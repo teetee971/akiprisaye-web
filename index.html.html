@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A KI PRI SA YÉ</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .lang-switch {
+      text-align: right;
+      margin: 1rem;
+    }
+    .lang-switch button {
+      background: none;
+      border: none;
+      font-size: 1.1rem;
+      margin-left: 0.5rem;
+      cursor: pointer;
+    }
+    .lang-switch button:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="lang-switch">
+      <span>🌐</span>
+      <button onclick="switchLang('fr')">🇫🇷</button>
+      <button onclick="switchLang('en')">🇬🇧</button>
+      <button onclick="switchLang('es')">🇪🇸</button>
+    </div>
+    <h1>A KI PRI SA YÉ</h1>
+    <p id="subtitle">L'appli qui dit la vérité sur les prix</p>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2 id="budgetTitle">Maîtrisez votre budget avec l'appli 100% péyi</h2>
+      <ul id="budgetList">
+        <li>✅ Synthèse vocale créole “Vwa Péyi”</li>
+        <li>✅ Suivi des prix avec IA</li>
+        <li>✅ Promos personnalisées et alertes vie chère</li>
+        <li>✅ Comparaison Antilles / Métropole</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2 id="modulesTitle">Modules Intelligents</h2>
+      <ul id="modulesList">
+        <li>✅ Palmarès des enseignes les moins chères</li>
+        <li>✅ Radar géolocalisé des prix</li>
+        <li>✅ Scan IA des tickets de caisse</li>
+        <li>✅ Vwa Péyi vocal multilingue</li>
+        <li>✅ Dénonciation prix abusifs</li>
+        <li>✅ IA prévision inflation + shrinkflation</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 A KI PRI SA YÉ – Tous droits réservés.</p>
+  </footer>
+
+  <script>
+    const translations = {
+      fr: {
+        subtitle: "L'appli qui dit la vérité sur les prix",
+        budgetTitle: "Maîtrisez votre budget avec l'appli 100% péyi",
+        budgetList: [
+          "✅ Synthèse vocale créole “Vwa Péyi”",
+          "✅ Suivi des prix avec IA",
+          "✅ Promos personnalisées et alertes vie chère",
+          "✅ Comparaison Antilles / Métropole"
+        ],
+        modulesTitle: "Modules Intelligents",
+        modulesList: [
+          "✅ Palmarès des enseignes les moins chères",
+          "✅ Radar géolocalisé des prix",
+          "✅ Scan IA des tickets de caisse",
+          "✅ Vwa Péyi vocal multilingue",
+          "✅ Dénonciation prix abusifs",
+          "✅ IA prévision inflation + shrinkflation"
+        ]
+      },
+      en: {
+        subtitle: "The app that tells the truth about prices",
+        budgetTitle: "Take control of your budget with the 100% local app",
+        budgetList: [
+          "✅ Creole voice synthesis “Vwa Péyi”",
+          "✅ Price tracking with AI",
+          "✅ Personalized promotions and cost-of-living alerts",
+          "✅ Antilles / Mainland comparison"
+        ],
+        modulesTitle: "Smart Modules",
+        modulesList: [
+          "✅ Ranking of cheapest stores",
+          "✅ Geolocated price radar",
+          "✅ AI receipt scanner",
+          "✅ Vwa Péyi multilingual voice",
+          "✅ Report abusive prices",
+          "✅ AI inflation forecast + shrinkflation"
+        ]
+      },
+      es: {
+        subtitle: "La app que dice la verdad sobre los precios",
+        budgetTitle: "Controle su presupuesto con la app 100% local",
+        budgetList: [
+          "✅ Síntesis vocal criolla “Vwa Péyi”",
+          "✅ Seguimiento de precios con IA",
+          "✅ Promociones personalizadas y alertas de carestía",
+          "✅ Comparación Antillas / Metrópoli"
+        ],
+        modulesTitle: "Módulos Inteligentes",
+        modulesList: [
+          "✅ Clasificación de tiendas más baratas",
+          "✅ Radar de precios geolocalizado",
+          "✅ Escáner IA de tickets",
+          "✅ Voz multilingüe Vwa Péyi",
+          "✅ Denuncia de precios abusivos",
+          "✅ IA previsión inflación + shrinkflation"
+        ]
+      }
+    };
+
+    function switchLang(lang) {
+      const t = translations[lang];
+      document.getElementById("subtitle").innerText = t.subtitle;
+      document.getElementById("budgetTitle").innerText = t.budgetTitle;
+      document.getElementById("modulesTitle").innerText = t.modulesTitle;
+
+      const budgetList = document.getElementById("budgetList");
+      budgetList.innerHTML = "";
+      t.budgetList.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = item;
+        budgetList.appendChild(li);
+      });
+
+      const modulesList = document.getElementById("modulesList");
+      modulesList.innerHTML = "";
+      t.modulesList.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = item;
+        modulesList.appendChild(li);
+      });
+    }
+  </script>
+</body>
+</html>
