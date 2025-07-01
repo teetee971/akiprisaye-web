@@ -1,0 +1,107 @@
+[
+    {
+        "id": "1",
+        "nom": "Scan intelligent de ticket",
+        "description": "Détecte les prix à partir d’un ticket de caisse scanné.",
+        "actif": true,
+        "catégorie": "Analyse de prix"
+    },
+    {
+        "id": "2",
+        "nom": "Shrinkflation AI",
+        "description": "Détecte la réduction des quantités sans baisse de prix.",
+        "actif": true,
+        "catégorie": "Analyse de prix"
+    },
+    {
+        "id": "3",
+        "nom": "Radar prix géolocalisé",
+        "description": "Affiche les hausses de prix dans ta zone en temps réel.",
+        "actif": true,
+        "catégorie": "Géolocalisation"
+    },
+    {
+        "id": "4",
+        "nom": "Badge Prix Respecté",
+        "description": "Signale les enseignes dont les prix sont jugés corrects par la communauté.",
+        "actif": true,
+        "catégorie": "Communautaire"
+    },
+    {
+        "id": "5",
+        "nom": "Alerte prix abusif",
+        "description": "Permet de signaler un prix excessif directement via l'application.",
+        "actif": true,
+        "catégorie": "Surveillance"
+    },
+    {
+        "id": "6",
+        "nom": "Équivalent en Hexagone",
+        "description": "Compare le prix local avec celui du même produit en Métropole.",
+        "actif": true,
+        "catégorie": "Comparaison"
+    },
+    {
+        "id": "7",
+        "nom": "Assistant vocal Vwa Péi",
+        "description": "Répond en créole, français ou espagnol pour t’assister sur les prix.",
+        "actif": true,
+        "catégorie": "Accessibilité"
+    },
+    {
+        "id": "8",
+        "nom": "Mode Silans Lokal",
+        "description": "Navigation premium rapide et sans publicité.",
+        "actif": true,
+        "catégorie": "Premium"
+    },
+    {
+        "id": "9",
+        "nom": "Rakett AI",
+        "description": "Détecte les prix trop élevés et propose des bons plans alternatifs.",
+        "actif": true,
+        "catégorie": "Anti-arnaques"
+    },
+    {
+        "id": "10",
+        "nom": "Comparateur Pro",
+        "description": "Compare les prix au kilo, par enseigne et par ville.",
+        "actif": true,
+        "catégorie": "Analyse de prix"
+    },
+    {
+        "id": "11",
+        "nom": "Tarif Tracker Pro",
+        "description": "Envoie une alerte dès qu’un produit baisse de prix.",
+        "actif": true,
+        "catégorie": "Alerte"
+    },
+    {
+        "id": "12",
+        "nom": "Budget Zen+",
+        "description": "Permet de planifier un budget courses intelligent par IA.",
+        "actif": true,
+        "catégorie": "Gestion"
+    },
+    {
+        "id": "13",
+        "nom": "Scan nutritionnel",
+        "description": "Affiche la composition nutritionnelle des produits scannés.",
+        "actif": true,
+        "catégorie": "Santé"
+    },
+    {
+        "id": "14",
+        "nom": "Mode Conso solidaire",
+        "description": "Indique les produits ou enseignes favorables à l’économie locale.",
+        "actif": true,
+        "catégorie": "Éthique"
+    },
+    {
+        "id": "15",
+        "nom": "Analyse socio-économique IA",
+        "description": "Croise les données de prix et de revenus pour identifier les injustices économiques.",
+        "actif": true,
+        "catégorie": "Analyse IA"
+    }
+]

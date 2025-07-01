@@ -1,0 +1,42 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mon Historique de Prix – A KI PRI SA YÉ</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+</head>
+<body class="dark">
+  <h1>🧾 Mon Historique de Prix</h1>
+  <div id="historique-container">Chargement de vos données...</div>
+
+  <script>
+    const app = firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    auth.signInAnonymously().then(() => {
+      const uid = auth.currentUser.uid;
+      db.collection("historique")
+        .where("uid", "==", uid)
+        .orderBy("date", "desc")
+        .get()
+        .then(snapshot => {
+          const container = document.getElementById("historique-container");
+          container.innerHTML = "";
+          snapshot.forEach(doc => {
+            const data = doc.data();
+            const entry = document.createElement("div");
+            entry.className = "historique-entry";
+            entry.innerHTML = `<b>${data.produit}</b> - ${data.prix.toFixed(2)} € à ${data.magasin || 'lieu inconnu'} le ${new Date(data.date.seconds * 1000).toLocaleDateString()}`;
+            container.appendChild(entry);
+          });
+        });
+    });
+  </script>
+</body>
+</html>
