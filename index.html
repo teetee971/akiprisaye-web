@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>A KI PRI SA YÉ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header>
+  <h1>A KI PRI SA YÉ</h1>
+  <p>Comparateur citoyen des Outre-mer</p>
+</header>
+
+<nav>
+  <a href="index.html">🏠 Accueil</a>
+  <a href="mon-compte.html">👤 Mon compte</a>
+  <a href="signalements.html">📢 Signalements</a>
+</nav>
+
+<main>
+  <section>
+    <h2>🔍 Comparer les prix près de chez vous</h2>
+    <p>Choisissez votre territoire, une enseigne, et comparez les prix avec la métropole.</p>
+    <button id="login">🔐 Se connecter anonymement</button>
+    <button id="upgrade">👑 Activer mon compte premium</button>
+    <p id="status">🕐 Vérification du statut...</p>
+  </section>
+
+  <section id="premiumContent" style="display:none;">
+    <h3>⭐ Contenu Premium</h3>
+    <ul>
+      <li>📊 Comparaison Antilles / Métropole / autres DROM</li>
+      <li>🔔 Alertes prix abusifs + badge Conso Solidaire</li>
+      <li>📥 Export Excel et suivi de panier</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>💬 Témoignages</h2>
+    <blockquote>
+      “Grâce à A KI PRI SA YÉ, j’ai trouvé le meilleur prix pour mes courses à Pointe-à-Pitre.” — Marie, Guadeloupe
+    </blockquote>
+  </section>
+</main>
+
+<footer>
+  <p>&copy; 2025 A KI PRI SA YÉ – Lutte contre la vie chère</p>
+</footer>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+  import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "XXXXXXX",
+    appId: "YOUR_APP_ID"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  document.getElementById("login").addEventListener("click", () => {
+    signInAnonymously(auth)
+      .then(() => alert("✅ Connecté anonymement"))
+      .catch((error) => console.error("Erreur:", error));
+  });
+
+  document.getElementById("upgrade").addEventListener("click", () => {
+    alert("Veuillez créer un compte pour activer votre accès premium.");
+  });
+
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      const token = await user.getIdTokenResult();
+      const isPremium = token.claims.premium === true;
+      document.getElementById("status").textContent = isPremium ? "👑 Statut : PREMIUM" : "👤 Statut : Standard";
+      if (isPremium) {
+        document.getElementById("premiumContent").style.display = "block";
+      }
+    }
+  });
+</script>
+
+</body>
+</html>

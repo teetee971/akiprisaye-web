@@ -1,0 +1,22 @@
+{
+  "produits": [
+    {
+      "nom": "Lait 1L",
+      "prix_dom": 2.49,
+      "prix_metropole": 1.1,
+      "ville": "Cayenne"
+    },
+    {
+      "nom": "Riz Basmati 1kg",
+      "prix_dom": 5.9,
+      "prix_metropole": 2.3,
+      "ville": "Fort-de-France"
+    },
+    {
+      "nom": "Eau 6x1.5L",
+      "prix_dom": 6.2,
+      "prix_metropole": 3.4,
+      "ville": "Saint-Denis"
+    }
+  ]
+}
