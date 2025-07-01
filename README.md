@@ -1,11 +1,2 @@
-# A KI PRI SA YÉ – Firebase PWA (Thème Sombre)
-
-## 🚀 Lancer
-
-```bash
-firebase login
-firebase init hosting
-firebase deploy
-```
-
-Connexion anonyme Firebase activée.
+# A KI PRI SA YÉ - DARK PRO VERSION
+Validated visual version

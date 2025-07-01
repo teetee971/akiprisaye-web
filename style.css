@@ -1,15 +1,1 @@
-body {
-  margin: 0; font-family: sans-serif; background: #121212; color: #eee;
-}
-header {
-  background: #1f1f1f; padding: 1rem; text-align: center;
-}
-button {
-  margin: 0.5rem; padding: 0.6rem 1rem; background: #333; color: #fff; border: none;
-}
-main {
-  max-width: 800px; margin: auto; padding: 2rem;
-}
-h2, h3 {
-  color: #80cbc4;
-}
+/* Dark Pro CSS */

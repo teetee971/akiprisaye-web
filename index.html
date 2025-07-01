@@ -2,90 +2,113 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>A KI PRI SA YÉ</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link rel="stylesheet" href="style.css" />
+  <title>A KI PRI SA YÉ – Mode Sombre</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #121212;
+      color: #e0e0e0;
+    }
+    header {
+      background-color: #1e1e1e;
+      color: #ffffff;
+      padding: 2rem 1rem;
+      text-align: center;
+    }
+    .banner {
+      background-color: #2e2e2e;
+      color: #00c853;
+      text-align: center;
+      padding: 1rem;
+      font-weight: 600;
+    }
+    main {
+      max-width: 960px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background-color: #1c1c1c;
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.5);
+    }
+    h2, h3 {
+      color: #81d4fa;
+    }
+    ul {
+      padding-left: 1.5rem;
+    }
+    li {
+      margin-bottom: 0.5rem;
+    }
+    .testimonial {
+      background: #2a2a2a;
+      border-left: 4px solid #00c853;
+      padding: 1rem;
+      margin-top: 1rem;
+      border-radius: 8px;
+      color: #e0e0e0;
+    }
+    .badge {
+      background-color: #263238;
+      border-left: 6px solid #00c853;
+      padding: 1rem;
+      margin-top: 2rem;
+      border-radius: 8px;
+    }
+    footer {
+      text-align: center;
+      font-size: 0.9rem;
+      padding: 1rem;
+      color: #999;
+      background-color: #1a1a1a;
+      margin-top: 2rem;
+    }
+    a {
+      color: #80cbc4;
+    }
+  </style>
 </head>
 <body>
 
 <header>
   <h1>A KI PRI SA YÉ</h1>
-  <p>Comparateur citoyen des Outre-mer</p>
+  <p>Comparer les prix en Outre-mer n'a jamais été aussi clair</p>
 </header>
 
-<nav>
-  <a href="index.html">🏠 Accueil</a>
-  <a href="mon-compte.html">👤 Mon compte</a>
-  <a href="signalements.html">📢 Signalements</a>
-</nav>
+<div class="banner">
+  🎗️ Lutte contre la vie chère – Mobilisation Outre-mer / Métropole
+</div>
 
 <main>
   <section>
-    <h2>🔍 Comparer les prix près de chez vous</h2>
-    <p>Choisissez votre territoire, une enseigne, et comparez les prix avec la métropole.</p>
-    <button id="login">🔐 Se connecter anonymement</button>
-    <button id="upgrade">👑 Activer mon compte premium</button>
-    <p id="status">🕐 Vérification du statut...</p>
-  </section>
-
-  <section id="premiumContent" style="display:none;">
-    <h3>⭐ Contenu Premium</h3>
+    <h2>🧠 Modules Intelligents</h2>
     <ul>
-      <li>📊 Comparaison Antilles / Métropole / autres DROM</li>
-      <li>🔔 Alertes prix abusifs + badge Conso Solidaire</li>
-      <li>📥 Export Excel et suivi de panier</li>
+      <li>✅ Suivi intelligent des prix (IA)</li>
+      <li>✅ Synthèse vocale créole “Voix créole”</li>
+      <li>✅ Carte des prix géolocalisés</li>
+      <li>✅ Scan des tickets de caisse avec IA</li>
+      <li>✅ Comparaison Outre-mer / Métropole</li>
+      <li>✅ Signalement anonyme des prix abusifs</li>
     </ul>
   </section>
 
   <section>
-    <h2>💬 Témoignages</h2>
-    <blockquote>
-      “Grâce à A KI PRI SA YÉ, j’ai trouvé le meilleur prix pour mes courses à Pointe-à-Pitre.” — Marie, Guadeloupe
-    </blockquote>
+    <h2>💬 Témoignages Utilisateurs</h2>
+    <div class="testimonial">« Grâce à l’app, j’ai pu alerter sur des écarts de prix de plus de 50 %. Merci. » – Alex, Saint-Denis</div>
+    <div class="testimonial">« J’utilise la voix créole tous les jours pour mes proches. » – Noémie, Basse-Terre</div>
+  </section>
+
+  <section class="badge">
+    <h3>🫱 Badge “Conso Solidaire”</h3>
+    <p>Agissez pour la transparence. Ensemble, dénonçons les abus et faisons évoluer les comportements de consommation.</p>
+    <p><a href="#">Voir les actions récentes signalées</a></p>
   </section>
 </main>
 
 <footer>
-  <p>&copy; 2025 A KI PRI SA YÉ – Lutte contre la vie chère</p>
+  © 2025 A KI PRI SA YÉ – Plateforme citoyenne pour la vérité sur les prix
 </footer>
-
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-  import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
-
-  const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT.firebaseapp.com",
-    projectId: "YOUR_PROJECT",
-    storageBucket: "YOUR_PROJECT.appspot.com",
-    messagingSenderId: "XXXXXXX",
-    appId: "YOUR_APP_ID"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-
-  document.getElementById("login").addEventListener("click", () => {
-    signInAnonymously(auth)
-      .then(() => alert("✅ Connecté anonymement"))
-      .catch((error) => console.error("Erreur:", error));
-  });
-
-  document.getElementById("upgrade").addEventListener("click", () => {
-    alert("Veuillez créer un compte pour activer votre accès premium.");
-  });
-
-  onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      const token = await user.getIdTokenResult();
-      const isPremium = token.claims.premium === true;
-      document.getElementById("status").textContent = isPremium ? "👑 Statut : PREMIUM" : "👤 Statut : Standard";
-      if (isPremium) {
-        document.getElementById("premiumContent").style.display = "block";
-      }
-    }
-  });
-</script>
 
 </body>
 </html>
