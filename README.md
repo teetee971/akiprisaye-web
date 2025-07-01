@@ -1,38 +1,23 @@
-# A KI PRI SA YÉ - Comparateur de prix citoyen
+# A KI PRI SA YÉ - Application Web
 
-**A KI PRI SA YÉ** est une application citoyenne antillaise de comparaison des prix entre les territoires d’Outre-Mer (DROM-COM) et l’Hexagone. Elle aide les consommateurs à repérer les écarts, à mieux gérer leur budget, et à lutter contre la vie chère.
+**A KI PRI SA YÉ** est une application citoyenne de lutte contre la vie chère dans les DROM-COM et en France hexagonale.
 
-## 📦 Fonctionnalités clés
-- Comparaison des prix par enseigne, par ville, par territoire
-- Affichage des écarts DOM/Métropole
-- Signalement des prix abusifs
-- Carte des magasins avec itinéraire
-- Historique personnel, alertes prix, badges communautaires
-- Modules IA et analyse des tendances
-- Assistant vocal multilingue ("Vwa Péi")
+## 🎯 Objectifs :
+- Comparer les prix par enseigne, ville, et territoire
+- Révéler les écarts DOM/Métropole
+- Offrir des outils de budget, cartes interactives, signalements, IA éthique, etc.
 
-## 🚀 Technologies utilisées
-- React.js
-- Firebase (Auth + Firestore)
-- Vite.js
-- CSS Modules / Tailwind (au choix)
-- Intégration prévue avec API de scrapping prix
+## 🚀 Technologies prévues
+- HTML/CSS/JS
+- React ou Vite (structure adaptable)
+- Firebase (Auth, Firestore, Storage)
+- IA hybride, modules comparateurs, scanner
 
-## 📂 Arborescence simplifiée
-```
-/public/images       → Visuels et ressources
-/src/pages           → Pages principales (Accueil, Comparateur, Carte...)
-/src/components      → Composants réutilisables
-```
-
-## 🛠️ Installation
+## 🛠 Commandes recommandées pour version React
 ```bash
 npm install
 npm run dev
 ```
 
-## 🌐 Déploiement
-Compatible Vercel / Netlify / Firebase Hosting
-
-## 📜 Licence
-Projet open source dans le cadre du développement territorial citoyen.
+## 🌐 Licence
+Projet libre dans le cadre de l'engagement citoyen.

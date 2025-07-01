@@ -1,6 +1,14 @@
 {
-  "dependencies": {
-    "firebase": "^11.10.0",
-    "firebase-admin": "^13.4.0"
+  "name": "aki-pri-sa-ye",
+  "version": "1.0.0",
+  "description": "Application citoyenne de comparaison de prix",
+  "scripts": {
+    "start": "vite",
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "vite": "^4.0.0"
   }
 }
