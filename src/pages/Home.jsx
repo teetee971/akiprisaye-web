@@ -1,0 +1,1 @@
+export default function Home() { return <h2>Accueil - A KI PRI SA YÉ</h2>; }

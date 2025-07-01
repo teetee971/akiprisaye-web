@@ -1,14 +1,18 @@
 {
-  "name": "aki-pri-sa-ye",
+  "name": "aki-pri-sa-ye-vite",
   "version": "1.0.0",
-  "description": "Application citoyenne de comparaison de prix",
   "scripts": {
-    "start": "vite",
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "preview": "vite preview"
   },
-  "dependencies": {},
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.20.1"
+  },
   "devDependencies": {
-    "vite": "^4.0.0"
+    "vite": "^4.0.0",
+    "@vitejs/plugin-react": "^4.0.0"
   }
 }
