@@ -1,0 +1,1 @@
+<template><div>Choix de voix</div></template>
