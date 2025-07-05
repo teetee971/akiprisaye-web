@@ -1,11 +1,11 @@
 
 import { useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
-import { logMessage } from '../firebase_log_service.js';
+import { Card, CardContent } from '../ui/card';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Textarea } from '../ui/textarea';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../ui/select';
+import { logMessage } from '../../firebase_log_service.js';
 
 export default function ChatIALocal() {
   const [messages, setMessages] = useState([
@@ -56,13 +56,21 @@ export default function ChatIALocal() {
             <SelectContent>
               <SelectItem value="creole">🇬🇵 Créole</SelectItem>
               <SelectItem value="fr">🇫🇷 Français</SelectItem>
-              <SelectItem value="es">🇪🇸 Espagnol</SelectItem>
+              <SelectItem value="es">🇪🇸 Español</SelectItem>
             </SelectContent>
           </Select>
 
           <div className="h-48 overflow-y-auto bg-gray-50 p-2 rounded-md border border-gray-200">
             {messages.map((msg, i) => (
-              <div key={i} className={\`text-sm my-1 \${msg.from === 'user' ? 'text-right text-blue-600' : 'text-left text-green-800'}\`}>
+              <div
+                key={i}
+                className={
+                  "text-sm my-1 " +
+                  (msg.from === 'user'
+                    ? 'text-right text-blue-600'
+                    : 'text-left text-green-800')
+                }
+              >
                 <span>{msg.text}</span>
               </div>
             ))}

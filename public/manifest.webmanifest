@@ -1,0 +1,23 @@
+{
+  "name": "A KI PRI SA Y\u00c9",
+  "short_name": "AKPSY",
+  "description": "Application citoyenne pour lutter contre la vie ch\u00e8re dans les Outre-mer.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#121212",
+  "lang": "fr-FR",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
