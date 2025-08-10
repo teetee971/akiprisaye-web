@@ -1,1 +1,0 @@
-// Configuration Firebase pour logs anonymisés

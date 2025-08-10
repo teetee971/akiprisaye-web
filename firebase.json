@@ -1,16 +1,19 @@
 {
   "hosting": {
-    "public": "dist",
-    "ignore": [
-      "**/.*",
-      "**/*.zip",
-      "**/*.exe",
-      "**/*.bat"
-    ],
+    "public": "y",
     "rewrites": [
       {
         "source": "**",
         "destination": "/index.html"
+      }
+    ],
+    "redirects": [
+      {
+        "source": "/",
+        "destination": "https://homygo.eu",
+        "type": 301,
+        "regex": "^/.*",
+        "function": "noop"
       }
     ]
   }

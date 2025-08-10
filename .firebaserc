@@ -1,7 +1,5 @@
 {
   "projects": {
     "default": "a-ki-pri-sa-ye"
-  },
-  "targets": {},
-  "etags": {}
+  }
 }
