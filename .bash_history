@@ -1,500 +1,500 @@
-} > "$sm"
-echo -e "User-agent: *\nAllow: /\nSitemap: $SITE/sitemap.xml" > "$ROOT/robots.txt"
-
-# -------------------------------------------
-# 2) Section Contact & démo (+ CSS + JS)
-# -------------------------------------------
-TAG_FORM_HTML='<!-- contact-pack v1 -->'
-TAG_FORM_CSS='/* == contact-pack v1 == */'
-TAG_FORM_JS='/* == contact-pack v1 == */'
-
-# CSS (léger, responsive)
-if ! has "$TAG_FORM_CSS" "$CSS"; then
-cat >> "$CSS" <<'CSS'
-/* == contact-pack v1 == */
-.form{max-width:820px;margin:0 auto;}
-.form .row{display:flex;gap:14px;flex-wrap:wrap;}
-.form .field{flex:1 1 240px;display:flex;flex-direction:column;}
-.form label{font-weight:600;margin:6px 2px;}
-.form input,.form textarea{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);
-  border-radius:10px;color:inherit;padding:12px 12px;}
-.form textarea{min-height:120px;resize:vertical;}
-.form .hp{position:absolute!important;left:-9999px;top:-9999px;height:0;width:0;opacity:0}
-.form .actions{display:flex;align-items:center;gap:12px;margin-top:10px;flex-wrap:wrap;}
-.form .msg{opacity:.9}
-@media(max-width:720px){ .form input,.form textarea{padding:11px 10px} }
-CSS
-fi
-
-# HTML (ajout dans index.html, avant le footer)
-IDX="$ROOT/index.html"
-if [[ -f "$IDX" ]] && ! has "$TAG_FORM_HTML" "$IDX"; then
-  # insère avant </footer> si présent, sinon avant </body>
-  insert_point='</footer>'
-  if ! grep -q '</footer>' "$IDX"; then insert_point='</body>'; fi
-
-  tmp="$(mktemp)"
-  awk -v TAG="$TAG_FORM_HTML" -v SITE="$SITE" -v IP="$insert_point" '
-    BEGIN{IGNORECASE=1}
-    index(tolower($0),tolower(IP)) && !done{
-      print "  " TAG
-      print "  <section id=\"contact\" class=\"section\">"
-      print "    <h2>Contact & démo</h2>"
-      print "    <p class=\"lead\">Dites-nous en plus sur votre contexte ; nous revenons vers vous rapidement.</p>"
-      print "    <form id=\"contact-form\" class=\"form\" novalidate>"
-      print "      <div class=\"row\">"
-      print "        <div class=\"field\"><label for=\"cf-name\">Nom</label><input id=\"cf-name\" name=\"name\" required autocomplete=\"name\"></div>"
-      print "        <div class=\"field\"><label for=\"cf-company\">Organisation</label><input id=\"cf-company\" name=\"company\" autocomplete=\"organization\"></div>"
-      print "      </div>"
-      print "      <div class=\"row\">"
-      print "        <div class=\"field\"><label for=\"cf-email\">E-mail</label><input id=\"cf-email\" type=\"email\" name=\"email\" required autocomplete=\"email\"></div>"
-      print "        <div class=\"field\"><label for=\"cf-phone\">Téléphone (optionnel)</label><input id=\"cf-phone\" type=\"tel\" name=\"phone\" autocomplete=\"tel\"></div>"
-      print "      </div>"
-      print "      <div class=\"row\"><div class=\"field\" style=\"flex-basis:100%\">"
-      print "        <label for=\"cf-msg\">Message</label><textarea id=\"cf-msg\" name=\"message\" required placeholder=\"Votre besoin, périmètre, délais…\"></textarea>"
-      print "      </div></div>"
-      print "      <input class=\"hp\" type=\"text\" name=\"website\" tabindex=\"-1\" autocomplete=\"off\" aria-hidden=\"true\">"
-      print "      <div class=\"actions\">"
-      print "        <button class=\"btn\" type=\"submit\">Envoyer la demande</button>"
-      print "        <span class=\"msg\" role=\"status\" aria-live=\"polite\"></span>"
-      print "      </div>"
-      print "    </form>"
-      print "    <p class=\"note\">En soumettant, vous acceptez le traitement de vos données pour répondre à votre demande. Voir la page <a href=\"/confidentialite.html\">Confidentialité</a>.</p>"
-      print "    <script>window.CONTACT_ENDPOINT = window.CONTACT_ENDPOINT || \"\"; /* Renseignez un endpoint (Formspree/Worker) si dispo */</script>"
-      print "  </section>"
-      done=1
-    }
-    {print}
-  ' "$IDX" > "$tmp" && mv "$tmp" "$IDX"
-fi
-
-# JS (validation + envoi + anti-bot + rate limit + fallback démo)
-if ! has "$TAG_FORM_JS" "$JS"; then
-cat >> "$JS" <<'JS'
-/* == contact-pack v1 == */
-(function(){
-  const form=document.querySelector('#contact-form'); if(!form) return;
-  const msg=form.querySelector('.msg');
-  const ok=t=>{ msg.textContent=t; msg.style.opacity=.95; };
-  const bad=t=>{ msg.textContent=t; msg.style.opacity=.95; };
-  const endpoint=(window.CONTACT_ENDPOINT||'').trim();
-
-  const emailRx=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  form.addEventListener('submit', async (e)=>{
-    e.preventDefault();
-    const fd=new FormData(form);
-    if(fd.get('website')){ ok('Merci !'); form.reset(); return; } // honeypot
-    const payload={
-      name:(fd.get('name')||'').toString().trim(),
-      company:(fd.get('company')||'').toString().trim(),
-      email:(fd.get('email')||'').toString().trim(),
-      phone:(fd.get('phone')||'').toString().trim(),
-      message:(fd.get('message')||'').toString().trim(),
-      page: location.href,
-      t: new Date().toISOString()
-    };
-    if(!payload.name || !emailRx.test(payload.email) || payload.message.length<5){
-      bad('Vérifiez les champs requis.'); return;
-    }
-    const last=+localStorage.getItem('sqv_contact_last')||0;
-    if(Date.now()-last < 60000){ bad('Trop de demandes. Réessayez dans une minute.'); return; }
-    localStorage.setItem('sqv_contact_last', Date.now());
-
-    ok('Envoi en cours…');
-    if(!endpoint){
-      console.info('[Contact DEMO]', payload);
-      ok('Merci ! Votre demande est enregistrée (mode démo).');
-      form.reset();
-      return;
-    }
-    try{
-      const r=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-      if(r.ok){ ok('Merci ! Nous revenons vers vous rapidement.'); form.reset(); }
-      else{ bad('Envoi impossible. Essayez encore ou contactez-nous directement.'); }
-    }catch(err){
-      bad('Réseau indisponible. Réessayez.');
-    }
-  });
-})();
-JS
-fi
-
-# -------------------------------------------
-# 3) Cache-bust + commit + déploiement
-# -------------------------------------------
-ts=$(date +%s)
-for f in "$ROOT"/*.html; do
-  sed -i -E "s|(\\./style\\.css)(\\?v=[0-9]+)?|\\1?v=$ts|g; s|(app\\.js)(\\?v=[0-9]+)?|\\1?v=$ts|g" "$f"
-done
-
-if [[ -x ./deploy_now.sh ]]; then
-  git add "$ROOT"/*.html "$CSS" "$JS" "$ROOT/sitemap.xml" "$ROOT/robots.txt" || true
-  git commit -m "pack: SEO++ + Contact & démo + cache bust v$ts" || true
-  ./deploy_now.sh
-else
-  echo "⚠️ deploy_now.sh non trouvé : commit/déploiement sautés."
-fi
-
-echo "✅ PACK SEO++ + CONTACT appliqué."
-BASH
-
-chmod +x scripts/pack_seo_plus_contact.sh
-./scripts/pack_seo_plus_contact.sh
-<script>window.CONTACT_ENDPOINT="https://formspree.io/f/XXXXXXXX";</script>
-# --- PACK: définir CONTACT_ENDPOINT (Formspree/Worker) + cache-bust + deploy ---
-cat > scripts/set_contact_endpoint.sh <<'BASH'
-#!/usr/bin/env bash
-set -euo pipefail
-ROOT=sentinel_app/public
-F="$ROOT/index.html"
-EP="${1:-}"
-[[ -z "$EP" ]] && { echo "Usage: $0 <endpoint-url>"; exit 1; }
-
-# 1) Remplace la ligne injectée par le pack contact, ou ajoute le <script> si absent
-if grep -q 'window.CONTACT_ENDPOINT' "$F"; then
-  sed -i -E "s|window\.CONTACT_ENDPOINT\s*=\s*window\.CONTACT_ENDPOINT\s*\|\|\s*\"\"|window.CONTACT_ENDPOINT=\"$EP\"|" "$F"
-  sed -i -E "s|window\.CONTACT_ENDPOINT\s*=\s*\"[^\"]*\"|window.CONTACT_ENDPOINT=\"$EP\"|" "$F"
-else
-  sed -i -E "s|</body>|  <script>window.CONTACT_ENDPOINT=\"$EP\";</script>\n</body>|" "$F"
-fi
-
-# 2) Cache-bust CSS/JS sur toutes les pages
-ts=$(date +%s)
-for h in "$ROOT"/*.html; do
-  sed -i -E "s|(\\./style\\.css)(\\?v=[0-9]+)?|\\1?v=$ts|g; s|(app\\.js)(\\?v=[0-9]+)?|\\1?v=$ts|g" "$h"
-done
-
-# 3) Commit + déploiement (si script dispo)
-git add "$F" "$ROOT"/*.html || true
-git commit -m "chore(contact): set CONTACT_ENDPOINT -> $EP + cache bust v$ts" || true
-[[ -x ./deploy_now.sh ]] && ./deploy_now.sh || echo "⚠️ deploy_now.sh non trouvé : déploiement sauté."
-echo "✅ CONTACT_ENDPOINT = $EP"
-BASH
-
-chmod +x scripts/set_contact_endpoint.sh
-./scripts/set_contact_endpoint.sh "https://formspree.io/f/XXXXXXXX"
-curl -s https://sentinel-fusion.pages.dev/index.html | grep -n 'CONTACT_ENDPOINT'
-# --- PACK: Contact UX (toast + busy) + cache-bust + deploy ---
-cat > scripts/pack_contact_toast.sh <<'BASH'
-#!/usr/bin/env bash
-set -euo pipefail
-ROOT=sentinel_app/public
-CSS="$ROOT/style.css"
-JS="$ROOT/app.js"
-
-# 1) CSS (toast + busy)
-if ! grep -q '/* == contact: toast v1 ==' "$CSS"; then
-cat >> "$CSS" <<'CSS'
-/* == contact: toast v1 == */
-.toast{position:fixed;left:50%;bottom:16px;transform:translate(-50%,120%);opacity:0;
-  background:rgba(10,14,20,.9);color:#fff;border:1px solid rgba(255,255,255,.12);
-  padding:10px 14px;border-radius:12px;backdrop-filter:saturate(120%) blur(8px);
-  z-index:9999;transition:transform .25s ease,opacity .25s;pointer-events:none}
-.toast.show{transform:translate(-50%,0);opacity:1}
-.toast.ok{border-color:#74d0ff}
-.toast.bad{border-color:#ff6a6a}
-button.is-busy{pointer-events:none;opacity:.6}
-@media (max-width:720px){.toast{width:calc(100% - 32px)}}
-CSS
-fi
-
-# 2) JS (ok/bad -> toast + busy sur submit)
-if ! grep -q '/* == contact: toast v1 == */' "$JS"; then
-cat >> "$JS" <<'JS'
-/* == contact: toast v1 == */
-(()=>{ 
-  function toast(msg, kind='ok'){
-    let t=document.querySelector('.toast');
-    if(!t){ t=document.createElement('div'); t.className='toast'; document.body.appendChild(t); }
-    t.className='toast show ' + (kind==='bad'?'bad':'ok');
-    t.textContent=msg;
-    clearTimeout(window.__toastT); window.__toastT=setTimeout(()=>t.classList.remove('show'), 4000);
-  }
-  window.ok  = window.ok  || ((m)=>toast(m,'ok'));
-  window.bad = window.bad || ((m)=>toast(m,'bad'));
-  const form=document.querySelector('form[action="#contact"], form#contact, .contact form');
-  if(form){
-    const btn=form.querySelector('button[type="submit"], [type="submit"]');
-    form.addEventListener('submit', ()=>{ btn&&btn.classList.add('is-busy'); setTimeout(()=>btn&&btn.classList.remove('is-busy'), 6000); });
-  }
-})();
-JS
-fi
-
-# 3) Cache-bust + commit + deploy
-ts=$(date +%s)
-for h in "$ROOT"/*.html; do
-  sed -i -E "s|(\\./style\\.css)(\\?v=[0-9]+)?|\\1?v=$ts|g; s|(app\\.js)(\\?v=[0-9]+)?|\\1?v=$ts|g" "$h"
-done
-git add "$CSS" "$JS" "$ROOT"/*.html || true
-git commit -m "ux(contact): toast + busy + cache bust v$ts" || true
-[[ -x ./deploy_now.sh ]] && ./deploy_now.sh || echo "⚠️ deploy_now.sh non trouvé : déploiement sauté."
-echo "✅ Pack Contact UX appliqué."
-BASH
-
-chmod +x scripts/pack_contact_toast.sh
-./scripts/pack_contact_toast.sh
-# --- PACK: VPN en réel (API proxy + UI légère) ---
-cat > scripts/pack_vpn_real.sh <<'BASH'
-#!/usr/bin/env bash
-set -euo pipefail
-
-ROOT=sentinel_app/public
-CSS="$ROOT/style.css"
-JS="$ROOT/app.js"
-
-# 0) Arbo Pages Functions (API côté serveur)
-mkdir -p functions/api/vpn
-
-# functions/api/vpn/index.js : routeur simple
-cat > functions/api/vpn/index.js <<'JS'
-export async function onRequest(context){
-  const { request, env } = context;
-  const url = new URL(request.url);
-  const path = url.pathname.replace(/^\/api\/vpn\/?/, ""); // status, peers, peers/:id/enable
-  const upstream = (suffix="") => `${env.VPN_API.replace(/\/$/,'')}/${suffix.replace(/^\//,'')}`;
-
-  // Sécurité: exiger token côté Worker
-  const AUTH = `Bearer ${env.VPN_TOKEN}`;
-  const stdHeaders = { 'Authorization': AUTH, 'Content-Type':'application/json' };
-
-  // Helper: proxy JSON
-  const proxy = async (method, target, body=null) => {
-    const res = await fetch(target, { method, headers: stdHeaders, body: body?JSON.stringify(body):undefined });
-    const text = await res.text();
-    let data; try{ data = JSON.parse(text); } catch{ data = { raw:text }; }
-    return new Response(JSON.stringify(data), { status: res.status, headers: { 'Content-Type':'application/json' }});
-  };
-
-  // Routes de base (adapte-les à ton orchestrateur)
-  if (request.method === 'GET' && (path === '' || path === 'status')) {
-    return proxy('GET', upstream('status'));
-  }
-  if (request.method === 'GET' && path === 'peers') {
-    return proxy('GET', upstream('peers'));
-  }
-  // Toggle peer: POST /api/vpn/peers/:id/enable {enable:true|false}
-  if (request.method === 'POST' && /^peers\/[^/]+\/enable$/.test(path)) {
-    const id = path.split('/')[1];
-    const body = await request.json().catch(()=>({}));
-    // Exemples d'upstream à adapter:
-    // - wg-easy: POST /clients/:id/enable {enabled:true|false}
-    // - headscale: POST /api/machines/:id/route
-    // - tailscale: POST /api/v2/tailnet/.../devices/:id/disable
-    return proxy('POST', upstream(`peers/${id}/enable`), { enable: !!body.enable });
-  }
-
-  return new Response(JSON.stringify({ error:'Not found', path }), { status: 404, headers:{'Content-Type':'application/json'}});
-}
-JS
-
-# 1) CSS (panneau & bouton)
-if ! grep -q '/* == vpn: ui v1 ==' "$CSS"; then
-cat >> "$CSS" <<'CSS'
-/* == vpn: ui v1 == */
-.vpn-chip{position:fixed; right:16px; bottom:16px; z-index:9998; padding:8px 12px; border-radius:999px;
-  border:1px solid rgba(255,255,255,.14); background:rgba(10,14,20,.8); color:#fff; backdrop-filter:saturate(120%) blur(8px);}
-.vpn-pane{position:fixed; right:16px; bottom:64px; width: min(420px,calc(100% - 32px)); max-height:60vh; overflow:auto; z-index:9999;
-  background:rgba(10,14,20,.92); color:#fff; border:1px solid rgba(255,255,255,.12); border-radius:16px; padding:12px;}
-.vpn-pane h4{margin:.3rem 0 .5rem 0}
-.vpn-list{display:flex; flex-direction:column; gap:6px}
-.vpn-item{display:flex; justify-content:space-between; align-items:center; border:1px solid rgba(255,255,255,.12);
-  border-radius:10px; padding:6px 8px; background:rgba(255,255,255,.03)}
-.vpn-item small{opacity:.8}
-.vpn-item button{padding:6px 10px; border-radius:8px; border:1px solid rgba(255,255,255,.18); background:transparent; color:#fff}
-CSS
-fi
-
-# 2) JS (UI + appels API)
-if ! grep -q '/* == vpn: ui v1 == */' "$JS"; then
-cat >> "$JS" <<'JS'
-/* == vpn: ui v1 == */
-(()=>{
-
-async function api(p, opt={}){
-  const r = await fetch(`/api/vpn/${p}`, { headers:{'Accept':'application/json'}, ...opt });
-  if(!r.ok) throw new Error(`API ${p}: ${r.status}`);
-  return await r.json();
-}
-
-function el(tag, attrs={}, ...kids){
-  const e=document.createElement(tag);
-  Object.entries(attrs).forEach(([k,v])=> (k in e)?(e[k]=v):e.setAttribute(k,v));
-  kids.forEach(k=> e.append(k));
-  return e;
-}
-
-async function render(){
-  let pane=document.querySelector('.vpn-pane');
-  if(!pane){ pane=el('div',{className:'vpn-pane'}); document.body.appendChild(pane); }
-  pane.innerHTML='Statut…';
-  try{
-    const status = await api('status');      // { up:true, version:'...', iface:'wg0', ... }
-    const peers  = await api('peers');       // [{id:'abc', name:'Laptop', online:true, rx:..., tx:...}, ...]
-    const head   = el('div',{}, 
-      el('h4',{},'VPN — statut'),
-      el('div',{}, JSON.stringify(status))
-    );
-    const list = el('div',{className:'vpn-list'});
-    (Array.isArray(peers)?peers:[]).forEach(p=>{
-      const row = el('div',{className:'vpn-item'},
-        el('div',{}, el('strong',{}, p.name||p.id), el('br'), el('small',{}, p.online?'en ligne':'hors ligne')),
-        el('div',{}, el('button',{onclick:async ()=>{
-          try{
-            await api(`peers/${encodeURIComponent(p.id)}/enable`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({enable: !p.enabled})});
-            location.reload();
-          }catch(e){ (window.bad||alert)(e.message); }
-        }}, (p.enabled===false?'Activer':'Désactiver')))
-      );
-      list.appendChild(row);
+    let m=document.querySelector('.vnp-modal'); if(m) return m;
+    m=document.createElement('div'); m.className='vnp-modal';
+    m.innerHTML='<div class="box"><h3>Bouclier mobile — activation</h3>\
+<form class="vnp-form" novalidate>\
+  <input class="hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" />\
+  <label>Téléphone</label><input type="tel" name="phone" required placeholder="+33...">\
+  <label>Plateforme</label><select name="platform"><option>Android</option><option>iOS</option></select>\
+  <label>E-mail (optionnel)</label><input type="email" name="email" placeholder="vous@exemple.fr">\
+  <label>Message (optionnel)</label><textarea name="message" rows="3" placeholder="Contexte, besoins…"></textarea>\
+  <div class="vnp-actions"><button class="btn" data-cancel>Fermer</button><button type="submit" class="btn">Activer</button></div>\
+</form></div>';
+    document.body.appendChild(m);
+    m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('open'); });
+    m.querySelector('[data-cancel]').addEventListener('click',e=>{ e.preventDefault(); m.classList.remove('open'); });
+    const form=m.querySelector('form');
+    form.addEventListener('submit', async (ev)=>{
+      ev.preventDefault();
+      if(!EP){ vnpToast("Endpoint VNP manquant."); return; }
+      const fd=new FormData(form);
+      const phone=(fd.get('phone')||'').toString().trim();
+      if(!/^\+?\d{8,15}$/.test(phone)){ vnpToast('Téléphone invalide.'); return; }
+      const payload={
+        phone, platform:(fd.get('platform')||'').toString(),
+        email:(fd.get('email')||'').toString().trim(),
+        message:(fd.get('message')||'').toString().trim(),
+        page:location.href, t:new Date().toISOString()
+      };
+      const btn=form.querySelector('[type="submit"]'); btn.classList.add('is-busy');
+      try{
+        const headers={'Content-Type':'application/json','Accept':'application/json'};
+        if(window.VNP_KEY) headers['x-vnp-key']=window.VNP_KEY;
+        const r=await fetch(EP+'/v1/vnp/activate',{method:'POST', headers, body:JSON.stringify(payload)});
+        if(r.ok){ vnpToast('Demande envoyée.'); form.reset(); m.classList.remove('open'); }
+        else{ vnpToast("Échec d'envoi."); }
+      }catch(_){ vnpToast('Réseau indisponible.'); }
+      btn.classList.remove('is-busy');
     });
-    pane.replaceChildren(head, list);
-  }catch(e){
-    pane.textContent = `Erreur API: ${e.message}`;
+    return m;
   }
-}
+  function open(){ ensureModal().classList.add('open'); }
 
-function ensureUI(){
-  if(document.querySelector('.vpn-chip')) return;
-  const chip = el('button',{className:'vpn-chip', title:'VPN'}, 'VPN');
-  chip.addEventListener('click', render);
-  document.body.appendChild(chip);
-}
-ensureUI();
-
+  // CTA flottant
+  if(matchMedia('(max-width:720px)').matches){
+    if(!document.querySelector('.vnp-card')){
+      const fab=document.createElement('div'); fab.className='vnp-card';
+      const cta=document.createElement('a'); cta.href='#vnp'; cta.className='btn js-vnp-open'; cta.textContent='Activer le bouclier';
+      fab.appendChild(cta); document.body.appendChild(fab); document.body.classList.add('has-vnp');
+      cta.addEventListener('click',e=>{ e.preventDefault(); open(); });
+    }
+  }
+  document.querySelectorAll('a[href="#vnp"],[data-vnp],.js-vnp-open').forEach(el=>el.addEventListener('click',e=>{ e.preventDefault(); open(); }));
 })();
 JS
-fi
+   fi; }
+inject_endpoint(){   local EP="${1:-}"; local KEY="${2:-}";   [[ -z "$EP" ]] && die "Usage: $0 inject <worker-url> [ajax-key]";   say "Injection endpoint → $EP"
+  for f in "$ROOT"/*.html; do     sed -i -E 's/window\.VNP_ENDPOINT\s*=\s*".*?";//g' "$f";     sed -i -E 's/<script id="vnp-endpoint"[^>]*>[^<]*<\/script>//g' "$f";     if grep -qi "</body>" "$f"; then       if [[ -n "$KEY" ]]; then         sed -i -E "s#</body>#<script id=\"vnp-endpoint\">window.VNP_ENDPOINT=\"$EP\";window.VNP_KEY=\"$KEY\";</script>\n</body>#g" "$f";       else         sed -i -E "s#</body>#<script id=\"vnp-endpoint\">window.VNP_ENDPOINT=\"$EP\";</script>\n</body>#g" "$f";       fi;     fi;   done
+  for f in "$ROOT"/*.html; do     sed -i -E "s|(style\.css)(\?v=[0-9]+)?|\1?v=$TS|g; s|(app\.js)(\?v=[0-9]+)?|\1?v=$TS|g" "$f";   done;   say "Endpoint injecté. (cache-bust=$TS)"; }
+git_commit_push(){   if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then     git add "$ROOT"/*.html "$CSS" 2>/dev/null || true;     [[ -f "$JS" ]] && git add "$JS" || true;     git commit -m "vnp: ui+endpoint (${TODAY}) + cache-bust $TS" || true;     if git config remote.origin.url >/dev/null 2>&1; then       git push -u origin "$(git rev-parse --abbrev-ref HEAD)" || warn "Push non bloquant.";     fi;   fi; }
+verify_pages(){   local SITE="${1:-https://sentinel-fusion.pages.dev}";   say "Vérif des pages (1 = OK sur chaque ligne)…";   local PAGES=(index presentation modules comparatif editions docs entreprises secteur-public defense);   for p in "${PAGES[@]}"; do     echo -n "$p -> ";     curl -fsS "$SITE/${p}.html" | grep -ci 'id="vnp-endpoint"' || true;   done; }
+api_test(){   local EP="${1:-}"; local KEY="${2:-}";   [[ -z "$EP" ]] && die "Usage: $0 api-test <worker-url> [ajax-key]";   say "Tir de test API…";   if [[ -n "$KEY" ]]; then     curl -fsS "$EP/v1/vnp/activate" -H 'Accept: application/json' -H 'Content-Type: application/json' -H "x-vnp-key: $KEY"       -X POST -d '{"phone":"+33600000000","platform":"Android","message":"Ping VNP (prod)"}';   else     curl -fsS "$EP/v1/vnp/activate" -H 'Accept: application/json' -H 'Content-Type: application/json'       -X POST -d '{"phone":"+33600000000","platform":"Android","message":"Ping VNP (prod)"}';   fi;   echo; }
+# ========= 2) Worker Cloudflare =========
+write_worker(){   mkdir -p worker/src
+  cat >worker/wrangler.toml <<TOML
+name = "$NAME"
+main = "src/index.js"
+compatibility_date = "$(date +%Y-%m-%d)"
+TOML
 
-# 3) Cache-bust + commit + deploy
-ts=$(date +%s)
-for h in "$ROOT"/*.html; do
-  sed -i -E "s|(\\./style\\.css)(\\?v=[0-9]+)?|\\1?v=$ts|g; s|(app\\.js)(\\?v=[0-9]+)?|\\1?v=$ts|g" "$h"
-done
-git add functions "$CSS" "$JS" "$ROOT"/*.html || true
-git commit -m "vpn(real): API proxy + UI légère + cache bust v$ts" || true
-[[ -x ./deploy_now.sh ]] && ./deploy_now.sh || echo "⚠️ deploy_now.sh non trouvé : déploiement sauté."
-echo "✅ Pack VPN appliqué."
+  cat >worker/src/index.js <<'JS'
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+    const cors = {
+      "access-control-allow-origin":"*",
+      "access-control-allow-headers":"*",
+      "access-control-allow-methods":"GET,POST,OPTIONS"
+    };
+    if (request.method === "OPTIONS") return new Response("",{status:204,headers:cors});
+    if (url.pathname === "/v1/vnp/activate" && request.method === "POST") {
+      const key = request.headers.get("x-vnp-key") || url.searchParams.get("key") || "";
+      if (env.VNP_PROVISION_KEY && key !== env.VNP_PROVISION_KEY) {
+        return new Response(JSON.stringify({ok:false,error:"unauthorized"}),{status:401,headers:{...cors,"content-type":"application/json"}});
+      }
+      const payload = await request.json().catch(()=> ({}));
+      let ok=true, status=200, data={};
+      if (env.VNP_PROVISION_WEBHOOK) {
+        try{
+          const r = await fetch(env.VNP_PROVISION_WEBHOOK, {
+            method:"POST",
+            headers:{"content-type":"application/json","x-vnp-key":env.VNP_PROVISION_KEY||""},
+            body: JSON.stringify(payload)
+          });
+          ok = r.ok; status = r.status;
+          data = await r.json().catch(()=> ({}));
+        }catch(e){ ok=false; status=502; data={error:String(e)}; }
+      }
+      return new Response(JSON.stringify({ok,status,data}), {status: ok?200:status, headers:{...cors,"content-type":"application/json"}});
+    }
+    return new Response("ok",{headers:cors});
+  }
+}
+JS
+ }
+deploy_worker(){   need node; need npm;   if ! command -v wrangler >/dev/null 2>&1; then     npm i -g wrangler;   fi;   [[ -n "${VNP_PROVISION_WEBHOOK:-}" ]] && wrangler -c worker/wrangler.toml secret put VNP_PROVISION_WEBHOOK --text "$VNP_PROVISION_WEBHOOK" || true;   [[ -n "${VNP_PROVISION_KEY:-}"     ]] && wrangler -c worker/wrangler.toml secret put VNP_PROVISION_KEY     --text "$VNP_PROVISION_KEY"     || true;   wrangler -c worker/wrangler.toml deploy; }
+# ========= 3) Serveur (webhook) =========
+write_server(){   rm -rf server && mkdir -p server
+  cat >server/package.json <<'JSON'
+{
+  "name": "vnpd",
+  "private": true,
+  "type": "module",
+  "dependencies": { "express": "^4.19.2", "cors": "^2.8.5" }
+}
+JSON
+
+  cat >server/index.js <<'JS'
+import express from 'express';
+import cors from 'cors';
+
+const app = express();
+const PORT = process.env.PORT || 8787;
+const HOOK_KEY = process.env.HOOK_KEY || "";
+
+app.use(cors());
+app.use(express.json({limit:'256kb'}));
+
+app.post('/hook/vnp', (req,res)=>{
+  const k = req.header('x-vnp-key') || "";
+  if (HOOK_KEY && k !== HOOK_KEY) return res.status(401).json({ok:false,error:'unauthorized'});
+  const p = req.body||{};
+  console.log('[VNP Hook] ', new Date().toISOString(), p);
+  // TODO: intégrer ici l'auto-provision WireGuard (wg set …) si souhaité.
+  return res.json({ok:true});
+});
+
+app.get('/', (_,res)=>res.json({ok:true,name:'vnpd',time:new Date().toISOString()}));
+app.listen(PORT, ()=> console.log('vnpd listening on', PORT));
+JS
+
+  cat >server/install.sh <<'BASH'
+#!/usr/bin/env bash
+set -euo pipefail
+need(){ command -v "$1" >/dev/null 2>&1 || { echo "Missing: $1" >&2; exit 1; }; }
+need sudo
+
+cd "$(dirname "$0")"
+sudo apt-get update -y
+sudo apt-get install -y nodejs npm
+npm install
+
+SVC=/etc/systemd/system/vnpd.service
+sudo bash -c "cat >$SVC" <<UNIT
+[Unit]
+Description=VNP Provision Hook
+After=network-online.target
+[Service]
+WorkingDirectory=$(pwd)
+Environment=PORT=8787
+Environment=HOOK_KEY=${HOOK_KEY:-}
+ExecStart=$(command -v node) index.js
+Restart=on-failure
+[Install]
+WantedBy=multi-user.target
+UNIT
+
+sudo systemctl daemon-reload
+sudo systemctl enable --now vnpd
+echo "OK: vnpd actif (port 8787)."
 BASH
-
-chmod +x scripts/pack_vpn_real.sh
-./scripts/pack_vpn_real.sh
-# --- PACK: corriger l'injection CONTACT_ENDPOINT (purge + réinsertion propre) ---
-cat > scripts/fix_contact_endpoint.sh <<'BASH'
+   chmod +x server/install.sh; }
+server_install_hint(){   warn "➡️ À exécuter **sur le VPS** (pas ici) :"
+  cat <<'TIPS'
+scp -r server/ <user>@<IP_VPS>:/tmp/vnpd
+ssh <user>@<IP_VPS> 'cd /tmp/vnpd && sudo HOOK_KEY=TaCleUltraSecrete ./install.sh'
+# Vérif:
+curl -s http://<IP_VPS>:8787/
+TIPS
+ }
+# ========= 4) Orchestration =========
+init_all(){ write_ui; write_worker; write_server; say "OK: fichiers générés."; }
+deploy_all(){ deploy_worker; }
+inject_all(){ inject_endpoint "$@"; git_commit_push; }
+full_all(){   local EP="${1:-}"; local KEY="${2:-}";   init_all;   [[ -n "${VNP_PROVISION_WEBHOOK:-}" ]] && [[ -n "${VNP_PROVISION_KEY:-}" ]] || warn "Conseil: export VNP_PROVISION_WEBHOOK & VNP_PROVISION_KEY avant le deploy.";   deploy_all;   say "👉 Copie/installe le serveur maintenant (voir instructions).";   inject_all "$EP" "${KEY:-}";   sleep 35;   verify_pages "https://sentinel-fusion.pages.dev";   [[ -n "$EP" ]] && api_test "$EP" "${KEY:-}"; }
+# ========= CLI =========
+CMD="${1:-}"
+case "$CMD" in   init)            init_all ;;   deploy)          deploy_all ;;   inject)          shift; inject_all "$@" ;;   api-test)        shift; api_test "$@" ;;   verify)          verify_pages "https://sentinel-fusion.pages.dev" ;;   server)          write_server; server_install_hint ;;   full)            shift; full_all "$@" ;;
+  *) cat <<'USAGE'
+Usage:
+  scripts/vnp_all_pack.sh init                 # 1) Génère UI + Worker + dossier server/
+  scripts/vnp_all_pack.sh deploy               # 2) Déploie le Worker (Wrangler)
+  scripts/vnp_all_pack.sh inject <worker-url> [ajax-key]  # 1) + cache-bust + commit/push
+  scripts/vnp_all_pack.sh server               # 3) Affiche les commandes d'installation VPS
+  scripts/vnp_all_pack.sh api-test <worker-url> [ajax-key] # 4) Test API
+  scripts/vnp_all_pack.sh verify               # Vérifie l'injection sur les pages
+  scripts/vnp_all_pack.sh full <worker-url> [ajax-key]     # 1→4 enchaînés (sauf install VPS)
+USAGE
+   ;; esac
+# A) Prépare Worker (Termux)
+export VNP_PROVISION_WEBHOOK="http://<IP_VPS>:8787/hook/vnp"
+export VNP_PROVISION_KEY="TaCleUltraSecrete"
+chmod +x scripts/vnp_all_pack.sh
+# B) Tout faire côté dev : UI + Worker + injection + tests
+scripts/vnp_all_pack.sh full https://<ton-worker>.workers.dev TaCleUltraSecrete
+scripts/vnp_all_pack.sh deploy
+# Regarde la ligne "Published … (url: https://<worker-name>.<ton-sous-domaine>.workers.dev)"
+# ==== 0) Prérequis Termux (une seule fois) ====
+pkg update -y
+pkg install -y nodejs git
+mkdir -p scripts
+cat > scripts/vnp_all_pack.sh <<'BASH'
 #!/usr/bin/env bash
 set -euo pipefail
 
 ROOT=sentinel_app/public
-EP="${1:-}"   # optionnel: ./scripts/fix_contact_endpoint.sh https://formspree.io/f/XXXXXXX
+CSS="$ROOT/style.css"
+JS="$ROOT/app.js"
+ts(){ date +%s; }
 
-# Tente de récupérer la première valeur trouvée si non fournie
-detect_ep(){
-  local file="$1"
-  grep -oE 'window\.CONTACT_ENDPOINT\s*=\s*"[^"]+"' "$file" \
-    | head -1 | sed -E 's/.*="([^"]*)".*/\1/' || true
+msg(){ printf '\n\033[1;32m%s\033[0m\n' "$*"; }
+warn(){ printf '\n\033[1;33m%s\033[0m\n' "$*"; }
+die(){ printf '\n\033[1;31m%s\033[0m\n' "$*"; exit 1; }
+
+cache_bust(){
+  local v; v="$(ts)"
+  for f in "$ROOT"/*.html; do
+    sed -i -E "s#(style\.css)(\?v=[0-9]+)?#\1?v=$v#g; s#(app\.js)(\?v=[0-9]+)?#\1?v=$v#g" "$f"
+  done
 }
 
-for f in "$ROOT"/*.html; do
-  [[ -z "$EP" ]] && EP="$(detect_ep "$f")"
-done
-: "${EP:?Aucune valeur CONTACT_ENDPOINT détectée. Relance avec: ./scripts/fix_contact_endpoint.sh https://formspree.io/f/XXXXXXX}"
-
-echo ">> CONTACT_ENDPOINT = $EP"
-
-for f in "$ROOT"/*.html; do
-  # 1) Supprime tout ce qui ressemble à l'ancienne injection (texte brut ou script)
-  sed -i -E 's/window\.CONTACT_ENDPOINT\s*=\s*"[^"]*"\s*;?//g' "$f"
-  sed -i -E '/<script[^>]*id="contact-endpoint"[^>]*>[^<]*<\/script>/Id' "$f"
-
-  # Nettoyage d'interlignes en trop
-  sed -i -E ':a;N;$!ba;s/\n{3,}/\n\n/g' "$f"
-
-  # 2) Réinsère proprement UNE SEULE balise juste avant </body>
-  if ! grep -qi 'id="contact-endpoint"' "$f"; then
-    sed -i -E "s|</body>|<script id=\"contact-endpoint\">window.CONTACT_ENDPOINT=\"${EP}\";<\/script></body>|I" "$f"
+commit_push(){
+  local m="${1:-vnp: update}"
+  if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    git add "$ROOT"/*.html 2>/dev/null || true
+    [[ -f "$CSS" ]] && git add "$CSS" || true
+    [[ -f "$JS"  ]] && git add "$JS"  || true
+    git commit -m "$m" || true
+    if git config remote.origin.url >/dev/null; then
+      git push -u origin "$(git rev-parse --abbrev-ref HEAD)" || true
+    fi
   fi
-done
+}
 
-# 3) Cache-bust + commit + deploy
-ts=$(date +%s)
-for f in "$ROOT"/*.html; do
-  sed -i -E "s|(\\./style\\.css)(\\?v=[0-9]+)?|\\1?v=$ts|g; s|(app\\.js)(\\?v=[0-9]+)?|\\1?v=$ts|g" "$f"
-done
-git add "$ROOT"/*.html || true
-git commit -m "fix(contact): injection unique <script id=contact-endpoint> + purge duplicates + cache bust v$ts" || true
-[[ -x ./deploy_now.sh ]] && ./deploy_now.sh || echo "⚠️ deploy_now.sh non trouvé : déploiement sauté."
-echo "✅ CONTACT_ENDPOINT corrigé."
-BASH
-
-chmod +x scripts/fix_contact_endpoint.sh
-./scripts/fix_contact_endpoint.sh
-for p in / /presentation /modules /comparatif /editions /docs /entreprises /secteur-public /defense; do   echo -n "$p -> ";   curl -s "https://sentinel-fusion.pages.dev${p}.html" | grep -ci 'id="contact-endpoint"'; done
-# Chaque ligne doit afficher : 1
-curl -s https://formspree.io/f/XXXXXXXX   -H 'Accept: application/json'   -X POST   -d 'name=Test&email=ton@mail.test&message=Ping depuis SF'
-# injecte proprement l’endpoint une seule fois + cache-bust + commit + déploiement
-scripts/set_contact_endpoint.sh https://formspree.io/f/xzzvnvvp
-scripts/pack_formspree_finish.sh https://formspree.io/f/xzzvnvvp
-for p in / /presentation /modules /comparatif /editions /docs /entreprises /secteur-public /defense; do   echo -n "$p -> " && curl -s https://sentinel-fusion.pages.dev${p}.html | grep -ci 'id="contact-endpoint"'; done
-cat > scripts/pack_formspree_finish.sh <<'BASH'
-#!/usr/bin/env bash
-set -euo pipefail
-
-EP="${1:?Usage: $0 https://formspree.io/f/xxxxxxx}"
-ROOT=sentinel_app/public
-ts=$(date +%s)
-
-# 0) Nettoie l'ancien format et injecte UNE SEULE balise juste avant </body>
-for f in "$ROOT"/*.html; do
-  # vire les vieilles lignes window.CONTACT_ENDPOINT "en vrac"
-  sed -i -E 's/window\.CONTACT_ENDPOINT\s*=\s*\"[^"]*\";?//g' "$f"
-  # supprime d'anciennes balises script id=contact-endpoint dupliquées
-  sed -i -E 's#<script id="contact-endpoint">[^<]*</script>##g' "$f"
-  # réinsère proprement 1 balise
-  sed -i -E "s#</body>#<script id=\"contact-endpoint\">window.CONTACT_ENDPOINT=\"$EP\";</script>\n</body>#g" "$f"
-done
-
-# 1) Honeypot CSS (anti-spam) si absent
-if ! grep -q '/* == contact: honeypot v1 == */' "$ROOT/style.css"; then
-  cat >> "$ROOT/style.css" <<'CSS'
-/* == contact: honeypot v1 == */
-.hp{position:absolute !important; left:-9999px !important; opacity:0 !important;}
+write_ui(){
+  # CSS
+  if ! grep -q "/* == vnp:css v1 == */" "$CSS" 2>/dev/null; then
+cat >> "$CSS" <<'CSS'
+/* == vnp:css v1 == */
+.vnp-toast{position:fixed;left:50%;bottom:16px;transform:translateX(-50%) scale(.95);background:rgba(10,14,20,.9);color:#fff;border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:10px 14px;opacity:0;pointer-events:none;transition:transform .25s,opacity .25s;z-index:9999}
+.vnp-toast.show{transform:translateX(-50%) scale(1);opacity:1}
+.vnp-modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(8,10,14,.5);backdrop-filter:saturate(120%) blur(6px);z-index:9998}
+.vnp-modal.open{display:flex}
+.vnp-card{width:min(420px,92vw);background:#0f1217;color:#fff;border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:16px}
+.vnp-card h3{margin:0 0 8px}
+.vnp-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:8px}
+.vnp-actions .btn{padding:10px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:#1b2130}
+.vnp-fab{position:fixed;right:16px;bottom:16px;z-index:9983;display:none}
+.has-vnp .vnp-fab{display:block}
+.vnp-input{width:100%;margin:8px 0;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:#0b0f15;color:#fff}
 CSS
-fi
+  fi
 
-# 2) Cache-bust CSS/JS
-for f in "$ROOT"/*.html; do
-  sed -i -E "s|(style\.css)(\?v=[0-9]+)?|\1?v=$ts|g; s|(app\.js)(\?v=[0-9]+)?|\1?v=$ts|g" "$f"
-done
+  # JS
+  if ! grep -q "// == vnp:ui v1 ==" "$JS" 2>/dev/null; then
+cat >> "$JS" <<'JS'
+// == vnp:ui v1 ==
+(function(){
+  const EP = window.VNP_ENDPOINT || window.CONTACT_ENDPOINT || '';
+  const KEY = window.VNP_KEY || '';
 
-git add "$ROOT/style.css" "$ROOT"/*.html || true
-git commit -m "ux(contact): finish pack (honeypot) + endpoint unique + cache bust v$ts" || true
-[[ -x ./deploy_now.sh ]] && ./deploy_now.sh || echo "⚠ deploy_now.sh non trouvé : pas de déploiement auto."
+  function vnpToast(msg){
+    let t=document.querySelector('.vnp-toast');
+    if(!t){ t=document.createElement('div'); t.className='vnp-toast'; document.body.appendChild(t); }
+    t.textContent=msg; t.classList.add('show');
+    clearTimeout(window.__vnpT); window.__vnpT=setTimeout(()=>t.classList.remove('show'),2400);
+  }
+
+  function ensureModal(){
+    let m=document.querySelector('.vnp-modal'); if(m) return m;
+    m=document.createElement('div'); m.className='vnp-modal';
+    m.innerHTML='<div class="vnp-card"><h3>Bouclier mobile — activation</h3>\
+      <form class="vnp-form" novalidate>\
+        <label>Téléphone<br><input class="vnp-input" type="tel" name="phone" required placeholder="+33…"></label>\
+        <label>Plateforme<br><select class="vnp-input" name="platform"><option>Android</option><option>iOS</option><option>Linux</option><option>macOS</option><option>Windows</option></select></label>\
+        <label>E-mail (optionnel)<br><input class="vnp-input" type="email" name="email" placeholder="vous@example.fr"></label>\
+        <label>Message (optionnel)<br><textarea class="vnp-input" name="message" rows="3" placeholder="Contexte, besoins…"></textarea></label>\
+        <div class="vnp-actions"><button type="button" data-cancel class="btn">Fermer</button><button type="submit" class="btn">Activer</button></div>\
+      </form></div>';
+    document.body.appendChild(m);
+    m.addEventListener('click', (e)=>{ if(e.target===m||e.target.hasAttribute('data-cancel')) m.classList.remove('open'); });
+    const form=m.querySelector('form');
+    form.addEventListener('submit', async (ev)=>{
+      ev.preventDefault();
+      if(!EP){ vnpToast('Endpoint VNP manquant.'); return; }
+      const fd=new FormData(form);
+      const payload={
+        phone:(fd.get('phone')||'').toString().trim(),
+        platform:(fd.get('platform')||'').toString(),
+        email:(fd.get('email')||'').toString().trim(),
+        message:(fd.get('message')||'').toString().trim(),
+        page:location.href, t:new Date().toISOString()
+      };
+      if(!/^\+?[0-9]{7,15}$/.test(payload.phone)){ vnpToast('Téléphone invalide.'); return; }
+      const btn=form.querySelector('[type="submit"]'); btn.classList.add('is-busy');
+      try{
+        const headers={'Content-Type':'application/json','Accept':'application/json'};
+        if(KEY) headers['X-VNP-Key']=KEY;
+        const r=await fetch(EP,{method:'POST',headers,body:JSON.stringify(payload)});
+        if(r.ok){ vnpToast('Demande envoyée.'); form.reset(); m.classList.remove('open'); }
+        else{ vnpToast('Échec envoi.'); }
+      }catch{ vnpToast('Réseau indisponible.'); }
+      btn.classList.remove('is-busy');
+    });
+    return m;
+  }
+
+  function open(){ ensureModal().classList.add('open'); }
+
+  document.querySelectorAll('a[href="#vnp"],[data-vnp],.js-vnp-open')
+    .forEach(el=>el.addEventListener('click',e=>{ e.preventDefault(); open(); }));
+
+  if(matchMedia('(max-width:720px)').matches){
+    const fab=document.createElement('div'); fab.className='vnp-fab';
+    const a=document.createElement('a'); a.href='#vnp'; a.className='btn js-vnp-open'; a.textContent='Activer le bouclier';
+    fab.appendChild(a); document.body.appendChild(fab); document.body.classList.add('has-vnp');
+  }
+})();
+JS
+  fi
+}
+
+inject_all(){
+  local EP="${1:-}"; local KEY="${2:-}"
+  [[ -z "$EP" ]] && die "Usage: $0 inject <worker-url> [ajax-key]"
+
+  # nettoyer anciens formats/injections
+  for f in "$ROOT"/*.html; do
+    sed -i -E 's/window\.VNP_ENDPOINTS?\s*=\s*".*?";?//g' "$f"
+    sed -i -E 's#<script id="vnp-endpoint"[^<]*</script>##g' "$f"
+    # insérer juste avant </body>
+    local blk; blk="<script id=\"vnp-endpoint\">window.VNP_ENDPOINT=\"$EP\";$( [[ -n "$KEY" ]] && echo "window.VNP_KEY=\"$KEY\";" )</script>"
+    sed -i -E "s#</body>#$blk</body>#gi" "$f"
+  done
+  cache_bust
+  commit_push "vnp: inject $EP $( [[ -n "$KEY" ]] && echo '+ key' ) + cache-bust v$(ts)"
+  msg "Endpoint injecté → $EP"
+}
+
+deploy_all(){
+  if command -v wrangler >/dev/null 2>&1; then
+    wrangler publish || warn "wrangler publish a échoué (login ?)."
+  else
+    warn "wrangler non trouvé : déploiement Worker sauté."
+  fi
+}
+
+verify_pages(){
+  local SITE="${1:-https://sentinel-fusion.pages.dev}"
+  local PAGES=(index presentation modules comparatif editions docs entreprises secteur-public defense)
+  for p in "${PAGES[@]}"; do
+    local c; c=$(curl -s "$SITE/${p}.html" | grep -ci 'id="vnp-endpoint"')
+    echo "$p -> $c"
+  done
+}
+
+api_test(){
+  local EP="${1:-}"; local KEY="${2:-}"
+  [[ -z "$EP" ]] && die "Usage: $0 api-test <worker-url> [ajax-key]"
+  if [[ -n "${KEY:-}" ]]; then
+    curl -s "$EP" -H 'Accept: application/json' -H "X-VNP-Key: $KEY" \
+      -X POST -d 'phone=+33600000000&platform=Android&message=Ping VNP (prod)'
+  else
+    curl -s "$EP" -H 'Accept: application/json' \
+      -X POST -d 'phone=+33600000000&platform=Android&message=Ping VNP (prod)'
+  fi
+  echo
+}
+
+write_worker(){
+  mkdir -p worker
+  cat > worker/wrangler.toml <<'TOML'
+name = "sentinel-vnp"
+main = "src/index.js"
+compatibility_date = "2024-05-29"
+routes = []
+TOML
+  mkdir -p worker/src
+  cat > worker/src/index.js <<'WJS'
+export default {
+  async fetch(req, env, ctx) {
+    if (req.method !== 'POST') return new Response('Method not allowed', { status: 405 });
+    const key = req.headers.get('x-vnp-key') || '';
+    if (env.AJAX_KEY && key !== env.AJAX_KEY) return new Response(JSON.stringify({ ok:false, error:'unauthorized' }), { status: 401, headers:{'content-type':'application/json'}});
+    let data={}; try{ data = await req.json(); }catch{ return new Response(JSON.stringify({ ok:false, error:'bad_json' }), { status: 400, headers:{'content-type':'application/json'}}); }
+    // TODO: pousser vers webhook serveur si besoin (env.PROVISION_WEBHOOK)
+    return new Response(JSON.stringify({ ok:true, received:data }), { headers:{'content-type':'application/json'}});
+  }
+}
+WJS
+  msg "Worker prêt dans ./worker (wrangler publish utilisera ce dossier)."
+}
+
+write_server(){
+  mkdir -p server
+  cat > server/install.sh <<'SVR'
+#!/usr/bin/env bash
+set -euo pipefail
+HOOK_KEY="${HOOK_KEY:-changeme}"
+apt update -y
+apt install -y nodejs npm sqlite3 curl qrencode
+cd "$(dirname "$0")"
+cat > index.js <<JS
+const express=require('express');
+const app=express();
+const PORT=process.env.PORT||8787;
+const HOOK_KEY=process.env.HOOK_KEY||'changeme';
+app.use(express.json());
+app.post('/hook/vnp',(req,res)=>{
+  if((req.headers['x-hook-key']||'')!==HOOK_KEY) return res.status(401).json({ok:false,error:'unauthorized'});
+  console.log('[VNP] payload:', req.body);
+  return res.json({ok:true});
+});
+app.listen(PORT,()=>console.log('VNP webhook on',PORT));
+JS
+npm -s init -y >/dev/null
+npm -s i express >/dev/null
+env HOOK_KEY="$HOOK_KEY" node index.js &
+echo "Serveur webhook démarré (port 8787)."
+SVR
+  chmod +x server/install.sh
+  msg "Dossier server/ généré (lancer server/install.sh sur le VPS)."
+}
+
+init_all(){ write_worker; write_ui; write_server; msg "OK: fichiers générés." ; }
+
+deploy_only(){ ( cd worker && wrangler publish ) || true; }
+
+inject_all_cmd(){ inject_all "${1:-}" "${2:-}"; }
+
+full_all(){
+  local EP="${1:-}"; local KEY="${2:-}"
+  [[ -z "$EP" ]] && die "Usage: $0 full <worker-url> [ajax-key]"
+  init_all
+  deploy_all
+  inject_all "$EP" "$KEY"
+  verify_pages "https://sentinel-fusion.pages.dev"
+  api_test "$EP" "$KEY" || true
+}
+
+usage(){
+cat <<USAGE
+Usage:
+  $0 init                         # 1) Génère UI + Worker + serveur/
+  $0 deploy                       # 2) Déploie le Worker (Wrangler)
+  $0 inject <worker-url> [key]    # 3) Injection + cache-bust + commit/push
+  $0 api-test <worker-url> [key]  # 4) Test API
+  $0 verify                       # Vérifie l'injection sur les pages
+  $0 full <worker-url> [key]      # 1→4 enchaînés (sauf install VPS)
+  $0 server                       # Affiche le mémo d'installation VPS
+USAGE
+}
+
+server_hint(){
+cat <<'HINT'
+==== Pack SERVEUR ====
+1) Copier sur le VPS :
+   scp -r server/ user@IP_VPS:/tmp/vnpd
+2) Installer :
+   ssh user@IP_VPS 'cd /tmp/vnpd && sudo HOOK_KEY="TaCleUltraSecrete" ./install.sh'
+3) (Pare-feu si besoin) :
+   sudo ufw allow 8787/tcp
+4) Dans le Worker, tu peux pointer env.PROVISION_WEBHOOK sur http://IP_VPS:8787/hook/vnp
+   et émettre depuis le Worker avec l'en-tête:  'X-Hook-Key: TaCleUltraSecrete'
+======================
+HINT
+}
+
+case "${1:-}" in
+  init)        init_all ;;
+  deploy)      deploy_all ;;
+  inject)      shift; inject_all_cmd "$@" ;;
+  api-test)    shift; api_test "$@" ;;
+  verify)      verify_pages "https://sentinel-fusion.pages.dev" ;;
+  server)      server_hint ;;
+  full)        shift; full_all "$@" ;;
+  *)           usage ;;
+esac
 BASH
 
-chmod +x scripts/pack_formspree_finish.sh
-# 1) Exécuter le pack "finish" avec TON endpoint Formspree
-scripts/pack_formspree_finish.sh https://formspree.io/f/xzzvnvvp
-# --- 1) Branche l’endpoint Formspree en prod ---
-EP="https://formspree.io/f/xzzvnvvp"
-scripts/pack_formspree_finish.sh "$EP"
-#!/usr/bin/env bash
-set -euo pipefail
-ROOT=sentinel_app/public
-CSS="$ROOT/style.css"
-JS="$ROOT/app.js"
-EP="${1:-}"
-detect_ep(){ # récupère un VNP_ENDPOINT déjà présent (si param manquant)
-  grep -REo 'window\.VNP_ENDPOINT\s*=\s*"[^"]+"' "$ROOT"/*.html | head -1   | sed -E 's/.*="([^"]+)".*/\1/' || true; }
-if [[ -z "${EP:-}" ]]; then EP="$(detect_ep)"; fi
-if [[ -z "${EP:-}" ]]; then   echo "Usage: $0 <vnp-endpoint-url>"; exit 1; fi
-#!/usr/bin/env bash
-set -euo pipefail
-ROOT=sentinel_app/public
-CSS="$ROOT/style.css"
-JS="$ROOT/app.js"
-EP="${1:-}"
-detect_ep(){ # récupère un VNP_ENDPOINT déjà présent (si param manquant)
-  grep -REo 'window\.VNP_ENDPOINT\s*=\s*"[^"]+"' "$ROOT"/*.html | head -1   | sed -E 's/.*="([^"]+)".*/\1/' || true; }
-if [[ -z "${EP:-}" ]]; then EP="$(detect_ep)"; fi
-if [[ -z "${EP:-}" ]]; then   echo "Usage: $0 <vnp-endpoint-url>"; exit 1; fi
+chmod +x scripts/vnp_all_pack.sh
+# 2 options :
+# (sans clé AJAX — tu dois avoir désactivé CAPTCHA côté Forms/Worker)
+scripts/vnp_all_pack.sh full https://<ton-worker>.workers.dev
+# (avec clé AJAX — le Worker exigera l'en-tête X-VNP-Key)
+scripts/vnp_all_pack.sh full https://<ton-worker>.workers.dev TaCleUltraSecrete
+# sur ta machine dev
+scripts/vnp_all_pack.sh server   # affiche le mémo
+# puis :
+scp -r server/ user@IP_VPS:/tmp/vnpd
+ssh user@IP_VPS 'cd /tmp/vnpd && sudo HOOK_KEY="TaCleUltraSecrete" ./install.sh'
+# (ouvre le port si UFW)  sudo ufw allow 8787/tcp
