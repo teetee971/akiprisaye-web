@@ -10,3 +10,4 @@ alias cfdeploy='/data/data/com.termux/files/home/deploy_pages.sh --auto'
 set -a; [ -f ~/.env ] && . ~/.env; set +a
 export PATH="$HOME/bin:$PATH"
 export PATH=$HOME/bin:$PATH
+alias deploy="./deploy_now.sh"

@@ -1,500 +1,500 @@
-      - uses: actions/setup-node@v4
-        with: { node-version: 22, cache: 'npm' }
-      - name: Detect & Build
-        id: b
-        run: |
-          if [ -f package.json ] && jq -e '.scripts.build?!=null' package.json >/dev/null 2>&1; then
-            npm ci --omit=dev || npm i
-            npm run build
-            echo "dist=dist" >> "$GITHUB_OUTPUT"
-          else
-            echo "dist=." >> "$GITHUB_OUTPUT"
-          fi
-      - name: Deploy
-        uses: cloudflare/pages-action@v1
-        with:
-          apiToken: ${{ secrets.CF_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: ${{ secrets.CLOUDFLARE_PROJECT_NAME }}
-          directory: ${{ steps.b.outputs.dist }}
-          branch: ${{ secrets.CLOUDFLARE_PAGES_BRANCH || 'main' }}
-YAML
+} > "$sm"
+echo -e "User-agent: *\nAllow: /\nSitemap: $SITE/sitemap.xml" > "$ROOT/robots.txt"
 
-cat > .gitignore <<'GIT'
-node_modules/
-dist/
-.http.pid
-GIT
+# -------------------------------------------
+# 2) Section Contact & démo (+ CSS + JS)
+# -------------------------------------------
+TAG_FORM_HTML='<!-- contact-pack v1 -->'
+TAG_FORM_CSS='/* == contact-pack v1 == */'
+TAG_FORM_JS='/* == contact-pack v1 == */'
 
-git init -q
-git config user.email "ci@example" ; git config user.name "Sentinel Bot"
-git checkout -b "$DEFAULT_BRANCH"
-git add -A && git commit -m "feat(ui): Fusion PS5 + Futur-Cyber"
-# crée repo si besoin
-REMOTE_URL="https://github.com/${GH_USER}/${REPO_NAME}.git"
-curl -fsS -H "Authorization: token ${GH_TOKEN}" \
-  -H "Content-Type: application/json" \
-  -X POST "https://api.github.com/user/repos" \
-  -d "{\"name\":\"${REPO_NAME}\",\"private\":false}" >/dev/null 2>&1 || true
-git remote add origin "$REMOTE_URL" 2>/dev/null || git remote set-url origin "$REMOTE_URL"
-git push -u origin "$DEFAULT_BRANCH" --force
-
-echo "👉 Rendez-vous dans GitHub > Settings > Secrets and variables > Actions et ajoute:"
-echo "   CF_API_TOKEN, CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_PROJECT_NAME, (optionnel) CLOUDFLARE_PAGES_BRANCH"
-echo "Puis fais un commit/push pour déclencher le déploiement."
-BASH
-
-chmod +x deploy_github.sh
-# 7) lance un preview
-./preview.sh 5520
-echo "✅ Pack prêt dans: $(pwd)"
-# === Sentinel Fusion (PS5 + Futur-Cyber) ===
-mkdir -p ~/sentinel_fusion && cd ~/sentinel_fusion
-# 1) index.html
-cat > index.html <<'HTML'
-<!doctype html><html lang="fr" data-theme="dark">
-<head>
-  <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Sentinel Quantum Vanguard AI Pro</title>
-  <link rel="stylesheet" href="style.css"/>
-  <meta name="theme-color" content="#0a1222"/>
-</head>
-<body>
-  <header class="topbar _container">
-    <div class="ps5">PS5</div>
-    <div class="brand"><span class="b-ic">🛡️</span><b>Sentinel</b> Quantum Vanguard <span class="tag">AI Pro</span></div>
-    <div class="actions">
-      <button id="themeBtn" class="btn ghost" title="Basculer le thème">🌗</button>
-      <span id="clock" class="hint"></span>
-    </div>
-  </header>
-
-  <main class="_container shell">
-    <!-- Héro : blason + anneaux -->
-    <section class="hero">
-      <div class="shield">
-        <div class="ring ring1"></div><div class="ring ring2"></div><div class="ring ring3"></div>
-        <div class="core"></div>
-      </div>
-      <div class="hero-text">
-        <h1>Sentinel Quantum Vanguard AI Pro</h1>
-        <p class="sub">Protection proactive • Intelligence extrême • Résilience totale.</p>
-      </div>
-    </section>
-
-    <!-- Grille des modules -->
-    <section class="grid modules">
-      <a class="card" id="btnCF"      data-ic="🧠">Cognitive Firewall</a>
-      <a class="card" id="btnOSINT"   data-ic="🛰️">OSINT Intelligence</a>
-      <a class="card" id="btnPrivacy" data-ic="🔐">Confidentialité Renforcée</a>
-      <a class="card" id="btnVisualFW"data-ic="🧩">Pare-feu Visuel</a>
-      <a class="card" id="btnIR"      data-ic="🛠️">Réponse Incident</a>
-      <a class="card" id="btnAPT"     data-ic="🕵️">Détection APT / Pegasus</a>
-      <a class="card" id="btnNetGuard"data-ic="📡">Garde Réseau</a>
-      <a class="card" id="btnAuto"    data-ic="🔄">Mise à jour Automatique</a>
-      <a class="card" id="btnQP"      data-ic="🎯">Quantum Protector</a>
-      <a class="card" id="btnVault"   data-ic="🗄️">Coffre-fort de confidentialité</a>
-      <a class="card" id="btnLauncher"data-ic="🎛️">Lanceur principal sécurisé</a>
-      <a class="card" id="btnLog"     data-ic="📊">Journal IA en temps réel</a>
-    </section>
-
-    <!-- Panneaux : news + score + outils démo -->
-    <section class="panels">
-      <article class="panel">
-        <div class="panel-title">Actualité Cyber & Modules IA</div>
-        <ul id="newsList" class="news"></ul>
-      </article>
-
-      <article class="panel compact">
-        <div class="panel-title">Security score</div>
-        <div class="donut"><span id="scoreNum">96</span></div>
-        <div class="bar"><i id="scoreBar" style="width:82%"></i></div>
-      </article>
-
-      <article class="panel">
-        <div class="panel-title">Outils (démos branchées)</div>
-        <div class="tools">
-          <div class="row">
-            <button id="btnIP">IP publique</button>
-            <input id="domainInput" placeholder="ex: cloudflare.com"/>
-            <button id="btnDNS">DNS Cloudflare</button>
-            <button id="btnPing">Latence 1.1.1.1</button>
-            <button id="btnFP">Fingerprint</button>
-          </div>
-          <pre id="toolOut" class="out"></pre>
-        </div>
-      </article>
-    </section>
-  </main>
-
-  <footer class="_container footer">
-    <span class="tagline">Protection proactive. Intelligence extrême. Résilience totale.</span>
-  </footer>
-
-  <script type="module" src="main.js"></script>
-</body></html>
-HTML
-
-# 2) style.css (PS5 + Futur-Cyber)
-cat > style.css <<'CSS'
-:root{
-  --bg:#0a1020;--panel:#0e162a;--panel2:#0b1426;--glass:#0b1630b8;
-  --text:#e9eef8;--muted:#98a7c6;--border:rgba(130,170,210,.25);
-  --primary:#63a4ff;--accent:#22d3ee;--glow:#3aa2ff;--ok:#3ddc97;--warn:#ffcb6b;
-}
-*{box-sizing:border-box}html,body{height:100%}
-body{
-  margin:0;color:var(--text);font:15px/1.55 Inter,system-ui,"Segoe UI",Roboto,Arial;
-  background:
-    radial-gradient(1200px 620px at 10% -10%, #0f203e 0%, transparent 55%),
-    radial-gradient(1200px 520px at 110% -10%, #0b1a37 0%, transparent 60%),
-    var(--bg);
-}
-._container{max-width:1120px;margin:auto;padding:22px 18px}
-
-/* Topbar */
-.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.ps5{letter-spacing:.4px;opacity:.7}
-.brand{display:flex;align-items:center;gap:8px;font-weight:700}
-.b-ic{display:grid;place-items:center;width:28px;height:28px;border-radius:8px;background:#0d1a33;border:1px solid var(--border)}
-.tag{color:var(--accent);font-weight:700}
-.actions{display:flex;align-items:center;gap:10px}
-.btn{border:1px solid var(--border);background:#0f1a2f;color:var(--text);border-radius:10px;padding:8px 10px}
-.btn.ghost{background:transparent}
-.hint{color:var(--muted)}
-
-/* Hero */
-.shell{display:grid;gap:22px}
-.hero{display:grid;grid-template-columns:200px 1fr;gap:22px;align-items:center}
-@media (max-width:900px){.hero{grid-template-columns:1fr}}
-.shield{position:relative;width:200px;height:200px;margin:auto}
-.ring{position:absolute;inset:0;border-radius:50%}
-.ring1{box-shadow:0 0 60px rgba(99,164,255,.35) inset}
-.ring2{border:2px dashed rgba(99,164,255,.25);animation:spin 22s linear infinite}
-.ring3{border:2px solid rgba(99,164,255,.12);box-shadow:0 0 0 25px rgba(99,164,255,.08) inset}
-.core{position:absolute;inset:35px;border-radius:14px;background:radial-gradient(120px 80px at 50% 40%,rgba(99,164,255,.45),transparent 60%),#081227;border:1px solid rgba(99,164,255,.35);box-shadow:0 12px 60px rgba(0,0,0,.55),0 0 32px rgba(99,164,255,.35)}
-@keyframes spin{to{transform:rotate(360deg)}}
-.hero-text h1{margin:0;font-size:28px}
-.hero-text .sub{margin:6px 0 0;color:var(--muted)}
-
-/* Modules (PS5 tiles) */
-.grid{display:grid;gap:14px}
-.modules{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
-.card{
-  display:flex;align-items:center;gap:12px;padding:16px;border-radius:16px;
-  background:linear-gradient(180deg,var(--panel),var(--panel2));
-  border:1px solid var(--border);position:relative;overflow:hidden;
-  box-shadow:0 1px 0 rgba(255,255,255,.02) inset,0 16px 40px rgba(0,0,0,.40);
-  transition:.18s ease; font-weight:650; letter-spacing:.2px;
-}
-.card:hover{transform:translateY(-2px); box-shadow:0 0 0 1px var(--primary),0 24px 46px rgba(0,0,0,.55)}
-.card::before{
-  content:attr(data-ic); display:grid;place-items:center; font-size:18px;
-  width:40px;height:40px;border-radius:12px; background:rgba(99,164,255,.12);
-  border:1px solid rgba(99,164,255,.35); box-shadow:0 0 16px rgba(99,164,255,.28);
-}
-
-/* Panneaux */
-.panels{display:grid;grid-template-columns:1.4fr .8fr 1fr;gap:18px}
-@media (max-width:1024px){.panels{grid-template-columns:1fr}}
-.panel{
-  padding:16px;border-radius:16px;background:linear-gradient(180deg,var(--panel),var(--panel2));
-  border:1px solid var(--border); box-shadow:0 10px 28px rgba(0,0,0,.35);
-}
-.panel-title{font-weight:750;margin-bottom:8px}
-.compact .donut{display:grid;place-items:center;font-weight:800;font-size:28px;text-align:center}
-.bar{height:8px;border-radius:999px;background:rgba(255,255,255,.06);overflow:hidden}
-.bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--primary))}
-
-/* News */
-.news{list-style:none;margin:0;padding:0;display:grid;gap:10px}
-.news li{padding:10px 12px;border-radius:12px;background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--border)}
-.news .t{font-weight:700}.news .m{font-size:12px;color:var(--muted)}
-
-/* Outils */
-.tools{display:grid;gap:12px}.row{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
-.tools input, .tools button{border-radius:10px;border:1px solid var(--border);padding:8px;background:#0b1426;color:var(--text)}
-.out{max-height:160px;overflow:auto;background:#0b1324;border:1px solid var(--border);padding:8px;border-radius:10px}
-
-/* Light alt */
-[data-theme="light"]{
-  --bg:#0f1730;--panel:#111c3c;--panel2:#0f1a36;--text:#eef3ff;--muted:#a2b3d2;--border:rgba(130,170,210,.35);
-}
-.footer{display:flex;justify-content:center;padding:12px}
-.tagline{color:var(--muted)}
+# CSS (léger, responsive)
+if ! has "$TAG_FORM_CSS" "$CSS"; then
+cat >> "$CSS" <<'CSS'
+/* == contact-pack v1 == */
+.form{max-width:820px;margin:0 auto;}
+.form .row{display:flex;gap:14px;flex-wrap:wrap;}
+.form .field{flex:1 1 240px;display:flex;flex-direction:column;}
+.form label{font-weight:600;margin:6px 2px;}
+.form input,.form textarea{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);
+  border-radius:10px;color:inherit;padding:12px 12px;}
+.form textarea{min-height:120px;resize:vertical;}
+.form .hp{position:absolute!important;left:-9999px;top:-9999px;height:0;width:0;opacity:0}
+.form .actions{display:flex;align-items:center;gap:12px;margin-top:10px;flex-wrap:wrap;}
+.form .msg{opacity:.9}
+@media(max-width:720px){ .form input,.form textarea{padding:11px 10px} }
 CSS
+fi
 
-# 3) main.js (export toast + wire actu/score + thème)
-cat > main.js <<'JS'
-export function toast(msg){
-  const t=document.createElement('div');
-  t.className='toast';
-  t.textContent=msg;
-  Object.assign(t.style,{position:'fixed',bottom:'20px',left:'50%',transform:'translateX(-50%)',
-    background:'rgba(15,25,50,.85)',border:'1px solid rgba(130,170,210,.35)',padding:'10px 12px',
-    borderRadius:'10px',backdropFilter:'blur(8px)',zIndex:9999});
-  document.body.appendChild(t); setTimeout(()=>t.remove(),1800);
-}
+# HTML (ajout dans index.html, avant le footer)
+IDX="$ROOT/index.html"
+if [[ -f "$IDX" ]] && ! has "$TAG_FORM_HTML" "$IDX"; then
+  # insère avant </footer> si présent, sinon avant </body>
+  insert_point='</footer>'
+  if ! grep -q '</footer>' "$IDX"; then insert_point='</body>'; fi
 
-const THEME_KEY='sentinel-theme', body=document.body;
-// boot thème
+  tmp="$(mktemp)"
+  awk -v TAG="$TAG_FORM_HTML" -v SITE="$SITE" -v IP="$insert_point" '
+    BEGIN{IGNORECASE=1}
+    index(tolower($0),tolower(IP)) && !done{
+      print "  " TAG
+      print "  <section id=\"contact\" class=\"section\">"
+      print "    <h2>Contact & démo</h2>"
+      print "    <p class=\"lead\">Dites-nous en plus sur votre contexte ; nous revenons vers vous rapidement.</p>"
+      print "    <form id=\"contact-form\" class=\"form\" novalidate>"
+      print "      <div class=\"row\">"
+      print "        <div class=\"field\"><label for=\"cf-name\">Nom</label><input id=\"cf-name\" name=\"name\" required autocomplete=\"name\"></div>"
+      print "        <div class=\"field\"><label for=\"cf-company\">Organisation</label><input id=\"cf-company\" name=\"company\" autocomplete=\"organization\"></div>"
+      print "      </div>"
+      print "      <div class=\"row\">"
+      print "        <div class=\"field\"><label for=\"cf-email\">E-mail</label><input id=\"cf-email\" type=\"email\" name=\"email\" required autocomplete=\"email\"></div>"
+      print "        <div class=\"field\"><label for=\"cf-phone\">Téléphone (optionnel)</label><input id=\"cf-phone\" type=\"tel\" name=\"phone\" autocomplete=\"tel\"></div>"
+      print "      </div>"
+      print "      <div class=\"row\"><div class=\"field\" style=\"flex-basis:100%\">"
+      print "        <label for=\"cf-msg\">Message</label><textarea id=\"cf-msg\" name=\"message\" required placeholder=\"Votre besoin, périmètre, délais…\"></textarea>"
+      print "      </div></div>"
+      print "      <input class=\"hp\" type=\"text\" name=\"website\" tabindex=\"-1\" autocomplete=\"off\" aria-hidden=\"true\">"
+      print "      <div class=\"actions\">"
+      print "        <button class=\"btn\" type=\"submit\">Envoyer la demande</button>"
+      print "        <span class=\"msg\" role=\"status\" aria-live=\"polite\"></span>"
+      print "      </div>"
+      print "    </form>"
+      print "    <p class=\"note\">En soumettant, vous acceptez le traitement de vos données pour répondre à votre demande. Voir la page <a href=\"/confidentialite.html\">Confidentialité</a>.</p>"
+      print "    <script>window.CONTACT_ENDPOINT = window.CONTACT_ENDPOINT || \"\"; /* Renseignez un endpoint (Formspree/Worker) si dispo */</script>"
+      print "  </section>"
+      done=1
+    }
+    {print}
+  ' "$IDX" > "$tmp" && mv "$tmp" "$IDX"
+fi
+
+# JS (validation + envoi + anti-bot + rate limit + fallback démo)
+if ! has "$TAG_FORM_JS" "$JS"; then
+cat >> "$JS" <<'JS'
+/* == contact-pack v1 == */
 (function(){
-  const t=localStorage.getItem(THEME_KEY)||'dark';
-  body.setAttribute('data-theme',t);
-})();
-document.getElementById('themeBtn')?.addEventListener('click',()=>{
-  const next=body.getAttribute('data-theme')==='dark'?'light':'dark';
-  body.setAttribute('data-theme',next); localStorage.setItem(THEME_KEY,next);
-});
+  const form=document.querySelector('#contact-form'); if(!form) return;
+  const msg=form.querySelector('.msg');
+  const ok=t=>{ msg.textContent=t; msg.style.opacity=.95; };
+  const bad=t=>{ msg.textContent=t; msg.style.opacity=.95; };
+  const endpoint=(window.CONTACT_ENDPOINT||'').trim();
 
-// horloge
-(function tick(){
-  const el=document.getElementById('clock');
-  if(el) el.textContent=new Date().toLocaleString('fr-FR',{weekday:'long',day:'2-digit',month:'long',hour:'2-digit',minute:'2-digit'});
-  setTimeout(tick,30000);
-})();
+  const emailRx=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-// score (démo)
-(function score(){
-  const s=92+Math.floor(Math.random()*6);
-  const n=document.getElementById('scoreNum'); const b=document.getElementById('scoreBar');
-  if(n) n.textContent=String(s); if(b) b.style.width=s+'%';
-})();
+  form.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const fd=new FormData(form);
+    if(fd.get('website')){ ok('Merci !'); form.reset(); return; } // honeypot
+    const payload={
+      name:(fd.get('name')||'').toString().trim(),
+      company:(fd.get('company')||'').toString().trim(),
+      email:(fd.get('email')||'').toString().trim(),
+      phone:(fd.get('phone')||'').toString().trim(),
+      message:(fd.get('message')||'').toString().trim(),
+      page: location.href,
+      t: new Date().toISOString()
+    };
+    if(!payload.name || !emailRx.test(payload.email) || payload.message.length<5){
+      bad('Vérifiez les champs requis.'); return;
+    }
+    const last=+localStorage.getItem('sqv_contact_last')||0;
+    if(Date.now()-last < 60000){ bad('Trop de demandes. Réessayez dans une minute.'); return; }
+    localStorage.setItem('sqv_contact_last', Date.now());
 
-// actus (démo statique)
-const feed=[
- {t:"Nouvelle attaque Zero-Day détectée (CVE-2025-5433) ciblant routeurs TP-Link", m:"Vulnérabilités · CERT EU · 5 min"},
- {t:"Propagande IA détectée sur réseaux sociaux en Europe de l’Est", m:"VPN · Cloudflare Radar · 1 h"},
- {t:"Restrictions VPN en Iran : hausse de la censure Internet", m:"IA · The Hacker News · 9 h"},
- {t:"Ransomware ciblant 4200 hôpitaux aux États-Unis", m:"IA · The Hacker News · 9 h"}
-];
-(function news(){
-  const ul=document.getElementById('newsList'); if(!ul) return;
-  feed.forEach(n=>{ const li=document.createElement('li'); li.innerHTML=`<div class="t">• ${n.t}</div><div class="m">${n.m}</div>`; ul.appendChild(li); });
+    ok('Envoi en cours…');
+    if(!endpoint){
+      console.info('[Contact DEMO]', payload);
+      ok('Merci ! Votre demande est enregistrée (mode démo).');
+      form.reset();
+      return;
+    }
+    try{
+      const r=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+      if(r.ok){ ok('Merci ! Nous revenons vers vous rapidement.'); form.reset(); }
+      else{ bad('Envoi impossible. Essayez encore ou contactez-nous directement.'); }
+    }catch(err){
+      bad('Réseau indisponible. Réessayez.');
+    }
+  });
 })();
-
-// charge les modules (liaisons boutons + outils)
-import './modules.js';
 JS
+fi
 
-# 4) modules.js (outils branchés)
-cat > modules.js <<'JS'
-import { toast } from "./main.js";
-const out = document.getElementById('toolOut');
-const write = (o) => { out.textContent = (typeof o==="string"?o:JSON.stringify(o,null,2)); };
+# -------------------------------------------
+# 3) Cache-bust + commit + déploiement
+# -------------------------------------------
+ts=$(date +%s)
+for f in "$ROOT"/*.html; do
+  sed -i -E "s|(\\./style\\.css)(\\?v=[0-9]+)?|\\1?v=$ts|g; s|(app\\.js)(\\?v=[0-9]+)?|\\1?v=$ts|g" "$f"
+done
 
-// IP publique (ipify)
-async function publicIP(){
-  try{
-    const r = await fetch('https://api.ipify.org?format=json',{cache:'no-store'});
-    const j = await r.json(); write(j); toast(`IP publique: ${j.ip}`);
-  }catch(e){ write(String(e)); toast('IP: erreur'); }
-}
+if [[ -x ./deploy_now.sh ]]; then
+  git add "$ROOT"/*.html "$CSS" "$JS" "$ROOT/sitemap.xml" "$ROOT/robots.txt" || true
+  git commit -m "pack: SEO++ + Contact & démo + cache bust v$ts" || true
+  ./deploy_now.sh
+else
+  echo "⚠️ deploy_now.sh non trouvé : commit/déploiement sautés."
+fi
 
-// DNS Cloudflare (application/dns-json)
-async function dnsQuery(name){
-  const q = name?.trim(); if(!q) return write("Entrez un nom de domaine.");
-  try{
-    const url=`https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(q)}&type=A`;
-    const r = await fetch(url,{headers:{'accept':'application/dns-json'}}); const j=await r.json();
-    write(j); toast(`DNS ${q} → ${j?.Answer?.[0]?.data||'—'}`);
-  }catch(e){ write(String(e)); toast('DNS: erreur'); }
-}
+echo "✅ PACK SEO++ + CONTACT appliqué."
+BASH
 
-// Latence vers 1.1.1.1
-async function latency(){
-  try{
-    const t0=performance.now();
-    await fetch('https://1.1.1.1/cdn-cgi/trace',{cache:'no-store'});
-    const ms=Math.round(performance.now()-t0);
-    write({latency_ms:ms}); toast(`Latence ~ ${ms} ms`);
-  }catch(e){ write(String(e)); toast('Latence: erreur'); }
-}
+chmod +x scripts/pack_seo_plus_contact.sh
+./scripts/pack_seo_plus_contact.sh
+<script>window.CONTACT_ENDPOINT="https://formspree.io/f/XXXXXXXX";</script>
+# --- PACK: définir CONTACT_ENDPOINT (Formspree/Worker) + cache-bust + deploy ---
+cat > scripts/set_contact_endpoint.sh <<'BASH'
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT=sentinel_app/public
+F="$ROOT/index.html"
+EP="${1:-}"
+[[ -z "$EP" ]] && { echo "Usage: $0 <endpoint-url>"; exit 1; }
 
-// Fingerprint léger (local)
-function fingerprint(){
-  const d=window.devicePixelRatio||1;
-  const fp={
-    ua:navigator.userAgent,
-    lang:navigator.language,
-    tz:Intl.DateTimeFormat().resolvedOptions().timeZone,
-    mem:navigator.deviceMemory??'n/a',
-    cores:navigator.hardwareConcurrency??'n/a',
-    screen:{w:screen.width,h:screen.height,dpr:d}
+# 1) Remplace la ligne injectée par le pack contact, ou ajoute le <script> si absent
+if grep -q 'window.CONTACT_ENDPOINT' "$F"; then
+  sed -i -E "s|window\.CONTACT_ENDPOINT\s*=\s*window\.CONTACT_ENDPOINT\s*\|\|\s*\"\"|window.CONTACT_ENDPOINT=\"$EP\"|" "$F"
+  sed -i -E "s|window\.CONTACT_ENDPOINT\s*=\s*\"[^\"]*\"|window.CONTACT_ENDPOINT=\"$EP\"|" "$F"
+else
+  sed -i -E "s|</body>|  <script>window.CONTACT_ENDPOINT=\"$EP\";</script>\n</body>|" "$F"
+fi
+
+# 2) Cache-bust CSS/JS sur toutes les pages
+ts=$(date +%s)
+for h in "$ROOT"/*.html; do
+  sed -i -E "s|(\\./style\\.css)(\\?v=[0-9]+)?|\\1?v=$ts|g; s|(app\\.js)(\\?v=[0-9]+)?|\\1?v=$ts|g" "$h"
+done
+
+# 3) Commit + déploiement (si script dispo)
+git add "$F" "$ROOT"/*.html || true
+git commit -m "chore(contact): set CONTACT_ENDPOINT -> $EP + cache bust v$ts" || true
+[[ -x ./deploy_now.sh ]] && ./deploy_now.sh || echo "⚠️ deploy_now.sh non trouvé : déploiement sauté."
+echo "✅ CONTACT_ENDPOINT = $EP"
+BASH
+
+chmod +x scripts/set_contact_endpoint.sh
+./scripts/set_contact_endpoint.sh "https://formspree.io/f/XXXXXXXX"
+curl -s https://sentinel-fusion.pages.dev/index.html | grep -n 'CONTACT_ENDPOINT'
+# --- PACK: Contact UX (toast + busy) + cache-bust + deploy ---
+cat > scripts/pack_contact_toast.sh <<'BASH'
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT=sentinel_app/public
+CSS="$ROOT/style.css"
+JS="$ROOT/app.js"
+
+# 1) CSS (toast + busy)
+if ! grep -q '/* == contact: toast v1 ==' "$CSS"; then
+cat >> "$CSS" <<'CSS'
+/* == contact: toast v1 == */
+.toast{position:fixed;left:50%;bottom:16px;transform:translate(-50%,120%);opacity:0;
+  background:rgba(10,14,20,.9);color:#fff;border:1px solid rgba(255,255,255,.12);
+  padding:10px 14px;border-radius:12px;backdrop-filter:saturate(120%) blur(8px);
+  z-index:9999;transition:transform .25s ease,opacity .25s;pointer-events:none}
+.toast.show{transform:translate(-50%,0);opacity:1}
+.toast.ok{border-color:#74d0ff}
+.toast.bad{border-color:#ff6a6a}
+button.is-busy{pointer-events:none;opacity:.6}
+@media (max-width:720px){.toast{width:calc(100% - 32px)}}
+CSS
+fi
+
+# 2) JS (ok/bad -> toast + busy sur submit)
+if ! grep -q '/* == contact: toast v1 == */' "$JS"; then
+cat >> "$JS" <<'JS'
+/* == contact: toast v1 == */
+(()=>{ 
+  function toast(msg, kind='ok'){
+    let t=document.querySelector('.toast');
+    if(!t){ t=document.createElement('div'); t.className='toast'; document.body.appendChild(t); }
+    t.className='toast show ' + (kind==='bad'?'bad':'ok');
+    t.textContent=msg;
+    clearTimeout(window.__toastT); window.__toastT=setTimeout(()=>t.classList.remove('show'), 4000);
+  }
+  window.ok  = window.ok  || ((m)=>toast(m,'ok'));
+  window.bad = window.bad || ((m)=>toast(m,'bad'));
+  const form=document.querySelector('form[action="#contact"], form#contact, .contact form');
+  if(form){
+    const btn=form.querySelector('button[type="submit"], [type="submit"]');
+    form.addEventListener('submit', ()=>{ btn&&btn.classList.add('is-busy'); setTimeout(()=>btn&&btn.classList.remove('is-busy'), 6000); });
+  }
+})();
+JS
+fi
+
+# 3) Cache-bust + commit + deploy
+ts=$(date +%s)
+for h in "$ROOT"/*.html; do
+  sed -i -E "s|(\\./style\\.css)(\\?v=[0-9]+)?|\\1?v=$ts|g; s|(app\\.js)(\\?v=[0-9]+)?|\\1?v=$ts|g" "$h"
+done
+git add "$CSS" "$JS" "$ROOT"/*.html || true
+git commit -m "ux(contact): toast + busy + cache bust v$ts" || true
+[[ -x ./deploy_now.sh ]] && ./deploy_now.sh || echo "⚠️ deploy_now.sh non trouvé : déploiement sauté."
+echo "✅ Pack Contact UX appliqué."
+BASH
+
+chmod +x scripts/pack_contact_toast.sh
+./scripts/pack_contact_toast.sh
+# --- PACK: VPN en réel (API proxy + UI légère) ---
+cat > scripts/pack_vpn_real.sh <<'BASH'
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT=sentinel_app/public
+CSS="$ROOT/style.css"
+JS="$ROOT/app.js"
+
+# 0) Arbo Pages Functions (API côté serveur)
+mkdir -p functions/api/vpn
+
+# functions/api/vpn/index.js : routeur simple
+cat > functions/api/vpn/index.js <<'JS'
+export async function onRequest(context){
+  const { request, env } = context;
+  const url = new URL(request.url);
+  const path = url.pathname.replace(/^\/api\/vpn\/?/, ""); // status, peers, peers/:id/enable
+  const upstream = (suffix="") => `${env.VPN_API.replace(/\/$/,'')}/${suffix.replace(/^\//,'')}`;
+
+  // Sécurité: exiger token côté Worker
+  const AUTH = `Bearer ${env.VPN_TOKEN}`;
+  const stdHeaders = { 'Authorization': AUTH, 'Content-Type':'application/json' };
+
+  // Helper: proxy JSON
+  const proxy = async (method, target, body=null) => {
+    const res = await fetch(target, { method, headers: stdHeaders, body: body?JSON.stringify(body):undefined });
+    const text = await res.text();
+    let data; try{ data = JSON.parse(text); } catch{ data = { raw:text }; }
+    return new Response(JSON.stringify(data), { status: res.status, headers: { 'Content-Type':'application/json' }});
   };
-  write(fp); toast("Fingerprint local généré");
+
+  // Routes de base (adapte-les à ton orchestrateur)
+  if (request.method === 'GET' && (path === '' || path === 'status')) {
+    return proxy('GET', upstream('status'));
+  }
+  if (request.method === 'GET' && path === 'peers') {
+    return proxy('GET', upstream('peers'));
+  }
+  // Toggle peer: POST /api/vpn/peers/:id/enable {enable:true|false}
+  if (request.method === 'POST' && /^peers\/[^/]+\/enable$/.test(path)) {
+    const id = path.split('/')[1];
+    const body = await request.json().catch(()=>({}));
+    // Exemples d'upstream à adapter:
+    // - wg-easy: POST /clients/:id/enable {enabled:true|false}
+    // - headscale: POST /api/machines/:id/route
+    // - tailscale: POST /api/v2/tailnet/.../devices/:id/disable
+    return proxy('POST', upstream(`peers/${id}/enable`), { enable: !!body.enable });
+  }
+
+  return new Response(JSON.stringify({ error:'Not found', path }), { status: 404, headers:{'Content-Type':'application/json'}});
 }
-
-// Bind
-document.getElementById('btnIP')   ?.addEventListener('click', publicIP);
-document.getElementById('btnDNS')  ?.addEventListener('click', ()=>dnsQuery(document.getElementById('domainInput')?.value));
-document.getElementById('btnPing') ?.addEventListener('click', latency);
-document.getElementById('btnFP')   ?.addEventListener('click', fingerprint);
-
-// Démos “modules” (clics tuiles)
-function bindDemo(id,label){ document.getElementById(id)?.addEventListener('click',()=>toast(`${label} (démo)`)); }
-bindDemo('btnCF','Cognitive Firewall'); bindDemo('btnOSINT','OSINT Intelligence');
-bindDemo('btnPrivacy','Confidentialité Renforcée'); bindDemo('btnVisualFW','Pare-feu Visuel');
-bindDemo('btnIR','Réponse Incident'); bindDemo('btnAPT','Détection APT / Pegasus');
-bindDemo('btnNetGuard','Garde Réseau'); bindDemo('btnAuto','Mises à jour Automatiques');
-bindDemo('btnQP','Quantum Protector'); bindDemo('btnVault','Coffre-fort');
-bindDemo('btnLauncher','Lanceur sécurisé'); bindDemo('btnLog','Journal IA temps réel');
 JS
 
-# 5) mini preview local (évite les conflits Vite)
-cat > preview.sh <<'BASH'
-#!/usr/bin/env bash
-set -euo pipefail
-PORT="${1:-5520}"
-# stop précédent
-[ -f .http.pid ] && kill $(cat .http.pid) 2>/dev/null || true
-nohup python3 -m http.server "$PORT" --bind 127.0.0.1 >/dev/null 2>&1 & echo $! > .http.pid
-echo "✅ Serveur prêt: http://127.0.0.1:$PORT/"
-command -v termux-open-url >/dev/null 2>&1 && termux-open-url "http://127.0.0.1:$PORT/" || true
+# 1) CSS (panneau & bouton)
+if ! grep -q '/* == vpn: ui v1 ==' "$CSS"; then
+cat >> "$CSS" <<'CSS'
+/* == vpn: ui v1 == */
+.vpn-chip{position:fixed; right:16px; bottom:16px; z-index:9998; padding:8px 12px; border-radius:999px;
+  border:1px solid rgba(255,255,255,.14); background:rgba(10,14,20,.8); color:#fff; backdrop-filter:saturate(120%) blur(8px);}
+.vpn-pane{position:fixed; right:16px; bottom:64px; width: min(420px,calc(100% - 32px)); max-height:60vh; overflow:auto; z-index:9999;
+  background:rgba(10,14,20,.92); color:#fff; border:1px solid rgba(255,255,255,.12); border-radius:16px; padding:12px;}
+.vpn-pane h4{margin:.3rem 0 .5rem 0}
+.vpn-list{display:flex; flex-direction:column; gap:6px}
+.vpn-item{display:flex; justify-content:space-between; align-items:center; border:1px solid rgba(255,255,255,.12);
+  border-radius:10px; padding:6px 8px; background:rgba(255,255,255,.03)}
+.vpn-item small{opacity:.8}
+.vpn-item button{padding:6px 10px; border-radius:8px; border:1px solid rgba(255,255,255,.18); background:transparent; color:#fff}
+CSS
+fi
+
+# 2) JS (UI + appels API)
+if ! grep -q '/* == vpn: ui v1 == */' "$JS"; then
+cat >> "$JS" <<'JS'
+/* == vpn: ui v1 == */
+(()=>{
+
+async function api(p, opt={}){
+  const r = await fetch(`/api/vpn/${p}`, { headers:{'Accept':'application/json'}, ...opt });
+  if(!r.ok) throw new Error(`API ${p}: ${r.status}`);
+  return await r.json();
+}
+
+function el(tag, attrs={}, ...kids){
+  const e=document.createElement(tag);
+  Object.entries(attrs).forEach(([k,v])=> (k in e)?(e[k]=v):e.setAttribute(k,v));
+  kids.forEach(k=> e.append(k));
+  return e;
+}
+
+async function render(){
+  let pane=document.querySelector('.vpn-pane');
+  if(!pane){ pane=el('div',{className:'vpn-pane'}); document.body.appendChild(pane); }
+  pane.innerHTML='Statut…';
+  try{
+    const status = await api('status');      // { up:true, version:'...', iface:'wg0', ... }
+    const peers  = await api('peers');       // [{id:'abc', name:'Laptop', online:true, rx:..., tx:...}, ...]
+    const head   = el('div',{}, 
+      el('h4',{},'VPN — statut'),
+      el('div',{}, JSON.stringify(status))
+    );
+    const list = el('div',{className:'vpn-list'});
+    (Array.isArray(peers)?peers:[]).forEach(p=>{
+      const row = el('div',{className:'vpn-item'},
+        el('div',{}, el('strong',{}, p.name||p.id), el('br'), el('small',{}, p.online?'en ligne':'hors ligne')),
+        el('div',{}, el('button',{onclick:async ()=>{
+          try{
+            await api(`peers/${encodeURIComponent(p.id)}/enable`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({enable: !p.enabled})});
+            location.reload();
+          }catch(e){ (window.bad||alert)(e.message); }
+        }}, (p.enabled===false?'Activer':'Désactiver')))
+      );
+      list.appendChild(row);
+    });
+    pane.replaceChildren(head, list);
+  }catch(e){
+    pane.textContent = `Erreur API: ${e.message}`;
+  }
+}
+
+function ensureUI(){
+  if(document.querySelector('.vpn-chip')) return;
+  const chip = el('button',{className:'vpn-chip', title:'VPN'}, 'VPN');
+  chip.addEventListener('click', render);
+  document.body.appendChild(chip);
+}
+ensureUI();
+
+})();
+JS
+fi
+
+# 3) Cache-bust + commit + deploy
+ts=$(date +%s)
+for h in "$ROOT"/*.html; do
+  sed -i -E "s|(\\./style\\.css)(\\?v=[0-9]+)?|\\1?v=$ts|g; s|(app\\.js)(\\?v=[0-9]+)?|\\1?v=$ts|g" "$h"
+done
+git add functions "$CSS" "$JS" "$ROOT"/*.html || true
+git commit -m "vpn(real): API proxy + UI légère + cache bust v$ts" || true
+[[ -x ./deploy_now.sh ]] && ./deploy_now.sh || echo "⚠️ deploy_now.sh non trouvé : déploiement sauté."
+echo "✅ Pack VPN appliqué."
 BASH
 
-chmod +x preview.sh
-# 6) déploiement via GitHub → Cloudflare Pages
-cat > deploy_github.sh <<'BASH'
+chmod +x scripts/pack_vpn_real.sh
+./scripts/pack_vpn_real.sh
+# --- PACK: corriger l'injection CONTACT_ENDPOINT (purge + réinsertion propre) ---
+cat > scripts/fix_contact_endpoint.sh <<'BASH'
 #!/usr/bin/env bash
 set -euo pipefail
-# Prérequis: GH_TOKEN (PAT), CF_API_TOKEN (Pages:Edit), CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_PROJECT_NAME
-: "${GH_TOKEN:?GH_TOKEN manquant}"
-: "${CF_API_TOKEN:?CF_API_TOKEN manquant}"
-: "${CLOUDFLARE_ACCOUNT_ID:?CLOUDFLARE_ACCOUNT_ID manquant}"
-: "${CLOUDFLARE_PROJECT_NAME:?CLOUDFLARE_PROJECT_NAME manquant}"
-GH_USER="${GH_USER:-$(whoami)}"
-REPO_NAME="${REPO_NAME:-sentinel-fusion}"
-DEFAULT_BRANCH="${DEFAULT_BRANCH:-main}"
 
-mkdir -p .github/workflows
-cat > .github/workflows/deploy-cloudflare.yml <<'YAML'
-name: Deploy to Cloudflare Pages
-on: { push: { branches: ["main"] } }
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: 22, cache: 'npm' }
-      - name: Detect & Build
-        id: b
-        run: |
-          if [ -f package.json ] && jq -e '.scripts.build?!=null' package.json >/dev/null 2>&1; then
-            npm ci --omit=dev || npm i
-            npm run build
-            echo "dist=dist" >> "$GITHUB_OUTPUT"
-          else
-            echo "dist=." >> "$GITHUB_OUTPUT"
-          fi
-      - name: Deploy
-        uses: cloudflare/pages-action@v1
-        with:
-          apiToken: ${{ secrets.CF_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: ${{ secrets.CLOUDFLARE_PROJECT_NAME }}
-          directory: ${{ steps.b.outputs.dist }}
-          branch: ${{ secrets.CLOUDFLARE_PAGES_BRANCH || 'main' }}
-YAML
+ROOT=sentinel_app/public
+EP="${1:-}"   # optionnel: ./scripts/fix_contact_endpoint.sh https://formspree.io/f/XXXXXXX
 
-cat > .gitignore <<'GIT'
-node_modules/
-dist/
-.http.pid
-GIT
+# Tente de récupérer la première valeur trouvée si non fournie
+detect_ep(){
+  local file="$1"
+  grep -oE 'window\.CONTACT_ENDPOINT\s*=\s*"[^"]+"' "$file" \
+    | head -1 | sed -E 's/.*="([^"]*)".*/\1/' || true
+}
 
-git init -q
-git config user.email "ci@example" ; git config user.name "Sentinel Bot"
-git checkout -b "$DEFAULT_BRANCH"
-git add -A && git commit -m "feat(ui): Fusion PS5 + Futur-Cyber"
-# crée repo si besoin
-REMOTE_URL="https://github.com/${GH_USER}/${REPO_NAME}.git"
-curl -fsS -H "Authorization: token ${GH_TOKEN}" \
-  -H "Content-Type: application/json" \
-  -X POST "https://api.github.com/user/repos" \
-  -d "{\"name\":\"${REPO_NAME}\",\"private\":false}" >/dev/null 2>&1 || true
-git remote add origin "$REMOTE_URL" 2>/dev/null || git remote set-url origin "$REMOTE_URL"
-git push -u origin "$DEFAULT_BRANCH" --force
+for f in "$ROOT"/*.html; do
+  [[ -z "$EP" ]] && EP="$(detect_ep "$f")"
+done
+: "${EP:?Aucune valeur CONTACT_ENDPOINT détectée. Relance avec: ./scripts/fix_contact_endpoint.sh https://formspree.io/f/XXXXXXX}"
 
-echo "👉 Rendez-vous dans GitHub > Settings > Secrets and variables > Actions et ajoute:"
-echo "   CF_API_TOKEN, CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_PROJECT_NAME, (optionnel) CLOUDFLARE_PAGES_BRANCH"
-echo "Puis fais un commit/push pour déclencher le déploiement."
+echo ">> CONTACT_ENDPOINT = $EP"
+
+for f in "$ROOT"/*.html; do
+  # 1) Supprime tout ce qui ressemble à l'ancienne injection (texte brut ou script)
+  sed -i -E 's/window\.CONTACT_ENDPOINT\s*=\s*"[^"]*"\s*;?//g' "$f"
+  sed -i -E '/<script[^>]*id="contact-endpoint"[^>]*>[^<]*<\/script>/Id' "$f"
+
+  # Nettoyage d'interlignes en trop
+  sed -i -E ':a;N;$!ba;s/\n{3,}/\n\n/g' "$f"
+
+  # 2) Réinsère proprement UNE SEULE balise juste avant </body>
+  if ! grep -qi 'id="contact-endpoint"' "$f"; then
+    sed -i -E "s|</body>|<script id=\"contact-endpoint\">window.CONTACT_ENDPOINT=\"${EP}\";<\/script></body>|I" "$f"
+  fi
+done
+
+# 3) Cache-bust + commit + deploy
+ts=$(date +%s)
+for f in "$ROOT"/*.html; do
+  sed -i -E "s|(\\./style\\.css)(\\?v=[0-9]+)?|\\1?v=$ts|g; s|(app\\.js)(\\?v=[0-9]+)?|\\1?v=$ts|g" "$f"
+done
+git add "$ROOT"/*.html || true
+git commit -m "fix(contact): injection unique <script id=contact-endpoint> + purge duplicates + cache bust v$ts" || true
+[[ -x ./deploy_now.sh ]] && ./deploy_now.sh || echo "⚠️ deploy_now.sh non trouvé : déploiement sauté."
+echo "✅ CONTACT_ENDPOINT corrigé."
 BASH
 
-chmod +x deploy_github.sh
-# 7) lance un preview
-./preview.sh 5520
-echo "✅ Pack prêt dans: $(pwd)"
-export GH_TOKEN="TON_PAT_GITHUB"
-export GH_USER="TonUserGithub"
-export CLOUDFLARE_ACCOUNT_ID="xxx"
-export CF_API_TOKEN="xxx"
-export CLOUDFLARE_PROJECT_NAME="sentinel-fusion"
-./deploy_github.sh
-# 1) Te placer sur main (la créer si elle n’existe pas)
-git checkout main 2>/dev/null || git checkout -b main
-# 2) Ajouter / committer (le commit est tolérant s’il n’y a rien à committer)
-git add -A
-git commit -m "chore: sync deploy" || true
-# 3) S'assurer du remote puis pousser
-REMOTE_URL="https://github.com/${GH_USER:-TonUserGithub}/sentinel-fusion.git"
-git remote get-url origin >/dev/null 2>&1 || git remote add origin "$REMOTE_URL"
-git push -u origin main
+chmod +x scripts/fix_contact_endpoint.sh
+./scripts/fix_contact_endpoint.sh
+for p in / /presentation /modules /comparatif /editions /docs /entreprises /secteur-public /defense; do   echo -n "$p -> ";   curl -s "https://sentinel-fusion.pages.dev${p}.html" | grep -ci 'id="contact-endpoint"'; done
+# Chaque ligne doit afficher : 1
+curl -s https://formspree.io/f/XXXXXXXX   -H 'Accept: application/json'   -X POST   -d 'name=Test&email=ton@mail.test&message=Ping depuis SF'
+# injecte proprement l’endpoint une seule fois + cache-bust + commit + déploiement
+scripts/set_contact_endpoint.sh https://formspree.io/f/xzzvnvvp
+scripts/pack_formspree_finish.sh https://formspree.io/f/xzzvnvvp
+for p in / /presentation /modules /comparatif /editions /docs /entreprises /secteur-public /defense; do   echo -n "$p -> " && curl -s https://sentinel-fusion.pages.dev${p}.html | grep -ci 'id="contact-endpoint"'; done
+cat > scripts/pack_formspree_finish.sh <<'BASH'
 #!/usr/bin/env bash
 set -euo pipefail
-: "${GH_TOKEN:?GH_TOKEN manquant}"
-: "${CF_API_TOKEN:?CF_API_TOKEN manquant}"
-: "${CLOUDFLARE_ACCOUNT_ID:?CLOUDFLARE_ACCOUNT_ID manquant}"
-: "${CLOUDFLARE_PROJECT_NAME:?CLOUDFLARE_PROJECT_NAME manquant}"
-GH_USER="${GH_USER:-$(whoami)}"
-REPO_NAME="${REPO_NAME:-sentinel-fusion}"
-DEFAULT_BRANCH="${DEFAULT_BRANCH:-main}"
-mkdir -p .github/workflows
-cat > .github/workflows/deploy-cloudflare.yml <<'YAML'
-name: Deploy to Cloudflare Pages
-on: { push: { branches: ["main"] } }
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: 22, cache: 'npm' }
-      - name: Detect & Build
-        id: b
-        run: |
-          if [ -f package.json ] && jq -e '.scripts.build?!=null' package.json >/dev/null 2>&1; then
-            npm ci --omit=dev || npm i
-            npm run build
-            echo "dist=dist" >> "$GITHUB_OUTPUT"
-          else
-            echo "dist=." >> "$GITHUB_OUTPUT"
-          fi
-      - name: Deploy
-        uses: cloudflare/pages-action@v1
-        with:
-          apiToken: ${{ secrets.CF_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: ${{ secrets.CLOUDFLARE_PROJECT_NAME }}
-          directory: ${{ steps.b.outputs.dist }}
-          branch: ${{ secrets.CLOUDFLARE_PAGES_BRANCH || 'main' }}
-YAML
 
-cat > .gitignore <<'GIT'
-node_modules/
-dist/
-.http.pid
-GIT
+EP="${1:?Usage: $0 https://formspree.io/f/xxxxxxx}"
+ROOT=sentinel_app/public
+ts=$(date +%s)
 
-# --- Git idempotent ---
-if [ ! -d .git ]; then git init -q; fi
-git config user.email "ci@example" ; git config user.name "Sentinel Bot"
-if git show-ref --verify --quiet "refs/heads/$DEFAULT_BRANCH"; then   git checkout "$DEFAULT_BRANCH"; else   git checkout -b "$DEFAULT_BRANCH"; fi
-git add -A
-git commit -m "feat(ui): Fusion PS5 + Futur-Cyber" || true
-REMOTE_URL="https://github.com/${GH_USER}/${REPO_NAME}.git"
-# Créer le repo si besoin (silencieux si déjà présent)
-curl -fsS -H "Authorization: token ${GH_TOKEN}"   -H "Content-Type: application/json"   -X POST "https://api.github.com/user/repos"   -d "{\"name\":\"${REPO_NAME}\",\"private\":false}" >/dev/null 2>&1 || true
-git remote get-url origin >/dev/null 2>&1 || git remote add origin "$REMOTE_URL"
-git push -u origin "$DEFAULT_BRANCH"
+# 0) Nettoie l'ancien format et injecte UNE SEULE balise juste avant </body>
+for f in "$ROOT"/*.html; do
+  # vire les vieilles lignes window.CONTACT_ENDPOINT "en vrac"
+  sed -i -E 's/window\.CONTACT_ENDPOINT\s*=\s*\"[^"]*\";?//g' "$f"
+  # supprime d'anciennes balises script id=contact-endpoint dupliquées
+  sed -i -E 's#<script id="contact-endpoint">[^<]*</script>##g' "$f"
+  # réinsère proprement 1 balise
+  sed -i -E "s#</body>#<script id=\"contact-endpoint\">window.CONTACT_ENDPOINT=\"$EP\";</script>\n</body>#g" "$f"
+done
+
+# 1) Honeypot CSS (anti-spam) si absent
+if ! grep -q '/* == contact: honeypot v1 == */' "$ROOT/style.css"; then
+  cat >> "$ROOT/style.css" <<'CSS'
+/* == contact: honeypot v1 == */
+.hp{position:absolute !important; left:-9999px !important; opacity:0 !important;}
+CSS
+fi
+
+# 2) Cache-bust CSS/JS
+for f in "$ROOT"/*.html; do
+  sed -i -E "s|(style\.css)(\?v=[0-9]+)?|\1?v=$ts|g; s|(app\.js)(\?v=[0-9]+)?|\1?v=$ts|g" "$f"
+done
+
+git add "$ROOT/style.css" "$ROOT"/*.html || true
+git commit -m "ux(contact): finish pack (honeypot) + endpoint unique + cache bust v$ts" || true
+[[ -x ./deploy_now.sh ]] && ./deploy_now.sh || echo "⚠ deploy_now.sh non trouvé : pas de déploiement auto."
+BASH
+
+chmod +x scripts/pack_formspree_finish.sh
+# 1) Exécuter le pack "finish" avec TON endpoint Formspree
+scripts/pack_formspree_finish.sh https://formspree.io/f/xzzvnvvp
+# --- 1) Branche l’endpoint Formspree en prod ---
+EP="https://formspree.io/f/xzzvnvvp"
+scripts/pack_formspree_finish.sh "$EP"
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT=sentinel_app/public
+CSS="$ROOT/style.css"
+JS="$ROOT/app.js"
+EP="${1:-}"
+detect_ep(){ # récupère un VNP_ENDPOINT déjà présent (si param manquant)
+  grep -REo 'window\.VNP_ENDPOINT\s*=\s*"[^"]+"' "$ROOT"/*.html | head -1   | sed -E 's/.*="([^"]+)".*/\1/' || true; }
+if [[ -z "${EP:-}" ]]; then EP="$(detect_ep)"; fi
+if [[ -z "${EP:-}" ]]; then   echo "Usage: $0 <vnp-endpoint-url>"; exit 1; fi
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT=sentinel_app/public
+CSS="$ROOT/style.css"
+JS="$ROOT/app.js"
+EP="${1:-}"
+detect_ep(){ # récupère un VNP_ENDPOINT déjà présent (si param manquant)
+  grep -REo 'window\.VNP_ENDPOINT\s*=\s*"[^"]+"' "$ROOT"/*.html | head -1   | sed -E 's/.*="([^"]+)".*/\1/' || true; }
+if [[ -z "${EP:-}" ]]; then EP="$(detect_ep)"; fi
+if [[ -z "${EP:-}" ]]; then   echo "Usage: $0 <vnp-endpoint-url>"; exit 1; fi
