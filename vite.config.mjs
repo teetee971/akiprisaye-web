@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
 
-// Corrige les chemins en prod sur Pages
 export default defineConfig({
-  base: './',
+  plugins: [react()],
 })
