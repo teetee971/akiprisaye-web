@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # ── Réglages (adapte si besoin) ────────────────────────────────────────────────
-REPO_DIR="${REPO_DIR:-$HOME/SentinelQuantumVanguardAiPro}"
+REPO_DIR="${REPO_DIR:-$HOME/akiprisaye-web}"
 GIT_REMOTE="${GIT_REMOTE:-origin}"
 BRANCH="${BRANCH:-main}"
 
