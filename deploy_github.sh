@@ -19,7 +19,7 @@ REMOTE_URL="https://${GH_TOKEN}@github.com/${GH_USER}/${REPO_NAME}.git"
 
 # Init + commit (idempotent)
 [ -d .git ] || git init -q
-git config user.name "Sentinel Bot"
+git config user.name "Akiprisaye Bot"
 git config user.email "bot@sentinel.local"
 git checkout -B "$CLOUDFLARE_PAGES_BRANCH"
 git add -A
