@@ -1,0 +1,25 @@
+#!/bin/bash
+echo "🔁 Nettoyage complet de l'historique Git et push forcé"
+
+# Supprimer l'historique et recréer la branche main propre
+rm -rf .git
+git init
+git branch -M main
+git remote add origin https://github.com/teetee971/akiprisaye-web.git
+
+# Ré-ajouter uniquement les fichiers nécessaires
+echo "⚠️ On ignore les fichiers sensibles (clé Firebase etc.)"
+echo "*.json" >> .gitignore
+echo "serviceAccountKey*.json" >> .gitignore
+echo ".env" >> .gitignore
+
+# Ajouter et commit
+git add .
+git commit -m "🚀 Déploiement propre - secrets purgés"
+
+# Forcer le push vers GitHub
+git push -u origin main --force
+
+echo "✅ Push terminé avec succès !"
+chmod +x reset_and_push.sh
+./reset_and_push.sh
