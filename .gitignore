@@ -6,3 +6,8 @@ firebase-debug.log
 *.zip
 *.json
 serviceAccountKey.json
+*.pem
+*.p12
+*.env
+.firebase/
+.DS_Store
