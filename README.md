@@ -1,47 +1,44 @@
-# A KI PRI SA YÉ — PRO PACK (Front + APIs mock)
 
-## Contenu
-- `webapp/` : front statique (API-ready). Lit `/prices` si `API_URL` défini, sinon bascule en mock.
-- `worker_api/` : API Cloudflare Workers (`/ping`, `/prices`).
-- `functions_api/` : API Firebase Functions (`/api/ping`, `/api/prices`) via `firebase.pro.json` (rewrites).
-- `tools/seed.js` : script Node pour peupler Firestore (collection `products`) — nécessite GOOGLE_APPLICATION_CREDENTIALS (clé admin locale, ne pas commiter).
+# A KI PRI SA YÉ – PWA Officielle
 
-## Déploiement Cloudflare Workers
+Bienvenue dans le dépôt de la Progressive Web App (PWA) **A KI PRI SA YÉ** !  
+Cette application vise à lutter contre la vie chère en permettant aux utilisateurs de comparer les prix, scanner les produits, consulter les données par territoires d'outre-mer, et bien plus encore.
+
+## 🚀 Stack Technique
+
+- **Frontend** : React + Vite + Tailwind CSS
+- **PWA** : manifest.webmanifest + service worker + icônes
+- **Graphiques** : chart.js
+- **Design** : sombre, immersif et responsive
+- **Modules intégrés** :
+  - Données produits simulées
+  - Module "Vie chère"
+  - Scanner produit (simulé)
+  - Carte des DOM-TOM (prévue)
+  - UX 100% mobile
+  - Territoires préconfigurés via GPMQGF
+
+## 🔧 Commandes utiles
+
 ```bash
-cd worker_api
-npm i -g wrangler
-wrangler login
-wrangler deploy
-# URL affichée, ex: https://akiprisaye-api.<something>.workers.dev
-```
-Puis mets l’URL dans `webapp/runtime-env.sample.js`:
-```js
-window.__AKP__ = { API_URL: "https://...workers.dev" };
+npm install      # Installer les dépendances
+npm run dev      # Lancer le serveur local
+npm run build    # Générer le build de production
+firebase deploy  # Déployer sur Firebase Hosting
 ```
 
-## Déploiement Firebase Hosting + Functions
-```bash
-cd functions_api && npm i
-cd ..
-# Utilise la config pro (functions + rewrites)
-firebase deploy --only functions,hosting --config firebase.pro.json
-```
-Ton front sera servi depuis `webapp/`. Les endpoints :
-- `https://<site>/api/ping`
-- `https://<site>/api/prices`
+## 🌐 Déploiements
 
-## Front (webapp) en local
-Ouvre `webapp/index.html` ou sers-le avec un petit serveur (ex: `npx http-server webapp`).
+- Firebase Hosting : [https://a-ki-pri-sa-ye.web.app](https://a-ki-pri-sa-ye.web.app)
+- Cloudflare Pages : [https://akiprisaye.pages.dev](https://akiprisaye.pages.dev)
 
-## Firestore (optionnel) — Seed
-```bash
-cd tools
-npm i
-export GOOGLE_APPLICATION_CREDENTIALS="/chemin/vers/serviceAccount.json"
-node seed.js
-```
-Collection créée : `products` avec `{id,name,price_dom,price_hex}`.
+## 🧠 Auteur
 
-## Sécurité
-- AUCUNE clé privée n’est incluse. Configure tes secrets via variables d’environnement.
-- Ne commite jamais `serviceAccount*.json`.
+**akiprisaye@gmail.com** – Tous droits réservés.  
+Projet supervisé et automatisé avec agents IA spécialisés.
+
+---
+
+> Ce projet fait partie de la plateforme citoyenne et technologique de l’Outre-Mer 🇬🇵🇲🇶🇬🇫🇷🇪🇲🇶🇵.  
+> Merci pour votre soutien dans la lutte contre la vie chère.
+
