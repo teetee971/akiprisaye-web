@@ -1,8 +1,4 @@
-# A KI PRI SA YÉ – Module Chat IA Local
 
-Instructions :
+# A KI PRI SA YÉ – Déploiement Cloudflare Pages
 
-1. `npm install`
-2. `npm run dev` pour tester localement
-3. Connectez Firebase avec vos clés dans `firebase_config.js`
-4. Déployez sur Vercel ou Firebase Hosting
+Ce dépôt contient la version publique et officielle du site https://akiprisaye.pages.dev.

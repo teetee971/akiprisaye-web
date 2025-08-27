@@ -1,20 +1,8 @@
+
 {
   "hosting": {
-    "public": "y",
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ],
-    "redirects": [
-      {
-        "source": "/",
-        "destination": "https://homygo.eu",
-        "type": 301,
-        "regex": "^/.*",
-        "function": "noop"
-      }
-    ]
+    "public": "./",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [{ "source": "**", "destination": "/index.html" }]
   }
 }

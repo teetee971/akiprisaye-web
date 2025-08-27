@@ -1,1 +1,48 @@
-/* Dark Pro CSS */
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  color: #222;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background-color: #004AAD;
+  color: white;
+  padding: 2rem;
+  text-align: center;
+}
+
+main {
+  padding: 2rem;
+}
+
+.hero {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.cta {
+  display: inline-block;
+  margin-top: 1rem;
+  background: #00A86B;
+  color: white;
+  padding: 1rem 2rem;
+  text-decoration: none;
+  border-radius: 4px;
+}
+
+.features ul {
+  list-style: none;
+  padding: 0;
+}
+
+.features li {
+  background: #e0e0e0;
+  margin: 0.5rem 0;
+  padding: 1rem;
+  border-radius: 4px;
+}
