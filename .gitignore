@@ -11,3 +11,13 @@ serviceAccountKey.json
 *.env
 .firebase/
 .DS_Store
+.env
+*.env
+*.key
+serviceAccountKey*.json
+firebase-adminsdk-*.json
+google-credentials*.json
+node_modules/
+dist/
+.cache/
+*.log
