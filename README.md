@@ -1,28 +1,47 @@
-# A KI PRI SA YÉ — Démo enrichie
+# A KI PRI SA YÉ — PRO PACK (Front + APIs mock)
 
-Cette démo **sans secrets** te permet de tester rapidement :
-- Comparaison de prix (mock)
-- Prévision IA (mock)
-- Vwa Peyi (synthèse vocale navigateur)
-- Radar de cherté (seuil d'alerte)
+## Contenu
+- `webapp/` : front statique (API-ready). Lit `/prices` si `API_URL` défini, sinon bascule en mock.
+- `worker_api/` : API Cloudflare Workers (`/ping`, `/prices`).
+- `functions_api/` : API Firebase Functions (`/api/ping`, `/api/prices`) via `firebase.pro.json` (rewrites).
+- `tools/seed.js` : script Node pour peupler Firestore (collection `products`) — nécessite GOOGLE_APPLICATION_CREDENTIALS (clé admin locale, ne pas commiter).
 
-## Démarrer en local
-Ouvre `index.html` dans le navigateur. Tout est static.
-
-## Déployer sur Firebase Hosting
+## Déploiement Cloudflare Workers
 ```bash
-firebase init hosting   # (si besoin)
-firebase deploy --only hosting
+cd worker_api
+npm i -g wrangler
+wrangler login
+wrangler deploy
+# URL affichée, ex: https://akiprisaye-api.<something>.workers.dev
 ```
-Le fichier `firebase.json` est déjà prêt.
-
-## Déployer sur GitHub Pages
-```bash
-bash deploy_github_pages.sh
+Puis mets l’URL dans `webapp/runtime-env.sample.js`:
+```js
+window.__AKP__ = { API_URL: "https://...workers.dev" };
 ```
 
-## Secrets réels
-- Les clés/API réelles ne sont **pas** incluses (sécurité). Utilise `.env.local`.
-- Exemple : `FIREBASE_API_KEY=xxx` → consommer dans un build frontend.
+## Déploiement Firebase Hosting + Functions
+```bash
+cd functions_api && npm i
+cd ..
+# Utilise la config pro (functions + rewrites)
+firebase deploy --only functions,hosting --config firebase.pro.json
+```
+Ton front sera servi depuis `webapp/`. Les endpoints :
+- `https://<site>/api/ping`
+- `https://<site>/api/prices`
 
-Généré le 2025-08-27T13:57:18.737230Z
+## Front (webapp) en local
+Ouvre `webapp/index.html` ou sers-le avec un petit serveur (ex: `npx http-server webapp`).
+
+## Firestore (optionnel) — Seed
+```bash
+cd tools
+npm i
+export GOOGLE_APPLICATION_CREDENTIALS="/chemin/vers/serviceAccount.json"
+node seed.js
+```
+Collection créée : `products` avec `{id,name,price_dom,price_hex}`.
+
+## Sécurité
+- AUCUNE clé privée n’est incluse. Configure tes secrets via variables d’environnement.
+- Ne commite jamais `serviceAccount*.json`.
