@@ -1,0 +1,1 @@
+// Service worker de la PWA enrichie

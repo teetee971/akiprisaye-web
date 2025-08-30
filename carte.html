@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Carte des magasins - A KI PRI SA YÉ</title>
+  <style>
+    #map { height: 90vh; width: 100%; }
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</head>
+<body>
+  <h2>🗺️ Carte interactive des magasins</h2>
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    var map = L.map('map').setView([16.265, -61.551], 10); // Guadeloupe par défaut
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    const magasins = [
+      { name: "Carrefour Destreland", lat: 16.2676, lon: -61.5252 },
+      { name: "E.Leclerc Abymes", lat: 16.2731, lon: -61.5062 },
+      { name: "Leader Price Baie-Mahault", lat: 16.2679, lon: -61.5863 }
+    ];
+
+    magasins.forEach(m => {
+      L.marker([m.lat, m.lon]).addTo(map)
+        .bindPopup("<b>" + m.name + "</b>");
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1 @@
+// Module comparateur (placeholder)

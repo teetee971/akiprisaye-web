@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A KI PRI SA YÉ — WebApp (API-ready)</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="hero">
+    <h1>A KI PRI SA YÉ</h1>
+    <p>Comparateur de prix DOM ↔ Métropole — démo connectable API</p>
+    <div class="cta">
+      <button id="btnCompare" class="btn">Comparer (API si dispo)</button>
+      <button id="btnMock" class="btn ghost">Forcer le mode mock</button>
+    </div>
+    <div class="env">
+      API_URL: <code id="apiUrlDisplay"></code>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="card">
+      <h2>Produits</h2>
+      <div id="grid" class="grid"></div>
+    </section>
+  </main>
+
+  <footer class="foot">© 2025 A KI PRI SA YÉ</footer>
+
+  <script src="runtime-env.sample.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

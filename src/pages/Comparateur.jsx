@@ -1,0 +1,1 @@
+export default function Comparateur() { return <h2>Comparateur de prix</h2>; }

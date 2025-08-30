@@ -1,0 +1,52 @@
+{
+  "products": [
+    {
+      "id": "riz-1kg",
+      "name": "Riz 1kg",
+      "category": "Épicerie",
+      "brand": "Marque A",
+      "prices": [
+        {
+          "store": "Carrefour",
+          "price": 2.35
+        },
+        {
+          "store": "Leader Price",
+          "price": 2.1
+        }
+      ]
+    },
+    {
+      "id": "lait-1l",
+      "name": "Lait 1L",
+      "category": "Frais",
+      "brand": "Marque B",
+      "prices": [
+        {
+          "store": "Carrefour",
+          "price": 1.25
+        },
+        {
+          "store": "Leader Price",
+          "price": 1.1
+        }
+      ]
+    },
+    {
+      "id": "pates-500g",
+      "name": "Pâtes 500g",
+      "category": "Épicerie",
+      "brand": "Marque C",
+      "prices": [
+        {
+          "store": "Carrefour",
+          "price": 1.05
+        },
+        {
+          "store": "Leader Price",
+          "price": 0.95
+        }
+      ]
+    }
+  ]
+}

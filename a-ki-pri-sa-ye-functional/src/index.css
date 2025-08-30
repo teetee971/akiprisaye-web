@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+:root{color-scheme:dark}
+html,body,#root{height:100%}
+.gradient{background: radial-gradient(1200px 600px at 10% -10%, rgba(0,162,255,0.15), transparent 60%), radial-gradient(1200px 600px at 90% 10%, rgba(0,162,255,0.12), transparent 60%), linear-gradient(180deg, #0b0f19, #0a0e18);}
+.card{@apply bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl shadow-soft}
+.link-btn{@apply inline-flex items-center justify-center px-4 py-3 rounded-xl font-medium transition bg-brand-500/10 text-white hover:bg-brand-500/20 hover:shadow-lg hover:-translate-y-0.5 border}

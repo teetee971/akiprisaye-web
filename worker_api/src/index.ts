@@ -1,0 +1,19 @@
+export default {
+  async fetch(request: Request): Promise<Response> {
+    const url = new URL(request.url);
+    if (url.pathname === "/ping") {
+      return new Response("OK", { status: 200 });
+    }
+    if (url.pathname === "/prices") {
+      const data = {
+        items: [
+          { id: "lait-1l", name: "Lait UHT 1L", price_dom: 1.45, price_hex: 1.12 },
+          { id: "pates-500g", name: "Pâtes 500g", price_dom: 1.36, price_hex: 0.98 },
+          { id: "riz-1kg", name: "Riz 1kg", price_dom: 2.30, price_hex: 1.85 }
+        ]
+      };
+      return Response.json(data, { headers: { "Access-Control-Allow-Origin": "*" } });
+    }
+    return new Response("Not Found", { status: 404 });
+  }
+} satisfies ExportedHandler;

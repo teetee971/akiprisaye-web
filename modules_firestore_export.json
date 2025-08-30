@@ -1,0 +1,304 @@
+{
+  "documents": [
+    {
+      "name": "projects/a-ki-pri-sa-ye/databases/(default)/documents/modules/module_1",
+      "fields": {
+        "id": {
+          "stringValue": "1"
+        },
+        "nom": {
+          "stringValue": "Module 1"
+        },
+        "description": {
+          "stringValue": "Description du module 1 avec fonctionnalit\u00e9 IA int\u00e9gr\u00e9e."
+        },
+        "actif": {
+          "booleanValue": true
+        },
+        "cat\u00e9gorie": {
+          "stringValue": "Fonctionnalit\u00e9 IA"
+        }
+      }
+    },
+    {
+      "name": "projects/a-ki-pri-sa-ye/databases/(default)/documents/modules/module_2",
+      "fields": {
+        "id": {
+          "stringValue": "2"
+        },
+        "nom": {
+          "stringValue": "Module 2"
+        },
+        "description": {
+          "stringValue": "Description du module 2 avec fonctionnalit\u00e9 IA int\u00e9gr\u00e9e."
+        },
+        "actif": {
+          "booleanValue": true
+        },
+        "cat\u00e9gorie": {
+          "stringValue": "Fonctionnalit\u00e9 IA"
+        }
+      }
+    },
+    {
+      "name": "projects/a-ki-pri-sa-ye/databases/(default)/documents/modules/module_3",
+      "fields": {
+        "id": {
+          "stringValue": "3"
+        },
+        "nom": {
+          "stringValue": "Module 3"
+        },
+        "description": {
+          "stringValue": "Description du module 3 avec fonctionnalit\u00e9 IA int\u00e9gr\u00e9e."
+        },
+        "actif": {
+          "booleanValue": true
+        },
+        "cat\u00e9gorie": {
+          "stringValue": "Fonctionnalit\u00e9 IA"
+        }
+      }
+    },
+    {
+      "name": "projects/a-ki-pri-sa-ye/databases/(default)/documents/modules/module_4",
+      "fields": {
+        "id": {
+          "stringValue": "4"
+        },
+        "nom": {
+          "stringValue": "Module 4"
+        },
+        "description": {
+          "stringValue": "Description du module 4 avec fonctionnalit\u00e9 IA int\u00e9gr\u00e9e."
+        },
+        "actif": {
+          "booleanValue": true
+        },
+        "cat\u00e9gorie": {
+          "stringValue": "Fonctionnalit\u00e9 IA"
+        }
+      }
+    },
+    {
+      "name": "projects/a-ki-pri-sa-ye/databases/(default)/documents/modules/module_5",
+      "fields": {
+        "id": {
+          "stringValue": "5"
+        },
+        "nom": {
+          "stringValue": "Module 5"
+        },
+        "description": {
+          "stringValue": "Description du module 5 avec fonctionnalit\u00e9 IA int\u00e9gr\u00e9e."
+        },
+        "actif": {
+          "booleanValue": true
+        },
+        "cat\u00e9gorie": {
+          "stringValue": "Fonctionnalit\u00e9 IA"
+        }
+      }
+    },
+    {
+      "name": "projects/a-ki-pri-sa-ye/databases/(default)/documents/modules/module_6",
+      "fields": {
+        "id": {
+          "stringValue": "6"
+        },
+        "nom": {
+          "stringValue": "Module 6"
+        },
+        "description": {
+          "stringValue": "Description du module 6 avec fonctionnalit\u00e9 IA int\u00e9gr\u00e9e."
+        },
+        "actif": {
+          "booleanValue": true
+        },
+        "cat\u00e9gorie": {
+          "stringValue": "Comparateur"
+        }
+      }
+    },
+    {
+      "name": "projects/a-ki-pri-sa-ye/databases/(default)/documents/modules/module_7",
+      "fields": {
+        "id": {
+          "stringValue": "7"
+        },
+        "nom": {
+          "stringValue": "Module 7"
+        },
+        "description": {
+          "stringValue": "Description du module 7 avec fonctionnalit\u00e9 IA int\u00e9gr\u00e9e."
+        },
+        "actif": {
+          "booleanValue": true
+        },
+        "cat\u00e9gorie": {
+          "stringValue": "Comparateur"
+        }
+      }
+    },
+    {
+      "name": "projects/a-ki-pri-sa-ye/databases/(default)/documents/modules/module_8",
+      "fields": {
+        "id": {
+          "stringValue": "8"
+        },
+        "nom": {
+          "stringValue": "Module 8"
+        },
+        "description": {
+          "stringValue": "Description du module 8 avec fonctionnalit\u00e9 IA int\u00e9gr\u00e9e."
+        },
+        "actif": {
+          "booleanValue": true
+        },
+        "cat\u00e9gorie": {
+          "stringValue": "Comparateur"
+        }
+      }
+    },
+    {
+      "name": "projects/a-ki-pri-sa-ye/databases/(default)/documents/modules/module_9",
+      "fields": {
+        "id": {
+          "stringValue": "9"
+        },
+        "nom": {
+          "stringValue": "Module 9"
+        },
+        "description": {
+          "stringValue": "Description du module 9 avec fonctionnalit\u00e9 IA int\u00e9gr\u00e9e."
+        },
+        "actif": {
+          "booleanValue": true
+        },
+        "cat\u00e9gorie": {
+          "stringValue": "Comparateur"
+        }
+      }
+    },
+    {
+      "name": "projects/a-ki-pri-sa-ye/databases/(default)/documents/modules/module_10",
+      "fields": {
+        "id": {
+          "stringValue": "10"
+        },
+        "nom": {
+          "stringValue": "Module 10"
+        },
+        "description": {
+          "stringValue": "Description du module 10 avec fonctionnalit\u00e9 IA int\u00e9gr\u00e9e."
+        },
+        "actif": {
+          "booleanValue": true
+        },
+        "cat\u00e9gorie": {
+          "stringValue": "Comparateur"
+        }
+      }
+    },
+    {
+      "name": "projects/a-ki-pri-sa-ye/databases/(default)/documents/modules/module_11",
+      "fields": {
+        "id": {
+          "stringValue": "11"
+        },
+        "nom": {
+          "stringValue": "Module 11"
+        },
+        "description": {
+          "stringValue": "Description du module 11 avec fonctionnalit\u00e9 IA int\u00e9gr\u00e9e."
+        },
+        "actif": {
+          "booleanValue": true
+        },
+        "cat\u00e9gorie": {
+          "stringValue": "Analyse avanc\u00e9e"
+        }
+      }
+    },
+    {
+      "name": "projects/a-ki-pri-sa-ye/databases/(default)/documents/modules/module_12",
+      "fields": {
+        "id": {
+          "stringValue": "12"
+        },
+        "nom": {
+          "stringValue": "Module 12"
+        },
+        "description": {
+          "stringValue": "Description du module 12 avec fonctionnalit\u00e9 IA int\u00e9gr\u00e9e."
+        },
+        "actif": {
+          "booleanValue": true
+        },
+        "cat\u00e9gorie": {
+          "stringValue": "Analyse avanc\u00e9e"
+        }
+      }
+    },
+    {
+      "name": "projects/a-ki-pri-sa-ye/databases/(default)/documents/modules/module_13",
+      "fields": {
+        "id": {
+          "stringValue": "13"
+        },
+        "nom": {
+          "stringValue": "Module 13"
+        },
+        "description": {
+          "stringValue": "Description du module 13 avec fonctionnalit\u00e9 IA int\u00e9gr\u00e9e."
+        },
+        "actif": {
+          "booleanValue": true
+        },
+        "cat\u00e9gorie": {
+          "stringValue": "Analyse avanc\u00e9e"
+        }
+      }
+    },
+    {
+      "name": "projects/a-ki-pri-sa-ye/databases/(default)/documents/modules/module_14",
+      "fields": {
+        "id": {
+          "stringValue": "14"
+        },
+        "nom": {
+          "stringValue": "Module 14"
+        },
+        "description": {
+          "stringValue": "Description du module 14 avec fonctionnalit\u00e9 IA int\u00e9gr\u00e9e."
+        },
+        "actif": {
+          "booleanValue": true
+        },
+        "cat\u00e9gorie": {
+          "stringValue": "Analyse avanc\u00e9e"
+        }
+      }
+    },
+    {
+      "name": "projects/a-ki-pri-sa-ye/databases/(default)/documents/modules/module_15",
+      "fields": {
+        "id": {
+          "stringValue": "15"
+        },
+        "nom": {
+          "stringValue": "Module 15"
+        },
+        "description": {
+          "stringValue": "Description du module 15 avec fonctionnalit\u00e9 IA int\u00e9gr\u00e9e."
+        },
+        "actif": {
+          "booleanValue": true
+        },
+        "cat\u00e9gorie": {
+          "stringValue": "Analyse avanc\u00e9e"
+        }
+      }
+    }
+  ]
+}
