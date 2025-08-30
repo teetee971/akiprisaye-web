@@ -1,0 +1,246 @@
+# Backlog de modules "agents" à implémenter (statut: todo|doing|done)
+
+- name: DelayedAssetLoader
+  area: perf
+  status: todo
+  note: "Charger paresseux les assets non-critiques après LCP"
+
+- name: RealtimeHealthMapper
+  area: obs
+  status: todo
+  note: "Ping santé + matrice routage (200/404/5xx)"
+
+- name: CDNAutoSyncWatcher
+  area: perf
+  status: todo
+  note: "Comparer hash par région, purge si écarts"
+
+- name: IndexPageFallbackAI
+  area: router
+  status: todo
+  note: "Fallback 404→/ index SPA si nécessaire"
+
+- name: AgentDeployHealer
+  area: rollout
+  status: todo
+  note: "Canary, rollback auto si régression"
+
+- name: PWAInstallabilityFixer
+  area: pwa
+  status: todo
+  note: "Vérifier manifeste/SW/HTTPS pour installabilité"
+
+- name: Ghost404Handler
+  area: router
+  status: todo
+  note: "Détection 404 fantômes sur routes SPA"
+
+- name: ServiceWorkerHealer
+  area: pwa
+  status: todo
+  note: "Auto-update & heal du SW"
+
+- name: DNSFailoverSelfFixer
+  area: infra
+  status: todo
+  note: "Watch DNS + bascule de secours"
+
+- name: MissingRouteRegenerator
+  area: router
+  status: todo
+  note: "Recréer routes manquantes (SPA redirects)"
+
+- name: BuildSyncOrchestrator
+  area: ci
+  status: todo
+  note: "Synchroniser build/push/deploy"
+
+- name: SilentPatchApplier
+  area: ops
+  status: todo
+  note: "Patchs discrets non bloquants"
+
+- name: InferenceAuditSentinel
+  area: ai
+  status: todo
+  note: "Audit sécurité/comportement d’agents IA"
+
+- name: CognitiveSwitchoverAI
+  area: ai
+  status: todo
+  note: "Bascule vers agent/stratégie IA alternative"
+
+- name: AgentNetworkBalancer
+  area: ai
+  status: todo
+  note: "Répartition de charge entre agents"
+
+- name: ConversionTunerAgent
+  area: ui
+  status: todo
+  note: "AB test titres/CTA/ordre sections"
+
+- name: UIFatigueTracker
+  area: ui
+  status: todo
+  note: "Mesure fatigue scroll/clics → adaptations"
+
+- name: GhostClickDetector
+  area: ui
+  status: todo
+  note: "Détecter clics fantômes et debounce"
+
+- name: MaliciousScriptScanner
+  area: security
+  status: todo
+  note: "Scan CSP/3rd-party + blocage"
+
+- name: PermissionIntegrityEnforcer
+  area: security
+  status: todo
+  note: "Surveiller permissions sensibles"
+
+- name: AntiAbuseFirewallAI
+  area: security
+  status: todo
+  note: "Règles auto anti-abus/crawlers agressifs"
+
+- name: ReverseProxyAutoFixer
+  area: infra
+  status: todo
+  note: "Auto-fix de headers/reverse proxy"
+
+- name: LiveHealthPulseAgent
+  area: obs
+  status: todo
+  note: "Pulse temps réel + statut public"
+
+- name: DNSIntegritySentinel
+  area: infra
+  status: todo
+  note: "Vérif cohérence DNS/TTL"
+
+- name: AIBehaviorTuner
+  area: ai
+  status: todo
+  note: "Affiner prompts/politiques"
+
+- name: SelfAdaptationPlanner
+  area: ai
+  status: todo
+  note: "Roadmap auto-priorisée via métriques"
+
+- name: MirrorStateSyncAgent
+  area: ops
+  status: todo
+  note: "Sync état entre environnements"
+
+- name: SessionAutoStabilizer
+  area: auth
+  status: todo
+  note: "Renouvellement/anti-glitch de session"
+
+- name: DependencyWatchdog
+  area: build
+  status: todo
+  note: "Watch vulnérabilités + MAJ safe"
+
+- name: ColdStartHeater
+  area: perf
+  status: todo
+  note: "Pré-chauffer fonctions/pages lentes"
+
+- name: IncidentPredictorAI
+  area: obs
+  status: todo
+  note: "Prédire risques via signaux faibles"
+
+- name: GeoFailoverCoordinator
+  area: infra
+  status: todo
+  note: "Bascule régionale pilotée"
+
+- name: DynamicCSPDefender
+  area: security
+  status: todo
+  note: "CSP adaptative selon risque"
+
+- name: FallbackRouter
+  area: router
+  status: todo
+  note: "Routage de secours intelligent"
+
+- name: AuthGuardian
+  area: auth
+  status: todo
+  note: "Protections anti-hijack + refresh token"
+
+- name: MobileAutoTester
+  area: qa
+  status: todo
+  note: "Smoke tests mobiles clé"
+
+- name: InterfaceStabilizer
+  area: ui
+  status: todo
+  note: "Limiter reflows/CLS"
+
+- name: LiveDeploySentinel
+  area: ci
+  status: todo
+  note: "Surveillance continue de déploiement"
+
+- name: AutoMetaTagFixer
+  area: seo
+  status: todo
+  note: "Répare title/description/open-graph"
+
+- name: CloudflarePropagateWatcher
+  area: infra
+  status: todo
+  note: "Vérifie propagation + purge ciblée"
+
+- name: UIRegressionLiveScanner
+  area: ui
+  status: todo
+  note: "Comparaison DOM/snapshots"
+
+- name: TokenAutoRefresher
+  area: auth
+  status: todo
+  note: "Refresh silencieux des tokens côté client"
+
+- name: SessionIntegritySentinel
+  area: auth
+  status: todo
+  note: "Détection d’anomalies de session"
+
+- name: OfflineReadinessChecker
+  area: pwa
+  status: todo
+  note: "Audit offline + assets stratégiques"
+
+- name: TouchFeedbackOptimizer
+  area: ux
+  status: todo
+  note: "Réponses haptiques/visuelles rapides"
+
+- name: MobileLayoutFixer
+  area: ux
+  status: todo
+  note: "Règles anti-sauts et polices adaptées"
+
+- name: ComponentSyncAgent
+  area: build
+  status: todo
+  note: "Synchronisation composants partagés"
+
+- name: OrphanRouteCleaner
+  area: router
+  status: todo
+  note: "Nettoyage routes mortes"
+
+- name: LiveRollbackOrchestrator
+  area: rollout
+  status: todo
+  note: "Rollback 1-clic si métriques rouges"
