@@ -1,0 +1,44 @@
+{
+  "regions": [
+    {
+      "code": "GP",
+      "name": "Guadeloupe",
+      "stores": ["Carrefour", "Carrefour Market", "Carrefour Express", "E.Leclerc", "Hyper U", "Super U", "Leader Price", "Jumbo", "Cora", "Auchan Drive (import)", "Système U Drive", "Intermarché (import)"]
+    },
+    {
+      "code": "MQ",
+      "name": "Martinique",
+      "stores": ["Carrefour", "Carrefour Market", "E.Leclerc", "Hyper U", "Super U", "Leader Price", "Jumbo", "Cora", "Géant Casino", "Monoprix (import)"]
+    },
+    {
+      "code": "GF",
+      "name": "Guyane",
+      "stores": ["Carrefour", "Carrefour Market", "E.Leclerc", "Hyper U", "Super U", "Leader Price", "Géant", "Cora"]
+    },
+    {
+      "code": "RE",
+      "name": "La Réunion",
+      "stores": ["Carrefour", "Carrefour Market", "Carrefour Express", "E.Leclerc", "Hyper U", "Super U", "Score", "Jumbo Score", "Auchan (import)"]
+    },
+    {
+      "code": "YT",
+      "name": "Mayotte",
+      "stores": ["Carrefour", "Carrefour Market", "E.Leclerc", "Jumbo", "Système U", "Sodifram", "Casino (import)"]
+    },
+    {
+      "code": "PF",
+      "name": "Polynésie française",
+      "stores": ["Carrefour", "Carrefour Market", "Champion", "Hyper U", "Super U", "Magasins U", "Jumbo", "Hyper Cash"]
+    },
+    {
+      "code": "NC",
+      "name": "Nouvelle-Calédonie",
+      "stores": ["Carrefour", "Carrefour Market", "Casino", "Monoprix", "Géant", "Hyper U", "Super U", "Leader Price"]
+    },
+    {
+      "code": "PM",
+      "name": "Saint-Pierre-et-Miquelon",
+      "stores": ["E.Leclerc", "Carrefour Market", "Intermarché (import)"]
+    }
+  ]
+}
