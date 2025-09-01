@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Couche de composants */
+@layer components {
+  .link { @apply text-blue-700 hover:text-blue-900 underline underline-offset-4; }
+  .btn  { @apply inline-flex items-center gap-2 rounded-xl border px-4 py-2 shadow-sm active:scale-[.99]; }
+  .card { @apply rounded-2xl border bg-white/60 backdrop-blur p-4 shadow-sm; }
+}

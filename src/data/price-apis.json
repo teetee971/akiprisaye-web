@@ -1,0 +1,21 @@
+[
+  {
+    "name": "OpenFoodFacts",
+    "type": "openfoodfacts",
+    "enabled": true,
+    "baseUrl": "https://world.openfoodfacts.org",
+    "imageFieldOrder": ["image_front_url","image_url","selected_images.front.display.fr","selected_images.front.display.en"],
+    "nutriScoreField": "nutriscore_grade"
+  }
+
+  /* Tu peux ajouter d'autres APIs ainsi :
+  ,
+  {
+    "name": "MonSupermarché",
+    "type": "custom",
+    "enabled": false,
+    "baseUrl": "https://api.mon-supermarche.example",
+    "auth": { "header": "x-api-key", "value": "A_METTRE" }
+  }
+  */
+]
