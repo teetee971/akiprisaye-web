@@ -3,7 +3,11 @@
     "overrides": {
       "vite": "4.5.3",
       "rollup": "3.29.4"
-    }
+    },
+    "ignoredBuiltDependencies": [
+      "@swc/core",
+      "esbuild"
+    ]
   },
   "devDependencies": {
     "@tailwindcss/aspect-ratio": "^0.4.2",
