@@ -1,33 +1,24 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# ────────────────────────────────────────────────────────────
-# Usage: ./deploy.sh "ton message de commit"
-# Si tu n'indiques pas de message, un message auto sera généré.
-# ────────────────────────────────────────────────────────────
-
-msg="${1:-deploy: auto (build+pages files+push)}"
+# Usage: ./deploy.sh "ton message"
+MSG="${1:-deploy: auto (build+pages files+push)}"
+BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || true)"
 
 echo "🧭 Repo: $(pwd)"
-git rev-parse --is-inside-work-tree >/dev/null 2>&1 || { echo "❌ Pas un dépôt git"; exit 1; }
+git rev-parse --is-inside-work-tree >/dev/null || { echo "❌ Pas un dépôt git"; exit 1; }
+echo "🌿 Branche: ${BRANCH}"
 
-# Branche courante
-BRANCH="$(git rev-parse --abbrev-ref HEAD)"
-echo "🌿 Branche: $BRANCH"
-
-# ── 1) S'assure que les fichiers Cloudflare Pages sont OK
+# ── 1) Fichiers Cloudflare Pages
 mkdir -p public
 
-# Redirects SPA (sans boucle)
-echo "🔧 Sync public/_redirects"
+# Redirect SPA (évite la boucle)
 printf "/*    /index.html   200!\n" > public/_redirects
 
-# Headers (sécurité + cache) – garde ton _headers existant si présent
+# Headers (sécurité + cache). Si _headers existe à la racine, on le copie sinon on crée un défaut.
 if [ -f "_headers" ]; then
-  echo "🔧 Copie _headers -> public/_headers"
   cp -f _headers public/_headers
-elif [ ! -f "public/_headers" ]; then
-  echo "✍️  Création public/_headers (par défaut)"
+else
   cat > public/_headers <<'EOS'
 /*
   X-Frame-Options: DENY
@@ -39,47 +30,46 @@ elif [ ! -f "public/_headers" ]; then
 EOS
 fi
 
-# ── 2) Test build local (attrape les erreurs avant le push)
-if command -v pnpm >/dev/null 2>&1; then
-  PKG=pnpm
-elif command -v npm >/dev/null 2>&1; then
-  PKG=npm
-else
-  echo "⚠️  ni pnpm ni npm trouvés — skip build local"; PKG=""
-fi
+# ── 2) Build local (attrape les erreurs avant push)
+PKG=""
+command -v pnpm >/dev/null && PKG="pnpm"
+command -v npm  >/dev/null && [ -z "$PKG" ] && PKG="npm"
 
-if [ -n "${PKG}" ]; then
-  echo "🏗️  Build local (vite build)…"
-  if [ "$PKG" = "pnpm" ]; then pnpm install --frozen-lockfile || true; pnpm run build; else npm ci || true; npm run build; fi
-  echo "✅ Build local OK"
+if [ "$PKG" = "pnpm" ]; then
+  pnpm install --frozen-lockfile || true
+  pnpm run build
+elif [ "$PKG" = "npm" ]; then
+  npm ci || true
+  npm run build
+else
+  echo "⚠️  ni pnpm ni npm trouvés — build local ignoré"
 fi
 
 # ── 3) Commit + Push
 git add -A
 if git diff --cached --quiet; then
-  echo "ℹ️  Rien à committer (pas de changements)."
+  echo "ℹ️  Rien à committer."
 else
-  git commit -m "$msg"
+  git commit -m "$MSG"
 fi
+echo "🚀 Push → origin/${BRANCH}"
+git push -u origin "${BRANCH}"
 
-echo "🚀 Push -> origin/$BRANCH"
-git push -u origin "$BRANCH"
-
-# ── 4) (Optionnel) Déploiement API Cloudflare Pages
-# Renseigne ces variables d'environnement si tu veux forcer un redeploy côté Cloudflare :
+# ── 4) (Optionnel) Redeploy via l’API Cloudflare Pages
+# À renseigner si tu veux forcer un redeploy sans changements:
 #   export CF_ACCOUNT_ID="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-#   export CF_API_TOKEN="cf-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-#   export CF_PAGES_PROJECT="akiprisaye"   # par défaut
+#   export CF_API_TOKEN="cf-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"   # Pages:Edit
+#   export CF_PAGES_PROJECT="akiprisaye"                      # par défaut
 CF_PAGES_PROJECT="${CF_PAGES_PROJECT:-akiprisaye}"
 
 if [[ -n "${CF_ACCOUNT_ID:-}" && -n "${CF_API_TOKEN:-}" ]]; then
-  echo "🔁 API Cloudflare Pages: redeploy (${CF_PAGES_PROJECT})"
+  echo "🔁 Cloudflare API: redeploy ${CF_PAGES_PROJECT}"
   curl -sS -X POST \
     "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/pages/projects/${CF_PAGES_PROJECT}/deployments" \
     -H "Authorization: Bearer ${CF_API_TOKEN}" \
     -H "Content-Type: application/json" \
-    -d '{"deployment_trigger": {"metadata": {"triggered_by": "deploy.sh"}}, "production_branch":"'"$BRANCH"'"}' \
-    | jq -r '.success' 2>/dev/null || true
+    -d '{"deployment_trigger":{"metadata":{"triggered_by":"deploy.sh"}},"production_branch":"'"${BRANCH}"'"}' \
+    >/dev/null || true
 fi
 
-echo "🎉 Terminé. Cloudflare Pages va builder automatiquement suite au push."
+echo "🎉 Terminé. Cloudflare Pages va builder suite au push."
