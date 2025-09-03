@@ -2,9 +2,12 @@
   "name": "functions",
   "private": true,
   "type": "commonjs",
-  "engines": { "node": "22" },
+  "engines": {
+    "node": "22"
+  },
   "main": "index.js",
   "scripts": {
+    "build": "echo '📦 Build en cours...' && rm -rf dist && mkdir dist && cp -r public/* dist/",
     "lint": "eslint .",
     "predeploy": "npm --prefix \"$RESOURCE_DIR\" run lint || true"
   },
