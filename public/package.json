@@ -1,0 +1,7 @@
+"scripts": {
+  "start": "vite preview",
+  "dev": "vite",
+  "build": "vite build",
+  "lint": "eslint .",
+  "predeploy": "npm --prefix \"$RESOURCE_DIR\" run lint || true"
+}
