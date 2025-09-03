@@ -104,3 +104,42 @@
   </div>
 </body>
 </html>
+<style>
+  /* ---- Tableau responsive (Palmarès) ---- */
+  .table-wrap{
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    margin: 0 -8px;   /* grignote un peu les bords sur mobile */
+    padding: 0 8px;   /* pour ne pas coller aux bords */
+  }
+  table.responsive{
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 600px; /* force une largeur mini => déclenche le scroll sur mobile */
+  }
+  table.responsive th, table.responsive td{
+    padding: 12px 16px;
+    white-space: nowrap; /* évite les mots coupés en mobile */
+    border-bottom: 1px solid rgba(255,255,255,.08);
+  }
+  table.responsive thead th{
+    position: sticky; top: 0;
+    background: rgba(0,0,0,.35); /* garde l’entête lisible pendant le scroll */
+    backdrop-filter: saturate(160%) blur(6px);
+  }
+  @media (min-width: 768px){
+    table.responsive th, table.responsive td{ white-space: normal; }
+  }
+</style>
+<!-- AVANT -->
+<table>
+  <!-- thead / tbody existants -->
+</table>
+
+<!-- APRÈS -->
+<div class="table-wrap" role="region" aria-label="Palmarès des meilleures enseignes" tabindex="0">
+  <table class="responsive">
+    <!-- thead / tbody existants, inchangés -->
+  </table>
+</div>
+
