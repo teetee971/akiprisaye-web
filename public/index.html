@@ -1,145 +1,148 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>A KI PRI SA YÉ – Lutte contre la vie chère</title>
-  <meta name="description" content="Comparez les prix, suivez votre budget, recevez des alertes promos en Outre-mer. A KI PRI SA YÉ aide à lutter contre la vie chère." />
-  <link rel="icon" href="/favicon.ico" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A KI PRI SA YÉ – Comparateur</title>
+  <link rel="icon" href="/favicon.ico">
 
-  <!-- Open Graph / Twitter -->
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="A KI PRI SA YÉ – Lutte contre la vie chère" />
-  <meta property="og:description" content="Comparez les prix, suivez votre budget et trouvez l’enseigne la moins chère autour de vous." />
-  <meta property="og:url" content="https://akiprisaye.pages.dev/" />
-  <meta property="og:image" content="https://akiprisaye.pages.dev/og-cover.jpg" />
-  <meta name="twitter:card" content="summary_large_image" />
-
-  <link rel="canonical" href="https://akiprisaye.pages.dev/"/>
+  <!-- SEO -->
+  <meta name="description" content="Comparez les prix en Outre-mer, suivez votre budget et trouvez les enseignes les plus économiques.">
+  <meta property="og:title" content="A KI PRI SA YÉ – Lutte contre la vie chère">
+  <meta property="og:description" content="Comparez les prix et trouvez l’enseigne la moins chère autour de vous.">
+  <meta property="og:image" content="/og-cover.jpg">
+  <meta property="og:type" content="website">
 
   <style>
-    :root{--bg:#0b1117;--panel:#0f1621;--txt:#e6eef8;--muted:#9fb3c8;--acc:#22d3a6;}
-    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--txt);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu}
-    .wrap{max-width:980px;margin:auto;padding:24px}
-    header{display:flex;justify-content:space-between;align-items:center;padding:12px 0}
-    nav a{color:var(--muted);text-decoration:none;margin:0 10px}
-    nav a:hover{color:var(--txt)}
-    .hero{background:linear-gradient(180deg,rgba(34,211,166,.06),transparent);border:1px solid #1b2430;border-radius:16px;padding:28px;margin:16px 0}
-    h1{font-size:32px;margin:0 0 8px}
-    h2{font-size:24px;margin:24px 0 12px}
-    .btn{display:inline-block;background:var(--acc);color:#041017;padding:12px 18px;border-radius:10px;font-weight:700;text-decoration:none}
-    .btn.outline{background:transparent;color:var(--acc);border:1px solid var(--acc)}
-    .grid{display:grid;gap:16px}
-    @media(min-width:760px){.grid.cols-3{grid-template-columns:repeat(3,1fr)}}
-    .card{background:var(--panel);border:1px solid #1b2430;border-radius:14px;padding:16px}
-    footer{color:var(--muted);font-size:14px;padding:32px 0}
-    table{width:100%;border-collapse:collapse} td,th{border-bottom:1px solid #1b2430;padding:10px;text-align:left}
+    body {
+      font-family: system-ui, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      margin: 0;
+      padding: 0;
+    }
+    header, section {
+      padding: 1.5rem;
+    }
+    h1, h2 {
+      color: #38bdf8;
+    }
+    a.btn {
+      display: inline-block;
+      margin: .5rem 0;
+      padding: .6rem 1.2rem;
+      border-radius: 8px;
+      background: #38bdf8;
+      color: #0f172a;
+      font-weight: bold;
+      text-decoration: none;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #334155;
+      text-align: center;
+    }
+    th {
+      background: #1e293b;
+      position: sticky;
+      top: 0;
+    }
+    .controls {
+      margin: 1rem 0;
+    }
+    select, button {
+      padding: .5rem;
+      border-radius: 5px;
+      border: none;
+      margin-right: .5rem;
+    }
+    #rankStatus {
+      margin-top: .5rem;
+      font-size: .9rem;
+      color: #94a3b8;
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <div><strong>A KI PRI SA YÉ</strong></div>
-      <nav>
-        <a href="#features">Fonctionnalités</a>
-        <a href="#ranking">Palmarès</a>
-        <a href="#how">Comment ça marche</a>
-        <a href="#contact">Contact</a>
-      </nav>
-    </header>
+  <header>
+    <h1>A KI PRI SA YÉ</h1>
+    <p>Comparez les prix, suivez votre budget et trouvez l’enseigne la moins chère.</p>
+    <a class="btn" href="#">Télécharger maintenant</a>
+  </header>
 
-    <section class="hero">
-      <h1>Maîtrisez votre budget, comparez les prix près de chez vous</h1>
-      <p>Antilles • Océan Indien • Guyane</p>
-      <p>L’appli gratuite qui centralise les promos, calcule vos paniers, et classe les meilleures enseignes pour lutter concrètement contre la vie chère.</p>
-      <p>
-        <a class="btn" href="#download">Télécharger maintenant</a>
-        <a class="btn outline" href="#demo">Voir la démo</a>
-      </p>
-    </section>
+  <section id="ranking">
+    <h2>Palmarès – Meilleures enseignes</h2>
+    <div class="controls">
+      <label for="zoneSelect">Zone :</label>
+      <select id="zoneSelect">
+        <option value="martinique">Martinique</option>
+        <option value="guadeloupe">Guadeloupe</option>
+        <option value="guyane">Guyane</option>
+        <option value="reunion">La Réunion</option>
+        <option value="mayotte">Mayotte</option>
+      </select>
+      <button id="refreshRanking">Actualiser</button>
+    </div>
+    <div id="rankStatus"></div>
+    <table>
+      <thead>
+        <tr>
+          <th>Rang</th>
+          <th>Enseigne</th>
+          <th>Panier moyen</th>
+          <th>Échantillon</th>
+        </tr>
+      </thead>
+      <tbody id="rankBody">
+        <tr><td colspan="4">Choisissez une zone pour voir le classement</td></tr>
+      </tbody>
+    </table>
+  </section>
 
-    <section id="features">
-      <h2>Fonctionnalités clés</h2>
-      <div class="grid cols-3">
-        <div class="card"><h3>Suivi des dépenses</h3><p>Catégorisez vos achats, fixez des objectifs et recevez des alertes de dépassement.</p></div>
-        <div class="card"><h3>Comparaison en temps réel</h3><p>Construisez votre panier et trouvez l’enseigne la plus économique autour de vous.</p></div>
-        <div class="card"><h3>Alertes personnalisées</h3><p>Suivez vos produits favoris et soyez notifié des promos locales.</p></div>
-      </div>
-    </section>
+  <script>
+    const ENDPOINT = "https://us-central1-a-ki-pri-sa-ye.cloudfunctions.net/getRanking";
 
-    <section id="ranking">
-      <h2>Palmarès – Meilleures enseignes <small style="color:var(--muted)">(données démo)</small></h2>
-      <div class="card">
-        <table>
-          <thead><tr><th>Rang</th><th>Enseigne</th><th>Zone</th><th>Panier moyen</th><th>Tendance</th></tr></thead>
-          <tbody>
-            <tr><td>1</td><td>HyperDom</td><td>Fort-de-France</td><td>52,30 €</td><td>↘︎</td></tr>
-            <tr><td>2</td><td>Market Caraïbes</td><td>Pointe-à-Pitre</td><td>53,90 €</td><td>→</td></tr>
-            <tr><td>3</td><td>TiPrix</td><td>Saint-Denis</td><td>54,10 €</td><td>↗︎</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
+    async function fetchRanking(zone) {
+      const rankBody = document.getElementById("rankBody");
+      const rankStatus = document.getElementById("rankStatus");
+      rankStatus.textContent = "⏳ Chargement...";
+      rankBody.innerHTML = '<tr><td colspan="4">Chargement...</td></tr>';
 
-    <section id="how">
-      <h2>Comment ça marche ?</h2>
-      <div class="grid cols-3">
-        <div class="card"><strong>1. Je choisis ma zone</strong><p>Sélectionnez votre territoire et vos enseignes habituelles.</p></div>
-        <div class="card"><strong>2. Je crée mon panier</strong><p>Scannez ou ajoutez vos produits favoris et comparez en un clic.</p></div>
-        <div class="card"><strong>3. J’optimise mon budget</strong><p>Recevez des alertes, suivez vos dépenses, partagez vos listes.</p></div>
-      </div>
-    </section>
+      try {
+        const res = await fetch(`${ENDPOINT}?zone=${encodeURIComponent(zone)}`);
+        if (!res.ok) throw new Error("Erreur réseau");
+        const data = await res.json();
 
-    <section id="download">
-      <h2>Téléchargez l’application</h2>
-      <p>Disponible bientôt sur iOS & Android • Accès anticipé web</p>
-      <p><a class="btn" href="#demo">Accès anticipé</a></p>
-    </section>
+        if (!data.rows || data.rows.length === 0) {
+          rankBody.innerHTML = '<tr><td colspan="4">Aucune donnée pour cette zone</td></tr>';
+          rankStatus.textContent = "⚠️ Pas de données disponibles.";
+          return;
+        }
 
-    <footer id="contact">
-      <p>A KI PRI SA YÉ · <a href="mailto:contact@akiprisaye.app">contact@akiprisaye.app</a></p>
-      <p><a href="/mentions-legales.html">Mentions légales</a> · <a href="/confidentialite.html">Confidentialité</a></p>
-      <p>© A KI PRI SA YÉ – Tous droits réservés.</p>
-    </footer>
-  </div>
+        rankBody.innerHTML = data.rows.map((row, i) => `
+          <tr>
+            <td>${i + 1}</td>
+            <td>${row.store}</td>
+            <td>${row.avgBasket} €</td>
+            <td>${row.sampleSize}</td>
+          </tr>
+        `).join("");
+        rankStatus.textContent = "✅ Données mises à jour";
+      } catch (e) {
+        rankBody.innerHTML = '<tr><td colspan="4">Impossible de charger les données</td></tr>';
+        rankStatus.textContent = "❌ Erreur : " + e.message;
+      }
+    }
+
+    document.getElementById("refreshRanking").addEventListener("click", () => {
+      const zone = document.getElementById("zoneSelect").value;
+      fetchRanking(zone);
+    });
+  </script>
 </body>
 </html>
-<style>
-  /* ---- Tableau responsive (Palmarès) ---- */
-  .table-wrap{
-    overflow-x:auto;
-    -webkit-overflow-scrolling:touch;
-    margin: 0 -8px;   /* grignote un peu les bords sur mobile */
-    padding: 0 8px;   /* pour ne pas coller aux bords */
-  }
-  table.responsive{
-    border-collapse: collapse;
-    width: 100%;
-    min-width: 600px; /* force une largeur mini => déclenche le scroll sur mobile */
-  }
-  table.responsive th, table.responsive td{
-    padding: 12px 16px;
-    white-space: nowrap; /* évite les mots coupés en mobile */
-    border-bottom: 1px solid rgba(255,255,255,.08);
-  }
-  table.responsive thead th{
-    position: sticky; top: 0;
-    background: rgba(0,0,0,.35); /* garde l’entête lisible pendant le scroll */
-    backdrop-filter: saturate(160%) blur(6px);
-  }
-  @media (min-width: 768px){
-    table.responsive th, table.responsive td{ white-space: normal; }
-  }
-</style>
-<!-- AVANT -->
-<table>
-  <!-- thead / tbody existants -->
-</table>
-
-<!-- APRÈS -->
-<div class="table-wrap" role="region" aria-label="Palmarès des meilleures enseignes" tabindex="0">
-  <table class="responsive">
-    <!-- thead / tbody existants, inchangés -->
-  </table>
-</div>
-
