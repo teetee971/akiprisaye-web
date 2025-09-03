@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://akiprisaye.pages.dev/sitemap.xml
