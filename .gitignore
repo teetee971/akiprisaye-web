@@ -7,3 +7,6 @@ dist/
 serviceAccount*.json
 firebase-adminsdk*.json
 *.log
+
+# Sauvegardes nano
+public/index.html.save*
