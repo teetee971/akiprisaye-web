@@ -201,4 +201,69 @@
     document.getElementById("y").textContent = new Date().getFullYear();
   </script>
 </body>
+<script>
+const SEARCH_ENDPOINT = "https://us-central1-a-ki-pri-sa-ye.cloudfunctions.net/searchPrices";
+
+// récupère les éléments du DOM
+const zoneEl   = document.getElementById("zone");
+const qEl      = document.getElementById("q");
+const goEl     = document.getElementById("go");
+const listEl   = document.getElementById("list");
+const statusEl = document.getElementById("status");
+
+// fonction pour afficher les résultats
+function render(items) {
+  if (!items || items.length === 0) {
+    listEl.innerHTML = `<div class="status muted">Aucun résultat trouvé.</div>`;
+    return;
+  }
+
+  // construire les lignes HTML du tableau
+  listEl.innerHTML = items.map(it => `
+    <tr>
+      <td><img src="${it.image || ''}" alt="img" style="max-height:40px"></td>
+      <td>${it.name || '-'}</td>
+      <td>${it.brand || '-'}</td>
+      <td>${it.price ? it.price + ' ' + (it.currency||'') : '-'}</td>
+      <td>${it.quantity || '-'}</td>
+    </tr>
+  `).join("");
+}
+
+// fonction pour lancer la recherche
+async function search() {
+  const zone = zoneEl.value;
+  const text = qEl.value.trim();
+
+  if (!text) {
+    statusEl.textContent = "⚠️ Entrez un produit.";
+    statusEl.className = "status err";
+    return;
+  }
+
+  statusEl.textContent = "Recherche en cours…";
+  statusEl.className = "status muted";
+
+  const v = Date.now().toString().slice(-6); // anti-cache
+  const url = `${SEARCH_ENDPOINT}?zone=${encodeURIComponent(zone)}&q=${encodeURIComponent(text)}&limit=10&v=${v}`;
+
+  try {
+    const res = await fetch(url, { headers: { "accept": "application/json" }});
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const data = await res.json();
+
+    render(data.items || []);
+    statusEl.textContent = `✅ ${data.count || 0} résultats trouvés`;
+    statusEl.className = "status ok";
+  } catch (err) {
+    console.error(err);
+    statusEl.textContent = "❌ Erreur lors de la recherche";
+    statusEl.className = "status err";
+  }
+}
+
+// brancher les événements
+goEl.addEventListener("click", search);
+qEl.addEventListener("keydown", (e) => { if (e.key === "Enter") search(); });
+</script>
 </html>
