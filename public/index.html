@@ -127,3 +127,133 @@
   </script>
 </body>
 </html>
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>A KI PRI SA YÉ – Comparateur de prix & suivi budget</title>
+  <meta name="description" content="Comparez les prix, suivez votre budget et trouvez l’enseigne la moins chère dans votre zone (DROM-COM).">
+  <meta name="theme-color" content="#0f172a" />
+
+  <style>
+    :root{
+      --bg:#0f172a; --panel:#111827; --muted:#94a3b8;
+      --text:#e5e7eb; --brand:#38bdf8; --brand-dark:#0ea5e9;
+      --ok:#22c55e; --err:#ef4444; --card:#1e293b;
+    }
+    body{
+      margin:0; font-family:system-ui, sans-serif; background:var(--bg); color:var(--text);
+    }
+    header{
+      text-align:center; padding:2rem 1rem; background:var(--panel);
+    }
+    header img{
+      max-width:120px; margin-bottom:1rem;
+    }
+    h1{ font-size:1.8rem; margin:0; color:var(--brand); }
+    p.lead{ color:var(--muted); max-width:600px; margin:0.5rem auto; }
+    main{ padding:2rem 1rem; max-width:900px; margin:auto; }
+    button{
+      background:var(--brand); border:none; padding:0.8rem 1.2rem;
+      border-radius:8px; color:#000; font-weight:bold; cursor:pointer;
+    }
+    button:hover{ background:var(--brand-dark); }
+    table{
+      width:100%; border-collapse:collapse; margin-top:1.5rem;
+    }
+    th,td{
+      border:1px solid var(--panel); padding:0.6rem; text-align:center;
+    }
+    th{ background:var(--card); }
+    td.muted{ color:var(--muted); }
+    footer{
+      margin-top:3rem; text-align:center; font-size:0.9rem; color:var(--muted);
+      padding:1rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="/logo.webp" alt="Logo A KI PRI SA YÉ">
+    <h1>A KI PRI SA YÉ</h1>
+    <p class="lead">Comparez les prix, suivez votre budget et trouvez l’enseigne la moins chère dans votre zone.</p>
+    <a href="#"><button>Télécharger maintenant</button></a>
+  </header>
+
+  <main>
+    <h2>📊 Palmarès – Meilleures enseignes</h2>
+    <label for="zoneSelect">Zone :</label>
+    <select id="zoneSelect">
+      <option value="martinique">Martinique</option>
+      <option value="guadeloupe">Guadeloupe</option>
+      <option value="guyane">Guyane</option>
+      <option value="reunion">Réunion</option>
+      <option value="mayotte">Mayotte</option>
+    </select>
+    <button id="refreshRanking">Actualiser</button>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Rang</th>
+          <th>Enseigne</th>
+          <th>Panier moyen</th>
+          <th>Échantillon</th>
+        </tr>
+      </thead>
+      <tbody id="rankBody">
+        <tr><td colspan="4" class="muted">Choisissez une zone pour voir le classement</td></tr>
+      </tbody>
+    </table>
+
+    <p id="rankStatus" style="text-align:center; margin-top:1rem; color:var(--muted)"></p>
+  </main>
+
+  <footer>
+    © 2025 A KI PRI SA YÉ – Données mises à jour automatiquement
+  </footer>
+
+  <script>
+    const ENDPOINT = "https://us-central1-a-ki-pri-sa-ye.cloudfunctions.net/getRanking";
+    const refreshBtn = document.getElementById("refreshRanking");
+    const rankBody = document.getElementById("rankBody");
+    const rankStatus = document.getElementById("rankStatus");
+    const zoneSelect = document.getElementById("zoneSelect");
+    const fmtEUR = new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" });
+
+    async function fetchRanking(zone) {
+      rankStatus.textContent = "Chargement...";
+      rankBody.innerHTML = `<tr><td colspan="4" class="muted">⏳ Chargement en cours...</td></tr>`;
+      try {
+        const res = await fetch(`${ENDPOINT}?zone=${encodeURIComponent(zone)}`);
+        if (!res.ok) throw new Error("Erreur HTTP " + res.status);
+        const data = await res.json();
+
+        if (!data.rows || data.rows.length === 0) {
+          rankBody.innerHTML = `<tr><td colspan="4" class="muted">Aucune donnée disponible</td></tr>`;
+          rankStatus.textContent = "";
+          return;
+        }
+
+        rankBody.innerHTML = data.rows.map((row, i) => `
+          <tr>
+            <td>${i+1}</td>
+            <td>${row.store}</td>
+            <td>${fmtEUR.format(row.avgBasket)}</td>
+            <td>${row.sampleSize}</td>
+          </tr>
+        `).join("");
+        rankStatus.textContent = "✅ Données mises à jour";
+      } catch (err) {
+        console.error(err);
+        rankStatus.textContent = "❌ Erreur lors du chargement";
+        rankBody.innerHTML = `<tr><td colspan="4" class="muted">Réessayez dans un instant.</td></tr>`;
+      }
+    }
+
+    refreshBtn.addEventListener("click", () => fetchRanking(zoneSelect.value));
+  </script>
+</body>
+</html>
