@@ -1,73 +1,70 @@
-<!DOCTYPE html>
+
+<!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Recherche produit – A KI PRI SA YÉ</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>A KI PRI SA YÉ – Recherche produit</title>
   <meta name="theme-color" content="#0f172a" />
-  <meta name="description" content="Recherchez un produit et trouvez son prix par enseigne dans votre zone." />
 
   <style>
     :root{
-      --bg:#0f172a; --panel:#111827; --muted:#94a3b8;
-      --text:#e5e7eb; --brand:#38bdf8; --brand-dark:#0ea5e9;
-      --ok:#22c55e; --err:#ef4444; --card:#1e293b;
+      --bg:#0f172a; --panel:#111827; --card:#1e293b; --text:#e5e7eb;
+      --brand:#38bdf8; --muted:#94a3b8; --ok:#22c55e; --err:#ef4444;
+      --ring:rgba(56,189,248,.35);
     }
     *{box-sizing:border-box}
-    html,body{margin:0; background:var(--bg); color:var(--text); font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial;}
-    a{color:var(--brand); text-decoration:none}
-    header{
-      padding:2rem 1rem; background:linear-gradient(180deg, rgba(2,6,23,.6), rgba(2,6,23,0));
-      text-align:center;
-    }
-    .wrap{max-width:980px; margin:0 auto; padding:0 1rem}
-    h1{margin:0 0 .25rem 0; font-size:clamp(1.4rem, 2.5vw, 2rem);}
-    .sub{color:var(--muted); margin:0}
-    .card{
-      background:rgba(255,255,255,0.04);
-      border:1px solid rgba(255,255,255,0.08);
-      border-radius:14px; padding:1rem;
-      backdrop-filter: blur(6px);
-    }
-    .panel{ margin:1rem 0 2rem 0 }
-    label{display:block; margin:.25rem 0 .4rem 0; color:var(--muted)}
-    select, input[type="text"]{
-      width:100%; background:var(--card); color:var(--text);
-      border:1px solid rgba(255,255,255,.12); border-radius:10px;
-      padding:.9rem .9rem; outline:none;
-    }
-    .row{display:grid; gap:1rem}
-    @media(min-width:700px){ .row{ grid-template-columns: 260px 1fr 160px } }
+    body{margin:0;font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
+    header{padding:2rem 1rem;background:linear-gradient(180deg,#0b1220,#0f172a);}
+    .wrap{max-width:960px;margin:0 auto;padding:0 1rem}
+    h1{margin:0 0 .5rem;font-size:clamp(1.4rem,2.5vw,2rem);letter-spacing:.02em}
+    p.sub{margin:.25rem 0 0;color:var(--muted)}
+    .tabs{display:flex;gap:1rem;margin-top:1rem}
+    .tabs a{color:#cbd5e1;text-decoration:none}
+    .tabs a.active{color:white}
 
-    .btn{
-      display:inline-block; width:100%;
-      background:linear-gradient(90deg, var(--brand), var(--brand-dark));
-      border:none; color:#001018; font-weight:700; letter-spacing:.2px;
-      padding:.95rem 1rem; border-radius:12px; cursor:pointer;
-    }
-    .status{margin:.6rem 0 0 0; font-size:.95rem}
-    .status.ok{ color:var(--ok) }
-    .status.err{ color:var(--err) }
-    .status.muted{ color:var(--muted) }
+    main{padding:1.25rem 0}
+    .card{background:var(--card);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:1rem}
+    label{display:block;margin:.5rem 0 .35rem;color:#cbd5e1}
+    select, input{width:100%;background:#0b1324;color:var(--text);border:1px solid rgba(148,163,184,.25);
+      border-radius:12px;padding:.9rem .95rem;outline:none}
+    input::placeholder{color:#7c8aa0}
+    button{appearance:none;border:0;background:linear-gradient(180deg,#22d3ee,#06b6d4);color:#00131c;
+      font-weight:700;padding:.95rem 1rem;border-radius:12px;cursor:pointer;box-shadow:0 6px 18px var(--ring)}
+    button:active{transform:translateY(1px)}
+    .row{display:grid;grid-template-columns:1fr;gap:1rem}
+    @media(min-width:680px){.row{grid-template-columns:240px 1fr auto}}
 
-    .cards{ display:grid; gap:1rem; margin-top:1rem }
-    @media(min-width:700px){ .cards{ grid-template-columns: 1fr 1fr } }
-    .item h3{ margin:.1rem 0 .35rem 0; font-size:1.1rem; color:var(--brand) }
-    .meta{ margin:.15rem 0; color:var(--muted) }
-    .price{ font-size:1.05rem; font-weight:700; margin:.15rem 0; }
-    footer{ text-align:center; color:var(--muted); padding:2rem 0; }
+    .status{margin-top:.75rem;font-size:.95rem}
+    .status.muted{color:var(--muted)}
+    .status.ok{color:var(--ok)}
+    .status.err{color:#fecaca}
+
+    table{width:100%;border-collapse:collapse;margin-top:1rem}
+    th,td{padding:.75rem .6rem;border-top:1px solid rgba(148,163,184,.15)}
+    th{color:#cbd5e1;text-align:left;font-weight:600;background:rgba(255,255,255,.03)}
+    td{color:#e5e7eb}
+    td small{color:#9fb0c7}
+    footer{padding:2rem 1rem;color:#94a3b8}
+    .text-right{text-align:right}
   </style>
 </head>
 <body>
   <header>
     <div class="wrap">
-      <h1>🔎 Recherche produit</h1>
-      <p class="sub">Tape un mot-clé (ex : <i>banane</i>, <i>yaourt</i>, <i>lait</i>, <i>baguette</i>…) et choisis ta zone.</p>
+      <h1>A KI PRI SA YÉ</h1>
+      <p class="sub">Comparez les prix, suivez votre budget et trouvez l’enseigne la moins chère.</p>
+      <div class="tabs">
+        <a href="/" aria-label="Accueil">Accueil</a>
+        <a class="active" href="/search.html" aria-label="Recherche">🔎 Recherche</a>
+      </div>
     </div>
   </header>
 
   <main class="wrap">
-    <section class="card panel">
+    <section class="card">
+      <h2 style="margin:.25rem 0 1rem">🔎 Recherche produit</h2>
+
       <div class="row">
         <div>
           <label for="zone">Zone</label>
@@ -87,19 +84,31 @@
 
         <div>
           <label for="q">Produit</label>
-          <input id="q" type="text" placeholder="Ex : banane, yaourt nature, lait demi-écrémé…" />
+          <input id="q" type="search" placeholder="Ex : yaourt nature, lait, baguette…" />
         </div>
 
-        <div style="align-self:end">
-          <button id="go" class="btn">Rechercher</button>
+        <div class="text-right" style="align-self:end">
+          <label>&nbsp;</label>
+          <button id="go">Rechercher</button>
         </div>
       </div>
 
       <div id="status" class="status muted">Saisissez un mot-clé puis cliquez sur « Rechercher ».</div>
       <div id="count" class="status muted"></div>
-    </section>
 
-    <section id="results" class="cards"></section>
+      <table aria-label="Résultats">
+        <thead>
+          <tr>
+            <th>Produit</th>
+            <th>Enseigne</th>
+            <th>Prix</th>
+            <th>Unité</th>
+            <th>Maj.</th>
+          </tr>
+        </thead>
+        <tbody id="list"></tbody>
+      </table>
+    </section>
   </main>
 
   <footer>
@@ -107,163 +116,83 @@
   </footer>
 
   <script>
-    // 1) Endpoint de la Cloud Function de recherche
-    const SEARCH_ENDPOINT = "https://us-central1-a-ki-pri-sa-ye.cloudfunctions.net/searchPrices";
+  // 1) Endpoint Cloud Functions (vérifié)
+  const SEARCH_ENDPOINT = "https://us-central1-a-ki-pri-sa-ye.cloudfunctions.net/searchPrices";
 
-    // 2) Utilitaires
-    const fmtEUR = new Intl.NumberFormat("fr-FR", { style:"currency", currency:"EUR" });
-    const $ = (sel) => document.querySelector(sel);
-    const statusEl = $("#status");
-    const countEl  = $("#count");
-    const listEl   = $("#results");
+  // 2) utilitaires & DOM
+  const $ = (sel) => document.querySelector(sel);
+  const zoneEl   = $("#zone");
+  const qEl      = $("#q");
+  const goEl     = $("#go");
+  const listEl   = $("#list");
+  const statusEl = $("#status");
+  const countEl  = $("#count");
 
-    function setStatus(text, type="muted"){
-      statusEl.textContent = text;
-      statusEl.className = "status " + type;
+  const fmtEUR = new Intl.NumberFormat("fr-FR",{style:"currency",currency:"EUR"});
+
+  function setStatus(text, cls="muted") {
+    statusEl.textContent = text;
+    statusEl.className = "status " + cls;
+  }
+
+  function render(items) {
+    if (!items || items.length === 0) {
+      listEl.innerHTML = `<tr><td colspan="5"><div class="status muted">Aucun résultat.</div></td></tr>`;
+      countEl.textContent = "";
+      return;
     }
 
-    function setCount(n, zone, q){
-      if(n==null){ countEl.textContent = ""; return; }
-      countEl.textContent = `${n} résultat${n>1?"s":""} pour « ${q} » – zone ${zone}`;
+    listEl.innerHTML = items.map(it => {
+      const name  = it.name || it.product || it.label || "-";
+      const shop  = it.store || it.shop || it.brand || "-";
+      const price = (it.price ?? it.amount) != null ? fmtEUR.format(it.price ?? it.amount) : "-";
+      const unit  = it.unit || it.unitPrice || "-";
+      const maj   = it.updatedAt
+                    ? new Date((it.updatedAt.seconds ?? it.updatedAt)*1000).toLocaleDateString("fr-FR")
+                    : (it.ts ? new Date(it.ts*1000).toLocaleDateString("fr-FR") : "-");
+      return `
+        <tr>
+          <td>${name}</td>
+          <td>${shop}</td>
+          <td>${price}</td>
+          <td>${unit}</td>
+          <td>${maj}</td>
+        </tr>`;
+    }).join("");
+
+    countEl.textContent = `${items.length} résultat(s).`;
+  }
+
+  async function doSearch() {
+    const zone = (zoneEl.value||"").toString().trim();
+    const text = (qEl.value||"").toString().trim();
+    if (!text) { setStatus("Entrez un mot-clé.", "err"); return; }
+
+    // petite clé cache-busting
+    const v = Date.now().toString().slice(-6);
+    const url = `${SEARCH_ENDPOINT}?zone=${encodeURIComponent(zone)}&q=${encodeURIComponent(text)}&limit=10&v=${v}`;
+
+    setStatus("Recherche en cours…", "muted");
+    listEl.innerHTML = "";
+    countEl.textContent = "";
+
+    try{
+      const r = await fetch(url, { headers:{ "accept":"application/json" }});
+      if(!r.ok) throw new Error("HTTP " + r.status);
+      const data = await r.json();
+      render(data.items || []);
+      setStatus(`Résultats mis à jour.`, "ok");
+    }catch(e){
+      console.error(e);
+      render([]);
+      setStatus("Erreur : impossible de charger les résultats.", "err");
     }
+  }
 
-    function niceDate(ts){
-      try{
-        if(!ts) return "-";
-        if(typeof ts === "number") return new Date(ts).toLocaleDateString("fr-FR");
-        if(ts._seconds) return new Date(ts._seconds*1000).toLocaleDateString("fr-FR");
-        if(ts.seconds)  return new Date(ts.seconds*1000).toLocaleDateString("fr-FR");
-        const d = new Date(ts);
-        return isNaN(d.getTime()) ? "-" : d.toLocaleDateString("fr-FR");
-      }catch{ return "-"; }
-    }
+  goEl.addEventListener("click", doSearch);
+  qEl.addEventListener("keydown", (e)=>{ if(e.key==="Enter") doSearch(); });
 
-    // 3) Rendu visuel
-    function render(items){
-      if(!items || items.length===0){
-        listEl.innerHTML = `<div class="card item"><h3>Aucun résultat</h3><div class="meta">Essayez un autre mot-clé.</div></div>`;
-        setCount(0);
-        return;
-      }
-
-      listEl.innerHTML = items.map(it => {
-        const name  = it.name || it.product || it.label || "Produit";
-        const shop  = it.store || it.shop || it.brand || "Enseigne inconnue";
-        const prix  = (it.price ?? it.amount ?? null);
-        const unit  = it.unit || it.unitPrice || "";
-        const maj   = niceDate(it.updatedAt || it.ts);
-
-        return `
-          <article class="card item">
-            <h3>${name}</h3>
-            <div class="price">${prix != null ? fmtEUR.format(prix) : "—"} ${unit ? " / "+unit : ""}</div>
-            <div class="meta"><b>Enseigne :</b> ${shop}</div>
-            <div class="meta"><b>Maj :</b> ${maj}</div>
-          </article>
-        `;
-      }).join("");
-      setCount(items.length, $("#zone").value, $("#q").value.trim());
-    }
-
-    // 4) Appel API
-    async function doSearch(){
-      const zone = $("#zone").value;
-      const q    = $("#q").value.trim();
-
-      if(!q){ setStatus("Entrez un mot-clé.", "err"); listEl.innerHTML = ""; setCount(null); return; }
-
-      // cache-busting léger (évite un vieux cache éventuel en Pages)
-      const v = Date.now().toString().slice(-6);
-      const url = `${SEARCH_ENDPOINT}?zone=${encodeURIComponent(zone)}&q=${encodeURIComponent(q)}&limit=24&v=${v}`;
-
-      setStatus("Recherche en cours…", "muted");
-
-      try{
-        const res = await fetch(url, { headers:{ "accept":"application/json" }});
-        if(!res.ok) throw new Error("HTTP "+res.status);
-        const data = await res.json();
-
-        if(!data || !Array.isArray(data.items)){ render([]); setStatus("Aucun résultat.", "muted"); return; }
-
-        render(data.items);
-        setStatus("Résultats mis à jour.", "ok");
-      }catch(e){
-        console.error(e);
-        setStatus("Erreur : impossible de charger les résultats.", "err");
-      }
-    }
-
-    // 5) Événements
-    $("#go").addEventListener("click", doSearch);
-    $("#q").addEventListener("keydown", (e)=>{ if(e.key==="Enter") doSearch(); });
-
-    // Année footer
-    document.getElementById("y").textContent = new Date().getFullYear();
+  document.getElementById("y").textContent = new Date().getFullYear();
   </script>
 </body>
-<script>
-const SEARCH_ENDPOINT = "https://us-central1-a-ki-pri-sa-ye.cloudfunctions.net/searchPrices";
-
-// récupère les éléments du DOM
-const zoneEl   = document.getElementById("zone");
-const qEl      = document.getElementById("q");
-const goEl     = document.getElementById("go");
-const listEl   = document.getElementById("list");
-const statusEl = document.getElementById("status");
-
-// fonction pour afficher les résultats
-function render(items) {
-  if (!items || items.length === 0) {
-    listEl.innerHTML = `<div class="status muted">Aucun résultat trouvé.</div>`;
-    return;
-  }
-
-  // construire les lignes HTML du tableau
-  listEl.innerHTML = items.map(it => `
-    <tr>
-      <td><img src="${it.image || ''}" alt="img" style="max-height:40px"></td>
-      <td>${it.name || '-'}</td>
-      <td>${it.brand || '-'}</td>
-      <td>${it.price ? it.price + ' ' + (it.currency||'') : '-'}</td>
-      <td>${it.quantity || '-'}</td>
-    </tr>
-  `).join("");
-}
-
-// fonction pour lancer la recherche
-async function search() {
-  const zone = zoneEl.value;
-  const text = qEl.value.trim();
-
-  if (!text) {
-    statusEl.textContent = "⚠️ Entrez un produit.";
-    statusEl.className = "status err";
-    return;
-  }
-
-  statusEl.textContent = "Recherche en cours…";
-  statusEl.className = "status muted";
-
-  const v = Date.now().toString().slice(-6); // anti-cache
-  const url = `${SEARCH_ENDPOINT}?zone=${encodeURIComponent(zone)}&q=${encodeURIComponent(text)}&limit=10&v=${v}`;
-
-  try {
-    const res = await fetch(url, { headers: { "accept": "application/json" }});
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    const data = await res.json();
-
-    render(data.items || []);
-    statusEl.textContent = `✅ ${data.count || 0} résultats trouvés`;
-    statusEl.className = "status ok";
-  } catch (err) {
-    console.error(err);
-    statusEl.textContent = "❌ Erreur lors de la recherche";
-    statusEl.className = "status err";
-  }
-}
-
-// brancher les événements
-goEl.addEventListener("click", search);
-qEl.addEventListener("keydown", (e) => { if (e.key === "Enter") search(); });
-</script>
 </html>
