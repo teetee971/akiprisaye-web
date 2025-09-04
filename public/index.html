@@ -53,6 +53,79 @@
     <a class="cta" href="#" aria-disabled="true">Télécharger maintenant</a>
   </header>
 
+<!-- ===== Recherche Produit (branchée Firebase) ===== -->
+<section id="search" style="max-width: 980px; margin: 2rem auto;">
+  <div style="background: var(--card); border:1px solid rgba(255,255,255,.06); border-radius:18px; padding:1.25rem;">
+    <h2 style="margin:0 0 1rem 0; font-size:1.4rem;">🔎 Recherche produit</h2>
+
+    <div style="display:grid; gap:.75rem; grid-template-columns: 1fr;">
+      <label style="font-size:.95rem;">Zone</label>
+      <select id="zone" style="padding:.8rem; border-radius:.75rem; background:#0e1520; color:#e5e7eb; border:1px solid rgba(255,255,255,.08);">
+        <option value="martinique">Martinique</option>
+        <option value="guadeloupe">Guadeloupe</option>
+        <option value="guyane">Guyane</option>
+        <option value="reunion">Réunion</option>
+        <option value="mayotte">Mayotte</option>
+        <option value="saint-martin">Saint-Martin</option>
+        <option value="saint-barthelemy">Saint-Barthélemy</option>
+        <option value="saint-pierre-et-miquelon">Saint-Pierre-et-Miquelon</option>
+        <option value="polynesie-francaise">Polynésie française</option>
+        <option value="wallis-et-futuna">Wallis-et-Futuna</option>
+      </select>
+
+      <label style="font-size:.95rem; margin-top:.5rem;">Produit</label>
+      <input id="q" placeholder="Ex : yaourt nature, lait, baguette…"
+             style="padding:.8rem; border-radius:.75rem; background:#0e1520; color:#e5e7eb; border:1px solid rgba(255,255,255,.08);" />
+      <button id="go" style="margin-top:.25rem; padding:.85rem 1.1rem; border-radius:.8rem; background:#22d3ee; color:#002b3a; font-weight:700; border:0; cursor:pointer;">Rechercher</button>
+
+      <div id="status" class="status muted" style="min-height:1.25rem; font-size:.95rem; margin-top:.25rem;">Saisissez un mot-clé puis cliquez sur « Rechercher ».</div>
+    </div>
+
+    <div style="overflow:auto; margin-top:1rem;">
+      <table style="width:100%; border-collapse:collapse;">
+        <thead>
+          <tr>
+            <th style="text-align:left; padding:.6rem; border-bottom:1px solid rgba(255,255,255,.08);">Produit</th>
+            <th style="text-align:left; padding:.6rem; border-bottom:1px solid rgba(255,255,255,.08);">Enseigne</th>
+            <th style="text-align:left; padding:.6rem; border-bottom:1px solid rgba(255,255,255,.08);">Prix</th>
+            <th style="text-align:left; padding:.6rem; border-bottom:1px solid rgba(255,255,255,.08);">Unité</th>
+            <th style="text-align:left; padding:.6rem; border-bottom:1px solid rgba(255,255,255,.08);">Maj.</th>
+          </tr>
+        </thead>
+        <tbody id="list"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<script>
+  // ====== CONFIG : URL Firebase (la tienne) ======
+  const SEARCH_ENDPOINT = "https://us-central1-a-ki-pri-sa-ye.cloudfunctions.net/searchPrices";
+
+  const zoneEl  = document.getElementById('zone');
+  const qEl     = document.getElementById('q');
+  const goEl    = document.getElementById('go');
+  const listEl  = document.getElementById('list');
+  const statusEl= document.getElementById('status');
+
+  const fmtEUR = new Intl.NumberFormat("fr-FR", { style:"currency", currency:"EUR" });
+
+  function setStatus(txt, cls="muted"){
+    statusEl.textContent = txt;
+    statusEl.style.color = (cls==="err") ? "#ef4444" : (cls==="ok" ? "#22c55e" : "#94a3b8");
+  }
+
+  function render(items){
+    if(!items || !items.length){
+      listEl.innerHTML = `<tr><td colspan="5" style="padding:.7rem; color:#94a3b8;">Aucun résultat.</td></tr>`;
+      return;
+    }
+    listEl.innerHTML = items.map(it => {
+      const p = (it.price?.amount ?? it.price ?? null);
+      const u = it.unit ?? it.unitPrice ?? "";
+      const d = it.updatedAt ? new Date((it.updatedAt.seconds || it.updatedAt._seconds)*1000) :
+                (it.ts ? new Date(it.ts) : null);
+      const ds = d ? d.toLocaleDateString
   <main>
     <!-- RECHERCHE PRODUIT -->
     <section class="card" id="searchCard">
