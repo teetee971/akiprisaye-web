@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Recherche de produits – A KI PRI SA YÉ</title>
+  <meta name="theme-color" content="#0f172a" />
+  <style>
+    :root{--bg:#0f172a;--panel:#111827;--muted:#94a3b8;--text:#e5e7eb;--brand:#38bdf8;--ok:#22c55e;--err:#ef4444;--card:#1e293b;}
+    *{box-sizing:border-box} body{margin:0;font-family:system-ui, sans-serif;background:var(--bg);color:var(--text);}
+    .wrap{max-width:980px;margin:0 auto;padding:1rem;}
+    .card{background:var(--card);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:1rem;}
+    h1{font-size:1.4rem;margin:0 0 1rem} label{display:block;margin:.5rem 0 .25rem;color:var(--muted);font-size:.95rem}
+    input,select,button{width:100%;padding:.9rem;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:#0b1220;color:var(--text)}
+    button{background:linear-gradient(90deg,#22d3ee,#0ea5e9);color:#001b2b;font-weight:700;margin-top:.75rem;cursor:pointer}
+    button:hover{filter:brightness(1.05)}
+    .row{display:grid;grid-template-columns:1fr 1fr 1fr .8fr;gap:.6rem;align-items:center;padding:.7rem 0;border-bottom:1px dashed rgba(255,255,255,.06)}
+    .row>div:first-child{font-weight:600}
+    .head{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap}
+    .pill{background:rgba(56,189,248,.12);color:#a5f3fc;padding:.25rem .6rem;border-radius:999px;font-size:.85rem}
+    .muted{color:var(--muted)}
+    .status{margin:.5rem 0 0;font-size:.95rem}
+    .ok{color:var(--ok)} .err{color:var(--err)} .muted{color:var(--muted)}
+    .list{margin-top:1rem}
+    a{color:var(--brand);text-decoration:none}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="head">
+      <h1 style="margin:0">🔎 Recherche de produits</h1>
+      <a class="pill" href="/">← Retour à l’accueil</a>
+    </div>
+
+    <div class="card" style="margin-top:1rem">
+      <label for="zone">Zone</label>
+      <select id="zone">
+        <option value="martinique">Martinique</option>
+        <option value="guadeloupe">Guadeloupe</option>
+        <option value="guyane">Guyane</option>
+        <option value="reunion">Réunion</option>
+        <option value="mayotte">Mayotte</option>
+        <option value="saint-martin">Saint-Martin</option>
+        <option value="saint-barthelemy">Saint-Barthélemy</option>
+        <option value="saint-pierre-et-miquelon">Saint-Pierre-et-Miquelon</option>
+        <option value="polynesie-francaise">Polynésie française</option>
+        <option value="wallis-et-futuna">Wallis-et-Futuna</option>
+      </select>
+
+      <label for="q">Produit à rechercher</label>
+      <input id="q" placeholder="Ex : yaourt nature, lait, baguette…" />
+
+      <button id="go">Rechercher</button>
+      <div id="status" class="status muted">Saisissez un mot-clé puis cliquez sur « Rechercher ».</div>
+
+      <div id="list" class="list"></div>
+    </div>
+  </div>
+
+  <script>
+    // ⚠️ adapte si ton URL de fonction est différente :
+    const SEARCH_ENDPOINT = "https://us-central1-a-ki-pri-sa-ye.cloudfunctions.net/searchPrices";
+
+    const el = (id)=>document.getElementById(id);
+    const zone = el('zone'), q = el('q'), go = el('go'), list = el('list'), status = el('status');
+
+    function fmtPrice(p){ if(p==null) return "—"; try{ return new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR'}).format(Number(p)); }catch{ return p; } }
+
+    function render(items){
+      if(!items || !items.length){ list.innerHTML = '<div class="muted">Aucun résultat.</div>'; return; }
+      list.innerHTML = items.map(it=>`
+        <div class="row">
+          <div>${it.name ?? '—'}</div>
+          <div class="muted">${it.store ?? '—'}</div>
+          <div>${fmtPrice(it.price)} <span class="muted">${it.unit?('· '+it.unit):''}</span></div>
+          <div class="muted" style="text-align:right">${it.updatedAt ? new Date((it.updatedAt.seconds||0)*1000).toLocaleDateString('fr-FR') : ''}</div>
+        </div>
+      `).join('');
+    }
+
+    async function search(){
+      const z = zone.value;
+      const text = q.value.trim();
+      if(!text){ status.textContent = "Entrez un mot-clé."; status.className = "status err"; return; }
+
+      status.textContent = "Recherche en cours…"; status.className = "status muted";
+      list.innerHTML = "";
+
+      // cache-busting léger
+      const v = Date.now().toString().slice(-6);
+      const url = `${SEARCH_ENDPOINT}?zone=${encodeURIComponent(z)}&q=${encodeURIComponent(text)}&limit=50&v=${v}`;
+
+      try{
+        const r = await fetch(url, { headers: { "accept":"application/json" }});
+        if(!r.ok) throw new Error("HTTP "+r.status);
+        const data = await r.json();
+        render(data.items||[]);
+        status.textContent = `Résultats : ${data.count||0}`; status.className = "status ok";
+      }catch(e){
+        console.error(e);
+        status.textContent = "Erreur pendant la recherche."; status.className = "status err";
+      }
+    }
+
+    go.addEventListener('click', search);
+    q.addEventListener('keydown', (e)=>{ if(e.key==='Enter') search(); });
+  </script>
+</body>
+</html>
