@@ -3,190 +3,127 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>A KI PRI SA YÉ – Comparateur officiel DOM-COM</title>
-  <meta name="description" content="Comparez les prix, suivez votre budget et trouvez l’enseigne la moins chère dans les DOM-COM grâce à A KI PRI SA YÉ.">
+  <title>A KI PRI SA YÉ – Comparateur de prix & suivi budget</title>
+  <meta name="description" content="Comparez les prix, suivez votre budget et trouvez l’enseigne la moins chère dans votre zone (DROM-COM).">
   <meta name="theme-color" content="#0f172a" />
+
   <style>
     :root{
-      --bg:#0f172a; --panel:#111827; --card:#1e293b;
-      --text:#f8fafc; --muted:#94a3b8; --accent:#3b82f6;
-      --accent2:#38bdf8; --ok:#22c55e; --err:#ef4444;
+      --bg:#0f172a; --panel:#111827; --muted:#94a3b8;
+      --text:#e5e7eb; --brand:#38bdf8; --brand-dark:#0ea5e9;
+      --ok:#22c55e; --err:#ef4444; --card:#1e293b;
     }
-    *{box-sizing:border-box}
-    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
-    header{background:var(--panel);padding:14px 18px;display:flex;gap:12px;align-items:center;justify-content:space-between;border-bottom:1px solid #1f2937}
-    header .brand{display:flex;align-items:center;gap:10px}
-    header img{height:42px;width:auto;display:block}
-    header h1{margin:0;font-size:1.25rem;color:var(--accent);font-weight:800}
-    main{max-width:980px;margin:0 auto;padding:22px 16px}
-    h2{color:var(--accent);margin:18px 0 10px;font-size:1.4rem}
-    .lead{color:var(--muted);margin-top:4px}
-    .card{background:var(--card);border:1px solid #233043;border-radius:12px;padding:16px;margin-top:12px}
-    ul{margin:8px 0 0 18px}
-    ol{margin:8px 0 0 18px}
-    .btn{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;padding:10px 14px;border-radius:10px;font-weight:700;margin-top:10px}
-    .btn:hover{filter:brightness(1.05)}
-    .hr{height:1px;background:#1f2937;margin:24px 0}
-    /* Palmarès */
-    .panel{background:var(--panel);border:1px solid #1f2937;border-radius:12px;padding:14px}
-    .controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
-    select,button{border:none;border-radius:10px}
-    select{background:#0b1220;color:var(--text);padding:10px 12px}
-    button{background:var(--accent2);color:#0b1220;padding:10px 14px;font-weight:800;cursor:pointer}
-    button:hover{filter:brightness(1.06)}
-    table{width:100%;border-collapse:collapse;border:1px solid #1f2937;border-radius:10px;overflow:hidden;margin-top:6px}
-    thead th{background:#0b1224;color:#cbd5e1;text-align:left;padding:10px}
-    tbody td{padding:10px;border-top:1px solid #1f2937}
-    .muted{color:var(--muted)}
-    .ok{color:var(--ok)} .err{color:var(--err)}
-    footer{margin:28px auto 16px;max-width:980px;color:#9ca3af;text-align:center;padding:0 16px}
+    body{
+      margin:0; font-family:system-ui, sans-serif; background:var(--bg); color:var(--text);
+    }
+    header{
+      text-align:center; padding:2rem 1rem; background:var(--panel);
+    }
+    header img{
+      max-width:120px; margin-bottom:1rem;
+    }
+    h1{ font-size:1.8rem; margin:0; color:var(--brand); }
+    p.lead{ color:var(--muted); max-width:600px; margin:0.5rem auto; }
+    main{ padding:2rem 1rem; max-width:900px; margin:auto; }
+    button{
+      background:var(--brand); border:none; padding:0.8rem 1.2rem;
+      border-radius:8px; color:#000; font-weight:bold; cursor:pointer;
+    }
+    button:hover{ background:var(--brand-dark); }
+    table{
+      width:100%; border-collapse:collapse; margin-top:1.5rem;
+    }
+    th,td{
+      border:1px solid var(--panel); padding:0.6rem; text-align:center;
+    }
+    th{ background:var(--card); }
+    td.muted{ color:var(--muted); }
+    footer{
+      margin-top:3rem; text-align:center; font-size:0.9rem; color:var(--muted);
+      padding:1rem;
+    }
   </style>
 </head>
 <body>
   <header>
-    <div class="brand">
-      <!-- ⚠️ place ton logo dans /public/logo.webp (ou change le src) -->
-      <img src="/logo.webp" alt="Logo A KI PRI SA YÉ" onerror="this.src='/logo_hd_4k.png'">
-      <h1>A KI PRI SA YÉ</h1>
-    </div>
-    <a class="btn" href="#palmares">Voir le palmarès</a>
+    <img src="/logo.webp" alt="Logo A KI PRI SA YÉ">
+    <h1>A KI PRI SA YÉ</h1>
+    <p class="lead">Comparez les prix, suivez votre budget et trouvez l’enseigne la moins chère dans votre zone.</p>
+    <a href="#"><button>Télécharger maintenant</button></a>
   </header>
 
   <main>
-    <!-- Présentation -->
-    <section>
-      <h2>📌 Pourquoi ce logiciel ?</h2>
-      <p class="lead">A KI PRI SA YÉ est le comparateur officiel pensé pour les DOM-COM : transparence, simplicité et efficacité pour lutter contre la vie chère.</p>
-      <div class="card">
-        <ul>
-          <li>Comparer les prix des enseignes en fonction de votre <strong>zone</strong></li>
-          <li>Suivre votre <strong>budget</strong> et repérer les écarts de prix</li>
-          <li>Identifier rapidement <strong>l’enseigne la plus compétitive</strong></li>
-          <li>Palmarès actualisé avec <strong>panier moyen</strong> et <strong>échantillon</strong></li>
-        </ul>
-        <a class="btn" href="#palmares">Accéder au palmarès</a>
-      </div>
+    <h2>📊 Palmarès – Meilleures enseignes</h2>
+    <label for="zoneSelect">Zone :</label>
+    <select id="zoneSelect">
+      <option value="martinique">Martinique</option>
+      <option value="guadeloupe">Guadeloupe</option>
+      <option value="guyane">Guyane</option>
+      <option value="reunion">Réunion</option>
+      <option value="mayotte">Mayotte</option>
+    </select>
+    <button id="refreshRanking">Actualiser</button>
 
-      <h2>⚙️ Comment ça marche ?</h2>
-      <div class="card">
-        <ol>
-          <li>Choisissez votre <strong>zone</strong> (DROM-COM)</li>
-          <li>Consultez le <strong>classement des enseignes</strong></li>
-          <li>Décidez où faire vos courses en toute <strong>confiance</strong></li>
-        </ol>
-      </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Rang</th>
+          <th>Enseigne</th>
+          <th>Panier moyen</th>
+          <th>Échantillon</th>
+        </tr>
+      </thead>
+      <tbody id="rankBody">
+        <tr><td colspan="4" class="muted">Choisissez une zone pour voir le classement</td></tr>
+      </tbody>
+    </table>
 
-      <h2>👥 Pour qui ?</h2>
-      <div class="card">
-        <ul>
-          <li><strong>Consommateurs</strong> : économisez sur le panier</li>
-          <li><strong>Commerçants</strong> : positionnement concurrentiel</li>
-          <li><strong>Collectivités/Assos</strong> : indicateurs fiables & lisibles</li>
-        </ul>
-      </div>
-    </section>
-
-    <div class="hr"></div>
-
-    <!-- Palmarès dynamique -->
-    <section id="palmares" aria-labelledby="rank-title">
-      <h2 id="rank-title">📊 Palmarès – Meilleures enseignes</h2>
-      <div class="panel">
-        <div class="controls">
-          <label for="zoneSelect" class="muted">Zone :</label>
-          <select id="zoneSelect">
-            <option>Martinique</option>
-            <option>Guadeloupe</option>
-            <option>Guyane</option>
-            <option>Réunion</option>
-            <option>Mayotte</option>
-            <option>Saint-Martin</option>
-            <option>Saint-Barthélemy</option>
-            <option>Saint-Pierre-et-Miquelon</option>
-            <option>Polynésie française</option>
-            <option>Wallis-et-Futuna</option>
-          </select>
-          <button id="refresh">Actualiser</button>
-          <span id="status" class="muted" role="status" aria-live="polite"></span>
-        </div>
-
-        <div style="overflow:auto;border-radius:10px">
-          <table aria-describedby="rank-title">
-            <thead>
-              <tr>
-                <th>Rang</th>
-                <th>Enseigne</th>
-                <th>Panier moyen</th>
-                <th>Échantillon</th>
-              </tr>
-            </thead>
-            <tbody id="rankBody">
-              <tr><td colspan="4" class="muted">Choisissez une zone puis cliquez sur <em>Actualiser</em>.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
+    <p id="rankStatus" style="text-align:center; margin-top:1rem; color:var(--muted)"></p>
   </main>
 
   <footer>
-    © <span id="year"></span> A KI PRI SA YÉ — Tous droits réservés.
+    © 2025 A KI PRI SA YÉ – Données mises à jour automatiquement
   </footer>
 
   <script>
-    // -------- CONFIG À ADAPTER SI BESOIN --------
-    // Cloud Functions HTTPS (GET /getRanking?zone=xxx)
     const ENDPOINT = "https://us-central1-a-ki-pri-sa-ye.cloudfunctions.net/getRanking";
-    // --------------------------------------------
-
-    const zoneSelect = document.getElementById("zoneSelect");
-    const refreshBtn = document.getElementById("refresh");
+    const refreshBtn = document.getElementById("refreshRanking");
     const rankBody = document.getElementById("rankBody");
-    const statusEl = document.getElementById("status");
-    document.getElementById("year").textContent = new Date().getFullYear();
-
+    const rankStatus = document.getElementById("rankStatus");
+    const zoneSelect = document.getElementById("zoneSelect");
     const fmtEUR = new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" });
 
-    function normalizeZone(label){
-      // Convertit "Réunion" -> "reunion", "Saint-Pierre-et-Miquelon" -> "saint-pierre-et-miquelon", etc.
-      return label.toString().normalize("NFD").replace(/\p{Diacritic}/gu,"").toLowerCase().replace(/\s+/g,"-");
-    }
-
-    async function fetchRanking(zoneLabel){
-      const zone = normalizeZone(zoneLabel);
-      statusEl.className = "muted";
-      statusEl.textContent = "";
-      rankBody.innerHTML = '<tr><td colspan="4" class="muted">⏳ Chargement…</td></tr>';
-      try{
-        const res = await fetch(`${ENDPOINT}?zone=${encodeURIComponent(zone)}`, { cache:"no-store" });
-        if(!res.ok) throw new Error("HTTP " + res.status);
+    async function fetchRanking(zone) {
+      rankStatus.textContent = "Chargement...";
+      rankBody.innerHTML = `<tr><td colspan="4" class="muted">⏳ Chargement en cours...</td></tr>`;
+      try {
+        const res = await fetch(`${ENDPOINT}?zone=${encodeURIComponent(zone)}`);
+        if (!res.ok) throw new Error("Erreur HTTP " + res.status);
         const data = await res.json();
 
-        if(!data.rows || !data.rows.length){
-          rankBody.innerHTML = '<tr><td colspan="4" class="muted">Aucune donnée disponible pour cette zone.</td></tr>';
+        if (!data.rows || data.rows.length === 0) {
+          rankBody.innerHTML = `<tr><td colspan="4" class="muted">Aucune donnée disponible</td></tr>`;
+          rankStatus.textContent = "";
           return;
         }
 
-        rankBody.innerHTML = data.rows.map((r,i)=>`
+        rankBody.innerHTML = data.rows.map((row, i) => `
           <tr>
             <td>${i+1}</td>
-            <td>${r.store}</td>
-            <td>${fmtEUR.format(Number(r.avgBasket||0))}</td>
-            <td>${r.sampleSize ?? "-"}</td>
+            <td>${row.store}</td>
+            <td>${fmtEUR.format(row.avgBasket)}</td>
+            <td>${row.sampleSize}</td>
           </tr>
         `).join("");
-
-        statusEl.textContent = "✅ Classement mis à jour";
-        statusEl.className = "ok";
-      }catch(e){
-        console.error(e);
-        statusEl.textContent = "❌ Erreur de chargement";
-        statusEl.className = "err";
-        rankBody.innerHTML = '<tr><td colspan="4" class="muted">Réessayez dans un instant.</td></tr>';
+        rankStatus.textContent = "✅ Données mises à jour";
+      } catch (err) {
+        console.error(err);
+        rankStatus.textContent = "❌ Erreur lors du chargement";
+        rankBody.innerHTML = `<tr><td colspan="4" class="muted">Réessayez dans un instant.</td></tr>`;
       }
     }
 
-    refreshBtn.addEventListener("click", ()=> fetchRanking(zoneSelect.value));
+    refreshBtn.addEventListener("click", () => fetchRanking(zoneSelect.value));
   </script>
 </body>
 </html>
