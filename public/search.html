@@ -1,109 +1,204 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Recherche de produits – A KI PRI SA YÉ</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Recherche produit – A KI PRI SA YÉ</title>
   <meta name="theme-color" content="#0f172a" />
+  <meta name="description" content="Recherchez un produit et trouvez son prix par enseigne dans votre zone." />
+
   <style>
-    :root{--bg:#0f172a;--panel:#111827;--muted:#94a3b8;--text:#e5e7eb;--brand:#38bdf8;--ok:#22c55e;--err:#ef4444;--card:#1e293b;}
-    *{box-sizing:border-box} body{margin:0;font-family:system-ui, sans-serif;background:var(--bg);color:var(--text);}
-    .wrap{max-width:980px;margin:0 auto;padding:1rem;}
-    .card{background:var(--card);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:1rem;}
-    h1{font-size:1.4rem;margin:0 0 1rem} label{display:block;margin:.5rem 0 .25rem;color:var(--muted);font-size:.95rem}
-    input,select,button{width:100%;padding:.9rem;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:#0b1220;color:var(--text)}
-    button{background:linear-gradient(90deg,#22d3ee,#0ea5e9);color:#001b2b;font-weight:700;margin-top:.75rem;cursor:pointer}
-    button:hover{filter:brightness(1.05)}
-    .row{display:grid;grid-template-columns:1fr 1fr 1fr .8fr;gap:.6rem;align-items:center;padding:.7rem 0;border-bottom:1px dashed rgba(255,255,255,.06)}
-    .row>div:first-child{font-weight:600}
-    .head{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap}
-    .pill{background:rgba(56,189,248,.12);color:#a5f3fc;padding:.25rem .6rem;border-radius:999px;font-size:.85rem}
-    .muted{color:var(--muted)}
-    .status{margin:.5rem 0 0;font-size:.95rem}
-    .ok{color:var(--ok)} .err{color:var(--err)} .muted{color:var(--muted)}
-    .list{margin-top:1rem}
-    a{color:var(--brand);text-decoration:none}
+    :root{
+      --bg:#0f172a; --panel:#111827; --muted:#94a3b8;
+      --text:#e5e7eb; --brand:#38bdf8; --brand-dark:#0ea5e9;
+      --ok:#22c55e; --err:#ef4444; --card:#1e293b;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0; background:var(--bg); color:var(--text); font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial;}
+    a{color:var(--brand); text-decoration:none}
+    header{
+      padding:2rem 1rem; background:linear-gradient(180deg, rgba(2,6,23,.6), rgba(2,6,23,0));
+      text-align:center;
+    }
+    .wrap{max-width:980px; margin:0 auto; padding:0 1rem}
+    h1{margin:0 0 .25rem 0; font-size:clamp(1.4rem, 2.5vw, 2rem);}
+    .sub{color:var(--muted); margin:0}
+    .card{
+      background:rgba(255,255,255,0.04);
+      border:1px solid rgba(255,255,255,0.08);
+      border-radius:14px; padding:1rem;
+      backdrop-filter: blur(6px);
+    }
+    .panel{ margin:1rem 0 2rem 0 }
+    label{display:block; margin:.25rem 0 .4rem 0; color:var(--muted)}
+    select, input[type="text"]{
+      width:100%; background:var(--card); color:var(--text);
+      border:1px solid rgba(255,255,255,.12); border-radius:10px;
+      padding:.9rem .9rem; outline:none;
+    }
+    .row{display:grid; gap:1rem}
+    @media(min-width:700px){ .row{ grid-template-columns: 260px 1fr 160px } }
+
+    .btn{
+      display:inline-block; width:100%;
+      background:linear-gradient(90deg, var(--brand), var(--brand-dark));
+      border:none; color:#001018; font-weight:700; letter-spacing:.2px;
+      padding:.95rem 1rem; border-radius:12px; cursor:pointer;
+    }
+    .status{margin:.6rem 0 0 0; font-size:.95rem}
+    .status.ok{ color:var(--ok) }
+    .status.err{ color:var(--err) }
+    .status.muted{ color:var(--muted) }
+
+    .cards{ display:grid; gap:1rem; margin-top:1rem }
+    @media(min-width:700px){ .cards{ grid-template-columns: 1fr 1fr } }
+    .item h3{ margin:.1rem 0 .35rem 0; font-size:1.1rem; color:var(--brand) }
+    .meta{ margin:.15rem 0; color:var(--muted) }
+    .price{ font-size:1.05rem; font-weight:700; margin:.15rem 0; }
+    footer{ text-align:center; color:var(--muted); padding:2rem 0; }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="head">
-      <h1 style="margin:0">🔎 Recherche de produits</h1>
-      <a class="pill" href="/">← Retour à l’accueil</a>
+  <header>
+    <div class="wrap">
+      <h1>🔎 Recherche produit</h1>
+      <p class="sub">Tape un mot-clé (ex : <i>banane</i>, <i>yaourt</i>, <i>lait</i>, <i>baguette</i>…) et choisis ta zone.</p>
     </div>
+  </header>
 
-    <div class="card" style="margin-top:1rem">
-      <label for="zone">Zone</label>
-      <select id="zone">
-        <option value="martinique">Martinique</option>
-        <option value="guadeloupe">Guadeloupe</option>
-        <option value="guyane">Guyane</option>
-        <option value="reunion">Réunion</option>
-        <option value="mayotte">Mayotte</option>
-        <option value="saint-martin">Saint-Martin</option>
-        <option value="saint-barthelemy">Saint-Barthélemy</option>
-        <option value="saint-pierre-et-miquelon">Saint-Pierre-et-Miquelon</option>
-        <option value="polynesie-francaise">Polynésie française</option>
-        <option value="wallis-et-futuna">Wallis-et-Futuna</option>
-      </select>
+  <main class="wrap">
+    <section class="card panel">
+      <div class="row">
+        <div>
+          <label for="zone">Zone</label>
+          <select id="zone">
+            <option value="martinique">Martinique</option>
+            <option value="guadeloupe">Guadeloupe</option>
+            <option value="guyane">Guyane</option>
+            <option value="reunion">La Réunion</option>
+            <option value="mayotte">Mayotte</option>
+            <option value="saint-martin">Saint-Martin</option>
+            <option value="saint-barthelemy">Saint-Barthélemy</option>
+            <option value="saint-pierre-et-miquelon">Saint-Pierre-et-Miquelon</option>
+            <option value="polynesie-francaise">Polynésie française</option>
+            <option value="wallis-et-futuna">Wallis-et-Futuna</option>
+          </select>
+        </div>
 
-      <label for="q">Produit à rechercher</label>
-      <input id="q" placeholder="Ex : yaourt nature, lait, baguette…" />
+        <div>
+          <label for="q">Produit</label>
+          <input id="q" type="text" placeholder="Ex : banane, yaourt nature, lait demi-écrémé…" />
+        </div>
 
-      <button id="go">Rechercher</button>
+        <div style="align-self:end">
+          <button id="go" class="btn">Rechercher</button>
+        </div>
+      </div>
+
       <div id="status" class="status muted">Saisissez un mot-clé puis cliquez sur « Rechercher ».</div>
+      <div id="count" class="status muted"></div>
+    </section>
 
-      <div id="list" class="list"></div>
-    </div>
-  </div>
+    <section id="results" class="cards"></section>
+  </main>
+
+  <footer>
+    <div class="wrap">© <span id="y"></span> A KI PRI SA YÉ</div>
+  </footer>
 
   <script>
-    // ⚠️ adapte si ton URL de fonction est différente :
+    // 1) Endpoint de la Cloud Function de recherche
     const SEARCH_ENDPOINT = "https://us-central1-a-ki-pri-sa-ye.cloudfunctions.net/searchPrices";
 
-    const el = (id)=>document.getElementById(id);
-    const zone = el('zone'), q = el('q'), go = el('go'), list = el('list'), status = el('status');
+    // 2) Utilitaires
+    const fmtEUR = new Intl.NumberFormat("fr-FR", { style:"currency", currency:"EUR" });
+    const $ = (sel) => document.querySelector(sel);
+    const statusEl = $("#status");
+    const countEl  = $("#count");
+    const listEl   = $("#results");
 
-    function fmtPrice(p){ if(p==null) return "—"; try{ return new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR'}).format(Number(p)); }catch{ return p; } }
-
-    function render(items){
-      if(!items || !items.length){ list.innerHTML = '<div class="muted">Aucun résultat.</div>'; return; }
-      list.innerHTML = items.map(it=>`
-        <div class="row">
-          <div>${it.name ?? '—'}</div>
-          <div class="muted">${it.store ?? '—'}</div>
-          <div>${fmtPrice(it.price)} <span class="muted">${it.unit?('· '+it.unit):''}</span></div>
-          <div class="muted" style="text-align:right">${it.updatedAt ? new Date((it.updatedAt.seconds||0)*1000).toLocaleDateString('fr-FR') : ''}</div>
-        </div>
-      `).join('');
+    function setStatus(text, type="muted"){
+      statusEl.textContent = text;
+      statusEl.className = "status " + type;
     }
 
-    async function search(){
-      const z = zone.value;
-      const text = q.value.trim();
-      if(!text){ status.textContent = "Entrez un mot-clé."; status.className = "status err"; return; }
+    function setCount(n, zone, q){
+      if(n==null){ countEl.textContent = ""; return; }
+      countEl.textContent = `${n} résultat${n>1?"s":""} pour « ${q} » – zone ${zone}`;
+    }
 
-      status.textContent = "Recherche en cours…"; status.className = "status muted";
-      list.innerHTML = "";
+    function niceDate(ts){
+      try{
+        if(!ts) return "-";
+        if(typeof ts === "number") return new Date(ts).toLocaleDateString("fr-FR");
+        if(ts._seconds) return new Date(ts._seconds*1000).toLocaleDateString("fr-FR");
+        if(ts.seconds)  return new Date(ts.seconds*1000).toLocaleDateString("fr-FR");
+        const d = new Date(ts);
+        return isNaN(d.getTime()) ? "-" : d.toLocaleDateString("fr-FR");
+      }catch{ return "-"; }
+    }
 
-      // cache-busting léger
+    // 3) Rendu visuel
+    function render(items){
+      if(!items || items.length===0){
+        listEl.innerHTML = `<div class="card item"><h3>Aucun résultat</h3><div class="meta">Essayez un autre mot-clé.</div></div>`;
+        setCount(0);
+        return;
+      }
+
+      listEl.innerHTML = items.map(it => {
+        const name  = it.name || it.product || it.label || "Produit";
+        const shop  = it.store || it.shop || it.brand || "Enseigne inconnue";
+        const prix  = (it.price ?? it.amount ?? null);
+        const unit  = it.unit || it.unitPrice || "";
+        const maj   = niceDate(it.updatedAt || it.ts);
+
+        return `
+          <article class="card item">
+            <h3>${name}</h3>
+            <div class="price">${prix != null ? fmtEUR.format(prix) : "—"} ${unit ? " / "+unit : ""}</div>
+            <div class="meta"><b>Enseigne :</b> ${shop}</div>
+            <div class="meta"><b>Maj :</b> ${maj}</div>
+          </article>
+        `;
+      }).join("");
+      setCount(items.length, $("#zone").value, $("#q").value.trim());
+    }
+
+    // 4) Appel API
+    async function doSearch(){
+      const zone = $("#zone").value;
+      const q    = $("#q").value.trim();
+
+      if(!q){ setStatus("Entrez un mot-clé.", "err"); listEl.innerHTML = ""; setCount(null); return; }
+
+      // cache-busting léger (évite un vieux cache éventuel en Pages)
       const v = Date.now().toString().slice(-6);
-      const url = `${SEARCH_ENDPOINT}?zone=${encodeURIComponent(z)}&q=${encodeURIComponent(text)}&limit=50&v=${v}`;
+      const url = `${SEARCH_ENDPOINT}?zone=${encodeURIComponent(zone)}&q=${encodeURIComponent(q)}&limit=24&v=${v}`;
+
+      setStatus("Recherche en cours…", "muted");
 
       try{
-        const r = await fetch(url, { headers: { "accept":"application/json" }});
-        if(!r.ok) throw new Error("HTTP "+r.status);
-        const data = await r.json();
-        render(data.items||[]);
-        status.textContent = `Résultats : ${data.count||0}`; status.className = "status ok";
+        const res = await fetch(url, { headers:{ "accept":"application/json" }});
+        if(!res.ok) throw new Error("HTTP "+res.status);
+        const data = await res.json();
+
+        if(!data || !Array.isArray(data.items)){ render([]); setStatus("Aucun résultat.", "muted"); return; }
+
+        render(data.items);
+        setStatus("Résultats mis à jour.", "ok");
       }catch(e){
         console.error(e);
-        status.textContent = "Erreur pendant la recherche."; status.className = "status err";
+        setStatus("Erreur : impossible de charger les résultats.", "err");
       }
     }
 
-    go.addEventListener('click', search);
-    q.addEventListener('keydown', (e)=>{ if(e.key==='Enter') search(); });
+    // 5) Événements
+    $("#go").addEventListener("click", doSearch);
+    $("#q").addEventListener("keydown", (e)=>{ if(e.key==="Enter") doSearch(); });
+
+    // Année footer
+    document.getElementById("y").textContent = new Date().getFullYear();
   </script>
 </body>
 </html>
