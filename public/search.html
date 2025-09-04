@@ -1,70 +1,38 @@
-
 <!doctype html>
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>A KI PRI SA YÉ – Recherche produit</title>
-  <meta name="theme-color" content="#0f172a" />
-
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Recherche produit — A KI PRI SA YÉ</title>
+  <link rel="stylesheet" href="./styles.css" />
   <style>
-    :root{
-      --bg:#0f172a; --panel:#111827; --card:#1e293b; --text:#e5e7eb;
-      --brand:#38bdf8; --muted:#94a3b8; --ok:#22c55e; --err:#ef4444;
-      --ring:rgba(56,189,248,.35);
-    }
-    *{box-sizing:border-box}
-    body{margin:0;font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
-    header{padding:2rem 1rem;background:linear-gradient(180deg,#0b1220,#0f172a);}
-    .wrap{max-width:960px;margin:0 auto;padding:0 1rem}
-    h1{margin:0 0 .5rem;font-size:clamp(1.4rem,2.5vw,2rem);letter-spacing:.02em}
-    p.sub{margin:.25rem 0 0;color:var(--muted)}
-    .tabs{display:flex;gap:1rem;margin-top:1rem}
-    .tabs a{color:#cbd5e1;text-decoration:none}
-    .tabs a.active{color:white}
-
-    main{padding:1.25rem 0}
-    .card{background:var(--card);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:1rem}
-    label{display:block;margin:.5rem 0 .35rem;color:#cbd5e1}
-    select, input{width:100%;background:#0b1324;color:var(--text);border:1px solid rgba(148,163,184,.25);
-      border-radius:12px;padding:.9rem .95rem;outline:none}
-    input::placeholder{color:#7c8aa0}
-    button{appearance:none;border:0;background:linear-gradient(180deg,#22d3ee,#06b6d4);color:#00131c;
-      font-weight:700;padding:.95rem 1rem;border-radius:12px;cursor:pointer;box-shadow:0 6px 18px var(--ring)}
-    button:active{transform:translateY(1px)}
-    .row{display:grid;grid-template-columns:1fr;gap:1rem}
-    @media(min-width:680px){.row{grid-template-columns:240px 1fr auto}}
-
-    .status{margin-top:.75rem;font-size:.95rem}
-    .status.muted{color:var(--muted)}
-    .status.ok{color:var(--ok)}
-    .status.err{color:#fecaca}
-
-    table{width:100%;border-collapse:collapse;margin-top:1rem}
-    th,td{padding:.75rem .6rem;border-top:1px solid rgba(148,163,184,.15)}
-    th{color:#cbd5e1;text-align:left;font-weight:600;background:rgba(255,255,255,.03)}
-    td{color:#e5e7eb}
-    td small{color:#9fb0c7}
-    footer{padding:2rem 1rem;color:#94a3b8}
-    .text-right{text-align:right}
+    body{background:#0c1220;color:#e7eef9;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
+    .wrap{max-width:960px;margin:0 auto;padding:1rem}
+    .card{background:#151c2f;border:1px solid #26304a;border-radius:14px;padding:1rem;margin:1rem 0}
+    .row{display:flex;gap:.75rem;flex-wrap:wrap}
+    .row>*{flex:1 1 240px}
+    select,input,button{width:100%;padding:.9rem;border-radius:10px;border:1px solid #25324a;background:#0e1627;color:#e7eef9}
+    button{background:#1fb6ff;border-color:#1fb6ff;font-weight:600;cursor:pointer}
+    button:disabled{opacity:.6;cursor:not-allowed}
+    .status{margin-top:.5rem;font-size:.95rem}
+    .status.ok{color:#79e6a1}
+    .status.err{color:#ff6b6b}
+    .status.muted{color:#9bb3d3}
+    table{width:100%;border-collapse:collapse;margin-top:.5rem}
+    th,td{padding:.6rem;border-bottom:1px solid #24314a;text-align:left}
+    th{color:#9bb3d3;font-weight:600}
+    footer{opacity:.85;text-align:center;margin:2rem 0}
   </style>
 </head>
+
 <body>
-  <header>
-    <div class="wrap">
-      <h1>A KI PRI SA YÉ</h1>
-      <p class="sub">Comparez les prix, suivez votre budget et trouvez l’enseigne la moins chère.</p>
-      <div class="tabs">
-        <a href="/" aria-label="Accueil">Accueil</a>
-        <a class="active" href="/search.html" aria-label="Recherche">🔎 Recherche</a>
-      </div>
-    </div>
+  <header class="wrap">
+    <h1>A KI PRI SA YÉ</h1>
+    <p>Recherche produit</p>
   </header>
 
   <main class="wrap">
     <section class="card">
-      <h2 style="margin:.25rem 0 1rem">🔎 Recherche produit</h2>
-
       <div class="row">
         <div>
           <label for="zone">Zone</label>
@@ -72,7 +40,7 @@
             <option value="martinique">Martinique</option>
             <option value="guadeloupe">Guadeloupe</option>
             <option value="guyane">Guyane</option>
-            <option value="reunion">La Réunion</option>
+            <option value="reunion">Réunion</option>
             <option value="mayotte">Mayotte</option>
             <option value="saint-martin">Saint-Martin</option>
             <option value="saint-barthelemy">Saint-Barthélemy</option>
@@ -84,11 +52,10 @@
 
         <div>
           <label for="q">Produit</label>
-          <input id="q" type="search" placeholder="Ex : yaourt nature, lait, baguette…" />
+          <input id="q" placeholder="Ex : banane, yaourt nature, lait, baguette…" />
         </div>
 
-        <div class="text-right" style="align-self:end">
-          <label>&nbsp;</label>
+        <div style="align-self:end">
           <button id="go">Rechercher</button>
         </div>
       </div>
@@ -96,14 +63,10 @@
       <div id="status" class="status muted">Saisissez un mot-clé puis cliquez sur « Rechercher ».</div>
       <div id="count" class="status muted"></div>
 
-      <table aria-label="Résultats">
+      <table>
         <thead>
           <tr>
-            <th>Produit</th>
-            <th>Enseigne</th>
-            <th>Prix</th>
-            <th>Unité</th>
-            <th>Maj.</th>
+            <th>Produit</th><th>Enseigne</th><th>Prix</th><th>Unité</th><th>Maj.</th>
           </tr>
         </thead>
         <tbody id="list"></tbody>
@@ -112,87 +75,76 @@
   </main>
 
   <footer>
-    <div class="wrap">© <span id="y"></span> A KI PRI SA YÉ</div>
+    <div class="wrap">© <span id="y"></span> A KI PRI SA YÉ – DROM-COM</div>
   </footer>
 
   <script>
-  // 1) Endpoint Cloud Functions (vérifié)
-  const SEARCH_ENDPOINT = "https://us-central1-a-ki-pri-sa-ye.cloudfunctions.net/searchPrices";
+    // 1) Endpoint Cloud Functions
+    const SEARCH_ENDPOINT = "https://us-central1-a-ki-pri-sa-ye.cloudfunctions.net/searchPrices";
 
-  // 2) utilitaires & DOM
-  const $ = (sel) => document.querySelector(sel);
-  const zoneEl   = $("#zone");
-  const qEl      = $("#q");
-  const goEl     = $("#go");
-  const listEl   = $("#list");
-  const statusEl = $("#status");
-  const countEl  = $("#count");
+    // 2) Aides
+    const fmtEUR = new Intl.NumberFormat("fr-FR",{style:"currency",currency:"EUR"});
+    const $ = (sel)=>document.querySelector(sel);
+    const zoneEl  = $("#zone");
+    const qEl     = $("#q");
+    const goEl    = $("#go");
+    const listEl  = $("#list");
+    const statusEl= $("#status");
+    const countEl = $("#count");
 
-  const fmtEUR = new Intl.NumberFormat("fr-FR",{style:"currency",currency:"EUR"});
+    const setStatus = (msg, cls="muted")=>{
+      statusEl.className = "status " + cls;
+      statusEl.textContent = msg;
+    };
 
-  function setStatus(text, cls="muted") {
-    statusEl.textContent = text;
-    statusEl.className = "status " + cls;
-  }
-
-  function render(items) {
-    if (!items || items.length === 0) {
-      listEl.innerHTML = `<tr><td colspan="5"><div class="status muted">Aucun résultat.</div></td></tr>`;
-      countEl.textContent = "";
-      return;
-    }
-
-    listEl.innerHTML = items.map(it => {
-      const name  = it.name || it.product || it.label || "-";
-      const shop  = it.store || it.shop || it.brand || "-";
-      const price = (it.price ?? it.amount) != null ? fmtEUR.format(it.price ?? it.amount) : "-";
-      const unit  = it.unit || it.unitPrice || "-";
-      const maj   = it.updatedAt
-                    ? new Date((it.updatedAt.seconds ?? it.updatedAt)*1000).toLocaleDateString("fr-FR")
-                    : (it.ts ? new Date(it.ts*1000).toLocaleDateString("fr-FR") : "-");
-      return `
+    const render = (items)=>{
+      if(!items || !items.length){
+        listEl.innerHTML = '<tr><td colspan="5" class="status muted">Aucun résultat trouvé.</td></tr>';
+        countEl.textContent = "";
+        return;
+      }
+      countEl.textContent = `Résultats : ${items.length}`;
+      listEl.innerHTML = items.map(it=>`
         <tr>
-          <td>${name}</td>
-          <td>${shop}</td>
-          <td>${price}</td>
-          <td>${unit}</td>
-          <td>${maj}</td>
-        </tr>`;
-    }).join("");
+          <td>${it.name || it.product || it.label || ""}</td>
+          <td>${it.store || it.shop || it.brand || ""}</td>
+          <td>${it.price!=null ? fmtEUR.format(it.price) : "—"}</td>
+          <td>${it.unit || it.unitPrice || "—"}</td>
+          <td>${it.updatedAt ? new Date(it.updatedAt*1000).toLocaleDateString("fr-FR") : "—"}</td>
+        </tr>`).join("");
+    };
 
-    countEl.textContent = `${items.length} résultat(s).`;
-  }
+    async function doSearch(){
+      const zone = (zoneEl.value||"").toLowerCase().trim();
+      const text = (qEl.value||"").trim();
+      if(!text){ setStatus("Entrez un mot-clé.","err"); qEl.focus(); return; }
 
-  async function doSearch() {
-    const zone = (zoneEl.value||"").toString().trim();
-    const text = (qEl.value||"").toString().trim();
-    if (!text) { setStatus("Entrez un mot-clé.", "err"); return; }
+      setStatus("Recherche en cours…","muted");
+      render([]); // vide l'affichage
 
-    // petite clé cache-busting
-    const v = Date.now().toString().slice(-6);
-    const url = `${SEARCH_ENDPOINT}?zone=${encodeURIComponent(zone)}&q=${encodeURIComponent(text)}&limit=10&v=${v}`;
+      // cache-busting léger
+      const v = Date.now().toString().slice(-6);
+      const url = `${SEARCH_ENDPOINT}?zone=${encodeURIComponent(zone)}&q=${encodeURIComponent(text)}&limit=10&v=${v}`;
 
-    setStatus("Recherche en cours…", "muted");
-    listEl.innerHTML = "";
-    countEl.textContent = "";
-
-    try{
-      const r = await fetch(url, { headers:{ "accept":"application/json" }});
-      if(!r.ok) throw new Error("HTTP " + r.status);
-      const data = await r.json();
-      render(data.items || []);
-      setStatus(`Résultats mis à jour.`, "ok");
-    }catch(e){
-      console.error(e);
-      render([]);
-      setStatus("Erreur : impossible de charger les résultats.", "err");
+      try{
+        const r = await fetch(url,{headers:{accept:"application/json"}});
+        if(!r.ok) throw new Error("HTTP "+r.status);
+        const data = await r.json();
+        render(data.items||[]);
+        setStatus("Résultats mis à jour.","ok");
+      }catch(e){
+        console.error(e);
+        render([]);
+        setStatus("Erreur : impossible de charger les résultats.","err");
+      }
     }
-  }
 
-  goEl.addEventListener("click", doSearch);
-  qEl.addEventListener("keydown", (e)=>{ if(e.key==="Enter") doSearch(); });
+    // 3) Événements
+    goEl.addEventListener("click", doSearch);
+    qEl.addEventListener("keydown",(e)=>{ if(e.key==="Enter") doSearch(); });
 
-  document.getElementById("y").textContent = new Date().getFullYear();
+    // 4) Footer année
+    document.getElementById("y").textContent = new Date().getFullYear();
   </script>
 </body>
 </html>
