@@ -1,0 +1,2 @@
+# Empêche Cloudflare Pages d'uploader/traiter le dossier Firebase
+functions/
