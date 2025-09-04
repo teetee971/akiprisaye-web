@@ -10,3 +10,4 @@ firebase-adminsdk*.json
 
 # Sauvegardes nano
 public/index.html.save*
+*.save
