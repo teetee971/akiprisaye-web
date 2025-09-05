@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>A KI PRI SA YÉ – Comparateur de prix & suivi budget</title>
+  <meta name="description" content="Comparez les prix, suivez votre budget et trouvez l’enseigne la moins chère dans votre zone (DROM-COM)." />
+  <meta name="theme-color" content="#0f172a" />
+
+  <!-- SEO / Social -->
+  <meta property="og:title" content="A KI PRI SA YÉ" />
+  <meta property="og:description" content="Comparez les prix et trouvez l’enseigne la moins chère dans votre zone." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://akiprisaye.pages.dev/" />
+  <meta property="og:image" content="/og-cover.jpg" />
+  <link rel="icon" href="/favicon.ico" />
+
+  <!-- Perfs -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <style>
+    :root{
+      --bg:#0f172a;          /* slate-900 */
+      --panel:#111827;       /* gray-900 */
+      --card:#1e293b;        /* slate-800 */
+      --brand:#38bdf8;       /* sky-400 */
+      --brand-dark:#0ea5e9;  /* sky-500 */
+      --text:#e5e7eb;        /* gray-200 */
+      --muted:#94a3b8;       /* slate-400 */
+      --ok:#22c55e;          /* green-500 */
+      --err:#ef4444;         /* red-500 */
+      --ring:rgba(56, 189, 248, .35);
+      --radius:16px;
+      --shadow:0 10px 30px rgba(0,0,0,.35);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+      background:var(--bg);
+      color:var(--text);
+    }
+
+    header{
+      padding:2rem 1rem;
+      background:linear-gradient(180deg, rgba(56,189,248,.10), rgba(0,0,0,0));
+      border-bottom:1px solid rgba(148,163,184,.15);
+    }
+    .container{max-width:1100px;margin:0 auto;padding:0 1rem}
+    .brand{display:flex;align-items:center;gap:.85rem}
+    .brand img{height:40px;width:40px;border-radius:12px}
+    .title{font-size:clamp(1.3rem,2.8vw,1.8rem);margin:0}
+    .subtitle{margin:.25rem 0 0;color:var(--muted);font-size:.95rem}
+
+    .hero{
+      display:grid;gap:1rem;margin:1.4rem 0 0;
+      grid-template-columns:1fr auto;
+      align-items:center;
+    }
+    .cta{
+      appearance:none;border:0;border-radius:999px;padding:.9rem 1.15rem;
+      font-weight:600; background:linear-gradient(90deg,var(--brand),var(--brand-dark));
+      color:#00131a; cursor:pointer; box-shadow:0 8px 24px var(--ring);
+    }
+    .cta:focus-visible{outline:2px solid var(--brand-dark);outline-offset:2px}
+
+    main{padding:1.25rem 0 3rem}
+    .card{
+      background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
+      border:1px solid rgba(148,163,184,.12);
+    }
+    .card h2{margin:0;padding:1rem 1.25rem;border-bottom:1px solid rgba(148,163,184,.12)}
+    .toolbar{
+      display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;
+      padding:1rem 1.25rem;border-bottom:1px solid rgba(148,163,184,.12)
+    }
+    .select, .btn{
+      height:40px;border-radius:10px;border:1px solid rgba(148,163,184,.25);background:#0b1220;color:var(--text)
+    }
+    .select{padding:.35rem .6rem}
+    .btn{
+      padding:.5rem .9rem;font-weight:600;cursor:pointer;background:#0b1220
+    }
+    .btn:hover{background:#0e1526;border-color:rgba(148,163,184,.45)}
+    .btn.primary{background:linear-gradient(90deg,var(--brand),var(--brand-dark));border:none;color:#05222c}
+    .status{margin-left:auto;font-size:.95rem}
+    .status.ok{color:var(--ok)}
+    .status.err{color:var(--err)}
+    .status.muted{color:var(--muted)}
+
+    table{width:100%;border-collapse:collapse}
+    thead th{
+      text-align:left;padding:.85rem 1.25rem;border-bottom:1px solid rgba(148,163,184,.18);
+      color:var(--muted);font-weight:600
+    }
+    tbody td{padding:1rem 1.25rem;border-bottom:1px solid rgba(148,163,184,.1)}
+    tbody tr:hover{background:#0e1526}
+    .rank{width:72px}
+    .skeleton{
+      height:12px;border-radius:6px;background:linear-gradient(90deg,#0f2030,#17283a 45%,#0f2030 80%);
+      background-size:200% 100%;animation:shimmer 1.5s infinite
+    }
+    @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+    footer{padding:2rem 1rem;border-top:1px solid rgba(148,163,184,.15);background:#0b1220;color:var(--muted);font-size:.95rem}
+    footer a{color:var(--brand);text-decoration:none}
+    footer a:hover{text-decoration:underline}
+
+    @media (max-width:640px){
+      .hero{grid-template-columns:1fr}
+      .status{width:100%}
+      .rank{width:56px}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="brand" aria-label="Identité du site">
+        <img src="/logo.webp" alt="Logo A KI PRI SA YÉ" onerror="this.src='/logo_hd_4k.png'">
+        <div>
+          <h1 class="title">A KI PRI SA YÉ</h1>
+          <p class="subtitle">Comparez les prix, suivez votre budget et trouvez l’enseigne la moins chère.</p>
+        </div>
+      </div>
+
+      <div class="hero">
+        <div></div>
+        <button class="cta" onclick="location.href='https://akiprisaye.pages.dev/#download'">Télécharger maintenant</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <article class="card" aria-labelledby="rankTitle">
+      <h2 id="rankTitle">Palmarès – Meilleures enseignes</h2>
+
+      <div class="toolbar" role="region" aria-label="Contrôles">
+        <label for="zone" style="font-weight:600">Zone :</label>
+        <select id="zone" class="select" aria-label="Sélection de la zone">
+          <option value="martinique">Martinique</option>
+          <option value="guadeloupe">Guadeloupe</option>
+          <option value="guyane">Guyane</option>
+          <option value="reunion">Réunion</option>
+          <option value="mayotte">Mayotte</option>
+          <option value="saint-martin">Saint-Martin</option>
+          <option value="saint-barthelemy">Saint-Barthélemy</option>
+          <option value="saint-pierre-et-miquelon">Saint-Pierre-et-Miquelon</option>
+          <option value="polynesie-francaise">Polynésie française</option>
+          <option value="wallis-et-futuna">Wallis-et-Futuna</option>
+        </select>
+
+        <button id="refresh" class="btn primary" type="button">Actualiser</button>
+        <span id="status" class="status muted" role="status" aria-live="polite">Choisissez une zone puis « Actualiser »</span>
+      </div>
+
+      <div class="table-wrap" style="overflow:auto">
+        <table aria-describedby="rankTitle">
+          <thead>
+          <tr>
+            <th class="rank">Rang</th>
+            <th>Enseigne</th>
+            <th>Panier moyen</th>
+            <th>Échantillon</th>
+          </tr>
+          </thead>
+          <tbody id="rows">
+          <!-- Skeleton initial -->
+          <tr><td colspan="4">
+            <div class="skeleton" style="width:35%"></div>
+          </td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p><strong>Transparence :</strong> données consolidées par zone (DROM-COM). Mise à jour automatique via nos fonctions backend.</p>
+      <p>Besoin d’aide ? Écrivez-nous.</p>
+    </div>
+  </footer>
+
+  <script>
+    // --- Configuration API ---
+    // Si un jour tu changes le domaine, tu n'auras qu'à modifier ici.
+    const ENDPOINT = "https://us-central1-a-ki-pri-sa-ye.cloudfunctions.net/getRanking";
+
+    // --- Raccourcis DOM ---
+    const zoneEl   = document.getElementById('zone');
+    const rowsEl   = document.getElementById('rows');
+    const statusEl = document.getElementById('status');
+    const refresh  = document.getElementById('refresh');
+
+    const fmtEUR = new Intl.NumberFormat("fr-FR", { style:"currency", currency:"EUR" });
+
+    function setStatus(msg, cls="muted"){
+      statusEl.className = "status " + cls;
+      statusEl.textContent = msg;
+    }
+
+    function renderSkeleton(){
+      rowsEl.innerHTML = `
+        <tr><td colspan="4">
+          <div class="skeleton" style="width:40%;margin:.35rem 0"></div>
+          <div class="skeleton" style="width:55%;margin:.35rem 0"></div>
+          <div class="skeleton" style="width:48%;margin:.35rem 0"></div>
+        </td></tr>
+      `;
+    }
+
+    function renderEmpty(){
+      rowsEl.innerHTML = `<tr><td colspan="4" class="muted">Aucune donnée disponible.</td></tr>`;
+    }
+
+    function renderRows(rows){
+      rowsEl.innerHTML = rows.map((r, i) => `
+        <tr>
+          <td class="rank">${i+1}</td>
+          <td>${r.store}</td>
+          <td>${fmtEUR.format(r.avgBasket ?? 0)}</td>
+          <td>${r.sampleSize ?? 0}</td>
+        </tr>
+      `).join("");
+    }
+
+    async function fetchRanking(zone){
+      // cache-busting léger côté lecture
+      const v = Date.now().toString().slice(-6);
+      const url = \`\${ENDPOINT}?zone=\${encodeURIComponent(zone)}&v=\${v}\`;
+
+      setStatus("Chargement…", "muted");
+      renderSkeleton();
+
+      try{
+        const res = await fetch(url, { headers:{ "accept":"application/json" }});
+        if(!res.ok) throw new Error("HTTP " + res.status);
+
+        const data = await res.json();
+
+        if(!data || !Array.isArray(data.rows) || data.rows.length === 0){
+          renderEmpty();
+          setStatus("Aucune donnée pour cette zone.", "muted");
+          return;
+        }
+
+        renderRows(data.rows);
+
+        // Info de mise à jour si présente
+        const ts = data.updatedAt? (data.updatedAt.seconds ?? data.updatedAt._seconds) : null;
+        if(ts){
+          const d = new Date(ts*1000);
+          setStatus("Dernière mise à jour : " + d.toLocaleString("fr-FR"), "ok");
+        }else{
+          setStatus("Données chargées.", "ok");
+        }
+      }catch(e){
+        console.error(e);
+        renderEmpty();
+        setStatus("Erreur : impossible de charger les données.", "err");
+      }
+    }
+
+    // Actions
+    refresh.addEventListener("click", () => fetchRanking(zoneEl.value));
+
+    // Option : chargement initial sur la zone par défaut (décommente si tu veux auto-charger)
+    // fetchRanking(zoneEl.value);
+  </script>
+
+<footer style="margin-top:2rem;padding:1.25rem;border-top:1px solid rgba(255,255,255,.1);text-align:center;opacity:.85">
+  <div style="font-size:.95rem">© <span id="y"></span> A KI PRI SA YÉ — DROM-COM</div>
+  <div style="margin-top:.35rem;font-size:.9rem">
+    <a href="mailto:contact@akiprisaye.app" style="color:#38bdf8;text-decoration:none">contact@akiprisaye.app</a> ·
+    <a href="#" style="color:#38bdf8;text-decoration:none">Mentions légales</a>
+  </div>
+  <script>document.getElementById("y").textContent=new Date().getFullYear();</script>
+</footer></body>
+</html>

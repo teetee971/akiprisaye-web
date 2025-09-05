@@ -1,0 +1,250 @@
+/**
+ * A KI PRI SA YÉ – Cloud Functions (unique)
+ * Region: us-central1
+ * Expose:
+ *   - GET /getRanking?zone=martinique
+ *   - GET /searchPrices?zone=martinique&q=banane&limit=50
+ */
+
+const functions = require('firebase-functions');
+const admin     = require('firebase-admin');
+
+if (admin.apps.length === 0) {
+  admin.initializeApp();
+}
+const db = admin.firestore();
+
+const REGION = 'us-central1';
+const https  = functions.region(REGION).https;
+
+/* ---------- util CORS ---------- */
+function handleCORS(req, res) {
+  res.set('Access-Control-Allow-Origin', '*');
+  res.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.set('Access-Control-Allow-Headers', 'Content-Type');
+  if (req.method === 'OPTIONS') { res.status(204).send(''); return true; }
+  return false;
+}
+
+/* ---------- normalisation pour recherche texte ---------- */
+function norm(s='') {
+  return s.toString()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '');
+}
+
+/* ---------- zoniers connus (pour sanity check) ---------- */
+const ZONES = [
+  'martinique','guadeloupe','guyane','reunion',
+  'mayotte','saint-martin','saint-barthelemy',
+  'saint-pierre-et-miquelon','polynesie-francaise',
+  'wallis-et-futuna'
+];
+
+/* ----------- Fonction getRanking ----------- */
+exports.getRanking = https.onRequest(async (req, res) => {
+  if (handleCORS(req, res)) return;
+  try {
+    const zone = (req.query.zone || "martinique").toLowerCase();
+    if (!ZONES.includes(zone)) {
+      return res.status(400).json({ error: "zone invalide" });
+    }
+
+    // Récupère les enseignes avec le panier moyen
+    const snap = await db.collection("prices").where("zone", "==", zone).get();
+    const rows = snap.docs.map(d => d.data());
+
+    const result = rows.map(r => ({
+      store: r.store || "inconnu",
+      avgBasket: r.avgBasket || null,
+      sampleSize: r.sampleSize || 0
+    }));
+
+    res.json({
+      zone,
+      rows: result,
+      updatedAt: new Date()
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "server", details: err.message });
+  }
+});
+
+/* ----------- Fonction searchPrices ----------- */
+exports.searchPrices = https.onRequest(async (req, res) => {
+  if (handleCORS(req, res)) return;
+  try {
+    const zone = (req.query.zone || "martinique").toLowerCase();
+    const q = (req.query.q || "").toLowerCase().trim();
+    const limit = Math.min(parseInt(req.query.limit) || 50, 100);
+
+    if (!ZONES.includes(zone)) {
+      return res.status(400).json({ error: "zone invalide" });
+    }
+    if (!q) {
+      return res.status(400).json({ error: "missing q" });
+    }
+
+    // 🔎 Récupère les produits de la zone
+    const snap = await db.collection("prices").where("zone", "==", zone).get();
+    let items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+    // Normalisation pour la recherche
+    const normQ = norm(q);
+    const match = (s = "") => norm(s).includes(normQ);
+
+    // Filtrage
+    items = items.filter(it =>
+      match(it.name) ||
+      match(it.product) ||
+      match(it.label)
+    );
+
+    // Projection simplifiée
+    const out = items.slice(0, limit).map(it => ({
+      name: it.name || it.product || it.label || null,
+      store: it.store || it.shop || it.brand || null,
+      price: it.price ?? it.amount ?? null,
+      unit: it.unit || it.unitPrice || null,
+      zone: it.zone || zone,
+      updatedAt: it.updatedAt || null
+    }));
+
+    res.json({
+      zone,
+      q,
+      count: out.length,
+      items: out
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "server", details: err.message });
+  }
+});
+
+/* ====================================================================== */
+/*  GET RANKING                                                            */
+/* ====================================================================== */
+/**
+ * Stratégie:
+ * 1) Essaie de lire un cache: collection 'rank' doc(zone) {rows:[...], updatedAt}
+ * 2) Sinon, fallback: parcourt 'prices_<zone>' (ou 'prices' with zone=)
+ *    et calcule un panier moyen par enseigne.
+ */
+exports.getRanking = https.onRequest(async (req, res) => {
+  try {
+    if (handleCORS(req, res)) return;
+    const zone = (req.query.zone || 'martinique').toString().toLowerCase();
+    if (!ZONES.includes(zone)) {
+      return res.status(400).json({ error: 'invalid zone' });
+    }
+
+    // 1) cache
+    const cacheDoc = await db.collection('rank').doc(zone).get();
+    if (cacheDoc.exists) {
+      const data = cacheDoc.data() || {};
+      return res.json({
+        zone,
+        rows: Array.isArray(data.rows) ? data.rows : [],
+        updatedAt: data.updatedAt || null,
+      });
+    }
+
+    // 2) fallback: agrégation simple depuis les prix
+    let snap;
+    try {
+      // collection dédiée par zone si elle existe
+      snap = await db.collection(`prices_${zone}`).get();
+    } catch (_) {
+      // sinon, collection globale filtrée
+      snap = await db.collection('prices').where('zone', '==', zone).get();
+    }
+
+    const byStore = {};
+    snap.forEach(doc => {
+      const d = doc.data() || {};
+      const store = d.store || d.shop || d.brand || 'Inconnu';
+      const p = Number(d.price ?? d.amount ?? NaN);
+      if (!Number.isFinite(p)) return;
+      if (!byStore[store]) byStore[store] = { sum:0, n:0 };
+      byStore[store].sum += p;
+      byStore[store].n   += 1;
+    });
+
+    const rows = Object.entries(byStore)
+      .map(([store, v], i) => ({
+        rank: i+1,
+        store,
+        avgBasket: +(v.sum / Math.max(1,v.n)).toFixed(2),
+        sampleSize: v.n
+      }))
+      .sort((a,b)=> a.avgBasket - b.avgBasket)
+      .map((r,i)=> ({...r, rank:i+1}));
+
+    return res.json({ zone, rows, updatedAt: null });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'server' });
+  }
+});
+
+/* ====================================================================== */
+/*  SEARCH PRICES                                                          */
+/* ====================================================================== */
+/**
+ * GET /searchPrices?zone=martinique&q=banane&limit=50
+ * Compose à partir de 'prices_<zone>' (si existe) + fallback 'prices' where zone
+ * Retourne une projection simple & propre pour le front.
+ */
+exports.searchPrices = https.onRequest(async (req, res) => {
+  try {
+    if (handleCORS(req, res)) return;
+
+    const zone  = (req.query.zone || 'martinique').toString().toLowerCase();
+    const qTxt  = (req.query.q || '').toString();
+    const limit = Math.min(parseInt(req.query.limit)||50, 100);
+
+    if (!qTxt) return res.status(400).json({ error: 'missing q' });
+    if (!ZONES.includes(zone)) return res.status(400).json({ error: 'invalid zone' });
+
+    // 1) lecture de base
+    let items = [];
+    try {
+      const s1 = await db.collection(`prices_${zone}`).get();
+      items = s1.docs.map(d => ({ id:d.id, ...d.data() }));
+    } catch (_) {
+      // ok si pas de collection par zone
+    }
+
+    if (items.length === 0) {
+      const s2 = await db.collection('prices').where('zone','==',zone).get();
+      items = s2.docs.map(d => ({ id:d.id, ...d.data() }));
+    }
+
+    // 2) filtre texte (nom, label, product)
+    const needle = norm(qTxt);
+    const match = (s='') => norm(s).includes(needle);
+    items = items.filter(it => match(it.name) || match(it.product) || match(it.label));
+
+    // 3) projection
+    const out = items.slice(0, limit).map(it => {
+      const ts = it.updatedAt?.seconds ?? it._seconds ?? null;
+      return {
+        id: it.id,
+        name: it.name || it.product || it.label || null,
+        store: it.store || it.shop || it.brand || null,
+        price: (it.price ?? it.amount ?? null),
+        unit:  it.unit || it.unitPrice || null,
+        zone,
+        updatedAt: ts ? ts : null
+      };
+    });
+
+    res.json({ zone, q: qTxt, count: out.length, items: out });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'server' });
+  }
+});
