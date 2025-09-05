@@ -2,3 +2,15 @@
   Cache-Control: public, max-age=300
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
+/*.html
+  Cache-Control: no-store, no-cache, must-revalidate, max-age=0
+/index.html
+  Cache-Control: no-store, no-cache, must-revalidate, max-age=0
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+/img/*
+  Cache-Control: public, max-age=31536000, immutable
+/css/*
+  Cache-Control: public, max-age=31536000, immutable
+/js/*
+  Cache-Control: public, max-age=31536000, immutable
