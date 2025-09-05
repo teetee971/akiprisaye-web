@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Recherche produit — A KI PRI SA YÉ</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <style>
+    body{background:#0c1220;color:#e7eef9;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
+    .wrap{max-width:960px;margin:0 auto;padding:1rem}
+    .card{background:#151c2f;border:1px solid #26304a;border-radius:14px;padding:1rem;margin:1rem 0}
+    .row{display:flex;gap:.75rem;flex-wrap:wrap}
+    .row>*{flex:1 1 240px}
+    select,input,button{width:100%;padding:.9rem;border-radius:10px;border:1px solid #25324a;background:#0e1627;color:#e7eef9}
+    button{background:#1fb6ff;border-color:#1fb6ff;font-weight:600;cursor:pointer}
+    button:disabled{opacity:.6;cursor:not-allowed}
+    .status{margin-top:.5rem;font-size:.95rem}
+    .status.ok{color:#79e6a1}
+    .status.err{color:#ff6b6b}
+    .status.muted{color:#9bb3d3}
+    table{width:100%;border-collapse:collapse;margin-top:.5rem}
+    th,td{padding:.6rem;border-bottom:1px solid #24314a;text-align:left}
+    th{color:#9bb3d3;font-weight:600}
+    footer{opacity:.85;text-align:center;margin:2rem 0}
+  </style>
+</head>
+
+<body>
+  <header class="wrap">
+    <h1>A KI PRI SA YÉ</h1>
+    <p>Recherche produit</p>
+  </header>
+
+  <main class="wrap">
+    <section class="card">
+      <div class="row">
+        <div>
+          <label for="zone">Zone</label>
+          <select id="zone">
+            <option value="martinique">Martinique</option>
+            <option value="guadeloupe">Guadeloupe</option>
+            <option value="guyane">Guyane</option>
+            <option value="reunion">Réunion</option>
+            <option value="mayotte">Mayotte</option>
+            <option value="saint-martin">Saint-Martin</option>
+            <option value="saint-barthelemy">Saint-Barthélemy</option>
+            <option value="saint-pierre-et-miquelon">Saint-Pierre-et-Miquelon</option>
+            <option value="polynesie-francaise">Polynésie française</option>
+            <option value="wallis-et-futuna">Wallis-et-Futuna</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="q">Produit</label>
+          <input id="q" placeholder="Ex : banane, yaourt nature, lait, baguette…" />
+        </div>
+
+        <div style="align-self:end">
+          <button id="go" type="button" onclick="doSearch()">Rechercher</button>
+        </div>
+      </div>
+
+      <div id="status" aria-live="polite" class="status muted">Saisissez un mot-clé puis cliquez sur « Rechercher ».</div>
+      <div id="count" class="status muted"></div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Produit</th><th>Enseigne</th><th>Prix</th><th>Unité</th><th>Maj.</th>
+          </tr>
+        </thead>
+        <tbody id="list"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">© <span id="y"></span> A KI PRI SA YÉ – DROM-COM</div>
+  </footer>
+
+  <script>
+    // 1) Endpoint Cloud Functions
+    const SEARCH_ENDPOINT = "https://us-central1-a-ki-pri-sa-ye.cloudfunctions.net/searchPrices";
+
+    // 2) Aides
+    const fmtEUR = new Intl.NumberFormat("fr-FR",{style:"currency",currency:"EUR"});
+    const $ = (sel)=>document.querySelector(sel);
+    const zoneEl  = $("#zone");
+    const qEl     = $("#q");
+    const goEl    = $("#go");
+    const listEl  = $("#list");
+    const statusEl= $("#status");
+    const countEl = $("#count");
+
+    const setStatus = (msg, cls="muted")=>{
+      statusEl.className = "status " + cls;
+      statusEl.textContent = msg;
+    };
+
+    const render = (items)=>{
+      if(!items || !items.length){
+        listEl.innerHTML = '<tr><td colspan="5" class="status muted">Aucun résultat trouvé.</td></tr>';
+        countEl.textContent = "";
+        return;
+      }
+      countEl.textContent = `Résultats : ${items.length}`;
+      listEl.innerHTML = items.map(it=>`
+        <tr>
+          <td>${it.name || it.product || it.label || ""}</td>
+          <td>${it.store || it.shop || it.brand || ""}</td>
+          <td>${it.price!=null ? fmtEUR.format(it.price) : "—"}</td>
+          <td>${it.unit || it.unitPrice || "—"}</td>
+          <td>${it.updatedAt ? new Date(it.updatedAt*1000).toLocaleDateString("fr-FR") : "—"}</td>
+        </tr>`).join("");
+    };
+
+    async function doSearch(){
+  console.log("doSearch()", { zone: zoneEl?.value, q: qEl?.value });
+      const zone = (zoneEl.value||"").toLowerCase().trim();
+      const text = (qEl.value||"").trim();
+      if(!text){ setStatus("Entrez un mot-clé.","err"); qEl.focus(); return; }
+
+      setStatus("Recherche en cours…","muted");
+      render([]); // vide l'affichage
+
+      // cache-busting léger
+      const v = Date.now().toString().slice(-6);
+      const url = `${SEARCH_ENDPOINT}?zone=${encodeURIComponent(zone)}&q=${encodeURIComponent(text)}&limit=10&v=${v}`;
+
+      try{
+        const r = await fetch(url,{headers:{accept:"application/json"}});
+        if(!r.ok) throw new Error("HTTP "+r.status);
+        const data = await r.json();
+        render(data.items||[]);
+        setStatus("Résultats mis à jour.","ok");
+      }catch(e){
+        console.error(e);
+        render([]);
+        setStatus("Erreur : impossible de charger les résultats.","err");
+      }
+    }window.doSearch = doSearch;
+
+    // 3) Événements
+    goEl.addEventListener("click", doSearch);
+    qEl.addEventListener("keydown",(e)=>{ if(e.key==="Enter") doSearch(); });
+
+    // 4) Footer année
+    document.getElementById("y").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
