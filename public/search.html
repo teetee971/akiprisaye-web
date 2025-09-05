@@ -56,7 +56,7 @@
         </div>
 
         <div style="align-self:end">
-          <button id="go">Rechercher</button>
+          <button id="go" type="button" onclick="doSearch()">Rechercher</button>
         </div>
       </div>
 
@@ -137,7 +137,7 @@
         render([]);
         setStatus("Erreur : impossible de charger les résultats.","err");
       }
-    }
+    }window.doSearch = doSearch;
 
     // 3) Événements
     goEl.addEventListener("click", doSearch);
