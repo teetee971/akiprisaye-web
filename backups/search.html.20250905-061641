@@ -56,11 +56,11 @@
         </div>
 
         <div style="align-self:end">
-          <button id="go" type="button" onclick="doSearch()">Rechercher</button>
+          <button id="go">Rechercher</button>
         </div>
       </div>
 
-      <div id="status" aria-live="polite" class="status muted">Saisissez un mot-clé puis cliquez sur « Rechercher ».</div>
+      <div id="status" class="status muted">Saisissez un mot-clé puis cliquez sur « Rechercher ».</div>
       <div id="count" class="status muted"></div>
 
       <table>
@@ -115,7 +115,6 @@
     };
 
     async function doSearch(){
-  console.log("doSearch()", { zone: zoneEl?.value, q: qEl?.value });
       const zone = (zoneEl.value||"").toLowerCase().trim();
       const text = (qEl.value||"").trim();
       if(!text){ setStatus("Entrez un mot-clé.","err"); qEl.focus(); return; }
