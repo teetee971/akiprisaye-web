@@ -1,8 +1,3 @@
 {
-  "projects": {
-    "default": "a-ki-pri-sa-ye",
-    "ory = String(req.query.territory||'martinique').toLowerCase();": "a-ki-pri-sa-ye"
-  },
-  "targets": {},
-  "etags": {}
+  "projects": { "default": "ton-project-id" }
 }

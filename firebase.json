@@ -1,4 +1,22 @@
 {
-  "hosting": { "public":"public", "ignore": ["firebase.json","**/.*","**/node_modules/**"] },
-  "functions": { "source": "functions" }
+  "hosting": {
+    "public": "public",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "headers": [
+      {
+        "source": "/api/**",
+        "headers": [
+          { "key": "Access-Control-Allow-Origin", "value": "*" },
+          { "key": "Access-Control-Allow-Methods", "value": "GET,OPTIONS" }
+        ]
+      }
+    ],
+    "rewrites": [
+      { "source": "/api/ean2nc8", "function": "ean2nc8" },
+      { "source": "**", "destination": "/index.html" }
+    ]
+  },
+  "functions": {
+    "source": "functions"
+  }
 }
