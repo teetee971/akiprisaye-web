@@ -1,0 +1,14 @@
+[
+  {"code":"MQ","name":"Martinique"},
+  {"code":"GP","name":"Guadeloupe"},
+  {"code":"GF","name":"Guyane"},
+  {"code":"RE","name":"La Réunion"},
+  {"code":"YT","name":"Mayotte"},
+  {"code":"PM","name":"Saint-Pierre-et-Miquelon"},
+  {"code":"BL","name":"Saint-Barthélemy"},
+  {"code":"MF","name":"Saint-Martin"},
+  {"code":"WF","name":"Wallis-et-Futuna"},
+  {"code":"PF","name":"Polynésie française"},
+  {"code":"NC","name":"Nouvelle-Calédonie"},
+  {"code":"TF","name":"Terres australes et antarctiques françaises"}
+]

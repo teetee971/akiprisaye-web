@@ -1,0 +1,11 @@
+{
+  "name": "ocr-nc8",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "OCR etiquette -> EAN -> produit OFF -> candidats code douanier NC8",
+  "dependencies": {
+    "jimp": "^0.22.10",
+    "node-fetch": "^3.3.2",
+    "tesseract.js": "^5.1.0"
+  }
+}
