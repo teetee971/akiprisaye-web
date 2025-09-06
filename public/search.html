@@ -49,6 +49,7 @@
     .right{text-align:right}
     footer{color:var(--muted);font-size:14px;margin:28px 0 40px}
   </style>
+<link rel="stylesheet" href="/app-modal.css"/>
 </head>
 <body>
   <div class="wrap">
@@ -172,5 +173,7 @@
     qEl.setAttribute("autocomplete","on");
     $("#y").textContent = new Date().getFullYear();
   </script>
+<script type="module">import {wireProductClicks} from "/app-modal.js";
+window.wireProductClicks=wireProductClicks;</script>
 </body>
 </html>
