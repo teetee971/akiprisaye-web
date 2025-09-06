@@ -1,6 +1,4 @@
 {
-  "functions": {
-    "source": "firebase_functions",
-    "runtime": "nodejs20"
-  }
+  "hosting": { "public":"public", "ignore": ["firebase.json","**/.*","**/node_modules/**"] },
+  "functions": { "source": "functions" }
 }

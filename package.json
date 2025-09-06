@@ -12,9 +12,14 @@
     "predeploy": "npm --prefix \"$RESOURCE_DIR\" run lint || true"
   },
   "dependencies": {
+    "@google-cloud/vision": "^5.3.3",
     "axios": "1.7.7",
     "firebase-admin": "12.6.0",
-    "firebase-functions": "6.0.0"
+    "firebase-functions": "6.0.0",
+    "jimp": "^1.6.0",
+    "node-fetch": "^3.3.2",
+    "sharp": "^0.34.3",
+    "tesseract.js": "^6.0.1"
   },
   "devDependencies": {
     "eslint": "9.34.0"
