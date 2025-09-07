@@ -1,88 +1,74 @@
-const $ = (s) => document.querySelector(s);
-const K = (n) => Intl.NumberFormat('fr-FR').format(n);
-
-async function loadJSON(path, fallback=[]) {
-  try { const r = await fetch(path, {cache:'no-store'}); return await r.json(); }
-  catch(e){ console.warn('json fail', path, e); return fallback; }
-}
-
 async function hydrateKPIs(){
-  const k = await loadJSON('./data/kpis.json', {});
-  $('#kpi-products').textContent   = K(k.products ?? 0);
-  $('#kpi-stores').textContent     = K(k.stores ?? 0);
-  $('#kpi-territories').textContent= K(k.territories ?? 0);
-  $('#kpi-updated').textContent    = (k.updated ?? '').split('T')[0].split('-').reverse().join('/');
-}
-
-async function hydrateFeatures(){
-  const feats = await loadJSON('./data/features.json', []);
-  const wrap = $('#features'); wrap.innerHTML = '';
-  feats.forEach(f=>{
-    const el = document.createElement('div');
-    el.className='card';
-    el.innerHTML = `<span class="badge">${f.tag}</span>
-      <h3 style="margin:8px 0 6px">${f.title}</h3>
-      <p class="lead" style="font-size:14px">${f.text}</p>`;
-    wrap.appendChild(el);
-  });
+  try{
+    const k = await (await fetch('../data/kpis.json')).json();
+    byId('kpiProducts').textContent   = k.products.toLocaleString('fr-FR');
+    byId('kpiRetailers').textContent  = k.retailers.toLocaleString('fr-FR');
+    byId('kpiTerritories').textContent= k.territories.toLocaleString('fr-FR');
+    byId('kpiUpdated').textContent    = new Date(k.updated).toLocaleDateString('fr-FR');
+  }catch(e){ console.warn('kpis.json?', e); }
 }
 
 async function hydrateNews(){
-  const items = await loadJSON('./data/news.json', []);
-  const wrap = $('#news'); wrap.innerHTML = '';
-  items.slice(0,3).forEach(n=>{
-    const el = document.createElement('div');
-    el.className='card';
-    const d = new Date(n.date).toLocaleDateString('fr-FR');
-    el.innerHTML = `<span class="badge">${n.tag}</span>
-      <h3 style="margin:8px 0 6px">${n.title}</h3>
-      <p class="lead" style="font-size:14px">${n.excerpt}</p>
-      <div class="lead" style="font-size:12px;color:#9fb1d3">${d}</div>`;
-    wrap.appendChild(el);
-  });
+  try{
+    const items = await (await fetch('../data/news.json')).json();
+    const wrap = byId('news'); wrap.innerHTML='';
+    items.forEach(n=>{
+      const card = el('div','card');
+      card.innerHTML = `
+        <span class="badge">${n.tag}</span>
+        <h3>${n.title}</h3>
+        <div class="lead3">${new Date(n.date).toLocaleDateString('fr-FR')}</div>
+        <p class="lead3">${n.excerpt}</p>`;
+      wrap.appendChild(card);
+    });
+  }catch(e){ console.warn('news.json?', e); }
 }
 
 async function hydrateReviews(){
-  const items = await loadJSON('./data/reviews.json', []);
-  const wrap = $('#reviews'); wrap.innerHTML = '';
-  if(items.length){
-    const avg = (items.reduce((a,b)=>a+b.rating,0)/items.length).toFixed(1);
-    $('#avg-rating').textContent = `Note moyenne ${avg} ★`;
-  }
-  items.slice(0,3).forEach(v=>{
-    const stars = '★★★★★'.slice(0, v.rating).split('').join('<span style="opacity:.25">★</span>') + (v.rating<5?'':'');
-    const el = document.createElement('div');
-    el.className='card';
-    el.innerHTML = `<div style="font-size:18px;font-weight:800">${v.title}</div>
-    <p class="lead" style="font-size:14px">${v.text}</p>
-    <div class="lead" style="font-size:12px;color:#9fb1d3">${'★'.repeat(v.rating)}${'☆'.repeat(5-v.rating)} — ${v.author}</div>`;
-    wrap.appendChild(el);
-  });
+  try{
+    const items = await (await fetch('../data/reviews.json')).json();
+    const wrap = byId('reviews'); wrap.innerHTML='';
+    items.forEach(v=>{
+      const stars = '★★★★★'.slice(0, v.rating).split('').map(s=>`<span style="color:#ffc857">${s}</span>`).join('');
+      const card = el('div','card');
+      card.innerHTML = `<div>${stars}</div><p class="lead3">${v.text}</p><strong>${v.author}</strong>`;
+      wrap.appendChild(card);
+    });
+  }catch(e){ console.warn('reviews.json?', e); }
 }
 
 async function hydrateStores(){
-  const logos = await loadJSON('./data/stores.json', []);
-  const row = $('#logos'); row.innerHTML='';
-  logos.forEach(s=>{
-    const el = document.createElement('div');
-    el.innerHTML = `<img class="logo" alt="${s.name}" src="${s.logo}">`;
-    row.appendChild(el);
-  });
+  try{
+    const items = await (await fetch('../data/stores.json')).json();
+    const row = byId('logos'); row.innerHTML='';
+    items.forEach(s=>{
+      const box = el('div'); box.style.textAlign='center';
+      box.innerHTML=`<img class="logo" alt="${s.name}" src="${s.logo}" onerror="this.replaceWith(document.createTextNode('${s.name}'));">`;
+      row.appendChild(box);
+    });
+  }catch(e){ console.warn('stores.json?', e); }
 }
 
-function wireSearch(){
-  $('#go').addEventListener('click', ()=>{
-    const q = ($('#q').value||'').trim();
-    if(!q) return;
-    // Option A (recherche côté client plus tard) :
-    window.location.href = `/recherche.html?q=${encodeURIComponent(q)}`;
-    // Option B : démo API EAN :
-    // fetch(`/api/ean2nc8?ean=${encodeURIComponent(q)}`).then(r=>r.json()).then(console.log);
-  });
-}
+// Recherche: redirige vers /recherche.html?q=...
+document.getElementById('searchForm').addEventListener('submit', (ev)=>{
+  ev.preventDefault();
+  const q = byId('q').value.trim();
+  const t = byId('territoire').value.trim();
+  // Démo endpoint EAN (optionnel) si q ressemble à un EAN
+  if(/^\d{8,14}$/.test(q)){
+    fetch(`/api/ean2nc8?ean=${encodeURIComponent(q)}`)
+      .then(r=>r.json()).then(console.log).catch(()=>{});
+  }
+  const u = new URL(location.origin + '/recherche.html');
+  u.searchParams.set('q', q);
+  if(t) u.searchParams.set('t', t);
+  location.href = u.toString();
+});
+
+function byId(id){return document.getElementById(id)}
+function el(tag,cls){const n=document.createElement(tag); if(cls) n.className=cls; return n;}
 
 document.addEventListener('DOMContentLoaded', ()=>{
-  $('#y').textContent = new Date().getFullYear();
-  hydrateKPIs(); hydrateFeatures(); hydrateNews(); hydrateReviews(); hydrateStores();
-  wireSearch();
+  hydrateKPIs(); hydrateNews(); hydrateReviews(); hydrateStores();
+  byId('year').textContent = new Date().getFullYear();
 });
