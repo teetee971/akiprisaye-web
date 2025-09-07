@@ -1,0 +1,5 @@
+[
+  { "tag":"Comparateur", "title":"Prix en temps quasi réel", "text":"Unifie les tickets, étiquettes et flux de prix pour te montrer le meilleur prix par territoire." },
+  { "tag":"Scan EAN", "title":"Recherche par code-barres", "text":"Tape ou scanne un EAN pour retrouver le produit et son prix le plus bas." },
+  { "tag":"Alertes", "title":"Baisse de prix", "text":"Crée des listes et reçois une alerte quand ça baisse dans ton magasin." }
+]
