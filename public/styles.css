@@ -1,0 +1,40 @@
+:root{
+  --bg:#0c1220; --card:#121a2c; --text:#e6ebff; --muted:#9cb3ff;
+  --accent:#6ad1ff; --border:#1f2a44;
+}
+*{box-sizing:border-box} html,body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,Segoe UI,Roboto,Ubuntu}
+a{color:var(--accent);text-decoration:none}
+.site{max-width:1100px;margin:auto;padding:16px}
+header.site{display:flex;gap:16px;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.brand{font-weight:800;letter-spacing:.5px}
+nav a{margin-left:12px;opacity:.9}
+.hero{padding:40px 16px 24px;background:radial-gradient(1200px 400px at 20% -10%,#1b2a4f,transparent)}
+h1{font-size:clamp(28px,5vw,44px);margin:0 0 8px}
+.accent{color:var(--accent)}
+.lead{color:var(--muted);max-width:65ch}
+.search{display:grid;grid-template-columns:1fr 220px 160px;gap:8px;margin:18px 0}
+.search input,.search select,.search button{border:1px solid var(--border);background:var(--card);color:var(--text);padding:10px;border-radius:10px}
+.search button{background:linear-gradient(180deg,#3a67ff,#2449d8);border:none}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center}
+.stat div{font-size:24px;font-weight:800}
+.panel{padding:28px 16px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px}
+.badge{display:inline-block;padding:2px 8px;border-radius:999px;background:#203563;color:#b9c9ff;font-size:12px}
+.lead3{color:var(--muted);margin:6px 0 0}
+.logos{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;align-items:center}
+.logos .logo{height:30px;filter:grayscale(.2) brightness(1.1)}
+.about .bullets{columns:2;margin:8px 0 0;padding-left:18px}
+footer.site{border-top:1px solid var(--border);opacity:.8;text-align:center;margin-top:18px}
+@media (max-width:900px){
+  .search{grid-template-columns:1fr 160px 120px}
+  .cards{grid-template-columns:1fr 1fr}
+  .logos{grid-template-columns:repeat(3,1fr)}
+  .stats-grid{grid-template-columns:1fr 1fr}
+}
+@media (max-width:560px){
+  .search{grid-template-columns:1fr}
+  .cards{grid-template-columns:1fr}
+  .logos{grid-template-columns:repeat(2,1fr)}
+}
