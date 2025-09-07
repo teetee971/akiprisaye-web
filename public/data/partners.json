@@ -1,0 +1,62 @@
+[
+  // ==== Alimentation GMS ====
+  {"id":"carrefour","name":"Carrefour","category":"Alimentation","territories":["FR","GP","MQ","GF","RE","YT"],"logo":"/img/partners/carrefour.svg"},
+  {"id":"intermarche","name":"Intermarché","category":"Alimentation","territories":["FR","GP","RE"],"logo":"/img/partners/intermarche.svg"},
+  {"id":"leclerc","name":"E.Leclerc","category":"Alimentation","territories":["FR","RE"],"logo":"/img/partners/leclerc.svg"},
+  {"id":"super-u","name":"Super U / Hyper U","category":"Alimentation","territories":["FR","GP","MQ","RE"],"logo":"/img/partners/u.svg"},
+  {"id":"casino","name":"Géant Casino / Casino","category":"Alimentation","territories":["FR","MQ","RE"],"logo":"/img/partners/casino.svg"},
+  {"id":"leader-price","name":"Leader Price","category":"Alimentation","territories":["FR","RE"],"logo":"/img/partners/leaderprice.svg"},
+  {"id":"ecomax","name":"Ecomax","category":"Alimentation","territories":["GP","MQ"],"logo":"/img/partners/ecomax.svg"},
+  {"id":"carrefour-express","name":"Carrefour Express","category":"Alimentation","territories":["FR","RE","GP"],"logo":"/img/partners/carrefour.svg"},
+  {"id":"spar","name":"SPAR","category":"Alimentation","territories":["FR","RE","NC","PF"],"logo":"/img/partners/spar.svg"},
+
+  // ==== Hard discount / proximité ====
+  {"id":"aldi","name":"ALDI","category":"Alimentation","territories":["FR"],"logo":"/img/partners/aldi.svg"},
+  {"id":"lidl","name":"Lidl","category":"Alimentation","territories":["FR","RE"],"logo":"/img/partners/lidl.svg"},
+
+  // ==== Bricolage / Maison ====
+  {"id":"leroy-merlin","name":"Leroy Merlin","category":"Bricolage","territories":["FR"],"logo":"/img/partners/leroy-merlin.svg"},
+  {"id":"castorama","name":"Castorama","category":"Bricolage","territories":["FR"],"logo":"/img/partners/castorama.svg"},
+  {"id":"bricomarche","name":"Bricomarché","category":"Bricolage","territories":["FR","GF"],"logo":"/img/partners/bricomarche.svg"},
+  {"id":"mr-bricolage","name":"Mr Bricolage","category":"Bricolage","territories":["FR","GF","RE","NC"],"logo":"/img/partners/mrbricolage.svg"},
+  {"id":"bricorama","name":"Bricorama","category":"Bricolage","territories":["FR"],"logo":"/img/partners/bricorama.svg"},
+  {"id":"bricodepot","name":"Brico Dépôt","category":"Bricolage","territories":["FR"],"logo":"/img/partners/bricodepot.svg"},
+  {"id":"feu-vert","name":"Feu Vert","category":"Auto / Garages","territories":["FR"],"logo":"/img/partners/feu-vert.svg"},
+  {"id":"norauto","name":"Norauto","category":"Auto / Garages","territories":["FR"],"logo":"/img/partners/norauto.svg"},
+  {"id":"autodiscount-dom","name":"Auto Discount DOM","category":"Auto / Garages","territories":["GP","MQ","GF","RE"],"logo":"/img/partners/auto.svg"},
+
+  // ==== Jardinage / Plein air ====
+  {"id":"jardiland","name":"Jardiland","category":"Jardinage","territories":["FR"],"logo":"/img/partners/jardiland.svg"},
+  {"id":"gamm-vert","name":"Gamm vert","category":"Jardinage","territories":["FR","GF","RE"],"logo":"/img/partners/gamm-vert.svg"},
+  {"id":"feu-vert-jardin","name":"Feu Vert Jardin","category":"Jardinage","territories":["FR"],"logo":"/img/partners/garden.svg"},
+
+  // ==== High-Tech / Culture ====
+  {"id":"fnac","name":"Fnac","category":"High-Tech","territories":["FR","RE"],"logo":"/img/partners/fnac.svg"},
+  {"id":"darty","name":"Darty","category":"High-Tech","territories":["FR","RE"],"logo":"/img/partners/darty.svg"},
+  {"id":"cdiscount","name":"Cdiscount","category":"High-Tech","territories":["FR"],"logo":"/img/partners/cdiscount.svg"},
+  {"id":"boulanger","name":"Boulanger","category":"High-Tech","territories":["FR"],"logo":"/img/partners/boulanger.svg"},
+
+  // ==== Sport / Loisirs ====
+  {"id":"decathlon","name":"Decathlon","category":"Sport","territories":["FR","RE"],"logo":"/img/partners/decathlon.svg"},
+  {"id":"intersport","name":"Intersport","category":"Sport","territories":["FR","RE","NC"],"logo":"/img/partners/intersport.svg"},
+
+  // ==== Ameublement / Déco ====
+  {"id":"ikea","name":"IKEA","category":"Maison / Déco","territories":["FR","RE"],"logo":"/img/partners/ikea.svg"},
+  {"id":"but","name":"BUT","category":"Maison / Déco","territories":["FR","RE","GP","MQ"],"logo":"/img/partners/but.svg"},
+  {"id":"conforama","name":"Conforama","category":"Maison / Déco","territories":["FR","RE"],"logo":"/img/partners/conforama.svg"},
+  {"id":"darty-dom","name":"Darty DOM","category":"Maison / Déco","territories":["GP","MQ","RE"],"logo":"/img/partners/darty.svg"},
+
+  // ==== Pharmacie / Parapharmacie (affichage, pas d’actes médicaux) ====
+  {"id":"parashop","name":"Parashop","category":"Parapharmacie","territories":["FR"],"logo":"/img/partners/parashop.svg"},
+  {"id":"parapharm-dom","name":"Parapharmacie DOM","category":"Parapharmacie","territories":["GP","MQ","GF","RE"],"logo":"/img/partners/parapharm.svg"},
+
+  // ==== Voyage (listing indicatif) ====
+  {"id":"air-france","name":"Air France","category":"Voyages","territories":["FR","GP","MQ","GF","RE","YT","PF","NC","WF","PM","BL","MF"],"logo":"/img/partners/airfrance.svg"},
+  {"id":"air-caraibes","name":"Air Caraïbes","category":"Voyages","territories":["FR","GP","MQ","GF"],"logo":"/img/partners/aircaraibes.svg"},
+  {"id":"corsair","name":"Corsair","category":"Voyages","territories":["FR","GP","MQ","RE","MF"],"logo":"/img/partners/corsair.svg"},
+
+  // ==== Locales / Régionales (exemples, extensible) ====
+  {"id":"milenas","name":"Miléna (épicerie locale)","category":"Alimentation","territories":["GP"],"logo":"/img/partners/local-store.svg"},
+  {"id":"hyper-u-dom","name":"Hyper U DOM","category":"Alimentation","territories":["RE","GP","MQ"],"logo":"/img/partners/u.svg"},
+  {"id":"gbh","name":"GBH (réseau de magasins DOM)","category":"Multi-enseignes","territories":["GP","MQ","GF","RE"],"logo":"/img/partners/gbh.svg"}
+]
