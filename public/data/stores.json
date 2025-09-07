@@ -1,29 +1,6 @@
-{
-  "MQ": [
-    {"id":"mq-cora","name":"Cora","city":"Lamentin"},
-    {"id":"mq-carrefour","name":"Carrefour","city":"Fort-de-France"},
-    {"id":"mq-leader-price","name":"Leader Price","city":"Schoelcher"}
-  ],
-  "GP": [
-    {"id":"gp-carrefour","name":"Carrefour","city":"Baie-Mahault"},
-    {"id":"gp-super-u","name":"Super U","city":"Le Moule"}
-  ],
-  "GF": [
-    {"id":"gf-casino","name":"Géant Casino","city":"Cayenne"},
-    {"id":"gf-super-u","name":"Super U","city":"Matoury"}
-  ],
-  "RE": [
-    {"id":"re-leclerc","name":"E.Leclerc","city":"Saint-Denis"},
-    {"id":"re-carrefour","name":"Carrefour","city":"Saint-Pierre"}
-  ],
-  "YT": [
-    {"id":"yt-carrefour","name":"Carrefour","city":"Mamoudzou"}
-  ],
-  "PM": [{"id":"pm-uex","name":"U Express","city":"Saint-Pierre"}],
-  "BL": [{"id":"bl-marche","name":"Marché local","city":"Gustavia"}],
-  "MF": [{"id":"mf-super-u","name":"Super U","city":"Marigot"}],
-  "WF": [{"id":"wf-mag","name":"Magasin général","city":"Mata-Utu"}],
-  "PF": [{"id":"pf-carrefour","name":"Carrefour","city":"Papeete"}],
-  "NC": [{"id":"nc-casino","name":"Casino","city":"Nouméa"}],
-  "TF": []
-}
+[
+  {"name":"U","logo":"/img/u.svg"},
+  {"name":"Carrefour","logo":"/img/carrefour.svg"},
+  {"name":"Leader Price","logo":"/img/leader.svg"},
+  {"name":"Hyper U","logo":"/img/u.svg"}
+]
