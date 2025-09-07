@@ -1,126 +1,88 @@
-/* ---- Rendu liste & interactions ----
-   Hypothèse : tu appelles renderResults(items) avec des objets:
-   { name, brand, imageUrl, price, unit, storeName, ean }
-*/
-const $ = (q, root=document) => root.querySelector(q);
-const $$ = (q, root=document) => Array.from(root.querySelectorAll(q));
+const $ = (s) => document.querySelector(s);
+const K = (n) => Intl.NumberFormat('fr-FR').format(n);
 
-/** Rend la liste des produits */
-export function renderResults(items=[]) {
-  const list = $("#results-list");
-  if(!list) return;
-  list.innerHTML = items.map((p, idx) => {
-    const img = p.imageUrl || "/img/placeholder.png";
-    const name = p.name || "Produit";
-    const brand = p.brand || "";
-    const price = p.price ?? "";
-    const unit = p.unit || "";
-    const store = p.storeName || "";
-    const ean = p.ean || "";
-    return `
-      <li class="result-row" 
-          data-idx="${idx}"
-          data-name="${escapeHtml(name)}"
-          data-brand="${escapeHtml(brand)}"
-          data-price="${escapeHtml(String(price))}"
-          data-unit="${escapeHtml(unit)}"
-          data-store="${escapeHtml(store)}"
-          data-ean="${escapeHtml(ean)}"
-          data-image="${escapeHtml(img)}">
-        <div class="row px-3 py-3 flex gap-3 items-center">
-          <img src="${img}" alt="" width="56" height="56" style="border-radius:10px;object-fit:cover;background:#0b1220"/>
-          <div class="flex-1">
-            <div class="text-base font-semibold">${escapeHtml(name)}</div>
-            <div class="text-sm opacity-70">${escapeHtml(brand)}</div>
-          </div>
-          <div class="w-24 text-right">
-            <div class="font-semibold">${price !== "" ? escapeHtml(String(price)) : "-"}</div>
-            <div class="opacity-70 text-sm">${escapeHtml(unit)}</div>
-          </div>
-        </div>
-      </li>`;
-  }).join("");
+async function loadJSON(path, fallback=[]) {
+  try { const r = await fetch(path, {cache:'no-store'}); return await r.json(); }
+  catch(e){ console.warn('json fail', path, e); return fallback; }
 }
 
-/** Event delegation pour ouvrir la fiche */
-document.addEventListener("click", async (ev) => {
-  const row = ev.target.closest(".result-row");
-  if(!row) return;
+async function hydrateKPIs(){
+  const k = await loadJSON('./data/kpis.json', {});
+  $('#kpi-products').textContent   = K(k.products ?? 0);
+  $('#kpi-stores').textContent     = K(k.stores ?? 0);
+  $('#kpi-territories').textContent= K(k.territories ?? 0);
+  $('#kpi-updated').textContent    = (k.updated ?? '').split('T')[0].split('-').reverse().join('/');
+}
 
-  const data = {
-    name: row.dataset.name,
-    brand: row.dataset.brand,
-    price: row.dataset.price,
-    unit: row.dataset.unit,
-    store: row.dataset.store,
-    ean: row.dataset.ean,
-    image: row.dataset.image
-  };
-  await openProductModal(data);
-});
+async function hydrateFeatures(){
+  const feats = await loadJSON('./data/features.json', []);
+  const wrap = $('#features'); wrap.innerHTML = '';
+  feats.forEach(f=>{
+    const el = document.createElement('div');
+    el.className='card';
+    el.innerHTML = `<span class="badge">${f.tag}</span>
+      <h3 style="margin:8px 0 6px">${f.title}</h3>
+      <p class="lead" style="font-size:14px">${f.text}</p>`;
+    wrap.appendChild(el);
+  });
+}
 
-/** FICHE PRODUIT (modal) + enrichissement OFF si EAN présent */
-async function openProductModal(p) {
-  const modal = $("#product-modal");
-  const title = $("#pm-title");
-  const img = $("#pm-img");
-  const info = $("#pm-info");
-  const extra = $("#pm-extra");
+async function hydrateNews(){
+  const items = await loadJSON('./data/news.json', []);
+  const wrap = $('#news'); wrap.innerHTML = '';
+  items.slice(0,3).forEach(n=>{
+    const el = document.createElement('div');
+    el.className='card';
+    const d = new Date(n.date).toLocaleDateString('fr-FR');
+    el.innerHTML = `<span class="badge">${n.tag}</span>
+      <h3 style="margin:8px 0 6px">${n.title}</h3>
+      <p class="lead" style="font-size:14px">${n.excerpt}</p>
+      <div class="lead" style="font-size:12px;color:#9fb1d3">${d}</div>`;
+    wrap.appendChild(el);
+  });
+}
 
-  title.textContent = p.name || "Produit";
-  img.src = p.image || "/img/placeholder.png";
-  img.alt = p.name || "";
-
-  info.innerHTML = `
-    <div><b>Marque :</b> ${safe(p.brand) || "—"}</div>
-    <div><b>Magasin :</b> ${safe(p.store) || "—"}</div>
-    <div><b>Prix :</b> ${safe(p.price) || "—"} <span class="opacity-70">${safe(p.unit) || ""}</span></div>
-    <div><b>EAN :</b> ${safe(p.ean) || "—"}</div>
-  `;
-
-  // Reset bloc OFF
-  extra.innerHTML = `<div class="opacity-70">Chargement des infos complémentaires…</div>`;
-
-  // Enrichissement via OpenFoodFacts si on a un EAN (facultatif)
-  if (p.ean && /^\d{8,14}$/.test(p.ean)) {
-    try {
-      const r = await fetch(`https://world.openfoodfacts.org/api/v2/product/${encodeURIComponent(p.ean)}.json`);
-      const j = await r.json();
-      if (j && j.product) {
-        const prod = j.product;
-        const nutr = prod.nutriments || {};
-        extra.innerHTML = `
-          <div><b>Nom OFF :</b> ${safe(prod.product_name)}</div>
-          <div><b>Catégories :</b> ${safe(prod.categories_fr || prod.categories)}</div>
-          <div><b>Nutri-Score :</b> ${safe(prod.nutriscore_grade || "").toUpperCase() || "—"}</div>
-          <div><b>Énergie :</b> ${nutr["energy-kcal_100g"] ? nutr["energy-kcal_100g"]+" kcal/100g" : "—"}</div>
-          <div><b>Sucre :</b> ${nutr.sugars_100g != null ? nutr.sugars_100g+" g/100g" : "—"}</div>
-          <div class="opacity-60 text-sm mt-2">Source : OpenFoodFacts</div>
-        `;
-      } else {
-        extra.innerHTML = `<div class="opacity-70">Aucune donnée trouvée dans OFF.</div>`;
-      }
-    } catch(e) {
-      extra.innerHTML = `<div class="opacity-70">OFF indisponible (${e?.message||"erreur"}).</div>`;
-    }
-  } else {
-    extra.innerHTML = `<div class="opacity-70">Pas d’EAN disponible pour ce produit.</div>`;
+async function hydrateReviews(){
+  const items = await loadJSON('./data/reviews.json', []);
+  const wrap = $('#reviews'); wrap.innerHTML = '';
+  if(items.length){
+    const avg = (items.reduce((a,b)=>a+b.rating,0)/items.length).toFixed(1);
+    $('#avg-rating').textContent = `Note moyenne ${avg} ★`;
   }
-
-  modal.classList.add("open");
+  items.slice(0,3).forEach(v=>{
+    const stars = '★★★★★'.slice(0, v.rating).split('').join('<span style="opacity:.25">★</span>') + (v.rating<5?'':'');
+    const el = document.createElement('div');
+    el.className='card';
+    el.innerHTML = `<div style="font-size:18px;font-weight:800">${v.title}</div>
+    <p class="lead" style="font-size:14px">${v.text}</p>
+    <div class="lead" style="font-size:12px;color:#9fb1d3">${'★'.repeat(v.rating)}${'☆'.repeat(5-v.rating)} — ${v.author}</div>`;
+    wrap.appendChild(el);
+  });
 }
 
-/** Fermer le modal */
-$("#pm-close")?.addEventListener("click", () => $("#product-modal")?.classList.remove("open"));
-$("#product-modal")?.addEventListener("click", (e) => {
-  if (e.target.id === "product-modal") $("#product-modal").classList.remove("open");
+async function hydrateStores(){
+  const logos = await loadJSON('./data/stores.json', []);
+  const row = $('#logos'); row.innerHTML='';
+  logos.forEach(s=>{
+    const el = document.createElement('div');
+    el.innerHTML = `<img class="logo" alt="${s.name}" src="${s.logo}">`;
+    row.appendChild(el);
+  });
+}
+
+function wireSearch(){
+  $('#go').addEventListener('click', ()=>{
+    const q = ($('#q').value||'').trim();
+    if(!q) return;
+    // Option A (recherche côté client plus tard) :
+    window.location.href = `/recherche.html?q=${encodeURIComponent(q)}`;
+    // Option B : démo API EAN :
+    // fetch(`/api/ean2nc8?ean=${encodeURIComponent(q)}`).then(r=>r.json()).then(console.log);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  $('#y').textContent = new Date().getFullYear();
+  hydrateKPIs(); hydrateFeatures(); hydrateNews(); hydrateReviews(); hydrateStores();
+  wireSearch();
 });
-
-/** petits helpers */
-function escapeHtml(s=""){return s.replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[m]));}
-function safe(v){return v==null?"":escapeHtml(String(v));}
-
-/* ---- Si ton code existant fait déjà un rendu, assure-toi qu'il appelle renderResults([...]) ---- */
-/* Exemple:
-fetch('/data/search?q=lait&territoire=martinique').then(r=>r.json()).then(items => renderResults(items));
-*/

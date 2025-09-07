@@ -2,182 +2,104 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>A KI PRI SA YÉ — Comparateur de prix DROM-COM</title>
-  <meta name="description" content="Compare les prix près de chez toi dans les DROM-COM. Recherche produit, enseignes, statistiques, actualités et avis." />
-  <meta property="og:title" content="A KI PRI SA YÉ" />
-  <meta property="og:description" content="Compare les prix près de chez toi dans les DROM-COM." />
-  <meta property="og:type" content="website" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>A KI PRI SA YÉ • Compare les prix près de chez toi</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/assets/styles.css" />
-  <link rel="icon" href="/favicon.ico" />
+  <style>
+    :root{--bg:#0b1220;--card:#101a2e;--muted:#94a3b8;--text:#e5ecff;--brand:#69d6ff;--accent:#4ade80;--ring:#21304d;}
+    *{box-sizing:border-box} html,body{margin:0;height:100%;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto}
+    body{background:linear-gradient(180deg,#0b1220 0%,#0d1424 60%,#0b1220 100%);color:var(--text)}
+    a{color:inherit;text-decoration:none}
+    .wrap{max-width:1080px;margin:0 auto;padding:24px}
+    header{font-weight:800;letter-spacing:.02em}
+    .hero{padding:40px 0 8px}
+    h1{font-size:44px;line-height:1.05;margin:0 0 14px}
+    .lead{color:var(--muted);font-size:18px}
+    .row{display:grid;gap:16px}
+    .grid-2{grid-template-columns:1fr auto}
+    .grid-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .input{width:100%;padding:14px 16px;border-radius:14px;background:#0f1a2c;border:1px solid var(--ring);color:var(--text);outline:none}
+    .btn{padding:14px 18px;border-radius:12px;background:#2563eb;color:#fff;border:none;font-weight:700;cursor:pointer}
+    .kpi{background:var(--card);border:1px solid var(--ring);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:6px}
+    .kpi .n{font-size:28px;font-weight:800}
+    .kpi .l{color:var(--muted)}
+    section{margin:28px 0}
+    h2{font-size:22px;margin:0 0 12px}
+    .cards{display:grid;gap:12px;grid-template-columns:repeat(3,minmax(0,1fr))}
+    .card{background:var(--card);border:1px solid var(--ring);border-radius:16px;padding:16px}
+    .badge{display:inline-flex;align-items:center;gap:8px;background:#0f1a2c;border:1px solid var(--ring);color:#c7d2fe;padding:8px 10px;border-radius:999px;font-size:12px}
+    .logos{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+    .logos img{width:100%;height:36px;object-fit:contain;filter:grayscale(100%) brightness(1.2)}
+    footer{margin:30px 0 10px;color:var(--muted);font-size:14px}
+    @media (max-width:960px){
+      .grid-4{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .cards{grid-template-columns:1fr}
+      .logos{grid-template-columns:repeat(3,1fr)}
+      h1{font-size:34px}
+    }
+    .pill{display:inline-flex;gap:6px;align-items:center;padding:6px 10px;border-radius:999px;background:#0f1a2c;border:1px solid var(--ring);color:#cbd5e1;font-size:12px}
+  </style>
 </head>
 <body>
-  <!-- Header -->
-  <header class="site-header">
-    <div class="container row between center">
-      <a class="brand" href="/">A KI PRI SA YÉ</a>
-      <nav class="nav">
-        <a href="#features">Fonctions</a>
-        <a href="#territoires">Territoires</a>
-        <a href="#enseignes">Enseignes</a>
-        <a href="#actus">Actus</a>
-        <a href="#avis">Avis</a>
-        <a href="#apropos">À propos</a>
-        <a class="btn btn-primary" href="/search.html">Rechercher</a>
-      </nav>
-    </div>
-  </header>
+  <div class="wrap">
+    <header>A KI PRI SA YÉ</header>
 
-  <!-- Hero -->
-  <section class="hero">
-    <div class="container">
-      <h1>Compare les prix <span class="accent">près de chez toi</span></h1>
-      <p class="lead">Un moteur simple pour trouver le meilleur prix dans les DROM-COM : Guadeloupe, Martinique, Guyane, Réunion, Mayotte, et au-delà.</p>
-      <form class="searchbar" action="/search.html">
-        <input id="qHome" name="q" type="search" placeholder="Ex. Lait demi-écrémé, EAN, marque…" aria-label="Rechercher un produit" />
-        <select id="zoneHome" name="zone" aria-label="Sélectionner un territoire">
-          <option value="">— Territoire —</option>
-          <option>guadeloupe</option><option>martinique</option><option>guyane</option>
-          <option>reunion</option><option>mayotte</option>
-          <option>saint-martin</option><option>saint-barthelemy</option>
-          <option>saint-pierre-et-miquelon</option>
-          <option>polynesie-francaise</option><option>nouvelle-caledonie</option><option>wallis-et-futuna</option>
-        </select>
-        <button class="btn btn-primary" type="submit">Rechercher</button>
-      </form>
-
-      <div class="stats row center">
-        <div class="stat">
-          <div class="stat-value" id="statProducts">—</div>
-          <div class="stat-label">Produits suivis</div>
-        </div>
-        <div class="stat">
-          <div class="stat-value" id="statStores">—</div>
-          <div class="stat-label">Enseignes</div>
-        </div>
-        <div class="stat">
-          <div class="stat-value" id="statZones">—</div>
-          <div class="stat-label">Territoires couverts</div>
-        </div>
-        <div class="stat">
-          <div class="stat-value" id="statUpdated">—</div>
-          <div class="stat-label">Dernière mise à jour</div>
-        </div>
+    <!-- HERO -->
+    <section class="hero">
+      <h1>Compare les prix<br/> <span style="color:var(--brand)">près de chez toi</span></h1>
+      <p class="lead">Trouve le meilleur prix dans les DROM-COM (Guadeloupe, Martinique, Guyane, Réunion, Mayotte…).</p>
+      <div class="row grid-2" style="margin-top:16px;">
+        <input id="q" class="input" placeholder="Ex. Lait demi-écrémé, EAN, marque…" />
+        <button id="go" class="btn">Rechercher</button>
       </div>
-    </div>
-  </section>
+      <div class="row grid-4" style="margin-top:16px;">
+        <div class="kpi"><div class="n" id="kpi-products">—</div><div class="l">Produits suivis</div></div>
+        <div class="kpi"><div class="n" id="kpi-stores">—</div><div class="l">Enseignes</div></div>
+        <div class="kpi"><div class="n" id="kpi-territories">—</div><div class="l">Territoires couverts</div></div>
+        <div class="kpi"><div class="n" id="kpi-updated">—</div><div class="l">Dernière mise à jour</div></div>
+      </div>
+    </section>
 
-  <!-- Features / Présentation -->
-  <section id="features" class="section">
-    <div class="container">
+    <!-- CE QUE LE LOGICIEL PROPOSE -->
+    <section>
       <h2>Ce que le logiciel propose</h2>
-      <div class="grid features">
-        <article class="card">
-          <h3>Recherche précise</h3>
-          <p>Par mot-clé, marque ou code-barres (EAN). Filtre par territoire et enseigne.</p>
-        </article>
-        <article class="card">
-          <h3>Comparateur clair</h3>
-          <p>Prix triés du moins cher au plus cher, avec informations magasin et disponibilité.</p>
-        </article>
-        <article class="card">
-          <h3>Suivi des hausses</h3>
-          <p>Évolution des prix par produit, alerte sur les variations significatives.</p>
-        </article>
-        <article class="card">
-          <h3>Étiquettes lisibles</h3>
-          <p>Lecture assistée d’étiquettes et extraction de codes avec reconnaissance optique.</p>
-        </article>
+      <div class="cards" id="features"></div>
+    </section>
+
+    <!-- ACTUALITÉS -->
+    <section>
+      <div class="row grid-2" style="align-items:center">
+        <h2 style="margin:0">Actualités</h2>
+        <a class="pill" href="#actus">Voir tout</a>
       </div>
-    </div>
-  </section>
+      <div class="cards" id="news"></div>
+    </section>
 
-  <!-- Territoires -->
-  <section id="territoires" class="section alt">
-    <div class="container">
-      <h2>Territoires couverts</h2>
-      <ul class="chips" id="chipsZones">
-        <!-- rempli par JS -->
-      </ul>
-    </div>
-  </section>
-
-  <!-- Enseignes -->
-  <section id="enseignes" class="section">
-    <div class="container">
-      <h2>Enseignes partenaires & suivies</h2>
-      <div class="grid logos" id="storesGrid">
-        <!-- rempli par JS -->
+    <!-- AVIS -->
+    <section>
+      <div class="row grid-2" style="align-items:center">
+        <h2 style="margin:0">Avis utilisateurs</h2>
+        <span class="pill" id="avg-rating">—</span>
       </div>
-      <p class="hint">Liste indicative. Nous ajoutons régulièrement de nouvelles enseignes.</p>
-    </div>
-  </section>
+      <div class="cards" id="reviews"></div>
+    </section>
 
-  <!-- Actus -->
-  <section id="actus" class="section alt">
-    <div class="container">
-      <h2>Actualités</h2>
-      <div class="grid news" id="newsGrid">
-        <!-- cartes actus (exemples statiques) -->
-        <article class="card">
-          <h3>Lutte contre la vie chère</h3>
-          <p>Suivi des prix de produits essentiels dans les DROM-COM, transparence pour tous.</p>
-        </article>
-        <article class="card">
-          <h3>Classement des enseignes</h3>
-          <p>Un palmarès par territoire : stabilité des prix, disponibilité et satisfaction.</p>
-        </article>
-        <article class="card">
-          <h3>Lecture d’étiquettes</h3>
-          <p>Notre module OCR facilite l’identification produit en magasin.</p>
-        </article>
+    <!-- ENSEIGNES -->
+    <section>
+      <div class="row grid-2" style="align-items:center">
+        <h2 style="margin:0">Enseignes partenaires</h2>
+        <span class="pill">Aperçu</span>
       </div>
-      <div class="center">
-        <a class="btn" href="/search.html">Commencer une recherche</a>
-      </div>
-    </div>
-  </section>
+      <div class="logos" id="logos"></div>
+    </section>
 
-  <!-- Avis -->
-  <section id="avis" class="section">
-    <div class="container">
-      <h2>Ils en parlent</h2>
-      <div class="grid testimonials">
-        <blockquote class="card">
-          <p>“J’ai économisé sur mon panier en 2 minutes.”</p>
-          <cite>— JL, Fort-de-France</cite>
-        </blockquote>
-        <blockquote class="card">
-          <p>“Pratique pour comparer les promos autour de moi.”</p>
-          <cite>— MN, Pointe-à-Pitre</cite>
-        </blockquote>
-        <blockquote class="card">
-          <p>“Interface claire, résultats rapides.”</p>
-          <cite>— RS, Saint-Denis</cite>
-        </blockquote>
-      </div>
-    </div>
-  </section>
+    <footer>
+      <div>&copy; <span id="y"></span> A KI PRI SA YÉ • <a href="#propos">À propos</a> • <a href="#contact">Contact</a></div>
+    </footer>
+  </div>
 
-  <!-- À propos -->
-  <section id="apropos" class="section alt">
-    <div class="container">
-      <h2>À propos</h2>
-      <p>A KI PRI SA YÉ est un comparateur de prix pensé pour les réalités des DROM-COM. Notre mission : rendre l’information simple, à jour et utile pour tous.</p>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="site-footer">
-    <div class="container row between">
-      <p>© <span id="year"></span> A KI PRI SA YÉ — Tous droits réservés.</p>
-      <p><a href="/search.html">Recherche</a> · <a href="#apropos">À propos</a></p>
-    </div>
-  </footer>
-
-  <script src="/assets/app.js" defer></script>
+  <script src="./app.js" type="module"></script>
 </body>
 </html>
