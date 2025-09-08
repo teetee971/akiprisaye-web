@@ -1,0 +1,5 @@
+"scripts": {
+  "build": "echo 'Build terminé' && cp -r public dist",
+  "lint": "eslint .",
+  "predeploy": "npm --prefix \"$RESOURCE_DIR\" run lint || true"
+}

@@ -1,0 +1,28 @@
+{
+  "functions": {
+    "source": "functions_api"
+  },
+  "hosting": {
+    "public": "webapp",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "cleanUrls": true,
+    "rewrites": [
+      {
+        "source": "/api/ping",
+        "function": "ping"
+      },
+      {
+        "source": "/api/prices",
+        "function": "prices"
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}

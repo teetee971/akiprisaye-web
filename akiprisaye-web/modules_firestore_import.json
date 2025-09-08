@@ -1,0 +1,334 @@
+{
+  "documents": [
+    {
+      "name": "projects/_/databases/(default)/documents/modules/module_1",
+      "fields": {
+        "id": {
+          "stringValue": "1"
+        },
+        "nom": {
+          "stringValue": "Module IA 1"
+        },
+        "description": {
+          "stringValue": "Fonctionnalit\u00e9 intelligente n\u00b01 int\u00e9gr\u00e9e dans l'app"
+        },
+        "actif": {
+          "booleanValue": true
+        },
+        "cat\u00e9gorie": {
+          "stringValue": "Analyse de prix"
+        }
+      },
+      "createTime": "2025-07-01T13:07:56.495026Z",
+      "updateTime": "2025-07-01T13:07:56.495036Z"
+    },
+    {
+      "name": "projects/_/databases/(default)/documents/modules/module_2",
+      "fields": {
+        "id": {
+          "stringValue": "2"
+        },
+        "nom": {
+          "stringValue": "Module IA 2"
+        },
+        "description": {
+          "stringValue": "Fonctionnalit\u00e9 intelligente n\u00b02 int\u00e9gr\u00e9e dans l'app"
+        },
+        "actif": {
+          "booleanValue": true
+        },
+        "cat\u00e9gorie": {
+          "stringValue": "Analyse de prix"
+        }
+      },
+      "createTime": "2025-07-01T13:07:56.495044Z",
+      "updateTime": "2025-07-01T13:07:56.495047Z"
+    },
+    {
+      "name": "projects/_/databases/(default)/documents/modules/module_3",
+      "fields": {
+        "id": {
+          "stringValue": "3"
+        },
+        "nom": {
+          "stringValue": "Module IA 3"
+        },
+        "description": {
+          "stringValue": "Fonctionnalit\u00e9 intelligente n\u00b03 int\u00e9gr\u00e9e dans l'app"
+        },
+        "actif": {
+          "booleanValue": true
+        },
+        "cat\u00e9gorie": {
+          "stringValue": "Analyse de prix"
+        }
+      },
+      "createTime": "2025-07-01T13:07:56.495054Z",
+      "updateTime": "2025-07-01T13:07:56.495056Z"
+    },
+    {
+      "name": "projects/_/databases/(default)/documents/modules/module_4",
+      "fields": {
+        "id": {
+          "stringValue": "4"
+        },
+        "nom": {
+          "stringValue": "Module IA 4"
+        },
+        "description": {
+          "stringValue": "Fonctionnalit\u00e9 intelligente n\u00b04 int\u00e9gr\u00e9e dans l'app"
+        },
+        "actif": {
+          "booleanValue": true
+        },
+        "cat\u00e9gorie": {
+          "stringValue": "Analyse de prix"
+        }
+      },
+      "createTime": "2025-07-01T13:07:56.495060Z",
+      "updateTime": "2025-07-01T13:07:56.495062Z"
+    },
+    {
+      "name": "projects/_/databases/(default)/documents/modules/module_5",
+      "fields": {
+        "id": {
+          "stringValue": "5"
+        },
+        "nom": {
+          "stringValue": "Module IA 5"
+        },
+        "description": {
+          "stringValue": "Fonctionnalit\u00e9 intelligente n\u00b05 int\u00e9gr\u00e9e dans l'app"
+        },
+        "actif": {
+          "booleanValue": true
+        },
+        "cat\u00e9gorie": {
+          "stringValue": "Analyse de prix"
+        }
+      },
+      "createTime": "2025-07-01T13:07:56.495070Z",
+      "updateTime": "2025-07-01T13:07:56.495072Z"
+    },
+    {
+      "name": "projects/_/databases/(default)/documents/modules/module_6",
+      "fields": {
+        "id": {
+          "stringValue": "6"
+        },
+        "nom": {
+          "stringValue": "Module IA 6"
+        },
+        "description": {
+          "stringValue": "Fonctionnalit\u00e9 intelligente n\u00b06 int\u00e9gr\u00e9e dans l'app"
+        },
+        "actif": {
+          "booleanValue": true
+        },
+        "cat\u00e9gorie": {
+          "stringValue": "Pr\u00e9vision IA"
+        }
+      },
+      "createTime": "2025-07-01T13:07:56.495081Z",
+      "updateTime": "2025-07-01T13:07:56.495084Z"
+    },
+    {
+      "name": "projects/_/databases/(default)/documents/modules/module_7",
+      "fields": {
+        "id": {
+          "stringValue": "7"
+        },
+        "nom": {
+          "stringValue": "Module IA 7"
+        },
+        "description": {
+          "stringValue": "Fonctionnalit\u00e9 intelligente n\u00b07 int\u00e9gr\u00e9e dans l'app"
+        },
+        "actif": {
+          "booleanValue": true
+        },
+        "cat\u00e9gorie": {
+          "stringValue": "Pr\u00e9vision IA"
+        }
+      },
+      "createTime": "2025-07-01T13:07:56.495091Z",
+      "updateTime": "2025-07-01T13:07:56.495093Z"
+    },
+    {
+      "name": "projects/_/databases/(default)/documents/modules/module_8",
+      "fields": {
+        "id": {
+          "stringValue": "8"
+        },
+        "nom": {
+          "stringValue": "Module IA 8"
+        },
+        "description": {
+          "stringValue": "Fonctionnalit\u00e9 intelligente n\u00b08 int\u00e9gr\u00e9e dans l'app"
+        },
+        "actif": {
+          "booleanValue": true
+        },
+        "cat\u00e9gorie": {
+          "stringValue": "Pr\u00e9vision IA"
+        }
+      },
+      "createTime": "2025-07-01T13:07:56.495103Z",
+      "updateTime": "2025-07-01T13:07:56.495105Z"
+    },
+    {
+      "name": "projects/_/databases/(default)/documents/modules/module_9",
+      "fields": {
+        "id": {
+          "stringValue": "9"
+        },
+        "nom": {
+          "stringValue": "Module IA 9"
+        },
+        "description": {
+          "stringValue": "Fonctionnalit\u00e9 intelligente n\u00b09 int\u00e9gr\u00e9e dans l'app"
+        },
+        "actif": {
+          "booleanValue": true
+        },
+        "cat\u00e9gorie": {
+          "stringValue": "Pr\u00e9vision IA"
+        }
+      },
+      "createTime": "2025-07-01T13:07:56.495110Z",
+      "updateTime": "2025-07-01T13:07:56.495111Z"
+    },
+    {
+      "name": "projects/_/databases/(default)/documents/modules/module_10",
+      "fields": {
+        "id": {
+          "stringValue": "10"
+        },
+        "nom": {
+          "stringValue": "Module IA 10"
+        },
+        "description": {
+          "stringValue": "Fonctionnalit\u00e9 intelligente n\u00b010 int\u00e9gr\u00e9e dans l'app"
+        },
+        "actif": {
+          "booleanValue": true
+        },
+        "cat\u00e9gorie": {
+          "stringValue": "Pr\u00e9vision IA"
+        }
+      },
+      "createTime": "2025-07-01T13:07:56.495117Z",
+      "updateTime": "2025-07-01T13:07:56.495118Z"
+    },
+    {
+      "name": "projects/_/databases/(default)/documents/modules/module_11",
+      "fields": {
+        "id": {
+          "stringValue": "11"
+        },
+        "nom": {
+          "stringValue": "Module IA 11"
+        },
+        "description": {
+          "stringValue": "Fonctionnalit\u00e9 intelligente n\u00b011 int\u00e9gr\u00e9e dans l'app"
+        },
+        "actif": {
+          "booleanValue": true
+        },
+        "cat\u00e9gorie": {
+          "stringValue": "Comparaison avanc\u00e9e"
+        }
+      },
+      "createTime": "2025-07-01T13:07:56.495123Z",
+      "updateTime": "2025-07-01T13:07:56.495126Z"
+    },
+    {
+      "name": "projects/_/databases/(default)/documents/modules/module_12",
+      "fields": {
+        "id": {
+          "stringValue": "12"
+        },
+        "nom": {
+          "stringValue": "Module IA 12"
+        },
+        "description": {
+          "stringValue": "Fonctionnalit\u00e9 intelligente n\u00b012 int\u00e9gr\u00e9e dans l'app"
+        },
+        "actif": {
+          "booleanValue": true
+        },
+        "cat\u00e9gorie": {
+          "stringValue": "Comparaison avanc\u00e9e"
+        }
+      },
+      "createTime": "2025-07-01T13:07:56.495132Z",
+      "updateTime": "2025-07-01T13:07:56.495135Z"
+    },
+    {
+      "name": "projects/_/databases/(default)/documents/modules/module_13",
+      "fields": {
+        "id": {
+          "stringValue": "13"
+        },
+        "nom": {
+          "stringValue": "Module IA 13"
+        },
+        "description": {
+          "stringValue": "Fonctionnalit\u00e9 intelligente n\u00b013 int\u00e9gr\u00e9e dans l'app"
+        },
+        "actif": {
+          "booleanValue": true
+        },
+        "cat\u00e9gorie": {
+          "stringValue": "Comparaison avanc\u00e9e"
+        }
+      },
+      "createTime": "2025-07-01T13:07:56.495143Z",
+      "updateTime": "2025-07-01T13:07:56.495145Z"
+    },
+    {
+      "name": "projects/_/databases/(default)/documents/modules/module_14",
+      "fields": {
+        "id": {
+          "stringValue": "14"
+        },
+        "nom": {
+          "stringValue": "Module IA 14"
+        },
+        "description": {
+          "stringValue": "Fonctionnalit\u00e9 intelligente n\u00b014 int\u00e9gr\u00e9e dans l'app"
+        },
+        "actif": {
+          "booleanValue": true
+        },
+        "cat\u00e9gorie": {
+          "stringValue": "Comparaison avanc\u00e9e"
+        }
+      },
+      "createTime": "2025-07-01T13:07:56.495152Z",
+      "updateTime": "2025-07-01T13:07:56.495164Z"
+    },
+    {
+      "name": "projects/_/databases/(default)/documents/modules/module_15",
+      "fields": {
+        "id": {
+          "stringValue": "15"
+        },
+        "nom": {
+          "stringValue": "Module IA 15"
+        },
+        "description": {
+          "stringValue": "Fonctionnalit\u00e9 intelligente n\u00b015 int\u00e9gr\u00e9e dans l'app"
+        },
+        "actif": {
+          "booleanValue": true
+        },
+        "cat\u00e9gorie": {
+          "stringValue": "Comparaison avanc\u00e9e"
+        }
+      },
+      "createTime": "2025-07-01T13:07:56.495171Z",
+      "updateTime": "2025-07-01T13:07:56.495173Z"
+    }
+  ]
+}

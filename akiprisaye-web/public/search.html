@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>A KI PRI SA YÉ — Recherche produit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <style>
+    :root{
+      --bg:#0d1420;--panel:#1b2636;--muted:#8da2b5;--text:#e8f0f7;--accent:#35e1ff;
+      --ok:#18c08f;--err:#ff6b6b;--shadow:0 6px 24px rgba(0,0,0,.25);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
+    a{color:var(--accent);text-decoration:none}
+    .wrap{max-width:980px;margin:24px auto;padding:0 16px}
+    header{padding:24px 0 12px}
+    h1{margin:0 0 8px;font-size:32px;letter-spacing:.5px}
+    .sub{color:var(--muted)}
+    nav{display:flex;gap:16px;margin:16px 0 24px}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:8px;
+      padding:14px 18px;border-radius:12px;background:var(--accent);color:#042029;
+      font-weight:700;border:0;cursor:pointer;box-shadow:var(--shadow);
+    }
+    .btn.secondary{background:#223147;color:var(--text)}
+    .card{
+      background:var(--panel);border-radius:16px;box-shadow:var(--shadow);padding:18px;margin-bottom:18px;
+    }
+    .row{display:grid;grid-template-columns:1fr;gap:12px}
+    @media(min-width:640px){.row{grid-template-columns:260px 1fr}}
+    label{display:block;margin:6px 0 6px;color:var(--muted);font-size:14px}
+    select,input,button{width:100%}
+    select,input{
+      background:#0f1826;border:1px solid #2b3a52;color:var(--text);
+      border-radius:10px;padding:12px 12px;outline:none;
+    }
+    #go{margin-top:10px}
+    .status{margin:6px 0 0;font-size:14px}
+    .status.muted{color:var(--muted)}
+    .status.ok{color:var(--ok)}
+    .status.err{color:var(--err)}
+    table{width:100%;border-collapse:collapse;margin-top:12px}
+    th,td{padding:10px;border-bottom:1px solid #2b3a52;text-align:left}
+    th{color:var(--muted);font-weight:600;font-size:14px}
+    tfoot td{color:var(--muted)}
+    .img{width:44px;height:44px;object-fit:contain;border-radius:6px;background:#0f1826;border:1px solid #23324a}
+    .right{text-align:right}
+    footer{color:var(--muted);font-size:14px;margin:28px 0 40px}
+  </style>
+<link rel="stylesheet" href="/app-modal.css"/>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>A KI PRI SA YÉ</h1>
+      <div class="sub">Comparez les prix, suivez votre budget et trouvez l’enseigne la moins chère.</div>
+      <nav>
+        <a class="btn secondary" href="./index.html">🏠 Accueil</a>
+        <a class="btn" href="#">🔎 Recherche</a>
+      </nav>
+    </header>
+
+    <section class="card">
+      <h2 style="margin:0 0 12px">🔎 Recherche produit</h2>
+
+      <div class="row">
+        <div>
+          <label for="zone">Zone</label>
+          <select id="zone">
+            <option value="martinique">Martinique</option>
+            <option value="guadeloupe">Guadeloupe</option>
+            <option value="guyane">Guyane</option>
+            <option value="reunion">La Réunion</option>
+            <option value="mayotte">Mayotte</option>
+          </select>
+        </div>
+        <div>
+          <label for="q">Produit</label>
+          <input id="q" placeholder="ex : Lait, Banane, Riz…" inputmode="search"/>
+          <button id="go" type="button" class="btn">Rechercher</button>
+          <div id="status" class="status muted">Saisissez un mot-clé puis cliquez sur « Rechercher ».</div>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Produit</th>
+            <th>Enseigne</th>
+            <th class="right">Prix</th>
+            <th>Unité</th>
+            <th>Maj.</th>
+          </tr>
+        </thead>
+        <tbody id="out"></tbody>
+        <tfoot>
+          <tr><td colspan="5" id="hint">—</td></tr>
+        </tfoot>
+      </table>
+    </section>
+
+    <footer>© <span id="y"></span> A KI PRI SA YÉ</footer>
+  </div>
+
+  <script>
+    // 0) Constantes
+    const SEARCH_ENDPOINT = "https://us-central1-a-ki-pri-sa-ye.cloudfunctions.net/searchPrices";
+
+    // 1) Petits utilitaires DOM
+    const $ = (sel) => document.querySelector(sel);
+    const zoneEl = $("#zone"), qEl = $("#q"), goEl = $("#go"), outEl = $("#out"), stEl = $("#status"), hintEl = $("#hint");
+
+    function setStatus(msg, cls=""){
+      stEl.className = "status " + (cls||"muted");
+      stEl.textContent = msg;
+    }
+
+    function render(items){
+      outEl.innerHTML = items.map(it => `
+        <tr>
+          <td><div style="display:flex;align-items:center;gap:10px">
+            ${it.image ? `<img class="img" src="${it.image}" alt="">` : ""}
+            <div>
+              <div style="font-weight:600">${it.name||"-"}</div>
+              <div style="color:#8da2b5;font-size:12px">${it.brand||""}</div>
+            </div>
+          </div></td>
+          <td>${it.store||""}</td>
+          <td class="right">${(it.price!=null? it.price.toFixed(2)+" "+(it.currency||"€") : "—")}</td>
+          <td>${it.quantity? it.quantity : (it.unit||"")}</td>
+          <td>${it.updatedAt? new Date(it.updatedAt*1000).toLocaleDateString("fr-FR") : "—"}</td>
+        </tr>
+      `).join("");
+      hintEl.textContent = items.length ? `${items.length} résultat(s)` : "Aucun résultat.";
+    }
+
+    // 2) Fonction de recherche
+    async function doSearch(){
+      const zone = (zoneEl.value||"").trim().toLowerCase();
+      const text = (qEl.value||"").trim();
+      if(!text){ setStatus("Entrez un mot-clé.","err"); qEl.focus(); return; }
+
+      // anti-cache léger
+      const v = Date.now().toString().slice(-6);
+      const url = `${SEARCH_ENDPOINT}?zone=${encodeURIComponent(zone)}&q=${encodeURIComponent(text)}&limit=25&v=${v}`;
+
+      setStatus("Recherche en cours…","muted");
+      render([]);
+
+      try{
+        const r = await fetch(url, { headers:{ accept:"application/json" }});
+        if(!r.ok) throw new Error("HTTP "+r.status);
+        const data = await r.json();
+        render(data.items||[]);
+        setStatus("Résultats mis à jour.","ok");
+      }catch(e){
+        console.error(e);
+        render([]);
+        setStatus("Erreur : impossible de charger les résultats.","err");
+      }
+    }
+
+    // 3) Évènements
+    goEl.addEventListener("click", doSearch);
+    qEl.addEventListener("keydown", (e)=>{ if(e.key==="Enter") doSearch(); });
+
+    // 4) Fallback global (si on a un vieux onclick inline)
+    window.doSearch = doSearch;
+
+    // 5) Petite UX : focus auto + année footer
+    qEl.setAttribute("autocomplete","on");
+    $("#y").textContent = new Date().getFullYear();
+  </script>
+<script type="module">import {wireProductClicks} from "/app-modal.js";
+window.wireProductClicks=wireProductClicks;</script>
+</body>
+</html>

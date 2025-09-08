@@ -1,0 +1,114 @@
+[
+  {
+    "id": "1",
+    "actif": true,
+    "nom": "Module 1",
+    "description": "Description du module 1.",
+    "catégorie": "Analyse de prix"
+  },
+  {
+    "id": "10",
+    "actif": true,
+    "catégorie": "Service",
+    "description": "Description du module 10.",
+    "nom": "Module 10"
+  },
+  {
+    "id": "11",
+    "nom": "Module 11",
+    "catégorie": "Analyse de prix",
+    "actif": true,
+    "description": "Description du module 11."
+  },
+  {
+    "id": "12",
+    "catégorie": "Service",
+    "description": "Description du module 12.",
+    "nom": "Module 12",
+    "actif": true
+  },
+  {
+    "id": "13",
+    "actif": true,
+    "description": "Description du module 13.",
+    "catégorie": "Analyse de prix",
+    "nom": "Module 13"
+  },
+  {
+    "id": "14",
+    "description": "Description du module 14.",
+    "catégorie": "Service",
+    "nom": "Module 14",
+    "actif": true
+  },
+  {
+    "id": "15",
+    "actif": true,
+    "nom": "Module 15",
+    "description": "Description du module 15.",
+    "catégorie": "Analyse de prix"
+  },
+  {
+    "id": "2",
+    "catégorie": "Service",
+    "description": "Description du module 2.",
+    "actif": true,
+    "nom": "Module 2"
+  },
+  {
+    "id": "3",
+    "description": "Description du module 3.",
+    "nom": "Module 3",
+    "catégorie": "Analyse de prix",
+    "actif": true
+  },
+  {
+    "id": "4",
+    "actif": true,
+    "description": "Description du module 4.",
+    "nom": "Module 4",
+    "catégorie": "Service"
+  },
+  {
+    "id": "5",
+    "catégorie": "Analyse de prix",
+    "actif": true,
+    "nom": "Module 5",
+    "description": "Description du module 5."
+  },
+  {
+    "id": "6",
+    "nom": "Module 6",
+    "catégorie": "Service",
+    "description": "Description du module 6.",
+    "actif": true
+  },
+  {
+    "id": "7",
+    "catégorie": "Analyse de prix",
+    "actif": true,
+    "description": "Description du module 7.",
+    "nom": "Module 7"
+  },
+  {
+    "id": "8",
+    "actif": true,
+    "nom": "Module 8",
+    "description": "Description du module 8.",
+    "catégorie": "Service"
+  },
+  {
+    "id": "9",
+    "description": "Description du module 9.",
+    "catégorie": "Analyse de prix",
+    "actif": true,
+    "nom": "Module 9"
+  },
+  {
+    "id": "1",
+    "actif": true,
+    "description": "Détecte les prix à partir d’un ticket de caisse scanné.",
+    "catégorie": "Analyse de prix",
+    "nom": "Scan intelligent de ticket"
+  }
+]

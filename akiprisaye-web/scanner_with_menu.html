@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="Simulation de scan de ticket de caisse pour A KI PRI SA YÉ." name="description"/>
+<title>Scan Ticket - A KI PRI SA YÉ</title>
+<link href="style.css" rel="stylesheet"/>
+</head>
+<body>
+
+<nav style="background-color: #0f1f1f; padding: 10px; border-bottom: 1px solid #444;">
+  <ul style="display: flex; list-style: none; margin: 0; padding: 0; justify-content: center; gap: 30px;">
+    <li><a href="index.html" style="color: #a8ffb0; text-decoration: none; font-weight: bold;">Accueil</a></li>
+    <li><a href="modules.html" style="color: #a8ffb0; text-decoration: none; font-weight: bold;">Modules</a></li>
+    <li><a href="scanner.html" style="color: #a8ffb0; text-decoration: none; font-weight: bold;">Scan Ticket</a></li>
+    <li><a href="contact.html" style="color: #a8ffb0; text-decoration: none; font-weight: bold;">Contact</a></li>
+  </ul>
+</nav>
+
+<header>
+<h1>🧾 Scan Intelligent de Ticket</h1>
+<p>Simulation de détection automatique des produits et prix</p>
+</header>
+<main>
+<section>
+<form>
+<label for="ticket-upload">Téléversez une image de ticket :</label><br/><br/>
+<input accept="image/*" id="ticket-upload" type="file"/><br/><br/>
+<button type="button">📷 Lancer la reconnaissance</button>
+</form>
+<p style="margin-top:2rem;">Résultat simulé :</p>
+<div style="background:#1e2f2f;padding:1rem;border-radius:10px;">
+<p><strong>Produit :</strong> Riz Basmati 1kg</p>
+<p><strong>Prix détecté :</strong> 3,89 €</p>
+<p><strong>Écart métropole :</strong> +42%</p>
+<p><strong>Alerte :</strong> Prix au-dessus du seuil moyen</p>
+</div>
+</section>
+<p style="text-align:center;margin-top:2rem;"><a href="modules.html" onmouseout="this.style.color='#a8ffb0'" onmouseover="this.style.color='#ffffff'" style="color: #a8ffb0; text-decoration: none;">← Retour aux modules</a></p>
+</main>
+</body>
+</html>

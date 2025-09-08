@@ -1,0 +1,1 @@
+<template><div>Fenêtre de Chat</div></template>

@@ -1,0 +1,28 @@
+{
+  "name": "functions",
+  "description": "Cloud Functions for A KI PRI SA YÉ",
+  "scripts": {
+    "lint": "echo Skip lint",
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "20"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "axios": "^1.11.0",
+    "firebase-admin": "^11.11.1",
+    "firebase-functions": "^4.9.0",
+    "lodash.chunk": "^4.2.0",
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "eslint": "^9.0.0",
+    "eslint-config-google": "^0.14.0"
+  },
+  "private": true
+}

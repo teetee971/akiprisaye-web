@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Mon Compte – A KI PRI SA YÉ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>👤 Mon Compte</h1>
+    <p>Vos informations personnelles et votre statut utilisateur</p>
+  </header>
+
+  <main>
+    <section>
+      <h2>🔐 Identité</h2>
+      <p><strong>UID Firebase :</strong> <span id="uid">chargement...</span></p>
+      <p><strong>Email :</strong> <span id="email">chargement...</span></p>
+    </section>
+
+    <section>
+      <h2>🏷️ Statut</h2>
+      <p><strong>Rôle :</strong> <span id="role">chargement...</span></p>
+      <p><strong>Badge :</strong> <span id="badge">chargement...</span></p>
+    </section>
+
+    <section>
+      <h2>🛡️ Sécurité</h2>
+      <p>Statut 2FA : <span id="2fa">non activé</span></p>
+      <button id="activate2fa">⚙️ Activer la double authentification</button>
+    </section>
+
+    <section>
+      <button id="logout">🚪 Se déconnecter</button>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 A KI PRI SA YÉ – Données sécurisées</p>
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      projectId: "YOUR_PROJECT",
+      storageBucket: "YOUR_PROJECT.appspot.com",
+      messagingSenderId: "XXXXXXX",
+      appId: "YOUR_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        document.getElementById("uid").textContent = user.uid;
+        document.getElementById("email").textContent = user.email || "Utilisateur anonyme";
+
+        const token = await user.getIdTokenResult();
+        const role = token.claims.premium ? "Premium 👑" : "Standard";
+        document.getElementById("role").textContent = role;
+        document.getElementById("badge").textContent = token.claims.premium ? "Conso Solidaire+" : "Conso Solidaire";
+      } else {
+        document.getElementById("uid").textContent = "Non connecté";
+        document.getElementById("email").textContent = "Non connecté";
+        document.getElementById("role").textContent = "Aucun";
+        document.getElementById("badge").textContent = "Aucun";
+      }
+    });
+
+    document.getElementById("logout").addEventListener("click", () => {
+      signOut(auth).then(() => {
+        alert("Déconnecté");
+        window.location.href = "/index.html";
+      });
+    });
+
+    document.getElementById("activate2fa").addEventListener("click", () => {
+      alert("Activation 2FA en cours... (fonctionnalité à finaliser)");
+    });
+  </script>
+</body>
+</html>
