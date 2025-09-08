@@ -1,0 +1,158 @@
+[
+  {
+    "name": "Action",
+    "category": "Discount",
+    "territories": [
+      "Metropole",
+      "GP",
+      "MQ",
+      "GF",
+      "RE",
+      "YT"
+    ],
+    "logo": "/img/partners/action.svg"
+  },
+  {
+    "name": "Aldi",
+    "category": "Hard Discount Alimentaire",
+    "territories": [
+      "Metropole"
+    ],
+    "logo": "/img/partners/aldi.svg"
+  },
+  {
+    "name": "B&M",
+    "category": "Discount",
+    "territories": [
+      "Metropole"
+    ],
+    "logo": "/img/partners/bm.svg"
+  },
+  {
+    "name": "Decathlon",
+    "category": "Sport",
+    "territories": [
+      "Metropole",
+      "GP",
+      "MQ",
+      "RE"
+    ],
+    "logo": "/img/partners/decathlon.svg"
+  },
+  {
+    "name": "Dia",
+    "category": "Hard Discount Alimentaire",
+    "territories": [
+      "Metropole"
+    ],
+    "logo": "/img/partners/dia.svg"
+  },
+  {
+    "name": "Gifi",
+    "category": "Discount",
+    "territories": [
+      "Metropole",
+      "GP",
+      "MQ",
+      "GF",
+      "RE"
+    ],
+    "logo": "/img/partners/gifi.svg"
+  },
+  {
+    "name": "La Foir’Fouille",
+    "category": "Discount",
+    "territories": [
+      "Metropole",
+      "GP",
+      "MQ",
+      "GF",
+      "RE"
+    ],
+    "logo": "/img/partners/lafoirfouille.svg"
+  },
+  {
+    "name": "Leader Price",
+    "category": "Hard Discount Alimentaire",
+    "territories": [
+      "Metropole",
+      "GP",
+      "MQ",
+      "GF",
+      "RE"
+    ],
+    "logo": "/img/partners/leaderprice.svg"
+  },
+  {
+    "name": "Lidl",
+    "category": "Hard Discount Alimentaire",
+    "territories": [
+      "Metropole",
+      "GP",
+      "MQ",
+      "GF",
+      "RE"
+    ],
+    "logo": "/img/partners/lidl.svg"
+  },
+  {
+    "name": "Mr.Bricolage",
+    "category": "Bricolage",
+    "territories": [
+      "Metropole",
+      "GP",
+      "MQ",
+      "GF",
+      "RE",
+      "YT"
+    ],
+    "logo": "/img/partners/mrbricolage.svg"
+  },
+  {
+    "name": "Netto",
+    "category": "Hard Discount Alimentaire",
+    "territories": [
+      "Metropole",
+      "GP",
+      "MQ",
+      "RE"
+    ],
+    "logo": "/img/partners/netto.svg"
+  },
+  {
+    "name": "Norauto",
+    "category": "Auto",
+    "territories": [
+      "Metropole",
+      "GP",
+      "MQ",
+      "GF",
+      "RE"
+    ],
+    "logo": "/img/partners/norauto.svg"
+  },
+  {
+    "name": "Normal",
+    "category": "Discount",
+    "territories": [
+      "Metropole"
+    ],
+    "logo": "/img/partners/normal.svg"
+  },
+  {
+    "name": "Noz",
+    "category": "Discount",
+    "territories": [
+      "Metropole"
+    ],
+    "logo": "/img/partners/noz.svg"
+  },
+  {
+    "name": "Stokomani",
+    "category": "Discount",
+    "territories": [
+      "Metropole"
+    ],
+    "logo": "/img/partners/stokomani.svg"
+  }
+]
