@@ -72,3 +72,51 @@ document.addEventListener('DOMContentLoaded', ()=>{
   hydrateKPIs(); hydrateNews(); hydrateReviews(); hydrateStores();
   byId('year').textContent = new Date().getFullYear();
 });
+
+// ====== Hydrate Partners & Territories (DOM-COM) ======
+async function hydratePartners(){
+  try{
+    const data = await (await fetch('/data/partners.json')).json();
+    const wrap = document.getElementById('partners') || document.querySelector('.partners');
+    if(!wrap) return;
+    wrap.innerHTML = '';
+    data.forEach(p=>{
+      const card = document.createElement('div'); card.className='partner';
+      const img  = document.createElement('img'); img.alt = p.name; img.loading='lazy'; img.src = p.logo;
+      img.onerror = ()=>{ img.remove(); const fb=document.createElement('div'); fb.textContent=p.name; fb.style.opacity='.85'; fb.style.textAlign='center'; fb.style.fontWeight='700'; card.appendChild(fb); };
+      card.appendChild(img);
+      wrap.appendChild(card);
+    });
+  }catch(e){ console.warn('partners.json?', e); }
+}
+
+async function hydrateFlags(){
+  try{
+    const data = await (await fetch('/data/territories.json')).json();
+    // Selecteur
+    const select = document.getElementById('territoire') || document.querySelector('select[name="territoire"]');
+    if(select){
+      select.innerHTML = '';
+      const opt0 = document.createElement('option'); opt0.value=''; opt0.textContent='— Territoire —'; select.appendChild(opt0);
+      data.forEach(t=>{ const o=document.createElement('option'); o.value=t.code; o.textContent=t.name; select.appendChild(o); });
+    }
+    // Grille drapeaux si présente
+    const grid = document.getElementById('flags') || document.querySelector('.flags');
+    if(grid){
+      grid.innerHTML='';
+      data.forEach(t=>{
+        const box = document.createElement('div'); box.className='flag-item';
+        const img = document.createElement('img'); img.alt=t.name; img.loading='lazy'; img.src=t.flag;
+        img.onerror = ()=>{ img.remove(); const fb=document.createElement('div'); fb.textContent=t.code; fb.style.fontWeight='700'; fb.style.opacity='.85'; box.appendChild(fb); };
+        const label = document.createElement('div'); label.textContent=t.name; label.style.marginTop='8px'; label.style.opacity='.85'; label.style.fontSize='12px'; label.style.textAlign='center';
+        box.appendChild(img); box.appendChild(label);
+        grid.appendChild(box);
+      });
+    }
+  }catch(e){ console.warn('territories.json?', e); }
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  try{ hydratePartners(); }catch{}
+  try{ hydrateFlags(); }catch{}
+});

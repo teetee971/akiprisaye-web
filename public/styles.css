@@ -1,3 +1,6 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 :root{
   --bg:#0b1020; --card:#121a33; --muted:#94a3b8; --text:#e6ebf7; --brand:#60a5fa; --brand2:#22d3ee; --ok:#22c55e; --warn:#f59e0b;
   --shadow:0 10px 30px rgba(0,0,0,.3);
@@ -29,3 +32,20 @@ a{color:inherit;text-decoration:none}
 .faq details{background:#0c1430;border:1px solid #1f2a44;border-radius:12px;margin-bottom:10px;padding:10px 14px}
 footer{border-top:1px solid #1f2a44;color:#98a2b3}
 @media (max-width:980px){.kpis{grid-template-columns:repeat(2,1fr)} .grid{grid-template-columns:1fr} .stores{grid-template-columns:repeat(3,1fr)} .hero h1{font-size:34px}}
+
+/* === PARTNERS ENHANCE === */
+.partners { grid-template-columns: repeat(auto-fit,minmax(140px,1fr)); gap: 14px; }
+.partner, .flag-item {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 16px; padding: 18px;
+  display: grid; place-items: center;
+  transition: transform .12s ease, border-color .12s ease, box-shadow .12s ease;
+}
+.partner:hover { transform: translateY(-2px); border-color: rgba(255,255,255,.20); box-shadow: 0 4px 16px rgba(0,0,0,.22); }
+.partner img { height: 72px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,.25)); }
+@media (min-width: 768px) { .partner img { height: 96px; } }
+
+/* Résultats cartes (si utilisés) */
+.result-card .logo { height: 72px; max-width: 120px; }
+.result-card .title{ font-weight:700; }

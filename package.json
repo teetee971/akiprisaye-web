@@ -7,9 +7,11 @@
   },
   "main": "index.js",
   "scripts": {
-    "build": "echo \"📦 Build...\" && rm -rf dist && mkdir dist && cp -r public/* dist/",
+    "build": "ROLLUP_SKIP_NATIVE=true vite build",
     "lint": "eslint .",
-    "predeploy": "npm --prefix \"$RESOURCE_DIR\" run lint || true"
+    "predeploy": "npm --prefix \"$RESOURCE_DIR\" run lint || true",
+    "dev": "ROLLUP_SKIP_NATIVE=true vite",
+    "preview": "ROLLUP_SKIP_NATIVE=true vite preview"
   },
   "dependencies": {
     "@google-cloud/vision": "^5.3.3",
@@ -22,6 +24,16 @@
     "tesseract.js": "^6.0.1"
   },
   "devDependencies": {
-    "eslint": "9.34.0"
+    "autoprefixer": "^10.4.21",
+    "eslint": "9.34.0",
+    "postcss": "^8.5.6",
+    "rollup": "4.14.3",
+    "tailwindcss": "^4.1.13",
+    "vite": "^7.1.4"
+  },
+  "pnpm": {
+    "overrides": {
+      "rollup": "4.14.3"
+    }
   }
 }

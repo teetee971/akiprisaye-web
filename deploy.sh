@@ -1,96 +1,48 @@
-#!/bin/bash
-# 🚀 Déploiement akiprisaye-web (build + commit + push)
-# Usage:
-#   ./deploy.sh                    # build + commit auto + push
-#   ./deploy.sh "mon message"      # build + commit avec message custom
-#   ./deploy.sh --no-build         # skip build
-#   ./deploy.sh --no-test          # skip test API
-#   ./deploy.sh -n                 # dry-run (montre les actions, ne push pas)
-
+#!/usr/bin/env bash
 set -euo pipefail
 
-PROJECT_DIR="${HOME}/akiprisaye-web"
-BRANCH="main"
-MSG_DEFAULT='chore(prod): build + deploy auto'
-DO_BUILD=1
-DO_TEST=1
-DRYRUN=0
+# ───────── Réglages de sûreté
+export ROLLUP_SKIP_NATIVE=true
+BRANCH="${1:-main}"                    # tu peux passer une autre branche: ./deploy.sh staging
+DATE_UTC="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+MSG="build: pages statiques + déploiement (Cloudflare) • ${DATE_UTC}"
 
-# --- parse args ---
-COMMIT_MSG=""
-for a in "$@"; do
-  case "$a" in
-    --no-build) DO_BUILD=0 ;;
-    --no-test)  DO_TEST=0 ;;
-    -n|--dry-run) DRYRUN=1 ;;
-    *) COMMIT_MSG="$a" ;;
-  esac
-done
-COMMIT_MSG="${COMMIT_MSG:-$MSG_DEFAULT}"
+echo "🚀 DEPLOY • Branche: ${BRANCH}"
+echo "🔧 Préparation deps (sans scripts natifs)…"
+pnpm install --ignore-scripts >/dev/null
 
-cd "$PROJECT_DIR" || { echo "❌ Dossier projet introuvable: $PROJECT_DIR"; exit 1; }
-git rev-parse --is-inside-work-tree >/dev/null 2>&1 || { echo "❌ Pas un repo git ici."; exit 1; }
-
-echo "🏷️  Branche: $(git rev-parse --abbrev-ref HEAD)"
-[ "$(git rev-parse --abbrev-ref HEAD)" = "$BRANCH" ] || echo "⚠️  Tu n'es pas sur '$BRANCH'"
-
-# --- build (copie du /public vers /dist) ---
-if [ "$DO_BUILD" -eq 1 ]; then
-  echo "📦 Build (dist ← public)…"
-  rm -rf dist && mkdir dist
-  cp -r public/* dist/
-  echo "✅ Build terminé."
+# ───────── Build
+echo "📦 Build de production…"
+if pnpm -s run | grep -q '"build"'; then
+  pnpm build
 else
-  echo "⏭️  Build ignoré (--no-build)."
+  echo "ℹ️ Aucun script build trouvé — fallback: copie /public → /dist"
+  rm -rf dist && mkdir -p dist && cp -r public/* dist/
 fi
 
-# --- staging sélectif (ajuste si besoin) ---
-echo "➕ git add…"
-git add public/ dist/ || true
-# ajoute aussi les fichiers debug si présents
-[ -f public/debug.js ] && git add public/debug.js || true
-[ -f public/search.html ] && git add public/search.html || true
+# Vérifs rapides
+test -f dist/index.html || { echo "❌ Build incomplet: dist/index.html manquant"; exit 1; }
+test -d dist || { echo "❌ Dossier dist manquant"; exit 1; }
+echo "✅ Build OK → dist/"
 
-# Rien à committer ?
+# ───────── Commit + push (déploiement auto via Cloudflare Pages)
+# Ajoute seulement ce qui est versionné (data, public, scripts, etc.)
+echo "📝 Git add…"
+git add -A
+
 if git diff --cached --quiet; then
-  echo "ℹ️  Rien à committer (index inchangé)."
+  echo "ℹ️ Rien à committer. Si Cloudflare Pages est déjà branché à ${BRANCH}, rien à déployer."
 else
-  echo "📝 git commit -m \"$COMMIT_MSG\""
-  if [ "$DRYRUN" -eq 1 ]; then
-    echo "💤 Dry-run: commit simulé."
-  else
-    git commit -m "$COMMIT_MSG"
-  fi
+  echo "🧷 Commit…"
+  git commit -m "${MSG}"
+  echo "⬆️  Push → origin/${BRANCH}"
+  git push origin "${BRANCH}"
+  echo "⏱️  Cloudflare Pages va builder & publier automatiquement."
 fi
 
-# --- push ---
-if [ "$DRYRUN" -eq 1 ]; then
-  echo "💤 Dry-run: push simulé."
-else
-  echo "⤴️  git push origin $BRANCH"
-  git push origin "$BRANCH"
-fi
-
-# --- post info: URL cache-bust ---
-TS=$(date +%s)
-URL_BASE="https://akiprisaye.pages.dev"
-URL_SEARCH="${URL_BASE}/search.html?v=${TS}"
-echo "🔗 Ouvre (hard refresh): $URL_SEARCH"
-
-# --- petit test API (optionnel) ---
-if [ "$DO_TEST" -eq 1 ]; then
-  ENDP="https://us-central1-a-ki-pri-sa-ye.cloudfunctions.net/searchPrices"
-  echo "🧪 Test rapide API (banane/martinique)…"
-  # si curl est là, affiche juste un bout de la réponse
-  if command -v curl >/dev/null 2>&1; then
-    curl -s "${ENDP}?zone=martinique&q=banane&limit=2" | cut -c1-300 || true
-    echo
-  else
-    echo "⚠️  curl non disponible, test API sauté."
-  fi
-else
-  echo "⏭️  Test API ignoré (--no-test)."
-fi
-
-echo "✅ Déploiement envoyé. Cloudflare Pages va re-déployer automatiquement."
-
+# Récapitulatif
+echo "─── Résumé ─────────────────────────────────────"
+echo "  Branche      : ${BRANCH}"
+echo "  Commit msg   : ${MSG}"
+echo "  Dossier dist : $(du -sh dist 2>/dev/null | awk '{print $1}')"
+echo "✅ Terminé."
