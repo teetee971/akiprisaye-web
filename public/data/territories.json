@@ -1,16 +1,72 @@
 [
-  { "code": "FR", "name": "Métropole", "flag": "/img/flags/metropole.png" },
-  { "code": "GF", "name": "Guyane", "flag": "/img/flags/guyane.png" },
-  { "code": "GP", "name": "Guadeloupe", "flag": "/img/flags/guadeloupe.png" },
-  { "code": "MQ", "name": "Martinique", "flag": "/img/flags/martinique.png" },
-  { "code": "RE", "name": "La Réunion", "flag": "/img/flags/reunion.png" },
-  { "code": "YT", "name": "Mayotte", "flag": "/img/flags/mayotte.png" },
-  { "code": "PM", "name": "Saint-Pierre-et-Miquelon", "flag": "/img/flags/saint-pierre-miquelon.png" },
-  { "code": "BL", "name": "Saint-Barthélemy", "flag": "/img/flags/saint-barthelemy.png" },
-  { "code": "MF", "name": "Saint-Martin", "flag": "/img/flags/saint-martin.png" },
-  { "code": "WF", "name": "Wallis-et-Futuna", "flag": "/img/flags/wallis-futuna.png" },
-  { "code": "PF", "name": "Polynésie française", "flag": "/img/flags/polynesie-francaise.png" },
-  { "code": "NC", "name": "Nouvelle-Calédonie", "flag": "/img/flags/nouvelle-caledonie.png" },
-  { "code": "TF", "name": "Terres australes et antarctiques françaises", "flag": "/img/flags/taaf.png" },
-  { "code": "CP", "name": "Île de Clipperton", "flag": "/img/flags/clipperton.png" }
+  {
+    "code": "BL",
+    "name": "Saint-Barthélemy",
+    "flag": "/img/flags/saint-barthelemy.png"
+  },
+  {
+    "code": "CP",
+    "name": "Île de Clipperton",
+    "flag": "/img/flags/clipperton.png"
+  },
+  {
+    "code": "FR",
+    "name": "Métropole",
+    "flag": "/img/flags/metropole.png"
+  },
+  {
+    "code": "GF",
+    "name": "Guyane",
+    "flag": "/img/flags/guyane.png"
+  },
+  {
+    "code": "GP",
+    "name": "Guadeloupe",
+    "flag": "/img/flags/guadeloupe.png"
+  },
+  {
+    "code": "MF",
+    "name": "Saint-Martin",
+    "flag": "/img/flags/saint-martin.png"
+  },
+  {
+    "code": "MQ",
+    "name": "Martinique",
+    "flag": "/img/flags/martinique.png"
+  },
+  {
+    "code": "NC",
+    "name": "Nouvelle-Calédonie",
+    "flag": "/img/flags/nouvelle-caledonie.png"
+  },
+  {
+    "code": "PF",
+    "name": "Polynésie française",
+    "flag": "/img/flags/polynesie-francaise.png"
+  },
+  {
+    "code": "PM",
+    "name": "Saint-Pierre-et-Miquelon",
+    "flag": "/img/flags/saint-pierre-miquelon.png"
+  },
+  {
+    "code": "RE",
+    "name": "La Réunion",
+    "flag": "/img/flags/reunion.png"
+  },
+  {
+    "code": "TF",
+    "name": "Terres australes et antarctiques françaises",
+    "flag": "/img/flags/taaf.png"
+  },
+  {
+    "code": "WF",
+    "name": "Wallis-et-Futuna",
+    "flag": "/img/flags/wallis-futuna.png"
+  },
+  {
+    "code": "YT",
+    "name": "Mayotte",
+    "flag": "/img/flags/mayotte.png"
+  }
 ]
