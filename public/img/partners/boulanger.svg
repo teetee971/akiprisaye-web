@@ -1,11 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="160" height="120" viewBox="0 0 160 120">
-  <defs>
-    <filter id="s" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity=".25"/>
-    </filter>
-  </defs>
-  <rect rx="18" ry="18" width="160" height="120" fill="#ff6d00" filter="url(#s)"/>
-  <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle"
-        font-family="system-ui,Segoe UI,Roboto,Arial" font-weight="800"
-        font-size="56" fill="#ffffff">BO</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <circle cx="60" cy="60" r="56" fill="#0ea5e9"/>
+  <text x="50%" y="54%" text-anchor="middle" font-size="46" font-family="Inter,Arial" fill="#fff" font-weight="700" dy=".3em">BO</text>
 </svg>

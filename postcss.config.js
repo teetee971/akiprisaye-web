@@ -1,7 +1,6 @@
-/** PostCSS config (CommonJS pour compat Termux/Node) */
-module.exports = {
+export default {
   plugins: {
     tailwindcss: {},
     autoprefixer: {},
   },
-};
+}

@@ -1,48 +1,24 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#!/data/data/com.termux/files/usr/bin/bash
+set -e
+BRANCH="${1:-main}"   # main (prod) ou staging (préprod)
+MSG="${2:-"chore(deploy): build + push"}"
 
-# ───────── Réglages de sûreté
-export ROLLUP_SKIP_NATIVE=true
-BRANCH="${1:-main}"                    # tu peux passer une autre branche: ./deploy.sh staging
-DATE_UTC="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
-MSG="build: pages statiques + déploiement (Cloudflare) • ${DATE_UTC}"
+echo "🧹 Build fallback → copie /public → /dist"
+rm -rf dist && mkdir -p dist && cp -r public/* dist/
+test -f dist/index.html || { echo "❌ Build incomplet (dist/index.html manquant)"; exit 1; }
+echo "✅ Build OK"
 
-echo "🚀 DEPLOY • Branche: ${BRANCH}"
-echo "🔧 Préparation deps (sans scripts natifs)…"
-pnpm install --ignore-scripts >/dev/null
-
-# ───────── Build
-echo "📦 Build de production…"
-if pnpm -s run | grep -q '"build"'; then
-  pnpm build
-else
-  echo "ℹ️ Aucun script build trouvé — fallback: copie /public → /dist"
-  rm -rf dist && mkdir -p dist && cp -r public/* dist/
-fi
-
-# Vérifs rapides
-test -f dist/index.html || { echo "❌ Build incomplet: dist/index.html manquant"; exit 1; }
-test -d dist || { echo "❌ Dossier dist manquant"; exit 1; }
-echo "✅ Build OK → dist/"
-
-# ───────── Commit + push (déploiement auto via Cloudflare Pages)
-# Ajoute seulement ce qui est versionné (data, public, scripts, etc.)
-echo "📝 Git add…"
+echo "🪣 Commit & push → $BRANCH"
 git add -A
-
 if git diff --cached --quiet; then
-  echo "ℹ️ Rien à committer. Si Cloudflare Pages est déjà branché à ${BRANCH}, rien à déployer."
+  echo "ℹ️ Rien à committer (si Pages est branché, CF Pages build/publish auto)."
 else
-  echo "🧷 Commit…"
-  git commit -m "${MSG}"
-  echo "⬆️  Push → origin/${BRANCH}"
-  git push origin "${BRANCH}"
-  echo "⏱️  Cloudflare Pages va builder & publier automatiquement."
+  git commit -m "$MSG"
 fi
+git push origin "$BRANCH"
 
-# Récapitulatif
-echo "─── Résumé ─────────────────────────────────────"
-echo "  Branche      : ${BRANCH}"
-echo "  Commit msg   : ${MSG}"
-echo "  Dossier dist : $(du -sh dist 2>/dev/null | awk '{print $1}')"
-echo "✅ Terminé."
+echo "🌩️ Cloudflare Pages va builder & publier automatiquement."
+echo "📋 Récapitulatif:"
+echo "  • Branche  : $BRANCH"
+echo "  • Commit   : $MSG"
+echo "  • Dossier  : $(du -sh dist 2>/dev/null | awk '{print $1}')"

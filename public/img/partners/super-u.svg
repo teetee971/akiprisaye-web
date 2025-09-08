@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160">
-  <defs><style>
-    .bg{fill:#2ecc71;opacity:.15}
-    .tx{fill:#fff;font:bold 56px/1.2 system-ui,Segoe UI,Roboto,sans-serif;text-anchor:middle}
-  </style></defs>
-  <circle class="bg" cx="80" cy="80" r="72"/>
-  <text class="tx" x="80" y="98">SU</text>
-</svg>

@@ -1,33 +1,8 @@
 [
   {
-    "code": "BL",
-    "name": "Saint-Barthélemy",
-    "flag": "/img/flags/saint-barthelemy.png"
-  },
-  {
-    "code": "DOM-COM",
-    "name": "DOM-COM (global)",
-    "flag": "/img/flags/domcom.png"
-  },
-  {
-    "code": "FR",
-    "name": "Métropole",
-    "flag": "/img/flags/metropole.png"
-  },
-  {
-    "code": "GF",
-    "name": "Guyane",
-    "flag": "/img/flags/guyane.png"
-  },
-  {
     "code": "GP",
     "name": "Guadeloupe",
     "flag": "/img/flags/guadeloupe.png"
-  },
-  {
-    "code": "MF",
-    "name": "Saint-Martin",
-    "flag": "/img/flags/saint-martin.png"
   },
   {
     "code": "MQ",
@@ -35,19 +10,9 @@
     "flag": "/img/flags/martinique.png"
   },
   {
-    "code": "NC",
-    "name": "Nouvelle-Calédonie",
-    "flag": "/img/flags/nouvelle-caledonie.png"
-  },
-  {
-    "code": "PF",
-    "name": "Polynésie française",
-    "flag": "/img/flags/polynesie.png"
-  },
-  {
-    "code": "PM",
-    "name": "Saint-Pierre-et-Miquelon",
-    "flag": "/img/flags/saint-pierre-miquelon.png"
+    "code": "GF",
+    "name": "Guyane",
+    "flag": "/img/flags/guyane.png"
   },
   {
     "code": "RE",
@@ -55,13 +20,48 @@
     "flag": "/img/flags/reunion.png"
   },
   {
+    "code": "YT",
+    "name": "Mayotte",
+    "flag": "/img/flags/mayotte.png"
+  },
+  {
+    "code": "PF",
+    "name": "Polynésie française",
+    "flag": "/img/flags/polynesie.png"
+  },
+  {
+    "code": "NC",
+    "name": "Nouvelle-Calédonie",
+    "flag": "/img/flags/nouvelle-caledonie.png"
+  },
+  {
     "code": "WF",
     "name": "Wallis-et-Futuna",
     "flag": "/img/flags/wallis-futuna.png"
   },
   {
-    "code": "YT",
-    "name": "Mayotte",
-    "flag": "/img/flags/mayotte.png"
+    "code": "PM",
+    "name": "Saint-Pierre-et-Miquelon",
+    "flag": "/img/flags/saint-pierre-miquelon.png"
+  },
+  {
+    "code": "BL",
+    "name": "Saint-Barthélemy",
+    "flag": "/img/flags/saint-barthelemy.png"
+  },
+  {
+    "code": "MF",
+    "name": "Saint-Martin",
+    "flag": "/img/flags/saint-martin.png"
+  },
+  {
+    "code": "FR",
+    "name": "Métropole",
+    "flag": "/img/flags/metropole.png"
+  },
+  {
+    "code": "DOM-COM",
+    "name": "DOM-COM (global)",
+    "flag": "/img/flags/domcom.png"
   }
 ]
