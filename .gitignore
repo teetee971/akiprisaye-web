@@ -65,3 +65,6 @@ coverage/
 # ==============================
 public/data/*.merged.json
 push.sh
+push.sh
+
+push.sh
