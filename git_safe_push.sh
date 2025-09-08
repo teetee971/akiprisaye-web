@@ -1,69 +1,161 @@
 #!/usr/bin/env bash
-set -euo pipefail
+# Git Safe Push – Termux friendly
+# Usage:
+#   ./git_safe_push.sh           -> push la branche courante (ou main si détaché)
+#   ./git_safe_push.sh main      -> force la branche main
+#   BRANCH=feat/xyz ./git_safe_push.sh  -> via variable
+#   CF_DEPLOY_HOOK_URL=https://... ./git_safe_push.sh  -> déclenche Cloudflare
 
-REMOTE="${2:-origin}"
-BRANCH="${1:-main}"
+set -u
 
-echo "🚀 Push sécurisé vers $REMOTE/$BRANCH"
+red()  { printf "\033[31m%s\033[0m\n" "$*"; }
+grn()  { printf "\033[32m%s\033[0m\n" "$*"; }
+ylw()  { printf "\033[33m%s\033[0m\n" "$*"; }
+dim()  { printf "\033[2m%s\033[0m\n"  "$*"; }
 
-# 0) Sanity checks
-git rev-parse --is-inside-work-tree >/dev/null
-if ! git rev-parse --verify "$BRANCH" >/dev/null 2>&1; then
-  echo "❌ Branche locale '$BRANCH' introuvable."; exit 1
-fi
-if ! git ls-remote --exit-code "$REMOTE" >/dev/null 2>&1; then
-  echo "❌ Remote '$REMOTE' introuvable."; exit 1
-fi
+ensure_repo() {
+  git rev-parse --is-inside-work-tree >/dev/null 2>&1 || {
+    red "❌ Pas dans un dépôt Git. Va dans ~/akiprisaye-web"
+    exit 1
+  }
+}
 
-# 1) Add/commit si besoin
-git add -A
-if ! git diff --cached --quiet; then
-  msg="Déploiement: $(date -Iseconds) [Termux]"
-  git commit -m "$msg" || true
-  echo "✔️ Commit: $msg"
-else
-  echo "ℹ️ Rien à committer (index propre)"
-fi
-
-# 2) S'assurer que l’URL remote est bien en SSH (évite le prompt https)
-URL="$(git remote get-url "$REMOTE")"
-if [[ "$URL" == https://github.com/* ]]; then
-  SSH_URL="${URL/https:\/\/github.com\//git@github.com:}"
-  git remote set-url "$REMOTE" "$SSH_URL"
-  echo "🔑 Remote converti en SSH: $SSH_URL"
-fi
-
-# 3) Récupère l’état distant
-git fetch "$REMOTE" --prune
-LOCAL_HEAD="$(git rev-parse HEAD)"
-REMOTE_HEAD="$(git rev-parse "$REMOTE/$BRANCH" || echo '0000000')"
-BASE="$(git merge-base HEAD "$REMOTE/$BRANCH" 2>/dev/null || echo '')"
-
-# 4) Essaie un rebase quand pertinent
-FORCE=0
-if [[ -n "$REMOTE_HEAD" && "$REMOTE_HEAD" != "0000000" ]]; then
-  if [[ "$LOCAL_HEAD" = "$REMOTE_HEAD" ]]; then
-    echo "✅ Déjà à jour avec $REMOTE/$BRANCH"
-  else
-    echo "🔄 Rebase sur $REMOTE/$BRANCH…"
-    if git pull --rebase "$REMOTE" "$BRANCH"; then
-      echo "✔️ Rebase OK"
+resolve_rebase_if_any() {
+  if [ -d .git/rebase-merge ] || [ -d .git/rebase-apply ]; then
+    ylw "⚠️ Rebase en cours détecté → tentative de continuer"
+    if git rebase --continue 2>/dev/null; then
+      grn "✅ Rebase terminé."
     else
-      echo "⚠️ Rebase en échec, rollback…"
-      git rebase --abort || true
-      FORCE=1
+      ylw "↪️ Rien à continuer. J'abandonne le rebase."
+      git rebase --abort >/dev/null 2>&1 || true
     fi
   fi
-else
-  echo "ℹ️ $REMOTE/$BRANCH n’existe pas encore (création à la poussée)."
-fi
+}
 
-# 5) Push (normal ou fallback force-with-lease)
-if [[ "$FORCE" -eq 1 ]]; then
-  echo "⚠️ Fallback: push avec --force-with-lease (sécurisé)…"
-  git push "$REMOTE" "HEAD:$BRANCH" --force-with-lease
-else
-  git push -u "$REMOTE" "HEAD:$BRANCH"
-fi
+detect_branch() {
+  local current
+  current="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo detached)"
+  if [ "${current:-detached}" = "HEAD" ] || [ "${current:-detached}" = "detached" ]; then
+    current="main"
+  fi
+  BRANCH="${BRANCH:-${1:-$current}}"
+  echo "$BRANCH"
+}
 
-echo "🎉 Push terminé sur $REMOTE/$BRANCH"
+config_pull_rebase() {
+  # évite les merge commits quand on pull
+  git config pull.rebase false >/dev/null 2>&1 || true
+}
+
+setup_ssh_remote() {
+  # passe en SSH si l’URL est en https (plus simple dans Termux)
+  local url
+  url="$(git remote get-url origin 2>/dev/null || true)"
+  if [ -n "$url" ] && printf "%s" "$url" | grep -q '^https://github.com/'; then
+    local org_repo="${url#https://github.com/}"
+    ylw "🔧 Bascule le remote en SSH"
+    git remote set-url origin "git@github.com:${org_repo}"
+  fi
+}
+
+auth_check() {
+  if command -v ssh >/dev/null 2>&1; then
+    dim "⏳ Test d'auth SSH vers GitHub (pas de shell ouvert attendu)…"
+    ssh -T git@github.com 2>&1 | sed -e 's/^/  /'
+  fi
+}
+
+stash_untracked() {
+  # on stash TOUT pour éviter que des fichiers non suivis bloquent un pull
+  git add -A >/dev/null 2>&1 || true
+  git stash push -u -m "pre-pull-$(date +%s)" >/dev/null 2>&1 || true
+}
+
+unstash_if_any() {
+  if git stash list | grep -q 'pre-pull-'; then
+    git stash pop >/dev/null 2>&1 || true
+  fi
+}
+
+safe_pull() {
+  ylw "⬇️  Pull (sans rebase)…"
+  if ! git pull --no-rebase --ff-only; then
+    ylw "⚠️ Pull avec --ff-only impossible. Tentative avec --rebase…"
+    if ! git pull --rebase --autostash; then
+      red "❌ Échec du pull. Je continue quand même au push local."
+    fi
+  fi
+}
+
+commit_if_needed() {
+  # commit auto si changements
+  if ! git diff --quiet || ! git diff --cached --quiet; then
+    git add -A
+    msg="${1:-"chore(termux): sync auto $(date -u +%F_%H:%M:%S)"}"
+    git commit -m "$msg" || true
+  else
+    dim "Aucun changement à committer."
+  fi
+}
+
+ensure_branch_exists_remote() {
+  local branch="$1"
+  # crée la branche distante si elle n’existe pas
+  if ! git ls-remote --exit-code --heads origin "$branch" >/dev/null 2>&1; then
+    ylw "🆕 Branche distante $branch absente → création"
+    git push -u origin "HEAD:$branch"
+  fi
+}
+
+push_with_lease() {
+  local branch="$1"
+  ylw "⬆️  Push vers origin/$branch (force-with-lease)…"
+  if git push --force-with-lease -u origin "$branch"; then
+    grn "✅ Push réussi sur $branch."
+  else
+    red "❌ Push échoué. Tentative avec --force (moins sûr)…"
+    git push --force -u origin "$branch" || {
+      red "❌ Échec du push même en --force."
+      exit 1
+    }
+  fi
+}
+
+trigger_cloudflare() {
+  if [ -n "${CF_DEPLOY_HOOK_URL:-}" ]; then
+    ylw "🚀 Déclenchement Cloudflare Pages…"
+    curl -fsSL -X POST "$CF_DEPLOY_HOOK_URL" >/dev/null 2>&1 \
+      && grn "✅ Hook Cloudflare déclenché." \
+      || ylw "⚠️ Hook Cloudflare non déclenché (URL invalide ?)"
+  fi
+}
+
+main() {
+  ensure_repo
+  resolve_rebase_if_any
+  config_pull_rebase
+  setup_ssh_remote
+  auth_check
+
+  local target_branch
+  target_branch="$(detect_branch "$@")"
+  grn "📦 Branche cible : $target_branch"
+
+  # se place sur la branche cible
+  git checkout -B "$target_branch" >/dev/null 2>&1 || git checkout "$target_branch"
+
+  stash_untracked
+  safe_pull
+  unstash_if_any
+
+  commit_if_needed
+
+  ensure_branch_exists_remote "$target_branch"
+  push_with_lease "$target_branch"
+
+  trigger_cloudflare
+
+  grn "🎉 Tout est à jour. Fin."
+}
+
+main "$@"
