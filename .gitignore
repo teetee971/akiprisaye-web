@@ -1,19 +1,67 @@
-.DS_Store
+# ==============================
+# Node / npm / pnpm / yarn
+# ==============================
 node_modules/
-dist/
-.cache/
-.env
-.env.*
-serviceAccount*.json
-firebase-adminsdk*.json
-*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 
-# Sauvegardes nano
-public/index.html.save*
-*.save
-push.sh
-push.sh
-push.sh
-push.sh
-push.sh
+# ==============================
+# Build / Dist / Cache
+# ==============================
+dist/
+build/
+.cache/
+.eslintcache
+.vite/
+
+# ==============================
+# OS / IDE files
+# ==============================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# ==============================
+# Env & secrets
+# ==============================
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+
+# ==============================
+# Firebase
+# ==============================
+.firebase/
+.firebaserc
+.storage/
+
+# ==============================
+# Cloudflare
+# ==============================
+.cloudflare/
+wrangler.toml
+
+# ==============================
+# Logs
+# ==============================
+*.log
+*.tmp
+*.swp
+
+# ==============================
+# Coverage / Tests
+# ==============================
+coverage/
+.jest/
+.cypress/
+
+# ==============================
+# Autres spécifiques
+# ==============================
+public/data/*.merged.json
 push.sh
