@@ -1,1 +1,0 @@
-// Fonctions d'affichage prix (placeholder)

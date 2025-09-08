@@ -1,1 +1,0 @@
-// Déclenchement automatique des signalements

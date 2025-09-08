@@ -1,1 +1,0 @@
-Contenu factice du script Inno Setup

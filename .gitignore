@@ -17,3 +17,7 @@ push.sh
 push.sh
 push.sh
 push.sh
+
+# Stop anciennes refs submodule
+akiprisaye-web/
+promo-finder/akiprisaye-web/

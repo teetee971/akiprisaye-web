@@ -1,1 +1,0 @@
-// Connexion au module d'entraide locale

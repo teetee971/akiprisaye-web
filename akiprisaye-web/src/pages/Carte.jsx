@@ -1,1 +1,0 @@
-export default function Carte() { return <h2>Carte des magasins (module Leaflet à venir)</h2>; }

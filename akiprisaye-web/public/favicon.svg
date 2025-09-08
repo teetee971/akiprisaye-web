@@ -1,5 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
-  <defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#0ea5e9"/><stop offset="1" stop-color="#22c55e"/></linearGradient></defs>
-  <rect rx="24" width="128" height="128" fill="url(#g)"/>
-  <text x="50%" y="54%" text-anchor="middle" font-family="sans-serif" font-size="58" fill="white" font-weight="800">KP</text>
-</svg>

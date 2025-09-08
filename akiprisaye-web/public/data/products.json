@@ -1,7 +1,0 @@
-[
-  {"id":"r1","name":"Riz 5kg","brand":"Ti-Sa","image":"/img/rice.png","price":12.90,"favorite":true,"category":"Épicerie"},
-  {"id":"m1","name":"Lait 1L","brand":"Lait-Péi","image":"/img/milk.png","price":1.35,"favorite":false,"category":"Frais"},
-  {"id":"o1","name":"Huile 1L","brand":"Zétwal","image":"/img/oil.png","price":3.99,"favorite":true,"category":"Épicerie"},
-  {"id":"p1","name":"Pâtes 500g","brand":"Dodo","image":"/img/pasta.png","price":0.89,"favorite":false,"category":"Épicerie"},
-  {"id":"s1","name":"Sucre 1kg","brand":"Bézouk","image":"/img/sugar.png","price":1.19,"favorite":true,"category":"Épicerie"}
-]
