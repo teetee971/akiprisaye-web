@@ -7,3 +7,4 @@ dist/
 serviceAccount*.json
 firebase-adminsdk*.json
 *.log
+akiprisaye-web/
