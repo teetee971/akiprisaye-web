@@ -1,0 +1,142 @@
+{
+  "domain": "https://akiprisaye.pages.dev",
+  "mode": "--full",
+  "time": "2025-09-09 22:36:51 UTC",
+  "fail": 0,
+  "results": [
+    {
+      "name": "home",
+      "status": "ok",
+      "details": {
+        "http": 200
+      }
+    },
+    {
+      "name": "version.txt",
+      "status": "ok",
+      "details": {
+        "raw": "commit: 45a3fde7\nbuilt_at_local: 2025-09-09 18:02:09 AST\nbuilt_at_utc: 2025-09-09 22:02:09 UTC"
+      }
+    },
+    {
+      "name": "api/territories",
+      "status": "ok",
+      "details": {
+        "sample": {
+          "count": 11,
+          "ok": true
+        }
+      }
+    },
+    {
+      "name": "api/prices:guadeloupe",
+      "status": "ok",
+      "details": {
+        "sample": {
+          "ok": true,
+          "count": 15
+        }
+      }
+    },
+    {
+      "name": "api/prices:martinique",
+      "status": "warn",
+      "details": {
+        "sample": {
+          "ok": true,
+          "count": 0
+        }
+      }
+    },
+    {
+      "name": "api/prices:guyane",
+      "status": "warn",
+      "details": {
+        "sample": {
+          "ok": true,
+          "count": 0
+        }
+      }
+    },
+    {
+      "name": "api/prices:reunion",
+      "status": "warn",
+      "details": {
+        "sample": {
+          "ok": true,
+          "count": 0
+        }
+      }
+    },
+    {
+      "name": "api/prices:mayotte",
+      "status": "warn",
+      "details": {
+        "sample": {
+          "ok": true,
+          "count": 0
+        }
+      }
+    },
+    {
+      "name": "api/prices:saint-martin",
+      "status": "warn",
+      "details": {
+        "sample": {
+          "ok": true,
+          "count": 0
+        }
+      }
+    },
+    {
+      "name": "api/prices:saint-barthelemy",
+      "status": "warn",
+      "details": {
+        "sample": {
+          "ok": true,
+          "count": 0
+        }
+      }
+    },
+    {
+      "name": "api/prices:polynesie-francaise",
+      "status": "warn",
+      "details": {
+        "sample": {
+          "ok": true,
+          "count": 0
+        }
+      }
+    },
+    {
+      "name": "api/prices:nouvelle-caledonie",
+      "status": "warn",
+      "details": {
+        "sample": {
+          "ok": true,
+          "count": 0
+        }
+      }
+    },
+    {
+      "name": "api/prices:wallis-et-futuna",
+      "status": "warn",
+      "details": {
+        "sample": {
+          "ok": true,
+          "count": 0
+        }
+      }
+    },
+    {
+      "name": "api/prices:saint-pierre-et-miquelon",
+      "status": "warn",
+      "details": {
+        "sample": {
+          "ok": true,
+          "count": 0
+        }
+      }
+    }
+  ]
+}

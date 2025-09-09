@@ -1,1 +1,4 @@
-/recherche  /recherche.html   200
+/a-propos            /#apropos           302
+/mentions            /legal/mentions.html 301
+/confidentialite     /legal/confidentialite.html 301
+/cgu                 /legal/cgu.html      301

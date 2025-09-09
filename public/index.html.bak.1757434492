@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>A KI PRI SA YÉ – Compare les prix près de chez toi</title>
+<link rel="stylesheet" href="/styles.css"/>
+</head>
+<body>
+  <nav class="nav">
+    <div class="container" style="display:flex;align-items:center;justify-content:space-between;gap:14px">
+      <div class="brand">A KI PRI SA YÉ</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <a href="/recherche.html" class="badge">Recherche</a>
+        <a href="#actus" class="badge">Actualités</a>
+        <a href="#avis" class="badge">Avis</a>
+        <a href="#apropos" class="badge">À propos</a>
+        <a href="#contact" class="btn">Télécharger l’appli</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container">
+      <h1>Compare les prix <span class="em">près de chez toi</span></h1>
+      <p class="lead">Un moteur simple pour trouver le meilleur prix dans les DROM-COM : Guadeloupe, Martinique, Guyane, Réunion, Mayotte, et au-delà.</p>
+
+      <form id="search" class="search" onsubmit="return goSearch(event)">
+        <input id="q" class="input" placeholder="Ex. Lait demi-écrémé, EAN, marque…"/>
+        <div style="display:flex;gap:12px">
+          <select id="territoire" class="input" style="flex:1">
+            <option value="">— Territoire —</option>
+            <option>Guadeloupe</option><option>Martinique</option><option>Guyane</option>
+            <option>Réunion</option><option>Mayotte</option>
+          </select>
+          <button class="btn" type="submit">Rechercher</button>
+        </div>
+      </form>
+
+      <section class="kpis">
+        <div class="card"><div class="k" id="k-products">—</div><small>Produits suivis</small></div>
+        <div class="card"><div class="k" id="k-stores">—</div><small>Enseignes</small></div>
+        <div class="card"><div class="k" id="k-territories">—</div><small>Territoires couverts</small></div>
+        <div class="card"><div class="k" id="k-last">—</div><small>Dernière mise à jour</small></div>
+      </section>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="section" id="propose">
+      <h2>Ce que le logiciel propose</h2>
+      <div class="grid">
+        <article class="card"><h3>Scan EAN</h3><p class="lead">Scanne le code-barres et compare instantanément.</p></article>
+        <article class="card"><h3>Paniers types</h3><p class="lead">Suis un panier d’achats équilibré par territoire.</p></article>
+        <article class="card"><h3>Transparence</h3><p class="lead">Classements des enseignes et historique public.</p></article>
+      </div>
+    </section>
+
+    <section class="section news" id="actus">
+      <h2>Actualités</h2>
+      <div id="news" class="grid"></div>
+    </section>
+
+    <section class="section" id="avis">
+      <h2>Avis utilisateurs</h2>
+      <div id="reviews" class="grid"></div>
+    </section>
+
+    <section class="section" id="stores">
+      <h2>Enseignes partenaires/suivies</h2>
+      <div id="logos" class="stores"></div>
+    </section>
+
+    <section class="section" id="apropos">
+      <h2>À propos</h2>
+      <div class="card">
+        <p class="lead">A KI PRI SA YÉ est un service public/communautaire pour comparer les prix dans les DROM-COM, lutter contre la vie chère et aider chacun·e à maîtriser son budget.</p>
+      </div>
+    </section>
+
+    <section class="section faq" id="faq">
+      <h2>FAQ</h2>
+      <details><summary>Comment sont collectés les prix ?</summary><p>Données ouvertes + contributions contrôlées, mises à jour régulièrement.</p></details>
+      <details><summary>Quels territoires ?</summary><p>Guadeloupe, Martinique, Guyane, Réunion, Mayotte… et extensions prévues.</p></details>
+      <details><summary>Combien ça coûte ?</summary><p>Le service web est gratuit.</p></details>
+    </section>
+
+    <section class="section" id="newsletter">
+      <h2>Newsletter</h2>
+      <div class="card" style="display:flex;gap:12px;flex-wrap:wrap">
+        <input class="input" placeholder="Ton email…"/>
+        <button class="btn" type="button" onclick="alert('Merci ! Inscription prise en compte ✔')">S’inscrire</button>
+      </div>
+    </section>
+
+    <section class="section" id="contact">
+      <h2>Contact</h2>
+      <div class="card">
+        <p>Email : <a href="mailto:contact@akiprisaye.example">contact@akiprisaye.example</a></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="container" style="padding:28px 0">
+    <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
+      <small>© <span id="year"></span> A KI PRI SA YÉ</small>
+      <small><a class="badge" href="#apropos">Transparence</a></small>
+    </div>
+  </footer>
+
+<script>
+async function hydrateKPIs(){
+  try{const r=await fetch('/data/kpis.json');const k=await r.json();
+    byId('k-products').textContent=k.products.toLocaleString('fr-FR');
+    byId('k-stores').textContent=k.stores.toLocaleString('fr-FR');
+    byId('k-territories').textContent=k.territories.toString();
+    byId('k-last').textContent=new Date(k.lastUpdate).toLocaleDateString('fr-FR');
+  }catch(e){console.warn('kpis',e)}
+}
+async function hydrateNews(){
+  try{const r=await fetch('/data/news.json');const n=await r.json(); const wrap=el('div'); wrap.innerHTML='';
+    n.forEach(s=>{
+      const card=el('article'); card.className='card';
+      card.innerHTML=`<span class="badge">${s.tag}</span>
+       <h3>${s.title}</h3>
+       <span class="lead">${new Date(s.date).toLocaleDateString('fr-FR')}</span>
+       <p class="lead">${s.excerpt}</p>`;
+      wrap.appendChild(card);
+    });
+    byId('news').replaceChildren(...wrap.children);
+  }catch(e){console.warn('news',e)}
+}
+async function hydrateReviews(){
+  try{const r=await fetch('/data/reviews.json');const v=await r.json(); const wrap=el('div');
+    v.forEach(it=>{
+      const stars='★★★★★'.slice(0,it.rating).padEnd(5,'☆');
+      const card=el('article'); card.className='card';
+      card.innerHTML=`<h3>${stars}</h3><p class="lead">“${it.text}”</p><strong>— ${it.author}</strong>`;
+      wrap.appendChild(card);
+    });
+    byId('reviews').replaceChildren(...wrap.children);
+  }catch(e){console.warn('reviews',e)}
+}
+async function hydrateStores(){
+  try{const r=await fetch('/data/stores.json');const rows=await r.json(); const wrap=el('div');
+    rows.forEach(s=>{const box=el('div'); box.className='logo';
+      box.innerHTML=`<img class="logo" alt="${s.name}" src="${s.logo}">`;
+      wrap.appendChild(box);
+    });
+    byId('logos').replaceChildren(...wrap.children);
+  }catch(e){console.warn('stores',e)}
+}
+
+function byId(id){return document.getElementById(id)}
+function el(tag){return document.createElement(tag)}
+function goSearch(ev){
+  ev.preventDefault();
+  const q=byId('q').value.trim();
+  const t=byId('territoire').value.trim();
+  // Option: démo endpoint EAN si q ressemble à un EAN
+  if(/^\d{8,14}$/.test(q)){
+    fetch(`/api/ean2nc8?ean=${encodeURIComponent(q)}`).then(r=>r.json()).then(console.log).catch(()=>{});
+  }
+  const u=new URL(location.origin+'/recherche.html');
+  u.searchParams.set('q',q); if(t) u.searchParams.set('t',t);
+  location.href=u.toString(); return false;
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  hydrateKPIs(); hydrateNews(); hydrateReviews(); hydrateStores();
+  byId('year').textContent=new Date().getFullYear();
+});
+</script>
+</body>
+</html>
