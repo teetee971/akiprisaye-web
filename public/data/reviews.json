@@ -1,23 +1,50 @@
 [
   {
-    "id": "rvw-0001",
-    "name": "Mickaël (Les Abymes)",
-    "rating": 5,
-    "date": "2025-09-05",
-    "text": "Top pour comparer rapidement U vs Carrefour. J'ai économisé sur mon panier de la semaine 👌🏾."
+    "name":"Élodie G.",
+    "territory":"guadeloupe",
+    "city":"Baie-Mahault",
+    "rating":5,
+    "text":"Top ! Les prix comparés m'ont fait gagner ~12€ sur mon panier hebdo.",
+    "date":"2025-09-05"
   },
   {
-    "id": "rvw-0002",
-    "name": "Sabrina (Fort-de-France)",
-    "rating": 4,
-    "date": "2025-09-06",
-    "text": "Interface claire, j’attends l’appli mobile native !"
+    "name":"Romain P.",
+    "territory":"martinique",
+    "city":"Fort-de-France",
+    "rating":4,
+    "text":"Interface claire. J'aimerais plus d'enseignes locales, mais déjà utile.",
+    "date":"2025-09-06"
   },
   {
-    "id": "rvw-0003",
-    "name": "Yann (Cayenne)",
-    "rating": 5,
-    "date": "2025-09-07",
-    "text": "Les alertes promos, ce sera parfait pour la suite. Déjà très utile."
+    "name":"Sabrina L.",
+    "territory":"reunion",
+    "city":"Saint-Denis",
+    "rating":5,
+    "text":"Les alertes promos m'ont alerté sur le beurre à -20%. Génial.",
+    "date":"2025-09-07"
+  },
+  {
+    "name":"Hugo T.",
+    "territory":"guyane",
+    "city":"Cayenne",
+    "rating":4,
+    "text":"Comparateur rapide, gains réels sur pâtes/riz/huile.",
+    "date":"2025-09-07"
+  },
+  {
+    "name":"Amina K.",
+    "territory":"mayotte",
+    "city":"Mamoudzou",
+    "rating":5,
+    "text":"Simple et concret. Je valide 👌",
+    "date":"2025-09-08"
+  },
+  {
+    "name":"Tia M.",
+    "territory":"polynesie-francaise",
+    "city":"Papeete",
+    "rating":4,
+    "text":"Pratique pour repérer les écarts entre magasins.",
+    "date":"2025-09-08"
   }
 ]

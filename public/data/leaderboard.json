@@ -1,0 +1,23 @@
+{
+  "updated":"2025-09-06",
+  "currency":"EUR",
+  "territories":[
+    {
+      "code":"guadeloupe",
+      "rows":[
+        {"rank":1,"brand":"Market Caraïbes","zone":"Pointe-à-Pitre","avgBasket":53.10},
+        {"rank":2,"brand":"HyperDom","zone":"Baie-Mahault","avgBasket":53.80},
+        {"rank":3,"brand":"TiPrix","zone":"Les Abymes","avgBasket":54.40}
+      ]
+    },
+    {
+      "code":"martinique",
+      "rows":[
+        {"rank":1,"brand":"HyperDom","zone":"Fort-de-France","avgBasket":52.80},
+        {"rank":2,"brand":"TiPrix","zone":"Le Lamentin","avgBasket":53.30},
+        {"rank":3,"brand":"Market Caraïbes","zone":"Schoelcher","avgBasket":53.70}
+      ]
+    }
+  ],
+  "note":"Données démo. En prod, alimenter via vos relevés ou API."
+}

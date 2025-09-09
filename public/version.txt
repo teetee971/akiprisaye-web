@@ -1,3 +1,3 @@
-commit: 3d41c9bc7f2f
-built_at_local: 2025-09-09 11:19:54 AST
-built_at_utc:   2025-09-09 15:19:54 UTC
+commit: fca0f503
+built_at_local: Tue Sep  9 12:14:52 AST 2025
+built_at_utc:   Tue Sep  9 16:14:52 UTC 2025

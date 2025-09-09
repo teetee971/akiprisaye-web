@@ -1,22 +1,59 @@
-<!doctype html><html lang="fr"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>A KI PRI SA YÉ – Présentation</title>
-<link rel="stylesheet" href="/styles.css">
-</head><body class="prose" style="max-width:720px;margin:24px auto;padding:16px;">
-<h1>A KI PRI SA YÉ</h1>
-<p>Comparez les prix, suivez votre budget et trouvez l’enseigne la moins chère dans les territoires d’Outre-mer.</p>
-<h2>Fonctionnalités</h2>
-<ul>
-  <li>Recherche produit par mot-clé et par territoire</li>
-  <li>Scan EAN &rarr; identification de produit (OpenFoodFacts) &rarr; proposition NC8</li>
-  <li>Classements par enseigne, prix unitaire, suivi d’historique</li>
-</ul>
-<h2>Données & sources</h2>
-<ul>
-  <li><b>Produits</b> : OpenFoodFacts (nom, image, EAN)</li>
-  <li><b>NC8</b> : heuristique + fallback Douane (facultatif)</li>
-  <li><b>Magasins</b> : seed local + enrichissement communautaire</li>
-</ul>
-<h2>Vie privée</h2>
-<p>Aucune donnée personnelle n’est vendue. Les scans restent locaux sauf action explicite d’envoi.</p>
-</body></html>
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>À propos – A KI PRI SA YÉ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',sans-serif;background:#0b1020;color:#e7ebf3;margin:0}
+    header,main{max-width:900px;margin:auto;padding:16px}
+    .card{background:#0f152b;border:1px solid #1e2647;border-radius:16px;padding:20px;margin:12px 0}
+    h1,h2{margin:.2rem 0  .6rem}
+    ul{margin:.2rem 0 1rem 1.2rem}
+    a{color:#87c8ff}
+    .row{display:flex;gap:8px;align-items:center;justify-content:space-between}
+    a.btn{background:#1fb673;color:white;text-decoration:none;padding:10px 14px;border-radius:12px}
+  </style>
+</head>
+<body>
+<header class="row">
+  <h1 style="margin:0">À propos</h1>
+  <nav style="display:flex;gap:8px">
+    <a class="btn" href="/index.html">Accueil</a>
+    <a class="btn" href="/palmares.html">Palmarès</a>
+    <a class="btn" href="/enseignes.html">Enseignes</a>
+    <a class="btn" href="/avis.html">Avis</a>
+    <a class="btn" href="/actus.html">Actus</a>
+  </nav>
+</header>
+<main>
+  <section class="card">
+    <h2>Notre mission</h2>
+    <p><b>A KI PRI SA YÉ</b> aide les consommateurs des DROM-COM à <b>maîtriser leur budget</b> en comparant les prix, en suivant leurs dépenses et en repérant les bons plans locaux. L’objectif : des économies concrètes et transparentes, près de chez vous.</p>
+  </section>
+
+  <section class="card">
+    <h2>Comment ça marche ?</h2>
+    <ul>
+      <li><b>Collecte multicanale</b> : données ouvertes, relevés en magasin, contributions vérifiées.</li>
+      <li><b>Comparateur</b> : paniers multi-enseignes, prix unifiés, classement des enseignes.</li>
+      <li><b>Outils budget</b> : suivi de dépenses, alertes personnalisées, listes partagées.</li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2>Valeurs & conformité</h2>
+    <ul>
+      <li><b>Neutralité</b> vis-à-vis des enseignes ; méthode de calcul documentée.</li>
+      <li><b>Transparence</b> : sources et mises à jour indiquées dans l’app.</li>
+      <li><b>Vie privée</b> : aucune revente de données individuelles.</li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2>Nous contacter</h2>
+    <p>Email : <a href="mailto:contact@akiprisaye.app">contact@akiprisaye.app</a></p>
+  </section>
+</main>
+</body>
+</html>

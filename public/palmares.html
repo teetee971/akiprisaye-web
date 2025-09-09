@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Palmarès – A KI PRI SA YÉ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',sans-serif;background:#0b1020;color:#e7ebf3;margin:0}
+    header,main{max-width:1024px;margin:auto;padding:16px}
+    .tbl{width:100%;border-collapse:collapse;background:#0f152b;border:1px solid #1e2647;border-radius:16px;overflow:hidden}
+    th,td{padding:12px;border-bottom:1px solid #1e2647}
+    th{text-align:left;background:#0f1a38}
+    .row{display:flex;gap:8px;align-items:center;justify-content:space-between}
+    select{background:#0f152b;border:1px solid #233065;color:#e7ebf3;border-radius:10px;padding:10px 12px}
+    a.btn{background:#1fb673;color:white;text-decoration:none;padding:10px 14px;border-radius:12px}
+  </style>
+</head>
+<body>
+<header class="row">
+  <h1 style="margin:0">Palmarès – Meilleures enseignes</h1>
+  <nav style="display:flex;gap:8px">
+    <a class="btn" href="/index.html">Accueil</a>
+    <a class="btn" href="/enseignes.html">Enseignes</a>
+    <a class="btn" href="/avis.html">Avis</a>
+    <a class="btn" href="/actus.html">Actus</a>
+    <a class="btn" href="/a-propos.html">À propos</a>
+  </nav>
+</header>
+<main>
+  <div class="row" style="margin:8px 0 16px">
+    <select id="t"></select>
+    <div class="muted" id="meta"></div>
+  </div>
+  <table class="tbl" aria-describedby="meta">
+    <thead><tr><th>Rang</th><th>Enseigne</th><th>Zone</th><th>Panier moyen</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+let TERR=[], LB={territories:[]};
+
+function render(){
+  const code = $("t").value;
+  const terr = TERR.find(x=>x.code===code);
+  const block = (LB.territories.find(x=>x.code===code)||{rows:[]}).rows;
+  $("meta").textContent = `Mise à jour ${LB.updated} – Monnaie: ${LB.currency} – Territoire: ${(terr||{}).name||code}`;
+  $("rows").innerHTML = block.map(r=>`<tr>
+    <td>${r.rank}</td><td>${r.brand}</td><td>${r.zone}</td><td>${r.avgBasket.toFixed(2)} €</td>
+  </tr>`).join('') || `<tr><td colspan="4" class="muted">Aucune donnée</td></tr>`;
+}
+
+Promise.all([
+  fetch("/data/territories.json").then(r=>r.json()),
+  fetch("/data/leaderboard.json").then(r=>r.json())
+]).then(([terr,lb])=>{
+  TERR=terr; LB=lb;
+  $("t").innerHTML = TERR.map(t=>`<option value="${t.code}">${t.flag} ${t.name}</option>`).join('');
+  // défaut : 1er territoire présent dans leaderboard
+  const def = (LB.territories[0]||{}).code || TERR[0].code;
+  $("t").value = def;
+  $("t").addEventListener("input",render);
+  render();
+});
+</script>
+</body>
+</html>

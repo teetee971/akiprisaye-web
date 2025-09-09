@@ -1,5 +1,21 @@
-[
-  {"title":"Lancement appli A KI PRI SA YÉ","date":"2025-09-01","tag":"Actus","excerpt":"Compare les prix près de chez toi dans tous les DROM-COM.","url":"#"},
-  {"title":"Lutte contre la vie chère","date":"2025-08-20","tag":"Économie","excerpt":"Suivi public des variations de prix et des paniers types.","url":"#"},
-  {"title":"Palmarès des enseignes","date":"2025-08-05","tag":"Classement","excerpt":"Transparence : les meilleures enseignes par territoire.","url":"#"}
-]
+{
+  "updated":"2025-09-06",
+  "sections":[
+    {
+      "territory":"guadeloupe",
+      "title":"Vie chère & conso – Guadeloupe",
+      "links":[
+        {"title":"Observatoire des prix – dernier rapport","url":"https://www.guadeloupe.gouv.fr/","source":"Préfecture","when":"2025-08"},
+        {"title":"Comparatif panier – associations conso","url":"https://www.insee.fr/fr/statistiques","source":"INSEE","when":"2025-07"}
+      ]
+    },
+    {
+      "territory":"martinique",
+      "title":"Vie chère & conso – Martinique",
+      "links":[
+        {"title":"Indice des prix à la consommation","url":"https://www.insee.fr/fr/statistiques","source":"INSEE","when":"2025-08"}
+      ]
+    }
+  ],
+  "note":"Liens éditoriaux de référence. Ajouter/mettre à jour facilement ce JSON."
+}
