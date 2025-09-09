@@ -1,19 +1,19 @@
-# 🌍 A KI PRI SA YÉ – API & Frontend
-
-API + Application React (Vite + Tailwind) pour comparer les prix DOM-TOM et vérifier l’état de l’API.
-
----
-
-## 🚀 Installation
-
-```bash
-# Cloner le dépôt
-git clone <repo-url>
-cd <repo>
-
-# Installer les dépendances
-npm install
-
-# Lancer le serveur local
-npm run dev
-
+{
+  "name": "akiprisaye-web",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A KI PRI SA YÉ – Comparateur de prix DOM-TOM (Cloudflare Pages + Functions).",
+  "scripts": {
+    "dev": "vite",
+    "build": "echo \"📦 Build…\" && rm -rf dist && mkdir -p dist && ( [ -d public ] && cp -r public/* dist/ || true )",
+    "preview": "vite preview --host"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "vite": "^4.5.14"
+  }
+}

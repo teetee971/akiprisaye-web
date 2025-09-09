@@ -1,0 +1,27 @@
+{
+  "name": "akiprisaye-web",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Application A KI PRI SA YÉ – comparaison de prix DOM-TOM + Functions Cloudflare Pages",
+  "scripts": {
+    "dev": "vite",
+    "build": "echo \"📦 Build...\" && rm -rf dist && mkdir -p dist && cp -r public/* dist/ || true",
+    "preview": "vite preview --host"
+  },
+  "keywords": [
+    "prix",
+    "DOM-TOM",
+    "comparateur",
+    "cloudflare-pages"
+  ],
+  "author": "A KI PRI SA YÉ",
+  "license": "MIT",
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "vite": "^4.5.14"
+  }
+}
