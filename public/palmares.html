@@ -1,19 +1,20 @@
 <!doctype html><html lang="fr"><head>
 <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Palmarès — Meilleures enseignes</title>
-<style>
-  body{font-family:system-ui,-apple-system,Segoe UI,Roboto; background:#0b1220; color:#e6eefc; margin:0}
-  main{max-width:980px;margin:auto;padding:24px}
-  table{width:100%;border-collapse:collapse}
-  th,td{padding:10px;border-bottom:1px solid #1b2a44;text-align:left}
-  .muted{color:#9fb2cc}
-</style>
-</head>
-<body>
-<main>
+<link rel="stylesheet" href="/css/theme.css"/>
+</head><body>
+<div class="wrapper">
+  <nav class="nav"><a href="/index.html">Accueil</a><a href="/avis.html">Avis</a><a href="/enseignes.html">Enseignes</a><a href="/actualites.html">Actus</a><a href="/a-propos.html">À propos</a><button id="theme-toggle" class="theme-toggle btn">☀️ Clair</button>  <a href="/tarifs.html">Tarifs</a>
+</nav>
   <h1>Palmarès — Meilleures enseignes</h1>
-  <p class="muted">Maj : <span id="palmares-updated">—</span></p>
-  <table id="palmares-table"><thead><tr><th>Rang</th><th>Enseigne</th><th>Zone</th><th>Panier moyen</th></tr></thead><tbody></tbody></table>
-</main>
+  <div class="muted">Mise à jour : <span id="palmares-updated">—</span></div>
+  <div class="card" style="margin-top:10px;overflow:auto">
+    <table id="palmares-table"><thead><tr><th>Rang</th><th>Enseigne</th><th>Zone</th><th>Panier moyen</th></tr></thead><tbody></tbody></table>
+  </div>
+</div>
+<script src="/js/theme.js" defer></script>
 <script src="/js/palmares.js" defer></script>
+
+<div id="site-footer"></div>
+  <script src="/js/footer.js" defer></script>
 </body></html>

@@ -1,147 +1,49 @@
-<!doctype html>
-<html lang="fr">
-<head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Avis — A KI PRI SA YÉ</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <style>
-    :root{--bg:#0b1220;--card:#0f1a2b;--text:#e6f0ff;--muted:#9bb0d3;--accent:#26d1ff;}
-    html,body{background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,sans-serif;margin:0}
-    header,main{max-width:980px;margin:auto;padding:24px}
-    h1{font-size:clamp(1.4rem,3.5vw,2.2rem);margin:0 0 8px}
-    p.muted{color:var(--muted);margin:0 0 16px}
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
-    .card{background:var(--card);border:1px solid #14213a;border-radius:14px;padding:14px}
-    .head{display:flex;gap:10px;align-items:center}
-    .flag{font-size:20px}
-    .who{font-weight:600}
-    .tag{color:#a4c7ff;background:#0b223c;border:1px solid #173055;padding:2px 8px;border-radius:999px;font-size:12px}
-    .stars{letter-spacing:2px}
-    .form{background:#0c1a30;border:1px dashed #1b3358;border-radius:16px;padding:14px;margin-top:18px}
-    input,select,textarea{width:100%;background:#0a1628;color:var(--text);border:1px solid #163055;border-radius:10px;padding:10px}
-    .row{display:grid;gap:10px;grid-template-columns:1fr 1fr}
-    button{background:linear-gradient(90deg,#1fe4ff,#1ec8ff);border:0;color:#00223f;font-weight:700;padding:10px 14px;border-radius:12px;cursor:pointer}
-    .small{font-size:12px;color:var(--muted)}
-  </style>
-</head>
-<body>
-<header>
-  <h1>Avis des utilisateurs</h1>
-  <p class="muted">Vos retours nous aident à améliorer la comparaison des prix dans les DROM-COM.</p>
-
-  <div class="form" aria-labelledby="formTitle">
-    <h2 id="formTitle" style="margin:0 0 8px;font-size:18px">Laisser un avis</h2>
-    <div class="row">
-      <div><label>Nom (facultatif)<br><input id="name" placeholder="Ex. Karine"></label></div>
-      <div><label>Territoire<br>
-        <select id="territory">
-          <option value="guadeloupe">🇬🇵 Guadeloupe</option>
-          <option value="martinique">🇲🇶 Martinique</option>
-          <option value="guyane">🇬🇫 Guyane</option>
-          <option value="reunion">🇷🇪 Réunion</option>
-          <option value="mayotte">🇾🇹 Mayotte</option>
-          <option value="saint-martin">🇲🇫 Saint-Martin</option>
-          <option value="saint-barthelemy">🇧🇱 Saint-Barthélemy</option>
-          <option value="polynesie-francaise">🇵🇫 Polynésie française</option>
-          <option value="nouvelle-caledonie">🇳🇨 Nouvelle-Calédonie</option>
-          <option value="wallis-et-futuna">🇼🇫 Wallis-et-Futuna</option>
-        </select>
-      </label></div>
-    </div>
-    <div class="row">
-      <div><label>Ville (facultatif)<br><input id="city" placeholder="Ex. Pointe-à-Pitre"></label></div>
-      <div><label>Note<br>
-        <select id="rating">
-          <option>5</option><option>4</option><option>3</option><option>2</option><option>1</option>
-        </select>
-      </label></div>
-    </div>
-    <label>Votre avis<br><textarea id="text" rows="4" placeholder="Partagez votre expérience (prix, disponibilité, accueil…)"></textarea></label>
-    <div style="display:flex;gap:10px;align-items:center;margin-top:10px">
-      <button id="send" type="button">Envoyer</button>
-      <span class="small">Les avis sont stockés localement (démo) et n’affichent aucune donnée personnelle.</span>
-    </div>
+<!doctype html><html lang="fr"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Avis — A KI PRI SA YÉ</title>
+<link rel="stylesheet" href="/css/theme.css"/>
+</head><body>
+<div class="wrapper">
+  <nav class="nav"><a href="/index.html">Accueil</a><a href="/avis.html">Avis</a><a href="/enseignes.html">Enseignes</a><a href="/palmares.html">Palmarès</a><a href="/actualites.html">Actus</a><a href="/a-propos.html">À propos</a><button id="theme-toggle" class="theme-toggle btn" style="margin-left:8px">☀️ Clair</button>  <a href="/tarifs.html">Tarifs</a>
+</nav>
+  <h1>Vos avis</h1>
+  <div class="toolbar">
+    <select id="fltTerr" class="input"><option value="">— Tous —</option></select>
+    <input id="q" class="input" placeholder="Filtrer texte / ville / nom…"/>
   </div>
-</header>
+  <section id="list" class="grid cards" aria-live="polite"></section>
 
-<main>
-  <div id="filters" class="row" style="margin-bottom:10px">
-    <label>Filtrer territoire<br>
-      <select id="fltTerr"><option value="">— Tous —</option></select>
-    </label>
-    <label>Recherche texte<br><input id="q" placeholder="Mot-clé (enseigne, ville, remarque…)"></label>
+  <div class="card" style="margin-top:16px">
+    <h2>Laisser un avis</h2>
+    <div class="toolbar">
+      <input id="name" class="input" placeholder="Nom (facultatif)"/>
+      <select id="territory" class="input">
+        <option value="guadeloupe">🇬🇵 Guadeloupe</option><option value="martinique">🇲🇶 Martinique</option>
+        <option value="guyane">🇬🇫 Guyane</option><option value="reunion">🇷🇪 Réunion</option><option value="mayotte">🇾🇹 Mayotte</option>
+        <option value="saint-martin">🇲🇫 Saint-Martin</option><option value="saint-barthelemy">🇧🇱 Saint-Barthélemy</option>
+        <option value="polynesie-francaise">🇵🇫 Polynésie française</option><option value="nouvelle-caledonie">🇳🇨 Nouvelle-Calédonie</option><option value="wallis-et-futuna">🇼🇫 Wallis-et-Futuna</option>
+      </select>
+      <input id="city" class="input" placeholder="Ville"/>
+      <select id="rating" class="input"><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select>
+    </div>
+    <textarea id="text" class="input" rows="4" placeholder="Votre avis (prix, disponibilité, accueil…)"></textarea>
+    <div style="margin-top:10px"><button id="send" class="btn">Envoyer</button> <span class="muted">Démo: avis stockés localement.</span></div>
   </div>
-  <section id="list" class="grid" aria-live="polite"></section>
-</main>
-
+</div>
+<script src="/js/theme.js" defer></script>
 <script>
-const $ = (id)=>document.getElementById(id);
-const FLAGS = {
- "guadeloupe":"🇬🇵","martinique":"🇲🇶","guyane":"🇬🇫","reunion":"🇷🇪","mayotte":"🇾🇹",
- "saint-martin":"🇲🇫","saint-barthelemy":"🇧🇱","polynesie-francaise":"🇵🇫",
- "nouvelle-caledonie":"🇳🇨","wallis-et-futuna":"🇼🇫"
-};
-const RKEY="akp-reviews";
-let ALL=[];
-
-const card = (r)=>`
-  <article class="card">
-    <div class="head">
-      <div class="flag">${FLAGS[r.territory]||"🏷️"}</div>
-      <div>
-        <div class="who">${r.name||"Anonyme"} <span class="tag">${r.city||"—"}</span></div>
-        <div class="small">${(r.territory||"").replaceAll("-"," ")}</div>
-      </div>
-    </div>
-    <p style="margin:10px 0">${r.text}</p>
-    <div class="stars" aria-label="note">${"★".repeat(r.rating)}${"☆".repeat(5-r.rating)}</div>
-  </article>`;
-
-function render(){
-  const t = $("fltTerr").value; const q = $("q").value.toLowerCase().trim();
-  const items = ALL.filter(r=>{
-    const okT = !t || r.territory===t;
-    const inTxt = [r.text,r.city,r.name].filter(Boolean).join(" ").toLowerCase().includes(q);
-    return okT && inTxt;
-  });
-  $("list").innerHTML = items.length ? items.map(card).join("") : `<div class="small">Aucun avis pour ce filtre.</div>`;
-}
-
-function loadLocal(){
-  try{
-    const cur = JSON.parse(localStorage.getItem(RKEY)||"[]");
-    if(Array.isArray(cur) && cur.length) ALL=[...cur,...ALL];
-  }catch{}
-}
-
-function saveLocal(r){
-  const cur = JSON.parse(localStorage.getItem(RKEY)||"[]");
-  cur.unshift(r); localStorage.setItem(RKEY,JSON.stringify(cur));
-}
-
-$("send").onclick = ()=>{
-  const r = {
-    name: $("name").value.trim(),
-    territory: $("territory").value,
-    city: $("city").value.trim(),
-    rating: Number($("rating").value||"5"),
-    text: $("text").value.trim()||"—",
-    at: new Date().toISOString()
-  };
-  ALL=[r,...ALL]; saveLocal(r); $("text").value=""; render();
-};
-
-fetch('/data/reviews.json').then(r=>r.json()).then(json=>{
-  ALL = json;
-  // hydrate filtre territoires
-  const uniq = [...new Set(ALL.map(a=>a.territory))].sort();
-  $("fltTerr").innerHTML = `<option value="">— Tous —</option>` + uniq.map(t=>`<option value="${t}">${FLAGS[t]||"🏷️"} ${t.replaceAll("-"," ")}</option>`).join("");
-  loadLocal(); render();
-}).catch(()=>{ loadLocal(); render(); });
-
-$("fltTerr").onchange = render;
-$("q").oninput = render;
+const list=document.getElementById('list'); const $=id=>document.getElementById(id);
+const FLAGS={"guadeloupe":"🇬🇵","martinique":"🇲🇶","guyane":"🇬🇫","reunion":"🇷🇪","mayotte":"🇾🇹","saint-martin":"🇲🇫","saint-barthelemy":"🇧🇱","polynesie-francaise":"🇵🇫","nouvelle-caledonie":"🇳🇨","wallis-et-futuna":"🇼🇫"};
+const RKEY="akp-reviews-local"; let ALL=[];
+const card=r=>`<article class="card"><div style="display:flex;gap:8px;align-items:center"><div style="font-size:22px">${FLAGS[r.territory]||"🏷️"}</div><div><div style="font-weight:700">${r.name||"Anonyme"}</div><div class="muted">${r.city||"—"} — ${r.territory.replaceAll("-"," ")}</div></div><div style="margin-left:auto"> ${"★".repeat(r.rating)}${"☆".repeat(5-r.rating)}</div></div><p style="margin:10px 0">${r.text}</p></article>`;
+function render(){const t=.value;const q=(.value||'').toLowerCase().trim();const out=ALL.filter(r=>(!t||r.territory===t)&&[` ${r.text} ${r.city} ${r.name}`].join(' ').toLowerCase().includes(q)); list.innerHTML=out.length?out.map(card).join(''):'<div class="muted">Aucun avis.</div>';}
+function loadLocal(){try{const cur=JSON.parse(localStorage.getItem(RKEY)||"[]"); if(Array.isArray(cur)&&cur.length) ALL=[...cur,...ALL];}catch{}}
+function saveLocal(r){const cur=JSON.parse(localStorage.getItem(RKEY)||"[]"); cur.unshift(r); localStorage.setItem(RKEY,JSON.stringify(cur));}
+.onclick=()=>{const r={name:.value.trim(),territory:.value,city:.value.trim(),rating:Number(.value||"5"),text:.value.trim()||"—",at:new Date().toISOString()}; ALL=[r,...ALL]; saveLocal(r); .value=""; render();};
+fetch('/data/reviews.json').then(r=>r.json()).then(j=>{ALL=j; const uniq=[...new Set(ALL.map(a=>a.territory))].sort(); .innerHTML='<option value="">— Tous —</option>'+uniq.map(t=>`<option value="${t}">${FLAGS[t]||"🏷️"} ${t.replaceAll("-"," ")}</option>`).join(''); loadLocal(); render();}).catch(()=>{loadLocal(); render();});
+['fltTerr','q'].forEach(id=>uid=10461(u0_a461) gid=10461(u0_a461) groups=10461(u0_a461),1077(external_storage),1079(ext_obb_rw),3003(inet),9997(everybody),20461(u0_a461_cache),50461(all_a461) context=u:r:untrusted_app_27:s0:c205,c257,c512,c768.addEventListener('input',render));
 </script>
-</body>
-</html>
+
+<div id="site-footer"></div>
+  <script src="/js/footer.js" defer></script>
+</body></html>

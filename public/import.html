@@ -1,0 +1,24 @@
+<!doctype html><html lang="fr"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Import CSV — A KI PRI SA YÉ</title>
+<link rel="stylesheet" href="/css/theme.css"/>
+</head><body>
+<div class="wrapper">
+  <nav class="nav"><a href="/index.html">Accueil</a><a href="/avis.html">Avis</a><a href="/enseignes.html">Enseignes</a><a href="/palmares.html">Palmarès</a><a href="/actualites.html">Actus</a><a href="/a-propos.html">À propos</a><button id="theme-toggle" class="theme-toggle btn">☀️ Clair</button>  <a href="/tarifs.html">Tarifs</a>
+</nav>
+  <h1>Import CSV (démo)</h1>
+  <div class="card">
+    <p class="muted">Colonnes attendues : <code>product,price,store,territory,date</code></p>
+    <input id="file" type="file" accept=".csv" class="input"/>
+    <div id="preview" style="margin-top:12px"></div>
+  </div>
+</div>
+<script src="/js/theme.js" defer></script>
+<script>
+const file=document.getElementById('file'), prev=document.getElementById('preview');
+file.onchange=()=>{const f=file.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{const rows=r.result.split(/\\r?\\n/).filter(Boolean); const head=rows.shift().split(',').map(s=>s.trim()); const out=rows.map(line=>{const cols=line.split(','); const obj={}; head.forEach((h,i)=>obj[h]=cols[i]?.trim()); obj.price=parseFloat(obj.price||"0"); return obj;}); prev.innerHTML='<div class="muted">Aperçu ('+out.length+' lignes)</div><pre class="card" style="white-space:pre-wrap">'+JSON.stringify(out,null,2)+'</pre>';}; r.readAsText(f);};
+</script>
+
+<div id="site-footer"></div>
+  <script src="/js/footer.js" defer></script>
+</body></html>

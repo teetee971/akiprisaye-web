@@ -1,0 +1,29 @@
+<!doctype html><html lang="fr"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Soumettre un prix — A KI PRI SA YÉ</title>
+<link rel="stylesheet" href="/css/theme.css"/>
+</head><body>
+<div class="wrapper">
+  <nav class="nav"><a href="/index.html">Accueil</a><a href="/avis.html">Avis</a><a href="/enseignes.html">Enseignes</a><a href="/palmares.html">Palmarès</a><a href="/actualites.html">Actus</a><a href="/a-propos.html">À propos</a><button id="theme-toggle" class="theme-toggle btn">☀️ Clair</button>  <a href="/tarifs.html">Tarifs</a>
+</nav>
+  <h1>Soumettre un prix (démo locale)</h1>
+  <div class="card">
+    <div class="toolbar">
+      <input id="product" class="input" placeholder="Produit (ex. Lait 1L)"/>
+      <input id="price" class="input" type="number" step="0.01" placeholder="Prix (€)"/>
+      <input id="store" class="input" placeholder="Magasin/Enseigne"/>
+      <input id="territory" class="input" placeholder="Territoire (ex. guadeloupe)"/>
+    </div>
+    <button id="save" class="btn">Enregistrer (local)</button>
+    <pre id="out" class="card" style="margin-top:12px;white-space:pre-wrap"></pre>
+  </div>
+</div>
+<script src="/js/theme.js" defer></script>
+<script>
+const $=id=>document.getElementById(id), KEY="akp-submissions";
+$('save').onclick=()=>{const r={product:$('product').value.trim(),price:parseFloat($('price').value||"0"),store:$('store').value.trim(),territory:$('territory').value.trim(),at:new Date().toISOString()}; const cur=JSON.parse(localStorage.getItem(KEY)||"[]"); cur.unshift(r); localStorage.setItem(KEY,JSON.stringify(cur)); $('out').textContent=JSON.stringify(r,null,2)+"\\n— Stocké localement (démo).";};
+</script>
+
+<div id="site-footer"></div>
+  <script src="/js/footer.js" defer></script>
+</body></html>

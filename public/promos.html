@@ -8,7 +8,8 @@
     <a href="/index.html">Accueil</a><a href="/avis.html">Avis</a><a href="/enseignes.html">Enseignes</a>
     <a href="/palmares.html">Palmarès</a><a href="/actualites.html">Actus</a><a href="/a-propos.html">À propos</a>
     <a href="/panier.html">Panier</a><button id="theme-toggle" class="theme-toggle btn">☀️ Clair</button>
-  </nav>
+    <a href="/tarifs.html">Tarifs</a>
+</nav>
 
   <h1>Top Promos</h1>
   <div class="card">
@@ -56,4 +57,7 @@ function render(){
 ['territory','brand','sort'].forEach(id=>$(id).addEventListener('input',render));
 fetch('/data/promos.json').then(r=>r.json()).then(j=>{PROMOS=j.items||[]; options(); render();});
 </script>
+
+<div id="site-footer"></div>
+  <script src="/js/footer.js" defer></script>
 </body></html>

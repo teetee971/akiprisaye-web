@@ -1,68 +1,29 @@
-<!doctype html>
-<html lang="fr"><head>
-  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Enseignes & magasins — A KI PRI SA YÉ</title>
-  <style>
-    :root{--bg:#0b1220;--card:#0f1a2b;--text:#e6f0ff;--muted:#9bb0d3}
-    html,body{background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,sans-serif;margin:0}
-    main{max-width:1080px;margin:auto;padding:24px}
-    h1{margin:0 0 8px}
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
-    .card{background:var(--card);border:1px solid #14213a;border-radius:14px;padding:14px}
-    .muted{color:var(--muted)}
-    .row{display:grid;gap:10px;grid-template-columns:1fr 1fr 1fr}
-    input,select{width:100%;background:#0a1628;color:var(--text);border:1px solid #163055;border-radius:10px;padding:10px}
-    .brand{font-weight:700}
-    .tag{color:#a4c7ff;background:#0b223c;border:1px solid #173055;padding:2px 8px;border-radius:999px;font-size:12px}
-  </style>
-</head>
-<body>
-<main>
+<!doctype html><html lang="fr"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Enseignes locales — A KI PRI SA YÉ</title>
+<link rel="stylesheet" href="/css/theme.css"/>
+</head><body>
+<div class="wrapper">
+  <nav class="nav"><a href="/index.html">Accueil</a><a href="/avis.html">Avis</a><a href="/enseignes.html">Enseignes</a><a href="/palmares.html">Palmarès</a><a href="/actualites.html">Actus</a><a href="/a-propos.html">À propos</a><button id="theme-toggle" class="theme-toggle btn" style="margin-left:8px">☀️ Clair</button>  <a href="/tarifs.html">Tarifs</a>
+</nav>
   <h1>Magasins & enseignes</h1>
-  <p class="muted">Filtrez par territoire, ville, nom ou marque.</p>
-  <div class="row" style="margin:10px 0 16px">
-    <label>Territoire<br><select id="territory"><option value="">— Tous —</option></select></label>
-    <label>Ville<br><input id="city" placeholder="Ex. Baie-Mahault"></label>
-    <label>Recherche<br><input id="q" placeholder="Nom / marque / adresse…"></label>
+  <div class="toolbar">
+    <select id="territory" class="input"><option value="">— Tous —</option></select>
+    <input id="city" class="input" placeholder="Ville"/>
+    <input id="q" class="input" placeholder="Recherche (enseigne, adresse…)"/>
   </div>
-  <section id="list" class="grid" aria-live="polite"></section>
-</main>
-
+  <section id="list" class="grid cards" aria-live="polite"></section>
+</div>
+<script src="/js/theme.js" defer></script>
 <script>
-const $=(id)=>document.getElementById(id);
-const card = (s)=>`
-  <article class="card">
-    <div style="display:flex;align-items:center;gap:8px">
-      <div class="brand">${s.brand||"Enseigne"}</div>
-      <span class="tag">${s.territory}</span>
-      <span class="tag">${s.city}</span>
-    </div>
-    <h3 style="margin:10px 0 6px">${s.name||""}</h3>
-    <div class="muted">${s.address||""}</div>
-    ${s.hours ? `<div class="muted" style="margin-top:6px">🕒 ${s.hours}</div>`:""}
-    ${s.phone ? `<div class="muted">📞 ${s.phone}</div>`:""}
-    ${s.website ? `<div>🌐 <a href="${s.website}" target="_blank" rel="noopener">${s.website}</a></div>`:""}
-  </article>`;
-
-// state
-let STORES=[];
-function options(){
-  const t = [...new Set(STORES.map(s=>s.territory))].sort();
-  $("territory").innerHTML = `<option value="">— Tous —</option>` + t.map(x=>`<option>${x}</option>`).join("");
-}
-function render(){
-  const t = $("territory").value.trim().toLowerCase();
-  const c = $("city").value.trim().toLowerCase();
-  const q = $("q").value.trim().toLowerCase();
-  const out = STORES.filter(s=>{
-    const okT = !t || s.territory.toLowerCase()===t;
-    const okC = !c || (s.city||"").toLowerCase().includes(c);
-    const inTxt = `${s.name||""} ${s.brand||""} ${s.address||""}`.toLowerCase().includes(q);
-    return okT && okC && inTxt;
-  });
-  $("list").innerHTML = out.length ? out.map(card).join("") : `<div class="muted">Aucun résultat pour ce filtre.</div>`;
-}
-["territory","city","q"].forEach(id=>$(`${id}`).addEventListener("input",render));
-fetch('/data/stores.json').then(r=>r.json()).then(json=>{STORES=json; options(); render();});
+const $=id=>document.getElementById(id); const list=; let STORES=[];
+const card=s=>`<article class="card"><div style="display:flex;gap:8px;align-items:center"><div style="font-weight:700">${s.brand||"Enseigne"}</div><span class="muted">• ${s.city||""} (${s.territory})</span></div><h3 style="margin:8px 0">${s.name||""}</h3><div class="muted">${s.address||""}</div>${s.hours?'<div class="muted">🕒 '+s.hours+'</div>':''}${s.phone?'<div class="muted">📞 '+s.phone+'</div>':''}${s.website?'<div>🌐 <a href="${s.website}" target="_blank" rel="noopener">Site</a></div>':''}</article>`;
+function options(){const t=[...new Set(STORES.map(s=>s.territory))].sort(); .innerHTML='<option value="">— Tous —</option>'+t.map(x=>`<option>${x}</option>`).join('');}
+function render(){const t=.value.toLowerCase(); const c=.value.toLowerCase(); const q=.value.toLowerCase(); const out=STORES.filter(s=>(!t||s.territory.toLowerCase()===t)&&(!c||(s.city||'').toLowerCase().includes(c))&&(!q||`${s.name} ${s.brand} ${s.address}`.toLowerCase().includes(q))); list.innerHTML=out.length?out.map(card).join(''):'<div class="muted">Aucun résultat.</div>';}
+['territory','city','q'].forEach(id=>uid=10461(u0_a461) gid=10461(u0_a461) groups=10461(u0_a461),1077(external_storage),1079(ext_obb_rw),3003(inet),9997(everybody),20461(u0_a461_cache),50461(all_a461) context=u:r:untrusted_app_27:s0:c205,c257,c512,c768.addEventListener('input',render));
+fetch('/data/stores.json').then(r=>r.json()).then(j=>{STORES=j; options(); render();});
 </script>
+
+<div id="site-footer"></div>
+  <script src="/js/footer.js" defer></script>
 </body></html>
