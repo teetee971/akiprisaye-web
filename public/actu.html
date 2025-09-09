@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Actualités — A KI PRI SA YÉ</title>
+  <link rel="preload" as="style" href="/css/base.css"/>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial,sans-serif;background:#0a0f1a;color:#e8eefc}
+    .container{max-width:1100px;margin:0 auto;padding:24px}
+    h1{font-size:clamp(28px,3vw,36px);margin:8px 0 16px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+    .card{background:#121a2a;border:1px solid #1f2a44;border-radius:14px;padding:14px}
+    .tag{display:inline-flex;gap:8px;flex-wrap:wrap;margin:10px 0 0}
+    .tag a{display:inline-block;padding:6px 10px;border:1px solid #2a385d;border-radius:999px;text-decoration:none;color:#cfe1ff}
+    .tag a:hover{background:#1a2744}
+    .muted{opacity:.75;font-size:.92rem}
+  </style>
+</head>
+<body>
+  <!-- header auto-chargé par le site -->
+  <main class="container">
+    <h1>Actualités « vie chère » & consommation</h1>
+    <p class="muted">Raccourcis vers des sources publiques et Google News par territoire (recherches « vie chère », « consommation », « inflation », « pouvoir d’achat »).</p>
+
+    <section class="grid" id="zones"></section>
+  </main>
+
+  <script>
+  const TERRES = [
+    {code:"guadeloupe",  name:"Guadeloupe"},
+    {code:"martinique",  name:"Martinique"},
+    {code:"guyane",      name:"Guyane"},
+    {code:"reunion",     name:"La Réunion"},
+    {code:"mayotte",     name:"Mayotte"},
+    {code:"saint-martin",name:"Saint-Martin"},
+    {code:"saint-barthelemy",name:"Saint-Barthélemy"},
+    {code:"polynesie-francaise",name:"Polynésie française"},
+    {code:"nouvelle-caledonie", name:"Nouvelle-Calédonie"},
+    {code:"wallis-et-futuna",   name:"Wallis-et-Futuna"},
+    {code:"saint-pierre-et-miquelon", name:"Saint-Pierre-et-Miquelon"},
+  ];
+
+  const q = (s)=>encodeURIComponent(s);
+  const mkLinks = (t) => {
+    // jeux de requêtes
+    const gnews = `https://news.google.com/search?q=${q(t.name+" vie chère OR inflation OR consommation OR pouvoir d’achat")}&hl=fr&gl=FR&ceid=FR:fr`;
+    const dgouv = `https://www.data.gouv.fr/fr/search/?q=${q(t.name+" prix consommation")}`;
+    const eco   = `https://www.economie.gouv.fr/recherche?search_api_fulltext=${q(t.name+" prix consommation")}`;
+    const insee = `https://www.insee.fr/fr/recherche/recherche-geographique?debut=0&geo=dep&q=${q(t.name+" prix")}`;
+    return [
+      {label:"Google News", url:gnews},
+      {label:"data.gouv.fr", url:dgouv},
+      {label:"Économie.gouv", url:eco},
+      {label:"INSEE", url:insee},
+    ];
+  };
+
+  const container = document.getElementById('zones');
+  container.innerHTML = TERRES.map(t=>{
+    const links = mkLinks(t).map(l=>`<a href="${l.url}" target="_blank" rel="noopener">${l.label}</a>`).join("");
+    return `
+      <article class="card">
+        <h3>${t.name}</h3>
+        <div class="tag">${links}</div>
+      </article>
+    `;
+  }).join("");
+  </script>
+</body>
+</html>
