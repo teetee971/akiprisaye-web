@@ -1,66 +1,56 @@
-<!doctype html><html lang="fr"><head>
-<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Avis – A KI PRI SA YÉ</title>
-<link rel="icon" href="/favicon.ico"/>
+<!doctype html><html lang="fr">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Avis — A KI PRI SA YÉ</title>
+<link rel="stylesheet" href="/styles.css"/>
 <style>
-  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial; background:#0b1220; color:#e8eefc; margin:0; padding:24px;}
-  h1{font-size:28px;margin:0 0 16px}
-  .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
-  input,select,textarea{background:#0f1730;color:#e8eefc;border:1px solid #23304d;border-radius:10px;padding:10px 12px}
-  textarea{min-height:100px}
-  .grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));margin-top:16px}
-  .card{background:#0f1730;border:1px solid #243452;border-radius:16px;padding:14px}
-  .muted{color:#a7b3c9}
-  .stars{color:#ffc857}
-  .tag{display:inline-block;background:#0b1a35;border:1px solid #1e2d4b;border-radius:999px;padding:2px 8px;margin-right:6px;color:#9cc3ff}
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto; color:#e8eef9; background:#0b1220}
+  .wrap{max-width:960px;margin:40px auto;padding:0 16px}
+  .head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+  .card{background:#0f172a;border:1px solid #263143;border-radius:14px;padding:14px}
+  .muted{color:#9fb2cc}
+  .stars{letter-spacing:2px}
 </style>
-</head><body>
-<h1>🗣️ Avis des utilisateurs</h1>
-
-<div class="toolbar">
-  <select id="territory">
-    <option value="">— Tous les territoires —</option>
-    <option value="guadeloupe">🇬🇵 Guadeloupe</option>
-    <option value="martinique">🇲🇶 Martinique</option>
-    <option value="guyane">🇬🇫 Guyane</option>
-    <option value="reunion">🇷🇪 Réunion</option>
-    <option value="mayotte">🇾🇹 Mayotte</option>
-  </select>
-  <input id="city" placeholder="Ville…" />
-  <input id="q" placeholder="Recherche texte…" style="min-width:240px"/>
-</div>
-
-<section id="list" class="grid" aria-live="polite"></section>
+</head>
+<body>
+  <div class="wrap">
+    <div class="head">
+      <h1>Vos avis</h1>
+      <input id="q" placeholder="Filtrer par territoire, ville, texte…" style="padding:8px 10px;border-radius:10px;border:1px solid #334155;background:#0b1220;color:#e8eef9;width:260px">
+    </div>
+    <section id="list" class="grid" aria-live="polite"></section>
+  </div>
 
 <script>
-let ALL=[];
-const list = document.getElementById('list');
-const $ = (id)=>document.getElementById(id);
-const stars = n=>'★'.repeat(n)+'☆'.repeat(5-n);
-const card = r => `
+const el = s => document.querySelector(s);
+const list = el('#list');
+const star = n => '★★★★★'.slice(0,n) + '☆☆☆☆☆'.slice(n,5).replace(/./g,'');
+let ALL = [];
+
+const tpl = r => `
   <article class="card">
-    <div class="muted">${r.flag} ${r.territory} • ${r.city} • <span class="stars">${stars(r.rating)}</span></div>
-    <h3 style="margin:6px 0">${r.title}</h3>
-    <p class="muted">${r.text}</p>
-    <div class="muted">— ${r.author} · ${r.date}</div>
-  </article>
-`;
+    <div style="display:flex;gap:8px;align-items:center">
+      <div style="font-size:22px">${r.flag||''}</div>
+      <div>
+        <div style="font-weight:700">${r.name}</div>
+        <div class="muted">${(r.city||'').trim()} — ${(r.territory||'').replace('-',' ')}</div>
+      </div>
+      <div style="margin-left:auto" class="stars" aria-label="${r.rating} étoiles">${'★'.repeat(r.rating)}</div>
+    </div>
+    <p style="margin:10px 0 4px">${r.text}</p>
+    <div class="muted" style="font-size:12px">${r.date||''}</div>
+  </article>`;
 
-const render=()=>{
-  const t=($('territory').value||'').toLowerCase().trim();
-  const c=($('city').value||'').toLowerCase().trim();
-  const q=($('q').value||'').toLowerCase().trim();
-  const out=ALL.filter(r=>{
-    const okT=!t||r.territory===t;
-    const inCity=!c||(r.city||'').toLowerCase().includes(c);
-    const inTxt=(r.title+' '+r.text+' '+(r.author||'')).toLowerCase().includes(q);
-    return okT && inCity && inTxt;
+function render(){
+  const q = (el('#q').value||'').toLowerCase();
+  const out = ALL.filter(r => {
+    const hay = [r.flag,r.territory,r.city,r.text,r.name].join(' ').toLowerCase();
+    return !q || hay.includes(q);
   });
-  list.innerHTML = out.map(card).join('') || '<div class="muted">Aucun avis trouvé.</div>';
-};
-
-['territory','city','q'].forEach(id=>$(id).addEventListener('input',render));
-
-fetch('/data/reviews.json').then(r=>r.json()).then(json=>{ ALL=json; render(); });
+  list.innerHTML = out.map(tpl).join('') || `<div class="muted">Aucun avis pour ce filtre.</div>`;
+}
+fetch('/data/reviews.json').then(r=>r.json()).then(j=>{ ALL=j.items||[]; render(); });
+el('#q').addEventListener('input',render);
 </script>
 </body></html>

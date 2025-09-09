@@ -1,57 +1,32 @@
-[
-  {
-    "id": "RV-0001",
-    "territory": "guadeloupe",
-    "flag": "🇬🇵",
-    "city": "Les Abymes",
-    "rating": 5,
-    "title": "Prix imbattables près de chez moi",
-    "text": "J'ai trouvé moins cher pour le petit-déjeuner (lait, pain, beurre).",
-    "author": "Nadège",
-    "date": "2025-09-06"
-  },
-  {
-    "id": "RV-0002",
-    "territory": "martinique",
-    "flag": "🇲🇶",
-    "city": "Fort-de-France",
-    "rating": 4,
-    "title": "Comparateur très utile",
-    "text": "Le panier m'aide à voir tout de suite l'enseigne la plus économique.",
-    "author": "Kévin",
-    "date": "2025-09-05"
-  },
-  {
-    "id": "RV-0003",
-    "territory": "guyane",
-    "flag": "🇬🇫",
-    "city": "Cayenne",
-    "rating": 4,
-    "title": "Transparence sur les prix",
-    "text": "Top pour suivre l'évolution des prix dans mon quartier.",
-    "author": "Sarah",
-    "date": "2025-09-03"
-  },
-  {
-    "id": "RV-0004",
-    "territory": "reunion",
-    "flag": "🇷🇪",
-    "city": "Saint-Denis",
-    "rating": 5,
-    "title": "Simple et efficace",
-    "text": "J'adore les alertes promos et le suivi de budget.",
-    "author": "Mathieu",
-    "date": "2025-09-02"
-  },
-  {
-    "id": "RV-0005",
-    "territory": "mayotte",
-    "flag": "🇾🇹",
-    "city": "Mamoudzou",
-    "rating": 4,
-    "title": "Bonne base pour comparer",
-    "text": "Les prix des produits de base sont bien couverts.",
-    "author": "Rokia",
-    "date": "2025-09-01"
-  }
-]
+{
+  "updatedAt": "2025-09-09",
+  "items": [
+    { "id":"rv-971-001", "name":"Karine G.", "territory":"guadeloupe", "flag":"🇬🇵",
+      "rating":5, "text":"Super idée ! Les prix sont enfin comparables près de chez moi.",
+      "city":"Baie-Mahault", "date":"2025-09-05" },
+
+    { "id":"rv-972-001", "name":"Matthieu R.", "territory":"martinique", "flag":"🇲🇶",
+      "rating":4, "text":"Pratique et rapide. Vivement plus d’enseignes couvertes.",
+      "city":"Fort-de-France", "date":"2025-09-06" },
+
+    { "id":"rv-973-001", "name":"Nathalie P.", "territory":"guyane", "flag":"🇬🇫",
+      "rating":5, "text":"Indispensable pour surveiller mon budget courses.",
+      "city":"Cayenne", "date":"2025-09-06" },
+
+    { "id":"rv-974-001", "name":"Stéphane L.", "territory":"reunion", "flag":"🇷🇪",
+      "rating":5, "text":"Le suivi de panier m’aide vraiment, bravo.",
+      "city":"Saint-Denis", "date":"2025-09-07" },
+
+    { "id":"rv-976-001", "name":"Aïcha D.", "territory":"mayotte", "flag":"🇾🇹",
+      "rating":4, "text":"Simple, fluide, utile au quotidien.", "city":"Mamoudzou",
+      "date":"2025-09-07" },
+
+    { "id":"rv-sm-001", "name":"Luc J.", "territory":"saint-martin", "flag":"🇸🇽",
+      "rating":4, "text":"Les comparaisons par magasin sont top.", "city":"Marigot",
+      "date":"2025-09-08" },
+
+    { "id":"rv-sb-001", "name":"Maya C.", "territory":"saint-barthelemy", "flag":"🇧🇱",
+      "rating":5, "text":"L’alerte promo m’a déjà fait économiser.", "city":"Gustavia",
+      "date":"2025-09-08" }
+  ]
+}

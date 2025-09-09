@@ -1,68 +1,62 @@
-<!doctype html><html lang="fr"><head>
-<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Enseignes locales – A KI PRI SA YÉ</title>
-<link rel="icon" href="/favicon.ico"/>
+<!doctype html><html lang="fr">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Enseignes locales — A KI PRI SA YÉ</title>
+<link rel="stylesheet" href="/styles.css"/>
 <style>
-  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial; background:#0b1220; color:#e8eefc; margin:0; padding:24px;}
-  h1{font-size:28px;margin:0 0 16px}
-  .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
-  input,select{background:#0f1730;color:#e8eefc;border:1px solid #23304d;border-radius:10px;padding:10px 12px}
-  .grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));margin-top:16px}
-  .card{background:#0f1730;border:1px solid #243452;border-radius:16px;padding:14px}
-  .muted{color:#a7b3c9}
-  .tag{display:inline-block;background:#0b1a35;border:1px solid #1e2d4b;border-radius:999px;padding:2px 8px;margin-right:6px;color:#9cc3ff}
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto; color:#e8eef9; background:#0b1220}
+  .wrap{max-width:1080px;margin:40px auto;padding:0 16px}
+  .filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin:6px 0 16px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+  .card{background:#0f172a;border:1px solid #263143;border-radius:14px;padding:14px}
+  .muted{color:#9fb2cc}
+  input,select{padding:8px 10px;border-radius:10px;border:1px solid #334155;background:#0b1220;color:#e8eef9}
 </style>
-</head><body>
-<h1>🏬 Enseignes locales</h1>
-
-<div class="toolbar">
-  <select id="territory">
-    <option value="">— Territoire —</option>
-    <option value="guadeloupe">🇬🇵 Guadeloupe</option>
-    <option value="martinique">🇲🇶 Martinique</option>
-    <option value="guyane">🇬🇫 Guyane</option>
-    <option value="reunion">🇷🇪 Réunion</option>
-    <option value="mayotte">🇾🇹 Mayotte</option>
-  </select>
-  <input id="city" placeholder="Ville…" />
-  <input id="q" placeholder="Recherche (enseigne, adresse…)" style="min-width:260px" />
-</div>
-
-<section id="list" class="grid" aria-live="polite"></section>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Enseignes locales</h1>
+    <div class="filters">
+      <select id="territory" aria-label="Territoire">
+        <option value="">— Territoire —</option>
+        <option>guadeloupe</option><option>martinique</option><option>guyane</option>
+        <option>reunion</option><option>mayotte</option><option>saint-martin</option><option>saint-barthelemy</option>
+      </select>
+      <input id="city" placeholder="Ville">
+      <input id="q" placeholder="Recherche (enseigne, adresse…)">
+    </div>
+    <section id="list" class="grid" aria-live="polite"></section>
+  </div>
 
 <script>
-let STORES=[];
-const list = document.getElementById('list');
-const $ = id => document.getElementById(id);
-
+const $ = s => document.querySelector(s);
+const list = $('#list');
 const card = s => `
-<article class="card">
-  <div style="display:flex;align-items:center;gap:8px">
-    <div class="tag">${s.brand||'Enseigne'}</div>
-    <div class="tag">${s.territory}</div>
-    <div class="tag">${s.city}</div>
-  </div>
-  <h3 style="margin:8px 0">${s.name||''}</h3>
-  <div class="muted">${s.address||''}</div>
-  <div class="muted">${s.hours||''}</div>
-  ${s.phone?`<div class="muted">☎︎ ${s.phone}</div>`:''}
-  ${s.website?`<div><a href="${s.website}" target="_blank" rel="noopener">Site</a></div>`:''}
-</article>`;
+  <article class="card">
+    <h3 style="margin:4px 0">${s.name}</h3>
+    <div class="muted">${s.brand||'Enseigne'} — ${s.city||''} (${s.territory})</div>
+    <div>${s.address||''}</div>
+    <div class="muted" style="margin-top:6px">${s.hours||''}</div>
+    <div style="margin-top:4px">
+      ${s.phone?`<span class="muted">☎ ${s.phone}</span>`:''}
+      ${s.website?` · <a href="${s.website}" target="_blank" rel="noopener">Site</a>`:''}
+    </div>
+  </article>`;
 
-const render=()=>{
-  const t=($('territory').value||'').toLowerCase().trim();
-  const c=($('city').value||'').toLowerCase().trim();
-  const q=($('q').value||'').toLowerCase().trim();
-  const out=STORES.filter(s=>{
-    const okT=!t||s.territory===t;
-    const okC=!c||(s.city||'').toLowerCase().includes(c);
-    const inTxt=(s.name+' '+(s.brand||'')+' '+(s.address||'')+' '+(s.city||'')).toLowerCase().includes(q);
-    return okT && okC && inTxt;
+let STORES = [];
+function render(){
+  const t = ($('#territory').value||'').toLowerCase();
+  const c = ($('#city').value||'').toLowerCase();
+  const q = ($('#q').value||'').toLowerCase();
+  const out = STORES.filter(s=>{
+    const okT = !t || s.territory===t;
+    const okC = !c || (s.city||'').toLowerCase().includes(c);
+    const inTxt = [s.name,s.brand,s.address,s.city].join(' ').toLowerCase().includes(q);
+    return okT && okC && (!q || inTxt);
   });
-  list.innerHTML = out.map(card).join('') || '<div class="muted">Aucun résultat.</div>';
-};
-
-['territory','city','q'].forEach(id=>$(id).addEventListener('input',render));
-fetch('/data/stores.json').then(r=>r.json()).then(json=>{ STORES=json; render(); });
+  list.innerHTML = out.map(card).join('') || `<div class="muted">Aucun résultat.</div>`;
+}
+['#territory','#city','#q'].forEach(i=>document.querySelector(i).addEventListener('input',render));
+fetch('/data/stores.json').then(r=>r.json()).then(j=>{STORES=j.stores||[];render();});
 </script>
 </body></html>

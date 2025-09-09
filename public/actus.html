@@ -1,47 +1,52 @@
-<!doctype html>
-<html lang="fr">
+<!doctype html><html lang="fr">
 <head>
-  <meta charset="utf-8">
-  <title>Actus – A KI PRI SA YÉ</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',sans-serif;background:#0b1020;color:#e7ebf3;margin:0}
-    header,main{max-width:1024px;margin:auto;padding:16px}
-    .card{background:#0f152b;border:1px solid #1e2647;border-radius:16px;padding:16px;margin:12px 0}
-    .pill{display:inline-flex;gap:8px;align-items:center;background:#102046;border:1px solid #22346e;border-radius:999px;padding:6px 10px;margin-right:8px}
-    a.btn{background:#1fb673;color:white;text-decoration:none;padding:10px 14px;border-radius:12px}
-    a.link{color:#87c8ff}
-  </style>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Actualités — Vie chère & conso</title>
+<link rel="stylesheet" href="/styles.css"/>
+<style>
+ body{font-family:system-ui,-apple-system,Segoe UI,Roboto; color:#e8eef9; background:#0b1220}
+ .wrap{max-width:960px;margin:40px auto;padding:0 16px}
+ .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+ .card{background:#0f172a;border:1px solid #263143;border-radius:14px;padding:14px}
+ .muted{color:#9fb2cc}
+ a{color:#8bd3ff}
+</style>
 </head>
 <body>
-<header style="display:flex;gap:8px;align-items:center;justify-content:space-between">
-  <h1 style="margin:0">Actualités – vie chère & consommation</h1>
-  <nav style="display:flex;gap:8px">
-    <a class="btn" href="/index.html">Accueil</a>
-    <a class="btn" href="/palmares.html">Palmarès</a>
-    <a class="btn" href="/enseignes.html">Enseignes</a>
-    <a class="btn" href="/avis.html">Avis</a>
-    <a class="btn" href="/a-propos.html">À propos</a>
-  </nav>
-</header>
-<main>
-  <div id="wrap"></div>
-</main>
-<script>
-const wrap = document.getElementById('wrap');
-let TERR=[];
-fetch("/data/territories.json").then(r=>r.json()).then(t=>{TERR=t});
-fetch("/data/news.json").then(r=>r.json()).then(data=>{
-  wrap.innerHTML = data.sections.map(sec=>{
-    const terr = TERR.find(x=>x.code===sec.territory)||{flag:"🏝️",name:sec.territory};
-    const links = sec.links.map(l=>`<li><a class="link" href="${l.url}" target="_blank" rel="noopener">${l.title}</a> — <span class="muted">${l.source} • ${l.when}</span></li>`).join('');
-    return `<article class="card">
-      <div class="pill">${terr.flag} <b>${terr.name}</b></div>
-      <h2 style="margin:.4rem 0">${sec.title}</h2>
-      <ul>${links}</ul>
-    </article>`;
-  }).join('') + `<p class="muted">Dernière mise à jour: ${data.updated} • Sources publiques & organismes officiels. 🔗 Pour ajouter des liens, édite <code>/data/news.json</code>.</p>`;
-});
-</script>
-</body>
-</html>
+  <div class="wrap">
+    <h1>Actualités — Vie chère & consommation</h1>
+    <p class="muted">Sélection de liens directs (recherche d’actus). Ouvre et filtre selon ton territoire.</p>
+    <section class="grid">
+      <article class="card"><h3>🇬🇵 Guadeloupe</h3>
+        <ul>
+          <li><a target="_blank" rel="noopener" href="https://news.google.com/search?q=Guadeloupe+vie+ch%C3%A8re+consommation">Google News</a></li>
+          <li><a target="_blank" rel="noopener" href="https://www.google.com/search?q=site%3Aguadeloupe.gouv.fr+prix">Services de l’État</a></li>
+        </ul>
+      </article>
+      <article class="card"><h3>🇲🇶 Martinique</h3>
+        <ul>
+          <li><a target="_blank" rel="noopener" href="https://news.google.com/search?q=Martinique+vie+ch%C3%A8re+consommation">Google News</a></li>
+          <li><a target="_blank" rel="noopener" href="https://www.google.com/search?q=site%3Amartinique.gouv.fr+prix">Services de l’État</a></li>
+        </ul>
+      </article>
+      <article class="card"><h3>🇬🇫 Guyane</h3>
+        <ul>
+          <li><a target="_blank" rel="noopener" href="https://news.google.com/search?q=Guyane+vie+ch%C3%A8re+consommation">Google News</a></li>
+          <li><a target="_blank" rel="noopener" href="https://www.google.com/search?q=site%3Aguyane.gouv.fr+prix">Services de l’État</a></li>
+        </ul>
+      </article>
+      <article class="card"><h3>🇷🇪 La Réunion</h3>
+        <ul>
+          <li><a target="_blank" rel="noopener" href="https://news.google.com/search?q=R%C3%A9union+vie+ch%C3%A8re+consommation">Google News</a></li>
+          <li><a target="_blank" rel="noopener" href="https://www.google.com/search?q=site%3Areunion.gouv.fr+prix">Services de l’État</a></li>
+        </ul>
+      </article>
+      <article class="card"><h3>🇾🇹 Mayotte</h3>
+        <ul>
+          <li><a target="_blank" rel="noopener" href="https://news.google.com/search?q=Mayotte+vie+ch%C3%A8re+consommation">Google News</a></li>
+          <li><a target="_blank" rel="noopener" href="https://www.google.com/search?q=site%3Amayotte.gouv.fr+prix">Services de l’État</a></li>
+        </ul>
+      </article>
+    </section>
+  </div>
+</body></html>
