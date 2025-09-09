@@ -1,0 +1,55 @@
+import { useEffect, useState } from "react";
+
+export default function PricesByTerritory() {
+  const [territories, setTerritories] = useState([]);
+  const [selected, setSelected] = useState("");
+  const [items, setItems] = useState([]);
+
+  // Charger la liste des territoires
+  useEffect(() => {
+    fetch("https://akiprisaye.pages.dev/api/territories")
+      .then(res => res.json())
+      .then(json => {
+        setTerritories(json.territories || []);
+        if (json.territories?.length) {
+          setSelected(json.territories[0].code); // sélectionne le premier par défaut
+        }
+      });
+  }, []);
+
+  // Charger les prix quand le territoire change
+  useEffect(() => {
+    if (!selected) return;
+    fetch(`https://akiprisaye.pages.dev/api/prices?territory=${selected}&limit=5`)
+      .then(res => res.json())
+      .then(json => setItems(json.data || []));
+  }, [selected]);
+
+  return (
+    <div style={{ padding: "1rem", fontFamily: "Arial, sans-serif" }}>
+      <h2>Comparateur de prix</h2>
+
+      <label htmlFor="territory">Choisir un territoire :</label>
+      <select
+        id="territory"
+        value={selected}
+        onChange={(e) => setSelected(e.target.value)}
+      >
+        {territories.map((t) => (
+          <option key={t.code} value={t.code}>
+            {t.name} ({t.type})
+          </option>
+        ))}
+      </select>
+
+      <h3 style={{ marginTop: "1rem" }}>Articles pour {selected}</h3>
+      <ul>
+        {items.map((item) => (
+          <li key={item.id}>
+            {item.title} — {item.price} {item.currency}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}

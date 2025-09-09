@@ -1,29 +1,19 @@
-{
-  "name": "functions",
-  "private": true,
-  "type": "commonjs",
-  "engines": {
-    "node": "22"
-  },
-  "main": "index.js",
-  "scripts": {
-    "build": "echo \"📦 Build...\" && rm -rf dist && mkdir -p dist && cp -r public/* dist/",
-    "lint": "eslint .",
-    "predeploy": "npm --prefix \"$RESOURCE_DIR\" run lint || true",
-    "dev": "ROLLUP_SKIP_NATIVE=true vite"
-  },
-  "dependencies": {
-    "@google-cloud/vision": "^5.3.3",
-    "axios": "1.7.7",
-    "firebase-admin": "12.6.0",
-    "firebase-functions": "6.0.0",
-    "jimp": "^1.6.0",
-    "node-fetch": "^3.3.2",
-    "sharp": "^0.34.3",
-    "tesseract.js": "^6.0.1"
-  },
-  "devDependencies": {
-    "eslint": "9.34.0",
-    "rollup": "4.14.3"
-  }
-}
+# 🌍 A KI PRI SA YÉ – API & Frontend
+
+API + Application React (Vite + Tailwind) pour comparer les prix DOM-TOM et vérifier l’état de l’API.
+
+---
+
+## 🚀 Installation
+
+```bash
+# Cloner le dépôt
+git clone <repo-url>
+cd <repo>
+
+# Installer les dépendances
+npm install
+
+# Lancer le serveur local
+npm run dev
+
