@@ -2,8 +2,8 @@
   "updatedAt": "2025-09-09",
   "currency": "EUR",
   "ranking": [
-    { "rank": 1, "brand": "HyperDom",        "zone": "Fort-de-France",  "territory": "martinique", "basket": 52.30 },
-    { "rank": 2, "brand": "Market Caraïbes", "zone": "Pointe-à-Pitre",  "territory": "guadeloupe", "basket": 53.10 },
-    { "rank": 3, "brand": "TiPrix",          "zone": "Saint-Denis",     "territory": "reunion",    "basket": 54.95 }
+    { "rank": 1, "brand": "HyperDom", "zone": "Fort-de-France", "basket": 52.30 },
+    { "rank": 2, "brand": "Market Caraïbes", "zone": "Pointe-à-Pitre", "basket": 53.10 },
+    { "rank": 3, "brand": "TiPrix", "zone": "Saint-Denis", "basket": 54.95 }
   ]
 }
