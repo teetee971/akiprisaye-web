@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Actualités — Vie chère & consommation</title>
+  <style>
+    :root{--bg:#0b1220;--card:#0f1a2b;--text:#e6f0ff;--muted:#9bb0d3;--accent:#26d1ff;}
+    html,body{background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,sans-serif;margin:0}
+    header,main{max-width:1024px;margin:auto;padding:24px}
+    h1{margin:0 0 8px}
+    .muted{color:var(--muted)}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+    .card{background:var(--card);border:1px solid #14213a;border-radius:14px;padding:14px}
+    a{color:#8bd3ff}
+    .pill{display:inline-block;background:#0b223c;border:1px solid #173055;border-radius:999px;padding:2px 8px;font-size:12px;color:#a4c7ff}
+    nav a{display:inline-block;margin-right:8px;text-decoration:none;color:#0b1; background:#0c1f39;border:1px solid #163055;border-radius:10px;padding:8px 10px}
+  </style>
+</head>
+<body>
+<header>
+  <h1>Actualités — vie chère & consommation</h1>
+  <p class="muted">Sélection de liens officiels et sources presse par territoire (édition via <code>/data/news.json</code>).</p>
+  <nav>
+    <a href="/index.html">Accueil</a>
+    <a href="/avis.html">Avis</a>
+    <a href="/enseignes.html">Enseignes</a>
+    <a href="/palmares.html">Palmarès</a>
+    <a href="/a-propos.html">À propos</a>
+  </nav>
+</header>
+
+<main>
+  <div id="wrap" class="grid" aria-live="polite"></div>
+  <p class="muted" id="meta"></p>
+</main>
+
+<script>
+const wrap = document.getElementById('wrap');
+const meta = document.getElementById('meta');
+
+fetch('/data/news.json').then(r=>r.json()).then(d=>{
+  wrap.innerHTML = (d.sections||[]).map(sec=>{
+    const links = (sec.links||[]).map(l=>`<li><a href="${l.url}" target="_blank" rel="noopener">${l.title}</a> — <span class="muted">${l.source}</span></li>`).join('');
+    return `<article class="card">
+      <div class="pill">${sec.flag||"🗺️"} ${(sec.territory||"").replaceAll("-"," ")}</div>
+      <h3 style="margin:.5rem 0">${sec.title||""}</h3>
+      <ul>${links}</ul>
+    </article>`;
+  }).join('') || '<div class="muted">Aucune actualité pour le moment.</div>';
+  meta.textContent = `Mise à jour : ${d.updatedAt || "—"} • ${d.note || ""}`;
+});
+</script>
+</body>
+</html>

@@ -1,21 +1,40 @@
 {
-  "updated":"2025-09-06",
-  "sections":[
+  "updatedAt": "2025-09-09",
+  "sections": [
     {
-      "territory":"guadeloupe",
-      "title":"Vie chère & conso – Guadeloupe",
-      "links":[
-        {"title":"Observatoire des prix – dernier rapport","url":"https://www.guadeloupe.gouv.fr/","source":"Préfecture","when":"2025-08"},
-        {"title":"Comparatif panier – associations conso","url":"https://www.insee.fr/fr/statistiques","source":"INSEE","when":"2025-07"}
+      "territory": "guadeloupe",
+      "flag": "🇬🇵",
+      "title": "Vie chère & conso en Guadeloupe",
+      "links": [
+        { "title": "Indice des prix — dernier point INSEE", "source": "INSEE", "url": "https://www.insee.fr/fr/statistiques" },
+        { "title": "Observatoire des prix, marges et revenus (OPMR)", "source": "Préfecture", "url": "https://www.guadeloupe.gouv.fr/" }
       ]
     },
     {
-      "territory":"martinique",
-      "title":"Vie chère & conso – Martinique",
-      "links":[
-        {"title":"Indice des prix à la consommation","url":"https://www.insee.fr/fr/statistiques","source":"INSEE","when":"2025-08"}
+      "territory": "martinique",
+      "flag": "🇲🇶",
+      "title": "Vie chère & conso en Martinique",
+      "links": [
+        { "title": "Point conjoncturel INSEE", "source": "INSEE", "url": "https://www.insee.fr/fr/statistiques" },
+        { "title": "Infos prix — services de l'État", "source": "Préfecture", "url": "https://www.martinique.gouv.fr/" }
+      ]
+    },
+    {
+      "territory": "reunion",
+      "flag": "🇷🇪",
+      "title": "Vie chère & conso à La Réunion",
+      "links": [
+        { "title": "OPMR — synthèses & rapports", "source": "Préfecture", "url": "https://www.reunion.gouv.fr/" }
+      ]
+    },
+    {
+      "territory": "mayotte",
+      "flag": "🇾🇹",
+      "title": "Vie chère & conso à Mayotte",
+      "links": [
+        { "title": "Infos prix — Préfecture", "source": "Préfecture", "url": "https://www.mayotte.gouv.fr/" }
       ]
     }
   ],
-  "note":"Liens éditoriaux de référence. Ajouter/mettre à jour facilement ce JSON."
+  "note": "Données démo. Ajoute/édite simplement ce fichier pour enrichir la page."
 }
