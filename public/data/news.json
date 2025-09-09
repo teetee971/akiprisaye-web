@@ -1,40 +1,23 @@
 {
   "updatedAt": "2025-09-09",
   "sections": [
-    {
-      "territory": "guadeloupe",
-      "flag": "🇬🇵",
-      "title": "Vie chère & conso en Guadeloupe",
-      "links": [
-        { "title": "Indice des prix — dernier point INSEE", "source": "INSEE", "url": "https://www.insee.fr/fr/statistiques" },
-        { "title": "Observatoire des prix, marges et revenus (OPMR)", "source": "Préfecture", "url": "https://www.guadeloupe.gouv.fr/" }
-      ]
-    },
-    {
-      "territory": "martinique",
-      "flag": "🇲🇶",
-      "title": "Vie chère & conso en Martinique",
-      "links": [
-        { "title": "Point conjoncturel INSEE", "source": "INSEE", "url": "https://www.insee.fr/fr/statistiques" },
-        { "title": "Infos prix — services de l'État", "source": "Préfecture", "url": "https://www.martinique.gouv.fr/" }
-      ]
-    },
-    {
-      "territory": "reunion",
-      "flag": "🇷🇪",
-      "title": "Vie chère & conso à La Réunion",
-      "links": [
-        { "title": "OPMR — synthèses & rapports", "source": "Préfecture", "url": "https://www.reunion.gouv.fr/" }
-      ]
-    },
-    {
-      "territory": "mayotte",
-      "flag": "🇾🇹",
-      "title": "Vie chère & conso à Mayotte",
-      "links": [
-        { "title": "Infos prix — Préfecture", "source": "Préfecture", "url": "https://www.mayotte.gouv.fr/" }
-      ]
-    }
-  ],
-  "note": "Données démo. Ajoute/édite simplement ce fichier pour enrichir la page."
+    { "territory":"guadeloupe", "flag":"🇬🇵", "title":"Vie chère – Guadeloupe",
+      "links":[
+        {"title":"INSEE — statistiques prix","source":"INSEE","url":"https://www.insee.fr/fr/statistiques"},
+        {"title":"OPMR — Guadeloupe","source":"Préfecture","url":"https://www.guadeloupe.gouv.fr/"}
+      ]},
+    { "territory":"martinique", "flag":"🇲🇶", "title":"Vie chère – Martinique",
+      "links":[
+        {"title":"INSEE — conjoncture","source":"INSEE","url":"https://www.insee.fr/fr/statistiques"},
+        {"title":"Services de l'État — prix","source":"Préfecture","url":"https://www.martinique.gouv.fr/"}
+      ]},
+    { "territory":"reunion", "flag":"🇷🇪", "title":"Vie chère – Réunion",
+      "links":[
+        {"title":"OPMR — Réunion","source":"Préfecture","url":"https://www.reunion.gouv.fr/"}
+      ]},
+    { "territory":"mayotte", "flag":"🇾🇹", "title":"Vie chère – Mayotte",
+      "links":[
+        {"title":"Services de l'État — prix","source":"Préfecture","url":"https://www.mayotte.gouv.fr/"}
+      ]}
+  ]
 }

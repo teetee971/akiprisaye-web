@@ -1,38 +1,19 @@
-<!doctype html>
-<html lang="fr">
-<head>
-  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Palmarès — Meilleures enseignes</title>
-  <style>
-    :root{--bg:#0b1220;--card:#0f1a2b;--text:#e6f0ff;--muted:#9bb0d3}
-    html,body{background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,sans-serif;margin:0}
-    header,main{max-width:980px;margin:auto;padding:24px}
-    table{width:100%;border-collapse:collapse}
-    th,td{border-bottom:1px solid #1b2640;padding:10px;text-align:left}
-    .muted{color:var(--muted)}
-    nav a{display:inline-block;margin-right:8px;text-decoration:none;color:#0b1; background:#0c1f39;border:1px solid #163055;border-radius:10px;padding:8px 10px}
-  </style>
+<!doctype html><html lang="fr"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Palmarès — Meilleures enseignes</title>
+<style>
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto; background:#0b1220; color:#e6eefc; margin:0}
+  main{max-width:980px;margin:auto;padding:24px}
+  table{width:100%;border-collapse:collapse}
+  th,td{padding:10px;border-bottom:1px solid #1b2a44;text-align:left}
+  .muted{color:#9fb2cc}
+</style>
 </head>
 <body>
-<header>
-  <h1>Palmarès — Meilleures enseignes</h1>
-  <nav>
-    <a href="/index.html">Accueil</a>
-    <a href="/avis.html">Avis</a>
-    <a href="/enseignes.html">Enseignes</a>
-    <a href="/actualites.html">Actus</a>
-    <a href="/a-propos.html">À propos</a>
-  </nav>
-  <p class="muted">Source: <code>/data/palmares.json</code> (démo)</p>
-</header>
 <main>
-  <div class="muted" style="margin-bottom:10px">Mise à jour : <span id="palmares-updated">—</span></div>
-  <div class="table-wrap">
-    <table id="palmares-table"><thead>
-      <tr><th>Rang</th><th>Enseigne</th><th>Zone</th><th>Panier moyen</th></tr>
-    </thead><tbody></tbody></table>
-  </div>
+  <h1>Palmarès — Meilleures enseignes</h1>
+  <p class="muted">Maj : <span id="palmares-updated">—</span></p>
+  <table id="palmares-table"><thead><tr><th>Rang</th><th>Enseigne</th><th>Zone</th><th>Panier moyen</th></tr></thead><tbody></tbody></table>
 </main>
 <script src="/js/palmares.js" defer></script>
-</body>
-</html>
+</body></html>
