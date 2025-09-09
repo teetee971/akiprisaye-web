@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Enseignes locales • A KI PRI SA YÉ</title>
+  <meta name="description" content="Magasins et enseignes référencés par territoire et ville.">
+  <link rel="icon" href="/icon.png">
+  <style>
+    :root { color-scheme: dark; }
+    body{margin:0;background:#0b1220;color:#e6eefc;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial}
+    .wrap{max-width:1100px;margin:0 auto;padding:24px}
+    header{position:sticky;top:0;background:#0b1220aa;backdrop-filter:saturate(1.2) blur(6px);padding:12px 24px;border-bottom:1px solid #1c2740}
+    a{color:#9ae6ff;text-decoration:none}
+    h1{font-size:clamp(22px,4vw,36px);margin:12px 0 4px}
+    .bar{display:grid;gap:10px;grid-template-columns:1fr; margin:12px 0}
+    @media(min-width:800px){.bar{grid-template-columns:220px 220px 1fr}}
+    select,input{background:#0b1323;border:1px solid #1c2740;border-radius:10px;color:#e6eefc;padding:10px}
+    .grid{display:grid;gap:12px;grid-template-columns:1fr}
+    @media(min-width:700px){.grid{grid-template-columns:1fr 1fr}}
+    .card{background:#0f1729;border:1px solid #1c2740;border-radius:16px;padding:16px;display:flex;gap:12px}
+    .brand{font-weight:800;color:#22d3ee}
+    .muted{opacity:.7}
+    .pill{display:inline-block;background:#10213a;border:1px solid #1f2f4a;border-radius:999px;padding:6px 10px;font-size:14px;margin-right:8px}
+    .tag{background:#071a2d;border:1px solid #123055;border-radius:8px;padding:2px 8px;font-size:12px;margin-left:6px}
+  </style>
+</head>
+<body>
+<header class="wrap">
+  <div style="display:flex;gap:12px;align-items:center;justify-content:space-between">
+    <div style="font-weight:800">A KI PRI SA YÉ</div>
+    <nav style="display:flex;gap:8px">
+      <a class="pill" href="/">Accueil</a>
+      <a class="pill" href="/avis.html">Avis</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1>Magasins & enseignes locales</h1>
+  <p class="muted">Filtre par <b>territoire</b>, <b>ville</b> ou recherche texte (nom, marque, adresse).</p>
+
+  <div class="bar">
+    <select id="territory">
+      <option value="">— Territoire —</option>
+      <option value="guadeloupe">Guadeloupe</option>
+      <option value="martinique">Martinique</option>
+      <option value="guyane">Guyane</option>
+      <option value="reunion">Réunion</option>
+      <option value="mayotte">Mayotte</option>
+    </select>
+    <input id="city" placeholder="Ville (ex. Les Abymes)">
+    <input id="q" placeholder="Recherche (nom, marque, adresse…)">
+  </div>
+
+  <section id="list" class="grid" aria-live="polite"></section>
+</main>
+
+<script>
+  const list = document.getElementById('list');
+  const $ = (id)=>document.getElementById(id);
+  const card = (s)=> {
+    return `
+      <article class="card">
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div class="brand">${s.brand || 'Enseigne'}</div>
+            <span class="tag">${s.territory}</span>
+            <span class="tag">${s.city}</span>
+          </div>
+          <h3 style="margin:6px 0 4px">${s.name}</h3>
+          <div class="muted">${s.address || ''}</div>
+          ${s.hours ? `<div class="muted" style="margin-top:6px">🕒 ${s.hours}</div>` : ''}
+          ${s.phone ? `<div class="muted">☎ ${s.phone}</div>` : ''}
+          ${s.website ? `<div><a href="${s.website}" target="_blank" rel="noopener">Site →</a></div>` : ''}
+        </div>
+      </article>
+    `;
+  };
+
+  let STORES = [];
+  const render = () => {
+    const t = $('territory').value.trim().toLowerCase();
+    const c = $('city').value.trim().toLowerCase();
+    const q = $('q').value.trim().toLowerCase();
+    const out = STORES.filter(s => {
+      const okT = !t || s.territory === t;
+      const okC = !c || (s.city||'').toLowerCase().includes(c);
+      const inTxt = (s.name+' '+(s.brand||'')+' '+(s.address||'')+' '+(s.city||'')).toLowerCase().includes(q);
+      return okT && okC && (!q || inTxt);
+    });
+    list.innerHTML = out.map(card).join('') || `<div class="muted">Aucun résultat…</div>`;
+  };
+
+  ['territory','city','q'].forEach(id => $(id).addEventListener('input', render));
+  fetch('/data/stores.json').then(r=>r.json()).then(json => { STORES = json; render(); });
+</script>
+</body>
+</html>

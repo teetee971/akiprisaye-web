@@ -1,6 +1,46 @@
 [
-  {"name":"U","logo":"/img/u.svg"},
-  {"name":"Carrefour","logo":"/img/carrefour.svg"},
-  {"name":"Leader Price","logo":"/img/leader.svg"},
-  {"name":"Hyper U","logo":"/img/u.svg"}
+  {
+    "id": "gua-carrefour-abymes",
+    "name": "Carrefour Les Abymes",
+    "brand": "Carrefour",
+    "territory": "guadeloupe",
+    "city": "Les Abymes",
+    "address": "Imp. de Perrin, 97139 Les Abymes",
+    "phone": "+590 590 90 00 00",
+    "website": "",
+    "hours": "Lun-Sam 08:00-20:00 • Dim 08:00-12:30"
+  },
+  {
+    "id": "gua-u-baie",
+    "name": "Super U Baie-Mahault",
+    "brand": "U",
+    "territory": "guadeloupe",
+    "city": "Baie-Mahault",
+    "address": "Bd de Houëlbourg, 97122 Baie-Mahault",
+    "phone": "",
+    "website": "",
+    "hours": "Lun-Sam 08:30-19:30 • Dim fermé"
+  },
+  {
+    "id": "mtq-hyperdom-fdf",
+    "name": "HyperDom",
+    "brand": "HyperDom",
+    "territory": "martinique",
+    "city": "Fort-de-France",
+    "address": "Centre, 97200 Fort-de-France",
+    "phone": "",
+    "website": "",
+    "hours": "Lun-Sam 08:00-20:00"
+  },
+  {
+    "id": "reu-tiprix-saintdenis",
+    "name": "TiPrix Saint-Denis",
+    "brand": "TiPrix",
+    "territory": "reunion",
+    "city": "Saint-Denis",
+    "address": "Rue principale, 97400 Saint-Denis",
+    "phone": "",
+    "website": "",
+    "hours": "Lun-Sam 09:00-19:00"
+  }
 ]

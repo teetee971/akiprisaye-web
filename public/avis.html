@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Avis • A KI PRI SA YÉ</title>
+  <meta name="description" content="Avis et retours des utilisateurs des DROM-COM.">
+  <link rel="icon" href="/icon.png">
+  <style>
+    :root { color-scheme: dark; }
+    body{margin:0;background:#0b1220;color:#e6eefc;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial}
+    .wrap{max-width:960px;margin:0 auto;padding:24px}
+    header{position:sticky;top:0;background:#0b1220aa;backdrop-filter:saturate(1.2) blur(6px);padding:12px 24px;border-bottom:1px solid #1c2740}
+    a,button{color:#9ae6ff;text-decoration:none}
+    h1{font-size:clamp(22px,4vw,36px);margin:12px 0 4px}
+    .card{background:#0f1729;border:1px solid #1c2740;border-radius:16px;padding:16px;margin:12px 0}
+    .row{display:grid;grid-template-columns:1fr;gap:12px}
+    @media(min-width:700px){.row{grid-template-columns:1fr 1fr}}
+    .stars{letter-spacing:2px;color:#22d3ee}
+    .muted{opacity:.7}
+    .pill{display:inline-block;background:#10213a;border:1px solid #1f2f4a;border-radius:999px;padding:6px 10px;font-size:14px;margin-right:8px}
+    .cta{display:inline-block;background:linear-gradient(90deg,#16a34a,#22d3ee);color:#052133;border:0;border-radius:12px;padding:10px 14px;font-weight:700}
+    .field{display:grid;gap:6px;margin:8px 0}
+    input,textarea,select{background:#0b1323;border:1px solid #1c2740;border-radius:10px;color:#e6eefc;padding:10px}
+    footer{color:#9fb3d9;opacity:.8;margin:24px 0}
+  </style>
+</head>
+<body>
+<header class="wrap">
+  <div style="display:flex;gap:12px;align-items:center;justify-content:space-between">
+    <div style="font-weight:800">A KI PRI SA YÉ</div>
+    <nav style="display:flex;gap:8px">
+      <a class="pill" href="/">Accueil</a>
+      <a class="pill" href="/enseignes.html">Enseignes locales</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1>Vos avis</h1>
+  <p class="muted">Retours d’expérience des utilisateurs. Les avis ci-dessous sont des <b>données démo</b>.</p>
+
+  <section id="reviews" class="row" aria-live="polite"></section>
+
+  <div class="card">
+    <h2>Laisser un avis (démo local)</h2>
+    <p class="muted">Ce formulaire stocke temporairement votre avis dans la mémoire de la page pour la démo (pas d’envoi serveur).</p>
+    <form id="form">
+      <div class="field">
+        <label>Nom / Ville</label>
+        <input id="name" placeholder="Ex. Laura (Baie-Mahault)">
+      </div>
+      <div class="field">
+        <label>Note</label>
+        <select id="rating">
+          <option value="5">★★★★★ – 5</option>
+          <option value="4">★★★★☆ – 4</option>
+          <option value="3">★★★☆☆ – 3</option>
+          <option value="2">★★☆☆☆ – 2</option>
+          <option value="1">★☆☆☆☆ – 1</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Votre message</label>
+        <textarea id="text" rows="4" placeholder="Partage ton retour…"></textarea>
+      </div>
+      <button class="cta" type="submit">Publier (local)</button>
+    </form>
+  </div>
+
+  <footer>© 2025 A KI PRI SA YÉ • <a href="/">Retour accueil</a></footer>
+</main>
+
+<script>
+  const el = (html) => { const t = document.createElement('template'); t.innerHTML = html.trim(); return t.content.firstChild; };
+  const stars = (n) => "★".repeat(n) + "☆".repeat(5-n);
+
+  const list = document.getElementById('reviews');
+  const render = (r) => el(`
+    <article class="card">
+      <div class="stars" aria-label="note ${r.rating}/5">${stars(r.rating)}</div>
+      <div style="margin:6px 0 2px;font-weight:700">${r.name}</div>
+      <div class="muted" style="font-size:12px">${r.date}</div>
+      <p style="margin-top:8px">${r.text}</p>
+    </article>`);
+
+  let data = [];
+  fetch('/data/reviews.json').then(r=>r.json()).then(json=>{
+    data = json; list.replaceChildren(...data.map(render));
+  });
+
+  document.getElementById('form').addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const r = {
+      id: 'local-'+Date.now(),
+      name: document.getElementById('name').value || 'Anonyme',
+      rating: +document.getElementById('rating').value || 5,
+      date: new Date().toISOString().slice(0,10),
+      text: document.getElementById('text').value || ''
+    };
+    data = [r, ...data];
+    list.replaceChildren(...data.map(render));
+    e.target.reset();
+  });
+</script>
+</body>
+</html>

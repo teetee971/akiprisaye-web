@@ -1,5 +1,23 @@
 [
-  {"author":"Mickaël","rating":5,"text":"Hyper simple, je vois enfin où c'est le moins cher."},
-  {"author":"Sarah","rating":4,"text":"Pratique en magasin avec l'EAN."},
-  {"author":"Anaïs","rating":5,"text":"Design clair, infos utiles pour le budget."}
+  {
+    "id": "rvw-0001",
+    "name": "Mickaël (Les Abymes)",
+    "rating": 5,
+    "date": "2025-09-05",
+    "text": "Top pour comparer rapidement U vs Carrefour. J'ai économisé sur mon panier de la semaine 👌🏾."
+  },
+  {
+    "id": "rvw-0002",
+    "name": "Sabrina (Fort-de-France)",
+    "rating": 4,
+    "date": "2025-09-06",
+    "text": "Interface claire, j’attends l’appli mobile native !"
+  },
+  {
+    "id": "rvw-0003",
+    "name": "Yann (Cayenne)",
+    "rating": 5,
+    "date": "2025-09-07",
+    "text": "Les alertes promos, ce sera parfait pour la suite. Déjà très utile."
+  }
 ]
