@@ -1,0 +1,59 @@
+<!doctype html><html lang="fr"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Top Promos — A KI PRI SA YÉ</title>
+<link rel="stylesheet" href="/css/theme.css"/>
+</head><body>
+<div class="wrapper">
+  <nav class="nav">
+    <a href="/index.html">Accueil</a><a href="/avis.html">Avis</a><a href="/enseignes.html">Enseignes</a>
+    <a href="/palmares.html">Palmarès</a><a href="/actualites.html">Actus</a><a href="/a-propos.html">À propos</a>
+    <a href="/panier.html">Panier</a><button id="theme-toggle" class="theme-toggle btn">☀️ Clair</button>
+  </nav>
+
+  <h1>Top Promos</h1>
+  <div class="card">
+    <div class="toolbar">
+      <select id="territory" class="input"><option value="">— Tous territoires —</option></select>
+      <input id="brand" class="input" placeholder="Filtrer enseigne (ex. U, Carrefour…)">
+      <select id="sort" class="input">
+        <option value="discount">Tri: remise (%)</option>
+        <option value="price">Tri: prix croissant</option>
+        <option value="until">Tri: fin d’offre (proche)</option>
+      </select>
+    </div>
+  </div>
+
+  <section id="list" class="grid cards" style="margin-top:12px" aria-live="polite"></section>
+</div>
+
+<script src="/js/theme.js" defer></script>
+<script>
+const $=id=>document.getElementById(id); const list=$('list'); let PROMOS=[];
+function pct(p,prev){if(!prev||prev<=0) return 0; return Math.round((1 - (p/prev))*100);}
+function card(x){const d=pct(x.price,x.previous); return \`<article class="card">
+  <div style="display:flex;gap:8px;align-items:center;justify-content:space-between">
+    <div><strong>\${x.product}</strong><div class="muted">\${x.brand} — \${x.store}</div></div>
+    <div class="muted">\${x.territory}</div>
+  </div>
+  <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center">
+    <div><span style="font-size:22px;font-weight:800">\${x.price.toFixed(2)} €</span>
+      \${x.previous?'<span class="muted" style="text-decoration:line-through;margin-left:6px">'+x.previous.toFixed(2)+' €</span>':''}
+      \${d?'<span class="tag" style="margin-left:8px">-'+d+'%</span>':''}
+    </div>
+    <div class="muted">jusqu\'au \${x.until||'—'}</div>
+  </div>
+  <div style="margin-top:10px"><a class="btn" href="/panier.html" title="Ajouter dans le panier">Ajouter au panier…</a></div>
+</article>\`;}
+function options(){const t=[...new Set(PROMOS.map(p=>p.territory))].sort(); $('territory').innerHTML='<option value="">— Tous territoires —</option>'+t.map(x=>\`<option>\${x}</option>\`).join('');}
+function render(){
+  const t=$('territory').value.toLowerCase(); const b=($('brand').value||'').toLowerCase(); const sort=$('sort').value;
+  let arr=PROMOS.filter(p=>(!t||p.territory.toLowerCase()===t)&&(!b||(p.brand||'').toLowerCase().includes(b)));
+  if(sort==='discount') arr.sort((a,b)=>pct(b.price,b.previous)-pct(a.price,a.previous));
+  if(sort==='price') arr.sort((a,b)=>a.price-b.price);
+  if(sort==='until') arr.sort((a,b)=>new Date(a.until)-new Date(b.until));
+  list.innerHTML = arr.length?arr.map(card).join(''):'<div class="muted">Aucune promo selon ces filtres.</div>';
+}
+['territory','brand','sort'].forEach(id=>$(id).addEventListener('input',render));
+fetch('/data/promos.json').then(r=>r.json()).then(j=>{PROMOS=j.items||[]; options(); render();});
+</script>
+</body></html>

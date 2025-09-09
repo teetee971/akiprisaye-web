@@ -1,0 +1,12 @@
+{
+  "updatedAt": "2025-09-09",
+  "currency": "EUR",
+  "items": [
+    { "id":"P-971-001", "territory":"guadeloupe", "brand":"Carrefour", "store":"Carrefour Les Abymes", "product":"Lait demi-écrémé 1L", "price":1.09, "previous":1.35, "until":"2025-09-20" },
+    { "id":"P-971-002", "territory":"guadeloupe", "brand":"U", "store":"Super U Baie-Mahault", "product":"Pâtes 500g", "price":0.79, "previous":0.99, "until":"2025-09-22" },
+    { "id":"P-972-001", "territory":"martinique", "brand":"HyperDom", "store":"HyperDom FdF", "product":"Riz 1kg", "price":1.65, "previous":2.05, "until":"2025-09-25" },
+    { "id":"P-973-001", "territory":"guyane", "brand":"Leader Price", "store":"Leader Price Cayenne", "product":"Sucre 1kg", "price":1.15, "previous":1.45, "until":"2025-09-18" },
+    { "id":"P-974-001", "territory":"reunion", "brand":"Carrefour", "store":"Carrefour St-Pierre", "product":"Huile 1L", "price":2.99, "previous":3.79, "until":"2025-09-28" },
+    { "id":"P-976-001", "territory":"mayotte", "brand":"U", "store":"Super U Mamoudzou", "product":"Farine 1kg", "price":1.05, "previous":1.29, "until":"2025-09-26" }
+  ]
+}
