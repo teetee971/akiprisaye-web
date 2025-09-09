@@ -1,22 +1,8 @@
-{
-  "updatedAt": "2025-09-06",
-  "stores": [
-    { "id":"GUA-CRF-ABY", "territory":"guadeloupe", "brand":"Carrefour",
-      "name":"Carrefour Les Abymes", "address":"ZAC de Dothémare",
-      "city":"Les Abymes", "phone":"+590 590 xx xx xx",
-      "website":"https://www.carrefour.fr/", "hours":"Lun-Sam 8h-20h" },
-
-    { "id":"GUA-U-BMH", "territory":"guadeloupe", "brand":"U",
-      "name":"Super U Baie-Mahault", "address":"Rue de La Retraite",
-      "city":"Baie-Mahault", "phone":"+590 590 xx xx xx",
-      "website":"https://www.magasins-u.com/", "hours":"Lun-Sam 8h-20h" },
-
-    { "id":"MTQ-HYP-FDF", "territory":"martinique", "brand":"HyperDom",
-      "name":"HyperDom", "address":"Centre commercial", "city":"Fort-de-France",
-      "website":"https://exemple-hyperdom.com", "hours":"9h-20h" },
-
-    { "id":"REU-TPX-SDN", "territory":"reunion", "brand":"TiPrix",
-      "name":"TiPrix", "address":"Rue Cilaos", "city":"Saint-Denis",
-      "website":"https://exemple-tiprix.re", "hours":"9h-19h" }
-  ]
-}
+[
+  {"territory":"guadeloupe","city":"Les Abymes","brand":"Carrefour","name":"Carrefour Les Abymes","address":"Rte de Boisripeaux","hours":"8:00–20:00","phone":"+590590000001","website":"https://www.carrefour.fr"},
+  {"territory":"guadeloupe","city":"Le Gosier","brand":"U","name":"Super U Le Gosier","address":"Bd du Général de Gaulle","hours":"8:30–19:30","phone":"+590590000002","website":"https://www.magasins-u.com"},
+  {"territory":"martinique","city":"Fort-de-France","brand":"HyperDom","name":"HyperDom FdF","address":"ZAC Etang Z'Abricots"},
+  {"territory":"reunion","city":"Saint-Denis","brand":"TiPrix","name":"TiPrix St-Denis","address":"Rue Maréchal Leclerc"},
+  {"territory":"guyane","city":"Cayenne","brand":"Leader Price","name":"Leader Price Cayenne","address":"Route de Baduel"},
+  {"territory":"mayotte","city":"Mamoudzou","brand":"U","name":"Super U Mamoudzou","address":"Centre-ville"}
+]
