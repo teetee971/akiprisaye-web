@@ -1,50 +1,57 @@
 [
   {
-    "name":"Élodie G.",
-    "territory":"guadeloupe",
-    "city":"Baie-Mahault",
-    "rating":5,
-    "text":"Top ! Les prix comparés m'ont fait gagner ~12€ sur mon panier hebdo.",
-    "date":"2025-09-05"
+    "id": "RV-0001",
+    "territory": "guadeloupe",
+    "flag": "🇬🇵",
+    "city": "Les Abymes",
+    "rating": 5,
+    "title": "Prix imbattables près de chez moi",
+    "text": "J'ai trouvé moins cher pour le petit-déjeuner (lait, pain, beurre).",
+    "author": "Nadège",
+    "date": "2025-09-06"
   },
   {
-    "name":"Romain P.",
-    "territory":"martinique",
-    "city":"Fort-de-France",
-    "rating":4,
-    "text":"Interface claire. J'aimerais plus d'enseignes locales, mais déjà utile.",
-    "date":"2025-09-06"
+    "id": "RV-0002",
+    "territory": "martinique",
+    "flag": "🇲🇶",
+    "city": "Fort-de-France",
+    "rating": 4,
+    "title": "Comparateur très utile",
+    "text": "Le panier m'aide à voir tout de suite l'enseigne la plus économique.",
+    "author": "Kévin",
+    "date": "2025-09-05"
   },
   {
-    "name":"Sabrina L.",
-    "territory":"reunion",
-    "city":"Saint-Denis",
-    "rating":5,
-    "text":"Les alertes promos m'ont alerté sur le beurre à -20%. Génial.",
-    "date":"2025-09-07"
+    "id": "RV-0003",
+    "territory": "guyane",
+    "flag": "🇬🇫",
+    "city": "Cayenne",
+    "rating": 4,
+    "title": "Transparence sur les prix",
+    "text": "Top pour suivre l'évolution des prix dans mon quartier.",
+    "author": "Sarah",
+    "date": "2025-09-03"
   },
   {
-    "name":"Hugo T.",
-    "territory":"guyane",
-    "city":"Cayenne",
-    "rating":4,
-    "text":"Comparateur rapide, gains réels sur pâtes/riz/huile.",
-    "date":"2025-09-07"
+    "id": "RV-0004",
+    "territory": "reunion",
+    "flag": "🇷🇪",
+    "city": "Saint-Denis",
+    "rating": 5,
+    "title": "Simple et efficace",
+    "text": "J'adore les alertes promos et le suivi de budget.",
+    "author": "Mathieu",
+    "date": "2025-09-02"
   },
   {
-    "name":"Amina K.",
-    "territory":"mayotte",
-    "city":"Mamoudzou",
-    "rating":5,
-    "text":"Simple et concret. Je valide 👌",
-    "date":"2025-09-08"
-  },
-  {
-    "name":"Tia M.",
-    "territory":"polynesie-francaise",
-    "city":"Papeete",
-    "rating":4,
-    "text":"Pratique pour repérer les écarts entre magasins.",
-    "date":"2025-09-08"
+    "id": "RV-0005",
+    "territory": "mayotte",
+    "flag": "🇾🇹",
+    "city": "Mamoudzou",
+    "rating": 4,
+    "title": "Bonne base pour comparer",
+    "text": "Les prix des produits de base sont bien couverts.",
+    "author": "Rokia",
+    "date": "2025-09-01"
   }
 ]

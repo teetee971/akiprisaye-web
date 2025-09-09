@@ -1,86 +1,66 @@
-<!doctype html>
-<html lang="fr">
-<head>
-  <meta charset="utf-8">
-  <title>Avis – A KI PRI SA YÉ</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',sans-serif;background:#0b1020;color:#e7ebf3;margin:0}
-    header,main{max-width:1024px;margin:auto;padding:16px}
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
-    .card{background:#0f152b;border:1px solid #1e2647;border-radius:16px;padding:16px;box-shadow:0 10px 24px rgba(0,0,0,.2)}
-    .muted{opacity:.8;font-size:.9rem}
-    .star{color:#16e;filter:brightness(1.2)}
-    .pill{display:inline-flex;gap:8px;align-items:center;background:#102046;border:1px solid #22346e;border-radius:999px;padding:6px 10px;margin:6px 6px 0 0}
-    .flag{font-size:20px}
-    .row{display:flex;gap:8px;align-items:center;justify-content:space-between}
-    .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 16px}
-    input,select{background:#0f152b;border:1px solid #233065;color:#e7ebf3;border-radius:10px;padding:10px 12px}
-    a.btn{background:#1fb673;color:white;text-decoration:none;padding:10px 14px;border-radius:12px}
-  </style>
-</head>
-<body>
-<header class="row">
-  <h1 style="margin:0">Avis</h1>
-  <nav style="display:flex;gap:8px">
-    <a class="btn" href="/index.html">Accueil</a>
-    <a class="btn" href="/enseignes.html">Enseignes</a>
-    <a class="btn" href="/palmares.html">Palmarès</a>
-    <a class="btn" href="/actus.html">Actus</a>
-    <a class="btn" href="/a-propos.html">À propos</a>
-  </nav>
-</header>
-<main>
-  <div class="toolbar">
-    <select id="t"><option value="">Tous territoires</option></select>
-    <input id="q" placeholder="Recherche (nom, ville, avis)…">
-  </div>
-  <section id="list" class="grid" aria-live="polite"></section>
-</main>
+<!doctype html><html lang="fr"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Avis – A KI PRI SA YÉ</title>
+<link rel="icon" href="/favicon.ico"/>
+<style>
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial; background:#0b1220; color:#e8eefc; margin:0; padding:24px;}
+  h1{font-size:28px;margin:0 0 16px}
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+  input,select,textarea{background:#0f1730;color:#e8eefc;border:1px solid #23304d;border-radius:10px;padding:10px 12px}
+  textarea{min-height:100px}
+  .grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));margin-top:16px}
+  .card{background:#0f1730;border:1px solid #243452;border-radius:16px;padding:14px}
+  .muted{color:#a7b3c9}
+  .stars{color:#ffc857}
+  .tag{display:inline-block;background:#0b1a35;border:1px solid #1e2d4b;border-radius:999px;padding:2px 8px;margin-right:6px;color:#9cc3ff}
+</style>
+</head><body>
+<h1>🗣️ Avis des utilisateurs</h1>
+
+<div class="toolbar">
+  <select id="territory">
+    <option value="">— Tous les territoires —</option>
+    <option value="guadeloupe">🇬🇵 Guadeloupe</option>
+    <option value="martinique">🇲🇶 Martinique</option>
+    <option value="guyane">🇬🇫 Guyane</option>
+    <option value="reunion">🇷🇪 Réunion</option>
+    <option value="mayotte">🇾🇹 Mayotte</option>
+  </select>
+  <input id="city" placeholder="Ville…" />
+  <input id="q" placeholder="Recherche texte…" style="min-width:240px"/>
+</div>
+
+<section id="list" class="grid" aria-live="polite"></section>
+
 <script>
+let ALL=[];
+const list = document.getElementById('list');
 const $ = (id)=>document.getElementById(id);
-const list = $("list");
-let TERR=[], REV=[];
-
-const rating = n => "★".repeat(n) + "☆".repeat(5-n);
-
-const flagOf = code => (TERR.find(t=>t.code===code)||{}).flag || "🇫🇷";
-const nameOf = code => (TERR.find(t=>t.code===code)||{}).name || code;
-
+const stars = n=>'★'.repeat(n)+'☆'.repeat(5-n);
 const card = r => `
   <article class="card">
-    <div class="row">
-      <div class="pill"><span class="flag">${flagOf(r.territory)}</span><b>${nameOf(r.territory)}</b></div>
-      <div class="muted">${r.city||""}</div>
-    </div>
-    <h3 style="margin:.6rem 0">${r.name}</h3>
-    <div class="star" aria-label="${r.rating} sur 5">${rating(r.rating)}</div>
+    <div class="muted">${r.flag} ${r.territory} • ${r.city} • <span class="stars">${stars(r.rating)}</span></div>
+    <h3 style="margin:6px 0">${r.title}</h3>
     <p class="muted">${r.text}</p>
-    <div class="muted">${new Date(r.date).toLocaleDateString()}</div>
+    <div class="muted">— ${r.author} · ${r.date}</div>
   </article>
 `;
 
-function render(){
-  const t = $("t").value;
-  const q = $("q").value.toLowerCase().trim();
-  const out = REV.filter(x=>{
-    const okT = !t || x.territory===t;
-    const inTxt = (x.name+" "+(x.city||"")+" "+x.text).toLowerCase().includes(q);
-    return okT && inTxt;
+const render=()=>{
+  const t=($('territory').value||'').toLowerCase().trim();
+  const c=($('city').value||'').toLowerCase().trim();
+  const q=($('q').value||'').toLowerCase().trim();
+  const out=ALL.filter(r=>{
+    const okT=!t||r.territory===t;
+    const inCity=!c||(r.city||'').toLowerCase().includes(c);
+    const inTxt=(r.title+' '+r.text+' '+(r.author||'')).toLowerCase().includes(q);
+    return okT && inCity && inTxt;
   });
-  list.innerHTML = out.map(card).join("") || '<div class="muted">Aucun avis</div>';
-}
+  list.innerHTML = out.map(card).join('') || '<div class="muted">Aucun avis trouvé.</div>';
+};
 
-Promise.all([
-  fetch("/data/territories.json").then(r=>r.json()),
-  fetch("/data/reviews.json").then(r=>r.json())
-]).then(([terr,rev])=>{
-  TERR=terr; REV=rev.sort((a,b)=>b.date.localeCompare(a.date));
-  // options territoire
-  $("t").innerHTML = '<option value="">Tous territoires</option>'+ TERR.map(t=>`<option value="${t.code}">${t.flag} ${t.name}</option>`).join('');
-  ["t","q"].forEach(id=>$(id).addEventListener("input",render));
-  render();
-});
+['territory','city','q'].forEach(id=>$(id).addEventListener('input',render));
+
+fetch('/data/reviews.json').then(r=>r.json()).then(json=>{ ALL=json; render(); });
 </script>
-</body>
-</html>
+</body></html>
