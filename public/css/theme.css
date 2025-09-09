@@ -1,0 +1,16 @@
+:root{--bg:#0b1220;--card:#0f1a2b;--text:#e6f0ff;--muted:#9bb0d3;--line:#14213a;--accent:#26d1ff;}
+:root.light{--bg:#f8fbff;--card:#ffffff;--text:#0c1b32;--muted:#4a5b78;--line:#dbe6f7;--accent:#0a7cff;}
+html,body{background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,sans-serif;margin:0}
+a{color:var(--accent)}
+.wrapper{max-width:1040px;margin:auto;padding:24px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.muted{color:var(--muted)}
+.btn{background:linear-gradient(90deg,#1fe4ff,#1ec8ff);color:#06233f;border:0;border-radius:12px;padding:10px 14px;font-weight:700;cursor:pointer}
+.input,select,textarea{background:color-mix(in oklab,var(--card) 96%,black 6%);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:10px}
+.grid{display:grid;gap:14px}
+.grid.cards{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+table{width:100%;border-collapse:collapse}
+th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+.nav a{display:inline-block;margin-right:8px;text-decoration:none;background:color-mix(in oklab,var(--card) 94%,black 6%);border:1px solid var(--line);border-radius:10px;padding:8px 10px;color:var(--text)}
+.theme-toggle{float:right}
