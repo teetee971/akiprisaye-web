@@ -1,32 +1,37 @@
+import { useState } from "react";
 import TerritorySelect from "@/components/TerritorySelect";
-import Carousel from '../components/Carousel';
-import ProductCard from '../components/ProductCard';
-import PriceStats from '../components/PriceStats';
-import { useQuery } from '@tanstack/react-query';
-import { fetchProducts } from '../lib/api';
+import BrandGrid from "@/components/BrandGrid";
+import ProductScanner from "@/components/ProductScanner";
 
 export default function Home(){
-  const { data, isLoading, error } = useQuery({ queryKey: ['products'], queryFn: fetchProducts });
-  const products = data ?? [];
-
   const [territory, setTerritory] = useState("");
+  const [scan, setScan] = useState(false);
 
   return (
-    <div className="container py-6 space-y-6">
-      <Carousel />
-      <section className="grid md:grid-cols-3 gap-4">
-        <div className="md:col-span-2 card p-4">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="font-semibold">Produits essentiels</h2>
-            {isLoading && <span className="text-xs opacity-70">Chargement…</span>}
-            {error && <span className="text-xs text-red-600">Erreur de chargement</span>}
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {products.slice(0,6).map(p => <ProductCard key={p.id} product={p} />)}
-          </div>
+    <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8 space-y-10">
+      <header className="space-y-3">
+        <h1 className="text-4xl font-bold">Compare les prix <span className="text-cyan-300">près de chez toi</span></h1>
+        <p className="text-slate-300">DROM-COM : Guadeloupe, Martinique, Guyane, Réunion, Mayotte…</p>
+        <div className="flex gap-3 items-center">
+          <div className="w-72"><TerritorySelect value={territory} onChange={setTerritory} /></div>
+          <a className="text-sm text-cyan-300 underline" href="/diagnostics/">Diagnostics</a>
+          <button onClick={()=>setScan(s=>!s)} className="text-sm px-3 py-2 rounded-lg bg-slate-800 border border-slate-600">
+            {scan ? "Fermer le scanner" : "Scanner un code-barres"}
+          </button>
         </div>
-        <PriceStats />
+      </header>
+
+      {scan && (
+        <section className="space-y-3">
+          <ProductScanner onCode={(ean)=>alert("EAN détecté: "+ean)} />
+          <p className="text-sm text-slate-400">Après décodage, tu pourras appeler ton endpoint produit (ex: /api/product?ean=...).</p>
+        </section>
+      )}
+
+      <section className="space-y-3">
+        <h2 className="text-xl font-semibold">Enseignes partenaires / suivies</h2>
+        <BrandGrid />
       </section>
-    </div>
+    </main>
   );
 }
