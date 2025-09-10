@@ -1,16 +1,17 @@
 {
   "ok": true,
   "data": [
-    {"code":"BL","slug":"saint-barthelemy","name":"Saint-Barthélemy"},
-    {"code":"GF","slug":"guyane","name":"Guyane"},
     {"code":"GP","slug":"guadeloupe","name":"Guadeloupe"},
-    {"code":"MF","slug":"saint-martin","name":"Saint-Martin"},
     {"code":"MQ","slug":"martinique","name":"Martinique"},
+    {"code":"GF","slug":"guyane","name":"Guyane"},
+    {"code":"RE","slug":"reunion","name":"Réunion"},
+    {"code":"YT","slug":"mayotte","name":"Mayotte"},
+    {"code":"BL","slug":"saint-barthelemy","name":"Saint-Barthélemy"},
+    {"code":"MF","slug":"saint-martin","name":"Saint-Martin"},
+    {"code":"PM","slug":"saint-pierre-et-miquelon","name":"Saint-Pierre-et-Miquelon"},
     {"code":"NC","slug":"nouvelle-caledonie","name":"Nouvelle-Calédonie"},
     {"code":"PF","slug":"polynesie-francaise","name":"Polynésie française"},
-    {"code":"PM","slug":"saint-pierre-et-miquelon","name":"Saint-Pierre-et-Miquelon"},
-    {"code":"RE","slug":"reunion","name":"Réunion"},
-    {"code":"WF","slug":"wallis-et-futuna","name":"Wallis-et-Futuna"},
-    {"code":"YT","slug":"mayotte","name":"Mayotte"}
-  ]
+    {"code":"WF","slug":"wallis-et-futuna","name":"Wallis-et-Futuna"}
+  ],
+  "count": 11
 }

@@ -1,4 +1,2 @@
-/a-propos            /#apropos           302
-/mentions            /legal/mentions.html 301
-/confidentialite     /legal/confidentialite.html 301
-/cgu                 /legal/cgu.html      301
+/api/territories      /api/territories.json     200
+/api/*                /api/:splat               200
