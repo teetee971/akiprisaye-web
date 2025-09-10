@@ -1,48 +1,67 @@
-<!doctype html><meta charset="utf-8">
+<!doctype html>
+<html lang="fr">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Diagnostics A KI PRI SA YÉ</title>
-<style>body{font:16px/1.4 system-ui,Segoe UI,Roboto,Arial;padding:16px;background:#0f172a;color:#e2e8f0}
-h1{margin:0 0 12px} button{padding:10px 14px;border-radius:10px;margin:8px 8px 8px 0;border:0;background:#1e293b;color:#e2e8f0;cursor:pointer}
-.ok{color:#22c55e}.ko{color:#ef4444}.muted{opacity:.7} video{width:100%;max-width:520px;border-radius:12px;margin-top:12px;background:#020617}
-.grid{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));margin:12px 0}
-.card{padding:12px;border:1px solid #334155;border-radius:12px;background:#0b1220}
-small{color:#94a3b8}
+<style>
+  :root{color-scheme:light dark}
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,sans-serif;margin:0 auto;max-width:920px;padding:24px}
+  h1{font-size:1.6rem;margin:0 0 8px}
+  .grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+  .card{border:1px solid #8883;padding:14px;border-radius:12px;background:#fff2}
+  .ok{color:#16a34a;font-weight:600}
+  .ko{color:#dc2626;font-weight:600}
+  code,pre{background:#0002;padding:.2em .35em;border-radius:.4em}
+  .mono{font-family:ui-monospace,Menlo,Consolas,monospace}
+  small{opacity:.7}
 </style>
-<h1>🔎 Diagnostics</h1>
+<h1>Diagnostics</h1>
+<p>Statut en direct des endpoints. <small>Cache-buster: <span id="ts" class="mono"></span></small></p>
 <div class="grid">
-  <div class="card">
-    <b>Navigation</b>
-    <div id="nav"></div>
-    <button onclick="go('/')">Accueil</button>
-    <button onclick="go('/enseigne')">Enseignes</button>
-    <button onclick="go('/palmares')">Palmarès</button>
-    <button onclick="go('/actus')">Actus</button>
-    <div><small id="navStatus" class="muted">En attente…</small></div>
-  </div>
-  <div class="card">
-    <b>Caméra / Scanner</b>
-    <div id="cam"></div>
-    <button id="btnCam">Tester caméra</button>
-    <div><small>Si la caméra s’ouvre: ✅ OK. Sinon: vérifier permissions navigateur.</small></div>
-    <video id="v" playsinline autoplay muted></video>
-  </div>
-  <div class="card">
-    <b>API</b>
-    <div id="api"></div>
-    <button onclick="testAPI()">Tester endpoints</button>
-    <div><small>Territoires / Prices / version.txt</small></div>
-  </div>
+  <div class="card"><h3>Page</h3><div id="page"></div></div>
+  <div class="card"><h3>version.txt</h3><div id="version"></div></div>
+  <div class="card"><h3>API /territories</h3><div id="territories"></div></div>
+  <div class="card"><h3>API /prices</h3><div id="prices"></div></div>
 </div>
 <script>
-const d=document, $=s=>d.querySelector(s), log=(id,msg,ok)=>{$(id).innerHTML=`<div class="${ok?'ok':'ko'}">${msg}</div>`}
-function go(path){try{history.pushState({},'',path);$('#navStatus').textContent='Route changée vers '+location.pathname;log('#nav','Route '+location.pathname+' ✅',true)}catch(e){log('#nav','Navigation KO '+e,true)}}
-$('#btnCam').onclick=async()=>{try{const s=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});$('#v').srcObject=s;log('#cam','Caméra OK ✅',true)}catch(e){log('#cam','Caméra KO ❌ ('+e.name+')',false)}}
-async function testAPI(){
-  try{
-    const bust=Date.now();
-    const a=await fetch(`/api/territories?v=${bust}`); const aj=await a.json(); const ok1=!!aj.ok && Array.isArray(aj.data) && aj.data.length>0;
-    const b=await fetch(`/api/prices?territory=guadeloupe&limit=3&v=${bust}`); const bj=await b.json(); const ok2=!!bj.ok && Array.isArray(bj.data);
-    const c=await fetch(`/version.txt?v=${bust}`); const t=await c.text(); const ok3=/\d{4}-\d{2}-\d{2}T/.test(t);
-    log('#api',`Territories:${ok1?'✅':'❌'} count=${aj.data?.length||0} · Prices:${ok2?'✅':'❌'} items=${bj.data?.length||0} · version.txt:${ok3?'✅':'❌'}`, ok1&&ok2&&ok3);
-  }catch(e){log('#api','Erreur API ❌ '+e,false)}
-}
+(async () => {
+  const $ = (id) => document.getElementById(id);
+  const ts = Date.now(); $("ts").textContent = ts;
+
+  async function check(url, parser){
+    try{
+      const r = await fetch(url,{cache:"no-store"});
+      const ok = r.ok;
+      const body = await r.text();
+      const data = parser ? parser(body) : null;
+      return {ok, code:r.status, data, body};
+    }catch(e){ return {ok:false, code:"ERR", data:null, body:String(e)}}
+  }
+  const origin = location.origin;
+
+  const page = await check(origin + "/?v="+ts);
+  $("page").innerHTML = page.ok
+    ? `<span class="ok">OK</span> HTTP ${page.code}`
+    : `<span class="ko">KO</span> (${page.code})`;
+
+  const version = await check(origin + "/version.txt?v="+ts,(t)=>t.trim());
+  $("version").innerHTML = version.ok
+    ? `<span class="ok">OK</span> <code class="mono">${version.data.slice(0,120)}</code>`
+    : `<span class="ko">KO</span> (${version.code})`;
+
+  const terr = await check(origin + "/api/territories?v="+ts, (t)=> {
+    try { const j = JSON.parse(t); return {ok:j.ok, count: (Array.isArray(j.data)? j.data.length : 0)} } catch { return {ok:false,count:0} }
+  });
+  $("territories").innerHTML = terr.ok && terr.data.ok
+    ? `<span class="ok">OK</span> ${terr.data.count} codes`
+    : `<span class="ko">KO</span>`;
+
+  const territory = new URLSearchParams(location.search).get("t") || "guadeloupe";
+  const prices = await check(origin + `/api/prices?territory=${encodeURIComponent(territory)}&limit=5&v=${ts}`, (t)=>{
+    try { const j = JSON.parse(t); return {ok:j.ok, count: (Array.isArray(j.data)? j.data.length : 0)} } catch { return {ok:false,count:0} }
+  });
+  $("prices").innerHTML = prices.ok && prices.data.ok
+    ? `<span class="ok">OK</span> ${prices.data.count} items (t=<code>${territory}</code>)`
+    : `<span class="ko">KO</span>`;
+})();
 </script>
