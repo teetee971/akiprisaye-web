@@ -1,97 +1,86 @@
 #!/usr/bin/env bash
 set -euo pipefail
-# Désactive l'expansion historique "!" (évite le plantage sur <!doctype>)
-set +H
 
-# -------- Config minimale ----------
-DOMAIN="${DOMAIN:-https://akiprisaye.pages.dev}"
+# --- Réglages ---
+ZIP="logos-officiels-domtom.zip"
 BRANDS_DIR="public/assets/brands"
-SRC_DIR="logos"               # mets tes .png officiels ici (carrefour.png, superu.png, etc.)
-BRANDS=("carrefour" "superu" "leaderprice" "promocash" "hyperu" "market" "tiprix")
-COMMIT_MSG="${1:-Ajout logos officiels enseignes DOM-TOM}"
+BRANDS=(carrefour superu leaderprice tiprix promocash hyperu market)
 
-# -------- Helpers ----------
-ok()   { printf "✅ %s\n" "$*"; }
-warn() { printf "⚠️  %s\n" "$*"; }
-err()  { printf "❌ %s\n" "$*" >&2; }
-sep()  { printf -- "\n----------------------------------------------\n"; }
+ok="✅"; warn="⚠️"; err="❌"; info="ℹ️"
 
-# -------- 0) Pré-check git ----------
-if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-  err "Ce répertoire n'est pas un dépôt git."
+echo
+echo "——— Déploiement des logos officiels (DOM-TOM) ———"
+
+# 1) Vérifs préalables
+if [ ! -f "$ZIP" ]; then
+  echo "$err Fichier $ZIP introuvable dans le dossier courant."
+  echo "   Place le zip à côté de ce script (ou passe un chemin absolu)."
   exit 1
 fi
-git remote -v || true
 
-# -------- 1) Prépare dossier cible ----------
+# 2) Décompression dans un dossier temporaire
+TMP=".tmp_logos_$$"
+rm -rf "$TMP"
+mkdir -p "$TMP"
+unzip -q "$ZIP" -d "$TMP"
+echo "$ok Zip extrait → $TMP"
+
+# 3) Création de l’arborescence cible
 mkdir -p "$BRANDS_DIR"
 
-# -------- 2) Copie des logos (avec placeholder si manquant) ----------
-MISSING=0
+# 4) Copie des logos (en conservant les noms exacts)
+COPIED=0
 for b in "${BRANDS[@]}"; do
-  src_png="$SRC_DIR/$b.png"
-  dst_png="$BRANDS_DIR/$b.png"
-  if [[ -f "$src_png" ]]; then
-    cp -f "$src_png" "$dst_png"
-    ok "Logo copié: $b.png"
+  SRC_PNG="$TMP/$BRANDS_DIR/$b.png"
+  if [ -f "$SRC_PNG" ]; then
+    cp "$SRC_PNG" "$BRANDS_DIR/$b.png"
+    echo "$ok $b.png copié"
+    COPIED=$((COPIED+1))
   else
-    MISSING=$((MISSING+1))
-    warn "Manque: $src_png (j'utilise placeholder.png si présent)"
-    if [[ -f "$SRC_DIR/placeholder.png" ]]; then
-      cp -f "$SRC_DIR/placeholder.png" "$dst_png"
-      warn "→ placeholder pour $b"
-    fi
+    echo "$warn $b.png manquant dans le zip (placeholder utilisé si présent)."
   fi
 done
 
-# -------- 3) Sanity check des fichiers cibles ----------
+# 5) Récapitulatif
+echo "—"
+echo "$info Logos copiés: $COPIED / ${#BRANDS[@]}"
+
+# 6) Contrôles rapides
 FAIL=0
 for b in "${BRANDS[@]}"; do
-  if [[ ! -s "$BRANDS_DIR/$b.png" ]]; then
-    err "Absent ou vide: $BRANDS_DIR/$b.png"
+  if [ -s "$BRANDS_DIR/$b.png" ]; then
+    echo "$ok Présent: $BRANDS_DIR/$b.png"
+  else
+    echo "$warn Absent ou vide: $BRANDS_DIR/$b.png"
     FAIL=$((FAIL+1))
   fi
 done
-if (( FAIL > 0 )); then
-  err "Il manque $FAIL logo(s) dans $BRANDS_DIR. Abandon."
-  exit 2
-fi
-ok "Tous les fichiers logos cibles existent."
 
-# -------- 4) Build du site ----------
-if npm -v >/dev/null 2>&1; then
-  ok "Build en cours…"
-  npm run build
-  ok "Build OK."
+# 7) Build local (copie les assets, pas de bundling si le projet est statique)
+if grep -q '"build"' package.json 2>/dev/null; then
+  echo "—"
+  echo "$info Lancement du build NPM…"
+  npm run build || { echo "$err Build échoué"; exit 1; }
+  echo "$ok Build terminé"
 else
-  warn "npm introuvable – je suppose un site purement statique (OK si Cloudflare Pages juste sert /public)."
+  echo "$info Aucun script 'build' dans package.json → on saute l’étape."
 fi
 
-# -------- 5) Commit & push ----------
-git add -A
-if git diff --cached --quiet; then
-  warn "Aucun changement à committer."
-else
-  git commit -m "$COMMIT_MSG"
-  ok "Commit OK."
-fi
+# 8) Commit & push (Cloudflare Pages = déploiement automatique via Git)
+echo "—"
+git add "$BRANDS_DIR" || true
+git commit -m "feat(assets): logos officiels enseignes DOM-TOM" || echo "$info Rien à committer"
 git push
-ok "Push OK."
+echo "$ok Push OK"
 
-# -------- 6) Post-check (CDN) ----------
-sep
-TS=$(date +%s)
-ok "Warm-up CDN…"
-curl -skI "$DOMAIN/?v=$TS" | sed -n '1,8p' || true
+# 9) Mini check prod (si tes scripts existent)
+if [ -x scripts/mega_check.sh ]; then
+  echo "—"
+  echo "$info Vérifs prod (scripts/mega_check.sh)…"
+  scripts/mega_check.sh || echo "$warn Vérifs: certains endpoints peuvent encore être en cache."
+fi
 
-ok "version.txt :"
-curl -sk "$DOMAIN/version.txt?v=$TS" | head -c 200; echo || true
-
-ok "API /territories :"
-curl -sk "$DOMAIN/api/territories?v=$TS" | jq -r '.ok,.count' 2>/dev/null || curl -sk "$DOMAIN/api/territories?v=$TS" | head -c 200; echo
-
-ok "API /prices :"
-curl -sk "$DOMAIN/api/prices?territory=guadeloupe&limit=5&v=$TS" | jq -r '.ok, (.data|length)' 2>/dev/null || curl -sk "$DOMAIN/api/prices?territory=guadeloupe&limit=5&v=$TS" | head -c 200; echo
-
-ok "Vérifs terminées."
-sep
+# 10) Nettoyage
+rm -rf "$TMP"
+echo "—"
+echo "$ok Terminé. Attends la fin du déploiement Cloudflare Pages (quelques secondes)."
