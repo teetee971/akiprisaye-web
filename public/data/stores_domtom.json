@@ -1,0 +1,107 @@
+{
+  "meta": {
+    "version": 1,
+    "updated_at": "2025-09-10T04:22:28Z",
+    "territories": ["Guadeloupe","Martinique","Guyane","La Réunion","Mayotte","Polynésie française","Nouvelle-Calédonie","Saint-Martin","Saint-Barthélemy","Saint-Pierre-et-Miquelon"]
+  },
+  "brands": [
+    {"key":"carrefour","name":"Carrefour","logo":"/assets/brands/carrefour.png"},
+    {"key":"market","name":"Carrefour Market","logo":"/assets/brands/market.png"},
+    {"key":"contact","name":"Carrefour Contact","logo":"/assets/brands/contact.png"},
+    {"key":"leclerc","name":"E.Leclerc","logo":"/assets/brands/leclerc.png"},
+    {"key":"superu","name":"Super U","logo":"/assets/brands/superu.png"},
+    {"key":"hyperu","name":"Hyper U","logo":"/assets/brands/hyperu.png"},
+    {"key":"u_express","name":"U Express","logo":"/assets/brands/u_express.png"},
+    {"key":"casino","name":"Casino","logo":"/assets/brands/casino.png"},
+    {"key":"spar","name":"SPAR","logo":"/assets/brands/spar.png"},
+    {"key":"promocash","name":"Promocash","logo":"/assets/brands/promocash.png"},
+    {"key":"intermarché","name":"Intermarché","logo":"/assets/brands/intermarché.png"},
+    {"key":"ecomax","name":"Ecomax","logo":"/assets/brands/ecomax.png"},
+    {"key":"score","name":"Score","logo":"/assets/brands/score.png"},
+    {"key":"jumbo","name":"Jumbo","logo":"/assets/brands/jumbo.png"},
+    {"key":"leaderprice","name":"Leader Price","logo":"/assets/brands/leaderprice.png"},
+    {"key":"auchan","name":"Auchan","logo":"/assets/brands/auchan.png"},
+    {"key":"monoprix","name":"Monoprix","logo":"/assets/brands/monoprix.png"},
+    {"key":"proxi","name":"Proxi","logo":"/assets/brands/proxi.png"},
+    {"key":"utile","name":"Utile","logo":"/assets/brands/utile.png"},
+    {"key":"coccinelle","name":"Coccinelle","logo":"/assets/brands/coccinelle.png"}
+  ],
+  "stores": [
+    /* =========================
+       GUADELOUPE (971)
+       ========================= */
+    {"territory":"Guadeloupe","brand":"carrefour","name":"Carrefour Destreland","address":"Destreland","city":"Baie-Mahault","postcode":"97122","lat":null,"lng":null},
+    {"territory":"Guadeloupe","brand":"carrefour","name":"Carrefour Milenis","address":"Centre commercial Milénis","city":"Les Abymes","postcode":"97139","lat":null,"lng":null},
+    {"territory":"Guadeloupe","brand":"leclerc","name":"E.Leclerc Soco Fort","address":"Soco Fort","city":"Le Gosier","postcode":"97190","lat":null,"lng":null},
+    {"territory":"Guadeloupe","brand":"casino","name":"Hyper Casino Saint-Claude","address":"Desmarais","city":"Saint-Claude","postcode":"97120","lat":null,"lng":null},
+
+    {"territory":"Guadeloupe","brand":"market","name":"Carrefour Market ZA Colin","address":"ZA Colin","city":"Petit-Bourg","postcode":"97170","lat":null,"lng":null},
+    {"territory":"Guadeloupe","brand":"ecomax","name":"Ecomax Gissac","address":"Gissac","city":"Sainte-Anne","postcode":"97180","lat":null,"lng":null},
+    {"territory":"Guadeloupe","brand":"superu","name":"Super U Bergevin","address":"Bergevin","city":"Pointe-à-Pitre","postcode":"97110","lat":null,"lng":null},
+    {"territory":"Guadeloupe","brand":"contact","name":"Carrefour Contact Grand-Camp","address":"Grand-Camp","city":"Les Abymes","postcode":"97139","lat":null,"lng":null},
+    {"territory":"Guadeloupe","brand":"superu","name":"Super U Baillif","address":"—","city":"Baillif","postcode":"97123","lat":null,"lng":null},
+    {"territory":"Guadeloupe","brand":"superu","name":"Super U Saint-Jules","address":"—","city":"Pointe-à-Pitre","postcode":"97110","lat":null,"lng":null},
+    {"territory":"Guadeloupe","brand":"superu","name":"Super U Chanzy Grand-Camp","address":"Chanzy, Grand-Camp","city":"Les Abymes","postcode":"97139","lat":null,"lng":null},
+    {"territory":"Guadeloupe","brand":"casino","name":"Casino Saint-François","address":"—","city":"Saint-François","postcode":"97118","lat":null,"lng":null},
+    {"territory":"Guadeloupe","brand":"contact","name":"Carrefour Contact Pradel","address":"Pradel","city":"Saint-François","postcode":"97118","lat":null,"lng":null},
+    {"territory":"Guadeloupe","brand":"market","name":"Carrefour Market Baie Side","address":"—","city":"Le Moule","postcode":"97160","lat":null,"lng":null},
+    {"territory":"Guadeloupe","brand":"market","name":"Carrefour Market Sainte-Rose","address":"Bourg","city":"Sainte-Rose","postcode":"97115","lat":null,"lng":null},
+    {"territory":"Guadeloupe","brand":"market","name":"Carrefour Market Boisripaux","address":"Boisripaux","city":"Les Abymes","postcode":"97139","lat":null,"lng":null},
+
+    /* =========================
+       MARTINIQUE (972)
+       ========================= */
+    {"territory":"Martinique","brand":"carrefour","name":"Carrefour Dillon","address":"CC Dillon","city":"Fort-de-France","postcode":"97200","lat":null,"lng":null},
+    {"territory":"Martinique","brand":"leclerc","name":"E.Leclerc La Galleria","address":"La Galleria","city":"Schoelcher","postcode":"97233","lat":null,"lng":null},
+    {"territory":"Martinique","brand":"superu","name":"Super U — Centre","address":"—","city":"—","postcode":"972xx","lat":null,"lng":null},
+    {"territory":"Martinique","brand":"ecomax","name":"Ecomax — Réseau","address":"—","city":"—","postcode":"972xx","lat":null,"lng":null},
+
+    /* =========================
+       GUYANE (973)
+       ========================= */
+    {"territory":"Guyane","brand":"carrefour","name":"Carrefour — Cayenne","address":"—","city":"Cayenne","postcode":"97300","lat":null,"lng":null},
+    {"territory":"Guyane","brand":"leclerc","name":"E.Leclerc — Matoury","address":"—","city":"Matoury","postcode":"97351","lat":null,"lng":null},
+    {"territory":"Guyane","brand":"superu","name":"Super U — Kourou","address":"—","city":"Kourou","postcode":"97310","lat":null,"lng":null},
+    {"territory":"Guyane","brand":"promocash","name":"Promocash — Cayenne","address":"—","city":"Cayenne","postcode":"97300","lat":null,"lng":null},
+
+    /* =========================
+       LA RÉUNION (974)
+       ========================= */
+    {"territory":"La Réunion","brand":"score","name":"Score — Réseau","address":"—","city":"—","postcode":"974xx","lat":null,"lng":null},
+    {"territory":"La Réunion","brand":"jumbo","name":"Jumbo — Réseau","address":"—","city":"—","postcode":"974xx","lat":null,"lng":null},
+    {"territory":"La Réunion","brand":"leclerc","name":"E.Leclerc — Réseau","address":"—","city":"—","postcode":"974xx","lat":null,"lng":null},
+    {"territory":"La Réunion","brand":"intermarché","name":"Intermarché — Réseau","address":"—","city":"—","postcode":"974xx","lat":null,"lng":null},
+    {"territory":"La Réunion","brand":"spar","name":"SPAR — Réseau","address":"—","city":"—","postcode":"974xx","lat":null,"lng":null},
+
+    /* =========================
+       MAYOTTE (976)
+       ========================= */
+    {"territory":"Mayotte","brand":"superu","name":"Super U — Mamoudzou","address":"—","city":"Mamoudzou","postcode":"97600","lat":null,"lng":null},
+    {"territory":"Mayotte","brand":"intermarché","name":"Intermarché — Dembéni","address":"—","city":"Dembéni","postcode":"97660","lat":null,"lng":null},
+    {"territory":"Mayotte","brand":"auchan","name":"Auchan — Réseau","address":"—","city":"—","postcode":"976xx","lat":null,"lng":null},
+
+    /* =========================
+       POLYNÉSIE FRANÇAISE
+       ========================= */
+    {"territory":"Polynésie française","brand":"carrefour","name":"Carrefour — Punaauia","address":"—","city":"Punaauia","postcode":"98718","lat":null,"lng":null},
+    {"territory":"Polynésie française","brand":"champion","name":"Champion — Réseau","address":"—","city":"—","postcode":"987xx","lat":null,"lng":null},
+
+    /* =========================
+       NOUVELLE-CALÉDONIE
+       ========================= */
+    {"territory":"Nouvelle-Calédonie","brand":"carrefour","name":"Carrefour — Nouméa","address":"—","city":"Nouméa","postcode":"98800","lat":null,"lng":null},
+    {"territory":"Nouvelle-Calédonie","brand":"casino","name":"Casino — Réseau","address":"—","city":"—","postcode":"988xx","lat":null,"lng":null},
+    {"territory":"Nouvelle-Calédonie","brand":"monoprix","name":"Monoprix — Nouméa","address":"—","city":"Nouméa","postcode":"98800","lat":null,"lng":null},
+
+    /* =========================
+       SAINT-MARTIN / SAINT-BARTH
+       ========================= */
+    {"territory":"Saint-Martin","brand":"superu","name":"Super U — Marigot","address":"—","city":"Marigot","postcode":"97150","lat":null,"lng":null},
+    {"territory":"Saint-Barthélemy","brand":"u_express","name":"U Express — Gustavia","address":"—","city":"Gustavia","postcode":"97133","lat":null,"lng":null},
+
+    /* =========================
+       SAINT-PIERRE-ET-MIQUELON
+       ========================= */
+    {"territory":"Saint-Pierre-et-Miquelon","brand":"proxi","name":"Proxi — Saint-Pierre","address":"—","city":"Saint-Pierre","postcode":"97500","lat":null,"lng":null}
+  ]
+}
