@@ -2,66 +2,48 @@
 <html lang="fr">
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Diagnostics A KI PRI SA YÉ</title>
+<title>Diagnostics</title>
 <style>
-  :root{color-scheme:light dark}
-  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,sans-serif;margin:0 auto;max-width:920px;padding:24px}
-  h1{font-size:1.6rem;margin:0 0 8px}
-  .grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
-  .card{border:1px solid #8883;padding:14px;border-radius:12px;background:#fff2}
-  .ok{color:#16a34a;font-weight:600}
-  .ko{color:#dc2626;font-weight:600}
-  code,pre{background:#0002;padding:.2em .35em;border-radius:.4em}
-  .mono{font-family:ui-monospace,Menlo,Consolas,monospace}
-  small{opacity:.7}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;
+background:#0f172a;color:#e2e8f0;margin:2rem}
+pre{background:#0b1220;border:1px solid #1f2a44;border-radius:12px;padding:1rem;overflow:auto}
+a{color:#67e8f9}
+.badge{display:inline-block;border:1px solid #244; padding:.2rem .5rem;border-radius:.5rem;background:#0b1220}
+.ok{color:#22c55e}.ko{color:#ef4444}
 </style>
-<h1>Diagnostics</h1>
-<p>Statut en direct des endpoints. <small>Cache-buster: <span id="ts" class="mono"></span></small></p>
-<div class="grid">
-  <div class="card"><h3>Page</h3><div id="page"></div></div>
-  <div class="card"><h3>version.txt</h3><div id="version"></div></div>
-  <div class="card"><h3>API /territories</h3><div id="territories"></div></div>
-  <div class="card"><h3>API /prices</h3><div id="prices"></div></div>
-</div>
+<h1>🔎 Diagnostics</h1>
+<p>Vérifie rapidement la visibilité du déploiement et les endpoints.</p>
+<div id="out"><span class="badge">Chargement…</span></div>
 <script>
 (async () => {
-  const $ = (id) => document.getElementById(id);
-  const ts = Date.now(); $("ts").textContent = ts;
+  const base = location.origin;
+  const ts = Date.now();
+  const out = (html) => document.getElementById('out').innerHTML = html;
 
-  async function check(url, parser){
-    try{
-      const r = await fetch(url,{cache:"no-store"});
-      const ok = r.ok;
-      const body = await r.text();
-      const data = parser ? parser(body) : null;
-      return {ok, code:r.status, data, body};
-    }catch(e){ return {ok:false, code:"ERR", data:null, body:String(e)}}
-  }
-  const origin = location.origin;
+  const get = async (p) => {
+    try {
+      const r = await fetch(p);
+      const t = await r.text();
+      return { ok: r.ok, status: r.status, text: t };
+    } catch (e) { return { ok:false, status:0, text:String(e) }; }
+  };
 
-  const page = await check(origin + "/?v="+ts);
-  $("page").innerHTML = page.ok
-    ? `<span class="ok">OK</span> HTTP ${page.code}`
-    : `<span class="ko">KO</span> (${page.code})`;
+  const v = await get(`/version.txt?v=${ts}`);
+  const t = await get(`/api/territories?v=${ts}`);
+  const p = await get(`/api/prices?territory=guadeloupe&limit=5&v=${ts}`);
 
-  const version = await check(origin + "/version.txt?v="+ts,(t)=>t.trim());
-  $("version").innerHTML = version.ok
-    ? `<span class="ok">OK</span> <code class="mono">${version.data.slice(0,120)}</code>`
-    : `<span class="ko">KO</span> (${version.code})`;
-
-  const terr = await check(origin + "/api/territories?v="+ts, (t)=> {
-    try { const j = JSON.parse(t); return {ok:j.ok, count: (Array.isArray(j.data)? j.data.length : 0)} } catch { return {ok:false,count:0} }
-  });
-  $("territories").innerHTML = terr.ok && terr.data.ok
-    ? `<span class="ok">OK</span> ${terr.data.count} codes`
-    : `<span class="ko">KO</span>`;
-
-  const territory = new URLSearchParams(location.search).get("t") || "guadeloupe";
-  const prices = await check(origin + `/api/prices?territory=${encodeURIComponent(territory)}&limit=5&v=${ts}`, (t)=>{
-    try { const j = JSON.parse(t); return {ok:j.ok, count: (Array.isArray(j.data)? j.data.length : 0)} } catch { return {ok:false,count:0} }
-  });
-  $("prices").innerHTML = prices.ok && prices.data.ok
-    ? `<span class="ok">OK</span> ${prices.data.count} items (t=<code>${territory}</code>)`
-    : `<span class="ko">KO</span>`;
+  const ok = (b) => b ? '<b class="ok">OK</b>' : '<b class="ko">KO</b>';
+  out(`
+  <ul>
+    <li>Page HTML… ${ok(true)} (si tu vois cette page, le CDN répond)</li>
+    <li>version.txt… ${ok(v.ok)} code=${v.status}</li>
+    <li>/api/territories… ${ok(t.ok)} code=${t.status}</li>
+    <li>/api/prices (échantillon)… ${ok(p.ok)} code=${p.status}</li>
+  </ul>
+  <details open><summary>version.txt</summary><pre>${(v.text||'').slice(0,400)}</pre></details>
+  <details><summary>territories</summary><pre>${(t.text||'').slice(0,1400)}</pre></details>
+  <details><summary>prices</summary><pre>${(p.text||'').slice(0,1400)}</pre></details>
+  <p>Base: <a href="${base}">${base}</a></p>
+  `);
 })();
 </script>

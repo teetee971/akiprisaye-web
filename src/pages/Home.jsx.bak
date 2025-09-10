@@ -1,4 +1,3 @@
-import TerritorySelect from "@/components/TerritorySelect";
 import Carousel from '../components/Carousel';
 import ProductCard from '../components/ProductCard';
 import PriceStats from '../components/PriceStats';
@@ -8,8 +7,6 @@ import { fetchProducts } from '../lib/api';
 export default function Home(){
   const { data, isLoading, error } = useQuery({ queryKey: ['products'], queryFn: fetchProducts });
   const products = data ?? [];
-
-  const [territory, setTerritory] = useState("");
 
   return (
     <div className="container py-6 space-y-6">
