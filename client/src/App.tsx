@@ -6,7 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ProductsProvider } from "@/context/ProductsContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import Home from "@/pages/Home";
+import HomePage from "@/pages/HomePage";
 import ProductsPage from "@/pages/ProductsPage";
 import ComparePage from "@/pages/ComparePage";
 import MapPage from "@/pages/MapPage";
@@ -17,7 +17,7 @@ import NotFound from "@/pages/not-found";
 function Router() {
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
+      <Route path="/" element={<HomePage />} />
       <Route path="/produits" element={<ProductsPage />} />
       <Route path="/comparateur" element={<ComparePage />} />
       <Route path="/carte" element={<MapPage />} />
