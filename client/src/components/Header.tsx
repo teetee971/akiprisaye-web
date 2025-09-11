@@ -1,15 +1,18 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import ThemeToggle from "@/components/ThemeToggle";
+import { useProducts } from "@/context/ProductsContext";
 
 export default function Header() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const { setFilters } = useProducts();
 
   const navigationItems = [
     { path: "/", label: "Accueil" },
@@ -22,8 +25,23 @@ export default function Header() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Header search:', searchQuery);
-    // TODO: Implement global search functionality
+    if (searchQuery.trim()) {
+      // Apply the search filter immediately
+      setFilters({ search: searchQuery.trim() });
+      
+      // Navigate to products page if not already there
+      if (location.pathname !== '/produits') {
+        navigate('/produits');
+      }
+      
+      // Close mobile menu if open
+      setIsOpen(false);
+      
+      // Clear search input on mobile after search
+      if (window.innerWidth < 768) {
+        setSearchQuery('');
+      }
+    }
   };
 
   const NavContent = () => (
