@@ -1,0 +1,42 @@
+name: Deploy to Cloudflare Pages
+
+on:
+  push:
+    branches: [ main ]
+  # (optionnel) prévisualisations pour les PR
+  pull_request:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Build (Vite)
+        run: npm run build
+        env:
+          # place tes variables Vite ici si besoin (ex: VITE_API_URL)
+          NODE_ENV: production
+
+      # Déploiement Cloudflare Pages
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: akiprisaye       # <-- nom EXACT du projet Pages
+          directory: dist               # <-- dossier de sortie Vite
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          # (optionnel) true sur les PR pour créer un preview
+          wranglerVersion: '3'
