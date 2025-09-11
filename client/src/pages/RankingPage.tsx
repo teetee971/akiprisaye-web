@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useProducts } from "@/context/ProductsContext";
-import { useLocation } from "wouter";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,7 +17,7 @@ import { exportRankingToCSV, exportRankingToJSON, shareRanking } from "@/utils/e
 export default function RankingPage() {
   const { products, stores, territories, loading } = useProducts();
   const { toast } = useToast();
-  const [, setLocation] = useLocation();
+  const navigate = useNavigate();
   const [selectedTerritory, setSelectedTerritory] = useState<string>("all");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [viewMode, setViewMode] = useState<'cards' | 'compact'>('cards');
@@ -36,8 +36,8 @@ export default function RankingPage() {
   }, [products]);
 
   const handleStoreSelect = (storeId: string) => {
-    // Navigate to products page with store filter using wouter
-    setLocation(`/produits?store=${storeId}`);
+    // Navigate to products page with store filter using react-router-dom
+    navigate(`/produits?store=${storeId}`);
   };
 
   const handleExportRanking = async () => {
