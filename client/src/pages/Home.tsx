@@ -3,10 +3,25 @@ import { Search, TrendingUp, MapPin, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import PriceCard, { type PriceData } from "@/components/PriceCard";
+import { useProducts } from "@/context/ProductsContext";
 import heroImage from "@assets/generated_images/Tropical_islands_price_comparison_hero_c34340d8.png";
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
+  
+  // Test du contexte ProductsContext  
+  const { 
+    products, 
+    stores, 
+    territories, 
+    loading, 
+    error,
+    filteredProducts,
+    filters,
+    compareList,
+    setFilters,
+    toggleCompare 
+  } = useProducts();
 
   // todo: remove mock functionality
   const featuredProducts: PriceData[] = [
@@ -48,15 +63,73 @@ export default function Home() {
     console.log('Product clicked:', product.productName);
   };
 
+  // Adapter les statistiques avec les données réelles
   const stats = [
-    { label: "Produits suivis", value: "2,500+", icon: Search },
+    { label: "Produits suivis", value: products.length.toString(), icon: Search },
     { label: "Prix comparés", value: "45,000+", icon: TrendingUp },
-    { label: "Territoires", value: "5", icon: MapPin },
-    { label: "Enseignes", value: "85+", icon: Trophy },
+    { label: "Territoires", value: territories.length.toString(), icon: MapPin },
+    { label: "Enseignes", value: stores.length.toString(), icon: Trophy },
   ];
+
+  // Convertir les produits réels au format PriceData pour les composants existants
+  const featuredProductsReal: PriceData[] = products.slice(0, 3).map(product => {
+    const lastPrice = product.priceHistory[product.priceHistory.length - 2]?.price || product.price;
+    return {
+      id: product.id,
+      productName: product.name,
+      currentPrice: product.price,
+      previousPrice: lastPrice,
+      storeName: product.store,
+      territory: product.territory,
+      lastUpdated: "il y a 2h" // Simplification pour l'instant
+    };
+  });
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Section de test temporaire du contexte */}
+      {error && (
+        <div className="bg-destructive/10 border border-destructive text-destructive p-4 m-4 rounded">
+          Erreur: {error}
+        </div>
+      )}
+      
+      {loading && (
+        <div className="bg-muted p-4 m-4 rounded text-center">
+          Chargement des données...
+        </div>
+      )}
+
+      {!loading && !error && (
+        <div className="bg-green-50 dark:bg-green-950 p-4 m-4 rounded">
+          <h3 className="font-bold text-green-800 dark:text-green-200 mb-2">✅ Context API Test - Succès!</h3>
+          <div className="text-sm space-y-1">
+            <p>📦 {products.length} produits chargés</p>
+            <p>🏪 {stores.length} magasins chargés</p>  
+            <p>🏝️ {territories.length} territoires chargés</p>
+            <p>🔍 {filteredProducts.length} produits filtrés</p>
+            <p>⚖️ {compareList.length} produits en comparaison</p>
+            <div className="mt-2">
+              <Button 
+                size="sm" 
+                onClick={() => toggleCompare(products[0]?.id || '')}
+                disabled={!products.length}
+              >
+                Test Compare
+              </Button>
+              <Button 
+                size="sm" 
+                variant="outline"
+                className="ml-2"
+                onClick={() => setFilters({ search: 'test' })}
+              >
+                Test Filter
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Hero Section */}
       <section className="relative">
         <div 
@@ -133,7 +206,7 @@ export default function Home() {
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {featuredProducts.map((product) => (
+            {(loading || !featuredProductsReal.length ? featuredProducts : featuredProductsReal).map((product) => (
               <PriceCard
                 key={product.id}
                 priceData={product}
