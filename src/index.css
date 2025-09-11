@@ -1,9 +1,3 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* petites classes utilitaires */
-.container-app{ @apply max-w-6xl mx-auto px-4; }
-.card{ @apply border rounded-lg bg-white shadow-sm; }
-.btn{ @apply px-3 py-2 border rounded bg-white hover:bg-gray-50 disabled:opacity-40; }
-.section{ @apply container-app my-8; }

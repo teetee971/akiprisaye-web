@@ -1,0 +1,4 @@
+run = "npm run dev"
+hidden = [ "node_modules" ]
+[unitTest]
+run = "npm test -- --watch=false"
