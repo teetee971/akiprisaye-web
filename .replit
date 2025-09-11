@@ -4,6 +4,7 @@ hidden = [".config", ".git", "generated-icon.png", "node_modules", "dist"]
 
 [nix]
 channel = "stable-24_05"
+packages = ["wrangler"]
 
 [deployment]
 deploymentTarget = "autoscale"
@@ -13,10 +14,6 @@ run = ["npm", "run", "start"]
 [[ports]]
 localPort = 5000
 externalPort = 80
-
-[[ports]]
-localPort = 36795
-externalPort = 3001
 
 [[ports]]
 localPort = 38067
