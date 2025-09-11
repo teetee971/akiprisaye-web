@@ -1,0 +1,477 @@
+[
+  {
+    "id": "lait-lactel-1l",
+    "name": "Lait demi-écrémé Lactel 1L",
+    "category": "Alimentation",
+    "brand": "Lactel",
+    "price": 1.85,
+    "store": "Carrefour",
+    "territory": "Martinique",
+    "updatedAt": "2025-01-10T16:30:00Z",
+    "imageUrl": "/products/lait-lactel.jpg",
+    "priceHistory": [
+      { "date": "2024-12-15", "price": 1.78 },
+      { "date": "2024-12-22", "price": 1.82 },
+      { "date": "2025-01-02", "price": 1.90 },
+      { "date": "2025-01-05", "price": 1.90 },
+      { "date": "2025-01-08", "price": 1.87 },
+      { "date": "2025-01-10", "price": 1.85 }
+    ]
+  },
+  {
+    "id": "pain-mie-harrys",
+    "name": "Pain de mie Harrys Nature",
+    "category": "Alimentation",
+    "brand": "Harrys",
+    "price": 2.45,
+    "store": "Super U",
+    "territory": "Guadeloupe",
+    "updatedAt": "2025-01-10T14:20:00Z",
+    "imageUrl": "/products/pain-harrys.jpg",
+    "priceHistory": [
+      { "date": "2024-12-15", "price": 2.38 },
+      { "date": "2024-12-20", "price": 2.35 },
+      { "date": "2024-12-28", "price": 2.42 },
+      { "date": "2025-01-03", "price": 2.40 },
+      { "date": "2025-01-07", "price": 2.45 },
+      { "date": "2025-01-10", "price": 2.45 }
+    ]
+  },
+  {
+    "id": "yaourt-danone-nature-x8",
+    "name": "Yaourt nature Danone x8",
+    "category": "Alimentation",
+    "brand": "Danone",
+    "price": 3.20,
+    "store": "E.Leclerc",
+    "territory": "La Réunion",
+    "updatedAt": "2025-01-10T17:15:00Z",
+    "imageUrl": "/products/yaourt-danone.jpg",
+    "priceHistory": [
+      { "date": "2024-12-12", "price": 3.15 },
+      { "date": "2024-12-18", "price": 3.18 },
+      { "date": "2024-12-25", "price": 3.22 },
+      { "date": "2025-01-01", "price": 3.22 },
+      { "date": "2025-01-05", "price": 3.20 },
+      { "date": "2025-01-10", "price": 3.20 }
+    ]
+  },
+  {
+    "id": "bananes-locales-1kg",
+    "name": "Bananes locales 1kg",
+    "category": "Alimentation",
+    "brand": "Local",
+    "price": 2.80,
+    "store": "Score Supermarchés",
+    "territory": "La Réunion",
+    "updatedAt": "2025-01-10T15:45:00Z",
+    "imageUrl": "/products/bananes.jpg",
+    "priceHistory": [
+      { "date": "2024-12-10", "price": 2.60 },
+      { "date": "2024-12-17", "price": 2.75 },
+      { "date": "2024-12-24", "price": 2.90 },
+      { "date": "2025-01-01", "price": 2.85 },
+      { "date": "2025-01-06", "price": 2.80 },
+      { "date": "2025-01-10", "price": 2.80 }
+    ]
+  },
+  {
+    "id": "riz-thai-jasmin-5kg",
+    "name": "Riz Thaï Jasmin 5kg",
+    "category": "Alimentation",
+    "brand": "Tipiak",
+    "price": 12.50,
+    "store": "Carrefour",
+    "territory": "Guyane française",
+    "updatedAt": "2025-01-10T11:30:00Z",
+    "imageUrl": "/products/riz-thai.jpg",
+    "priceHistory": [
+      { "date": "2024-12-08", "price": 11.90 },
+      { "date": "2024-12-15", "price": 12.20 },
+      { "date": "2024-12-22", "price": 12.35 },
+      { "date": "2025-01-01", "price": 12.60 },
+      { "date": "2025-01-05", "price": 12.50 },
+      { "date": "2025-01-10", "price": 12.50 }
+    ]
+  },
+  {
+    "id": "coca-cola-33cl-x6",
+    "name": "Coca-Cola 33cl x6",
+    "category": "Boissons",
+    "brand": "Coca-Cola",
+    "price": 4.95,
+    "store": "Leader Price",
+    "territory": "Martinique",
+    "updatedAt": "2025-01-10T13:20:00Z",
+    "imageUrl": "/products/coca-cola.jpg",
+    "priceHistory": [
+      { "date": "2024-12-10", "price": 4.80 },
+      { "date": "2024-12-18", "price": 4.85 },
+      { "date": "2024-12-26", "price": 4.90 },
+      { "date": "2025-01-02", "price": 4.95 },
+      { "date": "2025-01-07", "price": 4.95 },
+      { "date": "2025-01-10", "price": 4.95 }
+    ]
+  },
+  {
+    "id": "eau-cristaline-pack-6x1-5l",
+    "name": "Eau Cristaline Pack 6x1.5L",
+    "category": "Boissons",
+    "brand": "Cristaline",
+    "price": 3.60,
+    "store": "Hyper U",
+    "territory": "Guadeloupe",
+    "updatedAt": "2025-01-10T10:15:00Z",
+    "imageUrl": "/products/eau-cristaline.jpg",
+    "priceHistory": [
+      { "date": "2024-12-05", "price": 3.45 },
+      { "date": "2024-12-12", "price": 3.50 },
+      { "date": "2024-12-20", "price": 3.55 },
+      { "date": "2024-12-28", "price": 3.60 },
+      { "date": "2025-01-05", "price": 3.60 },
+      { "date": "2025-01-10", "price": 3.60 }
+    ]
+  },
+  {
+    "id": "shampoing-head-shoulders-400ml",
+    "name": "Shampoing Head & Shoulders 400ml",
+    "category": "Hygiène",
+    "brand": "Head & Shoulders",
+    "price": 6.80,
+    "store": "Monoprix",
+    "territory": "Polynésie française",
+    "updatedAt": "2025-01-10T12:40:00Z",
+    "imageUrl": "/products/shampoing-hs.jpg",
+    "priceHistory": [
+      { "date": "2024-12-01", "price": 6.50 },
+      { "date": "2024-12-10", "price": 6.65 },
+      { "date": "2024-12-18", "price": 6.75 },
+      { "date": "2024-12-27", "price": 6.80 },
+      { "date": "2025-01-04", "price": 6.80 },
+      { "date": "2025-01-10", "price": 6.80 }
+    ]
+  },
+  {
+    "id": "dentifrice-colgate-75ml",
+    "name": "Dentifrice Colgate Total 75ml",
+    "category": "Hygiène",
+    "brand": "Colgate",
+    "price": 3.45,
+    "store": "Casino",
+    "territory": "Nouvelle-Calédonie",
+    "updatedAt": "2025-01-10T14:55:00Z",
+    "imageUrl": "/products/dentifrice-colgate.jpg",
+    "priceHistory": [
+      { "date": "2024-11-30", "price": 3.25 },
+      { "date": "2024-12-08", "price": 3.30 },
+      { "date": "2024-12-16", "price": 3.40 },
+      { "date": "2024-12-24", "price": 3.45 },
+      { "date": "2025-01-02", "price": 3.45 },
+      { "date": "2025-01-10", "price": 3.45 }
+    ]
+  },
+  {
+    "id": "gel-douche-dove-250ml",
+    "name": "Gel douche Dove 250ml",
+    "category": "Hygiène",
+    "brand": "Dove",
+    "price": 4.20,
+    "store": "Vindémia",
+    "territory": "Martinique",
+    "updatedAt": "2025-01-10T16:10:00Z",
+    "imageUrl": "/products/gel-douche-dove.jpg",
+    "priceHistory": [
+      { "date": "2024-12-03", "price": 4.05 },
+      { "date": "2024-12-11", "price": 4.10 },
+      { "date": "2024-12-19", "price": 4.15 },
+      { "date": "2024-12-28", "price": 4.20 },
+      { "date": "2025-01-06", "price": 4.20 },
+      { "date": "2025-01-10", "price": 4.20 }
+    ]
+  },
+  {
+    "id": "lessive-ariel-pods-32-doses",
+    "name": "Lessive Ariel Pods 32 doses",
+    "category": "Entretien",
+    "brand": "Ariel",
+    "price": 11.90,
+    "store": "E.Leclerc",
+    "territory": "Guadeloupe",
+    "updatedAt": "2025-01-10T09:25:00Z",
+    "imageUrl": "/products/lessive-ariel.jpg",
+    "priceHistory": [
+      { "date": "2024-11-28", "price": 11.50 },
+      { "date": "2024-12-06", "price": 11.65 },
+      { "date": "2024-12-14", "price": 11.80 },
+      { "date": "2024-12-23", "price": 11.90 },
+      { "date": "2025-01-01", "price": 11.90 },
+      { "date": "2025-01-10", "price": 11.90 }
+    ]
+  },
+  {
+    "id": "nettoyant-multi-usage-cif-750ml",
+    "name": "Nettoyant multi-usage CIF 750ml",
+    "category": "Entretien",
+    "brand": "CIF",
+    "price": 3.85,
+    "store": "Champion",
+    "territory": "Mayotte",
+    "updatedAt": "2025-01-10T15:30:00Z",
+    "imageUrl": "/products/cif-nettoyant.jpg",
+    "priceHistory": [
+      { "date": "2024-12-01", "price": 3.70 },
+      { "date": "2024-12-09", "price": 3.75 },
+      { "date": "2024-12-17", "price": 3.80 },
+      { "date": "2024-12-26", "price": 3.85 },
+      { "date": "2025-01-03", "price": 3.85 },
+      { "date": "2025-01-10", "price": 3.85 }
+    ]
+  },
+  {
+    "id": "papier-toilette-lotus-12-rouleaux",
+    "name": "Papier toilette Lotus 12 rouleaux",
+    "category": "Hygiène",
+    "brand": "Lotus",
+    "price": 8.50,
+    "store": "Super U",
+    "territory": "La Réunion",
+    "updatedAt": "2025-01-10T11:15:00Z",
+    "imageUrl": "/products/papier-lotus.jpg",
+    "priceHistory": [
+      { "date": "2024-11-25", "price": 8.20 },
+      { "date": "2024-12-03", "price": 8.30 },
+      { "date": "2024-12-12", "price": 8.40 },
+      { "date": "2024-12-21", "price": 8.50 },
+      { "date": "2024-12-30", "price": 8.50 },
+      { "date": "2025-01-10", "price": 8.50 }
+    ]
+  },
+  {
+    "id": "biere-dodo-33cl-x6",
+    "name": "Bière Dodo 33cl x6",
+    "category": "Boissons",
+    "brand": "Dodo",
+    "price": 7.20,
+    "store": "Score Supermarchés",
+    "territory": "La Réunion",
+    "updatedAt": "2025-01-10T17:45:00Z",
+    "imageUrl": "/products/biere-dodo.jpg",
+    "priceHistory": [
+      { "date": "2024-12-02", "price": 6.95 },
+      { "date": "2024-12-10", "price": 7.05 },
+      { "date": "2024-12-18", "price": 7.15 },
+      { "date": "2024-12-27", "price": 7.20 },
+      { "date": "2025-01-05", "price": 7.20 },
+      { "date": "2025-01-10", "price": 7.20 }
+    ]
+  },
+  {
+    "id": "huile-tournesol-lesieur-1l",
+    "name": "Huile de tournesol Lesieur 1L",
+    "category": "Alimentation",
+    "brand": "Lesieur",
+    "price": 3.95,
+    "store": "Carrefour",
+    "territory": "Guyane française",
+    "updatedAt": "2025-01-10T13:50:00Z",
+    "imageUrl": "/products/huile-lesieur.jpg",
+    "priceHistory": [
+      { "date": "2024-11-20", "price": 3.75 },
+      { "date": "2024-11-28", "price": 3.80 },
+      { "date": "2024-12-06", "price": 3.85 },
+      { "date": "2024-12-15", "price": 3.90 },
+      { "date": "2024-12-24", "price": 3.95 },
+      { "date": "2025-01-10", "price": 3.95 }
+    ]
+  },
+  {
+    "id": "cafe-lor-moulu-250g",
+    "name": "Café moulu L'OR Espresso 250g",
+    "category": "Boissons",
+    "brand": "L'OR",
+    "price": 5.85,
+    "store": "Monoprix",
+    "territory": "Nouvelle-Calédonie",
+    "updatedAt": "2025-01-10T10:30:00Z",
+    "imageUrl": "/products/cafe-lor.jpg",
+    "priceHistory": [
+      { "date": "2024-11-15", "price": 5.60 },
+      { "date": "2024-11-25", "price": 5.70 },
+      { "date": "2024-12-05", "price": 5.75 },
+      { "date": "2024-12-15", "price": 5.80 },
+      { "date": "2024-12-25", "price": 5.85 },
+      { "date": "2025-01-10", "price": 5.85 }
+    ]
+  },
+  {
+    "id": "sucre-blanc-daddy-1kg",
+    "name": "Sucre blanc Daddy 1kg",
+    "category": "Alimentation",
+    "brand": "Daddy",
+    "price": 2.15,
+    "store": "Leader Price",
+    "territory": "Guadeloupe",
+    "updatedAt": "2025-01-10T14:05:00Z",
+    "imageUrl": "/products/sucre-daddy.jpg",
+    "priceHistory": [
+      { "date": "2024-11-10", "price": 1.95 },
+      { "date": "2024-11-20", "price": 2.00 },
+      { "date": "2024-12-01", "price": 2.05 },
+      { "date": "2024-12-12", "price": 2.10 },
+      { "date": "2024-12-22", "price": 2.15 },
+      { "date": "2025-01-10", "price": 2.15 }
+    ]
+  },
+  {
+    "id": "pates-barilla-500g",
+    "name": "Pâtes Barilla Penne 500g",
+    "category": "Alimentation",
+    "brand": "Barilla",
+    "price": 2.65,
+    "store": "Hyper U",
+    "territory": "Martinique",
+    "updatedAt": "2025-01-10T16:25:00Z",
+    "imageUrl": "/products/pates-barilla.jpg",
+    "priceHistory": [
+      { "date": "2024-11-05", "price": 2.45 },
+      { "date": "2024-11-15", "price": 2.50 },
+      { "date": "2024-11-26", "price": 2.55 },
+      { "date": "2024-12-07", "price": 2.60 },
+      { "date": "2024-12-18", "price": 2.65 },
+      { "date": "2025-01-10", "price": 2.65 }
+    ]
+  },
+  {
+    "id": "conserve-thon-saupiquet-160g",
+    "name": "Thon au naturel Saupiquet 160g",
+    "category": "Alimentation",
+    "brand": "Saupiquet",
+    "price": 2.35,
+    "store": "Casino",
+    "territory": "Polynésie française",
+    "updatedAt": "2025-01-10T12:20:00Z",
+    "imageUrl": "/products/thon-saupiquet.jpg",
+    "priceHistory": [
+      { "date": "2024-10-30", "price": 2.20 },
+      { "date": "2024-11-10", "price": 2.25 },
+      { "date": "2024-11-22", "price": 2.30 },
+      { "date": "2024-12-03", "price": 2.35 },
+      { "date": "2024-12-15", "price": 2.35 },
+      { "date": "2025-01-10", "price": 2.35 }
+    ]
+  },
+  {
+    "id": "fromage-president-emmental-200g",
+    "name": "Emmental Président 200g",
+    "category": "Alimentation",
+    "brand": "Président",
+    "price": 4.80,
+    "store": "Vindémia",
+    "territory": "Guadeloupe",
+    "updatedAt": "2025-01-10T15:10:00Z",
+    "imageUrl": "/products/emmental-president.jpg",
+    "priceHistory": [
+      { "date": "2024-10-25", "price": 4.60 },
+      { "date": "2024-11-05", "price": 4.65 },
+      { "date": "2024-11-18", "price": 4.70 },
+      { "date": "2024-11-30", "price": 4.75 },
+      { "date": "2024-12-12", "price": 4.80 },
+      { "date": "2025-01-10", "price": 4.80 }
+    ]
+  },
+  {
+    "id": "savon-marseille-rampal-100g",
+    "name": "Savon de Marseille Rampal 100g",
+    "category": "Hygiène",
+    "brand": "Rampal Latour",
+    "price": 2.90,
+    "store": "E.Leclerc",
+    "territory": "Mayotte",
+    "updatedAt": "2025-01-10T11:40:00Z",
+    "imageUrl": "/products/savon-marseille.jpg",
+    "priceHistory": [
+      { "date": "2024-10-20", "price": 2.75 },
+      { "date": "2024-11-01", "price": 2.80 },
+      { "date": "2024-11-15", "price": 2.85 },
+      { "date": "2024-11-29", "price": 2.90 },
+      { "date": "2024-12-10", "price": 2.90 },
+      { "date": "2025-01-10", "price": 2.90 }
+    ]
+  },
+  {
+    "id": "biscuits-lu-petit-beurre-200g",
+    "name": "Biscuits LU Petit Beurre 200g",
+    "category": "Alimentation",
+    "brand": "LU",
+    "price": 2.40,
+    "store": "Champion",
+    "territory": "Guyane française",
+    "updatedAt": "2025-01-10T13:35:00Z",
+    "imageUrl": "/products/biscuits-lu.jpg",
+    "priceHistory": [
+      { "date": "2024-10-15", "price": 2.25 },
+      { "date": "2024-10-28", "price": 2.30 },
+      { "date": "2024-11-12", "price": 2.35 },
+      { "date": "2024-11-26", "price": 2.40 },
+      { "date": "2024-12-08", "price": 2.40 },
+      { "date": "2025-01-10", "price": 2.40 }
+    ]
+  },
+  {
+    "id": "jus-orange-tropicana-1l",
+    "name": "Jus d'orange Tropicana 1L",
+    "category": "Boissons",
+    "brand": "Tropicana",
+    "price": 3.25,
+    "store": "Super U",
+    "territory": "La Réunion",
+    "updatedAt": "2025-01-10T17:00:00Z",
+    "imageUrl": "/products/jus-tropicana.jpg",
+    "priceHistory": [
+      { "date": "2024-10-10", "price": 3.05 },
+      { "date": "2024-10-24", "price": 3.10 },
+      { "date": "2024-11-08", "price": 3.15 },
+      { "date": "2024-11-22", "price": 3.20 },
+      { "date": "2024-12-05", "price": 3.25 },
+      { "date": "2025-01-10", "price": 3.25 }
+    ]
+  },
+  {
+    "id": "cereales-nesquik-375g",
+    "name": "Céréales Nesquik 375g",
+    "category": "Alimentation",
+    "brand": "Nestlé",
+    "price": 4.15,
+    "store": "Carrefour",
+    "territory": "Polynésie française",
+    "updatedAt": "2025-01-10T10:45:00Z",
+    "imageUrl": "/products/cereales-nesquik.jpg",
+    "priceHistory": [
+      { "date": "2024-10-05", "price": 3.95 },
+      { "date": "2024-10-20", "price": 4.00 },
+      { "date": "2024-11-04", "price": 4.05 },
+      { "date": "2024-11-18", "price": 4.10 },
+      { "date": "2024-12-01", "price": 4.15 },
+      { "date": "2025-01-10", "price": 4.15 }
+    ]
+  },
+  {
+    "id": "lessive-liquide-skip-1-5l",
+    "name": "Lessive liquide Skip 1.5L",
+    "category": "Entretien",
+    "brand": "Skip",
+    "price": 8.90,
+    "store": "Score Supermarchés",
+    "territory": "La Réunion",
+    "updatedAt": "2025-01-10T14:50:00Z",
+    "imageUrl": "/products/lessive-skip.jpg",
+    "priceHistory": [
+      { "date": "2024-09-30", "price": 8.60 },
+      { "date": "2024-10-15", "price": 8.70 },
+      { "date": "2024-11-01", "price": 8.80 },
+      { "date": "2024-11-20", "price": 8.85 },
+      { "date": "2024-12-10", "price": 8.90 },
+      { "date": "2025-01-10", "price": 8.90 }
+    ]
+  }
+]

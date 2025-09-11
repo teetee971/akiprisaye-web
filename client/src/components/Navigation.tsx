@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useLocation } from "wouter";
+import { Link, useLocation } from "react-router-dom";
 import { Home, MapPin, Trophy, Search, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -9,7 +9,7 @@ interface NavigationProps {
 }
 
 export default function Navigation({ onSearch }: NavigationProps) {
-  const [location] = useLocation();
+  const location = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
 
@@ -30,9 +30,9 @@ export default function Navigation({ onSearch }: NavigationProps) {
     <nav className="flex flex-col space-y-2">
       {navigationItems.map((item) => {
         const Icon = item.icon;
-        const isActive = location === item.path;
+        const isActive = location.pathname === item.path;
         return (
-          <Link key={item.path} href={item.path}>
+          <Link key={item.path} to={item.path}>
             <Button
               variant={isActive ? "secondary" : "ghost"}
               className="w-full justify-start gap-3"
@@ -127,9 +127,9 @@ export default function Navigation({ onSearch }: NavigationProps) {
           <div className="flex justify-around py-2">
             {navigationItems.map((item) => {
               const Icon = item.icon;
-              const isActive = location === item.path;
+              const isActive = location.pathname === item.path;
               return (
-                <Link key={item.path} href={item.path}>
+                <Link key={item.path} to={item.path}>
                   <Button
                     variant={isActive ? "secondary" : "ghost"}
                     size="sm"

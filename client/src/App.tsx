@@ -1,4 +1,4 @@
-import { Switch, Route } from "wouter";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -13,13 +13,13 @@ import NotFound from "@/pages/not-found";
 
 function Router() {
   return (
-    <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/prix" component={PricePage} />
-      <Route path="/carte" component={MapPage} />
-      <Route path="/palmares" component={RankingPage} />
-      <Route component={NotFound} />
-    </Switch>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/prix" element={<PricePage />} />
+      <Route path="/carte" element={<MapPage />} />
+      <Route path="/palmares" element={<RankingPage />} />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 }
 
@@ -30,35 +30,37 @@ function App() {
   };
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <div className="flex min-h-screen bg-background">
-          {/* Desktop Sidebar */}
-          <div className="hidden md:block">
-            <Navigation onSearch={handleSearch} />
-          </div>
-
-          {/* Main Content */}
-          <div className="flex-1 md:ml-0">
-            {/* Mobile Navigation */}
-            <div className="md:hidden">
+    <BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <div className="flex min-h-screen bg-background">
+            {/* Desktop Sidebar */}
+            <div className="hidden md:block">
               <Navigation onSearch={handleSearch} />
             </div>
 
-            {/* Desktop Header */}
-            <div className="hidden md:flex items-center justify-end p-4 border-b border-border">
-              <ThemeToggle />
-            </div>
+            {/* Main Content */}
+            <div className="flex-1 md:ml-0">
+              {/* Mobile Navigation */}
+              <div className="md:hidden">
+                <Navigation onSearch={handleSearch} />
+              </div>
 
-            {/* Page Content */}
-            <main className="flex-1">
-              <Router />
-            </main>
+              {/* Desktop Header */}
+              <div className="hidden md:flex items-center justify-end p-4 border-b border-border">
+                <ThemeToggle />
+              </div>
+
+              {/* Page Content */}
+              <main className="flex-1">
+                <Router />
+              </main>
+            </div>
           </div>
-        </div>
-        <Toaster />
-      </TooltipProvider>
-    </QueryClientProvider>
+          <Toaster />
+        </TooltipProvider>
+      </QueryClientProvider>
+    </BrowserRouter>
   );
 }
 
