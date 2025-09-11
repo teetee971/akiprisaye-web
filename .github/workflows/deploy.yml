@@ -36,7 +36,7 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: akiprisaye       # <-- nom EXACT du projet Pages
-          directory: dist               # <-- dossier de sortie Vite
+          directory: dist/public        # <-- dossier de sortie Vite correct
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           # (optionnel) true sur les PR pour créer un preview
           wranglerVersion: '3'
