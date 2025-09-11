@@ -1,0 +1,112 @@
+[
+  {
+    "id": "carrefour",
+    "name": "Carrefour",
+    "territories": ["Guadeloupe", "Martinique", "Guyane française", "La Réunion", "Mayotte", "Polynésie française"],
+    "averageScore": 4.2,
+    "priceIndex": 1.05,
+    "stabilityScore": 4.5,
+    "availabilityScore": 4.6,
+    "logo": "/logos/carrefour.png",
+    "storeCount": 28
+  },
+  {
+    "id": "super-u",
+    "name": "Super U",
+    "territories": ["Guadeloupe", "Martinique", "La Réunion", "Polynésie française"],
+    "averageScore": 4.0,
+    "priceIndex": 1.02,
+    "stabilityScore": 4.3,
+    "availabilityScore": 4.2,
+    "logo": "/logos/super-u.png",
+    "storeCount": 35
+  },
+  {
+    "id": "leclerc",
+    "name": "E.Leclerc",
+    "territories": ["Guadeloupe", "Martinique", "Guyane française", "La Réunion", "Nouvelle-Calédonie"],
+    "averageScore": 4.3,
+    "priceIndex": 0.98,
+    "stabilityScore": 4.4,
+    "availabilityScore": 4.5,
+    "logo": "/logos/leclerc.png",
+    "storeCount": 24
+  },
+  {
+    "id": "leader-price",
+    "name": "Leader Price",
+    "territories": ["Guadeloupe", "Martinique", "La Réunion", "Mayotte"],
+    "averageScore": 3.8,
+    "priceIndex": 0.92,
+    "stabilityScore": 4.0,
+    "availabilityScore": 3.9,
+    "logo": "/logos/leader-price.png",
+    "storeCount": 42
+  },
+  {
+    "id": "casino",
+    "name": "Casino",
+    "territories": ["Guadeloupe", "Martinique", "La Réunion", "Nouvelle-Calédonie"],
+    "averageScore": 3.9,
+    "priceIndex": 1.08,
+    "stabilityScore": 4.1,
+    "availabilityScore": 4.0,
+    "logo": "/logos/casino.png",
+    "storeCount": 19
+  },
+  {
+    "id": "hyper-u",
+    "name": "Hyper U",
+    "territories": ["Guadeloupe", "Martinique", "La Réunion"],
+    "averageScore": 4.1,
+    "priceIndex": 1.03,
+    "stabilityScore": 4.2,
+    "availabilityScore": 4.4,
+    "logo": "/logos/hyper-u.png",
+    "storeCount": 8
+  },
+  {
+    "id": "score",
+    "name": "Score Supermarchés",
+    "territories": ["La Réunion"],
+    "averageScore": 4.4,
+    "priceIndex": 0.96,
+    "stabilityScore": 4.6,
+    "availabilityScore": 4.3,
+    "logo": "/logos/score.png",
+    "storeCount": 18
+  },
+  {
+    "id": "vindemia",
+    "name": "Vindémia",
+    "territories": ["Guadeloupe", "Martinique"],
+    "averageScore": 4.0,
+    "priceIndex": 1.01,
+    "stabilityScore": 4.2,
+    "availabilityScore": 4.1,
+    "logo": "/logos/vindemia.png",
+    "storeCount": 12
+  },
+  {
+    "id": "monoprix",
+    "name": "Monoprix",
+    "territories": ["Guadeloupe", "Martinique", "La Réunion", "Polynésie française", "Nouvelle-Calédonie"],
+    "averageScore": 4.1,
+    "priceIndex": 1.15,
+    "stabilityScore": 4.3,
+    "availabilityScore": 4.2,
+    "logo": "/logos/monoprix.png",
+    "storeCount": 16
+  },
+  {
+    "id": "champion",
+    "name": "Champion",
+    "territories": ["Guyane française", "Mayotte", "Polynésie française"],
+    "averageScore": 3.7,
+    "priceIndex": 1.07,
+    "stabilityScore": 3.9,
+    "availabilityScore": 3.8,
+    "logo": "/logos/champion.png",
+    "storeCount": 14
+  }
+]

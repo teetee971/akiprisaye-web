@@ -1,0 +1,65 @@
+[
+  {
+    "id": "guadeloupe",
+    "name": "Guadeloupe",
+    "lat": 16.2650,
+    "lng": -61.5510,
+    "population": 384239,
+    "priceIndex": 1.35,
+    "storeCount": 124
+  },
+  {
+    "id": "martinique",
+    "name": "Martinique",
+    "lat": 14.6415,
+    "lng": -61.0242,
+    "population": 364508,
+    "priceIndex": 1.32,
+    "storeCount": 118
+  },
+  {
+    "id": "guyane",
+    "name": "Guyane française",
+    "lat": 3.9339,
+    "lng": -53.1258,
+    "population": 294436,
+    "priceIndex": 1.45,
+    "storeCount": 87
+  },
+  {
+    "id": "reunion",
+    "name": "La Réunion",
+    "lat": -21.1151,
+    "lng": 55.5364,
+    "population": 859959,
+    "priceIndex": 1.28,
+    "storeCount": 196
+  },
+  {
+    "id": "mayotte",
+    "name": "Mayotte",
+    "lat": -12.8275,
+    "lng": 45.1662,
+    "population": 279471,
+    "priceIndex": 1.52,
+    "storeCount": 45
+  },
+  {
+    "id": "polynesie",
+    "name": "Polynésie française",
+    "lat": -17.6797,
+    "lng": -149.4068,
+    "population": 280908,
+    "priceIndex": 1.68,
+    "storeCount": 78
+  },
+  {
+    "id": "nouvelle-caledonie",
+    "name": "Nouvelle-Calédonie",
+    "lat": -20.9043,
+    "lng": 165.6180,
+    "population": 271407,
+    "priceIndex": 1.58,
+    "storeCount": 89
+  }
+]
