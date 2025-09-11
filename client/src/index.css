@@ -291,4 +291,88 @@
   .border.hover-elevate:not(.no-hover-interaction-elevate)::after {
     inset: -1px;
   }
+
+  /* Styles spécifiques pour Leaflet map */
+  .leaflet-container {
+    font-family: var(--font-sans);
+    background: hsl(var(--background));
+  }
+
+  .leaflet-popup-content-wrapper {
+    background: hsl(var(--card));
+    color: hsl(var(--card-foreground));
+    border-radius: var(--radius);
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    border: 1px solid hsl(var(--border));
+  }
+
+  .leaflet-popup-content {
+    margin: 0;
+    font-family: var(--font-sans);
+    line-height: 1.5;
+  }
+
+  .leaflet-popup-tip {
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+  }
+
+  .leaflet-control-zoom a {
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
+    border: 1px solid hsl(var(--border));
+    transition: all 0.2s ease;
+  }
+
+  .leaflet-control-zoom a:hover {
+    background: hsl(var(--accent));
+    color: hsl(var(--accent-foreground));
+    border-color: hsl(var(--accent));
+  }
+
+  .leaflet-control-attribution {
+    background: hsl(var(--background) / 0.8);
+    color: hsl(var(--muted-foreground));
+    border-color: hsl(var(--border));
+    font-size: 11px;
+  }
+
+  .leaflet-control-attribution a {
+    color: hsl(var(--primary));
+  }
+
+  /* Marqueur personnalisé */
+  .custom-territory-marker {
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    cursor: pointer;
+  }
+
+  .custom-territory-marker:hover {
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+    transform: scale(1.05);
+    transition: all 0.2s ease-in-out;
+  }
+
+  /* Popup territoire personnalisée */
+  .territory-popup .leaflet-popup-content-wrapper {
+    min-width: 280px;
+    max-width: 320px;
+    padding: 0;
+  }
+
+  .territory-popup .leaflet-popup-content {
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .territory-popup .leaflet-popup-close-button {
+    color: hsl(var(--muted-foreground));
+    font-size: 16px;
+    padding: 4px 8px;
+  }
+
+  .territory-popup .leaflet-popup-close-button:hover {
+    color: hsl(var(--foreground));
+    background: hsl(var(--accent));
+  }
 }
