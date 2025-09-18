@@ -1,25 +1,62 @@
-.DS_Store
+# =========================
+# Node.js & Vite
+# =========================
 node_modules/
 dist/
-.cache/
-.env
-.env.*
-serviceAccount*.json
-firebase-adminsdk*.json
+dist-ssr/
+*.local
+
+# =========================
+# Logs & Debug
+# =========================
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 *.log
 
-# Sauvegardes nano
-public/index.html.save*
-*.save
-push.sh
-push.sh
-push.sh
-push.sh
-push.sh
-push.sh
+# =========================
+# Environnements & Secrets
+# =========================
+.env
+.env.*
+!.env.example
 
-# Stop anciennes refs submodule
-akiprisaye-web/
-promo-finder/akiprisaye-web/
+# =========================
+# OS & Éditeurs
+# =========================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# =========================
+# Build / Output / Archives
+# =========================
 *.zip
-dist/
+*.tar.gz
+*.tgz
+*.gz
+
+# =========================
+# Termux / Mobile
+# =========================
+*.apk
+*.aab
+*.deb
+*.rpm
+
+# =========================
+# Tests / Coverage
+# =========================
+coverage/
+*.lcov
+
+# =========================
+# Cloudflare / Deploy
+# =========================
+.cache/
+functions/.netlify/
+functions/node_modules/
