@@ -21,3 +21,5 @@ push.sh
 # Stop anciennes refs submodule
 akiprisaye-web/
 promo-finder/akiprisaye-web/
+*.zip
+dist/
