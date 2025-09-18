@@ -60,3 +60,5 @@ coverage/
 .cache/
 functions/.netlify/
 functions/node_modules/
+dist/
+*.zip
