@@ -102,3 +102,28 @@ else
 fi
 
 ok "Terminé. Ouvre le tableau des déploiements pour suivre le build."
+#!/bin/bash
+# 🚀 Script de déploiement automatique A KI PRI SA YÉ
+
+echo "📦 Nettoyage des sorties..."
+rm -rf dist *.zip
+
+echo "📝 Mise à jour du .gitignore..."
+echo "dist/" >> .gitignore
+echo "*.zip" >> .gitignore
+git add .gitignore
+git commit -m "chore: update .gitignore for dist and zip outputs" || true
+
+echo "⚙️ Installation des dépendances..."
+npm ci
+
+echo "🏗️ Build du client..."
+npm run build --if-present
+
+echo "📤 Commit et push vers main..."
+git add .
+git commit -m "build: déploiement automatique vers Cloudflare Pages" || true
+git push origin main
+
+echo "✅ Déploiement terminé !"
+echo "🔗 Vérifie la page : https://akiprisaye.pages.dev"
