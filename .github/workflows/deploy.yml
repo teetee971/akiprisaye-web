@@ -1,28 +1,34 @@
-name: Deploy to Cloudflare Pages
+name: 🚀 Déployer sur Cloudflare Pages
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: 📥 Checkout repo
         uses: actions/checkout@v4
 
-      # Build très simple: on copie /public vers /dist
-      - name: Build static site
-        run: |
-          rm -rf dist
-          mkdir dist
-          cp -r public/* dist/ || true
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
 
-      - name: Publish to Cloudflare Pages
+      - name: 📦 Installer dépendances
+        run: npm ci
+
+      - name: 🏗️ Build
+        run: npm run build
+
+      - name: 🚀 Déploiement Cloudflare Pages
         uses: cloudflare/pages-action@v1
         with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: ${{ secrets.PROJECT_NAME }}
-          directory: dist
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          projectName: akiprisaye
+          directory: dist/public
