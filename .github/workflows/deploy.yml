@@ -10,7 +10,7 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: 📥 Checkout repo
+      - name: 📂 Checkout repo
         uses: actions/checkout@v4
 
       - name: ⚙️ Setup Node.js
@@ -30,5 +30,12 @@ jobs:
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          projectName: akiprisaye
-          directory: dist/public
+          projectName: ${{ secrets.CF_PROJECT_NAME }}
+          directory: dist
+
+      - name: 🧹 Purge cache Cloudflare
+        run: |
+          curl -X POST "https://api.cloudflare.com/client/v4/zones/${{ secrets.CF_ZONE_ID }}/purge_cache" \
+            -H "Authorization: Bearer ${{ secrets.CF_API_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            --data '{"purge_everything":true}'
