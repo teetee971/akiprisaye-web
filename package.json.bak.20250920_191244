@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "vite --host",
-    "build": "vite build",
+    "build": "vite build --outDir dist/client",
     "build:client": "vite build --outDir dist/client",
     "preview": "vite preview --host",
     "check": "tsc --noEmit",
@@ -16,14 +16,11 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.13",
-    "@vitejs/plugin-react": "^5.0.3",
     "autoprefixer": "^10.4.21",
     "esbuild": "^0.21.5",
-    "postcss": "^8.5.6",
     "rollup": "^4.50.2",
     "tailwindcss": "^4.1.13",
     "typescript": "^5.6.3",
-    "vite": "^5.4.20"
-  },
-  "type": "module"
+    "vite": "^5.4.10"
+  }
 }
