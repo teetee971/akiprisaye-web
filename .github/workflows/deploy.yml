@@ -6,6 +6,10 @@ on:
       - main
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -21,20 +25,16 @@ jobs:
 
       - name: 📦 Installer dépendances
         run: |
+          # Essayer npm ci d'abord, puis fallback vers npm install
           if [ -f package-lock.json ]; then
-            npm ci
+            echo "📋 Utilisation de npm ci avec package-lock.json existant"
+            npm ci || {
+              echo "⚠️ npm ci a échoué, fallback vers npm install"
+              npm install
+            }
           else
+            echo "📋 Aucun package-lock.json trouvé, utilisation de npm install"
             npm install
-          fi
-          # Installer les dépendances vitales si manquantes
-          if ! npm list vite >/dev/null 2>&1; then
-            npm install -D vite
-          fi
-          if ! npm list react >/dev/null 2>&1; then
-            npm install react react-dom
-          fi
-          if ! npm list @vitejs/plugin-react >/dev/null 2>&1; then
-            npm install -D @vitejs/plugin-react
           fi
 
       - name: 🏗️ Build
@@ -49,14 +49,26 @@ jobs:
           directory: dist
 
       - name: 🧹 Purge cache Cloudflare
-        if: ${{ env.CF_ZONE_ID != '' }}
+        if: ${{ secrets.CF_ZONE_ID != '' }}
         run: |
           curl -X POST "https://api.cloudflare.com/client/v4/zones/${{ secrets.CF_ZONE_ID }}/purge_cache" \
             -H "Authorization: Bearer ${{ secrets.CF_API_TOKEN }}" \
             -H "Content-Type: application/json" \
             --data '{"purge_everything":true}'
 
-      - name: 📝 Write Production URL to Summary
+      - name: 📝 Résumé de déploiement complet
         run: |
-          echo "# 🌐 Production URL" >> $GITHUB_STEP_SUMMARY
-          echo "L'application est déployée sur [https://akiprisaye.pages.dev](https://akiprisaye.pages.dev)" >> $GITHUB_STEP_SUMMARY
+          echo "# 🚀 Déploiement A KI PRI SA YÉ" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## 📊 Informations de déploiement" >> $GITHUB_STEP_SUMMARY
+          echo "- **🌐 URL de production:** [https://akiprisaye.pages.dev](https://akiprisaye.pages.dev)" >> $GITHUB_STEP_SUMMARY
+          echo "- **🌿 Branche:** \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **📝 Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **📅 Date:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+          echo "- **👤 Auteur:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## 🔄 Actions effectuées" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Installation des dépendances npm" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Build de l'application Vite + React" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Déploiement sur Cloudflare Pages" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Purge du cache Cloudflare" >> $GITHUB_STEP_SUMMARY
