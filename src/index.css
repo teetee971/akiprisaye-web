@@ -1,7 +1,78 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Basic styles for the tickets admin */
+html, body, #root { 
+  height: 100%; 
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
 
-/* Styles globaux optionnels */
-html, body, #root { height: 100%; }
-body { @apply bg-slate-50 text-slate-900 antialiased; }
+/* Simple utilities for the TicketsAdmin component */
+.bg-gray-900 { background-color: #111827; }
+.text-white { color: #ffffff; }
+.min-h-screen { min-height: 100vh; }
+.p-6 { padding: 1.5rem; }
+.p-2 { padding: 0.5rem; }
+.text-2xl { font-size: 1.5rem; line-height: 2rem; }
+.font-bold { font-weight: 700; }
+.mb-4 { margin-bottom: 1rem; }
+.flex { display: flex; }
+.gap-2 { gap: 0.5rem; }
+.flex-1 { flex: 1 1 0%; }
+.rounded { border-radius: 0.375rem; }
+.bg-gray-800 { background-color: #1f2937; }
+.border { border-width: 1px; }
+.border-gray-700 { border-color: #374151; }
+.bg-green-600 { background-color: #059669; }
+.hover\:bg-green-700:hover { background-color: #047857; }
+.px-4 { padding-left: 1rem; padding-right: 1rem; }
+.py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+.w-full { width: 100%; }
+.text-left { text-align: left; }
+.border-t { border-top-width: 1px; }
+.bg-transparent { background-color: transparent; }
+.border-b { border-bottom-width: 1px; }
+.border-gray-600 { border-color: #4b5563; }
+.focus\:outline-none:focus { outline: 2px solid transparent; outline-offset: 2px; }
+.bg-red-600 { background-color: #dc2626; }
+.hover\:bg-red-700:hover { background-color: #b91c1c; }
+.px-2 { padding-left: 0.5rem; padding-right: 0.5rem; }
+.py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; }
+
+/* Home page styles */
+.bg-slate-50 { background-color: #f8fafc; }
+.text-slate-900 { color: #0f172a; }
+.antialiased { -webkit-font-smoothing: antialiased; }
+.text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
+.tracking-tight { letter-spacing: -0.025em; }
+.mb-6 { margin-bottom: 1.5rem; }
+.text-center { text-align: center; }
+.text-slate-600 { color: #475569; }
+.gap-4 { gap: 1rem; }
+.rounded-xl { border-radius: 0.75rem; }
+.border-slate-300 { border-color: #cbd5e1; }
+.px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+.w-32 { width: 8rem; }
+.text-right { text-align: right; }
+.bg-sky-600 { background-color: #0284c7; }
+.font-medium { font-weight: 500; }
+.hover\:bg-sky-700:hover { background-color: #0369a1; }
+.px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+.py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+.hover\:bg-gray-900:hover { background-color: #111827; }
+.text-blue-300 { color: #93c5fd; }
+.hover\:text-blue-100:hover { color: #dbeafe; }
+
+/* Table styles */
+table {
+  border-collapse: collapse;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.2s;
+}
+
+input {
+  box-sizing: border-box;
+}
