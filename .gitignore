@@ -62,3 +62,5 @@ functions/.netlify/
 functions/node_modules/
 dist/
 *.zip
+# Backup files created during setup testing
+*.bak.*
