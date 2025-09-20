@@ -1,26 +1,11 @@
 {
   "name": "akiprisaye-web",
-  "version": "1.0.0",
   "private": true,
+  "version": "1.0.0",
+  "license": "MIT",
   "scripts": {
-    "dev": "vite --host",
-    "build": "vite build --outDir dist/client",
-    "build:client": "vite build --outDir dist/client",
-    "preview": "vite preview --host",
-    "check": "tsc --noEmit",
-    "start": "npm run preview"
-  },
-  "dependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
-  },
-  "devDependencies": {
-    "@tailwindcss/postcss": "^4.1.13",
-    "autoprefixer": "^10.4.21",
-    "esbuild": "^0.21.5",
-    "rollup": "^4.50.2",
-    "tailwindcss": "^4.1.13",
-    "typescript": "^5.6.3",
-    "vite": "^5.4.10"
+    "build": "npm run build:darkness && npm run build:functional && node -e \"require('fs').mkdirSync('site/darkness-pro', {recursive:true}); require('fs').mkdirSync('site/functional', {recursive:true});\" && cp -r a-ki-pri-sa-ye-darkness-pro/dist/* site/darkness-pro/ && cp -r a-ki-pri-sa-ye-functional/dist/* site/functional/",
+    "build:darkness": "npm --prefix a-ki-pri-sa-ye-darkness-pro ci || npm --prefix a-ki-pri-sa-ye-darkness-pro install && npm --prefix a-ki-pri-sa-ye-darkness-pro run build -- --base=/darkness-pro/",
+    "build:functional": "npm --prefix a-ki-pri-sa-ye-functional ci || npm --prefix a-ki-pri-sa-ye-functional install && npm --prefix a-ki-pri-sa-ye-functional run build -- --base=/functional/"
   }
 }

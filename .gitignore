@@ -35,6 +35,7 @@ Thumbs.db
 # =========================
 # Build / Output / Archives
 # =========================
+site/
 *.zip
 *.tar.gz
 *.tgz
