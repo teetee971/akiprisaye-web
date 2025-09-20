@@ -20,7 +20,22 @@ jobs:
           cache: 'npm'
 
       - name: 📦 Installer dépendances
-        run: npm ci
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
+          # Installer les dépendances vitales si manquantes
+          if ! npm list vite >/dev/null 2>&1; then
+            npm install -D vite
+          fi
+          if ! npm list react >/dev/null 2>&1; then
+            npm install react react-dom
+          fi
+          if ! npm list @vitejs/plugin-react >/dev/null 2>&1; then
+            npm install -D @vitejs/plugin-react
+          fi
 
       - name: 🏗️ Build
         run: npm run build
@@ -34,8 +49,14 @@ jobs:
           directory: dist
 
       - name: 🧹 Purge cache Cloudflare
+        if: ${{ env.CF_ZONE_ID != '' }}
         run: |
           curl -X POST "https://api.cloudflare.com/client/v4/zones/${{ secrets.CF_ZONE_ID }}/purge_cache" \
             -H "Authorization: Bearer ${{ secrets.CF_API_TOKEN }}" \
             -H "Content-Type: application/json" \
             --data '{"purge_everything":true}'
+
+      - name: 📝 Write Production URL to Summary
+        run: |
+          echo "# 🌐 Production URL" >> $GITHUB_STEP_SUMMARY
+          echo "L'application est déployée sur [https://akiprisaye.pages.dev](https://akiprisaye.pages.dev)" >> $GITHUB_STEP_SUMMARY
