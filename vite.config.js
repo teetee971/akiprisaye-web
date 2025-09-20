@@ -3,5 +3,9 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   plugins: [react()],
-  css: { transformer: "postcss" }
+  resolve: {
+    alias: {
+      "@": new URL("./src", import.meta.url).pathname
+    }
+  }
 });
