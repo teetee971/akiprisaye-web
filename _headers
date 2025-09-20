@@ -1,4 +1,5 @@
 /*
-  X-Frame-Options: SAMEORIGIN
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  Content-Security-Policy: default-src 'self'; img-src 'self' data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';
+  X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
-  Referrer-Policy: same-origin
