@@ -20,10 +20,15 @@ npm run build
 echo "🔍 Vérification du build..."
 ls -lh dist/client
 
-# 5. Commit & push vers main
+# 5. Synchro avec origin/main
+echo "🔄 Synchronisation avec origin/main..."
+git pull --rebase origin main || true
+echo "✅ Synchro locale avec origin/main OK"
+
+# 6. Commit & push vers main
 echo "📤 Commit et push vers origin/main..."
 git add -A
 git commit -m "🚀 build prod auto via codex-web-deploy.sh"
 git push origin main
 
-echo "✅ Déploiement terminé. Cloudflare Pages va builder automatiquement."
+echo "✅ Déploiement terminé. Cloudflare Pages va builder automatiquement.",
