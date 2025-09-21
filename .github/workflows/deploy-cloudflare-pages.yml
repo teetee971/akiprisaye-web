@@ -1,0 +1,37 @@
+name: Deploy to Cloudflare Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies (fix esbuild + tailwind)
+        run: |
+          npm uninstall lightningcss --force || true
+          npm install esbuild@0.21.5 --save-dev --force
+          npm install postcss postcss-cli autoprefixer --save-dev --legacy-peer-deps
+          npm install --legacy-peer-deps
+
+      - name: Build project
+        run: npm run build
+
+      - name: Publish to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          projectName: akiprisaye
+          directory: dist
