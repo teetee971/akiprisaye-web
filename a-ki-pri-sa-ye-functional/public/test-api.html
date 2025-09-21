@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test API Service</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #0b0f19; color: white; }
+        .card { background: rgba(255,255,255,0.1); padding: 20px; margin: 10px 0; border-radius: 8px; }
+        button { background: #4f46e5; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+        .error { background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.5); }
+        .success { background: rgba(34, 197, 94, 0.2); border: 1px solid rgba(34, 197, 94, 0.5); }
+        pre { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 4px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>Test de l'API Service Data.gouv</h1>
+    
+    <div class="card">
+        <h2>Test de recherche de produits</h2>
+        <input type="text" id="searchQuery" placeholder="Rechercher un produit" value="pain">
+        <select id="territory">
+            <option value="guadeloupe">Guadeloupe</option>
+            <option value="martinique">Martinique</option>
+        </select>
+        <button onclick="testSearchProducts()">Rechercher</button>
+        <button onclick="clearCache()">Vider le cache</button>
+    </div>
+    
+    <div class="card">
+        <h2>Test de santé des APIs</h2>
+        <button onclick="testApiHealth()">Vérifier la santé des APIs</button>
+    </div>
+    
+    <div id="results"></div>
+
+    <script type="module">
+        // Import our API service
+        import { searchProducts, clearCache, checkApiHealth } from '/src/services/api.js';
+        
+        window.testSearchProducts = async function() {
+            const resultsDiv = document.getElementById('results');
+            const query = document.getElementById('searchQuery').value;
+            const territory = document.getElementById('territory').value;
+            
+            resultsDiv.innerHTML = '<div class="card">Recherche en cours...</div>';
+            
+            try {
+                const products = await searchProducts(query, territory);
+                resultsDiv.innerHTML = `
+                    <div class="card success">
+                        <h3>Résultats trouvés: ${products.length} produits</h3>
+                        <pre>${JSON.stringify(products, null, 2)}</pre>
+                    </div>
+                `;
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <div class="card error">
+                        <h3>Erreur</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        };
+        
+        window.clearCache = function() {
+            clearCache();
+            document.getElementById('results').innerHTML = '<div class="card success">Cache vidé avec succès</div>';
+        };
+        
+        window.testApiHealth = async function() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<div class="card">Vérification en cours...</div>';
+            
+            try {
+                const health = await checkApiHealth();
+                resultsDiv.innerHTML = `
+                    <div class="card ${health.dataGouv || health.internal ? 'success' : 'error'}">
+                        <h3>État des APIs</h3>
+                        <pre>${JSON.stringify(health, null, 2)}</pre>
+                    </div>
+                `;
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <div class="card error">
+                        <h3>Erreur lors de la vérification</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        };
+    </script>
+</body>
+</html>

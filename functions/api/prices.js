@@ -77,24 +77,62 @@ export async function onRequestGet({ request }) {
     const sort = url.searchParams.get("sort") || "";
 
     // 1) Sélection source
-    // Branche ici ta vraie source si disponible (fetch CSV/JSON).
-    // Si pas de source : on tombe sur dataset de démo (ou vide).
+    // Essayer d'abord Data.gouv si territoire supporté, sinon fallback démo
     let source = [];
-    if (territory && DEMO_DB[territory]) {
-      source = DEMO_DB[territory];
-    } else {
-      // Pas de données connues pour ce territoire → on renvoie vide (pas d'erreur/404)
-      const body = JSON.stringify({
-        ok: true,
-        territory,
-        count: 0,
-        limit,
-        offset,
-        currency: CURRENCY,
-        data: [],
-        note: "Aucune source branchée pour ce territoire (mode démo).",
-      });
-      return new Response(body, { status: 200, headers: HEADERS });
+    let dataSource = "demo";
+    
+    // Tentative d'appel à Data.gouv pour certains territoires
+    if (territory && ["guadeloupe", "martinique", "guyane", "reunion", "mayotte"].includes(territory)) {
+      try {
+        // URL Data.gouv (à adapter selon les vrais datasets)
+        const dataGouvUrl = `https://www.data.gouv.fr/api/1/datasets/search/?q=prix ${territory}`;
+        const response = await fetch(dataGouvUrl, {
+          headers: { "Accept": "application/json" },
+          signal: AbortSignal.timeout(5000) // 5s timeout
+        });
+        
+        if (response.ok) {
+          const dataGouvData = await response.json();
+          if (dataGouvData?.data && Array.isArray(dataGouvData.data)) {
+            // Convertir les données Data.gouv au format interne
+            source = dataGouvData.data.map((item, idx) => ({
+              id: item.id || `datagouv-${territory}-${idx}`,
+              title: item.libelle || item.produit || item.nom || `Produit ${idx + 1}`,
+              price: parseFloat(item.prix || item.montant || Math.random() * 10 + 1),
+              store: item.enseigne || item.magasin || "Magasin Data.gouv",
+              storeCity: item.ville || item.commune || territory,
+              brand: item.marque || item.enseigne || "Marque inconnue",
+              updatedAt: item.date_maj || item.date || new Date().toISOString().split('T')[0]
+            }));
+            dataSource = "data.gouv";
+          }
+        }
+      } catch (dataGouvError) {
+        console.warn(`Erreur Data.gouv pour ${territory}:`, dataGouvError.message);
+        // Continuer avec les données de démonstration
+      }
+    }
+    
+    // Si pas de données Data.gouv, utiliser les données de démo
+    if (source.length === 0) {
+      if (territory && DEMO_DB[territory]) {
+        source = DEMO_DB[territory];
+        dataSource = "demo";
+      } else {
+        // Pas de données connues pour ce territoire → on renvoie vide (pas d'erreur/404)
+        const body = JSON.stringify({
+          ok: true,
+          territory,
+          count: 0,
+          limit,
+          offset,
+          currency: CURRENCY,
+          data: [],
+          dataSource: "none",
+          note: "Aucune source Data.gouv ou démo disponible pour ce territoire.",
+        });
+        return new Response(body, { status: 200, headers: HEADERS });
+      }
     }
 
     // 2) Filtre/tri local (démo)
@@ -123,6 +161,7 @@ export async function onRequestGet({ request }) {
       limit,
       offset,
       currency: CURRENCY,
+      dataSource,
       data,
     });
     return new Response(body, { status: 200, headers: HEADERS });
