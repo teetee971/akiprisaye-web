@@ -3,21 +3,117 @@
 <head>
   <meta charset="UTF-8">
   <title>Comparateur de prix</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+    .results { margin-top: 20px; }
+    .product { border: 1px solid #ddd; margin: 10px 0; padding: 15px; border-radius: 5px; }
+    .price-comparison { display: flex; gap: 20px; margin-top: 10px; }
+    .price-dom { color: #e74c3c; font-weight: bold; }
+    .price-metro { color: #27ae60; font-weight: bold; }
+    .loading { color: #666; font-style: italic; }
+    .error { color: #e74c3c; }
+  </style>
 </head>
 <body>
-  <h2>🛒 Comparateur de prix</h2>
-  <form>
-    <label for="produit">Produit :</label>
-    <input type="text" id="produit" name="produit">
+  <h2>🛒 Comparateur de prix DOM ↔ Métropole</h2>
+  <form id="searchForm">
+    <label for="produit">Rechercher un produit :</label>
+    <input type="text" id="produit" name="produit" placeholder="Ex: lait, pain, riz...">
     <button type="submit">Comparer</button>
   </form>
-  <div id="résultats">
-    <p>Résultats fictifs pour démonstration :</p>
-    <ul>
-      <li>Carrefour : 2,50 €</li>
-      <li>Leader Price : 2,30 €</li>
-      <li>Ecomax : 2,10 €</li>
-    </ul>
+  
+  <div id="résultats" class="results">
+    <p>Entrez un nom de produit pour voir la comparaison de prix entre les DOM et la Métropole.</p>
   </div>
+
+  <script>
+    const API_URL = 'https://akiprisaye.pages.dev/api';
+    
+    // Données de fallback pour démonstration locale
+    const FALLBACK_DATA = {
+      items: [
+        { id: "GUA-0001", name: "Baguette tradition 250g", price_dom: 1.20, price_hex: 0.95, store: "Carrefour Les Abymes" },
+        { id: "GUA-0002", name: "Lait UHT demi-écrémé 1L", price_dom: 1.15, price_hex: 1.12, store: "Super U Baie-Mahault" },
+        { id: "GUA-0003", name: "Beurre doux 250g", price_dom: 2.45, price_hex: 1.95, store: "Leader Price Pointe-à-Pitre" },
+        { id: "GUA-0004", name: "Riz long 1kg", price_dom: 1.95, price_hex: 1.85, store: "Carrefour Destreland" },
+        { id: "GUA-0005", name: "Pâtes spaghetti 500g", price_dom: 1.10, price_hex: 0.98, store: "Super U Le Gosier" },
+        { id: "GUA-0006", name: "Eau minérale 6x1.5L", price_dom: 3.90, price_hex: 2.90, store: "Carrefour Les Abymes" },
+        { id: "GUA-0007", name: "Sucre en poudre 1kg", price_dom: 1.75, price_hex: 1.35, store: "Leader Price Pointe-à-Pitre" },
+        { id: "GUA-0008", name: "Œufs x12 calibre M", price_dom: 3.60, price_hex: 2.80, store: "Super U Baie-Mahault" },
+      ]
+    };
+    
+    async function searchProducts(query) {
+      try {
+        const response = await fetch(`${API_URL}/prices?territory=guadeloupe&compare=true&q=${encodeURIComponent(query)}&limit=20`);
+        if (!response.ok) throw new Error('Erreur API');
+        return await response.json();
+      } catch (error) {
+        console.warn('API non disponible, utilisation des données de démonstration:', error.message);
+        // Filtrage local pour la démo
+        const filtered = FALLBACK_DATA.items.filter(item => 
+          !query || item.name.toLowerCase().includes(query.toLowerCase())
+        );
+        return { items: filtered };
+      }
+    }
+    
+    function displayResults(products, query) {
+      const resultsDiv = document.getElementById('résultats');
+      
+      if (products.length === 0) {
+        resultsDiv.innerHTML = `
+          <p class="error">Aucun produit trouvé pour "${query}". Essayez avec des termes comme "lait", "pain", "riz", "beurre".</p>
+        `;
+        return;
+      }
+      
+      const resultsHTML = products.map(product => {
+        const priceDiff = product.price_dom - product.price_hex;
+        const priceDiffPercent = Math.round((priceDiff / product.price_hex) * 100);
+        
+        return `
+          <div class="product">
+            <h3>${product.name || product.title}</h3>
+            <div class="price-comparison">
+              <div>DOM: <span class="price-dom">${product.price_dom.toFixed(2)} €</span></div>
+              <div>Métropole: <span class="price-metro">${product.price_hex.toFixed(2)} €</span></div>
+              <div>Écart: <strong>${priceDiffPercent > 0 ? '+' : ''}${priceDiffPercent}%</strong></div>
+            </div>
+            ${product.store ? `<p><small>Magasin: ${product.store}</small></p>` : ''}
+          </div>
+        `;
+      }).join('');
+      
+      resultsDiv.innerHTML = `
+        <h3>Résultats pour "${query}" :</h3>
+        ${resultsHTML}
+      `;
+    }
+    
+    document.getElementById('searchForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const query = document.getElementById('produit').value.trim();
+      
+      if (!query) {
+        alert('Veuillez entrer un nom de produit');
+        return;
+      }
+      
+      const resultsDiv = document.getElementById('résultats');
+      resultsDiv.innerHTML = '<p class="loading">Recherche en cours...</p>';
+      
+      const data = await searchProducts(query);
+      displayResults(data.items || [], query);
+    });
+    
+    // Chargement initial avec quelques produits populaires
+    window.addEventListener('load', async () => {
+      const data = await searchProducts('');
+      if (data.items && data.items.length > 0) {
+        displayResults(data.items.slice(0, 5), 'Produits populaires');
+      }
+    });
+  </script>
 </body>
 </html>

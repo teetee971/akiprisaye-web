@@ -18,7 +18,7 @@
     return res.json();
   }
   async function fetchAPI(){
-    const res = await fetch(API_URL + '/prices', {cache:'no-store'});
+    const res = await fetch(API_URL + '/prices?territory=guadeloupe&compare=true&limit=10', {cache:'no-store'});
     if(!res.ok) throw new Error('API error ' + res.status);
     return res.json();
   }

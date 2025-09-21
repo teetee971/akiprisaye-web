@@ -14,6 +14,25 @@ const CURRENCY = "EUR";
 // --- DEMO DATA --------------------------------------------------------------
 // Remplace/branche ici une vraie source (CSV/JSON/Firestore/API…) si besoin.
 // Ex: lire depuis un asset public: const url = new URL('../../public/data/xxx.json', import.meta.url)
+// Prix de référence de la métropole (France hexagonale)
+const MAINLAND_PRICES = {
+  "Lait UHT 1L": 1.12,
+  "Pâtes 500g": 0.98,
+  "Riz 1kg": 1.85,
+  "Baguette tradition 250g": 0.95,
+  "Beurre doux 250g": 1.95,
+  "Eau minérale 6x1.5L": 2.90,
+  "Sucre en poudre 1kg": 1.35,
+  "Œufs x12 calibre M": 2.80,
+  "Huile de tournesol 1L": 2.50,
+  "Poulet entier (~1.2kg)": 5.20,
+  "Fromage râpé 200g": 1.80,
+  "Yaourts nature x12": 2.40,
+  "Café moulu 250g": 2.95,
+  "Banane (kg)": 1.65,
+  "Tomates grappe (kg)": 2.80,
+};
+
 const DEMO_DB = {
   guadeloupe: [
     { id:"GUA-0001", title:"Baguette tradition 250g", price:1.20, store:"Carrefour Les Abymes", storeCity:"Les Abymes", brand:"Carrefour", updatedAt:"2025-09-01" },
@@ -43,6 +62,45 @@ function normalizeTerritory(t) {
 function parseIntSafe(v, def) {
   const n = parseInt(v, 10);
   return Number.isFinite(n) && n >= 0 ? n : def;
+}
+
+/** 
+ * Trouve le prix métropole correspondant à un produit DOM
+ * Utilise une correspondance approximative basée sur le titre
+ */
+function findMainlandPrice(title) {
+  // Normalise le titre pour la recherche
+  const normalizedTitle = title.toLowerCase();
+  
+  // Recherche exacte d'abord
+  if (MAINLAND_PRICES[title]) {
+    return MAINLAND_PRICES[title];
+  }
+  
+  // Recherche par mots-clés
+  for (const [mainlandProduct, price] of Object.entries(MAINLAND_PRICES)) {
+    const mainlandLower = mainlandProduct.toLowerCase();
+    
+    // Si le titre contient des mots-clés du produit métropole
+    if (normalizedTitle.includes('lait') && mainlandLower.includes('lait')) return price;
+    if (normalizedTitle.includes('pâtes') && mainlandLower.includes('pâtes')) return price;
+    if (normalizedTitle.includes('riz') && mainlandLower.includes('riz')) return price;
+    if (normalizedTitle.includes('baguette') && mainlandLower.includes('baguette')) return price;
+    if (normalizedTitle.includes('beurre') && mainlandLower.includes('beurre')) return price;
+    if (normalizedTitle.includes('eau') && mainlandLower.includes('eau')) return price;
+    if (normalizedTitle.includes('sucre') && mainlandLower.includes('sucre')) return price;
+    if (normalizedTitle.includes('œuf') && mainlandLower.includes('œuf')) return price;
+    if (normalizedTitle.includes('huile') && mainlandLower.includes('huile')) return price;
+    if (normalizedTitle.includes('poulet') && mainlandLower.includes('poulet')) return price;
+    if (normalizedTitle.includes('fromage') && mainlandLower.includes('fromage')) return price;
+    if (normalizedTitle.includes('yaourt') && mainlandLower.includes('yaourt')) return price;
+    if (normalizedTitle.includes('café') && mainlandLower.includes('café')) return price;
+    if (normalizedTitle.includes('banane') && mainlandLower.includes('banane')) return price;
+    if (normalizedTitle.includes('tomate') && mainlandLower.includes('tomate')) return price;
+  }
+  
+  // Pas de correspondance trouvée
+  return null;
 }
 
 /** Filtre/tri simple côté worker (démonstration) */
@@ -75,6 +133,7 @@ export async function onRequestGet({ request }) {
     const offset = Math.max(0, parseIntSafe(url.searchParams.get("offset"), 0));
     const q = url.searchParams.get("q") || "";
     const sort = url.searchParams.get("sort") || "";
+    const compare = url.searchParams.get("compare") === "true";
 
     // 1) Sélection source
     // Branche ici ta vraie source si disponible (fetch CSV/JSON).
@@ -105,26 +164,47 @@ export async function onRequestGet({ request }) {
     const page = filtered.slice(offset, offset + limit);
 
     // 4) Mapping de sortie
-    const data = page.map((x) => ({
-      id: x.id,
-      title: x.title,
-      price: x.price,
-      currency: CURRENCY,
-      store: x.store,
-      storeCity: x.storeCity,
-      brand: x.brand,
-      updatedAt: x.updatedAt,
-    }));
+    const data = page.map((x) => {
+      const baseProduct = {
+        id: x.id,
+        title: x.title,
+        price: x.price,
+        currency: CURRENCY,
+        store: x.store,
+        storeCity: x.storeCity,
+        brand: x.brand,
+        updatedAt: x.updatedAt,
+      };
 
-    const body = JSON.stringify({
-      ok: true,
-      territory,
-      count: total,
-      limit,
-      offset,
-      currency: CURRENCY,
-      data,
+      // Si le paramètre compare=true est présent, ajouter les données de comparaison DOM/Métropole
+      if (compare) {
+        const mainlandPrice = findMainlandPrice(x.title);
+        return {
+          ...baseProduct,
+          name: x.title, // Alias pour compatibilité webapp
+          price_dom: x.price, // Prix DOM (territoire d'outre-mer)
+          price_hex: mainlandPrice || x.price * 0.75, // Prix métropole (estimé si pas trouvé)
+        };
+      }
+
+      return baseProduct;
     });
+
+    const responseBody = compare ? 
+      // Format attendu par webapp (avec items)
+      { items: data } :
+      // Format API standard
+      {
+        ok: true,
+        territory,
+        count: total,
+        limit,
+        offset,
+        currency: CURRENCY,
+        data,
+      };
+
+    const body = JSON.stringify(responseBody);
     return new Response(body, { status: 200, headers: HEADERS });
   } catch (err) {
     const body = JSON.stringify({
