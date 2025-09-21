@@ -1,7 +1,7 @@
 
 :root{--blue:#0b72ff;--ink:#0e1320;--bg:#f6f8fb;--card:#fff;--muted:#6b7280;--bd:#e6e9f2}
 *{box-sizing:border-box}body{margin:0;font-family:system-ui,Segoe UI,Roboto,Arial;color:var(--ink);background:var(--bg)}
-.hero{padding:48px 20px;background:linear-gradient(180deg,var(--blue),#5aa0ff);color:#fff;text-align:center}
+.hero{padding:48px 20px;background:url('/assets/Tropical_islands_price_comparison_hero_production.png') center/cover no-repeat, linear-gradient(180deg,var(--blue),#5aa0ff);color:#fff;text-align:center}
 .cta{display:flex;gap:12px;justify-content:center;margin:12px 0}
 .btn{padding:10px 16px;border-radius:999px;border:1px solid #fff;background:#fff;color:var(--blue);cursor:pointer}
 .btn.ghost{background:transparent;color:#fff;border-color:#fff}

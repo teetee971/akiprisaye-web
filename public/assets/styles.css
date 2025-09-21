@@ -18,7 +18,7 @@ a{color:var(--accent);text-decoration:none}
 .brand{font-weight:800;font-size:1.05rem;color:#fff}
 .nav a{margin:0 8px;color:var(--muted)}
 .nav .btn{margin-left:8px}
-.hero{padding:48px 0;background:radial-gradient(60% 120% at 50% -10%,rgba(96,165,250,.25),transparent 60%)}
+.hero{padding:48px 0;background:url('/assets/Tropical_islands_price_comparison_hero_production.png') center/cover no-repeat, radial-gradient(60% 120% at 50% -10%,rgba(96,165,250,.25),transparent 60%)}
 .hero h1{font-size:2.2rem;margin:0 0 8px}
 .accent{color:var(--accent)}
 .lead{color:var(--muted);margin:0 0 20px}
