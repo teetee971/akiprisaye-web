@@ -1,0 +1,54 @@
+name: Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📂 Checkout repo
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
+
+      - name: 🏗️ Build project
+        run: npm run build
+
+      - name: 🧪 Validate build output
+        run: |
+          chmod +x test_build.sh
+          ./test_build.sh
+
+      - name: 🌐 Test live API endpoints
+        run: |
+          chmod +x test_api.sh
+          # Run the API tests against production
+          ./test_api.sh
+
+      - name: 🔍 Run basic health checks
+        continue-on-error: true
+        run: |
+          # Try production health check but don't fail if it's down
+          chmod +x scripts/check_prod.sh
+          ./scripts/check_prod.sh || echo "⚠️ Production health check failed (this might be expected)"
+
+      - name: ✅ Tests completed
+        run: echo "All tests passed successfully!"

@@ -10,7 +10,11 @@
     "check": "tsc --noEmit",
     "start": "npm run preview",
     "optimize-seo": "node optimize-seo.js",
-    "build:optimized": "npm run optimize-seo && npm run build"
+    "build:optimized": "npm run optimize-seo && npm run build",
+    "test": "npm run test:api && npm run test:build",
+    "test:api": "chmod +x test_api.sh && ./test_api.sh",
+    "test:build": "chmod +x test_build.sh && ./test_build.sh",
+    "test:prod": "chmod +x scripts/check_prod.sh && ./scripts/check_prod.sh"
   },
   "dependencies": {
     "react": "^18.3.1",
