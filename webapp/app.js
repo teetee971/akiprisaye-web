@@ -18,9 +18,23 @@
     return res.json();
   }
   async function fetchAPI(){
-    const res = await fetch(API_URL + '/prices', {cache:'no-store'});
+    const res = await fetch(API_URL + '/prices?territory=guadeloupe', {cache:'no-store'});
     if(!res.ok) throw new Error('API error ' + res.status);
-    return res.json();
+    const response = await res.json();
+    
+    // Transform API response data to match expected format
+    if (response.data && Array.isArray(response.data)) {
+      return {
+        items: response.data.map(item => ({
+          id: item.id,
+          name: item.title, // API uses 'title', webapp expects 'name'
+          price_dom: item.price_dom,
+          price_hex: item.price_hex
+        }))
+      };
+    }
+    
+    return { items: [] };
   }
 
   async function load(useAPI=true){

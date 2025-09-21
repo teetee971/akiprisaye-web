@@ -16,21 +16,21 @@ const CURRENCY = "EUR";
 // Ex: lire depuis un asset public: const url = new URL('../../public/data/xxx.json', import.meta.url)
 const DEMO_DB = {
   guadeloupe: [
-    { id:"GUA-0001", title:"Baguette tradition 250g", price:1.20, store:"Carrefour Les Abymes", storeCity:"Les Abymes", brand:"Carrefour", updatedAt:"2025-09-01" },
-    { id:"GUA-0002", title:"Lait UHT demi-écrémé 1L", price:1.15, store:"Super U Baie-Mahault", storeCity:"Baie-Mahault", brand:"U", updatedAt:"2025-09-01" },
-    { id:"GUA-0003", title:"Beurre doux 250g", price:2.45, store:"Leader Price Pointe-à-Pitre", storeCity:"Pointe-à-Pitre", brand:"Leader Price", updatedAt:"2025-09-01" },
-    { id:"GUA-0004", title:"Riz long 1kg", price:1.95, store:"Carrefour Destreland", storeCity:"Baie-Mahault", brand:"Carrefour", updatedAt:"2025-09-01" },
-    { id:"GUA-0005", title:"Pâtes spaghetti 500g", price:1.10, store:"Super U Le Gosier", storeCity:"Le Gosier", brand:"U", updatedAt:"2025-09-01" },
-    { id:"GUA-0006", title:"Eau minérale 6x1.5L", price:3.90, store:"Carrefour Les Abymes", storeCity:"Les Abymes", brand:"Carrefour", updatedAt:"2025-09-01" },
-    { id:"GUA-0007", title:"Sucre en poudre 1kg", price:1.75, store:"Leader Price Pointe-à-Pitre", storeCity:"Pointe-à-Pitre", brand:"Leader Price", updatedAt:"2025-09-01" },
-    { id:"GUA-0008", title:"Œufs x12 calibre M", price:3.60, store:"Super U Baie-Mahault", storeCity:"Baie-Mahault", brand:"U", updatedAt:"2025-09-01" },
-    { id:"GUA-0009", title:"Huile de tournesol 1L", price:3.20, store:"Carrefour Destreland", storeCity:"Baie-Mahault", brand:"Carrefour", updatedAt:"2025-09-01" },
-    { id:"GUA-0010", title:"Poulet entier (~1.2kg)", price:6.90, store:"Super U Le Gosier", storeCity:"Le Gosier", brand:"U", updatedAt:"2025-09-01" },
-    { id:"GUA-0011", title:"Fromage râpé 200g", price:2.40, store:"Carrefour Les Abymes", storeCity:"Les Abymes", brand:"Carrefour", updatedAt:"2025-09-01" },
-    { id:"GUA-0012", title:"Yaourts nature x12", price:3.10, store:"Leader Price Pointe-à-Pitre", storeCity:"Pointe-à-Pitre", brand:"Leader Price", updatedAt:"2025-09-01" },
-    { id:"GUA-0013", title:"Café moulu 250g", price:3.80, store:"Super U Baie-Mahault", storeCity:"Baie-Mahault", brand:"U", updatedAt:"2025-09-01" },
-    { id:"GUA-0014", title:"Banane locale (kg)", price:2.20, store:"Carrefour Destreland", storeCity:"Baie-Mahault", brand:"Carrefour", updatedAt:"2025-09-01" },
-    { id:"GUA-0015", title:"Tomates grappe (kg)", price:3.95, store:"Super U Le Gosier", storeCity:"Le Gosier", brand:"U", updatedAt:"2025-09-01" },
+    { id:"GUA-0001", title:"Baguette tradition 250g", price_dom:1.20, price_hex:0.95, store:"Carrefour Les Abymes", storeCity:"Les Abymes", brand:"Carrefour", updatedAt:"2025-09-01" },
+    { id:"GUA-0002", title:"Lait UHT demi-écrémé 1L", price_dom:1.45, price_hex:1.12, store:"Super U Baie-Mahault", storeCity:"Baie-Mahault", brand:"U", updatedAt:"2025-09-01" },
+    { id:"GUA-0003", title:"Beurre doux 250g", price_dom:2.45, price_hex:1.89, store:"Leader Price Pointe-à-Pitre", storeCity:"Pointe-à-Pitre", brand:"Leader Price", updatedAt:"2025-09-01" },
+    { id:"GUA-0004", title:"Riz long 1kg", price_dom:2.30, price_hex:1.85, store:"Carrefour Destreland", storeCity:"Baie-Mahault", brand:"Carrefour", updatedAt:"2025-09-01" },
+    { id:"GUA-0005", title:"Pâtes spaghetti 500g", price_dom:1.36, price_hex:0.98, store:"Super U Le Gosier", storeCity:"Le Gosier", brand:"U", updatedAt:"2025-09-01" },
+    { id:"GUA-0006", title:"Eau minérale 6x1.5L", price_dom:3.90, price_hex:2.85, store:"Carrefour Les Abymes", storeCity:"Les Abymes", brand:"Carrefour", updatedAt:"2025-09-01" },
+    { id:"GUA-0007", title:"Sucre en poudre 1kg", price_dom:1.75, price_hex:1.20, store:"Leader Price Pointe-à-Pitre", storeCity:"Pointe-à-Pitre", brand:"Leader Price", updatedAt:"2025-09-01" },
+    { id:"GUA-0008", title:"Œufs x12 calibre M", price_dom:3.60, price_hex:2.80, store:"Super U Baie-Mahault", storeCity:"Baie-Mahault", brand:"U", updatedAt:"2025-09-01" },
+    { id:"GUA-0009", title:"Huile de tournesol 1L", price_dom:3.20, price_hex:2.45, store:"Carrefour Destreland", storeCity:"Baie-Mahault", brand:"Carrefour", updatedAt:"2025-09-01" },
+    { id:"GUA-0010", title:"Poulet entier (~1.2kg)", price_dom:6.90, price_hex:5.20, store:"Super U Le Gosier", storeCity:"Le Gosier", brand:"U", updatedAt:"2025-09-01" },
+    { id:"GUA-0011", title:"Fromage râpé 200g", price_dom:2.40, price_hex:1.95, store:"Carrefour Les Abymes", storeCity:"Les Abymes", brand:"Carrefour", updatedAt:"2025-09-01" },
+    { id:"GUA-0012", title:"Yaourts nature x12", price_dom:3.10, price_hex:2.30, store:"Leader Price Pointe-à-Pitre", storeCity:"Pointe-à-Pitre", brand:"Leader Price", updatedAt:"2025-09-01" },
+    { id:"GUA-0013", title:"Café moulu 250g", price_dom:3.80, price_hex:2.90, store:"Super U Baie-Mahault", storeCity:"Baie-Mahault", brand:"U", updatedAt:"2025-09-01" },
+    { id:"GUA-0014", title:"Banane locale (kg)", price_dom:2.20, price_hex:3.50, store:"Carrefour Destreland", storeCity:"Baie-Mahault", brand:"Carrefour", updatedAt:"2025-09-01" },
+    { id:"GUA-0015", title:"Tomates grappe (kg)", price_dom:3.95, price_hex:2.80, store:"Super U Le Gosier", storeCity:"Le Gosier", brand:"U", updatedAt:"2025-09-01" },
   ],
 };
 
@@ -59,8 +59,8 @@ function filterAndSort(data, q, sort) {
   }
 
   if (sort) {
-    if (sort === "price_asc") out.sort((a, b) => (a.price ?? 0) - (b.price ?? 0));
-    else if (sort === "price_desc") out.sort((a, b) => (b.price ?? 0) - (a.price ?? 0));
+    if (sort === "price_asc") out.sort((a, b) => (a.price_dom ?? 0) - (b.price_dom ?? 0));
+    else if (sort === "price_desc") out.sort((a, b) => (b.price_dom ?? 0) - (a.price_dom ?? 0));
     else if (sort === "alpha") out.sort((a, b) => (a.title || "").localeCompare(b.title || ""));
   }
 
@@ -108,7 +108,8 @@ export async function onRequestGet({ request }) {
     const data = page.map((x) => ({
       id: x.id,
       title: x.title,
-      price: x.price,
+      price_dom: x.price_dom,
+      price_hex: x.price_hex,
       currency: CURRENCY,
       store: x.store,
       storeCity: x.storeCity,
