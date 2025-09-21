@@ -122,7 +122,7 @@
       outEl.innerHTML = items.map(it => `
         <tr>
           <td><div style="display:flex;align-items:center;gap:10px">
-            ${it.image ? `<img class="img" src="${it.image}" alt="">` : ""}
+            ${it.image ? `<img loading="lazy" decoding="async" class="img" src="${it.image}" alt="">` : ""}
             <div>
               <div style="font-weight:600">${it.name||"-"}</div>
               <div style="color:#8da2b5;font-size:12px">${it.brand||""}</div>

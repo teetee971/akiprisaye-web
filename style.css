@@ -13,7 +13,11 @@
 }
 
 *{box-sizing:border-box}
-html,body{height:100%}
+html,body{
+  height:100%;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
 body{
   margin:0;
   background:linear-gradient(180deg,#0a0f14 0%, #0b121a 100%);
@@ -21,6 +25,8 @@ body{
   font:500 16px/1.6 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial;
   -webkit-font-smoothing:antialiased;
   text-rendering:optimizeLegibility;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 /* Layout de base */
@@ -142,6 +148,22 @@ footer a:hover{color:var(--txt)}
   .card{padding:22px}
   .btn{width:100%; justify-content:center}
   footer .container{justify-items:flex-start}
+  
+  /* Enhanced mobile text handling */
+  .section-title{
+    font-size:clamp(18px,6vw,28px);
+    line-height:1.2;
+    word-break:break-word;
+    overflow-wrap:anywhere;
+  }
+  .subtitle{
+    font-size:14px;
+    line-height:1.4;
+  }
+  p, span, div{
+    word-break:break-word;
+    overflow-wrap:anywhere;
+  }
 }
 
 /* Petits détails d’accessibilité */

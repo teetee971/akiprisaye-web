@@ -27,9 +27,10 @@ fi
 
 # Push GitHub
 echo "📤 Push vers GitHub..."
+CURRENT_BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo main)"
 git add .
 git commit -m "✅ Build corrigé + déploiement auto"
-git push origin main
+git push origin "$CURRENT_BRANCH"
 
 echo "✅ Déploiement terminé. Cloudflare Pages va prendre le relais."
 

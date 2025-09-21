@@ -4,13 +4,15 @@
   "private": true,
   "scripts": {
     "dev": "vite --host",
-    "build": "vite build --outDir dist/client",
-    "build:client": "vite build --outDir dist/client",
+   
     "preview": "vite preview --host",
     "check": "tsc --noEmit",
-    "start": "npm run preview"
+    "start": "npm run preview",
+    "optimize-seo": "node optimize-seo.js",
+    "build:optimized": "npm run optimize-seo && npm run build"
   },
   "dependencies": {
+    "http-server": "^14.1.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
