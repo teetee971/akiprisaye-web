@@ -112,14 +112,20 @@
 
     const url = bust('/data/stores_domtom.json');
     const r = await fetch(url, {cache:'no-store'});
-    const j = await r.json();
+    let text = await r.text();
+    
+    // Remove JavaScript-style comments from JSON
+    text = text.replace(/\/\*[\s\S]*?\*\//g, '');
+    
+    const j = JSON.parse(text);
 
     // map brands
     state.brands = {};
     for(const b of j.brands||[]) state.brands[b.key]=b;
 
     // data
-    state.data = Array.isArray(j.stores)? j.stores : [];
+    state.data = Array.isArray(j.stores) ? j.stores : [];
+    
     // remplir select territoires
     const ts = (j.meta && j.meta.territories) ? j.meta.territories : [...new Set(state.data.map(x=>x.territory).filter(Boolean))].sort();
     const sel = $('#filter-territory');
