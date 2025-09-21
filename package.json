@@ -2,6 +2,7 @@
   "name": "akiprisaye-web",
   "version": "1.0.0",
   "private": true,
+  "license": "MIT",
   "scripts": {
     "dev": "vite --host",
     "build": "vite build --outDir dist/client",
