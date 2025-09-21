@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Connexion Admin - A KI PRI SA YÉ</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="stylesheet" href="/styles.css" />
+  <style>
+    body {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #e7eefc;
+      font-family: system-ui, 'Segoe UI', Roboto, Inter, Arial;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+    }
+    .login-container {
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid #334155;
+      border-radius: 16px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+    .logo {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .logo h1 {
+      color: #00e5ff;
+      font-size: 1.5rem;
+      margin: 0.5rem 0;
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #cbd5e1;
+      font-weight: 500;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #475569;
+      border-radius: 8px;
+      background: #1e293b;
+      color: #e7eefc;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+    .form-group input:focus {
+      outline: none;
+      border-color: #00e5ff;
+      box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.1);
+    }
+    .btn {
+      width: 100%;
+      padding: 0.75rem;
+      background: linear-gradient(135deg, #00e5ff, #00ff95);
+      color: #081224;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .error {
+      background: #dc2626;
+      color: white;
+      padding: 0.75rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+    .back-link {
+      text-align: center;
+      margin-top: 1.5rem;
+    }
+    .back-link a {
+      color: #00e5ff;
+      text-decoration: none;
+    }
+    .back-link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="logo">
+      <img src="/icon.svg" alt="A KI PRI SA YÉ" width="48" height="48" />
+      <h1>A KI PRI SA YÉ</h1>
+      <p style="color: #64748b; margin: 0;">Administration</p>
+    </div>
+
+    <div id="error-message" class="error" style="display: none;"></div>
+
+    <form id="login-form">
+      <div class="form-group">
+        <label for="username">Nom d'utilisateur</label>
+        <input type="text" id="username" name="username" required autocomplete="username" />
+      </div>
+      
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <input type="password" id="password" name="password" required autocomplete="current-password" />
+      </div>
+      
+      <button type="submit" class="btn" id="login-btn">
+        Se connecter
+      </button>
+    </form>
+
+    <div class="back-link">
+      <a href="/">← Retour au site</a>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('login-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const errorDiv = document.getElementById('error-message');
+      const loginBtn = document.getElementById('login-btn');
+      
+      // Simple client-side validation (in production, use proper server-side auth)
+      const validCredentials = [
+        { username: 'admin', password: 'akiprisaye2024!' },
+        { username: 'moderateur', password: 'modakipri2024!' }
+      ];
+      
+      loginBtn.disabled = true;
+      loginBtn.textContent = 'Connexion...';
+      
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      const validUser = validCredentials.find(cred => 
+        cred.username === username && cred.password === password
+      );
+      
+      if (validUser) {
+        // Store auth token in localStorage (in production, use secure httpOnly cookies)
+        const token = btoa(JSON.stringify({
+          username: validUser.username,
+          role: validUser.username === 'admin' ? 'admin' : 'moderator',
+          timestamp: Date.now()
+        }));
+        
+        localStorage.setItem('akiprisaye_auth', token);
+        
+        // Redirect to admin dashboard
+        window.location.href = '/admin';
+      } else {
+        errorDiv.textContent = 'Nom d\'utilisateur ou mot de passe incorrect';
+        errorDiv.style.display = 'block';
+        
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'Se connecter';
+        
+        // Clear form
+        document.getElementById('password').value = '';
+      }
+    });
+
+    // Check if already logged in
+    window.addEventListener('load', function() {
+      const token = localStorage.getItem('akiprisaye_auth');
+      if (token) {
+        try {
+          const payload = JSON.parse(atob(token));
+          // Check if token is not expired (24 hours)
+          if (Date.now() - payload.timestamp < 24 * 60 * 60 * 1000) {
+            window.location.href = '/admin';
+          } else {
+            localStorage.removeItem('akiprisaye_auth');
+          }
+        } catch (e) {
+          localStorage.removeItem('akiprisaye_auth');
+        }
+      }
+    });
+  </script>
+</body>
+</html>

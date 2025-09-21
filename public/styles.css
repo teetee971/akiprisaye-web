@@ -56,4 +56,128 @@ footer{border-top:1px solid #1f2a44;color:#98a2b3}
   .container{
     padding:16px;
   }
+
+  /* Mobile navigation improvements */
+  .nav{
+    position:fixed;
+    width:100%;
+    padding:8px 16px;
+  }
+  
+  /* Improved touch targets */
+  .btn{
+    min-height:44px;
+    min-width:44px;
+    font-size:16px;
+    padding:12px 20px;
+  }
+  
+  /* Better mobile forms */
+  .input, select{
+    min-height:48px;
+    font-size:16px; /* Prevents zoom on iOS */
+  }
+  
+  /* Mobile-first search */
+  .search{
+    grid-template-columns:1fr;
+    gap:16px;
+    position:relative;
+  }
+  
+  /* Cards spacing */
+  .card{
+    margin-bottom:16px;
+    padding:16px;
+  }
+  
+  /* Horizontal scroll for tables */
+  .table-container{
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  
+  /* Sticky footer adjustments */
+  body{
+    padding-bottom:80px; /* Space for floating buttons */
+  }
+}
+
+@media (max-width:640px){
+  .kpis{grid-template-columns:1fr}
+  .stores{grid-template-columns:repeat(2,1fr)}
+  .hero h1{font-size:28px}
+  .hero{padding:32px 0}
+  
+  /* Single column layout */
+  .grid{
+    grid-template-columns:1fr;
+    gap:12px;
+  }
+  
+  /* Reduced spacing */
+  .container{
+    padding:12px;
+  }
+  
+  /* Mobile typography */
+  h2{font-size:24px}
+  h3{font-size:20px}
+  
+  /* Better mobile interaction */
+  .card:hover, .card:focus{
+    transform:translateY(-2px);
+    transition:transform 0.2s ease;
+  }
+  
+  /* Improved mobile menu if needed */
+  .mobile-menu{
+    display:block;
+  }
+  .desktop-menu{
+    display:none;
+  }
+}
+
+/* Touch device optimizations */
+@media (pointer: coarse) {
+  /* Larger touch targets */
+  a, button, .btn{
+    min-height:44px;
+    min-width:44px;
+  }
+  
+  /* Remove hover effects on touch devices */
+  .btn:hover{
+    transform:none;
+  }
+  
+  /* Better focus states for accessibility */
+  button:focus, input:focus, select:focus{
+    outline:3px solid var(--brand2);
+    outline-offset:2px;
+  }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  /* Ensure crisp rendering */
+  *{
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
+}
+
+/* Dark mode preferences */
+@media (prefers-color-scheme: dark) {
+  /* Already using dark theme, but could adjust if needed */
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *{
+    animation-duration:0.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:0.01ms !important;
+  }
 }

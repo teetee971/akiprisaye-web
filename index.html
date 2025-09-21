@@ -100,5 +100,22 @@
         document.head.appendChild(script);
       }
     </script>
+    
+    <!-- A KI PRI SA YÉ Core Modules -->
+    <script src="/js/form-protection.js" defer></script>
+    <script src="/js/export-utils.js" defer></script>
+    <script src="/js/local-suggestions.js" defer></script>
+    <script src="/js/analytics.js" defer></script>
+    
+    <!-- Development/Testing -->
+    <script>
+      // Load tests only in development
+      if (window.location.hostname === 'localhost' || window.location.search.includes('debug=true')) {
+        const script = document.createElement('script');
+        script.src = '/js/tests.js';
+        script.defer = true;
+        document.head.appendChild(script);
+      }
+    </script>
   </body>
 </html>
