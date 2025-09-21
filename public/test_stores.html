@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Test DOM-TOM Store Icons</title>
+  <style>
+    body { 
+      font-family: system-ui, sans-serif; 
+      background: #0b1220; 
+      color: #e5e7eb; 
+      padding: 20px;
+    }
+    .test-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    h1 { color: #3b82f6; }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <h1>🏪 Test des icônes DOM-TOM</h1>
+    <p>Test des améliorations visuelles pour l'identification des magasins DOM-TOM</p>
+    
+    <div class="stores-wrap">
+      <div class="toolbar">
+        <select id="filter-territory">
+          <option value="">Tous les territoires</option>
+        </select>
+        <input id="filter-q" class="grow" placeholder="Rechercher un magasin..." />
+      </div>
+      <div id="stores-grid"></div>
+      <div class="pager">
+        <button id="btn-prev">← Précédent</button>
+        <span id="page-info"></span>
+        <button id="btn-next">Suivant →</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Copy the improved stores.js logic here for testing
+    const $ = s => document.querySelector(s);
+    const bust = u => u + (u.includes('?')?'&':'?') + 'v=' + Date.now();
+    const PLACEHOLDER = '/public/assets/brands/placeholder.png';
+
+    const state = { data:[], brands:{}, filtered:[], page:1, per:12, territory:'', q:'' };
+
+    function byBrandKey(k){ return state.brands[k] || {name:k, logo:PLACEHOLDER}; }
+    function esc(s){ return String(s||'').replace(/[&<>"'`]/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','`':'&#96;' }[m])); }
+
+    function getTerritoryFlag(territory) {
+      const flags = {
+        'Guadeloupe': '🇬🇵',
+        'Martinique': '🇲🇶', 
+        'Guyane': '🇬🇫',
+        'La Réunion': '🇷🇪',
+        'Mayotte': '🇾🇹',
+        'Polynésie française': '🇵🇫',
+        'Nouvelle-Calédonie': '🇳🇨',
+        'Saint-Martin': '🇲🇫',
+        'Saint-Barthélemy': '🇧🇱',
+        'Saint-Pierre-et-Miquelon': '🇵🇲',
+        'Wallis-et-Futuna': '🇼🇫'
+      };
+      return flags[territory] || null;
+    }
+
+    function card(x){
+      const b = byBrandKey(x.brand);
+      const logo = bust(b.logo || PLACEHOLDER);
+      const city = x.city || '—';
+      const addr = x.address || '—';
+      
+      // DOM-TOM territory flags for visual identification
+      const territoryFlag = getTerritoryFlag(x.territory);
+      
+      return `
+        <article class="store">
+          <div class="logo-container">
+            <div class="logo"><img src="${logo}" alt="${esc(b.name)}" loading="lazy" decoding="async" width="56" height="56"></div>
+            ${territoryFlag ? `<div class="territory-flag" title="${esc(x.territory)}">${territoryFlag}</div>` : ''}
+          </div>
+          <div class="txt">
+            <div class="name"><strong>${esc(x.name||b.name)}</strong></div>
+            <div class="meta">${esc(city)}${addr!=='—'?' • '+esc(addr):''}</div>
+            <div class="territory-info">
+              ${territoryFlag ? `<span class="territory-badge">${territoryFlag} ${esc(x.territory||'')}</span>` : `<span class="muted">${esc(x.territory||'')}</span>`}
+            </div>
+          </div>
+        </article>`;
+    }
+
+    // Inject CSS styles
+    const css = document.createElement('style');
+    css.textContent = `
+      .stores-wrap{margin-top:16px}
+      .toolbar{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:10px}
+      .toolbar select,.toolbar input{padding:10px 12px; border-radius:10px; border:1px solid #334155; background:#0b1220; color:#e5e7eb}
+      .toolbar .grow{flex:1 1 220px}
+      #stores-grid{display:grid; gap:12px; grid-template-columns:repeat(1,minmax(0,1fr))}
+      @media(min-width:560px){#stores-grid{grid-template-columns:repeat(2,1fr)}}
+      @media(min-width:900px){#stores-grid{grid-template-columns:repeat(3,1fr)}}
+      .store{display:flex; gap:12px; padding:12px; border:1px solid #1f2937; background:#111827; border-radius:14px}
+      .store .logo-container{position:relative; width:56px; height:56px}
+      .store .logo{width:56px;height:56px; border-radius:12px; background:#0b2930; display:grid; place-items:center; overflow:hidden; border:1px solid #0a2a30}
+      .store .logo img{max-width:100%; max-height:100%; object-fit:contain; display:block; background:#fff; border-radius:10px}
+      .store .territory-flag{position:absolute; top:-6px; right:-6px; font-size:18px; background:#fff; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(0,0,0,0.3); border:2px solid #111827}
+      .store .txt .name{margin-bottom:4px}
+      .store .territory-info{margin-top:6px}
+      .store .territory-badge{display:inline-flex; align-items:center; gap:4px; padding:2px 8px; background:rgba(59,130,246,0.15); color:#3b82f6; border-radius:12px; font-size:12px; font-weight:500}
+      .muted{color:#94a3b8; font-size:12px}
+      .pager{display:flex; gap:8px; align-items:center; margin-top:10px}
+      .pager button{padding:8px 12px; border-radius:10px; border:1px solid #334155; background:#0b1220; color:#e5e7eb}
+    `;
+    document.head.appendChild(css);
+
+    // Test data
+    const testStores = [
+      {"territory":"Guadeloupe","brand":"carrefour","name":"Carrefour Destreland","address":"Destreland","city":"Baie-Mahault","postcode":"97122"},
+      {"territory":"Martinique","brand":"leclerc","name":"E.Leclerc La Galleria","address":"La Galleria","city":"Schoelcher","postcode":"97233"},
+      {"territory":"Guyane","brand":"superu","name":"Super U — Kourou","address":"—","city":"Kourou","postcode":"97310"},
+      {"territory":"La Réunion","brand":"score","name":"Score — Réseau","address":"—","city":"—","postcode":"974xx"},
+      {"territory":"Mayotte","brand":"superu","name":"Super U — Mamoudzou","address":"—","city":"Mamoudzou","postcode":"97600"}
+    ];
+
+    const testBrands = [
+      {"key":"carrefour","name":"Carrefour","logo":"https://via.placeholder.com/56x56/3b82f6/ffffff?text=CF"},
+      {"key":"leclerc","name":"E.Leclerc","logo":"https://via.placeholder.com/56x56/ef4444/ffffff?text=LC"},
+      {"key":"superu","name":"Super U","logo":"https://via.placeholder.com/56x56/10b981/ffffff?text=SU"},
+      {"key":"score","name":"Score","logo":"https://via.placeholder.com/56x56/f59e0b/ffffff?text=SC"}
+    ];
+
+    // Initialize
+    state.brands = {};
+    testBrands.forEach(b => state.brands[b.key] = b);
+    state.data = testStores;
+    state.filtered = testStores;
+
+    // Render test
+    const grid = $('#stores-grid');
+    grid.innerHTML = state.filtered.map(card).join('');
+
+    // Territory filter
+    const territories = [...new Set(state.data.map(x => x.territory))].sort();
+    $('#filter-territory').innerHTML = '<option value="">Tous les territoires</option>' + 
+      territories.map(t => `<option>${t}</option>`).join('');
+  </script>
+</body>
+</html>

@@ -9,6 +9,23 @@
   function byBrandKey(k){ return state.brands[k] || {name:k, logo:PLACEHOLDER}; }
   function esc(s){ return String(s||'').replace(/[&<>"'`]/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','`':'&#96;' }[m])); }
 
+  function getTerritoryFlag(territory) {
+    const flags = {
+      'Guadeloupe': '🇬🇵',
+      'Martinique': '🇲🇶', 
+      'Guyane': '🇬🇫',
+      'La Réunion': '🇷🇪',
+      'Mayotte': '🇾🇹',
+      'Polynésie française': '🇵🇫',
+      'Nouvelle-Calédonie': '🇳🇨',
+      'Saint-Martin': '🇲🇫',
+      'Saint-Barthélemy': '🇧🇱',
+      'Saint-Pierre-et-Miquelon': '🇵🇲',
+      'Wallis-et-Futuna': '🇼🇫'
+    };
+    return flags[territory] || null;
+  }
+
   function draw(){
     // filtre
     const t = state.territory;
@@ -48,13 +65,22 @@
     const logo = bust(b.logo || PLACEHOLDER);
     const city = x.city || '—';
     const addr = x.address || '—';
+    
+    // DOM-TOM territory flags for visual identification
+    const territoryFlag = getTerritoryFlag(x.territory);
+    
     return `
       <article class="store">
-        <div class="logo"><img src="${logo}" alt="${esc(b.name)}" loading="lazy" decoding="async" width="56" height="56"></div>
+        <div class="logo-container">
+          <div class="logo"><img src="${logo}" alt="${esc(b.name)}" loading="lazy" decoding="async" width="56" height="56"></div>
+          ${territoryFlag ? `<div class="territory-flag" title="${esc(x.territory)}">${territoryFlag}</div>` : ''}
+        </div>
         <div class="txt">
           <div class="name"><strong>${esc(x.name||b.name)}</strong></div>
           <div class="meta">${esc(city)}${addr!=='—'?' • '+esc(addr):''}</div>
-          <div class="muted">${esc(x.territory||'')}</div>
+          <div class="territory-info">
+            ${territoryFlag ? `<span class="territory-badge">${territoryFlag} ${esc(x.territory||'')}</span>` : `<span class="muted">${esc(x.territory||'')}</span>`}
+          </div>
         </div>
       </article>`;
   }
@@ -71,9 +97,13 @@
       @media(min-width:560px){#stores-grid{grid-template-columns:repeat(2,1fr)}}
       @media(min-width:900px){#stores-grid{grid-template-columns:repeat(3,1fr)}}
       .store{display:flex; gap:12px; padding:12px; border:1px solid #1f2937; background:#111827; border-radius:14px}
+      .store .logo-container{position:relative; width:56px; height:56px}
       .store .logo{width:56px;height:56px; border-radius:12px; background:#0b2930; display:grid; place-items:center; overflow:hidden; border:1px solid #0a2a30}
       .store .logo img{max-width:100%; max-height:100%; object-fit:contain; display:block; background:#fff; border-radius:10px}
+      .store .territory-flag{position:absolute; top:-6px; right:-6px; font-size:18px; background:#fff; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(0,0,0,0.3); border:2px solid #111827}
       .store .txt .name{margin-bottom:4px}
+      .store .territory-info{margin-top:6px}
+      .store .territory-badge{display:inline-flex; align-items:center; gap:4px; padding:2px 8px; background:rgba(59,130,246,0.15); color:#3b82f6; border-radius:12px; font-size:12px; font-weight:500}
       .muted{color:#94a3b8; font-size:12px}
       .pager{display:flex; gap:8px; align-items:center; margin-top:10px}
       .pager button{padding:8px 12px; border-radius:10px; border:1px solid #334155; background:#0b1220; color:#e5e7eb}
