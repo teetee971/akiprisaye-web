@@ -1,6 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
 /* Styles globaux optionnels */
 html, body, #root { 
@@ -8,4 +6,8 @@ html, body, #root {
   word-break: break-word;
   overflow-wrap: anywhere;
 }
-body { @apply bg-slate-50 text-slate-900 antialiased; }
+body { 
+  background-color: #f8fafc;
+  color: #0f172a;
+  -webkit-font-smoothing: antialiased;
+}
