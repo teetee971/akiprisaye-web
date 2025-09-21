@@ -25,19 +25,19 @@ jobs:
       - name: 📦 Installer npm et dépendances
         run: |
           if [ -f package-lock.json ]; then
-            npm ci
+            npm ci --legacy-peer-deps
           else
-            npm install
+            npm install --legacy-peer-deps
           fi
           # Installer les dépendances vitales si manquantes
           if ! npm list vite >/dev/null 2>&1; then
-            npm install -D vite
+            npm install -D vite --legacy-peer-deps
           fi
           if ! npm list react >/dev/null 2>&1; then
-            npm install react react-dom
+            npm install react react-dom --legacy-peer-deps
           fi
           if ! npm list @vitejs/plugin-react >/dev/null 2>&1; then
-            npm install -D @vitejs/plugin-react
+            npm install -D @vitejs/plugin-react --legacy-peer-deps
           fi
 
       - name: 🧪 Lancer npm test --if-present
