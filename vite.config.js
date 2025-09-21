@@ -1,5 +1,5 @@
 export default {
   build: {
-    outDir: "dist/public",
+    outDir: "dist/client",
   },
 };
