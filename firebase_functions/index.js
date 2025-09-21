@@ -4,6 +4,7 @@
  * Expose:
  *  - GET /getRanking?zone=martinique
  *  - GET /searchPrices?zone=martinique&q=banane&limit=50
+ *  - POST /setAdminClaim?uid=USER_UID (for testing)
  */
 
 const functions = require('firebase-functions');
@@ -19,11 +20,28 @@ const https  = functions.region(REGION).https;
 /* --------- CORS util --------- */
 function handleCORS(req, res){
   res.set('Access-Control-Allow-Origin', '*');
-  res.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.set('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') { res.status(204).end(''); return true; }
   return false;
 }
+
+/* --------- Admin Claim Helper (for testing) --------- */
+exports.setAdminClaim = https.onRequest(async (req, res) => {
+  if (handleCORS(req, res)) return;
+  try {
+    const uid = req.query.uid || req.body?.uid;
+    if (!uid) {
+      return res.status(400).json({ error: 'Missing uid parameter' });
+    }
+    
+    await admin.auth().setCustomUserClaims(uid, { admin: true });
+    res.json({ success: true, message: `Admin claim set for user ${uid}` });
+  } catch (error) {
+    console.error('Error setting admin claim:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
 
 /* --------- normalisation texte --------- */
 function norm(s=''){
