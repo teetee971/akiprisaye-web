@@ -1,3 +1,5 @@
+import React from "react";
+
 export default function StoreBadge({ store, region }) {
   const flag = {
     GP: "🇬🇵", MQ: "🇲🇶", GF: "🇬🇫", RE: "🇷🇪", YT: "🇾🇹",

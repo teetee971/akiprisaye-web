@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import ProductCard from "../components/ProductCard";
 import ProductDetailsSheet from "../components/ProductDetailsSheet";
 import { getFavs, toggleFav, subscribeFavs } from "../lib/favorites";
