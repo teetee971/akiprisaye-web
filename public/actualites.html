@@ -7,13 +7,22 @@
   <link rel="stylesheet" href="/styles.css">
   <style>
     body{background:#0b1220;color:#e7eefc;font-family:system-ui,Segoe UI,Roboto,Inter,Arial}
-    .wrap{max-width:980px;margin:32px auto;padding:0 16px}
+    .wrap{max-width:1200px;margin:32px auto;padding:0 16px}
     .h1{font-size:2rem;font-weight:800;margin:8px 0 16px}
     .muted{opacity:.7}
     .grid{display:grid;gap:12px}
-    .card{background:#0f1629;border:1px solid #1e2945;border-radius:16px;padding:14px}
+    .card{background:#0f1629;border:1px solid #1e2945;border-radius:16px;padding:14px;transition:border-color 0.2s}
     a.card{color:inherit;text-decoration:none}
+    a.card:hover{border-color:#3b4a6b}
     .tag{font-size:.75rem;opacity:.8;background:#17213a;padding:4px 8px;border-radius:999px;margin-right:6px}
+    .featured{border:2px solid #ffd700;background:#1a1f2e}
+    .featured .tag{background:#ffd700;color:#0b1220;opacity:1}
+    .filters{display:flex;gap:10px;align-items:center;margin:20px 0;flex-wrap:wrap}
+    .category-btn{padding:8px 16px;border:1px solid #1e2945;background:#0f1629;color:#e7eefc;border-radius:999px;cursor:pointer;transition:all 0.2s}
+    .category-btn:hover{background:#1e2945}
+    .category-btn.active{background:#3b82f6;border-color:#3b82f6}
+    .section-title{font-size:1.5rem;font-weight:700;margin:24px 0 12px;color:#ffd700}
+    .loading{text-align:center;padding:40px;color:#8da0b8}
   </style>
 </head>
 <body>
@@ -27,35 +36,111 @@
       <span id="when" class="muted" style="margin-left:auto"></span>
     </div>
 
-    <section id="news" class="grid" aria-live="polite"></section>
+    <div class="filters">
+      <span style="margin-right:10px">Catégories:</span>
+      <button class="category-btn active" data-category="all">Tout</button>
+      <button class="category-btn" data-category="vie-chere">Vie chère</button>
+      <button class="category-btn" data-category="dom-tom">DOM-TOM</button>
+      <button class="category-btn" data-category="comparatif-prix">Comparatif prix</button>
+    </div>
+
+    <!-- Section À la une -->
+    <section id="featured-section" style="display:none">
+      <h2 class="section-title">🌟 À la une</h2>
+      <div id="featured-news" class="grid"></div>
+    </section>
+
+    <!-- Section Toutes les actualités -->
+    <section>
+      <h2 class="section-title">📰 Toutes les actualités</h2>
+      <div id="news" class="grid" aria-live="polite"></div>
+    </section>
   </div>
 
   <script type="module">
     import { TERR_FLAGS } from "/js/flags.js";
     const $=id=>document.getElementById(id);
     const TERRS=["guadeloupe","martinique","guyane","reunion","mayotte","saint-martin","saint-barthelemy","polynesie-francaise","nouvelle-caledonie","wallis-et-futuna"];
+    
+    let currentCategory = 'all';
+    
+    // Populate territory dropdown
     $("territory").innerHTML=TERRS.map(t=>`<option value="${t}">${TERR_FLAGS[t]||"🏳️"} ${t.replace('-',' ')}</option>`).join('');
-    const card = a => `
-      <a class="card" href="${a.link}" target="_blank" rel="noopener">
+    
+    // Card template with featured styling
+    const card = (a, isFeatured = false) => `
+      <a class="card${isFeatured ? ' featured' : ''}" href="${a.link}" target="_blank" rel="noopener">
         <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          ${isFeatured ? '<span class="tag">⭐ À LA UNE</span>' : ''}
           <span class="tag">${TERR_FLAGS[a.territory]||"🏳️"} ${a.territory}</span>
           <span class="tag">${a.source}</span>
+          ${a.category ? `<span class="tag">${getCategoryLabel(a.category)}</span>` : ''}
           <span class="muted" style="margin-left:auto">${new Date(a.date).toLocaleString()}</span>
         </div>
         <h3 style="margin:0 0 6px">${a.title}</h3>
         <p class="muted" style="margin:0">${a.summary||""}</p>
       </a>`;
+    
+    // Get category label for display
+    function getCategoryLabel(cat) {
+      const labels = {
+        'vie-chere': 'Vie chère',
+        'dom-tom': 'DOM-TOM',
+        'comparatif-prix': 'Prix',
+        'general': 'Général'
+      };
+      return labels[cat] || cat;
+    }
+    
+    // Load news with current filters
     const load=()=>{
       const t=$("territory").value;
-      $("news").innerHTML='<div class="muted">Chargement…</div>';
-      fetch(`/news?territory=${encodeURIComponent(t)}`).then(r=>r.json()).then(d=>{
-        $("when").textContent = new Date(d.fetchedAt||Date.now()).toLocaleString();
-        const items = (d.items||[]).slice(0,20);
-        $("news").innerHTML = items.map(card).join('') || '<div class="muted">Aucune actu trouvée.</div>';
-      }).catch(e=>{
-        $("news").innerHTML='<div class="muted">Erreur de chargement</div>';
-      });
+      $("news").innerHTML='<div class="loading">Chargement…</div>';
+      $("featured-news").innerHTML='';
+      $("featured-section").style.display = 'none';
+      
+      fetch(`/news?territory=${encodeURIComponent(t)}&category=${encodeURIComponent(currentCategory)}`)
+        .then(r=>r.json())
+        .then(d=>{
+          $("when").textContent = new Date(d.fetchedAt||Date.now()).toLocaleString();
+          const items = (d.items||[]);
+          
+          if (items.length === 0) {
+            $("news").innerHTML='<div class="muted">Aucune actu trouvée pour cette catégorie.</div>';
+            return;
+          }
+          
+          // Show featured articles (latest 3)
+          const featured = items.slice(0, 3);
+          if (featured.length > 0) {
+            $("featured-section").style.display = 'block';
+            $("featured-news").innerHTML = featured.map(a => card(a, true)).join('');
+          }
+          
+          // Show all articles
+          const allCards = items.slice(0, 20).map(a => card(a)).join('');
+          $("news").innerHTML = allCards || '<div class="muted">Aucune actu trouvée.</div>';
+        })
+        .catch(e=>{
+          console.error('Error loading news:', e);
+          $("news").innerHTML='<div class="muted">Erreur de chargement. Vérifiez votre connexion.</div>';
+        });
     };
+    
+    // Category filter handlers
+    document.querySelectorAll('.category-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Update active state
+        document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        // Update current category and reload
+        currentCategory = btn.dataset.category;
+        load();
+      });
+    });
+    
+    // Initialize
     $("btn").onclick=load;
     load();
   </script>
