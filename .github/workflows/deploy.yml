@@ -9,17 +9,20 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    outputs:
+      deployment-id: ${{ steps.deploy.outputs.id }}
+      deployment-url: ${{ steps.deploy.outputs.url }}
     steps:
       - name: 📂 Checkout repo
         uses: actions/checkout@v4
 
-      - name: ⚙️ Setup Node.js
+      - name: ⚙️ Setup Node.js 20
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'npm'
 
-      - name: 📦 Installer dépendances
+      - name: 📦 Installer npm et dépendances
         run: |
           if [ -f package-lock.json ]; then
             npm ci
@@ -37,26 +40,123 @@ jobs:
             npm install -D @vitejs/plugin-react
           fi
 
-      - name: 🏗️ Build
+      - name: 🧪 Lancer npm test --if-present
+        run: npm test --if-present
+
+      - name: 🏗️ Lancer npm run build
         run: npm run build
 
+      - name: 🌐 Installer http-server
+        run: npm install -g http-server
+
+      - name: 🚀 Démarrer serveur local et tester
+        run: |
+          echo "Démarrage du serveur local sur port 3000..."
+          http-server ./dist/client -p 3000 --silent &
+          SERVER_PID=$!
+          echo "Server PID: $SERVER_PID"
+
+          # Attendre que le serveur démarre
+          sleep 5
+
+          echo "Test des endpoints..."
+
+          # Test de la page d'accueil
+          echo "Testing /"
+          curl -f http://localhost:3000/ || \
+            (echo "❌ Page d'accueil échouée" && kill $SERVER_PID && exit 1)
+          echo "✅ Page d'accueil OK (200)"
+
+          # Test de la page comparateur
+          echo "Testing /compare.html"
+          curl -f http://localhost:3000/compare.html || \
+            (echo "❌ Page comparateur échouée" && kill $SERVER_PID && exit 1)
+          echo "✅ Page comparateur OK (200)"
+
+          # Test de la page actualités
+          echo "Testing /actualites.html"
+          curl -f http://localhost:3000/actualites.html || \
+            (echo "❌ Page actualités échouée" && kill $SERVER_PID && exit 1)
+          echo "✅ Page actualités OK (200)"
+
+          # Arrêter le serveur
+          kill $SERVER_PID
+          echo "✅ Tous les tests locaux passés"
+
       - name: 🚀 Déploiement Cloudflare Pages
+        id: deploy
         uses: cloudflare/pages-action@v1
         with:
-          apiToken: ${{ secrets.CF_API_TOKEN }}
-          accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          projectName: ${{ secrets.CF_PROJECT_NAME }}
-          directory: dist
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: akiprisaye
+          directory: dist/client
 
-      - name: 🧹 Purge cache Cloudflare
+      - name: 🔍 Vérifier déploiement en ligne
+        id: verify
+        run: |
+          echo "Attente de la propagation du déploiement..."
+          sleep 30
+
+          echo "Vérification de https://akiprisaye.pages.dev"
+
+          # Test de l'accueil
+          if curl -f -s https://akiprisaye.pages.dev/ > /dev/null; then
+            echo "✅ Site en ligne accessible (200 OK)"
+          else
+            echo "❌ Site non accessible"
+            echo "DEPLOYMENT_FAILED=true" >> $GITHUB_ENV
+            exit 1
+          fi
+
+      - name: 🧹 Purge cache Cloudflare (optionnel)
         if: ${{ env.CF_ZONE_ID != '' }}
         run: |
-          curl -X POST "https://api.cloudflare.com/client/v4/zones/${{ secrets.CF_ZONE_ID }}/purge_cache" \
-            -H "Authorization: Bearer ${{ secrets.CF_API_TOKEN }}" \
+          curl -X POST \
+            "https://api.cloudflare.com/client/v4/zones/${{ secrets.CF_ZONE_ID }}/purge_cache" \
+            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
             -H "Content-Type: application/json" \
             --data '{"purge_everything":true}'
 
       - name: 📝 Write Production URL to Summary
+        if: success()
         run: |
           echo "# 🌐 Production URL" >> $GITHUB_STEP_SUMMARY
           echo "L'application est déployée sur [https://akiprisaye.pages.dev](https://akiprisaye.pages.dev)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## ✅ Tests réussis" >> $GITHUB_STEP_SUMMARY
+          echo "- Page d'accueil: ✅" >> $GITHUB_STEP_SUMMARY
+          echo "- Page comparateur: ✅" >> $GITHUB_STEP_SUMMARY
+          echo "- Page actualités: ✅" >> $GITHUB_STEP_SUMMARY
+          echo "- Déploiement en ligne: ✅" >> $GITHUB_STEP_SUMMARY
+
+  rollback:
+    runs-on: ubuntu-latest
+    needs: build-and-deploy
+    if: failure()
+    steps:
+      - name: 🔄 Rollback automatique en cas d'échec
+        run: |
+          echo "Échec détecté, tentative de rollback..."
+
+          # Appel API Cloudflare pour rollback
+          ROLLBACK_RESPONSE=$(curl -s -X POST \
+            "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects/akiprisaye/deployments/rollback" \
+            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
+            -H "Content-Type: application/json")
+
+          echo "Réponse rollback: $ROLLBACK_RESPONSE"
+
+          # Vérifier si le rollback a réussi
+          if echo "$ROLLBACK_RESPONSE" | grep -q '"success":true'; then
+            echo "✅ Rollback automatique réussi"
+          else
+            echo "❌ Rollback automatique échoué"
+            echo "Vérifiez manuellement le tableau Cloudflare Pages"
+          fi
+
+      - name: 📝 Write Rollback Summary
+        run: |
+          echo "# ❌ Déploiement échoué" >> $GITHUB_STEP_SUMMARY
+          echo "Un rollback automatique a été tenté." >> $GITHUB_STEP_SUMMARY
+          echo "Vérifiez les logs ci-dessus et le tableau Cloudflare Pages." >> $GITHUB_STEP_SUMMARY
