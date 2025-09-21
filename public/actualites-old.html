@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Actualités • Vie chère & conso • A KI PRI SA YÉ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/styles.css">
+  <style>
+    body{background:#0b1220;color:#e7eefc;font-family:system-ui,Segoe UI,Roboto,Inter,Arial}
+    .wrap{max-width:980px;margin:32px auto;padding:0 16px}
+    .h1{font-size:2rem;font-weight:800;margin:8px 0 16px}
+    .muted{opacity:.7}
+    .grid{display:grid;gap:12px}
+    .card{background:#0f1629;border:1px solid #1e2945;border-radius:16px;padding:14px}
+    a.card{color:inherit;text-decoration:none}
+    .tag{font-size:.75rem;opacity:.8;background:#17213a;padding:4px 8px;border-radius:999px;margin-right:6px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="h1">Actualités “vie chère / consommation”</div>
+    <p class="muted">Filtré par territoire, agrégé côté serveur (Cloudflare Worker) pour éviter les blocages CORS.</p>
+
+    <div style="display:flex;gap:10px;align-items:center;margin:12px 0">
+      <select id="territory"></select>
+      <button id="btn">Rechercher</button>
+      <span id="when" class="muted" style="margin-left:auto"></span>
+    </div>
+
+    <section id="news" class="grid" aria-live="polite"></section>
+  </div>
+
+  <script type="module">
+    import { TERR_FLAGS } from "/js/flags.js";
+    const $=id=>document.getElementById(id);
+    const TERRS=["guadeloupe","martinique","guyane","reunion","mayotte","saint-martin","saint-barthelemy","polynesie-francaise","nouvelle-caledonie","wallis-et-futuna"];
+    $("territory").innerHTML=TERRS.map(t=>`<option value="${t}">${TERR_FLAGS[t]||"🏳️"} ${t.replace('-',' ')}</option>`).join('');
+    const card = a => `
+      <a class="card" href="${a.link}" target="_blank" rel="noopener">
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="tag">${TERR_FLAGS[a.territory]||"🏳️"} ${a.territory}</span>
+          <span class="tag">${a.source}</span>
+          <span class="muted" style="margin-left:auto">${new Date(a.date).toLocaleString()}</span>
+        </div>
+        <h3 style="margin:0 0 6px">${a.title}</h3>
+        <p class="muted" style="margin:0">${a.summary||""}</p>
+      </a>`;
+    const load=()=>{
+      const t=$("territory").value;
+      $("news").innerHTML='<div class="muted">Chargement…</div>';
+      fetch(`/news?territory=${encodeURIComponent(t)}`).then(r=>r.json()).then(d=>{
+        $("when").textContent = new Date(d.fetchedAt||Date.now()).toLocaleString();
+        const items = (d.items||[]).slice(0,20);
+        $("news").innerHTML = items.map(card).join('') || '<div class="muted">Aucune actu trouvée.</div>';
+      }).catch(e=>{
+        $("news").innerHTML='<div class="muted">Erreur de chargement</div>';
+      });
+    };
+    $("btn").onclick=load;
+    load();
+  </script>
+
+  <!-- Lazy Loading Support -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add lazy loading to images that don't have it
+      const images = document.querySelectorAll('img:not([loading])');
+      images.forEach(img => {
+        if (img.getBoundingClientRect().top > window.innerHeight * 2) {
+          img.setAttribute('loading', 'lazy');
+          img.setAttribute('decoding', 'async');
+        }
+      });
+      
+      // Add alt attributes to images without them
+      const imagesWithoutAlt = document.querySelectorAll('img:not([alt])');
+      imagesWithoutAlt.forEach(img => {
+        const src = img.getAttribute('src') || '';
+        const filename = src.split('/').pop().split('.')[0];
+        img.setAttribute('alt', `Image: ${filename}`);
+      });
+    });
+  </script></body>
+</html>

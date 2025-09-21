@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Administration - A KI PRI SA YÉ</title>
+  <meta name="robots" content="noindex, nofollow">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+  
+  <style>
+    .admin-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .admin-header {
+      background: var(--panel);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+      border: 1px solid #1e2945;
+      text-align: center;
+    }
+    
+    .auth-panel {
+      background: var(--panel);
+      border-radius: 16px;
+      padding: 32px;
+      margin: 0 auto 24px;
+      max-width: 400px;
+      border: 1px solid #1e2945;
+    }
+    
+    .admin-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+    
+    .admin-card {
+      background: var(--panel);
+      border: 1px solid #1e2945;
+      border-radius: 16px;
+      padding: 24px;
+    }
+    
+    .admin-card h3 {
+      margin: 0 0 16px 0;
+      color: var(--brand);
+      font-size: 18px;
+    }
+    
+    .upload-zone {
+      border: 2px dashed #2a3441;
+      border-radius: 12px;
+      padding: 40px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: var(--muted);
+    }
+    
+    .upload-zone:hover,
+    .upload-zone.dragover {
+      border-color: var(--brand);
+      background: rgba(38, 208, 124, 0.1);
+    }
+    
+    .upload-zone.processing {
+      border-color: var(--brand-2);
+      background: rgba(0, 179, 255, 0.1);
+    }
+    
+    .file-input {
+      display: none;
+    }
+    
+    .ocr-results {
+      background: var(--bg);
+      border: 1px solid #2a3441;
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 16px;
+      font-family: monospace;
+      font-size: 14px;
+      white-space: pre-wrap;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    
+    .stat-card {
+      background: var(--muted);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+    
+    .stat-number {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--brand);
+    }
+    
+    .stat-label {
+      font-size: 12px;
+      opacity: 0.8;
+      margin-top: 4px;
+    }
+    
+    .tickets-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+    }
+    
+    .tickets-table th,
+    .tickets-table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #2a3441;
+    }
+    
+    .tickets-table th {
+      background: var(--muted);
+      font-weight: 600;
+    }
+    
+    .tickets-table tr:hover {
+      background: rgba(38, 208, 124, 0.05);
+    }
+    
+    .reports-list {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    
+    .report-item {
+      background: var(--muted);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+      border-left: 4px solid var(--danger);
+    }
+    
+    .report-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 12px;
+      opacity: 0.8;
+    }
+    
+    .report-reason {
+      font-weight: 600;
+      color: var(--danger);
+      margin-bottom: 8px;
+    }
+    
+    .report-comment {
+      font-size: 14px;
+      line-height: 1.4;
+    }
+    
+    .btn-danger {
+      background: linear-gradient(135deg, var(--danger), #ff3333);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    
+    .btn-success {
+      background: linear-gradient(135deg, var(--brand), #22c55e);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(11, 15, 20, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #2a3441;
+      border-top: 4px solid var(--brand);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .error-message {
+      background: rgba(255, 93, 93, 0.1);
+      border: 1px solid rgba(255, 93, 93, 0.3);
+      border-radius: 8px;
+      padding: 12px;
+      margin: 12px 0;
+      color: var(--danger);
+    }
+    
+    .success-message {
+      background: rgba(38, 208, 124, 0.1);
+      border: 1px solid rgba(38, 208, 124, 0.3);
+      border-radius: 8px;
+      padding: 12px;
+      margin: 12px 0;
+      color: var(--brand);
+    }
+    
+    @media (max-width: 768px) {
+      .admin-container {
+        padding: 16px;
+      }
+      
+      .admin-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .tickets-table {
+        font-size: 12px;
+      }
+      
+      .tickets-table th,
+      .tickets-table td {
+        padding: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-container">
+    <!-- Authentication Panel -->
+    <div id="auth-panel" class="auth-panel">
+      <h2 style="text-align: center; margin-bottom: 24px;">
+        🔐 Authentification Admin
+      </h2>
+      
+      <div id="auth-form">
+        <div style="margin-bottom: 16px;">
+          <label for="email" style="display: block; margin-bottom: 8px;">Email :</label>
+          <input type="email" id="email" class="input" placeholder="admin@akiprisaye.com" required>
+        </div>
+        
+        <div style="margin-bottom: 20px;">
+          <label for="password" style="display: block; margin-bottom: 8px;">Mot de passe :</label>
+          <input type="password" id="password" class="input" placeholder="••••••••" required>
+        </div>
+        
+        <button id="login-btn" class="btn" style="width: 100%;">
+          Se connecter
+        </button>
+        
+        <div id="auth-error" class="error-message" style="display: none;"></div>
+      </div>
+    </div>
+
+    <!-- Admin Dashboard (hidden by default) -->
+    <div id="admin-dashboard" style="display: none;">
+      <div class="admin-header">
+        <h1 style="margin: 0 0 8px 0;">
+          📊 Dashboard Admin - A KI PRI SA YÉ
+        </h1>
+        <p style="margin: 0; opacity: 0.8;">
+          Gestion des tickets OCR et signalements produits
+        </p>
+        <button id="logout-btn" class="btn-danger" style="margin-top: 16px;">
+          Déconnexion
+        </button>
+      </div>
+
+      <!-- Statistics -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-number" id="tickets-count">0</div>
+          <div class="stat-label">Tickets OCR</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="reports-count">0</div>
+          <div class="stat-label">Signalements</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="cache-size">0</div>
+          <div class="stat-label">Éléments en cache</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="online-users">1</div>
+          <div class="stat-label">Utilisateurs actifs</div>
+        </div>
+      </div>
+
+      <div class="admin-grid">
+        <!-- OCR Upload Section -->
+        <div class="admin-card">
+          <h3>📷 Upload Ticket OCR</h3>
+          
+          <div id="upload-zone" class="upload-zone">
+            <div style="font-size: 48px; margin-bottom: 16px;">📄</div>
+            <div style="font-weight: 600; margin-bottom: 8px;">
+              Glissez votre ticket ici ou cliquez pour sélectionner
+            </div>
+            <div style="font-size: 12px; opacity: 0.7;">
+              Formats supportés : JPG, PNG, WebP
+            </div>
+            <input type="file" id="file-input" class="file-input" accept="image/*" multiple>
+          </div>
+          
+          <div id="upload-progress" style="display: none; margin-top: 16px;">
+            <div style="background: var(--muted); border-radius: 8px; padding: 12px;">
+              <div style="font-size: 14px; margin-bottom: 8px;">
+                Traitement OCR en cours...
+              </div>
+              <div style="background: var(--bg); border-radius: 4px; height: 8px;">
+                <div id="progress-bar" style="background: var(--brand); height: 100%; border-radius: 4px; width: 0%; transition: width 0.3s;"></div>
+              </div>
+            </div>
+          </div>
+          
+          <div id="ocr-results" class="ocr-results" style="display: none;"></div>
+          
+          <div style="margin-top: 16px;">
+            <button id="save-ticket-btn" class="btn-success" style="display: none;">
+              💾 Sauvegarder dans Firestore
+            </button>
+          </div>
+        </div>
+
+        <!-- Tickets Management -->
+        <div class="admin-card">
+          <h3>📋 Tickets OCR</h3>
+          
+          <div style="margin-bottom: 16px;">
+            <button id="refresh-tickets-btn" class="btn" style="padding: 8px 16px; font-size: 14px;">
+              🔄 Actualiser
+            </button>
+            <button id="export-tickets-btn" class="btn" style="padding: 8px 16px; font-size: 14px; margin-left: 8px;">
+              📤 Exporter CSV
+            </button>
+          </div>
+          
+          <div id="tickets-container">
+            <table class="tickets-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Produits</th>
+                  <th>Total</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="tickets-tbody">
+                <tr>
+                  <td colspan="4" style="text-align: center; opacity: 0.6;">
+                    Aucun ticket pour le moment
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Product Reports -->
+        <div class="admin-card">
+          <h3>🚨 Signalements Produits</h3>
+          
+          <div style="margin-bottom: 16px;">
+            <button id="refresh-reports-btn" class="btn" style="padding: 8px 16px; font-size: 14px;">
+              🔄 Actualiser
+            </button>
+          </div>
+          
+          <div id="reports-container" class="reports-list">
+            <div style="text-align: center; opacity: 0.6; padding: 40px;">
+              Aucun signalement pour le moment
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div id="loading-overlay" class="loading-overlay" style="display: none;">
+    <div class="loading-spinner"></div>
+  </div>
+
+  <!-- Scripts -->
+  <script type="module">
+    import { auth, db } from '/firebase-config.js';
+    import { 
+      signInWithEmailAndPassword, 
+      signOut, 
+      onAuthStateChanged 
+    } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+    import { 
+      collection, 
+      addDoc, 
+      getDocs, 
+      orderBy, 
+      query, 
+      Timestamp 
+    } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+    class AdminPanel {
+      constructor() {
+        this.currentUser = null;
+        this.currentOcrText = '';
+        this.tickets = [];
+        this.reports = [];
+        
+        this.initElements();
+        this.initEventListeners();
+        this.initAuth();
+        this.loadTestData();
+      }
+      
+      initElements() {
+        this.authPanel = document.getElementById('auth-panel');
+        this.dashboard = document.getElementById('admin-dashboard');
+        this.loginBtn = document.getElementById('login-btn');
+        this.logoutBtn = document.getElementById('logout-btn');
+        this.emailInput = document.getElementById('email');
+        this.passwordInput = document.getElementById('password');
+        this.authError = document.getElementById('auth-error');
+        this.uploadZone = document.getElementById('upload-zone');
+        this.fileInput = document.getElementById('file-input');
+        this.uploadProgress = document.getElementById('upload-progress');
+        this.progressBar = document.getElementById('progress-bar');
+        this.ocrResults = document.getElementById('ocr-results');
+        this.saveTicketBtn = document.getElementById('save-ticket-btn');
+        this.loadingOverlay = document.getElementById('loading-overlay');
+        
+        // Stats elements
+        this.ticketsCountEl = document.getElementById('tickets-count');
+        this.reportsCountEl = document.getElementById('reports-count');
+        this.cacheSizeEl = document.getElementById('cache-size');
+        
+        // Tables
+        this.ticketsTbody = document.getElementById('tickets-tbody');
+        this.reportsContainer = document.getElementById('reports-container');
+      }
+      
+      initEventListeners() {
+        this.loginBtn.addEventListener('click', () => this.login());
+        this.logoutBtn.addEventListener('click', () => this.logout());
+        
+        this.emailInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') this.login();
+        });
+        this.passwordInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') this.login();
+        });
+        
+        // OCR Upload
+        this.uploadZone.addEventListener('click', () => this.fileInput.click());
+        this.uploadZone.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          this.uploadZone.classList.add('dragover');
+        });
+        this.uploadZone.addEventListener('dragleave', () => {
+          this.uploadZone.classList.remove('dragover');
+        });
+        this.uploadZone.addEventListener('drop', (e) => {
+          e.preventDefault();
+          this.uploadZone.classList.remove('dragover');
+          this.handleFiles(e.dataTransfer.files);
+        });
+        
+        this.fileInput.addEventListener('change', (e) => {
+          this.handleFiles(e.target.files);
+        });
+        
+        this.saveTicketBtn.addEventListener('click', () => this.saveTicket());
+        
+        // Refresh buttons
+        document.getElementById('refresh-tickets-btn').addEventListener('click', () => this.loadTickets());
+        document.getElementById('refresh-reports-btn').addEventListener('click', () => this.loadReports());
+        document.getElementById('export-tickets-btn').addEventListener('click', () => this.exportTickets());
+      }
+      
+      initAuth() {
+        onAuthStateChanged(auth, (user) => {
+          if (user) {
+            this.currentUser = user;
+            this.showDashboard();
+            this.loadData();
+          } else {
+            this.currentUser = null;
+            this.showAuth();
+          }
+        });
+      }
+      
+      async login() {
+        const email = this.emailInput.value.trim();
+        const password = this.passwordInput.value;
+        
+        if (!email || !password) {
+          this.showAuthError('Veuillez remplir tous les champs');
+          return;
+        }
+        
+        this.setLoading(true);
+        this.hideAuthError();
+        
+        try {
+          await signInWithEmailAndPassword(auth, email, password);
+        } catch (error) {
+          console.error('Login error:', error);
+          this.showAuthError('Identifiants incorrects');
+        } finally {
+          this.setLoading(false);
+        }
+      }
+      
+      async logout() {
+        try {
+          await signOut(auth);
+        } catch (error) {
+          console.error('Logout error:', error);
+        }
+      }
+      
+      showAuth() {
+        this.authPanel.style.display = 'block';
+        this.dashboard.style.display = 'none';
+      }
+      
+      showDashboard() {
+        this.authPanel.style.display = 'none';
+        this.dashboard.style.display = 'block';
+      }
+      
+      showAuthError(message) {
+        this.authError.textContent = message;
+        this.authError.style.display = 'block';
+      }
+      
+      hideAuthError() {
+        this.authError.style.display = 'none';
+      }
+      
+      setLoading(loading) {
+        this.loadingOverlay.style.display = loading ? 'flex' : 'none';
+      }
+      
+      async handleFiles(files) {
+        if (!files.length) return;
+        
+        this.uploadZone.classList.add('processing');
+        this.uploadProgress.style.display = 'block';
+        this.ocrResults.style.display = 'none';
+        this.saveTicketBtn.style.display = 'none';
+        
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          await this.processOCR(file, i + 1, files.length);
+        }
+        
+        this.uploadZone.classList.remove('processing');
+      }
+      
+      async processOCR(file, index, total) {
+        try {
+          // Simuler le traitement OCR (en production, utiliser Tesseract.js)
+          const progressStep = 100 / total;
+          const startProgress = (index - 1) * progressStep;
+          
+          // Simulation du traitement
+          for (let i = 0; i <= 100; i += 10) {
+            this.progressBar.style.width = (startProgress + (i * progressStep / 100)) + '%';
+            await new Promise(resolve => setTimeout(resolve, 100));
+          }
+          
+          // Résultat OCR simulé
+          const mockOcrText = `=== TICKET ${index} ===
+Date: ${new Date().toLocaleDateString()}
+Magasin: Super U Pointe-à-Pitre
+
+Produits:
+- Pain de mie 1.25€
+- Lait 1L 1.85€
+- Bananes 1kg 2.40€
+- Yaourts x4 3.20€
+
+TOTAL: 8.70€
+================`;
+          
+          this.currentOcrText += mockOcrText + '\n\n';
+          this.ocrResults.textContent = this.currentOcrText;
+          this.ocrResults.style.display = 'block';
+          this.saveTicketBtn.style.display = 'inline-block';
+          
+        } catch (error) {
+          console.error('OCR Error:', error);
+          alert('Erreur lors du traitement OCR');
+        }
+      }
+      
+      async saveTicket() {
+        if (!this.currentOcrText.trim()) return;
+        
+        try {
+          this.setLoading(true);
+          
+          // En production, sauvegarder dans Firestore
+          const ticketData = {
+            text: this.currentOcrText,
+            createdAt: new Date().toISOString(),
+            userId: this.currentUser?.uid || 'admin',
+            processed: false
+          };
+          
+          // Simulation sauvegarde Firestore
+          this.tickets.unshift({
+            id: Date.now().toString(),
+            ...ticketData
+          });
+          
+          this.currentOcrText = '';
+          this.ocrResults.style.display = 'none';
+          this.saveTicketBtn.style.display = 'none';
+          this.uploadProgress.style.display = 'none';
+          this.progressBar.style.width = '0%';
+          
+          this.updateStats();
+          this.renderTickets();
+          
+          alert('Ticket sauvegardé avec succès !');
+          
+        } catch (error) {
+          console.error('Save error:', error);
+          alert('Erreur lors de la sauvegarde');
+        } finally {
+          this.setLoading(false);
+        }
+      }
+      
+      async loadData() {
+        this.loadTickets();
+        this.loadReports();
+        this.updateCacheStats();
+      }
+      
+      loadTestData() {
+        // Données de test pour la démo
+        this.reports = [
+          {
+            id: '1',
+            productId: 'prod_1',
+            reason: 'Prix incorrect',
+            comment: 'Le prix affiché ne correspond pas à celui en magasin',
+            timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
+          },
+          {
+            id: '2',
+            productId: 'prod_2',
+            reason: 'Produit introuvable',
+            comment: 'Ce produit n\'existe plus dans ce magasin',
+            timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString()
+          }
+        ];
+        
+        this.updateStats();
+        this.renderReports();
+      }
+      
+      async loadTickets() {
+        // En production, charger depuis Firestore
+        // const q = query(collection(db, 'tickets'), orderBy('createdAt', 'desc'));
+        // const querySnapshot = await getDocs(q);
+        // this.tickets = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        
+        this.renderTickets();
+      }
+      
+      async loadReports() {
+        // Charger les signalements depuis localStorage pour la démo
+        try {
+          const reports = JSON.parse(localStorage.getItem('product_reports') || '[]');
+          this.reports = [...this.reports, ...reports];
+          this.renderReports();
+        } catch (error) {
+          console.error('Error loading reports:', error);
+        }
+      }
+      
+      renderTickets() {
+        if (!this.tickets.length) {
+          this.ticketsTbody.innerHTML = `
+            <tr>
+              <td colspan="4" style="text-align: center; opacity: 0.6;">
+                Aucun ticket pour le moment
+              </td>
+            </tr>
+          `;
+          return;
+        }
+        
+        this.ticketsTbody.innerHTML = this.tickets.map(ticket => `
+          <tr>
+            <td>${new Date(ticket.createdAt).toLocaleDateString()}</td>
+            <td>${this.extractProductCount(ticket.text)} produits</td>
+            <td>${this.extractTotal(ticket.text)}</td>
+            <td>
+              <button class="btn-success" onclick="adminPanel.viewTicket('${ticket.id}')">
+                👁️ Voir
+              </button>
+            </td>
+          </tr>
+        `).join('');
+      }
+      
+      renderReports() {
+        if (!this.reports.length) {
+          this.reportsContainer.innerHTML = `
+            <div style="text-align: center; opacity: 0.6; padding: 40px;">
+              Aucun signalement pour le moment
+            </div>
+          `;
+          return;
+        }
+        
+        this.reportsContainer.innerHTML = this.reports.map(report => `
+          <div class="report-item">
+            <div class="report-meta">
+              <span>ID: ${report.productId}</span>
+              <span>${new Date(report.timestamp).toLocaleString()}</span>
+            </div>
+            <div class="report-reason">${report.reason}</div>
+            <div class="report-comment">${report.comment}</div>
+            <div style="margin-top: 12px;">
+              <button class="btn-success" onclick="adminPanel.resolveReport('${report.id}')">
+                ✓ Résoudre
+              </button>
+              <button class="btn-danger" onclick="adminPanel.deleteReport('${report.id}')">
+                🗑️ Supprimer
+              </button>
+            </div>
+          </div>
+        `).join('');
+      }
+      
+      updateStats() {
+        this.ticketsCountEl.textContent = this.tickets.length;
+        this.reportsCountEl.textContent = this.reports.length;
+      }
+      
+      async updateCacheStats() {
+        if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+          try {
+            const messageChannel = new MessageChannel();
+            messageChannel.port1.onmessage = (event) => {
+              if (event.data.size !== undefined) {
+                this.cacheSizeEl.textContent = event.data.size;
+              }
+            };
+            
+            navigator.serviceWorker.controller.postMessage(
+              { type: 'GET_CACHE_SIZE' },
+              [messageChannel.port2]
+            );
+          } catch (error) {
+            console.error('Error getting cache stats:', error);
+          }
+        }
+      }
+      
+      extractProductCount(text) {
+        const lines = text.split('\n');
+        return lines.filter(line => line.includes('€')).length;
+      }
+      
+      extractTotal(text) {
+        const totalMatch = text.match(/TOTAL.*?(\d+\.\d+)€/i);
+        return totalMatch ? totalMatch[1] + '€' : 'N/A';
+      }
+      
+      viewTicket(ticketId) {
+        const ticket = this.tickets.find(t => t.id === ticketId);
+        if (ticket) {
+          alert('Contenu du ticket:\n\n' + ticket.text);
+        }
+      }
+      
+      resolveReport(reportId) {
+        this.reports = this.reports.filter(r => r.id !== reportId);
+        this.renderReports();
+        this.updateStats();
+      }
+      
+      deleteReport(reportId) {
+        if (confirm('Supprimer ce signalement ?')) {
+          this.resolveReport(reportId);
+        }
+      }
+      
+      exportTickets() {
+        if (!this.tickets.length) {
+          alert('Aucun ticket à exporter');
+          return;
+        }
+        
+        const csv = 'Date,Produits,Total,Texte\n' + 
+          this.tickets.map(ticket => {
+            const date = new Date(ticket.createdAt).toLocaleDateString();
+            const products = this.extractProductCount(ticket.text);
+            const total = this.extractTotal(ticket.text);
+            const text = ticket.text.replace(/"/g, '""');
+            return `"${date}","${products}","${total}","${text}"`;
+          }).join('\n');
+        
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `tickets_${new Date().toISOString().split('T')[0]}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+    }
+    
+    // Initialiser l'application admin
+    window.adminPanel = new AdminPanel();
+  </script>
+
+  <!-- Lazy Loading Support -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const images = document.querySelectorAll('img:not([loading])');
+      images.forEach(img => {
+        if (img.getBoundingClientRect().top > window.innerHeight * 2) {
+          img.setAttribute('loading', 'lazy');
+          img.setAttribute('decoding', 'async');
+        }
+      });
+      
+      const imagesWithoutAlt = document.querySelectorAll('img:not([alt])');
+      imagesWithoutAlt.forEach(img => {
+        const src = img.getAttribute('src') || '';
+        const filename = src.split('/').pop().split('.')[0];
+        img.setAttribute('alt', `Image: ${filename}`);
+      });
+    });
+  </script>
+</body>
+</html>

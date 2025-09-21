@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  
+  <!-- SEO Meta Tags -->
+  <title>Comparateur de prix DROM-COM – A KI PRI SA YÉ</title>
+  <meta name="description" content="Comparez les prix entre les DOM-TOM et la métropole en temps réel. Trouvez les meilleurs prix pour vos courses dans votre territoire." />
+  <meta name="keywords" content="comparateur prix, DROM-COM, DOM-TOM, Guadeloupe, Martinique, Guyane, Réunion, Mayotte, courses, prix, économies" />
+  <meta name="robots" content="index, follow" />
+  
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Comparateur de prix DROM-COM – A KI PRI SA YÉ" />
+  <meta property="og:description" content="Comparez les prix entre les DOM-TOM et la métropole en temps réel. Trouvez les meilleurs prix pour vos courses." />
+  <meta property="og:url" content="https://akiprisaye.pages.dev/comparateur" />
+  <meta property="og:image" content="https://akiprisaye.pages.dev/og-cover.jpg" />
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Comparateur de prix DROM-COM – A KI PRI SA YÉ" />
+  <meta name="twitter:description" content="Comparez les prix entre les DOM-TOM et la métropole en temps réel." />
+  
+  <!-- Favicons -->
+  <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/styles.css"/>
+  <link rel="stylesheet" href="/css/theme.css"/>
+  
+  <style>
+    .comparateur-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .search-panel {
+      background: var(--panel);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+      border: 1px solid #1e2945;
+    }
+    
+    .search-form {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 16px;
+      align-items: end;
+    }
+    
+    .search-input {
+      background: var(--muted);
+      border: 1px solid #2a3441;
+      border-radius: 8px;
+      padding: 12px 16px;
+      color: var(--txt);
+      font-size: 16px;
+    }
+    
+    .search-input:focus {
+      outline: none;
+      border-color: var(--brand);
+    }
+    
+    .territory-select {
+      background: var(--muted);
+      border: 1px solid #2a3441;
+      border-radius: 8px;
+      padding: 12px 16px;
+      color: var(--txt);
+      min-width: 180px;
+    }
+    
+    .search-btn {
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      border: none;
+      border-radius: 8px;
+      padding: 12px 24px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    
+    .search-btn:hover {
+      transform: translateY(-2px);
+    }
+    
+    .search-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 20px;
+    }
+    
+    .product-card {
+      background: var(--panel);
+      border: 1px solid #1e2945;
+      border-radius: 16px;
+      padding: 20px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .product-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 25px rgba(0, 179, 255, 0.15);
+    }
+    
+    .product-name {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0 0 12px 0;
+      color: var(--txt);
+    }
+    
+    .price-comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    
+    .price-box {
+      text-align: center;
+      padding: 12px;
+      border-radius: 8px;
+    }
+    
+    .price-dom {
+      background: rgba(255, 93, 93, 0.1);
+      border: 1px solid rgba(255, 93, 93, 0.3);
+    }
+    
+    .price-hex {
+      background: rgba(38, 208, 124, 0.1);
+      border: 1px solid rgba(38, 208, 124, 0.3);
+    }
+    
+    .price-label {
+      font-size: 12px;
+      opacity: 0.8;
+      margin-bottom: 4px;
+    }
+    
+    .price-value {
+      font-size: 20px;
+      font-weight: 700;
+    }
+    
+    .price-dom .price-value {
+      color: var(--danger);
+    }
+    
+    .price-hex .price-value {
+      color: var(--brand);
+    }
+    
+    .price-difference {
+      text-align: center;
+      padding: 8px;
+      background: var(--muted);
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    
+    .price-diff-positive {
+      color: var(--danger);
+    }
+    
+    .price-diff-negative {
+      color: var(--brand);
+    }
+    
+    .product-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+      font-size: 12px;
+      opacity: 0.7;
+    }
+    
+    .report-btn {
+      background: none;
+      border: 1px solid #444;
+      border-radius: 4px;
+      padding: 6px 12px;
+      color: var(--sub);
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .report-btn:hover {
+      border-color: var(--brand);
+      color: var(--brand);
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 40px;
+      opacity: 0.7;
+    }
+    
+    .error {
+      background: rgba(255, 93, 93, 0.1);
+      border: 1px solid rgba(255, 93, 93, 0.3);
+      border-radius: 8px;
+      padding: 16px;
+      margin: 20px 0;
+      color: var(--danger);
+    }
+    
+    .cache-info {
+      background: rgba(38, 208, 124, 0.1);
+      border: 1px solid rgba(38, 208, 124, 0.3);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 20px;
+      font-size: 12px;
+      color: var(--brand);
+    }
+    
+    @media (max-width: 768px) {
+      .search-form {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      
+      .products-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .comparateur-container {
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="comparateur-container">
+    <header style="text-align: center; margin-bottom: 32px;">
+      <h1 style="font-size: 2.5rem; margin: 0 0 12px 0; background: linear-gradient(135deg, var(--brand), var(--brand-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+        Comparateur de Prix
+      </h1>
+      <p style="opacity: 0.8; font-size: 18px; margin: 0;">
+        Comparez les prix entre votre territoire et la métropole
+      </p>
+    </header>
+
+    <div class="search-panel">
+      <div class="search-form">
+        <div>
+          <label for="search-input" style="display: block; margin-bottom: 8px; font-weight: 600;">
+            Rechercher un produit
+          </label>
+          <input 
+            type="text" 
+            id="search-input" 
+            class="search-input" 
+            placeholder="Ex: pain, lait, essence..."
+            autocomplete="off"
+          />
+        </div>
+        
+        <div>
+          <label for="territory-select" style="display: block; margin-bottom: 8px; font-weight: 600;">
+            Territoire
+          </label>
+          <select id="territory-select" class="territory-select">
+            <option value="">Chargement...</option>
+          </select>
+        </div>
+        
+        <button id="search-btn" class="search-btn">
+          🔍 Comparer
+        </button>
+      </div>
+    </div>
+
+    <div id="cache-info" class="cache-info" style="display: none;">
+      ✓ Données en cache - dernière mise à jour : <span id="cache-time"></span>
+    </div>
+
+    <div id="error-message" class="error" style="display: none;"></div>
+
+    <div id="loading" class="loading" style="display: none;">
+      <div style="font-size: 24px;">⏳</div>
+      <div>Chargement des prix...</div>
+    </div>
+
+    <div id="products-container" class="products-grid"></div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/js/api.js"></script>
+  <script>
+    class ComparateurApp {
+      constructor() {
+        this.currentTerritory = 'guadeloupe';
+        this.currentQuery = '';
+        this.isLoading = false;
+        
+        this.initElements();
+        this.initEventListeners();
+        this.loadTerritories();
+        this.loadInitialData();
+      }
+      
+      initElements() {
+        this.searchInput = document.getElementById('search-input');
+        this.territorySelect = document.getElementById('territory-select');
+        this.searchBtn = document.getElementById('search-btn');
+        this.loadingEl = document.getElementById('loading');
+        this.errorEl = document.getElementById('error-message');
+        this.productsContainer = document.getElementById('products-container');
+        this.cacheInfoEl = document.getElementById('cache-info');
+        this.cacheTimeEl = document.getElementById('cache-time');
+      }
+      
+      initEventListeners() {
+        this.searchBtn.addEventListener('click', () => this.performSearch());
+        this.searchInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') this.performSearch();
+        });
+        this.territorySelect.addEventListener('change', () => {
+          this.currentTerritory = this.territorySelect.value;
+          if (this.currentQuery) this.performSearch();
+        });
+        
+        // Recherche en temps réel
+        let searchTimeout;
+        this.searchInput.addEventListener('input', () => {
+          clearTimeout(searchTimeout);
+          searchTimeout = setTimeout(() => {
+            if (this.searchInput.value.length > 2) {
+              this.performSearch();
+            }
+          }, 500);
+        });
+      }
+      
+      async loadTerritories() {
+        try {
+          const data = await window.apiService.getTerritories();
+          this.populateTerritories(data.data || []);
+        } catch (error) {
+          console.error('Erreur chargement territoires:', error);
+        }
+      }
+      
+      populateTerritories(territories) {
+        this.territorySelect.innerHTML = territories.map(t => 
+          `<option value="${t.slug}" ${t.slug === this.currentTerritory ? 'selected' : ''}>
+            ${t.name}
+          </option>`
+        ).join('');
+      }
+      
+      async loadInitialData() {
+        try {
+          await this.loadPrices();
+        } catch (error) {
+          console.error('Erreur chargement initial:', error);
+        }
+      }
+      
+      async performSearch() {
+        const query = this.searchInput.value.trim();
+        this.currentQuery = query;
+        
+        if (query.length < 2) {
+          await this.loadPrices();
+        } else {
+          await this.searchProducts(query);
+        }
+      }
+      
+      async loadPrices() {
+        if (this.isLoading) return;
+        
+        this.setLoading(true);
+        this.hideError();
+        
+        try {
+          const data = await window.apiService.getPrices(this.currentTerritory);
+          this.displayProducts(data.items || []);
+          this.showCacheInfo();
+        } catch (error) {
+          this.showError('Erreur lors du chargement des prix. Données de démonstration affichées.');
+          console.error('Erreur:', error);
+        } finally {
+          this.setLoading(false);
+        }
+      }
+      
+      async searchProducts(query) {
+        if (this.isLoading) return;
+        
+        this.setLoading(true);
+        this.hideError();
+        
+        try {
+          const data = await window.apiService.searchProducts(query, this.currentTerritory);
+          this.displayProducts(data.items || []);
+          this.showCacheInfo();
+        } catch (error) {
+          this.showError('Erreur lors de la recherche.');
+          console.error('Erreur:', error);
+        } finally {
+          this.setLoading(false);
+        }
+      }
+      
+      displayProducts(products) {
+        if (!products.length) {
+          this.productsContainer.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: 40px; opacity: 0.7;">
+              <div style="font-size: 48px; margin-bottom: 16px;">🔍</div>
+              <div>Aucun produit trouvé pour votre recherche</div>
+            </div>
+          `;
+          return;
+        }
+        
+        this.productsContainer.innerHTML = products.map(product => this.createProductCard(product)).join('');
+        
+        // Ajouter les event listeners pour les boutons de signalement
+        document.querySelectorAll('.report-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const productId = e.target.dataset.productId;
+            this.reportProduct(productId);
+          });
+        });
+      }
+      
+      createProductCard(product) {
+        const priceDiff = product.price_dom - product.price_hex;
+        const priceDiffPercent = ((priceDiff / product.price_hex) * 100).toFixed(1);
+        const isMoreExpensive = priceDiff > 0;
+        
+        return `
+          <div class="product-card">
+            <h3 class="product-name">${this.escapeHtml(product.name)}</h3>
+            
+            <div class="price-comparison">
+              <div class="price-box price-dom">
+                <div class="price-label">${product.territory || 'DOM'}</div>
+                <div class="price-value">${product.price_dom.toFixed(2)}€</div>
+              </div>
+              <div class="price-box price-hex">
+                <div class="price-label">Métropole</div>
+                <div class="price-value">${product.price_hex.toFixed(2)}€</div>
+              </div>
+            </div>
+            
+            <div class="price-difference ${isMoreExpensive ? 'price-diff-positive' : 'price-diff-negative'}">
+              ${isMoreExpensive ? '+' : ''}${priceDiff.toFixed(2)}€ (${isMoreExpensive ? '+' : ''}${priceDiffPercent}%)
+            </div>
+            
+            <div class="product-meta">
+              <span>${product.store || 'Enseigne inconnue'}</span>
+              <button class="report-btn" data-product-id="${product.id}">
+                🚨 Signaler
+              </button>
+            </div>
+          </div>
+        `;
+      }
+      
+      async reportProduct(productId) {
+        const reason = prompt('Raison du signalement (prix incorrect, produit introuvable, etc.) :');
+        if (!reason) return;
+        
+        const comment = prompt('Commentaire supplémentaire (optionnel) :') || '';
+        
+        try {
+          await window.apiService.reportProduct(productId, reason, comment);
+          alert('Signalement envoyé. Merci pour votre contribution !');
+        } catch (error) {
+          alert('Erreur lors de l\'envoi du signalement.');
+          console.error('Erreur signalement:', error);
+        }
+      }
+      
+      setLoading(loading) {
+        this.isLoading = loading;
+        this.loadingEl.style.display = loading ? 'block' : 'none';
+        this.searchBtn.disabled = loading;
+        this.searchBtn.textContent = loading ? '⏳ Recherche...' : '🔍 Comparer';
+      }
+      
+      showError(message) {
+        this.errorEl.textContent = message;
+        this.errorEl.style.display = 'block';
+      }
+      
+      hideError() {
+        this.errorEl.style.display = 'none';
+      }
+      
+      showCacheInfo() {
+        const stats = window.apiService.getCacheStats();
+        if (stats.lastUpdate) {
+          const date = new Date(stats.lastUpdate);
+          this.cacheTimeEl.textContent = date.toLocaleString();
+          this.cacheInfoEl.style.display = 'block';
+        }
+      }
+      
+      escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+    }
+    
+    // Initialiser l'application
+    document.addEventListener('DOMContentLoaded', () => {
+      new ComparateurApp();
+    });
+  </script>
+
+  <!-- Lazy Loading Support -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add lazy loading to images that don't have it
+      const images = document.querySelectorAll('img:not([loading])');
+      images.forEach(img => {
+        if (img.getBoundingClientRect().top > window.innerHeight * 2) {
+          img.setAttribute('loading', 'lazy');
+          img.setAttribute('decoding', 'async');
+        }
+      });
+      
+      // Add alt attributes to images without them
+      const imagesWithoutAlt = document.querySelectorAll('img:not([alt])');
+      imagesWithoutAlt.forEach(img => {
+        const src = img.getAttribute('src') || '';
+        const filename = src.split('/').pop().split('.')[0];
+        img.setAttribute('alt', `Image: ${filename}`);
+      });
+    });
+  </script>
+</body>
+</html>

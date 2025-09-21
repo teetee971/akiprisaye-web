@@ -1,3 +1,22 @@
 User-agent: *
 Allow: /
+
+# Sitemaps
 Sitemap: https://akiprisaye.pages.dev/sitemap.xml
+
+# Disallow admin and private areas
+Disallow: /admin/
+Disallow: /_*
+Disallow: /api/internal/
+Disallow: /firebase-config.js
+Disallow: /*.json$
+
+# Allow specific directories
+Allow: /api/territories.json
+Allow: /data/
+Allow: /assets/
+Allow: /css/
+Allow: /js/
+
+# Crawl-delay for politeness
+Crawl-delay: 1

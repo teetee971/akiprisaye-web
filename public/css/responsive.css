@@ -1,0 +1,270 @@
+/* === Responsive enhancements for A KI PRI SA YÉ === */
+
+/* Mobile-first responsive improvements */
+@media (max-width: 768px) {
+  /* Prevent horizontal overflow */
+  html, body {
+    overflow-x: hidden;
+    width: 100%;
+  }
+  
+  /* Ensure all elements respect viewport width */
+  * {
+    max-width: 100vw;
+    box-sizing: border-box;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  
+  /* Container adjustments */
+  .container {
+    padding: 16px 12px;
+    width: 100%;
+  }
+  
+  /* Better touch targets */
+  .btn, button, [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 12px 16px;
+    font-size: 16px;
+  }
+  
+  /* Form elements */
+  .input, input, select, textarea {
+    width: 100%;
+    font-size: 16px; /* Prevent iOS zoom */
+    padding: 14px 16px;
+    border-radius: 8px;
+  }
+  
+  /* Search improvements */
+  .search {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  /* KPIs stack on mobile */
+  .kpis {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  
+  /* Single column grid */
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  /* Stores grid mobile */
+  .stores {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  
+  /* Typography scaling */
+  .hero h1 {
+    font-size: clamp(24px, 6vw, 32px);
+    line-height: 1.2;
+  }
+  
+  .hero {
+    padding: 32px 0;
+  }
+  
+  /* Card adjustments */
+  .card {
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  
+  /* Logo sizing */
+  .logo {
+    padding: 8px;
+  }
+  
+  .logo img {
+    height: 28px;
+  }
+  
+  /* Navigation improvements */
+  .nav {
+    padding: 12px 0;
+  }
+  
+  /* Better spacing */
+  .section {
+    padding: 20px 0;
+  }
+  
+  /* FAQ details */
+  .faq details {
+    padding: 12px;
+    font-size: 14px;
+  }
+  
+  /* Badge adjustments */
+  .badge {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+  
+  /* News cards */
+  .news .card h3 {
+    font-size: 16px;
+    margin: 0.2rem 0 0.3rem;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+  .container {
+    padding: 12px 8px;
+  }
+  
+  .kpis {
+    grid-template-columns: 1fr;
+  }
+  
+  .stores {
+    grid-template-columns: 1fr;
+  }
+  
+  .hero h1 {
+    font-size: clamp(20px, 8vw, 28px);
+  }
+  
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Landscape mobile devices */
+@media (max-width: 768px) and (orientation: landscape) {
+  .hero {
+    padding: 20px 0;
+  }
+  
+  .hero h1 {
+    font-size: clamp(22px, 5vw, 30px);
+  }
+}
+
+/* Tablet adjustments */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .kpis {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .stores {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Large screen optimizations */
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1200px;
+    padding: 32px 24px;
+  }
+  
+  .hero h1 {
+    font-size: 48px;
+  }
+  
+  .kpis {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+  
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  /* Enhance text rendering on high DPI screens */
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Dark mode enhancements (if supported by system) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0a0e16;
+    --card: #0f1419;
+    --muted: #8194aa;
+    --text: #e8f0fd;
+  }
+}
+
+/* Print styles */
+@media print {
+  .nav, .btn, button {
+    display: none !important;
+  }
+  
+  .card {
+    border: 1px solid #ccc;
+    box-shadow: none;
+    page-break-inside: avoid;
+  }
+  
+  .hero {
+    background: none;
+  }
+}
+
+/* Focus improvements for accessibility */
+.btn:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.2);
+}
+
+/* Ensure clickable elements are large enough on touch devices */
+@media (pointer: coarse) {
+  .btn, button, [role="button"], a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Improve text readability */
+.card, .hero, .section {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Prevent zoom on form inputs on iOS */
+input[type="search"],
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+select,
+textarea {
+  font-size: 16px;
+}

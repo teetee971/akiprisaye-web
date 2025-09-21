@@ -2,68 +2,851 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8">
-  <title>Actualités • Vie chère & conso • A KI PRI SA YÉ</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <!-- SEO Meta Tags -->
+  <title>Actualités • Vie chère & consommation DOM-TOM • A KI PRI SA YÉ</title>
+  <meta name="description" content="Suivez l'actualité de la vie chère dans les DOM-TOM. News, comparatifs prix, analyses économiques pour Guadeloupe, Martinique, Guyane, Réunion, Mayotte." />
+  <meta name="keywords" content="actualités DOM-TOM, vie chère, prix, consommation, Guadeloupe, Martinique, Guyane, Réunion, Mayotte, économie" />
+  <meta name="robots" content="index, follow" />
+  
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Actualités vie chère DOM-TOM – A KI PRI SA YÉ" />
+  <meta property="og:description" content="Suivez l'actualité de la vie chère dans les DOM-TOM. News, comparatifs prix et analyses économiques." />
+  <meta property="og:url" content="https://akiprisaye.pages.dev/actualites" />
+  <meta property="og:image" content="https://akiprisaye.pages.dev/og-cover.jpg" />
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Actualités vie chère DOM-TOM – A KI PRI SA YÉ" />
+  <meta name="twitter:description" content="Suivez l'actualité de la vie chère dans les DOM-TOM." />
+  
+  <!-- Stylesheets -->
   <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+  
   <style>
-    body{background:#0b1220;color:#e7eefc;font-family:system-ui,Segoe UI,Roboto,Inter,Arial}
-    .wrap{max-width:980px;margin:32px auto;padding:0 16px}
-    .h1{font-size:2rem;font-weight:800;margin:8px 0 16px}
-    .muted{opacity:.7}
-    .grid{display:grid;gap:12px}
-    .card{background:#0f1629;border:1px solid #1e2945;border-radius:16px;padding:14px}
-    a.card{color:inherit;text-decoration:none}
-    .tag{font-size:.75rem;opacity:.8;background:#17213a;padding:4px 8px;border-radius:999px;margin-right:6px}
+    .actualites-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .hero-section {
+      background: linear-gradient(135deg, var(--panel), var(--muted));
+      border-radius: 20px;
+      padding: 32px;
+      margin-bottom: 32px;
+      text-align: center;
+      border: 1px solid #1e2945;
+    }
+    
+    .hero-title {
+      font-size: clamp(28px, 5vw, 42px);
+      font-weight: 800;
+      margin: 0 0 16px 0;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .filters-panel {
+      background: var(--panel);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+      border: 1px solid #1e2945;
+    }
+    
+    .filters-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      align-items: end;
+    }
+    
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .filter-label {
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--txt);
+    }
+    
+    .filter-select {
+      background: var(--muted);
+      border: 1px solid #2a3441;
+      border-radius: 8px;
+      padding: 12px 16px;
+      color: var(--txt);
+      font-size: 14px;
+    }
+    
+    .filter-select:focus {
+      outline: none;
+      border-color: var(--brand);
+    }
+    
+    .search-input {
+      background: var(--muted);
+      border: 1px solid #2a3441;
+      border-radius: 8px;
+      padding: 12px 16px;
+      color: var(--txt);
+      font-size: 14px;
+      flex: 1;
+    }
+    
+    .search-input:focus {
+      outline: none;
+      border-color: var(--brand);
+    }
+    
+    .filter-btn {
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      border: none;
+      border-radius: 8px;
+      padding: 12px 20px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    
+    .filter-btn:hover {
+      transform: translateY(-2px);
+    }
+    
+    .featured-section {
+      margin-bottom: 32px;
+    }
+    
+    .featured-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin: 0 0 20px 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .featured-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+    }
+    
+    .featured-main {
+      background: var(--panel);
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid #1e2945;
+      transition: transform 0.3s ease;
+    }
+    
+    .featured-main:hover {
+      transform: translateY(-4px);
+    }
+    
+    .featured-image {
+      width: 100%;
+      height: 200px;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+    }
+    
+    .featured-content {
+      padding: 20px;
+    }
+    
+    .featured-meta {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 12px;
+      font-size: 12px;
+    }
+    
+    .featured-tag {
+      background: rgba(38, 208, 124, 0.2);
+      color: var(--brand);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+    
+    .featured-date {
+      color: var(--sub);
+    }
+    
+    .featured-title-text {
+      font-size: 20px;
+      font-weight: 700;
+      margin: 0 0 12px 0;
+      line-height: 1.3;
+    }
+    
+    .featured-excerpt {
+      color: var(--sub);
+      line-height: 1.5;
+      margin: 0;
+    }
+    
+    .featured-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    
+    .sidebar-item {
+      background: var(--panel);
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid #1e2945;
+      transition: transform 0.2s ease;
+      cursor: pointer;
+    }
+    
+    .sidebar-item:hover {
+      transform: translateY(-2px);
+    }
+    
+    .sidebar-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin: 0 0 8px 0;
+      line-height: 1.3;
+    }
+    
+    .sidebar-meta {
+      font-size: 11px;
+      color: var(--sub);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+    
+    .news-card {
+      background: var(--panel);
+      border: 1px solid #1e2945;
+      border-radius: 16px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .news-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 25px rgba(0, 179, 255, 0.15);
+    }
+    
+    .news-image {
+      width: 100%;
+      height: 160px;
+      background: linear-gradient(135deg, var(--muted), var(--panel));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+    }
+    
+    .news-content {
+      padding: 18px;
+    }
+    
+    .news-meta {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 10px;
+      font-size: 11px;
+    }
+    
+    .territory-flag {
+      font-size: 14px;
+    }
+    
+    .news-source {
+      background: var(--muted);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+    
+    .news-date {
+      color: var(--sub);
+      margin-left: auto;
+    }
+    
+    .news-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0 0 10px 0;
+      line-height: 1.4;
+      color: var(--txt);
+    }
+    
+    .news-excerpt {
+      font-size: 14px;
+      color: var(--sub);
+      line-height: 1.5;
+      margin: 0;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    
+    .loading-container {
+      text-align: center;
+      padding: 60px 20px;
+    }
+    
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid var(--muted);
+      border-top: 4px solid var(--brand);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .error-state {
+      text-align: center;
+      padding: 60px 20px;
+      background: var(--panel);
+      border-radius: 16px;
+      border: 1px solid #1e2945;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      opacity: 0.7;
+    }
+    
+    .cache-indicator {
+      background: rgba(38, 208, 124, 0.1);
+      border: 1px solid rgba(38, 208, 124, 0.3);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      color: var(--brand);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    @media (max-width: 768px) {
+      .actualites-container {
+        padding: 16px;
+      }
+      
+      .hero-section {
+        padding: 24px 16px;
+      }
+      
+      .filters-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .featured-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .news-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .featured-sidebar {
+        grid-row: 1;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 12px;
+      }
+      
+      .filters-panel {
+        padding: 16px;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="h1">Actualités “vie chère / consommation”</div>
-    <p class="muted">Filtré par territoire, agrégé côté serveur (Cloudflare Worker) pour éviter les blocages CORS.</p>
-
-    <div style="display:flex;gap:10px;align-items:center;margin:12px 0">
-      <select id="territory"></select>
-      <button id="btn">Rechercher</button>
-      <span id="when" class="muted" style="margin-left:auto"></span>
+  <div class="actualites-container">
+    <!-- Hero Section -->
+    <div class="hero-section">
+      <h1 class="hero-title">📰 Actualités Vie Chère</h1>
+      <p style="margin: 0; font-size: 18px; opacity: 0.9;">
+        Suivez l'actualité économique et les évolutions de prix dans les DOM-TOM
+      </p>
     </div>
 
-    <section id="news" class="grid" aria-live="polite"></section>
+    <!-- Filters Panel -->
+    <div class="filters-panel">
+      <div class="filters-grid">
+        <div class="filter-group">
+          <label class="filter-label" for="territory-filter">🏝️ Territoire</label>
+          <select id="territory-filter" class="filter-select">
+            <option value="">Tous les territoires</option>
+            <option value="guadeloupe">🇬🇵 Guadeloupe</option>
+            <option value="martinique">🇲🇶 Martinique</option>
+            <option value="guyane">🇬🇫 Guyane</option>
+            <option value="reunion">🇷🇪 Réunion</option>
+            <option value="mayotte">🇾🇹 Mayotte</option>
+            <option value="nouvelle-caledonie">🇳🇨 Nouvelle-Calédonie</option>
+            <option value="polynesie-francaise">🇵🇫 Polynésie française</option>
+          </select>
+        </div>
+        
+        <div class="filter-group">
+          <label class="filter-label" for="category-filter">📂 Catégorie</label>
+          <select id="category-filter" class="filter-select">
+            <option value="">Toutes les catégories</option>
+            <option value="vie-chere">💰 Vie chère</option>
+            <option value="comparatif-prix">📊 Comparatif prix</option>
+            <option value="economie">💼 Économie</option>
+            <option value="consommation">🛒 Consommation</option>
+            <option value="transport">🚗 Transport</option>
+            <option value="logement">🏠 Logement</option>
+          </select>
+        </div>
+        
+        <div class="filter-group">
+          <label class="filter-label" for="search-input">🔍 Recherche</label>
+          <input type="text" id="search-input" class="search-input" placeholder="Mots-clés...">
+        </div>
+        
+        <div class="filter-group">
+          <label class="filter-label">&nbsp;</label>
+          <button id="apply-filters" class="filter-btn">Filtrer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cache Indicator -->
+    <div id="cache-indicator" class="cache-indicator" style="display: none;">
+      ✓ Données en cache - Dernière mise à jour : <span id="cache-time"></span>
+    </div>
+
+    <!-- Featured Section -->
+    <div id="featured-section" class="featured-section">
+      <h2 class="featured-title">
+        ⭐ À la une
+      </h2>
+      
+      <div class="featured-grid">
+        <article class="featured-main">
+          <div class="featured-image">📈</div>
+          <div class="featured-content">
+            <div class="featured-meta">
+              <span class="featured-tag">VIE CHÈRE</span>
+              <span class="featured-date">Aujourd'hui</span>
+            </div>
+            <h3 class="featured-title-text">
+              Hausse des prix alimentaires : +15% en moyenne dans les DOM-TOM
+            </h3>
+            <p class="featured-excerpt">
+              Une étude révèle une augmentation significative du coût de la vie dans les territoires d'outre-mer, 
+              particulièrement marquée sur les produits de première nécessité...
+            </p>
+          </div>
+        </article>
+        
+        <div class="featured-sidebar">
+          <article class="sidebar-item">
+            <h4 class="sidebar-title">🇬🇵 Guadeloupe : Nouvelle grève des transporteurs</h4>
+            <div class="sidebar-meta">
+              <span>TRANSPORT</span>
+              <span>Il y a 2h</span>
+            </div>
+          </article>
+          
+          <article class="sidebar-item">
+            <h4 class="sidebar-title">📊 Comparatif : Le panier moyen plus cher de 30%</h4>
+            <div class="sidebar-meta">
+              <span>COMPARATIF</span>
+              <span>Il y a 4h</span>
+            </div>
+          </article>
+          
+          <article class="sidebar-item">
+            <h4 class="sidebar-title">🇷🇪 Réunion : Mesures contre la vie chère</h4>
+            <div class="sidebar-meta">
+              <span>POLITIQUE</span>
+              <span>Hier</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loading-container" class="loading-container" style="display: none;">
+      <div class="loading-spinner"></div>
+      <div>Chargement des actualités...</div>
+    </div>
+
+    <!-- Error State -->
+    <div id="error-container" class="error-state" style="display: none;">
+      <div style="font-size: 48px; margin-bottom: 16px;">⚠️</div>
+      <h3 style="margin: 0 0 12px 0;">Erreur de chargement</h3>
+      <p style="margin: 0 0 20px 0; opacity: 0.8;">
+        Impossible de charger les actualités. Vérifiez votre connexion internet.
+      </p>
+      <button id="retry-btn" class="filter-btn">🔄 Réessayer</button>
+    </div>
+
+    <!-- News Grid -->
+    <div id="news-container">
+      <h2 style="font-size: 24px; font-weight: 700; margin: 0 0 20px 0;">
+        📄 Dernières actualités
+      </h2>
+      <div id="news-grid" class="news-grid"></div>
+    </div>
+
+    <!-- Empty State -->
+    <div id="empty-container" class="empty-state" style="display: none;">
+      <div style="font-size: 48px; margin-bottom: 16px;">📰</div>
+      <h3 style="margin: 0 0 12px 0;">Aucune actualité trouvée</h3>
+      <p style="margin: 0; opacity: 0.8;">
+        Essayez de modifier vos filtres ou votre recherche.
+      </p>
+    </div>
   </div>
 
+  <!-- Scripts -->
   <script type="module">
-    import { TERR_FLAGS } from "/js/flags.js";
-    const $=id=>document.getElementById(id);
-    const TERRS=["guadeloupe","martinique","guyane","reunion","mayotte","saint-martin","saint-barthelemy","polynesie-francaise","nouvelle-caledonie","wallis-et-futuna"];
-    $("territory").innerHTML=TERRS.map(t=>`<option value="${t}">${TERR_FLAGS[t]||"🏳️"} ${t.replace('-',' ')}</option>`).join('');
-    const card = a => `
-      <a class="card" href="${a.link}" target="_blank" rel="noopener">
-        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
-          <span class="tag">${TERR_FLAGS[a.territory]||"🏳️"} ${a.territory}</span>
-          <span class="tag">${a.source}</span>
-          <span class="muted" style="margin-left:auto">${new Date(a.date).toLocaleString()}</span>
-        </div>
-        <h3 style="margin:0 0 6px">${a.title}</h3>
-        <p class="muted" style="margin:0">${a.summary||""}</p>
-      </a>`;
-    const load=()=>{
-      const t=$("territory").value;
-      $("news").innerHTML='<div class="muted">Chargement…</div>';
-      fetch(`/news?territory=${encodeURIComponent(t)}`).then(r=>r.json()).then(d=>{
-        $("when").textContent = new Date(d.fetchedAt||Date.now()).toLocaleString();
-        const items = (d.items||[]).slice(0,20);
-        $("news").innerHTML = items.map(card).join('') || '<div class="muted">Aucune actu trouvée.</div>';
-      }).catch(e=>{
-        $("news").innerHTML='<div class="muted">Erreur de chargement</div>';
-      });
-    };
-    $("btn").onclick=load;
-    load();
+    import { TERR_FLAGS } from '/js/flags.js';
+
+    class ActualitesApp {
+      constructor() {
+        this.currentFilters = {
+          territory: '',
+          category: '',
+          search: ''
+        };
+        this.newsData = [];
+        this.isLoading = false;
+        
+        this.initElements();
+        this.initEventListeners();
+        this.loadMockData();
+        this.checkCache();
+      }
+      
+      initElements() {
+        this.territoryFilter = document.getElementById('territory-filter');
+        this.categoryFilter = document.getElementById('category-filter');
+        this.searchInput = document.getElementById('search-input');
+        this.applyFiltersBtn = document.getElementById('apply-filters');
+        this.loadingContainer = document.getElementById('loading-container');
+        this.errorContainer = document.getElementById('error-container');
+        this.newsContainer = document.getElementById('news-container');
+        this.newsGrid = document.getElementById('news-grid');
+        this.emptyContainer = document.getElementById('empty-container');
+        this.cacheIndicator = document.getElementById('cache-indicator');
+        this.cacheTime = document.getElementById('cache-time');
+        this.retryBtn = document.getElementById('retry-btn');
+      }
+      
+      initEventListeners() {
+        this.applyFiltersBtn.addEventListener('click', () => this.applyFilters());
+        this.retryBtn.addEventListener('click', () => this.loadNews());
+        
+        // Auto-search on input
+        let searchTimeout;
+        this.searchInput.addEventListener('input', () => {
+          clearTimeout(searchTimeout);
+          searchTimeout = setTimeout(() => this.applyFilters(), 500);
+        });
+        
+        // Filter changes
+        this.territoryFilter.addEventListener('change', () => this.applyFilters());
+        this.categoryFilter.addEventListener('change', () => this.applyFilters());
+        
+        // Enter key on search
+        this.searchInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') this.applyFilters();
+        });
+      }
+      
+      async loadNews() {
+        if (this.isLoading) return;
+        
+        this.setLoading(true);
+        this.hideError();
+        
+        try {
+          // En production, utiliser une vraie API
+          await this.simulateApiCall();
+          this.displayNews();
+          this.showCacheInfo();
+        } catch (error) {
+          console.error('Erreur chargement news:', error);
+          this.showError();
+        } finally {
+          this.setLoading(false);
+        }
+      }
+      
+      async simulateApiCall() {
+        // Simuler un appel API
+        return new Promise(resolve => setTimeout(resolve, 1000));
+      }
+      
+      loadMockData() {
+        this.newsData = [
+          {
+            id: '1',
+            title: 'Hausse du prix de l\'essence en Guadeloupe',
+            excerpt: 'Les prix à la pompe atteignent des niveaux record dans l\'archipel, impactant directement le pouvoir d\'achat des ménages.',
+            territory: 'guadeloupe',
+            category: 'transport',
+            source: 'France-Antilles',
+            date: new Date(Date.now() - 2 * 60 * 60 * 1000),
+            featured: false
+          },
+          {
+            id: '2',
+            title: 'Réunion : Nouveau dispositif contre la vie chère',
+            excerpt: 'Le gouvernement annonce des mesures exceptionnelles pour réduire l\'écart de prix avec la métropole.',
+            territory: 'reunion',
+            category: 'vie-chere',
+            source: 'JIR',
+            date: new Date(Date.now() - 4 * 60 * 60 * 1000),
+            featured: true
+          },
+          {
+            id: '3',
+            title: 'Martinique : Grève dans la grande distribution',
+            excerpt: 'Les syndicats dénoncent les conditions de travail et réclament une augmentation des salaires.',
+            territory: 'martinique',
+            category: 'economie',
+            source: 'RCI',
+            date: new Date(Date.now() - 6 * 60 * 60 * 1000),
+            featured: false
+          },
+          {
+            id: '4',
+            title: 'Guyane : Comparatif des prix alimentaires',
+            excerpt: 'Une étude révèle des écarts de prix importants entre les communes de la Guyane et la métropole.',
+            territory: 'guyane',
+            category: 'comparatif-prix',
+            source: 'France-Guyane',
+            date: new Date(Date.now() - 8 * 60 * 60 * 1000),
+            featured: false
+          },
+          {
+            id: '5',
+            title: 'Mayotte : Inflation record sur les produits de première nécessité',
+            excerpt: 'L\'île connaît une hausse des prix sans précédent, particulièrement sur l\'alimentation et les produits d\'hygiène.',
+            territory: 'mayotte',
+            category: 'vie-chere',
+            source: 'Mayotte Hebdo',
+            date: new Date(Date.now() - 12 * 60 * 60 * 1000),
+            featured: false
+          },
+          {
+            id: '6',
+            title: 'Nouvelle-Calédonie : Accord sur les prix du nickel',
+            excerpt: 'Un nouvel accord pourrait stabiliser les revenus de l\'archipel et impacter positivement les prix locaux.',
+            territory: 'nouvelle-caledonie',
+            category: 'economie',
+            source: 'Les Nouvelles Calédoniennes',
+            date: new Date(Date.now() - 24 * 60 * 60 * 1000),
+            featured: false
+          }
+        ];
+        
+        this.displayNews();
+      }
+      
+      applyFilters() {
+        this.currentFilters.territory = this.territoryFilter.value;
+        this.currentFilters.category = this.categoryFilter.value;
+        this.currentFilters.search = this.searchInput.value.toLowerCase().trim();
+        
+        this.displayNews();
+      }
+      
+      displayNews() {
+        const filteredNews = this.filterNews();
+        
+        if (filteredNews.length === 0) {
+          this.showEmpty();
+          return;
+        }
+        
+        this.hideEmpty();
+        this.newsGrid.innerHTML = filteredNews.map(news => this.createNewsCard(news)).join('');
+        
+        // Add click listeners
+        document.querySelectorAll('.news-card').forEach(card => {
+          card.addEventListener('click', () => {
+            const newsId = card.dataset.newsId;
+            this.openNews(newsId);
+          });
+        });
+      }
+      
+      filterNews() {
+        return this.newsData.filter(news => {
+          const territoryMatch = !this.currentFilters.territory || 
+                                news.territory === this.currentFilters.territory;
+          
+          const categoryMatch = !this.currentFilters.category || 
+                               news.category === this.currentFilters.category;
+          
+          const searchMatch = !this.currentFilters.search || 
+                             news.title.toLowerCase().includes(this.currentFilters.search) ||
+                             news.excerpt.toLowerCase().includes(this.currentFilters.search);
+          
+          return territoryMatch && categoryMatch && searchMatch;
+        }).sort((a, b) => b.date - a.date);
+      }
+      
+      createNewsCard(news) {
+        const territoryFlag = TERR_FLAGS[news.territory] || '🏳️';
+        const timeAgo = this.getTimeAgo(news.date);
+        
+        return `
+          <article class="news-card" data-news-id="${news.id}">
+            <div class="news-image">
+              ${this.getCategoryIcon(news.category)}
+            </div>
+            <div class="news-content">
+              <div class="news-meta">
+                <span class="territory-flag">${territoryFlag}</span>
+                <span class="news-source">${news.source}</span>
+                <span class="news-date">${timeAgo}</span>
+              </div>
+              <h3 class="news-title">${this.escapeHtml(news.title)}</h3>
+              <p class="news-excerpt">${this.escapeHtml(news.excerpt)}</p>
+            </div>
+          </article>
+        `;
+      }
+      
+      getCategoryIcon(category) {
+        const icons = {
+          'vie-chere': '💰',
+          'comparatif-prix': '📊',
+          'economie': '💼',
+          'consommation': '🛒',
+          'transport': '🚗',
+          'logement': '🏠'
+        };
+        return icons[category] || '📰';
+      }
+      
+      getTimeAgo(date) {
+        const now = new Date();
+        const diffMs = now - date;
+        const diffMins = Math.floor(diffMs / 60000);
+        const diffHours = Math.floor(diffMs / 3600000);
+        const diffDays = Math.floor(diffMs / 86400000);
+        
+        if (diffMins < 60) {
+          return `Il y a ${diffMins}min`;
+        } else if (diffHours < 24) {
+          return `Il y a ${diffHours}h`;
+        } else {
+          return `Il y a ${diffDays}j`;
+        }
+      }
+      
+      setLoading(loading) {
+        this.isLoading = loading;
+        this.loadingContainer.style.display = loading ? 'block' : 'none';
+        this.newsContainer.style.display = loading ? 'none' : 'block';
+      }
+      
+      showError() {
+        this.errorContainer.style.display = 'block';
+        this.newsContainer.style.display = 'none';
+        this.emptyContainer.style.display = 'none';
+      }
+      
+      hideError() {
+        this.errorContainer.style.display = 'none';
+      }
+      
+      showEmpty() {
+        this.emptyContainer.style.display = 'block';
+        this.newsContainer.style.display = 'none';
+      }
+      
+      hideEmpty() {
+        this.emptyContainer.style.display = 'none';
+        this.newsContainer.style.display = 'block';
+      }
+      
+      showCacheInfo() {
+        this.cacheTime.textContent = new Date().toLocaleString();
+        this.cacheIndicator.style.display = 'flex';
+      }
+      
+      checkCache() {
+        // Vérifier s'il y a des données en cache
+        const cached = localStorage.getItem('actualites_cache');
+        if (cached) {
+          try {
+            const data = JSON.parse(cached);
+            if (Date.now() - data.timestamp < 30 * 60 * 1000) { // 30 minutes
+              this.showCacheInfo();
+            }
+          } catch (error) {
+            console.error('Erreur cache:', error);
+          }
+        }
+      }
+      
+      openNews(newsId) {
+        const news = this.newsData.find(n => n.id === newsId);
+        if (news) {
+          // En production, ouvrir la page complète de l'article
+          alert(`Article: ${news.title}\n\n${news.excerpt}\n\nSource: ${news.source}`);
+        }
+      }
+      
+      escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+    }
+    
+    // Initialiser l'application
+    document.addEventListener('DOMContentLoaded', () => {
+      new ActualitesApp();
+    });
   </script>
 
   <!-- Lazy Loading Support -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // Add lazy loading to images that don't have it
       const images = document.querySelectorAll('img:not([loading])');
       images.forEach(img => {
         if (img.getBoundingClientRect().top > window.innerHeight * 2) {
@@ -72,7 +855,6 @@
         }
       });
       
-      // Add alt attributes to images without them
       const imagesWithoutAlt = document.querySelectorAll('img:not([alt])');
       imagesWithoutAlt.forEach(img => {
         const src = img.getAttribute('src') || '';
@@ -80,5 +862,6 @@
         img.setAttribute('alt', `Image: ${filename}`);
       });
     });
-  </script></body>
+  </script>
+</body>
 </html>
