@@ -69,6 +69,34 @@
     }
   }
   </script>
+  
+  <!-- Lazy Loading Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      if ('IntersectionObserver' in window) {
+        const lazyImages = document.querySelectorAll('img[data-src]');
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              const img = entry.target;
+              img.src = img.dataset.src;
+              img.removeAttribute('data-src');
+              img.classList.remove('lazy');
+              observer.unobserve(img);
+            }
+          });
+        });
+        lazyImages.forEach(img => imageObserver.observe(img));
+      } else {
+        // Fallback for browsers without Intersection Observer
+        const lazyImages = document.querySelectorAll('img[data-src]');
+        lazyImages.forEach(img => {
+          img.src = img.dataset.src;
+          img.removeAttribute('data-src');
+        });
+      }
+    });
+  </script>
 </head>
 <body>
 <div class="wrapper"><nav class="nav"><a href="/index.html">Accueil</a><a href="/avis.html">Avis</a><a href="/enseignes.html">Enseignes</a><a href="/palmares.html">Palmarès</a><a href="/actualites.html">Actus</a><a href="/a-propos.html">À propos</a><button id="theme-toggle" class="theme-toggle btn">☀️ Clair</button>  <a href="/panier.html">Panier</a>
