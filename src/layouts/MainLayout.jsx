@@ -1,4 +1,6 @@
+import React from 'react';
 import { Link, NavLink, Outlet } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 const nav = [
   { to: '/', label: 'Accueil' },
@@ -9,6 +11,8 @@ const nav = [
 ];
 
 export default function MainLayout() {
+  const { isAdmin } = useAuth();
+  
   return (
     <div className="min-h-screen bg-white text-slate-800 dark:bg-slate-950 dark:text-slate-100">
       <header className="sticky top-0 z-30 border-b border-slate-200/70 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 backdrop-blur">
@@ -26,6 +30,17 @@ export default function MainLayout() {
                 }
               >{n.label}</NavLink>
             ))}
+            {/* Admin link - only visible to admin users */}
+            {isAdmin() && (
+              <NavLink
+                to="/admin"
+                className={({isActive}) =>
+                  `px-3 py-2 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/30 border border-red-200 dark:border-red-800 ${isActive ? 'bg-red-100 dark:bg-red-900/50' : ''}`
+                }
+              >
+                🛡️ Admin
+              </NavLink>
+            )}
           </nav>
         </div>
       </header>

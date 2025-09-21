@@ -13,8 +13,11 @@
     "build:optimized": "npm run optimize-seo && npm run build"
   },
   "dependencies": {
+    "firebase": "^12.3.0",
+    "lucide-react": "^0.544.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^7.9.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.13",

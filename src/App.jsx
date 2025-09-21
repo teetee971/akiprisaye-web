@@ -1,30 +1,40 @@
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthContext';
+import MainLayout from './layouts/MainLayout';
+import ProtectedRoute from './components/ProtectedRoute';
+import Accueil from './pages/Accueil';
+import Produits from './pages/Produits';
+import Favoris from './pages/Favoris';
+import VieChere from './pages/VieChere';
+import Compte from './pages/Compte';
+import Admin from './pages/Admin';
+import NotFound from './pages/NotFound';
+
 export default function App() {
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 antialiased p-6">
-      <h1 className="text-3xl font-bold tracking-tight mb-6">
-        A KI PRI SA YÉ
-      </h1>
-
-      <p className="text-center text-slate-600 mb-4">
-        Comparateur - version démo
-      </p>
-
-      <div className="flex gap-4">
-        <input
-          type="text"
-          placeholder="Nom du produit"
-          className="flex-1 rounded-xl border border-slate-300 px-3 py-2"
-        />
-        <input
-          type="number"
-          placeholder="Prix (€)"
-          className="w-32 rounded-xl border border-slate-300 px-3 py-2 text-right"
-        />
-        <button className="rounded-xl bg-sky-600 px-4 py-2 text-white font-medium hover:bg-sky-700">
-          Ajouter
-        </button>
-      </div>
-    </div>
-  )
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<MainLayout />}>
+            <Route index element={<Accueil />} />
+            <Route path="produits" element={<Produits />} />
+            <Route path="favoris" element={<Favoris />} />
+            <Route path="vie-chere" element={<VieChere />} />
+            <Route path="compte" element={<Compte />} />
+            <Route 
+              path="admin" 
+              element={
+                <ProtectedRoute requireAdmin={true}>
+                  <Admin />
+                </ProtectedRoute>
+              } 
+            />
+            <Route path="*" element={<NotFound />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
+  );
 }
 
