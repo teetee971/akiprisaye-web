@@ -119,8 +119,11 @@
     }
 
     function render(items){
-      outEl.innerHTML = items.map(it => `
-        <tr>
+      // Mettre à jour le cache des produits pour la modal
+      window.productsCache = items;
+      
+      outEl.innerHTML = items.map((it, idx) => `
+        <tr class="js-product" style="cursor:pointer;">
           <td><div style="display:flex;align-items:center;gap:10px">
             ${it.image ? `<img loading="lazy" decoding="async" class="img" src="${it.image}" alt="">` : ""}
             <div>
@@ -135,6 +138,11 @@
         </tr>
       `).join("");
       hintEl.textContent = items.length ? `${items.length} résultat(s)` : "Aucun résultat.";
+      
+      // Réactiver les clics sur les produits
+      if(window.wireProductClicks) {
+        window.wireProductClicks();
+      }
     }
 
     // 2) Fonction de recherche
@@ -158,8 +166,44 @@
         setStatus("Résultats mis à jour.","ok");
       }catch(e){
         console.error(e);
-        render([]);
-        setStatus("Erreur : impossible de charger les résultats.","err");
+        // Utiliser des données de démo en cas d'erreur API
+        const mockData = [
+          {
+            name: `Lait demi-écrémé 1L - ${text}`,
+            brand: "Candia",
+            store: "Carrefour",
+            price: 1.89,
+            currency: "€",
+            unit: "1L",
+            ean: "3234567890123",
+            image: "/img/placeholder.png",
+            updatedAt: Math.floor(Date.now()/1000) - 86400
+          },
+          {
+            name: `Riz basmati 1kg - ${text}`,
+            brand: "Uncle Ben's",
+            store: "Leader Price",
+            price: 3.49,
+            currency: "€",
+            unit: "1kg",
+            ean: "3234567890124",
+            image: "/img/placeholder.png",
+            updatedAt: Math.floor(Date.now()/1000) - 172800
+          },
+          {
+            name: `Pain de mie complet - ${text}`,
+            brand: "Harry's",
+            store: "Super U",
+            price: 2.15,
+            currency: "€",
+            unit: "500g",
+            ean: "3234567890125",
+            image: "/img/placeholder.png",
+            updatedAt: Math.floor(Date.now()/1000) - 3600
+          }
+        ];
+        render(mockData);
+        setStatus("Données de démonstration (API non disponible).","muted");
       }
     }
 
@@ -176,6 +220,58 @@
   </script>
 <script type="module">import {wireProductClicks} from "/app-modal.js";
 window.wireProductClicks=wireProductClicks;</script>
+
+<!-- Modal produit -->
+<div id="product-modal">
+  <div class="pm-backdrop"></div>
+  <div class="pm-card">
+    <div class="pm-hd">
+      <div class="pm-title">Produit</div>
+      <button id="pm-close" class="pm-close">×</button>
+    </div>
+    <div class="pm-body">
+      <img class="pm-img" src="" alt="" />
+      <div class="pm-extra">
+        <div id="pm-chips"></div>
+        <div class="pm-kv"></div>
+        <div id="pm-extra"></div>
+      </div>
+    </div>
+    <div class="pm-ft">
+      <button id="pm-report" class="btn secondary" style="margin-right: 8px;">🚩 Signaler</button>
+      <button id="pm-close-btn" class="btn" onclick="closeProductModal()">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de signalement -->
+<div id="report-modal" style="position:fixed;inset:0;display:none;z-index:1001;background:rgba(0,0,0,0.5);">
+  <div style="position:relative;margin:10vh auto;max-width:500px;width:90%;background:var(--panel);border-radius:16px;padding:20px;">
+    <h3 style="margin:0 0 16px;color:var(--text);">Signaler ce produit</h3>
+    <form id="report-form">
+      <div style="margin-bottom:12px;">
+        <label style="display:block;margin-bottom:4px;color:var(--muted);">Motif du signalement :</label>
+        <select id="report-reason" style="width:100%;padding:8px;border:1px solid #2b3a52;border-radius:6px;background:#0f1826;color:var(--text);">
+          <option value="">Sélectionnez un motif</option>
+          <option value="prix_incorrect">Prix incorrect</option>
+          <option value="produit_inexistant">Produit inexistant</option>
+          <option value="information_erronee">Information erronée</option>
+          <option value="contenu_inapproprie">Contenu inapproprié</option>
+          <option value="autre">Autre</option>
+        </select>
+      </div>
+      <div style="margin-bottom:16px;">
+        <label style="display:block;margin-bottom:4px;color:var(--muted);">Commentaire (optionnel) :</label>
+        <textarea id="report-comment" rows="3" placeholder="Décrivez le problème..." style="width:100%;padding:8px;border:1px solid #2b3a52;border-radius:6px;background:#0f1826;color:var(--text);resize:vertical;"></textarea>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;">
+        <button type="button" id="cancel-report" class="btn secondary">Annuler</button>
+        <button type="submit" class="btn">Envoyer le signalement</button>
+      </div>
+    </form>
+    <div id="report-status" style="margin-top:12px;padding:8px;border-radius:6px;display:none;"></div>
+  </div>
+</div>
 
 <div id="site-footer"></div>
   <script src="/js/footer.js" defer></script>

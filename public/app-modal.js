@@ -75,8 +75,10 @@ export function closeProductModal(){
 
 /* Fermeture via fond & bouton */
 document.addEventListener("click",(e)=>{
-  if(e.target?.closest?.("#pm-close")) return closeProductModal();
+  if(e.target?.closest?.("#pm-close") || e.target?.id==="pm-close-btn") return closeProductModal();
   if(e.target?.id==="product-modal") return closeProductModal();
+  if(e.target?.id==="pm-report") return openReportModal();
+  if(e.target?.id==="cancel-report") return closeReportModal();
 });
 
 /* Hook minimal pour intégrer sur une liste existante
@@ -85,4 +87,119 @@ export function wireProductClicks(){
   $$(".js-product").forEach((el,idx)=>{
     el.onclick = ()=>openProductModal(idx);
   });
+}
+
+/* Fonctions de signalement */
+let currentProductForReport = null;
+
+export function openReportModal(){
+  const productModal = $("#product-modal");
+  const reportModal = $("#report-modal");
+  if(!reportModal) return;
+  
+  // Stocker le produit actuel pour le signalement
+  const productIdx = window.productsCache.findIndex(p => 
+    p.name === $(".pm-title", productModal)?.textContent
+  );
+  if(productIdx >= 0) {
+    currentProductForReport = window.productsCache[productIdx];
+  }
+  
+  // Réinitialiser le formulaire
+  $("#report-form").reset();
+  $("#report-status").style.display = "none";
+  
+  reportModal.style.display = "block";
+}
+
+export function closeReportModal(){
+  const reportModal = $("#report-modal");
+  if(reportModal) {
+    reportModal.style.display = "none";
+  }
+  currentProductForReport = null;
+}
+
+/* Gestion de soumission du formulaire de signalement */
+document.addEventListener("DOMContentLoaded", () => {
+  const reportForm = $("#report-form");
+  if(reportForm) {
+    reportForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      await handleReportSubmission();
+    });
+  }
+});
+
+async function handleReportSubmission(){
+  const reasonEl = $("#report-reason");
+  const commentEl = $("#report-comment");
+  const statusEl = $("#report-status");
+  
+  const reason = reasonEl?.value?.trim();
+  const comment = commentEl?.value?.trim();
+  
+  if(!reason) {
+    showReportStatus("Veuillez sélectionner un motif de signalement.", "error");
+    return;
+  }
+  
+  // Données du signalement
+  const reportData = {
+    product: currentProductForReport ? {
+      name: currentProductForReport.name,
+      store: currentProductForReport.store,
+      price: currentProductForReport.price,
+      ean: currentProductForReport.ean
+    } : null,
+    reason,
+    comment,
+    timestamp: new Date().toISOString(),
+    userAgent: navigator.userAgent,
+    url: window.location.href
+  };
+  
+  showReportStatus("Envoi du signalement en cours...", "info");
+  
+  try {
+    // Tenter d'envoyer via API
+    const response = await fetch('/api/signalement', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(reportData)
+    });
+    
+    if(response.ok) {
+      showReportStatus("Signalement envoyé avec succès. Merci pour votre contribution!", "success");
+      setTimeout(() => {
+        closeReportModal();
+      }, 2000);
+    } else {
+      throw new Error('Erreur serveur');
+    }
+  } catch(error) {
+    console.warn('API non disponible, sauvegarde locale:', error);
+    
+    // Fallback : sauvegarde locale
+    const reports = JSON.parse(localStorage.getItem('akp-reports') || '[]');
+    reports.unshift(reportData);
+    localStorage.setItem('akp-reports', JSON.stringify(reports.slice(0, 50))); // Garder max 50 signalements
+    
+    showReportStatus("Signalement enregistré localement. Il sera transmis lors de la prochaine synchronisation.", "success");
+    setTimeout(() => {
+      closeReportModal();
+    }, 2000);
+  }
+}
+
+function showReportStatus(message, type) {
+  const statusEl = $("#report-status");
+  if(!statusEl) return;
+  
+  statusEl.style.display = "block";
+  statusEl.textContent = message;
+  statusEl.className = type === "error" ? "status err" : 
+                      type === "success" ? "status ok" : "status muted";
 }

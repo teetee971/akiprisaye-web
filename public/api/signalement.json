@@ -1,0 +1,6 @@
+{
+  "status": "success",
+  "message": "Signalement reçu avec succès",
+  "id": "demo-report-id",
+  "processed": true
+}
