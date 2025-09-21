@@ -8,7 +8,15 @@ html, body, #root {
   word-break: break-word;
   overflow-wrap: anywhere;
 }
-body { @apply bg-slate-50 text-slate-900 antialiased; }
+body { 
+  margin: 0;
+  background: var(--bg, #0f172a);
+  color: var(--text, #f1f5f9);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Inter, Arial, sans-serif;
+  line-height: 1.6;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
 
 /* Hero styles */
 .container {

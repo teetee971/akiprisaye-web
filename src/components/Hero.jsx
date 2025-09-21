@@ -1,3 +1,5 @@
+import React from "react";
+
 export default function Hero() {
   return (
     <header className="hero">
