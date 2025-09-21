@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Admin - Signalements produits — A KI PRI SA YÉ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <style>
+    :root{
+      --bg:#0d1420;--panel:#1b2636;--muted:#8da2b5;--text:#e8f0f7;--accent:#35e1ff;
+      --ok:#18c08f;--err:#ff6b6b;--warn:#ffa726;--shadow:0 6px 24px rgba(0,0,0,.25);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
+    a{color:var(--accent);text-decoration:none}
+    .wrap{max-width:1200px;margin:24px auto;padding:0 16px}
+    header{padding:24px 0 12px}
+    h1{margin:0 0 8px;font-size:32px;letter-spacing:.5px}
+    .sub{color:var(--muted)}
+    nav{display:flex;gap:16px;margin:16px 0 24px}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:8px;
+      padding:14px 18px;border-radius:12px;background:var(--accent);color:#042029;
+      font-weight:700;border:0;cursor:pointer;box-shadow:var(--shadow);
+    }
+    .btn.secondary{background:#223147;color:var(--text)}
+    .btn.small{padding:8px 12px;font-size:13px}
+    .btn.success{background:var(--ok)}
+    .btn.danger{background:var(--err)}
+    .card{
+      background:var(--panel);border-radius:16px;box-shadow:var(--shadow);padding:18px;margin-bottom:18px;
+    }
+    .status{margin:6px 0 0;font-size:14px}
+    .status.muted{color:var(--muted)}
+    .status.ok{color:var(--ok)}
+    .status.err{color:var(--err)}
+    .status.warn{color:var(--warn)}
+    table{width:100%;border-collapse:collapse;margin-top:12px}
+    th,td{padding:12px;border-bottom:1px solid #2b3a52;text-align:left;vertical-align:top}
+    th{color:var(--muted);font-weight:600;font-size:14px}
+    .right{text-align:right}
+    .filter-bar{display:flex;gap:12px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
+    select,input{
+      background:#0f1826;border:1px solid #2b3a52;color:var(--text);
+      border-radius:8px;padding:8px 12px;outline:none;
+    }
+    .badge{
+      padding:4px 8px;border-radius:6px;font-size:12px;font-weight:600;
+    }
+    .badge.pending{background:#42a5f5;color:white}
+    .badge.reviewed{background:#ffa726;color:white}
+    .badge.resolved{background:#66bb6a;color:white}
+    .report-actions{display:flex;gap:8px}
+    .report-comment{max-width:300px;word-wrap:break-word;font-size:13px;line-height:1.4}
+    footer{color:var(--muted);font-size:14px;margin:28px 0 40px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>🛡️ Admin - Signalements produits</h1>
+      <div class="sub">Gestion des signalements de produits soumis par les utilisateurs.</div>
+      <nav>
+        <a class="btn secondary" href="./index.html">🏠 Accueil</a>
+        <a class="btn secondary" href="./search.html">🔎 Recherche</a>
+      </nav>
+    </header>
+
+    <section class="card">
+      <h2 style="margin:0 0 16px">Filtres</h2>
+      <div class="filter-bar">
+        <select id="statusFilter">
+          <option value="">Tous les statuts</option>
+          <option value="pending">En attente</option>
+          <option value="reviewed">Examiné</option>
+          <option value="resolved">Résolu</option>
+        </select>
+        <select id="reasonFilter">
+          <option value="">Toutes les raisons</option>
+          <option value="prix_incorrect">Prix incorrect</option>
+          <option value="produit_indisponible">Produit indisponible</option>
+          <option value="information_incorrecte">Information incorrecte</option>
+          <option value="contenu_inapproprie">Contenu inapproprié</option>
+          <option value="autre">Autre</option>
+        </select>
+        <button id="refreshBtn" class="btn small">🔄 Actualiser</button>
+        <span id="totalCount" class="status muted" style="margin-left:auto"></span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 style="margin:0 0 16px">Signalements</h2>
+      <div id="loadingStatus" class="status muted">Chargement des signalements...</div>
+      
+      <div id="reportsTable" style="display:none">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Produit</th>
+              <th>Enseigne</th>
+              <th>Prix</th>
+              <th>Zone</th>
+              <th>Raison</th>
+              <th>Commentaire</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="reportsTableBody"></tbody>
+        </table>
+      </div>
+
+      <div id="noReports" style="display:none" class="status muted">
+        Aucun signalement trouvé.
+      </div>
+    </section>
+
+    <footer>© <span id="y"></span> A KI PRI SA YÉ - Admin Dashboard</footer>
+  </div>
+
+  <script>
+    // Utilities
+    const $ = (sel) => document.querySelector(sel);
+    const statusFilter = $("#statusFilter");
+    const reasonFilter = $("#reasonFilter");
+    const refreshBtn = $("#refreshBtn");
+    const loadingStatus = $("#loadingStatus");
+    const reportsTable = $("#reportsTable");
+    const reportsTableBody = $("#reportsTableBody");
+    const noReports = $("#noReports");
+    const totalCount = $("#totalCount");
+
+    let allReports = [];
+    let filteredReports = [];
+
+    // Load reports from localStorage for demo purposes
+    function loadReports() {
+      loadingStatus.style.display = "block";
+      reportsTable.style.display = "none";
+      noReports.style.display = "none";
+
+      try {
+        // Load from localStorage for demo
+        const localReports = JSON.parse(localStorage.getItem('akp-reports') || '[]');
+        
+        // Add demo status and ID to local reports
+        allReports = localReports.map((report, index) => ({
+          id: `local_${index}`,
+          ...report,
+          status: report.status || 'pending',
+          createdAt: report.timestamp
+        }));
+
+        // TODO: In production, fetch from Firebase Cloud Function
+        // const response = await fetch('https://us-central1-a-ki-pri-sa-ye.cloudfunctions.net/getProductReports');
+        // const data = await response.json();
+        // allReports = data.reports || [];
+
+        filterAndDisplayReports();
+        loadingStatus.style.display = "none";
+      } catch (error) {
+        console.error('Error loading reports:', error);
+        loadingStatus.textContent = "Erreur lors du chargement des signalements.";
+        loadingStatus.className = "status err";
+      }
+    }
+
+    function filterAndDisplayReports() {
+      const statusFilterValue = statusFilter.value;
+      const reasonFilterValue = reasonFilter.value;
+
+      filteredReports = allReports.filter(report => {
+        const statusMatch = !statusFilterValue || report.status === statusFilterValue;
+        const reasonMatch = !reasonFilterValue || report.reason === reasonFilterValue;
+        return statusMatch && reasonMatch;
+      });
+
+      totalCount.textContent = `${filteredReports.length} signalement(s)`;
+
+      if (filteredReports.length === 0) {
+        reportsTable.style.display = "none";
+        noReports.style.display = "block";
+        return;
+      }
+
+      noReports.style.display = "none";
+      reportsTable.style.display = "block";
+
+      // Sort by date (newest first)
+      filteredReports.sort((a, b) => new Date(b.createdAt || b.timestamp) - new Date(a.createdAt || a.timestamp));
+
+      renderReportsTable();
+    }
+
+    function renderReportsTable() {
+      reportsTableBody.innerHTML = filteredReports.map(report => {
+        const date = new Date(report.createdAt || report.timestamp).toLocaleString('fr-FR');
+        const statusBadge = getStatusBadge(report.status);
+        const reasonText = getReasonText(report.reason);
+
+        return `
+          <tr>
+            <td>${date}</td>
+            <td><strong>${report.product?.name || '-'}</strong></td>
+            <td>${report.product?.store || '-'}</td>
+            <td>${report.product?.price ? report.product.price.toFixed(2) + ' €' : '-'}</td>
+            <td>${report.product?.zone || '-'}</td>
+            <td>${reasonText}</td>
+            <td><div class="report-comment">${report.comment || '-'}</div></td>
+            <td>${statusBadge}</td>
+            <td>
+              <div class="report-actions">
+                ${report.status === 'pending' ? `<button class="btn small success" onclick="updateReportStatus('${report.id}', 'reviewed')">Examiner</button>` : ''}
+                ${report.status === 'reviewed' ? `<button class="btn small success" onclick="updateReportStatus('${report.id}', 'resolved')">Résoudre</button>` : ''}
+                <button class="btn small danger" onclick="deleteReport('${report.id}')">Supprimer</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function getStatusBadge(status) {
+      const badges = {
+        pending: '<span class="badge pending">En attente</span>',
+        reviewed: '<span class="badge reviewed">Examiné</span>',
+        resolved: '<span class="badge resolved">Résolu</span>'
+      };
+      return badges[status] || '<span class="badge">Inconnu</span>';
+    }
+
+    function getReasonText(reason) {
+      const reasons = {
+        prix_incorrect: 'Prix incorrect',
+        produit_indisponible: 'Produit indisponible',
+        information_incorrecte: 'Information incorrecte',
+        contenu_inapproprie: 'Contenu inapproprié',
+        autre: 'Autre'
+      };
+      return reasons[reason] || reason;
+    }
+
+    function updateReportStatus(reportId, newStatus) {
+      // Update in localStorage for demo
+      const reports = JSON.parse(localStorage.getItem('akp-reports') || '[]');
+      const index = parseInt(reportId.replace('local_', ''));
+      if (reports[index]) {
+        reports[index].status = newStatus;
+        reports[index].updatedAt = new Date().toISOString();
+        localStorage.setItem('akp-reports', JSON.stringify(reports));
+        loadReports(); // Refresh display
+      }
+
+      // TODO: In production, call Firebase Cloud Function to update status
+      // updateReportStatusInFirebase(reportId, newStatus);
+    }
+
+    function deleteReport(reportId) {
+      if (!confirm('Êtes-vous sûr de vouloir supprimer ce signalement ?')) {
+        return;
+      }
+
+      // Delete from localStorage for demo
+      const reports = JSON.parse(localStorage.getItem('akp-reports') || '[]');
+      const index = parseInt(reportId.replace('local_', ''));
+      if (reports[index]) {
+        reports.splice(index, 1);
+        localStorage.setItem('akp-reports', JSON.stringify(reports));
+        loadReports(); // Refresh display
+      }
+
+      // TODO: In production, call Firebase Cloud Function to delete
+      // deleteReportInFirebase(reportId);
+    }
+
+    // Event listeners
+    statusFilter.addEventListener('change', filterAndDisplayReports);
+    reasonFilter.addEventListener('change', filterAndDisplayReports);
+    refreshBtn.addEventListener('click', loadReports);
+
+    // Initialize
+    $("#y").textContent = new Date().getFullYear();
+    loadReports();
+  </script>
+
+<div id="site-footer"></div>
+  <script src="/js/footer.js" defer></script>
+</body>
+</html>

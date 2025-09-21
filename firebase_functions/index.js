@@ -177,3 +177,54 @@ exports.getRanking = https.onRequest(async (req, res) => {
     res.status(500).json({ error: 'server' });
   }
 });
+
+/* =========================================================================
+   PRODUCT REPORTS – Signalement de produits
+   ========================================================================= */
+
+exports.submitProductReport = https.onRequest(async (req, res) => {
+  if (handleCORS(req, res)) return;
+  
+  try {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    const { product, reason, comment, timestamp, userAgent } = req.body;
+
+    // Validation
+    if (!product || !reason) {
+      return res.status(400).json({ error: 'Missing required fields: product, reason' });
+    }
+
+    // Create report document
+    const reportData = {
+      product: {
+        name: product.name || '',
+        store: product.store || '',
+        price: product.price || null,
+        zone: product.zone || ''
+      },
+      reason: reason,
+      comment: comment || '',
+      timestamp: timestamp || new Date().toISOString(),
+      userAgent: userAgent || '',
+      status: 'pending', // pending, reviewed, resolved
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    };
+
+    // Save to Firestore
+    const docRef = await db.collection('product_reports').add(reportData);
+
+    res.json({ 
+      success: true, 
+      reportId: docRef.id,
+      message: 'Report submitted successfully'
+    });
+
+  } catch (e) {
+    console.error('Error submitting product report:', e);
+    res.status(500).json({ error: 'server' });
+  }
+});

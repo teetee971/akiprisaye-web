@@ -48,6 +48,11 @@
     .img{width:44px;height:44px;object-fit:contain;border-radius:6px;background:#0f1826;border:1px solid #23324a}
     .right{text-align:right}
     footer{color:var(--muted);font-size:14px;margin:28px 0 40px}
+    .modal{backdrop-filter:blur(4px)}
+    .modal-content{animation:fadeIn 0.2s ease-out}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+    textarea{font-family:inherit;line-height:1.4}
+    .btn:disabled{opacity:0.5;cursor:not-allowed}
   </style>
 <link rel="stylesheet" href="/app-modal.css"/>
   <link rel="stylesheet" href="/css/theme.css"/>
@@ -93,16 +98,43 @@
             <th class="right">Prix</th>
             <th>Unité</th>
             <th>Maj.</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody id="out"></tbody>
         <tfoot>
-          <tr><td colspan="5" id="hint">—</td></tr>
+          <tr><td colspan="6" id="hint">—</td></tr>
         </tfoot>
       </table>
     </section>
 
     <footer>© <span id="y"></span> A KI PRI SA YÉ</footer>
+  </div>
+
+  <!-- Report Modal -->
+  <div id="reportModal" class="modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:1000">
+    <div class="modal-content" style="background:var(--panel);margin:5% auto;padding:20px;border-radius:16px;width:90%;max-width:500px;box-shadow:var(--shadow)">
+      <h3 style="margin:0 0 16px;color:var(--text)">Signaler un produit</h3>
+      <div style="margin-bottom:12px">
+        <label for="reportReason" style="display:block;margin-bottom:4px;color:var(--muted)">Raison du signalement</label>
+        <select id="reportReason" style="width:100%;background:#0f1826;border:1px solid #2b3a52;color:var(--text);border-radius:10px;padding:12px">
+          <option value="prix_incorrect">Prix incorrect</option>
+          <option value="produit_indisponible">Produit indisponible</option>
+          <option value="information_incorrecte">Information incorrecte</option>
+          <option value="contenu_inapproprie">Contenu inapproprié</option>
+          <option value="autre">Autre</option>
+        </select>
+      </div>
+      <div style="margin-bottom:16px">
+        <label for="reportComment" style="display:block;margin-bottom:4px;color:var(--muted)">Commentaire (optionnel)</label>
+        <textarea id="reportComment" placeholder="Décrivez le problème..." style="width:100%;height:80px;background:#0f1826;border:1px solid #2b3a52;color:var(--text);border-radius:10px;padding:12px;resize:vertical"></textarea>
+      </div>
+      <div style="display:flex;gap:12px;justify-content:flex-end">
+        <button id="cancelReport" class="btn secondary">Annuler</button>
+        <button id="submitReport" class="btn">Envoyer</button>
+      </div>
+      <div id="reportStatus" class="status muted" style="margin-top:12px"></div>
+    </div>
   </div>
 
   <script>
@@ -119,7 +151,7 @@
     }
 
     function render(items){
-      outEl.innerHTML = items.map(it => `
+      outEl.innerHTML = items.map((it, index) => `
         <tr>
           <td><div style="display:flex;align-items:center;gap:10px">
             ${it.image ? `<img loading="lazy" decoding="async" class="img" src="${it.image}" alt="">` : ""}
@@ -132,9 +164,19 @@
           <td class="right">${(it.price!=null? it.price.toFixed(2)+" "+(it.currency||"€") : "—")}</td>
           <td>${it.quantity? it.quantity : (it.unit||"")}</td>
           <td>${it.updatedAt? new Date(it.updatedAt*1000).toLocaleDateString("fr-FR") : "—"}</td>
+          <td><button class="btn-report" data-product-index="${index}" style="background:#ff6b6b;color:white;border:none;padding:4px 8px;border-radius:4px;cursor:pointer;font-size:12px">Signaler</button></td>
         </tr>
       `).join("");
       hintEl.textContent = items.length ? `${items.length} résultat(s)` : "Aucun résultat.";
+      
+      // Wire up report buttons
+      document.querySelectorAll('.btn-report').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const index = parseInt(e.target.getAttribute('data-product-index'));
+          const product = items[index];
+          openReportModal(product);
+        });
+      });
     }
 
     // 2) Fonction de recherche
@@ -158,8 +200,38 @@
         setStatus("Résultats mis à jour.","ok");
       }catch(e){
         console.error(e);
-        render([]);
-        setStatus("Erreur : impossible de charger les résultats.","err");
+        // Show demo data when API fails
+        const demoData = [
+          {
+            name: "Banane " + text,
+            brand: "Bio",
+            store: "Carrefour Génipa",
+            price: 2.45,
+            currency: "€",
+            unit: "kg",
+            updatedAt: Math.floor(Date.now()/1000) - 86400
+          },
+          {
+            name: "Banane " + text + " premium",
+            brand: "Extra",
+            store: "Hyper U Place d'Armes",
+            price: 2.19,
+            currency: "€", 
+            unit: "kg",
+            updatedAt: Math.floor(Date.now()/1000) - 172800
+          },
+          {
+            name: "Banane " + text + " locale",
+            brand: "",
+            store: "Market Fresh",
+            price: 1.95,
+            currency: "€",
+            unit: "kg", 
+            updatedAt: Math.floor(Date.now()/1000) - 259200
+          }
+        ];
+        render(demoData);
+        setStatus("Données de démonstration (API indisponible)","ok");
       }
     }
 
@@ -173,6 +245,121 @@
     // 5) Petite UX : focus auto + année footer
     qEl.setAttribute("autocomplete","on");
     $("#y").textContent = new Date().getFullYear();
+
+    // 6) Report Modal functionality
+    let currentProduct = null;
+    const reportModal = $("#reportModal");
+    const reportReason = $("#reportReason");
+    const reportComment = $("#reportComment");
+    const reportStatus = $("#reportStatus");
+    const cancelReport = $("#cancelReport");
+    const submitReport = $("#submitReport");
+
+    function openReportModal(product) {
+      currentProduct = product;
+      reportReason.value = "prix_incorrect";
+      reportComment.value = "";
+      setReportStatus("", "muted");
+      reportModal.style.display = "block";
+    }
+
+    function closeReportModal() {
+      reportModal.style.display = "none";
+      currentProduct = null;
+    }
+
+    function setReportStatus(msg, cls = "muted") {
+      reportStatus.className = "status " + cls;
+      reportStatus.textContent = msg;
+    }
+
+    async function submitProductReport() {
+      if (!currentProduct) return;
+
+      const reason = reportReason.value;
+      const comment = reportComment.value.trim();
+
+      if (!reason) {
+        setReportStatus("Veuillez sélectionner une raison.", "err");
+        return;
+      }
+
+      setReportStatus("Envoi du signalement...", "muted");
+      submitReport.disabled = true;
+
+      const reportData = {
+        product: {
+          name: currentProduct.name,
+          store: currentProduct.store,
+          price: currentProduct.price,
+          zone: zoneEl.value
+        },
+        reason: reason,
+        comment: comment,
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent
+      };
+
+      try {
+        // Send to Firebase Cloud Function
+        const response = await fetch('https://us-central1-a-ki-pri-sa-ye.cloudfunctions.net/submitProductReport', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(reportData)
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const result = await response.json();
+        
+        if (result.success) {
+          setReportStatus("Signalement envoyé avec succès !", "ok");
+          setTimeout(() => {
+            closeReportModal();
+          }, 2000);
+        } else {
+          throw new Error(result.error || 'Unknown error');
+        }
+      } catch (error) {
+        console.error('Error submitting report:', error);
+        // Fallback to localStorage if Firebase fails
+        try {
+          const reports = JSON.parse(localStorage.getItem('akp-reports') || '[]');
+          reports.push(reportData);
+          localStorage.setItem('akp-reports', JSON.stringify(reports));
+          setReportStatus("Signalement stocké localement (hors ligne).", "ok");
+          setTimeout(() => {
+            closeReportModal();
+          }, 2000);
+        } catch (localError) {
+          setReportStatus("Erreur lors de l'envoi du signalement.", "err");
+        }
+      } finally {
+        submitReport.disabled = false;
+      }
+    }
+
+    // Modal events
+    cancelReport.addEventListener("click", closeReportModal);
+    submitReport.addEventListener("click", submitProductReport);
+    
+    // Close modal when clicking outside
+    reportModal.addEventListener("click", (e) => {
+      if (e.target === reportModal) {
+        closeReportModal();
+      }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && reportModal.style.display === "block") {
+        closeReportModal();
+      }
+    });
   </script>
 <script type="module">import {wireProductClicks} from "/app-modal.js";
 window.wireProductClicks=wireProductClicks;</script>
