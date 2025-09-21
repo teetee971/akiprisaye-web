@@ -1,29 +1,14 @@
+import React from "react";
+import Produits from "./pages/Produits";
+
 export default function App() {
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 antialiased p-6">
-      <h1 className="text-3xl font-bold tracking-tight mb-6">
-        A KI PRI SA YÉ
+    <div className="min-h-screen bg-slate-50 text-slate-900 antialiased">
+      <h1 className="text-3xl font-bold tracking-tight mb-6 p-6">
+        A KI PRI SA YÉ - Test des Icônes
       </h1>
-
-      <p className="text-center text-slate-600 mb-4">
-        Comparateur - version démo
-      </p>
-
-      <div className="flex gap-4">
-        <input
-          type="text"
-          placeholder="Nom du produit"
-          className="flex-1 rounded-xl border border-slate-300 px-3 py-2"
-        />
-        <input
-          type="number"
-          placeholder="Prix (€)"
-          className="w-32 rounded-xl border border-slate-300 px-3 py-2 text-right"
-        />
-        <button className="rounded-xl bg-sky-600 px-4 py-2 text-white font-medium hover:bg-sky-700">
-          Ajouter
-        </button>
-      </div>
+      
+      <Produits />
     </div>
   )
 }

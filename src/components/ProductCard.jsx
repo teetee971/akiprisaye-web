@@ -1,12 +1,16 @@
+import React from "react";
 import { Heart } from "lucide-react";
 import StoreBadge from "./StoreBadge";
 
-const nsColor = {
-  A: "bg-green-600", B: "bg-green-500", C: "bg-yellow-500",
-  D: "bg-orange-500", E: "bg-red-600",
-};
-
 export default function ProductCard({ p, onOpen, onFav, fav }) {
+  // Get Nutri-score icon path
+  const getNutriScoreIcon = (score) => {
+    const scoreCode = (score || 'C').toLowerCase();
+    return `/icons/nutriscore/${scoreCode}.svg`;
+  };
+
+  const nutriScoreIcon = getNutriScoreIcon(p.nutriScore);
+
   return (
     <article
       className="border border-slate-200 rounded-xl p-3 cursor-pointer
@@ -31,10 +35,21 @@ export default function ProductCard({ p, onOpen, onFav, fav }) {
 
       <div className="mt-2 flex items-center gap-2">
         <span className="text-sm font-medium">{p.price} {p.currency || "€"}</span>
-        <span className={`text-[10px] text-white px-2 py-0.5 rounded
-                         ${nsColor[p.nutriScore || "C"]}`}>
-          Nutri-Score {p.nutriScore || "C"}
-        </span>
+        <div className="flex items-center gap-1">
+          <img 
+            src={nutriScoreIcon} 
+            alt={`Nutri-Score ${p.nutriScore || 'C'}`}
+            width="24" 
+            height="18" 
+            className="flex-shrink-0"
+            onError={(e) => {
+              e.target.src = '/icons/nutriscore/c.svg';
+            }}
+          />
+          <span className="text-xs text-slate-600">
+            Nutri-Score
+          </span>
+        </div>
       </div>
 
       <div className="mt-2">

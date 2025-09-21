@@ -1,0 +1,20 @@
+<!-- Polynésie Française Flag Icon -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+  <defs>
+    <linearGradient id="pfGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ff0000"/>
+      <stop offset="20%" stop-color="#ff0000"/>
+      <stop offset="20%" stop-color="#ffffff"/>
+      <stop offset="40%" stop-color="#ffffff"/>
+      <stop offset="40%" stop-color="#ff0000"/>
+      <stop offset="60%" stop-color="#ff0000"/>
+      <stop offset="60%" stop-color="#ffffff"/>
+      <stop offset="80%" stop-color="#ffffff"/>
+      <stop offset="80%" stop-color="#ff0000"/>
+      <stop offset="100%" stop-color="#ff0000"/>
+    </linearGradient>
+  </defs>
+  <rect width="24" height="24" rx="2" fill="url(#pfGrad)"/>
+  <circle cx="12" cy="12" r="3" fill="#0066cc" opacity="0.8"/>
+  <text x="12" y="13" text-anchor="middle" font-size="7" fill="#ffffff" font-weight="bold">PF</text>
+</svg>

@@ -1,0 +1,16 @@
+<!-- Nouvelle-Calédonie Flag Icon -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+  <defs>
+    <linearGradient id="ncGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0066cc"/>
+      <stop offset="33.33%" stop-color="#0066cc"/>
+      <stop offset="33.33%" stop-color="#ed2939"/>
+      <stop offset="66.66%" stop-color="#ed2939"/>
+      <stop offset="66.66%" stop-color="#228b22"/>
+      <stop offset="100%" stop-color="#228b22"/>
+    </linearGradient>
+  </defs>
+  <rect width="24" height="24" rx="2" fill="url(#ncGrad)"/>
+  <circle cx="12" cy="12" r="3" fill="#ffd700" opacity="0.8"/>
+  <text x="12" y="13" text-anchor="middle" font-size="7" fill="#000000" font-weight="bold">NC</text>
+</svg>
