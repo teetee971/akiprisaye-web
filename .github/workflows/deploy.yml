@@ -1,4 +1,4 @@
-name: 🚀 Déployer sur Cloudflare Pages
+name: Deploy to Cloudflare Pages
 
 on:
   push:
@@ -9,54 +9,50 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: 📂 Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: ⚙️ Setup Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
 
-      - name: 📦 Installer dépendances
-        run: |
-          if [ -f package-lock.json ]; then
-            npm ci
-          else
-            npm install
-          fi
-          # Installer les dépendances vitales si manquantes
-          if ! npm list vite >/dev/null 2>&1; then
-            npm install -D vite
-          fi
-          if ! npm list react >/dev/null 2>&1; then
-            npm install react react-dom
-          fi
-          if ! npm list @vitejs/plugin-react >/dev/null 2>&1; then
-            npm install -D @vitejs/plugin-react
-          fi
+      - name: Install dependencies
+        run: npm install
 
-      - name: 🏗️ Build
+      - name: Build project
         run: npm run build
 
-      - name: 🚀 Déploiement Cloudflare Pages
+      - name: Deploy to Cloudflare Pages
+        id: deploy
         uses: cloudflare/pages-action@v1
         with:
-          apiToken: ${{ secrets.CF_API_TOKEN }}
-          accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          projectName: ${{ secrets.CF_PROJECT_NAME }}
-          directory: dist
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: akiprisaye
+          directory: ./dist
 
-      - name: 🧹 Purge cache Cloudflare
-        if: ${{ env.CF_ZONE_ID != '' }}
+      - name: Verify Deployment
+        id: verify
         run: |
-          curl -X POST "https://api.cloudflare.com/client/v4/zones/${{ secrets.CF_ZONE_ID }}/purge_cache" \
-            -H "Authorization: Bearer ${{ secrets.CF_API_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            --data '{"purge_everything":true}'
+          sleep 20
+          if curl -s -I https://akiprisaye.pages.dev | grep "200 OK"; then
+            echo "✅ Deployment successful"
+          else
+            echo "❌ Deployment failed"
+            exit 1
+          fi
 
-      - name: 📝 Write Production URL to Summary
+  rollback:
+    runs-on: ubuntu-latest
+    needs: build-and-deploy
+    if: failure()
+    steps:
+      - name: Rollback to previous deployment
         run: |
-          echo "# 🌐 Production URL" >> $GITHUB_STEP_SUMMARY
-          echo "L'application est déployée sur [https://akiprisaye.pages.dev](https://akiprisaye.pages.dev)" >> $GITHUB_STEP_SUMMARY
+          echo "⚠️ Rolling back to previous successful version..."
+          curl -X POST "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects/akiprisaye/deployments/rollback" \
+            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
+            -H "Content-Type: application/json"
