@@ -4,61 +4,323 @@
   <meta charset="utf-8">
   <title>Actualités • Vie chère & conso • A KI PRI SA YÉ</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Actualités et informations sur la vie chère, prix et consommation dans les DROM-COM. Restez informé des évolutions économiques.">
   <link rel="stylesheet" href="/styles.css">
   <style>
     body{background:#0b1220;color:#e7eefc;font-family:system-ui,Segoe UI,Roboto,Inter,Arial}
-    .wrap{max-width:980px;margin:32px auto;padding:0 16px}
+    .wrap{max-width:1200px;margin:32px auto;padding:0 16px}
     .h1{font-size:2rem;font-weight:800;margin:8px 0 16px}
     .muted{opacity:.7}
     .grid{display:grid;gap:12px}
-    .card{background:#0f1629;border:1px solid #1e2945;border-radius:16px;padding:14px}
+    .grid-2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+    .grid-3{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+    .card{background:#0f1629;border:1px solid #1e2945;border-radius:16px;padding:14px;transition:all 0.2s ease}
+    .card:hover{border-color:#35e1ff;transform:translateY(-2px)}
+    .card.featured{background:linear-gradient(135deg,#1a2744,#0f1629);border-color:#35e1ff;position:relative}
+    .card.featured::before{content:"⭐ À la une";position:absolute;top:-8px;left:12px;background:#35e1ff;color:#042029;padding:4px 8px;border-radius:8px;font-size:0.75rem;font-weight:600}
     a.card{color:inherit;text-decoration:none}
     .tag{font-size:.75rem;opacity:.8;background:#17213a;padding:4px 8px;border-radius:999px;margin-right:6px}
+    .tag.prix{background:#ff6b6b;color:white}
+    .tag.comparatif{background:#35e1ff;color:#042029}
+    .tag.vie-chere{background:#ffa726;color:white}
+    
+    .filters{background:#0f1629;border:1px solid #1e2945;border-radius:16px;padding:16px;margin-bottom:24px}
+    .filter-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+    .filter-row:last-child{margin-bottom:0}
+    select,button{background:#1a2744;border:1px solid #2b3a52;color:#e7eefc;border-radius:8px;padding:8px 12px;cursor:pointer}
+    button{background:#35e1ff;color:#042029;font-weight:600;border:none}
+    button:hover{background:#2dd4f0}
+    .btn-secondary{background:#1a2744;color:#e7eefc;border:1px solid #2b3a52}
+    .btn-secondary:hover{background:#233453}
+    
+    .section-title{font-size:1.5rem;font-weight:700;margin:32px 0 16px;color:#35e1ff}
+    .section-title:first-child{margin-top:0}
+    .stats{display:flex;gap:16px;margin:16px 0;font-size:0.9rem}
+    .stat{color:#8da2b5}
+    .loading{text-align:center;padding:32px;opacity:0.7}
+    
+    @media(max-width:768px){
+      .filter-row{flex-direction:column;align-items:stretch}
+      .filter-row > *{width:100%}
+      .stats{flex-direction:column;gap:8px}
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="h1">Actualités “vie chère / consommation”</div>
-    <p class="muted">Filtré par territoire, agrégé côté serveur (Cloudflare Worker) pour éviter les blocages CORS.</p>
+    <div class="h1">📰 Actualités "vie chère / consommation"</div>
+    <p class="muted">Restez informé des évolutions des prix et de la consommation dans les territoires d'outre-mer.</p>
 
-    <div style="display:flex;gap:10px;align-items:center;margin:12px 0">
-      <select id="territory"></select>
-      <button id="btn">Rechercher</button>
-      <span id="when" class="muted" style="margin-left:auto"></span>
+    <!-- Enhanced Filters -->
+    <div class="filters">
+      <div class="filter-row">
+        <select id="territory">
+          <option value="">Tous les territoires</option>
+        </select>
+        <select id="category">
+          <option value="">Toutes les catégories</option>
+          <option value="vie-chere">🏷️ Vie chère</option>
+          <option value="prix">💰 Prix & tarifs</option>
+          <option value="comparatif">📊 Comparatifs</option>
+          <option value="economie">📈 Économie</option>
+          <option value="consommation">🛒 Consommation</option>
+        </select>
+        <select id="source">
+          <option value="">Toutes les sources</option>
+          <option value="gouvernement">Services de l'État</option>
+          <option value="insee">INSEE</option>
+          <option value="medias">Médias locaux</option>
+          <option value="associations">Associations</option>
+        </select>
+      </div>
+      <div class="filter-row">
+        <button id="btn">🔎 Rechercher</button>
+        <button id="btnReset" class="btn-secondary">🔄 Réinitialiser</button>
+        <span id="when" class="muted" style="margin-left:auto"></span>
+      </div>
+      <div class="stats">
+        <span id="totalCount" class="stat">— articles</span>
+        <span id="featuredCount" class="stat">— à la une</span>
+        <span id="lastUpdate" class="stat">Dernière MAJ: —</span>
+      </div>
     </div>
 
-    <section id="news" class="grid" aria-live="polite"></section>
+    <!-- Featured Section -->
+    <section id="featuredSection" style="display:none">
+      <div class="section-title">⭐ À la une</div>
+      <div id="featured" class="grid grid-2"></div>
+    </section>
+
+    <!-- All News Section -->
+    <section>
+      <div class="section-title">📰 Toutes les actualités</div>
+      <div id="news" class="grid grid-3" aria-live="polite">
+        <div class="loading">Chargement des actualités...</div>
+      </div>
+    </section>
   </div>
 
   <script type="module">
-    import { TERR_FLAGS } from "/js/flags.js";
-    const $=id=>document.getElementById(id);
-    const TERRS=["guadeloupe","martinique","guyane","reunion","mayotte","saint-martin","saint-barthelemy","polynesie-francaise","nouvelle-caledonie","wallis-et-futuna"];
-    $("territory").innerHTML=TERRS.map(t=>`<option value="${t}">${TERR_FLAGS[t]||"🏳️"} ${t.replace('-',' ')}</option>`).join('');
-    const card = a => `
-      <a class="card" href="${a.link}" target="_blank" rel="noopener">
-        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
-          <span class="tag">${TERR_FLAGS[a.territory]||"🏳️"} ${a.territory}</span>
-          <span class="tag">${a.source}</span>
-          <span class="muted" style="margin-left:auto">${new Date(a.date).toLocaleString()}</span>
-        </div>
-        <h3 style="margin:0 0 6px">${a.title}</h3>
-        <p class="muted" style="margin:0">${a.summary||""}</p>
-      </a>`;
-    const load=()=>{
-      const t=$("territory").value;
-      $("news").innerHTML='<div class="muted">Chargement…</div>';
-      fetch(`/news?territory=${encodeURIComponent(t)}`).then(r=>r.json()).then(d=>{
-        $("when").textContent = new Date(d.fetchedAt||Date.now()).toLocaleString();
-        const items = (d.items||[]).slice(0,20);
-        $("news").innerHTML = items.map(card).join('') || '<div class="muted">Aucune actu trouvée.</div>';
-      }).catch(e=>{
-        $("news").innerHTML='<div class="muted">Erreur de chargement</div>';
-      });
+    // Import flags from the existing file
+    const TERR_FLAGS = window.KI_FLAGS || {
+      "guadeloupe":"🇬🇵","martinique":"🇲🇶","guyane":"🇬🇫","reunion":"🇷🇪","mayotte":"🇾🇹",
+      "saint-martin":"🇸🇽","saint-barthelemy":"🇧🇱","polynesie-francaise":"🇵🇫",
+      "nouvelle-caledonie":"🇳🇨","wallis-et-futuna":"🇼🇫","saint-pierre-et-miquelon":"🇵🇲"
     };
-    $("btn").onclick=load;
-    load();
+    
+    // DOM elements
+    const $ = id => document.getElementById(id);
+    const territory = $("territory");
+    const category = $("category");
+    const source = $("source");
+    const btn = $("btn");
+    const btnReset = $("btnReset");
+    const news = $("news");
+    const featured = $("featured");
+    const featuredSection = $("featuredSection");
+    const when = $("when");
+    const totalCount = $("totalCount");
+    const featuredCount = $("featuredCount");
+    const lastUpdate = $("lastUpdate");
+
+    // Territory list
+    const TERRS = ["guadeloupe","martinique","guyane","reunion","mayotte","saint-martin","saint-barthelemy","polynesie-francaise","nouvelle-caledonie","wallis-et-futuna"];
+    
+    // Initialize territory dropdown
+    territory.innerHTML = '<option value="">Tous les territoires</option>' + 
+      TERRS.map(t => `<option value="${t}">${TERR_FLAGS[t]||"🏳️"} ${t.replace('-',' ')}</option>`).join('');
+
+    // Demo data for when API is unavailable
+    const DEMO_NEWS = [
+      {
+        id: "demo1",
+        title: "Évolution des prix alimentaires en Martinique",
+        summary: "Les prix des produits de première nécessité ont augmenté de 3,2% ce trimestre selon l'observatoire des prix.",
+        territory: "martinique",
+        category: "vie-chere",
+        source: "INSEE",
+        date: new Date(Date.now() - 86400000).toISOString(),
+        link: "#demo1",
+        featured: true
+      },
+      {
+        id: "demo2", 
+        title: "Nouvelles mesures contre la vie chère en Guadeloupe",
+        summary: "Le gouvernement annonce un plan d'aide pour réduire le coût de la vie dans les territoires d'outre-mer.",
+        territory: "guadeloupe",
+        category: "vie-chere",
+        source: "gouvernement",
+        date: new Date(Date.now() - 172800000).toISOString(),
+        link: "#demo2",
+        featured: true
+      },
+      {
+        id: "demo3",
+        title: "Comparatif des prix carburant DOM-TOM",
+        summary: "Analyse comparative des tarifs de l'essence dans les différents territoires ultramarins.",
+        territory: "reunion",
+        category: "comparatif",
+        source: "medias",
+        date: new Date(Date.now() - 259200000).toISOString(),
+        link: "#demo3",
+        featured: false
+      },
+      {
+        id: "demo4",
+        title: "Hausse des prix de l'électricité en Guyane",
+        summary: "Les tarifs énergétiques connaissent une augmentation significative pour la fin d'année.",
+        territory: "guyane",
+        category: "prix",
+        source: "medias",
+        date: new Date(Date.now() - 345600000).toISOString(),
+        link: "#demo4",
+        featured: false
+      },
+      {
+        id: "demo5",
+        title: "Observatoire des prix à Mayotte",
+        summary: "Publication du rapport mensuel sur l'évolution du coût de la vie dans le département.",
+        territory: "mayotte", 
+        category: "economie",
+        source: "insee",
+        date: new Date(Date.now() - 432000000).toISOString(),
+        link: "#demo5",
+        featured: false
+      }
+    ];
+
+    // Enhanced card template
+    const createCard = (article, isFeatured = false) => {
+      const categoryClass = article.category ? ` ${article.category}` : '';
+      const featuredClass = isFeatured ? ' featured' : '';
+      
+      return `
+        <a class="card${featuredClass}" href="${article.link}" target="_blank" rel="noopener">
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
+            <span class="tag">${TERR_FLAGS[article.territory]||"🏳️"} ${article.territory}</span>
+            <span class="tag${categoryClass}">${getCategoryIcon(article.category)} ${getCategoryName(article.category)}</span>
+            <span class="tag">${article.source}</span>
+            <span class="muted" style="margin-left:auto;font-size:0.8rem">${new Date(article.date).toLocaleDateString('fr-FR')}</span>
+          </div>
+          <h3 style="margin:0 0 8px;line-height:1.3">${article.title}</h3>
+          <p class="muted" style="margin:0;line-height:1.4">${article.summary||""}</p>
+        </a>
+      `;
+    };
+
+    function getCategoryIcon(category) {
+      const icons = {
+        'vie-chere': '🏷️',
+        'prix': '💰', 
+        'comparatif': '📊',
+        'economie': '📈',
+        'consommation': '🛒'
+      };
+      return icons[category] || '📰';
+    }
+
+    function getCategoryName(category) {
+      const names = {
+        'vie-chere': 'Vie chère',
+        'prix': 'Prix',
+        'comparatif': 'Comparatif', 
+        'economie': 'Économie',
+        'consommation': 'Consommation'
+      };
+      return names[category] || 'Actualité';
+    }
+
+    // Filter articles
+    function filterArticles(articles) {
+      const territoryFilter = territory.value;
+      const categoryFilter = category.value;
+      const sourceFilter = source.value;
+
+      return articles.filter(article => {
+        const territoryMatch = !territoryFilter || article.territory === territoryFilter;
+        const categoryMatch = !categoryFilter || article.category === categoryFilter;
+        const sourceMatch = !sourceFilter || article.source.toLowerCase().includes(sourceFilter.toLowerCase());
+        
+        return territoryMatch && categoryMatch && sourceMatch;
+      });
+    }
+
+    // Load and display articles
+    async function loadArticles() {
+      const loadingHtml = '<div class="loading">Chargement des actualités...</div>';
+      news.innerHTML = loadingHtml;
+      featured.innerHTML = '';
+      featuredSection.style.display = 'none';
+
+      try {
+        // Try to fetch from external API/Firestore
+        const t = territory.value || 'general';
+        const response = await fetch(`/news?territory=${encodeURIComponent(t)}&category=${category.value}&source=${source.value}`);
+        
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        
+        const data = await response.json();
+        const articles = data.items || [];
+        
+        displayArticles(articles, data.fetchedAt);
+        
+      } catch (error) {
+        console.error('Failed to fetch news:', error);
+        // Fallback to demo data
+        displayArticles(DEMO_NEWS, Date.now(), true);
+      }
+    }
+
+    function displayArticles(allArticles, fetchedAt, isDemo = false) {
+      const filteredArticles = filterArticles(allArticles);
+      const featuredArticles = filteredArticles.filter(a => a.featured);
+      const regularArticles = filteredArticles.filter(a => !a.featured);
+
+      // Update stats
+      totalCount.textContent = `${filteredArticles.length} article${filteredArticles.length !== 1 ? 's' : ''}`;
+      featuredCount.textContent = `${featuredArticles.length} à la une`;
+      lastUpdate.textContent = `Dernière MAJ: ${new Date(fetchedAt).toLocaleString('fr-FR')}`;
+      when.textContent = isDemo ? 'Données de démonstration' : new Date(fetchedAt).toLocaleString('fr-FR');
+
+      // Display featured articles
+      if (featuredArticles.length > 0) {
+        featured.innerHTML = featuredArticles.map(article => createCard(article, true)).join('');
+        featuredSection.style.display = 'block';
+      } else {
+        featuredSection.style.display = 'none';
+      }
+
+      // Display regular articles
+      if (regularArticles.length > 0) {
+        news.innerHTML = regularArticles.map(article => createCard(article, false)).join('');
+      } else if (featuredArticles.length === 0) {
+        news.innerHTML = '<div class="muted" style="text-align:center;padding:32px">Aucune actualité trouvée pour ces critères.</div>';
+      } else {
+        news.innerHTML = '<div class="muted" style="text-align:center;padding:16px">Toutes les actualités sont mises en avant ci-dessus.</div>';
+      }
+    }
+
+    // Reset filters
+    function resetFilters() {
+      territory.value = '';
+      category.value = '';
+      source.value = '';
+      loadArticles();
+    }
+
+    // Event listeners
+    btn.addEventListener('click', loadArticles);
+    btnReset.addEventListener('click', resetFilters);
+    
+    // Auto-refresh every 15 minutes
+    setInterval(loadArticles, 15 * 60 * 1000);
+
+    // Initial load
+    loadArticles();
   </script>
+
+  <!-- Load flags if not already loaded -->
+  <script src="/js/flags.js"></script>
 
   <!-- Lazy Loading Support -->
   <script>
@@ -80,5 +342,9 @@
         img.setAttribute('alt', `Image: ${filename}`);
       });
     });
-  </script></body>
+  </script>
+
+<div id="site-footer"></div>
+  <script src="/js/footer.js" defer></script>
+</body>
 </html>
