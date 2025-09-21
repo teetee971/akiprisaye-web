@@ -1,4 +1,53 @@
+/*
+  # Security Headers
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  X-XSS-Protection: 1; mode=block
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://fonts.googleapis.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https:; frame-ancestors 'none';
+  # Short cache for HTML files
+  Cache-Control: public, max-age=300, s-maxage=600
+
+# Static assets with long cache
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Images with long cache
+/img/*
+  Cache-Control: public, max-age=31536000, immutable
+/*.png
+  Cache-Control: public, max-age=31536000, immutable
+/*.jpg
+  Cache-Control: public, max-age=31536000, immutable
+/*.jpeg
+  Cache-Control: public, max-age=31536000, immutable
+/*.webp
+  Cache-Control: public, max-age=31536000, immutable
+/*.svg
+  Cache-Control: public, max-age=31536000, immutable
+
+# Fonts with long cache
+/*.woff
+  Cache-Control: public, max-age=31536000, immutable
+/*.woff2
+  Cache-Control: public, max-age=31536000, immutable
+
+# JavaScript and CSS with long cache
+/*.js
+  Cache-Control: public, max-age=31536000, immutable
+/*.css
+  Cache-Control: public, max-age=31536000, immutable
+
+# PWA files with shorter cache
+/manifest.json
+  Cache-Control: public, max-age=86400
+/manifest.webmanifest
+  Cache-Control: public, max-age=86400
+/service-worker.js
+  Cache-Control: public, max-age=0, must-revalidate
+
+# API endpoints with no cache
 /api/*
-  Content-Type: application/json; charset=utf-8
-  Cache-Control: public, max-age=600
-  Access-Control-Allow-Origin: *
+  Cache-Control: no-cache, no-store, must-revalidate
