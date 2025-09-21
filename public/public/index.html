@@ -15,7 +15,7 @@
       --brand:#38bdf8; --brand-dark:#0ea5e9; --accent:#2563eb;
     }
     *{box-sizing:border-box}
-    html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;line-height:1.6}
+    html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;line-height:1.6;word-break:break-word;overflow-wrap:anywhere}
     .container{max-width:1040px;margin:0 auto;padding:0 16px}
     header.hero{
       background: radial-gradient(1200px 520px at 20% -20%, rgba(56,189,248,.25), transparent 60%),
@@ -45,6 +45,23 @@
     tbody td{border-top:1px solid #1f2937;padding:10px}
     .muted{color:var(--muted)}
     footer{border-top:1px solid #1f2937;color:#9ca3af;text-align:center;padding:28px 12px;margin-top:36px}
+    
+    /* Enhanced mobile responsive styles */
+    @media (max-width:768px){
+      .container{padding:0 12px}
+      .brand h1{font-size:clamp(20px,6vw,28px)}
+      .hero-sub{font-size:14px}
+      .features{grid-template-columns:1fr;gap:12px}
+      .card{padding:14px}
+      .controls{flex-direction:column;align-items:stretch;gap:8px}
+      select, button{width:100%}
+      table{font-size:14px}
+      thead th, tbody td{padding:8px}
+      h1, h2, h3, p, span, div{
+        word-break:break-word;
+        overflow-wrap:anywhere;
+      }
+    }
   </style>
 </head>
 <body>

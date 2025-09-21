@@ -1,0 +1,199 @@
+name: Mettre à jour checklist et historique après merge PR
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  update-checklist-and-history:
+    if: ${{ github.event.pull_request.merged == true }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
+    steps:
+      - name: Checkout base branch (branche de destination de la PR)
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+
+      - name: Mettre à jour checklists + HISTORY.md
+        id: update
+        uses: actions/github-script@v7
+        with:
+          result-encoding: json
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+
+            const pr = context.payload.pull_request;
+            if (!pr || !pr.merged) {
+              core.info('PR non mergée. Rien à faire.');
+              return { changed: false, checked: 0, filesChanged: 0, tasks: [] };
+            }
+
+            const prNumber = pr.number;
+            const dateStr = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+            const text = ((pr.title || '') + ' ' + (pr.body || '')).toLowerCase();
+
+            // Mots-clés et numéros d'issue à détecter dans le titre/corps de la PR
+            const keywords = [
+              'headers',
+              'robots.txt',
+              'sitemap.xml',
+              'seo',
+              'open graph',
+              'responsive',
+              '#42',
+              'api data.gouv',
+              'comparateur',
+              'admin',
+              'ocr',
+              'signalement',
+              'actualites',
+              'pwa',
+              'offline'
+            ];
+
+            const matchedKeys = keywords.filter(k => text.includes(k));
+            if (matchedKeys.length === 0) {
+              core.info('Aucun mot-clé détecté dans le titre/corps de la PR. Rien à cocher.');
+              return { changed: false, checked: 0, filesChanged: 0, tasks: [] };
+            }
+
+            const sectionMatchers = [
+              '📋 checklist copilot – suivi des tâches', // tiret demi-cadratin
+              '📋 checklist copilot - suivi des tâches', // tiret simple
+              'checklist copilot – suivi des tâches',
+              'checklist copilot - suivi des tâches',
+              '📋 checklist copilot',
+              'checklist copilot'
+            ].map(s => s.toLowerCase());
+
+            const filesToProcess = ['README.md', 'docs/checklist.md'];
+            const completedTasks = new Set();
+            let filesChanged = 0;
+
+            const lineHasAnyKey = (lowerLine, keys) => keys.some(k => lowerLine.includes(k));
+
+            function processFile(filePath) {
+              if (!fs.existsSync(filePath)) {
+                core.info(`Fichier non trouvé: ${filePath}`);
+                return;
+              }
+              const original = fs.readFileSync(filePath, 'utf8');
+              const lines = original.split(/\r?\n/);
+
+              // Trouver le début de la section
+              let start = -1;
+              for (let i = 0; i < lines.length; i++) {
+                const low = lines[i].toLowerCase();
+                if (sectionMatchers.some(s => low.includes(s))) {
+                  start = i;
+                  break;
+                }
+              }
+              if (start === -1) {
+                core.info(`Section "📋 Checklist Copilot – Suivi des tâches" introuvable dans ${filePath}`);
+                return;
+              }
+
+              // Fin de section: prochain titre markdown (# ...), sinon fin du fichier
+              let end = lines.length;
+              for (let j = start + 1; j < lines.length; j++) {
+                if (/^\s*#{1,6}\s/.test(lines[j])) {
+                  end = j;
+                  break;
+                }
+              }
+
+              let changed = false;
+
+              for (let i = start + 1; i < end; i++) {
+                const line = lines[i];
+                const lower = line.toLowerCase();
+
+                // Ne traiter que les lignes de checklist
+                const isUnchecked = /^\s*-\s\[\s\]\s/.test(line);
+                const isChecked = /^\s*-\s\[\s?[xX]\s?\]\s/.test(line);
+                if (!isUnchecked && !isChecked) continue;
+
+                // La ligne doit correspondre à l'un des mots-clés détectés par la PR
+                if (!lineHasAnyKey(lower, matchedKeys)) continue;
+
+                // Extraire l'intitulé de tâche (sans la coche ni annotations existantes)
+                const cleanLabel = line
+                  .replace(/^\s*-\s\[\s?[ xX]?\s?\]\s*/, '')
+                  .replace(/\s*✅\s*\(PR\s*#\d+\s*-\s*\d{4}-\d{2}-\d{2}\)\s*$/i, '')
+                  .trim();
+
+                // Construire l'annotation PR
+                const annotation = ` ✅ (PR #${prNumber} - ${dateStr})`;
+
+                if (isUnchecked) {
+                  lines[i] = `- [x] ${cleanLabel}${annotation}`;
+                  changed = true;
+                  completedTasks.add(cleanLabel);
+                } else if (isChecked) {
+                  // Si déjà coché, on ajoute l'annotation si elle n'existe pas pour cette PR
+                  if (!line.includes(`PR #${prNumber}`)) {
+                    lines[i] = `${line}${annotation}`;
+                    changed = true;
+                    completedTasks.add(cleanLabel);
+                  }
+                }
+              }
+
+              if (changed) {
+                fs.writeFileSync(filePath, lines.join('\n'));
+                filesChanged++;
+                core.info(`Mises à jour écrites dans ${filePath}`);
+              } else {
+                core.info(`Aucune mise à jour dans ${filePath}`);
+              }
+            }
+
+            for (const p of filesToProcess) {
+              processFile(p);
+            }
+
+            // Mettre à jour HISTORY.md si au moins une tâche complétée
+            if (completedTasks.size > 0) {
+              const historyPath = 'HISTORY.md';
+              let history = '';
+              if (fs.existsSync(historyPath)) {
+                history = fs.readFileSync(historyPath, 'utf8');
+                if (history.length && !history.endsWith('\n')) history += '\n';
+              }
+
+              for (const task of completedTasks) {
+                history += `✅ ${task} (PR #${prNumber} - ${dateStr})\n`;
+              }
+
+              fs.writeFileSync(historyPath, history);
+              filesChanged++;
+              core.info(`HISTORY.md mis à jour (${completedTasks.size} tâche(s)).`);
+            }
+
+            const result = {
+              changed: filesChanged > 0,
+              checked: completedTasks.size,
+              filesChanged,
+              tasks: Array.from(completedTasks)
+            };
+            core.info(`Résumé: ${JSON.stringify(result)}`);
+            return result;
+
+      - name: Commit & push les modifications
+        if: ${{ fromJSON(steps.update.outputs.result).changed }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          # Ajouter uniquement les fichiers concernés s'ils existent
+          git add README.md docs/checklist.md HISTORY.md 2>/dev/null || true
+          if [[ -n "$(git status --porcelain)" ]]; then
+            git commit -m "✅ Checklist + Historique mis à jour après merge PR #${{ github.event.pull_request.number }}"
+            git push
+          else
+            echo "Aucun changement détecté après analyse."
+          fi
