@@ -23,4 +23,44 @@
         img.setAttribute('alt', `Image: ${filename}`);
       });
     });
+  </script>
+  <script>
+    // Enhanced lazy loading with intersection observer and WebP support
+    document.addEventListener('DOMContentLoaded', function() {
+      // Native lazy loading support check
+      if ('loading' in HTMLImageElement.prototype) {
+        console.log('Native lazy loading supported');
+      } else {
+        // Load polyfill for browsers that don't support lazy loading
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.8.4/dist/lazyload.min.js';
+        script.onload = () => {
+          new LazyLoad({
+            elements_selector: 'img[loading="lazy"]',
+            use_native: false
+          });
+        };
+        document.head.appendChild(script);
+      }
+      
+      // WebP support detection
+      function supportsWebP() {
+        const canvas = document.createElement('canvas');
+        canvas.width = 1;
+        canvas.height = 1;
+        return canvas.toDataURL('image/webp').indexOf('data:image/webp') === 0;
+      }
+      
+      // Apply WebP fallback if needed
+      if (!supportsWebP()) {
+        const pictures = document.querySelectorAll('picture');
+        pictures.forEach(picture => {
+          const img = picture.querySelector('img');
+          const webpSource = picture.querySelector('source[type="image/webp"]');
+          if (webpSource && img) {
+            webpSource.remove();
+          }
+        });
+      }
+    });
   </script></body></html>

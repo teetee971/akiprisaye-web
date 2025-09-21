@@ -69,30 +69,90 @@ function optimizeHtmlFile(filePath) {
   try {
     let content = fs.readFileSync(filePath, 'utf8');
     
-    // Add lazy loading to images
+    // Add lazy loading to images with WebP support
     content = content.replace(
       /<img([^>]*?)(?:\s+loading=[^>\s]*)?([^>]*?)>/gi,
       (match, before, after) => {
         if (match.includes('loading=')) return match;
+        
+        // Extract src attribute
+        const srcMatch = match.match(/src=['"]([^'"]*)['"]/);
+        if (srcMatch) {
+          const originalSrc = srcMatch[1];
+          const webpSrc = originalSrc.replace(/\.(png|jpg|jpeg)$/i, '.webp');
+          
+          // Create picture element with WebP fallback
+          const altMatch = match.match(/alt=['"]([^'"]*)['"]/);
+          const alt = altMatch ? altMatch[1] : 'Image';
+          
+          return `<picture>
+  <source srcset="${webpSrc}" type="image/webp">
+  <img${before} src="${originalSrc}" loading="lazy" decoding="async" alt="${alt}"${after}>
+</picture>`;
+        }
+        
         return `<img${before} loading="lazy" decoding="async"${after}>`;
       }
     );
     
-    // Ensure alt attributes exist
+    // Ensure alt attributes exist for standalone images
     content = content.replace(
       /<img([^>]*?)(?:(?!\salt=).)*/gi,
       (match) => {
         if (match.includes('alt=')) return match;
-        const srcMatch = match.match(/src=['""]([^'""]*)['"]/);
+        const srcMatch = match.match(/src=['"]([^'"]*)['"]/);
         const src = srcMatch ? srcMatch[1] : '';
         const filename = src.split('/').pop().split('.')[0] || 'Image';
         return match.replace('>', ` alt="Image: ${filename}">`);
       }
     );
     
-    // Add lazy loading script if not present
-    if (!content.includes('lazy loading') && !content.includes('loading="lazy"')) {
-      content = content.replace('</body>', `${lazyLoadingScript}</body>`);
+    // Enhanced lazy loading script with intersection observer
+    const enhancedLazyLoadingScript = `
+  <script>
+    // Enhanced lazy loading with intersection observer and WebP support
+    document.addEventListener('DOMContentLoaded', function() {
+      // Native lazy loading support check
+      if ('loading' in HTMLImageElement.prototype) {
+        console.log('Native lazy loading supported');
+      } else {
+        // Load polyfill for browsers that don't support lazy loading
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.8.4/dist/lazyload.min.js';
+        script.onload = () => {
+          new LazyLoad({
+            elements_selector: 'img[loading="lazy"]',
+            use_native: false
+          });
+        };
+        document.head.appendChild(script);
+      }
+      
+      // WebP support detection
+      function supportsWebP() {
+        const canvas = document.createElement('canvas');
+        canvas.width = 1;
+        canvas.height = 1;
+        return canvas.toDataURL('image/webp').indexOf('data:image/webp') === 0;
+      }
+      
+      // Apply WebP fallback if needed
+      if (!supportsWebP()) {
+        const pictures = document.querySelectorAll('picture');
+        pictures.forEach(picture => {
+          const img = picture.querySelector('img');
+          const webpSource = picture.querySelector('source[type="image/webp"]');
+          if (webpSource && img) {
+            webpSource.remove();
+          }
+        });
+      }
+    });
+  </script>`;
+    
+    // Add enhanced lazy loading script if not present
+    if (!content.includes('Enhanced lazy loading') && !content.includes('vanilla-lazyload')) {
+      content = content.replace('</body>', `${enhancedLazyLoadingScript}</body>`);
     }
     
     fs.writeFileSync(filePath, content);
