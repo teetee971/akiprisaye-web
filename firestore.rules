@@ -1,8 +1,92 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /prices/{doc} { allow read: if true; allow write: if request.auth != null; }
-    match /stores/{doc} { allow read: if true; }
-    match /products/{doc} { allow read: if true; }
+    // Fonction pour vérifier si l'utilisateur est admin
+    function isAdmin() {
+      return request.auth != null && 
+             (resource.data.admin == true || request.auth.token.admin == true);
+    }
+    
+    // Fonction pour vérifier si l'utilisateur est premium
+    function isPremium() {
+      return request.auth != null && 
+             (resource.data.premium == true || request.auth.token.premium == true);
+    }
+    
+    // Fonction pour vérifier si l'utilisateur est le propriétaire
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Collections publiques (lecture pour tous, écriture pour utilisateurs connectés)
+    match /prices/{doc} { 
+      allow read: if true; 
+      allow write: if request.auth != null; 
+    }
+    
+    match /stores/{doc} { 
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    
+    match /products/{doc} { 
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    
+    // Collections de prix par zone (lecture publique, écriture auth)
+    match /prices_{zone}/{doc} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    
+    // Journaux d'audit admin (accès admin uniquement)
+    match /admin_logs/{doc} {
+      allow read, write: if isAdmin();
+    }
+    
+    // Profils utilisateurs
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+      allow read: if isAdmin(); // Les admins peuvent lire tous les profils
+      allow write: if isAdmin(); // Les admins peuvent modifier tous les profils
+    }
+    
+    // Configuration système (admin uniquement)
+    match /admin_config/{doc} {
+      allow read, write: if isAdmin();
+    }
+    
+    // Sessions admin (admin uniquement)
+    match /admin_sessions/{doc} {
+      allow read, write: if isAdmin();
+    }
+    
+    // Logs de sécurité (admin uniquement)
+    match /security_logs/{doc} {
+      allow read, write: if isAdmin();
+    }
+    
+    // Rapports et statistiques (admin et premium)
+    match /reports/{doc} {
+      allow read: if isPremium() || isAdmin();
+      allow write: if isAdmin();
+    }
+    
+    // Paramètres de l'application (lecture publique pour les paramètres de base)
+    match /app_settings/{doc} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // Notifications admin
+    match /admin_notifications/{doc} {
+      allow read, write: if isAdmin();
+    }
+    
+    // Sauvegarde et maintenance (admin uniquement)
+    match /backups/{doc} {
+      allow read, write: if isAdmin();
+    }
   }
 }

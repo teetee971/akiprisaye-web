@@ -1,3 +1,6 @@
+# Security Headers for A KI PRI SA YÉ
+
+# Global security headers
 /*
   Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
   X-Frame-Options: DENY
@@ -5,3 +8,44 @@
   Referrer-Policy: no-referrer-when-downgrade
   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:;
   Cache-Control: public, max-age=31536000
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
+
+# Admin interface security (extra protection)
+/dashboard-admin.html
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  X-XSS-Protection: 1; mode=block
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.googleapis.com; style-src 'self' 'unsafe-inline'; connect-src 'self' https://*.googleapis.com https://*.firebaseapp.com https://*.cloudfunctions.net https://api.ipify.org; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com; frame-ancestors 'none'
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  Cache-Control: no-cache, no-store, must-revalidate
+  Pragma: no-cache
+  Expires: 0
+
+# Admin API endpoints (if served statically)
+/api/admin/*
+  X-Frame-Options: DENY
+  Content-Security-Policy: default-src 'none'
+  Cache-Control: no-cache, no-store, must-revalidate
+
+# User account pages
+/mon-compte.html
+  X-Frame-Options: SAMEORIGIN
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com; style-src 'self' 'unsafe-inline'; connect-src 'self' https://*.googleapis.com https://*.firebaseapp.com
+
+# Static assets with caching
+/css/*
+  Cache-Control: public, max-age=86400
+  
+/js/*
+  Cache-Control: public, max-age=86400
+
+/assets/*
+  Cache-Control: public, max-age=31536000
+
+# PWA and service worker
+/manifest.webmanifest
+  Content-Type: application/manifest+json
+  Cache-Control: public, max-age=86400
+
+/service-worker.js
+  Cache-Control: no-cache, no-store, must-revalidate
