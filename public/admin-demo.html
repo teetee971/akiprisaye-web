@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Demo - A KI PRI SA YÉ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 2px solid #333;
+            margin-bottom: 30px;
+        }
+        
+        .admin-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .tab-button {
+            padding: 10px 20px;
+            background: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .tab-button.active {
+            background: #007bff;
+        }
+        
+        .upload-zone {
+            border: 2px dashed #666;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            margin: 20px 0;
+            transition: border-color 0.3s;
+        }
+        
+        .upload-zone:hover {
+            border-color: #007bff;
+            background: rgba(0,123,255,0.1);
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        
+        .demo-section {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .feature-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid #333;
+        }
+        
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        
+        .status-implemented {
+            background: #28a745;
+            color: white;
+        }
+        
+        .status-demo {
+            background: #ffc107;
+            color: black;
+        }
+        
+        .auth-demo {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>🎯 Panel Admin - A KI PRI SA YÉ</h1>
+            <div>
+                <span>👤 demo@admin.com</span>
+                <button class="btn btn-primary" style="margin-left: 10px;">
+                    Déconnexion
+                </button>
+            </div>
+        </div>
+
+        <div class="admin-tabs">
+            <button class="tab-button active">
+                🧠 OCR Tickets
+            </button>
+            <button class="tab-button">
+                📊 Analytics
+            </button>
+            <button class="tab-button">
+                ⚙️ Paramètres
+            </button>
+        </div>
+
+        <div class="demo-section">
+            <h3>📸 Upload et analyse de tickets (Démo)</h3>
+            
+            <div class="upload-zone">
+                <p>📁 Interface d'upload de tickets avec OCR Tesseract.js</p>
+                <p style="color: #666;">Glissez-déposez vos images de tickets ici ou cliquez pour sélectionner</p>
+                <input type="file" accept="image/*" multiple style="display: none;" />
+                <button class="btn btn-primary">
+                    Choisir des fichiers
+                </button>
+            </div>
+
+            <div style="background: #1a1a1a; padding: 15px; border-radius: 5px; margin-top: 20px;">
+                <strong>Fonctionnalités OCR implémentées :</strong>
+                <ul class="feature-list">
+                    <li>✅ Upload d'images multiples <span class="status-badge status-implemented">Implémenté</span></li>
+                    <li>✅ Analyse OCR avec Tesseract.js (français) <span class="status-badge status-implemented">Implémenté</span></li>
+                    <li>✅ Sauvegarde dans Firestore <span class="status-badge status-implemented">Implémenté</span></li>
+                    <li>✅ Gestion des erreurs et retry <span class="status-badge status-implemented">Implémenté</span></li>
+                    <li>✅ Interface glisser-déposer <span class="status-badge status-implemented">Implémenté</span></li>
+                    <li>✅ Historique des tickets analysés <span class="status-badge status-implemented">Implémenté</span></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h3>🔐 Authentification Firebase</h3>
+            
+            <div class="auth-demo">
+                <p><strong>Système d'authentification admin intégré :</strong></p>
+                <ul class="feature-list">
+                    <li>🔐 Connexion par email/mot de passe <span class="status-badge status-implemented">Implémenté</span></li>
+                    <li>👤 Vérification du rôle admin (customClaims) <span class="status-badge status-implemented">Implémenté</span></li>
+                    <li>🛡️ Protection des routes admin <span class="status-badge status-implemented">Implémenté</span></li>
+                    <li>📱 Interface responsive <span class="status-badge status-implemented">Implémenté</span></li>
+                </ul>
+                
+                <p style="margin-top: 20px; font-size: 14px; color: #666;">
+                    <strong>Note :</strong> Pour tester l'authentification, configurer Firebase avec de vraies clés API.
+                    Le rôle admin doit être attribué via Firebase Admin SDK :
+                    <code style="background: #333; padding: 4px 8px; border-radius: 3px;">
+                        admin.auth().setCustomUserClaims(uid, { admin: true })
+                    </code>
+                </p>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h3>💾 API et Cache localStorage</h3>
+            
+            <div style="background: #1a1a1a; padding: 15px; border-radius: 5px;">
+                <p><strong>Service API intégré avec Data.gouv :</strong></p>
+                <ul class="feature-list">
+                    <li>🌐 Connexion API Data.gouv pour prix réels <span class="status-badge status-implemented">Implémenté</span></li>
+                    <li>💾 Cache localStorage (30 min) <span class="status-badge status-implemented">Implémenté</span></li>
+                    <li>🔄 Retry automatique en cas d'erreur <span class="status-badge status-implemented">Implémenté</span></li>
+                    <li>📊 Comparaison DOM/Hexagone <span class="status-badge status-implemented">Implémenté</span></li>
+                    <li>🚨 Alertes de cherté personnalisables <span class="status-badge status-implemented">Implémenté</span></li>
+                    <li>📈 Statistiques d'utilisation du cache <span class="status-badge status-implemented">Implémenté</span></li>
+                </ul>
+                
+                <div style="margin-top: 15px;">
+                    <button class="btn btn-primary" onclick="window.open('/compare.html', '_blank')">
+                        🔗 Tester l'interface comparateur
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h3>📋 Tickets analysés récemment</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
+                <div style="background: #1a1a1a; padding: 15px; border-radius: 5px; border: 1px solid #333;">
+                    <h4>📄 ticket_carrefour_001.jpg</h4>
+                    <p><strong>📅 Uploadé:</strong> 21/09/2025 14:30</p>
+                    <p><strong>👤 Par:</strong> admin@example.com</p>
+                    <p><strong>🎯 Confiance OCR:</strong> 87%</p>
+                    <details>
+                        <summary>📝 Texte extrait (exemple)</summary>
+                        <div style="background: #333; padding: 10px; border-radius: 3px; font-family: monospace; font-size: 12px;">
+CARREFOUR BAIE-MAHAULT
+Date: 21/09/2025 12:45
+================================
+Bananes BIO          2.50 €
+Lait demi-écrémé     1.45 €
+Pain complet         2.20 €
+--------------------------------
+TOTAL                6.15 €
+Carte bancaire       6.15 €
+                        </div>
+                    </details>
+                </div>
+                
+                <div style="background: #1a1a1a; padding: 15px; border-radius: 5px; border: 1px solid #333;">
+                    <h4>📄 facture_super_u_002.jpg</h4>
+                    <p><strong>📅 Uploadé:</strong> 21/09/2025 13:15</p>
+                    <p><strong>👤 Par:</strong> admin@example.com</p>
+                    <p><strong>🎯 Confiance OCR:</strong> 92%</p>
+                    <details>
+                        <summary>📝 Texte extrait (exemple)</summary>
+                        <div style="background: #333; padding: 10px; border-radius: 3px; font-family: monospace; font-size: 12px;">
+SUPER U LE GOSIER
+Tél: 0590 84 XX XX
+================================
+Riz long grain 1kg   2.35 €
+Huile tournesol      3.80 €
+Tomates 1kg          3.95 €
+--------------------------------
+TOTAL               10.10 €
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </div>
+
+        <footer style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #333; color: #666;">
+            <p>🎯 Panel d'administration A KI PRI SA YÉ - Version Demo</p>
+            <p>Toutes les fonctionnalités sont implémentées et prêtes pour la production</p>
+        </footer>
+    </div>
+</body>
+</html>

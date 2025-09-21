@@ -1,5 +1,50 @@
 <!DOCTYPE html><html><head><title>Comparer</title>  <link rel="stylesheet" href="/css/theme.css"/>
 </head><body><h1>Page Comparateur</h1>
+
+<!-- Interface de comparaison de prix améliorée -->
+<div id="comparateur-container" style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+  <div style="background: #2a2a2a; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+    <h2>🛒 Comparateur de Prix DOM/Hexagone</h2>
+    <p>Comparez les prix entre les territoires d'outre-mer et l'Hexagone en temps réel</p>
+    
+    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin: 20px 0;">
+      <button data-demo="compare" style="padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        🔍 Comparer les Prix
+      </button>
+      <button data-demo="alerts" style="padding: 10px 20px; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        🚨 Alertes Cherté
+      </button>
+      <button data-demo="cache-stats" style="padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        📊 Stats Cache
+      </button>
+      <button data-demo="cache-clear" style="padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        🗑️ Vider Cache
+      </button>
+      <button data-demo="api-test" style="padding: 10px 20px; background: #17a2b8; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        🌐 Test API
+      </button>
+    </div>
+    
+    <div id="output" style="background: #1a1a1a; padding: 15px; border-radius: 5px; font-family: monospace; white-space: pre-wrap; max-height: 400px; overflow-y: auto; color: #fff;">
+      Cliquez sur un bouton pour démarrer...
+    </div>
+  </div>
+  
+  <div style="background: #2a2a2a; padding: 20px; border-radius: 10px;">
+    <h3>ℹ️ Informations</h3>
+    <ul style="color: #ccc;">
+      <li><strong>Cache localStorage :</strong> Les données sont mises en cache pendant 30 minutes pour améliorer les performances</li>
+      <li><strong>Gestion d'erreurs :</strong> En cas d'indisponibilité de l'API, les données en cache sont utilisées</li>
+      <li><strong>Comparaison :</strong> Calcul automatique des écarts de prix entre DOM et Hexagone</li>
+      <li><strong>Alertes :</strong> Notification des produits dépassant un seuil de cherté de 15%</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Chargement des scripts nécessaires -->
+<script src="/js/api.js"></script>
+<script src="/web/app.js"></script>
+
 <div id="site-footer"></div>
   <script src="/js/footer.js" defer></script>
 
