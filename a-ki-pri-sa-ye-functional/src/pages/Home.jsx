@@ -1,7 +1,10 @@
 import FeatureCard from '../components/FeatureCard.jsx'
+import Hero from '../components/Hero.jsx'
+
 export default function Home(){
   return (
     <>
+      <Hero />
       <div className="mt-6 sm:mt-10">
         <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight">Bienvenue sur A KI PRI SA YÉ</h1>
         <p className="text-white/70 mt-4 max-w-2xl">L'application citoyenne pour lutter contre la vie chère dans les Outre-mer.</p>
