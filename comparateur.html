@@ -2,22 +2,65 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Comparateur de prix</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- SEO Meta Tags -->
+  <title>Comparateur de prix - A KI PRI SA YÉ | Trouvez les meilleurs prix dans les DROM-COM</title>
+  <meta name="description" content="Comparez les prix des produits dans les enseignes de Guadeloupe, Martinique, Guyane, Réunion et Mayotte. Trouvez l'enseigne la moins chère pour vos courses." />
+  <meta name="keywords" content="comparateur prix, DROM-COM, courses, supermarché, moins cher, Guadeloupe, Martinique, Guyane, Réunion, Mayotte" />
+  <meta name="author" content="A KI PRI SA YÉ" />
+  <meta name="robots" content="index, follow" />
+  
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Comparateur de prix - A KI PRI SA YÉ" />
+  <meta property="og:description" content="Comparez les prix et trouvez l'enseigne la moins chère dans votre zone (DROM-COM)." />
+  <meta property="og:url" content="https://akiprisaye.pages.dev/comparateur.html" />
+  <meta property="og:site_name" content="A KI PRI SA YÉ" />
+  <meta property="og:image" content="https://akiprisaye.pages.dev/og-cover.jpg" />
+  <meta property="og:locale" content="fr_FR" />
+  
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Comparateur de prix - A KI PRI SA YÉ" />
+  <meta name="twitter:description" content="Comparez les prix et trouvez l'enseigne la moins chère dans votre zone (DROM-COM)." />
+  <meta name="twitter:image" content="https://akiprisaye.pages.dev/og-cover.jpg" />
+  
+  <link rel="stylesheet" href="/public/css/theme.css">
+  <link rel="icon" type="image/svg+xml" href="/public/icon.svg" />
 </head>
 <body>
-  <h2>🛒 Comparateur de prix</h2>
-  <form>
-    <label for="produit">Produit :</label>
-    <input type="text" id="produit" name="produit">
-    <button type="submit">Comparer</button>
-  </form>
-  <div id="résultats">
-    <p>Résultats fictifs pour démonstration :</p>
-    <ul>
-      <li>Carrefour : 2,50 €</li>
-      <li>Leader Price : 2,30 €</li>
-      <li>Ecomax : 2,10 €</li>
-    </ul>
+  <div class="wrapper">
+    <h1>🛒 Comparateur de prix</h1>
+    <div class="card">
+      <form class="toolbar">
+        <label for="produit">Produit :</label>
+        <input type="text" id="produit" name="produit" class="input" placeholder="Rechercher un produit...">
+        <button type="submit" class="btn">Comparer</button>
+      </form>
+    </div>
+    
+    <div id="résultats" class="card">
+      <h2>Résultats de comparaison</h2>
+      <p class="muted">Résultats fictifs pour démonstration :</p>
+      <div class="grid">
+        <div class="card">
+          <h3>Carrefour</h3>
+          <p><strong>2,50 €</strong></p>
+        </div>
+        <div class="card">
+          <h3>Leader Price</h3>
+          <p><strong>2,30 €</strong></p>
+        </div>
+        <div class="card">
+          <h3>Ecomax</h3>
+          <p><strong>2,10 €</strong> <span class="muted">🏆 Meilleur prix</span></p>
+        </div>
+      </div>
+    </div>
   </div>
+  
+  <!-- Image Optimization Script -->
+  <script src="/public/js/image-optimization.js" defer></script>
 </body>
 </html>
