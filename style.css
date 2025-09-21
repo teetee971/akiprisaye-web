@@ -23,6 +23,18 @@ body{
   text-rendering:optimizeLegibility;
 }
 
+/* Protection contre les débordements globaux */
+img, video, iframe {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Protection contre les débordements de texte */
+p, h1, h2, h3, h4, h5, h6, div, span, td, th {
+  overflow-wrap: anywhere;
+  word-wrap: break-word;
+}
+
 /* Layout de base */
 .container{
   width:min(100%,1080px);
@@ -142,6 +154,45 @@ footer a:hover{color:var(--txt)}
   .card{padding:22px}
   .btn{width:100%; justify-content:center}
   footer .container{justify-items:flex-start}
+  
+  /* Protection supplémentaire mobile */
+  .btn-row{
+    flex-direction: column;
+  }
+  .btn-row .btn{
+    width: 100%;
+  }
+}
+
+/* Responsive mobile renforcé */
+@media (max-width:480px){
+  .container{padding:12px}
+  .card{padding:16px}
+  
+  /* Titres adaptatifs mobiles */
+  .section-title{
+    font-size:clamp(20px,4.5vw,28px);
+  }
+  .section-title::after{
+    width:30px;
+    height:3px;
+  }
+  
+  /* Gestion overflow des longs mots/URLs */
+  .card p, .card div, .card span{
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+  
+  /* Tables responsives */
+  table{
+    font-size:14px;
+  }
+  
+  /* Forms mobiles */
+  input, select, textarea{
+    font-size:16px; /* Évite le zoom iOS */
+  }
 }
 
 /* Petits détails d’accessibilité */
