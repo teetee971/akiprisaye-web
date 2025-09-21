@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "vite --host",
-    "build": "vite build",
+    "build": "rm -rf dist && cp -r public dist",
+    "build:vite": "vite build",
     "preview": "vite preview --host",
     "check": "tsc --noEmit",
     "start": "npm run preview",
