@@ -58,6 +58,7 @@ fi
 
 git add -A
 git commit -m "build: purge complete des sous-modules hérités (fix Pages)" || echo "[info] rien à committer"
-git push origin main
+CURRENT_BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo main)"
+git push origin "$CURRENT_BRANCH"
 
 echo "=== Terminé : vérifie le déploiement Cloudflare Pages ==="
