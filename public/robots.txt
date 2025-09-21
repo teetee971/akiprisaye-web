@@ -1,3 +1,18 @@
 User-agent: *
 Allow: /
+
+# Sitemaps
 Sitemap: https://akiprisaye.pages.dev/sitemap.xml
+
+# Disallow admin and private areas
+Disallow: /admin/
+Disallow: /_*
+Disallow: /api/internal/
+Disallow: /private/
+
+# Allow crawling of main content
+Allow: /*.html
+Allow: /*.css
+Allow: /*.js
+Allow: /img/
+Allow: /assets/

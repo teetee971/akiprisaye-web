@@ -24,6 +24,18 @@
   <link rel="icon" type="image/svg+xml" href="/icon.svg" />
   <link rel="manifest" href="/manifest.webmanifest" />
   
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-9XNT09JB00"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-9XNT09JB00', {
+      page_title: document.title,
+      page_location: window.location.href
+    });
+  </script>
+  
   <link rel="stylesheet" href="/styles.css"/>
   <link rel="stylesheet" href="/css/theme.css"/>
 </head>
@@ -34,7 +46,7 @@
 </div></nav>
 
 <main class="container section">
-  <h1>Résultats</h1>
+  <h1>Résultats de recherche — Comparateur de prix DROM-COM</h1>
   <p class="lead" id="qtxt"></p>
   <div id="results" class="grid"></div>
 </main>

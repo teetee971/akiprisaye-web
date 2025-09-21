@@ -43,6 +43,18 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="dns-prefetch" href="//akiprisaye.pages.dev" />
   
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-9XNT09JB00"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-9XNT09JB00', {
+      page_title: document.title,
+      page_location: window.location.href
+    });
+  </script>
+  
   <!-- Stylesheets -->
   <link rel="stylesheet" href="/styles.css"/>
   <link rel="stylesheet" href="/css/theme.css"/>
@@ -98,7 +110,7 @@
 
   <header class="hero">
     <div class="container">
-      <h1>Compare les prix <span class="em">près de chez toi</span></h1>
+      <h1>Comparateur de prix DROM-COM : <span class="em">trouvez les meilleures offres près de chez vous</span></h1>
       <p class="lead">Un moteur simple pour trouver le meilleur prix dans les DROM-COM : Guadeloupe, Martinique, Guyane, Réunion, Mayotte, et au-delà.</p>
 
       <form id="search" class="search" onsubmit="return goSearch(event)">
