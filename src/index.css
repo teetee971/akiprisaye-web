@@ -3,5 +3,9 @@
 @tailwind utilities;
 
 /* Styles globaux optionnels */
-html, body, #root { height: 100%; }
+html, body, #root { 
+  height: 100%; 
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
 body { @apply bg-slate-50 text-slate-900 antialiased; }

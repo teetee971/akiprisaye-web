@@ -1,6 +1,13 @@
 :root{--bg:#0b1220;--card:#0f1a2b;--text:#e6f0ff;--muted:#9bb0d3;--line:#14213a;--accent:#26d1ff;}
 :root.light{--bg:#f8fbff;--card:#ffffff;--text:#0c1b32;--muted:#4a5b78;--line:#dbe6f7;--accent:#0a7cff;}
-html,body{background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,sans-serif;margin:0}
+html,body{
+  background:var(--bg);
+  color:var(--text);
+  font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,sans-serif;
+  margin:0;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
 a{color:var(--accent)}
 .wrapper{max-width:1040px;margin:auto;padding:24px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
@@ -14,3 +21,29 @@ th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left}
 .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
 .nav a{display:inline-block;margin-right:8px;text-decoration:none;background:color-mix(in oklab,var(--card) 94%,black 6%);border:1px solid var(--line);border-radius:10px;padding:8px 10px;color:var(--text)}
 .theme-toggle{float:right}
+
+/* Mobile responsive enhancements */
+@media (max-width:768px){
+  .wrapper{
+    padding:16px;
+  }
+  .nav a{
+    display:block;
+    margin:4px 0;
+    word-break:break-word;
+    overflow-wrap:anywhere;
+  }
+  h1, h2, h3, p, span, div{
+    word-break:break-word;
+    overflow-wrap:anywhere;
+  }
+  .grid.cards{
+    grid-template-columns:1fr;
+  }
+  table{
+    font-size:14px;
+  }
+  th, td{
+    padding:8px;
+  }
+}
