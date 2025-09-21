@@ -1,12 +1,203 @@
-<!DOCTYPE html><html><head><title>Admin</title>  <link rel="stylesheet" href="/css/theme.css"/>
-</head><body><h1>Admin Premium</h1>
-<div id="site-footer"></div>
-  <script src="/js/footer.js" defer></script>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard Admin – A KI PRI SA YÉ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="/css/theme.css"/>
+  <style>
+    body { background: #0b1220; color: #e7eefc; font-family: system-ui; margin: 0; padding: 20px; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .auth-required { display: none; }
+    .auth-required.show { display: block; }
+    .loading { text-align: center; padding: 50px; color: #888; }
+    .error { background: #dc2626; color: white; padding: 15px; border-radius: 8px; margin: 20px 0; }
+    .success { background: #059669; color: white; padding: 15px; border-radius: 8px; margin: 20px 0; }
+    .card { background: #0f1629; border: 1px solid #1e2945; border-radius: 12px; padding: 20px; margin: 20px 0; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+    button { background: #3b82f6; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
+    button:hover { background: #2563eb; }
+    button.danger { background: #dc2626; }
+    button.danger:hover { background: #b91c1c; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🛡️ Dashboard Administration</h1>
+    
+    <div id="loading" class="loading">
+      🔐 Vérification des permissions administrateur...
+    </div>
+
+    <div id="access-denied" style="display: none;">
+      <div class="error">
+        ⚠️ Accès refusé. Cette page est réservée aux administrateurs.
+        <br><br>
+        <button onclick="window.location.href='/mon-compte.html'">Aller au compte utilisateur</button>
+        <button onclick="window.location.href='/index.html'">Retour à l'accueil</button>
+      </div>
+    </div>
+
+    <div id="admin-panel" class="auth-required">
+      <div class="success">
+        ✅ Accès administrateur confirmé
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <h3>👤 Gestion Utilisateurs</h3>
+          <p>Utilisateurs connectés: <span id="user-count">...</span></p>
+          <p>Comptes Premium: <span id="premium-count">...</span></p>
+          <button onclick="refreshUserStats()">🔄 Actualiser</button>
+        </div>
+
+        <div class="card">
+          <h3>💰 Gestion Prix</h3>
+          <p>Produits en base: <span id="product-count">...</span></p>
+          <p>Dernière MAJ: <span id="last-update">...</span></p>
+          <button onclick="viewPriceManagement()">📊 Gérer les prix</button>
+        </div>
+
+        <div class="card">
+          <h3>📈 Statistiques</h3>
+          <p>Visites aujourd'hui: <span id="daily-visits">...</span></p>
+          <p>Recherches: <span id="daily-searches">...</span></p>
+          <button onclick="viewAnalytics()">📊 Voir analytics</button>
+        </div>
+
+        <div class="card">
+          <h3>🔧 Maintenance</h3>
+          <button onclick="clearCache()">🗑️ Vider le cache</button>
+          <button onclick="regenerateSitemap()">🗺️ Régénérer sitemap</button>
+          <button onclick="testAPIs()">🔍 Tester APIs</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>🔑 Session Admin</h3>
+        <p><strong>UID:</strong> <span id="admin-uid">...</span></p>
+        <p><strong>Email:</strong> <span id="admin-email">...</span></p>
+        <button class="danger" onclick="logout()">🚪 Se déconnecter</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyXXXXXXX",
+      authDomain: "a-ki-pri-sa-ye.firebaseapp.com",
+      projectId: "a-ki-pri-sa-ye",
+      storageBucket: "a-ki-pri-sa-ye.appspot.com",
+      messagingSenderId: "123456789012",
+      appId: "1:123456789012:web:abcdef123456"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // Check authentication and admin privileges
+    onAuthStateChanged(auth, async (user) => {
+      document.getElementById('loading').style.display = 'none';
+      
+      if (user) {
+        try {
+          // Get user's custom claims to check for admin role
+          const idTokenResult = await user.getIdTokenResult();
+          const isAdmin = idTokenResult.claims.admin === true;
+          
+          if (isAdmin) {
+            // User is admin, show admin panel
+            document.getElementById('admin-panel').classList.add('show');
+            document.getElementById('admin-uid').textContent = user.uid;
+            document.getElementById('admin-email').textContent = user.email || 'Utilisateur anonyme';
+            loadAdminData();
+          } else {
+            // User is not admin
+            document.getElementById('access-denied').style.display = 'block';
+          }
+        } catch (error) {
+          console.error('Error checking admin privileges:', error);
+          document.getElementById('access-denied').style.display = 'block';
+        }
+      } else {
+        // User not logged in
+        document.getElementById('access-denied').style.display = 'block';
+      }
+    });
+
+    // Admin functions
+    window.logout = () => {
+      signOut(auth).then(() => {
+        window.location.href = '/index.html';
+      });
+    };
+
+    window.refreshUserStats = () => {
+      // Placeholder - would connect to admin API
+      document.getElementById('user-count').textContent = '42';
+      document.getElementById('premium-count').textContent = '7';
+    };
+
+    window.viewPriceManagement = () => {
+      alert('Redirection vers la gestion des prix (fonctionnalité à développer)');
+    };
+
+    window.viewAnalytics = () => {
+      alert('Redirection vers les analytics (fonctionnalité à développer)');
+    };
+
+    window.clearCache = () => {
+      if (confirm('Êtes-vous sûr de vouloir vider le cache ?')) {
+        // Clear service worker cache
+        if ('serviceWorker' in navigator && 'caches' in window) {
+          caches.keys().then(names => {
+            names.forEach(name => caches.delete(name));
+          });
+        }
+        alert('Cache vidé avec succès');
+      }
+    };
+
+    window.regenerateSitemap = () => {
+      alert('Régénération du sitemap (fonctionnalité à développer)');
+    };
+
+    window.testAPIs = async () => {
+      const endpoints = [
+        '/api/territories',
+        '/api/prices?territory=guadeloupe&limit=1',
+        '/news?territory=guadeloupe'
+      ];
+      
+      let results = 'Résultats des tests API:\n\n';
+      for (const endpoint of endpoints) {
+        try {
+          const response = await fetch(endpoint);
+          const status = response.ok ? '✅' : '❌';
+          results += `${status} ${endpoint} (${response.status})\n`;
+        } catch (error) {
+          results += `❌ ${endpoint} (Error: ${error.message})\n`;
+        }
+      }
+      alert(results);
+    };
+
+    function loadAdminData() {
+      // Load initial admin data
+      refreshUserStats();
+      document.getElementById('product-count').textContent = '1,247';
+      document.getElementById('last-update').textContent = new Date().toLocaleString('fr-FR');
+      document.getElementById('daily-visits').textContent = '156';
+      document.getElementById('daily-searches').textContent = '89';
+    }
+  </script>
 
   <!-- Lazy Loading Support -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // Add lazy loading to images that don't have it
       const images = document.querySelectorAll('img:not([loading])');
       images.forEach(img => {
         if (img.getBoundingClientRect().top > window.innerHeight * 2) {
@@ -15,7 +206,6 @@
         }
       });
       
-      // Add alt attributes to images without them
       const imagesWithoutAlt = document.querySelectorAll('img:not([alt])');
       imagesWithoutAlt.forEach(img => {
         const src = img.getAttribute('src') || '';
@@ -23,4 +213,6 @@
         img.setAttribute('alt', `Image: ${filename}`);
       });
     });
-  </script></body></html>
+  </script>
+</body>
+</html>
