@@ -14,6 +14,10 @@
 
 *{box-sizing:border-box}
 html,body{height:100%}
+
+/* Global responsive fixes for mobile */
+img{max-width:100%;height:auto}
+*{overflow-wrap:anywhere;word-wrap:break-word}
 body{
   margin:0;
   background:linear-gradient(180deg,#0a0f14 0%, #0b121a 100%);
@@ -142,6 +146,11 @@ footer a:hover{color:var(--txt)}
   .card{padding:22px}
   .btn{width:100%; justify-content:center}
   footer .container{justify-items:flex-start}
+  
+  /* Enhanced mobile responsive fixes */
+  .section-title{font-size:clamp(18px,4vw,28px)}
+  .btn-row{flex-direction:column}
+  .btn-row .btn{width:100%}
 }
 
 /* Petits détails d’accessibilité */
