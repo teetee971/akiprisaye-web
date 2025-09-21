@@ -1,4 +1,7 @@
+import React from "react";
+import { useState } from "react";
 import StoreBadge from "./StoreBadge";
+import ReportProductModal from "./ReportProductModal";
 
 const nsColor = {
   A: "bg-green-600", B: "bg-green-500", C: "bg-yellow-500",
@@ -6,6 +9,7 @@ const nsColor = {
 };
 
 export default function ProductDetailsSheet({ product, open, onClose }) {
+  const [showReportModal, setShowReportModal] = useState(false);
   if (!open || !product) return null;
 
   return (
@@ -43,11 +47,26 @@ export default function ProductDetailsSheet({ product, open, onClose }) {
           </a>
         )}
 
-        <button onClick={onClose}
-                className="mt-6 w-full bg-slate-900 text-white py-2 rounded hover:bg-slate-950">
-          Fermer
-        </button>
+        <div className="mt-6 space-y-3">
+          <button 
+            onClick={() => setShowReportModal(true)}
+            className="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 transition-colors"
+          >
+            🚨 Signaler un problème
+          </button>
+          
+          <button onClick={onClose}
+                  className="w-full bg-slate-900 text-white py-2 rounded hover:bg-slate-950">
+            Fermer
+          </button>
+        </div>
       </div>
+      
+      <ReportProductModal 
+        product={product}
+        open={showReportModal}
+        onClose={() => setShowReportModal(false)}
+      />
     </div>
   );
 }

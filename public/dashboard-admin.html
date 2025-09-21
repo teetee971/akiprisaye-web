@@ -1,6 +1,322 @@
-<!DOCTYPE html><html><head><title>Admin</title>  <link rel="stylesheet" href="/css/theme.css"/>
-</head><body><h1>Admin Premium</h1>
-<div id="site-footer"></div>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Admin - Signalements</title>
+  <link rel="stylesheet" href="/css/theme.css"/>
+  <style>
+    .status-badge {
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .status-pending { background: #fef3c7; color: #92400e; }
+    .status-resolved { background: #d1fae5; color: #065f46; }
+    .status-rejected { background: #fee2e2; color: #991b1b; }
+    .actions { display: flex; gap: 8px; }
+    .btn-small { padding: 6px 10px; font-size: 12px; }
+    .btn-danger { background: #dc2626; color: white; }
+    .btn-success { background: #16a34a; color: white; }
+    .btn-warning { background: #ea580c; color: white; }
+    .report-details { 
+      background: var(--card); 
+      border: 1px solid var(--line); 
+      border-radius: 8px; 
+      padding: 12px; 
+      margin: 8px 0; 
+    }
+    .filter-bar {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+    .loading { text-align: center; padding: 40px; }
+    .empty-state { text-align: center; padding: 40px; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <header style="margin-bottom: 30px;">
+      <h1>🛡️ Dashboard Admin - Signalements</h1>
+      <button class="theme-toggle btn" onclick="toggleTheme()">🌙/☀️</button>
+    </header>
+
+    <div class="filter-bar">
+      <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+        <label>
+          Statut:
+          <select id="statusFilter" onchange="filterReports()">
+            <option value="">Tous</option>
+            <option value="pending">En attente</option>
+            <option value="resolved">Résolu</option>
+            <option value="rejected">Rejeté</option>
+          </select>
+        </label>
+        <label>
+          Raison:
+          <select id="reasonFilter" onchange="filterReports()">
+            <option value="">Toutes</option>
+            <option value="prix_incorrect">Prix incorrect</option>
+            <option value="produit_inexistant">Produit inexistant</option>
+            <option value="informations_erronees">Informations erronées</option>
+            <option value="produit_expire">Produit expiré</option>
+            <option value="contenu_inapproprie">Contenu inapproprié</option>
+            <option value="autre">Autre</option>
+          </select>
+        </label>
+        <button class="btn" onclick="loadReports()">🔄 Actualiser</button>
+      </div>
+    </div>
+
+    <div id="stats" class="grid cards" style="margin-bottom: 30px;">
+      <!-- Stats cards will be populated by JS -->
+    </div>
+
+    <div id="loading" class="loading" style="display: none;">
+      <p>⏳ Chargement des signalements...</p>
+    </div>
+
+    <div id="empty" class="empty-state" style="display: none;">
+      <p>📝 Aucun signalement pour le moment</p>
+    </div>
+
+    <div id="reports-container">
+      <!-- Reports will be populated by JS -->
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js';
+    import { 
+      getFirestore, 
+      collection, 
+      query, 
+      orderBy, 
+      onSnapshot, 
+      doc, 
+      updateDoc, 
+      deleteDoc,
+      where 
+    } from 'https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js';
+
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AlzaSyBfQGLocAqVPNyk2w2Jyi0Pbej-Lz8tSYU",
+      authDomain: "a-ki-pri-sa-ye.firebaseapp.com",
+      projectId: "a-ki-pri-sa-ye",
+      storageBucket: "a-ki-pri-sa-ye.appspot.com",
+      messagingSenderId: "187272078809",
+      appId: "1:187272078809:web:a2841196fcd9735306e5c8"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    let allReports = [];
+    let filteredReports = [];
+
+    // Reason labels
+    const reasonLabels = {
+      'prix_incorrect': 'Prix incorrect',
+      'produit_inexistant': 'Produit inexistant',
+      'informations_erronees': 'Informations erronées',
+      'produit_expire': 'Produit expiré',
+      'contenu_inapproprie': 'Contenu inapproprié',
+      'autre': 'Autre'
+    };
+
+    // Load reports from Firestore
+    function loadReports() {
+      const loading = document.getElementById('loading');
+      const empty = document.getElementById('empty');
+      const container = document.getElementById('reports-container');
+      
+      loading.style.display = 'block';
+      empty.style.display = 'none';
+      container.innerHTML = '';
+
+      const q = query(collection(db, 'signalements'), orderBy('reportedAt', 'desc'));
+      
+      onSnapshot(q, (snapshot) => {
+        allReports = [];
+        snapshot.forEach((doc) => {
+          allReports.push({ id: doc.id, ...doc.data() });
+        });
+        
+        loading.style.display = 'none';
+        updateStats();
+        filterReports();
+      }, (error) => {
+        loading.style.display = 'none';
+        console.error('Erreur lors du chargement:', error);
+        container.innerHTML = '<div class="card"><p style="color: #dc2626;">❌ Erreur lors du chargement des signalements</p></div>';
+      });
+    }
+
+    // Update statistics
+    function updateStats() {
+      const stats = document.getElementById('stats');
+      const pending = allReports.filter(r => r.status === 'pending').length;
+      const resolved = allReports.filter(r => r.status === 'resolved').length;
+      const rejected = allReports.filter(r => r.status === 'rejected').length;
+      
+      stats.innerHTML = `
+        <div class="card">
+          <h3>📊 Total</h3>
+          <p style="font-size: 24px; font-weight: bold;">${allReports.length}</p>
+        </div>
+        <div class="card">
+          <h3>⏳ En attente</h3>
+          <p style="font-size: 24px; font-weight: bold; color: #ea580c;">${pending}</p>
+        </div>
+        <div class="card">
+          <h3>✅ Résolus</h3>
+          <p style="font-size: 24px; font-weight: bold; color: #16a34a;">${resolved}</p>
+        </div>
+        <div class="card">
+          <h3>❌ Rejetés</h3>
+          <p style="font-size: 24px; font-weight: bold; color: #dc2626;">${rejected}</p>
+        </div>
+      `;
+    }
+
+    // Filter reports
+    function filterReports() {
+      const statusFilter = document.getElementById('statusFilter').value;
+      const reasonFilter = document.getElementById('reasonFilter').value;
+      
+      filteredReports = allReports.filter(report => {
+        return (!statusFilter || report.status === statusFilter) &&
+               (!reasonFilter || report.reason === reasonFilter);
+      });
+      
+      renderReports();
+    }
+
+    // Render reports
+    function renderReports() {
+      const container = document.getElementById('reports-container');
+      const empty = document.getElementById('empty');
+      
+      if (filteredReports.length === 0) {
+        container.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+      }
+      
+      empty.style.display = 'none';
+      
+      container.innerHTML = filteredReports.map(report => `
+        <div class="card" style="margin-bottom: 16px;">
+          <div style="display: flex; justify-content: between; align-items: start; gap: 16px;">
+            <div style="flex: 1;">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                <h3 style="margin: 0;">${report.productName}</h3>
+                <span class="status-badge status-${report.status}">
+                  ${report.status === 'pending' ? 'En attente' : 
+                    report.status === 'resolved' ? 'Résolu' : 'Rejeté'}
+                </span>
+              </div>
+              
+              <p class="muted" style="margin: 4px 0;">${report.productBrand || 'Marque inconnue'}</p>
+              
+              <div class="report-details">
+                <p><strong>Raison:</strong> ${reasonLabels[report.reason] || report.reason}</p>
+                <p><strong>Commentaire:</strong> ${report.comment}</p>
+                <p class="muted"><strong>Signalé le:</strong> ${formatDate(report.reportedAt)}</p>
+              </div>
+            </div>
+            
+            <div class="actions">
+              ${report.status === 'pending' ? `
+                <button class="btn btn-small btn-success" onclick="updateReportStatus('${report.id}', 'resolved')">
+                  ✅ Résoudre
+                </button>
+                <button class="btn btn-small btn-warning" onclick="updateReportStatus('${report.id}', 'rejected')">
+                  ❌ Rejeter
+                </button>
+              ` : `
+                <button class="btn btn-small" onclick="updateReportStatus('${report.id}', 'pending')">
+                  🔄 Réouvrir
+                </button>
+              `}
+              <button class="btn btn-small btn-danger" onclick="deleteReport('${report.id}')">
+                🗑️ Supprimer
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Update report status
+    async function updateReportStatus(reportId, newStatus) {
+      try {
+        await updateDoc(doc(db, 'signalements', reportId), {
+          status: newStatus,
+          updatedAt: new Date()
+        });
+        console.log('Statut mis à jour avec succès');
+      } catch (error) {
+        console.error('Erreur lors de la mise à jour:', error);
+        alert('Erreur lors de la mise à jour du statut');
+      }
+    }
+
+    // Delete report
+    async function deleteReport(reportId) {
+      if (confirm('Êtes-vous sûr de vouloir supprimer ce signalement ?')) {
+        try {
+          await deleteDoc(doc(db, 'signalements', reportId));
+          console.log('Signalement supprimé avec succès');
+        } catch (error) {
+          console.error('Erreur lors de la suppression:', error);
+          alert('Erreur lors de la suppression');
+        }
+      }
+    }
+
+    // Format date
+    function formatDate(timestamp) {
+      if (!timestamp) return 'Date inconnue';
+      const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+      return date.toLocaleDateString('fr-FR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+
+    // Theme toggle
+    function toggleTheme() {
+      document.documentElement.classList.toggle('light');
+      localStorage.setItem('theme', document.documentElement.classList.contains('light') ? 'light' : 'dark');
+    }
+
+    // Load saved theme
+    if (localStorage.getItem('theme') === 'light') {
+      document.documentElement.classList.add('light');
+    }
+
+    // Make functions global for onclick handlers
+    window.filterReports = filterReports;
+    window.loadReports = loadReports;
+    window.updateReportStatus = updateReportStatus;
+    window.deleteReport = deleteReport;
+    window.toggleTheme = toggleTheme;
+
+    // Load reports on page load
+    loadReports();
+  </script>
+
+  <div id="site-footer"></div>
   <script src="/js/footer.js" defer></script>
 
   <!-- Lazy Loading Support -->
@@ -23,4 +339,6 @@
         img.setAttribute('alt', `Image: ${filename}`);
       });
     });
-  </script></body></html>
+  </script>
+</body>
+</html>
