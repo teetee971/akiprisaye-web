@@ -1,0 +1,137 @@
+name: Cocher checklist README selon PR
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+jobs:
+  update-readme-checklist:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Mettre à jour la checklist du README
+        id: update
+        uses: actions/github-script@v7
+        with:
+          result-encoding: json
+          script: |
+            const fs = require('fs');
+
+            if (!context.payload.pull_request) {
+              core.info('Pas de pull_request dans le contexte: étape ignorée.');
+              return { changed: false, checked: 0, matches: [] };
+            }
+
+            const pr = context.payload.pull_request;
+            const prTitle = (pr.title || '').toLowerCase();
+            const prBody = (pr.body || '').toLowerCase();
+            const text = prTitle + ' ' + prBody;
+
+            const readmePath = 'README.md';
+            let content;
+            try {
+              content = fs.readFileSync(readmePath, 'utf8');
+            } catch (e) {
+              core.warning(`README introuvable: ${e.message}`);
+              return { changed: false, checked: 0, matches: [] };
+            }
+
+            const map = {
+              '#42': 'Corriger responsive mobile',
+              'headers': 'Créer `_headers`',
+              'robots.txt': 'Ajouter `robots.txt`',
+              'sitemap.xml': 'sitemap.xml',
+              'seo': 'Ajouter meta SEO',
+              'open graph': 'OpenGraph',
+              'api data.gouv': 'Connecter comparateur à API Data.gouv',
+              'admin': 'Créer page `/admin` sécurisée',
+              'ocr': 'OCR',
+              'signalement': 'Signaler un produit',
+              'actualites': 'Créer page `/actualites`',
+              'pwa': 'Améliorer Service Worker',
+              'offline': 'offline complet'
+            };
+
+            const shouldCheck = (kw) => {
+              const lowerKw = kw.toLowerCase();
+              if (/^[a-z0-9#\- ]+$/i.test(kw)) {
+                const escaped = lowerKw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                return new RegExp(`\\b${escaped}\\b`, 'i').test(text);
+              }
+              return text.includes(lowerKw);
+            };
+
+            const lines = content.split(/\r?\n/);
+            let changes = 0;
+            const matched = [];
+
+            for (const [keyword, label] of Object.entries(map)) {
+              if (!shouldCheck(keyword)) continue;
+              const labelLower = label.toLowerCase();
+              let changedThisLabel = false;
+
+              for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                if (line.startsWith('- [ ]') && line.toLowerCase().includes(labelLower)) {
+                  lines[i] = line.replace('- [ ]', '- [x]');
+                  changes++;
+                  changedThisLabel = true;
+                }
+              }
+
+              if (changedThisLabel) matched.push(label);
+            }
+
+            if (changes > 0) {
+              fs.writeFileSync(readmePath, lines.join('\n'));
+              core.info(`Checklist mise à jour: ${changes} case(s) cochée(s).`);
+              return { changed: true, checked: changes, matches: matched };
+            } else {
+              core.info('Aucun élément de checklist à cocher.');
+              return { changed: false, checked: 0, matches: [] };
+            }
+
+      - name: Commit & push si modifié (PR depuis même dépôt)
+        if: ${{ fromJSON(steps.update.outputs.result).changed && github.event.pull_request.head.repo.full_name == github.repository }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if [[ -n "$(git status --porcelain README.md)" ]]; then
+            git add README.md
+            git commit -m "chore: coche des éléments de checklist selon la PR #${{ github.event.pull_request.number }}"
+            git push
+          else
+            echo "Aucun changement à committer."
+          fi
+
+      - name: Commenter la PR (PR depuis un fork)
+        if: ${{ fromJSON(steps.update.outputs.result).checked > 0 && github.event.pull_request.head.repo.full_name != github.repository }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const items = JSON.parse(process.env.RESULT).matches;
+            const number = context.payload.pull_request.number;
+            const body = [
+              "Bonjour, cette PR provient d'un fork, je ne peux pas pousser sur la branche.",
+              "J'aurais coché automatiquement dans le README :",
+              "",
+              ...items.map(i => `- [x] ${i}`),
+              "",
+              "Merci de valider ces éléments manuellement dans le README."
+            ].join('\n');
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: number,
+              body
+            });
+          env:
+            RESULT: ${{ steps.update.outputs.result }}
