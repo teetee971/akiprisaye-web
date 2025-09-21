@@ -42,6 +42,42 @@ export default function Produits() {
         ingredients: "Riz blanc.",
         offUrl: "https://fr.openfoodfacts.org/",
       },
+      {
+        id: "3",
+        name: "Épinards Bio",
+        brand: "Bio Nature",
+        store: "Bio Market",
+        region: "RE", // 🇷🇪 Réunion
+        price: 3.20,
+        currency: "€",
+        nutriScore: "A",
+        ingredients: "Épinards biologiques.",
+        offUrl: "https://fr.openfoodfacts.org/",
+      },
+      {
+        id: "4",
+        name: "Chips Salées",
+        brand: "Snack Co",
+        store: "Supermarché",
+        region: "GF", // 🇬🇫 Guyane
+        price: 2.85,
+        currency: "€",
+        nutriScore: "D",
+        ingredients: "Pommes de terre, huile, sel.",
+        offUrl: "https://fr.openfoodfacts.org/",
+      },
+      {
+        id: "5",
+        name: "Soda Cola",
+        brand: "Fizzy",
+        store: "Convenience",
+        region: "YT", // 🇾🇹 Mayotte
+        price: 1.50,
+        currency: "€",
+        nutriScore: "E",
+        ingredients: "Eau, sucre, arômes, caféine.",
+        offUrl: "https://fr.openfoodfacts.org/",
+      },
     ]);
   }, []);
 
