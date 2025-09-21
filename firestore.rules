@@ -1,8 +1,27 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Existing collections
     match /prices/{doc} { allow read: if true; allow write: if request.auth != null; }
     match /stores/{doc} { allow read: if true; }
     match /products/{doc} { allow read: if true; }
+    
+    // Historical data collection (existing)
+    match /historique/{doc} { 
+      allow read, write: if request.auth != null; 
+    }
+    
+    // New tickets collection for admin OCR functionality
+    match /tickets/{doc} { 
+      // Only allow admins to read and write tickets
+      allow read, write: if request.auth != null && 
+        request.auth.token.admin == true;
+    }
+    
+    // Admin users collection (optional, for managing admin roles)
+    match /admin_users/{doc} { 
+      allow read, write: if request.auth != null && 
+        request.auth.token.admin == true;
+    }
   }
 }
