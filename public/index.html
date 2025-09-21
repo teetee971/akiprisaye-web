@@ -242,7 +242,7 @@ async function hydrateReviews(){
 async function hydrateStores(){
   try{const r=await fetch('/data/stores.json');const rows=await r.json(); const wrap=el('div');
     rows.forEach(s=>{const box=el('div'); box.className='logo';
-      box.innerHTML=`<img class="logo" alt="Logo de l'enseigne ${s.name}" src="${s.logo}" loading="lazy" decoding="async">`;
+      box.innerHTML=`<img loading="lazy" decoding="async" class="logo" alt="Logo de l'enseigne ${s.name}" src="${s.logo}" loading="lazy" decoding="async">`;
       wrap.appendChild(box);
     });
     byId('logos').replaceChildren(...wrap.children);

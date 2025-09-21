@@ -69,30 +69,92 @@ function optimizeHtmlFile(filePath) {
   try {
     let content = fs.readFileSync(filePath, 'utf8');
     
-    // Add lazy loading to images
+    // Add lazy loading to images (more robust version)
     content = content.replace(
-      /<img([^>]*?)(?:\s+loading=[^>\s]*)?([^>]*?)>/gi,
-      (match, before, after) => {
-        if (match.includes('loading=')) return match;
-        return `<img${before} loading="lazy" decoding="async"${after}>`;
+      /<img([^>]*?)>/gi,
+      (match, attrs) => {
+        // Skip if already has loading attribute
+        if (attrs.includes('loading=')) return match;
+        
+        // Add loading="lazy" and decoding="async"
+        return `<img${attrs} loading="lazy" decoding="async">`;
       }
     );
     
-    // Ensure alt attributes exist
+    // Ensure alt attributes exist (improved version)
     content = content.replace(
-      /<img([^>]*?)(?:(?!\salt=).)*/gi,
-      (match) => {
-        if (match.includes('alt=')) return match;
-        const srcMatch = match.match(/src=['""]([^'""]*)['"]/);
-        const src = srcMatch ? srcMatch[1] : '';
+      /<img([^>]*?)>/gi,
+      (match, attrs) => {
+        if (attrs.includes('alt=')) return match;
+        
+        const srcMatch = attrs.match(/src=(["'])([^"']*)\1/);
+        const src = srcMatch ? srcMatch[2] : '';
         const filename = src.split('/').pop().split('.')[0] || 'Image';
-        return match.replace('>', ` alt="Image: ${filename}">`);
+        const altText = `A KI PRI SA YÉ - ${filename}`;
+        
+        return `<img${attrs} alt="${altText}">`;
       }
     );
     
-    // Add lazy loading script if not present
+    // Add WebP support with picture element for better performance
+    content = content.replace(
+      /<img([^>]*?)src=(["'])([^"']*\.(jpg|jpeg|png))\2([^>]*?)>/gi,
+      (match, beforeSrc, quote, src, ext, afterSrc) => {
+        // Skip if already in a picture element
+        if (match.includes('picture')) return match;
+        
+        const webpSrc = src.replace(/\.(jpg|jpeg|png)$/i, '.webp');
+        
+        return `<picture>
+  <source srcset="${webpSrc}" type="image/webp">
+  <img${beforeSrc}src=${quote}${src}${quote}${afterSrc}>
+</picture>`;
+      }
+    );
+    
+    // Add lazy loading script if not present (enhanced version)
     if (!content.includes('lazy loading') && !content.includes('loading="lazy"')) {
-      content = content.replace('</body>', `${lazyLoadingScript}</body>`);
+      const enhancedLazyScript = `
+  <!-- Enhanced Lazy Loading Support -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add lazy loading to dynamically created images
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const img = entry.target;
+            if (img.dataset.src) {
+              img.src = img.dataset.src;
+              img.removeAttribute('data-src');
+              observer.unobserve(img);
+            }
+          }
+        });
+      });
+      
+      // Observe images with data-src
+      document.querySelectorAll('img[data-src]').forEach(img => {
+        observer.observe(img);
+      });
+      
+      // Add alt attributes to images without them
+      const imagesWithoutAlt = document.querySelectorAll('img:not([alt])');
+      imagesWithoutAlt.forEach(img => {
+        const src = img.getAttribute('src') || img.getAttribute('data-src') || '';
+        const filename = src.split('/').pop().split('.')[0] || 'Image';
+        img.setAttribute('alt', \`A KI PRI SA YÉ - \${filename}\`);
+      });
+      
+      // Enhance loading for images
+      const images = document.querySelectorAll('img:not([loading])');
+      images.forEach(img => {
+        img.setAttribute('loading', 'lazy');
+        img.setAttribute('decoding', 'async');
+      });
+    });
+  </script>`;
+      
+      content = content.replace('</body>', `${enhancedLazyScript}</body>`);
     }
     
     fs.writeFileSync(filePath, content);
@@ -128,11 +190,13 @@ function optimizeProject() {
   
   console.log('\n✅ SEO optimization completed!');
   console.log('\n📋 Optimizations applied:');
-  console.log('  • Lazy loading for images');
+  console.log('  • Enhanced lazy loading for images');
+  console.log('  • WebP support with fallback using <picture> elements');
   console.log('  • Alt attributes for accessibility'); 
-  console.log('  • SEO meta tags enhancement');
+  console.log('  • Enhanced SEO meta tags');
   console.log('  • Open Graph and Twitter Card tags');
   console.log('  • PWA manifest integration');
+  console.log('  • Intersection Observer for advanced lazy loading');
 }
 
 // Run optimization

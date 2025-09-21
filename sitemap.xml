@@ -1,7 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-<url><loc>https://akiprisaye.pages.dev/</loc></url>
-<url><loc>https://akiprisaye.pages.dev/#/vie-chere</loc></url>
-<url><loc>https://akiprisaye.pages.dev/#/scan</loc></url>
-<url><loc>https://akiprisaye.pages.dev/#/compte</loc></url>
+  <!-- Main page -->
+  <url>
+    <loc>https://akiprisaye.pages.dev/</loc>
+    <lastmod>2024-12-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  
+  <!-- Comparateur page -->
+  <url>
+    <loc>https://akiprisaye.pages.dev/comparateur</loc>
+    <lastmod>2024-12-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+  <!-- Actualités page -->
+  <url>
+    <loc>https://akiprisaye.pages.dev/actualites</loc>
+    <lastmod>2024-12-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Recherche -->
+  <url>
+    <loc>https://akiprisaye.pages.dev/recherche.html</loc>
+    <lastmod>2024-12-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+  <!-- Palmarès -->
+  <url>
+    <loc>https://akiprisaye.pages.dev/palmares.html</loc>
+    <lastmod>2024-12-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Enseignes -->
+  <url>
+    <loc>https://akiprisaye.pages.dev/enseignes.html</loc>
+    <lastmod>2024-12-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Actualités HTML page -->
+  <url>
+    <loc>https://akiprisaye.pages.dev/actualites.html</loc>
+    <lastmod>2024-12-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- A propos -->
+  <url>
+    <loc>https://akiprisaye.pages.dev/a-propos.html</loc>
+    <lastmod>2024-12-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <!-- Avis -->
+  <url>
+    <loc>https://akiprisaye.pages.dev/avis.html</loc>
+    <lastmod>2024-12-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
 </urlset>
