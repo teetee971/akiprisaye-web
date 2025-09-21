@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline - A KI PRI SA YÉ</title>
+    <meta name="description" content="Page hors ligne - A KI PRI SA YÉ">
+    <link rel="icon" type="image/svg+xml" href="/icon.svg">
+    <link rel="manifest" href="/manifest.webmanifest">
+    <style>
+        :root {
+            --bg: #0b1020;
+            --card: #121a33;
+            --muted: #94a3b8;
+            --text: #e6ebf7;
+            --brand: #60a5fa;
+            --brand2: #22d3ee;
+            --ok: #22c55e;
+            --warn: #f59e0b;
+            --shadow: 0 10px 30px rgba(0,0,0,.3);
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            margin: 0;
+            padding: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            height: 100vh;
+        }
+        
+        .offline-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 24px;
+            text-align: center;
+        }
+        
+        .offline-icon {
+            font-size: 4rem;
+            color: var(--brand);
+            margin-bottom: 2rem;
+        }
+        
+        .offline-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, var(--brand), var(--brand2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .offline-message {
+            font-size: 1.2rem;
+            color: var(--muted);
+            margin-bottom: 2rem;
+            max-width: 500px;
+            line-height: 1.6;
+        }
+        
+        .retry-btn {
+            background: linear-gradient(90deg, var(--brand), var(--brand2));
+            color: #001f2a;
+            border: 0;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s ease;
+        }
+        
+        .retry-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .retry-btn:active {
+            transform: translateY(1px);
+        }
+        
+        .features-offline {
+            margin-top: 3rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        .feature-card {
+            background: var(--card);
+            border: 1px solid #1f2a44;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+        
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .feature-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .feature-desc {
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .offline-title {
+                font-size: 2rem;
+            }
+            
+            .features-offline {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-container">
+        <div class="offline-icon">📱</div>
+        <h1 class="offline-title">Hors ligne</h1>
+        <p class="offline-message">
+            Pas de connexion internet ? Pas de problème !<br>
+            A KI PRI SA YÉ fonctionne même hors ligne grâce à la technologie PWA.
+        </p>
+        
+        <button class="retry-btn" onclick="window.location.reload()">
+            🔄 Réessayer la connexion
+        </button>
+        
+        <div class="features-offline">
+            <div class="feature-card">
+                <div class="feature-icon">💾</div>
+                <div class="feature-title">Données sauvées</div>
+                <div class="feature-desc">Vos recherches récentes sont conservées localement</div>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🏪</div>
+                <div class="feature-title">Enseignes disponibles</div>
+                <div class="feature-desc">Consultez la liste des magasins partenaires</div>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-title">💡</div>
+                <div class="feature-title">Conseils budget</div>
+                <div class="feature-desc">Accédez aux astuces d'économie</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Vérifier périodiquement si la connexion est revenue
+        function checkConnection() {
+            if (navigator.onLine) {
+                // Essayer de récupérer une ressource légère pour vérifier la vraie connectivité
+                fetch('/manifest.webmanifest', { method: 'HEAD', cache: 'no-cache' })
+                    .then(() => {
+                        // Connexion rétablie, rediriger vers la page d'accueil
+                        window.location.href = '/';
+                    })
+                    .catch(() => {
+                        // Toujours pas de connexion réelle
+                        setTimeout(checkConnection, 5000);
+                    });
+            } else {
+                setTimeout(checkConnection, 5000);
+            }
+        }
+
+        // Démarrer la vérification après 10 secondes
+        setTimeout(checkConnection, 10000);
+
+        // Écouter les changements de statut de connexion
+        window.addEventListener('online', checkConnection);
+        
+        // Afficher un message quand la connexion est détectée
+        window.addEventListener('online', function() {
+            const btn = document.querySelector('.retry-btn');
+            btn.textContent = '🟢 Connexion détectée - Rechargement...';
+            btn.style.background = 'linear-gradient(90deg, var(--ok), var(--brand))';
+            setTimeout(() => window.location.reload(), 1000);
+        });
+    </script>
+</body>
+</html>
