@@ -93,6 +93,12 @@ exports.searchPrices = functions.https.onRequest(async (req, res) => {
     const qRaw  = (req.query.q || '').toString();
     const q     = qRaw.trim();
     const limit = Math.min(parseInt(req.query.limit)||50, 100);
+    
+    // Nouveaux paramètres de filtre
+    const storeFilter = (req.query.store || '').toString().toLowerCase().trim();
+    const priceMin = parseFloat(req.query.price_min) || 0;
+    const priceMax = parseFloat(req.query.price_max) || Infinity;
+    const categoryFilter = (req.query.category || '').toString().toLowerCase().trim();
 
     if (!q) return res.status(400).json({ error: 'missing q' });
 
@@ -116,7 +122,41 @@ exports.searchPrices = functions.https.onRequest(async (req, res) => {
           || norm(it.label).includes(QQ);
     });
 
-    // 4) Projection simplifiée
+    // 4) Filtres avancés
+    if (storeFilter) {
+      items = items.filter(it => {
+        const store = norm(it.store || it.shop || it.brand || '');
+        return store.includes(storeFilter);
+      });
+    }
+
+    if (priceMin > 0 || priceMax < Infinity) {
+      items = items.filter(it => {
+        const price = it.price ?? it.amount ?? 0;
+        return price >= priceMin && price <= priceMax;
+      });
+    }
+
+    if (categoryFilter) {
+      const categoryKeywords = {
+        'alimentaire': ['lait', 'beurre', 'fromage', 'yaourt', 'pain', 'riz', 'pâtes', 'sucre', 'huile'],
+        'boisson': ['eau', 'jus', 'soda', 'café', 'thé'],
+        'hygiene': ['savon', 'shampooing', 'dentifrice', 'déodorant'],
+        'maison': ['lessive', 'détergent', 'liquide vaisselle'],
+        'viande': ['poulet', 'bœuf', 'porc', 'poisson', 'œuf'],
+        'fruits': ['banane', 'pomme', 'tomate', 'fruit', 'légume']
+      };
+      
+      const keywords = categoryKeywords[categoryFilter] || [];
+      if (keywords.length > 0) {
+        items = items.filter(it => {
+          const productName = norm(it.name || it.product || it.label || '');
+          return keywords.some(keyword => productName.includes(keyword));
+        });
+      }
+    }
+
+    // 5) Projection simplifiée
     const out = items.slice(0, limit).map(it => ({
       name: it.name || it.product || it.label || null,
       store: it.store || it.shop || it.brand || null,

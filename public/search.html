@@ -64,7 +64,7 @@
     </header>
 
     <section class="card">
-      <h2 style="margin:0 0 12px">🔎 Recherche produit</h2>
+      <h2 style="margin:0 0 12px">🔎 Recherche avancée</h2>
 
       <div class="row">
         <div>
@@ -82,6 +82,49 @@
           <input id="q" placeholder="ex : Lait, Banane, Riz…" inputmode="search"/>
           <button id="go" type="button" class="btn">Rechercher</button>
           <div id="status" class="status muted">Saisissez un mot-clé puis cliquez sur « Rechercher ».</div>
+        </div>
+      </div>
+
+      <!-- Filtres avancés -->
+      <div style="margin-top:18px;border-top:1px solid #2b3a52;padding-top:18px">
+        <h3 style="margin:0 0 12px;font-size:16px;color:var(--muted)">🔧 Filtres avancés</h3>
+        <div class="row">
+          <div>
+            <label for="store-filter">Magasin/Enseigne</label>
+            <select id="store-filter">
+              <option value="">Tous les magasins</option>
+              <option value="carrefour">Carrefour</option>
+              <option value="super u">Super U</option>
+              <option value="leader price">Leader Price</option>
+              <option value="leclerc">Leclerc</option>
+              <option value="intermarché">Intermarché</option>
+            </select>
+          </div>
+          <div>
+            <label for="category-filter">Catégorie</label>
+            <select id="category-filter">
+              <option value="">Toutes catégories</option>
+              <option value="alimentaire">Alimentaire</option>
+              <option value="boisson">Boissons</option>
+              <option value="hygiene">Hygiène</option>
+              <option value="maison">Maison</option>
+              <option value="viande">Viande & Poisson</option>
+              <option value="fruits">Fruits & Légumes</option>
+            </select>
+          </div>
+        </div>
+        <div class="row" style="margin-top:12px">
+          <div>
+            <label for="price-min">Prix minimum (€)</label>
+            <input id="price-min" type="number" step="0.01" min="0" placeholder="0.00"/>
+          </div>
+          <div>
+            <label for="price-max">Prix maximum (€)</label>
+            <input id="price-max" type="number" step="0.01" min="0" placeholder="99.99"/>
+          </div>
+        </div>
+        <div style="margin-top:12px">
+          <button id="reset-filters" type="button" class="btn secondary" style="width:auto;padding:8px 16px;font-size:14px">🔄 Réinitialiser les filtres</button>
         </div>
       </div>
 
@@ -112,10 +155,19 @@
     // 1) Petits utilitaires DOM
     const $ = (sel) => document.querySelector(sel);
     const zoneEl = $("#zone"), qEl = $("#q"), goEl = $("#go"), outEl = $("#out"), stEl = $("#status"), hintEl = $("#hint");
+    const storeFilterEl = $("#store-filter"), categoryFilterEl = $("#category-filter");
+    const priceMinEl = $("#price-min"), priceMaxEl = $("#price-max"), resetFiltersEl = $("#reset-filters");
 
     function setStatus(msg, cls=""){
       stEl.className = "status " + (cls||"muted");
       stEl.textContent = msg;
+    }
+
+    // 4) Fonction pour réappliquer les filtres (re-déclenche la recherche)
+    function applyFilters() {
+      if (qEl.value.trim()) {
+        doSearch();
+      }
     }
 
     function render(items){
@@ -134,43 +186,134 @@
           <td>${it.updatedAt? new Date(it.updatedAt*1000).toLocaleDateString("fr-FR") : "—"}</td>
         </tr>
       `).join("");
+      
       hintEl.textContent = items.length ? `${items.length} résultat(s)` : "Aucun résultat.";
     }
 
-    // 2) Fonction de recherche
+    // 2) Variables globales pour stocker les résultats
+    let currentResults = [];
+
+    // 3) Fonction de recherche
     async function doSearch(){
       const zone = (zoneEl.value||"").trim().toLowerCase();
       const text = (qEl.value||"").trim();
       if(!text){ setStatus("Entrez un mot-clé.","err"); qEl.focus(); return; }
 
-      // anti-cache léger
-      const v = Date.now().toString().slice(-6);
-      const url = `${SEARCH_ENDPOINT}?zone=${encodeURIComponent(zone)}&q=${encodeURIComponent(text)}&limit=25&v=${v}`;
+      // Récupérer les filtres
+      const storeFilter = (storeFilterEl.value || "").trim();
+      const categoryFilter = (categoryFilterEl.value || "").trim();
+      const priceMin = priceMinEl.value ? parseFloat(priceMinEl.value) : "";
+      const priceMax = priceMaxEl.value ? parseFloat(priceMaxEl.value) : "";
 
       setStatus("Recherche en cours…","muted");
       render([]);
 
       try{
-        const r = await fetch(url, { headers:{ accept:"application/json" }});
-        if(!r.ok) throw new Error("HTTP "+r.status);
-        const data = await r.json();
-        render(data.items||[]);
+        // Tentative avec l'API principale
+        let data;
+        try {
+          // anti-cache léger
+          const v = Date.now().toString().slice(-6);
+          let url = `${SEARCH_ENDPOINT}?zone=${encodeURIComponent(zone)}&q=${encodeURIComponent(text)}&limit=50&v=${v}`;
+          
+          // Ajouter les paramètres de filtre à l'URL
+          if (storeFilter) url += `&store=${encodeURIComponent(storeFilter)}`;
+          if (categoryFilter) url += `&category=${encodeURIComponent(categoryFilter)}`;
+          if (priceMin !== "") url += `&price_min=${priceMin}`;
+          if (priceMax !== "") url += `&price_max=${priceMax}`;
+
+          const r = await fetch(url, { headers:{ accept:"application/json" }});
+          if(!r.ok) throw new Error("HTTP "+r.status);
+          data = await r.json();
+        } catch(e) {
+          // Fallback vers les données locales pour la démo
+          console.log("API principale indisponible, utilisation des données locales pour la démo");
+          const mockResponse = await fetch('./api/search-mock.json');
+          const mockData = await mockResponse.json();
+          
+          let items = mockData[zone] || [];
+          
+          // Filtrage côté client
+          const needle = text.toLowerCase();
+          items = items.filter(item => 
+            (item.name || "").toLowerCase().includes(needle)
+          );
+
+          // Filtres avancés
+          if (storeFilter) {
+            items = items.filter(item => 
+              (item.store || "").toLowerCase().includes(storeFilter.toLowerCase())
+            );
+          }
+
+          if (categoryFilter) {
+            const categoryKeywords = {
+              'alimentaire': ['lait', 'beurre', 'fromage', 'yaourt', 'pain', 'riz', 'pâtes', 'sucre', 'huile'],
+              'boisson': ['eau', 'jus', 'soda', 'café', 'thé'],
+              'hygiene': ['savon', 'shampooing', 'dentifrice', 'déodorant'],
+              'maison': ['lessive', 'détergent', 'liquide vaisselle'],
+              'viande': ['poulet', 'bœuf', 'porc', 'poisson', 'œuf'],
+              'fruits': ['banane', 'pomme', 'tomate', 'fruit', 'légume']
+            };
+            
+            const keywords = categoryKeywords[categoryFilter] || [];
+            if (keywords.length > 0) {
+              items = items.filter(item => {
+                const productName = (item.name || "").toLowerCase();
+                return keywords.some(keyword => productName.includes(keyword));
+              });
+            }
+          }
+
+          if (priceMin !== "" || priceMax !== "") {
+            const minPrice = priceMin !== "" ? priceMin : 0;
+            const maxPrice = priceMax !== "" ? priceMax : Infinity;
+            items = items.filter(item => {
+              const price = item.price || 0;
+              return price >= minPrice && price <= maxPrice;
+            });
+          }
+
+          data = { items, count: items.length };
+        }
+        
+        currentResults = data.items || [];
+        render(currentResults);
         setStatus("Résultats mis à jour.","ok");
       }catch(e){
         console.error(e);
+        currentResults = [];
         render([]);
         setStatus("Erreur : impossible de charger les résultats.","err");
       }
     }
 
-    // 3) Évènements
+    // 5) Fonction pour réinitialiser les filtres
+    function resetFilters() {
+      storeFilterEl.value = "";
+      categoryFilterEl.value = "";
+      priceMinEl.value = "";
+      priceMaxEl.value = "";
+      if (qEl.value.trim()) {
+        doSearch(); // Re-déclenche la recherche sans filtres
+      }
+    }
+
+    // 6) Évènements
     goEl.addEventListener("click", doSearch);
     qEl.addEventListener("keydown", (e)=>{ if(e.key==="Enter") doSearch(); });
+    
+    // Évènements pour les filtres
+    storeFilterEl.addEventListener("change", applyFilters);
+    categoryFilterEl.addEventListener("change", applyFilters);
+    priceMinEl.addEventListener("input", applyFilters);
+    priceMaxEl.addEventListener("input", applyFilters);
+    resetFiltersEl.addEventListener("click", resetFilters);
 
-    // 4) Fallback global (si on a un vieux onclick inline)
+    // 7) Fallback global (si on a un vieux onclick inline)
     window.doSearch = doSearch;
 
-    // 5) Petite UX : focus auto + année footer
+    // 8) Petite UX : focus auto + année footer
     qEl.setAttribute("autocomplete","on");
     $("#y").textContent = new Date().getFullYear();
   </script>

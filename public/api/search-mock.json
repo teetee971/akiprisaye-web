@@ -1,0 +1,36 @@
+{
+  "martinique": [
+    { "id":"MART-0001", "name":"Baguette tradition 250g", "price":1.25, "store":"Carrefour Fort-de-France", "storeCity":"Fort-de-France", "brand":"Carrefour", "updatedAt":"2025-09-01", "unit":"250g" },
+    { "id":"MART-0002", "name":"Lait UHT demi-écrémé 1L", "price":1.20, "store":"Super U Schoelcher", "storeCity":"Schoelcher", "brand":"U", "updatedAt":"2025-09-01", "unit":"1L" },
+    { "id":"MART-0003", "name":"Beurre doux 250g", "price":2.50, "store":"Leader Price Lamentin", "storeCity":"Lamentin", "brand":"Leader Price", "updatedAt":"2025-09-01", "unit":"250g" },
+    { "id":"MART-0004", "name":"Riz long 1kg", "price":2.00, "store":"Carrefour Dillon", "storeCity":"Fort-de-France", "brand":"Carrefour", "updatedAt":"2025-09-01", "unit":"1kg" },
+    { "id":"MART-0005", "name":"Pâtes spaghetti 500g", "price":1.15, "store":"Super U Trinité", "storeCity":"Trinité", "brand":"U", "updatedAt":"2025-09-01", "unit":"500g" },
+    { "id":"MART-0006", "name":"Eau minérale 6x1.5L", "price":4.00, "store":"Carrefour Fort-de-France", "storeCity":"Fort-de-France", "brand":"Carrefour", "updatedAt":"2025-09-01", "unit":"6x1.5L" },
+    { "id":"MART-0007", "name":"Sucre en poudre 1kg", "price":1.80, "store":"Leader Price Lamentin", "storeCity":"Lamentin", "brand":"Leader Price", "updatedAt":"2025-09-01", "unit":"1kg" },
+    { "id":"MART-0008", "name":"Œufs x12 calibre M", "price":3.70, "store":"Super U Schoelcher", "storeCity":"Schoelcher", "brand":"U", "updatedAt":"2025-09-01", "unit":"x12" },
+    { "id":"MART-0009", "name":"Huile de tournesol 1L", "price":3.30, "store":"Carrefour Dillon", "storeCity":"Fort-de-France", "brand":"Carrefour", "updatedAt":"2025-09-01", "unit":"1L" },
+    { "id":"MART-0010", "name":"Poulet entier (~1.2kg)", "price":7.20, "store":"Super U Trinité", "storeCity":"Trinité", "brand":"U", "updatedAt":"2025-09-01", "unit":"~1.2kg" },
+    { "id":"MART-0011", "name":"Fromage râpé 200g", "price":2.50, "store":"Carrefour Fort-de-France", "storeCity":"Fort-de-France", "brand":"Carrefour", "updatedAt":"2025-09-01", "unit":"200g" },
+    { "id":"MART-0012", "name":"Yaourts nature x12", "price":3.20, "store":"Leader Price Lamentin", "storeCity":"Lamentin", "brand":"Leader Price", "updatedAt":"2025-09-01", "unit":"x12" },
+    { "id":"MART-0013", "name":"Café moulu 250g", "price":3.90, "store":"Super U Schoelcher", "storeCity":"Schoelcher", "brand":"U", "updatedAt":"2025-09-01", "unit":"250g" },
+    { "id":"MART-0014", "name":"Banane locale (kg)", "price":2.30, "store":"Carrefour Dillon", "storeCity":"Fort-de-France", "brand":"Carrefour", "updatedAt":"2025-09-01", "unit":"kg" },
+    { "id":"MART-0015", "name":"Tomates grappe (kg)", "price":4.10, "store":"Super U Trinité", "storeCity":"Trinité", "brand":"U", "updatedAt":"2025-09-01", "unit":"kg" }
+  ],
+  "guadeloupe": [
+    { "id":"GUA-0001", "name":"Baguette tradition 250g", "price":1.20, "store":"Carrefour Les Abymes", "storeCity":"Les Abymes", "brand":"Carrefour", "updatedAt":"2025-09-01", "unit":"250g" },
+    { "id":"GUA-0002", "name":"Lait UHT demi-écrémé 1L", "price":1.15, "store":"Super U Baie-Mahault", "storeCity":"Baie-Mahault", "brand":"U", "updatedAt":"2025-09-01", "unit":"1L" },
+    { "id":"GUA-0003", "name":"Beurre doux 250g", "price":2.45, "store":"Leader Price Pointe-à-Pitre", "storeCity":"Pointe-à-Pitre", "brand":"Leader Price", "updatedAt":"2025-09-01", "unit":"250g" },
+    { "id":"GUA-0004", "name":"Riz long 1kg", "price":1.95, "store":"Carrefour Destreland", "storeCity":"Baie-Mahault", "brand":"Carrefour", "updatedAt":"2025-09-01", "unit":"1kg" },
+    { "id":"GUA-0005", "name":"Pâtes spaghetti 500g", "price":1.10, "store":"Super U Le Gosier", "storeCity":"Le Gosier", "brand":"U", "updatedAt":"2025-09-01", "unit":"500g" },
+    { "id":"GUA-0006", "name":"Eau minérale 6x1.5L", "price":3.90, "store":"Carrefour Les Abymes", "storeCity":"Les Abymes", "brand":"Carrefour", "updatedAt":"2025-09-01", "unit":"6x1.5L" },
+    { "id":"GUA-0007", "name":"Sucre en poudre 1kg", "price":1.75, "store":"Leader Price Pointe-à-Pitre", "storeCity":"Pointe-à-Pitre", "brand":"Leader Price", "updatedAt":"2025-09-01", "unit":"1kg" },
+    { "id":"GUA-0008", "name":"Œufs x12 calibre M", "price":3.60, "store":"Super U Baie-Mahault", "storeCity":"Baie-Mahault", "brand":"U", "updatedAt":"2025-09-01", "unit":"x12" },
+    { "id":"GUA-0009", "name":"Huile de tournesol 1L", "price":3.20, "store":"Carrefour Destreland", "storeCity":"Baie-Mahault", "brand":"Carrefour", "updatedAt":"2025-09-01", "unit":"1L" },
+    { "id":"GUA-0010", "name":"Poulet entier (~1.2kg)", "price":6.90, "store":"Super U Le Gosier", "storeCity":"Le Gosier", "brand":"U", "updatedAt":"2025-09-01", "unit":"~1.2kg" },
+    { "id":"GUA-0011", "name":"Fromage râpé 200g", "price":2.40, "store":"Carrefour Les Abymes", "storeCity":"Les Abymes", "brand":"Carrefour", "updatedAt":"2025-09-01", "unit":"200g" },
+    { "id":"GUA-0012", "name":"Yaourts nature x12", "price":3.10, "store":"Leader Price Pointe-à-Pitre", "storeCity":"Pointe-à-Pitre", "brand":"Leader Price", "updatedAt":"2025-09-01", "unit":"x12" },
+    { "id":"GUA-0013", "name":"Café moulu 250g", "price":3.80, "store":"Super U Baie-Mahault", "storeCity":"Baie-Mahault", "brand":"U", "updatedAt":"2025-09-01", "unit":"250g" },
+    { "id":"GUA-0014", "name":"Banane locale (kg)", "price":2.20, "store":"Carrefour Destreland", "storeCity":"Baie-Mahault", "brand":"Carrefour", "updatedAt":"2025-09-01", "unit":"kg" },
+    { "id":"GUA-0015", "name":"Tomates grappe (kg)", "price":3.95, "store":"Super U Le Gosier", "storeCity":"Le Gosier", "brand":"U", "updatedAt":"2025-09-01", "unit":"kg" }
+  ]
+}
