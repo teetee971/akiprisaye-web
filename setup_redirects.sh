@@ -24,9 +24,10 @@ if [ ! -f "$HDR" ]; then
   echo "✍️  Création $HDR (sécurité + cache)"
   cat > "$HDR" <<'EOS'
 /*
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  Content-Security-Policy: default-src 'self'; img-src 'self' data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
-  Referrer-Policy: strict-origin-when-cross-origin
 
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
