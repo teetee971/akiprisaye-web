@@ -102,9 +102,11 @@
       <p class="lead">Un moteur simple pour trouver le meilleur prix dans les DROM-COM : Guadeloupe, Martinique, Guyane, Réunion, Mayotte, et au-delà.</p>
 
       <form id="search" class="search" onsubmit="return goSearch(event)">
-        <input id="q" class="input" placeholder="Ex. Lait demi-écrémé, EAN, marque…"/>
+        <label for="q" class="visually-hidden">Rechercher un produit</label>
+        <input id="q" class="input" placeholder="Ex. Lait demi-écrémé, EAN, marque…" aria-label="Rechercher un produit"/>
         <div style="display:flex;gap:12px">
-          <select id="territoire" class="input" style="flex:1">
+          <label for="territoire" class="visually-hidden">Sélectionner un territoire</label>
+          <select id="territoire" class="input" style="flex:1" aria-label="Territoire">
             <option value="">— Territoire —</option>
             <option>Guadeloupe</option><option>Martinique</option><option>Guyane</option>
             <option>Réunion</option><option>Mayotte</option>
@@ -122,7 +124,7 @@
     </div>
   </header>
 
-  <main class="container">
+  <main class="container" id="main-content">
     <section class="section" id="propose">
       <h2>Ce que le logiciel propose</h2>
       <div class="grid">
@@ -314,5 +316,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
   <script src="/js/footer.js" defer></script>
   <script src="/js/brands.js"></script>
   <script src="/js/stores.js"></script>
+  <script src="/js/accessibility.js" defer></script>
 </body>
 </html>
