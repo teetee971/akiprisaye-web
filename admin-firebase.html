@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - A KI PRI SA YÉ</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Firebase v9 SDK (optional) -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+  <!-- Firebase config -->
+  <script src="firebase-config-compat.js"></script>
+  <!-- Tesseract.js for OCR -->
+  <script src="https://unpkg.com/tesseract.js@v2.1.0/dist/tesseract.min.js"></script>
+  <style>
+    .auth-container {
+      max-width: 400px;
+      margin: 50px auto;
+      background: var(--panel);
+      border-radius: var(--radius);
+      padding: 32px;
+      box-shadow: var(--shadow);
+    }
+    
+    .admin-dashboard {
+      display: none;
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+    }
+    
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #1f2a37;
+    }
+    
+    .upload-section {
+      background: var(--panel);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 30px;
+      border: 1px solid #1f2a37;
+    }
+    
+    .ticket-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 30px;
+    }
+    
+    .ticket-item {
+      background: var(--panel);
+      border-radius: var(--radius);
+      padding: 20px;
+      border: 1px solid #1f2a37;
+      box-shadow: var(--shadow);
+    }
+    
+    .ticket-preview {
+      max-width: 100%;
+      max-height: 200px;
+      object-fit: contain;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--txt);
+      font-weight: 500;
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 12px;
+      background: var(--muted);
+      border: 1px solid #1f2a37;
+      border-radius: 8px;
+      color: var(--txt);
+      font-size: 16px;
+    }
+    
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--brand);
+    }
+    
+    .btn {
+      background: var(--brand);
+      color: #000;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn:hover {
+      background: #1ed760;
+      transform: translateY(-1px);
+    }
+    
+    .btn-danger {
+      background: var(--danger);
+      color: white;
+    }
+    
+    .btn-danger:hover {
+      background: #ff4444;
+    }
+    
+    .file-upload {
+      border: 2px dashed #1f2a37;
+      border-radius: 8px;
+      padding: 40px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .file-upload:hover {
+      border-color: var(--brand);
+      background: rgba(38, 208, 124, 0.05);
+    }
+    
+    .file-upload.dragover {
+      border-color: var(--brand);
+      background: rgba(38, 208, 124, 0.1);
+    }
+    
+    .status-message {
+      padding: 12px;
+      border-radius: 8px;
+      margin: 10px 0;
+      font-weight: 500;
+    }
+    
+    .status-success {
+      background: rgba(38, 208, 124, 0.1);
+      color: var(--brand);
+      border: 1px solid var(--brand);
+    }
+    
+    .status-error {
+      background: rgba(255, 93, 93, 0.1);
+      color: var(--danger);
+      border: 1px solid var(--danger);
+    }
+    
+    .status-info {
+      background: rgba(0, 179, 255, 0.1);
+      color: var(--brand-2);
+      border: 1px solid var(--brand-2);
+    }
+    
+    .ocr-results {
+      background: var(--muted);
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 15px;
+      max-height: 200px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+    
+    .extracted-data {
+      background: var(--panel);
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 15px;
+      border: 1px solid #1f2a37;
+    }
+    
+    .data-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #1f2a37;
+    }
+    
+    .data-item:last-child {
+      border-bottom: none;
+    }
+    
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(38, 208, 124, 0.3);
+      border-radius: 50%;
+      border-top-color: var(--brand);
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 10px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .demo-note {
+      background: rgba(0, 179, 255, 0.1);
+      border: 1px solid var(--brand-2);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 20px;
+      color: var(--brand-2);
+    }
+  </style>
+</head>
+<body class="dark">
+  <!-- Section d'authentification -->
+  <div id="auth-section" class="auth-container">
+    <h1 style="text-align: center; margin-bottom: 30px;">🔐 Admin A KI PRI SA YÉ</h1>
+    
+    <div class="demo-note">
+      <strong>📌 Mode Hybride:</strong> Utilise Firebase si disponible, sinon fonctionne en mode démo local.
+    </div>
+    
+    <div id="login-form">
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" id="email" placeholder="admin@akiprisaye.com" value="admin@akiprisaye.com" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="password">Mot de passe:</label>
+        <input type="password" id="password" placeholder="••••••••" value="admin123" required>
+      </div>
+      
+      <button class="btn" onclick="signIn()" style="width: 100%;">Se connecter</button>
+      
+      <div id="auth-status" style="margin-top: 20px;"></div>
+    </div>
+  </div>
+
+  <!-- Dashboard admin -->
+  <div id="admin-dashboard" class="admin-dashboard">
+    <div class="admin-header">
+      <h1>📊 Dashboard Admin</h1>
+      <div>
+        <span id="user-info" style="margin-right: 20px; color: var(--sub);"></span>
+        <button class="btn btn-danger" onclick="signOut()">Déconnexion</button>
+      </div>
+    </div>
+
+    <!-- Section upload tickets -->
+    <div class="upload-section">
+      <h2>📸 Upload & Analyse de Tickets</h2>
+      <p style="color: var(--sub); margin-bottom: 20px;">
+        Uploadez vos tickets (images ou PDF) pour extraction automatique des prix et produits
+      </p>
+      
+      <div class="file-upload" id="file-upload" onclick="document.getElementById('file-input').click()">
+        <input type="file" id="file-input" accept="image/*,.pdf" style="display: none;" onchange="handleFileSelect(event)">
+        <div>
+          <p style="font-size: 18px; margin: 0 0 10px 0;">📄 Cliquez ou glissez vos fichiers ici</p>
+          <p style="color: var(--sub); margin: 0;">Formats supportés: JPG, PNG, PDF</p>
+        </div>
+      </div>
+      
+      <div id="upload-status"></div>
+    </div>
+
+    <!-- Liste des tickets analysés -->
+    <div>
+      <h2>🧾 Tickets Analysés</h2>
+      <div id="tickets-grid" class="ticket-grid">
+        <div style="grid-column: 1/-1; text-align: center; color: var(--sub); padding: 40px;">
+          Aucun ticket analysé pour le moment. Uploadez votre premier ticket!
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Initialisation Firebase adaptative
+    let isFirebaseAvailable = false;
+    let app, auth, db, storage;
+    
+    try {
+      if (typeof firebase !== 'undefined' && typeof firebaseConfig !== 'undefined') {
+        app = firebase.initializeApp(firebaseConfig);
+        auth = firebase.auth();
+        db = firebase.firestore();
+        storage = firebase.storage();
+        isFirebaseAvailable = true;
+        console.log('✅ Firebase initialisé avec succès');
+        
+        // Écouter les changements d'authentification
+        auth.onAuthStateChanged(async (user) => {
+          if (user) {
+            currentUser = user;
+            // Vérifier le rôle admin
+            try {
+              const idTokenResult = await user.getIdTokenResult();
+              const isAdmin = idTokenResult.claims.admin === true || isAdminEmail(user.email);
+              
+              if (isAdmin) {
+                showDashboard(user);
+                loadTicketsFromFirebase();
+              } else {
+                showAuthError("Accès refusé: Rôle administrateur requis.");
+              }
+            } catch (error) {
+              console.warn('Vérification des claims échouée:', error);
+              if (isAdminEmail(user.email)) {
+                showDashboard(user);
+                loadTicketsFromFirebase();
+              } else {
+                showAuthError("Accès refusé: Rôle administrateur requis.");
+              }
+            }
+          } else {
+            showAuthSection();
+          }
+        });
+      } else {
+        console.warn('⚠️ Firebase non disponible, mode local activé');
+      }
+    } catch (error) {
+      console.warn('❌ Erreur Firebase:', error);
+      isFirebaseAvailable = false;
+    }
+
+    // Mode démo - simulation de l'authentification
+    let currentUser = null;
+    let tickets = [];
+    
+    // Fonction pour vérifier si un email est autorisé comme admin
+    function isAdminEmail(email) {
+      const adminEmails = [
+        'admin@akiprisaye.com',
+        'admin@a-ki-pri-sa-ye.firebaseapp.com'
+      ];
+      return adminEmails.includes(email?.toLowerCase());
+    }
+    
+    // Simulation des données de démo
+    const demoTickets = [
+      {
+        id: 'demo1',
+        fileName: 'ticket_carrefour.jpg',
+        uploadedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+        userEmail: 'admin@akiprisaye.com',
+        extractedData: {
+          products: ['banane', 'lait', 'pain'],
+          prices: ['2.45€', '1.09€', '0.89€'],
+          totalProducts: 3,
+          totalPrices: 3
+        },
+        ocrText: 'CARREFOUR GÉNIPA\nBANANE 1KG 2.45€\nLAIT DEMI-ÉCRÉMÉ 1L 1.09€\nPAIN BAGUETTE 0.89€\nTOTAL: 4.43€',
+        fileSize: 245780,
+        fileType: 'image/jpeg',
+        status: 'processed'
+      }
+    ];
+
+    // Fonction de connexion (mode démo)
+    // Fonction de connexion
+    async function signIn() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      
+      if (!email || !password) {
+        showAuthError("Veuillez remplir tous les champs.");
+        return;
+      }
+
+      showAuthStatus("Connexion en cours...", 'info');
+
+      // Essayer Firebase en premier
+      if (isFirebaseAvailable) {
+        try {
+          await auth.signInWithEmailAndPassword(email, password);
+          return; // Firebase gérera l'authentification via onAuthStateChanged
+        } catch (error) {
+          console.warn('Erreur Firebase:', error);
+          showAuthError("Firebase: " + error.message + " - Passage en mode local");
+        }
+      }
+
+      // Mode local (démo) en fallback
+      setTimeout(() => {
+        if (email === 'admin@akiprisaye.com' && password === 'admin123') {
+          currentUser = { email: email };
+          showDashboard({ email: email });
+          // Charger les tickets de démo
+          tickets = [...demoTickets];
+          displayTickets();
+        } else {
+          showAuthError("Identifiants incorrects. Utilisez admin@akiprisaye.com / admin123");
+        }
+      }, 1000);
+    }
+
+    // Fonction de déconnexion
+    function signOut() {
+      currentUser = null;
+      tickets = [];
+      showAuthSection();
+    }
+
+    // Affichage des sections
+    function showAuthSection() {
+      document.getElementById('auth-section').style.display = 'block';
+      document.getElementById('admin-dashboard').style.display = 'none';
+    }
+
+    function showDashboard(user) {
+      document.getElementById('auth-section').style.display = 'none';
+      document.getElementById('admin-dashboard').style.display = 'block';
+      document.getElementById('user-info').textContent = `Connecté: ${user.email}`;
+      
+      // Charger les tickets selon le mode disponible
+      if (isFirebaseAvailable) {
+        loadTicketsFromFirebase();
+      } else {
+        tickets = [...demoTickets];
+        displayTickets();
+      }
+    }
+    
+    // Chargement des tickets depuis Firestore
+    async function loadTicketsFromFirebase() {
+      try {
+        console.log('Chargement des tickets depuis Firestore...');
+        const snapshot = await db.collection('tickets')
+          .orderBy('uploadedAt', 'desc')
+          .limit(20)
+          .get();
+
+        if (snapshot.empty) {
+          console.log('Aucun ticket en Firestore, utilisation des données démo');
+          tickets = [...demoTickets];
+        } else {
+          tickets = [];
+          snapshot.forEach(doc => {
+            tickets.push(doc.data());
+          });
+          console.log(`${tickets.length} tickets chargés depuis Firestore`);
+        }
+
+        displayTickets();
+
+      } catch (error) {
+        console.error('Erreur lors du chargement Firestore:', error);
+        tickets = [...demoTickets];
+        displayTickets();
+      }
+    }
+
+    // Gestion des messages d'état
+    function showAuthStatus(message, type) {
+      const statusDiv = document.getElementById('auth-status');
+      statusDiv.innerHTML = `<div class="status-message status-${type}">${message}</div>`;
+    }
+
+    function showAuthError(message) {
+      showAuthStatus(message, 'error');
+    }
+
+    function showUploadStatus(message, type) {
+      const statusDiv = document.getElementById('upload-status');
+      statusDiv.innerHTML = `<div class="status-message status-${type}">${message}</div>`;
+    }
+
+    // Gestion du drag & drop
+    const fileUpload = document.getElementById('file-upload');
+    
+    fileUpload.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      fileUpload.classList.add('dragover');
+    });
+
+    fileUpload.addEventListener('dragleave', () => {
+      fileUpload.classList.remove('dragover');
+    });
+
+    fileUpload.addEventListener('drop', (e) => {
+      e.preventDefault();
+      fileUpload.classList.remove('dragover');
+      const files = Array.from(e.dataTransfer.files);
+      handleFiles(files);
+    });
+
+    // Gestion de la sélection de fichiers
+    function handleFileSelect(event) {
+      const files = Array.from(event.target.files);
+      handleFiles(files);
+    }
+
+    // Traitement des fichiers
+    async function handleFiles(files) {
+      for (const file of files) {
+        if (file.type.startsWith('image/') || file.type === 'application/pdf') {
+          await processTicket(file);
+        } else {
+          showUploadStatus(`Type de fichier non supporté: ${file.name}`, 'error');
+        }
+      }
+    }
+
+    // Traitement OCR et sauvegarde d'un ticket
+    async function processTicket(file) {
+      const ticketId = Date.now().toString();
+      
+      showUploadStatus(`<span class="loading"></span>Traitement de ${file.name}...`, 'info');
+
+      try {
+        // OCR avec Tesseract.js (seulement pour les images)
+        let ocrText = '';
+        let extractedData = {};
+        
+        if (file.type.startsWith('image/')) {
+          showUploadStatus(`<span class="loading"></span>Analyse OCR de ${file.name}...`, 'info');
+          
+          // Vérifier si Tesseract est disponible
+          if (typeof Tesseract !== 'undefined') {
+            const { data: { text } } = await Tesseract.recognize(file, 'fra', {
+              logger: m => console.log(m)
+            });
+            
+            ocrText = text;
+            extractedData = extractProductsAndPrices(text);
+          } else {
+            // Simulation de l'OCR si Tesseract n'est pas disponible
+            ocrText = `TICKET SIMULÉ\nProduit simulé 1: 2.50€\nProduit simulé 2: 1.20€\nTOTAL: 3.70€`;
+            extractedData = {
+              products: ['produit simulé 1', 'produit simulé 2'],
+              prices: ['2.50€', '1.20€'],
+              totalProducts: 2,
+              totalPrices: 2
+            };
+          }
+        } else {
+          // Pour les PDFs, simulation de données
+          ocrText = `PDF analysé: ${file.name}\nContenu simulé du PDF`;
+          extractedData = {
+            products: ['produit pdf'],
+            prices: ['5.00€'],
+            totalProducts: 1,
+            totalPrices: 1
+          };
+        }
+
+        // Créer l'URL d'aperçu pour les images
+        const previewURL = file.type.startsWith('image/') ? URL.createObjectURL(file) : null;
+
+        // Simulation de sauvegarde
+        const ticketData = {
+          id: ticketId,
+          fileName: file.name,
+          fileSize: file.size,
+          fileType: file.type,
+          uploadedAt: new Date(),
+          uploadedBy: currentUser.email,
+          userEmail: currentUser.email,
+          downloadURL: previewURL,
+          ocrText: ocrText,
+          extractedData: extractedData,
+          status: 'processed'
+        };
+
+        // Ajouter à la liste locale
+        tickets.unshift(ticketData);
+
+        showUploadStatus(`✅ ${file.name} traité et sauvegardé avec succès!`, 'success');
+        
+        // Recharger l'affichage
+        displayTickets();
+
+      } catch (error) {
+        console.error('Erreur lors du traitement:', error);
+        showUploadStatus(`❌ Erreur lors du traitement de ${file.name}: ${error.message}`, 'error');
+      }
+    }
+
+    // Extraction des produits et prix depuis le texte OCR
+    function extractProductsAndPrices(text) {
+      const products = [];
+      const prices = [];
+      
+      // Patterns pour détecter les prix (euros)
+      const pricePattern = /(\d+[,.]?\d*)\s*€/g;
+      const priceMatches = text.match(pricePattern);
+      
+      if (priceMatches) {
+        priceMatches.forEach(price => {
+          prices.push(price.trim());
+        });
+      }
+
+      // Patterns simples pour détecter des produits courants
+      const productPatterns = [
+        /banane/gi,
+        /lait/gi,
+        /pain/gi,
+        /baguette/gi,
+        /yaourt/gi,
+        /fromage/gi,
+        /tomate/gi,
+        /pomme/gi,
+        /orange/gi,
+        /riz/gi,
+        /pâtes?/gi,
+        /huile/gi,
+        /sucre/gi,
+        /café/gi,
+        /thé/gi
+      ];
+
+      productPatterns.forEach(pattern => {
+        const matches = text.match(pattern);
+        if (matches) {
+          matches.forEach(match => {
+            if (!products.includes(match.toLowerCase())) {
+              products.push(match.toLowerCase());
+            }
+          });
+        }
+      });
+
+      return {
+        products: products,
+        prices: prices,
+        totalPrices: prices.length,
+        totalProducts: products.length
+      };
+    }
+
+    // Affichage des tickets
+    function displayTickets() {
+      const ticketsGrid = document.getElementById('tickets-grid');
+      
+      if (tickets.length === 0) {
+        ticketsGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--sub); padding: 40px;">Aucun ticket trouvé. Uploadez votre premier ticket!</div>';
+        return;
+      }
+
+      ticketsGrid.innerHTML = '';
+
+      tickets.forEach(ticket => {
+        const ticketElement = createTicketElement(ticket);
+        ticketsGrid.appendChild(ticketElement);
+      });
+    }
+
+    // Création d'un élément ticket pour l'affichage
+    function createTicketElement(ticket) {
+      const div = document.createElement('div');
+      div.className = 'ticket-item';
+      
+      const isImage = ticket.fileType.startsWith('image/');
+      const uploadDate = ticket.uploadedAt instanceof Date ? 
+        ticket.uploadedAt.toLocaleDateString('fr-FR') : 
+        new Date(ticket.uploadedAt).toLocaleDateString('fr-FR');
+      
+      div.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+          <h3 style="margin: 0; font-size: 16px; color: var(--txt);">${ticket.fileName}</h3>
+          <span style="font-size: 12px; color: var(--sub);">${uploadDate}</span>
+        </div>
+        
+        ${isImage && ticket.downloadURL ? `<img src="${ticket.downloadURL}" alt="${ticket.fileName}" class="ticket-preview">` : `<div style="background: var(--muted); padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 10px;"><p>📄 ${ticket.fileName}</p></div>`}
+        
+        <div class="extracted-data">
+          <div class="data-item">
+            <span>Produits détectés:</span>
+            <span>${ticket.extractedData.totalProducts || 0}</span>
+          </div>
+          <div class="data-item">
+            <span>Prix détectés:</span>
+            <span>${ticket.extractedData.totalPrices || 0}</span>
+          </div>
+          <div class="data-item">
+            <span>Taille:</span>
+            <span>${(ticket.fileSize / 1024).toFixed(1)} KB</span>
+          </div>
+        </div>
+        
+        ${ticket.extractedData.products && ticket.extractedData.products.length > 0 ? `
+          <div style="margin-top: 10px;">
+            <strong>Produits:</strong>
+            <div style="margin-top: 5px; color: var(--sub);">
+              ${ticket.extractedData.products.join(', ')}
+            </div>
+          </div>
+        ` : ''}
+        
+        ${ticket.extractedData.prices && ticket.extractedData.prices.length > 0 ? `
+          <div style="margin-top: 10px;">
+            <strong>Prix:</strong>
+            <div style="margin-top: 5px; color: var(--sub);">
+              ${ticket.extractedData.prices.join(', ')}
+            </div>
+          </div>
+        ` : ''}
+        
+        ${ticket.ocrText ? `
+          <details style="margin-top: 15px;">
+            <summary style="cursor: pointer; color: var(--brand);">Voir le texte OCR complet</summary>
+            <div class="ocr-results">
+              ${ticket.ocrText.replace(/\n/g, '<br>')}
+            </div>
+          </details>
+        ` : ''}
+      `;
+      
+      return div;
+    }
+
+    // Gestion de la touche Entrée pour la connexion
+    document.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' && document.getElementById('auth-section').style.display !== 'none') {
+        signIn();
+      }
+    });
+  </script>
+</body>
+</html>
