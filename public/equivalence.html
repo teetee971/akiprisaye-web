@@ -2,4 +2,25 @@
 </head><body><h1>Équivalents DOM/Métropole</h1>
 <div id="site-footer"></div>
   <script src="/js/footer.js" defer></script>
-</body></html>
+
+  <!-- Lazy Loading Support -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add lazy loading to images that don't have it
+      const images = document.querySelectorAll('img:not([loading])');
+      images.forEach(img => {
+        if (img.getBoundingClientRect().top > window.innerHeight * 2) {
+          img.setAttribute('loading', 'lazy');
+          img.setAttribute('decoding', 'async');
+        }
+      });
+      
+      // Add alt attributes to images without them
+      const imagesWithoutAlt = document.querySelectorAll('img:not([alt])');
+      imagesWithoutAlt.forEach(img => {
+        const src = img.getAttribute('src') || '';
+        const filename = src.split('/').pop().split('.')[0];
+        img.setAttribute('alt', `Image: ${filename}`);
+      });
+    });
+  </script></body></html>

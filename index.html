@@ -1,14 +1,104 @@
 <!doctype html>
-<html lang="fr" translate="no">>
+<html lang="fr" translate="no">
   <head>
-  <meta name="google" content="notranslate">
-  <meta http-equiv="Content-Language" content="fr">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>A KI PRI SA YÉ — Démo</title>
+    
+    <!-- SEO Meta Tags -->
+    <title>A KI PRI SA YÉ – Comparateur de prix & suivi budget dans les DROM-COM</title>
+    <meta name="description" content="Comparez les prix, suivez votre budget et trouvez l'enseigne la moins chère dans votre zone (DROM-COM). Service gratuit pour Guadeloupe, Martinique, Guyane, Réunion, Mayotte." />
+    <meta name="keywords" content="comparateur prix, DROM-COM, Guadeloupe, Martinique, Guyane, Réunion, Mayotte, budget, vie chère, courses, enseigne" />
+    <meta name="author" content="A KI PRI SA YÉ" />
+    <meta name="robots" content="index, follow" />
+    <meta name="googlebot" content="index, follow" />
+    <meta name="google" content="notranslate" />
+    <meta http-equiv="Content-Language" content="fr" />
+    <meta name="theme-color" content="#0f172a" />
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="A KI PRI SA YÉ – Comparateur de prix & suivi budget" />
+    <meta property="og:description" content="Comparez les prix et trouvez l'enseigne la moins chère dans votre zone (DROM-COM). Service gratuit et transparent." />
+    <meta property="og:url" content="https://akiprisaye.pages.dev/" />
+    <meta property="og:site_name" content="A KI PRI SA YÉ" />
+    <meta property="og:image" content="https://akiprisaye.pages.dev/og-cover.jpg" />
+    <meta property="og:image:alt" content="A KI PRI SA YÉ - Comparateur de prix pour les DROM-COM" />
+    <meta property="og:locale" content="fr_FR" />
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="A KI PRI SA YÉ – Comparateur de prix & suivi budget" />
+    <meta name="twitter:description" content="Comparez les prix et trouvez l'enseigne la moins chère dans votre zone (DROM-COM). Service gratuit et transparent." />
+    <meta name="twitter:image" content="https://akiprisaye.pages.dev/og-cover.jpg" />
+    <meta name="twitter:image:alt" content="A KI PRI SA YÉ - Comparateur de prix pour les DROM-COM" />
+    
+    <!-- Favicons and Icons -->
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/icon.svg" />
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+    
+    <!-- Performance and Preconnects -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="//akiprisaye.pages.dev" />
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "A KI PRI SA YÉ",
+      "alternateName": "Ki Pri",
+      "description": "Comparateur de prix et suivi budget pour les territoires d'outre-mer français (DROM-COM)",
+      "url": "https://akiprisaye.pages.dev/",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "Web Browser",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "EUR"
+      },
+      "serviceArea": {
+        "@type": "Place",
+        "name": "DROM-COM (Guadeloupe, Martinique, Guyane, Réunion, Mayotte)"
+      }
+    }
+    </script>
   </head>
   <body class="bg-slate-50 text-slate-900 antialiased">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/service-worker.js')
+            .then(registration => console.log('SW registered:', registration))
+            .catch(error => console.log('SW registration failed:', error));
+        });
+      }
+    </script>
+    
+    <!-- Lazy Loading Support -->
+    <script>
+      // Lazy loading polyfill for older browsers
+      if ('loading' in HTMLImageElement.prototype) {
+        // Native lazy loading is supported
+      } else {
+        // Load polyfill for browsers that don't support lazy loading
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.8.4/dist/lazyload.min.js';
+        script.onload = () => {
+          new LazyLoad({
+            elements_selector: 'img[loading="lazy"]'
+          });
+        };
+        document.head.appendChild(script);
+      }
+    </script>
   </body>
 </html>

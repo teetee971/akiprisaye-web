@@ -8,7 +8,9 @@
     "build:client": "vite build --outDir dist/client",
     "preview": "vite preview --host",
     "check": "tsc --noEmit",
-    "start": "npm run preview"
+    "start": "npm run preview",
+    "optimize-seo": "node optimize-seo.js",
+    "build:optimized": "npm run optimize-seo && npm run build"
   },
   "dependencies": {
     "react": "^18.3.1",
