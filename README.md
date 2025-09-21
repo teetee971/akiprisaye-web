@@ -1,6 +1,32 @@
-# 🌍 A KI PRI SA YÉ — API
+# 🌍 A KI PRI SA YÉ — Comparateur de prix DROM-COM
 
-API Cloudflare Pages Functions pour la comparaison de prix et la gestion des territoires DOM-TOM.
+Application web de comparaison de prix et suivi budget pour les territoires d'outre-mer français (DROM-COM).
+
+---
+
+## 📁 Organisation du dépôt
+
+```
+akiprisaye-web/
+├── public/                 # Fichiers statiques pour Pages.dev
+│   ├── index.html         # Page principale
+│   ├── favicon.ico        # Icône du site
+│   ├── icon.svg           # Icône SVG
+│   ├── manifest.webmanifest
+│   └── ...
+├── src/                   # Code source de l'application
+├── scripts/               # Scripts d'utilitaires et maintenance
+│   ├── deploy_check.sh    # Vérification du déploiement
+│   ├── mega_check.sh      # Tests complets
+│   └── ...
+├── install/               # Fichiers d'installation (.iss, .bat)
+├── assets/                # Ressources (images promo, logos)
+│   ├── promo/            # Images promotionnelles
+│   ├── pwa_icon_*.png    # Icônes PWA
+│   └── logo_*.webp       # Logos
+├── deploy-pages.sh        # Script principal de déploiement
+└── package.json
+```
 
 ---
 
@@ -12,34 +38,65 @@ API Cloudflare Pages Functions pour la comparaison de prix et la gestion des ter
 
 ---
 
-## 🚀 Checklist des fonctionnalités
+## 🚀 Déploiement sur Pages.dev
 
-### 📱 Interface & UX
-- [ ] Corriger responsive mobile
-- [ ] Améliorer Service Worker
-- [ ] offline complet
+### Installation rapide
+```bash
+npm install
+npm run build
+```
 
-### 🌐 SEO & Infrastructure  
-- [ ] Créer `_headers`
-- [ ] Ajouter `robots.txt`
-- [ ] sitemap.xml
-- [ ] Ajouter meta SEO
-- [ ] OpenGraph
+### Déploiement automatique
+```bash
+./deploy-pages.sh
+```
 
-### 🔗 Intégrations & API
-- [ ] Connecter comparateur à API Data.gouv
-- [ ] OCR
-- [ ] Signaler un produit
+Le script de déploiement :
+1. Vérifie les pré-requis (Node.js, pnpm, git)
+2. Installe les dépendances
+3. Lance le build Vite
+4. Commit et push vers GitHub
+5. Cloudflare Pages déploie automatiquement
 
-### 📄 Pages & Admin
-- [ ] Créer page `/admin` sécurisée
-- [ ] Créer page `/actualites`
+### Variables d'environnement
+```bash
+export BRANCH=main           # Branche de déploiement
+export BUILD_DIR=dist        # Dossier de sortie
+export CF_PROJECT=akiprisaye # Nom du projet Cloudflare
+```
 
 ---
 
-## 🛠️ Installation et développement
+## 🛠️ Développement local
 
 ```bash
+# Installation
 npm install
+
+# Serveur de développement
 npm run dev
-``` 
+
+# Build de production
+npm run build
+
+# Prévisualisation locale
+npm run preview
+```
+
+---
+
+## 🧹 Maintenance
+
+- **Scripts utilitaires** : `scripts/`
+- **Installation desktop** : `install/`
+- **Vérification déploiement** : `./scripts/deploy_check.sh`
+- **Tests complets** : `./scripts/mega_check.sh`
+
+---
+
+## 🌐 SEO & Infrastructure
+
+- [x] Meta SEO et OpenGraph
+- [x] robots.txt et sitemap.xml  
+- [x] Service Worker PWA
+- [x] Responsive mobile 
