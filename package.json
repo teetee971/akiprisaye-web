@@ -4,8 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "vite --host",
-    "build": "vite build --outDir dist/client",
-    "build:client": "vite build --outDir dist/client",
+    "build": "vite build",
     "preview": "vite preview --host",
     "check": "tsc --noEmit",
     "start": "npm run preview",
