@@ -8,4 +8,4 @@ html, body, #root {
   word-break: break-word;
   overflow-wrap: anywhere;
 }
-body { @apply bg-slate-50 text-slate-900 antialiased; }
+body { @apply bg-gray-50 text-gray-900 antialiased; }
