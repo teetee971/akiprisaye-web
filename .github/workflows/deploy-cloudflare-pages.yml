@@ -96,13 +96,13 @@ jobs:
       - name: Merge builds
         run: |
           # Copy functional app to subdirectory
-          mkdir -p dist/app
-          cp -r a-ki-pri-sa-ye-functional/dist/* dist/app/
+          mkdir -p dist/public/app
+          cp -r a-ki-pri-sa-ye-functional/dist/* dist/public/app/
           
-          # Copy PWA files to root
-          cp public/manifest.webmanifest dist/
-          cp public/service-worker.js dist/
-          cp public/*icon*.png dist/ 2>/dev/null || true
+          # Copy PWA files to root of public
+          cp public/manifest.webmanifest dist/public/
+          cp public/service-worker.js dist/public/
+          cp public/*icon*.png dist/public/ 2>/dev/null || true
 
       - name: Publish to Cloudflare Pages
         uses: cloudflare/pages-action@v1
@@ -110,7 +110,7 @@ jobs:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
           projectName: akiprisaye
-          directory: dist
+          directory: dist/public
 
       - name: Deploy success notification
         if: success()
