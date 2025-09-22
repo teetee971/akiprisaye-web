@@ -1,6 +1,6 @@
 name: 📋 Check-list de déploiement interactive
 description: Liste de tâches interactive pour valider le déploiement de A KI PRI SA YÉ
-title: "Check-list de déploiement - [DATE]"
+title: "Check-list de déploiement"
 labels: ["deployment", "checklist"]
 assignees:
   - teetee971

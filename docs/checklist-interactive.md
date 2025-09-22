@@ -8,7 +8,7 @@ Cette fonctionnalité permet de créer une issue GitHub interactive pour suivre 
 
 1. Aller sur [Nouvelle issue](https://github.com/teetee971/akiprisaye-web/issues/new/choose)
 2. Sélectionner "📋 Check-list de déploiement interactive"
-3. Modifier le titre en remplaçant `[DATE]` par la date actuelle
+3. Modifier le titre si nécessaire (ajouter une date ou version spécifique)
 4. L'issue sera pré-remplie avec tous les éléments de la check-list
 
 ### Comment utiliser la check-list
