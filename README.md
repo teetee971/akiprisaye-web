@@ -37,6 +37,13 @@ API Cloudflare Pages Functions pour la comparaison de prix et la gestion des ter
 
 ---
 
+## 🗺️ Feuille de Route
+
+Consultez notre [**Roadmap complète**](./ROADMAP.md) pour découvrir :
+- Les priorités Q4 2024, Q1 2025 et Q2 2025
+- Les fonctionnalités en développement
+- Comment contribuer au projet
+
 ## 🛠️ Installation et développement
 
 ```bash

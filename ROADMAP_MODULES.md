@@ -38,7 +38,7 @@
 ---
 
 ## 🗓️ Mise à jour
-Dernière MAJ : 27 juin 2025 — 23h03 GMT‑4 (Guadeloupe)
+Dernière MAJ : 22/09/2025 — 10:01 GMT‑4 (Guadeloupe)
 
 ---
 

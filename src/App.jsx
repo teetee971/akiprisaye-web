@@ -5,6 +5,7 @@ import GamificationSystem from './components/GamificationSystem';
 import AccessibilityPanel from './components/AccessibilityPanel';
 import UserFeedbackSystem from './components/UserFeedbackSystem';
 import GrandesSurfacesDOMTOM from './components/GrandesSurfacesDOMTOM';
+import RoadmapViewer from './components/RoadmapViewer';
 import Carte from './pages/Carte';
 
 export default function App() {
@@ -12,7 +13,8 @@ export default function App() {
 
   const modules = [
     { id: 'home', name: 'Accueil', icon: '🏠' },
-    { id: 'map', name: 'Carte GPS', icon: '🗺️' },
+    { id: 'roadmap', name: 'Roadmap', icon: '🗺️' },
+    { id: 'map', name: 'Carte GPS', icon: '📍' },
     { id: 'stores', name: 'Grandes Surfaces', icon: '🏪' },
     { id: 'notifications', name: 'Notifications', icon: '🔔' },
     { id: 'history', name: 'Historique Prix', icon: '📈' },
@@ -22,6 +24,8 @@ export default function App() {
 
   const renderModule = () => {
     switch (activeModule) {
+      case 'roadmap':
+        return <RoadmapViewer />;
       case 'map':
         return <Carte />;
       case 'stores':

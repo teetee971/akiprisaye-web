@@ -20,6 +20,8 @@
 
     "optimize-seo": "node optimize-seo.js",
 
+    "update-roadmap": "node scripts/update-roadmap.js",
+
     "build:optimized": "npm run optimize-seo && npm run build",
 
     "test": "vitest",
