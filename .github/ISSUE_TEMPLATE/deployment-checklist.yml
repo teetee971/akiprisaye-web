@@ -1,0 +1,124 @@
+name: 📋 Check-list de déploiement interactive
+description: Liste de tâches interactive pour valider le déploiement de A KI PRI SA YÉ
+title: "Check-list de déploiement"
+labels: ["deployment", "checklist"]
+assignees:
+  - teetee971
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # Check-list de déploiement A KI PRI SA YÉ
+        
+        Cette issue permet de suivre l'avancement du déploiement en cochant directement les tâches accomplies.
+        
+        **Instructions :** Cochez les cases en modifiant les `- [ ]` en `- [x]` au fur et à mesure de l'avancement.
+
+  - type: textarea
+    id: code-functionalities
+    attributes:
+      label: "1. Code & Fonctionnalités"
+      description: "Validation des composants et fonctionnalités principales"
+      value: |
+        - [ ] Les composants `ProductDetails.jsx` et `ScannerPage.jsx` sont présents et testés.
+        - [ ] Le scanner réel fonctionne sur mobile et desktop.
+        - [ ] Les appels à OpenFoodFacts sont OK : nom, marque, Nutri-Score, photo, origine, labels, ingrédients s'affichent.
+        - [ ] L'historique des prix (Firestore) s'affiche en graphique (react-chartjs-2).
+        - [ ] Les tickets associés (Firestore) s'affichent correctement.
+        - [ ] Le cache local fonctionne (localStorage).
+        - [ ] Les animations (fade-in) sont visibles sur la fiche produit.
+    validations:
+      required: false
+
+  - type: textarea
+    id: design-accessibility
+    attributes:
+      label: "2. Design & Accessibilité"
+      description: "Validation de l'interface utilisateur et de l'accessibilité"
+      value: |
+        - [ ] Dark mode / mode sombre cohérent sur toutes les pages.
+        - [ ] Les badges, cartes, boutons et graphiques sont bien stylisés (Tailwind + shadcn/ui).
+        - [ ] Responsive mobile-first (affichage correct sur smartphone, tablette, desktop).
+        - [ ] Les `aria-label` sont présents sur tous les éléments interactifs.
+    validations:
+      required: false
+
+  - type: textarea
+    id: dependencies-build
+    attributes:
+      label: "3. Dépendances & Build"
+      description: "Validation de l'environnement de développement et build"
+      value: |
+        - [ ] Toutes les dépendances sont installées (`html5-qrcode`, `react-chartjs-2`, `chart.js`, `shadcn-ui`, `tailwindcss`, `firebase`).
+        - [ ] Le build local fonctionne sans erreur (`npm run build` ou équivalent).
+        - [ ] Le fichier `firebase.js` est bien configuré (accès Firestore sécurisé).
+    validations:
+      required: false
+
+  - type: textarea
+    id: deployment
+    attributes:
+      label: "4. Déploiement"
+      description: "Validation du processus de déploiement"
+      value: |
+        - [ ] Le dépôt GitHub est à jour sur la branche principale (`main`).
+        - [ ] Le service de déploiement (Pages.dev, Vercel, Netlify…) est configuré pour déployer sur chaque push.
+        - [ ] La dernière version du code est déployée (vérifier logs, date du build).
+        - [ ] L'URL de production est accessible : https://akiprisaye.pages.dev/
+    validations:
+      required: false
+
+  - type: textarea
+    id: tests-validation
+    attributes:
+      label: "5. Tests & Validation"
+      description: "Tests fonctionnels sur l'application déployée"
+      value: |
+        - [ ] Tester un scan de code-barres réel sur mobile.
+        - [ ] Vérifier l'affichage d'un produit connu (ex : Nutella).
+        - [ ] Vérifier l'affichage de l'historique des prix et tickets pour ce produit.
+        - [ ] Vérifier la gestion des erreurs (produit non trouvé, prix/ticket absent, problème API).
+        - [ ] Vérifier le comportement sur différents navigateurs (Chrome, Safari, Firefox).
+    validations:
+      required: false
+
+  - type: textarea
+    id: security-gdpr
+    attributes:
+      label: "6. Sécurité & RGPD"
+      description: "Validation des aspects sécurité et conformité"
+      value: |
+        - [ ] Les données Firestore sont protégées (règles de sécurité).
+        - [ ] Les données personnelles (tickets, prix) ne sont pas exposées publiquement.
+        - [ ] Les mentions RGPD sont présentes (si besoin).
+    validations:
+      required: false
+
+  - type: textarea
+    id: monitoring-support
+    attributes:
+      label: "7. Monitoring & Support"
+      description: "Validation des outils de monitoring et support"
+      value: |
+        - [ ] Un moyen de monitoring est en place (logs, erreurs déploiement).
+        - [ ] Un canal support est prêt en cas de bug (mail, Discord, GitHub issues).
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional-notes
+    attributes:
+      label: "Notes additionnelles"
+      description: "Commentaires, observations ou problèmes rencontrés"
+      placeholder: "Ajouter des notes, liens, captures d'écran ou informations complémentaires..."
+    validations:
+      required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        
+        **Progression :** Une fois tous les éléments validés, cette issue peut être fermée et le déploiement considéré comme terminé.
+        
+        > **Tip :** Vous pouvez suivre la progression en temps réel en modifiant directement cette issue ou en commentant pour signaler l'avancement.

@@ -1,0 +1,22 @@
+name: 📋 Suggest Deployment Checklist
+
+on:
+  workflow_run:
+    workflows: ["🚀 Déployer sur Cloudflare Pages"]
+    types:
+      - completed
+
+jobs:
+  suggest-checklist:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Log deployment checklist reminder
+        run: |
+          echo "🎉 Déploiement réussi sur Cloudflare Pages!"
+          echo "💡 Rappel: Pensez à créer une check-list de déploiement interactive"
+          echo "🔗 URL: https://github.com/${{ github.repository }}/issues/new/choose"
+          echo "📋 Sélectionner: 'Check-list de déploiement interactive'"
+          echo "✅ Cela permettra de valider toutes les fonctionnalités post-déploiement"
