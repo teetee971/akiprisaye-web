@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 📚 Documentation
+    url: https://github.com/teetee971/akiprisaye-web/blob/main/README.md
+    about: Consultez la documentation du projet
+  - name: 🌐 Site web
+    url: https://akiprisaye.pages.dev/
+    about: Visitez l'application en production
+  - name: 💬 Discussions
+    url: https://github.com/teetee971/akiprisaye-web/discussions
+    about: Rejoignez les discussions de la communauté

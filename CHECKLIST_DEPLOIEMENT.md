@@ -1,5 +1,9 @@
 # Check-list de déploiement A KI PRI SA YÉ
 
+> 💡 **Nouveau** : Une version interactive de cette check-list est disponible !  
+> [Créer une issue de déploiement interactive](.github/ISSUE_TEMPLATE/deployment-checklist.yml) •  
+> [Guide d'utilisation](.github/DEPLOYMENT_CHECKLIST_GUIDE.md)
+
 ## 1. Code & Fonctionnalités
 - [ ] Les composants `ProductDetails.jsx` et `ScannerPage.jsx` sont présents et testés.
 - [ ] Le scanner réel fonctionne sur mobile et desktop.

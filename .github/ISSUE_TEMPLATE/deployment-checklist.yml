@@ -1,0 +1,159 @@
+name: 🚀 Check-list de déploiement interactive
+description: Check-list interactive pour valider le déploiement du projet A KI PRI SA YÉ
+title: "🚀 Déploiement - [DATE]"
+labels: ["déploiement", "checklist", "validation"]
+assignees:
+  - teetee971
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # 🚀 Check-list de déploiement A KI PRI SA YÉ
+
+        Cette issue permet de suivre interactivement l'avancement du déploiement du projet.
+        Cochez les cases au fur et à mesure de la validation de chaque étape.
+
+        ---
+
+  - type: checkboxes
+    id: code-fonctionnalites
+    attributes:
+      label: "## 1. Code & Fonctionnalités"
+      description: "Validation des composants et fonctionnalités principales"
+      options:
+        - label: "Les composants `ProductDetails.jsx` et `ScannerPage.jsx` sont présents et testés"
+          required: false
+        - label: "Le scanner réel fonctionne sur mobile et desktop"
+          required: false
+        - label: "Les appels à OpenFoodFacts sont OK : nom, marque, Nutri-Score, photo, origine, labels, ingrédients s'affichent"
+          required: false
+        - label: "L'historique des prix (Firestore) s'affiche en graphique (react-chartjs-2)"
+          required: false
+        - label: "Les tickets associés (Firestore) s'affichent correctement"
+          required: false
+        - label: "Le cache local fonctionne (localStorage)"
+          required: false
+        - label: "Les animations (fade-in) sont visibles sur la fiche produit"
+          required: false
+
+  - type: checkboxes
+    id: design-accessibilite
+    attributes:
+      label: "## 2. Design & Accessibilité"
+      description: "Validation de l'interface utilisateur et de l'accessibilité"
+      options:
+        - label: "Dark mode / mode sombre cohérent sur toutes les pages"
+          required: false
+        - label: "Les badges, cartes, boutons et graphiques sont bien stylisés (Tailwind + shadcn/ui)"
+          required: false
+        - label: "Responsive mobile-first (affichage correct sur smartphone, tablette, desktop)"
+          required: false
+        - label: "Les `aria-label` sont présents sur tous les éléments interactifs"
+          required: false
+
+  - type: checkboxes
+    id: dependances-build
+    attributes:
+      label: "## 3. Dépendances & Build"
+      description: "Validation de l'environnement de build et des dépendances"
+      options:
+        - label: "Toutes les dépendances sont installées (`html5-qrcode`, `react-chartjs-2`, `chart.js`, `shadcn-ui`, `tailwindcss`, `firebase`)"
+          required: false
+        - label: "Le build local fonctionne sans erreur (`npm run build` ou équivalent)"
+          required: false
+        - label: "Le fichier `firebase.js` est bien configuré (accès Firestore sécurisé)"
+          required: false
+
+  - type: checkboxes
+    id: deploiement
+    attributes:
+      label: "## 4. Déploiement"
+      description: "Validation du déploiement en production"
+      options:
+        - label: "Le dépôt GitHub est à jour sur la branche principale (`main`)"
+          required: false
+        - label: "Le service de déploiement (Pages.dev, Vercel, Netlify…) est configuré pour déployer sur chaque push"
+          required: false
+        - label: "La dernière version du code est déployée (vérifier logs, date du build)"
+          required: false
+        - label: "L'URL de production est accessible : https://akiprisaye.pages.dev/"
+          required: false
+
+  - type: checkboxes
+    id: tests-validation
+    attributes:
+      label: "## 5. Tests & Validation"
+      description: "Tests fonctionnels en environnement de production"
+      options:
+        - label: "Tester un scan de code-barres réel sur mobile"
+          required: false
+        - label: "Vérifier l'affichage d'un produit connu (ex : Nutella)"
+          required: false
+        - label: "Vérifier l'affichage de l'historique des prix et tickets pour ce produit"
+          required: false
+        - label: "Vérifier la gestion des erreurs (produit non trouvé, prix/ticket absent, problème API)"
+          required: false
+        - label: "Vérifier le comportement sur différents navigateurs (Chrome, Safari, Firefox)"
+          required: false
+
+  - type: checkboxes
+    id: securite-rgpd
+    attributes:
+      label: "## 6. Sécurité & RGPD"
+      description: "Validation de la sécurité et de la conformité RGPD"
+      options:
+        - label: "Les données Firestore sont protégées (règles de sécurité)"
+          required: false
+        - label: "Les données personnelles (tickets, prix) ne sont pas exposées publiquement"
+          required: false
+        - label: "Les mentions RGPD sont présentes (si besoin)"
+          required: false
+
+  - type: checkboxes
+    id: monitoring-support
+    attributes:
+      label: "## 7. Monitoring & Support"
+      description: "Mise en place du monitoring et du support"
+      options:
+        - label: "Un moyen de monitoring est en place (logs, erreurs déploiement)"
+          required: false
+        - label: "Un canal support est prêt en cas de bug (mail, Discord, GitHub issues)"
+          required: false
+
+  - type: textarea
+    id: notes-deploiement
+    attributes:
+      label: "📝 Notes de déploiement"
+      description: "Ajoutez ici toutes les notes, observations ou problèmes rencontrés pendant le déploiement"
+      placeholder: |
+        - Version déployée : 
+        - Date/heure : 
+        - Problèmes rencontrés :
+        - Actions correctives :
+        - Commentaires additionnels :
+
+  - type: dropdown
+    id: statut-deploiement
+    attributes:
+      label: "📊 Statut du déploiement"
+      description: "Sélectionnez le statut actuel du déploiement"
+      options:
+        - "🟡 En cours"
+        - "🟢 Réussi"
+        - "🔴 Échec"
+        - "⏸️ En attente"
+      default: 0
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        
+        ## 🎯 Instructions d'utilisation
+
+        1. **Cochez les cases** au fur et à mesure de la validation de chaque étape
+        2. **Ajoutez des commentaires** si nécessaire pour chaque section
+        3. **Mettez à jour le statut** du déploiement
+        4. **Fermez l'issue** une fois toutes les validations terminées
+
+        > 💡 **Tip :** Vous pouvez utiliser cette issue pour communiquer avec l'équipe sur l'avancement du déploiement.

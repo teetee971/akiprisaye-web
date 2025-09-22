@@ -37,6 +37,18 @@ API Cloudflare Pages Functions pour la comparaison de prix et la gestion des ter
 
 ---
 
+## 🚀 Déploiement
+
+### Check-list interactive de déploiement
+
+Pour valider un déploiement, utilisez notre check-list interactive :
+
+- 📋 **[Créer une issue de déploiement](https://github.com/teetee971/akiprisaye-web/issues/new?template=deployment-checklist.yml)** - Version interactive GitHub
+- 📚 **[Guide d'utilisation](.github/DEPLOYMENT_CHECKLIST_GUIDE.md)** - Comment utiliser la check-list
+- 📝 **[Check-list originale](CHECKLIST_DEPLOIEMENT.md)** - Version markdown statique
+
+---
+
 ## 🛠️ Installation et développement
 
 ```bash
