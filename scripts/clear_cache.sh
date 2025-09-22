@@ -5,7 +5,7 @@ echo "🚀 Purge cache et redéploiement forcé..."
 npm run build || { echo "❌ Erreur build"; exit 1; }
 
 # Publication forcée Cloudflare Pages
-npx wrangler pages publish ./dist \
+npx wrangler pages publish ./dist/public \
   --project-name=akiprisaye \
   --branch=main \
   --commit-dirty=true \

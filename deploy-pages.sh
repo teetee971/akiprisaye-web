@@ -8,7 +8,7 @@ er(){ printf "\033[1;31m%s\033[0m\n" "$*"; }
 
 # === Réglages ===
 BRANCH="${BRANCH:-main}"            # branche à pousser
-BUILD_DIR="${BUILD_DIR:-dist}"      # dossier de sortie Vite
+BUILD_DIR="${BUILD_DIR:-dist/public}"      # dossier de sortie Vite
 CF_PROJECT="${CF_PROJECT:-}"         # nom Cloudflare Pages (si déploiement wrangler)
 WRANGLER_DEPLOY="${WRANGLER_DEPLOY:-0}" # 1 pour déployer via wrangler, sinon 0
 
