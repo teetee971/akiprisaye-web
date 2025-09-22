@@ -1,7 +1,12 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./index.html", "./src/**/*.{js,jsx,ts,tsx}"],
-  theme: { 
+  content: [
+    "./src/**/*.{js,jsx,ts,tsx}",
+    "./public/index.html",
+    "./index.html"
+  ],
+  darkMode: "class", // pour le mode sombre
+  theme: {
     extend: {
       colors: {
         slate: {
@@ -18,7 +23,7 @@ module.exports = {
           950: '#020617',
         }
       }
-    } 
+    },
   },
   plugins: [],
 };
