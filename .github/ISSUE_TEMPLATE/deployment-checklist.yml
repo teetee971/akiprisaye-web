@@ -1,0 +1,190 @@
+---
+name: Check-list de déploiement A KI PRI SA YÉ
+description: Liste de tâches interactive pour le déploiement du projet
+title: "🚀 Check-list de déploiement - [VERSION/DATE]"
+labels: ["deployment", "checklist", "production"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # 🚀 Check-list de déploiement A KI PRI SA YÉ
+
+        Cette issue permet de suivre l'avancement du déploiement
+        étape par étape. Cochez les cases au fur et à mesure de la
+        validation de chaque point.
+
+        ---
+
+  - type: markdown
+    attributes:
+      value: |
+        ## 1. Code & Fonctionnalités
+
+  - type: checkboxes
+    id: code-features
+    attributes:
+      label: Validation du code et des fonctionnalités
+      options:
+        - label: "Les composants `ProductDetails.jsx` et `ScannerPage.jsx`
+            sont présents et testés"
+          required: false
+        - label: "Le scanner réel fonctionne sur mobile et desktop"
+          required: false
+        - label: "Les appels à OpenFoodFacts sont OK : nom, marque,
+            Nutri-Score, photo, origine, labels, ingrédients s'affichent"
+          required: false
+        - label: "L'historique des prix (Firestore) s'affiche en graphique
+            (react-chartjs-2)"
+          required: false
+        - label: "Les tickets associés (Firestore) s'affichent correctement"
+          required: false
+        - label: "Le cache local fonctionne (localStorage)"
+          required: false
+        - label: "Les animations (fade-in) sont visibles sur la fiche produit"
+          required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ## 2. Design & Accessibilité
+
+  - type: checkboxes
+    id: design-accessibility
+    attributes:
+      label: Validation du design et de l'accessibilité
+      options:
+        - label: "Dark mode / mode sombre cohérent sur toutes les pages"
+          required: false
+        - label: "Les badges, cartes, boutons et graphiques sont bien
+            stylisés (Tailwind + shadcn/ui)"
+          required: false
+        - label: "Responsive mobile-first (affichage correct sur smartphone,
+            tablette, desktop)"
+          required: false
+        - label: "Les `aria-label` sont présents sur tous les éléments
+            interactifs"
+          required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ## 3. Dépendances & Build
+
+  - type: checkboxes
+    id: dependencies-build
+    attributes:
+      label: Validation des dépendances et du build
+      options:
+        - label: "Toutes les dépendances sont installées (`html5-qrcode`,
+            `react-chartjs-2`, `chart.js`, `shadcn-ui`, `tailwindcss`,
+            `firebase`)"
+          required: false
+        - label: "Le build local fonctionne sans erreur (`npm run build`
+            ou équivalent)"
+          required: false
+        - label: "Le fichier `firebase.js` est bien configuré
+            (accès Firestore sécurisé)"
+          required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ## 4. Déploiement
+
+  - type: checkboxes
+    id: deployment
+    attributes:
+      label: Validation du déploiement
+      options:
+        - label: "Le dépôt GitHub est à jour sur la branche principale
+            (`main`)"
+          required: false
+        - label: "Le service de déploiement (Pages.dev, Vercel, Netlify…)
+            est configuré pour déployer sur chaque push"
+          required: false
+        - label: "La dernière version du code est déployée (vérifier logs,
+            date du build)"
+          required: false
+        - label: "L'URL de production est accessible :
+            https://akiprisaye.pages.dev/"
+          required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ## 5. Tests & Validation
+
+  - type: checkboxes
+    id: tests-validation
+    attributes:
+      label: Tests et validation en production
+      options:
+        - label: "Tester un scan de code-barres réel sur mobile"
+          required: false
+        - label: "Vérifier l'affichage d'un produit connu (ex : Nutella)"
+          required: false
+        - label: "Vérifier l'affichage de l'historique des prix et tickets
+            pour ce produit"
+          required: false
+        - label: "Vérifier la gestion des erreurs (produit non trouvé,
+            prix/ticket absent, problème API)"
+          required: false
+        - label: "Vérifier le comportement sur différents navigateurs
+            (Chrome, Safari, Firefox)"
+          required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ## 6. Sécurité & RGPD
+
+  - type: checkboxes
+    id: security-gdpr
+    attributes:
+      label: Validation sécurité et RGPD
+      options:
+        - label: "Les données Firestore sont protégées (règles de sécurité)"
+          required: false
+        - label: "Les données personnelles (tickets, prix) ne sont pas
+            exposées publiquement"
+          required: false
+        - label: "Les mentions RGPD sont présentes (si besoin)"
+          required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ## 7. Monitoring & Support
+
+  - type: checkboxes
+    id: monitoring-support
+    attributes:
+      label: Validation monitoring et support
+      options:
+        - label: "Un moyen de monitoring est en place (logs, erreurs
+            déploiement)"
+          required: false
+        - label: "Un canal support est prêt en cas de bug (mail, Discord,
+            GitHub issues)"
+          required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+
+        ## ✅ Validation finale
+
+        Une fois toutes les cases cochées, le déploiement peut être
+        considéré comme validé et prêt pour la production.
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes additionnelles
+      description: "Ajoutez ici toute note ou observation importante
+        concernant ce déploiement"
+      placeholder: "Notes, liens utiles, problèmes rencontrés..."
+    validations:
+      required: false

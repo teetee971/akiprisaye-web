@@ -1,5 +1,8 @@
 # Check-list de déploiement A KI PRI SA YÉ
 
+> 🚀 **Version interactive disponible !** Créez une check-list interactive via GitHub Issues :  
+> **[📋 Voir la documentation](./docs/deployment-checklist.md)** | **[🎯 Créer une issue](https://github.com/teetee971/akiprisaye-web/issues/new/choose)**
+
 ## 1. Code & Fonctionnalités
 - [ ] Les composants `ProductDetails.jsx` et `ScannerPage.jsx` sont présents et testés.
 - [ ] Le scanner réel fonctionne sur mobile et desktop.
