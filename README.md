@@ -12,6 +12,12 @@ API Cloudflare Pages Functions pour la comparaison de prix et la gestion des ter
 
 ---
 
+## 🗺️ Feuille de Route
+
+Consultez notre [**Feuille de route détaillée**](./ROADMAP.md) pour connaître les fonctionnalités prévues et le planning de développement par trimestre.
+
+---
+
 ## 🚀 Checklist des fonctionnalités
 
 ### 📱 Interface & UX

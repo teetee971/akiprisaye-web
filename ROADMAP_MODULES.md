@@ -1,5 +1,7 @@
 # 📍 A KI PRI SA YÉ – Roadmap des Modules (FR / EN / ES)
 
+> 📋 **Voir aussi** : [Feuille de route principale du projet](./ROADMAP.md) pour la planification globale et les jalons trimestriels.
+
 ---
 
 ## ✅ Modules actuellement disponibles / Currently live / Actualmente activos
