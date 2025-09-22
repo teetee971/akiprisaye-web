@@ -58,6 +58,8 @@
 
     "react-leaflet": "^4.2.1",
 
+    "react-router-dom": "^7.9.1",
+
     "react-scroll": "^1.9.3"
 
   },
@@ -70,6 +72,10 @@
 
     "@testing-library/react": "^16.3.0",
 
+    "@typescript-eslint/eslint-plugin": "^8.44.0",
+
+    "@typescript-eslint/parser": "^8.44.0",
+
     "@vitejs/plugin-react": "^4.5.0",
 
     "@vitest/coverage-v8": "^3.2.4",
@@ -79,6 +85,8 @@
     "esbuild": "^0.21.5",
 
     "eslint": "^9.36.0",
+
+    "eslint-plugin-react": "^7.37.5",
 
     "jsdom": "^27.0.0",
 

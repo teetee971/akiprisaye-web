@@ -1,38 +1,132 @@
-import { Link, NavLink } from 'react-router-dom';
-import { ShoppingCart, Heart, BarChart3 } from 'lucide-react';
-import { useCart } from '../store/useCart';
+import React, { useState, useEffect } from 'react';
+import { Link as ScrollLink } from 'react-scroll';
+import { motion } from 'framer-motion';
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 
-const Item = ({ to, children }) => (
-  <NavLink
-    to={to}
-    className={({isActive}) =>
-      `px-3 py-2 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 ${isActive?'font-semibold underline':''}`
-    }>
-    {children}
-  </NavLink>
-);
+const ModernNavbar = () => {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState('hero');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-export default function Navbar(){
-  const total = useCart(state => state.totalQty());
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const navItems = [
+    { name: 'Accueil', to: 'hero' },
+    { name: 'Fonctionnalités', to: 'features' },
+    { name: 'Statistiques', to: 'stats' },
+    { name: 'Démo', to: 'demo' }
+  ];
+
   return (
-    <header className="sticky top-0 z-50 backdrop-blur bg-white/60 dark:bg-neutral-900/60 border-b border-black/5">
-      <div className="container flex items-center gap-3 py-3">
-        <Link to="/" className="text-xl font-black tracking-tight">A KI PRI SA YÉ</Link>
-        <nav className="ml-4 hidden sm:flex items-center gap-1">
-          <Item to="/">Accueil</Item>
-          <Item to="/produits">Produits</Item>
-          <Item to="/favoris">Favoris</Item>
-          <Item to="/vie-chere">Vie chère</Item>
-          <Item to="/compte">Compte</Item>
-        </nav>
-        <div className="ml-auto flex items-center gap-2">
-          <Link to="/favoris" className="btn" title="Favoris"><Heart size={18}/></Link>
-          <Link to="/vie-chere" className="btn" title="Stats"><BarChart3 size={18}/></Link>
-          <Link to="/panier" className="btn btn-primary" title="Panier">
-            <ShoppingCart size={18} className="mr-2"/>{total()}
-          </Link>
+    <motion.nav
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isScrolled 
+          ? 'bg-white/90 backdrop-blur-md shadow-lg' 
+          : 'bg-transparent'
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo */}
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            className="flex-shrink-0"
+          >
+            <ScrollLink
+              to="hero"
+              smooth={true}
+              duration={500}
+              className={`text-xl font-bold cursor-pointer transition-colors ${
+                isScrolled ? 'text-blue-600' : 'text-white'
+              }`}
+            >
+              A KI PRI SA YÉ
+            </ScrollLink>
+          </motion.div>
+
+          {/* Desktop Navigation */}
+          <div className="hidden md:block">
+            <div className="ml-10 flex items-baseline space-x-4">
+              {navItems.map((item) => (
+                <ScrollLink
+                  key={item.to}
+                  to={item.to}
+                  smooth={true}
+                  duration={500}
+                  spy={true}
+                  onSetActive={(to) => setActiveSection(to)}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium cursor-pointer transition-all duration-200 ${
+                    activeSection === item.to
+                      ? (isScrolled ? 'bg-blue-100 text-blue-700' : 'bg-white/20 text-white')
+                      : (isScrolled ? 'text-gray-700 hover:text-blue-600 hover:bg-blue-50' : 'text-white/80 hover:text-white hover:bg-white/10')
+                  }`}
+                >
+                  {item.name}
+                </ScrollLink>
+              ))}
+            </div>
+          </div>
+
+          {/* Mobile menu button */}
+          <div className="md:hidden">
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className={`p-2 rounded-md transition-colors ${
+                isScrolled ? 'text-gray-700 hover:text-blue-600' : 'text-white hover:bg-white/10'
+              }`}
+            >
+              {isMobileMenuOpen ? (
+                <XMarkIcon className="h-6 w-6" />
+              ) : (
+                <Bars3Icon className="h-6 w-6" />
+              )}
+            </button>
+          </div>
         </div>
+
+        {/* Mobile Navigation */}
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden bg-white/95 backdrop-blur-md rounded-lg mt-2 shadow-lg"
+          >
+            <div className="px-2 pt-2 pb-3 space-y-1">
+              {navItems.map((item) => (
+                <ScrollLink
+                  key={item.to}
+                  to={item.to}
+                  smooth={true}
+                  duration={500}
+                  spy={true}
+                  onSetActive={(to) => setActiveSection(to)}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={`block px-3 py-2 rounded-md text-base font-medium cursor-pointer transition-colors ${
+                    activeSection === item.to
+                      ? 'bg-blue-100 text-blue-700'
+                      : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+                  }`}
+                >
+                  {item.name}
+                </ScrollLink>
+              ))}
+            </div>
+          </motion.div>
+        )}
       </div>
-    </header>
+    </motion.nav>
   );
-}
+};
+
+export default ModernNavbar;
