@@ -5,6 +5,8 @@ import Chat from './pages/Chat.jsx'
 import OCR from './pages/OCR.jsx'
 import Comparateur from './pages/Comparateur.jsx'
 import Import from './pages/Import.jsx'
+import Statistics from './pages/Statistics.jsx'
+import History from './pages/History.jsx'
 
 export default function App(){
   return (
@@ -16,6 +18,8 @@ export default function App(){
           <Route path="/ocr" element={<OCR/>} />
           <Route path="/comparateur" element={<Comparateur/>} />
           <Route path="/import" element={<Import/>} />
+          <Route path="/statistics" element={<Statistics/>} />
+          <Route path="/history" element={<History/>} />
         </Routes>
       </Layout>
     </BrowserRouter>

@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "firebase": "^10.12.4",
+copilot/fix-aa09c3e6-a505-47d9-894f-7d049135fd35
+    "jspdf": "^3.0.3", main
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^5.5.0",

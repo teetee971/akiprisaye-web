@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  tests:
+  unit-tests:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -22,7 +22,9 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm ci
+          cd a-ki-pri-sa-ye-functional && npm ci
 
       - name: Lint code
         run: npx eslint . --ext .js,.jsx,.ts,.tsx --max-warnings 0 || echo "Linting completed with warnings"
@@ -31,29 +33,56 @@ jobs:
         run: npm run check
 
       - name: Run unit tests
-        run: npm test --if-present
+        run: npm run test:run
 
-      - name: Build project
-        run: npm run build
+      - name: Run validation tests
+        run: node test_validation.js
+
+      - name: Build projects
+        run: |
+          npm run build
+          cd a-ki-pri-sa-ye-functional && npm run build
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v3
         with:
           name: build-artifacts
-          path: dist/
+          path: |
+            dist/
+            a-ki-pri-sa-ye-functional/dist/
           retention-days: 7
-
-      - name: Run end-to-end tests
-        run: |
-          npx http-server ./dist -p 3000 &   # lance serveur local
-          sleep 10
-          curl -I http://localhost:3000/ | grep "200 OK"
-          curl -I http://localhost:3000/compare | grep "200 OK" || echo "Compare page may not exist yet"
-          curl -I http://localhost:3000/actualites | grep "200 OK" || echo "Actualites page may not exist yet"
 
   lighthouse:
     runs-on: ubuntu-latest
-    needs: tests
+    needs: unit-tests
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Lighthouse optimization suite
+        run: node lighthouse-optimize.js
+
+      - name: Upload Lighthouse reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: lighthouse-reports
+          path: |
+            lighthouse-report.json
+            lighthouse-optimization-report.json
+          retention-days: 30
+
+  e2e-tests:
+    runs-on: ubuntu-latest
+    needs: unit-tests
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -70,22 +99,32 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: Run Lighthouse CI
+      - name: Run end-to-end tests
         run: |
-          npx http-server ./dist -p 3000 &
+          npx http-server ./dist -p 3000 &   # lance serveur local
           sleep 10
-          npx lighthouse http://localhost:3000 --output=json --output-path=./lighthouse-report.json --chrome-flags="--headless" || echo "Lighthouse audit completed"
-
-      - name: Upload Lighthouse report
-        uses: actions/upload-artifact@v3
-        with:
-          name: lighthouse-report
-          path: lighthouse-report.json
-          retention-days: 7
+          curl -I http://localhost:3000/ | grep "200 OK"
+          curl -I http://localhost:3000/index.html | grep "200 OK"
+          
+          # Test PWA manifest
+          curl -I http://localhost:3000/manifest.webmanifest | grep "200 OK"
+          
+          # Test service worker
+          curl -I http://localhost:3000/service-worker.js | grep "200 OK"
+          
+          # Test essential pages
+          pages=("comparateur.html" "scan-ocr.html" "historique.html" "mon-compte.html")
+          for page in "${pages[@]}"; do
+            if curl -I "http://localhost:3000/$page" 2>/dev/null | grep -q "200 OK"; then
+              echo "✅ $page accessible"
+            else
+              echo "⚠️ $page may not exist (expected for some pages)"
+            fi
+          done
 
   accessibility-test:
     runs-on: ubuntu-latest
-    needs: tests
+    needs: unit-tests
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -123,10 +162,66 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm ci
+          cd a-ki-pri-sa-ye-functional && npm ci
 
       - name: Run security audit
-        run: npm audit --audit-level moderate || echo "Security audit completed with warnings"
+        run: |
+          npm audit --audit-level moderate || echo "Security audit completed with warnings"
+          cd a-ki-pri-sa-ye-functional
+          npm audit --audit-level moderate || echo "Functional app security audit completed with warnings"
 
       - name: Check for known vulnerabilities
-        run: npx audit-ci --moderate || echo "Vulnerability check completed"
+        run: |
+          npx audit-ci --moderate || echo "Vulnerability check completed"
+          cd a-ki-pri-sa-ye-functional
+          npx audit-ci --moderate || echo "Functional app vulnerability check completed"
+
+  performance-test:
+    runs-on: ubuntu-latest
+    needs: unit-tests
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build and analyze bundle
+        run: |
+          npm run build
+          
+          # Check bundle sizes
+          echo "📊 Bundle size analysis:"
+          du -sh dist/assets/* | sort -hr
+          
+          # Check if any JS files are too large (>1MB)
+          large_files=$(find dist/assets -name "*.js" -size +1M)
+          if [ -n "$large_files" ]; then
+            echo "⚠️ Large JavaScript files detected:"
+            echo "$large_files"
+          else
+            echo "✅ All JavaScript bundles are within acceptable size limits"
+          fi
+
+  summary:
+    runs-on: ubuntu-latest
+    needs: [unit-tests, lighthouse, e2e-tests, accessibility-test, security-scan, performance-test]
+    if: always()
+    steps:
+      - name: Test Summary
+        run: |
+          echo "🧪 Test Suite Summary:"
+          echo "- Unit tests: ${{ needs.unit-tests.result }}"
+          echo "- Lighthouse: ${{ needs.lighthouse.result }}"
+          echo "- E2E tests: ${{ needs.e2e-tests.result }}"
+          echo "- Accessibility: ${{ needs.accessibility-test.result }}"
+          echo "- Security: ${{ needs.security-scan.result }}"
+          echo "- Performance: ${{ needs.performance-test.result }}"

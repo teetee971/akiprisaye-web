@@ -7,6 +7,11 @@ export default defineConfig({
     transformer: 'postcss',
   },
   base: './',
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: ['./src/test/setup.js'],
+  },
   build: {
     outDir: "dist",
     assetsDir: 'assets',
