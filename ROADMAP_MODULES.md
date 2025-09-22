@@ -4,6 +4,7 @@
 
 ## ✅ Modules actuellement disponibles / Currently live / Actualmente activos
 
+- 🤖 **Orchestrateur d'IA dynamique** / Dynamic AI Orchestrator / Orquestador IA dinámico
 - 🧠 IA suivi des prix / Price tracking AI / IA seguimiento de precios
 - 🔊 Vwa Péyi vocal multilingue / Multilingual voice / Voz multilingüe Vwa Péyi
 - 🧾 Scan ticket de caisse IA / Receipt scan / Escáner de recibos IA
@@ -27,7 +28,8 @@
 
 ## 🔜 Prochaines fonctionnalités / Coming next / Próximamente
 
-- 🧠 IA prévision inflation + shrinkflation
+- 🤖 Intégration LLM locaux avec l'orchestrateur IA
+- 🧠 IA prévision inflation + shrinkflation (déploiement automatique)
 - 🧪 Analyse nutritionnelle intelligente
 - 📤 Partage différentiel DOM-Hexagone (ex: TikTok)
 - 🧾 Export Excel des comparaisons

@@ -5,6 +5,7 @@ import GamificationSystem from './components/GamificationSystem';
 import AccessibilityPanel from './components/AccessibilityPanel';
 import UserFeedbackSystem from './components/UserFeedbackSystem';
 import GrandesSurfacesDOMTOM from './components/GrandesSurfacesDOMTOM';
+import AIOrchestrationDashboard from './components/AIOrchestrationDashboard';
 import Carte from './pages/Carte';
 
 export default function App() {
@@ -12,6 +13,7 @@ export default function App() {
 
   const modules = [
     { id: 'home', name: 'Accueil', icon: '🏠' },
+    { id: 'ai-orchestration', name: 'Orchestrateur IA', icon: '🤖' },
     { id: 'map', name: 'Carte GPS', icon: '🗺️' },
     { id: 'stores', name: 'Grandes Surfaces', icon: '🏪' },
     { id: 'notifications', name: 'Notifications', icon: '🔔' },
@@ -22,6 +24,8 @@ export default function App() {
 
   const renderModule = () => {
     switch (activeModule) {
+      case 'ai-orchestration':
+        return <AIOrchestrationDashboard />;
       case 'map':
         return <Carte />;
       case 'stores':
@@ -46,6 +50,19 @@ export default function App() {
               </p>
               <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-8 rounded-xl">
                 <h2 className="text-2xl font-bold mb-6">🎉 Modules Intégrés et Améliorés</h2>
+                <div className="mb-6 p-4 bg-gradient-to-r from-green-100 to-blue-100 rounded-lg border-2 border-blue-200">
+                  <h3 className="text-lg font-bold text-blue-800 mb-2">🤖 NOUVEAU: Orchestrateur d'IA</h3>
+                  <p className="text-sm text-blue-700 mb-3">
+                    Système d'orchestration IA permettant le déploiement autonome d'instances IA spécialisées 
+                    pour l'analyse, l'optimisation et l'adaptation aux besoins détectés.
+                  </p>
+                  <button
+                    onClick={() => setActiveModule('ai-orchestration')}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
+                  >
+                    🚀 Découvrir l'Orchestrateur IA
+                  </button>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {modules.slice(1).map(module => (
                     <button
@@ -56,6 +73,7 @@ export default function App() {
                       <div className="text-3xl mb-3">{module.icon}</div>
                       <h3 className="font-semibold text-gray-900 mb-2">{module.name}</h3>
                       <p className="text-sm text-gray-600">
+                        {module.id === 'ai-orchestration' && 'Déploiement autonome et orchestration d\'IA spécialisées'}
                         {module.id === 'map' && 'Carte interactive avec géolocalisation, filtrage et heatmap'}
                         {module.id === 'notifications' && 'Alertes intelligentes PWA en temps réel'}
                         {module.id === 'history' && 'Analyse historique et tendances des prix'}
@@ -70,6 +88,16 @@ export default function App() {
             
             {/* Enhanced Features Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+              <div className="bg-white p-6 rounded-lg shadow-md border-l-4 border-blue-500">
+                <h3 className="text-lg font-semibold mb-3">🤖 Orchestrateur d'IA</h3>
+                <ul className="text-sm text-gray-600 space-y-1">
+                  <li>• Déploiement autonome d'IA spécialisées</li>
+                  <li>• Détection des besoins et optimisation</li>
+                  <li>• Adaptation territoriale DOM-TOM/Métropole</li>
+                  <li>• Gouvernance et sécurité avancées</li>
+                </ul>
+              </div>
+              
               <div className="bg-white p-6 rounded-lg shadow-md">
                 <h3 className="text-lg font-semibold mb-3">🔔 Notifications Intelligentes</h3>
                 <ul className="text-sm text-gray-600 space-y-1">
@@ -134,7 +162,13 @@ export default function App() {
             {/* Demo Actions */}
             <div className="bg-gray-50 p-6 rounded-lg mb-8">
               <h3 className="text-lg font-semibold mb-4">🧪 Explorer les fonctionnalités</h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <button 
+                  onClick={() => setActiveModule('ai-orchestration')}
+                  className="px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 text-sm font-medium"
+                >
+                  🤖 Orchestrateur IA
+                </button>
                 <button 
                   onClick={() => setActiveModule('map')}
                   className="px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"
@@ -186,6 +220,7 @@ export default function App() {
                 <div>
                   <h4 className="font-medium mb-2">🎯 Modules Fonctionnels</h4>
                   <ul className="text-gray-600 space-y-1">
+                    <li>• Orchestrateur IA avec déploiement autonome</li>
                     <li>• Module GPS interactif avec Leaflet</li>
                     <li>• Notifications intelligentes PWA</li>
                     <li>• Comparatif historique avec Chart.js</li>
