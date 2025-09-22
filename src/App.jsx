@@ -12,6 +12,7 @@ export default function App() {
 
   const modules = [
     { id: 'home', name: 'Accueil', icon: '🏠' },
+    { id: 'comparator', name: 'Comparateur Prix', icon: '💰' },
     { id: 'map', name: 'Carte GPS', icon: '🗺️' },
     { id: 'stores', name: 'Grandes Surfaces', icon: '🏪' },
     { id: 'notifications', name: 'Notifications', icon: '🔔' },
@@ -22,6 +23,45 @@ export default function App() {
 
   const renderModule = () => {
     switch (activeModule) {
+      case 'comparator':
+        return (
+          <div className="max-w-7xl mx-auto p-6">
+            <div className="text-center mb-8">
+              <h1 className="text-3xl font-bold text-gray-900 mb-4">
+                💰 Comparateur de Prix
+              </h1>
+              <p className="text-lg text-gray-600 mb-6">
+                Comparez les prix des produits dans votre territoire
+              </p>
+            </div>
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+              <p className="text-blue-800 mb-4">
+                🔗 <strong>Version complète disponible :</strong> Accédez à notre comparateur de prix complet
+              </p>
+              <a 
+                href="/comparateur.html" 
+                target="_blank"
+                className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                🚀 Ouvrir le Comparateur Complet
+              </a>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="bg-white p-6 rounded-lg shadow-md">
+                <h3 className="text-lg font-semibold mb-3">🏪 Multi-enseignes</h3>
+                <p className="text-gray-600">Comparez les prix dans toutes les grandes surfaces de votre territoire</p>
+              </div>
+              <div className="bg-white p-6 rounded-lg shadow-md">
+                <h3 className="text-lg font-semibold mb-3">📊 Export CSV</h3>
+                <p className="text-gray-600">Exportez vos comparaisons pour un suivi personnalisé</p>
+              </div>
+              <div className="bg-white p-6 rounded-lg shadow-md">
+                <h3 className="text-lg font-semibold mb-3">🎯 Filtrage avancé</h3>
+                <p className="text-gray-600">Filtrez par territoire, produit et enseigne</p>
+              </div>
+            </div>
+          </div>
+        );
       case 'map':
         return <Carte />;
       case 'stores':
@@ -56,7 +96,9 @@ export default function App() {
                       <div className="text-3xl mb-3">{module.icon}</div>
                       <h3 className="font-semibold text-gray-900 mb-2">{module.name}</h3>
                       <p className="text-sm text-gray-600">
+                        {module.id === 'comparator' && 'Comparez les prix dans votre territoire d\'outre-mer'}
                         {module.id === 'map' && 'Carte interactive avec géolocalisation, filtrage et heatmap'}
+                        {module.id === 'stores' && 'Guide des grandes surfaces et magasins locaux'}
                         {module.id === 'notifications' && 'Alertes intelligentes PWA en temps réel'}
                         {module.id === 'history' && 'Analyse historique et tendances des prix'}
                         {module.id === 'gamification' && 'Badges, défis et classement communautaire'}
@@ -135,6 +177,12 @@ export default function App() {
             <div className="bg-gray-50 p-6 rounded-lg mb-8">
               <h3 className="text-lg font-semibold mb-4">🧪 Explorer les fonctionnalités</h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                <button 
+                  onClick={() => setActiveModule('comparator')}
+                  className="px-4 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 text-sm"
+                >
+                  💰 Comparateur prix
+                </button>
                 <button 
                   onClick={() => setActiveModule('map')}
                   className="px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"
