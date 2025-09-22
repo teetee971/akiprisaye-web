@@ -2,7 +2,7 @@
 echo "🚀 Correction complète esbuild + rebuild"
 
 # 1. Nettoyage
-rm -rf node_modules package-lock.json
+rm -rf node_modules package-lock.json dist
 rm -rf ~/.npm/_npx ~/.npm/_cacache
 
 # 2. Réinstallation des dépendances
@@ -18,7 +18,7 @@ echo "✅ Version esbuild installée :"
 npx esbuild --version
 
 # 5. Build automatique
-echo "🏗️ Lancement du build..."
+echo "🌐 Lancement du build..."
 npm run build
 
-echo "🎉 Fix terminé. Utilise 'npm run preview' pour tester en local."
+echo "🎉 Fix terminée. Utilise 'npm run preview' pour tester en local."

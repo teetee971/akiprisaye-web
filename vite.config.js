@@ -4,7 +4,8 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   css: {
-    transformer: 'postcss',
+    // Force PostCSS, désactive LightningCSS (problématique sur ARM64)
+    transformer: 'postcss'
   },
   base: './',
   test: {
