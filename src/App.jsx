@@ -6,6 +6,7 @@ import AccessibilityPanel from './components/AccessibilityPanel';
 import UserFeedbackSystem from './components/UserFeedbackSystem';
 import GrandesSurfacesDOMTOM from './components/GrandesSurfacesDOMTOM';
 import AIOrchestrationDashboard from './components/AIOrchestrationDashboard';
+import EnseignesGrid from './components/EnseignesGrid';
 import Carte from './pages/Carte';
 
 export default function App() {
@@ -242,6 +243,9 @@ export default function App() {
                 </div>
               </div>
             </div>
+            
+            {/* EnseignesGrid Component */}
+            <EnseignesGrid />
           </div>
         );
     }
