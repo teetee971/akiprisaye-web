@@ -37,13 +37,40 @@ export async function fetchPrices(territory = 'guadeloupe', options = {}) {
  * @returns {Promise<Object>} API response with territories data
  */
 export async function fetchTerritories() {
-  const response = await fetch(`${API_BASE}/territories`, { cache: 'no-store' });
-  
-  if (!response.ok) {
-    throw new Error(`Erreur lors du chargement des territoires: ${response.status}`);
+  try {
+    console.log('Attempting to fetch real territories API data');
+    const response = await fetch(`${API_BASE}/territories`, { cache: 'no-store' });
+    
+    if (!response.ok) {
+      throw new Error(`Erreur lors du chargement des territoires: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    console.log('✅ Real territories API data loaded successfully');
+    return data;
+  } catch (error) {
+    console.warn('❌ Real territories API not available, using fallback:', error.message);
+    
+    // Fallback to basic territory list
+    const mockTerritories = {
+      territories: [
+        { code: 'guadeloupe', name: 'Guadeloupe', slug: 'guadeloupe' },
+        { code: 'martinique', name: 'Martinique', slug: 'martinique' },
+        { code: 'guyane', name: 'Guyane', slug: 'guyane' },
+        { code: 'reunion', name: 'Réunion', slug: 'reunion' },
+        { code: 'mayotte', name: 'Mayotte', slug: 'mayotte' },
+        { code: 'nouvelle-caledonie', name: 'Nouvelle-Calédonie', slug: 'nouvelle-caledonie' },
+        { code: 'polynesie-francaise', name: 'Polynésie française', slug: 'polynesie-francaise' },
+        { code: 'saint-barthelemy', name: 'Saint-Barthélemy', slug: 'saint-barthelemy' },
+        { code: 'saint-martin', name: 'Saint-Martin', slug: 'saint-martin' },
+        { code: 'saint-pierre-et-miquelon', name: 'Saint-Pierre-et-Miquelon', slug: 'saint-pierre-et-miquelon' },
+        { code: 'wallis-et-futuna', name: 'Wallis-et-Futuna', slug: 'wallis-et-futuna' }
+      ]
+    };
+    
+    console.log('📦 Using mock territories data as fallback');
+    return mockTerritories;
   }
-  
-  return response.json();
 }
 
 /**
@@ -53,32 +80,33 @@ export async function fetchTerritories() {
  * @returns {Promise<Array>} Formatted comparison data
  */
 export async function fetchPriceComparison(query = '', territory = 'guadeloupe') {
+  // Always try the real API first (both in development and production)
   try {
-    // Try the real API first (for production/deployed environments)
-    if (API_BASE !== '/api') {
-      const data = await fetchPrices(territory, { q: query, limit: 50 });
-      
-      // Transform the API data to match the webapp expected format
-      const items = (data.data || []).map(item => ({
-        id: item.id,
-        name: item.title,
-        price_dom: item.price, // DOM price from API
-        price_hex: item.price * 0.8, // Estimated mainland price (20% less)
-        store: item.store,
-        storeCity: item.storeCity,
-        brand: item.brand,
-        territory: data.territory,
-        updatedAt: item.updatedAt
-      }));
-      
-      return { items, total: data.count, territory: data.territory };
-    }
+    console.log(`Attempting to fetch real API data for territory: ${territory}`);
+    const data = await fetchPrices(territory, { q: query, limit: 50 });
+    
+    // Transform the API data to match the webapp expected format
+    const items = (data.data || []).map(item => ({
+      id: item.id,
+      name: item.title,
+      price_dom: item.price, // DOM price from API
+      price_hex: item.price * 0.8, // Estimated mainland price (20% less)
+      store: item.store,
+      storeCity: item.storeCity,
+      brand: item.brand,
+      territory: data.territory,
+      updatedAt: item.updatedAt
+    }));
+    
+    console.log(`✅ Real API data loaded successfully: ${items.length} items`);
+    return { items, total: data.count, territory: data.territory };
   } catch (error) {
-    console.warn('Real API not available, using mock data:', error.message);
+    console.warn('❌ Real API not available, falling back to mock data:', error.message);
   }
 
-  // Fallback to mock data for development
+  // Fallback to mock data when real API is not available
   try {
+    console.log('📦 Loading mock data as fallback');
     const mockData = await fetchMockComparisonData();
     const filteredItems = query 
       ? mockData.items.filter(item => 
@@ -86,13 +114,14 @@ export async function fetchPriceComparison(query = '', territory = 'guadeloupe')
         )
       : mockData.items;
     
+    console.log(`✅ Mock data loaded: ${filteredItems.length} items`);
     return { 
       items: filteredItems, 
       total: filteredItems.length, 
       territory 
     };
   } catch (error) {
-    console.warn('Mock data fetch failed:', error.message);
+    console.warn('❌ Mock data fetch failed:', error.message);
     return { items: [], total: 0, territory };
   }
 }
