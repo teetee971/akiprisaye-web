@@ -2,6 +2,101 @@
 <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Tarifs — A KI PRI SA YÉ</title>
 <link rel="stylesheet" href="/css/theme.css"/>
+<style>
+/* Styles spécifiques pour la grille tarifaire */
+.pricing-toggle {
+  display: inline-flex;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.toggle-option {
+  padding: 12px 20px;
+  cursor: pointer;
+  position: relative;
+  background: transparent;
+  transition: all 0.3s ease;
+}
+
+.toggle-option input {
+  display: none;
+}
+
+.toggle-option.active {
+  background: var(--accent);
+  color: #06233f;
+}
+
+.toggle-option:not(.active) {
+  color: var(--muted);
+}
+
+.toggle-option:hover:not(.active) {
+  background: color-mix(in oklab, var(--card) 90%, var(--accent) 10%);
+}
+
+.savings {
+  background: #22c55e;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-size: 10px;
+  margin-left: 4px;
+}
+
+.pricing-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pricing-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(38, 209, 255, 0.15);
+}
+
+.price-display {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin: 8px 0;
+}
+
+.price {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: var(--accent);
+}
+
+.period {
+  color: var(--muted);
+  font-size: 1rem;
+}
+
+.features-list li {
+  padding: 4px 0;
+  color: var(--text);
+}
+
+.features-list li strong {
+  color: var(--accent);
+}
+
+@media (max-width: 768px) {
+  .pricing-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .price {
+    font-size: 2rem;
+  }
+  
+  .pricing-toggle {
+    flex-direction: column;
+    width: 100%;
+  }
+}
+</style>
 </head><body>
 <div class="wrapper">
   <nav class="nav">
@@ -12,36 +107,276 @@
     <button id="theme-toggle" class="theme-toggle btn">☀️ Clair</button>
   </nav>
 
-  <h1>Tarifs & modules</h1>
-  <p class="muted">Choisissez le plan qui vous convient. Vous pouvez démarrer gratuitement et évoluer vers l’offre Pro quand vous le souhaitez.</p>
+  <h1>Grille tarifaire DOM-TOM</h1>
+  <p class="muted">Tarifs adaptés aux territoires d'outre-mer. Commencez gratuitement et évoluez selon vos besoins pour lutter efficacement contre la vie chère.</p>
 
-  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr));margin-top:12px">
-    <section class="card">
-      <h2 style="margin:0 0 6px">Gratuit</h2>
-      <div class="muted">0 € / mois</div>
-      <ul style="margin:10px 0 0; padding-left:18px">
-        <li>Comparateur de prix par territoire</li>
-        <li>Palmarès des enseignes (lecture)</li>
-        <li>Paniers locaux (stockage sur l’appareil)</li>
-        <li>Avis & enseignes locales (lecture)</li>
-        <li>Actus “vie chère & conso” (liens)</li>
+  <!-- Toggle Mensuel/Annuel -->
+  <div style="text-align:center;margin:20px 0">
+    <div class="pricing-toggle">
+      <label class="toggle-option active" data-period="monthly">
+        <input type="radio" name="pricing" value="monthly" checked>
+        <span>Mensuel</span>
+      </label>
+      <label class="toggle-option" data-period="annual">
+        <input type="radio" name="pricing" value="annual">
+        <span>Annuel <small class="savings">-20%</small></span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Offres spéciales -->
+  <div class="special-offers" style="background:linear-gradient(135deg,var(--accent)22,var(--accent)44);padding:16px;border-radius:14px;margin:20px 0;text-align:center">
+    <h3 style="margin:0 0 8px;color:#fff">🎯 Offres spéciales DOM-TOM</h3>
+    <p style="margin:0;color:#fff;opacity:0.9">
+      <strong>1er mois découverte gratuit</strong> • <strong>-30% pour les collectifs (5+ utilisateurs)</strong> • <strong>Version gratuite limitée disponible</strong>
+    </p>
+  </div>
+
+  <!-- Grille des plans principaux -->
+  <div class="grid pricing-grid" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px;margin:24px 0">
+    
+    <!-- Plan Starter -->
+    <section class="card pricing-card">
+      <div class="plan-header">
+        <h2 style="margin:0 0 6px;color:var(--accent)">Starter</h2>
+        <div class="price-display">
+          <span class="price monthly-price">9€</span>
+          <span class="price annual-price" style="display:none">7€</span>
+          <span class="period">/mois</span>
+        </div>
+        <div class="annual-note" style="display:none">
+          <small class="muted">84€/an (économisez 24€)</small>
+        </div>
+      </div>
+      
+      <div class="plan-description">
+        <p class="muted" style="font-size:14px;margin:8px 0">Idéal pour les particuliers qui découvrent les fonctionnalités de base</p>
+      </div>
+
+      <ul class="features-list" style="margin:16px 0;padding-left:0;list-style:none">
+        <li>✓ Comparateur prix par territoire</li>
+        <li>✓ Palmarès enseignes (lecture)</li>
+        <li>✓ 3 paniers personnalisés</li>
+        <li>✓ Alertes prix simples (5 produits max)</li>
+        <li>✓ Historique 3 mois</li>
+        <li>✓ Support email</li>
       </ul>
-      <div style="margin-top:12px"><a href="/index.html" class="btn">Commencer</a></div>
+      
+      <div class="plan-footer">
+        <a href="mailto:contact@akiprisaye.app?subject=Souscription%20Starter" class="btn" style="width:100%;text-align:center;display:block;margin-top:16px">Choisir Starter</a>
+      </div>
     </section>
 
-    <section class="card" style="border:2px solid var(--accent)">
-      <h2 style="margin:0 0 6px">Pro</h2>
-      <div class="muted">19 € / mois (démo)</div>
-      <ul style="margin:10px 0 0; padding-left:18px">
-        <li>Toutes les fonctionnalités du plan Gratuit</li>
-        <li>Alertes prix personnalisées (par produit/panier)</li>
-        <li>Historique & analytics de paniers</li>
-        <li>Import CSV / API partenaires</li>
-        <li>Palmarès avancé (segments, zones)</li>
-        <li>Support prioritaire</li>
+    <!-- Plan Pro (Recommandé) -->
+    <section class="card pricing-card recommended" style="border:2px solid var(--accent);position:relative">
+      <div class="recommended-badge" style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--accent);color:#06233f;padding:6px 16px;border-radius:20px;font-size:12px;font-weight:bold">
+        RECOMMANDÉ
+      </div>
+      
+      <div class="plan-header" style="margin-top:12px">
+        <h2 style="margin:0 0 6px;color:var(--accent)">Pro</h2>
+        <div class="price-display">
+          <span class="price monthly-price">19€</span>
+          <span class="price annual-price" style="display:none">15€</span>
+          <span class="period">/mois</span>
+        </div>
+        <div class="annual-note" style="display:none">
+          <small class="muted">180€/an (économisez 48€)</small>
+        </div>
+      </div>
+      
+      <div class="plan-description">
+        <p class="muted" style="font-size:14px;margin:8px 0">Parfait pour les familles et petites entreprises qui veulent optimiser leurs achats</p>
+      </div>
+
+      <ul class="features-list" style="margin:16px 0;padding-left:0;list-style:none">
+        <li>✓ <strong>Tout du plan Starter</strong></li>
+        <li>✓ Paniers illimités</li>
+        <li>✓ Alertes personnalisées avancées</li>
+        <li>✓ Historique & analytics 12 mois</li>
+        <li>✓ Import/Export CSV</li>
+        <li>✓ API partenaires</li>
+        <li>✓ Palmarès segments & zones</li>
+        <li>✓ Support prioritaire</li>
+        <li>✓ Prévisions de prix IA</li>
       </ul>
-      <div style="margin-top:12px"><a href="mailto:contact@akiprisaye.app?subject=Souscription%20Pro" class="btn">Passer en Pro</a></div>
+      
+      <div class="plan-footer">
+        <a href="mailto:contact@akiprisaye.app?subject=Souscription%20Pro" class="btn" style="width:100%;text-align:center;display:block;margin-top:16px">Choisir Pro</a>
+      </div>
     </section>
+
+    <!-- Plan Entreprise -->
+    <section class="card pricing-card">
+      <div class="plan-header">
+        <h2 style="margin:0 0 6px;color:var(--accent)">Entreprise</h2>
+        <div class="price-display">
+          <span class="price monthly-price">49€</span>
+          <span class="price annual-price" style="display:none">39€</span>
+          <span class="period">/mois</span>
+        </div>
+        <div class="annual-note" style="display:none">
+          <small class="muted">468€/an (économisez 120€)</small>
+        </div>
+      </div>
+      
+      <div class="plan-description">
+        <p class="muted" style="font-size:14px;margin:8px 0">Solution complète pour magasins, collectivités et grandes entreprises</p>
+      </div>
+
+      <ul class="features-list" style="margin:16px 0;padding-left:0;list-style:none">
+        <li>✓ <strong>Tout du plan Pro</strong></li>
+        <li>✓ Utilisateurs multiples (jusqu'à 20)</li>
+        <li>✓ Tableaux de bord avancés</li>
+        <li>✓ API complète & webhooks</li>
+        <li>✓ Intégration ERP/POS</li>
+        <li>✓ Données temps réel</li>
+        <li>✓ Analyses concurrentielles</li>
+        <li>✓ Support téléphonique dédié</li>
+        <li>✓ Formation personnalisée</li>
+        <li>✓ SLA 99.9%</li>
+      </ul>
+      
+      <div class="plan-footer">
+        <a href="mailto:contact@akiprisaye.app?subject=Devis%20Entreprise" class="btn" style="width:100%;text-align:center;display:block;margin-top:16px">Demander un devis</a>
+      </div>
+    </section>
+  </div>
+
+  <!-- Version gratuite limitée -->
+  <div class="card" style="margin:20px 0;background:linear-gradient(135deg,var(--card),color-mix(in oklab,var(--card) 90%,var(--accent) 10%))">
+    <h3 style="margin:0 0 12px;color:var(--accent)">🆓 Version gratuite limitée</h3>
+    <div class="grid" style="grid-template-columns:1fr 1fr;gap:20px;align-items:center">
+      <div>
+        <ul style="margin:0;padding-left:18px">
+          <li>Comparateur basique (3 recherches/jour)</li>
+          <li>Consultation palmarès public</li>
+          <li>1 panier simple (5 produits max)</li>
+          <li>Accès actus vie chère</li>
+        </ul>
+      </div>
+      <div style="text-align:center">
+        <a href="/index.html" class="btn" style="background:var(--accent);color:#06233f">Commencer gratuitement</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tableau comparatif détaillé -->
+  <h2 style="margin-top:40px">Comparaison détaillée des fonctionnalités</h2>
+  <div style="overflow-x:auto;margin:20px 0">
+    <table style="min-width:100%;border-collapse:collapse">
+      <thead>
+        <tr style="background:var(--card)">
+          <th style="text-align:left;padding:12px;border:1px solid var(--line)">Fonctionnalité</th>
+          <th style="text-align:center;padding:12px;border:1px solid var(--line);color:var(--accent)">Gratuit</th>
+          <th style="text-align:center;padding:12px;border:1px solid var(--line);color:var(--accent)">Starter</th>
+          <th style="text-align:center;padding:12px;border:1px solid var(--line);color:var(--accent)">Pro</th>
+          <th style="text-align:center;padding:12px;border:1px solid var(--line);color:var(--accent)">Entreprise</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:10px;border:1px solid var(--line)">Comparateur de prix</td>
+          <td style="padding:10px;border:1px solid var(--line);text-align:center">3/jour</td>
+          <td style="padding:10px;border:1px solid var(--line);text-align:center">✓ Illimité</td>
+          <td style="padding:10px;border:1px solid var(--line);text-align:center">✓ Illimité</td>
+          <td style="padding:10px;border:1px solid var(--line);text-align:center">✓ Illimité</td>
+        </tr>
+        <tr>
+          <td style="padding:10px;border:1px solid var(--line)">Paniers personnalisés</td>
+          <td style="padding:10px;border:1px solid var(--line);text-align:center">1 (5 produits)</td>
+          <td style="padding:10px;border:1px solid var(--line);text-align:center">3 paniers</td>
+          <td style="padding:10px;border:1px solid var(--line);text-align:center">✓ Illimité</td>
+          <td style="padding:10px;border:1px solid var(--line);text-align:center">✓ Illimité</td>
+        </tr>
+        <tr>
+          <td style="padding:10px;border:1px solid var(--line)">Alertes prix</td>
+          <td style="padding:10px;border:1px solid var(--line);text-align:center">—</td>
+          <td style="padding:10px;border:1px solid var(--line);text-align:center">5 produits</td>
+          <td style="padding:10px;border:1px solid var(--line);text-align:center">✓ Illimité</td>
+          <td style="padding:10px;border:1px solid var(--line);text-align:center">✓ Illimité + IA</td>
+        </tr>
+        <tr>
+          <td style="padding:10px;border:1px solid var(--line)">Historique</td>
+          <td style="padding:10px;border:1px solid var(--line);text-align:center">—</td>
+          <td style="padding:10px;border:1px solid var(--line);text-align:center">3 mois</td>
+          <td style="padding:10px;border:1px solid var(--line);text-align:center">12 mois</td>
+          <td style="padding:10px;border:1px solid var(--line);text-align:center">✓ Illimité</td>
+        </tr>
+        <tr>
+          <td style="padding:10px;border:1px solid var(--line)">Export/Import CSV</td>
+          <td style="padding:10px;border:1px solid var(--line);text-align:center">—</td>
+          <td style="padding:10px;border:1px solid var(--line);text-align:center">—</td>
+          <td style="padding:10px;border:1px solid var(--line);text-align:center">✓</td>
+          <td style="padding:10px;border:1px solid var(--line);text-align:center">✓ Avancé</td>
+        </tr>
+        <tr>
+          <td style="padding:10px;border:1px solid var(--line)">API & Intégrations</td>
+          <td style="padding:10px;border:1px solid var(--line);text-align:center">—</td>
+          <td style="padding:10px;border:1px solid var(--line);text-align:center">—</td>
+          <td style="padding:10px;border:1px solid var(--line);text-align:center">✓ Basique</td>
+          <td style="padding:10px;border:1px solid var(--line);text-align:center">✓ Complète + Webhooks</td>
+        </tr>
+        <tr>
+          <td style="padding:10px;border:1px solid var(--line)">Support</td>
+          <td style="padding:10px;border:1px solid var(--line);text-align:center">FAQ</td>
+          <td style="padding:10px;border:1px solid var(--line);text-align:center">Email</td>
+          <td style="padding:10px;border:1px solid var(--line);text-align:center">Email prioritaire</td>
+          <td style="padding:10px;border:1px solid var(--line);text-align:center">Téléphone dédié</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Exemples de simulation de coût annuel -->
+  <h2 style="margin-top:40px">💰 Simulations d'économies annuelles</h2>
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin:20px 0">
+    
+    <div class="card" style="background:linear-gradient(135deg,var(--card),color-mix(in oklab,var(--card) 95%,#22c55e 5%))">
+      <h4 style="margin:0 0 8px;color:#22c55e">👨‍👩‍👧‍👦 Famille (4 personnes)</h4>
+      <p class="muted" style="font-size:14px;margin:8px 0">Plan Pro - Martinique</p>
+      <ul style="margin:8px 0;padding-left:16px;font-size:14px">
+        <li>Budget courses mensuel : <strong>800€</strong></li>
+        <li>Économies moyennes : <strong>12% = 96€/mois</strong></li>
+        <li>Coût plan Pro annuel : <strong>180€</strong></li>
+        <li style="color:#22c55e;font-weight:bold">Économie nette : +972€/an</li>
+      </ul>
+    </div>
+
+    <div class="card" style="background:linear-gradient(135deg,var(--card),color-mix(in oklab,var(--card) 95%,#3b82f6 5%))">
+      <h4 style="margin:0 0 8px;color:#3b82f6">🏪 Petit commerce</h4>
+      <p class="muted" style="font-size:14px;margin:8px 0">Plan Entreprise - Guadeloupe</p>
+      <ul style="margin:8px 0;padding-left:16px;font-size:14px">
+        <li>Achats approvisionnement : <strong>5000€/mois</strong></li>
+        <li>Optimisation prix : <strong>8% = 400€/mois</strong></li>
+        <li>Coût plan Entreprise : <strong>468€/an</strong></li>
+        <li style="color:#3b82f6;font-weight:bold">Économie nette : +4332€/an</li>
+      </ul>
+    </div>
+
+    <div class="card" style="background:linear-gradient(135deg,var(--card),color-mix(in oklab,var(--card) 95%,#8b5cf6 5%))">
+      <h4 style="margin:0 0 8px;color:#8b5cf6">🏛️ Collectivité</h4>
+      <p class="muted" style="font-size:14px;margin:8px 0">Plan Entreprise + remise collective - Guyane</p>
+      <ul style="margin:8px 0;padding-left:16px;font-size:14px">
+        <li>Budget restauration : <strong>20000€/mois</strong></li>
+        <li>Réduction coûts : <strong>15% = 3000€/mois</strong></li>
+        <li>Coût avec remise -30% : <strong>328€/an</strong></li>
+        <li style="color:#8b5cf6;font-weight:bold">Économie nette : +35672€/an</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Contact pour devis personnalisé -->
+  <div class="card" style="margin:40px 0;background:linear-gradient(135deg,var(--accent),#1ec8ff);color:#fff;text-align:center">
+    <h2 style="margin:0 0 16px;color:#fff">🎯 Besoin d'un devis personnalisé ?</h2>
+    <p style="margin:0 0 20px;opacity:0.9">
+      Nos experts DOM-TOM vous accompagnent pour adapter la solution à vos besoins spécifiques.<br>
+      <strong>Démonstration gratuite • Intégration personnalisée • Formation incluse</strong>
+    </p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <a href="mailto:contact@akiprisaye.app?subject=Demande%20de%20devis%20personnalisé" class="btn" style="background:#fff;color:var(--accent)">📧 Demander un devis</a>
+      <a href="mailto:demo@akiprisaye.app?subject=Demande%20de%20démonstration" class="btn" style="background:rgba(255,255,255,0.2);color:#fff;border:1px solid rgba(255,255,255,0.3)">🖥️ Réserver une démo</a>
+    </div>
   </div>
 
   <h2 style="margin-top:24px">Modules inclus</h2>
@@ -51,13 +386,47 @@
     <article class="card"><strong>Paniers</strong><p class="muted">Création, quantités, totaux, export JSON/CSV.</p></article>
     <article class="card"><strong>Promos</strong><p class="muted">Top promos filtrables par territoire/enseigne.</p></article>
     <article class="card"><strong>Avis & Enseignes</strong><p class="muted">Retours utilisateurs + répertoire magasins locaux.</p></article>
-    <article class="card"><strong>Actus</strong><p class="muted">Liens officiels & presse “vie chère / conso”.</p></article>
+    <article class="card"><strong>Actus</strong><p class="muted">Liens officiels & presse "vie chère / conso".</p></article>
   </div>
 
   <div id="site-footer"></div>
 </div>
 <script src="/js/theme.js" defer></script>
 <script src="/js/footer.js" defer></script>
+
+<!-- Script pour le toggle mensuel/annuel -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const toggleOptions = document.querySelectorAll('.toggle-option');
+    const monthlyPrices = document.querySelectorAll('.monthly-price');
+    const annualPrices = document.querySelectorAll('.annual-price');
+    const annualNotes = document.querySelectorAll('.annual-note');
+
+    toggleOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            const period = this.dataset.period;
+            
+            // Update active state
+            toggleOptions.forEach(opt => opt.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Update radio button
+            this.querySelector('input').checked = true;
+            
+            // Show/hide prices
+            if (period === 'annual') {
+                monthlyPrices.forEach(price => price.style.display = 'none');
+                annualPrices.forEach(price => price.style.display = 'inline');
+                annualNotes.forEach(note => note.style.display = 'block');
+            } else {
+                monthlyPrices.forEach(price => price.style.display = 'inline');
+                annualPrices.forEach(price => price.style.display = 'none');
+                annualNotes.forEach(note => note.style.display = 'none');
+            }
+        });
+    });
+});
+</script>
 
   <!-- Lazy Loading Support -->
   <script>
