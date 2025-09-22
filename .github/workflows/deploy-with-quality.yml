@@ -68,7 +68,7 @@ jobs:
           echo "![Security](https://img.shields.io/badge/security-monitored-blue)" > badges/security.md
 
       - name: Upload badges
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-badges
           path: badges/
@@ -165,7 +165,7 @@ jobs:
           npx @axe-core/cli $PAGES_URL --exit || echo "Accessibility audit completed"
 
       - name: Upload performance reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: performance-reports
           path: |
