@@ -13,7 +13,7 @@ export default defineConfig({
     setupFiles: ['./src/test/setup.js'],
   },
   build: {
-    outDir: "dist/public",
+    outDir: "dist/client",
     assetsDir: 'assets',
     sourcemap: false,
     rollupOptions: {
