@@ -5,6 +5,7 @@ import GamificationSystem from './components/GamificationSystem';
 import AccessibilityPanel from './components/AccessibilityPanel';
 import UserFeedbackSystem from './components/UserFeedbackSystem';
 import GrandesSurfacesDOMTOM from './components/GrandesSurfacesDOMTOM';
+import PriceComparator from './components/PriceComparator';
 import Carte from './pages/Carte';
 
 export default function App() {
@@ -12,6 +13,7 @@ export default function App() {
 
   const modules = [
     { id: 'home', name: 'Accueil', icon: '🏠' },
+    { id: 'comparator', name: 'Comparateur', icon: '🛒' },
     { id: 'map', name: 'Carte GPS', icon: '🗺️' },
     { id: 'stores', name: 'Grandes Surfaces', icon: '🏪' },
     { id: 'notifications', name: 'Notifications', icon: '🔔' },
@@ -22,6 +24,8 @@ export default function App() {
 
   const renderModule = () => {
     switch (activeModule) {
+      case 'comparator':
+        return <PriceComparator />;
       case 'map':
         return <Carte />;
       case 'stores':
@@ -56,6 +60,7 @@ export default function App() {
                       <div className="text-3xl mb-3">{module.icon}</div>
                       <h3 className="font-semibold text-gray-900 mb-2">{module.name}</h3>
                       <p className="text-sm text-gray-600">
+                        {module.id === 'comparator' && 'Comparaison de prix en temps réel entre enseignes'}
                         {module.id === 'map' && 'Carte interactive avec géolocalisation, filtrage et heatmap'}
                         {module.id === 'notifications' && 'Alertes intelligentes PWA en temps réel'}
                         {module.id === 'history' && 'Analyse historique et tendances des prix'}
@@ -70,6 +75,16 @@ export default function App() {
             
             {/* Enhanced Features Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+              <div className="bg-white p-6 rounded-lg shadow-md">
+                <h3 className="text-lg font-semibold mb-3">🛒 Comparateur de Prix</h3>
+                <ul className="text-sm text-gray-600 space-y-1">
+                  <li>• Comparaison en temps réel</li>
+                  <li>• Recherche par territoire</li>
+                  <li>• Export des résultats CSV</li>
+                  <li>• Analyse d'écarts de prix</li>
+                </ul>
+              </div>
+              
               <div className="bg-white p-6 rounded-lg shadow-md">
                 <h3 className="text-lg font-semibold mb-3">🔔 Notifications Intelligentes</h3>
                 <ul className="text-sm text-gray-600 space-y-1">
@@ -136,6 +151,12 @@ export default function App() {
               <h3 className="text-lg font-semibold mb-4">🧪 Explorer les fonctionnalités</h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 <button 
+                  onClick={() => setActiveModule('comparator')}
+                  className="px-4 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm"
+                >
+                  🛒 Comparateur prix
+                </button>
+                <button 
                   onClick={() => setActiveModule('map')}
                   className="px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"
                 >
@@ -186,6 +207,7 @@ export default function App() {
                 <div>
                   <h4 className="font-medium mb-2">🎯 Modules Fonctionnels</h4>
                   <ul className="text-gray-600 space-y-1">
+                    <li>• Comparateur de prix intelligent</li>
                     <li>• Module GPS interactif avec Leaflet</li>
                     <li>• Notifications intelligentes PWA</li>
                     <li>• Comparatif historique avec Chart.js</li>

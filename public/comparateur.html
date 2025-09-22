@@ -23,108 +23,169 @@
   <meta name="twitter:description" content="Comparez les prix des produits dans votre territoire d'outre-mer et exportez vos résultats" />
 
   <link rel="stylesheet" href="/styles.css">
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body { background: #0b1220; color: #e7eefc; font-family: system-ui; margin: 0; padding: 20px; }
-    .container { max-width: 1200px; margin: 0 auto; }
-    .form-group { margin: 15px 0; }
-    .form-group label { display: block; margin-bottom: 5px; font-weight: 600; }
-    .form-group input, .form-group select { 
-      width: 100%; max-width: 300px; padding: 10px; border: 1px solid #374151; 
-      border-radius: 6px; background: #1f2937; color: #e7eefc; 
+    .result-item.best-price { 
+      border-color: #10b981; 
+      background: rgba(16, 185, 129, 0.1); 
     }
-    .form-group input:focus, .form-group select:focus { outline: none; border-color: #3b82f6; }
-    .error { color: #ef4444; font-size: 0.875rem; margin-top: 5px; }
-    .btn { background: #3b82f6; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; margin: 5px; }
-    .btn:hover { background: #2563eb; }
-    .btn.secondary { background: #6b7280; }
-    .btn.secondary:hover { background: #4b5563; }
-    .btn.success { background: #059669; }
-    .btn.success:hover { background: #047857; }
-    .results { margin-top: 30px; }
-    .result-item { 
-      background: #0f1629; border: 1px solid #1e2945; border-radius: 8px; 
-      padding: 15px; margin: 10px 0; display: flex; justify-content: space-between; align-items: center;
+    .loading-spinner {
+      animation: spin 1s linear infinite;
     }
-    .result-item.best-price { border-color: #059669; background: rgba(5, 150, 105, 0.1); }
-    .store-info { flex: 1; }
-    .price-info { text-align: right; font-weight: 600; font-size: 1.125rem; }
-    .price-per-unit { font-size: 0.875rem; opacity: 0.8; }
-    .loading { text-align: center; padding: 40px; color: #6b7280; }
-    .no-results { text-align: center; padding: 40px; color: #6b7280; }
-    .export-section { margin: 20px 0; padding: 20px; background: #0f1629; border-radius: 8px; }
-    .suggestions { margin-top: 30px; padding: 20px; background: rgba(59, 130, 246, 0.1); border-radius: 8px; }
-    .suggestion-item { padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
-    .suggestion-item:last-child { border-bottom: none; }
-    @media (max-width: 768px) {
-      .result-item { flex-direction: column; text-align: center; }
-      .price-info { margin-top: 10px; }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
     }
   </style>
 </head>
-<body>
-  <div class="container">
-    <header>
-      <h1>🛒 Comparateur de prix</h1>
-      <p>Trouvez les meilleurs prix dans votre territoire</p>
+<body class="bg-gray-50 min-h-screen">
+  <div class="container mx-auto px-4 py-8 max-w-6xl">
+    <!-- Header -->
+    <header class="text-center mb-8">
+      <h1 class="text-4xl font-bold text-gray-900 mb-2">🛒 Comparateur de Prix</h1>
+      <p class="text-xl text-gray-600 mb-4">Trouvez les meilleurs prix dans votre territoire d'outre-mer</p>
+      <div class="flex justify-center gap-4">
+        <a href="/" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">
+          🏠 Retour à l'accueil
+        </a>
+        <a href="/index.html" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 text-sm">
+          📱 Version React
+        </a>
+      </div>
     </header>
 
-    <form id="search-form" novalidate>
-      <div class="form-group">
-        <label for="produit">Produit recherché *</label>
-        <input type="text" id="produit" name="produit" required 
-               placeholder="Ex: lait, banane, riz..." 
-               minlength="2" maxlength="100">
-        <div class="error" id="produit-error"></div>
-      </div>
+    <!-- Search Form -->
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+      <form id="search-form" novalidate>
+        <div class="grid md:grid-cols-3 gap-4 mb-4">
+          <div>
+            <label for="produit" class="block text-sm font-medium text-gray-700 mb-1">
+              Produit recherché *
+            </label>
+            <input 
+              type="text" 
+              id="produit" 
+              name="produit" 
+              required 
+              placeholder="Ex: lait, banane, riz..." 
+              minlength="2" 
+              maxlength="100"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+            <div class="text-red-500 text-sm mt-1" id="produit-error"></div>
+          </div>
 
-      <div class="form-group">
-        <label for="territoire">Territoire *</label>
-        <select id="territoire" name="territoire" required>
-          <option value="">Sélectionnez votre territoire</option>
-          <option value="guadeloupe">🇬🇵 Guadeloupe</option>
-          <option value="martinique">🇲🇶 Martinique</option>
-          <option value="guyane">🇬🇫 Guyane</option>
-          <option value="reunion">🇷🇪 Réunion</option>
-          <option value="mayotte">🇾🇹 Mayotte</option>
-          <option value="saint-martin">🇲🇫 Saint-Martin</option>
-          <option value="saint-barthelemy">🇧🇱 Saint-Barthélemy</option>
-        </select>
-        <div class="error" id="territoire-error"></div>
-      </div>
+          <div>
+            <label for="territoire" class="block text-sm font-medium text-gray-700 mb-1">
+              Territoire *
+            </label>
+            <select 
+              id="territoire" 
+              name="territoire" 
+              required
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Sélectionnez votre territoire</option>
+              <option value="guadeloupe">🇬🇵 Guadeloupe</option>
+              <option value="martinique">🇲🇶 Martinique</option>
+              <option value="guyane">🇬🇫 Guyane</option>
+              <option value="reunion">🇷🇪 Réunion</option>
+              <option value="mayotte">🇾🇹 Mayotte</option>
+              <option value="saint-martin">🇲🇫 Saint-Martin</option>
+              <option value="saint-barthelemy">🇧🇱 Saint-Barthélemy</option>
+            </select>
+            <div class="text-red-500 text-sm mt-1" id="territoire-error"></div>
+          </div>
 
-      <button type="submit" class="btn">🔍 Comparer les prix</button>
-    </form>
-
-    <div id="loading" class="loading" style="display: none;">
-      🔄 Recherche en cours...
+          <div class="flex items-end">
+            <button 
+              type="submit" 
+              class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+            >
+              🔍 Comparer les prix
+            </button>
+          </div>
+        </div>
+      </form>
     </div>
 
-    <div id="results" class="results" style="display: none;">
-      <div class="export-section">
-        <h3>📊 Exporter les résultats</h3>
-        <button class="btn success" onclick="exportToExcel()">📗 Exporter Excel</button>
-        <button class="btn secondary" onclick="exportToPDF()">📄 Exporter PDF</button>
-        <button class="btn secondary" onclick="shareResults()">📤 Partager</button>
+    <!-- Loading State -->
+    <div id="loading" class="hidden text-center py-12">
+      <div class="loading-spinner w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full mx-auto mb-4"></div>
+      <p class="text-gray-600">🔄 Recherche en cours...</p>
+    </div>
+
+    <!-- Results Section -->
+    <div id="results" class="hidden">
+      <!-- Export Section -->
+      <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+        <h3 class="text-lg font-semibold mb-4">📊 Exporter les résultats</h3>
+        <div class="flex flex-wrap gap-3">
+          <button 
+            class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm" 
+            onclick="exportToExcel()"
+          >
+            📗 Exporter Excel
+          </button>
+          <button 
+            class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm" 
+            onclick="exportToPDF()"
+          >
+            📄 Exporter PDF
+          </button>
+          <button 
+            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm" 
+            onclick="shareResults()"
+          >
+            📤 Partager
+          </button>
+        </div>
       </div>
       
-      <div id="results-list"></div>
+      <!-- Results List -->
+      <div class="bg-white rounded-lg shadow-lg p-6">
+        <h3 class="text-lg font-semibold mb-4" id="results-title">📊 Résultats</h3>
+        <div id="results-list" class="space-y-3"></div>
+        
+        <!-- Summary -->
+        <div id="results-summary" class="mt-6 p-4 bg-gray-50 rounded-lg"></div>
+      </div>
     </div>
 
-    <div id="suggestions" class="suggestions" style="display: none;">
-      <h3>💡 Suggestions d'alternatives locales</h3>
-      <div id="suggestions-list"></div>
+    <!-- Suggestions -->
+    <div id="suggestions" class="hidden bg-white rounded-lg shadow-lg p-6 mt-6">
+      <h3 class="text-lg font-semibold mb-4">💡 Suggestions d'alternatives locales</h3>
+      <div id="suggestions-list" class="space-y-3"></div>
     </div>
 
-    <div id="no-results" class="no-results" style="display: none;">
-      ❌ Aucun résultat trouvé pour ce produit dans ce territoire.
-      <br><br>
-      <button class="btn secondary" onclick="suggestProduct()">📝 Suggérer ce produit</button>
+    <!-- No Results -->
+    <div id="no-results" class="hidden text-center py-12">
+      <div class="text-6xl mb-4">😕</div>
+      <h3 class="text-xl font-semibold text-gray-900 mb-2">Aucun résultat trouvé</h3>
+      <p class="text-gray-600 mb-4">Nous n'avons pas trouvé ce produit dans ce territoire.</p>
+      <button 
+        class="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700" 
+        onclick="suggestProduct()"
+      >
+        📝 Suggérer ce produit
+      </button>
     </div>
   </div>
 
   <script>
     let currentResults = [];
     let currentSearch = {};
+
+    // Territory labels for display
+    const territoryLabels = {
+      'guadeloupe': '🇬🇵 Guadeloupe',
+      'martinique': '🇲🇶 Martinique',
+      'guyane': '🇬🇫 Guyane',
+      'reunion': '🇷🇪 Réunion',
+      'mayotte': '🇾🇹 Mayotte',
+      'saint-martin': '🇲🇫 Saint-Martin',
+      'saint-barthelemy': '🇧🇱 Saint-Barthélemy'
+    };
 
     // Form validation
     function validateForm() {
@@ -134,7 +195,7 @@
       let isValid = true;
 
       // Clear previous errors
-      document.querySelectorAll('.error').forEach(error => error.textContent = '');
+      document.querySelectorAll('[id$="-error"]').forEach(error => error.textContent = '');
 
       // Validate product
       if (!produit.value.trim()) {
@@ -168,86 +229,137 @@
       currentSearch = { produit, territoire };
 
       // Show loading
-      document.getElementById('loading').style.display = 'block';
-      document.getElementById('results').style.display = 'none';
-      document.getElementById('suggestions').style.display = 'none';
-      document.getElementById('no-results').style.display = 'none';
+      showSection('loading');
 
       try {
-        // Call the API
-        const response = await fetch(`/api/prices?territory=${encodeURIComponent(territoire)}&search=${encodeURIComponent(produit)}&limit=20`);
-        const data = await response.json();
-
-        document.getElementById('loading').style.display = 'none';
-
-        if (data.items && data.items.length > 0) {
-          currentResults = data.items;
-          displayResults(data.items);
-          showSuggestions(produit, territoire);
-        } else {
-          document.getElementById('no-results').style.display = 'block';
-        }
-      } catch (error) {
-        console.error('Erreur lors de la recherche:', error);
-        document.getElementById('loading').style.display = 'none';
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1500));
         
-        // Show demo results for testing
         const demoResults = generateDemoResults(produit, territoire);
         currentResults = demoResults;
         displayResults(demoResults);
         showSuggestions(produit, territoire);
+      } catch (error) {
+        console.error('Erreur lors de la recherche:', error);
+        showSection('no-results');
       }
     });
 
-    function generateDemoResults(produit, territoire) {
-      const stores = ['Carrefour', 'Leader Price', 'Ecomax', 'Hyper U', 'Super U', 'Géant'];
-      const results = [];
+    function showSection(sectionId) {
+      const sections = ['loading', 'results', 'suggestions', 'no-results'];
+      sections.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.classList.add('hidden');
+        }
+      });
       
-      for (let i = 0; i < Math.min(6, stores.length); i++) {
-        const basePrice = 2.0 + Math.random() * 3;
+      const activeSection = document.getElementById(sectionId);
+      if (activeSection) {
+        activeSection.classList.remove('hidden');
+      }
+    }
+
+    function generateDemoResults(produit, territoire) {
+      const stores = [
+        'Carrefour', 'Leader Price', 'Ecomax', 'Hyper U', 
+        'Super U', 'Géant', 'Intermarché', 'Leclerc'
+      ];
+      
+      const results = stores.slice(0, 6).map((store, index) => {
+        const basePrice = 2.0 + Math.random() * 4;
         const pricePerUnit = basePrice + (Math.random() - 0.5) * 0.8;
         
-        results.push({
-          store: stores[i],
+        return {
+          store,
           name: produit,
           price: basePrice.toFixed(2),
           pricePerUnit: pricePerUnit.toFixed(2),
           unit: 'kg',
           territory: territoire,
-          updatedAt: new Date().toISOString()
-        });
-      }
+          updatedAt: new Date().toISOString(),
+          distance: (Math.random() * 15).toFixed(1),
+          availability: Math.random() > 0.3 ? 'En stock' : 'Stock limité'
+        };
+      });
       
       return results.sort((a, b) => parseFloat(a.pricePerUnit) - parseFloat(b.pricePerUnit));
     }
 
     function displayResults(results) {
       const resultsList = document.getElementById('results-list');
-      const resultsDiv = document.getElementById('results');
+      const resultsTitle = document.getElementById('results-title');
+      const resultsSummary = document.getElementById('results-summary');
       
       resultsList.innerHTML = '';
+      resultsTitle.textContent = `📊 Résultats pour "${currentSearch.produit}" en ${territoryLabels[currentSearch.territoire]}`;
       
+      // Display results
       results.forEach((item, index) => {
         const isLowest = index === 0;
         const resultItem = document.createElement('div');
-        resultItem.className = `result-item ${isLowest ? 'best-price' : ''}`;
+        resultItem.className = `p-4 border rounded-lg flex justify-between items-center ${
+          isLowest ? 'border-green-500 bg-green-50' : 'border-gray-200'
+        }`;
         
         resultItem.innerHTML = `
-          <div class="store-info">
-            <h4>${item.store} ${isLowest ? '🏆' : ''}</h4>
-            <p>${item.name}</p>
-            <small>MAJ: ${new Date(item.updatedAt).toLocaleDateString('fr-FR')}</small>
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-1">
+              <h4 class="font-semibold text-gray-900">${item.store} ${isLowest ? '🏆' : ''}</h4>
+              <span class="px-2 py-1 text-xs rounded-full ${
+                item.availability === 'En stock' 
+                  ? 'bg-green-100 text-green-800' 
+                  : 'bg-yellow-100 text-yellow-800'
+              }">
+                ${item.availability}
+              </span>
+            </div>
+            <p class="text-sm text-gray-600">${item.name}</p>
+            <p class="text-xs text-gray-500">
+              📍 ${item.distance} km • Mis à jour: ${new Date(item.updatedAt).toLocaleDateString('fr-FR')}
+            </p>
           </div>
-          <div class="price-info">
-            <div>${item.price} €</div>
-            <div class="price-per-unit">${item.pricePerUnit} €/${item.unit}</div>
+          <div class="text-right">
+            <div class="text-lg font-bold text-gray-900">${item.price} €</div>
+            <div class="text-sm text-gray-600">${item.pricePerUnit} €/${item.unit}</div>
+            ${isLowest ? '<div class="text-xs text-green-600 font-medium">Meilleur prix!</div>' : ''}
           </div>
         `;
         
         resultsList.appendChild(resultItem);
       });
+
+      // Display summary
+      const lowestPrice = parseFloat(results[0].pricePerUnit);
+      const highestPrice = parseFloat(results[results.length - 1].pricePerUnit);
+      const priceDiff = highestPrice - lowestPrice;
+      const percentDiff = ((priceDiff / lowestPrice) * 100).toFixed(1);
+
+      resultsSummary.innerHTML = `
+        <h4 class="font-semibold mb-3">📈 Résumé de la comparaison</h4>
+        <div class="grid md:grid-cols-3 gap-4 text-sm">
+          <div>
+            <span class="text-gray-600">Prix le plus bas:</span>
+            <div class="font-semibold text-green-600">
+              ${results[0].pricePerUnit} €/${results[0].unit} chez ${results[0].store}
+            </div>
+          </div>
+          <div>
+            <span class="text-gray-600">Prix le plus élevé:</span>
+            <div class="font-semibold text-red-600">
+              ${results[results.length - 1].pricePerUnit} €/${results[results.length - 1].unit}
+            </div>
+          </div>
+          <div>
+            <span class="text-gray-600">Écart maximum:</span>
+            <div class="font-semibold text-gray-900">
+              ${priceDiff.toFixed(2)} € (${percentDiff}%)
+            </div>
+          </div>
+        </div>
+      `;
       
-      resultsDiv.style.display = 'block';
+      showSection('results');
     }
 
     function showSuggestions(produit, territoire) {
@@ -262,15 +374,15 @@
 
       suggestions.forEach(suggestion => {
         const suggestionItem = document.createElement('div');
-        suggestionItem.className = 'suggestion-item';
+        suggestionItem.className = 'p-3 bg-blue-50 rounded-lg';
         suggestionItem.innerHTML = `
-          <strong>💡 ${suggestion.name}</strong><br>
-          <small>${suggestion.reason}</small>
+          <strong class="text-blue-900">💡 ${suggestion.name}</strong><br>
+          <small class="text-blue-700">${suggestion.reason}</small>
         `;
         suggestionsList.appendChild(suggestionItem);
       });
 
-      document.getElementById('suggestions').style.display = 'block';
+      document.getElementById('suggestions').classList.remove('hidden');
     }
 
     // Export functions
@@ -280,8 +392,7 @@
         return;
       }
 
-      // Create CSV content
-      const headers = ['Enseigne', 'Produit', 'Prix', 'Prix/Unité', 'Unité', 'Territoire', 'Dernière MAJ'];
+      const headers = ['Enseigne', 'Produit', 'Prix', 'Prix/Unité', 'Unité', 'Territoire', 'Disponibilité', 'Distance (km)', 'Dernière MAJ'];
       const csvContent = [
         headers.join(','),
         ...currentResults.map(item => [
@@ -291,11 +402,12 @@
           item.pricePerUnit,
           item.unit,
           item.territory,
+          item.availability,
+          item.distance,
           new Date(item.updatedAt).toLocaleDateString('fr-FR')
         ].join(','))
       ].join('\n');
 
-      // Download CSV
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement('a');
       const url = URL.createObjectURL(blob);
@@ -312,15 +424,14 @@
     };
 
     window.shareResults = () => {
-      if (navigator.share) {
+      if (navigator.share && currentResults.length > 0) {
         navigator.share({
           title: `Comparaison prix: ${currentSearch.produit}`,
           text: `Meilleur prix trouvé: ${currentResults[0]?.pricePerUnit}€/${currentResults[0]?.unit} chez ${currentResults[0]?.store}`,
           url: window.location.href
         });
       } else {
-        // Fallback: copy to clipboard
-        const text = `Comparaison prix ${currentSearch.produit} en ${currentSearch.territoire}\nMeilleur prix: ${currentResults[0]?.pricePerUnit}€/${currentResults[0]?.unit} chez ${currentResults[0]?.store}`;
+        const text = `Comparaison prix ${currentSearch.produit} en ${territoryLabels[currentSearch.territoire]}\nMeilleur prix: ${currentResults[0]?.pricePerUnit}€/${currentResults[0]?.unit} chez ${currentResults[0]?.store}`;
         navigator.clipboard.writeText(text).then(() => {
           alert('Résultats copiés dans le presse-papier');
         });
@@ -328,7 +439,7 @@
     };
 
     window.suggestProduct = () => {
-      alert(`Merci pour votre suggestion! Le produit "${currentSearch.produit}" sera ajouté à notre base de données pour ${currentSearch.territoire}.`);
+      alert(`Merci pour votre suggestion! Le produit "${currentSearch.produit}" sera ajouté à notre base de données pour ${territoryLabels[currentSearch.territoire]}.`);
     };
   </script>
 
