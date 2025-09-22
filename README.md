@@ -37,6 +37,19 @@ API Cloudflare Pages Functions pour la comparaison de prix et la gestion des ter
 
 ---
 
+## 📋 Check-list de déploiement interactive
+
+Une [check-list de déploiement interactive](docs/checklist-interactive.md) est disponible via les templates d'issues GitHub.
+
+**Utilisation :**
+1. [Créer une nouvelle issue](https://github.com/teetee971/akiprisaye-web/issues/new/choose)
+2. Sélectionner "📋 Check-list de déploiement interactive"
+3. Suivre l'avancement en cochant les tâches directement dans l'issue
+
+Cette fonctionnalité permet un suivi collaboratif et traçable du processus de déploiement.
+
+---
+
 ## 🛠️ Installation et développement
 
 ```bash
