@@ -12,7 +12,7 @@ export default function App() {
 
   const modules = [
     { id: 'home', name: 'Accueil', icon: '🏠' },
-    { id: 'map', name: 'Carte GPS', icon: '🗺️' },
+    { id: 'map', name: 'Carte GPS', icon: '🌍' },
     { id: 'stores', name: 'Grandes Surfaces', icon: '🏪' },
     { id: 'notifications', name: 'Notifications', icon: '🔔' },
     { id: 'history', name: 'Historique Prix', icon: '📈' },
@@ -81,7 +81,7 @@ export default function App() {
               </div>
               
               <div className="bg-white p-6 rounded-lg shadow-md">
-                <h3 className="text-lg font-semibold mb-3">🗺️ Carte GPS Interactive</h3>
+                <h3 className="text-lg font-semibold mb-3">🌍 Carte GPS Interactive</h3>
                 <ul className="text-sm text-gray-600 space-y-1">
                   <li>• Géolocalisation en temps réel</li>
                   <li>• Heatmap des zones de prix</li>
@@ -139,7 +139,7 @@ export default function App() {
                   onClick={() => setActiveModule('map')}
                   className="px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"
                 >
-                  🗺️ Carte interactive
+                  🌍 Carte interactive
                 </button>
                 <button 
                   onClick={() => setActiveModule('notifications')}

@@ -323,7 +323,7 @@ const GrandesSurfacesDOMTOM = () => {
                     📱 Voir les prix
                   </button>
                   <button className="px-3 py-2 bg-slate-700/50 hover:bg-slate-700 text-slate-400 rounded-lg text-sm transition-colors">
-                    🗺️ Localiser
+                    🌍 Localiser
                   </button>
                 </div>
               </div>

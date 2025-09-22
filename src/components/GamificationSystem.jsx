@@ -129,7 +129,7 @@ const CHALLENGES = [
     current: 1,
     reward: '100 points + Badge Explorateur',
     deadline: '2024-10-15',
-    icon: '🗺️'
+    icon: '🌍'
   }
 ];
 
