@@ -1,0 +1,1268 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Recherche Intelligente – A KI PRI SA YÉ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  
+  <!-- Local fuzzy search implementation -->
+  <script>
+    // Simple fuzzy search implementation
+    class SimpleFuzzySearch {
+      constructor(list, options = {}) {
+        this.list = list;
+        this.keys = options.keys || [];
+        this.threshold = options.threshold || 0.6;
+      }
+
+      search(query) {
+        if (!query || query.length < 2) return [];
+        
+        const results = this.list.map(item => {
+          let score = 0;
+          let matches = [];
+          
+          for (const key of this.keys) {
+            const text = this.getValue(item, key.name).toLowerCase();
+            const queryLower = query.toLowerCase();
+            
+            // Exact match
+            if (text.includes(queryLower)) {
+              score += (key.weight || 1) * 1.0;
+              matches.push({ key: key.name, value: text });
+            }
+            // Fuzzy match
+            else if (this.fuzzyMatch(text, queryLower)) {
+              score += (key.weight || 1) * 0.7;
+              matches.push({ key: key.name, value: text });
+            }
+          }
+          
+          return { item, score, matches };
+        })
+        .filter(result => result.score > 0)
+        .sort((a, b) => b.score - a.score);
+        
+        return results;
+      }
+
+      getValue(obj, path) {
+        return path.split('.').reduce((o, p) => o && o[p], obj) || '';
+      }
+
+      fuzzyMatch(text, query) {
+        let textIndex = 0;
+        let queryIndex = 0;
+        
+        while (textIndex < text.length && queryIndex < query.length) {
+          if (text[textIndex] === query[queryIndex]) {
+            queryIndex++;
+          }
+          textIndex++;
+        }
+        
+        return queryIndex === query.length;
+      }
+    }
+    
+    // Make it available globally as Fuse replacement
+    window.Fuse = SimpleFuzzySearch;
+  </script>
+  
+  <style>
+    :root {
+      --bg: #0d1420;
+      --panel: #1b2636;
+      --muted: #8da2b5;
+      --text: #e8f0f7;
+      --accent: #35e1ff;
+      --ok: #18c08f;
+      --err: #ff6b6b;
+      --warning: #f59e0b;
+      --shadow: 0 6px 24px rgba(0,0,0,.25);
+      --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Ubuntu, 'Helvetica Neue', Arial, sans-serif;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    /* Header */
+    .header {
+      background: var(--gradient);
+      padding: 2rem 0;
+      margin-bottom: 2rem;
+      border-radius: 0 0 2rem 2rem;
+      box-shadow: var(--shadow-xl);
+    }
+
+    .header h1 {
+      margin: 0 0 0.5rem;
+      font-size: 2.5rem;
+      font-weight: 700;
+      text-align: center;
+      color: white;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .header p {
+      text-align: center;
+      color: rgba(255,255,255,0.9);
+      font-size: 1.1rem;
+      margin: 0;
+    }
+
+    /* Search Section */
+    .search-section {
+      background: var(--panel);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+
+    .search-container {
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 1rem 3rem 1rem 1rem;
+      background: #0f1826;
+      border: 2px solid #2b3a52;
+      border-radius: 12px;
+      color: var(--text);
+      font-size: 1.1rem;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(53, 225, 255, 0.1);
+    }
+
+    .search-icon {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: 1.2rem;
+    }
+
+    /* Loader Animation */
+    .loader {
+      display: none;
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      border: 2px solid #2b3a52;
+      border-top: 2px solid var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: translateY(-50%) rotate(0deg); }
+      100% { transform: translateY(-50%) rotate(360deg); }
+    }
+
+    /* Suggestions Dropdown */
+    .suggestions {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: var(--panel);
+      border: 1px solid #2b3a52;
+      border-radius: 12px;
+      box-shadow: var(--shadow-xl);
+      max-height: 300px;
+      overflow-y: auto;
+      z-index: 1000;
+      display: none;
+    }
+
+    .suggestion-item {
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      border-bottom: 1px solid rgba(43, 58, 82, 0.5);
+      transition: background-color 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .suggestion-item:hover,
+    .suggestion-item.highlighted {
+      background: rgba(53, 225, 255, 0.1);
+    }
+
+    .suggestion-item:last-child {
+      border-bottom: none;
+    }
+
+    .suggestion-icon {
+      width: 24px;
+      height: 24px;
+      font-size: 1.2rem;
+    }
+
+    .suggestion-text {
+      flex: 1;
+    }
+
+    .suggestion-type {
+      font-size: 0.8rem;
+      color: var(--muted);
+      background: rgba(141, 162, 181, 0.1);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    /* Filters */
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .filter-label {
+      font-size: 0.9rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .filter-select, .filter-input {
+      padding: 0.75rem;
+      background: #0f1826;
+      border: 1px solid #2b3a52;
+      border-radius: 8px;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+
+    .filter-select:focus, .filter-input:focus {
+      border-color: var(--accent);
+    }
+
+    .price-range {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    /* Gamification Section */
+    .gamification {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      color: white;
+      box-shadow: var(--shadow);
+    }
+
+    .game-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .game-card {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 1rem;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .game-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: rgba(24, 192, 143, 0.2);
+      color: var(--ok);
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border: 1px solid rgba(24, 192, 143, 0.3);
+    }
+
+    /* Results Section */
+    .results-section {
+      background: var(--panel);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: var(--shadow);
+    }
+
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .results-count {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .sort-controls {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .sort-btn {
+      padding: 0.5rem 1rem;
+      background: transparent;
+      border: 1px solid #2b3a52;
+      border-radius: 6px;
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.9rem;
+    }
+
+    .sort-btn:hover, .sort-btn.active {
+      background: var(--accent);
+      color: #042029;
+      border-color: var(--accent);
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .product-card {
+      background: #0f1826;
+      border-radius: 12px;
+      padding: 1.5rem;
+      border: 1px solid #2b3a52;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .product-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-xl);
+      border-color: var(--accent);
+    }
+
+    .product-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+
+    .product-image {
+      width: 60px;
+      height: 60px;
+      border-radius: 8px;
+      background: var(--panel);
+      border: 1px solid #2b3a52;
+      object-fit: cover;
+    }
+
+    .product-title {
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 0.25rem;
+      color: var(--text);
+    }
+
+    .product-brand {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .product-price {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--ok);
+      margin: 0.75rem 0;
+    }
+
+    .product-store {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.25rem 0.75rem;
+      background: rgba(53, 225, 255, 0.1);
+      color: var(--accent);
+      border-radius: 16px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .product-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .action-btn {
+      flex: 1;
+      padding: 0.5rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .share-btn {
+      background: #25d366;
+      color: white;
+    }
+
+    .report-btn {
+      background: var(--warning);
+      color: white;
+    }
+
+    .share-btn:hover {
+      background: #128c7e;
+    }
+
+    .report-btn:hover {
+      background: #d97706;
+    }
+
+    /* Status Messages */
+    .status-message {
+      text-align: center;
+      padding: 2rem;
+      color: var(--muted);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+    }
+
+    .empty-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .container {
+        padding: 0 12px;
+      }
+      
+      .header h1 {
+        font-size: 2rem;
+      }
+      
+      .search-section,
+      .results-section {
+        padding: 1.5rem;
+      }
+      
+      .filters {
+        grid-template-columns: 1fr;
+      }
+      
+      .results-header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .results-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Animation Classes */
+    .fade-in {
+      animation: fadeIn 0.3s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
+    /* Trending indicator */
+    .trending {
+      position: relative;
+    }
+
+    .trending::after {
+      content: "🔥";
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <h1>🔍 Recherche Intelligente</h1>
+      <p>Trouvez les meilleurs prix dans les DOM-TOM avec notre IA</p>
+    </header>
+
+    <!-- Search Section -->
+    <section class="search-section">
+      <div class="search-container">
+        <input 
+          type="text" 
+          id="searchInput" 
+          class="search-input" 
+          placeholder="Recherchez un produit (ex: lait, riz, banane...)"
+          autocomplete="off"
+        >
+        <div class="search-icon" id="searchIcon">🔍</div>
+        <div class="loader" id="loader"></div>
+        
+        <div class="suggestions" id="suggestions"></div>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters">
+        <div class="filter-group">
+          <label class="filter-label">Territoire</label>
+          <select class="filter-select" id="territoryFilter">
+            <option value="">Tous les territoires</option>
+            <option value="guadeloupe">Guadeloupe</option>
+            <option value="martinique">Martinique</option>
+            <option value="guyane">Guyane</option>
+            <option value="reunion">La Réunion</option>
+            <option value="mayotte">Mayotte</option>
+            <option value="polynesie">Polynésie française</option>
+            <option value="nouvelle-caledonie">Nouvelle-Calédonie</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">Enseigne</label>
+          <select class="filter-select" id="storeFilter">
+            <option value="">Toutes les enseignes</option>
+            <option value="carrefour">Carrefour</option>
+            <option value="leclerc">E.Leclerc</option>
+            <option value="super-u">Super U</option>
+            <option value="leader-price">Leader Price</option>
+            <option value="score">Score</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">Prix (€)</label>
+          <div class="price-range">
+            <input type="number" class="filter-input" id="minPrice" placeholder="Min" step="0.01">
+            <span>-</span>
+            <input type="number" class="filter-input" id="maxPrice" placeholder="Max" step="0.01">
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">Mise à jour</label>
+          <select class="filter-select" id="dateFilter">
+            <option value="">Toutes les dates</option>
+            <option value="today">Aujourd'hui</option>
+            <option value="week">Cette semaine</option>
+            <option value="month">Ce mois</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Status message -->
+      <div id="statusMessage" class="status-message" style="display: none;"></div>
+    </section>
+
+    <!-- Gamification Section -->
+    <section class="gamification">
+      <h2>🎮 Défis & Récompenses</h2>
+      <div class="game-grid">
+        <div class="game-card" onclick="showTrending()">
+          <h3>📈 Tendances du moment</h3>
+          <p>Découvrez les produits les plus recherchés</p>
+          <div class="badge">
+            <span>🏆</span>
+            Explorateur
+          </div>
+        </div>
+        
+        <div class="game-card" onclick="startPriceGame()">
+          <h3>🎯 Devinez le prix</h3>
+          <p>Testez vos connaissances du marché local</p>
+          <div class="badge">
+            <span>🎮</span>
+            Mini-jeu
+          </div>
+        </div>
+        
+        <div class="game-card" onclick="showUserStats()">
+          <h3>📊 Mes statistiques</h3>
+          <p>Suivez vos économies et achievements</p>
+          <div class="badge">
+            <span>⭐</span>
+            Expert
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Results Section -->
+    <section class="results-section">
+      <div class="results-header">
+        <div>
+          <h2>Résultats de recherche</h2>
+          <div class="results-count" id="resultsCount">Tapez pour commencer votre recherche</div>
+        </div>
+        
+        <div class="sort-controls">
+          <button class="sort-btn active" data-sort="relevance">Pertinence</button>
+          <button class="sort-btn" data-sort="price-asc">Prix ↑</button>
+          <button class="sort-btn" data-sort="price-desc">Prix ↓</button>
+          <button class="sort-btn" data-sort="date">Date</button>
+        </div>
+      </div>
+
+      <div class="results-grid" id="resultsGrid">
+        <div class="empty-state">
+          <div class="empty-icon">🛍️</div>
+          <h3>Prêt pour une recherche intelligente ?</h3>
+          <p>Commencez à taper dans la barre de recherche ci-dessus pour voir apparaître des suggestions automatiques.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Social Share Modal -->
+  <div id="shareModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 2000; align-items: center; justify-content: center;">
+    <div style="background: var(--panel); padding: 2rem; border-radius: 16px; max-width: 400px; width: 90%;">
+      <h3 style="margin-top: 0;">Partager ce produit</h3>
+      <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+        <button onclick="shareWhatsApp()" style="flex: 1; padding: 0.75rem; background: #25d366; color: white; border: none; border-radius: 8px; cursor: pointer;">
+          📱 WhatsApp
+        </button>
+        <button onclick="shareFacebook()" style="flex: 1; padding: 0.75rem; background: #1877f2; color: white; border: none; border-radius: 8px; cursor: pointer;">
+          📘 Facebook
+        </button>
+      </div>
+      <button onclick="closeShareModal()" style="width: 100%; padding: 0.75rem; background: var(--muted); color: white; border: none; border-radius: 8px; cursor: pointer; margin-top: 1rem;">
+        Fermer
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // Enhanced Search Implementation
+    class EnhancedSearch {
+      constructor() {
+        this.searchInput = document.getElementById('searchInput');
+        this.suggestions = document.getElementById('suggestions');
+        this.loader = document.getElementById('loader');
+        this.searchIcon = document.getElementById('searchIcon');
+        this.resultsGrid = document.getElementById('resultsGrid');
+        this.resultsCount = document.getElementById('resultsCount');
+        this.statusMessage = document.getElementById('statusMessage');
+        
+        this.currentQuery = '';
+        this.searchTimeout = null;
+        this.suggestionIndex = -1;
+        this.isLoading = false;
+        this.fuse = null;
+        this.productsData = [];
+        this.currentResults = [];
+        
+        this.initializeSearch();
+        this.loadProductsData();
+        this.setupEventListeners();
+      }
+
+      async loadProductsData() {
+        try {
+          // Load products data for fuzzy search
+          const response = await fetch('/data/products.json');
+          const products = await response.json();
+          
+          // Enhanced mock data for demonstration
+          this.productsData = [
+            ...products,
+            // Add more diverse products for better demo
+            { id: 'b1', name: 'Banane', brand: 'Local', price: 2.50, category: 'Fruits', store: 'Carrefour', territory: 'martinique', image: '/img/banana.png', trending: true },
+            { id: 'b2', name: 'Banane plantain', brand: 'Caraïbes', price: 3.20, category: 'Fruits', store: 'Super U', territory: 'guadeloupe', image: '/img/plantain.png' },
+            { id: 'b3', name: 'Banane douce', brand: 'Ti-Nana', price: 2.80, category: 'Fruits', store: 'Leader Price', territory: 'martinique', image: '/img/banana-sweet.png' },
+            { id: 'c1', name: 'Café Bonka', brand: 'Bonka', price: 4.50, category: 'Boissons', store: 'Carrefour', territory: 'reunion', image: '/img/coffee.png' },
+            { id: 'c2', name: 'Café arabica', brand: 'Local', price: 8.90, category: 'Boissons', store: 'E.Leclerc', territory: 'nouvelle-caledonie', image: '/img/arabica.png', trending: true },
+            { id: 't1', name: 'Thon rouge', brand: 'Saupiquet', price: 3.45, category: 'Conserves', store: 'Score', territory: 'mayotte', image: '/img/tuna.png' },
+            { id: 'a1', name: 'Ananas Victoria', brand: 'Local', price: 4.20, category: 'Fruits', store: 'Carrefour', territory: 'reunion', image: '/img/pineapple.png', trending: true },
+            { id: 'y1', name: 'Yaourt coco', brand: 'Yoplait', price: 0.85, category: 'Frais', store: 'Super U', territory: 'guadeloupe', image: '/img/yogurt.png' }
+          ];
+
+          // Initialize Fuse.js for fuzzy search
+          this.initializeFuse();
+        } catch (error) {
+          console.error('Error loading products data:', error);
+          this.showStatus('Erreur lors du chargement des données', 'error');
+        }
+      }
+
+      initializeFuse() {
+        const options = {
+          keys: [
+            { name: 'name', weight: 0.7 },
+            { name: 'brand', weight: 0.2 },
+            { name: 'category', weight: 0.1 }
+          ],
+          threshold: 0.3, // More forgiving for typos
+          includeScore: true,
+          includeMatches: true,
+          minMatchCharLength: 2
+        };
+
+        this.fuse = new Fuse(this.productsData, options);
+      }
+
+      initializeSearch() {
+        // Setup search functionality
+        this.searchInput.addEventListener('input', (e) => this.handleSearchInput(e));
+        this.searchInput.addEventListener('keydown', (e) => this.handleKeyNavigation(e));
+        this.searchInput.addEventListener('focus', () => this.showSuggestions());
+        
+        // Close suggestions when clicking outside
+        document.addEventListener('click', (e) => {
+          if (!e.target.closest('.search-container')) {
+            this.hideSuggestions();
+          }
+        });
+      }
+
+      setupEventListeners() {
+        // Filter change listeners
+        ['territoryFilter', 'storeFilter', 'minPrice', 'maxPrice', 'dateFilter'].forEach(id => {
+          const element = document.getElementById(id);
+          element.addEventListener('change', () => this.applyFilters());
+        });
+
+        // Sort button listeners
+        document.querySelectorAll('.sort-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => this.handleSort(e));
+        });
+      }
+
+      handleSearchInput(e) {
+        const query = e.target.value.trim();
+        this.currentQuery = query;
+
+        // Clear previous timeout
+        if (this.searchTimeout) {
+          clearTimeout(this.searchTimeout);
+        }
+
+        if (query.length >= 2) {
+          // Show loader
+          this.showLoader();
+          
+          // Debounce search
+          this.searchTimeout = setTimeout(() => {
+            this.performSearch(query);
+          }, 300);
+        } else if (query.length === 0) {
+          this.hideSuggestions();
+          this.hideLoader();
+          this.showEmptyState();
+        } else {
+          this.hideSuggestions();
+          this.hideLoader();
+        }
+      }
+
+      async performSearch(query) {
+        try {
+          // Simulate API delay
+          await new Promise(resolve => setTimeout(resolve, 200));
+
+          if (this.currentQuery !== query) return; // Query changed, ignore
+
+          // Fuzzy search with Fuse.js
+          const results = this.fuse.search(query);
+          
+          // Generate suggestions
+          this.generateSuggestions(query, results);
+          
+          // Update main results
+          this.updateResults(results);
+          
+          this.hideLoader();
+        } catch (error) {
+          console.error('Search error:', error);
+          this.hideLoader();
+          this.showStatus('Erreur lors de la recherche', 'error');
+        }
+      }
+
+      generateSuggestions(query, results) {
+        const suggestions = [];
+        
+        // Exact matches first
+        const exactMatches = results.filter(r => 
+          r.item.name.toLowerCase().includes(query.toLowerCase())
+        ).slice(0, 3);
+        
+        exactMatches.forEach(result => {
+          suggestions.push({
+            type: 'product',
+            text: result.item.name,
+            icon: '🛍️',
+            data: result.item
+          });
+        });
+
+        // Category suggestions
+        const categories = [...new Set(results.map(r => r.item.category))].slice(0, 2);
+        categories.forEach(category => {
+          suggestions.push({
+            type: 'category',
+            text: `Rechercher dans ${category}`,
+            icon: '📂',
+            data: { category }
+          });
+        });
+
+        // Brand suggestions
+        const brands = [...new Set(results.map(r => r.item.brand))].slice(0, 2);
+        brands.forEach(brand => {
+          suggestions.push({
+            type: 'brand',
+            text: `Produits ${brand}`,
+            icon: '🏷️',
+            data: { brand }
+          });
+        });
+
+        // Spelling suggestions (simple implementation)
+        if (results.length === 0) {
+          const spellingSuggestions = this.getSpellingSuggestions(query);
+          spellingSuggestions.forEach(suggestion => {
+            suggestions.push({
+              type: 'spelling',
+              text: `Peut-être "${suggestion}" ?`,
+              icon: '✨',
+              data: { query: suggestion }
+            });
+          });
+        }
+
+        this.displaySuggestions(suggestions);
+      }
+
+      getSpellingSuggestions(query) {
+        // Simple spelling correction based on product names
+        const allNames = this.productsData.map(p => p.name.toLowerCase());
+        const suggestions = [];
+        
+        // Find similar words (very basic implementation)
+        for (const name of allNames) {
+          if (this.levenshteinDistance(query.toLowerCase(), name) <= 2 && query.length > 3) {
+            suggestions.push(name);
+          }
+        }
+        
+        return suggestions.slice(0, 3);
+      }
+
+      levenshteinDistance(str1, str2) {
+        const matrix = Array(str2.length + 1).fill(null).map(() => Array(str1.length + 1).fill(null));
+        
+        for (let i = 0; i <= str1.length; i++) matrix[0][i] = i;
+        for (let j = 0; j <= str2.length; j++) matrix[j][0] = j;
+        
+        for (let j = 1; j <= str2.length; j++) {
+          for (let i = 1; i <= str1.length; i++) {
+            const indicator = str1[i - 1] === str2[j - 1] ? 0 : 1;
+            matrix[j][i] = Math.min(
+              matrix[j][i - 1] + 1,
+              matrix[j - 1][i] + 1,
+              matrix[j - 1][i - 1] + indicator
+            );
+          }
+        }
+        
+        return matrix[str2.length][str1.length];
+      }
+
+      displaySuggestions(suggestions) {
+        if (suggestions.length === 0) {
+          this.hideSuggestions();
+          return;
+        }
+
+        const html = suggestions.map((suggestion, index) => `
+          <div class="suggestion-item" data-index="${index}" onclick="selectSuggestion(${index})">
+            <span class="suggestion-icon">${suggestion.icon}</span>
+            <span class="suggestion-text">${suggestion.text}</span>
+            <span class="suggestion-type">${suggestion.type}</span>
+          </div>
+        `).join('');
+
+        this.suggestions.innerHTML = html;
+        this.suggestions.style.display = 'block';
+        this.suggestionIndex = -1;
+      }
+
+      handleKeyNavigation(e) {
+        const suggestionItems = this.suggestions.querySelectorAll('.suggestion-item');
+        
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          this.suggestionIndex = Math.min(this.suggestionIndex + 1, suggestionItems.length - 1);
+          this.highlightSuggestion();
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          this.suggestionIndex = Math.max(this.suggestionIndex - 1, -1);
+          this.highlightSuggestion();
+        } else if (e.key === 'Enter') {
+          e.preventDefault();
+          if (this.suggestionIndex >= 0) {
+            this.selectSuggestionByIndex(this.suggestionIndex);
+          } else {
+            this.performSearch(this.currentQuery);
+          }
+        } else if (e.key === 'Escape') {
+          this.hideSuggestions();
+        }
+      }
+
+      highlightSuggestion() {
+        const suggestionItems = this.suggestions.querySelectorAll('.suggestion-item');
+        suggestionItems.forEach((item, index) => {
+          item.classList.toggle('highlighted', index === this.suggestionIndex);
+        });
+      }
+
+      updateResults(results) {
+        this.currentResults = results.map(r => r.item);
+        this.applyFilters();
+      }
+
+      applyFilters() {
+        let filteredResults = [...this.currentResults];
+
+        // Territory filter
+        const territory = document.getElementById('territoryFilter').value;
+        if (territory) {
+          filteredResults = filteredResults.filter(item => item.territory === territory);
+        }
+
+        // Store filter
+        const store = document.getElementById('storeFilter').value;
+        if (store) {
+          filteredResults = filteredResults.filter(item => 
+            item.store && item.store.toLowerCase().includes(store.toLowerCase())
+          );
+        }
+
+        // Price filter
+        const minPrice = parseFloat(document.getElementById('minPrice').value);
+        const maxPrice = parseFloat(document.getElementById('maxPrice').value);
+        if (!isNaN(minPrice)) {
+          filteredResults = filteredResults.filter(item => item.price >= minPrice);
+        }
+        if (!isNaN(maxPrice)) {
+          filteredResults = filteredResults.filter(item => item.price <= maxPrice);
+        }
+
+        this.displayResults(filteredResults);
+      }
+
+      displayResults(results) {
+        this.resultsCount.textContent = `${results.length} résultat${results.length !== 1 ? 's' : ''} trouvé${results.length !== 1 ? 's' : ''}`;
+
+        if (results.length === 0) {
+          this.resultsGrid.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-icon">😔</div>
+              <h3>Aucun résultat trouvé</h3>
+              <p>Essayez de modifier vos critères de recherche ou utilisez d'autres mots-clés.</p>
+            </div>
+          `;
+          return;
+        }
+
+        const html = results.map(product => this.createProductCard(product)).join('');
+        this.resultsGrid.innerHTML = html;
+        this.resultsGrid.classList.add('fade-in');
+      }
+
+      createProductCard(product) {
+        const isTrending = product.trending ? 'trending' : '';
+        return `
+          <div class="product-card ${isTrending}">
+            <div class="product-header">
+              <img src="${product.image || '/img/placeholder.png'}" alt="${product.name}" class="product-image" loading="lazy">
+              <div>
+                <h3 class="product-title">${product.name}</h3>
+                <p class="product-brand">${product.brand || 'N/A'}</p>
+              </div>
+            </div>
+            
+            <div class="product-price">${product.price?.toFixed(2) || 'N/A'} €</div>
+            
+            <div style="margin-bottom: 1rem;">
+              <span class="product-store">🏪 ${product.store || 'N/A'}</span>
+            </div>
+            
+            <div class="product-actions">
+              <button class="action-btn share-btn" onclick="shareProduct('${product.id}')">
+                📱 Partager
+              </button>
+              <button class="action-btn report-btn" onclick="reportPrice('${product.id}')">
+                ⚠️ Signaler
+              </button>
+            </div>
+          </div>
+        `;
+      }
+
+      handleSort(e) {
+        // Remove active class from all buttons
+        document.querySelectorAll('.sort-btn').forEach(btn => btn.classList.remove('active'));
+        e.target.classList.add('active');
+
+        const sortType = e.target.dataset.sort;
+        let sortedResults = [...this.currentResults];
+
+        switch (sortType) {
+          case 'price-asc':
+            sortedResults.sort((a, b) => (a.price || 0) - (b.price || 0));
+            break;
+          case 'price-desc':
+            sortedResults.sort((a, b) => (b.price || 0) - (a.price || 0));
+            break;
+          case 'date':
+            // Mock date sorting
+            sortedResults.sort(() => Math.random() - 0.5);
+            break;
+          default: // relevance
+            // Keep original order (by relevance from Fuse.js)
+            break;
+        }
+
+        this.currentResults = sortedResults;
+        this.applyFilters();
+      }
+
+      showLoader() {
+        this.isLoading = true;
+        this.loader.style.display = 'block';
+        this.searchIcon.style.display = 'none';
+      }
+
+      hideLoader() {
+        this.isLoading = false;
+        this.loader.style.display = 'none';
+        this.searchIcon.style.display = 'block';
+      }
+
+      showSuggestions() {
+        if (this.suggestions.innerHTML && this.currentQuery.length >= 2) {
+          this.suggestions.style.display = 'block';
+        }
+      }
+
+      hideSuggestions() {
+        this.suggestions.style.display = 'none';
+        this.suggestionIndex = -1;
+      }
+
+      showEmptyState() {
+        this.resultsGrid.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">🛍️</div>
+            <h3>Prêt pour une recherche intelligente ?</h3>
+            <p>Commencez à taper dans la barre de recherche ci-dessus pour voir apparaître des suggestions automatiques.</p>
+          </div>
+        `;
+        this.resultsCount.textContent = 'Tapez pour commencer votre recherche';
+      }
+
+      showStatus(message, type = 'info') {
+        this.statusMessage.textContent = message;
+        this.statusMessage.className = `status-message ${type}`;
+        this.statusMessage.style.display = 'block';
+        
+        setTimeout(() => {
+          this.statusMessage.style.display = 'none';
+        }, 3000);
+      }
+
+      selectSuggestionByIndex(index) {
+        const suggestionItems = this.suggestions.querySelectorAll('.suggestion-item');
+        if (suggestionItems[index]) {
+          suggestionItems[index].click();
+        }
+      }
+    }
+
+    // Global functions for interactions
+    let currentProduct = null;
+
+    function selectSuggestion(index) {
+      const suggestionItems = document.querySelectorAll('.suggestion-item');
+      const suggestion = suggestionItems[index];
+      const text = suggestion.querySelector('.suggestion-text').textContent;
+      
+      // Extract the actual search term
+      let searchTerm = text;
+      if (text.includes('"')) {
+        searchTerm = text.match(/"([^"]+)"/)?.[1] || text;
+      } else if (text.includes('Rechercher dans')) {
+        searchTerm = text.replace('Rechercher dans ', '');
+      } else if (text.includes('Produits')) {
+        searchTerm = text.replace('Produits ', '');
+      }
+      
+      document.getElementById('searchInput').value = searchTerm;
+      enhancedSearch.hideSuggestions();
+      enhancedSearch.performSearch(searchTerm);
+    }
+
+    function shareProduct(productId) {
+      currentProduct = enhancedSearch.productsData.find(p => p.id === productId);
+      const modal = document.getElementById('shareModal');
+      modal.style.display = 'flex';
+    }
+
+    function shareWhatsApp() {
+      if (currentProduct) {
+        const message = `🛍️ Super prix trouvé !\n\n${currentProduct.name} - ${currentProduct.brand}\n💰 ${currentProduct.price}€ chez ${currentProduct.store}\n\n📱 Trouvé sur A KI PRI SA YÉ - https://akiprisaye.pages.dev`;
+        const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
+        window.open(url, '_blank');
+      }
+      closeShareModal();
+    }
+
+    function shareFacebook() {
+      if (currentProduct) {
+        const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://akiprisaye.pages.dev')}&quote=${encodeURIComponent(`Super prix : ${currentProduct.name} à ${currentProduct.price}€ !`)}`;
+        window.open(url, '_blank');
+      }
+      closeShareModal();
+    }
+
+    function closeShareModal() {
+      document.getElementById('shareModal').style.display = 'none';
+      currentProduct = null;
+    }
+
+    function reportPrice(productId) {
+      const product = enhancedSearch.productsData.find(p => p.id === productId);
+      if (product && confirm(`Signaler un problème avec le prix de "${product.name}" ?`)) {
+        alert('Signalement envoyé ! Merci de nous aider à maintenir des données exactes.');
+      }
+    }
+
+    function showTrending() {
+      const trendingProducts = enhancedSearch.productsData.filter(p => p.trending);
+      alert(`🔥 Produits tendance :\n${trendingProducts.map(p => `• ${p.name}`).join('\n')}`);
+    }
+
+    function startPriceGame() {
+      const randomProduct = enhancedSearch.productsData[Math.floor(Math.random() * enhancedSearch.productsData.length)];
+      const guess = prompt(`🎯 Devinez le prix du produit :\n\n"${randomProduct.name}" chez ${randomProduct.store}\n\nVotre estimation (en euros) :`);
+      
+      if (guess) {
+        const guessPrice = parseFloat(guess);
+        const actualPrice = randomProduct.price;
+        const difference = Math.abs(guessPrice - actualPrice);
+        
+        if (difference < 0.5) {
+          alert(`🎉 Excellent ! Le prix exact est ${actualPrice}€. Vous étiez très proche !`);
+        } else if (difference < 1) {
+          alert(`👍 Pas mal ! Le prix exact est ${actualPrice}€. Vous aviez une bonne estimation.`);
+        } else {
+          alert(`💡 Le prix exact est ${actualPrice}€. Continuez à jouer pour améliorer vos connaissances du marché !`);
+        }
+      }
+    }
+
+    function showUserStats() {
+      alert(`📊 Vos statistiques :\n\n🔍 Recherches effectuées : 47\n💰 Économies réalisées : 23.45€\n🏆 Badge actuel : Expert Local\n⭐ Points : 1,250\n\n🎯 Prochain objectif : 500 points pour le badge "Maître des Prix"`);
+    }
+
+    // Initialize the enhanced search system
+    let enhancedSearch;
+    document.addEventListener('DOMContentLoaded', () => {
+      enhancedSearch = new EnhancedSearch();
+    });
+  </script>
+
+  <!-- Navigation -->
+  <div style="position: fixed; bottom: 1rem; right: 1rem;">
+    <a href="/search.html" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1rem; background: var(--accent); color: #042029; border-radius: 25px; text-decoration: none; font-weight: 600; box-shadow: var(--shadow);">
+      🔙 Recherche classique
+    </a>
+  </div>
+</body>
+</html>
