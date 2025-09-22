@@ -1,14 +1,17 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo "==> 0) Vérifs préliminaires"
+# Fonction pour afficher les étapes numérotées
+step() { printf "📋 Étape %s/8: %s\n" "$1" "${*:2}"; }
+
+step 0 "Vérifications préliminaires"
 [ -f package.json ] || { echo "package.json introuvable. Lance d'abord:  npm create vite@latest .  (ou équivalent)"; exit 1; }
 
-echo "==> 1) Dépendances (tailwind + postcss + autoprefixer)"
+step 1 "Installation des dépendances (tailwind + postcss + autoprefixer)"
 # Tailwind v4 sépare le plugin PostCSS dans @tailwindcss/postcss
 npm i -D tailwindcss @tailwindcss/postcss autoprefixer
 
-echo "==> 2) Fichiers de config (sauvegarde si existants)"
+step 2 "Configuration des fichiers (sauvegarde si existants)"
 ts=$(date +%Y%m%d_%H%M%S)
 for f in tailwind.config.cjs postcss.config.cjs; do
   [ -f "$f" ] && cp -f "$f" "$f.bak.$ts"
@@ -33,10 +36,10 @@ module.exports = {
 };
 CFG
 
-echo "==> 3) Arborescence src/"
+step 3 "Création de l'arborescence src/"
 mkdir -p src
 
-echo "==> 4) Feuille CSS avec directives Tailwind"
+step 4 "Création de la feuille CSS avec directives Tailwind"
 [ -f src/index.css ] && cp -f src/index.css "src/index.css.bak.$ts"
 cat > src/index.css <<'CSS'
 @tailwind base;
@@ -48,7 +51,7 @@ html, body, #root { height: 100%; }
 body { @apply bg-slate-50 text-slate-900 antialiased; }
 CSS
 
-echo "==> 5) Fichiers React minimaux"
+step 5 "Création des fichiers React minimaux"
 # index.html (root)
 if [ ! -f index.html ]; then
 cat > index.html <<'HTML'
@@ -84,6 +87,7 @@ JSX
 fi
 
 # main.jsx (toujours régénéré proprement avec import CSS)
+step 6 "Configuration du point d'entrée main.jsx"
 [ -f src/main.jsx ] && cp -f src/main.jsx "src/main.jsx.bak.$ts"
 cat > src/main.jsx <<'JSX'
 import "./index.css";
@@ -98,7 +102,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
 );
 JSX
 
-echo "==> 6) Scripts npm (dev/preview avec --host)"
+step 7 "Configuration des scripts npm (dev/preview avec --host)"
 tmp=package.tmp.json
 node - <<'NODE' > "$tmp"
 const fs = require("fs");
@@ -112,7 +116,7 @@ process.stdout.write(JSON.stringify(pkg, null, 2));
 NODE
 mv "$tmp" package.json
 
-echo "==> 7) (Re)démarrage du serveur Vite"
+step 8 "Démarrage du serveur Vite"
 # Tue l'ancien Vite s'il existe, puis relance
 pkill -f "vite" >/dev/null 2>&1 || true
 npm run dev

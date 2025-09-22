@@ -44,13 +44,19 @@ use_sa_if_exists() {
   fi
 }
 
+# --- Fonction pour afficher les étapes ---
+step() { printf "📋 Étape %s: %s\n" "$1" "${*:2}"; }
+
 # --- Seed Firestore (produits tests x zones DROM+COM) ---
 seed_firestore() {
+  step 1 "Vérification des prérequis"
   use_sa_if_exists
   if [ ! -f "${SA_FILE}" ]; then
     echo "❌ ${SA_FILE} manquant. Choisis l'option 2 pour charger la clé."
     return 1
   fi
+
+  step 2 "Initialisation et seed des données Firestore"
 
   node - <<'NODE'
 const admin = require('firebase-admin');

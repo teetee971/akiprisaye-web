@@ -5,6 +5,7 @@ set -euo pipefail
 c() { printf "\033[1;36m%s\033[0m\n" "$*"; }
 ok(){ printf "\033[1;32m%s\033[0m\n" "$*"; }
 er(){ printf "\033[1;31m%s\033[0m\n" "$*"; }
+step() { printf "\033[1;33m📋 Étape %s/%s: %s\033[0m\n" "$1" "$2" "${*:3}"; }
 
 # === Réglages ===
 BRANCH="${BRANCH:-main}"            # branche à pousser
@@ -12,8 +13,13 @@ BUILD_DIR="${BUILD_DIR:-dist}"      # dossier de sortie Vite
 CF_PROJECT="${CF_PROJECT:-}"         # nom Cloudflare Pages (si déploiement wrangler)
 WRANGLER_DEPLOY="${WRANGLER_DEPLOY:-0}" # 1 pour déployer via wrangler, sinon 0
 
+# Variables pour le suivi des étapes
+TOTAL_STEPS=7
+CURRENT_STEP=0
+
 # === Pré-requis ===
-c "🔎 Vérification des pré-requis…"
+CURRENT_STEP=$((CURRENT_STEP + 1))
+step $CURRENT_STEP $TOTAL_STEPS "Vérification des pré-requis"
 command -v git >/dev/null    || { er "git manquant"; exit 1; }
 command -v node >/dev/null   || { er "node manquant"; exit 1; }
 command -v pnpm >/dev/null   || { er "pnpm manquant"; exit 1; }
@@ -26,6 +32,8 @@ fi
 ok "✔ Node $(node -v), pnpm $(pnpm -v), git OK"
 
 # === Mise à jour / install ===
+CURRENT_STEP=$((CURRENT_STEP + 1))
+step $CURRENT_STEP $TOTAL_STEPS "Installation des dépendances"
 c "📦 Installation des dépendances (pnpm i)…"
 pnpm install --frozen-lockfile || pnpm install
 
@@ -36,12 +44,16 @@ if pnpm approve-builds -h >/dev/null 2>&1; then
 fi
 
 # === Lint (souple) ===
+CURRENT_STEP=$((CURRENT_STEP + 1))
+step $CURRENT_STEP $TOTAL_STEPS "Vérification du code (lint)"
 if npm run -s lint >/dev/null 2>&1; then
   c "🧹 Lint… (non bloquant)"
   npm run -s lint || true
 fi
 
 # === Build local pour vérifier que Vite passe ===
+CURRENT_STEP=$((CURRENT_STEP + 1))
+step $CURRENT_STEP $TOTAL_STEPS "Build Vite"
 c "🏗️ Build Vite…"
 if npm run -s build >/dev/null 2>&1; then
   npm run -s build
@@ -55,6 +67,8 @@ fi
 ok "✔ Build terminé → $BUILD_DIR"
 
 # === Git: commit & push pour déclencher Cloudflare Pages ===
+CURRENT_STEP=$((CURRENT_STEP + 1))
+step $CURRENT_STEP $TOTAL_STEPS "Push vers la branche ${BRANCH}"
 c "🔁 Commit & push vers ${BRANCH}…"
 git add -A
 if ! git diff --cached --quiet; then
@@ -77,6 +91,8 @@ git push origin "$BRANCH"
 ok "✔ Push envoyé. Cloudflare Pages va construire et déployer automatiquement."
 
 # === Déploiement manuel (optionnel) via Wrangler ===
+CURRENT_STEP=$((CURRENT_STEP + 1))
+step $CURRENT_STEP $TOTAL_STEPS "Déploiement optionnel via Wrangler"
 if [ "$WRANGLER_DEPLOY" = "1" ]; then
   if ! command -v wrangler >/dev/null; then
     er "Wrangler introuvable. Installe: npm i -g wrangler"

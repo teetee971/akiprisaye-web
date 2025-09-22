@@ -14,6 +14,7 @@ ok()   { printf "✅ %s\n" "$*"; }
 ko()   { printf "❌ %s\n" "$*"; }
 info() { printf "ℹ️  %s\n" "$*"; }
 sep()  { printf "%s\n" "----------------------------------------------------------------"; }
+step() { printf "📋 Étape %s/%s: %s\n" "$1" "$2" "${*:3}"; }
 
 # ── Préambule ──────────────────────────────────────────────────────────────────
 cd "$ROOT"
@@ -23,14 +24,20 @@ info "Domaine: $DOMAIN"
 info "Territoire: $TERRITORY   • LIMIT: $LIMIT"
 sep
 
+# Variables pour le suivi des étapes
+TOTAL_STEPS=6
+CURRENT_STEP=0
+
 # ── Build statique ─────────────────────────────────────────────────────────────
-echo "📦 Build…"
+CURRENT_STEP=$((CURRENT_STEP + 1))
+step $CURRENT_STEP $TOTAL_STEPS "Build statique"
 rm -rf dist && mkdir -p dist
 [ -d public ] && cp -r public/* dist/ || true
 ok "Build OK."
 
 # ── Copie des données API locales (fallback) ───────────────────────────────────
-echo "📂 Copie API locale → dist/api…"
+CURRENT_STEP=$((CURRENT_STEP + 1))
+step $CURRENT_STEP $TOTAL_STEPS "Copie des données API locales"
 mkdir -p dist/api
 if [ -d public/api ]; then
   cp -r public/api/* dist/api/
@@ -40,7 +47,8 @@ else
 fi
 
 # ── Vérifs locales (fichiers présents dans dist) ───────────────────────────────
-echo "🔎 Vérifs locales (dist)…"
+CURRENT_STEP=$((CURRENT_STEP + 1))
+step $CURRENT_STEP $TOTAL_STEPS "Vérifications locales (dist)"
 if [ -f dist/version.txt ]; then
   ver_line="$(head -n 1 dist/version.txt || true)"
   ok "version.txt (local) : ${ver_line:-vide}"
@@ -61,7 +69,9 @@ fi
 sep
 
 # ── Vérifs côté PROD (Cloudflare Pages) ────────────────────────────────────────
-echo "🌐 Vérifs prod ($DOMAIN)…"
+CURRENT_STEP=$((CURRENT_STEP + 1))
+step $CURRENT_STEP $TOTAL_STEPS "Vérifications de production"
+info "Test de $DOMAIN…"
 FAIL=0
 
 # 1) Page HTML
@@ -105,6 +115,8 @@ else
 fi
 
 sep
+CURRENT_STEP=$((CURRENT_STEP + 1))
+step $CURRENT_STEP $TOTAL_STEPS "Analyse des résultats"
 if [ "$FAIL" -eq 0 ]; then
   ok "Déploiement visible & endpoints accessibles."
   echo "🔗 Diagnostics: $DOMAIN/diagnostics/"
@@ -116,6 +128,8 @@ else
 fi
 
 # ── Pause anti-fermeture (Termux) ──────────────────────────────────────────────
+CURRENT_STEP=$((CURRENT_STEP + 1))
+step $CURRENT_STEP $TOTAL_STEPS "Finalisation"
 if [ "$PAUSE" = "1" ]; then
   echo
   read -r -p "Appuie sur Entrée pour quitter… " _ || true
