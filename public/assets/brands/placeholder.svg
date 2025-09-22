@@ -1,0 +1,7 @@
+<svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="56" height="56" rx="8" fill="#1e293b"/>
+  <rect x="4" y="4" width="48" height="48" rx="4" fill="#334155"/>
+  <path d="M28 16c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm0 20c-4.418 0-8-3.582-8-8s3.582-8 8-8 8 3.582 8 8-3.582 8-8 8z" fill="#64748b"/>
+  <path d="M28 22c-3.314 0-6 2.686-6 6s2.686 6 6 6 6-2.686 6-6-2.686-6-6-6zm0 8c-1.105 0-2-0.895-2-2s0.895-2 2-2 2 0.895 2 2-0.895 2-2 2z" fill="#94a3b8"/>
+  <text x="28" y="44" text-anchor="middle" fill="#64748b" font-family="Arial, sans-serif" font-size="8" font-weight="600">LOGO</text>
+</svg>

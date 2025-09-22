@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Grandes Surfaces DOM-TOM • A KI PRI SA YÉ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Découvrez toutes les grandes surfaces et enseignes présentes dans les DOM-TOM. Filtrage par territoire, suggestions UX et comparaisons.">
+  
+  <!-- SEO Meta Tags -->
+  <meta name="keywords" content="grandes surfaces, DROM-COM, Guadeloupe, Martinique, Guyane, Réunion, Mayotte, enseignes, supermarchés, hypermarché" />
+  <meta name="author" content="A KI PRI SA YÉ" />
+  <meta name="robots" content="index, follow" />
+  
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="Grandes Surfaces DOM-TOM • A KI PRI SA YÉ" />
+  <meta property="og:description" content="Explorez toutes les enseignes des territoires d'outre-mer avec filtrage par région et suggestions d'amélioration UX." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://akiprisaye.web.app/grandes-surfaces.html" />
+  <meta property="og:image" content="https://akiprisaye.web.app/logo_hd_4k.png" />
+  
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Grandes Surfaces DOM-TOM • A KI PRI SA YÉ" />
+  <meta name="twitter:description" content="Découvrez toutes les enseignes DOM-TOM avec filtrage intelligent" />
+  <meta name="twitter:image" content="https://akiprisaye.web.app/logo_hd_4k.png" />
+  
+  <!-- Icons -->
+  <link rel="icon" href="/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/pwa_icon_512.png">
+  
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0ea5e9">
+  
+  <!-- Styles -->
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+      color: #e2e8f0;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      flex-direction: column;
+    }
+    
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #334155;
+      border-top: 4px solid #0ea5e9;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .hero {
+      background: linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(30, 41, 59, 0.2) 100%);
+      backdrop-filter: blur(10px);
+      padding: 3rem 1rem;
+      text-align: center;
+      border-bottom: 1px solid #334155;
+    }
+    
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #ffffff 0%, #0ea5e9 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .hero p {
+      font-size: 1.25rem;
+      color: #94a3b8;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+    
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid #334155;
+    }
+    
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: white;
+      text-decoration: none;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+    
+    .nav-links a {
+      color: #94a3b8;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    
+    .nav-links a:hover {
+      color: #0ea5e9;
+    }
+    
+    .nav-links a.active {
+      color: #0ea5e9;
+      font-weight: 600;
+    }
+    
+    #app {
+      min-height: calc(100vh - 200px);
+    }
+    
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+      
+      .hero p {
+        font-size: 1rem;
+      }
+      
+      .nav {
+        padding: 1rem;
+      }
+      
+      .nav-links {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="nav">
+    <a href="/" class="nav-brand">
+      <span>🛒</span>
+      <span>A KI PRI SA YÉ</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="/">Accueil</a></li>
+      <li><a href="/comparateur.html">Comparateur</a></li>
+      <li><a href="/grandes-surfaces.html" class="active">Grandes Surfaces</a></li>
+      <li><a href="/contact.html">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <h1>🏪 Grandes Surfaces DOM-TOM</h1>
+    <p>
+      Explorez toutes les enseignes présentes dans les territoires d'outre-mer français. 
+      Filtrez par région, découvrez les suggestions d'amélioration et planifiez vos achats intelligemment.
+    </p>
+  </section>
+
+  <!-- Loading Screen -->
+  <div id="loading" class="loading">
+    <div class="spinner"></div>
+    <p style="margin-top: 1rem; color: #94a3b8;">Chargement des enseignes DOM-TOM...</p>
+  </div>
+
+  <!-- React App Container -->
+  <div id="grandes-surfaces-root"></div>
+
+  <!-- React Development -->
+  <script type="module" src="/src/grandes-surfaces.jsx"></script>
+  
+  <!-- Fallback for non-module browsers -->
+  <script type="module">
+    // This will be handled by Vite
+  </script>
+  </script>
+
+  <!-- Additional Scripts -->
+  <script>
+    // PWA Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then(function(registration) {
+            console.log('SW registered: ', registration);
+          })
+          .catch(function(registrationError) {
+            console.log('SW registration failed: ', registrationError);
+          });
+      });
+    }
+
+    // Analytics (if needed)
+    // Google Analytics code here
+
+    // Performance monitoring
+    window.addEventListener('load', function() {
+      if (window.performance) {
+        const perfData = window.performance.timing;
+        const pageLoadTime = perfData.loadEventEnd - perfData.navigationStart;
+        console.log('Page load time:', pageLoadTime + 'ms');
+      }
+    });
+  </script>
+</body>
+</html>

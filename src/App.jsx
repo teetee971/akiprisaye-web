@@ -4,6 +4,7 @@ import HistoricalPriceComparison from './components/HistoricalPriceComparison';
 import GamificationSystem from './components/GamificationSystem';
 import AccessibilityPanel from './components/AccessibilityPanel';
 import UserFeedbackSystem from './components/UserFeedbackSystem';
+import GrandesSurfacesDOMTOM from './components/GrandesSurfacesDOMTOM';
 import Carte from './pages/Carte';
 
 export default function App() {
@@ -12,6 +13,7 @@ export default function App() {
   const modules = [
     { id: 'home', name: 'Accueil', icon: '🏠' },
     { id: 'map', name: 'Carte GPS', icon: '🗺️' },
+    { id: 'stores', name: 'Grandes Surfaces', icon: '🏪' },
     { id: 'notifications', name: 'Notifications', icon: '🔔' },
     { id: 'history', name: 'Historique Prix', icon: '📈' },
     { id: 'gamification', name: 'Gamification', icon: '🏆' },
@@ -22,6 +24,8 @@ export default function App() {
     switch (activeModule) {
       case 'map':
         return <Carte />;
+      case 'stores':
+        return <GrandesSurfacesDOMTOM />;
       case 'notifications':
         return <NotificationSystem />;
       case 'history':
