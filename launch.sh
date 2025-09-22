@@ -24,13 +24,13 @@ info "Territoire: $TERRITORY   • LIMIT: $LIMIT"
 sep
 
 # ── Build statique ─────────────────────────────────────────────────────────────
-echo "📦 Build…"
+echo "==> 1) 📦 Build…"
 rm -rf dist && mkdir -p dist
 [ -d public ] && cp -r public/* dist/ || true
 ok "Build OK."
 
 # ── Copie des données API locales (fallback) ───────────────────────────────────
-echo "📂 Copie API locale → dist/api…"
+echo "==> 2) 📂 Copie API locale → dist/api…"
 mkdir -p dist/api
 if [ -d public/api ]; then
   cp -r public/api/* dist/api/
@@ -40,7 +40,7 @@ else
 fi
 
 # ── Vérifs locales (fichiers présents dans dist) ───────────────────────────────
-echo "🔎 Vérifs locales (dist)…"
+echo "==> 3) 🔎 Vérifs locales (dist)…"
 if [ -f dist/version.txt ]; then
   ver_line="$(head -n 1 dist/version.txt || true)"
   ok "version.txt (local) : ${ver_line:-vide}"
@@ -61,7 +61,7 @@ fi
 sep
 
 # ── Vérifs côté PROD (Cloudflare Pages) ────────────────────────────────────────
-echo "🌐 Vérifs prod ($DOMAIN)…"
+echo "==> 4) 🌐 Vérifs prod ($DOMAIN)…"
 FAIL=0
 
 # 1) Page HTML
