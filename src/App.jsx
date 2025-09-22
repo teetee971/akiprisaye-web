@@ -6,6 +6,7 @@ import AccessibilityPanel from './components/AccessibilityPanel';
 import UserFeedbackSystem from './components/UserFeedbackSystem';
 import GrandesSurfacesDOMTOM from './components/GrandesSurfacesDOMTOM';
 import AIOrchestrationDashboard from './components/AIOrchestrationDashboard';
+import EnseignesGrid from './components/EnseignesGrid';
 import Carte from './pages/Carte';
 
 export default function App() {
@@ -13,9 +14,10 @@ export default function App() {
 
   const modules = [
     { id: 'home', name: 'Accueil', icon: '🏠' },
+    { id: 'enseignes', name: 'Enseignes & Campagnes', icon: '🏪' },
     { id: 'ai-orchestration', name: 'Orchestrateur IA', icon: '🤖' },
     { id: 'map', name: 'Carte GPS', icon: '🗺️' },
-    { id: 'stores', name: 'Grandes Surfaces', icon: '🏪' },
+    { id: 'stores', name: 'Grandes Surfaces', icon: '🏬' },
     { id: 'notifications', name: 'Notifications', icon: '🔔' },
     { id: 'history', name: 'Historique Prix', icon: '📈' },
     { id: 'gamification', name: 'Gamification', icon: '🏆' },
@@ -24,6 +26,8 @@ export default function App() {
 
   const renderModule = () => {
     switch (activeModule) {
+      case 'enseignes':
+        return <EnseignesGrid />;
       case 'ai-orchestration':
         return <AIOrchestrationDashboard />;
       case 'map':
@@ -74,7 +78,9 @@ export default function App() {
                       <h3 className="font-semibold text-gray-900 mb-2">{module.name}</h3>
                       <p className="text-sm text-gray-600">
                         {module.id === 'ai-orchestration' && 'Déploiement autonome et orchestration d\'IA spécialisées'}
+                        {module.id === 'enseignes' && 'Grille moderne des enseignes et campagnes visuelles'}
                         {module.id === 'map' && 'Carte interactive avec géolocalisation, filtrage et heatmap'}
+                        {module.id === 'stores' && 'Répertoire des grandes surfaces et commerces locaux'}
                         {module.id === 'notifications' && 'Alertes intelligentes PWA en temps réel'}
                         {module.id === 'history' && 'Analyse historique et tendances des prix'}
                         {module.id === 'gamification' && 'Badges, défis et classement communautaire'}
@@ -84,6 +90,11 @@ export default function App() {
                   ))}
                 </div>
               </div>
+            </div>
+            
+            {/* EnseignesGrid Section */}
+            <div className="mb-12">
+              <EnseignesGrid />
             </div>
             
             {/* Enhanced Features Grid */}
@@ -163,6 +174,12 @@ export default function App() {
             <div className="bg-gray-50 p-6 rounded-lg mb-8">
               <h3 className="text-lg font-semibold mb-4">🧪 Explorer les fonctionnalités</h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <button 
+                  onClick={() => setActiveModule('enseignes')}
+                  className="px-4 py-3 bg-gradient-to-r from-green-600 to-teal-600 text-white rounded-lg hover:from-green-700 hover:to-teal-700 text-sm font-medium"
+                >
+                  🏪 Enseignes & Campagnes
+                </button>
                 <button 
                   onClick={() => setActiveModule('ai-orchestration')}
                   className="px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 text-sm font-medium"
