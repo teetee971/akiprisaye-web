@@ -157,7 +157,7 @@ export default function Carte() {
     <div className="p-6 max-w-7xl mx-auto">
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900 mb-4">
-          🗺️ Carte Interactive des Prix
+          🌍 Carte Interactive des Prix
         </h1>
         <p className="text-gray-600 mb-6">
           Découvrez les magasins près de chez vous et comparez les prix en temps réel
