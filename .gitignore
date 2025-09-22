@@ -62,3 +62,10 @@ functions/.netlify/
 functions/node_modules/
 dist/
 *.zip
+
+# =========================
+# Backup / Archive directories
+# =========================
+a-ki-pri-sa-ye-*/
+aki-prisaye-pwa/
+web/
