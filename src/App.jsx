@@ -6,12 +6,14 @@ import AccessibilityPanel from './components/AccessibilityPanel';
 import UserFeedbackSystem from './components/UserFeedbackSystem';
 import GrandesSurfacesDOMTOM from './components/GrandesSurfacesDOMTOM';
 import Carte from './pages/Carte';
+import AISubQuantumPlatform from './components/AISubQuantum/AISubQuantumPlatform';
 
 export default function App() {
   const [activeModule, setActiveModule] = useState('home');
 
   const modules = [
     { id: 'home', name: 'Accueil', icon: '🏠' },
+    { id: 'ai-quantum', name: 'IA Sub-Quantique', icon: '🌌' },
     { id: 'map', name: 'Carte GPS', icon: '🗺️' },
     { id: 'stores', name: 'Grandes Surfaces', icon: '🏪' },
     { id: 'notifications', name: 'Notifications', icon: '🔔' },
@@ -22,6 +24,8 @@ export default function App() {
 
   const renderModule = () => {
     switch (activeModule) {
+      case 'ai-quantum':
+        return <AISubQuantumPlatform />;
       case 'map':
         return <Carte />;
       case 'stores':
@@ -45,9 +49,24 @@ export default function App() {
                 Comparateur de prix intelligent pour les DROM-COM
               </p>
               <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-8 rounded-xl">
-                <h2 className="text-2xl font-bold mb-6">🎉 Modules Intégrés et Améliorés</h2>
+                <h2 className="text-2xl font-bold mb-6">🌌 Plateforme IA Sub-Quantique Intégrée</h2>
+                <div className="mb-6 p-4 bg-white rounded-lg border-2 border-purple-200">
+                  <p className="text-center text-purple-800 font-medium">
+                    ✨ 11 axes ultra-avancés pour la France métropolitaine et DOM-TOM
+                  </p>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {modules.slice(1).map(module => (
+                  <button
+                    onClick={() => setActiveModule('ai-quantum')}
+                    className="bg-gradient-to-br from-purple-100 to-blue-100 p-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 border-2 border-purple-300"
+                  >
+                    <div className="text-4xl mb-3">🌌</div>
+                    <h3 className="font-bold text-purple-900 mb-2">IA Sub-Quantique</h3>
+                    <p className="text-sm text-purple-700">
+                      Plateforme ultra-avancée avec hyperlocalisation, orchestration multi-services, sécurité proactive
+                    </p>
+                  </button>
+                  {modules.slice(2).map(module => (
                     <button
                       key={module.id}
                       onClick={() => setActiveModule(module.id)}
@@ -57,6 +76,7 @@ export default function App() {
                       <h3 className="font-semibold text-gray-900 mb-2">{module.name}</h3>
                       <p className="text-sm text-gray-600">
                         {module.id === 'map' && 'Carte interactive avec géolocalisation, filtrage et heatmap'}
+                        {module.id === 'stores' && 'Comparateur intelligent des grandes surfaces DOM-TOM'}
                         {module.id === 'notifications' && 'Alertes intelligentes PWA en temps réel'}
                         {module.id === 'history' && 'Analyse historique et tendances des prix'}
                         {module.id === 'gamification' && 'Badges, défis et classement communautaire'}
@@ -70,6 +90,16 @@ export default function App() {
             
             {/* Enhanced Features Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+              <div className="bg-white p-6 rounded-lg shadow-md border-l-4 border-purple-500">
+                <h3 className="text-lg font-semibold mb-3">🌌 IA Sub-Quantique Ultra-Avancée</h3>
+                <ul className="text-sm text-gray-600 space-y-1">
+                  <li>• Hyperlocalisation intelligente & prédiction contextuelle</li>
+                  <li>• Orchestration multi-services coordonnée</li>
+                  <li>• Sécurité globale et adaptation proactive</li>
+                  <li>• Empowerment citoyen & gouvernance adaptative</li>
+                </ul>
+              </div>
+              
               <div className="bg-white p-6 rounded-lg shadow-md">
                 <h3 className="text-lg font-semibold mb-3">🔔 Notifications Intelligentes</h3>
                 <ul className="text-sm text-gray-600 space-y-1">
@@ -134,12 +164,24 @@ export default function App() {
             {/* Demo Actions */}
             <div className="bg-gray-50 p-6 rounded-lg mb-8">
               <h3 className="text-lg font-semibold mb-4">🧪 Explorer les fonctionnalités</h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <button 
+                  onClick={() => setActiveModule('ai-quantum')}
+                  className="px-4 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 text-sm font-medium"
+                >
+                  🌌 IA Sub-Quantique
+                </button>
                 <button 
                   onClick={() => setActiveModule('map')}
                   className="px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"
                 >
                   🗺️ Carte interactive
+                </button>
+                <button 
+                  onClick={() => setActiveModule('stores')}
+                  className="px-4 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-sm"
+                >
+                  🏪 Grandes surfaces
                 </button>
                 <button 
                   onClick={() => setActiveModule('notifications')}
@@ -181,28 +223,28 @@ export default function App() {
 
             {/* Features Summary */}
             <div className="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-lg">
-              <h3 className="text-lg font-semibold mb-4">✅ Intégration Complète Réalisée</h3>
+              <h3 className="text-lg font-semibold mb-4">✅ Intégration IA Sub-Quantique Complète</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                 <div>
-                  <h4 className="font-medium mb-2">🎯 Modules Fonctionnels</h4>
+                  <h4 className="font-medium mb-2">🌌 Axes Ultra-Avancés</h4>
                   <ul className="text-gray-600 space-y-1">
-                    <li>• Module GPS interactif avec Leaflet</li>
-                    <li>• Notifications intelligentes PWA</li>
-                    <li>• Comparatif historique avec Chart.js</li>
-                    <li>• Gamification complète</li>
-                    <li>• Accessibilité renforcée</li>
-                    <li>• Système de feedback utilisateur</li>
+                    <li>• Hyperlocalisation intelligente & prédiction contextuelle</li>
+                    <li>• Orchestration multi-services coordonnée</li>
+                    <li>• Sécurité globale et adaptation proactive</li>
+                    <li>• Empowerment citoyen & gouvernance adaptative</li>
+                    <li>• Gestion intelligente mobilité alternative</li>
+                    <li>• Connectivité universelle et zones blanches</li>
                   </ul>
                 </div>
                 <div>
-                  <h4 className="font-medium mb-2">🚀 Optimisations</h4>
+                  <h4 className="font-medium mb-2">🚀 Optimisations Avancées</h4>
                   <ul className="text-gray-600 space-y-1">
-                    <li>• Service Worker PWA avancé</li>
-                    <li>• CI/CD automatisé avec GitHub Actions</li>
-                    <li>• Tests et badges de qualité</li>
-                    <li>• Déploiement multi-plateforme</li>
-                    <li>• Performance et accessibilité</li>
-                    <li>• Documentation utilisateur</li>
+                    <li>• Simulation anticipée scénarios de vie</li>
+                    <li>• Marketplace services ultra-ciblés solidaires</li>
+                    <li>• Formation coaching sub-quantique évolutif</li>
+                    <li>• Personnalisation sensorielle universelle</li>
+                    <li>• IA auto-intégrante dynamique</li>
+                    <li>• Couverture totale France + DOM-TOM</li>
                   </ul>
                 </div>
               </div>

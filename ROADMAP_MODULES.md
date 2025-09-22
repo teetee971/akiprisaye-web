@@ -11,6 +11,14 @@
 - 📍 Carte des prix par géolocalisation / Price map / Mapa de precios geolocalizado
 - 📢 Dénonciation prix abusifs / Report unfair prices / Denuncia de precios abusivos
 - 🧰 Budget Zen / Budget Tracker / Seguimiento Zen del Presupuesto
+- 🌌 **Plateforme IA Sub-Quantique** / AI Sub-Quantum Platform / Plataforma IA Sub-Cuántica
+
+### 🌌 Nouveaux axes IA Sub-Quantique intégrés:
+- 🎯 Hyperlocalisation intelligente & prédiction contextuelle
+- 🎛️ Supervision et orchestration multi-services  
+- 🛡️ Sécurité globale et adaptation proactive
+- 🗳️ Empowerment citoyen & gouvernance ultra-adaptative
+- 🚀 Gestion intelligente de la mobilité et du transport alternatif
 
 ---
 
@@ -38,7 +46,9 @@
 ---
 
 ## 🗓️ Mise à jour
-Dernière MAJ : 27 juin 2025 — 23h03 GMT‑4 (Guadeloupe)
+Dernière MAJ : 22 septembre 2024 — Intégration plateforme IA Sub-Quantique
+
+**🌌 Nouveauté majeure :** Intégration de 5 axes ultra-avancés de la plateforme IA Sub-Quantique avec 6 axes supplémentaires planifiés, couvrant l'hyperlocalisation intelligente, l'orchestration multi-services, la sécurité proactive, l'empowerment citoyen et la mobilité intelligente.
 
 ---
 
