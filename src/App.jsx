@@ -5,6 +5,7 @@ import GamificationSystem from './components/GamificationSystem';
 import AccessibilityPanel from './components/AccessibilityPanel';
 import UserFeedbackSystem from './components/UserFeedbackSystem';
 import GrandesSurfacesDOMTOM from './components/GrandesSurfacesDOMTOM';
+import AIOrchestrationDashboard from './components/AIOrchestrationDashboard';
 import Carte from './pages/Carte';
 
 export default function App() {
@@ -14,6 +15,7 @@ export default function App() {
     { id: 'home', name: 'Accueil', icon: '🏠' },
     { id: 'map', name: 'Carte GPS', icon: '🗺️' },
     { id: 'stores', name: 'Grandes Surfaces', icon: '🏪' },
+    { id: 'ai-orchestration', name: 'Orchestration IA', icon: '🧠' },
     { id: 'notifications', name: 'Notifications', icon: '🔔' },
     { id: 'history', name: 'Historique Prix', icon: '📈' },
     { id: 'gamification', name: 'Gamification', icon: '🏆' },
@@ -26,6 +28,8 @@ export default function App() {
         return <Carte />;
       case 'stores':
         return <GrandesSurfacesDOMTOM />;
+      case 'ai-orchestration':
+        return <AIOrchestrationDashboard />;
       case 'notifications':
         return <NotificationSystem />;
       case 'history':

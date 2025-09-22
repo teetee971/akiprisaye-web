@@ -11,6 +11,7 @@
 - 📍 Carte des prix par géolocalisation / Price map / Mapa de precios geolocalizado
 - 📢 Dénonciation prix abusifs / Report unfair prices / Denuncia de precios abusivos
 - 🧰 Budget Zen / Budget Tracker / Seguimiento Zen del Presupuesto
+- 🤖 **NOUVEAU** : Orchestration IA dynamique / Dynamic AI Orchestration / Orquestación IA dinámica
 
 ---
 
