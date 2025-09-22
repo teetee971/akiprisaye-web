@@ -8,7 +8,10 @@ export default {
         brand: {"500":"#00a2ff"}
       },
       fontFamily: { sans: ["Inter","system-ui","Arial","sans-serif"]},
-      boxShadow: { soft: "0 10px 30px rgba(0,0,0,0.35)" }
+      boxShadow: { soft: "0 10px 30px rgba(0,0,0,0.35)" },
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+      }
     },
   },
   plugins: [],
