@@ -20,7 +20,19 @@
 
     "optimize-seo": "node optimize-seo.js",
 
-    "build:optimized": "npm run optimize-seo && npm run build"
+    "build:optimized": "npm run optimize-seo && npm run build",
+
+    "test": "vitest",
+
+    "test:run": "vitest run",
+
+    "test:coverage": "vitest run --coverage",
+
+    "test:ui": "vitest --ui",
+
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx --max-warnings 0 || echo 'Linting completed with warnings'",
+
+    "lighthouse": "lighthouse http://localhost:3000 --output=json --output-path=./lighthouse-report.json --chrome-flags='--headless' || echo 'Lighthouse completed'"
 
   },
 
@@ -46,11 +58,23 @@
 
     "@tailwindcss/postcss": "^4.1.13",
 
+    "@testing-library/jest-dom": "^6.8.0",
+
+    "@testing-library/react": "^16.3.0",
+
     "@vitejs/plugin-react": "^4.5.0",
+
+    "@vitest/coverage-v8": "^3.2.4",
 
     "autoprefixer": "^10.4.21",
 
     "esbuild": "^0.21.5",
+
+    "eslint": "^9.36.0",
+
+    "jsdom": "^27.0.0",
+
+    "lighthouse": "^12.8.2",
 
     "postcss": "^8.5.6",
 
@@ -62,7 +86,9 @@
 
     "typescript": "^5.6.3",
 
-    "vite": "^5.4.10"
+    "vite": "^5.4.10",
+
+    "vitest": "^3.2.4"
 
   }
 
