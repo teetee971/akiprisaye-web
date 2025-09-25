@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard Demo – A KI PRI SA YÉ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Demo: Admin Dashboard (logged in state) -->
+  <div id="adminDashboard">
+    <header class="container">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h1>📊 Panneau d'Administration</h1>
+        <div style="display: flex; gap: 15px; align-items: center;">
+          <span style="color: var(--sub);">👤 admin@akiprisaye.com</span>
+          <button style="padding: 8px 16px; background: var(--danger); color: white; border: none; border-radius: 6px; cursor: pointer;">
+            Déconnexion
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <!-- Upload Section -->
+      <section class="card" style="margin-bottom: 30px;">
+        <h2 class="section-title">📤 Upload de Tickets</h2>
+        <p class="sub">Téléchargez des images ou PDF de tickets pour analyse OCR</p>
+        
+        <div style="margin-top: 20px;">
+          <input type="file" accept="image/*,.pdf" 
+                 style="margin-bottom: 15px; width: 100%; padding: 10px; border: 2px dashed var(--brand); border-radius: 8px; background: var(--muted);">
+          
+          <button style="padding: 12px 24px; background: var(--brand); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+            🧠 Analyser avec OCR
+          </button>
+          
+          <div style="margin-top: 15px; font-weight: 500; color: var(--brand);">
+            ✅ Prêt pour l'analyse
+          </div>
+        </div>
+      </section>
+
+      <!-- Demo OCR Result -->
+      <section class="card" style="margin-bottom: 30px; background: var(--muted);">
+        <h3 style="color: var(--brand); margin-bottom: 15px;">🔍 Dernier résultat OCR</h3>
+        <div style="background: var(--bg); padding: 15px; border-radius: 8px; font-family: monospace; font-size: 14px;">
+          <strong>Fichier:</strong> ticket_carrefour_20250121.jpg<br>
+          <strong>Données extraites:</strong><br>
+          • Produits détectés: 8<br>
+          • Prix trouvés: 12<br>
+          • Total: 47.85€<br><br>
+          <strong>Produits:</strong> BANANES BIO, PAIN COMPLET, LAIT 1/2 ÉCRÉMÉ...
+        </div>
+      </section>
+
+      <!-- Tickets List Section -->
+      <section class="card">
+        <h2 class="section-title">📋 Tickets Analysés</h2>
+        <p class="sub">Liste des tickets traités avec les résultats OCR</p>
+        
+        <div style="margin-top: 20px;">
+          <!-- Demo Ticket 1 -->
+          <div style="border: 1px solid #374151; border-radius: 8px; padding: 20px; margin-bottom: 15px; background: var(--muted);">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+              <strong style="color: var(--brand);">ticket_carrefour_20250121.jpg</strong>
+              <span style="color: var(--sub); font-size: 14px;">21/01/2025 14:32</span>
+            </div>
+            
+            <div style="margin-bottom: 10px;">
+              <strong>Produits extraits:</strong> 8
+              &nbsp;|&nbsp;
+              <strong>Prix détectés:</strong> 12
+              &nbsp;|&nbsp;
+              <strong>Total:</strong> 47.85€
+            </div>
+            
+            <div style="margin-bottom: 10px;">
+              <strong>Produits:</strong> BANANES BIO, PAIN COMPLET, LAIT 1/2 ÉCRÉMÉ...
+            </div>
+            
+            <details>
+              <summary style="cursor: pointer; color: var(--brand);">Voir le texte OCR complet</summary>
+              <pre style="margin-top: 10px; padding: 10px; background: var(--bg); border-radius: 4px; font-size: 12px; overflow-x: auto;">CARREFOUR MARKET
+POINTE-À-PITRE
+
+BANANES BIO                    3.50€
+PAIN COMPLET                   2.80€
+LAIT 1/2 ÉCRÉMÉ               1.95€
+YAOURTS NATURE                4.20€
+ŒUFS PLEIN AIR                3.85€
+TOMATES                       5.40€
+SALADE ICEBERG                2.15€
+FROMAGE EMMENTAL              8.90€
+
+SOUS-TOTAL                   32.75€
+TVA 8.5%                      2.79€
+TOTAL À PAYER                47.85€
+
+MERCI DE VOTRE VISITE</pre>
+            </details>
+          </div>
+
+          <!-- Demo Ticket 2 -->
+          <div style="border: 1px solid #374151; border-radius: 8px; padding: 20px; margin-bottom: 15px; background: var(--muted);">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+              <strong style="color: var(--brand);">ticket_casino_20250120.jpg</strong>
+              <span style="color: var(--sub); font-size: 14px;">20/01/2025 09:15</span>
+            </div>
+            
+            <div style="margin-bottom: 10px;">
+              <strong>Produits extraits:</strong> 5
+              &nbsp;|&nbsp;
+              <strong>Prix détectés:</strong> 7
+              &nbsp;|&nbsp;
+              <strong>Total:</strong> 23.40€
+            </div>
+            
+            <div style="margin-bottom: 10px;">
+              <strong>Produits:</strong> BAGUETTE TRADITION, JAMBON BLANC, BEURRE PRÉSIDENT...
+            </div>
+            
+            <details>
+              <summary style="cursor: pointer; color: var(--brand);">Voir le texte OCR complet</summary>
+              <pre style="margin-top: 10px; padding: 10px; background: var(--bg); border-radius: 4px; font-size: 12px; overflow-x: auto;">CASINO SHOP
+BASSE-TERRE
+
+BAGUETTE TRADITION            1.20€
+JAMBON BLANC 4TR              5.90€
+BEURRE PRÉSIDENT              4.50€
+POMMES GOLDEN                 3.80€
+EAU CRISTALINE 6x1.5L         7.00€
+
+TOTAL TTC                    23.40€
+
+CARTE FIDELITE: ****1234
+POINTS GAGNES: 47</pre>
+            </details>
+          </div>
+
+          <!-- Demo Ticket 3 -->
+          <div style="border: 1px solid #374151; border-radius: 8px; padding: 20px; margin-bottom: 15px; background: var(--muted);">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+              <strong style="color: var(--brand);">ticket_super_u_20250119.pdf</strong>
+              <span style="color: var(--sub); font-size: 14px;">19/01/2025 16:45</span>
+            </div>
+            
+            <div style="margin-bottom: 10px;">
+              <strong>Produits extraits:</strong> 12
+              &nbsp;|&nbsp;
+              <strong>Prix détectés:</strong> 18
+              &nbsp;|&nbsp;
+              <strong>Total:</strong> 89.65€
+            </div>
+            
+            <div style="margin-bottom: 10px;">
+              <strong>Produits:</strong> RIZ BASMATI, POULET FERMIER, ANANAS VICTORIA, IGNAMES...
+            </div>
+            
+            <details>
+              <summary style="cursor: pointer; color: var(--brand);">Voir le texte OCR complet</summary>
+              <pre style="margin-top: 10px; padding: 10px; background: var(--bg); border-radius: 4px; font-size: 12px; overflow-x: auto;">SUPER U
+FORT-DE-FRANCE
+
+RIZ BASMATI 5KG              12.50€
+POULET FERMIER KG            15.90€
+ANANAS VICTORIA              4.20€
+IGNAMES 2KG                  8.90€
+MADRAS CURRY                 3.50€
+LAIT COCO 400ML              2.80€
+BANANES PLANTAIN 1KG         3.40€
+CHRISTOPHINES 500G           2.50€
+PATATES DOUCES 1KG           4.90€
+MANGUES JOSÉ                 6.80€
+PAIN COCO                    3.20€
+CONFITURE GOYAVE             4.95€
+
+SOUS-TOTAL                  73.55€
+REMISE FIDÉLITÉ             -2.40€
+TVA 8.5%                     6.05€
+OCTROI DE MER               2.45€
+TOTAL                       89.65€</pre>
+            </details>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Demo Statistics Box -->
+  <div class="container" style="margin-top: 30px;">
+    <div class="card" style="background: linear-gradient(135deg, var(--brand), var(--brand-2));">
+      <h3 style="color: white; margin-bottom: 15px;">📈 Statistiques de la journée</h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; color: white;">
+        <div style="text-align: center;">
+          <div style="font-size: 24px; font-weight: bold;">23</div>
+          <div style="opacity: 0.9;">Tickets analysés</div>
+        </div>
+        <div style="text-align: center;">
+          <div style="font-size: 24px; font-weight: bold;">847.30€</div>
+          <div style="opacity: 0.9;">Montant total</div>
+        </div>
+        <div style="text-align: center;">
+          <div style="font-size: 24px; font-weight: bold;">156</div>
+          <div style="opacity: 0.9;">Produits détectés</div>
+        </div>
+        <div style="text-align: center;">
+          <div style="font-size: 24px; font-weight: bold;">12</div>
+          <div style="opacity: 0.9;">Enseignes différentes</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="container" style="text-align: center; margin-top: 40px; color: var(--sub);">
+    <p>&copy; 2025 A KI PRI SA YÉ – Interface d'administration sécurisée</p>
+  </footer>
+</body>
+</html>

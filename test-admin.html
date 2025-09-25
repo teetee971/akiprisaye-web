@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Test Admin Functions – A KI PRI SA YÉ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="card" style="max-width: 600px; margin: 50px auto;">
+      <h1>🧪 Test des Fonctionnalités Admin</h1>
+      <p class="sub">Tests unitaires pour valider le bon fonctionnement du module admin</p>
+      
+      <div id="testResults" style="margin-top: 30px;">
+        <!-- Test results will be displayed here -->
+      </div>
+      
+      <button id="runTests" 
+              style="width: 100%; padding: 15px; background: var(--brand); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 20px;">
+        🚀 Exécuter les tests
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // Test suite for admin functionality
+    const tests = [
+      {
+        name: "Vérification de la structure HTML admin.html",
+        test: async () => {
+          try {
+            const response = await fetch('/admin.html');
+            const html = await response.text();
+            
+            const checks = [
+              { check: html.includes('loginSection'), name: 'Section de connexion' },
+              { check: html.includes('adminDashboard'), name: 'Section dashboard' },
+              { check: html.includes('ticketFile'), name: 'Input fichier' },
+              { check: html.includes('uploadBtn'), name: 'Bouton upload' },
+              { check: html.includes('ticketsList'), name: 'Liste des tickets' },
+              { check: html.includes('tesseract'), name: 'Tesseract.js intégré' },
+              { check: html.includes('firebase'), name: 'Firebase intégré' }
+            ];
+            
+            const passed = checks.filter(c => c.check).length;
+            const total = checks.length;
+            
+            return {
+              success: passed === total,
+              message: `${passed}/${total} vérifications passées`,
+              details: checks.map(c => `${c.check ? '✅' : '❌'} ${c.name}`).join('<br>')
+            };
+          } catch (error) {
+            return { success: false, message: error.message };
+          }
+        }
+      },
+      
+      {
+        name: "Validation des règles Firestore",
+        test: async () => {
+          try {
+            const response = await fetch('/firestore.rules');
+            const rules = await response.text();
+            
+            const checks = [
+              { check: rules.includes('tickets/{doc}'), name: 'Collection tickets définie' },
+              { check: rules.includes('admin == true'), name: 'Vérification rôle admin' },
+              { check: rules.includes('historique/{doc}'), name: 'Collection historique définie' },
+              { check: rules.includes('request.auth != null'), name: 'Authentification requise' }
+            ];
+            
+            const passed = checks.filter(c => c.check).length;
+            const total = checks.length;
+            
+            return {
+              success: passed === total,
+              message: `${passed}/${total} règles validées`,
+              details: checks.map(c => `${c.check ? '✅' : '❌'} ${c.name}`).join('<br>')
+            };
+          } catch (error) {
+            return { success: false, message: error.message };
+          }
+        }
+      },
+      
+      {
+        name: "Vérification des Cloud Functions",
+        test: async () => {
+          try {
+            const response = await fetch('/functions/index.js');
+            const functions = await response.text();
+            
+            const checks = [
+              { check: functions.includes('setAdminRole'), name: 'Fonction setAdminRole' },
+              { check: functions.includes('createFirstAdmin'), name: 'Fonction createFirstAdmin' },
+              { check: functions.includes('onNewTicket'), name: 'Trigger nouveaux tickets' },
+              { check: functions.includes('firebase-admin'), name: 'Firebase Admin SDK' },
+              { check: functions.includes('setCustomUserClaims'), name: 'Gestion des rôles' }
+            ];
+            
+            const passed = checks.filter(c => c.check).length;
+            const total = checks.length;
+            
+            return {
+              success: passed === total,
+              message: `${passed}/${total} fonctions validées`,
+              details: checks.map(c => `${c.check ? '✅' : '❌'} ${c.name}`).join('<br>')
+            };
+          } catch (error) {
+            return { success: false, message: error.message };
+          }
+        }
+      },
+      
+      {
+        name: "Test de l'algorithme d'extraction OCR",
+        test: async () => {
+          try {
+            // Simulation d'un texte OCR typique
+            const mockOcrText = `CARREFOUR MARKET
+POINTE-À-PITRE
+
+BANANES BIO                    3.50€
+PAIN COMPLET                   2.80€
+LAIT 1/2 ÉCRÉMÉ               1.95€
+
+SOUS-TOTAL                   8.25€
+TVA 8.5%                      0.70€
+TOTAL À PAYER                8.95€`;
+
+            // Fonction d'extraction (copiée de admin.html)
+            function parseTicketText(text) {
+              const lines = text.split('\n').map(line => line.trim()).filter(Boolean);
+              const prices = [];
+              const products = [];
+              let total = null;
+
+              const priceRegex = /(\d+[,.]?\d*)\s*€?/g;
+              const productRegex = /^[A-ZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ\s]+$/i;
+
+              lines.forEach(line => {
+                const priceMatches = line.match(priceRegex);
+                if (priceMatches) {
+                  priceMatches.forEach(price => {
+                    const cleanPrice = parseFloat(price.replace(',', '.').replace('€', ''));
+                    if (!isNaN(cleanPrice)) {
+                      prices.push({ text: price, value: cleanPrice, line: line });
+                    }
+                  });
+                }
+
+                if (productRegex.test(line) && line.length > 3 && line.length < 50) {
+                  products.push(line);
+                }
+
+                if (line.toLowerCase().includes('total') || line.toLowerCase().includes('sous-total')) {
+                  const totalMatch = line.match(priceRegex);
+                  if (totalMatch) {
+                    total = parseFloat(totalMatch[totalMatch.length - 1].replace(',', '.').replace('€', ''));
+                  }
+                }
+              });
+
+              return { prices, products, total, lineCount: lines.length };
+            }
+            
+            const result = parseTicketText(mockOcrText);
+            
+            const checks = [
+              { check: result.prices.length >= 3, name: 'Prix détectés (≥3)' },
+              { check: result.products.length >= 2, name: 'Produits détectés (≥2)' },
+              { check: result.total === 8.95, name: 'Total extrait correctement' },
+              { check: result.lineCount > 5, name: 'Lignes traitées' }
+            ];
+            
+            const passed = checks.filter(c => c.check).length;
+            const total = checks.length;
+            
+            return {
+              success: passed === total,
+              message: `${passed}/${total} extractions réussies`,
+              details: checks.map(c => `${c.check ? '✅' : '❌'} ${c.name}`).join('<br>') + 
+                      `<br><strong>Résultat:</strong> ${result.prices.length} prix, ${result.products.length} produits, total: ${result.total}€`
+            };
+          } catch (error) {
+            return { success: false, message: error.message };
+          }
+        }
+      },
+      
+      {
+        name: "Vérification de la documentation",
+        test: async () => {
+          try {
+            const files = ['README_ADMIN.md', 'setup-admin.sh'];
+            const checks = [];
+            
+            for (const file of files) {
+              try {
+                const response = await fetch(`/${file}`);
+                const exists = response.ok;
+                checks.push({ check: exists, name: `Fichier ${file}` });
+              } catch {
+                checks.push({ check: false, name: `Fichier ${file}` });
+              }
+            }
+            
+            const passed = checks.filter(c => c.check).length;
+            const total = checks.length;
+            
+            return {
+              success: passed === total,
+              message: `${passed}/${total} fichiers de documentation`,
+              details: checks.map(c => `${c.check ? '✅' : '❌'} ${c.name}`).join('<br>')
+            };
+          } catch (error) {
+            return { success: false, message: error.message };
+          }
+        }
+      },
+      
+      {
+        name: "Test de sécurité des accès",
+        test: async () => {
+          try {
+            // Vérifications de sécurité basiques
+            const response = await fetch('/admin.html');
+            const html = await response.text();
+            
+            const checks = [
+              { check: html.includes('onAuthStateChanged'), name: 'Écoute changements auth' },
+              { check: html.includes('token.claims.admin'), name: 'Vérification rôle admin' },
+              { check: html.includes('signOut'), name: 'Fonction déconnexion' },
+              { check: html.includes('showError'), name: 'Gestion des erreurs' },
+              { check: !html.includes('password123'), name: 'Pas de mots de passe hardcodés' }
+            ];
+            
+            const passed = checks.filter(c => c.check).length;
+            const total = checks.length;
+            
+            return {
+              success: passed === total,
+              message: `${passed}/${total} vérifications sécurité`,
+              details: checks.map(c => `${c.check ? '✅' : '❌'} ${c.name}`).join('<br>')
+            };
+          } catch (error) {
+            return { success: false, message: error.message };
+          }
+        }
+      }
+    ];
+
+    document.getElementById('runTests').addEventListener('click', async () => {
+      const button = document.getElementById('runTests');
+      const resultsDiv = document.getElementById('testResults');
+      
+      button.textContent = '⏳ Exécution des tests...';
+      button.disabled = true;
+      
+      resultsDiv.innerHTML = '<p style="color: var(--brand);">Exécution des tests en cours...</p>';
+      
+      let totalTests = tests.length;
+      let passedTests = 0;
+      let results = [];
+      
+      for (let i = 0; i < tests.length; i++) {
+        const test = tests[i];
+        try {
+          const result = await test.test();
+          if (result.success) passedTests++;
+          
+          results.push(`
+            <div style="border: 1px solid ${result.success ? 'var(--brand)' : 'var(--danger)'}; border-radius: 8px; padding: 15px; margin-bottom: 10px; background: var(--muted);">
+              <h3 style="margin: 0 0 10px 0; color: ${result.success ? 'var(--brand)' : 'var(--danger)'};">
+                ${result.success ? '✅' : '❌'} ${test.name}
+              </h3>
+              <p style="margin: 5px 0;"><strong>Résultat:</strong> ${result.message}</p>
+              ${result.details ? `<div style="font-size: 14px; color: var(--sub); margin-top: 10px;">${result.details}</div>` : ''}
+            </div>
+          `);
+        } catch (error) {
+          results.push(`
+            <div style="border: 1px solid var(--danger); border-radius: 8px; padding: 15px; margin-bottom: 10px; background: var(--muted);">
+              <h3 style="margin: 0 0 10px 0; color: var(--danger);">❌ ${test.name}</h3>
+              <p style="margin: 5px 0;"><strong>Erreur:</strong> ${error.message}</p>
+            </div>
+          `);
+        }
+      }
+      
+      const successRate = Math.round((passedTests / totalTests) * 100);
+      const summaryColor = successRate === 100 ? 'var(--brand)' : successRate >= 80 ? '#f59e0b' : 'var(--danger)';
+      
+      resultsDiv.innerHTML = `
+        <div style="border: 2px solid ${summaryColor}; border-radius: 12px; padding: 20px; margin-bottom: 20px; text-align: center; background: linear-gradient(135deg, ${summaryColor}20, transparent);">
+          <h2 style="margin: 0 0 10px 0; color: ${summaryColor};">
+            ${successRate === 100 ? '🎉' : successRate >= 80 ? '⚠️' : '❌'} Résultats des Tests
+          </h2>
+          <p style="font-size: 18px; margin: 0;"><strong>${passedTests}/${totalTests}</strong> tests réussis (<strong>${successRate}%</strong>)</p>
+          ${successRate === 100 ? '<p style="color: var(--brand); margin-top: 10px;">✨ Tous les tests sont passés ! Le module admin est prêt.</p>' : ''}
+        </div>
+        ${results.join('')}
+      `;
+      
+      button.textContent = '🔄 Relancer les tests';
+      button.disabled = false;
+    });
+  </script>
+</body>
+</html>

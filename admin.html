@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Administration – A KI PRI SA YÉ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Login Section (initially visible) -->
+  <div id="loginSection" class="container">
+    <div class="card" style="max-width: 400px; margin: 50px auto;">
+      <h1>🔐 Administration</h1>
+      <p class="sub">Connexion requise pour accéder au panneau d'administration</p>
+      
+      <form id="loginForm">
+        <div style="margin-bottom: 20px;">
+          <label for="email" style="display: block; margin-bottom: 8px; font-weight: 500;">Email :</label>
+          <input type="email" id="email" required 
+                 style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #374151; background: var(--muted); color: var(--txt);">
+        </div>
+        
+        <div style="margin-bottom: 20px;">
+          <label for="password" style="display: block; margin-bottom: 8px; font-weight: 500;">Mot de passe :</label>
+          <input type="password" id="password" required 
+                 style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #374151; background: var(--muted); color: var(--txt);">
+        </div>
+        
+        <button type="submit" id="loginBtn" 
+                style="width: 100%; padding: 12px; background: var(--brand); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+          Se connecter
+        </button>
+      </form>
+      
+      <div id="errorMessage" style="margin-top: 15px; padding: 10px; background: var(--danger); color: white; border-radius: 8px; display: none;"></div>
+    </div>
+  </div>
+
+  <!-- Admin Dashboard (initially hidden) -->
+  <div id="adminDashboard" style="display: none;">
+    <header class="container">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h1>📊 Panneau d'Administration</h1>
+        <div style="display: flex; gap: 15px; align-items: center;">
+          <span id="adminUser" style="color: var(--sub);"></span>
+          <button id="logoutBtn" 
+                  style="padding: 8px 16px; background: var(--danger); color: white; border: none; border-radius: 6px; cursor: pointer;">
+            Déconnexion
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <!-- Upload Section -->
+      <section class="card" style="margin-bottom: 30px;">
+        <h2 class="section-title">📤 Upload de Tickets</h2>
+        <p class="sub">Téléchargez des images ou PDF de tickets pour analyse OCR</p>
+        
+        <div style="margin-top: 20px;">
+          <input type="file" id="ticketFile" accept="image/*,.pdf" 
+                 style="margin-bottom: 15px; width: 100%; padding: 10px; border: 2px dashed var(--brand); border-radius: 8px; background: var(--muted);">
+          
+          <button id="uploadBtn" 
+                  style="padding: 12px 24px; background: var(--brand); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+            🧠 Analyser avec OCR
+          </button>
+          
+          <div id="uploadStatus" style="margin-top: 15px; font-weight: 500;"></div>
+          <div id="ocrResult" style="margin-top: 15px; padding: 15px; background: var(--muted); border-radius: 8px; white-space: pre-wrap; display: none;"></div>
+        </div>
+      </section>
+
+      <!-- Tickets List Section -->
+      <section class="card">
+        <h2 class="section-title">📋 Tickets Analysés</h2>
+        <p class="sub">Liste des tickets traités avec les résultats OCR</p>
+        
+        <div id="ticketsList" style="margin-top: 20px;">
+          <div style="text-align: center; padding: 40px; color: var(--sub);">
+            Chargement des tickets...
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.5/dist/tesseract.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+  <script>
+    // Firebase configuration (same as scan-ocr.html)
+    const firebaseConfig = {
+      apiKey: "AIzaSyXXXXXXX",  // 🔐 À remplacer par ta clé réelle
+      authDomain: "a-ki-pri-sa-ye.firebaseapp.com",
+      projectId: "a-ki-pri-sa-ye",
+      storageBucket: "a-ki-pri-sa-ye.appspot.com",
+      messagingSenderId: "123456789012",
+      appId: "1:123456789012:web:abcdef123456",
+      measurementId: "G-XXXXXXXXXX"
+    };
+
+    const app = firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // DOM elements
+    const loginSection = document.getElementById('loginSection');
+    const adminDashboard = document.getElementById('adminDashboard');
+    const loginForm = document.getElementById('loginForm');
+    const errorMessage = document.getElementById('errorMessage');
+    const adminUser = document.getElementById('adminUser');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const ticketFile = document.getElementById('ticketFile');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const uploadStatus = document.getElementById('uploadStatus');
+    const ocrResult = document.getElementById('ocrResult');
+    const ticketsList = document.getElementById('ticketsList');
+
+    // Auth state listener
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        // Check if user has admin role
+        const token = await user.getIdTokenResult();
+        if (token.claims.admin) {
+          showAdminDashboard(user);
+        } else {
+          showError("Accès refusé : vous devez avoir le rôle administrateur.");
+          auth.signOut();
+        }
+      } else {
+        showLoginSection();
+      }
+    });
+
+    // Login form handler
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      
+      try {
+        document.getElementById('loginBtn').textContent = 'Connexion...';
+        await auth.signInWithEmailAndPassword(email, password);
+      } catch (error) {
+        showError(getErrorMessage(error.code));
+        document.getElementById('loginBtn').textContent = 'Se connecter';
+      }
+    });
+
+    // Logout handler
+    logoutBtn.addEventListener('click', () => {
+      auth.signOut();
+    });
+
+    // Upload and OCR handler
+    uploadBtn.addEventListener('click', async () => {
+      const file = ticketFile.files[0];
+      if (!file) {
+        showError("Veuillez sélectionner un fichier.");
+        return;
+      }
+
+      try {
+        uploadStatus.textContent = "⏳ Analyse OCR en cours...";
+        uploadStatus.style.color = "var(--brand)";
+        
+        const { data: { text } } = await Tesseract.recognize(file, 'fra', {
+          logger: m => {
+            if (m.status === 'recognizing text') {
+              uploadStatus.textContent = `⏳ Analyse OCR: ${Math.round(m.progress * 100)}%`;
+            }
+          }
+        });
+
+        // Parse OCR text to extract prices and products
+        const extractedData = parseTicketText(text);
+        
+        // Save to Firestore
+        const ticketDoc = await db.collection("tickets").add({
+          originalText: text,
+          extractedData: extractedData,
+          fileName: file.name,
+          fileSize: file.size,
+          uploadedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          uploadedBy: auth.currentUser.uid
+        });
+
+        uploadStatus.textContent = "✅ Analyse terminée et sauvegardée";
+        uploadStatus.style.color = "var(--brand)";
+        
+        // Show OCR result
+        ocrResult.textContent = `Texte original:\n${text}\n\nDonnées extraites:\n${JSON.stringify(extractedData, null, 2)}`;
+        ocrResult.style.display = "block";
+        
+        // Refresh tickets list
+        loadTickets();
+        
+      } catch (error) {
+        uploadStatus.textContent = "❌ Erreur lors de l'analyse";
+        uploadStatus.style.color = "var(--danger)";
+        console.error("OCR Error:", error);
+      }
+    });
+
+    // Utility functions
+    function showLoginSection() {
+      loginSection.style.display = 'block';
+      adminDashboard.style.display = 'none';
+    }
+
+    function showAdminDashboard(user) {
+      loginSection.style.display = 'none';
+      adminDashboard.style.display = 'block';
+      adminUser.textContent = `👤 ${user.email}`;
+      loadTickets();
+    }
+
+    function showError(message) {
+      errorMessage.textContent = message;
+      errorMessage.style.display = 'block';
+      setTimeout(() => {
+        errorMessage.style.display = 'none';
+      }, 5000);
+    }
+
+    function getErrorMessage(errorCode) {
+      const messages = {
+        'auth/invalid-email': 'Adresse email invalide.',
+        'auth/user-disabled': 'Ce compte a été désactivé.',
+        'auth/user-not-found': 'Aucun compte trouvé avec cet email.',
+        'auth/wrong-password': 'Mot de passe incorrect.',
+        'auth/invalid-credential': 'Identifiants invalides.',
+        'auth/too-many-requests': 'Trop de tentatives. Réessayez plus tard.'
+      };
+      return messages[errorCode] || 'Erreur de connexion.';
+    }
+
+    function parseTicketText(text) {
+      const lines = text.split('\n').map(line => line.trim()).filter(Boolean);
+      const prices = [];
+      const products = [];
+      let total = null;
+
+      // Simple regex patterns for French tickets
+      const priceRegex = /(\d+[,.]?\d*)\s*€?/g;
+      const productRegex = /^[A-ZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ\s]+$/i;
+
+      lines.forEach(line => {
+        // Extract prices
+        const priceMatches = line.match(priceRegex);
+        if (priceMatches) {
+          priceMatches.forEach(price => {
+            const cleanPrice = parseFloat(price.replace(',', '.').replace('€', ''));
+            if (!isNaN(cleanPrice)) {
+              prices.push({ text: price, value: cleanPrice, line: line });
+            }
+          });
+        }
+
+        // Extract products (heuristic: lines that look like product names)
+        if (productRegex.test(line) && line.length > 3 && line.length < 50) {
+          products.push(line);
+        }
+
+        // Look for total
+        if (line.toLowerCase().includes('total') || line.toLowerCase().includes('sous-total')) {
+          const totalMatch = line.match(priceRegex);
+          if (totalMatch) {
+            total = parseFloat(totalMatch[totalMatch.length - 1].replace(',', '.').replace('€', ''));
+          }
+        }
+      });
+
+      return {
+        prices: prices,
+        products: products,
+        total: total,
+        lineCount: lines.length
+      };
+    }
+
+    async function loadTickets() {
+      try {
+        const snapshot = await db.collection("tickets")
+          .orderBy("uploadedAt", "desc")
+          .limit(20)
+          .get();
+
+        if (snapshot.empty) {
+          ticketsList.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--sub);">Aucun ticket analysé pour le moment.</div>';
+          return;
+        }
+
+        let html = '';
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const uploadDate = data.uploadedAt ? data.uploadedAt.toDate().toLocaleString('fr-FR') : 'Date inconnue';
+          
+          html += `
+            <div style="border: 1px solid #374151; border-radius: 8px; padding: 20px; margin-bottom: 15px; background: var(--muted);">
+              <div style="display: flex; justify-content: between; align-items: start; margin-bottom: 10px;">
+                <strong style="color: var(--brand);">${data.fileName || 'Fichier inconnu'}</strong>
+                <span style="color: var(--sub); font-size: 14px;">${uploadDate}</span>
+              </div>
+              
+              <div style="margin-bottom: 10px;">
+                <strong>Produits extraits:</strong> ${data.extractedData?.products?.length || 0}
+                &nbsp;|&nbsp;
+                <strong>Prix détectés:</strong> ${data.extractedData?.prices?.length || 0}
+                ${data.extractedData?.total ? `&nbsp;|&nbsp;<strong>Total:</strong> ${data.extractedData.total}€` : ''}
+              </div>
+              
+              ${data.extractedData?.products?.length > 0 ? `
+                <div style="margin-bottom: 10px;">
+                  <strong>Produits:</strong> ${data.extractedData.products.slice(0, 3).join(', ')}${data.extractedData.products.length > 3 ? '...' : ''}
+                </div>
+              ` : ''}
+              
+              <details>
+                <summary style="cursor: pointer; color: var(--brand);">Voir le texte OCR complet</summary>
+                <pre style="margin-top: 10px; padding: 10px; background: var(--bg); border-radius: 4px; font-size: 12px; overflow-x: auto;">${data.originalText || 'Aucun texte'}</pre>
+              </details>
+            </div>
+          `;
+        });
+
+        ticketsList.innerHTML = html;
+      } catch (error) {
+        console.error("Error loading tickets:", error);
+        ticketsList.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--danger);">Erreur lors du chargement des tickets.</div>';
+      }
+    }
+  </script>
+</body>
+</html>
