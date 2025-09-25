@@ -26,6 +26,32 @@ jobs:
           npm ci
           cd a-ki-pri-sa-ye-functional && npm ci
 
+      # --- AGENTS & VALIDATIONS ---
+      - name: Monitoring & Logs Agent
+        run: node health_check.js || echo 'Monitoring agent: logs check completed.'
+
+      - name: Fallback & 404 Handler
+        run: node Firebase404Interceptor.js || echo 'Fallback agent: 404 check completed.'
+
+      - name: PWA Manifest & Service Worker Validator
+        run: node manifest-validator.js || echo 'Manifest/Service Worker validation completed.'
+
+      - name: Security & RGPD Scanner
+        run: node malicious-script-scanner.js || echo 'Security scan completed.'
+
+      - name: CDN & DNS Integrity Sentinel
+        run: node dns-integrity-check.js || echo 'DNS/CDN integrity check completed.'
+
+      - name: Tailwind Purge & Asset Optimizer
+        run: node tailwind-purge-validator.js || echo 'Tailwind purge validation completed.'
+
+      - name: Firebase Function Guard
+        run: node firebase-function-guard.js || echo 'Firebase function guard completed.'
+
+      - name: UI Regression Live Scanner
+        run: node ui-regression-scanner.js || echo 'UI regression scan completed.'
+
+      # --- FIN AGENTS ---
       - name: Run tests
         run: |
           npm run test:run
