@@ -1,3 +1,25 @@
+# 📱 A KI PRI SA YÉ
+
+![Cloudflare Pages Deployment](https://github.com/teetee971/akiprisaye-web/actions/workflows/deploy.yml/badge.svg)
+
+Comparateur de prix intelligent conçu pour les consommateurs des **DOM-TOM**, afin de lutter contre la vie chère.  
+Notre mission : rendre les prix **lisibles, comparables et justes**, en tenant compte des réalités locales (octroi de mer, logistique, saisonnalité).
+
+---
+
+## 🚀 Fonctionnalités principales
+
+- 🔍 **Comparateur de prix DOM ↔ Métropole** avec prise en compte des taxes locales.  
+- 🛒 **Catalogues & bons plans** multi-enseignes (supermarchés, magasins discount, etc.).  
+- 📊 **Fiches produits enrichies** : Nutri-Score, composition, origine, traçabilité, éco-scores.  
+- 🧾 **Analyse automatique de tickets de caisse** (scan ticket CB ↔ ticket magasin).  
+- 📲 **PWA installable** (site utilisable comme une application mobile).  
+- 📰 **Fil d’actualité DOM-TOM** : consommation, prix, vie chère, initiatives locales.  
+- 🎯 **Comparaisons à l’unité** : €/kg, €/L, €/m², €/m³.  
+- 🌍 **Multilingue et multi-territoires** (drapeaux DOM intégrés).  
+
+---
+
 # 🌍 A KI PRI SA YÉ — API
 
 API Cloudflare Pages Functions pour la comparaison de prix et la gestion des territoires DOM-TOM.
@@ -52,7 +74,28 @@ Cette fonctionnalité permet un suivi collaboratif et traçable du processus de 
 
 ## 🛠️ Installation et développement
 
-```bash
-npm install
-npm run dev
+## ⚙️ Installation locale
+1. **Cloner le dépôt**  
+	```bash
+	git clone https://github.com/teetee971/akiprisaye-web.git
+	cd akiprisaye-web
+	```
+
+2. **Installer les dépendances**
+	```bash
+	npm install
+	```
+
+3. **Lancer le serveur de développement**
+	```bash
+	npm run dev
+	```
+
+4. **Accéder à l’application**
+	Ouvre [http://localhost:3000](http://localhost:3000) dans ton navigateur.
+
+5. **Build pour la production**
+	```bash
+	npm run build
+	```
 ``` 
