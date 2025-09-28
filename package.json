@@ -1,0 +1,8 @@
+{
+  "name": "akiprisaye-import",
+  "version": "1.0.0",
+  "main": "autoImport.js",
+  "dependencies": {
+    "node-cron": "^3.0.3"
+  }
+}
