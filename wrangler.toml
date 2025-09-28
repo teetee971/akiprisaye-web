@@ -1,0 +1,5 @@
+name = "akiprisaye"
+compatibility_date = "2025-09-28"
+
+[pages]
+build_output_dir = "dist"
