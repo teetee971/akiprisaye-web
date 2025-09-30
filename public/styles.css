@@ -1,4 +1,14 @@
-/* Supprimer les anciens ronds AKI */
-.circle, .aki-logo {
+/* Masque les gros logos AKI doublons */
+img[src*='aki-logo'], 
+.logo-akiround {
   display: none !important;
+}
+
+/* Ajustements généraux */
+.page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to bottom right, #0f172a, #1e293b);
 }
