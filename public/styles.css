@@ -1,0 +1,4 @@
+/* Supprimer les anciens ronds AKI */
+.circle, .aki-logo {
+  display: none !important;
+}
