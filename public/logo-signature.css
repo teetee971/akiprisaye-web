@@ -1,0 +1,14 @@
+.logo-signature {
+  position: fixed;
+  bottom: 15px;
+  right: 20px;
+  font-size: 14px;
+  font-family: 'Montserrat', sans-serif;
+  color: #ffffff;
+  opacity: 0.7;
+  letter-spacing: 1px;
+}
+
+.logo-signature:hover {
+  opacity: 1;
+}
