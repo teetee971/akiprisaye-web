@@ -6,9 +6,20 @@
   font-family: 'Montserrat', sans-serif;
   color: #ffffff;
   opacity: 0.7;
-  letter-spacing: 1px;
+  letter-spacing: clamp(0.2px, 0.15vw, 0.8px);
+  padding: clamp(2px, 0.5vw, 8px) clamp(4px, 1vw, 12px);
 }
 
 .logo-signature:hover {
   opacity: 1;
+}
+
+@media (max-width: 600px) {
+  .logo-signature {
+    bottom: 12px;
+    right: 12px;
+    font-size: 13px;
+    letter-spacing: clamp(0.1px, 0.2vw, 0.4px);
+    padding: clamp(2px, 1vw, 6px) clamp(3px, 1.2vw, 8px);
+  }
 }
