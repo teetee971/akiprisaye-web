@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <title>Signature de logo &mdash; démonstration</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="./logo-signature.css" />
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: "Montserrat", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #0f172a;
+        color: #e2e8f0;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 2.5rem 1.5rem;
+        background: radial-gradient(circle at top, rgba(56, 189, 248, 0.5), rgba(15, 23, 42, 1) 55%);
+      }
+
+      main {
+        max-width: 960px;
+        width: 100%;
+        display: grid;
+        gap: 2.5rem;
+      }
+
+      header h1 {
+        margin: 0;
+        font-size: clamp(2rem, 3.5vw, 2.75rem);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      header p {
+        margin: 0.75rem 0 0;
+        line-height: 1.6;
+      }
+
+      .preview-card {
+        position: relative;
+        border-radius: 18px;
+        overflow: hidden;
+        background: linear-gradient(135deg, rgba(14, 165, 233, 0.8), rgba(2, 132, 199, 0.8));
+        min-height: 320px;
+        box-shadow: 0 25px 45px rgba(15, 23, 42, 0.55);
+        isolation: isolate;
+      }
+
+      .preview-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: url("https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1400&q=80")
+          center / cover no-repeat;
+        opacity: 0.35;
+        transform: scale(1.05);
+        filter: saturate(1.2);
+      }
+
+      .preview-content {
+        position: relative;
+        z-index: 0;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 2.5rem 2.25rem 3.75rem;
+      }
+
+      .preview-content h2 {
+        margin: 0 0 1rem;
+        font-size: clamp(1.75rem, 3vw, 2.25rem);
+        letter-spacing: 0.06em;
+      }
+
+      .preview-content p {
+        margin: 0;
+        max-width: 34ch;
+        line-height: 1.7;
+        font-size: 1rem;
+      }
+
+      .instructions {
+        background: rgba(15, 23, 42, 0.55);
+        border-radius: 16px;
+        padding: 1.5rem 1.75rem;
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        backdrop-filter: blur(8px);
+      }
+
+      .instructions h2 {
+        margin-top: 0;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        font-size: 1.1rem;
+      }
+
+      pre {
+        margin: 1rem 0 0;
+        background: rgba(15, 23, 42, 0.8);
+        padding: 1rem 1.25rem;
+        border-radius: 12px;
+        overflow-x: auto;
+        border: 1px solid rgba(148, 163, 184, 0.15);
+      }
+
+      code {
+        font-family: "Fira Code", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        font-size: 0.95rem;
+        color: #bae6fd;
+      }
+
+      @media (max-width: 600px) {
+        body {
+          padding: 1.5rem 1rem;
+        }
+
+        .preview-content {
+          padding: 2rem 1.75rem 3.5rem;
+        }
+
+        .preview-content p {
+          font-size: 0.95rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>Signature de logo</h1>
+        <p>
+          Démonstration interactive de la classe <code>.logo-signature</code> destinée à afficher une signature de marque en bas à droite d'un visuel.
+          Le composant reste discret mais lisible, et gagne en intensité au survol.
+        </p>
+      </header>
+
+      <section class="preview-card" aria-labelledby="preview-title">
+        <div class="preview-content">
+          <h2 id="preview-title">Comparateur de prix DROM-COM</h2>
+          <p>
+            A KI PRI SA YÉ permet de repérer instantanément les enseignes les plus avantageuses et d'optimiser votre panier.
+          </p>
+        </div>
+        <span class="logo-signature" aria-label="Signature du logo">A KI PRI SA YÉ</span>
+      </section>
+
+      <section class="instructions">
+        <h2>Utilisation dans votre projet</h2>
+        <p>
+          Importez la feuille de style et ajoutez l'élément marqué de la classe <code>logo-signature</code> dans votre mise en page.
+        </p>
+        <pre><code>&lt;link rel="stylesheet" href="/logo-signature.css" /&gt;
+&lt;div class="votre-conteneur"&gt;
+  ...
+  &lt;span class="logo-signature"&gt;A KI PRI SA YÉ&lt;/span&gt;
+&lt;/div&gt;</code></pre>
+      </section>
+    </main>
+  </body>
+</html>
