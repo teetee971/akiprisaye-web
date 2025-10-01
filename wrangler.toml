@@ -1,5 +1,7 @@
-name = "akiprisaye"
-compatibility_date = "2025-09-28"
+name = "akiprisaye-web"
+compatibility_date = "2025-10-01"
 
-[pages]
-build_output_dir = "dist"
+[build]
+command = "npm run build"
+# Dossier final généré par Vite
+pages_build_output_dir = "dist"
