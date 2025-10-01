@@ -1,6 +1,3 @@
- codex/add-hover-effect-to-logo-signature
-
- codex/add-logo-signature-to-component
 :root {
   color-scheme: dark;
   --primary-start: #ff6f61;
@@ -33,7 +30,9 @@ body {
 }
 
 .logo-signature {
-  position: relative;
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
   display: inline-flex;
   align-items: center;
   gap: 1.25rem;
@@ -49,6 +48,9 @@ body {
   font-size: clamp(1.1rem, 3vw, 2.4rem);
   font-weight: 700;
   text-align: center;
+  opacity: 0.7;
+  transition: opacity 0.25s ease, transform 0.25s ease, background 0.25s ease;
+  z-index: 1;
 }
 
 .logo-signature::before {
@@ -87,59 +89,24 @@ body {
   }
 }
 
-@media (max-width: 600px) {
-  .logo-signature {
-    letter-spacing: 0.35rem;
-    padding: 1.25rem 2.25rem;
-    gap: 1rem;
-  }
-
-  .logo-signature::before {
-    width: 2.5rem;
-    height: 2.5rem;
-  }
-
- main
-.logo-signature {
-  position: fixed;
-  bottom: 15px;
-  right: 20px;
-  font-size: 14px;
-  font-family: 'Montserrat', sans-serif;
-  color: #ffffff;
-  opacity: 0.7;
- codex/add-hover-effect-to-logo-signature
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  padding: 6px 14px;
-  border-radius: 999px;
-  background: rgba(15, 23, 42, 0.45);
-  backdrop-filter: blur(6px);
-  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.35);
-  transition: opacity 0.25s ease, transform 0.25s ease, background 0.25s ease;
-  z-index: 1;
-
-  letter-spacing: clamp(0.2px, 0.15vw, 0.8px);
-  padding: clamp(2px, 0.5vw, 8px) clamp(4px, 1vw, 12px);
- main
-}
-
 .logo-signature:hover {
   opacity: 1;
- codex/add-hover-effect-to-logo-signature
   transform: translateY(-2px);
   background: rgba(15, 23, 42, 0.65);
-
- main
 }
 
 @media (max-width: 600px) {
   .logo-signature {
     bottom: 12px;
     right: 12px;
-    font-size: 13px;
-    letter-spacing: clamp(0.1px, 0.2vw, 0.4px);
-    padding: clamp(2px, 1vw, 6px) clamp(3px, 1.2vw, 8px);
+    letter-spacing: 0.35rem;
+    padding: 1.25rem 2.25rem;
+    gap: 1rem;
+    font-size: clamp(0.9rem, 2.5vw, 1.1rem);
   }
- main
+
+  .logo-signature::before {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
 }
