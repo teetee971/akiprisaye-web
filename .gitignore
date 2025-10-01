@@ -1,6 +1,5 @@
 node_modules/
 dist/
-codex/add-logo-signature-to-component
 import.log
 .DS_Store
- main
+*.png
