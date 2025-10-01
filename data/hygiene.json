@@ -9,38 +9,30 @@
   { "id": 8, "nom": "Brosse à dents souple", "prix": 1.5, "categorie": "hygiene" },
   { "id": 9, "nom": "Fil dentaire 50m", "prix": 2.2, "categorie": "hygiene" },
   { "id": 10, "nom": "Shampoing anti-pelliculaire", "prix": 4.0, "categorie": "hygiene" },
-  ...
   { "id": 99, "nom": "Brosse WC", "prix": 4.0, "categorie": "hygiene" },
-  { "id": 100, "nom": "Gel hydroalcoolique", "prix": 3.5, "categorie": "hygiene" }
+  { "id": 100, "nom": "Gel hydroalcoolique", "prix": 3.5, "categorie": "hygiene" },
+  { "id": 101, "nom": "Bouilloire électrique", "prix": 25.9, "categorie": "electromenager" },
+  { "id": 102, "nom": "Micro-ondes", "prix": 89.0, "categorie": "electromenager" },
+  { "id": 103, "nom": "Réfrigérateur", "prix": 399.0, "categorie": "electromenager" },
+  { "id": 104, "nom": "Machine à laver", "prix": 299.0, "categorie": "electromenager" },
+  { "id": 105, "nom": "Aspirateur", "prix": 149.0, "categorie": "electromenager" },
+  { "id": 106, "nom": "Fer à repasser", "prix": 35.0, "categorie": "electromenager" },
+  { "id": 107, "nom": "Ventilateur sur pied", "prix": 49.0, "categorie": "electromenager" },
+  { "id": 108, "nom": "Climatiseur mobile", "prix": 299.0, "categorie": "electromenager" },
+  { "id": 109, "nom": "Télévision LED 42\"", "prix": 349.0, "categorie": "electromenager" },
+  { "id": 110, "nom": "Cafetière filtre", "prix": 59.0, "categorie": "electromenager" },
+  { "id": 199, "nom": "Mini four", "prix": 129.0, "categorie": "electromenager" },
+  { "id": 200, "nom": "Grille-pain inox", "prix": 34.0, "categorie": "electromenager" },
+  { "id": 201, "nom": "T-shirt coton", "prix": 12.5, "categorie": "vetements" },
+  { "id": 202, "nom": "Jean slim", "prix": 39.0, "categorie": "vetements" },
+  { "id": 203, "nom": "Chemise homme", "prix": 29.9, "categorie": "vetements" },
+  { "id": 204, "nom": "Robe d'été", "prix": 35.0, "categorie": "vetements" },
+  { "id": 205, "nom": "Chaussures de sport", "prix": 59.9, "categorie": "vetements" },
+  { "id": 206, "nom": "Veste en cuir", "prix": 149.0, "categorie": "vetements" },
+  { "id": 207, "nom": "Pull en laine", "prix": 45.0, "categorie": "vetements" },
+  { "id": 208, "nom": "Short en jean", "prix": 29.0, "categorie": "vetements" },
+  { "id": 209, "nom": "Chaussettes x5", "prix": 9.9, "categorie": "vetements" },
+  { "id": 210, "nom": "Cravate soie", "prix": 25.0, "categorie": "vetements" },
+  { "id": 299, "nom": "Manteau d'hiver", "prix": 149.0, "categorie": "vetements" },
+  { "id": 300, "nom": "Sac à main cuir", "prix": 199.0, "categorie": "vetements" }
 ]
-[
-  { "id": 1, "nom": "Bouilloire électrique", "prix": 25.9, "categorie": "electromenager" },
-  { "id": 2, "nom": "Micro-ondes", "prix": 89.0, "categorie": "electromenager" },
-  { "id": 3, "nom": "Réfrigérateur", "prix": 399.0, "categorie": "electromenager" },
-  { "id": 4, "nom": "Machine à laver", "prix": 299.0, "categorie": "electromenager" },
-  { "id": 5, "nom": "Aspirateur", "prix": 149.0, "categorie": "electromenager" },
-  { "id": 6, "nom": "Fer à repasser", "prix": 35.0, "categorie": "electromenager" },
-  { "id": 7, "nom": "Ventilateur sur pied", "prix": 49.0, "categorie": "electromenager" },
-  { "id": 8, "nom": "Climatiseur mobile", "prix": 299.0, "categorie": "electromenager" },
-  { "id": 9, "nom": "Télévision LED 42\"", "prix": 349.0, "categorie": "electromenager" },
-  { "id": 10, "nom": "Cafetière filtre", "prix": 59.0, "categorie": "electromenager" },
-  ...
-  { "id": 99, "nom": "Mini four", "prix": 129.0, "categorie": "electromenager" },
-  { "id": 100, "nom": "Grille-pain inox", "prix": 34.0, "categorie": "electromenager" }
-]
-[
-  { "id": 1, "nom": "T-shirt coton", "prix": 12.5, "categorie": "vetements" },
-  { "id": 2, "nom": "Jean slim", "prix": 39.0, "categorie": "vetements" },
-  { "id": 3, "nom": "Chemise homme", "prix": 29.9, "categorie": "vetements" },
-  { "id": 4, "nom": "Robe d'été", "prix": 35.0, "categorie": "vetements" },
-  { "id": 5, "nom": "Chaussures de sport", "prix": 59.9, "categorie": "vetements" },
-  { "id": 6, "nom": "Veste en cuir", "prix": 149.0, "categorie": "vetements" },
-  { "id": 7, "nom": "Pull en laine", "prix": 45.0, "categorie": "vetements" },
-  { "id": 8, "nom": "Short en jean", "prix": 29.0, "categorie": "vetements" },
-  { "id": 9, "nom": "Chaussettes x5", "prix": 9.9, "categorie": "vetements" },
-  { "id": 10, "nom": "Cravate soie", "prix": 25.0, "categorie": "vetements" },
-  ...
-  { "id": 99, "nom": "Manteau d’hiver", "prix": 149.0, "categorie": "vetements" },
-  { "id": 100, "nom": "Sac à main cuir", "prix": 199.0, "categorie": "vetements" }
-]
-
