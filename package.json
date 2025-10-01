@@ -1,8 +1,16 @@
 {
-  "name": "akiprisaye-import",
+  "name": "akiprisaye-web",
   "version": "1.0.0",
-  "main": "autoImport.js",
+  "description": "Site A KI PRI SA YÉ",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
   "dependencies": {
     "node-cron": "^3.0.3"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
   }
 }
