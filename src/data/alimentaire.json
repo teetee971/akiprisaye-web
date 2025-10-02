@@ -1,0 +1,5 @@
+[
+  { "nom": "Riz 1kg", "prix": 2.5, "enseigne": "Carrefour" },
+  { "nom": "Lait 1L", "prix": 1.2, "enseigne": "Leclerc" },
+  { "nom": "Poulet 1kg", "prix": 7.8, "enseigne": "Auchan" }
+]
