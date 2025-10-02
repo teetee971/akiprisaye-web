@@ -1,20 +1,9 @@
 {
   "name": "A KI PRI SA YÉ",
-  "short_name": "KiPri",
+  "short_name": "AKIPRI",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#111827",
-  "theme_color": "#111827",
-  "icons": [
-    {
-      "src": "/icon.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "/icon.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ]
+  "background_color": "#0b0f1a",
+  "theme_color": "#0b0f1a",
+  "icons": []
 }
