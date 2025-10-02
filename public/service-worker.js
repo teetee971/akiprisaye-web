@@ -1,7 +1,11 @@
-self.addEventListener('install', event => {
-  console.log('Service Worker installé.');
+self.addEventListener('install', (e) => {
+  e.waitUntil(
+    caches.open('akipri-cache').then((cache) => cache.add('/'))
+  );
 });
 
-self.addEventListener('fetch', event => {
-  event.respondWith(fetch(event.request).catch(() => caches.match(event.request)));
+self.addEventListener('fetch', (e) => {
+  e.respondWith(
+    caches.match(e.request).then((response) => response || fetch(e.request))
+  );
 });
