@@ -1,27 +1,21 @@
-import React, { useEffect, useState } from 'react'
-import Navbar from './components/Navbar'
-import Carousel from './components/Carousel'
-import Produits from './pages/Produits'
-import Apropos from './pages/Apropos'
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import Home from "./pages/Home";
+import Produits from "./pages/Produits";
+import About from "./pages/About";
 
-export default function App() {
-  const [page, setPage] = useState('home')
-
-  const renderPage = () => {
-    switch (page) {
-      case 'produits':
-        return <Produits />
-      case 'apropos':
-        return <Apropos />
-      default:
-        return <Carousel />
-    }
-  }
-
+function App() {
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
-      <Navbar setPage={setPage} />
-      <div className="p-4">{renderPage()}</div>
+    <div>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/produits" element={<Produits />} />
+        <Route path="/about" element={<About />} />
+      </Routes>
     </div>
-  )
+  );
 }
+
+export default App;

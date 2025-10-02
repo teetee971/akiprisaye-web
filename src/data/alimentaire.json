@@ -1,5 +1,5 @@
 [
-  { "id": 1, "nom": "Riz 1kg", "prix": 2.5 },
-  { "id": 2, "nom": "Lait 1L", "prix": 1.2 },
-  { "id": 3, "nom": "Pain", "prix": 1.0 }
+  { "nom": "Riz 1kg", "prix": 2.5, "enseigne": "Carrefour" },
+  { "nom": "Lait 1L", "prix": 1.2, "enseigne": "Leclerc" },
+  { "nom": "Poulet 1kg", "prix": 7.8, "enseigne": "Auchan" }
 ]
