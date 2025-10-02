@@ -1,25 +1,29 @@
-import React, { useState, useEffect } from 'react'
-import img1 from '../assets/app.png'
-import img2 from '../assets/carte.png'
-import img3 from '../assets/budget.png'
-import img4 from '../assets/vie_chere.png'
-import img5 from '../assets/classement.png'
+import React, { useEffect, useState } from 'react'
 
-const images = [img1, img2, img3, img4, img5]
+const images = [
+  '/Application.png',
+  '/Carte.png',
+  '/Budget.png',
+  '/VieChere.png',
+  '/Classement.png'
+]
 
 export default function Carousel() {
-  const [index, setIndex] = useState(0)
+  const [current, setCurrent] = useState(0)
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % images.length)
+      setCurrent(prev => (prev + 1) % images.length)
     }, 3000)
     return () => clearInterval(interval)
   }, [])
 
   return (
-    <div className="w-full max-w-2xl">
-      <img src={images[index]} alt="Slide" className="rounded-2xl shadow-lg" />
+    <div className="w-full h-64 md:h-96 overflow-hidden relative">
+      {images.map((img, idx) => (
+        <img key={idx} src={img} alt="slide" 
+          className={`absolute w-full h-full object-cover transition-opacity duration-1000 ${idx === current ? 'opacity-100' : 'opacity-0'}`} />
+      ))}
     </div>
   )
 }
