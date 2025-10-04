@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.6.0",
-    "firebase": "^9.0.0",
+    "firebase": "^10.9.0",
     "path": "^0.12.7",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
@@ -16,6 +16,6 @@
     "tesseract.js": "^6.0.1"
   },
   "devDependencies": {
-    "vite": "^4.0.0"
+    "vite": "^7.1.9"
   }
 }
