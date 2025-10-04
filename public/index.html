@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>A KI PRI SA YÉ – Accueil</title>
+  <style>
+    body {
+      background-color: #111;
+      color: #eee;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 2rem;
+      text-align: center;
+    }
+    .language-selector {
+      margin-bottom: 2rem;
+    }
+    .language-selector button {
+      background: #222;
+      color: #ccc;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      margin: 0 0.5rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .language-selector button:hover {
+      background: #444;
+    }
+    .hero-image {
+      max-width: 90%;
+      margin: 2rem auto;
+      border-radius: 12px;
+      box-shadow: 0 0 18px rgba(255, 255, 255, 0.1);
+    }
+    h1 {
+      font-size: 2rem;
+      margin-top: 1rem;
+    }
+    p {
+      font-size: 1.2rem;
+      margin: 1rem auto;
+      max-width: 700px;
+    }
+    .start-button {
+      display: inline-block;
+      background: #00c896;
+      color: #000;
+      font-weight: bold;
+      padding: 0.8rem 1.6rem;
+      margin-top: 1.5rem;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: 0.3s ease;
+    }
+    .start-button:hover {
+      background: #00a882;
+    }
+  </style>
+</head>
+<body>
+  <div class="language-selector">
+    <button onclick="setLang('creole')">🇬🇵 Kreyòl</button>
+    <button onclick="setLang('fr')">🇫🇷 Français</button>
+    <button onclick="setLang('es')">🇪🇸 Español</button>
+  </div>
+
+  <img src="home_hero_dark.webp" alt="Accueil A KI PRI SA YÉ" class="hero-image" />
+
+  <h1 id="title">Bienvenue sur A KI PRI SA YÉ</h1>
+  <p id="desc">Comparez les prix, dénoncez les abus et faites des économies en toute transparence.</p>
+  <a href="compare.html" class="start-button" id="startBtn">Commencer</a>
+
+  <script>
+    const translations = {
+      fr: {
+        title: "Bienvenue sur A KI PRI SA YÉ",
+        desc: "Comparez les prix, dénoncez les abus et faites des économies en toute transparence.",
+        btn: "Commencer"
+      },
+      creole: {
+        title: "Byenvini asi A KI PRI SA YÉ",
+        desc: "Konpwann pri-la, dénoncé abiz-la, é fè ékonomi an toute klareté.",
+        btn: "Koumansé"
+      },
+      es: {
+        title: "Bienvenido a A KI PRI SA YÉ",
+        desc: "Compara precios, denuncia abusos y ahorra con total transparencia.",
+        btn: "Empezar"
+      }
+    };
+
+    function setLang(lang) {
+      document.getElementById("title").innerText = translations[lang].title;
+      document.getElementById("desc").innerText = translations[lang].desc;
+      document.getElementById("startBtn").innerText = translations[lang].btn;
+    }
+  </script>
+</body>
+</html>

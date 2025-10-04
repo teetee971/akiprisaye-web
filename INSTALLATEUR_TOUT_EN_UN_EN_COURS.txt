@@ -1,0 +1,13 @@
+
+🚧 INSTALLATEUR EN COURS DE CRÉATION
+
+Un installeur .exe auto-extractible "tout-en-un" est en cours de compilation.
+Il contiendra :
+- Lanceur intelligent
+- Fichiers de config (INI, LIC, README)
+- Dossiers Docs, Audio, IA, Assets
+- Icône officielle
+- Message personnalisé au lancement
+- Raccourci sur le bureau
+
+✅ Le fichier final sera livré dans quelques instants, prêt à être diffusé ou exécuté.

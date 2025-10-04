@@ -1,0 +1,15 @@
+# Git ignore pour A KI PRI SA YÉ
+
+# Fichiers sensibles
+*.key
+*.pem
+*.env
+*.env.local
+serviceAccount*.json
+
+# Dépendances & builds
+node_modules/
+dist/
+build/
+.vscode/
+.DS_Store

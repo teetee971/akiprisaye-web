@@ -1,0 +1,1 @@
+// JavaScript for dark version
