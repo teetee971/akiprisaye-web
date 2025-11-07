@@ -8,10 +8,10 @@
   <!-- Manifest et icônes pour mode PWA -->
   <link rel="manifest" href="manifest.json" />
   <!-- Icônes multiples pour différentes résolutions et plateformes -->
-  <link rel="icon" type="image/png" sizes="192x192" href="assets/icon_192.png" />
-  <link rel="icon" type="image/png" sizes="256x256" href="assets/icon_256.png" />
-  <link rel="icon" type="image/png" sizes="512x512" href="assets/icon_512.png" />
-  <link rel="apple-touch-icon" href="assets/icon_192.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/assets/icon_192.png" />
+  <link rel="icon" type="image/png" sizes="256x256" href="/assets/icon_256.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="/assets/icon_512.png" />
+  <link rel="apple-touch-icon" href="/assets/icon_192.png" />
   <meta name="theme-color" content="#000000" />
   <style>
     /* Réinitialisation et styles de base */
@@ -153,7 +153,7 @@
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function () {
         navigator.serviceWorker
-          .register('public/service-worker.js')
+          .register('/service-worker.js')
           .catch(function (err) {
             console.error('Échec de l\'enregistrement du service worker :', err);
           });
