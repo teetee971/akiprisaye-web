@@ -1,38 +1,30 @@
 import { reactive } from 'vue';
-
-// Simple reactive i18n store
-export const i18n = reactive({
-  currentLang: 'fr',
-  
-  messages: {
-    fr: {
-      title: 'A KI PRI SA YÉ',
-      subtitle: 'Gérez votre budget facilement',
-      tagline: 'Comparez les prix et luttez contre la vie chère',
-      startButton: 'Commencer',
-      language: 'Langue'
-    },
-    creole: {
-      title: 'A KI PRI SA YÉ',
-      subtitle: 'Gérez boudjet-ou fasilman',
-      tagline: 'Konpwann pri-la é goumenn kont lavi chè',
-      startButton: 'Koumansé',
-      language: 'Lang'
-    },
-    es: {
-      title: 'A KI PRI SA YÉ',
-      subtitle: 'Gestiona tu presupuesto fácilmente',
-      tagline: 'Compara precios y lucha contra el alto costo de vida',
-      startButton: 'Empezar',
-      language: 'Idioma'
+const messages = {
+  fr: {
+    title: 'Bienvenue sur A KI PRI SA YÉ',
+    desc: 'Comparez les prix, dénoncez les abus et faites des économies.',
+    start: 'Commencer',
+    tagline: 'Transparence • Pouvoir d’achat • Guadeloupe',
+  },
+  creole: {
+    title: 'Byenvini asi A KI PRI SA YÉ',
+    desc: 'Konpwann pri, dénoncé abiz, fè ékonomi san kout têt.',
+    start: 'Koumansé',
+    tagline: 'Klareté • Pouvwa achté • Gwadloup',
+  },
+  es: {
+    title: 'Bienvenido a A KI PRI SA YÉ',
+    desc: 'Compara precios, denuncia abusos y ahorra con transparencia.',
+    start: 'Empezar',
+    tagline: 'Transparencia • Poder adquisitivo • Guadalupe',
+  }
+};
+export const i18n = {
+  state: reactive({ locale: 'fr', t: messages.fr }),
+  setLocale(l) {
+    if (messages[l]) {
+      this.state.locale = l;
+      this.state.t = messages[l];
     }
   },
-  
-  setLanguage(lang) {
-    this.currentLang = lang;
-  },
-  
-  t(key) {
-    return this.messages[this.currentLang]?.[key] || key;
-  }
-});
+};

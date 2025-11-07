@@ -1,12 +1,1 @@
-<template>
-  <a
-    href="/compare"
-    class="inline-block mt-8 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg rounded-lg shadow-lg transition-all duration-200 hover:scale-105 hover:shadow-xl"
-  >
-    {{ i18n.t('startButton') }}
-  </a>
-</template>
-
-<script setup>
-import { i18n } from '../i18n.js';
-</script>
+<template><a href="/comparateur.html" class="inline-flex items-center gap-2 px-5 py-2 rounded-full font-semibold bg-teal-500 text-black hover:bg-teal-400 transition shadow-lg shadow-teal-900/40"><span>{{ label }}</span><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9h12M11 5l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg></a></template><script setup>defineProps({ label:{ type:String, default:'Commencer' } });</script>
