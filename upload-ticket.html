@@ -379,7 +379,14 @@
     // Show status message
     function showStatus(message, type) {
       const statusDiv = document.getElementById('status-message');
-      statusDiv.innerHTML = `<div class="status-message status-${type}">${message}</div>`;
+      
+      // Create element safely to prevent XSS
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `status-message status-${type}`;
+      messageDiv.textContent = message; // textContent prevents XSS
+      
+      statusDiv.innerHTML = '';
+      statusDiv.appendChild(messageDiv);
       
       // Auto-hide success messages after 5 seconds
       if (type === 'success') {
