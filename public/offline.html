@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hors ligne – A KI PRI SA YÉ</title>
+  <style>
+    body {
+      background-color: #111;
+      color: #eee;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 2rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: #00c896;
+    }
+    p {
+      font-size: 1.2rem;
+      margin: 1rem auto;
+      max-width: 600px;
+      line-height: 1.6;
+    }
+    .icon {
+      font-size: 4rem;
+      margin-bottom: 2rem;
+    }
+    .retry-button {
+      display: inline-block;
+      background: #00c896;
+      color: #000;
+      font-weight: bold;
+      padding: 0.8rem 1.6rem;
+      margin-top: 1.5rem;
+      text-decoration: none;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: 0.3s ease;
+    }
+    .retry-button:hover {
+      background: #00a882;
+    }
+  </style>
+</head>
+<body>
+  <div class="icon">📡</div>
+  <h1>Vous êtes hors ligne</h1>
+  <p>
+    Il semble que vous n'ayez pas de connexion internet. 
+    Veuillez vérifier votre connexion et réessayer.
+  </p>
+  <button class="retry-button" onclick="window.location.reload()">
+    Réessayer
+  </button>
+</body>
+</html>

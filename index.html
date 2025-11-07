@@ -48,15 +48,15 @@
 
     /* Définition des images de fond pour chaque diapositive et leurs délais d'animation */
     .slide:nth-child(1) {
-      background-image: url('assets/84ba022c-9450-4e4f-841b-64d5363aaae1_lg.webp');
+      background-image: url('A_webpage_screenshot_screenshot_titled__A_KI_PRI_S.png');
       animation-delay: 0s;
     }
     .slide:nth-child(2) {
-      background-image: url('assets/b3ced496-7272-4600-b46e-c14cf625667e_lg.webp');
+      background-image: url('A_pair_of_digital_screenshots_displays_the_launch_.png');
       animation-delay: 5s;
     }
     .slide:nth-child(3) {
-      background-image: url('assets/0d3bd9ac-734a-4f7d-b671-6dc715ae9e94_lg.webp');
+      background-image: url('A_digital_screenshot_and_a_mockup_of_the_web_appli.png');
       animation-delay: 10s;
     }
 
@@ -153,7 +153,7 @@
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function () {
         navigator.serviceWorker
-          .register('service-worker.js')
+          .register('public/service-worker.js')
           .catch(function (err) {
             console.error('Échec de l\'enregistrement du service worker :', err);
           });
