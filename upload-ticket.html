@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Ticket - A KI PRI SA YÉ</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    
+    h2 {
+      color: #0f62fe;
+      text-align: center;
+    }
+    
+    .upload-container {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    
+    .file-input-wrapper {
+      margin: 20px 0;
+    }
+    
+    #ticket-file {
+      width: 100%;
+      padding: 10px;
+      border: 2px dashed #ddd;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    #ticket-file:hover {
+      border-color: #0f62fe;
+    }
+    
+    button {
+      width: 100%;
+      padding: 12px 20px;
+      background-color: #0f62fe;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    
+    button:hover {
+      background-color: #0353e9;
+    }
+    
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    
+    #preview-container {
+      margin: 20px 0;
+      text-align: center;
+    }
+    
+    #preview-image {
+      max-width: 100%;
+      max-height: 400px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    
+    #ocr-results {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .ocr-line {
+      padding: 10px;
+      margin: 5px 0;
+      background-color: #f8f9fa;
+      border-left: 3px solid #0f62fe;
+      border-radius: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .ocr-line.has-price {
+      background-color: #e6f4ea;
+      border-left-color: #137333;
+    }
+    
+    .line-text {
+      flex: 1;
+      font-family: monospace;
+    }
+    
+    .price-detected {
+      font-weight: bold;
+      color: #137333;
+      margin-left: 10px;
+    }
+    
+    .confirm-section {
+      margin-top: 20px;
+      padding: 20px;
+      background-color: #f0f4ff;
+      border-radius: 4px;
+    }
+    
+    .status-message {
+      padding: 15px;
+      border-radius: 4px;
+      margin: 10px 0;
+      text-align: center;
+    }
+    
+    .status-loading {
+      background-color: #fff4e5;
+      color: #ea8600;
+    }
+    
+    .status-success {
+      background-color: #e6f4ea;
+      color: #137333;
+    }
+    
+    .status-error {
+      background-color: #fce8e6;
+      color: #c5221f;
+    }
+    
+    .progress-bar {
+      width: 100%;
+      height: 20px;
+      background-color: #e0e0e0;
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 10px 0;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background-color: #0f62fe;
+      transition: width 0.3s ease;
+    }
+    
+    .hint {
+      font-size: 14px;
+      color: #666;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h2>📸 Upload de Ticket</h2>
+  
+  <div class="upload-container">
+    <p>Téléchargez une photo de votre ticket de caisse pour extraire automatiquement les prix.</p>
+    
+    <form id="upload-form">
+      <div class="file-input-wrapper">
+        <label for="ticket-file">
+          <strong>Sélectionner un ticket :</strong>
+        </label>
+        <input 
+          type="file" 
+          id="ticket-file" 
+          name="ticket" 
+          accept="image/*"
+          required
+        >
+      </div>
+      
+      <div id="preview-container" style="display: none;">
+        <img id="preview-image" src="" alt="Aperçu du ticket">
+      </div>
+      
+      <button type="submit" id="process-btn">🔍 Traiter le ticket</button>
+    </form>
+  </div>
+  
+  <div id="ocr-results" style="display: none;">
+    <h3>Résultats OCR</h3>
+    <div id="progress-section" style="display: none;">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+      </div>
+      <p id="progress-text" class="hint">Traitement en cours...</p>
+    </div>
+    <div id="lines-container"></div>
+    <div id="confirm-section" class="confirm-section" style="display: none;">
+      <button id="confirm-btn">✅ Confirmer et enregistrer</button>
+      <p class="hint">Les lignes avec prix seront enregistrées dans la base de données.</p>
+    </div>
+  </div>
+  
+  <div id="status-message"></div>
+  
+  <script type="module">
+    import Tesseract from 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.esm.min.js';
+    import { db } from './firebase-config.js';
+    import { collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+    
+    let ocrLines = [];
+    
+    // Preview image when selected
+    document.getElementById('ticket-file').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const preview = document.getElementById('preview-image');
+          preview.src = event.target.result;
+          document.getElementById('preview-container').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+    
+    // Handle form submission
+    document.getElementById('upload-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const fileInput = document.getElementById('ticket-file');
+      const file = fileInput.files[0];
+      
+      if (!file) {
+        showStatus('Veuillez sélectionner une image', 'error');
+        return;
+      }
+      
+      // Show OCR results section and progress
+      document.getElementById('ocr-results').style.display = 'block';
+      document.getElementById('progress-section').style.display = 'block';
+      document.getElementById('lines-container').innerHTML = '';
+      document.getElementById('confirm-section').style.display = 'none';
+      
+      showStatus('Traitement de l\'image en cours...', 'loading');
+      
+      try {
+        // Perform OCR
+        const result = await Tesseract.recognize(
+          file,
+          'fra', // French language
+          {
+            logger: m => {
+              if (m.status === 'recognizing text') {
+                const progress = Math.round(m.progress * 100);
+                document.getElementById('progress-fill').style.width = progress + '%';
+                document.getElementById('progress-text').textContent = `Reconnaissance: ${progress}%`;
+              }
+            }
+          }
+        );
+        
+        // Hide progress
+        document.getElementById('progress-section').style.display = 'none';
+        
+        // Parse lines
+        ocrLines = parseOcrLines(result.data.text);
+        
+        // Display lines
+        displayOcrLines(ocrLines);
+        
+        // Show confirm button
+        document.getElementById('confirm-section').style.display = 'block';
+        
+        showStatus(`✅ ${ocrLines.length} lignes détectées`, 'success');
+        
+      } catch (error) {
+        console.error('OCR error:', error);
+        showStatus('❌ Erreur lors du traitement: ' + error.message, 'error');
+      }
+    });
+    
+    // Parse OCR text into lines and detect prices
+    function parseOcrLines(text) {
+      const lines = text.split('\n').filter(line => line.trim().length > 0);
+      const parsed = [];
+      
+      // Price pattern: matches numbers like 2.50, 12,99, etc.
+      const pricePattern = /\b(\d+[.,]\d{2})\b/g;
+      
+      lines.forEach(line => {
+        const trimmed = line.trim();
+        const prices = trimmed.match(pricePattern);
+        
+        parsed.push({
+          raw: trimmed,
+          price: prices ? prices[0].replace(',', '.') : null,
+          ean: null, // EAN detection not implemented in MVP
+          name: null,
+          qty: null
+        });
+      });
+      
+      return parsed;
+    }
+    
+    // Display OCR lines
+    function displayOcrLines(lines) {
+      const container = document.getElementById('lines-container');
+      container.innerHTML = '';
+      
+      lines.forEach((line, index) => {
+        const div = document.createElement('div');
+        div.className = 'ocr-line' + (line.price ? ' has-price' : '');
+        
+        const textSpan = document.createElement('span');
+        textSpan.className = 'line-text';
+        textSpan.textContent = line.raw;
+        div.appendChild(textSpan);
+        
+        if (line.price) {
+          const priceSpan = document.createElement('span');
+          priceSpan.className = 'price-detected';
+          priceSpan.textContent = line.price + ' €';
+          div.appendChild(priceSpan);
+        }
+        
+        container.appendChild(div);
+      });
+    }
+    
+    // Confirm and save to Firestore
+    document.getElementById('confirm-btn').addEventListener('click', async function() {
+      showStatus('Enregistrement en cours...', 'loading');
+      
+      try {
+        // TODO: In production, upload image to Firebase Storage first
+        // For MVP, we just save the parsed data
+        
+        const receiptData = {
+          imageUrl: 'pending_upload', // Would be Storage URL in production
+          parsedLines: ocrLines,
+          status: 'pending',
+          uploadedAt: serverTimestamp()
+        };
+        
+        // Save to Firestore receipts collection
+        const receiptsRef = collection(db, 'receipts');
+        const docRef = await addDoc(receiptsRef, receiptData);
+        
+        showStatus('✅ Ticket enregistré avec succès! ID: ' + docRef.id, 'success');
+        
+        // Reset form
+        document.getElementById('upload-form').reset();
+        document.getElementById('preview-container').style.display = 'none';
+        document.getElementById('ocr-results').style.display = 'none';
+        
+      } catch (error) {
+        console.error('Save error:', error);
+        
+        // If Firestore write fails (likely due to security rules), show helpful message
+        if (error.code === 'permission-denied') {
+          showStatus('⚠️ Ticket traité mais non enregistré (règles Firestore). Les données sont prêtes pour traitement.', 'error');
+          console.log('Processed receipt data:', receiptData);
+        } else {
+          showStatus('❌ Erreur lors de l\'enregistrement: ' + error.message, 'error');
+        }
+      }
+    });
+    
+    // Show status message
+    function showStatus(message, type) {
+      const statusDiv = document.getElementById('status-message');
+      statusDiv.innerHTML = `<div class="status-message status-${type}">${message}</div>`;
+      
+      // Auto-hide success messages after 5 seconds
+      if (type === 'success') {
+        setTimeout(() => {
+          statusDiv.innerHTML = '';
+        }, 5000);
+      }
+    }
+  </script>
+</body>
+</html>
