@@ -143,7 +143,11 @@ async function handleSearch(event) {
   const ean = eanInput?.value?.trim();
   
   if (!ean) {
-    alert('Veuillez saisir un code EAN');
+    // Show error in results area instead of alert
+    const resultsDiv = document.getElementById('price-results');
+    if (resultsDiv) {
+      resultsDiv.innerHTML = '<p class="error">⚠️ Veuillez saisir un code EAN</p>';
+    }
     return;
   }
   

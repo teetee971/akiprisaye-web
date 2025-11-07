@@ -160,6 +160,8 @@ export async function addPrice(priceData) {
 
 /**
  * Calculate distance between two coordinates using Haversine formula
+ * Note: This function is intentionally duplicated in functions/api/prices.js
+ * because Cloudflare Workers cannot import from src/ directory.
  * @param {number} lat1 - Latitude 1
  * @param {number} lng1 - Longitude 1
  * @param {number} lat2 - Latitude 2

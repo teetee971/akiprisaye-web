@@ -298,9 +298,9 @@
         parsed.push({
           raw: trimmed,
           price: prices ? prices[0].replace(',', '.') : null,
-          ean: null, // EAN detection not implemented in MVP
-          name: null,
-          qty: null
+          ean: null, // TODO: EAN detection - implement barcode recognition or pattern matching
+          name: null, // TODO: Product name extraction - requires more sophisticated NLP
+          qty: null  // TODO: Quantity detection - implement number + unit pattern matching
         });
       });
       
@@ -337,8 +337,13 @@
       showStatus('Enregistrement en cours...', 'loading');
       
       try {
-        // TODO: In production, upload image to Firebase Storage first
-        // For MVP, we just save the parsed data
+        // TODO: PRODUCTION - Upload image to Firebase Storage first:
+        // const storageRef = ref(storage, `receipts/${Date.now()}_${file.name}`);
+        // const uploadResult = await uploadBytes(storageRef, file);
+        // const imageUrl = await getDownloadURL(uploadResult.ref);
+        //
+        // For MVP, we save parsed data without the actual image URL.
+        // The 'pending_upload' placeholder indicates image storage is not yet implemented.
         
         const receiptData = {
           imageUrl: 'pending_upload', // Would be Storage URL in production

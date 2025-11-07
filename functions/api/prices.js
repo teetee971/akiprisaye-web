@@ -44,6 +44,8 @@ function clampRadius(radius) {
 
 /**
  * Calculate distance between two coordinates using Haversine formula
+ * Note: This function is duplicated from src/data/firestorePrices.js
+ * because Cloudflare Workers cannot import from src/ directory.
  * @param {number} lat1 - Latitude 1
  * @param {number} lng1 - Longitude 1
  * @param {number} lat2 - Latitude 2
@@ -90,9 +92,19 @@ export async function onRequestGet(context) {
     const lng = params.get('lng') ? parseFloat(params.get('lng')) : null;
     const radius = clampRadius(params.get('radius') || 50);
     
-    // TODO: In production, use Firebase Admin SDK to query Firestore
-    // For now, return a stub response indicating the system is ready
-    // This allows the frontend to be tested independently
+    // TODO: PRODUCTION IMPLEMENTATION REQUIRED
+    // This is a stub response for MVP development and testing.
+    // 
+    // In production, connect to Firestore using Firebase Admin SDK:
+    // 1. Initialize Admin SDK with service account credentials
+    // 2. Query products/{ean} for product info
+    // 3. Query prices collection where ean == ean and filter by expiresAt
+    // 4. If lat/lng provided, query stores and filter by distance using calculateDistance()
+    // 5. Calculate ageHours for each price: (Date.now() - capturedAt) / (1000 * 60 * 60)
+    // 6. Sort prices by price (ascending) to find best deal
+    // 7. Return structured response as shown below
+    //
+    // This mock response allows frontend development and testing independently.
     
     // Mock data structure for demonstration
     const mockResponse = {
@@ -102,15 +114,6 @@ export async function onRequestGet(context) {
       best: null, // Would be calculated from available prices
       message: 'API endpoint is ready. Connect to Firestore for live data.'
     };
-    
-    // If this were connected to Firestore, the logic would be:
-    // 1. Query products/{ean} for product info
-    // 2. Query prices collection where ean == ean
-    // 3. Filter by expiresAt > Date.now()
-    // 4. If lat/lng provided, query stores and filter by distance
-    // 5. Calculate ageHours for each price
-    // 6. Sort by price to find best deal
-    // 7. Return structured response
     
     return new Response(JSON.stringify(mockResponse), {
       status: 200,
