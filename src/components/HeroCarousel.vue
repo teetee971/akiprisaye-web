@@ -4,8 +4,8 @@
     <TransitionGroup name="fade">
       <div
         v-for="(image, index) in images"
-        :key="currentSlide === index ? `slide-${index}` : `hidden-${index}`"
-        v-show="currentSlide === index"
+        v-if="currentSlide === index"
+        :key="`slide-${index}`"
         class="absolute inset-0 bg-cover bg-center"
         :style="{ backgroundImage: `url(${image})` }"
       >
@@ -29,19 +29,19 @@ import hero3 from '../assets/hero3.webp';
 
 const images = [hero1, hero2, hero3];
 const currentSlide = ref(0);
-let intervalId = null;
+const intervalId = ref(null);
 
 const nextSlide = () => {
   currentSlide.value = (currentSlide.value + 1) % images.length;
 };
 
 onMounted(() => {
-  intervalId = setInterval(nextSlide, 5000);
+  intervalId.value = setInterval(nextSlide, 5000);
 });
 
 onUnmounted(() => {
-  if (intervalId) {
-    clearInterval(intervalId);
+  if (intervalId.value) {
+    clearInterval(intervalId.value);
   }
 });
 </script>
