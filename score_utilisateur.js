@@ -1,1 +1,0 @@
-// Suivi des utilisateurs pour badges
