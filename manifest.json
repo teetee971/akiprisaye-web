@@ -1,42 +1,73 @@
 {
   "name": "A KI PRI SA YÉ",
-  "short_name": "A KI PRI SA YÉ",
-  "description": "Comparez les prix, signalez les abus et gérez votre budget facilement.",
+  "short_name": "AKIPRISAYE",
+  "description": "Comparez les prix, signalez les abus et gérez votre budget facilement en Outre-mer.",
   "lang": "fr",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#000000",
+  "orientation": "portrait-primary",
+  "background_color": "#0b0d17",
+  "theme_color": "#0f62fe",
+  "categories": ["shopping", "finance", "utilities"],
   "icons": [
     {
       "src": "/public/assets/icon_192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "/public/assets/icon_256.png",
       "sizes": "256x256",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "/public/assets/icon_512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/public/assets/icon_512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "/public/assets/icon_192.webp",
       "sizes": "192x192",
-      "type": "image/webp"
+      "type": "image/webp",
+      "purpose": "any"
     },
     {
       "src": "/public/assets/icon_256.webp",
       "sizes": "256x256",
-      "type": "image/webp"
+      "type": "image/webp",
+      "purpose": "any"
     },
     {
       "src": "/public/assets/icon_512.webp",
       "sizes": "512x512",
-      "type": "image/webp"
+      "type": "image/webp",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Scanner",
+      "short_name": "Scanner",
+      "description": "Scannez vos produits",
+      "url": "/scanner.html",
+      "icons": [{ "src": "/public/assets/icon_192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Comparateur",
+      "short_name": "Comparer",
+      "description": "Comparez les prix",
+      "url": "/comparateur.html",
+      "icons": [{ "src": "/public/assets/icon_192.png", "sizes": "192x192" }]
     }
   ]
 }

@@ -1,33 +1,27 @@
 // Service Worker pour A KI PRI SA YÉ
-// Ce fichier gère le cache statique afin de permettre l'accès hors-ligne.
+// Ce fichier gère le cache avec des stratégies optimisées pour la performance et l'accès hors-ligne.
 
-const CACHE_NAME = 'aki-pri-sa-ye-cache-v1';
+const CACHE_VERSION = 'v2';
+const CACHE_APP_SHELL = `aki-app-shell-${CACHE_VERSION}`;
+const CACHE_ASSETS = `aki-assets-${CACHE_VERSION}`;
+const CACHE_PAGES = `aki-pages-${CACHE_VERSION}`;
 
-// Liste des ressources à mettre en cache lors de l'installation
-const STATIC_ASSETS = [
+// App Shell - ressources critiques pour l'interface de base
+const APP_SHELL = [
   '/',
   '/index.html',
   '/manifest.json',
   '/public/assets/icon_192.png',
   '/public/assets/icon_256.png',
-  '/public/assets/icon_512.png',
-  '/public/assets/icon_192.webp',
-  '/public/assets/icon_256.webp',
-  '/public/assets/icon_512.webp',
-  '/public/assets/0d3bd9ac-734a-4f7d-b671-6dc715ae9e94_lg.webp',
-  '/public/assets/84ba022c-9450-4e4f-841b-64d5363aaae1_lg.webp',
-  '/public/assets/b3ced496-7272-4600-b46e-c14cf625667e_lg.webp',
-  '/public/assets/logo_base.webp',
-  '/public/assets/aki_pri_sa_ye_banner.webp',
-  '/public/assets/aki_pri_sa_ye_banner_dark.webp'
+  '/public/assets/icon_512.png'
 ];
 
-// Événement d'installation : mise en cache des ressources statiques
+// Événement d'installation : mise en cache de l'App Shell
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(STATIC_ASSETS);
-    }).then(() => self.skipWaiting())
+    caches.open(CACHE_APP_SHELL)
+      .then((cache) => cache.addAll(APP_SHELL))
+      .then(() => self.skipWaiting())
   );
 });
 
@@ -36,34 +30,82 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
-        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+        keys
+          .filter((key) => key.startsWith('aki-') && !key.includes(CACHE_VERSION))
+          .map((key) => caches.delete(key))
       );
     }).then(() => self.clients.claim())
   );
 });
 
-// Événement de récupération : stratégie cache-first avec mise à jour
+// Stratégie Network First pour les pages HTML
+async function networkFirstStrategy(request) {
+  try {
+    const networkResponse = await fetch(request);
+    if (networkResponse.ok) {
+      const cache = await caches.open(CACHE_PAGES);
+      cache.put(request, networkResponse.clone());
+    }
+    return networkResponse;
+  } catch (error) {
+    const cachedResponse = await caches.match(request);
+    return cachedResponse || caches.match('/index.html');
+  }
+}
+
+// Stratégie Cache First pour les assets statiques
+async function cacheFirstStrategy(request) {
+  const cachedResponse = await caches.match(request);
+  if (cachedResponse) {
+    return cachedResponse;
+  }
+  
+  try {
+    const networkResponse = await fetch(request);
+    if (networkResponse.ok) {
+      const cache = await caches.open(CACHE_ASSETS);
+      cache.put(request, networkResponse.clone());
+    }
+    return networkResponse;
+  } catch (error) {
+    return new Response('Asset not available', { status: 404 });
+  }
+}
+
+// Événement de récupération : stratégies différenciées selon le type de ressource
 self.addEventListener('fetch', (event) => {
-  // Ne traite que les requêtes GET
   if (event.request.method !== 'GET') {
     return;
   }
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        // Retourne la version du cache
-        return cachedResponse;
-      }
-      // Sinon, effectue la requête réseau et met à jour le cache
-      return fetch(event.request).then((networkResponse) => {
-        return caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, networkResponse.clone());
-          return networkResponse;
-        });
-      }).catch(() => {
-        // En cas d'échec réseau, retourne la page d'accueil
-        return caches.match('/');
-      });
-    })
-  );
+
+  const { request } = event;
+  const url = new URL(request.url);
+
+  // Ne pas cacher les requêtes vers des APIs externes
+  if (!url.origin.includes(self.location.origin)) {
+    return;
+  }
+
+  // Network-first pour les pages HTML
+  if (request.headers.get('accept')?.includes('text/html')) {
+    event.respondWith(networkFirstStrategy(request));
+    return;
+  }
+
+  // Cache-first pour les assets statiques (images, fonts, CSS, JS)
+  if (
+    request.url.includes('/public/assets/') ||
+    request.url.includes('.png') ||
+    request.url.includes('.jpg') ||
+    request.url.includes('.webp') ||
+    request.url.includes('.css') ||
+    request.url.includes('.js') ||
+    request.url.includes('.woff')
+  ) {
+    event.respondWith(cacheFirstStrategy(request));
+    return;
+  }
+
+  // Stratégie par défaut: network-first
+  event.respondWith(networkFirstStrategy(request));
 });

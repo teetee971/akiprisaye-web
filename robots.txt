@@ -1,2 +1,8 @@
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /admin/
+Disallow: /private/
+Disallow: /*.json$
+Disallow: /firebase-config.js
+
+Sitemap: https://akiprisaye.web.app/sitemap.xml
