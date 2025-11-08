@@ -18,10 +18,12 @@ const isDevelopment = window.location.hostname === 'localhost' || window.locatio
 const currentLogLevel = isDevelopment ? LOG_LEVELS.DEBUG : LOG_LEVELS.ERROR;
 
 const logger = {
+  /* eslint-disable no-console */
   debug: (...args) => currentLogLevel <= LOG_LEVELS.DEBUG && console.log('[DEBUG]', ...args),
   info: (...args) => currentLogLevel <= LOG_LEVELS.INFO && console.info('[INFO]', ...args),
   warn: (...args) => currentLogLevel <= LOG_LEVELS.WARN && console.warn('[WARN]', ...args),
   error: (...args) => currentLogLevel <= LOG_LEVELS.ERROR && console.error('[ERROR]', ...args)
+  /* eslint-enable no-console */
 };
 
 /**
