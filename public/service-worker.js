@@ -9,7 +9,7 @@ const STATIC_ASSETS = [
   '/',
   '/index.html',
   '/offline.html',
-  '/manifest.webmanifest'
+  '/manifest.webmanifest',
 ];
 
 // Événement d'installation : mise en cache des ressources statiques
@@ -19,7 +19,7 @@ self.addEventListener('install', (event) => {
       return cache.addAll(STATIC_ASSETS).catch((err) => {
         console.error('Cache addAll failed:', err);
       });
-    }).then(() => self.skipWaiting())
+    }).then(() => self.skipWaiting()),
   );
 });
 
@@ -28,9 +28,9 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
-        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)),
       );
-    }).then(() => self.clients.claim())
+    }).then(() => self.clients.claim()),
   );
 });
 
@@ -66,6 +66,6 @@ self.addEventListener('fetch', (event) => {
         }
         return new Response('Network error', { status: 503 });
       });
-    })
+    }),
   );
 });

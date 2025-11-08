@@ -52,6 +52,7 @@ function clampRadius(radius) {
  * @param {number} lng2 - Longitude 2
  * @returns {number} Distance in kilometers
  */
+// eslint-disable-next-line no-unused-vars
 function calculateDistance(lat1, lng1, lat2, lng2) {
   const R = 6371; // Radius of Earth in kilometers
   const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -69,7 +70,7 @@ function calculateDistance(lat1, lng1, lat2, lng2) {
  */
 export async function onRequestGet(context) {
   try {
-    const { request, env } = context;
+    const { request, _env } = context;
     const url = new URL(request.url);
     const params = url.searchParams;
     
@@ -80,17 +81,17 @@ export async function onRequestGet(context) {
     if (!ean) {
       return new Response(JSON.stringify({
         error: 'Invalid or missing EAN code',
-        message: 'EAN must be 8-14 digits'
+        message: 'EAN must be 8-14 digits',
       }), {
         status: 400,
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
       });
     }
     
     // Optional location parameters
-    const lat = params.get('lat') ? parseFloat(params.get('lat')) : null;
-    const lng = params.get('lng') ? parseFloat(params.get('lng')) : null;
-    const radius = clampRadius(params.get('radius') || 50);
+    const _lat = params.get('lat') ? parseFloat(params.get('lat')) : null;
+    const _lng = params.get('lng') ? parseFloat(params.get('lng')) : null;
+    const _radius = clampRadius(params.get('radius') || 50);
     
     // TODO: PRODUCTION IMPLEMENTATION REQUIRED
     // This is a stub response for MVP development and testing.
@@ -112,15 +113,15 @@ export async function onRequestGet(context) {
       product: null, // Would be fetched from products collection
       prices: [], // Would be fetched from prices collection
       best: null, // Would be calculated from available prices
-      message: 'API endpoint is ready. Connect to Firestore for live data.'
+      message: 'API endpoint is ready. Connect to Firestore for live data.',
     };
     
     return new Response(JSON.stringify(mockResponse), {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=300' // Cache for 5 minutes
-      }
+        'Cache-Control': 'public, max-age=300', // Cache for 5 minutes
+      },
     });
     
   } catch (error) {
@@ -128,21 +129,21 @@ export async function onRequestGet(context) {
     
     return new Response(JSON.stringify({
       error: 'Internal server error',
-      message: error.message
+      message: error.message,
     }), {
       status: 500,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
     });
   }
 }
 
 // Export for other methods (POST, PUT, etc.) - currently not implemented
-export function onRequestPost(context) {
+export function onRequestPost(_context) {
   return new Response(JSON.stringify({
     error: 'Method not allowed',
-    message: 'POST not supported on this endpoint'
+    message: 'POST not supported on this endpoint',
   }), {
     status: 405,
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json' },
   });
 }

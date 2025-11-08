@@ -15,5 +15,5 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path='/scan' element={<ScanOCR />} />
       </Routes>
     </BrowserRouter>
-  </React.StrictMode>
+  </React.StrictMode>,
 );

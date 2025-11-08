@@ -28,6 +28,12 @@ export default [
         alert: 'readonly',
         confirm: 'readonly',
         prompt: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
+        URL: 'readonly',
+        URLSearchParams: 'readonly',
         // Node globals
         process: 'readonly',
         __dirname: 'readonly',
@@ -77,19 +83,39 @@ export default [
   },
   {
     // Service Worker files
-    files: ['**/service-worker.js', '**/sw.js'],
+    files: ['**/service-worker.js', '**/sw.js', 'public/service-worker.js'],
     languageOptions: {
       globals: {
         self: 'readonly',
         caches: 'readonly',
         clients: 'readonly',
         skipWaiting: 'readonly',
+        URL: 'readonly',
+        Response: 'readonly',
+        Request: 'readonly',
+        fetch: 'readonly',
       },
     },
   },
   {
-    // Node.js scripts
-    files: ['scripts/**/*.js', 'functions/**/*.js'],
+    // Cloudflare Workers/Pages Functions
+    files: ['functions/**/*.js'],
+    languageOptions: {
+      globals: {
+        Request: 'readonly',
+        Response: 'readonly',
+        URL: 'readonly',
+        URLSearchParams: 'readonly',
+        Headers: 'readonly',
+        fetch: 'readonly',
+        addEventListener: 'readonly',
+        caches: 'readonly',
+      },
+    },
+  },
+  {
+    // Node.js scripts - allow console.log
+    files: ['scripts/**/*.js'],
     languageOptions: {
       globals: {
         process: 'readonly',
@@ -101,6 +127,9 @@ export default [
         Buffer: 'readonly',
       },
     },
+    rules: {
+      'no-console': 'off', // Allow console in scripts
+    },
   },
   {
     ignores: [
@@ -110,6 +139,7 @@ export default [
       '.firebase/',
       '*.min.js',
       'public/assets/',
+      'importFromExportedJson.mjs', // Admin script with import assertions
     ],
   },
 ];
