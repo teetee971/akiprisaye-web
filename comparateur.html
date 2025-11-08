@@ -185,8 +185,7 @@
   <main role="main">
     <h2 id="page-title">🛒 Comparateur de Prix</h2>
     
-    <div class="search-container" role="search" aria-labelledby="search-label">
-      <h3 id="search-label" class="sr-only">Recherche de produits</h3>
+    <div class="search-container" role="search" aria-label="Recherche de produits">
       <form id="comparateur-form">
         <label for="ean-input">Code EAN :</label>
         <input 
@@ -204,25 +203,10 @@
       </form>
     </div>
     
-    <div id="price-results" role="region" aria-live="polite" aria-labelledby="results-label">
-      <h3 id="results-label" class="sr-only">Résultats de la comparaison</h3>
+    <div id="price-results" role="region" aria-live="polite" aria-label="Résultats de la comparaison">
       <p class="hint" id="ean-hint">Entrez un code EAN pour comparer les prix dans différents magasins.</p>
     </div>
   </main>
-  
-  <style>
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border-width: 0;
-    }
-  </style>
   
   <script src="comparateur-fetch.js"></script>
 </body>

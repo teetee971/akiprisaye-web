@@ -3,28 +3,8 @@
  * Fetches and displays price comparison data from the API
  */
 
-/**
- * Browser-Compatible Logger
- */
-const LOG_LEVELS = {
-  DEBUG: 0,
-  INFO: 1,
-  WARN: 2,
-  ERROR: 3,
-  NONE: 4
-};
-
-const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-const currentLogLevel = isDevelopment ? LOG_LEVELS.DEBUG : LOG_LEVELS.ERROR;
-
-const logger = {
-  /* eslint-disable no-console */
-  debug: (...args) => currentLogLevel <= LOG_LEVELS.DEBUG && console.log('[DEBUG]', ...args),
-  info: (...args) => currentLogLevel <= LOG_LEVELS.INFO && console.info('[INFO]', ...args),
-  warn: (...args) => currentLogLevel <= LOG_LEVELS.WARN && console.warn('[WARN]', ...args),
-  error: (...args) => currentLogLevel <= LOG_LEVELS.ERROR && console.error('[ERROR]', ...args)
-  /* eslint-enable no-console */
-};
+// Import logger from shared module
+import logger from './utils/logger-browser.js';
 
 /**
  * Escape HTML to prevent XSS attacks

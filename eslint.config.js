@@ -26,7 +26,6 @@ export default [
         module: 'readonly',
         require: 'readonly',
         __dirname: 'readonly',
-        vi: 'readonly', // Vitest
       },
     },
     rules: {

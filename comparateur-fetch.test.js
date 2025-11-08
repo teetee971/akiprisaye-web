@@ -2,7 +2,7 @@
  * Tests for comparateur price fetcher
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { JSDOM } from 'jsdom';
 
 describe('Comparateur Fetch', () => {
