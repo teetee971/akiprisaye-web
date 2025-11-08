@@ -4,6 +4,27 @@
  */
 
 /**
+ * Browser-Compatible Logger
+ */
+const LOG_LEVELS = {
+  DEBUG: 0,
+  INFO: 1,
+  WARN: 2,
+  ERROR: 3,
+  NONE: 4
+};
+
+const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const currentLogLevel = isDevelopment ? LOG_LEVELS.DEBUG : LOG_LEVELS.ERROR;
+
+const logger = {
+  debug: (...args) => currentLogLevel <= LOG_LEVELS.DEBUG && console.log('[DEBUG]', ...args),
+  info: (...args) => currentLogLevel <= LOG_LEVELS.INFO && console.info('[INFO]', ...args),
+  warn: (...args) => currentLogLevel <= LOG_LEVELS.WARN && console.warn('[WARN]', ...args),
+  error: (...args) => currentLogLevel <= LOG_LEVELS.ERROR && console.error('[ERROR]', ...args)
+};
+
+/**
  * Escape HTML to prevent XSS attacks
  * @param {string} str - String to escape
  * @returns {string} Escaped string
@@ -30,7 +51,7 @@ async function fetchPrices(ean) {
     
     return await response.json();
   } catch (error) {
-    console.error('Error fetching prices:', error);
+    logger.error('Error fetching prices:', error);
     throw error;
   }
 }
@@ -43,7 +64,7 @@ function renderPricesTable(data) {
   const resultsDiv = document.getElementById('price-results');
   
   if (!resultsDiv) {
-    console.error('Results container not found');
+    logger.error('Results container not found');
     return;
   }
   

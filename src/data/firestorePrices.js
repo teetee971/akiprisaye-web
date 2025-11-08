@@ -17,6 +17,7 @@ import {
   limit,
   serverTimestamp
 } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import { logger } from '../utils/logger.js';
 
 /**
  * Get product by EAN
@@ -33,7 +34,7 @@ export async function getProductByEan(ean) {
     }
     return null;
   } catch (error) {
-    console.error('Error getting product:', error);
+    logger.error('Error getting product:', error);
     throw error;
   }
 }
@@ -82,7 +83,7 @@ export async function getPricesByEan(ean, options = {}) {
     
     return prices;
   } catch (error) {
-    console.error('Error getting prices:', error);
+    logger.error('Error getting prices:', error);
     throw error;
   }
 }
@@ -102,7 +103,7 @@ export async function getStoreById(storeId) {
     }
     return null;
   } catch (error) {
-    console.error('Error getting store:', error);
+    logger.error('Error getting store:', error);
     throw error;
   }
 }
@@ -125,7 +126,7 @@ export async function createReceipt(receiptData) {
     
     return docRef.id;
   } catch (error) {
-    console.error('Error creating receipt:', error);
+    logger.error('Error creating receipt:', error);
     throw error;
   }
 }
@@ -153,7 +154,7 @@ export async function addPrice(priceData) {
     
     return docRef.id;
   } catch (error) {
-    console.error('Error adding price:', error);
+    logger.error('Error adding price:', error);
     throw error;
   }
 }
