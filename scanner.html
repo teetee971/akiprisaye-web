@@ -88,6 +88,32 @@
       animation: scan 2s linear infinite;
     }
     
+    .torch-btn {
+      position: absolute;
+      bottom: 1rem;
+      right: 1rem;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(15, 98, 254, 0.9);
+      border: 2px solid #ffffff;
+      color: #ffffff;
+      font-size: 24px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 10;
+    }
+    
+    .torch-btn:hover {
+      background: rgba(3, 83, 233, 0.9);
+      transform: scale(1.1);
+    }
+    
+    .torch-btn.active {
+      background: #ffd700;
+      border-color: #ffd700;
+    }
+    
     @keyframes scan {
       0%, 100% { top: 0; }
       50% { top: 100%; }
@@ -282,6 +308,9 @@
         <div class="scan-overlay">
           <div class="scan-line"></div>
         </div>
+        <button id="torch-btn" class="torch-btn" style="display: none;" aria-label="Activer/Désactiver la lampe torche">
+          💡
+        </button>
       </div>
       
       <div class="button-container">

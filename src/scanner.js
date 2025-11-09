@@ -13,10 +13,15 @@ let startCameraBtn;
 let stopCameraBtn;
 let fileUploadInput;
 let statusMessage;
+let torchBtn;
 
 // Scanner instance
 let codeReader = null;
 let isScanning = false;
+let lastDetectedCode = null;
+let lastDetectionTime = 0;
+let currentStream = null;
+let torchEnabled = false;
 
 /**
  * Initialize the scanner when DOM is loaded
@@ -29,6 +34,7 @@ function init() {
   stopCameraBtn = document.getElementById('stop-camera-btn');
   fileUploadInput = document.getElementById('file-upload');
   statusMessage = document.getElementById('status-message');
+  torchBtn = document.getElementById('torch-btn');
 
   // Initialize the barcode reader with specific formats
   const hints = new Map();
@@ -47,6 +53,7 @@ function init() {
   startCameraBtn.addEventListener('click', startCamera);
   stopCameraBtn.addEventListener('click', stopCamera);
   fileUploadInput.addEventListener('change', handleFileUpload);
+  torchBtn.addEventListener('click', toggleTorch);
 
   // Check if camera is available
   checkCameraAvailability();
@@ -91,6 +98,10 @@ async function startCamera() {
       }
     );
 
+    // Get the video stream to check for torch support
+    currentStream = videoElement.srcObject;
+    await checkTorchSupport();
+
     // Update UI
     videoContainer.classList.add('active');
     startCameraBtn.style.display = 'none';
@@ -123,9 +134,16 @@ function stopCamera() {
     codeReader.reset();
   }
   
+  // Turn off torch if enabled
+  if (torchEnabled && currentStream) {
+    toggleTorch();
+  }
+  
+  currentStream = null;
   videoContainer.classList.remove('active');
   startCameraBtn.style.display = 'block';
   stopCameraBtn.style.display = 'none';
+  torchBtn.style.display = 'none';
   startCameraBtn.disabled = false;
   isScanning = false;
   
@@ -172,6 +190,15 @@ function handleBarcodeDetected(result) {
   const barcode = result.getText();
   const format = result.getBarcodeFormat();
   
+  // Debounce: Prevent duplicate detections within 2 seconds
+  const now = Date.now();
+  if (barcode === lastDetectedCode && now - lastDetectionTime < 2000) {
+    return;
+  }
+  
+  lastDetectedCode = barcode;
+  lastDetectionTime = now;
+  
   console.log('Barcode detected:', barcode, 'Format:', format);
   
   // Validate EAN format (8-14 digits)
@@ -184,6 +211,14 @@ function handleBarcodeDetected(result) {
   if (isScanning) {
     stopCamera();
   }
+  
+  // Provide haptic feedback on mobile devices
+  if (navigator.vibrate) {
+    navigator.vibrate(200);
+  }
+  
+  // Play success beep sound (optional, subtle)
+  playBeep();
   
   // Show success message
   showStatus(`✅ Code-barres détecté : ${barcode}`, 'success');
@@ -201,6 +236,10 @@ function showStatus(message, type = 'info') {
   statusMessage.textContent = message;
   statusMessage.className = 'status-message active ' + type;
   
+  // Update ARIA live region for screen readers
+  statusMessage.setAttribute('role', 'status');
+  statusMessage.setAttribute('aria-live', type === 'error' ? 'assertive' : 'polite');
+  
   // Auto-hide info messages after 5 seconds
   if (type === 'info') {
     setTimeout(() => {
@@ -208,6 +247,72 @@ function showStatus(message, type = 'info') {
         statusMessage.classList.remove('active');
       }
     }, 5000);
+  }
+}
+
+/**
+ * Play a subtle beep sound on successful scan
+ */
+function playBeep() {
+  try {
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    oscillator.frequency.value = 800;
+    oscillator.type = 'sine';
+    
+    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+    
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.1);
+  } catch (error) {
+    // Silently fail if audio is not supported
+    console.debug('Audio feedback not available');
+  }
+}
+
+/**
+ * Check if torch/flashlight is supported
+ */
+async function checkTorchSupport() {
+  if (!currentStream) return;
+  
+  try {
+    const track = currentStream.getVideoTracks()[0];
+    const capabilities = track.getCapabilities();
+    
+    if (capabilities.torch) {
+      torchBtn.style.display = 'block';
+    }
+  } catch (error) {
+    console.debug('Torch not supported on this device');
+  }
+}
+
+/**
+ * Toggle torch/flashlight on/off
+ */
+async function toggleTorch() {
+  if (!currentStream) return;
+  
+  try {
+    const track = currentStream.getVideoTracks()[0];
+    torchEnabled = !torchEnabled;
+    
+    await track.applyConstraints({
+      advanced: [{ torch: torchEnabled }]
+    });
+    
+    torchBtn.classList.toggle('active', torchEnabled);
+    torchBtn.setAttribute('aria-pressed', torchEnabled);
+  } catch (error) {
+    console.error('Failed to toggle torch:', error);
+    showStatus('Impossible d\'activer la lampe torche', 'error');
   }
 }
 
