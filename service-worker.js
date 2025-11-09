@@ -1,7 +1,7 @@
 // Service Worker pour A KI PRI SA YÉ
 // Ce fichier gère le cache statique afin de permettre l'accès hors-ligne.
 
-const CACHE_NAME = 'aki-pri-sa-ye-cache-v3';
+const CACHE_NAME = 'aki-pri-sa-ye-cache-v4';
 
 // Liste des ressources à mettre en cache lors de l'installation
 const STATIC_ASSETS = [
@@ -19,6 +19,7 @@ const STATIC_ASSETS = [
   '/contact.html',
   '/mentions.html',
   '/partenaires.html',
+  '/offline.html',
   '/manifest.json',
   '/shared-nav.css',
   '/shared-nav.js',
@@ -60,6 +61,19 @@ self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') {
     return;
   }
+  
+  // Special handling for navigation requests
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request)
+        .catch(() => {
+          // If offline, return the offline page
+          return caches.match('/offline.html');
+        })
+    );
+    return;
+  }
+  
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {
@@ -73,8 +87,8 @@ self.addEventListener('fetch', (event) => {
           return networkResponse;
         });
       }).catch(() => {
-        // En cas d'échec réseau, retourne la page d'accueil
-        return caches.match('/');
+        // En cas d'échec réseau pour les ressources, retourne undefined
+        return undefined;
       });
     })
   );
