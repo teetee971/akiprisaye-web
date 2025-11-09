@@ -244,6 +244,58 @@
       margin-top: 0.5rem;
     }
     
+    .manual-input-section {
+      margin: 2rem auto;
+      max-width: 400px;
+    }
+    
+    .manual-input-section details {
+      background: rgba(15, 98, 254, 0.1);
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      border: 1px solid rgba(15, 98, 254, 0.3);
+    }
+    
+    .manual-input-section summary {
+      cursor: pointer;
+      font-weight: 600;
+      padding: 0.5rem 0;
+      color: #0f62fe;
+      user-select: none;
+    }
+    
+    .manual-input-section summary:hover {
+      color: #0353e9;
+    }
+    
+    .manual-input-container {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      padding-bottom: 0.5rem;
+    }
+    
+    #manual-ean-input {
+      flex: 1;
+      padding: 0.75rem;
+      border: 1px solid #393939;
+      border-radius: 6px;
+      background: #0b0d17;
+      color: #ffffff;
+      font-size: 16px;
+    }
+    
+    #manual-ean-input:focus {
+      outline: none;
+      border-color: #0f62fe;
+      box-shadow: 0 0 0 2px rgba(15, 98, 254, 0.2);
+    }
+    
+    #manual-submit-btn {
+      padding: 0.75rem 1.5rem;
+      white-space: nowrap;
+    }
+    
     @media (max-width: 768px) {
       main {
         padding: 1rem 0.5rem;
@@ -251,6 +303,14 @@
       
       .scanner-container {
         padding: 1rem;
+      }
+      
+      .manual-input-container {
+        flex-direction: column;
+      }
+      
+      #manual-submit-btn {
+        width: 100%;
       }
     }
   </style>
@@ -325,6 +385,27 @@
           <div class="help-text">Pour les navigateurs non compatibles</div>
         </label>
         <input type="file" id="file-upload" accept="image/*" capture="environment" aria-label="Sélectionner une image de code-barres" />
+      </div>
+      
+      <!-- Manual EAN Input -->
+      <div class="manual-input-section">
+        <details>
+          <summary>⌨️ Saisir le code EAN manuellement</summary>
+          <div class="manual-input-container">
+            <input 
+              type="text" 
+              id="manual-ean-input" 
+              placeholder="Ex: 3017620422003"
+              pattern="[0-9]{8,14}"
+              inputmode="numeric"
+              maxlength="14"
+              aria-label="Code EAN manuel"
+            />
+            <button id="manual-submit-btn" class="btn-secondary">
+              ✓ Valider
+            </button>
+          </div>
+        </details>
       </div>
       
       <p class="info">

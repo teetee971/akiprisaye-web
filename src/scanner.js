@@ -14,6 +14,8 @@ let stopCameraBtn;
 let fileUploadInput;
 let statusMessage;
 let torchBtn;
+let manualEanInput;
+let manualSubmitBtn;
 
 // Scanner instance
 let codeReader = null;
@@ -22,6 +24,8 @@ let lastDetectedCode = null;
 let lastDetectionTime = 0;
 let currentStream = null;
 let torchEnabled = false;
+let scanAttempts = 0;
+let zoomLevel = 1;
 
 /**
  * Initialize the scanner when DOM is loaded
@@ -35,6 +39,8 @@ function init() {
   fileUploadInput = document.getElementById('file-upload');
   statusMessage = document.getElementById('status-message');
   torchBtn = document.getElementById('torch-btn');
+  manualEanInput = document.getElementById('manual-ean-input');
+  manualSubmitBtn = document.getElementById('manual-submit-btn');
 
   // Initialize the barcode reader with specific formats
   const hints = new Map();
@@ -54,6 +60,14 @@ function init() {
   stopCameraBtn.addEventListener('click', stopCamera);
   fileUploadInput.addEventListener('change', handleFileUpload);
   torchBtn.addEventListener('click', toggleTorch);
+  manualSubmitBtn.addEventListener('click', handleManualSubmit);
+  
+  // Handle Enter key in manual input
+  manualEanInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      handleManualSubmit();
+    }
+  });
 
   // Check if camera is available
   checkCameraAvailability();
@@ -207,6 +221,9 @@ function handleBarcodeDetected(result) {
     return;
   }
   
+  // Save to recent scans
+  saveToRecentScans(barcode);
+  
   // Stop scanning
   if (isScanning) {
     stopCamera();
@@ -314,6 +331,81 @@ async function toggleTorch() {
     console.error('Failed to toggle torch:', error);
     showStatus('Impossible d\'activer la lampe torche', 'error');
   }
+}
+
+/**
+ * Save scanned barcode to recent scans in localStorage
+ */
+function saveToRecentScans(barcode) {
+  try {
+    const recentScans = JSON.parse(localStorage.getItem('recentScans') || '[]');
+    
+    // Remove duplicates and add to beginning
+    const filtered = recentScans.filter(scan => scan.code !== barcode);
+    filtered.unshift({
+      code: barcode,
+      timestamp: Date.now()
+    });
+    
+    // Keep only last 10 scans
+    const trimmed = filtered.slice(0, 10);
+    
+    localStorage.setItem('recentScans', JSON.stringify(trimmed));
+  } catch (error) {
+    console.debug('Failed to save to recent scans:', error);
+  }
+}
+
+/**
+ * Apply zoom to camera
+ */
+async function applyZoom(level) {
+  if (!currentStream) return;
+  
+  try {
+    const track = currentStream.getVideoTracks()[0];
+    const capabilities = track.getCapabilities();
+    
+    if (capabilities.zoom) {
+      zoomLevel = Math.max(capabilities.zoom.min || 1, Math.min(level, capabilities.zoom.max || 3));
+      
+      await track.applyConstraints({
+        advanced: [{ zoom: zoomLevel }]
+      });
+    }
+  } catch (error) {
+    console.debug('Zoom not supported or failed:', error);
+  }
+}
+
+/**
+ * Handle manual EAN input submission
+ */
+function handleManualSubmit() {
+  const ean = manualEanInput.value.trim();
+  
+  // Validate EAN format (8-14 digits)
+  if (!ean) {
+    showStatus('Veuillez saisir un code EAN', 'error');
+    manualEanInput.focus();
+    return;
+  }
+  
+  if (!/^\d{8,14}$/.test(ean)) {
+    showStatus('Code EAN invalide (8 à 14 chiffres requis)', 'error');
+    manualEanInput.focus();
+    return;
+  }
+  
+  // Save to recent scans
+  saveToRecentScans(ean);
+  
+  // Show success and redirect
+  showStatus(`✅ Code EAN validé : ${ean}`, 'success');
+  
+  setTimeout(() => {
+    window.location.href = `/comparateur.html?ean=${encodeURIComponent(ean)}`;
+  }, 500);
 }
 
 // Initialize when DOM is ready
