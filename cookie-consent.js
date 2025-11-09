@@ -195,6 +195,7 @@ class CookieConsent {
     } catch {
       return null;
     }
+  }
 
   hideBanner(banner) {
     banner.classList.remove('show');

@@ -50,6 +50,8 @@ function showMessage(message, type = 'success') {
   if (!messageDiv) {
     const newDiv = document.createElement('div');
     newDiv.id = 'status-message';
+    newDiv.setAttribute('role', 'alert');
+    newDiv.setAttribute('aria-live', 'polite');
     newDiv.style.cssText = `
       margin-top: 1rem;
       padding: 1rem;

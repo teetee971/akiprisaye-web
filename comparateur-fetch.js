@@ -62,7 +62,7 @@ function renderPricesTable(data, offProduct = null) {
     html += `
       <div class="product-info" style="display: flex; gap: 1.5rem; align-items: start; margin-bottom: 1.5rem;">
         ${offProduct?.image ? `
-          <img src="${offProduct.image}" 
+          <img src="${escapeHtml(offProduct.image)}" 
                alt="${escapeHtml(offProduct.name)}" 
                style="width: 120px; height: 120px; object-fit: contain; border-radius: 8px; background: white; padding: 0.5rem;" />
         ` : ''}
@@ -260,7 +260,7 @@ function initComparateur() {
     if (eanInput) {
       eanInput.value = eanFromUrl;
       // Auto-submit the search
-      form?.dispatchEvent(new Event('submit'));
+      form?.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
     }
   }
 }

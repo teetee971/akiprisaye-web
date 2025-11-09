@@ -65,9 +65,12 @@ self.addEventListener('fetch', (event) => {
   // Special handling for navigation requests
   if (event.request.mode === 'navigate') {
     event.respondWith(
-      fetch(event.request)
+      Promise.race([
+        fetch(event.request),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 3000))
+      ])
         .catch(() => {
-          // If offline, return the offline page
+          // If offline or timeout, return the offline page
           return caches.match('/offline.html');
         })
     );
