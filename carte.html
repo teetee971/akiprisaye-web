@@ -90,27 +90,181 @@
 
   <main>
     <h1>🗺️ Carte interactive des magasins</h1>
+    
+    <!-- Filters -->
+    <div style="background: #1a1d2e; border-radius: 12px; padding: 1rem; margin-bottom: 1rem; border: 1px solid #2a2d3e;">
+      <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+        <div style="flex: 1; min-width: 200px;">
+          <label for="territory-filter" style="display: block; margin-bottom: 0.5rem; color: #b8b8b8; font-size: 0.9rem;">
+            Territoire
+          </label>
+          <select id="territory-filter" 
+                  style="width: 100%; padding: 0.5rem; background: #0b0d17; color: #ffffff; 
+                         border: 1px solid #2a2d3e; border-radius: 6px; font-size: 0.9rem;">
+            <option value="all">Tous les territoires</option>
+            <option value="GP" selected>Guadeloupe</option>
+            <option value="MQ">Martinique</option>
+            <option value="GF">Guyane</option>
+            <option value="RE">Réunion</option>
+            <option value="YT">Mayotte</option>
+          </select>
+        </div>
+        
+        <div style="flex: 1; min-width: 200px;">
+          <label for="store-type-filter" style="display: block; margin-bottom: 0.5rem; color: #b8b8b8; font-size: 0.9rem;">
+            Type de magasin
+          </label>
+          <select id="store-type-filter" 
+                  style="width: 100%; padding: 0.5rem; background: #0b0d17; color: #ffffff; 
+                         border: 1px solid #2a2d3e; border-radius: 6px; font-size: 0.9rem;">
+            <option value="all">Tous les types</option>
+            <option value="supermarket">Supermarchés</option>
+            <option value="hypermarket">Hypermarchés</option>
+            <option value="discount">Discount</option>
+            <option value="local">Commerces locaux</option>
+          </select>
+        </div>
+      </div>
+      
+      <!-- Legend -->
+      <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #2a2d3e;">
+        <div style="color: #b8b8b8; font-size: 0.85rem; margin-bottom: 0.5rem; font-weight: 600;">
+          📍 Légende
+        </div>
+        <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; font-size: 0.8rem;">
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <div style="width: 12px; height: 12px; background: #0f62fe; border-radius: 50%;"></div>
+            <span style="color: #94a3b8;">Supermarché</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <div style="width: 12px; height: 12px; background: #10b981; border-radius: 50%;"></div>
+            <span style="color: #94a3b8;">Hypermarché</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <div style="width: 12px; height: 12px; background: #f59e0b; border-radius: 50%;"></div>
+            <span style="color: #94a3b8;">Discount</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <div style="width: 12px; height: 12px; background: #8b5cf6; border-radius: 50%;"></div>
+            <span style="color: #94a3b8;">Commerce local</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
     <div id="map"></div>
   </main>
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script>
-    var map = L.map('map').setView([16.265, -61.551], 10); // Guadeloupe par défaut
+    // Initialize map centered on Guadeloupe
+    var map = L.map('map').setView([16.265, -61.551], 10);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap'
+    // Use dark tiles for better visual consistency
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      attribution: '© OpenStreetMap contributors © CARTO',
+      subdomains: 'abcd',
+      maxZoom: 19
     }).addTo(map);
 
-    const magasins = [
-      { name: "Carrefour Destreland", lat: 16.2676, lon: -61.5252 },
-      { name: "E.Leclerc Abymes", lat: 16.2731, lon: -61.5062 },
-      { name: "Leader Price Baie-Mahault", lat: 16.2679, lon: -61.5863 }
+    // Territory coordinates for map centering
+    const territories = {
+      'GP': { center: [16.265, -61.551], zoom: 10, name: 'Guadeloupe' },
+      'MQ': { center: [14.641, -61.024], zoom: 10, name: 'Martinique' },
+      'GF': { center: [3.933, -53.125], zoom: 8, name: 'Guyane' },
+      'RE': { center: [-21.115, 55.536], zoom: 10, name: 'Réunion' },
+      'YT': { center: [-12.827, 45.166], zoom: 11, name: 'Mayotte' }
+    };
+
+    // Store data with types
+    const stores = [
+      { name: "Carrefour Destreland", lat: 16.2676, lon: -61.5252, type: 'hypermarket', territory: 'GP' },
+      { name: "E.Leclerc Abymes", lat: 16.2731, lon: -61.5062, type: 'hypermarket', territory: 'GP' },
+      { name: "Leader Price Baie-Mahault", lat: 16.2679, lon: -61.5863, type: 'discount', territory: 'GP' },
+      { name: "Carrefour Market Pointe-à-Pitre", lat: 16.2417, lon: -61.5331, type: 'supermarket', territory: 'GP' },
+      { name: "Super U Gosier", lat: 16.2287, lon: -61.5021, type: 'supermarket', territory: 'GP' }
     ];
 
-    magasins.forEach(m => {
-      L.marker([m.lat, m.lon]).addTo(map)
-        .bindPopup('<strong>' + m.name + '</strong>');
+    // Store type colors
+    const storeColors = {
+      'supermarket': '#0f62fe',
+      'hypermarket': '#10b981',
+      'discount': '#f59e0b',
+      'local': '#8b5cf6'
+    };
+
+    // Current markers layer
+    let markersLayer = L.layerGroup().addTo(map);
+
+    // Custom icon function
+    function createColoredIcon(type) {
+      const color = storeColors[type] || '#999';
+      return L.divIcon({
+        className: 'custom-marker',
+        html: `<div style="background: ${color}; width: 24px; height: 24px; border-radius: 50%; 
+                           border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.4);"></div>`,
+        iconSize: [24, 24],
+        iconAnchor: [12, 12]
+      });
+    }
+
+    // Render markers
+    function renderMarkers() {
+      const territoryFilter = document.getElementById('territory-filter').value;
+      const storeTypeFilter = document.getElementById('store-type-filter').value;
+
+      // Clear existing markers
+      markersLayer.clearLayers();
+
+      // Filter and add markers
+      const filteredStores = stores.filter(store => {
+        const matchTerritory = territoryFilter === 'all' || store.territory === territoryFilter;
+        const matchType = storeTypeFilter === 'all' || store.type === storeTypeFilter;
+        return matchTerritory && matchType;
+      });
+
+      filteredStores.forEach(store => {
+        const marker = L.marker([store.lat, store.lon], {
+          icon: createColoredIcon(store.type)
+        });
+        
+        marker.bindPopup(`
+          <div style="color: #1a1d2e; min-width: 150px;">
+            <strong style="font-size: 1.1em;">${store.name}</strong>
+            <br/>
+            <span style="color: #666; font-size: 0.9em;">
+              ${store.type === 'supermarket' ? 'Supermarché' : 
+                store.type === 'hypermarket' ? 'Hypermarché' : 
+                store.type === 'discount' ? 'Discount' : 'Commerce local'}
+            </span>
+          </div>
+        `);
+        
+        markersLayer.addLayer(marker);
+      });
+
+      // If no stores match, show a message
+      if (filteredStores.length === 0) {
+        console.log('Aucun magasin trouvé pour ces critères');
+      }
+    }
+
+    // Territory filter change handler
+    document.getElementById('territory-filter').addEventListener('change', function(e) {
+      const territory = e.target.value;
+      
+      if (territory !== 'all' && territories[territory]) {
+        map.setView(territories[territory].center, territories[territory].zoom);
+      }
+      
+      renderMarkers();
     });
+
+    // Store type filter change handler
+    document.getElementById('store-type-filter').addEventListener('change', renderMarkers);
+
+    // Initial render
+    renderMarkers();
   </script>
   
   <script type="module" src="shared-nav.js"></script>
