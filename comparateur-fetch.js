@@ -193,6 +193,36 @@ function initComparateur() {
   if (form) {
     form.addEventListener('submit', handleSearch);
   }
+  
+  // Check if EAN is provided in URL parameters
+  const urlParams = new URLSearchParams(window.location.search);
+  const eanFromUrl = urlParams.get('ean');
+  
+  if (eanFromUrl) {
+    // Fill the input field
+    const eanInput = document.getElementById('ean-input');
+    if (eanInput) {
+      eanInput.value = eanFromUrl;
+      // Trigger search automatically
+      const resultsDiv = document.getElementById('price-results');
+      if (resultsDiv) {
+        resultsDiv.innerHTML = '<p class="loading">⏳ Chargement des prix...</p>';
+      }
+      
+      fetchPrices(eanFromUrl)
+        .then(data => renderPricesTable(data))
+        .catch(error => {
+          if (resultsDiv) {
+            resultsDiv.innerHTML = `
+              <div class="error">
+                <p>❌ Erreur lors de la récupération des prix</p>
+                <p class="hint">${escapeHtml(error.message)}</p>
+              </div>
+            `;
+          }
+        });
+    }
+  }
 }
 
 // Initialize when DOM is loaded

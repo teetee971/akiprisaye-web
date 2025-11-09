@@ -45,18 +45,129 @@
       text-align: center;
     }
     
-    input[type="file"] {
-      display: block;
+    .video-container {
+      position: relative;
+      width: 100%;
+      max-width: 640px;
       margin: 1.5rem auto;
+      display: none;
+      background: #000;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    
+    .video-container.active {
+      display: block;
+    }
+    
+    #video-preview {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    
+    .scan-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80%;
+      height: 40%;
+      border: 2px solid #0f62fe;
+      box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+      pointer-events: none;
+    }
+    
+    .scan-line {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: #0f62fe;
+      animation: scan 2s linear infinite;
+    }
+    
+    @keyframes scan {
+      0%, 100% { top: 0; }
+      50% { top: 100%; }
+    }
+    
+    .button-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      max-width: 400px;
+      margin: 1.5rem auto;
+    }
+    
+    button {
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    
+    .btn-primary {
+      background: #0f62fe;
+      color: #ffffff;
+    }
+    
+    .btn-primary:hover {
+      background: #0353e9;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(15, 98, 254, 0.3);
+    }
+    
+    .btn-secondary {
+      background: #393939;
+      color: #ffffff;
+    }
+    
+    .btn-secondary:hover {
+      background: #4c4c4c;
+    }
+    
+    .btn-danger {
+      background: #da1e28;
+      color: #ffffff;
+    }
+    
+    .btn-danger:hover {
+      background: #ba1b23;
+    }
+    
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    input[type="file"] {
+      display: none;
+    }
+    
+    .upload-label {
+      display: block;
+      margin: 1rem auto;
       padding: 1rem;
       border: 2px dashed #0f62fe;
       border-radius: 8px;
       background: #0b0d17;
       color: #ffffff;
       cursor: pointer;
+      transition: all 0.3s ease;
+      max-width: 400px;
+      text-align: center;
     }
     
-    input[type="file"]:hover {
+    .upload-label:hover {
       border-color: #0353e9;
       background: #1a1d2e;
     }
@@ -65,6 +176,56 @@
       color: #b8b8b8;
       line-height: 1.6;
       margin-top: 1rem;
+      padding: 1rem;
+      background: rgba(15, 98, 254, 0.1);
+      border-radius: 8px;
+      border-left: 4px solid #0f62fe;
+    }
+    
+    .status-message {
+      margin: 1rem auto;
+      padding: 1rem;
+      border-radius: 8px;
+      max-width: 400px;
+      display: none;
+    }
+    
+    .status-message.active {
+      display: block;
+    }
+    
+    .status-message.success {
+      background: rgba(19, 115, 51, 0.2);
+      border-left: 4px solid #137333;
+      color: #a8ffb0;
+    }
+    
+    .status-message.error {
+      background: rgba(218, 30, 40, 0.2);
+      border-left: 4px solid #da1e28;
+      color: #ffb3ba;
+    }
+    
+    .status-message.info {
+      background: rgba(15, 98, 254, 0.2);
+      border-left: 4px solid #0f62fe;
+      color: #a8d8ff;
+    }
+    
+    .help-text {
+      font-size: 14px;
+      color: #b8b8b8;
+      margin-top: 0.5rem;
+    }
+    
+    @media (max-width: 768px) {
+      main {
+        padding: 1rem 0.5rem;
+      }
+      
+      .scanner-container {
+        padding: 1rem;
+      }
     }
   </style>
 </head>
@@ -114,11 +275,42 @@
   <main>
     <h1>📷 Scanner de code-barres</h1>
     <div class="scanner-container">
-      <input type="file" accept="image/*" capture="environment" aria-label="Sélectionner une image de code-barres" />
-      <p class="info">Ce module analysera les tickets ou codes-barres à l'avenir. Fonctionnalité en développement.</p>
+      <div class="status-message" id="status-message"></div>
+      
+      <div class="video-container" id="video-container">
+        <video id="video-preview" autoplay playsinline></video>
+        <div class="scan-overlay">
+          <div class="scan-line"></div>
+        </div>
+      </div>
+      
+      <div class="button-container">
+        <button id="start-camera-btn" class="btn-primary">
+          📹 Démarrer la caméra
+        </button>
+        <button id="stop-camera-btn" class="btn-danger" style="display: none;">
+          ⏹️ Arrêter la caméra
+        </button>
+        <label for="file-upload" class="upload-label">
+          📁 Ou télécharger une image
+          <div class="help-text">Pour les navigateurs non compatibles</div>
+        </label>
+        <input type="file" id="file-upload" accept="image/*" capture="environment" aria-label="Sélectionner une image de code-barres" />
+      </div>
+      
+      <p class="info">
+        <strong>Comment utiliser :</strong><br>
+        1. Cliquez sur "Démarrer la caméra" pour scanner en direct<br>
+        2. Positionnez le code-barres dans le cadre bleu<br>
+        3. Le code sera détecté automatiquement<br>
+        4. Vous serez redirigé vers le comparateur de prix<br>
+        <br>
+        <em>Formats supportés : EAN-8, EAN-13, UPC-A, UPC-E</em>
+      </p>
     </div>
   </main>
   
   <script src="shared-nav.js" defer></script>
+  <script type="module" src="/src/scanner.js"></script>
 </body>
 </html>
