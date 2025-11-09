@@ -296,6 +296,77 @@
       white-space: nowrap;
     }
     
+    .history-section {
+      margin: 2rem auto;
+      max-width: 400px;
+    }
+    
+    .history-section h3 {
+      color: #0f62fe;
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+      text-align: left;
+    }
+    
+    .history-list {
+      background: rgba(15, 98, 254, 0.05);
+      border-radius: 8px;
+      border: 1px solid rgba(15, 98, 254, 0.2);
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    
+    .history-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid rgba(15, 98, 254, 0.1);
+      transition: background 0.2s ease;
+    }
+    
+    .history-item:last-child {
+      border-bottom: none;
+    }
+    
+    .history-item:hover {
+      background: rgba(15, 98, 254, 0.1);
+      cursor: pointer;
+    }
+    
+    .history-item-code {
+      font-family: 'Courier New', monospace;
+      font-weight: 600;
+      color: #ffffff;
+      flex: 1;
+    }
+    
+    .history-item-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    .history-item-btn {
+      background: rgba(15, 98, 254, 0.2);
+      border: none;
+      padding: 0.4rem 0.6rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+    }
+    
+    .history-item-btn:hover {
+      background: rgba(15, 98, 254, 0.4);
+      transform: scale(1.1);
+    }
+    
+    .history-item-time {
+      font-size: 0.75rem;
+      color: #888;
+      margin-right: 0.5rem;
+    }
+    
     @media (max-width: 768px) {
       main {
         padding: 1rem 0.5rem;
@@ -406,6 +477,15 @@
             </button>
           </div>
         </details>
+      </div>
+      
+      <!-- Recent Scans History -->
+      <div class="history-section" id="history-section" style="display: none;">
+        <h3>📋 Scans récents</h3>
+        <div class="history-list" id="history-list"></div>
+        <button id="clear-history-btn" class="btn-secondary" style="margin-top: 1rem;">
+          🗑️ Effacer l'historique
+        </button>
       </div>
       
       <p class="info">

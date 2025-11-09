@@ -16,6 +16,9 @@ let statusMessage;
 let torchBtn;
 let manualEanInput;
 let manualSubmitBtn;
+let historySection;
+let historyList;
+let clearHistoryBtn;
 
 // Scanner instance
 let codeReader = null;
@@ -41,6 +44,9 @@ function init() {
   torchBtn = document.getElementById('torch-btn');
   manualEanInput = document.getElementById('manual-ean-input');
   manualSubmitBtn = document.getElementById('manual-submit-btn');
+  historySection = document.getElementById('history-section');
+  historyList = document.getElementById('history-list');
+  clearHistoryBtn = document.getElementById('clear-history-btn');
 
   // Initialize the barcode reader with specific formats
   const hints = new Map();
@@ -61,6 +67,7 @@ function init() {
   fileUploadInput.addEventListener('change', handleFileUpload);
   torchBtn.addEventListener('click', toggleTorch);
   manualSubmitBtn.addEventListener('click', handleManualSubmit);
+  clearHistoryBtn.addEventListener('click', clearHistory);
   
   // Handle Enter key in manual input
   manualEanInput.addEventListener('keypress', (e) => {
@@ -71,6 +78,9 @@ function init() {
 
   // Check if camera is available
   checkCameraAvailability();
+  
+  // Load and display recent scans
+  displayRecentScans();
 }
 
 /**
@@ -351,10 +361,159 @@ function saveToRecentScans(barcode) {
     const trimmed = filtered.slice(0, 10);
     
     localStorage.setItem('recentScans', JSON.stringify(trimmed));
+    
+    // Update display
+    displayRecentScans();
   } catch (error) {
     console.debug('Failed to save to recent scans:', error);
   }
 }
+
+/**
+ * Display recent scans from localStorage
+ */
+function displayRecentScans() {
+  try {
+    const recentScans = JSON.parse(localStorage.getItem('recentScans') || '[]');
+    
+    if (recentScans.length === 0) {
+      historySection.style.display = 'none';
+      return;
+    }
+    
+    historySection.style.display = 'block';
+    historyList.innerHTML = '';
+    
+    recentScans.forEach(scan => {
+      const item = document.createElement('div');
+      item.className = 'history-item';
+      
+      const timeAgo = getTimeAgo(scan.timestamp);
+      
+      item.innerHTML = `
+        <div style="flex: 1;" onclick="navigateToComparateur('${scan.code}')">
+          <div class="history-item-code">${scan.code}</div>
+          <div class="history-item-time">${timeAgo}</div>
+        </div>
+        <div class="history-item-actions">
+          <button class="history-item-btn" onclick="copyToClipboard('${scan.code}')" aria-label="Copier" title="Copier">
+            📋
+          </button>
+          <button class="history-item-btn" onclick="shareCode('${scan.code}')" aria-label="Partager" title="Partager">
+            📤
+          </button>
+        </div>
+      `;
+      
+      historyList.appendChild(item);
+    });
+  } catch (error) {
+    console.debug('Failed to display recent scans:', error);
+  }
+}
+
+/**
+ * Get human-readable time ago string
+ */
+function getTimeAgo(timestamp) {
+  const now = Date.now();
+  const diff = now - timestamp;
+  
+  const minutes = Math.floor(diff / 60000);
+  const hours = Math.floor(diff / 3600000);
+  const days = Math.floor(diff / 86400000);
+  
+  if (minutes < 1) return 'À l\'instant';
+  if (minutes < 60) return `Il y a ${minutes}min`;
+  if (hours < 24) return `Il y a ${hours}h`;
+  if (days < 7) return `Il y a ${days}j`;
+  return new Date(timestamp).toLocaleDateString('fr-FR');
+}
+
+/**
+ * Navigate to comparateur with EAN code
+ */
+function navigateToComparateur(ean) {
+  window.location.href = `/comparateur.html?ean=${encodeURIComponent(ean)}`;
+}
+
+/**
+ * Copy EAN code to clipboard
+ */
+async function copyToClipboard(ean) {
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(ean);
+      showStatus(`✓ Code ${ean} copié dans le presse-papiers`, 'success');
+    } else {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = ean;
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-999999px';
+      document.body.appendChild(textArea);
+      textArea.select();
+      try {
+        document.execCommand('copy');
+        showStatus(`✓ Code ${ean} copié dans le presse-papiers`, 'success');
+      } catch (err) {
+        showStatus('Impossible de copier le code', 'error');
+      }
+      document.body.removeChild(textArea);
+    }
+  } catch (error) {
+    console.error('Copy failed:', error);
+    showStatus('Impossible de copier le code', 'error');
+  }
+}
+
+/**
+ * Share EAN code using Web Share API or fallback
+ */
+async function shareCode(ean) {
+  const shareData = {
+    title: 'Code EAN - A KI PRI SA YÉ',
+    text: `Code EAN: ${ean}`,
+    url: `${window.location.origin}/comparateur.html?ean=${encodeURIComponent(ean)}`
+  };
+  
+  try {
+    if (navigator.share) {
+      await navigator.share(shareData);
+      showStatus('Code partagé avec succès', 'success');
+    } else {
+      // Fallback: copy URL to clipboard
+      await copyToClipboard(shareData.url);
+      showStatus('Lien copié dans le presse-papiers', 'success');
+    }
+  } catch (error) {
+    if (error.name !== 'AbortError') {
+      console.error('Share failed:', error);
+      showStatus('Impossible de partager le code', 'error');
+    }
+  }
+}
+
+/**
+ * Clear all recent scans
+ */
+function clearHistory() {
+  if (confirm('Voulez-vous vraiment effacer tout l\'historique ?')) {
+    try {
+      localStorage.removeItem('recentScans');
+      displayRecentScans();
+      showStatus('Historique effacé', 'success');
+    } catch (error) {
+      console.error('Clear history failed:', error);
+      showStatus('Impossible d\'effacer l\'historique', 'error');
+    }
+  }
+}
+
+// Make functions globally accessible for inline onclick handlers
+window.navigateToComparateur = navigateToComparateur;
+window.copyToClipboard = copyToClipboard;
+window.shareCode = shareCode;
 
 /**
  * Apply zoom to camera
