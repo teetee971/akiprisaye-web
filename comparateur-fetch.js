@@ -3,6 +3,9 @@
  * Fetches and displays price comparison data from the API
  */
 
+import { addToHistory } from './historique.js';
+import { fetchProductFromOFF } from './openfoodfacts.js';
+
 /**
  * Escape HTML to prevent XSS attacks
  * @param {string} str - String to escape
@@ -38,8 +41,9 @@ async function fetchPrices(ean) {
 /**
  * Render prices table
  * @param {Object} data - Price data from API
+ * @param {Object} offProduct - Product data from Open Food Facts
  */
-function renderPricesTable(data) {
+function renderPricesTable(data, offProduct = null) {
   const resultsDiv = document.getElementById('price-results');
   
   if (!resultsDiv) {
@@ -50,27 +54,55 @@ function renderPricesTable(data) {
   // Clear previous results
   resultsDiv.innerHTML = '';
   
-  // Check if we have prices
-  if (!data.prices || data.prices.length === 0) {
-    resultsDiv.innerHTML = `
-      <div class="no-results">
-        <p>❌ Aucun prix disponible actuellement</p>
-        <p class="hint">Essayez de scanner un ticket ou attendez que les données soient ajoutées.</p>
+  // Show product info from Open Food Facts if available
+  let html = '';
+  const productInfo = offProduct || data.product;
+  
+  if (productInfo) {
+    html += `
+      <div class="product-info" style="display: flex; gap: 1.5rem; align-items: start; margin-bottom: 1.5rem;">
+        ${offProduct?.image ? `
+          <img src="${offProduct.image}" 
+               alt="${escapeHtml(offProduct.name)}" 
+               style="width: 120px; height: 120px; object-fit: contain; border-radius: 8px; background: white; padding: 0.5rem;" />
+        ` : ''}
+        <div style="flex: 1;">
+          <h3 style="margin: 0 0 0.5rem 0;">${escapeHtml(productInfo.name) || 'Produit'}</h3>
+          ${productInfo.brand ? `<p style="margin: 0.25rem 0;"><strong>Marque:</strong> ${escapeHtml(productInfo.brand)}</p>` : ''}
+          ${productInfo.quantity ? `<p style="margin: 0.25rem 0;"><strong>Quantité:</strong> ${escapeHtml(productInfo.quantity)}</p>` : ''}
+          ${productInfo.category ? `<p style="margin: 0.25rem 0;"><strong>Catégorie:</strong> ${escapeHtml(productInfo.category)}</p>` : ''}
+          ${offProduct?.nutriscore ? `
+            <p style="margin: 0.5rem 0 0 0;">
+              <span style="background: ${getNutriscoreColor(offProduct.nutriscore)}; 
+                           color: white; padding: 0.25rem 0.5rem; border-radius: 4px; 
+                           font-weight: bold; font-size: 0.85rem;">
+                Nutri-Score: ${offProduct.nutriscore.toUpperCase()}
+              </span>
+            </p>
+          ` : ''}
+          ${offProduct ? `
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: #64748b;">
+              Source: Open Food Facts
+            </p>
+          ` : ''}
+        </div>
       </div>
     `;
-    return;
   }
   
-  // Show product info if available
-  let html = '';
-  if (data.product) {
+  // Check if we have prices
+  if (!data.prices || data.prices.length === 0) {
     html += `
-      <div class="product-info">
-        <h3>${escapeHtml(data.product.name) || 'Produit'}</h3>
-        ${data.product.brand ? `<p><strong>Marque:</strong> ${escapeHtml(data.product.brand)}</p>` : ''}
-        ${data.product.category ? `<p><strong>Catégorie:</strong> ${escapeHtml(data.product.category)}</p>` : ''}
+      <div class="no-results">
+        <p>❌ Aucun prix disponible actuellement pour ce produit</p>
+        <p class="hint">Les prix locaux pour ce produit ne sont pas encore dans notre base de données.</p>
+        ${offProduct ? `
+          <p class="hint">Cependant, nous avons trouvé les informations du produit grâce à Open Food Facts.</p>
+        ` : ''}
       </div>
     `;
+    resultsDiv.innerHTML = html;
+    return;
   }
   
   // Create prices table
@@ -131,6 +163,22 @@ function renderPricesTable(data) {
 }
 
 /**
+ * Get color for Nutri-Score grade
+ * @param {string} grade - Nutri-Score grade (a-e)
+ * @returns {string} Color code
+ */
+function getNutriscoreColor(grade) {
+  const colors = {
+    'a': '#038141',
+    'b': '#85bb2f',
+    'c': '#fecb02',
+    'd': '#ee8100',
+    'e': '#e63e11'
+  };
+  return colors[grade?.toLowerCase()] || '#999';
+}
+
+/**
  * Get human-readable label for price source
  * @param {string} source - Source type
  * @returns {string} Label
@@ -170,8 +218,17 @@ async function handleSearch(event) {
   }
   
   try {
-    const data = await fetchPrices(ean);
-    renderPricesTable(data);
+    // Fetch from both our API and Open Food Facts in parallel
+    const [data, offProduct] = await Promise.all([
+      fetchPrices(ean),
+      fetchProductFromOFF(ean)
+    ]);
+    
+    renderPricesTable(data, offProduct);
+    
+    // Add to search history with product name from OFF if available
+    const productName = offProduct?.name || data.product?.name || '';
+    addToHistory(ean, productName);
   } catch (error) {
     if (resultsDiv) {
       resultsDiv.innerHTML = `
@@ -192,6 +249,19 @@ function initComparateur() {
   
   if (form) {
     form.addEventListener('submit', handleSearch);
+  }
+  
+  // Check for EAN in URL params (from history)
+  const urlParams = new URLSearchParams(window.location.search);
+  const eanFromUrl = urlParams.get('ean');
+  
+  if (eanFromUrl) {
+    const eanInput = document.getElementById('ean-input');
+    if (eanInput) {
+      eanInput.value = eanFromUrl;
+      // Auto-submit the search
+      form?.dispatchEvent(new Event('submit'));
+    }
   }
 }
 
