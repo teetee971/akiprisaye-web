@@ -62,13 +62,21 @@ export default function ProductSearch({ territory, onPickEAN }) {
         onChange={(e) => setQuery(e.target.value)}
         placeholder="🔍 Rechercher un produit (ex : riz basmati, lait, pâtes...)"
         className="w-full p-3 rounded-xl bg-slate-800 text-white outline-none placeholder-gray-400"
+        aria-label="Rechercher un produit"
+        aria-autocomplete="list"
+        aria-controls="search-results"
       />
-      {loading && <div className="absolute right-3 top-3 text-xs text-gray-400">Chargement…</div>}
+      {loading && <div className="absolute right-3 top-3 text-xs text-gray-400" aria-live="polite">Chargement…</div>}
       {results.length > 0 && (
-        <ul className="absolute z-20 mt-2 w-full bg-slate-900/95 backdrop-blur-lg border border-white/10 rounded-xl shadow-xl max-h-80 overflow-auto">
+        <ul 
+          id="search-results"
+          role="listbox"
+          className="absolute z-20 mt-2 w-full bg-slate-900/95 backdrop-blur-lg border border-white/10 rounded-xl shadow-xl max-h-80 overflow-auto"
+        >
           {results.map((p) => (
             <li
               key={p.ean}
+              role="option"
               onClick={() => {
                 onPickEAN(p.ean);
                 setQuery('');
