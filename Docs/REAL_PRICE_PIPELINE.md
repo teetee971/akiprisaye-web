@@ -4,16 +4,19 @@ This document describes the end-to-end price retrieval, verification, and displa
 
 ## Overview
 
-The system automatically collects, verifies, and displays real prices from multiple sources to help users find the best deals in their area.
+The system automatically collects, verifies, and displays real prices from multiple sources to help users
+find the best deals in their area.
 
 ## Data Model
 
 ### Collections
 
 #### `stores/{storeId}`
+
 Store locations and metadata.
 
 **Fields:**
+
 - `name` (string): Store name
 - `territory` (string): Territory/region code
 - `geohash` (string, optional): Geohash for location-based queries
@@ -22,9 +25,11 @@ Store locations and metadata.
 - `updatedAt` (timestamp): Last update timestamp
 
 #### `products/{ean}`
+
 Product catalog with EAN as document ID.
 
 **Fields:**
+
 - `name` (string): Product name
 - `brand` (string, optional): Brand name
 - `category` (string, optional): Product category
@@ -33,9 +38,11 @@ Product catalog with EAN as document ID.
 - `updatedAt` (timestamp): Last update timestamp
 
 #### `prices/{docId}`
+
 Price records with automatic expiration.
 
 **Fields:**
+
 - `ean` (string): Product EAN code
 - `storeId` (string): Store identifier
 - `price` (number): Price in euros
@@ -47,9 +54,11 @@ Price records with automatic expiration.
 - `createdAt` (timestamp): Record creation timestamp
 
 #### `receipts/{docId}`
+
 OCR-processed receipts awaiting verification.
 
 **Fields:**
+
 - `imageUrl` (string): URL to receipt image in Storage
 - `parsedLines` (array): Array of parsed line objects:
   - `raw` (string): Raw OCR text
@@ -92,12 +101,14 @@ Prices are prioritized based on reliability and freshness:
 **Endpoint:** `GET /api/prices`
 
 **Query Parameters:**
+
 - `ean` (required): Product EAN code (8-14 digits)
 - `lat` (optional): Latitude for location-based filtering
 - `lng` (optional): Longitude for location-based filtering
 - `radius` (optional): Search radius in km (max 200km, default 50km)
 
 **Response Format:**
+
 ```json
 {
   "ean": "3017620422003",
@@ -129,10 +140,12 @@ Prices are prioritized based on reliability and freshness:
 ```
 
 **Age Calculation:**
+
 - Age is calculated as: `(Date.now() - capturedAt) / (1000 * 60 * 60)`
 - Prices where `Date.now() > expiresAt` are automatically filtered out
 
 **Empty Results:**
+
 ```json
 {
   "ean": "3017620422003",
@@ -145,6 +158,7 @@ Prices are prioritized based on reliability and freshness:
 ## Security Measures
 
 ### API Endpoint
+
 1. **EAN Sanitization**: Remove all non-digits, validate length (8-14)
 2. **Radius Clamping**: Maximum 200km to prevent abuse
 3. **Rate Limiting**: TODO - Implement rate limiting per IP
@@ -186,7 +200,8 @@ service cloud.firestore {
 }
 ```
 
-**Note:** The repository does not include a firestore.rules file. Apply these rules through the Firebase Console or deploy them separately.
+**Note:** The repository does not include a firestore.rules file. Apply these rules through the Firebase
+Console or deploy them separately.
 
 ## OCR Pipeline (Client-side MVP)
 
@@ -201,6 +216,7 @@ service cloud.firestore {
 7. **Integration**: (Future) Accepted receipts create price records
 
 ### Limitations (MVP)
+
 - Client-side OCR only (no server processing)
 - Basic price detection (regex-based)
 - No EAN detection in MVP
@@ -212,16 +228,19 @@ service cloud.firestore {
 ### Smoke Tests (`.github/workflows/smoke.yml`)
 
 **Runs:**
+
 - On push to main
 - Every hour (cron schedule)
 - Manual trigger
 
 **Tests:**
+
 1. Root page accessibility and content check
 2. Comparateur page accessibility and content check
 3. API endpoint health check
 
 **Failure Actions:**
+
 - GitHub Actions run marked as failed
 - Team notified via GitHub notifications
 - Prevents unnoticed outages
@@ -229,11 +248,13 @@ service cloud.firestore {
 ### Asset Integrity (`scripts/check-assets.js`)
 
 Verifies:
+
 - Critical files exist (HTML, JS, configs)
 - File references are correct
 - Scripts are properly linked
 
 **Usage:**
+
 ```bash
 node scripts/check-assets.js
 ```
@@ -241,31 +262,41 @@ node scripts/check-assets.js
 ## Future Enhancements (Non-Goals for MVP)
 
 ### Partner Connector
+
 TODO: Implement partner API integrations
+
 - Scheduled imports from partner APIs
 - Data transformation and validation
 - Conflict resolution
 
 ### Advanced Moderation UI
+
 TODO: Build admin interface for receipt moderation
+
 - Queue management
 - Bulk actions
 - Quality metrics
 
 ### Real-time Updates
+
 TODO: Implement real-time price notifications
+
 - WebSocket/SSE for live updates
 - Push notifications
 - Price alerts
 
 ### Machine Learning
+
 TODO: Enhance OCR with ML models
+
 - Better product name extraction
 - EAN detection from images
 - Receipt layout recognition
 
 ### Mobile App
+
 TODO: Native mobile apps
+
 - Camera integration
 - Offline support
 - Geolocation features
@@ -286,15 +317,18 @@ The comparateur page (`comparateur.html`) integrates with the API:
 ## Monitoring & Maintenance
 
 ### Health Checks
+
 - Hourly smoke tests via GitHub Actions
 - Manual testing before major releases
 
 ### Data Quality
+
 - Monitor price age distribution
 - Track source breakdown
 - Review expired price cleanup
 
 ### Performance
+
 - API response times
 - Firestore read/write metrics
 - OCR processing times
@@ -302,6 +336,7 @@ The comparateur page (`comparateur.html`) integrates with the API:
 ## Contact & Support
 
 For issues or questions:
+
 - Open an issue on GitHub
 - Check FAQ in `faq.html`
 - Contact support via `contact.html`

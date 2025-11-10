@@ -1,11 +1,13 @@
 # Guide d'Amélioration de l'Accessibilité
+
 ## A KI PRI SA YÉ - WCAG 2.1 Level AA
 
 ---
 
 ## Objectif
 
-Rendre l'application **A KI PRI SA YÉ** accessible à tous les utilisateurs, y compris ceux utilisant des technologies d'assistance (lecteurs d'écran, navigation au clavier, etc.).
+Rendre l'application **A KI PRI SA YÉ** accessible à tous les utilisateurs, y compris ceux utilisant
+des technologies d'assistance (lecteurs d'écran, navigation au clavier, etc.).
 
 **Norme cible:** WCAG 2.1 Level AA
 
@@ -18,6 +20,7 @@ Rendre l'application **A KI PRI SA YÉ** accessible à tous les utilisateurs, y 
 #### Exemple: Formulaire de Recherche EAN
 
 **Avant:**
+
 ```html
 <form id="comparateur-form">
   <label>Code EAN:</label>
@@ -27,6 +30,7 @@ Rendre l'application **A KI PRI SA YÉ** accessible à tous les utilisateurs, y 
 ```
 
 **Après:**
+
 ```html
 <form id="comparateur-form" 
       role="search"
@@ -51,11 +55,13 @@ Rendre l'application **A KI PRI SA YÉ** accessible à tous les utilisateurs, y 
 ### 2. Zones de Résultats Dynamiques
 
 **Avant:**
+
 ```html
 <div id="price-results"></div>
 ```
 
 **Après:**
+
 ```html
 <div id="price-results" 
      role="region" 
@@ -69,6 +75,7 @@ Rendre l'application **A KI PRI SA YÉ** accessible à tous les utilisateurs, y 
 ### 3. Navigation
 
 **Avant:**
+
 ```html
 <div class="banner">
   🎗️ Lutte contre la vie chère
@@ -76,6 +83,7 @@ Rendre l'application **A KI PRI SA YÉ** accessible à tous les utilisateurs, y 
 ```
 
 **Après:**
+
 ```html
 <nav aria-label="Navigation principale">
   <div class="banner" role="banner">
@@ -88,11 +96,13 @@ Rendre l'application **A KI PRI SA YÉ** accessible à tous les utilisateurs, y 
 ### 4. Boutons d'Action
 
 **Avant:**
+
 ```html
 <button onclick="scanBarcode()">📷</button>
 ```
 
 **Après:**
+
 ```html
 <button onclick="scanBarcode()" 
         aria-label="Scanner un code-barres avec la caméra"
@@ -195,6 +205,7 @@ Assurez-vous que l'ordre de tabulation (Tab) suit l'ordre visuel:
 ### Vérification
 
 Utilisez ces outils:
+
 - [WebAIM Contrast Checker](https://webaim.org/resources/contrastchecker/)
 - DevTools > Lighthouse > Accessibility
 
@@ -221,11 +232,13 @@ Utilisez ces outils:
 ### Images
 
 **Avant:**
+
 ```html
 <img src="logo.png">
 ```
 
 **Après:**
+
 ```html
 <img src="logo.png" 
      alt="Logo A KI PRI SA YÉ - Comparateur de prix">
@@ -241,11 +254,13 @@ Utilisez ces outils:
 ### Icônes
 
 **Avant:**
+
 ```html
 <span class="icon">🔍</span>
 ```
 
 **Après:**
+
 ```html
 <span class="icon" aria-hidden="true">🔍</span>
 <span class="sr-only">Rechercher</span>
@@ -258,6 +273,7 @@ Utilisez ces outils:
 ### Structure de Tableau
 
 **Avant:**
+
 ```html
 <table>
   <tr>
@@ -272,6 +288,7 @@ Utilisez ces outils:
 ```
 
 **Après:**
+
 ```html
 <table role="table" aria-label="Comparaison des prix">
   <caption>Prix du produit dans différents magasins</caption>
@@ -428,6 +445,7 @@ function toggleFavorite(btn) {
 ### Automatiques
 
 1. **Lighthouse** (Chrome DevTools)
+
    ```bash
    npm install -g lighthouse
    lighthouse https://akiprisaye.pages.dev/ --view
@@ -437,7 +455,7 @@ function toggleFavorite(btn) {
    - Détecte automatiquement les problèmes WCAG
 
 3. **WAVE** (WebAIM)
-   - Outil en ligne: https://wave.webaim.org/
+   - Outil en ligne: <https://wave.webaim.org/>
 
 ### Manuels
 
@@ -460,18 +478,21 @@ function toggleFavorite(btn) {
 ## Implémentation Progressive
 
 ### Phase 1 (Semaine 1) - Critiques
+
 - [ ] Ajouter les attributs `lang`
 - [ ] Corriger les labels de formulaires
 - [ ] Ajouter `alt` sur toutes les images
 - [ ] Focus visible sur tous les éléments
 
 ### Phase 2 (Semaine 2-3) - Importantes
+
 - [ ] ARIA sur les zones dynamiques
 - [ ] Skip links
 - [ ] Améliorer les contrastes
 - [ ] Attributs ARIA sur les boutons
 
 ### Phase 3 (Semaine 4-6) - Optimisations
+
 - [ ] Navigation au clavier avancée
 - [ ] Tests avec lecteurs d'écran
 - [ ] Documentation pour les développeurs

@@ -23,13 +23,16 @@ backend/
 ### 🔍 Prices API
 
 #### GET /api/prices
+
 Récupère les prix par code EAN et territoire.
 
 **Query Parameters:**
+
 - `ean` (required): Code EAN du produit (8-13 chiffres)
 - `territory` (optional): Code territoire (GP, MQ, RE, etc.)
 
 **Response:**
+
 ```json
 {
   "data": [
@@ -53,9 +56,11 @@ Récupère les prix par code EAN et territoire.
 ```
 
 #### POST /api/prices
+
 Ajoute un nouveau prix (contribution utilisateur ou scraper).
 
 **Body:**
+
 ```json
 {
   "ean": "3017620422003",
@@ -67,23 +72,28 @@ Ajoute un nouveau prix (contribution utilisateur ou scraper).
 ```
 
 #### GET /api/prices/compare
+
 Compare les prix de plusieurs produits.
 
 **Query Parameters:**
+
 - `eans`: Liste de codes EAN séparés par des virgules
 - `territory`: Code territoire
 
 ### 📰 News API
 
 #### GET /api/news
+
 Récupère les actualités.
 
 **Query Parameters:**
+
 - `territory` (optional): Filtrer par territoire
 - `category` (optional): Filtrer par catégorie (Prix, Innovation, Politique, Alerte)
 - `limit` (optional): Nombre d'articles (défaut: 10)
 
 **Response:**
+
 ```json
 {
   "data": [
@@ -105,17 +115,21 @@ Récupère les actualités.
 ```
 
 #### GET /api/news/:id
+
 Récupère un article spécifique.
 
 #### POST /api/news
+
 Crée un nouvel article (admin uniquement).
 
 ### 📧 Contact API
 
 #### POST /api/contact
+
 Envoie un message via le formulaire de contact.
 
 **Body:**
+
 ```json
 {
   "name": "Marie Dupont",
@@ -127,6 +141,7 @@ Envoie un message via le formulaire de contact.
 ```
 
 **Response:**
+
 ```json
 {
   "data": {
@@ -140,12 +155,14 @@ Envoie un message via le formulaire de contact.
 ## CRON Jobs
 
 ### price-refresh.ts
+
 Job quotidien de mise à jour des prix.
 
 **Schedule:** Tous les jours à 2h00 du matin
 **Pattern:** `0 2 * * *`
 
 **Actions:**
+
 1. Récupère les prix depuis les APIs partenaires
 2. Met à jour la base de données
 3. Nettoie les données de plus de 30 jours
@@ -154,6 +171,7 @@ Job quotidien de mise à jour des prix.
 ## Déploiement
 
 ### Option 1: Firebase Functions
+
 ```bash
 # Dans le dossier functions/
 npm install
@@ -161,6 +179,7 @@ npm run deploy
 ```
 
 ### Option 2: Serveur Node.js classique
+
 ```bash
 cd backend
 npm install
@@ -168,6 +187,7 @@ npm start
 ```
 
 ### Option 3: AdonisJS (production)
+
 ```bash
 cd backend
 npm install
@@ -199,7 +219,8 @@ ADMIN_EMAIL=admin@akiprisaye.app
 
 ## Sécurité
 
-### En production, ajouter:
+### En production, ajouter
+
 - ✅ Authentification JWT pour routes admin
 - ✅ Rate limiting (express-rate-limit)
 - ✅ CORS configuré strictement
@@ -223,19 +244,23 @@ npm run test:coverage
 ## Maintenance
 
 ### Logs
+
 Les logs sont stockés dans:
+
 - `storage/logs/` (local)
 - CloudWatch (AWS)
 - Cloud Logging (GCP)
 
 ### Monitoring
-- Uptime: https://status.akiprisaye.app
+
+- Uptime: <https://status.akiprisaye.app>
 - Metrics: Dashboard Grafana
 - Alerts: Email + Slack
 
 ## Support
 
 Pour toute question sur le backend:
-- Documentation: https://docs.akiprisaye.app
-- Issues: https://github.com/teetee971/akiprisaye-web/issues
-- Email: dev@akiprisaye.app
+
+- Documentation: <https://docs.akiprisaye.app>
+- Issues: <https://github.com/teetee971/akiprisaye-web/issues>
+- Email: <dev@akiprisaye.app>

@@ -15,6 +15,7 @@ import { IndiceVieChere } from './src/components/IndiceVieChere';
 ```
 
 **Props:**
+
 - `selectedTerritory` (optional): Territory code (GP, MQ, GF, RE, YT, etc.)
 
 ---
@@ -32,9 +33,11 @@ import { TiPanieSolidaire } from './src/components/TiPanieSolidaire';
 ```
 
 **Props:**
+
 - `territoire` (optional): Territory code
 
 **Features:**
+
 - Switch between baskets and producers
 - Displays savings calculations
 - Shows certifications (Bio, Local, Anti-Gaspi)
@@ -73,11 +76,13 @@ function handleStoreClick(store) {
 ```
 
 **Props:**
+
 - `territory`: Territory code (GP, MQ, GF, etc.)
 - `stores`: Array of store objects with lat/lng
 - `onStoreClick` (optional): Callback when store is clicked
 
 **Store Object:**
+
 ```typescript
 {
   id: string;
@@ -163,6 +168,7 @@ import { PalmaresEnseignes } from './src/components/PalmaresEnseignes';
 ```
 
 **Features:**
+
 - Sort by: average price, product count, price changes
 - Top 3 stores highlighted with medals
 - Score out of 100
@@ -204,6 +210,7 @@ console.log(formatted.displayName, formatted.sustainability);
 ## Backend API Endpoints
 
 ### Compare Prices
+
 ```javascript
 const response = await fetch('/api/compare?ean=3017620422003&territoire=GP');
 const data = await response.json();
@@ -211,6 +218,7 @@ console.log(data.prices); // Array of prices sorted by price
 ```
 
 ### OCR Receipt
+
 ```javascript
 const formData = new FormData();
 formData.append('image', imageFile);
@@ -225,6 +233,7 @@ console.log(data.data.products); // Extracted products
 ```
 
 ### IA Conseiller
+
 ```javascript
 const response = await fetch('/api/ia-conseiller', {
   method: 'POST',
@@ -251,6 +260,7 @@ console.log(data.tips); // Array of personalized tips
 All components use Tailwind CSS classes. The custom configuration includes:
 
 ### Territory Colors
+
 ```jsx
 <div className="bg-territory-guadeloupe">Guadeloupe</div>
 <div className="bg-territory-martinique">Martinique</div>
@@ -258,6 +268,7 @@ All components use Tailwind CSS classes. The custom configuration includes:
 ```
 
 ### Dark Mode
+
 ```jsx
 <div className="bg-white dark:bg-dark-300">
   <p className="text-gray-900 dark:text-gray-100">Content</p>
@@ -265,6 +276,7 @@ All components use Tailwind CSS classes. The custom configuration includes:
 ```
 
 ### Touch Targets (WCAG AA)
+
 ```jsx
 <button className="min-h-44 min-w-44">Accessible Button</button>
 ```
@@ -274,22 +286,26 @@ All components use Tailwind CSS classes. The custom configuration includes:
 ## Testing
 
 ### Build
+
 ```bash
 npm run build
 ```
 
 ### Lint
+
 ```bash
 npm run lint
 npm run lint:fix
 ```
 
 ### Format
+
 ```bash
 npm run format
 ```
 
 ### Dev Server
+
 ```bash
 npm run dev
 # Open http://localhost:3000

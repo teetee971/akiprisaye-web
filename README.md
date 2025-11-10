@@ -4,7 +4,8 @@
 [![Build Status](https://img.shields.io/badge/build-passing-success.svg)]()
 [![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)]()
 
-Application citoyenne pour lutter contre la vie chère dans les DROM-COM (Départements et Régions d'Outre-Mer et Collectivités d'Outre-Mer).
+Application citoyenne pour lutter contre la vie chère dans les DROM-COM
+(Départements et Régions d'Outre-Mer et Collectivités d'Outre-Mer).
 
 ## 🚀 Démarrage Rapide
 
@@ -62,6 +63,7 @@ Nouveau composant `TerritorySelector` avec support complet des 12 territoires :
 ### 📰 Widget Actualités
 
 Nouveau composant `NewsWidget` avec :
+
 - Fil d'actualités dynamique
 - Filtres par territoire et catégorie
 - Connexion API avec fallback mock
@@ -70,6 +72,7 @@ Nouveau composant `NewsWidget` avec :
 ### 🗺️ Carte Interactive
 
 Page `/carte` améliorée avec :
+
 - Liste des magasins par territoire
 - Structure prête pour intégration Leaflet
 - Géolocalisation (à venir)
@@ -78,6 +81,7 @@ Page `/carte` améliorée avec :
 ### 🔍 Comparateur Amélioré
 
 Le comparateur de prix intègre maintenant :
+
 - Connexion à l'API `/api/prices`
 - Fallback avec données mock
 - Interface responsive optimisée
@@ -87,6 +91,7 @@ Le comparateur de prix intègre maintenant :
 ### 📄 Mentions Légales
 
 Nouvelle page `/mentions-legales` conforme RGPD avec :
+
 - Informations éditeur
 - Politique de confidentialité
 - Gestion des cookies
@@ -95,6 +100,7 @@ Nouvelle page `/mentions-legales` conforme RGPD avec :
 ### 📱 PWA Améliorée
 
 Manifest PWA enrichi avec :
+
 - ✅ Shortcuts pour accès rapide (Comparateur, Scanner, Actualités, Carte)
 - ✅ Share Target API
 - ✅ Catégories et screenshots
@@ -102,6 +108,7 @@ Manifest PWA enrichi avec :
 - ✅ Mode offline complet
 
 Service Worker v4 avec :
+
 - ✅ Cache stratégique (Cache First pour statique, Network First pour API)
 - ✅ Synchronisation en arrière-plan
 - ✅ Support offline pour pages principales
@@ -110,6 +117,7 @@ Service Worker v4 avec :
 ### 🎨 Responsive Design
 
 Nouveau fichier `responsive.css` avec :
+
 - ✅ Safe areas pour Samsung S24+, iPhone notch
 - ✅ Touch targets minimum 44px (WCAG 2.1 AA)
 - ✅ Grilles responsives mobile-first
@@ -121,24 +129,28 @@ Nouveau fichier `responsive.css` avec :
 
 Nouvelle structure backend dans `/backend` :
 
-#### Routes API disponibles :
+#### Routes API disponibles
 
 **Prices API**
+
 - `GET /api/prices` - Récupérer les prix par EAN et territoire
 - `POST /api/prices` - Ajouter un nouveau prix
 - `GET /api/prices/compare` - Comparer plusieurs produits
 
 **News API**
+
 - `GET /api/news` - Récupérer les actualités
 - `GET /api/news/:id` - Récupérer une actualité spécifique
 - `POST /api/news` - Créer une nouvelle actualité (admin)
 
 **Contact API**
+
 - `POST /api/contact` - Envoyer un message de contact
 - `GET /api/contact` - Lister les messages (admin)
 - `PATCH /api/contact/:id` - Mettre à jour le statut (admin)
 
 **Placeholders (à venir)**
+
 - `GET /api/ai/tips` - Conseils IA personnalisés
 - `GET /api/history` - Historique utilisateur
 - `POST /api/scan` - Upload et OCR de tickets
@@ -205,14 +217,23 @@ service cloud.firestore {
 }
 ```
 
-**Note importante :** Les règles ci-dessus protègent l'écriture directe dans Firestore. En production, utilisez Firebase Cloud Functions ou Admin SDK pour gérer les écritures de prix et la modération des tickets.
+**Note importante :** Les règles ci-dessus protègent l'écriture directe dans Firestore. En production,
+utilisez Firebase Cloud Functions ou Admin SDK pour gérer les écritures de prix et la modération des tickets.
 
 ### Tests Automatiques
 
 Des tests de smoke sont exécutés automatiquement toutes les heures pour vérifier :
+
 - Accessibilité de la page d'accueil
 - Accessibilité du comparateur
 - Fonctionnement de l'API
 
 Voir `.github/workflows/smoke.yml` pour plus de détails.
 
+## 📝 Maintenance et Versioning
+
+Ce projet suit le [Semantic Versioning](https://semver.org/) et maintient un changelog détaillé.
+
+- **CHANGELOG** : Voir [CHANGELOG.md](./CHANGELOG.md) pour l'historique complet des versions et des modifications
+- **Contributions** : Avant de merger une PR, assurez-vous de mettre à jour la section `[Unreleased]` du CHANGELOG
+  avec un résumé de vos changements

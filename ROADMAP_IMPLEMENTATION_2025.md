@@ -2,7 +2,9 @@
 
 ## 📋 Overview
 
-This document describes the implementation of the 2025-2026 roadmap for **A KI PRI SA YÉ**, focusing on T1-T3 2025 features. All changes follow a minimal, surgical approach to enhance the existing codebase while maintaining stability.
+This document describes the implementation of the 2025-2026 roadmap for **A KI PRI SA YÉ**, focusing on
+T1-T3 2025 features. All changes follow a minimal, surgical approach to enhance the existing codebase while
+maintaining stability.
 
 ---
 
@@ -11,6 +13,7 @@ This document describes the implementation of the 2025-2026 roadmap for **A KI P
 ### 🔧 1. Infrastructure & Configuration
 
 #### **Dependencies Added**
+
 ```json
 {
   "@tanstack/react-query": "^5.62.11",  // State management for API calls
@@ -47,48 +50,57 @@ This document describes the implementation of the 2025-2026 roadmap for **A KI P
 All functions are located in `/functions/` and follow Cloudflare Pages Functions API:
 
 #### **compare.js** - Price Comparison API
+
 ```
 GET /api/compare?ean=<code>&territoire=<code>
 ```
+
 - Compares prices across stores
 - Territory-based filtering
 - Returns sorted results (lowest to highest)
 - CORS enabled
 
 **Production TODO:**
+
 - Connect to Firestore
 - Implement caching strategy
 - Add rate limiting
 
 #### **ocr.js** - Receipt OCR Processing
+
 ```
 POST /api/ocr
 Content-Type: multipart/form-data
 Body: { image: File }
 ```
+
 - Processes receipt images
 - Extracts products, prices, EAN codes
 - Returns structured data
 - Validates image format and size (max 10MB)
 
 **Production TODO:**
+
 - Integrate Google Vision API or Tesseract.js
 - Save to Firebase Storage
 - Queue for verification
 - Calculate confidence scores
 
 #### **iaConseiller.js** - AI Budget Advisor
+
 ```
 POST /api/ia-conseiller
 Content-Type: application/json
 Body: { panier: [...], territoire: "..." }
 ```
+
 - Analyzes shopping basket
 - Suggests savings opportunities
 - Provides personalized tips
 - Calculates potential savings
 
 **Production TODO:**
+
 - Integrate ML model
 - Use historical user data
 - Track suggestion acceptance
@@ -101,7 +113,9 @@ Body: { panier: [...], territoire: "..." }
 All components are in `/src/components/` and use modern React patterns:
 
 #### **IndiceVieChere.jsx** - Cost of Living Index
+
 Features:
+
 - Displays average prices by territory
 - Comparison with mainland France
 - Price trend indicators
@@ -109,13 +123,16 @@ Features:
 - Responsive cards with rankings
 
 Usage:
+
 ```jsx
 import { IndiceVieChere } from './components/IndiceVieChere';
 <IndiceVieChere selectedTerritory="GP" />
 ```
 
 #### **TiPanieSolidaire.jsx** - Solidarity Baskets
+
 Features:
+
 - Solidarity baskets listing
 - Local producers directory
 - Tabs for baskets/producers
@@ -123,13 +140,16 @@ Features:
 - Certification badges (Bio, Local, Anti-Gaspi)
 
 Usage:
+
 ```jsx
 import { TiPanieSolidaire } from './components/TiPanieSolidaire';
 <TiPanieSolidaire territoire="GP" />
 ```
 
 #### **MapLeaflet.jsx** - Interactive Map
+
 Features:
+
 - Dynamic Leaflet loading
 - Territory-based view
 - Store markers with popups
@@ -137,19 +157,23 @@ Features:
 - Responsive design
 
 Usage:
+
 ```jsx
 import { MapLeaflet } from './components/MapLeaflet';
 <MapLeaflet territory="GP" stores={storesList} onStoreClick={handleClick} />
 ```
 
 #### **PriceCharts.jsx** - Data Visualization
+
 Includes 4 chart types:
+
 1. **PriceTrendChart** - Line chart for price evolution
 2. **TerritoryComparisonChart** - Bar chart for territory comparison
 3. **CategoryDistributionChart** - Pie chart for categories
 4. **PriceBreakdownChart** - Pie chart for price components
 
 Usage:
+
 ```jsx
 import { PriceDashboard } from './components/PriceCharts';
 <PriceDashboard 
@@ -161,7 +185,9 @@ import { PriceDashboard } from './components/PriceCharts';
 ```
 
 #### **PalmaresEnseignes.jsx** - Store Rankings
+
 Features:
+
 - Store competitiveness rankings
 - Sorting by price, products, trends
 - Score calculation (0-100)
@@ -169,6 +195,7 @@ Features:
 - Progress bars for visual feedback
 
 Usage:
+
 ```jsx
 import { PalmaresEnseignes } from './components/PalmaresEnseignes';
 <PalmaresEnseignes territoire="GP" />
@@ -179,9 +206,11 @@ import { PalmaresEnseignes } from './components/PalmaresEnseignes';
 ### 📡 4. Data Integration
 
 #### **openFoodFacts.js** - Product Data API
+
 Located in `/src/data/openFoodFacts.js`
 
 Functions:
+
 ```javascript
 // Fetch product by EAN
 fetchProductFromOpenFoodFacts(ean)
@@ -200,6 +229,7 @@ formatProductForDisplay(product)
 ```
 
 **Sustainability Score Breakdown:**
+
 - Eco-score: 30 points
 - Packaging: 20 points (recyclable, cardboard, glass, etc.)
 - Local production: 30 points (DOM-COM, France, manufacturing)
@@ -213,7 +243,7 @@ Grades: A (≥80), B (≥60), C (≥40), D (≥20), E (<20)
 
 **File:** `.github/workflows/deploy.yml`
 
-#### Workflow Jobs:
+#### Workflow Jobs
 
 1. **Lint & Test** ✅
    - ESLint validation
@@ -248,6 +278,7 @@ Grades: A (≥80), B (≥60), C (≥40), D (≥20), E (<20)
    - Permissions: contents:read
 
 **Environment Variables Required:**
+
 ```
 CLOUDFLARE_API_TOKEN
 CLOUDFLARE_ACCOUNT_ID
@@ -262,13 +293,17 @@ GITHUB_TOKEN (auto-provided)
 ## 🛡️ Security
 
 ### CodeQL Scan Results: ✅ **0 Alerts**
+
 All security issues resolved:
+
 - ✅ GitHub Actions permissions properly scoped
 - ✅ No code vulnerabilities detected
 - ✅ No dependency vulnerabilities
 
 ### Dependency Audit: ✅ **No Vulnerabilities**
+
 All packages verified against GitHub Advisory Database:
+
 - React 18.3.1
 - Firebase 12.5.0
 - Vite 7.2.2
@@ -279,7 +314,8 @@ All packages verified against GitHub Advisory Database:
 
 ## 📊 Progress Summary
 
-### Completed (T1-T3 2025):
+### Completed (T1-T3 2025)
+
 - ✅ Infrastructure & configuration
 - ✅ Backend API functions (3/3)
 - ✅ Frontend components (5/5)
@@ -287,7 +323,8 @@ All packages verified against GitHub Advisory Database:
 - ✅ CI/CD pipeline
 - ✅ Security hardening
 
-### Remaining (T4 2025 - Q1 2026):
+### Remaining (T4 2025 - Q1 2026)
+
 - ⏳ "Lutte contre la vie chère" dedicated page
 - ⏳ Firestore integration (all components have TODO comments)
 - ⏳ Upload ticket UI flow
@@ -299,9 +336,10 @@ All packages verified against GitHub Advisory Database:
 
 ## 🎯 Next Steps
 
-### For Developers:
+### For Developers
 
 1. **Firestore Integration**
+
    ```javascript
    // Each component has TODO comments like:
    // TODO: PRODUCTION IMPLEMENTATION
@@ -318,7 +356,7 @@ All packages verified against GitHub Advisory Database:
    - Run Lighthouse CI locally
    - Validate PWA installation
 
-### For Product Owner:
+### For Product Owner
 
 1. **Cloudflare Configuration**
    - Create Cloudflare account
@@ -340,12 +378,12 @@ All packages verified against GitHub Advisory Database:
 
 ## 📚 Resources
 
-- **Tailwind Documentation:** https://tailwindcss.com/docs
-- **Leaflet Documentation:** https://leafletjs.com/reference.html
-- **Recharts Documentation:** https://recharts.org/en-US/api
-- **OpenFoodFacts API:** https://world.openfoodfacts.org/data
-- **Cloudflare Pages:** https://developers.cloudflare.com/pages
-- **Firebase:** https://firebase.google.com/docs
+- **Tailwind Documentation:** <https://tailwindcss.com/docs>
+- **Leaflet Documentation:** <https://leafletjs.com/reference.html>
+- **Recharts Documentation:** <https://recharts.org/en-US/api>
+- **OpenFoodFacts API:** <https://world.openfoodfacts.org/data>
+- **Cloudflare Pages:** <https://developers.cloudflare.com/pages>
+- **Firebase:** <https://firebase.google.com/docs>
 
 ---
 

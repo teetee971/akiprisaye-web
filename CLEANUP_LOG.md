@@ -3,6 +3,7 @@
 ## Fichiers Supprimés ✅
 
 ### Images de Présentation/Marketing (18 fichiers)
+
 - A_2D_digital_graphic_design_image_features_a_dark_.png
 - A_QR_code_in_a_square_digital_image_is_displayed_i.png
 - A_digital_screenshot_and_a_mockup_of_the_web_appli.png
@@ -25,6 +26,7 @@
 **Raison:** Fichiers de marketing/présentation non nécessaires dans le repository web
 
 ### Installateurs Windows (12 fichiers)
+
 - Installer_A_Ki_Pri_Sa_Ye_Final.iss
 - Installer_A_Ki_Pri_Sa_Ye_PC_Lanceur.iss
 - Installer_A_Ki_Pri_Sa_Ye_PC_Lanceur_Licence_FR_64bits.iss
@@ -41,6 +43,7 @@
 **Raison:** Application web uniquement, pas besoin d'installateurs desktop
 
 ### Documentation en Doublon (5 fichiers)
+
 - README.txt
 - README_Conversion_BAT_to_EXE.txt
 - README_multilang_akiprisaye.md
@@ -50,12 +53,14 @@
 **Raison:** Consolidation dans README.md et documentation d'audit
 
 ### Scripts de Déploiement Obsolètes (2 fichiers)
+
 - deploiement_akiprisaye_gitbash.sh
 - push_git.sh
 
 **Raison:** Remplacé par CI/CD GitHub Actions
 
 ### Configuration en Doublon (6 fichiers)
+
 - firebase_config.js (dupliquer de firebase-config.js)
 - modules_export.json
 - modules_firebase.json
@@ -66,6 +71,7 @@
 **Raison:** Fichiers de configuration obsolètes ou en doublon
 
 ### JavaScript Obsolète (5 fichiers)
+
 - exportModules.commonjs.js
 - exportModules.configured.js
 - exportModules.js
@@ -75,16 +81,19 @@
 **Raison:** Modules non utilisés ou obsolètes
 
 ### Fichiers HTML en Doublon (1 fichier)
+
 - index.html.html
 
 **Raison:** Doublon de index.html
 
 ### Fichiers de Log (1 fichier)
+
 - pglite-debug.log
 
 **Raison:** Fichier de log temporaire
 
 ### Dossiers Supprimés
+
 - akiprisaye/ (sous-application React redondante)
 - Documents/ (fichiers de présentation)
 - Audio/ (dossier vide)
@@ -148,17 +157,20 @@ akiprisaye-web/
 ## Bénéfices du Nettoyage
 
 ### Réduction de Taille
+
 - **Avant:** ~150 fichiers à la racine
 - **Après:** ~66 fichiers à la racine
 - **Réduction:** ~56%
 
 ### Clarté
+
 - ✅ Suppression des doublons
 - ✅ Suppression des fichiers obsolètes
 - ✅ Structure plus claire
 - ✅ Meilleure navigabilité
 
 ### Maintenance
+
 - ✅ Moins de confusion pour les développeurs
 - ✅ Dépendances plus claires
 - ✅ Build plus rapide
@@ -169,6 +181,7 @@ akiprisaye-web/
 ## Prochaines Étapes Recommandées
 
 ### 1. Migration vers src/
+
 Déplacer les fichiers HTML et JS de la racine vers `src/` pour une architecture moderne:
 
 ```bash
@@ -178,6 +191,7 @@ mv *.js src/utils/
 ```
 
 ### 2. Optimisation des Images
+
 Convertir les images PNG restantes en WebP:
 
 ```bash
@@ -186,6 +200,7 @@ npx @squoosh/cli --webp '{"quality":80}' *.png
 ```
 
 ### 3. Tests
+
 Ajouter des tests unitaires:
 
 ```bash
@@ -197,6 +212,7 @@ npm install --save-dev vitest @testing-library/react
 ## Fichiers Conservés (Importants)
 
 ### Configuration Essentielle
+
 - ✅ firebase.json (hosting config)
 - ✅ vite.config.js (build config)
 - ✅ package.json (dépendances)
@@ -205,12 +221,14 @@ npm install --save-dev vitest @testing-library/react
 - ✅ .gitignore (fichiers ignorés)
 
 ### Documentation Importante
+
 - ✅ README.md (documentation principale)
 - ✅ README_DEPLOIEMENT.md (instructions déploiement)
 - ✅ ROADMAP_MODULES.md (feuille de route)
 - ✅ AUDIT_TECHNIQUE_2025.md (audit complet)
 
 ### Code Source
+
 - ✅ Toutes les pages HTML fonctionnelles
 - ✅ Tous les scripts JavaScript actifs
 - ✅ Firebase config et services
@@ -219,5 +237,5 @@ npm install --save-dev vitest @testing-library/react
 
 ---
 
-*Nettoyage effectué le: 8 novembre 2025*  
-*Par: GitHub Copilot - Technical Audit*
+_Nettoyage effectué le: 8 novembre 2025_  
+_Par: GitHub Copilot - Technical Audit_

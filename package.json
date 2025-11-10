@@ -8,6 +8,7 @@
     "check-assets": "node scripts/check-assets.js",
     "lint": "eslint . --ext .js,.jsx",
     "lint:fix": "eslint . --ext .js,.jsx --fix",
+    "lint:md": "markdownlint \"**/*.md\" --ignore node_modules",
     "format": "prettier --write \"**/*.{js,jsx,json,md,css,html}\"",
     "test": "echo \"No tests configured yet\" && exit 0"
   },
@@ -29,6 +30,8 @@
     "autoprefixer": "^10.4.21",
     "eslint": "^9.15.0",
     "eslint-plugin-react": "^7.37.2",
+    "markdownlint": "^0.39.0",
+    "markdownlint-cli": "^0.45.0",
     "prettier": "^3.3.3",
     "tailwindcss": "^4.1.17",
     "terser": "^5.44.1",

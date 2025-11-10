@@ -1,4 +1,5 @@
 # Guide d'Optimisation des Performances
+
 ## A KI PRI SA YÉ
 
 ---
@@ -47,6 +48,7 @@ npx @squoosh/cli --webp '{"quality":80}' *.png
 ### Solution 2: Lazy Loading
 
 **HTML:**
+
 ```html
 <!-- Avant -->
 <div class="slide" style="background-image: url('A_webpage_screenshot.png')"></div>
@@ -121,6 +123,7 @@ document.querySelectorAll('.slide').forEach(slide => {
 ### Bundle Splitting
 
 **vite.config.js** (déjà mis à jour):
+
 ```javascript
 export default defineConfig({
   build: {
@@ -140,11 +143,13 @@ export default defineConfig({
 ### Code Splitting Dynamique
 
 **Avant:**
+
 ```javascript
 import { scanBarcode } from './scanner.js';
 ```
 
 **Après:**
+
 ```javascript
 // Charger uniquement quand nécessaire
 async function handleScan() {
@@ -158,11 +163,13 @@ async function handleScan() {
 Importer seulement ce qui est nécessaire:
 
 **Avant:**
+
 ```javascript
 import firebase from 'firebase';
 ```
 
 **Après:**
+
 ```javascript
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
@@ -172,6 +179,7 @@ import { getFirestore } from 'firebase/firestore';
 ### Minification Agressive
 
 **vite.config.js** (déjà mis à jour):
+
 ```javascript
 export default defineConfig({
   build: {
@@ -335,6 +343,7 @@ async function updateCache(request, cache) {
 ### Indexation Firestore
 
 **firestore.indexes.json:**
+
 ```json
 {
   "indexes": [
@@ -361,12 +370,14 @@ async function updateCache(request, cache) {
 ### Pagination des Requêtes
 
 **Avant:**
+
 ```javascript
 // ❌ Charge tous les prix
 const snapshot = await getDocs(collection(db, 'prices'));
 ```
 
 **Après:**
+
 ```javascript
 // ✅ Charge seulement 20 résultats
 const q = query(
@@ -411,6 +422,7 @@ curl -H "Accept-Encoding: gzip" -I https://akiprisaye.pages.dev/
 ### Compression des Assets au Build
 
 **vite.config.js:**
+
 ```javascript
 import viteCompression from 'vite-plugin-compression';
 
@@ -436,6 +448,7 @@ export default defineConfig({
 ### Firebase Performance Monitoring
 
 **firebase-config.js:**
+
 ```javascript
 import { getPerformance } from 'firebase/performance';
 
@@ -457,6 +470,7 @@ npm install web-vitals
 ```
 
 **app.js:**
+
 ```javascript
 import { getCLS, getFID, getFCP, getLCP, getTTFB } from 'web-vitals';
 
@@ -477,6 +491,7 @@ getTTFB(sendToAnalytics);
 ## 9. Checklist d'Optimisation
 
 ### Images
+
 - [ ] Convertir PNG → WebP
 - [ ] Compresser toutes les images (qualité 80%)
 - [ ] Ajouter `loading="lazy"` sur toutes les images
@@ -484,6 +499,7 @@ getTTFB(sendToAnalytics);
 - [ ] Optimiser les favicon (16x16, 32x32)
 
 ### JavaScript
+
 - [ ] Code splitting configuré
 - [ ] Import dynamique pour code lourd
 - [ ] Minification activée (terser)
@@ -491,24 +507,28 @@ getTTFB(sendToAnalytics);
 - [ ] Bundle analysis avec visualizer
 
 ### CSS
+
 - [ ] Critical CSS inliné
 - [ ] CSS non-critique async
 - [ ] PurgeCSS pour supprimer CSS inutilisé
 - [ ] Minification activée
 
 ### Caching
+
 - [ ] Service Worker optimisé
 - [ ] Cache headers corrects (firebase.json)
 - [ ] Firebase cache persistence activé
 - [ ] Versionning des assets
 
 ### Network
+
 - [ ] Preconnect aux domaines externes
 - [ ] Prefetch des pages suivantes
 - [ ] DNS-Prefetch configuré
 - [ ] HTTP/2 activé (Firebase Hosting)
 
 ### Monitoring
+
 - [ ] Lighthouse CI configuré
 - [ ] Firebase Performance activé
 - [ ] Web Vitals tracking
@@ -521,6 +541,7 @@ getTTFB(sendToAnalytics);
 ### Script de Build avec Analysis
 
 **package.json:**
+
 ```json
 {
   "scripts": {
@@ -535,6 +556,7 @@ getTTFB(sendToAnalytics);
 ### Budget de Performance
 
 **.lighthouserc.json:**
+
 ```json
 {
   "ci": {
@@ -559,6 +581,7 @@ getTTFB(sendToAnalytics);
 ## Gains Attendus
 
 ### Avant Optimisations
+
 ```
 Bundle size: ~3 MB
 FCP: ~4.5s
@@ -567,6 +590,7 @@ Performance Score: 45
 ```
 
 ### Après Optimisations
+
 ```
 Bundle size: ~400 KB (réduction de 87%)
 FCP: <1.5s (amélioration de 67%)

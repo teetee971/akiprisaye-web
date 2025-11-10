@@ -1,6 +1,7 @@
 # Configuration Cloudflare Pages
 
-Pour que le site fonctionne correctement sur https://akiprisaye.pages.dev/, les paramètres suivants doivent être configurés dans le dashboard Cloudflare Pages :
+Pour que le site fonctionne correctement sur <https://akiprisaye.pages.dev/>, les paramètres suivants
+doivent être configurés dans le dashboard Cloudflare Pages :
 
 ## Paramètres de Build
 
@@ -23,6 +24,7 @@ npm run build
 ```
 
 Cela devrait créer un dossier `dist/` avec :
+
 - `index.html` - Page d'accueil complète avec header, hero, et cartes de fonctionnalités
 - Tous les fichiers HTML liés (comparateur.html, scanner.html, etc.)
 - `assets/` - Icônes et images optimisées
@@ -59,7 +61,9 @@ dist/
 
 ## Cohérence avec Firebase Hosting
 
-La configuration Vite a été mise à jour pour assurer que le déploiement Cloudflare Pages serve exactement le même contenu que Firebase Hosting :
+La configuration Vite a été mise à jour pour assurer que le déploiement Cloudflare Pages serve exactement
+le même contenu que Firebase Hosting :
+
 - L'entrée principale est maintenant `./index.html` (racine du projet) au lieu de `./public/index.html`
 - Tous les fichiers HTML liés depuis l'index sont inclus dans le build
 - Les fichiers JavaScript et CSS sont copiés via le plugin `vite-plugin-static-copy`
@@ -67,6 +71,7 @@ La configuration Vite a été mise à jour pour assurer que le déploiement Clou
 ## Dépannage
 
 Si le site affiche une page blanche :
+
 1. Vérifier que la build command est bien `npm run build`
 2. Vérifier que le output directory est bien `dist`
 3. Vérifier les logs de déploiement dans Cloudflare Pages

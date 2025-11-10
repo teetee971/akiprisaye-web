@@ -1,4 +1,5 @@
 # Plan d'Implémentation - Audit Technique
+
 ## A KI PRI SA YÉ
 
 ---
@@ -54,9 +55,10 @@ npm run test          # Tests (à configurer)
 **Priorité: CRITIQUE**  
 **Temps estimé: 2 heures**
 
-#### Actions:
+#### Actions
 
 1. Créer `.env.local`:
+
 ```bash
 # Ne PAS commiter ce fichier!
 VITE_FIREBASE_API_KEY=votre_vraie_clé
@@ -69,6 +71,7 @@ VITE_FIREBASE_MEASUREMENT_ID=G-XXXXXXXXXX
 ```
 
 2. Modifier `firebase-config.js`:
+
 ```javascript
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -81,7 +84,8 @@ const firebaseConfig = {
 
 4. Configurer les variables sur Firebase Hosting/Cloudflare Pages
 
-#### Validation:
+#### Validation
+
 ```bash
 # Vérifier qu'aucune clé n'est en clair
 grep -r "AIzaSy" . --exclude-dir={node_modules,dist,.git}
@@ -95,11 +99,12 @@ grep -r "AIzaSy" . --exclude-dir={node_modules,dist,.git}
 **Priorité: CRITIQUE**  
 **Temps estimé: 1 heure**
 
-#### Fichiers à modifier:
+#### Fichiers à modifier
 
 **Tous les fichiers HTML** (index.html, comparateur.html, etc.)
 
 Ajouter dans le `<head>`:
+
 ```html
 <meta http-equiv="Content-Security-Policy" 
       content="default-src 'self'; 
@@ -111,7 +116,8 @@ Ajouter dans le `<head>`:
                object-src 'none';">
 ```
 
-#### Validation:
+#### Validation
+
 ```bash
 # Tester avec l'outil CSP Evaluator de Google
 # https://csp-evaluator.withgoogle.com/
@@ -124,7 +130,8 @@ Ajouter dans le `<head>`:
 **Priorité: HAUTE**  
 **Temps estimé: 5 minutes**
 
-#### Actions:
+#### Actions
+
 ```bash
 # Vérifier que index.html existe
 ls -la index.html
@@ -141,14 +148,16 @@ git commit -m "Remove duplicate index.html.html"
 **Priorité: HAUTE**  
 **Temps estimé: 2 heures**
 
-#### Actions:
+#### Actions
 
 1. Exécuter le premier lint:
+
 ```bash
 npm run lint
 ```
 
 2. Corriger les erreurs automatiquement:
+
 ```bash
 npm run lint:fix
 ```
@@ -156,6 +165,7 @@ npm run lint:fix
 3. Corriger manuellement les erreurs restantes
 
 4. Ajouter pre-commit hook (optionnel):
+
 ```bash
 npm install --save-dev husky lint-staged
 npx husky install
@@ -163,6 +173,7 @@ npx husky add .husky/pre-commit "npm run lint-staged"
 ```
 
 **package.json:**
+
 ```json
 {
   "lint-staged": {
@@ -178,7 +189,7 @@ npx husky add .husky/pre-commit "npm run lint-staged"
 **Priorité: CRITIQUE**  
 **Temps estimé: 1 heure**
 
-#### Actions:
+#### Actions
 
 1. Se connecter à la Console Firebase
 2. Aller dans Firestore > Règles
@@ -186,7 +197,8 @@ npx husky add .husky/pre-commit "npm run lint-staged"
 4. Publier les règles
 5. Tester l'accès en lecture/écriture
 
-#### Règles minimales:
+#### Règles minimales
+
 ```javascript
 rules_version = '2';
 service cloud.firestore {
@@ -212,7 +224,7 @@ service cloud.firestore {
 **Priorité: MOYENNE-HAUTE**  
 **Temps estimé: 3 heures**
 
-#### Actions:
+#### Actions
 
 ```bash
 # Installer squoosh-cli
@@ -230,7 +242,8 @@ mv A_webpage_screenshot_screenshot_titled__A_KI_PRI_S.png.webp A_webpage_screens
 sed -i 's/.png/.webp/g' index.html
 ```
 
-#### Gains attendus:
+#### Gains attendus
+
 - Réduction de ~4 MB à ~400 KB (90% de réduction)
 
 ---
@@ -240,7 +253,7 @@ sed -i 's/.png/.webp/g' index.html
 **Priorité: MOYENNE**  
 **Temps estimé: 1 semaine**
 
-#### Actions:
+#### Actions
 
 ```bash
 # Installer Vitest et Testing Library
@@ -248,6 +261,7 @@ npm install --save-dev vitest @testing-library/react @testing-library/jest-dom
 ```
 
 **vite.config.js:**
+
 ```javascript
 export default defineConfig({
   // ... config existante
@@ -260,6 +274,7 @@ export default defineConfig({
 ```
 
 **package.json:**
+
 ```json
 {
   "scripts": {
@@ -270,7 +285,8 @@ export default defineConfig({
 }
 ```
 
-#### Tests prioritaires:
+#### Tests prioritaires
+
 1. `comparateur-fetch.js` → `escapeHtml()` function
 2. Service Worker → cache functionality
 3. Firebase config → initialization
@@ -284,7 +300,8 @@ export default defineConfig({
 
 Voir le guide détaillé dans **ACCESSIBILITY_GUIDE.md**
 
-#### Actions phase 2:
+#### Actions phase 2
+
 - [ ] Ajouter `aria-label` sur tous les formulaires
 - [ ] Ajouter `aria-live` sur les zones de résultats
 - [ ] Corriger les contrastes de couleurs
@@ -300,7 +317,8 @@ Voir le guide détaillé dans **ACCESSIBILITY_GUIDE.md**
 **Priorité: MOYENNE**  
 **Temps estimé: 2 semaines**
 
-#### Plan:
+#### Plan
+
 ```
 Avant:
 /
@@ -377,6 +395,7 @@ Sentry.init({
 Avant de marquer l'audit comme terminé:
 
 ### Sécurité
+
 - [ ] Aucune clé API en clair dans le code
 - [ ] CSP configuré sur toutes les pages
 - [ ] Headers de sécurité dans firebase.json
@@ -384,24 +403,28 @@ Avant de marquer l'audit comme terminé:
 - [ ] `npm audit` = 0 vulnérabilités
 
 ### Performance
+
 - [ ] Images converties en WebP
 - [ ] Lighthouse Performance > 90
 - [ ] Bundle size < 500 KB
 - [ ] Service Worker optimisé
 
 ### Accessibilité
+
 - [ ] Lighthouse Accessibility > 95
 - [ ] Navigation au clavier fonctionnelle
 - [ ] Lecteur d'écran testé
 - [ ] Contraste des couleurs validé
 
 ### Qualité du Code
+
 - [ ] ESLint configuré et 0 erreurs
 - [ ] Prettier configuré
 - [ ] Tests coverage > 80%
 - [ ] Documentation à jour
 
 ### DevOps
+
 - [ ] CI/CD passe (tous les workflows verts)
 - [ ] Déploiement automatique
 - [ ] Monitoring configuré
@@ -423,18 +446,22 @@ Avant de marquer l'audit comme terminé:
 ## Ressources et Support
 
 ### Documentation
-- Firebase: https://firebase.google.com/docs
-- Vite: https://vitejs.dev/
-- ESLint: https://eslint.org/
-- WCAG: https://www.w3.org/WAI/WCAG21/quickref/
+
+- Firebase: <https://firebase.google.com/docs>
+- Vite: <https://vitejs.dev/>
+- ESLint: <https://eslint.org/>
+- WCAG: <https://www.w3.org/WAI/WCAG21/quickref/>
 
 ### Outils
-- Lighthouse CI: https://github.com/GoogleChrome/lighthouse-ci
-- axe DevTools: https://www.deque.com/axe/devtools/
-- Bundle Analyzer: https://www.npmjs.com/package/rollup-plugin-visualizer
+
+- Lighthouse CI: <https://github.com/GoogleChrome/lighthouse-ci>
+- axe DevTools: <https://www.deque.com/axe/devtools/>
+- Bundle Analyzer: <https://www.npmjs.com/package/rollup-plugin-visualizer>
 
 ### Contact
+
 En cas de problème, référez-vous aux documents d'audit créés:
+
 - AUDIT_TECHNIQUE_2025.md
 - SECURITY_CONFIG.md
 - PERFORMANCE_OPTIMIZATION.md

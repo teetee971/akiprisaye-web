@@ -3,6 +3,7 @@
 ## 📋 Overview
 
 This patch implements a comprehensive update to the A KI PRI SA YÉ platform, including:
+
 - Complete PWA enhancement
 - Backend API structure (AdonisJS + Cloudflare Functions)
 - 12 DROM-COM territory support
@@ -289,8 +290,8 @@ npm run build
 
 ## 📞 Support & Contact
 
-- **Repository:** https://github.com/teetee971/akiprisaye-web
-- **Issues:** https://github.com/teetee971/akiprisaye-web/issues
+- **Repository:** <https://github.com/teetee971/akiprisaye-web>
+- **Issues:** <https://github.com/teetee971/akiprisaye-web/issues>
 - **Documentation:** See README.md and backend/README.md
 
 ---

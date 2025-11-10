@@ -157,12 +157,14 @@ Lors de l'utilisation de ces icônes, assurez-vous de toujours :
 ## Couleurs utilisées
 
 ### DOM-TOM
+
 - Bleu France : `#0055A4`
 - Rouge France : `#EF4135`
 - Vert (végétation) : `#009E60`, `#4a7c2c`
 - Océan : `#0088cc`, `#006699`
 
 ### Nutri-Score
+
 - Score A : `#038141` (vert foncé)
 - Score B : `#85BB2F` (vert clair)
 - Score C : `#FECB02` (jaune)
@@ -175,7 +177,8 @@ Ces couleurs respectent les standards officiels du Nutri-Score français.
 
 Ces icônes sont créées spécifiquement pour le projet A KI PRI SA YÉ et sont disponibles sous la même licence que le projet.
 
-Le concept Nutri-Score est une marque officielle du Ministère de la Santé français. L'utilisation de ces représentations doit respecter les directives officielles.
+Le concept Nutri-Score est une marque officielle du Ministère de la Santé français.
+L'utilisation de ces représentations doit respecter les directives officielles.
 
 ---
 

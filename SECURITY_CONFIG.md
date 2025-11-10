@@ -52,7 +52,8 @@ Ajoutez cette balise dans le `<head>` de chaque fichier HTML :
 ```html
 <meta http-equiv="Content-Security-Policy" 
       content="default-src 'self'; 
-               script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com https://apis.google.com https://www.google-analytics.com; 
+               script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com
+                          https://apis.google.com https://www.google-analytics.com; 
                style-src 'self' 'unsafe-inline'; 
                img-src 'self' data: https: http:; 
                font-src 'self' data:; 
@@ -62,7 +63,8 @@ Ajoutez cette balise dans le `<head>` de chaque fichier HTML :
                base-uri 'self';">
 ```
 
-**Note:** `unsafe-inline` et `unsafe-eval` sont temporaires. Dans une prochaine version, migrez vers des nonces ou hashes CSP.
+**Note:** `unsafe-inline` et `unsafe-eval` sont temporaires. Dans une prochaine version, migrez vers des
+nonces ou hashes CSP.
 
 ## Checklist de Sécurité
 
