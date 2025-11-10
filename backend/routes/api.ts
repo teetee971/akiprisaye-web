@@ -18,11 +18,17 @@ export default function routes(Route: Route) {
   });
 
   // ============================================
-  // PRODUCTS ROUTES
+  // PRODUCTS ROUTES (with rate limiting)
   // ============================================
   
   // Search products by name/keyword
-  Route.get('/api/products/search', 'ProductsController.search');
+  Route.get('/api/products/search', 'ProductsController.search').middleware('ratelimit');
+
+  // Get trending products
+  Route.get('/api/products/trending', 'ProductsController.trending').middleware('ratelimit');
+
+  // Get selected/featured products
+  Route.get('/api/products/select', 'ProductsController.select').middleware('ratelimit');
 
   // ============================================
   // PRICES ROUTES
@@ -101,6 +107,7 @@ export function expressRoutes(app: any) {
   const NewsController = require('../app/Controllers/NewsController').default;
   const ContactController = require('../app/Controllers/ContactController').default;
   const ProductsController = require('../app/Controllers/ProductsController').default;
+  const { ratelimit } = require('../app/Middleware/RateLimit');
 
   const pricesCtrl = new PricesController();
   const newsCtrl = new NewsController();
@@ -121,7 +128,13 @@ export function expressRoutes(app: any) {
         created: (data: any) => res.status(201).json(data),
         badRequest: (data: any) => res.status(400).json(data),
         notFound: (data: any) => res.status(404).json(data),
-        internalServerError: (data: any) => res.status(500).json(data)
+        internalServerError: (data: any) => res.status(500).json(data),
+        status: (code: number) => ({
+          json: (data: any) => res.status(code).json(data)
+        }),
+        header: (name: string, value: string) => {
+          res.setHeader(name, value);
+        }
       };
 
       try {
@@ -142,8 +155,10 @@ export function expressRoutes(app: any) {
     });
   });
 
-  // Products routes
-  app.get('/api/products/search', wrap(productsCtrl.search.bind(productsCtrl)));
+  // Products routes (with rate limiting)
+  app.get('/api/products/search', ratelimit, wrap(productsCtrl.search.bind(productsCtrl)));
+  app.get('/api/products/trending', ratelimit, wrap(productsCtrl.trending.bind(productsCtrl)));
+  app.get('/api/products/select', ratelimit, wrap(productsCtrl.select.bind(productsCtrl)));
 
   // Prices routes
   app.get('/api/prices', wrap(pricesCtrl.index.bind(pricesCtrl)));
