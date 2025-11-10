@@ -9,6 +9,8 @@
  * - Internal network routing
  */
 
+/* global Response */
+
 // Import metrics from the search function
 // Note: In serverless environments, metrics are ephemeral per instance
 // For persistent metrics, consider using Cloudflare Workers KV or Durable Objects
@@ -22,7 +24,7 @@ function generatePrometheusMetrics(metrics) {
   // search_requests_total counter
   output += '# HELP search_requests_total Total number of product search requests\n';
   output += '# TYPE search_requests_total counter\n';
-  for (const [key, value] of Object.entries(metrics.search_requests_total || {})) {
+  for (const value of Object.values(metrics.search_requests_total || {})) {
     const labels = Object.entries(value.labels)
       .map(([k, v]) => `${k}="${v}"`)
       .join(',');
@@ -32,7 +34,7 @@ function generatePrometheusMetrics(metrics) {
   // search_errors_total counter
   output += '# HELP search_errors_total Total number of product search errors\n';
   output += '# TYPE search_errors_total counter\n';
-  for (const [key, value] of Object.entries(metrics.search_errors_total || {})) {
+  for (const value of Object.values(metrics.search_errors_total || {})) {
     const labels = Object.entries(value.labels)
       .map(([k, v]) => `${k}="${v}"`)
       .join(',');
@@ -42,7 +44,7 @@ function generatePrometheusMetrics(metrics) {
   // search_zero_results_total counter
   output += '# HELP search_zero_results_total Total number of product searches that returned zero results\n';
   output += '# TYPE search_zero_results_total counter\n';
-  for (const [key, value] of Object.entries(metrics.search_zero_results_total || {})) {
+  for (const value of Object.values(metrics.search_zero_results_total || {})) {
     const labels = Object.entries(value.labels)
       .map(([k, v]) => `${k}="${v}"`)
       .join(',');
@@ -52,7 +54,7 @@ function generatePrometheusMetrics(metrics) {
   // search_duration_ms histogram
   output += '# HELP search_duration_ms Product search request duration in milliseconds\n';
   output += '# TYPE search_duration_ms histogram\n';
-  for (const [key, value] of Object.entries(metrics.search_duration_buckets || {})) {
+  for (const value of Object.values(metrics.search_duration_buckets || {})) {
     const labels = Object.entries(value.labels)
       .map(([k, v]) => `${k}="${v}"`)
       .join(',');
@@ -78,13 +80,13 @@ const globalMetrics = {
   search_requests_total: {},
   search_errors_total: {},
   search_zero_results_total: {},
-  search_duration_buckets: {}
+  search_duration_buckets: {},
 };
 
 /**
  * GET /metrics
  */
-export async function onRequestGet(context) {
+export async function onRequestGet(_context) {
   try {
     // In a real implementation, you would fetch metrics from a shared store
     // For now, we'll generate a basic response with the schema
@@ -104,20 +106,20 @@ export async function onRequestGet(context) {
       status: 200,
       headers: {
         'Content-Type': 'text/plain; version=0.0.4; charset=utf-8',
-        'Cache-Control': 'no-cache'
-      }
+        'Cache-Control': 'no-cache',
+      },
     });
   } catch (error) {
     console.error('Error collecting metrics:', error);
     
     return new Response(JSON.stringify({
       error: 'Failed to collect metrics',
-      message: error.message
+      message: error.message,
     }), {
       status: 500,
       headers: {
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     });
   }
 }

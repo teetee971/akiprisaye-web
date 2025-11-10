@@ -3,6 +3,8 @@
  * Product search endpoint with Prometheus metrics and structured logging
  */
 
+/* global Response */
+
 import crypto from 'node:crypto';
 
 // In-memory metrics storage for serverless environment
@@ -11,7 +13,7 @@ const metrics = {
   search_requests_total: {},
   search_errors_total: {},
   search_zero_results_total: {},
-  search_duration_buckets: {}
+  search_duration_buckets: {},
 };
 
 /**
@@ -30,8 +32,10 @@ function logStructured(level, event, data = {}) {
     level,
     event,
     timestamp: new Date().toISOString(),
-    ...data
+    ...data,
   };
+  
+  // eslint-disable-next-line no-console
   console.log(JSON.stringify(logEntry));
 }
 
@@ -56,7 +60,7 @@ function recordHistogram(metricName, value, labels = {}) {
       labels,
       buckets: { 50: 0, 100: 0, 200: 0, 300: 0, 500: 0, 1000: 0, 2000: 0, 5000: 0 },
       sum: 0,
-      count: 0
+      count: 0,
     };
   }
   
@@ -97,21 +101,21 @@ export async function onRequestGet(context) {
         q_hash: qHash,
         territory,
         results: 0,
-        reason: 'query_too_short'
+        reason: 'query_too_short',
       });
       
       return new Response(JSON.stringify([]), {
         status: 200,
         headers: {
           'Content-Type': 'application/json',
-          'Cache-Control': 'no-cache'
-        }
+          'Cache-Control': 'no-cache',
+        },
       });
     }
 
     // Search Open Food Facts
     const results = await fetch(
-      `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(q)}&search_simple=1&action=process&json=1&page_size=15`
+      `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(q)}&search_simple=1&action=process&json=1&page_size=15`,
     ).then((r) => r.json());
 
     const items = (results.products || [])
@@ -138,15 +142,15 @@ export async function onRequestGet(context) {
     logStructured('info', 'search', {
       q_hash: qHash,
       territory,
-      results: items.length
+      results: items.length,
     });
 
     return new Response(JSON.stringify(items), {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'no-cache'
-      }
+        'Cache-Control': 'no-cache',
+      },
     });
   } catch (error) {
     // Increment error counter
@@ -162,19 +166,19 @@ export async function onRequestGet(context) {
       q_hash: qHash,
       territory,
       error: error.message,
-      type: 'exception'
+      type: 'exception',
     });
     
     console.error('Erreur API produits :', error);
     
     return new Response(JSON.stringify({
       error: 'Error searching products',
-      message: error.message
+      message: error.message,
     }), {
       status: 500,
       headers: {
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     });
   }
 }
