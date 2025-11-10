@@ -17,6 +17,9 @@ export default function routes(Route: Route) {
     });
   });
 
+  // Prometheus metrics endpoint (unauthenticated - protect in production)
+  Route.get('/metrics', 'MetricsController.index');
+
   // ============================================
   // PRODUCTS ROUTES
   // ============================================
@@ -101,11 +104,13 @@ export function expressRoutes(app: any) {
   const NewsController = require('../app/Controllers/NewsController').default;
   const ContactController = require('../app/Controllers/ContactController').default;
   const ProductsController = require('../app/Controllers/ProductsController').default;
+  const MetricsController = require('../app/Controllers/MetricsController').default;
 
   const pricesCtrl = new PricesController();
   const newsCtrl = new NewsController();
   const contactCtrl = new ContactController();
   const productsCtrl = new ProductsController();
+  const metricsCtrl = new MetricsController();
 
   // Helper to wrap controller methods
   const wrap = (method: Function) => {
@@ -121,7 +126,14 @@ export function expressRoutes(app: any) {
         created: (data: any) => res.status(201).json(data),
         badRequest: (data: any) => res.status(400).json(data),
         notFound: (data: any) => res.status(404).json(data),
-        internalServerError: (data: any) => res.status(500).json(data)
+        internalServerError: (data: any) => res.status(500).json(data),
+        status: (code: number) => ({
+          header: (name: string, value: string) => ({
+            send: (data: any) => {
+              res.status(code).set(name, value).send(data);
+            }
+          })
+        })
       };
 
       try {
@@ -132,6 +144,9 @@ export function expressRoutes(app: any) {
       }
     };
   };
+
+  // Metrics endpoint (unauthenticated - protect in production with reverse proxy/IP allowlist)
+  app.get('/metrics', wrap(metricsCtrl.index.bind(metricsCtrl)));
 
   // Health check
   app.get('/api/health', (req: any, res: any) => {

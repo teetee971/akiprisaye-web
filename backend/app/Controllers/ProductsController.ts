@@ -1,6 +1,14 @@
 // ProductsController.ts - Controller for product search API
 // Searches products using Open Food Facts API
 
+import {
+  searchRequestsTotal,
+  searchErrorsTotal,
+  searchZeroResultsTotal,
+  searchDurationMs
+} from '../../start/metrics';
+import { hashQuery, logStructured } from '../../start/logger';
+
 interface Product {
   name: string;
   brand: string;
@@ -14,14 +22,30 @@ class ProductsController {
    * Search products by name/keyword
    */
   async search({ request, response }) {
+    const q = (request.qs().q || '').trim();
+    const territory = request.qs().territory || 'Guadeloupe';
+    
+    // Start timer for duration tracking
+    const endTimer = searchDurationMs.startTimer({ territory });
+    
+    // Increment total request counter
+    searchRequestsTotal.inc({ territory });
+    
     try {
-      const q = (request.qs().q || '').trim();
-      
       if (q.length < 3) {
+        endTimer();
+        
+        // Log zero results for short queries
+        const qHash = hashQuery(q);
+        logStructured('info', 'search', {
+          q_hash: qHash,
+          territory,
+          results: 0,
+          reason: 'query_too_short'
+        });
+        
         return response.ok([]);
       }
-
-      const territory = request.qs().territory || 'Guadeloupe';
 
       // Search Open Food Facts
       const results = await fetch(
@@ -38,8 +62,39 @@ class ProductsController {
         .filter((p: any) => p.ean)
         .slice(0, 15);
 
+      // Check for zero results
+      if (items.length === 0) {
+        searchZeroResultsTotal.inc({ territory });
+      }
+      
+      // Stop timer
+      endTimer();
+      
+      // Log structured search event
+      const qHash = hashQuery(q);
+      logStructured('info', 'search', {
+        q_hash: qHash,
+        territory,
+        results: items.length
+      });
+
       return response.ok(items);
     } catch (error) {
+      // Increment error counter
+      searchErrorsTotal.inc({ type: 'exception' });
+      
+      // Stop timer
+      endTimer();
+      
+      // Log error with structured logging
+      const qHash = hashQuery(q);
+      logStructured('error', 'search', {
+        q_hash: qHash,
+        territory,
+        error: error.message,
+        type: 'exception'
+      });
+      
       console.error('Erreur API produits :', error);
       return response.internalServerError({
         error: 'Error searching products',
