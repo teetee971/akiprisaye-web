@@ -59,8 +59,9 @@ function generatePrometheusMetrics(metrics) {
       .map(([k, v]) => `${k}="${v}"`)
       .join(',');
     
-    // Output buckets
-    for (const [bucket, count] of Object.entries(value.buckets)) {
+    // Output buckets in ascending order
+    const sortedBuckets = Object.entries(value.buckets).sort((a, b) => Number(a[0]) - Number(b[0]));
+    for (const [bucket, count] of sortedBuckets) {
       output += `search_duration_ms_bucket{${labels},le="${bucket}"} ${count}\n`;
     }
     output += `search_duration_ms_bucket{${labels},le="+Inf"} ${value.count}\n`;
@@ -85,6 +86,17 @@ const globalMetrics = {
 
 /**
  * GET /metrics
+ * 
+ * IMPORTANT LIMITATION:
+ * In Cloudflare Pages Functions, each function runs in its own isolated context.
+ * The metrics from functions/api/products/search.js cannot be shared with this endpoint.
+ * 
+ * For production use with Cloudflare Pages, consider:
+ * 1. Cloudflare Workers KV for shared metrics storage
+ * 2. Cloudflare Durable Objects for stateful metrics
+ * 3. External metrics aggregation service (e.g., Prometheus Pushgateway)
+ * 
+ * This endpoint currently returns a placeholder/schema demonstration.
  */
 export async function onRequestGet(_context) {
   try {
@@ -96,6 +108,11 @@ export async function onRequestGet(_context) {
     // Note: In Cloudflare Workers/Pages, these metrics are not available
     // This is a placeholder to show the expected format
     let output = metricsText;
+    
+    // Add informational comment about limitation
+    output = '# Note: Metrics in Cloudflare Pages Functions are ephemeral per worker instance.\n';
+    output += '# For persistent metrics, use Workers KV, Durable Objects, or external storage.\n\n';
+    output += metricsText;
     
     // Add some basic runtime metrics if available
     output += '\n# HELP nodejs_version_info Node.js version info\n';
@@ -114,7 +131,7 @@ export async function onRequestGet(_context) {
     
     return new Response(JSON.stringify({
       error: 'Failed to collect metrics',
-      message: error.message,
+      message: error?.message || String(error),
     }), {
       status: 500,
       headers: {

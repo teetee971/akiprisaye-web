@@ -3,17 +3,23 @@
  * 
  * This script tests the Prometheus metrics functionality using the TypeScript backend.
  * It simulates different scenarios and verifies metrics are updated correctly.
+ * 
+ * Note: This test requires TypeScript compilation or a TypeScript runtime like ts-node.
+ * To run: npx ts-node backend/test-metrics-integration.js
+ * Or compile TypeScript files first and update imports to use .js files.
  */
 
+// Note: These imports assume TypeScript files have been compiled to JavaScript
+// If running directly, you'll need ts-node or similar TypeScript runtime
 const { 
   register,
   searchRequestsTotal,
   searchErrorsTotal,
   searchZeroResultsTotal,
   searchDurationMs,
-} = require('./start/metrics');
+} = require('./start/metrics.js');
 
-const { hashQuery, logStructured } = require('./start/logger');
+const { hashQuery, logStructured } = require('./start/logger.js');
 
 console.log('=== Testing Prometheus Metrics ===\n');
 

@@ -94,6 +94,7 @@ export async function onRequestGet(context) {
     if (q.length < 3) {
       const duration = Date.now() - startTime;
       recordHistogram('search_duration_buckets', duration, { territory });
+      incrementCounter('search_zero_results_total', { territory });
       
       // Log zero results for short queries
       const qHash = hashQuery(q);
@@ -165,7 +166,7 @@ export async function onRequestGet(context) {
     logStructured('error', 'search', {
       q_hash: qHash,
       territory,
-      error: error.message,
+      error: error?.message || String(error),
       type: 'exception',
     });
     
@@ -173,7 +174,7 @@ export async function onRequestGet(context) {
     
     return new Response(JSON.stringify({
       error: 'Error searching products',
-      message: error.message,
+      message: error?.message || String(error),
     }), {
       status: 500,
       headers: {

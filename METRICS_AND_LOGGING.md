@@ -65,9 +65,11 @@ All search events are logged in JSON format with the following structure:
 
 ```json
 {
-  "prom-client": "^15.0.0"
+  "prom-client": "^15.1.3"
 }
 ```
+
+**Note**: `prom-client` is added as a dependency for the backend TypeScript implementation. It is not used in the frontend Vite/React application and will not be bundled in the frontend build.
 
 ## Usage
 
@@ -213,12 +215,21 @@ scrape_configs:
 ## Limitations & Notes
 
 ### Serverless Environment
-- Metrics are stored in-memory per Cloudflare Worker instance
+
+⚠️ **IMPORTANT**: In Cloudflare Pages Functions, each function runs in its own isolated context. This means:
+
+- **Metrics isolation**: The `/metrics` endpoint cannot access metrics collected by `/api/products/search`
+- Each worker instance maintains its own in-memory metrics
 - Metrics reset when worker instance is recycled
-- For persistent metrics, consider:
-  - Cloudflare Workers KV
-  - Cloudflare Durable Objects
-  - External metrics aggregation service
+- The current `/metrics` endpoint in `functions/metrics.js` returns a placeholder/schema demonstration
+
+**For production use with persistent metrics across requests:**
+1. **Cloudflare Workers KV**: Store metrics in key-value storage
+2. **Cloudflare Durable Objects**: Use stateful objects for metrics aggregation
+3. **External service**: Push metrics to Prometheus Pushgateway or similar service
+4. **Backend server**: Use the TypeScript backend implementation with prom-client for traditional server deployments
+
+**Recommended approach**: Use the TypeScript backend (`backend/app/Controllers`) for production deployments where you need persistent metrics. The Cloudflare Pages Functions implementation is primarily for demonstration and logging purposes.
 
 ### Default Node.js Metrics
 - Standard Node.js process metrics (memory, CPU, etc.) are available in the TypeScript backend

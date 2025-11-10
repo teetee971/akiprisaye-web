@@ -22,17 +22,18 @@ class ProductsController {
    * Search products by name/keyword
    */
   async search({ request, response }) {
-    const q = (request.qs().q || '').trim();
-    const territory = request.qs().territory || 'Guadeloupe';
-    
-    // Start timer for duration tracking
-    const endTimer = searchDurationMs.startTimer({ territory });
-    
-    // Increment total request counter
-    searchRequestsTotal.inc({ territory });
-    
     try {
+      const q = (request.qs().q || '').trim();
+      const territory = request.qs().territory || 'Guadeloupe';
+      
+      // Start timer for duration tracking
+      const endTimer = searchDurationMs.startTimer({ territory });
+      
+      // Increment total request counter
+      searchRequestsTotal.inc({ territory });
+      
       if (q.length < 3) {
+        searchZeroResultsTotal.inc({ territory });
         endTimer();
         
         // Log zero results for short queries
@@ -83,22 +84,36 @@ class ProductsController {
       // Increment error counter
       searchErrorsTotal.inc({ type: 'exception' });
       
-      // Stop timer
-      endTimer();
+      // Safe fallback values for territory
+      const territory = request.qs?.()?.territory || 'unknown';
+      const q = request.qs?.()?.q || '';
+      
+      // Stop timer if possible
+      try {
+        const endTimer = searchDurationMs.startTimer({ territory });
+        endTimer();
+      } catch (timerError) {
+        // Timer may not be initialized, continue
+      }
       
       // Log error with structured logging
-      const qHash = hashQuery(q);
-      logStructured('error', 'search', {
-        q_hash: qHash,
-        territory,
-        error: error.message,
-        type: 'exception'
-      });
+      try {
+        const qHash = hashQuery(q);
+        logStructured('error', 'search', {
+          q_hash: qHash,
+          territory,
+          error: error?.message || String(error),
+          type: 'exception'
+        });
+      } catch (logError) {
+        // If logging fails, just log to console
+        console.error('Failed to log error:', logError);
+      }
       
       console.error('Erreur API produits :', error);
       return response.internalServerError({
         error: 'Error searching products',
-        message: error.message
+        message: error?.message || String(error)
       });
     }
   }
