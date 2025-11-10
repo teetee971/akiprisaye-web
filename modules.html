@@ -105,6 +105,19 @@
       text-transform: uppercase;
     }
     
+    .in-progress-badge {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: #ffffff;
+      padding: 0.25rem 0.75rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+    
     .module-icon {
       font-size: 3rem;
       display: block;
@@ -176,10 +189,10 @@
     
     <div class="modules-grid">
       <a href="/comparateur.html" class="module-card" aria-label="Comparateur de prix">
-        <span class="active-badge">Actif</span>
+        <span class="in-progress-badge">En cours</span>
         <span class="module-icon" aria-hidden="true">🔍</span>
         <div class="module-title">Comparateur de Prix</div>
-        <div class="module-desc">Comparez les prix par code EAN dans différents magasins</div>
+        <div class="module-desc">Comparez les prix par code EAN (connexion API en cours)</div>
       </a>
 
       <a href="/scanner.html" class="module-card coming-soon" aria-label="Scanner de code-barres">
@@ -197,17 +210,17 @@
       </a>
 
       <a href="/carte.html" class="module-card" aria-label="Carte des prix">
-        <span class="active-badge">Actif</span>
+        <span class="in-progress-badge">En cours</span>
         <span class="module-icon" aria-hidden="true">🗺️</span>
         <div class="module-title">Carte Interactive</div>
-        <div class="module-desc">Visualisez les magasins et prix géolocalisés</div>
+        <div class="module-desc">Visualisez les magasins (thème sombre et filtres à venir)</div>
       </a>
 
       <a href="/historique.html" class="module-card" aria-label="Historique">
-        <span class="active-badge">Actif</span>
+        <span class="in-progress-badge">En cours</span>
         <span class="module-icon" aria-hidden="true">📊</span>
         <div class="module-title">Historique</div>
-        <div class="module-desc">Consultez l'historique de vos recherches</div>
+        <div class="module-desc">Consultez l'historique (persistance en cours)</div>
       </a>
 
       <a href="/ia-conseiller.html" class="module-card coming-soon" aria-label="IA Conseiller">
@@ -218,10 +231,10 @@
       </a>
 
       <a href="/mon-compte.html" class="module-card" aria-label="Mon compte">
-        <span class="active-badge">Actif</span>
+        <span class="in-progress-badge">En cours</span>
         <span class="module-icon" aria-hidden="true">👤</span>
         <div class="module-title">Mon Compte</div>
-        <div class="module-desc">Gérez votre profil et vos préférences</div>
+        <div class="module-desc">Gérez votre profil (authentification à venir)</div>
       </a>
 
       <a href="/faq.html" class="module-card" aria-label="FAQ">
