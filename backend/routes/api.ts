@@ -23,6 +23,12 @@ export default function routes(Route: Route) {
   
   // Search products by name/keyword
   Route.get('/api/products/search', 'ProductsController.search');
+  
+  // Track product selection for trending
+  Route.post('/api/products/select', 'ProductsController.select');
+  
+  // Get trending products by territory
+  Route.get('/api/products/trending', 'ProductsController.trending');
 
   // ============================================
   // PRICES ROUTES
@@ -144,6 +150,8 @@ export function expressRoutes(app: any) {
 
   // Products routes
   app.get('/api/products/search', wrap(productsCtrl.search.bind(productsCtrl)));
+  app.post('/api/products/select', wrap(productsCtrl.select.bind(productsCtrl)));
+  app.get('/api/products/trending', wrap(productsCtrl.trending.bind(productsCtrl)));
 
   // Prices routes
   app.get('/api/prices', wrap(pricesCtrl.index.bind(pricesCtrl)));

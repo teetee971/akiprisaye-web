@@ -20,6 +20,85 @@ backend/
 
 ## Endpoints API
 
+### 📦 Products API
+
+#### GET /api/products/search
+Search products by name or keyword using Open Food Facts API.
+
+**Query Parameters:**
+- `q` (required): Search query (minimum 3 characters)
+- `territory` (optional): Territory code (default: 'Guadeloupe')
+
+**Response:**
+```json
+[
+  {
+    "name": "Nutella",
+    "brand": "Ferrero",
+    "ean": "3017620422003",
+    "image": "https://images.openfoodfacts.org/..."
+  }
+]
+```
+
+#### POST /api/products/select
+Track a product selection for trending analytics. Uses Redis sorted sets to maintain real-time trending data.
+
+**Body:**
+```json
+{
+  "ean": "3017620422003",
+  "territory": "Guadeloupe",
+  "name": "Nutella",
+  "brand": "Ferrero",
+  "image": "https://images.openfoodfacts.org/..."
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "ean": "3017620422003",
+  "territory": "Guadeloupe",
+  "score": 42,
+  "tracked": true,
+  "message": "Product selection tracked successfully"
+}
+```
+
+**Notes:**
+- `ean` is required and must be 8-14 digits
+- `territory` defaults to 'Guadeloupe' if not provided
+- `name`, `brand`, and `image` are optional metadata
+- Uses `ZINCRBY trendingZ:{territory}` to increment product score
+- Stores metadata in `product:{ean}` hash
+
+#### GET /api/products/trending
+Get top trending products by territory based on user selections.
+
+**Query Parameters:**
+- `territory` (optional): Territory code (default: 'Guadeloupe')
+- `limit` (optional): Number of products to return (default: 10, max: 100)
+
+**Response:**
+```json
+{
+  "territory": "Guadeloupe",
+  "limit": 10,
+  "count": 5,
+  "products": [
+    {
+      "ean": "3017620422003",
+      "score": 42,
+      "name": "Nutella",
+      "brand": "Ferrero",
+      "image": "https://images.openfoodfacts.org/..."
+    }
+  ]
+}
+```
+
 ### 🔍 Prices API
 
 #### GET /api/prices
@@ -181,6 +260,10 @@ node ace serve --watch
 ```env
 # Database
 DATABASE_URL=postgresql://...
+
+# Redis (for trending analytics)
+UPSTASH_REDIS_REST_URL=https://your-redis.upstash.io
+UPSTASH_REDIS_REST_TOKEN=your_token_here
 
 # External APIs
 CARREFOUR_API_KEY=xxx
