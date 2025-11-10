@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import Fuse from 'fuse.js';
+import { normalizeText } from '../utils/text';
 
 const DEBOUNCE = 250;
 
@@ -16,9 +18,32 @@ export default function ProductSearch({ territory, onPickEAN }) {
     const timer = setTimeout(async () => {
       setLoading(true);
       try {
+        const normalizedQuery = normalizeText(query);
         const res = await fetch(`/api/products/search?q=${encodeURIComponent(query)}&territory=${encodeURIComponent(territory || 'Guadeloupe')}`);
         const data = await res.json();
-        setResults(data);
+
+        // Apply fuzzy re-ranking if we have results
+        if (data && data.length > 0 && normalizedQuery.length >= 3) {
+          const fuse = new Fuse(data, {
+            keys: [
+              { name: 'name', weight: 0.6 },
+              { name: 'brand', weight: 0.4 },
+            ],
+            threshold: 0.38,
+            ignoreLocation: true,
+          });
+
+          const reranked = fuse.search(normalizedQuery);
+
+          // If Fuse returns empty, fall back to original ordering
+          if (reranked.length > 0) {
+            setResults(reranked.map((result) => result.item).slice(0, 15));
+          } else {
+            setResults(data.slice(0, 15));
+          }
+        } else {
+          setResults(data);
+        }
       } catch (err) {
         console.error('Erreur recherche produit :', err);
       } finally {

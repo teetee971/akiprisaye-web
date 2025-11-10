@@ -40,6 +40,10 @@ export default [
         FormData: 'readonly',
         URL: 'readonly',
         URLSearchParams: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
         // Node.js globals
         process: 'readonly',
         __dirname: 'readonly',
