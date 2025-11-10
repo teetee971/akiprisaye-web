@@ -65,14 +65,25 @@ self.addEventListener('fetch', (event) => {
   // Special handling for navigation requests
   if (event.request.mode === 'navigate') {
     event.respondWith(
-      Promise.race([
-        fetch(event.request),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 3000))
-      ])
-        .catch(() => {
-          // If offline or timeout, return the offline page
+      caches.match(event.request).then((cachedResponse) => {
+        if (cachedResponse) {
+          return cachedResponse;
+        }
+        // Not in cache, try network with timeout
+        return Promise.race([
+          fetch(event.request),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 3000))
+        ])
+        .catch(async () => {
+          // Try cache again in case it was added after the first check
+          const fallbackCached = await caches.match(event.request);
+          if (fallbackCached) {
+            return fallbackCached;
+          }
+          // If still not available, return the offline page
           return caches.match('/offline.html');
-        })
+        });
+      })
     );
     return;
   }

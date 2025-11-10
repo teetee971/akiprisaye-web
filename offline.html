@@ -172,13 +172,6 @@
     window.addEventListener('online', function() {
       window.location.reload();
     });
-    
-    // Check connection status periodically
-    setInterval(function() {
-      if (navigator.onLine) {
-        window.location.reload();
-      }
-    }, 5000);
   </script>
 </body>
 </html>

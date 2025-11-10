@@ -76,7 +76,7 @@ function renderPricesTable(data, offProduct = null) {
               <span style="background: ${getNutriscoreColor(offProduct.nutriscore)}; 
                            color: white; padding: 0.25rem 0.5rem; border-radius: 4px; 
                            font-weight: bold; font-size: 0.85rem;">
-                Nutri-Score: ${offProduct.nutriscore.toUpperCase()}
+                Nutri-Score: ${escapeHtml(offProduct.nutriscore.toUpperCase())}
               </span>
             </p>
           ` : ''}
