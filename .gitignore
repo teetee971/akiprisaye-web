@@ -3,9 +3,9 @@
 # Fichiers sensibles
 *.key
 *.pem
-*.env
-*.env.*
 .env
+.env.*
+!.env.example
 .env.local
 .env.development.local
 .env.test.local
