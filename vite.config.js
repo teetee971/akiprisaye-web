@@ -1,8 +1,14 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
+import path from 'path';
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
   plugins: [
     react(),
     viteStaticCopy({
@@ -56,6 +62,7 @@ export default defineConfig({
         historique: './historique.html',
         iaConseiller: './ia-conseiller.html',
         monCompte: './mon-compte.html',
+        pricing: './pricing.html',
         faq: './faq.html',
         contact: './contact.html',
         mentions: './mentions.html',
