@@ -24,7 +24,7 @@ export default function Carte() {
   }, []);
 
   const filteredStores = stores.filter(store => 
-    selectedTerritory === 'all' || store.territory === selectedTerritory
+    selectedTerritory === 'all' || store.territory === selectedTerritory,
   );
 
   const getStoreTypeIcon = (type) => {
@@ -32,7 +32,7 @@ export default function Carte() {
       'hypermarche': '🏬',
       'supermarche': '🛒',
       'discount': '💰',
-      'proximite': '🏪'
+      'proximite': '🏪',
     };
     return icons[type] || '🏪';
   };

@@ -80,10 +80,10 @@ export async function onRequestGet(context) {
     if (!ean) {
       return new Response(JSON.stringify({
         error: 'Invalid or missing EAN code',
-        message: 'EAN must be 8-14 digits'
+        message: 'EAN must be 8-14 digits',
       }), {
         status: 400,
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
       });
     }
     
@@ -112,15 +112,15 @@ export async function onRequestGet(context) {
       product: null, // Would be fetched from products collection
       prices: [], // Would be fetched from prices collection
       best: null, // Would be calculated from available prices
-      message: 'API endpoint is ready. Connect to Firestore for live data.'
+      message: 'API endpoint is ready. Connect to Firestore for live data.',
     };
     
     return new Response(JSON.stringify(mockResponse), {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=300' // Cache for 5 minutes
-      }
+        'Cache-Control': 'public, max-age=300', // Cache for 5 minutes
+      },
     });
     
   } catch (error) {
@@ -128,10 +128,10 @@ export async function onRequestGet(context) {
     
     return new Response(JSON.stringify({
       error: 'Internal server error',
-      message: error.message
+      message: error.message,
     }), {
       status: 500,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
     });
   }
 }
@@ -140,9 +140,9 @@ export async function onRequestGet(context) {
 export function onRequestPost(context) {
   return new Response(JSON.stringify({
     error: 'Method not allowed',
-    message: 'POST not supported on this endpoint'
+    message: 'POST not supported on this endpoint',
   }), {
     status: 405,
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json' },
   });
 }

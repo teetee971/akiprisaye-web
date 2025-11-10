@@ -104,7 +104,7 @@ function generateTips(analysis) {
   const categoryEntries = Object.entries(analysis.categories);
   if (categoryEntries.length > 0) {
     const topCategory = categoryEntries.reduce((max, curr) => 
-      curr[1].total > max[1].total ? curr : max
+      curr[1].total > max[1].total ? curr : max,
     );
     
     tips.push({

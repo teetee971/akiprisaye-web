@@ -40,6 +40,7 @@ export default [
         FormData: 'readonly',
         URL: 'readonly',
         URLSearchParams: 'readonly',
+        alert: 'readonly',
         // Node.js globals
         process: 'readonly',
         __dirname: 'readonly',

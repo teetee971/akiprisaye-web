@@ -56,7 +56,7 @@ export default function Comparateur() {
         unit: '€',
         location: territory,
         lastUpdate: new Date().toISOString(),
-        promotion: false
+        promotion: false,
       },
       {
         id: 2,
@@ -65,7 +65,7 @@ export default function Comparateur() {
         unit: '€',
         location: territory,
         lastUpdate: new Date().toISOString(),
-        promotion: true
+        promotion: true,
       },
       {
         id: 3,
@@ -74,8 +74,8 @@ export default function Comparateur() {
         unit: '€',
         location: territory,
         lastUpdate: new Date().toISOString(),
-        promotion: false
-      }
+        promotion: false,
+      },
     ];
   };
 
@@ -85,7 +85,7 @@ export default function Comparateur() {
       day: 'numeric',
       month: 'short',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
   };
 

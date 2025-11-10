@@ -20,13 +20,13 @@ const CRITICAL_ASSETS = [
   'upload-ticket.html',
   'firebase-config.js',
   'manifest.json',
-  'public/service-worker.js'
+  'public/service-worker.js',
 ];
 
 // Optional assets (warnings only)
 const OPTIONAL_ASSETS = [
   'functions/api/prices.js',
-  'src/data/firestorePrices.js'
+  'src/data/firestorePrices.js',
 ];
 
 // File reference checks
@@ -34,19 +34,19 @@ const FILE_REFERENCES = [
   {
     file: 'comparateur.html',
     shouldContain: ['comparateur-fetch.js'],
-    description: 'comparateur.html should reference comparateur-fetch.js'
+    description: 'comparateur.html should reference comparateur-fetch.js',
   },
   {
     file: 'index.html',
     shouldContain: ['KI PRI SA YÉ'],
-    description: 'index.html should contain expected content'
-  }
+    description: 'index.html should contain expected content',
+  },
 ];
 
 // HTML files to validate for image references
 const HTML_FILES_TO_VALIDATE = [
   'index.html',
-  'public/index.html'
+  'public/index.html',
 ];
 
 let hasErrors = false;

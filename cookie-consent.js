@@ -81,12 +81,12 @@ class CookieConsent {
   setConsent(value) {
     const date = new Date();
     date.setTime(date.getTime() + (this.consentExpiry * 24 * 60 * 60 * 1000));
-    const expires = "expires=" + date.toUTCString();
+    const expires = 'expires=' + date.toUTCString();
     document.cookie = `${this.cookieName}=${value};${expires};path=/;SameSite=Strict`;
   }
 
   getConsent() {
-    const name = this.cookieName + "=";
+    const name = this.cookieName + '=';
     const decodedCookie = decodeURIComponent(document.cookie);
     const ca = decodedCookie.split(';');
     

@@ -1,14 +1,14 @@
 // src/pages/Pricing.jsx
-import React, { useState, useEffect } from "react";
-import { auth } from "@/lib/firebase";
-import { setUserPlan, getUserPlan } from "@/lib/firestore/plan";
-import { onAuthStateChanged } from "firebase/auth";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { useState, useEffect } from 'react';
+import { auth } from '@/lib/firebase';
+import { setUserPlan, getUserPlan } from '@/lib/firestore/plan';
+import { onAuthStateChanged } from 'firebase/auth';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 
 export default function Pricing() {
   const [user, setUser] = useState(null);
-  const [currentPlan, setCurrentPlan] = useState("freemium");
+  const [currentPlan, setCurrentPlan] = useState('freemium');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -26,7 +26,7 @@ export default function Pricing() {
 
   const handleChoosePlan = async (plan) => {
     if (!user) {
-      alert("Veuillez d'abord vous connecter.");
+      alert('Veuillez d\'abord vous connecter.');
       return;
     }
     
@@ -35,7 +35,7 @@ export default function Pricing() {
       setCurrentPlan(plan);
       alert(`Plan ${plan.toUpperCase()} activé ✅`);
     } catch (error) {
-      alert("Erreur lors de la mise à jour du plan : " + error.message);
+      alert('Erreur lors de la mise à jour du plan : ' + error.message);
     }
   };
 
@@ -54,7 +54,7 @@ export default function Pricing() {
           Choisissez votre plan
         </h1>
         <p className="text-center text-gray-300 mb-12">
-          {user ? `Connecté en tant que ${user.email} - Plan actuel: ${currentPlan.toUpperCase()}` : "Connectez-vous pour changer de plan"}
+          {user ? `Connecté en tant que ${user.email} - Plan actuel: ${currentPlan.toUpperCase()}` : 'Connectez-vous pour changer de plan'}
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -72,11 +72,11 @@ export default function Pricing() {
                 <li>✓ Alertes de prix limitées</li>
               </ul>
               <Button
-                onClick={() => handleChoosePlan("freemium")}
-                disabled={currentPlan === "freemium"}
+                onClick={() => handleChoosePlan('freemium')}
+                disabled={currentPlan === 'freemium'}
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white"
               >
-                {currentPlan === "freemium" ? "Plan actuel" : "Choisir Freemium"}
+                {currentPlan === 'freemium' ? 'Plan actuel' : 'Choisir Freemium'}
               </Button>
             </div>
           </Card>
@@ -99,11 +99,11 @@ export default function Pricing() {
                 <li>✓ Support prioritaire</li>
               </ul>
               <Button
-                onClick={() => handleChoosePlan("premium")}
-                disabled={currentPlan === "premium"}
+                onClick={() => handleChoosePlan('premium')}
+                disabled={currentPlan === 'premium'}
                 className="w-full bg-white text-blue-900 hover:bg-gray-100"
               >
-                {currentPlan === "premium" ? "Plan actuel" : "Passer à Premium"}
+                {currentPlan === 'premium' ? 'Plan actuel' : 'Passer à Premium'}
               </Button>
             </div>
           </Card>
@@ -124,11 +124,11 @@ export default function Pricing() {
                 <li>✓ Intégrations personnalisées</li>
               </ul>
               <Button
-                onClick={() => handleChoosePlan("pro")}
-                disabled={currentPlan === "pro"}
+                onClick={() => handleChoosePlan('pro')}
+                disabled={currentPlan === 'pro'}
                 className="w-full bg-purple-600 hover:bg-purple-700 text-white"
               >
-                {currentPlan === "pro" ? "Plan actuel" : "Passer à Pro"}
+                {currentPlan === 'pro' ? 'Plan actuel' : 'Passer à Pro'}
               </Button>
             </div>
           </Card>
@@ -140,7 +140,7 @@ export default function Pricing() {
               Vous devez être connecté pour changer de plan
             </p>
             <Button
-              onClick={() => window.location.href = "/mon-compte"}
+              onClick={() => window.location.href = '/mon-compte'}
               className="bg-blue-600 hover:bg-blue-700 text-white"
             >
               Se connecter

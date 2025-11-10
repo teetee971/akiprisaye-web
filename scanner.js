@@ -28,10 +28,10 @@ async function ensureZXing() {
 
 async function startScanner() {
   if (!canUseMedia()) {
-    setStatus("Caméra non supportée par ce navigateur.", true);
+    setStatus('Caméra non supportée par ce navigateur.', true);
     return;
   }
-  setStatus("Initialisation caméra…");
+  setStatus('Initialisation caméra…');
   startBtn.disabled = true;
   try {
     const { BrowserMultiFormatReader } = await ensureZXing();
@@ -51,7 +51,7 @@ async function startScanner() {
         } else if (err) {
           // Ignorer les erreurs courantes (NotFound/Checksum/Format) pour éviter le spam
         }
-      }
+      },
     );
     currentStream = videoEl.srcObject;
     if (currentStream) {
@@ -66,7 +66,7 @@ async function startScanner() {
       }
     }
     stopBtn.disabled = false;
-    setStatus("Caméra active. Cadrez le code-barres.");
+    setStatus('Caméra active. Cadrez le code-barres.');
   } catch (e) {
     setStatus(`Erreur: ${e?.message || 'Impossible d’accéder à la caméra'}`, true);
     startBtn.disabled = false;
@@ -85,7 +85,7 @@ function stopScanner(resetStatus = true) {
   flashBtn.style.display = 'none';
   stopBtn.disabled = true;
   startBtn.disabled = false;
-  if (resetStatus) setStatus("Caméra inactive.");
+  if (resetStatus) setStatus('Caméra inactive.');
 }
 
 async function toggleTorch() {
@@ -93,14 +93,14 @@ async function toggleTorch() {
   const current = torchTrack.getSettings().torch === true;
   try {
     await torchTrack.applyConstraints({ advanced: [{ torch: !current }] });
-    flashBtn.textContent = !current ? "Désactiver flash" : "Activer flash";
+    flashBtn.textContent = !current ? 'Désactiver flash' : 'Activer flash';
   } catch {
-    setStatus("Impossible d’activer le flash.", true);
+    setStatus('Impossible d’activer le flash.', true);
   }
 }
 
 async function decodeImageFile(file) {
-  setStatus("Décodage de l’image…");
+  setStatus('Décodage de l’image…');
   const url = URL.createObjectURL(file);
   const img = new Image();
   img.onload = async () => {
@@ -113,17 +113,17 @@ async function decodeImageFile(file) {
         setStatus(`EAN détecté: ${text}`);
         window.location.href = `/comparateur.html?ean=${encodeURIComponent(text)}`;
       } else {
-        setStatus("Aucun EAN valide détecté.", true);
+        setStatus('Aucun EAN valide détecté.', true);
       }
     } catch {
-      setStatus("Code-barres introuvable sur l’image.", true);
+      setStatus('Code-barres introuvable sur l’image.', true);
     } finally {
       URL.revokeObjectURL(url);
     }
   };
   img.onerror = () => {
     URL.revokeObjectURL(url);
-    setStatus("Erreur de lecture de l’image.", true);
+    setStatus('Erreur de lecture de l’image.', true);
   };
   img.src = url;
 }

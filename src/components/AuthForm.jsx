@@ -1,5 +1,5 @@
 // src/components/AuthForm.jsx
-import React, { useState } from "react";
+import { useState } from 'react';
 import {
   GoogleAuthProvider,
   signInWithPopup,
@@ -7,32 +7,32 @@ import {
   createUserWithEmailAndPassword,
   RecaptchaVerifier,
   signInWithPhoneNumber,
-} from "firebase/auth";
-import { auth, db } from "@/lib/firebase";
-import { doc, setDoc } from "firebase/firestore";
-import { Button } from "@/components/ui/button";
+} from 'firebase/auth';
+import { auth, db } from '@/lib/firebase';
+import { doc, setDoc } from 'firebase/firestore';
+import { Button } from '@/components/ui/button';
 
 export default function AuthForm() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [phone, setPhone] = useState("");
-  const [otp, setOtp] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [phone, setPhone] = useState('');
+  const [otp, setOtp] = useState('');
   const [confirmResult, setConfirmResult] = useState(null);
-  const [mode, setMode] = useState("login");
+  const [mode, setMode] = useState('login');
 
   // --- Google Sign In ---
   const signInGoogle = async () => {
     try {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
-      await setDoc(doc(db, "users", result.user.uid), {
+      await setDoc(doc(db, 'users', result.user.uid), {
         email: result.user.email,
         name: result.user.displayName,
-        plan: "freemium",
+        plan: 'freemium',
         createdAt: new Date(),
       }, { merge: true });
     } catch (err) {
-      alert("Erreur d'authentification Google : " + err.message);
+      alert('Erreur d\'authentification Google : ' + err.message);
     }
   };
 
@@ -40,17 +40,17 @@ export default function AuthForm() {
   const handleEmailAuth = async () => {
     try {
       const userCredential =
-        mode === "login"
+        mode === 'login'
           ? await signInWithEmailAndPassword(auth, email, password)
           : await createUserWithEmailAndPassword(auth, email, password);
 
-      await setDoc(doc(db, "users", userCredential.user.uid), {
+      await setDoc(doc(db, 'users', userCredential.user.uid), {
         email,
-        plan: "freemium",
+        plan: 'freemium',
         createdAt: new Date(),
       }, { merge: true });
     } catch (err) {
-      alert("Erreur d'authentification : " + err.message);
+      alert('Erreur d\'authentification : ' + err.message);
     }
   };
 
@@ -60,32 +60,32 @@ export default function AuthForm() {
       if (!window.recaptchaVerifier) {
         window.recaptchaVerifier = new RecaptchaVerifier(
           auth,
-          "recaptcha-container",
-          { size: "invisible" }
+          'recaptcha-container',
+          { size: 'invisible' },
         );
       }
       const confirmation = await signInWithPhoneNumber(
         auth,
         phone,
-        window.recaptchaVerifier
+        window.recaptchaVerifier,
       );
       setConfirmResult(confirmation);
-      alert("Code OTP envoyé !");
+      alert('Code OTP envoyé !');
     } catch (err) {
-      alert("Erreur envoi OTP : " + err.message);
+      alert('Erreur envoi OTP : ' + err.message);
     }
   };
 
   const verifyOtp = async () => {
     try {
       const result = await confirmResult.confirm(otp);
-      await setDoc(doc(db, "users", result.user.uid), {
+      await setDoc(doc(db, 'users', result.user.uid), {
         phone,
-        plan: "freemium",
+        plan: 'freemium',
         createdAt: new Date(),
       }, { merge: true });
     } catch (err) {
-      alert("Erreur OTP : " + err.message);
+      alert('Erreur OTP : ' + err.message);
     }
   };
 
@@ -114,7 +114,7 @@ export default function AuthForm() {
         className="w-full mb-3 p-3 rounded bg-slate-800 text-white"
       />
       <Button onClick={handleEmailAuth} className="w-full mb-4 bg-green-600 hover:bg-green-700">
-        {mode === "login" ? "Connexion" : "Créer un compte"}
+        {mode === 'login' ? 'Connexion' : 'Créer un compte'}
       </Button>
 
       {/* Téléphone */}
@@ -146,12 +146,12 @@ export default function AuthForm() {
       <div id="recaptcha-container"></div>
 
       <p className="text-gray-400 mt-4 text-sm">
-        {mode === "login" ? "Pas encore inscrit ?" : "Déjà un compte ?"}{" "}
+        {mode === 'login' ? 'Pas encore inscrit ?' : 'Déjà un compte ?'}{' '}
         <span
-          onClick={() => setMode(mode === "login" ? "signup" : "login")}
+          onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
           className="text-blue-400 cursor-pointer hover:underline"
         >
-          {mode === "login" ? "Créer un compte" : "Se connecter"}
+          {mode === 'login' ? 'Créer un compte' : 'Se connecter'}
         </span>
       </p>
     </div>

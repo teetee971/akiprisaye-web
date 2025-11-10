@@ -9,7 +9,7 @@ import { logMessage } from '../../firebase_log_service.js';
 
 export default function ChatIALocal() {
   const [messages, setMessages] = useState([
-    { from: 'ia', text: 'Bonjou, ès ou vlé konpare pri on pwodui lokal ?' }
+    { from: 'ia', text: 'Bonjou, ès ou vlé konpare pri on pwodui lokal ?' },
   ]);
   const [input, setInput] = useState('');
   const [lang, setLang] = useState('creole');
@@ -65,7 +65,7 @@ export default function ChatIALocal() {
               <div
                 key={i}
                 className={
-                  "text-sm my-1 " +
+                  'text-sm my-1 ' +
                   (msg.from === 'user'
                     ? 'text-right text-blue-600'
                     : 'text-left text-green-800')

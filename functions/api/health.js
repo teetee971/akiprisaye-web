@@ -12,20 +12,20 @@ export async function onRequestGet(context) {
     endpoints: {
       prices: '/api/prices',
       news: '/api/news',
-      contact: '/api/contact'
+      contact: '/api/contact',
     },
     features: {
       pwa: true,
       offline: true,
-      responsive: true
-    }
+      responsive: true,
+    },
   };
 
   return new Response(JSON.stringify(health), {
     status: 200,
     headers: {
       'Content-Type': 'application/json',
-      'Cache-Control': 'no-cache'
-    }
+      'Cache-Control': 'no-cache',
+    },
   });
 }

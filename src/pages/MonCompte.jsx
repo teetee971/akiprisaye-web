@@ -1,16 +1,16 @@
 // src/pages/MonCompte.jsx
-import React, { useState, useEffect } from "react";
-import { auth, db } from "@/lib/firebase";
-import { onAuthStateChanged, signOut } from "firebase/auth";
-import { doc, getDoc, setDoc } from "firebase/firestore";
-import { getUserPlan } from "@/lib/firestore/plan";
-import AuthForm from "@/components/AuthForm";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { useState, useEffect } from 'react';
+import { auth, db } from '@/lib/firebase';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { getUserPlan } from '@/lib/firestore/plan';
+import AuthForm from '@/components/AuthForm';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 
 export default function MonCompte() {
   const [user, setUser] = useState(null);
-  const [userPlan, setUserPlan] = useState("freemium");
+  const [userPlan, setUserPlan] = useState('freemium');
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -21,7 +21,7 @@ export default function MonCompte() {
         const plan = await getUserPlan(currentUser.uid);
         setUserPlan(plan);
         
-        const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+        const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
         if (userDoc.exists()) {
           setUserData(userDoc.data());
         }
@@ -37,9 +37,9 @@ export default function MonCompte() {
       await signOut(auth);
       setUser(null);
       setUserData(null);
-      setUserPlan("freemium");
+      setUserPlan('freemium');
     } catch (error) {
-      alert("Erreur lors de la déconnexion : " + error.message);
+      alert('Erreur lors de la déconnexion : ' + error.message);
     }
   };
 
@@ -49,18 +49,18 @@ export default function MonCompte() {
 
     const formData = new FormData(e.target);
     const updates = {
-      name: formData.get("name"),
-      territory: formData.get("territory"),
-      notifications: formData.get("notifications") === "on",
-      newsletter: formData.get("newsletter") === "on",
+      name: formData.get('name'),
+      territory: formData.get('territory'),
+      notifications: formData.get('notifications') === 'on',
+      newsletter: formData.get('newsletter') === 'on',
     };
 
     try {
-      await setDoc(doc(db, "users", user.uid), updates, { merge: true });
-      alert("Profil mis à jour avec succès ✅");
+      await setDoc(doc(db, 'users', user.uid), updates, { merge: true });
+      alert('Profil mis à jour avec succès ✅');
       setUserData({ ...userData, ...updates });
     } catch (error) {
-      alert("Erreur lors de la mise à jour : " + error.message);
+      alert('Erreur lors de la mise à jour : ' + error.message);
     }
   };
 
@@ -127,7 +127,7 @@ export default function MonCompte() {
                 type="text"
                 id="name"
                 name="name"
-                defaultValue={userData?.name || ""}
+                defaultValue={userData?.name || ''}
                 placeholder="Votre nom"
                 className="w-full p-3 rounded bg-slate-700 text-white border border-slate-600 focus:border-blue-500 focus:outline-none"
               />
@@ -140,7 +140,7 @@ export default function MonCompte() {
               <input
                 type="email"
                 id="email"
-                value={user.email || ""}
+                value={user.email || ''}
                 disabled
                 className="w-full p-3 rounded bg-slate-900 text-gray-500 border border-slate-600"
               />
@@ -153,7 +153,7 @@ export default function MonCompte() {
               <select
                 id="territory"
                 name="territory"
-                defaultValue={userData?.territory || ""}
+                defaultValue={userData?.territory || ''}
                 className="w-full p-3 rounded bg-slate-700 text-white border border-slate-600 focus:border-blue-500 focus:outline-none"
               >
                 <option value="">Sélectionnez votre territoire</option>
@@ -221,17 +221,17 @@ export default function MonCompte() {
           <p className="text-gray-300 mb-4">
             Vous êtes actuellement sur le plan <strong className="text-blue-400">{userPlan.toUpperCase()}</strong>
           </p>
-          {userPlan !== "premium" && userPlan !== "pro" && (
+          {userPlan !== 'premium' && userPlan !== 'pro' && (
             <Button
-              onClick={() => window.location.href = "/pricing"}
+              onClick={() => window.location.href = '/pricing'}
               className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
             >
               Passer à Premium ou Pro
             </Button>
           )}
-          {(userPlan === "premium" || userPlan === "pro") && (
+          {(userPlan === 'premium' || userPlan === 'pro') && (
             <Button
-              onClick={() => window.location.href = "/pricing"}
+              onClick={() => window.location.href = '/pricing'}
               className="w-full bg-slate-700 hover:bg-slate-600 text-white"
             >
               Gérer mon abonnement
