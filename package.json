@@ -9,7 +9,8 @@
     "lint": "eslint . --ext .js,.jsx",
     "lint:fix": "eslint . --ext .js,.jsx --fix",
     "format": "prettier --write \"**/*.{js,jsx,json,md,css,html}\"",
-    "test": "echo \"No tests configured yet\" && exit 0"
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@openfoodfacts/openfoodfacts-nodejs": "^2.0.0-alpha.19",
@@ -26,13 +27,18 @@
   "devDependencies": {
     "@eslint/js": "^9.15.0",
     "@tailwindcss/postcss": "^4.1.17",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
     "autoprefixer": "^10.4.21",
     "eslint": "^9.15.0",
     "eslint-plugin-react": "^7.37.2",
+    "jsdom": "^27.1.0",
     "prettier": "^3.3.3",
     "tailwindcss": "^4.1.17",
     "terser": "^5.44.1",
     "vite": "^7.2.2",
-    "vite-plugin-static-copy": "^3.1.4"
+    "vite-plugin-static-copy": "^3.1.4",
+    "vitest": "^4.0.8"
   }
 }
