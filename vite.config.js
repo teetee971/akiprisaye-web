@@ -13,6 +13,7 @@ export default defineConfig({
             'app.js',
             'comparateur-fetch.js',
             'comparateur-autofill.js',
+            'cookie-consent.js',
             'detecteur_contexte.js',
             'entraide_local.js',
             'firebase-config.js',
@@ -28,7 +29,7 @@ export default defineConfig({
           dest: '',
         },
         {
-          src: ['style.css', 'shared-nav.css'],
+          src: ['style.css', 'shared-nav.css', 'cookie-consent.css'],
           dest: '',
         },
       ],

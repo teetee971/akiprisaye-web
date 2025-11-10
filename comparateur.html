@@ -19,7 +19,7 @@
 <body>
   <div class="nav-overlay" id="nav-overlay"></div>
   <nav class="mobile-nav" id="mobile-nav" role="navigation" aria-label="Navigation mobile"><div class="mobile-nav-header"><span class="mobile-nav-title">Menu</span><button class="close-nav" id="close-nav" aria-label="Fermer le menu">&times;</button></div><ul class="mobile-nav-list"><li><a href="/"><span class="mobile-nav-icon">🏠</span>Accueil</a></li><li><a href="/comparateur.html"><span class="mobile-nav-icon">🔍</span>Comparateur</a></li><li><a href="/scanner.html"><span class="mobile-nav-icon">📷</span>Scanner</a></li><li><a href="/carte.html"><span class="mobile-nav-icon">🗺️</span>Carte</a></li><li><a href="/modules.html"><span class="mobile-nav-icon">🧩</span>Modules</a></li><li><a href="/ia-conseiller.html"><span class="mobile-nav-icon">🤖</span>IA Conseiller</a></li><li><a href="/historique.html"><span class="mobile-nav-icon">📊</span>Historique</a></li><li><a href="/mon-compte.html"><span class="mobile-nav-icon">👤</span>Mon Compte</a></li><li><a href="/faq.html"><span class="mobile-nav-icon">❓</span>FAQ</a></li><li><a href="/contact.html"><span class="mobile-nav-icon">📧</span>Contact</a></li></ul></nav>
-  <header class="shared-header"><div class="shared-header-content"><div style="display: flex; align-items: center; gap: 1rem;"><button class="burger-menu" id="burger-menu" aria-label="Menu" aria-expanded="false"><div class="burger-line"></div><div class="burger-line"></div><div class="burger-line"></div></button><a href="/" class="shared-logo" aria-label="A KI PRI SA YÉ - Accueil">A KI PRI SA YÉ</a></div><nav class="header-nav" role="navigation" aria-label="Navigation principale"><a href="/comparateur.html" aria-current="page">Comparateur</a><a href="/scanner.html">Scanner</a><a href="/modules.html">Modules</a><a href="/mon-compte.html">Mon Compte</a></nav></div></header>
+  <header class="shared-header"><div class="shared-header-content"><div style="display: flex; align-items: center; gap: 1rem;"><button class="burger-menu" id="burger-menu" aria-label="Menu" aria-expanded="false"><div class="burger-line"></div><div class="burger-line"></div><div class="burger-line"></div></button><a href="/" class="shared-logo" aria-label="A KI PRI SA YÉ - Accueil"><img src="/logo-icon.svg" alt="" class="shared-logo-icon" /><span class="shared-logo-text">A KI PRI SA YÉ</span></a></div><nav class="header-nav" role="navigation" aria-label="Navigation principale"><a href="/comparateur.html" aria-current="page">Comparateur</a><a href="/scanner.html">Scanner</a><a href="/modules.html">Modules</a><a href="/mon-compte.html">Mon Compte</a></nav></div></header>
   <main>
     <h1>🛒 Comparateur de Prix</h1>
     <div class="search-container"><form id="comparateur-form"><label for="ean-input">Code EAN :</label><input type="text" id="ean-input" name="ean" placeholder="Ex: 3017620422003" required pattern="[0-9]{8,14}" title="Code EAN (8 à 14 chiffres)"><button type="submit">🔍 Comparer les prix</button></form></div>
@@ -28,6 +28,6 @@
   <script type="module" src="shared-nav.js"></script>
   <script type="module" src="comparateur-fetch.js"></script>
   <script type="module" src="comparateur-autofill.js"></script>
-  <script src="/cookie-consent.js" defer></script>
+  <script type="module" src="/cookie-consent.js"></script>
 </body>
 </html>
