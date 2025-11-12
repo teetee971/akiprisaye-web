@@ -1,5 +1,5 @@
 /* eslint-env browser */
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 
 const DEBOUNCE = 250;
 
@@ -10,26 +10,43 @@ export default function ProductSearch({ territory, onPickEAN }) {
   const [loading, setLoading] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [isOpen, setIsOpen] = useState(false);
-  const inputRef = useRef(null);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (query.trim().length < 3) {
       setResults([]);
       setIsOpen(false);
+      setHasSearched(false);
+      setError(null);
       return;
     }
 
     const timer = setTimeout(async () => {
       setLoading(true);
+      setError(null);
       try {
         const res = await fetch(`/api/products/search?q=${encodeURIComponent(query)}&territory=${encodeURIComponent(territory || 'Guadeloupe')}`);
+        
+        if (!res.ok) {
+          const errorText = await res.text();
+          console.error('API error:', errorText);
+          setError('Erreur lors de la recherche');
+          setResults([]);
+          setHasSearched(true);
+          return;
+        }
+        
         const data = await res.json();
         setResults(Array.isArray(data) ? data : []);
         setIsOpen(true);
         setSelectedIndex(-1);
+        setHasSearched(true);
       } catch (err) {
         console.error('Erreur recherche produit :', err);
+        setError('Erreur lors de la recherche');
         setResults([]);
+        setHasSearched(true);
       } finally {
         setLoading(false);
       }
@@ -66,6 +83,17 @@ export default function ProductSearch({ territory, onPickEAN }) {
     }
   };
 
+  // Scroll selected item into view when navigating with keyboard
+  useEffect(() => {
+    if (selectedIndex >= 0) {
+      const element = document.getElementById(`product-option-${selectedIndex}`);
+      element?.scrollIntoView({
+        block: 'nearest',
+        behavior: 'smooth',
+      });
+    }
+  }, [selectedIndex]);
+
   const handleSelectProduct = (product) => {
     onPickEAN(product.ean);
     setQuery('');
@@ -78,7 +106,6 @@ export default function ProductSearch({ territory, onPickEAN }) {
     <div className="relative w-full max-w-xl mx-auto">
       <div className="relative">
         <input
-          ref={inputRef}
           type="text"
           role="combobox"
           aria-label="Rechercher un produit par nom"
@@ -149,11 +176,22 @@ export default function ProductSearch({ territory, onPickEAN }) {
         role="status"
         aria-live="polite"
         aria-atomic="true"
-        className="sr-only"
+        style={{
+          position: 'absolute',
+          width: '1px',
+          height: '1px',
+          padding: 0,
+          margin: '-1px',
+          overflow: 'hidden',
+          clip: 'rect(0, 0, 0, 0)',
+          whiteSpace: 'nowrap',
+          borderWidth: 0,
+        }}
       >
         {loading && 'Recherche en cours'}
-        {!loading && isOpen && results.length > 0 && `${results.length} résultat${results.length > 1 ? 's' : ''} trouvé${results.length > 1 ? 's' : ''}`}
-        {!loading && query.trim().length >= 3 && results.length === 0 && 'Aucun résultat trouvé'}
+        {!loading && error && error}
+        {!loading && !error && hasSearched && isOpen && results.length > 0 && `${results.length} résultat${results.length > 1 ? 's' : ''} trouvé${results.length > 1 ? 's' : ''}`}
+        {!loading && !error && hasSearched && results.length === 0 && 'Aucun résultat trouvé'}
       </div>
     </div>
   );

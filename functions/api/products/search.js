@@ -16,8 +16,8 @@ function sanitizeQuery(query) {
   // Remove special characters but keep spaces, letters, numbers, and hyphens
   const cleaned = query.trim().replace(/[^\w\s\-àâäæçéèêëïîôùûüÿœ]/gi, '');
   
-  // Require minimum 2 characters
-  if (cleaned.length < 2) return null;
+  // Require minimum 3 characters to match frontend requirement
+  if (cleaned.length < 3) return null;
   
   // Limit length to prevent abuse
   return cleaned.substring(0, 100);
@@ -84,19 +84,19 @@ export async function onRequestGet(context) {
     const query = sanitizeQuery(rawQuery);
     
     if (!query) {
-      return new Response(JSON.stringify({
-        error: 'Invalid or missing search query',
-        message: 'Query must be at least 2 characters',
-      }), {
-        status: 400,
-        headers: { 
+      // Return empty array for consistency with frontend expectations
+      return new Response(JSON.stringify([]), {
+        status: 200,
+        headers: {
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*',
+          'Cache-Control': 'public, max-age=3600',
         },
       });
     }
     
-    // Territory parameter (optional, for future use)
+    // Territory parameter (reserved for future territory-specific filtering)
+    // Currently passed but not used in OpenFoodFacts query
     const territory = params.get('territory') || 'Guadeloupe';
     
     // Search products
