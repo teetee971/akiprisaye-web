@@ -66,7 +66,10 @@ async function geocode(address) {
 
   try {
     const res = await fetch(url, {
-      headers: { "Accept-Language": "fr" }
+      headers: {
+        "Accept-Language": "fr",
+        "User-Agent": "akiprisaye-web/1.0 (+https://github.com/teetee971/akiprisaye-web)"
+      }
     });
 
     const data = await res.json();
@@ -92,8 +95,12 @@ async function autoImport() {
   );
 
   for (let store of storesList) {
-    // --- Géocodage
-    const { lat, lon } = await gecode(store.address);
+    // --- Géocodage (correction : geocode)
+    const { lat, lon } = await geocode(store.address);
+
+    if (lat === null || lon === null) {
+      console.warn(`Géocodage non trouvé pour: ${store.address}`);
+    }
 
     // --- Création d’un document automatique
     const ref = doc(collection(db, "stores"));
@@ -106,7 +113,7 @@ async function autoImport() {
       lat,
       lon,
       openingHours: "08:00 - 20:00",
-      territory: "Guadeloupe"
+      territory: "guadeloupe"
     });
 
     console.log("✅ Ajouté :", store.name);
