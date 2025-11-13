@@ -128,6 +128,13 @@ jobs:
           name: dist
           path: frontend/dist
 
+      - name: Vérifier les secrets Cloudflare
+        run: |
+          if [ -z "${{ secrets.CLOUDFLARE_API_TOKEN }}" ] || [ -z "${{ secrets.CLOUDFLARE_ACCOUNT_ID }}" ]; then
+            echo "Erreur: définissez les secrets CLOUDFLARE_API_TOKEN et CLOUDFLARE_ACCOUNT_ID dans Settings > Secrets and variables > Actions"
+            exit 1
+          fi
+
       - name: 🌐 Publish to Cloudflare Pages
         uses: cloudflare/pages-action@v1
         with:
