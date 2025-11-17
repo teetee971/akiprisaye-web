@@ -1,7 +1,7 @@
 
 // firebase_log_service.js
 
-import { db } from './firebase_config';
+import { db } from './src/firebase_config.js';
 import { collection, addDoc, Timestamp } from 'firebase/firestore';
 
 /**
@@ -11,6 +11,11 @@ import { collection, addDoc, Timestamp } from 'firebase/firestore';
  * @param {string} language - langue utilisée
  */
 export async function logMessage(from, text, language) {
+  if (!db) {
+    console.info('Journalisation désactivée : Firestore non initialisé.');
+    return;
+  }
+
   try {
     await addDoc(collection(db, 'chat_logs'), {
       from,
