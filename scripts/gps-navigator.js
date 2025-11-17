@@ -5,3 +5,13 @@ export function openGPS(lat, lng, name = "") {
 
   window.open(url, "_blank");
 }
+
+export function findPromosOnRoute(start, end, stores) {
+  // Stub implementation - returns empty array for now
+  return Promise.resolve([]);
+}
+
+export function renderPromoStops(promos) {
+  // Stub implementation - returns empty string for now
+  return "";
+}
