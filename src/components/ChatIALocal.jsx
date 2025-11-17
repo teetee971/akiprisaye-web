@@ -1,10 +1,10 @@
 
 import { useState } from 'react';
-import { Card, CardContent } from '../ui/card';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
-import { Textarea } from '../ui/textarea';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../ui/select';
+import { Card, CardContent } from './ui/card';
+import { Button } from './ui/button';
+import { Input } from './ui/input';
+import { Textarea } from './ui/textarea';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './ui/select';
 import { logMessage } from '../../firebase_log_service.js';
 
 export default function ChatIALocal() {

@@ -8,7 +8,7 @@ import {
   getDocs
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-import { openGPS, findPromosOnRoute, renderPromoStops } from "./gps-navigator.js";
+import { openGPS } from "./gps-navigator.js";
 
 /* -------------------------------------------------------------------------- */
 /*                               GOOGLE MAPS INIT                             */
@@ -141,19 +141,19 @@ window.findPromos = async function (storeId) {
     return;
   }
 
-  const userPos = userMarker.getPosition();
-  const destStore = await getStoreById(storeId);
-
-  const promos = await findPromosOnRoute(
-    userPos.lat(),
-    userPos.lng(),
-    destStore.lat,
-    destStore.lon
-  );
-
-  const html = renderPromoStops(promos);
-
-  document.querySelector("#promo-panel").innerHTML = html;
+  // TODO: Implement findPromosOnRoute and renderPromoStops functions
+  alert("Fonctionnalité de promos sur le trajet à venir !");
+  
+  // const userPos = userMarker.getPosition();
+  // const destStore = await getStoreById(storeId);
+  // const promos = await findPromosOnRoute(
+  //   userPos.lat(),
+  //   userPos.lng(),
+  //   destStore.lat,
+  //   destStore.lon
+  // );
+  // const html = renderPromoStops(promos);
+  // document.querySelector("#promo-panel").innerHTML = html;
 };
 
 async function getStoreById(id) {
