@@ -5,7 +5,7 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './ui/select';
-import { logMessage } from '../../firebase_log_service.js';
+import { logMessage } from '../firebase_log_service.js';
 
 export default function ChatIALocal() {
   const [messages, setMessages] = useState([
