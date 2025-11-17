@@ -39,7 +39,7 @@ export default function NewsWidget({ limit = 3, showFullButton = true }) {
       summary: 'Plusieurs enseignes annoncent une réduction de 5% sur les produits de première nécessité.',
       date: '2025-11-08',
       category: 'Prix',
-      territory: 'Guadeloupe'
+      territory: 'Guadeloupe',
     },
     {
       id: 2,
@@ -47,7 +47,7 @@ export default function NewsWidget({ limit = 3, showFullButton = true }) {
       summary: 'A KI PRI SA YÉ lance son comparateur intelligent pour les consommateurs ultra-marins.',
       date: '2025-11-07',
       category: 'Innovation',
-      territory: 'Tous territoires'
+      territory: 'Tous territoires',
     },
     {
       id: 3,
@@ -55,7 +55,7 @@ export default function NewsWidget({ limit = 3, showFullButton = true }) {
       summary: 'Le gouvernement étend le dispositif anti-vie-chère à de nouveaux produits essentiels.',
       date: '2025-11-06',
       category: 'Politique',
-      territory: 'DROM-COM'
+      territory: 'DROM-COM',
     },
     {
       id: 4,
@@ -63,8 +63,8 @@ export default function NewsWidget({ limit = 3, showFullButton = true }) {
       summary: 'Les consommateurs signalent une réduction des quantités sans baisse des prix.',
       date: '2025-11-05',
       category: 'Alerte',
-      territory: 'Martinique'
-    }
+      territory: 'Martinique',
+    },
   ];
 
   const formatDate = (dateString) => {
@@ -72,7 +72,7 @@ export default function NewsWidget({ limit = 3, showFullButton = true }) {
     return date.toLocaleDateString('fr-FR', { 
       day: 'numeric', 
       month: 'long', 
-      year: 'numeric' 
+      year: 'numeric', 
     });
   };
 
@@ -81,7 +81,7 @@ export default function NewsWidget({ limit = 3, showFullButton = true }) {
       'Prix': 'bg-green-600',
       'Innovation': 'bg-blue-600',
       'Politique': 'bg-purple-600',
-      'Alerte': 'bg-red-600'
+      'Alerte': 'bg-red-600',
     };
     return colors[category] || 'bg-gray-600';
   };

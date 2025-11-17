@@ -101,7 +101,7 @@ export function PalmaresEnseignes({ territoire = null }) {
       ];
 
       // Sort by selected criteria
-      let sorted = [...mockRankings];
+      const sorted = [...mockRankings];
       if (sortBy === 'avgPrice') {
         sorted.sort((a, b) => a.avgPrice - b.avgPrice);
       } else if (sortBy === 'productCount') {
@@ -188,10 +188,10 @@ export function PalmaresEnseignes({ territoire = null }) {
                   index === 0 
                     ? 'bg-yellow-400 text-yellow-900'
                     : index === 1
-                    ? 'bg-gray-300 text-gray-700'
-                    : index === 2
-                    ? 'bg-orange-400 text-orange-900'
-                    : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400'
+                      ? 'bg-gray-300 text-gray-700'
+                      : index === 2
+                        ? 'bg-orange-400 text-orange-900'
+                        : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400'
                 }`}>
                   {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : index + 1}
                 </div>
@@ -247,8 +247,8 @@ export function PalmaresEnseignes({ territoire = null }) {
                       store.priceChangePercent < 0
                         ? 'text-green-600 dark:text-green-400'
                         : store.priceChangePercent > 0
-                        ? 'text-red-600 dark:text-red-400'
-                        : 'text-gray-600 dark:text-gray-400'
+                          ? 'text-red-600 dark:text-red-400'
+                          : 'text-gray-600 dark:text-gray-400'
                     }`}>
                       {store.priceChangePercent > 0 ? '+' : ''}{store.priceChangePercent.toFixed(1)}%
                     </div>
@@ -263,8 +263,8 @@ export function PalmaresEnseignes({ territoire = null }) {
                         store.score >= 80
                           ? 'bg-green-500'
                           : store.score >= 60
-                          ? 'bg-yellow-500'
-                          : 'bg-orange-500'
+                            ? 'bg-yellow-500'
+                            : 'bg-orange-500'
                       }`}
                       style={{ width: `${store.score}%` }}
                     />

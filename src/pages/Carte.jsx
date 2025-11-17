@@ -8,7 +8,7 @@ delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
   iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png'
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
 });
 
 function MapUpdater({ position }) {
@@ -27,7 +27,7 @@ export default function Carte() {
   const territoryPositions = {
     'Guadeloupe': [16.262, -61.583],
     'Martinique': [14.613, -60.996],
-    'Guyane': [4.853, -52.328]
+    'Guyane': [4.853, -52.328],
   };
 
   useEffect(() => {
@@ -38,12 +38,12 @@ export default function Carte() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => setUserPosition([pos.coords.latitude, pos.coords.longitude]),
-        (err) => console.warn('Géolocalisation refusée', err)
+        (err) => console.warn('Géolocalisation refusée', err),
       );
     }
   }, []);
 
-  const territories = ["Guadeloupe", "Martinique", "Guyane"];
+  const territories = ['Guadeloupe', 'Martinique', 'Guyane'];
   const defaultPosition = territoryPositions[territory] || [16.262, -61.583];
 
   return (
@@ -103,7 +103,7 @@ export default function Carte() {
                   iconSize: [25, 41],
                   iconAnchor: [12, 41],
                   popupAnchor: [1, -34],
-                  shadowSize: [41, 41]
+                  shadowSize: [41, 41],
                 })}
               >
                 <Popup>

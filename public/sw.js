@@ -20,7 +20,7 @@ self.addEventListener('install', (event) => {
     caches.open(STATIC_CACHE).then((cache) => {
       console.log('[SW] Pre-caching static assets');
       return cache.addAll(STATIC_ASSETS.map(url => new Request(url, { cache: 'reload' })));
-    }).then(() => self.skipWaiting())
+    }).then(() => self.skipWaiting()),
   );
 });
 
@@ -34,12 +34,12 @@ self.addEventListener('activate', (event) => {
           .map((name) => {
             console.log('[SW] Deleting old cache:', name);
             return caches.delete(name);
-          })
+          }),
       );
     }).then(() => {
       console.log('[SW] Service Worker activé - version', CACHE_VERSION);
       return self.clients.claim();
-    })
+    }),
   );
 });
 
@@ -199,7 +199,7 @@ async function networkFirstWithOffline(request, cacheName) {
       </html>`,
       {
         headers: { 'Content-Type': 'text/html; charset=utf-8' },
-      }
+      },
     );
   }
 }
@@ -214,7 +214,7 @@ self.addEventListener('message', (event) => {
     event.waitUntil(
       caches.keys().then((cacheNames) => {
         return Promise.all(
-          cacheNames.map((name) => caches.delete(name))
+          cacheNames.map((name) => caches.delete(name)),
         );
       }).then(() => {
         return self.clients.matchAll();
@@ -222,7 +222,7 @@ self.addEventListener('message', (event) => {
         clients.forEach((client) => {
           client.postMessage({ type: 'CACHE_CLEARED' });
         });
-      })
+      }),
     );
   }
 });

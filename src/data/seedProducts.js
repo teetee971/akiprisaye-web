@@ -386,7 +386,7 @@ export function searchProductsByName(query) {
   const lowerQuery = query.toLowerCase();
   return SEED_PRODUCTS.filter(p => 
     p.name.toLowerCase().includes(lowerQuery) ||
-    p.brand.toLowerCase().includes(lowerQuery)
+    p.brand.toLowerCase().includes(lowerQuery),
   );
 }
 

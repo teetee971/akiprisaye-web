@@ -180,8 +180,8 @@ export function TiPanieSolidaire({ territoire = null }) {
                     panier.type === 'bio' 
                       ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200'
                       : panier.type === 'antigaspi'
-                      ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-200'
-                      : 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200'
+                        ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-200'
+                        : 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200'
                   }`}>
                     {panier.type === 'bio' ? 'BIO' : panier.type === 'antigaspi' ? 'ANTI-GASPI' : 'LOCAL'}
                   </span>

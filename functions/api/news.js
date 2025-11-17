@@ -15,7 +15,7 @@ const MOCK_NEWS = [
     territory: 'Guadeloupe',
     author: 'Rédaction AKPSY',
     tags: ['prix', 'baisse', 'bouclier-qualité-prix'],
-    published: true
+    published: true,
   },
   {
     id: 2,
@@ -27,7 +27,7 @@ const MOCK_NEWS = [
     territory: 'Tous territoires',
     author: 'Équipe AKPSY',
     tags: ['innovation', 'comparateur', 'technologie'],
-    published: true
+    published: true,
   },
   {
     id: 3,
@@ -39,7 +39,7 @@ const MOCK_NEWS = [
     territory: 'DROM-COM',
     author: 'AFP',
     tags: ['politique', 'bouclier', 'gouvernement'],
-    published: true
+    published: true,
   },
   {
     id: 4,
@@ -51,7 +51,7 @@ const MOCK_NEWS = [
     territory: 'Martinique',
     author: 'Association consommateurs',
     tags: ['shrinkflation', 'alerte', 'produits-laitiers'],
-    published: true
+    published: true,
   },
   {
     id: 5,
@@ -63,7 +63,7 @@ const MOCK_NEWS = [
     territory: 'La Réunion',
     author: 'Rédaction locale',
     tags: ['commerce', 'ouverture', 'discount'],
-    published: true
+    published: true,
   },
   {
     id: 6,
@@ -75,8 +75,8 @@ const MOCK_NEWS = [
     territory: 'Tous territoires',
     author: 'Équipe AKPSY',
     tags: ['mobile', 'pwa', 'application'],
-    published: true
-  }
+    published: true,
+  },
 ];
 
 /**
@@ -105,14 +105,14 @@ export async function onRequestGet(context) {
       filteredNews = filteredNews.filter(article =>
         article.territory === territory ||
         article.territory === 'Tous territoires' ||
-        article.territory === 'DROM-COM'
+        article.territory === 'DROM-COM',
       );
     }
     
     // Filter by category if specified
     if (category) {
       filteredNews = filteredNews.filter(article =>
-        article.category.toLowerCase() === category.toLowerCase()
+        article.category.toLowerCase() === category.toLowerCase(),
       );
     }
     
@@ -125,24 +125,24 @@ export async function onRequestGet(context) {
         total: filteredNews.length,
         territory: territory || 'all',
         category: category || 'all',
-        limit
-      }
+        limit,
+      },
     }), {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=600' // Cache for 10 minutes
-      }
+        'Cache-Control': 'public, max-age=600', // Cache for 10 minutes
+      },
     });
   } catch (error) {
     console.error('Error in /api/news:', error);
     
     return new Response(JSON.stringify({
       error: 'Internal server error',
-      message: error.message
+      message: error.message,
     }), {
       status: 500,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
     });
   }
 }
@@ -161,10 +161,10 @@ export async function onRequestPost(context) {
     for (const field of required) {
       if (!data[field]) {
         return new Response(JSON.stringify({
-          error: `Field ${field} is required`
+          error: `Field ${field} is required`,
         }), {
           status: 400,
-          headers: { 'Content-Type': 'application/json' }
+          headers: { 'Content-Type': 'application/json' },
         });
       }
     }
@@ -182,25 +182,25 @@ export async function onRequestPost(context) {
       territory: data.territory,
       author: data.author || 'A KI PRI SA YÉ',
       tags: data.tags || [],
-      published: true
+      published: true,
     };
     
     return new Response(JSON.stringify({
       data: newArticle,
-      message: 'Article created successfully (mock - not persisted)'
+      message: 'Article created successfully (mock - not persisted)',
     }), {
       status: 201,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {
     console.error('Error creating article:', error);
     
     return new Response(JSON.stringify({
       error: 'Internal server error',
-      message: error.message
+      message: error.message,
     }), {
       status: 500,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
     });
   }
 }

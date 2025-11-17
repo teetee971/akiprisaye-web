@@ -2,13 +2,13 @@
  * load-map.js — VERSION C (Google Maps + IA + Trajets + Arrêts Promo)
  */
 
-import { getDB } from "../firebase-config.js";
+import { getDB } from '../firebase-config.js';
 import {
   collection,
-  getDocs
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  getDocs,
+} from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
-import { openGPS, findPromosOnRoute, renderPromoStops } from "./gps-navigator.js";
+import { openGPS, findPromosOnRoute, renderPromoStops } from './gps-navigator.js';
 
 /* -------------------------------------------------------------------------- */
 /*                               GOOGLE MAPS INIT                             */
@@ -21,16 +21,16 @@ let userMarker = null;
  * Initialise Google Maps avec un style propre et épuré.
  */
 export function initGoogleMap() {
-  map = new google.maps.Map(document.getElementById("map"), {
+  map = new google.maps.Map(document.getElementById('map'), {
     center: { lat: 16.265, lon: -61.55 },
     zoom: 11,
-    mapId: "DEMO_MAP_ID", // si tu veux une carte stylée, je t’en ferai une
-    gestureHandling: "greedy",
+    mapId: 'DEMO_MAP_ID', // si tu veux une carte stylée, je t’en ferai une
+    gestureHandling: 'greedy',
     clickableIcons: false,
-    streetViewControl: false
+    streetViewControl: false,
   });
 
-  console.log("Google Maps initialisé.");
+  console.log('Google Maps initialisé.');
 }
 
 /* -------------------------------------------------------------------------- */
@@ -53,11 +53,11 @@ export function locateUser() {
         userMarker = new google.maps.Marker({
           position: coords,
           map,
-          title: "Vous êtes ici",
+          title: 'Vous êtes ici',
           icon: {
-            url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",
-            scaledSize: new google.maps.Size(40, 40)
-          }
+            url: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+            scaledSize: new google.maps.Size(40, 40),
+          },
         });
       } else {
         userMarker.setPosition(coords);
@@ -65,7 +65,7 @@ export function locateUser() {
 
       map.panTo(coords);
     },
-    () => alert("Impossible de vous localiser.")
+    () => alert('Impossible de vous localiser.'),
   );
 }
 
@@ -73,9 +73,9 @@ export function locateUser() {
 /*                            CHARGER MAGASINS FIRESTORE                      */
 /* -------------------------------------------------------------------------- */
 
-export async function loadStoresForTerritory(territory = "guadeloupe") {
+export async function loadStoresForTerritory(territory = 'guadeloupe') {
   const db = await getDB();
-  const storesRef = collection(db, "stores");
+  const storesRef = collection(db, 'stores');
 
   const snap = await getDocs(storesRef);
   const stores = [];
@@ -106,9 +106,9 @@ function renderStoresOnMap(stores) {
       map,
       title: store.name,
       icon: {
-        url: "https://maps.google.com/mapfiles/ms/icons/red-dot.png",
-        scaledSize: new google.maps.Size(40, 40)
-      }
+        url: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
+        scaledSize: new google.maps.Size(40, 40),
+      },
     });
 
     const content = `
@@ -127,7 +127,7 @@ function renderStoresOnMap(stores) {
 
     const box = new google.maps.InfoWindow({ content });
 
-    marker.addListener("click", () => box.open({ anchor: marker, map }));
+    marker.addListener('click', () => box.open({ anchor: marker, map }));
   });
 }
 
@@ -137,7 +137,7 @@ function renderStoresOnMap(stores) {
 
 window.findPromos = async function (storeId) {
   if (!userMarker) {
-    alert("Active la géolocalisation avant !");
+    alert('Active la géolocalisation avant !');
     return;
   }
 
@@ -148,17 +148,17 @@ window.findPromos = async function (storeId) {
     userPos.lat(),
     userPos.lng(),
     destStore.lat,
-    destStore.lon
+    destStore.lon,
   );
 
   const html = renderPromoStops(promos);
 
-  document.querySelector("#promo-panel").innerHTML = html;
+  document.querySelector('#promo-panel').innerHTML = html;
 };
 
 async function getStoreById(id) {
   const db = await getDB();
-  const col = collection(db, "stores");
+  const col = collection(db, 'stores');
   const snap = await getDocs(col);
 
   let res = null;

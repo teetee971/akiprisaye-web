@@ -6,39 +6,39 @@
 
 export const TERRITORIES = {
   guadeloupe: {
-    name: "Guadeloupe",
-    slug: "guadeloupe",
+    name: 'Guadeloupe',
+    slug: 'guadeloupe',
     center: { lat: 16.265, lng: -61.55 },
-    zoom: 11
+    zoom: 11,
   },
 
   martinique: {
-    name: "Martinique",
-    slug: "martinique",
+    name: 'Martinique',
+    slug: 'martinique',
     center: { lat: 14.6415, lng: -61.0242 },
-    zoom: 11
+    zoom: 11,
   },
 
   guyane: {
-    name: "Guyane",
-    slug: "guyane",
+    name: 'Guyane',
+    slug: 'guyane',
     center: { lat: 4.9224, lng: -52.3269 },
-    zoom: 10
+    zoom: 10,
   },
 
   mayotte: {
-    name: "Mayotte",
-    slug: "mayotte",
+    name: 'Mayotte',
+    slug: 'mayotte',
     center: { lat: -12.8275, lng: 45.1662 },
-    zoom: 11
+    zoom: 11,
   },
 
   reunion: {
-    name: "La Réunion",
-    slug: "reunion",
+    name: 'La Réunion',
+    slug: 'reunion',
     center: { lat: -21.1151, lng: 55.5364 },
-    zoom: 11
-  }
+    zoom: 11,
+  },
 };
 
 /**

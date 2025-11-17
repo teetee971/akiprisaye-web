@@ -50,7 +50,7 @@ export function SkeletonTable({ rows = 5, columns = 4 }) {
               key={`row-${rowIndex}-col-${colIndex}`}
               className="h-6 bg-slate-800 dark:bg-slate-700 rounded"
             ></div>
-          ))
+          )),
         )}
       </div>
     </div>

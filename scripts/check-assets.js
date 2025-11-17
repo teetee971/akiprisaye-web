@@ -1,8 +1,8 @@
-import fs from "fs";
+import fs from 'fs';
 
-console.log("🖼️ Analyse des assets (images)…");
+console.log('🖼️ Analyse des assets (images)…');
 
-const files = fs.readdirSync("./images");
+const files = fs.readdirSync('./images');
 
 files.forEach(f => {
   if (!/\.(png|jpg|jpeg|webp)$/i.test(f)) {
@@ -10,4 +10,4 @@ files.forEach(f => {
   }
 });
 
-console.log("✔ Analyse terminée.");
+console.log('✔ Analyse terminée.');

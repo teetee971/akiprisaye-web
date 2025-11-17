@@ -1,9 +1,9 @@
 // Service Worker v1.2 pour A KI PRI SA YÉ - Glass Pro Edition
 // Gère le cache statique et permet l'accès hors-ligne avec stratégie améliorée
 
-const CACHE_NAME = "akiprisaye-v1.2";
-const DYNAMIC_CACHE = `akipsy-dynamic-v1.2`;
-const OFFLINE_URL = "/offline.html";
+const CACHE_NAME = 'akiprisaye-v1.2';
+const DYNAMIC_CACHE = 'akipsy-dynamic-v1.2';
+const OFFLINE_URL = '/offline.html';
 
 // Liste des ressources à mettre en cache lors de l'installation
 const STATIC_ASSETS = [
@@ -19,7 +19,7 @@ const STATIC_ASSETS = [
   '/modules.html',
   '/public/responsive.css',
   '/public/assets/icon_192.png',
-  '/public/assets/icon_512.png'
+  '/public/assets/icon_512.png',
 ];
 
 // URLs à ne jamais mettre en cache
@@ -27,7 +27,7 @@ const CACHE_BLACKLIST = [
   '/api/',
   'chrome-extension://',
   'https://www.google-analytics.com',
-  'https://www.googletagmanager.com'
+  'https://www.googletagmanager.com',
 ];
 
 // Événement d'installation : mise en cache des ressources statiques
@@ -46,7 +46,7 @@ self.addEventListener('install', (e) => {
       .then(() => {
         console.log('[SW] Service Worker installed successfully');
         return self.skipWaiting();
-      })
+      }),
   );
 });
 
@@ -65,13 +65,13 @@ self.addEventListener('activate', (event) => {
             .map((cacheName) => {
               console.log('[SW] Deleting old cache:', cacheName);
               return caches.delete(cacheName);
-            })
+            }),
         );
       })
       .then(() => {
         console.log('[SW] Service Worker activated');
         return self.clients.claim();
-      })
+      }),
   );
 });
 
@@ -106,8 +106,8 @@ async function networkFirst(request) {
       JSON.stringify({ error: 'Network unavailable and no cache available' }),
       {
         status: 503,
-        headers: { 'Content-Type': 'application/json' }
-      }
+        headers: { 'Content-Type': 'application/json' },
+      },
     );
   }
 }
@@ -142,7 +142,7 @@ async function cacheFirst(request) {
     
     return new Response('Network error', {
       status: 503,
-      statusText: 'Service Unavailable'
+      statusText: 'Service Unavailable',
     });
   }
 }
@@ -150,7 +150,7 @@ async function cacheFirst(request) {
 // Événement de récupération : stratégie adaptative selon le type de requête
 self.addEventListener('fetch', (e) => {
   e.respondWith(
-    fetch(e.request).catch(() => caches.match(e.request).then((r) => r || caches.match(OFFLINE_URL)))
+    fetch(e.request).catch(() => caches.match(e.request).then((r) => r || caches.match(OFFLINE_URL))),
   );
 });
 
@@ -164,9 +164,9 @@ self.addEventListener('message', (event) => {
     event.waitUntil(
       caches.keys().then((cacheNames) => {
         return Promise.all(
-          cacheNames.map((cacheName) => caches.delete(cacheName))
+          cacheNames.map((cacheName) => caches.delete(cacheName)),
         );
-      })
+      }),
     );
   }
 });

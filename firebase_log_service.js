@@ -1,7 +1,7 @@
 
 // firebase_log_service.js
 
-import { db } from './firebase_config';
+import { db } from './src/firebase_config.js';
 import { collection, addDoc, Timestamp } from 'firebase/firestore';
 
 /**
@@ -16,7 +16,7 @@ export async function logMessage(from, text, language) {
       from,
       text,
       language,
-      timestamp: Timestamp.now()
+      timestamp: Timestamp.now(),
     });
   } catch (e) {
     console.error('Erreur enregistrement Firestore :', e);

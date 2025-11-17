@@ -65,7 +65,7 @@ exports.aiMarketInsights = functions.pubsub
       for (const product of domData) {
         // Find matching reference product from mainland
         const reference = hexData.find(
-          (r) => r.title === product.title || r.category === product.category
+          (r) => r.title === product.title || r.category === product.category,
         );
 
         const category = product.category || 'Autres';
@@ -148,19 +148,19 @@ exports.aiMarketInsights = functions.pubsub
         recommendations.push(
           'Les produits alimentaires et ménagers présentent une forte inflation locale.',
           'Renforcez les partenariats anti-gaspillage et Ti-Panié solidaire.',
-          'Alertez les consommateurs sur les écarts de prix importants.'
+          'Alertez les consommateurs sur les écarts de prix importants.',
         );
       } else if (globalIndex > 15) {
         recommendations.push(
           'Les écarts restent modérés mais constants.',
           'Optimisez la logistique locale et le regroupement des commandes.',
-          'Surveillez les catégories à forte variation.'
+          'Surveillez les catégories à forte variation.',
         );
       } else {
         recommendations.push(
           'Les prix sont globalement stables.',
           'Continuez le suivi IA et la veille tarifaire.',
-          'Maintenez la qualité des partenariats locaux.'
+          'Maintenez la qualité des partenariats locaux.',
         );
       }
 
@@ -207,7 +207,7 @@ exports.aiMarketInsights = functions.pubsub
           errorTimestamp: admin.firestore.FieldValue.serverTimestamp(),
           status: 'failed',
         },
-        { merge: true }
+        { merge: true },
       );
 
       throw error;

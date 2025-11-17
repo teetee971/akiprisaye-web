@@ -133,14 +133,14 @@ function initProductSearch() {
   if (!searchInput) return;
   
   // Handle input changes
-  searchInput.addEventListener('input', function(e) {
+  searchInput.addEventListener('input', (e) => {
     const query = e.target.value;
     const products = searchProducts(query);
     displaySuggestions(products);
   });
   
   // Close suggestions when clicking outside
-  document.addEventListener('click', function(e) {
+  document.addEventListener('click', (e) => {
     if (suggestionsDiv && !searchInput.contains(e.target) && !suggestionsDiv.contains(e.target)) {
       suggestionsDiv.style.display = 'none';
     }
@@ -149,7 +149,7 @@ function initProductSearch() {
   // Handle form submission with product search
   const form = document.getElementById('comparateur-form');
   if (form) {
-    form.addEventListener('submit', function(e) {
+    form.addEventListener('submit', (e) => {
       const eanInput = document.getElementById('ean-input');
       const searchValue = searchInput.value.trim();
       

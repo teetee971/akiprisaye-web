@@ -12,7 +12,7 @@ const territories = [
   { code: 'WF', name: 'Wallis-et-Futuna', flag: '🇼🇫' },
   { code: 'PF', name: 'Polynésie française', flag: '🇵🇫' },
   { code: 'NC', name: 'Nouvelle-Calédonie', flag: '🇳🇨' },
-  { code: 'TF', name: 'Terres australes et antarctiques françaises', flag: '🇹🇫' }
+  { code: 'TF', name: 'Terres australes et antarctiques françaises', flag: '🇹🇫' },
 ];
 
 export default function TerritorySelector({ value, onChange, className = '' }) {

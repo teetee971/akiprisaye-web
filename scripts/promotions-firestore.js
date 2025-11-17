@@ -18,13 +18,13 @@
  *  - estimatedSaving: 5.5   // en euros, optionnel
  */
 
-import { getDB } from "../firebase-config.js";
+import { getDB } from '../firebase-config.js';
 import {
   collection,
   getDocs,
   query,
-  where
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  where,
+} from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 /**
  * Transforme un document Firestore en objet promo propre.
@@ -33,17 +33,17 @@ function normalizePromo(docSnap) {
   const data = docSnap.data() || {};
   return {
     id: docSnap.id,
-    storeName: data.storeName || data.name || "Magasin",
-    title: data.title || "Promotion intéressante",
-    description: data.description || "",
-    territory: (data.territory || "guadeloupe").toLowerCase(),
-    discountType: data.discountType || "percent",
-    discountValue: typeof data.discountValue === "number" ? data.discountValue : 0,
-    lat: typeof data.lat === "number" ? data.lat : null,
-    lon: typeof data.lon === "number" ? data.lon : null,
+    storeName: data.storeName || data.name || 'Magasin',
+    title: data.title || 'Promotion intéressante',
+    description: data.description || '',
+    territory: (data.territory || 'guadeloupe').toLowerCase(),
+    discountType: data.discountType || 'percent',
+    discountValue: typeof data.discountValue === 'number' ? data.discountValue : 0,
+    lat: typeof data.lat === 'number' ? data.lat : null,
+    lon: typeof data.lon === 'number' ? data.lon : null,
     active: data.active !== false,
     tags: Array.isArray(data.tags) ? data.tags : [],
-    estimatedSaving: typeof data.estimatedSaving === "number" ? data.estimatedSaving : null
+    estimatedSaving: typeof data.estimatedSaving === 'number' ? data.estimatedSaving : null,
   };
 }
 
@@ -54,13 +54,13 @@ function getSavingLabel(promo) {
   if (promo.estimatedSaving && promo.estimatedSaving > 0) {
     return `≈ ${promo.estimatedSaving.toFixed(2)} € d'économie`;
   }
-  if (promo.discountType === "percent" && promo.discountValue > 0) {
+  if (promo.discountType === 'percent' && promo.discountValue > 0) {
     return `-${promo.discountValue}%`;
   }
-  if (promo.discountType === "fixed" && promo.discountValue > 0) {
+  if (promo.discountType === 'fixed' && promo.discountValue > 0) {
     return `-${promo.discountValue} €`;
   }
-  return "Économie intéressante";
+  return 'Économie intéressante';
 }
 
 /**
@@ -68,17 +68,17 @@ function getSavingLabel(promo) {
  * @param {string} territory - ex: "guadeloupe"
  * @returns {Promise<Array>}
  */
-export async function fetchActivePromotions(territory = "guadeloupe") {
+export async function fetchActivePromotions(territory = 'guadeloupe') {
   const db = await getDB();
-  const colRef = collection(db, "promotions");
+  const colRef = collection(db, 'promotions');
 
   // Normalisation du territoire
   const t = territory.toLowerCase();
 
-  let q = query(
+  const q = query(
     colRef,
-    where("active", "==", true),
-    where("territory", "==", t)
+    where('active', '==', true),
+    where('territory', '==', t),
   );
 
   const snap = await getDocs(q);
@@ -100,7 +100,7 @@ export async function fetchActivePromotions(territory = "guadeloupe") {
  * window.debugListPromos()
  */
 export async function debugListPromos() {
-  const promos = await fetchActivePromotions("guadeloupe");
+  const promos = await fetchActivePromotions('guadeloupe');
   console.table(
     promos.map((p) => ({
       id: p.id,
@@ -108,13 +108,13 @@ export async function debugListPromos() {
       title: p.title,
       saving: p.savingLabel,
       lat: p.lat,
-      lon: p.lon
-    }))
+      lon: p.lon,
+    })),
   );
   return promos;
 }
 
 // Pour pouvoir appeler depuis la console du navigateur
-if (typeof window !== "undefined") {
+if (typeof window !== 'undefined') {
   window.debugListPromos = debugListPromos;
 }

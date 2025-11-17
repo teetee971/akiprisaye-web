@@ -9,7 +9,7 @@ export default function IaConseiller() {
 
   const handleAnalyze = async () => {
     if (!user) {
-      setAdvice("Veuillez vous connecter pour obtenir une analyse personnalisée.");
+      setAdvice('Veuillez vous connecter pour obtenir une analyse personnalisée.');
       return;
     }
 

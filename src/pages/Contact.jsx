@@ -22,7 +22,7 @@ export default function Contact() {
               borderRadius: '4px',
               border: '1px solid #2a2d3e',
               background: '#1a1d2e',
-              color: '#ffffff'
+              color: '#ffffff',
             }}
           />
         </div>
@@ -40,7 +40,7 @@ export default function Contact() {
               borderRadius: '4px',
               border: '1px solid #2a2d3e',
               background: '#1a1d2e',
-              color: '#ffffff'
+              color: '#ffffff',
             }}
           />
         </div>
@@ -58,7 +58,7 @@ export default function Contact() {
               borderRadius: '4px',
               border: '1px solid #2a2d3e',
               background: '#1a1d2e',
-              color: '#ffffff'
+              color: '#ffffff',
             }}
           ></textarea>
         </div>
@@ -71,7 +71,7 @@ export default function Contact() {
             border: 'none',
             borderRadius: '4px',
             cursor: 'pointer',
-            fontWeight: '500'
+            fontWeight: '500',
           }}
         >
           Envoyer

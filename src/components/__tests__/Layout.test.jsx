@@ -8,7 +8,7 @@ describe('Layout Component', () => {
     return render(
       <BrowserRouter>
         <Layout />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
   };
 

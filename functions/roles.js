@@ -30,14 +30,14 @@ exports.setUserRole = functions.https.onCall(async (data, context) => {
   if (!context.auth) {
     throw new functions.https.HttpsError(
       'unauthenticated',
-      'Must be authenticated to call this function'
+      'Must be authenticated to call this function',
     );
   }
 
   if (!context.auth.token.admin) {
     throw new functions.https.HttpsError(
       'permission-denied',
-      'Only admins can set user roles'
+      'Only admins can set user roles',
     );
   }
 
@@ -48,7 +48,7 @@ exports.setUserRole = functions.https.onCall(async (data, context) => {
   if (!validRoles.includes(role)) {
     throw new functions.https.HttpsError(
       'invalid-argument',
-      `Role must be one of: ${validRoles.join(', ')}`
+      `Role must be one of: ${validRoles.join(', ')}`,
     );
   }
 
@@ -64,7 +64,7 @@ exports.setUserRole = functions.https.onCall(async (data, context) => {
         roleUpdatedAt: admin.firestore.FieldValue.serverTimestamp(),
         roleUpdatedBy: context.auth.uid,
       },
-      { merge: true }
+      { merge: true },
     );
 
     return { ok: true, message: `Role ${role} set successfully for user ${uid}` };
@@ -86,7 +86,7 @@ exports.getUserRole = functions.https.onCall(async (data, context) => {
   if (!context.auth) {
     throw new functions.https.HttpsError(
       'unauthenticated',
-      'Must be authenticated'
+      'Must be authenticated',
     );
   }
 
@@ -95,7 +95,7 @@ exports.getUserRole = functions.https.onCall(async (data, context) => {
   if (context.auth.uid !== uid && !context.auth.token.admin) {
     throw new functions.https.HttpsError(
       'permission-denied',
-      'Can only query your own role unless you are an admin'
+      'Can only query your own role unless you are an admin',
     );
   }
 

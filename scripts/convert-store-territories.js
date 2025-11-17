@@ -4,21 +4,21 @@
  * Collection cible : stores
  */
 
-import { getDB } from "../firebase-config.js";
+import { getDB } from '../firebase-config.js';
 
 async function normalizeTerritories() {
-  console.log("🚀 Normalisation des territoires dans Firestore…");
+  console.log('🚀 Normalisation des territoires dans Firestore…');
 
   const db = await getDB();
   const { collection, getDocs, updateDoc, doc } = await import(
-    "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"
+    'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js'
   );
 
-  const storesRef = collection(db, "stores");
+  const storesRef = collection(db, 'stores');
   const snap = await getDocs(storesRef);
 
   if (snap.empty) {
-    console.warn("⚠️ Aucun magasin trouvé dans Firestore.");
+    console.warn('⚠️ Aucun magasin trouvé dans Firestore.');
     return;
   }
 
@@ -28,27 +28,27 @@ async function normalizeTerritories() {
     const data = d.data();
     const storeId = d.id;
 
-    let territory = data.territory || "";
-    let original = territory;
+    let territory = data.territory || '';
+    const original = territory;
 
     // --- Normalisation des territoires
     territory = territory.trim().toLowerCase();
 
     // Corrections intelligentes
-    if (territory.includes("guadel")) territory = "guadeloupe";
-    if (territory.includes("martin")) territory = "martinique";
-    if (territory.includes("guyane") || territory.includes("guyana"))
-      territory = "guyane";
-    if (territory.includes("réunion") || territory.includes("la réunion"))
-      territory = "reunion";
-    if (territory.includes("mayotte")) territory = "mayotte";
+    if (territory.includes('guadel')) territory = 'guadeloupe';
+    if (territory.includes('martin')) territory = 'martinique';
+    if (territory.includes('guyane') || territory.includes('guyana'))
+      territory = 'guyane';
+    if (territory.includes('réunion') || territory.includes('la réunion'))
+      territory = 'reunion';
+    if (territory.includes('mayotte')) territory = 'mayotte';
 
     // Si aucun match -> rester en lowercase
-    if (!territory) territory = "guadeloupe";
+    if (!territory) territory = 'guadeloupe';
 
     // Mise à jour Firestore si changement détecté
     if (territory !== original) {
-      await updateDoc(doc(db, "stores", storeId), { territory });
+      await updateDoc(doc(db, 'stores', storeId), { territory });
       console.log(`✔️ ${storeId} — Territory corrigé : ${original} → ${territory}`);
       count++;
     }

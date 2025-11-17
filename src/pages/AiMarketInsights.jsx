@@ -274,7 +274,7 @@ export default function AiMarketInsights() {
                         ))}
                       </div>
                     </div>
-                  )
+                  ),
               )}
             </div>
           </div>

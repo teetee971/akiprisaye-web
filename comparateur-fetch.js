@@ -139,7 +139,7 @@ function getSourceLabel(source) {
   const labels = {
     'partner': 'Partenaire',
     'ocr': 'Ticket',
-    'user': 'Utilisateur'
+    'user': 'Utilisateur',
   };
   return labels[source] || source;
 }

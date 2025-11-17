@@ -40,7 +40,7 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(STATIC_ASSETS);
-    }).then(() => self.skipWaiting())
+    }).then(() => self.skipWaiting()),
   );
 });
 
@@ -51,9 +51,9 @@ self.addEventListener('activate', (event) => {
       return Promise.all(
         keys
           .filter((key) => key !== CACHE_NAME && key !== RUNTIME_CACHE)
-          .map((key) => caches.delete(key))
+          .map((key) => caches.delete(key)),
       );
-    }).then(() => self.clients.claim())
+    }).then(() => self.clients.claim()),
   );
 });
 
@@ -147,6 +147,6 @@ self.addEventListener('fetch', (event) => {
         }
         return new Response('Offline', { status: 503 });
       });
-    })
+    }),
   );
 });

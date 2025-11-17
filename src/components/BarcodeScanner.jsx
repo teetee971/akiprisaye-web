@@ -28,7 +28,7 @@ export default function BarcodeScanner({ onScan, onClose }) {
     try {
       // Request camera permission
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment' }
+        video: { facingMode: 'environment' },
       });
       
       streamRef.current = stream;
@@ -105,7 +105,7 @@ export default function BarcodeScanner({ onScan, onClose }) {
     try {
       const track = streamRef.current.getVideoTracks()[0];
       await track.applyConstraints({
-        advanced: [{ torch: !torchEnabled }]
+        advanced: [{ torch: !torchEnabled }],
       });
       setTorchEnabled(!torchEnabled);
     } catch (err) {
