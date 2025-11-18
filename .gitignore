@@ -26,6 +26,7 @@ build/
 *.swp
 *.swo
 *~
+*.tsbuildinfo
 
 # Logs
 logs/
