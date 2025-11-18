@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import path from 'path';
+import * as path from 'path';
 
 // Determine base URL dynamically:
 // 1. Use VITE_BASE environment variable if set (allows override)
@@ -37,7 +37,7 @@ export default defineConfig({
         drop_debugger: true,
         // Removed redundant pure_funcs - drop_console already handles console removal
       },
-    },
+    } as any, // Type assertion needed for Vite 7 terser options compatibility
     rollupOptions: {
       // No longer an MPA, so we don't need multiple inputs.
       // Vite will use index.html at the root by default.
