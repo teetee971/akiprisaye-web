@@ -1,7 +1,7 @@
 
 // firebase_log_service.js
 
-import { db } from './src/firebase_config.js';
+import { db } from './firebase-config.js';
 import { collection, addDoc, Timestamp } from 'firebase/firestore';
 
 /**

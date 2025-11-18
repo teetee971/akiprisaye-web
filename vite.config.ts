@@ -43,7 +43,8 @@ export default defineConfig({
         drop_console: true,
         drop_debugger: true,
         // Removed pure_funcs: it was redundant with drop_console
-        // drop_console already removes all console.* calls
+        // drop_console removes ALL console.* calls (log, info, debug, warn, error, etc.)
+        // which is more comprehensive than the specific list in pure_funcs
       },
     },
     rollupOptions: {
