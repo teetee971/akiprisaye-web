@@ -29,6 +29,7 @@ jobs:
 
       # Déploiement du contenu du dossier dist vers Cloudflare Pages
       - name: Deploy to Cloudflare Pages
+        id: cloudflare-deploy
         uses: cloudflare/pages-action@v1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -36,6 +37,25 @@ jobs:
           projectName: akiprisaye-web
           directory: dist             # important : dossier de build
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      # Vérification post-déploiement
+      - name: Verify Deployment
+        if: success()
+        run: |
+          echo "🚀 Deployment to Cloudflare Pages completed successfully"
+          echo "📍 Production URL: https://akiprisaye-web.pages.dev"
+          echo "⏰ Deployed at: $(date)"
+          echo "🔗 Deployment URL: ${{ steps.cloudflare-deploy.outputs.url }}"
+          
+          # Vérifier que le site répond (attendre 10 secondes pour que le déploiement se propage)
+          sleep 10
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://akiprisaye-web.pages.dev || echo "000")
+          
+          if [ "$HTTP_CODE" = "200" ]; then
+            echo "✅ Site is live and responding with HTTP 200"
+          else
+            echo "⚠️ Site responded with HTTP $HTTP_CODE - may take a few moments to propagate"
+          fi
 
       # Purge du cache inutile (pas de domaine personnalisé)
       - name: Skip cache purge

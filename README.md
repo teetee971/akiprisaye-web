@@ -32,13 +32,44 @@ npm run preview
 
 ### Déploiement
 
-```bash
-# Firebase
-firebase deploy
+#### Cloudflare Pages (Recommandé)
 
-# Cloudflare Pages
+**Le site est déployé automatiquement sur Cloudflare Pages via GitHub Actions.**
+
+- **URL de production**: https://akiprisaye-web.pages.dev
+- **Déclenchement**: Automatique à chaque push sur `main`
+- **Workflow**: `.github/workflows/deploy.yml`
+
+##### Configuration Requise
+
+Le déploiement nécessite deux secrets GitHub:
+1. `CLOUDFLARE_API_TOKEN` - Token API Cloudflare avec permissions Pages Edit
+2. `CLOUDFLARE_ACCOUNT_ID` - ID de compte Cloudflare
+
+> ⚠️ **Important**: Si les déploiements échouent, voir [CLOUDFLARE_DEPLOYMENT_FIX.md](./CLOUDFLARE_DEPLOYMENT_FIX.md)
+
+##### Processus de Déploiement
+
+```
+Push sur main → GitHub Actions → Build (Vite) → Deploy → Vérification
+                                     ↓
+                               Cloudflare Pages
+                                     ↓
+                        https://akiprisaye-web.pages.dev
+```
+
+##### Build Manuel Local
+
+```bash
+npm ci
 npm run build
-# puis déployez le dossier dist/
+# Le dossier dist/ contient l'application prête pour production
+```
+
+#### Firebase (Alternatif)
+
+```bash
+firebase deploy
 ```
 
 ## ✨ Nouvelles Fonctionnalités (v1.1.0)

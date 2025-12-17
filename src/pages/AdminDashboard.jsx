@@ -34,7 +34,6 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     checkAdminAndLoad();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const checkAdminAndLoad = async () => {
