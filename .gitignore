@@ -26,6 +26,7 @@ build/
 *.swp
 *.swo
 *~
+Assets/  # Build artifacts from Vite
 
 # Logs
 logs/
