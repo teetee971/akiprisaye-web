@@ -7,7 +7,7 @@
  * Utilisé par : carte-google.js
  */
 
-import { fetchActivePromotions } from "./promotions-firestore.js";
+import { fetchActivePromotions } from './promotions-firestore.js';
 
 /**
  * Planifie un itinéraire optimisé avec arrêts promo.
@@ -18,20 +18,20 @@ import { fetchActivePromotions } from "./promotions-firestore.js";
  * @returns {Promise<{stops: Array, debug: Object}>}
  */
 export async function planOptimizedRoute(startAddress, endAddress, options = {}) {
-  const territory = (options.territory || "guadeloupe").toLowerCase();
+  const territory = (options.territory || 'guadeloupe').toLowerCase();
 
   // 1) Récupérer les promos actives pour le territoire
   const promos = await fetchActivePromotions(territory);
 
   if (!promos.length) {
-    console.info("[GPS PROMO] Aucune promotion active trouvée pour", territory);
+    console.info('[GPS PROMO] Aucune promotion active trouvée pour', territory);
     return {
       stops: [],
       debug: {
         territory,
         totalPromos: 0,
-        reason: "no-active-promos"
-      }
+        reason: 'no-active-promos',
+      },
     };
   }
 
@@ -50,16 +50,16 @@ export async function planOptimizedRoute(startAddress, endAddress, options = {})
   const stops = top.map((promo) => ({
     coords: { lat: promo.lat, lon: promo.lon },
     store: promo.storeName,
-    reason: promo.title || "Promotion intéressante sur le trajet",
-    savings: promo.savingLabel || "Économie intéressante",
+    reason: promo.title || 'Promotion intéressante sur le trajet',
+    savings: promo.savingLabel || 'Économie intéressante',
     territory,
-    tags: promo.tags || []
+    tags: promo.tags || [],
   }));
 
-  console.info("[GPS PROMO] Itinéraire promo calculé :", {
+  console.info('[GPS PROMO] Itinéraire promo calculé :', {
     territory,
     totalPromos: promos.length,
-    usedStops: stops.length
+    usedStops: stops.length,
   });
 
   return {
@@ -69,7 +69,7 @@ export async function planOptimizedRoute(startAddress, endAddress, options = {})
       totalPromos: promos.length,
       usedStops: stops.length,
       sampleStart: startAddress,
-      sampleEnd: endAddress
-    }
+      sampleEnd: endAddress,
+    },
   };
 }

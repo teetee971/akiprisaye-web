@@ -11,14 +11,14 @@ const STATIC_ASSETS = [
   '/manifest.webmanifest',
   '/offline.html',
   '/icons/icon-192.png',
-  '/icons/icon-512.png'
+  '/icons/icon-512.png',
 ];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(STATIC_CACHE)
       .then((cache) => cache.addAll(STATIC_ASSETS.map(url => new Request(url, { cache: 'reload' }))))
-      .then(() => self.skipWaiting())
+      .then(() => self.skipWaiting()),
   );
 });
 
@@ -28,7 +28,7 @@ self.addEventListener('activate', (event) => {
     await Promise.all(
       names
         .filter((n) => n.startsWith('akiprisaye-') && n !== STATIC_CACHE && n !== DYNAMIC_CACHE && n !== API_CACHE)
-        .map((n) => caches.delete(n))
+        .map((n) => caches.delete(n)),
     );
     if ('navigationPreload' in self.registration) {
       try { await self.registration.navigationPreload.enable(); } catch {}
@@ -150,7 +150,7 @@ async function offlineFallback() {
     </div>
   </body>
 </html>`,
-    { headers: { 'Content-Type': 'text/html; charset=utf-8' } }
+    { headers: { 'Content-Type': 'text/html; charset=utf-8' } },
   );
 }
 

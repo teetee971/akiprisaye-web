@@ -42,7 +42,7 @@ export function BudgetVital() {
     { code: 'MQ', name: 'Martinique', flag: '🇲🇶' },
     { code: 'GF', name: 'Guyane', flag: '🇬🇫' },
     { code: 'RE', name: 'La Réunion', flag: '🇷🇪' },
-    { code: 'FR', name: 'France métropolitaine', flag: '🇫🇷' }
+    { code: 'FR', name: 'France métropolitaine', flag: '🇫🇷' },
   ];
 
   return (

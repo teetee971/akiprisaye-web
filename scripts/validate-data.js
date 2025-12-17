@@ -55,7 +55,7 @@ function validateDataFile(filePath) {
   console.log(`\n📄 Validation: ${filePath}`);
   filesChecked++;
 
-  let errors = [];
+  const errors = [];
 
   try {
     const content = fs.readFileSync(filePath, 'utf8');
@@ -119,7 +119,7 @@ function validateDataFile(filePath) {
         }
       });
     } else {
-      errors.push(`❌ "donnees" doit être un tableau`);
+      errors.push('❌ "donnees" doit être un tableau');
     }
 
     // 5. Vérifier métadonnées Open Data

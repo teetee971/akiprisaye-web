@@ -20,7 +20,7 @@ const STATIC_ASSETS = [
   '/assets/b3ced496-7272-4600-b46e-c14cf625667e_lg.webp',
   '/assets/logo_base.webp',
   '/assets/aki_pri_sa_ye_banner.webp',
-  '/assets/aki_pri_sa_ye_banner_dark.webp'
+  '/assets/aki_pri_sa_ye_banner_dark.webp',
 ];
 
 // Événement d'installation : mise en cache des ressources statiques
@@ -28,7 +28,7 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(STATIC_ASSETS);
-    }).then(() => self.skipWaiting())
+    }).then(() => self.skipWaiting()),
   );
 });
 
@@ -37,9 +37,9 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
-        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)),
       );
-    }).then(() => self.clients.claim())
+    }).then(() => self.clients.claim()),
   );
 });
 
@@ -65,6 +65,6 @@ self.addEventListener('fetch', (event) => {
         // En cas d'échec réseau, retourne la page offline
         return caches.match('/offline.html');
       });
-    })
+    }),
   );
 });

@@ -6,28 +6,28 @@ const CATEGORIES_OFFICIELLES = {
   'alimentaire_base': {
     nom: 'Produits alimentaires de base',
     types_magasins: ['Supermarché', 'Hypermarché', 'Hard discount', 'Commerce de proximité'],
-    source: 'OPMR - Panier de référence'
+    source: 'OPMR - Panier de référence',
   },
   'frais': {
     nom: 'Produits frais',
     types_magasins: ['Supermarché', 'Hypermarché', 'Marché alimentaire'],
-    source: 'OPMR - Alimentation fraîche'
+    source: 'OPMR - Alimentation fraîche',
   },
   'carburant': {
     nom: 'Carburant',
     types_magasins: ['Station-service'],
-    source: 'prix-carburants.gouv.fr'
+    source: 'prix-carburants.gouv.fr',
   },
   'bricolage': {
     nom: 'Bricolage / Matériaux',
     types_magasins: ['Bricolage / Matériaux'],
-    source: 'INSEE - NAF 4752'
+    source: 'INSEE - NAF 4752',
   },
   'hygiene': {
     nom: 'Hygiène / Santé',
     types_magasins: ['Pharmacie', 'Parapharmacie', 'Supermarché'],
-    source: 'OPMR - Hygiène'
-  }
+    source: 'OPMR - Hygiène',
+  },
 };
 
 const PRODUITS_GENERIQUES = [
@@ -47,7 +47,7 @@ const PRODUITS_GENERIQUES = [
   { nom: 'Diesel', categorie: 'carburant' },
   { nom: 'Médicaments', categorie: 'hygiene' },
   { nom: 'Shampooing', categorie: 'hygiene' },
-  { nom: 'Savon', categorie: 'hygiene' }
+  { nom: 'Savon', categorie: 'hygiene' },
 ];
 
 export default function ListeCourses({ territoire = '971' }) {
@@ -98,7 +98,7 @@ export default function ListeCourses({ territoire = '971' }) {
         // JAMAIS stockée, JAMAIS envoyée au serveur
         setPosition({
           latitude: pos.coords.latitude,
-          longitude: pos.coords.longitude
+          longitude: pos.coords.longitude,
         });
         calculerMagasinsProches(pos.coords);
       },
@@ -109,8 +109,8 @@ export default function ListeCourses({ territoire = '971' }) {
       {
         enableHighAccuracy: false,
         timeout: 10000,
-        maximumAge: 300000 // 5 minutes
-      }
+        maximumAge: 300000, // 5 minutes
+      },
     );
   };
 
@@ -141,7 +141,7 @@ export default function ListeCourses({ territoire = '971' }) {
         
         return {
           ...magasin,
-          distance: distanceKm.toFixed(1)
+          distance: distanceKm.toFixed(1),
         };
       })
       .sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));
@@ -156,7 +156,7 @@ export default function ListeCourses({ territoire = '971' }) {
 
     // Critère 1: Type de magasin correspond aux catégories
     const typesCompatibles = categoriesRequises.flatMap(cat => 
-      CATEGORIES_OFFICIELLES[cat]?.types_magasins || []
+      CATEGORIES_OFFICIELLES[cat]?.types_magasins || [],
     );
     
     if (typesCompatibles.includes(magasin.type_magasin)) {
@@ -208,7 +208,7 @@ export default function ListeCourses({ territoire = '971' }) {
   // Générer recommandations
   const recommandations = magasinsProches.map(magasin => ({
     magasin,
-    pertinence: calculerScorePertinence(magasin, categoriesRequises)
+    pertinence: calculerScorePertinence(magasin, categoriesRequises),
   })).sort((a, b) => b.pertinence.score - a.pertinence.score);
 
   return (
@@ -387,8 +387,8 @@ export default function ListeCourses({ territoire = '971' }) {
                       rec.pertinence.niveau === 'Prioritaire'
                         ? 'bg-green-900/20 border-green-500/30'
                         : rec.pertinence.niveau === 'Pertinent'
-                        ? 'bg-blue-900/20 border-blue-500/30'
-                        : 'bg-slate-700/20 border-slate-600/30'
+                          ? 'bg-blue-900/20 border-blue-500/30'
+                          : 'bg-slate-700/20 border-slate-600/30'
                     }`}
                   >
                     <div className="flex items-start justify-between mb-2">
@@ -401,8 +401,8 @@ export default function ListeCourses({ territoire = '971' }) {
                           rec.pertinence.niveau === 'Prioritaire'
                             ? 'bg-green-500/20 text-green-300'
                             : rec.pertinence.niveau === 'Pertinent'
-                            ? 'bg-blue-500/20 text-blue-300'
-                            : 'bg-slate-500/20 text-slate-300'
+                              ? 'bg-blue-500/20 text-blue-300'
+                              : 'bg-slate-500/20 text-slate-300'
                         }`}>
                           {rec.pertinence.niveau}
                         </div>

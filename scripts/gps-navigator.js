@@ -1,6 +1,6 @@
-export function openGPS(lat, lng, name = "") {
+export function openGPS(lat, lng, name = '') {
   const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving`;
-  window.open(url, "_blank");
+  window.open(url, '_blank');
 }
 
 // Fonctions placeholders pour assurer le fonctionnement de la carte
@@ -10,7 +10,7 @@ export async function findPromosOnRoute() {
 
 export function renderPromoStops(promos = []) {
   if (!promos.length) {
-    return "<p>Aucune promotion détectée pour ce trajet.</p>";
+    return '<p>Aucune promotion détectée pour ce trajet.</p>';
   }
 
   const items = promos

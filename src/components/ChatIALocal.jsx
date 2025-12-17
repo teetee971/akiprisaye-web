@@ -12,9 +12,9 @@ const translations = {
       entraide: 'Ou vlé afiché on ti mésaj an mode "Dépanne ton voisin" ? Moun pé wè i an anonim.',
       octroi: 'L’octroi de mer sé on taks lokal ki aplike sou pwodui ki sòti an déor. I ka édé pwodiksyon péyi.',
       abus: 'Ou pé fè on signalman an 1 klik. Sé pa jist si sa tro chè !',
-      default: 'Mwen pa tro sèten, ou pé réformilé ou kestyon ?'
+      default: 'Mwen pa tro sèten, ou pé réformilé ou kestyon ?',
     },
-    langChanged: 'Lang ajustée. Ou pé kontinyé an lang ou chwazi.'
+    langChanged: 'Lang ajustée. Ou pé kontinyé an lang ou chwazi.',
   },
   fr: {
     welcome: 'Bonjour, envie de comparer les prix d’un produit local ?',
@@ -26,9 +26,9 @@ const translations = {
       entraide: 'Souhaitez-vous publier un message "Dépanne ton voisin" ? Il restera anonyme.',
       octroi: 'L’octroi de mer est une taxe locale sur les produits importés pour soutenir la production locale.',
       abus: 'Vous pouvez signaler un prix abusif en un clic. Ce n’est pas juste si c’est trop cher !',
-      default: 'Je ne suis pas certain, pouvez-vous reformuler votre question ?'
+      default: 'Je ne suis pas certain, pouvez-vous reformuler votre question ?',
     },
-    langChanged: 'Langue mise à jour. Vous pouvez continuer dans cette langue.'
+    langChanged: 'Langue mise à jour. Vous pouvez continuer dans cette langue.',
   },
   es: {
     welcome: 'Hola, ¿quieres comparar el precio de un producto local?',
@@ -40,10 +40,10 @@ const translations = {
       entraide: '¿Quieres publicar un mensaje tipo "Ayuda a tu vecino"? Se mostrará de forma anónima.',
       octroi: 'El “octroi de mer” es un impuesto local a los productos importados para apoyar la producción local.',
       abus: 'Puedes reportar un precio abusivo en un clic. ¡No es justo si está demasiado caro!',
-      default: 'No estoy seguro, ¿puedes reformular la pregunta?'
+      default: 'No estoy seguro, ¿puedes reformular la pregunta?',
     },
-    langChanged: 'Idioma actualizado. Puedes seguir en este idioma.'
-  }
+    langChanged: 'Idioma actualizado. Puedes seguir en este idioma.',
+  },
 };
 
 const getLocale = (lang) => translations[lang] ?? translations.fr;
@@ -52,7 +52,7 @@ export default function ChatIALocal() {
   const [lang, setLang] = useState('creole');
   const locale = useMemo(() => getLocale(lang), [lang]);
   const [messages, setMessages] = useState([
-    { from: 'ia', text: getLocale('creole').welcome }
+    { from: 'ia', text: getLocale('creole').welcome },
   ]);
   const [input, setInput] = useState('');
 

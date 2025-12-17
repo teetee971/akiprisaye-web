@@ -95,7 +95,7 @@ export function MapLeaflet({ territory = 'GP', stores = [], onStoreClick = null 
     // Create map
     const map = window.L.map(mapRef.current).setView(
       [coords.lat, coords.lng],
-      coords.zoom
+      coords.zoom,
     );
 
     // Add dark CartoDB tiles

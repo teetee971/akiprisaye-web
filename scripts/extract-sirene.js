@@ -126,7 +126,7 @@ async function genererFichierTerritoire(codeTerritoire) {
   
   if (!territoire.sirene) {
     console.log(`⚠️  ${territoire.nom} - Pas de couverture SIRENE`);
-    console.log(`   Utiliser sources locales: ISEE, ISPF, STSEE`);
+    console.log('   Utiliser sources locales: ISEE, ISPF, STSEE');
     return;
   }
   
@@ -144,7 +144,7 @@ async function genererFichierTerritoire(codeTerritoire) {
       statut_fichier: etablissements.length > 0 ? 'extraction_sirene' : 'template_vide',
       avertissement: 'ATTENTION: Toutes les données sont à statut "a_confirmer". Vérification manuelle requise.',
       source: 'INSEE SIRENE via extraction automatique',
-    }
+    },
   };
   
   const outputPath = path.join(__dirname, '..', 'src', 'data', 'magasins', `${codeTerritoire}_${territoire.nom.toLowerCase().replace(/[- ]/g, '_')}.json`);

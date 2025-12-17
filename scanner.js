@@ -7,8 +7,8 @@
 // -----------------------------
 // Vérification HTTPS obligatoire
 // -----------------------------
-if (location.protocol !== "https:" && location.hostname !== "localhost") {
-  alert("Le scanner nécessite une connexion HTTPS sécurisée.");
+if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
+  alert('Le scanner nécessite une connexion HTTPS sécurisée.');
 }
 
 // -----------------------------
@@ -21,24 +21,24 @@ let scanning = false;
 // -----------------------------
 // Charger le composant une fois le DOM prêt
 // -----------------------------
-document.addEventListener("DOMContentLoaded", () => {
-  videoElement = document.getElementById("video-scanner");
-  const resultBox = document.getElementById("scan-result");
-  const startBtn = document.getElementById("start-scan");
-  const stopBtn = document.getElementById("stop-scan");
+document.addEventListener('DOMContentLoaded', () => {
+  videoElement = document.getElementById('video-scanner');
+  const resultBox = document.getElementById('scan-result');
+  const startBtn = document.getElementById('start-scan');
+  const stopBtn = document.getElementById('stop-scan');
 
   if (!videoElement) {
-    console.error("⚠ Impossible de trouver #video-scanner");
+    console.error('⚠ Impossible de trouver #video-scanner');
     return;
   }
 
   // Bouton démarrer
-  startBtn?.addEventListener("click", async () => {
+  startBtn?.addEventListener('click', async () => {
     await startScanner();
   });
 
   // Bouton stop
-  stopBtn?.addEventListener("click", () => {
+  stopBtn?.addEventListener('click', () => {
     stopScanner();
   });
 });
@@ -51,24 +51,24 @@ async function startScanner() {
     // Perm's caméra
     stream = await navigator.mediaDevices.getUserMedia({
       video: {
-        facingMode: { ideal: "environment" },
+        facingMode: { ideal: 'environment' },
         width: { ideal: 1280 },
-        height: { ideal: 720 }
-      }
+        height: { ideal: 720 },
+      },
     });
 
     videoElement.srcObject = stream;
-    videoElement.setAttribute("playsinline", true);
+    videoElement.setAttribute('playsinline', true);
     await videoElement.play();
 
     scanning = true;
     requestAnimationFrame(tick);
 
-    document.getElementById("scan-status").innerText = "📡 Scan en cours…";
+    document.getElementById('scan-status').innerText = '📡 Scan en cours…';
 
   } catch (err) {
-    console.error("Erreur accès caméra :", err);
-    alert("Impossible d’accéder à la caméra. Active la permission dans les paramètres.");
+    console.error('Erreur accès caméra :', err);
+    alert('Impossible d’accéder à la caméra. Active la permission dans les paramètres.');
   }
 }
 
@@ -80,7 +80,7 @@ function stopScanner() {
   if (stream) {
     stream.getTracks().forEach(t => t.stop());
   }
-  document.getElementById("scan-status").innerText = "⏹ Scan arrêté.";
+  document.getElementById('scan-status').innerText = '⏹ Scan arrêté.';
 }
 
 // -----------------------------
@@ -89,8 +89,8 @@ function stopScanner() {
 function tick() {
   if (!scanning) return;
 
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
 
   canvas.width = videoElement.videoWidth;
   canvas.height = videoElement.videoHeight;
@@ -101,7 +101,7 @@ function tick() {
     0,
     0,
     canvas.width,
-    canvas.height
+    canvas.height,
   );
 
   // Librairie de décodage (Quagga-like léger intégré)
@@ -130,7 +130,7 @@ function decodeBarcode(imageData) {
 // Afficher résultat (intégré avec comparateur)
 // -----------------------------
 function displayResult(code) {
-  const box = document.getElementById("scan-result");
+  const box = document.getElementById('scan-result');
 
   box.innerHTML = `
     <p><strong>Code détecté :</strong> ${code}</p>
@@ -145,15 +145,15 @@ function displayResult(code) {
 // Utilitaire UI
 // -----------------------------
 export function flashMessage(msg) {
-  const box = document.getElementById("flash-msg");
+  const box = document.getElementById('flash-msg');
   if (!box) return;
 
   box.innerText = msg;
-  box.style.display = "block";
+  box.style.display = 'block';
 
   setTimeout(() => {
-    box.style.display = "none";
+    box.style.display = 'none';
   }, 2500);
 }
 
-console.log("✔ scanner.js chargé.");
+console.log('✔ scanner.js chargé.');

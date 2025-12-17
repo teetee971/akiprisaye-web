@@ -3,14 +3,14 @@
  */
 
 export function suggestPromotionsAlongRoute(stores) {
-  const panel = document.getElementById("promo-panel");
+  const panel = document.getElementById('promo-panel');
 
   if (!stores.length) {
-    panel.innerHTML = "<p>Aucune promotion détectée.</p>";
+    panel.innerHTML = '<p>Aucune promotion détectée.</p>';
     return;
   }
 
-  panel.innerHTML = "<h3>🔥 Promotions proches du trajet</h3>";
+  panel.innerHTML = '<h3>🔥 Promotions proches du trajet</h3>';
 
   stores.slice(0, 3).forEach(s => {
     panel.innerHTML += `

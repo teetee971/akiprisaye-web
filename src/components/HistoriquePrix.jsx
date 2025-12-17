@@ -19,7 +19,7 @@ import {
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
 } from 'chart.js';
 import { Card } from './card.jsx';
 import pricesHistory from '../data/prices-history.json';
@@ -31,7 +31,7 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
 );
 
 export function HistoriquePrix({ productId = null, territory = 'GP' }) {
@@ -41,7 +41,7 @@ export function HistoriquePrix({ productId = null, territory = 'GP' }) {
   // Get product list
   const products = Object.entries(pricesHistory.products).map(([id, product]) => ({
     id,
-    ...product
+    ...product,
   }));
 
   const currentProduct = pricesHistory.products[selectedProduct];
@@ -92,14 +92,14 @@ export function HistoriquePrix({ productId = null, territory = 'GP' }) {
     }),
     datasets: [
       {
-        label: `Prix (€)`,
+        label: 'Prix (€)',
         data: prices,
         borderColor: 'rgb(59, 130, 246)',
         backgroundColor: 'rgba(59, 130, 246, 0.1)',
         tension: 0.3,
-        fill: true
-      }
-    ]
+        fill: true,
+      },
+    ],
   };
 
   const chartOptions = {
@@ -107,18 +107,18 @@ export function HistoriquePrix({ productId = null, territory = 'GP' }) {
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        display: false
+        display: false,
       },
       title: {
-        display: false
+        display: false,
       },
       tooltip: {
         callbacks: {
           label: function(context) {
             return `Prix: ${context.parsed.y.toFixed(2)} €`;
-          }
-        }
-      }
+          },
+        },
+      },
     },
     scales: {
       y: {
@@ -126,10 +126,10 @@ export function HistoriquePrix({ productId = null, territory = 'GP' }) {
         ticks: {
           callback: function(value) {
             return value.toFixed(2) + ' €';
-          }
-        }
-      }
-    }
+          },
+        },
+      },
+    },
   };
 
   // Export chart as PNG
@@ -213,8 +213,8 @@ export function HistoriquePrix({ productId = null, territory = 'GP' }) {
             priceChange > 0 
               ? 'text-red-600 dark:text-red-400' 
               : priceChange < 0
-              ? 'text-green-600 dark:text-green-400'
-              : 'text-gray-600 dark:text-gray-400'
+                ? 'text-green-600 dark:text-green-400'
+                : 'text-gray-600 dark:text-gray-400'
           }`}>
             {priceChange > 0 ? '+' : ''}{priceChangePercent}%
           </div>
@@ -313,8 +313,8 @@ export function HistoriquePrix({ productId = null, territory = 'GP' }) {
                           variation > 0 
                             ? 'text-red-600 dark:text-red-400' 
                             : variation < 0
-                            ? 'text-green-600 dark:text-green-400'
-                            : 'text-gray-600 dark:text-gray-400'
+                              ? 'text-green-600 dark:text-green-400'
+                              : 'text-gray-600 dark:text-gray-400'
                         }`}>
                           {variation > 0 ? '+' : ''}{variation.toFixed(2)} € ({variation > 0 ? '+' : ''}{variationPercent}%)
                         </span>

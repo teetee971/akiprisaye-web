@@ -10,7 +10,7 @@ import {
   generateExplanation,
   getScoreColor,
   getTrendIcon,
-  validateIEVRData
+  validateIEVRData,
 } from '../utils/ievrCalculations';
 
 describe('IEVR Calculations', () => {
@@ -21,7 +21,7 @@ describe('IEVR Calculations', () => {
         hygiene: 68,
         transport: 72,
         energie: 70,
-        autres: 67
+        autres: 67,
       };
       
       const weights = {
@@ -29,7 +29,7 @@ describe('IEVR Calculations', () => {
         hygiene: 0.15,
         transport: 0.15,
         energie: 0.15,
-        autres: 0.15
+        autres: 0.15,
       };
 
       const score = calculateIEVRScore(categories, weights);
@@ -53,7 +53,7 @@ describe('IEVR Calculations', () => {
         hygiene: 100,
         transport: 100,
         energie: 100,
-        autres: 100
+        autres: 100,
       };
       
       const weights = {
@@ -61,7 +61,7 @@ describe('IEVR Calculations', () => {
         hygiene: 0.15,
         transport: 0.15,
         energie: 0.15,
-        autres: 0.15
+        autres: 0.15,
       };
 
       const score = calculateIEVRScore(categories, weights);
@@ -188,18 +188,18 @@ describe('IEVR Calculations', () => {
     const validData = {
       metadata: {
         version: '1.0.0',
-        reference: 'Hexagone'
+        reference: 'Hexagone',
       },
       categories: {
         alimentation: { weight: 0.40 },
         hygiene: { weight: 0.15 },
         transport: { weight: 0.15 },
         energie: { weight: 0.15 },
-        autres: { weight: 0.15 }
+        autres: { weight: 0.15 },
       },
       territories: {
-        FR: { name: 'France' }
-      }
+        FR: { name: 'France' },
+      },
     };
 
     it('should validate correct data', () => {
@@ -232,9 +232,9 @@ describe('IEVR Calculations', () => {
         metadata: { version: '1.0.0' },
         categories: {
           alimentation: { weight: 0.40 },
-          hygiene: { weight: 0.20 }
+          hygiene: { weight: 0.20 },
         },
-        territories: { FR: { name: 'France' } }
+        territories: { FR: { name: 'France' } },
       };
       
       expect(() => validateIEVRData(invalidData)).toThrow('Category weights sum to');

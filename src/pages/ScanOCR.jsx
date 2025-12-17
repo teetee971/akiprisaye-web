@@ -11,22 +11,22 @@ export default function ScanOCR() {
     if (!file) return;
     setImage(URL.createObjectURL(file));
     setLoading(true);
-    setResult("⏳ Analyse OCR en cours...");
+    setResult('⏳ Analyse OCR en cours...');
 
     try {
       const { data: { text } } = await Tesseract.recognize(file, 'fra', {
         logger: m => console.log(m),
       });
 
-      setResult("🧾 Résultat OCR :\n" + text);
+      setResult('🧾 Résultat OCR :\n' + text);
 
       // Exemple d’analyse IA simplifiée
-      if (text.includes("125g") && text.includes("110g")) {
-        setResult(prev => prev + "\n⚠️ Shrinkflation détectée : Contenance réduite détectée.");
+      if (text.includes('125g') && text.includes('110g')) {
+        setResult(prev => prev + '\n⚠️ Shrinkflation détectée : Contenance réduite détectée.');
       }
 
     } catch (err) {
-      setResult("❌ Erreur OCR : " + err.message);
+      setResult('❌ Erreur OCR : ' + err.message);
     } finally {
       setLoading(false);
     }

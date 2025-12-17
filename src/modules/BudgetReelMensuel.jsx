@@ -19,7 +19,7 @@ export function BudgetReelMensuel() {
     adulte_seul: { label: 'Adulte seul', icon: '👤' },
     couple: { label: 'Couple', icon: '👥' },
     famille_2_enfants: { label: 'Famille (2 adultes + 2 enfants)', icon: '👨‍👩‍👧‍👦' },
-    senior: { label: 'Senior', icon: '👴' }
+    senior: { label: 'Senior', icon: '👴' },
   };
 
   const territories = {
@@ -27,7 +27,7 @@ export function BudgetReelMensuel() {
     martinique: { name: 'Martinique', flag: '🇲🇶' },
     guyane: { name: 'Guyane', flag: '🇬🇫' },
     reunion: { name: 'La Réunion', flag: '🇷🇪' },
-    mayotte: { name: 'Mayotte', flag: '🇾🇹' }
+    mayotte: { name: 'Mayotte', flag: '🇾🇹' },
   };
 
   // Get data

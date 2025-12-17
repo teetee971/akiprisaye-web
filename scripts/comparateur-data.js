@@ -7,14 +7,14 @@
 // 📌 Base des catégories
 // -----------------------------
 export const categories = [
-  "Fruits & Légumes",
-  "Viandes & Poissons",
-  "Épicerie",
-  "Boissons",
-  "Hygiène",
-  "Maison",
-  "Bébé",
-  "Animaux"
+  'Fruits & Légumes',
+  'Viandes & Poissons',
+  'Épicerie',
+  'Boissons',
+  'Hygiène',
+  'Maison',
+  'Bébé',
+  'Animaux',
 ];
 
 // -----------------------------
@@ -23,10 +23,10 @@ export const categories = [
 // -----------------------------
 export const produits = [
   {
-    id: "p-banane",
-    nom: "Banane Locale",
-    categorie: "Fruits & Légumes",
-    unite: "kg",
+    id: 'p-banane',
+    nom: 'Banane Locale',
+    categorie: 'Fruits & Légumes',
+    unite: 'kg',
     prixMoyen: {
       guadeloupe: 2.40,
       martinique: 2.20,
@@ -34,14 +34,14 @@ export const produits = [
       reunion: 2.10,
       mayotte: 2.60,
       nc: 3.20,
-      pf: 3.50
-    }
+      pf: 3.50,
+    },
   },
   {
-    id: "p-eau-1l",
-    nom: "Eau Minérale 1L",
-    categorie: "Boissons",
-    unite: "L",
+    id: 'p-eau-1l',
+    nom: 'Eau Minérale 1L',
+    categorie: 'Boissons',
+    unite: 'L',
     prixMoyen: {
       guadeloupe: 0.65,
       martinique: 0.60,
@@ -49,14 +49,14 @@ export const produits = [
       reunion: 0.55,
       mayotte: 0.75,
       nc: 0.90,
-      pf: 1.00
-    }
+      pf: 1.00,
+    },
   },
   {
-    id: "p-riz-1kg",
-    nom: "Riz Long 1kg",
-    categorie: "Épicerie",
-    unite: "kg",
+    id: 'p-riz-1kg',
+    nom: 'Riz Long 1kg',
+    categorie: 'Épicerie',
+    unite: 'kg',
     prixMoyen: {
       guadeloupe: 1.95,
       martinique: 1.90,
@@ -64,14 +64,14 @@ export const produits = [
       reunion: 1.85,
       mayotte: 2.20,
       nc: 2.90,
-      pf: 3.10
-    }
+      pf: 3.10,
+    },
   },
   {
-    id: "p-lait-1l",
-    nom: "Lait UHT 1L",
-    categorie: "Boissons",
-    unite: "L",
+    id: 'p-lait-1l',
+    nom: 'Lait UHT 1L',
+    categorie: 'Boissons',
+    unite: 'L',
     prixMoyen: {
       guadeloupe: 1.35,
       martinique: 1.30,
@@ -79,14 +79,14 @@ export const produits = [
       reunion: 1.25,
       mayotte: 1.65,
       nc: 2.20,
-      pf: 2.40
-    }
+      pf: 2.40,
+    },
   },
   {
-    id: "p-savon",
-    nom: "Savon corporel 250ml",
-    categorie: "Hygiène",
-    unite: "250 ml",
+    id: 'p-savon',
+    nom: 'Savon corporel 250ml',
+    categorie: 'Hygiène',
+    unite: '250 ml',
     prixMoyen: {
       guadeloupe: 2.90,
       martinique: 2.80,
@@ -94,9 +94,9 @@ export const produits = [
       reunion: 2.70,
       mayotte: 3.20,
       nc: 3.80,
-      pf: 4.10
-    }
-  }
+      pf: 4.10,
+    },
+  },
 ];
 
 // -----------------------------
@@ -119,7 +119,7 @@ export const firestoreStructure = produits.map(p => ({
   nom: p.nom,
   categorie: p.categorie,
   unite: p.unite,
-  prixMoyen: p.prixMoyen
+  prixMoyen: p.prixMoyen,
 }));
 
-console.log("✔ comparateur-data.js chargé.");
+console.log('✔ comparateur-data.js chargé.');

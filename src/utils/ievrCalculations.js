@@ -67,7 +67,7 @@ export function compareToReference(territoryScore, referenceScore = 100) {
   return {
     difference: Math.round(difference),
     percentDiff: Math.round(percentDiff),
-    interpretation
+    interpretation,
   };
 }
 
@@ -83,7 +83,7 @@ export function calculateEvolution(currentScore, previousScore) {
     return {
       change: 0,
       percentChange: 0,
-      trend: 'stable'
+      trend: 'stable',
     };
   }
 
@@ -102,7 +102,7 @@ export function calculateEvolution(currentScore, previousScore) {
   return {
     change: Math.round(change * 10) / 10, // Round to 1 decimal
     percentChange: Math.round(percentChange * 10) / 10,
-    trend
+    trend,
   };
 }
 
@@ -148,7 +148,7 @@ export function getTerritoryStatus(score) {
       level: 'normal',
       color: '#10b981', // green
       icon: '✅',
-      description: 'Écart faible avec le territoire de référence'
+      description: 'Écart faible avec le territoire de référence',
     };
   } else if (score >= 75) {
     return {
@@ -156,7 +156,7 @@ export function getTerritoryStatus(score) {
       level: 'pressure',
       color: '#f59e0b', // amber
       icon: '⚠️',
-      description: 'Écart notable nécessitant une vigilance'
+      description: 'Écart notable nécessitant une vigilance',
     };
   } else {
     return {
@@ -164,7 +164,7 @@ export function getTerritoryStatus(score) {
       level: 'high-pressure',
       color: '#ef4444', // red
       icon: '🔴',
-      description: 'Écart important nécessitant une attention particulière'
+      description: 'Écart important nécessitant une attention particulière',
     };
   }
 }

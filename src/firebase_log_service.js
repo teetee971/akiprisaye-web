@@ -20,7 +20,7 @@ export async function logMessage(from, text, language) {
       from,
       text,
       language,
-      timestamp: Timestamp.now()
+      timestamp: Timestamp.now(),
     });
   } catch (e) {
     console.error('Erreur enregistrement Firestore :', e);

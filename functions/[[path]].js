@@ -11,7 +11,7 @@ export async function onRequest(context) {
   }
 
   // Try to serve static asset first
-  let response = await env.ASSETS.fetch(request);
+  const response = await env.ASSETS.fetch(request);
 
   // If not found and the request is for an HTML page, serve index.html (SPA)
   const accept = request.headers.get('accept') || '';

@@ -49,7 +49,7 @@ export function ComparateurFormats() {
       ...format,
       quantite,
       unite,
-      prixUnitaire
+      prixUnitaire,
     };
   });
 
@@ -111,8 +111,8 @@ export function ComparateurFormats() {
                 isMeilleur 
                   ? 'border-green-400 dark:border-green-600' 
                   : isPire
-                  ? 'border-red-400 dark:border-red-600'
-                  : 'border-gray-200 dark:border-gray-700'
+                    ? 'border-red-400 dark:border-red-600'
+                    : 'border-gray-200 dark:border-gray-700'
               }`}
             >
               <div className="flex items-start justify-between gap-4 mb-4">
@@ -161,8 +161,8 @@ export function ComparateurFormats() {
                   isMeilleur 
                     ? 'bg-green-100 dark:bg-green-900/30' 
                     : isPire
-                    ? 'bg-red-100 dark:bg-red-900/30'
-                    : 'bg-slate-50 dark:bg-slate-800/50'
+                      ? 'bg-red-100 dark:bg-red-900/30'
+                      : 'bg-slate-50 dark:bg-slate-800/50'
                 }`}>
                   <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">
                     Prix au {format.unite}
@@ -171,8 +171,8 @@ export function ComparateurFormats() {
                     isMeilleur 
                       ? 'text-green-600 dark:text-green-400' 
                       : isPire
-                      ? 'text-red-600 dark:text-red-400'
-                      : 'text-gray-900 dark:text-white'
+                        ? 'text-red-600 dark:text-red-400'
+                        : 'text-gray-900 dark:text-white'
                   }`}>
                     {format.prixUnitaire.toFixed(2)} €
                   </div>

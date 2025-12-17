@@ -83,7 +83,7 @@ export function IndiceVieChere({ selectedTerritory = null }) {
       // Filter by selected territory if specified
       if (selectedTerritory) {
         const filtered = mockIndices.filter(
-          i => i.territory === selectedTerritory
+          i => i.territory === selectedTerritory,
         );
         setIndices(filtered);
       } else {

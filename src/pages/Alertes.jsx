@@ -14,7 +14,7 @@ export default function Alertes() {
       message: 'Prix anormalement élevé détecté',
       date: '2025-01-15',
       status: 'active',
-      severity: 'medium'
+      severity: 'medium',
     },
     {
       id: 2,
@@ -24,7 +24,7 @@ export default function Alertes() {
       message: 'Rupture de stock signalée dans plusieurs enseignes',
       date: '2025-01-14',
       status: 'active',
-      severity: 'high'
+      severity: 'high',
     },
     {
       id: 3,
@@ -34,8 +34,8 @@ export default function Alertes() {
       message: 'Hausse brutale de +15% en 1 semaine',
       date: '2025-01-13',
       status: 'active',
-      severity: 'high'
-    }
+      severity: 'high',
+    },
   ];
 
   const getSeverityColor = (severity) => {
@@ -164,19 +164,19 @@ export default function Alertes() {
                         Signalé le {new Date(alert.date).toLocaleDateString('fr-FR', {
                           day: 'numeric',
                           month: 'long',
-                          year: 'numeric'
+                          year: 'numeric',
                         })}
                       </p>
                     </div>
                   </div>
                   <span className={`px-3 py-1 rounded text-xs font-semibold ${
                     alert.severity === 'high' ? 'bg-red-600' :
-                    alert.severity === 'medium' ? 'bg-orange-600' :
-                    'bg-yellow-600'
+                      alert.severity === 'medium' ? 'bg-orange-600' :
+                        'bg-yellow-600'
                   }`}>
                     {alert.severity === 'high' ? 'Urgent' :
-                     alert.severity === 'medium' ? 'Important' :
-                     'À surveiller'}
+                      alert.severity === 'medium' ? 'Important' :
+                        'À surveiller'}
                   </span>
                 </div>
               </div>

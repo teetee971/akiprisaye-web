@@ -89,7 +89,7 @@ function searchProducts(keyword) {
 
   const searchTerm = keyword.toLowerCase().trim();
   return placeholderProducts.filter(product =>
-    product.name.toLowerCase().includes(searchTerm)
+    product.name.toLowerCase().includes(searchTerm),
   );
 }
 

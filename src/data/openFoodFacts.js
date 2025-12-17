@@ -161,7 +161,7 @@ function memoize(fn, keyGenerator = JSON.stringify) {
  */
 function calculateSustainabilityScoreCore(product) {
   let score = 0;
-  let maxScore = 100;
+  const maxScore = 100;
   const breakdown = {
     ecoScore: 0,
     packaging: 0,
@@ -194,10 +194,10 @@ function calculateSustainabilityScoreCore(product) {
   // Local production (30 points)
   const domComCountries = ['gp', 'mq', 'gf', 're', 'yt', 'pm', 'bl', 'mf', 'wf', 'pf', 'nc', 'tf'];
   const isLocal = product.countries?.some(country => 
-    domComCountries.includes(country.toLowerCase())
+    domComCountries.includes(country.toLowerCase()),
   );
   const isFrance = product.countries?.some(country => 
-    country.toLowerCase().includes('france')
+    country.toLowerCase().includes('france'),
   );
   
   if (isLocal) {
@@ -214,7 +214,7 @@ function calculateSustainabilityScoreCore(product) {
   // Organic/Bio labels (20 points)
   const bioLabels = ['bio', 'organic', 'ab-agriculture-biologique', 'eu-organic'];
   const hasBioLabel = product.labels?.some(label => 
-    bioLabels.some(bio => label.toLowerCase().includes(bio))
+    bioLabels.some(bio => label.toLowerCase().includes(bio)),
   );
   
   if (hasBioLabel) {
@@ -234,7 +234,7 @@ function calculateSustainabilityScoreCore(product) {
 // Export memoized version for better performance
 export const calculateSustainabilityScore = memoize(
   calculateSustainabilityScoreCore,
-  (args) => args[0]?.ean || JSON.stringify(args[0])
+  (args) => args[0]?.ean || JSON.stringify(args[0]),
 );
 
 /**

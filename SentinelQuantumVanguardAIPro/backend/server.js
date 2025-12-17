@@ -1,1 +1,1 @@
-import Fastify from 'fastify';const app=Fastify();app.get('/health',()=>({status:'ok'}));app.listen({port:3333,host:'0.0.0.0'});
+import Fastify from 'fastify';const app=Fastify();app.get('/health',()=>({ status:'ok' }));app.listen({ port:3333,host:'0.0.0.0' });

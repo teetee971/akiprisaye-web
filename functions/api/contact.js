@@ -43,20 +43,20 @@ export async function onRequestPost(context) {
     if (missingFields.length > 0) {
       return new Response(JSON.stringify({
         error: 'Missing required fields',
-        missingFields
+        missingFields,
       }), {
         status: 400,
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
       });
     }
     
     // Validate email format
     if (!isValidEmail(data.email)) {
       return new Response(JSON.stringify({
-        error: 'Invalid email format'
+        error: 'Invalid email format',
       }), {
         status: 400,
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
       });
     }
     
@@ -66,34 +66,34 @@ export async function onRequestPost(context) {
       email: sanitizeInput(data.email),
       subject: sanitizeInput(data.subject),
       message: sanitizeInput(data.message),
-      territory: data.territory ? sanitizeInput(data.territory) : null
+      territory: data.territory ? sanitizeInput(data.territory) : null,
     };
     
     // Validate sanitized data lengths
     if (sanitizedData.name.length < 2 || sanitizedData.name.length > 100) {
       return new Response(JSON.stringify({
-        error: 'Name must be between 2 and 100 characters'
+        error: 'Name must be between 2 and 100 characters',
       }), {
         status: 400,
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
       });
     }
     
     if (sanitizedData.subject.length < 5 || sanitizedData.subject.length > 200) {
       return new Response(JSON.stringify({
-        error: 'Subject must be between 5 and 200 characters'
+        error: 'Subject must be between 5 and 200 characters',
       }), {
         status: 400,
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
       });
     }
     
     if (sanitizedData.message.length < 10 || sanitizedData.message.length > 5000) {
       return new Response(JSON.stringify({
-        error: 'Message must be between 10 and 5000 characters'
+        error: 'Message must be between 10 and 5000 characters',
       }), {
         status: 400,
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
       });
     }
     
@@ -104,7 +104,7 @@ export async function onRequestPost(context) {
       status: 'new',
       createdAt: new Date().toISOString(),
       ip: request.headers.get('CF-Connecting-IP') || 'unknown',
-      userAgent: request.headers.get('User-Agent') || 'unknown'
+      userAgent: request.headers.get('User-Agent') || 'unknown',
     };
     
     // TODO: PRODUCTION IMPLEMENTATION REQUIRED
@@ -121,14 +121,14 @@ export async function onRequestPost(context) {
     return new Response(JSON.stringify({
       data: {
         id: contactMessage.id,
-        status: 'received'
+        status: 'received',
       },
-      message: 'Votre message a été envoyé avec succès. Nous vous répondrons dans les plus brefs délais.'
+      message: 'Votre message a été envoyé avec succès. Nous vous répondrons dans les plus brefs délais.',
     }), {
       status: 201,
       headers: {
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     });
     
   } catch (error) {
@@ -136,10 +136,10 @@ export async function onRequestPost(context) {
     
     return new Response(JSON.stringify({
       error: 'Internal server error',
-      message: 'Une erreur est survenue lors de l\'envoi de votre message. Veuillez réessayer plus tard.'
+      message: 'Une erreur est survenue lors de l\'envoi de votre message. Veuillez réessayer plus tard.',
     }), {
       status: 500,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
     });
   }
 }
@@ -155,10 +155,10 @@ export async function onRequestGet(context) {
     // Mock response
     return new Response(JSON.stringify({
       error: 'Authentication required',
-      message: 'Admin access only'
+      message: 'Admin access only',
     }), {
       status: 401,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
     });
     
   } catch (error) {
@@ -166,10 +166,10 @@ export async function onRequestGet(context) {
     
     return new Response(JSON.stringify({
       error: 'Internal server error',
-      message: error.message
+      message: error.message,
     }), {
       status: 500,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
     });
   }
 }
@@ -185,10 +185,10 @@ export async function onRequestPatch(context) {
     // Mock response
     return new Response(JSON.stringify({
       error: 'Authentication required',
-      message: 'Admin access only'
+      message: 'Admin access only',
     }), {
       status: 401,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
     });
     
   } catch (error) {
@@ -196,10 +196,10 @@ export async function onRequestPatch(context) {
     
     return new Response(JSON.stringify({
       error: 'Internal server error',
-      message: error.message
+      message: error.message,
     }), {
       status: 500,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
     });
   }
 }

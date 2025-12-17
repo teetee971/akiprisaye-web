@@ -15,7 +15,7 @@ import {
   where,
   orderBy,
   limit,
-  serverTimestamp
+  serverTimestamp,
 } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 import { getStoreById as getSeedStoreById } from './seedStores.js';
 
@@ -49,7 +49,7 @@ export async function getProductByEan(ean) {
 export async function getPricesByEan(ean, options = {}) {
   try {
     const pricesRef = collection(db, 'prices');
-    let q = query(pricesRef, where('ean', '==', ean));
+    const q = query(pricesRef, where('ean', '==', ean));
     
     const snapshot = await getDocs(q);
     const now = Date.now();
@@ -77,7 +77,7 @@ export async function getPricesByEan(ean, options = {}) {
         ...data,
         ageHours,
         capturedAt: capturedAt,
-        expiresAt: data.expiresAt?.toMillis()
+        expiresAt: data.expiresAt?.toMillis(),
       });
     });
     
@@ -126,7 +126,7 @@ export async function createReceipt(receiptData) {
     const receiptsRef = collection(db, 'receipts');
     const docRef = await addDoc(receiptsRef, {
       ...receiptData,
-      uploadedAt: serverTimestamp()
+      uploadedAt: serverTimestamp(),
     });
     
     return docRef.id;
@@ -154,7 +154,7 @@ export async function addPrice(priceData) {
     const pricesRef = collection(db, 'prices');
     const docRef = await addDoc(pricesRef, {
       ...priceData,
-      createdAt: serverTimestamp()
+      createdAt: serverTimestamp(),
     });
     
     return docRef.id;

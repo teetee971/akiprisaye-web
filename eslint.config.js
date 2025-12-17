@@ -40,6 +40,15 @@ export default [
         FormData: 'readonly',
         URL: 'readonly',
         URLSearchParams: 'readonly',
+        alert: 'readonly',
+        confirm: 'readonly',
+        prompt: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
+        Event: 'readonly',
+        CustomEvent: 'readonly',
         // Node.js globals
         process: 'readonly',
         __dirname: 'readonly',
@@ -49,6 +58,13 @@ export default [
         exports: 'readonly',
         // Firebase globals
         firebase: 'readonly',
+        // Google Maps globals
+        google: 'readonly',
+        // Application specific globals
+        sourcesMetadata: 'readonly',
+        inseeIPC: 'readonly',
+        revenusReference: 'readonly',
+        opmrGuadeloupe: 'readonly',
       },
     },
     plugins: {

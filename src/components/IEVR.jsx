@@ -23,7 +23,7 @@ import {
   getScoreColor,
   getTrendIcon,
   validateIEVRData,
-  getTerritoryStatus
+  getTerritoryStatus,
 } from '../utils/ievrCalculations.js';
 import { DataSourceWarning } from './DataSourceWarning.jsx';
 
@@ -95,7 +95,7 @@ export function IEVR({ selectedTerritory = null }) {
   const territories = Object.entries(data.territories).map(([code, t]) => ({
     code,
     name: t.name,
-    flag: t.flag
+    flag: t.flag,
   }));
 
   return (
@@ -202,7 +202,7 @@ export function IEVR({ selectedTerritory = null }) {
             style={{ 
               backgroundColor: `${territoryStatus.color}20`,
               color: territoryStatus.color,
-              border: `2px solid ${territoryStatus.color}`
+              border: `2px solid ${territoryStatus.color}`,
             }}
           >
             <span className="text-2xl">{territoryStatus.icon}</span>
@@ -241,8 +241,8 @@ export function IEVR({ selectedTerritory = null }) {
                 monthEvolution.change > 0
                   ? 'text-green-600 dark:text-green-400'
                   : monthEvolution.change < 0
-                  ? 'text-red-600 dark:text-red-400'
-                  : 'text-gray-600 dark:text-gray-400'
+                    ? 'text-red-600 dark:text-red-400'
+                    : 'text-gray-600 dark:text-gray-400'
               }`}>
                 {monthEvolution.change > 0 ? '+' : ''}{monthEvolution.change}
               </span>
@@ -262,8 +262,8 @@ export function IEVR({ selectedTerritory = null }) {
                 yearEvolution.change > 0
                   ? 'text-green-600 dark:text-green-400'
                   : yearEvolution.change < 0
-                  ? 'text-red-600 dark:text-red-400'
-                  : 'text-gray-600 dark:text-gray-400'
+                    ? 'text-red-600 dark:text-red-400'
+                    : 'text-gray-600 dark:text-gray-400'
               }`}>
                 {yearEvolution.change > 0 ? '+' : ''}{yearEvolution.change}
               </span>
@@ -284,7 +284,7 @@ export function IEVR({ selectedTerritory = null }) {
           <div className="space-y-3">
             {[
               { date: territoryData.current.date, score: currentScore, status: territoryStatus.level },
-              ...territoryData.history
+              ...territoryData.history,
             ].map((entry, index) => {
               const entryStatus = index === 0 ? territoryStatus : getTerritoryStatus(entry.score);
               const date = new Date(entry.date);
@@ -352,7 +352,7 @@ export function IEVR({ selectedTerritory = null }) {
                     className="h-2 rounded-full transition-all duration-500"
                     style={{
                       width: `${categoryScore}%`,
-                      backgroundColor: getScoreColor(categoryScore)
+                      backgroundColor: getScoreColor(categoryScore),
                     }}
                   />
                 </div>

@@ -24,7 +24,7 @@ export function DossierMedia() {
     .map(([code, territory]) => ({
       code,
       ...territory,
-      status: getTerritoryStatus(territory.current.score)
+      status: getTerritoryStatus(territory.current.score),
     }))
     .sort((a, b) => a.current.score - b.current.score); // Sort by score ascending (worst first)
 
@@ -51,7 +51,7 @@ export function DossierMedia() {
           Document généré le {new Date().toLocaleDateString('fr-FR', { 
             day: 'numeric', 
             month: 'long', 
-            year: 'numeric' 
+            year: 'numeric', 
           })}
         </p>
       </div>

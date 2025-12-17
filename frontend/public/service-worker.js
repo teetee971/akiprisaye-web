@@ -1,57 +1,57 @@
 // 🔹 Nom du cache
-const CACHE_NAME = "akiprisaye-smart-cache-v2";
+const CACHE_NAME = 'akiprisaye-smart-cache-v2';
 
 // 🔹 Ressources à précharger
 const ASSETS_TO_CACHE = [
-  "/",
-  "/index.html",
-  "/scanner.html",
-  "/comparateur.html",
-  "/historique.html",
-  "/ia-conseiller.html",
-  "/partenaires.html",
-  "/contact.html",
-  "/faq.html",
-  "/carte.html",
-  "/upload-ticket.html",
-  "/manifest.webmanifest",
-  "/assets/icon_512-3-9kYoTe.png"
+  '/',
+  '/index.html',
+  '/scanner.html',
+  '/comparateur.html',
+  '/historique.html',
+  '/ia-conseiller.html',
+  '/partenaires.html',
+  '/contact.html',
+  '/faq.html',
+  '/carte.html',
+  '/upload-ticket.html',
+  '/manifest.webmanifest',
+  '/assets/icon_512-3-9kYoTe.png',
 ];
 
 // 🔹 Installation du service worker
-self.addEventListener("install", (event) => {
+self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log("📦 Mise en cache initiale des ressources...");
+      console.log('📦 Mise en cache initiale des ressources...');
       return cache.addAll(ASSETS_TO_CACHE);
-    })
+    }),
   );
   self.skipWaiting();
 });
 
 // 🔹 Activation (nettoyage ancien cache)
-self.addEventListener("activate", (event) => {
+self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
       Promise.all(
         keys
           .filter((key) => key !== CACHE_NAME)
           .map((key) => {
-            console.log("🧹 Suppression ancien cache :", key);
+            console.log('🧹 Suppression ancien cache :', key);
             return caches.delete(key);
-          })
-      )
-    )
+          }),
+      ),
+    ),
   );
   self.clients.claim();
 });
 
 // 🔹 Interception des requêtes (offline fallback)
-self.addEventListener("fetch", (event) => {
+self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request).then((response) => {
       if (response) {
-        console.log("✅ Cache hit :", event.request.url);
+        console.log('✅ Cache hit :', event.request.url);
         return response;
       }
       return fetch(event.request)
@@ -61,14 +61,14 @@ self.addEventListener("fetch", (event) => {
             return liveResponse;
           });
         })
-        .catch(() => caches.match("/index.html"));
-    })
+        .catch(() => caches.match('/index.html'));
+    }),
   );
 });
 
 // 🔹 Message pour forcer la mise à jour
-self.addEventListener("message", (event) => {
-  if (event.data === "SKIP_WAITING") {
+self.addEventListener('message', (event) => {
+  if (event.data === 'SKIP_WAITING') {
     self.skipWaiting();
   }
 });

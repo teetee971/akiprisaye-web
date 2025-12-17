@@ -20,7 +20,7 @@ const USER_ALERTS_KEY = 'akiprisaye_user_alerts';
 export function AlertesPrix() {
   const [thresholds, setThresholds] = useState({
     percentage: 5, // Alert if price increases by more than 5%
-    absolute: 0.50  // Alert if price increases by more than 0.50€
+    absolute: 0.50,  // Alert if price increases by more than 0.50€
   });
   const [alerts, setAlerts] = useState([]);
   const [watchedProducts, setWatchedProducts] = useState([]);
@@ -74,7 +74,7 @@ export function AlertesPrix() {
           absoluteChange,
           percentageChange: percentageChange.toFixed(1),
           date: current.date,
-          severity: percentageChange > 10 ? 'high' : percentageChange > 5 ? 'medium' : 'low'
+          severity: percentageChange > 10 ? 'high' : percentageChange > 5 ? 'medium' : 'low',
         });
       }
     });

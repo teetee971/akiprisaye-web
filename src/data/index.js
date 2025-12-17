@@ -30,7 +30,7 @@ export function verifierStatutDonnees(source) {
   if (!source || !source.statut) {
     return {
       valide: false,
-      message: 'Source invalide ou statut manquant'
+      message: 'Source invalide ou statut manquant',
     };
   }
 
@@ -38,20 +38,20 @@ export function verifierStatutDonnees(source) {
     return {
       valide: false,
       message: source.message || 'Données non disponibles',
-      actionRequise: source.action_requise
+      actionRequise: source.action_requise,
     };
   }
 
   if (source.statut === 'OFFICIEL') {
     return {
       valide: true,
-      message: 'Données officielles validées'
+      message: 'Données officielles validées',
     };
   }
 
   return {
     valide: false,
-    message: 'Statut inconnu'
+    message: 'Statut inconnu',
   };
 }
 
@@ -72,5 +72,5 @@ export default {
   revenusReference,
   opmrGuadeloupe,
   verifierStatutDonnees,
-  obtenirMetadonneesSource
+  obtenirMetadonneesSource,
 };
