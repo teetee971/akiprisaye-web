@@ -32,9 +32,11 @@ interface RouteOptimization {
 
 export class DistanceCalculator {
   // Average fuel consumption in L/100km
+  // TODO: Make territory-specific - urban vs rural, terrain differences
   private readonly AVG_FUEL_CONSUMPTION = 7.5;
   
   // Average speed in km/h
+  // TODO: Make territory-specific - traffic conditions vary by territory
   private readonly AVG_SPEED = 40;
 
   /**

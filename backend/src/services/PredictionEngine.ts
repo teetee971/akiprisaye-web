@@ -43,6 +43,7 @@ interface TrendAnalysis {
 }
 
 export class PredictionEngine {
+  // TODO: Make territory-specific based on data quality and market volatility
   private readonly MARGIN_OF_ERROR = 15; // ±15% as stated in requirements
   private readonly MIN_DATA_POINTS = 6; // At least 6 months of data
 
@@ -259,7 +260,12 @@ export class PredictionEngine {
     source: string;
     date: Date;
   }> {
-    // Placeholder - in production, fetch from INSEE API
+    // TODO: Replace with actual INSEE API integration in production
+    // Placeholder data - DO NOT use in production without real API
+    if (process.env.NODE_ENV === 'production') {
+      console.warn('WARNING: Using mock inflation data in production!');
+    }
+    
     return {
       rate: 2.3,
       source: 'INSEE',

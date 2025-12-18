@@ -56,7 +56,7 @@ export function SourceFooter({ sources = [], limitation, methodology }) {
 
         {limitation && (
           <div className="mb-4">
-            <LimitNote text={limitation} />
+            <LimitNote>{limitation}</LimitNote>
           </div>
         )}
 

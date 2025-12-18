@@ -231,9 +231,9 @@ export function PriceTrendChart({
 
       {/* Methodology note */}
       <div className="mt-4">
-        <LimitNote 
-          text={`Données historiques : ${historicalData.length} points sur ${Math.ceil(historicalData.length / 30)} mois. Prédictions calculées par moyenne mobile simple. AUCUNE IA opaque. Dernière mise à jour : ${lastUpdate}`}
-        />
+        <LimitNote>
+          Données historiques : {historicalData.length} points sur {Math.ceil(historicalData.length / 30)} mois. Prédictions calculées par moyenne mobile simple. AUCUNE IA opaque. Dernière mise à jour : {lastUpdate}
+        </LimitNote>
       </div>
     </div>
   );

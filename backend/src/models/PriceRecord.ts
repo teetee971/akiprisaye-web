@@ -89,7 +89,7 @@ class PriceRecordStore {
   async create(record: Omit<PriceRecord, 'id' | 'collectedAt'>): Promise<PriceRecord> {
     const newRecord: PriceRecord = {
       ...record,
-      id: `price_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      id: `price_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`,
       collectedAt: new Date(),
     };
     

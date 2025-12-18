@@ -16,7 +16,7 @@ const generateMockHistoricalData = (basePrice, months = 12) => {
     date.setMonth(date.getMonth() - i);
     
     // Simulate seasonal variation and random fluctuation
-    const seasonal = Math.sin((date.getMonth() / 12) * Math.PI * 2) * 0.1;
+    const seasonal = Math.sin((date.getMonth() / 6) * Math.PI) * 0.1;
     const random = (Math.random() - 0.5) * 0.05;
     const trend = (months - i) * 0.002; // Slight upward trend
     
