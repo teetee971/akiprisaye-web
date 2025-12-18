@@ -47,7 +47,7 @@ export default function Header() {
 
       {/* Mobile Drawer Menu - RIGHT SIDE ONLY */}
       <nav
-        className={`fixed top-0 right-0 left-auto h-full w-80 glass-strong z-50 transform transition-transform duration-300 ease-in-out lg:hidden ${
+        className={`fixed top-0 right-0 h-full w-80 glass-strong z-50 transform transition-transform duration-300 ease-in-out lg:hidden ${
           mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
         aria-label="Navigation mobile"
