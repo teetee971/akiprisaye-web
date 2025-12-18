@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { PriceRecord } from '../../frontend/src/types/civic'
+import { PriceRecord } from '../types/civic'
 import { predictPrice } from '../services/prediction.service'
 
 // Mock data for demonstration

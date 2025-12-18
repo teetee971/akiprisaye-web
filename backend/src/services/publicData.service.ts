@@ -1,4 +1,4 @@
-import { CivicNewsItem } from "../../frontend/src/types/civic"
+import { CivicNewsItem } from "../types/civic"
 
 export async function fetchPublicNews(): Promise<CivicNewsItem[]> {
   // EXEMPLE : données issues de data.gouv.fr (API ouverte)

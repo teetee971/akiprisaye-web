@@ -1,4 +1,4 @@
-import { PriceRecord } from "../../frontend/src/types/civic"
+import { PriceRecord } from "../types/civic"
 
 export function predictPrice(records: PriceRecord[]) {
   const last = records[records.length - 1]
