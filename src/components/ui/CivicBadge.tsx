@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface CivicBadgeProps {
   category: 'PRIX' | 'POLITIQUE' | 'ALERTE' | 'INNOVATION';
   className?: string;

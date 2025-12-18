@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { MapPin, ShoppingCart, TrendingDown, Navigation } from 'lucide-react';
 
 interface ShoppingItem {

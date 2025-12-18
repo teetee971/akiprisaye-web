@@ -63,6 +63,23 @@ export default function CivicModules() {
             <NewsWidgetCivic limit={3} showFullButton={true} />
           </section>
 
+          {/* Price Comparator Info */}
+          <section className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-6">
+            <h2 className="text-xl font-semibold text-gray-100 mb-4">
+              2️⃣ Comparateur de prix intelligent
+            </h2>
+            <p className="text-gray-400 text-sm mb-4">
+              Le comparateur existant permet de rechercher par produit, comparer par territoire, visualiser l'historique 
+              et détecter l'inflation et la shrinkflation. Toutes les données proviennent de sources officielles (OPMR, DGCCRF).
+            </p>
+            <a 
+              href="/comparateur" 
+              className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+            >
+              Accéder au comparateur →
+            </a>
+          </section>
+
           {/* AI Price Prediction Module */}
           <section>
             <h2 className="text-xl font-semibold text-gray-100 mb-4">

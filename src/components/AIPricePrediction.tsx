@@ -1,4 +1,3 @@
-import React from 'react';
 import { TrendingUp, TrendingDown, AlertCircle } from 'lucide-react';
 
 interface PricePrediction {
