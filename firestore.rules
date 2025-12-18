@@ -1,7 +1,33 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Allow read/write access to authenticated users only
+    // CORE MODULE 3: Price History - Append-only, read-accessible
+    match /priceHistory/{docId} {
+      // Public read access for transparency
+      allow read: if true;
+      // Write only via Cloud Functions/Admin SDK (append-only enforcement)
+      allow write: if false;
+    }
+    
+    // Price observations - read-only for users
+    match /prices/{docId} {
+      allow read: if true;
+      allow write: if false; // Only via Cloud Functions
+    }
+    
+    // Products - read-only for users
+    match /products/{ean} {
+      allow read: if true;
+      allow write: if false; // Only via Cloud Functions
+    }
+    
+    // Stores - read-only for users
+    match /stores/{storeId} {
+      allow read: if true;
+      allow write: if false; // Only via Cloud Functions
+    }
+    
+    // User-specific data (authenticated users only)
     match /{document=**} {
       allow read, write: if request.auth != null;
     }

@@ -1,162 +1,403 @@
 {
   "metadata": {
-    "version": "1.0.0",
-    "description": "Historique des prix - Données append-only pour traçabilité",
-    "lastUpdate": "2025-12-17"
+    "version": "2.0.0",
+    "description": "Historique des prix - Données append-only pour traçabilité - CORE MODULE 3",
+    "lastUpdate": "2025-12-18",
+    "disclaimer": "Cette plateforme présente des observations factuelles de prix basées sur des données publiques et soumises par les utilisateurs."
   },
   "products": {
     "pain-500g": {
       "name": "Pain complet 500g",
       "category": "alimentation",
-      "unit": "unité",
+      "unit": "€/unité",
       "history": [
         {
           "date": "2025-12-01",
           "territory": "GP",
+          "store_name": "Carrefour Baie-Mahault",
           "price": 2.50,
-          "source": "observateur"
+          "quantity": 500,
+          "unit": "€/unité",
+          "data_source": "Catalogue public",
+          "confidence_level": "HIGH",
+          "product_id": "pain-500g",
+          "product_name": "Pain complet 500g"
         },
         {
           "date": "2025-11-01",
           "territory": "GP",
+          "store_name": "Carrefour Baie-Mahault",
           "price": 2.45,
-          "source": "observateur"
+          "quantity": 500,
+          "unit": "€/unité",
+          "data_source": "Catalogue public",
+          "confidence_level": "HIGH",
+          "product_id": "pain-500g",
+          "product_name": "Pain complet 500g"
         },
         {
           "date": "2025-10-01",
           "territory": "GP",
+          "store_name": "Carrefour Baie-Mahault",
           "price": 2.40,
-          "source": "observateur"
+          "quantity": 500,
+          "unit": "€/unité",
+          "data_source": "Catalogue public",
+          "confidence_level": "HIGH",
+          "product_id": "pain-500g",
+          "product_name": "Pain complet 500g"
         },
         {
           "date": "2024-12-01",
           "territory": "GP",
+          "store_name": "Carrefour Baie-Mahault",
           "price": 2.30,
-          "source": "observateur"
+          "quantity": 500,
+          "unit": "€/unité",
+          "data_source": "Catalogue public",
+          "confidence_level": "HIGH",
+          "product_id": "pain-500g",
+          "product_name": "Pain complet 500g"
+        },
+        {
+          "date": "2025-12-01",
+          "territory": "MQ",
+          "store_name": "Hyper U Fort-de-France",
+          "price": 2.60,
+          "quantity": 500,
+          "unit": "€/unité",
+          "data_source": "Relevé utilisateur",
+          "confidence_level": "MEDIUM",
+          "product_id": "pain-500g",
+          "product_name": "Pain complet 500g"
+        },
+        {
+          "date": "2025-11-01",
+          "territory": "MQ",
+          "store_name": "Hyper U Fort-de-France",
+          "price": 2.55,
+          "quantity": 500,
+          "unit": "€/unité",
+          "data_source": "Relevé utilisateur",
+          "confidence_level": "MEDIUM",
+          "product_id": "pain-500g",
+          "product_name": "Pain complet 500g"
         }
       ]
     },
     "lait-1l": {
       "name": "Lait demi-écrémé 1L",
       "category": "alimentation",
-      "unit": "litre",
+      "unit": "€/L",
       "history": [
         {
           "date": "2025-12-01",
           "territory": "GP",
+          "store_name": "Leader Price Pointe-à-Pitre",
           "price": 1.85,
-          "source": "observateur"
+          "quantity": 1,
+          "unit": "€/L",
+          "data_source": "Catalogue public",
+          "confidence_level": "HIGH",
+          "product_id": "lait-1l",
+          "product_name": "Lait demi-écrémé 1L"
         },
         {
           "date": "2025-11-01",
           "territory": "GP",
+          "store_name": "Leader Price Pointe-à-Pitre",
           "price": 1.80,
-          "source": "observateur"
+          "quantity": 1,
+          "unit": "€/L",
+          "data_source": "Catalogue public",
+          "confidence_level": "HIGH",
+          "product_id": "lait-1l",
+          "product_name": "Lait demi-écrémé 1L"
         },
         {
           "date": "2025-10-01",
           "territory": "GP",
+          "store_name": "Leader Price Pointe-à-Pitre",
           "price": 1.75,
-          "source": "observateur"
+          "quantity": 1,
+          "unit": "€/L",
+          "data_source": "Catalogue public",
+          "confidence_level": "HIGH",
+          "product_id": "lait-1l",
+          "product_name": "Lait demi-écrémé 1L"
+        },
+        {
+          "date": "2025-09-01",
+          "territory": "GP",
+          "store_name": "Leader Price Pointe-à-Pitre",
+          "price": 1.75,
+          "quantity": 0.95,
+          "unit": "€/L",
+          "data_source": "Catalogue public",
+          "confidence_level": "HIGH",
+          "product_id": "lait-1l",
+          "product_name": "Lait demi-écrémé 1L (shrinkflation: 950ml)"
         },
         {
           "date": "2024-12-01",
           "territory": "GP",
+          "store_name": "Leader Price Pointe-à-Pitre",
           "price": 1.65,
-          "source": "observateur"
+          "quantity": 1,
+          "unit": "€/L",
+          "data_source": "Catalogue public",
+          "confidence_level": "HIGH",
+          "product_id": "lait-1l",
+          "product_name": "Lait demi-écrémé 1L"
+        },
+        {
+          "date": "2025-12-01",
+          "territory": "MQ",
+          "store_name": "Carrefour Le Lamentin",
+          "price": 1.90,
+          "quantity": 1,
+          "unit": "€/L",
+          "data_source": "Site officiel",
+          "confidence_level": "HIGH",
+          "product_id": "lait-1l",
+          "product_name": "Lait demi-écrémé 1L"
+        },
+        {
+          "date": "2025-12-01",
+          "territory": "RE",
+          "store_name": "Jumbo Score Saint-Denis",
+          "price": 1.75,
+          "quantity": 1,
+          "unit": "€/L",
+          "data_source": "Relevé utilisateur",
+          "confidence_level": "MEDIUM",
+          "product_id": "lait-1l",
+          "product_name": "Lait demi-écrémé 1L"
         }
       ]
     },
     "riz-1kg": {
       "name": "Riz blanc 1kg",
       "category": "alimentation",
-      "unit": "kg",
+      "unit": "€/kg",
       "history": [
         {
           "date": "2025-12-01",
           "territory": "GP",
+          "store_name": "Casino Les Abymes",
           "price": 3.20,
-          "source": "observateur"
+          "quantity": 1,
+          "unit": "€/kg",
+          "data_source": "Catalogue public",
+          "confidence_level": "HIGH",
+          "product_id": "riz-1kg",
+          "product_name": "Riz blanc 1kg"
         },
         {
           "date": "2025-11-01",
           "territory": "GP",
+          "store_name": "Casino Les Abymes",
           "price": 3.15,
-          "source": "observateur"
+          "quantity": 1,
+          "unit": "€/kg",
+          "data_source": "Catalogue public",
+          "confidence_level": "HIGH",
+          "product_id": "riz-1kg",
+          "product_name": "Riz blanc 1kg"
         },
         {
           "date": "2025-10-01",
           "territory": "GP",
+          "store_name": "Casino Les Abymes",
           "price": 3.10,
-          "source": "observateur"
+          "quantity": 1,
+          "unit": "€/kg",
+          "data_source": "Catalogue public",
+          "confidence_level": "HIGH",
+          "product_id": "riz-1kg",
+          "product_name": "Riz blanc 1kg"
+        },
+        {
+          "date": "2025-09-01",
+          "territory": "GP",
+          "store_name": "Casino Les Abymes",
+          "price": 3.05,
+          "quantity": 1,
+          "unit": "€/kg",
+          "data_source": "Catalogue public",
+          "confidence_level": "HIGH",
+          "product_id": "riz-1kg",
+          "product_name": "Riz blanc 1kg"
         },
         {
           "date": "2024-12-01",
           "territory": "GP",
+          "store_name": "Casino Les Abymes",
           "price": 2.95,
-          "source": "observateur"
+          "quantity": 1,
+          "unit": "€/kg",
+          "data_source": "Catalogue public",
+          "confidence_level": "HIGH",
+          "product_id": "riz-1kg",
+          "product_name": "Riz blanc 1kg"
+        },
+        {
+          "date": "2025-12-01",
+          "territory": "MQ",
+          "store_name": "Carrefour Schoelcher",
+          "price": 3.35,
+          "quantity": 1,
+          "unit": "€/kg",
+          "data_source": "Site officiel",
+          "confidence_level": "HIGH",
+          "product_id": "riz-1kg",
+          "product_name": "Riz blanc 1kg"
+        },
+        {
+          "date": "2025-12-01",
+          "territory": "GF",
+          "store_name": "Géant Cayenne",
+          "price": 3.45,
+          "quantity": 1,
+          "unit": "€/kg",
+          "data_source": "Relevé utilisateur",
+          "confidence_level": "MEDIUM",
+          "product_id": "riz-1kg",
+          "product_name": "Riz blanc 1kg"
         }
       ]
     },
     "savon-liquide-500ml": {
       "name": "Savon liquide 500ml",
       "category": "hygiene",
-      "unit": "unité",
+      "unit": "€/unité",
       "history": [
         {
           "date": "2025-12-01",
           "territory": "GP",
+          "store_name": "Super U Gosier",
           "price": 4.50,
-          "source": "observateur"
+          "quantity": 500,
+          "unit": "€/unité",
+          "data_source": "Catalogue public",
+          "confidence_level": "HIGH",
+          "product_id": "savon-liquide-500ml",
+          "product_name": "Savon liquide 500ml"
         },
         {
           "date": "2025-11-01",
           "territory": "GP",
+          "store_name": "Super U Gosier",
           "price": 4.40,
-          "source": "observateur"
+          "quantity": 500,
+          "unit": "€/unité",
+          "data_source": "Catalogue public",
+          "confidence_level": "HIGH",
+          "product_id": "savon-liquide-500ml",
+          "product_name": "Savon liquide 500ml"
         },
         {
           "date": "2025-10-01",
           "territory": "GP",
+          "store_name": "Super U Gosier",
           "price": 4.30,
-          "source": "observateur"
+          "quantity": 500,
+          "unit": "€/unité",
+          "data_source": "Catalogue public",
+          "confidence_level": "HIGH",
+          "product_id": "savon-liquide-500ml",
+          "product_name": "Savon liquide 500ml"
         },
         {
           "date": "2024-12-01",
           "territory": "GP",
+          "store_name": "Super U Gosier",
           "price": 4.10,
-          "source": "observateur"
+          "quantity": 500,
+          "unit": "€/unité",
+          "data_source": "Catalogue public",
+          "confidence_level": "HIGH",
+          "product_id": "savon-liquide-500ml",
+          "product_name": "Savon liquide 500ml"
         }
       ]
     },
     "essence-sp95-1l": {
       "name": "Essence SP95",
       "category": "transport",
-      "unit": "litre",
+      "unit": "€/L",
       "history": [
         {
           "date": "2025-12-01",
           "territory": "GP",
+          "store_name": "Total Baie-Mahault",
           "price": 1.75,
-          "source": "observateur"
+          "quantity": 1,
+          "unit": "€/L",
+          "data_source": "Site officiel",
+          "confidence_level": "HIGH",
+          "product_id": "essence-sp95-1l",
+          "product_name": "Essence SP95"
         },
         {
           "date": "2025-11-01",
           "territory": "GP",
+          "store_name": "Total Baie-Mahault",
           "price": 1.72,
-          "source": "observateur"
+          "quantity": 1,
+          "unit": "€/L",
+          "data_source": "Site officiel",
+          "confidence_level": "HIGH",
+          "product_id": "essence-sp95-1l",
+          "product_name": "Essence SP95"
         },
         {
           "date": "2025-10-01",
           "territory": "GP",
+          "store_name": "Total Baie-Mahault",
           "price": 1.70,
-          "source": "observateur"
+          "quantity": 1,
+          "unit": "€/L",
+          "data_source": "Site officiel",
+          "confidence_level": "HIGH",
+          "product_id": "essence-sp95-1l",
+          "product_name": "Essence SP95"
+        },
+        {
+          "date": "2025-09-01",
+          "territory": "GP",
+          "store_name": "Total Baie-Mahault",
+          "price": 1.68,
+          "quantity": 1,
+          "unit": "€/L",
+          "data_source": "Site officiel",
+          "confidence_level": "HIGH",
+          "product_id": "essence-sp95-1l",
+          "product_name": "Essence SP95"
         },
         {
           "date": "2024-12-01",
           "territory": "GP",
+          "store_name": "Total Baie-Mahault",
           "price": 1.65,
-          "source": "observateur"
+          "quantity": 1,
+          "unit": "€/L",
+          "data_source": "Site officiel",
+          "confidence_level": "HIGH",
+          "product_id": "essence-sp95-1l",
+          "product_name": "Essence SP95"
+        },
+        {
+          "date": "2025-12-01",
+          "territory": "MQ",
+          "store_name": "Esso Fort-de-France",
+          "price": 1.78,
+          "quantity": 1,
+          "unit": "€/L",
+          "data_source": "Site officiel",
+          "confidence_level": "HIGH",
+          "product_id": "essence-sp95-1l",
+          "product_name": "Essence SP95"
         }
       ]
     }
