@@ -22,7 +22,7 @@ export default function APropos() {
           
           {/* Mission */}
           <section className="bg-[#1e1e1e] rounded-xl border border-gray-700 p-8">
-            <h2 className="text-2xl font-semibold mb-4 text-blue-400">🎯 Notre Mission</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-blue-400">Notre Mission</h2>
             <div className="text-gray-300 space-y-3">
               <p>
                 <strong>A KI PRI SA YÉ</strong> est un outil citoyen, sérieux, factuel et vérifiable
@@ -33,19 +33,19 @@ export default function APropos() {
                 départements et régions d'Outre-mer (DROM-COM) :
               </p>
               <ul className="list-disc list-inside ml-4 space-y-1">
-                <li>🇬🇵 Guadeloupe</li>
-                <li>🇲🇶 Martinique</li>
-                <li>🇬🇫 Guyane</li>
-                <li>🇷🇪 La Réunion</li>
-                <li>🇾🇹 Mayotte</li>
-                <li>🇫🇷 France hexagonale (référence)</li>
+                <li>Guadeloupe</li>
+                <li>Martinique</li>
+                <li>Guyane</li>
+                <li>La Réunion</li>
+                <li>Mayotte</li>
+                <li>France hexagonale (référence)</li>
               </ul>
             </div>
           </section>
 
           {/* Philosophy */}
           <section className="bg-[#1e1e1e] rounded-xl border border-gray-700 p-8">
-            <h2 className="text-2xl font-semibold mb-4 text-blue-400">💡 Notre Philosophie</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-blue-400">Notre Philosophie</h2>
             <div className="text-gray-300 space-y-3">
               <blockquote className="border-l-4 border-blue-500 pl-4 italic text-lg">
                 "Faire peu, mais faire VRAI."
@@ -55,19 +55,27 @@ export default function APropos() {
               </p>
               <ul className="space-y-2">
                 <li className="flex items-start gap-2">
-                  <span className="text-green-400 font-bold">✓</span>
+                  <svg className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
                   <span><strong>Transparence totale</strong> : Sources clairement identifiées, méthodologie publique</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-green-400 font-bold">✓</span>
+                  <svg className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
                   <span><strong>Données réelles</strong> : Aucun prix inventé, aucune simulation présentée comme réelle</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-green-400 font-bold">✓</span>
+                  <svg className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
                   <span><strong>Honnêteté</strong> : Les modules en développement sont clairement identifiés</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-green-400 font-bold">✓</span>
+                  <svg className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
                   <span><strong>Indépendance</strong> : Aucun lien avec des enseignes ou marques commerciales</span>
                 </li>
               </ul>

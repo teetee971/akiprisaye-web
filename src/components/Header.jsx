@@ -74,7 +74,6 @@ export default function Header() {
               }`}
               onClick={closeMobileMenu}
             >
-              <span className="text-xl">🏠</span>
               <span>Accueil</span>
             </Link>
           </li>
@@ -86,7 +85,6 @@ export default function Header() {
               }`}
               onClick={closeMobileMenu}
             >
-              <span className="text-xl">🔍</span>
               <span>Comparateur</span>
             </Link>
           </li>
@@ -98,7 +96,6 @@ export default function Header() {
               }`}
               onClick={closeMobileMenu}
             >
-              <span className="text-xl">📷</span>
               <span>Scanner</span>
             </Link>
           </li>
@@ -110,7 +107,6 @@ export default function Header() {
               }`}
               onClick={closeMobileMenu}
             >
-              <span className="text-xl">🗺️</span>
               <span>Carte</span>
             </Link>
           </li>
@@ -122,7 +118,6 @@ export default function Header() {
               }`}
               onClick={closeMobileMenu}
             >
-              <span className="text-xl">🔔</span>
               <span>Alertes</span>
             </Link>
           </li>
@@ -134,7 +129,6 @@ export default function Header() {
               }`}
               onClick={closeMobileMenu}
             >
-              <span className="text-xl">📰</span>
               <span>Actualités</span>
             </Link>
           </li>
@@ -146,7 +140,6 @@ export default function Header() {
               }`}
               onClick={closeMobileMenu}
             >
-              <span className="text-xl">💰</span>
               <span>Tarifs</span>
             </Link>
           </li>
@@ -158,7 +151,6 @@ export default function Header() {
               }`}
               onClick={closeMobileMenu}
             >
-              <span className="text-xl">👤</span>
               <span>Mon Compte</span>
             </Link>
           </li>

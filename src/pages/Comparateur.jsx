@@ -137,7 +137,7 @@ export default function Comparateur() {
       <header className="bg-gradient-to-r from-[#0f62fe] to-[#0353e9] p-6 shadow-lg">
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center justify-between mb-4">
-            <h1 className="text-3xl font-bold">🔍 Comparateur de Prix</h1>
+            <h1 className="text-3xl font-bold">Comparateur de Prix</h1>
             <a 
               href="/" 
               className="text-white hover:text-gray-200 transition-colors"
@@ -213,7 +213,7 @@ export default function Comparateur() {
               disabled={loading}
               className="w-full md:w-auto px-8 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg font-semibold transition-colors"
             >
-              {loading ? '🔍 Recherche en cours...' : '🔍 Comparer les prix'}
+              {loading ? 'Recherche en cours...' : 'Comparer les prix'}
             </button>
           </form>
         </div>
@@ -274,8 +274,8 @@ export default function Comparateur() {
                         
                         <div className="flex items-center gap-4 flex-wrap">
                           {result.promotion && (
-                            <span className="px-3 py-1 bg-red-600 text-white text-xs font-semibold rounded-full">
-                              🏷️ EN PROMO
+                            <span className="px-3 py-1 bg-red-600 text-white text-xs font-semibold rounded-md uppercase">
+                              EN PROMO
                             </span>
                           )}
                           {isBestPrice && (
@@ -306,7 +306,6 @@ export default function Comparateur() {
 
         {!loading && results.length === 0 && ean && (
           <div className="bg-[#1e1e1e] rounded-xl border border-gray-700 p-12 text-center">
-            <div className="text-6xl mb-4">🔍</div>
             <h3 className="text-xl font-semibold mb-2">Aucun résultat trouvé</h3>
             <p className="text-gray-400">
               Essayez un autre code EAN ou vérifiez votre saisie
@@ -319,7 +318,7 @@ export default function Comparateur() {
           {/* Transparency Notice */}
           <div className="bg-yellow-900/20 border border-yellow-700 rounded-xl p-6">
             <h3 className="text-lg font-semibold mb-3 text-yellow-400">
-              ⚠️ Transparence sur les données
+              Transparence sur les données
             </h3>
             <p className="text-gray-300 text-sm mb-2">
               <strong>Phase de développement :</strong> Les prix affichés proviennent actuellement
@@ -336,7 +335,7 @@ export default function Comparateur() {
           
           <div className="bg-blue-900/20 border border-blue-700/30 rounded-xl p-6">
             <h3 className="text-lg font-semibold mb-3 text-blue-400">
-              ℹ️ Comment ça marche ?
+              Comment ça marche ?
             </h3>
             <ul className="space-y-2 text-gray-300 text-sm">
               <li>• Scannez le code-barres de votre produit ou saisissez-le manuellement</li>
