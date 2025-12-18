@@ -41,6 +41,7 @@ const FauxBonsPlan = lazy(() => import('./pages/FauxBonsPlan'));
 const BudgetReelMensuel = lazy(() => import('./pages/BudgetReelMensuel'));
 const ComparateurFormats = lazy(() => import('./pages/ComparateurFormats'));
 const ListeCourses = lazy(() => import('./pages/ListeCourses'));
+const PriceTrendAnalysis = lazy(() => import('./pages/PriceTrendAnalysis'));
 
 // New simplified pages for automatic generation
 const HomeSimple = lazy(() => import('./pages/Home.tsx'));
@@ -117,6 +118,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                   <Route path='budget-reel-mensuel' element={<BudgetReelMensuel />} />
                   <Route path='comparateur-formats' element={<ComparateurFormats />} />
                   <Route path='liste-courses' element={<ListeCourses />} />
+                  <Route path='price-trend-analysis' element={<PriceTrendAnalysis />} />
                   
                   {/* New simplified pages for automatic generation */}
                   <Route path='comparer' element={<CompareSimple />} />
