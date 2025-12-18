@@ -1,5 +1,4 @@
 import React from 'react';
-import { cn } from '../../lib/utils';
 import { ExternalLink } from 'lucide-react';
 
 interface SourceFooterProps {
@@ -10,7 +9,7 @@ interface SourceFooterProps {
 
 export default function SourceFooter({ sourceName, sourceUrl, className }: SourceFooterProps) {
   return (
-    <div className={cn('mt-3 pt-3 border-t border-white/10', className)}>
+    <div className={`mt-3 pt-3 border-t border-white/10 ${className || ''}`}>
       <div className="flex items-center gap-2 text-xs text-gray-400">
         <span className="font-medium">Source officielle:</span>
         <a

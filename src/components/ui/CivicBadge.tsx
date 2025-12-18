@@ -1,5 +1,4 @@
 import React from 'react';
-import { cn } from '../../lib/utils';
 
 interface CivicBadgeProps {
   category: 'PRIX' | 'POLITIQUE' | 'ALERTE' | 'INNOVATION';
@@ -14,15 +13,10 @@ const CATEGORY_STYLES = {
 } as const;
 
 export default function CivicBadge({ category, className }: CivicBadgeProps) {
+  const styles = `inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium border backdrop-blur-sm ${CATEGORY_STYLES[category]} ${className || ''}`;
+  
   return (
-    <span
-      className={cn(
-        'inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium',
-        'border backdrop-blur-sm',
-        CATEGORY_STYLES[category],
-        className
-      )}
-    >
+    <span className={styles}>
       {category}
     </span>
   );

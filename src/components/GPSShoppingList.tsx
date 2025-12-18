@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { MapPin, ShoppingCart, TrendingDown, Navigation } from 'lucide-react';
-import { cn } from '../../lib/utils';
 
 interface ShoppingItem {
   id: string;
@@ -97,10 +96,7 @@ export default function GPSShoppingList({ items, className }: GPSShoppingListPro
   const bestOption = getBestOption();
 
   return (
-    <div className={cn(
-      'bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-6',
-      className
-    )}>
+    <div className={`bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-6 ${className || ''}`}>
       <div className="flex items-center gap-3 mb-6">
         <ShoppingCart className="w-6 h-6 text-blue-400" />
         <h2 className="text-xl font-semibold text-gray-100">

@@ -1,6 +1,5 @@
 import React from 'react';
 import { TrendingUp, TrendingDown, AlertCircle } from 'lucide-react';
-import { cn } from '../../lib/utils';
 
 interface PricePrediction {
   trend: 'hausse' | 'baisse' | 'stable';
@@ -46,17 +45,14 @@ export default function AIPricePrediction({
   };
 
   return (
-    <div className={cn(
-      'bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5',
-      className
-    )}>
+    <div className={`bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5 ${className || ''}`}>
       <div className="flex items-start gap-3 mb-4">
         {getTrendIcon()}
         <div className="flex-1">
           <h3 className="text-sm font-medium text-gray-200 mb-1">
             Projection de prix : {productName}
           </h3>
-          <p className={cn('text-base font-semibold', getTrendColor())}>
+          <p className={`text-base font-semibold ${getTrendColor()}`}>
             {getTrendText()} sur {prediction.period} jours
           </p>
         </div>
