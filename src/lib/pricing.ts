@@ -11,6 +11,15 @@ export type Plan =
   | 'ENTERPRISE'
   | 'INSTITUTION';
 
+// Simple pricing structure (for basic reference)
+export const PLANS = {
+  FREE: { price: 0 },
+  CITIZEN: { price: 3.99 },
+  PRO: { price: 19 },
+  ENTERPRISE: { min: 2500, max: 25000 },
+  INSTITUTION: { min: 500, max: 50000 }
+}
+
 export const PLAN_PRICES = {
   FREE: { monthly: 0, yearly: 0 },
   CITIZEN_PREMIUM: { monthly: 3.99, yearly: 39 },
