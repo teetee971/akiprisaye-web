@@ -177,6 +177,10 @@ export default [
         process: 'readonly',
         Buffer: 'readonly',
         global: 'readonly',
+        console: 'readonly',
+        setTimeout: 'readonly',
+        setInterval: 'readonly',
+        fetch: 'readonly',
         // Cloudflare Workers / Edge runtime globals
         Response: 'readonly',
         Request: 'readonly',
