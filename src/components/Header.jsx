@@ -47,10 +47,11 @@ export default function Header() {
 
       {/* Mobile Drawer Menu - RIGHT SIDE ONLY */}
       <nav
-        className={`fixed top-0 right-0 h-full w-80 glass-strong z-50 transform transition-transform duration-300 ease-in-out lg:hidden ${
+        className={`fixed top-0 right-0 left-auto h-full w-80 glass-strong z-50 transform transition-transform duration-300 ease-in-out lg:hidden ${
           mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
         aria-label="Navigation mobile"
+        style={{ left: 'auto' }}
       >
         <div className="flex items-center justify-between p-4 border-b border-[color:var(--glass-border)]" style={{ paddingTop: 'max(1rem, var(--safe-top))' }}>
           <div className="flex items-center gap-3">
