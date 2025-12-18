@@ -16,23 +16,31 @@ import { Card } from '../components/card.jsx';
 import pricesHistoryData from '../data/prices-history.json';
 import { DataSourceWarning } from '../components/DataSourceWarning.jsx';
 
+// Constants
+const PRICE_CHANGE_THRESHOLD = 0.01; // Minimum price difference (in €) to consider as a change
+const MS_PER_MONTH = 1000 * 60 * 60 * 24 * 30; // Approximate milliseconds per month
+
 export function PriceTrendAnalysis() {
-  const [selectedProduct, setSelectedProduct] = useState('');
+  // Extract products list
+  const products = useMemo(() => 
+    Object.entries(pricesHistoryData.products).map(([id, data]) => ({
+      id,
+      name: data.name,
+      category: data.category,
+      unit: data.unit
+    }))
+  , []);
+
+  const [selectedProduct, setSelectedProduct] = useState(products.length > 0 ? products[0].id : '');
   const [timeWindow, setTimeWindow] = useState('12months');
   const [selectedTerritory, setSelectedTerritory] = useState('all');
+  const [notification, setNotification] = useState(null);
 
-  // Extract products list
-  const products = Object.entries(pricesHistoryData.products).map(([id, data]) => ({
-    id,
-    name: data.name,
-    category: data.category,
-    unit: data.unit
-  }));
-
-  // Set initial product if not set
-  if (!selectedProduct && products.length > 0) {
-    setSelectedProduct(products[0].id);
-  }
+  // Show notification
+  const showNotification = (message) => {
+    setNotification(message);
+    setTimeout(() => setNotification(null), 3000);
+  };
 
   const currentProduct = pricesHistoryData.products[selectedProduct];
 
@@ -103,8 +111,8 @@ export function PriceTrendAnalysis() {
 
     for (let i = 1; i < filteredHistory.length; i++) {
       const diff = filteredHistory[i].price - filteredHistory[i - 1].price;
-      if (diff > 0.01) increases++;
-      else if (diff < -0.01) decreases++;
+      if (diff > PRICE_CHANGE_THRESHOLD) increases++;
+      else if (diff < -PRICE_CHANGE_THRESHOLD) decreases++;
       else noChange++;
     }
 
@@ -127,7 +135,7 @@ export function PriceTrendAnalysis() {
 
     // Frequency Indicator
     const priceChanges = increases + decreases;
-    const periodMonths = Math.round((endDate - startDate) / (1000 * 60 * 60 * 24 * 30));
+    const periodMonths = Math.round((endDate - startDate) / MS_PER_MONTH);
 
     // Get territories and stores involved
     const territories = [...new Set(filteredHistory.map(obs => obs.territory))];
@@ -177,6 +185,13 @@ export function PriceTrendAnalysis() {
 
   return (
     <div className="space-y-6">
+      {/* Notification Toast */}
+      {notification && (
+        <div className="fixed top-4 right-4 z-50 bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg animate-fade-in">
+          {notification}
+        </div>
+      )}
+
       {/* Critical Data Warning */}
       {pricesHistoryData.metadata && (
         <DataSourceWarning 
@@ -511,19 +526,19 @@ export function PriceTrendAnalysis() {
         <div className="flex gap-3">
           <button 
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            onClick={() => alert('CSV export feature coming soon')}
+            onClick={() => showNotification('📊 CSV export feature coming soon')}
           >
             📊 Export CSV
           </button>
           <button 
             className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-            onClick={() => alert('Image export feature coming soon')}
+            onClick={() => showNotification('🖼️ Image export feature coming soon')}
           >
             🖼️ Export as Image
           </button>
           <button 
             className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-            onClick={() => alert('Report generation feature coming soon')}
+            onClick={() => showNotification('📄 Report generation feature coming soon')}
           >
             📄 Generate Report
           </button>
