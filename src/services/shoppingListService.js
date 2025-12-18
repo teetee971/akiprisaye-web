@@ -161,8 +161,8 @@ export function findBestSingleStore(shoppingList, stores) {
     
     // Transparent scoring:
     // - Coverage: 60% weight (having items available is critical)
-    // - Cost: 30% weight (lower is better, normalized)
     // - Distance: 10% weight (closer is better)
+    // - Cost is a natural secondary factor when coverage is similar
     
     const coverageScore = costAnalysis.coverage * 0.6;
     
@@ -315,9 +315,9 @@ export function getShoppingRecommendations(shoppingList, territory, userLocation
   // Input validation
   if (!shoppingList || shoppingList.length === 0) {
     return {
-      error: 'Shopping list is empty',
+      error: 'Votre liste de courses est vide',
       transparency: {
-        message: 'Please add items to your shopping list'
+        message: 'Veuillez ajouter des articles à votre liste de courses'
       }
     };
   }
@@ -362,7 +362,11 @@ export function getShoppingRecommendations(shoppingList, territory, userLocation
   } else {
     // Compare the two options
     const savings = singleStoreOption.totalCost - multiStoreOption.totalCost;
-    const savingsPercent = (savings / singleStoreOption.totalCost) * 100;
+    
+    // Safeguard against division by zero
+    const savingsPercent = singleStoreOption.totalCost > 0 
+      ? (savings / singleStoreOption.totalCost) * 100 
+      : 0;
     const extraDistance = multiStoreOption.totalDistance - (singleStoreOption.store.distance || 0) * 2;
     
     // Decision logic (transparent):

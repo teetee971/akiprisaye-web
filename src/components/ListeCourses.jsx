@@ -464,7 +464,6 @@ function SingleStoreCard({ store }) {
         <div className="bg-slate-800/50 rounded p-3">
           <p className="text-xs text-slate-400 mb-1">Coût total estimé</p>
           <p className="text-2xl font-bold text-white flex items-center gap-1">
-            <DollarSign className="w-5 h-5" />
             €{store.totalCost.toFixed(2)}
           </p>
         </div>
@@ -536,7 +535,6 @@ function MultiStoreCard({ multiStore }) {
         <div className="bg-slate-800/50 rounded p-3">
           <p className="text-xs text-slate-400 mb-1">Coût total</p>
           <p className="text-2xl font-bold text-white flex items-center gap-1">
-            <DollarSign className="w-5 h-5" />
             €{multiStore.totalCost.toFixed(2)}
           </p>
         </div>
