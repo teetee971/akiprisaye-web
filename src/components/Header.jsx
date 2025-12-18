@@ -45,10 +45,10 @@ export default function Header() {
         />
       )}
 
-      {/* Mobile Drawer Menu */}
+      {/* Mobile Drawer Menu - RIGHT SIDE ONLY */}
       <nav
-        className={`fixed top-0 left-0 h-full w-80 glass-strong z-50 transform transition-transform duration-300 ease-in-out lg:hidden ${
-          mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+        className={`fixed top-0 right-0 h-full w-80 glass-strong z-50 transform transition-transform duration-300 ease-in-out lg:hidden ${
+          mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
         aria-label="Navigation mobile"
       >
@@ -128,6 +128,18 @@ export default function Header() {
           </li>
           <li>
             <Link
+              to="/liste-courses"
+              className={`flex items-center gap-3 px-6 py-3 text-white hover:bg-blue-700/20 transition-colors border-l-4 ${
+                isActiveRoute('/liste-courses') ? 'border-blue-400 bg-blue-700/10' : 'border-transparent hover:border-blue-400'
+              }`}
+              onClick={closeMobileMenu}
+            >
+              <span className="text-xl">📝</span>
+              <span>Liste de courses</span>
+            </Link>
+          </li>
+          <li>
+            <Link
               to="/actualites"
               className={`flex items-center gap-3 px-6 py-3 text-white hover:bg-blue-700/20 transition-colors border-l-4 ${
                 isActiveRoute('/actualites') ? 'border-blue-400 bg-blue-700/10' : 'border-transparent hover:border-blue-400'
@@ -136,18 +148,6 @@ export default function Header() {
             >
               <span className="text-xl">📰</span>
               <span>Actualités</span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/pricing"
-              className={`flex items-center gap-3 px-6 py-3 text-white hover:bg-blue-700/20 transition-colors border-l-4 ${
-                isActiveRoute('/pricing') ? 'border-blue-400 bg-blue-700/10' : 'border-transparent hover:border-blue-400'
-              }`}
-              onClick={closeMobileMenu}
-            >
-              <span className="text-xl">💰</span>
-              <span>Tarifs</span>
             </Link>
           </li>
           <li>
@@ -172,20 +172,8 @@ export default function Header() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            {/* Logo and burger menu */}
+            {/* Logo on the left */}
             <div className="flex items-center gap-4">
-              {/* Mobile menu button */}
-              <button
-                onClick={toggleMobileMenu}
-                className="lg:hidden flex flex-col justify-center items-center w-10 h-10 rounded hover:bg-[color:var(--glass-bg)] transition-colors"
-                aria-label="Menu"
-                aria-expanded={mobileMenuOpen}
-              >
-                <span className={`block w-6 h-0.5 bg-white transition-all ${mobileMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`} />
-                <span className={`block w-6 h-0.5 bg-white my-1 transition-all ${mobileMenuOpen ? 'opacity-0' : ''}`} />
-                <span className={`block w-6 h-0.5 bg-white transition-all ${mobileMenuOpen ? '-rotate-45 -translate-y-1.5' : ''}`} />
-              </button>
-
               {/* Logo with subtle hover animation */}
               <Link to="/" className="flex items-center gap-2 text-white font-bold text-lg group">
                 <img 
@@ -196,60 +184,75 @@ export default function Header() {
               </Link>
             </div>
 
-            {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-6" aria-label="Navigation principale">
-              <Link
-                to="/comparateur"
-                className={`text-white/90 hover:text-white hover:bg-[color:var(--glass-bg)] px-3 py-2 rounded-lg transition-all ${
-                  isActiveRoute('/comparateur') ? 'bg-[color:var(--glass-bg)] text-white font-semibold' : ''
-                }`}
+            {/* Desktop Navigation and Mobile Menu Button */}
+            <div className="flex items-center gap-6">
+              {/* Desktop Navigation */}
+              <nav className="hidden lg:flex items-center gap-6" aria-label="Navigation principale">
+                <Link
+                  to="/comparateur"
+                  className={`text-white/90 hover:text-white hover:bg-[color:var(--glass-bg)] px-3 py-2 rounded-lg transition-all ${
+                    isActiveRoute('/comparateur') ? 'bg-[color:var(--glass-bg)] text-white font-semibold' : ''
+                  }`}
+                >
+                  Comparateur
+                </Link>
+                <Link
+                  to="/scan"
+                  className={`text-white/90 hover:text-white hover:bg-[color:var(--glass-bg)] px-3 py-2 rounded-lg transition-all ${
+                    isActiveRoute('/scan') ? 'bg-[color:var(--glass-bg)] text-white font-semibold' : ''
+                  }`}
+                >
+                  Scanner
+                </Link>
+                <Link
+                  to="/carte"
+                  className={`text-white/90 hover:text-white hover:bg-[color:var(--glass-bg)] px-3 py-2 rounded-lg transition-all ${
+                    isActiveRoute('/carte') ? 'bg-[color:var(--glass-bg)] text-white font-semibold' : ''
+                  }`}
+                >
+                  Carte
+                </Link>
+                <Link
+                  to="/alertes"
+                  className={`text-white/90 hover:text-white hover:bg-[color:var(--glass-bg)] px-3 py-2 rounded-lg transition-all ${
+                    isActiveRoute('/alertes') ? 'bg-[color:var(--glass-bg)] text-white font-semibold' : ''
+                  }`}
+                >
+                  Alertes
+                </Link>
+                <Link
+                  to="/liste-courses"
+                  className={`text-white/90 hover:text-white hover:bg-[color:var(--glass-bg)] px-3 py-2 rounded-lg transition-all ${
+                    isActiveRoute('/liste-courses') ? 'bg-[color:var(--glass-bg)] text-white font-semibold' : ''
+                  }`}
+                >
+                  Liste de courses
+                </Link>
+                <Link
+                  to="/actualites"
+                  className={`text-white/90 hover:text-white hover:bg-[color:var(--glass-bg)] px-3 py-2 rounded-lg transition-all ${
+                    isActiveRoute('/actualites') ? 'bg-[color:var(--glass-bg)] text-white font-semibold' : ''
+                  }`}
+                >
+                  Actualités
+                </Link>
+                
+                {/* Theme Toggle */}
+                <ThemeToggle />
+              </nav>
+
+              {/* Mobile menu button - RIGHT SIDE ONLY */}
+              <button
+                onClick={toggleMobileMenu}
+                className="lg:hidden flex flex-col justify-center items-center w-10 h-10 rounded hover:bg-[color:var(--glass-bg)] transition-colors"
+                aria-label="Menu"
+                aria-expanded={mobileMenuOpen}
               >
-                Comparateur
-              </Link>
-              <Link
-                to="/scan"
-                className={`text-white/90 hover:text-white hover:bg-[color:var(--glass-bg)] px-3 py-2 rounded-lg transition-all ${
-                  isActiveRoute('/scan') ? 'bg-[color:var(--glass-bg)] text-white font-semibold' : ''
-                }`}
-              >
-                Scanner
-              </Link>
-              <Link
-                to="/carte"
-                className={`text-white/90 hover:text-white hover:bg-[color:var(--glass-bg)] px-3 py-2 rounded-lg transition-all ${
-                  isActiveRoute('/carte') ? 'bg-[color:var(--glass-bg)] text-white font-semibold' : ''
-                }`}
-              >
-                Carte
-              </Link>
-              <Link
-                to="/alertes"
-                className={`text-white/90 hover:text-white hover:bg-[color:var(--glass-bg)] px-3 py-2 rounded-lg transition-all ${
-                  isActiveRoute('/alertes') ? 'bg-[color:var(--glass-bg)] text-white font-semibold' : ''
-                }`}
-              >
-                Alertes
-              </Link>
-              <Link
-                to="/actualites"
-                className={`text-white/90 hover:text-white hover:bg-[color:var(--glass-bg)] px-3 py-2 rounded-lg transition-all ${
-                  isActiveRoute('/actualites') ? 'bg-[color:var(--glass-bg)] text-white font-semibold' : ''
-                }`}
-              >
-                Actualités
-              </Link>
-              <Link
-                to="/mon-compte"
-                className={`text-white/90 hover:text-white hover:bg-[color:var(--glass-bg)] px-3 py-2 rounded-lg transition-all ${
-                  isActiveRoute('/mon-compte') ? 'bg-[color:var(--glass-bg)] text-white font-semibold' : ''
-                }`}
-              >
-                Mon Compte
-              </Link>
-              
-              {/* Theme Toggle */}
-              <ThemeToggle />
-            </nav>
+                <span className={`block w-6 h-0.5 bg-white transition-all ${mobileMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`} />
+                <span className={`block w-6 h-0.5 bg-white my-1 transition-all ${mobileMenuOpen ? 'opacity-0' : ''}`} />
+                <span className={`block w-6 h-0.5 bg-white transition-all ${mobileMenuOpen ? '-rotate-45 -translate-y-1.5' : ''}`} />
+              </button>
+            </div>
           </div>
         </div>
       </header>

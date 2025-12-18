@@ -23,11 +23,21 @@ export default function Carte() {
   const [territory, setTerritory] = useState('Guadeloupe');
   const [stores, setStores] = useState([]);
   const [userPosition, setUserPosition] = useState(null);
+  const [filterChain, setFilterChain] = useState('');
 
   const territoryPositions = {
     'Guadeloupe': [16.262, -61.583],
     'Martinique': [14.613, -60.996],
     'Guyane': [4.853, -52.328],
+    'La Réunion': [-20.884, 55.450],
+    'Mayotte': [-12.780, 45.227],
+    'Saint-Pierre-et-Miquelon': [46.780, -56.177],
+    'Saint-Barthélemy': [17.896, -62.849],
+    'Saint-Martin': [18.067, -63.083],
+    'Wallis-et-Futuna': [-13.282, -176.174],
+    'Polynésie française': [-17.536, -149.525],
+    'Nouvelle-Calédonie': [-22.276, 166.458],
+    'Terres australes françaises': [-49.351, 70.217], // Kerguelen Islands
   };
 
   useEffect(() => {
@@ -43,34 +53,61 @@ export default function Carte() {
     }
   }, []);
 
-  const territories = ['Guadeloupe', 'Martinique', 'Guyane'];
+  const territories = Object.keys(territoryPositions);
   const defaultPosition = territoryPositions[territory] || [16.262, -61.583];
+
+  // Filter stores by chain name
+  const filteredStores = filterChain 
+    ? stores.filter(store => store.name.toLowerCase().includes(filterChain.toLowerCase()))
+    : stores;
+
+  // Get unique store chains for filter
+  const uniqueChains = [...new Set(stores.map(s => s.name.split(' ')[0]))];
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
       <div className="max-w-7xl mx-auto py-8 px-4">
         <h1 className="text-3xl font-semibold mb-6 text-blue-400">
-          🗺️ Carte Interactive des Magasins
+          🗺️ Carte Interactive des Magasins - DOM/COM/ROM
         </h1>
 
         {/* Territory Selector */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium mb-2 text-slate-300">
-            Sélectionner un territoire
-          </label>
-          <select
-            value={territory}
-            onChange={(e) => setTerritory(e.target.value)}
-            className="px-4 py-2 rounded-lg bg-slate-800 text-slate-100 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            {territories.map((t) => (
-              <option key={t} value={t}>{t}</option>
-            ))}
-          </select>
+        <div className="grid md:grid-cols-2 gap-4 mb-6">
+          <div>
+            <label className="block text-sm font-medium mb-2 text-slate-300">
+              Sélectionner un territoire
+            </label>
+            <select
+              value={territory}
+              onChange={(e) => setTerritory(e.target.value)}
+              className="w-full px-4 py-2 rounded-lg bg-slate-800 text-slate-100 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              {territories.map((t) => (
+                <option key={t} value={t}>{t}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Store Chain Filter */}
+          <div>
+            <label className="block text-sm font-medium mb-2 text-slate-300">
+              Filtrer par enseigne
+            </label>
+            <select
+              value={filterChain}
+              onChange={(e) => setFilterChain(e.target.value)}
+              className="w-full px-4 py-2 rounded-lg bg-slate-800 text-slate-100 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Toutes les enseignes</option>
+              {uniqueChains.map((chain) => (
+                <option key={chain} value={chain}>{chain}</option>
+              ))}
+            </select>
+          </div>
         </div>
 
-        {/* Map Container */}
-        <div className="rounded-lg overflow-hidden border border-slate-800 h-[600px]">
+        {/* Map Container - Mobile Fullscreen */}
+        <div className="rounded-lg overflow-hidden border border-slate-800 h-[400px] md:h-[600px]">
           <MapContainer
             center={defaultPosition}
             zoom={11}
@@ -82,7 +119,7 @@ export default function Carte() {
             />
             <MapUpdater position={territoryPositions[territory]} />
             
-            {stores.map((store, index) => (
+            {filteredStores.map((store, index) => (
               <Marker key={index} position={[store.lat, store.lon]}>
                 <Popup>
                   <div className="text-slate-900">
@@ -116,24 +153,31 @@ export default function Carte() {
           </MapContainer>
         </div>
 
-        {/* Store List */}
+        {/* Store List - Scrollable */}
         <div className="mt-8">
           <h2 className="text-2xl font-semibold mb-4 text-blue-400">
-            Magasins dans {territory} ({stores.length})
+            Magasins dans {territory} ({filteredStores.length})
           </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {stores.map((store, index) => (
-              <div
-                key={index}
-                className="border border-slate-800 rounded-lg p-4 bg-slate-900/50 hover:border-blue-500 transition"
-              >
-                <h3 className="font-semibold text-slate-100 mb-1">{store.name}</h3>
-                <p className="text-slate-400 text-sm mb-2">{store.category}</p>
-                <p className="text-slate-500 text-xs">
-                  📍 {store.lat.toFixed(4)}°, {store.lon.toFixed(4)}°
-                </p>
-              </div>
-            ))}
+          <div className="max-h-96 overflow-y-auto">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredStores.map((store, index) => (
+                <div
+                  key={index}
+                  className="border border-slate-800 rounded-lg p-4 bg-slate-900/50 hover:border-blue-500 transition"
+                >
+                  <h3 className="font-semibold text-slate-100 mb-1">{store.name}</h3>
+                  <p className="text-slate-400 text-sm mb-2">{store.category}</p>
+                  <p className="text-slate-500 text-xs">
+                    📍 {store.lat.toFixed(4)}°, {store.lon.toFixed(4)}°
+                  </p>
+                </div>
+              ))}
+              {filteredStores.length === 0 && (
+                <div className="col-span-full text-center text-slate-500 py-8">
+                  Aucun magasin trouvé pour ce territoire
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

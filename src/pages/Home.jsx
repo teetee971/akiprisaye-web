@@ -1,7 +1,5 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 import ScrollToTop from '../components/ScrollToTop';
 import PWAInstallToast from '../components/PWAInstallToast';
 import StructuredData from '../components/StructuredData';
@@ -82,11 +80,8 @@ export default function Home() {
         Aller au contenu principal
       </a>
       
-      <div className="relative-z-10">
-        <Header />
-
-        {/* Hero Section - Minimal & Institutional */}
-        <section className="border-b border-[color:var(--glass-border)]">
+      {/* Hero Section - Minimal & Institutional */}
+      <section className="border-b border-[color:var(--glass-border)]">
           <div className="container-civic py-16 sm:py-24 text-center">
             <div className="flex justify-end mb-6">
               <select
@@ -198,9 +193,6 @@ export default function Home() {
             </div>
           </div>
         </section>
-
-        <Footer />
-      </div>
       
       {/* PWA Install Toast */}
       <PWAInstallToast />
