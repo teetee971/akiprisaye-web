@@ -22,6 +22,7 @@ import {
   Legend
 } from 'chart.js';
 import { Card } from './card.jsx';
+import PriceTrendIndicator from './PriceTrendIndicator';
 import pricesHistory from '../data/prices-history.json';
 
 ChartJS.register(
@@ -49,8 +50,8 @@ export function HistoriquePrix({ productId = null, territory = 'GP' }) {
   if (!currentProduct) {
     return (
       <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
-        <p className="text-yellow-800 dark:text-yellow-200">
-          ⚠️ Produit non trouvé
+        <p className="text-yellow-800 dark:text-yellow-200 font-semibold">
+          Produit non trouvé
         </p>
       </div>
     );
@@ -64,8 +65,8 @@ export function HistoriquePrix({ productId = null, territory = 'GP' }) {
   if (filteredHistory.length === 0) {
     return (
       <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
-        <p className="text-yellow-800 dark:text-yellow-200">
-          ℹ️ Aucune donnée disponible pour ce territoire
+        <p className="text-yellow-800 dark:text-yellow-200 font-semibold">
+          Aucune donnée disponible pour ce territoire
         </p>
       </div>
     );
@@ -149,7 +150,7 @@ export function HistoriquePrix({ productId = null, territory = 'GP' }) {
       {/* Header */}
       <div className="bg-gradient-to-r from-purple-600 to-purple-800 rounded-lg p-6 text-white">
         <h2 className="text-2xl font-bold mb-2">
-          📈 Historique & Preuve des Prix
+          Historique des Prix
         </h2>
         <p className="text-purple-50">
           Évolution transparente et vérifiable des prix dans le temps
@@ -186,13 +187,20 @@ export function HistoriquePrix({ productId = null, territory = 'GP' }) {
             onChange={(e) => setSelectedTerritory(e.target.value)}
             className="w-full bg-white dark:bg-slate-800 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent"
           >
-            <option value="GP">🇬🇵 Guadeloupe</option>
-            <option value="MQ">🇲🇶 Martinique</option>
-            <option value="GF">🇬🇫 Guyane</option>
-            <option value="RE">🇷🇪 La Réunion</option>
+            <option value="GP">Guadeloupe</option>
+            <option value="MQ">Martinique</option>
+            <option value="GF">Guyane</option>
+            <option value="RE">La Réunion</option>
           </select>
         </div>
       </div>
+
+      {/* Price Trend Indicator */}
+      <PriceTrendIndicator
+        productId={selectedProduct}
+        productName={currentProduct.name}
+        historicalPrices={filteredHistory}
+      />
 
       {/* Statistics Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -249,7 +257,7 @@ export function HistoriquePrix({ productId = null, territory = 'GP' }) {
             onClick={exportChart}
             className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors text-sm font-medium"
           >
-            📥 Exporter PNG
+            Exporter PNG
           </button>
         </div>
 
@@ -334,8 +342,11 @@ export function HistoriquePrix({ productId = null, territory = 'GP' }) {
 
       {/* Legal Note */}
       <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+        <p className="text-sm text-blue-800 dark:text-blue-200 font-semibold mb-2">
+          Transparence des données
+        </p>
         <p className="text-sm text-blue-800 dark:text-blue-200">
-          ℹ️ L'historique des prix est conservé de manière append-only (ajout uniquement) pour garantir
+          L'historique des prix est conservé de manière append-only (ajout uniquement) pour garantir
           la traçabilité et l'intégrité des données. Chaque entrée indique sa source et sa date de collecte.
         </p>
       </div>

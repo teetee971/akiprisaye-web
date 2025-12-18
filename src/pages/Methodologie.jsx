@@ -23,7 +23,7 @@ export default function Methodologie() {
 
           {/* Introduction */}
           <section className="bg-[#1e1e1e] rounded-xl border border-gray-700 p-8">
-            <h2 className="text-2xl font-semibold mb-4 text-blue-400">📊 Transparence totale</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-blue-400">Transparence totale</h2>
             <div className="text-gray-300 space-y-3">
               <p>
                 A KI PRI SA YÉ s'engage à une transparence totale sur la méthodologie de collecte,
@@ -39,7 +39,7 @@ export default function Methodologie() {
 
           {/* Data Collection */}
           <section className="bg-[#1e1e1e] rounded-xl border border-gray-700 p-8">
-            <h2 className="text-2xl font-semibold mb-4 text-blue-400">🔍 Collecte des données</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-blue-400">Collecte des données</h2>
             <div className="text-gray-300 space-y-4">
               <div>
                 <h3 className="font-semibold text-lg mb-2">Sources de données</h3>
@@ -77,7 +77,7 @@ export default function Methodologie() {
 
           {/* Data Verification */}
           <section className="bg-[#1e1e1e] rounded-xl border border-gray-700 p-8">
-            <h2 className="text-2xl font-semibold mb-4 text-blue-400">✓ Vérification des données</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-blue-400">Vérification des données</h2>
             <div className="text-gray-300 space-y-3">
               <p>
                 Chaque prix collecté passe par un processus de vérification avant affichage :
@@ -97,8 +97,8 @@ export default function Methodologie() {
 
           {/* Calculations */}
           <section className="bg-[#1e1e1e] rounded-xl border border-gray-700 p-8">
-            <h2 className="text-2xl font-semibold mb-4 text-blue-400">🧮 Calculs et moyennes</h2>
-            <div className="text-gray-300 space-y-3">
+            <h2 className="text-2xl font-semibold mb-4 text-blue-400">Calculs et moyennes</h2>
+            <div className="text-gray-300 space-y-4">
               <div>
                 <h3 className="font-semibold mb-2">Prix moyen par territoire</h3>
                 <p className="text-sm text-gray-400">
@@ -113,6 +113,25 @@ export default function Methodologie() {
                 </p>
               </div>
               <div>
+                <h3 className="font-semibold mb-2">Tendance de prix (non-IA)</h3>
+                <p className="text-sm text-gray-400 mb-2">
+                  L&apos;indicateur de tendance est basé sur une analyse statistique simple et transparente :
+                </p>
+                <ul className="list-disc list-inside ml-4 space-y-1 text-sm text-gray-400">
+                  <li><strong>Données utilisées :</strong> 10 derniers relevés de prix ou 30 derniers jours</li>
+                  <li><strong>Méthode :</strong> Moyenne mobile - comparaison de la première moitié avec la seconde moitié</li>
+                  <li><strong>Seuils :</strong> Hausse si &gt;+2%, Baisse si &lt;-2%, Stable sinon</li>
+                  <li><strong>Fiabilité :</strong> Calculée selon la variance des prix (faible variance = haute fiabilité)</li>
+                  <li><strong>Aucune IA :</strong> Calculs mathématiques simples, pas de modèle prédictif complexe</li>
+                </ul>
+                <div className="mt-3 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded">
+                  <p className="text-xs text-yellow-300">
+                    <strong>Important :</strong> Cette tendance est indicative et ne constitue pas une prédiction garantie. 
+                    Les prix peuvent varier selon les promotions et les magasins.
+                  </p>
+                </div>
+              </div>
+              <div>
                 <h3 className="font-semibold mb-2">Alertes prix anormaux</h3>
                 <p className="text-sm text-gray-400">
                   Un prix est considéré comme anormalement élevé s'il dépasse de +20% la moyenne
@@ -124,7 +143,7 @@ export default function Methodologie() {
 
           {/* Update Frequency */}
           <section className="bg-[#1e1e1e] rounded-xl border border-gray-700 p-8">
-            <h2 className="text-2xl font-semibold mb-4 text-blue-400">🔄 Fréquence de mise à jour</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-blue-400">Fréquence de mise à jour</h2>
             <div className="text-gray-300 space-y-3">
               <p>
                 La fraîcheur des données est essentielle pour un comparateur de prix pertinent :
@@ -144,7 +163,7 @@ export default function Methodologie() {
 
           {/* Limitations */}
           <section className="bg-red-900/20 border border-red-700 rounded-xl p-8">
-            <h2 className="text-2xl font-semibold mb-4 text-red-400">⚠️ Limites du service</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-red-400">Limites du service</h2>
             <div className="text-gray-300 space-y-3">
               <p>
                 A KI PRI SA YÉ reconnaît honnêtement ses limites actuelles :
@@ -175,7 +194,7 @@ export default function Methodologie() {
 
           {/* Data Sources */}
           <section className="bg-[#1e1e1e] rounded-xl border border-gray-700 p-8">
-            <h2 className="text-2xl font-semibold mb-4 text-blue-400">📚 Sources publiques utilisées</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-blue-400">Sources publiques utilisées</h2>
             <div className="text-gray-300 space-y-2">
               <p className="mb-3">Pour le contexte et l'analyse :</p>
               <ul className="list-disc list-inside ml-4 space-y-2">
@@ -222,7 +241,7 @@ export default function Methodologie() {
 
           {/* How to contribute */}
           <section className="bg-green-900/20 border border-green-700 rounded-xl p-8">
-            <h2 className="text-2xl font-semibold mb-4 text-green-400">🤝 Comment contribuer</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-green-400">Comment contribuer</h2>
             <div className="text-gray-300 space-y-3">
               <p>
                 A KI PRI SA YÉ est un projet citoyen. Vous pouvez contribuer de plusieurs manières :

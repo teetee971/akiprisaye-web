@@ -33,27 +33,27 @@ export const categoryConfigs: Record<NewsItem['category'], CategoryConfig> = {
     color: 'text-green-400',
     bgColor: 'bg-green-500/10',
     borderColor: 'border-green-500/30',
-    icon: '📉'
+    icon: ''
   },
   POLITIQUE: {
     label: 'POLITIQUE',
     color: 'text-purple-400',
     bgColor: 'bg-purple-500/10',
     borderColor: 'border-purple-500/30',
-    icon: '🏛️'
+    icon: ''
   },
   ALERTE: {
     label: 'ALERTE',
     color: 'text-red-400',
     bgColor: 'bg-red-500/10',
     borderColor: 'border-red-500/30',
-    icon: '⚠️'
+    icon: ''
   },
   INNOVATION: {
     label: 'INNOVATION',
     color: 'text-blue-400',
     bgColor: 'bg-blue-500/10',
     borderColor: 'border-blue-500/30',
-    icon: '💡'
+    icon: ''
   }
 };

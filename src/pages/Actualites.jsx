@@ -14,15 +14,15 @@ export default function Actualites() {
       <header className="bg-gradient-to-r from-[#0f62fe] to-[#0353e9] p-6 shadow-lg">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-4">
-            <h1 className="text-3xl font-bold">📰 Actualités Civiques Vérifiées</h1>
+            <h1 className="text-3xl font-bold">Actualités Civiques Vérifiées</h1>
             <a 
               href="/" 
-              className="text-white hover:text-gray-200 transition-colors"
+              className="text-white hover:text-gray-200 transition-colors font-medium"
             >
-              ← Accueil
+              Retour à l&apos;accueil
             </a>
           </div>
-          <p className="text-gray-100 max-w-3xl">
+          <p className="text-gray-100 max-w-3xl text-lg">
             Informations officielles sur les prix et la vie chère dans les DROM-COM. 
             Toutes les actualités proviennent de sources publiques vérifiables.
           </p>
@@ -35,8 +35,8 @@ export default function Actualites() {
         <div className="mb-8 space-y-6">
           {/* Territory Filter */}
           <div className="bg-white/[0.05] backdrop-blur-[14px] border border-white/[0.12] rounded-xl p-6">
-            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              🗺️ Filtrer par territoire
+            <h2 className="text-xl font-semibold mb-4">
+              Filtrer par territoire
             </h2>
             <div className="max-w-md">
               <TerritorySelector 
@@ -48,8 +48,8 @@ export default function Actualites() {
 
           {/* Category Filter */}
           <div className="bg-white/[0.05] backdrop-blur-[14px] border border-white/[0.12] rounded-xl p-6">
-            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              🏷️ Filtrer par catégorie
+            <h2 className="text-xl font-semibold mb-4">
+              Filtrer par catégorie
             </h2>
             <CategoryFilter 
               value={selectedCategory}
@@ -70,8 +70,8 @@ export default function Actualites() {
 
         {/* Info Section - Civic Transparency */}
         <div className="bg-white/[0.05] backdrop-blur-[14px] border border-white/[0.12] rounded-xl p-6">
-          <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-            ℹ️ Sources d&apos;information autorisées
+          <h3 className="text-xl font-semibold mb-4">
+            Sources d&apos;information autorisées
           </h3>
           <div className="text-gray-300 space-y-3">
             <p className="leading-relaxed">
