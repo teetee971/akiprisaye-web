@@ -8,11 +8,16 @@ import PropTypes from 'prop-types';
 export default function PriceTrendIndicator({ productId, productName, historicalPrices = [] }) {
   const [trend, setTrend] = useState(null);
 
-  useEffect(() => {
-    if (historicalPrices && historicalPrices.length >= 2) {
-      calculateTrend(historicalPrices);
-    }
-  }, [historicalPrices]);
+  // Note: productId and productName are kept in props for future use and API consistency
+
+  /**
+   * Calculate variance for confidence measure
+   */
+  const calculateVariance = (values) => {
+    const mean = values.reduce((sum, val) => sum + val, 0) / values.length;
+    const squaredDiffs = values.map(val => Math.pow(val - mean, 2));
+    return squaredDiffs.reduce((sum, val) => sum + val, 0) / values.length;
+  };
 
   /**
    * Simple trend calculation based on linear regression
@@ -63,12 +68,6 @@ export default function PriceTrendIndicator({ productId, productName, historical
     });
   };
 
-  const calculateVariance = (values) => {
-    const mean = values.reduce((sum, val) => sum + val, 0) / values.length;
-    const squaredDiffs = values.map(val => Math.pow(val - mean, 2));
-    return squaredDiffs.reduce((sum, val) => sum + val, 0) / values.length;
-  };
-
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('fr-FR', {
       day: 'numeric',
@@ -76,6 +75,13 @@ export default function PriceTrendIndicator({ productId, productName, historical
       year: 'numeric'
     });
   };
+
+  useEffect(() => {
+    if (historicalPrices && historicalPrices.length >= 2) {
+      calculateTrend(historicalPrices);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [historicalPrices]);
 
   if (!trend) {
     return (
