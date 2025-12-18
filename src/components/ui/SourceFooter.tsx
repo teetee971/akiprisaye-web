@@ -12,7 +12,7 @@ export function SourceFooter({ source }: { source: CivicSource }) {
       <a 
         href={source.url} 
         target="_blank" 
-        rel="noreferrer noopener" 
+        rel="noreferrer" 
         className="underline hover:text-blue-400 transition-colors"
       >
         {source.name}
