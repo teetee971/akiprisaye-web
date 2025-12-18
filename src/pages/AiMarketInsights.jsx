@@ -35,7 +35,6 @@ export default function AiMarketInsights() {
 
   useEffect(() => {
     checkAdminAccess();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   useEffect(() => {
