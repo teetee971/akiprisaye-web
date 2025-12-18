@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import GlobalDisclaimer from './GlobalDisclaimer';
 
 export default function Footer() {
   return (
@@ -8,6 +9,11 @@ export default function Footer() {
       role="contentinfo"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Global Disclaimer */}
+        <div className="mb-8">
+          <GlobalDisclaimer />
+        </div>
+
         {/* Navigation Links */}
         <nav
           className="flex flex-wrap justify-center gap-6 mb-6 text-sm"

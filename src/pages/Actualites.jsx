@@ -1,5 +1,6 @@
-import NewsWidget from '../components/NewsWidget';
+import NewsWidgetCivic from '../components/NewsWidgetCivic';
 import TerritorySelector from '../components/TerritorySelector';
+import GlobalDisclaimer from '../components/GlobalDisclaimer';
 import { useState } from 'react';
 
 export default function Actualites() {
@@ -43,26 +44,13 @@ export default function Actualites() {
         {/* News Grid */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           <div className="md:col-span-2 lg:col-span-3">
-            <NewsWidget limit={12} showFullButton={false} />
+            <NewsWidgetCivic limit={12} showFullButton={false} />
           </div>
         </div>
 
         {/* Info Section */}
-        <div className="mt-12 bg-[#1e1e1e] rounded-xl border border-gray-700 p-6">
-          <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-            ℹ️ À propos de nos actualités
-          </h3>
-          <div className="text-gray-400 space-y-2">
-            <p>
-              Les actualités présentées ici sont issues de sources officielles et de signalements citoyens.
-            </p>
-            <p>
-              Pour signaler une information importante sur les prix dans votre territoire,{' '}
-              <a href="/contact.html" className="text-blue-400 hover:text-blue-300">
-                contactez-nous
-              </a>.
-            </p>
-          </div>
+        <div className="mt-12">
+          <GlobalDisclaimer />
         </div>
       </main>
 
