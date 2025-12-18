@@ -2,6 +2,7 @@ import { useState } from 'react';
 import TerritorySelector from '../components/TerritorySelector';
 import ProductSearch from '../components/ProductSearch';
 import BarcodeScanner from '../components/BarcodeScanner';
+import SourceFooter from '../components/ui/SourceFooter';
 import { findProductByEan, filterPricesByTerritory } from '../data/seedProducts';
 
 export default function Comparateur() {
@@ -347,6 +348,25 @@ export default function Comparateur() {
           </div>
         </div>
       </main>
+
+      {/* Source Footer - MANDATORY for data transparency */}
+      <SourceFooter 
+        sources={[
+          {
+            source: 'Open Food Facts',
+            date: new Date().toLocaleDateString('fr-FR'),
+            url: 'https://world.openfoodfacts.org/'
+          },
+          {
+            source: 'OPMR',
+            date: new Date().toLocaleDateString('fr-FR'),
+            territory: territory,
+            url: 'https://www.guadeloupe.gouv.fr/opmr'
+          }
+        ]}
+        limitation="Les prix affichés sont des données agrégées issues de sources publiques. Les prix en magasin peuvent varier. Dernière mise à jour variable selon la source."
+        methodology="Collecte automatique des données Open Food Facts (informations produits) et OPMR (prix territoriaux). Affichage des prix moyens par enseigne lorsque disponible."
+      />
 
       {/* Footer */}
       <footer className="bg-[#1e1e1e] border-t border-gray-700 mt-12 p-6 text-center text-gray-400">

@@ -6,6 +6,7 @@ import ScrollToTop from '../components/ScrollToTop';
 import PWAInstallToast from '../components/PWAInstallToast';
 import StructuredData from '../components/StructuredData';
 import BackgroundMapBlur from '../components/BackgroundMapBlur';
+import SourceFooter from '../components/ui/SourceFooter';
 
 export default function Home() {
   const [lang, setLang] = useState('fr');
@@ -198,6 +199,29 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* Data Sources Footer - MANDATORY */}
+        <SourceFooter 
+          sources={[
+            {
+              source: 'INSEE',
+              date: '15/12/2024',
+              url: 'https://www.insee.fr'
+            },
+            {
+              source: 'OPMR',
+              date: '01/12/2024',
+              url: 'https://www.guadeloupe.gouv.fr/opmr'
+            },
+            {
+              source: 'DGCCRF',
+              date: '10/12/2024',
+              url: 'https://www.economie.gouv.fr/dgccrf'
+            }
+          ]}
+          limitation="Les données affichées sont des moyennes territoriales issues de sources publiques officielles. Les prix en magasin peuvent varier."
+          methodology="A KI PRI SA YÉ agrège uniquement des données publiques officielles (INSEE, OPMR, DGCCRF, data.gouv.fr). Aucune donnée inventée. Aucun tracking publicitaire."
+        />
 
         <Footer />
       </div>
