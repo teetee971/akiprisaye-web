@@ -11,7 +11,7 @@
  * This module answers: "What has happened?" NOT "What will happen?"
  */
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { Card } from '../components/card.jsx';
 import pricesHistoryData from '../data/prices-history.json';
 import { DataSourceWarning } from '../components/DataSourceWarning.jsx';
@@ -19,6 +19,8 @@ import { DataSourceWarning } from '../components/DataSourceWarning.jsx';
 // Constants
 const PRICE_CHANGE_THRESHOLD = 0.01; // Minimum price difference (in €) to consider as a change
 const MS_PER_MONTH = 1000 * 60 * 60 * 24 * 30; // Approximate milliseconds per month
+const VOLATILITY_HIGH_THRESHOLD = 0.66; // Change rate threshold for high volatility
+const VOLATILITY_MEDIUM_THRESHOLD = 0.33; // Change rate threshold for medium volatility
 
 export function PriceTrendAnalysis() {
   // Extract products list
@@ -31,25 +33,54 @@ export function PriceTrendAnalysis() {
     }))
   , []);
 
-  const [selectedProduct, setSelectedProduct] = useState(products.length > 0 ? products[0].id : '');
+  // Use lazy initializer to avoid timing issues with useMemo
+  const [selectedProduct, setSelectedProduct] = useState(() => {
+    const entries = Object.entries(pricesHistoryData.products);
+    return entries.length > 0 ? entries[0][0] : '';
+  });
   const [timeWindow, setTimeWindow] = useState('12months');
   const [selectedTerritory, setSelectedTerritory] = useState('all');
   const [notification, setNotification] = useState(null);
+  const notificationTimeoutRef = useRef(null);
 
-  // Show notification
-  const showNotification = (message) => {
+  /**
+   * Show a temporary notification toast
+   * @param {string} message - The message to display
+   */
+  const showNotification = useCallback((message) => {
     setNotification(message);
-    setTimeout(() => setNotification(null), 3000);
-  };
+    // Clear any existing timeout
+    if (notificationTimeoutRef.current) {
+      clearTimeout(notificationTimeoutRef.current);
+    }
+    // Set new timeout and store reference
+    notificationTimeoutRef.current = setTimeout(() => {
+      setNotification(null);
+      notificationTimeoutRef.current = null;
+    }, 3000);
+  }, []);
+
+  // Cleanup notification timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (notificationTimeoutRef.current) {
+        clearTimeout(notificationTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const currentProduct = pricesHistoryData.products[selectedProduct];
 
-  // Calculate date range based on time window
-  const getDateRange = () => {
+  /**
+   * Calculate date range based on the selected time window
+   * @param {string} window - The time window ('30days', '90days', '6months', '12months')
+   * @returns {{startDate: Date, endDate: Date}} Object containing start and end dates
+   */
+  const getDateRange = useCallback((window) => {
     const now = new Date();
     let startDate = new Date();
 
-    switch (timeWindow) {
+    switch (window) {
       case '30days':
         startDate.setDate(now.getDate() - 30);
         break;
@@ -67,7 +98,10 @@ export function PriceTrendAnalysis() {
     }
 
     return { startDate, endDate: now };
-  };
+  }, []);
+
+  // Memoize date range to avoid recalculation
+  const dateRange = useMemo(() => getDateRange(timeWindow), [timeWindow, getDateRange]);
 
   // Filter and analyze historical data
   const analysis = useMemo(() => {
@@ -75,7 +109,7 @@ export function PriceTrendAnalysis() {
       return null;
     }
 
-    const { startDate, endDate } = getDateRange();
+    const { startDate, endDate } = dateRange;
     
     // Filter observations by date and territory
     let filteredHistory = currentProduct.history.filter(obs => {
@@ -127,9 +161,9 @@ export function PriceTrendAnalysis() {
     const totalChanges = increases + decreases;
     const changeRate = totalChanges / (filteredHistory.length - 1);
     let volatility = 'Low volatility';
-    if (changeRate > 0.66) {
+    if (changeRate > VOLATILITY_HIGH_THRESHOLD) {
       volatility = 'High volatility';
-    } else if (changeRate > 0.33) {
+    } else if (changeRate > VOLATILITY_MEDIUM_THRESHOLD) {
       volatility = 'Medium volatility';
     }
 
@@ -164,7 +198,7 @@ export function PriceTrendAnalysis() {
         endDate
       }
     };
-  }, [currentProduct, timeWindow, selectedTerritory]);
+  }, [currentProduct, selectedTerritory, dateRange]);
 
   // Time window options
   const timeWindows = [
@@ -245,11 +279,12 @@ export function PriceTrendAnalysis() {
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Time Window (Historical Period)
             </label>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3" role="group" aria-label="Time window selection">
               {timeWindows.map((tw) => (
                 <button
                   key={tw.value}
                   onClick={() => setTimeWindow(tw.value)}
+                  aria-pressed={timeWindow === tw.value}
                   className={`p-3 rounded-lg border-2 transition-all ${
                     timeWindow === tw.value
                       ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
@@ -439,7 +474,7 @@ export function PriceTrendAnalysis() {
                         const changePercent = prevPrice > 0 ? (change / prevPrice * 100) : 0;
 
                         return (
-                          <tr key={index} className="border-b border-gray-200 dark:border-gray-700">
+                          <tr key={`${obs.date}-${obs.territory}`} className="border-b border-gray-200 dark:border-gray-700">
                             <td className="p-3 text-gray-900 dark:text-white">
                               {new Date(obs.date).toLocaleDateString('en-US', { 
                                 year: 'numeric', 
@@ -453,11 +488,11 @@ export function PriceTrendAnalysis() {
                             <td className="p-3">
                               {index === 0 ? (
                                 <span className="text-gray-500 dark:text-gray-500">-</span>
-                              ) : change > 0.01 ? (
+                              ) : change > PRICE_CHANGE_THRESHOLD ? (
                                 <span className="text-red-600 dark:text-red-400">
                                   ▲ +{change.toFixed(2)} € ({changePercent.toFixed(1)}%)
                                 </span>
-                              ) : change < -0.01 ? (
+                              ) : change < -PRICE_CHANGE_THRESHOLD ? (
                                 <span className="text-green-600 dark:text-green-400">
                                   ▼ {change.toFixed(2)} € ({changePercent.toFixed(1)}%)
                                 </span>
