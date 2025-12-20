@@ -174,7 +174,9 @@ export default function Carte() {
               ))}
               {filteredStores.length === 0 && (
                 <div className="col-span-full text-center text-slate-500 py-8">
-                  Aucun magasin trouvé pour ce territoire
+                  {stores && stores.length === 0
+                    ? "Aucun magasin n'est disponible pour ce territoire."
+                    : "Aucun magasin ne correspond aux filtres actuels pour ce territoire."}
                 </div>
               )}
             </div>
