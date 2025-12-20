@@ -107,7 +107,7 @@ export default function Carte() {
         </div>
 
         {/* Map Container - Mobile Fullscreen */}
-        <div className="rounded-lg overflow-hidden border border-slate-800 h-[400px] md:h-[600px]">
+        <div className="rounded-lg overflow-hidden border border-slate-800 h-[50vh] md:h-[600px]">
           <MapContainer
             center={defaultPosition}
             zoom={11}
