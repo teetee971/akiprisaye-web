@@ -263,7 +263,17 @@ async function startLabelOCR(container, targets, state) {
       }
 
       // Log the raw OCR text securely to console for debugging (avoid sending to server)
-      console.info("[OCR] raw:", text);
+      // Log only a fingerprint (SHA-256) + length for privacy-preserving debug
+      try {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(text);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+        console.debug(`[OCR] fingerprint: sha256:${hashHex} length:${text.length}`);
+      } catch (hashErr) {
+        console.debug("[OCR] fingerprint failed", hashErr);
+      }
 
       const { inci, cleaned } = extractINCIFromOCR(text);
       if (inci) {
