@@ -1,0 +1,53 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Scan Ticket IA – A KI PRI SA YÉ</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.5/dist/tesseract.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+</head>
+<body class="dark">
+  <h1>🧠 Scan Ticket IA</h1>
+  <input type="file" id="ticket" accept="image/*" />
+  <button onclick="scanner()">📸 Scanner</button>
+  <p id="status"></p>
+  <div id="resultat"></div>
+
+  <script>
+    const app = firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    let currentUID = null;
+    auth.signInAnonymously().then(() => {
+      currentUID = auth.currentUser.uid;
+    });
+
+    function scanner() {
+      const file = document.getElementById("ticket").files[0];
+      if (!file) return alert("Veuillez sélectionner une image.");
+      document.getElementById("status").innerText = "⏳ Analyse en cours...";
+
+      Tesseract.recognize(file, 'fra', {
+        logger: m => console.log(m)
+      }).then(({ data: { text } }) => {
+        document.getElementById("status").innerText = "✅ Analyse terminée";
+        document.getElementById("resultat").innerText = text;
+
+        // Sauvegarde brute dans Firestore
+        db.collection("historique").add({
+          uid: currentUID,
+          source: "scan_ticket",
+          texte: text,
+          date: new Date()
+        });
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Palmarès des Enseignes - A KI PRI SA YÉ</title>
+  <meta name="description" content="Découvrez les enseignes les plus avantageuses par territoire." />
+  
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Palmarès des Enseignes - A KI PRI SA YÉ" />
+  
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0f62fe" />
+  
+  <link rel="stylesheet" href="shared-nav.css" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #0b0d17;
+      color: #ffffff;
+    }
+    
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+    
+    h1 {
+      color: #0f62fe;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    
+    .intro-text {
+      text-align: center;
+      color: #b8b8b8;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+    
+    .territory-tabs {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+      justify-content: center;
+    }
+    
+    .tab-btn {
+      padding: 0.75rem 1.5rem;
+      background: transparent;
+      border: 2px solid #2a2d3e;
+      border-radius: 8px;
+      color: #b8b8b8;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.95rem;
+    }
+    
+    .tab-btn:hover,
+    .tab-btn.active {
+      background: rgba(15, 98, 254, 0.1);
+      border-color: #0f62fe;
+      color: #0f62fe;
+    }
+    
+    .rankings-container {
+      background: #1a1d2e;
+      border-radius: 12px;
+      padding: 2rem;
+      border: 1px solid #2a2d3e;
+    }
+    
+    .ranking-item {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      padding: 1.5rem;
+      background: rgba(15, 23, 42, 0.5);
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      border: 1px solid #2a2d3e;
+      transition: all 0.3s ease;
+    }
+    
+    .ranking-item:hover {
+      transform: translateX(5px);
+      border-color: #0f62fe;
+      box-shadow: 0 4px 12px rgba(15, 98, 254, 0.2);
+    }
+    
+    .rank-number {
+      font-size: 2rem;
+      font-weight: bold;
+      min-width: 60px;
+      text-align: center;
+    }
+    
+    .rank-1 { color: #ffd700; } /* Gold */
+    .rank-2 { color: #c0c0c0; } /* Silver */
+    .rank-3 { color: #cd7f32; } /* Bronze */
+    .rank-other { color: #0f62fe; }
+    
+    .rank-medal {
+      font-size: 2.5rem;
+    }
+    
+    .store-info {
+      flex: 1;
+    }
+    
+    .store-name {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      color: #ffffff;
+    }
+    
+    .store-stats {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin-top: 0.5rem;
+    }
+    
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #b8b8b8;
+      font-size: 0.9rem;
+    }
+    
+    .stat-value {
+      color: #10b981;
+      font-weight: 600;
+    }
+    
+    .score-badge {
+      padding: 0.75rem 1.5rem;
+      background: linear-gradient(135deg, #10b981, #059669);
+      border-radius: 20px;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #ffffff;
+      min-width: 80px;
+      text-align: center;
+    }
+    
+    .legend {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: rgba(15, 98, 254, 0.05);
+      border-radius: 8px;
+      border: 1px solid rgba(15, 98, 254, 0.2);
+    }
+    
+    .legend h3 {
+      color: #0f62fe;
+      margin-bottom: 1rem;
+      font-size: 1rem;
+    }
+    
+    .legend-item {
+      color: #b8b8b8;
+      margin: 0.5rem 0;
+      font-size: 0.9rem;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: #b8b8b8;
+    }
+  </style>
+</head>
+<body>
+  <!-- Mobile Navigation Overlay -->
+  <div class="nav-overlay" id="nav-overlay"></div>
+  
+  <!-- Mobile Navigation -->
+  <nav class="mobile-nav" id="mobile-nav" role="navigation" aria-label="Navigation mobile">
+    <div class="mobile-nav-header">
+      <span class="mobile-nav-title">Menu</span>
+      <button class="close-nav" id="close-nav" aria-label="Fermer le menu">&times;</button>
+    </div>
+    <ul class="mobile-nav-list">
+      <li><a href="/"><span class="mobile-nav-icon">🏠</span>Accueil</a></li>
+      <li><a href="/comparateur.html"><span class="mobile-nav-icon">🔍</span>Comparateur</a></li>
+      <li><a href="/scanner.html"><span class="mobile-nav-icon">📷</span>Scanner</a></li>
+      <li><a href="/carte.html"><span class="mobile-nav-icon">🗺️</span>Carte</a></li>
+      <li><a href="/modules.html"><span class="mobile-nav-icon">🧩</span>Modules</a></li>
+      <li><a href="/ia-conseiller.html"><span class="mobile-nav-icon">🤖</span>IA Conseiller</a></li>
+      <li><a href="/historique.html"><span class="mobile-nav-icon">📊</span>Historique</a></li>
+      <li><a href="/mon-compte.html"><span class="mobile-nav-icon">👤</span>Mon Compte</a></li>
+      <li><a href="/faq.html"><span class="mobile-nav-icon">❓</span>FAQ</a></li>
+      <li><a href="/contact.html"><span class="mobile-nav-icon">📧</span>Contact</a></li>
+    </ul>
+  </nav>
+
+  <header class="shared-header">
+    <div class="shared-header-content">
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <button class="burger-menu" id="burger-menu" aria-label="Menu" aria-expanded="false">
+          <div class="burger-line"></div>
+          <div class="burger-line"></div>
+          <div class="burger-line"></div>
+        </button>
+        <a href="/" class="shared-logo" aria-label="A KI PRI SA YÉ - Accueil"><img src="/logo-akpsy.svg" alt="A KI PRI SA YÉ" /></a>
+      </div>
+      <nav class="header-nav" role="navigation" aria-label="Navigation principale">
+        <a href="/comparateur.html">Comparateur</a>
+        <a href="/scanner.html">Scanner</a>
+        <a href="/modules.html">Modules</a>
+        <a href="/mon-compte.html">Mon Compte</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <h1>🏆 Palmarès des Enseignes</h1>
+    <div class="intro-text">
+      <p>Découvrez les magasins les plus compétitifs de votre territoire</p>
+      <p><small>Classement basé sur les prix moyens et la disponibilité des produits</small></p>
+    </div>
+    
+    <div class="territory-tabs">
+      <button class="tab-btn active" data-territory="guadeloupe">🇬🇵 Guadeloupe</button>
+      <button class="tab-btn" data-territory="martinique">🇲🇶 Martinique</button>
+      <button class="tab-btn" data-territory="guyane">🇬🇫 Guyane</button>
+      <button class="tab-btn" data-territory="reunion">🇷🇪 La Réunion</button>
+      <button class="tab-btn" data-territory="mayotte">🇾🇹 Mayotte</button>
+    </div>
+    
+    <div class="rankings-container" id="rankings-container">
+      <!-- Rankings will be loaded here -->
+    </div>
+    
+    <div class="legend">
+      <h3>📊 À propos du classement</h3>
+      <div class="legend-item">
+        <strong>Score global :</strong> Calculé sur la base du prix moyen, de la disponibilité des produits et des promotions
+      </div>
+      <div class="legend-item">
+        <strong>Prix moyen :</strong> Écart en % par rapport à la moyenne du territoire
+      </div>
+      <div class="legend-item">
+        <strong>Produits disponibles :</strong> Nombre de produits référencés dans notre base de données
+      </div>
+      <div class="legend-item" style="margin-top: 1rem; font-style: italic;">
+        💡 Ce classement est mis à jour quotidiennement. Les données proviennent des contributions de la communauté et de nos partenaires.
+      </div>
+    </div>
+  </main>
+  
+  <script type="module" src="shared-nav.js"></script>
+  <script type="module" src="/cookie-consent.js"></script>
+  
+  <script>
+    // Mock data for demonstration - Replace with real API calls
+    const rankingsData = {
+      guadeloupe: [
+        { name: "E.Leclerc Abymes", score: 92, avgPrice: "-8%", products: 1240, promos: 156 },
+        { name: "Leader Price Baie-Mahault", score: 88, avgPrice: "-5%", products: 980, promos: 89 },
+        { name: "Carrefour Destreland", score: 85, avgPrice: "-3%", products: 1560, promos: 234 },
+        { name: "Géant Casino", score: 82, avgPrice: "+2%", products: 1890, promos: 178 },
+        { name: "Super U Gosier", score: 79, avgPrice: "+5%", products: 750, promos: 45 }
+      ],
+      martinique: [
+        { name: "Carrefour Dillon", score: 90, avgPrice: "-7%", products: 1345, promos: 167 },
+        { name: "E.Leclerc Lamentin", score: 87, avgPrice: "-4%", products: 1120, promos: 98 },
+        { name: "Hyper U Ducos", score: 84, avgPrice: "-2%", products: 890, promos: 67 }
+      ],
+      guyane: [
+        { name: "Carrefour Cayenne", score: 89, avgPrice: "-6%", products: 1178, promos: 134 },
+        { name: "Leader Price Rémire", score: 86, avgPrice: "-4%", products: 856, promos: 78 }
+      ],
+      reunion: [
+        { name: "Score Saint-Denis", score: 91, avgPrice: "-8%", products: 1456, promos: 189 },
+        { name: "Leclerc Saint-Pierre", score: 88, avgPrice: "-6%", products: 1289, promos: 145 },
+        { name: "Carrefour Sainte-Marie", score: 85, avgPrice: "-3%", products: 1567, promos: 201 }
+      ],
+      mayotte: [
+        { name: "Leader Price Mamoudzou", score: 87, avgPrice: "-5%", products: 678, promos: 56 },
+        { name: "Carrefour Kawéni", score: 83, avgPrice: "-2%", products: 892, promos: 89 }
+      ]
+    };
+    
+    function displayRankings(territory) {
+      const container = document.getElementById('rankings-container');
+      const data = rankingsData[territory] || [];
+      
+      if (data.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <p>📊 Données en cours de collecte pour ce territoire</p>
+            <p style="margin-top: 1rem;">Revenez bientôt pour découvrir le classement des enseignes</p>
+          </div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = data.map((store, index) => {
+        const rank = index + 1;
+        const rankClass = rank === 1 ? 'rank-1' : rank === 2 ? 'rank-2' : rank === 3 ? 'rank-3' : 'rank-other';
+        const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '';
+        
+        return `
+          <div class="ranking-item">
+            <div class="rank-number ${rankClass}">
+              ${medal ? `<div class="rank-medal">${medal}</div>` : `#${rank}`}
+            </div>
+            <div class="store-info">
+              <div class="store-name">${store.name}</div>
+              <div class="store-stats">
+                <div class="stat-item">
+                  <span>💰 Prix moyen:</span>
+                  <span class="stat-value">${store.avgPrice}</span>
+                </div>
+                <div class="stat-item">
+                  <span>📦 Produits:</span>
+                  <span class="stat-value">${store.products}</span>
+                </div>
+                <div class="stat-item">
+                  <span>🏷️ Promos:</span>
+                  <span class="stat-value">${store.promos}</span>
+                </div>
+              </div>
+            </div>
+            <div class="score-badge">
+              ${store.score}/100
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+    
+    // Initial load
+    displayRankings('guadeloupe');
+    
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        displayRankings(this.dataset.territory);
+      });
+    });
+  </script>
+</body>
+</html>

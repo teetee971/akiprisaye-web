@@ -1,0 +1,45 @@
+name: Lighthouse Audit
+
+on:
+  schedule:
+    # Run daily at 6:00 AM UTC
+    - cron: '0 6 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      
+      - name: Install Lighthouse CI
+        run: npm install -g @lhci/cli@0.13.x
+      
+      - name: Run Lighthouse on home page
+        run: |
+          lhci autorun --collect.url=https://akiprisaye.pages.dev/ \
+            --collect.numberOfRuns=1 \
+            --assert.preset=lighthouse:recommended
+      
+      - name: Run Lighthouse on comparateur page
+        run: |
+          lhci autorun --collect.url=https://akiprisaye.pages.dev/comparateur.html \
+            --collect.numberOfRuns=1 \
+            --assert.preset=lighthouse:recommended
+      
+      - name: Upload Lighthouse results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-results
+          path: .lighthouseci/

@@ -1,0 +1,19 @@
+name: Build Installer
+
+on:
+  push:
+    paths:
+      - '**.iss'
+      - '**.exe'
+      - '**.md'
+      - '**.ini'
+      - '**.lic'
+      - '**/build.yml'
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build Notice
+        run: echo "Simulation de compilation (.iss non compilable directement en ligne)"

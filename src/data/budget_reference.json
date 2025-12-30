@@ -1,0 +1,58 @@
+{
+  "metadata": {
+    "version": "2025.1",
+    "dataStatus": "DEMONSTRATION",
+    "warning": "⚠️ DONNÉES DE DÉMONSTRATION - À REMPLACER PAR SOURCES OFFICIELLES",
+    "requiredSources": [
+      "CAF - RSA par territoire",
+      "Service-public.fr - SMIC net",
+      "INSEE - Budget des ménages",
+      "OPMR - Coûts par territoire"
+    ]
+  },
+  "referenceRevenus": {
+    "adulte_seul": 1400,
+    "couple": 2400,
+    "famille_2_enfants": 3200,
+    "senior": 1200
+  },
+  "territoires": {
+    "guadeloupe": {
+      "panier_vital": 280,
+      "logement": 450,
+      "transport": 85,
+      "energie_eau": 95,
+      "autres": 120
+    },
+    "martinique": {
+      "panier_vital": 285,
+      "logement": 455,
+      "transport": 87,
+      "energie_eau": 97,
+      "autres": 122
+    },
+    "guyane": {
+      "panier_vital": 310,
+      "logement": 490,
+      "transport": 95,
+      "energie_eau": 105,
+      "autres": 135
+    },
+    "reunion": {
+      "panier_vital": 270,
+      "logement": 440,
+      "transport": 80,
+      "energie_eau": 88,
+      "autres": 112
+    },
+    "mayotte": {
+      "panier_vital": 320,
+      "logement": 420,
+      "transport": 100,
+      "energie_eau": 110,
+      "autres": 140
+    }
+  },
+  "version": "2025.1",
+  "source": "A KI PRI SA YÉ – données de démonstration pédagogiques"
+}

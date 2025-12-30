@@ -1,0 +1,19 @@
+name: ☁️ Purge Cloudflare Cache
+
+on:
+  workflow_run:
+    workflows: [ "🗺️ Auto-Coords Generator" ]
+    types: [ completed ]
+  workflow_dispatch:
+
+jobs:
+  purge:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Purger Cloudflare
+        run: |
+          curl -X POST "https://api.cloudflare.com/client/v4/zones/${{ secrets.CF_ZONE_ID }}/purge_cache" \
+          -H "Authorization: Bearer ${{ secrets.CF_API_TOKEN }}" \
+          -H "Content-Type: application/json" \
+          --data '{"purge_everything":true}'

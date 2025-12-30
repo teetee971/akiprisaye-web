@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>A KI PRI SA YÉ — Gérez votre budget facilement</title>
+  <meta name="description" content="Comparez les prix, gérez votre budget facilement et luttez contre la vie chère dans les DOM-TOM." />
+  
+  <!-- Manifest PWA -->
+  <link rel="manifest" href="./manifest.json" />
+  <meta name="theme-color" content="#0b0d17" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  
+  <!-- Icônes optimisées -->
+  <link rel="icon" type="image/png" sizes="192x192" href="./assets/icon_192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="./assets/icon_512.png" />
+  <link rel="apple-touch-icon" sizes="192x192" href="./assets/icon_192.png" />
+  
+  <!-- Préchargement critique -->
+  <link rel="preload" as="image" href="./assets/84ba022c-9450-4e4f-841b-64d5363aaae1_lg.webp" />
+  
+  <style>
+    /* === RESET OPTIMISÉ === */
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{margin:0;padding:0;height:100%;overflow-x:hidden}
+    body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#0b0d17;color:#fff}
+    
+    /* === CARROUSEL PERFORMANT === */
+    .carousel{
+      position:relative;
+      height:100vh;
+      width:100vw;
+      background:#0b0d17;
+      overflow:hidden;
+    }
+    
+    .slide{
+      position:absolute;
+      top:0;left:0;
+      height:100%;width:100%;
+      background-size:cover;
+      background-position:center;
+      background-repeat:no-repeat;
+      opacity:0;
+      will-change:opacity;
+      animation:slideShow 15s infinite ease-in-out;
+    }
+    
+    /* Images avec fallbacks */
+    .slide:nth-child(1){
+      background-image:url('./assets/84ba022c-9450-4e4f-841b-64d5363aaae1_lg.webp');
+      animation-delay:0s;
+    }
+    .slide:nth-child(2){
+      background-image:url('./assets/b3ced496-7272-4600-b46e-c14cf625667e_lg.webp');
+      animation-delay:5s;
+    }
+    .slide:nth-child(3){
+      background-image:url('./assets/0d3bd9ac-734a-4f7d-b671-6dc715ae9e94_lg.webp');
+      animation-delay:10s;
+    }
+    
+    /* Animation optimisée */
+    @keyframes slideShow{
+      0%,33%{opacity:0}
+      17%,50%{opacity:1}
+      67%,100%{opacity:0}
+    }
+    
+    /* === OVERLAY AMÉLIORÉ === */
+    .overlay{
+      position:absolute;
+      top:0;left:0;
+      height:100%;width:100%;
+      background:radial-gradient(ellipse at center,rgba(0,0,0,0.3) 0%,rgba(11,13,23,0.8) 70%);
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      text-align:center;
+      padding:2rem;
+      z-index:10;
+    }
+    
+    /* === TYPOGRAPHIE RESPONSIVE === */
+    h1{
+      font-size:clamp(2.5rem,8vw,4rem);
+      font-weight:700;
+      margin:0 0 1.5rem 0;
+      letter-spacing:0.02em;
+      text-shadow:2px 2px 8px rgba(0,0,0,0.8);
+      animation:fadeInUp 0.8s ease-out;
+    }
+    
+    .slogan{
+      font-size:clamp(1.1rem,4vw,1.6rem);
+      font-weight:400;
+      margin:0.5rem 0;
+      text-shadow:1px 1px 4px rgba(0,0,0,0.7);
+      animation:fadeInUp 0.8s ease-out 0.2s both;
+    }
+    
+    /* === BOUTON CTA OPTIMISÉ === */
+    .btn{
+      margin-top:2rem;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      background:linear-gradient(135deg,#0f62fe 0%,#0353e9 100%);
+      color:#fff;
+      padding:1rem 2.5rem;
+      border-radius:50px;
+      text-decoration:none;
+      font-weight:600;
+      font-size:1.1rem;
+      transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
+      box-shadow:0 8px 32px rgba(15,98,254,0.3);
+      animation:fadeInUp 0.8s ease-out 0.4s both;
+      position:relative;
+      overflow:hidden;
+    }
+    
+    .btn::before{
+      content:'';
+      position:absolute;
+      top:0;left:-100%;
+      width:100%;height:100%;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent);
+      transition:left 0.5s;
+    }
+    
+    .btn:hover{
+      transform:translateY(-3px);
+      box-shadow:0 12px 40px rgba(15,98,254,0.4);
+    }
+    
+    .btn:hover::before{left:100%}
+    
+    .btn:active{transform:translateY(-1px)}
+    
+    /* === ANIMATIONS === */
+    @keyframes fadeInUp{
+      from{opacity:0;transform:translateY(40px)}
+      to{opacity:1;transform:translateY(0)}
+    }
+    
+    /* === ÉTATS D'ERREUR === */
+    .slide.error{
+      background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    
+    .slide.error::after{
+      content:"🖼️ Image en chargement...";
+      color:#666;
+      font-size:1rem;
+      animation:pulse 2s infinite;
+    }
+    
+    @keyframes pulse{
+      0%,100%{opacity:0.5}
+      50%{opacity:1}
+    }
+    
+    /* === LOADING SPINNER === */
+    .loading{
+      position:fixed;
+      top:50%;left:50%;
+      transform:translate(-50%,-50%);
+      z-index:1000;
+      display:none;
+    }
+    
+    .spinner{
+      width:50px;height:50px;
+      border:3px solid rgba(15,98,254,0.1);
+      border-top:3px solid #0f62fe;
+      border-radius:50%;
+      animation:spin 1s linear infinite;
+    }
+    
+    @keyframes spin{
+      to{transform:rotate(360deg)}
+    }
+    
+    /* === RESPONSIVE MOBILE === */
+    @media (max-width:768px){
+      .overlay{padding:1.5rem 1rem}
+      .btn{padding:0.9rem 2rem;font-size:1rem}
+    }
+    
+    @media (max-width:480px){
+      .overlay{padding:1rem 0.8rem}
+      .carousel{min-height:100vh}
+    }
+    
+    /* === PERFORMANCE === */
+    @media (prefers-reduced-motion:reduce){
+      *,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important}
+    }
+    
+    /* === IMPRESSION === */
+    @media print{
+      .carousel{height:auto;background:#fff}
+      .slide{position:relative;height:auto;opacity:1!important;animation:none}
+      .overlay{background:transparent;color:#000}
+      .btn{display:none}
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Loading Spinner -->
+  <div id="loading" class="loading">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Carrousel Principal -->
+  <main class="carousel" role="banner">
+    <div class="slide" data-bg="1" aria-label="Slide 1"></div>
+    <div class="slide" data-bg="2" aria-label="Slide 2"></div>
+    <div class="slide" data-bg="3" aria-label="Slide 3"></div>
+    
+    <section class="overlay">
+      <h1>A&nbsp;KI PRI SA YÉ</h1>
+      <p class="slogan">Gérez votre budget facilement</p>
+      <p class="slogan">Comparez les prix et luttez contre la vie chère</p>
+      <a href="#app" class="btn" id="cta-btn" role="button" aria-label="Découvrir l'application">
+        Découvrir l'application
+      </a>
+    </section>
+  </main>
+
+  <script>
+    // Configuration
+    const CONFIG = {
+      images: [
+        './assets/84ba022c-9450-4e4f-841b-64d5363aaae1_lg.webp',
+        './assets/b3ced496-7272-4600-b46e-c14cf625667e_lg.webp',
+        './assets/0d3bd9ac-734a-4f7d-b671-6dc715ae9e94_lg.webp'
+      ],
+      loadTimeout: 5000,
+      debug: false
+    };
+
+    // Logger simple
+    const log = CONFIG.debug ? console.log.bind(console) : () => {};
+
+    // Gestionnaire de chargement
+    class LoadManager {
+      constructor() {
+        this.loading = document.getElementById('loading');
+        this.loaded = new Set();
+        this.errors = new Set();
+      }
+
+      show() {
+        this.loading.style.display = 'block';
+        log('💫 Loading started');
+      }
+
+      hide() {
+        this.loading.style.display = 'none';
+        log('✨ Loading complete');
+      }
+
+      preloadImages() {
+        log('🖼️ Preloading images...');
+        
+        CONFIG.images.forEach((src, i) => {
+          const img = new Image();
+          
+          img.onload = () => {
+            this.loaded.add(src);
+            log(`✅ Image ${i+1} loaded`);
+            this.checkComplete();
+          };
+          
+          img.onerror = () => {
+            this.errors.add(src);
+            log(`❌ Image ${i+1} failed`);
+            document.querySelectorAll('.slide')[i]?.classList.add('error');
+            this.checkComplete();
+          };
+          
+          img.src = src;
+        });
+
+        // Timeout de sécurité
+        setTimeout(() => this.hide(), CONFIG.loadTimeout);
+      }
+
+      checkComplete() {
+        if (this.loaded.size + this.errors.size >= CONFIG.images.length) {
+          setTimeout(() => this.hide(), 300);
+        }
+      }
+    }
+
+    // Gestionnaire d'interface
+    class UIManager {
+      constructor() {
+        this.setupCTA();
+        this.setupKeyboard();
+        this.setupAccessibility();
+      }
+
+      setupCTA() {
+        const btn = document.getElementById('cta-btn');
+        if (!btn) return;
+
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          this.showAppInfo();
+        });
+
+        btn.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            this.showAppInfo();
+          }
+        });
+      }
+
+      setupKeyboard() {
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+            document.activeElement?.blur();
+          }
+        });
+      }
+
+      setupAccessibility() {
+        // Amélioration pour les lecteurs d'écran
+        document.querySelectorAll('.slide').forEach((slide, i) => {
+          slide.setAttribute('aria-hidden', 'true');
+        });
+      }
+
+      showAppInfo() {
+        const message = `🚀 A KI PRI SA YÉ
+
+📱 Application mobile et web en développement
+
+✨ Fonctionnalités prévues :
+• Comparaison de prix en temps réel
+• Gestion de budget personnalisé  
+• Alertes promotions
+• Suivi des dépenses
+• Mode hors ligne
+
+🎯 Spécialement conçu pour les DOM-TOM
+💡 Restez connectés pour le lancement !`;
+
+        alert(message);
+        log('📱 App info displayed');
+      }
+    }
+
+    // Service Worker
+    class SWManager {
+      static async register() {
+        if ('serviceWorker' in navigator) {
+          try {
+            await navigator.serviceWorker.register('./service-worker.js');
+            log('✅ SW registered');
+          } catch (e) {
+            log('❌ SW failed:', e.message);
+          }
+        }
+      }
+    }
+
+    // Application principale
+    class App {
+      constructor() {
+        this.loader = new LoadManager();
+        this.ui = new UIManager();
+      }
+
+      async init() {
+        log('🚀 App initializing...');
+        
+        // Affichage du loader
+        this.loader.show();
+        
+        // Préchargement des images
+        this.loader.preloadImages();
+        
+        // Service Worker
+        await SWManager.register();
+        
+        log('✅ App initialized');
+      }
+    }
+
+    // Démarrage optimisé
+    const app = new App();
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => app.init());
+    } else {
+      app.init();
+    }
+
+    // Gestion d'erreur globale
+    window.addEventListener('error', (e) => {
+      log('❌ Global error:', e.message);
+    });
+
+    // Performance monitoring
+    window.addEventListener('load', () => {
+      if (performance.navigation.type === performance.navigation.TYPE_RELOAD) {
+        log('🔄 Page reloaded');
+      }
+      
+      const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+      log(`⚡ Load time: ${loadTime}ms`);
+    });
+  </script>
+</body>
+</html>

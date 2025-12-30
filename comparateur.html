@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comparateur de prix</title>
+</head>
+<body>
+  <h2>🛒 Comparateur de prix</h2>
+  <form>
+    <label for="produit">Produit :</label>
+    <input type="text" id="produit" name="produit">
+    <label for="territoire">Territoire :</label>
+    <select id="territoire" name="territoire">
+      <option value="guadeloupe">Guadeloupe</option>
+      <option value="martinique">Martinique</option>
+    </select>
+    <button type="submit">Comparer</button>
+  </form>
+  <div id="résultats">
+    <p>Résultats fictifs pour démonstration :</p>
+    <ul>
+      <li>Carrefour : 2,50 €</li>
+      <li>Leader Price : 2,30 €</li>
+      <li>Ecomax : 2,10 €</li>
+    </ul>
+  </div>
+</body>
+<script>
+document.querySelector('form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const produit = document.getElementById('produit').value;
+  const territoire = document.getElementById('territoire').value;
+  let results = '';
+  if (territoire === 'guadeloupe') {
+    results = '<ul><li>Carrefour : 2,50 €</li><li>Leader Price : 2,30 €</li><li>Ecomax : 2,10 €</li></ul>';
+  } else {
+    results = '<ul><li>Carrefour : 2,60 €</li><li>Leader Price : 2,40 €</li><li>Ecomax : 2,20 €</li></ul>';
+  }
+  document.getElementById('résultats').innerHTML = '<p>Résultats pour ' + produit + ' en ' + territoire + ' :</p>' + results;
+});
+</script>
+</html>

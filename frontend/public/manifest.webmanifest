@@ -1,0 +1,45 @@
+{
+  "name": "A KI PRI SA YÉ",
+  "short_name": "A Ki Pri Sa Yé",
+  "description": "Comparez les prix, scannez vos produits et luttez contre la vie chère dans les DOM.",
+  "lang": "fr",
+  "start_url": "/index.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#000000",
+  "theme_color": "#00A86B",
+  "icons": [
+    {
+      "src": "/assets/icon_512-3-9kYoTe.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/icon_192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Scanner un produit",
+      "short_name": "Scanner",
+      "url": "/scanner.html",
+      "icons": [{ "src": "/assets/icon_192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Comparer les prix",
+      "short_name": "Comparateur",
+      "url": "/comparateur.html",
+      "icons": [{ "src": "/assets/icon_192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Historique",
+      "short_name": "Historique",
+      "url": "/historique.html",
+      "icons": [{ "src": "/assets/icon_192.png", "sizes": "192x192" }]
+    }
+  ]
+}

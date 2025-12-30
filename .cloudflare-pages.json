@@ -1,0 +1,7 @@
+﻿{
+  "build": {
+    "command": "npm install && npm run build",
+    "cwd": "/",
+    "output": "dist"
+  }
+}

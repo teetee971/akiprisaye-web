@@ -1,0 +1,45 @@
+name: Deploy to Cloudflare Pages
+
+on:
+  push:
+    branches:
+      - main        # déclenchement sur main
+      - copilot/create-citizen-support-service  # déclenchement sur la branche de développement
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Installation de Node.js et mise en cache des dépendances npm
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # Installation des dépendances du projet
+      - name: Install dependencies
+        run: npm ci
+
+      # Build de l'application Vite/React (génère le dossier dist)
+      - name: Build application
+        run: npm run build
+
+      # Déploiement du contenu du dossier dist vers Cloudflare Pages
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: akiprisaye-web
+          directory: dist             # important : dossier de build
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      # Purge du cache inutile (pas de domaine personnalisé)
+      - name: Skip cache purge
+        if: success()
+        run: |
+          echo "Purge skipped: Cloudflare Pages without custom domain does not support API cache purge."

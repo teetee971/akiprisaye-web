@@ -1,0 +1,57 @@
+groups:
+- name: search-service.rules
+  interval: 15s
+  rules:
+  - alert: SearchHighErrorRate
+    annotations:
+      summary: "Taux d'erreurs élevé sur la recherche"
+      description: "Le ratio erreurs/requêtes dépasse 5% pendant 5m (territory={{ $labels.territory }})."
+      runbook_url: "https://your-runbook.example.com/search#high-error-rate"
+    expr: |
+      (
+        sum by (territory) (rate(search_errors_total[5m])) /
+        clamp_min(sum by (territory) (rate(search_requests_total[5m])), 1)
+      ) > 0.05
+    for: 5m
+    labels:
+      severity: page
+
+  - alert: SearchHighLatencyP95
+    annotations:
+      summary: "Latence p95 élevée sur la recherche"
+      description: "La latence p95 > 1s sur 5m (territory={{ $labels.territory }})."
+      runbook_url: "https://your-runbook.example.com/search#high-latency"
+    expr: |
+      histogram_quantile(
+        0.95,
+        sum by (le, territory) (rate(search_duration_ms_bucket[5m]))
+      ) > 1000
+    for: 5m
+    labels:
+      severity: ticket
+
+  - alert: SearchZeroResultsSpike
+    annotations:
+      summary: "Pic de recherches sans résultat"
+      description: "Le ratio de requêtes à zéro résultat dépasse 35% sur 10m (territory={{ $labels.territory }})."
+      runbook_url: "https://your-runbook.example.com/search#zero-results"
+    expr: |
+      (
+        sum by (territory) (rate(search_zero_results_total[10m])) /
+        clamp_min(sum by (territory) (rate(search_requests_total[10m])), 1)
+      ) > 0.35
+    for: 10m
+    labels:
+      severity: ticket
+
+  # (Optionnel futur)
+  # - alert: SearchCircuitBreakerOpen
+  #   annotations:
+  #     summary: "Circuit breaker ouvert sur la recherche"
+  #     description: "Le circuit breaker OFF est ouvert depuis > 1m (territory={{ $labels.territory }})."
+  #     runbook_url: "https://your-runbook.example.com/search#circuit-breaker"
+  #   expr: |
+  #     avg_over_time(circuit_breaker_state[1m]) > 0.9
+  #   for: 1m
+  #   labels:
+  #     severity: page

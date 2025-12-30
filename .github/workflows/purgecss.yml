@@ -1,0 +1,19 @@
+name: ✂️ PurgeCSS Optimizer
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  purgecss:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 📦 Install PurgeCSS
+        run: npm install @fullhuman/postcss-purgecss --save
+
+      - name: ✂️ Run Purge script
+        run: node scripts/purgecss-run.mjs

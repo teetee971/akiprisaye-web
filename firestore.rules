@@ -1,0 +1,44 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // --- MODULE TI-PANIÉ SOLIDAIRE ---
+    
+    // Paniers : Tout le monde peut voir les offres disponibles
+    match /paniers/{panierId} {
+      allow read: if true; 
+      allow write: if false; // Verrouillé pour éviter les fausses annonces
+    }
+    
+    // Producteurs : Tout le monde peut voir la liste des partenaires vérifiés
+    match /producteurs/{producteurId} {
+      allow read: if true;
+      allow write: if false; // Verrouillé pour garantir l'identité des producteurs
+    }
+
+    // --- MODULES EXISTANTS (RAPPEL) ---
+    
+    // Produits et Prix : Lecture seule pour le public
+    match /products/{ean} {
+      allow read: if true;
+      allow write: if false;
+    }
+    
+    match /prices/{priceId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Utilisateurs : Seul l'utilisateur peut voir/modifier ses propres données
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Tickets de caisse (OCR) : Seul l'utilisateur peut uploader son ticket
+    match /receipts/{receiptId} {
+      allow create: if request.auth != null;
+      allow read: if request.auth != null && request.auth.uid == resource.data.userId;
+    }
+  }
+}

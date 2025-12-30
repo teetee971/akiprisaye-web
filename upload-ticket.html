@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scanner Ticket - A KI PRI SA YÉ</title>
+
+  <style>
+    body {
+      background: #0d0d16;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #4aa3ff;
+      margin-bottom: 20px;
+    }
+
+    .box {
+      background: #151521;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      width: 100%;
+      background: #4aa3ff;
+      border: none;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 8px;
+      color: #fff;
+      margin-top: 10px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      margin-top: 10px;
+    }
+
+    #result {
+      margin-top: 15px;
+      white-space: pre-wrap;
+      background: #0f0f1a;
+      padding: 12px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>📄 Scanner un ticket</h1>
+
+  <div class="box">
+    <label for="fileInput">Importer une image</label>
+    <input type="file" id="fileInput" accept="image/*">
+    <button id="scanBtn">Analyser l'image</button>
+  </div>
+
+  <div id="result" class="box">
+    Résultat OCR :<br><i>(en attente d’analyse…)</i>
+  </div>
+
+  <script type="module">
+    /* ------------------------------------------------------------------
+     * IMPORTS FIREBASE (Lazy load)
+     * ------------------------------------------------------------------ */
+    import { getDB, loadFirestore } from "./firebase-config.js";
+
+    /* ------------------------------------------------------------------
+     * TESSERACT OCR IMPORT
+     * ------------------------------------------------------------------ */
+    import Tesseract from "https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.esm.min.js";
+
+    /* ------------------------------------------------------------------
+     * DOM SELECTORS
+     * ------------------------------------------------------------------ */
+    const fileInput = document.getElementById("fileInput");
+    const scanBtn = document.getElementById("scanBtn");
+    const resultBox = document.getElementById("result");
+
+    /* ------------------------------------------------------------------
+     * OCR FUNCTION
+     * ------------------------------------------------------------------ */
+    async function scanImage(file) {
+      resultBox.innerHTML = "⏳ Analyse OCR en cours…";
+
+      const { data } = await Tesseract.recognize(file, "fra", {
+        logger: (m) => console.log(m),
+      });
+
+      return data.text;
+    }
+
+    /* ------------------------------------------------------------------
+     * SAVE TO FIRESTORE
+     * ------------------------------------------------------------------ */
+    async function saveToFirestore(text) {
+      try {
+        const db = await getDB();
+        const { collection, addDoc, serverTimestamp } = await loadFirestore();
+
+        await addDoc(collection(db, "tickets"), {
+          content: text,
+          createdAt: serverTimestamp(),
+        });
+
+        console.log("🔥 Ticket enregistré !");
+      } catch (err) {
+        console.error("Erreur Firestore:", err);
+      }
+    }
+
+    /* ------------------------------------------------------------------
+     * MAIN BUTTON ACTION
+     * ------------------------------------------------------------------ */
+    scanBtn.addEventListener("click", async () => {
+      if (!fileInput.files.length) {
+        alert("Veuillez choisir une image.");
+        return;
+      }
+
+      const file = fileInput.files[0];
+
+      try {
+        const text = await scanImage(file);
+
+        resultBox.textContent = text;
+
+        // Enregistrer automatiquement dans Firestore
+        await saveToFirestore(text);
+
+        alert("🎉 Ticket enregistré dans Firestore !");
+      } catch (err) {
+        console.error(err);
+        resultBox.textContent = "Erreur lors du scan.";
+      }
+    });
+  </script>
+</body>
+
+</html>

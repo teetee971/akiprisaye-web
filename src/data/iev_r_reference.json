@@ -1,0 +1,28 @@
+{
+  "metadata": {
+    "version": "IEVR-FR-v1",
+    "dataStatus": "DEMONSTRATION",
+    "warning": "⚠️ DONNÉES DE DÉMONSTRATION - CALCULS À BASER SUR INSEE + OPMR",
+    "requiredSources": [
+      "INSEE - IPC par territoire",
+      "OPMR - Indices locaux",
+      "Calculs méthodologie IEVR v1.0"
+    ]
+  },
+  "reference_nationale": 100,
+  "territoires": {
+    "guadeloupe": 68,
+    "martinique": 69,
+    "guyane": 65,
+    "reunion": 72,
+    "mayotte": 63,
+    "nouvelle_caledonie": 76,
+    "polynesie_francaise": 61
+  },
+  "interpretation": {
+    ">=90": "Situation comparable à la référence",
+    "75-89": "Territoire sous tension",
+    "<75": "Territoire sous forte tension"
+  },
+  "version": "IEVR-FR-v1"
+}

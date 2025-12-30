@@ -1,0 +1,104 @@
+# Git ignore pour A KI PRI SA YÉ
+
+# Fichiers sensibles
+*.key
+*.pem
+*.env
+*.env.*
+!.env.example
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+serviceAccount*.json
+firebase-adminsdk-*.json
+google-credentials.json
+secrets.json
+
+# Dépendances & builds
+node_modules/
+dist/
+build/
+.vscode/
+.DS_Store
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+pglite-debug.log
+
+# Firebase
+.firebase/
+.firebaserc.local
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+
+# Testing
+coverage/
+.nyc_output/
+*.test.js.snap
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+.cache/
+
+# OS files
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Build artifacts
+*.exe
+*.msi
+*.dmg
+*.app
+*.apk
+unins*.dat
+unins*.exe
+
+# Archive files
+*.zip
+*.tar.gz
+*.rar
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Obsolete directories and scripts (production cleanup)
+akiprisaye_web/
+akiprisaye_web_final_full_*/
+test_extract/
+SentinelQuantumVanguardAIPro/
+*.ps1
+diagnostic*.ps1
+fix_*.ps1
+deploy.ps1
+# build.sh excluded at root, but extension/build.sh is allowed
+
+# Backend specific
+backend/.env
+backend/dist/
+backend/node_modules/
+backend/coverage/
+backend/prisma/migrations/*.sql

@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 Dashboard de Diagnostic - A KI PRI SA YÉ</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .card {
+            background: rgba(255,255,255,0.15);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card h3 {
+            margin-bottom: 15px;
+            color: #ffd700;
+            border-bottom: 2px solid #ffd700;
+            padding-bottom: 10px;
+        }
+        
+        .status-grid {
+            display: grid;
+            grid-template-columns: 1fr 100px;
+            gap: 10px;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+        }
+        
+        .status {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            text-align: center;
+            font-size: 0.9em;
+        }
+        
+        .status.success { background: #28a745; }
+        .status.error { background: #dc3545; }
+        .status.warning { background: #ffc107; color: #000; }
+        .status.info { background: #17a2b8; }
+        
+        .test-section {
+            margin: 20px 0;
+        }
+        
+        .test-images {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .image-test {
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .image-preview {
+            width: 100%;
+            height: 100px;
+            border-radius: 8px;
+            background-size: cover;
+            background-position: center;
+            background-color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .logs {
+            background: #000;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 15px;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #0f62fe 0%, #0353e9 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(15, 98, 254, 0.4);
+        }
+        
+        .btn.secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+        }
+        
+        .btn.success {
+            background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+        }
+        
+        .performance-meter {
+            width: 100%;
+            height: 20px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .performance-bar {
+            height: 100%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .perf-excellent { background: linear-gradient(90deg, #28a745, #20c997); }
+        .perf-good { background: linear-gradient(90deg, #ffc107, #fd7e14); }
+        .perf-poor { background: linear-gradient(90deg, #dc3545, #c82333); }
+        
+        @media (max-width: 768px) {
+            .dashboard { grid-template-columns: 1fr; }
+            .header h1 { font-size: 2em; }
+            .controls { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔧 Dashboard de Diagnostic</h1>
+        <p>Surveillance en temps réel - A KI PRI SA YÉ</p>
+        <div id="timestamp"></div>
+    </div>
+
+    <div class="controls">
+        <button class="btn" onclick="runFullDiagnostic()">🔍 Diagnostic Complet</button>
+        <button class="btn secondary" onclick="testImages()">🖼️ Test Images</button>
+        <button class="btn secondary" onclick="testServers()">🌐 Test Serveurs</button>
+        <button class="btn success" onclick="clearLogs()">🗑️ Effacer Logs</button>
+        <a href="http://localhost:5173/index_final.html" class="btn" target="_blank">🚀 Ouvrir Site Final</a>
+    </div>
+
+    <div class="dashboard">
+        <!-- Statut Global -->
+        <div class="card">
+            <h3>📊 Statut Global</h3>
+            <div class="status-grid">
+                <span>Serveur Vite (5173)</span>
+                <div id="vite-status" class="status info">Test...</div>
+            </div>
+            <div class="status-grid">
+                <span>Serveur Python (8001)</span>
+                <div id="python-status" class="status info">Test...</div>
+            </div>
+            <div class="status-grid">
+                <span>Images WebP</span>
+                <div id="images-status" class="status info">Test...</div>
+            </div>
+            <div class="status-grid">
+                <span>Performance</span>
+                <div id="perf-status" class="status info">Test...</div>
+            </div>
+        </div>
+
+        <!-- Test des Images -->
+        <div class="card">
+            <h3>🖼️ Test des Images</h3>
+            <div class="test-images">
+                <div class="image-test">
+                    <div id="img1-preview" class="image-preview"></div>
+                    <div>Image 1</div>
+                    <div id="img1-status" class="status info">En attente</div>
+                </div>
+                <div class="image-test">
+                    <div id="img2-preview" class="image-preview"></div>
+                    <div>Image 2</div>
+                    <div id="img2-status" class="status info">En attente</div>
+                </div>
+                <div class="image-test">
+                    <div id="img3-preview" class="image-preview"></div>
+                    <div>Image 3</div>
+                    <div id="img3-status" class="status info">En attente</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance -->
+        <div class="card">
+            <h3>⚡ Performance</h3>
+            <div class="test-section">
+                <div>Temps de chargement des images:</div>
+                <div class="performance-meter">
+                    <div id="load-time-bar" class="performance-bar perf-excellent" style="width: 0%"></div>
+                </div>
+                <div id="load-time-text">0ms</div>
+                
+                <div style="margin-top: 15px;">Support WebP:</div>
+                <div id="webp-support" class="status info">Test...</div>
+                
+                <div style="margin-top: 15px;">Résolution actuelle:</div>
+                <div id="resolution-info">Calcul...</div>
+            </div>
+        </div>
+
+        <!-- URLs de Test -->
+        <div class="card">
+            <h3>🌐 URLs de Test</h3>
+            <div id="url-tests">
+                <div class="status-grid">
+                    <span>Index Principal</span>
+                    <div id="url-index" class="status info">Test...</div>
+                </div>
+                <div class="status-grid">
+                    <span>Version Finale</span>
+                    <div id="url-final" class="status info">Test...</div>
+                </div>
+                <div class="status-grid">
+                    <span>Diagnostic</span>
+                    <div id="url-diagnostic" class="status info">Test...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Informations Système -->
+        <div class="card">
+            <h3>💻 Informations Système</h3>
+            <div class="test-section">
+                <div><strong>Navigateur:</strong> <span id="browser-info"></span></div>
+                <div><strong>Plateforme:</strong> <span id="platform-info"></span></div>
+                <div><strong>Langue:</strong> <span id="language-info"></span></div>
+                <div><strong>Connexion:</strong> <span id="connection-info"></span></div>
+                <div><strong>Mémoire:</strong> <span id="memory-info"></span></div>
+            </div>
+        </div>
+
+        <!-- Logs en Temps Réel -->
+        <div class="card" style="grid-column: 1 / -1;">
+            <h3>📝 Logs de Diagnostic</h3>
+            <div id="logs" class="logs">
+[INIT] Dashboard de diagnostic chargé...\n
+Cliquez sur "Diagnostic Complet" pour commencer les tests.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const CONFIG = {
+            images: [
+                './assets/84ba022c-9450-4e4f-841b-64d5363aaae1_lg.webp',
+                './assets/b3ced496-7272-4600-b46e-c14cf625667e_lg.webp',
+                './assets/0d3bd9ac-734a-4f7d-b671-6dc715ae9e94_lg.webp'
+            ],
+            urls: [
+                'http://localhost:5173/',
+                'http://localhost:5173/index_final.html',
+                'http://localhost:5173/diagnostic.html'
+            ],
+            servers: [
+                { name: 'Vite', port: 5173, id: 'vite-status' },
+                { name: 'Python', port: 8001, id: 'python-status' }
+            ]
+        };
+
+        let logs = [];
+
+        // Système de logs
+        function log(message, type = 'INFO') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] [${type}] ${message}`;
+            logs.push(logEntry);
+            
+            const logsDiv = document.getElementById('logs');
+            logsDiv.textContent = logs.join('\n');
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+            
+            console.log(logEntry);
+        }
+
+        function clearLogs() {
+            logs = [];
+            document.getElementById('logs').textContent = '[CLEAR] Logs effacés.\n';
+            log('Logs effacés', 'CLEAR');
+        }
+
+        // Mise à jour du statut
+        function updateStatus(elementId, status, text) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.className = `status ${status}`;
+                element.textContent = text;
+            }
+        }
+
+        // Test des serveurs
+        async function testServers() {
+            log('🌐 Test des serveurs...', 'TEST');
+            
+            for (const server of CONFIG.servers) {
+                try {
+                    const response = await fetch(`http://localhost:${server.port}/`, { 
+                        method: 'GET',
+                        mode: 'no-cors',
+                        cache: 'no-cache'
+                    });
+                    
+                    updateStatus(server.id, 'success', 'Actif');
+                    log(`✅ ${server.name} (${server.port}): Actif`, 'SUCCESS');
+                } catch (error) {
+                    updateStatus(server.id, 'error', 'Inactif');
+                    log(`❌ ${server.name} (${server.port}): ${error.message}`, 'ERROR');
+                }
+            }
+        }
+
+        // Test des images
+        async function testImages() {
+            log('🖼️ Test des images...', 'TEST');
+            const startTime = performance.now();
+            
+            CONFIG.images.forEach((src, index) => {
+                const img = new Image();
+                const previewId = `img${index + 1}-preview`;
+                const statusId = `img${index + 1}-status`;
+                
+                img.onload = () => {
+                    updateStatus(statusId, 'success', 'OK');
+                    document.getElementById(previewId).style.backgroundImage = `url('${src}')`;
+                    log(`✅ Image ${index + 1}: Chargée (${Math.round(img.naturalWidth)}x${Math.round(img.naturalHeight)})`, 'SUCCESS');
+                    
+                    const loadTime = performance.now() - startTime;
+                    updatePerformance(loadTime);
+                };
+                
+                img.onerror = () => {
+                    updateStatus(statusId, 'error', 'Erreur');
+                    log(`❌ Image ${index + 1}: Échec du chargement`, 'ERROR');
+                };
+                
+                img.src = src;
+            });
+        }
+
+        // Test des URLs
+        async function testUrls() {
+            log('🔗 Test des URLs...', 'TEST');
+            
+            const urlIds = ['url-index', 'url-final', 'url-diagnostic'];
+            
+            for (let i = 0; i < CONFIG.urls.length; i++) {
+                try {
+                    const response = await fetch(CONFIG.urls[i], { method: 'HEAD' });
+                    if (response.ok) {
+                        updateStatus(urlIds[i], 'success', 'OK');
+                        log(`✅ URL ${i + 1}: Accessible`, 'SUCCESS');
+                    } else {
+                        updateStatus(urlIds[i], 'warning', response.status);
+                        log(`⚠️ URL ${i + 1}: Status ${response.status}`, 'WARNING');
+                    }
+                } catch (error) {
+                    updateStatus(urlIds[i], 'error', 'Erreur');
+                    log(`❌ URL ${i + 1}: ${error.message}`, 'ERROR');
+                }
+            }
+        }
+
+        // Test de performance
+        function updatePerformance(loadTime) {
+            const bar = document.getElementById('load-time-bar');
+            const text = document.getElementById('load-time-text');
+            
+            text.textContent = `${Math.round(loadTime)}ms`;
+            
+            let width, className, status;
+            if (loadTime < 500) {
+                width = Math.min(100, (loadTime / 500) * 100);
+                className = 'perf-excellent';
+                status = 'success';
+            } else if (loadTime < 2000) {
+                width = Math.min(100, (loadTime / 2000) * 100);
+                className = 'perf-good';
+                status = 'warning';
+            } else {
+                width = 100;
+                className = 'perf-poor';
+                status = 'error';
+            }
+            
+            bar.style.width = width + '%';
+            bar.className = `performance-bar ${className}`;
+            updateStatus('perf-status', status, `${Math.round(loadTime)}ms`);
+        }
+
+        // Test du support WebP
+        function testWebPSupport() {
+            const webp = new Image();
+            webp.onload = () => {
+                updateStatus('webp-support', 'success', 'Supporté');
+                log('✅ WebP: Supporté', 'SUCCESS');
+            };
+            webp.onerror = () => {
+                updateStatus('webp-support', 'error', 'Non supporté');
+                log('❌ WebP: Non supporté', 'ERROR');
+            };
+            webp.src = 'data:image/webp;base64,UklGRiIAAABXRUJQVlA4IBYAAAAwAQCdASoBAAEADsD+JaQAA3AAAAAA';
+        }
+
+        // Informations système
+        function loadSystemInfo() {
+            document.getElementById('browser-info').textContent = navigator.userAgent.split(' ').pop();
+            document.getElementById('platform-info').textContent = navigator.platform;
+            document.getElementById('language-info').textContent = navigator.language;
+            document.getElementById('resolution-info').textContent = `${window.innerWidth}x${window.innerHeight}`;
+            
+            // Connexion
+            const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+            if (connection) {
+                document.getElementById('connection-info').textContent = connection.effectiveType || 'Inconnue';
+            } else {
+                document.getElementById('connection-info').textContent = 'Non disponible';
+            }
+            
+            // Mémoire (si disponible)
+            if (performance.memory) {
+                const used = Math.round(performance.memory.usedJSHeapSize / 1048576);
+                document.getElementById('memory-info').textContent = `${used} MB utilisés`;
+            } else {
+                document.getElementById('memory-info').textContent = 'Non disponible';
+            }
+        }
+
+        // Diagnostic complet
+        async function runFullDiagnostic() {
+            log('🚀 Début du diagnostic complet...', 'START');
+            
+            // Tests séquentiels
+            await testServers();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            testImages();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            await testUrls();
+            testWebPSupport();
+            
+            log('✅ Diagnostic complet terminé', 'COMPLETE');
+        }
+
+        // Mise à jour de l'horodatage
+        function updateTimestamp() {
+            const now = new Date();
+            document.getElementById('timestamp').textContent = 
+                `Dernière mise à jour: ${now.toLocaleTimeString()}`;
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', () => {
+            log('📱 Dashboard initialisé', 'INIT');
+            loadSystemInfo();
+            updateTimestamp();
+            
+            // Tests automatiques après 1 seconde
+            setTimeout(runFullDiagnostic, 1000);
+            
+            // Mise à jour de l'horodatage toutes les 30 secondes
+            setInterval(updateTimestamp, 30000);
+        });
+
+        // Gestion des erreurs globales
+        window.addEventListener('error', (event) => {
+            log(`❌ Erreur: ${event.message}`, 'ERROR');
+        });
+    </script>
+</body>
+</html>

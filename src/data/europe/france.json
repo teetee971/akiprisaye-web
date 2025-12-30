@@ -1,0 +1,46 @@
+{
+  "pays": "France",
+  "organisme": "Eurostat + INSEE",
+  "date_publication": "En attente de source officielle",
+  "source_officielle": "https://ec.europa.eu/eurostat",
+  "statut": "DONNEES_NON_DISPONIBLES",
+  "message": "⚠️ Template pour données Eurostat. Données officielles à intégrer.",
+  "action_requise": "Extraire les données HICP et niveaux de prix depuis Eurostat",
+  "template_donnees": [
+    {
+      "intitule": "HICP - Indice harmonisé des prix à la consommation",
+      "valeur": null,
+      "unite": "Indice base 100 en 2015",
+      "periode": null,
+      "source_exacte": "Eurostat - HICP",
+      "code_serie": null,
+      "lien_direct": "https://ec.europa.eu/eurostat/web/hicp"
+    },
+    {
+      "intitule": "Niveau de prix comparatif",
+      "valeur": null,
+      "unite": "UE27=100",
+      "periode": null,
+      "source_exacte": "Eurostat - Comparative price levels",
+      "code_serie": null,
+      "lien_direct": "https://ec.europa.eu/eurostat/statistics-explained/index.php/Comparative_price_levels"
+    },
+    {
+      "intitule": "Revenu médian équivalent disponible",
+      "valeur": null,
+      "unite": "EUR PPS",
+      "periode": null,
+      "source_exacte": "Eurostat - Living conditions",
+      "code_serie": null,
+      "lien_direct": null
+    }
+  ],
+  "notes_comparabilite": {
+    "hicp": "Méthodologie harmonisée UE, comparable entre pays",
+    "niveaux_prix": "Exprimés en parité de pouvoir d'achat (PPA)",
+    "revenus": "Standardisés selon méthodologie EU-SILC",
+    "attention": "Vérifier que les années de référence sont identiques avant toute comparaison"
+  },
+  "licence": "Données publiques Eurostat",
+  "note": "Les valeurs null doivent être remplacées par des données extraites d'Eurostat. Comparaisons uniquement à périmètre et période identiques."
+}

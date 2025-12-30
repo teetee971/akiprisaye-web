@@ -1,0 +1,12 @@
+{
+  "territoire": "Polynésie française",
+  "code_territoire": "987",
+  "statut_territorial": "COM",
+  "magasins": [],
+  "metadata": {
+    "derniere_maj": "",
+    "statut_fichier": "template_vide",
+    "avertissement": "ATTENTION: Fichier template vide. Données à intégrer via ISPF (Institut de la Statistique de Polynésie française).",
+    "note": "Pas de couverture INSEE SIRENE - Utiliser ISPF comme source officielle"
+  }
+}

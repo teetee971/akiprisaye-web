@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <title>DOM-TOM - Départements et Régions d'Outre-Mer</title>
+  <!-- France metropolitan outline simplified -->
+  <path d="M35 20 L40 18 L45 20 L48 25 L50 30 L48 35 L45 38 L40 40 L35 38 L32 35 L30 30 L32 25 Z" fill="#0055A4" opacity="0.3"/>
+  
+  <!-- Tropical island representations -->
+  <!-- Guadeloupe -->
+  <circle cx="15" cy="55" r="6" fill="#EF4135"/>
+  <text x="15" y="58" font-size="4" fill="white" text-anchor="middle" font-weight="bold">GP</text>
+  
+  <!-- Martinique -->
+  <circle cx="28" cy="58" r="6" fill="#EF4135"/>
+  <text x="28" y="61" font-size="4" fill="white" text-anchor="middle" font-weight="bold">MQ</text>
+  
+  <!-- Guyane -->
+  <ellipse cx="20" cy="70" rx="8" ry="6" fill="#009E60"/>
+  <text x="20" y="72" font-size="4" fill="white" text-anchor="middle" font-weight="bold">GF</text>
+  
+  <!-- Réunion -->
+  <circle cx="72" cy="65" r="6" fill="#EF4135"/>
+  <text x="72" y="68" font-size="4" fill="white" text-anchor="middle" font-weight="bold">RE</text>
+  
+  <!-- Mayotte -->
+  <circle cx="65" cy="75" r="5" fill="#0055A4"/>
+  <text x="65" y="78" font-size="3.5" fill="white" text-anchor="middle" font-weight="bold">YT</text>
+  
+  <!-- New Caledonia -->
+  <ellipse cx="85" cy="70" rx="7" ry="5" fill="#0055A4"/>
+  <text x="85" y="72" font-size="3.5" fill="white" text-anchor="middle" font-weight="bold">NC</text>
+  
+  <!-- French Polynesia -->
+  <g>
+    <circle cx="88" cy="55" r="3" fill="#EF4135"/>
+    <circle cx="82" cy="52" r="2.5" fill="#EF4135"/>
+    <circle cx="90" cy="50" r="2" fill="#EF4135"/>
+  </g>
+  <text x="87" y="48" font-size="3" fill="#0055A4" text-anchor="middle" font-weight="bold">PF</text>
+  
+  <!-- Connecting lines showing link to France -->
+  <path d="M40 38 Q50 50 72 65" stroke="#0055A4" stroke-width="0.5" fill="none" stroke-dasharray="2,2" opacity="0.4"/>
+  <path d="M40 38 Q30 45 15 55" stroke="#0055A4" stroke-width="0.5" fill="none" stroke-dasharray="2,2" opacity="0.4"/>
+  <path d="M40 38 Q60 50 85 70" stroke="#0055A4" stroke-width="0.5" fill="none" stroke-dasharray="2,2" opacity="0.4"/>
+</svg>

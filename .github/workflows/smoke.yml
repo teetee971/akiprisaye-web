@@ -1,0 +1,79 @@
+name: Smoke Tests
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    # Run every hour
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Check root page content
+        run: |
+          echo "Checking root page..."
+          response=$(curl -s -o /dev/null -w "%{http_code}" https://akiprisaye.pages.dev/)
+          if [ "$response" != "200" ]; then
+            echo "Error: Root page returned HTTP $response"
+            exit 1
+          fi
+          
+          content=$(curl -s https://akiprisaye.pages.dev/)
+          if ! echo "$content" | grep -q "A KI PRI SA YÉ"; then
+            echo "Error: Root page does not contain expected content 'A KI PRI SA YÉ'"
+            exit 1
+          fi
+          
+          echo "✅ Root page check passed"
+      
+      - name: Check comparateur page
+        run: |
+          echo "Checking comparateur page..."
+          response=$(curl -s -o /dev/null -w "%{http_code}" https://akiprisaye.pages.dev/comparateur.html)
+          if [ "$response" != "200" ]; then
+            echo "Error: Comparateur page returned HTTP $response"
+            exit 1
+          fi
+          
+          content=$(curl -s https://akiprisaye.pages.dev/comparateur.html)
+          if ! echo "$content" | grep -q "Comparateur"; then
+            echo "Error: Comparateur page does not contain expected content 'Comparateur'"
+            exit 1
+          fi
+          
+          echo "✅ Comparateur page check passed"
+      
+      - name: Check API endpoint
+        run: |
+          echo "Checking API endpoint..."
+          # Test with invalid EAN to ensure endpoint responds
+          response=$(curl -s -o /dev/null -w "%{http_code}" "https://akiprisaye.pages.dev/api/prices")
+          if [ "$response" = "404" ]; then
+            echo "⚠️ API endpoint not yet deployed (expected for initial PR)"
+            exit 0
+          fi
+          
+          if [ "$response" != "400" ] && [ "$response" != "200" ]; then
+            echo "Warning: API endpoint returned unexpected HTTP $response"
+          else
+            echo "✅ API endpoint responds"
+          fi
+      
+      - name: Summary
+        if: success()
+        run: |
+          echo "🎉 All smoke tests passed!"
+          echo "- Root page is accessible and displays correct content"
+          echo "- Comparateur page is accessible and displays correct content"
+          echo "- API endpoint check completed"

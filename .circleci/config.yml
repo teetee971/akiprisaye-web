@@ -1,0 +1,76 @@
+version: 2.1
+
+orbs:
+  node: circleci/node@5.2.0
+
+parameters:
+  node-version:
+    type: string
+    default: "20.10"
+
+jobs:
+  install_and_build:
+    docker:
+      - image: cimg/node:<< parameters.node-version >>
+    working_directory: ~/project
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-frontend-deps-{{ checksum "frontend/package-lock.json" }}
+            - v1-frontend-deps-
+      - run:
+          name: Install dépendances frontend
+          command: |
+            cd frontend
+            npm ci
+      - save_cache:
+          paths:
+            - frontend/node_modules
+          key: v1-frontend-deps-{{ checksum "frontend/package-lock.json" }}
+      - run:
+          name: Build frontend
+          command: |
+            cd frontend
+            npm run build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - frontend/dist
+
+  deploy:
+    docker:
+      - image: cimg/base:stable
+    working_directory: ~/project
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Install wrangler
+          command: |
+            npm install -g wrangler
+      - run:
+          name: Publication Cloudflare Pages
+          command: |
+            wrangler pages publish ./frontend/dist \
+              --project-name akiprisaye-web \
+              --branch $CIRCLE_BRANCH \
+              --commit-hash $CIRCLE_SHA1
+          no_output_timeout: 10m
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - install_and_build:
+          filters:
+            branches:
+              only:
+                - main
+      - deploy:
+          requires:
+            - install_and_build
+          filters:
+            branches:
+              only:
+                - main

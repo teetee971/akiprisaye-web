@@ -1,0 +1,40 @@
+name: 🗺️ Auto-Coords Generator
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "0 3 * * *"  # Tous les jours à 03h du matin
+  workflow_dispatch: {}  # Lancement manuel
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout repo
+        uses: actions/checkout@v4
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: 📦 Install deps
+        run: npm install node-fetch@3 --save
+
+      - name: 🔍 Run coords generator
+        run: node scripts/generate-coords.mjs
+
+      - name: 💾 Commit updated stores.json
+        run: |
+          git config --global user.name "A KI PRI SA YÉ Bot"
+          git config --global user.email "bot@akiprisaye.local"
+          git add stores.json
+          git commit -m "🔄 Auto-update coords (GPS generator)" || echo "Nothing to commit"
+
+      - name: 🚀 Push changes
+        run: git push origin main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

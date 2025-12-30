@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ti-Panié Solidaire - A KI PRI SA YÉ</title>
+  <meta name="description" content="Participez à l'effort solidaire contre la vie chère en Outre-mer." />
+  
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Ti-Panié Solidaire - A KI PRI SA YÉ" />
+  
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0f62fe" />
+  
+  <link rel="stylesheet" href="shared-nav.css" />
+  <link rel="stylesheet" href="cookie-consent.css" />
+  
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #0b0d17;
+      color: #ffffff;
+    }
+    
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+    
+    h1 {
+      color: #0f62fe;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    
+    .intro-text {
+      text-align: center;
+      color: #b8b8b8;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+    
+    .hero-section {
+      background: linear-gradient(135deg, rgba(15, 98, 254, 0.1), rgba(16, 185, 129, 0.1));
+      border: 1px solid rgba(15, 98, 254, 0.3);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+    
+    .hero-section h2 {
+      color: #10b981;
+      margin-bottom: 1rem;
+    }
+    
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    
+    .tab-btn {
+      padding: 0.75rem 1.5rem;
+      background: transparent;
+      border: 2px solid #2a2d3e;
+      border-radius: 8px;
+      color: #b8b8b8;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.95rem;
+    }
+    
+    .tab-btn:hover,
+    .tab-btn.active {
+      background: rgba(15, 98, 254, 0.1);
+      border-color: #0f62fe;
+      color: #0f62fe;
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    .initiatives-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .initiative-card {
+      background: #1a1d2e;
+      border-radius: 12px;
+      padding: 1.5rem;
+      border: 1px solid #2a2d3e;
+      transition: all 0.3s ease;
+    }
+    
+    .initiative-card:hover {
+      transform: translateY(-4px);
+      border-color: #0f62fe;
+      box-shadow: 0 8px 20px rgba(15, 98, 254, 0.2);
+    }
+    
+    .initiative-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    
+    .initiative-icon {
+      font-size: 2.5rem;
+    }
+    
+    .initiative-title {
+      color: #ffffff;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+    
+    .initiative-desc {
+      color: #b8b8b8;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+    
+    .initiative-meta {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      font-size: 0.85rem;
+      color: #b8b8b8;
+      margin-bottom: 1rem;
+    }
+    
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.95rem;
+      display: inline-block;
+      text-decoration: none;
+      text-align: center;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #ffffff;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    }
+    
+    .btn-secondary {
+      background: transparent;
+      border: 2px solid #0f62fe;
+      color: #0f62fe;
+    }
+    
+    .btn-secondary:hover {
+      background: rgba(15, 98, 254, 0.1);
+    }
+    
+    .story-card {
+      background: rgba(15, 23, 42, 0.5);
+      border-left: 4px solid #10b981;
+      padding: 1.5rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+    }
+    
+    .story-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    
+    .story-author {
+      color: #10b981;
+      font-weight: 600;
+    }
+    
+    .story-date {
+      color: #b8b8b8;
+      font-size: 0.85rem;
+    }
+    
+    .story-content {
+      color: #e5e7eb;
+      line-height: 1.6;
+      font-style: italic;
+    }
+    
+    .report-section {
+      background: rgba(239, 68, 68, 0.05);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 12px;
+      padding: 2rem;
+    }
+    
+    .report-section h2 {
+      color: #ef4444;
+      margin-bottom: 1rem;
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    label {
+      display: block;
+      color: #b8b8b8;
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+    }
+    
+    input[type="text"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: #0f172a;
+      border: 1px solid #2a2d3e;
+      border-radius: 8px;
+      color: #ffffff;
+      font-size: 1rem;
+      font-family: inherit;
+    }
+    
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #0f62fe;
+    }
+    
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+    
+    .stat-card {
+      background: rgba(15, 98, 254, 0.05);
+      border: 1px solid rgba(15, 98, 254, 0.2);
+      border-radius: 8px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+    
+    .stat-value {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #0f62fe;
+      margin-bottom: 0.5rem;
+    }
+    
+    .stat-label {
+      color: #b8b8b8;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- Mobile Navigation Overlay -->
+  <div class="nav-overlay" id="nav-overlay"></div>
+  
+  <!-- Mobile Navigation -->
+  <nav class="mobile-nav" id="mobile-nav" role="navigation" aria-label="Navigation mobile">
+    <div class="mobile-nav-header">
+      <span class="mobile-nav-title">Menu</span>
+      <button class="close-nav" id="close-nav" aria-label="Fermer le menu">&times;</button>
+    </div>
+    <ul class="mobile-nav-list">
+      <li><a href="/"><span class="mobile-nav-icon">🏠</span>Accueil</a></li>
+      <li><a href="/comparateur.html"><span class="mobile-nav-icon">🔍</span>Comparateur</a></li>
+      <li><a href="/scanner.html"><span class="mobile-nav-icon">📷</span>Scanner</a></li>
+      <li><a href="/carte.html"><span class="mobile-nav-icon">🗺️</span>Carte</a></li>
+      <li><a href="/modules.html"><span class="mobile-nav-icon">🧩</span>Modules</a></li>
+      <li><a href="/ia-conseiller.html"><span class="mobile-nav-icon">🤖</span>IA Conseiller</a></li>
+      <li><a href="/historique.html"><span class="mobile-nav-icon">📊</span>Historique</a></li>
+      <li><a href="/mon-compte.html"><span class="mobile-nav-icon">👤</span>Mon Compte</a></li>
+      <li><a href="/faq.html"><span class="mobile-nav-icon">❓</span>FAQ</a></li>
+      <li><a href="/contact.html"><span class="mobile-nav-icon">📧</span>Contact</a></li>
+    </ul>
+  </nav>
+
+  <header class="shared-header">
+    <div class="shared-header-content">
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <button class="burger-menu" id="burger-menu" aria-label="Menu" aria-expanded="false">
+          <div class="burger-line"></div>
+          <div class="burger-line"></div>
+          <div class="burger-line"></div>
+        </button>
+        <a href="/" class="shared-logo" aria-label="A KI PRI SA YÉ - Accueil"><img src="/logo-akpsy.svg" alt="A KI PRI SA YÉ" /></a>
+      </div>
+      <nav class="header-nav" role="navigation" aria-label="Navigation principale">
+        <a href="/comparateur.html">Comparateur</a>
+        <a href="/scanner.html">Scanner</a>
+        <a href="/modules.html">Modules</a>
+        <a href="/mon-compte.html">Mon Compte</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <h1>🤝 Ti-Panié Solidaire</h1>
+    <div class="intro-text">
+      <p>Ensemble contre la vie chère en Outre-mer</p>
+    </div>
+    
+    <div class="hero-section">
+      <h2>🌟 Notre Impact Communautaire</h2>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value">1,247</div>
+          <div class="stat-label">Paniers partagés</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">3,890</div>
+          <div class="stat-label">Membres actifs</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">42%</div>
+          <div class="stat-label">Économies moyennes</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">156</div>
+          <div class="stat-label">Signalements traités</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="initiatives">🎯 Initiatives</button>
+      <button class="tab-btn" data-tab="stories">💬 Témoignages</button>
+      <button class="tab-btn" data-tab="report">⚠️ Signaler un abus</button>
+      <button class="tab-btn" data-tab="participate">✨ Participer</button>
+    </div>
+    
+    <!-- Initiatives Tab -->
+    <div class="tab-content active" id="tab-initiatives">
+      <h2 style="color: #0f62fe; margin-bottom: 1.5rem;">Initiatives locales actives</h2>
+      <div class="initiatives-grid">
+        <div class="initiative-card">
+          <div class="initiative-header">
+            <span class="initiative-icon">🛒</span>
+            <div>
+              <div class="initiative-title">Achats Groupés Guadeloupe</div>
+              <div style="color: #10b981; font-size: 0.85rem; margin-top: 0.25rem;">● En cours</div>
+            </div>
+          </div>
+          <div class="initiative-desc">
+            Regroupement de commandes pour achats en gros auprès des producteurs locaux. 
+            Économies moyennes de 35% sur les fruits et légumes.
+          </div>
+          <div class="initiative-meta">
+            <div class="meta-item">📍 Guadeloupe</div>
+            <div class="meta-item">👥 247 participants</div>
+            <div class="meta-item">💰 -35%</div>
+          </div>
+          <button class="btn btn-primary" style="width: 100%;">Rejoindre l'initiative</button>
+        </div>
+        
+        <div class="initiative-card">
+          <div class="initiative-header">
+            <span class="initiative-icon">🌱</span>
+            <div>
+              <div class="initiative-title">Circuit Court Martinique</div>
+              <div style="color: #10b981; font-size: 0.85rem; margin-top: 0.25rem;">● En cours</div>
+            </div>
+          </div>
+          <div class="initiative-desc">
+            Plateforme d'achats directs auprès des producteurs locaux. Produits frais, locaux et à prix équitables.
+          </div>
+          <div class="initiative-meta">
+            <div class="meta-item">📍 Martinique</div>
+            <div class="meta-item">👥 189 participants</div>
+            <div class="meta-item">🌿 100% local</div>
+          </div>
+          <button class="btn btn-primary" style="width: 100%;">Rejoindre l'initiative</button>
+        </div>
+        
+        <div class="initiative-card">
+          <div class="initiative-header">
+            <span class="initiative-icon">🎁</span>
+            <div>
+              <div class="initiative-title">Paniers Solidaires Réunion</div>
+              <div style="color: #10b981; font-size: 0.85rem; margin-top: 0.25rem;">● En cours</div>
+            </div>
+          </div>
+          <div class="initiative-desc">
+            Distribution de paniers alimentaires à prix réduits pour les familles en difficulté. 
+            Partenariat avec les associations locales.
+          </div>
+          <div class="initiative-meta">
+            <div class="meta-item">📍 La Réunion</div>
+            <div class="meta-item">👥 312 bénéficiaires</div>
+            <div class="meta-item">❤️ Solidaire</div>
+          </div>
+          <button class="btn btn-primary" style="width: 100%;">En savoir plus</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Stories Tab -->
+    <div class="tab-content" id="tab-stories">
+      <h2 style="color: #0f62fe; margin-bottom: 1.5rem;">Témoignages de la communauté</h2>
+      
+      <div class="story-card">
+        <div class="story-header">
+          <span class="story-author">Marie L. - Guadeloupe</span>
+          <span class="story-date">Il y a 2 jours</span>
+        </div>
+        <div class="story-content">
+          "Grâce aux achats groupés, je peux enfin offrir des fruits et légumes frais à mes enfants tous les jours. 
+          J'économise environ 150€ par mois sur mon budget alimentaire. Cette initiative a changé ma vie !"
+        </div>
+      </div>
+      
+      <div class="story-card">
+        <div class="story-header">
+          <span class="story-author">Jean-Paul M. - Martinique</span>
+          <span class="story-date">Il y a 5 jours</span>
+        </div>
+        <div class="story-content">
+          "En tant que producteur local, le circuit court me permet de vendre directement mes produits à un prix juste. 
+          Les consommateurs sont contents, et moi aussi. C'est une belle collaboration !"
+        </div>
+      </div>
+      
+      <div class="story-card">
+        <div class="story-header">
+          <span class="story-author">Sophie D. - La Réunion</span>
+          <span class="story-date">Il y a 1 semaine</span>
+        </div>
+        <div class="story-content">
+          "Le comparateur de prix m'a permis d'identifier les enseignes les moins chères pour mes produits du quotidien. 
+          En changeant simplement de magasin, j'économise 200€ par mois. Merci A KI PRI SA YÉ !"
+        </div>
+      </div>
+      
+      <div style="text-align: center; margin-top: 2rem;">
+        <button class="btn btn-secondary">📝 Partager votre expérience</button>
+      </div>
+    </div>
+    
+    <!-- Report Tab -->
+    <div class="tab-content" id="tab-report">
+      <div class="report-section">
+        <h2>⚠️ Signaler un prix abusif</h2>
+        <p style="color: #b8b8b8; margin-bottom: 1.5rem;">
+          Vous avez constaté un prix manifestement excessif ou non conforme aux tarifs réglementés ? 
+          Signalez-le ici. Votre signalement sera vérifié et peut être transmis aux autorités compétentes.
+        </p>
+        
+        <form id="report-form">
+          <div class="form-group">
+            <label for="report-product">Nom du produit *</label>
+            <input type="text" id="report-product" required placeholder="Ex: Lait demi-écrémé 1L">
+          </div>
+          
+          <div class="form-group">
+            <label for="report-ean">Code EAN (si disponible)</label>
+            <input type="text" id="report-ean" placeholder="Ex: 3760123456789">
+          </div>
+          
+          <div class="form-group">
+            <label for="report-store">Magasin *</label>
+            <input type="text" id="report-store" required placeholder="Ex: Carrefour Destreland">
+          </div>
+          
+          <div class="form-group">
+            <label for="report-territory">Territoire *</label>
+            <select id="report-territory" required>
+              <option value="">Sélectionnez...</option>
+              <option value="guadeloupe">🇬🇵 Guadeloupe</option>
+              <option value="martinique">🇲🇶 Martinique</option>
+              <option value="guyane">🇬🇫 Guyane</option>
+              <option value="reunion">🇷🇪 La Réunion</option>
+              <option value="mayotte">🇾🇹 Mayotte</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="report-price">Prix constaté (€) *</label>
+            <input type="number" id="report-price" required step="0.01" placeholder="Ex: 4.50">
+          </div>
+          
+          <div class="form-group">
+            <label for="report-description">Description du problème *</label>
+            <textarea id="report-description" required placeholder="Décrivez pourquoi ce prix vous semble abusif..."></textarea>
+          </div>
+          
+          <button type="submit" class="btn btn-primary" style="width: 100%;">📤 Envoyer le signalement</button>
+        </form>
+        
+        <p style="margin-top: 1rem; font-size: 0.85rem; color: #b8b8b8;">
+          ℹ️ Vos signalements sont traités de manière confidentielle et contribuent à la transparence des prix en Outre-mer.
+        </p>
+      </div>
+    </div>
+    
+    <!-- Participate Tab -->
+    <div class="tab-content" id="tab-participate">
+      <h2 style="color: #0f62fe; margin-bottom: 1.5rem;">Comment participer ?</h2>
+      
+      <div class="initiatives-grid">
+        <div class="initiative-card">
+          <div class="initiative-icon" style="text-align: center; margin-bottom: 1rem;">👥</div>
+          <div class="initiative-title">Rejoindre une initiative</div>
+          <div class="initiative-desc">
+            Participez aux achats groupés, circuits courts ou paniers solidaires de votre territoire. 
+            C'est gratuit et vous permet de faire des économies substantielles.
+          </div>
+          <button class="btn btn-secondary" style="width: 100%;">Voir les initiatives</button>
+        </div>
+        
+        <div class="initiative-card">
+          <div class="initiative-icon" style="text-align: center; margin-bottom: 1rem;">🚀</div>
+          <div class="initiative-title">Lancer une initiative</div>
+          <div class="initiative-desc">
+            Vous avez une idée pour lutter contre la vie chère dans votre communauté ? 
+            Créez votre propre initiative et mobilisez des participants.
+          </div>
+          <button class="btn btn-secondary" style="width: 100%;">Créer une initiative</button>
+        </div>
+        
+        <div class="initiative-card">
+          <div class="initiative-icon" style="text-align: center; margin-bottom: 1rem;">💰</div>
+          <div class="initiative-title">Partager les bons plans</div>
+          <div class="initiative-desc">
+            Vous avez trouvé une bonne affaire ? Partagez-la avec la communauté ! 
+            Chaque contribution aide des milliers de personnes à économiser.
+          </div>
+          <button class="btn btn-secondary" style="width: 100%;">Partager</button>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <script type="module" src="shared-nav.js"></script>
+  <script type="module" src="/cookie-consent.js"></script>
+  
+  <script>
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        // Remove active class from all buttons and contents
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        
+        // Add active class to clicked button and corresponding content
+        this.classList.add('active');
+        document.getElementById('tab-' + this.dataset.tab).classList.add('active');
+      });
+    });
+    
+    // Report form handling
+    document.getElementById('report-form')?.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Here you would normally send the data to a backend
+      alert('✅ Merci pour votre signalement !\n\nVotre signalement a été enregistré et sera vérifié par notre équipe. Nous vous tiendrons informé de la suite donnée.');
+      
+      this.reset();
+    });
+  </script>
+</body>
+</html>

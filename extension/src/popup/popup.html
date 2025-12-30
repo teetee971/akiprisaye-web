@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A KI PRI SA YÉ</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <header class="popup-header">
+      <img src="../icons/icon-48.png" alt="A KI PRI SA YÉ" class="popup-logo">
+      <h1>A KI PRI SA YÉ</h1>
+      <p class="popup-subtitle">Assistant Prix Citoyen</p>
+    </header>
+    
+    <main class="popup-content">
+      <!-- Sélection du territoire -->
+      <section class="popup-section">
+        <h2>Votre territoire</h2>
+        <select id="territory-select" class="popup-select">
+          <option value="FR">France Métropolitaine</option>
+          <option value="GP">Guadeloupe</option>
+          <option value="MQ">Martinique</option>
+          <option value="GF">Guyane</option>
+          <option value="RE">La Réunion</option>
+          <option value="YT">Mayotte</option>
+        </select>
+        <p class="popup-note">Les comparaisons de prix sont effectuées au sein de votre territoire.</p>
+      </section>
+      
+      <!-- Statistiques -->
+      <section class="popup-section">
+        <h2>Vos données</h2>
+        <div class="popup-stats">
+          <div class="popup-stat">
+            <span class="popup-stat-value" id="shopping-list-count">0</span>
+            <span class="popup-stat-label">produits en liste</span>
+          </div>
+          <div class="popup-stat">
+            <span class="popup-stat-value" id="followed-count">0</span>
+            <span class="popup-stat-label">prix suivis</span>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Paramètres d'alertes -->
+      <section class="popup-section">
+        <h2>Alertes prix</h2>
+        <label class="popup-checkbox">
+          <input type="checkbox" id="alerts-enabled">
+          <span>Recevoir des alertes de variation de prix</span>
+        </label>
+        <p class="popup-note">Vous serez notifié en cas de hausse ou baisse significative.</p>
+      </section>
+      
+      <!-- Actions rapides -->
+      <section class="popup-section">
+        <h2>Actions rapides</h2>
+        <div class="popup-actions">
+          <button id="view-shopping-list" class="popup-btn popup-btn-primary">
+            Voir ma liste de courses
+          </button>
+          <button id="view-followed" class="popup-btn popup-btn-secondary">
+            Gérer mes suivis
+          </button>
+          <button id="open-app" class="popup-btn popup-btn-secondary">
+            Ouvrir l'application complète
+          </button>
+        </div>
+      </section>
+      
+      <!-- Informations -->
+      <section class="popup-section popup-info">
+        <h3>Confidentialité</h3>
+        <ul>
+          <li>Aucune donnée personnelle collectée</li>
+          <li>Aucun historique de navigation</li>
+          <li>Données stockées localement</li>
+          <li>Transparence totale</li>
+        </ul>
+      </section>
+    </main>
+    
+    <footer class="popup-footer">
+      <p>Version 1.0.0</p>
+      <a href="https://akiprisaye.web.app/mentions-legales" target="_blank">Mentions légales</a>
+    </footer>
+  </div>
+  
+  <script src="popup.js" type="module"></script>
+</body>
+</html>

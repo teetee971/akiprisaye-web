@@ -1,0 +1,2486 @@
+// Schema Prisma pour A KI PRI SA YÉ - Backend Institutionnel
+// Conforme RGPD et législation française
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// Utilisateur de l'application (administrateurs, gestionnaires)
+/// RGPD: Minimisation des données - uniquement les informations essentielles
+/// 
+/// Références légales:
+/// - Règlement (UE) 2016/679 (RGPD) - Art. 5, 25, 32
+model User {
+  /// Identifiant unique
+  id        String   @id @default(uuid())
+  
+  /// Email (utilisé pour l'authentification)
+  /// RGPD: Donnée personnelle - consentement requis
+  email     String   @unique @db.VarChar(255)
+  
+  /// Hash du mot de passe (bcrypt)
+  /// RGPD: Art. 32 - Sécurité du traitement
+  /// Jamais stocké en clair
+  passwordHash String @map("password_hash") @db.VarChar(255)
+  
+  /// Nom complet de l'utilisateur
+  /// RGPD: Donnée personnelle
+  name      String   @db.VarChar(255)
+  
+  /// Rôle de l'utilisateur (pour permissions futures)
+  role      UserRole @default(USER)
+  
+  /// Compte actif ou désactivé
+  isActive  Boolean  @default(true) @map("is_active")
+  
+  /// Date de dernière connexion
+  /// RGPD: Traçabilité des accès
+  lastLogin DateTime? @map("last_login")
+  
+  /// Date de création du compte
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  /// Date de dernière mise à jour
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  /// Refresh tokens actifs (pour révocation)
+  refreshTokens RefreshToken[]
+  
+  /// Logs d'audit créés par cet utilisateur
+  auditLogs AuditLog[]
+  
+  /// Profil chat (optionnel - créé si user participe aux discussions)
+  chatProfile ChatUserProfile?
+
+  @@index([email])
+  @@index([isActive])
+  @@index([role])
+  @@map("users")
+}
+
+/// Refresh tokens pour authentification JWT
+/// Stockage pour permettre révocation
+/// RGPD: Minimisation - uniquement hash et expiration
+model RefreshToken {
+  /// Identifiant unique
+  id        String   @id @default(uuid())
+  
+  /// Hash du refresh token (SHA-256)
+  /// Jamais stocké en clair
+  tokenHash String   @unique @map("token_hash") @db.VarChar(64)
+  
+  /// Utilisateur propriétaire
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  /// Date d'expiration
+  expiresAt DateTime @map("expires_at")
+  
+  /// Révoqué manuellement (logout, changement mot de passe, etc.)
+  isRevoked Boolean  @default(false) @map("is_revoked")
+  
+  /// Date de création
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@index([tokenHash])
+  @@index([expiresAt])
+  @@map("refresh_tokens")
+}
+
+/// Rôles utilisateur avec hiérarchie de permissions (Sprint 3)
+/// 
+/// Hiérarchie (du plus restreint au plus permissif):
+/// USER < ANALYSTE < ENSEIGNE < INSTITUTION < SUPER_ADMIN
+enum UserRole {
+  /// Utilisateur standard - lecture seule
+  USER
+  
+  /// Analyste - lecture étendue + statistiques
+  ANALYSTE
+  
+  /// Enseigne - gestion entités propres
+  ENSEIGNE
+  
+  /// Institution - gestion multi-enseignes
+  INSTITUTION
+  
+  /// Super administrateur - accès complet
+  SUPER_ADMIN
+}
+
+/// Entité légale représentant une entreprise ou établissement
+/// Conforme au système d'identification français SIREN/SIRET
+/// 
+/// Références légales:
+/// - Décret n°82-130 du 9 février 1982 (SIREN)
+/// - Article R123-220 du Code de commerce (SIRET)
+/// - Règlement (UE) 2016/679 (RGPD) - Art. 5, 25, 32
+model LegalEntity {
+  /// Identifiant unique interne
+  id        String   @id @default(uuid())
+  
+  /// SIREN: Système d'Identification du Répertoire des ENtreprises
+  /// Format: 9 chiffres exactement
+  /// Délivré par l'INSEE lors de l'inscription au Répertoire SIRENE
+  /// Algorithme de validation: Luhn (clé de contrôle)
+  /// @unique car chaque entreprise n'a qu'un seul SIREN
+  siren     String   @unique @db.VarChar(9)
+  
+  /// SIRET: Système d'Identification du Répertoire des ETablissements
+  /// Format: 14 chiffres (SIREN + NIC)
+  /// NIC = Numéro Interne de Classement (5 chiffres)
+  /// Une entreprise peut avoir plusieurs SIRET (un par établissement)
+  /// @unique car chaque établissement est unique
+  siret     String   @unique @db.VarChar(14)
+  
+  /// Raison sociale ou dénomination de l'entreprise
+  /// Donnée publique issue du Répertoire SIRENE (Open Data)
+  /// RGPD: Base légale = Art. 6.1.e (mission d'intérêt public)
+  name      String   @db.VarChar(255)
+  
+  /// Statut de l'entreprise
+  /// ACTIVE: En activité
+  /// CEASED: Cessation d'activité (radiation, liquidation)
+  /// Conforme aux codes de l'INSEE pour le Répertoire SIRENE
+  status    EntityStatus @default(ACTIVE)
+  
+  /// Date de création de l'enregistrement dans notre système
+  /// RGPD: Traçabilité des données (Art. 5.2)
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  /// Date de dernière mise à jour
+  /// RGPD: Exactitude et mise à jour des données (Art. 5.1.d)
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  /// Enseignes liées à cette entité légale (Sprint 4)
+  brands    Brand[]
+  
+  /// Vérifications d'entreprise (Sprint 11)
+  verifications CompanyVerification[]
+
+  @@index([siren])
+  @@index([siret])
+  @@index([status])
+  @@map("legal_entities")
+}
+
+/// Énumération des statuts possibles pour une entité légale
+/// Conforme aux catégories du Répertoire SIRENE de l'INSEE
+enum EntityStatus {
+  /// Entreprise en activité
+  ACTIVE
+  
+  /// Entreprise ayant cessé son activité
+  /// Inclut: radiation, liquidation, fermeture
+  CEASED
+}
+
+/// Journal d'audit légal - IMMUABLE (Sprint 3)
+/// 
+/// Traçabilité complète de toutes les actions sensibles
+/// Conformité RGPD Art. 30 (registre des activités de traitement)
+/// 
+/// RÈGLES STRICTES:
+/// - ❌ Aucune modification possible
+/// - ❌ Aucune suppression possible
+/// - ✅ Création uniquement
+/// - ✅ Lecture par utilisateurs autorisés (AUDIT_READ)
+model AuditLog {
+  /// Identifiant unique
+  id        String   @id @default(uuid())
+  
+  /// Utilisateur ayant effectué l'action
+  /// RGPD: Responsabilité et traçabilité (Art. 5.2)
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+  
+  /// Rôle de l'utilisateur au moment de l'action
+  /// Permet de tracer les permissions effectives
+  userRole  UserRole @map("user_role")
+  
+  /// Action effectuée
+  /// Exemples: CREATE_LEGAL_ENTITY, UPDATE_USER_ROLE, LOGIN, etc.
+  action    String   @db.VarChar(100)
+  
+  /// Type d'entité concernée
+  /// Exemples: LegalEntity, User, RefreshToken
+  entity    String?  @db.VarChar(100)
+  
+  /// ID de l'entité concernée (si applicable)
+  entityId  String?  @map("entity_id") @db.VarChar(255)
+  
+  /// Résultat de l'action
+  result    AuditResult @default(SUCCESS)
+  
+  /// Message additionnel (erreur, détails, etc.)
+  /// Ne doit pas contenir de données sensibles
+  message   String?  @db.Text
+  
+  /// Adresse IP de l'utilisateur
+  /// RGPD: Donnée personnelle - à pseudonymiser après 90 jours
+  ip        String?  @db.VarChar(45)
+  
+  /// User-Agent du navigateur/client
+  userAgent String?  @map("user_agent") @db.Text
+  
+  /// Date et heure de l'action (UTC)
+  /// Horodatage précis pour traçabilité légale
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@index([userRole])
+  @@index([action])
+  @@index([entity])
+  @@index([entityId])
+  @@index([result])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+/// Résultat d'une action auditée
+enum AuditResult {
+  /// Action réussie
+  SUCCESS
+  
+  /// Action échouée (erreur, validation, etc.)
+  FAILURE
+  
+  /// Accès refusé (permissions insuffisantes)
+  DENIED
+}
+
+/// ==========================================
+/// SPRINT 4: MARKETPLACE ECOSYSTEM
+/// ==========================================
+
+/// Enseigne commerciale (Brand)
+/// Représente une marque ou chaîne de magasins inscrite sur la plateforme
+/// Lien obligatoire avec une LegalEntity validée
+/// 
+/// Règles métier:
+/// - Une enseigne doit être liée à une entité légale valide (SIREN/SIRET)
+/// - Validation requise par INSTITUTION ou SUPER_ADMIN
+/// - Abonnement obligatoire pour publier produits/prix
+model Brand {
+  /// Identifiant unique
+  id        String   @id @default(uuid())
+  
+  /// Nom commercial de l'enseigne
+  name      String   @db.VarChar(255)
+  
+  /// Entité légale associée (SIREN/SIRET validé)
+  /// Référence obligatoire pour conformité juridique
+  legalEntityId String  @map("legal_entity_id")
+  legalEntity   LegalEntity @relation(fields: [legalEntityId], references: [id], onDelete: Restrict)
+  
+  /// Statut de l'enseigne
+  /// PENDING: En attente de validation
+  /// ACTIVE: Validée et opérationnelle
+  /// SUSPENDED: Suspendue (non-paiement, violation CGU, etc.)
+  status    BrandStatus @default(PENDING)
+  
+  /// Plan d'abonnement actif
+  subscriptionPlan SubscriptionPlan @default(BASIC) @map("subscription_plan")
+  
+  /// Logo URL (optionnel)
+  logoUrl   String?  @map("logo_url") @db.VarChar(500)
+  
+  /// Description de l'enseigne
+  description String? @db.Text
+  
+  /// Site web de l'enseigne
+  website   String?  @db.VarChar(500)
+  
+  /// Date de création
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  /// Date de dernière mise à jour
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  /// Magasins de l'enseigne
+  stores    Store[]
+  
+  /// Produits de l'enseigne
+  products  Product[]
+  
+  /// Abonnements
+  subscriptions Subscription[]
+
+  @@index([legalEntityId])
+  @@index([status])
+  @@index([subscriptionPlan])
+  @@map("brands")
+}
+
+/// Statut d'une enseigne
+enum BrandStatus {
+  /// En attente de validation institutionnelle
+  PENDING
+  
+  /// Validée et active
+  ACTIVE
+  
+  /// Suspendue (violation, non-paiement, etc.)
+  SUSPENDED
+}
+
+/// Magasin / Point de vente
+/// Représente un point de vente physique d'une enseigne
+/// Utilisé pour la géolocalisation et comparaison locale des prix
+model Store {
+  /// Identifiant unique
+  id        String   @id @default(uuid())
+  
+  /// Enseigne propriétaire
+  brandId   String   @map("brand_id")
+  brand     Brand    @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  
+  /// Nom du magasin (ex: "Carrefour City Paris 15")
+  name      String   @db.VarChar(255)
+  
+  /// Adresse complète
+  address   String   @db.VarChar(500)
+  
+  /// Code postal
+  postalCode String  @map("postal_code") @db.VarChar(10)
+  
+  /// Ville
+  city      String   @db.VarChar(255)
+  
+  /// Territoire (pour comparaisons et statistiques)
+  /// DOM/COM/France hexagonale
+  territory Territory
+  
+  /// Latitude (pour géolocalisation)
+  latitude  Float?   @db.DoublePrecision
+  
+  /// Longitude (pour géolocalisation)
+  longitude Float?   @db.DoublePrecision
+  
+  /// Magasin actif ou fermé
+  isActive  Boolean  @default(true) @map("is_active")
+  
+  /// Date de création
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  /// Date de dernière mise à jour
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  /// Prix associés au magasin
+  prices    Price[]
+
+  @@index([brandId])
+  @@index([territory])
+  @@index([city])
+  @@index([isActive])
+  @@map("stores")
+}
+
+/// Territoire géographique
+/// Pour segmentation et comparaisons de prix
+enum Territory {
+  /// France hexagonale (métropole)
+  FRANCE_HEXAGONALE
+  
+  /// Départements d'Outre-Mer
+  DOM
+  
+  /// Collectivités d'Outre-Mer
+  COM
+}
+
+/// Produit
+/// Représente un produit vendu par une enseigne
+/// Peut avoir plusieurs prix (un par magasin)
+model Product {
+  /// Identifiant unique
+  id        String   @id @default(uuid())
+  
+  /// Enseigne propriétaire
+  /// Un produit ne peut être créé que par une enseigne validée
+  brandId   String   @map("brand_id")
+  brand     Brand    @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  
+  /// Nom du produit
+  name      String   @db.VarChar(255)
+  
+  /// Catégorie produit
+  category  String   @db.VarChar(100)
+  
+  /// Code-barres EAN/GTIN (si disponible)
+  /// Permet l'identification unique inter-enseignes
+  barcode   String?  @db.VarChar(50)
+  
+  /// Description du produit
+  description String? @db.Text
+  
+  /// Image URL (optionnel)
+  imageUrl  String?  @map("image_url") @db.VarChar(500)
+  
+  /// Produit actif ou retiré du catalogue
+  isActive  Boolean  @default(true) @map("is_active")
+  
+  /// Date de création
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  /// Date de dernière mise à jour
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  /// Prix du produit (historique et actuels)
+  prices    Price[]
+  
+  /// Prédictions de prix
+  predictions PricePrediction[]
+
+  @@index([brandId])
+  @@index([category])
+  @@index([barcode])
+  @@index([isActive])
+  @@map("products")
+}
+
+/// Prix d'un produit dans un magasin
+/// Historique complet - aucune suppression autorisée
+/// 
+/// Règles strictes:
+/// - Chaque modification de prix crée une nouvelle entrée
+/// - Historique conservé indéfiniment pour traçabilité
+/// - Détection automatique d'anomalies (variations > seuil)
+/// - Audit obligatoire de toute modification
+model Price {
+  /// Identifiant unique
+  id        String   @id @default(uuid())
+  
+  /// Produit concerné
+  productId String   @map("product_id")
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Restrict)
+  
+  /// Magasin concerné
+  storeId   String   @map("store_id")
+  store     Store    @relation(fields: [storeId], references: [id], onDelete: Restrict)
+  
+  /// Prix (en centimes d'euro pour éviter problèmes de précision)
+  /// Ex: 1599 = 15,99€
+  price     Int
+  
+  /// Devise (ISO 4217)
+  currency  String   @default("EUR") @db.VarChar(3)
+  
+  /// Source de la donnée prix
+  /// MANUAL: Saisie manuelle par l'enseigne
+  /// API: Import via API
+  /// INSTITUTION: Relevé institutionnel (vérification)
+  source    PriceSource @default(MANUAL)
+  
+  /// Date d'effet du prix
+  /// Permet de planifier des changements de prix futurs
+  effectiveDate DateTime @map("effective_date")
+  
+  /// Date de création de l'enregistrement
+  /// RGPD: Traçabilité complète
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([productId])
+  @@index([storeId])
+  @@index([effectiveDate])
+  @@index([createdAt])
+  @@map("prices")
+}
+
+/// Source d'un prix
+enum PriceSource {
+  /// Saisie manuelle par l'enseigne
+  MANUAL
+  
+  /// Import automatique via API
+  API
+  
+  /// Relevé institutionnel (contrôle, vérification)
+  INSTITUTION
+}
+
+/// Prédiction de prix par IA
+/// RÈGLES JURIDIQUES STRICTES:
+/// - ❌ PAS de promesse de prix futur
+/// - ❌ PAS de conseil financier
+/// - ✅ Indication probabiliste uniquement
+/// - ✅ Mention obligatoire "aide à la décision"
+/// - ✅ Historique conservé pour auditabilité
+/// 
+/// Conformité:
+/// - Code de la consommation (pratiques commerciales trompeuses)
+/// - Règlement (UE) 2016/679 (RGPD) - Art. 22 (décision automatisée)
+model PricePrediction {
+  /// Identifiant unique
+  id        String   @id @default(uuid())
+  
+  /// Produit concerné
+  productId String   @map("product_id")
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  /// Territoire concerné
+  territory Territory
+  
+  /// Prix actuel moyen (référence)
+  currentPrice Int    @map("current_price")
+  
+  /// Prix prédit (en centimes)
+  predictedPrice Int  @map("predicted_price")
+  
+  /// Score de confiance (0.0 à 1.0)
+  /// Indique la fiabilité de la prédiction
+  confidenceScore Float @map("confidence_score") @db.DoublePrecision
+  
+  /// Version du modèle IA utilisé
+  /// Permet traçabilité et reproductibilité
+  modelVersion String @map("model_version") @db.VarChar(50)
+  
+  /// Horizon de prédiction (en jours)
+  /// Ex: 7 = prédiction à 7 jours
+  horizonDays Int    @map("horizon_days")
+  
+  /// Date de création de la prédiction
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([productId])
+  @@index([territory])
+  @@index([createdAt])
+  @@map("price_predictions")
+}
+
+/// Abonnement d'une enseigne
+/// Gère la monétisation B2B de la plateforme
+/// 
+/// Règles métier:
+/// - Abonnement obligatoire pour publier produits/prix
+/// - Facturation automatique selon billingCycle
+/// - Suspension automatique en cas de non-paiement
+model Subscription {
+  /// Identifiant unique
+  id        String   @id @default(uuid())
+  
+  /// Enseigne abonnée
+  brandId   String   @map("brand_id")
+  brand     Brand    @relation(fields: [brandId], references: [id], onDelete: Restrict)
+  
+  /// Plan d'abonnement
+  /// BASIC: Fonctionnalités limitées
+  /// PRO: Fonctionnalités étendues + API
+  /// INSTITUTION: Accès complet + support premium
+  plan      SubscriptionPlan
+  
+  /// Prix de l'abonnement (en centimes/mois)
+  price     Int
+  
+  /// Cycle de facturation
+  /// MONTHLY, QUARTERLY, YEARLY
+  billingCycle String @map("billing_cycle") @db.VarChar(20)
+  
+  /// Statut de l'abonnement
+  status    SubscriptionStatus @default(ACTIVE)
+  
+  /// Date de début
+  startedAt DateTime @map("started_at")
+  
+  /// Date de fin (null = abonnement actif indéfiniment)
+  endsAt    DateTime? @map("ends_at")
+  
+  /// Date de création
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  /// Date de dernière mise à jour
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  /// Factures associées
+  invoices  Invoice[]
+
+  @@index([brandId])
+  @@index([plan])
+  @@index([status])
+  @@map("subscriptions")
+}
+
+/// Plan d'abonnement
+enum SubscriptionPlan {
+  /// Plan basique (limité)
+  BASIC
+  
+  /// Plan professionnel (étendu)
+  PRO
+  
+  /// Plan institutionnel (complet)
+  INSTITUTION
+}
+
+/// Statut d'abonnement
+enum SubscriptionStatus {
+  /// Actif
+  ACTIVE
+  
+  /// Annulé (par l'utilisateur)
+  CANCELLED
+  
+  /// Suspendu (non-paiement, etc.)
+  SUSPENDED
+  
+  /// Expiré
+  EXPIRED
+}
+
+/// Facture
+/// Générée automatiquement selon le cycle de facturation
+/// Traçabilité complète des paiements
+model Invoice {
+  /// Identifiant unique
+  id        String   @id @default(uuid())
+  
+  /// Abonnement concerné
+  subscriptionId String @map("subscription_id")
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Restrict)
+  
+  /// Montant (en centimes)
+  amount    Int
+  
+  /// Devise
+  currency  String   @default("EUR") @db.VarChar(3)
+  
+  /// Statut de la facture
+  status    InvoiceStatus @default(PENDING)
+  
+  /// Numéro de facture (unique, généré automatiquement)
+  invoiceNumber String @unique @map("invoice_number") @db.VarChar(50)
+  
+  /// Date d'émission
+  issuedAt  DateTime @map("issued_at")
+  
+  /// Date d'échéance
+  dueAt     DateTime @map("due_at")
+  
+  /// Date de paiement (null si non payée)
+  paidAt    DateTime? @map("paid_at")
+  
+  /// Date de création
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([subscriptionId])
+  @@index([status])
+  @@index([issuedAt])
+  @@map("invoices")
+}
+
+/// Statut de facture
+enum InvoiceStatus {
+  /// En attente de paiement
+  PENDING
+  
+  /// Payée
+  PAID
+  
+  /// Annulée
+  CANCELLED
+  
+  /// En retard
+  OVERDUE
+}
+
+/// Demande de devis
+/// Pour entreprises PRO et institutions
+/// Permet demandes personnalisées
+model QuoteRequest {
+  /// Identifiant unique
+  id        String   @id @default(uuid())
+  
+  /// Type de demandeur
+  requesterType RequesterType @map("requester_type")
+  
+  /// Email du demandeur
+  email     String   @db.VarChar(255)
+  
+  /// Nom de l'entreprise/institution
+  companyName String @map("company_name") @db.VarChar(255)
+  
+  /// Besoins détaillés
+  needs     String   @db.Text
+  
+  /// Volume estimé (nombre de produits, magasins, etc.)
+  estimatedVolume String? @map("estimated_volume") @db.VarChar(255)
+  
+  /// Territoire(s) concerné(s)
+  territory Territory?
+  
+  /// Statut de la demande
+  status    QuoteStatus @default(PENDING)
+  
+  /// Date de création
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  /// Date de dernière mise à jour
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  /// Devis généré (si disponible)
+  quote     Quote?
+
+  @@index([status])
+  @@index([requesterType])
+  @@map("quote_requests")
+}
+
+/// Type de demandeur de devis
+enum RequesterType {
+  /// Entreprise professionnelle
+  PRO
+  
+  /// Institution publique
+  INSTITUTION
+}
+
+/// Statut de demande de devis
+enum QuoteStatus {
+  /// En attente de traitement
+  PENDING
+  
+  /// Devis envoyé
+  SENT
+  
+  /// Devis accepté
+  ACCEPTED
+  
+  /// Devis rejeté
+  REJECTED
+}
+
+/// Devis généré
+/// Réponse à une QuoteRequest
+/// Génération par règles IA déterministes (pas d'hallucination)
+model Quote {
+  /// Identifiant unique
+  id        String   @id @default(uuid())
+  
+  /// Demande de devis associée
+  quoteRequestId String @unique @map("quote_request_id")
+  quoteRequest   QuoteRequest @relation(fields: [quoteRequestId], references: [id], onDelete: Restrict)
+  
+  /// Montant proposé (en centimes)
+  amount    Int
+  
+  /// Devise
+  currency  String   @default("EUR") @db.VarChar(3)
+  
+  /// Détails du devis (JSON)
+  /// Inclut: breakdown, options, conditions
+  details   String   @db.Text
+  
+  /// Généré par IA ou manuellement
+  generatedByAI Boolean @default(true) @map("generated_by_ai")
+  
+  /// Version du modèle IA (si applicable)
+  modelVersion String? @map("model_version") @db.VarChar(50)
+  
+  /// Date de validité du devis
+  validUntil DateTime @map("valid_until")
+  
+  /// Date d'acceptation (null si non accepté)
+  acceptedAt DateTime? @map("accepted_at")
+  
+  /// Date de création
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([quoteRequestId])
+  @@map("quotes")
+}
+
+// ============================================================================
+// SPRINT 8: CERTIFICATION, COMPLIANCE & DATA INTEGRITY
+// ============================================================================
+
+/// Certification officielle de la plateforme
+/// Label "A KI PRI SA YÉ - Données Économiques Vérifiées"
+/// 
+/// Références légales:
+/// - Loi pour une République numérique (2016) - Transparence algorithmes
+/// - RGPD Art. 30 - Registre des activités de traitement
+enum CertificationScope {
+  PLATFORM      // Certification plateforme entière
+  API           // Certification API spécifique
+  DASHBOARD     // Certification dashboard institutionnel
+  ALGORITHM     // Certification algorithme spécifique
+  DATA_SOURCE   // Certification source de données
+}
+
+enum CertificationStatus {
+  ACTIVE      // Certification valide
+  SUSPENDED   // Certification suspendue
+  REVOKED     // Certification révoquée
+  EXPIRED     // Certification expirée
+}
+
+model Certification {
+  /// Identifiant unique
+  id String @id @default(uuid())
+  
+  /// Périmètre de la certification
+  scope CertificationScope
+  
+  /// Version de la certification (ex: "1.0.0")
+  version String @db.VarChar(20)
+  
+  /// Émis par (organisation/autorité)
+  issuedBy String @db.VarChar(255)
+  
+  /// Date d'émission
+  issuedAt DateTime @default(now()) @map("issued_at")
+  
+  /// Valide jusqu'à
+  validUntil DateTime @map("valid_until")
+  
+  /// Statut de la certification
+  status CertificationStatus @default(ACTIVE)
+  
+  /// Hash SHA-256 des critères de certification
+  /// Garantit l'intégrité et la traçabilité
+  criteriaHash String @map("criteria_hash") @db.VarChar(64)
+  
+  /// Référence audit externe (optionnel)
+  auditReference String? @map("audit_reference") @db.VarChar(100)
+  
+  /// Métadonnées JSON (critères détaillés, etc.)
+  metadata String? @db.Text
+  
+  /// Date de création
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  /// Date de mise à jour
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  @@index([scope])
+  @@index([status])
+  @@index([validUntil])
+  @@map("certifications")
+}
+
+/// Registre des algorithmes (transparence algorithmique)
+/// Conformité Loi pour une République numérique - Art. L111-7-2
+/// 
+/// Pas de boîte noire - tous les algorithmes documentés
+enum AlgorithmModelType {
+  STATISTICAL       // Modèles statistiques (moyenne, régression, etc.)
+  MACHINE_LEARNING  // ML (réseaux neurones, etc.)
+  RULE_BASED        // Règles déterministes
+  HYBRID            // Combinaison
+}
+
+model AlgorithmRegistry {
+  /// Identifiant unique
+  id String @id @default(uuid())
+  
+  /// Nom de l'algorithme (ex: "price_prediction_v1")
+  name String @unique @db.VarChar(100)
+  
+  /// Objectif de l'algorithme
+  purpose String @db.VarChar(500)
+  
+  /// Description détaillée
+  description String @db.Text
+  
+  /// Inputs (JSON array de noms de champs)
+  inputs String @db.Text
+  
+  /// Outputs (JSON array de noms de champs)
+  outputs String @db.Text
+  
+  /// Type de modèle
+  modelType AlgorithmModelType @map("model_type")
+  
+  /// Version de l'algorithme
+  version String @db.VarChar(20)
+  
+  /// Méthode de calcul de confiance (expliquée en français)
+  confidenceMethod String @map("confidence_method") @db.Text
+  
+  /// Date de dernière revue
+  lastReviewedAt DateTime @map("last_reviewed_at")
+  
+  /// Publiquement visible (transparence)
+  isPublic Boolean @default(true) @map("is_public")
+  
+  /// Métadonnées JSON (formules mathématiques, etc.)
+  metadata String? @db.Text
+  
+  /// Date de création
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  /// Date de mise à jour
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  @@index([name])
+  @@index([modelType])
+  @@index([isPublic])
+  @@map("algorithm_registry")
+}
+
+/// Journal d'intégrité des données
+/// Hash cryptographique quotidien pour détecter toute altération
+/// 
+/// Références légales:
+/// - RGPD Art. 32 - Sécurité du traitement
+/// - Code de commerce - Conservation documents comptables
+model DataIntegrityLog {
+  /// Identifiant unique
+  id String @id @default(uuid())
+  
+  /// Nom de la table surveillée
+  tableName String @map("table_name") @db.VarChar(100)
+  
+  /// Nombre d'enregistrements au moment du snapshot
+  recordCount Int @map("record_count")
+  
+  /// Hash SHA-256 des données (triées, normalisées)
+  dataHash String @map("data_hash") @db.VarChar(64)
+  
+  /// Date du snapshot
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  @@index([tableName])
+  @@index([createdAt])
+  @@map("data_integrity_logs")
+}
+
+/// Documents de conformité (auto-générés)
+/// COMPLIANCE_REPORT, DATA_GOVERNANCE, ALGORITHMIC_TRANSPARENCY, RGPD_RECORDS
+enum ComplianceDocumentType {
+  COMPLIANCE_REPORT         // Rapport conformité général
+  DATA_GOVERNANCE           // Gouvernance des données
+  ALGORITHMIC_TRANSPARENCY  // Transparence algorithmes
+  RGPD_RECORDS             // Registre RGPD Art. 30
+  SECURITY_POLICY          // Politique sécurité
+  DATA_RETENTION           // Politique conservation
+}
+
+model ComplianceDocument {
+  /// Identifiant unique
+  id String @id @default(uuid())
+  
+  /// Type de document
+  type ComplianceDocumentType
+  
+  /// Version du document (ex: "1.0.0")
+  version String @db.VarChar(20)
+  
+  /// Contenu du document (Markdown)
+  content String @db.Text
+  
+  /// Hash SHA-256 du contenu (intégrité)
+  contentHash String @map("content_hash") @db.VarChar(64)
+  
+  /// Auteur/Générateur
+  author String @db.VarChar(255)
+  
+  /// Révisé par (optionnel)
+  reviewedBy String? @map("reviewed_by") @db.VarChar(255)
+  
+  /// Valide jusqu'à
+  validUntil DateTime? @map("valid_until")
+  
+  /// Métadonnées JSON
+  metadata String? @db.Text
+  
+  /// Date de génération
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  @@index([type])
+  @@index([version])
+  @@index([createdAt])
+  @@map("compliance_documents")
+}
+
+// =============================================================================
+// SPRINT 10: data.gouv.fr Publication & API Hub Models
+// =============================================================================
+
+/// Fréquence de mise à jour des datasets Open Data
+enum UpdateFrequency {
+  DAILY     // Quotidien
+  WEEKLY    // Hebdomadaire
+  MONTHLY   // Mensuel
+  QUARTERLY // Trimestriel
+  YEARLY    // Annuel
+  ON_DEMAND // À la demande
+}
+
+/// Format d'export des données
+enum ExportFormat {
+  CSV      // Comma-Separated Values (UTF-8)
+  JSON     // JavaScript Object Notation
+  GEOJSON  // Geographic JSON (RFC 7946)
+  XML      // Extensible Markup Language
+}
+
+/// Statut d'un export
+enum ExportStatus {
+  IN_PROGRESS // En cours
+  SUCCESS     // Réussi
+  FAILED      // Échoué
+  CANCELLED   // Annulé
+}
+
+/// Statut d'une version d'API
+enum VersionStatus {
+  ACTIVE     // Active
+  DEPRECATED // Dépréciée (6 mois avant sunset)
+  SUNSET     // Arrêtée
+}
+
+/// Dataset Open Data publié sur data.gouv.fr
+/// 
+/// Références légales:
+/// - Licence Ouverte v2.0 (Etalab)
+/// - Loi pour une République numérique (2016)
+model OpenDataDataset {
+  /// Identifiant unique
+  id String @id @default(uuid())
+  
+  /// Identifiant du dataset (slug)
+  datasetId String @unique @map("dataset_id") @db.VarChar(100)
+  
+  /// Titre officiel du dataset
+  title String @db.VarChar(255)
+  
+  /// Description détaillée
+  description String @db.Text
+  
+  /// Producteur des données
+  producer String @db.VarChar(255)
+  
+  /// Licence (ex: "Licence Ouverte v2.0")
+  licence String @db.VarChar(100)
+  
+  /// URL de la licence
+  licenceUrl String @map("licence_url") @db.VarChar(500)
+  
+  /// Fréquence de mise à jour
+  updateFrequency UpdateFrequency @map("update_frequency")
+  
+  /// Couverture territoriale (JSON array: ["DOM", "COM", "FRANCE_HEXAGONALE"])
+  territorialCoverage String @map("territorial_coverage") @db.Text
+  
+  /// Formats disponibles (JSON array: ["CSV", "JSON", "GEOJSON"])
+  formats String @db.Text
+  
+  /// Date de dernière mise à jour
+  lastUpdate DateTime? @map("last_update")
+  
+  /// Nombre d'enregistrements
+  recordCount Int @default(0) @map("record_count")
+  
+  /// URL de téléchargement CSV
+  downloadUrlCsv String? @map("download_url_csv") @db.VarChar(500)
+  
+  /// URL de téléchargement JSON
+  downloadUrlJson String? @map("download_url_json") @db.VarChar(500)
+  
+  /// URL de téléchargement GeoJSON
+  downloadUrlGeojson String? @map("download_url_geojson") @db.VarChar(500)
+  
+  /// URL data.gouv.fr
+  datagouvUrl String? @map("datagouv_url") @db.VarChar(500)
+  
+  /// Statut de publication
+  status String @db.VarChar(50) // "DRAFT" | "PUBLISHED" | "ARCHIVED"
+  
+  /// Hash SHA-256 du dernier export
+  hash String? @db.VarChar(64)
+  
+  /// Date de création
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  /// Date de mise à jour
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  /// Logs d'export
+  exports OpenDataExportLog[]
+  
+  @@index([datasetId])
+  @@index([updateFrequency])
+  @@index([status])
+  @@map("opendata_datasets")
+}
+
+/// Log d'export Open Data (traçabilité complète)
+model OpenDataExportLog {
+  /// Identifiant unique
+  id String @id @default(uuid())
+  
+  /// Identifiant du dataset
+  datasetId String @map("dataset_id")
+  
+  /// Relation vers le dataset
+  dataset OpenDataDataset @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+  
+  /// Version de l'export (date: "YYYY-MM-DD")
+  version String @db.VarChar(50)
+  
+  /// Format d'export
+  format ExportFormat
+  
+  /// Taille du fichier en octets
+  fileSize Int @map("file_size")
+  
+  /// Nombre d'enregistrements exportés
+  recordCount Int @map("record_count")
+  
+  /// Hash SHA-256 du fichier exporté
+  hash String @db.VarChar(64)
+  
+  /// Statut de l'export
+  status ExportStatus @default(IN_PROGRESS)
+  
+  /// Message d'erreur (si échec)
+  errorMessage String? @map("error_message") @db.Text
+  
+  /// Date de génération
+  generatedAt DateTime @default(now()) @map("generated_at")
+  
+  @@index([datasetId])
+  @@index([version])
+  @@index([format])
+  @@index([status])
+  @@map("opendata_export_logs")
+}
+
+/// Historique des versions d'API (versionnement + changelog)
+/// 
+/// Politique de dépréciation: 6 mois minimum entre annonce et sunset
+model VersionHistory {
+  /// Identifiant unique
+  id String @id @default(uuid())
+  
+  /// Version de l'API (ex: "v1", "v2")
+  version String @unique @db.VarChar(20)
+  
+  /// Statut de la version
+  status VersionStatus @default(ACTIVE)
+  
+  /// Date de release
+  releasedAt DateTime @default(now()) @map("released_at")
+  
+  /// Date de dépréciation (annonce)
+  deprecatedAt DateTime? @map("deprecated_at")
+  
+  /// Date d'arrêt définitif (sunset)
+  sunsetAt DateTime? @map("sunset_at")
+  
+  /// Changelog (Markdown)
+  changelog String @db.Text
+  
+  /// Contient des breaking changes
+  breakingChanges Boolean @default(false) @map("breaking_changes")
+  
+  /// Date de création
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  /// Date de mise à jour
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  @@index([version])
+  @@index([status])
+  @@map("version_history")
+}
+
+// ============================================================
+// SPRINT 11: INTERCONNEXIONS SOURCES OFFICIELLES
+// ============================================================
+
+/// Source de données externes (INSEE, DGCCRF, Registres)
+/// Traçabilité complète des intégrations avec organismes officiels
+/// RGPD: Données publiques uniquement
+model ExternalDataSource {
+  /// Identifiant unique
+  id String @id @default(uuid())
+  
+  /// Nom de la source
+  /// Exemples: "INSEE", "DGCCRF", "rappel.conso.gouv.fr"
+  name String @db.VarChar(255)
+  
+  /// Type de source
+  sourceType DataSourceType
+  
+  /// URL API ou endpoint
+  apiUrl String? @map("api_url") @db.VarChar(500)
+  
+  /// Licence d'utilisation
+  /// Exemple: "Licence Ouverte v2.0"
+  licence String @db.VarChar(255)
+  
+  /// URL de la licence
+  licenceUrl String? @map("licence_url") @db.VarChar(500)
+  
+  /// Fréquence de mise à jour
+  updateFrequency UpdateFrequency @map("update_frequency")
+  
+  /// Dernière synchronisation réussie
+  lastSync DateTime? @map("last_sync")
+  
+  /// Fiabilité estimée (0-100%)
+  reliabilityScore Int @default(100) @map("reliability_score")
+  
+  /// Source active ou inactive
+  isActive Boolean @default(true) @map("is_active")
+  
+  /// Notes techniques
+  notes String? @db.Text
+  
+  /// Date de création
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  /// Date de mise à jour
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  recalls ProductRecall[]
+  verifications CompanyVerification[]
+  logs SourceDataLog[]
+  
+  @@index([sourceType])
+  @@index([isActive])
+  @@map("external_data_sources")
+}
+
+/// Rappels de produits (DGCCRF / rappel.conso.gouv.fr)
+/// Protection du consommateur - alertes officielles
+model ProductRecall {
+  /// Identifiant unique
+  id String @id @default(uuid())
+  
+  /// ID source externe (rappel.conso.gouv.fr)
+  externalId String? @map("external_id") @db.VarChar(255)
+  
+  /// Source de données
+  sourceId String @map("source_id")
+  source ExternalDataSource @relation(fields: [sourceId], references: [id])
+  
+  /// Nom du produit rappelé
+  productName String @map("product_name") @db.VarChar(500)
+  
+  /// Marque
+  brand String? @db.VarChar(255)
+  
+  /// Catégorie de produit
+  category String @db.VarChar(255)
+  
+  /// Motif du rappel
+  /// Exemple: "Présence de Listeria", "Risque d'étouffement"
+  reason String @db.Text
+  
+  /// Gravité
+  severity RecallSeverity
+  
+  /// Numéro de lot
+  lotNumber String? @map("lot_number") @db.VarChar(255)
+  
+  /// Code-barres (GTIN/EAN)
+  barcode String? @db.VarChar(14)
+  
+  /// Date de publication du rappel
+  publishedAt DateTime @map("published_at")
+  
+  /// Date de fin de la procédure de rappel
+  endsAt DateTime? @map("ends_at")
+  
+  /// URL de la notice officielle
+  noticeUrl String? @map("notice_url") @db.VarChar(500)
+  
+  /// Image du produit
+  imageUrl String? @map("image_url") @db.VarChar(500)
+  
+  /// Consignes aux consommateurs
+  consumerInstructions String? @map("consumer_instructions") @db.Text
+  
+  /// Rappel actif ou terminé
+  isActive Boolean @default(true) @map("is_active")
+  
+  /// Date de création dans notre système
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  /// Date de mise à jour
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  @@index([barcode])
+  @@index([category])
+  @@index([severity])
+  @@index([publishedAt])
+  @@index([isActive])
+  @@map("product_recalls")
+}
+
+/// Vérification d'entreprises (SIREN/SIRET)
+/// Registres officiels - données publiques uniquement
+model CompanyVerification {
+  /// Identifiant unique
+  id String @id @default(uuid())
+  
+  /// Lien vers LegalEntity si existant
+  legalEntityId String? @map("legal_entity_id")
+  legalEntity LegalEntity? @relation(fields: [legalEntityId], references: [id])
+  
+  /// Source de vérification
+  sourceId String @map("source_id")
+  source ExternalDataSource @relation(fields: [sourceId], references: [id])
+  
+  /// SIREN vérifié
+  siren String @db.VarChar(9)
+  
+  /// SIRET vérifié (si applicable)
+  siret String? @db.VarChar(14)
+  
+  /// Nom légal vérifié
+  legalName String @map("legal_name") @db.VarChar(500)
+  
+  /// Nom commercial
+  tradeName String? @map("trade_name") @db.VarChar(500)
+  
+  /// Statut juridique
+  /// Exemple: "SARL", "SAS", "Micro-entreprise"
+  legalStatus String? @map("legal_status") @db.VarChar(100)
+  
+  /// Statut d'activité
+  activityStatus CompanyActivityStatus @default(ACTIVE) @map("activity_status")
+  
+  /// Adresse siège social
+  address String? @db.VarChar(500)
+  
+  /// Code postal
+  postalCode String? @map("postal_code") @db.VarChar(10)
+  
+  /// Ville
+  city String? @db.VarChar(255)
+  
+  /// Département
+  department String? @db.VarChar(10)
+  
+  /// Date de création de l'entreprise
+  companyCreatedAt DateTime? @map("company_created_at")
+  
+  /// Date de cessation (si applicable)
+  companyCeasedAt DateTime? @map("company_ceased_at")
+  
+  /// Coordonnées géographiques (si publiques)
+  latitude Decimal? @db.Decimal(10, 8)
+  longitude Decimal? @db.Decimal(11, 8)
+  
+  /// Date de vérification
+  verifiedAt DateTime @default(now()) @map("verified_at")
+  
+  /// Fiabilité de la vérification (0-100%)
+  verificationScore Int @default(100) @map("verification_score")
+  
+  /// Notes de vérification
+  notes String? @db.Text
+  
+  /// Date de création
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  /// Date de mise à jour
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  @@index([siren])
+  @@index([siret])
+  @@index([activityStatus])
+  @@map("company_verifications")
+}
+
+/// Journal des accès aux sources de données externes
+/// Traçabilité complète - audit obligatoire
+/// RGPD: Art. 30 - Registre des activités de traitement
+model SourceDataLog {
+  /// Identifiant unique
+  id String @id @default(uuid())
+  
+  /// Source de données
+  sourceId String @map("source_id")
+  source ExternalDataSource @relation(fields: [sourceId], references: [id])
+  
+  /// Action effectuée
+  /// Exemple: "SYNC", "QUERY", "VERIFICATION"
+  action String @db.VarChar(100)
+  
+  /// Endpoint ou méthode appelée
+  endpoint String? @db.VarChar(500)
+  
+  /// Résultat de l'action
+  result DataActionResult
+  
+  /// Nombre d'enregistrements traités
+  recordCount Int? @map("record_count")
+  
+  /// Temps de réponse (ms)
+  responseTime Int? @map("response_time")
+  
+  /// Message d'erreur (si échec)
+  errorMessage String? @map("error_message") @db.Text
+  
+  /// Utilisateur ayant initié l'action (si applicable)
+  userId String? @map("user_id")
+  
+  /// Adresse IP
+  ipAddress String? @map("ip_address") @db.VarChar(45)
+  
+  /// User agent
+  userAgent String? @map("user_agent") @db.VarChar(500)
+  
+  /// Métadonnées supplémentaires (JSON)
+  metadata String? @db.Text
+  
+  /// Date de l'action
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  @@index([sourceId])
+  @@index([action])
+  @@index([result])
+  @@index([createdAt])
+  @@map("source_data_logs")
+}
+
+// ============================================================
+// ENUMS SPRINT 11
+// ============================================================
+
+/// Type de source de données externe
+enum DataSourceType {
+  INSEE              // Institut national de la statistique
+  DGCCRF             // Direction générale de la concurrence
+  RAPPEL_CONSO       // rappel.conso.gouv.fr
+  COMPANY_REGISTRY   // Registres d'entreprises
+  OPEN_DATA_PORTAL   // Portails open data
+  API_GOUV           // api.gouv.fr
+  OTHER              // Autres sources officielles
+}
+
+/// Gravité d'un rappel de produit
+enum RecallSeverity {
+  CRITICAL   // Danger immédiat pour la santé
+  HIGH       // Risque important
+  MEDIUM     // Risque modéré
+  LOW        // Risque faible
+  INFO       // Information préventive
+}
+
+/// Statut d'activité d'une entreprise
+enum CompanyActivityStatus {
+  ACTIVE     // Entreprise active
+  CEASED     // Activité cessée
+  SUSPENDED  // Activité suspendue
+  UNKNOWN    // Statut inconnu
+}
+
+/// Résultat d'une action sur source externe
+enum DataActionResult {
+  SUCCESS    // Succès
+  FAILURE    // Échec
+  PARTIAL    // Succès partiel
+  TIMEOUT    // Timeout
+  UNAUTHORIZED // Non autorisé
+}
+
+// ============================================================
+// SPRINT 13: OBSERVATOIRE PERMANENT DE LA VIE CHÈRE
+// ============================================================
+
+/// Rapport de l'Observatoire permanent
+/// Analyse long terme de la vie chère
+/// Immutable après publication (no deletion allowed)
+/// 
+/// Références légales:
+/// - Neutralité absolue (pas de recommandations commerciales)
+/// - Méthodologie transparente
+/// - Données réelles uniquement
+model ObservatoryReport {
+  /// Identifiant unique
+  id String @id @default(uuid())
+  
+  /// Titre du rapport
+  title String @db.VarChar(500)
+  
+  /// Périmètre du rapport
+  scope ReportScope
+  
+  /// Territoire concerné (si scope TERRITORIAL)
+  territory Territory?
+  
+  /// Catégorie de produits (si scope SECTORIEL)
+  category String? @db.VarChar(255)
+  
+  /// Début de la période analysée
+  periodStart DateTime @map("period_start")
+  
+  /// Fin de la période analysée
+  periodEnd DateTime @map("period_end")
+  
+  /// Méthodologie utilisée
+  /// Description claire et transparente
+  methodology String @db.Text
+  
+  /// Principales conclusions
+  keyFindings String @map("key_findings") @db.Text
+  
+  /// Limites de l'analyse
+  /// Transparence obligatoire
+  limitations String @db.Text
+  
+  /// Auteur du rapport
+  /// Pour traçabilité institutionnelle
+  author String @db.VarChar(255)
+  
+  /// Date de génération du rapport
+  generatedAt DateTime @default(now()) @map("generated_at")
+  
+  /// Date de publication officielle
+  /// Null si DRAFT
+  publishedAt DateTime? @map("published_at")
+  
+  /// Statut du rapport
+  status ReportStatus @default(DRAFT)
+  
+  /// Relations
+  indicators StructuralIndicator[]
+  insights   ExplanatoryInsight[]
+  
+  @@index([scope])
+  @@index([territory])
+  @@index([periodStart])
+  @@index([periodEnd])
+  @@index([status])
+  @@index([publishedAt])
+  @@map("observatory_reports")
+}
+
+/// Indicateur structurel de la vie chère
+/// Calculé à partir de données historiques uniquement
+/// 
+/// Indicateurs disponibles:
+/// - DISPERSION_PRIX: Coefficient de variation des prix
+/// - VOLATILITE: Écart-type des variations
+/// - ECART_METROPOLE: Différence avec prix métropole
+/// - TENSION_MARCHE: Ratio offre/demande estimé
+/// - PERSISTENCE_HAUSSE: Durée des hausses continues
+model StructuralIndicator {
+  /// Identifiant unique
+  id String @id @default(uuid())
+  
+  /// Rapport associé (optionnel)
+  reportId String? @map("report_id")
+  report   ObservatoryReport? @relation(fields: [reportId], references: [id], onDelete: SetNull)
+  
+  /// Type d'indicateur
+  indicatorType IndicatorType @map("indicator_type")
+  
+  /// Territoire concerné
+  territory Territory
+  
+  /// Catégorie de produits
+  /// Null = tous produits
+  category String? @db.VarChar(255)
+  
+  /// Valeur de l'indicateur
+  /// Interprétation dépend du type
+  value Decimal @db.Decimal(10, 4)
+  
+  /// Niveau de confiance (0-1)
+  /// Basé sur quantité de données
+  confidenceLevel Decimal @map("confidence_level") @db.Decimal(3, 2)
+  
+  /// Période de référence
+  /// Format: "YYYY-MM" ou "YYYY-Q1", etc.
+  period String @db.VarChar(50)
+  
+  /// Date de calcul de l'indicateur
+  calculatedAt DateTime @default(now()) @map("calculated_at")
+  
+  /// Relations
+  insights ExplanatoryInsight[]
+  
+  @@index([indicatorType])
+  @@index([territory])
+  @@index([category])
+  @@index([period])
+  @@index([calculatedAt])
+  @@map("structural_indicators")
+}
+
+/// Analyse IA explicative (NON prédictive)
+/// L'IA explique le passé, elle ne prédit rien
+/// Toutes les analyses sont revues par un humain
+/// 
+/// Références légales:
+/// - RGPD Art. 22: Pas de décision automatisée
+/// - Transparence algorithmique obligatoire
+/// - Sources visibles
+model ExplanatoryInsight {
+  /// Identifiant unique
+  id String @id @default(uuid())
+  
+  /// Rapport associé (optionnel)
+  reportId String? @map("report_id")
+  report   ObservatoryReport? @relation(fields: [reportId], references: [id], onDelete: SetNull)
+  
+  /// Indicateur associé (optionnel)
+  indicatorId String? @map("indicator_id")
+  indicator   StructuralIndicator? @relation(fields: [indicatorId], references: [id], onDelete: SetNull)
+  
+  /// Explication textuelle claire
+  /// Langage accessible au grand public
+  explanation String @db.Text
+  
+  /// Sources utilisées pour l'analyse
+  /// JSON array: [{"name": "INSEE", "date": "2025-01"}]
+  sources String @db.Text
+  
+  /// Score de confiance de l'analyse (0-1)
+  /// Basé sur cohérence des données
+  confidenceScore Decimal @map("confidence_score") @db.Decimal(3, 2)
+  
+  /// Version du modèle IA utilisé
+  /// Pour traçabilité et reproductibilité
+  modelVersion String @map("model_version") @db.VarChar(50)
+  
+  /// Date de génération de l'analyse
+  generatedAt DateTime @default(now()) @map("generated_at")
+  
+  /// Revue par un humain (obligatoire avant publication)
+  reviewedByHuman Boolean @default(false) @map("reviewed_by_human")
+  
+  /// Nom du reviewer (si reviewedByHuman = true)
+  reviewedBy String? @map("reviewed_by") @db.VarChar(255)
+  
+  /// Date de la revue humaine
+  reviewedAt DateTime? @map("reviewed_at")
+  
+  /// Commentaires du reviewer
+  reviewComments String? @map("review_comments") @db.Text
+  
+  @@index([reportId])
+  @@index([indicatorId])
+  @@index([reviewedByHuman])
+  @@index([generatedAt])
+  @@map("explanatory_insights")
+}
+
+// ============================================================
+// ENUMS SPRINT 13
+// ============================================================
+
+/// Périmètre d'un rapport d'observatoire
+enum ReportScope {
+  NATIONAL     // Analyse nationale globale
+  TERRITORIAL  // Analyse d'un territoire spécifique
+  SECTORIEL    // Analyse d'un secteur/catégorie
+}
+
+/// Type d'indicateur structurel
+enum IndicatorType {
+  DISPERSION_PRIX    // Coefficient de variation des prix
+  VOLATILITE         // Écart-type des variations de prix
+  ECART_METROPOLE    // Différence avec prix métropole
+  TENSION_MARCHE     // Ratio offre/demande estimé
+  PERSISTENCE_HAUSSE // Durée moyenne des hausses continues
+}
+
+/// Statut d'un rapport d'observatoire
+enum ReportStatus {
+  DRAFT      // Brouillon (en cours de rédaction)
+  PUBLISHED  // Publié officiellement (immutable)
+  ARCHIVED   // Archivé (historique)
+}
+
+// ============================================================
+// SPRINT 14: IA EXPLICATIVE MULTI-SOURCES CERTIFIÉE
+// ============================================================
+
+/// Cadre de recherche IA scientifique
+/// Documentation niveau publication scientifique
+/// Reproductibilité et auditabilité garanties
+/// 
+/// Références légales:
+/// - Transparence algorithmique (Conseil d'État)
+/// - IA responsable (RGPD Art. 22)
+/// - Compatible recherche publique
+model AIResearchFramework {
+  /// Identifiant unique
+  id String @id @default(uuid())
+  
+  /// Nom du framework/modèle
+  name String @unique @db.VarChar(255)
+  
+  /// Objectif scientifique clair
+  /// Ex: "Expliquer variations prix alimentaires DOM"
+  objective String @db.Text
+  
+  /// Sources de données utilisées (JSON array)
+  /// [{name, type, coverage, period}]
+  dataSources String @map("data_sources") @db.Text
+  
+  /// Méthodes statistiques/ML utilisées
+  /// Description niveau publication
+  methods String @db.Text
+  
+  /// Hypothèses du modèle
+  /// Explicitation claire
+  assumptions String @db.Text
+  
+  /// Biais connus et documentés
+  /// Transparence obligatoire
+  knownBiases String @map("known_biases") @db.Text
+  
+  /// Limitations méthodologiques
+  /// Cas où le modèle n'est pas applicable
+  limitations String @db.Text
+  
+  /// Version du framework (semver)
+  version String @db.VarChar(50)
+  
+  /// Créé le
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  /// Validé par (expert scientifique)
+  /// Null si pas encore validé
+  validatedBy String? @map("validated_by") @db.VarChar(255)
+  
+  /// Date de validation
+  validatedAt DateTime? @map("validated_at")
+  
+  /// Commentaires validation
+  validationComments String? @map("validation_comments") @db.Text
+  
+  /// Relations
+  explanations ExplanationResult[]
+  computations ComputationTrace[]
+  reviews      HumanReview[]
+  
+  @@index([name])
+  @@index([version])
+  @@index([validatedBy])
+  @@map("ai_research_frameworks")
+}
+
+/// Registre des sources de données
+/// Traçabilité complète des inputs IA
+/// 
+/// Chaque source doit être:
+/// - Officiellement autorisée (lecture seule)
+/// - Licence compatible
+/// - Fiabilité documentée
+model DataSourceRegistry {
+  /// Identifiant unique
+  id String @id @default(uuid())
+  
+  /// Nom de la source
+  /// Ex: "A KI PRI SA YÉ - Prix historiques"
+  name String @db.VarChar(500)
+  
+  /// Type de source
+  type DataSourceType
+  
+  /// Licence d'utilisation
+  /// Ex: "Licence Ouverte v2.0"
+  licence String @db.VarChar(255)
+  
+  /// Fréquence de mise à jour
+  updateFrequency UpdateFrequency @map("update_frequency")
+  
+  /// Score de fiabilité (0-100)
+  /// Basé sur: complétude, cohérence, vérifications
+  reliabilityScore Int @map("reliability_score") @db.SmallInt
+  
+  /// Périmètre couvert (JSON)
+  /// {territories, categories, period}
+  coverage String @db.Text
+  
+  /// URL source officielle
+  sourceUrl String? @map("source_url") @db.VarChar(1000)
+  
+  /// Description
+  description String? @db.Text
+  
+  /// Date d'ajout au registre
+  registeredAt DateTime @default(now()) @map("registered_at")
+  
+  /// Dernière vérification fiabilité
+  lastVerified DateTime? @map("last_verified")
+  
+  /// Statut (actif/deprecated)
+  isActive Boolean @default(true) @map("is_active")
+  
+  /// Relations
+  explanations ExplanationResult[]
+  
+  @@index([type])
+  @@index([reliabilityScore])
+  @@index([isActive])
+  @@map("data_source_registry")
+}
+
+/// Résultat d'explication IA
+/// Explication = décomposition facteurs passés
+/// NON prédictif, NON prescriptif
+/// 
+/// Références légales:
+/// - Pas de conseil économique
+/// - Pas de décision automatisée
+/// - Transparence méthodologique totale
+model ExplanationResult {
+  /// Identifiant unique
+  id String @id @default(uuid())
+  
+  /// Framework IA utilisé
+  frameworkId String @map("framework_id")
+  framework   AIResearchFramework @relation(fields: [frameworkId], references: [id], onDelete: Restrict)
+  
+  /// Indicateur analysé (optionnel)
+  indicatorId String? @map("indicator_id")
+  indicator   StructuralIndicator? @relation(fields: [indicatorId], references: [id], onDelete: SetNull)
+  
+  /// Facteurs identifiés (JSON array)
+  /// [{name, contribution, confidence, sources}]
+  /// Ex: [{"name": "Distance géo", "contribution": 0.42, ...}]
+  factors String @db.Text
+  
+  /// Poids de chaque facteur (JSON)
+  /// Somme = 1.0 (100%)
+  weights String @db.Text
+  
+  /// Intervalle de confiance (JSON)
+  /// {lower: 0.85, upper: 0.95}
+  confidenceInterval String @map("confidence_interval") @db.Text
+  
+  /// Méthode d'explication utilisée
+  methodUsed ExplanationMethod @map("method_used")
+  
+  /// Sources de données utilisées (relation)
+  sourceIds String @map("source_ids") @db.Text // JSON array d'IDs
+  sources   DataSourceRegistry[]
+  
+  /// Explication textuelle générée
+  /// Langage accessible
+  textExplanation String? @map("text_explanation") @db.Text
+  
+  /// Date de génération
+  generatedAt DateTime @default(now()) @map("generated_at")
+  
+  /// Hash computation associé (reproductibilité)
+  computationTraceId String? @map("computation_trace_id")
+  computationTrace   ComputationTrace? @relation(fields: [computationTraceId], references: [id], onDelete: SetNull)
+  
+  /// Revue humaine associée
+  humanReviewId String? @map("human_review_id")
+  humanReview   HumanReview? @relation(fields: [humanReviewId], references: [id], onDelete: SetNull)
+  
+  /// Statut publication
+  isPublished Boolean @default(false) @map("is_published")
+  publishedAt DateTime? @map("published_at")
+  
+  @@index([frameworkId])
+  @@index([indicatorId])
+  @@index([methodUsed])
+  @@index([isPublished])
+  @@index([generatedAt])
+  @@map("explanation_results")
+}
+
+/// Trace de calcul pour reproductibilité
+/// Garantit auditabilité scientifique
+/// 
+/// Permet de re-exécuter exactement le même calcul
+/// avec les mêmes résultats (déterminisme)
+model ComputationTrace {
+  /// Identifiant unique
+  id String @id @default(uuid())
+  
+  /// Framework IA utilisé
+  frameworkId String @map("framework_id")
+  framework   AIResearchFramework @relation(fields: [frameworkId], references: [id], onDelete: Restrict)
+  
+  /// Hash des inputs (SHA-256)
+  /// Données entrée + paramètres
+  inputsHash String @map("inputs_hash") @db.VarChar(64)
+  
+  /// Inputs détaillés (JSON)
+  /// Pour reproductibilité exacte
+  inputsDetail String @map("inputs_detail") @db.Text
+  
+  /// Version algorithme utilisée
+  algorithmVersion String @map("algorithm_version") @db.VarChar(50)
+  
+  /// Hash du résultat (SHA-256)
+  /// Permet vérification intégrité
+  outputHash String @map("output_hash") @db.VarChar(64)
+  
+  /// Résultat détaillé (JSON)
+  outputDetail String @map("output_detail") @db.Text
+  
+  /// Temps d'exécution (ms)
+  executionTime Int @map("execution_time")
+  
+  /// Date/heure exécution (UTC)
+  executedAt DateTime @default(now()) @map("executed_at")
+  
+  /// Environnement exécution (JSON)
+  /// {os, node_version, dependencies}
+  environment String? @db.Text
+  
+  /// Reproductible (déterministe)
+  isReproducible Boolean @default(true) @map("is_reproducible")
+  
+  /// Relations
+  explanations ExplanationResult[]
+  
+  @@index([frameworkId])
+  @@index([inputsHash])
+  @@index([executedAt])
+  @@map("computation_traces")
+}
+
+/// Revue humaine des résultats IA
+/// Validation obligatoire avant publication
+/// 
+/// Workflow:
+/// 1. IA génère explication
+/// 2. Expert humain revoit
+/// 3. Décision: APPROVED / REJECTED / NEEDS_REVISION
+/// 4. Si APPROVED → Publication
+model HumanReview {
+  /// Identifiant unique
+  id String @id @default(uuid())
+  
+  /// Framework IA revu
+  frameworkId String? @map("framework_id")
+  framework   AIResearchFramework? @relation(fields: [frameworkId], references: [id], onDelete: SetNull)
+  
+  /// Explication revue (optionnel)
+  explanationId String? @map("explanation_id")
+  explanation   ExplanationResult? @relation(fields: [explanationId], references: [id], onDelete: SetNull)
+  
+  /// Nom/ID du reviewer
+  /// Expert scientifique qualifié
+  reviewer String @db.VarChar(255)
+  
+  /// Qualifications reviewer
+  /// Ex: "Dr. en Économie, 15 ans exp. analyse prix"
+  reviewerCredentials String? @map("reviewer_credentials") @db.Text
+  
+  /// Date de la revue
+  reviewedAt DateTime @default(now()) @map("reviewed_at")
+  
+  /// Décision
+  decision ReviewDecision
+  
+  /// Commentaires détaillés
+  /// Justification de la décision
+  comments String @db.Text
+  
+  /// Modifications suggérées (si NEEDS_REVISION)
+  suggestedChanges String? @map("suggested_changes") @db.Text
+  
+  /// Score qualité (0-10)
+  /// Évaluation globale par reviewer
+  qualityScore Int? @map("quality_score") @db.SmallInt
+  
+  /// Critères évaluation (JSON)
+  /// {accuracy, clarity, completeness, methodology}
+  evaluationCriteria String? @map("evaluation_criteria") @db.Text
+  
+  @@index([frameworkId])
+  @@index([explanationId])
+  @@index([reviewer])
+  @@index([decision])
+  @@index([reviewedAt])
+  @@map("human_reviews")
+}
+
+// ============================================================
+// ENUMS SPRINT 14
+// ============================================================
+
+/// Méthode d'explication IA
+enum ExplanationMethod {
+  DECOMPOSITION_FACTORS  // Décomposition en facteurs contributifs
+  CORRELATION_ANALYSIS   // Analyse de corrélation documentée
+  CONTRIBUTION_WEIGHTS   // Contribution pondérée par facteur
+  TEMPORAL_COMPARISON    // Comparaison temporelle contrôlée
+  TERRITORIAL_EFFECTS    // Effets territoriaux persistants
+  REGRESSION_BASED       // Basée sur régression linéaire/non-linéaire
+  ENSEMBLE_METHODS       // Combinaison plusieurs méthodes
+}
+
+/// Décision revue humaine
+enum ReviewDecision {
+  APPROVED         // Approuvé pour publication
+  REJECTED         // Rejeté (méthodologie incorrecte)
+  NEEDS_REVISION   // Nécessite modifications
+  PENDING          // En attente de revue
+}
+
+// ============================================================
+// CITIZEN CHAT BACKEND (Backend-only, no frontend)
+// ============================================================
+// Private citizen discussion groups for cost of living topics
+// - JWT authentication required
+// - Verified users only
+// - AI-assisted moderation (non-blocking, passive)
+// - RGPD compliant (data minimization, audit trail)
+// - Territory-based groups (DOM, COM, ROM, RUP)
+// 
+// Frontend implementation planned separately
+// WebSocket client implementation planned separately
+// ============================================================
+
+/// Verified user profile for chat system
+/// Extended profile for chat participation
+/// 
+/// RGPD: Art. 5 (data minimization), Art. 6 (lawful basis)
+/// Only verified users can participate in discussions
+model ChatUserProfile {
+  /// Identifiant unique
+  id String @id @default(uuid())
+  
+  /// Lien vers User principal (JWT auth)
+  /// CASCADE: suppression profil si user supprimé
+  userId String @unique @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  /// Pseudonyme public affiché dans les groupes
+  /// RGPD: Pseudonymisation (Art. 4.5)
+  displayName String @map("display_name") @db.VarChar(100)
+  
+  /// URL avatar (photo de profil - facultative)
+  /// Stockage S3-compatible recommandé
+  /// RGPD: Consentement explicite requis pour photo
+  avatarUrl String? @map("avatar_url") @db.VarChar(500)
+  
+  /// Code territoire (COG INSEE)
+  /// Ex: "971" (Guadeloupe), "972" (Martinique), "973" (Guyane)
+  /// Permet groupes territoriaux et affichage drapeau
+  territoryCode String @map("territory_code") @db.VarChar(10)
+  
+  /// Région/ville (optionnel, pour contexte)
+  /// Ex: "Pointe-à-Pitre", "Fort-de-France"
+  location String? @db.VarChar(100)
+  
+  /// Statut utilisateur chat
+  /// VERIFIED: Peut participer
+  /// MUTED: Temporairement silencieux (sanction modération)
+  /// SUSPENDED: Suspendu définitivement
+  status ChatUserStatus @default(VERIFIED)
+  
+  /// Date fin mute (si MUTED)
+  /// NULL si statut != MUTED
+  mutedUntil DateTime? @map("muted_until")
+  
+  /// Biographie courte (optionnelle)
+  /// Max 500 chars, modérable
+  bio String? @db.VarChar(500)
+  
+  /// Préférences notifications (JSON)
+  /// {mention: true, newMessage: false, dailyDigest: true}
+  notificationPreferences String? @map("notification_preferences") @db.Text
+  
+  /// Date création profil
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  /// Date dernière mise à jour
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  /// Messages envoyés
+  messages ChatMessage[]
+  
+  /// Appartenance groupes
+  memberships ChatGroupMembership[]
+  
+  /// Actions de modération reçues
+  moderationActions ChatModerationAction[]
+  
+  @@index([userId])
+  @@index([territoryCode])
+  @@index([status])
+  @@index([displayName])
+  @@map("chat_user_profiles")
+}
+
+/// Discussion group (groupe de parole)
+/// Groupes privés organisés par territoire ou thématique
+/// 
+/// Types:
+/// - Territoriaux: Par DOM/COM/ROM (code INSEE)
+/// - Thématiques: Alimentation, carburant, logement
+/// - Situations: Familles, étudiants, retraités
+model ChatGroup {
+  /// Identifiant unique
+  id String @id @default(uuid())
+  
+  /// Nom du groupe
+  /// Ex: "Vie chère Guadeloupe", "Carburant Martinique"
+  name String @db.VarChar(150)
+  
+  /// Description groupe
+  description String @db.Text
+  
+  /// Type de groupe
+  groupType ChatGroupType @map("group_type")
+  
+  /// Code territoire associé (si type TERRITORIAL)
+  /// Code INSEE: "971", "972", "973", etc.
+  /// NULL si type THEMATIC ou SITUATION
+  territoryCode String? @map("territory_code") @db.VarChar(10)
+  
+  /// Thématique (si type THEMATIC)
+  /// Ex: FOOD, FUEL, HOUSING
+  theme ChatTheme?
+  
+  /// Icône groupe (emoji ou URL)
+  /// Ex: "🛒" pour alimentation, "⛽" pour carburant
+  icon String? @db.VarChar(100)
+  
+  /// Métadonnées groupe (JSON)
+  /// {flagCode: "GP", color: "#003580", rules: [...]}
+  metadata String? @db.Text
+  
+  /// Règles du groupe
+  /// Texte affiché aux nouveaux membres
+  rules String @db.Text
+  
+  /// Groupe actif ou archivé
+  isActive Boolean @default(true) @map("is_active")
+  
+  /// Nombre maximum de membres (optionnel)
+  /// NULL = illimité
+  maxMembers Int? @map("max_members") @db.Integer
+  
+  /// Date création groupe
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  /// Date dernière activité (dernier message)
+  lastActivityAt DateTime? @map("last_activity_at")
+  
+  /// Messages du groupe
+  messages ChatMessage[]
+  
+  /// Membres du groupe
+  memberships ChatGroupMembership[]
+  
+  @@index([groupType])
+  @@index([territoryCode])
+  @@index([theme])
+  @@index([isActive])
+  @@index([lastActivityAt])
+  @@map("chat_groups")
+}
+
+/// Membership in discussion group
+/// Association user ↔ group avec métadonnées
+model ChatGroupMembership {
+  /// Identifiant unique
+  id String @id @default(uuid())
+  
+  /// Profil utilisateur
+  userProfileId String @map("user_profile_id")
+  userProfile   ChatUserProfile @relation(fields: [userProfileId], references: [id], onDelete: Cascade)
+  
+  /// Groupe
+  groupId String @map("group_id")
+  group   ChatGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  
+  /// Rôle dans le groupe
+  /// MEMBER: Membre standard
+  /// MODERATOR: Modérateur groupe (peut signaler)
+  /// ADMIN: Administrateur groupe (peut gérer membres)
+  role ChatGroupRole @default(MEMBER)
+  
+  /// Date adhésion
+  joinedAt DateTime @default(now()) @map("joined_at")
+  
+  /// Date dernière lecture (pour notifications)
+  /// Permet calcul messages non lus
+  lastReadAt DateTime? @map("last_read_at")
+  
+  /// Notifications activées pour ce groupe
+  notificationsEnabled Boolean @default(true) @map("notifications_enabled")
+  
+  @@unique([userProfileId, groupId])
+  @@index([userProfileId])
+  @@index([groupId])
+  @@index([role])
+  @@map("chat_group_memberships")
+}
+
+/// Chat message
+/// Messages échangés dans groupes de discussion
+/// 
+/// RGPD: Art. 30 (registre), Art. 17 (droit à l'effacement)
+/// Modération: IA passive + signalement humain
+model ChatMessage {
+  /// Identifiant unique
+  id String @id @default(uuid())
+  
+  /// Auteur du message
+  authorId String @map("author_id")
+  author   ChatUserProfile @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  
+  /// Groupe de discussion
+  groupId String @map("group_id")
+  group   ChatGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  
+  /// Contenu texte du message
+  /// Max 2000 caractères recommandé
+  content String @db.Text
+  
+  /// Type de message
+  messageType ChatMessageType @default(TEXT) @map("message_type")
+  
+  /// URL pièce jointe (optionnel)
+  /// Photo, document (pas implémenté initialement)
+  /// Stockage S3-compatible recommandé
+  attachmentUrl String? @map("attachment_url") @db.VarChar(500)
+  
+  /// Métadonnées pièce jointe (JSON)
+  /// {fileName: "...", mimeType: "...", size: 123456}
+  attachmentMetadata String? @map("attachment_metadata") @db.Text
+  
+  /// Message en réponse à (threading)
+  /// NULL si message racine
+  replyToId String? @map("reply_to_id")
+  replyTo   ChatMessage? @relation("MessageReplies", fields: [replyToId], references: [id], onDelete: SetNull)
+  
+  /// Réponses à ce message
+  replies ChatMessage[] @relation("MessageReplies")
+  
+  /// Statut modération IA
+  moderationStatus ChatModerationStatus @default(PENDING) @map("moderation_status")
+  
+  /// Score toxicité IA (0.0 - 1.0)
+  /// Détection automatique propos haineux/agressifs
+  /// NULL si pas encore analysé
+  toxicityScore Float? @map("toxicity_score") @db.Real
+  
+  /// Flags modération IA (JSON array)
+  /// ["profanity", "aggression", "spam"]
+  /// NULL si aucun flag
+  moderationFlags String? @map("moderation_flags") @db.Text
+  
+  /// Message édité
+  isEdited Boolean @default(false) @map("is_edited")
+  
+  /// Date dernière édition
+  editedAt DateTime? @map("edited_at")
+  
+  /// Message supprimé par auteur
+  /// Soft delete: conservé pour audit mais masqué
+  isDeleted Boolean @default(false) @map("is_deleted")
+  
+  /// Date suppression
+  deletedAt DateTime? @map("deleted_at")
+  
+  /// Date création (horodatage)
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  /// Actions modération sur ce message
+  moderationActions ChatModerationAction[]
+  
+  @@index([authorId])
+  @@index([groupId])
+  @@index([replyToId])
+  @@index([moderationStatus])
+  @@index([isDeleted])
+  @@index([createdAt])
+  @@map("chat_messages")
+}
+
+/// Moderation action log
+/// Journal actions modération (IA + humaine)
+/// 
+/// RGPD: Art. 30 (registre activités de traitement)
+/// Traçabilité complète pour transparence et contestation
+model ChatModerationAction {
+  /// Identifiant unique
+  id String @id @default(uuid())
+  
+  /// Message concerné
+  messageId String @map("message_id")
+  message   ChatMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  
+  /// Utilisateur ciblé (auteur message ou profil)
+  targetUserId String @map("target_user_id")
+  targetUser   ChatUserProfile @relation(fields: [targetUserId], references: [id], onDelete: Cascade)
+  
+  /// Type d'action modération
+  actionType ChatModerationType @map("action_type")
+  
+  /// Source action
+  /// AI: Détection automatique IA
+  /// USER_REPORT: Signalement utilisateur
+  /// MODERATOR: Action modérateur humain
+  /// ADMIN: Action administrateur
+  source ChatModerationSource
+  
+  /// ID modérateur humain (si source = MODERATOR/ADMIN)
+  /// Lien vers User.id (compte admin)
+  moderatorId String? @map("moderator_id")
+  
+  /// Raison détaillée
+  /// Justification action pour transparence
+  reason String @db.Text
+  
+  /// Durée sanction (minutes)
+  /// Pour MUTE: durée mute
+  /// NULL pour autres actions
+  durationMinutes Int? @map("duration_minutes") @db.Integer
+  
+  /// Action révoquée/annulée
+  isRevoked Boolean @default(false) @map("is_revoked")
+  
+  /// Date révocation
+  revokedAt DateTime? @map("revoked_at")
+  
+  /// Raison révocation
+  revocationReason String? @map("revocation_reason") @db.Text
+  
+  /// Date action
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  @@index([messageId])
+  @@index([targetUserId])
+  @@index([actionType])
+  @@index([source])
+  @@index([moderatorId])
+  @@index([createdAt])
+  @@map("chat_moderation_actions")
+}
+
+/// AI moderation model metadata
+/// Métadonnées modèle IA modération
+/// Traçabilité versions modèle pour reproductibilité
+model ChatModerationModel {
+  /// Identifiant unique
+  id String @id @default(uuid())
+  
+  /// Nom modèle
+  /// Ex: "toxicity-detector-v1", "hate-speech-classifier-v2"
+  name String @db.VarChar(100)
+  
+  /// Version modèle
+  /// Semantic versioning: "1.0.0", "2.1.3"
+  version String @db.VarChar(20)
+  
+  /// Type modèle
+  modelType ChatModerationModelType @map("model_type")
+  
+  /// Provider/source
+  /// Ex: "OpenAI Moderation API", "Hugging Face transformers", "Internal ML"
+  provider String @db.VarChar(100)
+  
+  /// Configuration modèle (JSON)
+  /// {thresholds: {toxicity: 0.7, spam: 0.8}, languages: ["fr"]}
+  config String? @db.Text
+  
+  /// Statistiques performance (JSON)
+  /// {accuracy: 0.92, precision: 0.89, recall: 0.85, f1: 0.87}
+  performanceMetrics String? @map("performance_metrics") @db.Text
+  
+  /// Modèle actif (utilisé en production)
+  isActive Boolean @default(false) @map("is_active")
+  
+  /// Date déploiement
+  deployedAt DateTime? @map("deployed_at")
+  
+  /// Date création
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  @@index([name])
+  @@index([version])
+  @@index([isActive])
+  @@map("chat_moderation_models")
+}
+
+// ============================================================
+// CHAT ENUMS
+// ============================================================
+
+/// Statut utilisateur chat
+enum ChatUserStatus {
+  VERIFIED   // Vérifié, peut participer
+  MUTED      // Temporairement silencieux (sanction)
+  SUSPENDED  // Suspendu définitivement
+}
+
+/// Type de groupe discussion
+enum ChatGroupType {
+  TERRITORIAL  // Par territoire (DOM/COM/ROM)
+  THEMATIC     // Par thématique (alimentation, carburant, etc.)
+  SITUATION    // Par situation (familles, étudiants, retraités)
+}
+
+/// Thématique discussion
+enum ChatTheme {
+  FOOD         // Alimentation
+  FUEL         // Carburant
+  HOUSING      // Logement
+  TRANSPORT    // Transport
+  HEALTH       // Santé
+  EDUCATION    // Éducation
+  UTILITIES    // Services publics (eau, électricité)
+  GENERAL      // Général vie chère
+}
+
+/// Rôle dans groupe
+enum ChatGroupRole {
+  MEMBER      // Membre standard
+  MODERATOR   // Modérateur groupe
+  ADMIN       // Administrateur groupe
+}
+
+/// Type de message
+enum ChatMessageType {
+  TEXT        // Texte uniquement
+  IMAGE       // Message avec image
+  DOCUMENT    // Message avec document
+  SYSTEM      // Message système (join/leave/etc.)
+}
+
+/// Statut modération message
+enum ChatModerationStatus {
+  PENDING      // En attente analyse IA
+  APPROVED     // Approuvé (pas de problème détecté)
+  FLAGGED      // Signalé (détection automatique)
+  UNDER_REVIEW // En revue humaine
+  REMOVED      // Supprimé par modération
+}
+
+/// Type action modération
+enum ChatModerationType {
+  WARNING      // Avertissement
+  MUTE         // Mute temporaire
+  KICK         // Expulsion groupe
+  BAN          // Bannissement plateforme
+  MESSAGE_HIDE // Masquage message
+  MESSAGE_DELETE // Suppression message
+}
+
+/// Source action modération
+enum ChatModerationSource {
+  AI            // Détection automatique IA
+  USER_REPORT   // Signalement utilisateur
+  MODERATOR     // Action modérateur groupe
+  ADMIN         // Action administrateur plateforme
+}
+
+/// Type modèle modération IA
+enum ChatModerationModelType {
+  TOXICITY_DETECTION   // Détection toxicité
+  HATE_SPEECH         // Détection discours haineux
+  SPAM_DETECTION      // Détection spam
+  PROFANITY_FILTER    // Filtre grossièretés
+  SENTIMENT_ANALYSIS  // Analyse sentiment
+}

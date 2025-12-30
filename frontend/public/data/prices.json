@@ -1,0 +1,5 @@
+[
+  { "ean": "5449000000996", "name": "Coca-Cola 1.5L", "price": "2.15 €", "store": "Carrefour Abymes", "date": "2025-11-12" },
+  { "ean": "3228857000855", "name": "Lait UHT demi-écrémé 1L", "price": "1.10 €", "store": "Super U Basse-Terre", "date": "2025-11-12" },
+  { "ean": "3036810214034", "name": "Nutella 1kg", "price": "7.89 €", "store": "Leclerc Jarry", "date": "2025-11-12" }
+]

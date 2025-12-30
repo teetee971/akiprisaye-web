@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Planificateur Budget - A KI PRI SA YÉ</title>
+  <meta name="description" content="Gérez votre budget mensuel et optimisez vos dépenses." />
+  
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Planificateur Budget - A KI PRI SA YÉ" />
+  
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0f62fe" />
+  
+  <link rel="stylesheet" href="shared-nav.css" />
+  <link rel="stylesheet" href="cookie-consent.css" />
+  
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #0b0d17;
+      color: #ffffff;
+    }
+    
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+    
+    h1 {
+      color: #0f62fe;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    
+    .intro-text {
+      text-align: center;
+      color: #b8b8b8;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+    
+    .budget-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .budget-card {
+      background: #1a1d2e;
+      border-radius: 12px;
+      padding: 1.5rem;
+      border: 1px solid #2a2d3e;
+    }
+    
+    .budget-card h2 {
+      color: #0f62fe;
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    label {
+      display: block;
+      color: #b8b8b8;
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+    }
+    
+    input[type="number"],
+    input[type="text"],
+    select {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: #0f172a;
+      border: 1px solid #2a2d3e;
+      border-radius: 8px;
+      color: #ffffff;
+      font-size: 1rem;
+    }
+    
+    input:focus,
+    select:focus {
+      outline: none;
+      border-color: #0f62fe;
+    }
+    
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.95rem;
+      width: 100%;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #0f62fe, #0353e9);
+      color: #ffffff;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(15, 98, 254, 0.4);
+    }
+    
+    .budget-summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    
+    .summary-item {
+      text-align: center;
+      padding: 1rem;
+      background: rgba(15, 23, 42, 0.5);
+      border-radius: 8px;
+      border: 1px solid #2a2d3e;
+    }
+    
+    .summary-label {
+      color: #b8b8b8;
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .summary-value {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    
+    .summary-value.positive {
+      color: #10b981;
+    }
+    
+    .summary-value.negative {
+      color: #ef4444;
+    }
+    
+    .summary-value.neutral {
+      color: #0f62fe;
+    }
+    
+    .category-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .category-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      background: rgba(15, 23, 42, 0.3);
+      border-radius: 8px;
+      margin-bottom: 0.75rem;
+      border: 1px solid #2a2d3e;
+    }
+    
+    .category-name {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    
+    .category-icon {
+      font-size: 1.5rem;
+    }
+    
+    .category-amount {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #0f62fe;
+    }
+    
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: #0f172a;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #10b981, #059669);
+      transition: width 0.3s ease;
+    }
+    
+    .progress-fill.warning {
+      background: linear-gradient(90deg, #f59e0b, #d97706);
+    }
+    
+    .progress-fill.danger {
+      background: linear-gradient(90deg, #ef4444, #dc2626);
+    }
+    
+    .tips-section {
+      background: rgba(15, 98, 254, 0.05);
+      border: 1px solid rgba(15, 98, 254, 0.2);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-top: 2rem;
+    }
+    
+    .tips-section h3 {
+      color: #0f62fe;
+      margin-bottom: 1rem;
+    }
+    
+    .tip-item {
+      padding: 0.75rem;
+      margin: 0.5rem 0;
+      background: rgba(15, 23, 42, 0.3);
+      border-radius: 6px;
+      color: #b8b8b8;
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- Mobile Navigation Overlay -->
+  <div class="nav-overlay" id="nav-overlay"></div>
+  
+  <!-- Mobile Navigation -->
+  <nav class="mobile-nav" id="mobile-nav" role="navigation" aria-label="Navigation mobile">
+    <div class="mobile-nav-header">
+      <span class="mobile-nav-title">Menu</span>
+      <button class="close-nav" id="close-nav" aria-label="Fermer le menu">&times;</button>
+    </div>
+    <ul class="mobile-nav-list">
+      <li><a href="/"><span class="mobile-nav-icon">🏠</span>Accueil</a></li>
+      <li><a href="/comparateur.html"><span class="mobile-nav-icon">🔍</span>Comparateur</a></li>
+      <li><a href="/scanner.html"><span class="mobile-nav-icon">📷</span>Scanner</a></li>
+      <li><a href="/carte.html"><span class="mobile-nav-icon">🗺️</span>Carte</a></li>
+      <li><a href="/modules.html"><span class="mobile-nav-icon">🧩</span>Modules</a></li>
+      <li><a href="/ia-conseiller.html"><span class="mobile-nav-icon">🤖</span>IA Conseiller</a></li>
+      <li><a href="/historique.html"><span class="mobile-nav-icon">📊</span>Historique</a></li>
+      <li><a href="/mon-compte.html"><span class="mobile-nav-icon">👤</span>Mon Compte</a></li>
+      <li><a href="/faq.html"><span class="mobile-nav-icon">❓</span>FAQ</a></li>
+      <li><a href="/contact.html"><span class="mobile-nav-icon">📧</span>Contact</a></li>
+    </ul>
+  </nav>
+
+  <header class="shared-header">
+    <div class="shared-header-content">
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <button class="burger-menu" id="burger-menu" aria-label="Menu" aria-expanded="false">
+          <div class="burger-line"></div>
+          <div class="burger-line"></div>
+          <div class="burger-line"></div>
+        </button>
+        <a href="/" class="shared-logo" aria-label="A KI PRI SA YÉ - Accueil"><img src="/logo-akpsy.svg" alt="A KI PRI SA YÉ" /></a>
+      </div>
+      <nav class="header-nav" role="navigation" aria-label="Navigation principale">
+        <a href="/comparateur.html">Comparateur</a>
+        <a href="/scanner.html">Scanner</a>
+        <a href="/modules.html">Modules</a>
+        <a href="/mon-compte.html">Mon Compte</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <h1>💰 Planificateur de Budget</h1>
+    <div class="intro-text">
+      <p>Fixez votre budget mensuel et suivez vos dépenses par catégorie</p>
+      <p><small>Recevez des conseils personnalisés pour optimiser votre budget</small></p>
+    </div>
+    
+    <div class="budget-grid">
+      <!-- Budget Configuration -->
+      <div class="budget-card">
+        <h2>⚙️ Configuration</h2>
+        <form id="budget-form">
+          <div class="form-group">
+            <label for="monthly-income">Revenus mensuels (€)</label>
+            <input type="number" id="monthly-income" placeholder="2000" min="0" step="0.01" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="budget-goal">Objectif d'épargne mensuel (€)</label>
+            <input type="number" id="budget-goal" placeholder="200" min="0" step="0.01">
+          </div>
+          
+          <button type="submit" class="btn btn-primary">💾 Enregistrer</button>
+        </form>
+        
+        <div class="budget-summary" id="budget-summary">
+          <div class="summary-item">
+            <div class="summary-label">Revenus</div>
+            <div class="summary-value neutral" id="income-display">0€</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-label">Dépenses</div>
+            <div class="summary-value negative" id="expenses-display">0€</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-label">Reste</div>
+            <div class="summary-value positive" id="remaining-display">0€</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Expense Categories -->
+      <div class="budget-card">
+        <h2>📊 Catégories de dépenses</h2>
+        <ul class="category-list" id="category-list">
+          <!-- Categories will be loaded here -->
+        </ul>
+        <button class="btn btn-primary" id="add-category-btn" style="margin-top: 1rem;">➕ Ajouter une catégorie</button>
+      </div>
+    </div>
+    
+    <!-- Tips Section -->
+    <div class="tips-section">
+      <h3>💡 Conseils pour optimiser votre budget</h3>
+      <div id="tips-container">
+        <!-- Tips will be generated based on budget analysis -->
+      </div>
+    </div>
+  </main>
+  
+  <script type="module" src="shared-nav.js"></script>
+  <script type="module" src="/cookie-consent.js"></script>
+  
+  <script>
+    class BudgetPlanner {
+      constructor() {
+        this.storageKey = 'akiprisaye-budget';
+        this.defaultCategories = [
+          { id: 'food', name: 'Alimentation', icon: '🛒', budget: 0, spent: 0 },
+          { id: 'housing', name: 'Logement', icon: '🏠', budget: 0, spent: 0 },
+          { id: 'transport', name: 'Transport', icon: '🚗', budget: 0, spent: 0 },
+          { id: 'utilities', name: 'Énergie', icon: '⚡', budget: 0, spent: 0 },
+          { id: 'health', name: 'Santé', icon: '💊', budget: 0, spent: 0 },
+          { id: 'entertainment', name: 'Loisirs', icon: '🎬', budget: 0, spent: 0 }
+        ];
+        this.init();
+      }
+      
+      init() {
+        this.loadBudget();
+        this.attachEventListeners();
+        this.updateDisplay();
+        this.generateTips();
+      }
+      
+      loadBudget() {
+        try {
+          const data = localStorage.getItem(this.storageKey);
+          if (data) {
+            const parsed = JSON.parse(data);
+            this.income = parsed.income || 0;
+            this.savingsGoal = parsed.savingsGoal || 0;
+            this.categories = parsed.categories || this.defaultCategories;
+          } else {
+            this.income = 0;
+            this.savingsGoal = 0;
+            this.categories = this.defaultCategories;
+          }
+        } catch (e) {
+          console.error('Error loading budget:', e);
+          this.income = 0;
+          this.savingsGoal = 0;
+          this.categories = this.defaultCategories;
+        }
+      }
+      
+      saveBudget() {
+        try {
+          localStorage.setItem(this.storageKey, JSON.stringify({
+            income: this.income,
+            savingsGoal: this.savingsGoal,
+            categories: this.categories
+          }));
+        } catch (e) {
+          console.error('Error saving budget:', e);
+        }
+      }
+      
+      attachEventListeners() {
+        document.getElementById('budget-form')?.addEventListener('submit', (e) => {
+          e.preventDefault();
+          this.income = parseFloat(document.getElementById('monthly-income').value) || 0;
+          this.savingsGoal = parseFloat(document.getElementById('budget-goal').value) || 0;
+          this.saveBudget();
+          this.updateDisplay();
+          this.generateTips();
+          alert('✅ Budget enregistré avec succès !');
+        });
+      }
+      
+      updateDisplay() {
+        // Update form fields
+        document.getElementById('monthly-income').value = this.income || '';
+        document.getElementById('budget-goal').value = this.savingsGoal || '';
+        
+        // Calculate totals
+        const totalExpenses = this.categories.reduce((sum, cat) => sum + cat.spent, 0);
+        const remaining = this.income - totalExpenses;
+        
+        // Update summary
+        document.getElementById('income-display').textContent = this.income.toFixed(2) + '€';
+        document.getElementById('expenses-display').textContent = totalExpenses.toFixed(2) + '€';
+        document.getElementById('remaining-display').textContent = remaining.toFixed(2) + '€';
+        
+        const remainingEl = document.getElementById('remaining-display');
+        remainingEl.className = 'summary-value ' + (remaining >= 0 ? 'positive' : 'negative');
+        
+        // Update categories
+        this.displayCategories();
+      }
+      
+      displayCategories() {
+        const container = document.getElementById('category-list');
+        container.innerHTML = this.categories.map(cat => {
+          const percentage = cat.budget > 0 ? (cat.spent / cat.budget) * 100 : 0;
+          const progressClass = percentage > 100 ? 'danger' : percentage > 80 ? 'warning' : '';
+          
+          return `
+            <li class="category-item">
+              <div style="flex: 1;">
+                <div class="category-name">
+                  <span class="category-icon">${cat.icon}</span>
+                  <span>${cat.name}</span>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-fill ${progressClass}" style="width: ${Math.min(percentage, 100)}%"></div>
+                </div>
+                <small style="color: #b8b8b8; margin-top: 0.25rem; display: block;">
+                  ${cat.spent.toFixed(2)}€ / ${cat.budget.toFixed(2)}€
+                </small>
+              </div>
+            </li>
+          `;
+        }).join('');
+      }
+      
+      generateTips() {
+        const container = document.getElementById('tips-container');
+        const tips = [];
+        
+        const totalExpenses = this.categories.reduce((sum, cat) => sum + cat.spent, 0);
+        const remaining = this.income - totalExpenses;
+        
+        if (this.income === 0) {
+          tips.push('📝 Commencez par définir vos revenus mensuels pour obtenir des conseils personnalisés.');
+        } else {
+          if (remaining < 0) {
+            tips.push('⚠️ Attention : vos dépenses dépassent vos revenus. Identifiez les catégories où vous pouvez réduire vos dépenses.');
+          } else if (remaining < this.savingsGoal) {
+            tips.push('💰 Vous n\'atteignez pas votre objectif d\'épargne. Essayez de réduire certaines dépenses non essentielles.');
+          } else {
+            tips.push('✅ Excellent ! Vous respectez votre budget et atteignez votre objectif d\'épargne.');
+          }
+          
+          // Category-specific tips
+          const foodCat = this.categories.find(c => c.id === 'food');
+          if (foodCat && foodCat.spent > this.income * 0.3) {
+            tips.push('🛒 Vos dépenses alimentaires représentent plus de 30% de vos revenus. Utilisez notre comparateur pour trouver les meilleurs prix !');
+          }
+        }
+        
+        tips.push('💡 Astuce : Consultez régulièrement le <a href="/palmares-detailed.html" style="color: #0f62fe;">palmarès des enseignes</a> pour identifier les magasins les plus avantageux.');
+        
+        container.innerHTML = tips.map(tip => `<div class="tip-item">${tip}</div>`).join('');
+      }
+    }
+    
+    // Initialize budget planner
+    new BudgetPlanner();
+  </script>
+</body>
+</html>

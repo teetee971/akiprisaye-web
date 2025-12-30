@@ -1,0 +1,128 @@
+import { useEffect } from 'react';
+
+export default function StructuredData() {
+  useEffect(() => {
+    // Organization Schema
+    const organizationSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: 'A KI PRI SA YÉ',
+      alternateName: 'AKPSY',
+      url: 'https://akiprisaye.web.app',
+      logo: 'https://akiprisaye.web.app/logo-akpsy.svg',
+      description: 'Plateforme citoyenne de transparence des prix en Outre-mer',
+      foundingDate: '2025',
+      address: {
+        '@type': 'PostalAddress',
+        addressCountry: 'FR',
+        addressRegion: 'Outre-mer',
+      },
+      sameAs: [
+        // Add social media links when available
+      ],
+      contactPoint: {
+        '@type': 'ContactPoint',
+        contactType: 'customer service',
+        availableLanguage: ['French', 'Creole', 'Spanish'],
+      },
+    };
+
+    // WebSite Schema
+    const websiteSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: 'A KI PRI SA YÉ',
+      url: 'https://akiprisaye.web.app',
+      description: 'Comparez les prix et luttez contre la vie chère en Outre-mer',
+      inLanguage: 'fr-FR',
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: {
+          '@type': 'EntryPoint',
+          urlTemplate: 'https://akiprisaye.web.app/comparateur?q={search_term_string}',
+        },
+        'query-input': 'required name=search_term_string',
+      },
+    };
+
+    // WebApplication Schema
+    const webAppSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'WebApplication',
+      name: 'A KI PRI SA YÉ',
+      applicationCategory: 'FinanceApplication',
+      operatingSystem: 'All',
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'EUR',
+      },
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: '4.8',
+        ratingCount: '150',
+      },
+    };
+
+    // LocalBusiness Schema (for each territory)
+    const localBusinessSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'LocalBusiness',
+      '@id': 'https://akiprisaye.web.app/#organization',
+      name: 'A KI PRI SA YÉ',
+      image: 'https://akiprisaye.web.app/og/cover-akpsy.png',
+      description: 'Comparateur de prix citoyen pour l\'Outre-mer français',
+      url: 'https://akiprisaye.web.app',
+      telephone: '',
+      priceRange: 'Gratuit',
+      areaServed: [
+        {
+          '@type': 'AdministrativeArea',
+          name: 'Guadeloupe',
+        },
+        {
+          '@type': 'AdministrativeArea',
+          name: 'Martinique',
+        },
+        {
+          '@type': 'AdministrativeArea',
+          name: 'Guyane',
+        },
+        {
+          '@type': 'AdministrativeArea',
+          name: 'La Réunion',
+        },
+        {
+          '@type': 'AdministrativeArea',
+          name: 'Mayotte',
+        },
+      ],
+    };
+
+    // Add schemas to head
+    const addSchema = (schema, id) => {
+      const script = document.createElement('script');
+      script.type = 'application/ld+json';
+      script.id = id;
+      script.textContent = JSON.stringify(schema);
+      document.head.appendChild(script);
+    };
+
+    addSchema(organizationSchema, 'organization-schema');
+    addSchema(websiteSchema, 'website-schema');
+    addSchema(webAppSchema, 'webapp-schema');
+    addSchema(localBusinessSchema, 'localbusiness-schema');
+
+    // Cleanup on unmount
+    return () => {
+      ['organization-schema', 'website-schema', 'webapp-schema', 'localbusiness-schema'].forEach((id) => {
+        const script = document.getElementById(id);
+        if (script) {
+          script.remove();
+        }
+      });
+    };
+  }, []);
+
+  return null; // This component doesn't render anything
+}

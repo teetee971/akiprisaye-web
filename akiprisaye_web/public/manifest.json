@@ -1,0 +1,8 @@
+{
+  "name": "A KI PRI SA YÉ",
+  "short_name": "Akipri",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#0f172a"
+}

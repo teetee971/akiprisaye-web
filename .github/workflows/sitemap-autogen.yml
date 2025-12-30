@@ -1,0 +1,30 @@
+name: 📡 Sitemap + Robots Generator
+
+on:
+  push:
+    branches: [ main ]
+  schedule:
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+
+jobs:
+  sitemap:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 📡 Generate sitemap
+        run: node scripts/generate-sitemap.mjs
+
+      - name: 💾 Commit files
+        run: |
+          git config user.name "A KI PRI SA YÉ Bot"
+          git config user.email "bot@saye"
+          git add sitemap.xml robots.txt
+          git commit -m "🌐 Auto-update sitemap + robots" || echo "Nothing to commit"
+
+      - name: 🚀 Push
+        run: git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

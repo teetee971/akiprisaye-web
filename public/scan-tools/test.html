@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Scan Tools — Test</title>
+  <link rel="stylesheet" href="/scan-tools/scan-tools.css" />
+  <style>
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; background:#0b1020; color:#fff; }
+    .wrap { max-width: 560px; margin: 0 auto; padding: 18px; }
+    .card { background: rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.10); border-radius: 16px; padding: 16px; }
+    label { display:block; margin: 12px 0 6px; color: rgba(255,255,255,.85); }
+    input, textarea, select { width:100%; padding: 12px; border-radius: 12px; border:1px solid rgba(255,255,255,.14); background: rgba(0,0,0,.25); color:#fff; }
+    textarea { min-height: 120px; }
+    .hint { font-size: 12px; color: rgba(255,255,255,.65); margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h2>Scan Tools v1.3.2 — Test mobile</h2>
+    <div class="card">
+      <label>Nom du produit</label>
+      <input name="productName" placeholder="Ex: Ma crème hydratante" />
+
+      <label>Catégorie</label>
+      <select name="category">
+        <option value="">—</option>
+        <option>Crème visage</option>
+        <option>Shampooing</option>
+        <option>Déodorant</option>
+      </select>
+
+      <label>Liste INCI</label>
+      <textarea name="inci" placeholder="Ex: AQUA, GLYCERIN, CETEARYL ALCOHOL..."></textarea>
+
+      <p class="hint">Les boutons scan s’injectent automatiquement au-dessus du champ INCI sur cette page de test.</p>
+    </div>
+  </div>
+
+  <script type="module" src="/scan-tools/scan-tools.js"></script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>A KI PRI SA YÉ – Comparez et luttez contre la vie chère</title>
+    <meta name="description" content="Comparez les prix, scannez vos produits et économisez en Guadeloupe, Martinique, Guyane et Réunion." />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" type="image/png" href="/assets/icon_512-3-9kYoTe.png" />
+    <meta name="theme-color" content="#00A86B" />
+  </head>
+
+  <body>
+    <div id="root"></div>
+
+    <script type="module" src="/src/main.tsx"></script>
+
+    <!-- ✅ Enregistrement du Service Worker (Smart Cache) -->
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker
+          .register("/service-worker.js")
+          .then((registration) => {
+            console.log("✅ Service Worker actif :", registration.scope);
+
+            // Détection nouvelle version
+            registration.onupdatefound = () => {
+              const newWorker = registration.installing;
+              newWorker.onstatechange = () => {
+                if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+                  const reloadBanner = document.createElement("div");
+                  reloadBanner.innerHTML = `
+                    <div style="
+                      position: fixed; bottom: 20px; left: 50%;
+                      transform: translateX(-50%);
+                      background: #00A86B; color: white; padding: 10px 16px;
+                      border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.3);
+                      font-family: system-ui; font-size: 14px;
+                      z-index: 9999; text-align: center;
+                    ">
+                      🔄 Nouvelle version disponible – <b>rechargez</b>
+                      <button id="reload-btn" style="
+                        background: white; color: #00A86B; border: none;
+                        margin-left: 10px; padding: 5px 10px;
+                        border-radius: 8px; cursor: pointer;
+                      ">Recharger</button>
+                    </div>
+                  `;
+                  document.body.appendChild(reloadBanner);
+                  document.getElementById("reload-btn").onclick = () => {
+                    newWorker.postMessage("SKIP_WAITING");
+                    window.location.reload();
+                  };
+                }
+              };
+            };
+          })
+          .catch((err) => console.error("⚠️ Erreur Service Worker :", err));
+      }
+    </script>
+  </body>
+</html>

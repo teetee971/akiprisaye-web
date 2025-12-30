@@ -1,0 +1,1 @@
+<template><div>Chat IA</div></template>

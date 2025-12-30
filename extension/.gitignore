@@ -1,0 +1,27 @@
+# Extension Build Artifacts
+build/
+dist/
+*.zip
+
+# Icons (generated)
+icons/*.png
+icons/*.jpg
+icons/*.webp
+!icons/.placeholder
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+.cache/

@@ -1,8 +1,61 @@
 {
-  "name": "akiprisaye-import",
+  "name": "aki-chat-ia-local",
   "version": "1.0.0",
-  "main": "autoImport.js",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext .js,.jsx",
+    "lint:fix": "eslint . --ext .js,.jsx --fix",
+    "format": "prettier --write \"**/*.{js,jsx,json,md,css,html}\"",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
   "dependencies": {
-    "node-cron": "^3.0.3"
+    "@openfoodfacts/openfoodfacts-nodejs": "^2.0.0-alpha.19",
+    "@tanstack/react-query": "^5.90.7",
+    "@zxing/browser": "^0.1.5",
+    "@zxing/library": "^0.21.3",
+    "chart.js": "^4.5.1",
+    "clsx": "^2.1.1",
+    "firebase": "^12.5.0",
+    "fuse.js": "^7.1.0",
+    "leaflet": "^1.9.4",
+    "leaflet.markercluster": "^1.5.3",
+    "lucide-react": "^0.553.0",
+    "react": "^18.3.1",
+    "react-chartjs-2": "^5.3.1",
+    "react-dom": "^18.3.1",
+    "react-leaflet": "^4.2.1",
+    "react-router-dom": "^7.6.3",
+    "recharts": "^3.5.0",
+    "tailwind-merge": "^3.4.0",
+    "tesseract.js": "^6.0.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.15.0",
+    "@tailwindcss/postcss": "^4.1.18",
+    "@testing-library/jest-dom": "^6.6.1",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "@vitejs/plugin-react": "^5.1.2",
+    "autoprefixer": "^10.4.23",
+    "eslint": "^9.15.0",
+    "eslint-plugin-react": "^7.37.2",
+    "jsdom": "^27.1.0",
+    "prettier": "^3.5.3",
+    "tailwindcss": "^4.1.18",
+    "terser": "^5.44.1",
+    "typescript": "^5.9.3",
+    "vite": "^7.2.2",
+    "vite-plugin-static-copy": "^3.1.4",
+    "vitest": "^4.0.8"
+  },
+  "engines": {
+    "node": ">=20.19.0"
   }
 }

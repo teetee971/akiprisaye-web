@@ -1,0 +1,73 @@
+{
+  "manifest_version": 3,
+  "name": "A KI PRI SA YÉ - Assistant Prix Citoyen",
+  "version": "1.0.0",
+  "description": "Assistant citoyen pour la transparence des prix - Outre-mer et France métropolitaine",
+  "author": "A KI PRI SA YÉ",
+  "homepage_url": "https://akiprisaye.web.app",
+  
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    },
+    "default_title": "A KI PRI SA YÉ"
+  },
+  
+  "background": {
+    "service_worker": "background/service-worker.js",
+    "type": "module"
+  },
+  
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.carrefour.fr/*",
+        "*://*.leclerc.com/*",
+        "*://*.auchan.fr/*",
+        "*://*.intermarche.com/*",
+        "*://*.lidl.fr/*",
+        "*://*.super-u.fr/*",
+        "*://*.monoprix.fr/*",
+        "*://*.casino.fr/*"
+      ],
+      "js": ["content/detector.js"],
+      "css": ["content/overlay.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  
+  "permissions": [
+    "storage",
+    "activeTab",
+    "alarms",
+    "notifications"
+  ],
+  
+  "host_permissions": [],
+  
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "popup/*",
+        "icons/*",
+        "shared/*"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
+}

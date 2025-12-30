@@ -1,0 +1,16 @@
+name: 🔍 Verify Stores JSON
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 🧪 Run JSON verification
+        run: node scripts/verify-stores.mjs

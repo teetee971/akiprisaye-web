@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" width="200" height="60">
+  <!-- Background -->
+  <rect width="200" height="60" rx="8" fill="#0f172a"/>
+  
+  <!-- Shopping cart icon -->
+  <g transform="translate(12, 15)">
+    <path d="M0 4 L6 4 L10 24 L28 24 L32 10 L8 10" 
+          stroke="#3b82f6" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="12" cy="28" r="2" fill="#3b82f6"/>
+    <circle cx="26" cy="28" r="2" fill="#3b82f6"/>
+    <!-- Price tag -->
+    <text x="18" y="16" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#60a5fa" text-anchor="middle">€</text>
+  </g>
+  
+  <!-- Text -->
+  <text x="50" y="25" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#ffffff">
+    A KI PRI SA YÉ
+  </text>
+  <text x="50" y="42" font-family="Arial, sans-serif" font-size="9" fill="#94a3b8">
+    Transparence des prix Outre-mer
+  </text>
+</svg>

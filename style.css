@@ -1,0 +1,64 @@
+/* Dark Pro CSS */
+
+body {
+  color: #ffffff;
+  background-color: #000000;
+}
+
+button {
+  padding: 12px 24px;
+  font-size: 16px;
+  background-color: #a8ffb0;
+  color: #000000;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #7fff8a;
+}
+
+.nav {
+  background-color: #0f1f1f;
+  padding: 10px;
+  border-bottom: 1px solid #444;
+}
+
+.nav ul {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  justify-content: center;
+  gap: 30px;
+}
+
+.nav a {
+  color: #a8ffb0;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.result {
+  background: #1e2f2f;
+  padding: 1rem;
+  border-radius: 10px;
+}
+
+.margin-top {
+  margin-top: 2rem;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.link {
+  color: #a8ffb0;
+  text-decoration: none;
+}
+
+.link:hover {
+  color: #ffffff;
+}

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "187272078809",
+    "project_id": "a-ki-pri-sa-ye",
+    "storage_bucket": "a-ki-pri-sa-ye.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:187272078809:android:a2841196fcd9735306e5c8",
+        "android_client_info": {
+          "package_name": "com.akiprisaye"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBfQGLocAqVPNyk2w2Jyi0Pbej-Lz8tSYU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

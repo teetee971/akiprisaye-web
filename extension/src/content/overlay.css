@@ -1,0 +1,499 @@
+/**
+ * Styles pour l'overlay A KI PRI SA YÉ
+ * Design: Dark/neutral avec effet liquid glass
+ * Ton: Institutionnel, sobre, sans emojis
+ */
+
+/* Notification de consentement */
+.akpsy-consent-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 400px;
+  max-width: calc(100vw - 40px);
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  padding: 24px;
+  z-index: 999999;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  color: #f1f5f9;
+  animation: akpsy-slide-in 0.3s ease-out;
+}
+
+@keyframes akpsy-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.akpsy-consent-content {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.akpsy-consent-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.akpsy-consent-logo {
+  width: 32px;
+  height: 32px;
+}
+
+.akpsy-consent-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.akpsy-consent-content p {
+  margin: 12px 0;
+  color: #cbd5e1;
+}
+
+.akpsy-consent-content ul {
+  margin: 12px 0;
+  padding-left: 20px;
+  color: #cbd5e1;
+}
+
+.akpsy-consent-content li {
+  margin: 6px 0;
+}
+
+.akpsy-consent-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.akpsy-consent-note {
+  margin-top: 16px;
+  font-size: 12px;
+  color: #94a3b8;
+  font-style: italic;
+}
+
+/* Bouton d'analyse */
+.akpsy-analyze-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(37, 99, 235, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: white;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 12px;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  z-index: 999998;
+  box-shadow: 0 10px 30px rgba(37, 99, 235, 0.3);
+  transition: all 0.2s ease;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.akpsy-analyze-button:hover {
+  background: rgba(59, 130, 246, 0.95);
+  transform: translateY(-2px);
+  box-shadow: 0 15px 40px rgba(37, 99, 235, 0.4);
+}
+
+.akpsy-analyze-button img {
+  width: 24px;
+  height: 24px;
+}
+
+/* Overlay principal */
+.akpsy-price-overlay {
+  position: fixed;
+  top: 0;
+  right: -450px;
+  width: 420px;
+  max-width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.98);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border-left: 1px solid rgba(148, 163, 184, 0.2);
+  box-shadow: -10px 0 60px rgba(0, 0, 0, 0.5);
+  z-index: 999999;
+  transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  color: #f1f5f9;
+  overflow-y: auto;
+}
+
+.akpsy-price-overlay.akpsy-overlay-visible {
+  right: 0;
+}
+
+.akpsy-overlay-header {
+  position: sticky;
+  top: 0;
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+}
+
+.akpsy-overlay-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.akpsy-overlay-title img {
+  width: 28px;
+  height: 28px;
+}
+
+.akpsy-overlay-title h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.akpsy-overlay-close {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 32px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.akpsy-overlay-close:hover {
+  background: rgba(148, 163, 184, 0.1);
+  color: #f1f5f9;
+}
+
+.akpsy-overlay-content {
+  padding: 20px;
+}
+
+/* Informations produit */
+.akpsy-product-info {
+  margin-bottom: 24px;
+}
+
+.akpsy-product-info h4 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #f1f5f9;
+  line-height: 1.4;
+}
+
+.akpsy-brand {
+  margin: 4px 0;
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+.akpsy-quantity {
+  margin: 4px 0;
+  color: #cbd5e1;
+  font-size: 13px;
+}
+
+/* Prix actuel */
+.akpsy-current-price {
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.akpsy-label {
+  font-size: 13px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.akpsy-price {
+  font-size: 28px;
+  font-weight: 700;
+  color: #3b82f6;
+}
+
+.akpsy-date {
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* Comparaison */
+.akpsy-comparison {
+  margin-bottom: 20px;
+}
+
+.akpsy-comparison h5 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #cbd5e1;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.akpsy-comparison-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.akpsy-comparison-item {
+  background: rgba(30, 41, 59, 0.4);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.akpsy-comparison-item:hover {
+  background: rgba(30, 41, 59, 0.6);
+  border-color: rgba(148, 163, 184, 0.2);
+}
+
+.akpsy-comparison-item.akpsy-best-price {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.akpsy-store-name {
+  font-size: 14px;
+  color: #e2e8f0;
+}
+
+.akpsy-badge {
+  background: rgba(16, 185, 129, 0.2);
+  color: #10b981;
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+.akpsy-average {
+  margin: 12px 0 4px 0;
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+.akpsy-source {
+  margin: 4px 0;
+  font-size: 11px;
+  color: #64748b;
+  font-style: italic;
+}
+
+/* Pas de données */
+.akpsy-no-data {
+  background: rgba(30, 41, 59, 0.4);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.akpsy-no-data p {
+  margin: 8px 0;
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+.akpsy-note {
+  font-size: 12px;
+  color: #64748b;
+  font-style: italic;
+}
+
+/* Historique */
+.akpsy-history {
+  background: rgba(30, 41, 59, 0.4);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.akpsy-history h5 {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #cbd5e1;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.akpsy-trend {
+  margin: 0;
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+/* Actions */
+.akpsy-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+/* Boutons */
+.akpsy-btn {
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  text-align: center;
+}
+
+.akpsy-btn-primary {
+  background: rgba(37, 99, 235, 0.9);
+  color: white;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.akpsy-btn-primary:hover {
+  background: rgba(59, 130, 246, 0.9);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.akpsy-btn-secondary {
+  background: rgba(30, 41, 59, 0.8);
+  color: #cbd5e1;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.akpsy-btn-secondary:hover {
+  background: rgba(51, 65, 85, 0.8);
+  color: #f1f5f9;
+  border-color: rgba(148, 163, 184, 0.3);
+}
+
+/* Notifications */
+.akpsy-error-notification,
+.akpsy-success-notification {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  color: white;
+  padding: 16px 24px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  z-index: 1000000;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 14px;
+  animation: akpsy-fade-in 0.3s ease-out;
+  max-width: 90vw;
+}
+
+.akpsy-error-notification {
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.akpsy-success-notification {
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+@keyframes akpsy-fade-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .akpsy-price-overlay {
+    width: 100vw;
+  }
+  
+  .akpsy-consent-notification {
+    width: calc(100vw - 40px);
+    right: 20px;
+  }
+  
+  .akpsy-analyze-button {
+    bottom: 10px;
+    right: 10px;
+    padding: 10px 16px;
+  }
+}
+
+/* Scrollbar personnalisée */
+.akpsy-price-overlay::-webkit-scrollbar {
+  width: 8px;
+}
+
+.akpsy-price-overlay::-webkit-scrollbar-track {
+  background: rgba(30, 41, 59, 0.3);
+}
+
+.akpsy-price-overlay::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.3);
+  border-radius: 4px;
+}
+
+.akpsy-price-overlay::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.5);
+}

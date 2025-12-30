@@ -1,0 +1,14 @@
+{
+  "name": "A KI PRI SA YÉ",
+  "short_name": "AKPSY",
+  "description": "Plateforme citoyenne de transparence des prix Outre-mer",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f172a",
+  "theme_color": "#2563eb",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
