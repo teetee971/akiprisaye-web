@@ -4,14 +4,15 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './styles/globals.css';
 import './styles/civic-glass.css';
 import './styles/glass.css';
-import Home from './pages/Home';
+// Removed static import of Home to avoid duplicate import and allow code-splitting
 import Layout from './components/Layout';
 import ErrorBoundary from './components/ErrorBoundary';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
 import NotFound from './pages/NotFound';
 
-// Lazy load other pages for better performance
+// Lazy load pages for better performance
+const Home = lazy(() => import('./pages/Home'));
 const ChatIALocal = lazy(() => import('./components/ChatIALocal'));
 const ScanOCR = lazy(() => import('./pages/ScanOCR'));
 const Comparateur = lazy(() => import('./pages/Comparateur'));
@@ -45,7 +46,6 @@ const CivicModules = lazy(() => import('./pages/CivicModules'));
 const EvaluationCosmetique = lazy(() => import('./pages/EvaluationCosmetique'));
 
 // New simplified pages for automatic generation
-const HomeSimple = lazy(() => import('./pages/Home.tsx'));
 const CompareSimple = lazy(() => import('./pages/Compare.tsx'));
 const NewsSimple = lazy(() => import('./pages/News.tsx'));
 const PricingSimple = lazy(() => import('./pages/Pricing.tsx'));
@@ -62,7 +62,7 @@ function LoadingFallback() {
   );
 }
 
-// Service Worker registration
+// Service Worker registration (uses service-worker.js at root)
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker
