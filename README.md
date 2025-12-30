@@ -4,7 +4,7 @@
 
 ## 🌍 Présentation
 
-**A KI PRI SA YÉ** est une plateforme web professionnelle dédiée à la lutte contre la vie chère, à la transparence des prix, et à la protection des consommateurs, couvrant l'ensemble des territoires français, y compris :
+**A KI PRI SA YÉ** est une plateforme web professionnelle dédiée à la lutte contre la vie chère, à la transparence des prix, et à la protection des consommateurs, couvrant l'ensemble des territoires.
 
 - **DOM** (Guadeloupe, Martinique, Guyane, La Réunion, Mayotte)
 - **ROM / COM** (Saint-Martin, Saint-Barthélemy, Polynésie française, Nouvelle-Calédonie, Wallis-et-Futuna, Saint-Pierre-et-Miquelon, Terres australes, etc.)
@@ -295,7 +295,7 @@ Nouveau composant `TerritorySelector` avec support complet des 12 territoires :
 
 Structure backend disponible dans `/backend` :
 
-**Routes API :**
+**Routes API**
 
 **Prices API**
 - `GET /api/prices` - Récupérer les prix par EAN et territoire
@@ -363,5 +363,12 @@ service cloud.firestore {
 }
 ```
 
-**Note importante :** Les règles ci-dessus protègent l'écriture directe dans Firestore. En production, utilisez Firebase Cloud Functions ou Admin SDK pour gérer les écritures de prix et la modération des tickets.
+---
 
+## Cycle v1.2.0 — Clôturé
+
+- Objet : correction règle SPA Cloudflare (infinite loop)
+- Impact applicatif : aucun
+- Production : v1.1.0 inchangée
+- Statut : validé en preview Cloudflare Pages
+---
