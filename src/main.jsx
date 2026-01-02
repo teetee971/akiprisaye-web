@@ -21,6 +21,7 @@ const Alertes = lazy(() => import('./pages/Alertes'));
 const APropos = lazy(() => import('./pages/APropos'));
 const Methodologie = lazy(() => import('./pages/Methodologie'));
 const MentionsLegales = lazy(() => import('./pages/MentionsLegales'));
+const PolitiqueConfidentialite = lazy(() => import('./pages/PolitiqueConfidentialite'));
 const MonCompte = lazy(() => import('./pages/MonCompte'));
 const Pricing = lazy(() => import('./pages/Pricing'));
 const PricingDetailed = lazy(() => import('./pages/PricingDetailed'));
@@ -104,6 +105,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                   <Route path='a-propos' element={<APropos />} />
                   <Route path='methodologie' element={<Methodologie />} />
                   <Route path='mentions-legales' element={<MentionsLegales />} />
+                  <Route path='politique-confidentialite' element={<PolitiqueConfidentialite />} />
                   <Route path='mon-compte' element={<MonCompte />} />
                   <Route path='pricing' element={<Pricing />} />
                   <Route path='pricing-detailed' element={<PricingDetailed />} />

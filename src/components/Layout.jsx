@@ -85,9 +85,15 @@ export default function Layout() {
       <footer className="border-t border-slate-800 bg-slate-900/90 text-center py-6 text-sm text-slate-400">
         © {new Date().getFullYear()} A KI PRI SA YÉ — Transparence des prix Outre-mer.
         <br />
-        <Link to="/mentions-legales" className="hover:text-blue-400">
-          Mentions légales
-        </Link>
+        <div className="flex justify-center gap-4 mt-2 flex-wrap">
+          <Link to="/mentions-legales" className="hover:text-blue-400">
+            Mentions légales
+          </Link>
+          <span>•</span>
+          <Link to="/politique-confidentialite" className="hover:text-blue-400">
+            Politique de confidentialité
+          </Link>
+        </div>
       </footer>
     </div>
   );
