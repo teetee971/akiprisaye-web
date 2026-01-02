@@ -87,11 +87,11 @@ export default function Layout() {
         <br />
         <div className="flex justify-center gap-4 mt-2 flex-wrap">
           <Link to="/mentions-legales" className="hover:text-blue-400">
-            Mentions légales
+            Mentions Légales
           </Link>
           <span>•</span>
           <Link to="/politique-confidentialite" className="hover:text-blue-400">
-            Politique de confidentialité
+            Politique de Confidentialité
           </Link>
         </div>
       </footer>
