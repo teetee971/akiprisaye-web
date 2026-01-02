@@ -43,14 +43,15 @@ export default function ScanOCR() {
         setOcrResult(result);
         setScanState(result.rawText && result.rawText.trim() ? 'success' : 'no_result');
       } else {
+        const isError = Boolean(result.error);
         console.info('[SCAN]', {
-          step: 'ocr_no_result',
+          step: isError ? 'ocr_error' : 'ocr_no_result',
           error: result.error,
           durationMs
         });
         
         setError(result.error || 'Erreur lors de l\'extraction du texte');
-        setScanState('no_result');
+        setScanState(isError ? 'error' : 'no_result');
       }
     } catch (err) {
       const durationMs = Date.now() - startTime;
@@ -192,7 +193,7 @@ export default function ScanOCR() {
           )}
 
           {/* Error State */}
-          {(scanState === 'error' || (scanState === 'no_result' && error)) && (
+          {scanState === 'error' && error && (
             <div className="space-y-4">
               <div className="bg-red-900/20 border border-red-700 rounded-lg p-6 text-center">
                 <svg className="w-12 h-12 mx-auto mb-3 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -230,7 +231,7 @@ export default function ScanOCR() {
           )}
 
           {/* Success State - Show Results */}
-          {(scanState === 'success' || scanState === 'no_result') && ocrResult && (
+          {scanState === 'success' && ocrResult && (
             <div className="space-y-4">
               <OCRResultView 
                 result={ocrResult} 
