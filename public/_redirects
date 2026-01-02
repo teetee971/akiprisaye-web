@@ -1,2 +1,2 @@
-/assets/*  /assets/:splat  200
-/*         /index.html     200
+# Removed automatic SPA redirect to avoid infinite loop on Cloudflare Pages
+# If you need a SPA fallback, configure your Pages project or a single specific redirect rule instead of a catch-all.
