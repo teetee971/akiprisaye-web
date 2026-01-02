@@ -88,7 +88,7 @@ export function handleError(error: unknown, context?: string): UserFriendlyError
 
   // HTTP errors (if we receive response objects)
   if (typeof error === 'object' && error !== null && 'status' in error) {
-    const status = (error as any).status;
+    const status = (error as { status: number }).status;
     
     if (status === 404) {
       userError = {
@@ -210,17 +210,4 @@ export function showErrorToUser(error: UserFriendlyError) {
   // TODO: Replace with toast notification library
   const icon = error.type === 'error' ? '❌' : error.type === 'warning' ? '⚠️' : 'ℹ️';
   alert(`${icon} ${error.title}\n\n${error.message}`);
-}
-
-/**
- * Validate that we never expose technical details
- */
-export function sanitizeErrorForDisplay(error: unknown): string {
-  if (error instanceof Error) {
-    // Never return stack traces
-    // Never return technical error codes
-    // Only return generic message
-    return 'Une erreur est survenue';
-  }
-  return 'Une erreur est survenue';
 }

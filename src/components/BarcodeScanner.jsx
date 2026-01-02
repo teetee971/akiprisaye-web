@@ -73,7 +73,7 @@ export default function BarcodeScanner({ onScan, onClose }) {
       });
 
     } catch (err) {
-      const userError = handleScanError(err);
+      handleScanError(err);
       setHasPermission(false);
       setScanState('failed');
       
@@ -82,6 +82,7 @@ export default function BarcodeScanner({ onScan, onClose }) {
       } else if (err.name === 'NotFoundError') {
         setError(SCAN_MESSAGES.permission.notFound.description);
       } else {
+        const userError = handleScanError(err);
         setError(userError.message);
       }
     }
@@ -136,7 +137,7 @@ export default function BarcodeScanner({ onScan, onClose }) {
       setScanState('success');
       onScan(code);
     } catch (err) {
-      const userError = handleScanError(err);
+      handleScanError(err);
       setError(SCAN_MESSAGES.result.failed.description);
       setScanState('failed');
     }

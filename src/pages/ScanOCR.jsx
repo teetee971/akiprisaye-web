@@ -192,7 +192,7 @@ export default function ScanOCR() {
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <div className="bg-slate-800/50 rounded-lg p-3">
                     <p className="text-gray-400">{OCR_MESSAGES.metadata.confidence}</p>
-                    <p className="text-white font-semibold">{metadata.confidence.toFixed(0)}%</p>
+                    <p className="text-white font-semibold">{Number(metadata?.confidence ?? 0).toFixed(0)}%</p>
                   </div>
                   <div className="bg-slate-800/50 rounded-lg p-3">
                     <p className="text-gray-400">{OCR_MESSAGES.metadata.processingTime}</p>

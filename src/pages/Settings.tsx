@@ -40,6 +40,9 @@ export default function Settings() {
         setCameraPermission('unavailable');
       }
     } catch (error) {
+      if (import.meta.env.DEV) {
+        console.error('Failed to check camera permission:', error);
+      }
       setCameraPermission('unavailable');
     }
   }
@@ -48,7 +51,7 @@ export default function Settings() {
     const data = {
       export_date: new Date().toISOString(),
       user_email: user?.email || 'Non connecté',
-      note: 'Export des données personnelles A KI PRI SA YÉ',
+      note: 'Export des données personnelles de l\'utilisateur',
       permissions: {
         camera: cameraPermission
       }
@@ -74,8 +77,14 @@ export default function Settings() {
       sessionStorage.clear();
       
       // Clear cookies (if any)
-      document.cookie.split(";").forEach((c) => {
-        document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+      const cookies = document.cookie ? document.cookie.split(";") : [];
+      const expires = "Thu, 01 Jan 1970 00:00:00 GMT";
+      cookies.forEach((cookie) => {
+        const eqPos = cookie.indexOf("=");
+        const name = (eqPos > -1 ? cookie.substr(0, eqPos) : cookie).trim();
+        // Try deleting with different path combinations
+        document.cookie = name + "=; expires=" + expires + "; path=/";
+        document.cookie = name + "=; expires=" + expires + "; path=/; domain=" + window.location.hostname;
       });
       
       alert('Toutes les données locales ont été supprimées. La page va se recharger.');
