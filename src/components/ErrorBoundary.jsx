@@ -38,10 +38,11 @@ class ErrorBoundary extends Component {
               Une erreur est survenue
             </h1>
             <p className="text-slate-300 mb-6">
-              Nous sommes désolés, quelque chose s'est mal passé. Notre équipe a été notifiée.
+              Une erreur temporaire est survenue. Le service reste accessible.
             </p>
             
-            {process.env.NODE_ENV === 'development' && this.state.error && (
+            {/* Only show technical details in development */}
+            {import.meta.env.DEV && this.state.error && (
               <details className="mb-6 text-left">
                 <summary className="cursor-pointer text-red-400 font-semibold mb-2">
                   Détails de l'erreur (développement uniquement)
@@ -57,6 +58,15 @@ class ErrorBoundary extends Component {
                   )}
                 </div>
               </details>
+            )}
+            
+            {/* Production - No technical details exposed */}
+            {!import.meta.env.DEV && (
+              <div className="bg-blue-900/20 border border-blue-700/30 rounded-lg p-4 mb-6">
+                <p className="text-blue-200 text-sm">
+                  ℹ️ Si le problème persiste, veuillez nous contacter via la page contact.
+                </p>
+              </div>
             )}
 
             <div className="flex gap-4 justify-center">

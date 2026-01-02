@@ -45,6 +45,9 @@ const ListeCourses = lazy(() => import('./pages/ListeCourses'));
 const CivicModules = lazy(() => import('./pages/CivicModules'));
 const EvaluationCosmetique = lazy(() => import('./pages/EvaluationCosmetique'));
 
+// Settings page - Ticket 4
+const Settings = lazy(() => import('./pages/Settings'));
+
 // New simplified pages for automatic generation
 const HomeSimple = lazy(() => import('./pages/Home.tsx'));
 const CompareSimple = lazy(() => import('./pages/Compare.tsx'));
@@ -105,6 +108,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                   <Route path='methodologie' element={<Methodologie />} />
                   <Route path='mentions-legales' element={<MentionsLegales />} />
                   <Route path='mon-compte' element={<MonCompte />} />
+                  <Route path='parametres' element={<Settings />} />
                   <Route path='pricing' element={<Pricing />} />
                   <Route path='pricing-detailed' element={<PricingDetailed />} />
                   <Route path='subscribe' element={<Subscribe />} />
