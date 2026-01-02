@@ -238,18 +238,6 @@ export default function PolitiqueConfidentialite() {
             </div>
           </section>
 
-          {/* Status Section */}
-          <section className="bg-gradient-to-r from-blue-900/30 to-green-900/30 p-6 rounded-lg border border-blue-500/50">
-            <h2 className="text-xl font-semibold mb-3 text-green-400">✅ STATUT FINAL</h2>
-            <ul className="space-y-2 text-gray-300">
-              <li>✓ Texte juridiquement propre</li>
-              <li>✓ Conforme RGPD / CNIL</li>
-              <li>✓ Compatible audit institutionnel</li>
-              <li>✓ Aligné avec un usage citoyen et public</li>
-              <li>✓ Prêt publication immédiate</li>
-            </ul>
-          </section>
-
           {/* Last Update */}
           <section className="pt-6 border-t border-gray-700">
             <p className="text-gray-500 text-sm">
