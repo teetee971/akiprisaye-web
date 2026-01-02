@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { extractTextFromImage } from '../services/ocrService';
 import OCRResultView from '../components/OCRResultView';
 import { SCAN_STATE_MESSAGES } from '../types/scan';
-import type { ScanState } from '../types/scan';
 
 export default function ScanOCR() {
   const [image, setImage] = useState(null);

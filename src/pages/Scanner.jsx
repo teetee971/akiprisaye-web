@@ -4,7 +4,6 @@ import ProductDetails from '../components/products/ProductDetails';
 import { lookupProductByEan } from '../services/eanProductService';
 import { toProductViewModel } from '../services/productViewModelService';
 import { SCAN_STATE_MESSAGES } from '../types/scan';
-import type { ScanState, UnreferencedProduct } from '../types/scan';
 
 export default function Scanner() {
   const [showScanner, setShowScanner] = useState(false);
