@@ -64,7 +64,7 @@ describe('Scan Types and Utilities', () => {
 
   describe('logStateTransition', () => {
     it('should log state transition to console', () => {
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
       logStateTransition('idle', 'scanning', { test: 'context' });
 
@@ -79,7 +79,7 @@ describe('Scan Types and Utilities', () => {
     });
 
     it('should handle transitions without context', () => {
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
       logStateTransition('scanning', 'processing');
 

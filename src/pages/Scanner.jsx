@@ -58,11 +58,16 @@ export default function Scanner() {
     if (behavior === 'offer_search') {
       setError(`Produit non trouvé dans notre base de données (Code: ${code}). Voulez-vous effectuer une recherche manuelle ?`);
     } else if (behavior === 'record_locally') {
-      // Save for later review
-      const notFoundScans = JSON.parse(localStorage.getItem('notFoundScans') || '[]');
-      notFoundScans.push({ code, timestamp: Date.now() });
-      localStorage.setItem('notFoundScans', JSON.stringify(notFoundScans));
-      setError(`Produit non référencé (Code: ${code}). Enregistré localement pour revue.`);
+      // Save for later review with error handling
+      try {
+        const notFoundScans = JSON.parse(localStorage.getItem('notFoundScans') || '[]');
+        notFoundScans.push({ code, timestamp: Date.now() });
+        localStorage.setItem('notFoundScans', JSON.stringify(notFoundScans));
+        setError(`Produit non référencé (Code: ${code}). Enregistré localement pour revue.`);
+      } catch (err) {
+        console.error('Failed to save not-found scan:', err);
+        setError(`Produit non référencé (Code: ${code}).`);
+      }
     } else {
       setError(`Produit non trouvé dans notre base de données (Code: ${code})`);
     }

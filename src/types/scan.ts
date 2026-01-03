@@ -70,11 +70,16 @@ export function logStateTransition(
   const timestamp = new Date().toISOString();
   const contextStr = context ? JSON.stringify(context) : '';
   
-  console.log(`[SCAN_STATE] ${timestamp} | ${from} → ${to} ${contextStr}`);
+  console.warn(`[SCAN_STATE] ${timestamp} | ${from} → ${to} ${contextStr}`);
   
   // Also log to any debug hooks if available
   if (typeof window !== 'undefined' && (window as any).scanDebugHook) {
-    (window as any).scanDebugHook({ from, to, timestamp, context });
+    try {
+      (window as any).scanDebugHook({ from, to, timestamp, context });
+    } catch (error) {
+      // Silently fail if debug hook has issues
+      console.error('Debug hook error:', error);
+    }
   }
 }
 

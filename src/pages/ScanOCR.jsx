@@ -37,7 +37,9 @@ export default function ScanOCR() {
     setLoading(true);
     setError(null);
     setOcrResult(null);
-    updateScanState('preprocessing', { filename: file.name });
+    // Sanitize filename for logging (remove path, limit length)
+    const sanitizedName = file.name.split('/').pop().substring(0, 50);
+    updateScanState('preprocessing', { filename: sanitizedName });
 
     // OPTIMIZATION 3: Async non-blocking OCR
     // Use setTimeout to allow UI to update immediately
