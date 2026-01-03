@@ -3,13 +3,18 @@ import BarcodeScanner from '../components/BarcodeScanner';
 import ProductDetails from '../components/products/ProductDetails';
 import { lookupProductByEan } from '../services/eanProductService';
 import { toProductViewModel } from '../services/productViewModelService';
+import { DEFAULT_SCANNER_CONFIG } from '../types/scan';
 
 export default function Scanner() {
   const [showScanner, setShowScanner] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const [scanResult, setScanResult] = useState(null);
   const [productData, setProductData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  
+  // Scanner configuration
+  const [scannerConfig, setScannerConfig] = useState(DEFAULT_SCANNER_CONFIG);
 
   const handleScan = async (code) => {
     if (import.meta.env.DEV) {
@@ -36,7 +41,8 @@ export default function Scanner() {
         const viewModel = toProductViewModel(result.product);
         setProductData(viewModel);
       } else {
-        setError('Produit non trouvé dans notre base de données');
+        // Product not found - handle based on config
+        handleProductNotFound(code);
       }
     } catch (err) {
       console.error('Product lookup error:', err);
@@ -46,17 +52,101 @@ export default function Scanner() {
     }
   };
 
+  const handleProductNotFound = (code) => {
+    const behavior = scannerConfig.notFoundBehavior || 'offer_search';
+    
+    if (behavior === 'offer_search') {
+      setError(`Produit non trouvé dans notre base de données (Code: ${code}). Voulez-vous effectuer une recherche manuelle ?`);
+    } else if (behavior === 'record_locally') {
+      // Save for later review
+      const notFoundScans = JSON.parse(localStorage.getItem('notFoundScans') || '[]');
+      notFoundScans.push({ code, timestamp: Date.now() });
+      localStorage.setItem('notFoundScans', JSON.stringify(notFoundScans));
+      setError(`Produit non référencé (Code: ${code}). Enregistré localement pour revue.`);
+    } else {
+      setError(`Produit non trouvé dans notre base de données (Code: ${code})`);
+    }
+  };
+
   const handleReset = () => {
     setScanResult(null);
     setProductData(null);
     setError(null);
   };
 
+  const updateScannerConfig = (key, value) => {
+    setScannerConfig(prev => ({ ...prev, [key]: value }));
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 p-4">
       <div className="max-w-4xl mx-auto">
         <div className="bg-slate-900 rounded-2xl p-6 shadow-lg">
-          <h1 className="text-3xl font-bold text-white mb-6">📷 Scanner Code-Barres</h1>
+          {/* Header with Settings Button */}
+          <div className="flex items-center justify-between mb-6">
+            <h1 className="text-3xl font-bold text-white">📷 Scanner Code-Barres</h1>
+            <button
+              onClick={() => setShowSettings(!showSettings)}
+              className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors"
+              title="Paramètres"
+            >
+              ⚙️
+            </button>
+          </div>
+          
+          {/* Settings Panel */}
+          {showSettings && (
+            <div className="mb-6 p-4 bg-slate-800 border border-slate-700 rounded-lg space-y-4">
+              <h3 className="text-white font-semibold mb-3">⚙️ Paramètres du scanner</h3>
+              
+              {/* Scan Timeout */}
+              <div>
+                <label className="block text-gray-300 text-sm mb-2">
+                  Délai d'attente (secondes)
+                </label>
+                <select
+                  value={scannerConfig.scanTimeout}
+                  onChange={(e) => updateScannerConfig('scanTimeout', Number(e.target.value))}
+                  className="w-full bg-slate-700 text-white border border-slate-600 px-3 py-2 rounded-lg"
+                >
+                  <option value={10000}>10 secondes</option>
+                  <option value={15000}>15 secondes</option>
+                  <option value={20000}>20 secondes</option>
+                  <option value={30000}>30 secondes</option>
+                </select>
+              </div>
+              
+              {/* Not Found Behavior */}
+              <div>
+                <label className="block text-gray-300 text-sm mb-2">
+                  Comportement si produit non référencé
+                </label>
+                <select
+                  value={scannerConfig.notFoundBehavior}
+                  onChange={(e) => updateScannerConfig('notFoundBehavior', e.target.value)}
+                  className="w-full bg-slate-700 text-white border border-slate-600 px-3 py-2 rounded-lg"
+                >
+                  <option value="show_message">Afficher uniquement un message</option>
+                  <option value="offer_search">Proposer une recherche manuelle</option>
+                  <option value="record_locally">Enregistrer localement pour revue</option>
+                </select>
+              </div>
+              
+              {/* Debug Mode */}
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="debugMode"
+                  checked={scannerConfig.debugMode}
+                  onChange={(e) => updateScannerConfig('debugMode', e.target.checked)}
+                  className="mr-2"
+                />
+                <label htmlFor="debugMode" className="text-gray-300 text-sm">
+                  Activer le mode debug (logs dans la console)
+                </label>
+              </div>
+            </div>
+          )}
           
           {/* Information Banner */}
           <div className="mb-6 p-4 bg-blue-900/30 border border-blue-700 rounded-lg">
@@ -113,8 +203,19 @@ export default function Scanner() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <p className="text-red-200 font-semibold mb-2">{error}</p>
-                <p className="text-red-300 text-sm">Code scanné: {scanResult}</p>
+                {scanResult && <p className="text-red-300 text-sm">Code scanné: {scanResult}</p>}
               </div>
+              
+              {/* Offer manual search if configured */}
+              {scannerConfig.notFoundBehavior === 'offer_search' && scanResult && (
+                <a
+                  href={`/recherche?q=${scanResult}`}
+                  className="block w-full px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold text-center transition-colors"
+                >
+                  🔍 Rechercher manuellement
+                </a>
+              )}
+              
               <div className="flex gap-3">
                 <button
                   onClick={handleReset}
@@ -155,6 +256,7 @@ export default function Scanner() {
         <BarcodeScanner
           onScan={handleScan}
           onClose={() => setShowScanner(false)}
+          config={scannerConfig}
         />
       )}
     </div>

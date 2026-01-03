@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { extractTextFromImage } from '../services/ocrService';
 import OCRResultView from '../components/OCRResultView';
+import { DEFAULT_SCANNER_CONFIG, logStateTransition, getStateIcon } from '../types/scan';
 
 export default function ScanOCR() {
   const [image, setImage] = useState(null);
@@ -8,6 +9,25 @@ export default function ScanOCR() {
   const [loading, setLoading] = useState(false);
   const [scanState, setScanState] = useState('idle'); // 'idle', 'preprocessing', 'ocr_processing', 'complete'
   const [error, setError] = useState(null);
+  const [showSettings, setShowSettings] = useState(false);
+  
+  // OCR configuration
+  const [ocrConfig, setOcrConfig] = useState({
+    ...DEFAULT_SCANNER_CONFIG,
+    enableOCR: true, // Always enabled for this page
+  });
+
+  const updateScanState = (newState, context) => {
+    const oldState = scanState;
+    setScanState(newState);
+    if (ocrConfig.debugMode) {
+      logStateTransition(oldState, newState, context);
+    }
+  };
+
+  const updateOcrConfig = (key, value) => {
+    setOcrConfig(prev => ({ ...prev, [key]: value }));
+  };
 
   const handleUpload = async (e) => {
     const file = e.target.files[0];
@@ -17,32 +37,35 @@ export default function ScanOCR() {
     setLoading(true);
     setError(null);
     setOcrResult(null);
-    setScanState('preprocessing');
+    updateScanState('preprocessing', { filename: file.name });
 
     // OPTIMIZATION 3: Async non-blocking OCR
     // Use setTimeout to allow UI to update immediately
     setTimeout(async () => {
       try {
-        setScanState('ocr_processing');
+        updateScanState('ocr_processing', { sensitivity: ocrConfig.ocrSensitivity });
         
         const result = await extractTextFromImage(file);
         
         if (result.success) {
           setOcrResult(result);
-          setScanState('complete');
+          updateScanState('complete', { textLength: result.text?.length || 0 });
         } else {
           // Handle timeout or error gracefully
           if (result.timeoutTriggered) {
+            updateScanState('error', { reason: 'timeout' });
             setError('Le traitement a pris trop de temps. Le produit pourrait ne pas être référencé dans notre base.');
           } else {
+            updateScanState('error', { reason: 'extraction_failed' });
             setError(result.error || 'Erreur lors de l\'extraction du texte');
           }
-          setScanState('idle');
         }
       } catch (err) {
-        console.error('OCR error:', err);
+        if (ocrConfig.debugMode) {
+          console.error('OCR error:', err);
+        }
+        updateScanState('error', { error: err.message });
         setError('Une erreur s\'est produite lors de l\'analyse de l\'image');
-        setScanState('idle');
       } finally {
         setLoading(false);
       }
@@ -53,14 +76,80 @@ export default function ScanOCR() {
     setImage(null);
     setOcrResult(null);
     setError(null);
-    setScanState('idle');
+    updateScanState('idle', { action: 'retry' });
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 p-4">
       <div className="max-w-4xl mx-auto">
         <div className="bg-slate-900 rounded-2xl p-6 shadow-lg">
-          <h1 className="text-3xl font-bold text-white mb-6">📸 Scanner Ingrédients (OCR)</h1>
+          {/* Header with Settings Button */}
+          <div className="flex items-center justify-between mb-6">
+            <h1 className="text-3xl font-bold text-white">📸 Scanner Ingrédients (OCR)</h1>
+            <button
+              onClick={() => setShowSettings(!showSettings)}
+              className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors"
+              title="Paramètres"
+            >
+              ⚙️
+            </button>
+          </div>
+          
+          {/* Settings Panel */}
+          {showSettings && (
+            <div className="mb-6 p-4 bg-slate-800 border border-slate-700 rounded-lg space-y-4">
+              <h3 className="text-white font-semibold mb-3">⚙️ Paramètres OCR</h3>
+              
+              {/* OCR Sensitivity */}
+              <div>
+                <label className="block text-gray-300 text-sm mb-2">
+                  Sensibilité de détection
+                </label>
+                <select
+                  value={ocrConfig.ocrSensitivity}
+                  onChange={(e) => updateOcrConfig('ocrSensitivity', e.target.value)}
+                  className="w-full bg-slate-700 text-white border border-slate-600 px-3 py-2 rounded-lg"
+                >
+                  <option value="low">Faible (rapide, moins précis)</option>
+                  <option value="medium">Moyenne (équilibré)</option>
+                  <option value="high">Élevée (lent, très précis)</option>
+                </select>
+                <p className="text-gray-400 text-xs mt-1">
+                  Note: La sensibilité élevée peut prendre plus de temps
+                </p>
+              </div>
+              
+              {/* Not Found Behavior */}
+              <div>
+                <label className="block text-gray-300 text-sm mb-2">
+                  Si aucun texte détecté
+                </label>
+                <select
+                  value={ocrConfig.notFoundBehavior}
+                  onChange={(e) => updateOcrConfig('notFoundBehavior', e.target.value)}
+                  className="w-full bg-slate-700 text-white border border-slate-600 px-3 py-2 rounded-lg"
+                >
+                  <option value="show_message">Afficher un message d'erreur</option>
+                  <option value="offer_search">Proposer une autre méthode</option>
+                  <option value="record_locally">Enregistrer pour analyse manuelle</option>
+                </select>
+              </div>
+              
+              {/* Debug Mode */}
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="ocrDebugMode"
+                  checked={ocrConfig.debugMode}
+                  onChange={(e) => updateOcrConfig('debugMode', e.target.checked)}
+                  className="mr-2"
+                />
+                <label htmlFor="ocrDebugMode" className="text-gray-300 text-sm">
+                  Activer le mode debug (logs dans la console)
+                </label>
+              </div>
+            </div>
+          )}
           
           {/* Information Banner */}
           <div className="mb-6 p-4 bg-blue-900/30 border border-blue-700 rounded-lg">
@@ -110,14 +199,14 @@ export default function ScanOCR() {
               <div className="inline-block animate-spin rounded-full h-16 w-16 border-b-4 border-blue-500 mb-4"></div>
               {scanState === 'preprocessing' && (
                 <>
-                  <p className="text-white text-lg font-semibold">Préparation de l'image...</p>
+                  <p className="text-white text-lg font-semibold">{getStateIcon('processing')} Préparation de l'image...</p>
                   <p className="text-gray-400 text-sm mt-2">Optimisation pour analyse rapide</p>
                 </>
               )}
               {scanState === 'ocr_processing' && (
                 <>
-                  <p className="text-white text-lg font-semibold">Lecture en cours...</p>
-                  <p className="text-gray-400 text-sm mt-2">Extraction du texte de l'image</p>
+                  <p className="text-white text-lg font-semibold">{getStateIcon('scanning')} Lecture en cours...</p>
+                  <p className="text-gray-400 text-sm mt-2">Extraction du texte de l'image (sensibilité: {ocrConfig.ocrSensitivity})</p>
                   {/* Progress bar - indeterminate */}
                   <div className="w-64 h-2 bg-gray-700 rounded-full mx-auto mt-4 overflow-hidden">
                     <div className="h-full bg-blue-500 rounded-full animate-pulse" style={{ width: '60%' }}></div>

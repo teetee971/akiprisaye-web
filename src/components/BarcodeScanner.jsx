@@ -1,8 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { BrowserMultiFormatReader, NotFoundException } from '@zxing/library';
+import { logStateTransition, getStateIcon, STATE_MESSAGES, DEFAULT_SCANNER_CONFIG } from '../types/scan';
 
-export default function BarcodeScanner({ onScan, onClose }) {
-  const [isScanning, setIsScanning] = useState(false);
+export default function BarcodeScanner({ 
+  onScan, 
+  onClose,
+  config = DEFAULT_SCANNER_CONFIG 
+}) {
+  const [scanState, setScanState] = useState('idle');
   const [error, setError] = useState(null);
   const [hasPermission, setHasPermission] = useState(null);
   const [manualInput, setManualInput] = useState('');
@@ -21,9 +26,17 @@ export default function BarcodeScanner({ onScan, onClose }) {
     };
   }, []);
 
+  const updateScanState = (newState, context) => {
+    const oldState = scanState;
+    setScanState(newState);
+    if (config.debugMode) {
+      logStateTransition(oldState, newState, context);
+    }
+  };
+
   const startScanning = async () => {
     setError(null);
-    setIsScanning(true);
+    updateScanState('scanning', { action: 'start_scanning' });
     setHasPermission(null); // Reset permission state
 
     try {
@@ -32,7 +45,9 @@ export default function BarcodeScanner({ onScan, onClose }) {
         throw new Error('getUserMedia non disponible sur ce navigateur');
       }
 
-      console.log('📷 Requesting camera access...');
+      if (config.debugMode) {
+        console.warn('📷 Requesting camera access...');
+      }
       
       // Request camera permission with proper constraints
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -43,7 +58,9 @@ export default function BarcodeScanner({ onScan, onClose }) {
         },
       });
       
-      console.log('✅ Camera access granted');
+      if (config.debugMode) {
+        console.warn('✅ Camera access granted');
+      }
       streamRef.current = stream;
       setHasPermission(true);
       
@@ -63,62 +80,85 @@ export default function BarcodeScanner({ onScan, onClose }) {
         });
         
         await videoRef.current.play();
-        console.log('▶️ Video playing');
+        if (config.debugMode) {
+          console.warn('▶️ Video playing');
+        }
       }
 
       // Check if torch is supported
       const track = stream.getVideoTracks()[0];
       const capabilities = track.getCapabilities();
-      console.log('📱 Camera capabilities:', capabilities);
+      if (config.debugMode) {
+        console.warn('📱 Camera capabilities:', capabilities);
+      }
       
       if (capabilities.torch) {
         setTorchSupported(true);
-        console.log('🔦 Torch supported');
+        if (config.debugMode) {
+          console.warn('🔦 Torch supported');
+        }
       }
 
       // Start decoding with timeout
+      const timeoutDuration = config.scanTimeout || 15000;
       const timeoutId = setTimeout(() => {
-        console.warn('⏱️ Scan timeout');
+        if (config.debugMode) {
+          console.warn('⏱️ Scan timeout');
+        }
+        updateScanState('error', { reason: 'timeout' });
         setError('⏱️ Timeout: Approchez le code-barres de la caméra (10-20 cm)');
-      }, 15000);
+      }, timeoutDuration);
 
-      console.log('🔍 Starting barcode detection...');
+      if (config.debugMode) {
+        console.warn('🔍 Starting barcode detection...');
+      }
       
       readerRef.current.decodeFromVideoDevice(undefined, videoRef.current, (result, err) => {
         if (result) {
           clearTimeout(timeoutId);
           const code = result.getText();
-          console.log('✅ Barcode detected:', code);
+          if (config.debugMode) {
+            console.warn('✅ Barcode detected:', code);
+          }
+          updateScanState('processing', { code });
           stopScanning();
           onScan(code);
         }
         
         if (err && !(err instanceof NotFoundException)) {
-          console.error('Scan error:', err);
+          if (config.debugMode) {
+            console.error('Scan error:', err);
+          }
         }
       });
 
     } catch (err) {
-      console.error('❌ Camera error:', err);
+      if (config.debugMode) {
+        console.error('❌ Camera error:', err);
+      }
       setHasPermission(false);
-      setIsScanning(false);
       
       if (err.name === 'NotAllowedError') {
+        updateScanState('permission_denied', { error: err.name });
         setError('📷 Accès caméra refusé. Veuillez autoriser l\'accès à la caméra dans les paramètres de votre navigateur.');
       } else if (err.name === 'NotFoundError') {
+        updateScanState('error', { error: err.name });
         setError('📷 Aucune caméra détectée sur cet appareil. Utilisez l\'import d\'image ou la saisie manuelle.');
       } else if (err.name === 'NotReadableError') {
+        updateScanState('error', { error: err.name });
         setError('📷 Caméra déjà utilisée par une autre application. Fermez les autres applications utilisant la caméra.');
       } else if (err.name === 'NotSupportedError' || err.message.includes('getUserMedia')) {
+        updateScanState('error', { error: err.name });
         setError('📷 Caméra non supportée sur ce navigateur. Utilisez Chrome, Firefox ou Safari récent. Ou utilisez l\'import d\'image.');
       } else {
+        updateScanState('error', { error: err.message });
         setError(`❌ Erreur: ${err.message || 'Impossible d\'accéder à la caméra'}. Essayez l\'import d\'image.`);
       }
     }
   };
 
   const stopScanning = () => {
-    setIsScanning(false);
+    updateScanState('idle', { action: 'stop_scanning' });
     
     if (readerRef.current) {
       readerRef.current.reset();
@@ -155,19 +195,21 @@ export default function BarcodeScanner({ onScan, onClose }) {
     if (!file) return;
 
     setError(null);
-    setIsScanning(true);
+    updateScanState('processing', { action: 'image_upload' });
 
     try {
       const imageUrl = URL.createObjectURL(file);
       const result = await readerRef.current.decodeFromImageUrl(imageUrl);
       const code = result.getText();
       URL.revokeObjectURL(imageUrl);
-      setIsScanning(false);
+      updateScanState('success', { code });
       onScan(code);
     } catch (err) {
-      console.error('Image decode error:', err);
+      if (config.debugMode) {
+        console.error('Image decode error:', err);
+      }
+      updateScanState('error', { error: 'image_decode_failed' });
       setError('❌ Code-barres non détecté dans l\'image. Essayez la saisie manuelle.');
-      setIsScanning(false);
     }
   };
 
@@ -197,7 +239,7 @@ export default function BarcodeScanner({ onScan, onClose }) {
         {/* Content */}
         <div className="p-6 space-y-4">
           {/* Video Preview */}
-          {isScanning && hasPermission && (
+          {scanState === 'scanning' && hasPermission && (
             <div className="relative bg-black rounded-lg overflow-hidden">
               <video
                 ref={videoRef}
@@ -239,8 +281,17 @@ export default function BarcodeScanner({ onScan, onClose }) {
             </div>
           )}
 
+          {/* Processing State */}
+          {scanState === 'processing' && (
+            <div className="text-center py-12">
+              <div className="inline-block animate-spin rounded-full h-16 w-16 border-b-4 border-blue-500 mb-4"></div>
+              <p className="text-white text-lg font-semibold">Traitement en cours...</p>
+              <p className="text-gray-400 text-sm mt-2">{getStateIcon('processing')} {STATE_MESSAGES.processing}</p>
+            </div>
+          )}
+
           {/* Instructions */}
-          {!isScanning && !error && (
+          {scanState === 'idle' && !error && (
             <div className="bg-blue-900/20 border border-blue-700/30 rounded-lg p-4 text-sm text-blue-200">
               <p className="font-semibold mb-2">📋 Instructions :</p>
               <ul className="space-y-1 ml-4 list-disc">
@@ -261,7 +312,7 @@ export default function BarcodeScanner({ onScan, onClose }) {
           )}
 
           {/* Permission denied help */}
-          {hasPermission === false && (
+          {(hasPermission === false || scanState === 'permission_denied') && (
             <div className="bg-yellow-900/20 border border-yellow-700/30 rounded-lg p-4 text-sm text-yellow-200">
               <p className="font-semibold mb-2">🔐 Comment autoriser l'accès à la caméra ?</p>
               <ul className="space-y-2 ml-4 list-disc">
@@ -281,7 +332,7 @@ export default function BarcodeScanner({ onScan, onClose }) {
           )}
 
           {/* Camera scan button */}
-          {!isScanning && (
+          {(scanState === 'idle' || scanState === 'error' || scanState === 'permission_denied') && (
             <button
               onClick={startScanning}
               className="w-full px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold text-lg transition-colors"
