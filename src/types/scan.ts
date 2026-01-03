@@ -41,9 +41,6 @@ export interface ScannerConfig {
   /** Enable/disable torch (flash) support */
   enableTorch?: boolean;
   
-  /** Behavior when product is not found */
-  notFoundBehavior?: NotFoundBehavior;
-  
   /** Enable debug logging */
   enableDebugLogging?: boolean;
   
@@ -172,7 +169,6 @@ export const DEFAULT_SCANNER_SETTINGS: ScannerSettings = {
   scanner: {
     scanTimeout: 15000,
     enableTorch: true,
-    notFoundBehavior: 'show_search',
     enableDebugLogging: false,
     cameraFacingMode: 'environment',
   },

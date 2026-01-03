@@ -104,7 +104,6 @@ describe('scan types', () => {
       expect(DEFAULT_SCANNER_SETTINGS.scanner).toBeDefined();
       expect(DEFAULT_SCANNER_SETTINGS.scanner.scanTimeout).toBe(15000);
       expect(DEFAULT_SCANNER_SETTINGS.scanner.enableTorch).toBe(true);
-      expect(DEFAULT_SCANNER_SETTINGS.scanner.notFoundBehavior).toBe('show_search');
       expect(DEFAULT_SCANNER_SETTINGS.scanner.cameraFacingMode).toBe('environment');
     });
 
