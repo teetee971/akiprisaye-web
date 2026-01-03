@@ -79,7 +79,7 @@ function escapeHtml(s) {
     .replaceAll("&","&amp;")
     .replaceAll("<","&lt;")
     .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
+    .replaceAll('"','&quot;')
     .replaceAll("'","&#039;");
 }
 
@@ -247,23 +247,57 @@ async function startLabelOCR(container, targets, state) {
     const ok = confirm("Lancer OCR et tenter extraction INCI ? (validation requise)");
     if (!ok) return;
 
-    const result = await Tesseract.recognize(file, "eng+fra");
-    const text = (result && result.data && result.data.text) ? result.data.text : "";
+    try {
+      const result = await Tesseract.recognize(file, "eng+fra", {
+        logger: m => console.log("[OCR]", m)
+      });
 
-    const { inci, cleaned } = extractINCIFromOCR(text);
-    if (inci) {
-      targets.inci.value = inci.replace(/\s+/g, " ").trim();
-      state.ocrText = cleaned;
-      const symbols = detectSymbolsFromText(cleaned);
-      const price = await getPriceCompare({ barcode: state.barcode, productName: state.productName });
+      if (!result || !result.data || !result.data.text) {
+        throw new Error("OCR_RESULT_INVALIDE");
+      }
 
-      renderResults(container, { barcode: state.barcode, ocrText: cleaned, symbols, price });
-      setStatus(container, navigator.onLine ? "OCR terminé." : "Analyse locale – données non synchronisées (offline).");
-    } else {
-      state.ocrText = cleaned;
-      renderResults(container, { barcode: state.barcode, ocrText: cleaned, symbols: [], price: null });
-      alert("INCI non détectée automatiquement. Vérification manuelle requise.");
-      setStatus(container, "OCR terminé (INCI non extraite).");
+      const text = result.data.text.trim();
+
+      if (!text) {
+        throw new Error("OCR_TEXTE_VIDE");
+      }
+
+      // Log the raw OCR text securely to console for debugging (avoid sending to server)
+      // Log only a fingerprint (SHA-256) + length for privacy-preserving debug
+      try {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(text);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+        console.debug(`[OCR] fingerprint: sha256:${hashHex} length:${text.length}`);
+      } catch (hashErr) {
+        console.debug("[OCR] fingerprint failed", hashErr);
+      }
+
+      const { inci, cleaned } = extractINCIFromOCR(text);
+      if (inci) {
+        targets.inci.value = inci.replace(/\s+/g, " ").trim();
+        state.ocrText = cleaned;
+        const symbols = detectSymbolsFromText(cleaned);
+        const price = await getPriceCompare({ barcode: state.barcode, productName: state.productName });
+
+        renderResults(container, { barcode: state.barcode, ocrText: cleaned, symbols, price });
+        setStatus(container, navigator.onLine ? "OCR terminé." : "Analyse locale – données non synchronisées (offline).");
+      } else {
+        state.ocrText = cleaned;
+        renderResults(container, { barcode: state.barcode, ocrText: cleaned, symbols: [], price: null });
+        alert("INCI non détectée automatiquement. Vérification manuelle requise.");
+        setStatus(container, "OCR terminé (INCI non extraite).");
+      }
+
+    } catch (err) {
+      console.error("❌ Erreur OCR :", err);
+      alert(
+        "Impossible d’analyser automatiquement l’étiquette.\n" +
+        "Veuillez vérifier la photo (netteté, lumière) ou saisir manuellement."
+      );
+      setStatus(container, "OCR échoué.");
     }
   };
 }

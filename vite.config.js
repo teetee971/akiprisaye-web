@@ -30,6 +30,8 @@ export default defineConfig({
     // Use a lowercase assets directory to avoid case-sensitivity issues between 'Assets' and 'assets'
     assetsDir: 'assets',
     sourcemap: true,
+    // increase warning limit to reduce noisy warnings, and add manualChunks to split heavy deps
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
         // Place images under assets/images and other assets under assets/
@@ -39,6 +41,12 @@ export default defineConfig({
           }
           return 'assets/[name].[hash][extname]';
         },
+        manualChunks: {
+          // safe manual chunks to separate major vendors and heavy libraries
+          react: ['react', 'react-dom'],
+          router: ['react-router-dom'],
+          leaflet: ['leaflet'],
+        }
       },
     },
   },
