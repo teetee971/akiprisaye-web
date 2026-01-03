@@ -21,13 +21,33 @@ jobs:
         run: npm install -g ajv-cli
       - name: Validate JSON files
         run: |
+          # Check if schema exists
+          if [ ! -f "data/groupes/schema.json" ]; then
+            echo "Error: Schema file data/groupes/schema.json not found"
+            exit 1
+          fi
+          
+          # Validate all JSON files except schema.json
           failed=0
+          found_files=0
           for file in data/groupes/*.json; do
+            # Check if glob matched any files
+            if [ ! -e "$file" ]; then
+              echo "Warning: No JSON files found in data/groupes/"
+              exit 0
+            fi
+            
             if [ "$(basename "$file")" != "schema.json" ]; then
+              found_files=1
               echo "Validating $file..."
               if ! ajv validate -s data/groupes/schema.json -d "$file"; then
                 failed=1
               fi
             fi
           done
+          
+          if [ $found_files -eq 0 ]; then
+            echo "Warning: No data files found to validate (only schema.json exists)"
+          fi
+          
           exit $failed
