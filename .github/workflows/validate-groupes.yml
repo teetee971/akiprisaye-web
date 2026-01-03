@@ -12,11 +12,12 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
       - name: Install ajv-cli
         run: npm install -g ajv-cli
       - name: Validate JSON files
@@ -31,12 +32,6 @@ jobs:
           failed=0
           found_files=0
           for file in data/groupes/*.json; do
-            # Check if glob matched any files
-            if [ ! -e "$file" ]; then
-              echo "Warning: No JSON files found in data/groupes/"
-              exit 0
-            fi
-            
             if [ "$(basename "$file")" != "schema.json" ]; then
               found_files=1
               echo "Validating $file..."
