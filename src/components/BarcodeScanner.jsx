@@ -137,10 +137,10 @@ export default function BarcodeScanner({
       } else if (err.name === 'NotReadableError') {
         setError('📷 Caméra déjà utilisée par une autre application. Fermez les autres applications utilisant la caméra.');
       } else if (err.name === 'NotSupportedError' || err.message.includes('getUserMedia')) {
-        setError('📷 Caméra non supportée sur ce navigateur. Utilisez Chrome, Firefox ou Safari récent. Ou utilisez l\'import d\'image.');
+        setError("📷 Caméra non supportée sur ce navigateur. Utilisez Chrome, Firefox ou Safari récent. Ou utilisez l'import d'image.");
       } else {
         setScanState('error');
-        setError(`❌ Erreur: ${err.message || 'Impossible d\'accéder à la caméra'}. Essayez l\'import d\'image.`);
+        setError(`❌ Erreur: ${err.message || "Impossible d'accéder à la caméra"}. Essayez l'import d'image.`);
       }
     }
   };

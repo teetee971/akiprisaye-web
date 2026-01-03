@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import BarcodeScanner from '../components/BarcodeScanner';
+import BarcodeScanner from '../components/BarcodeScanner.jsx';
 
 describe('BarcodeScanner Component', () => {
   const mockOnScan = vi.fn();
@@ -10,7 +10,7 @@ describe('BarcodeScanner Component', () => {
     vi.clearAllMocks();
     
     // Mock navigator.mediaDevices.getUserMedia
-    global.navigator.mediaDevices = {
+    globalThis.navigator.mediaDevices = {
       getUserMedia: vi.fn().mockResolvedValue({
         getTracks: () => [
           {
