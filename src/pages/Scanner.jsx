@@ -67,7 +67,7 @@ export default function Scanner() {
           ean: code,
           captureDate: new Date().toISOString(),
           territoire: 'martinique',
-          message: 'Code non reconnu, analyse visuelle en cours'
+          message: 'Code non reconnu dans notre base de données'
         };
         
         setUnreferencedProduct(unrefProduct);
