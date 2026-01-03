@@ -3,6 +3,7 @@ import BarcodeScanner from '../components/BarcodeScanner';
 import ProductDetails from '../components/products/ProductDetails';
 import { lookupProductByEan } from '../services/eanProductService';
 import { toProductViewModel } from '../services/productViewModelService';
+import { DEFAULT_SCANNER_SETTINGS, logStateTransition } from '../types/scan';
 
 export default function Scanner() {
   const [showScanner, setShowScanner] = useState(false);
@@ -10,6 +11,15 @@ export default function Scanner() {
   const [productData, setProductData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [scanState, setScanState] = useState('idle');
+  const [showSettings, setShowSettings] = useState(false);
+  const [settings, setSettings] = useState(DEFAULT_SCANNER_SETTINGS);
+  
+  // State transition helper with logging
+  const transitionState = (newState, context) => {
+    logStateTransition(scanState, newState, context);
+    setScanState(newState);
+  };
 
   const handleScan = async (code) => {
     if (import.meta.env.DEV) {
@@ -25,6 +35,7 @@ export default function Scanner() {
     setShowScanner(false);
     setLoading(true);
     setError(null);
+    transitionState('processing', { code });
 
     try {
       const result = await lookupProductByEan(code, {
@@ -35,14 +46,44 @@ export default function Scanner() {
       if (result.success && result.product) {
         const viewModel = toProductViewModel(result.product);
         setProductData(viewModel);
+        transitionState('success', { productName: viewModel.nom });
       } else {
-        setError('Produit non trouvé dans notre base de données');
+        transitionState('not_found', { code });
+        handleProductNotFound(code);
       }
     } catch (err) {
       console.error('Product lookup error:', err);
+      transitionState('error', { error: err.message });
       setError('Une erreur s\'est produite lors de la recherche du produit');
     } finally {
       setLoading(false);
+    }
+  };
+  
+  const handleProductNotFound = (code) => {
+    const behavior = settings.notFoundBehavior;
+    
+    switch (behavior) {
+      case 'show_search':
+        setError(`Produit ${code} non trouvé dans notre base de données. Vous pouvez effectuer une recherche manuelle.`);
+        break;
+      case 'show_message':
+        setError(`Produit ${code} non référencé.`);
+        break;
+      case 'save_for_review':
+        setError(`Produit ${code} non trouvé. Le scan a été enregistré localement pour revue.`);
+        // Could implement local storage here
+        if (typeof window !== 'undefined' && window.localStorage) {
+          const saved = JSON.parse(localStorage.getItem('unrecognized_scans') || '[]');
+          saved.push({ code, timestamp: Date.now() });
+          localStorage.setItem('unrecognized_scans', JSON.stringify(saved));
+        }
+        break;
+      case 'suggest_contribution':
+        setError(`Produit ${code} non trouvé. Vous pouvez contribuer en ajoutant ses informations.`);
+        break;
+      default:
+        setError('Produit non trouvé dans notre base de données');
     }
   };
 
@@ -50,6 +91,7 @@ export default function Scanner() {
     setScanResult(null);
     setProductData(null);
     setError(null);
+    transitionState('idle', { trigger: 'user_reset' });
   };
 
   return (
@@ -57,6 +99,86 @@ export default function Scanner() {
       <div className="max-w-4xl mx-auto">
         <div className="bg-slate-900 rounded-2xl p-6 shadow-lg">
           <h1 className="text-3xl font-bold text-white mb-6">📷 Scanner Code-Barres</h1>
+          
+          {/* Settings Button */}
+          <button
+            onClick={() => setShowSettings(!showSettings)}
+            className="mb-4 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-sm transition-colors"
+          >
+            ⚙️ {showSettings ? 'Masquer' : 'Afficher'} les paramètres
+          </button>
+          
+          {/* Settings Panel */}
+          {showSettings && (
+            <div className="mb-6 p-4 bg-slate-800 border border-slate-700 rounded-lg space-y-4">
+              <h3 className="text-white font-semibold mb-3">⚙️ Paramètres du scanner</h3>
+              
+              {/* Scan Timeout */}
+              <div>
+                <label className="block text-sm text-gray-300 mb-2">
+                  Délai d'attente du scan (secondes)
+                </label>
+                <input
+                  type="range"
+                  min="5"
+                  max="30"
+                  step="5"
+                  value={(settings.scanner.scanTimeout || 15000) / 1000}
+                  onChange={(e) => setSettings({
+                    ...settings,
+                    scanner: {
+                      ...settings.scanner,
+                      scanTimeout: parseInt(e.target.value) * 1000
+                    }
+                  })}
+                  className="w-full"
+                />
+                <span className="text-xs text-gray-400">
+                  {(settings.scanner.scanTimeout || 15000) / 1000}s
+                </span>
+              </div>
+              
+              {/* Not Found Behavior */}
+              <div>
+                <label className="block text-sm text-gray-300 mb-2">
+                  Comportement si produit non trouvé
+                </label>
+                <select
+                  value={settings.notFoundBehavior}
+                  onChange={(e) => setSettings({
+                    ...settings,
+                    notFoundBehavior: e.target.value
+                  })}
+                  className="w-full px-3 py-2 bg-slate-900 text-white border border-slate-600 rounded-lg focus:outline-none focus:border-blue-500"
+                >
+                  <option value="show_search">Proposer une recherche manuelle</option>
+                  <option value="show_message">Afficher un message seulement</option>
+                  <option value="save_for_review">Enregistrer pour revue ultérieure</option>
+                  <option value="suggest_contribution">Suggérer de contribuer</option>
+                </select>
+              </div>
+              
+              {/* Debug Logging */}
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="debugLogging"
+                  checked={settings.scanner.enableDebugLogging || false}
+                  onChange={(e) => setSettings({
+                    ...settings,
+                    scanner: {
+                      ...settings.scanner,
+                      enableDebugLogging: e.target.checked
+                    }
+                  })}
+                  className="rounded"
+                />
+                <label htmlFor="debugLogging" className="text-sm text-gray-300">
+                  Activer les logs de débogage
+                </label>
+              </div>
+            </div>
+          )}
           
           {/* Information Banner */}
           <div className="mb-6 p-4 bg-blue-900/30 border border-blue-700 rounded-lg">
@@ -155,6 +277,7 @@ export default function Scanner() {
         <BarcodeScanner
           onScan={handleScan}
           onClose={() => setShowScanner(false)}
+          config={settings.scanner}
         />
       )}
     </div>

@@ -1,7 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { BrowserMultiFormatReader, NotFoundException } from '@zxing/library';
+import { logStateTransition, getScanStateMessage, DEFAULT_SCANNER_SETTINGS } from '../types/scan';
 
-export default function BarcodeScanner({ onScan, onClose }) {
+export default function BarcodeScanner({ 
+  onScan, 
+  onClose, 
+  config = DEFAULT_SCANNER_SETTINGS.scanner 
+}) {
+  const [scanState, setScanState] = useState('idle');
   const [isScanning, setIsScanning] = useState(false);
   const [error, setError] = useState(null);
   const [hasPermission, setHasPermission] = useState(null);
@@ -12,6 +18,12 @@ export default function BarcodeScanner({ onScan, onClose }) {
   const videoRef = useRef(null);
   const readerRef = useRef(null);
   const streamRef = useRef(null);
+  
+  // State transition helper with logging
+  const transitionState = (newState, context) => {
+    logStateTransition(scanState, newState, context);
+    setScanState(newState);
+  };
 
   useEffect(() => {
     readerRef.current = new BrowserMultiFormatReader();
@@ -25,10 +37,12 @@ export default function BarcodeScanner({ onScan, onClose }) {
     setError(null);
     setIsScanning(true);
     setHasPermission(null); // Reset permission state
+    transitionState('scanning', { trigger: 'user_initiated' });
 
     try {
       // Check if getUserMedia is available
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        transitionState('error', { reason: 'getUserMedia_not_available' });
         throw new Error('getUserMedia non disponible sur ce navigateur');
       }
 
@@ -46,6 +60,7 @@ export default function BarcodeScanner({ onScan, onClose }) {
       console.log('✅ Camera access granted');
       streamRef.current = stream;
       setHasPermission(true);
+      transitionState('scanning', { status: 'camera_active' });
       
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
@@ -76,11 +91,13 @@ export default function BarcodeScanner({ onScan, onClose }) {
         console.log('🔦 Torch supported');
       }
 
-      // Start decoding with timeout
+      // Start decoding with timeout (configurable)
+      const timeoutMs = config.scanTimeout || 15000;
       const timeoutId = setTimeout(() => {
         console.warn('⏱️ Scan timeout');
+        transitionState('timeout', { timeoutMs });
         setError('⏱️ Timeout: Approchez le code-barres de la caméra (10-20 cm)');
-      }, 15000);
+      }, timeoutMs);
 
       console.log('🔍 Starting barcode detection...');
       
@@ -89,12 +106,16 @@ export default function BarcodeScanner({ onScan, onClose }) {
           clearTimeout(timeoutId);
           const code = result.getText();
           console.log('✅ Barcode detected:', code);
+          transitionState('processing', { code });
           stopScanning();
           onScan(code);
         }
         
         if (err && !(err instanceof NotFoundException)) {
           console.error('Scan error:', err);
+          if (config.enableDebugLogging) {
+            transitionState('error', { error: err.message });
+          }
         }
       });
 
@@ -104,21 +125,27 @@ export default function BarcodeScanner({ onScan, onClose }) {
       setIsScanning(false);
       
       if (err.name === 'NotAllowedError') {
+        transitionState('permission_denied', { error: err.name });
         setError('📷 Accès caméra refusé. Veuillez autoriser l\'accès à la caméra dans les paramètres de votre navigateur.');
       } else if (err.name === 'NotFoundError') {
+        transitionState('no_camera', { error: err.name });
         setError('📷 Aucune caméra détectée sur cet appareil. Utilisez l\'import d\'image ou la saisie manuelle.');
       } else if (err.name === 'NotReadableError') {
+        transitionState('camera_busy', { error: err.name });
         setError('📷 Caméra déjà utilisée par une autre application. Fermez les autres applications utilisant la caméra.');
       } else if (err.name === 'NotSupportedError' || err.message.includes('getUserMedia')) {
+        transitionState('error', { error: 'camera_not_supported' });
         setError('📷 Caméra non supportée sur ce navigateur. Utilisez Chrome, Firefox ou Safari récent. Ou utilisez l\'import d\'image.');
       } else {
-        setError(`❌ Erreur: ${err.message || 'Impossible d\'accéder à la caméra'}. Essayez l\'import d\'image.`);
+        transitionState('error', { error: err.message });
+        setError(`❌ Erreur: ${err.message || 'Impossible d\'accéder à la caméra'}. Essayez l'import d'image.`);
       }
     }
   };
 
   const stopScanning = () => {
     setIsScanning(false);
+    transitionState('idle', { trigger: 'user_stopped' });
     
     if (readerRef.current) {
       readerRef.current.reset();
@@ -156,6 +183,7 @@ export default function BarcodeScanner({ onScan, onClose }) {
 
     setError(null);
     setIsScanning(true);
+    transitionState('processing', { source: 'image_upload' });
 
     try {
       const imageUrl = URL.createObjectURL(file);
@@ -163,9 +191,11 @@ export default function BarcodeScanner({ onScan, onClose }) {
       const code = result.getText();
       URL.revokeObjectURL(imageUrl);
       setIsScanning(false);
+      transitionState('success', { code, source: 'image_upload' });
       onScan(code);
     } catch (err) {
       console.error('Image decode error:', err);
+      transitionState('error', { error: 'barcode_not_found_in_image' });
       setError('❌ Code-barres non détecté dans l\'image. Essayez la saisie manuelle.');
       setIsScanning(false);
     }
@@ -174,6 +204,7 @@ export default function BarcodeScanner({ onScan, onClose }) {
   const handleManualSubmit = (e) => {
     e.preventDefault();
     if (manualInput.length >= 8) {
+      transitionState('processing', { source: 'manual_input', code: manualInput });
       onScan(manualInput);
       setManualInput('');
     }
@@ -184,7 +215,12 @@ export default function BarcodeScanner({ onScan, onClose }) {
       <div className="bg-slate-900 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-slate-700">
-          <h2 className="text-xl font-bold text-white">📷 Scanner Code-Barres</h2>
+          <div>
+            <h2 className="text-xl font-bold text-white">📷 Scanner Code-Barres</h2>
+            {config.enableDebugLogging && (
+              <p className="text-xs text-gray-400 mt-1">État: {getScanStateMessage(scanState)}</p>
+            )}
+          </div>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-white text-2xl"

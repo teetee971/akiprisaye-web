@@ -1,48 +1,67 @@
 import { useState } from 'react';
 import { extractTextFromImage } from '../services/ocrService';
 import OCRResultView from '../components/OCRResultView';
+import { DEFAULT_SCANNER_SETTINGS, logStateTransition } from '../types/scan';
 
 export default function ScanOCR() {
   const [image, setImage] = useState(null);
   const [ocrResult, setOcrResult] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [scanState, setScanState] = useState('idle'); // 'idle', 'preprocessing', 'ocr_processing', 'complete'
+  const [ocrState, setOcrState] = useState('idle');
   const [error, setError] = useState(null);
+  const [showSettings, setShowSettings] = useState(false);
+  const [settings, setSettings] = useState(DEFAULT_SCANNER_SETTINGS);
+  
+  // State transition helper with logging
+  const transitionState = (newState, context) => {
+    logStateTransition(ocrState, newState, context);
+    setOcrState(newState);
+  };
 
   const handleUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
+    
+    // Check if OCR is enabled
+    if (!settings.ocr.enabled) {
+      setError('L\'OCR est désactivé dans les paramètres');
+      return;
+    }
 
     setImage(URL.createObjectURL(file));
     setLoading(true);
     setError(null);
     setOcrResult(null);
-    setScanState('preprocessing');
+    transitionState('preprocessing', { fileSize: file.size });
 
     // OPTIMIZATION 3: Async non-blocking OCR
     // Use setTimeout to allow UI to update immediately
     setTimeout(async () => {
       try {
-        setScanState('ocr_processing');
+        transitionState('ocr_processing', {});
         
         const result = await extractTextFromImage(file);
         
         if (result.success) {
           setOcrResult(result);
-          setScanState('complete');
+          transitionState('complete', { 
+            confidence: result.confidence,
+            textLength: result.rawText?.length 
+          });
         } else {
           // Handle timeout or error gracefully
           if (result.timeoutTriggered) {
+            transitionState('timeout', { duration: result.processingTime });
             setError('Le traitement a pris trop de temps. Le produit pourrait ne pas être référencé dans notre base.');
           } else {
+            transitionState('error', { error: result.error });
             setError(result.error || 'Erreur lors de l\'extraction du texte');
           }
-          setScanState('idle');
         }
       } catch (err) {
         console.error('OCR error:', err);
+        transitionState('error', { error: err.message });
         setError('Une erreur s\'est produite lors de l\'analyse de l\'image');
-        setScanState('idle');
       } finally {
         setLoading(false);
       }
@@ -53,7 +72,7 @@ export default function ScanOCR() {
     setImage(null);
     setOcrResult(null);
     setError(null);
-    setScanState('idle');
+    transitionState('idle', { trigger: 'user_retry' });
   };
 
   return (
@@ -61,6 +80,182 @@ export default function ScanOCR() {
       <div className="max-w-4xl mx-auto">
         <div className="bg-slate-900 rounded-2xl p-6 shadow-lg">
           <h1 className="text-3xl font-bold text-white mb-6">📸 Scanner Ingrédients (OCR)</h1>
+          
+          {/* Settings Button */}
+          <button
+            onClick={() => setShowSettings(!showSettings)}
+            className="mb-4 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-sm transition-colors"
+          >
+            ⚙️ {showSettings ? 'Masquer' : 'Afficher'} les paramètres
+          </button>
+          
+          {/* Settings Panel */}
+          {showSettings && (
+            <div className="mb-6 p-4 bg-slate-800 border border-slate-700 rounded-lg space-y-4">
+              <h3 className="text-white font-semibold mb-3">⚙️ Paramètres OCR</h3>
+              
+              {/* Enable OCR */}
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="enableOCR"
+                  checked={settings.ocr.enabled !== false}
+                  onChange={(e) => setSettings({
+                    ...settings,
+                    ocr: {
+                      ...settings.ocr,
+                      enabled: e.target.checked
+                    }
+                  })}
+                  className="rounded"
+                />
+                <label htmlFor="enableOCR" className="text-sm text-gray-300">
+                  Activer l'OCR
+                </label>
+              </div>
+              
+              {/* Confidence Threshold */}
+              <div>
+                <label className="block text-sm text-gray-300 mb-2">
+                  Seuil de confiance (%)
+                </label>
+                <input
+                  type="range"
+                  min="30"
+                  max="100"
+                  step="10"
+                  value={settings.ocr.confidenceThreshold || 60}
+                  onChange={(e) => setSettings({
+                    ...settings,
+                    ocr: {
+                      ...settings.ocr,
+                      confidenceThreshold: parseInt(e.target.value)
+                    }
+                  })}
+                  className="w-full"
+                />
+                <span className="text-xs text-gray-400">
+                  {settings.ocr.confidenceThreshold || 60}%
+                </span>
+              </div>
+              
+              {/* OCR Timeout */}
+              <div>
+                <label className="block text-sm text-gray-300 mb-2">
+                  Délai d'attente OCR (secondes)
+                </label>
+                <input
+                  type="range"
+                  min="2"
+                  max="10"
+                  step="1"
+                  value={(settings.ocr.timeout || 4000) / 1000}
+                  onChange={(e) => setSettings({
+                    ...settings,
+                    ocr: {
+                      ...settings.ocr,
+                      timeout: parseInt(e.target.value) * 1000
+                    }
+                  })}
+                  className="w-full"
+                />
+                <span className="text-xs text-gray-400">
+                  {(settings.ocr.timeout || 4000) / 1000}s
+                </span>
+              </div>
+              
+              {/* Preprocessing Options */}
+              <div className="space-y-2">
+                <p className="text-sm text-gray-300 mb-2">Options de prétraitement</p>
+                
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="enhanceContrast"
+                    checked={settings.ocr.preprocessing?.enhanceContrast !== false}
+                    onChange={(e) => setSettings({
+                      ...settings,
+                      ocr: {
+                        ...settings.ocr,
+                        preprocessing: {
+                          ...settings.ocr.preprocessing,
+                          enhanceContrast: e.target.checked
+                        }
+                      }
+                    })}
+                    className="rounded"
+                  />
+                  <label htmlFor="enhanceContrast" className="text-xs text-gray-400">
+                    Améliorer le contraste
+                  </label>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="grayscale"
+                    checked={settings.ocr.preprocessing?.grayscale !== false}
+                    onChange={(e) => setSettings({
+                      ...settings,
+                      ocr: {
+                        ...settings.ocr,
+                        preprocessing: {
+                          ...settings.ocr.preprocessing,
+                          grayscale: e.target.checked
+                        }
+                      }
+                    })}
+                    className="rounded"
+                  />
+                  <label htmlFor="grayscale" className="text-xs text-gray-400">
+                    Convertir en niveaux de gris
+                  </label>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="autoRotate"
+                    checked={settings.ocr.preprocessing?.autoRotate !== false}
+                    onChange={(e) => setSettings({
+                      ...settings,
+                      ocr: {
+                        ...settings.ocr,
+                        preprocessing: {
+                          ...settings.ocr.preprocessing,
+                          autoRotate: e.target.checked
+                        }
+                      }
+                    })}
+                    className="rounded"
+                  />
+                  <label htmlFor="autoRotate" className="text-xs text-gray-400">
+                    Rotation automatique
+                  </label>
+                </div>
+              </div>
+              
+              {/* Debug Logging */}
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="debugLoggingOCR"
+                  checked={settings.ocr.enableDebugLogging || false}
+                  onChange={(e) => setSettings({
+                    ...settings,
+                    ocr: {
+                      ...settings.ocr,
+                      enableDebugLogging: e.target.checked
+                    }
+                  })}
+                  className="rounded"
+                />
+                <label htmlFor="debugLoggingOCR" className="text-sm text-gray-300">
+                  Activer les logs de débogage
+                </label>
+              </div>
+            </div>
+          )}
           
           {/* Information Banner */}
           <div className="mb-6 p-4 bg-blue-900/30 border border-blue-700 rounded-lg">
@@ -108,13 +303,13 @@ export default function ScanOCR() {
           {loading && (
             <div className="text-center py-12">
               <div className="inline-block animate-spin rounded-full h-16 w-16 border-b-4 border-blue-500 mb-4"></div>
-              {scanState === 'preprocessing' && (
+              {ocrState === 'preprocessing' && (
                 <>
                   <p className="text-white text-lg font-semibold">Préparation de l'image...</p>
                   <p className="text-gray-400 text-sm mt-2">Optimisation pour analyse rapide</p>
                 </>
               )}
-              {scanState === 'ocr_processing' && (
+              {ocrState === 'ocr_processing' && (
                 <>
                   <p className="text-white text-lg font-semibold">Lecture en cours...</p>
                   <p className="text-gray-400 text-sm mt-2">Extraction du texte de l'image</p>
