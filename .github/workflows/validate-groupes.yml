@@ -21,4 +21,13 @@ jobs:
         run: npm install -g ajv-cli
       - name: Validate JSON files
         run: |
-          find data/groupes -name '*.json' ! -name 'schema.json' -exec ajv validate -s data/groupes/schema.json -d {} \;
+          failed=0
+          for file in data/groupes/*.json; do
+            if [ "$(basename "$file")" != "schema.json" ]; then
+              echo "Validating $file..."
+              if ! ajv validate -s data/groupes/schema.json -d "$file"; then
+                failed=1
+              fi
+            fi
+          done
+          exit $failed
