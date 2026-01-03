@@ -1,8 +1,17 @@
 import { useState, useEffect, useRef } from 'react';
 import { BrowserMultiFormatReader, NotFoundException } from '@zxing/library';
 
-export default function BarcodeScanner({ onScan, onClose }) {
-  const [isScanning, setIsScanning] = useState(false);
+// TODO: Intégrer une librairie de détection de code-barres plus performante
+// Options à évaluer: @undecaf/zbar-wasm, html5-qrcode, ou solution native
+// Critères: performance, taux de détection, support des formats, taille bundle
+
+export default function BarcodeScanner({ 
+  onScan, 
+  onClose, 
+  timeout = 15000, 
+  notFoundBehavior = 'suggest_search' 
+}) {
+  const [scanState, setScanState] = useState('idle'); // 'idle', 'scanning', 'processing', 'success', 'not_found', 'error', 'permission_denied'
   const [error, setError] = useState(null);
   const [hasPermission, setHasPermission] = useState(null);
   const [manualInput, setManualInput] = useState('');
@@ -12,6 +21,7 @@ export default function BarcodeScanner({ onScan, onClose }) {
   const videoRef = useRef(null);
   const readerRef = useRef(null);
   const streamRef = useRef(null);
+  const timeoutRef = useRef(null);
 
   useEffect(() => {
     readerRef.current = new BrowserMultiFormatReader();
@@ -23,7 +33,7 @@ export default function BarcodeScanner({ onScan, onClose }) {
 
   const startScanning = async () => {
     setError(null);
-    setIsScanning(true);
+    setScanState('scanning');
     setHasPermission(null); // Reset permission state
 
     try {
@@ -77,18 +87,35 @@ export default function BarcodeScanner({ onScan, onClose }) {
       }
 
       // Start decoding with timeout
-      const timeoutId = setTimeout(() => {
+      // TODO: Rendre le timeout configurable via props
+      timeoutRef.current = setTimeout(() => {
         console.warn('⏱️ Scan timeout');
+        setScanState('not_found');
         setError('⏱️ Timeout: Approchez le code-barres de la caméra (10-20 cm)');
-      }, 15000);
+        stopScanning();
+        
+        // Handle notFoundBehavior
+        if (notFoundBehavior === 'suggest_search') {
+          // Keep error message to suggest search
+        } else if (notFoundBehavior === 'save_for_review') {
+          // TODO: Implémenter la sauvegarde pour revue
+          console.log('TODO: Save scan attempt for review');
+        } else if (notFoundBehavior === 'open_empty_product_page') {
+          // TODO: Implémenter l'ouverture d'une page produit vide
+          console.log('TODO: Open empty product page');
+        }
+      }, timeout);
 
       console.log('🔍 Starting barcode detection...');
       
+      // TODO: Remplacer par une librairie plus performante
+      // Évaluer @undecaf/zbar-wasm pour améliorer le taux de détection
       readerRef.current.decodeFromVideoDevice(undefined, videoRef.current, (result, err) => {
         if (result) {
-          clearTimeout(timeoutId);
+          clearTimeout(timeoutRef.current);
           const code = result.getText();
           console.log('✅ Barcode detected:', code);
+          setScanState('success');
           stopScanning();
           onScan(code);
         }
@@ -101,7 +128,7 @@ export default function BarcodeScanner({ onScan, onClose }) {
     } catch (err) {
       console.error('❌ Camera error:', err);
       setHasPermission(false);
-      setIsScanning(false);
+      setScanState('permission_denied');
       
       if (err.name === 'NotAllowedError') {
         setError('📷 Accès caméra refusé. Veuillez autoriser l\'accès à la caméra dans les paramètres de votre navigateur.');
@@ -112,13 +139,19 @@ export default function BarcodeScanner({ onScan, onClose }) {
       } else if (err.name === 'NotSupportedError' || err.message.includes('getUserMedia')) {
         setError('📷 Caméra non supportée sur ce navigateur. Utilisez Chrome, Firefox ou Safari récent. Ou utilisez l\'import d\'image.');
       } else {
+        setScanState('error');
         setError(`❌ Erreur: ${err.message || 'Impossible d\'accéder à la caméra'}. Essayez l\'import d\'image.`);
       }
     }
   };
 
   const stopScanning = () => {
-    setIsScanning(false);
+    setScanState('idle');
+    
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
     
     if (readerRef.current) {
       readerRef.current.reset();
@@ -155,19 +188,20 @@ export default function BarcodeScanner({ onScan, onClose }) {
     if (!file) return;
 
     setError(null);
-    setIsScanning(true);
+    setScanState('processing');
 
     try {
       const imageUrl = URL.createObjectURL(file);
+      // TODO: Améliorer la détection sur images avec prétraitement
       const result = await readerRef.current.decodeFromImageUrl(imageUrl);
       const code = result.getText();
       URL.revokeObjectURL(imageUrl);
-      setIsScanning(false);
+      setScanState('success');
       onScan(code);
     } catch (err) {
       console.error('Image decode error:', err);
+      setScanState('not_found');
       setError('❌ Code-barres non détecté dans l\'image. Essayez la saisie manuelle.');
-      setIsScanning(false);
     }
   };
 
@@ -197,7 +231,7 @@ export default function BarcodeScanner({ onScan, onClose }) {
         {/* Content */}
         <div className="p-6 space-y-4">
           {/* Video Preview */}
-          {isScanning && hasPermission && (
+          {scanState === 'scanning' && hasPermission && (
             <div className="relative bg-black rounded-lg overflow-hidden">
               <video
                 ref={videoRef}
@@ -232,6 +266,7 @@ export default function BarcodeScanner({ onScan, onClose }) {
               {/* Stop button */}
               <button
                 onClick={stopScanning}
+                data-testid="stop-scan"
                 className="absolute bottom-4 left-4 px-4 py-2 bg-red-600 text-white rounded-lg font-semibold"
               >
                 Arrêter
@@ -240,7 +275,7 @@ export default function BarcodeScanner({ onScan, onClose }) {
           )}
 
           {/* Instructions */}
-          {!isScanning && !error && (
+          {scanState === 'idle' && !error && (
             <div className="bg-blue-900/20 border border-blue-700/30 rounded-lg p-4 text-sm text-blue-200">
               <p className="font-semibold mb-2">📋 Instructions :</p>
               <ul className="space-y-1 ml-4 list-disc">
@@ -281,9 +316,10 @@ export default function BarcodeScanner({ onScan, onClose }) {
           )}
 
           {/* Camera scan button */}
-          {!isScanning && (
+          {scanState === 'idle' && (
             <button
               onClick={startScanning}
+              data-testid="start-scan"
               className="w-full px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold text-lg transition-colors"
             >
               📷 Scanner avec la caméra

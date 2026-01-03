@@ -10,6 +10,11 @@ export default function Scanner() {
   const [productData, setProductData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [showSettings, setShowSettings] = useState(false);
+  
+  // Scanner settings
+  const [scanTimeout, setScanTimeout] = useState(15000); // 15 secondes par défaut
+  const [notFoundBehavior, setNotFoundBehavior] = useState('suggest_search');
 
   const handleScan = async (code) => {
     if (import.meta.env.DEV) {
@@ -56,7 +61,54 @@ export default function Scanner() {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 p-4">
       <div className="max-w-4xl mx-auto">
         <div className="bg-slate-900 rounded-2xl p-6 shadow-lg">
-          <h1 className="text-3xl font-bold text-white mb-6">📷 Scanner Code-Barres</h1>
+          <div className="flex items-center justify-between mb-6">
+            <h1 className="text-3xl font-bold text-white">📷 Scanner Code-Barres</h1>
+            <button
+              onClick={() => setShowSettings(!showSettings)}
+              className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm transition-colors"
+              aria-label="Paramètres du scanner"
+            >
+              ⚙️ Paramètres
+            </button>
+          </div>
+          
+          {/* Settings Panel */}
+          {showSettings && (
+            <div className="mb-6 p-4 bg-slate-800 border border-slate-700 rounded-lg space-y-4">
+              <h3 className="text-white font-semibold mb-3">Paramètres du scanner</h3>
+              
+              <div>
+                <label className="block text-gray-300 text-sm mb-2">
+                  Timeout de scan (millisecondes)
+                </label>
+                <select
+                  value={scanTimeout}
+                  onChange={(e) => setScanTimeout(Number(e.target.value))}
+                  className="w-full bg-slate-700 text-white border border-slate-600 px-3 py-2 rounded-lg"
+                >
+                  <option value={10000}>10 secondes</option>
+                  <option value={15000}>15 secondes (par défaut)</option>
+                  <option value={20000}>20 secondes</option>
+                  <option value={30000}>30 secondes</option>
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-gray-300 text-sm mb-2">
+                  Comportement si produit non trouvé
+                </label>
+                <select
+                  value={notFoundBehavior}
+                  onChange={(e) => setNotFoundBehavior(e.target.value)}
+                  className="w-full bg-slate-700 text-white border border-slate-600 px-3 py-2 rounded-lg"
+                >
+                  <option value="suggest_search">Suggérer une recherche</option>
+                  <option value="save_for_review">Sauvegarder pour revue</option>
+                  <option value="open_empty_product_page">Ouvrir page produit vide</option>
+                </select>
+              </div>
+            </div>
+          )}
           
           {/* Information Banner */}
           <div className="mb-6 p-4 bg-blue-900/30 border border-blue-700 rounded-lg">
@@ -155,6 +207,8 @@ export default function Scanner() {
         <BarcodeScanner
           onScan={handleScan}
           onClose={() => setShowScanner(false)}
+          timeout={scanTimeout}
+          notFoundBehavior={notFoundBehavior}
         />
       )}
     </div>

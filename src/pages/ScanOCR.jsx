@@ -8,6 +8,10 @@ export default function ScanOCR() {
   const [loading, setLoading] = useState(false);
   const [scanState, setScanState] = useState('idle'); // 'idle', 'preprocessing', 'ocr_processing', 'complete'
   const [error, setError] = useState(null);
+  const [showSettings, setShowSettings] = useState(false);
+  
+  // OCR settings
+  const [ocrTimeout, setOcrTimeout] = useState(30000); // 30 secondes par défaut
 
   const handleUpload = async (e) => {
     const file = e.target.files[0];
@@ -60,7 +64,39 @@ export default function ScanOCR() {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 p-4">
       <div className="max-w-4xl mx-auto">
         <div className="bg-slate-900 rounded-2xl p-6 shadow-lg">
-          <h1 className="text-3xl font-bold text-white mb-6">📸 Scanner Ingrédients (OCR)</h1>
+          <div className="flex items-center justify-between mb-6">
+            <h1 className="text-3xl font-bold text-white">📸 Scanner Ingrédients (OCR)</h1>
+            <button
+              onClick={() => setShowSettings(!showSettings)}
+              className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm transition-colors"
+              aria-label="Paramètres OCR"
+            >
+              ⚙️ Paramètres
+            </button>
+          </div>
+          
+          {/* Settings Panel */}
+          {showSettings && (
+            <div className="mb-6 p-4 bg-slate-800 border border-slate-700 rounded-lg space-y-4">
+              <h3 className="text-white font-semibold mb-3">Paramètres OCR</h3>
+              
+              <div>
+                <label className="block text-gray-300 text-sm mb-2">
+                  Timeout de traitement (millisecondes)
+                </label>
+                <select
+                  value={ocrTimeout}
+                  onChange={(e) => setOcrTimeout(Number(e.target.value))}
+                  className="w-full bg-slate-700 text-white border border-slate-600 px-3 py-2 rounded-lg"
+                >
+                  <option value={20000}>20 secondes</option>
+                  <option value={30000}>30 secondes (par défaut)</option>
+                  <option value={45000}>45 secondes</option>
+                  <option value={60000}>60 secondes</option>
+                </select>
+              </div>
+            </div>
+          )}
           
           {/* Information Banner */}
           <div className="mb-6 p-4 bg-blue-900/30 border border-blue-700 rounded-lg">
