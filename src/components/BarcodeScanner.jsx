@@ -68,7 +68,9 @@ export default function BarcodeScanner({
         // Wait for video to be ready
         await new Promise((resolve, reject) => {
           videoRef.current.onloadedmetadata = () => {
-            console.log('📹 Video metadata loaded');
+            if (config.debugMode) {
+              console.warn('📹 Video metadata loaded');
+            }
             resolve();
           };
           videoRef.current.onerror = (e) => {

@@ -24,7 +24,9 @@ export default function Scanner() {
     // OPTIMIZATION 2: Conditional OCR
     // EAN detected → skip OCR entirely
     // OCR is only used as fallback in ScanOCR page when barcode detection fails
-    console.info('[SCAN_PERF] EAN detected, skipping OCR:', code);
+    if (scannerConfig.debugMode) {
+      console.warn('[SCAN_PERF] EAN detected, skipping OCR:', code);
+    }
     
     setScanResult(code);
     setShowScanner(false);
