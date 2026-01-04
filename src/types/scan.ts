@@ -61,16 +61,20 @@ export const DEFAULT_SCANNER_CONFIG: ScannerConfig = {
 
 /**
  * State transition logging helper
+ * Only logs when debug mode is enabled
  */
 export function logStateTransition(
   from: ScanState,
   to: ScanState,
-  context?: Record<string, any>
+  context?: Record<string, any>,
+  debugMode: boolean = false
 ): void {
+  if (!debugMode) return;
+  
   const timestamp = new Date().toISOString();
   const contextStr = context ? JSON.stringify(context) : '';
   
-  console.warn(`[SCAN_STATE] ${timestamp} | ${from} → ${to} ${contextStr}`);
+  console.log(`[SCAN_STATE] ${timestamp} | ${from} → ${to} ${contextStr}`);
   
   // Also log to any debug hooks if available
   if (typeof window !== 'undefined' && (window as any).scanDebugHook) {

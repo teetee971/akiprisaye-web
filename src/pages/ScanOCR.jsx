@@ -20,9 +20,7 @@ export default function ScanOCR() {
   const updateScanState = (newState, context) => {
     const oldState = scanState;
     setScanState(newState);
-    if (ocrConfig.debugMode) {
-      logStateTransition(oldState, newState, context);
-    }
+    logStateTransition(oldState, newState, context, ocrConfig.debugMode);
   };
 
   const updateOcrConfig = (key, value) => {
@@ -92,14 +90,17 @@ export default function ScanOCR() {
               onClick={() => setShowSettings(!showSettings)}
               className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors"
               title="Paramètres"
+              aria-label="Ouvrir les paramètres OCR"
+              aria-expanded={showSettings}
+              aria-controls="ocr-settings-panel"
             >
-              ⚙️
+              <span aria-hidden="true">⚙️</span>
             </button>
           </div>
           
           {/* Settings Panel */}
           {showSettings && (
-            <div className="mb-6 p-4 bg-slate-800 border border-slate-700 rounded-lg space-y-4">
+            <div id="ocr-settings-panel" className="mb-6 p-4 bg-slate-800 border border-slate-700 rounded-lg space-y-4">
               <h3 className="text-white font-semibold mb-3">⚙️ Paramètres OCR</h3>
               
               {/* OCR Sensitivity */}

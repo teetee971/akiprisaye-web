@@ -63,10 +63,10 @@ describe('Scan Types and Utilities', () => {
   });
 
   describe('logStateTransition', () => {
-    it('should log state transition to console', () => {
-      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    it('should log state transition to console when debug mode is enabled', () => {
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
-      logStateTransition('idle', 'scanning', { test: 'context' });
+      logStateTransition('idle', 'scanning', { test: 'context' }, true);
 
       expect(consoleSpy).toHaveBeenCalledWith(
         expect.stringContaining('[SCAN_STATE]')
@@ -78,10 +78,20 @@ describe('Scan Types and Utilities', () => {
       consoleSpy.mockRestore();
     });
 
-    it('should handle transitions without context', () => {
-      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    it('should not log when debug mode is disabled', () => {
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
-      logStateTransition('scanning', 'processing');
+      logStateTransition('scanning', 'processing', undefined, false);
+
+      expect(consoleSpy).not.toHaveBeenCalled();
+
+      consoleSpy.mockRestore();
+    });
+
+    it('should handle transitions without context', () => {
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+      logStateTransition('scanning', 'processing', undefined, true);
 
       expect(consoleSpy).toHaveBeenCalledWith(
         expect.stringContaining('[SCAN_STATE]')

@@ -29,9 +29,7 @@ export default function BarcodeScanner({
   const updateScanState = (newState, context) => {
     const oldState = scanState;
     setScanState(newState);
-    if (config.debugMode) {
-      logStateTransition(oldState, newState, context);
-    }
+    logStateTransition(oldState, newState, context, config.debugMode);
   };
 
   const startScanning = async () => {
@@ -152,7 +150,7 @@ export default function BarcodeScanner({
         setError('📷 Caméra non supportée sur ce navigateur. Utilisez Chrome, Firefox ou Safari récent. Ou utilisez l\'import d\'image.');
       } else {
         updateScanState('error', { error: err.message });
-        setError(`❌ Erreur: ${err.message || 'Impossible d\'accéder à la caméra'}. Essayez l\'import d\'image.`);
+        setError(`❌ Erreur: ${err.message || "Impossible d'accéder à la caméra"}. Essayez l'import d'image.`);
       }
     }
   };

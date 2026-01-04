@@ -65,8 +65,43 @@ export default function Scanner() {
         localStorage.setItem('notFoundScans', JSON.stringify(notFoundScans));
         setError(`Produit non référencé (Code: ${code}). Enregistré localement pour revue.`);
       } catch (err) {
-        console.error('Failed to save not-found scan:', err);
-        setError(`Produit non référencé (Code: ${code}).`);
+        // Distinguish between corrupted JSON and storage quota / other errors
+        if (err instanceof SyntaxError) {
+          // Corrupted JSON in localStorage: reset and retry once
+          console.warn('Corrupted notFoundScans data in localStorage, resetting key:', err);
+          try {
+            const resetScans = [{ code, timestamp: Date.now() }];
+            localStorage.setItem('notFoundScans', JSON.stringify(resetScans));
+            setError(`Produit non référencé (Code: ${code}). Enregistré localement pour revue.`);
+          } catch (storageError) {
+            if (
+              storageError &&
+              (storageError.name === 'QuotaExceededError' ||
+                storageError.name === 'NS_ERROR_DOM_QUOTA_REACHED')
+            ) {
+              console.error(
+                'localStorage quota exceeded while saving not-found scan after reset:',
+                storageError
+              );
+            } else {
+              console.error(
+                'Failed to save not-found scan to localStorage after reset:',
+                storageError
+              );
+            }
+            setError(`Produit non référencé (Code: ${code}).`);
+          }
+        } else if (
+          err &&
+          (err.name === 'QuotaExceededError' || err.name === 'NS_ERROR_DOM_QUOTA_REACHED')
+        ) {
+          // Specific handling for storage quota exceeded
+          console.error('localStorage quota exceeded while saving not-found scan:', err);
+          setError(`Produit non référencé (Code: ${code}). Stockage local plein.`);
+        } else {
+          console.error('Failed to save not-found scan:', err);
+          setError(`Produit non référencé (Code: ${code}).`);
+        }
       }
     } else {
       setError(`Produit non trouvé dans notre base de données (Code: ${code})`);
@@ -94,6 +129,9 @@ export default function Scanner() {
               onClick={() => setShowSettings(!showSettings)}
               className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors"
               title="Paramètres"
+              aria-label="Paramètres"
+              aria-expanded={showSettings}
+              aria-controls="scanner-settings-panel"
             >
               ⚙️
             </button>
@@ -101,7 +139,7 @@ export default function Scanner() {
           
           {/* Settings Panel */}
           {showSettings && (
-            <div className="mb-6 p-4 bg-slate-800 border border-slate-700 rounded-lg space-y-4">
+            <div id="scanner-settings-panel" className="mb-6 p-4 bg-slate-800 border border-slate-700 rounded-lg space-y-4">
               <h3 className="text-white font-semibold mb-3">⚙️ Paramètres du scanner</h3>
               
               {/* Scan Timeout */}
