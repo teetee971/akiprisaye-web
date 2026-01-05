@@ -81,12 +81,17 @@ function generateSecurePassword(): string {
     password += allChars[array[i] % allChars.length];
   }
   
-  // Shuffle the password
-  return password.split('').sort(() => {
-    const arr = new Uint8Array(1);
-    crypto.getRandomValues(arr);
-    return arr[0] - 128;
-  }).join('');
+  // Shuffle using Fisher-Yates with crypto.getRandomValues
+  const chars = password.split('');
+  const randomValues = new Uint32Array(chars.length);
+  crypto.getRandomValues(randomValues);
+  
+  for (let i = chars.length - 1; i > 0; i--) {
+    const j = randomValues[i] % (i + 1);
+    [chars[i], chars[j]] = [chars[j], chars[i]];
+  }
+  
+  return chars.join('');
 }
 
 export function PasswordInput({
