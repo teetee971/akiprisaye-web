@@ -125,9 +125,8 @@ export default function ScanEAN() {
         
         const Tesseract = await import('tesseract.js')
         const { data } = await Tesseract.recognize(img, 'eng', {
-          logger: m => console.log(m),
-          // Suppression volontaire de la whitelist chiffres
-          // OCR texte requis pour reconnaissance produit
+          // Intentional removal of digit whitelist
+          // Full text OCR required for product recognition
         })
 
         ocrText = data.text;
@@ -183,7 +182,7 @@ export default function ScanEAN() {
       setImageUploadStatus('❌ Erreur lors du traitement de l\'image')
       setIsProcessingImage(false)
     } finally {
-      // Évite fuite mémoire (mobile / sessions longues)
+      // Prevents memory leaks (mobile / long sessions)
       URL.revokeObjectURL(imageUrl)
     }
   }
