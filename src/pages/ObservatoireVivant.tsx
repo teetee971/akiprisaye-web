@@ -17,6 +17,38 @@ type PricePoint = {
   prix: number;
 };
 
+type PriceAnomaly = {
+  timestamp: string;
+  prix: number;
+  type: string;
+  severity: string;
+  message: string;
+  territoire?: string;
+};
+
+type PriceKpi = {
+  min: number;
+  max: number;
+  median: number;
+  trend: number;
+  sample: number;
+  windowStart: string;
+  windowEnd: string;
+};
+
+type PriceSeries = {
+  territoire: string;
+  produit: string;
+  period: Period;
+  data: PricePoint[];
+  updated_at?: string;
+  source_type?: string | null;
+  source_name?: string | null;
+  currency?: string | null;
+  anomalies?: PriceAnomaly[];
+  kpis?: PriceKpi;
+};
+
 type ApiResponse = {
   territoire: string;
   produit: string;
@@ -28,6 +60,9 @@ type ApiResponse = {
   updated_at?: string;
   cache?: string;
   message?: string;
+  anomalies?: PriceAnomaly[];
+  kpis?: PriceKpi;
+  series?: PriceSeries[];
 };
 
 const TERRITORIES = ['Guadeloupe', 'Martinique', 'Guyane', 'La Réunion', 'Mayotte'];
@@ -78,15 +113,19 @@ const formatObservationTimestamp = (value?: string | null) => {
 
 export default function ObservatoireVivant() {
   const [territoire, setTerritoire] = useState(TERRITORIES[0]);
+  const [selectedTerritories, setSelectedTerritories] = useState<string[]>([TERRITORIES[0]]);
   const [produit, setProduit] = useState(PRODUCTS[0]);
   const [period, setPeriod] = useState<Period>('day');
-  const [data, setData] = useState<PricePoint[]>([]);
-  const [meta, setMeta] = useState<Omit<ApiResponse, 'data'> | null>(null);
+  const [series, setSeries] = useState<PriceSeries[]>([]);
+  const [meta, setMeta] = useState<Omit<ApiResponse, 'data' | 'series'> | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [comparisonMode, setComparisonMode] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
+    const territoriesToLoad =
+      comparisonMode && selectedTerritories.length > 0 ? selectedTerritories : [territoire];
 
     const fetchData = async () => {
       setLoading(true);
@@ -94,9 +133,13 @@ export default function ObservatoireVivant() {
 
       try {
         const url = new URL('/api/prices', window.location.origin);
-        url.searchParams.set('territoire', territoire);
         url.searchParams.set('produit', produit);
         url.searchParams.set('period', period);
+        if (territoriesToLoad.length > 1) {
+          url.searchParams.set('territoires', territoriesToLoad.join(','));
+        } else {
+          url.searchParams.set('territoire', territoriesToLoad[0]);
+        }
 
         const response = await fetch(url.toString(), { signal: controller.signal });
 
@@ -105,9 +148,25 @@ export default function ObservatoireVivant() {
         }
 
         const json = (await response.json()) as ApiResponse;
-        const points = Array.isArray(json.data) ? json.data : [];
+        const incomingSeries: PriceSeries[] =
+          json.series && json.series.length
+            ? json.series
+            : [
+                {
+                  territoire: json.territoire,
+                  produit: json.produit,
+                  period: json.period,
+                  data: json.data ?? [],
+                  source_type: json.source_type ?? undefined,
+                  source_name: json.source_name ?? undefined,
+                  currency: json.currency ?? undefined,
+                  updated_at: json.updated_at,
+                  anomalies: json.anomalies,
+                  kpis: json.kpis,
+                },
+              ];
 
-        setData(points);
+        setSeries(incomingSeries);
         setMeta({
           territoire: json.territoire,
           produit: json.produit,
@@ -120,7 +179,7 @@ export default function ObservatoireVivant() {
           message: json.message,
         });
 
-        if (points.length === 0) {
+        if (incomingSeries.every((s) => (s.data?.length ?? 0) === 0)) {
           setError(
             "Aucune donnée horodatée disponible pour cette sélection. Les flux se mettront à jour dès la première collecte."
           );
@@ -129,7 +188,7 @@ export default function ObservatoireVivant() {
         if (controller.signal.aborted) return;
         console.error('Erreur chargement observatoire vivant', err);
         setError("Données momentanément indisponibles. Merci de réessayer ultérieurement.");
-        setData([]);
+        setSeries([]);
       } finally {
         if (!controller.signal.aborted) {
           setLoading(false);
@@ -139,37 +198,80 @@ export default function ObservatoireVivant() {
 
     fetchData();
     return () => controller.abort();
-  }, [territoire, produit, period]);
+  }, [territoire, produit, period, comparisonMode, selectedTerritories]);
 
-  const latestUpdate = useMemo(() => formatDate(meta?.updated_at), [meta?.updated_at]);
+  const latestUpdate = useMemo(() => {
+    const latest = series
+      .map((s) => (s.updated_at ? new Date(s.updated_at).getTime() : 0))
+      .sort((a, b) => b - a)
+      .at(0);
+    return latest ? formatDate(new Date(latest).toISOString()) : formatDate(meta?.updated_at);
+  }, [series, meta?.updated_at]);
 
-  const currency = meta?.currency ?? '€';
+  const currency = series[0]?.currency ?? meta?.currency ?? '€';
   const latestTimestamp = useMemo(() => {
-    if (data.length === 0) {
-      return meta?.updated_at ?? null;
-    }
     let latest: string | null = null;
-    for (const point of data) {
-      const parsed = new Date(point.timestamp);
-      if (Number.isNaN(parsed.getTime())) continue;
-      if (!latest || parsed.getTime() > new Date(latest).getTime()) {
-        latest = point.timestamp;
-      }
-    }
+    series.forEach((serie) => {
+      serie.data.forEach((point) => {
+        const parsed = new Date(point.timestamp);
+        if (Number.isNaN(parsed.getTime())) return;
+        if (!latest || parsed.getTime() > new Date(latest).getTime()) {
+          latest = point.timestamp;
+        }
+      });
+    });
     return latest ?? meta?.updated_at ?? null;
-  }, [data, meta?.updated_at]);
+  }, [series, meta?.updated_at]);
 
   const sourceCategory = useMemo(() => {
-    const value = (meta?.source_type ?? '').toLowerCase();
+    const value = (series[0]?.source_type ?? meta?.source_type ?? '').toLowerCase();
     if (value.includes('instit')) return 'institutionnelle';
     if (value.includes('terrain')) return 'terrain';
     if (value.includes('parten')) return 'partenaire';
-    return meta?.source_type ?? 'non renseignée';
-  }, [meta?.source_type]);
+    return series[0]?.source_type ?? meta?.source_type ?? 'non renseignée';
+  }, [series, meta?.source_type]);
 
-  const isInstitutionalSource = sourceCategory === 'institutionnelle';
-  const lineStrokeDasharray = isInstitutionalSource ? undefined : '5 4';
-  const lineDot = isInstitutionalSource ? false : { r: 3, strokeWidth: 1, stroke: '#34d399', fill: '#34d399' };
+  const comparisonData = useMemo(() => {
+    const timeline = new Map<string, Record<string, unknown>>();
+    series.forEach((serie) => {
+      serie.data.forEach((point) => {
+        const existing = timeline.get(point.timestamp) ?? { timestamp: point.timestamp };
+        (existing as Record<string, unknown>)[serie.territoire] = point.prix;
+        timeline.set(point.timestamp, existing);
+      });
+    });
+    return Array.from(timeline.values()).sort(
+      (a, b) => new Date(a.timestamp as string).getTime() - new Date(b.timestamp as string).getTime()
+    );
+  }, [series]);
+
+  const anomalies = useMemo(
+    () =>
+      series.flatMap((serie) =>
+        (serie.anomalies ?? []).map((a) => ({
+          ...a,
+          territoire: serie.territoire,
+        }))
+      ),
+    [series]
+  );
+
+  const lineStrokeDasharray = sourceCategory === 'institutionnelle' ? undefined : '5 4';
+  const lineDot =
+    sourceCategory === 'institutionnelle' ? false : { r: 3, strokeWidth: 1, stroke: '#34d399', fill: '#34d399' };
+
+  const handleToggleTerritory = (value: string) => {
+    setSelectedTerritories((current) => {
+      if (current.includes(value)) {
+        const next = current.filter((t) => t !== value);
+        // Always keep at least one territoire actif pour éviter un état vide
+        return next.length ? next : [value];
+      }
+      return [...current, value];
+    });
+  };
+
+  const colorPalette = ['#60a5fa', '#34d399', '#f59e0b', '#a855f7', '#f87171'];
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
@@ -215,20 +317,80 @@ export default function ObservatoireVivant() {
         </header>
 
         <section className="bg-slate-900/70 border border-slate-800 rounded-2xl shadow-xl p-5 space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="space-y-2">
+              <p className="text-xs text-slate-400 uppercase">Mode</p>
+              <div className="inline-flex rounded-lg overflow-hidden border border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setComparisonMode(false);
+                    setSelectedTerritories([territoire]);
+                  }}
+                  className={`px-3 py-2 text-sm font-semibold ${
+                    !comparisonMode ? 'bg-blue-600 text-white' : 'bg-slate-950 text-slate-200'
+                  }`}
+                >
+                  Vue simple
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setComparisonMode(true)}
+                  className={`px-3 py-2 text-sm font-semibold ${
+                    comparisonMode ? 'bg-blue-600 text-white' : 'bg-slate-950 text-slate-200'
+                  }`}
+                >
+                  Comparaison multi-territoires
+                </button>
+              </div>
+              <p className="text-xs text-slate-400">
+                Source et fraîcheur affichées — pas de promesse flux caisse sans partenaire connecté.
+              </p>
+            </div>
+            <div className="rounded-full bg-slate-800/70 border border-slate-700 px-3 py-2 text-xs text-slate-200">
+              Dernière mise à jour : <span className="font-semibold text-white">{latestUpdate}</span>
+            </div>
+          </div>
+
           <div className="grid gap-4 md:grid-cols-3">
             <div className="space-y-2">
-              <label className="text-sm text-slate-400">Territoire</label>
-              <select
-                className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={territoire}
-                onChange={(e) => setTerritoire(e.target.value)}
-              >
-                {TERRITORIES.map((t) => (
-                  <option key={t} value={t}>
-                    {t}
-                  </option>
-                ))}
-              </select>
+              <label className="text-sm text-slate-400">Territoire(s)</label>
+              {comparisonMode ? (
+                <div className="grid grid-cols-2 gap-2">
+                  {TERRITORIES.map((t) => (
+                    <label
+                      key={t}
+                      className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-sm ${
+                        selectedTerritories.includes(t)
+                          ? 'border-blue-500/60 bg-blue-500/10 text-blue-100'
+                          : 'border-slate-800 bg-slate-950 text-slate-200'
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedTerritories.includes(t)}
+                        onChange={() => handleToggleTerritory(t)}
+                      />
+                      <span>{t}</span>
+                    </label>
+                  ))}
+                </div>
+              ) : (
+                <select
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  value={territoire}
+                  onChange={(e) => {
+                    setTerritoire(e.target.value);
+                    setSelectedTerritories([e.target.value]);
+                  }}
+                >
+                  {TERRITORIES.map((t) => (
+                    <option key={t} value={t}>
+                      {t}
+                    </option>
+                  ))}
+                </select>
+              )}
             </div>
             <div className="space-y-2">
               <label className="text-sm text-slate-400">Produit</label>
@@ -274,20 +436,18 @@ export default function ObservatoireVivant() {
             <div className="rounded-xl border border-slate-800 bg-slate-950/70 p-3">
               <p className="text-xs text-slate-400 uppercase">Source</p>
               <p className="text-lg font-semibold text-white">
-                {meta?.source_name || '—'}
+                {meta?.source_name || series[0]?.source_name || '—'}
               </p>
               <p className="text-xs text-slate-400">
-                {meta?.source_type ? `Type: ${meta.source_type}` : 'Type non renseigné'}
+                {meta?.source_type || series[0]?.source_type ? `Type: ${meta?.source_type ?? series[0]?.source_type}` : 'Type non renseigné'}
               </p>
             </div>
             <div className="rounded-xl border border-slate-800 bg-slate-950/70 p-3">
-              <p className="text-xs text-slate-400 uppercase">Période sélectionnée</p>
+              <p className="text-xs text-slate-400 uppercase">Vue active</p>
               <p className="text-lg font-semibold text-white">
-                {PERIOD_OPTIONS.find((p) => p.value === period)?.label}
+                {comparisonMode ? `${selectedTerritories.length} territoires` : 'Monoterritoire'}
               </p>
-              {meta?.cache && (
-                <p className="text-xs text-emerald-300">Cache: {meta.cache}</p>
-              )}
+              {meta?.cache && <p className="text-xs text-emerald-300">Cache: {meta.cache}</p>}
             </div>
           </div>
         </section>
@@ -329,11 +489,11 @@ export default function ObservatoireVivant() {
             </div>
           )}
 
-          {!loading && data.length > 0 && (
+          {!loading && series.some((s) => s.data.length > 0) && (
             <div className="space-y-3">
               <div className="h-80">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={data} margin={{ left: 10, right: 10, top: 10, bottom: 10 }}>
+                  <LineChart data={comparisonData} margin={{ left: 10, right: 10, top: 10, bottom: 10 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
                     <XAxis
                       dataKey="timestamp"
@@ -353,41 +513,95 @@ export default function ObservatoireVivant() {
                         borderRadius: '12px',
                         color: '#e2e8f0',
                       }}
-                      formatter={(value: number) => [`${value.toFixed(2)} ${currency}`, 'Prix']}
-                      labelFormatter={(label) => formatDate(label)}
+                      formatter={(value: number, name) => [`${value.toFixed(2)} ${currency}`, name]}
+                      labelFormatter={(label) => formatDate(label as string)}
                     />
-                    <Line
-                      type="monotone"
-                      dataKey="prix"
-                      stroke={isInstitutionalSource ? '#60a5fa' : '#34d399'}
-                      strokeWidth={2}
-                      strokeDasharray={lineStrokeDasharray}
-                      dot={lineDot}
-                      activeDot={{ r: 5 }}
-                    />
+                    {series.map((serie, idx) => (
+                      <Line
+                        key={serie.territoire}
+                        type="monotone"
+                        dataKey={serie.territoire}
+                        stroke={colorPalette[idx % colorPalette.length]}
+                        strokeWidth={2}
+                        strokeDasharray={lineStrokeDasharray}
+                        dot={comparisonMode ? { r: 3 } : lineDot}
+                        activeDot={{ r: 5 }}
+                      />
+                    ))}
                   </LineChart>
                 </ResponsiveContainer>
               </div>
               <div className="flex flex-wrap items-center gap-4 text-xs text-slate-200">
-                <div className="flex items-center gap-2">
-                  <span className="h-[2px] w-8 rounded-full bg-blue-400" aria-hidden="true" />
-                  <span>● Données institutionnelles</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="w-8 border-t border-dashed border-emerald-300 relative">
-                    <span className="absolute -top-1 left-1 h-2 w-2 rounded-full bg-emerald-300" aria-hidden="true" />
-                    <span className="absolute -bottom-1 right-1 h-2 w-2 rounded-full bg-emerald-300" aria-hidden="true" />
-                  </span>
-                  <span>○ Données observées (terrain / partenaires)</span>
-                </div>
+                {series.map((serie, idx) => (
+                  <div key={serie.territoire} className="flex items-center gap-2">
+                    <span
+                      className="h-[2px] w-8 rounded-full"
+                      style={{ backgroundColor: colorPalette[idx % colorPalette.length] }}
+                      aria-hidden="true"
+                    />
+                    <span>{serie.territoire}</span>
+                  </div>
+                ))}
               </div>
-              <div className="rounded-xl border border-slate-800 bg-slate-950/70 px-4 py-3 text-xs text-slate-200">
+              {anomalies.length > 0 && (
+                <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-xs text-amber-100 space-y-2">
+                  <p className="font-semibold text-amber-200">Anomalies détectées</p>
+                  <div className="flex flex-wrap gap-2">
+                    {anomalies.slice(0, 8).map((anomaly, idx) => (
+                      <span
+                        key={`${anomaly.timestamp}-${idx}`}
+                        className="rounded-lg border border-amber-500/40 px-2 py-1"
+                      >
+                        {anomaly.territoire ? `${anomaly.territoire} · ` : ''}
+                        {formatObservationTimestamp(anomaly.timestamp)} — {anomaly.message}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <div className="rounded-xl border border-slate-800 bg-slate-950/70 px-4 py-3 text-xs text-slate-200 space-y-2">
                 <p>Dernière observation : {formatObservationTimestamp(latestTimestamp)}</p>
                 <p>Source : {sourceCategory}</p>
               </div>
             </div>
           )}
         </section>
+
+        {series.some((s) => s.kpis) && (
+          <section className="bg-slate-900/70 border border-slate-800 rounded-2xl p-5 space-y-3">
+            <h3 className="text-lg font-semibold text-white">KPIs comparés</h3>
+            <div className="overflow-x-auto">
+              <table className="min-w-full text-sm text-left text-slate-200">
+                <thead className="text-xs uppercase text-slate-400">
+                  <tr>
+                    <th className="px-3 py-2">Territoire</th>
+                    <th className="px-3 py-2">Min</th>
+                    <th className="px-3 py-2">Médiane</th>
+                    <th className="px-3 py-2">Max</th>
+                    <th className="px-3 py-2">Tendance</th>
+                    <th className="px-3 py-2">Échantillon</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {series.map((serie) => (
+                    <tr key={serie.territoire} className="border-t border-slate-800">
+                      <td className="px-3 py-2 font-semibold">{serie.territoire}</td>
+                      <td className="px-3 py-2">{serie.kpis ? `${serie.kpis.min.toFixed(2)} ${currency}` : '—'}</td>
+                      <td className="px-3 py-2">
+                        {serie.kpis ? `${serie.kpis.median.toFixed(2)} ${currency}` : '—'}
+                      </td>
+                      <td className="px-3 py-2">{serie.kpis ? `${serie.kpis.max.toFixed(2)} ${currency}` : '—'}</td>
+                      <td className="px-3 py-2">
+                        {serie.kpis ? `${serie.kpis.trend.toFixed(2)}%` : '—'}
+                      </td>
+                      <td className="px-3 py-2">{serie.kpis?.sample ?? '—'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
 
         <section className="bg-slate-900/70 border border-slate-800 rounded-2xl p-5 space-y-3">
           <h3 className="text-lg font-semibold text-white">Transparence & mentions</h3>
@@ -400,8 +614,8 @@ export default function ObservatoireVivant() {
               Les prix commerciaux sont indicatifs et dépendent des sources partenaires.
             </li>
             <li>
-              Données réelles, aucune simulation. Les caches sont rafraîchis par KV et les historiques
-              sont stockés dans D1.
+              Données horodatées, avec source affichée. En l’absence de flux connectés, un cache open-data
+              est servi (KV) et les historiques sont stockés dans D1 quand elle est activée.
             </li>
           </ul>
         </section>

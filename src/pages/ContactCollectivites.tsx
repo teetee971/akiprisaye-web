@@ -146,6 +146,35 @@ export default function ContactCollectivites() {
           <DataBadge source="Service public numérique" date="Réponse sous 48h ouvrées" />
         </div>
 
+        <div className="mb-10">
+          <GlassCard>
+            <div className="grid md:grid-cols-3 gap-4">
+              <div>
+                <p className="text-sm text-blue-200 font-semibold mb-1">Convention</p>
+                <p className="text-gray-300 text-sm">
+                  Proposition de convention et clauses de gouvernance livrées sous 72h. Aucune donnée personnelle
+                  collectée, uniquement des prix agrégés.
+                </p>
+              </div>
+              <div>
+                <p className="text-sm text-blue-200 font-semibold mb-1">Mise à disposition</p>
+                <p className="text-gray-300 text-sm">
+                  Flux open-data (CSV/JSONL) + endpoints API documentés. Licence ouverte, attribution “A KI PRI SA YÉ”.
+                </p>
+              </div>
+              <div>
+                <p className="text-sm text-blue-200 font-semibold mb-1">Canal presse / collectivités</p>
+                <p className="text-gray-300 text-sm">
+                  <a href="mailto:institutions@akiprisaye.fr" className="text-blue-300 underline">
+                    institutions@akiprisaye.fr
+                  </a>
+                  {' '}ou formulaire ci-dessous pour organiser un échange presse/collectivité.
+                </p>
+              </div>
+            </div>
+          </GlassCard>
+        </div>
+
         <div className="grid md:grid-cols-3 gap-8">
           {/* Contact Form */}
           <div className="md:col-span-2">

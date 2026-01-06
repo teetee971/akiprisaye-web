@@ -1,5 +1,29 @@
 const dataFiles = [
   {
+    name: 'prices.csv',
+    path: '/open-data/prices.csv',
+    description: 'Export agrégé multi-territoires (14 derniers jours) – prêt pour tableur.',
+    territory: 'DOM/COM (multi)',
+    period: 'Heure / jour / semaine / mois',
+    source: 'Open-data cache (pas de flux caisse)',
+  },
+  {
+    name: 'prices.jsonl',
+    path: '/open-data/prices.jsonl',
+    description: 'Export NDJSON (une ligne = une observation horodatée).',
+    territory: 'DOM/COM (multi)',
+    period: 'Heure / jour / semaine / mois',
+    source: 'Open-data cache (pas de flux caisse)',
+  },
+  {
+    name: 'metadata.json',
+    path: '/open-data/metadata.json',
+    description: 'Métadonnées officielles (licence, périmètre, fraîcheur).',
+    territory: 'Global',
+    period: 'Horodatage inclus',
+    source: 'A KI PRI SA YÉ – Observatoire',
+  },
+  {
     name: 'prix-panier-base.json',
     path: '/data/observatoire/prix-panier-base.json',
     description: 'Panier de référence observatoire (prix moyens par produit).',
@@ -33,7 +57,8 @@ export default function DonneesPubliques() {
           <p className="text-xs uppercase tracking-wide text-blue-200">Open-data officiel</p>
           <h1 className="text-3xl font-bold text-white">Données publiques</h1>
           <p className="text-slate-300 max-w-3xl">
-            Liste des fichiers statiques mis à disposition par l’observatoire citoyen. Aucun appel réseau dynamique, aucune API : les données sont servies par Cloudflare Pages.
+            Liste des fichiers statiques mis à disposition par l’observatoire citoyen. Aucun appel réseau dynamique,
+            aucune collecte personnelle. Pas de promesse “flux caisse live” : la source et la fraîcheur sont affichées.
           </p>
         </header>
 
@@ -50,8 +75,28 @@ export default function DonneesPubliques() {
             </span>
           </div>
           <p className="text-sm text-slate-400">
-            Formats JSON lisibles par tous · Pas de cookie · Pas de tracker · Pas d’identifiants requis.
+            Formats CSV / JSONL / JSON lisibles par tous · Pas de cookie · Pas de tracker · Pas d’identifiants requis.
           </p>
+          <div className="flex flex-wrap gap-2">
+            <a
+              href="/open-data/prices.csv"
+              className="px-3 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-500"
+            >
+              Télécharger prices.csv
+            </a>
+            <a
+              href="/open-data/prices.jsonl"
+              className="px-3 py-2 rounded-lg border border-slate-700 text-slate-200 hover:border-blue-400 text-sm"
+            >
+              Export JSONL
+            </a>
+            <a
+              href="/open-data/metadata.json"
+              className="px-3 py-2 rounded-lg border border-slate-700 text-slate-200 hover:border-blue-400 text-sm"
+            >
+              Métadonnées
+            </a>
+          </div>
         </div>
 
         <section className="space-y-4">
