@@ -31,13 +31,6 @@
     backface-visibility: hidden;
   }
 
-  /* Prevent chat/cart from being hidden by mobile keyboard */
-  [class*="z-floating"],
-  [class*="z-modal"] {
-    /* Use visual viewport for better positioning with keyboard */
-    position: fixed;
-  }
-
   /* Android keyboard collision prevention for bottom-positioned elements */
   .fixed.bottom-4,
   .fixed.bottom-8 {
@@ -74,17 +67,19 @@
 
 /* Touch target size for mobile (WCAG AAA - 44px minimum) */
 /* Scope to specific interactive elements to avoid layout issues */
-button,
-a[role="button"],
-input[type="checkbox"],
-input[type="radio"],
-input[type="submit"],
-input[type="button"],
-[role="button"],
-[role="tab"],
-[role="menuitem"] {
-  min-height: 44px;
-  min-width: 44px;
+@media screen and (max-width: 768px) {
+  button,
+  a[role="button"],
+  input[type="checkbox"],
+  input[type="radio"],
+  input[type="submit"],
+  input[type="button"],
+  [role="button"],
+  [role="tab"],
+  [role="menuitem"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
 }
 
 /* Improve tap highlight for better mobile UX */

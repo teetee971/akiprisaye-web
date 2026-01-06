@@ -12,6 +12,37 @@ import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
 import NotFound from './pages/NotFound';
 
+// Lazy loading error handler to prevent black screens
+function lazyWithRetry(componentImport) {
+  return lazy(async () => {
+    try {
+      return await componentImport();
+    } catch (error) {
+      console.error('Failed to load component:', error);
+      // Return a fallback component instead of crashing
+      return {
+        default: () => (
+          <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
+            <div className="max-w-md bg-slate-900 rounded-xl p-6 text-center">
+              <div className="text-5xl mb-4">⚠️</div>
+              <h2 className="text-xl font-semibold text-white mb-2">Module non disponible</h2>
+              <p className="text-gray-300 mb-4">
+                Cette fonctionnalité n'a pas pu être chargée. Veuillez rafraîchir la page.
+              </p>
+              <button
+                onClick={() => window.location.reload()}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+              >
+                Rafraîchir
+              </button>
+            </div>
+          </div>
+        )
+      };
+    }
+  });
+}
+
 // Lazy load other pages for better performance with retry logic
 const ChatIALocal = lazyWithRetry(() => import('./components/ChatIALocal'));
 const ScanOCR = lazyWithRetry(() => import('./pages/ScanOCR'));
@@ -79,37 +110,6 @@ function LoadingFallback() {
   );
 }
 
-// Lazy loading error handler to prevent black screens
-function lazyWithRetry(componentImport) {
-  return lazy(async () => {
-    try {
-      return await componentImport();
-    } catch (error) {
-      console.error('Failed to load component:', error);
-      // Return a fallback component instead of crashing
-      return {
-        default: () => (
-          <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
-            <div className="max-w-md bg-slate-900 rounded-xl p-6 text-center">
-              <div className="text-5xl mb-4">⚠️</div>
-              <h2 className="text-xl font-semibold text-white mb-2">Module non disponible</h2>
-              <p className="text-gray-300 mb-4">
-                Cette fonctionnalité n'a pas pu être chargée. Veuillez rafraîchir la page.
-              </p>
-              <button
-                onClick={() => window.location.reload()}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-              >
-                Rafraîchir
-              </button>
-            </div>
-          </div>
-        )
-      };
-    }
-  });
-}
-
 // Service Worker registration
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
@@ -128,18 +128,20 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// Global error handler to prevent black screens
-window.addEventListener('error', (event) => {
-  console.error('Global error caught:', event.error);
-  // Prevent default behavior that might cause black screen
-  event.preventDefault();
-});
+// Global error handlers - production only to avoid interfering with development
+if (import.meta.env.PROD) {
+  window.addEventListener('error', (event) => {
+    console.error('Global error caught:', event.error);
+    // Prevent default behavior that might cause black screen
+    event.preventDefault();
+  });
 
-window.addEventListener('unhandledrejection', (event) => {
-  console.error('Unhandled promise rejection:', event.reason);
-  // Prevent default behavior
-  event.preventDefault();
-});
+  window.addEventListener('unhandledrejection', (event) => {
+    console.error('Unhandled promise rejection:', event.reason);
+    // Prevent default behavior
+    event.preventDefault();
+  });
+}
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
