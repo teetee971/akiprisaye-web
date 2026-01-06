@@ -23,6 +23,7 @@ const Actualites = lazyWithRetry(() => import('./pages/Actualites'));
 const Alertes = lazyWithRetry(() => import('./pages/Alertes'));
 const APropos = lazyWithRetry(() => import('./pages/APropos'));
 const Methodologie = lazyWithRetry(() => import('./pages/Methodologie'));
+const Donnees = lazyWithRetry(() => import('./pages/Donnees'));
 const MentionsLegales = lazyWithRetry(() => import('./pages/MentionsLegales'));
 const MonCompte = lazyWithRetry(() => import('./pages/MonCompte'));
 const Inscription = lazyWithRetry(() => import('./pages/Inscription'));
@@ -165,6 +166,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                   <Route path='alertes' element={<Alertes />} />
                   <Route path='a-propos' element={<APropos />} />
                   <Route path='methodologie' element={<Methodologie />} />
+                  <Route path='donnees' element={<Donnees />} />
                   <Route path='mentions-legales' element={<MentionsLegales />} />
                   <Route path='mon-compte' element={<MonCompte />} />
                   <Route path='inscription' element={<Inscription />} />

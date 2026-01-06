@@ -44,12 +44,22 @@ export default function Footer() {
             Contact
           </Link>
           <Link
+            to="/donnees"
+            className="text-slate-300 hover:text-blue-400 transition-colors"
+          >
+            Données
+          </Link>
+          <Link
             to="/mentions-legales"
             className="text-slate-300 hover:text-blue-400 transition-colors"
           >
             Mentions légales
           </Link>
         </nav>
+
+        <div className="text-center text-slate-300 text-sm mb-4">
+          Périmètre actuellement couvert : Guadeloupe, Martinique (phase pilote)
+        </div>
 
         {/* Copyright */}
         <div className="text-center text-slate-400 text-sm">

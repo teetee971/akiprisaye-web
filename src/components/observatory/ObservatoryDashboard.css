@@ -177,6 +177,148 @@
   margin-bottom: 1.5rem;
 }
 
+.coverage-note {
+  color: #0f172a;
+  margin-top: 0.35rem;
+  font-weight: 600;
+}
+
+.real-data-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.real-data-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.real-data-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: #0ea5e9;
+  color: white;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.real-data-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.real-data-table {
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.real-data-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 0.5rem;
+  padding: 0.65rem 0.85rem;
+  align-items: center;
+}
+
+.real-data-row:nth-child(even) {
+  background: #f8fafc;
+}
+
+.real-data-row-head {
+  background: #0f172a;
+  color: white;
+  font-weight: 700;
+}
+
+.fallback-text {
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.observatoire-simple {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.observatoire-simple .card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.observatoire-simple .label {
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  color: #475569;
+  margin-bottom: 0.25rem;
+}
+
+.observatoire-simple .value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.observatoire-simple .muted {
+  color: #475569;
+  margin-top: 0.25rem;
+}
+
+.comparatif-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.comparatif-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 0.8fr;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.35rem 0.5rem;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.mini-chart-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+  height: 140px;
+}
+
+.mini-bar {
+  position: relative;
+  width: 24px;
+  background: linear-gradient(180deg, #38bdf8 0%, #0ea5e9 100%);
+  border-radius: 8px 8px 4px 4px;
+}
+
+.mini-label {
+  position: absolute;
+  bottom: -1.4rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.75rem;
+  color: #475569;
+}
+
 /* IVC Grid */
 .ivc-grid {
   display: grid;

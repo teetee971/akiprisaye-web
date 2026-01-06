@@ -14,6 +14,28 @@ import type {
 import type { TerritoireName } from '../../types/canonicalPriceObservation';
 import { loadSnapshotLocally, isSnapshotStale } from '../../services/snapshotGenerationService';
 
+type PriceSnapshot = {
+  territoire: string;
+  date: string;
+  source: string;
+  produits: Array<{
+    ean: string;
+    nom: string;
+    prix: number;
+    enseigne: string;
+  }>;
+};
+
+type ObservatoireDataset = {
+  date: string;
+  source: string;
+  perimetre: string;
+  indice_panier: number;
+  variation_mensuelle: number;
+  comparatif: Array<{ enseigne: string; produits: number; prix_moyen: number }>;
+  serie: Array<{ mois: string; indice: number }>;
+};
+
 interface ObservatoryDashboardProps {
   territoire?: TerritoireName;
 }
@@ -23,6 +45,10 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedTerritory, setSelectedTerritory] = useState<TerritoireName | undefined>(territoire);
+  const [priceSnapshot, setPriceSnapshot] = useState<PriceSnapshot | null>(null);
+  const [priceError, setPriceError] = useState<string | null>(null);
+  const [observatoireDataset, setObservatoireDataset] = useState<ObservatoireDataset | null>(null);
+  const [observatoireError, setObservatoireError] = useState<string | null>(null);
 
   const normalizeSnapshot = useCallback((loaded: IndicatorSnapshot): IndicatorSnapshot => {
     return {
@@ -85,6 +111,39 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
     loadSnapshot();
   }, [selectedTerritory, loadSnapshot]);
 
+  useEffect(() => {
+    const loadRealPriceSnapshot = async () => {
+      try {
+        const res = await fetch('/data/prix_snapshot.json', { cache: 'no-store' });
+        if (!res.ok) {
+          throw new Error(`Flux prix indisponible (${res.status})`);
+        }
+        const data = (await res.json()) as PriceSnapshot;
+        setPriceSnapshot(data);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Flux prix indisponible';
+        setPriceError(message);
+      }
+    };
+
+    const loadObservatoireDataset = async () => {
+      try {
+        const res = await fetch('/data/observatoire_2026-01.json', { cache: 'no-store' });
+        if (!res.ok) {
+          throw new Error(`Jeu de données observatoire indisponible (${res.status})`);
+        }
+        const data = (await res.json()) as ObservatoireDataset;
+        setObservatoireDataset(data);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Dataset observatoire indisponible';
+        setObservatoireError(message);
+      }
+    };
+
+    loadRealPriceSnapshot();
+    loadObservatoireDataset();
+  }, []);
+
   const renderDeploymentState = (message?: string) => (
     <div className="observatory-dashboard empty">
       <div className="error-message">
@@ -109,25 +168,33 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
     );
   }
 
-  if (error && !snapshot) {
-    return renderDeploymentState(error);
-  }
-
-  if (!snapshot) {
+  if (!snapshot && !priceSnapshot && !observatoireDataset) {
     return renderDeploymentState(error ?? undefined);
   }
 
-  const { indicateurs, metadata } = snapshot;
+  const { indicateurs, metadata } = snapshot || {
+    indicateurs: {
+      prix_moyens: [],
+      ecarts_dom_hexagone: [],
+      indices_vie_chere: [],
+      evolutions_temporelles: [],
+      dispersions_enseignes: [],
+    },
+    metadata: {
+      nombre_observations_total: 0,
+      periode_couverte: { debut: '', fin: '' },
+      sources: [],
+      qualite_moyenne: 0,
+    },
+    date_snapshot: '',
+  };
   const hasData =
     indicateurs.prix_moyens.length > 0 ||
     indicateurs.ecarts_dom_hexagone.length > 0 ||
     indicateurs.indices_vie_chere.length > 0 ||
     indicateurs.evolutions_temporelles.length > 0 ||
     indicateurs.dispersions_enseignes.length > 0;
-
-  if (!hasData) {
-    return renderDeploymentState(error ?? undefined);
-  }
+  const lastUpdate = snapshot?.date_snapshot ?? observatoireDataset?.date ?? new Date().toISOString();
 
   return (
     <div className="observatory-dashboard">
@@ -137,12 +204,90 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
         <p className="subtitle">
           Données publiques - {metadata.nombre_observations_total} observations
         </p>
+        <p className="coverage-note">Périmètre couvert : Guadeloupe, Martinique (phase pilote)</p>
         {error && (
           <div className="warning-banner">
             <span>⚠️</span> {error}
           </div>
         )}
       </header>
+
+      {/* Real price snapshot */}
+      <section className="real-data-card">
+        <div className="real-data-header">
+          <span className="real-data-badge">Donnée réelle – relevé mensuel</span>
+          <div className="real-data-meta">
+            <span>{priceSnapshot?.territoire ?? 'Territoire pilote : Guadeloupe'}</span>
+            <span>Campagne : {priceSnapshot?.date ?? '2026-01'}</span>
+            <span>Source : {priceSnapshot?.source ?? 'Relevé terrain / tickets'}</span>
+          </div>
+        </div>
+        {priceSnapshot ? (
+          <div className="real-data-table">
+            <div className="real-data-row real-data-row-head">
+              <span>Produit</span>
+              <span>Enseigne</span>
+              <span>Prix relevé</span>
+            </div>
+            {priceSnapshot.produits.slice(0, 4).map((produit) => (
+              <div key={produit.ean} className="real-data-row">
+                <span className="truncate">{produit.nom}</span>
+                <span className="truncate">{produit.enseigne}</span>
+                <span className="price-cell">{produit.prix.toFixed(2)} €</span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="fallback-text">
+            {priceError
+              ? `${priceError} — affichage en mode pédagogique`
+              : 'Chargement du flux prix réel...'}
+          </p>
+        )}
+      </section>
+
+      {/* Observatoire minimal */}
+      <section className="indicator-section">
+        <h2>Observatoire mensuel (donnée publiée)</h2>
+        <p className="section-description">
+          Date : {observatoireDataset?.date ?? '2026-01'} · Source :{' '}
+          {observatoireDataset?.source ?? 'Relevé terrain'} · Périmètre :{' '}
+          {observatoireDataset?.perimetre ?? 'Guadeloupe (phase pilote)'}
+        </p>
+        {observatoireDataset ? (
+          <div className="observatoire-simple">
+            <div className="card">
+              <p className="label">Indice panier</p>
+              <p className="value">{observatoireDataset.indice_panier.toFixed(1)}</p>
+              <p className="muted">Variation mensuelle : {observatoireDataset.variation_mensuelle.toFixed(1)}%</p>
+            </div>
+            <div className="card">
+              <p className="label">Comparatif enseignes</p>
+              <div className="comparatif-list">
+                {observatoireDataset.comparatif.map((row) => (
+                  <div key={row.enseigne} className="comparatif-row">
+                    <span>{row.enseigne}</span>
+                    <span>{row.produits} produits</span>
+                    <span className="price-cell">{row.prix_moyen.toFixed(2)} €</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="card">
+              <p className="label">Évolution récente</p>
+              <div className="mini-chart" aria-label="Évolution de l'indice panier">
+                {renderMiniChart(observatoireDataset.serie)}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <p className="fallback-text">
+            {observatoireError
+              ? `${observatoireError} — données affichées en mode dégradé`
+              : 'Chargement des données observatoire...'}
+          </p>
+        )}
+      </section>
 
       {/* Metadata */}
       <section className="metadata-section">
@@ -367,7 +512,7 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
             <li>✅ Sources citées: {metadata.sources.map(formatSource).join(', ')}</li>
           </ul>
           <p className="update-info">
-            Dernière mise à jour: {new Date(snapshot.date_snapshot).toLocaleString('fr-FR')}
+            Dernière mise à jour: {new Date(lastUpdate).toLocaleString('fr-FR')}
           </p>
         </div>
       </footer>
@@ -405,6 +550,26 @@ function formatDateSafe(value?: string): string {
     return 'à publier';
   }
   return date.toLocaleDateString('fr-FR');
+}
+
+function renderMiniChart(points: ObservatoireDataset['serie']) {
+  if (!points?.length) return <span className="fallback-text">Aucune donnée temporelle</span>;
+  const maxValue = Math.max(...points.map((p) => p.indice), 1);
+
+  return (
+    <div className="mini-chart-bars">
+      {points.map((point) => (
+        <div
+          key={point.mois}
+          className="mini-bar"
+          title={`${point.mois} : ${point.indice}`}
+          style={{ height: `${(point.indice / maxValue) * 100}%` }}
+        >
+          <span className="mini-label">{point.mois.slice(5)}</span>
+        </div>
+      ))}
+    </div>
+  );
 }
 
 export default ObservatoryDashboard;

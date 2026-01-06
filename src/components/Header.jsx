@@ -276,6 +276,9 @@ export default function Header() {
               <ThemeToggle />
             </nav>
           </div>
+          <div className="pt-2 pb-3 text-center text-xs text-white/90 dark:text-slate-100 font-semibold">
+            Périmètre actuellement couvert : Guadeloupe, Martinique (phase pilote)
+          </div>
         </div>
       </header>
     </>

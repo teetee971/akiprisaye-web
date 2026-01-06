@@ -1,0 +1,10 @@
+{
+  "territoire": "Guadeloupe",
+  "date": "2026-01",
+  "source": "Relevé mensuel terrain",
+  "produits": [
+    { "ean": "3017620422003", "nom": "Riz long grain 1kg", "prix": 2.1, "enseigne": "Carrefour" },
+    { "ean": "3560070478012", "nom": "Lait demi-écrémé UHT 1L", "prix": 1.38, "enseigne": "E.Leclerc" },
+    { "ean": "3274080005003", "nom": "Pâtes spaghetti 500g", "prix": 1.05, "enseigne": "Intermarché" }
+  ]
+}

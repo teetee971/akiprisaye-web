@@ -1,0 +1,17 @@
+{
+  "date": "2026-01",
+  "source": "Relevé mensuel terrain + tickets scannés",
+  "perimetre": "Guadeloupe (phase pilote)",
+  "indice_panier": 102.4,
+  "variation_mensuelle": 1.3,
+  "comparatif": [
+    { "enseigne": "Carrefour", "produits": 5, "prix_moyen": 2.15 },
+    { "enseigne": "E.Leclerc", "produits": 5, "prix_moyen": 2.07 },
+    { "enseigne": "Intermarché", "produits": 5, "prix_moyen": 2.11 }
+  ],
+  "serie": [
+    { "mois": "2025-11", "indice": 100.0 },
+    { "mois": "2025-12", "indice": 101.2 },
+    { "mois": "2026-01", "indice": 102.4 }
+  ]
+}
