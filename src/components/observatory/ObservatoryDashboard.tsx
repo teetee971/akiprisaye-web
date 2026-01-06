@@ -148,7 +148,8 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
       try {
         const now = new Date();
         const month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-        const urlCandidates = [`/data/observatoire_${month}.json`, '/data/observatoire_2026-01.json'];
+        const fallbackDataset = import.meta.env.VITE_OBSERVATOIRE_FALLBACK ?? '/data/observatoire_2026-01.json';
+        const urlCandidates = [`/data/observatoire_${month}.json`, fallbackDataset];
 
         let data: ObservatoireDataset | null = null;
         for (const url of urlCandidates) {
@@ -196,7 +197,9 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
     );
   }
 
-  if (!snapshot && !priceSnapshot && !observatoireDataset) {
+  const hasAnyDataset = Boolean(snapshot || priceSnapshot || observatoireDataset);
+
+  if (!hasAnyDataset) {
     return renderDeploymentState(error ?? undefined);
   }
 
@@ -207,7 +210,7 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
     indicateurs.indices_vie_chere.length > 0 ||
     indicateurs.evolutions_temporelles.length > 0 ||
     indicateurs.dispersions_enseignes.length > 0;
-  const lastUpdate = snapshot?.date_snapshot ?? observatoireDataset?.date ?? new Date().toISOString();
+  const lastUpdate = snapshot?.date_snapshot ?? observatoireDataset?.date ?? null;
 
   return (
     <div className="observatory-dashboard">
@@ -525,7 +528,7 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
             <li>✅ Sources citées: {metadata.sources.map(formatSource).join(', ')}</li>
           </ul>
           <p className="update-info">
-            Dernière mise à jour: {new Date(lastUpdate).toLocaleString('fr-FR')}
+            Dernière mise à jour: {lastUpdate ? new Date(lastUpdate).toLocaleString('fr-FR') : 'à publier'}
           </p>
         </div>
       </footer>
@@ -567,7 +570,7 @@ function formatDateSafe(value?: string): string {
 
 function renderMiniChart(points: ObservatoireDataset['serie']) {
   if (!points?.length) return <span className="fallback-text">Aucune donnée temporelle</span>;
-  const maxValue = Math.max(...points.map((p) => p.indice), 1);
+  const maxValue = points.reduce((max, p) => (p.indice > max ? p.indice : max), 1);
 
   return (
     <div className="mini-chart-bars">

@@ -92,7 +92,16 @@ export default function Donnees() {
             <li>Données collectées de manière indépendante et vérifiables.</li>
             <li>Fréquence : publication mensuelle, avec versionnage des fichiers.</li>
             <li>Neutralité : aucune publicité, aucun sponsoring d’enseigne.</li>
-            <li>Contact dédié pour signaler une erreur : <a href="mailto:contact@akiprisaye.fr" className="text-blue-600 dark:text-blue-300 underline">contact@akiprisaye.fr</a>.</li>
+            <li>
+              Contact dédié pour signaler une erreur :{' '}
+              <a
+                href="mailto:contact@akiprisaye.fr"
+                className="text-blue-600 dark:text-blue-300 underline"
+                aria-label="Contacter l'équipe pour signaler une erreur par email"
+              >
+                contact@akiprisaye.fr
+              </a>.
+            </li>
           </ul>
         </section>
       </main>
