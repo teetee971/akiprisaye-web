@@ -57,7 +57,7 @@ export default function Donnees() {
             Accès direct aux jeux de données
           </h2>
           <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
-            Données versionnées, mises à jour mensuellement, sans sponsoring d&apos;enseigne. Licence : Ouverte / Etalab v2.0.
+            Données versionnées, mises à jour mensuellement, sans sponsoring d’enseigne. Licence : Ouverte / Etalab v2.0.
           </p>
           <div className="grid md:grid-cols-2 gap-4">
             {datasets.map((dataset) => (
@@ -91,7 +91,7 @@ export default function Donnees() {
           <ul className="list-disc list-inside space-y-2 text-sm text-slate-700 dark:text-slate-300">
             <li>Données collectées de manière indépendante et vérifiables.</li>
             <li>Fréquence : publication mensuelle, avec versionnage des fichiers.</li>
-            <li>Neutralité : aucune publicité, aucun sponsoring d&apos;enseigne.</li>
+            <li>Neutralité : aucune publicité, aucun sponsoring d’enseigne.</li>
             <li>Contact dédié pour signaler une erreur : <a href="mailto:contact@akiprisaye.fr" className="text-blue-600 dark:text-blue-300 underline">contact@akiprisaye.fr</a>.</li>
           </ul>
         </section>

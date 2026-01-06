@@ -69,6 +69,24 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
     };
   }, []);
 
+  const DEFAULT_SNAPSHOT: IndicatorSnapshot = {
+    version: '3.0.0',
+    date_snapshot: '',
+    indicateurs: {
+      prix_moyens: [],
+      ecarts_dom_hexagone: [],
+      indices_vie_chere: [],
+      evolutions_temporelles: [],
+      dispersions_enseignes: [],
+    },
+    metadata: {
+      nombre_observations_total: 0,
+      periode_couverte: { debut: '', fin: '' },
+      sources: [],
+      qualite_moyenne: 0,
+    },
+  };
+
   const loadSnapshot = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -114,7 +132,7 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
   useEffect(() => {
     const loadRealPriceSnapshot = async () => {
       try {
-        const res = await fetch('/data/prix_snapshot.json', { cache: 'no-store' });
+        const res = await fetch('/data/prix_snapshot.json');
         if (!res.ok) {
           throw new Error(`Flux prix indisponible (${res.status})`);
         }
@@ -128,11 +146,21 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
 
     const loadObservatoireDataset = async () => {
       try {
-        const res = await fetch('/data/observatoire_2026-01.json', { cache: 'no-store' });
-        if (!res.ok) {
-          throw new Error(`Jeu de données observatoire indisponible (${res.status})`);
+        const now = new Date();
+        const month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+        const urlCandidates = [`/data/observatoire_${month}.json`, '/data/observatoire_2026-01.json'];
+
+        let data: ObservatoireDataset | null = null;
+        for (const url of urlCandidates) {
+          const res = await fetch(url);
+          if (res.ok) {
+            data = (await res.json()) as ObservatoireDataset;
+            break;
+          }
         }
-        const data = (await res.json()) as ObservatoireDataset;
+        if (!data) {
+          throw new Error('Jeu de données observatoire indisponible');
+        }
         setObservatoireDataset(data);
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Dataset observatoire indisponible';
@@ -172,22 +200,7 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
     return renderDeploymentState(error ?? undefined);
   }
 
-  const { indicateurs, metadata } = snapshot || {
-    indicateurs: {
-      prix_moyens: [],
-      ecarts_dom_hexagone: [],
-      indices_vie_chere: [],
-      evolutions_temporelles: [],
-      dispersions_enseignes: [],
-    },
-    metadata: {
-      nombre_observations_total: 0,
-      periode_couverte: { debut: '', fin: '' },
-      sources: [],
-      qualite_moyenne: 0,
-    },
-    date_snapshot: '',
-  };
+  const { indicateurs, metadata } = snapshot || DEFAULT_SNAPSHOT;
   const hasData =
     indicateurs.prix_moyens.length > 0 ||
     indicateurs.ecarts_dom_hexagone.length > 0 ||
