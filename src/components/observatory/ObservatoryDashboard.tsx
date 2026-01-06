@@ -36,6 +36,26 @@ type ObservatoireDataset = {
   serie: Array<{ mois: string; indice: number }>;
 };
 
+const DEFAULT_SNAPSHOT: IndicatorSnapshot = {
+  version: '3.0.0',
+  date_snapshot: '',
+  indicateurs: {
+    prix_moyens: [],
+    ecarts_dom_hexagone: [],
+    indices_vie_chere: [],
+    evolutions_temporelles: [],
+    dispersions_enseignes: [],
+  },
+  metadata: {
+    nombre_observations_total: 0,
+    periode_couverte: { debut: '', fin: '' },
+    sources: [],
+    qualite_moyenne: 0,
+  },
+};
+
+const DEFAULT_OBSERVATOIRE_FALLBACK = '/data/observatoire_2026-01.json';
+
 interface ObservatoryDashboardProps {
   territoire?: TerritoireName;
 }
@@ -68,24 +88,6 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
       }
     };
   }, []);
-
-  const DEFAULT_SNAPSHOT: IndicatorSnapshot = {
-    version: '3.0.0',
-    date_snapshot: '',
-    indicateurs: {
-      prix_moyens: [],
-      ecarts_dom_hexagone: [],
-      indices_vie_chere: [],
-      evolutions_temporelles: [],
-      dispersions_enseignes: [],
-    },
-    metadata: {
-      nombre_observations_total: 0,
-      periode_couverte: { debut: '', fin: '' },
-      sources: [],
-      qualite_moyenne: 0,
-    },
-  };
 
   const loadSnapshot = useCallback(async () => {
     setLoading(true);
@@ -148,7 +150,7 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
       try {
         const now = new Date();
         const month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-        const fallbackDataset = import.meta.env.VITE_OBSERVATOIRE_FALLBACK ?? '/data/observatoire_2026-01.json';
+        const fallbackDataset = import.meta.env.VITE_OBSERVATOIRE_FALLBACK ?? DEFAULT_OBSERVATOIRE_FALLBACK;
         const urlCandidates = [`/data/observatoire_${month}.json`, fallbackDataset];
 
         let data: ObservatoireDataset | null = null;
@@ -197,9 +199,9 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
     );
   }
 
-  const hasAnyDataset = Boolean(snapshot || priceSnapshot || observatoireDataset);
+  const hasAnyData = Boolean(snapshot || priceSnapshot || observatoireDataset);
 
-  if (!hasAnyDataset) {
+  if (!hasAnyData) {
     return renderDeploymentState(error ?? undefined);
   }
 
@@ -573,14 +575,14 @@ function renderMiniChart(points: ObservatoireDataset['serie']) {
   const maxValue = points.reduce((max, p) => (p.indice > max ? p.indice : max), 1);
 
   return (
-    <div className="mini-chart-bars">
+    <div className="mini-chart-bars" role="img" aria-label="Évolution de l'indice panier publié">
       {points.map((point) => (
         <div
           key={point.mois}
           className="mini-bar"
           title={`${point.mois} : ${point.indice}`}
           style={{ height: `${(point.indice / maxValue) * 100}%` }}
-        >
+          >
           <span className="mini-label">{point.mois.slice(5)}</span>
         </div>
       ))}
