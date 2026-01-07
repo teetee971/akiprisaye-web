@@ -118,9 +118,10 @@ export function validateObservation(obj: any): string[] {
         errors.push(`Le produit à l'index ${index} doit avoir un "prix_total" >= 0`);
       }
 
-      // Vérification cohérence prix (tolérance de 0.01 pour arrondis)
+      // Vérification cohérence prix (tolérance pour arrondis)
+      const PRICE_CALCULATION_TOLERANCE = 0.02;
       const expectedTotal = produit.quantite * produit.prix_unitaire;
-      if (Math.abs(produit.prix_total - expectedTotal) > 0.02) {
+      if (Math.abs(produit.prix_total - expectedTotal) > PRICE_CALCULATION_TOLERANCE) {
         errors.push(
           `Le produit à l'index ${index} a une incohérence: prix_total (${produit.prix_total}) != quantite (${produit.quantite}) × prix_unitaire (${produit.prix_unitaire})`
         );

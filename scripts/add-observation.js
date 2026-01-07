@@ -99,27 +99,32 @@ function validateObservation(obj) {
 }
 
 /**
- * Génère un ID unique basé sur date + commune + enseigne + magasin
+ * Normalise une chaîne pour l'utiliser dans un ID
+ * @param {string} str - Chaîne à normaliser
+ * @returns {string} Chaîne normalisée
  */
-function generateId(observation) {
-  const date = observation.date;
-  const commune = observation.commune
+function normalizeString(str) {
+  return str
     .toLowerCase()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '') // Supprimer les accents
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
-  
-  const enseigne = observation.enseigne
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
-  
+}
+
+/**
+ * Génère un ID unique basé sur date + commune + enseigne + magasin + timestamp
+ */
+function generateId(observation) {
+  const date = observation.date;
+  const commune = normalizeString(observation.commune);
+  const enseigne = normalizeString(observation.enseigne);
   const magasinPart = observation.magasin_id ? `-${observation.magasin_id}` : '';
   
-  return `${date}-${commune}-${enseigne}${magasinPart}`;
+  // Ajouter un timestamp court pour éviter les collisions
+  const timestamp = Date.now().toString(36).slice(-4);
+  
+  return `${date}-${commune}-${enseigne}${magasinPart}-${timestamp}`;
 }
 
 /**
