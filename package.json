@@ -6,7 +6,9 @@
         "build": "vite build",
         "preview": "vite preview",
         "test": "vitest",
-        "test:ci": "SKIP_OCR_TESTS=true vitest run --passWithNoTests"
+        "test:ci": "SKIP_OCR_TESTS=true vitest run --passWithNoTests",
+        "observations:add": "node scripts/add-observation.js",
+        "observations:generate": "node scripts/generate-index.js"
     },
     "dependencies": {
         "@openfoodfacts/openfoodfacts-nodejs": "^2.0.0-alpha.19",
