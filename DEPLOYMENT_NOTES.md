@@ -354,3 +354,97 @@ If you continue to experience issues after following this guide:
 4. Review the geolocation utility error logs in browser DevTools
 
 For platform-specific issues, consult your hosting provider's documentation on setting HTTP headers.
+
+---
+
+## Usage Examples
+
+### Using the LocationButton Component
+
+The `LocationButton` component provides a pre-built UI for requesting user location with error handling:
+
+```tsx
+import LocationButton from '@/components/LocationButton';
+import type { GeoPosition } from '@/utils/geoLocation';
+
+function MyComponent() {
+  const handleLocationObtained = (position: GeoPosition) => {
+    console.log('User location:', position.lat, position.lon);
+    // Use position for distance calculations, map centering, etc.
+  };
+
+  const handleError = (error) => {
+    console.error('Geolocation error:', error.type, error.message);
+    // Handle error (show manual input, fallback to default location, etc.)
+  };
+
+  return (
+    <LocationButton
+      onLocationObtained={handleLocationObtained}
+      onError={handleError}
+      variant="primary"
+      size="md"
+      showDetailedErrors={true}
+    />
+  );
+}
+```
+
+### Using the requestGeolocation Utility Directly
+
+For more control, use the `requestGeolocation` function directly:
+
+```typescript
+import { requestGeolocation, GeolocationErrorType } from '@/utils/geoLocation';
+
+async function getLocation() {
+  const result = await requestGeolocation();
+
+  if (result.success && result.position) {
+    console.log('Position:', result.position);
+    // Use position.lat and position.lon
+  } else if (result.error) {
+    console.error('Error:', result.error.type);
+    
+    // Handle specific error types
+    if (result.error.type === GeolocationErrorType.PERMISSIONS_POLICY) {
+      // Show deployment documentation link
+      alert('Configuration serveur requise. Voir DEPLOYMENT_NOTES.md');
+    } else if (result.error.type === GeolocationErrorType.PERMISSION_DENIED) {
+      // Provide manual location input
+      showManualLocationInput();
+    }
+  }
+}
+```
+
+### Replacing Old getUserPosition Calls
+
+If you have existing code using `getUserPosition`, you can upgrade it to use `requestGeolocation` for better error handling:
+
+**Before:**
+```typescript
+const position = await getUserPosition();
+if (position) {
+  // use position
+} else {
+  // generic error handling
+}
+```
+
+**After:**
+```typescript
+const result = await requestGeolocation((msg, type) => {
+  // Optional: show message to user
+  if (type === 'error') {
+    showErrorToast(msg);
+  }
+});
+
+if (result.success && result.position) {
+  // use result.position
+} else if (result.error) {
+  // specific error handling with result.error.type
+  // and result.error.remediation
+}
+```
