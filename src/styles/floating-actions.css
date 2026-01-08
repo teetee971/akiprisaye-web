@@ -1,0 +1,181 @@
+/**
+ * Floating Actions CSS
+ * Styles for stacked floating action buttons (chat and cart)
+ * Prevents overlap with important UI elements on mobile
+ */
+
+/* Main container - fixed positioning */
+.fab-container {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: var(--z-floating, 1000);
+  
+  /* Prevent container from blocking interactions */
+  pointer-events: none;
+}
+
+/* Allow individual buttons to receive pointer events */
+.fab-container > * {
+  pointer-events: auto;
+}
+
+/* Responsive positioning for mobile */
+@media (max-width: 768px) {
+  .fab-container {
+    bottom: 20px;
+    right: 16px;
+    gap: 10px;
+  }
+}
+
+/* Small screens - further adjustments */
+@media (max-width: 480px) {
+  .fab-container {
+    bottom: 16px;
+    right: 12px;
+    gap: 8px;
+  }
+}
+
+/* Utility class: raise the stack when bottom input is focused */
+.fab-container--raised {
+  /* Move up by approximately keyboard height on mobile */
+  transform: translateY(-280px);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Reset raised state on larger screens */
+@media (min-width: 769px) {
+  .fab-container--raised {
+    transform: translateY(0);
+  }
+}
+
+/* Individual FAB button styles */
+.fab-button {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+/* Hover effects for FAB buttons */
+.fab-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* Active state */
+.fab-button:active {
+  transform: scale(0.95);
+}
+
+/* Focus visible for keyboard navigation */
+.fab-button:focus-visible {
+  outline: 2px solid rgba(var(--accent-primary, 58 122 254), 1);
+  outline-offset: 2px;
+}
+
+/* Responsive sizes for mobile */
+@media (max-width: 768px) {
+  .fab-button {
+    width: 52px;
+    height: 52px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+  }
+}
+
+@media (max-width: 480px) {
+  .fab-button {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+/* Badge for cart count */
+.fab-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  background-color: rgb(239, 68, 68);
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+}
+
+/* Animation for badge entry */
+@keyframes badge-pop {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.fab-badge[data-new="true"] {
+  animation: badge-pop 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Accessibility: reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  .fab-container,
+  .fab-button,
+  .fab-badge {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+  
+  .fab-container--raised {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode adjustments */
+@media (prefers-contrast: high) {
+  .fab-button {
+    border: 2px solid currentColor;
+  }
+  
+  .fab-badge {
+    border: 1px solid white;
+  }
+}
+
+/* Safe area insets for notched devices */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .fab-container {
+    bottom: calc(16px + env(safe-area-inset-bottom));
+    right: calc(16px + env(safe-area-inset-right));
+  }
+  
+  @media (max-width: 768px) {
+    .fab-container {
+      bottom: calc(20px + env(safe-area-inset-bottom));
+      right: calc(16px + env(safe-area-inset-right));
+    }
+  }
+}
