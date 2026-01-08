@@ -31,10 +31,12 @@ export default function FloatingActions() {
       const target = e.target as HTMLElement;
       
       // Check if focused element is an input near the bottom of the viewport
+      // Use case-insensitive matching for better browser compatibility
+      const tagName = target.tagName.toUpperCase();
       if (
-        target.tagName === 'INPUT' ||
-        target.tagName === 'TEXTAREA' ||
-        target.tagName === 'SELECT'
+        tagName === 'INPUT' ||
+        tagName === 'TEXTAREA' ||
+        tagName === 'SELECT'
       ) {
         const rect = target.getBoundingClientRect();
         const viewportHeight = window.innerHeight;

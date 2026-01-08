@@ -176,7 +176,7 @@ export async function requestGeolocation(
       {
         enableHighAccuracy: false,
         timeout: 10000,
-        maximumAge: 300000 // 5 minutes
+        maximumAge: 60000 // 1 minute - balance between freshness and performance
       }
     );
   });
