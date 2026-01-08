@@ -21,9 +21,6 @@ export function useIsMobile(breakpoint: number = 768): boolean {
     // Add event listener
     window.addEventListener('resize', handleResize);
 
-    // Initial check in case window was resized before mount
-    handleResize();
-
     // Cleanup
     return () => {
       window.removeEventListener('resize', handleResize);

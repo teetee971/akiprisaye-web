@@ -155,8 +155,17 @@ webView.setWebChromeClient(new WebChromeClient() {
         String origin,
         GeolocationPermissions.Callback callback
     ) {
-        // Always grant permission or prompt user
-        callback.invoke(origin, true, false);
+        // IMPORTANT: Prompt user for permission instead of auto-granting
+        // This example uses a dialog - implement proper permission flow for production
+        new AlertDialog.Builder(context)
+            .setMessage("Allow this app to access your location?")
+            .setPositiveButton("Allow", (dialog, which) -> {
+                callback.invoke(origin, true, false);
+            })
+            .setNegativeButton("Deny", (dialog, which) -> {
+                callback.invoke(origin, false, false);
+            })
+            .show();
     }
 });
 ```

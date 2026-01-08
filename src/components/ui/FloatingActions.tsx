@@ -23,11 +23,10 @@ export default function FloatingActions() {
 
   // Handle input focus events to raise the FAB container on mobile
   useEffect(() => {
-    if (!isMobile) {
-      return; // Only apply on mobile
-    }
-
     const handleFocusIn = (e: FocusEvent) => {
+      // Only raise on mobile
+      if (!isMobile) return;
+      
       const target = e.target as HTMLElement;
       
       // Check if focused element is an input near the bottom of the viewport
