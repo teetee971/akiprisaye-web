@@ -192,8 +192,14 @@ webView.setWebChromeClient(new WebChromeClient() {
         String origin,
         GeolocationPermissions.Callback callback
     ) {
-        // Always allow geolocation from your app's origin
-        callback.invoke(origin, true, false);
+        // Only allow geolocation from your app's trusted origin
+        String trustedOrigin = "https://your-app.com";
+        if (trustedOrigin.equals(origin)) {
+            callback.invoke(origin, true, false);
+        } else {
+            // Deny geolocation for untrusted origins
+            callback.invoke(origin, false, false);
+        }
     }
 });
 ```

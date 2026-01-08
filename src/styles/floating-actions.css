@@ -20,6 +20,7 @@
   gap: 12px;
   z-index: var(--z-floating, 900);
   pointer-events: none; /* Container doesn't block clicks */
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* All child buttons should accept pointer events */
@@ -46,35 +47,12 @@
 }
 
 /**
- * Utility class: Raise floating actions when keyboard is visible
- * Apply this class to .floating-actions when an input is focused
- * to prevent FABs from covering form controls
- */
-.fab-container--raised {
-  /* Move up by typical mobile keyboard height */
-  transform: translateY(-280px);
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@media (max-width: 768px) {
-  .fab-container--raised {
-    /* More aggressive raise on mobile */
-    transform: translateY(-320px);
-  }
-}
-
-/* Smooth transition when keyboard closes */
-.floating-actions {
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/**
  * Responsive button sizing
  * Buttons should be large enough for touch but not overwhelming
  */
 .floating-actions button,
 .floating-actions a {
-  /* Ensure minimum touch target size (WCAG AAA) */
+  /* Ensure minimum touch target size (WCAG 2.1 Level AA – SC 2.5.5) */
   min-width: 56px;
   min-height: 56px;
   

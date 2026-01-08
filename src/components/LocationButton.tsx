@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { MapPin, Loader2, AlertCircle } from 'lucide-react';
 import { requestGeolocation, type GeoPosition, type GeolocationResult } from '../utils/geoLocation';
 
@@ -43,12 +43,26 @@ export default function LocationButton({
 }: LocationButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' | 'info' } | null>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleShowMessage = (text: string, type: 'success' | 'error' | 'info') => {
     setMessage({ text, type });
+    // Clear any existing timeout
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
     // Auto-clear success and info messages after 5 seconds
     if (type !== 'error') {
-      setTimeout(() => setMessage(null), 5000);
+      timeoutRef.current = setTimeout(() => setMessage(null), 5000);
     }
   };
 

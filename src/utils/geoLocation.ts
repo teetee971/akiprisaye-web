@@ -302,9 +302,11 @@ function getErrorDetails(
       message: 'La géolocalisation est bloquée par la configuration du serveur.',
       remediation: 
         'Cette application nécessite la géolocalisation pour afficher les magasins proches. ' +
-        'Si vous êtes le propriétaire du site, consultez DEPLOYMENT_NOTES.md pour configurer ' +
-        'les en-têtes HTTP Permissions-Policy. Si vous consultez cette page dans une iframe, ' +
-        'assurez-vous que l\'attribut allow="geolocation" est défini.'
+        'Si vous êtes administrateur ou propriétaire du site, vérifiez la configuration des en-têtes HTTP ' +
+        '« Permissions-Policy » (anciennement « Feature-Policy ») afin d\'autoriser la fonctionnalité ' +
+        'de géolocalisation pour ce domaine. Par exemple : Permissions-Policy: geolocation=(self). ' +
+        'Si vous consultez cette page dans une iframe, assurez-vous que la balise <iframe> inclut ' +
+        'l\'attribut allow="geolocation".'
     };
   }
 
