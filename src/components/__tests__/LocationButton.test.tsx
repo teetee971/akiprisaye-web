@@ -84,4 +84,3 @@ describe('LocationButton', () => {
     expect(button).not.toBeDisabled();
   });
 });
-
