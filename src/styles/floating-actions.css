@@ -1,0 +1,66 @@
+/* Floating action buttons : empilement vertical, espacement et responsive */
+.fab-container {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-end;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+/* Chaque bouton garde son propre pointer-events */
+.fab {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  background: linear-gradient(180deg,#1f7bff,#1c5ee0);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: transform .14s ease, opacity .14s ease;
+  font-size: 20px;
+}
+
+/* Variante large pour le bouton panier */
+.fab--large {
+  width: 92px;
+  height: 56px;
+  padding: 0 12px;
+  border-radius: 28px;
+  gap: 8px;
+  justify-content: center;
+  display: inline-flex;
+}
+
+.fab-badge {
+  background: rgba(255,255,255,0.12);
+  padding: 4px 8px;
+  border-radius: 12px;
+  margin-left: 8px;
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+@media (max-width: 420px) {
+  .fab { width: 48px; height: 48px; font-size: 18px; }
+  .fab--large { width: 76px; height: 48px; }
+  .fab-container { right: 10px; bottom: 10px; gap: 8px; }
+}
+
+.fab-container--raised {
+  bottom: 92px;
+}
+
+.fab:focus {
+  outline: 3px solid rgba(255,255,255,0.14);
+  outline-offset: 3px;
+}
