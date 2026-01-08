@@ -9,11 +9,35 @@
  * - Distance calculation caching with memoization
  * - Batch distance calculations for multiple stores
  * - Pre-computed trigonometric values
+ * 
+ * ERROR HANDLING:
+ * - Detects Permissions-Policy header blocking
+ * - Detects iframe without allow="geolocation"
+ * - Provides user-friendly error messages with remediation steps
  */
 
 export interface GeoPosition {
   lat: number;
   lon: number;
+}
+
+export enum GeolocationErrorType {
+  PERMISSION_DENIED = 'PERMISSION_DENIED',
+  POSITION_UNAVAILABLE = 'POSITION_UNAVAILABLE',
+  TIMEOUT = 'TIMEOUT',
+  PERMISSIONS_POLICY = 'PERMISSIONS_POLICY',
+  NOT_SUPPORTED = 'NOT_SUPPORTED',
+  UNKNOWN = 'UNKNOWN'
+}
+
+export interface GeolocationResult {
+  success: boolean;
+  position?: GeoPosition;
+  error?: {
+    type: GeolocationErrorType;
+    message: string;
+    remediation?: string;
+  };
 }
 
 export interface StoreWithDistance {
@@ -233,4 +257,193 @@ export function getCacheStats(): { positionCached: boolean; distanceCacheSize: n
     positionCached: positionCache !== null,
     distanceCacheSize: distanceCache.size,
   };
+}
+
+/**
+ * Check if Permissions API is available and get permission state
+ */
+async function checkGeolocationPermission(): Promise<PermissionState | null> {
+  if (!('permissions' in navigator)) {
+    return null;
+  }
+
+  try {
+    const result = await navigator.permissions.query({ name: 'geolocation' as PermissionName });
+    return result.state;
+  } catch (error) {
+    // Permissions API might not support geolocation query in some browsers
+    return null;
+  }
+}
+
+/**
+ * Detect if geolocation is blocked by Permissions-Policy header
+ */
+function detectPermissionsPolicy(error: GeolocationPositionError): boolean {
+  const errorMessage = error.message.toLowerCase();
+  return (
+    errorMessage.includes('permissions-policy') ||
+    errorMessage.includes('disabled in this document') ||
+    errorMessage.includes('permissions policy')
+  );
+}
+
+/**
+ * Get user-friendly error message and remediation steps
+ */
+function getErrorDetails(
+  error: GeolocationPositionError,
+  permissionState: PermissionState | null
+): { type: GeolocationErrorType; message: string; remediation?: string } {
+  // Check for Permissions-Policy blocking first
+  if (detectPermissionsPolicy(error)) {
+    return {
+      type: GeolocationErrorType.PERMISSIONS_POLICY,
+      message: 'La géolocalisation est bloquée par la configuration du serveur.',
+      remediation: 
+        'Cette application nécessite la géolocalisation pour afficher les magasins proches. ' +
+        'Si vous êtes le propriétaire du site, consultez DEPLOYMENT_NOTES.md pour configurer ' +
+        'les en-têtes HTTP Permissions-Policy. Si vous consultez cette page dans une iframe, ' +
+        'assurez-vous que l\'attribut allow="geolocation" est défini.'
+    };
+  }
+
+  switch (error.code) {
+    case error.PERMISSION_DENIED:
+      if (permissionState === 'denied') {
+        return {
+          type: GeolocationErrorType.PERMISSION_DENIED,
+          message: 'Vous avez refusé l\'accès à votre position.',
+          remediation:
+            'Pour utiliser cette fonctionnalité, autorisez la géolocalisation dans les paramètres de votre navigateur. ' +
+            'Sur mobile : Paramètres > Applications > Navigateur > Autorisations > Localisation. ' +
+            'Sur ordinateur : cliquez sur l\'icône 🔒 ou ⓘ dans la barre d\'adresse et activez la géolocalisation.'
+        };
+      }
+      return {
+        type: GeolocationErrorType.PERMISSION_DENIED,
+        message: 'Accès à la géolocalisation refusé.',
+        remediation: 'Veuillez autoriser l\'accès à votre position dans votre navigateur.'
+      };
+
+    case error.POSITION_UNAVAILABLE:
+      return {
+        type: GeolocationErrorType.POSITION_UNAVAILABLE,
+        message: 'Impossible de déterminer votre position.',
+        remediation:
+          'Assurez-vous que les services de localisation sont activés sur votre appareil. ' +
+          'Vous pouvez aussi être dans une zone sans signal GPS (intérieur, sous-sol).'
+      };
+
+    case error.TIMEOUT:
+      return {
+        type: GeolocationErrorType.TIMEOUT,
+        message: 'La demande de géolocalisation a expiré.',
+        remediation:
+          'Réessayez. Si le problème persiste, vérifiez votre connexion GPS ou ' +
+          'essayez de vous déplacer vers un endroit avec un meilleur signal.'
+      };
+
+    default:
+      return {
+        type: GeolocationErrorType.UNKNOWN,
+        message: 'Erreur de géolocalisation inconnue.',
+        remediation: 'Réessayez plus tard ou contactez le support si le problème persiste.'
+      };
+  }
+}
+
+/**
+ * Request user's geolocation with comprehensive error handling
+ * 
+ * This function provides enhanced error detection including:
+ * - Permissions-Policy header blocking detection
+ * - iframe without allow="geolocation" detection
+ * - WebView restrictions detection
+ * - User-friendly error messages with remediation steps
+ * 
+ * @param showMessage Optional callback to display messages to user
+ * @returns Promise with GeolocationResult containing position or detailed error
+ */
+export async function requestGeolocation(
+  showMessage?: (message: string, type: 'success' | 'error' | 'info') => void
+): Promise<GeolocationResult> {
+  // Check if geolocation is supported
+  if (!('geolocation' in navigator)) {
+    const error = {
+      type: GeolocationErrorType.NOT_SUPPORTED,
+      message: 'Votre navigateur ne supporte pas la géolocalisation.',
+      remediation: 'Veuillez utiliser un navigateur moderne (Chrome, Firefox, Safari, Edge).'
+    };
+    if (showMessage) {
+      showMessage(error.message, 'error');
+    }
+    return { success: false, error };
+  }
+
+  // Check permission state if Permissions API is available
+  const permissionState = await checkGeolocationPermission();
+  
+  if (permissionState === 'denied') {
+    const error = {
+      type: GeolocationErrorType.PERMISSION_DENIED,
+      message: 'Vous avez refusé l\'accès à votre position.',
+      remediation:
+        'Pour utiliser cette fonctionnalité, autorisez la géolocalisation dans les paramètres de votre navigateur.'
+    };
+    if (showMessage) {
+      showMessage(error.message, 'error');
+    }
+    return { success: false, error };
+  }
+
+  if (showMessage && permissionState === 'prompt') {
+    showMessage('Autorisation requise pour accéder à votre position...', 'info');
+  }
+
+  return new Promise((resolve) => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const geoPos: GeoPosition = {
+          lat: position.coords.latitude,
+          lon: position.coords.longitude,
+        };
+        
+        // Update cache
+        positionCache = {
+          position: geoPos,
+          timestamp: Date.now(),
+        };
+        
+        if (showMessage) {
+          showMessage('Position obtenue avec succès', 'success');
+        }
+        
+        resolve({ success: true, position: geoPos });
+      },
+      (error) => {
+        const errorDetails = getErrorDetails(error, permissionState);
+        
+        if (showMessage) {
+          const fullMessage = errorDetails.remediation 
+            ? `${errorDetails.message} ${errorDetails.remediation}`
+            : errorDetails.message;
+          showMessage(fullMessage, 'error');
+        }
+        
+        console.error('Geolocation error:', {
+          code: error.code,
+          message: error.message,
+          type: errorDetails.type
+        });
+        
+        resolve({ success: false, error: errorDetails });
+      },
+      {
+        timeout: 10000,
+        maximumAge: 300000, // Cache position for 5 minutes
+        enableHighAccuracy: false, // Faster, less battery drain
+      }
+    );
+  });
 }

@@ -1,0 +1,117 @@
+/**
+ * Floating Actions Component Styles
+ * 
+ * Provides styling for stacked floating action buttons (chat, cart)
+ * that avoid overlapping with mobile UI elements.
+ * 
+ * Key features:
+ * - Pointer-events strategy: container is pointer-events:none, buttons are pointer-events:auto
+ * - This prevents the container from blocking underlying interactive elements
+ * - Vertical stacking with responsive gap
+ * - Utility class to raise the stack when keyboard is visible
+ */
+
+.floating-actions {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: var(--z-floating, 900);
+  pointer-events: none; /* Container doesn't block clicks */
+}
+
+/* All child buttons should accept pointer events */
+.floating-actions > * {
+  pointer-events: auto;
+}
+
+/* Mobile: avoid Android system bar and provide more clearance */
+@media (max-width: 768px) {
+  .floating-actions {
+    bottom: 72px; /* Clear Android navigation bar */
+    right: 12px;
+    gap: 10px;
+  }
+}
+
+/* Small mobile: reduce size further */
+@media (max-width: 480px) {
+  .floating-actions {
+    bottom: 68px;
+    right: 10px;
+    gap: 8px;
+  }
+}
+
+/**
+ * Utility class: Raise floating actions when keyboard is visible
+ * Apply this class to .floating-actions when an input is focused
+ * to prevent FABs from covering form controls
+ */
+.fab-container--raised {
+  /* Move up by typical mobile keyboard height */
+  transform: translateY(-280px);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (max-width: 768px) {
+  .fab-container--raised {
+    /* More aggressive raise on mobile */
+    transform: translateY(-320px);
+  }
+}
+
+/* Smooth transition when keyboard closes */
+.floating-actions {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/**
+ * Responsive button sizing
+ * Buttons should be large enough for touch but not overwhelming
+ */
+.floating-actions button,
+.floating-actions a {
+  /* Ensure minimum touch target size (WCAG AAA) */
+  min-width: 56px;
+  min-height: 56px;
+  
+  /* Visual feedback */
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (max-width: 768px) {
+  .floating-actions button,
+  .floating-actions a {
+    min-width: 52px;
+    min-height: 52px;
+  }
+}
+
+@media (max-width: 480px) {
+  .floating-actions button,
+  .floating-actions a {
+    min-width: 48px;
+    min-height: 48px;
+  }
+}
+
+/* Active state for better touch feedback */
+.floating-actions button:active,
+.floating-actions a:active {
+  transform: scale(0.95);
+}
+
+/**
+ * Safe area support for notched devices
+ * Ensures buttons don't get cut off by device notches or home indicators
+ */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  @media (max-width: 768px) {
+    .floating-actions {
+      bottom: calc(72px + env(safe-area-inset-bottom));
+    }
+  }
+}

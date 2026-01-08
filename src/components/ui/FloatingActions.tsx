@@ -1,6 +1,7 @@
 import { useLocation } from "react-router-dom";
 import AssistantChatButton from "../AssistantChat";
 import PanierButton from "../TiPanierButton";
+import "../../styles/floating-actions.css";
 
 /**
  * FloatingActions - Unified container for floating action buttons

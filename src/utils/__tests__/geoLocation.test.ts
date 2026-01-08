@@ -12,8 +12,10 @@ import {
   clearPositionCache,
   clearDistanceCache,
   getCacheStats,
+  GeolocationErrorType,
   type GeoPosition,
   type StoreLocation,
+  type GeolocationResult,
 } from '../geoLocation';
 
 describe('geoLocation utilities', () => {
@@ -263,6 +265,17 @@ describe('geoLocation utilities', () => {
       expect(dist1).toBe(dist2);
       // Second call should use cached value
       expect(dist1).toBeGreaterThan(0);
+    });
+  });
+
+  describe('GeolocationErrorType', () => {
+    it('should export all error types', () => {
+      expect(GeolocationErrorType.PERMISSION_DENIED).toBe('PERMISSION_DENIED');
+      expect(GeolocationErrorType.POSITION_UNAVAILABLE).toBe('POSITION_UNAVAILABLE');
+      expect(GeolocationErrorType.TIMEOUT).toBe('TIMEOUT');
+      expect(GeolocationErrorType.PERMISSIONS_POLICY).toBe('PERMISSIONS_POLICY');
+      expect(GeolocationErrorType.NOT_SUPPORTED).toBe('NOT_SUPPORTED');
+      expect(GeolocationErrorType.UNKNOWN).toBe('UNKNOWN');
     });
   });
 });
