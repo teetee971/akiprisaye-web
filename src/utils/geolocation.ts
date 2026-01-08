@@ -44,12 +44,18 @@ async function checkGeolocationPermission(): Promise<'granted' | 'denied' | 'pro
  */
 function isPermissionsPolicyError(error: GeolocationPositionError | Error): boolean {
   const message = error.message?.toLowerCase() || '';
-  return (
+  const hasPermissionPolicyKeyword = (
     message.includes('permissions policy') ||
     message.includes('permission-policy') ||
-    message.includes('disabled in this document') ||
+    message.includes('permissions-policy') ||
     message.includes('not allowed by permissions policy')
   );
+  
+  const hasDisabledKeyword = message.includes('disabled in this document');
+  
+  // Must have both a policy-related keyword AND indication that it's blocked
+  // OR have the specific "disabled in this document" phrase which is unique to policy blocks
+  return hasPermissionPolicyKeyword || hasDisabledKeyword;
 }
 
 /**
@@ -106,6 +112,16 @@ export async function requestGeolocation(
     return {
       error,
       errorType: 'permission-denied'
+    };
+  }
+
+  // Double-check geolocation is still available (for edge cases)
+  if (!('geolocation' in navigator) || !navigator.geolocation) {
+    const error = 'La géolocalisation n\'est pas disponible dans ce navigateur.';
+    showMessage?.(error, 'error');
+    return {
+      error,
+      errorType: 'unavailable'
     };
   }
 
