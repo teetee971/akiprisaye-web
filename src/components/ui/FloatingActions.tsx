@@ -2,6 +2,7 @@ import { useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import AssistantChatButton from "../AssistantChat";
 import PanierButton from "../TiPanierButton";
+import { useIsMobile } from "../../hooks/useIsMobile";
 
 /**
  * FloatingActions - Unified container for floating action buttons
@@ -18,10 +19,11 @@ export default function FloatingActions() {
   const disabledRoutes = ['/observatoire', '/pricing', '/tarifs', '/inscription', '/login', '/connexion', '/subscribe'];
   const isDisabled = disabledRoutes.some((path) => location.pathname.startsWith(path));
   const [isRaised, setIsRaised] = useState(false);
+  const isMobile = useIsMobile();
 
   // Handle input focus events to raise the FAB container on mobile
   useEffect(() => {
-    if (typeof window === 'undefined' || window.innerWidth > 768) {
+    if (!isMobile) {
       return; // Only apply on mobile
     }
 
@@ -55,7 +57,7 @@ export default function FloatingActions() {
       document.removeEventListener('focusin', handleFocusIn);
       document.removeEventListener('focusout', handleFocusOut);
     };
-  }, []);
+  }, [isMobile]);
 
   if (isDisabled) {
     return null;

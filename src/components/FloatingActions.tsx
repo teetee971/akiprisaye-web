@@ -12,6 +12,7 @@
 import { useState, useEffect } from 'react';
 import { MessageCircle, ShoppingCart } from 'lucide-react';
 import { useTiPanier } from '../hooks/useTiPanier';
+import { useIsMobile } from '../hooks/useIsMobile';
 
 interface FloatingActionsProps {
   onChatClick?: () => void;
@@ -30,13 +31,14 @@ export default function FloatingActions({
 }: FloatingActionsProps) {
   const { count: internalCartCount } = useTiPanier('comparison');
   const [isRaised, setIsRaised] = useState(raised);
+  const isMobile = useIsMobile();
   
   // Use external count if provided, otherwise use internal hook
   const cartCount = externalCartCount ?? internalCartCount;
 
   // Handle input focus events to raise the FAB container on mobile
   useEffect(() => {
-    if (typeof window === 'undefined' || window.innerWidth > 768) {
+    if (!isMobile) {
       return; // Only apply on mobile
     }
 
@@ -70,7 +72,7 @@ export default function FloatingActions({
       document.removeEventListener('focusin', handleFocusIn);
       document.removeEventListener('focusout', handleFocusOut);
     };
-  }, []);
+  }, [isMobile]);
 
   // Sync with external raised prop
   useEffect(() => {

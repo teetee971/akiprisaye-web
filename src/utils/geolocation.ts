@@ -41,21 +41,23 @@ async function checkGeolocationPermission(): Promise<'granted' | 'denied' | 'pro
 
 /**
  * Detect if error is due to Permissions-Policy
+ * Returns true if:
+ * 1. Message contains both a policy-related keyword AND "disabled in this document", OR
+ * 2. Message contains "not allowed by permissions policy"
  */
 function isPermissionsPolicyError(error: GeolocationPositionError | Error): boolean {
   const message = error.message?.toLowerCase() || '';
   const hasPermissionPolicyKeyword = (
     message.includes('permissions policy') ||
     message.includes('permission-policy') ||
-    message.includes('permissions-policy') ||
-    message.includes('not allowed by permissions policy')
+    message.includes('permissions-policy')
   );
   
   const hasDisabledKeyword = message.includes('disabled in this document');
+  const hasNotAllowedPhrase = message.includes('not allowed by permissions policy');
   
-  // Must have both a policy-related keyword AND indication that it's blocked
-  // OR have the specific "disabled in this document" phrase which is unique to policy blocks
-  return hasPermissionPolicyKeyword || hasDisabledKeyword;
+  // Match specific Permissions-Policy error patterns
+  return (hasPermissionPolicyKeyword && hasDisabledKeyword) || hasNotAllowedPhrase;
 }
 
 /**

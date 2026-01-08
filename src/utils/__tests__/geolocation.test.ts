@@ -279,8 +279,8 @@ describe('Enhanced Geolocation Utility', () => {
       const policyErrorMessages = [
         'Geolocation has been disabled in this document by permissions policy',
         'Not allowed by permissions policy',
-        'Geolocation Permissions-Policy blocked',
-        'disabled in this document by Permission-Policy',
+        'geolocation has been disabled in this document by Permission-Policy',
+        'Permissions policy disabled in this document',
       ];
 
       mockPermissions.query.mockResolvedValue({ state: 'prompt' });
@@ -311,7 +311,7 @@ describe('Enhanced Geolocation Utility', () => {
     it('should provide helpful message for Permissions-Policy block', async () => {
       const mockError: GeolocationPositionError = {
         code: 1,
-        message: 'Permissions policy blocked',
+        message: 'Geolocation has been disabled in this document by permissions policy',
         PERMISSION_DENIED: 1,
         POSITION_UNAVAILABLE: 2,
         TIMEOUT: 3,

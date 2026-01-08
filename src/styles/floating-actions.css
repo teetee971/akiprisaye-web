@@ -145,12 +145,12 @@
   .fab-container,
   .fab-button,
   .fab-badge {
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
+    transition: none !important;
+    animation: none !important;
   }
   
   .fab-container--raised {
-    transition-duration: 0.01ms !important;
+    transition: none !important;
   }
 }
 
