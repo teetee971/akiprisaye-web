@@ -14,9 +14,9 @@ import { AuthProvider } from './context/AuthContext';
 import { ScanFlowProvider } from './context/ScanFlowContext';
 import NotFound from './pages/NotFound';
 
-// Hub Pages - New unified navigation hubs
-import ScannerHub from './pages/ScannerHub';
+// Hub Pages - Direct imports for main navigation entries
 import ComparateursHub from './pages/ComparateursHub';
+import ScannerHub from './pages/ScannerHub';
 import AssistantIAHub from './pages/AssistantIAHub';
 import CarteItinerairesHub from './pages/CarteItinerairesHub';
 import SolidariteHub from './pages/SolidariteHub';
@@ -81,6 +81,13 @@ const NewsSimple = lazyWithRetry(() => import('./pages/News'));
 
 // PR #1 - Assistant + FAQ étendue (v1.6.0)
 const Faq = lazyWithRetry(() => import('./pages/Faq'));
+
+// v7.0.0 New Modules - Integrated Pages
+const InflationDashboardPage = lazyWithRetry(() => import('./pages/InflationDashboardPage'));
+const PriceAlertsPage = lazyWithRetry(() => import('./pages/PriceAlertsPage'));
+const PriceHistoryPage = lazyWithRetry(() => import('./pages/PriceHistoryPage'));
+const SmartShoppingListPage = lazyWithRetry(() => import('./pages/SmartShoppingListPage'));
+const LutteVieChereIndexPage = lazyWithRetry(() => import('./pages/LutteVieChereIndexPage'));
 
 // Comparateur Citoyen - Observatoire data
 const ComparateurCitoyen = lazyWithRetry(() => import('./pages/ComparateurCitoyen'));
@@ -248,15 +255,19 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                   <Routes>
                     <Route path='/' element={<Layout />}>
                   <Route index element={<Home />} />
-                  <Route path='chat' element={<ChatIALocal />} />
                   
-                  {/* HUB PAGES - New unified navigation */}
-                  <Route path='scanner' element={<ScannerHub />} />
+                  {/* HUB ROUTES - Main navigation entries (7 hubs) */}
                   <Route path='comparateurs' element={<ComparateursHub />} />
-                  <Route path='assistant-ia' element={<AssistantIAHub />} />
+                  <Route path='scanner' element={<ScannerHub />} />
                   <Route path='carte-itineraires' element={<CarteItinerairesHub />} />
+                  <Route path='assistant-ia' element={<AssistantIAHub />} />
                   <Route path='solidarite' element={<SolidariteHub />} />
                   <Route path='observatoire-hub' element={<ObservatoireHub />} />
+                  
+                  {/* Legacy Carte route kept for backward compatibility */}
+                  <Route path='carte' element={<Carte />} />
+                  
+                  <Route path='chat' element={<ChatIALocal />} />
                   
                   {/* OCR ROUTES - Direct imports (no lazy loading) */}
                   <Route path='ocr' element={<OCRHub />} />
@@ -268,7 +279,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                   <Route path='analyse-photo-produit' element={<ProductPhotoAnalysis />} />
                   <Route path='comparaison-enseignes' element={<ComparaisonEnseignes />} />
                   <Route path='comparateur' element={<Comparateur />} />
-                  <Route path='carte' element={<Carte />} />
                   <Route path='actualites' element={<NewsSimple />} />
                   <Route path='alertes' element={<Alertes />} />
                   <Route path='a-propos' element={<APropos />} />
@@ -303,6 +313,14 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                   <Route path='dossier-media' element={<DossierMedia />} />
                   <Route path='historique-prix' element={<HistoriquePrix />} />
                   <Route path='alertes-prix' element={<AlertesPrix />} />
+                  
+                  {/* v7.0.0 New Integrated Routes */}
+                  <Route path='lutte-vie-chere' element={<LutteVieChereIndexPage />} />
+                  <Route path='inflation' element={<InflationDashboardPage />} />
+                  <Route path='alertes-prix-new' element={<PriceAlertsPage />} />
+                  <Route path='historique-prix-new' element={<PriceHistoryPage />} />
+                  <Route path='liste-courses-intelligente' element={<SmartShoppingListPage />} />
+                  
                   <Route path='budget-vital' element={<BudgetVital />} />
                   <Route path='faux-bons-plans' element={<FauxBonsPlan />} />
                   <Route path='budget-reel-mensuel' element={<BudgetReelMensuel />} />
