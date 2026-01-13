@@ -82,13 +82,6 @@ const NewsSimple = lazyWithRetry(() => import('./pages/News'));
 // PR #1 - Assistant + FAQ étendue (v1.6.0)
 const Faq = lazyWithRetry(() => import('./pages/Faq'));
 
-// v7.0.0 New Modules - Integrated Pages
-const InflationDashboardPage = lazyWithRetry(() => import('./pages/InflationDashboardPage'));
-const PriceAlertsPage = lazyWithRetry(() => import('./pages/PriceAlertsPage'));
-const PriceHistoryPage = lazyWithRetry(() => import('./pages/PriceHistoryPage'));
-const SmartShoppingListPage = lazyWithRetry(() => import('./pages/SmartShoppingListPage'));
-const LutteVieChereIndexPage = lazyWithRetry(() => import('./pages/LutteVieChereIndexPage'));
-
 // Comparateur Citoyen - Observatoire data
 const ComparateurCitoyen = lazyWithRetry(() => import('./pages/ComparateurCitoyen'));
 const ComparateurTerritoires = lazyWithRetry(() => import('./pages/ComparateurTerritoires'));
@@ -313,13 +306,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                   <Route path='dossier-media' element={<DossierMedia />} />
                   <Route path='historique-prix' element={<HistoriquePrix />} />
                   <Route path='alertes-prix' element={<AlertesPrix />} />
-                  
-                  {/* v7.0.0 New Integrated Routes */}
-                  <Route path='lutte-vie-chere' element={<LutteVieChereIndexPage />} />
-                  <Route path='inflation' element={<InflationDashboardPage />} />
-                  <Route path='alertes-prix-new' element={<PriceAlertsPage />} />
-                  <Route path='historique-prix-new' element={<PriceHistoryPage />} />
-                  <Route path='liste-courses-intelligente' element={<SmartShoppingListPage />} />
                   
                   <Route path='budget-vital' element={<BudgetVital />} />
                   <Route path='faux-bons-plans' element={<FauxBonsPlan />} />
