@@ -139,7 +139,7 @@ export default function SolidariteHub() {
             {activeSection === 'economie' && (
               <GlassCard>
                 <h2 className="text-2xl font-semibold text-white mb-4 flex items-center gap-3">
-                  <Ghost className="w-7 h-7 text-orange-400" />
+                  <Store className="w-7 h-7 text-orange-400" />
                   Économie Locale & Circuit Court
                 </h2>
                 <p className="text-gray-400 mb-6">

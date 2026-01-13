@@ -26,7 +26,7 @@ export default function Layout() {
     { path: '/actualites', label: 'Actualités' },
     { path: '/pricing', label: 'Tarifs' },
     { path: '/presse', label: 'Presse' },
-    { path: '/mon-espace', label: 'Mon espace' },
+    { path: '/mon-compte', label: 'Mon espace' },
     { path: '/contact', label: 'Contact' },
   ];
 
