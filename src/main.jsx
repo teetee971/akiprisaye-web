@@ -14,6 +14,14 @@ import { AuthProvider } from './context/AuthContext';
 import { ScanFlowProvider } from './context/ScanFlowContext';
 import NotFound from './pages/NotFound';
 
+// Hub Pages - New unified navigation hubs
+import ScannerHub from './pages/ScannerHub';
+import ComparateursHub from './pages/ComparateursHub';
+import AssistantIAHub from './pages/AssistantIAHub';
+import CarteItinerairesHub from './pages/CarteItinerairesHub';
+import SolidariteHub from './pages/SolidariteHub';
+import ObservatoireHub from './pages/ObservatoireHub';
+
 // Lazy load other pages for better performance with retry logic
 const ChatIALocal = lazyWithRetry(() => import('./components/ChatIALocal'));
 const ScanOCR = lazyWithRetry(() => import('./pages/ScanOCR'));
@@ -241,6 +249,14 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                     <Route path='/' element={<Layout />}>
                   <Route index element={<Home />} />
                   <Route path='chat' element={<ChatIALocal />} />
+                  
+                  {/* HUB PAGES - New unified navigation */}
+                  <Route path='scanner' element={<ScannerHub />} />
+                  <Route path='comparateurs' element={<ComparateursHub />} />
+                  <Route path='assistant-ia' element={<AssistantIAHub />} />
+                  <Route path='carte-itineraires' element={<CarteItinerairesHub />} />
+                  <Route path='solidarite' element={<SolidariteHub />} />
+                  <Route path='observatoire-hub' element={<ObservatoireHub />} />
                   
                   {/* OCR ROUTES - Direct imports (no lazy loading) */}
                   <Route path='ocr' element={<OCRHub />} />
