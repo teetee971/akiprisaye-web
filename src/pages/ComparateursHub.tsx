@@ -3,7 +3,6 @@ import { Helmet } from 'react-helmet-async';
 import { DollarSign, Weight, TrendingDown, Map, BarChart3 } from 'lucide-react';
 import { GlassCard } from '../components/ui/glass-card';
 import Comparateur from './Comparateur';
-import ComparateurFormats from './ComparateurFormats';
 import HistoriquePrix from './HistoriquePrix';
 
 type ComparateurTab = 'prix' | 'kilo' | 'shrinkflation' | 'metropole' | 'historique';
@@ -51,6 +50,8 @@ export default function ComparateursHub() {
                         ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
                         : 'bg-slate-800/50 text-gray-400 hover:bg-slate-700 hover:text-gray-300'
                     }`}
+                    aria-label={`Sélectionner le mode ${tab.label}`}
+                    aria-pressed={activeTab === tab.id}
                   >
                     <Icon className="w-5 h-5 flex-shrink-0" />
                     <span className="text-sm whitespace-nowrap">{tab.label}</span>

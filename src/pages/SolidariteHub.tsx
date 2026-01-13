@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { ShoppingBasket, HandHeart, TrendingDown as Ghost } from 'lucide-react';
+import { ShoppingBasket, HandHeart, Store } from 'lucide-react';
 import { GlassCard } from '../components/ui/glass-card';
 import TiPanie from './TiPanie';
 
@@ -37,6 +37,8 @@ export default function SolidariteHub() {
                     ? 'bg-orange-600 text-white shadow-lg shadow-orange-600/30' 
                     : 'bg-slate-800/50 text-gray-400 hover:bg-slate-700 hover:text-gray-300'
                 }`}
+                aria-label="Sélectionner la section Ti Panier"
+                aria-pressed={activeSection === 'panier'}
               >
                 <ShoppingBasket className="w-6 h-6" />
                 <span className="text-sm">Ti Panier</span>
@@ -48,6 +50,8 @@ export default function SolidariteHub() {
                     ? 'bg-orange-600 text-white shadow-lg shadow-orange-600/30' 
                     : 'bg-slate-800/50 text-gray-400 hover:bg-slate-700 hover:text-gray-300'
                 }`}
+                aria-label="Sélectionner la section entraide"
+                aria-pressed={activeSection === 'entraide'}
               >
                 <HandHeart className="w-6 h-6" />
                 <span className="text-sm">Entraide</span>
@@ -59,8 +63,10 @@ export default function SolidariteHub() {
                     ? 'bg-orange-600 text-white shadow-lg shadow-orange-600/30' 
                     : 'bg-slate-800/50 text-gray-400 hover:bg-slate-700 hover:text-gray-300'
                 }`}
+                aria-label="Sélectionner la section économie locale"
+                aria-pressed={activeSection === 'economie'}
               >
-                <Ghost className="w-6 h-6" />
+                <Store className="w-6 h-6" />
                 <span className="text-sm">Économie</span>
               </button>
             </div>

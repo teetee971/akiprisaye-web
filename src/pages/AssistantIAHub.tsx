@@ -37,6 +37,8 @@ export default function AssistantIAHub() {
                     ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/30' 
                     : 'bg-slate-800/50 text-gray-400 hover:bg-slate-700 hover:text-gray-300'
                 }`}
+                aria-label="Sélectionner la section conseiller"
+                aria-pressed={activeSection === 'conseiller'}
               >
                 <MessageCircle className="w-6 h-6" />
                 <span className="text-sm">Conseiller</span>
@@ -48,6 +50,8 @@ export default function AssistantIAHub() {
                     ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/30' 
                     : 'bg-slate-800/50 text-gray-400 hover:bg-slate-700 hover:text-gray-300'
                 }`}
+                aria-label="Sélectionner la section suivi"
+                aria-pressed={activeSection === 'suivi'}
               >
                 <TrendingUp className="w-6 h-6" />
                 <span className="text-sm">Suivi</span>
@@ -59,6 +63,8 @@ export default function AssistantIAHub() {
                     ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/30' 
                     : 'bg-slate-800/50 text-gray-400 hover:bg-slate-700 hover:text-gray-300'
                 }`}
+                aria-label="Sélectionner la section rayon IA"
+                aria-pressed={activeSection === 'rayon'}
               >
                 <ShoppingCart className="w-6 h-6" />
                 <span className="text-sm">Rayon IA</span>

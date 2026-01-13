@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Camera, FileText, Barcode } from 'lucide-react';
 import { GlassCard } from '../components/ui/glass-card';
-import BarcodeScanner from '../components/BarcodeScanner';
 import ReceiptScanner from '../components/ReceiptScanner';
 import ScanOCR from './ScanOCR';
 
@@ -39,6 +38,8 @@ export default function ScannerHub() {
                     ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
                     : 'bg-slate-800/50 text-gray-400 hover:bg-slate-700 hover:text-gray-300'
                 }`}
+                aria-label="Sélectionner le mode code-barres"
+                aria-pressed={mode === 'barcode'}
               >
                 <Barcode className="w-6 h-6" />
                 <span className="text-sm">Code-barres</span>
@@ -50,6 +51,8 @@ export default function ScannerHub() {
                     ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
                     : 'bg-slate-800/50 text-gray-400 hover:bg-slate-700 hover:text-gray-300'
                 }`}
+                aria-label="Sélectionner le mode OCR texte"
+                aria-pressed={mode === 'ocr'}
               >
                 <FileText className="w-6 h-6" />
                 <span className="text-sm">OCR Texte</span>
@@ -61,6 +64,8 @@ export default function ScannerHub() {
                     ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
                     : 'bg-slate-800/50 text-gray-400 hover:bg-slate-700 hover:text-gray-300'
                 }`}
+                aria-label="Sélectionner le mode ticket de caisse"
+                aria-pressed={mode === 'ticket'}
               >
                 <Camera className="w-6 h-6" />
                 <span className="text-sm">Ticket</span>

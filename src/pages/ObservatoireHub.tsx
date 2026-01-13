@@ -37,6 +37,8 @@ export default function ObservatoireHub() {
                     ? 'bg-red-600 text-white shadow-lg shadow-red-600/30' 
                     : 'bg-slate-800/50 text-gray-400 hover:bg-slate-700 hover:text-gray-300'
                 }`}
+                aria-label="Sélectionner l'onglet dashboard"
+                aria-pressed={activeTab === 'dashboard'}
               >
                 <BarChart3 className="w-5 h-5" />
                 <span className="text-sm">Dashboard</span>
@@ -48,6 +50,8 @@ export default function ObservatoireHub() {
                     ? 'bg-red-600 text-white shadow-lg shadow-red-600/30' 
                     : 'bg-slate-800/50 text-gray-400 hover:bg-slate-700 hover:text-gray-300'
                 }`}
+                aria-label="Sélectionner l'onglet diagnostic"
+                aria-pressed={activeTab === 'diagnostic'}
               >
                 <Search className="w-5 h-5" />
                 <span className="text-sm">Diagnostic</span>
@@ -59,6 +63,8 @@ export default function ObservatoireHub() {
                     ? 'bg-red-600 text-white shadow-lg shadow-red-600/30' 
                     : 'bg-slate-800/50 text-gray-400 hover:bg-slate-700 hover:text-gray-300'
                 }`}
+                aria-label="Sélectionner l'onglet palmarès"
+                aria-pressed={activeTab === 'palmares'}
               >
                 <Award className="w-5 h-5" />
                 <span className="text-sm">Palmarès</span>
@@ -70,6 +76,8 @@ export default function ObservatoireHub() {
                     ? 'bg-red-600 text-white shadow-lg shadow-red-600/30' 
                     : 'bg-slate-800/50 text-gray-400 hover:bg-slate-700 hover:text-gray-300'
                 }`}
+                aria-label="Sélectionner l'onglet données"
+                aria-pressed={activeTab === 'donnees'}
               >
                 <Database className="w-5 h-5" />
                 <span className="text-sm">Données</span>

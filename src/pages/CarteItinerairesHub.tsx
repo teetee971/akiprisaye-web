@@ -37,6 +37,8 @@ export default function CarteItinerairesHub() {
                     ? 'bg-green-600 text-white shadow-lg shadow-green-600/30' 
                     : 'bg-slate-800/50 text-gray-400 hover:bg-slate-700 hover:text-gray-300'
                 }`}
+                aria-label="Sélectionner le mode carte"
+                aria-pressed={mode === 'carte'}
               >
                 <MapIcon className="w-6 h-6" />
                 <span className="text-sm">Carte</span>
@@ -48,6 +50,8 @@ export default function CarteItinerairesHub() {
                     ? 'bg-green-600 text-white shadow-lg shadow-green-600/30' 
                     : 'bg-slate-800/50 text-gray-400 hover:bg-slate-700 hover:text-gray-300'
                 }`}
+                aria-label="Sélectionner le mode itinéraire"
+                aria-pressed={mode === 'itineraire'}
               >
                 <Navigation className="w-6 h-6" />
                 <span className="text-sm">Itinéraire</span>
@@ -59,6 +63,8 @@ export default function CarteItinerairesHub() {
                     ? 'bg-green-600 text-white shadow-lg shadow-green-600/30' 
                     : 'bg-slate-800/50 text-gray-400 hover:bg-slate-700 hover:text-gray-300'
                 }`}
+                aria-label="Sélectionner le mode optimisation"
+                aria-pressed={mode === 'optimisation'}
               >
                 <Zap className="w-6 h-6" />
                 <span className="text-sm">Optimisation</span>
