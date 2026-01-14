@@ -1,0 +1,626 @@
+{
+  "metadata": {
+    "generated_at": "2026-01-14T00:00:00Z",
+    "source": "A KI PRI SA YÉ - Observatoire Préparation Cyclones",
+    "version": "1.0.0",
+    "disclaimer": "Prix indicatifs issus d'observations citoyennes. Vérifier en magasin avant achat."
+  },
+  "essential_items": [
+    {
+      "id": "water-1.5l",
+      "category": "water",
+      "name": "Eau potable 1.5L",
+      "quantityPerPerson": 10,
+      "unit": "bouteilles",
+      "priority": "essential",
+      "shelfLife": 24
+    },
+    {
+      "id": "water-5l",
+      "category": "water",
+      "name": "Eau potable 5L",
+      "quantityPerPerson": 3,
+      "unit": "bidons",
+      "priority": "essential",
+      "shelfLife": 24
+    },
+    {
+      "id": "canned-tuna",
+      "category": "food",
+      "name": "Thon en conserve",
+      "quantityPerPerson": 6,
+      "unit": "boîtes",
+      "priority": "essential",
+      "shelfLife": 36
+    },
+    {
+      "id": "canned-sardines",
+      "category": "food",
+      "name": "Sardines en conserve",
+      "quantityPerPerson": 4,
+      "unit": "boîtes",
+      "priority": "essential",
+      "shelfLife": 36
+    },
+    {
+      "id": "canned-vegetables",
+      "category": "food",
+      "name": "Légumes en conserve",
+      "quantityPerPerson": 8,
+      "unit": "boîtes",
+      "priority": "essential",
+      "shelfLife": 24
+    },
+    {
+      "id": "rice",
+      "category": "food",
+      "name": "Riz",
+      "quantityPerPerson": 2,
+      "unit": "kg",
+      "priority": "essential",
+      "shelfLife": 12
+    },
+    {
+      "id": "pasta",
+      "category": "food",
+      "name": "Pâtes",
+      "quantityPerPerson": 2,
+      "unit": "kg",
+      "priority": "essential",
+      "shelfLife": 12
+    },
+    {
+      "id": "crackers",
+      "category": "food",
+      "name": "Biscuits secs",
+      "quantityPerPerson": 3,
+      "unit": "paquets",
+      "priority": "important",
+      "shelfLife": 6
+    },
+    {
+      "id": "energy-bars",
+      "category": "food",
+      "name": "Barres céréales",
+      "quantityPerPerson": 10,
+      "unit": "barres",
+      "priority": "important",
+      "shelfLife": 12
+    },
+    {
+      "id": "baby-milk",
+      "category": "food",
+      "name": "Lait en poudre bébé",
+      "quantityPerPerson": 2,
+      "unit": "boîtes",
+      "priority": "essential",
+      "shelfLife": 12
+    },
+    {
+      "id": "flashlight-led",
+      "category": "energy",
+      "name": "Lampe torche LED",
+      "quantityPerPerson": 1,
+      "unit": "unité",
+      "priority": "essential",
+      "shelfLife": null
+    },
+    {
+      "id": "batteries-aa",
+      "category": "energy",
+      "name": "Piles AA",
+      "quantityPerPerson": 8,
+      "unit": "piles",
+      "priority": "essential",
+      "shelfLife": 60
+    },
+    {
+      "id": "batteries-aaa",
+      "category": "energy",
+      "name": "Piles AAA",
+      "quantityPerPerson": 4,
+      "unit": "piles",
+      "priority": "essential",
+      "shelfLife": 60
+    },
+    {
+      "id": "candles",
+      "category": "energy",
+      "name": "Bougies",
+      "quantityPerPerson": 10,
+      "unit": "bougies",
+      "priority": "important",
+      "shelfLife": null
+    },
+    {
+      "id": "matches",
+      "category": "energy",
+      "name": "Allumettes",
+      "quantityPerPerson": 2,
+      "unit": "boîtes",
+      "priority": "important",
+      "shelfLife": null
+    },
+    {
+      "id": "radio-battery",
+      "category": "energy",
+      "name": "Radio à piles",
+      "quantityPerPerson": 1,
+      "unit": "unité",
+      "priority": "essential",
+      "shelfLife": null
+    },
+    {
+      "id": "powerbank-solar",
+      "category": "energy",
+      "name": "Powerbank solaire",
+      "quantityPerPerson": 1,
+      "unit": "unité",
+      "priority": "recommended",
+      "shelfLife": null
+    },
+    {
+      "id": "first-aid-kit",
+      "category": "safety",
+      "name": "Trousse premiers secours",
+      "quantityPerPerson": 1,
+      "unit": "trousse",
+      "priority": "essential",
+      "shelfLife": 36
+    },
+    {
+      "id": "masks",
+      "category": "safety",
+      "name": "Masques protection",
+      "quantityPerPerson": 10,
+      "unit": "masques",
+      "priority": "important",
+      "shelfLife": 24
+    },
+    {
+      "id": "gloves",
+      "category": "safety",
+      "name": "Gants protection",
+      "quantityPerPerson": 3,
+      "unit": "paires",
+      "priority": "important",
+      "shelfLife": 24
+    },
+    {
+      "id": "tarp-plastic",
+      "category": "protection",
+      "name": "Bâche plastique épaisse",
+      "quantityPerPerson": 2,
+      "unit": "bâches",
+      "priority": "essential",
+      "shelfLife": null
+    },
+    {
+      "id": "duct-tape",
+      "category": "protection",
+      "name": "Ruban adhésif large",
+      "quantityPerPerson": 3,
+      "unit": "rouleaux",
+      "priority": "essential",
+      "shelfLife": null
+    },
+    {
+      "id": "rope",
+      "category": "protection",
+      "name": "Corde solide",
+      "quantityPerPerson": 10,
+      "unit": "mètres",
+      "priority": "important",
+      "shelfLife": null
+    },
+    {
+      "id": "waterproof-pouch",
+      "category": "documents",
+      "name": "Pochette étanche",
+      "quantityPerPerson": 1,
+      "unit": "pochette",
+      "priority": "essential",
+      "shelfLife": null
+    }
+  ],
+  "prices": [
+    {
+      "itemId": "water-1.5l",
+      "store": "Carrefour",
+      "territory": "GP",
+      "price": 0.45,
+      "availability": "in_stock",
+      "lastUpdated": "2026-01-13T00:00:00Z",
+      "source": "user_report"
+    },
+    {
+      "itemId": "water-1.5l",
+      "store": "Super U",
+      "territory": "GP",
+      "price": 0.42,
+      "availability": "in_stock",
+      "lastUpdated": "2026-01-13T00:00:00Z",
+      "source": "user_report"
+    },
+    {
+      "itemId": "water-1.5l",
+      "store": "Leader Price",
+      "territory": "GP",
+      "price": 0.38,
+      "availability": "in_stock",
+      "lastUpdated": "2026-01-13T00:00:00Z",
+      "source": "user_report"
+    },
+    {
+      "itemId": "canned-tuna",
+      "store": "Carrefour",
+      "territory": "GP",
+      "price": 1.85,
+      "availability": "in_stock",
+      "lastUpdated": "2026-01-13T00:00:00Z",
+      "source": "user_report"
+    },
+    {
+      "itemId": "canned-tuna",
+      "store": "Super U",
+      "territory": "GP",
+      "price": 1.75,
+      "availability": "in_stock",
+      "lastUpdated": "2026-01-13T00:00:00Z",
+      "source": "user_report"
+    },
+    {
+      "itemId": "flashlight-led",
+      "store": "Carrefour",
+      "territory": "GP",
+      "price": 8.90,
+      "availability": "in_stock",
+      "lastUpdated": "2026-01-13T00:00:00Z",
+      "source": "user_report"
+    },
+    {
+      "itemId": "flashlight-led",
+      "store": "Mr Bricolage",
+      "territory": "GP",
+      "price": 12.50,
+      "availability": "in_stock",
+      "lastUpdated": "2026-01-13T00:00:00Z",
+      "source": "user_report"
+    },
+    {
+      "itemId": "batteries-aa",
+      "store": "Carrefour",
+      "territory": "GP",
+      "price": 0.85,
+      "availability": "in_stock",
+      "lastUpdated": "2026-01-13T00:00:00Z",
+      "source": "user_report"
+    },
+    {
+      "itemId": "first-aid-kit",
+      "store": "Pharmacie",
+      "territory": "GP",
+      "price": 25.00,
+      "availability": "in_stock",
+      "lastUpdated": "2026-01-13T00:00:00Z",
+      "source": "user_report"
+    },
+    {
+      "itemId": "tarp-plastic",
+      "store": "Mr Bricolage",
+      "territory": "GP",
+      "price": 15.90,
+      "availability": "in_stock",
+      "lastUpdated": "2026-01-13T00:00:00Z",
+      "source": "user_report"
+    }
+  ],
+  "shelters": [
+    {
+      "id": "shelter-gp-001",
+      "name": "Gymnase Municipal Pointe-à-Pitre",
+      "type": "gym",
+      "territory": "GP",
+      "commune": "Pointe-à-Pitre",
+      "address": "Rue de la République, 97110 Pointe-à-Pitre",
+      "coordinates": [16.2415, -61.5331],
+      "capacity": 200,
+      "facilities": {
+        "beds": true,
+        "showers": true,
+        "kitchen": false,
+        "generator": true,
+        "medical": false,
+        "accessible": true,
+        "petsAllowed": false
+      },
+      "contact": {
+        "phone": "0590 XX XX XX"
+      },
+      "status": "closed",
+      "officialShelter": true,
+      "lastUpdated": "2026-01-13T00:00:00Z"
+    },
+    {
+      "id": "shelter-gp-002",
+      "name": "École Primaire Basse-Terre",
+      "type": "school",
+      "territory": "GP",
+      "commune": "Basse-Terre",
+      "address": "Avenue des Écoles, 97100 Basse-Terre",
+      "coordinates": [15.9978, -61.7276],
+      "capacity": 150,
+      "facilities": {
+        "beds": false,
+        "showers": true,
+        "kitchen": false,
+        "generator": true,
+        "medical": false,
+        "accessible": true,
+        "petsAllowed": false
+      },
+      "contact": {
+        "phone": "0590 XX XX XX"
+      },
+      "status": "closed",
+      "officialShelter": true,
+      "lastUpdated": "2026-01-13T00:00:00Z"
+    },
+    {
+      "id": "shelter-mq-001",
+      "name": "Salle Omnisports Fort-de-France",
+      "type": "gym",
+      "territory": "MQ",
+      "commune": "Fort-de-France",
+      "address": "Rue Victor Hugo, 97200 Fort-de-France",
+      "coordinates": [14.6062, -61.0795],
+      "capacity": 250,
+      "facilities": {
+        "beds": true,
+        "showers": true,
+        "kitchen": true,
+        "generator": true,
+        "medical": true,
+        "accessible": true,
+        "petsAllowed": false
+      },
+      "contact": {
+        "phone": "0596 XX XX XX"
+      },
+      "status": "closed",
+      "officialShelter": true,
+      "lastUpdated": "2026-01-13T00:00:00Z"
+    },
+    {
+      "id": "shelter-re-001",
+      "name": "Gymnase Saint-Denis",
+      "type": "gym",
+      "territory": "RE",
+      "commune": "Saint-Denis",
+      "address": "Rue de Paris, 97400 Saint-Denis",
+      "coordinates": [-20.8823, 55.4504],
+      "capacity": 300,
+      "facilities": {
+        "beds": true,
+        "showers": true,
+        "kitchen": true,
+        "generator": true,
+        "medical": true,
+        "accessible": true,
+        "petsAllowed": false
+      },
+      "contact": {
+        "phone": "0262 XX XX XX"
+      },
+      "status": "closed",
+      "officialShelter": true,
+      "lastUpdated": "2026-01-13T00:00:00Z"
+    }
+  ],
+  "historical_cyclones": [
+    {
+      "id": "cyclone-irma-2017",
+      "name": "Irma",
+      "year": 2017,
+      "category": 5,
+      "territories": ["MF", "BL", "GP"],
+      "dates": {
+        "formation": "2017-08-30",
+        "landfall": "2017-09-06",
+        "dissipation": "2017-09-12"
+      },
+      "trajectory": [
+        { "lat": 16.7, "lng": -62.8, "time": "2017-09-06T06:00:00Z", "windSpeed": 285 }
+      ],
+      "impact": {
+        "deaths": 11,
+        "injured": 130,
+        "damagesEuros": 1200000000,
+        "housesDestroyed": 4500,
+        "householdsDamaged": 8000
+      },
+      "lessonsLearned": [
+        "Nécessité de renforcer les constructions aux normes anti-cycloniques",
+        "Importance des stocks d'eau et de nourriture",
+        "Communication de crise à améliorer"
+      ]
+    },
+    {
+      "id": "cyclone-maria-2017",
+      "name": "Maria",
+      "year": 2017,
+      "category": 5,
+      "territories": ["GP", "MQ"],
+      "dates": {
+        "formation": "2017-09-16",
+        "landfall": "2017-09-19",
+        "dissipation": "2017-09-30"
+      },
+      "trajectory": [
+        { "lat": 15.2, "lng": -61.0, "time": "2017-09-19T00:00:00Z", "windSpeed": 280 }
+      ],
+      "impact": {
+        "deaths": 5,
+        "injured": 89,
+        "damagesEuros": 650000000,
+        "housesDestroyed": 2200,
+        "householdsDamaged": 5500
+      },
+      "lessonsLearned": [
+        "Protection des infrastructures électriques prioritaire",
+        "Évacuation préventive efficace",
+        "Besoin de générateurs de secours"
+      ]
+    },
+    {
+      "id": "cyclone-chido-2024",
+      "name": "Chido",
+      "year": 2024,
+      "category": 4,
+      "territories": ["YT"],
+      "dates": {
+        "formation": "2024-12-08",
+        "landfall": "2024-12-14",
+        "dissipation": "2024-12-16"
+      },
+      "trajectory": [
+        { "lat": -12.8, "lng": 45.2, "time": "2024-12-14T03:00:00Z", "windSpeed": 250 }
+      ],
+      "impact": {
+        "deaths": 39,
+        "injured": 1400,
+        "damagesEuros": 800000000,
+        "housesDestroyed": 3800,
+        "householdsDamaged": 12000
+      },
+      "lessonsLearned": [
+        "Habitat précaire particulièrement vulnérable",
+        "Nécessité d'infrastructures renforcées à Mayotte",
+        "Accès aux refuges à améliorer"
+      ]
+    }
+  ],
+  "checklist_templates": {
+    "before": [
+      {
+        "id": "before-001",
+        "task": "Faire provisions eau/nourriture (3-7 jours)",
+        "priority": "critical"
+      },
+      {
+        "id": "before-002",
+        "task": "Retirer objets extérieurs (plantes, meubles)",
+        "priority": "high"
+      },
+      {
+        "id": "before-003",
+        "task": "Protéger fenêtres (volets, planches, X adhésif)",
+        "priority": "critical"
+      },
+      {
+        "id": "before-004",
+        "task": "Charger tous appareils électroniques",
+        "priority": "high"
+      },
+      {
+        "id": "before-005",
+        "task": "Faire le plein d'essence",
+        "priority": "high"
+      },
+      {
+        "id": "before-006",
+        "task": "Retirer argent liquide",
+        "priority": "medium"
+      },
+      {
+        "id": "before-007",
+        "task": "Remplir baignoire (réserve eau)",
+        "priority": "high"
+      },
+      {
+        "id": "before-008",
+        "task": "Localiser refuge le plus proche",
+        "priority": "critical"
+      },
+      {
+        "id": "before-009",
+        "task": "Préparer sac évacuation",
+        "priority": "critical"
+      },
+      {
+        "id": "before-010",
+        "task": "Informer proches/famille",
+        "priority": "high"
+      },
+      {
+        "id": "before-011",
+        "task": "Éteindre gaz, disjoncteur (si évacuation)",
+        "priority": "critical"
+      }
+    ],
+    "during": [
+      {
+        "id": "during-001",
+        "task": "Rester à l'intérieur",
+        "priority": "critical"
+      },
+      {
+        "id": "during-002",
+        "task": "S'éloigner des fenêtres",
+        "priority": "critical"
+      },
+      {
+        "id": "during-003",
+        "task": "Se placer dans pièce sûre (sans fenêtres)",
+        "priority": "critical"
+      },
+      {
+        "id": "during-004",
+        "task": "Écouter radio pour consignes",
+        "priority": "critical"
+      },
+      {
+        "id": "during-005",
+        "task": "NE PAS sortir pendant l'œil du cyclone",
+        "priority": "critical"
+      },
+      {
+        "id": "during-006",
+        "task": "Économiser eau/nourriture/piles",
+        "priority": "high"
+      }
+    ],
+    "after": [
+      {
+        "id": "after-001",
+        "task": "Vérifier état de la maison",
+        "priority": "high"
+      },
+      {
+        "id": "after-002",
+        "task": "Attention aux lignes électriques tombées",
+        "priority": "critical"
+      },
+      {
+        "id": "after-003",
+        "task": "Ne pas boire eau du robinet (contamination possible)",
+        "priority": "critical"
+      },
+      {
+        "id": "after-004",
+        "task": "Prendre photos des dégâts (assurance)",
+        "priority": "high"
+      },
+      {
+        "id": "after-005",
+        "task": "Signaler personnes en détresse",
+        "priority": "critical"
+      },
+      {
+        "id": "after-006",
+        "task": "Éviter déplacements inutiles",
+        "priority": "medium"
+      }
+    ]
+  }
+}

@@ -101,6 +101,9 @@ const ServiceComparator = lazyWithRetry(() => import('./pages/ServiceComparator'
 const FlightComparator = lazyWithRetry(() => import('./pages/FlightComparator'));
 const BoatComparator = lazyWithRetry(() => import('./pages/BoatComparator'));
 
+// Cyclone Preparation Comparator - Resilience Tool
+const CyclonePreparation = lazyWithRetry(() => import('./pages/CyclonePreparation'));
+
 // Unified Scan Flow
 const ScanFlow = lazyWithRetry(() => import('./pages/ScanFlow'));
 
@@ -345,6 +348,11 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                   <Route path='comparateur-bateaux' element={<BoatComparator />} />
                   <Route path='bateaux' element={<BoatComparator />} />
                   <Route path='ferries' element={<BoatComparator />} />
+                  
+                  {/* Cyclone Preparation Comparator - Resilience Tool */}
+                  <Route path='preparation-cyclones' element={<CyclonePreparation />} />
+                  <Route path='cyclones' element={<CyclonePreparation />} />
+                  <Route path='resilience-cyclone' element={<CyclonePreparation />} />
                   
                   {/* Store Detail Page - Fiche enseigne avec graphs, filiales, etc. */}
                   <Route path='enseigne/:storeId' element={<StoreDetail />} />
