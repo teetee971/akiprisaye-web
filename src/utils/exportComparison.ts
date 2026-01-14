@@ -4,6 +4,8 @@
 
 import type { FlightComparisonResult } from '../types/flightComparison';
 import type { BoatComparisonResult } from '../types/boatComparison';
+import type { FuelComparisonResult } from '../types/fuelComparison';
+import type { InsuranceComparisonResult } from '../types/insuranceComparison';
 
 /**
  * Format price as EUR currency
@@ -259,4 +261,170 @@ const downloadText = (content: string, filename: string): void => {
   
   // Revoke the URL to free up memory
   URL.revokeObjectURL(url);
+};
+
+/**
+ * Export fuel comparison to CSV
+ */
+export const exportFuelComparisonToCSV = (result: FuelComparisonResult): void => {
+  const headers = [
+    'Rang',
+    'Station',
+    'Ville',
+    'Carburant',
+    'Prix (€/L)',
+    'Différence vs moins cher (€)',
+    'Différence vs moins cher (%)',
+    'Catégorie',
+    'Prix plafonné'
+  ];
+
+  const rows = result.rankedPrices.map(ranking => [
+    escapeCSV(ranking.rank),
+    escapeCSV(ranking.fuelPrice.station.name),
+    escapeCSV(ranking.fuelPrice.station.city),
+    escapeCSV(ranking.fuelPrice.fuelType),
+    escapeCSV(ranking.fuelPrice.pricePerLiter.toFixed(3)),
+    escapeCSV(ranking.absoluteDifferenceFromCheapest.toFixed(3)),
+    escapeCSV(ranking.percentageDifferenceFromCheapest.toFixed(2)),
+    escapeCSV(ranking.priceCategory),
+    escapeCSV(ranking.fuelPrice.isPriceCapPlafonne ? 'Oui' : 'Non')
+  ]);
+
+  const csvContent = [
+    headers.join(','),
+    ...rows.map(row => row.join(','))
+  ].join('\n');
+
+  downloadCSV(csvContent, `comparaison-carburants-${result.territory}-${result.fuelType}-${Date.now()}.csv`);
+};
+
+/**
+ * Export fuel comparison to text
+ */
+export const exportFuelComparisonToText = (result: FuelComparisonResult): void => {
+  let text = `COMPARAISON DES PRIX DES CARBURANTS\n`;
+  text += `====================================\n\n`;
+  text += `Territoire: ${result.territory}\n`;
+  text += `Type de carburant: ${result.fuelType}\n`;
+  text += `Date: ${new Date(result.comparisonDate).toLocaleDateString('fr-FR')}\n`;
+  text += `Nombre de stations: ${result.metadata.totalStations}\n\n`;
+
+  text += `STATISTIQUES\n`;
+  text += `------------\n`;
+  text += `Prix minimum: ${formatPrice(result.aggregation.minPrice)}/L\n`;
+  text += `Prix moyen: ${formatPrice(result.aggregation.averagePrice)}/L\n`;
+  text += `Prix maximum: ${formatPrice(result.aggregation.maxPrice)}/L\n`;
+  text += `Écart de prix: ${formatPrice(result.aggregation.priceRange)}/L (${result.aggregation.priceRangePercentage.toFixed(1)}%)\n`;
+  if (result.aggregation.priceCapOfficiel) {
+    text += `Prix plafonné officiel: ${formatPrice(result.aggregation.priceCapOfficiel)}/L\n`;
+  }
+  text += `\n`;
+
+  text += `CLASSEMENT DES STATIONS\n`;
+  text += `-----------------------\n`;
+  result.rankedPrices.forEach((ranking, index) => {
+    text += `\n${index + 1}. ${ranking.fuelPrice.station.name} - ${ranking.fuelPrice.station.city}\n`;
+    text += `  Prix: ${formatPrice(ranking.fuelPrice.pricePerLiter)}/L\n`;
+    if (ranking.fuelPrice.isPriceCapPlafonne) {
+      text += `  ⭐ Prix plafonné officiel\n`;
+    }
+    text += `  Différence vs moins cher: ${ranking.percentageDifferenceFromCheapest > 0 ? '+' : ''}${ranking.percentageDifferenceFromCheapest.toFixed(1)}%\n`;
+    if (ranking.fuelPrice.station.brand) {
+      text += `  Enseigne: ${ranking.fuelPrice.station.brand}\n`;
+    }
+  });
+
+  text += `\n\nSOURCE\n`;
+  text += `------\n`;
+  text += `${result.metadata.dataSource}\n`;
+  text += `Méthodologie: ${result.metadata.methodology}\n`;
+
+  downloadText(text, `comparaison-carburants-${result.territory}-${result.fuelType}-${Date.now()}.txt`);
+};
+
+/**
+ * Export insurance comparison to CSV
+ */
+export const exportInsuranceComparisonToCSV = (result: InsuranceComparisonResult): void => {
+  const headers = [
+    'Rang',
+    'Assureur',
+    'Offre',
+    'Type',
+    'Niveau',
+    'Prix annuel (€)',
+    'Franchise (€)',
+    'Diff. vs min (€)',
+    'Diff. vs min (%)',
+    'Catégorie',
+    'Garanties principales'
+  ];
+
+  const rows = result.rankedOffers.map(ranking => [
+    escapeCSV(ranking.rank),
+    escapeCSV(ranking.insurance.providerName),
+    escapeCSV(ranking.insurance.offerName),
+    escapeCSV(ranking.insurance.insuranceType),
+    escapeCSV(ranking.insurance.coverageLevel),
+    escapeCSV(ranking.insurance.annualPriceTTC.toFixed(2)),
+    escapeCSV(ranking.insurance.deductible?.toFixed(2) || 'N/A'),
+    escapeCSV(ranking.absoluteDifferenceFromCheapest.toFixed(2)),
+    escapeCSV(ranking.percentageDifferenceFromCheapest.toFixed(2)),
+    escapeCSV(ranking.priceCategory),
+    escapeCSV(ranking.insurance.mainCoverages.join('; '))
+  ]);
+
+  const csvContent = [
+    headers.join(','),
+    ...rows.map(row => row.join(','))
+  ].join('\n');
+
+  downloadCSV(csvContent, `comparaison-assurances-${result.territory}-${result.insuranceType}-${Date.now()}.csv`);
+};
+
+/**
+ * Export insurance comparison to text
+ */
+export const exportInsuranceComparisonToText = (result: InsuranceComparisonResult): void => {
+  let text = `COMPARAISON DES ASSURANCES\n`;
+  text += `==========================\n\n`;
+  text += `Type: ${result.insuranceType}\n`;
+  text += `Territoire: ${result.territory}\n`;
+  text += `Date: ${new Date(result.comparisonDate).toLocaleDateString('fr-FR')}\n`;
+  text += `Nombre d'offres: ${result.metadata.totalOffers}\n\n`;
+
+  text += `STATISTIQUES\n`;
+  text += `------------\n`;
+  text += `Prix minimum: ${formatPrice(result.aggregation.minPrice)}/an\n`;
+  text += `Prix moyen: ${formatPrice(result.aggregation.averagePrice)}/an\n`;
+  text += `Prix maximum: ${formatPrice(result.aggregation.maxPrice)}/an\n`;
+  text += `Écart de prix: ${formatPrice(result.aggregation.priceRange)}/an (${result.aggregation.priceRangePercentage.toFixed(1)}%)\n`;
+  text += `\n`;
+
+  text += `CLASSEMENT DES OFFRES\n`;
+  text += `---------------------\n`;
+  result.rankedOffers.forEach((ranking, index) => {
+    text += `\n${index + 1}. ${ranking.insurance.providerName} - ${ranking.insurance.offerName}\n`;
+    text += `  Prix annuel: ${formatPrice(ranking.insurance.annualPriceTTC)}\n`;
+    text += `  Niveau: ${ranking.insurance.coverageLevel}\n`;
+    if (ranking.insurance.deductible) {
+      text += `  Franchise: ${formatPrice(ranking.insurance.deductible)}\n`;
+    }
+    text += `  Différence vs moins cher: ${ranking.percentageDifferenceFromCheapest > 0 ? '+' : ''}${ranking.percentageDifferenceFromCheapest.toFixed(1)}%\n`;
+    text += `  Garanties principales:\n`;
+    ranking.insurance.mainCoverages.forEach(coverage => {
+      text += `    - ${coverage}\n`;
+    });
+  });
+
+  text += `\n\nDISCLAIMER\n`;
+  text += `----------\n`;
+  text += `${result.metadata.disclaimer}\n`;
+  text += `\nSOURCE\n`;
+  text += `------\n`;
+  text += `${result.metadata.dataSource}\n`;
+  text += `Méthodologie: ${result.metadata.methodology}\n`;
+
+  downloadText(text, `comparaison-assurances-${result.territory}-${result.insuranceType}-${Date.now()}.txt`);
 };
