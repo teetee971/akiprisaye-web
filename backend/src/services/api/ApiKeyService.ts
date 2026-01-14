@@ -18,8 +18,8 @@
  */
 
 import { PrismaClient, ApiKey, ApiKeyStatus, ApiPermission, SubscriptionTier } from '@prisma/client';
-import crypto from 'crypto';
-import bcrypt from 'bcrypt';
+import * as crypto from 'crypto';
+import * as bcrypt from 'bcrypt';
 import { ApiKeyWithSecret, UsageStats, SUBSCRIPTION_PLANS } from '../../types/api.js';
 
 export class ApiKeyService {
