@@ -280,11 +280,11 @@ export class OpenDataService {
       skip: offset,
     });
 
-    // Count unique products for total
-    const totalCount = await prisma.price.findMany({
+    // Count unique products for total - using aggregate for better performance
+    const totalCount = await prisma.price.groupBy({
+      by: ['productId'],
       where,
-      distinct: ['productId'],
-      select: { productId: true },
+      _count: { _all: true },
     });
 
     const aggregatedPrices: AggregatedPrice[] = [];
