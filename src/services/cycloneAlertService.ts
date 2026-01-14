@@ -33,7 +33,7 @@ export async function subscribeToAlerts(
   territory: Territory
 ): Promise<void> {
   try {
-    const subscriptions = getSubscriptions();
+    const subscriptions = getSubscriptions(userId);
     if (!subscriptions.includes(territory)) {
       subscriptions.push(territory);
       localStorage.setItem(`alert-subscriptions-${userId}`, JSON.stringify(subscriptions));
@@ -51,7 +51,7 @@ export async function unsubscribeFromAlerts(
   territory: Territory
 ): Promise<void> {
   try {
-    const subscriptions = getSubscriptions();
+    const subscriptions = getSubscriptions(userId);
     const updated = subscriptions.filter(t => t !== territory);
     localStorage.setItem(`alert-subscriptions-${userId}`, JSON.stringify(updated));
   } catch (error) {
@@ -62,9 +62,10 @@ export async function unsubscribeFromAlerts(
 /**
  * Get user's alert subscriptions
  */
-function getSubscriptions(): Territory[] {
+function getSubscriptions(userId?: string): Territory[] {
   try {
-    const data = localStorage.getItem('alert-subscriptions');
+    const key = userId ? `alert-subscriptions-${userId}` : 'alert-subscriptions';
+    const data = localStorage.getItem(key);
     return data ? JSON.parse(data) : [];
   } catch {
     return [];

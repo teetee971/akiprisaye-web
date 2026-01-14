@@ -166,7 +166,7 @@ export async function getSheltersByCommune(
  */
 export async function getAvailableShelters(territory: Territory): Promise<Shelter[]> {
   const allShelters = await getAllShelters(territory);
-  return allShelters.filter(s => s.status === 'open' && s.status !== 'full');
+  return allShelters.filter(s => s.status === 'open');
 }
 
 /**
