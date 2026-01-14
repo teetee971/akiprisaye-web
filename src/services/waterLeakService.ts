@@ -63,18 +63,16 @@ export async function reportLeak(
 
 /**
  * Get leaks by location
+ * Note: Radius filtering requires geospatial calculations - use getLeaksNearLocation for distance filtering
  */
 export async function getLeaksByLocation(
-  commune: string,
-  _radius?: number
+  commune: string
 ): Promise<WaterLeakReport[]> {
   const db = await loadDatabase();
 
   const leaks = db.leaks.filter(
     (leak) => leak.location.commune.toLowerCase() === commune.toLowerCase()
   );
-
-  // Note: _radius parameter available for future distance filtering
 
   return leaks;
 }

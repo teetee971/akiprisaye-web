@@ -161,26 +161,27 @@ export async function getPriceEvolution(
 }
 
 /**
- * Compare territory pricing to mainland France
+ * Compare territory pricing to reference territory (Guadeloupe)
+ * Note: Using Guadeloupe as reference since this tool is DOM-TOM focused
  */
-export async function compareTerritoryToMainland(
+export async function compareTerritoryToReference(
   territory: Territory,
   consumptionM3: number = 120
 ): Promise<{
   territoryAverage: number;
-  mainlandAverage: number;
+  referenceAverage: number;
   difference: number;
   percentageDifference: number;
 }> {
   const db = await loadDatabase();
 
   const territoryPricing = db.pricing.filter((p) => p.territory === territory);
-  const mainlandPricing = db.pricing.filter((p) => p.territory === 'GP'); // Using GP as reference
+  const referencePricing = db.pricing.filter((p) => p.territory === 'GP'); // Using GP as DOM reference
 
-  if (territoryPricing.length === 0 || mainlandPricing.length === 0) {
+  if (territoryPricing.length === 0 || referencePricing.length === 0) {
     return {
       territoryAverage: 0,
-      mainlandAverage: 0,
+      referenceAverage: 0,
       difference: 0,
       percentageDifference: 0,
     };
@@ -189,23 +190,23 @@ export async function compareTerritoryToMainland(
   const territoryCosts = territoryPricing.map((p) =>
     calculateAnnualCost(p, consumptionM3)
   );
-  const mainlandCosts = mainlandPricing.map((p) =>
+  const referenceCosts = referencePricing.map((p) =>
     calculateAnnualCost(p, consumptionM3)
   );
 
   const territoryAverage =
     territoryCosts.reduce((sum, cost) => sum + cost, 0) /
     territoryCosts.length;
-  const mainlandAverage =
-    mainlandCosts.reduce((sum, cost) => sum + cost, 0) / mainlandCosts.length;
+  const referenceAverage =
+    referenceCosts.reduce((sum, cost) => sum + cost, 0) / referenceCosts.length;
 
-  const difference = territoryAverage - mainlandAverage;
+  const difference = territoryAverage - referenceAverage;
   const percentageDifference =
-    mainlandAverage > 0 ? (difference / mainlandAverage) * 100 : 0;
+    referenceAverage > 0 ? (difference / referenceAverage) * 100 : 0;
 
   return {
     territoryAverage: Math.round(territoryAverage * 100) / 100,
-    mainlandAverage: Math.round(mainlandAverage * 100) / 100,
+    referenceAverage: Math.round(referenceAverage * 100) / 100,
     difference: Math.round(difference * 100) / 100,
     percentageDifference: Math.round(percentageDifference * 100) / 100,
   };

@@ -64,6 +64,7 @@ export async function reportWaterStatus(
 
 /**
  * Get water status by location (commune)
+ * Note: Territory parameter reserved for future filtering when data grows
  */
 export async function getWaterStatusByLocation(
   commune: string,
@@ -74,7 +75,7 @@ export async function getWaterStatusByLocation(
   return db.current_status.filter(
     (status) =>
       status.location.commune.toLowerCase() === commune.toLowerCase()
-      // Note: _territory parameter available for future filtering if needed
+      // _territory parameter reserved for future territory-based filtering
   );
 }
 

@@ -60,8 +60,14 @@ export default function WaterStatusReportForm({
     setLoading(true);
 
     try {
-      // Use coordinates or default fallback
-      const coords: [number, number] = coordinates || [0, 0];
+      // Use coordinates or require valid geolocation
+      if (!coordinates) {
+        setError('Veuillez activer la géolocalisation ou saisir une adresse précise');
+        setLoading(false);
+        return;
+      }
+
+      const coords: [number, number] = coordinates;
 
       await reportWaterStatus({
         location: {
