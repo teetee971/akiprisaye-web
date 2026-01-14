@@ -223,7 +223,7 @@ router.post('/save', (req: Request, res: Response) => {
  * Get saved baskets
  * GET /api/basket/saved
  */
-router.get('/saved', (req: Request, res: Response) => {
+router.get('/saved', (_req: Request, res: Response) => {
   try {
     return res.json({
       success: true,
@@ -376,9 +376,9 @@ function calculateStoreComparisons(
  * Generate optimization recommendations (mock implementation)
  */
 function generateOptimizationRecommendations(
-  items: any[],
+  _items: any[],
   preferences: any,
-  userPosition?: any
+  _userPosition?: any
 ): any[] {
   const prioritize = preferences.prioritize || 'balanced';
 

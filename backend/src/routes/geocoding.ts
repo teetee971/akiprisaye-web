@@ -73,7 +73,7 @@ router.post('/geocode', async (req: Request, res: Response) => {
       throw new Error(`Nominatim API error: ${response.status}`);
     }
 
-    const data = await response.json();
+    const data: any = await response.json();
 
     if (!data || data.length === 0) {
       return res.json({
@@ -153,7 +153,7 @@ router.post('/reverse', async (req: Request, res: Response) => {
       throw new Error(`Nominatim API error: ${response.status}`);
     }
 
-    const data = await response.json();
+    const data: any = await response.json();
 
     if (!data || !data.display_name) {
       return res.json({
@@ -260,7 +260,7 @@ router.post('/batch', async (req: Request, res: Response) => {
           throw new Error(`HTTP ${response.status}`);
         }
 
-        const data = await response.json();
+        const data: any = await response.json();
 
         if (!data || data.length === 0) {
           results.push({

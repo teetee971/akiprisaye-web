@@ -424,7 +424,7 @@ router.post('/import/csv', async (req: Request, res: Response) => {
  * Export products to CSV
  * GET /api/products/export/csv
  */
-router.get('/export/csv', (req: Request, res: Response) => {
+router.get('/export/csv', (_req: Request, res: Response) => {
   try {
     const csv = exportProductsToCSV(products);
     

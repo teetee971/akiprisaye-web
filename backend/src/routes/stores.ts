@@ -370,7 +370,7 @@ router.post('/import/csv', async (req: Request, res: Response) => {
  * Export stores to CSV
  * GET /api/stores/export/csv
  */
-router.get('/export/csv', (req: Request, res: Response) => {
+router.get('/export/csv', (_req: Request, res: Response) => {
   try {
     const csv = exportStoresToCSV(stores);
     
