@@ -56,10 +56,17 @@ model User {
   
   /// Profil chat (optionnel - créé si user participe aux discussions)
   chatProfile ChatUserProfile?
+  
+  /// Niveau d'abonnement (pour accès API)
+  subscriptionTier SubscriptionTier @default(FREE) @map("subscription_tier")
+  
+  /// API Keys créées par cet utilisateur
+  apiKeys ApiKey[]
 
   @@index([email])
   @@index([isActive])
   @@index([role])
+  @@index([subscriptionTier])
   @@map("users")
 }
 
@@ -112,6 +119,168 @@ enum UserRole {
   
   /// Super administrateur - accès complet
   SUPER_ADMIN
+}
+
+/// Niveaux d'abonnement pour accès API
+/// 
+/// Hiérarchie des fonctionnalités et rate limits:
+/// FREE < CITIZEN_PREMIUM < SME < BUSINESS_PRO < INSTITUTIONAL
+enum SubscriptionTier {
+  /// Gratuit - Accès limité (100 req/jour)
+  FREE
+  
+  /// Citoyen Premium - Accès étendu (1000 req/jour)
+  CITIZEN_PREMIUM
+  
+  /// PME - Accès professionnel (5000 req/jour)
+  SME
+  
+  /// Business Pro - Accès complet + Analytics (50000 req/jour)
+  BUSINESS_PRO
+  
+  /// Institutionnel - Accès illimité + Support premium (500000 req/jour)
+  INSTITUTIONAL
+}
+
+/// Permissions API pour contrôle d'accès granulaire
+enum ApiPermission {
+  /// Lecture des données comparateurs
+  READ_COMPARATORS
+  
+  /// Lecture des prix
+  READ_PRICES
+  
+  /// Lecture des territoires
+  READ_TERRITORIES
+  
+  /// Lecture des analytics (Pro/Institutional uniquement)
+  READ_ANALYTICS
+  
+  /// Écriture de contributions
+  WRITE_CONTRIBUTIONS
+  
+  /// Export de données (CSV/Excel)
+  EXPORT_DATA
+  
+  /// Administration complète
+  ADMIN
+}
+
+/// API Key pour authentification programmatique
+/// Alternative au JWT pour applications tierces
+/// 
+/// Sécurité:
+/// - Clé stockée hashée (bcrypt)
+/// - Rate limiting par clé
+/// - Révocation possible
+/// - Tracking d'usage
+/// 
+/// RGPD: Art. 32 - Sécurité du traitement
+model ApiKey {
+  /// Identifiant unique
+  id        String   @id @default(uuid())
+  
+  /// Utilisateur propriétaire
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  /// Nom descriptif de la clé (ex: "Production API", "Dev")
+  name      String   @db.VarChar(255)
+  
+  /// Clé hashée (bcrypt) - jamais stockée en clair
+  keyHash   String   @unique @map("key_hash") @db.VarChar(255)
+  
+  /// Préfixe visible de la clé (ex: "akp_live_")
+  prefix    String   @db.VarChar(20)
+  
+  /// Permissions accordées à cette clé
+  permissions ApiPermission[]
+  
+  /// Limite de requêtes par jour
+  rateLimitDay Int @default(100) @map("rate_limit_day")
+  
+  /// Limite de requêtes par heure
+  rateLimitHour Int @default(10) @map("rate_limit_hour")
+  
+  /// Limite de requêtes par minute
+  rateLimitMinute Int @default(1) @map("rate_limit_minute")
+  
+  /// Statut de la clé
+  status    ApiKeyStatus @default(ACTIVE)
+  
+  /// Date de dernière utilisation
+  lastUsedAt DateTime? @map("last_used_at")
+  
+  /// Date d'expiration (null = pas d'expiration)
+  expiresAt DateTime? @map("expires_at")
+  
+  /// Date de création
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  /// Date de mise à jour
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  /// Historique d'usage de cette clé
+  usageRecords ApiUsage[]
+
+  @@index([userId])
+  @@index([keyHash])
+  @@index([status])
+  @@index([prefix])
+  @@map("api_keys")
+}
+
+/// Statut d'une API Key
+enum ApiKeyStatus {
+  /// Active - utilisable
+  ACTIVE
+  
+  /// Révoquée - plus utilisable
+  REVOKED
+  
+  /// Expirée - plus utilisable
+  EXPIRED
+}
+
+/// Enregistrement d'usage API pour facturation et analytics
+/// 
+/// Permet de:
+/// - Tracker l'usage par clé
+/// - Facturer selon consommation
+/// - Analyser les patterns d'utilisation
+/// - Détecter les abus
+/// 
+/// RGPD: Base légale = contrat (facturation)
+model ApiUsage {
+  /// Identifiant unique
+  id        String   @id @default(uuid())
+  
+  /// API Key utilisée
+  apiKeyId  String   @map("api_key_id")
+  apiKey    ApiKey   @relation(fields: [apiKeyId], references: [id], onDelete: Cascade)
+  
+  /// Endpoint appelé (ex: "/api/v1/comparators/fuel/data")
+  endpoint  String   @db.VarChar(255)
+  
+  /// Méthode HTTP (GET, POST, etc.)
+  method    String   @db.VarChar(10)
+  
+  /// Code de statut HTTP de la réponse
+  statusCode Int     @map("status_code")
+  
+  /// Temps de réponse en millisecondes
+  responseTime Int   @map("response_time")
+  
+  /// Timestamp de la requête
+  timestamp DateTime @default(now())
+  
+  /// IP du client (optionnel - pour détection abus)
+  clientIp  String?  @map("client_ip") @db.VarChar(45)
+
+  @@index([apiKeyId])
+  @@index([timestamp])
+  @@index([endpoint])
+  @@map("api_usage")
 }
 
 /// Entité légale représentant une entreprise ou établissement
@@ -1603,6 +1772,7 @@ model StructuralIndicator {
   
   /// Relations
   insights ExplanatoryInsight[]
+  explanations ExplanationResult[]
   
   @@index([indicatorType])
   @@index([territory])
@@ -1876,8 +2046,8 @@ model ExplanationResult {
   computationTrace   ComputationTrace? @relation(fields: [computationTraceId], references: [id], onDelete: SetNull)
   
   /// Revue humaine associée
-  humanReviewId String? @map("human_review_id")
-  humanReview   HumanReview? @relation(fields: [humanReviewId], references: [id], onDelete: SetNull)
+  humanReviewId String? @unique @map("human_review_id")
+  humanReview   HumanReview?
   
   /// Statut publication
   isPublished Boolean @default(false) @map("is_published")
@@ -1961,7 +2131,7 @@ model HumanReview {
   framework   AIResearchFramework? @relation(fields: [frameworkId], references: [id], onDelete: SetNull)
   
   /// Explication revue (optionnel)
-  explanationId String? @map("explanation_id")
+  explanationId String? @unique @map("explanation_id")
   explanation   ExplanationResult? @relation(fields: [explanationId], references: [id], onDelete: SetNull)
   
   /// Nom/ID du reviewer
