@@ -3,7 +3,7 @@
  * Calculateur de consommation et économies d'eau
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import type { WaterConsumptionProfile, Territory } from '../../types/waterComparison';
 import {
   estimateConsumption,
@@ -22,7 +22,7 @@ export default function ConsumptionCalculator() {
     pool: false,
   });
 
-  const [territory, setTerritory] = useState<Territory>('GP');
+  const [territory] = useState<Territory>('GP');
   const [estimate, setEstimate] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 

@@ -6,7 +6,9 @@
  * problèmes de qualité, etc.
  */
 
-import type { WaterAlert, Territory } from '../types/waterComparison';
+import type {
+  WaterAlert,
+} from '../types/waterComparison';
 
 // In-memory storage for alerts (in real app, would use backend/database)
 const alerts: WaterAlert[] = [];

@@ -7,7 +7,6 @@
 
 import type {
   WaterLeakReport,
-  LeakType,
   WaterAvailabilityDatabase,
 } from '../types/waterComparison';
 
@@ -67,16 +66,15 @@ export async function reportLeak(
  */
 export async function getLeaksByLocation(
   commune: string,
-  radius?: number
+  _radius?: number
 ): Promise<WaterLeakReport[]> {
   const db = await loadDatabase();
 
-  let leaks = db.leaks.filter(
+  const leaks = db.leaks.filter(
     (leak) => leak.location.commune.toLowerCase() === commune.toLowerCase()
   );
 
-  // If radius is specified, could filter by distance
-  // (requires coordinate calculations - not implemented here)
+  // Note: _radius parameter available for future distance filtering
 
   return leaks;
 }

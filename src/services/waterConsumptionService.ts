@@ -77,7 +77,12 @@ function calculateSavings(
   savingsEuros: number;
   difficulty: 'easy' | 'medium' | 'hard';
 }> {
-  const savings = [];
+  const savings: Array<{
+    action: string;
+    savingsM3: number;
+    savingsEuros: number;
+    difficulty: 'easy' | 'medium' | 'hard';
+  }> = [];
 
   // Shower efficiency
   if (profile.showers > 0) {

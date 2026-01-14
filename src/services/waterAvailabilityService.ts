@@ -67,16 +67,14 @@ export async function reportWaterStatus(
  */
 export async function getWaterStatusByLocation(
   commune: string,
-  territory: Territory
+  _territory: Territory
 ): Promise<WaterAvailability[]> {
   const db = await loadDatabase();
 
   return db.current_status.filter(
     (status) =>
-      status.location.commune.toLowerCase() === commune.toLowerCase() &&
-      // Check if location might be in the territory (basic check)
-      (territory === 'GP' || territory === 'MQ' || territory === 'GF' || 
-       territory === 'RE' || territory === 'YT' || true)
+      status.location.commune.toLowerCase() === commune.toLowerCase()
+      // Note: _territory parameter available for future filtering if needed
   );
 }
 

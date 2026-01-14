@@ -3,7 +3,7 @@
  * Historique des coupures d'eau par commune
  */
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { WaterCutHistory } from '../../types/waterComparison';
 import {
   getCutHistory,
@@ -195,7 +195,7 @@ export default function WaterCutHistoryComponent({
           </h3>
 
           <div className="space-y-2">
-            {history.slice(0, 10).map((cut, index) => {
+            {history.slice(0, 10).map((cut) => {
               const duration = cut.duration / 60; // hours
               const maxWidth = 100;
               const widthPercent = Math.min((duration / 24) * 100, maxWidth);

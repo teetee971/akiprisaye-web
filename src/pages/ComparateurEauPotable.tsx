@@ -5,7 +5,7 @@
  * Réponse à l'urgence hydrique (Mayotte, Guadeloupe, etc.)
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import WaterAvailabilityMap from '../components/water/WaterAvailabilityMap';
 import WaterStatusReportForm from '../components/water/WaterStatusReportForm';

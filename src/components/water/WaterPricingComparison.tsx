@@ -3,7 +3,7 @@
  * Comparaison des prix de l'eau par territoire
  */
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { WaterPricing, Territory } from '../../types/waterComparison';
 import {
   getWaterPricing,
@@ -150,7 +150,7 @@ export default function WaterPricingComparison({
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-700">
-            {pricings.map((pricing, index) => {
+            {pricings.map((pricing) => {
               const annualCost = calculateAnnualCost(pricing, selectedConsumption);
               const isCheapest = pricing.id === comparison.cheapest?.id;
               const isMostExpensive = pricing.id === comparison.mostExpensive?.id;
