@@ -139,6 +139,9 @@ const Electricite = lazyWithRetry(() => import('./pages/recherche-prix/Electrici
 // Water Price Module (feature flagged)
 const Eau = lazyWithRetry(() => import('./pages/recherche-prix/Eau'));
 
+// Water Access Comparator - Urgent humanitarian response
+const ComparateurEauPotable = lazyWithRetry(() => import('./pages/ComparateurEauPotable'));
+
 // Freight Price Module (feature flagged)
 const Fret = lazyWithRetry(() => import('./pages/recherche-prix/Fret'));
 
@@ -345,6 +348,11 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                   <Route path='comparateur-bateaux' element={<BoatComparator />} />
                   <Route path='bateaux' element={<BoatComparator />} />
                   <Route path='ferries' element={<BoatComparator />} />
+                  
+                  {/* Water Access Comparator - Urgent humanitarian response for Mayotte, Guadeloupe */}
+                  <Route path='eau-potable' element={<ComparateurEauPotable />} />
+                  <Route path='comparateur-eau-potable' element={<ComparateurEauPotable />} />
+                  <Route path='eau' element={<ComparateurEauPotable />} />
                   
                   {/* Store Detail Page - Fiche enseigne avec graphs, filiales, etc. */}
                   <Route path='enseigne/:storeId' element={<StoreDetail />} />
