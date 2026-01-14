@@ -161,7 +161,7 @@ export async function getLogsByEntity(
  * Returns: { total, byResult, byRole, last24Hours }
  */
 export async function getStats(
-  req: Request,
+  _req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> {

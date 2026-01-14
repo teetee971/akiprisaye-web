@@ -11,8 +11,8 @@
 
 import { Request, Response } from 'express';
 import { Territory } from '@prisma/client';
-import { OpenDataService } from '../../services/opendata/OpenDataService';
-import { AnomalyDetectionService } from '../../services/opendata/AnomalyDetectionService';
+import { OpenDataService } from '../../services/opendata/OpenDataService.js';
+import { AnomalyDetectionService } from '../../services/opendata/AnomalyDetectionService.js';
 
 export class SimpleOpenDataController {
   /**
