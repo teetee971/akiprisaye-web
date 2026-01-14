@@ -41,7 +41,7 @@ export class SimpleOpenDataController {
       const result = await OpenDataService.getAggregatedPrices(filters);
 
       // Formater au format simplifié demandé
-      const simplifiedPrices = result.prices.map((price) => ({
+      const simplifiedPrices = result.prices.map((price: any) => ({
         productId: productId || price.productName.toLowerCase().replace(/\s+/g, '-'),
         productLabel: price.productName,
         territory: price.territory,

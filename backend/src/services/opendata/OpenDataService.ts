@@ -273,13 +273,18 @@ export class OpenDataService {
         id: true,
       },
       where,
+      orderBy: {
+        productId: 'asc',
+      },
       take: limit,
       skip: offset,
     });
 
-    const total = await prisma.price.groupBy({
-      by: ['productId'],
+    // Count unique products for total
+    const totalCount = await prisma.price.findMany({
       where,
+      distinct: ['productId'],
+      select: { productId: true },
     });
 
     const aggregatedPrices: AggregatedPrice[] = [];
@@ -327,7 +332,7 @@ export class OpenDataService {
 
     return {
       prices: aggregatedPrices,
-      total: total.length,
+      total: totalCount.length,
     };
   }
 

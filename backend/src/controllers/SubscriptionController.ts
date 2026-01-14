@@ -203,7 +203,7 @@ export class SubscriptionController {
       }
       
       const plan = subscription.plan;
-      const hasAccess = PlanService.canUseFeature(plan, feature as any);
+      const hasAccess = PlanService.canUse(plan, feature as any);
 
       return res.json({
         hasAccess,
