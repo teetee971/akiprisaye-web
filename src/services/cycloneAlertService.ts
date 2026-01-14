@@ -113,7 +113,7 @@ function getNotifications(): any[] {
 /**
  * Parse Météo France data (mock implementation)
  */
-export function parseMete oFranceData(data: any): CycloneAlert {
+export function parseMeteoFranceData(data: any): CycloneAlert {
   // This would parse actual Météo France API data
   // Returning a basic structure for now
   return {

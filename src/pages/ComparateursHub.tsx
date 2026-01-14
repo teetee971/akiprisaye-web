@@ -24,7 +24,8 @@ import {
   Ship,
   Wifi,
   Zap,
-  Bell
+  Bell,
+  Cloud
 } from 'lucide-react';
 
 interface ComparatorTab {
@@ -164,6 +165,15 @@ const COMPARATOR_TABS: ComparatorTab[] = [
     color: 'yellow',
     available: false,
   },
+  {
+    id: 'cyclones',
+    title: '🌀 Préparation Cyclones',
+    description: 'Kit survie, refuges, alertes - Outil de résilience',
+    icon: Cloud,
+    route: '/preparation-cyclones',
+    color: 'red',
+    available: true,
+  },
 ];
 
 export default function ComparateursHub() {
@@ -179,6 +189,8 @@ export default function ComparateursHub() {
       cyan: { bg: 'bg-cyan-500/10', text: 'text-cyan-400', border: 'border-cyan-500/30', hover: 'hover:border-cyan-500/50' },
       violet: { bg: 'bg-violet-500/10', text: 'text-violet-400', border: 'border-violet-500/30', hover: 'hover:border-violet-500/50' },
       yellow: { bg: 'bg-yellow-500/10', text: 'text-yellow-400', border: 'border-yellow-500/30', hover: 'hover:border-yellow-500/50' },
+      red: { bg: 'bg-red-500/10', text: 'text-red-400', border: 'border-red-500/30', hover: 'hover:border-red-500/50' },
+      emerald: { bg: 'bg-emerald-500/10', text: 'text-emerald-400', border: 'border-emerald-500/30', hover: 'hover:border-emerald-500/50' },
     };
     return colorMap[color]?.[type] || colorMap.blue[type];
   };

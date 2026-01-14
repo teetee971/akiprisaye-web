@@ -10,7 +10,7 @@
 
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { Heart, ShoppingBasket, Users, Handshake, Leaf, Building2 } from 'lucide-react';
+import { Heart, ShoppingBasket, Users, Handshake, Leaf, Building2, Cloud } from 'lucide-react';
 
 interface SolidarityFeature {
   id: string;
@@ -64,6 +64,15 @@ const SOLIDARITY_FEATURES: SolidarityFeature[] = [
     icon: Heart,
     route: '/contribuer',
     color: 'red',
+  },
+  {
+    id: 'cyclones',
+    title: '🌀 Préparation Cyclones',
+    description: 'Kit survie, refuges, réseau solidaire pour la résilience face aux cyclones',
+    icon: Cloud,
+    route: '/preparation-cyclones',
+    color: 'orange',
+    badge: 'Vital',
   },
 ];
 
