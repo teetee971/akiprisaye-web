@@ -23,6 +23,9 @@ import legalEntityRoutes from './api/routes/legalEntity.routes.js';
 import auditRoutes from './audit/audit.routes.js';
 import adminRoutes from './admin/admin.routes.js';
 import opendataRoutes from './api/routes/opendata.routes.js';
+// API Gateway routes
+import apiKeyRoutes from './api/routes/apiKey.routes.js';
+import v1Routes from './api/v1/index.js';
 // Phase 7: Infrastructure routes
 import geocodingRoutes from './routes/geocoding.js';
 import storesRoutes from './routes/stores.js';
@@ -131,6 +134,8 @@ app.get('/', (_req: Request, res: Response) => {
       api: '/api',
       docs: '/api/docs',
       auth: '/api/auth',
+      v1: '/api/v1',
+      apiKeys: '/api/api-keys',
       legalEntities: '/api/legal-entities',
       audit: '/api/audit',
       admin: '/api/admin',
@@ -164,6 +169,12 @@ app.use('/api', apiLimiter);
 
 // Routes d'authentification (publiques)
 app.use('/api/auth', authRoutes);
+
+// API Gateway v1 (authentification requise)
+app.use('/api/v1', v1Routes);
+
+// API Keys management (JWT authentification uniquement)
+app.use('/api/api-keys', apiKeyRoutes);
 
 // Routes des entités juridiques (protégées par JWT)
 app.use('/api/legal-entities', legalEntityRoutes);
