@@ -48,11 +48,11 @@ export function generateAccessToken(userId: string, email: string): string {
   };
 
   return jwt.sign(payload, JWT_SECRET, {
-    expiresIn: ACCESS_TOKEN_EXPIRY,
+    expiresIn: ACCESS_TOKEN_EXPIRY as string,
     algorithm: 'HS256',
     issuer: 'akiprisaye-api',
     audience: 'akiprisaye-client',
-  });
+  } as jwt.SignOptions);
 }
 
 /**
@@ -75,11 +75,11 @@ export function generateRefreshToken(userId: string, email: string): string {
   };
 
   return jwt.sign(payload, JWT_REFRESH_SECRET, {
-    expiresIn: REFRESH_TOKEN_EXPIRY,
+    expiresIn: REFRESH_TOKEN_EXPIRY as string,
     algorithm: 'HS256',
     issuer: 'akiprisaye-api',
     audience: 'akiprisaye-client',
-  });
+  } as jwt.SignOptions);
 }
 
 /**
