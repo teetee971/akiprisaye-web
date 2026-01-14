@@ -15,11 +15,11 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { PrismaClient, ApiKey, ApiPermission, SubscriptionTier } from '@prisma/client';
+import { ApiKey, ApiPermission, SubscriptionTier } from '@prisma/client';
 import { verifyAccessToken, extractTokenFromHeader } from '../../security/jwt.js';
 import { ApiKeyService } from '../../services/api/ApiKeyService.js';
+import { prisma } from '../../app.js';
 
-const prisma = new PrismaClient();
 const apiKeyService = new ApiKeyService(prisma);
 
 // Extension du type Request

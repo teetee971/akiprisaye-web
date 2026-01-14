@@ -20,7 +20,7 @@
 import { PrismaClient, ApiKey, ApiKeyStatus, ApiPermission, SubscriptionTier } from '@prisma/client';
 import * as crypto from 'crypto';
 import * as bcrypt from 'bcrypt';
-import { ApiKeyWithSecret, UsageStats, SUBSCRIPTION_PLANS } from '../../types/api.js';
+import { ApiKeyWithSecret, UsageStats, SUBSCRIPTION_PLANS, DEFAULT_PERMISSIONS } from '../../types/api.js';
 
 export class ApiKeyService {
   private prisma: PrismaClient;
@@ -303,44 +303,7 @@ export class ApiKeyService {
    * Obtient les permissions par défaut selon le niveau d'abonnement
    */
   private getDefaultPermissions(tier: SubscriptionTier): ApiPermission[] {
-    switch (tier) {
-      case SubscriptionTier.FREE:
-        return [
-          ApiPermission.READ_COMPARATORS,
-          ApiPermission.READ_PRICES,
-          ApiPermission.READ_TERRITORIES,
-        ];
-      case SubscriptionTier.CITIZEN_PREMIUM:
-        return [
-          ApiPermission.READ_COMPARATORS,
-          ApiPermission.READ_PRICES,
-          ApiPermission.READ_TERRITORIES,
-          ApiPermission.WRITE_CONTRIBUTIONS,
-          ApiPermission.EXPORT_DATA,
-        ];
-      case SubscriptionTier.SME:
-      case SubscriptionTier.BUSINESS_PRO:
-        return [
-          ApiPermission.READ_COMPARATORS,
-          ApiPermission.READ_PRICES,
-          ApiPermission.READ_TERRITORIES,
-          ApiPermission.READ_ANALYTICS,
-          ApiPermission.WRITE_CONTRIBUTIONS,
-          ApiPermission.EXPORT_DATA,
-        ];
-      case SubscriptionTier.INSTITUTIONAL:
-        return [
-          ApiPermission.READ_COMPARATORS,
-          ApiPermission.READ_PRICES,
-          ApiPermission.READ_TERRITORIES,
-          ApiPermission.READ_ANALYTICS,
-          ApiPermission.WRITE_CONTRIBUTIONS,
-          ApiPermission.EXPORT_DATA,
-          ApiPermission.ADMIN,
-        ];
-      default:
-        return [ApiPermission.READ_COMPARATORS];
-    }
+    return DEFAULT_PERMISSIONS[tier];
   }
 
   /**

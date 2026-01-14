@@ -19,7 +19,24 @@ import { SUBSCRIPTION_PLANS } from '../../types/api.js';
 
 /**
  * Store en mémoire pour le rate limiting
- * TODO: Migrer vers Redis en production
+ * 
+ * ⚠️ LIMITATION: Ne fonctionne pas correctement en multi-instance
+ * Les limites seront par instance, pas globales
+ * 
+ * TODO PRODUCTION: Migrer vers Redis avec rate-limit-redis
+ * Exemple: https://github.com/express-rate-limit/rate-limit-redis
+ * 
+ * Installation:
+ * ```
+ * npm install rate-limit-redis ioredis
+ * ```
+ * 
+ * Usage:
+ * ```typescript
+ * import RedisStore from 'rate-limit-redis';
+ * import Redis from 'ioredis';
+ * const client = new Redis(process.env.REDIS_URL);
+ * ```
  */
 const memoryStore = new Map<string, { count: number; resetTime: number }>();
 
