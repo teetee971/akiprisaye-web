@@ -1,0 +1,302 @@
+{
+  "metadata": {
+    "generated_at": "2026-01-14T00:00:00Z",
+    "source": "A KI PRI SA YÉ - Observatoire Eau Potable",
+    "note": "Données citoyennes temps réel + sources officielles"
+  },
+  "providers": [
+    {
+      "code": "SMGEAG",
+      "name": "Syndicat Mixte de Gestion de l'Eau et de l'Assainissement de la Guadeloupe",
+      "territory": "GP",
+      "website": "https://www.smgeag.fr",
+      "phone": "0590 99 45 00",
+      "emergencyPhone": "0590 99 45 45"
+    },
+    {
+      "code": "GDEG",
+      "name": "Générale des Eaux Guadeloupe",
+      "territory": "GP",
+      "website": "https://www.generale-des-eaux-guadeloupe.fr",
+      "phone": "0590 80 81 82"
+    },
+    {
+      "code": "SME",
+      "name": "Société Martiniquaise des Eaux",
+      "territory": "MQ",
+      "website": "https://www.sme.fr",
+      "phone": "0596 71 76 00"
+    },
+    {
+      "code": "SGDE",
+      "name": "Société Guyanaise des Eaux",
+      "territory": "GF",
+      "phone": "0594 25 52 00"
+    },
+    {
+      "code": "CISE",
+      "name": "CISE Réunion",
+      "territory": "RE",
+      "phone": "0262 90 69 69"
+    },
+    {
+      "code": "SMAE",
+      "name": "Syndicat Mixte d'Alimentation en Eau de Mayotte",
+      "territory": "YT",
+      "phone": "0269 61 12 34",
+      "emergencyPhone": "0269 61 00 00"
+    }
+  ],
+  "current_status": [
+    {
+      "id": "status_001",
+      "location": {
+        "commune": "Mamoudzou",
+        "quartier": "Kawéni",
+        "coordinates": [45.2269, -12.7806]
+      },
+      "status": "cut",
+      "since": "2026-01-13T08:00:00Z",
+      "duration": 720,
+      "reportedBy": "official",
+      "verified": true,
+      "createdAt": "2026-01-13T08:05:00Z"
+    },
+    {
+      "id": "status_002",
+      "location": {
+        "commune": "Koungou",
+        "coordinates": [45.2031, -12.7361]
+      },
+      "status": "scheduled_cut",
+      "since": "2026-01-14T00:00:00Z",
+      "scheduledEnd": "2026-01-14T14:00:00Z",
+      "reportedBy": "official",
+      "verified": true,
+      "createdAt": "2026-01-13T18:00:00Z"
+    },
+    {
+      "id": "status_003",
+      "location": {
+        "commune": "Pointe-à-Pitre",
+        "quartier": "Bergevin",
+        "coordinates": [-61.5342, 16.2415]
+      },
+      "status": "low_pressure",
+      "since": "2026-01-14T06:00:00Z",
+      "reportedBy": "user",
+      "verified": false,
+      "contributorId": "user_12345",
+      "createdAt": "2026-01-14T06:15:00Z"
+    }
+  ],
+  "cut_history": [
+    {
+      "id": "cut_001",
+      "location": {
+        "commune": "Mamoudzou",
+        "quartier": "Kawéni"
+      },
+      "startDate": "2026-01-10T08:00:00Z",
+      "endDate": "2026-01-10T16:00:00Z",
+      "duration": 480,
+      "scheduled": true,
+      "reason": "Maintenance réseau principal",
+      "affectedHouseholds": 5000
+    },
+    {
+      "id": "cut_002",
+      "location": {
+        "commune": "Mamoudzou",
+        "quartier": "Tsoundzou"
+      },
+      "startDate": "2026-01-11T22:00:00Z",
+      "endDate": "2026-01-12T10:00:00Z",
+      "duration": 720,
+      "scheduled": false,
+      "reason": "Fuite majeure",
+      "affectedHouseholds": 3000
+    },
+    {
+      "id": "cut_003",
+      "location": {
+        "commune": "Baie-Mahault"
+      },
+      "startDate": "2026-01-08T10:00:00Z",
+      "endDate": "2026-01-08T18:00:00Z",
+      "duration": 480,
+      "scheduled": true,
+      "reason": "Travaux réseau",
+      "affectedHouseholds": 2000
+    }
+  ],
+  "pricing": [
+    {
+      "id": "price_001",
+      "provider": "SMGEAG",
+      "territory": "GP",
+      "commune": "Baie-Mahault",
+      "pricing": {
+        "pricePerM3": 4.85,
+        "sanitationPerM3": 2.45,
+        "subscriptionMonthly": 9.75,
+        "subscriptionAnnual": 117.0,
+        "fixedFees": 0,
+        "taxes": [
+          { "name": "Redevance agence eau", "rate": 0.15 },
+          { "name": "TVA", "rate": 0.055 }
+        ]
+      },
+      "lastUpdated": "2026-01-01T00:00:00Z",
+      "source": {
+        "type": "official",
+        "url": "https://www.smgeag.fr/tarifs"
+      }
+    },
+    {
+      "id": "price_002",
+      "provider": "SMAE",
+      "territory": "YT",
+      "commune": "Mamoudzou",
+      "pricing": {
+        "pricePerM3": 6.20,
+        "sanitationPerM3": 3.10,
+        "subscriptionMonthly": 12.50,
+        "subscriptionAnnual": 150.0,
+        "fixedFees": 0,
+        "taxes": [
+          { "name": "Redevance pollution", "rate": 0.18 }
+        ]
+      },
+      "lastUpdated": "2026-01-01T00:00:00Z",
+      "source": {
+        "type": "official"
+      }
+    }
+  ],
+  "quality": [
+    {
+      "id": "quality_001",
+      "commune": "Pointe-à-Pitre",
+      "territory": "GP",
+      "quality": {
+        "overallScore": "B",
+        "bacteriological": "compliant",
+        "chemical": "compliant",
+        "parameters": [
+          {
+            "name": "Chlore résiduel",
+            "value": 0.3,
+            "unit": "mg/L",
+            "limit": 0.5,
+            "compliant": true
+          },
+          {
+            "name": "Nitrates",
+            "value": 35,
+            "unit": "mg/L",
+            "limit": 50,
+            "compliant": true
+          },
+          {
+            "name": "Turbidité",
+            "value": 0.8,
+            "unit": "NFU",
+            "limit": 2.0,
+            "compliant": true
+          }
+        ]
+      },
+      "analysisDate": "2026-01-05T00:00:00Z",
+      "nextAnalysisDate": "2026-02-05T00:00:00Z",
+      "source": {
+        "type": "ARS",
+        "url": "https://solidarites-sante.gouv.fr/sante-et-environnement/eaux/article/qualite-de-l-eau-potable"
+      }
+    },
+    {
+      "id": "quality_002",
+      "commune": "Mamoudzou",
+      "territory": "YT",
+      "quality": {
+        "overallScore": "C",
+        "bacteriological": "compliant",
+        "chemical": "compliant",
+        "parameters": [
+          {
+            "name": "Chlore résiduel",
+            "value": 0.25,
+            "unit": "mg/L",
+            "limit": 0.5,
+            "compliant": true
+          },
+          {
+            "name": "Turbidité",
+            "value": 1.5,
+            "unit": "NFU",
+            "limit": 2.0,
+            "compliant": true
+          }
+        ]
+      },
+      "analysisDate": "2026-01-03T00:00:00Z",
+      "nextAnalysisDate": "2026-01-17T00:00:00Z",
+      "restrictions": "Faire bouillir l'eau avant consommation dans certains quartiers",
+      "source": {
+        "type": "ARS"
+      }
+    }
+  ],
+  "leaks": [
+    {
+      "id": "leak_001",
+      "type": "pipe",
+      "location": {
+        "address": "Route de Baie-Mahault",
+        "commune": "Baie-Mahault",
+        "coordinates": [-61.5897, 16.2739]
+      },
+      "severity": "moderate",
+      "estimatedLossLitersPerHour": 500,
+      "description": "Fuite visible sur canalisation principale, eau s'écoule sur la chaussée",
+      "status": "in_progress",
+      "reportedAt": "2026-01-12T14:30:00Z",
+      "reportedBy": "user_67890",
+      "verified": true
+    },
+    {
+      "id": "leak_002",
+      "type": "hydrant",
+      "location": {
+        "address": "Boulevard des Crabes, Kawéni",
+        "commune": "Mamoudzou",
+        "coordinates": [45.2285, -12.7815]
+      },
+      "severity": "major",
+      "estimatedLossLitersPerHour": 2000,
+      "description": "Bouche incendie cassée, débit important",
+      "status": "reported",
+      "reportedAt": "2026-01-13T09:00:00Z",
+      "reportedBy": "user_11111",
+      "verified": false
+    },
+    {
+      "id": "leak_003",
+      "type": "pipe",
+      "location": {
+        "address": "Rue Victor Hugo",
+        "commune": "Fort-de-France",
+        "coordinates": [-61.0594, 14.6037]
+      },
+      "severity": "minor",
+      "estimatedLossLitersPerHour": 100,
+      "description": "Petite fuite sur canalisation secondaire",
+      "status": "repaired",
+      "reportedAt": "2026-01-08T10:00:00Z",
+      "repairedAt": "2026-01-09T15:00:00Z",
+      "repairDuration": 29,
+      "reportedBy": "user_22222",
+      "verified": true
+    }
+  ]
+}
