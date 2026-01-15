@@ -6,6 +6,8 @@ import {
   getMockUserStats,
   formatDownloadCount,
   formatContributionCount,
+  formatScannedProductsCount,
+  getContributionMessage,
   type GratificationBadge,
   type UserStats,
 } from '@/data/gratification';
@@ -84,18 +86,18 @@ export default function GratificationDisplay({
             Compteurs d'usage
           </h3>
           
-          <div className="grid gap-4 md:grid-cols-3">
-            {/* Downloads Counter */}
+          <div className="grid gap-4 md:grid-cols-4">
+            {/* Scanned Products Counter - NEW */}
             <GlassCard className="text-center">
-              <div className="text-3xl mb-2">📥</div>
-              <div className="text-2xl font-bold text-blue-400 mb-1">
-                {userStats.downloadsCount}
+              <div className="text-3xl mb-2">📦</div>
+              <div className="text-2xl font-bold text-yellow-400 mb-1">
+                {userStats.scannedProductsCount}
               </div>
               <p className="text-sm text-gray-300">
-                {formatDownloadCount(userStats.downloadsCount)}
+                {formatScannedProductsCount(userStats.scannedProductsCount)}
               </p>
               <p className="text-xs text-gray-500 mt-1">
-                Exports open-data réalisés
+                Scans EAN réalisés
               </p>
             </GlassCard>
 
@@ -109,7 +111,21 @@ export default function GratificationDisplay({
                 {formatContributionCount(userStats.contributionsCount)}
               </p>
               <p className="text-xs text-gray-500 mt-1">
-                Signalements et améliorations
+                Signalements utiles
+              </p>
+            </GlassCard>
+
+            {/* Downloads Counter */}
+            <GlassCard className="text-center">
+              <div className="text-3xl mb-2">📥</div>
+              <div className="text-2xl font-bold text-blue-400 mb-1">
+                {userStats.downloadsCount}
+              </div>
+              <p className="text-sm text-gray-300">
+                {formatDownloadCount(userStats.downloadsCount)}
+              </p>
+              <p className="text-xs text-gray-500 mt-1">
+                Exports open-data
               </p>
             </GlassCard>
 
@@ -123,7 +139,16 @@ export default function GratificationDisplay({
                 {userStats.activeUsageDays === 1 ? 'jour actif' : 'jours actifs'}
               </p>
               <p className="text-xs text-gray-500 mt-1">
-                Utilisation régulière du service
+                Utilisation régulière
+              </p>
+            </GlassCard>
+          </div>
+          
+          {/* Contribution Message - NEW */}
+          <div className="mt-6 text-center">
+            <GlassCard className="bg-green-900/20 border-green-500/30">
+              <p className="text-base text-green-200 font-medium">
+                💚 {getContributionMessage()}
               </p>
             </GlassCard>
           </div>

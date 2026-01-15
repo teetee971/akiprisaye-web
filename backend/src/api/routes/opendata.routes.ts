@@ -11,16 +11,25 @@
  * - GET /api/opendata/v1/prices - Prix agrégés
  * - GET /api/opendata/v1/indicators - Indicateurs publics
  * - GET /api/opendata/v1/history - Historique prix
+ * 
+ * Endpoints simplifiés (PR E):
+ * - GET /api/opendata/prices - Prix format simplifié
+ * - GET /api/opendata/anomalies - Anomalies détectées
  */
 
 import { Router } from 'express';
 import { OpenDataController } from '../controllers/opendata/opendata.controller';
+import { SimpleOpenDataController } from '../controllers/opendata/simpleOpendata.controller';
 import {
   opendataRateLimiter,
   opendataHeavyRateLimiter,
 } from '../middlewares/opendataRateLimit.middleware';
+import { opendataHeaders } from '../middlewares/opendataHeaders.middleware';
 
 const router = Router();
+
+// Appliquer les headers Open Data à toutes les routes
+router.use(opendataHeaders);
 
 /**
  * @swagger
@@ -196,6 +205,78 @@ router.get(
   '/v1/history',
   opendataHeavyRateLimiter, // Rate limit plus strict
   OpenDataController.getHistory,
+);
+
+// ========================================
+// Endpoints simplifiés (PR E - Format institutionnel)
+// ========================================
+
+/**
+ * @swagger
+ * /api/opendata/prices:
+ *   get:
+ *     summary: Prix au format simplifié (PR E)
+ *     tags: [Open Data]
+ *     parameters:
+ *       - in: query
+ *         name: territory
+ *         schema:
+ *           type: string
+ *           enum: [DOM, COM, FRANCE_HEXAGONALE]
+ *       - in: query
+ *         name: productId
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Prix format simplifié avec licence Etalab 2.0
+ *         headers:
+ *           X-Data-License:
+ *             description: Licence des données
+ *             schema:
+ *               type: string
+ *               example: Etalab-2.0
+ *           X-Disclaimer:
+ *             description: Avertissement légal
+ *             schema:
+ *               type: string
+ *           Cache-Control:
+ *             description: Politique de cache
+ *             schema:
+ *               type: string
+ */
+router.get('/prices', opendataRateLimiter, SimpleOpenDataController.getPrices);
+
+/**
+ * @swagger
+ * /api/opendata/anomalies:
+ *   get:
+ *     summary: Anomalies de prix détectées (PR E)
+ *     tags: [Open Data]
+ *     parameters:
+ *       - in: query
+ *         name: territory
+ *         schema:
+ *           type: string
+ *           enum: [DOM, COM, FRANCE_HEXAGONALE]
+ *     responses:
+ *       200:
+ *         description: Anomalies détectées (temporelles et spatiales)
+ *         headers:
+ *           X-Data-License:
+ *             description: Licence des données
+ *             schema:
+ *               type: string
+ *               example: Etalab-2.0
+ *           X-Disclaimer:
+ *             description: Avertissement légal
+ *             schema:
+ *               type: string
+ */
+router.get(
+  '/anomalies',
+  opendataRateLimiter,
+  SimpleOpenDataController.getAnomalies,
 );
 
 export default router;

@@ -62,7 +62,8 @@
   border: 1px solid var(--glass-border);
   border-radius: 16px;
   box-shadow: var(--shadow-glass);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
 }
 
 .glass:hover {
@@ -77,6 +78,7 @@
   backdrop-filter: blur(var(--blur-strong));
   -webkit-backdrop-filter: blur(var(--blur-strong));
   border: 1px solid rgba(255, 255, 255, 0.25);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* No hover effect for static elements */
@@ -102,14 +104,21 @@
   color: var(--text-main);
   font-weight: 500;
   font-size: 0.95rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
+  will-change: transform;
 }
 
 .btn-civic:hover {
   border-color: var(--accent-primary);
   background: var(--glass-bg-hover);
   transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-civic:active {
+  transform: translateY(0);
+  transition: transform 0.1s cubic-bezier(0.4, 0, 1, 1);
 }
 
 .btn-civic-primary {
@@ -121,6 +130,7 @@
 .btn-civic-primary:hover {
   background: var(--accent-primary-dark);
   border-color: var(--accent-primary-dark);
+  box-shadow: 0 4px 16px rgba(58, 122, 254, 0.4);
 }
 
 .btn-civic:disabled {
@@ -143,11 +153,13 @@
   justify-content: space-between;
   align-items: center;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
 }
 
 .list-civic-item:hover {
   border-color: var(--glass-border-hover);
   background: var(--glass-bg-hover);
+  transform: translateX(4px);
 }
 
 .list-civic-item-label {
@@ -285,6 +297,11 @@ input, textarea, select {
   font-family: var(--font-sans);
   font-size: 0.95rem;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+input:hover, textarea:hover, select:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  background: var(--glass-bg-hover);
 }
 
 input:focus, textarea:focus, select:focus {

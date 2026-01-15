@@ -1,0 +1,167 @@
+name: CI Strict (Zero Warning)
+
+on:
+  pull_request:
+    branches: ['main', 'production']
+  push:
+    branches: ['main', 'production']
+
+jobs:
+  ci-strict:
+    name: Strict CI - Zero Warnings Allowed
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: TypeScript strict check
+        run: npm run typecheck:ci
+        continue-on-error: false
+
+      - name: ESLint strict check (max-warnings=0)
+        run: npm run lint:ci
+        continue-on-error: false
+
+      - name: Build strict (Vite - no warnings allowed)
+        run: npm run build:ci
+        continue-on-error: false
+
+      - name: Run tests
+        run: npm run test:ci
+        continue-on-error: false
+
+      - name: Security audit (moderate+)
+        run: npm run audit:ci
+        continue-on-error: false
+
+      - name: Accessibility testing (axe-core WCAG)
+        run: npm run axe:ci
+        continue-on-error: false
+
+      - name: Lighthouse CI (strict quality gates)
+        id: lighthouse
+        run: npm run lhci
+        continue-on-error: false
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+      - name: Extract Lighthouse report URL
+        if: always()
+        id: lhci-url
+        run: |
+          if [ -f .lighthouseci/links.json ]; then
+            URL=$(cat .lighthouseci/links.json | grep -o 'https://[^"]*' | head -1)
+            echo "report_url=$URL" >> $GITHUB_OUTPUT
+            echo "📊 Lighthouse Report: $URL"
+          else
+            echo "report_url=Not available" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Comment PR with quality report
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const reportUrl = '${{ steps.lhci-url.outputs.report_url }}';
+            const status = '${{ needs.ci-strict.result }}' === 'success' ? '✅' : '❌';
+            const body = `## ${status} CI Strict - Quality Report
+            
+            ### Checks Performed
+            - ${status} TypeScript strict check
+            - ${status} ESLint (max-warnings=0)
+            - ${status} Build (zero warnings)
+            - ${status} Tests
+            - ${status} Security audit (npm)
+            - ${status} Accessibility (WCAG 2.1 AA)
+            - ${status} Lighthouse CI (Performance, A11y, Best Practices, SEO)
+            
+            ### Lighthouse Report
+            ${reportUrl !== 'Not available' ? `📊 [View detailed Lighthouse report](${reportUrl})` : 'Report not available'}
+            
+            ### Quality Standards
+            - **Performance** ≥ 85
+            - **Accessibility** ≥ 95
+            - **Best Practices** ≥ 95
+            - **SEO** ≥ 90
+            
+            ### Performance Budgets
+            - Scripts: 350 KB max
+            - Images: 500 KB max
+            - Total: 1.2 MB max
+            
+            ---
+            *Powered by A KI PRI SA YÉ - Transparent quality metrics*`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: build.log
+          retention-days: 7
+
+      - name: Upload Lighthouse results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-results
+          path: .lighthouseci
+          retention-days: 30
+
+      - name: Check dist directory
+        run: |
+          echo "✅ Build artifacts created successfully"
+          ls -lh dist/
+          echo "✅ Leaflet images copied:"
+          ls -lh dist/images/
+
+  summary:
+    name: CI Summary
+    runs-on: ubuntu-latest
+    needs: ci-strict
+    if: always()
+    
+    steps:
+      - name: Check CI Status
+        run: |
+          if [ "${{ needs.ci-strict.result }}" == "success" ]; then
+            echo "✅ CI STRICT PASSED - Zero warnings detected"
+            echo "✅ TypeScript: Clean"
+            echo "✅ ESLint: Clean (max-warnings=0)"
+            echo "✅ Build: Clean (no warnings)"
+            echo "✅ Tests: Passed"
+            echo "✅ Security: No vulnerabilities (moderate+)"
+            echo "✅ Lighthouse CI: All quality gates passed"
+            echo "  - Performance ≥ 85"
+            echo "  - Accessibility ≥ 95"
+            echo "  - Best Practices ≥ 95"
+            echo "  - SEO ≥ 90"
+            echo ""
+            echo "🎯 Ready for production deployment"
+          else
+            echo "❌ CI STRICT FAILED - Warnings or errors detected"
+            echo ""
+            echo "Please fix all issues before merging:"
+            echo "  - Check TypeScript errors (npm run typecheck)"
+            echo "  - Check ESLint warnings (npm run lint)"
+            echo "  - Check build warnings (npm run build)"
+            echo "  - Check Lighthouse scores (npm run lhci)"
+            exit 1
+          fi

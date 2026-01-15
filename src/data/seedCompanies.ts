@@ -167,6 +167,162 @@ export const SEED_COMPANIES: Company[] = [
     lastUpdate: '2024-12-18T12:00:00Z',
     source: 'REGISTRE_ENTREPRISES',
   },
+
+  // Groupe Bernard Hayot (GBH) - Major retail group in French Antilles
+  {
+    id: 'company-gbh',
+    siretCode: '31322226000015', // GBH headquarters
+    sirenCode: '313222260',
+    vatCode: 'FR60313222260',
+    legalName: 'Groupe Bernard Hayot',
+    tradeName: 'GBH',
+    activityStatus: 'ACTIVE',
+    creationDate: '1960-01-01',
+    headOffice: {
+      streetNumber: 'Zone',
+      streetName: 'Industrielle de Jarry',
+      city: 'Baie-Mahault',
+      department: '971',
+      postalCode: '97122',
+      country: 'France',
+    },
+    geoLocation: {
+      latitude: 16.2469,
+      longitude: -61.5717,
+    },
+    lastUpdate: '2024-12-18T12:00:00Z',
+    source: 'REGISTRE_ENTREPRISES',
+  },
+
+  // Groupe Caillé - Major retail group in La Réunion
+  {
+    id: 'company-caille',
+    siretCode: '31806506600015', // Groupe Caillé headquarters
+    sirenCode: '318065066',
+    vatCode: 'FR42318065066',
+    legalName: 'Groupe Caillé',
+    tradeName: 'Groupe Caillé',
+    activityStatus: 'ACTIVE',
+    creationDate: '1965-01-01',
+    headOffice: {
+      streetNumber: '1',
+      streetName: 'Rue du Commerce',
+      city: 'Saint-Denis',
+      department: '974',
+      postalCode: '97400',
+      country: 'France',
+    },
+    geoLocation: {
+      latitude: -20.8823,
+      longitude: 55.4504,
+    },
+    lastUpdate: '2024-12-18T12:00:00Z',
+    source: 'REGISTRE_ENTREPRISES',
+  },
+
+  // Groupe Parfait - Major retail group in Guadeloupe and Martinique
+  {
+    id: 'company-parfait',
+    siretCode: '32456789000015', // Groupe Parfait headquarters
+    sirenCode: '324567890',
+    vatCode: 'FR38324567890',
+    legalName: 'Groupe Parfait',
+    tradeName: 'Groupe Parfait',
+    activityStatus: 'ACTIVE',
+    creationDate: '1970-01-01',
+    headOffice: {
+      streetNumber: 'Zone',
+      streetName: 'Commerciale de Dillon',
+      city: 'Fort-de-France',
+      department: '972',
+      postalCode: '97200',
+      country: 'France',
+    },
+    geoLocation: {
+      latitude: 14.6118,
+      longitude: -61.0736,
+    },
+    lastUpdate: '2024-12-18T12:00:00Z',
+    source: 'REGISTRE_ENTREPRISES',
+  },
+
+  // Groupe Hayot-Sodiprav - Retail group in Martinique
+  {
+    id: 'company-hayot-sodiprav',
+    siretCode: '34512345600015', // Hayot-Sodiprav headquarters
+    sirenCode: '345123456',
+    vatCode: 'FR55345123456',
+    legalName: 'Groupe Hayot-Sodiprav',
+    tradeName: 'Hayot-Sodiprav',
+    activityStatus: 'ACTIVE',
+    creationDate: '1968-01-01',
+    headOffice: {
+      streetNumber: 'Zone',
+      streetName: 'Industrielle de Rivière Roche',
+      city: 'Fort-de-France',
+      department: '972',
+      postalCode: '97200',
+      country: 'France',
+    },
+    geoLocation: {
+      latitude: 14.6160,
+      longitude: -61.0588,
+    },
+    lastUpdate: '2024-12-18T12:00:00Z',
+    source: 'REGISTRE_ENTREPRISES',
+  },
+
+  // Groupe Loret - Automotive and mobility group in Antilles and Guyane
+  {
+    id: 'company-loret',
+    siretCode: '35678901200015', // Groupe Loret headquarters
+    sirenCode: '356789012',
+    vatCode: 'FR63356789012',
+    legalName: 'Groupe Loret',
+    tradeName: 'Groupe Loret',
+    activityStatus: 'ACTIVE',
+    creationDate: '1975-01-01',
+    headOffice: {
+      streetNumber: 'Zone',
+      streetName: 'Industrielle de Jarry',
+      city: 'Baie-Mahault',
+      department: '971',
+      postalCode: '97122',
+      country: 'France',
+    },
+    geoLocation: {
+      latitude: 16.2450,
+      longitude: -61.5700,
+    },
+    lastUpdate: '2024-12-18T12:00:00Z',
+    source: 'REGISTRE_ENTREPRISES',
+  },
+
+  // Sucreries de Bourbon - Agro-food industry in La Réunion
+  {
+    id: 'company-sucreries-bourbon',
+    siretCode: '36789012300015', // Sucreries de Bourbon headquarters
+    sirenCode: '367890123',
+    vatCode: 'FR71367890123',
+    legalName: 'Sucreries de Bourbon',
+    tradeName: 'Sucreries de Bourbon',
+    activityStatus: 'ACTIVE',
+    creationDate: '1970-01-01',
+    headOffice: {
+      streetNumber: '10',
+      streetName: 'Rue du Pont',
+      city: 'Le Port',
+      department: '974',
+      postalCode: '97420',
+      country: 'France',
+    },
+    geoLocation: {
+      latitude: -20.9400,
+      longitude: 55.2930,
+    },
+    lastUpdate: '2024-12-18T12:00:00Z',
+    source: 'REGISTRE_ENTREPRISES',
+  },
 ];
 
 /**

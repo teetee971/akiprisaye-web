@@ -1,1 +1,0 @@
-Sentinel FULL PACK ready.

@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["groupe","indice","ecart_moyen","territoires"],
+    "additionalProperties": false,
+    "properties": {
+      "groupe": { "type": "string", "minLength": 1 },
+      "indice": { "type": "string", "enum": ["🔴","🟠","🟢"] },
+      "ecart_moyen": { "type": "string", "pattern": "^[+-]?\\d+%$" },
+      "territoires": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+    }
+  }
+}

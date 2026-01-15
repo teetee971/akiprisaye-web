@@ -27,6 +27,19 @@ build/
 *.swo
 *~
 
+# Android / Capacitor
+android/.gradle/
+android/.idea/
+android/build/
+android/app/build/
+android/local.properties
+android/*.iml
+android/.cxx/
+android/captures/
+android/app/release/
+android/app/debug/
+*.aab
+
 # Logs
 logs/
 *.log
@@ -106,3 +119,49 @@ backend/prisma/migrations/*.sql
 
 # Open Data Exports
 exports/
+
+# ═══════════════════════════════════════════════════════════════
+# GARDE-FOU ANTI-POLLUTION — Assets lourds et fichiers marketing
+# ═══════════════════════════════════════════════════════════════
+# Les assets doivent être sur CDN (Cloudflare R2) ou dans public/
+
+# Design/Marketing source files (TOUJOURS sur CDN, jamais dans Git)
+*.psd
+*.ai
+*.fig
+*.sketch
+*.xd
+
+# Archives (JAMAIS dans le dépôt)
+*.7z
+
+# Vidéos (TOUJOURS sur CDN)
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.webm
+
+# Dossiers interdits (pollution repository)
+backup/
+old/
+archive/
+export/
+extract/
+final/
+draft/
+history/
+
+# Patterns marketing à la racine (doivent être sur CDN)
+A_*.png
+ChatGPT*.png
+*screenshot*.png
+*mockup*.png
+*banner*.png
+*affiche*.png
+*flyer*.png
+
+# Lighthouse CI
+.lighthouseci/
+lighthouse-results.json
+build.log

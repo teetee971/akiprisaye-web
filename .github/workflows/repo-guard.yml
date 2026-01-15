@@ -1,0 +1,141 @@
+name: Repo Guard — Anti fichiers inutiles
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  repo-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Prévention Git LFS (hérité des commits précédents)
+      - name: Disable Git LFS
+        run: git config --global filter.lfs.required false
+
+      # Vérification absence pointeurs LFS
+      - name: Check for LFS pointers
+        run: |
+          if git grep -I -n "version https://git-lfs.github.com/spec/v1" -- ':!.github/workflows/*' ':!.circleci/*'; then
+            echo "❌ ERREUR: Pointeurs Git LFS détectés dans le dépôt"
+            exit 1
+          else
+            echo "✅ OK: Aucun pointeur Git LFS détecté"
+          fi
+
+      # NOUVEAU: Garde-fou anti-fichiers inutiles
+      - name: Vérification structure du dépôt
+        run: |
+          echo "🔍 Scan des fichiers interdits..."
+
+          # ❌ Extensions interdites dans le repo (hors public/)
+          # Note: public/ peut contenir certains assets légers nécessaires
+          forbidden_patterns=(
+            "*.psd"
+            "*.ai"
+            "*.fig"
+            "*.sketch"
+            "*.zip"
+            "*.rar"
+            "*.7z"
+            "*.mp4"
+            "*.mov"
+          )
+
+          # ❌ Dossiers interdits à la racine
+          forbidden_dirs=(
+            "backup"
+            "old"
+            "archive"
+            "export"
+            "extract"
+            "test_extract"
+            "final"
+            "draft"
+            "tmp"
+            "temp"
+            "akiprisaye_web_final_full_*"
+            "SentinelQuantumVanguardAIPro"
+            "history"
+          )
+
+          # ❌ Fichiers marketing/documentation lourds à la racine
+          marketing_patterns=(
+            "A_*.png"
+            "ChatGPT*.png"
+            "*screenshot*.png"
+            "*mockup*.png"
+          )
+
+          errors=0
+
+          # Vérif patterns interdits
+          for pattern in "${forbidden_patterns[@]}"; do
+            files=$(git ls-files "$pattern" 2>/dev/null || true)
+            if [ -n "$files" ]; then
+              echo "❌ Fichiers $pattern détectés:"
+              echo "$files"
+              errors=$((errors + 1))
+            fi
+          done
+
+          # Vérif dossiers interdits
+          for dir in "${forbidden_dirs[@]}"; do
+            if git ls-files | grep -qE "^$dir/"; then
+              echo "❌ Dossier interdit détecté: $dir/"
+              errors=$((errors + 1))
+            fi
+          done
+
+          # Vérif fichiers marketing à la racine
+          for pattern in "${marketing_patterns[@]}"; do
+            files=$(git ls-files "$pattern" 2>/dev/null | grep -v "^public/" || true)
+            if [ -n "$files" ]; then
+              echo "❌ Fichiers marketing détectés à la racine:"
+              echo "$files"
+              echo "→ Les assets doivent être dans public/ ou sur CDN"
+              errors=$((errors + 1))
+            fi
+          done
+
+          if [ $errors -gt 0 ]; then
+            echo ""
+            echo "❌ ÉCHEC: $errors type(s) de fichiers interdits détectés"
+            echo "→ Utilisez scripts/clean-repo.sh pour nettoyer"
+            echo "→ Ou déplacez les assets vers Cloudflare R2/CDN"
+            exit 1
+          fi
+
+          echo "✅ Repo propre — aucune anomalie détectée"
+
+      # Vérification taille du repo
+      - name: Check repository size
+        run: |
+          echo "📊 Analyse de la taille du dépôt..."
+          
+          total_size=$(git ls-files | xargs -I {} du -b {} 2>/dev/null | awk '{sum+=$1} END {print sum}')
+          total_mb=$((total_size / 1024 / 1024))
+          
+          echo "Taille totale: ${total_mb}MB"
+          
+          if [ $total_mb -gt 100 ]; then
+            echo "⚠️ AVERTISSEMENT: Le dépôt dépasse 100MB"
+            echo "→ Considérez déplacer les assets lourds vers CDN"
+          else
+            echo "✅ Taille acceptable: ${total_mb}MB"
+          fi
+
+      # Rapport final
+      - name: Rapport de sécurité
+        if: success()
+        run: |
+          echo "╔════════════════════════════════════════════════════╗"
+          echo "║        REPO GUARD — VALIDATION RÉUSSIE ✓          ║"
+          echo "╚════════════════════════════════════════════════════╝"
+          echo ""
+          echo "✅ Aucun pointeur Git LFS"
+          echo "✅ Aucun fichier interdit"
+          echo "✅ Structure propre et maintenable"
+          echo "✅ Compatible Cloudflare Pages"

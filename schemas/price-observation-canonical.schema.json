@@ -1,0 +1,124 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://akiprisaye.fr/schemas/price-observation-canonical.schema.json",
+  "title": "A ki pri sa yé - Canonical Price Observation Schema",
+  "description": "Schéma canonique pour les observations de prix - Format unique normalisé",
+  "version": "3.0.0",
+  "type": "object",
+  "required": ["territoire", "produit", "prix", "date_releve", "source", "qualite"],
+  "properties": {
+    "territoire": {
+      "type": "string",
+      "enum": ["Guadeloupe", "Martinique", "Guyane", "La Réunion", "Mayotte", "Saint-Pierre-et-Miquelon", "Saint-Barthélemy", "Saint-Martin", "Wallis-et-Futuna", "Polynésie française", "Nouvelle-Calédonie", "Terres australes et antarctiques françaises", "Hexagone"],
+      "description": "Territoire d'observation (nom complet)"
+    },
+    "commune": {
+      "type": "string",
+      "description": "Commune précise de l'observation"
+    },
+    "enseigne": {
+      "type": "string",
+      "description": "Enseigne commerciale (optionnel pour anonymisation)"
+    },
+    "produit": {
+      "type": "object",
+      "required": ["nom", "categorie", "unite"],
+      "properties": {
+        "nom": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "description": "Nom du produit"
+        },
+        "ean": {
+          "type": "string",
+          "pattern": "^\\d{8,13}$",
+          "description": "Code EAN/GTIN du produit"
+        },
+        "categorie": {
+          "type": "string",
+          "enum": [
+            "Produits laitiers",
+            "Fruits et légumes",
+            "Viandes et poissons",
+            "Épicerie",
+            "Boissons",
+            "Hygiène et beauté",
+            "Entretien",
+            "Bébé",
+            "Autres"
+          ],
+          "description": "Catégorie principale du produit"
+        },
+        "unite": {
+          "type": "string",
+          "description": "Unité de mesure (ex: 1L, 500g, 1kg)"
+        },
+        "marque": {
+          "type": "string",
+          "description": "Marque du produit"
+        }
+      }
+    },
+    "prix": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Prix observé en euros (€)"
+    },
+    "date_releve": {
+      "type": "string",
+      "format": "date",
+      "description": "Date de l'observation (YYYY-MM-DD)"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "releve_citoyen",
+        "ticket_scan",
+        "donnee_ouverte",
+        "releve_terrain",
+        "api_publique"
+      ],
+      "description": "Source de la donnée"
+    },
+    "qualite": {
+      "type": "object",
+      "required": ["niveau", "preuve"],
+      "properties": {
+        "niveau": {
+          "type": "string",
+          "enum": ["verifie", "probable", "a_verifier"],
+          "description": "Niveau de qualité de l'observation"
+        },
+        "preuve": {
+          "type": "boolean",
+          "description": "Présence d'une preuve (photo ticket, etc.)"
+        },
+        "score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Score de qualité (0-1)"
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "observateur_id": {
+          "type": "string",
+          "description": "ID anonymisé de l'observateur"
+        },
+        "timestamp_creation": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp de création de l'observation"
+        },
+        "ip_hash": {
+          "type": "string",
+          "description": "Hash de l'IP pour détection de fraude"
+        }
+      }
+    }
+  }
+}

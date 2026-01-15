@@ -35,44 +35,50 @@ Ce document détaille le modèle économique définitif de A KI PRI SA YÉ, alig
 
 ---
 
-### 🧑 Citoyen+ - 2,99€ / mois
+### 🧑 Citoyen - 3,99€ / mois
 
 **Public cible** : Citoyens engagés, soutiens du service
 
 **Inclus tout le gratuit +** :
-- Historique étendu (12 mois glissants)
+- Scan EAN illimité (jamais bloqué)
+- OCR ingrédients (texte brut)
+- Fiche produit enrichie
 - Alertes locales de variation de prix
-- Suivi de produits favoris
-- Exports basiques (CSV simple)
-- Comparaison temporelle
+- Historique personnel local
+- Signalement citoyen
+- Comparaison temporelle basique
 
 **N'inclut PAS** :
-- Multi-territoires
+- Comparaisons temporelles multi-marques
+- Historique long (> 12 mois)
+- Exports CSV/JSON avancés
 - API
-- Séries longues (> 12 mois)
 
-**Philosophie** : Contribution volontaire pour soutenir l'indépendance du service.
+**Philosophie** : Valeur immédiate. Le scan n'est jamais bloqué, aucune frustration post-scan.
 
 **Tarif justifié par** :
 - Coût serveur pour stockage historique
 - Coût notification (emails, alertes)
-- Maintenance infrastructure
+- Maintenance infrastructure OCR
 
 ---
 
-### 🧑‍💼 Pro - 9,99€ / mois
+### 🧑‍💼 Professionnel - 19€ / mois
 
-**Public cible** : Associations, journalistes, chercheurs indépendants
+**Public cible** : Associations, artisans, journalistes, chercheurs indépendants
 
-**Inclus tout Citoyen+ +** :
-- Comparaisons multi-territoires
+**Inclus tout Citoyen +** :
+- Comparaisons temporelles multi-marques
+- Historique long (12-36 mois)
 - Séries temporelles longues (jusqu'à 5 ans)
-- Agrégation par catégories (alimentation, énergie, mobilité)
-- Exports CSV / JSON illimités
+- Exports CSV / JSON complets
+- Agrégation territoriale
+- Recherche EAN + historique
 - Méthodologie détaillée
 - Accès anticipé aux nouvelles fonctionnalités
 
 **Limites** :
+- Outil d'observation, pas de conseil
 - Usage non commercial
 - Pas d'API automatisée
 - Pas de redistribution
@@ -132,14 +138,14 @@ Reconnaissance sobre, non-compétitive de l'usage du service.
 
 ### Badges Disponibles
 
-#### ⭐ Badge Utilisateur actif
-- **Critère** : 30+ jours d'usage actif
+#### 🏅 Badge Contributeur citoyen
+- **Critère** : Participation aux signalements et améliorations
 - **Niveau** : Tous niveaux
 - **Affichage** : Profil utilisateur (privé)
 
-#### 📊 Badge Contributeur open-data
-- **Critère** : Participation aux signalements et améliorations
-- **Niveau** : Citoyen+ et supérieurs
+#### 👁️ Badge Veilleur de prix
+- **Critère** : 30+ scans actifs (usage régulier)
+- **Niveau** : Tous niveaux
 - **Affichage** : Profil utilisateur (privé)
 
 #### 🏛️ Mention Partenaire institutionnel
@@ -151,9 +157,13 @@ Reconnaissance sobre, non-compétitive de l'usage du service.
 
 **Affichés sur le profil utilisateur** :
 
-1. **Téléchargements** : Nombre d'exports réalisés
-2. **Contributions** : Signalements et améliorations
-3. **Jours actifs** : Nombre de jours d'utilisation
+1. **Produits scannés** : Nombre de scans EAN réalisés
+2. **Contributions utiles** : Signalements et améliorations validés
+3. **Téléchargements** : Nombre d'exports réalisés
+4. **Jours actifs** : Nombre de jours d'utilisation
+
+**Message de contribution** :
+"💚 Votre contribution améliore la transparence locale"
 
 **Caractéristiques** :
 - Compteurs agrégés
@@ -175,13 +185,13 @@ Indication simple du niveau d'accès :
 
 ## Comparaison avec Anciens Tarifs
 
-| Niveau | Ancien | Nouveau | Justification |
-|--------|--------|---------|---------------|
-| Citoyen | 3,99€ | 2,99€ | Plus accessible, psychologiquement plus juste |
-| Pro | 19€ | 9,99€ | Aligné marché associatif/recherche |
-| Institution | Licence | Sur devis | Maintenu, plus de flexibilité |
+| Niveau | v1.6.1 | Audit v1.0 | Justification |
+|--------|--------|------------|---------------|
+| Citoyen | 2,99€ | 3,99€ | Alignement audit post-scan, valeur perçue immédiate |
+| Professionnel | 9,99€ | 19€ | Alignement marché pro, outil de travail |
+| Institution | Sur devis | Sur devis | Maintenu, licence annuelle sur mesure |
 
-**Raison du changement** : Alignement service civique / institutionnel, crédibilité renforcée.
+**Raison du changement** : Alignement avec audit post-scan, crédibilité renforcée, montée en valeur naturelle freemium → payant.
 
 ---
 

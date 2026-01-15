@@ -1,21 +1,15 @@
 import { useState } from 'react';
-import { ALL_TERRITORIES } from '../constants/news';
+import { getActiveTerritories, ALL_TERRITORIES } from '../constants/territories';
 
-const territories = [
-  { code: ALL_TERRITORIES, name: 'Tous les territoires', type: 'Tous' },
-  { code: 'GP', name: 'Guadeloupe', type: 'DROM' },
-  { code: 'MQ', name: 'Martinique', type: 'DROM' },
-  { code: 'GF', name: 'Guyane', type: 'DROM' },
-  { code: 'RE', name: 'La Réunion', type: 'DROM' },
-  { code: 'YT', name: 'Mayotte', type: 'DROM' },
-  { code: 'PM', name: 'Saint-Pierre-et-Miquelon', type: 'COM' },
-  { code: 'BL', name: 'Saint-Barthélemy', type: 'COM' },
-  { code: 'MF', name: 'Saint-Martin', type: 'COM' },
-  { code: 'WF', name: 'Wallis-et-Futuna', type: 'COM' },
-  { code: 'PF', name: 'Polynésie française', type: 'COM' },
-  { code: 'NC', name: 'Nouvelle-Calédonie', type: 'COM' },
-  { code: 'TF', name: 'Terres australes françaises', type: 'COM' },
-];
+// Construire la liste des territoires avec "Tous" en premier
+const allTerritoriesOption = { code: ALL_TERRITORIES, name: 'Tous les territoires', type: 'Tous', flag: '🌍' };
+const activeTerritories = getActiveTerritories().map(t => ({
+  code: t.code,
+  name: t.name,
+  type: t.type,
+  flag: t.flag,
+}));
+const territories = [allTerritoriesOption, ...activeTerritories];
 
 export default function TerritorySelector({ value, onChange, className = '' }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -37,6 +31,7 @@ export default function TerritorySelector({ value, onChange, className = '' }) {
         aria-expanded={isOpen}
       >
         <span className="flex items-center gap-3">
+          <span className="text-lg">{selectedTerritory.flag}</span>
           <span className="px-2 py-0.5 text-xs font-mono bg-blue-600/20 border border-blue-500/40 rounded text-blue-300">
             {selectedTerritory.code}
           </span>
@@ -70,6 +65,7 @@ export default function TerritorySelector({ value, onChange, className = '' }) {
                   territory.code === value ? 'bg-white/[0.12] border-l-2 border-blue-500' : ''
                 }`}
               >
+                <span className="text-lg flex-shrink-0">{territory.flag}</span>
                 <span className="px-2 py-0.5 text-xs font-mono bg-blue-600/20 border border-blue-500/40 rounded text-blue-300 flex-shrink-0">
                   {territory.code}
                 </span>

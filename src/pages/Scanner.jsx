@@ -1,1 +1,0 @@
-export default function Scanner() { return <h2>Scanner de tickets (à intégrer)</h2>; }

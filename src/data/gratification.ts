@@ -16,33 +16,35 @@ export interface GratificationBadge {
 export interface UserStats {
   downloadsCount: number;
   contributionsCount: number;
+  scannedProductsCount: number; // Nouveau: compteur de produits scannés
   activeUsageDays: number;
   lastActive: Date;
 }
 
 /**
  * Badges de reconnaissance (non gamifiés)
+ * Audit v1.0 - Section 4: Système de gratification
  */
 export const GRATIFICATION_BADGES: GratificationBadge[] = [
   {
-    id: 'active_user',
-    title: 'Badge Utilisateur actif',
-    description: 'Reconnaissance d\'usage régulier du service',
-    icon: '⭐',
-    criteria: 'Usage régulier du service (30+ jours actifs)',
+    id: 'contributeur_citoyen',
+    title: 'Contributeur citoyen',
+    description: 'Reconnaissance pour participation active aux signalements',
+    icon: '🏅',
+    criteria: 'Participation aux signalements et améliorations',
     accessLevel: 'ALL',
   },
   {
-    id: 'open_data_contributor',
-    title: 'Badge Contributeur open-data',
-    description: 'Participation à l\'amélioration des données',
-    icon: '📊',
-    criteria: 'Participation aux signalements et améliorations',
-    accessLevel: 'CITIZEN',
+    id: 'veilleur_prix',
+    title: 'Veilleur de prix',
+    description: 'Reconnaissance pour suivi régulier des prix',
+    icon: '👁️',
+    criteria: 'Usage régulier du service (30+ scans actifs)',
+    accessLevel: 'ALL',
   },
   {
     id: 'institutional_partner',
-    title: 'Mention Partenaire institutionnel',
+    title: 'Partenaire institutionnel',
     description: 'Collaboration institutionnelle reconnue',
     icon: '🏛️',
     criteria: 'Partenariat officiel ou convention active',
@@ -69,11 +71,11 @@ export const hasBadge = (
   
   // Badge-specific logic
   switch (badgeId) {
-    case 'active_user':
-      return userStats.activeUsageDays >= 30;
+    case 'contributeur_citoyen':
+      return userStats.contributionsCount > 0;
     
-    case 'open_data_contributor':
-      return userStats.contributionsCount > 0 && (accessLevel === 'CITIZEN' || accessLevel === 'PROFESSIONAL' || accessLevel === 'INSTITUTIONAL');
+    case 'veilleur_prix':
+      return userStats.scannedProductsCount >= 30;
     
     case 'institutional_partner':
       return accessLevel === 'INSTITUTIONAL';
@@ -102,6 +104,7 @@ export const getMockUserStats = (): UserStats => {
   return {
     downloadsCount: 12,
     contributionsCount: 3,
+    scannedProductsCount: 47,
     activeUsageDays: 45,
     lastActive: new Date(),
   };
@@ -125,6 +128,22 @@ export const formatContributionCount = (count: number): string => {
   return `${count} contributions`;
 };
 
+/**
+ * Format scanned products count
+ */
+export const formatScannedProductsCount = (count: number): string => {
+  if (count === 0) return 'Aucun produit scanné';
+  if (count === 1) return '1 produit scanné';
+  return `${count} produits scannés`;
+};
+
+/**
+ * Get contribution message
+ */
+export const getContributionMessage = (): string => {
+  return 'Votre contribution améliore la transparence locale';
+};
+
 export default {
   GRATIFICATION_BADGES,
   hasBadge,
@@ -132,4 +151,6 @@ export default {
   getMockUserStats,
   formatDownloadCount,
   formatContributionCount,
+  formatScannedProductsCount,
+  getContributionMessage,
 };

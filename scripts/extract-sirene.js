@@ -12,7 +12,7 @@
  * Tous les résultats sont marqués "a_confirmer"
  */
 
-const fs = require('fs');
+// const fs = require('fs'); // Unused for now
 const path = require('path');
 
 // Codes APE/NAF commerce de détail
@@ -44,7 +44,7 @@ const TERRITOIRES = {
 /**
  * Catégorise un établissement selon son code NAF
  */
-function categoriserEtablissement(codeNaf) {
+function _categoriserEtablissement(codeNaf) {
   if (codeNaf.startsWith('4711')) return 'Grande distribution';
   if (codeNaf.startsWith('4719')) return 'Commerce de proximité';
   if (codeNaf.startsWith('472')) return 'Alimentation spécialisée';
@@ -58,7 +58,7 @@ function categoriserEtablissement(codeNaf) {
 /**
  * Détermine le type de magasin selon le code NAF
  */
-function determinerTypeMagasin(codeNaf, denomination) {
+function _determinerTypeMagasin(codeNaf, denomination) {
   const denom = denomination.toLowerCase();
   
   if (codeNaf === '4711A' || codeNaf === '4711B') return 'Hypermarché';

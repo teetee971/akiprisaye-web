@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+// eslint-disable-next-line no-unused-vars
 import ThemeToggle from './ThemeToggle';
+import { useAuth } from '../context/AuthContext';
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { user, userRole, _isGuest } = useAuth();
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -74,52 +77,79 @@ export default function Header() {
               }`}
               onClick={closeMobileMenu}
             >
-              <span>Accueil</span>
+              <span>🏠 Accueil</span>
             </Link>
           </li>
           <li>
             <Link
-              to="/comparateur"
+              to="/comparateurs"
               className={`flex items-center gap-3 px-6 py-3 text-white hover:bg-blue-700/20 transition-colors border-l-4 ${
-                isActiveRoute('/comparateur') ? 'border-blue-400 bg-blue-700/10' : 'border-transparent hover:border-blue-400'
+                isActiveRoute('/comparateurs') ? 'border-blue-400 bg-blue-700/10' : 'border-transparent hover:border-blue-400'
               }`}
               onClick={closeMobileMenu}
             >
-              <span>Comparateur</span>
+              <span>📊 Comparateurs</span>
             </Link>
           </li>
           <li>
             <Link
-              to="/scan"
+              to="/carte-itineraires"
               className={`flex items-center gap-3 px-6 py-3 text-white hover:bg-blue-700/20 transition-colors border-l-4 ${
-                isActiveRoute('/scan') ? 'border-blue-400 bg-blue-700/10' : 'border-transparent hover:border-blue-400'
+                isActiveRoute('/carte-itineraires') ? 'border-blue-400 bg-blue-700/10' : 'border-transparent hover:border-blue-400'
               }`}
               onClick={closeMobileMenu}
             >
-              <span>Scanner</span>
+              <span>🗺️ Carte</span>
             </Link>
           </li>
           <li>
             <Link
-              to="/carte"
+              to="/scanner"
               className={`flex items-center gap-3 px-6 py-3 text-white hover:bg-blue-700/20 transition-colors border-l-4 ${
-                isActiveRoute('/carte') ? 'border-blue-400 bg-blue-700/10' : 'border-transparent hover:border-blue-400'
+                isActiveRoute('/scanner') ? 'border-blue-400 bg-blue-700/10' : 'border-transparent hover:border-blue-400'
               }`}
               onClick={closeMobileMenu}
             >
-              <span>Carte</span>
+              <span>📷 Scanner</span>
             </Link>
           </li>
           <li>
             <Link
-              to="/alertes"
+              to="/assistant-ia"
               className={`flex items-center gap-3 px-6 py-3 text-white hover:bg-blue-700/20 transition-colors border-l-4 ${
-                isActiveRoute('/alertes') ? 'border-blue-400 bg-blue-700/10' : 'border-transparent hover:border-blue-400'
+                isActiveRoute('/assistant-ia') ? 'border-blue-400 bg-blue-700/10' : 'border-transparent hover:border-blue-400'
               }`}
               onClick={closeMobileMenu}
             >
-              <span>Alertes</span>
+              <span>🤖 Assistant IA</span>
             </Link>
+          </li>
+          <li>
+            <Link
+              to="/observatoire-hub"
+              className={`flex items-center gap-3 px-6 py-3 text-white hover:bg-blue-700/20 transition-colors border-l-4 ${
+                isActiveRoute('/observatoire-hub') ? 'border-blue-400 bg-blue-700/10' : 'border-transparent hover:border-blue-400'
+              }`}
+              onClick={closeMobileMenu}
+            >
+              <span>📈 Observatoire</span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/solidarite"
+              className={`flex items-center gap-3 px-6 py-3 text-white hover:bg-blue-700/20 transition-colors border-l-4 ${
+                isActiveRoute('/solidarite') ? 'border-blue-400 bg-blue-700/10' : 'border-transparent hover:border-blue-400'
+              }`}
+              onClick={closeMobileMenu}
+            >
+              <span>🤝 Solidarité</span>
+            </Link>
+          </li>
+          
+          {/* Secondary Navigation */}
+          <li className="px-6 py-2 mt-4">
+            <div className="text-xs uppercase tracking-wide text-slate-400">Plus</div>
           </li>
           <li>
             <Link
@@ -129,18 +159,7 @@ export default function Header() {
               }`}
               onClick={closeMobileMenu}
             >
-              <span>Actualités</span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/pricing"
-              className={`flex items-center gap-3 px-6 py-3 text-white hover:bg-blue-700/20 transition-colors border-l-4 ${
-                isActiveRoute('/pricing') ? 'border-blue-400 bg-blue-700/10' : 'border-transparent hover:border-blue-400'
-              }`}
-              onClick={closeMobileMenu}
-            >
-              <span>Tarifs</span>
+              <span>📰 Actualités</span>
             </Link>
           </li>
           <li>
@@ -151,9 +170,10 @@ export default function Header() {
               }`}
               onClick={closeMobileMenu}
             >
-              <span>Mon Compte</span>
+              <span>👤 Mon Compte</span>
             </Link>
           </li>
+<<<<<<< HEAD
           <li>
             <Link
               to="/parametres"
@@ -168,6 +188,22 @@ export default function Header() {
               </svg>
               <span>Paramètres</span>
             </Link>
+=======
+          
+          {/* Status Badge in Mobile Menu */}
+          <li className="px-6 py-3">
+            {user ? (
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-900/30 border border-green-700/50 w-fit">
+                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                <span className="text-green-200 text-sm font-medium capitalize">{userRole}</span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-700/30 border border-slate-600/50 w-fit">
+                <span className="w-2 h-2 bg-gray-400 rounded-full"></span>
+                <span className="text-gray-300 text-sm font-medium">Invité</span>
+              </div>
+            )}
+>>>>>>> origin/main
           </li>
         </ul>
       </nav>
@@ -211,23 +247,31 @@ export default function Header() {
                   isActiveRoute('/comparateur') ? 'bg-[color:var(--glass-bg)] text-white font-semibold' : ''
                 }`}
               >
-                Comparateur
+                Comparer
               </Link>
               <Link
-                to="/scan"
+                to="/comprendre-prix"
                 className={`text-white/90 hover:text-white hover:bg-[color:var(--glass-bg)] px-3 py-2 rounded-lg transition-all ${
-                  isActiveRoute('/scan') ? 'bg-[color:var(--glass-bg)] text-white font-semibold' : ''
+                  isActiveRoute('/comprendre-prix') ? 'bg-[color:var(--glass-bg)] text-white font-semibold' : ''
                 }`}
               >
-                Scanner
+                Comprendre
               </Link>
               <Link
-                to="/carte"
+                to="/ocr"
                 className={`text-white/90 hover:text-white hover:bg-[color:var(--glass-bg)] px-3 py-2 rounded-lg transition-all ${
-                  isActiveRoute('/carte') ? 'bg-[color:var(--glass-bg)] text-white font-semibold' : ''
+                  isActiveRoute('/ocr') ? 'bg-[color:var(--glass-bg)] text-white font-semibold' : ''
                 }`}
               >
-                Carte
+                OCR & Scan
+              </Link>
+              <Link
+                to="/civic-modules"
+                className={`text-white/90 hover:text-white hover:bg-[color:var(--glass-bg)] px-3 py-2 rounded-lg transition-all ${
+                  isActiveRoute('/civic-modules') ? 'bg-[color:var(--glass-bg)] text-white font-semibold' : ''
+                }`}
+              >
+                Participer
               </Link>
               <Link
                 to="/alertes"
@@ -236,14 +280,6 @@ export default function Header() {
                 }`}
               >
                 Alertes
-              </Link>
-              <Link
-                to="/actualites"
-                className={`text-white/90 hover:text-white hover:bg-[color:var(--glass-bg)] px-3 py-2 rounded-lg transition-all ${
-                  isActiveRoute('/actualites') ? 'bg-[color:var(--glass-bg)] text-white font-semibold' : ''
-                }`}
-              >
-                Actualités
               </Link>
               <Link
                 to="/mon-compte"
@@ -266,6 +302,19 @@ export default function Header() {
                 </svg>
                 Paramètres
               </Link>
+              
+              {/* Connection Status Badge */}
+              {user ? (
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-900/30 border border-green-700/50">
+                  <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                  <span className="text-green-200 text-sm font-medium capitalize">{userRole}</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-700/30 border border-slate-600/50">
+                  <span className="w-2 h-2 bg-gray-400 rounded-full"></span>
+                  <span className="text-gray-300 text-sm font-medium">Invité</span>
+                </div>
+              )}
               
               {/* Theme Toggle */}
               <ThemeToggle />

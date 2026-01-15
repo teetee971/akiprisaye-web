@@ -23,6 +23,13 @@ export type ProductCategory =
   | 'hygiene'
   | 'entretien'
   | 'bebe'
+  | 'viande'
+  | 'poisson'
+  | 'fruits-legumes'
+  | 'pain-patisserie'
+  | 'produits-laitiers'
+  | 'epicerie'
+  | 'surgeles'
   | 'autre';
 
 /**

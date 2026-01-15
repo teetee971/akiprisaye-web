@@ -142,11 +142,28 @@ export default {
         'medium': '0 2px 16px rgba(0, 0, 0, 0.12)',
         'hard': '0 4px 24px rgba(0, 0, 0, 0.15)',
         'dark': '0 4px 16px rgba(0, 0, 0, 0.3)',
+        'glow': '0 0 20px rgba(74, 163, 255, 0.3)',
+        'glow-strong': '0 0 30px rgba(74, 163, 255, 0.5)',
+      },
+      transitionDuration: {
+        '150': '150ms',
+        '250': '250ms',
+        '350': '350ms',
+        '400': '400ms',
+      },
+      transitionTimingFunction: {
+        'smooth': 'cubic-bezier(0.4, 0, 0.2, 1)',
+        'bounce': 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
       },
       animation: {
-        'fade-in': 'fadeIn 0.3s ease-in-out',
-        'slide-up': 'slideUp 0.3s ease-out',
+        'fade-in': 'fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+        'slide-up': 'slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+        'slide-down': 'slideDown 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+        'slide-left': 'slideLeft 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+        'slide-right': 'slideRight 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+        'scale-in': 'scaleIn 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'bounce-soft': 'bounceSoft 1s cubic-bezier(0.4, 0, 0.2, 1)',
       },
       keyframes: {
         fadeIn: {
@@ -154,8 +171,28 @@ export default {
           '100%': { opacity: '1' },
         },
         slideUp: {
-          '0%': { transform: 'translateY(10px)', opacity: '0' },
+          '0%': { transform: 'translateY(20px)', opacity: '0' },
           '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        slideDown: {
+          '0%': { transform: 'translateY(-20px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        slideLeft: {
+          '0%': { transform: 'translateX(20px)', opacity: '0' },
+          '100%': { transform: 'translateX(0)', opacity: '1' },
+        },
+        slideRight: {
+          '0%': { transform: 'translateX(-20px)', opacity: '0' },
+          '100%': { transform: 'translateX(0)', opacity: '1' },
+        },
+        scaleIn: {
+          '0%': { transform: 'scale(0.95)', opacity: '0' },
+          '100%': { transform: 'scale(1)', opacity: '1' },
+        },
+        bounceSoft: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-5px)' },
         },
       },
       // Contrast ratios for WCAG 2.1 AA compliance (minimum 4.5:1)

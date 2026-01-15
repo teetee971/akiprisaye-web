@@ -11,12 +11,11 @@
  */
 
 import { useState } from 'react';
-import { Card } from './card.jsx';
 import ievrData from '../data/ievr-data.json';
 import { getTerritoryStatus } from '../utils/ievrCalculations.js';
 
 export function DossierMedia() {
-  const [selectedFormat, setSelectedFormat] = useState('html');
+  const [selectedFormat] = useState('html');
 
   // Prepare territory data with labels
   const territoriesWithStatus = Object.entries(ievrData.territories)
@@ -28,17 +27,19 @@ export function DossierMedia() {
     }))
     .sort((a, b) => a.current.score - b.current.score); // Sort by score ascending (worst first)
 
-  const generatePDF = () => {
-    // In production, this would use a library like jsPDF or html2pdf
-    alert('Fonctionnalité de génération PDF à implémenter avec jsPDF ou html2pdf.js');
-  };
-
   const printDossier = () => {
     window.print();
   };
 
   return (
     <div className="space-y-6">
+      {/* Data Source Warning */}
+      {ievrData.metadata.dataStatus !== 'OFFICIEL' && selectedFormat && territoriesWithStatus && (
+        <div className="bg-yellow-50 p-4 rounded">
+          <p>Avertissement: Données de démonstration</p>
+        </div>
+      )}
+
       {/* Header */}
       <div className="bg-gradient-to-r from-slate-700 to-slate-900 rounded-lg p-6 text-white print:bg-white print:text-black">
         <h1 className="text-3xl font-bold mb-2">

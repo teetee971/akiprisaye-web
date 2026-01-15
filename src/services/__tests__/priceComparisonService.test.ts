@@ -136,6 +136,19 @@ describe('Price Comparison Service v1.4.0', () => {
       expect(aggregation.priceRange).toBe(0);
       expect(aggregation.priceRangePercentage).toBe(0);
     });
+
+    it('should avoid infinite range percentage when minimum price is zero', () => {
+      const zeroMinPrices = [
+        { ...mockStorePrices[0], price: 0 },
+        mockStorePrices[1],
+      ];
+
+      const aggregation = calculateTerritoryAggregation(zeroMinPrices, 'MQ');
+
+      expect(aggregation.minPrice).toBe(0);
+      expect(aggregation.priceRange).toBeCloseTo(mockStorePrices[1].price, 2);
+      expect(aggregation.priceRangePercentage).toBe(0);
+    });
   });
 
   describe('rankStorePrices', () => {

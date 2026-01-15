@@ -9,17 +9,30 @@ Allez sur https://dash.cloudflare.com/  Pages  akiprisaye-web  Settings  Builds 
 
 ### Configuration Build Requise:
 
-`
+**Option 1 (Recommended):** Build from frontend subdirectory
+```
+Framework preset: Vite
+Build command: cd frontend && npm ci && npm run build
+Build output directory: frontend/dist
+Root directory: (leave empty or /)
+Node version: 20
+```
+
+**Option 2 (Alternative):** Build from root directory
+```
 Framework preset: Vite
 Build command: npm run build
 Build output directory: dist
 Root directory: (leave empty or /)
-Node version: 18
-`
+Node version: 20
+```
+
+**Note:** The `frontend/src` is a symlink to `../src` to enable building from the frontend directory.
+See `CLOUDFLARE_BUILD_FIX.md` for detailed explanation.
 
 ### Variables d'Environnement (optionnel):
 `
-NODE_VERSION=18
+NODE_VERSION=20
 NPM_VERSION=latest
 `
 

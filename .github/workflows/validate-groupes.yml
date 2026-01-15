@@ -1,0 +1,131 @@
+name: Validate Groupes Data
+
+on:
+  push:
+    paths:
+      - 'src/data/groupes/**/*.json'
+      - '.github/workflows/validate-groupes.yml'
+  pull_request:
+    paths:
+      - 'src/data/groupes/**/*.json'
+      - '.github/workflows/validate-groupes.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    name: Validate groupe comparison data structure
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          
+      - name: Install AJV validator
+        run: npm install -g ajv-cli ajv-formats
+        
+      - name: Create JSON Schema for groupes
+        run: |
+          cat > /tmp/groupes-schema.json << 'EOF'
+          {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "type": "object",
+              "required": ["groupe", "indice", "ecart_moyen", "territoires"],
+              "properties": {
+                "groupe": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "indice": {
+                  "type": "string",
+                  "enum": ["🔴", "🟠", "🟢"]
+                },
+                "ecart_moyen": {
+                  "type": "string",
+                  "pattern": "^[+-][0-9]+%$"
+                },
+                "territoires": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "Guadeloupe",
+                      "Martinique",
+                      "Guyane",
+                      "La Réunion",
+                      "Mayotte",
+                      "Saint-Martin",
+                      "Saint-Barthélemy",
+                      "Saint-Pierre-et-Miquelon",
+                      "Wallis-et-Futuna",
+                      "Polynésie française",
+                      "Nouvelle-Calédonie"
+                    ]
+                  }
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+          EOF
+          
+      - name: Validate JSON structure with AJV
+        run: |
+          echo "Validating JSON files in src/data/groupes/"
+          for file in src/data/groupes/*.json; do
+            if [ -f "$file" ]; then
+              echo "Validating $file..."
+              ajv validate -s /tmp/groupes-schema.json -d "$file" --strict=true
+            fi
+          done
+          
+      - name: Check for "Indépendants" presence (Editorial Rule)
+        run: |
+          echo "Checking editorial rule: 'Indépendants' must be present in each comparison"
+          for file in src/data/groupes/*.json; do
+            if [ -f "$file" ]; then
+              echo "Checking $file..."
+              if ! grep -q '"groupe": "Indépendants"' "$file"; then
+                echo "❌ ERROR: File $file is missing 'Indépendants' group"
+                echo "Editorial rule: Independent retailers must always be included as baseline reference"
+                exit 1
+              else
+                echo "✅ 'Indépendants' found in $file"
+              fi
+            fi
+          done
+          
+      - name: Validate multi-actor principle (minimum 2 groups + Indépendants)
+        run: |
+          echo "Checking editorial rule: Minimum 3 actors (2 groups + Indépendants)"
+          for file in src/data/groupes/*.json; do
+            if [ -f "$file" ]; then
+              echo "Checking $file..."
+              count=$(jq 'length' "$file")
+              if [ "$count" -lt 3 ]; then
+                echo "❌ ERROR: File $file has only $count actors"
+                echo "Editorial rule: Minimum 3 actors required (multi-actor comparison)"
+                exit 1
+              else
+                echo "✅ File $file has $count actors (meets minimum requirement)"
+              fi
+            fi
+          done
+          
+      - name: Summary
+        if: success()
+        run: |
+          echo "✅ All validation checks passed!"
+          echo "- JSON structure validated"
+          echo "- Editorial rules enforced"
+          echo "- Multi-actor comparison principle verified"

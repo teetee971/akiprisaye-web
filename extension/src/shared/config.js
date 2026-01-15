@@ -12,42 +12,42 @@ export const CONFIG = {
     carrefour: {
       pattern: /carrefour\.fr\/p\//,
       name: 'Carrefour',
-      productUrlPattern: /\/p\/([^\/]+)/
+      productUrlPattern: /\/p\/([^/]+)/
     },
     leclerc: {
       pattern: /leclerc\.com\/p\//,
       name: 'E.Leclerc',
-      productUrlPattern: /\/p\/([^\/]+)/
+      productUrlPattern: /\/p\/([^/]+)/
     },
     auchan: {
       pattern: /auchan\.fr\/.*\/p\//,
       name: 'Auchan',
-      productUrlPattern: /\/p\/([^\/]+)/
+      productUrlPattern: /\/p\/([^/]+)/
     },
     intermarche: {
       pattern: /intermarche\.com\/.*produit/,
       name: 'Intermarché',
-      productUrlPattern: /produit\/([^\/]+)/
+      productUrlPattern: /produit\/([^/]+)/
     },
     lidl: {
       pattern: /lidl\.fr\/p\//,
       name: 'Lidl',
-      productUrlPattern: /\/p\/([^\/]+)/
+      productUrlPattern: /\/p\/([^/]+)/
     },
     superU: {
       pattern: /super-u\.fr\/.*\/p\//,
       name: 'Super U',
-      productUrlPattern: /\/p\/([^\/]+)/
+      productUrlPattern: /\/p\/([^/]+)/
     },
     monoprix: {
       pattern: /monoprix\.fr\/.*\/p\//,
       name: 'Monoprix',
-      productUrlPattern: /\/p\/([^\/]+)/
+      productUrlPattern: /\/p\/([^/]+)/
     },
     casino: {
       pattern: /casino\.fr\/.*\/p\//,
       name: 'Casino',
-      productUrlPattern: /\/p\/([^\/]+)/
+      productUrlPattern: /\/p\/([^/]+)/
     }
   },
   

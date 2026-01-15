@@ -6,7 +6,6 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Card } from './card.jsx';
 
 const TERRITORIES = [
   { code: 'GP', name: 'Guadeloupe', flag: '🇬🇵' },

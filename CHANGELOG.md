@@ -41,7 +41,12 @@ Le format s'inspire de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) 
 - (à compléter)
 
 ### Fixed
-- (à compléter)
+- **Cloudflare Pages - Redirection SPA**: Correction de la configuration `_redirects` pour éliminer les boucles de redirection infinies
+  - Validation de la règle de fallback SPA unique: `/*    /index.html   200`
+  - Élimination de toute redirection conflictuelle
+  - Navigation SPA stable sur toutes les routes (/, /scan, /comparateur, /faq)
+  - Rafraîchissement de page fonctionnel
+  - Chargement correct des modules selon la route
 
 ## [0.4.1] - 2025-11-10
 ### Added

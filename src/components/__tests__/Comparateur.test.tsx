@@ -1,14 +1,16 @@
+import { describe, test, expect } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import "@testing-library/jest-dom";
+import "@testing-library/jest-dom/vitest";
+import { vi } from "vitest";
 import Comparateur from "../Comparateur";
 
 // 🔹 Mock Firebase Firestore
-jest.mock("firebase/firestore", () => {
+vi.mock("firebase/firestore", () => {
   return {
-    collection: jest.fn(),
-    query: jest.fn(),
-    where: jest.fn(),
-    getDocs: jest.fn(async () => ({
+    collection: vi.fn(),
+    query: vi.fn(),
+    where: vi.fn(),
+    getDocs: vi.fn(async () => ({
       docs: [
         {
           id: "product-1",
@@ -31,13 +33,13 @@ jest.mock("firebase/firestore", () => {
       ],
     })),
     Timestamp: {
-      fromDate: jest.fn(),
+      fromDate: vi.fn(),
     },
   };
 });
 
 // 🔹 Mock Firebase config
-jest.mock("../../firebase_config", () => ({
+vi.mock("../../firebase_config", () => ({
   db: {},
 }));
 
@@ -55,6 +57,7 @@ describe("Comparateur component", () => {
   });
 
   test("fetches and displays product and prices", async () => {
+    vi.useRealTimers();
     render(<Comparateur />);
 
     const input = screen.getByPlaceholderText(/entrer ou scanner un ean/i);

@@ -205,6 +205,7 @@ export class OpenDataService {
   static async getAggregatedPrices(filters: {
     territory?: Territory;
     category?: string;
+    productId?: string;
     startDate?: Date;
     endDate?: Date;
     limit?: number;
@@ -216,6 +217,7 @@ export class OpenDataService {
     const {
       territory,
       category,
+      productId,
       startDate,
       endDate,
       limit = 100,
@@ -237,6 +239,11 @@ export class OpenDataService {
 
     if (category) {
       where.product.category = category;
+    }
+
+    // Filtrage par productId si fourni
+    if (productId) {
+      where.product.id = productId;
     }
 
     if (startDate) {
@@ -266,13 +273,18 @@ export class OpenDataService {
         id: true,
       },
       where,
+      orderBy: {
+        productId: 'asc',
+      },
       take: limit,
       skip: offset,
     });
 
-    const total = await prisma.price.groupBy({
+    // Count unique products for total - using aggregate for better performance
+    const totalCount = await prisma.price.groupBy({
       by: ['productId'],
       where,
+      _count: { _all: true },
     });
 
     const aggregatedPrices: AggregatedPrice[] = [];
@@ -320,7 +332,7 @@ export class OpenDataService {
 
     return {
       prices: aggregatedPrices,
-      total: total.length,
+      total: totalCount.length,
     };
   }
 

@@ -93,7 +93,7 @@ export default function ChatIALocal() {
   };
 
   return (
-    <div className="fixed bottom-4 right-4 max-w-sm w-full z-50">
+    <div className="fixed bottom-4 right-4 max-w-sm w-full" style={{ zIndex: 1000 }}>
       <div className="shadow-2xl rounded-2xl bg-white p-4 space-y-3 border border-gray-200">
         <div className="text-xl font-bold">🧠 Chat IA Lokal</div>
 

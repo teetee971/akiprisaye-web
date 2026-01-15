@@ -1,12 +1,33 @@
-import React from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { saveBasketToHistory } from '../services/tiPanieService';
+import { compareBasketAcrossTerritories } from '../utils/priceAnalysis';
+import { saveBasketSnapshot, getTrend } from '../utils/priceHistory';
 import PriceBadge from '../components/PriceBadge';
+import BasketTerritoryComparison from './BasketTerritoryComparison';
+import TrendIndicator from './TrendIndicator';
 
-export default function BasketCard({ basket }) {
+export default function BasketCard({ basket, selectedTerritories }) {
   const navigate = useNavigate();
   const { user } = useAuth();
+
+  // Automatically save price snapshot when basket is displayed
+  useEffect(() => {
+    if (basket && basket.id && basket.price) {
+      // Save snapshot for each selected territory
+      if (selectedTerritories && selectedTerritories.length > 0) {
+        selectedTerritories.forEach(territoryId => {
+          const price = basket.prices?.[territoryId] || basket.price;
+          saveBasketSnapshot(String(basket.id), territoryId, price);
+        });
+      } else {
+        // Fallback: save for basket's default territory
+        const territoryId = basket.territory || 'GP';
+        saveBasketSnapshot(String(basket.id), territoryId, basket.price);
+      }
+    }
+  }, [basket, selectedTerritories]);
 
   const handleViewOnMap = () => {
     // Navigate to map with the basket's location
@@ -19,6 +40,25 @@ export default function BasketCard({ basket }) {
       await saveBasketToHistory(user.uid, basket);
     }
   };
+
+  // Calculate territory comparison if multiple territories selected
+  let territoryComparison = null;
+  if (selectedTerritories && selectedTerritories.length > 1) {
+    // Build price map from basket data
+    // Assuming basket has prices per territory or we use the same price for all
+    const priceMap = {};
+    selectedTerritories.forEach(territoryId => {
+      // If basket has territory-specific prices, use them
+      // Otherwise use the base price (same for all territories)
+      priceMap[territoryId] = basket.prices?.[territoryId] || basket.price || 0;
+    });
+
+    territoryComparison = compareBasketAcrossTerritories(priceMap, selectedTerritories);
+  }
+
+  // Get trend for primary territory (first selected or basket's territory)
+  const primaryTerritory = selectedTerritories?.[0] || basket.territory || 'GP';
+  const trend = getTrend(primaryTerritory, 'week', String(basket.id));
 
   return (
     <div
@@ -84,13 +124,30 @@ export default function BasketCard({ basket }) {
           />
         </div>
 
+        {/* Trend Indicator (only if historical data available) */}
+        {trend && trend.direction !== 'unknown' && (
+          <div className="mb-3">
+            <TrendIndicator
+              direction={trend.direction}
+              percentageChange={trend.percentageChange}
+              period="week"
+              showPercentage={true}
+            />
+          </div>
+        )}
+
+        {/* Territory Comparison (only if multiple territories selected) */}
+        {territoryComparison && territoryComparison.length > 1 && (
+          <BasketTerritoryComparison comparison={territoryComparison} basket={basket} />
+        )}
+
         {/* Action Button */}
         <button
           onClick={(e) => {
             e.stopPropagation();
             handleViewOnMap();
           }}
-          className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition text-sm"
+          className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition text-sm mt-3"
         >
           📍 Voir sur la carte
         </button>

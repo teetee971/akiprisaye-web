@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { getBaskets } from '../services/tiPanieService';
 import BasketCard from '../ui/BasketCard';
 import BasketFilters from '../ui/BasketFilters';
@@ -6,28 +6,47 @@ import BasketFilters from '../ui/BasketFilters';
 export default function TiPanie() {
   const [baskets, setBaskets] = useState([]);
   const [filters, setFilters] = useState({
-    territory: 'all',
+    selectedTerritories: ['GP'], // Default to Guadeloupe
     store: '',
     timeSlot: '',
     stockOnly: false,
   });
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    loadBaskets();
-  }, [filters]);
-
-  const loadBaskets = async () => {
+  const loadBaskets = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
-      const data = await getBaskets(filters);
+      // Convert selectedTerritories to legacy territory format for service compatibility
+      const serviceFilters = {
+        ...filters,
+        territory: filters.selectedTerritories?.length === 1 
+          ? filters.selectedTerritories[0] 
+          : 'all',
+      };
+      const data = await getBaskets(serviceFilters);
+      
+      // Validate data format
+      if (!Array.isArray(data)) {
+        console.error('Invalid data format received:', typeof data, data);
+        throw new Error('Les données reçues ne sont pas au format attendu');
+      }
+      
       setBaskets(data);
+      setError(null);
     } catch (error) {
       console.error('Error loading baskets:', error);
+      setError(error.message || 'Erreur lors du chargement des paniers');
+      setBaskets([]);
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters]);
+
+  useEffect(() => {
+    loadBaskets();
+  }, [loadBaskets]);
 
   const totalSavings = baskets.reduce((sum, b) => sum + (b.originalPrice - b.price), 0);
 
@@ -68,6 +87,25 @@ export default function TiPanie() {
         {/* Filters */}
         <BasketFilters filters={filters} onFilterChange={setFilters} />
 
+        {/* Error State */}
+        {error && !loading && (
+          <div className="bg-red-900/20 border border-red-700/30 rounded-lg p-6 mb-8">
+            <div className="flex items-start gap-3">
+              <span className="text-3xl">⚠️</span>
+              <div>
+                <h3 className="font-semibold text-red-400 mb-2">Erreur de chargement</h3>
+                <p className="text-slate-300 mb-4">{error}</p>
+                <button
+                  onClick={() => loadBaskets()}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                >
+                  Réessayer
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Loading State */}
         {loading && (
           <div className="text-center py-12">
@@ -80,7 +118,11 @@ export default function TiPanie() {
         {!loading && baskets.length > 0 && (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {baskets.map((basket) => (
-              <BasketCard key={basket.id} basket={basket} />
+              <BasketCard 
+                key={basket.id} 
+                basket={basket} 
+                selectedTerritories={filters.selectedTerritories}
+              />
             ))}
           </div>
         )}

@@ -37,7 +37,7 @@ if (!admin.apps.length) {
 exports.aiMarketInsights = functions.pubsub
   .schedule('every 24 hours')
   .timeZone('Europe/Paris')
-  .onRun(async (context) => {
+  .onRun(async (_context) => {
     const db = admin.firestore();
     
     console.log('Starting AI Market Insights analysis...');

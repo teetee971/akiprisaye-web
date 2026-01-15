@@ -1,0 +1,2 @@
+# This directory contains price observations from receipt tickets
+# Files are managed by scripts/add-observation.js and scripts/generate-index.js

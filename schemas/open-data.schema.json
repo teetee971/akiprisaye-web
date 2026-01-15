@@ -1,0 +1,329 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://akiprisaye.fr/schemas/open-data.schema.json",
+  "title": "A ki pri sa yé - Open Data Schema",
+  "description": "Schéma normalisé pour les données ouvertes de prix et produits - Compatible INSEE/Eurostat",
+  "version": "1.0.0",
+  "type": "object",
+  "definitions": {
+    "metadata": {
+      "type": "object",
+      "required": ["generatedAt", "dataVersion", "territory", "sources", "recordCount", "dateRange", "schemaVersion", "license"],
+      "properties": {
+        "generatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Date et heure de génération de l'export (ISO 8601)"
+        },
+        "dataVersion": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "description": "Version sémantique des données (semver)"
+        },
+        "territory": {
+          "oneOf": [
+            {"$ref": "#/definitions/territoryCode"},
+            {
+              "type": "array",
+              "items": {"$ref": "#/definitions/territoryCode"},
+              "minItems": 1
+            }
+          ],
+          "description": "Code(s) territoire INSEE"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["label_scan", "ticket_scan", "public_database", "user_report", "official_source"]
+          },
+          "minItems": 1,
+          "description": "Sources des données incluses"
+        },
+        "recordCount": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Nombre total d'enregistrements"
+        },
+        "dateRange": {
+          "type": "object",
+          "required": ["start", "end"],
+          "properties": {
+            "start": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Date de début de la période couverte"
+            },
+            "end": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Date de fin de la période couverte"
+            }
+          }
+        },
+        "schemaVersion": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "description": "Version du schéma (semver)"
+        },
+        "contact": {
+          "type": "string",
+          "format": "email",
+          "description": "Contact pour questions sur les données"
+        },
+        "license": {
+          "type": "string",
+          "description": "Licence de diffusion des données"
+        }
+      }
+    },
+    "territoryCode": {
+      "type": "string",
+      "enum": ["GP", "MQ", "GF", "RE", "YT", "PM", "BL", "MF", "WF", "PF", "NC", "TF"],
+      "description": "Codes territoires INSEE pour DOM-ROM-COM"
+    },
+    "priceRecord": {
+      "type": "object",
+      "required": ["ean", "name", "category", "territory", "observedAt", "price", "source"],
+      "properties": {
+        "ean": {
+          "type": "string",
+          "pattern": "^\\d{8,13}$",
+          "description": "Code EAN du produit (GTIN-8, GTIN-13)"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "description": "Nom du produit"
+        },
+        "brand": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Marque du produit"
+        },
+        "category": {
+          "type": "string",
+          "description": "Catégorie du produit"
+        },
+        "subcategory": {
+          "type": "string",
+          "description": "Sous-catégorie du produit"
+        },
+        "territory": {
+          "$ref": "#/definitions/territoryCode",
+          "description": "Territoire d'observation"
+        },
+        "observedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Date et heure d'observation du prix"
+        },
+        "price": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Prix en euros (€)"
+        },
+        "priceUnit": {
+          "type": "string",
+          "default": "€",
+          "description": "Unité monétaire"
+        },
+        "quantity": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Quantité (poids, volume, nombre d'unités)"
+        },
+        "quantityUnit": {
+          "type": "string",
+          "enum": ["g", "kg", "ml", "l", "unit"],
+          "description": "Unité de quantité"
+        },
+        "pricePerUnit": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Prix par unité (€/kg, €/L, etc.)"
+        },
+        "store": {
+          "type": "string",
+          "description": "Enseigne ou point de vente"
+        },
+        "storeLocation": {
+          "type": "object",
+          "properties": {
+            "commune": {"type": "string"},
+            "codeINSEE": {"type": "string", "pattern": "^\\d{5}$"},
+            "latitude": {"type": "number", "minimum": -90, "maximum": 90},
+            "longitude": {"type": "number", "minimum": -180, "maximum": 180}
+          },
+          "description": "Localisation géographique du point de vente"
+        },
+        "source": {
+          "type": "string",
+          "enum": ["label_scan", "ticket_scan", "public_database", "user_report", "official_source"],
+          "description": "Source de l'observation"
+        },
+        "qualityScore": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Score de qualité de l'observation (0-1)"
+        },
+        "promotion": {
+          "type": "boolean",
+          "description": "Indique si le prix correspond à une promotion"
+        },
+        "verificationType": {
+          "type": "string",
+          "enum": ["automatic", "manual", "verified"],
+          "description": "Type de vérification de la donnée"
+        }
+      }
+    },
+    "productRecord": {
+      "type": "object",
+      "required": ["ean", "name", "category", "territory"],
+      "properties": {
+        "ean": {
+          "type": "string",
+          "pattern": "^\\d{8,13}$",
+          "description": "Code EAN du produit"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "description": "Nom du produit"
+        },
+        "brand": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Marque"
+        },
+        "category": {
+          "type": "string",
+          "description": "Catégorie principale"
+        },
+        "subcategory": {
+          "type": "string",
+          "description": "Sous-catégorie"
+        },
+        "territory": {
+          "$ref": "#/definitions/territoryCode",
+          "description": "Territoire de référence"
+        },
+        "firstObserved": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Date de première observation"
+        },
+        "lastObserved": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Date de dernière observation"
+        },
+        "ingredients": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Liste ordonnée des ingrédients"
+        },
+        "nutrition": {
+          "type": "object",
+          "properties": {
+            "energyKcal": {"type": "number", "minimum": 0},
+            "energyKj": {"type": "number", "minimum": 0},
+            "fats": {"type": "number", "minimum": 0},
+            "saturatedFats": {"type": "number", "minimum": 0},
+            "carbohydrates": {"type": "number", "minimum": 0},
+            "sugars": {"type": "number", "minimum": 0},
+            "proteins": {"type": "number", "minimum": 0},
+            "salt": {"type": "number", "minimum": 0},
+            "fiber": {"type": "number", "minimum": 0}
+          },
+          "description": "Valeurs nutritionnelles pour 100g/100ml"
+        },
+        "packaging": {
+          "type": "string",
+          "description": "Type d'emballage"
+        },
+        "labels": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Labels et certifications (Bio, Label Rouge, etc.)"
+        }
+      }
+    },
+    "storeRecord": {
+      "type": "object",
+      "required": ["id", "name", "territory"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Identifiant unique du magasin"
+        },
+        "name": {
+          "type": "string",
+          "description": "Nom de l'enseigne"
+        },
+        "chain": {
+          "type": "string",
+          "description": "Groupe ou chaîne de magasins"
+        },
+        "territory": {
+          "$ref": "#/definitions/territoryCode",
+          "description": "Territoire"
+        },
+        "commune": {
+          "type": "string",
+          "description": "Commune"
+        },
+        "codeINSEE": {
+          "type": "string",
+          "pattern": "^\\d{5}$",
+          "description": "Code INSEE de la commune"
+        },
+        "address": {
+          "type": "string",
+          "description": "Adresse complète"
+        },
+        "location": {
+          "type": "object",
+          "properties": {
+            "latitude": {"type": "number", "minimum": -90, "maximum": 90},
+            "longitude": {"type": "number", "minimum": -180, "maximum": 180}
+          },
+          "required": ["latitude", "longitude"],
+          "description": "Coordonnées GPS"
+        },
+        "priceLevel": {
+          "type": "string",
+          "enum": ["low", "medium", "high"],
+          "description": "Niveau de prix général"
+        },
+        "observationCount": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Nombre d'observations pour ce magasin"
+        }
+      }
+    }
+  },
+  "properties": {
+    "metadata": {
+      "$ref": "#/definitions/metadata",
+      "description": "Métadonnées de l'export"
+    },
+    "records": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {"$ref": "#/definitions/priceRecord"},
+          {"$ref": "#/definitions/productRecord"},
+          {"$ref": "#/definitions/storeRecord"}
+        ]
+      },
+      "description": "Enregistrements de données"
+    }
+  },
+  "required": ["metadata", "records"]
+}

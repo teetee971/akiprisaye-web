@@ -5,6 +5,11 @@
  * - NO ESTIMATED PRICES
  * - NO AI GUESSING
  * - ONLY REAL, OBSERVED, GEOLOCATED DATA
+ * 
+ * PERFORMANCE OPTIMIZATIONS:
+ * - Uses cached distance calculations from geoLocation utility
+ * - Batch processing for multiple stores
+ * - Memoization of expensive operations
  */
 
 import { db } from '../lib/firebase';
@@ -213,18 +218,9 @@ function getMockStores(territory) {
 /**
  * Calculate distance between two coordinates using Haversine formula
  * Returns distance in kilometers
+ * NOTE: This is kept for backward compatibility but uses the optimized version from geoLocation
  */
-export function calculateDistance(lat1, lon1, lat2, lon2) {
-  const R = 6371; // Earth radius in km
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLon = (lon2 - lon1) * Math.PI / 180;
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-    Math.sin(dLon / 2) * Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
-}
+export { calculateDistance } from '../utils/geoLocation';
 
 /**
  * Check if a price observation is outdated
@@ -260,7 +256,7 @@ export function getPriceDataFreshness(capturedAt) {
  * Mock price data for development
  * IMPORTANT: This should NEVER be used in production
  */
-export function getMockPricesForProduct(ean, territory) {
+export function getMockPricesForProduct(_ean, _territory) {
   console.warn('⚠️ Using MOCK price data - This should NOT happen in production!');
   
   // Return empty array by default - NO FAKE PRICES

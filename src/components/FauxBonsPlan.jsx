@@ -12,7 +12,6 @@
  */
 
 import { useState } from 'react';
-import { Card } from './card.jsx';
 import productsData from '../data/faux-bons-plans.json';
 
 export function FauxBonsPlan() {
@@ -37,6 +36,14 @@ export function FauxBonsPlan() {
 
   return (
     <div className="space-y-6">
+      {/* Data Source Warning */}
+      {productsData.metadata.dataStatus !== 'OFFICIEL' && (
+        <DataSourceWarning 
+          dataStatus={productsData.metadata.dataStatus}
+          requiredSources={productsData.metadata.requiredSources}
+        />
+      )}
+
       {/* Header */}
       <div className="bg-gradient-to-r from-amber-600 to-amber-800 rounded-lg p-6 text-white">
         <h2 className="text-2xl font-bold mb-2">

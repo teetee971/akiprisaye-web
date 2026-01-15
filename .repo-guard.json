@@ -1,0 +1,8 @@
+{
+  "allow": [
+    "public/ocr/**",
+    "**/*.wasm",
+    "**/*.traineddata.gz",
+    "**/worker.min.js"
+  ]
+}

@@ -5,7 +5,7 @@ import {
   createAssistantMessage,
   isProhibitedQuery,
   type AssistantMessage
-} from '@/services/assistantService';
+} from '../services/assistantService';
 
 export default function AssistantChat() {
   const [isOpen, setIsOpen] = useState(false);
@@ -70,7 +70,7 @@ export default function AssistantChat() {
       {/* Floating Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`fixed bottom-6 right-6 w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition-all z-50 ${
+        className={`w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition-all ${
           isOpen
             ? 'bg-red-600 hover:bg-red-500'
             : 'bg-blue-600 hover:bg-blue-500 animate-pulse'
@@ -86,7 +86,7 @@ export default function AssistantChat() {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-24 right-6 w-96 max-w-[calc(100vw-3rem)] h-[600px] max-h-[calc(100vh-8rem)] bg-slate-900/95 backdrop-blur-lg border border-slate-700/50 rounded-xl shadow-2xl flex flex-col z-50">
+        <div className="fixed bottom-24 right-6 w-96 max-w-[calc(100vw-3rem)] h-[600px] max-h-[calc(100vh-8rem)] bg-slate-900/95 backdrop-blur-lg border border-slate-700/50 rounded-xl shadow-2xl flex flex-col z-modal">
           {/* Header */}
           <div className="p-4 border-b border-slate-700/50 flex items-center justify-between">
             <div>

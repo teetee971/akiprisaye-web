@@ -1,34 +1,12 @@
 import { GlassCard } from "../components/ui/glass-card";
+import VersionBanner from "../components/ui/VersionBanner";
 
 export default function Home() {
   return (
     <div className="space-y-6">
 
-      {/* Version Client Officielle v1.0 */}
-      <div
-        style={{
-          background: "#0f172a",
-          border: "1px solid #1e293b",
-          borderRadius: "12px",
-          padding: "12px 16px",
-          margin: "16px auto",
-          maxWidth: "520px",
-          textAlign: "center",
-          fontSize: "14px",
-          color: "#e5e7eb",
-        }}
-      >
-        <strong>Version Client Officielle v1.0</strong><br />
-        Plateforme publique stable – données vérifiées – transparence garantie<br />
-        <a
-          href="https://github.com/teetee971/akiprisaye-web/releases/tag/v1.0"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ color: "#60a5fa", textDecoration: "underline" }}
-        >
-          Voir la version de référence
-        </a>
-      </div>
+      {/* Centralized public version banner */}
+      <VersionBanner />
 
       {/* Hero principal - Proposition de valeur claire */}
       <GlassCard>
@@ -72,51 +50,6 @@ export default function Home() {
             <span className="text-green-400 mt-0.5">✔</span>
             <span><strong>Sources publiques et vérifiables</strong></span>
           </li>
-          <li className="flex items-start gap-2">
-            <span className="text-green-400 mt-0.5">✔</span>
-            <span><strong>Lecture seule</strong> – aucun conseil, aucune publicité</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-blue-400 mt-0.5">✔</span>
-            <span><strong>Données exportables</strong> – Open-Data</span>
-          </li>
-        </ul>
-      </GlassCard>
-
-      {/* CTAs clairs */}
-      <GlassCard>
-        <h3 className="text-lg font-semibold mb-4">Accéder aux données</h3>
-        <div className="space-y-2">
-          <a 
-            href="/comparateur" 
-            className="block px-4 py-3 bg-blue-600 hover:bg-blue-500 rounded-lg text-center font-medium transition-colors"
-          >
-            → Accéder au comparateur
-          </a>
-          <a 
-            href="/carte" 
-            className="block px-4 py-3 bg-slate-700 hover:bg-slate-600 rounded-lg text-center transition-colors"
-          >
-            → Consulter les données par territoire
-          </a>
-          <a 
-            href="https://github.com/teetee971/akiprisaye-web/blob/main/docs/CHARTE_TRANSPARENCE.md" 
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block px-4 py-3 bg-slate-700 hover:bg-slate-600 rounded-lg text-center transition-colors"
-          >
-            → Voir la méthodologie
-          </a>
-        </div>
-      </GlassCard>
-
-      {/* Fonctionnalités en cours de déploiement */}
-      <GlassCard>
-        <h3 className="text-lg font-semibold mb-3 text-gray-400">Fonctionnalités en cours de déploiement</h3>
-        <ul className="space-y-2 text-sm text-gray-400">
-          <li>• Comparaison multi-services (énergie, télécoms, transports)</li>
-          <li>• Indices du coût de la vie par territoire</li>
-          <li>• Données ouvertes pour chercheurs et institutions</li>
         </ul>
       </GlassCard>
 

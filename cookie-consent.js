@@ -34,18 +34,17 @@ class CookieConsent {
       <div class="cookie-consent-content">
         <div class="cookie-consent-text">
           <p>
-            🍪 Nous utilisons des cookies pour améliorer votre expérience sur notre site. 
-            En continuant à naviguer, vous acceptez notre 
-            <a href="/mentions.html#cookies" target="_blank">politique de cookies</a> et notre
-            <a href="/mentions.html#privacy" target="_blank">politique de confidentialité</a>.
+            🍪 Ce site utilise uniquement des cookies strictement nécessaires à son fonctionnement 
+            (authentification, préférences, sécurité). Aucun cookie publicitaire ou de traçage n'est utilisé.
+            Consultez notre 
+            <a href="/mentions.html#cookies" target="_blank">politique de cookies</a> et 
+            <a href="/mentions.html#privacy" target="_blank">politique de confidentialité</a> 
+            pour plus d'informations.
           </p>
         </div>
         <div class="cookie-consent-buttons">
-          <button class="cookie-btn cookie-btn-accept" id="cookie-accept" aria-label="Accepter les cookies">
-            ✓ Accepter
-          </button>
-          <button class="cookie-btn cookie-btn-decline" id="cookie-decline" aria-label="Refuser les cookies">
-            ✗ Refuser
+          <button class="cookie-btn cookie-btn-accept" id="cookie-accept" aria-label="Accepter les cookies nécessaires">
+            ✓ J'ai compris
           </button>
         </div>
       </div>
@@ -62,12 +61,10 @@ class CookieConsent {
     document.getElementById('cookie-accept')?.addEventListener('click', () => {
       this.setConsent('accepted');
       this.hideBanner(banner);
-      this.loadAnalytics();
-    });
-    
-    document.getElementById('cookie-decline')?.addEventListener('click', () => {
-      this.setConsent('declined');
-      this.hideBanner(banner);
+      // No analytics to load for strictly necessary cookies
+      if (import.meta.env.DEV) {
+        console.warn('Cookie notice acknowledged - Only essential cookies are used');
+      }
     });
   }
 
@@ -99,10 +96,15 @@ class CookieConsent {
   }
 
   loadAnalytics() {
-    // Placeholder for analytics/tracking code
-    console.log('Cookie consent accepted - Analytics can be loaded');
+    // Note: For strictly necessary cookies, no additional analytics loading is required
+    // This method is kept for future optional analytics with explicit consent
+    if (import.meta.env.DEV) {
+      console.warn('Cookie consent accepted - Only essential cookies are used');
+      console.warn('A KI PRI SA YÉ: No advertising, no tracking, no behavioral manipulation');
+    }
     
-    // Example: Load Google Analytics, Firebase Analytics, etc.
+    // Future optional analytics would require explicit additional consent
+    // Example for future use:
     // if (typeof gtag !== 'undefined') {
     //   gtag('consent', 'update', {
     //     'analytics_storage': 'granted'

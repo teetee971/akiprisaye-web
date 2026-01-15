@@ -140,8 +140,10 @@ async function handleAnalyzeProduct(productInfo) {
 
 /**
  * Formate les données de prix reçues de l'API
+ * Note: productInfo and territory parameters removed as they were unused.
+ * All necessary data is contained within the apiData response from the API.
  */
-function formatPriceData(apiData, productInfo, territory) {
+function formatPriceData(apiData) {
   const formatted = {
     observationDate: apiData.observation_date || new Date().toLocaleDateString('fr-FR'),
     comparison: [],
@@ -299,10 +301,10 @@ async function syncWithPWA(dataType, data) {
       },
       body: JSON.stringify({ data })
     });
-  } catch (error) {
+  } catch {
     // La synchronisation échoue silencieusement
     // Les données restent en local
-    console.log('Sync failed, data stored locally only');
+    console.warn('Sync failed, data stored locally only');
   }
 }
 

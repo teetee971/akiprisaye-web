@@ -14,51 +14,55 @@ export const ACCESS_LEVEL_PRICES = {
   PUBLIC: { 
     monthly: 0, 
     yearly: 0,
-    description: 'Accès gratuit — Comparaisons basiques, lecture seule'
+    description: 'Accès gratuit — Scan illimité, comparaisons basiques'
   },
   CITIZEN: { 
-    monthly: 2.99, 
-    yearly: 29,
-    description: 'Citoyen+ — Historique, alertes, exports basiques'
+    monthly: 3.99, 
+    yearly: 39,
+    description: 'Citoyen — Scan illimité, OCR, historique, alertes'
   },
   PROFESSIONAL: { 
-    monthly: 9.99, 
-    yearly: 99,
-    description: 'Pro — Agrégations avancées, multi-territoires'
+    monthly: 19, 
+    yearly: 190,
+    description: 'Professionnel — Comparaisons temporelles, exports, agrégations'
   },
   INSTITUTIONAL: { 
     monthly: null, 
     yearly: null,
-    description: 'Institution — API, open-data, rapports (sur devis)'
+    description: 'Institution — Licence annuelle, données publiques agrégées'
   },
 } as const;
 
 export const FEATURES = {
-  // Accès Public (Gratuit pour tous)
+  // Accès Public (Gratuit pour tous - avec inscription)
   PRICE_COMPARISON: ['PUBLIC', 'CITIZEN', 'PROFESSIONAL', 'INSTITUTIONAL'],
   TERRITORY_VIEW: ['PUBLIC', 'CITIZEN', 'PROFESSIONAL', 'INSTITUTIONAL'],
   PRICE_SOURCES_VISIBLE: ['PUBLIC', 'CITIZEN', 'PROFESSIONAL', 'INSTITUTIONAL'],
   BASIC_HISTORY: ['PUBLIC', 'CITIZEN', 'PROFESSIONAL', 'INSTITUTIONAL'],
   READ_ONLY_ACCESS: ['PUBLIC', 'CITIZEN', 'PROFESSIONAL', 'INSTITUTIONAL'],
   NO_ADS: ['PUBLIC', 'CITIZEN', 'PROFESSIONAL', 'INSTITUTIONAL'],
+  SCAN_EAN_UNLIMITED: ['PUBLIC', 'CITIZEN', 'PROFESSIONAL', 'INSTITUTIONAL'],
   
-  // Accès Citoyen
-  LOCAL_ALERTS: ['CITIZEN', 'PROFESSIONAL', 'INSTITUTIONAL'],
-  EXTENDED_HISTORY: ['CITIZEN', 'PROFESSIONAL', 'INSTITUTIONAL'],
-  PRODUCT_TRACKING: ['CITIZEN', 'PROFESSIONAL', 'INSTITUTIONAL'],
-  PUBLIC_DATA_ACCESS: ['CITIZEN', 'PROFESSIONAL', 'INSTITUTIONAL'],
+  // Accès Citoyen (3.99€/mois)
+  OCR_INGREDIENTS: ['CITIZEN', 'PROFESSIONAL', 'INSTITUTIONAL'],
+  ENRICHED_PRODUCT_INFO: ['CITIZEN', 'PROFESSIONAL', 'INSTITUTIONAL'],
+  LOCAL_PRICE_ALERTS: ['CITIZEN', 'PROFESSIONAL', 'INSTITUTIONAL'],
+  PERSONAL_HISTORY: ['CITIZEN', 'PROFESSIONAL', 'INSTITUTIONAL'],
+  CITIZEN_REPORTING: ['CITIZEN', 'PROFESSIONAL', 'INSTITUTIONAL'],
   
-  // Accès Professionnel
-  MULTI_TERRITORY: ['PROFESSIONAL', 'INSTITUTIONAL'],
-  LONG_TIME_SERIES: ['PROFESSIONAL', 'INSTITUTIONAL'],
-  CSV_EXPORT: ['PROFESSIONAL', 'INSTITUTIONAL'],
-  MULTI_TERRITORY_COMPARISON: ['PROFESSIONAL', 'INSTITUTIONAL'],
+  // Accès Professionnel (19€/mois)
+  MULTI_BRAND_TEMPORAL: ['PROFESSIONAL', 'INSTITUTIONAL'],
+  LONG_HISTORY_12_36_MONTHS: ['PROFESSIONAL', 'INSTITUTIONAL'],
+  CSV_JSON_EXPORT: ['PROFESSIONAL', 'INSTITUTIONAL'],
+  TERRITORIAL_AGGREGATION: ['PROFESSIONAL', 'INSTITUTIONAL'],
+  EAN_SEARCH_HISTORY: ['PROFESSIONAL', 'INSTITUTIONAL'],
   
-  // Licence Institutionnelle
-  PUBLIC_AUDITED_DATA: ['INSTITUTIONAL'],
-  NORMALIZED_EXPORTS: ['INSTITUTIONAL'],
-  PUBLIC_API: ['INSTITUTIONAL'],
-  OFFICIAL_METHODOLOGY: ['INSTITUTIONAL'],
+  // Licence Institutionnelle (Sur devis)
+  PUBLIC_AGGREGATED_DATA: ['INSTITUTIONAL'],
+  AUDITABILITY: ['INSTITUTIONAL'],
+  STRUCTURED_OPEN_DATA: ['INSTITUTIONAL'],
+  TERRITORIAL_INTERNATIONAL_COMPARISON: ['INSTITUTIONAL'],
+  OFFICIAL_OBSERVATORY: ['INSTITUTIONAL'],
 } as const;
 
 export type Feature = keyof typeof FEATURES;
@@ -85,31 +89,35 @@ export const getAccessPrice = (
  */
 export const getFeatureDescription = (feature: Feature): string => {
   const descriptions: Record<Feature, string> = {
-    // Accès Public
+    // Accès Public (Gratuit avec inscription)
     PRICE_COMPARISON: 'Comparateur citoyen DOM · ROM · COM',
     TERRITORY_VIEW: 'Consultation par territoire',
     PRICE_SOURCES_VISIBLE: 'Prix observés, datés et sourcés',
     BASIC_HISTORY: 'Historique simple',
     READ_ONLY_ACCESS: 'Lecture seule',
     NO_ADS: 'Sans publicité',
+    SCAN_EAN_UNLIMITED: 'Scan EAN illimité (jamais bloqué)',
     
-    // Accès Citoyen
-    LOCAL_ALERTS: 'Alertes locales personnalisées',
-    EXTENDED_HISTORY: 'Historique des prix',
-    PRODUCT_TRACKING: 'Consultation des comparateurs',
-    PUBLIC_DATA_ACCESS: 'Accès aux données publiques',
+    // Accès Citoyen (3.99€/mois)
+    OCR_INGREDIENTS: 'OCR ingrédients (texte brut)',
+    ENRICHED_PRODUCT_INFO: 'Fiche produit enrichie',
+    LOCAL_PRICE_ALERTS: 'Alertes prix locales simples',
+    PERSONAL_HISTORY: 'Historique personnel local',
+    CITIZEN_REPORTING: 'Signalement citoyen',
     
-    // Accès Professionnel
-    MULTI_TERRITORY: 'Comparaisons multi-territoires',
-    LONG_TIME_SERIES: 'Séries historiques complètes',
-    CSV_EXPORT: 'Exports CSV / JSON',
-    MULTI_TERRITORY_COMPARISON: 'Analyses territoriales avancées',
+    // Accès Professionnel (19€/mois)
+    MULTI_BRAND_TEMPORAL: 'Comparaisons temporelles multi-marques',
+    LONG_HISTORY_12_36_MONTHS: 'Historique long (12-36 mois)',
+    CSV_JSON_EXPORT: 'Export CSV / JSON',
+    TERRITORIAL_AGGREGATION: 'Agrégation territoriale',
+    EAN_SEARCH_HISTORY: 'Recherche EAN + historique',
     
-    // Licence Institutionnelle
-    PUBLIC_AUDITED_DATA: 'Données publiques auditées',
-    NORMALIZED_EXPORTS: 'Exports normalisés (INSEE / Eurostat)',
-    PUBLIC_API: 'Accès API open-data',
-    OFFICIAL_METHODOLOGY: 'Documentation méthodologique officielle',
+    // Licence Institutionnelle (Sur devis)
+    PUBLIC_AGGREGATED_DATA: 'Données publiques agrégées',
+    AUDITABILITY: 'Auditabilité',
+    STRUCTURED_OPEN_DATA: 'Accès open-data structuré',
+    TERRITORIAL_INTERNATIONAL_COMPARISON: 'Comparaisons territoriales / internationales',
+    OFFICIAL_OBSERVATORY: 'Observatoire officiel',
   };
   
   return descriptions[feature];

@@ -10,40 +10,43 @@ const accessLevels = [
     id: 'PUBLIC',
     title: '📖 Gratuit',
     price: '0 €',
-    subtitle: 'Accès public',
+    subtitle: 'Accès libre aux comparaisons',
     features: [
+      'Scan EAN illimité',
       'Comparaisons basiques',
       'Lecture seule',
-      'Données observées',
       'Sans publicité',
     ],
-    note: 'Accès de base pour tous les citoyens.',
+    note: 'Inscription optionnelle pour alertes, panier et historique.',
   },
   {
     id: 'CITIZEN',
-    title: '🧑 Citoyen+',
-    price: '2,99 € / mois',
-    subtitle: 'Contribution volontaire',
+    title: '🧑 Citoyen',
+    price: '3,99 € / mois',
+    subtitle: 'Outil citoyen complet',
     features: [
-      'Historique étendu',
-      'Alertes locales',
-      'Exports basiques',
-      'Suivi de produits',
+      'Scan EAN illimité',
+      'OCR ingrédients (texte brut)',
+      'Fiche produit enrichie',
+      'Alertes prix locales',
+      'Historique personnel',
+      'Signalement citoyen',
     ],
-    note: 'Soutien au fonctionnement du service.',
+    note: 'Valeur immédiate. Le scan n\'est jamais bloqué.',
   },
   {
     id: 'PROFESSIONAL',
-    title: '🧑‍💼 Pro',
-    price: '9,99 € / mois',
-    subtitle: 'Agrégations avancées',
+    title: '🧑‍💼 Professionnel',
+    price: '19 € / mois',
+    subtitle: 'Outil de travail',
     features: [
-      'Multi-territoires',
-      'Séries historiques longues',
-      'Exports CSV / JSON',
-      'Analyses territoriales',
+      'Comparaisons temporelles multi-marques',
+      'Historique long (12-36 mois)',
+      'Export CSV / JSON',
+      'Agrégation territoriale',
+      'Recherche EAN + historique',
     ],
-    note: 'Pour associations, journalistes, chercheurs.',
+    note: 'Pour artisans, associations, journalistes. Outil d\'observation, pas de conseil.',
   },
   {
     id: 'INSTITUTIONAL',
@@ -51,12 +54,13 @@ const accessLevels = [
     price: 'Sur devis',
     subtitle: 'Licence annuelle',
     features: [
-      'API open-data',
-      'Exports normalisés INSEE/Eurostat',
-      'Documentation complète',
-      'Support méthodologique',
+      'Données publiques agrégées',
+      'Auditabilité complète',
+      'Accès open-data structuré',
+      'Comparaisons territoriales/internationales',
+      'Observatoire officiel',
     ],
-    note: 'Paiement non activé — accès sur convention ou demande officielle.',
+    note: 'Conforme INSEE / Eurostat / collectivités. Clause de non-interprétation politique.',
   },
 ];
 
@@ -76,6 +80,32 @@ export default function PricingDetailed() {
             <p className="text-xl font-semibold text-green-300">
               DOM · ROM · COM
             </p>
+          </div>
+        </div>
+
+        {/* Pourquoi un abonnement? - Section d'explication */}
+        <div className="mb-12 p-8 bg-green-900/20 border border-green-500/30 rounded-xl">
+          <h2 className="text-2xl font-bold text-white mb-4 text-center">
+            Pourquoi un abonnement ?
+          </h2>
+          <p className="text-gray-200 text-base max-w-3xl mx-auto text-center leading-relaxed">
+            A KI PRI SA YÉ est un outil citoyen, indépendant et sans publicité.
+            L'abonnement permet de maintenir des données fiables, auditées, mises à jour,
+            sans revente ni influence commerciale.
+          </p>
+          <div className="mt-6 flex justify-center gap-4 flex-wrap">
+            <span className="px-4 py-2 bg-red-900/30 border border-red-500/30 rounded-lg text-red-200 text-sm">
+              ❌ Pas de publicité
+            </span>
+            <span className="px-4 py-2 bg-red-900/30 border border-red-500/30 rounded-lg text-red-200 text-sm">
+              ❌ Pas de vente de données
+            </span>
+            <span className="px-4 py-2 bg-green-900/30 border border-green-500/30 rounded-lg text-green-200 text-sm">
+              ✅ Accès libre aux comparaisons
+            </span>
+            <span className="px-4 py-2 bg-green-900/30 border border-green-500/30 rounded-lg text-green-200 text-sm">
+              ✅ Transparence totale
+            </span>
           </div>
         </div>
 
@@ -157,10 +187,10 @@ export default function PricingDetailed() {
           <div className="grid gap-6 md:grid-cols-2">
             <GlassCard>
               <h3 className="font-bold text-lg text-white mb-2">
-                Pourquoi une inscription est-elle obligatoire ?
+                Quand l'inscription est-elle nécessaire ?
               </h3>
               <p className="text-gray-300 text-sm">
-                Pour assurer la traçabilité des usages, la fiabilité statistique et la protection des données publiques.
+                L'inscription est nécessaire pour les alertes prix, le panier et l'historique. Les comparaisons et recherches restent accessibles librement.
               </p>
             </GlassCard>
 

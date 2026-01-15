@@ -197,7 +197,7 @@ export async function updateUserRole(
  * Returns: { data: { users, legalEntities, audit } }
  */
 export async function getStats(
-  req: Request,
+  _req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> {

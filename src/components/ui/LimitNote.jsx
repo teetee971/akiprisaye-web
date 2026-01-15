@@ -3,7 +3,6 @@
  * Display note for data limitations
  * MANDATORY: Explain data limits for transparency
  */
-import React from 'react';
 import { cn } from '@/lib/utils';
 
 export function LimitNote({ 

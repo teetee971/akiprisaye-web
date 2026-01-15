@@ -1,0 +1,32 @@
+[
+  {
+    "groupe": "GBH",
+    "indice": "🔴",
+    "ecart_moyen": "+22%",
+    "territoires": ["Guadeloupe","Martinique","Guyane","La Réunion"]
+  },
+  {
+    "groupe": "Groupe Caillé",
+    "indice": "🟠",
+    "ecart_moyen": "+14%",
+    "territoires": ["La Réunion"]
+  },
+  {
+    "groupe": "Groupe Parfait",
+    "indice": "🟠",
+    "ecart_moyen": "+12%",
+    "territoires": ["Guadeloupe","Martinique"]
+  },
+  {
+    "groupe": "Groupe Hayot-Sodiprav",
+    "indice": "🟠",
+    "ecart_moyen": "+13%",
+    "territoires": ["Martinique"]
+  },
+  {
+    "groupe": "Indépendants",
+    "indice": "🟢",
+    "ecart_moyen": "+7%",
+    "territoires": ["Guadeloupe","Martinique","Guyane","La Réunion"]
+  }
+]

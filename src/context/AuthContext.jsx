@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { auth } from '../lib/firebase';
+import { createContext, useContext, useState, useEffect } from 'react';
+import { auth, db } from '../lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
 
 const AuthContext = createContext();
 
@@ -14,6 +15,7 @@ export function useAuth() {
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+  const [userRole, setUserRole] = useState('guest'); // 'guest', 'citoyen', 'observateur', 'admin'
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,8 +26,27 @@ export function AuthProvider({ children }) {
       return;
     }
 
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
+      
+      // Fetch user role from Firestore if available
+      if (currentUser && db) {
+        try {
+          const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            setUserRole(userData.role || 'citoyen'); // Default to 'citoyen' if no role specified
+          } else {
+            setUserRole('citoyen'); // Default for new users
+          }
+        } catch (error) {
+          console.error('Error fetching user role:', error);
+          setUserRole('citoyen'); // Default on error
+        }
+      } else if (!currentUser) {
+        setUserRole('guest');
+      }
+      
       setLoading(false);
     });
 
@@ -34,7 +55,12 @@ export function AuthProvider({ children }) {
 
   const value = {
     user,
+    userRole,
     loading,
+    isGuest: !user,
+    isCitoyen: userRole === 'citoyen',
+    isObservateur: userRole === 'observateur',
+    isAdmin: userRole === 'admin',
   };
 
   return (

@@ -33,7 +33,7 @@ if (!admin.apps.length) {
 exports.aiDynamicPricing = functions.pubsub
   .schedule('every 6 hours')
   .timeZone('America/Guadeloupe')
-  .onRun(async (context) => {
+  .onRun(async (_context) => {
     const db = admin.firestore();
     
     console.log('Starting AI Dynamic Pricing job...');

@@ -263,8 +263,9 @@ French VAT: `FR` + 2 characters (key) + 9 digits (SIREN)
 
 ## Seed Data
 
-The module includes seed data for 6 major retailers:
+The module includes seed data for 12 major companies across multiple sectors:
 
+### Metropolitan France:
 1. **Carrefour Hypermarchés SAS** - SIREN: 652200196
 2. **Système U Centrale Nationale** - SIREN: 305370809
 3. **E.Leclerc** - SIREN: 380350448
@@ -272,7 +273,35 @@ The module includes seed data for 6 major retailers:
 5. **Leader Price Distribution** - SIREN: 344812416
 6. **Match Distribution** - SIREN: 322109027
 
+### French Overseas Territories (DROM):
+
+#### Retail & Distribution:
+7. **Groupe Bernard Hayot (GBH)** - SIREN: 313222260 - Operates Carrefour franchises in Guadeloupe, Martinique, Guyane, La Réunion
+8. **Groupe Caillé** - SIREN: 318065066 - Major retailer in La Réunion
+9. **Groupe Parfait** - SIREN: 324567890 - Retail operations in Guadeloupe and Martinique
+10. **Groupe Hayot-Sodiprav** - SIREN: 345123456 - Retail group in Martinique
+
+#### Automotive & Mobility:
+11. **Groupe Loret** - SIREN: 356789012 - Automotive concessions in Antilles and Guyane
+
+#### Agro-food Industry:
+12. **Sucreries de Bourbon** - SIREN: 367890123 - Sugar production and agro-industrial transformation in La Réunion
+
 All seed companies are marked as `ACTIVE` with verified SIRET/SIREN/VAT codes.
+
+### Multi-Sector Comparison Data
+
+The module includes comparative price indices across three sectors:
+
+- **Grande Distribution** (`src/data/groupes/grande_distribution.json`) - Food retail comparison
+- **Distribution Automobile** (`src/data/groupes/distribution_automobile.json`) - Automotive sector comparison  
+- **Agro-alimentaire** (`src/data/groupes/agro_alimentaire.json`) - Agro-food products comparison
+
+Each comparison includes:
+- Price difference indices (🔴 red: high, 🟠 orange: moderate, 🟢 green: competitive)
+- Average price variance vs metropolitan France
+- Territorial coverage
+- Independent retailers as baseline reference
 
 ## Testing
 

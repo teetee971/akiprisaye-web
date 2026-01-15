@@ -1,0 +1,244 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "generated_at": "2026-01-14T08:00:00.000Z",
+    "source": "A KI PRI SA YÉ - Contributions citoyennes",
+    "note": "Données réelles à ajouter - Structure prête pour collecte",
+    "disclaimer": "Observer, pas vendre - Aucun conseil personnalisé",
+    "updateFrequency": "continuous",
+    "features": [
+      "Comparaison multi-territoires",
+      "Niveaux de couverture",
+      "Export CSV/TXT",
+      "Architecture évolutive"
+    ]
+  },
+  "providers": [
+    "AXA",
+    "Allianz",
+    "MAAF",
+    "Groupama",
+    "Matmut",
+    "MACIF",
+    "MAIF",
+    "MMA",
+    "GMF",
+    "Direct Assurance"
+  ],
+  "insurances": [
+    {
+      "id": "example-auto-gp-1",
+      "providerName": "Exemple Assureur A",
+      "offerName": "Auto Tiers",
+      "insuranceType": "auto",
+      "coverageLevel": "basic",
+      "annualPriceTTC": 450,
+      "territory": "GP",
+      "mainCoverages": [
+        "Responsabilité civile",
+        "Défense pénale",
+        "Protection juridique"
+      ],
+      "deductible": 450,
+      "observationDate": "2026-01-10T00:00:00.000Z",
+      "source": {
+        "type": "user_report",
+        "reliability": "medium"
+      },
+      "additionalInfo": {
+        "contractDuration": "1 an",
+        "paymentOptions": ["Mensuel", "Annuel"]
+      }
+    },
+    {
+      "id": "example-auto-gp-2",
+      "providerName": "Exemple Assureur B",
+      "offerName": "Auto Tiers Étendu",
+      "insuranceType": "auto",
+      "coverageLevel": "intermediate",
+      "annualPriceTTC": 680,
+      "territory": "GP",
+      "mainCoverages": [
+        "Responsabilité civile",
+        "Vol",
+        "Incendie",
+        "Bris de glace",
+        "Protection juridique"
+      ],
+      "deductible": 350,
+      "observationDate": "2026-01-11T00:00:00.000Z",
+      "source": {
+        "type": "official_website",
+        "url": "https://example-assureur-b.fr",
+        "reliability": "high"
+      },
+      "additionalInfo": {
+        "contractDuration": "1 an",
+        "paymentOptions": ["Mensuel", "Annuel"]
+      }
+    },
+    {
+      "id": "example-auto-mq-1",
+      "providerName": "Exemple Assureur A",
+      "offerName": "Auto Tous Risques",
+      "insuranceType": "auto",
+      "coverageLevel": "comprehensive",
+      "annualPriceTTC": 950,
+      "territory": "MQ",
+      "mainCoverages": [
+        "Responsabilité civile",
+        "Dommages tous accidents",
+        "Vol",
+        "Incendie",
+        "Bris de glace",
+        "Catastrophes naturelles",
+        "Protection juridique",
+        "Assistance 0 km"
+      ],
+      "deductible": 200,
+      "observationDate": "2026-01-12T00:00:00.000Z",
+      "source": {
+        "type": "user_report",
+        "reliability": "medium"
+      },
+      "additionalInfo": {
+        "contractDuration": "1 an",
+        "paymentOptions": ["Mensuel", "Annuel", "Trimestriel"]
+      }
+    },
+    {
+      "id": "example-home-gp-1",
+      "providerName": "Exemple Assureur C",
+      "offerName": "Habitation Basic",
+      "insuranceType": "home",
+      "coverageLevel": "basic",
+      "annualPriceTTC": 180,
+      "territory": "GP",
+      "mainCoverages": [
+        "Responsabilité civile",
+        "Incendie",
+        "Dégâts des eaux",
+        "Bris de glace"
+      ],
+      "deductible": 300,
+      "observationDate": "2026-01-13T00:00:00.000Z",
+      "source": {
+        "type": "official_website",
+        "url": "https://example-assureur-c.fr",
+        "reliability": "high"
+      },
+      "additionalInfo": {
+        "contractDuration": "1 an",
+        "paymentOptions": ["Mensuel", "Annuel"]
+      }
+    },
+    {
+      "id": "example-home-mq-1",
+      "providerName": "Exemple Assureur D",
+      "offerName": "Habitation Confort",
+      "insuranceType": "home",
+      "coverageLevel": "intermediate",
+      "annualPriceTTC": 320,
+      "territory": "MQ",
+      "mainCoverages": [
+        "Responsabilité civile",
+        "Incendie",
+        "Dégâts des eaux",
+        "Vol",
+        "Bris de glace",
+        "Catastrophes naturelles",
+        "Dommages électriques"
+      ],
+      "deductible": 200,
+      "observationDate": "2026-01-13T00:00:00.000Z",
+      "source": {
+        "type": "user_report",
+        "reliability": "medium"
+      },
+      "additionalInfo": {
+        "contractDuration": "1 an",
+        "paymentOptions": ["Mensuel", "Annuel"]
+      }
+    },
+    {
+      "id": "example-health-gp-1",
+      "providerName": "Exemple Mutuelle A",
+      "offerName": "Santé Essentiel",
+      "insuranceType": "health",
+      "coverageLevel": "basic",
+      "annualPriceTTC": 480,
+      "territory": "GP",
+      "mainCoverages": [
+        "Hospitalisation 100%",
+        "Médecin 100%",
+        "Pharmacie 100%",
+        "Optique 100€/an",
+        "Dentaire 150€/an"
+      ],
+      "observationDate": "2026-01-14T00:00:00.000Z",
+      "source": {
+        "type": "official_website",
+        "url": "https://example-mutuelle-a.fr",
+        "reliability": "high"
+      },
+      "additionalInfo": {
+        "contractDuration": "1 an renouvelable",
+        "paymentOptions": ["Mensuel", "Trimestriel", "Annuel"]
+      }
+    },
+    {
+      "id": "example-health-mq-1",
+      "providerName": "Exemple Mutuelle B",
+      "offerName": "Santé Confort",
+      "insuranceType": "health",
+      "coverageLevel": "intermediate",
+      "annualPriceTTC": 780,
+      "territory": "MQ",
+      "mainCoverages": [
+        "Hospitalisation 125%",
+        "Médecin 125%",
+        "Pharmacie 100%",
+        "Optique 250€/an",
+        "Dentaire 400€/an",
+        "Médecines douces 150€/an"
+      ],
+      "observationDate": "2026-01-14T00:00:00.000Z",
+      "source": {
+        "type": "user_report",
+        "reliability": "medium"
+      },
+      "additionalInfo": {
+        "contractDuration": "1 an renouvelable",
+        "paymentOptions": ["Mensuel", "Trimestriel", "Annuel"]
+      }
+    },
+    {
+      "id": "example-health-re-1",
+      "providerName": "Exemple Mutuelle C",
+      "offerName": "Santé Premium",
+      "insuranceType": "health",
+      "coverageLevel": "comprehensive",
+      "annualPriceTTC": 1150,
+      "territory": "RE",
+      "mainCoverages": [
+        "Hospitalisation 150%",
+        "Médecin 150%",
+        "Pharmacie 100%",
+        "Optique 500€/an",
+        "Dentaire 800€/an",
+        "Médecines douces 300€/an",
+        "Prévention 100€/an"
+      ],
+      "observationDate": "2026-01-14T00:00:00.000Z",
+      "source": {
+        "type": "official_website",
+        "url": "https://example-mutuelle-c.fr",
+        "reliability": "high"
+      },
+      "additionalInfo": {
+        "contractDuration": "1 an renouvelable",
+        "paymentOptions": ["Mensuel", "Trimestriel", "Annuel"]
+      }
+    }
+  ]
+}

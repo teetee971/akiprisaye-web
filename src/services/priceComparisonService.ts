@@ -101,7 +101,7 @@ export function calculateTerritoryAggregation(
   const maxPrice = Math.max(...priceValues);
   const averagePrice = priceValues.reduce((sum, p) => sum + p, 0) / priceValues.length;
   const priceRange = maxPrice - minPrice;
-  const priceRangePercentage = (priceRange / minPrice) * 100;
+  const priceRangePercentage = minPrice > 0 ? (priceRange / minPrice) * 100 : 0;
 
   // Find observation period
   const dates = prices.map(p => new Date(p.observationDate).getTime());

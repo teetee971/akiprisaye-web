@@ -1,6 +1,7 @@
 import js from '@eslint/js'
 import globals from 'globals'
 import react from 'eslint-plugin-react'
+import reactHooks from 'eslint-plugin-react-hooks'
 
 export default [
   // =========================
@@ -13,6 +14,12 @@ export default [
       '**/build/**',
       '**/.firebase/**',
       '**/coverage/**',
+      '**/Assets/**',
+      '**/SentinelQuantumVanguardAIPro/**',
+      '**/chat_ia_local/**',
+      '**/frontend/public/**',
+      '**/*.min.js',
+      '**/public/ocr/worker.min.js',
     ],
   },
 
@@ -22,6 +29,13 @@ export default [
   {
     rules: {
       ...js.configs.recommended.rules,
+      'no-unused-vars': ['error', { 
+        argsIgnorePattern: '^_', 
+        varsIgnorePattern: '^_',
+        caughtErrorsIgnorePattern: '^_'
+      }],
+      'no-fallthrough': 'error',
+      'no-console': ['warn', { allow: ['warn', 'error'] }],
     },
   },
 
@@ -38,6 +52,11 @@ export default [
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true
+        }
+      },
       globals: {
         ...globals.browser,
         ...globals.es2021,
@@ -54,10 +73,18 @@ export default [
         cancelAnimationFrame: 'readonly',
       },
     },
-    plugins: { react },
+    plugins: { react, 'react-hooks': reactHooks },
+    settings: {
+      react: {
+        version: 'detect'
+      }
+    },
     rules: {
       'react/react-in-jsx-scope': 'off',
+      'react/prop-types': 'off',
       'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'error',
     },
   },
 
@@ -81,6 +108,19 @@ export default [
     },
     rules: {
       'no-console': ['warn', { allow: ['warn', 'error'] }],
+    },
+  },
+
+  // =====================================================
+  // COOKIE CONSENT - Legacy Module Pattern
+  // =====================================================
+  {
+    files: ['cookie-consent.js'],
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        module: 'writable',
+      },
     },
   },
 
@@ -117,6 +157,28 @@ export default [
         exports: 'readonly',
         module: 'readonly',
         __dirname: 'readonly',
+      },
+    },
+    rules: {
+      'no-console': 'off',
+    },
+  },
+
+  // =====================================================
+  // BROWSER-SIDE SCRIPTS (run in HTML pages)
+  // =====================================================
+  {
+    files: [
+      'scripts/news-feed.js',
+      'scripts/promo-ai.js',
+      'scripts/auto-import-stores.js',
+      'scripts/gps-navigator.js',
+      'scripts/promotions-firestore.js',
+    ],
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...globals.es2021,
       },
     },
     rules: {

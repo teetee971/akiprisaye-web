@@ -5,7 +5,6 @@
  */
 
 import { detectProductPage, extractProductInfo, hasUserConsent } from '../shared/productDetector.js';
-import { CONFIG } from '../shared/config.js';
 
 let overlayInjected = false;
 let currentProductInfo = null;
@@ -313,7 +312,7 @@ function followPrice(productInfo) {
  * Ouvre l'analyse complète dans l'application
  */
 function openFullAnalysis(productInfo) {
-  const appUrl = `https://akiprisaye.web.app/comparateur.html?product=${encodeURIComponent(productInfo.name)}`;
+  const appUrl = `https://akiprisaye.pages.dev/comparateur?product=${encodeURIComponent(productInfo.name)}`;
   window.open(appUrl, '_blank');
 }
 

@@ -31,18 +31,20 @@ export default function CameraPermissionHandler({
 
   async function checkPermissionState() {
     try {
-      // Check if Permissions API is available
-      if ('permissions' in navigator) {
-        const result = await navigator.permissions.query({ name: 'camera' as PermissionName });
-        setPermissionState(result.state as PermissionState);
-        
-        // Listen for permission changes
-        result.addEventListener('change', () => {
-          setPermissionState(result.state as PermissionState);
-        });
-      } else {
+      // Guard for non-browser environments (Node.js, SSR)
+      if (typeof navigator === 'undefined' || !navigator.permissions || !navigator.permissions.query) {
         setPermissionState('prompt');
+        return;
       }
+      
+      // Check if Permissions API is available
+      const result = await navigator.permissions.query({ name: 'camera' as PermissionName });
+      setPermissionState(result.state as PermissionState);
+      
+      // Listen for permission changes
+      result.addEventListener('change', () => {
+        setPermissionState(result.state as PermissionState);
+      });
     } catch (error) {
       console.error('Permission check error:', error);
       setPermissionState('prompt');
@@ -53,6 +55,11 @@ export default function CameraPermissionHandler({
     setIsRequesting(true);
     
     try {
+      // Guard for non-browser environments
+      if (typeof navigator === 'undefined' || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error('Camera API not available');
+      }
+      
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: 'environment' }
       });
@@ -80,6 +87,11 @@ export default function CameraPermissionHandler({
   }
 
   function openSystemSettings() {
+    // Guard for non-browser environments
+    if (typeof navigator === 'undefined') {
+      return;
+    }
+    
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
     const isAndroid = /Android/.test(navigator.userAgent);
     

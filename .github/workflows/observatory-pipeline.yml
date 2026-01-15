@@ -3,8 +3,18 @@ name: A KI PRI SA YÉ - Observatoire Pipeline
 on:
   push:
     branches: [main]
+    paths:
+      - 'data/**'
+      - 'scripts/**'
+      - 'backend/**'
+      - '.github/workflows/observatory-pipeline.yml'
   pull_request:
     branches: [main]
+    paths:
+      - 'data/**'
+      - 'scripts/**'
+      - 'backend/**'
+      - '.github/workflows/observatory-pipeline.yml'
   workflow_dispatch:
   schedule:
     # Exécution mensuelle pour vérification régulière (1er du mois à 3h)
@@ -12,6 +22,11 @@ on:
 
 env:
   NODE_VERSION: '20'
+
+# Prevent concurrent workflow runs to avoid cancellations
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   # ═══════════════════════════════════════════════════════════════
@@ -70,6 +85,10 @@ jobs:
 
       - name: 🔍 Validate data files
         run: node scripts/validate-data.js
+        continue-on-error: false
+
+      - name: 🔍 Validate observatoire data
+        run: node scripts/validate-observatoire-data.js
         continue-on-error: false
 
       - name: 📊 Data validation summary

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Observatoire Data</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2563eb;
+        }
+        h2 {
+            color: #1e40af;
+            border-bottom: 2px solid #3b82f6;
+            padding-bottom: 10px;
+        }
+        .stat {
+            display: inline-block;
+            background: #dbeafe;
+            padding: 10px 20px;
+            margin: 10px 10px 10px 0;
+            border-radius: 6px;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1e40af;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #64748b;
+            text-transform: uppercase;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        th {
+            background: #f1f5f9;
+            font-weight: 600;
+        }
+        .price-up {
+            color: #dc2626;
+        }
+        .price-down {
+            color: #16a34a;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #64748b;
+        }
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Test Observatoire Data Loader</h1>
+    
+    <div id="loading" class="loading">
+        Chargement des données...
+    </div>
+    
+    <div id="error" style="display: none;"></div>
+    
+    <div id="results" style="display: none;">
+        <div class="card">
+            <h2>📊 Statistiques Globales</h2>
+            <div id="globalStats"></div>
+        </div>
+        
+        <div class="card">
+            <h2>💰 Prix par Produit</h2>
+            <table id="priceTable">
+                <thead>
+                    <tr>
+                        <th>Produit</th>
+                        <th>Catégorie</th>
+                        <th>Prix Moyen</th>
+                        <th>Prix Min</th>
+                        <th>Prix Max</th>
+                        <th>Écart</th>
+                        <th>Évolution</th>
+                    </tr>
+                </thead>
+                <tbody id="priceTableBody"></tbody>
+            </table>
+        </div>
+        
+        <div class="card">
+            <h2>📈 Évolution des Prix</h2>
+            <div id="priceChanges"></div>
+        </div>
+        
+        <div class="card">
+            <h2>🏪 Dispersion par Enseigne</h2>
+            <div id="dispersion"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Simple data loader (without importing the TypeScript service)
+        async function loadData() {
+            try {
+                const snap1 = await fetch('/data/observatoire/guadeloupe_2026-01.json').then(r => r.json());
+                const snap2 = await fetch('/data/observatoire/guadeloupe_2026-02.json').then(r => r.json());
+                return [snap1, snap2];
+            } catch (error) {
+                throw new Error('Impossible de charger les données: ' + error.message);
+            }
+        }
+
+        function calculateStats(snapshots) {
+            const productMap = new Map();
+            
+            snapshots.forEach(snapshot => {
+                snapshot.donnees.forEach(obs => {
+                    const key = obs.ean || obs.produit;
+                    if (!productMap.has(key)) {
+                        productMap.set(key, []);
+                    }
+                    productMap.get(key).push(obs);
+                });
+            });
+            
+            const stats = [];
+            productMap.forEach((observations, key) => {
+                const prices = observations.map(o => o.prix);
+                const avgPrice = prices.reduce((a, b) => a + b, 0) / prices.length;
+                const minPrice = Math.min(...prices);
+                const maxPrice = Math.max(...prices);
+                const firstObs = observations[0];
+                
+                stats.push({
+                    productName: firstObs.produit,
+                    category: firstObs.categorie,
+                    avgPrice: Math.round(avgPrice * 100) / 100,
+                    minPrice: Math.round(minPrice * 100) / 100,
+                    maxPrice: Math.round(maxPrice * 100) / 100,
+                    observations: observations.length,
+                    ean: firstObs.ean
+                });
+            });
+            
+            return stats;
+        }
+
+        function calculatePriceChange(snap1, snap2) {
+            const changes = new Map();
+            const oldPrices = new Map();
+            const newPrices = new Map();
+            
+            snap1.donnees.forEach(obs => {
+                const key = obs.ean || obs.produit;
+                if (!oldPrices.has(key)) oldPrices.set(key, []);
+                oldPrices.get(key).push(obs.prix);
+            });
+            
+            snap2.donnees.forEach(obs => {
+                const key = obs.ean || obs.produit;
+                if (!newPrices.has(key)) newPrices.set(key, []);
+                newPrices.get(key).push(obs.prix);
+            });
+            
+            oldPrices.forEach((oldPriceList, key) => {
+                const newPriceList = newPrices.get(key);
+                if (newPriceList) {
+                    const oldAvg = oldPriceList.reduce((a, b) => a + b, 0) / oldPriceList.length;
+                    const newAvg = newPriceList.reduce((a, b) => a + b, 0) / newPriceList.length;
+                    const changePercent = ((newAvg - oldAvg) / oldAvg) * 100;
+                    changes.set(key, Math.round(changePercent * 10) / 10);
+                }
+            });
+            
+            return changes;
+        }
+
+        async function displayResults() {
+            const loadingEl = document.getElementById('loading');
+            const errorEl = document.getElementById('error');
+            const resultsEl = document.getElementById('results');
+            
+            try {
+                const snapshots = await loadData();
+                const stats = calculateStats(snapshots);
+                const changes = calculatePriceChange(snapshots[0], snapshots[1]);
+                
+                // Global stats
+                const avgPrice = stats.reduce((sum, s) => sum + s.avgPrice, 0) / stats.length;
+                const totalObs = stats.reduce((sum, s) => sum + s.observations, 0);
+                
+                document.getElementById('globalStats').innerHTML = `
+                    <div class="stat">
+                        <div class="stat-label">Produits suivis</div>
+                        <div class="stat-value">${stats.length}</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">Prix moyen</div>
+                        <div class="stat-value">${avgPrice.toFixed(2)}€</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">Observations</div>
+                        <div class="stat-value">${totalObs}</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">Période</div>
+                        <div class="stat-value">${snapshots[0].date_snapshot} → ${snapshots[1].date_snapshot}</div>
+                    </div>
+                `;
+                
+                // Price table
+                const tableBody = document.getElementById('priceTableBody');
+                stats.forEach(stat => {
+                    const change = changes.get(stat.ean || stat.productName);
+                    const changeClass = change > 0 ? 'price-up' : change < 0 ? 'price-down' : '';
+                    const changeSymbol = change > 0 ? '📈' : change < 0 ? '📉' : '➡️';
+                    
+                    tableBody.innerHTML += `
+                        <tr>
+                            <td>${stat.productName}</td>
+                            <td>${stat.category}</td>
+                            <td><strong>${stat.avgPrice.toFixed(2)}€</strong></td>
+                            <td>${stat.minPrice.toFixed(2)}€</td>
+                            <td>${stat.maxPrice.toFixed(2)}€</td>
+                            <td>${(stat.maxPrice - stat.minPrice).toFixed(2)}€</td>
+                            <td class="${changeClass}">
+                                ${changeSymbol} ${change !== undefined ? (change > 0 ? '+' : '') + change.toFixed(1) + '%' : 'N/A'}
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                // Price changes
+                let changesHtml = '<table><thead><tr><th>Produit</th><th>Évolution</th></tr></thead><tbody>';
+                changes.forEach((change, product) => {
+                    const changeClass = change > 0 ? 'price-up' : change < 0 ? 'price-down' : '';
+                    const changeSymbol = change > 0 ? '📈' : change < 0 ? '📉' : '➡️';
+                    changesHtml += `
+                        <tr>
+                            <td>${product}</td>
+                            <td class="${changeClass}">${changeSymbol} ${change > 0 ? '+' : ''}${change.toFixed(1)}%</td>
+                        </tr>
+                    `;
+                });
+                changesHtml += '</tbody></table>';
+                document.getElementById('priceChanges').innerHTML = changesHtml;
+                
+                // Dispersion
+                const dispersionHtml = stats.map(stat => `
+                    <div class="stat">
+                        <div class="stat-label">${stat.productName}</div>
+                        <div class="stat-value">${(stat.maxPrice - stat.minPrice).toFixed(2)}€</div>
+                    </div>
+                `).join('');
+                document.getElementById('dispersion').innerHTML = dispersionHtml;
+                
+                loadingEl.style.display = 'none';
+                resultsEl.style.display = 'block';
+                
+            } catch (error) {
+                loadingEl.style.display = 'none';
+                errorEl.style.display = 'block';
+                errorEl.className = 'error';
+                errorEl.innerHTML = `<strong>Erreur:</strong> ${error.message}`;
+            }
+        }
+
+        // Load data when page loads
+        displayResults();
+    </script>
+</body>
+</html>

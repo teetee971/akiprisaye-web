@@ -4,7 +4,7 @@
  * PRINCIPE: User-triggered only, NO automatic background scan
  */
 
-import { CONFIG, STORE_PATTERNS } from './config.js';
+import { CONFIG } from './config.js';
 
 /**
  * Détecte si l'URL actuelle correspond à une page produit supportée

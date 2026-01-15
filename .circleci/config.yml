@@ -15,6 +15,18 @@ jobs:
     working_directory: ~/project
     steps:
       - checkout
+      - run:
+          name: Disable Git LFS
+          command: git config --global filter.lfs.required false
+      - run:
+          name: Check for LFS pointers
+          command: |
+            if git grep -I -n "version https://git-lfs.github.com/spec/v1" -- ':!.github/workflows/*' ':!.circleci/*'; then
+              echo "❌ ERREUR: Pointeurs Git LFS détectés dans le dépôt"
+              exit 1
+            else
+              echo "✅ OK: Aucun pointeur Git LFS détecté"
+            fi
       - restore_cache:
           keys:
             - v1-frontend-deps-{{ checksum "frontend/package-lock.json" }}

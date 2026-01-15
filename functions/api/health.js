@@ -3,7 +3,7 @@
  * Health check endpoint for monitoring and uptime checks
  */
 
-export async function onRequestGet(context) {
+export async function onRequestGet(_context) {
   const health = {
     status: 'healthy',
     timestamp: new Date().toISOString(),

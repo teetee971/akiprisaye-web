@@ -149,7 +149,7 @@ function initProductSearch() {
   // Handle form submission with product search
   const form = document.getElementById('comparateur-form');
   if (form) {
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', (_e) => {
       const eanInput = document.getElementById('ean-input');
       const searchValue = searchInput.value.trim();
       

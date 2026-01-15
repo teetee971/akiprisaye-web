@@ -1,0 +1,42 @@
+[
+  {
+    "id": "p-001",
+    "name": "Riz 1kg",
+    "store": "Supermarché A",
+    "territory": "GP",
+    "currency": "€",
+    "observations": [
+      { "date": "2025-11-01T10:00:00Z", "price": 2.50 },
+      { "date": "2025-11-08T10:00:00Z", "price": 2.45 },
+      { "date": "2025-11-15T10:00:00Z", "price": 2.30 },
+      { "date": "2025-11-22T10:00:00Z", "price": 2.20 },
+      { "date": "2025-11-29T10:00:00Z", "price": 1.95 }
+    ]
+  },
+  {
+    "id": "p-002",
+    "name": "Lait UHT 1L",
+    "store": "Épicerie B",
+    "territory": "RE",
+    "currency": "€",
+    "observations": [
+      { "date": "2025-11-01T10:00:00Z", "price": 1.20 },
+      { "date": "2025-11-10T10:00:00Z", "price": 1.18 },
+      { "date": "2025-11-20T10:00:00Z", "price": 1.15 },
+      { "date": "2025-11-28T10:00:00Z", "price": 1.12 }
+    ]
+  },
+  {
+    "id": "p-003",
+    "name": "Farine 1kg",
+    "store": "Marché C",
+    "territory": "MQ",
+    "currency": "€",
+    "observations": [
+      { "date": "2025-10-01T10:00:00Z", "price": 1.80 },
+      { "date": "2025-10-15T10:00:00Z", "price": 1.85 },
+      { "date": "2025-11-01T10:00:00Z", "price": 1.78 },
+      { "date": "2025-11-25T10:00:00Z", "price": 1.75 }
+    ]
+  }
+]
