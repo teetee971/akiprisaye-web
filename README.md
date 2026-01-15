@@ -108,11 +108,18 @@ Actions solidaires et anti-gaspillage :
 
 #### 🎯 Principes OCR Non Négociables
 - ✅ **100% Local** - Traitement WASM (Tesseract.js) dans le navigateur
+- ✅ **Lazy Loading** - Module OCR (~17 MB) chargé uniquement à la première utilisation
 - ✅ **Aucune interprétation** - Extraction brute uniquement, zéro analyse santé
 - ✅ **Aucune recommandation** - Pas de notation produit, pas de conseil
 - ✅ **Validation utilisateur** - Toute détection nécessite confirmation humaine
 - ✅ **RGPD Compliant** - Aucune biométrie, aucune transmission serveur
 - ✅ **Transparent** - Méthodologie publique et auditable
+
+#### ⚡ Optimisation Performance
+- **Bundle initial réduit** : Les fichiers OCR (17 MB) ne sont plus dans le bundle principal
+- **Chargement à la demande** : Téléchargement automatique lors de la première utilisation du scanner
+- **Mise en cache** : Une fois chargé, le module OCR reste disponible pour les utilisations suivantes
+- **Pas d'impact** : Les utilisateurs qui n'utilisent pas le scanner ne téléchargent jamais les fichiers OCR
 
 #### 📊 Qualité OCR (Informatif)
 - Score de lisibilité technique (0-100)

@@ -27,7 +27,22 @@
  * Base légale : Consentement explicite (RGPD Art. 6.1.a)
  */
 
-import Tesseract from 'tesseract.js';
+// Dynamic import for lazy loading (loaded only when OCR is actually used)
+// This reduces initial bundle size by ~17MB
+let TesseractModule: typeof import('tesseract.js') | null = null;
+
+/**
+ * Lazy load Tesseract module
+ * Loads the 17MB OCR library only when needed
+ */
+async function loadTesseract() {
+  if (!TesseractModule) {
+    console.log('[OCR] Loading Tesseract.js module (~17MB download)...');
+    TesseractModule = await import('tesseract.js');
+    console.log('[OCR] Tesseract.js loaded successfully');
+  }
+  return TesseractModule;
+}
 
 export const GENERIC_OCR_ERROR = 'Une erreur s\'est produite lors de l\'analyse de l\'image';
 const OCR_ASSET_BASE_PATH = '/ocr';
@@ -221,6 +236,9 @@ export async function runOCR(
   // Log mode for debugging
   console.log(`OCR mode: ${offline ? 'OFFLINE (local WASM)' : 'ONLINE'}`);
   console.log('[OCR] Asset paths', { WORKER_PATH, CORE_PATH, LANG_PATH, lang: effectiveLang });
+
+  // Lazy load Tesseract module (17MB) - only loads when OCR is actually used
+  const Tesseract = await loadTesseract();
 
   await ensureAssetAvailable(WORKER_PATH, 'worker');
   await ensureAssetAvailable(CORE_PATH, 'core');
