@@ -31,12 +31,13 @@ function asyncCssPlugin() {
     name: 'async-css',
     transformIndexHtml(html) {
       // Transform CSS link tags to load asynchronously
+      const asyncCssLink = (href) => 
+        `<link rel="preload" href="${href}" as="style" onload="this.onload=null;this.rel='stylesheet'" crossorigin>
+    <noscript><link rel="stylesheet" href="${href}" crossorigin></noscript>`;
+      
       return html.replace(
         /<link rel="stylesheet" crossorigin href="([^"]+)">/g,
-        (match, href) => {
-          return `<link rel="preload" href="${href}" as="style" onload="this.onload=null;this.rel='stylesheet'" crossorigin>
-    <noscript><link rel="stylesheet" href="${href}" crossorigin></noscript>`;
-        }
+        (_match, href) => asyncCssLink(href)
       );
     },
   };
@@ -99,36 +100,27 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          // Séparer React et ses dépendances
+          // Separate vendor chunks for better caching
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          
-          // Séparer Leaflet (gros)
           'vendor-leaflet':  ['leaflet', 'react-leaflet'],
-          
-          // Séparer Chart.js
           'vendor-chart': ['chart.js', 'react-chartjs-2'],
-          
-          // Séparer lucide-icons
           'vendor-icons': ['lucide-react'],
-          
-          // Séparer les utilitaires
           'vendor-utils': ['date-fns', 'clsx'],
           
-          // Séparer Firebase pour meilleur caching
+          // Separate Firebase for better caching
           'vendor-firebase': ['firebase/app', 'firebase/auth', 'firebase/firestore'],
         },
         
         // Organize assets by type for better caching
         assetFileNames: (assetInfo) => {
-          const info = assetInfo.name.split('.');
-          const ext = info[info.length - 1];
-          if (/\.(png|jpe?g|svg|gif|tiff|bmp|ico)$/i.test(assetInfo.name)) {
+          const ext = assetInfo.name.split('.').pop();
+          if (/^(png|jpe?g|svg|gif|tiff|bmp|ico)$/i.test(ext)) {
             return 'assets/images/[name]-[hash][extname]';
           }
-          if (/\.(woff2?|eot|ttf|otf)$/i.test(assetInfo.name)) {
+          if (/^(woff2?|eot|ttf|otf)$/i.test(ext)) {
             return 'assets/fonts/[name]-[hash][extname]';
           }
-          if (/\.css$/i.test(assetInfo.name)) {
+          if (/^css$/i.test(ext)) {
             return 'assets/css/[name]-[hash][extname]';
           }
           return 'assets/[name]-[hash][extname]';
