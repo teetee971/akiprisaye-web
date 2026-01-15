@@ -42,6 +42,12 @@ export function usePriceComparison(productId: string, territories: Territory[]) 
         // Load prices from each territory
         const promises = territories.map(async (territory) => {
           try {
+            // Validate territory code before using in URL
+            if (!['GP', 'MQ', 'GY', 'RE', 'YT', 'MF', 'BL', 'PM', 'WF', 'PF', 'NC'].includes(territory)) {
+              console.warn(`Invalid territory code: ${territory}`);
+              return null;
+            }
+            
             // Try to load from split files (Mission I format)
             const response = await fetch(`/data/territories/${territory.toLowerCase()}.json`);
             
@@ -59,9 +65,16 @@ export function usePriceComparison(productId: string, territories: Territory[]) 
               return null;
             }
 
+            // Ensure we have a valid price before including in comparison
+            const price = product.basePrice || product.prix_unitaire;
+            if (typeof price !== 'number' || price <= 0) {
+              console.warn(`Invalid price for product ${productId} in territory ${territory}`);
+              return null;
+            }
+
             return {
               territory,
-              price: product.basePrice || product.prix_unitaire || 0,
+              price,
               available: true,
               storeCount: getStoreCount(territory)
             };

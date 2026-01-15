@@ -103,7 +103,7 @@ const Faq = lazyWithRetry(() => import('./pages/Faq'));
 const ComparateurCitoyen = lazyWithRetry(() => import('./pages/ComparateurCitoyen'));
 
 // Mission M-B - Multi-territory price comparison
-const ComparaisonPage = lazyWithRetry(() => import('./pages/ComparaisonPage.tsx'));
+const ComparaisonPage = lazyWithRetry(() => import('./pages/ComparaisonPage'));
 
 // Loading component
 function LoadingFallback() {
