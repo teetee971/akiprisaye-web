@@ -32,7 +32,7 @@ export async function getForecast(territory) {
     return snap.docs
       .map((d) => ({ id: d.id, ...d.data() }))
       .filter((d) => !territory || d.territory === territory);
-  } catch (error) {
+  } catch (_error) {
     // Collection might not exist yet, return empty array
     console.warn('Forecast collection not found, returning empty data');
     return [];
@@ -80,7 +80,7 @@ export function computeKpis({ baskets = [], forecast = [] }) {
 /**
  * Generate AI recommendations based on data analysis
  */
-export function generateRecommendations({ baskets = [], forecast = [], kpis = {} }) {
+export function generateRecommendations({ baskets = [], forecast: _forecast = [], kpis = {} }) {
   const recommendations = [];
 
   // Check rupture rate

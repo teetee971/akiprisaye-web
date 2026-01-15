@@ -27,11 +27,11 @@
 export async function getFirestore() {
   // Placeholder that will be replaced with actual implementation
   // For now, operations will fall back gracefully
-  const projectId = process.env.FIREBASE_PROJECT_ID || 'akiprisaye-web';
+  const _projectId = process.env.FIREBASE_PROJECT_ID || 'akiprisaye-web';
   
   return {
     collection: (name) => ({
-      add: async (data) => {
+      add: async (_data) => {
         // TODO: Implement actual Firestore REST API call or Admin SDK
         // This placeholder allows the code to run without crashing
         // Operations will log fallback messages

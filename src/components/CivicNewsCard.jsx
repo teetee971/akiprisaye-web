@@ -13,7 +13,7 @@ export default function CivicNewsCard({
   publishedAt,
   sourceName,
   sourceUrl,
-  sourceLogo,
+  sourceLogo: _sourceLogo,
 }) {
   const config = categoryConfigs[category];
 

@@ -32,6 +32,8 @@ import storesRoutes from './routes/stores.js';
 import productsRoutes from './routes/products.js';
 // Phase 8: Basket comparison routes
 import basketRoutes from './routes/basket.js';
+// Subscription & Payment routes
+import subscriptionRoutes from './api/routes/subscription.routes.js';
 
 // Import middlewares
 import { apiLimiter } from './api/middlewares/rateLimit.middleware.js';
@@ -196,6 +198,9 @@ app.use('/api/products', productsRoutes);
 
 // Phase 8: Basket comparison API routes (publiques avec rate limiting)
 app.use('/api/basket', basketRoutes);
+
+// Subscription & Payment API routes
+app.use('/api/subscriptions', subscriptionRoutes);
 
 // ========================================
 // Gestion des erreurs

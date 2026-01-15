@@ -301,7 +301,7 @@ async function syncWithPWA(dataType, data) {
       },
       body: JSON.stringify({ data })
     });
-  } catch (_error) {
+  } catch {
     // La synchronisation échoue silencieusement
     // Les données restent en local
     console.warn('Sync failed, data stored locally only');

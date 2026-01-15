@@ -1,5 +1,3 @@
-import React from 'react';
-
 /**
  * Indice Marge Badge
  * Visual indicator for price differential
@@ -7,12 +5,6 @@ import React from 'react';
  * @param {number} value - Margin percentage value
  */
 export function IndiceMarge({ value = 0 }) {
-  const getMarginLevel = (val) => {
-    if (val < 20) return 'faible';
-    if (val < 50) return 'modere';
-    return 'eleve';
-  };
-
   const getMarginColor = (val) => {
     if (val < 20) return 'bg-green-100 text-green-800 border-green-300';
     if (val < 50) return 'bg-yellow-100 text-yellow-800 border-yellow-300';

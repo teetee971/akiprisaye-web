@@ -800,3 +800,33 @@ service cloud.firestore {
 
 **Note importante :** Les règles ci-dessus protègent l'écriture directe dans Firestore. En production, utilisez Firebase Cloud Functions ou Admin SDK pour gérer les écritures de prix et la modération des tickets.
 
+---
+
+## 📚 Documentation Complémentaire
+
+Pour en savoir plus sur l'architecture et les fonctionnalités :
+
+### 🧭 Navigation
+- **[NAVIGATION_GUIDE.md](NAVIGATION_GUIDE.md)** - Guide complet de navigation de l'application
+  - Architecture des 7 hubs
+  - Routes Ti-Panier détaillées
+  - Résolution des problèmes de navigation
+  - Routes expérimentales (feature flags)
+
+### 🔍 Audits & Rapports
+- **[AUDIT_NAVIGATION_RAPPORT.md](AUDIT_NAVIGATION_RAPPORT.md)** - Rapport d'audit de navigation (Janvier 2026)
+  - Problèmes identifiés et corrigés
+  - Métriques de performance
+  - Solutions implémentées
+  - Recommandations futures
+
+### 🏗️ Architecture
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - Architecture technique de l'application
+- **[METHODOLOGIE_OFFICIELLE_v2.0.md](METHODOLOGIE_OFFICIELLE_v2.0.md)** - Méthodologie de collecte de données
+
+### 📦 Déploiement
+- **[CLOUDFLARE_DEPLOYMENT.md](CLOUDFLARE_DEPLOYMENT.md)** - Guide de déploiement Cloudflare Pages
+- **[DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md)** - Checklist de déploiement
+
+Pour toute question ou problème, consultez d'abord le [NAVIGATION_GUIDE.md](NAVIGATION_GUIDE.md) ou ouvrez une issue GitHub.
+

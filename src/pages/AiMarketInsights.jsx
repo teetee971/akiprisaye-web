@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { Bar, Line } from 'react-chartjs-2';
+import { useEffect, useState } from 'react';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -35,13 +34,15 @@ export default function AiMarketInsights() {
 
   useEffect(() => {
     checkAdminAccess();
+  // checkAdminAccess is stable and doesn't need to be in deps - it's a function that depends only on user
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   useEffect(() => {
     if (isAdmin) {
       loadData();
     }
-  }, [isAdmin]);
+  }, [isAdmin, loadData]);
 
   const checkAdminAccess = async () => {
     if (!user) {

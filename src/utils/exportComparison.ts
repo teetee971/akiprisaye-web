@@ -4,6 +4,9 @@
 
 import type { FlightComparisonResult } from '../types/flightComparison';
 import type { BoatComparisonResult } from '../types/boatComparison';
+import type { FuelComparisonResult } from '../types/fuelComparison';
+import type { InsuranceComparisonResult } from '../types/insuranceComparison';
+import type { FreightComparisonResult } from '../types/freightComparison';
 
 /**
  * Format price as EUR currency
@@ -259,4 +262,254 @@ const downloadText = (content: string, filename: string): void => {
   
   // Revoke the URL to free up memory
   URL.revokeObjectURL(url);
+};
+
+/**
+ * Export freight comparison to CSV
+ */
+export const exportFreightComparisonToCSV = (result: FreightComparisonResult): void => {
+  const headers = [
+    'Rang',
+    'Transporteur',
+    'Prix de base (€)',
+    'Frais manutention (€)',
+    'Assurance (€)',
+    'Octroi de mer (€)',
+    'Prix total TTC (€)',
+    'Délai annoncé (jours)',
+    'Délai réel moyen (jours)',
+    'Score fiabilité',
+    'Taux ponctualité (%)',
+    'Incidents signalés',
+    'Différence vs moins cher (%)',
+    'Catégorie'
+  ];
+
+  const rows = result.quotes.map(ranking => [
+    escapeCSV(ranking.rank),
+    escapeCSV(ranking.quote.carrier),
+    escapeCSV(ranking.quote.pricing.basePrice.toFixed(2)),
+    escapeCSV(ranking.quote.pricing.handlingFee.toFixed(2)),
+    escapeCSV(ranking.quote.pricing.insurance?.toFixed(2) || '0.00'),
+    escapeCSV(ranking.quote.pricing.octroi.toFixed(2)),
+    escapeCSV(ranking.quote.pricing.totalTTC.toFixed(2)),
+    escapeCSV(ranking.quote.timing.announcedDays),
+    escapeCSV(ranking.quote.timing.realDaysAverage || ranking.quote.timing.announcedDays),
+    escapeCSV(ranking.quote.reliability.score.toFixed(1)),
+    escapeCSV((ranking.quote.reliability.onTimeRate * 100).toFixed(1)),
+    escapeCSV(ranking.quote.reliability.issuesReported),
+    escapeCSV(ranking.savingsVsCheapest > 0 ? `+${(ranking.savingsVsCheapest / result.aggregation.minPrice * 100).toFixed(2)}` : '0.00'),
+    escapeCSV(ranking.priceCategory)
+  ]);
+
+  const csvContent = [
+    headers.join(','),
+    ...rows.map(row => row.join(','))
+  ].join('\n');
+
+  downloadCSV(csvContent, `comparaison-fret-${Date.now()}.csv`);
+};
+
+/**
+ * Export freight comparison to text summary
+ */
+export const exportFreightComparisonToText = (result: FreightComparisonResult): void => {
+  let text = `COMPARATEUR FRET MARITIME & COLIS\n`;
+  text += `==================================\n\n`;
+  text += `Route: ${result.route.origin} → ${result.route.destination}\n`;
+  text += `Poids: ${result.package.weight} kg\n`;
+  text += `Dimensions: ${result.package.dimensions.length}x${result.package.dimensions.width}x${result.package.dimensions.height} cm\n`;
+  text += `Type: ${result.package.type}\n`;
+  text += `Urgence: ${result.urgency}\n`;
+  text += `Date d'export: ${new Date().toLocaleDateString('fr-FR')}\n\n`;
+  
+  text += `STATISTIQUES\n`;
+  text += `------------\n`;
+  text += `Prix moyen: ${formatPrice(result.aggregation.averagePrice)}\n`;
+  text += `Prix minimum: ${formatPrice(result.aggregation.minPrice)}\n`;
+  text += `Prix maximum: ${formatPrice(result.aggregation.maxPrice)}\n`;
+  text += `Écart de prix: ${result.aggregation.priceRangePercentage.toFixed(1)}%\n`;
+  text += `Transporteurs: ${result.aggregation.carrierCount}\n`;
+  text += `Contributions: ${result.metadata.contributionsCount}\n\n`;
+
+  text += `COMPARAISON PAR TRANSPORTEUR\n`;
+  text += `----------------------------\n`;
+  result.quotes.forEach(ranking => {
+    text += `\n#${ranking.rank} - ${ranking.quote.carrier}\n`;
+    text += `  Prix de base: ${formatPrice(ranking.quote.pricing.basePrice)}\n`;
+    text += `  Frais de manutention: ${formatPrice(ranking.quote.pricing.handlingFee)}\n`;
+    if (ranking.quote.pricing.insurance) {
+      text += `  Assurance: ${formatPrice(ranking.quote.pricing.insurance)}\n`;
+    }
+    text += `  Octroi de mer: ${formatPrice(ranking.quote.pricing.octroi)}\n`;
+    text += `  Prix total TTC: ${formatPrice(ranking.quote.pricing.totalTTC)}\n`;
+    text += `  Délai annoncé: ${ranking.quote.timing.announcedDays} jours\n`;
+    if (ranking.quote.timing.realDaysAverage) {
+      text += `  Délai réel moyen: ${ranking.quote.timing.realDaysAverage} jours`;
+      if (ranking.quote.timing.realDaysAverage > ranking.quote.timing.announcedDays) {
+        text += ` (+${ranking.quote.timing.realDaysAverage - ranking.quote.timing.announcedDays} jours de retard)\n`;
+      } else {
+        text += `\n`;
+      }
+    }
+    text += `  Score de fiabilité: ${ranking.quote.reliability.score.toFixed(1)}/5 (${ranking.quote.reliability.basedOnContributions} avis)\n`;
+    text += `  Taux de ponctualité: ${(ranking.quote.reliability.onTimeRate * 100).toFixed(1)}%\n`;
+    text += `  Incidents signalés: ${ranking.quote.reliability.issuesReported}\n`;
+    if (ranking.savingsVsCheapest > 0) {
+      text += `  Différence vs moins cher: +${formatPrice(ranking.savingsVsCheapest)} (+${(ranking.savingsVsCheapest / result.aggregation.minPrice * 100).toFixed(1)}%)\n`;
+    }
+    if (ranking.isBestValue) {
+      text += `  ✓ MEILLEUR RAPPORT QUALITÉ/PRIX\n`;
+    }
+  });
+
+  text += `\n\nMÉTHODOLOGIE & SOURCES\n`;
+  text += `----------------------\n`;
+  text += `Sources: ${result.metadata.dataSource}\n`;
+  text += `Méthodologie: ${result.metadata.methodology}\n\n`;
+
+  text += `DISCLAIMER\n`;
+  text += `----------\n`;
+  text += `${result.metadata.disclaimer}\n`;
+  text += `\nCe comparateur vise à répondre à la problématique #1 de la vie chère\n`;
+  text += `en Outre-mer identifiée par les Rapports Sénat 2024-2025.\n`;
+  text += `\n80% des importations DOM-TOM passent par le fret maritime.\n`;
+  text += `\nPremier comparateur en France offrant:\n`;
+  text += `✅ Transparence totale sur l'octroi de mer\n`;
+  text += `✅ Délais réels vs annoncés (contributions citoyennes)\n`;
+  text += `✅ Score de fiabilité communautaire\n`;
+  text += `✅ Aucun lien d'affiliation - Observer, pas vendre\n`;
+
+  downloadText(text, `comparaison-fret-${Date.now()}.txt`);
+  downloadCSV(csvContent, `comparaison-carburants-${result.territory}-${result.fuelType}-${Date.now()}.csv`);
+};
+
+/**
+ * Export fuel comparison to text
+ */
+export const exportFuelComparisonToText = (result: FuelComparisonResult): void => {
+  let text = `COMPARAISON DES PRIX DES CARBURANTS\n`;
+  text += `====================================\n\n`;
+  text += `Territoire: ${result.territory}\n`;
+  text += `Type de carburant: ${result.fuelType}\n`;
+  text += `Date: ${new Date(result.comparisonDate).toLocaleDateString('fr-FR')}\n`;
+  text += `Nombre de stations: ${result.metadata.totalStations}\n\n`;
+
+  text += `STATISTIQUES\n`;
+  text += `------------\n`;
+  text += `Prix minimum: ${formatPrice(result.aggregation.minPrice)}/L\n`;
+  text += `Prix moyen: ${formatPrice(result.aggregation.averagePrice)}/L\n`;
+  text += `Prix maximum: ${formatPrice(result.aggregation.maxPrice)}/L\n`;
+  text += `Écart de prix: ${formatPrice(result.aggregation.priceRange)}/L (${result.aggregation.priceRangePercentage.toFixed(1)}%)\n`;
+  if (result.aggregation.priceCapOfficiel) {
+    text += `Prix plafonné officiel: ${formatPrice(result.aggregation.priceCapOfficiel)}/L\n`;
+  }
+  text += `\n`;
+
+  text += `CLASSEMENT DES STATIONS\n`;
+  text += `-----------------------\n`;
+  result.rankedPrices.forEach((ranking, index) => {
+    text += `\n${index + 1}. ${ranking.fuelPrice.station.name} - ${ranking.fuelPrice.station.city}\n`;
+    text += `  Prix: ${formatPrice(ranking.fuelPrice.pricePerLiter)}/L\n`;
+    if (ranking.fuelPrice.isPriceCapPlafonne) {
+      text += `  ⭐ Prix plafonné officiel\n`;
+    }
+    text += `  Différence vs moins cher: ${ranking.percentageDifferenceFromCheapest > 0 ? '+' : ''}${ranking.percentageDifferenceFromCheapest.toFixed(1)}%\n`;
+    if (ranking.fuelPrice.station.brand) {
+      text += `  Enseigne: ${ranking.fuelPrice.station.brand}\n`;
+    }
+  });
+
+  text += `\n\nSOURCE\n`;
+  text += `------\n`;
+  text += `${result.metadata.dataSource}\n`;
+  text += `Méthodologie: ${result.metadata.methodology}\n`;
+
+  downloadText(text, `comparaison-carburants-${result.territory}-${result.fuelType}-${Date.now()}.txt`);
+};
+
+/**
+ * Export insurance comparison to CSV
+ */
+export const exportInsuranceComparisonToCSV = (result: InsuranceComparisonResult): void => {
+  const headers = [
+    'Rang',
+    'Assureur',
+    'Offre',
+    'Type',
+    'Niveau',
+    'Prix annuel (€)',
+    'Franchise (€)',
+    'Diff. vs min (€)',
+    'Diff. vs min (%)',
+    'Catégorie',
+    'Garanties principales'
+  ];
+
+  const rows = result.rankedOffers.map(ranking => [
+    escapeCSV(ranking.rank),
+    escapeCSV(ranking.insurance.providerName),
+    escapeCSV(ranking.insurance.offerName),
+    escapeCSV(ranking.insurance.insuranceType),
+    escapeCSV(ranking.insurance.coverageLevel),
+    escapeCSV(ranking.insurance.annualPriceTTC.toFixed(2)),
+    escapeCSV(ranking.insurance.deductible?.toFixed(2) || 'N/A'),
+    escapeCSV(ranking.absoluteDifferenceFromCheapest.toFixed(2)),
+    escapeCSV(ranking.percentageDifferenceFromCheapest.toFixed(2)),
+    escapeCSV(ranking.priceCategory),
+    escapeCSV(ranking.insurance.mainCoverages.join('; '))
+  ]);
+
+  const csvContent = [
+    headers.join(','),
+    ...rows.map(row => row.join(','))
+  ].join('\n');
+
+  downloadCSV(csvContent, `comparaison-assurances-${result.territory}-${result.insuranceType}-${Date.now()}.csv`);
+};
+
+/**
+ * Export insurance comparison to text
+ */
+export const exportInsuranceComparisonToText = (result: InsuranceComparisonResult): void => {
+  let text = `COMPARAISON DES ASSURANCES\n`;
+  text += `==========================\n\n`;
+  text += `Type: ${result.insuranceType}\n`;
+  text += `Territoire: ${result.territory}\n`;
+  text += `Date: ${new Date(result.comparisonDate).toLocaleDateString('fr-FR')}\n`;
+  text += `Nombre d'offres: ${result.metadata.totalOffers}\n\n`;
+
+  text += `STATISTIQUES\n`;
+  text += `------------\n`;
+  text += `Prix minimum: ${formatPrice(result.aggregation.minPrice)}/an\n`;
+  text += `Prix moyen: ${formatPrice(result.aggregation.averagePrice)}/an\n`;
+  text += `Prix maximum: ${formatPrice(result.aggregation.maxPrice)}/an\n`;
+  text += `Écart de prix: ${formatPrice(result.aggregation.priceRange)}/an (${result.aggregation.priceRangePercentage.toFixed(1)}%)\n`;
+  text += `\n`;
+
+  text += `CLASSEMENT DES OFFRES\n`;
+  text += `---------------------\n`;
+  result.rankedOffers.forEach((ranking, index) => {
+    text += `\n${index + 1}. ${ranking.insurance.providerName} - ${ranking.insurance.offerName}\n`;
+    text += `  Prix annuel: ${formatPrice(ranking.insurance.annualPriceTTC)}\n`;
+    text += `  Niveau: ${ranking.insurance.coverageLevel}\n`;
+    if (ranking.insurance.deductible) {
+      text += `  Franchise: ${formatPrice(ranking.insurance.deductible)}\n`;
+    }
+    text += `  Différence vs moins cher: ${ranking.percentageDifferenceFromCheapest > 0 ? '+' : ''}${ranking.percentageDifferenceFromCheapest.toFixed(1)}%\n`;
+    text += `  Garanties principales:\n`;
+    ranking.insurance.mainCoverages.forEach(coverage => {
+      text += `    - ${coverage}\n`;
+    });
+  });
+
+  text += `\n\nDISCLAIMER\n`;
+  text += `----------\n`;
+  text += `${result.metadata.disclaimer}\n`;
+  text += `\nSOURCE\n`;
+  text += `------\n`;
+  text += `${result.metadata.dataSource}\n`;
+  text += `Méthodologie: ${result.metadata.methodology}\n`;
+
+  downloadText(text, `comparaison-assurances-${result.territory}-${result.insuranceType}-${Date.now()}.txt`);
 };

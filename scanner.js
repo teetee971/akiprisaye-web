@@ -30,7 +30,6 @@ let scanning = false;
 // -----------------------------
 document.addEventListener('DOMContentLoaded', () => {
   videoElement = document.getElementById('video-scanner');
-  const resultBox = document.getElementById('scan-result');
   const startBtn = document.getElementById('start-scan');
   const stopBtn = document.getElementById('stop-scan');
 
@@ -202,7 +201,7 @@ function displayResult(code, format) {
 
   // Redirect to product search with detected code
   setTimeout(() => {
-    window.location.href = `/comparateur.html?ean=${code}`;
+    window.location.href = `/comparateur?ean=${code}`;
   }, 1500);
 }
 
@@ -221,4 +220,6 @@ export function flashMessage(msg) {
   }, 2500);
 }
 
-console.log('✔ scanner.js chargé.');
+if (typeof console !== 'undefined' && console.warn) {
+  console.warn('✔ scanner.js chargé.');
+}

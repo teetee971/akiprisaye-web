@@ -86,27 +86,48 @@ const mockBaskets = [
  * Get all baskets or filter by territory
  */
 export const getBaskets = async (filters = {}) => {
-  // In production, this would query Firestore
-  // For now, return mock data with filters applied
-  let baskets = [...mockBaskets];
+  try {
+    // In production, this would query Firestore
+    // For now, return mock data with filters applied
+    let baskets = [...mockBaskets];
 
-  if (filters.territory && filters.territory !== 'all') {
-    baskets = baskets.filter(b => b.territory === filters.territory);
+    // Validate filters
+    if (filters.territory && filters.territory !== 'all') {
+      baskets = baskets.filter(b => b.territory === filters.territory);
+    }
+
+    if (filters.store && typeof filters.store === 'string') {
+      baskets = baskets.filter(b => b.store.toLowerCase().includes(filters.store.toLowerCase()));
+    }
+
+    if (filters.stockOnly) {
+      baskets = baskets.filter(b => b.stock === true);
+    }
+
+    if (filters.timeSlot && typeof filters.timeSlot === 'string') {
+      baskets = baskets.filter(b => b.timeSlot === filters.timeSlot);
+    }
+
+    // Validate basket structure before returning
+    const validBaskets = baskets.filter(basket => {
+      return (
+        basket &&
+        typeof basket.id !== 'undefined' &&
+        typeof basket.name === 'string' &&
+        typeof basket.store === 'string' &&
+        typeof basket.price === 'number' &&
+        basket.price >= 0
+      );
+    });
+
+    return validBaskets;
+  } catch (error) {
+    console.error('Error in getBaskets:', error);
+    // Log detailed error for debugging but provide user-friendly message
+    const technicalDetails = error instanceof Error ? error.message : String(error);
+    console.error('Technical details:', technicalDetails);
+    throw new Error('Impossible de charger les paniers. Veuillez réessayer plus tard.');
   }
-
-  if (filters.store) {
-    baskets = baskets.filter(b => b.store.toLowerCase().includes(filters.store.toLowerCase()));
-  }
-
-  if (filters.stockOnly) {
-    baskets = baskets.filter(b => b.stock);
-  }
-
-  if (filters.timeSlot) {
-    baskets = baskets.filter(b => b.timeSlot === filters.timeSlot);
-  }
-
-  return baskets;
 };
 
 /**

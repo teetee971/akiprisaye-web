@@ -1,4 +1,4 @@
-import React from 'react';
+
 
 /**
  * TrendIndicator - Display price trend with icon and color

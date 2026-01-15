@@ -138,17 +138,17 @@ export function listArticles() {
 const command = process.argv[2];
 
 switch (command) {
-  case 'list':
+  case 'list': {
     listArticles();
     break;
-    
-  case 'clean':
+  }
+  case 'clean': {
     const days = parseInt(process.argv[3]) || 90;
     console.log(`🧹 Nettoyage des articles > ${days} jours...\n`);
     cleanOldArticles(days);
     break;
-    
-  case 'add':
+  }
+  case 'add': {
     // Exemple: node scripts/update-news.js add
     // Pour une vraie automatisation, il faudrait:
     // 1. Scraper des sources RSS autorisées (Insee, DGCCRF, etc.)
@@ -156,12 +156,12 @@ switch (command) {
     // 3. Recevoir des webhooks
     console.log('ℹ️  Pour ajouter un article, modifier ce script ou utiliser l\'API');
     break;
-    
-  case 'update-timestamp':
+  }
+  case 'update-timestamp': {
     updateTimestamp();
     break;
-    
-  default:
+  }
+  default: {
     console.log('Usage:');
     console.log('  node scripts/update-news.js list              - Lister les actualités');
     console.log('  node scripts/update-news.js clean [days]      - Nettoyer articles anciens');
@@ -181,25 +181,25 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 
 function handleCommand(command) {
   switch (command) {
-    case 'list':
+    case 'list': {
       listArticles();
       break;
-      
-    case 'clean':
+    }
+    case 'clean': {
       const days = parseInt(process.argv[3]) || 90;
       console.log(`🧹 Nettoyage des articles > ${days} jours...\n`);
       cleanOldArticles(days);
       break;
-      
-    case 'add':
+    }
+    case 'add': {
       console.log('ℹ️  Pour ajouter un article, modifier ce script ou utiliser l\'API');
       break;
-      
-    case 'update-timestamp':
+    }
+    case 'update-timestamp': {
       updateTimestamp();
       break;
-      
-    default:
+    }
+    default: {
       console.log('Usage:');
       console.log('  node scripts/update-news.js list              - Lister les actualités');
       console.log('  node scripts/update-news.js clean [days]      - Nettoyer articles anciens');
@@ -209,5 +209,7 @@ function handleCommand(command) {
       
       // Par défaut, lister
       listArticles();
+      break;
+    }
   }
 }

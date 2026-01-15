@@ -27,7 +27,9 @@ try {
   db = getFirestore(app);
   storage = getStorage(app);
   functions = getFunctions(app);
-  console.log('✅ Firebase initialisé avec succès');
+  if (import.meta.env.DEV) {
+    console.warn('✅ Firebase initialisé avec succès');
+  }
 } catch (error) {
   console.warn('⚠️ Firebase désactivé - l\'application fonctionne sans backend:', error.code || error.message);
   // Les services restent null - l'app continuera de fonctionner

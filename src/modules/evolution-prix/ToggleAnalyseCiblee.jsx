@@ -1,5 +1,3 @@
-import React from 'react';
-
 /**
  * Toggle Analyse Ciblée Component
  * Provides opt-in toggle for targeted analysis mode

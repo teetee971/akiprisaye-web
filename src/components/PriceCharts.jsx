@@ -7,25 +7,7 @@
 
 import { useState } from 'react';
 import {
-  LineChart,
-  Line,
-  BarChart,
-  Bar,
-  PieChart,
-  Pie,
-  Cell,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from 'recharts';
-import { Card } from './card.jsx';
-import {
   CHART_COLORS,
-  TERRITORY_COLORS,
-  BREAKDOWN_COLORS,
   CHART_THEME,
   getTerritoryColor,
   getBreakdownColor,

@@ -1,6 +1,4 @@
-import React, { useState } from 'react';
-import { UploadPreuve } from './UploadPreuve';
-import { SignalementConfirmation } from './SignalementConfirmation';
+import { useState } from 'react';
 
 /**
  * Signalement Form Component

@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
+// eslint-disable-next-line no-unused-vars -- Component is used in render() call below
 import { ScoreAntiCrise } from '../ScoreAntiCrise';
 
 describe('ScoreAntiCrise', () => {

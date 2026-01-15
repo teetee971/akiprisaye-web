@@ -1,5 +1,3 @@
-import React from 'react';
-
 /**
  * Badge Variation Component
  * Visual indicator for price variation
@@ -7,13 +5,6 @@ import React from 'react';
  * @param {number} value - Variation percentage
  */
 export function BadgeVariation({ value = 0 }) {
-  const getVariationLevel = (val) => {
-    const absVal = Math.abs(val);
-    if (absVal < 10) return 'stable';
-    if (absVal < 30) return 'notable';
-    return 'importante';
-  };
-
   const getVariationColor = (val) => {
     const absVal = Math.abs(val);
     if (absVal < 10) return 'bg-gray-100 text-gray-800 border-gray-300';

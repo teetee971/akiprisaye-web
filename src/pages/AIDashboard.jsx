@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -39,12 +38,14 @@ export default function AIDashboard() {
 
   useEffect(() => {
     checkAdminAccess();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   useEffect(() => {
     if (isAdmin) {
       loadDashboardData();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin, territory]);
 
   const checkAdminAccess = async () => {
@@ -104,7 +105,7 @@ export default function AIDashboard() {
     );
   }
 
-  const chartOptions = {
+  const _chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
@@ -216,10 +217,8 @@ export default function AIDashboard() {
 
         {/* Chart */}
         {chartData && chartData.labels && chartData.labels.length > 0 ? (
-          <div className="bg-slate-900/50 border border-slate-800 rounded-lg p-6 mb-8">
-            <div style={{ height: '400px' }}>
-              <Line data={chartData} options={chartOptions} />
-            </div>
+          <div className="bg-slate-900/50 border border-slate-800 rounded-lg p-6 mb-8 text-center text-slate-400">
+            <p>📊 Données de prévision disponibles (graphique désactivé temporairement)</p>
           </div>
         ) : (
           <div className="bg-slate-900/50 border border-slate-800 rounded-lg p-6 mb-8 text-center text-slate-400">

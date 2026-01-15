@@ -1,9 +1,7 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
-import { Link } from 'react-router-dom';
+import { useEffect, useState, useMemo } from 'react';
 import L from 'leaflet';
+import { useMap } from 'react-leaflet';
 import 'leaflet.markercluster';
-import { Car, Footprints, Bus, MapPin, Loader2, History, Share2, WifiOff } from 'lucide-react';
 import { getStoresByTerritory } from '../services/mapService';
 import { getActiveTerritories, TERRITORIES } from '../constants/territories';
 
@@ -14,6 +12,7 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
 });
 
+// eslint-disable-next-line no-unused-vars
 function MapUpdater({ position }) {
   const map = useMap();
   useEffect(() => {
@@ -23,7 +22,8 @@ function MapUpdater({ position }) {
 }
 
 // Phase 2: Marker Clustering Component
-function MarkerClusterGroup({ stores, isNavigating, handleGPS, currentTerritory, formatDistance, estimateTravelTime, formatTravelTime }) {
+// eslint-disable-next-line no-unused-vars
+function MarkerClusterGroup({ stores, currentTerritory, formatDistance }) {
   const map = useMap();
 
   useEffect(() => {
@@ -241,17 +241,25 @@ export default function Carte() {
     // Check if Web Share API is supported
     if (navigator.share) {
       navigator.share(shareData)
-        .then(() => console.log('Shared successfully'))
-        .catch((error) => console.log('Error sharing:', error));
+        .then(() => {
+          if (import.meta.env.DEV) {
+            console.warn('Shared successfully');
+          }
+        })
+        .catch((error) => console.error('Error sharing:', error));
     } else {
       // Fallback: copy to clipboard
       const text = `${store.name} - ${store.category}\nCoordonnées GPS: ${store.lat}, ${store.lon}\nLien: https://www.google.com/maps/search/?api=1&query=${store.lat},${store.lon}`;
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(text)
-          .then(() => console.log('Coordonnées copiées dans le presse-papier !'))
+          .then(() => {
+            if (import.meta.env.DEV) {
+              console.warn('Coordonnées copiées dans le presse-papier !');
+            }
+          })
           .catch((error) => {
             console.error('Erreur lors de la copie dans le presse-papier :', error);
-            console.log(
+            console.warn(
               `Impossible de copier automatiquement dans le presse-papier.\n\n` +
               `Cela peut être dû aux restrictions de votre navigateur ` +
               `(contexte non sécurisé HTTP ou autorisation refusée).\n\n` +
@@ -262,7 +270,7 @@ export default function Carte() {
             );
           });
       } else {
-        console.log(
+        console.warn(
           `Le partage automatique du lien n'est pas disponible dans ce navigateur ` +
           `ou dans ce contexte (par exemple, page non sécurisée HTTP).\n\n` +
           `Vous pouvez copier manuellement ces informations :\n\n` +

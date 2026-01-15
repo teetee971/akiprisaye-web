@@ -1,8 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
-import MarkerClusterGroup from 'react-leaflet-cluster';
-import { ObservationPopup } from './ObservationPopup';
-import { FiltresCarte } from './FiltresCarte';
+import { useState, useEffect } from 'react';
 import 'leaflet/dist/leaflet.css';
 
 // Fix for default marker icon in React-Leaflet

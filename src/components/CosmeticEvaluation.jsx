@@ -3,8 +3,7 @@
  * Basé uniquement sur des sources officielles (CosIng, ANSES, ECHA, Règlement CE 1223/2009)
  */
 
-import React, { useState } from 'react';
-import { Shield, AlertTriangle, CheckCircle, Info, ExternalLink, BookOpen } from 'lucide-react';
+import { useState } from 'react';
 import {
   evaluateProduct,
   getCategories,

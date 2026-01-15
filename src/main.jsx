@@ -18,7 +18,9 @@ import NotFound from './pages/NotFound';
 import ComparateursHub from './pages/ComparateursHub';
 import ScannerHub from './pages/ScannerHub';
 import AssistantIAHub from './pages/AssistantIAHub';
+import CarteItinerairesHub from './pages/CarteItinerairesHub';
 import SolidariteHub from './pages/SolidariteHub';
+import ObservatoireHub from './pages/ObservatoireHub';
 
 // Lazy load other pages for better performance with retry logic
 const ChatIALocal = lazyWithRetry(() => import('./components/ChatIALocal'));
@@ -79,13 +81,6 @@ const NewsSimple = lazyWithRetry(() => import('./pages/News'));
 
 // PR #1 - Assistant + FAQ étendue (v1.6.0)
 const Faq = lazyWithRetry(() => import('./pages/Faq'));
-
-// v7.0.0 New Modules - Integrated Pages
-const InflationDashboardPage = lazyWithRetry(() => import('./pages/InflationDashboardPage'));
-const PriceAlertsPage = lazyWithRetry(() => import('./pages/PriceAlertsPage'));
-const PriceHistoryPage = lazyWithRetry(() => import('./pages/PriceHistoryPage'));
-const SmartShoppingListPage = lazyWithRetry(() => import('./pages/SmartShoppingListPage'));
-const LutteVieChereIndexPage = lazyWithRetry(() => import('./pages/LutteVieChereIndexPage'));
 
 // Comparateur Citoyen - Observatoire data
 const ComparateurCitoyen = lazyWithRetry(() => import('./pages/ComparateurCitoyen'));
@@ -257,10 +252,13 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                   {/* HUB ROUTES - Main navigation entries (7 hubs) */}
                   <Route path='comparateurs' element={<ComparateursHub />} />
                   <Route path='scanner' element={<ScannerHub />} />
-                  <Route path='carte' element={<Carte />} /> {/* Carte already has all map/route features */}
+                  <Route path='carte-itineraires' element={<CarteItinerairesHub />} />
                   <Route path='assistant-ia' element={<AssistantIAHub />} />
                   <Route path='solidarite' element={<SolidariteHub />} />
-                  {/* Observatoire kept as-is */}
+                  <Route path='observatoire-hub' element={<ObservatoireHub />} />
+                  
+                  {/* Legacy Carte route kept for backward compatibility */}
+                  <Route path='carte' element={<Carte />} />
                   
                   <Route path='chat' element={<ChatIALocal />} />
                   
@@ -308,13 +306,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                   <Route path='dossier-media' element={<DossierMedia />} />
                   <Route path='historique-prix' element={<HistoriquePrix />} />
                   <Route path='alertes-prix' element={<AlertesPrix />} />
-                  
-                  {/* v7.0.0 New Integrated Routes */}
-                  <Route path='lutte-vie-chere' element={<LutteVieChereIndexPage />} />
-                  <Route path='inflation' element={<InflationDashboardPage />} />
-                  <Route path='alertes-prix-new' element={<PriceAlertsPage />} />
-                  <Route path='historique-prix-new' element={<PriceHistoryPage />} />
-                  <Route path='liste-courses-intelligente' element={<SmartShoppingListPage />} />
                   
                   <Route path='budget-vital' element={<BudgetVital />} />
                   <Route path='faux-bons-plans' element={<FauxBonsPlan />} />

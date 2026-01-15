@@ -1,5 +1,3 @@
-import React from 'react';
-
 /**
  * Observation Popup Component
  * Displays detailed information about a validated observation

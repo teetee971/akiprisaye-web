@@ -22,7 +22,7 @@ try {
   auth = getAuth(app);
   db = getFirestore(app);
   if (import.meta.env?.DEV) {
-    console.log('✅ Firebase initialized successfully');
+    console.warn('✅ Firebase initialized successfully');
   }
 } catch (error) {
   firebaseError = error?.message || 'Unknown Firebase initialization error';

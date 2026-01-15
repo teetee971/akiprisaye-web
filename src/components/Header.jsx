@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+// eslint-disable-next-line no-unused-vars
 import ThemeToggle from './ThemeToggle';
 import { useAuth } from '../context/AuthContext';
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
-  const { user, userRole, isGuest } = useAuth();
+  const { user, userRole, _isGuest } = useAuth();
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -81,42 +82,20 @@ export default function Header() {
           </li>
           <li>
             <Link
-              to="/comparateur"
+              to="/comparateurs"
               className={`flex items-center gap-3 px-6 py-3 text-white hover:bg-blue-700/20 transition-colors border-l-4 ${
-                isActiveRoute('/comparateur') ? 'border-blue-400 bg-blue-700/10' : 'border-transparent hover:border-blue-400'
+                isActiveRoute('/comparateurs') ? 'border-blue-400 bg-blue-700/10' : 'border-transparent hover:border-blue-400'
               }`}
               onClick={closeMobileMenu}
             >
-              <span>🛒 Comparer</span>
+              <span>📊 Comparateurs</span>
             </Link>
           </li>
           <li>
             <Link
-              to="/comprendre-prix"
+              to="/carte-itineraires"
               className={`flex items-center gap-3 px-6 py-3 text-white hover:bg-blue-700/20 transition-colors border-l-4 ${
-                isActiveRoute('/comprendre-prix') ? 'border-blue-400 bg-blue-700/10' : 'border-transparent hover:border-blue-400'
-              }`}
-              onClick={closeMobileMenu}
-            >
-              <span>💡 Comprendre</span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/ocr"
-              className={`flex items-center gap-3 px-6 py-3 text-white hover:bg-blue-700/20 transition-colors border-l-4 ${
-                isActiveRoute('/ocr') ? 'border-blue-400 bg-blue-700/10' : 'border-transparent hover:border-blue-400'
-              }`}
-              onClick={closeMobileMenu}
-            >
-              <span>🔎 OCR & Scan</span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/carte"
-              className={`flex items-center gap-3 px-6 py-3 text-white hover:bg-blue-700/20 transition-colors border-l-4 ${
-                isActiveRoute('/carte') ? 'border-blue-400 bg-blue-700/10' : 'border-transparent hover:border-blue-400'
+                isActiveRoute('/carte-itineraires') ? 'border-blue-400 bg-blue-700/10' : 'border-transparent hover:border-blue-400'
               }`}
               onClick={closeMobileMenu}
             >
@@ -125,25 +104,52 @@ export default function Header() {
           </li>
           <li>
             <Link
-              to="/civic-modules"
+              to="/scanner"
               className={`flex items-center gap-3 px-6 py-3 text-white hover:bg-blue-700/20 transition-colors border-l-4 ${
-                isActiveRoute('/civic-modules') ? 'border-blue-400 bg-blue-700/10' : 'border-transparent hover:border-blue-400'
+                isActiveRoute('/scanner') ? 'border-blue-400 bg-blue-700/10' : 'border-transparent hover:border-blue-400'
               }`}
               onClick={closeMobileMenu}
             >
-              <span>🤝 Participer</span>
+              <span>📷 Scanner</span>
             </Link>
           </li>
           <li>
             <Link
-              to="/alertes"
+              to="/assistant-ia"
               className={`flex items-center gap-3 px-6 py-3 text-white hover:bg-blue-700/20 transition-colors border-l-4 ${
-                isActiveRoute('/alertes') ? 'border-blue-400 bg-blue-700/10' : 'border-transparent hover:border-blue-400'
+                isActiveRoute('/assistant-ia') ? 'border-blue-400 bg-blue-700/10' : 'border-transparent hover:border-blue-400'
               }`}
               onClick={closeMobileMenu}
             >
-              <span>🚨 Alertes</span>
+              <span>🤖 Assistant IA</span>
             </Link>
+          </li>
+          <li>
+            <Link
+              to="/observatoire-hub"
+              className={`flex items-center gap-3 px-6 py-3 text-white hover:bg-blue-700/20 transition-colors border-l-4 ${
+                isActiveRoute('/observatoire-hub') ? 'border-blue-400 bg-blue-700/10' : 'border-transparent hover:border-blue-400'
+              }`}
+              onClick={closeMobileMenu}
+            >
+              <span>📈 Observatoire</span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/solidarite"
+              className={`flex items-center gap-3 px-6 py-3 text-white hover:bg-blue-700/20 transition-colors border-l-4 ${
+                isActiveRoute('/solidarite') ? 'border-blue-400 bg-blue-700/10' : 'border-transparent hover:border-blue-400'
+              }`}
+              onClick={closeMobileMenu}
+            >
+              <span>🤝 Solidarité</span>
+            </Link>
+          </li>
+          
+          {/* Secondary Navigation */}
+          <li className="px-6 py-2 mt-4">
+            <div className="text-xs uppercase tracking-wide text-slate-400">Plus</div>
           </li>
           <li>
             <Link

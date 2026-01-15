@@ -10,11 +10,8 @@ import {
   getDocs,
   getDoc,
   addDoc,
-  updateDoc,
   query,
   where,
-  orderBy,
-  limit,
   serverTimestamp,
 } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 import { getStoreById as getSeedStoreById } from './seedStores.js';

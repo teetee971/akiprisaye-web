@@ -1,5 +1,3 @@
-import React from 'react';
-
 /**
  * Panier Timeline Component
  * Shows price evolution over time using pure SVG/CSS

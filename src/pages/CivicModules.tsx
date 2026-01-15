@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import QuickSummary from '../components/QuickSummary';
 import NewsWidgetCivic from '../components/NewsWidgetCivic';
 import AIPricePrediction from '../components/AIPricePrediction';
@@ -72,12 +73,12 @@ export default function CivicModules() {
             </h2>
             <div className="space-y-3">
               {/* Main CTA */}
-              <a 
-                href="/comparateur-citoyen" 
+              <Link 
+                to="/comparateur-citoyen" 
                 className="block w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors text-center"
               >
                 📊 Comparer les prix par territoire
-              </a>
+              </Link>
               
               {/* Priority 1 - Vital Transport Comparators */}
               <div className="bg-gradient-to-r from-blue-900/30 to-purple-900/30 border border-blue-500/30 rounded-lg p-4">
@@ -86,8 +87,8 @@ export default function CivicModules() {
                   🥇 Transports Vitaux (Impact Maximum)
                 </h3>
                 <div className="grid md:grid-cols-2 gap-3">
-                  <a
-                    href="/comparateur-vols"
+                  <Link
+                    to="/comparateur-vols"
                     className="block p-3 bg-slate-800/70 border border-blue-700/50 rounded-lg hover:bg-slate-800/90 transition-colors"
                   >
                     <h4 className="font-medium text-blue-200 mb-1 text-sm flex items-center gap-2">
@@ -96,9 +97,9 @@ export default function CivicModules() {
                     <p className="text-xs text-gray-400 leading-relaxed">
                       DOM ↔ Métropole — Prix, compagnies, moments d'achat, saisons
                     </p>
-                  </a>
-                  <a
-                    href="/comparateur-bateaux"
+                  </Link>
+                  <Link
+                    to="/comparateur-bateaux"
                     className="block p-3 bg-slate-800/70 border border-blue-700/50 rounded-lg hover:bg-slate-800/90 transition-colors"
                   >
                     <h4 className="font-medium text-blue-200 mb-1 text-sm flex items-center gap-2">
@@ -107,7 +108,7 @@ export default function CivicModules() {
                     <p className="text-xs text-gray-400 leading-relaxed">
                       Inter-îles — Passagers, véhicules, fréquences
                     </p>
-                  </a>
+                  </Link>
                 </div>
               </div>
               
@@ -119,7 +120,6 @@ export default function CivicModules() {
                     e.preventDefault();
                     const element = document.getElementById('gps-shopping');
                     if (element) {
-                      // Respect user's reduced motion preference
                       const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
                       element.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth' });
                     }
@@ -131,27 +131,36 @@ export default function CivicModules() {
                     Trouvez les meilleurs magasins près de chez vous
                   </p>
                 </a>
-                <a
-                  href="/contribuer-prix"
+                <Link
+                  to="/evaluation-cosmetique"
+                  className="block p-3 bg-slate-800/50 border border-green-700/50 rounded-lg hover:bg-slate-800/70 transition-colors"
+                >
+                  <h3 className="font-medium text-green-200 mb-1 text-sm">🧴 Évaluation Cosmétiques</h3>
+                  <p className="text-xs text-gray-400 leading-relaxed">
+                    Analysez la composition de vos produits cosmétiques
+                  </p>
+                </Link>
+                <Link
+                  to="/contribuer-prix"
                   className="block p-3 bg-slate-800/50 border border-slate-700/50 rounded-lg hover:bg-slate-800/70 transition-colors"
                 >
                   <h3 className="font-medium text-gray-300 mb-1 text-sm">🤝 Contribuer aux données publiques</h3>
                   <p className="text-xs text-gray-400 leading-relaxed">
                     Partagez vos observations de prix
                   </p>
-                </a>
+                </Link>
               </div>
 
               {/* Always Visible Alert CTA */}
-              <a
-                href="/signaler-abus"
+              <Link
+                to="/signaler-abus"
                 className="block p-3 bg-red-900/30 border border-red-700/50 rounded-lg hover:bg-red-900/40 transition-colors"
               >
                 <h3 className="font-medium text-red-200 mb-1 text-sm">🚨 Signaler un abus</h3>
                 <p className="text-xs text-gray-400 leading-relaxed">
                   Signalez les pratiques commerciales douteuses ou prix anormaux
                 </p>
-              </a>
+              </Link>
             </div>
           </section>
 

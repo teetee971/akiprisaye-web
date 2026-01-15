@@ -3,7 +3,6 @@
  * Button component with glassmorphism and civic design
  * Variants: primary, secondary, ghost, danger
  */
-import React from 'react';
 import { cn } from '@/lib/utils';
 
 const variants = {

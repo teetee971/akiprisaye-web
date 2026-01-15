@@ -1,6 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { IndiceMarge } from './IndiceMarge';
-import { ComparatifEnseignes } from './ComparatifEnseignes';
+import { useState, useEffect } from 'react';
 
 /**
  * Observatoire des Marges Component
