@@ -1,19 +1,20 @@
-﻿import { initializeApp } from 'firebase/app';
+﻿// Re-export from centralized Firebase configuration
+import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import { getFunctions } from 'firebase/functions';
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyBfQGLocAqVPNyk2w2Jyi0Pbej-Lz8tSYU',
-  authDomain: 'a-ki-pri-sa-ye.firebaseapp.com',
-  projectId: 'a-ki-pri-sa-ye',
-  storageBucket: 'a-ki-pri-sa-ye.firebasestorage.app',
-  messagingSenderId: '187272078809',
-  appId: '1:187272078809:android:a2841196fcd9735306e5c8',
+  apiKey: "AIzaSyDf_m8BzMVHFWoFhVLyThuKwWTMhB7u5ZY",
+  authDomain: "a-ki-pri-sa-ye.firebaseapp.com",
+  projectId: "a-ki-pri-sa-ye",
+  storageBucket: "a-ki-pri-sa-ye.firebasestorage.app",
+  messagingSenderId: "187272078809",
+  appId: "1:187272078809:web:110a92e34493ef4506e5c8",
+  measurementId: "G-NFHCZTLPDM"
 };
 
-// Initialiser tous les services Firebase comme null par défaut
 let app = null;
 let auth = null;
 let db = null;
@@ -26,9 +27,11 @@ try {
   db = getFirestore(app);
   storage = getStorage(app);
   functions = getFunctions(app);
-  console.log(' Firebase initialisé avec succès');
+  if (import.meta.env.DEV) {
+    console.warn('✅ Firebase initialisé avec succès');
+  }
 } catch (error) {
-  console.warn(' Firebase désactivé - l\'application fonctionne sans backend:', error.code || error.message);
+  console.warn('⚠️ Firebase désactivé - l\'application fonctionne sans backend:', error.code || error.message);
   // Les services restent null - l'app continuera de fonctionner
 }
 

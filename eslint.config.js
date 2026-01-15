@@ -1,6 +1,7 @@
 import js from '@eslint/js'
 import globals from 'globals'
 import react from 'eslint-plugin-react'
+import reactHooks from 'eslint-plugin-react-hooks'
 
 export default [
   // =========================
@@ -17,6 +18,8 @@ export default [
       '**/SentinelQuantumVanguardAIPro/**',
       '**/chat_ia_local/**',
       '**/frontend/public/**',
+      '**/*.min.js',
+      '**/public/ocr/worker.min.js',
     ],
   },
 
@@ -26,7 +29,13 @@ export default [
   {
     rules: {
       ...js.configs.recommended.rules,
-      'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      'no-unused-vars': ['error', { 
+        argsIgnorePattern: '^_', 
+        varsIgnorePattern: '^_',
+        caughtErrorsIgnorePattern: '^_'
+      }],
+      'no-fallthrough': 'error',
+      'no-console': ['warn', { allow: ['warn', 'error'] }],
     },
   },
 
@@ -64,7 +73,7 @@ export default [
         cancelAnimationFrame: 'readonly',
       },
     },
-    plugins: { react },
+    plugins: { react, 'react-hooks': reactHooks },
     settings: {
       react: {
         version: 'detect'
@@ -74,6 +83,8 @@ export default [
       'react/react-in-jsx-scope': 'off',
       'react/prop-types': 'off',
       'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'error',
     },
   },
 
@@ -146,6 +157,28 @@ export default [
         exports: 'readonly',
         module: 'readonly',
         __dirname: 'readonly',
+      },
+    },
+    rules: {
+      'no-console': 'off',
+    },
+  },
+
+  // =====================================================
+  // BROWSER-SIDE SCRIPTS (run in HTML pages)
+  // =====================================================
+  {
+    files: [
+      'scripts/news-feed.js',
+      'scripts/promo-ai.js',
+      'scripts/auto-import-stores.js',
+      'scripts/gps-navigator.js',
+      'scripts/promotions-firestore.js',
+    ],
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...globals.es2021,
       },
     },
     rules: {

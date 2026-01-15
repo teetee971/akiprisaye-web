@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparaison Territoriale - A KI PRI SA YÉ</title>
+    <meta name="description" content="Comparaison des prix entre territoires d'Outre-mer basée EXCLUSIVEMENT sur des données réelles observées">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ff9800;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+        }
+
+        .warning-box h2 {
+            color: #ff9800;
+            margin-bottom: 0.75rem;
+            font-size: 1.3rem;
+        }
+
+        .warning-box ul {
+            margin-left: 1.5rem;
+            color: #856404;
+        }
+
+        .warning-box li {
+            margin-bottom: 0.5rem;
+        }
+
+        .filters-section {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .filters-section h2 {
+            color: #667eea;
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        .filter-group select[multiple] {
+            min-height: 150px;
+        }
+
+        .filter-group small {
+            display: block;
+            margin-top: 0.25rem;
+            color: #666;
+            font-size: 0.875rem;
+        }
+
+        .filter-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            width: 100%;
+        }
+
+        .btn:hover {
+            background: #5568d3;
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .results-section {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .results-section.visible {
+            display: block;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            background: #10b981;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .comparison-table th {
+            background: #f9fafb;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .comparison-table tr:hover {
+            background: #f9fafb;
+        }
+
+        .price {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .no-data {
+            color: #999;
+            font-style: italic;
+        }
+
+        .count-badge {
+            display: inline-block;
+            background: #e5e7eb;
+            color: #374151;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .chart-container {
+            margin: 2rem 0;
+            min-height: 300px;
+        }
+
+        .methodology {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 6px;
+        }
+
+        .methodology h3 {
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .methodology ul {
+            margin-left: 1.5rem;
+        }
+
+        .methodology li {
+            margin-bottom: 0.5rem;
+            color: #374151;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+
+        .error {
+            background: #fee;
+            border: 1px solid #fcc;
+            color: #c33;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .filter-row {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison-table {
+                font-size: 0.875rem;
+            }
+
+            .comparison-table th,
+            .comparison-table td {
+                padding: 0.5rem;
+            }
+        }
+
+        footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 2rem 1rem;
+            margin-top: 4rem;
+        }
+
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>🗺️ Comparaison Territoriale des Prix</h1>
+        <p>Comparaison basée EXCLUSIVEMENT sur des prix réels observés</p>
+    </header>
+
+    <div class="container">
+        <div class="warning-box">
+            <h2>⚠️ Avertissement méthodologique</h2>
+            <ul>
+                <li><strong>Aucune estimation</strong> : Les prix affichés proviennent UNIQUEMENT de tickets de caisse réels</li>
+                <li><strong>Aucune moyenne fictive</strong> : Si un territoire manque de données, cela sera clairement indiqué</li>
+                <li><strong>Aucun lissage statistique</strong> : Les calculs (min, max, médiane) sont basés sur les observations brutes</li>
+                <li><strong>Transparence totale</strong> : Le nombre d'observations est toujours affiché</li>
+            </ul>
+        </div>
+
+        <div class="filters-section">
+            <h2>🔍 Critères de comparaison</h2>
+            
+            <div class="filter-group">
+                <label for="comparison-type">Type de comparaison</label>
+                <select id="comparison-type">
+                    <option value="categorie">Par catégorie de produits</option>
+                    <option value="produit">Par produit spécifique</option>
+                </select>
+            </div>
+
+            <div class="filter-group" id="categorie-group">
+                <label for="categorie-select">Catégorie</label>
+                <select id="categorie-select">
+                    <option value="">Chargement...</option>
+                </select>
+            </div>
+
+            <div class="filter-group" id="produit-group" style="display: none;">
+                <label for="produit-select">Produit</label>
+                <select id="produit-select">
+                    <option value="">Chargement...</option>
+                </select>
+                <small>Recherchez un produit spécifique par son nom</small>
+            </div>
+
+            <div class="filter-group">
+                <label for="territoires-select">Territoires à comparer</label>
+                <select id="territoires-select" multiple>
+                    <option value="">Chargement...</option>
+                </select>
+                <small>Maintenez Ctrl (Cmd sur Mac) pour sélectionner plusieurs territoires</small>
+            </div>
+
+            <div class="filter-group">
+                <label>Période</label>
+                <div class="filter-row">
+                    <div>
+                        <label for="date-debut" style="font-weight: normal; font-size: 0.875rem;">Début</label>
+                        <input type="date" id="date-debut">
+                    </div>
+                    <div>
+                        <label for="date-fin" style="font-weight: normal; font-size: 0.875rem;">Fin</label>
+                        <input type="date" id="date-fin">
+                    </div>
+                </div>
+                <small>Laissez vide pour inclure toutes les observations disponibles</small>
+            </div>
+
+            <button class="btn" id="compare-btn" onclick="performComparison()">
+                Comparer les prix
+            </button>
+        </div>
+
+        <div class="results-section" id="results-section">
+            <span class="badge">Données réelles – observatoire citoyen</span>
+            
+            <div id="results-content">
+                <!-- Results will be inserted here -->
+            </div>
+
+            <div class="methodology">
+                <h3>📊 À propos de cette comparaison</h3>
+                <ul>
+                    <li><strong>Ce qui est comparé</strong> : Prix réels observés sur des tickets de caisse vérifiés</li>
+                    <li><strong>Ce qui n'est PAS comparé</strong> : Estimations, prix moyens fictifs, données extrapolées</li>
+                    <li><strong>Médiane</strong> : Calculée uniquement si ≥ 3 observations (sinon affichée comme "Insuffisant")</li>
+                    <li><strong>Limites</strong> : Certains territoires peuvent manquer de données car la collecte est citoyenne</li>
+                    <li><strong>Enseignes</strong> : La liste des enseignes observées est affichée pour traçabilité</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 A KI PRI SA YÉ - Observatoire citoyen des prix en Outre-mer</p>
+        <p>
+            <a href="/">Retour à l'accueil</a> | 
+            <a href="/observatoire.html">Observatoire</a> | 
+            <a href="https://github.com/teetee971/akiprisaye-web/blob/main/docs/METHODOLOGY_TICKETS.md" target="_blank" rel="noopener">Méthodologie</a>
+        </p>
+    </footer>
+
+    <script type="module">
+        // Load observations data
+        let observationsData = [];
+
+        // Format price
+        function formatPrice(price) {
+            if (price === null) return '<span class="no-data">Données insuffisantes</span>';
+            return new Intl.NumberFormat('fr-FR', {
+                style: 'currency',
+                currency: 'EUR'
+            }).format(price);
+        }
+
+        // Format date
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('fr-FR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        // Calculate median
+        function calculateMedian(values) {
+            if (values.length < 3) return null;
+            const sorted = [...values].sort((a, b) => a - b);
+            const mid = Math.floor(sorted.length / 2);
+            return sorted.length % 2 === 0 
+                ? (sorted[mid - 1] + sorted[mid]) / 2 
+                : sorted[mid];
+        }
+
+        // Extract prices from observations
+        function extractPrices(observations, filter) {
+            const prices = [];
+            for (const obs of observations) {
+                for (const product of obs.produits) {
+                    let matches = false;
+                    
+                    if (filter.produit && product.nom.toLowerCase().includes(filter.produit.toLowerCase())) {
+                        matches = true;
+                    }
+                    
+                    if (filter.categorie && product.categorie?.toLowerCase() === filter.categorie.toLowerCase()) {
+                        matches = true;
+                    }
+                    
+                    if (matches) {
+                        prices.push({
+                            prix: product.prix_total,
+                            date: obs.date,
+                            enseigne: obs.enseigne
+                        });
+                    }
+                }
+            }
+            return prices;
+        }
+
+        // Perform comparison
+        window.performComparison = function() {
+            const type = document.getElementById('comparison-type').value;
+            const categorie = document.getElementById('categorie-select').value;
+            const produit = document.getElementById('produit-select').value;
+            const territoriesSelect = document.getElementById('territoires-select');
+            const selectedTerritories = Array.from(territoriesSelect.selectedOptions).map(opt => opt.value);
+            const dateDebut = document.getElementById('date-debut').value;
+            const dateFin = document.getElementById('date-fin').value;
+
+            // Validate
+            if (type === 'categorie' && !categorie) {
+                alert('Veuillez sélectionner une catégorie');
+                return;
+            }
+            if (type === 'produit' && !produit) {
+                alert('Veuillez sélectionner un produit');
+                return;
+            }
+            if (selectedTerritories.length === 0) {
+                alert('Veuillez sélectionner au moins un territoire');
+                return;
+            }
+
+            // Filter observations
+            let filteredObs = observationsData;
+            
+            if (dateDebut) {
+                filteredObs = filteredObs.filter(obs => obs.date >= dateDebut);
+            }
+            if (dateFin) {
+                filteredObs = filteredObs.filter(obs => obs.date <= dateFin);
+            }
+
+            // Group by territory
+            const territoireStats = [];
+            let totalObs = 0;
+
+            for (const territoire of selectedTerritories) {
+                const territoireObs = filteredObs.filter(obs => obs.territoire === territoire);
+                const filter = type === 'produit' ? { produit } : { categorie };
+                const prices = extractPrices(territoireObs, filter);
+                const priceValues = prices.map(p => p.prix);
+
+                if (priceValues.length > 0) {
+                    const enseignes = [...new Set(prices.map(p => p.enseigne))].sort();
+                    const dates = prices.map(p => p.date).sort();
+                    
+                    territoireStats.push({
+                        territoire,
+                        observation_count: priceValues.length,
+                        prix_min: Math.min(...priceValues),
+                        prix_max: Math.max(...priceValues),
+                        prix_median: calculateMedian(priceValues),
+                        enseignes,
+                        date_debut: dates[0],
+                        date_fin: dates[dates.length - 1]
+                    });
+                    
+                    totalObs += priceValues.length;
+                } else {
+                    territoireStats.push({
+                        territoire,
+                        observation_count: 0,
+                        prix_min: null,
+                        prix_max: null,
+                        prix_median: null,
+                        enseignes: [],
+                        date_debut: null,
+                        date_fin: null
+                    });
+                }
+            }
+
+            // Display results
+            displayResults(territoireStats, type === 'produit' ? produit : categorie, type, totalObs);
+        };
+
+        // Display comparison results
+        function displayResults(stats, label, type, totalObs) {
+            const resultsSection = document.getElementById('results-section');
+            const resultsContent = document.getElementById('results-content');
+
+            let html = `
+                <h2>Comparaison : ${label}</h2>
+                <p style="color: #666; margin-bottom: 1rem;">
+                    Type: ${type === 'produit' ? 'Produit spécifique' : 'Catégorie'} • 
+                    Total observations: <strong>${totalObs}</strong>
+                </p>
+            `;
+
+            if (totalObs === 0) {
+                html += `
+                    <div class="empty-state">
+                        <h3>Aucune donnée disponible</h3>
+                        <p>Aucune observation ne correspond aux critères sélectionnés.</p>
+                        <p>Essayez d'élargir la période ou de sélectionner d'autres territoires.</p>
+                    </div>
+                `;
+            } else {
+                html += `
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Territoire</th>
+                                <th>Prix Min</th>
+                                <th>Prix Médian</th>
+                                <th>Prix Max</th>
+                                <th>Observations</th>
+                                <th>Enseignes</th>
+                                <th>Période</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                for (const stat of stats) {
+                    html += `
+                        <tr>
+                            <td><strong>${stat.territoire}</strong></td>
+                            <td class="price">${formatPrice(stat.prix_min)}</td>
+                            <td class="price">${formatPrice(stat.prix_median)}</td>
+                            <td class="price">${formatPrice(stat.prix_max)}</td>
+                            <td><span class="count-badge">${stat.observation_count}</span></td>
+                            <td style="font-size: 0.875rem;">${stat.enseignes.join(', ') || '—'}</td>
+                            <td style="font-size: 0.875rem;">
+                                ${stat.date_debut ? `${formatDate(stat.date_debut)}<br>au<br>${formatDate(stat.date_fin)}` : '—'}
+                            </td>
+                        </tr>
+                    `;
+                }
+
+                html += `
+                        </tbody>
+                    </table>
+                `;
+            }
+
+            resultsContent.innerHTML = html;
+            resultsSection.classList.add('visible');
+            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // Load initial data
+        async function loadData() {
+            try {
+                const response = await fetch('/data/observations/index.json');
+                if (!response.ok) throw new Error('Failed to load observations');
+                
+                observationsData = await response.json();
+
+                // Populate categories
+                const categories = new Set();
+                const products = new Set();
+                const territories = new Set();
+
+                for (const obs of observationsData) {
+                    territories.add(obs.territoire);
+                    for (const product of obs.produits) {
+                        if (product.categorie) categories.add(product.categorie);
+                        products.add(product.nom);
+                    }
+                }
+
+                // Populate select elements
+                const categorieSelect = document.getElementById('categorie-select');
+                categorieSelect.innerHTML = '<option value="">Sélectionnez une catégorie</option>' +
+                    Array.from(categories).sort().map(cat => 
+                        `<option value="${cat}">${cat}</option>`
+                    ).join('');
+
+                const produitSelect = document.getElementById('produit-select');
+                produitSelect.innerHTML = '<option value="">Sélectionnez un produit</option>' +
+                    Array.from(products).sort().map(prod => 
+                        `<option value="${prod}">${prod}</option>`
+                    ).join('');
+
+                const territoriesSelect = document.getElementById('territoires-select');
+                territoriesSelect.innerHTML = Array.from(territories).sort().map(terr => 
+                    `<option value="${terr}">${terr}</option>`
+                ).join('');
+
+                // Enable comparison button
+                document.getElementById('compare-btn').disabled = false;
+
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.getElementById('compare-btn').disabled = true;
+                alert('Erreur lors du chargement des données. Veuillez réessayer.');
+            }
+        }
+
+        // Toggle between product and category selection
+        document.getElementById('comparison-type').addEventListener('change', (e) => {
+            const type = e.target.value;
+            const categorieGroup = document.getElementById('categorie-group');
+            const produitGroup = document.getElementById('produit-group');
+
+            if (type === 'categorie') {
+                categorieGroup.style.display = 'block';
+                produitGroup.style.display = 'none';
+            } else {
+                categorieGroup.style.display = 'none';
+                produitGroup.style.display = 'block';
+            }
+        });
+
+        // Load data on page load
+        document.addEventListener('DOMContentLoaded', loadData);
+    </script>
+</body>
+</html>

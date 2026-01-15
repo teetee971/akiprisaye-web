@@ -5,7 +5,7 @@
  * Affiche les indicateurs prioritaires de manière transparente
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './ObservatoryDashboard.css';
 import type {
   IndicatorSnapshot,
@@ -24,35 +24,79 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
   const [error, setError] = useState<string | null>(null);
   const [selectedTerritory, setSelectedTerritory] = useState<TerritoireName | undefined>(territoire);
 
-  useEffect(() => {
-    loadSnapshot();
-  }, [selectedTerritory]);
+  const normalizeSnapshot = useCallback((loaded: IndicatorSnapshot): IndicatorSnapshot => {
+    return {
+      ...loaded,
+      indicateurs: {
+        prix_moyens: loaded.indicateurs?.prix_moyens ?? [],
+        ecarts_dom_hexagone: loaded.indicateurs?.ecarts_dom_hexagone ?? [],
+        indices_vie_chere: loaded.indicateurs?.indices_vie_chere ?? [],
+        evolutions_temporelles: loaded.indicateurs?.evolutions_temporelles ?? [],
+        dispersions_enseignes: loaded.indicateurs?.dispersions_enseignes ?? [],
+      },
+      metadata: {
+        nombre_observations_total: loaded.metadata?.nombre_observations_total ?? 0,
+        periode_couverte: loaded.metadata?.periode_couverte ?? { debut: '', fin: '' },
+        sources: loaded.metadata?.sources ?? [],
+        qualite_moyenne: loaded.metadata?.qualite_moyenne ?? 0,
+      }
+    };
+  }, []);
 
-  const loadSnapshot = () => {
+  const loadSnapshot = useCallback(async () => {
     setLoading(true);
     setError(null);
 
     try {
-      const loaded = loadSnapshotLocally('observatory_snapshot');
+      let loaded = loadSnapshotLocally('observatory_snapshot');
       
+      // Fallback to bundled snapshot if local storage is empty or broken
       if (!loaded) {
+        const res = await fetch('/data/observatory_snapshot.json', { cache: 'no-store' });
+        if (!res.ok) {
+          throw new Error(`Impossible de charger les données (${res.status})`);
+        }
+        loaded = await res.json() as IndicatorSnapshot;
+      }
+      
+      const safeSnapshot = normalizeSnapshot(loaded);
+      
+      if (!safeSnapshot) {
         setError('Aucune donnée disponible. Veuillez générer un snapshot.');
         setLoading(false);
         return;
       }
 
-      if (isSnapshotStale(loaded, 24)) {
+      if (isSnapshotStale(safeSnapshot, 24)) {
         setError('Les données sont obsolètes (plus de 24h). Un rafraîchissement est recommandé.');
       }
 
-      setSnapshot(loaded);
+      setSnapshot(safeSnapshot);
     } catch (err) {
-      setError('Erreur lors du chargement des données');
-      console.error(err);
+      const message = err instanceof Error ? err.message : 'Erreur lors du chargement des données';
+      setError(message);
+      console.error('Observatoire load error:', err);
     } finally {
       setLoading(false);
     }
-  };
+  }, [normalizeSnapshot]);
+
+  useEffect(() => {
+    loadSnapshot();
+  }, [selectedTerritory, loadSnapshot]);
+
+  const renderDeploymentState = (message?: string) => (
+    <div className="observatory-dashboard empty">
+      <div className="error-message">
+        <h3>Observatoire public en cours de déploiement</h3>
+        <p>Les premières données seront publiées prochainement.</p>
+        {message && <p className="mt-2">{message}</p>}
+        <button onClick={() => (window.location.href = '/observatoire/methodologie')}>
+          Comprendre le projet
+        </button>
+      </div>
+    </div>
+  );
 
   if (loading) {
     return (
@@ -66,22 +110,24 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
   }
 
   if (error && !snapshot) {
-    return (
-      <div className="observatory-dashboard error">
-        <div className="error-message">
-          <h3>⚠️ Erreur</h3>
-          <p>{error}</p>
-          <button onClick={loadSnapshot}>Réessayer</button>
-        </div>
-      </div>
-    );
+    return renderDeploymentState(error);
   }
 
   if (!snapshot) {
-    return null;
+    return renderDeploymentState(error ?? undefined);
   }
 
   const { indicateurs, metadata } = snapshot;
+  const hasData =
+    indicateurs.prix_moyens.length > 0 ||
+    indicateurs.ecarts_dom_hexagone.length > 0 ||
+    indicateurs.indices_vie_chere.length > 0 ||
+    indicateurs.evolutions_temporelles.length > 0 ||
+    indicateurs.dispersions_enseignes.length > 0;
+
+  if (!hasData) {
+    return renderDeploymentState(error ?? undefined);
+  }
 
   return (
     <div className="observatory-dashboard">
@@ -103,8 +149,8 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
         <div className="metadata-card">
           <h3>Période couverte</h3>
           <p>
-            Du {new Date(metadata.periode_couverte.debut).toLocaleDateString('fr-FR')} au{' '}
-            {new Date(metadata.periode_couverte.fin).toLocaleDateString('fr-FR')}
+            Du {formatDateSafe(metadata?.periode_couverte?.debut)} au{' '}
+            {formatDateSafe(metadata?.periode_couverte?.fin)}
           </p>
         </div>
         <div className="metadata-card">
@@ -303,6 +349,12 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
         </section>
       )}
 
+      {!hasData && (
+        <div className="warning-banner" style={{ marginTop: '2rem' }}>
+          <span>ℹ️</span> Données en mode dégradé. Les listes ci-dessous peuvent être limitées.
+        </div>
+      )}
+
       {/* Footer with Transparency */}
       <footer className="dashboard-footer">
         <div className="transparency-section">
@@ -342,6 +394,17 @@ function formatTendance(tendance: 'hausse' | 'baisse' | 'stable'): string {
     stable: '➡️ Stable',
   };
   return labels[tendance];
+}
+
+function formatDateSafe(value?: string): string {
+  if (!value) {
+    return 'à publier';
+  }
+  const date = new Date(String(value));
+  if (Number.isNaN(date.getTime())) {
+    return 'à publier';
+  }
+  return date.toLocaleDateString('fr-FR');
 }
 
 export default ObservatoryDashboard;

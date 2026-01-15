@@ -1,0 +1,105 @@
+name: Build Android AAB for Google Play
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - principal
+
+jobs:
+  build-android-aab:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build web app
+        run: npm run build
+
+      - name: Sync Capacitor Android
+        run: |
+          npx cap sync android
+
+      - name: Setup Java (Temurin JDK 17)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Decode Android keystore from Base64
+        run: |
+          echo "🔐 Decoding keystore from Base64..."
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > android/release.jks
+          
+          if [ ! -f android/release.jks ]; then
+            echo "❌ ERROR: Failed to decode keystore from ANDROID_KEYSTORE_BASE64"
+            echo "⚠️  Ensure the secret exists and contains valid Base64-encoded keystore"
+            exit 1
+          fi
+          
+          echo "✅ Keystore decoded successfully"
+          ls -lh android/release.jks
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x android/gradlew
+
+      - name: Build signed Android App Bundle (AAB)
+        working-directory: android
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+        run: |
+          echo "🔨 Building signed Android App Bundle..."
+          ./gradlew bundleRelease --stacktrace
+          echo "✅ Build completed successfully"
+
+      - name: Verify signed AAB was created
+        run: |
+          AAB_PATH="android/app/build/outputs/bundle/release/app-release.aab"
+          
+          if [ ! -f "$AAB_PATH" ]; then
+            echo "❌ ERROR: AAB not found at $AAB_PATH"
+            exit 1
+          fi
+          
+          AAB_SIZE=$(du -h "$AAB_PATH" | cut -f1)
+          echo "✅ Signed AAB created successfully"
+          echo "📦 File: $AAB_PATH"
+          echo "📏 Size: $AAB_SIZE"
+          
+          # Verify AAB is signed (fail if not signed)
+          echo "🔍 Verifying AAB signature..."
+          if ! jarsigner -verify "$AAB_PATH"; then
+            echo "❌ ERROR: AAB signature verification failed"
+            echo "❌ The AAB is unsigned or improperly signed"
+            echo "⚠️  Check keystore configuration and environment variables"
+            exit 1
+          fi
+          echo "✅ AAB signature verified successfully"
+
+      - name: Clean up keystore
+        if: always()
+        run: |
+          if [ -f android/release.jks ]; then
+            rm -f android/release.jks
+            echo "🧹 Keystore cleaned up for security"
+          fi
+
+      - name: Upload signed AAB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-aab-signed
+          path: android/app/build/outputs/bundle/release/*.aab
+          if-no-files-found: error
+          retention-days: 30

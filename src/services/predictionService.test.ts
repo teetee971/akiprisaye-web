@@ -1,3 +1,4 @@
+import { expect, test } from 'vitest';
 import { computePrediction } from './predictionService';
 
 test('computePrediction returns Baisse probable on clear downward trend', () => {

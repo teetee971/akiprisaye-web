@@ -1,0 +1,38 @@
+{
+  "territoire": "Guadeloupe",
+  "periode": "2026-01",
+  "date_collecte": "2026-01-12",
+  "source": "Relevés citoyens validés",
+  "produits": [
+    {
+      "ean": "3560070034764",
+      "nom": "Lait UHT demi-écrémé 1L",
+      "categorie": "Produits laitiers",
+      "prix": 1.32,
+      "enseigne": "Carrefour Market",
+      "ville": "Pointe-à-Pitre"
+    },
+    {
+      "ean": "7613035541123",
+      "nom": "Riz blanc long grain 1kg",
+      "categorie": "Épicerie",
+      "prix": 2.45,
+      "enseigne": "Super U",
+      "ville": "Les Abymes"
+    },
+    {
+      "ean": "3228857000609",
+      "nom": "Pâtes spaghetti 500g",
+      "categorie": "Épicerie",
+      "prix": 1.15,
+      "enseigne": "Leader Price",
+      "ville": "Gosier"
+    }
+  ],
+  "statistiques": {
+    "nombre_produits": 3,
+    "prix_moyen": 1.64,
+    "prix_min": 1.15,
+    "prix_max": 2.45
+  }
+}

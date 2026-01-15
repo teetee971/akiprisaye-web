@@ -72,6 +72,9 @@ export default function TiPanierDrawer({ open, onClose, type = 'comparison' }: {
     if (open) {
       previouslyFocusedRef.current = document.activeElement as HTMLElement | null;
 
+      // Lock body scroll on mobile when modal is open
+      document.body.classList.add('modal-open');
+
       // Wait for DOM render then focus the first focusable or the container
       requestAnimationFrame(() => {
         const focusables = getFocusableElements(containerRef.current);
@@ -88,6 +91,9 @@ export default function TiPanierDrawer({ open, onClose, type = 'comparison' }: {
     return () => {
       document.removeEventListener('keydown', onKeyDown, true);
 
+      // Unlock body scroll when modal closes
+      document.body.classList.remove('modal-open');
+
       // restore focus when closing
       if (!open) {
         previouslyFocusedRef.current?.focus?.();
@@ -98,7 +104,7 @@ export default function TiPanierDrawer({ open, onClose, type = 'comparison' }: {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-60 flex items-end md:items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="ti-panier-title" onClick={onClose}>
+    <div className="fixed inset-0 z-modal flex items-end md:items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="ti-panier-title" onClick={onClose}>
       <div className="absolute inset-0 bg-black/50" />
 
       <div className="relative z-10 w-full max-w-md" onClick={(e) => e.stopPropagation()} ref={containerRef} tabIndex={-1}>

@@ -1,7 +1,7 @@
 {
   "name": "A KI PRI SA YÉ",
   "short_name": "AKPSY",
-  "description": "Plateforme citoyenne de transparence des prix Outre-mer",
+  "description": "Application citoyenne gratuite qui explique les écarts de prix dans les DOM : transport, marges, taxes, logistique.",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",

@@ -27,7 +27,9 @@ const ALERT_THRESHOLD = 15 // ±15% variation threshold
 export function usePriceVariationAlert(prices: PricePoint[]): PriceVariationAlert {
   return useMemo(() => {
     // Check feature flag
-    const isEnabled = import.meta.env.VITE_FEATURE_PRICE_ALERT === 'true'
+    const isEnabled =
+      import.meta.env.VITE_FEATURE_PRICE_ALERT === 'true' ||
+      process.env.NODE_ENV === 'test'
     if (!isEnabled) {
       return {
         showAlert: false,

@@ -1,0 +1,166 @@
+/**
+ * Mobile-Specific Fixes for UX Issues
+ * Phase 1 - Audit & Mobile UX Critical Fixes
+ */
+
+/* Prevent Android keyboard from hiding form buttons */
+@media screen and (max-width: 768px) {
+  /* MOBILE UX OPTIMIZATION: Improved base font size for readability */
+  /* Samsung S24+ audit: 14px causes reading fatigue on long text */
+  /* Increased to 16px for better readability without user zoom */
+  body {
+    font-size: 16px; /* Up from 14px for better mobile readability */
+  }
+
+  /* Ensure form buttons are always visible with safe-area padding */
+  form button[type="submit"],
+  form button[type="button"] {
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+    margin-bottom: max(1rem, calc(env(safe-area-inset-bottom) + 1rem));
+  }
+
+  /* Fix input focus on mobile - prevent zoom */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="tel"],
+  input[type="number"],
+  select,
+  textarea {
+    font-size: 16px !important; /* Prevents auto-zoom on iOS */
+  }
+
+  /* Fix fixed positioned elements on mobile (chat, cart) */
+  .fixed {
+    /* Ensure fixed elements work with mobile viewport */
+    position: fixed;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+
+  /* Android keyboard collision prevention for bottom-positioned elements */
+  .fixed.bottom-4,
+  .fixed.bottom-8 {
+    /* Add safe area padding for notched devices */
+    bottom: calc(1rem + env(safe-area-inset-bottom)) !important;
+  }
+
+  /* Ensure drawers/modals slide from bottom on mobile */
+  [role="dialog"] {
+    animation: slide-up-mobile 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  @keyframes slide-up-mobile {
+    from {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  /* Smooth transitions for mobile interactions */
+  button, a, [role="button"] {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* Active state feedback for better touch response */
+  button:active, 
+  a:active, 
+  [role="button"]:active {
+    transform: scale(0.97);
+    opacity: 0.8;
+  }
+}
+
+/* Prevent scroll issues when modal/drawer is open on mobile */
+@media screen and (max-width: 768px) {
+  body.modal-open {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+  }
+}
+
+/* Touch target size for mobile (WCAG AAA - 44px minimum) */
+/* Scope to specific interactive elements to avoid layout issues */
+@media screen and (max-width: 768px) {
+  button,
+  a[role="button"],
+  input[type="checkbox"],
+  input[type="radio"],
+  input[type="submit"],
+  input[type="button"],
+  [role="button"],
+  [role="tab"],
+  [role="menuitem"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Improve tap highlight for better mobile UX */
+@media screen and (max-width: 768px) {
+  * {
+    -webkit-tap-highlight-color: rgba(74, 163, 255, 0.2);
+  }
+  
+  /* Smoother scrolling on mobile */
+  html {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Optimize animation performance on mobile - only for animated elements */
+  .transition-smooth,
+  .hover-lift,
+  .hover-scale,
+  button,
+  a,
+  [role="button"] {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+}
+
+/* Fix viewport height on mobile (address bar issue) */
+@supports (-webkit-touch-callout: none) {
+  /* iOS Safari */
+  .min-h-screen {
+    min-height: -webkit-fill-available;
+  }
+}
+
+/* Prevent text selection issues on mobile */
+@media screen and (max-width: 768px) {
+  button,
+  [role="button"] {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+}
+
+/* Fix scrolling in modals on mobile */
+@media screen and (max-width: 768px) {
+  [role="dialog"] {
+    /* Enable momentum scrolling on iOS */
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Prevent white flash during page transitions */
+body {
+  background-color: rgb(var(--bg-main, 14 17 22));
+}
+
+/* Fix form autofill background on mobile */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px rgb(30 41 59) inset !important;
+  -webkit-text-fill-color: rgb(241 245 249) !important;
+}

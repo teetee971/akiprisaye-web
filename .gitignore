@@ -27,6 +27,19 @@ build/
 *.swo
 *~
 
+# Android / Capacitor
+android/.gradle/
+android/.idea/
+android/build/
+android/app/build/
+android/local.properties
+android/*.iml
+android/.cxx/
+android/captures/
+android/app/release/
+android/app/debug/
+*.aab
+
 # Logs
 logs/
 *.log
@@ -147,3 +160,8 @@ ChatGPT*.png
 *banner*.png
 *affiche*.png
 *flyer*.png
+
+# Lighthouse CI
+.lighthouseci/
+lighthouse-results.json
+build.log

@@ -18,8 +18,8 @@ export default function Scanner() {
   const [settings, setSettings] = useState<ScannerOptions>({
     timeout: 15000,
     notFoundBehavior: 'manual_search',
-    enableDebugLogging: false,
-    enableOcrFallback: false,
+    enableDebugLogging: import.meta.env.DEV, // Enable debug logging in development
+    enableOcrFallback: true, // Enable OCR fallback by default
   });
 
   const handleScan = async (code: string) => {
@@ -173,8 +173,11 @@ export default function Scanner() {
                     onChange={(e) => setSettings({ ...settings, enableOcrFallback: e.target.checked })}
                     className="rounded"
                   />
-                  Activer l'OCR en fallback (expérimental)
+                  Activer la reconnaissance optique (OCR)
                 </label>
+                <p className="text-xs text-gray-400 mt-1 ml-6">
+                  L'OCR aide à détecter les codes-barres sur des images floues
+                </p>
               </div>
             </div>
           )}

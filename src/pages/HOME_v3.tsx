@@ -8,6 +8,17 @@
 import { Link } from 'react-router-dom';
 import { GlassCard } from "../components/ui/glass-card";
 import { useState, useEffect } from 'react';
+import { RealSavingsBlock } from "../components/home/RealSavingsBlock";
+import { BeforeAfterComparison } from "../components/home/BeforeAfterComparison";
+import { OptimalRoutePreview } from "../components/home/OptimalRoutePreview";
+import { StoreRanking } from "../components/home/StoreRanking";
+import { DailyShockCard } from "../components/home/DailyShockCard";
+import { MonthlySavingsDashboard } from "../components/home/MonthlySavingsDashboard";
+import { SmartShoppingList } from "../components/home/SmartShoppingList";
+import { TerritorySignal } from "../components/home/TerritorySignal";
+import { AnonymousSocialComparison } from "../components/home/AnonymousSocialComparison";
+import { PersonalizedDealOfDay } from "../components/home/PersonalizedDealOfDay";
+import { ShareVictory } from "../components/home/ShareVictory";
 
 export default function HomeV3() {
   const [stats, setStats] = useState({
@@ -31,29 +42,73 @@ export default function HomeV3() {
       {/* Hero Section - Clear Value Proposition */}
       <GlassCard className="text-center">
         <h1 className="text-4xl md:text-5xl font-bold mb-4">
-          Comparez les prix<br />
-          <span className="text-blue-400">simplement</span>
+          Comprendre et comparer les prix<br />
+          <span className="text-blue-400">près de chez vous</span>
         </h1>
         <p className="text-xl text-gray-300 mb-6 max-w-2xl mx-auto">
-          Scannez, comprenez et comparez les prix dans votre territoire en 3 étapes
+          Données publiques et citoyennes • Sans publicité • Sans recommandation d'achat
         </p>
         
-        {/* Primary CTA */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+        {/* Primary CTA - Single, prominent */}
+        <div className="flex flex-col items-center gap-4">
           <Link 
-            to="/scan" 
-            className="w-full sm:w-auto px-8 py-4 bg-blue-600 hover:bg-blue-500 rounded-xl text-lg font-semibold transition-all transform hover:scale-105 shadow-lg"
+            to="/recherche-prix" 
+            className="w-full sm:w-auto px-10 py-5 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 rounded-xl text-xl font-semibold transition-all transform hover:scale-105 shadow-2xl"
           >
-            📸 Scanner un produit
+            🛒 Comparer un prix ou scanner un ticket
           </Link>
+          
+          {/* Secondary CTA - Discrete link */}
           <Link 
-            to="/observatoire" 
-            className="w-full sm:w-auto px-8 py-4 bg-slate-700 hover:bg-slate-600 rounded-xl text-lg font-semibold transition-all"
+            to="/methodologie" 
+            className="text-sm text-gray-400 hover:text-gray-300 underline transition-colors"
           >
-            📊 Consulter l'observatoire
+            🔍 Voir comment les données sont produites
           </Link>
         </div>
+        
+        <div className="mt-6 inline-flex items-center justify-center gap-2 px-3 py-2 rounded-full bg-slate-800/60 text-xs text-slate-200">
+          <span className="text-blue-300">●</span>
+          Données publiques • stockage local • aucun suivi utilisateur
+        </div>
+        <div className="mt-2 inline-flex items-center justify-center gap-2 px-3 py-2 rounded-full bg-emerald-500/15 border border-emerald-500/40 text-xs text-emerald-100">
+          <span className="text-sm">🏛️</span>
+          Observatoire citoyen indépendant – données ouvertes
+        </div>
       </GlassCard>
+
+      {/* ⑭ HAUSSES DU JOUR - EMOTIONAL HOOK - AU-DESSUS DE TOUT */}
+      <DailyShockCard territory="GP" />
+
+      {/* ⑰ BILAN MENSUEL - GAMIFICATION - FIERTÉ + ENGAGEMENT */}
+      <MonthlySavingsDashboard />
+
+      {/* ⑳ DEAL DU JOUR - PERSONNALISÉ - URGENCE + ACTION IMMÉDIATE */}
+      <PersonalizedDealOfDay />
+
+      {/* ① BLOC "ÉCONOMIES RÉELLES" - PRIORITÉ ABSOLUE - IMPACT MAX */}
+      <RealSavingsBlock />
+
+      {/* ⑲ COMPARAISON SOCIALE ANONYME - COMPÉTITION SAINE + MOTIVATION */}
+      <AnonymousSocialComparison />
+
+      {/* ⑯ PROCHAINE COURSE - PERSONNALISATION - RÉTENTION TRÈS ÉLEVÉE */}
+      <SmartShoppingList />
+
+      {/* ② COMPARAISON VISUELLE "AVANT / APRÈS" - Exemple concret */}
+      <BeforeAfterComparison />
+
+      {/* ③ ITINÉRAIRE OPTIMAL - Différenciation forte */}
+      <OptimalRoutePreview />
+
+      {/* ⑱ SIGNAL TERRITOIRE - COMMUNITY ENGAGEMENT */}
+      <TerritorySignal />
+
+      {/* ㉑ PARTAGE VICTOIRE - VIRALITÉ + RECRUTEMENT ORGANIQUE */}
+      <ShareVictory />
+
+      {/* ⑤ CLASSEMENT DES ENSEIGNES - Social + Crédible */}
+      <StoreRanking />
 
       {/* Public Counters - Transparency */}
       <GlassCard>
@@ -83,18 +138,26 @@ export default function HomeV3() {
 
       {/* User Journey - 3 Steps */}
       <div className="grid md:grid-cols-3 gap-6">
-        <GlassCard className="text-center hover:border-blue-500/50 transition-colors">
-          <div className="text-5xl mb-4">📸</div>
+        <GlassCard className="text-center hover:border-orange-500/50 transition-colors">
+          <div className="text-5xl mb-4">🧾</div>
           <h3 className="text-xl font-bold mb-3">1. Scanner</h3>
           <p className="text-gray-300 mb-4">
             Photographiez le code-barres ou votre ticket de caisse
           </p>
-          <Link 
-            to="/scan" 
-            className="inline-block px-6 py-2 bg-blue-600/20 hover:bg-blue-600/30 rounded-lg text-blue-400 font-medium transition-colors"
-          >
-            Essayer →
-          </Link>
+          <div className="flex flex-col gap-2">
+            <Link 
+              to="/recherche-prix?source=ticket" 
+              className="inline-block px-6 py-2 bg-orange-600/20 hover:bg-orange-600/30 rounded-lg text-orange-400 font-medium transition-colors"
+            >
+              Scanner un ticket →
+            </Link>
+            <Link 
+              to="/scan" 
+              className="inline-block px-6 py-2 bg-blue-600/20 hover:bg-blue-600/30 rounded-lg text-blue-400 font-medium transition-colors text-sm"
+            >
+              Ou scanner un produit
+            </Link>
+          </div>
         </GlassCard>
 
         <GlassCard className="text-center hover:border-green-500/50 transition-colors">
@@ -166,17 +229,17 @@ export default function HomeV3() {
         <div className="flex items-start gap-4">
           <div className="text-3xl">🏛️</div>
           <div className="flex-1">
-            <h3 className="text-lg font-bold mb-2 text-blue-300">Observatoire public officiel</h3>
+            <h3 className="text-lg font-bold mb-2 text-blue-300">Observatoire Temps Réel</h3>
             <p className="text-gray-300 mb-3">
-              Toutes les données sont publiées en open-data sous licence ODbL, exploitables par citoyens, 
+              Suivi en temps réel des prix · Détection d'anomalies · Open Data sous licence Etalab 2.0, exploitables par citoyens, 
               médias, chercheurs et institutions.
             </p>
             <div className="flex flex-wrap gap-3">
               <Link 
-                to="/observatoire" 
+                to="/observatoire-temps-reel" 
                 className="inline-block px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-sm font-medium transition-colors"
               >
-                Accéder à l'observatoire
+                🔴 Observatoire Temps Réel
               </Link>
               <a 
                 href="/OBSERVATOIRE_PUBLIC_v1.md" 
@@ -218,15 +281,17 @@ export default function HomeV3() {
       </GlassCard>
 
       {/* No Advisory - Clear Disclaimer */}
-      <GlassCard className="bg-yellow-900/10 border-yellow-500/30">
+      <GlassCard className="bg-blue-900/10 border-blue-500/30">
         <div className="flex items-start gap-4">
-          <div className="text-2xl">⚠️</div>
+          <div className="text-3xl">🏛️</div>
           <div>
-            <h3 className="font-semibold text-yellow-300 mb-2">Service d'observation - Aucun conseil</h3>
+            <h3 className="font-semibold text-blue-300 mb-2">Outil d'information citoyenne</h3>
+            <p className="text-sm text-gray-300 mb-3">
+              Cette plateforme présente des <strong>données indicatives issues d'observations publiques</strong>. 
+            </p>
             <p className="text-sm text-gray-300">
-              Cette plateforme présente des données observées et vérifiables. 
-              <strong> Nous ne donnons aucun conseil d'achat, aucun score propriétaire, aucune recommandation.</strong> 
-              Les informations sont factuelles et laissent l'utilisateur libre de ses choix.
+              <strong>Aucun conseil d'achat • Aucune recommandation • Aucun score propriétaire</strong> 
+              <br />Les informations sont factuelles et laissent l'utilisateur libre de ses choix.
             </p>
           </div>
         </div>

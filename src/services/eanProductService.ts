@@ -22,6 +22,17 @@ import type {
 } from '../types/ean';
 
 /**
+ * Product images from Open Food Facts
+ */
+export interface ProductImages {
+  imageUrl: string | null;
+  imageThumbnail: string | null;
+  imageFront?: string | null;
+  imageIngredients?: string | null;
+  imageNutrition?: string | null;
+}
+
+/**
  * Product lookup result with validation
  */
 export interface ProductLookupResult {
@@ -84,6 +95,14 @@ export async function lookupProductByEan(
     const product = await fetchProductFromDatabase(validation.ean);
 
     if (product) {
+      // Step 3a: Enrich with images from Open Food Facts if no image exists
+      if (!product.imageUrl) {
+        const images = await enrichProductWithImages(validation.ean);
+        if (images.imageUrl) {
+          product.imageUrl = images.imageUrl;
+        }
+      }
+      
       // Product found - return with confirmed or partial status
       const result = {
         ...product,
@@ -105,7 +124,39 @@ export async function lookupProductByEan(
     // Continue to fallback - don't fail on database errors
   }
 
-  // Step 4: Fallback for valid EAN not in database
+  // Step 4: Try Open Food Facts for unknown products
+  try {
+    const images = await enrichProductWithImages(validation.ean);
+    
+    if (images.imageUrl) {
+      // Found in Open Food Facts - create partial product
+      const offProduct: PartialProduct = {
+        ean: validation.ean,
+        status: 'partiel',
+        nom: 'Produit trouvé dans Open Food Facts',
+        imageUrl: images.imageUrl,
+        traceability: {
+          ...traceability,
+          source: 'open_food_facts'
+        }
+      };
+      
+      return {
+        success: true,
+        product: offProduct,
+        validation: {
+          eanValid: true,
+          format: validation.format,
+          checksumValid: true
+        }
+      };
+    }
+  } catch (error) {
+    console.error('Open Food Facts lookup error:', error);
+    // Continue to fallback
+  }
+
+  // Step 5: Fallback for valid EAN not in database or Open Food Facts
   const fallbackProduct: NonReferencedProduct = {
     ean: validation.ean,
     status: 'non_référencé',
@@ -121,6 +172,60 @@ export async function lookupProductByEan(
       format: validation.format,
       checksumValid: true
     }
+  };
+}
+
+/**
+ * Enrich product with images from Open Food Facts
+ * Fetches product images from Open Food Facts API
+ * 
+ * @param ean - Product EAN code
+ * @returns Product images or null values if not found
+ */
+async function enrichProductWithImages(ean: string): Promise<ProductImages> {
+  try {
+    const response = await fetch(
+      `https://world.openfoodfacts.org/api/v0/product/${ean}.json`,
+      {
+        headers: {
+          'User-Agent': 'AKiPriSaYe/2.1.0 (Contact: app@akiprisaye.fr)'
+        }
+      }
+    );
+    
+    if (!response.ok) {
+      // Handle rate limiting (429) specifically
+      if (response.status === 429) {
+        console.warn(`[IMAGES] Open Food Facts rate limit reached for EAN ${ean}. Please retry later.`);
+      } else {
+        console.warn(`[IMAGES] Open Food Facts API error for EAN ${ean}: ${response.status}`);
+      }
+      return {
+        imageUrl: null,
+        imageThumbnail: null,
+      };
+    }
+    
+    const data = await response.json();
+    
+    if (data.status === 1 && data.product) {
+      const product = data.product;
+      
+      return {
+        imageUrl: product.image_url || product.image_front_url || null,
+        imageThumbnail: product.image_small_url || product.image_thumb_url || null,
+        imageFront: product.image_front_url || null,
+        imageIngredients: product.image_ingredients_url || null,
+        imageNutrition: product.image_nutrition_url || null,
+      };
+    }
+  } catch (error) {
+    console.error('[IMAGES] Error fetching from Open Food Facts:', error);
+  }
+  
+  return {
+    imageUrl: null,
+    imageThumbnail: null,
   };
 }
 

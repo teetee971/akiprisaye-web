@@ -1,0 +1,435 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "lastUpdated": "2026-01-14T08:00:00.000Z",
+    "description": "Comparateur de prix des carburants - DOM-TOM",
+    "disclaimer": "A KI PRI SA YÉ observe les prix, ne vend pas. Transparence sur les écarts de prix.",
+    "methodology": "v1.0.0",
+    "updateFrequency": "daily",
+    "dataSource": "prix-carburants.gouv.fr + contributions citoyennes",
+    "features": [
+      "Prix officiels plafonnés",
+      "Historique mensuel",
+      "Carte interactive des stations",
+      "Export CSV/TXT"
+    ]
+  },
+  "stations": [
+    {
+      "id": "station-gp-001",
+      "name": "Station Total - Pointe-à-Pitre",
+      "address": "Avenue de l'Europe",
+      "city": "Pointe-à-Pitre",
+      "territory": "GP",
+      "location": {
+        "lat": 16.2415,
+        "lng": -61.5330
+      },
+      "brand": "Total",
+      "services": ["24h/24", "CB", "Shop"]
+    },
+    {
+      "id": "station-gp-002",
+      "name": "Esso - Les Abymes",
+      "address": "Route Nationale 4",
+      "city": "Les Abymes",
+      "territory": "GP",
+      "location": {
+        "lat": 16.2650,
+        "lng": -61.5100
+      },
+      "brand": "Esso",
+      "services": ["CB", "Shop"]
+    },
+    {
+      "id": "station-mq-001",
+      "name": "Station Shell - Fort-de-France",
+      "address": "Boulevard du Général de Gaulle",
+      "city": "Fort-de-France",
+      "territory": "MQ",
+      "location": {
+        "lat": 14.6099,
+        "lng": -61.0731
+      },
+      "brand": "Shell",
+      "services": ["24h/24", "CB", "Shop", "Lavage"]
+    },
+    {
+      "id": "station-mq-002",
+      "name": "Total - Schoelcher",
+      "address": "Route de la Redoute",
+      "city": "Schoelcher",
+      "territory": "MQ",
+      "location": {
+        "lat": 14.6166,
+        "lng": -61.1004
+      },
+      "brand": "Total",
+      "services": ["CB", "Shop"]
+    },
+    {
+      "id": "station-re-001",
+      "name": "Station Total - Saint-Denis",
+      "address": "Avenue de la Victoire",
+      "city": "Saint-Denis",
+      "territory": "RE",
+      "location": {
+        "lat": -20.8823,
+        "lng": 55.4504
+      },
+      "brand": "Total",
+      "services": ["24h/24", "CB", "Shop"]
+    },
+    {
+      "id": "station-gy-001",
+      "name": "Esso - Cayenne",
+      "address": "Route de Montabo",
+      "city": "Cayenne",
+      "territory": "GY",
+      "location": {
+        "lat": 4.9228,
+        "lng": -52.3130
+      },
+      "brand": "Esso",
+      "services": ["CB", "Shop"]
+    }
+  ],
+  "fuelPrices": [
+    {
+      "id": "price-gp-001-sp95",
+      "station": {
+        "id": "station-gp-001",
+        "name": "Station Total - Pointe-à-Pitre",
+        "address": "Avenue de l'Europe",
+        "city": "Pointe-à-Pitre",
+        "territory": "GP",
+        "location": {
+          "lat": 16.2415,
+          "lng": -61.5330
+        },
+        "brand": "Total"
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.589,
+      "currency": "EUR",
+      "observationDate": "2026-01-14T06:00:00.000Z",
+      "source": {
+        "type": "official_api",
+        "url": "https://www.prix-carburants.gouv.fr",
+        "observedAt": "2026-01-14T06:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": false,
+      "territory": "GP",
+      "lastUpdate": "2026-01-14T06:00:00.000Z"
+    },
+    {
+      "id": "price-gp-001-diesel",
+      "station": {
+        "id": "station-gp-001",
+        "name": "Station Total - Pointe-à-Pitre",
+        "address": "Avenue de l'Europe",
+        "city": "Pointe-à-Pitre",
+        "territory": "GP",
+        "location": {
+          "lat": 16.2415,
+          "lng": -61.5330
+        },
+        "brand": "Total"
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.459,
+      "currency": "EUR",
+      "observationDate": "2026-01-14T06:00:00.000Z",
+      "source": {
+        "type": "official_api",
+        "url": "https://www.prix-carburants.gouv.fr",
+        "observedAt": "2026-01-14T06:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": false,
+      "territory": "GP",
+      "lastUpdate": "2026-01-14T06:00:00.000Z"
+    },
+    {
+      "id": "price-gp-002-sp95",
+      "station": {
+        "id": "station-gp-002",
+        "name": "Esso - Les Abymes",
+        "address": "Route Nationale 4",
+        "city": "Les Abymes",
+        "territory": "GP",
+        "location": {
+          "lat": 16.2650,
+          "lng": -61.5100
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.599,
+      "currency": "EUR",
+      "observationDate": "2026-01-14T05:30:00.000Z",
+      "source": {
+        "type": "official_api",
+        "url": "https://www.prix-carburants.gouv.fr",
+        "observedAt": "2026-01-14T05:30:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": false,
+      "territory": "GP",
+      "lastUpdate": "2026-01-14T05:30:00.000Z"
+    },
+    {
+      "id": "price-gp-002-diesel",
+      "station": {
+        "id": "station-gp-002",
+        "name": "Esso - Les Abymes",
+        "address": "Route Nationale 4",
+        "city": "Les Abymes",
+        "territory": "GP",
+        "location": {
+          "lat": 16.2650,
+          "lng": -61.5100
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.469,
+      "currency": "EUR",
+      "observationDate": "2026-01-14T05:30:00.000Z",
+      "source": {
+        "type": "official_api",
+        "url": "https://www.prix-carburants.gouv.fr",
+        "observedAt": "2026-01-14T05:30:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": false,
+      "territory": "GP",
+      "lastUpdate": "2026-01-14T05:30:00.000Z"
+    },
+    {
+      "id": "price-mq-001-sp95",
+      "station": {
+        "id": "station-mq-001",
+        "name": "Station Shell - Fort-de-France",
+        "address": "Boulevard du Général de Gaulle",
+        "city": "Fort-de-France",
+        "territory": "MQ",
+        "location": {
+          "lat": 14.6099,
+          "lng": -61.0731
+        },
+        "brand": "Shell"
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.609,
+      "currency": "EUR",
+      "observationDate": "2026-01-14T07:00:00.000Z",
+      "source": {
+        "type": "official_api",
+        "url": "https://www.prix-carburants.gouv.fr",
+        "observedAt": "2026-01-14T07:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": false,
+      "territory": "MQ",
+      "lastUpdate": "2026-01-14T07:00:00.000Z"
+    },
+    {
+      "id": "price-mq-001-diesel",
+      "station": {
+        "id": "station-mq-001",
+        "name": "Station Shell - Fort-de-France",
+        "address": "Boulevard du Général de Gaulle",
+        "city": "Fort-de-France",
+        "territory": "MQ",
+        "location": {
+          "lat": 14.6099,
+          "lng": -61.0731
+        },
+        "brand": "Shell"
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.479,
+      "currency": "EUR",
+      "observationDate": "2026-01-14T07:00:00.000Z",
+      "source": {
+        "type": "official_api",
+        "url": "https://www.prix-carburants.gouv.fr",
+        "observedAt": "2026-01-14T07:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": false,
+      "territory": "MQ",
+      "lastUpdate": "2026-01-14T07:00:00.000Z"
+    },
+    {
+      "id": "price-mq-002-sp95",
+      "station": {
+        "id": "station-mq-002",
+        "name": "Total - Schoelcher",
+        "address": "Route de la Redoute",
+        "city": "Schoelcher",
+        "territory": "MQ",
+        "location": {
+          "lat": 14.6166,
+          "lng": -61.1004
+        },
+        "brand": "Total"
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.595,
+      "currency": "EUR",
+      "observationDate": "2026-01-14T06:30:00.000Z",
+      "source": {
+        "type": "official_api",
+        "url": "https://www.prix-carburants.gouv.fr",
+        "observedAt": "2026-01-14T06:30:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": false,
+      "territory": "MQ",
+      "lastUpdate": "2026-01-14T06:30:00.000Z"
+    },
+    {
+      "id": "price-mq-002-diesel",
+      "station": {
+        "id": "station-mq-002",
+        "name": "Total - Schoelcher",
+        "address": "Route de la Redoute",
+        "city": "Schoelcher",
+        "territory": "MQ",
+        "location": {
+          "lat": 14.6166,
+          "lng": -61.1004
+        },
+        "brand": "Total"
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.465,
+      "currency": "EUR",
+      "observationDate": "2026-01-14T06:30:00.000Z",
+      "source": {
+        "type": "official_api",
+        "url": "https://www.prix-carburants.gouv.fr",
+        "observedAt": "2026-01-14T06:30:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": false,
+      "territory": "MQ",
+      "lastUpdate": "2026-01-14T06:30:00.000Z"
+    },
+    {
+      "id": "price-re-001-sp95",
+      "station": {
+        "id": "station-re-001",
+        "name": "Station Total - Saint-Denis",
+        "address": "Avenue de la Victoire",
+        "city": "Saint-Denis",
+        "territory": "RE",
+        "location": {
+          "lat": -20.8823,
+          "lng": 55.4504
+        },
+        "brand": "Total"
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.639,
+      "currency": "EUR",
+      "observationDate": "2026-01-14T04:00:00.000Z",
+      "source": {
+        "type": "official_api",
+        "url": "https://www.prix-carburants.gouv.fr",
+        "observedAt": "2026-01-14T04:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": false,
+      "territory": "RE",
+      "lastUpdate": "2026-01-14T04:00:00.000Z"
+    },
+    {
+      "id": "price-re-001-diesel",
+      "station": {
+        "id": "station-re-001",
+        "name": "Station Total - Saint-Denis",
+        "address": "Avenue de la Victoire",
+        "city": "Saint-Denis",
+        "territory": "RE",
+        "location": {
+          "lat": -20.8823,
+          "lng": 55.4504
+        },
+        "brand": "Total"
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.509,
+      "currency": "EUR",
+      "observationDate": "2026-01-14T04:00:00.000Z",
+      "source": {
+        "type": "official_api",
+        "url": "https://www.prix-carburants.gouv.fr",
+        "observedAt": "2026-01-14T04:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": false,
+      "territory": "RE",
+      "lastUpdate": "2026-01-14T04:00:00.000Z"
+    },
+    {
+      "id": "price-gy-001-sp95",
+      "station": {
+        "id": "station-gy-001",
+        "name": "Esso - Cayenne",
+        "address": "Route de Montabo",
+        "city": "Cayenne",
+        "territory": "GY",
+        "location": {
+          "lat": 4.9228,
+          "lng": -52.3130
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.679,
+      "currency": "EUR",
+      "observationDate": "2026-01-14T08:00:00.000Z",
+      "source": {
+        "type": "official_api",
+        "url": "https://www.prix-carburants.gouv.fr",
+        "observedAt": "2026-01-14T08:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": false,
+      "territory": "GY",
+      "lastUpdate": "2026-01-14T08:00:00.000Z"
+    },
+    {
+      "id": "price-gy-001-diesel",
+      "station": {
+        "id": "station-gy-001",
+        "name": "Esso - Cayenne",
+        "address": "Route de Montabo",
+        "city": "Cayenne",
+        "territory": "GY",
+        "location": {
+          "lat": 4.9228,
+          "lng": -52.3130
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.549,
+      "currency": "EUR",
+      "observationDate": "2026-01-14T08:00:00.000Z",
+      "source": {
+        "type": "official_api",
+        "url": "https://www.prix-carburants.gouv.fr",
+        "observedAt": "2026-01-14T08:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": false,
+      "territory": "GY",
+      "lastUpdate": "2026-01-14T08:00:00.000Z"
+    }
+  ]
+}

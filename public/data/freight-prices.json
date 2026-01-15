@@ -1,0 +1,318 @@
+{
+  "metadata": {
+    "generated_at": "2026-01-14T09:00:00Z",
+    "source": "A KI PRI SA YÉ - Observatoire Fret Maritime",
+    "version": "1.0.0",
+    "note": "Données citoyennes + tarifs officiels transporteurs",
+    "disclaimer": "Observer, pas vendre. Aucun lien d'affiliation."
+  },
+  "carriers": [
+    {
+      "code": "COLISSIMO",
+      "name": "Colissimo",
+      "type": "postal",
+      "website": "https://www.laposte.fr/colissimo",
+      "pickupAvailable": true
+    },
+    {
+      "code": "CHRONOPOST",
+      "name": "Chronopost",
+      "type": "postal",
+      "website": "https://www.chronopost.fr",
+      "pickupAvailable": true
+    },
+    {
+      "code": "DHL",
+      "name": "DHL Express",
+      "type": "aerien",
+      "website": "https://www.dhl.fr",
+      "pickupAvailable": true
+    },
+    {
+      "code": "UPS",
+      "name": "UPS",
+      "type": "aerien",
+      "website": "https://www.ups.com/fr",
+      "pickupAvailable": true
+    },
+    {
+      "code": "FEDEX",
+      "name": "FedEx",
+      "type": "aerien",
+      "website": "https://www.fedex.com/fr",
+      "pickupAvailable": true
+    },
+    {
+      "code": "CMA_CGM",
+      "name": "CMA CGM",
+      "type": "maritime",
+      "website": "https://www.cma-cgm.com",
+      "pickupAvailable": false
+    }
+  ],
+  "origins": [
+    {
+      "code": "PARIS",
+      "name": "Paris",
+      "city": "Paris",
+      "territory": null,
+      "region": "Métropole"
+    },
+    {
+      "code": "MARSEILLE",
+      "name": "Marseille",
+      "city": "Marseille",
+      "territory": null,
+      "region": "Métropole"
+    },
+    {
+      "code": "LYON",
+      "name": "Lyon",
+      "city": "Lyon",
+      "territory": null,
+      "region": "Métropole"
+    }
+  ],
+  "routes": [
+    {
+      "origin": "Paris",
+      "destination": "GP",
+      "destinationName": "Guadeloupe",
+      "quotes": [
+        {
+          "carrier": "COLISSIMO",
+          "packageWeight": 5,
+          "basePrice": 45.00,
+          "announcedDays": 7,
+          "realDaysAverage": 9,
+          "reliability": 4.2,
+          "onTimeRate": 0.75,
+          "contributionsCount": 142,
+          "issuesReported": 8,
+          "lastUpdated": "2026-01-10T10:00:00Z"
+        },
+        {
+          "carrier": "CHRONOPOST",
+          "packageWeight": 5,
+          "basePrice": 55.00,
+          "announcedDays": 5,
+          "realDaysAverage": 6,
+          "reliability": 4.5,
+          "onTimeRate": 0.85,
+          "contributionsCount": 98,
+          "issuesReported": 3,
+          "lastUpdated": "2026-01-10T10:00:00Z"
+        },
+        {
+          "carrier": "DHL",
+          "packageWeight": 5,
+          "basePrice": 68.00,
+          "announcedDays": 4,
+          "realDaysAverage": 4,
+          "reliability": 4.8,
+          "onTimeRate": 0.92,
+          "contributionsCount": 67,
+          "issuesReported": 2,
+          "lastUpdated": "2026-01-10T10:00:00Z"
+        },
+        {
+          "carrier": "UPS",
+          "packageWeight": 5,
+          "basePrice": 72.00,
+          "announcedDays": 4,
+          "realDaysAverage": 5,
+          "reliability": 4.6,
+          "onTimeRate": 0.88,
+          "contributionsCount": 54,
+          "issuesReported": 4,
+          "lastUpdated": "2026-01-10T10:00:00Z"
+        },
+        {
+          "carrier": "FEDEX",
+          "packageWeight": 5,
+          "basePrice": 75.00,
+          "announcedDays": 3,
+          "realDaysAverage": 4,
+          "reliability": 4.7,
+          "onTimeRate": 0.90,
+          "contributionsCount": 43,
+          "issuesReported": 3,
+          "lastUpdated": "2026-01-10T10:00:00Z"
+        }
+      ]
+    },
+    {
+      "origin": "Paris",
+      "destination": "MQ",
+      "destinationName": "Martinique",
+      "quotes": [
+        {
+          "carrier": "COLISSIMO",
+          "packageWeight": 5,
+          "basePrice": 45.00,
+          "announcedDays": 7,
+          "realDaysAverage": 8,
+          "reliability": 4.3,
+          "onTimeRate": 0.78,
+          "contributionsCount": 156,
+          "issuesReported": 7,
+          "lastUpdated": "2026-01-10T10:00:00Z"
+        },
+        {
+          "carrier": "CHRONOPOST",
+          "packageWeight": 5,
+          "basePrice": 55.00,
+          "announcedDays": 5,
+          "realDaysAverage": 5,
+          "reliability": 4.6,
+          "onTimeRate": 0.87,
+          "contributionsCount": 112,
+          "issuesReported": 4,
+          "lastUpdated": "2026-01-10T10:00:00Z"
+        },
+        {
+          "carrier": "DHL",
+          "packageWeight": 5,
+          "basePrice": 68.00,
+          "announcedDays": 4,
+          "realDaysAverage": 4,
+          "reliability": 4.7,
+          "onTimeRate": 0.90,
+          "contributionsCount": 78,
+          "issuesReported": 3,
+          "lastUpdated": "2026-01-10T10:00:00Z"
+        }
+      ]
+    },
+    {
+      "origin": "Paris",
+      "destination": "GF",
+      "destinationName": "Guyane",
+      "quotes": [
+        {
+          "carrier": "COLISSIMO",
+          "packageWeight": 5,
+          "basePrice": 52.00,
+          "announcedDays": 10,
+          "realDaysAverage": 12,
+          "reliability": 3.8,
+          "onTimeRate": 0.65,
+          "contributionsCount": 87,
+          "issuesReported": 15,
+          "lastUpdated": "2026-01-10T10:00:00Z"
+        },
+        {
+          "carrier": "CHRONOPOST",
+          "packageWeight": 5,
+          "basePrice": 62.00,
+          "announcedDays": 7,
+          "realDaysAverage": 8,
+          "reliability": 4.2,
+          "onTimeRate": 0.80,
+          "contributionsCount": 63,
+          "issuesReported": 6,
+          "lastUpdated": "2026-01-10T10:00:00Z"
+        },
+        {
+          "carrier": "DHL",
+          "packageWeight": 5,
+          "basePrice": 78.00,
+          "announcedDays": 5,
+          "realDaysAverage": 6,
+          "reliability": 4.5,
+          "onTimeRate": 0.85,
+          "contributionsCount": 45,
+          "issuesReported": 4,
+          "lastUpdated": "2026-01-10T10:00:00Z"
+        }
+      ]
+    },
+    {
+      "origin": "Paris",
+      "destination": "RE",
+      "destinationName": "La Réunion",
+      "quotes": [
+        {
+          "carrier": "COLISSIMO",
+          "packageWeight": 5,
+          "basePrice": 58.00,
+          "announcedDays": 10,
+          "realDaysAverage": 11,
+          "reliability": 4.0,
+          "onTimeRate": 0.70,
+          "contributionsCount": 198,
+          "issuesReported": 12,
+          "lastUpdated": "2026-01-10T10:00:00Z"
+        },
+        {
+          "carrier": "CHRONOPOST",
+          "packageWeight": 5,
+          "basePrice": 68.00,
+          "announcedDays": 7,
+          "realDaysAverage": 8,
+          "reliability": 4.4,
+          "onTimeRate": 0.82,
+          "contributionsCount": 145,
+          "issuesReported": 8,
+          "lastUpdated": "2026-01-10T10:00:00Z"
+        },
+        {
+          "carrier": "DHL",
+          "packageWeight": 5,
+          "basePrice": 85.00,
+          "announcedDays": 5,
+          "realDaysAverage": 6,
+          "reliability": 4.6,
+          "onTimeRate": 0.88,
+          "contributionsCount": 92,
+          "issuesReported": 5,
+          "lastUpdated": "2026-01-10T10:00:00Z"
+        },
+        {
+          "carrier": "UPS",
+          "packageWeight": 5,
+          "basePrice": 88.00,
+          "announcedDays": 5,
+          "realDaysAverage": 6,
+          "reliability": 4.5,
+          "onTimeRate": 0.85,
+          "contributionsCount": 67,
+          "issuesReported": 6,
+          "lastUpdated": "2026-01-10T10:00:00Z"
+        }
+      ]
+    },
+    {
+      "origin": "Paris",
+      "destination": "YT",
+      "destinationName": "Mayotte",
+      "quotes": [
+        {
+          "carrier": "COLISSIMO",
+          "packageWeight": 5,
+          "basePrice": 62.00,
+          "announcedDays": 12,
+          "realDaysAverage": 15,
+          "reliability": 3.5,
+          "onTimeRate": 0.58,
+          "contributionsCount": 54,
+          "issuesReported": 18,
+          "lastUpdated": "2026-01-10T10:00:00Z"
+        },
+        {
+          "carrier": "DHL",
+          "packageWeight": 5,
+          "basePrice": 92.00,
+          "announcedDays": 7,
+          "realDaysAverage": 8,
+          "reliability": 4.3,
+          "onTimeRate": 0.78,
+          "contributionsCount": 32,
+          "issuesReported": 5,
+          "lastUpdated": "2026-01-10T10:00:00Z"
+        }
+      ]
+    }
+  ],
+  "contributions": []
+}

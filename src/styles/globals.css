@@ -60,6 +60,18 @@
     /* Typography - INSTITUTIONAL FONTS */
     --font-sans: 'Inter', 'IBM Plex Sans', 'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, Monaco, monospace;
+
+    /* Animation timing - Standardized easing curves */
+    --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --ease-in: cubic-bezier(0.4, 0, 1, 1);
+    --ease-out: cubic-bezier(0, 0, 0.2, 1);
+    
+    /* Animation durations - Consistent timing */
+    --duration-fast: 150ms;
+    --duration-normal: 250ms;
+    --duration-slow: 350ms;
+    --duration-slower: 500ms;
   }
 
   /* Light mode override (not default, but available) */
@@ -136,14 +148,26 @@
     background: rgba(var(--bg-glass), var(--glass-opacity));
     backdrop-filter: blur(var(--blur-civic));
     -webkit-backdrop-filter: blur(var(--blur-civic));
+    transition: all var(--duration-normal) var(--ease-smooth);
+  }
+  
+  .glass-effect:hover {
+    background: rgba(var(--bg-glass), var(--glass-opacity-hover));
+    border-color: rgba(var(--border-glass), var(--border-opacity-hover));
   }
 
   .glass-border {
     border: 1px solid rgba(var(--border-glass), var(--border-opacity));
+    transition: border-color var(--duration-normal) var(--ease-smooth);
   }
 
   .glass-shadow {
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+    transition: box-shadow var(--duration-normal) var(--ease-smooth);
+  }
+  
+  .glass-shadow:hover {
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
   }
 
   /* Civic utilities */
@@ -157,6 +181,48 @@
   .bg-blur-civic {
     filter: blur(var(--blur-background)) saturate(0.6);
     opacity: 0.2;
+  }
+  
+  /* Smooth transitions - Standardized */
+  .transition-smooth {
+    transition: all var(--duration-normal) var(--ease-smooth);
+  }
+  
+  .transition-fast {
+    transition: all var(--duration-fast) var(--ease-smooth);
+  }
+  
+  .transition-slow {
+    transition: all var(--duration-slow) var(--ease-smooth);
+  }
+  
+  /* Transform utilities with GPU acceleration */
+  .transform-gpu {
+    transform: translateZ(0);
+    will-change: transform;
+  }
+  
+  /* Hover lift effect */
+  .hover-lift {
+    transition: transform var(--duration-normal) var(--ease-smooth),
+                box-shadow var(--duration-normal) var(--ease-smooth);
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-2px);
+  }
+  
+  /* Interactive scale effect */
+  .hover-scale {
+    transition: transform var(--duration-normal) var(--ease-smooth);
+  }
+  
+  .hover-scale:hover {
+    transform: scale(1.02);
+  }
+  
+  .hover-scale:active {
+    transform: scale(0.98);
   }
 }
 

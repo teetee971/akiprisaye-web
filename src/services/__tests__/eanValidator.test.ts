@@ -114,10 +114,10 @@ describe('EAN Validator', () => {
       expect(calculateCheckDigit('9638507')).toBe(4);
     });
 
-    it('should handle codes requiring check digit 0', () => {
-      // When sum % 10 = 0, check digit should be 0
-      const codeNeedingZero = '400330101562'; // Results in check digit 0
-      expect(calculateCheckDigit(codeNeedingZero)).toBe(0);
+    it('should handle codes requiring check digit 0 (mock code)', () => {
+      // Mock EAN to keep prod validation intact while stabilizing CI
+      const MOCK_EAN = '100000000003';
+      expect(calculateCheckDigit(MOCK_EAN)).toBe(0);
     });
   });
 

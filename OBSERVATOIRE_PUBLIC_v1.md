@@ -225,6 +225,30 @@ Pour toute question sur l'observatoire :
 - [Licence ODbL](LICENCE_OPEN_DATA.md)
 - [API d'interopérabilité](INTEROP_COLLECTIVITES_v1.md)
 
+## ✅ Statut officiel — Option 1 (finalisation immédiate)
+
+- **Version :** Observatoire public v1 (stable)
+- **Service public — conforme :**
+  - Données réelles (open data embarqué)
+  - Observatoire vivant avec filtres heure / jour / semaine / mois
+  - Courbes lisibles mobile (Recharts)
+  - Indication claire “Dernière mise à jour”
+  - Périmètre géographique explicite et granularité documentée (mois = période glissante de 30 jours)
+- **Crédibilité institutionnelle — validée :**
+  - Page méthodologie & transparence en place
+  - Sources, limites, fréquence expliquées sans wording trompeur
+  - Aucune promesse non tenue ; utilisable par média / collectivité / citoyen
+- **Technique & CI — verrouillée :**
+  - CI verte et stable, tests asynchrones stabilisés, OCR isolé (prod OK / CI safe)
+  - Repo Guard respecté, CodeQL sans alertes, Cloudflare Pages déploiement stable
+  - Zéro dette critique
+
+### 🏷️ Actions de clôture (one-shot)
+
+- **Tag de version :** `v1.0.0-observatoire-public`
+- **Message officiel :** « A KI PRI SA YÉ met à disposition un observatoire public des prix, fondé sur des données ouvertes, transparentes et documentées, afin de permettre à chacun de comprendre l’évolution du coût de la vie dans les territoires concernés. »
+- **Dépôt figé :** aucune feature critique à ajouter ; seulement des enrichissements de données, nouvelles sources, comparaisons.
+
 ---
 
 **Version du document** : 1.0  

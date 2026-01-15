@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth, firebaseError } from "@/lib/firebase";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 export default function Login() {
@@ -11,6 +11,7 @@ export default function Login() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     if (firebaseError) {
@@ -31,8 +32,9 @@ export default function Login() {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      // Redirect to account page
-      navigate("/mon-compte");
+      const nextParam = searchParams.get("next");
+      const safeNext = nextParam && nextParam.startsWith("/") ? nextParam : null;
+      navigate(safeNext || "/mon-compte");
     } catch (err: any) {
       setError(getErrorMessage(err));
     } finally {

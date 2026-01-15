@@ -29,12 +29,13 @@ import { fileURLToPath } from "url";
 // FIREBASE CONFIG
 // -----------------------------
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "akiprisaye-web.firebaseapp.com",
-  projectId: "akiprisaye-web",
-  storageBucket: "akiprisaye-web.appspot.com",
-  messagingSenderId: "000000000000",
-  appId: "1:000000000000:web:xxxxxxx"
+  apiKey: "AIzaSyDf_m8BzMVHFWoFhVLyThuKwWTMhB7u5ZY",
+  authDomain: "a-ki-pri-sa-ye.firebaseapp.com",
+  projectId: "a-ki-pri-sa-ye",
+  storageBucket: "a-ki-pri-sa-ye.firebasestorage.app",
+  messagingSenderId: "187272078809",
+  appId: "1:187272078809:web:110a92e34493ef4506e5c8",
+  measurementId: "G-NFHCZTLPDM"
 };
 
 // -----------------------------

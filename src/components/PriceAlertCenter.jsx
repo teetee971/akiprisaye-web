@@ -11,8 +11,6 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Bell, TrendingDown, TrendingUp, Package, Settings, Info, AlertTriangle, CheckCircle, Eye } from 'lucide-react';
-import { Card } from './card';
 import priceAlertService from '../services/priceAlertService';
 
 const TERRITORY_NAMES = {

@@ -1,8 +1,14 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+import { Link } from 'react-router-dom';
+import QuickSummary from '../components/QuickSummary';
 import NewsWidgetCivic from '../components/NewsWidgetCivic';
 import AIPricePrediction from '../components/AIPricePrediction';
 import GPSShoppingList from '../components/GPSShoppingList';
 import GlobalDisclaimer from '../components/GlobalDisclaimer';
+
+// Compute current time once at module load for demo purposes
+// In production, this would come from API or be computed per-component instance
+const CURRENT_UPDATE_TIME = new Date();
 
 export default function CivicModules() {
   // Mock data for demonstrations
@@ -27,26 +33,140 @@ export default function CivicModules() {
     ]
   };
 
+  // Mock data for quick summary
+  const summaryData = {
+    averageBasket: 87.95,
+    territorialGap: 18,
+    productsUnderSurveillance: 2847,
+    lastUpdate: CURRENT_UPDATE_TIME
+  };
+
   return (
     <div className="min-h-screen bg-slate-950">
       {/* Header */}
       <header className="bg-gradient-to-r from-slate-900 to-slate-800 border-b border-slate-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <h1 className="text-3xl font-bold text-gray-100 mb-2">
-            Modules Civiques A KI PRI SA YÉ
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-100 mb-2">
+            A KI PRI SA YÉ
           </h1>
-          <p className="text-gray-300">
-            Plateforme citoyenne basée exclusivement sur des données publiques vérifiées
+          <p className="text-sm sm:text-base text-gray-300 leading-relaxed">
+            Observatoire public des prix — Données publiques vérifiées
           </p>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="space-y-8">
-          {/* Global Disclaimer at Top */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="space-y-6">
+          {/* Quick Summary at Top */}
+          <QuickSummary
+            averageBasket={summaryData.averageBasket}
+            territorialGap={summaryData.territorialGap}
+            productsUnderSurveillance={summaryData.productsUnderSurveillance}
+            lastUpdate={summaryData.lastUpdate}
+          />
+
+          {/* Re-prioritized CTAs */}
+          <section className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5">
+            <h2 className="text-lg font-semibold text-gray-100 mb-4">
+              Actions principales
+            </h2>
+            <div className="space-y-3">
+              {/* Main CTA */}
+              <Link 
+                to="/comparateur-citoyen" 
+                className="block w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors text-center"
+              >
+                📊 Comparer les prix par territoire
+              </Link>
+              
+              {/* Priority 1 - Vital Transport Comparators */}
+              <div className="bg-gradient-to-r from-blue-900/30 to-purple-900/30 border border-blue-500/30 rounded-lg p-4">
+                <h3 className="text-sm font-semibold text-blue-200 mb-3 flex items-center gap-2">
+                  <span className="bg-blue-500 text-white text-xs px-2 py-0.5 rounded">PRIORITÉ 1</span>
+                  🥇 Transports Vitaux (Impact Maximum)
+                </h3>
+                <div className="grid md:grid-cols-2 gap-3">
+                  <Link
+                    to="/comparateur-vols"
+                    className="block p-3 bg-slate-800/70 border border-blue-700/50 rounded-lg hover:bg-slate-800/90 transition-colors"
+                  >
+                    <h4 className="font-medium text-blue-200 mb-1 text-sm flex items-center gap-2">
+                      ✈️ Comparateur Vols
+                    </h4>
+                    <p className="text-xs text-gray-400 leading-relaxed">
+                      DOM ↔ Métropole — Prix, compagnies, moments d'achat, saisons
+                    </p>
+                  </Link>
+                  <Link
+                    to="/comparateur-bateaux"
+                    className="block p-3 bg-slate-800/70 border border-blue-700/50 rounded-lg hover:bg-slate-800/90 transition-colors"
+                  >
+                    <h4 className="font-medium text-blue-200 mb-1 text-sm flex items-center gap-2">
+                      🚢 Comparateur Bateaux/Ferries
+                    </h4>
+                    <p className="text-xs text-gray-400 leading-relaxed">
+                      Inter-îles — Passagers, véhicules, fréquences
+                    </p>
+                  </Link>
+                </div>
+              </div>
+              
+              {/* Secondary CTAs Grid */}
+              <div className="grid md:grid-cols-2 gap-3">
+                <a
+                  href="#gps-shopping"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const element = document.getElementById('gps-shopping');
+                    if (element) {
+                      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                      element.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+                    }
+                  }}
+                  className="block p-3 bg-slate-800/50 border border-blue-700/50 rounded-lg hover:bg-slate-800/70 transition-colors"
+                >
+                  <h3 className="font-medium text-blue-200 mb-1 text-sm">🗺️ Optimiser ma liste de courses (GPS)</h3>
+                  <p className="text-xs text-gray-400 leading-relaxed">
+                    Trouvez les meilleurs magasins près de chez vous
+                  </p>
+                </a>
+                <Link
+                  to="/evaluation-cosmetique"
+                  className="block p-3 bg-slate-800/50 border border-green-700/50 rounded-lg hover:bg-slate-800/70 transition-colors"
+                >
+                  <h3 className="font-medium text-green-200 mb-1 text-sm">🧴 Évaluation Cosmétiques</h3>
+                  <p className="text-xs text-gray-400 leading-relaxed">
+                    Analysez la composition de vos produits cosmétiques
+                  </p>
+                </Link>
+                <Link
+                  to="/contribuer-prix"
+                  className="block p-3 bg-slate-800/50 border border-slate-700/50 rounded-lg hover:bg-slate-800/70 transition-colors"
+                >
+                  <h3 className="font-medium text-gray-300 mb-1 text-sm">🤝 Contribuer aux données publiques</h3>
+                  <p className="text-xs text-gray-400 leading-relaxed">
+                    Partagez vos observations de prix
+                  </p>
+                </Link>
+              </div>
+
+              {/* Always Visible Alert CTA */}
+              <Link
+                to="/signaler-abus"
+                className="block p-3 bg-red-900/30 border border-red-700/50 rounded-lg hover:bg-red-900/40 transition-colors"
+              >
+                <h3 className="font-medium text-red-200 mb-1 text-sm">🚨 Signaler un abus</h3>
+                <p className="text-xs text-gray-400 leading-relaxed">
+                  Signalez les pratiques commerciales douteuses ou prix anormaux
+                </p>
+              </Link>
+            </div>
+          </section>
+
+          {/* Global Disclaimer */}
           <section>
-            <h2 className="text-xl font-semibold text-gray-100 mb-4">
+            <h2 className="text-lg font-semibold text-gray-100 mb-3">
               À propos de cette plateforme
             </h2>
             <GlobalDisclaimer />
@@ -54,68 +174,21 @@ export default function CivicModules() {
 
           {/* News Feed Module */}
           <section>
-            <h2 className="text-xl font-semibold text-gray-100 mb-4">
-              1️⃣ Fil d'actualité civique vérifié
+            <h2 className="text-lg font-semibold text-gray-100 mb-3">
+              Fil d'actualité civique vérifié
             </h2>
-            <p className="text-gray-400 text-sm mb-4">
+            <p className="text-sm text-gray-400 mb-3 leading-relaxed">
               Affichage des actualités avec sources officielles visibles, catégories neutres et texte factuel.
             </p>
             <NewsWidgetCivic limit={3} showFullButton={true} />
           </section>
 
-          {/* Price Comparator Info */}
-          <section className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-6">
-            <h2 className="text-xl font-semibold text-gray-100 mb-4">
-              2️⃣ Comparateur de prix intelligent
+          {/* AI Trend Indicator Module */}
+          <section id="ai-indicator">
+            <h2 className="text-lg font-semibold text-gray-100 mb-3">
+              Indicateur de tendance (non décisionnel)
             </h2>
-            <p className="text-gray-400 text-sm mb-4">
-              Le comparateur existant permet de rechercher par produit, comparer par territoire, visualiser l'historique 
-              et détecter l'inflation et la shrinkflation. Toutes les données proviennent de sources officielles (OPMR, DGCCRF).
-            </p>
-            <a 
-              href="/comparateur" 
-              className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-            >
-              Accéder au comparateur →
-            </a>
-          </section>
-
-          {/* Citizen Participation */}
-          <section className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-6">
-            <h2 className="text-xl font-semibold text-gray-100 mb-4">
-              🤝 Participation citoyenne
-            </h2>
-            <p className="text-gray-400 text-sm mb-4">
-              Contribuez activement à la transparence des prix dans votre territoire.
-            </p>
-            <div className="grid md:grid-cols-2 gap-4">
-              <a
-                href="/contribuer-prix"
-                className="block p-4 bg-blue-900/30 border border-blue-700 rounded-lg hover:bg-blue-900/40 transition-colors"
-              >
-                <h3 className="font-medium text-blue-200 mb-2">💰 Contribuer aux prix</h3>
-                <p className="text-sm text-gray-300">
-                  Partagez les prix que vous observez pour enrichir la base de données.
-                </p>
-              </a>
-              <a
-                href="/signaler-abus"
-                className="block p-4 bg-red-900/30 border border-red-700 rounded-lg hover:bg-red-900/40 transition-colors"
-              >
-                <h3 className="font-medium text-red-200 mb-2">🚨 Signaler un abus</h3>
-                <p className="text-sm text-gray-300">
-                  Signalez les pratiques commerciales douteuses ou prix anormaux.
-                </p>
-              </a>
-            </div>
-          </section>
-
-          {/* AI Price Prediction Module */}
-          <section>
-            <h2 className="text-xl font-semibold text-gray-100 mb-4">
-              3️⃣ Prédiction de prix IA (transparente)
-            </h2>
-            <p className="text-gray-400 text-sm mb-4">
+            <p className="text-sm text-gray-400 mb-3 leading-relaxed">
               Projection factuelle basée sur des données publiques, sans promesses ni conseil d'achat.
             </p>
             <AIPricePrediction 
@@ -125,42 +198,42 @@ export default function CivicModules() {
           </section>
 
           {/* GPS Shopping List Module */}
-          <section>
-            <h2 className="text-xl font-semibold text-gray-100 mb-4">
-              4️⃣ Liste de courses GPS optimisée
+          <section id="gps-shopping">
+            <h2 className="text-lg font-semibold text-gray-100 mb-3">
+              Liste de courses GPS optimisée
             </h2>
-            <p className="text-gray-400 text-sm mb-4">
+            <p className="text-sm text-gray-400 mb-3 leading-relaxed">
               Comparaison intelligente incluant distance, prix et coût de déplacement.
             </p>
-            <GPSShoppingList items={mockShoppingItems} />
+            <GPSShoppingList items={mockShoppingItems} lastUpdate={summaryData.lastUpdate} />
           </section>
 
           {/* Pricing Information */}
-          <section className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-6">
-            <h2 className="text-xl font-semibold text-gray-100 mb-2">
+          <section className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5">
+            <h2 className="text-lg font-semibold text-gray-100 mb-2">
               Niveaux d'accès au service
             </h2>
-            <p className="text-sm text-gray-400 mb-4">
+            <p className="text-xs text-gray-400 mb-4 leading-relaxed">
               Observatoire citoyen des prix et du coût de la vie — DOM · ROM · COM
             </p>
-            <div className="grid md:grid-cols-3 gap-4">
-              <div className="bg-slate-800/30 rounded-lg p-4 border border-blue-600/50">
-                <h3 className="font-semibold text-blue-300 mb-2">🧑 Citoyen</h3>
-                <p className="text-2xl font-bold text-gray-100 mb-2">3,99 €<span className="text-sm">/mois</span></p>
+            <div className="grid md:grid-cols-3 gap-3">
+              <div className="bg-slate-800/30 rounded-lg p-3 border border-blue-600/50">
+                <h3 className="font-semibold text-blue-300 mb-2 text-sm">🧑 Citoyen</h3>
+                <p className="text-xl font-bold text-gray-100 mb-1">3,99 €<span className="text-xs">/mois</span></p>
                 <p className="text-xs text-gray-400">Accès individuel</p>
               </div>
-              <div className="bg-slate-800/30 rounded-lg p-4 border border-purple-600/50">
-                <h3 className="font-semibold text-purple-300 mb-2">🧑‍💼 Professionnel</h3>
-                <p className="text-2xl font-bold text-gray-100 mb-2">19 €<span className="text-sm">/mois</span></p>
+              <div className="bg-slate-800/30 rounded-lg p-3 border border-purple-600/50">
+                <h3 className="font-semibold text-purple-300 mb-2 text-sm">🧑‍💼 Professionnel</h3>
+                <p className="text-xl font-bold text-gray-100 mb-1">19 €<span className="text-xs">/mois</span></p>
                 <p className="text-xs text-gray-400">Droits étendus</p>
               </div>
-              <div className="bg-slate-800/30 rounded-lg p-4 border border-slate-700/30">
-                <h3 className="font-semibold text-gray-200 mb-2">🏛️ Institution</h3>
-                <p className="text-lg font-bold text-gray-100 mb-2">Licence<span className="text-sm block">annuelle</span></p>
+              <div className="bg-slate-800/30 rounded-lg p-3 border border-slate-700/30">
+                <h3 className="font-semibold text-gray-200 mb-2 text-sm">🏛️ Institution</h3>
+                <p className="text-base font-bold text-gray-100 mb-1">Licence<span className="text-xs block">annuelle</span></p>
                 <p className="text-xs text-gray-400">Sur convention</p>
               </div>
             </div>
-            <div className="mt-4 p-3 bg-blue-900/20 border border-blue-700/30 rounded-lg">
+            <div className="mt-3 p-2 bg-blue-900/20 border border-blue-700/30 rounded-lg">
               <p className="text-xs text-blue-200 text-center">
                 Paiement non activé — accès sur convention ou demande officielle
               </p>
@@ -168,14 +241,14 @@ export default function CivicModules() {
           </section>
 
           {/* Tech Stack Info */}
-          <section className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-6">
-            <h2 className="text-xl font-semibold text-gray-100 mb-4">
-              8️⃣ Stack technique
+          <section className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5">
+            <h2 className="text-lg font-semibold text-gray-100 mb-3">
+              Stack technique
             </h2>
-            <div className="grid md:grid-cols-2 gap-4 text-sm">
+            <div className="grid md:grid-cols-2 gap-4 text-xs">
               <div>
                 <h3 className="font-medium text-gray-300 mb-2">Frontend</h3>
-                <ul className="space-y-1 text-gray-400">
+                <ul className="space-y-1 text-gray-400 leading-relaxed">
                   <li>• React + TypeScript</li>
                   <li>• Vite build system</li>
                   <li>• Tailwind CSS + Glassmorphism</li>
@@ -183,8 +256,8 @@ export default function CivicModules() {
                 </ul>
               </div>
               <div>
-                <h3 className="font-medium text-gray-300 mb-2">Backend & Déploiement</h3>
-                <ul className="space-y-1 text-gray-400">
+                <h3 className="font-medium text-gray-300 mb-3">Backend & Déploiement</h3>
+                <ul className="space-y-1 text-gray-400 leading-relaxed">
                   <li>• Node 20 + TypeScript</li>
                   <li>• API REST + JWT</li>
                   <li>• Cloudflare Pages</li>

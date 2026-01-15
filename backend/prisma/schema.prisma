@@ -48,6 +48,10 @@ model User {
   /// Date de dernière mise à jour
   updatedAt DateTime @updatedAt @map("updated_at")
   
+  /// Stripe Customer ID (for payment processing)
+  /// RGPD: External service identifier
+  stripeCustomerId String? @unique @map("stripe_customer_id") @db.VarChar(255)
+  
   /// Refresh tokens actifs (pour révocation)
   refreshTokens RefreshToken[]
   
@@ -60,6 +64,7 @@ model User {
   @@index([email])
   @@index([isActive])
   @@index([role])
+  @@index([stripeCustomerId])
   @@map("users")
 }
 
@@ -1603,6 +1608,7 @@ model StructuralIndicator {
   
   /// Relations
   insights ExplanatoryInsight[]
+  explanations ExplanationResult[]
   
   @@index([indicatorType])
   @@index([territory])
@@ -1876,8 +1882,7 @@ model ExplanationResult {
   computationTrace   ComputationTrace? @relation(fields: [computationTraceId], references: [id], onDelete: SetNull)
   
   /// Revue humaine associée
-  humanReviewId String? @map("human_review_id")
-  humanReview   HumanReview? @relation(fields: [humanReviewId], references: [id], onDelete: SetNull)
+  humanReviews HumanReview[]
   
   /// Statut publication
   isPublished Boolean @default(false) @map("is_published")
@@ -1961,7 +1966,7 @@ model HumanReview {
   framework   AIResearchFramework? @relation(fields: [frameworkId], references: [id], onDelete: SetNull)
   
   /// Explication revue (optionnel)
-  explanationId String? @map("explanation_id")
+  explanationId String? @unique @map("explanation_id")
   explanation   ExplanationResult? @relation(fields: [explanationId], references: [id], onDelete: SetNull)
   
   /// Nom/ID du reviewer
@@ -2483,4 +2488,353 @@ enum ChatModerationModelType {
   SPAM_DETECTION      // Détection spam
   PROFANITY_FILTER    // Filtre grossièretés
   SENTIMENT_ANALYSIS  // Analyse sentiment
+}
+
+// ============================================================
+// CREDITS, ANALYTICS & GAMIFICATION SYSTEM
+// ============================================================
+
+/// Transaction de crédits
+/// Historique complet de tous les gains, dépenses et échanges de crédits
+/// RGPD: Traçabilité des récompenses et transactions
+model CreditTransaction {
+  /// Identifiant unique
+  id String @id @default(uuid())
+  
+  /// Utilisateur concerné
+  userId String @map("user_id")
+  
+  /// Type de transaction
+  type CreditTransactionType
+  
+  /// Montant (positif pour earn, négatif pour spend)
+  amount Int
+  
+  /// Source de la transaction (JSON)
+  /// {type, contributionType, contributionId, verified}
+  source String @db.Text
+  
+  /// Description de la transaction
+  description String @db.VarChar(500)
+  
+  /// Métadonnées additionnelles (JSON)
+  metadata String? @db.Text
+  
+  /// Balance après transaction
+  balance Int
+  
+  /// Date de création
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  @@index([userId])
+  @@index([type])
+  @@index([createdAt])
+  @@map("credit_transactions")
+}
+
+/// Balance de crédits utilisateur
+/// État actuel du compte crédits
+model CreditBalance {
+  /// Identifiant unique
+  id String @id @default(uuid())
+  
+  /// Utilisateur
+  userId String @unique @map("user_id")
+  
+  /// Total disponible
+  total Int @default(0)
+  
+  /// En attente (contributions non vérifiées)
+  pending Int @default(0)
+  
+  /// Total gagné depuis le début
+  lifetime Int @default(0)
+  
+  /// Total échangé/retiré
+  redeemed Int @default(0)
+  
+  /// Date de dernière mise à jour
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  @@index([userId])
+  @@map("credit_balances")
+}
+
+/// Offre marketplace (échange de crédits)
+/// Produits/services disponibles contre crédits
+model MarketplaceOffer {
+  /// Identifiant unique
+  id String @id @default(uuid())
+  
+  /// Type d'offre
+  type MarketplaceOfferType
+  
+  /// Nom de l'offre
+  name String @db.VarChar(255)
+  
+  /// Description
+  description String @db.Text
+  
+  /// URL image
+  imageUrl String? @map("image_url") @db.VarChar(500)
+  
+  /// Coût en crédits
+  creditCost Int @map("credit_cost")
+  
+  /// Valeur monétaire équivalente (centimes)
+  monetaryValue Int @map("monetary_value")
+  
+  /// Disponible
+  available Boolean @default(true)
+  
+  /// Stock (null = illimité)
+  stock Int?
+  
+  /// ID partenaire (si applicable)
+  partnerId String? @map("partner_id") @db.VarChar(255)
+  
+  /// Cible donation (si type donation)
+  donationTarget String? @map("donation_target") @db.VarChar(255)
+  
+  /// Date de création
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  /// Date d'expiration (null = pas d'expiration)
+  expiresAt DateTime? @map("expires_at")
+  
+  /// Achats associés
+  purchases MarketplacePurchase[]
+  
+  @@index([type])
+  @@index([available])
+  @@index([expiresAt])
+  @@map("marketplace_offers")
+}
+
+/// Achat marketplace
+/// Historique des échanges de crédits
+model MarketplacePurchase {
+  /// Identifiant unique
+  id String @id @default(uuid())
+  
+  /// Utilisateur acheteur
+  userId String @map("user_id")
+  
+  /// Offre achetée
+  offerId String @map("offer_id")
+  offer MarketplaceOffer @relation(fields: [offerId], references: [id], onDelete: Restrict)
+  
+  /// Coût en crédits
+  creditCost Int @map("credit_cost")
+  
+  /// Statut de l'achat
+  status PurchaseStatus @default(PENDING)
+  
+  /// Données de fulfillment (JSON)
+  /// Ex: code promo, détails virement
+  fulfillmentData String? @map("fulfillment_data") @db.Text
+  
+  /// Date de création
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  /// Date de complétion
+  completedAt DateTime? @map("completed_at")
+  
+  @@index([userId])
+  @@index([offerId])
+  @@index([status])
+  @@map("marketplace_purchases")
+}
+
+/// Demande de retrait (redemption)
+/// Conversion crédits → argent
+model Redemption {
+  /// Identifiant unique
+  id String @id @default(uuid())
+  
+  /// Utilisateur
+  userId String @map("user_id")
+  
+  /// Montant en crédits
+  credits Int
+  
+  /// Valeur monétaire (centimes)
+  monetaryValue Int @map("monetary_value")
+  
+  /// Méthode de paiement
+  method RedemptionMethod
+  
+  /// Détails (JSON)
+  /// Ex: RIB, PayPal email
+  details String @db.Text
+  
+  /// Statut
+  status RedemptionStatus @default(PENDING)
+  
+  /// Date de création
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  /// Date de traitement
+  processedAt DateTime? @map("processed_at")
+  
+  /// Date de paiement effectué
+  paidAt DateTime? @map("paid_at")
+  
+  /// Notes traitement
+  processingNotes String? @map("processing_notes") @db.Text
+  
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("redemptions")
+}
+
+/// Badge gamification
+/// Achievements déblocables par les utilisateurs
+model UserBadge {
+  /// Identifiant unique
+  id String @id @default(uuid())
+  
+  /// Utilisateur
+  userId String @map("user_id")
+  
+  /// Type de badge
+  badgeType String @map("badge_type") @db.VarChar(100)
+  
+  /// Date d'obtention
+  earnedAt DateTime @default(now()) @map("earned_at")
+  
+  /// Métadonnées (JSON)
+  /// Progress, stats au moment de l'unlock
+  metadata String? @db.Text
+  
+  @@unique([userId, badgeType])
+  @@index([userId])
+  @@index([badgeType])
+  @@index([earnedAt])
+  @@map("user_badges")
+}
+
+/// Entrée leaderboard
+/// Classement périodique des contributeurs
+model LeaderboardEntry {
+  /// Identifiant unique
+  id String @id @default(uuid())
+  
+  /// Utilisateur
+  userId String @map("user_id")
+  
+  /// Territoire (null = global)
+  territory Territory?
+  
+  /// Période (format: "2026-01-W01", "2026-01", "2026")
+  period String @db.VarChar(50)
+  
+  /// Type de période
+  periodType LeaderboardPeriod @map("period_type")
+  
+  /// Rang
+  rank Int
+  
+  /// Crédits gagnés pendant la période
+  credits Int
+  
+  /// Nombre de contributions
+  contributions Int
+  
+  /// Nombre de badges
+  badges Int @default(0)
+  
+  /// Date de calcul
+  calculatedAt DateTime @default(now()) @map("calculated_at")
+  
+  @@unique([userId, period, territory])
+  @@index([period])
+  @@index([periodType])
+  @@index([territory])
+  @@index([rank])
+  @@map("leaderboard_entries")
+}
+
+/// Don effectué avec crédits
+/// Historique des dons vers ONG
+model Donation {
+  /// Identifiant unique
+  id String @id @default(uuid())
+  
+  /// Utilisateur donateur
+  userId String @map("user_id")
+  
+  /// Cible (ONG bénéficiaire)
+  target String @db.VarChar(255)
+  
+  /// Montant (centimes)
+  amount Int
+  
+  /// Méthode (crédits ou autre)
+  method String @db.VarChar(50)
+  
+  /// Date de création
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  /// Statut
+  status String @db.VarChar(50) @default("completed")
+  
+  @@index([userId])
+  @@index([target])
+  @@index([createdAt])
+  @@map("donations")
+}
+
+// ============================================================
+// ENUMS - CREDITS & GAMIFICATION
+// ============================================================
+
+/// Type de transaction crédit
+enum CreditTransactionType {
+  EARN     // Gagner des crédits
+  SPEND    // Dépenser des crédits
+  REDEEM   // Échanger contre argent
+  BONUS    // Bonus (parrainage, streak, etc.)
+  REFUND   // Remboursement
+}
+
+/// Type d'offre marketplace
+enum MarketplaceOfferType {
+  PREMIUM_SUBSCRIPTION  // Abonnement premium
+  DONATION             // Don à ONG
+  PARTNER_PRODUCT      // Produit partenaire
+  CASH                 // Retrait argent
+  OTHER                // Autre
+}
+
+/// Statut achat marketplace
+enum PurchaseStatus {
+  PENDING    // En attente
+  COMPLETED  // Complété
+  FAILED     // Échoué
+  CANCELLED  // Annulé
+}
+
+/// Méthode redemption
+enum RedemptionMethod {
+  BANK_TRANSFER  // Virement bancaire
+  PAYPAL         // PayPal
+  DONATION       // Don direct
+}
+
+/// Statut redemption
+enum RedemptionStatus {
+  PENDING     // En attente de traitement
+  PROCESSING  // En cours de traitement
+  COMPLETED   // Complété
+  REJECTED    // Rejeté
+}
+
+/// Type de période leaderboard
+enum LeaderboardPeriod {
+  WEEK       // Hebdomadaire
+  MONTH      // Mensuel
+  YEAR       // Annuel
+  ALL_TIME   // Tout temps
 }

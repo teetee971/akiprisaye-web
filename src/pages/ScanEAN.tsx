@@ -1,9 +1,12 @@
 // src/pages/ScanEAN.tsx
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
+import { useSearchParams, useNavigate } from 'react-router-dom'
 import { useEANScanner } from '../hooks/useEANScanner'
 import { useEANResolver } from '../hooks/useEANResolver'
 import { useScanHistory } from '../hooks/useScanHistory'
+import { useScanFlow } from '../context/ScanFlowContext'
 import { validateEAN, getAllProducts } from '../services/eanPublicCatalog'
+import { runOCR, GENERIC_OCR_ERROR } from '../services/ocrService'
 import { extractProductHints, fuzzySearchProducts } from '../services/textProductRecognition'
 import ScanCamera from '../components/ScanCamera'
 import ScanResultCard from '../components/ScanResultCard'
@@ -11,8 +14,14 @@ import ScanErrorState from '../components/ScanErrorState'
 import AddToTiPanierButton from '../components/AddToTiPanierButton'
 import { ProductTextReviewModal } from '../components/ProductTextReviewModal'
 import { GlassCard } from '../components/ui/glass-card'
+import type { ScannedProductContext } from '../types/scanFlow'
 
 export default function ScanEAN() {
+  const [searchParams] = useSearchParams()
+  const navigate = useNavigate()
+  const isUnifiedFlow = searchParams.get('flow') === 'unified'
+  const isPhotoMode = searchParams.get('mode') === 'photo'
+  
   const [manualEAN, setManualEAN] = useState('')
   const [manualError, setManualError] = useState<string | null>(null)
   const [showHistory, setShowHistory] = useState(false)
@@ -24,6 +33,7 @@ export default function ScanEAN() {
   const scanner = useEANScanner()
   const resolver = useEANResolver()
   const { history, addToHistory, removeFromHistory, clearHistory } = useScanHistory()
+  const scanFlow = isUnifiedFlow ? useScanFlow() : null
   
   // Cache product catalog to avoid repeated calls
   const productCatalog = React.useMemo(() => getAllProducts().map(p => ({ label: p.name, ean: p.ean })), [])
@@ -32,6 +42,8 @@ export default function ScanEAN() {
    * Unified EAN handler - Single source of truth
    * Handles EAN from: camera, image upload, manual input
    * Note: Validation errors should be handled by the caller before calling this function
+   * 
+   * If in unified flow, updates the scan context and redirects to comparator
    */
   const handleEAN = useCallback(async (ean: string) => {
     // Validate EAN (already validated by caller for manual input)
@@ -49,7 +61,26 @@ export default function ScanEAN() {
         productName: resolver.product.name,
       })
     }
-  }, [resolver, addToHistory])
+
+    // If in unified flow, update scan context and redirect to comparator
+    if (isUnifiedFlow && scanFlow && resolver.product) {
+      const scannedContext: ScannedProductContext = {
+        source: isPhotoMode ? 'photo' : 'ean',
+        ean,
+        productName: resolver.product.name,
+        confidenceScore: isPhotoMode ? 75 : 95, // Photo mode has lower confidence
+        timestamp: new Date(),
+      }
+
+      scanFlow.updateScannedProduct(scannedContext)
+      scanFlow.nextStep() // Move to understanding
+      
+      // Short delay before moving to comparison (for UX)
+      setTimeout(() => {
+        scanFlow.nextStep() // Move to comparison (will auto-redirect)
+      }, 500)
+    }
+  }, [resolver, addToHistory, isUnifiedFlow, isPhotoMode, scanFlow])
 
   // Handle manual EAN search
   const handleManualSearch = async () => {
@@ -77,7 +108,7 @@ export default function ScanEAN() {
 
   /**
    * Separate image pipeline - independent from camera
-   * Includes OCR fallback with Tesseract.js
+   * Includes OCR fallback with unified runOCR API
    */
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -86,13 +117,14 @@ export default function ScanEAN() {
     setImageUploadStatus('🔍 Analyse de l\'image en cours...')
     setIsProcessingImage(true)
 
-    let ean: string | null = null
-    const imageUrl = URL.createObjectURL(file)
+    let objectUrl: string | null = null
 
     try {
+      objectUrl = URL.createObjectURL(file)
+
       // Step 1: Load image properly
       const img = new Image()
-      img.src = imageUrl
+      img.src = objectUrl
 
       await new Promise<void>((resolve, reject) => {
         img.onload = () => resolve()
@@ -100,6 +132,8 @@ export default function ScanEAN() {
       })
 
       await img.decode()
+
+      let ean: string | null = null
 
       // Step 2: Try native BarcodeDetector (if available)
       if ('BarcodeDetector' in window) {
@@ -118,18 +152,17 @@ export default function ScanEAN() {
         }
       }
 
-      // Step 3: OCR Fallback with Tesseract.js (INDISPENSABLE)
+      // Step 3: OCR Fallback with unified runOCR API (INDISPENSABLE)
       let ocrText = '';
       if (!ean) {
         setImageUploadStatus('📝 Détection OCR en cours...')
         
-        const Tesseract = await import('tesseract.js')
-        const { data } = await Tesseract.recognize(img, 'eng', {
-          // Intentional removal of digit whitelist
-          // Full text OCR required for product recognition
-        })
-
-        ocrText = data.text;
+        const ocrResult = await runOCR(objectUrl);
+        if (!ocrResult.success) {
+          const ocrError = ocrResult.error ?? GENERIC_OCR_ERROR;
+          throw new Error(ocrError);
+        }
+        ocrText = ocrResult.rawText;
         console.log('OCR raw text:', ocrText)
 
         // Look for EAN-13 (13 digits) or EAN-8 (8 digits)
@@ -182,8 +215,10 @@ export default function ScanEAN() {
       setImageUploadStatus('❌ Erreur lors du traitement de l\'image')
       setIsProcessingImage(false)
     } finally {
-      // Prevents memory leaks (mobile / long sessions)
-      URL.revokeObjectURL(imageUrl)
+      // ✅ Nettoyage mémoire garanti
+      if (objectUrl) {
+        URL.revokeObjectURL(objectUrl)
+      }
     }
   }
 

@@ -105,7 +105,19 @@ export default function Comparateur() {
         </div>
       ))}
 
-      {prices.map((price) => (
+      {prices.map((price) => {
+        const dateValue = (price as any).date;
+        const parsedDate =
+          dateValue instanceof Date
+            ? dateValue
+            : typeof dateValue === 'string'
+              ? new Date(dateValue)
+              : typeof dateValue?.toDate === 'function'
+                ? dateValue.toDate()
+                : undefined;
+        const dateLabel = parsedDate ? parsedDate.toLocaleDateString() : '—';
+
+        return (
         <div
           key={price.id}
           style={{
@@ -117,10 +129,11 @@ export default function Comparateur() {
         >
           <div>💰 {price.amount} €</div>
           <div>🏬 {price.store}</div>
-          <div>📅 {price.date.toDate().toLocaleDateString()}</div>
+          <div>📅 {dateLabel}</div>
           <div>🔗 {price.source}</div>
         </div>
-      ))}
+        );
+      })}
 
       {!loading && prices.length === 0 && products.length > 0 && (
         <p>Aucun prix disponible pour ce produit.</p>

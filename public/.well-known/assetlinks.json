@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.akiprisaye.app",
+      "sha256_cert_fingerprints": [
+        "58:DB:AB:CE:52:AF:F3:F3:FC:A4:43:F1:2B:86:B0:F2:1B:B4:50:8D:90:C4:7F:3F:D9:7E:5B:B1:C8:D1:EB:5A"
+      ]
+    }
+  }
+]

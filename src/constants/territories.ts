@@ -1,29 +1,59 @@
 /**
- * territories.ts — Constantes centralisées des territoires
- * Version complète incluant TOUS les territoires français d'Outre-mer
+ * territories.ts — Single source of truth for all territories
+ * 
+ * Adding a new territory = MODIFY ONLY THIS FILE
  * 
  * Sources officielles:
  * - INSEE: Codes officiels des collectivités d'outre-mer
  * - ISO 3166-2:FR: Codes subdivision France
  */
 
+/**
+ * Territory ID type - add new IDs here when adding territories
+ */
+export type TerritoryId = 
+  | 'GP' // Guadeloupe
+  | 'MQ' // Martinique
+  | 'GF' // Guyane
+  | 'RE' // La Réunion
+  | 'YT' // Mayotte
+  | 'PF' // Polynésie française
+  | 'NC' // Nouvelle-Calédonie
+  | 'WF' // Wallis-et-Futuna
+  | 'MF' // Saint-Martin
+  | 'BL' // Saint-Barthélemy
+  | 'PM' // Saint-Pierre-et-Miquelon
+  | 'TF' // TAAF
+  | 'FR'; // France métropolitaine (for comparisons)
+
+/**
+ * Complete territory definition
+ */
 export interface Territory {
-  code: string;
+  code: TerritoryId;
   name: string;
   fullName: string;
-  type: 'DROM' | 'COM' | 'Autres';
+  type: 'DROM' | 'COM' | 'Autres' | 'Metro';
   inseeCode?: string;
   center: { lat: number; lng: number };
   zoom: number;
   flag: string;
-  active: boolean; // Si les données sont disponibles
+  active: boolean; // If data is available
+  // New fields for enhanced functionality
+  currency: string;      // ISO currency code
+  locale: string;        // Locale for formatting
+  timezone: string;      // IANA timezone
+  meta?: {
+    country?: string;
+    region?: string;
+  };
 }
 
 /**
- * Liste complète des territoires français d'Outre-mer
- * Conformité avec l'audit: TOUS les territoires doivent être présents
+ * Complete list of French overseas territories
+ * TO ADD A NEW TERRITORY: Add a new entry here only
  */
-export const TERRITORIES: Record<string, Territory> = {
+export const TERRITORIES: Record<TerritoryId, Territory> = {
   // ============ DROM (Départements et Régions d'Outre-Mer) ============
   GP: {
     code: 'GP',
@@ -35,6 +65,10 @@ export const TERRITORIES: Record<string, Territory> = {
     zoom: 11,
     flag: '🇬🇵',
     active: true,
+    currency: 'EUR',
+    locale: 'fr-FR',
+    timezone: 'America/Guadeloupe',
+    meta: { country: 'France', region: 'Antilles' },
   },
   MQ: {
     code: 'MQ',
@@ -46,6 +80,10 @@ export const TERRITORIES: Record<string, Territory> = {
     zoom: 11,
     flag: '🇲🇶',
     active: true,
+    currency: 'EUR',
+    locale: 'fr-FR',
+    timezone: 'America/Martinique',
+    meta: { country: 'France', region: 'Antilles' },
   },
   GF: {
     code: 'GF',
@@ -57,6 +95,10 @@ export const TERRITORIES: Record<string, Territory> = {
     zoom: 8,
     flag: '🇬🇫',
     active: true,
+    currency: 'EUR',
+    locale: 'fr-FR',
+    timezone: 'America/Cayenne',
+    meta: { country: 'France', region: 'Amérique du Sud' },
   },
   RE: {
     code: 'RE',
@@ -67,7 +109,11 @@ export const TERRITORIES: Record<string, Territory> = {
     center: { lat: -21.1151, lng: 55.5364 },
     zoom: 10,
     flag: '🇷🇪',
-    active: true, // Maintenant actif
+    active: true,
+    currency: 'EUR',
+    locale: 'fr-FR',
+    timezone: 'Indian/Reunion',
+    meta: { country: 'France', region: 'Océan Indien' },
   },
   YT: {
     code: 'YT',
@@ -78,7 +124,11 @@ export const TERRITORIES: Record<string, Territory> = {
     center: { lat: -12.8275, lng: 45.1662 },
     zoom: 11,
     flag: '🇾🇹',
-    active: true, // Maintenant actif
+    active: true,
+    currency: 'EUR',
+    locale: 'fr-FR',
+    timezone: 'Indian/Mayotte',
+    meta: { country: 'France', region: 'Océan Indien' },
   },
 
   // ============ COM (Collectivités d'Outre-Mer) ============
@@ -91,7 +141,11 @@ export const TERRITORIES: Record<string, Territory> = {
     center: { lat: -17.6797, lng: -149.4068 }, // Tahiti/Papeete
     zoom: 9,
     flag: '🇵🇫',
-    active: true, // Maintenant actif
+    active: true,
+    currency: 'XPF', // Franc Pacifique
+    locale: 'fr-PF',
+    timezone: 'Pacific/Tahiti',
+    meta: { country: 'France', region: 'Pacifique' },
   },
   NC: {
     code: 'NC',
@@ -102,7 +156,11 @@ export const TERRITORIES: Record<string, Territory> = {
     center: { lat: -21.2741, lng: 165.3018 }, // Nouméa
     zoom: 8,
     flag: '🇳🇨',
-    active: true, // Maintenant actif
+    active: true,
+    currency: 'XPF', // Franc Pacifique
+    locale: 'fr-NC',
+    timezone: 'Pacific/Noumea',
+    meta: { country: 'France', region: 'Pacifique' },
   },
   WF: {
     code: 'WF',
@@ -113,7 +171,11 @@ export const TERRITORIES: Record<string, Territory> = {
     center: { lat: -13.2765, lng: -176.1745 }, // Mata-Utu
     zoom: 11,
     flag: '🇼🇫',
-    active: true, // Maintenant actif
+    active: true,
+    currency: 'XPF', // Franc Pacifique
+    locale: 'fr-WF',
+    timezone: 'Pacific/Wallis',
+    meta: { country: 'France', region: 'Pacifique' },
   },
   MF: {
     code: 'MF',
@@ -124,7 +186,11 @@ export const TERRITORIES: Record<string, Territory> = {
     center: { lat: 18.0708, lng: -63.0501 }, // Marigot
     zoom: 12,
     flag: '🇲🇫',
-    active: true, // Maintenant actif
+    active: true,
+    currency: 'EUR',
+    locale: 'fr-MF',
+    timezone: 'America/Marigot',
+    meta: { country: 'France', region: 'Antilles' },
   },
   BL: {
     code: 'BL',
@@ -135,7 +201,11 @@ export const TERRITORIES: Record<string, Territory> = {
     center: { lat: 17.9, lng: -62.8333 }, // Gustavia
     zoom: 13,
     flag: '🇧🇱',
-    active: true, // Maintenant actif
+    active: true,
+    currency: 'EUR',
+    locale: 'fr-BL',
+    timezone: 'America/St_Barthelemy',
+    meta: { country: 'France', region: 'Antilles' },
   },
   PM: {
     code: 'PM',
@@ -147,6 +217,10 @@ export const TERRITORIES: Record<string, Territory> = {
     zoom: 11,
     flag: '🇵🇲',
     active: true,
+    currency: 'EUR',
+    locale: 'fr-PM',
+    timezone: 'America/Miquelon',
+    meta: { country: 'France', region: 'Amérique du Nord' },
   },
 
   // ============ Autres territoires ============
@@ -159,33 +233,83 @@ export const TERRITORIES: Record<string, Territory> = {
     center: { lat: -49.35, lng: 69.47 }, // Kerguelen
     zoom: 6,
     flag: '🇹🇫',
-    active: false, // Pas de population permanente significative
+    active: false, // No significant permanent population
+    currency: 'EUR',
+    locale: 'fr-FR',
+    timezone: 'Indian/Kerguelen',
+    meta: { country: 'France', region: 'Antarctique' },
+  },
+
+  // ============ France métropolitaine (for comparisons) ============
+  FR: {
+    code: 'FR',
+    name: 'France métropolitaine',
+    fullName: 'République Française (Métropole)',
+    type: 'Metro',
+    inseeCode: '00',
+    center: { lat: 46.603354, lng: 1.888334 }, // Center of France
+    zoom: 6,
+    flag: '🇫🇷',
+    active: true,
+    currency: 'EUR',
+    locale: 'fr-FR',
+    timezone: 'Europe/Paris',
+    meta: { country: 'France', region: 'Europe' },
   },
 };
 
 /**
- * Obtenir un territoire par son code
+ * Get territory by code (type-safe)
  */
-export function getTerritoryByCode(code: string): Territory | undefined {
-  return TERRITORIES[code.toUpperCase()];
+export function getTerritory(code: TerritoryId): Territory {
+  const territory = TERRITORIES[code];
+  if (!territory) {
+    throw new Error(`Unknown territory: ${code}`);
+  }
+  return territory;
 }
 
 /**
- * Obtenir tous les territoires actifs
+ * Get territory by code (with fallback to GP)
+ */
+export function getTerritoryByCode(code: string): Territory | undefined {
+  return TERRITORIES[code.toUpperCase() as TerritoryId];
+}
+
+/**
+ * Get all active territories (enabled = true)
+ * Computed dynamically to ensure it's always up-to-date
  */
 export function getActiveTerritories(): Territory[] {
   return Object.values(TERRITORIES).filter(t => t.active);
 }
 
 /**
- * Obtenir les territoires par type
+ * Get enabled territories (computed on first access)
+ */
+let _cachedEnabledTerritories: Territory[] | null = null;
+export function getEnabledTerritories(): Territory[] {
+  if (!_cachedEnabledTerritories) {
+    _cachedEnabledTerritories = getActiveTerritories();
+  }
+  return _cachedEnabledTerritories;
+}
+
+/**
+ * ENABLED_TERRITORIES - Alias for backward compatibility
+ * Use getEnabledTerritories() for lazy-loaded version
+ */
+export const ENABLED_TERRITORIES = getActiveTerritories();
+
+/**
+ * Get territories by type
  */
 export function getTerritoriesByType(type: Territory['type']): Territory[] {
   return Object.values(TERRITORIES).filter(t => t.type === type);
 }
 
 /**
- * Obtenir un territoire ou défaut (Guadeloupe)
+ * Get territory or default (Guadeloupe)
  */
 export function getTerritoryOrDefault(code?: string): Territory {
   if (!code) return TERRITORIES.GP;
@@ -194,29 +318,78 @@ export function getTerritoryOrDefault(code?: string): Territory {
 }
 
 /**
- * Liste des codes de territoires actifs
+ * Get default territory (first active territory, typically GP)
  */
-export const ACTIVE_TERRITORY_CODES = Object.keys(TERRITORIES).filter(
-  code => TERRITORIES[code].active
-);
+export const DEFAULT_TERRITORY: TerritoryId = getActiveTerritories()[0]?.code ?? 'GP';
 
 /**
- * Constante pour "Tous les territoires"
+ * List of active territory codes (computed lazily)
+ */
+export function getActiveTerritoryCodesIds(): TerritoryId[] {
+  return getActiveTerritories().map(t => t.code);
+}
+
+/**
+ * ACTIVE_TERRITORY_CODES - For backward compatibility
+ */
+export const ACTIVE_TERRITORY_CODES: TerritoryId[] = getActiveTerritoryCodesIds();
+
+/**
+ * Constant for "All territories" filter option
  */
 export const ALL_TERRITORIES = 'ALL';
 
 /**
- * Valider un code territoire
+ * Validate a territory code
  */
 export function isValidTerritoryCode(code: string): boolean {
   return code === ALL_TERRITORIES || !!getTerritoryByCode(code);
 }
 
 /**
- * Obtenir le nom d'affichage d'un territoire
+ * Get territory display name with flag
  */
 export function getTerritoryDisplayName(code: string): string {
   if (code === ALL_TERRITORIES) return 'Tous les territoires';
   const territory = getTerritoryByCode(code);
   return territory ? `${territory.flag} ${territory.name}` : code;
+}
+
+/**
+ * Format price according to territory locale and currency
+ * 
+ * @param value - Amount to format
+ * @param territoryCode - Territory code for locale/currency
+ * @returns Formatted price string
+ * 
+ * @example
+ * formatPrice(99.99, 'GP') // "99,99 €"
+ * formatPrice(5000, 'PF')  // "5 000 XPF"
+ */
+export function formatPriceForTerritory(value: number, territoryCode: TerritoryId): string {
+  const territory = getTerritory(territoryCode);
+  return new Intl.NumberFormat(territory.locale, {
+    style: 'currency',
+    currency: territory.currency,
+    maximumFractionDigits: 2,
+  }).format(value);
+}
+
+/**
+ * Get territories as dropdown options
+ * 
+ * @param includeAll - Include "All territories" option
+ * @returns Array of {value, label} objects for dropdowns
+ */
+export function getTerritoriesAsOptions(includeAll: boolean = false) {
+  const options = getActiveTerritories().map(t => ({
+    value: t.code,
+    label: `${t.flag} ${t.name}`,
+  }));
+  
+  if (includeAll) {
+    return [{ value: ALL_TERRITORIES, label: '🌍 Tous les territoires' }, ...options];
+  }
+  
+  return options;
 }

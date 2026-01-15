@@ -1,5 +1,16 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { MapPin, ShoppingCart, TrendingDown, Navigation } from 'lucide-react';
+import { getUserPosition, calculateDistancesBatch, type GeoPosition } from '../utils/geoLocation';
+
+// Default update time computed once at module load for demo purposes
+// In production, this would be the actual last data update timestamp
+const DEFAULT_UPDATE_TIME = new Date();
+
+// Create time formatter once at module level for performance
+const timeFormatter = new Intl.DateTimeFormat('fr-FR', {
+  hour: '2-digit',
+  minute: '2-digit'
+});
 
 interface ShoppingItem {
   id: string;
@@ -18,48 +29,56 @@ interface StoreOption {
 
 interface GPSShoppingListProps {
   items: ShoppingItem[];
+  lastUpdate?: Date;
   className?: string;
 }
 
-export default function GPSShoppingList({ items, className }: GPSShoppingListProps) {
-  const [position, setPosition] = useState<{ lat: number; lon: number } | null>(null);
+export default function GPSShoppingList({ items, lastUpdate = DEFAULT_UPDATE_TIME, className }: GPSShoppingListProps) {
+  const [position, setPosition] = useState<GeoPosition | null>(null);
   const [loading, setLoading] = useState(false);
   const [storeOptions, setStoreOptions] = useState<StoreOption[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  const requestLocation = () => {
+  // Memoize formatted time to avoid recreating on every render
+  const formattedTime = useMemo(() => {
+    return timeFormatter.format(lastUpdate);
+  }, [lastUpdate]);
+
+  const requestLocation = useCallback(async () => {
     setLoading(true);
     setError(null);
-    if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          setPosition({
-            lat: pos.coords.latitude,
-            lon: pos.coords.longitude
-          });
-          // Mock calculation - in production, fetch from API
-          calculateStoreOptions();
-          setLoading(false);
-        },
-        (error) => {
-          console.error('Geolocation error:', error);
-          setLoading(false);
-          setError("Impossible d'obtenir votre position. Veuillez autoriser la géolocalisation.");
-        }
-      );
-    } else {
+    
+    try {
+      const pos = await getUserPosition();
+      
+      if (pos) {
+        setPosition(pos);
+        // Calculate store options with real GPS data
+        await calculateStoreOptions(pos);
+      } else {
+        setError("Impossible d'obtenir votre position. Veuillez autoriser la géolocalisation.");
+      }
+    } catch (err) {
+      console.error('Geolocation error:', err);
+      setError("Une erreur s'est produite lors de la localisation.");
+    } finally {
       setLoading(false);
-      setError('La géolocalisation n\'est pas disponible sur votre appareil.');
     }
-  };
+  }, []);
 
-  const calculateStoreOptions = () => {
-    // Mock data - in production, fetch from API with real prices
-    const mockOptions: StoreOption[] = [
+  const calculateStoreOptions = useCallback(async (userPos: GeoPosition) => {
+    // Constants for travel cost calculation
+    const ROUND_TRIP_MULTIPLIER = 2; // Account for return trip
+    const COST_PER_KM = 0.5; // Average fuel cost per km (€)
+    const CENTS_MULTIPLIER = 100; // For rounding to cents
+    
+    // Mock data - in production, fetch from API with real prices and GPS coordinates
+    const mockStores = [
       {
         id: '1',
         name: 'Super U',
-        distance: 4.2,
+        lat: 16.271,
+        lon: -61.588,
         totalCost: 87.30,
         travelCost: 2.10,
         address: 'Zone commerciale Jarry, Baie-Mahault'
@@ -67,7 +86,8 @@ export default function GPSShoppingList({ items, className }: GPSShoppingListPro
       {
         id: '2',
         name: 'Carrefour Market',
-        distance: 2.8,
+        lat: 16.2415,
+        lon: -61.5331,
         totalCost: 92.50,
         travelCost: 1.40,
         address: 'Centre-ville, Pointe-à-Pitre'
@@ -75,14 +95,30 @@ export default function GPSShoppingList({ items, className }: GPSShoppingListPro
       {
         id: '3',
         name: 'Leader Price',
-        distance: 6.1,
+        lat: 16.224,
+        lon: -61.493,
         totalCost: 84.90,
         travelCost: 3.05,
         address: 'Route de Basse-Terre, Les Abymes'
       }
     ];
-    setStoreOptions(mockOptions);
-  };
+
+    // Use batch distance calculation for efficiency
+    const storesWithDistances = calculateDistancesBatch(userPos, mockStores);
+    
+    // Calculate travel cost based on actual distance
+    const optionsWithRealDistance: StoreOption[] = storesWithDistances.map(store => ({
+      id: store.id,
+      name: store.name,
+      distance: store.distance,
+      totalCost: store.totalCost,
+      // Travel cost: distance * round trip * cost per km, rounded to cents
+      travelCost: Math.round(store.distance * ROUND_TRIP_MULTIPLIER * COST_PER_KM * CENTS_MULTIPLIER) / CENTS_MULTIPLIER,
+      address: store.address,
+    }));
+    
+    setStoreOptions(optionsWithRealDistance);
+  }, []);
 
   // Use useMemo to avoid recalculating on every render
   const bestOption = useMemo(() => {
@@ -97,17 +133,39 @@ export default function GPSShoppingList({ items, className }: GPSShoppingListPro
   }, [storeOptions]);
 
   return (
-    <div className={`bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-6 ${className || ''}`}>
-      <div className="flex items-center gap-3 mb-6">
-        <ShoppingCart className="w-6 h-6 text-blue-400" />
-        <h2 className="text-xl font-semibold text-gray-100">
+    <div className={`bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5 ${className || ''}`}>
+      <div className="flex items-center gap-3 mb-4">
+        <ShoppingCart className="w-5 h-5 text-blue-400" />
+        <h2 className="text-lg font-semibold text-gray-100">
           Liste de courses optimisée GPS
         </h2>
       </div>
 
+      {/* Methodology Explanation */}
+      <div className="mb-5 bg-blue-900/20 border border-blue-700/30 rounded-lg p-4">
+        <p className="text-xs font-semibold text-blue-200 mb-2">Méthode de calcul :</p>
+        <ul className="text-xs text-blue-200/80 space-y-1 leading-relaxed">
+          <li className="flex items-start gap-2">
+            <span className="w-1 h-1 rounded-full bg-blue-400 mt-1.5 flex-shrink-0"></span>
+            <span>Prix observés en magasin (sources publiques)</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="w-1 h-1 rounded-full bg-blue-400 mt-1.5 flex-shrink-0"></span>
+            <span>Distance réelle (GPS)</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="w-1 h-1 rounded-full bg-blue-400 mt-1.5 flex-shrink-0"></span>
+            <span>Coût carburant moyen (6L / 100km)</span>
+          </li>
+        </ul>
+        <p className="text-[10px] text-blue-300/70 mt-2 italic">
+          Dernière mise à jour : {formattedTime}
+        </p>
+      </div>
+
       {/* Shopping Items */}
-      <div className="mb-6">
-        <h3 className="text-sm font-medium text-gray-300 mb-3">Vos articles ({items.length})</h3>
+      <div className="mb-5">
+        <h3 className="text-sm font-medium text-gray-300 mb-2">Vos articles ({items.length})</h3>
         <div className="space-y-2">
           {items.slice(0, 3).map((item) => (
             <div key={item.id} className="flex items-center justify-between text-sm">

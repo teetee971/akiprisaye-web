@@ -13,10 +13,8 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Card } from './card.jsx';
 import ievrData from '../data/ievr-data.json';
 import {
-  calculateIEVRScore,
   compareToReference,
   calculateEvolution,
   generateExplanation,
@@ -25,7 +23,6 @@ import {
   validateIEVRData,
   getTerritoryStatus,
 } from '../utils/ievrCalculations.js';
-import { DataSourceWarning } from './DataSourceWarning.jsx';
 
 export function IEVR({ selectedTerritory = null }) {
   const [territory, setTerritory] = useState(selectedTerritory || 'GP');

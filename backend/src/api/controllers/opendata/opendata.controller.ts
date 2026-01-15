@@ -10,7 +10,7 @@
  */
 
 import { Request, Response } from 'express';
-import { OpenDataService } from '../../services/opendata/OpenDataService';
+import { OpenDataService } from '../../services/opendata/OpenDataService.js';
 import { Territory } from '@prisma/client';
 
 /**
@@ -36,7 +36,7 @@ export class OpenDataController {
    * GET /api/opendata/v1/metadata
    * Métadonnées de l'API Open Data
    */
-  static async getMetadata(req: Request, res: Response) {
+  static async getMetadata(_req: Request, res: Response) {
     try {
       const metadata = {
         api_name: 'A KI PRI SA YÉ - API Open Data',
@@ -95,7 +95,7 @@ export class OpenDataController {
    * GET /api/opendata/v1/territories
    * Liste des territoires disponibles
    */
-  static async getTerritories(req: Request, res: Response) {
+  static async getTerritories(_req: Request, res: Response) {
     try {
       const territories = await OpenDataService.getTerritories();
       res.json(addMetadata({ territories, count: territories.length }));
