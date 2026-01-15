@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Observatoire des Prix - A KI PRI SA YÉ</title>
+    <meta name="description" content="Observatoire citoyen des prix réels en Outre-mer, basé sur des tickets de caisse vérifiés">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .info-box {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .info-box h2 {
+            color: #667eea;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .info-box p {
+            margin-bottom: 0.75rem;
+            color: #666;
+        }
+
+        .observations-grid {
+            display: grid;
+            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        }
+
+        .observation-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .observation-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+
+        .observation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .observation-location {
+            flex: 1;
+        }
+
+        .observation-location h3 {
+            color: #333;
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .observation-location .commune {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .observation-location .territoire {
+            color: #999;
+            font-size: 0.85rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-verified {
+            background: #10b981;
+            color: white;
+        }
+
+        .badge-proof {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .observation-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .observation-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .products-list {
+            margin-bottom: 1rem;
+        }
+
+        .product-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            background: #f9fafb;
+            border-radius: 6px;
+            border-left: 3px solid #667eea;
+        }
+
+        .product-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .product-details {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+
+        .product-price {
+            font-weight: 600;
+            color: #667eea;
+            font-size: 1.1rem;
+            white-space: nowrap;
+        }
+
+        .observation-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: #f0f4ff;
+            border-radius: 6px;
+            margin-top: 1rem;
+        }
+
+        .observation-total .label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .observation-total .amount {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .error {
+            background: #fee;
+            border: 1px solid #fcc;
+            color: #c33;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #666;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .header p {
+                font-size: 1rem;
+            }
+
+            .observations-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .observation-meta {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+
+        footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 2rem 1rem;
+            margin-top: 4rem;
+        }
+
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>🏝️ Observatoire des Prix - A KI PRI SA YÉ</h1>
+        <p>Prix réels observés en Outre-mer • Basé sur des tickets de caisse citoyens</p>
+    </header>
+
+    <div class="container">
+        <div class="info-box">
+            <h2>📋 À propos de cet observatoire</h2>
+            <p><strong>Source citoyenne :</strong> Les prix affichés proviennent de tickets de caisse réels fournis par des citoyens. Chaque observation est traçable et vérifiable.</p>
+            <p><strong>Méthodologie :</strong> Consultez notre <a href="https://github.com/teetee971/akiprisaye-web/blob/main/docs/METHODOLOGY_TICKETS.md" target="_blank" rel="noopener" style="color: #667eea;">documentation méthodologique</a> pour comprendre comment les données sont collectées et validées.</p>
+            <p><strong>Transparence :</strong> Toutes les observations sont datées, géolocalisées et incluent le nom de l'enseigne pour garantir la transparence.</p>
+        </div>
+
+        <div id="observations-container">
+            <div class="loading">
+                <p>Chargement des observations...</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 A KI PRI SA YÉ - Observatoire citoyen des prix en Outre-mer</p>
+        <p><a href="/">Retour à l'accueil</a> | <a href="https://github.com/teetee971/akiprisaye-web/blob/main/docs/METHODOLOGY_TICKETS.md" target="_blank" rel="noopener">Méthodologie</a></p>
+    </footer>
+
+    <script>
+        // Format date for display
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('fr-FR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        // Format time for display
+        function formatTime(timeStr) {
+            return timeStr.substring(0, 5); // HH:MM
+        }
+
+        // Format price
+        function formatPrice(price) {
+            return new Intl.NumberFormat('fr-FR', {
+                style: 'currency',
+                currency: 'EUR'
+            }).format(price);
+        }
+
+        // Create observation card HTML
+        function createObservationCard(obs) {
+            const productsHtml = obs.produits.map(product => `
+                <div class="product-item">
+                    <div>
+                        <div class="product-name">${product.nom}</div>
+                        <div class="product-details">
+                            ${product.quantite} × ${formatPrice(product.prix_unitaire)}
+                            ${product.categorie ? ` • ${product.categorie}` : ''}
+                        </div>
+                    </div>
+                    <div class="product-price">${formatPrice(product.prix_total)}</div>
+                </div>
+            `).join('');
+
+            return `
+                <div class="observation-card">
+                    <div class="observation-header">
+                        <div class="observation-location">
+                            <h3>${obs.enseigne}</h3>
+                            <div class="commune">${obs.commune}</div>
+                            <div class="territoire">${obs.territoire}</div>
+                        </div>
+                        <div>
+                            <span class="badge badge-proof">Prix réel – ticket de caisse</span>
+                        </div>
+                    </div>
+                    
+                    <div class="observation-meta">
+                        <span>📅 ${formatDate(obs.date)}</span>
+                        <span>🕐 ${formatTime(obs.heure)}</span>
+                        ${obs.magasin_id ? `<span>🏪 #${obs.magasin_id}</span>` : ''}
+                    </div>
+
+                    <div class="products-list">
+                        ${productsHtml}
+                    </div>
+
+                    <div class="observation-total">
+                        <span class="label">Total TTC</span>
+                        <span class="amount">${formatPrice(obs.total_ttc)}</span>
+                    </div>
+
+                    ${obs.notes ? `<p style="margin-top: 1rem; font-size: 0.9rem; color: #666; font-style: italic;">${obs.notes}</p>` : ''}
+                </div>
+            `;
+        }
+
+        // Load and display observations
+        async function loadObservations() {
+            const container = document.getElementById('observations-container');
+            
+            try {
+                const response = await fetch('/data/observations/index.json');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const observations = await response.json();
+
+                if (observations.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <h3>Aucune observation disponible</h3>
+                            <p>Les observations de prix apparaîtront ici dès qu'elles seront ajoutées.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const gridHtml = `
+                    <div class="observations-grid">
+                        ${observations.map(obs => createObservationCard(obs)).join('')}
+                    </div>
+                `;
+
+                container.innerHTML = gridHtml;
+
+            } catch (error) {
+                console.error('Error loading observations:', error);
+                container.innerHTML = `
+                    <div class="error">
+                        <strong>Erreur de chargement</strong>
+                        <p>Impossible de charger les observations : ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Load observations on page load
+        document.addEventListener('DOMContentLoaded', loadObservations);
+    </script>
+</body>
+</html>

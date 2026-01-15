@@ -43,7 +43,7 @@ export function computeReliabilityScore(params: ReliabilityParams): ReliabilityS
     observationScore = 40
     observationText = `${observationCount} observations (bon)`
   } else if (observationCount >= 5) {
-    observationScore = 25
+    observationScore = 20
     observationText = `${observationCount} observations (moyen)`
   } else {
     observationScore = Math.min(observationCount * 5, 20)
@@ -64,7 +64,7 @@ export function computeReliabilityScore(params: ReliabilityParams): ReliabilityS
     recencyScore = 30
     recencyText = `< 7 jours (récent)`
   } else if (daysSinceUpdate <= 30) {
-    recencyScore = 20
+    recencyScore = 15
     recencyText = `${daysSinceUpdate} jours (acceptable)`
   } else {
     recencyScore = 10

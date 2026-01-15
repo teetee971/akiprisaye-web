@@ -350,7 +350,7 @@ export function calculateTemporalEvolution(
       
       const obsDate = new Date(obs.date_releve);
       const daysDiff = (today.getTime() - obsDate.getTime()) / (1000 * 60 * 60 * 24);
-      return daysDiff <= 7;
+      return daysDiff <= 30;
     });
     
     if (recentObs.length === 0) {

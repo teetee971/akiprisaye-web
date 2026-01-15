@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { BrowserMultiFormatReader, NotFoundException } from '@zxing/library';
+import uxMonitor from '../utils/uxMonitor';
 import type { ScanState, ScannerOptions, ScanStateTransition } from '../types/scan';
 import { SCANNER_MESSAGES, type ScannerMessage } from '../constants/scannerMessages';
 
@@ -23,6 +24,9 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
   const [scanMode, setScanMode] = useState<'camera' | 'upload'>('camera');
   const [userMessage, setUserMessage] = useState<ScannerMessage | null>(null);
   
+  // OPTIMIZATION #2: Scan feedback state
+  const [scanFeedback, setScanFeedback] = useState<'searching' | 'focusing' | 'detecting' | null>(null);
+  
   const videoRef = useRef<HTMLVideoElement>(null);
   const readerRef = useRef<BrowserMultiFormatReader | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -32,6 +36,7 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
   const {
     timeout = 15000,
     enableDebugLogging = false,
+    enableOcrFallback = true, // OCR enabled by default for better detection
   } = options;
 
   // State transition handler with logging
@@ -88,11 +93,18 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
     setUserMessage(null);
     setIsScanning(true);
     setHasPermission(null); // Reset permission state
+    setScanFeedback('searching'); // OPTIMIZATION #2: Set initial feedback
     scanStartTimeRef.current = Date.now();
     transitionState('scanning', 'User initiated scan');
+    
+    // PROMPT 4: Monitor scan start
+    uxMonitor.scanStarted('barcode');
 
     // Check camera permission first
     const permission = await checkCameraPermission();
+    
+    // PROMPT 4: Monitor permission request
+    uxMonitor.cameraPermissionRequested();
     
     if (enableDebugLogging) {
       console.log('[SCAN] Camera permission state:', permission);
@@ -280,6 +292,7 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
     transitionState('processing', 'Processing uploaded image');
 
     let ean: string | null = null;
+    let detectionMethod: 'native' | 'zxing' | 'ocr' | null = null;
 
     try {
       // Step 1: Load image properly
@@ -305,6 +318,12 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
             console.log('[SCAN] 🔍 Attempting native BarcodeDetector...');
           }
           
+          setUserMessage({ 
+            type: 'info', 
+            title: 'Détection native en cours', 
+            message: 'Utilisation du détecteur natif du navigateur...' 
+          });
+          
           const detector = new (window as any).BarcodeDetector({ 
             formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e'] 
           });
@@ -312,15 +331,20 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
           
           if (codes.length > 0) {
             ean = codes[0].rawValue;
+            detectionMethod = 'native';
             if (enableDebugLogging) {
               console.log('[SCAN] ✅ Barcode detected with BarcodeDetector:', ean);
             }
+          } else if (enableDebugLogging) {
+            console.log('[SCAN] ℹ️ BarcodeDetector found no codes, trying ZXing...');
           }
         } catch (err) {
           if (enableDebugLogging) {
             console.log('[SCAN] BarcodeDetector failed, will try other methods:', err);
           }
         }
+      } else if (enableDebugLogging) {
+        console.log('[SCAN] ℹ️ Native BarcodeDetector not available, using ZXing');
       }
 
       // Step 2b: Try ZXing library if native BarcodeDetector not available or failed
@@ -329,8 +353,16 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
           if (enableDebugLogging) {
             console.log('[SCAN] 🔍 Attempting ZXing barcode detection...');
           }
+          
+          setUserMessage({ 
+            type: 'info', 
+            title: 'Détection ZXing en cours', 
+            message: 'Analyse avec bibliothèque ZXing...' 
+          });
+          
           const result = await readerRef.current.decodeFromImageUrl(imageUrl);
           ean = result.getText();
+          detectionMethod = 'zxing';
           if (enableDebugLogging) {
             console.log('[SCAN] ✅ Barcode detected with ZXing:', ean);
           }
@@ -341,8 +373,8 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
         }
       }
 
-      // Step 3: OCR Fallback (INDISPENSABLE)
-      if (!ean) {
+      // Step 3: OCR Fallback (if enabled)
+      if (!ean && enableOcrFallback) {
         if (enableDebugLogging) {
           console.log('[SCAN] 📝 Starting OCR fallback with Tesseract.js...');
         }
@@ -366,13 +398,21 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
           const match = data.text.match(/\b\d{13}\b|\b\d{8}\b/);
           if (match) {
             ean = match[0];
+            detectionMethod = 'ocr';
             if (enableDebugLogging) {
               console.log('[SCAN] ✅ EAN detected via OCR:', ean);
             }
+          } else if (enableDebugLogging) {
+            console.log('[SCAN] ⚠️ No EAN pattern found in OCR text');
           }
         } catch (ocrErr) {
           console.error('[SCAN] OCR error:', ocrErr);
+          if (enableDebugLogging) {
+            console.log('[SCAN] ⚠️ OCR fallback failed, will prompt for manual entry');
+          }
         }
+      } else if (!ean && !enableOcrFallback && enableDebugLogging) {
+        console.log('[SCAN] ℹ️ OCR fallback is disabled - skipping OCR detection');
       }
 
       // Cleanup
@@ -382,20 +422,30 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
       // Step 4: Handle result
       if (ean) {
         // SUCCESS CASE
+        // TODO: Externalize detection method names to constants or i18n for better maintainability
+        const methodName = 
+          detectionMethod === 'native' ? 'détecteur natif' :
+          detectionMethod === 'zxing' ? 'bibliothèque ZXing' :
+          detectionMethod === 'ocr' ? 'OCR Tesseract' :
+          'méthode inconnue';
+          
         setUserMessage({ 
           type: 'info', 
           title: 'Code détecté', 
-          message: `✅ Code détecté automatiquement à partir de l'image: ${ean}` 
+          message: `✅ Code détecté avec ${methodName}: ${ean}` 
         });
         
         if (enableDebugLogging) {
-          console.log('[SCAN] ✅ Final EAN to process:', ean);
+          console.log('[SCAN] ✅ Final EAN to process:', ean, 'via', detectionMethod);
         }
         
         transitionState('processing', `Barcode from image: ${ean}`);
         
         // Clear message after a short delay so user can see it
         setTimeout(() => setUserMessage(null), 2000);
+        
+        // PROMPT 4: Monitor scan success from image upload
+        uxMonitor.scanCompleted('barcode', true);
         
         try {
           onScan(ean);
@@ -404,14 +454,25 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
           setError('Erreur lors du traitement du code détecté');
         }
       } else {
-        // FAILURE CASE - Honest message
+        // FAILURE CASE - Honest message with helpful tips
+        // TODO: Externalize user-facing error messages to constants or i18n for better maintainability
         setError('❌ Aucun code détecté automatiquement');
         setUserMessage({ 
           type: 'warning', 
           title: 'Code non détecté', 
-          message: '❌ Aucun code détecté automatiquement. 👉 Vous pouvez saisir le code manuellement ci-dessous.' 
+          message: '❌ Aucun code détecté automatiquement. 💡 Conseils : assurez-vous que le code-barres est bien visible, net et bien éclairé. Vous pouvez aussi saisir le code manuellement ci-dessous.' 
         });
         transitionState('error', 'No barcode found in image');
+        
+        if (enableDebugLogging) {
+          console.log('[SCAN] ⚠️ Detection summary:');
+          console.log('  - Native BarcodeDetector:', 'BarcodeDetector' in window ? 'tried but no result' : 'not available');
+          console.log('  - ZXing detection: tried but no result');
+          console.log('  - OCR fallback:', enableOcrFallback ? 'tried but no EAN pattern found' : 'disabled');
+        }
+        
+        // PROMPT 4: Monitor scan failure from image upload
+        uxMonitor.scanCompleted('barcode', false);
       }
     } catch (err: any) {
       console.error('[SCAN] Image processing error:', err);
@@ -475,14 +536,49 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
                 muted
               />
               
-              {/* Scanning overlay */}
+              {/* OPTIMIZATION #2: Enhanced scanning overlay with real-time feedback */}
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="border-2 border-green-500 w-64 h-32 rounded-lg shadow-lg">
-                  <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-green-500 rounded-tl-lg"></div>
-                  <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-green-500 rounded-tr-lg"></div>
-                  <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-green-500 rounded-bl-lg"></div>
-                  <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-green-500 rounded-br-lg"></div>
+                {/* Scan frame with dynamic border */}
+                <div className={`border-2 w-64 h-32 rounded-lg shadow-lg transition-all ${
+                  scanFeedback === 'searching' ? 'border-blue-500 animate-pulse' :
+                  scanFeedback === 'focusing' ? 'border-yellow-500' :
+                  scanFeedback === 'detecting' ? 'border-green-500 scale-105' :
+                  'border-green-500'
+                }`}>
+                  <div className={`absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 rounded-tl-lg transition-colors ${
+                    scanFeedback === 'searching' ? 'border-blue-500' :
+                    scanFeedback === 'focusing' ? 'border-yellow-500' :
+                    'border-green-500'
+                  }`}></div>
+                  <div className={`absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 rounded-tr-lg transition-colors ${
+                    scanFeedback === 'searching' ? 'border-blue-500' :
+                    scanFeedback === 'focusing' ? 'border-yellow-500' :
+                    'border-green-500'
+                  }`}></div>
+                  <div className={`absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 rounded-bl-lg transition-colors ${
+                    scanFeedback === 'searching' ? 'border-blue-500' :
+                    scanFeedback === 'focusing' ? 'border-yellow-500' :
+                    'border-green-500'
+                  }`}></div>
+                  <div className={`absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 rounded-br-lg transition-colors ${
+                    scanFeedback === 'searching' ? 'border-blue-500' :
+                    scanFeedback === 'focusing' ? 'border-yellow-500' :
+                    'border-green-500'
+                  }`}></div>
                 </div>
+                
+                {/* Feedback message overlay */}
+                {scanFeedback && (
+                  <div className={`absolute top-4 left-0 right-0 text-center px-4 py-2 text-sm font-medium transition-all ${
+                    scanFeedback === 'searching' ? 'bg-blue-600/90 text-white' :
+                    scanFeedback === 'focusing' ? 'bg-yellow-600/90 text-white' :
+                    'bg-green-600/90 text-white'
+                  }`}>
+                    {scanFeedback === 'searching' && '📷 Recherche de code-barres...'}
+                    {scanFeedback === 'focusing' && '🎯 Code détecté ! Analyse...'}
+                    {scanFeedback === 'detecting' && '✓ Lecture en cours...'}
+                  </div>
+                )}
               </div>
 
               {/* Torch button */}

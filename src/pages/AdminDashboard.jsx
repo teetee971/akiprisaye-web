@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -32,11 +32,7 @@ export default function AdminDashboard() {
     img: '',
   });
 
-  useEffect(() => {
-    checkAdminAndLoad();
-  }, [user]);
-
-  const checkAdminAndLoad = async () => {
+  const checkAdminAndLoad = useCallback(async () => {
     if (!user) {
       navigate('/mon-compte');
       return;
@@ -52,7 +48,11 @@ export default function AdminDashboard() {
     }
 
     loadBaskets();
-  };
+  }, [user, navigate]);
+
+  useEffect(() => {
+    checkAdminAndLoad();
+  }, [checkAdminAndLoad]);
 
   const loadBaskets = async () => {
     setLoading(true);

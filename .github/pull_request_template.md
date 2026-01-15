@@ -1,110 +1,123 @@
-# ✅ CHECKLIST PR — A KI PRI SA YÉ
+# ✅ Checklist de conformité – Pull Request (API & Observatoire)
 
-**Objectif : stabilité totale, mobile-first, zéro écran noir, CI verte**
-
-Merci de cocher chaque point avant soumission.  
-⚠️ Toute non-conformité peut entraîner le rejet automatique de la PR.
+Merci de **valider chaque point** avant soumission.
+Toute non-conformité peut entraîner le rejet automatique de la PR par la CI.
 
 ---
 
-## 1️⃣ Stabilité & sécurité globale
+## 🏛️ 1. Conformité institutionnelle (OBLIGATOIRE)
 
-- [ ] Aucun écran noir possible (ErrorBoundary global actif)
-- [ ] Aucune exception JS non interceptée (try/catch sur modules sensibles)
-- [ ] Aucun crash bloquant sur mobile
-- [ ] Tous les modules sont fail-soft (fallback UI systématique)
-
-## 2️⃣ UX mobile & superpositions
-
-- [ ] Panier non superposé au chat en version mobile
-- [ ] Z-index harmonisés (chat < panier < modales)
-- [ ] Scroll verrouillé lors des modales
-- [ ] Navigation utilisable à une main (mobile-first)
-
-## 3️⃣ Caméra, image & fallback
-
-- [ ] Accès caméra optionnel, jamais bloquant
-- [ ] Fallback automatique Upload image fonctionnel
-- [ ] Timeout caméra géré proprement
-- [ ] Message utilisateur clair en cas d'échec caméra
-- [ ] Aucune dépendance CI à la caméra ou au hardware
-
-## 4️⃣ OCR & comparateur produit
-
-- [ ] Comparateur fonctionne avec EAN
-- [ ] Comparateur fonctionne sans EAN (OCR texte / estimation)
-- [ ] Message explicite si reconnaissance partielle
-- [ ] Aucune action utilisateur bloquée par l'OCR
-
-## 5️⃣ Données & logique métier
-
-- [ ] Produits locaux sans code-barres pris en charge
-- [ ] Recherche fuzzy / alternative active si EAN absent
-- [ ] Score de confiance visible (EAN / OCR / estimation)
-- [ ] Aucune donnée silencieusement inventée
-
-## 6️⃣ Tests & dette technique
-
-- [ ] Aucun test Jest résiduel (jest is not defined éliminé)
-- [ ] Stack test Vitest uniquement
-- [ ] Aucun test caméra / image dans la CI
-- [ ] Tests non bloquants pour les features hardware
-
-## 7️⃣ CI / Cloudflare Pages
-
-- [ ] Build Cloudflare Pages OK
-- [ ] Aucun warning bloquant
-- [ ] Redirections sans boucle infinie
-- [ ] Aucun fichier interdit (vidéo, zip, design source)
-- [ ] Dépôt sans Git LFS
-
-## 8️⃣ Documentation & transparence
-
-- [ ] README à jour (fallback caméra documenté)
-- [ ] Badge CI Camera-safe présent
-- [ ] Badge Offline-first / Mobile-first présent
-- [ ] Comportement OCR expliqué simplement
-
-## 9️⃣ Validation finale
-
-- [ ] Test réel effectué sur smartphone Android
-- [ ] Import image testé → comparateur fonctionnel
-- [ ] Chat, panier, comparateur testés ensemble
-- [ ] Aucun module manquant ou non branché
+- [ ] API strictement **en lecture seule**
+- [ ] Données d'intérêt général uniquement
+- [ ] Aucune promesse trompeuse (temps réel, exhaustivité, valeur contractuelle)
+- [ ] Périmètre géographique clairement défini
+- [ ] Mention d'avertissement public (outil d'information)
 
 ---
 
-## 🔍 PR D — Reconnaissance produit sans EAN
+## 📐 2. Versioning & gouvernance API
 
-### Périmètre & sécurité
-- [ ] Aucune modification CI / workflow
-- [ ] Aucun appel réseau externe
-- [ ] Fonctionnalité 100 % navigateur (offline)
-- [ ] Feature isolée (PR D uniquement)
-
-### OCR & extraction
-- [ ] OCR Tesseract.js offline fonctionnel
-- [ ] Timeout OCR géré proprement
-- [ ] Normalisation texte sécurisée
-- [ ] Aucune exécution automatique sans validation humaine
-
-### Recherche & comparaison
-- [ ] Recherche floue locale (Fuse.js)
-- [ ] Suggestions ≠ vérité (score visible)
-- [ ] Comparateur déclenché uniquement après confirmation
-
-### UX & accessibilité
-- [ ] Écran de validation obligatoire
-- [ ] Boutons : Confirmer / Corriger / Annuler
-- [ ] Mobile-first
-- [ ] Aucun écran bloquant
-
-### Tests
-- [ ] Tests unitaires Node-safe uniquement
-- [ ] Aucun test caméra / OCR réel en CI
+- [ ] Version explicite dans l'URL (`/api/v1/...`)
+- [ ] `openapi.yaml` mis à jour :
+  - [ ] `info.version`
+  - [ ] description de la version
+- [ ] Aucun breaking change sans nouvelle version majeure
+- [ ] Page **API Gouvernance** accessible publiquement
+- [ ] Politique de dépréciation documentée
 
 ---
 
-## 🔒 RÈGLE DE MERGE
+## ⚖️ 3. Fair use & rate limiting
 
-❌ **Aucun merge autorisé si une seule case n'est pas cochée.**
+- [ ] Rate limit actif (Cloudflare Workers)
+- [ ] HTTP `429` correctement géré
+- [ ] Headers présents :
+  - [ ] `X-RateLimit-Limit`
+  - [ ] `X-RateLimit-Remaining`
+  - [ ] `X-RateLimit-Reset`
+- [ ] Page **Fair Use API** publique
+- [ ] Aucun tracking utilisateur (RGPD OK)
+
+---
+
+## 📊 4. Données & crédibilité
+
+- [ ] Sources de données explicitement indiquées
+- [ ] Date de dernière mise à jour visible
+- [ ] Méthodologie accessible publiquement
+- [ ] Données manquantes gérées explicitement
+- [ ] Aucun chiffre "placeholder"
+
+---
+
+## 📈 5. Fonctionnalités observatoire
+
+- [ ] Comparaison de territoires fonctionnelle
+- [ ] Courbes d'évolution des prix affichées
+- [ ] Historique cohérent (pas de trous silencieux)
+- [ ] Détection d'anomalies documentée
+- [ ] Alertes citoyennes non intrusives
+
+---
+
+## 🔐 6. Sécurité & robustesse
+
+- [ ] Aucune clé secrète exposée
+- [ ] Aucun endpoint d'écriture publique
+- [ ] CORS maîtrisé
+- [ ] Gestion d'erreurs JSON standardisée
+- [ ] Protection minimale contre abus
+
+---
+
+## 🔌 7. Open-data & API publique
+
+- [ ] Export JSON fonctionnel
+- [ ] Export CSV fonctionnel
+- [ ] Licence open-data visible
+- [ ] Mention obligatoire de la source
+- [ ] API publique lecture seule confirmée
+
+---
+
+## 📘 8. Documentation & UX
+
+- [ ] Swagger UI accessible publiquement
+- [ ] OpenAPI valide
+- [ ] Page **Comment utiliser l'API**
+- [ ] Exemples simples fournis
+- [ ] Navigation claire depuis le site
+
+---
+
+## ⚙️ 9. CI / Build / Déploiement
+
+- [ ] `npm ci` OK
+- [ ] `npm run build` OK
+- [ ] Déploiement Cloudflare Pages OK
+- [ ] Aucun warning critique ignoré
+- [ ] Pas de boucle de redirection Cloudflare
+
+---
+
+## 🧪 10. Vérification finale manuelle
+
+- [ ] Tous les boutons API sont branchés
+- [ ] Aucun module "fantôme"
+- [ ] Mobile + desktop testés
+- [ ] Observatoire compréhensible sans explication orale
+- [ ] Prêt pour usage public / presse / collectivités
+
+---
+
+## 🏁 Statut PR
+
+- [ ] CI verte
+- [ ] Checklist complète
+- [ ] PR prête pour merge
+
+---
+
+> ⚠️ Rappel :  
+> Ce projet est un **outil d'intérêt général**.  
+> La stabilité, la clarté et la confiance priment sur la vitesse.

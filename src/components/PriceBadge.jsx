@@ -1,5 +1,3 @@
-import React from 'react';
-
 /**
  * Price badge component with AI adjustment indicator
  * Shows price with optional AI adjustment timestamp

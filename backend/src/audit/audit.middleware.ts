@@ -97,7 +97,7 @@ export function auditAction(action: string, entity?: string) {
 export async function auditErrorMiddleware(
   err: Error,
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ): Promise<void> {
   // Générer un log d'audit pour l'erreur
@@ -131,7 +131,7 @@ export async function auditErrorMiddleware(
  */
 export async function auditAccessDenied(
   req: Request,
-  res: Response
+  _res: Response
 ): Promise<void> {
   try {
     const userId = req.user?.userId || 'anonymous';

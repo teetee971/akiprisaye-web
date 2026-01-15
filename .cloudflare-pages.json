@@ -1,7 +1,7 @@
 ﻿{
   "build": {
-    "command": "npm install && npm run build",
+    "command": "cd frontend && npm ci && npm run build",
     "cwd": "/",
-    "output": "dist"
+    "output": "frontend/dist"
   }
 }

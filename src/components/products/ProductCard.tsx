@@ -15,14 +15,17 @@ import {
   getReliabilityLabel,
   getReliabilityColor
 } from '../../services/productService';
+import { AnomalyList, type PriceAnomaly } from '../anomaly/AnomalyBadge';
 
 interface ProductCardProps {
   product: Product;
   onClick?: () => void;
   onValidate?: (productId: string, isValid: boolean) => void;
+  /** Price anomalies detected for this product */
+  anomalies?: PriceAnomaly[];
 }
 
-export function ProductCard({ product, onClick, onValidate }: ProductCardProps) {
+export function ProductCard({ product, onClick, onValidate, anomalies }: ProductCardProps) {
   const mainPhoto = product.photos.find(p => p.isMain) || product.photos[0];
   const priceChangeIcon = product.price_change 
     ? (product.price_change.trend === 'up' ? '📈' : product.price_change.trend === 'down' ? '📉' : '➡️')
@@ -180,6 +183,13 @@ export function ProductCard({ product, onClick, onValidate }: ProductCardProps) 
             📍 {product.territoire}
           </span>
         </div>
+        
+        {/* Anomaly badges */}
+        {anomalies && anomalies.length > 0 && (
+          <div style={{ marginBottom: '12px' }}>
+            <AnomalyList anomalies={anomalies} maxVisible={2} />
+          </div>
+        )}
         
         {/* Source badge */}
         <div style={{

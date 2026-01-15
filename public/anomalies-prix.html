@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détection d'Anomalies - A KI PRI SA YÉ</title>
+    <meta name="description" content="Détection automatique d'anomalies de prix basée EXCLUSIVEMENT sur des données réelles observées">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .ethics-box {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+        }
+
+        .ethics-box h2 {
+            color: #92400e;
+            margin-bottom: 0.75rem;
+            font-size: 1.3rem;
+        }
+
+        .ethics-box ul {
+            margin-left: 1.5rem;
+            color: #78350f;
+        }
+
+        .ethics-box li {
+            margin-bottom: 0.5rem;
+        }
+
+        .methodology-box {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .methodology-box h2 {
+            color: #dc2626;
+            margin-bottom: 1rem;
+        }
+
+        .methodology-box h3 {
+            color: #374151;
+            margin: 1.5rem 0 0.75rem 0;
+            font-size: 1.1rem;
+        }
+
+        .methodology-box code {
+            background: #f3f4f6;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        .filters-section {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .filters-section h2 {
+            color: #dc2626;
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        .filter-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .btn {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            width: 100%;
+        }
+
+        .btn:hover {
+            background: #b91c1c;
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #dc2626;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .anomalies-list {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .anomaly-card {
+            border-left: 4px solid #dc2626;
+            background: #fef2f2;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-radius: 6px;
+        }
+
+        .anomaly-card.niveau-a_surveiller {
+            border-left-color: #f59e0b;
+            background: #fffbeb;
+        }
+
+        .anomaly-card.niveau-hausse_inhabituelle {
+            border-left-color: #dc2626;
+            background: #fef2f2;
+        }
+
+        .anomaly-card.niveau-variation_forte {
+            border-left-color: #991b1b;
+            background: #fee2e2;
+        }
+
+        .anomaly-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .anomaly-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .anomaly-badge {
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-a_surveiller {
+            background: #fbbf24;
+            color: #78350f;
+        }
+
+        .badge-hausse_inhabituelle {
+            background: #ef4444;
+            color: white;
+        }
+
+        .badge-variation_forte {
+            background: #991b1b;
+            color: white;
+        }
+
+        .anomaly-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .detail-item {
+            padding: 0.75rem;
+            background: white;
+            border-radius: 4px;
+        }
+
+        .detail-label {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-bottom: 0.25rem;
+        }
+
+        .detail-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .price-comparison {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: white;
+            border-radius: 6px;
+        }
+
+        .price-box {
+            text-align: center;
+        }
+
+        .price-box .label {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 0.25rem;
+        }
+
+        .price-box .value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .price-box.reference .value {
+            color: #10b981;
+        }
+
+        .price-box.observed .value {
+            color: #dc2626;
+        }
+
+        .price-arrow {
+            font-size: 2rem;
+            color: #dc2626;
+        }
+
+        .explanation {
+            background: #f9fafb;
+            padding: 1rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: #4b5563;
+            margin-top: 1rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #666;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        @media (max-width: 768px) {
+            .filter-row {
+                grid-template-columns: 1fr;
+            }
+
+            .anomaly-details {
+                grid-template-columns: 1fr;
+            }
+
+            .price-comparison {
+                flex-direction: column;
+            }
+        }
+
+        footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 2rem 1rem;
+            margin-top: 4rem;
+        }
+
+        footer a {
+            color: #dc2626;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>🚨 Détection d'Anomalies de Prix</h1>
+        <p>Analyse basée EXCLUSIVEMENT sur des prix réels observés</p>
+    </header>
+
+    <div class="container">
+        <div class="ethics-box">
+            <h2>⚖️ Éthique & Transparence</h2>
+            <ul>
+                <li><strong>Une anomalie = un signal</strong>, pas une accusation</li>
+                <li><strong>Aucune prédiction commerciale</strong> : uniquement des écarts par rapport à l'historique réel</li>
+                <li><strong>Méthode explicable</strong> : chaque détection est justifiée avec la référence et le seuil</li>
+                <li><strong>Pas de classement d'enseignes</strong> : les données sont factuelles, l'interprétation reste libre</li>
+                <li><strong>Aucune IA boîte noire</strong> : calculs statistiques simples et reproductibles</li>
+            </ul>
+        </div>
+
+        <div class="methodology-box">
+            <h2>📊 Comment cette détection fonctionne-t-elle ?</h2>
+            
+            <h3>Données utilisées</h3>
+            <p>
+                <strong>Source exclusive</strong> : Prix réels de tickets de caisse validés<br>
+                <strong>Historique minimum</strong> : 10 observations du même produit dans le même territoire<br>
+                <strong>Période de référence</strong> : 90 derniers jours
+            </p>
+
+            <h3>Méthode de détection</h3>
+            <p>
+                <strong>Méthode utilisée</strong> : Écart relatif (<code>relative_deviation</code>)<br>
+                <strong>Principe</strong> : Une anomalie est détectée si le prix observé s'écarte de plus de 20% de la médiane des prix récents<br>
+                <strong>Calcul</strong> : <code>écart % = (prix_observé - médiane) / médiane × 100</code>
+            </p>
+
+            <h3>Niveaux d'anomalie</h3>
+            <ul>
+                <li><strong>À surveiller</strong> : écart de 20% à 30%</li>
+                <li><strong>Hausse inhabituelle</strong> : écart de 30% à 50%</li>
+                <li><strong>Variation forte</strong> : écart supérieur à 50%</li>
+            </ul>
+
+            <h3>Ce que cette détection ne dit PAS</h3>
+            <ul>
+                <li>❌ Elle ne prédit pas les prix futurs</li>
+                <li>❌ Elle ne compare pas entre produits différents</li>
+                <li>❌ Elle n'accuse pas les enseignes</li>
+                <li>❌ Elle ne prouve pas un abus (contexte nécessaire)</li>
+            </ul>
+        </div>
+
+        <div class="filters-section">
+            <h2>🔍 Filtrer les anomalies</h2>
+            
+            <div class="filter-group">
+                <label for="territoire-filter">Territoire</label>
+                <select id="territoire-filter">
+                    <option value="">Tous les territoires</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="produit-filter">Produit</label>
+                <input type="text" id="produit-filter" placeholder="Rechercher un produit...">
+            </div>
+
+            <div class="filter-group">
+                <label for="niveau-filter">Niveau d'anomalie</label>
+                <select id="niveau-filter">
+                    <option value="">Tous les niveaux</option>
+                    <option value="variation_forte">Variation forte</option>
+                    <option value="hausse_inhabituelle">Hausse inhabituelle</option>
+                    <option value="a_surveiller">À surveiller</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label>Période</label>
+                <div class="filter-row">
+                    <div>
+                        <input type="date" id="date-debut-filter" placeholder="Date début">
+                    </div>
+                    <div>
+                        <input type="date" id="date-fin-filter" placeholder="Date fin">
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn" id="filter-btn" onclick="applyFilters()">
+                Filtrer les anomalies
+            </button>
+        </div>
+
+        <div id="stats-container" style="display: none;">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="number" id="stat-total">0</div>
+                    <div class="label">Anomalies détectées</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number" id="stat-forte">0</div>
+                    <div class="label">Variations fortes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number" id="stat-inhabituelle">0</div>
+                    <div class="label">Hausses inhabituelles</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number" id="stat-surveiller">0</div>
+                    <div class="label">À surveiller</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="anomalies-list">
+            <h2>📋 Anomalies détectées</h2>
+            <div id="anomalies-container">
+                <div class="loading">Analyse des observations en cours...</div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 A KI PRI SA YÉ - Observatoire citoyen des prix en Outre-mer</p>
+        <p>
+            <a href="/">Retour à l'accueil</a> | 
+            <a href="/observatoire.html">Observatoire</a> | 
+            <a href="/comparaison-territoires.html">Comparaison</a>
+        </p>
+    </footer>
+
+    <script type="module">
+        let allAnomalies = [];
+        let filteredAnomalies = [];
+
+        // Format price
+        function formatPrice(price) {
+            return new Intl.NumberFormat('fr-FR', {
+                style: 'currency',
+                currency: 'EUR'
+            }).format(price);
+        }
+
+        // Format date
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('fr-FR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        // Get badge class
+        function getBadgeClass(niveau) {
+            return `badge-${niveau}`;
+        }
+
+        // Get level label
+        function getLevelLabel(niveau) {
+            const labels = {
+                'a_surveiller': 'À surveiller',
+                'hausse_inhabituelle': 'Hausse inhabituelle',
+                'variation_forte': 'Variation forte'
+            };
+            return labels[niveau] || niveau;
+        }
+
+        // Display anomaly card
+        function createAnomalyCard(anomaly) {
+            const isIncrease = anomaly.ecart_pourcent > 0;
+            const arrow = isIncrease ? '↗' : '↘';
+            
+            return `
+                <div class="anomaly-card niveau-${anomaly.niveau}">
+                    <div class="anomaly-header">
+                        <div class="anomaly-title">${anomaly.produit}</div>
+                        <span class="anomaly-badge ${getBadgeClass(anomaly.niveau)}">
+                            ${getLevelLabel(anomaly.niveau)}
+                        </span>
+                    </div>
+
+                    <div class="anomaly-details">
+                        <div class="detail-item">
+                            <div class="detail-label">Territoire</div>
+                            <div class="detail-value">${anomaly.territoire}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Commune</div>
+                            <div class="detail-value">${anomaly.commune}</div>
+                        </div>
+                        ${anomaly.enseigne ? `
+                        <div class="detail-item">
+                            <div class="detail-label">Enseigne</div>
+                            <div class="detail-value">${anomaly.enseigne}</div>
+                        </div>
+                        ` : ''}
+                        <div class="detail-item">
+                            <div class="detail-label">Date</div>
+                            <div class="detail-value">${formatDate(anomaly.date)}</div>
+                        </div>
+                    </div>
+
+                    <div class="price-comparison">
+                        <div class="price-box reference">
+                            <div class="label">Prix de référence (médiane)</div>
+                            <div class="value">${formatPrice(anomaly.prix_reference)}</div>
+                            <div class="detail-label">${anomaly.observations_historiques} observations</div>
+                        </div>
+                        <div class="price-arrow">${arrow}</div>
+                        <div class="price-box observed">
+                            <div class="label">Prix observé</div>
+                            <div class="value">${formatPrice(anomaly.prix_observe)}</div>
+                            <div class="detail-label">Écart: ${anomaly.ecart_pourcent > 0 ? '+' : ''}${anomaly.ecart_pourcent.toFixed(1)}%</div>
+                        </div>
+                    </div>
+
+                    <div class="explanation">
+                        <strong>Explication</strong> : ${anomaly.explication}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Display anomalies
+        function displayAnomalies(anomalies) {
+            const container = document.getElementById('anomalies-container');
+            
+            if (anomalies.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>Aucune anomalie détectée</h3>
+                        <p>Aucune anomalie ne correspond aux critères de détection.</p>
+                        <p>Cela peut signifier que les prix observés sont stables ou que les données sont insuffisantes.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = anomalies.map(createAnomalyCard).join('');
+        }
+
+        // Update stats
+        function updateStats(anomalies) {
+            const stats = {
+                total: anomalies.length,
+                forte: anomalies.filter(a => a.niveau === 'variation_forte').length,
+                inhabituelle: anomalies.filter(a => a.niveau === 'hausse_inhabituelle').length,
+                surveiller: anomalies.filter(a => a.niveau === 'a_surveiller').length
+            };
+
+            document.getElementById('stat-total').textContent = stats.total;
+            document.getElementById('stat-forte').textContent = stats.forte;
+            document.getElementById('stat-inhabituelle').textContent = stats.inhabituelle;
+            document.getElementById('stat-surveiller').textContent = stats.surveiller;
+
+            document.getElementById('stats-container').style.display = 'block';
+        }
+
+        // Apply filters
+        window.applyFilters = function() {
+            const territoire = document.getElementById('territoire-filter').value;
+            const produit = document.getElementById('produit-filter').value.toLowerCase();
+            const niveau = document.getElementById('niveau-filter').value;
+            const dateDebut = document.getElementById('date-debut-filter').value;
+            const dateFin = document.getElementById('date-fin-filter').value;
+
+            filteredAnomalies = allAnomalies.filter(anomaly => {
+                if (territoire && anomaly.territoire !== territoire) return false;
+                if (produit && !anomaly.produit.toLowerCase().includes(produit)) return false;
+                if (niveau && anomaly.niveau !== niveau) return false;
+                if (dateDebut && anomaly.date < dateDebut) return false;
+                if (dateFin && anomaly.date > dateFin) return false;
+                return true;
+            });
+
+            displayAnomalies(filteredAnomalies);
+            updateStats(filteredAnomalies);
+        };
+
+        // Load and detect anomalies
+        async function loadAndDetect() {
+            try {
+                const response = await fetch('/data/observations/index.json');
+                if (!response.ok) throw new Error('Failed to load observations');
+                
+                const observations = await response.json();
+
+                // Detect anomalies (simplified client-side version)
+                allAnomalies = detectAnomaliesClientSide(observations);
+                filteredAnomalies = allAnomalies;
+
+                // Populate territory filter
+                const territories = [...new Set(observations.map(obs => obs.territoire))].sort();
+                const territorieSelect = document.getElementById('territoire-filter');
+                territorieSelect.innerHTML = '<option value="">Tous les territoires</option>' +
+                    territories.map(t => `<option value="${t}">${t}</option>`).join('');
+
+                // Display results
+                displayAnomalies(filteredAnomalies);
+                updateStats(filteredAnomalies);
+
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('anomalies-container').innerHTML = `
+                    <div class="empty-state">
+                        <h3>Erreur de chargement</h3>
+                        <p>Impossible de charger les données. Veuillez réessayer.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Simplified client-side anomaly detection
+        function detectAnomaliesClientSide(observations) {
+            const anomalies = [];
+            const MIN_OBS = 10;
+            const LOOKBACK_DAYS = 90;
+            const THRESHOLD = 20; // 20%
+
+            // Sort by date
+            const sorted = [...observations].sort((a, b) => a.date.localeCompare(b.date));
+
+            for (const obs of sorted) {
+                for (const product of obs.produits) {
+                    // Get historical prices
+                    const cutoffDate = new Date(obs.date);
+                    cutoffDate.setDate(cutoffDate.getDate() - LOOKBACK_DAYS);
+                    const cutoffStr = cutoffDate.toISOString().split('T')[0];
+
+                    const historicalPrices = [];
+                    for (const histObs of sorted) {
+                        if (histObs.territoire !== obs.territoire || histObs.date >= obs.date || histObs.date < cutoffStr) {
+                            continue;
+                        }
+                        for (const histProd of histObs.produits) {
+                            if (histProd.nom.toLowerCase() === product.nom.toLowerCase()) {
+                                historicalPrices.push(histProd.prix_total);
+                            }
+                        }
+                    }
+
+                    if (historicalPrices.length < MIN_OBS) continue;
+
+                    // Calculate median
+                    const sortedPrices = [...historicalPrices].sort((a, b) => a - b);
+                    const mid = Math.floor(sortedPrices.length / 2);
+                    const median = sortedPrices.length % 2 === 0
+                        ? (sortedPrices[mid - 1] + sortedPrices[mid]) / 2
+                        : sortedPrices[mid];
+
+                    // Check deviation
+                    const deviation = ((product.prix_total - median) / median) * 100;
+
+                    if (Math.abs(deviation) >= THRESHOLD) {
+                        let niveau = 'a_surveiller';
+                        if (Math.abs(deviation) >= 50) niveau = 'variation_forte';
+                        else if (Math.abs(deviation) >= 30) niveau = 'hausse_inhabituelle';
+
+                        anomalies.push({
+                            produit: product.nom,
+                            territoire: obs.territoire,
+                            commune: obs.commune,
+                            enseigne: obs.enseigne,
+                            date: obs.date,
+                            prix_observe: product.prix_total,
+                            prix_reference: median,
+                            ecart_absolu: product.prix_total - median,
+                            ecart_pourcent: deviation,
+                            methode: 'relative_deviation',
+                            seuil: THRESHOLD,
+                            niveau: niveau,
+                            observations_historiques: historicalPrices.length,
+                            explication: `Écart de ${deviation > 0 ? '+' : ''}${deviation.toFixed(1)}% par rapport à la médiane (${formatPrice(median)}). Seuil: ${THRESHOLD}%.`,
+                            observation_id: obs.id
+                        });
+                    }
+                }
+            }
+
+            return anomalies.sort((a, b) => b.date.localeCompare(a.date));
+        }
+
+        // Load on page load
+        document.addEventListener('DOMContentLoaded', loadAndDetect);
+    </script>
+</body>
+</html>

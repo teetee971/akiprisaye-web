@@ -67,6 +67,40 @@ export default function routes(Route: Route) {
   Route.patch('/api/contact/:id', 'ContactController.update');
 
   // ============================================
+  // OPEN DATA ROUTES
+  // ============================================
+  
+  // Get open data prices export
+  Route.get('/api/opendata/prices', async ({ request, response }) => {
+    const format = request.qs().format || 'json';
+    const territory = request.qs().territory || 'all';
+    
+    return response.ok({
+      message: 'Open Data Prices endpoint',
+      format,
+      territory,
+      licence: 'Licence Ouverte / Open Licence Version 2.0 (Etalab)',
+      documentation: '/observatoire/methodologie',
+      note: 'Use client-side export functionality or contact us for API access'
+    });
+  });
+  
+  // Get open data anomalies export
+  Route.get('/api/opendata/anomalies', async ({ request, response }) => {
+    const format = request.qs().format || 'json';
+    const territory = request.qs().territory || 'all';
+    
+    return response.ok({
+      message: 'Open Data Anomalies endpoint',
+      format,
+      territory,
+      licence: 'Licence Ouverte / Open Licence Version 2.0 (Etalab)',
+      documentation: '/observatoire/methodologie',
+      note: 'Use client-side export functionality or contact us for API access'
+    });
+  });
+
+  // ============================================
   // FUTURE ROUTES (Placeholders)
   // ============================================
   
@@ -163,6 +197,33 @@ export function expressRoutes(app: any) {
   app.post('/api/contact', wrap(contactCtrl.store.bind(contactCtrl)));
   app.get('/api/contact', wrap(contactCtrl.index.bind(contactCtrl)));
   app.patch('/api/contact/:id', wrap(contactCtrl.update.bind(contactCtrl)));
+
+  // Open Data routes
+  app.get('/api/opendata/prices', (req: any, res: any) => {
+    const format = req.query.format || 'json';
+    const territory = req.query.territory || 'all';
+    res.json({
+      message: 'Open Data Prices endpoint',
+      format,
+      territory,
+      licence: 'Licence Ouverte / Open Licence Version 2.0 (Etalab)',
+      documentation: '/observatoire/methodologie',
+      note: 'Use client-side export functionality or contact us for API access'
+    });
+  });
+  
+  app.get('/api/opendata/anomalies', (req: any, res: any) => {
+    const format = req.query.format || 'json';
+    const territory = req.query.territory || 'all';
+    res.json({
+      message: 'Open Data Anomalies endpoint',
+      format,
+      territory,
+      licence: 'Licence Ouverte / Open Licence Version 2.0 (Etalab)',
+      documentation: '/observatoire/methodologie',
+      note: 'Use client-side export functionality or contact us for API access'
+    });
+  });
 
   // Placeholder routes
   app.get('/api/ai/tips', (req: any, res: any) => {

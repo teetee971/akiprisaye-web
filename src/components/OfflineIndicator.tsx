@@ -6,7 +6,7 @@
  * Shows network quality when connection is slow
  */
 
-import { useOnlineStatus, useNetworkQuality } from '@/hooks/useOnlineStatus';
+import { useOnlineStatus, useNetworkQuality } from '../hooks/useOnlineStatus';
 
 export function OfflineIndicator() {
   const isOnline = useOnlineStatus();

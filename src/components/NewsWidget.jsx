@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react';
-import CivicNewsCard from './CivicNewsCard';
 import { ALL_TERRITORIES, MULTI_TERRITORY_VALUES, ALL_CATEGORIES } from '../constants/news';
 
 export default function NewsWidget({ limit = 3, showFullButton = true, selectedTerritory = null, selectedCategory = null }) {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchNews();

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { TERRITORIES, getActiveTerritories, ALL_TERRITORIES } from '../constants/territories';
+import { getActiveTerritories, ALL_TERRITORIES } from '../constants/territories';
 
 // Construire la liste des territoires avec "Tous" en premier
 const allTerritoriesOption = { code: ALL_TERRITORIES, name: 'Tous les territoires', type: 'Tous', flag: '🌍' };

@@ -57,6 +57,7 @@ describe("Comparateur component", () => {
   });
 
   test("fetches and displays product and prices", async () => {
+    vi.useRealTimers();
     render(<Comparateur />);
 
     const input = screen.getByPlaceholderText(/entrer ou scanner un ean/i);

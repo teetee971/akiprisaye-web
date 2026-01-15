@@ -1,7 +1,7 @@
 {
   "name": "A KI PRI SA YÉ",
   "short_name": "A KI PRI SA YÉ",
-  "description": "Comparez les prix, signalez les abus et gérez votre budget facilement.",
+  "description": "Application citoyenne gratuite qui explique les écarts de prix dans les DOM : transport, marges, taxes, logistique.",
   "lang": "fr",
   "start_url": "/",
   "display": "standalone",

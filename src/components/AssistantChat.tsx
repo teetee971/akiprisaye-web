@@ -5,7 +5,7 @@ import {
   createAssistantMessage,
   isProhibitedQuery,
   type AssistantMessage
-} from '@/services/assistantService';
+} from '../services/assistantService';
 
 export default function AssistantChat() {
   const [isOpen, setIsOpen] = useState(false);

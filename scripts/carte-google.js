@@ -7,11 +7,15 @@ import {
 
 import { planOptimizedRoute } from './gps-promo-planner.js';
 
-// FIREBASE CONFIG
+// FIREBASE CONFIG - centralized configuration
 const firebaseConfig = {
-  apiKey: 'YOUR_API_KEY',
-  authDomain: 'akiprisaye-web.firebaseapp.com',
-  projectId: 'akiprisaye-web',
+  apiKey: "AIzaSyDf_m8BzMVHFWoFhVLyThuKwWTMhB7u5ZY",
+  authDomain: "a-ki-pri-sa-ye.firebaseapp.com",
+  projectId: "a-ki-pri-sa-ye",
+  storageBucket: "a-ki-pri-sa-ye.firebasestorage.app",
+  messagingSenderId: "187272078809",
+  appId: "1:187272078809:web:110a92e34493ef4506e5c8",
+  measurementId: "G-NFHCZTLPDM"
 };
 
 const app = initializeApp(firebaseConfig);

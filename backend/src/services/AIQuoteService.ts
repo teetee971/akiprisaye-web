@@ -216,7 +216,7 @@ export class AIQuoteService {
       total,
       aiConfidence,
       aiRecommendations: this.generateRecommendations(request),
-      requiresHumanReview,
+      requiresHumanReview: requiresHumanReview || false,
       status: 'draft',
       createdAt: now,
       validUntil,

@@ -157,7 +157,7 @@ export async function onRequestPost(context) {
     let body;
     try {
       body = await request.json();
-    } catch (_e) {
+    } catch {
       return new Response(JSON.stringify({
         error: 'Invalid JSON',
         message: 'Request body must be valid JSON',

@@ -1,0 +1,122 @@
+[
+  {
+    "id": "obs-2026-0041",
+    "date": "2026-01-12",
+    "territory": "guadeloupe",
+    "city": "Baie-Mahault",
+    "store": "Leader Price",
+    "product": "Riz long 1 kg",
+    "price": 1.92,
+    "unit": "€/kg",
+    "confidence": "moyenne",
+    "geo": {
+      "lat": 16.265,
+      "lng": -61.586
+    }
+  },
+  {
+    "id": "obs-2026-0042",
+    "date": "2026-01-11",
+    "territory": "guadeloupe",
+    "city": "Pointe-à-Pitre",
+    "store": "Carrefour",
+    "product": "Sucre blanc 1 kg",
+    "price": 1.25,
+    "unit": "€/kg",
+    "confidence": "élevée",
+    "geo": {
+      "lat": 16.241,
+      "lng": -61.533
+    }
+  },
+  {
+    "id": "obs-2026-0043",
+    "date": "2026-01-10",
+    "territory": "guadeloupe",
+    "city": "Les Abymes",
+    "store": "Super U",
+    "product": "Lait demi-écrémé 1L",
+    "price": 1.45,
+    "unit": "€/L",
+    "confidence": "moyenne",
+    "geo": {
+      "lat": 16.273,
+      "lng": -61.508
+    }
+  },
+  {
+    "id": "obs-2026-0044",
+    "date": "2026-01-12",
+    "territory": "guadeloupe",
+    "city": "Baie-Mahault",
+    "store": "Carrefour",
+    "product": "Huile de tournesol 1L",
+    "price": 3.10,
+    "unit": "€/L",
+    "confidence": "élevée",
+    "geo": {
+      "lat": 16.267,
+      "lng": -61.590
+    }
+  },
+  {
+    "id": "obs-2026-0045",
+    "date": "2026-01-09",
+    "territory": "guadeloupe",
+    "city": "Pointe-à-Pitre",
+    "store": "Leader Price",
+    "product": "Pâtes 500g",
+    "price": 0.89,
+    "unit": "€/paquet",
+    "confidence": "moyenne",
+    "geo": {
+      "lat": 16.243,
+      "lng": -61.535
+    }
+  },
+  {
+    "id": "obs-2026-0046",
+    "date": "2026-01-11",
+    "territory": "guadeloupe",
+    "city": "Le Gosier",
+    "store": "Super U",
+    "product": "Farine 1 kg",
+    "price": 1.40,
+    "unit": "€/kg",
+    "confidence": "élevée",
+    "geo": {
+      "lat": 16.226,
+      "lng": -61.502
+    }
+  },
+  {
+    "id": "obs-2026-0047",
+    "date": "2026-01-12",
+    "territory": "martinique",
+    "city": "Fort-de-France",
+    "store": "Carrefour",
+    "product": "Riz long 1 kg",
+    "price": 1.95,
+    "unit": "€/kg",
+    "confidence": "moyenne",
+    "geo": {
+      "lat": 14.616,
+      "lng": -61.058
+    }
+  },
+  {
+    "id": "obs-2026-0048",
+    "date": "2026-01-10",
+    "territory": "martinique",
+    "city": "Lamentin",
+    "store": "Leader Price",
+    "product": "Sucre blanc 1 kg",
+    "price": 1.18,
+    "unit": "€/kg",
+    "confidence": "élevée",
+    "geo": {
+      "lat": 14.610,
+      "lng": -61.000
+    }
+  }
+]

@@ -1,0 +1,23 @@
+{
+  "version": "3.0.0",
+  "date_snapshot": "2025-01-01T00:00:00.000Z",
+  "territoire": null,
+  "indicateurs": {
+    "prix_moyens": [],
+    "ecarts_dom_hexagone": [],
+    "indices_vie_chere": [],
+    "evolutions_temporelles": [],
+    "dispersions_enseignes": []
+  },
+  "metadata": {
+    "nombre_observations_total": 0,
+    "periode_couverte": {
+      "debut": "2025-01-01",
+      "fin": "2025-01-01"
+    },
+    "sources": [
+      "donnee_ouverte"
+    ],
+    "qualite_moyenne": 0.75
+  }
+}

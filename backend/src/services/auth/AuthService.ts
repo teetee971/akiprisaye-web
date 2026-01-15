@@ -13,7 +13,7 @@
  * - Révocation possible des tokens
  */
 
-import { PrismaClient, User, RefreshToken } from '@prisma/client';
+import { PrismaClient, User } from '@prisma/client';
 import crypto from 'crypto';
 import { hashPassword, verifyPassword } from '../../security/password.js';
 import {

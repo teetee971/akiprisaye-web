@@ -101,9 +101,9 @@ export function PasswordInput({
   value,
   onChange,
   label = 'Mot de passe',
-  placeholder = 'Minimum 6 caractères',
+  placeholder = 'Minimum 8 caractères',
   required = false,
-  minLength = 6,
+  minLength = 8,
   autoComplete = 'new-password',
   className = ''
 }: PasswordInputProps) {
@@ -111,6 +111,7 @@ export function PasswordInput({
   const [copyFeedback, setCopyFeedback] = useState(false);
   
   const strength = getPasswordStrength(value);
+  const tooShort = value.length > 0 && value.length < minLength;
   
   /**
    * Toggle password visibility
@@ -168,6 +169,8 @@ export function PasswordInput({
           className="w-full p-3 pr-32 rounded-lg bg-slate-800 text-white border border-gray-700 focus:border-blue-500 focus:outline-none"
           value={value}
           onChange={(e) => onChange(e.target.value)}
+          aria-invalid={tooShort}
+          aria-describedby={tooShort ? `${id}-error` : undefined}
         />
         
         {/* Action Buttons */}
@@ -225,6 +228,16 @@ export function PasswordInput({
             </span>
           </div>
         </div>
+      )}
+
+      {tooShort && (
+        <p
+          id={`${id}-error`}
+          className="mt-2 text-xs text-red-300"
+          role="alert"
+        >
+          Le mot de passe doit contenir au moins {minLength} caractères.
+        </p>
       )}
       
       {/* Generate Button */}

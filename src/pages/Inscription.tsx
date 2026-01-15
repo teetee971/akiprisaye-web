@@ -2,12 +2,26 @@
 import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/lib/firebase";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { doc, setDoc } from "firebase/firestore";
 import { db, firebaseError } from "@/lib/firebase";
 import { PasswordInput } from "@/components/PasswordInput";
 
-const DEFAULT_USER_PLAN = "freemium";
+const DEFAULT_USER_PLAN = "free";
+const PLAN_LABELS: Record<string, { title: string; description: string }> = {
+  free: {
+    title: "Gratuit",
+    description: "Accès citoyen ouvert (scan et lecture seule).",
+  },
+  citizen: {
+    title: "Citoyen",
+    description: "Fonctionnalités avancées (alertes, OCR, historique).",
+  },
+  professional: {
+    title: "Professionnel",
+    description: "Exports, agrégations et support dédié.",
+  },
+};
 
 export default function Inscription() {
   const [email, setEmail] = useState("");
@@ -16,6 +30,11 @@ export default function Inscription() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  const requestedPlan = searchParams.get("plan") || DEFAULT_USER_PLAN;
+  const selectedPlan = Object.hasOwn(PLAN_LABELS, requestedPlan) ? requestedPlan : DEFAULT_USER_PLAN;
+  const selectedPlanInfo = PLAN_LABELS[selectedPlan];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,7 +60,7 @@ export default function Inscription() {
       if (db) {
         await setDoc(doc(db, "users", userCredential.user.uid), {
           email,
-          plan: DEFAULT_USER_PLAN,
+          plan: selectedPlan,
           createdAt: new Date(),
         }, { merge: true });
       }
@@ -51,7 +70,7 @@ export default function Inscription() {
       
       // Redirect after a short delay to show success message
       setTimeout(() => {
-        navigate("/mon-compte");
+        navigate(`/mon-compte?plan=${selectedPlan}`);
       }, 1500);
     } catch (err: any) {
       setError(getErrorMessage(err));
@@ -82,6 +101,18 @@ export default function Inscription() {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
       <div className="bg-slate-900 rounded-2xl p-6 shadow-lg w-full max-w-md">
         <h1 className="text-2xl font-semibold mb-6 text-white text-center">Créer un compte</h1>
+
+        <div className="mb-4 p-3 bg-blue-900/20 border border-blue-700/40 rounded-lg text-blue-100 text-sm">
+          <p className="font-semibold">
+            Plan sélectionné : <span className="text-white">{selectedPlanInfo.title}</span>
+          </p>
+          <p className="text-xs mt-1 text-blue-200">{selectedPlanInfo.description}</p>
+          {!searchParams.get("plan") && (
+            <p className="text-xs mt-2 text-blue-300">
+              Astuce : choisissez une formule depuis la page Tarifs pour la pré-remplir ici.
+            </p>
+          )}
+        </div>
 
         {success && (
           <div className="mb-4 p-3 bg-green-900/30 border border-green-700 rounded-lg text-green-200 text-sm text-center">

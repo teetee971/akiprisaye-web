@@ -1,6 +1,3 @@
-import { Link } from 'react-router-dom';
-import GlobalDisclaimer from './GlobalDisclaimer';
-
 export default function Footer() {
   return (
     <footer
@@ -11,7 +8,11 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Global Disclaimer */}
         <div className="mb-8">
-          <GlobalDisclaimer />
+          <div className="bg-blue-900/20 border border-blue-700 rounded-lg p-4">
+            <p className="text-blue-300 text-sm">
+              Transparence civique et données officielles
+            </p>
+          </div>
         </div>
 
         {/* Navigation Links */}
@@ -19,36 +20,36 @@ export default function Footer() {
           className="flex flex-wrap justify-center gap-6 mb-6 text-sm"
           aria-label="Navigation du pied de page"
         >
-          <Link
-            to="/a-propos"
+          <a
+            href="/a-propos"
             className="text-slate-300 hover:text-blue-400 transition-colors"
           >
             À propos
-          </Link>
-          <Link
-            to="/methodologie"
+          </a>
+          <a
+            href="/methodologie"
             className="text-slate-300 hover:text-blue-400 transition-colors"
           >
             Méthodologie
-          </Link>
-          <Link
-            to="/actualites"
+          </a>
+          <a
+            href="/actualites"
             className="text-slate-300 hover:text-blue-400 transition-colors"
           >
             Actualités
-          </Link>
-          <Link
-            to="/contact"
+          </a>
+          <a
+            href="/contact"
             className="text-slate-300 hover:text-blue-400 transition-colors"
           >
             Contact
-          </Link>
-          <Link
-            to="/mentions-legales"
+          </a>
+          <a
+            href="/mentions-legales"
             className="text-slate-300 hover:text-blue-400 transition-colors"
           >
             Mentions légales
-          </Link>
+          </a>
         </nav>
 
         {/* Copyright */}

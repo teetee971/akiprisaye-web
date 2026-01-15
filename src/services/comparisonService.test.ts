@@ -1,3 +1,4 @@
+import { expect, test } from 'vitest';
 import { computeComparison } from './comparisonService';
 
 test('computeComparison returns sorted list and best', () => {

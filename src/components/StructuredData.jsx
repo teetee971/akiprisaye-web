@@ -8,8 +8,8 @@ export default function StructuredData() {
       '@type': 'Organization',
       name: 'A KI PRI SA YÉ',
       alternateName: 'AKPSY',
-      url: 'https://akiprisaye.web.app',
-      logo: 'https://akiprisaye.web.app/logo-akpsy.svg',
+      url: 'https://akiprisaye.pages.dev',
+      logo: 'https://akiprisaye.pages.dev/logo-akpsy.svg',
       description: 'Plateforme citoyenne de transparence des prix en Outre-mer',
       foundingDate: '2025',
       address: {
@@ -32,14 +32,14 @@ export default function StructuredData() {
       '@context': 'https://schema.org',
       '@type': 'WebSite',
       name: 'A KI PRI SA YÉ',
-      url: 'https://akiprisaye.web.app',
+      url: 'https://akiprisaye.pages.dev',
       description: 'Comparez les prix et luttez contre la vie chère en Outre-mer',
       inLanguage: 'fr-FR',
       potentialAction: {
         '@type': 'SearchAction',
         target: {
           '@type': 'EntryPoint',
-          urlTemplate: 'https://akiprisaye.web.app/comparateur?q={search_term_string}',
+          urlTemplate: 'https://akiprisaye.pages.dev/comparateur?q={search_term_string}',
         },
         'query-input': 'required name=search_term_string',
       },
@@ -68,11 +68,11 @@ export default function StructuredData() {
     const localBusinessSchema = {
       '@context': 'https://schema.org',
       '@type': 'LocalBusiness',
-      '@id': 'https://akiprisaye.web.app/#organization',
+      '@id': 'https://akiprisaye.pages.dev/#organization',
       name: 'A KI PRI SA YÉ',
-      image: 'https://akiprisaye.web.app/og/cover-akpsy.png',
+      image: 'https://akiprisaye.pages.dev/og/cover-akpsy.png',
       description: 'Comparateur de prix citoyen pour l\'Outre-mer français',
-      url: 'https://akiprisaye.web.app',
+      url: 'https://akiprisaye.pages.dev',
       telephone: '',
       priceRange: 'Gratuit',
       areaServed: [

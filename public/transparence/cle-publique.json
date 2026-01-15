@@ -1,0 +1,29 @@
+{
+  "version": "1.0.0",
+  "algorithme": "SHA-256",
+  "description": "Clé publique pour la vérification de l'intégrité des données A KI PRI SA YÉ",
+  "usage": "Cette clé permet de vérifier que les données publiées n'ont pas été modifiées",
+  "contact": "https://github.com/teetee971/akiprisaye-web",
+  "documentation": "https://github.com/teetee971/akiprisaye-web/blob/main/docs/DATA_SIGNING.md",
+  "note": "Les clés cryptographiques seront générées lors de la mise en production du système de signature",
+  "methode_verification": {
+    "etape1": "Télécharger les données et le fichier .proof.json associé",
+    "etape2": "Recalculer le hash SHA-256 des données (format JSON canonique)",
+    "etape3": "Comparer le hash calculé avec celui présent dans le fichier .proof.json",
+    "etape4": "Si les hash correspondent, les données sont intègres"
+  },
+  "datasets_signes": [
+    "Prix par territoire",
+    "Panier Anti-Crise",
+    "Classement enseignes",
+    "Classement territoires",
+    "Indices IEVR",
+    "Pression prix"
+  ],
+  "garanties": {
+    "integrite": "Les données n'ont pas été modifiées depuis leur publication",
+    "tracabilite": "Horodatage précis de chaque dataset",
+    "auditabilite": "Vérification possible par n'importe qui",
+    "transparence": "Méthode publique et documentée"
+  }
+}

@@ -5,6 +5,13 @@
 
 /* Prevent Android keyboard from hiding form buttons */
 @media screen and (max-width: 768px) {
+  /* MOBILE UX OPTIMIZATION: Improved base font size for readability */
+  /* Samsung S24+ audit: 14px causes reading fatigue on long text */
+  /* Increased to 16px for better readability without user zoom */
+  body {
+    font-size: 16px; /* Up from 14px for better mobile readability */
+  }
+
   /* Ensure form buttons are always visible with safe-area padding */
   form button[type="submit"],
   form button[type="button"] {
@@ -40,7 +47,7 @@
 
   /* Ensure drawers/modals slide from bottom on mobile */
   [role="dialog"] {
-    animation: slide-up-mobile 0.3s ease-out;
+    animation: slide-up-mobile 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   @keyframes slide-up-mobile {
@@ -52,6 +59,19 @@
       transform: translateY(0);
       opacity: 1;
     }
+  }
+  
+  /* Smooth transitions for mobile interactions */
+  button, a, [role="button"] {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* Active state feedback for better touch response */
+  button:active, 
+  a:active, 
+  [role="button"]:active {
+    transform: scale(0.97);
+    opacity: 0.8;
   }
 }
 
@@ -85,7 +105,24 @@
 /* Improve tap highlight for better mobile UX */
 @media screen and (max-width: 768px) {
   * {
-    -webkit-tap-highlight-color: rgba(59, 130, 246, 0.2);
+    -webkit-tap-highlight-color: rgba(74, 163, 255, 0.2);
+  }
+  
+  /* Smoother scrolling on mobile */
+  html {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Optimize animation performance on mobile - only for animated elements */
+  .transition-smooth,
+  .hover-lift,
+  .hover-scale,
+  button,
+  a,
+  [role="button"] {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
   }
 }
 

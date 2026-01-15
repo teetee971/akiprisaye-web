@@ -5,13 +5,72 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hors connexion - A KI PRI SA YÉ</title>
   <style>
-    body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #0b0d17; color: #a8ffb0; }
-    h1 { color: #a8ffb0; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+      background: #0f172a;
+      color: #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .container {
+      max-width: 480px;
+      background: #1e293b;
+      padding: 48px 32px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    }
+    h1 { 
+      color: #3b82f6;
+      font-size: 48px;
+      margin: 0 0 16px;
+    }
+    h2 {
+      color: #f1f5f9;
+      font-size: 24px;
+      font-weight: 600;
+      margin: 0 0 16px;
+    }
+    p {
+      color: #cbd5e1;
+      font-size: 16px;
+      line-height: 1.6;
+      margin: 0 0 32px;
+    }
+    button {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 14px 32px;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #2563eb;
+    }
+    .logo {
+      font-size: 14px;
+      color: #64748b;
+      margin-top: 32px;
+    }
   </style>
 </head>
 <body>
-  <h1>🔌 Vous êtes hors connexion</h1>
-  <p>Le contenu n'est pas disponible pour le moment. Vérifiez votre connexion et réessayez.</p>
-  <button onclick="window.location.reload()">Réessayer</button>
+  <div class="container">
+    <h1>🔌</h1>
+    <h2>Vous êtes hors connexion</h2>
+    <p>Le contenu n'est pas disponible pour le moment. Vérifiez votre connexion Internet et réessayez.</p>
+    <button onclick="window.location.reload()">Réessayer</button>
+    <div class="logo">A KI PRI SA YÉ</div>
+  </div>
 </body>
 </html>

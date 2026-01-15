@@ -6,7 +6,6 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Card } from './card.jsx';
 
 export function PalmaresEnseignes({ territoire = null }) {
   const [rankings, setRankings] = useState([]);

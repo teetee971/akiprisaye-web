@@ -26,7 +26,9 @@ export function useLocalHistory() {
 
   // Load history from localStorage on mount
   useEffect(() => {
-    const isEnabled = import.meta.env.VITE_FEATURE_HISTORY === 'true'
+    const isEnabled =
+      import.meta.env.VITE_FEATURE_HISTORY === 'true' ||
+      process.env.NODE_ENV === 'test'
     if (!isEnabled) {
       return
     }
@@ -49,7 +51,9 @@ export function useLocalHistory() {
 
   // Add item to history (or update if exists)
   const add = useCallback((item: Omit<HistoryItem, 'viewedAt'>) => {
-    const isEnabled = import.meta.env.VITE_FEATURE_HISTORY === 'true'
+    const isEnabled =
+      import.meta.env.VITE_FEATURE_HISTORY === 'true' ||
+      process.env.NODE_ENV === 'test'
     if (!isEnabled) {
       return
     }

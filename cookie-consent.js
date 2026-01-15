@@ -62,7 +62,9 @@ class CookieConsent {
       this.setConsent('accepted');
       this.hideBanner(banner);
       // No analytics to load for strictly necessary cookies
-      console.log('Cookie notice acknowledged - Only essential cookies are used');
+      if (import.meta.env.DEV) {
+        console.warn('Cookie notice acknowledged - Only essential cookies are used');
+      }
     });
   }
 
@@ -96,8 +98,10 @@ class CookieConsent {
   loadAnalytics() {
     // Note: For strictly necessary cookies, no additional analytics loading is required
     // This method is kept for future optional analytics with explicit consent
-    console.log('Cookie consent accepted - Only essential cookies are used');
-    console.log('A KI PRI SA YÉ: No advertising, no tracking, no behavioral manipulation');
+    if (import.meta.env.DEV) {
+      console.warn('Cookie consent accepted - Only essential cookies are used');
+      console.warn('A KI PRI SA YÉ: No advertising, no tracking, no behavioral manipulation');
+    }
     
     // Future optional analytics would require explicit additional consent
     // Example for future use:

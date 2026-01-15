@@ -30,7 +30,8 @@ Backend institutionnel pour la gestion des entités juridiques françaises.
 - **SIRET**: Article R123-220 du Code de commerce
 
 ## Authentification
-Utilise JWT (JSON Web Tokens):
+
+### JWT (Utilisateurs Web)
 - **Access Token**: Courte durée (15 min)
 - **Refresh Token**: Longue durée (7 jours)
 
@@ -39,10 +40,35 @@ Pour utiliser les endpoints protégés:
 2. Utiliser le access token dans le header: \`Authorization: Bearer <token>\`
 3. POST /api/auth/refresh pour renouveler le token expiré
 
+### API Key (Applications Tierces)
+- Clés API générées via \`POST /api/api-keys\`
+- Format: \`akp_live_...\` (64 caractères hexadécimaux)
+- À passer dans le header: \`X-API-Key: akp_live_...\`
+- Permissions configurables par clé
+- Rate limiting selon niveau d'abonnement
+
 ## Rate Limiting
-- Endpoints auth: 5 tentatives / 15 min
-- Création ressources: 20 / heure
-- API générale: 100 requêtes / 15 min
+Limites dynamiques selon abonnement:
+- **Gratuit**: 100 requêtes/jour
+- **Citoyen Premium**: 1,000 requêtes/jour
+- **PME**: 5,000 requêtes/jour
+- **Business Pro**: 50,000 requêtes/jour
+- **Institutionnel**: 500,000 requêtes/jour
+
+Headers de réponse:
+- \`X-RateLimit-Limit\`: Limite totale
+- \`X-RateLimit-Remaining\`: Requêtes restantes
+- \`X-RateLimit-Reset\`: Timestamp de reset
+- \`X-Subscription-Tier\`: Niveau d'abonnement
+
+## API v1
+Nouveaux endpoints sous \`/api/v1\`:
+- \`/comparators\`: Données comparateurs de prix
+- \`/territories\`: Informations territoires
+- \`/prices\`: Données de prix
+- \`/analytics\`: Analytics avancées (Pro/Institutional)
+- \`/contributions\`: Contributions utilisateurs
+- \`/exports\`: Export de données (CSV/Excel)
       `,
       contact: {
         name: 'Support A KI PRI SA YÉ',
@@ -69,6 +95,12 @@ Pour utiliser les endpoints protégés:
           scheme: 'bearer',
           bearerFormat: 'JWT',
           description: 'Access token JWT obtenu via /api/auth/login',
+        },
+        apiKeyAuth: {
+          type: 'apiKey',
+          in: 'header',
+          name: 'X-API-Key',
+          description: 'Clé API pour authentification programmatique (format: akp_live_...)',
         },
       },
       schemas: {

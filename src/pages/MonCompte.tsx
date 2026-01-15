@@ -102,9 +102,14 @@ export default function MonCompte() {
           </div>
 
           <div className="mb-6 p-4 bg-blue-900/30 border border-blue-700 rounded-lg">
+            <h3 className="text-blue-200 font-semibold mb-2">
+              🔐 Le compte est facultatif
+            </h3>
+            <p className="text-blue-200 text-sm mb-2">
+              Il sert uniquement à retrouver votre historique personnel sur cet appareil.
+            </p>
             <p className="text-blue-200 text-sm">
-              ℹ️ <strong>Service citoyen gratuit</strong> - Toutes les fonctionnalités sont accessibles 
-              gratuitement à tous les citoyens. Aucun abonnement requis.
+              <strong>Toutes les comparaisons sont accessibles sans compte.</strong>
             </p>
           </div>
 

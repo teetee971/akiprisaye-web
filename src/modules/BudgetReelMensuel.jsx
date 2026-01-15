@@ -6,10 +6,8 @@
  */
 
 import { useState } from 'react';
-import { Card } from '../components/card.jsx';
 import budgetRef from '../data/budget_reference.json';
 import ievrRef from '../data/iev_r_reference.json';
-import { DataSourceWarning } from '../components/DataSourceWarning.jsx';
 
 export function BudgetReelMensuel() {
   const [selectedProfile, setSelectedProfile] = useState('adulte_seul');
@@ -285,6 +283,7 @@ export function BudgetReelMensuel() {
   );
 }
 
+// eslint-disable-next-line no-unused-vars
 function ChargeItem({ label, amount }) {
   return (
     <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg">

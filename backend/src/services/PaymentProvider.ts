@@ -98,7 +98,7 @@ export class PaymentProvider {
    */
   static async confirmCardPayment(
     paymentIntentId: string,
-    cardToken: string
+    _cardToken: string
   ): Promise<PaymentIntent> {
     const intent = paymentIntents.get(paymentIntentId);
     if (!intent) {
@@ -165,7 +165,7 @@ export class PaymentProvider {
    */
   static async createInstitutionalPayment(
     paymentIntentId: string,
-    institutionDetails: {
+    _institutionDetails: {
       name: string;
       siret: string;
       contactEmail: string;
@@ -265,9 +265,9 @@ export class PaymentProvider {
    * Implements basic fraud detection
    */
   static async verifyPaymentSecurity(
-    userId: string,
+    _userId: string,
     amount: number,
-    territory: string
+    _territory: string
   ): Promise<{
     verified: boolean;
     riskLevel: 'low' | 'medium' | 'high';

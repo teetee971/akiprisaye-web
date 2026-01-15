@@ -3,7 +3,6 @@
  * Ultra-simple toggle for accessibility mode and other binary options
  * WCAG AA compliant with clear visual feedback
  */
-import React from 'react';
 import { cn } from '@/lib/utils';
 
 export function UltraSimpleToggle({ 

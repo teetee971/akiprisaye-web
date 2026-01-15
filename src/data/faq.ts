@@ -6,7 +6,7 @@
 
 export interface FAQItem {
   id: string;
-  category: 'general' | 'abonnements' | 'donnees' | 'technique' | 'institutionnel';
+  category: 'general' | 'abonnements' | 'donnees' | 'technique' | 'institutionnel' | 'journalist';
   question: string;
   answer: string;
   tags: string[];
@@ -161,6 +161,78 @@ export const FAQ_DATA: FAQItem[] = [
     question: 'Le service est-il compatible INSEE / Eurostat ?',
     answer: 'Oui. Les exports institutionnels sont normalisés selon les standards INSEE et Eurostat. La méthodologie est conforme aux exigences de traçabilité et d\'auditabilité du secteur public.',
     tags: ['insee', 'eurostat', 'compatibilité', 'standards']
+  },
+
+  // QUESTIONS JOURNALISTES & RÉPONSES OFFICIELLES
+  {
+    id: 'faq-j01',
+    category: 'journalist',
+    question: 'Quel est l\'objectif réel de votre outil ?',
+    answer: 'L\'objectif est de donner aux citoyens une information pratique et locale sur l\'accès aux commerces : localisation, distance et temps estimé pour s\'y rendre. L\'outil aide à se repérer, pas à orienter les choix économiques.',
+    tags: ['objectif', 'mission', 'information']
+  },
+  {
+    id: 'faq-j02',
+    category: 'journalist',
+    question: 'Est-ce que vous recommandez un magasin plutôt qu\'un autre ?',
+    answer: 'Non. L\'outil ne recommande aucun commerce. Il affiche uniquement des données factuelles (distance, temps estimé, localisation). Le choix final appartient toujours à l\'utilisateur.',
+    tags: ['recommandation', 'neutralité', 'choix']
+  },
+  {
+    id: 'faq-j03',
+    category: 'journalist',
+    question: 'Comment sont calculés les temps de trajet ? Sont-ils fiables ?',
+    answer: 'Les temps sont des estimations basées sur la distance géographique et des vitesses moyennes standards. Ils ne tiennent pas compte du trafic, des embouteillages ou des conditions réelles. Ils sont fournis à titre indicatif uniquement.',
+    tags: ['calcul', 'trajet', 'fiabilité', 'estimation']
+  },
+  {
+    id: 'faq-j04',
+    category: 'journalist',
+    question: 'Collectez-vous la position GPS des utilisateurs ?',
+    answer: 'Non. La position est utilisée uniquement de manière temporaire par le navigateur, avec l\'accord explicite de l\'utilisateur. Aucune donnée GPS n\'est stockée, transmise ou exploitée.',
+    tags: ['gps', 'localisation', 'vie privée', 'rgpd']
+  },
+  {
+    id: 'faq-j05',
+    category: 'journalist',
+    question: 'Est-ce que certaines enseignes vous paient pour apparaître ?',
+    answer: 'Non. Il n\'y a ni publicité, ni mise en avant payante, ni partenariat commercial à ce stade.',
+    tags: ['publicité', 'partenariat', 'indépendance']
+  },
+  {
+    id: 'faq-j06',
+    category: 'journalist',
+    question: 'Pourquoi cet outil est utile concrètement ?',
+    answer: 'Il permet de comparer l\'accessibilité réelle des commerces autour de soi. Pour beaucoup de personnes, la distance et le temps sont aussi importants que le prix.',
+    tags: ['utilité', 'accessibilité', 'pratique']
+  },
+  {
+    id: 'faq-j07',
+    category: 'journalist',
+    question: 'Est-ce un comparateur de prix ?',
+    answer: 'Pas actuellement. Aujourd\'hui, il s\'agit d\'un outil d\'observation et de navigation. Toute future évolution sera clairement annoncée et séparée.',
+    tags: ['comparateur', 'prix', 'évolution']
+  },
+  {
+    id: 'faq-j08',
+    category: 'journalist',
+    question: 'À qui s\'adresse ce projet ?',
+    answer: 'À tous : particuliers, familles, personnes sans voiture, seniors, mais aussi collectivités et acteurs locaux qui veulent mieux comprendre l\'accessibilité commerciale.',
+    tags: ['public', 'cible', 'inclusivité']
+  },
+  {
+    id: 'faq-j09',
+    category: 'journalist',
+    question: 'Qui est derrière le projet ?',
+    answer: 'Un projet indépendant, développé localement, avec une approche citoyenne et pragmatique. L\'objectif est l\'utilité publique avant toute logique commerciale.',
+    tags: ['équipe', 'indépendance', 'citoyen']
+  },
+  {
+    id: 'faq-j10',
+    category: 'journalist',
+    question: 'Quel est le risque principal que vous avez voulu éviter ?',
+    answer: 'Le risque de manipulation ou de recommandation déguisée. C\'est pour cela que nous avons volontairement limité l\'outil à des données neutres et vérifiables.',
+    tags: ['risque', 'éthique', 'transparence', 'neutralité']
   }
 ];
 
