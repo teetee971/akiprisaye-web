@@ -103,5 +103,8 @@
   "type": "module",
   "engines": {
     "node": ">=20.19.0"
+  },
+  "overrides": {
+    "tmp": "^0.2.5"
   }
 }
