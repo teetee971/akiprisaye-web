@@ -5,6 +5,7 @@ import './styles/globals.css';
 import './styles/civic-glass.css';
 import './styles/glass.css';
 import './styles/mobile-fixes.css';
+import './styles/premium-features.css';
 import Home from './pages/Home';
 import Layout from './components/Layout';
 import ErrorBoundary from './components/ErrorBoundary';
