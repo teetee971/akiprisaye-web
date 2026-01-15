@@ -1,0 +1,105 @@
+{
+  "version": "1.0",
+  "last_update": "2026-01-12",
+  "currency": "EUR",
+  "reference": {
+    "riz_1kg": 1.30,
+    "sucre_1kg": 0.95,
+    "lait_1l": 0.90,
+    "huile_1l": 2.20,
+    "pates_500g": 0.75,
+    "farine_1kg": 1.00,
+    "tomates_1kg": 2.50,
+    "bananes_1kg": 1.50,
+    "poulet_1kg": 5.50,
+    "yaourt_pack4": 1.80,
+    "pain_400g": 1.40,
+    "cafe_250g": 3.50,
+    "savon_pack": 2.50
+  },
+  "territories": {
+    "guadeloupe": {
+      "label": "Guadeloupe",
+      "products": {
+        "riz_1kg": [
+          { "store": "Carrefour", "price": 1.89 },
+          { "store": "Leader Price", "price": 1.72 },
+          { "store": "Super U", "price": 1.95 },
+          { "store": "Hyper U", "price": 1.85 }
+        ],
+        "sucre_1kg": [
+          { "store": "Leader Price", "price": 1.12 },
+          { "store": "Carrefour", "price": 1.25 },
+          { "store": "Super U", "price": 1.18 }
+        ],
+        "lait_1l": [
+          { "store": "Super U", "price": 1.45 },
+          { "store": "Carrefour", "price": 1.50 },
+          { "store": "Leader Price", "price": 1.38 }
+        ],
+        "huile_1l": [
+          { "store": "Leader Price", "price": 2.89 },
+          { "store": "Carrefour", "price": 3.10 },
+          { "store": "Super U", "price": 2.95 }
+        ],
+        "pates_500g": [
+          { "store": "Carrefour", "price": 0.95 },
+          { "store": "Leader Price", "price": 0.89 },
+          { "store": "Super U", "price": 0.99 }
+        ],
+        "farine_1kg": [
+          { "store": "Leader Price", "price": 1.35 },
+          { "store": "Carrefour", "price": 1.42 },
+          { "store": "Super U", "price": 1.40 }
+        ],
+        "tomates_1kg": [
+          { "store": "Marché local", "price": 2.95 },
+          { "store": "Carrefour", "price": 3.20 },
+          { "store": "Super U", "price": 3.15 }
+        ],
+        "bananes_1kg": [
+          { "store": "Marché local", "price": 1.89 },
+          { "store": "Carrefour", "price": 2.10 },
+          { "store": "Super U", "price": 2.05 }
+        ],
+        "poulet_1kg": [
+          { "store": "Super U", "price": 6.90 },
+          { "store": "Carrefour", "price": 7.20 },
+          { "store": "Hyper U", "price": 6.85 }
+        ],
+        "yaourt_pack4": [
+          { "store": "Carrefour", "price": 2.15 },
+          { "store": "Leader Price", "price": 2.05 },
+          { "store": "Super U", "price": 2.20 }
+        ],
+        "pain_400g": [
+          { "store": "Boulangerie", "price": 1.85 },
+          { "store": "Carrefour", "price": 1.90 },
+          { "store": "Super U", "price": 1.88 }
+        ],
+        "cafe_250g": [
+          { "store": "Carrefour", "price": 4.50 },
+          { "store": "Leader Price", "price": 4.35 },
+          { "store": "Super U", "price": 4.55 }
+        ],
+        "savon_pack": [
+          { "store": "Leader Price", "price": 3.20 },
+          { "store": "Carrefour", "price": 3.45 },
+          { "store": "Super U", "price": 3.35 }
+        ]
+      }
+    },
+    "martinique": {
+      "label": "Martinique",
+      "products": {}
+    },
+    "guyane": {
+      "label": "Guyane",
+      "products": {}
+    },
+    "reunion": {
+      "label": "La Réunion",
+      "products": {}
+    }
+  }
+}

@@ -2,7 +2,13 @@
   "metadata": {
     "version": "1.0.0",
     "description": "Exemples de produits avec différents formats pour détecter les faux bons plans",
-    "lastUpdate": "2025-12-17"
+    "lastUpdate": "2025-12-17",
+    "dataStatus": "DEMONSTRATION",
+    "warning": "⚠️ DONNÉES DE DÉMONSTRATION - À REMPLACER PAR RELEVÉS TERRAIN SOURCÉS",
+    "requiredSources": [
+      "OPMR - Observatoires des prix DOM-TOM",
+      "Relevés terrain avec protocole défini"
+    ]
   },
   "products": [
     {

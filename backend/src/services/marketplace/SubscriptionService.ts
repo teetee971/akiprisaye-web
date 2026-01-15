@@ -9,7 +9,7 @@
  * - Suspension automatique en cas de non-paiement
  */
 
-import { PrismaClient, Subscription, Invoice, SubscriptionPlan, SubscriptionStatus, InvoiceStatus } from '@prisma/client';
+import { PrismaClient, Subscription, Invoice, SubscriptionPlan, SubscriptionStatus } from '@prisma/client';
 
 const prisma = new PrismaClient();
 

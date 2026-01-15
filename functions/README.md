@@ -1,5 +1,7 @@
 # Firebase Cloud Functions - A KI PRI SA YÉ
 
+> **⚠️ NOTE:** This README is for **Firebase Cloud Functions** only. For **Cloudflare Pages Functions** (edge functions for the static site), see `CLOUDFLARE_FUNCTIONS_FIX_SUMMARY.md`.
+
 This directory contains Firebase Cloud Functions for the A KI PRI SA YÉ platform.
 
 ## Prerequisites

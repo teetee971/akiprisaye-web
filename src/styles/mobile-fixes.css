@@ -5,6 +5,13 @@
 
 /* Prevent Android keyboard from hiding form buttons */
 @media screen and (max-width: 768px) {
+  /* MOBILE UX OPTIMIZATION: Improved base font size for readability */
+  /* Samsung S24+ audit: 14px causes reading fatigue on long text */
+  /* Increased to 16px for better readability without user zoom */
+  body {
+    font-size: 16px; /* Up from 14px for better mobile readability */
+  }
+
   /* Ensure form buttons are always visible with safe-area padding */
   form button[type="submit"],
   form button[type="button"] {

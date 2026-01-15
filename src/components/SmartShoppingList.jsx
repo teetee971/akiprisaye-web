@@ -1,59 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import {
-  ShoppingCart,
-  MapPin,
-  Navigation,
-  Info,
-  AlertCircle,
-  Download,
-  Share2,
-  Save,
-  Trash2,
-  Plus,
-  X,
-  Clock,
-  DollarSign,
-  TrendingDown,
-  Map as MapIcon,
-} from 'lucide-react';
+import { useState } from 'react';
 import {
   getProductByEan,
   getPricesByEan,
   getStoresByTerritory,
   calculateDistance as calcDist,
-  getPriceDataFreshness,
 } from '../services/shoppingListService';
 import { db } from '../lib/firebase';
 import { solveShoppingRoute } from '../utils/routeOptimization';
 import { trackTrip } from '../utils/shoppingStats';
-
-// OPTIMIZATION MODES (user chooses)
-const OPTIMIZATION_MODES = {
-  CHEAPEST: {
-    id: 'cheapest',
-    name: 'MODE A — Prix le Plus Bas',
-    description: 'Minimiser le coût total du panier (plusieurs magasins possibles)',
-    icon: TrendingDown,
-  },
-  MINIMAL_DISTANCE: {
-    id: 'minimal_distance',
-    name: 'MODE B — Distance Minimale',
-    description: 'Moins de magasins, trajet le plus court',
-    icon: MapIcon,
-  },
-  BALANCED: {
-    id: 'balanced',
-    name: 'MODE C — Équilibré (RECOMMANDÉ)',
-    description: 'Score pondéré : Prix + Distance + Nombre d\'arrêts',
-    icon: Clock,
-  },
-  SINGLE_STORE: {
-    id: 'single_store',
-    name: 'MODE D — Magasin Unique',
-    description: 'Panier le moins cher disponible dans un seul magasin',
-    icon: ShoppingCart,
-  },
-};
+import { OPTIMIZATION_MODES, DEFAULT_OPTIMIZATION_MODE } from '../config/optimizationModes';
+import { LOCATION_THRESHOLDS } from '../config/thresholds';
+import { DATA_FRESHNESS } from '../config/periods';
 
 export default function SmartShoppingList({ territoire = 'Guadeloupe' }) {
   const [shoppingList, setShoppingList] = useState([]);
@@ -68,8 +25,8 @@ export default function SmartShoppingList({ territoire = 'Guadeloupe' }) {
   const [gpsConsent, setGpsConsent] = useState(false);
   const [userLocation, setUserLocation] = useState(null);
   const [gpsError, setGpsError] = useState(null);
-  const [searchRadius, setSearchRadius] = useState(5); // km
-  const [selectedMode, setSelectedMode] = useState('balanced');
+  const [searchRadius, setSearchRadius] = useState(LOCATION_THRESHOLDS.DEFAULT_SEARCH_RADIUS_KM); // km
+  const [selectedMode, setSelectedMode] = useState(DEFAULT_OPTIMIZATION_MODE);
   const [optimizationResults, setOptimizationResults] = useState(null);
   const [loading, setLoading] = useState(false);
   const [savedRoutes, setSavedRoutes] = useState([]);
@@ -171,7 +128,7 @@ export default function SmartShoppingList({ territoire = 'Guadeloupe' }) {
           if (product) {
             // Get actual observed prices
             const prices = await getPricesByEan(item.ean, {
-              maxAgeHours: 720, // 30 days
+              maxAgeHours: DATA_FRESHNESS.PRICE_DATA_MAX_AGE_HOURS,
               territory: territoire,
             });
             matchedProducts.push({
@@ -188,7 +145,7 @@ export default function SmartShoppingList({ territoire = 'Guadeloupe' }) {
               message: 'Données non disponibles pour ce produit',
             });
           }
-        } catch (error) {
+        } catch (_error) {
           matchedProducts.push({
             ...item,
             dataAvailable: false,
@@ -790,6 +747,7 @@ export default function SmartShoppingList({ territoire = 'Guadeloupe' }) {
               </h2>
               <div className="space-y-3">
                 {Object.values(OPTIMIZATION_MODES).map((mode) => {
+                  // eslint-disable-next-line no-unused-vars
                   const Icon = mode.icon;
                   return (
                     <label

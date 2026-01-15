@@ -9,6 +9,9 @@
  * @returns {Object} Extracted data: products, total, store, date
  */
 
+import { logInfo, logWarn, logError } from './utils/logger.js';
+import { saveReceipt } from './utils/firestore.js';
+
 /**
  * Validate image file
  * @param {File} file - Uploaded file
@@ -81,6 +84,54 @@ TOTAL                                    18.67 EUR
 Carte bancaire: **** 1234
 Merci de votre visite!
   `.trim();
+}
+
+/**
+ * Calculate confidence score for OCR results
+ * @param {Object} receiptData - Parsed receipt data
+ * @returns {number} Confidence score (0-100)
+ */
+function calculateConfidenceScore(receiptData) {
+  let score = 0;
+  const weights = {
+    store: 20,
+    date: 15,
+    total: 25,
+    items: 30,
+    structure: 10,
+  };
+  
+  // Check if store name is identified
+  if (receiptData.store && receiptData.store.length > 2) {
+    score += weights.store;
+  }
+  
+  // Check if date is valid
+  if (receiptData.date && !isNaN(Date.parse(receiptData.date))) {
+    score += weights.date;
+  }
+  
+  // Check if total is valid
+  if (receiptData.total && receiptData.total > 0) {
+    score += weights.total;
+  }
+  
+  // Check if items are extracted
+  if (receiptData.items && receiptData.items.length > 0) {
+    const itemsScore = Math.min(receiptData.items.length / 10, 1) * weights.items;
+    score += itemsScore;
+  }
+  
+  // Check structure quality
+  if (receiptData.items && receiptData.items.length > 0) {
+    const validItems = receiptData.items.filter(item => 
+      item.name && item.price && item.price > 0
+    );
+    const structureScore = (validItems.length / receiptData.items.length) * weights.structure;
+    score += structureScore;
+  }
+  
+  return Math.round(score);
 }
 
 /**
@@ -223,18 +274,53 @@ export async function onRequestPost(context) {
     // Parse receipt data
     const receiptData = parseReceiptText(extractedText);
     
-    // TODO: PRODUCTION ENHANCEMENTS
-    // 1. Save receipt to Firebase Storage
-    // 2. Save receipt data to Firestore /receipts collection
-    // 3. Update prices in /prices collection (with verification workflow)
-    // 4. Link to user account if authenticated
-    // 5. Calculate confidence scores for extracted data
-    // 6. Queue for manual verification if confidence < 80%
+    // Calculate confidence score
+    const confidenceScore = calculateConfidenceScore(receiptData);
+    
+    // Add metadata
+    const enrichedReceiptData = {
+      ...receiptData,
+      confidence: confidenceScore,
+      needsVerification: confidenceScore < 80,
+      processedAt: new Date().toISOString(),
+    };
+    
+    // Save to Firestore if confidence is acceptable
+    try {
+      if (confidenceScore >= 50) {
+        const receiptId = await saveReceipt(enrichedReceiptData);
+        
+        logInfo('Receipt processed and saved', {
+          receiptId,
+          confidence: confidenceScore,
+          itemCount: receiptData.items?.length || 0,
+        });
+        
+        enrichedReceiptData.id = receiptId;
+      } else {
+        logWarn('Receipt confidence too low, not saving to Firestore', {
+          confidence: confidenceScore,
+        });
+      }
+    } catch (firestoreError) {
+      logError('Failed to save receipt to Firestore', firestoreError);
+      // Continue anyway - user still gets OCR results
+    }
+    
+    // TODO: PRODUCTION ENHANCEMENTS (Next Phase)
+    // 1. Upload receipt image to Firebase Storage for archival
+    // 2. Implement verification workflow for prices with confidence < 80%
+    // 3. Queue receipts for manual verification if confidence < 80%
+    // 4. Update prices in /prices collection after admin approval
+    // 5. Link to user account if authenticated (request.auth)
+    // 6. Send notification to user when receipt is processed
     
     return new Response(JSON.stringify({
       success: true,
-      data: receiptData,
-      message: 'Receipt processed successfully',
+      data: enrichedReceiptData,
+      message: confidenceScore >= 80 
+        ? 'Receipt processed successfully'
+        : 'Receipt processed with low confidence - may require verification',
     }), {
       status: 200,
       headers: {
@@ -245,7 +331,7 @@ export async function onRequestPost(context) {
     });
     
   } catch (error) {
-    console.error('Error in /api/ocr:', error);
+    logError('Error in /api/ocr:', error);
     
     return new Response(JSON.stringify({
       error: 'OCR processing failed',

@@ -1,0 +1,15 @@
+{
+  "hash": "ea40a2d89b7b477c8308ec51a6e293e096d3f2565f8aa66b11b3b5357f94374e",
+  "algorithme": "SHA-256",
+  "timestamp": "2026-01-12T22:58:36.391Z",
+  "metadata": {
+    "nom": "prix-guadeloupe-exemple",
+    "version": "1.0.0",
+    "territoire": "Guadeloupe",
+    "periode": "2026-01"
+  },
+  "verification": {
+    "methode": "Recalculer le hash des données et comparer",
+    "clePublique": "/transparence/cle-publique.json"
+  }
+}

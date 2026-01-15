@@ -34,7 +34,7 @@ export default function PWAInstallToast() {
     
     if (outcome === 'accepted') {
       if (import.meta.env.DEV) {
-        console.log('User accepted the install prompt');
+        console.warn('User accepted the install prompt');
       }
     }
     

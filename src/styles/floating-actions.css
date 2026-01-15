@@ -1,66 +1,115 @@
-/* Floating action buttons : empilement vertical, espacement et responsive */
-.fab-container {
+/**
+ * Floating Actions CSS
+ * 
+ * Styles for stacked floating action buttons (chat and cart)
+ * that are accessible, responsive, and don't block UI elements.
+ */
+
+.floating-actions {
+  /* Container is fixed bottom-right */
   position: fixed;
-  right: 16px;
   bottom: 16px;
+  right: 16px;
   display: flex;
   flex-direction: column;
   gap: 12px;
-  align-items: flex-end;
-  z-index: 9999;
+  z-index: var(--z-floating, 1000);
+  
+  /* Pointer events: none on container, auto on children */
+  /* This prevents the container from blocking clicks on underlying elements */
   pointer-events: none;
 }
 
-/* Chaque bouton garde son propre pointer-events */
-.fab {
+.floating-actions > * {
+  /* Re-enable pointer events on actual buttons */
   pointer-events: auto;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 56px;
-  height: 56px;
-  border-radius: 999px;
-  background: linear-gradient(180deg,#1f7bff,#1c5ee0);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.35);
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  transition: transform .14s ease, opacity .14s ease;
-  font-size: 20px;
 }
 
-/* Variante large pour le bouton panier */
-.fab--large {
-  width: 92px;
-  height: 56px;
-  padding: 0 12px;
-  border-radius: 28px;
-  gap: 8px;
-  justify-content: center;
-  display: inline-flex;
-}
-
-.fab-badge {
-  background: rgba(255,255,255,0.12);
-  padding: 4px 8px;
-  border-radius: 12px;
-  margin-left: 8px;
-  color: #fff;
-  font-weight: 600;
-  font-size: 14px;
-}
-
-@media (max-width: 420px) {
-  .fab { width: 48px; height: 48px; font-size: 18px; }
-  .fab--large { width: 76px; height: 48px; }
-  .fab-container { right: 10px; bottom: 10px; gap: 8px; }
-}
-
+/* Raised state - when bottom input is focused */
 .fab-container--raised {
-  bottom: 92px;
+  /* Move up to avoid covering bottom inputs/controls */
+  transform: translateY(-60px);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.fab:focus {
-  outline: 3px solid rgba(255,255,255,0.14);
-  outline-offset: 3px;
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .floating-actions {
+    /* Avoid Android/iOS system navigation bars */
+    bottom: 72px;
+    right: 12px;
+    gap: 10px;
+  }
+  
+  /* Smaller buttons on mobile */
+  .floating-actions > button {
+    min-width: 48px;
+    min-height: 48px;
+  }
+  
+  /* Raised state on mobile - needs more clearance */
+  .fab-container--raised {
+    transform: translateY(-80px);
+  }
+}
+
+/* Tablet adjustments */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .floating-actions {
+    bottom: 20px;
+    right: 20px;
+  }
+}
+
+/* Desktop - normal positioning */
+@media (min-width: 1025px) {
+  .floating-actions {
+    bottom: 24px;
+    right: 24px;
+  }
+}
+
+/* Ensure buttons are accessible with keyboard */
+.floating-actions button:focus-visible {
+  outline: 2px solid rgb(var(--accent-primary, 58 122 254));
+  outline-offset: 2px;
+}
+
+/* Animation for appearing */
+@keyframes fabSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.floating-actions > * {
+  animation: fabSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) backwards;
+}
+
+.floating-actions > *:nth-child(1) {
+  animation-delay: 0ms;
+}
+
+.floating-actions > *:nth-child(2) {
+  animation-delay: 50ms;
+}
+
+.floating-actions > *:nth-child(3) {
+  animation-delay: 100ms;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .floating-actions > * {
+    animation: none;
+  }
+  
+  .fab-container--raised {
+    transition: none;
+  }
 }

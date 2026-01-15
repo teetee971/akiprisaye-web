@@ -5,7 +5,7 @@
  */
 
 import { Request, Response } from 'express';
-import { PlanService } from '../services/PlanService.js';
+import PlanService from '../services/PlanService.js';
 import { PaymentProvider } from '../services/PaymentProvider.js';
 import { UserModel } from '../models/User.js';
 import { SubscriptionModel } from '../models/Subscription.js';
@@ -203,7 +203,7 @@ export class SubscriptionController {
       }
       
       const plan = subscription.plan;
-      const hasAccess = PlanService.canUseFeature(plan, feature as any);
+      const hasAccess = PlanService.canUse(plan, feature as any);
 
       return res.json({
         hasAccess,

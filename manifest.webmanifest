@@ -1,7 +1,7 @@
 {
   "name": "A KI PRI SA YÉ",
   "short_name": "AKPSY",
-  "description": "Plateforme citoyenne de transparence des prix Outre-mer",
+  "description": "Application citoyenne gratuite qui explique les écarts de prix dans les DOM : transport, marges, taxes, logistique.",
   "lang": "fr",
   "start_url": "/",
   "scope": "/",
@@ -9,7 +9,7 @@
   "orientation": "any",
   "background_color": "#0f172a",
   "theme_color": "#2563eb",
-  "categories": ["finance", "utilities", "shopping"],
+  "categories": ["education", "finance", "utilities"],
   "icons": [
     {
       "src": "/Assets/icon_64.webp",
@@ -62,7 +62,7 @@
       "name": "Comparateur de prix",
       "short_name": "Comparateur",
       "description": "Comparer les prix des produits",
-      "url": "/comparateur.html",
+      "url": "/comparateur",
       "icons": [
         {
           "src": "/Assets/icon_192.webp",
@@ -75,7 +75,7 @@
       "name": "Scanner",
       "short_name": "Scanner",
       "description": "Scanner un code-barres",
-      "url": "/scanner.html",
+      "url": "/scan",
       "icons": [
         {
           "src": "/Assets/icon_192.webp",
@@ -88,7 +88,7 @@
       "name": "Carte des prix",
       "short_name": "Carte",
       "description": "Voir la carte des magasins",
-      "url": "/carte.html",
+      "url": "/carte",
       "icons": [
         {
           "src": "/Assets/icon_192.webp",
@@ -101,7 +101,7 @@
       "name": "Historique",
       "short_name": "Historique",
       "description": "Consulter l'historique des prix",
-      "url": "/historique.html",
+      "url": "/historique-prix",
       "icons": [
         {
           "src": "/Assets/icon_192.webp",
@@ -112,7 +112,7 @@
     }
   ],
   "share_target": {
-    "action": "/upload-ticket.html",
+    "action": "/upload-ticket",
     "method": "POST",
     "enctype": "multipart/form-data",
     "params": {

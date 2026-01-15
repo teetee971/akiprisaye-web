@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import Fuse from 'fuse.js';
 import { normalizeText } from '../utils/text';
-import { searchProductsByName, SEED_PRODUCTS } from '../data/seedProducts';
+import { searchProductsByName } from '../data/seedProducts';
 
 const DEBOUNCE = 250;
 const MAX_RESULTS = 15;
@@ -41,9 +41,9 @@ export default function ProductSearch({ territory = 'Guadeloupe', onPickEAN }) {
           if (res.ok) {
             data = await res.json();
           }
-        } catch (apiErr) {
+        } catch (_apiErr) {
           if (import.meta.env.DEV) {
-            console.log('API not available, using seed data');
+            console.warn('API not available, using seed data');
           }
         }
         

@@ -1,7 +1,5 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
-import Layout from '../Layout';
 
 describe('Layout Component', () => {
   const renderLayout = () => {
@@ -28,6 +26,12 @@ describe('Layout Component', () => {
     renderLayout();
     const comparateurLinks = screen.getAllByText('Comparateur');
     expect(comparateurLinks.length).toBeGreaterThan(0);
+  });
+
+  it('should render OCR & Scan navigation link', () => {
+    renderLayout();
+    const ocrLinks = screen.getAllByText('OCR & Scan');
+    expect(ocrLinks.length).toBeGreaterThan(0);
   });
 
   it('should render mobile menu button', () => {

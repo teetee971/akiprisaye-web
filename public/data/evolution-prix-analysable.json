@@ -1,0 +1,92 @@
+{
+  "version": "1.0",
+  "last_update": "2026-01-12",
+  "currency": "EUR",
+  "stores": [
+    {
+      "store_id": "LP-971-001",
+      "store_name": "Leader Price",
+      "address": "Pointe-à-Pitre",
+      "territory": "guadeloupe",
+      "observations": 47
+    },
+    {
+      "store_id": "CF-971-001",
+      "store_name": "Carrefour",
+      "address": "Baie-Mahault",
+      "territory": "guadeloupe",
+      "observations": 62
+    },
+    {
+      "store_id": "SU-971-001",
+      "store_name": "Super U",
+      "address": "Les Abymes",
+      "territory": "guadeloupe",
+      "observations": 38
+    },
+    {
+      "store_id": "HU-971-001",
+      "store_name": "Hyper U",
+      "address": "Baie-Mahault",
+      "territory": "guadeloupe",
+      "observations": 29
+    }
+  ],
+  "products": [
+    {
+      "product_id": "riz_1kg",
+      "product_name": "Riz long grain 1kg",
+      "category": "Épicerie salée",
+      "price_range": {
+        "min": 1.25,
+        "max": 1.95
+      },
+      "observations": 38,
+      "period": "2025-10-01 à 2026-01-12"
+    },
+    {
+      "product_id": "sucre_1kg",
+      "product_name": "Sucre blanc 1kg",
+      "category": "Épicerie sucrée",
+      "price_range": {
+        "min": 0.95,
+        "max": 1.35
+      },
+      "observations": 31,
+      "period": "2025-10-01 à 2026-01-12"
+    },
+    {
+      "product_id": "lait_1l",
+      "product_name": "Lait demi-écrémé 1L",
+      "category": "Produits frais",
+      "price_range": {
+        "min": 1.20,
+        "max": 1.65
+      },
+      "observations": 42,
+      "period": "2025-10-01 à 2026-01-12"
+    },
+    {
+      "product_id": "huile_1l",
+      "product_name": "Huile de tournesol 1L",
+      "category": "Épicerie salée",
+      "price_range": {
+        "min": 2.45,
+        "max": 3.25
+      },
+      "observations": 28,
+      "period": "2025-10-01 à 2026-01-12"
+    },
+    {
+      "product_id": "pates_500g",
+      "product_name": "Pâtes 500g",
+      "category": "Épicerie salée",
+      "price_range": {
+        "min": 0.75,
+        "max": 1.15
+      },
+      "observations": 35,
+      "period": "2025-10-01 à 2026-01-12"
+    }
+  ]
+}

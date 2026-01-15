@@ -11,8 +11,8 @@
 
 import { Request, Response } from 'express';
 import { Territory } from '@prisma/client';
-import { OpenDataService } from '../../services/opendata/OpenDataService';
-import { AnomalyDetectionService } from '../../services/opendata/AnomalyDetectionService';
+import { OpenDataService } from '../../services/opendata/OpenDataService.js';
+import { AnomalyDetectionService } from '../../services/opendata/AnomalyDetectionService.js';
 
 export class SimpleOpenDataController {
   /**
@@ -41,7 +41,7 @@ export class SimpleOpenDataController {
       const result = await OpenDataService.getAggregatedPrices(filters);
 
       // Formater au format simplifié demandé
-      const simplifiedPrices = result.prices.map((price) => ({
+      const simplifiedPrices = result.prices.map((price: any) => ({
         productId: productId || price.productName.toLowerCase().replace(/\s+/g, '-'),
         productLabel: price.productName,
         territory: price.territory,

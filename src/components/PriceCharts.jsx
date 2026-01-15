@@ -7,35 +7,12 @@
 
 import { useState } from 'react';
 import {
-  LineChart,
-  Line,
-  BarChart,
-  Bar,
-  PieChart,
-  Pie,
-  Cell,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from 'recharts';
-import { Card } from './card.jsx';
-
-const COLORS = {
-  primary: '#0f62fe',
-  success: '#24a148',
-  warning: '#f1c21b',
-  danger: '#da1e28',
-  info: '#4589ff',
-};
-
-const TERRITORY_COLORS = [
-  '#0066cc', '#cc0000', '#008844', '#ff6600', '#9933cc',
-  '#006699', '#ffcc00', '#ff3399', '#663399', '#00cccc',
-  '#cc6600', '#3366cc',
-];
+  CHART_COLORS,
+  CHART_THEME,
+  getTerritoryColor,
+  getBreakdownColor,
+} from '../config/colors';
+import { formatCurrency } from '../utils/formatters';
 
 /**
  * Price trend chart over time
@@ -58,42 +35,33 @@ export function PriceTrendChart({ data = [], productName = 'Produit' }) {
       </h3>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+          <CartesianGrid {...CHART_THEME.grid} />
           <XAxis 
             dataKey="date" 
-            stroke="#6b7280"
-            style={{ fontSize: '12px' }}
+            {...CHART_THEME.axis}
           />
           <YAxis 
-            stroke="#6b7280"
-            style={{ fontSize: '12px' }}
+            {...CHART_THEME.axis}
             label={{ value: 'Prix (€)', angle: -90, position: 'insideLeft' }}
           />
-          <Tooltip 
-            contentStyle={{
-              backgroundColor: '#1f2937',
-              border: 'none',
-              borderRadius: '8px',
-              color: '#fff',
-            }}
-          />
+          <Tooltip {...CHART_THEME.tooltip} />
           <Legend />
           <Line 
             type="monotone" 
             dataKey="price" 
-            stroke={COLORS.primary} 
+            stroke={CHART_COLORS.primary} 
             strokeWidth={2}
             name="Prix"
-            dot={{ fill: COLORS.primary, r: 4 }}
+            dot={{ fill: CHART_COLORS.primary, r: 4 }}
           />
           <Line 
             type="monotone" 
             dataKey="avgPrice" 
-            stroke={COLORS.warning} 
+            stroke={CHART_COLORS.warning} 
             strokeWidth={2}
             strokeDasharray="5 5"
             name="Moyenne"
-            dot={{ fill: COLORS.warning, r: 3 }}
+            dot={{ fill: CHART_COLORS.warning, r: 3 }}
           />
         </LineChart>
       </ResponsiveContainer>
@@ -122,41 +90,32 @@ export function TerritoryComparisonChart({ data = [] }) {
       </h3>
       <ResponsiveContainer width="100%" height={400}>
         <BarChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+          <CartesianGrid {...CHART_THEME.grid} />
           <XAxis 
             dataKey="territory" 
-            stroke="#6b7280"
-            style={{ fontSize: '12px' }}
+            {...CHART_THEME.axis}
           />
           <YAxis 
-            stroke="#6b7280"
-            style={{ fontSize: '12px' }}
+            {...CHART_THEME.axis}
             label={{ value: 'Prix moyen (€)', angle: -90, position: 'insideLeft' }}
           />
-          <Tooltip 
-            contentStyle={{
-              backgroundColor: '#1f2937',
-              border: 'none',
-              borderRadius: '8px',
-              color: '#fff',
-            }}
-          />
+          <Tooltip {...CHART_THEME.tooltip} />
           <Legend />
           <Bar 
             dataKey="avgPrice" 
-            fill={COLORS.primary}
+            fill={CHART_COLORS.primary}
             name="Prix moyen"
             radius={[8, 8, 0, 0]}
           />
           <Bar 
             dataKey="minPrice" 
-            fill={COLORS.success}
+            fill={CHART_COLORS.success}
             name="Prix minimum"
             radius={[8, 8, 0, 0]}
           />
           <Bar 
             dataKey="maxPrice" 
-            fill={COLORS.danger}
+            fill={CHART_COLORS.danger}
             name="Prix maximum"
             radius={[8, 8, 0, 0]}
           />
@@ -198,17 +157,10 @@ export function CategoryDistributionChart({ data = [] }) {
             dataKey="value"
           >
             {data.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={TERRITORY_COLORS[index % TERRITORY_COLORS.length]} />
+              <Cell key={`cell-${index}`} fill={getTerritoryColor(index)} />
             ))}
           </Pie>
-          <Tooltip 
-            contentStyle={{
-              backgroundColor: '#1f2937',
-              border: 'none',
-              borderRadius: '8px',
-              color: '#fff',
-            }}
-          />
+          <Tooltip {...CHART_THEME.tooltip} />
         </PieChart>
       </ResponsiveContainer>
     </Card>
@@ -236,8 +188,6 @@ export function PriceBreakdownChart({ data = null }) {
     { name: 'TVA', value: data.tva || 0 },
   ];
 
-  const BREAKDOWN_COLORS = ['#4589ff', '#24a148', '#f1c21b', '#da1e28'];
-
   return (
     <Card className="p-4">
       <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200">
@@ -257,17 +207,12 @@ export function PriceBreakdownChart({ data = null }) {
               dataKey="value"
             >
               {breakdownData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={BREAKDOWN_COLORS[index]} />
+                <Cell key={`cell-${index}`} fill={getBreakdownColor(index)} />
               ))}
             </Pie>
             <Tooltip 
-              contentStyle={{
-                backgroundColor: '#1f2937',
-                border: 'none',
-                borderRadius: '8px',
-                color: '#fff',
-              }}
-              formatter={(value) => `${value.toFixed(2)}€`}
+              {...CHART_THEME.tooltip}
+              formatter={(value) => formatCurrency(value)}
             />
           </PieChart>
         </ResponsiveContainer>
@@ -278,14 +223,14 @@ export function PriceBreakdownChart({ data = null }) {
               <div className="flex items-center gap-2">
                 <div 
                   className="w-4 h-4 rounded"
-                  style={{ backgroundColor: BREAKDOWN_COLORS[index] }}
+                  style={{ backgroundColor: getBreakdownColor(index) }}
                 />
                 <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   {item.name}
                 </span>
               </div>
               <span className="text-sm font-bold text-gray-900 dark:text-gray-100">
-                {item.value.toFixed(2)}€
+                {formatCurrency(item.value)}
               </span>
             </div>
           ))}
@@ -295,7 +240,7 @@ export function PriceBreakdownChart({ data = null }) {
                 Prix total
               </span>
               <span className="text-base font-bold text-primary-600 dark:text-primary-400">
-                {(data.basePrice + data.margin + data.octroi + data.tva).toFixed(2)}€
+                {formatCurrency(data.basePrice + data.margin + data.octroi + data.tva)}
               </span>
             </div>
           </div>

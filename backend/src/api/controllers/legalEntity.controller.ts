@@ -212,7 +212,7 @@ export async function remove(
  * Returns: { total, active, ceased }
  */
 export async function getStats(
-  req: Request,
+  _req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> {

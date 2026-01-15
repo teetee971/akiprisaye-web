@@ -3,6 +3,7 @@ import { Camera, Search, Barcode, Receipt } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { useSearchParams } from 'react-router-dom';
 import ReceiptScanner from '../components/ReceiptScanner';
+import uxMonitor from '../utils/uxMonitor';
 import type { ReceiptAnalysisResult } from '../services/receiptScanService';
 
 /**
@@ -25,6 +26,7 @@ export default function RecherchePrix() {
   const [searchMode, setSearchMode] = useState<SearchMode | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [receiptAnalysis, setReceiptAnalysis] = useState<ReceiptAnalysisResult | null>(null);
+  const [showQuickScan, setShowQuickScan] = useState(false);
   
   // Check for source parameter (e.g., ?source=ticket)
   useEffect(() => {
@@ -34,8 +36,31 @@ export default function RecherchePrix() {
     }
   }, [searchParams]);
 
+  // OPTIMIZATION #1: Smart default - Show quick scan if camera available and no preference
+  useEffect(() => {
+    const preferredMode = localStorage.getItem('preferredSearchMode');
+    const hasCamera = typeof navigator !== 'undefined' && 'mediaDevices' in navigator;
+    
+    // Show quick scan shortcut for first-time users with camera
+    if (!preferredMode && hasCamera && !searchMode) {
+      setShowQuickScan(true);
+    }
+    
+    // PROMPT 4: Monitor page view
+    uxMonitor.pageView('/recherche-prix');
+  }, [searchMode]);
+
   const handleSearchModeSelect = (mode: SearchMode) => {
     setSearchMode(mode);
+    
+    // Remember user preference for next time
+    localStorage.setItem('preferredSearchMode', mode);
+    
+    // PROMPT 4: Monitor search mode selection
+    uxMonitor.searchModeSelected(mode);
+    if (showQuickScan && mode === 'barcode') {
+      uxMonitor.quickScanUsed();
+    }
     
     // Redirect to appropriate scan interface if needed
     switch (mode) {
@@ -125,8 +150,37 @@ export default function RecherchePrix() {
             </form>
           </div>
 
-          {/* 4 Visual Actions - Aligned */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          {/* OPTIMIZATION #1: Quick Scan Shortcut for first-time users */}
+          {showQuickScan && (
+            <div className="mb-6 animate-slide-up">
+              <button
+                onClick={() => handleSearchModeSelect('barcode')}
+                className="w-full py-6 px-4 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 rounded-2xl shadow-lg hover:shadow-xl transition-all group relative overflow-hidden"
+                aria-label="Scanner rapidement un code-barres"
+              >
+                <div className="absolute top-0 right-0 px-3 py-1 bg-yellow-400 text-green-900 text-xs font-bold rounded-bl-xl">
+                  LE PLUS RAPIDE
+                </div>
+                <Barcode className="w-12 h-12 mx-auto mb-3 text-white group-hover:scale-110 transition-transform" />
+                <span className="block text-xl font-bold text-white mb-1">
+                  Scanner maintenant
+                </span>
+                <span className="block text-sm text-white/80">
+                  Un seul tap pour comparer les prix
+                </span>
+              </button>
+              
+              <button
+                onClick={() => setShowQuickScan(false)}
+                className="w-full mt-3 text-sm text-gray-400 hover:text-gray-300 py-2"
+              >
+                Voir tous les modes de recherche ↓
+              </button>
+            </div>
+          )}
+
+          {/* 4 Visual Actions - Aligned (collapsed when quick scan shown) */}
+          <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8 ${showQuickScan ? 'opacity-50 pointer-events-none' : ''}`}>
             
             {/* 1. Text Search */}
             <button

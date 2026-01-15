@@ -20,9 +20,9 @@ button:hover {
 }
 
 .nav {
-  background-color: #0f1f1f;
+  background-color: #0a1515; /* Improved contrast from #0f1f1f - WCAG AA compliant */
   padding: 10px;
-  border-bottom: 1px solid #444;
+  border-bottom: 1px solid #555; /* Improved border contrast */
 }
 
 .nav ul {
@@ -41,9 +41,10 @@ button:hover {
 }
 
 .result {
-  background: #1e2f2f;
+  background: #0f2626; /* Improved contrast from #1e2f2f - WCAG AA compliant */
   padding: 1rem;
   border-radius: 10px;
+  color: #ffffff; /* Explicit white text for better contrast */
 }
 
 .margin-top {

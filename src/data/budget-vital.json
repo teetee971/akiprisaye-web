@@ -3,7 +3,14 @@
     "version": "1.0.0",
     "description": "Budget minimum vital mensuel par profil et territoire",
     "lastUpdate": "2025-12-17",
-    "source": "Estimation basée sur données publiques et panier IEVR"
+    "source": "Estimation basée sur données publiques et panier IEVR",
+    "dataStatus": "DEMONSTRATION",
+    "warning": "⚠️ DONNÉES DE DÉMONSTRATION - À REMPLACER PAR DONNÉES OFFICIELLES",
+    "requiredSources": [
+      "INSEE - Budget des ménages",
+      "CAF - RSA par territoire",
+      "Service-public.fr - SMIC net"
+    ]
   },
   "profiles": {
     "adulte-seul": {

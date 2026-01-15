@@ -99,7 +99,7 @@ describe('Cosmetic Evaluation Service', () => {
     });
 
     it('should provide CosIng link for unknown ingredients', () => {
-      const { identified, unknown } = identifyIngredients('UNKNOWN_INGREDIENT');
+      const { unknown } = identifyIngredients('UNKNOWN_INGREDIENT');
       expect(unknown.length).toBe(1);
       expect(unknown[0].sources).toBeDefined();
       expect(unknown[0].sources[0].type).toBe('COSING');

@@ -18,6 +18,11 @@ import { getStoreWithCompany } from '../services/storeCompanyService';
 import { getCompanyById } from '../services/companyRegistryService';
 import type { StoreWithCompany } from '../services/storeCompanyService';
 import type { Company } from '../types/company';
+import { getCheapestProductsAtStore, calculateDataReliability } from '../services/storeCheapestProductsService';
+import CheapestProductsSection from '../components/store/CheapestProductsSection';
+import { useTiPanier } from '../hooks/useTiPanier';
+import { requestGeolocation } from '../utils/geolocation';
+import { calculateDistance } from '../utils/geoLocation';
 
 export default function StoreDetail() {
   const { storeId } = useParams<{ storeId: string }>();
@@ -25,6 +30,9 @@ export default function StoreDetail() {
   const [store, setStore] = useState<StoreWithCompany | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'info' | 'prices' | 'company' | 'history'>('info');
+  const [distance, setDistance] = useState<number | null>(null);
+  const [userPosition, setUserPosition] = useState<{ lat: number; lon: number } | null>(null);
+  const { count: basketCount } = useTiPanier('comparison');
 
   useEffect(() => {
     if (!storeId) {
@@ -37,6 +45,28 @@ export default function StoreDetail() {
     setStore(storeData);
     setLoading(false);
   }, [storeId]);
+
+  // Try to get user location for distance calculation
+  useEffect(() => {
+    if (!store?.coordinates) return;
+
+    requestGeolocation().then(result => {
+      if (result.success && result.position) {
+        setUserPosition({
+          lat: result.position.latitude,
+          lon: result.position.longitude,
+        });
+
+        const dist = calculateDistance(
+          result.position.latitude,
+          result.position.longitude,
+          store.coordinates.lat,
+          store.coordinates.lon
+        );
+        setDistance(dist);
+      }
+    });
+  }, [store]);
 
   if (loading) {
     return (
@@ -128,6 +158,16 @@ export default function StoreDetail() {
                       </a>
                     </div>
                   )}
+                  {distance !== null && (
+                    <div className="flex items-center gap-2 text-gray-300">
+                      <span className="text-gray-500">📏</span>
+                      <span>
+                        {distance < 1 
+                          ? `${Math.round(distance * 1000)} m` 
+                          : `${distance.toFixed(1)} km`}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -149,6 +189,31 @@ export default function StoreDetail() {
                   </div>
                 )}
               </div>
+            </div>
+
+            {/* Action Buttons - PROMPT 7 */}
+            <div className="mt-4 pt-4 border-t border-slate-800 flex flex-wrap gap-3">
+              {store.coordinates && (
+                <a
+                  href={`https://www.google.com/maps/dir/?api=1&destination=${store.coordinates.lat},${store.coordinates.lon}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 min-w-[200px] px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+                >
+                  <span>🧭</span>
+                  <span>Y aller (GPS)</span>
+                </a>
+              )}
+              
+              {basketCount > 0 && (
+                <Link
+                  to={`/comparer-panier?storeId=${store.id}`}
+                  className="flex-1 min-w-[200px] px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+                >
+                  <span>🛒</span>
+                  <span>Comparer avec mon panier ({basketCount})</span>
+                </Link>
+              )}
             </div>
           </div>
         </div>
@@ -238,26 +303,13 @@ export default function StoreDetail() {
               </div>
             )}
 
-            {/* Prices Tab */}
+            {/* Prices Tab - PROMPT 2 */}
             {activeTab === 'prices' && (
               <div className="space-y-6">
-                <div>
-                  <h3 className="text-lg font-semibold text-white mb-4">Prix moyens observés</h3>
-                  <div className="bg-slate-800 rounded-lg p-6 text-center">
-                    <div className="text-5xl mb-4">📊</div>
-                    <p className="text-gray-300 mb-2">Graphiques de prix à venir</p>
-                    <p className="text-gray-400 text-sm">
-                      Cette fonctionnalité affichera l'évolution des prix moyens observés dans cette enseigne.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="bg-blue-900/20 border border-blue-700/50 rounded-lg p-4">
-                  <p className="text-blue-200 text-sm">
-                    <strong>Méthodologie :</strong> Les prix affichés sont des moyennes calculées à partir 
-                    d'observations déclarées. Aucune promesse d'exhaustivité ou de temps réel.
-                  </p>
-                </div>
+                <CheapestProductsSection 
+                  products={getCheapestProductsAtStore(store.id, 10)}
+                  storeName={store.name}
+                />
               </div>
             )}
 

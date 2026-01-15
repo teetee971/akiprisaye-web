@@ -20,7 +20,7 @@ export const opendataRateLimiter = rateLimit({
   },
   standardHeaders: true, // Retourne rate limit info dans headers `RateLimit-*`
   legacyHeaders: false, // Désactive headers `X-RateLimit-*`
-  handler: (req, res) => {
+  handler: (_req, res) => {
     res.status(429).json({
       error: 'Rate limit exceeded',
       message:
@@ -45,7 +45,7 @@ export const opendataHeavyRateLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
-  handler: (req, res) => {
+  handler: (_req, res) => {
     res.status(429).json({
       error: 'Rate limit exceeded',
       message:

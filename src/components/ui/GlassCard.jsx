@@ -3,7 +3,6 @@
  * Card component for data display with glassmorphism
  * Includes optional header and footer sections
  */
-import React from 'react';
 import { cn } from '@/lib/utils';
 
 export function GlassCard({ 

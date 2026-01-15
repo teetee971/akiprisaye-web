@@ -3,7 +3,6 @@
  * Display badge for data source and date
  * MANDATORY: Show source and date for all data
  */
-import React from 'react';
 import { cn } from '@/lib/utils';
 
 export function DataBadge({ 
