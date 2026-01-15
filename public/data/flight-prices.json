@@ -1,11 +1,18 @@
 {
   "metadata": {
-    "version": "1.0.0",
-    "lastUpdated": "2026-01-08T00:00:00Z",
+    "version": "1.1.0",
+    "lastUpdated": "2026-01-13T23:28:00.815Z",
     "description": "Comparateur de prix des vols - DOM ↔ Métropole ↔ Régional",
     "disclaimer": "A KI PRI SA YÉ observe les prix, ne vend pas. Transparence sur les écarts, pas d'affiliation opaque.",
     "methodology": "v1.0.0",
-    "updateFrequency": "weekly"
+    "updateFrequency": "weekly",
+    "features": [
+      "Visualisations graphiques interactives",
+      "Export CSV et texte",
+      "15 observations de prix",
+      "Analyse temporelle avancée",
+      "Couverture Guadeloupe, Martinique, Guyane, Réunion"
+    ]
   },
   "airports": [
     {
@@ -109,6 +116,11 @@
       "code": "FR",
       "name": "French Bee",
       "type": "low_cost"
+    },
+    {
+      "code": "UU",
+      "name": "Air Austral",
+      "type": "regional_carrier"
     }
   ],
   "flightPrices": [
@@ -133,7 +145,7 @@
         },
         "routeType": "dom_metropole"
       },
-      "price": 485.00,
+      "price": 485,
       "currency": "EUR",
       "priceType": "economy",
       "fareConditions": {
@@ -182,7 +194,7 @@
         },
         "routeType": "dom_metropole"
       },
-      "price": 425.00,
+      "price": 425,
       "currency": "EUR",
       "priceType": "economy",
       "fareConditions": {
@@ -231,7 +243,7 @@
         },
         "routeType": "dom_metropole"
       },
-      "price": 398.00,
+      "price": 398,
       "currency": "EUR",
       "priceType": "economy",
       "fareConditions": {
@@ -257,10 +269,10 @@
       "confidence": "high",
       "verified": true,
       "additionalFees": {
-        "baggage": 45.00,
-        "seat": 15.00,
+        "baggage": 45,
+        "seat": 15,
         "booking": 0,
-        "total": 60.00
+        "total": 60
       },
       "stops": 0,
       "duration": "8h35"
@@ -286,7 +298,7 @@
         },
         "routeType": "dom_metropole"
       },
-      "price": 785.00,
+      "price": 785,
       "currency": "EUR",
       "priceType": "economy",
       "fareConditions": {
@@ -336,7 +348,7 @@
         },
         "routeType": "dom_metropole"
       },
-      "price": 720.00,
+      "price": 720,
       "currency": "EUR",
       "priceType": "economy",
       "fareConditions": {
@@ -386,7 +398,7 @@
         },
         "routeType": "dom_metropole"
       },
-      "price": 490.00,
+      "price": 490,
       "currency": "EUR",
       "priceType": "economy",
       "fareConditions": {
@@ -435,7 +447,7 @@
         },
         "routeType": "dom_metropole"
       },
-      "price": 430.00,
+      "price": 430,
       "currency": "EUR",
       "priceType": "economy",
       "fareConditions": {
@@ -484,7 +496,7 @@
         },
         "routeType": "dom_metropole"
       },
-      "price": 485.00,
+      "price": 485,
       "currency": "EUR",
       "priceType": "economy",
       "fareConditions": {
@@ -510,10 +522,10 @@
       "confidence": "high",
       "verified": true,
       "additionalFees": {
-        "baggage": 60.00,
-        "seat": 20.00,
+        "baggage": 60,
+        "seat": 20,
         "booking": 0,
-        "total": 80.00
+        "total": 80
       },
       "stops": 0,
       "duration": "11h15"
@@ -539,7 +551,7 @@
         },
         "routeType": "dom_metropole"
       },
-      "price": 625.00,
+      "price": 625,
       "currency": "EUR",
       "priceType": "economy",
       "fareConditions": {
@@ -588,7 +600,7 @@
         },
         "routeType": "inter_dom"
       },
-      "price": 85.00,
+      "price": 85,
       "currency": "EUR",
       "priceType": "economy",
       "fareConditions": {
@@ -615,7 +627,258 @@
       "verified": true,
       "stops": 0,
       "duration": "0h45"
+    },
+    {
+      "id": "flight-011",
+      "airline": "Air France",
+      "airlineCode": "AF",
+      "route": {
+        "origin": {
+          "code": "CAY",
+          "name": "Aéroport Félix Éboué",
+          "city": "Cayenne",
+          "territory": "GF",
+          "region": "DOM"
+        },
+        "destination": {
+          "code": "ORY",
+          "name": "Aéroport d'Orly",
+          "city": "Paris",
+          "territory": "FR",
+          "region": "Métropole"
+        },
+        "routeType": "dom_metropole"
+      },
+      "price": 625,
+      "currency": "EUR",
+      "priceType": "economy",
+      "fareConditions": {
+        "refundable": false,
+        "changeable": true,
+        "baggageIncluded": true,
+        "seatSelection": true
+      },
+      "timing": {
+        "purchaseDate": "2026-01-08T10:00:00Z",
+        "travelDate": "2026-03-25T08:00:00Z",
+        "daysBeforeDeparture": 75,
+        "season": "low",
+        "isHoliday": false
+      },
+      "source": {
+        "type": "user_report",
+        "observedAt": "2026-01-08T10:00:00Z",
+        "verificationMethod": "manual",
+        "reliability": "high"
+      },
+      "volume": 10,
+      "confidence": "high",
+      "verified": true,
+      "stops": 0,
+      "duration": "8h50"
+    },
+    {
+      "id": "flight-012",
+      "airline": "Corsair",
+      "airlineCode": "SS",
+      "route": {
+        "origin": {
+          "code": "PTP",
+          "name": "Aéroport Pôle Caraïbes",
+          "city": "Pointe-à-Pitre",
+          "territory": "GP",
+          "region": "DOM"
+        },
+        "destination": {
+          "code": "ORY",
+          "name": "Aéroport d'Orly",
+          "city": "Paris",
+          "territory": "FR",
+          "region": "Métropole"
+        },
+        "routeType": "dom_metropole"
+      },
+      "price": 685,
+      "currency": "EUR",
+      "priceType": "economy",
+      "fareConditions": {
+        "refundable": false,
+        "changeable": false,
+        "baggageIncluded": false,
+        "seatSelection": false
+      },
+      "timing": {
+        "purchaseDate": "2026-01-08T15:00:00Z",
+        "travelDate": "2026-08-15T12:00:00Z",
+        "daysBeforeDeparture": 218,
+        "season": "high",
+        "isHoliday": true,
+        "holidayName": "Vacances d'été"
+      },
+      "source": {
+        "type": "user_report",
+        "observedAt": "2026-01-08T15:00:00Z",
+        "verificationMethod": "manual",
+        "reliability": "high"
+      },
+      "volume": 18,
+      "confidence": "high",
+      "verified": true,
+      "additionalFees": {
+        "baggage": 45,
+        "seat": 15,
+        "booking": 0,
+        "total": 60
+      },
+      "stops": 0,
+      "duration": "8h35"
+    },
+    {
+      "id": "flight-013",
+      "airline": "Air Caraïbes",
+      "airlineCode": "TX",
+      "route": {
+        "origin": {
+          "code": "FDF",
+          "name": "Aéroport Aimé Césaire",
+          "city": "Fort-de-France",
+          "territory": "MQ",
+          "region": "DOM"
+        },
+        "destination": {
+          "code": "CAY",
+          "name": "Aéroport Félix Éboué",
+          "city": "Cayenne",
+          "territory": "GF",
+          "region": "DOM"
+        },
+        "routeType": "inter_dom"
+      },
+      "price": 195,
+      "currency": "EUR",
+      "priceType": "economy",
+      "fareConditions": {
+        "refundable": false,
+        "changeable": true,
+        "baggageIncluded": true,
+        "seatSelection": false
+      },
+      "timing": {
+        "purchaseDate": "2026-01-07T16:00:00Z",
+        "travelDate": "2026-02-20T09:00:00Z",
+        "daysBeforeDeparture": 43,
+        "season": "low",
+        "isHoliday": false
+      },
+      "source": {
+        "type": "user_report",
+        "observedAt": "2026-01-07T16:00:00Z",
+        "verificationMethod": "manual",
+        "reliability": "high"
+      },
+      "volume": 7,
+      "confidence": "high",
+      "verified": true,
+      "stops": 0,
+      "duration": "1h30"
+    },
+    {
+      "id": "flight-014",
+      "airline": "Air Austral",
+      "airlineCode": "UU",
+      "route": {
+        "origin": {
+          "code": "RUN",
+          "name": "Aéroport Roland Garros",
+          "city": "Saint-Denis",
+          "territory": "RE",
+          "region": "DOM"
+        },
+        "destination": {
+          "code": "CDG",
+          "name": "Aéroport Charles de Gaulle",
+          "city": "Paris",
+          "territory": "FR",
+          "region": "Métropole"
+        },
+        "routeType": "dom_metropole"
+      },
+      "price": 595,
+      "currency": "EUR",
+      "priceType": "economy",
+      "fareConditions": {
+        "refundable": false,
+        "changeable": true,
+        "baggageIncluded": true,
+        "seatSelection": true
+      },
+      "timing": {
+        "purchaseDate": "2026-01-09T12:00:00Z",
+        "travelDate": "2026-05-15T22:00:00Z",
+        "daysBeforeDeparture": 125,
+        "season": "shoulder",
+        "isHoliday": false
+      },
+      "source": {
+        "type": "user_report",
+        "observedAt": "2026-01-09T12:00:00Z",
+        "verificationMethod": "manual",
+        "reliability": "high"
+      },
+      "volume": 13,
+      "confidence": "high",
+      "verified": true,
+      "stops": 0,
+      "duration": "11h10"
+    },
+    {
+      "id": "flight-015",
+      "airline": "Air France",
+      "airlineCode": "AF",
+      "route": {
+        "origin": {
+          "code": "PTP",
+          "name": "Aéroport Pôle Caraïbes",
+          "city": "Pointe-à-Pitre",
+          "territory": "GP",
+          "region": "DOM"
+        },
+        "destination": {
+          "code": "CDG",
+          "name": "Aéroport Charles de Gaulle",
+          "city": "Paris",
+          "territory": "FR",
+          "region": "Métropole"
+        },
+        "routeType": "dom_metropole"
+      },
+      "price": 890,
+      "currency": "EUR",
+      "priceType": "economy",
+      "fareConditions": {
+        "refundable": false,
+        "changeable": true,
+        "baggageIncluded": true,
+        "seatSelection": true
+      },
+      "timing": {
+        "purchaseDate": "2026-01-10T10:00:00Z",
+        "travelDate": "2026-01-18T08:00:00Z",
+        "daysBeforeDeparture": 7,
+        "season": "low",
+        "isHoliday": false
+      },
+      "source": {
+        "type": "user_report",
+        "observedAt": "2026-01-10T10:00:00Z",
+        "verificationMethod": "manual",
+        "reliability": "high"
+      },
+      "volume": 5,
+      "confidence": "high",
+      "verified": true,
+      "stops": 0,
+      "duration": "8h25"
     }
   ]
 }
-

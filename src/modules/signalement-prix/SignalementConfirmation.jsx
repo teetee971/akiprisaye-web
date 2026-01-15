@@ -1,5 +1,3 @@
-import React from 'react';
-
 /**
  * Signalement Confirmation Component
  * Shows summary and final legal reminder before saving locally

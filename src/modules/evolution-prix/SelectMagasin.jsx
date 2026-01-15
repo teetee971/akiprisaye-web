@@ -1,5 +1,3 @@
-import React from 'react';
-
 /**
  * Select Magasin Component
  * Store selector with legal safeguards

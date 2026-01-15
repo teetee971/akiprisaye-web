@@ -1,4 +1,3 @@
-import React from 'react';
 import { getActiveTerritories } from '../constants/territories';
 import { TIME_SLOTS, ALL_TIME_SLOTS } from '../config/periods';
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Zap, Info } from 'lucide-react';
+import { Zap, Info, Download } from 'lucide-react';
 import {
   searchElectricityPrices,
   getTerritories,
@@ -7,6 +7,9 @@ import {
   calculateDOMMetropoleGap,
   type ElectricityPrice,
 } from '../../services/electricityPriceService';
+import PriceChart from '../../components/comparateur/PriceChart';
+import SortControl from '../../components/comparateur/SortControl';
+import ShareButton from '../../components/comparateur/ShareButton';
 
 /**
  * Module de comparaison des prix de l'électricité
@@ -20,9 +23,17 @@ export default function Electricite() {
   const [typeTarif, setTypeTarif] = useState('');
   const [results, setResults] = useState<ElectricityPrice[]>([]);
   const [showResults, setShowResults] = useState(false);
+  const [sortBy, setSortBy] = useState<string>('prixKWh');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
   const territories = getTerritories();
   const tariffTypes = getTariffTypes();
+
+  const sortOptions = [
+    { value: 'prixKWh', label: 'Prix kWh' },
+    { value: 'abonnementMensuel', label: 'Abonnement' },
+    { value: 'fournisseur', label: 'Fournisseur' },
+  ];
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,6 +44,72 @@ export default function Electricite() {
       });
       setResults(searchResults);
       setShowResults(true);
+    }
+  };
+
+  const handleSortChange = (sort: string, direction: 'asc' | 'desc') => {
+    setSortBy(sort);
+    setSortDirection(direction);
+  };
+
+  const sortedResults = [...results].sort((a, b) => {
+    let comparison = 0;
+    if (sortBy === 'prixKWh') {
+      comparison = a.prixKWh - b.prixKWh;
+    } else if (sortBy === 'abonnementMensuel') {
+      comparison = a.abonnementMensuel - b.abonnementMensuel;
+    } else if (sortBy === 'fournisseur') {
+      comparison = a.fournisseur.localeCompare(b.fournisseur);
+    }
+    return sortDirection === 'asc' ? comparison : -comparison;
+  });
+
+  const handleExport = (format: 'csv' | 'txt') => {
+    if (results.length === 0) return;
+
+    const timestamp = new Date().toISOString().split('T')[0];
+    const filename = `electricite-${territoire}-${timestamp}.${format}`;
+
+    if (format === 'csv') {
+      const headers = ['Fournisseur', 'Type Tarif', 'Prix kWh (€)', 'Abonnement Mensuel (€)', 'Date Relevé'];
+      const rows = sortedResults.map(r => [
+        r.fournisseur,
+        r.typeTarif,
+        r.prixKWh.toFixed(4),
+        r.abonnementMensuel.toFixed(2),
+        r.dateReleve,
+      ]);
+      const csv = [headers, ...rows].map(row => row.join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      link.click();
+    } else if (format === 'txt') {
+      const text = [
+        `Comparaison des prix de l'électricité - ${territoire}`,
+        `Date: ${new Date().toLocaleDateString('fr-FR')}`,
+        ``,
+        `Prix minimum: ${formatPrice(Math.min(...results.map(r => r.prixKWh)))}`,
+        `Prix maximum: ${formatPrice(Math.max(...results.map(r => r.prixKWh)))}`,
+        gap !== null ? `Écart DOM/Métropole: ${gap > 0 ? '+' : ''}${gap}%` : '',
+        ``,
+        `Détails des tarifs:`,
+        ``,
+        ...sortedResults.map(r => [
+          `Fournisseur: ${r.fournisseur}`,
+          `Type: ${r.typeTarif}`,
+          `Prix kWh: ${formatPrice(r.prixKWh)}`,
+          `Abonnement: ${formatSubscription(r.abonnementMensuel)}/mois`,
+          `Date: ${formatDate(r.dateReleve)}`,
+          ``,
+        ].join('\n')),
+      ].join('\n');
+      const blob = new Blob([text], { type: 'text/plain;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      link.click();
     }
   };
 
@@ -178,6 +255,64 @@ export default function Electricite() {
                     </div>
                   </div>
 
+                  {/* Price Chart */}
+                  <div className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5">
+                    <h2 className="text-lg font-semibold text-gray-100 mb-4">
+                      Visualisation des prix
+                    </h2>
+                    <PriceChart
+                      data={{
+                        labels: sortedResults.map(r => r.fournisseur),
+                        datasets: [
+                          {
+                            label: 'Prix kWh (€)',
+                            data: sortedResults.map(r => r.prixKWh),
+                            backgroundColor: 'rgba(250, 204, 21, 0.6)',
+                            borderColor: 'rgba(250, 204, 21, 1)',
+                            borderWidth: 2,
+                          },
+                        ],
+                      }}
+                      type="bar"
+                      title="Comparaison des prix par fournisseur"
+                      height={300}
+                    />
+                  </div>
+
+                  {/* Controls */}
+                  <div className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                      <SortControl
+                        options={sortOptions}
+                        currentSort={sortBy}
+                        currentDirection={sortDirection}
+                        onSortChange={handleSortChange}
+                      />
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleExport('csv')}
+                          className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                          aria-label="Exporter en CSV"
+                        >
+                          <Download className="w-4 h-4" />
+                          CSV
+                        </button>
+                        <button
+                          onClick={() => handleExport('txt')}
+                          className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                          aria-label="Exporter en texte"
+                        >
+                          <Download className="w-4 h-4" />
+                          TXT
+                        </button>
+                        <ShareButton
+                          title={`Prix de l'électricité - ${territoire}`}
+                          description={`Comparaison des prix de l'électricité sur ${territoire}`}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
                   {/* Results Table */}
                   <div className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 overflow-hidden">
                     <div className="p-5 border-b border-slate-700">
@@ -207,7 +342,7 @@ export default function Electricite() {
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-700/50">
-                          {results.map((result, index) => (
+                          {sortedResults.map((result, index) => (
                             <tr
                               key={index}
                               className="hover:bg-slate-800/30 transition-colors"

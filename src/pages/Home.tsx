@@ -1,3 +1,3 @@
-// Home route uses the v3 experience (scan → comprendre → comparer)
-// Keep indirection to allow future A/B or locale-specific variants.
-export { default } from './HOME_v3';
+// Home route uses the v4 experience (modern, minimalist design)
+// Clean, focused UX with single CTA and generous spacing
+export { default } from './HOME_v4';

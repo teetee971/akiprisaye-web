@@ -36,6 +36,7 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
   const {
     timeout = 15000,
     enableDebugLogging = false,
+    enableOcrFallback = true, // OCR enabled by default for better detection
   } = options;
 
   // State transition handler with logging
@@ -291,6 +292,7 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
     transitionState('processing', 'Processing uploaded image');
 
     let ean: string | null = null;
+    let detectionMethod: 'native' | 'zxing' | 'ocr' | null = null;
 
     try {
       // Step 1: Load image properly
@@ -316,6 +318,12 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
             console.log('[SCAN] 🔍 Attempting native BarcodeDetector...');
           }
           
+          setUserMessage({ 
+            type: 'info', 
+            title: 'Détection native en cours', 
+            message: 'Utilisation du détecteur natif du navigateur...' 
+          });
+          
           const detector = new (window as any).BarcodeDetector({ 
             formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e'] 
           });
@@ -323,15 +331,20 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
           
           if (codes.length > 0) {
             ean = codes[0].rawValue;
+            detectionMethod = 'native';
             if (enableDebugLogging) {
               console.log('[SCAN] ✅ Barcode detected with BarcodeDetector:', ean);
             }
+          } else if (enableDebugLogging) {
+            console.log('[SCAN] ℹ️ BarcodeDetector found no codes, trying ZXing...');
           }
         } catch (err) {
           if (enableDebugLogging) {
             console.log('[SCAN] BarcodeDetector failed, will try other methods:', err);
           }
         }
+      } else if (enableDebugLogging) {
+        console.log('[SCAN] ℹ️ Native BarcodeDetector not available, using ZXing');
       }
 
       // Step 2b: Try ZXing library if native BarcodeDetector not available or failed
@@ -340,8 +353,16 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
           if (enableDebugLogging) {
             console.log('[SCAN] 🔍 Attempting ZXing barcode detection...');
           }
+          
+          setUserMessage({ 
+            type: 'info', 
+            title: 'Détection ZXing en cours', 
+            message: 'Analyse avec bibliothèque ZXing...' 
+          });
+          
           const result = await readerRef.current.decodeFromImageUrl(imageUrl);
           ean = result.getText();
+          detectionMethod = 'zxing';
           if (enableDebugLogging) {
             console.log('[SCAN] ✅ Barcode detected with ZXing:', ean);
           }
@@ -352,8 +373,8 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
         }
       }
 
-      // Step 3: OCR Fallback (INDISPENSABLE)
-      if (!ean) {
+      // Step 3: OCR Fallback (if enabled)
+      if (!ean && enableOcrFallback) {
         if (enableDebugLogging) {
           console.log('[SCAN] 📝 Starting OCR fallback with Tesseract.js...');
         }
@@ -377,13 +398,21 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
           const match = data.text.match(/\b\d{13}\b|\b\d{8}\b/);
           if (match) {
             ean = match[0];
+            detectionMethod = 'ocr';
             if (enableDebugLogging) {
               console.log('[SCAN] ✅ EAN detected via OCR:', ean);
             }
+          } else if (enableDebugLogging) {
+            console.log('[SCAN] ⚠️ No EAN pattern found in OCR text');
           }
         } catch (ocrErr) {
           console.error('[SCAN] OCR error:', ocrErr);
+          if (enableDebugLogging) {
+            console.log('[SCAN] ⚠️ OCR fallback failed, will prompt for manual entry');
+          }
         }
+      } else if (!ean && !enableOcrFallback && enableDebugLogging) {
+        console.log('[SCAN] ℹ️ OCR fallback is disabled - skipping OCR detection');
       }
 
       // Cleanup
@@ -393,14 +422,21 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
       // Step 4: Handle result
       if (ean) {
         // SUCCESS CASE
+        // TODO: Externalize detection method names to constants or i18n for better maintainability
+        const methodName = 
+          detectionMethod === 'native' ? 'détecteur natif' :
+          detectionMethod === 'zxing' ? 'bibliothèque ZXing' :
+          detectionMethod === 'ocr' ? 'OCR Tesseract' :
+          'méthode inconnue';
+          
         setUserMessage({ 
           type: 'info', 
           title: 'Code détecté', 
-          message: `✅ Code détecté automatiquement à partir de l'image: ${ean}` 
+          message: `✅ Code détecté avec ${methodName}: ${ean}` 
         });
         
         if (enableDebugLogging) {
-          console.log('[SCAN] ✅ Final EAN to process:', ean);
+          console.log('[SCAN] ✅ Final EAN to process:', ean, 'via', detectionMethod);
         }
         
         transitionState('processing', `Barcode from image: ${ean}`);
@@ -418,14 +454,22 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
           setError('Erreur lors du traitement du code détecté');
         }
       } else {
-        // FAILURE CASE - Honest message
+        // FAILURE CASE - Honest message with helpful tips
+        // TODO: Externalize user-facing error messages to constants or i18n for better maintainability
         setError('❌ Aucun code détecté automatiquement');
         setUserMessage({ 
           type: 'warning', 
           title: 'Code non détecté', 
-          message: '❌ Aucun code détecté automatiquement. 👉 Vous pouvez saisir le code manuellement ci-dessous.' 
+          message: '❌ Aucun code détecté automatiquement. 💡 Conseils : assurez-vous que le code-barres est bien visible, net et bien éclairé. Vous pouvez aussi saisir le code manuellement ci-dessous.' 
         });
         transitionState('error', 'No barcode found in image');
+        
+        if (enableDebugLogging) {
+          console.log('[SCAN] ⚠️ Detection summary:');
+          console.log('  - Native BarcodeDetector:', 'BarcodeDetector' in window ? 'tried but no result' : 'not available');
+          console.log('  - ZXing detection: tried but no result');
+          console.log('  - OCR fallback:', enableOcrFallback ? 'tried but no EAN pattern found' : 'disabled');
+        }
         
         // PROMPT 4: Monitor scan failure from image upload
         uxMonitor.scanCompleted('barcode', false);

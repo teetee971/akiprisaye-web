@@ -1,5 +1,4 @@
-import React, { useMemo } from 'react';
-import { IndiceMarge } from './IndiceMarge';
+import { useMemo } from 'react';
 
 /**
  * Comparatif Enseignes Component

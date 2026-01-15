@@ -1,5 +1,3 @@
-import React from 'react';
-
 /**
  * Select Produit Component
  * Product selector with legal safeguards

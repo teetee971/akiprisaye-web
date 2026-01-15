@@ -1,4 +1,16 @@
 {
+  "metadata": {
+    "version": "1.0.0",
+    "description": "Indice de Lourdeur du Panier du Prix (ILPP) par territoire",
+    "lastUpdate": "2024-01-11",
+    "dataStatus": "DEMONSTRATION",
+    "warning": "⚠️ DONNÉES DE DÉMONSTRATION - À REMPLACER PAR DONNÉES OPMR",
+    "requiredSources": [
+      "OPMR - Observatoires des prix DOM-TOM",
+      "INSEE - Indice des prix à la consommation",
+      "DGCCRF - Rapports vie chère"
+    ]
+  },
   "nationalAverage": {
     "30d": 59.8,
     "90d": 61.4

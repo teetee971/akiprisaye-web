@@ -1,5 +1,3 @@
-import React from 'react';
-
 /**
  * Observation Contextuelle Component
  * Displays contextualized observation data

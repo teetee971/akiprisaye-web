@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
-import { Wifi, Info } from 'lucide-react';
+import { Wifi, Info, Download } from 'lucide-react';
 import {
   searchInternetPlanPrices,
   getTerritories,
   getTechnologies,
   type InternetPlanPrice,
 } from '../../services/internetPlanPriceService';
+import PriceChart from '../../components/comparateur/PriceChart';
+import SortControl from '../../components/comparateur/SortControl';
+import ShareButton from '../../components/comparateur/ShareButton';
 
 /**
  * Module de comparaison des prix des abonnements Internet
@@ -19,9 +22,17 @@ export default function AbonnementsInternet() {
   const [technologie, setTechnologie] = useState('');
   const [results, setResults] = useState<InternetPlanPrice[]>([]);
   const [showResults, setShowResults] = useState(false);
+  const [sortBy, setSortBy] = useState<string>('prixMensuel');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
   const territories = getTerritories();
   const technologies = getTechnologies();
+
+  const sortOptions = [
+    { value: 'prixMensuel', label: 'Prix' },
+    { value: 'operateur', label: 'Opérateur' },
+    { value: 'technologie', label: 'Technologie' },
+  ];
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,6 +43,74 @@ export default function AbonnementsInternet() {
       });
       setResults(searchResults);
       setShowResults(true);
+    }
+  };
+
+  const handleSortChange = (sort: string, direction: 'asc' | 'desc') => {
+    setSortBy(sort);
+    setSortDirection(direction);
+  };
+
+  const sortedResults = [...results].sort((a, b) => {
+    let comparison = 0;
+    if (sortBy === 'prixMensuel') {
+      comparison = a.prixMensuel - b.prixMensuel;
+    } else if (sortBy === 'operateur') {
+      comparison = a.operateur.localeCompare(b.operateur);
+    } else if (sortBy === 'technologie') {
+      comparison = a.technologie.localeCompare(b.technologie);
+    }
+    return sortDirection === 'asc' ? comparison : -comparison;
+  });
+
+  const handleExport = (format: 'csv' | 'txt') => {
+    if (results.length === 0) return;
+
+    const timestamp = new Date().toISOString().split('T')[0];
+    const filename = `internet-${territoire}-${timestamp}.${format}`;
+
+    if (format === 'csv') {
+      const headers = ['Opérateur', 'Technologie', 'Prix Mensuel (€)', 'Débit', 'Engagement', 'Date Relevé'];
+      const rows = sortedResults.map(r => [
+        r.operateur,
+        r.technologie,
+        r.prixMensuel.toFixed(2),
+        r.debitDescendant,
+        r.engagement,
+        r.dateReleve,
+      ]);
+      const csv = [headers, ...rows].map(row => row.join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      link.click();
+    } else if (format === 'txt') {
+      const text = [
+        `Comparaison des prix Internet - ${territoire}`,
+        `Date: ${new Date().toLocaleDateString('fr-FR')}`,
+        ``,
+        `Prix minimum: ${formatPrice(Math.min(...results.map(r => r.prixMensuel)))}`,
+        `Prix maximum: ${formatPrice(Math.max(...results.map(r => r.prixMensuel)))}`,
+        `Écart: ${formatPrice(Math.max(...results.map(r => r.prixMensuel)) - Math.min(...results.map(r => r.prixMensuel)))}`,
+        ``,
+        `Détails des offres:`,
+        ``,
+        ...sortedResults.map(r => [
+          `Opérateur: ${r.operateur}`,
+          `Technologie: ${r.technologie}`,
+          `Prix: ${formatPrice(r.prixMensuel)}/mois`,
+          `Débit: ${r.debitDescendant}`,
+          `Engagement: ${r.engagement}`,
+          `Date: ${formatDate(r.dateReleve)}`,
+          ``,
+        ].join('\n')),
+      ].join('\n');
+      const blob = new Blob([text], { type: 'text/plain;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      link.click();
     }
   };
 
@@ -160,6 +239,64 @@ export default function AbonnementsInternet() {
                     </div>
                   </div>
 
+                  {/* Price Chart */}
+                  <div className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5">
+                    <h2 className="text-lg font-semibold text-gray-100 mb-4">
+                      Visualisation des prix
+                    </h2>
+                    <PriceChart
+                      data={{
+                        labels: sortedResults.map(r => r.operateur),
+                        datasets: [
+                          {
+                            label: 'Prix mensuel (€)',
+                            data: sortedResults.map(r => r.prixMensuel),
+                            backgroundColor: 'rgba(59, 130, 246, 0.6)',
+                            borderColor: 'rgba(59, 130, 246, 1)',
+                            borderWidth: 2,
+                          },
+                        ],
+                      }}
+                      type="bar"
+                      title="Comparaison des prix par opérateur"
+                      height={300}
+                    />
+                  </div>
+
+                  {/* Controls */}
+                  <div className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                      <SortControl
+                        options={sortOptions}
+                        currentSort={sortBy}
+                        currentDirection={sortDirection}
+                        onSortChange={handleSortChange}
+                      />
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleExport('csv')}
+                          className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                          aria-label="Exporter en CSV"
+                        >
+                          <Download className="w-4 h-4" />
+                          CSV
+                        </button>
+                        <button
+                          onClick={() => handleExport('txt')}
+                          className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                          aria-label="Exporter en texte"
+                        >
+                          <Download className="w-4 h-4" />
+                          TXT
+                        </button>
+                        <ShareButton
+                          title={`Prix Internet - ${territoire}`}
+                          description={`Comparaison des prix des abonnements Internet sur ${territoire}`}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
                   {/* Results Table */}
                   <div className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 overflow-hidden">
                     <div className="p-5 border-b border-slate-700">
@@ -192,7 +329,7 @@ export default function AbonnementsInternet() {
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-700/50">
-                          {results.map((result, index) => (
+                          {sortedResults.map((result, index) => (
                             <tr
                               key={index}
                               className="hover:bg-slate-800/30 transition-colors"

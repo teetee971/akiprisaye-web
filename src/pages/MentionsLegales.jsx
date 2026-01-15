@@ -164,7 +164,7 @@ export default function MentionsLegales() {
                   <strong>Comment exercer vos droits :</strong> Un simple email à{' '}
                   <a href="mailto:dpo@akiprisaye.com" className="text-blue-400 hover:text-blue-300">dpo@akiprisaye.com</a>
                   {' '}ou via notre{' '}
-                  <a href="/contact.html" className="text-blue-400 hover:text-blue-300">formulaire de contact</a>
+                  <a href="/contact" className="text-blue-400 hover:text-blue-300">formulaire de contact</a>
                   {' '}suffit. Aucune procédure complexe n'est requise.
                 </p>
               </div>
@@ -297,7 +297,7 @@ export default function MentionsLegales() {
               <ul className="list-disc list-inside space-y-1">
                 <li>📧 Email : <a href="mailto:contact@akiprisaye.com" className="text-blue-400 hover:text-blue-300">contact@akiprisaye.com</a></li>
                 <li>📧 DPO : <a href="mailto:dpo@akiprisaye.com" className="text-blue-400 hover:text-blue-300">dpo@akiprisaye.com</a></li>
-                <li>📝 Formulaire : <a href="/contact.html" className="text-blue-400 hover:text-blue-300">page Contact</a></li>
+                <li>📝 Formulaire : <a href="/contact" className="text-blue-400 hover:text-blue-300">page Contact</a></li>
               </ul>
             </div>
           </section>
@@ -321,10 +321,10 @@ export default function MentionsLegales() {
           <a href="/" className="hover:text-white transition-colors">
             Accueil
           </a>
-          <a href="/contact.html" className="hover:text-white transition-colors">
+          <a href="/contact" className="hover:text-white transition-colors">
             Contact
           </a>
-          <a href="/faq.html" className="hover:text-white transition-colors">
+          <a href="/faq" className="hover:text-white transition-colors">
             FAQ
           </a>
         </div>

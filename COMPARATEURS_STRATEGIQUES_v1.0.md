@@ -1,4 +1,4 @@
-# 📊 Comparateurs Stratégiques — Documentation v1.0
+# 📊 Comparateurs Stratégiques — Documentation v1.1
 
 ## 🎯 Vision & Philosophie
 
@@ -10,6 +10,8 @@
 - ✅ **Données sourcées** et vérifiables
 - ✅ **Méthodologie documentée** et accessible
 - ❌ **Aucune recommandation commerciale**
+- ✅ **Visualisations graphiques** pour une meilleure compréhension
+- ✅ **Export des données** pour utilisation personnelle
 
 ---
 
@@ -24,6 +26,18 @@
 - Sujet médiatique et politique majeur
 - Forte variabilité des prix → valeur immédiate pour les citoyens
 - ROI citoyen : **TRÈS ÉLEVÉ**
+
+#### Nouvelles fonctionnalités (v1.1)
+- 📊 **Visualisations graphiques interactives**
+  - Comparaison visuelle des prix par compagnie
+  - Graphique des frais supplémentaires
+  - Analyse temporelle du moment d'achat
+  - Évolution des prix selon l'anticipation
+- 📥 **Export des résultats**
+  - Format CSV pour tableurs (Excel, Google Sheets)
+  - Format texte pour impression ou partage
+  - Toutes les statistiques incluses
+- 📱 **Interface responsive** optimisée pour mobile
 
 #### Comparaisons incluses :
 1. **Prix par route**
@@ -79,6 +93,17 @@ Résultat :
 - Peu de comparateurs neutres existants
 - Données plus stables → fiabilité rapide
 - **Crédibilité territoriale forte**
+
+#### Nouvelles fonctionnalités (v1.1)
+- 📊 **Visualisations graphiques**
+  - Comparaison des prix passagers par opérateur
+  - Comparaison des prix véhicules (voiture, moto)
+  - Graphiques interactifs et clairs
+- 📥 **Export des résultats**
+  - Format CSV avec prix passagers et véhicules
+  - Format texte avec résumé complet
+  - Statistiques de fréquence et capacité
+- 📱 **Interface mobile optimisée**
 
 #### Cas d'usage couverts :
 
@@ -361,6 +386,27 @@ Route : `/methodologie`
 ---
 
 ## 📝 Changelog
+
+### v1.1.0 (2026-01-13)
+- ✅ **Visualisations graphiques** ajoutées
+  - Graphiques interactifs avec Chart.js
+  - Comparaison visuelle des prix par compagnie/opérateur
+  - Analyse temporelle pour les vols
+  - Comparaison des prix véhicules pour les bateaux
+- ✅ **Fonctionnalités d'export**
+  - Export CSV pour analyse dans Excel/Sheets
+  - Export texte formaté pour impression
+  - Inclut toutes les statistiques et analyses
+- ✅ **Données enrichies**
+  - Plus de routes de vols (15 observations vs 10)
+  - Plus de routes de bateaux (8 observations vs 6)
+  - Couverture améliorée : Cayenne, Réunion, Marie-Galante
+  - Compagnie Air Austral ajoutée
+  - Opérateur Val'Ferry ajouté
+- ✅ **Améliorations UX**
+  - Interface responsive optimisée mobile
+  - Composants réutilisables
+  - Meilleure présentation des données
 
 ### v1.0.0 (2026-01-08)
 - ✅ Implémentation comparateur vols (DOM ↔ Métropole)

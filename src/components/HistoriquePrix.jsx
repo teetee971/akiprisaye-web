@@ -10,7 +10,6 @@
  */
 
 import { useState } from 'react';
-import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -21,7 +20,6 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import { Card } from './card.jsx';
 import pricesHistory from '../data/prices-history.json';
 
 ChartJS.register(
@@ -146,6 +144,14 @@ export function HistoriquePrix({ productId = null, territory = 'GP' }) {
 
   return (
     <div className="space-y-6">
+      {/* Data Source Warning */}
+      {pricesHistory.metadata.dataStatus !== 'OFFICIEL' && (
+        <DataSourceWarning 
+          dataStatus={pricesHistory.metadata.dataStatus}
+          requiredSources={pricesHistory.metadata.requiredSources}
+        />
+      )}
+
       {/* Header */}
       <div className="bg-gradient-to-r from-purple-600 to-purple-800 rounded-lg p-6 text-white">
         <h2 className="text-2xl font-bold mb-2">

@@ -14,7 +14,6 @@
 
 import { db } from '../lib/firebase';
 import { collection, doc, getDoc, getDocs, query, where, orderBy, limit } from 'firebase/firestore';
-import { calculateDistance } from '../utils/geoLocation';
 
 /**
  * Get product by EAN from Firestore
@@ -257,7 +256,7 @@ export function getPriceDataFreshness(capturedAt) {
  * Mock price data for development
  * IMPORTANT: This should NEVER be used in production
  */
-export function getMockPricesForProduct(ean, territory) {
+export function getMockPricesForProduct(_ean, _territory) {
   console.warn('⚠️ Using MOCK price data - This should NOT happen in production!');
   
   // Return empty array by default - NO FAKE PRICES

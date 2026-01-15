@@ -43,7 +43,7 @@ async function main() {
   if (metadataJson) {
     try {
       metadata = JSON.parse(metadataJson);
-    } catch (e) {
+    } catch {
       console.error(`❌ Métadonnées JSON invalides: ${metadataJson}`);
       process.exit(1);
     }

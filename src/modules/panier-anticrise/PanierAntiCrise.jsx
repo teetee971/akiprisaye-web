@@ -1,6 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { ScoreAntiCrise } from './ScoreAntiCrise';
-import { PanierTimeline } from './PanierTimeline';
+import { useState, useEffect } from 'react';
 
 /**
  * Panier Anti-Crise Component

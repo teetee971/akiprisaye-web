@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Ship, TrendingUp, TrendingDown, AlertCircle, Info, Calendar, DollarSign, Clock, Car } from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Ship, AlertCircle, Info, Car, BarChart3, Download, FileText } from 'lucide-react';
 import type {
   BoatPricePoint,
   BoatComparisonResult,
@@ -8,9 +8,13 @@ import type {
 } from '../types/boatComparison';
 import {
   compareBoatPricesByRoute,
-  filterBoatPrices,
-  calculatePotentialSavings,
 } from '../services/boatComparisonService';
+import PriceChart from '../components/comparateur/PriceChart';
+import ComparisonSummary from '../components/comparateur/ComparisonSummary';
+import LoadingSkeleton from '../components/comparateur/LoadingSkeleton';
+import SortControl from '../components/comparateur/SortControl';
+import ShareButton from '../components/comparateur/ShareButton';
+import { exportBoatComparisonToCSV, exportBoatComparisonToText } from '../utils/exportComparison';
 
 const BoatComparator: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -20,7 +24,8 @@ const BoatComparator: React.FC = () => {
   const [selectedOrigin, setSelectedOrigin] = useState<string>('PTP-PORT');
   const [selectedDestination, setSelectedDestination] = useState<string>('FDF-PORT');
   const [comparisonResult, setComparisonResult] = useState<BoatComparisonResult | null>(null);
-  const [showVehicleTransport, setShowVehicleTransport] = useState(false);
+  const [sortBy, setSortBy] = useState<'price' | 'duration' | 'operator'>('price');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
   useEffect(() => {
     loadBoatData();
@@ -123,13 +128,125 @@ const BoatComparator: React.FC = () => {
     }
   };
 
+  // Prepare chart data for passenger price comparison
+  const passengerPriceChartData = useMemo(() => {
+    if (!comparisonResult) return null;
+
+    const labels = comparisonResult.operators.map(r => r.boatPrice.operator);
+    const prices = comparisonResult.operators.map(r => r.boatPrice.pricing.passengerPrice);
+
+    return {
+      labels,
+      datasets: [
+        {
+          label: 'Prix passager adulte',
+          data: prices,
+          backgroundColor: 'rgba(59, 130, 246, 0.6)',
+          borderColor: 'rgba(59, 130, 246, 1)',
+          borderWidth: 1,
+        },
+      ],
+    };
+  }, [comparisonResult]);
+
+  // Prepare chart data for vehicle price comparison
+  const vehiclePriceChartData = useMemo(() => {
+    if (!comparisonResult) return null;
+
+    const operatorsWithVehicles = comparisonResult.operators.filter(
+      r => r.boatPrice.pricing.vehiclePrice
+    );
+
+    if (operatorsWithVehicles.length === 0) return null;
+
+    const labels = operatorsWithVehicles.map(r => r.boatPrice.operator);
+    const carPrices = operatorsWithVehicles.map(r => r.boatPrice.pricing.vehiclePrice?.car || 0);
+    const motorcyclePrices = operatorsWithVehicles.map(r => r.boatPrice.pricing.vehiclePrice?.motorcycle || 0);
+
+    return {
+      labels,
+      datasets: [
+        {
+          label: 'Voiture',
+          data: carPrices,
+          backgroundColor: 'rgba(34, 197, 94, 0.6)',
+          borderColor: 'rgba(34, 197, 94, 1)',
+          borderWidth: 1,
+        },
+        {
+          label: 'Moto',
+          data: motorcyclePrices,
+          backgroundColor: 'rgba(168, 85, 247, 0.6)',
+          borderColor: 'rgba(168, 85, 247, 1)',
+          borderWidth: 1,
+        },
+      ],
+    };
+  }, [comparisonResult]);
+
+  // Sorted operators for display
+  const sortedOperators = useMemo(() => {
+    if (!comparisonResult) return [];
+    
+    const sorted = [...comparisonResult.operators].sort((a, b) => {
+      let comparison = 0;
+      
+      switch (sortBy) {
+        case 'price':
+          comparison = a.boatPrice.pricing.passengerPrice - b.boatPrice.pricing.passengerPrice;
+          break;
+        case 'duration':
+          const aDuration = parseDuration(a.boatPrice.schedule.duration);
+          const bDuration = parseDuration(b.boatPrice.schedule.duration);
+          comparison = aDuration - bDuration;
+          break;
+        case 'operator':
+          comparison = a.boatPrice.operator.localeCompare(b.boatPrice.operator);
+          break;
+      }
+      
+      return sortDirection === 'asc' ? comparison : -comparison;
+    });
+    
+    return sorted;
+  }, [comparisonResult, sortBy, sortDirection]);
+
+  const parseDuration = (duration: string): number => {
+    const match = duration.match(/(\d+)h(\d+)?/);
+    if (!match) return 0;
+    const hours = parseInt(match[1], 10);
+    const minutes = match[2] ? parseInt(match[2], 10) : 0;
+    return hours * 60 + minutes;
+  };
+
+  const handleSortChange = (sort: string, direction: 'asc' | 'desc') => {
+    setSortBy(sort as 'price' | 'duration' | 'operator');
+    setSortDirection(direction);
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="text-center">
-          <Ship className="w-12 h-12 text-blue-400 animate-pulse mx-auto mb-4" />
-          <p className="text-gray-300">Chargement des données des bateaux...</p>
-        </div>
+      <div className="min-h-screen bg-slate-950">
+        <header className="bg-gradient-to-r from-slate-900 to-slate-800 border-b border-slate-700">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div className="flex items-center gap-3 mb-3">
+              <Ship className="w-8 h-8 text-blue-400" />
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-100">
+                Comparateur de prix des bateaux/ferries
+              </h1>
+            </div>
+          </div>
+        </header>
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="space-y-6">
+            <div className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5">
+              <LoadingSkeleton type="stats" />
+            </div>
+            <div className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5">
+              <LoadingSkeleton type="card" count={3} />
+            </div>
+          </div>
+        </main>
       </div>
     );
   }
@@ -261,6 +378,19 @@ const BoatComparator: React.FC = () => {
           {/* Comparison Results */}
           {comparisonResult ? (
             <>
+              {/* Quick Summary */}
+              <ComparisonSummary
+                bestPrice={comparisonResult.aggregation.passengerPricing.minPrice}
+                worstPrice={comparisonResult.aggregation.passengerPricing.maxPrice}
+                averagePrice={comparisonResult.aggregation.passengerPricing.averagePrice}
+                savingsPercentage={
+                  ((comparisonResult.aggregation.passengerPricing.maxPrice - comparisonResult.aggregation.passengerPricing.minPrice) / 
+                  comparisonResult.aggregation.passengerPricing.maxPrice) * 100
+                }
+                bestProvider={comparisonResult.operators[0].boatPrice.operator}
+                totalObservations={comparisonResult.aggregation.totalObservations}
+              />
+
               {/* Aggregation Stats */}
               <section className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5">
                 <h2 className="text-lg font-semibold text-gray-100 mb-4">Statistiques</h2>
@@ -324,16 +454,62 @@ const BoatComparator: React.FC = () => {
                 )}
               </section>
 
-              {/* Operators Comparison */}
+              {/* Export & Share Options */}
               <section className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5">
                 <h2 className="text-lg font-semibold text-gray-100 mb-4">
-                  Comparaison par opérateur ({comparisonResult.operators.length})
+                  📥 Exporter et partager
                 </h2>
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    onClick={() => exportBoatComparisonToCSV(comparisonResult)}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                    aria-label="Exporter en CSV"
+                  >
+                    <Download className="w-4 h-4" />
+                    Exporter CSV
+                  </button>
+                  <button
+                    onClick={() => exportBoatComparisonToText(comparisonResult)}
+                    className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                    aria-label="Exporter en texte"
+                  >
+                    <FileText className="w-4 h-4" />
+                    Exporter Texte
+                  </button>
+                  <ShareButton
+                    title={`Comparateur bateaux ${comparisonResult.operators[0]?.boatPrice.route.origin.city} → ${comparisonResult.operators[0]?.boatPrice.route.destination.city}`}
+                    description={`Comparez les prix des ferries et économisez!`}
+                  />
+                </div>
+                <p className="text-xs text-gray-400 mt-3">
+                  Téléchargez ou partagez les résultats de la comparaison.
+                </p>
+              </section>
+
+              {/* Operators Comparison */}
+              <section className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+                  <h2 className="text-lg font-semibold text-gray-100">
+                    Comparaison par opérateur ({comparisonResult.operators.length})
+                  </h2>
+                  <SortControl
+                    options={[
+                      { value: 'price', label: 'Prix' },
+                      { value: 'duration', label: 'Durée' },
+                      { value: 'operator', label: 'Opérateur' },
+                    ]}
+                    currentSort={sortBy}
+                    currentDirection={sortDirection}
+                    onSortChange={handleSortChange}
+                  />
+                </div>
                 <div className="space-y-3">
-                  {comparisonResult.operators.map((ranking) => (
+                  {sortedOperators.map((ranking) => (
                     <div
                       key={ranking.boatPrice.id}
                       className={`border rounded-lg p-4 ${getPriceCategoryColor(ranking.priceCategory)}`}
+                      role="article"
+                      aria-label={`Ferry ${ranking.boatPrice.operator} à ${formatPrice(ranking.boatPrice.pricing.passengerPrice)}`}
                     >
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1">
@@ -442,6 +618,38 @@ const BoatComparator: React.FC = () => {
                   ))}
                 </div>
               </section>
+
+              {/* Passenger Price Comparison Chart */}
+              {passengerPriceChartData && (
+                <section className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5">
+                  <h2 className="text-lg font-semibold text-gray-100 mb-4 flex items-center gap-2">
+                    <BarChart3 className="w-5 h-5" />
+                    Comparaison visuelle des prix passagers
+                  </h2>
+                  <PriceChart
+                    data={passengerPriceChartData}
+                    type="bar"
+                    title="Prix passager adulte par opérateur"
+                    height={300}
+                  />
+                </section>
+              )}
+
+              {/* Vehicle Price Comparison Chart */}
+              {vehiclePriceChartData && (
+                <section className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5">
+                  <h2 className="text-lg font-semibold text-gray-100 mb-4 flex items-center gap-2">
+                    <Car className="w-5 h-5" />
+                    Comparaison des prix véhicules
+                  </h2>
+                  <PriceChart
+                    data={vehiclePriceChartData}
+                    type="bar"
+                    title="Prix transport véhicules par opérateur"
+                    height={300}
+                  />
+                </section>
+              )}
 
               {/* Vehicle Transport Analysis */}
               {comparisonResult.vehicleTransportAnalysis && (

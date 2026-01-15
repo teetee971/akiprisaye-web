@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { TimelinePrix } from './TimelinePrix';
+import { useState, useEffect } from 'react';
 
 /**
  * Historique Variations Component

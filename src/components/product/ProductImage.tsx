@@ -4,16 +4,21 @@
  * Features:
  * - Responsive images with srcset
  * - Lazy loading for performance
- * - Fallback placeholders
+ * - Category-based fallback placeholders
  * - Optimized for high-DPI screens (516 DPI on S24+)
+ * - Automatic image enrichment from Open Food Facts
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { ProductImages } from '../../types/enhancedPrice';
+import { createFallbackImage, generateLoadingPlaceholder, generateErrorPlaceholder } from '../../services/productImageFallback';
+import type { ProductCategory } from '../../types/product';
 
 interface ProductImageProps {
   images?: ProductImages;
   productName: string;
+  category?: ProductCategory | string;
+  barcode?: string;
   size?: 'thumbnail' | 'card' | 'full';
   className?: string;
   alt?: string;
@@ -23,6 +28,8 @@ interface ProductImageProps {
 export default function ProductImage({
   images,
   productName,
+  category,
+  barcode,
   size = 'card',
   className = '',
   alt,
@@ -30,11 +37,20 @@ export default function ProductImage({
 }: ProductImageProps) {
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [fallbackImage, setFallbackImage] = useState<string | null>(null);
+  
+  // Generate fallback image on mount or when category changes
+  useEffect(() => {
+    if (!images || imageError) {
+      const fallback = createFallbackImage(category, productName);
+      setFallbackImage(size === 'thumbnail' ? fallback.thumbnailUrl : fallback.url);
+    }
+  }, [images, imageError, category, productName, size]);
   
   // Get appropriate image URL based on size
   const getImageUrl = () => {
     if (!images || imageError) {
-      return images?.fallback || `https://via.placeholder.com/400x400/e0e0e0/757575?text=${encodeURIComponent(productName)}`;
+      return fallbackImage || images?.fallback || generateErrorPlaceholder();
     }
     
     switch (size) {
@@ -84,24 +100,14 @@ export default function ProductImage({
   
   return (
     <div className={`relative overflow-hidden bg-gray-100 ${className}`}>
-      {/* Loading skeleton */}
-      {!imageLoaded && (
-        <div className={`absolute inset-0 ${sizeClasses[size]} animate-pulse bg-gray-200`}>
-          <div className="flex items-center justify-center h-full">
-            <svg
-              className="w-10 h-10 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-              />
-            </svg>
-          </div>
+      {/* Loading placeholder */}
+      {!imageLoaded && !imageError && (
+        <div className={`absolute inset-0 ${sizeClasses[size]}`}>
+          <img
+            src={generateLoadingPlaceholder(size === 'thumbnail' ? 100 : 200)}
+            alt="Chargement..."
+            className="w-full h-full object-contain"
+          />
         </div>
       )}
       
@@ -119,16 +125,18 @@ export default function ProductImage({
       />
       
       {/* Attribution badge (for Open Food Facts images) */}
-      {images && !imageError && images.source === 'openfoodfacts' && size === 'full' && (
-        <div className="absolute bottom-2 right-2 bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded">
-          📸 Open Food Facts
+      {images && !imageError && images.source === 'openfoodfacts' && (size === 'full' || size === 'card') && (
+        <div className="absolute bottom-2 right-2 bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded flex items-center gap-1">
+          <span role="img" aria-label="Photo">📸</span>
+          <span>Open Food Facts</span>
         </div>
       )}
       
-      {/* Error state indicator */}
-      {imageError && (
-        <div className="absolute top-2 right-2 bg-yellow-500 text-white text-xs px-2 py-1 rounded">
-          Image non disponible
+      {/* Fallback indicator */}
+      {imageError && fallbackImage && size !== 'thumbnail' && (
+        <div className="absolute top-2 right-2 bg-blue-500 text-white text-xs px-2 py-1 rounded flex items-center gap-1">
+          <span role="img" aria-label="Catégorie">🏷️</span>
+          <span>Image par catégorie</span>
         </div>
       )}
     </div>

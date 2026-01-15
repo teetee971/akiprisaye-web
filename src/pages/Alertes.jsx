@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import TerritorySelector from '../components/TerritorySelector';
 
 export default function Alertes() {
   const [selectedTerritory, setSelectedTerritory] = useState('GP');
@@ -103,10 +102,16 @@ export default function Alertes() {
           <div className="bg-[#1e1e1e] rounded-xl border border-gray-700 p-6">
             <h2 className="text-xl font-semibold mb-4">🌍 Filtrer par territoire</h2>
             <div className="max-w-md">
-              <TerritorySelector 
+              <select 
                 value={selectedTerritory}
-                onChange={setSelectedTerritory}
-              />
+                onChange={(e) => setSelectedTerritory(e.target.value)}
+                className="w-full p-2 rounded bg-gray-800 border border-gray-700"
+              >
+                <option value="ALL">Tous les territoires</option>
+                <option value="GP">Guadeloupe</option>
+                <option value="MQ">Martinique</option>
+                <option value="RE">Réunion</option>
+              </select>
             </div>
           </div>
         </div>

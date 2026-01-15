@@ -1,6 +1,3 @@
-import NewsWidgetCivic from '../components/NewsWidgetCivic';
-import TerritorySelector from '../components/TerritorySelector';
-import GlobalDisclaimer from '../components/GlobalDisclaimer';
 import { useState } from 'react';
 
 export default function Actualites() {
@@ -37,26 +34,27 @@ export default function Actualites() {
               🗺️ Filtrer par territoire
             </h2>
             <div className="max-w-md">
-              <TerritorySelector 
+              <select 
                 value={selectedTerritory}
-                onChange={setSelectedTerritory}
-              />
+                onChange={(e) => setSelectedTerritory(e.target.value)}
+                className="w-full p-2 rounded bg-white/10 border border-white/20"
+              >
+                <option value="">Tous les territoires</option>
+              </select>
             </div>
           </div>
         </div>
 
         {/* News Grid */}
         <div className="mb-12">
-          <NewsWidgetCivic 
-            limit={12} 
-            showFullButton={false}
-            territory={selectedTerritory}
-          />
+          <p className="text-gray-400">Actualités à venir (filtre: {selectedTerritory || 'tous'})</p>
         </div>
 
         {/* Info Section - Civic Transparency */}
         <div className="mt-12">
-          <GlobalDisclaimer />
+          <div className="bg-white/[0.05] backdrop-blur-[14px] border border-white/[0.12] rounded-xl p-6">
+            <p className="text-gray-300">Transparence civique et données officielles</p>
+          </div>
         </div>
       </main>
 

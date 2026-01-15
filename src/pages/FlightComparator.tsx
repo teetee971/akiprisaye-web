@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Plane, TrendingUp, TrendingDown, AlertCircle, Info, Calendar, DollarSign, Clock } from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Plane, AlertCircle, Info, Clock, BarChart3, Download, FileText } from 'lucide-react';
 import type {
   FlightPricePoint,
   FlightComparisonResult,
@@ -9,8 +9,13 @@ import type {
 import {
   compareFlightPricesByRoute,
   filterFlightPrices,
-  calculatePotentialSavings,
 } from '../services/flightComparisonService';
+import PriceChart from '../components/comparateur/PriceChart';
+import ComparisonSummary from '../components/comparateur/ComparisonSummary';
+import LoadingSkeleton from '../components/comparateur/LoadingSkeleton';
+import SortControl from '../components/comparateur/SortControl';
+import ShareButton from '../components/comparateur/ShareButton';
+import { exportFlightComparisonToCSV, exportFlightComparisonToText } from '../utils/exportComparison';
 
 const FlightComparator: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -22,6 +27,8 @@ const FlightComparator: React.FC = () => {
   const [comparisonResult, setComparisonResult] = useState<FlightComparisonResult | null>(null);
   const [filterSeason, setFilterSeason] = useState<'all' | 'high' | 'low' | 'shoulder'>('all');
   const [filterPriceType, setFilterPriceType] = useState<'all' | 'economy'>('economy');
+  const [sortBy, setSortBy] = useState<'price' | 'duration' | 'airline'>('price');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
   useEffect(() => {
     loadFlightData();
@@ -134,13 +141,137 @@ const FlightComparator: React.FC = () => {
     }
   };
 
+  // Prepare chart data for price comparison
+  const priceComparisonChartData = useMemo(() => {
+    if (!comparisonResult) return null;
+
+    const labels = comparisonResult.airlines.map(r => r.flightPrice.airline);
+    const prices = comparisonResult.airlines.map(r => r.flightPrice.price);
+    const additionalFees = comparisonResult.airlines.map(r => r.flightPrice.additionalFees?.total || 0);
+
+    return {
+      labels,
+      datasets: [
+        {
+          label: 'Prix de base',
+          data: prices,
+          backgroundColor: 'rgba(59, 130, 246, 0.6)',
+          borderColor: 'rgba(59, 130, 246, 1)',
+          borderWidth: 1,
+        },
+        {
+          label: 'Frais supplémentaires',
+          data: additionalFees,
+          backgroundColor: 'rgba(249, 115, 22, 0.6)',
+          borderColor: 'rgba(249, 115, 22, 1)',
+          borderWidth: 1,
+        },
+      ],
+    };
+  }, [comparisonResult]);
+
+  // Prepare chart data for timing analysis
+  const timingAnalysisChartData = useMemo(() => {
+    if (!comparisonResult?.purchaseTimingAnalysis) return null;
+
+    const buckets = comparisonResult.purchaseTimingAnalysis.timingBuckets.filter(b => b.observationCount > 0);
+    const labels = buckets.map(b => b.label);
+    const avgPrices = buckets.map(b => b.averagePrice);
+    const minPrices = buckets.map(b => b.minPrice);
+    const maxPrices = buckets.map(b => b.maxPrice);
+
+    return {
+      labels,
+      datasets: [
+        {
+          label: 'Prix moyen',
+          data: avgPrices,
+          backgroundColor: 'rgba(59, 130, 246, 0.6)',
+          borderColor: 'rgba(59, 130, 246, 1)',
+          borderWidth: 2,
+        },
+        {
+          label: 'Prix minimum',
+          data: minPrices,
+          backgroundColor: 'rgba(34, 197, 94, 0.6)',
+          borderColor: 'rgba(34, 197, 94, 1)',
+          borderWidth: 2,
+        },
+        {
+          label: 'Prix maximum',
+          data: maxPrices,
+          backgroundColor: 'rgba(239, 68, 68, 0.6)',
+          borderColor: 'rgba(239, 68, 68, 1)',
+          borderWidth: 2,
+        },
+      ],
+    };
+  }, [comparisonResult]);
+
+  // Sorted airlines for display
+  const sortedAirlines = useMemo(() => {
+    if (!comparisonResult) return [];
+    
+    const sorted = [...comparisonResult.airlines].sort((a, b) => {
+      let comparison = 0;
+      
+      switch (sortBy) {
+        case 'price':
+          comparison = a.flightPrice.price - b.flightPrice.price;
+          break;
+        case 'duration':
+          // Parse duration string (e.g., "8h30" -> minutes)
+          const aDuration = parseDuration(a.flightPrice.duration);
+          const bDuration = parseDuration(b.flightPrice.duration);
+          comparison = aDuration - bDuration;
+          break;
+        case 'airline':
+          comparison = a.flightPrice.airline.localeCompare(b.flightPrice.airline);
+          break;
+      }
+      
+      return sortDirection === 'asc' ? comparison : -comparison;
+    });
+    
+    return sorted;
+  }, [comparisonResult, sortBy, sortDirection]);
+
+  const parseDuration = (duration: string): number => {
+    const match = duration.match(/(\d+)h(\d+)?/);
+    if (!match) return 0;
+    const hours = parseInt(match[1], 10);
+    const minutes = match[2] ? parseInt(match[2], 10) : 0;
+    return hours * 60 + minutes;
+  };
+
+  const handleSortChange = (sort: string, direction: 'asc' | 'desc') => {
+    setSortBy(sort as 'price' | 'duration' | 'airline');
+    setSortDirection(direction);
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="text-center">
-          <Plane className="w-12 h-12 text-blue-400 animate-pulse mx-auto mb-4" />
-          <p className="text-gray-300">Chargement des données de vols...</p>
-        </div>
+      <div className="min-h-screen bg-slate-950">
+        <header className="bg-gradient-to-r from-slate-900 to-slate-800 border-b border-slate-700">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div className="flex items-center gap-3 mb-3">
+              <Plane className="w-8 h-8 text-blue-400" />
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-100">
+                Comparateur de prix des vols
+              </h1>
+            </div>
+          </div>
+        </header>
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="space-y-6">
+            <div className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5">
+              <LoadingSkeleton type="stats" />
+            </div>
+            <div className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5">
+              <LoadingSkeleton type="card" count={3} />
+            </div>
+          </div>
+        </main>
       </div>
     );
   }
@@ -277,6 +408,24 @@ const FlightComparator: React.FC = () => {
           {/* Comparison Results */}
           {comparisonResult ? (
             <>
+              {/* Quick Summary */}
+              <ComparisonSummary
+                bestPrice={comparisonResult.aggregation.minPrice}
+                worstPrice={comparisonResult.aggregation.maxPrice}
+                averagePrice={comparisonResult.aggregation.averagePrice}
+                savingsPercentage={comparisonResult.aggregation.priceRangePercentage}
+                bestProvider={comparisonResult.airlines[0].flightPrice.airline}
+                totalObservations={comparisonResult.aggregation.totalObservations}
+                bestTiming={
+                  comparisonResult.purchaseTimingAnalysis?.optimalPurchaseWindow
+                    ? {
+                        label: 'Fenêtre optimale',
+                        daysRange: `${comparisonResult.purchaseTimingAnalysis.optimalPurchaseWindow.daysBeforeDeparture.min}-${comparisonResult.purchaseTimingAnalysis.optimalPurchaseWindow.daysBeforeDeparture.max} jours avant`,
+                      }
+                    : undefined
+                }
+              />
+
               {/* Aggregation Stats */}
               <section className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5">
                 <h2 className="text-lg font-semibold text-gray-100 mb-4">Statistiques</h2>
@@ -338,16 +487,62 @@ const FlightComparator: React.FC = () => {
                 )}
               </section>
 
-              {/* Airlines Comparison */}
+              {/* Export & Share Options */}
               <section className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5">
                 <h2 className="text-lg font-semibold text-gray-100 mb-4">
-                  Comparaison par compagnie ({comparisonResult.airlines.length})
+                  📥 Exporter et partager
                 </h2>
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    onClick={() => exportFlightComparisonToCSV(comparisonResult)}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                    aria-label="Exporter en CSV"
+                  >
+                    <Download className="w-4 h-4" />
+                    Exporter CSV
+                  </button>
+                  <button
+                    onClick={() => exportFlightComparisonToText(comparisonResult)}
+                    className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                    aria-label="Exporter en texte"
+                  >
+                    <FileText className="w-4 h-4" />
+                    Exporter Texte
+                  </button>
+                  <ShareButton
+                    title={`Comparateur vols ${comparisonResult.airlines[0]?.flightPrice.route.origin.city} → ${comparisonResult.airlines[0]?.flightPrice.route.destination.city}`}
+                    description={`Économisez jusqu'à ${comparisonResult.aggregation.priceRangePercentage.toFixed(1)}% sur votre billet d'avion!`}
+                  />
+                </div>
+                <p className="text-xs text-gray-400 mt-3">
+                  Téléchargez ou partagez les résultats de la comparaison.
+                </p>
+              </section>
+
+              {/* Airlines Comparison */}
+              <section className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+                  <h2 className="text-lg font-semibold text-gray-100">
+                    Comparaison par compagnie ({comparisonResult.airlines.length})
+                  </h2>
+                  <SortControl
+                    options={[
+                      { value: 'price', label: 'Prix' },
+                      { value: 'duration', label: 'Durée' },
+                      { value: 'airline', label: 'Compagnie' },
+                    ]}
+                    currentSort={sortBy}
+                    currentDirection={sortDirection}
+                    onSortChange={handleSortChange}
+                  />
+                </div>
                 <div className="space-y-3">
-                  {comparisonResult.airlines.map((ranking) => (
+                  {sortedAirlines.map((ranking) => (
                     <div
                       key={ranking.flightPrice.id}
                       className={`border rounded-lg p-4 ${getPriceCategoryColor(ranking.priceCategory)}`}
+                      role="article"
+                      aria-label={`Vol ${ranking.flightPrice.airline} à ${formatPrice(ranking.flightPrice.price)}`}
                     >
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1">
@@ -430,6 +625,22 @@ const FlightComparator: React.FC = () => {
                 </div>
               </section>
 
+              {/* Price Comparison Chart */}
+              {priceComparisonChartData && (
+                <section className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5">
+                  <h2 className="text-lg font-semibold text-gray-100 mb-4 flex items-center gap-2">
+                    <BarChart3 className="w-5 h-5" />
+                    Comparaison visuelle des prix
+                  </h2>
+                  <PriceChart
+                    data={priceComparisonChartData}
+                    type="bar"
+                    title="Prix par compagnie (avec frais supplémentaires)"
+                    height={350}
+                  />
+                </section>
+              )}
+
               {/* Purchase Timing Analysis */}
               {comparisonResult.purchaseTimingAnalysis && (
                 <section className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5">
@@ -490,6 +701,18 @@ const FlightComparator: React.FC = () => {
                         Économie potentielle :{' '}
                         {comparisonResult.purchaseTimingAnalysis.optimalPurchaseWindow.savingsPercentage.toFixed(1)}%
                       </p>
+                    </div>
+                  )}
+
+                  {/* Timing Chart */}
+                  {timingAnalysisChartData && (
+                    <div className="mt-4">
+                      <PriceChart
+                        data={timingAnalysisChartData}
+                        type="bar"
+                        title="Évolution des prix selon le moment d'achat"
+                        height={300}
+                      />
                     </div>
                   )}
                 </section>

@@ -1,11 +1,18 @@
 {
   "metadata": {
-    "version": "1.0.0",
-    "lastUpdated": "2026-01-08T00:00:00Z",
+    "version": "1.1.0",
+    "lastUpdated": "2026-01-13T23:28:00.816Z",
     "description": "Comparateur de prix des bateaux/ferries - Inter-îles, Transport véhicules",
     "disclaimer": "A KI PRI SA YÉ observe les prix, ne vend pas. Transparence sur les écarts, pas d'affiliation opaque.",
     "methodology": "v1.0.0",
-    "updateFrequency": "weekly"
+    "updateFrequency": "weekly",
+    "features": [
+      "Visualisations graphiques des prix",
+      "Export CSV et texte",
+      "8 observations de prix",
+      "Comparaison prix passagers et véhicules",
+      "Routes inter-îles Antilles"
+    ]
   },
   "ports": [
     {
@@ -49,6 +56,13 @@
       "city": "Terre-de-Haut",
       "territory": "GP",
       "island": "Les Saintes"
+    },
+    {
+      "code": "MGL-PORT",
+      "name": "Port de Marie-Galante",
+      "city": "Grand-Bourg",
+      "territory": "GP",
+      "island": "Marie-Galante"
     }
   ],
   "operators": [
@@ -97,11 +111,11 @@
         "islandGroup": "Antilles"
       },
       "pricing": {
-        "passengerPrice": 79.00,
-        "childPrice": 45.00,
+        "passengerPrice": 79,
+        "childPrice": 45,
         "vehiclePrice": {
-          "car": 185.00,
-          "motorcycle": 75.00
+          "car": 185,
+          "motorcycle": 75
         }
       },
       "currency": "EUR",
@@ -125,7 +139,10 @@
       "verified": true,
       "schedule": {
         "frequency": "Daily",
-        "departureTimes": ["08:00", "16:00"],
+        "departureTimes": [
+          "08:00",
+          "16:00"
+        ],
         "duration": "3h30"
       },
       "capacity": {
@@ -156,11 +173,11 @@
         "islandGroup": "Antilles"
       },
       "pricing": {
-        "passengerPrice": 75.00,
-        "childPrice": 42.00,
+        "passengerPrice": 75,
+        "childPrice": 42,
         "vehiclePrice": {
-          "car": 175.00,
-          "motorcycle": 70.00
+          "car": 175,
+          "motorcycle": 70
         }
       },
       "currency": "EUR",
@@ -184,7 +201,10 @@
       "verified": true,
       "schedule": {
         "frequency": "5x/week",
-        "departureTimes": ["09:00", "17:00"],
+        "departureTimes": [
+          "09:00",
+          "17:00"
+        ],
         "duration": "3h45"
       },
       "capacity": {
@@ -215,8 +235,8 @@
         "islandGroup": "Antilles"
       },
       "pricing": {
-        "passengerPrice": 65.00,
-        "childPrice": 38.00
+        "passengerPrice": 65,
+        "childPrice": 38
       },
       "currency": "EUR",
       "serviceClass": "standard",
@@ -239,7 +259,10 @@
       "verified": true,
       "schedule": {
         "frequency": "Daily",
-        "departureTimes": ["07:30", "15:30"],
+        "departureTimes": [
+          "07:30",
+          "15:30"
+        ],
         "duration": "2h15"
       },
       "capacity": {
@@ -270,8 +293,8 @@
         "islandGroup": "Antilles"
       },
       "pricing": {
-        "passengerPrice": 22.00,
-        "childPrice": 12.00
+        "passengerPrice": 22,
+        "childPrice": 12
       },
       "currency": "EUR",
       "serviceClass": "standard",
@@ -294,7 +317,12 @@
       "verified": true,
       "schedule": {
         "frequency": "Daily",
-        "departureTimes": ["08:00", "10:30", "15:00", "17:30"],
+        "departureTimes": [
+          "08:00",
+          "10:30",
+          "15:00",
+          "17:30"
+        ],
         "duration": "1h00"
       },
       "capacity": {
@@ -325,8 +353,8 @@
         "islandGroup": "Antilles"
       },
       "pricing": {
-        "passengerPrice": 18.00,
-        "childPrice": 10.00
+        "passengerPrice": 18,
+        "childPrice": 10
       },
       "currency": "EUR",
       "serviceClass": "standard",
@@ -349,7 +377,9 @@
       "verified": true,
       "schedule": {
         "frequency": "3x/week",
-        "departureTimes": ["09:00"],
+        "departureTimes": [
+          "09:00"
+        ],
         "duration": "0h45"
       },
       "capacity": {
@@ -380,8 +410,8 @@
         "islandGroup": "Antilles"
       },
       "pricing": {
-        "passengerPrice": 45.00,
-        "childPrice": 25.00
+        "passengerPrice": 45,
+        "childPrice": 25
       },
       "currency": "EUR",
       "serviceClass": "comfort",
@@ -404,14 +434,137 @@
       "verified": true,
       "schedule": {
         "frequency": "Daily",
-        "departureTimes": ["08:30", "16:30"],
+        "departureTimes": [
+          "08:30",
+          "16:30"
+        ],
         "duration": "0h45"
       },
       "capacity": {
         "passengers": 180,
         "vehicles": 0
       }
+    },
+    {
+      "id": "boat-007",
+      "operator": "Val'Ferry",
+      "operatorCode": "VAL",
+      "route": {
+        "origin": {
+          "code": "PTP-PORT",
+          "name": "Port de Pointe-à-Pitre",
+          "city": "Pointe-à-Pitre",
+          "territory": "GP",
+          "island": "Grande-Terre"
+        },
+        "destination": {
+          "code": "MGL-PORT",
+          "name": "Port de Marie-Galante",
+          "city": "Grand-Bourg",
+          "territory": "GP",
+          "island": "Marie-Galante"
+        },
+        "routeType": "inter_island",
+        "islandGroup": "Antilles"
+      },
+      "pricing": {
+        "passengerPrice": 28,
+        "childPrice": 15
+      },
+      "currency": "EUR",
+      "serviceClass": "standard",
+      "fareConditions": {
+        "refundable": false,
+        "changeable": false,
+        "mealsIncluded": false,
+        "deckAccess": true,
+        "cabinAvailable": false
+      },
+      "observationDate": "2026-01-08T10:00:00Z",
+      "source": {
+        "type": "user_report",
+        "observedAt": "2026-01-08T10:00:00Z",
+        "verificationMethod": "manual",
+        "reliability": "high"
+      },
+      "volume": 10,
+      "confidence": "high",
+      "verified": true,
+      "schedule": {
+        "frequency": "Daily",
+        "departureTimes": [
+          "08:00",
+          "12:00",
+          "16:30"
+        ],
+        "duration": "1h15"
+      },
+      "capacity": {
+        "passengers": 250,
+        "vehicles": 0
+      }
+    },
+    {
+      "id": "boat-008",
+      "operator": "Val'Ferry",
+      "operatorCode": "VAL",
+      "route": {
+        "origin": {
+          "code": "PTP-PORT",
+          "name": "Port de Pointe-à-Pitre",
+          "city": "Pointe-à-Pitre",
+          "territory": "GP",
+          "island": "Grande-Terre"
+        },
+        "destination": {
+          "code": "FDF-PORT",
+          "name": "Port de Fort-de-France",
+          "city": "Fort-de-France",
+          "territory": "MQ",
+          "island": "Martinique"
+        },
+        "routeType": "inter_territory",
+        "islandGroup": "Antilles"
+      },
+      "pricing": {
+        "passengerPrice": 72,
+        "childPrice": 40,
+        "vehiclePrice": {
+          "car": 170,
+          "motorcycle": 68
+        }
+      },
+      "currency": "EUR",
+      "serviceClass": "standard",
+      "fareConditions": {
+        "refundable": false,
+        "changeable": true,
+        "mealsIncluded": false,
+        "deckAccess": true,
+        "cabinAvailable": false
+      },
+      "observationDate": "2026-01-09T14:00:00Z",
+      "source": {
+        "type": "user_report",
+        "observedAt": "2026-01-09T14:00:00Z",
+        "verificationMethod": "manual",
+        "reliability": "high"
+      },
+      "volume": 11,
+      "confidence": "high",
+      "verified": true,
+      "schedule": {
+        "frequency": "6x/week",
+        "departureTimes": [
+          "10:00",
+          "18:00"
+        ],
+        "duration": "3h40"
+      },
+      "capacity": {
+        "passengers": 400,
+        "vehicles": 55
+      }
     }
   ]
 }
-

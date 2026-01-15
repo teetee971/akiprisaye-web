@@ -1,5 +1,3 @@
-import React from 'react';
-
 /**
  * Score Anti-Crise Badge
  * Displays the anti-crisis score with trend indicator

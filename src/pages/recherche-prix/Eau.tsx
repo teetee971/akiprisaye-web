@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Droplet, Info } from 'lucide-react';
+import { Droplet, Info, Download } from 'lucide-react';
 import {
   searchWaterPrices,
   getTerritories,
@@ -7,6 +7,9 @@ import {
   calculateDOMMetropoleGap,
   type WaterPrice,
 } from '../../services/waterPriceService';
+import PriceChart from '../../components/comparateur/PriceChart';
+import SortControl from '../../components/comparateur/SortControl';
+import ShareButton from '../../components/comparateur/ShareButton';
 
 /**
  * Module de comparaison des prix de l'eau
@@ -33,6 +36,72 @@ export default function Eau() {
       });
       setResults(searchResults);
       setShowResults(true);
+    }
+  };
+
+  const handleSortChange = (sort: string, direction: 'asc' | 'desc') => {
+    setSortBy(sort);
+    setSortDirection(direction);
+  };
+
+  const sortedResults = [...results].sort((a, b) => {
+    let comparison = 0;
+    if (sortBy === 'prixM3') {
+      comparison = a.prixM3 - b.prixM3;
+    } else if (sortBy === 'organismeGestionnaire') {
+      comparison = a.organismeGestionnaire.localeCompare(b.organismeGestionnaire);
+    } else if (sortBy === 'typeService') {
+      comparison = a.typeService.localeCompare(b.typeService);
+    }
+    return sortDirection === 'asc' ? comparison : -comparison;
+  });
+
+  const handleExport = (format: 'csv' | 'txt') => {
+    if (results.length === 0) return;
+
+    const timestamp = new Date().toISOString().split('T')[0];
+    const filename = `eau-${territoire}-${timestamp}.${format}`;
+
+    if (format === 'csv') {
+      const headers = ['Organisme', 'Type Service', 'Prix m³ (€)', 'Abonnement Mensuel (€)', 'Date Relevé'];
+      const rows = sortedResults.map(r => [
+        r.organismeGestionnaire,
+        r.typeService,
+        r.prixM3.toFixed(2),
+        r.abonnementMensuel.toFixed(2),
+        r.dateReleve,
+      ]);
+      const csv = [headers, ...rows].map(row => row.join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      link.click();
+    } else if (format === 'txt') {
+      const text = [
+        `Comparaison des prix de l'eau - ${territoire}`,
+        `Date: ${new Date().toLocaleDateString('fr-FR')}`,
+        ``,
+        `Prix m³ minimum: ${formatPrice(Math.min(...results.map(r => r.prixM3)))}`,
+        `Prix m³ maximum: ${formatPrice(Math.max(...results.map(r => r.prixM3)))}`,
+        gap !== null ? `Écart DOM/Métropole: ${gap > 0 ? '+' : ''}${gap}%` : '',
+        ``,
+        `Détails des services:`,
+        ``,
+        ...sortedResults.map(r => [
+          `Organisme: ${r.organismeGestionnaire}`,
+          `Type: ${r.typeService}`,
+          `Prix m³: ${formatPrice(r.prixM3)}`,
+          `Abonnement: ${formatPrice(r.abonnementMensuel)}/mois`,
+          `Date: ${formatDate(r.dateReleve)}`,
+          ``,
+        ].join('\n')),
+      ].join('\n');
+      const blob = new Blob([text], { type: 'text/plain;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      link.click();
     }
   };
 
@@ -169,6 +238,64 @@ export default function Eau() {
                     </div>
                   </div>
 
+                  {/* Price Chart */}
+                  <div className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5">
+                    <h2 className="text-lg font-semibold text-gray-100 mb-4">
+                      Visualisation des prix
+                    </h2>
+                    <PriceChart
+                      data={{
+                        labels: sortedResults.map(r => r.organismeGestionnaire),
+                        datasets: [
+                          {
+                            label: 'Prix m³ (€)',
+                            data: sortedResults.map(r => r.prixM3),
+                            backgroundColor: 'rgba(34, 211, 238, 0.6)',
+                            borderColor: 'rgba(34, 211, 238, 1)',
+                            borderWidth: 2,
+                          },
+                        ],
+                      }}
+                      type="bar"
+                      title="Comparaison des prix par fournisseur"
+                      height={300}
+                    />
+                  </div>
+
+                  {/* Controls */}
+                  <div className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                      <SortControl
+                        options={sortOptions}
+                        currentSort={sortBy}
+                        currentDirection={sortDirection}
+                        onSortChange={handleSortChange}
+                      />
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleExport('csv')}
+                          className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                          aria-label="Exporter en CSV"
+                        >
+                          <Download className="w-4 h-4" />
+                          CSV
+                        </button>
+                        <button
+                          onClick={() => handleExport('txt')}
+                          className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                          aria-label="Exporter en texte"
+                        >
+                          <Download className="w-4 h-4" />
+                          TXT
+                        </button>
+                        <ShareButton
+                          title={`Prix de l'eau - ${territoire}`}
+                          description={`Comparaison des prix de l'eau sur ${territoire}`}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
                   {/* Results Table */}
                   <div className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 overflow-hidden">
                     <div className="p-5 border-b border-slate-700">
@@ -198,7 +325,7 @@ export default function Eau() {
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-700/50">
-                          {results.map((result, index) => (
+                          {sortedResults.map((result, index) => (
                             <tr
                               key={index}
                               className="hover:bg-slate-800/30 transition-colors"

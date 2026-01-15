@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
-import { Smartphone, Info } from 'lucide-react';
+import { Smartphone, Info, Download } from 'lucide-react';
 import {
   searchMobilePlanPrices,
   getTerritories,
   getOfferTypes,
   type MobilePlanPrice,
 } from '../../services/mobilePlanPriceService';
+import PriceChart from '../../components/comparateur/PriceChart';
+import SortControl from '../../components/comparateur/SortControl';
+import ShareButton from '../../components/comparateur/ShareButton';
 
 /**
  * Module de comparaison des prix des abonnements mobiles
@@ -32,6 +35,74 @@ export default function AbonnementsMobile() {
       });
       setResults(searchResults);
       setShowResults(true);
+    }
+  };
+
+  const handleSortChange = (sort: string, direction: 'asc' | 'desc') => {
+    setSortBy(sort);
+    setSortDirection(direction);
+  };
+
+  const sortedResults = [...results].sort((a, b) => {
+    let comparison = 0;
+    if (sortBy === 'prixMensuel') {
+      comparison = a.prixMensuel - b.prixMensuel;
+    } else if (sortBy === 'operateur') {
+      comparison = a.operateur.localeCompare(b.operateur);
+    } else if (sortBy === 'donnees') {
+      comparison = a.donnees.localeCompare(b.donnees);
+    }
+    return sortDirection === 'asc' ? comparison : -comparison;
+  });
+
+  const handleExport = (format: 'csv' | 'txt') => {
+    if (results.length === 0) return;
+
+    const timestamp = new Date().toISOString().split('T')[0];
+    const filename = `mobile-${territoire}-${timestamp}.${format}`;
+
+    if (format === 'csv') {
+      const headers = ['Opérateur', 'Type Offre', 'Prix Mensuel (€)', 'Données', 'Appels/SMS', 'Date Relevé'];
+      const rows = sortedResults.map(r => [
+        r.operateur,
+        r.typeOffre,
+        r.prixMensuel.toFixed(2),
+        r.donnees,
+        r.appelsSMS,
+        r.dateReleve,
+      ]);
+      const csv = [headers, ...rows].map(row => row.join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      link.click();
+    } else if (format === 'txt') {
+      const text = [
+        `Comparaison des prix Mobile - ${territoire}`,
+        `Date: ${new Date().toLocaleDateString('fr-FR')}`,
+        ``,
+        `Prix minimum: ${formatPrice(Math.min(...results.map(r => r.prixMensuel)))}`,
+        `Prix maximum: ${formatPrice(Math.max(...results.map(r => r.prixMensuel)))}`,
+        `Écart: ${formatPrice(Math.max(...results.map(r => r.prixMensuel)) - Math.min(...results.map(r => r.prixMensuel)))}`,
+        ``,
+        `Détails des forfaits:`,
+        ``,
+        ...sortedResults.map(r => [
+          `Opérateur: ${r.operateur}`,
+          `Type: ${r.typeOffre}`,
+          `Prix: ${formatPrice(r.prixMensuel)}/mois`,
+          `Données: ${r.donnees}`,
+          `Appels/SMS: ${r.appelsSMS}`,
+          `Date: ${formatDate(r.dateReleve)}`,
+          ``,
+        ].join('\n')),
+      ].join('\n');
+      const blob = new Blob([text], { type: 'text/plain;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      link.click();
     }
   };
 
@@ -130,6 +201,94 @@ export default function AbonnementsMobile() {
             <>
               {results.length > 0 ? (
                 <>
+                  {/* Price Summary */}
+                  <section className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5">
+                    <h2 className="text-lg font-semibold text-gray-100 mb-3">
+                      Résumé des prix
+                    </h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <div className="bg-slate-800/50 rounded-lg p-3">
+                        <div className="text-sm text-gray-400 mb-1">Prix le plus bas</div>
+                        <div className="text-xl font-bold text-green-400">
+                          {formatPrice(Math.min(...results.map((r) => r.prixMensuel)))}
+                        </div>
+                      </div>
+                      <div className="bg-slate-800/50 rounded-lg p-3">
+                        <div className="text-sm text-gray-400 mb-1">Prix le plus élevé</div>
+                        <div className="text-xl font-bold text-orange-400">
+                          {formatPrice(Math.max(...results.map((r) => r.prixMensuel)))}
+                        </div>
+                      </div>
+                      <div className="bg-slate-800/50 rounded-lg p-3">
+                        <div className="text-sm text-gray-400 mb-1">Écart maximal</div>
+                        <div className="text-xl font-bold text-blue-400">
+                          {formatPrice(
+                            Math.max(...results.map((r) => r.prixMensuel)) -
+                              Math.min(...results.map((r) => r.prixMensuel))
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+
+                  {/* Price Chart */}
+                  <section className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5">
+                    <h2 className="text-lg font-semibold text-gray-100 mb-4">
+                      Visualisation des prix
+                    </h2>
+                    <PriceChart
+                      data={{
+                        labels: sortedResults.map(r => r.operateur),
+                        datasets: [
+                          {
+                            label: 'Prix mensuel (€)',
+                            data: sortedResults.map(r => r.prixMensuel),
+                            backgroundColor: 'rgba(59, 130, 246, 0.6)',
+                            borderColor: 'rgba(59, 130, 246, 1)',
+                            borderWidth: 2,
+                          },
+                        ],
+                      }}
+                      type="bar"
+                      title="Comparaison des prix par opérateur"
+                      height={300}
+                    />
+                  </section>
+
+                  {/* Controls */}
+                  <section className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                      <SortControl
+                        options={sortOptions}
+                        currentSort={sortBy}
+                        currentDirection={sortDirection}
+                        onSortChange={handleSortChange}
+                      />
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleExport('csv')}
+                          className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                          aria-label="Exporter en CSV"
+                        >
+                          <Download className="w-4 h-4" />
+                          CSV
+                        </button>
+                        <button
+                          onClick={() => handleExport('txt')}
+                          className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                          aria-label="Exporter en texte"
+                        >
+                          <Download className="w-4 h-4" />
+                          TXT
+                        </button>
+                        <ShareButton
+                          title={`Prix Mobile - ${territoire}`}
+                          description={`Comparaison des prix des forfaits mobile sur ${territoire}`}
+                        />
+                      </div>
+                    </div>
+                  </section>
+
                   {/* Results Table */}
                   <section className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5">
                     <h2 className="text-lg font-semibold text-gray-100 mb-4">
@@ -157,7 +316,7 @@ export default function AbonnementsMobile() {
                           </tr>
                         </thead>
                         <tbody>
-                          {results.map((plan, index) => (
+                          {sortedResults.map((plan, index) => (
                             <tr key={index} className="border-b border-slate-800 hover:bg-slate-800/30">
                               <td className="py-3 px-2">
                                 <div className="text-gray-200 font-medium">{plan.operateur}</div>
@@ -198,40 +357,6 @@ export default function AbonnementsMobile() {
                       </p>
                     </div>
                   </section>
-
-                  {/* Price Comparison Summary */}
-                  {results.length > 1 && (
-                    <section className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5">
-                      <h2 className="text-lg font-semibold text-gray-100 mb-4">
-                        Écarts de prix observés
-                      </h2>
-                      
-                      <div className="grid sm:grid-cols-3 gap-4">
-                        <div className="bg-slate-800/50 rounded-lg p-4">
-                          <p className="text-sm text-gray-400 mb-1">Prix le plus bas</p>
-                          <p className="text-2xl font-bold text-green-400">
-                            {formatPrice(results[0].prixMensuel)}
-                          </p>
-                        </div>
-                        <div className="bg-slate-800/50 rounded-lg p-4">
-                          <p className="text-sm text-gray-400 mb-1">Prix le plus élevé</p>
-                          <p className="text-2xl font-bold text-red-400">
-                            {formatPrice(results[results.length - 1].prixMensuel)}
-                          </p>
-                        </div>
-                        <div className="bg-slate-800/50 rounded-lg p-4">
-                          <p className="text-sm text-gray-400 mb-1">Écart maximum</p>
-                          <p className="text-2xl font-bold text-orange-400">
-                            {formatPrice(results[results.length - 1].prixMensuel - results[0].prixMensuel)}
-                          </p>
-                        </div>
-                      </div>
-
-                      <p className="mt-4 text-xs text-gray-400">
-                        Économie potentielle en choisissant l'offre la moins chère
-                      </p>
-                    </section>
-                  )}
                 </>
               ) : (
                 <div className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-8 text-center">

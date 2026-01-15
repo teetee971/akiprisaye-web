@@ -1,6 +1,3 @@
-import React from 'react';
-import { BadgeVariation } from './BadgeVariation';
-
 /**
  * Timeline Prix Component
  * Displays chronological price history with variation calculations
@@ -11,8 +8,8 @@ import { BadgeVariation } from './BadgeVariation';
  */
 export function TimelinePrix({ 
   history = [], 
-  productLabel = '', 
-  storeName = '',
+  productLabel: _productLabel = '', 
+  storeName: _storeName = '',
   currency = 'EUR' 
 }) {
   if (!history || history.length === 0) {

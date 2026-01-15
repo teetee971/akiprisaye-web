@@ -18,6 +18,8 @@ export default [
       '**/SentinelQuantumVanguardAIPro/**',
       '**/chat_ia_local/**',
       '**/frontend/public/**',
+      '**/*.min.js',
+      '**/public/ocr/worker.min.js',
     ],
   },
 
@@ -27,7 +29,11 @@ export default [
   {
     rules: {
       ...js.configs.recommended.rules,
-      'no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      'no-unused-vars': ['error', { 
+        argsIgnorePattern: '^_', 
+        varsIgnorePattern: '^_',
+        caughtErrorsIgnorePattern: '^_'
+      }],
       'no-fallthrough': 'error',
       'no-console': ['warn', { allow: ['warn', 'error'] }],
     },

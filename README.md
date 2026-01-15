@@ -23,6 +23,77 @@ L'application ne vend aucun produit et ne réalise aucune transaction commercial
 
 ---
 
+## 🧭 Navigation Optimisée - 7 Hubs Principaux
+
+**Nouvelle architecture !** La navigation a été simplifiée et organisée en 7 hubs principaux pour une expérience utilisateur fluide et intuitive.
+
+### 🏠 Accueil
+Point d'entrée principal avec vue d'ensemble et accès rapide à toutes les fonctionnalités.
+
+### 📊 Comparateurs
+Hub unifié regroupant tous les outils de comparaison :
+- Comparateur prix classique
+- Prix au kilo / formats
+- Détection shrinkflation
+- Équivalence Métropole (IEVR)
+- Historique des prix
+- Comparateurs services (vols, bateaux, télécoms)
+
+**Route:** `/comparateurs`
+
+### 🗺️ Carte & Itinéraires
+Fonctionnalités cartographiques et optimisation de trajets :
+- Carte interactive des magasins
+- Optimiseur d'itinéraire multi-destinations
+- Planification liste de courses intelligente
+- Recherche magasins à proximité
+
+**Route:** `/carte`
+
+### 📷 Scanner
+Hub unifié pour tous les modes de scan :
+- Scanner code-barres (EAN-13, EAN-8, UPC)
+- Scanner texte & tickets (OCR local)
+- Scanner produit complet
+- Analyse photo produit
+
+**Route:** `/scanner`
+
+### 🤖 Assistant IA
+Intelligence artificielle locale et respectueuse de la vie privée :
+- Conseiller budget IA
+- Chat IA local (100% privé)
+- Analyses de marché
+- Assistant courses intelligent
+
+**Route:** `/assistant-ia`
+
+### 📈 Observatoire
+Données agrégées et analyses de marché :
+- Dashboard prix en temps réel
+- Observatoire vivant
+- Méthodologie publique
+- Données ouvertes
+
+**Route:** `/observatoire`
+
+### 🤝 Solidarité
+Actions solidaires et anti-gaspillage :
+- Ti-Panié Solidaire (paniers anti-gaspi)
+- Modules citoyens
+- Contribution aux prix
+- Initiatives locales
+
+**Route:** `/solidarite`
+
+### 💡 Bénéfices de la Nouvelle Navigation
+- **-70% d'entrées menu** : Passage de 15+ à 7 entrées principales
+- **3x plus rapide** : Moins de clics pour atteindre la fonctionnalité souhaitée
+- **Mobile-first** : Optimisé pour la navigation tactile
+- **Backward compatible** : Les anciennes routes restent accessibles
+
+---
+
 ## 🔎 OCR & Scan - Hub Unifié
 
 **Nouveau !** Module OCR centralisé et institutionnel pour l'extraction locale de texte depuis images.
@@ -728,4 +799,34 @@ service cloud.firestore {
 ```
 
 **Note importante :** Les règles ci-dessus protègent l'écriture directe dans Firestore. En production, utilisez Firebase Cloud Functions ou Admin SDK pour gérer les écritures de prix et la modération des tickets.
+
+---
+
+## 📚 Documentation Complémentaire
+
+Pour en savoir plus sur l'architecture et les fonctionnalités :
+
+### 🧭 Navigation
+- **[NAVIGATION_GUIDE.md](NAVIGATION_GUIDE.md)** - Guide complet de navigation de l'application
+  - Architecture des 7 hubs
+  - Routes Ti-Panier détaillées
+  - Résolution des problèmes de navigation
+  - Routes expérimentales (feature flags)
+
+### 🔍 Audits & Rapports
+- **[AUDIT_NAVIGATION_RAPPORT.md](AUDIT_NAVIGATION_RAPPORT.md)** - Rapport d'audit de navigation (Janvier 2026)
+  - Problèmes identifiés et corrigés
+  - Métriques de performance
+  - Solutions implémentées
+  - Recommandations futures
+
+### 🏗️ Architecture
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - Architecture technique de l'application
+- **[METHODOLOGIE_OFFICIELLE_v2.0.md](METHODOLOGIE_OFFICIELLE_v2.0.md)** - Méthodologie de collecte de données
+
+### 📦 Déploiement
+- **[CLOUDFLARE_DEPLOYMENT.md](CLOUDFLARE_DEPLOYMENT.md)** - Guide de déploiement Cloudflare Pages
+- **[DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md)** - Checklist de déploiement
+
+Pour toute question ou problème, consultez d'abord le [NAVIGATION_GUIDE.md](NAVIGATION_GUIDE.md) ou ouvrez une issue GitHub.
 

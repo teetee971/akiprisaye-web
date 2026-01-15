@@ -1,8 +1,10 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { viteStaticCopy } from "vite-plugin-static-copy";
+import { fileURLToPath, URL } from "node:url";
 
 export default defineConfig({
+  base: "/",
   plugins: [
     react(),
     viteStaticCopy({
@@ -14,6 +16,12 @@ export default defineConfig({
       ],
     }),
   ],
+
+  resolve: {
+    alias: {
+      "@": fileURLToPath(new URL("./src", import.meta.url)),
+    },
+  },
 
   build: {
     sourcemap: false,

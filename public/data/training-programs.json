@@ -1,0 +1,453 @@
+{
+  "metadata": {
+    "generated_at": "2026-01-14T00:00:00Z",
+    "source": "A KI PRI SA YÉ - Observatoire Formations Professionnelles DOM-TOM",
+    "note": "Données d'exemple - Basées sur CARIF-OREF + Contributions citoyennes simulées"
+  },
+  "organismes": [
+    {
+      "id": "org_001",
+      "name": "AFPA Martinique",
+      "certifications": ["Qualiopi", "Datadock"],
+      "rating": 4.5
+    },
+    {
+      "id": "org_002",
+      "name": "GRETA Guadeloupe",
+      "certifications": ["Qualiopi"],
+      "rating": 4.2
+    },
+    {
+      "id": "org_003",
+      "name": "CCI Formation Réunion",
+      "certifications": ["Qualiopi", "ISO 9001"],
+      "rating": 4.7
+    }
+  ],
+  "programs": [
+    {
+      "id": "train_001",
+      "name": "Développeur Web et Web Mobile",
+      "organisme": {
+        "id": "org_001",
+        "name": "AFPA Martinique",
+        "certifications": ["Qualiopi", "Datadock"],
+        "rating": 4.5
+      },
+      "territory": "MQ",
+      "location": {
+        "commune": "Fort-de-France",
+        "address": "Zone de Manhity, 97232 Le Lamentin",
+        "coordinates": [14.6083, -61.0165]
+      },
+      "details": {
+        "domain": "Informatique",
+        "level": "BTS",
+        "type": "continue",
+        "mode": "hybride",
+        "duration": 945,
+        "durationWeeks": 27,
+        "program": [
+          "Développer la partie front-end d'une application web",
+          "Développer la partie back-end d'une application web",
+          "Déployer et sécuriser une application web",
+          "Technologies: HTML, CSS, JavaScript, PHP, SQL, React"
+        ],
+        "prerequisites": [
+          "Niveau Bac",
+          "Maîtrise de l'outil informatique",
+          "Logique et rigueur"
+        ]
+      },
+      "schedule": {
+        "nextSessions": [
+          { "startDate": "2026-03-15", "endDate": "2026-10-15" },
+          { "startDate": "2026-09-01", "endDate": "2027-04-01" }
+        ],
+        "fullTime": true,
+        "partTime": false
+      },
+      "pricing": {
+        "catalogPrice": 8500,
+        "fundingSources": ["CPF", "pole_emploi", "region"],
+        "cpfEligible": true,
+        "poleEmploiEligible": true,
+        "regionAidAvailable": true
+      },
+      "outcomes": {
+        "diploma": "Titre Professionnel Développeur Web et Web Mobile (Niveau 5)",
+        "jobs": [
+          "Développeur web",
+          "Développeur full-stack",
+          "Intégrateur web",
+          "Webmaster"
+        ],
+        "successRate": 85,
+        "insertionRate3M": 65,
+        "insertionRate6M": 78,
+        "insertionRate12M": 85,
+        "averageSalary": 2200
+      },
+      "contact": {
+        "phone": "0596 42 76 88",
+        "email": "martinique@afpa.fr",
+        "website": "https://www.afpa.fr"
+      },
+      "source": {
+        "type": "official",
+        "lastUpdated": "2026-01-10T00:00:00Z"
+      }
+    },
+    {
+      "id": "train_002",
+      "name": "CAP Électricien",
+      "organisme": {
+        "id": "org_002",
+        "name": "GRETA Guadeloupe",
+        "certifications": ["Qualiopi"],
+        "rating": 4.2
+      },
+      "territory": "GP",
+      "location": {
+        "commune": "Pointe-à-Pitre",
+        "address": "Rue Ferdinand Forest, 97110 Pointe-à-Pitre",
+        "coordinates": [16.2411, -61.5331]
+      },
+      "details": {
+        "domain": "BTP",
+        "level": "CAP",
+        "type": "alternance",
+        "mode": "presentiel",
+        "duration": 800,
+        "durationWeeks": 40,
+        "program": [
+          "Installation électrique résidentielle",
+          "Maintenance et dépannage",
+          "Normes de sécurité électrique",
+          "Lecture de plans et schémas",
+          "Habilitation électrique"
+        ],
+        "prerequisites": [
+          "Niveau 3ème",
+          "Aptitude physique",
+          "Sens pratique"
+        ]
+      },
+      "schedule": {
+        "nextSessions": [
+          { "startDate": "2026-09-01", "endDate": "2027-06-30" }
+        ],
+        "fullTime": true,
+        "partTime": false
+      },
+      "pricing": {
+        "catalogPrice": 6000,
+        "fundingSources": ["CPF", "pole_emploi", "region"],
+        "cpfEligible": true,
+        "poleEmploiEligible": true,
+        "regionAidAvailable": true
+      },
+      "outcomes": {
+        "diploma": "CAP Électricien",
+        "jobs": [
+          "Électricien bâtiment",
+          "Électricien d'installation",
+          "Électricien de maintenance"
+        ],
+        "successRate": 92,
+        "insertionRate3M": 88,
+        "insertionRate6M": 92,
+        "insertionRate12M": 95,
+        "averageSalary": 1800
+      },
+      "contact": {
+        "phone": "0590 21 04 00",
+        "email": "contact@greta-guadeloupe.fr",
+        "website": "https://www.greta-guadeloupe.fr"
+      },
+      "source": {
+        "type": "official",
+        "lastUpdated": "2026-01-08T00:00:00Z"
+      }
+    },
+    {
+      "id": "train_003",
+      "name": "BTS Tourisme",
+      "organisme": {
+        "id": "org_003",
+        "name": "CCI Formation Réunion",
+        "certifications": ["Qualiopi", "ISO 9001"],
+        "rating": 4.7
+      },
+      "territory": "RE",
+      "location": {
+        "commune": "Saint-Denis",
+        "address": "5 rue de Paris, 97400 Saint-Denis",
+        "coordinates": [-20.8789, 55.4481]
+      },
+      "details": {
+        "domain": "Tourisme",
+        "level": "BTS",
+        "type": "initiale",
+        "mode": "presentiel",
+        "duration": 1350,
+        "durationWeeks": 90,
+        "program": [
+          "Gestion de la relation clientèle touristique",
+          "Élaboration de l'offre touristique",
+          "Gestion de l'information touristique",
+          "Tourisme et territoires",
+          "Communication en langues vivantes"
+        ],
+        "prerequisites": [
+          "Baccalauréat",
+          "Bon niveau en langues",
+          "Sens du service"
+        ]
+      },
+      "schedule": {
+        "nextSessions": [
+          { "startDate": "2026-09-01", "endDate": "2028-06-30" }
+        ],
+        "fullTime": true,
+        "partTime": false
+      },
+      "pricing": {
+        "catalogPrice": 12000,
+        "fundingSources": ["CPF", "region"],
+        "cpfEligible": true,
+        "poleEmploiEligible": false,
+        "regionAidAvailable": true
+      },
+      "outcomes": {
+        "diploma": "BTS Tourisme",
+        "jobs": [
+          "Conseiller voyages",
+          "Agent d'accueil touristique",
+          "Chargé de promotion du tourisme local",
+          "Gestionnaire d'équipements touristiques"
+        ],
+        "successRate": 88,
+        "insertionRate3M": 70,
+        "insertionRate6M": 82,
+        "insertionRate12M": 88,
+        "averageSalary": 1900
+      },
+      "contact": {
+        "phone": "0262 94 46 46",
+        "email": "formation@reunion.cci.fr",
+        "website": "https://www.reunion.cci.fr"
+      },
+      "source": {
+        "type": "official",
+        "lastUpdated": "2026-01-12T00:00:00Z"
+      }
+    },
+    {
+      "id": "train_004",
+      "name": "Formation Aide-Soignant(e)",
+      "organisme": {
+        "id": "org_001",
+        "name": "AFPA Martinique",
+        "certifications": ["Qualiopi", "Datadock"],
+        "rating": 4.5
+      },
+      "territory": "MQ",
+      "location": {
+        "commune": "Fort-de-France",
+        "address": "Zone de Manhity, 97232 Le Lamentin",
+        "coordinates": [14.6083, -61.0165]
+      },
+      "details": {
+        "domain": "Santé",
+        "level": "CERTIFICAT",
+        "type": "continue",
+        "mode": "presentiel",
+        "duration": 1540,
+        "durationWeeks": 44,
+        "program": [
+          "Accompagner une personne dans les activités de sa vie quotidienne",
+          "Apprécier l'état clinique d'une personne",
+          "Réaliser des soins adaptés à l'état clinique",
+          "Travailler en équipe pluri-professionnelle",
+          "Stage pratique en établissement de santé"
+        ],
+        "prerequisites": [
+          "Aucun diplôme requis",
+          "Réussir les épreuves de sélection",
+          "Aptitude physique et psychologique"
+        ]
+      },
+      "schedule": {
+        "nextSessions": [
+          { "startDate": "2026-02-01", "endDate": "2026-12-31" },
+          { "startDate": "2026-09-01", "endDate": "2027-07-31" }
+        ],
+        "fullTime": true,
+        "partTime": false
+      },
+      "pricing": {
+        "catalogPrice": 5500,
+        "fundingSources": ["CPF", "pole_emploi", "region"],
+        "cpfEligible": true,
+        "poleEmploiEligible": true,
+        "regionAidAvailable": true
+      },
+      "outcomes": {
+        "diploma": "Diplôme d'État Aide-Soignant (DEAS)",
+        "jobs": [
+          "Aide-soignant en hôpital",
+          "Aide-soignant en EHPAD",
+          "Aide-soignant à domicile"
+        ],
+        "successRate": 95,
+        "insertionRate3M": 95,
+        "insertionRate6M": 98,
+        "insertionRate12M": 98,
+        "averageSalary": 1650
+      },
+      "contact": {
+        "phone": "0596 42 76 88",
+        "email": "martinique@afpa.fr",
+        "website": "https://www.afpa.fr"
+      },
+      "source": {
+        "type": "official",
+        "lastUpdated": "2026-01-10T00:00:00Z"
+      }
+    }
+  ],
+  "jobs_market": [
+    {
+      "id": "job_001",
+      "jobTitle": "Développeur Web",
+      "territory": "MQ",
+      "demand": {
+        "openPositions": 45,
+        "shortage": true,
+        "trend": "increasing"
+      },
+      "salary": {
+        "min": 1800,
+        "max": 2800,
+        "average": 2200,
+        "currency": "EUR"
+      },
+      "requiredTraining": ["train_001"],
+      "source": {
+        "type": "pole_emploi",
+        "lastUpdated": "2026-01-12T00:00:00Z"
+      }
+    },
+    {
+      "id": "job_002",
+      "jobTitle": "Électricien",
+      "territory": "GP",
+      "demand": {
+        "openPositions": 120,
+        "shortage": true,
+        "trend": "stable"
+      },
+      "salary": {
+        "min": 1600,
+        "max": 2400,
+        "average": 1800,
+        "currency": "EUR"
+      },
+      "requiredTraining": ["train_002"],
+      "source": {
+        "type": "pole_emploi",
+        "lastUpdated": "2026-01-10T00:00:00Z"
+      }
+    },
+    {
+      "id": "job_003",
+      "jobTitle": "Conseiller en Voyages",
+      "territory": "RE",
+      "demand": {
+        "openPositions": 35,
+        "shortage": false,
+        "trend": "increasing"
+      },
+      "salary": {
+        "min": 1600,
+        "max": 2200,
+        "average": 1900,
+        "currency": "EUR"
+      },
+      "requiredTraining": ["train_003"],
+      "source": {
+        "type": "pole_emploi",
+        "lastUpdated": "2026-01-11T00:00:00Z"
+      }
+    },
+    {
+      "id": "job_004",
+      "jobTitle": "Aide-Soignant",
+      "territory": "MQ",
+      "demand": {
+        "openPositions": 200,
+        "shortage": true,
+        "trend": "increasing"
+      },
+      "salary": {
+        "min": 1500,
+        "max": 1800,
+        "average": 1650,
+        "currency": "EUR"
+      },
+      "requiredTraining": ["train_004"],
+      "source": {
+        "type": "pole_emploi",
+        "lastUpdated": "2026-01-13T00:00:00Z"
+      }
+    }
+  ],
+  "feedbacks": [
+    {
+      "id": "feedback_001",
+      "trainingId": "train_001",
+      "completed": true,
+      "completionDate": "2025-10-15",
+      "jobFound": true,
+      "jobFoundDelay": 2,
+      "contractType": "CDI",
+      "salary": 2100,
+      "jobRelated": true,
+      "rating": 5,
+      "comment": "Excellente formation ! J'ai trouvé un CDI 2 mois après. Les formateurs sont très compétents et le contenu est adapté au marché local.",
+      "verified": true,
+      "createdAt": "2025-12-20T00:00:00Z"
+    },
+    {
+      "id": "feedback_002",
+      "trainingId": "train_002",
+      "completed": true,
+      "completionDate": "2025-06-30",
+      "jobFound": true,
+      "jobFoundDelay": 1,
+      "contractType": "CDI",
+      "salary": 1850,
+      "jobRelated": true,
+      "rating": 5,
+      "comment": "Formation très pratique. J'ai été embauché dès la fin de mon alternance. Le métier d'électricien est très recherché en Guadeloupe.",
+      "verified": true,
+      "createdAt": "2025-08-15T00:00:00Z"
+    },
+    {
+      "id": "feedback_003",
+      "trainingId": "train_004",
+      "completed": true,
+      "completionDate": "2025-12-31",
+      "jobFound": true,
+      "jobFoundDelay": 0,
+      "contractType": "CDI",
+      "salary": 1650,
+      "jobRelated": true,
+      "rating": 5,
+      "comment": "J'ai reçu plusieurs propositions d'embauche avant même la fin de ma formation. Le secteur de la santé recrute massivement.",
+      "verified": true,
+      "createdAt": "2026-01-10T00:00:00Z"
+    }
+  ]
+}

@@ -23,6 +23,14 @@ import legalEntityRoutes from './api/routes/legalEntity.routes.js';
 import auditRoutes from './audit/audit.routes.js';
 import adminRoutes from './admin/admin.routes.js';
 import opendataRoutes from './api/routes/opendata.routes.js';
+// Phase 7: Infrastructure routes
+import geocodingRoutes from './routes/geocoding.js';
+import storesRoutes from './routes/stores.js';
+import productsRoutes from './routes/products.js';
+// Phase 8: Basket comparison routes
+import basketRoutes from './routes/basket.js';
+// Subscription & Payment routes
+import subscriptionRoutes from './api/routes/subscription.routes.js';
 
 // Import middlewares
 import { apiLimiter } from './api/middlewares/rateLimit.middleware.js';
@@ -129,6 +137,10 @@ app.get('/', (_req: Request, res: Response) => {
       audit: '/api/audit',
       admin: '/api/admin',
       opendata: '/api/opendata/v1', // Sprint 6
+      geocoding: '/api/geocoding', // Phase 7
+      stores: '/api/stores', // Phase 7
+      products: '/api/products', // Phase 7
+      basket: '/api/basket', // Phase 8
     },
     legal: {
       rgpd: 'Conforme RGPD (EU) 2016/679',
@@ -167,6 +179,17 @@ app.use('/api/admin', adminRoutes);
 // Routes Open Data (publiques - pas d'authentification)
 // Sprint 6: API Open Data avec Licence Ouverte v2.0
 app.use('/api/opendata', opendataRoutes);
+
+// Phase 7: Infrastructure API routes (publiques avec rate limiting)
+app.use('/api/geocoding', geocodingRoutes);
+app.use('/api/stores', storesRoutes);
+app.use('/api/products', productsRoutes);
+
+// Phase 8: Basket comparison API routes (publiques avec rate limiting)
+app.use('/api/basket', basketRoutes);
+
+// Subscription & Payment API routes
+app.use('/api/subscriptions', subscriptionRoutes);
 
 // ========================================
 // Gestion des erreurs

@@ -1,27 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import {
-  ShoppingCart,
-  MapPin,
-  Navigation,
-  Info,
-  AlertCircle,
-  Download,
-  Share2,
-  Save,
-  Trash2,
-  Plus,
-  X,
-  Clock,
-  DollarSign,
-  TrendingDown,
-  Map as MapIcon,
-} from 'lucide-react';
+import { useState } from 'react';
 import {
   getProductByEan,
   getPricesByEan,
   getStoresByTerritory,
   calculateDistance as calcDist,
-  getPriceDataFreshness,
 } from '../services/shoppingListService';
 import { db } from '../lib/firebase';
 import { solveShoppingRoute } from '../utils/routeOptimization';
@@ -163,7 +145,7 @@ export default function SmartShoppingList({ territoire = 'Guadeloupe' }) {
               message: 'Données non disponibles pour ce produit',
             });
           }
-        } catch (error) {
+        } catch (_error) {
           matchedProducts.push({
             ...item,
             dataAvailable: false,
@@ -765,6 +747,7 @@ export default function SmartShoppingList({ territoire = 'Guadeloupe' }) {
               </h2>
               <div className="space-y-3">
                 {Object.values(OPTIMIZATION_MODES).map((mode) => {
+                  // eslint-disable-next-line no-unused-vars
                   const Icon = mode.icon;
                   return (
                     <label

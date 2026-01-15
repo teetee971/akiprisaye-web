@@ -1,5 +1,3 @@
-import React from 'react';
-
 /**
  * Filtres Carte Component
  * Provides neutral filters for map observations
