@@ -35,13 +35,21 @@ let TesseractModule: any = null;
  * Lazy load Tesseract module
  * Loads the 17MB OCR library only when needed
  * Returns the default export (Tesseract library)
+ * @throws Error if the module fails to load
  */
 async function loadTesseract() {
   if (!TesseractModule) {
-    console.log('[OCR] Loading Tesseract.js module (~17MB download)...');
-    const module = await import('tesseract.js');
-    TesseractModule = module.default || module;
-    console.log('[OCR] Tesseract.js loaded successfully');
+    try {
+      console.log('[OCR] Loading Tesseract.js module (~17MB download)...');
+      const module = await import('tesseract.js');
+      TesseractModule = module.default || module;
+      console.log('[OCR] Tesseract.js loaded successfully');
+    } catch (error) {
+      console.error('[OCR] Failed to load Tesseract.js module:', error);
+      throw new Error(
+        'Impossible de charger le module OCR. Vérifiez votre connexion Internet et réessayez.'
+      );
+    }
   }
   return TesseractModule;
 }
