@@ -17,28 +17,13 @@
 import { readFileSync, writeFileSync, mkdirSync, statSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { TERRITORY_FILENAMES } from '../src/config/territoryFilenames.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const ROOT_DIR = join(__dirname, '..');
 const DATA_DIR = join(ROOT_DIR, 'public', 'data');
 const TERRITORIES_DIR = join(DATA_DIR, 'territories');
-
-// Territory code to full name mapping
-const TERRITORY_NAMES = {
-  'GP': 'guadeloupe',
-  'MQ': 'martinique',
-  'GF': 'guyane',
-  'RE': 'reunion',
-  'YT': 'mayotte',
-  'SM': 'saint-martin',
-  'BL': 'saint-barthelemy',
-  'PM': 'saint-pierre-et-miquelon',
-  'WF': 'wallis-et-futuna',
-  'PF': 'polynesie-francaise',
-  'NC': 'nouvelle-caledonie',
-  'TF': 'terres-australes'
-};
 
 /**
  * Format bytes to human readable size
@@ -145,8 +130,13 @@ async function splitPricesJson() {
       observations: observations
     };
 
-    const territoryName = TERRITORY_NAMES[territoryCode] || territoryCode.toLowerCase();
-    const filename = `${territoryName}.json`;
+    // Get filename from shared config
+    const filename = TERRITORY_FILENAMES[territoryCode];
+    if (!filename) {
+      console.warn(`  ⚠ No filename mapping for territory ${territoryCode}, skipping...`);
+      continue;
+    }
+
     const filepath = join(TERRITORIES_DIR, filename);
 
     // Write minified JSON (no whitespace)
@@ -154,6 +144,9 @@ async function splitPricesJson() {
 
     const fileSize = statSync(filepath).size;
     totalSplitSize += fileSize;
+
+    // Extract territory name from filename (remove .json extension)
+    const territoryName = filename.replace('.json', '');
 
     territoryFiles.push({
       code: territoryCode,

@@ -17,25 +17,10 @@ import type {
   EnhancedSearchFilters,
   PriceObservationEnhanced,
 } from '../types/enhancedPrice';
+import { TERRITORY_FILENAMES } from '../config/territoryFilenames';
 
 // Cache for loaded territory data
 const territoryDataCache = new Map<string, EnhancedPriceData>();
-
-// Territory code to filename mapping (from split-prices-json.mjs)
-const TERRITORY_FILENAMES: Record<string, string> = {
-  'GP': 'guadeloupe.json',
-  'MQ': 'martinique.json',
-  'GF': 'guyane.json',
-  'RE': 'reunion.json',
-  'YT': 'mayotte.json',
-  'MF': 'saint-martin.json',
-  'BL': 'saint-barthelemy.json',
-  'PM': 'saint-pierre-et-miquelon.json',
-  'WF': 'wallis-et-futuna.json',
-  'PF': 'polynesie-francaise.json',
-  'NC': 'nouvelle-caledonie.json',
-  'TF': 'terres-australes.json'
-};
 
 /**
  * Load territory-specific price data (optimized)
@@ -72,7 +57,11 @@ async function loadTerritoryData(territory?: string): Promise<EnhancedPriceData>
         return data;
       }
     } catch (error) {
-      console.warn(`Failed to load territory-specific data for ${territory}, falling back to full file`, error);
+      console.warn(
+        `Failed to load territory-specific data for ${territory}, falling back to full file.`,
+        `To resolve: Run 'npm run split-prices' to generate territory files, or check file paths.`,
+        error
+      );
     }
   }
 
