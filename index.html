@@ -45,22 +45,47 @@
     <!-- Canonical URL -->
     <link rel="canonical" href="https://akiprisaye.pages.dev/" />
     
-    <!-- Fonts - Institutional Typography -->
+    <!-- Fonts - Institutional Typography with optimized loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet" />
+    <!-- Preload font with display=swap to prevent blocking -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Sans+3:wght@400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Sans+3:wght@400;500;600&display=swap" /></noscript>
     
     <title>A KI PRI SA YÉ - Transparence des prix Outre-mer</title>
     
-    <!-- Fallback styles in case JS/CSS fails to load -->
+    <!-- Critical CSS inlined for fast initial render -->
     <style>
-      /* Prevent black screen if CSS fails to load */
+      /* Critical CSS - Above the fold styles */
+      
+      /* CSS Variables - Design tokens */
+      :root {
+        --bg-main: 14 17 22;
+        --bg-secondary: 18 21 28;
+        --bg-glass: 255 255 255;
+        --text-main: 230 234 240;
+        --text-muted: 169 176 194;
+        --accent-primary: 58 122 254;
+        --glass-opacity: 0.06;
+        --blur-civic: 12px;
+        --radius: 16px;
+        --font-sans: 'Inter', 'IBM Plex Sans', 'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      }
+      
+      /* Base styles */
+      * {
+        box-sizing: border-box;
+      }
+      
       body {
-        background-color: #0f172a;
-        color: #f1f5f9;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background-color: rgb(var(--bg-main));
+        color: rgb(var(--text-main));
+        font-family: var(--font-sans);
+        font-size: 14px;
         margin: 0;
         padding: 0;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
       }
       
       /* Loading indicator shown until React hydrates */
@@ -86,7 +111,7 @@
         top: calc(50% + 40px);
         left: 50%;
         transform: translateX(-50%);
-        color: #f1f5f9;
+        color: rgb(var(--text-main));
         font-size: 16px;
       }
       
@@ -97,6 +122,24 @@
       /* Ensure no content is hidden behind black screen */
       #root {
         min-height: 100vh;
+      }
+      
+      /* Critical glass effect utilities */
+      .glass-effect {
+        background: rgba(var(--bg-glass), var(--glass-opacity));
+        backdrop-filter: blur(var(--blur-civic));
+        -webkit-backdrop-filter: blur(var(--blur-civic));
+      }
+      
+      /* Reduced motion support */
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
       }
     </style>
     
