@@ -102,6 +102,9 @@ const Faq = lazyWithRetry(() => import('./pages/Faq'));
 // Comparateur Citoyen - Observatoire data
 const ComparateurCitoyen = lazyWithRetry(() => import('./pages/ComparateurCitoyen'));
 
+// Mission M-B - Multi-territory price comparison
+const ComparaisonPage = lazyWithRetry(() => import('./pages/ComparaisonPage.tsx'));
+
 // Loading component
 function LoadingFallback() {
   return (
@@ -202,6 +205,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                   <Route path='observatoire' element={<Observatoire />} />
                   <Route path='observatoire/methodologie' element={<ObservatoryMethodology />} />
                   <Route path='comparateur-citoyen' element={<ComparateurCitoyen />} />
+                  
+                  {/* Mission M-B - Multi-territory comparison */}
+                  <Route path='comparateur/comparer' element={<ComparaisonPage />} />
                   
                   {/* New simplified pages for automatic generation */}
                   <Route path='comparer' element={<CompareSimple />} />
