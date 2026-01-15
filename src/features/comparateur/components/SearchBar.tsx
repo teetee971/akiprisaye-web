@@ -2,30 +2,26 @@ import { useState, useEffect, useRef } from 'react';
 import Fuse from 'fuse.js';
 import type { SearchBarProps, Product } from '../types';
 
+// Fuse.js configuration constant
+const FUSE_OPTIONS = {
+  keys: ['name', 'brand', 'synonyms', 'category', 'ean'],
+  threshold: 0.3,
+  includeScore: true,
+  minMatchCharLength: 2
+};
+
 export function SearchBar({ products, onSearch, placeholder }: SearchBarProps) {
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState<Product[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
 
-  // Fuse.js configuration
-  const fuse = useRef(
-    new Fuse(products, {
-      keys: ['name', 'brand', 'synonyms', 'category', 'ean'],
-      threshold: 0.3,
-      includeScore: true,
-      minMatchCharLength: 2
-    })
-  );
+  // Fuse.js instance
+  const fuse = useRef(new Fuse(products, FUSE_OPTIONS));
 
   // Update fuse instance when products change
   useEffect(() => {
-    fuse.current = new Fuse(products, {
-      keys: ['name', 'brand', 'synonyms', 'category', 'ean'],
-      threshold: 0.3,
-      includeScore: true,
-      minMatchCharLength: 2
-    });
+    fuse.current = new Fuse(products, FUSE_OPTIONS);
   }, [products]);
 
   // Close suggestions when clicking outside

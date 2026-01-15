@@ -20,9 +20,10 @@ export function useProductSearch(products: Product[]) {
 
     // Apply price range filter
     if (filters.priceRange) {
+      const [minPrice, maxPrice] = filters.priceRange;
       result = result.filter(p => 
-        p.basePrice >= filters.priceRange![0] && 
-        p.basePrice <= filters.priceRange![1]
+        p.basePrice >= minPrice && 
+        p.basePrice <= maxPrice
       );
     }
 
