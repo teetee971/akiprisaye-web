@@ -13,6 +13,7 @@ import { BestPriceHighlight } from '../features/comparateur/components/BestPrice
 import { ComparisonTable } from '../features/comparateur/components/ComparisonTable';
 import { PriceChart } from '../features/comparateur/components/PriceChartComparison';
 import { StatCard } from '../features/comparateur/components/StatCard';
+import { SIGNIFICANT_PRICE_DIFF_THRESHOLD } from '../features/comparateur/constants';
 
 // Default territories for comparison
 const DEFAULT_TERRITORIES: Territory[] = ['GP', 'MQ', 'GY', 'RE'];
@@ -145,7 +146,7 @@ export default function ComparaisonPage() {
               <h4 className="text-sm font-semibold text-blue-300 mb-2">ℹ️ Méthodologie</h4>
               <p className="text-sm text-slate-300">
                 Les prix affichés sont basés sur les données les plus récentes disponibles pour chaque territoire.
-                Les écarts significants (&gt;20%) sont mis en évidence. Les données proviennent de sources officielles
+                Les écarts significants (&gt;{SIGNIFICANT_PRICE_DIFF_THRESHOLD}%) sont mis en évidence. Les données proviennent de sources officielles
                 et de contributions citoyennes vérifiées.
               </p>
             </div>

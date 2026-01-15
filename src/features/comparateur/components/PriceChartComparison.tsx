@@ -9,7 +9,7 @@ import { getTerritoryLabel } from '../../../utils/territoryMapper';
 
 interface PriceChartProps {
   data: TerritoryPrice[];
-  type?: 'bar' | 'line';
+  type?: 'bar'; // Only bar charts implemented for now
 }
 
 export function PriceChart({ data, type = 'bar' }: PriceChartProps) {

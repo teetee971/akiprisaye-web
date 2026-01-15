@@ -1,11 +1,8 @@
-/**
- * Custom hook for multi-territory price comparison
- */
-
 import { useEffect, useState, useMemo } from 'react';
 import type { TerritoryPrice } from '../types';
 import type { Territory } from '../../../types/comparatorCommon';
 import { calculateMedian } from '../utils/statsUtils';
+import { TERRITORY_FILE_MAP } from '../constants';
 
 /**
  * Mock function to get store count for a territory
@@ -43,13 +40,14 @@ export function usePriceComparison(productId: string, territories: Territory[]) 
         const promises = territories.map(async (territory) => {
           try {
             // Validate territory code before using in URL
-            if (!['GP', 'MQ', 'GY', 'RE', 'YT', 'MF', 'BL', 'PM', 'WF', 'PF', 'NC'].includes(territory)) {
+            if (!TERRITORY_FILE_MAP[territory]) {
               console.warn(`Invalid territory code: ${territory}`);
               return null;
             }
             
             // Try to load from split files (Mission I format)
-            const response = await fetch(`/data/territories/${territory.toLowerCase()}.json`);
+            const territoryFilename = TERRITORY_FILE_MAP[territory];
+            const response = await fetch(`/data/territories/${territoryFilename}.json`);
             
             if (!response.ok) {
               // Fallback: territory not available yet

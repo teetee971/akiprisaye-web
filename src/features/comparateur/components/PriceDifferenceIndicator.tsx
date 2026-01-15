@@ -17,7 +17,9 @@ export function PriceDifferenceIndicator({
   const diff = comparePrice - basePrice;
   const diffPercent = ((diff / basePrice) * 100).toFixed(1);
   const isHigher = diff > 0;
-  const isSignificant = Math.abs(parseFloat(diffPercent)) > 20;
+  // Use constant from constants.ts for consistency
+  const SIGNIFICANT_THRESHOLD = 20;
+  const isSignificant = Math.abs(parseFloat(diffPercent)) > SIGNIFICANT_THRESHOLD;
 
   return (
     <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-lg ${

@@ -7,6 +7,7 @@ import type { Product, TerritoryPrice } from '../types';
 import { getTerritoryLabel } from '../../../utils/territoryMapper';
 import { StatCard } from './StatCard';
 import { average } from '../utils/statsUtils';
+import { SIGNIFICANT_PRICE_DIFF_THRESHOLD } from '../constants';
 
 interface ComparisonTableProps {
   product: Product;
@@ -53,7 +54,7 @@ export function ComparisonTable({ product, territoryPrices }: ComparisonTablePro
                   const diff = tp.price - minPrice;
                   const diffPercent = ((diff / minPrice) * 100).toFixed(1);
                   const isBest = tp.price === minPrice;
-                  const isHighDiff = parseFloat(diffPercent) > 20;
+                  const isHighDiff = parseFloat(diffPercent) > SIGNIFICANT_PRICE_DIFF_THRESHOLD;
                   
                   return (
                     <tr 
