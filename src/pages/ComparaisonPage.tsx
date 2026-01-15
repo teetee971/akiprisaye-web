@@ -5,14 +5,14 @@
 
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import type { Territory } from '../../types/comparatorCommon';
-import type { Product } from '../../features/comparateur/types';
-import { usePriceComparison } from '../../features/comparateur/hooks/usePriceComparison';
-import { TerritorySelector } from '../../features/comparateur/components/TerritorySelector';
-import { BestPriceHighlight } from '../../features/comparateur/components/BestPriceHighlight';
-import { ComparisonTable } from '../../features/comparateur/components/ComparisonTable';
-import { PriceChart } from '../../features/comparateur/components/PriceChartComparison';
-import { StatCard } from '../../features/comparateur/components/StatCard';
+import type { Territory } from '../types/comparatorCommon';
+import type { Product } from '../features/comparateur/types';
+import { usePriceComparison } from '../features/comparateur/hooks/usePriceComparison';
+import { TerritorySelector } from '../features/comparateur/components/TerritorySelector';
+import { BestPriceHighlight } from '../features/comparateur/components/BestPriceHighlight';
+import { ComparisonTable } from '../features/comparateur/components/ComparisonTable';
+import { PriceChart } from '../features/comparateur/components/PriceChartComparison';
+import { StatCard } from '../features/comparateur/components/StatCard';
 
 // Default territories for comparison
 const DEFAULT_TERRITORIES: Territory[] = ['GP', 'MQ', 'GY', 'RE'];
