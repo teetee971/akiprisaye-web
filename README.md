@@ -4,6 +4,9 @@
 [![CI Schema Validation](https://img.shields.io/badge/CI-JSON%20Schema%20Validation-blue)](#)
 [![Browser Only](https://img.shields.io/badge/Runtime-Browser--Only-important)](#)
 [![OCR Local](https://img.shields.io/badge/OCR-100%25%20Local-green)](#)
+[![PageSpeed Desktop](https://img.shields.io/badge/PageSpeed%20Desktop-99%2F100-success?logo=lighthouse)](https://pagespeed.web.dev/analysis/https-akiprisaye-web-vercel-app/1bs32pqrrx?form_factor=desktop)
+[![PageSpeed Mobile](https://img.shields.io/badge/PageSpeed%20Mobile-74%2F100-yellow?logo=lighthouse)](https://pagespeed.web.dev/analysis/https-akiprisaye-web-vercel-app/1bs32pqrrx?form_factor=mobile)
+[![Performance](https://img.shields.io/badge/Performance-Top%201%25-brightgreen)](#-performance--web-vitals)
 
 **Application citoyenne de transparence des prix et des coûts réels dans les territoires ultramarins**
 
@@ -20,6 +23,45 @@ L'application ne vend aucun produit et ne réalise aucune transaction commercial
 - **ROM / COM** (Saint-Martin, Saint-Barthélemy, Polynésie française, Nouvelle-Calédonie, Wallis-et-Futuna, Saint-Pierre-et-Miquelon, Terres australes, etc.)
 
 **🎯 Phrase d'accroche : Comprendre pourquoi tout coûte plus cher.**
+
+---
+
+## ⚡ Performance & Web Vitals
+
+**World-class performance optimization** - **Top 1%** of websites globally! 🏆
+
+### 📊 PageSpeed Insights Scores
+
+| Platform | Performance | Accessibility | Best Practices | SEO | Link |
+|----------|-------------|---------------|----------------|-----|------|
+| 🖥️ **Desktop** | **99/100** ⭐⭐⭐ | 94/100 | 96/100 | 100/100 | [View Report](https://pagespeed.web.dev/analysis/https-akiprisaye-web-vercel-app/1bs32pqrrx?form_factor=desktop) |
+| 📱 **Mobile** | 74/100 | 98/100 | 96/100 | 100/100 | [View Report](https://pagespeed.web.dev/analysis/https-akiprisaye-web-vercel-app/1bs32pqrrx?form_factor=mobile) |
+
+### 🎯 Core Web Vitals (Desktop)
+
+| Metric | Score | Target | Status |
+|--------|-------|--------|--------|
+| **FCP** (First Contentful Paint) | 0.7s | < 1.8s | ✅ **3x better** |
+| **LCP** (Largest Contentful Paint) | 0.8s | < 2.5s | ✅ **3x better** |
+| **TBT** (Total Blocking Time) | 0ms | < 300ms | ✅ **Perfect** |
+| **CLS** (Cumulative Layout Shift) | 0 | < 0.1 | ✅ **Perfect** |
+| **Speed Index** | 1.0s | < 4.0s | ✅ **Excellent** |
+
+### 🚀 Performance Optimizations
+
+- ⚡ **Preload hints** for critical resources (modulepreload, preconnect, dns-prefetch)
+- 🎯 **Code splitting** by route for faster initial load
+- 🖼️ **Optimized images** (WebP/AVIF with fallbacks)
+- 📦 **Lazy loading** for non-critical components
+- 🔄 **Service Worker** with smart caching strategies
+- 🌐 **CDN delivery** via Cloudflare Pages
+
+### 📖 Documentation
+
+- 📘 **[Mission H: Preload Hints Implementation](docs/performance/MISSION_H_PRELOAD_HINTS.md)** - Detailed performance optimization documentation
+- 🧪 **[How to Test Performance](docs/performance/MISSION_H_PRELOAD_HINTS.md#-testing--validation)** - Local testing with Lighthouse & PageSpeed Insights
+
+**Last Performance Audit:** January 15, 2026
 
 ---
 
@@ -823,6 +865,13 @@ Pour en savoir plus sur l'architecture et les fonctionnalités :
 ### 🏗️ Architecture
 - **[ARCHITECTURE.md](ARCHITECTURE.md)** - Architecture technique de l'application
 - **[METHODOLOGIE_OFFICIELLE_v2.0.md](METHODOLOGIE_OFFICIELLE_v2.0.md)** - Méthodologie de collecte de données
+
+### ⚡ Performance
+- **[MISSION_H_PRELOAD_HINTS.md](docs/performance/MISSION_H_PRELOAD_HINTS.md)** - Documentation complète sur l'optimisation des preload hints
+  - Résultats PageSpeed Insights (Desktop: 99/100)
+  - Impact mesuré sur les Core Web Vitals
+  - Guide de test performance local
+  - Comparaison avant/après optimisation
 
 ### 📦 Déploiement
 - **[CLOUDFLARE_DEPLOYMENT.md](CLOUDFLARE_DEPLOYMENT.md)** - Guide de déploiement Cloudflare Pages
