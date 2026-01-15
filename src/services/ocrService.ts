@@ -29,16 +29,18 @@
 
 // Dynamic import for lazy loading (loaded only when OCR is actually used)
 // This reduces initial bundle size by ~17MB
-let TesseractModule: typeof import('tesseract.js') | null = null;
+let TesseractModule: any = null;
 
 /**
  * Lazy load Tesseract module
  * Loads the 17MB OCR library only when needed
+ * Returns the default export (Tesseract library)
  */
 async function loadTesseract() {
   if (!TesseractModule) {
     console.log('[OCR] Loading Tesseract.js module (~17MB download)...');
-    TesseractModule = await import('tesseract.js');
+    const module = await import('tesseract.js');
+    TesseractModule = module.default || module;
     console.log('[OCR] Tesseract.js loaded successfully');
   }
   return TesseractModule;
