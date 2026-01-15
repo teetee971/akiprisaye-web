@@ -42,6 +42,7 @@
     "@openfoodfacts/openfoodfacts-nodejs": "^2.0.0-alpha.19",
     "@tanstack/react-query": "^5.90.7",
     "@tensorflow/tfjs": "^4.22.0",
+    "@types/react-window": "^1.8.8",
     "@vitejs/plugin-react": "^4.6.0",
     "@zxing/browser": "^0.1.5",
     "@zxing/library": "^0.21.3",
@@ -64,6 +65,7 @@
     "react-leaflet": "^4.2.1",
     "react-router-dom": "^7.6.3",
     "react-webcam": "^7.2.0",
+    "react-window": "^2.2.5",
     "recharts": "^3.3.0",
     "tailwind-merge": "^3.4.0",
     "tesseract.js": "^6.0.1"

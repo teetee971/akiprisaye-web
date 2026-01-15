@@ -102,6 +102,9 @@ const Faq = lazyWithRetry(() => import('./pages/Faq'));
 // Comparateur Citoyen - Observatoire data
 const ComparateurCitoyen = lazyWithRetry(() => import('./pages/ComparateurCitoyen'));
 
+// Mission M-A: Hub Comparateur Core
+const ComparateurHub = lazyWithRetry(() => import('./features/comparateur/pages/ComparateurHub'));
+
 // Loading component
 function LoadingFallback() {
   return (
@@ -163,6 +166,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                   <Route path='scan-ean' element={<ScanEAN />} />
                   <Route path='comparaison-enseignes' element={<ComparaisonEnseignes />} />
                   <Route path='comparateur' element={<Comparateur />} />
+                  <Route path='comparateurs' element={<ComparateurHub />} />
+                  <Route path='comparateur/produit/:id' element={<ComparateurHub />} />
                   <Route path='carte' element={<Carte />} />
                   <Route path='actualites' element={<NewsSimple />} />
                   <Route path='alertes' element={<Alertes />} />
