@@ -102,6 +102,10 @@ const Faq = lazyWithRetry(() => import('./pages/Faq'));
 // Comparateur Citoyen - Observatoire data
 const ComparateurCitoyen = lazyWithRetry(() => import('./pages/ComparateurCitoyen'));
 
+// Mission M-C: Premium Features
+const ComparateurFavoris = lazyWithRetry(() => import('./pages/ComparateurFavoris'));
+const ComparateurPartage = lazyWithRetry(() => import('./pages/ComparateurPartage'));
+
 // Loading component
 function LoadingFallback() {
   return (
@@ -202,6 +206,10 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                   <Route path='observatoire' element={<Observatoire />} />
                   <Route path='observatoire/methodologie' element={<ObservatoryMethodology />} />
                   <Route path='comparateur-citoyen' element={<ComparateurCitoyen />} />
+                  
+                  {/* Mission M-C: Premium Features */}
+                  <Route path='comparateur/favoris' element={<ComparateurFavoris />} />
+                  <Route path='comparateur/partage' element={<ComparateurPartage />} />
                   
                   {/* New simplified pages for automatic generation */}
                   <Route path='comparer' element={<CompareSimple />} />
