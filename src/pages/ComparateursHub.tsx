@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { DollarSign, Weight, TrendingDown, Map, BarChart3 } from 'lucide-react';
+import { DollarSign, Weight, TrendingDown, Map, BarChart3, Star } from 'lucide-react';
 import { GlassCard } from '../components/ui/glass-card';
 import Comparateur from './Comparateur';
 import HistoriquePrix from './HistoriquePrix';
+import { ThemeToggle, SearchHistory } from '../features/comparateur';
 
 type ComparateurTab = 'prix' | 'kilo' | 'shrinkflation' | 'metropole' | 'historique';
 
@@ -27,13 +28,25 @@ export default function ComparateursHub() {
       
       <div className="min-h-screen bg-slate-950 p-4 pt-24">
         <div className="max-w-7xl mx-auto">
-          <div className="mb-8">
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
-              📊 Comparateurs de prix
-            </h1>
-            <p className="text-gray-400 text-lg">
-              Tous vos outils de comparaison en un seul endroit
-            </p>
+          <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="flex-1">
+              <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
+                📊 Comparateurs de prix
+              </h1>
+              <p className="text-gray-400 text-lg">
+                Tous vos outils de comparaison en un seul endroit
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <a 
+                href="/comparateur/favoris"
+                className="flex items-center gap-2 px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg transition-colors font-medium"
+              >
+                <Star className="w-4 h-4" />
+                <span className="hidden sm:inline">Mes Favoris</span>
+              </a>
+              <ThemeToggle />
+            </div>
           </div>
           
           {/* Tabs - Mobile Responsive */}
@@ -119,6 +132,11 @@ export default function ComparateursHub() {
               </GlassCard>
             )}
             {activeTab === 'historique' && <HistoriquePrix />}
+          </div>
+          
+          {/* Search History Section */}
+          <div className="mt-8">
+            <SearchHistory />
           </div>
           
           {/* Statistics Section */}

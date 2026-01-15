@@ -105,6 +105,7 @@ const ComparateurCitoyen = lazyWithRetry(() => import('./pages/ComparateurCitoye
 // Mission M-C: Premium Features
 const ComparateurFavoris = lazyWithRetry(() => import('./pages/ComparateurFavoris'));
 const ComparateurPartage = lazyWithRetry(() => import('./pages/ComparateurPartage'));
+const PremiumFeaturesDemo = lazyWithRetry(() => import('./pages/PremiumFeaturesDemo'));
 
 // Loading component
 function LoadingFallback() {
@@ -210,6 +211,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                   {/* Mission M-C: Premium Features */}
                   <Route path='comparateur/favoris' element={<ComparateurFavoris />} />
                   <Route path='comparateur/partage' element={<ComparateurPartage />} />
+                  <Route path='premium-demo' element={<PremiumFeaturesDemo />} />
                   
                   {/* New simplified pages for automatic generation */}
                   <Route path='comparer' element={<CompareSimple />} />

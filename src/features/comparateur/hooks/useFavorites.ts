@@ -17,7 +17,10 @@ export function useFavorites() {
   }, [favorites]);
 
   const addFavorite = (productId: string) => {
-    setFavorites(prev => [...new Set([...prev, productId])]);
+    setFavorites(prev => {
+      if (prev.includes(productId)) return prev;
+      return [...prev, productId];
+    });
   };
 
   const removeFavorite = (productId: string) => {
