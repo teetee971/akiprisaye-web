@@ -35,9 +35,10 @@ export function FavoriteButton({ productId, size = 'medium' }: FavoriteButtonPro
       }`}
       onClick={handleToggle}
       aria-label={favorited ? 'Retirer des favoris' : 'Ajouter aux favoris'}
-      title={favorited ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+      aria-pressed={favorited}
     >
-      {favorited ? '⭐' : '☆'}
+      <span aria-hidden="true">{favorited ? '⭐' : '☆'}</span>
+      <span className="sr-only">{favorited ? 'Retirer des favoris' : 'Ajouter aux favoris'}</span>
     </button>
   );
 }

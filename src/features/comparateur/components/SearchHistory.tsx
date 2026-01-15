@@ -62,10 +62,10 @@ export function SearchHistory() {
               </button>
               <button 
                 onClick={() => removeHistoryItem(index)}
-                className="text-gray-500 hover:text-red-400 transition-colors"
+                className="text-gray-500 hover:text-red-400 transition-colors text-sm px-2"
                 aria-label="Supprimer cette recherche"
               >
-                ❌
+                ×
               </button>
             </li>
           ))}

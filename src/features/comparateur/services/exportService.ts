@@ -43,19 +43,50 @@ export async function generatePDF(data: Record<string, unknown>[]): Promise<Blob
   doc.setFontSize(10);
   doc.text(`Généré le ${new Date().toLocaleDateString('fr-FR')}`, 14, 25);
   
-  // Add data as simple text for now
-  doc.setFontSize(12);
-  let yPosition = 35;
+  // Add summary
+  doc.setFontSize(11);
+  doc.text(`Nombre d'éléments: ${data.length}`, 14, 35);
+  
+  // Add data in a table-like format
+  doc.setFontSize(10);
+  let yPosition = 45;
+  const lineHeight = 7;
+  const pageHeight = 280;
+  
+  // Get all unique keys from data
+  const keys = Array.from(new Set(data.flatMap(item => Object.keys(item))));
   
   data.forEach((item, index) => {
-    if (yPosition > 270) {
+    // Check if we need a new page
+    if (yPosition > pageHeight) {
       doc.addPage();
       yPosition = 15;
     }
     
-    const text = `${index + 1}. ${JSON.stringify(item)}`;
-    doc.text(text, 14, yPosition, { maxWidth: 180 });
-    yPosition += 10;
+    // Item header
+    doc.setFont(undefined, 'bold');
+    doc.text(`#${index + 1}`, 14, yPosition);
+    yPosition += lineHeight;
+    
+    // Item properties
+    doc.setFont(undefined, 'normal');
+    keys.forEach(key => {
+      if (yPosition > pageHeight) {
+        doc.addPage();
+        yPosition = 15;
+      }
+      
+      const value = item[key];
+      const displayValue = value !== null && value !== undefined ? String(value) : 'N/A';
+      const text = `  ${key}: ${displayValue}`;
+      
+      // Wrap text if too long
+      const splitText = doc.splitTextToSize(text, 180);
+      doc.text(splitText, 14, yPosition);
+      yPosition += lineHeight * splitText.length;
+    });
+    
+    yPosition += 3; // Add spacing between items
   });
   
   return doc.output('blob');

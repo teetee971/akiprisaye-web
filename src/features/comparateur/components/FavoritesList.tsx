@@ -76,10 +76,10 @@ export function FavoritesList() {
                 </h3>
                 <button 
                   onClick={() => removeFavorite(product.id)}
-                  className="text-red-400 hover:text-red-500 text-xl transition-colors"
+                  className="text-red-400 hover:text-red-500 text-xl transition-colors px-2"
                   aria-label="Retirer des favoris"
                 >
-                  ❌
+                  ×
                 </button>
               </div>
               <p className="text-gray-400 text-sm">ID: {product.id}</p>
