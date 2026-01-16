@@ -78,6 +78,7 @@ const AIDashboard = lazyWithRetry(() => import('./pages/AIDashboard'));
 const AiMarketInsights = lazyWithRetry(() => import('./pages/AiMarketInsights'));
 const IEVR = lazyWithRetry(() => import('./pages/IEVR'));
 const DossierMedia = lazyWithRetry(() => import('./pages/DossierMedia'));
+const Presse = lazyWithRetry(() => import('./pages/Presse'));
 const HistoriquePrix = lazyWithRetry(() => import('./pages/HistoriquePrix'));
 const AlertesPrix = lazyWithRetry(() => import('./pages/AlertesPrix'));
 const BudgetVital = lazyWithRetry(() => import('./pages/BudgetVital'));
@@ -196,6 +197,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                   <Route path='admin/ai-market-insights' element={<AiMarketInsights />} />
                   <Route path='ievr' element={<IEVR />} />
                   <Route path='dossier-media' element={<DossierMedia />} />
+                  <Route path='presse' element={<Presse />} />
                   <Route path='historique-prix' element={<HistoriquePrix />} />
                   <Route path='alertes-prix' element={<AlertesPrix />} />
                   <Route path='budget-vital' element={<BudgetVital />} />

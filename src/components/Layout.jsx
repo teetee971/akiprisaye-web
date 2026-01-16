@@ -34,6 +34,7 @@ export default function Layout() {
     { path: '/methodologie', label: 'Méthodologie' },
     { path: '/transparence', label: 'Transparence' },
     { path: '/donnees-publiques', label: 'Données publiques' },
+    { path: '/presse', label: 'Presse' },
     { path: '/mentions-legales', label: 'Mentions légales' },
   ];
 
