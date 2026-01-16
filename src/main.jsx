@@ -167,7 +167,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                   <Route path='comparaison-enseignes' element={<ComparaisonEnseignes />} />
                   <Route path='comparateur' element={<Comparateur />} />
                   <Route path='comparateurs' element={<ComparateurHub />} />
-                  <Route path='comparateur/produit/:id' element={<ComparateurHub />} />
                   <Route path='carte' element={<Carte />} />
                   <Route path='actualites' element={<NewsSimple />} />
                   <Route path='alertes' element={<Alertes />} />

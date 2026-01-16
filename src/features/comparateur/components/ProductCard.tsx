@@ -21,12 +21,25 @@ export function ProductCard({ product, onClick, showCompareButton }: ProductCard
 
   const handleCompare = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // This will be implemented later when comparison functionality is added
-    console.log('Compare product:', product.id);
+    // Comparison functionality will be implemented in Mission M-C
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onClick?.();
+    }
   };
 
   return (
-    <div className="product-card" onClick={onClick}>
+    <div 
+      className="product-card" 
+      onClick={onClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={handleKeyDown}
+      aria-label={`${product.name} - ${product.brand} - ${product.basePrice.toFixed(2)}€`}
+    >
       <div className="product-image">
         <span className="product-icon">{categoryIcon}</span>
       </div>

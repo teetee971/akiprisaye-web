@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { SearchBar } from '../components/SearchBar';
 import { FilterPanel } from '../components/FilterPanel';
 import { ProductList } from '../components/ProductList';
@@ -43,8 +43,13 @@ export default function ComparateurHub() {
 
       const data: ProductDataResponse = await response.json();
       
-      // Support both formats: data.products (monolithic) or data (split)
-      const productList = data.products || (Array.isArray(data) ? data : []);
+      // Support both formats: data (split array) or data.products (monolithic)
+      let productList: Product[] = [];
+      if (Array.isArray(data)) {
+        productList = data;
+      } else if (data && Array.isArray(data.products)) {
+        productList = data.products;
+      }
       
       setProducts(productList);
       setSearchResults(productList);
@@ -57,8 +62,8 @@ export default function ComparateurHub() {
   };
 
   const handleProductClick = (product: Product) => {
-    // Navigate to product detail page (to be implemented in future)
-    navigate(`/comparateur/produit/${product.id}`);
+    // Product detail page will be implemented in Mission M-B
+    console.warn('Product detail page not yet implemented:', product.id);
   };
 
   const handleSearch = (results: Product[]) => {
@@ -78,9 +83,9 @@ export default function ComparateurHub() {
             <h1>Hub Comparateur de Prix</h1>
             <p>Comparez les prix de {products.length} produits</p>
           </div>
-          <a href="/" className="back-link">
+          <Link to="/" className="back-link">
             ← Retour à l'accueil
-          </a>
+          </Link>
         </div>
       </header>
 
