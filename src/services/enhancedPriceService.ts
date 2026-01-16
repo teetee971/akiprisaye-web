@@ -6,6 +6,7 @@
  * - Fuzzy matching with synonyms
  * - Reliability-based ranking
  * - Price comparison with transparency
+ * - Territory-based data loading (optimized for performance)
  */
 
 import type {
@@ -16,6 +17,66 @@ import type {
   EnhancedSearchFilters,
   PriceObservationEnhanced,
 } from '../types/enhancedPrice';
+import { TERRITORY_FILENAMES } from '../config/territoryFilenames';
+
+// Cache for loaded territory data
+const territoryDataCache = new Map<string, EnhancedPriceData>();
+
+/**
+ * Load territory-specific price data (optimized)
+ * Uses split JSON files when available, falls back to full file
+ */
+async function loadTerritoryData(territory?: string): Promise<EnhancedPriceData> {
+  // If no territory specified or 'ALL', load full file
+  if (!territory || territory === 'ALL') {
+    const response = await fetch('/data/expanded-prices.json');
+    if (!response.ok) {
+      // Fallback to smaller database
+      const fallbackResponse = await fetch('/data/enhanced-prices.json');
+      if (!fallbackResponse.ok) {
+        throw new Error('Failed to fetch price data');
+      }
+      return await fallbackResponse.json();
+    }
+    return await response.json();
+  }
+
+  // Check cache first
+  if (territoryDataCache.has(territory)) {
+    return territoryDataCache.get(territory)!;
+  }
+
+  // Try to load territory-specific file
+  const filename = TERRITORY_FILENAMES[territory];
+  if (filename) {
+    try {
+      const response = await fetch(`/data/territories/${filename}`);
+      if (response.ok) {
+        const data = await response.json();
+        territoryDataCache.set(territory, data);
+        return data;
+      }
+    } catch (error) {
+      console.warn(
+        `Failed to load territory-specific data for ${territory}, falling back to full file.`,
+        `To resolve: Run 'npm run split-prices' to generate territory files, or check file paths.`,
+        error
+      );
+    }
+  }
+
+  // Fallback: load full file and filter
+  const response = await fetch('/data/expanded-prices.json');
+  if (!response.ok) {
+    const fallbackResponse = await fetch('/data/enhanced-prices.json');
+    if (!fallbackResponse.ok) {
+      throw new Error('Failed to fetch price data');
+    }
+    return await fallbackResponse.json();
+  }
+  
+  return await response.json();
+}
 
 /**
  * Normalize text for search matching
@@ -99,19 +160,8 @@ export async function searchProducts(
   filters: EnhancedSearchFilters
 ): Promise<ProductSearchResult[]> {
   try {
-    // Fetch enhanced price data - using expanded database by default
-    const response = await fetch('/data/expanded-prices.json');
-    if (!response.ok) {
-      // Fallback to smaller database if expanded not available
-      const fallbackResponse = await fetch('/data/enhanced-prices.json');
-      if (!fallbackResponse.ok) {
-        throw new Error('Failed to fetch price data');
-      }
-      const fallbackData: EnhancedPriceData = await fallbackResponse.json();
-      return processSearchFilters(fallbackData.products, filters);
-    }
-    
-    const data: EnhancedPriceData = await response.json();
+    // Load data optimized for territory
+    const data = await loadTerritoryData(filters.territory);
     return processSearchFilters(data.products, filters);
   } catch (error) {
     console.error('Error searching products:', error);
@@ -251,19 +301,9 @@ function processSearchFilters(
 /**
  * Get product by EAN
  */
-export async function getProductByEAN(ean: string): Promise<CanonicalProduct | null> {
+export async function getProductByEAN(ean: string, territory?: string): Promise<CanonicalProduct | null> {
   try {
-    // Try expanded database first
-    let response = await fetch('/data/expanded-prices.json');
-    if (!response.ok) {
-      // Fallback to smaller database
-      response = await fetch('/data/enhanced-prices.json');
-      if (!response.ok) {
-        throw new Error('Failed to fetch price data');
-      }
-    }
-    
-    const data: EnhancedPriceData = await response.json();
+    const data = await loadTerritoryData(territory);
     return data.products.find(p => p.ean === ean) || null;
   } catch (error) {
     console.error('Error fetching product by EAN:', error);
@@ -399,18 +439,9 @@ export async function comparePrices(
 /**
  * Get available categories
  */
-export async function getCategories(): Promise<string[]> {
+export async function getCategories(territory?: string): Promise<string[]> {
   try {
-    // Try expanded database first
-    let response = await fetch('/data/expanded-prices.json');
-    if (!response.ok) {
-      response = await fetch('/data/enhanced-prices.json');
-      if (!response.ok) {
-        throw new Error('Failed to fetch price data');
-      }
-    }
-    
-    const data: EnhancedPriceData = await response.json();
+    const data = await loadTerritoryData(territory);
     const categories = new Set(data.products.map(p => p.category));
     return Array.from(categories).sort();
   } catch (error) {
@@ -422,18 +453,9 @@ export async function getCategories(): Promise<string[]> {
 /**
  * Get available brands
  */
-export async function getBrands(): Promise<string[]> {
+export async function getBrands(territory?: string): Promise<string[]> {
   try {
-    // Try expanded database first
-    let response = await fetch('/data/expanded-prices.json');
-    if (!response.ok) {
-      response = await fetch('/data/enhanced-prices.json');
-      if (!response.ok) {
-        throw new Error('Failed to fetch price data');
-      }
-    }
-    
-    const data: EnhancedPriceData = await response.json();
+    const data = await loadTerritoryData(territory);
     const brands = new Set(data.products.map(p => p.brand));
     return Array.from(brands).sort();
   } catch (error) {
