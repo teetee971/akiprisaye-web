@@ -13,6 +13,12 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
+import { SEOHead } from '../components/SEO/SEOHead';
+import { 
+  generateOrganizationSchema, 
+  generateWebSiteSchema, 
+  generateBreadcrumbSchema 
+} from '../lib/seo/structuredData';
 
 export default function HomeV4() {
   const navigate = useNavigate();
@@ -117,26 +123,51 @@ export default function HomeV4() {
     }
   };
 
+  // Generate structured data
+  const organizationSchema = generateOrganizationSchema();
+  const websiteSchema = generateWebSiteSchema();
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Accueil', url: '/' }
+  ]);
+
   return (
-    <div className="home-v4">
-      {/* Skip to main content for accessibility */}
-      <a href="#main-content" className="skip-link">
-        Aller au contenu principal
-      </a>
+    <>
+      <SEOHead
+        title="Accueil - Transparence des prix Outre-mer"
+        description="Application citoyenne gratuite qui explique les écarts de prix dans les DOM. Comparez les prix de milliers de produits en Guadeloupe, Martinique, Guyane, Réunion et Mayotte."
+        keywords={[
+          'transparence',
+          'écarts de prix',
+          'application citoyenne',
+          'scanner produit',
+          'économies',
+          'budget',
+          'observatoire prix'
+        ]}
+        url="/"
+        type="website"
+        structuredData={[organizationSchema, websiteSchema, breadcrumbSchema]}
+      />
       
-      {/* 🏆 HERO SECTION WITH PARALLAX */}
-      <section className="hero" ref={heroRef}>
-        <motion.div
-          style={{ opacity: heroOpacity, scale: heroScale }}
-          className="hero-content"
-        >
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="hero-title"
+      <div className="home-v4">
+        {/* Skip to main content for accessibility */}
+        <a href="#main-content" className="skip-link">
+          Aller au contenu principal
+        </a>
+        
+        {/* 🏆 HERO SECTION WITH PARALLAX */}
+        <section className="hero" ref={heroRef}>
+          <motion.div
+            style={{ opacity: heroOpacity, scale: heroScale }}
+            className="hero-content"
           >
-            Comprendre et comparer les prix<br />
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="hero-title"
+            >
+              Comprendre et comparer les prix<br />
             des territoires d'outre-mer
           </motion.h1>
           
@@ -447,5 +478,6 @@ export default function HomeV4() {
         </motion.div>
       )}
     </div>
+    </>
   );
 }

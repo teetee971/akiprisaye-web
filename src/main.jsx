@@ -1,6 +1,7 @@
 import React, { Suspense, lazy } from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import './styles/globals.css';
 import './styles/civic-glass.css';
 import './styles/glass.css';
@@ -152,21 +153,22 @@ if (import.meta.env.PROD) {
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <ErrorBoundary>
-    <PerformanceMonitor />
-      <ThemeProvider>
-        <AuthProvider>
-          <BrowserRouter>
-            <Suspense fallback={<LoadingFallback />}>
-              <Routes>
-                <Route path='/' element={<Layout />}>
-                  <Route index element={<Home />} />
-                  <Route path='chat' element={<ChatIALocal />} />
-                  <Route path='scan' element={<ScanOCR />} />
-                  <Route path='scan-ean' element={<ScanEAN />} />
-                  <Route path='comparaison-enseignes' element={<ComparaisonEnseignes />} />
-                  <Route path='comparateur' element={<Comparateur />} />
-                  <Route path='carte' element={<Carte />} />
+    <HelmetProvider>
+      <ErrorBoundary>
+      <PerformanceMonitor />
+        <ThemeProvider>
+          <AuthProvider>
+            <BrowserRouter>
+              <Suspense fallback={<LoadingFallback />}>
+                <Routes>
+                  <Route path='/' element={<Layout />}>
+                    <Route index element={<Home />} />
+                    <Route path='chat' element={<ChatIALocal />} />
+                    <Route path='scan' element={<ScanOCR />} />
+                    <Route path='scan-ean' element={<ScanEAN />} />
+                    <Route path='comparaison-enseignes' element={<ComparaisonEnseignes />} />
+                    <Route path='comparateur' element={<Comparateur />} />
+                    <Route path='carte' element={<Carte />} />
                   <Route path='actualites' element={<NewsSimple />} />
                   <Route path='alertes' element={<Alertes />} />
                   <Route path='a-propos' element={<APropos />} />
@@ -224,5 +226,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         </AuthProvider>
       </ThemeProvider>
     </ErrorBoundary>
+    </HelmetProvider>
   </React.StrictMode>,
 );

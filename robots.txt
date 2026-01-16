@@ -1,1 +1,17 @@
-Sitemap: https://akiprisaye-web.pages.dev/sitemap.xml
+# Allow all bots
+User-agent: *
+Allow: /
+
+# Disallow admin/private pages
+Disallow: /admin/
+Disallow: /mon-compte
+Disallow: /parametres
+Disallow: /login
+Disallow: /inscription
+Disallow: /reset-password
+
+# Crawl-delay for politeness
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://akiprisaye.pages.dev/sitemap.xml
