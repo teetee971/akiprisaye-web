@@ -71,6 +71,9 @@ export default defineConfig({
           
           // Séparer les utilitaires
           'vendor-utils': ['date-fns', 'clsx'],
+          
+          // Lazy load Tesseract OCR (17MB) - loaded only when scanner is used
+          'vendor-tesseract': ['tesseract.js'],
         },
       },
       onwarn(warning, warn) {

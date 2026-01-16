@@ -312,6 +312,9 @@ export default function ScanOCR() {
                   <p className="text-gray-500 text-xs mt-2">
                     Seuil: {settings.confidenceThreshold}% | Timeout: {(settings.timeout ?? 30000) / 1000}s
                   </p>
+                  <div className="mt-4 p-3 bg-blue-900/20 border border-blue-700/30 rounded text-xs text-blue-200">
+                    <p>💡 <strong>Première utilisation ?</strong> Le scanner OCR (~17 MB) se charge automatiquement. Cela peut prendre quelques secondes selon votre connexion. Une fois chargé, il reste en cache pour les utilisations suivantes.</p>
+                  </div>
                 </>
               )}
             </div>
