@@ -5,7 +5,7 @@
  * Configurable rows and columns
  */
 
-import { Shimmer } from '@/components/Loading/Shimmer';
+import { Shimmer } from '../Loading/Shimmer';
 
 interface TableSkeletonProps {
   rows?: number;

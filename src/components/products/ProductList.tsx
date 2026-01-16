@@ -66,7 +66,7 @@ export function ProductList({ filters, onProductClick }: ProductListProps) {
   
   // Loading state
   if (loading) {
-    return <ProductListSkeleton count={9} stagger />;
+    return <ProductListSkeleton count={9} stagger={true} />;
   }
   
   // Error state

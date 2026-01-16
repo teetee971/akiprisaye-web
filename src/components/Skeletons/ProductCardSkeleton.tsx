@@ -5,7 +5,7 @@
  * Matches the structure of ProductCard for smooth transitions
  */
 
-import { Shimmer } from '@/components/Loading/Shimmer';
+import { Shimmer } from '../Loading/Shimmer';
 
 export function ProductCardSkeleton() {
   return (

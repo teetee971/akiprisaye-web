@@ -5,7 +5,7 @@
  * Provides a visual representation of chart structure
  */
 
-import { Shimmer } from '@/components/Loading/Shimmer';
+import { Shimmer } from '../Loading/Shimmer';
 
 export function ChartSkeleton() {
   return (
