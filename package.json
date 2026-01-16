@@ -20,6 +20,8 @@
     "lhci:assert": "lhci assert",
     "ci:strict": "npm run typecheck:ci && npm run lint:ci && npm run build:ci && npm run test:ci && npm run audit:ci",
     "ci:full": "npm run ci:strict && npm run axe:ci && npm run lhci",
+    "split-prices": "node scripts/split-prices-json.mjs",
+    "prebuild": "npm run split-prices",
     "data:sign": "node scripts/data-signing/signData.mjs",
     "data:verify": "node scripts/data-signing/verifyData.mjs",
     "data:sign-all": "for file in data/*.json; do node scripts/data-signing/signData.mjs \"$file\" \"${file%.json}.proof.json\"; done",
