@@ -4,6 +4,8 @@ import { useMap } from 'react-leaflet';
 import 'leaflet.markercluster';
 import { getStoresByTerritory } from '../services/mapService';
 import { getActiveTerritories, TERRITORIES } from '../constants/territories';
+import { SEOHead } from '../components/SEO/SEOHead';
+import { generateBreadcrumbSchema } from '../lib/seo/structuredData';
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -502,40 +504,62 @@ export default function Carte() {
   const defaultPosition = territoryPositions[territory] || [16.265, -61.551]; // Guadeloupe par défaut
   const currentTerritory = TERRITORIES[territory];
 
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Accueil', url: '/' },
+    { name: 'Carte Interactive', url: '/carte' }
+  ]);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 text-slate-100">
-      <div className="max-w-7xl mx-auto py-8 px-4">
-        <h1 className="text-3xl font-semibold mb-6 text-blue-400">
-          🗺️ Carte Interactive des Magasins
-        </h1>
+    <>
+      <SEOHead
+        title="Carte Interactive des Magasins - Localisez les commerces"
+        description="Trouvez les magasins et commerces près de vous en Guadeloupe, Martinique, Guyane et Réunion. Carte interactive avec GPS, itinéraires et informations pratiques."
+        keywords={[
+          'carte magasins',
+          'localisation commerces',
+          'GPS magasins',
+          'itinéraire',
+          'magasins proximité',
+          'boutiques Outre-mer'
+        ]}
+        url="/carte"
+        type="website"
+        structuredData={breadcrumbSchema}
+      />
+      
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 text-slate-100">
+        <div className="max-w-7xl mx-auto py-8 px-4">
+          <h1 className="text-3xl font-semibold mb-6 text-blue-400">
+            🗺️ Carte Interactive des Magasins
+          </h1>
 
-        {/* Offline/Online Status Banner */}
-        {!isOnline && (
-          <div className="mb-6 bg-orange-600/20 border border-orange-500/50 rounded-lg p-4 flex items-center gap-3">
-            <WifiOff size={24} className="text-orange-400" />
-            <div>
-              <p className="font-semibold text-orange-400">Mode hors ligne</p>
-              <p className="text-sm text-slate-300">
-                Vous êtes hors ligne. Les coordonnées GPS sont disponibles mais la navigation nécessite une connexion.
-              </p>
+          {/* Offline/Online Status Banner */}
+          {!isOnline && (
+            <div className="mb-6 bg-orange-600/20 border border-orange-500/50 rounded-lg p-4 flex items-center gap-3">
+              <WifiOff size={24} className="text-orange-400" />
+              <div>
+                <p className="font-semibold text-orange-400">Mode hors ligne</p>
+                <p className="text-sm text-slate-300">
+                  Vous êtes hors ligne. Les coordonnées GPS sont disponibles mais la navigation nécessite une connexion.
+                </p>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Recent Destinations */}
-        {recentDestinations.length > 0 && (
-          <div className="mb-6">
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-xl font-semibold text-slate-300 flex items-center gap-2">
-                <History size={20} className="text-blue-400" />
-                Destinations récentes
-              </h2>
-              <button
-                onClick={() => setShowRecentDestinations(!showRecentDestinations)}
-                className="text-sm text-blue-400 hover:text-blue-300"
-              >
-                {showRecentDestinations ? 'Masquer' : 'Afficher'}
-              </button>
+          {/* Recent Destinations */}
+          {recentDestinations.length > 0 && (
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-xl font-semibold text-slate-300 flex items-center gap-2">
+                  <History size={20} className="text-blue-400" />
+                  Destinations récentes
+                </h2>
+                <button
+                  onClick={() => setShowRecentDestinations(!showRecentDestinations)}
+                  className="text-sm text-blue-400 hover:text-blue-300"
+                >
+                  {showRecentDestinations ? 'Masquer' : 'Afficher'}
+                </button>
             </div>
             {showRecentDestinations && (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -1096,5 +1120,6 @@ export default function Carte() {
         </div>
       </div>
     </div>
+    </>
   );
 }

@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { runOCR, GENERIC_OCR_ERROR, type OCRResult } from '../services/ocrService';
 import OCRResultView from '../components/OCRResultView';
 import type { ScanState, OcrOptions } from '../types/scan';
+import { SEOHead } from '../components/SEO/SEOHead';
+import { generateBreadcrumbSchema } from '../lib/seo/structuredData';
 
 const SAMPLE_IMAGE = '/images/ocr-example.png';
 const COPY_FEEDBACK_DURATION = 2000;
@@ -129,33 +131,55 @@ export default function ScanOCR() {
     setScanState('idle');
   };
 
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Accueil', url: '/' },
+    { name: 'Scanner OCR', url: '/scan' }
+  ]);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 p-4">
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-slate-900 rounded-2xl p-6 shadow-lg">
-          <div className="flex items-center justify-between mb-6">
-            <h1 className="text-3xl font-bold text-white">📸 Scanner Ingrédients (OCR)</h1>
-            <button
-              onClick={() => setShowSettings(!showSettings)}
-              className="p-2 text-gray-400 hover:text-white transition-colors"
-              aria-label="Paramètres"
-            >
-              ⚙️
-            </button>
-          </div>
-          
-          {/* Settings Panel */}
-          {showSettings && (
-            <div className="mb-6 p-4 bg-slate-800 border border-slate-700 rounded-lg">
-              <h3 className="text-white font-semibold mb-4">⚙️ Paramètres OCR</h3>
-              
-              {/* Enable/Disable OCR */}
-              <div className="mb-4">
-                <label className="flex items-center gap-2 text-gray-300 text-sm">
-                  <input
-                    type="checkbox"
-                    checked={settings.enabled}
-                    onChange={(e) => setSettings({ ...settings, enabled: e.target.checked })}
+    <>
+      <SEOHead
+        title="Scanner Ingrédients OCR - Analyse de photos"
+        description="Scannez et analysez les ingrédients de vos produits avec notre technologie OCR. Prenez une photo de l'étiquette et obtenez une liste complète des ingrédients."
+        keywords={[
+          'scanner ingrédients',
+          'OCR',
+          'reconnaissance texte',
+          'photo étiquette',
+          'analyse composition',
+          'liste ingrédients'
+        ]}
+        url="/scan"
+        type="website"
+        structuredData={breadcrumbSchema}
+      />
+      
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 p-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-slate-900 rounded-2xl p-6 shadow-lg">
+            <div className="flex items-center justify-between mb-6">
+              <h1 className="text-3xl font-bold text-white">📸 Scanner Ingrédients (OCR)</h1>
+              <button
+                onClick={() => setShowSettings(!showSettings)}
+                className="p-2 text-gray-400 hover:text-white transition-colors"
+                aria-label="Paramètres"
+              >
+                ⚙️
+              </button>
+            </div>
+            
+            {/* Settings Panel */}
+            {showSettings && (
+              <div className="mb-6 p-4 bg-slate-800 border border-slate-700 rounded-lg">
+                <h3 className="text-white font-semibold mb-4">⚙️ Paramètres OCR</h3>
+                
+                {/* Enable/Disable OCR */}
+                <div className="mb-4">
+                  <label className="flex items-center gap-2 text-gray-300 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={settings.enabled}
+                      onChange={(e) => setSettings({ ...settings, enabled: e.target.checked })}
                     className="rounded"
                   />
                   Activer l'OCR
@@ -416,5 +440,6 @@ export default function ScanOCR() {
         </div>
       </div>
     </div>
+    </>
   );
 }

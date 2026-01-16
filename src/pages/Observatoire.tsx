@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { SEOHead } from '../components/SEO/SEOHead';
+import { generateBreadcrumbSchema } from '../lib/seo/structuredData';
 
 type ObservatoireData = {
   titre: string;
@@ -102,30 +104,53 @@ export default function Observatoire() {
     }
   }, [data]);
 
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Accueil', url: '/' },
+    { name: 'Observatoire', url: '/observatoire' }
+  ]);
+
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-        <header className="space-y-3">
-          <p className="text-sm text-blue-200 uppercase tracking-wide">Observatoire public</p>
-          <h1 className="text-3xl sm:text-4xl font-bold text-white">{data?.titre ?? 'Observatoire des prix'}</h1>
-          <p className="text-slate-300 max-w-3xl">
-            Première publication officielle de prix réels. Donnée statique, mise à jour mensuellement, disponible
-            sans compte pour tous les citoyens.
-          </p>
-          <div className="inline-flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 text-sm text-slate-200 bg-slate-900/70 border border-slate-800 rounded-xl px-3 py-2">
-            <span className="font-semibold">Granularité : heure / jour / semaine / mois</span>
-            <span className="text-slate-300">
-              Les données horaires reflètent les dernières observations disponibles.
-            </span>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            <Link
-              to="/methodologie"
-              className="inline-flex items-center px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold transition-colors"
-            >
-              Méthodologie
-            </Link>
-            <Link
+    <>
+      <SEOHead
+        title="Observatoire des Prix - Données officielles"
+        description="Consultez les prix officiels du panier de base en Outre-mer. Données publiques mises à jour mensuellement, disponibles pour tous les citoyens. Transparence totale des prix."
+        keywords={[
+          'observatoire prix',
+          'données officielles',
+          'panier de base',
+          'prix moyens',
+          'transparence',
+          'données publiques',
+          'statistiques prix'
+        ]}
+        url="/observatoire"
+        type="website"
+        structuredData={breadcrumbSchema}
+      />
+      
+      <div className="min-h-screen bg-slate-950 text-slate-100">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+          <header className="space-y-3">
+            <p className="text-sm text-blue-200 uppercase tracking-wide">Observatoire public</p>
+            <h1 className="text-3xl sm:text-4xl font-bold text-white">{data?.titre ?? 'Observatoire des prix'}</h1>
+            <p className="text-slate-300 max-w-3xl">
+              Première publication officielle de prix réels. Donnée statique, mise à jour mensuellement, disponible
+              sans compte pour tous les citoyens.
+            </p>
+            <div className="inline-flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 text-sm text-slate-200 bg-slate-900/70 border border-slate-800 rounded-xl px-3 py-2">
+              <span className="font-semibold">Granularité : heure / jour / semaine / mois</span>
+              <span className="text-slate-300">
+                Les données horaires reflètent les dernières observations disponibles.
+              </span>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <Link
+                to="/methodologie"
+                className="inline-flex items-center px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold transition-colors"
+              >
+                Méthodologie
+              </Link>
+              <Link
               to="/transparence"
               className="inline-flex items-center px-4 py-2 rounded-lg border border-slate-700 hover:border-blue-400 text-slate-200 text-sm font-semibold transition-colors"
             >
@@ -225,5 +250,6 @@ export default function Observatoire() {
         </section>
       </div>
     </div>
+    </>
   );
 }
