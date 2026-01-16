@@ -1,6 +1,7 @@
 import React, { Suspense, lazy } from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import './styles/globals.css';
 import './styles/civic-glass.css';
 import './styles/glass.css';
@@ -155,6 +156,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ErrorBoundary>
     <PerformanceMonitor />
+      <SpeedInsights />
       <ThemeProvider>
         <AuthProvider>
           <BrowserRouter>
