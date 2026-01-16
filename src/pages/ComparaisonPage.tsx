@@ -14,6 +14,8 @@ import { ComparisonTable } from '../features/comparateur/components/ComparisonTa
 import { PriceChart } from '../features/comparateur/components/PriceChartComparison';
 import { StatCard } from '../features/comparateur/components/StatCard';
 import { SIGNIFICANT_PRICE_DIFF_THRESHOLD } from '../features/comparateur/constants';
+import { TableSkeleton } from '../components/Skeletons/TableSkeleton';
+import { ChartSkeleton } from '../components/Skeletons/ChartSkeleton';
 
 // Default territories for comparison
 const DEFAULT_TERRITORIES: Territory[] = ['GP', 'MQ', 'GY', 'RE'];
@@ -81,10 +83,12 @@ export default function ComparaisonPage() {
 
         {/* Loading State */}
         {loading ? (
-          <div className="flex items-center justify-center py-20">
-            <div className="text-center">
-              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
-              <p className="text-slate-300">Chargement de la comparaison...</p>
+          <div className="space-y-8">
+            <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6">
+              <TableSkeleton rows={8} columns={5} />
+            </div>
+            <div className="bg-slate-900/80 border border-slate-800 rounded-2xl">
+              <ChartSkeleton />
             </div>
           </div>
         ) : comparisonData.length === 0 ? (

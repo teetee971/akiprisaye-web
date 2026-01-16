@@ -13,6 +13,7 @@ import { useState, useEffect, useRef } from 'react';
 import { searchProducts } from '../../services/enhancedPriceService';
 import ProductImage from '../product/ProductImage';
 import type { ProductSearchResult, EnhancedSearchFilters } from '../../types/enhancedPrice';
+import { Spinner } from '../Loading/Spinner';
 
 interface EnhancedSearchProps {
   territory?: string;
@@ -175,7 +176,7 @@ export default function EnhancedSearch({
         {/* Loading indicator */}
         {loading && (
           <div className="absolute right-4 top-1/2 -translate-y-1/2">
-            <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+            <Spinner size="sm" />
           </div>
         )}
         
@@ -203,7 +204,7 @@ export default function EnhancedSearch({
       {/* Loading state message */}
       {loading && (
         <div className="mt-2 text-sm text-blue-600 flex items-center gap-2">
-          <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+          <Spinner size="sm" />
           <span>Recherche en cours...</span>
         </div>
       )}

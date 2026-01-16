@@ -11,6 +11,7 @@ import React, { useEffect, useState } from 'react';
 import { ProductCard, ProductCardSkeleton } from './ProductCard';
 import { fetchProducts, validatePrice } from '../../services/productService';
 import type { Product, ProductSearchParams } from '../../types/product';
+import { ProductListSkeleton } from '../Skeletons/ProductListSkeleton';
 
 interface ProductListProps {
   filters?: ProductSearchParams;
@@ -65,18 +66,7 @@ export function ProductList({ filters, onProductClick }: ProductListProps) {
   
   // Loading state
   if (loading) {
-    return (
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-        gap: '16px',
-        padding: '16px 0'
-      }}>
-        {[1, 2, 3, 4, 5, 6].map(i => (
-          <ProductCardSkeleton key={i} />
-        ))}
-      </div>
-    );
+    return <ProductListSkeleton count={9} stagger />;
   }
   
   // Error state
