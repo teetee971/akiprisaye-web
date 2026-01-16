@@ -143,6 +143,11 @@
   background-color: #f8fafc;
 }
 
+.suggestion-item.selected {
+  background-color: #eff6ff;
+  border-left: 3px solid #3b82f6;
+}
+
 .suggestion-content {
   display: flex;
   flex-direction: column;
