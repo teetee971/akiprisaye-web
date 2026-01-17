@@ -146,7 +146,7 @@ export default function HomeV5() {
 
   const getTerritoryTitle = () => {
     if (detectedTerritory && detectedTerritory !== 'DOM-TOM') {
-      return `Comparez les prix en ${detectedTerritory}`;
+      return `Comparez les prix en ${detectedTerritory} et dans les territoires ultramarins`;
     }
     return 'Comparez les prix dans les territoires ultramarins français';
   };
