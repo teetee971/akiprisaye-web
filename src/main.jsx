@@ -90,6 +90,8 @@ const CivicModules = lazyWithRetry(() => import('./pages/CivicModules'));
 const EvaluationCosmetique = lazyWithRetry(() => import('./pages/EvaluationCosmetique'));
 const Observatoire = lazyWithRetry(() => import('./pages/Observatoire'));
 const ObservatoryMethodology = lazyWithRetry(() => import('./pages/ObservatoryMethodology'));
+
+// Settings page - Ticket 4
 const Settings = lazy(() => import('./pages/Settings'));
 
 // New simplified pages for automatic generation
@@ -140,11 +142,13 @@ if ('serviceWorker' in navigator) {
 if (import.meta.env.PROD) {
   window.addEventListener('error', (event) => {
     console.error('Global error caught:', event.error);
+    // Prevent default behavior that might cause black screen
     event.preventDefault();
   });
 
   window.addEventListener('unhandledrejection', (event) => {
     console.error('Unhandled promise rejection:', event.reason);
+    // Prevent default behavior
     event.preventDefault();
   });
 }
@@ -166,6 +170,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                   <Route path='scan-ean' element={<ScanEAN />} />
                   <Route path='comparaison-enseignes' element={<ComparaisonEnseignes />} />
                   <Route path='comparateur' element={<Comparateur />} />
+                  {/* FIX: Redirect /comparaison (old link) to /comparateur (new route) */}
                   <Route path='comparaison' element={<Navigate to="/comparateur" replace />} />
                   <Route path='carte' element={<Carte />} />
                   <Route path='actualites' element={<NewsSimple />} />
@@ -223,5 +228,5 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <ToastProvider />
       </ThemeProvider>
     </ErrorBoundary>
-  </React.StrictMode>,
+  </React.StrictMode>
 );
