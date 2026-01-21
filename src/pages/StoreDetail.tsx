@@ -21,7 +21,7 @@ import type { Company } from '../types/company';
 import { getCheapestProductsAtStore, calculateDataReliability } from '../services/storeCheapestProductsService';
 import CheapestProductsSection from '../components/store/CheapestProductsSection';
 import { useTiPanier } from '../hooks/useTiPanier';
-import { requestGeolocation } from '../utils/geolocation';
+import { requestGeolocation } from '../utils/geolocationEnhanced';
 import { calculateDistance } from '../utils/geoLocation';
 
 export default function StoreDetail() {

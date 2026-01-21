@@ -7,7 +7,7 @@
 
 import React, { useState } from 'react';
 import { Navigation, MapPin, AlertCircle, CheckCircle } from 'lucide-react';
-import { requestGeolocation, isGeolocationAvailable, type GeolocationResult } from '../utils/geolocation';
+import { requestGeolocation, isGeolocationAvailable, type GeolocationResult } from '../utils/geolocationEnhanced';
 
 interface LocationButtonProps {
   onLocationReceived?: (lat: number, lon: number) => void;
