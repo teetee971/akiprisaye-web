@@ -1,20 +1,21 @@
-// src/services/priceSearch/normalizeTerritoryCode.ts
-
 import type { TerritoryCode } from './price.types';
 
 /**
- * Normalise les codes territoire vers un format ISO DOM/FR cohérent
+ * Normalise les codes territoire vers un format canonique en minuscules
+ * (ISO DOM/FR étendu). Fallback sûr sur 'fr'.
  */
 export function normalizeTerritoryCode(input?: string): TerritoryCode {
   const normalizedInput = input?.trim();
+
   if (!normalizedInput) {
     return 'fr';
   }
+
   const value = normalizedInput
     .toUpperCase()
     .normalize('NFD')
     .replace(/\p{Diacritic}/gu, '')
-    .replace(/-/g, ' ')
+    .replace(/[-_]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
 
