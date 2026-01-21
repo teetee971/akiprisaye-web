@@ -384,7 +384,7 @@ const FuelComparator: React.FC<FuelComparisonProps> = (props) => {
                           {item.trend}
                         </td>
                         <td className="text-sm text-gray-500">
-                          {item.diffPercentage} > 0 ? "⬇️" : (item.diffPercentage < 0 ? "📉" : "⏸️")}
+                          {item.diffPercentage > 0 ? "⬇️" : item.diffPercentage < 0 ? "📉" : "⏸️"}
                         </td>
                       </tr>
                   );

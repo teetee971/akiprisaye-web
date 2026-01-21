@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { requestGeolocation, isGeolocationAvailable, getGeolocationDiagnostics } from '../geolocation';
+import { requestGeolocation, isGeolocationAvailable, getGeolocationDiagnostics } from '../geolocationEnhanced';
 
 describe('Enhanced Geolocation Utility', () => {
   beforeEach(() => {
