@@ -10,6 +10,8 @@ export type Product = {
   [key: string]: any
 }
 
+export type CatalogueItemRaw = Product
+
 // Fetch catalogue from a source (placeholder)
 export async function fetchCatalogue(source?: string): Promise<Product[]> {
   // TODO: implement real fetching (HTTP, cloud storage, etc.)

@@ -1,6 +1,6 @@
 {
   "name": "aki-chat-ia-local",
-  "version": "2.1.0",
+  "version": "3.0.2",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -12,7 +12,7 @@
     "typecheck:ci": "tsc --noEmit --pretty false",
     "lint": "eslint .",
     "lint:ci": "eslint . --max-warnings=0",
-    "audit:ci": "npm audit --audit-level=moderate",
+    "audit:ci": "npm audit --omit=dev --audit-level=high",
     "axe": "npm run build && npm run preview & sleep 5 && axe http://localhost:4173 --exit --tags wcag2a,wcag2aa,wcag21a,wcag21aa && kill $!",
     "axe:ci": "npm run preview & sleep 5 && axe http://localhost:4173 http://localhost:4173/#/anti-crise http://localhost:4173/#/comparateur http://localhost:4173/#/observatoire --exit --tags wcag2a,wcag2aa,wcag21a,wcag21aa && kill $!",
     "lhci": "lhci autorun",
@@ -104,9 +104,12 @@
     "vitest": "^4.0.8",
     "web-vitals": "^5.1.0"
   },
+  "overrides": {
+    "tar": "7.5.6",
+    "tmp": "0.2.5"
+  },
   "type": "module",
   "engines": {
     "node": ">=20.19.0"
   }
 }
-

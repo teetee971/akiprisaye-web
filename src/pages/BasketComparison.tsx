@@ -14,7 +14,7 @@ import {
   getDataFreshnessLabel,
   type BasketStoreComparison 
 } from '../services/basketComparisonService';
-import { requestGeolocation } from '../utils/geolocation';
+import { requestGeolocation } from '../utils/geolocationEnhanced';
 
 export default function BasketComparisonPage() {
   const navigate = useNavigate();

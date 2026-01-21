@@ -227,7 +227,7 @@ describe('Navigation Performance', () => {
   
   test('Multiple route navigations are efficient', () => {
     const routes = ['/', '/about', '/contact'];
-    const times = [];
+    const times: number[] = [];
     
     routes.forEach(route => {
       const start = performance.now();
