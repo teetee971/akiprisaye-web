@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { GlassCard } from './ui/glass-card';
+import { safeLocalStorage } from '../utils/safeLocalStorage';
 
 export type HistoryEntry = {
   id: string;
@@ -15,14 +16,14 @@ const MAX_ENTRIES = 10;
 
 export function recordHistory(entry: Omit<HistoryEntry, 'ts'>) {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = safeLocalStorage.getItem(STORAGE_KEY);
     const list: HistoryEntry[] = raw ? JSON.parse(raw) : [];
     const now = Date.now();
     const normalized: HistoryEntry = { ...entry, ts: now };
     // remove existing with same id
     const filtered = list.filter((e) => e.id !== entry.id);
     const next = [normalized, ...filtered].slice(0, MAX_ENTRIES);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    safeLocalStorage.setItem(STORAGE_KEY, JSON.stringify(next));
   } catch (e) {
     // silent
   }
@@ -33,7 +34,7 @@ export default function HistoryList() {
 
   useEffect(() => {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
+      const raw = safeLocalStorage.getItem(STORAGE_KEY);
       const list: HistoryEntry[] = raw ? JSON.parse(raw) : [];
       setItems(list);
     } catch {

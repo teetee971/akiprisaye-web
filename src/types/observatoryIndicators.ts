@@ -7,7 +7,7 @@
  * @module observatoryIndicators
  */
 
-import type { TerritoireName, ProductCategory } from './canonicalPriceObservation';
+import type { TerritoryCode, ProductCategory } from './PriceObservation';
 
 /**
  * Périodes temporelles pour les évolutions
@@ -21,7 +21,7 @@ export interface AveragePriceIndicator {
   produit: string;
   ean?: string;
   categorie: ProductCategory;
-  territoire: TerritoireName;
+  territoire: TerritoryCode;
   prix_moyen: number;
   nombre_observations: number;
   periode_debut: string;
@@ -36,7 +36,7 @@ export interface DomHexagoneGap {
   produit: string;
   ean?: string;
   categorie: ProductCategory;
-  territoire_dom: TerritoireName;
+  territoire_dom: TerritoryCode;
   prix_dom: number;
   prix_hexagone: number;
   ecart_absolu: number;
@@ -49,7 +49,7 @@ export interface DomHexagoneGap {
  * Indice Vie Chère (IVC) - base 100
  */
 export interface IVCIndicator {
-  territoire: TerritoireName;
+  territoire: TerritoryCode;
   indice_global: number;
   date_reference: string;
   date_calcul: string;
@@ -67,7 +67,7 @@ export interface IVCIndicator {
 export interface TemporalEvolution {
   produit: string;
   ean?: string;
-  territoire: TerritoireName;
+  territoire: TerritoryCode;
   prix_actuel: number;
   evolutions: {
     periode: TemporalPeriod;
@@ -84,7 +84,7 @@ export interface TemporalEvolution {
 export interface StoreDispersion {
   produit: string;
   ean?: string;
-  territoire: TerritoireName;
+  territoire: TerritoryCode;
   statistiques: {
     prix_min: number;
     prix_max: number;
@@ -108,7 +108,7 @@ export interface StoreDispersion {
 export interface IndicatorSnapshot {
   version: string;
   date_snapshot: string;
-  territoire?: TerritoireName;
+  territoire?: TerritoryCode;
   indicateurs: {
     prix_moyens: AveragePriceIndicator[];
     ecarts_dom_hexagone: DomHexagoneGap[];
@@ -131,7 +131,7 @@ export interface IndicatorSnapshot {
  * Configuration de calcul d'indicateur
  */
 export interface IndicatorCalculationConfig {
-  territoire?: TerritoireName;
+  territoire?: TerritoryCode;
   categorie?: ProductCategory;
   periode_debut: string;
   periode_fin: string;
@@ -158,7 +158,7 @@ export interface IndicatorCalculationResult<T> {
  */
 export interface ObservatoryGlobalStats {
   date_calcul: string;
-  territoires_couverts: TerritoireName[];
+  territoires_couverts: TerritoryCode[];
   nombre_total_observations: number;
   nombre_produits_uniques: number;
   categories_couvertes: ProductCategory[];

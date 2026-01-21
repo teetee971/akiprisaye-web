@@ -10,28 +10,21 @@ import {
   meetsQualityThreshold,
   filterByQuality,
 } from '../dataValidationService';
-import type { CanonicalPriceObservation } from '../../types/canonicalPriceObservation';
+import type { PriceObservation } from '../../types/PriceObservation';
 
 describe('Data Validation Service', () => {
-  const validObservation: CanonicalPriceObservation = {
-    territoire: 'Guadeloupe',
-    commune: 'Les Abymes',
-    enseigne: 'Carrefour',
-    produit: {
-      nom: 'Lait demi-écrémé',
-      ean: '3560070123456',
-      categorie: 'Produits laitiers',
-      unite: '1L',
-      marque: 'Lactel',
-    },
-    prix: 1.42,
-    date_releve: '2026-01-03',
-    source: 'releve_citoyen',
-    qualite: {
-      niveau: 'verifie',
-      preuve: true,
-      score: 0.95,
-    },
+  const validObservation: PriceObservation = {
+    id: 'obs-1',
+    productId: '3560070123456',
+    productLabel: 'Lait demi-écrémé',
+    productCategory: 'Produits laitiers',
+    territory: 'GP',
+    price: 1.42,
+    observedAt: '2026-01-03T10:15:00.000Z',
+    storeLabel: 'Carrefour',
+    sourceType: 'citizen',
+    confidenceScore: 95,
+    barcode: '3560070123456',
   };
 
   describe('validateObservation', () => {
@@ -42,7 +35,7 @@ describe('Data Validation Service', () => {
     });
 
     it('should detect missing required fields', () => {
-      const invalid = { ...validObservation, territoire: undefined as any };
+      const invalid = { ...validObservation, territory: undefined as any };
       const result = validateObservation(invalid);
       expect(result.valid).toBe(false);
       expect(result.errors.length).toBeGreaterThan(0);
@@ -51,7 +44,7 @@ describe('Data Validation Service', () => {
     it('should detect invalid EAN', () => {
       const invalid = {
         ...validObservation,
-        produit: { ...validObservation.produit, ean: '123' },
+        barcode: '123',
       };
       const result = validateObservation(invalid);
       expect(result.valid).toBe(false);
@@ -59,14 +52,14 @@ describe('Data Validation Service', () => {
     });
 
     it('should detect invalid price', () => {
-      const invalid = { ...validObservation, prix: -1 };
+      const invalid = { ...validObservation, price: -1 };
       const result = validateObservation(invalid);
       expect(result.valid).toBe(false);
       expect(result.errors.some((e) => e.includes('prix'))).toBe(true);
     });
 
     it('should detect invalid date format', () => {
-      const invalid = { ...validObservation, date_releve: '2026/01/03' };
+      const invalid = { ...validObservation, observedAt: '2026/01/03' };
       const result = validateObservation(invalid);
       expect(result.valid).toBe(false);
       expect(result.errors.some((e) => e.includes('date'))).toBe(true);
@@ -77,7 +70,7 @@ describe('Data Validation Service', () => {
       futureDate.setDate(futureDate.getDate() + 10);
       const invalid = {
         ...validObservation,
-        date_releve: futureDate.toISOString().split('T')[0],
+        observedAt: futureDate.toISOString(),
       };
       const result = validateObservation(invalid);
       expect(result.valid).toBe(false);
@@ -89,14 +82,14 @@ describe('Data Validation Service', () => {
       oldDate.setFullYear(oldDate.getFullYear() - 3);
       const observation = {
         ...validObservation,
-        date_releve: oldDate.toISOString().split('T')[0],
+        observedAt: oldDate.toISOString(),
       };
       const result = validateObservation(observation);
       expect(result.warnings.length).toBeGreaterThan(0);
     });
 
     it('should detect invalid territoire', () => {
-      const invalid = { ...validObservation, territoire: 'Paris' as any };
+      const invalid = { ...validObservation, territory: 'XX' as any };
       const result = validateObservation(invalid);
       expect(result.valid).toBe(false);
       expect(result.errors.some((e) => e.includes('Territoire'))).toBe(true);
@@ -105,7 +98,7 @@ describe('Data Validation Service', () => {
     it('should detect invalid category', () => {
       const invalid = {
         ...validObservation,
-        produit: { ...validObservation.produit, categorie: 'Invalid' as any },
+        productCategory: 'Invalid' as any,
       };
       const result = validateObservation(invalid);
       expect(result.valid).toBe(false);
@@ -113,26 +106,16 @@ describe('Data Validation Service', () => {
     });
 
     it('should detect invalid source', () => {
-      const invalid = { ...validObservation, source: 'unknown' as any };
+      const invalid = { ...validObservation, sourceType: 'unknown' as any };
       const result = validateObservation(invalid);
       expect(result.valid).toBe(false);
       expect(result.errors.some((e) => e.includes('Source'))).toBe(true);
     });
 
-    it('should detect invalid quality level', () => {
-      const invalid = {
-        ...validObservation,
-        qualite: { ...validObservation.qualite, niveau: 'bad' as any },
-      };
-      const result = validateObservation(invalid);
-      expect(result.valid).toBe(false);
-      expect(result.errors.some((e) => e.includes('qualité'))).toBe(true);
-    });
-
     it('should detect invalid quality score', () => {
       const invalid = {
         ...validObservation,
-        qualite: { ...validObservation.qualite, score: 1.5 },
+        confidenceScore: 150,
       };
       const result = validateObservation(invalid);
       expect(result.valid).toBe(false);
@@ -140,7 +123,7 @@ describe('Data Validation Service', () => {
     });
 
     it('should warn about unusual prices', () => {
-      const unusual = { ...validObservation, prix: 15000 };
+      const unusual = { ...validObservation, price: 15000 };
       const result = validateObservation(unusual);
       expect(result.warnings.length).toBeGreaterThan(0);
     });
@@ -148,7 +131,7 @@ describe('Data Validation Service', () => {
     it('should accept EAN-8', () => {
       const obs = {
         ...validObservation,
-        produit: { ...validObservation.produit, ean: '12345678' },
+        barcode: '12345678',
       };
       const result = validateObservation(obs);
       expect(result.valid).toBe(true);
@@ -157,7 +140,7 @@ describe('Data Validation Service', () => {
     it('should accept EAN-13', () => {
       const obs = {
         ...validObservation,
-        produit: { ...validObservation.produit, ean: '1234567890123' },
+        barcode: '1234567890123',
       };
       const result = validateObservation(obs);
       expect(result.valid).toBe(true);
@@ -174,7 +157,7 @@ describe('Data Validation Service', () => {
     });
 
     it('should detect mixed valid/invalid observations', () => {
-      const invalid = { ...validObservation, prix: -1 };
+      const invalid = { ...validObservation, price: -1 };
       const observations = [validObservation, invalid];
       const result = validateObservationBatch(observations);
       expect(result.valid).toBe(false);
@@ -186,7 +169,7 @@ describe('Data Validation Service', () => {
   describe('getValidationStatistics', () => {
     it('should calculate statistics correctly', () => {
       const result1 = validateObservation(validObservation);
-      const result2 = validateObservation({ ...validObservation, prix: -1 });
+      const result2 = validateObservation({ ...validObservation, price: -1 });
       
       const stats = getValidationStatistics([result1, result2]);
       
@@ -199,32 +182,25 @@ describe('Data Validation Service', () => {
 
   describe('meetsQualityThreshold', () => {
     it('should accept high quality score', () => {
-      expect(meetsQualityThreshold(validObservation, 0.5)).toBe(true);
+      expect(meetsQualityThreshold(validObservation, 50)).toBe(true);
     });
 
     it('should reject low quality score', () => {
       const lowQuality = {
         ...validObservation,
-        qualite: { ...validObservation.qualite, score: 0.3 },
+        confidenceScore: 30,
       };
-      expect(meetsQualityThreshold(lowQuality, 0.5)).toBe(false);
+      expect(meetsQualityThreshold(lowQuality, 50)).toBe(false);
     });
 
-    it('should accept verified without score', () => {
+    it('should reject missing score', () => {
       const noScore = {
         ...validObservation,
-        qualite: { niveau: 'verifie' as const, preuve: true },
+        confidenceScore: undefined,
       };
-      expect(meetsQualityThreshold(noScore, 0.5)).toBe(true);
+      expect(meetsQualityThreshold(noScore, 50)).toBe(false);
     });
 
-    it('should reject "a_verifier" without score', () => {
-      const toVerify = {
-        ...validObservation,
-        qualite: { niveau: 'a_verifier' as const, preuve: false },
-      };
-      expect(meetsQualityThreshold(toVerify, 0.5)).toBe(false);
-    });
   });
 
   describe('filterByQuality', () => {
@@ -232,11 +208,11 @@ describe('Data Validation Service', () => {
       const highQuality = validObservation;
       const lowQuality = {
         ...validObservation,
-        qualite: { niveau: 'a_verifier' as const, preuve: false },
+        confidenceScore: 10,
       };
       
       const observations = [highQuality, lowQuality];
-      const filtered = filterByQuality(observations, 0.5);
+      const filtered = filterByQuality(observations, 50);
       
       expect(filtered).toHaveLength(1);
       expect(filtered[0]).toEqual(highQuality);

@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import type { PriceObservation } from '../types/PriceObservation'
 import PriceSourceBadge from './PriceSourceBadge'
 import PriceHistoryMiniChart from './PriceHistoryMiniChart'
+import { safeLocalStorage } from '../utils/safeLocalStorage';
 
 type PriceComparisonTableProps = {
   observations: PriceObservation[]
@@ -91,7 +92,7 @@ export default function PriceComparisonTable({ observations, groupedByStore }: P
   const readWatchedPrices = () => {
     if (typeof window === 'undefined') return {}
     try {
-      const raw = window.localStorage.getItem(STORAGE_KEY)
+      const raw = safeLocalStorage.getItem(STORAGE_KEY)
       return raw ? (JSON.parse(raw) as Record<string, { price: number; observedAt: string }>) : {}
     } catch {
       return {}
@@ -104,7 +105,7 @@ export default function PriceComparisonTable({ observations, groupedByStore }: P
 
   const persistWatchedPrices = (payload: Record<string, { price: number; observedAt: string }>) => {
     if (typeof window === 'undefined') return
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload))
+    safeLocalStorage.setItem(STORAGE_KEY, JSON.stringify(payload))
   }
 
   const toggleWatch = (key: string, observation: PriceObservation) => {

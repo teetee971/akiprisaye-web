@@ -1,3 +1,4 @@
+import { safeLocalStorage } from '../../utils/safeLocalStorage';
 /**
  * OCR History Service
  * 
@@ -21,14 +22,14 @@ export interface OCRHistoryEntry {
 
 const HISTORY_KEY = 'akiprisaye_ocr_history';
 const CONSENT_KEY = 'akiprisaye_ocr_history_consent';
-const MAX_ENTRIES = 50; // Limit to prevent localStorage overflow
+const MAX_ENTRIES = 50; // Limit to prevent safeLocalStorage overflow
 
 /**
  * Check if user has consented to history storage
  */
 export function hasHistoryConsent(): boolean {
   try {
-    return localStorage.getItem(CONSENT_KEY) === 'true';
+    return safeLocalStorage.getItem(CONSENT_KEY) === 'true';
   } catch {
     return false;
   }
@@ -40,9 +41,9 @@ export function hasHistoryConsent(): boolean {
 export function setHistoryConsent(consent: boolean): void {
   try {
     if (consent) {
-      localStorage.setItem(CONSENT_KEY, 'true');
+      safeLocalStorage.setItem(CONSENT_KEY, 'true');
     } else {
-      localStorage.removeItem(CONSENT_KEY);
+      safeLocalStorage.removeItem(CONSENT_KEY);
       // Also clear history if consent is revoked
       clearHistory();
     }
@@ -60,7 +61,7 @@ export function getHistory(): OCRHistoryEntry[] {
   }
 
   try {
-    const data = localStorage.getItem(HISTORY_KEY);
+    const data = safeLocalStorage.getItem(HISTORY_KEY);
     if (!data) return [];
     return JSON.parse(data) as OCRHistoryEntry[];
   } catch (error) {
@@ -92,7 +93,7 @@ export function addHistoryEntry(entry: Omit<OCRHistoryEntry, 'id' | 'timestamp'>
     // Keep only last MAX_ENTRIES
     const trimmed = history.slice(0, MAX_ENTRIES);
 
-    localStorage.setItem(HISTORY_KEY, JSON.stringify(trimmed));
+    safeLocalStorage.setItem(HISTORY_KEY, JSON.stringify(trimmed));
   } catch (error) {
     console.error('Failed to save OCR history entry:', error);
   }
@@ -105,7 +106,7 @@ export function deleteHistoryEntry(id: string): void {
   try {
     const history = getHistory();
     const filtered = history.filter(entry => entry.id !== id);
-    localStorage.setItem(HISTORY_KEY, JSON.stringify(filtered));
+    safeLocalStorage.setItem(HISTORY_KEY, JSON.stringify(filtered));
   } catch (error) {
     console.error('Failed to delete history entry:', error);
   }
@@ -116,7 +117,7 @@ export function deleteHistoryEntry(id: string): void {
  */
 export function clearHistory(): void {
   try {
-    localStorage.removeItem(HISTORY_KEY);
+    safeLocalStorage.removeItem(HISTORY_KEY);
   } catch (error) {
     console.error('Failed to clear history:', error);
   }

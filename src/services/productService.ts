@@ -8,6 +8,7 @@
  */
 
 import type { 
+import { safeLocalStorage } from '../utils/safeLocalStorage';
   Product, 
   ProductSearchParams, 
   ProductListResponse,
@@ -129,7 +130,7 @@ async function fetchFromAPI(params: ProductSearchParams): Promise<Product[]> {
  */
 async function fetchFromCache(params: ProductSearchParams): Promise<Product[]> {
   try {
-    const cached = localStorage.getItem('products_cache');
+    const cached = safeLocalStorage.getItem('products_cache');
     if (cached) {
       const products: Product[] = JSON.parse(cached);
       return products.filter(p => {
@@ -223,7 +224,7 @@ export async function validatePrice(productId: string, isValid: boolean): Promis
   // In production, this would send to backend
   // For now, store locally
   try {
-    const validations = JSON.parse(localStorage.getItem('price_validations') || '{}');
+    const validations = JSON.parse(safeLocalStorage.getItem('price_validations') || '{}');
     if (!validations[productId]) {
       validations[productId] = { positive: 0, negative: 0 };
     }
@@ -234,7 +235,7 @@ export async function validatePrice(productId: string, isValid: boolean): Promis
       validations[productId].negative++;
     }
     
-    localStorage.setItem('price_validations', JSON.stringify(validations));
+    safeLocalStorage.setItem('price_validations', JSON.stringify(validations));
   } catch (error) {
     if (import.meta.env.DEV) {
       console.error('Failed to save validation:', error);

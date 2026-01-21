@@ -1,5 +1,6 @@
-import type { PriceObservation, TerritoryCode } from '../types/PriceObservation';
+import type { PriceObservation } from '../types/PriceObservation';
 import rawObservations from '../data/observations.json';
+import { normalizeTerritoryCode } from './priceSearch/normalizeTerritoryCode';
 
 const ENABLE_PARTNER_APIS = false;
 
@@ -64,31 +65,10 @@ const assertSourceType = (sourceType: PriceObservation['sourceType']) => {
   }
 };
 
-const TERRITORY_ALIASES: Record<string, TerritoryCode> = {
-  fr: 'FR',
-  gp: 'GP',
-  mq: 'MQ',
-  gf: 'GF',
-  gy: 'GF',
-  re: 'RE',
-  yt: 'YT',
-  pm: 'PM',
-  bl: 'BL',
-  mf: 'MF',
-  wf: 'WF',
-  pf: 'PF',
-  nc: 'NC',
-};
-
-const normalizeTerritory = (value: string): TerritoryCode => {
-  const normalized = value.trim().toLowerCase();
-  return TERRITORY_ALIASES[normalized] ?? 'FR';
-};
-
 const buildCitizenObservations = (): PriceObservation[] => {
   return (rawObservations as RawObservation[]).flatMap((observation) => {
     const observedAt = new Date(`${observation.date}T${observation.heure}`).toISOString();
-    const territory = normalizeTerritory(observation.territoire);
+    const territory = normalizeTerritoryCode(observation.territoire);
 
     return observation.produits.map((product) => {
       const productLabel = product.nom.trim();

@@ -7,14 +7,13 @@
  * @module dataValidationService
  */
 
-import type {
-  CanonicalPriceObservation,
-  ValidationResult,
-  TerritoireName,
-  ProductCategory,
-  DataSource,
-  QualityLevel,
-} from '../types/canonicalPriceObservation';
+import type { PriceObservation, ProductCategory, TerritoryCode } from '../types/PriceObservation';
+
+export interface ValidationResult {
+  valid: boolean;
+  errors: string[];
+  warnings: string[];
+}
 
 /**
  * Validate EAN format (GTIN-8, GTIN-12, GTIN-13)
@@ -70,8 +69,8 @@ function validateDateNotTooOld(date: string): boolean {
 /**
  * Validate price is reasonable (between 0.01€ and 10,000€)
  */
-function validatePriceRange(prix: number): boolean {
-  return prix >= 0.01 && prix <= 10000;
+function validatePriceRange(price: number): boolean {
+  return price >= 0.01 && price <= 10000;
 }
 
 /**
@@ -79,26 +78,25 @@ function validatePriceRange(prix: number): boolean {
  */
 function validateQualityScore(score?: number): boolean {
   if (score === undefined) return true;
-  return score >= 0 && score <= 1;
+  return score >= 0 && score <= 100;
 }
 
 /**
  * Valid territoire names
  */
-const VALID_TERRITOIRES: TerritoireName[] = [
-  'Guadeloupe',
-  'Martinique',
-  'Guyane',
-  'La Réunion',
-  'Mayotte',
-  'Saint-Pierre-et-Miquelon',
-  'Saint-Barthélemy',
-  'Saint-Martin',
-  'Wallis-et-Futuna',
-  'Polynésie française',
-  'Nouvelle-Calédonie',
-  'Terres australes et antarctiques françaises',
-  'Hexagone',
+const VALID_TERRITOIRES: TerritoryCode[] = [
+  'FR',
+  'GP',
+  'MQ',
+  'GF',
+  'RE',
+  'YT',
+  'PM',
+  'BL',
+  'MF',
+  'WF',
+  'PF',
+  'NC',
 ];
 
 /**
@@ -119,55 +117,38 @@ const VALID_CATEGORIES: ProductCategory[] = [
 /**
  * Valid data sources
  */
-const VALID_SOURCES: DataSource[] = [
-  'releve_citoyen',
-  'ticket_scan',
-  'donnee_ouverte',
-  'releve_terrain',
-  'api_publique',
-];
-
-/**
- * Valid quality levels
- */
-const VALID_QUALITY_LEVELS: QualityLevel[] = [
-  'verifie',
-  'probable',
-  'a_verifier',
+const VALID_SOURCES: NonNullable<PriceObservation['sourceType']>[] = [
+  'citizen',
+  'open_data',
+  'partner',
 ];
 
 /**
  * Validate a single price observation
  */
-export function validateObservation(
-  observation: CanonicalPriceObservation
-): ValidationResult {
+export function validateObservation(observation: PriceObservation): ValidationResult {
   const errors: string[] = [];
   const warnings: string[] = [];
   
   // Validate required fields presence
-  if (!observation.territoire) {
-    errors.push('Champ "territoire" manquant');
+  if (!observation.territory) {
+    errors.push('Champ "territory" manquant');
   }
   
-  if (!observation.produit) {
-    errors.push('Champ "produit" manquant');
+  if (!observation.productLabel) {
+    errors.push('Champ "productLabel" manquant');
   }
   
-  if (observation.prix === undefined || observation.prix === null) {
-    errors.push('Champ "prix" manquant');
+  if (observation.price === undefined || observation.price === null) {
+    errors.push('Champ "price" manquant');
   }
   
-  if (!observation.date_releve) {
-    errors.push('Champ "date_releve" manquant');
+  if (!observation.observedAt) {
+    errors.push('Champ "observedAt" manquant');
   }
   
-  if (!observation.source) {
-    errors.push('Champ "source" manquant');
-  }
-  
-  if (!observation.qualite) {
-    errors.push('Champ "qualite" manquant');
+  if (!observation.sourceType) {
+    errors.push('Champ "sourceType" manquant');
   }
   
   // If required fields are missing, stop here
@@ -176,79 +157,61 @@ export function validateObservation(
   }
   
   // Validate territoire
-  if (!VALID_TERRITOIRES.includes(observation.territoire)) {
-    errors.push(`Territoire invalide: "${observation.territoire}"`);
+  if (!VALID_TERRITOIRES.includes(observation.territory)) {
+    errors.push(`Territoire invalide: "${observation.territory}"`);
   }
   
-  // Validate produit
-  if (!observation.produit.nom || observation.produit.nom.trim().length === 0) {
+  // Validate product label
+  if (!observation.productLabel || observation.productLabel.trim().length === 0) {
     errors.push('Nom du produit manquant');
   }
   
-  if (observation.produit.nom && observation.produit.nom.length > 500) {
+  if (observation.productLabel && observation.productLabel.length > 500) {
     errors.push('Nom du produit trop long (max 500 caractères)');
   }
   
-  if (!VALID_CATEGORIES.includes(observation.produit.categorie)) {
-    errors.push(`Catégorie invalide: "${observation.produit.categorie}"`);
+  if (observation.productCategory && !VALID_CATEGORIES.includes(observation.productCategory)) {
+    errors.push(`Catégorie invalide: "${observation.productCategory}"`);
   }
   
-  if (!observation.produit.unite || observation.produit.unite.trim().length === 0) {
-    errors.push('Unité du produit manquante');
-  }
-  
-  if (observation.produit.ean && !validateEAN(observation.produit.ean)) {
-    errors.push(`Code EAN invalide: "${observation.produit.ean}"`);
+  if (observation.barcode && !validateEAN(observation.barcode)) {
+    errors.push(`Code EAN invalide: "${observation.barcode}"`);
   }
   
   // Validate prix
-  if (typeof observation.prix !== 'number') {
+  if (typeof observation.price !== 'number') {
     errors.push('Le prix doit être un nombre');
-  } else if (observation.prix < 0) {
+  } else if (observation.price < 0) {
     errors.push('Le prix ne peut pas être négatif');
-  } else if (!validatePriceRange(observation.prix)) {
-    warnings.push(`Prix inhabituel: ${observation.prix}€ (hors de la plage 0.01€-10,000€)`);
+  } else if (!validatePriceRange(observation.price)) {
+    warnings.push(`Prix inhabituel: ${observation.price}€ (hors de la plage 0.01€-10,000€)`);
   }
   
-  // Validate date_releve
-  if (!validateDateFormat(observation.date_releve)) {
-    errors.push(`Format de date invalide: "${observation.date_releve}" (attendu: YYYY-MM-DD)`);
+  // Validate observedAt
+  if (!validateDateFormat(observation.observedAt.split('T')[0])) {
+    errors.push(`Format de date invalide: "${observation.observedAt}" (attendu: YYYY-MM-DD)`);
   } else {
-    if (!validateDateNotFuture(observation.date_releve)) {
+    if (!validateDateNotFuture(observation.observedAt)) {
       errors.push('La date de relevé ne peut pas être dans le futur');
     }
     
-    if (!validateDateNotTooOld(observation.date_releve)) {
+    if (!validateDateNotTooOld(observation.observedAt)) {
       warnings.push('Date de relevé ancienne (plus de 2 ans)');
     }
   }
   
   // Validate source
-  if (!VALID_SOURCES.includes(observation.source)) {
-    errors.push(`Source invalide: "${observation.source}"`);
+  if (observation.sourceType && !VALID_SOURCES.includes(observation.sourceType)) {
+    errors.push(`Source invalide: "${observation.sourceType}"`);
   }
   
-  // Validate qualite
-  if (!VALID_QUALITY_LEVELS.includes(observation.qualite.niveau)) {
-    errors.push(`Niveau de qualité invalide: "${observation.qualite.niveau}"`);
-  }
-  
-  if (typeof observation.qualite.preuve !== 'boolean') {
-    errors.push('Le champ "qualite.preuve" doit être un booléen');
-  }
-  
-  if (observation.qualite.score !== undefined && !validateQualityScore(observation.qualite.score)) {
-    errors.push('Le score de qualité doit être entre 0 et 1');
+  if (observation.confidenceScore !== undefined && !validateQualityScore(observation.confidenceScore)) {
+    errors.push('Le score de qualité doit être entre 0 et 100');
   }
   
   // Validate enseigne if present
-  if (observation.enseigne && observation.enseigne.trim().length === 0) {
+  if (observation.storeLabel && observation.storeLabel.trim().length === 0) {
     warnings.push('Enseigne vide (devrait être omis ou rempli)');
-  }
-  
-  // Validate commune if present
-  if (observation.commune && observation.commune.trim().length === 0) {
-    warnings.push('Commune vide (devrait être omis ou rempli)');
   }
   
   return {
@@ -262,7 +225,7 @@ export function validateObservation(
  * Validate a batch of observations
  */
 export function validateObservationBatch(
-  observations: CanonicalPriceObservation[]
+  observations: PriceObservation[]
 ): {
   valid: boolean;
   total: number;
@@ -345,23 +308,22 @@ export function getValidationStatistics(
  * Check if observation meets quality threshold
  */
 export function meetsQualityThreshold(
-  observation: CanonicalPriceObservation,
-  minQualityScore: number = 0.5
+  observation: PriceObservation,
+  minQualityScore: number = 50
 ): boolean {
-  if (observation.qualite.score === undefined) {
-    // If no score, check quality level
-    return observation.qualite.niveau === 'verifie' || observation.qualite.niveau === 'probable';
+  if (observation.confidenceScore === undefined) {
+    return false;
   }
   
-  return observation.qualite.score >= minQualityScore;
+  return observation.confidenceScore >= minQualityScore;
 }
 
 /**
  * Filter observations by quality
  */
 export function filterByQuality(
-  observations: CanonicalPriceObservation[],
-  minQualityScore: number = 0.5
-): CanonicalPriceObservation[] {
+  observations: PriceObservation[],
+  minQualityScore: number = 50
+): PriceObservation[] {
   return observations.filter((obs) => meetsQualityThreshold(obs, minQualityScore));
 }

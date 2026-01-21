@@ -8,6 +8,7 @@
  * @module openDataExportService
  */
 
+import { safeLocalStorage } from '../utils/safeLocalStorage';
 import type {
   OpenDataExportRequest,
   OpenDataExportResponse,
@@ -56,7 +57,7 @@ const DEFAULT_JSON_OPTIONS: JSONExportOptions = {
  */
 async function loadProductData(): Promise<ProductExportRecord[]> {
   try {
-    const data = localStorage.getItem('open_data_products');
+    const data = safeLocalStorage.getItem('open_data_products');
     if (data) {
       return JSON.parse(data) as ProductExportRecord[];
     }
@@ -73,7 +74,7 @@ async function loadProductData(): Promise<ProductExportRecord[]> {
  */
 async function loadPriceData(): Promise<PriceExportRecord[]> {
   try {
-    const data = localStorage.getItem('open_data_prices');
+    const data = safeLocalStorage.getItem('open_data_prices');
     if (data) {
       return JSON.parse(data) as PriceExportRecord[];
     }
@@ -90,7 +91,7 @@ async function loadPriceData(): Promise<PriceExportRecord[]> {
  */
 async function loadIngredientData(): Promise<IngredientExportRecord[]> {
   try {
-    const data = localStorage.getItem('open_data_ingredients');
+    const data = safeLocalStorage.getItem('open_data_ingredients');
     if (data) {
       return JSON.parse(data) as IngredientExportRecord[];
     }
@@ -107,7 +108,7 @@ async function loadIngredientData(): Promise<IngredientExportRecord[]> {
  */
 async function loadStoreData(): Promise<StoreExportRecord[]> {
   try {
-    const data = localStorage.getItem('open_data_stores');
+    const data = safeLocalStorage.getItem('open_data_stores');
     if (data) {
       return JSON.parse(data) as StoreExportRecord[];
     }

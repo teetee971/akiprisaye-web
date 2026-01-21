@@ -6,6 +6,7 @@ import { normalizeTerritoryCode } from '../services/priceSearch/normalizeTerrito
 import type { PriceSearchResult } from '../services/priceSearch/priceSearch.types';
 import type { TerritoryCode } from '../types/PriceObservation';
 import type { ScanData, ScanHubResult } from '../types/scanHubResult';
+import { safeLocalStorage } from '../utils/safeLocalStorage';
 
 const TERRITORIES: { code: TerritoryCode; label: string }[] = [
   { code: 'FR', label: 'France (métropole)' },
@@ -318,7 +319,10 @@ export function PriceSearchResults({
 }
 
 export default function RechercheProduits() {
-  const params = useMemo(() => new URLSearchParams(window.location.search), []);
+  const params = useMemo(
+    () => new URLSearchParams(typeof window === 'undefined' ? '' : window.location.search),
+    [],
+  );
   const navigate = useNavigate();
   const [query, setQuery] = useState(params.get('q') ?? '');
   const [barcode, setBarcode] = useState(params.get('ean') ?? '');
@@ -339,7 +343,7 @@ export default function RechercheProduits() {
 
   const readCache = useCallback(() => {
     const key = buildCacheKey();
-    const raw = localStorage.getItem(key);
+    const raw = safeLocalStorage.getItem(key);
     if (!raw) return null;
     try {
       const parsed = JSON.parse(raw) as { cachedAt: string; payload: ScanHubResult };
@@ -356,7 +360,7 @@ export default function RechercheProduits() {
         cachedAt: new Date().toISOString(),
         payload,
       });
-      localStorage.setItem(key, cachedPayload);
+      safeLocalStorage.setItem(key, cachedPayload);
     },
     [buildCacheKey]
   );
@@ -406,7 +410,9 @@ export default function RechercheProduits() {
     setQuery('');
     setBarcode('');
     setCachedAt(null);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   return (

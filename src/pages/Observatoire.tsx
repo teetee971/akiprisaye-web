@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { safeLocalStorage } from '../utils/safeLocalStorage';
 
 type ObservatoireData = {
   titre: string;
@@ -94,7 +95,7 @@ export default function Observatoire() {
         lastTerritory: data.territoire,
         updatedAt: new Date().toISOString(),
       };
-      localStorage.setItem('akiprisaye:user:history', JSON.stringify(payload));
+      safeLocalStorage.setItem('akiprisaye:user:history', JSON.stringify(payload));
     } catch (e) {
       if (import.meta.env.DEV) {
         console.warn('Impossible de sauvegarder l’historique local', e);

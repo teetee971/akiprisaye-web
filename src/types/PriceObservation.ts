@@ -12,6 +12,17 @@ export type TerritoryCode =
   | 'PF'
   | 'NC';
 
+export type ProductCategory =
+  | 'Produits laitiers'
+  | 'Fruits et légumes'
+  | 'Viandes et poissons'
+  | 'Épicerie'
+  | 'Boissons'
+  | 'Hygiène et beauté'
+  | 'Entretien'
+  | 'Bébé'
+  | 'Autres';
+
 export interface PriceObservation {
   id?: string;
   productId: string;
@@ -20,6 +31,7 @@ export interface PriceObservation {
   price: number;
   observedAt: string; // ISO
   storeLabel?: string;
+  productCategory?: ProductCategory;
   currency?: 'EUR';
   sourceType?: 'citizen' | 'open_data' | 'partner';
   confidenceScore?: number;

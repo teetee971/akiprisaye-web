@@ -5,14 +5,15 @@
 
 import { useState, useEffect } from 'react';
 import { EyeOff, Shield, Database, WifiOff } from 'lucide-react';
+import { safeLocalStorage } from '../utils/safeLocalStorage';
 
 export function SilansLokalMode() {
   const [isEnabled, setIsEnabled] = useState(false);
   const [offlineReady, setOfflineReady] = useState(false);
 
   useEffect(() => {
-    // Load mode state from localStorage
-    const stored = localStorage.getItem('silans_lokal_mode');
+    // Load mode state from safeLocalStorage
+    const stored = safeLocalStorage.getItem('silans_lokal_mode');
     setIsEnabled(stored === 'true');
 
     // Check if service worker is ready for offline
@@ -26,7 +27,7 @@ export function SilansLokalMode() {
   const toggleMode = () => {
     const newState = !isEnabled;
     setIsEnabled(newState);
-    localStorage.setItem('silans_lokal_mode', String(newState));
+    safeLocalStorage.setItem('silans_lokal_mode', String(newState));
 
     if (newState) {
       // Enable private mode
@@ -60,7 +61,7 @@ export function SilansLokalMode() {
 
   const disablePrivateMode = () => {
     // Re-enable analytics if user consented before
-    const consent = localStorage.getItem('cookie_consent');
+    const consent = safeLocalStorage.getItem('cookie_consent');
     if (consent === 'accepted' && window.gtag) {
       window.gtag('consent', 'update', {
         'analytics_storage': 'granted',

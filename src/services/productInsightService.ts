@@ -8,6 +8,7 @@
  * @module productInsightService
  */
 
+import { safeLocalStorage } from '../utils/safeLocalStorage';
 import type {
   ProductInsight,
   ProductAnalysisRequest,
@@ -603,7 +604,7 @@ async function getCachedInsight(
 ): Promise<ProductInsight | null> {
   try {
     const key = `product_insight_${ean}_${territory}`;
-    const cached = localStorage.getItem(key);
+    const cached = safeLocalStorage.getItem(key);
     
     if (cached) {
       const data = JSON.parse(cached);
@@ -633,7 +634,7 @@ async function cacheInsight(
 ): Promise<void> {
   try {
     const key = `product_insight_${ean}_${territory}`;
-    localStorage.setItem(key, JSON.stringify(insight));
+    safeLocalStorage.setItem(key, JSON.stringify(insight));
   } catch (error) {
     if (import.meta.env.DEV) {
       console.warn('Failed to cache insight:', error);

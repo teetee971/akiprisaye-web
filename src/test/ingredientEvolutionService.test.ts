@@ -21,25 +21,28 @@ import type {
 
 describe('Ingredient Evolution Service - v1.7.0', () => {
   
-  // Mock localStorage
+  // Mock localStorage (used by safeLocalStorage)
   const mockStorage: Record<string, string> = {};
   
   beforeEach(() => {
     // Setup localStorage mock
-    global.localStorage = {
-      getItem: (key: string) => mockStorage[key] || null,
-      setItem: (key: string, value: string) => {
-        mockStorage[key] = value;
-      },
-      removeItem: (key: string) => {
-        delete mockStorage[key];
-      },
-      clear: () => {
-        Object.keys(mockStorage).forEach(key => delete mockStorage[key]);
-      },
-      length: Object.keys(mockStorage).length,
-      key: (index: number) => Object.keys(mockStorage)[index] || null,
-    } as Storage;
+    Object.defineProperty(window, 'localStorage', {
+      value: {
+        getItem: (key: string) => mockStorage[key] || null,
+        setItem: (key: string, value: string) => {
+          mockStorage[key] = value;
+        },
+        removeItem: (key: string) => {
+          delete mockStorage[key];
+        },
+        clear: () => {
+          Object.keys(mockStorage).forEach(key => delete mockStorage[key]);
+        },
+        length: Object.keys(mockStorage).length,
+        key: (index: number) => Object.keys(mockStorage)[index] || null,
+      } as Storage,
+      configurable: true,
+    });
     
     // Enable feature flag
     vi.stubEnv('VITE_FEATURE_INGREDIENT_EVOLUTION', 'true');
@@ -659,7 +662,7 @@ describe('Ingredient Evolution Service - v1.7.0', () => {
   });
   
   describe('Edge Cases', () => {
-    it('should handle malformed localStorage data', async () => {
+    it('should handle malformed safeLocalStorage data', async () => {
       mockStorage['formulation_history_3760074380534'] = 'invalid json';
       
       const request: IngredientEvolutionRequest = {

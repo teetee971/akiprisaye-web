@@ -10,36 +10,31 @@ import {
   calculateTemporalEvolution,
   calculateStoreDispersion,
 } from '../indicatorCalculationService';
-import type { CanonicalPriceObservation } from '../../types/canonicalPriceObservation';
+import type { PriceObservation } from '../../types/PriceObservation';
 
 describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
   // TODO: re-enable after deterministic refactor
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toISOString();
   
-  const baseObservation: CanonicalPriceObservation = {
-    territoire: 'Guadeloupe',
-    produit: {
-      nom: 'Lait UHT',
-      ean: '1234567890123',
-      categorie: 'Produits laitiers',
-      unite: '1L',
-    },
-    prix: 1.50,
-    date_releve: today,
-    source: 'releve_citoyen',
-    qualite: {
-      niveau: 'verifie',
-      preuve: true,
-      score: 0.9,
-    },
+  const baseObservation: PriceObservation = {
+    id: 'obs-base',
+    productId: '1234567890123',
+    productLabel: 'Lait UHT',
+    productCategory: 'Produits laitiers',
+    territory: 'GP',
+    price: 1.5,
+    observedAt: today,
+    sourceType: 'citizen',
+    confidenceScore: 90,
+    barcode: '1234567890123',
   };
 
   describe('calculateAveragePrices', () => {
     it('should calculate average prices correctly', () => {
-      const observations: CanonicalPriceObservation[] = [
-        { ...baseObservation, prix: 1.40 },
-        { ...baseObservation, prix: 1.50 },
-        { ...baseObservation, prix: 1.60 },
+      const observations: PriceObservation[] = [
+        { ...baseObservation, price: 1.40 },
+        { ...baseObservation, price: 1.50 },
+        { ...baseObservation, price: 1.60 },
       ];
 
       const config = {
@@ -58,13 +53,13 @@ describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
     });
 
     it('should filter by territory', () => {
-      const observations: CanonicalPriceObservation[] = [
-        { ...baseObservation, territoire: 'Guadeloupe', prix: 1.50 },
-        { ...baseObservation, territoire: 'Martinique', prix: 1.60 },
+      const observations: PriceObservation[] = [
+        { ...baseObservation, territory: 'GP', price: 1.50 },
+        { ...baseObservation, territory: 'MQ', price: 1.60 },
       ];
 
       const config = {
-        territoire: 'Guadeloupe' as const,
+        territoire: 'GP' as const,
         periode_debut: today,
         periode_fin: today,
         agregation: 'moyenne' as const,
@@ -73,14 +68,14 @@ describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
       const result = calculateAveragePrices(observations, config);
 
       expect(result.success).toBe(true);
-      expect(result.data![0].territoire).toBe('Guadeloupe');
+      expect(result.data![0].territoire).toBe('GP');
       expect(result.data![0].nombre_observations).toBe(1);
     });
 
     it('should filter by category', () => {
-      const observations: CanonicalPriceObservation[] = [
-        { ...baseObservation, produit: { ...baseObservation.produit, categorie: 'Produits laitiers' } },
-        { ...baseObservation, produit: { ...baseObservation.produit, categorie: 'Boissons' } },
+      const observations: PriceObservation[] = [
+        { ...baseObservation, productCategory: 'Produits laitiers' },
+        { ...baseObservation, productCategory: 'Boissons' },
       ];
 
       const config = {
@@ -98,10 +93,10 @@ describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
     });
 
     it('should calculate median when requested', () => {
-      const observations: CanonicalPriceObservation[] = [
-        { ...baseObservation, prix: 1.00 },
-        { ...baseObservation, prix: 1.50 },
-        { ...baseObservation, prix: 2.00 },
+      const observations: PriceObservation[] = [
+        { ...baseObservation, price: 1.00 },
+        { ...baseObservation, price: 1.50 },
+        { ...baseObservation, price: 2.00 },
       ];
 
       const config = {
@@ -117,16 +112,16 @@ describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
     });
 
     it('should apply quality filter', () => {
-      const observations: CanonicalPriceObservation[] = [
-        { ...baseObservation, qualite: { niveau: 'verifie', preuve: true, score: 0.9 } },
-        { ...baseObservation, qualite: { niveau: 'a_verifier', preuve: false, score: 0.3 } },
+      const observations: PriceObservation[] = [
+        { ...baseObservation, confidenceScore: 90 },
+        { ...baseObservation, confidenceScore: 30 },
       ];
 
       const config = {
         periode_debut: today,
         periode_fin: today,
         agregation: 'moyenne' as const,
-        qualite_minimale: 0.5,
+        qualite_minimale: 50,
       };
 
       const result = calculateAveragePrices(observations, config);
@@ -139,11 +134,11 @@ describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
   describe('calculateDomHexagoneGaps', () => {
     it('should calculate price gaps correctly', () => {
       // Create observations with different products to ensure they don't get grouped
-      const observations: CanonicalPriceObservation[] = [
-        { ...baseObservation, territoire: 'Guadeloupe', produit: { ...baseObservation.produit, ean: '1234567890123' }, prix: 1.65 },
-        { ...baseObservation, territoire: 'Guadeloupe', produit: { ...baseObservation.produit, ean: '1234567890123' }, prix: 1.65 },
-        { ...baseObservation, territoire: 'Hexagone', produit: { ...baseObservation.produit, ean: '1234567890123' }, prix: 1.50 },
-        { ...baseObservation, territoire: 'Hexagone', produit: { ...baseObservation.produit, ean: '1234567890123' }, prix: 1.50 },
+      const observations: PriceObservation[] = [
+        { ...baseObservation, territory: 'GP', barcode: '1234567890123', price: 1.65 },
+        { ...baseObservation, territory: 'GP', barcode: '1234567890123', price: 1.65 },
+        { ...baseObservation, territory: 'FR', barcode: '1234567890123', price: 1.50 },
+        { ...baseObservation, territory: 'FR', barcode: '1234567890123', price: 1.50 },
       ];
 
       const config = {
@@ -160,7 +155,7 @@ describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
       if (result.data && result.data.length > 0) {
         expect(result.data.length).toBeGreaterThan(0);
         const gap = result.data[0];
-        expect(gap.territoire_dom).toBe('Guadeloupe');
+        expect(gap.territoire_dom).toBe('GP');
         expect(gap.prix_dom).toBe(1.65);
         expect(gap.prix_hexagone).toBe(1.50);
         expect(gap.ecart_pourcentage).toBeCloseTo(10, 0);
@@ -169,11 +164,11 @@ describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
     });
 
     it('should detect equivalent prices', () => {
-      const observations: CanonicalPriceObservation[] = [
-        { ...baseObservation, territoire: 'Martinique', prix: 1.52 },
-        { ...baseObservation, territoire: 'Martinique', prix: 1.52 },
-        { ...baseObservation, territoire: 'Hexagone', prix: 1.50 },
-        { ...baseObservation, territoire: 'Hexagone', prix: 1.50 },
+      const observations: PriceObservation[] = [
+        { ...baseObservation, territory: 'MQ', price: 1.52 },
+        { ...baseObservation, territory: 'MQ', price: 1.52 },
+        { ...baseObservation, territory: 'FR', price: 1.50 },
+        { ...baseObservation, territory: 'FR', price: 1.50 },
       ];
 
       const config = {
@@ -192,11 +187,11 @@ describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
     });
 
     it('should detect cheaper prices in DOM', () => {
-      const observations: CanonicalPriceObservation[] = [
-        { ...baseObservation, territoire: 'Guyane', prix: 1.30 },
-        { ...baseObservation, territoire: 'Guyane', prix: 1.30 },
-        { ...baseObservation, territoire: 'Hexagone', prix: 1.50 },
-        { ...baseObservation, territoire: 'Hexagone', prix: 1.50 },
+      const observations: PriceObservation[] = [
+        { ...baseObservation, territory: 'GF', price: 1.30 },
+        { ...baseObservation, territory: 'GF', price: 1.30 },
+        { ...baseObservation, territory: 'FR', price: 1.50 },
+        { ...baseObservation, territory: 'FR', price: 1.50 },
       ];
 
       const config = {
@@ -217,30 +212,30 @@ describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
 
   describe('calculateIVC', () => {
     it('should calculate IVC correctly', () => {
-      const observations: CanonicalPriceObservation[] = [
-        { ...baseObservation, territoire: 'La Réunion', prix: 1.65 },
-        { ...baseObservation, territoire: 'La Réunion', prix: 1.65 },
-        { ...baseObservation, territoire: 'Hexagone', prix: 1.50 },
-        { ...baseObservation, territoire: 'Hexagone', prix: 1.50 },
+      const observations: PriceObservation[] = [
+        { ...baseObservation, territory: 'RE', price: 1.65 },
+        { ...baseObservation, territory: 'RE', price: 1.65 },
+        { ...baseObservation, territory: 'FR', price: 1.50 },
+        { ...baseObservation, territory: 'FR', price: 1.50 },
       ];
 
-      const result = calculateIVC(observations, 'La Réunion', today);
+      const result = calculateIVC(observations, 'RE', today);
 
       expect(result.success).toBe(true);
       expect(result.data).toBeDefined();
-      expect(result.data!.territoire).toBe('La Réunion');
+      expect(result.data!.territoire).toBe('RE');
       // IVC should be approximately 110 (65/1.50 * 100)
       expect(result.data!.indice_global).toBeGreaterThanOrEqual(100);
       expect(result.data!.date_reference).toBe(today);
     });
 
     it('should have IVC close to 100 for similar prices', () => {
-      const observations: CanonicalPriceObservation[] = [
-        { ...baseObservation, territoire: 'Hexagone', prix: 1.50 },
-        { ...baseObservation, territoire: 'Hexagone', prix: 1.50 },
+      const observations: PriceObservation[] = [
+        { ...baseObservation, territory: 'FR', price: 1.50 },
+        { ...baseObservation, territory: 'FR', price: 1.50 },
       ];
 
-      const result = calculateIVC(observations, 'Hexagone', today);
+      const result = calculateIVC(observations, 'FR', today);
 
       // Note: IVC calculation requires comparison to Hexagone reference
       // When only Hexagone data is available, result may not be accurate
@@ -249,34 +244,34 @@ describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
     });
 
     it('should include category breakdown', () => {
-      const observations: CanonicalPriceObservation[] = [
+      const observations: PriceObservation[] = [
         {
           ...baseObservation,
-          territoire: 'Mayotte',
-          produit: { ...baseObservation.produit, categorie: 'Produits laitiers' },
-          prix: 1.65,
+          territory: 'YT',
+          productCategory: 'Produits laitiers',
+          price: 1.65,
         },
         {
           ...baseObservation,
-          territoire: 'Mayotte',
-          produit: { ...baseObservation.produit, categorie: 'Produits laitiers' },
-          prix: 1.65,
+          territory: 'YT',
+          productCategory: 'Produits laitiers',
+          price: 1.65,
         },
         {
           ...baseObservation,
-          territoire: 'Hexagone',
-          produit: { ...baseObservation.produit, categorie: 'Produits laitiers' },
-          prix: 1.50,
+          territory: 'FR',
+          productCategory: 'Produits laitiers',
+          price: 1.50,
         },
         {
           ...baseObservation,
-          territoire: 'Hexagone',
-          produit: { ...baseObservation.produit, categorie: 'Produits laitiers' },
-          prix: 1.50,
+          territory: 'FR',
+          productCategory: 'Produits laitiers',
+          price: 1.50,
         },
       ];
 
-      const result = calculateIVC(observations, 'Mayotte', today);
+      const result = calculateIVC(observations, 'YT', today);
 
       expect(result.success).toBe(true);
       if (result.data!.par_categorie.length > 0) {
@@ -291,19 +286,19 @@ describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
       const thirtyDaysAgo = new Date(todayDate);
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-      const observations: CanonicalPriceObservation[] = [
-        { ...baseObservation, prix: 1.60, date_releve: today },
+      const observations: PriceObservation[] = [
+        { ...baseObservation, price: 1.60, observedAt: today },
         {
           ...baseObservation,
-          prix: 1.50,
-          date_releve: thirtyDaysAgo.toISOString().split('T')[0],
+          price: 1.50,
+          observedAt: thirtyDaysAgo.toISOString().split('T')[0],
         },
       ];
 
       const result = calculateTemporalEvolution(
         observations,
-        baseObservation.produit.ean!,
-        'Guadeloupe'
+        baseObservation.barcode!,
+        'GP'
       );
 
       expect(result.success).toBe(true);
@@ -317,19 +312,19 @@ describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
       const thirtyDaysAgo = new Date(todayDate);
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-      const observations: CanonicalPriceObservation[] = [
-        { ...baseObservation, prix: 1.70, date_releve: today },
+      const observations: PriceObservation[] = [
+        { ...baseObservation, price: 1.70, observedAt: today },
         {
           ...baseObservation,
-          prix: 1.50,
-          date_releve: thirtyDaysAgo.toISOString().split('T')[0],
+          price: 1.50,
+          observedAt: thirtyDaysAgo.toISOString().split('T')[0],
         },
       ];
 
       const result = calculateTemporalEvolution(
         observations,
-        baseObservation.produit.ean!,
-        'Guadeloupe'
+        baseObservation.barcode!,
+        'GP'
       );
 
       expect(result.success).toBe(true);
@@ -339,16 +334,16 @@ describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
 
   describe('calculateStoreDispersion', () => {
     it('should calculate price dispersion across stores', () => {
-      const observations: CanonicalPriceObservation[] = [
-        { ...baseObservation, enseigne: 'Carrefour', prix: 1.40 },
-        { ...baseObservation, enseigne: 'Leclerc', prix: 1.50 },
-        { ...baseObservation, enseigne: 'Casino', prix: 1.60 },
+      const observations: PriceObservation[] = [
+        { ...baseObservation, storeLabel: 'Carrefour', price: 1.40 },
+        { ...baseObservation, storeLabel: 'Leclerc', price: 1.50 },
+        { ...baseObservation, storeLabel: 'Casino', price: 1.60 },
       ];
 
       const result = calculateStoreDispersion(
         observations,
-        baseObservation.produit.ean!,
-        'Guadeloupe',
+        baseObservation.barcode!,
+        'GP',
         30
       );
 
@@ -362,16 +357,16 @@ describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
     });
 
     it('should identify min and max stores', () => {
-      const observations: CanonicalPriceObservation[] = [
-        { ...baseObservation, enseigne: 'StoreA', prix: 1.20 },
-        { ...baseObservation, enseigne: 'StoreB', prix: 1.50 },
-        { ...baseObservation, enseigne: 'StoreC', prix: 1.80 },
+      const observations: PriceObservation[] = [
+        { ...baseObservation, storeLabel: 'StoreA', price: 1.20 },
+        { ...baseObservation, storeLabel: 'StoreB', price: 1.50 },
+        { ...baseObservation, storeLabel: 'StoreC', price: 1.80 },
       ];
 
       const result = calculateStoreDispersion(
         observations,
-        baseObservation.produit.ean!,
-        'Guadeloupe',
+        baseObservation.barcode!,
+        'GP',
         30
       );
 
@@ -382,14 +377,14 @@ describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
     });
 
     it('should handle stores without observations', () => {
-      const observations: CanonicalPriceObservation[] = [
-        { ...baseObservation, enseigne: undefined, prix: 1.50 },
+      const observations: PriceObservation[] = [
+        { ...baseObservation, storeLabel: undefined, price: 1.50 },
       ];
 
       const result = calculateStoreDispersion(
         observations,
-        baseObservation.produit.ean!,
-        'Guadeloupe',
+        baseObservation.barcode!,
+        'GP',
         30
       );
 

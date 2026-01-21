@@ -11,18 +11,33 @@ import type {
   IndicatorSnapshot,
   ObservatoryGlobalStats,
 } from '../../types/observatoryIndicators';
-import type { TerritoireName } from '../../types/canonicalPriceObservation';
+import type { TerritoryCode } from '../../types/PriceObservation';
 import { loadSnapshotLocally, isSnapshotStale } from '../../services/snapshotGenerationService';
 
+const TERRITORY_LABELS: Record<TerritoryCode, string> = {
+  FR: 'Hexagone',
+  GP: 'Guadeloupe',
+  MQ: 'Martinique',
+  GF: 'Guyane',
+  RE: 'La Réunion',
+  YT: 'Mayotte',
+  PM: 'Saint-Pierre-et-Miquelon',
+  BL: 'Saint-Barthélemy',
+  MF: 'Saint-Martin',
+  WF: 'Wallis-et-Futuna',
+  PF: 'Polynésie française',
+  NC: 'Nouvelle-Calédonie',
+};
+
 interface ObservatoryDashboardProps {
-  territoire?: TerritoireName;
+  territoire?: TerritoryCode;
 }
 
 export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ territoire }) => {
   const [snapshot, setSnapshot] = useState<IndicatorSnapshot | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedTerritory, setSelectedTerritory] = useState<TerritoireName | undefined>(territoire);
+  const [selectedTerritory, setSelectedTerritory] = useState<TerritoryCode | undefined>(territoire);
 
   const normalizeSnapshot = useCallback((loaded: IndicatorSnapshot): IndicatorSnapshot => {
     return {
@@ -41,6 +56,11 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
         qualite_moyenne: loaded.metadata?.qualite_moyenne ?? 0,
       }
     };
+  }, []);
+
+  const formatTerritory = useCallback((territory?: TerritoryCode) => {
+    if (!territory) return 'Territoire';
+    return TERRITORY_LABELS[territory] ?? territory;
   }, []);
 
   const loadSnapshot = useCallback(async () => {
@@ -91,7 +111,13 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
         <h3>Observatoire public en cours de déploiement</h3>
         <p>Les premières données seront publiées prochainement.</p>
         {message && <p className="mt-2">{message}</p>}
-        <button onClick={() => (window.location.href = '/observatoire/methodologie')}>
+        <button
+          onClick={() => {
+            if (typeof window !== 'undefined') {
+              window.location.href = '/observatoire/methodologie';
+            }
+          }}
+        >
           Comprendre le projet
         </button>
       </div>
@@ -164,11 +190,11 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
         <div className="metadata-card">
           <h3>Qualité moyenne</h3>
           <div className="quality-score">
-            <span className="score">{Math.round(metadata.qualite_moyenne * 100)}%</span>
+            <span className="score">{Math.round(metadata.qualite_moyenne)}%</span>
             <div className="quality-bar">
               <div
                 className="quality-fill"
-                style={{ width: `${metadata.qualite_moyenne * 100}%` }}
+                style={{ width: `${metadata.qualite_moyenne}%` }}
               ></div>
             </div>
           </div>
@@ -185,7 +211,7 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
           <div className="ivc-grid">
             {indicateurs.indices_vie_chere.map((ivc) => (
               <div key={ivc.territoire} className="ivc-card">
-                <h3>{ivc.territoire}</h3>
+                <h3>{formatTerritory(ivc.territoire)}</h3>
                 <div className="ivc-value">
                   <span className="indice">{ivc.indice_global}</span>
                   <span className="ecart">
@@ -233,7 +259,7 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
                   <tr key={idx}>
                     <td>{price.produit}</td>
                     <td>{price.categorie}</td>
-                    <td>{price.territoire}</td>
+                    <td>{formatTerritory(price.territoire)}</td>
                     <td className="price-cell">{price.prix_moyen.toFixed(2)} €</td>
                     <td className="obs-count">{price.nombre_observations}</td>
                   </tr>
@@ -266,7 +292,7 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
                 {indicateurs.ecarts_dom_hexagone.slice(0, 20).map((gap, idx) => (
                   <tr key={idx}>
                     <td>{gap.produit}</td>
-                    <td>{gap.territoire_dom}</td>
+                    <td>{formatTerritory(gap.territoire_dom)}</td>
                     <td className="price-cell">{gap.prix_dom.toFixed(2)} €</td>
                     <td className="price-cell">{gap.prix_hexagone.toFixed(2)} €</td>
                     <td className={`gap-cell ${gap.signification}`}>

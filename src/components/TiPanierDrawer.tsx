@@ -8,7 +8,7 @@ const PRICE_COMPARISON_TOLERANCE = 0.01;
 
 /**
  * Drawer/modal showing saved items.
- * - Full client-side, localStorage via useTiPanier
+ * - Full client-side, safeLocalStorage via useTiPanier
  * - Firestore persistence for authenticated users
  * - Accessible: role="dialog", aria-labelledby
  * - Mobile-first: appears from bottom on small screens

@@ -1,11 +1,12 @@
 import { createContext, useContext, useEffect, useState } from 'react';
+import { safeLocalStorage } from '../utils/safeLocalStorage';
 
 const ThemeContext = createContext();
 
 export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState(() => {
-    // Check localStorage first
-    const savedTheme = localStorage.getItem('theme');
+    // Check safeLocalStorage first
+    const savedTheme = safeLocalStorage.getItem('theme');
     if (savedTheme) {
       return savedTheme;
     }
@@ -29,8 +30,8 @@ export function ThemeProvider({ children }) {
       root.classList.remove('dark');
     }
     
-    // Save to localStorage
-    localStorage.setItem('theme', theme);
+    // Save to safeLocalStorage
+    safeLocalStorage.setItem('theme', theme);
   }, [theme]);
 
   const toggleTheme = () => {

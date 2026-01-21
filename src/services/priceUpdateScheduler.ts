@@ -1,3 +1,4 @@
+import { safeLocalStorage } from '../utils/safeLocalStorage';
 // src/services/priceUpdateScheduler.ts
 // Planificateur de mise à jour automatique des données de prix
 // Refresh automatique toutes les 24h, fallback local
@@ -9,10 +10,10 @@ const LAST_UPDATE_KEY = 'price-data:last-update'
  * Récupère la date de dernière mise à jour
  */
 export function getLastUpdateDate(): Date | null {
-  if (typeof window === 'undefined' || !window.localStorage) return null
+  if (typeof window === 'undefined' || !safeLocalStorage) return null
 
   try {
-    const stored = window.localStorage.getItem(LAST_UPDATE_KEY)
+    const stored = safeLocalStorage.getItem(LAST_UPDATE_KEY)
     if (!stored) return null
     return new Date(stored)
   } catch {
@@ -24,10 +25,10 @@ export function getLastUpdateDate(): Date | null {
  * Enregistre la date de mise à jour
  */
 export function setLastUpdateDate(date: Date = new Date()): void {
-  if (typeof window === 'undefined' || !window.localStorage) return
+  if (typeof window === 'undefined' || !safeLocalStorage) return
 
   try {
-    window.localStorage.setItem(LAST_UPDATE_KEY, date.toISOString())
+    safeLocalStorage.setItem(LAST_UPDATE_KEY, date.toISOString())
   } catch {
     // ignore quota errors
   }

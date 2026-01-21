@@ -7,11 +7,7 @@
  * @module indicatorCalculationService
  */
 
-import type {
-  CanonicalPriceObservation,
-  TerritoireName,
-  ProductCategory,
-} from '../types/canonicalPriceObservation';
+import type { PriceObservation, ProductCategory, TerritoryCode } from '../types/PriceObservation';
 import type {
   AveragePriceIndicator,
   DomHexagoneGap,
@@ -27,7 +23,7 @@ import type {
  * Calculate average price by product and territory
  */
 export function calculateAveragePrices(
-  observations: CanonicalPriceObservation[],
+  observations: PriceObservation[],
   config: IndicatorCalculationConfig
 ): IndicatorCalculationResult<AveragePriceIndicator[]> {
   const startTime = Date.now();
@@ -35,10 +31,10 @@ export function calculateAveragePrices(
   try {
     // Filter observations by config
     let filtered = observations.filter((obs) => {
-      if (config.territoire && obs.territoire !== config.territoire) return false;
-      if (config.categorie && obs.produit.categorie !== config.categorie) return false;
-      
-      const obsDate = new Date(obs.date_releve);
+      if (config.territoire && obs.territory !== config.territoire) return false;
+      if (config.categorie && obs.productCategory !== config.categorie) return false;
+
+      const obsDate = new Date(obs.observedAt);
       const startDate = new Date(config.periode_debut);
       const endDate = new Date(config.periode_fin);
       
@@ -47,16 +43,16 @@ export function calculateAveragePrices(
     
     // Apply quality filter
     if (config.qualite_minimale !== undefined) {
-      filtered = filtered.filter((obs) => 
-        obs.qualite.score !== undefined && obs.qualite.score >= (config.qualite_minimale ?? 0)
+      filtered = filtered.filter(
+        (obs) => obs.confidenceScore !== undefined && obs.confidenceScore >= config.qualite_minimale,
       );
     }
     
     // Group by product EAN or name
-    const productGroups = new Map<string, CanonicalPriceObservation[]>();
+    const productGroups = new Map<string, PriceObservation[]>();
     
     filtered.forEach((obs) => {
-      const key = obs.produit.ean || obs.produit.nom;
+      const key = obs.barcode || obs.productLabel;
       if (!productGroups.has(key)) {
         productGroups.set(key, []);
       }
@@ -75,22 +71,22 @@ export function calculateAveragePrices(
       let averagePrice: number;
       
       if (config.agregation === 'mediane') {
-        const prices = obsGroup.map((o) => o.prix).sort((a, b) => a - b);
+        const prices = obsGroup.map((o) => o.price).sort((a, b) => a - b);
         const mid = Math.floor(prices.length / 2);
         averagePrice = prices.length % 2 === 0 
           ? (prices[mid - 1] + prices[mid]) / 2 
           : prices[mid];
       } else {
         // Default: moyenne (average)
-        const sum = obsGroup.reduce((acc, obs) => acc + obs.prix, 0);
+        const sum = obsGroup.reduce((acc, obs) => acc + obs.price, 0);
         averagePrice = sum / obsGroup.length;
       }
       
       results.push({
-        produit: firstObs.produit.nom,
-        ean: firstObs.produit.ean,
-        categorie: firstObs.produit.categorie,
-        territoire: firstObs.territoire,
+        produit: firstObs.productLabel,
+        ean: firstObs.barcode,
+        categorie: firstObs.productCategory ?? 'Autres',
+        territoire: firstObs.territory,
         prix_moyen: Math.round(averagePrice * 100) / 100,
         nombre_observations: obsGroup.length,
         periode_debut: config.periode_debut,
@@ -125,7 +121,7 @@ export function calculateAveragePrices(
  * Calculate DOM vs Hexagone price gaps
  */
 export function calculateDomHexagoneGaps(
-  observations: CanonicalPriceObservation[],
+  observations: PriceObservation[],
   config: IndicatorCalculationConfig
 ): IndicatorCalculationResult<DomHexagoneGap[]> {
   const startTime = Date.now();
@@ -163,10 +159,10 @@ export function calculateDomHexagoneGaps(
     
     // Calculate gaps for each product
     productMap.forEach((averages, key) => {
-      const hexagonePrice = averages.find((a) => a.territoire === 'Hexagone');
+      const hexagonePrice = averages.find((a) => a.territoire === 'FR');
       if (!hexagonePrice) return;
       
-      const domPrices = averages.filter((a) => a.territoire !== 'Hexagone');
+      const domPrices = averages.filter((a) => a.territoire !== 'FR');
       
       domPrices.forEach((domPrice) => {
         const ecartAbsolu = domPrice.prix_moyen - hexagonePrice.prix_moyen;
@@ -224,8 +220,8 @@ export function calculateDomHexagoneGaps(
 const DEFAULT_CATEGORY_WEIGHT = 1; // Equal weighting for all categories
 
 export function calculateIVC(
-  observations: CanonicalPriceObservation[],
-  territoire: TerritoireName,
+  observations: PriceObservation[],
+  territoire: TerritoryCode,
   referenceDate: string
 ): IndicatorCalculationResult<IVCIndicator> {
   const startTime = Date.now();
@@ -254,6 +250,8 @@ export function calculateIVC(
       'Boissons',
       'Hygiène et beauté',
       'Entretien',
+      'Bébé',
+      'Autres',
     ];
     
     const categoryIndices: { categorie: ProductCategory; indice: number; contribution: number }[] = [];
@@ -263,13 +261,13 @@ export function calculateIVC(
       const categoryConfig = { ...config, categorie };
       
       const territoryAvg = calculateAveragePrices(
-        observations.filter((o) => o.territoire === territoire),
-        categoryConfig
+        observations.filter((o) => o.territory === territoire),
+        categoryConfig,
       );
       
       const hexagoneAvg = calculateAveragePrices(
-        observations.filter((o) => o.territoire === 'Hexagone'),
-        categoryConfig
+        observations.filter((o) => o.territory === 'FR'),
+        categoryConfig,
       );
       
       if (territoryAvg.success && hexagoneAvg.success && 
@@ -308,8 +306,8 @@ export function calculateIVC(
         methodologie: 'Base 100 = Hexagone. Moyenne pondérée des catégories disponibles.',
       },
       metadata: {
-        observations_utilisees: observations.filter((o) => 
-          o.territoire === territoire || o.territoire === 'Hexagone'
+        observations_utilisees: observations.filter(
+          (o) => o.territory === territoire || o.territory === 'FR',
         ).length,
         observations_exclues: 0,
         temps_calcul_ms: Date.now() - startTime,
@@ -332,9 +330,9 @@ export function calculateIVC(
  * Calculate temporal evolution (J-30, J-90, J-365)
  */
 export function calculateTemporalEvolution(
-  observations: CanonicalPriceObservation[],
+  observations: PriceObservation[],
   productKey: string,
-  territoire: TerritoireName
+  territoire: TerritoryCode
 ): IndicatorCalculationResult<TemporalEvolution> {
   const startTime = Date.now();
   
@@ -344,11 +342,12 @@ export function calculateTemporalEvolution(
     
     // Find current price
     const recentObs = observations.filter((obs) => {
-      const match = (obs.produit.ean === productKey || obs.produit.nom === productKey) &&
-                    obs.territoire === territoire;
+      const match =
+        (obs.barcode === productKey || obs.productLabel === productKey) &&
+        obs.territory === territoire;
       if (!match) return false;
       
-      const obsDate = new Date(obs.date_releve);
+      const obsDate = new Date(obs.observedAt);
       const daysDiff = (today.getTime() - obsDate.getTime()) / (1000 * 60 * 60 * 24);
       return daysDiff <= 30;
     });
@@ -365,7 +364,7 @@ export function calculateTemporalEvolution(
       };
     }
     
-    const prixActuel = recentObs.reduce((sum, obs) => sum + obs.prix, 0) / recentObs.length;
+    const prixActuel = recentObs.reduce((sum, obs) => sum + obs.price, 0) / recentObs.length;
     
     const evolutions: TemporalEvolution['evolutions'] = [];
     
@@ -377,16 +376,18 @@ export function calculateTemporalEvolution(
       periodEnd.setDate(periodEnd.getDate() - daysBack + 7);
       
       const periodObs = observations.filter((obs) => {
-        const match = (obs.produit.ean === productKey || obs.produit.nom === productKey) &&
-                      obs.territoire === territoire;
+        const match =
+          (obs.barcode === productKey || obs.productLabel === productKey) &&
+          obs.territory === territoire;
         if (!match) return false;
         
-        const obsDate = new Date(obs.date_releve);
+        const obsDate = new Date(obs.observedAt);
         return obsDate >= periodStart && obsDate <= periodEnd;
       });
       
       if (periodObs.length > 0) {
-        const prixAnterieur = periodObs.reduce((sum, obs) => sum + obs.prix, 0) / periodObs.length;
+        const prixAnterieur =
+          periodObs.reduce((sum, obs) => sum + obs.price, 0) / periodObs.length;
         const variationAbsolue = prixActuel - prixAnterieur;
         const variationPourcentage = (variationAbsolue / prixAnterieur) * 100;
         
@@ -410,8 +411,8 @@ export function calculateTemporalEvolution(
     return {
       success: true,
       data: {
-        produit: recentObs[0].produit.nom,
-        ean: recentObs[0].produit.ean,
+        produit: recentObs[0].productLabel,
+        ean: recentObs[0].barcode,
         territoire,
         prix_actuel: Math.round(prixActuel * 100) / 100,
         evolutions,
@@ -440,9 +441,9 @@ export function calculateTemporalEvolution(
  * Calculate store price dispersion
  */
 export function calculateStoreDispersion(
-  observations: CanonicalPriceObservation[],
+  observations: PriceObservation[],
   productKey: string,
-  territoire: TerritoireName,
+  territoire: TerritoryCode,
   periodeDays: number = 30
 ): IndicatorCalculationResult<StoreDispersion> {
   const startTime = Date.now();
@@ -454,12 +455,13 @@ export function calculateStoreDispersion(
     
     // Filter observations
     const filtered = observations.filter((obs) => {
-      const match = (obs.produit.ean === productKey || obs.produit.nom === productKey) &&
-                    obs.territoire === territoire &&
-                    obs.enseigne;
+      const match =
+        (obs.barcode === productKey || obs.productLabel === productKey) &&
+        obs.territory === territoire &&
+        obs.storeLabel;
       if (!match) return false;
       
-      const obsDate = new Date(obs.date_releve);
+      const obsDate = new Date(obs.observedAt);
       return obsDate >= periodStart && obsDate <= today;
     });
     
@@ -478,11 +480,11 @@ export function calculateStoreDispersion(
     // Group by enseigne
     const storeGroups = new Map<string, number[]>();
     filtered.forEach((obs) => {
-      if (!obs.enseigne) return;
-      if (!storeGroups.has(obs.enseigne)) {
-        storeGroups.set(obs.enseigne, []);
+      if (!obs.storeLabel) return;
+      if (!storeGroups.has(obs.storeLabel)) {
+        storeGroups.set(obs.storeLabel, []);
       }
-      storeGroups.get(obs.enseigne)!.push(obs.prix);
+      storeGroups.get(obs.storeLabel)!.push(obs.price);
     });
     
     // Calculate store averages
@@ -528,8 +530,8 @@ export function calculateStoreDispersion(
     return {
       success: true,
       data: {
-        produit: filtered[0].produit.nom,
-        ean: filtered[0].produit.ean,
+        produit: filtered[0].productLabel,
+        ean: filtered[0].barcode,
         territoire,
         statistiques: {
           prix_min: Math.round(prixMin * 100) / 100,

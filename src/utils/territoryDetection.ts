@@ -1,16 +1,17 @@
+import { safeLocalStorage } from './safeLocalStorage';
 /**
  * Territory Detection Utility
  * 
  * Detects user's territory using multiple methods:
- * 1. localStorage cache (fastest)
+ * 1. safeLocalStorage cache (fastest)
  * 2. Geolocation API (GPS)
  * 3. IP Geolocation (fallback)
  * 4. Default fallback
  */
 
 export async function detectTerritory(): Promise<string> {
-  // 1. Check localStorage cache
-  const cached = localStorage.getItem('user_territory');
+  // 1. Check safeLocalStorage cache
+  const cached = safeLocalStorage.getItem('user_territory');
   if (cached) {
     console.log('Territory from cache:', cached);
     return cached;
@@ -27,7 +28,7 @@ export async function detectTerritory(): Promise<string> {
     
     const territory = mapCoordsToTerritory(position.coords.latitude, position.coords.longitude);
     if (territory) {
-      localStorage.setItem('user_territory', territory);
+      safeLocalStorage.setItem('user_territory', territory);
       console.log('Territory from GPS:', territory);
       return territory;
     }
@@ -51,7 +52,7 @@ export async function detectTerritory(): Promise<string> {
     const data = await response.json();
     const territory = mapCountryCodeToTerritory(data.country_code, data.region);
     if (territory) {
-      localStorage.setItem('user_territory', territory);
+      safeLocalStorage.setItem('user_territory', territory);
       console.log('Territory from IP:', territory);
       return territory;
     }
@@ -61,7 +62,7 @@ export async function detectTerritory(): Promise<string> {
 
   // 4. Default fallback
   const defaultTerritory = 'DOM-TOM';
-  localStorage.setItem('user_territory', defaultTerritory);
+  safeLocalStorage.setItem('user_territory', defaultTerritory);
   return defaultTerritory;
 }
 
@@ -156,5 +157,5 @@ function mapCountryCodeToTerritory(countryCode: string, region: string): string 
  * Clear cached territory (useful for testing)
  */
 export function clearTerritoryCache(): void {
-  localStorage.removeItem('user_territory');
+  safeLocalStorage.removeItem('user_territory');
 }

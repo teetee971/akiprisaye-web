@@ -7,6 +7,7 @@
  * @module productDossierService
  */
 
+import { safeLocalStorage } from '../utils/safeLocalStorage';
 import type {
   ProductDossier,
   ProductDossierRequest,
@@ -733,7 +734,7 @@ function filterDossierByTerritory(
 async function loadDossierFromStorage(ean: string): Promise<ProductDossier | null> {
   try {
     const key = `product_dossier_${ean}`;
-    const data = localStorage.getItem(key);
+    const data = safeLocalStorage.getItem(key);
     
     if (data) {
       return JSON.parse(data) as ProductDossier;
@@ -750,11 +751,10 @@ async function loadDossierFromStorage(ean: string): Promise<ProductDossier | nul
 async function saveDossierToStorage(dossier: ProductDossier): Promise<void> {
   try {
     const key = `product_dossier_${dossier.ean}`;
-    localStorage.setItem(key, JSON.stringify(dossier));
+    safeLocalStorage.setItem(key, JSON.stringify(dossier));
   } catch (error) {
     if (import.meta.env.DEV) {
       console.warn('Failed to save dossier:', error);
     }
   }
 }
-

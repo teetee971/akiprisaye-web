@@ -1,3 +1,4 @@
+import { safeLocalStorage } from '../utils/safeLocalStorage';
 /**
  * Price Alert Service
  * Gestion des alertes de prix côté navigateur
@@ -26,7 +27,7 @@ function classifySeverity(percentageChange) {
  */
 export function getPriceAlerts() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = safeLocalStorage.getItem(STORAGE_KEY);
     return raw ? JSON.parse(raw) : [];
   } catch (error) {
     console.error('[PriceAlertService] read error', error);
@@ -39,7 +40,7 @@ export function getPriceAlerts() {
  */
 export function savePriceAlerts(alerts) {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(alerts));
+    safeLocalStorage.setItem(STORAGE_KEY, JSON.stringify(alerts));
   } catch (error) {
     console.error('[PriceAlertService] save error', error);
   }
