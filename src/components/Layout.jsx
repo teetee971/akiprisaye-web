@@ -9,33 +9,14 @@ import { OfflineIndicator } from './OfflineIndicator';
 export default function Layout() {
   const [open, setOpen] = React.useState(false);
 
-  // Navigation principale - Menu simplifié à 7 entrées principales
-  // Chaque hub regroupe plusieurs fonctionnalités sous un seul point d'entrée
+  // Navigation principale - V1 officielle (6 entrées)
   const navItems = [
     { path: '/', label: 'Accueil', icon: '🏠' },
-    { path: '/comparateurs', label: 'Comparateurs', icon: '📊' },
-    { path: '/carte-itineraires', label: 'Carte', icon: '🗺️' },
-    { path: '/scanner', label: 'Scanner', icon: '📷' },
-    { path: '/assistant-ia', label: 'Assistant IA', icon: '🤖' },
-    { path: '/observatoire-hub', label: 'Observatoire', icon: '📈' },
-    { path: '/solidarite', label: 'Solidarité', icon: '🤝' },
-  ];
-
-  // Navigation secondaire - Accessible depuis le footer et menu mobile
-  const secondaryNavItems = [
-    { path: '/actualites', label: 'Actualités' },
-    { path: '/pricing', label: 'Tarifs' },
-    { path: '/presse', label: 'Presse' },
-    { path: '/mon-compte', label: 'Mon espace' },
-    { path: '/contact', label: 'Contact' },
-  ];
-
-  const publicNavItems = [
-    { path: '/methodologie', label: 'Méthodologie' },
-    { path: '/transparence', label: 'Transparence' },
-    { path: '/donnees-publiques', label: 'Données publiques' },
-    { path: '/presse', label: 'Presse' },
-    { path: '/mentions-legales', label: 'Mentions légales' },
+    { path: '/comparateur', label: 'Comparateur', icon: '📊' },
+    { path: '/observatoire', label: 'Observatoire', icon: '📈' },
+    { path: '/methodologie', label: 'Méthodologie', icon: '📚' },
+    { path: '/faq', label: 'FAQ', icon: '❓' },
+    { path: '/contact', label: 'Contact', icon: '✉️' },
   ];
 
   return (
@@ -110,37 +91,6 @@ export default function Layout() {
               ))}
             </div>
             
-            <div className="border-t border-slate-700 py-2">
-              <div className="px-6 py-2 text-xs uppercase tracking-wide text-slate-400">
-                Plus
-              </div>
-              {secondaryNavItems.map((item) => (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  className="block px-6 py-3 text-slate-200 hover:bg-slate-800 text-sm"
-                  onClick={() => setOpen(false)}
-                >
-                  {item.label}
-                </NavLink>
-              ))}
-            </div>
-            
-            <div className="border-t border-slate-700 py-2">
-              <div className="px-6 py-2 text-xs uppercase tracking-wide text-slate-400">
-                Données publiques
-              </div>
-              {publicNavItems.map((item) => (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  className="block px-6 py-3 text-slate-200 hover:bg-slate-800 text-sm"
-                  onClick={() => setOpen(false)}
-                >
-                  {item.label}
-                </NavLink>
-              ))}
-            </div>
           </div>
         )}
       </header>

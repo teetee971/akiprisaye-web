@@ -2,7 +2,19 @@
 // Service d'agrégation factuelle des observations de prix
 // Calculs statistiques uniquement, aucune interprétation commerciale
 
-import type { PriceObservation, PriceAggregation } from '../types/priceObservation'
+import type { PriceObservation } from '../types/PriceObservation'
+
+export interface PriceAggregation {
+  productId: string
+  productLabel: string
+  minPrice: number
+  maxPrice: number
+  averagePrice: number
+  observationCount: number
+  periodStart: string
+  periodEnd: string
+  observations: PriceObservation[]
+}
 
 /**
  * Agrège les observations pour un produit donné
@@ -12,7 +24,7 @@ export function aggregateObservations(observations: PriceObservation[]): PriceAg
   if (observations.length === 0) return null
 
   const prices = observations.map((obs) => obs.price)
-  const dates = observations.map((obs) => new Date(obs.observationDate).getTime())
+  const dates = observations.map((obs) => new Date(obs.observedAt).getTime())
 
   const minPrice = Math.min(...prices)
   const maxPrice = Math.max(...prices)
@@ -21,8 +33,8 @@ export function aggregateObservations(observations: PriceObservation[]): PriceAg
   const periodEnd = new Date(Math.max(...dates)).toISOString()
 
   return {
-    ean: observations[0].ean,
-    productName: observations[0].productName,
+    productId: observations[0].productId,
+    productLabel: observations[0].productLabel,
     minPrice,
     maxPrice,
     averagePrice,
@@ -40,10 +52,10 @@ export function groupByStore(observations: PriceObservation[]): Record<string, P
   const grouped: Record<string, PriceObservation[]> = {}
 
   observations.forEach((obs) => {
-    if (!grouped[obs.store]) {
-      grouped[obs.store] = []
+    if (!grouped[obs.storeLabel]) {
+      grouped[obs.storeLabel] = []
     }
-    grouped[obs.store].push(obs)
+    grouped[obs.storeLabel].push(obs)
   })
 
   return grouped
@@ -70,8 +82,8 @@ export function groupByTerritory(observations: PriceObservation[]): Record<strin
  */
 export function sortByDate(observations: PriceObservation[], ascending = true): PriceObservation[] {
   return [...observations].sort((a, b) => {
-    const dateA = new Date(a.observationDate).getTime()
-    const dateB = new Date(b.observationDate).getTime()
+    const dateA = new Date(a.observedAt).getTime()
+    const dateB = new Date(b.observedAt).getTime()
     return ascending ? dateA - dateB : dateB - dateA
   })
 }
@@ -86,7 +98,7 @@ export function hasOldData(observations: PriceObservation[], thresholdDays = 30)
   const threshold = thresholdDays * 24 * 60 * 60 * 1000
 
   return observations.some((obs) => {
-    const obsDate = new Date(obs.observationDate).getTime()
+    const obsDate = new Date(obs.observedAt).getTime()
     return now - obsDate > threshold
   })
 }
@@ -95,7 +107,7 @@ export function hasOldData(observations: PriceObservation[], thresholdDays = 30)
  * Compte le nombre d'enseignes uniques
  */
 export function countUniqueStores(observations: PriceObservation[]): number {
-  const stores = new Set(observations.map((obs) => obs.store))
+  const stores = new Set(observations.map((obs) => obs.storeLabel))
   return stores.size
 }
 

@@ -2,7 +2,7 @@
 // PR-04: Data Export Utilities (CSV/PDF)
 // Factual data export only, no transformations
 
-import type { PriceObservation } from '../types/priceObservation'
+import type { PriceObservation } from '../types/PriceObservation'
 
 /**
  * Export price observations to CSV format
@@ -16,26 +16,28 @@ export function exportToCSV(observations: PriceObservation[], filename: string =
 
   // CSV Headers (French institutional)
   const headers = [
-    'EAN',
+    'Identifiant produit',
     'Produit',
     'Enseigne',
     'Territoire',
     'Prix (EUR)',
     'Date Observation',
     'Source',
-    'Référence Source'
+    'Observations',
+    'Confiance (%)',
   ]
 
   // Convert observations to CSV rows
   const rows = observations.map(obs => [
-    obs.ean,
-    obs.productName,
-    obs.store,
+    obs.productId,
+    obs.productLabel,
+    obs.storeLabel,
     obs.territory,
     obs.price.toFixed(2),
-    obs.observationDate,
-    obs.source,
-    obs.sourceRef || 'N/A'
+    obs.observedAt,
+    obs.sourceType,
+    obs.observationsCount,
+    Math.round(obs.confidenceScore)
   ])
 
   // Build CSV content
@@ -111,13 +113,15 @@ export function exportToText(observations: PriceObservation[], filename: string 
     '═══════════════════════════════════════════════════════',
     '',
     ...observations.map((obs, index) => [
-      `[${index + 1}] ${obs.productName}`,
-      `    EAN: ${obs.ean}`,
-      `    Enseigne: ${obs.store}`,
+      `[${index + 1}] ${obs.productLabel}`,
+      `    ID produit: ${obs.productId}`,
+      `    Enseigne: ${obs.storeLabel}`,
       `    Territoire: ${obs.territory}`,
       `    Prix: ${obs.price.toFixed(2)} EUR`,
-      `    Date: ${new Date(obs.observationDate).toLocaleString('fr-FR')}`,
-      `    Source: ${obs.source}${obs.sourceRef ? ` (${obs.sourceRef})` : ''}`,
+      `    Date: ${new Date(obs.observedAt).toLocaleString('fr-FR')}`,
+      `    Source: ${obs.sourceType}`,
+      `    Observations: ${obs.observationsCount}`,
+      `    Confiance: ${Math.round(obs.confidenceScore)}%`,
       ''
     ]).flat()
   ]

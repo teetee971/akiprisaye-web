@@ -83,53 +83,20 @@ export default function Header() {
           </li>
           <li>
             <Link
-              to="/comparateurs"
+              to="/comparateur"
               className={`flex items-center gap-3 px-6 py-3 text-white hover:bg-blue-700/20 transition-colors border-l-4 ${
-                isActiveRoute('/comparateurs') ? 'border-blue-400 bg-blue-700/10' : 'border-transparent hover:border-blue-400'
+                isActiveRoute('/comparateur') ? 'border-blue-400 bg-blue-700/10' : 'border-transparent hover:border-blue-400'
               }`}
               onClick={closeMobileMenu}
             >
-              <span>📊 Comparateurs</span>
+              <span>📊 Comparateur</span>
             </Link>
           </li>
           <li>
             <Link
-              to="/carte-itineraires"
+              to="/observatoire"
               className={`flex items-center gap-3 px-6 py-3 text-white hover:bg-blue-700/20 transition-colors border-l-4 ${
-                isActiveRoute('/carte-itineraires') ? 'border-blue-400 bg-blue-700/10' : 'border-transparent hover:border-blue-400'
-              }`}
-              onClick={closeMobileMenu}
-            >
-              <span>🗺️ Carte</span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/scanner"
-              className={`flex items-center gap-3 px-6 py-3 text-white hover:bg-blue-700/20 transition-colors border-l-4 ${
-                isActiveRoute('/scanner') ? 'border-blue-400 bg-blue-700/10' : 'border-transparent hover:border-blue-400'
-              }`}
-              onClick={closeMobileMenu}
-            >
-              <span>📷 Scanner</span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/assistant-ia"
-              className={`flex items-center gap-3 px-6 py-3 text-white hover:bg-blue-700/20 transition-colors border-l-4 ${
-                isActiveRoute('/assistant-ia') ? 'border-blue-400 bg-blue-700/10' : 'border-transparent hover:border-blue-400'
-              }`}
-              onClick={closeMobileMenu}
-            >
-              <span>🤖 Assistant IA</span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/observatoire-hub"
-              className={`flex items-center gap-3 px-6 py-3 text-white hover:bg-blue-700/20 transition-colors border-l-4 ${
-                isActiveRoute('/observatoire-hub') ? 'border-blue-400 bg-blue-700/10' : 'border-transparent hover:border-blue-400'
+                isActiveRoute('/observatoire') ? 'border-blue-400 bg-blue-700/10' : 'border-transparent hover:border-blue-400'
               }`}
               onClick={closeMobileMenu}
             >
@@ -138,56 +105,37 @@ export default function Header() {
           </li>
           <li>
             <Link
-              to="/solidarite"
+              to="/methodologie"
               className={`flex items-center gap-3 px-6 py-3 text-white hover:bg-blue-700/20 transition-colors border-l-4 ${
-                isActiveRoute('/solidarite') ? 'border-blue-400 bg-blue-700/10' : 'border-transparent hover:border-blue-400'
+                isActiveRoute('/methodologie') ? 'border-blue-400 bg-blue-700/10' : 'border-transparent hover:border-blue-400'
               }`}
               onClick={closeMobileMenu}
             >
-              <span>🤝 Solidarité</span>
-            </Link>
-          </li>
-          
-          {/* Secondary Navigation */}
-          <li className="px-6 py-2 mt-4">
-            <div className="text-xs uppercase tracking-wide text-slate-400">Plus</div>
-          </li>
-          <li>
-            <Link
-              to="/actualites"
-              className={`flex items-center gap-3 px-6 py-3 text-white hover:bg-blue-700/20 transition-colors border-l-4 ${
-                isActiveRoute('/actualites') ? 'border-blue-400 bg-blue-700/10' : 'border-transparent hover:border-blue-400'
-              }`}
-              onClick={closeMobileMenu}
-            >
-              <span>📰 Actualités</span>
+              <span>📚 Méthodologie</span>
             </Link>
           </li>
           <li>
             <Link
-              to="/mon-compte"
+              to="/faq"
               className={`flex items-center gap-3 px-6 py-3 text-white hover:bg-blue-700/20 transition-colors border-l-4 ${
-                isActiveRoute('/mon-compte') ? 'border-blue-400 bg-blue-700/10' : 'border-transparent hover:border-blue-400'
+                isActiveRoute('/faq') ? 'border-blue-400 bg-blue-700/10' : 'border-transparent hover:border-blue-400'
               }`}
               onClick={closeMobileMenu}
             >
-              <span>👤 Mon Compte</span>
+              <span>❓ FAQ</span>
             </Link>
           </li>
           <li>
             <Link
-              to="/parametres"
+              to="/contact"
               className={`flex items-center gap-3 px-6 py-3 text-white hover:bg-blue-700/20 transition-colors border-l-4 ${
-                isActiveRoute('/parametres') ? 'border-blue-400 bg-blue-700/10' : 'border-transparent hover:border-blue-400'
+                isActiveRoute('/contact') ? 'border-blue-400 bg-blue-700/10' : 'border-transparent hover:border-blue-400'
               }`}
               onClick={closeMobileMenu}
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              <span>Paramètres</span>
+              <span>✉️ Contact</span>
             </Link>
+          </li>
           
           {/* Status Badge in Mobile Menu */}
           <li className="px-6 py-3">
@@ -247,68 +195,41 @@ export default function Header() {
                 onMouseEnter={() => prefetchRoute('/comparateur')}
                 onFocus={() => prefetchRoute('/comparateur')}
               >
-                Comparer
+                Comparateur
               </Link>
               <Link
-                to="/comprendre-prix"
+                to="/observatoire"
                 className={`text-white/90 hover:text-white hover:bg-[color:var(--glass-bg)] px-3 py-2 rounded-lg transition-all ${
-                  isActiveRoute('/comprendre-prix') ? 'bg-[color:var(--glass-bg)] text-white font-semibold' : ''
+                  isActiveRoute('/observatoire') ? 'bg-[color:var(--glass-bg)] text-white font-semibold' : ''
                 }`}
+                onMouseEnter={() => prefetchRoute('/observatoire')}
+                onFocus={() => prefetchRoute('/observatoire')}
               >
-                Comprendre
+                Observatoire
               </Link>
               <Link
-                to="/ocr"
+                to="/methodologie"
                 className={`text-white/90 hover:text-white hover:bg-[color:var(--glass-bg)] px-3 py-2 rounded-lg transition-all ${
-                  isActiveRoute('/ocr') ? 'bg-[color:var(--glass-bg)] text-white font-semibold' : ''
+                  isActiveRoute('/methodologie') ? 'bg-[color:var(--glass-bg)] text-white font-semibold' : ''
                 }`}
-                onMouseEnter={() => prefetchRoute('/scanner')}
-                onFocus={() => prefetchRoute('/scanner')}
               >
-                OCR & Scan
+                Méthodologie
               </Link>
               <Link
-                to="/civic-modules"
+                to="/faq"
                 className={`text-white/90 hover:text-white hover:bg-[color:var(--glass-bg)] px-3 py-2 rounded-lg transition-all ${
-                  isActiveRoute('/civic-modules') ? 'bg-[color:var(--glass-bg)] text-white font-semibold' : ''
+                  isActiveRoute('/faq') ? 'bg-[color:var(--glass-bg)] text-white font-semibold' : ''
                 }`}
               >
-                Participer
+                FAQ
               </Link>
               <Link
-                to="/alertes"
+                to="/contact"
                 className={`text-white/90 hover:text-white hover:bg-[color:var(--glass-bg)] px-3 py-2 rounded-lg transition-all ${
-                  isActiveRoute('/alertes') ? 'bg-[color:var(--glass-bg)] text-white font-semibold' : ''
+                  isActiveRoute('/contact') ? 'bg-[color:var(--glass-bg)] text-white font-semibold' : ''
                 }`}
-                onMouseEnter={() => prefetchRoute('/alertes')}
-                onFocus={() => prefetchRoute('/alertes')}
               >
-                Alertes
-              </Link>
-              <Link
-                to="/mon-compte"
-                className={`text-white/90 hover:text-white hover:bg-[color:var(--glass-bg)] px-3 py-2 rounded-lg transition-all ${
-                  isActiveRoute('/mon-compte') ? 'bg-[color:var(--glass-bg)] text-white font-semibold' : ''
-                }`}
-                onMouseEnter={() => prefetchRoute('/mon-compte')}
-                onFocus={() => prefetchRoute('/mon-compte')}
-              >
-                Mon Compte
-              </Link>
-              <Link
-                to="/parametres"
-                className={`text-white/90 hover:text-white hover:bg-[color:var(--glass-bg)] px-3 py-2 rounded-lg transition-all flex items-center gap-2 ${
-                  isActiveRoute('/parametres') ? 'bg-[color:var(--glass-bg)] text-white font-semibold' : ''
-                }`}
-                title="Paramètres"
-                onMouseEnter={() => prefetchRoute('/parametres')}
-                onFocus={() => prefetchRoute('/parametres')}
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                Paramètres
+                Contact
               </Link>
               
               {/* Connection Status Badge */}

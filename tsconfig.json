@@ -16,6 +16,7 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
+    // TODO(CI-TECH-DEBT-TS-001): Réactiver noImplicitAny post-V1 après résorption des `any` explicites.
     "noImplicitAny": false,
     "baseUrl": ".",
     "paths": {

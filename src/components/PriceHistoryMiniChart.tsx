@@ -1,6 +1,6 @@
 // src/components/PriceHistoryMiniChart.tsx
 import React from 'react'
-import type { PriceObservation } from '../types/priceObservation'
+import type { PriceObservation } from '../types/PriceObservation'
 
 type PriceHistoryMiniChartProps = {
   observations: PriceObservation[]
@@ -21,7 +21,7 @@ export default function PriceHistoryMiniChart({
 
   // Trier par date
   const sorted = [...observations].sort(
-    (a, b) => new Date(a.observationDate).getTime() - new Date(b.observationDate).getTime()
+    (a, b) => new Date(a.observedAt).getTime() - new Date(b.observedAt).getTime()
   )
 
   const prices = sorted.map((obs) => obs.price)

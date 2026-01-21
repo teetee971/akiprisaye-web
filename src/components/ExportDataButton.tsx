@@ -3,7 +3,7 @@
 // Factual data export with format selection
 
 import React, { useState } from 'react'
-import type { PriceObservation } from '../types/priceObservation'
+import type { PriceObservation } from '../types/PriceObservation'
 import { exportToCSV, exportToJSON, exportToText, getSanitizedFilename } from '../utils/exportData'
 import { useToast } from '../hooks/useToast'
 

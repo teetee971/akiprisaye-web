@@ -167,20 +167,24 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                 <Route path='/' element={<Layout />}>
                   <Route index element={<Home />} />
                   <Route path='chat' element={<ChatIALocal />} />
-                  <Route path='scan' element={<ScanOCR />} />
+                  <Route path='scan' element={<Navigate to="/observatoire" replace />} />
                   <Route path='scanner/*' element={<ScanOCR />} />
                   <Route path='scan-ean' element={<ScanEAN />} />
                   <Route path='comparaison-enseignes' element={<ComparaisonEnseignes />} />
                   <Route path='comparateur' element={<Comparateur />} />
                   <Route path='comparateurs/*' element={<Comparateurs />} />
                   <Route path='comparaison' element={<Navigate to="/comparateur" replace />} />
+                  <Route path='comparateur-vols' element={<Navigate to="/observatoire" replace />} />
+                  <Route path='comparateur-bateaux' element={<Navigate to="/observatoire" replace />} />
                   <Route path='recherche-produits' element={<RechercheProduits />} />
+                  <Route path='recherche-prix/*' element={<Navigate to="/observatoire" replace />} />
                   <Route path='carte' element={<Carte />} />
                   <Route path='carte-itineraires/*' element={<Carte />} />
                   <Route path='actualites' element={<ComingSoon title="Actualités" />} />
                   <Route path='alertes' element={<Alertes />} />
                   <Route path='a-propos' element={<APropos />} />
                   <Route path='methodologie' element={<Methodologie />} />
+                  <Route path='donnees-publiques' element={<Navigate to="/observatoire" replace />} />
                   <Route path='mentions-legales' element={<MentionsLegales />} />
                   <Route path='mon-compte' element={<MonCompte />} />
                   <Route path='parametres' element={<Settings />} />
@@ -189,6 +193,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                   <Route path='reset-password' element={<ResetPassword />} />
                   <Route path='comprendre-prix' element={<ComprendrePrix />} />
                   <Route path='contribuer-prix' element={<ContribuerPrix />} />
+                  <Route path='contribuer' element={<Navigate to="/observatoire" replace />} />
                   <Route path='signaler-abus' element={<SignalerAbus />} />
                   <Route path='pricing' element={<ComingSoon title="Tarifs" />} />
                   <Route path='solidarite' element={<ComingSoon title="Solidarité" />} />
@@ -207,6 +212,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                   <Route path='dossier-media' element={<DossierMedia />} />
                   <Route path='presse' element={<Presse />} />
                   <Route path='historique-prix' element={<HistoriquePrix />} />
+                  <Route path='historique-prix-new' element={<Navigate to="/observatoire" replace />} />
                   <Route path='alertes-prix' element={<AlertesPrix />} />
                   <Route path='budget-vital' element={<BudgetVital />} />
                   <Route path='faux-bons-plans' element={<FauxBonsPlan />} />
@@ -216,8 +222,13 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                   <Route path='civic-modules' element={<CivicModules />} />
                   <Route path='evaluation-cosmetique' element={<EvaluationCosmetique />} />
                   <Route path='observatoire' element={<Observatoire />} />
+                  <Route path='observatoire-prix' element={<Navigate to="/observatoire" replace />} />
                   <Route path='observatoire-hub' element={<ComingSoon title="Observatoire" />} />
                   <Route path='observatoire/methodologie' element={<ObservatoryMethodology />} />
+                  <Route path='observatoire-vivant' element={<Navigate to="/observatoire" replace />} />
+                  <Route path='inflation' element={<Navigate to="/observatoire" replace />} />
+                  <Route path='ocr' element={<Navigate to="/observatoire" replace />} />
+                  <Route path='ocr/history' element={<Navigate to="/observatoire" replace />} />
                   <Route path='comparateur-citoyen' element={<ComparateurCitoyen />} />
                   <Route path=':territory/scanner' element={<TerritoryScanner />} />
                   <Route path=':territory/comparateurs' element={<TerritoryComparateurs />} />

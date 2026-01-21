@@ -181,38 +181,44 @@ export default function Observatoire() {
 
             {!loading && !error && data && (
               <div className="space-y-4">
-                <div className="overflow-x-auto">
-                  <table className="min-w-full text-left border border-slate-800 rounded-xl overflow-hidden">
-                    <caption className="text-slate-300 text-sm px-3 py-2 bg-slate-800 border-b border-slate-800">
-                      Prix moyens du panier alimentaire de base ({formattedPeriod ?? data.periode})
-                    </caption>
-                    <thead className="bg-slate-800 text-slate-200 text-sm uppercase tracking-wide">
-                      <tr>
-                        <th scope="col" className="px-4 py-3">
-                          Produit
-                        </th>
-                        <th scope="col" className="px-4 py-3">
-                          Prix moyen ({data.devise})
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {data.panier.map((item) => (
-                        <tr key={item.produit} className="border-t border-slate-800">
-                          <th scope="row" className="px-4 py-3 font-semibold text-white">
-                            {item.produit}
+                {data.panier.length > 0 ? (
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full text-left border border-slate-800 rounded-xl overflow-hidden">
+                      <caption className="text-slate-300 text-sm px-3 py-2 bg-slate-800 border-b border-slate-800">
+                        Prix moyens du panier alimentaire de base ({formattedPeriod ?? data.periode})
+                      </caption>
+                      <thead className="bg-slate-800 text-slate-200 text-sm uppercase tracking-wide">
+                        <tr>
+                          <th scope="col" className="px-4 py-3">
+                            Produit
                           </th>
-                          <td className="px-4 py-3 text-slate-100">
-                            {item.prix_moyen.toLocaleString('fr-FR', {
-                              minimumFractionDigits: 2,
-                              maximumFractionDigits: 2,
-                            })}
-                          </td>
+                          <th scope="col" className="px-4 py-3">
+                            Prix moyen ({data.devise})
+                          </th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                      </thead>
+                      <tbody>
+                        {data.panier.map((item) => (
+                          <tr key={item.produit} className="border-t border-slate-800">
+                            <th scope="row" className="px-4 py-3 font-semibold text-white">
+                              {item.produit}
+                            </th>
+                            <td className="px-4 py-3 text-slate-100">
+                              {item.prix_moyen.toLocaleString('fr-FR', {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                              })}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <div className="rounded-xl border border-slate-800 bg-slate-900/70 px-4 py-3 text-sm text-slate-200">
+                    Aucune donnée de panier n'est disponible pour la période affichée.
+                  </div>
+                )}
 
                 {data.note && (
                   <p className="text-sm text-slate-300 bg-slate-800/70 border border-slate-800 rounded-xl px-4 py-3">

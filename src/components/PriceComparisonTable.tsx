@@ -1,6 +1,6 @@
 // src/components/PriceComparisonTable.tsx
 import React from 'react'
-import type { PriceObservation } from '../types/priceObservation'
+import type { PriceObservation } from '../types/PriceObservation'
 import PriceSourceBadge from './PriceSourceBadge'
 import PriceHistoryMiniChart from './PriceHistoryMiniChart'
 
@@ -20,7 +20,7 @@ export default function PriceComparisonTable({ observations, groupedByStore }: P
 
   // Ordre chronologique par défaut
   const sorted = [...observations].sort(
-    (a, b) => new Date(a.observationDate).getTime() - new Date(b.observationDate).getTime()
+    (a, b) => new Date(a.observedAt).getTime() - new Date(b.observedAt).getTime()
   )
 
   return (
@@ -41,21 +41,21 @@ export default function PriceComparisonTable({ observations, groupedByStore }: P
         </thead>
         <tbody>
           {sorted.map((obs, index) => {
-            const storeHistory = groupedByStore[obs.store] || []
+            const storeHistory = groupedByStore[obs.storeLabel] || []
             
             return (
               <tr
-                key={`${obs.ean}-${obs.store}-${obs.observationDate}-${index}`}
+                key={`${obs.productId}-${obs.storeLabel}-${obs.observedAt}-${index}`}
                 className="border-b border-white/[0.12] hover:bg-white/[0.05] transition-colors"
               >
-                <td className="py-3 px-4 text-white/90">{obs.store}</td>
+                <td className="py-3 px-4 text-white/90">{obs.storeLabel}</td>
                 <td className="py-3 px-4 text-right">
                   <span className="text-lg font-semibold text-blue-400">
                     {obs.price.toFixed(2)} {obs.currency}
                   </span>
                 </td>
                 <td className="py-3 px-4 text-center text-sm text-white/70">
-                  {new Date(obs.observationDate).toLocaleDateString('fr-FR', {
+                  {new Date(obs.observedAt).toLocaleDateString('fr-FR', {
                     year: 'numeric',
                     month: 'short',
                     day: 'numeric',

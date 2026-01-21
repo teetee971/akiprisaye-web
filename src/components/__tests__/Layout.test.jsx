@@ -26,12 +26,13 @@ describe('Layout Component', () => {
 
   it('should render desktop navigation links', () => {
     renderLayout();
-    expect(screen.getByRole('link', { name: /comparateurs/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /comparateur/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /observatoire/i })).toBeInTheDocument();
   });
 
-  it('should render OCR & Scan navigation link', () => {
+  it('should render Methodologie navigation link', () => {
     renderLayout();
-    expect(screen.getByRole('link', { name: /scanner/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /méthodologie/i })).toBeInTheDocument();
   });
 
   it('should render mobile menu button', () => {

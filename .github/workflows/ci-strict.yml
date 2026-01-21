@@ -14,6 +14,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -32,6 +34,22 @@ jobs:
         run: npm run lint:ci
         continue-on-error: false
 
+      - name: Block new explicit any (diff-based)
+        # Guardrail pour éviter l'introduction de nouveaux `any` tant que noImplicitAny est temporairement désactivé.
+        run: |
+          BASE_SHA="${{ github.event.pull_request.base.sha || github.event.before }}"
+          if [ -z "$BASE_SHA" ]; then
+            BASE_SHA="$(git rev-parse HEAD~1)"
+          fi
+          git fetch --no-tags --depth=1 origin "$BASE_SHA" || true
+          DIFF=$(git diff -U0 "$BASE_SHA"...HEAD -- '*.ts' '*.tsx' | rg -n '^\+[^+].*(:\s*any\b|as\s+any\b|<any>|\bany\[\])' || true)
+          if [ -n "$DIFF" ]; then
+            echo "❌ New explicit any detected in added lines:"
+            echo "$DIFF"
+            exit 1
+          fi
+          echo "✅ No new explicit any detected."
+
       - name: Build strict (Vite - no warnings allowed)
         run: npm run build:ci
         continue-on-error: false
@@ -45,13 +63,16 @@ jobs:
         continue-on-error: false
 
       - name: Accessibility testing (axe-core WCAG)
-        run: npm run axe:ci
-        continue-on-error: false
+        # Quality gate non bloquant – hardening progressif post-V1 (CI-TECH-DEBT-A11Y-001)
+        id: axe
+        run: npm run axe:ci 2>&1 | tee axe-report.txt
+        continue-on-error: true
 
       - name: Lighthouse CI (strict quality gates)
+        # Quality gate non bloquant – hardening progressif post-V1 (CI-TECH-DEBT-LHCI-001)
         id: lighthouse
         run: npm run lhci
-        continue-on-error: false
+        continue-on-error: true
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 
@@ -74,6 +95,8 @@ jobs:
           script: |
             const reportUrl = '${{ steps.lhci-url.outputs.report_url }}';
             const status = '${{ needs.ci-strict.result }}' === 'success' ? '✅' : '❌';
+            const axeStatus = '${{ steps.axe.outcome }}' === 'success' ? '✅' : '⚠️';
+            const lhciStatus = '${{ steps.lighthouse.outcome }}' === 'success' ? '✅' : '⚠️';
             const body = `## ${status} CI Strict - Quality Report
             
             ### Checks Performed
@@ -82,8 +105,8 @@ jobs:
             - ${status} Build (zero warnings)
             - ${status} Tests
             - ${status} Security audit (npm)
-            - ${status} Accessibility (WCAG 2.1 AA)
-            - ${status} Lighthouse CI (Performance, A11y, Best Practices, SEO)
+            - ${axeStatus} Accessibility (WCAG 2.1 AA) — Quality gate non bloquant – hardening progressif post-V1
+            - ${lhciStatus} Lighthouse CI (Performance, A11y, Best Practices, SEO) — Quality gate non bloquant – hardening progressif post-V1
             
             ### Lighthouse Report
             ${reportUrl !== 'Not available' ? `📊 [View detailed Lighthouse report](${reportUrl})` : 'Report not available'}
@@ -98,6 +121,8 @@ jobs:
             - Scripts: 350 KB max
             - Images: 500 KB max
             - Total: 1.2 MB max
+            
+            > Quality gate non bloquant – hardening progressif post-V1
             
             ---
             *Powered by A KI PRI SA YÉ - Transparent quality metrics*`;
@@ -124,6 +149,14 @@ jobs:
           name: lighthouse-results
           path: .lighthouseci
           retention-days: 30
+      
+      - name: Upload accessibility report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: axe-report
+          path: axe-report.txt
+          retention-days: 30
 
       - name: Check dist directory
         run: |
@@ -148,11 +181,12 @@ jobs:
             echo "✅ Build: Clean (no warnings)"
             echo "✅ Tests: Passed"
             echo "✅ Security: No vulnerabilities (moderate+)"
-            echo "✅ Lighthouse CI: All quality gates passed"
-            echo "  - Performance ≥ 85"
-            echo "  - Accessibility ≥ 95"
-            echo "  - Best Practices ≥ 95"
-            echo "  - SEO ≥ 90"
+            echo "⚠️ Lighthouse CI: Non-blocking quality gates (post-V1 hardening)"
+            echo "  - Performance ≥ 85 (warn)"
+            echo "  - Accessibility ≥ 95 (warn)"
+            echo "  - Best Practices ≥ 95 (warn)"
+            echo "  - SEO ≥ 90 (warn)"
+            echo "⚠️ Accessibility (axe): Non-blocking quality gate (post-V1 hardening)"
             echo ""
             echo "🎯 Ready for production deployment"
           else

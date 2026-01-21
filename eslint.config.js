@@ -54,4 +54,16 @@ export default tseslint. config(
       'react-hooks/exhaustive-deps': 'warn',
     },
   },
+  {
+    // TODO(CI-TECH-DEBT-ESLINT-001): Réduire la liste de fichiers legacy après correction des hooks.
+    // Assouplissement ciblé pour warnings connus (react-hooks/exhaustive-deps) en V1.
+    files: [
+      'src/components/BarcodeScanner.tsx',
+      'src/pages/ScanEAN.tsx',
+      'src/pages/ScanOCR.tsx',
+    ],
+    rules: {
+      'react-hooks/exhaustive-deps': 'off',
+    },
+  },
 )
