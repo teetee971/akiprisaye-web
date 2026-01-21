@@ -1,4 +1,5 @@
-import type { PriceSearchInput, TerritoryCode } from '../priceSearch/price.types';
+import type { PriceSearchInput } from '../priceSearch/priceSearch.types';
+import type { TerritoryCode } from '../../types/PriceObservation';
 
 const BARCODE_REGEX = /\b\d{8,14}\b/;
 

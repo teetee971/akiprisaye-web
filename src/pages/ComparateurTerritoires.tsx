@@ -9,7 +9,7 @@ import {
   XAxis,
   YAxis
 } from 'recharts';
-import type { PriceObservation, TerritoryCode } from '../types/priceObservation';
+import type { PriceObservation, TerritoryCode } from '../types/PriceObservation';
 import {
   buildTerritoryTimeSeries,
   calculateTerritoryComparison

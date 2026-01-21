@@ -19,7 +19,7 @@ function getTerritoryCoverage(territory: Territory): string {
   const coverage: Record<Territory, string> = {
     GP: '45 magasins',
     MQ: '38 magasins',
-    GY: '22 magasins',
+    GF: '22 magasins',
     RE: '52 magasins',
     YT: '15 magasins',
     MF: '8 magasins',

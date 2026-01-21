@@ -7,18 +7,9 @@ Le site https://akiprisaye-web.pages.dev/ affiche une page blanche car **le buil
 
 Allez sur https://dash.cloudflare.com/  Pages  akiprisaye-web  Settings  Builds & deployments
 
-### Configuration Build Requise:
+### Configuration Build Requise (Recommandée):
 
-**Option 1 (Recommended):** Build from frontend subdirectory
-```
-Framework preset: Vite
-Build command: cd frontend && npm ci && npm run build
-Build output directory: frontend/dist
-Root directory: (leave empty or /)
-Node version: 20
-```
-
-**Option 2 (Alternative):** Build from root directory
+**Build from root directory**
 ```
 Framework preset: Vite
 Build command: npm run build
@@ -27,8 +18,8 @@ Root directory: (leave empty or /)
 Node version: 20
 ```
 
-**Note:** The `frontend/src` is a symlink to `../src` to enable building from the frontend directory.
-See `CLOUDFLARE_BUILD_FIX.md` for detailed explanation.
+**Note:** Le build depuis `frontend/` est conservé uniquement pour compatibilité historique. 
+La configuration recommandée est désormais le build **à la racine**.
 
 ### Variables d'Environnement (optionnel):
 `

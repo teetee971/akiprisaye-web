@@ -194,7 +194,7 @@ const InsuranceComparator: React.FC = () => {
   const territories: { value: Territory; label: string }[] = [
     { value: 'GP', label: 'Guadeloupe' },
     { value: 'MQ', label: 'Martinique' },
-    { value: 'GY', label: 'Guyane' },
+    { value: 'GF', label: 'Guyane' },
     { value: 'RE', label: 'La Réunion' },
     { value: 'YT', label: 'Mayotte' },
   ];

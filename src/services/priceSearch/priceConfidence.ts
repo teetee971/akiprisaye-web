@@ -1,8 +1,8 @@
-import type { NormalizedPriceObservation } from './price.types';
+import type { PriceObservation } from '../../types/PriceObservation';
 
 interface ConfidenceInputs {
   territoryMatch: boolean;
-  observations: NormalizedPriceObservation[];
+  observations: PriceObservation[];
 }
 
 function scoreRecency(observedAt?: string): number {
@@ -16,7 +16,7 @@ function scoreRecency(observedAt?: string): number {
 
 export function computePriceConfidence({ territoryMatch, observations }: ConfidenceInputs): number {
   if (observations.length === 0) return 0;
-  const sources = new Set(observations.map((obs) => obs.source));
+  const sources = new Set(observations.map((obs) => obs.source ?? 'inconnu'));
   const sourceScore = Math.min(40, sources.size * 15);
   const recencyScore = Math.min(
     25,

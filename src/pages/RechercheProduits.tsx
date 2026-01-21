@@ -1,20 +1,22 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { searchProductPrices } from '../services/priceSearch/priceSearch.service';
-import type { PriceSearchResult, TerritoryCode } from '../services/priceSearch/price.types';
+import { normalizeTerritoryCode } from '../services/priceSearch/normalizeTerritoryCode';
+import type { PriceSearchResult } from '../services/priceSearch/priceSearch.types';
+import type { TerritoryCode } from '../types/PriceObservation';
 import type { ScanData, ScanHubResult } from '../types/scanHubResult';
 
 const TERRITORIES: { code: TerritoryCode; label: string }[] = [
-  { code: 'fr', label: 'France (métropole)' },
-  { code: 'gp', label: 'Guadeloupe' },
-  { code: 'mq', label: 'Martinique' },
-  { code: 'gf', label: 'Guyane' },
-  { code: 're', label: 'La Réunion' },
-  { code: 'yt', label: 'Mayotte' },
-  { code: 'pm', label: 'Saint-Pierre-et-Miquelon' },
-  { code: 'bl', label: 'Saint-Barthélemy' },
-  { code: 'mf', label: 'Saint-Martin' },
+  { code: 'FR', label: 'France (métropole)' },
+  { code: 'GP', label: 'Guadeloupe' },
+  { code: 'MQ', label: 'Martinique' },
+  { code: 'GF', label: 'Guyane' },
+  { code: 'RE', label: 'La Réunion' },
+  { code: 'YT', label: 'Mayotte' },
+  { code: 'PM', label: 'Saint-Pierre-et-Miquelon' },
+  { code: 'BL', label: 'Saint-Barthélemy' },
+  { code: 'MF', label: 'Saint-Martin' },
 ];
 
 export function SafeFallback({
@@ -320,15 +322,50 @@ export default function RechercheProduits() {
   const navigate = useNavigate();
   const [query, setQuery] = useState(params.get('q') ?? '');
   const [barcode, setBarcode] = useState(params.get('ean') ?? '');
-  const [territory, setTerritory] = useState<TerritoryCode>('fr');
+  const [territory, setTerritory] = useState<TerritoryCode>(() =>
+    normalizeTerritoryCode(params.get('territory') ?? undefined)
+  );
   const [result, setResult] = useState<ScanHubResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [hasAutoSearched, setHasAutoSearched] = useState(false);
+  const [cachedAt, setCachedAt] = useState<string | null>(null);
 
-  const handleSearch = async () => {
+  const buildCacheKey = useCallback(() => {
+    const normalizedQuery = query.trim().toLowerCase();
+    const normalizedBarcode = barcode.trim();
+    return `scanhub:price-search:${territory}:${normalizedBarcode || 'no-barcode'}:${normalizedQuery || 'no-query'}`;
+  }, [barcode, query, territory]);
+
+  const readCache = useCallback(() => {
+    const key = buildCacheKey();
+    const raw = localStorage.getItem(key);
+    if (!raw) return null;
+    try {
+      const parsed = JSON.parse(raw) as { cachedAt: string; payload: ScanHubResult };
+      return parsed;
+    } catch {
+      return null;
+    }
+  }, [buildCacheKey]);
+
+  const writeCache = useCallback(
+    (payload: ScanHubResult) => {
+      const key = buildCacheKey();
+      const cachedPayload = JSON.stringify({
+        cachedAt: new Date().toISOString(),
+        payload,
+      });
+      localStorage.setItem(key, cachedPayload);
+    },
+    [buildCacheKey]
+  );
+
+  const handleSearch = useCallback(async () => {
     setLoading(true);
     setError(null);
     setResult(null);
+    setCachedAt(null);
 
     try {
       const response = await searchProductPrices({
@@ -336,20 +373,39 @@ export default function RechercheProduits() {
         query: query.trim() || undefined,
         territory,
       });
-      setResult(mapPriceSearchResult(response));
+      const mapped = mapPriceSearchResult(response);
+      setResult(mapped);
+      writeCache(mapped);
     } catch (err: any) {
       console.error('Price search error:', err);
       setError('Impossible de récupérer les prix pour le moment.');
     } finally {
       setLoading(false);
     }
-  };
+  }, [barcode, query, territory]);
+
+  useEffect(() => {
+    if (hasAutoSearched) {
+      return;
+    }
+    if (!barcode.trim() && !query.trim()) {
+      return;
+    }
+    const cached = readCache();
+    if (cached?.payload) {
+      setResult(cached.payload);
+      setCachedAt(cached.cachedAt);
+    }
+    void handleSearch();
+    setHasAutoSearched(true);
+  }, [barcode, query, handleSearch, hasAutoSearched, readCache]);
 
   const handleReset = () => {
     setResult(null);
     setError(null);
     setQuery('');
     setBarcode('');
+    setCachedAt(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -421,6 +477,12 @@ export default function RechercheProduits() {
             Lancer la recherche
           </button>
         </section>
+
+        {cachedAt && !loading && (
+          <div className="bg-emerald-900/20 border border-emerald-700 rounded-2xl p-4 text-sm text-emerald-200">
+            Résultat affiché depuis le cache local ({new Date(cachedAt).toLocaleString('fr-FR')}).
+          </div>
+        )}
 
         {error && (
           <div className="bg-red-900/30 border border-red-700 rounded-2xl p-6 text-center">

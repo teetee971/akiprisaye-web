@@ -35,7 +35,7 @@ import {
 import type { TerritoryCode } from '../types/extensions';
 import type { PhotoContribution } from '../components/PhotoContributionModal';
 
-export interface PriceObservation {
+export interface ContributionPriceObservation {
   productId?: string;
   productName: string;
   barcode?: string;
@@ -202,7 +202,7 @@ export async function submitPhotoContribution(
  * Submit a price observation
  */
 export async function submitPriceObservation(
-  observation: PriceObservation,
+  observation: ContributionPriceObservation,
   userId?: string
 ): Promise<string> {
   // Check rate limit

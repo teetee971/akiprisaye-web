@@ -1,7 +1,7 @@
 // src/services/storeComparisonService.ts
 // Service de comparaison entre enseignes basé sur le catalogue local
 
-export type PriceObservation = {
+export type CatalogueObservation = {
   date: string
   price: number
   isPromo?: boolean
@@ -12,14 +12,14 @@ export type CatalogueItem = {
   id?: string
   name?: string
   store?: string
-  observations?: PriceObservation[]
+  observations?: CatalogueObservation[]
   [key: string]: any
 }
 
 export type StoreComparison = {
   store: string
   currentPrice: number
-  observations: PriceObservation[]
+  observations: CatalogueObservation[]
   trend30d: number // pourcentage de variation sur 30 jours
   differenceFromBest: {
     amount: number // en euros
@@ -38,7 +38,7 @@ export type ComparisonResult = {
 /**
  * Calcule le prix moyen sur les 30 derniers jours
  */
-function calculateAverage30d(observations: PriceObservation[]): number {
+function calculateAverage30d(observations: CatalogueObservation[]): number {
   const now = Date.now()
   const thirtyDaysAgo = now - 30 * 24 * 60 * 60 * 1000
   
@@ -56,7 +56,7 @@ function calculateAverage30d(observations: PriceObservation[]): number {
 /**
  * Calcule la tendance sur 30 jours (pourcentage de variation)
  */
-function calculateTrend30d(observations: PriceObservation[]): number {
+function calculateTrend30d(observations: CatalogueObservation[]): number {
   if (observations.length === 0) return 0
   
   const sorted = [...observations].sort((a, b) => 
@@ -94,11 +94,11 @@ export function compareStoresForProduct(
   if (matchingProducts.length === 0) return null
   
   // Grouper par enseigne
-  const storeMap = new Map<string, PriceObservation[]>()
+  const storeMap = new Map<string, CatalogueObservation[]>()
   
   matchingProducts.forEach(product => {
     const store = product.store || 'Inconnu'
-    const observations: PriceObservation[] = product.observations || []
+    const observations: CatalogueObservation[] = product.observations || []
     
     if (!storeMap.has(store)) {
       storeMap.set(store, [])

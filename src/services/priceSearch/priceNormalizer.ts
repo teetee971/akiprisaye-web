@@ -1,4 +1,4 @@
-import type { NormalizedPriceObservation, PriceObservation } from './price.types';
+import type { PriceObservation } from '../../types/PriceObservation';
 
 const UNIT_LABELS: Record<NonNullable<PriceObservation['unit']>, string> = {
   unit: 'pièce',
@@ -29,7 +29,7 @@ export function computeMedian(prices: number[]): number | null {
   return normalizePriceValue(sorted[mid]);
 }
 
-export function normalizeObservation(observation: PriceObservation): NormalizedPriceObservation {
+export function normalizeObservation(observation: PriceObservation): PriceObservation {
   const normalizedPrice = normalizePriceValue(observation.price);
   const pricePerUnit =
     observation.unit && observation.unit !== 'unit' ? normalizedPrice : undefined;

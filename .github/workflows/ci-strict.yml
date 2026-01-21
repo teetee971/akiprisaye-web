@@ -34,6 +34,15 @@ jobs:
         run: npm run lint:ci
         continue-on-error: false
 
+      - name: Ensure single PriceObservation model
+        run: |
+          COUNT=$(rg "interface PriceObservation" src | wc -l | tr -d ' ')
+          if [ "$COUNT" -ne 1 ]; then
+            echo "❌ Multiple PriceObservation definitions detected"
+            exit 1
+          fi
+          echo "✅ Single PriceObservation definition verified."
+
       - name: Block new explicit any (diff-based)
         # Guardrail pour éviter l'introduction de nouveaux `any` tant que noImplicitAny est temporairement désactivé.
         run: |

@@ -12,7 +12,7 @@ function getStoreCount(territory: Territory): number {
   const storeCounts: Record<Territory, number> = {
     GP: 45,
     MQ: 38,
-    GY: 22,
+    GF: 22,
     RE: 52,
     YT: 15,
     MF: 8,

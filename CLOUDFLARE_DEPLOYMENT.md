@@ -8,6 +8,7 @@ Pour que le site fonctionne correctement sur https://akiprisaye.pages.dev/, les 
 2. **Build command** : `npm run build`
 3. **Build output directory** : `dist`
 4. **Root directory** : `/` (racine du projet)
+5. **Node version** : 20
 
 ## Variables d'environnement
 

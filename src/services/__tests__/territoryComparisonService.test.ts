@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { PriceObservation } from '../../types/priceObservation';
+import type { PriceObservation } from '../../types/PriceObservation';
 import {
   buildTerritoryTimeSeries,
   calculateTerritoryAverages,

@@ -45,12 +45,13 @@ describe('Layout Component', () => {
     const burgerButton = screen.getByLabelText('Toggle menu');
     
     // Initially, mobile nav should not be visible
-    expect(screen.queryByText('Accueil', { selector: 'a.block.px-6' })).not.toBeInTheDocument();
+    expect(screen.queryByTestId('mobile-nav')).not.toBeInTheDocument();
     
     fireEvent.click(burgerButton);
     
     // After click, mobile nav items should be visible
-    expect(screen.getByText('Accueil', { selector: 'a.block.px-6' })).toBeInTheDocument();
+    const mobileNav = screen.getByTestId('mobile-nav');
+    expect(within(mobileNav).getByRole('link', { name: /accueil/i })).toBeInTheDocument();
   });
 
   it('should close mobile navigation when close button is clicked', () => {
@@ -59,11 +60,11 @@ describe('Layout Component', () => {
     
     // Open menu
     fireEvent.click(burgerButton);
-    expect(screen.getByText('Accueil', { selector: 'a.block.px-6' })).toBeInTheDocument();
+    expect(screen.getByTestId('mobile-nav')).toBeInTheDocument();
     
     // Close menu by clicking button again (acts as toggle)
     fireEvent.click(burgerButton);
-    expect(screen.queryByText('Accueil', { selector: 'a.block.px-6' })).not.toBeInTheDocument();
+    expect(screen.queryByTestId('mobile-nav')).not.toBeInTheDocument();
   });
 
   it('should close mobile navigation when Escape key is pressed', () => {
@@ -72,13 +73,12 @@ describe('Layout Component', () => {
     
     // Open menu
     fireEvent.click(burgerButton);
-    const mobileNav = screen.getByRole('navigation', { hidden: true });
-    expect(mobileNav).toBeInTheDocument();
+    expect(screen.getByTestId('mobile-nav')).toBeInTheDocument();
     
     // Press Escape - close menu by clicking button again (as component doesn't handle Escape)
     fireEvent.click(burgerButton);
     // After closing, mobile nav should not be visible
-    expect(screen.queryByText('Accueil', { selector: '.block.px-6' })).not.toBeInTheDocument();
+    expect(screen.queryByTestId('mobile-nav')).not.toBeInTheDocument();
   });
 
   it('should render footer with links', () => {

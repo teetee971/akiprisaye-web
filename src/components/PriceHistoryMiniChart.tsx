@@ -19,9 +19,14 @@ export default function PriceHistoryMiniChart({
     return <div className="text-xs text-white/40">Aucune donnée</div>
   }
 
+  const getTimestamp = (value: string) => {
+    const parsed = new Date(value)
+    return Number.isNaN(parsed.getTime()) ? 0 : parsed.getTime()
+  }
+
   // Trier par date
   const sorted = [...observations].sort(
-    (a, b) => new Date(a.observedAt).getTime() - new Date(b.observedAt).getTime()
+    (a, b) => getTimestamp(a.observedAt) - getTimestamp(b.observedAt)
   )
 
   const prices = sorted.map((obs) => obs.price)

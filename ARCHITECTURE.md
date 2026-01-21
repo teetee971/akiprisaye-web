@@ -1981,6 +1981,14 @@ This architecture document provides a comprehensive overview of the product sear
 
 ---
 
+## Règle absolue – PriceObservation
+
+- Un seul modèle canonique : `src/types/PriceObservation.ts`
+- Toute donnée externe DOIT passer par un adaptateur de normalisation
+- Toute duplication est une erreur bloquante en CI
+
+---
+
 **Last Updated:** November 10, 2025  
 **Version:** 1.0.0  
 **Author:** GitHub Copilot  

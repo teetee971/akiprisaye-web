@@ -5,15 +5,11 @@ import {
 } from './priceNormalizer';
 import { computePriceConfidence } from './priceConfidence';
 import { PRICE_PROVIDERS } from './priceProviders';
-import type {
-  PriceInterval,
-  PriceSearchInput,
-  PriceSearchResult,
-  PriceSearchStatus,
-  TerritoryCode,
-} from './price.types';
+import { normalizeTerritoryCode } from './normalizeTerritoryCode';
+import type { PriceSearchInput, PriceSearchResult, PriceSearchStatus } from './priceSearch.types';
+import type { TerritoryCode } from '../../types/PriceObservation';
 
-const DEFAULT_TERRITORY: TerritoryCode = 'fr';
+const DEFAULT_TERRITORY: TerritoryCode = 'FR';
 const PROVIDER_TIMEOUT_MS = 5000;
 
 function withTimeout<T>(promise: Promise<T>, timeoutMs: number, signal: AbortSignal): Promise<T> {
@@ -33,19 +29,27 @@ function withTimeout<T>(promise: Promise<T>, timeoutMs: number, signal: AbortSig
 }
 
 function territoryMessage(territory: TerritoryCode): string | undefined {
-  if (territory === 'fr') return undefined;
+  if (territory === 'FR') return undefined;
   return 'Données DOM en cours d’enrichissement. Les prix affichés restent indicatifs.';
 }
 
 export async function searchProductPrices(input: PriceSearchInput): Promise<PriceSearchResult> {
-  const territory = input.territory ?? DEFAULT_TERRITORY;
+  const territory = normalizeTerritoryCode(input.territory ?? DEFAULT_TERRITORY);
+  const normalizedInput: PriceSearchInput = {
+    ...input,
+    territory,
+  };
   const queryUsed = input.barcode || input.query || 'recherche libre';
 
   try {
     const controller = new AbortController();
     const providerResults = await Promise.allSettled(
       PRICE_PROVIDERS.filter((provider) => provider.enabled).map((provider) =>
-        withTimeout(provider.search(input, controller.signal), PROVIDER_TIMEOUT_MS, controller.signal)
+        withTimeout(
+          provider.search(normalizedInput, controller.signal),
+          PROVIDER_TIMEOUT_MS,
+          controller.signal
+        )
       )
     );
 
@@ -67,11 +71,11 @@ export async function searchProductPrices(input: PriceSearchInput): Promise<Pric
     );
 
     const priceValues = observations.map((obs) => obs.price);
-    const interval: PriceInterval = {
+    const interval = {
       min: priceValues.length > 0 ? normalizePriceValue(Math.min(...priceValues)) : null,
       median: computeMedian(priceValues),
       max: priceValues.length > 0 ? normalizePriceValue(Math.max(...priceValues)) : null,
-      currency: 'EUR',
+      currency: 'EUR' as const,
       priceCount: priceValues.length,
     };
 

@@ -167,7 +167,10 @@ export default function SignalementForm({ onSubmit = null }) {
       </div>
 
       {/* Legal Warning */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+      <div
+        className="bg-blue-50 border border-blue-200 rounded-lg p-4"
+        data-testid="signalement-legal-warning"
+      >
         <p className="text-sm text-blue-900 font-medium mb-2">
           ℹ️ Information importante
         </p>
@@ -182,10 +185,14 @@ export default function SignalementForm({ onSubmit = null }) {
       <div className="bg-white rounded-lg shadow-md p-6 space-y-4">
         {/* Territory Selection */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            htmlFor="signalement-territory"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
             Territoire *
           </label>
           <select
+            id="signalement-territory"
             value={formData.territory}
             onChange={(e) => handleInputChange('territory', e.target.value)}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -200,10 +207,14 @@ export default function SignalementForm({ onSubmit = null }) {
 
         {/* Store Name */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            htmlFor="signalement-store"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
             Nom du magasin *
           </label>
           <input
+            id="signalement-store"
             type="text"
             value={formData.store}
             onChange={(e) => handleInputChange('store', e.target.value)}
@@ -219,10 +230,14 @@ export default function SignalementForm({ onSubmit = null }) {
 
         {/* Product */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            htmlFor="signalement-product"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
             Produit *
           </label>
           <select
+            id="signalement-product"
             value={formData.product}
             onChange={(e) => handleInputChange('product', e.target.value)}
             className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
@@ -243,10 +258,14 @@ export default function SignalementForm({ onSubmit = null }) {
 
         {/* Price */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            htmlFor="signalement-price"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
             Prix observé (€) *
           </label>
           <input
+            id="signalement-price"
             type="number"
             step="0.01"
             min="0"
@@ -264,10 +283,14 @@ export default function SignalementForm({ onSubmit = null }) {
 
         {/* Date */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            htmlFor="signalement-date"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
             Date d'observation *
           </label>
           <input
+            id="signalement-date"
             type="date"
             value={formData.date}
             onChange={(e) => handleInputChange('date', e.target.value)}

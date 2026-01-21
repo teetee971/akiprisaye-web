@@ -1,4 +1,4 @@
-import type { PriceObservation, TerritoryCode } from '../types/priceObservation';
+import type { PriceObservation, TerritoryCode } from '../types/PriceObservation';
 
 export interface TerritoryComparisonMetric {
   territory: TerritoryCode;

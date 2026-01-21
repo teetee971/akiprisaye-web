@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build:ci": "vite build 2>&1 | tee build.log && ! grep -iE \"didn't resolve|deprecated|circular dependency|chunk size exceeds|eval is discouraged|dynamic import could not be analyzed\" build.log || true",
+    "build:ci": "vite build 2>&1 | tee build.log && ! grep -iE \"didn't resolve|deprecated|circular dependency|chunk size exceeds|eval is discouraged|dynamic import could not be analyzed\" build.log",
     "preview": "vite preview --port 4173",
     "test": "vitest",
     "test:ci": "SKIP_OCR_TESTS=true vitest run --passWithNoTests",
@@ -109,4 +109,3 @@
     "node": ">=20.19.0"
   }
 }
-

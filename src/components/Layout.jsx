@@ -70,7 +70,10 @@ export default function Layout() {
 
         {/* Dropdown mobile */}
         {open && (
-          <div className="lg:hidden bg-slate-900/95 backdrop-blur-xl border-t border-slate-700">
+          <div
+            className="lg:hidden bg-slate-900/95 backdrop-blur-xl border-t border-slate-700"
+            data-testid="mobile-nav"
+          >
             <div className="py-2">
               {navItems.map((item) => (
                 <NavLink

@@ -53,6 +53,7 @@ const Comparateur = lazyWithRetry(() => import('./pages/Comparateur'));
 const Comparateurs = lazyWithRetry(() => import('./pages/Comparateurs'));
 const Carte = lazyWithRetry(() => import('./pages/Carte'));
 const Alertes = lazyWithRetry(() => import('./pages/Alertes'));
+const Actualites = lazyWithRetry(() => import('./pages/Actualites'));
 const APropos = lazyWithRetry(() => import('./pages/APropos'));
 const Methodologie = lazyWithRetry(() => import('./pages/Methodologie'));
 const MentionsLegales = lazyWithRetry(() => import('./pages/MentionsLegales'));
@@ -70,6 +71,7 @@ const ContactCollectivites = lazyWithRetry(() => import('./pages/ContactCollecti
 const Contact = lazyWithRetry(() => import('./pages/Contact'));
 const IaConseiller = lazyWithRetry(() => import('./pages/IaConseiller'));
 const TiPanie = lazyWithRetry(() => import('./pages/TiPanie'));
+const Transparence = lazyWithRetry(() => import('./pages/Transparence'));
 const AdminDashboard = lazyWithRetry(() => import('./pages/AdminDashboard'));
 const AIDashboard = lazyWithRetry(() => import('./pages/AIDashboard'));
 const AiMarketInsights = lazyWithRetry(() => import('./pages/AiMarketInsights'));
@@ -86,12 +88,24 @@ const ListeCourses = lazyWithRetry(() => import('./pages/ListeCourses'));
 const CivicModules = lazyWithRetry(() => import('./pages/CivicModules'));
 const EvaluationCosmetique = lazyWithRetry(() => import('./pages/EvaluationCosmetique'));
 const Observatoire = lazyWithRetry(() => import('./pages/Observatoire'));
+const ObservatoireHub = lazyWithRetry(() => import('./pages/ObservatoireHub'));
+const ObservatoireTempsReel = lazyWithRetry(() => import('./pages/ObservatoireTempsReel'));
+const ObservatoireVivant = lazyWithRetry(() => import('./pages/ObservatoireVivant'));
 const ObservatoryMethodology = lazyWithRetry(() => import('./pages/ObservatoryMethodology'));
+const InflationDashboardPage = lazyWithRetry(() => import('./pages/InflationDashboardPage'));
+const Pricing = lazyWithRetry(() => import('./pages/Pricing'));
 const RechercheProduits = lazyWithRetry(() => import('./pages/RechercheProduits'));
+const RecherchePrix = lazyWithRetry(() => import('./pages/RecherchePrix'));
+const ProductPhotoAnalysis = lazyWithRetry(() => import('./pages/ProductPhotoAnalysis'));
 const TerritoryHub = lazyWithRetry(() => import('./pages/TerritoryHub'));
 const TerritoryScanner = lazyWithRetry(() => import('./pages/TerritoryScanner'));
 const TerritoryComparateurs = lazyWithRetry(() => import('./pages/TerritoryComparateurs'));
-const ComingSoon = lazyWithRetry(() => import('./pages/ComingSoon'));
+const OCRHub = lazyWithRetry(() => import('./pages/ocr/OCRHub'));
+const OCRHistory = lazyWithRetry(() => import('./pages/ocr/OCRHistory'));
+const QuestionsLogistiqueDOM = lazyWithRetry(() => import('./pages/ressources/QuestionsLogistiqueDOM'));
+const ComprendrePromotionsPrixBarres = lazyWithRetry(() => import('./pages/ressources/ComprendrePromotionsPrixBarres'));
+const PourquoiPrixVarieSansChangement = lazyWithRetry(() => import('./pages/ressources/PourquoiPrixVarieSansChangement'));
+const ComingSoonPage = lazyWithRetry(() => import('./components/ComingSoonPage'));
 const Settings = lazy(() => import('./pages/Settings'));
 const Home = lazyWithRetry(() => import('./pages/Home'));
 const NotFound = lazyWithRetry(() => import('./pages/NotFound'));
@@ -169,6 +183,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                   <Route path='chat' element={<ChatIALocal />} />
                   <Route path='scan' element={<Navigate to="/observatoire" replace />} />
                   <Route path='scanner/*' element={<ScanOCR />} />
+                  <Route path='scanner-produit' element={<Navigate to="/scanner" replace />} />
                   <Route path='scan-ean' element={<ScanEAN />} />
                   <Route path='comparaison-enseignes' element={<ComparaisonEnseignes />} />
                   <Route path='comparateur' element={<Comparateur />} />
@@ -177,10 +192,13 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                   <Route path='comparateur-vols' element={<Navigate to="/observatoire" replace />} />
                   <Route path='comparateur-bateaux' element={<Navigate to="/observatoire" replace />} />
                   <Route path='recherche-produits' element={<RechercheProduits />} />
-                  <Route path='recherche-prix/*' element={<Navigate to="/observatoire" replace />} />
+                  <Route path='recherche-prix' element={<RecherchePrix />} />
+                  <Route path='recherche-prix/indice-logistique' element={<ComingSoonPage title="Indice logistique DOM" description="Une vue explicative des contraintes logistiques par territoire arrive bientôt." status="En préparation" />} />
+                  <Route path='recherche-prix/delais-logistiques' element={<ComingSoonPage title="Délais logistiques" description="Cette page détaillera les étapes logistiques et leurs impacts sur les délais." status="En préparation" />} />
+                  <Route path='recherche-prix/pourquoi-delais-produit' element={<ComingSoonPage title="Délais par produit" description="Des explications pédagogiques par catégorie de produits seront disponibles prochainement." status="En préparation" />} />
                   <Route path='carte' element={<Carte />} />
                   <Route path='carte-itineraires/*' element={<Carte />} />
-                  <Route path='actualites' element={<ComingSoon title="Actualités" />} />
+                  <Route path='actualites' element={<Actualites />} />
                   <Route path='alertes' element={<Alertes />} />
                   <Route path='a-propos' element={<APropos />} />
                   <Route path='methodologie' element={<Methodologie />} />
@@ -190,13 +208,16 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                   <Route path='parametres' element={<Settings />} />
                   <Route path='inscription' element={<Inscription />} />
                   <Route path='login' element={<Login />} />
+                  <Route path='connexion' element={<Navigate to="/login" replace />} />
                   <Route path='reset-password' element={<ResetPassword />} />
                   <Route path='comprendre-prix' element={<ComprendrePrix />} />
                   <Route path='contribuer-prix' element={<ContribuerPrix />} />
-                  <Route path='contribuer' element={<Navigate to="/observatoire" replace />} />
+                  <Route path='contribuer' element={<Navigate to="/contribuer-prix" replace />} />
                   <Route path='signaler-abus' element={<SignalerAbus />} />
-                  <Route path='pricing' element={<ComingSoon title="Tarifs" />} />
-                  <Route path='solidarite' element={<ComingSoon title="Solidarité" />} />
+                  <Route path='signalement' element={<Navigate to="/signaler-abus" replace />} />
+                  <Route path='pricing' element={<Pricing />} />
+                  <Route path='tarifs' element={<Navigate to="/pricing" replace />} />
+                  <Route path='solidarite' element={<ComingSoonPage title="Solidarité" description="Le programme de solidarité est en préparation pour accompagner les foyers." status="En construction" />} />
                   <Route path='pricing-detailed' element={<PricingDetailed />} />
                   <Route path='subscribe' element={<Subscribe />} />
                   <Route path='licence-institution' element={<LicenceInstitution />} />
@@ -223,12 +244,14 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                   <Route path='evaluation-cosmetique' element={<EvaluationCosmetique />} />
                   <Route path='observatoire' element={<Observatoire />} />
                   <Route path='observatoire-prix' element={<Navigate to="/observatoire" replace />} />
-                  <Route path='observatoire-hub' element={<ComingSoon title="Observatoire" />} />
+                  <Route path='observatoire-hub' element={<ObservatoireHub />} />
                   <Route path='observatoire/methodologie' element={<ObservatoryMethodology />} />
-                  <Route path='observatoire-vivant' element={<Navigate to="/observatoire" replace />} />
-                  <Route path='inflation' element={<Navigate to="/observatoire" replace />} />
-                  <Route path='ocr' element={<Navigate to="/observatoire" replace />} />
-                  <Route path='ocr/history' element={<Navigate to="/observatoire" replace />} />
+                  <Route path='observatoire-temps-reel' element={<ObservatoireTempsReel />} />
+                  <Route path='observatoire-vivant' element={<ObservatoireVivant />} />
+                  <Route path='transparence' element={<Transparence />} />
+                  <Route path='inflation' element={<InflationDashboardPage />} />
+                  <Route path='ocr' element={<OCRHub />} />
+                  <Route path='ocr/history' element={<OCRHistory />} />
                   <Route path='comparateur-citoyen' element={<ComparateurCitoyen />} />
                   <Route path=':territory/scanner' element={<TerritoryScanner />} />
                   <Route path=':territory/comparateurs' element={<TerritoryComparateurs />} />
@@ -239,7 +262,12 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                   <Route path='comparer' element={<CompareSimple />} />
                   <Route path='recherche' element={<RechercheHub />} />
                   <Route path='recherche-prix-observes' element={<SearchCompareHub />} />
-                  <Route path='tarifs' element={<ComingSoon title="Tarifs" />} />
+                  <Route path='analyse-photo-produit' element={<ProductPhotoAnalysis />} />
+                  <Route path='ressources/questions-logistique-dom' element={<QuestionsLogistiqueDOM />} />
+                  <Route path='ressources/pourquoi-prix-varie-sans-changement' element={<PourquoiPrixVarieSansChangement />} />
+                  <Route path='ressources/comprendre-promotions-prix-barres' element={<ComprendrePromotionsPrixBarres />} />
+                  <Route path='ressources/guide-consommateur' element={<ComingSoonPage title="Guide consommateur" description="Le guide consommateur arrive bientôt avec des conseils pratiques pour acheter au juste prix." status="En préparation" />} />
+                  <Route path='ressources/glossaire-logistique-dom' element={<ComingSoonPage title="Glossaire logistique DOM" description="Un glossaire pédagogique des termes logistiques sera publié prochainement." status="En préparation" />} />
                   {/* PR #1 - Assistant + FAQ étendue (v1.6.0) */}
                   <Route path='faq' element={<Faq />} />
                   <Route path='*' element={<NotFound />} />

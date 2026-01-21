@@ -10,7 +10,7 @@ import {
   submitPhotoContribution, 
   submitPriceObservation,
   submitMissingProduct,
-  type PriceObservation,
+  type ContributionPriceObservation,
   type MissingProductReport,
 } from '../services/contributionService';
 import type { PhotoContribution } from '../components/PhotoContributionModal';
@@ -19,7 +19,7 @@ import type { ContributionData } from '../types/comparatorCommon';
 interface UseContributionReturn {
   submitContribution: (data: ContributionData) => Promise<string>;
   submitPhoto: (contribution: PhotoContribution, userId?: string) => Promise<string>;
-  submitPrice: (observation: PriceObservation, userId?: string) => Promise<string>;
+  submitPrice: (observation: ContributionPriceObservation, userId?: string) => Promise<string>;
   submitMissing: (report: MissingProductReport, userId?: string) => Promise<string>;
   loading: boolean;
   error: string | null;
@@ -93,7 +93,7 @@ export function useContribution(comparatorType?: string): UseContributionReturn 
    * Submit a price observation
    */
   const submitPrice = async (
-    observation: PriceObservation,
+    observation: ContributionPriceObservation,
     userId?: string
   ): Promise<string> => {
     setLoading(true);

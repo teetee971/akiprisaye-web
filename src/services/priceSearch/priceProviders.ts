@@ -1,4 +1,6 @@
-import type { PriceObservation, PriceSearchInput, PriceSourceId } from './price.types';
+import type { PriceObservation } from '../../types/PriceObservation';
+import type { PriceSearchInput, PriceSourceId } from './priceSearch.types';
+import { normalizePriceObservation } from './adapters/normalizePriceObservation';
 
 export interface PriceProviderResult {
   observations: PriceObservation[];
@@ -88,18 +90,22 @@ const openPricesProvider: PriceProvider = {
           unit?: string;
           product_name?: string;
           observed_at?: string;
+          brand?: string;
+          barcode?: string;
         }>;
       }>(url, signal);
 
       const observations: PriceObservation[] =
-        data.items?.map((item) => ({
-          source: 'open_prices',
-          productName: item.product_name,
-          price: item.price,
-          currency: 'EUR',
-          unit: item.unit === 'kg' || item.unit === 'l' ? item.unit : 'unit',
-          observedAt: item.observed_at,
-        })) ?? [];
+        data.items
+          ?.map((item) =>
+            normalizePriceObservation(item, {
+              territory: input.territory ?? 'FR',
+              source: 'open_prices',
+              fallbackLabel: input.query,
+              barcode: input.barcode,
+            })
+          )
+          .filter((item): item is PriceObservation => Boolean(item)) ?? [];
 
       if (observations.length === 0) {
         warnings.push('Aucun prix Open Prices trouvé pour cette requête.');

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 // eslint-disable-next-line no-unused-vars -- Component is used in render() call below
 import SignalementForm from '../SignalementForm';
 
@@ -27,8 +27,9 @@ describe('SignalementForm', () => {
   it('displays legal warning', () => {
     render(<SignalementForm />);
     
-    expect(screen.getByText(/observation ponctuelle/)).toBeDefined();
-    expect(screen.getByText(/pas publiées automatiquement/)).toBeDefined();
+    const warning = screen.getByTestId('signalement-legal-warning');
+    expect(within(warning).getByText(/observation ponctuelle/)).toBeDefined();
+    expect(within(warning).getByText(/pas publiées automatiquement/)).toBeDefined();
   });
 
   it('validates required fields', () => {

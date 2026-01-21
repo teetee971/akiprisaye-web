@@ -1,6 +1,6 @@
 # Cloudflare Build Configuration Fix
 
-## Problem
+## Problem (historique)
 The Cloudflare Pages build was failing with the error:
 ```
 Could not resolve "./styles/home-v4.css" from "src/main.jsx"
@@ -9,8 +9,12 @@ Could not resolve "./styles/home-v4.css" from "src/main.jsx"
 ## Root Cause
 The build command `cd frontend && npm ci && npm run build` was running from the `frontend/` subdirectory, which had an incomplete source structure. The `frontend/src` directory contained only partial files (components, firebase, modules, types, utils) but was missing the main entry point files (`main.jsx`, `main.tsx`) and the `styles/` directory.
 
-## Solution
+## Solution (historique)
 Created a symlink from `frontend/src` to `../src` so that when building from the `frontend/` directory, it can access the complete source code from the root level.
+
+## Recommandation actuelle
+Le build recommandé est désormais exécuté **à la racine** (`npm run build`, output `dist/`). 
+Le mode `frontend/` reste documenté uniquement pour compatibilité historique.
 
 ### Changes Made
 1. **Replaced `frontend/src` directory with symlink**: `frontend/src -> ../src`
@@ -69,12 +73,11 @@ akiprisaye-web/
 - Vite resolves all imports correctly through the symlink
 - No need to duplicate `package.json` or `node_modules` in `frontend/`
 
-## Testing Locally
+## Testing Locally (root build recommandé)
 To verify the fix locally:
 ```bash
-cd frontend
-npm ci          # Installs deps from parent package.json
-npm run build   # Builds successfully using src symlink
+npm ci
+npm run build
 ```
 
-The build output will be in `frontend/dist/` directory.
+The build output will be in `dist/` directory.
