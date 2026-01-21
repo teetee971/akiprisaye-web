@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { safeLocalStorage } from '../../utils/safeLocalStorage';
 
 /**
  * Signalement Form Component
@@ -106,11 +107,11 @@ export default function SignalementForm({ onSubmit = null }) {
       timestamp: new Date().toISOString(),
     };
 
-    // Save to localStorage
+    // Save to safeLocalStorage
     try {
-      const existingData = JSON.parse(localStorage.getItem('signalements_en_attente') || '[]');
+      const existingData = JSON.parse(safeLocalStorage.getItem('signalements_en_attente') || '[]');
       existingData.push(signalement);
-      localStorage.setItem('signalements_en_attente', JSON.stringify(existingData));
+      safeLocalStorage.setItem('signalements_en_attente', JSON.stringify(existingData));
 
       // Call parent callback if provided
       if (onSubmit) {

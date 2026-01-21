@@ -1,7 +1,6 @@
 import '@testing-library/jest-dom/vitest';
 import { cleanup } from '@testing-library/react';
 import { afterEach, beforeEach, vi } from 'vitest';
-
 const FIXED_DATE = new Date('2026-01-15T12:00:00Z');
 
 beforeEach(() => {

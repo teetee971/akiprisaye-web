@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { AlertTriangle, X, ExternalLink } from 'lucide-react';
+import { safeLocalStorage } from '../utils/safeLocalStorage';
 
 interface BandeauMessage {
   id: string;
@@ -15,8 +16,8 @@ export function BandeauVieChere() {
   const [dismissed, setDismissed] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    // Load dismissed messages from localStorage
-    const stored = localStorage.getItem('dismissed_bandeaux');
+    // Load dismissed messages from safeLocalStorage
+    const stored = safeLocalStorage.getItem('dismissed_bandeaux');
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
@@ -43,7 +44,7 @@ export function BandeauVieChere() {
   const handleDismiss = (id: string) => {
     const newDismissed = new Set([...dismissed, id]);
     setDismissed(newDismissed);
-    localStorage.setItem('dismissed_bandeaux', JSON.stringify([...newDismissed]));
+    safeLocalStorage.setItem('dismissed_bandeaux', JSON.stringify([...newDismissed]));
   };
 
   const activMessages = messages.filter(m => !dismissed.has(m.id));

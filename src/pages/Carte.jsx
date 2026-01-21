@@ -4,6 +4,7 @@ import { useMap } from 'react-leaflet';
 import 'leaflet.markercluster';
 import { getStoresByTerritory } from '../services/mapService';
 import { getActiveTerritories, TERRITORIES } from '../constants/territories';
+import { safeLocalStorage } from '../utils/safeLocalStorage';
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -129,23 +130,23 @@ export default function Carte() {
   // Constants
   const NAVIGATION_TIMEOUT = 1000; // Timeout for resetting navigation state
   const MAX_RECENT_DESTINATIONS = 5; // Maximum recent destinations to store
-  const RECENT_DESTINATIONS_KEY = 'akiprisaye_recent_destinations'; // localStorage key
+  const RECENT_DESTINATIONS_KEY = 'akiprisaye_recent_destinations'; // safeLocalStorage key
   
   // Travel speed constants (in km/h)
   const SPEED_DRIVING = 50;
   const SPEED_WALKING = 5;
   const SPEED_TRANSIT = 30;
 
-  // Load recent destinations from localStorage on mount
+  // Load recent destinations from safeLocalStorage on mount
   useEffect(() => {
-    const saved = localStorage.getItem(RECENT_DESTINATIONS_KEY);
+    const saved = safeLocalStorage.getItem(RECENT_DESTINATIONS_KEY);
     if (saved) {
       try {
         setRecentDestinations(JSON.parse(saved));
       } catch (e) {
         console.error('Error loading recent destinations:', e);
         // Clear corrupted data to prevent repeated failures on subsequent loads
-        localStorage.removeItem(RECENT_DESTINATIONS_KEY);
+        safeLocalStorage.removeItem(RECENT_DESTINATIONS_KEY);
         setRecentDestinations([]);
       }
     }
@@ -186,11 +187,11 @@ export default function Carte() {
       const filtered = prev.filter(d => !(d.lat === store.lat && d.lon === store.lon));
       // Add new destination at the beginning
       const updated = [newDestination, ...filtered].slice(0, MAX_RECENT_DESTINATIONS);
-      // Save to localStorage with error handling
+      // Save to safeLocalStorage with error handling
       try {
-        localStorage.setItem(RECENT_DESTINATIONS_KEY, JSON.stringify(updated));
+        safeLocalStorage.setItem(RECENT_DESTINATIONS_KEY, JSON.stringify(updated));
       } catch (e) {
-        console.error('Error saving recent destinations to localStorage:', e);
+        console.error('Error saving recent destinations to safeLocalStorage:', e);
       }
       return updated;
     });

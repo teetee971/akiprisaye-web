@@ -4,6 +4,7 @@ import ProductDetails from '../components/products/ProductDetails';
 import { lookupProductByEan } from '../services/eanProductService';
 import { toProductViewModel } from '../services/productViewModelService';
 import type { ScanState, ScannerOptions } from '../types/scan';
+import { safeLocalStorage } from '../utils/safeLocalStorage';
 
 export default function Scanner() {
   const [showScanner, setShowScanner] = useState(false);
@@ -79,12 +80,12 @@ export default function Scanner() {
       window.location.href = searchUrl;
     } else if (behavior === 'local_save') {
       // Save to local storage for review
-      const savedScans = JSON.parse(localStorage.getItem('unrecognizedScans') || '[]');
+      const savedScans = JSON.parse(safeLocalStorage.getItem('unrecognizedScans') || '[]');
       savedScans.push({
         code: scanResult,
         timestamp: new Date().toISOString(),
       });
-      localStorage.setItem('unrecognizedScans', JSON.stringify(savedScans));
+      safeLocalStorage.setItem('unrecognizedScans', JSON.stringify(savedScans));
       alert('Code enregistré localement pour revue ultérieure');
       handleReset();
     } else if (behavior === 'show_empty') {

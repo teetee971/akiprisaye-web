@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { auth, db } from '../lib/firebase';
 import { doc, setDoc, getDoc, collection, onSnapshot } from 'firebase/firestore';
+import { safeLocalStorage } from '../utils/safeLocalStorage';
 
 // Local storage key for ti-panier v1
 const STORAGE_KEY = 'ti-panier:v1';
@@ -44,16 +45,16 @@ function safeParse(raw: string | null): TiPanierItem[] {
 }
 
 function readFromStorage(type: PanierType = 'comparison'): TiPanierItem[] {
-  if (typeof window === 'undefined' || !window.localStorage) return [];
+  if (typeof window === 'undefined' || !safeLocalStorage) return [];
   const key = type === 'wishlist' ? `${STORAGE_KEY}:wishlist` : STORAGE_KEY;
-  return safeParse(window.localStorage.getItem(key));
+  return safeParse(safeLocalStorage.getItem(key));
 }
 
 function writeToStorage(items: TiPanierItem[], type: PanierType = 'comparison') {
-  if (typeof window === 'undefined' || !window.localStorage) return;
+  if (typeof window === 'undefined' || !safeLocalStorage) return;
   try {
     const key = type === 'wishlist' ? `${STORAGE_KEY}:wishlist` : STORAGE_KEY;
-    window.localStorage.setItem(key, JSON.stringify(items));
+    safeLocalStorage.setItem(key, JSON.stringify(items));
   } catch {
     // ignore quota/write errors
   }

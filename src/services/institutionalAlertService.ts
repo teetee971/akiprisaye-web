@@ -1,3 +1,4 @@
+import { safeLocalStorage } from '../utils/safeLocalStorage';
 /**
  * Institutional Alert Service
  * Automatic detection and reporting of abnormal prices to authorities
@@ -88,7 +89,7 @@ export class InstitutionalAlertService {
     };
     
     // TODO: Store in Firestore
-    // For now, store in localStorage
+    // For now, store in safeLocalStorage
     this.storeAlert(alert);
     
     return alert;
@@ -117,7 +118,7 @@ export class InstitutionalAlertService {
    * Get pending alerts
    */
   getPendingAlerts(): InstitutionalAlert[] {
-    const stored = localStorage.getItem('institutional_alerts');
+    const stored = safeLocalStorage.getItem('institutional_alerts');
     if (!stored) return [];
     
     const alerts: InstitutionalAlert[] = JSON.parse(stored);
@@ -182,11 +183,11 @@ export class InstitutionalAlertService {
       alerts.push(alert);
     }
     
-    localStorage.setItem('institutional_alerts', JSON.stringify(alerts));
+    safeLocalStorage.setItem('institutional_alerts', JSON.stringify(alerts));
   }
 
   private getAllAlerts(): InstitutionalAlert[] {
-    const stored = localStorage.getItem('institutional_alerts');
+    const stored = safeLocalStorage.getItem('institutional_alerts');
     return stored ? JSON.parse(stored) : [];
   }
 }

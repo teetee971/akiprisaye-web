@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Share2, Download, Copy, Check, TrendingUp } from 'lucide-react';
+import { safeLocalStorage } from '../../utils/safeLocalStorage';
 
 interface VictoryData {
   monthlySavings: number;
@@ -25,7 +26,7 @@ export const ShareVictory: React.FC = () => {
 
   React.useEffect(() => {
     // Get user's victory data
-    const savedData = localStorage.getItem('monthlySavings:v1');
+    const savedData = safeLocalStorage.getItem('monthlySavings:v1');
     if (savedData) {
       const data = JSON.parse(savedData);
       setVictoryData({

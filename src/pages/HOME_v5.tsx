@@ -25,6 +25,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
 import { getComparisonOfDay, type PriceComparison } from '../data/exampleComparisons';
 import '../styles/home-v5.css';
+import { safeLocalStorage } from '../utils/safeLocalStorage';
 
 export default function HomeV5() {
   const navigate = useNavigate();
@@ -48,8 +49,8 @@ export default function HomeV5() {
   const heroScale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95]);
 
   useEffect(() => {
-    // Load real stats from localStorage
-    const savedStats = localStorage.getItem('platform_stats');
+    // Load real stats from safeLocalStorage
+    const savedStats = safeLocalStorage.getItem('platform_stats');
     if (savedStats) {
       setStats(JSON.parse(savedStats));
     }

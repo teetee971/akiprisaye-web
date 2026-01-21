@@ -15,6 +15,7 @@
  */
 
 import { fetchProductFromOpenFoodFacts } from '../data/openFoodFacts';
+import { safeLocalStorage } from '../utils/safeLocalStorage';
 
 export interface ProductImageData {
   productId: string;
@@ -43,11 +44,11 @@ const CACHE_DURATION_MS = 7 * 24 * 60 * 60 * 1000;
 const IMAGE_CACHE_KEY = 'product_images_cache';
 
 /**
- * Get image cache from localStorage
+ * Get image cache from safeLocalStorage
  */
 function getImageCache(): Map<string, ImageCacheEntry> {
   try {
-    const cacheData = localStorage.getItem(IMAGE_CACHE_KEY);
+    const cacheData = safeLocalStorage.getItem(IMAGE_CACHE_KEY);
     if (!cacheData) {
       return new Map();
     }
@@ -60,12 +61,12 @@ function getImageCache(): Map<string, ImageCacheEntry> {
 }
 
 /**
- * Save image cache to localStorage
+ * Save image cache to safeLocalStorage
  */
 function saveImageCache(cache: Map<string, ImageCacheEntry>): void {
   try {
     const cacheObj = Object.fromEntries(cache);
-    localStorage.setItem(IMAGE_CACHE_KEY, JSON.stringify(cacheObj));
+    safeLocalStorage.setItem(IMAGE_CACHE_KEY, JSON.stringify(cacheObj));
   } catch (error) {
     console.error('Failed to save image cache:', error);
   }
@@ -217,7 +218,7 @@ export async function batchEnrichProductImages(
  */
 export function clearImageCache(): void {
   try {
-    localStorage.removeItem(IMAGE_CACHE_KEY);
+    safeLocalStorage.removeItem(IMAGE_CACHE_KEY);
   } catch (error) {
     console.error('Failed to clear image cache:', error);
   }
@@ -244,7 +245,7 @@ export function getImageCacheStats(): {
   }
   
   // Estimate cache size in bytes
-  const cacheData = localStorage.getItem(IMAGE_CACHE_KEY);
+  const cacheData = safeLocalStorage.getItem(IMAGE_CACHE_KEY);
   const cacheSize = cacheData ? new Blob([cacheData]).size : 0;
   
   return {

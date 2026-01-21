@@ -1,7 +1,8 @@
 // src/hooks/useScanHistory.ts
-// Gestion de l'historique des scans EAN (localStorage, max 10 entrées)
+// Gestion de l'historique des scans EAN (safeLocalStorage, max 10 entrées)
 
 import { useCallback, useEffect, useState } from 'react'
+import { safeLocalStorage } from '../utils/safeLocalStorage';
 
 const HISTORY_KEY = 'scan-ean:history:v1'
 const MAX_HISTORY = 10
@@ -13,10 +14,10 @@ export type ScanHistoryEntry = {
 }
 
 function readHistory(): ScanHistoryEntry[] {
-  if (typeof window === 'undefined' || !window.localStorage) return []
+  if (typeof window === 'undefined' || !safeLocalStorage) return []
   
   try {
-    const raw = window.localStorage.getItem(HISTORY_KEY)
+    const raw = safeLocalStorage.getItem(HISTORY_KEY)
     if (!raw) return []
     
     const parsed = JSON.parse(raw)
@@ -31,10 +32,10 @@ function readHistory(): ScanHistoryEntry[] {
 }
 
 function writeHistory(history: ScanHistoryEntry[]) {
-  if (typeof window === 'undefined' || !window.localStorage) return
+  if (typeof window === 'undefined' || !safeLocalStorage) return
   
   try {
-    window.localStorage.setItem(HISTORY_KEY, JSON.stringify(history.slice(0, MAX_HISTORY)))
+    safeLocalStorage.setItem(HISTORY_KEY, JSON.stringify(history.slice(0, MAX_HISTORY)))
   } catch {
     // ignore quota errors
   }

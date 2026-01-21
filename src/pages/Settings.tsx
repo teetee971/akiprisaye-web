@@ -14,6 +14,7 @@
 import { useState, useEffect } from 'react';
 import { auth } from '../lib/firebase';
 import { User } from 'firebase/auth';
+import { safeLocalStorage } from '../utils/safeLocalStorage';
 
 export default function Settings() {
   const [user, setUser] = useState<User | null>(null);
@@ -70,8 +71,8 @@ export default function Settings() {
   
   function handleDeleteLocalData() {
     if (confirm('Êtes-vous sûr de vouloir supprimer toutes les données locales ? Cette action est irréversible.')) {
-      // Clear localStorage
-      localStorage.clear();
+      // Clear safeLocalStorage
+      safeLocalStorage.clear();
       
       // Clear sessionStorage
       sessionStorage.clear();

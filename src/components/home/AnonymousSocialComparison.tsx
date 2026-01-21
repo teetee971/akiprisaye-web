@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TrendingUp, Award, Users } from 'lucide-react';
+import { safeLocalStorage } from '../../utils/safeLocalStorage';
 
 interface ComparisonData {
   userSavings: number;
@@ -23,10 +24,10 @@ export const AnonymousSocialComparison: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Calculate user's savings from localStorage
+    // Calculate user's savings from safeLocalStorage
     const calculateUserSavings = (): ComparisonData => {
       // Get monthly savings from dashboard data
-      const savedData = localStorage.getItem('monthlySavings:v1');
+      const savedData = safeLocalStorage.getItem('monthlySavings:v1');
       const userSavings = savedData ? JSON.parse(savedData).currentMonth || 0 : 0;
 
       // Simulated community average (would be from aggregated data in production)

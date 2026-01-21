@@ -3,6 +3,7 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
+import { safeLocalStorage } from '../utils/safeLocalStorage';
 import {
   getProductDossier,
   addAnalysisToDossier,
@@ -103,8 +104,8 @@ describe('Product Dossier Service', () => {
   };
   
   beforeEach(() => {
-    // Clear localStorage before each test
-    localStorage.clear();
+    // Clear safeLocalStorage before each test
+    safeLocalStorage.clear();
   });
   
   describe('Product Dossier Management', () => {
@@ -550,10 +551,10 @@ describe('Product Dossier Service', () => {
       expect(dossier.canonicalName).toBeDefined();
     });
     
-    it('should handle localStorage errors gracefully', async () => {
-      // Mock localStorage to throw
-      const originalSetItem = localStorage.setItem;
-      localStorage.setItem = () => {
+    it('should handle safeLocalStorage errors gracefully', async () => {
+      // Mock safeLocalStorage to throw
+      const originalSetItem = safeLocalStorage.setItem;
+      safeLocalStorage.setItem = () => {
         throw new Error('Storage full');
       };
       
@@ -567,7 +568,7 @@ describe('Product Dossier Service', () => {
       ).resolves.toBeDefined();
       
       // Restore
-      localStorage.setItem = originalSetItem;
+      safeLocalStorage.setItem = originalSetItem;
     });
   });
 });

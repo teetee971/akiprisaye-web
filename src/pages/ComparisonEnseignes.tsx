@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import StoreComparisonTable from '../components/StoreComparisonTable'
 import { GlassCard } from '../components/ui/glass-card'
+import { safeLocalStorage } from '../utils/safeLocalStorage'
 import {
   loadCatalogueData,
   compareStoresForProduct,
@@ -67,12 +68,12 @@ export default function ComparisonEnseignes() {
     }
     
     // Récupérer le panier existant
-    const existingCart = localStorage.getItem('ti-panier:items')
+    const existingCart = safeLocalStorage.getItem('ti-panier:items')
     const cart = existingCart ? JSON.parse(existingCart) : []
     
     // Ajouter le nouvel item
     cart.push(item)
-    localStorage.setItem('ti-panier:items', JSON.stringify(cart))
+    safeLocalStorage.setItem('ti-panier:items', JSON.stringify(cart))
     
     // Notification simple
     alert(`${selectedProduct} de ${store} ajouté au ti-panier !`)

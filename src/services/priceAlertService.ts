@@ -1,3 +1,4 @@
+import { safeLocalStorage } from '../utils/safeLocalStorage';
 /**
  * Service pour gérer les alertes de prix
  * Stockage local sans backend
@@ -21,7 +22,7 @@ const NOTIFICATION_COOLDOWN = 24 * 60 * 60 * 1000; // 24h
  */
 export function getAllAlerts(): PriceAlert[] {
   try {
-    const data = localStorage.getItem(STORAGE_KEY);
+    const data = safeLocalStorage.getItem(STORAGE_KEY);
     return data ? JSON.parse(data) : [];
   } catch (error) {
     console.error('Error loading price alerts:', error);
@@ -35,7 +36,7 @@ export function getAllAlerts(): PriceAlert[] {
 export function saveAlert(alert: PriceAlert): void {
   const alerts = getAllAlerts();
   alerts.push(alert);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(alerts));
+  safeLocalStorage.setItem(STORAGE_KEY, JSON.stringify(alerts));
 }
 
 /**
@@ -46,7 +47,7 @@ export function deleteAlert(productId: string, territory: string): void {
   const filtered = alerts.filter(
     a => !(a.productId === productId && a.territory === territory)
   );
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
+  safeLocalStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
 }
 
 /**
@@ -110,7 +111,7 @@ export function markAsNotified(productId: string, territory: string): void {
 
   if (alert) {
     alert.lastNotifiedAt = Date.now();
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(alerts));
+    safeLocalStorage.setItem(STORAGE_KEY, JSON.stringify(alerts));
   }
 }
 
@@ -124,6 +125,6 @@ export function cleanOldAlerts(): void {
   const filtered = alerts.filter(a => a.createdAt > thirtyDaysAgo);
   
   if (filtered.length < alerts.length) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
+    safeLocalStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
   }
 }

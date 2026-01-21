@@ -124,7 +124,7 @@ function LoadingFallback() {
 }
 
 // Service Worker registration
-if ('serviceWorker' in navigator) {
+if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker
       .register('/service-worker.js')
@@ -142,7 +142,7 @@ if ('serviceWorker' in navigator) {
 }
 
 // Global error handlers - production only to avoid interfering with development
-if (import.meta.env.PROD) {
+if (typeof window !== 'undefined' && import.meta.env.PROD) {
   window.addEventListener('error', (event) => {
     console.error('Global error caught:', event.error);
     event.preventDefault();

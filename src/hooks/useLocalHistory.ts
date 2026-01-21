@@ -1,6 +1,7 @@
 // src/hooks/useLocalHistory.ts
-// Local consultation history hook - localStorage only, no tracking
+// Local consultation history hook - safeLocalStorage only, no tracking
 import { useState, useEffect, useCallback } from 'react'
+import { safeLocalStorage } from '../utils/safeLocalStorage';
 
 const STORAGE_KEY = 'akiprisaye:history:v1'
 const MAX_ITEMS = 10
@@ -17,14 +18,14 @@ export type HistoryItem = {
 
 /**
  * Local history hook for consultation tracking
- * - Stored only in browser localStorage
+ * - Stored only in browser safeLocalStorage
  * - Limited to 10 most recent items
  * - No backend, no tracking, no personal data
  */
 export function useLocalHistory() {
   const [history, setHistory] = useState<HistoryItem[]>([])
 
-  // Load history from localStorage on mount
+  // Load history from safeLocalStorage on mount
   useEffect(() => {
     const isEnabled =
       import.meta.env.VITE_FEATURE_HISTORY === 'true' ||
@@ -34,7 +35,7 @@ export function useLocalHistory() {
     }
 
     try {
-      const stored = localStorage.getItem(STORAGE_KEY)
+      const stored = safeLocalStorage.getItem(STORAGE_KEY)
       if (stored) {
         const parsed = JSON.parse(stored) as HistoryItem[]
         // Sort by most recent first
@@ -74,9 +75,9 @@ export function useLocalHistory() {
       // Limit to MAX_ITEMS
       const limited = updated.slice(0, MAX_ITEMS)
 
-      // Persist to localStorage
+      // Persist to safeLocalStorage
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(limited))
+        safeLocalStorage.setItem(STORAGE_KEY, JSON.stringify(limited))
       } catch (error) {
         console.warn('Failed to save local history:', error)
       }
@@ -89,7 +90,7 @@ export function useLocalHistory() {
   const clear = useCallback(() => {
     setHistory([])
     try {
-      localStorage.removeItem(STORAGE_KEY)
+      safeLocalStorage.removeItem(STORAGE_KEY)
     } catch (error) {
       console.warn('Failed to clear local history:', error)
     }
