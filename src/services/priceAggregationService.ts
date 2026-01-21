@@ -16,6 +16,8 @@ export interface PriceAggregation {
   observations: PriceObservation[]
 }
 
+const UNKNOWN_STORE_LABEL = 'Enseigne inconnue'
+
 /**
  * Agrège les observations pour un produit donné
  * Calcule uniquement des statistiques factuelles
@@ -52,10 +54,11 @@ export function groupByStore(observations: PriceObservation[]): Record<string, P
   const grouped: Record<string, PriceObservation[]> = {}
 
   observations.forEach((obs) => {
-    if (!grouped[obs.storeLabel]) {
-      grouped[obs.storeLabel] = []
+    const storeLabel = obs.storeLabel ?? UNKNOWN_STORE_LABEL
+    if (!grouped[storeLabel]) {
+      grouped[storeLabel] = []
     }
-    grouped[obs.storeLabel].push(obs)
+    grouped[storeLabel].push(obs)
   })
 
   return grouped
@@ -107,7 +110,7 @@ export function hasOldData(observations: PriceObservation[], thresholdDays = 30)
  * Compte le nombre d'enseignes uniques
  */
 export function countUniqueStores(observations: PriceObservation[]): number {
-  const stores = new Set(observations.map((obs) => obs.storeLabel))
+  const stores = new Set(observations.map((obs) => obs.storeLabel ?? UNKNOWN_STORE_LABEL))
   return stores.size
 }
 

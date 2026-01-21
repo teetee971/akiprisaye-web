@@ -22,7 +22,7 @@ const API_BASE_URL = 'https://www.prix-carburants.gouv.fr';
 const TERRITORY_TO_DEPARTMENT: Record<string, string> = {
   GP: '971', // Guadeloupe
   MQ: '972', // Martinique
-  GY: '973', // Guyane
+  GF: '973', // Guyane
   RE: '974', // Réunion
   YT: '976', // Mayotte
 };

@@ -25,8 +25,8 @@ export const TERRITORIES: Record<Territory, TerritoryInfo> = {
     region: 'Antilles',
     coordinates: { latitude: 14.6415, longitude: -61.0242 },
   },
-  GY: {
-    code: 'GY',
+  GF: {
+    code: 'GF',
     name: 'Guyane',
     department: '973',
     region: 'Guyane',

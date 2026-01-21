@@ -18,9 +18,14 @@ export default function PriceComparisonTable({ observations, groupedByStore }: P
     )
   }
 
+  const getTimestamp = (value: string) => {
+    const parsed = new Date(value)
+    return Number.isNaN(parsed.getTime()) ? 0 : parsed.getTime()
+  }
+
   // Ordre chronologique par défaut
   const sorted = [...observations].sort(
-    (a, b) => new Date(a.observedAt).getTime() - new Date(b.observedAt).getTime()
+    (a, b) => getTimestamp(a.observedAt) - getTimestamp(b.observedAt)
   )
 
   return (
@@ -41,17 +46,19 @@ export default function PriceComparisonTable({ observations, groupedByStore }: P
         </thead>
         <tbody>
           {sorted.map((obs, index) => {
-            const storeHistory = groupedByStore[obs.storeLabel] || []
+            const storeLabel = obs.storeLabel ?? 'Enseigne inconnue'
+            const storeHistory = groupedByStore[storeLabel] || []
+            const currency = obs.currency ?? 'EUR'
             
             return (
               <tr
-                key={`${obs.productId}-${obs.storeLabel}-${obs.observedAt}-${index}`}
+                key={`${obs.productId}-${storeLabel}-${obs.observedAt}-${index}`}
                 className="border-b border-white/[0.12] hover:bg-white/[0.05] transition-colors"
               >
-                <td className="py-3 px-4 text-white/90">{obs.storeLabel}</td>
+                <td className="py-3 px-4 text-white/90">{storeLabel}</td>
                 <td className="py-3 px-4 text-right">
                   <span className="text-lg font-semibold text-blue-400">
-                    {obs.price.toFixed(2)} {obs.currency}
+                    {obs.price.toFixed(2)} {currency}
                   </span>
                 </td>
                 <td className="py-3 px-4 text-center text-sm text-white/70">

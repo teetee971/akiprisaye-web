@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { searchProductPrices } from '../services/priceSearch/priceSearch.service';
@@ -324,11 +324,44 @@ export default function RechercheProduits() {
   const [result, setResult] = useState<ScanHubResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [hasAutoSearched, setHasAutoSearched] = useState(false);
+  const [cachedAt, setCachedAt] = useState<string | null>(null);
 
-  const handleSearch = async () => {
+  const buildCacheKey = useCallback(() => {
+    const normalizedQuery = query.trim().toLowerCase();
+    const normalizedBarcode = barcode.trim();
+    return `scanhub:price-search:${territory}:${normalizedBarcode || 'no-barcode'}:${normalizedQuery || 'no-query'}`;
+  }, [barcode, query, territory]);
+
+  const readCache = useCallback(() => {
+    const key = buildCacheKey();
+    const raw = localStorage.getItem(key);
+    if (!raw) return null;
+    try {
+      const parsed = JSON.parse(raw) as { cachedAt: string; payload: ScanHubResult };
+      return parsed;
+    } catch {
+      return null;
+    }
+  }, [buildCacheKey]);
+
+  const writeCache = useCallback(
+    (payload: ScanHubResult) => {
+      const key = buildCacheKey();
+      const cachedPayload = JSON.stringify({
+        cachedAt: new Date().toISOString(),
+        payload,
+      });
+      localStorage.setItem(key, cachedPayload);
+    },
+    [buildCacheKey]
+  );
+
+  const handleSearch = useCallback(async () => {
     setLoading(true);
     setError(null);
     setResult(null);
+    setCachedAt(null);
 
     try {
       const response = await searchProductPrices({
@@ -336,20 +369,39 @@ export default function RechercheProduits() {
         query: query.trim() || undefined,
         territory,
       });
-      setResult(mapPriceSearchResult(response));
+      const mapped = mapPriceSearchResult(response);
+      setResult(mapped);
+      writeCache(mapped);
     } catch (err: any) {
       console.error('Price search error:', err);
       setError('Impossible de récupérer les prix pour le moment.');
     } finally {
       setLoading(false);
     }
-  };
+  }, [barcode, query, territory]);
+
+  useEffect(() => {
+    if (hasAutoSearched) {
+      return;
+    }
+    if (!barcode.trim() && !query.trim()) {
+      return;
+    }
+    const cached = readCache();
+    if (cached?.payload) {
+      setResult(cached.payload);
+      setCachedAt(cached.cachedAt);
+    }
+    void handleSearch();
+    setHasAutoSearched(true);
+  }, [barcode, query, handleSearch, hasAutoSearched, readCache]);
 
   const handleReset = () => {
     setResult(null);
     setError(null);
     setQuery('');
     setBarcode('');
+    setCachedAt(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -421,6 +473,12 @@ export default function RechercheProduits() {
             Lancer la recherche
           </button>
         </section>
+
+        {cachedAt && !loading && (
+          <div className="bg-emerald-900/20 border border-emerald-700 rounded-2xl p-4 text-sm text-emerald-200">
+            Résultat affiché depuis le cache local ({new Date(cachedAt).toLocaleString('fr-FR')}).
+          </div>
+        )}
 
         {error && (
           <div className="bg-red-900/30 border border-red-700 rounded-2xl p-6 text-center">

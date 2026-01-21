@@ -15,6 +15,14 @@ import type {
 
 const DEFAULT_TERRITORY: TerritoryCode = 'fr';
 const PROVIDER_TIMEOUT_MS = 5000;
+const TERRITORY_CODES: TerritoryCode[] = ['fr', 'gp', 'mq', 'gf', 're', 'yt', 'pm', 'bl', 'mf'];
+
+function normalizeTerritoryCode(value?: string): TerritoryCode {
+  const normalized = (value ?? DEFAULT_TERRITORY).toLowerCase();
+  return TERRITORY_CODES.includes(normalized as TerritoryCode)
+    ? (normalized as TerritoryCode)
+    : DEFAULT_TERRITORY;
+}
 
 function withTimeout<T>(promise: Promise<T>, timeoutMs: number, signal: AbortSignal): Promise<T> {
   return new Promise((resolve, reject) => {
@@ -38,14 +46,22 @@ function territoryMessage(territory: TerritoryCode): string | undefined {
 }
 
 export async function searchProductPrices(input: PriceSearchInput): Promise<PriceSearchResult> {
-  const territory = input.territory ?? DEFAULT_TERRITORY;
+  const territory = normalizeTerritoryCode(input.territory);
+  const normalizedInput: PriceSearchInput = {
+    ...input,
+    territory,
+  };
   const queryUsed = input.barcode || input.query || 'recherche libre';
 
   try {
     const controller = new AbortController();
     const providerResults = await Promise.allSettled(
       PRICE_PROVIDERS.filter((provider) => provider.enabled).map((provider) =>
-        withTimeout(provider.search(input, controller.signal), PROVIDER_TIMEOUT_MS, controller.signal)
+        withTimeout(
+          provider.search(normalizedInput, controller.signal),
+          PROVIDER_TIMEOUT_MS,
+          controller.signal
+        )
       )
     );
 
@@ -76,7 +92,9 @@ export async function searchProductPrices(input: PriceSearchInput): Promise<Pric
     };
 
     const confidence = computePriceConfidence({
-      territoryMatch: observations.some((obs) => obs.territory === territory),
+      territoryMatch: observations.some(
+        (obs) => normalizeTerritoryCode(obs.territory) === territory
+      ),
       observations,
     });
 

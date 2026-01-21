@@ -16,8 +16,8 @@ import { StatCard } from '../features/comparateur/components/StatCard';
 import { SIGNIFICANT_PRICE_DIFF_THRESHOLD } from '../features/comparateur/constants';
 
 // Default territories for comparison
-const DEFAULT_TERRITORIES: Territory[] = ['GP', 'MQ', 'GY', 'RE'];
-const ALL_TERRITORIES: Territory[] = ['GP', 'MQ', 'GY', 'RE', 'YT', 'MF', 'BL', 'PM', 'WF', 'PF', 'NC'];
+const DEFAULT_TERRITORIES: Territory[] = ['GP', 'MQ', 'GF', 'RE'];
+const ALL_TERRITORIES: Territory[] = ['GP', 'MQ', 'GF', 'RE', 'YT', 'MF', 'BL', 'PM', 'WF', 'PF', 'NC'];
 
 export default function ComparaisonPage() {
   const [searchParams] = useSearchParams();

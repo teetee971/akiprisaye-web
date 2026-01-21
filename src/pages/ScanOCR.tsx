@@ -11,11 +11,13 @@ import {
 } from '../services/scanHubClassifier';
 import { buildPriceSearchInput } from '../services/scanHub/scanToPriceBridge';
 import type { ScanState, OcrOptions } from '../types/scan';
+import { useNavigate } from 'react-router-dom';
 
 const SAMPLE_IMAGE = '/images/ocr-example.png';
 const COPY_FEEDBACK_DURATION = 2000;
 
 export default function ScanOCR() {
+  const navigate = useNavigate();
   const [image, setImage] = useState<string | null>(null);
   const [ocrResult, setOcrResult] = useState<OCRResult | null>(null);
   const [loading, setLoading] = useState(false);
@@ -44,6 +46,8 @@ export default function ScanOCR() {
     novaIndex: string;
     suggestedBarcode?: string;
   } | null>(null);
+  const [autoSearchEnabled, setAutoSearchEnabled] = useState(true);
+  const lastAutoSearchRef = useRef<string | null>(null);
 
   const executeOcr = (source: string, cleanup?: () => void) => {
     setLoading(true);
@@ -81,6 +85,19 @@ export default function ScanOCR() {
             novaIndex: estimateNovaIndex(additives.length),
             suggestedBarcode: priceInput.barcode,
           });
+          const normalizedBarcode = priceInput.barcode?.replace(/\D/g, '') ?? '';
+          const isLikelyBarcode =
+            normalizedBarcode.length === 8 ||
+            normalizedBarcode.length === 13 ||
+            normalizedBarcode.length === 14;
+          if (
+            autoSearchEnabled &&
+            isLikelyBarcode &&
+            lastAutoSearchRef.current !== normalizedBarcode
+          ) {
+            lastAutoSearchRef.current = normalizedBarcode;
+            handleSearchPrices(normalizedBarcode);
+          }
         }
       } catch (err: any) {
         console.error('OCR error:', err, err?.stack);
@@ -164,6 +181,10 @@ export default function ScanOCR() {
     setScanState('idle');
   };
 
+  const handleSearchPrices = (barcode: string) => {
+    navigate(`/recherche-produits?ean=${encodeURIComponent(barcode)}`);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 p-4">
       <div className="max-w-4xl mx-auto">
@@ -199,6 +220,17 @@ export default function ScanOCR() {
 
               {settings.enabled && (
                 <>
+                  <div className="mb-4">
+                    <label className="flex items-center gap-2 text-gray-300 text-sm">
+                      <input
+                        type="checkbox"
+                        checked={autoSearchEnabled}
+                        onChange={(e) => setAutoSearchEnabled(e.target.checked)}
+                        className="rounded"
+                      />
+                      Lancer automatiquement la recherche prix si un code-barres est détecté
+                    </label>
+                  </div>
                   {/* Confidence threshold */}
                   <div className="mb-4">
                     <label className="block text-gray-300 text-sm mb-2">
@@ -484,14 +516,19 @@ export default function ScanOCR() {
                           : 'Aucun additif identifié'}
                       </p>
                       {scanSummary.suggestedBarcode && (
-                        <a
-                          href={`/recherche-produits?ean=${encodeURIComponent(
-                            scanSummary.suggestedBarcode
-                          )}`}
-                          className="inline-flex items-center gap-2 mt-3 text-xs text-blue-300 hover:text-blue-200"
-                        >
-                          🔎 Rechercher les prix observés pour {scanSummary.suggestedBarcode}
-                        </a>
+                        <div className="mt-3 space-y-2">
+                          <button
+                            type="button"
+                            onClick={() => handleSearchPrices(scanSummary.suggestedBarcode)}
+                            className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-600/20 text-blue-200 hover:bg-blue-600/30 text-xs font-semibold"
+                          >
+                            🔎 Lancer la recherche prix ({scanSummary.suggestedBarcode})
+                          </button>
+                          <p className="text-[11px] text-slate-400">
+                            Ouvre la recherche produit avec le code-barres détecté pour obtenir les
+                            prix observés.
+                          </p>
+                        </div>
                       )}
                     </div>
                   </div>

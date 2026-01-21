@@ -15,7 +15,7 @@ export const SIGNIFICANT_PRICE_DIFF_THRESHOLD = 20;
 export const TERRITORY_FILE_MAP: Record<string, string> = {
   GP: 'guadeloupe',
   MQ: 'martinique',
-  GY: 'guyane',
+  GF: 'guyane',
   RE: 'reunion',
   YT: 'mayotte',
   MF: 'saint-martin',

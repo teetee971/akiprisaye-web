@@ -31,13 +31,13 @@ export function exportToCSV(observations: PriceObservation[], filename: string =
   const rows = observations.map(obs => [
     obs.productId,
     obs.productLabel,
-    obs.storeLabel,
+    obs.storeLabel ?? 'Enseigne inconnue',
     obs.territory,
     obs.price.toFixed(2),
     obs.observedAt,
-    obs.sourceType,
-    obs.observationsCount,
-    Math.round(obs.confidenceScore)
+    obs.sourceType ?? 'inconnue',
+    obs.observationsCount ?? 0,
+    typeof obs.confidenceScore === 'number' ? Math.round(obs.confidenceScore) : '—'
   ])
 
   // Build CSV content
@@ -115,13 +115,13 @@ export function exportToText(observations: PriceObservation[], filename: string 
     ...observations.map((obs, index) => [
       `[${index + 1}] ${obs.productLabel}`,
       `    ID produit: ${obs.productId}`,
-      `    Enseigne: ${obs.storeLabel}`,
+      `    Enseigne: ${obs.storeLabel ?? 'Enseigne inconnue'}`,
       `    Territoire: ${obs.territory}`,
       `    Prix: ${obs.price.toFixed(2)} EUR`,
       `    Date: ${new Date(obs.observedAt).toLocaleString('fr-FR')}`,
-      `    Source: ${obs.sourceType}`,
-      `    Observations: ${obs.observationsCount}`,
-      `    Confiance: ${Math.round(obs.confidenceScore)}%`,
+      `    Source: ${obs.sourceType ?? 'inconnue'}`,
+      `    Observations: ${obs.observationsCount ?? 0}`,
+      `    Confiance: ${typeof obs.confidenceScore === 'number' ? `${Math.round(obs.confidenceScore)}%` : '—'}`,
       ''
     ]).flat()
   ]
