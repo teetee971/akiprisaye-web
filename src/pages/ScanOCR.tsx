@@ -2,6 +2,12 @@ import { useEffect, useRef, useState } from 'react';
 import { runOCR, GENERIC_OCR_ERROR, type OCRResult } from '../services/ocrService';
 import OCRResultView from '../components/OCRResultView';
 import {
+  cacheOCRResult,
+  getCachedOCRResult,
+  hashImageFile,
+  resizeImageForOCR,
+} from '../utils/imageUtils';
+import {
   classifyScanText,
   estimateNutriScore,
   estimateNovaIndex,
@@ -27,6 +33,7 @@ export default function ScanOCR() {
   const [manualCopied, setManualCopied] = useState(false);
   const uploadInputRef = useRef<HTMLInputElement | null>(null);
   const manualCopyTimeoutRef = useRef<number | null>(null);
+  const imageObjectUrlRef = useRef<string | null>(null);
   
   // Settings panel state
   const [showSettings, setShowSettings] = useState(false);
@@ -49,7 +56,73 @@ export default function ScanOCR() {
   const [autoSearchEnabled, setAutoSearchEnabled] = useState(true);
   const lastAutoSearchRef = useRef<string | null>(null);
 
-  const executeOcr = (source: string, cleanup?: () => void) => {
+  const setImageSource = (url: string, isObjectUrl: boolean) => {
+    if (imageObjectUrlRef.current) {
+      URL.revokeObjectURL(imageObjectUrlRef.current);
+      imageObjectUrlRef.current = null;
+    }
+    if (isObjectUrl) {
+      imageObjectUrlRef.current = url;
+    }
+    setImage(url);
+  };
+
+  const applyOcrResult = (result: OCRResult) => {
+    const trimmedText = (result.rawText || '').trim();
+
+    if (!result.success || trimmedText.length === 0) {
+      const message = result.success
+        ? "Aucun texte détecté. Essayez l'image d'exemple fournie."
+        : result.error ?? GENERIC_OCR_ERROR;
+      setError(message);
+      setScanState('error');
+      setOcrResult(null);
+      return;
+    }
+
+    if (result.confidence < settings.confidenceThreshold) {
+      setError(
+        `Confiance OCR trop faible (${Math.round(result.confidence)}%). ` +
+          'Essayez un meilleur éclairage ou réduisez le seuil.'
+      );
+      setScanState('error');
+      setOcrResult(null);
+      return;
+    }
+
+    setOcrResult(result);
+    setScanState('success');
+
+    const classification = classifyScanText(trimmedText);
+    const prices = extractPrices(trimmedText);
+    const additives = extractAdditives(trimmedText);
+    const priceInput = buildPriceSearchInput({ text: trimmedText });
+    setScanSummary({
+      typeLabel: getScanHubTypeLabel(classification.type),
+      confidence: Math.round(classification.confidence),
+      signals: classification.signals,
+      prices,
+      additives,
+      nutriScore: estimateNutriScore(trimmedText),
+      novaIndex: estimateNovaIndex(additives.length),
+      suggestedBarcode: priceInput.barcode,
+    });
+    const normalizedBarcode = priceInput.barcode?.replace(/\D/g, '') ?? '';
+    const isLikelyBarcode =
+      normalizedBarcode.length === 8 ||
+      normalizedBarcode.length === 13 ||
+      normalizedBarcode.length === 14;
+    if (
+      autoSearchEnabled &&
+      isLikelyBarcode &&
+      lastAutoSearchRef.current !== normalizedBarcode
+    ) {
+      lastAutoSearchRef.current = normalizedBarcode;
+      handleSearchPrices(normalizedBarcode);
+    }
+  };
+
+  const executeOcr = (source: string, cacheKey?: string, cleanup?: () => void) => {
     setLoading(true);
     setError(null);
     setOcrResult(null);
@@ -59,46 +132,10 @@ export default function ScanOCR() {
     void Promise.resolve().then(async () => {
       try {
         const result = await runOCR(source, settings.language, { timeout: settings.timeout });
-        const trimmedText = (result.rawText || '').trim();
-
-        if (!result.success || trimmedText.length === 0) {
-          const message = result.success
-            ? "Aucun texte détecté. Essayez l'image d'exemple fournie."
-            : result.error ?? GENERIC_OCR_ERROR;
-          setError(message);
-          setScanState('error');
-          setOcrResult(null);
-        } else {
-          setOcrResult(result);
-          setScanState('success');
-          const classification = classifyScanText(trimmedText);
-          const prices = extractPrices(trimmedText);
-          const additives = extractAdditives(trimmedText);
-          const priceInput = buildPriceSearchInput({ text: trimmedText });
-          setScanSummary({
-            typeLabel: getScanHubTypeLabel(classification.type),
-            confidence: Math.round(classification.confidence),
-            signals: classification.signals,
-            prices,
-            additives,
-            nutriScore: estimateNutriScore(trimmedText),
-            novaIndex: estimateNovaIndex(additives.length),
-            suggestedBarcode: priceInput.barcode,
-          });
-          const normalizedBarcode = priceInput.barcode?.replace(/\D/g, '') ?? '';
-          const isLikelyBarcode =
-            normalizedBarcode.length === 8 ||
-            normalizedBarcode.length === 13 ||
-            normalizedBarcode.length === 14;
-          if (
-            autoSearchEnabled &&
-            isLikelyBarcode &&
-            lastAutoSearchRef.current !== normalizedBarcode
-          ) {
-            lastAutoSearchRef.current = normalizedBarcode;
-            handleSearchPrices(normalizedBarcode);
-          }
+        if (cacheKey && result.success) {
+          cacheOCRResult(cacheKey, result);
         }
+        applyOcrResult(result);
       } catch (err: any) {
         console.error('OCR error:', err, err?.stack);
         setError(err?.message ?? GENERIC_OCR_ERROR);
@@ -122,9 +159,18 @@ export default function ScanOCR() {
     let objectUrl: string | null = null;
 
     try {
-      objectUrl = URL.createObjectURL(file);
-      setImage(objectUrl);
-      executeOcr(objectUrl, () => {
+      const cacheKey = `${hashImageFile(file)}:${settings.language}`;
+      const cachedResult = getCachedOCRResult(cacheKey) as OCRResult | null;
+      if (cachedResult) {
+        setImageSource(URL.createObjectURL(file), true);
+        applyOcrResult({ ...cachedResult, fromCache: true });
+        return;
+      }
+
+      const optimizedBlob = await resizeImageForOCR(file);
+      objectUrl = URL.createObjectURL(optimizedBlob);
+      setImageSource(objectUrl, true);
+      executeOcr(objectUrl, cacheKey, () => {
         if (objectUrl) {
           URL.revokeObjectURL(objectUrl);
         }
@@ -142,7 +188,7 @@ export default function ScanOCR() {
   };
 
   const handleUseSample = () => {
-    setImage(SAMPLE_IMAGE);
+    setImageSource(SAMPLE_IMAGE, false);
     executeOcr(SAMPLE_IMAGE);
   };
 
@@ -151,6 +197,10 @@ export default function ScanOCR() {
       if (manualCopyTimeoutRef.current) {
         window.clearTimeout(manualCopyTimeoutRef.current);
         manualCopyTimeoutRef.current = null;
+      }
+      if (imageObjectUrlRef.current) {
+        URL.revokeObjectURL(imageObjectUrlRef.current);
+        imageObjectUrlRef.current = null;
       }
     };
   }, []);
@@ -174,6 +224,10 @@ export default function ScanOCR() {
   };
 
   const handleRetry = () => {
+    if (imageObjectUrlRef.current) {
+      URL.revokeObjectURL(imageObjectUrlRef.current);
+      imageObjectUrlRef.current = null;
+    }
     setImage(null);
     setOcrResult(null);
     setScanSummary(null);

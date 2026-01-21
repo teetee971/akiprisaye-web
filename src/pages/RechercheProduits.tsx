@@ -17,6 +17,9 @@ const TERRITORIES: { code: TerritoryCode; label: string }[] = [
   { code: 'mf', label: 'Saint-Martin' },
 ];
 
+const getTerritoryLabel = (code?: string) =>
+  TERRITORIES.find((item) => item.code === code)?.label ?? 'Territoire non précisé';
+
 export function SafeFallback({
   title,
   message,
@@ -111,6 +114,14 @@ export function UnknownState({ onReturnToHub }: { onReturnToHub: () => void }) {
   );
 }
 
+function formatCachedLabel(cachedAt: string) {
+  const cachedDate = new Date(cachedAt);
+  if (Number.isNaN(cachedDate.getTime())) {
+    return 'Date inconnue';
+  }
+  return cachedDate.toLocaleString('fr-FR');
+}
+
 export function PriceUnavailableState({
   onRetry,
   onReturnToHub,
@@ -133,12 +144,15 @@ export function PartialPriceState({
   onRetry,
   onReturnToHub,
 }: {
-  result: ScanData;
+  result: Partial<ScanData>;
   onRetry: () => void;
   onReturnToHub: () => void;
 }) {
   const interval = result.prices?.[0];
   const formatRange = (value: number | null) => (value === null ? '—' : `${value.toFixed(2)}€`);
+  const confidence = result.confidence ?? 0;
+  const observations = interval?.priceCount ?? 0;
+  const territoryLabel = getTerritoryLabel(result.territory);
 
   return (
     <div
@@ -157,9 +171,27 @@ export function PartialPriceState({
           </p>
         </div>
       </div>
-      <div className="text-xs text-slate-400">
-        Confiance actuelle : {result.confidence ?? 0}/100 • Sources:{' '}
-        {result.sourcesUsed?.length ?? 0}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+        <div className="bg-slate-950 rounded-lg p-4">
+          <p className="text-xs text-slate-400">Indice de confiance</p>
+          <p className="text-xl font-semibold">{confidence}/100</p>
+          <div className="h-2 bg-slate-800 rounded-full mt-2">
+            <div
+              className="h-2 rounded-full bg-amber-400"
+              style={{ width: `${Math.min(confidence, 100)}%` }}
+            />
+          </div>
+        </div>
+        <div className="bg-slate-950 rounded-lg p-4">
+          <p className="text-xs text-slate-400">Observations</p>
+          <p className="text-xl font-semibold">{observations}</p>
+          <p className="text-xs text-slate-500 mt-1">Sources: {result.sourcesUsed?.length ?? 0}</p>
+        </div>
+        <div className="bg-slate-950 rounded-lg p-4">
+          <p className="text-xs text-slate-400">Territoire</p>
+          <p className="text-base font-semibold">{territoryLabel}</p>
+          <p className="text-xs text-slate-500 mt-1">Lecture locale</p>
+        </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
         <div className="bg-slate-950 rounded-lg p-4">
@@ -214,6 +246,9 @@ export function PriceResults({
   const formatRange = (value: number | null) => (value === null ? '—' : `${value.toFixed(2)}€`);
 
   const interval = result.prices?.[0];
+  const confidence = result.confidence ?? 0;
+  const observations = interval?.priceCount ?? 0;
+  const territoryLabel = getTerritoryLabel(result.territory);
 
   return (
     <section className="space-y-4">
@@ -224,11 +259,34 @@ export function PriceResults({
               {result.productName || 'Produit analysé'}
             </h2>
             <p className="text-sm text-slate-400">
-              Confiance: {result.confidence ?? 0}/100 • Sources: {result.sourcesUsed?.length ?? 0}
+              Confiance: {confidence}/100 • Sources: {result.sourcesUsed?.length ?? 0}
             </p>
           </div>
           <div className="text-sm text-blue-200 bg-blue-500/10 border border-blue-500/20 rounded-lg px-3 py-1">
             Badge prix observé
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+          <div className="bg-slate-950 rounded-lg p-4">
+            <p className="text-xs text-slate-400">Indice de confiance</p>
+            <p className="text-xl font-semibold">{confidence}/100</p>
+            <div className="h-2 bg-slate-800 rounded-full mt-2">
+              <div
+                className="h-2 rounded-full bg-emerald-400"
+                style={{ width: `${Math.min(confidence, 100)}%` }}
+              />
+            </div>
+          </div>
+          <div className="bg-slate-950 rounded-lg p-4">
+            <p className="text-xs text-slate-400">Observations</p>
+            <p className="text-xl font-semibold">{observations}</p>
+            <p className="text-xs text-slate-500 mt-1">Prix agrégés</p>
+          </div>
+          <div className="bg-slate-950 rounded-lg p-4">
+            <p className="text-xs text-slate-400">Territoire</p>
+            <p className="text-base font-semibold">{territoryLabel}</p>
+            <p className="text-xs text-slate-500 mt-1">Données locales</p>
           </div>
         </div>
 
@@ -301,6 +359,13 @@ export function PriceSearchResults({
     case 'UNAVAILABLE':
       return <PriceUnavailableState onRetry={onReset} onReturnToHub={onReturnToHub} />;
     case 'PARTIAL':
+      return (
+        <PartialPriceState
+          result={result.data}
+          onRetry={onReset}
+          onReturnToHub={onReturnToHub}
+        />
+      );
     case 'OK':
       return (
         <PriceResults
@@ -326,6 +391,9 @@ export default function RechercheProduits() {
   const [error, setError] = useState<string | null>(null);
   const [hasAutoSearched, setHasAutoSearched] = useState(false);
   const [cachedAt, setCachedAt] = useState<string | null>(null);
+  const hasSearchInput = Boolean(barcode.trim() || query.trim());
+  const canSearch = hasSearchInput && !loading;
+  const shouldShowReset = hasSearchInput || Boolean(result) || Boolean(error);
 
   const buildCacheKey = useCallback(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -428,6 +496,15 @@ export default function RechercheProduits() {
         </header>
 
         <section className="bg-slate-900/70 border border-slate-700 rounded-2xl p-6 space-y-4">
+          <form
+            className="space-y-4"
+            onSubmit={(event) => {
+              event.preventDefault();
+              if (canSearch) {
+                void handleSearch();
+              }
+            }}
+          >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <label className="space-y-2 text-sm">
               <span className="text-slate-300">Code-barres (EAN)</span>
@@ -437,6 +514,8 @@ export default function RechercheProduits() {
                 placeholder="Ex: 3229820129488"
                 className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-white"
                 aria-label="Code-barres"
+                inputMode="numeric"
+                pattern="[0-9]*"
               />
             </label>
             <label className="space-y-2 text-sm">
@@ -465,18 +544,44 @@ export default function RechercheProduits() {
               ))}
             </select>
           </label>
-          <button
-            type="button"
-            onClick={handleSearch}
-            className="w-full md:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold"
-          >
-            Lancer la recherche
-          </button>
+          <div className="flex flex-col md:flex-row gap-3">
+            <button
+              type="submit"
+              disabled={!canSearch}
+              className="w-full md:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-700 disabled:text-slate-400 rounded-lg font-semibold"
+            >
+              {loading ? 'Recherche en cours...' : 'Lancer la recherche'}
+            </button>
+            {shouldShowReset && (
+              <button
+                type="button"
+                onClick={handleReset}
+                className="w-full md:w-auto px-6 py-3 bg-slate-800 hover:bg-slate-700 rounded-lg font-semibold"
+              >
+                Effacer
+              </button>
+            )}
+          </div>
+          {!hasSearchInput && (
+            <p className="text-xs text-slate-400">
+              Renseignez un code-barres ou un nom de produit pour lancer la comparaison.
+            </p>
+          )}
+          </form>
+        </section>
+
+        <section className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 text-sm text-slate-300 space-y-2">
+          <h2 className="font-semibold text-white">Conseils ScanHub</h2>
+          <ul className="list-disc list-inside space-y-1 text-slate-300">
+            <li>Combinez EAN et nom produit pour améliorer la précision.</li>
+            <li>Vérifiez le territoire pour comparer des prix réellement observés localement.</li>
+            <li>Un indice de confiance élevé signifie des données plus fiables.</li>
+          </ul>
         </section>
 
         {cachedAt && !loading && (
           <div className="bg-emerald-900/20 border border-emerald-700 rounded-2xl p-4 text-sm text-emerald-200">
-            Résultat affiché depuis le cache local ({new Date(cachedAt).toLocaleString('fr-FR')}).
+            Résultat affiché depuis le cache local ({formatCachedLabel(cachedAt)}).
           </div>
         )}
 
