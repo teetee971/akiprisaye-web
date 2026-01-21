@@ -1,6 +1,6 @@
 // src/components/PriceComparisonTable.tsx
 import React from 'react'
-import type { PriceObservation } from '../types/PriceObservation'
+import type { PriceObservation } from '../types/priceObservation'
 import PriceSourceBadge from './PriceSourceBadge'
 import PriceHistoryMiniChart from './PriceHistoryMiniChart'
 
@@ -9,7 +9,10 @@ type PriceComparisonTableProps = {
   groupedByStore: Record<string, PriceObservation[]>
 }
 
-export default function PriceComparisonTable({ observations, groupedByStore }: PriceComparisonTableProps) {
+export default function PriceComparisonTable({
+  observations,
+  groupedByStore,
+}: PriceComparisonTableProps) {
   if (observations.length === 0) {
     return (
       <div className="text-center py-8 text-white/60">
@@ -30,18 +33,33 @@ export default function PriceComparisonTable({ observations, groupedByStore }: P
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[700px]" aria-label="Tableau de comparaison des prix observés">
+      <table
+        className="w-full min-w-[700px]"
+        aria-label="Tableau de comparaison des prix observés"
+      >
         <caption className="sr-only">
           Comparaison des prix observés entre enseignes pour ce produit
         </caption>
         <thead>
           <tr className="border-b border-white/[0.22]">
-            <th className="text-left py-3 px-4 text-white/90 font-semibold">Enseigne</th>
-            <th className="text-right py-3 px-4 text-white/90 font-semibold">Prix</th>
-            <th className="text-center py-3 px-4 text-white/90 font-semibold">Date observation</th>
-            <th className="text-center py-3 px-4 text-white/90 font-semibold">Source</th>
-            <th className="text-center py-3 px-4 text-white/90 font-semibold">Territoire</th>
-            <th className="text-center py-3 px-4 text-white/90 font-semibold">Historique</th>
+            <th className="text-left py-3 px-4 text-white/90 font-semibold">
+              Enseigne
+            </th>
+            <th className="text-right py-3 px-4 text-white/90 font-semibold">
+              Prix
+            </th>
+            <th className="text-center py-3 px-4 text-white/90 font-semibold">
+              Date observation
+            </th>
+            <th className="text-center py-3 px-4 text-white/90 font-semibold">
+              Source
+            </th>
+            <th className="text-center py-3 px-4 text-white/90 font-semibold">
+              Territoire
+            </th>
+            <th className="text-center py-3 px-4 text-white/90 font-semibold">
+              Historique
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -49,7 +67,7 @@ export default function PriceComparisonTable({ observations, groupedByStore }: P
             const storeLabel = obs.storeLabel ?? 'Enseigne inconnue'
             const storeHistory = groupedByStore[storeLabel] || []
             const currency = obs.currency ?? 'EUR'
-            
+
             return (
               <tr
                 key={`${obs.productId}-${storeLabel}-${obs.observedAt}-${index}`}
