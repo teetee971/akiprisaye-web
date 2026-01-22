@@ -2,45 +2,19 @@ import { describe, it, expect } from 'vitest';
 import { normalizeTerritoryCode } from '../normalizeTerritoryCode';
 
 describe('normalizeTerritoryCode', () => {
-  it('normalizes standard territory codes', () => {
-<<<<<<< HEAD
-    expect(normalizeTerritoryCode('gp')).toBe('gp');
-    expect(normalizeTerritoryCode('GF')).toBe('gf');
-    expect(normalizeTerritoryCode('re')).toBe('re');
-  });
-
-  it('normalizes DOM-TOM territory names', () => {
-    expect(normalizeTerritoryCode('Guadeloupe')).toBe('gp');
-    expect(normalizeTerritoryCode('Martinique')).toBe('mq');
-    expect(normalizeTerritoryCode('Guyane')).toBe('gf');
-    expect(normalizeTerritoryCode('La Réunion')).toBe('re');
-    expect(normalizeTerritoryCode('Mayotte')).toBe('yt');
-    expect(normalizeTerritoryCode('France métropole')).toBe('fr');
-    expect(normalizeTerritoryCode('Saint-Pierre-et-Miquelon')).toBe('pm');
-    expect(normalizeTerritoryCode('Saint-Barthélemy')).toBe('bl');
-    expect(normalizeTerritoryCode('Saint-Martin')).toBe('mf');
-    expect(normalizeTerritoryCode('Wallis-et-Futuna')).toBe('wf');
-    expect(normalizeTerritoryCode('Polynésie française')).toBe('pf');
-    expect(normalizeTerritoryCode('Nouvelle-Calédonie')).toBe('nc');
-  });
-
-  it('defaults to FR for missing or unknown values', () => {
-    expect(normalizeTerritoryCode()).toBe('fr');
-    expect(normalizeTerritoryCode('')).toBe('fr');
-    expect(normalizeTerritoryCode('Unknown')).toBe('fr');
-=======
+  it('normalizes standard territory codes to ISO uppercase', () => {
     expect(normalizeTerritoryCode('gp')).toBe('GP');
     expect(normalizeTerritoryCode('GF')).toBe('GF');
     expect(normalizeTerritoryCode('re')).toBe('RE');
   });
 
-  it('normalizes DOM-TOM territory names', () => {
+  it('normalizes DOM-TOM territory names to ISO codes', () => {
     expect(normalizeTerritoryCode('Guadeloupe')).toBe('GP');
     expect(normalizeTerritoryCode('Martinique')).toBe('MQ');
     expect(normalizeTerritoryCode('Guyane')).toBe('GF');
     expect(normalizeTerritoryCode('La Réunion')).toBe('RE');
     expect(normalizeTerritoryCode('Mayotte')).toBe('YT');
-    expect(normalizeTerritoryCode('France métropole')).toBe('FR');
+    expect(normalizeTerritoryCode('France métropolitaine')).toBe('FR');
     expect(normalizeTerritoryCode('Saint-Pierre-et-Miquelon')).toBe('PM');
     expect(normalizeTerritoryCode('Saint-Barthélemy')).toBe('BL');
     expect(normalizeTerritoryCode('Saint-Martin')).toBe('MF');
@@ -53,6 +27,5 @@ describe('normalizeTerritoryCode', () => {
     expect(normalizeTerritoryCode()).toBe('FR');
     expect(normalizeTerritoryCode('')).toBe('FR');
     expect(normalizeTerritoryCode('Unknown')).toBe('FR');
->>>>>>> e487a4d9 (Unify price observation model and storage handling)
   });
 });
