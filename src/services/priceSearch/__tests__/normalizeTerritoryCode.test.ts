@@ -3,29 +3,29 @@ import { normalizeTerritoryCode } from '../normalizeTerritoryCode';
 
 describe('normalizeTerritoryCode', () => {
   it('normalizes standard territory codes', () => {
-    expect(normalizeTerritoryCode('gp')).toBe('GP');
-    expect(normalizeTerritoryCode('GF')).toBe('GF');
-    expect(normalizeTerritoryCode('re')).toBe('RE');
+    expect(normalizeTerritoryCode('gp')).toBe('gp');
+    expect(normalizeTerritoryCode('GF')).toBe('gf');
+    expect(normalizeTerritoryCode('re')).toBe('re');
   });
 
   it('normalizes DOM-TOM territory names', () => {
-    expect(normalizeTerritoryCode('Guadeloupe')).toBe('GP');
-    expect(normalizeTerritoryCode('Martinique')).toBe('MQ');
-    expect(normalizeTerritoryCode('Guyane')).toBe('GF');
-    expect(normalizeTerritoryCode('La Réunion')).toBe('RE');
-    expect(normalizeTerritoryCode('Mayotte')).toBe('YT');
-    expect(normalizeTerritoryCode('France métropole')).toBe('FR');
-    expect(normalizeTerritoryCode('Saint-Pierre-et-Miquelon')).toBe('PM');
-    expect(normalizeTerritoryCode('Saint-Barthélemy')).toBe('BL');
-    expect(normalizeTerritoryCode('Saint-Martin')).toBe('MF');
-    expect(normalizeTerritoryCode('Wallis-et-Futuna')).toBe('WF');
-    expect(normalizeTerritoryCode('Polynésie française')).toBe('PF');
-    expect(normalizeTerritoryCode('Nouvelle-Calédonie')).toBe('NC');
+    expect(normalizeTerritoryCode('Guadeloupe')).toBe('gp');
+    expect(normalizeTerritoryCode('Martinique')).toBe('mq');
+    expect(normalizeTerritoryCode('Guyane')).toBe('gf');
+    expect(normalizeTerritoryCode('La Réunion')).toBe('re');
+    expect(normalizeTerritoryCode('Mayotte')).toBe('yt');
+    expect(normalizeTerritoryCode('France métropole')).toBe('fr');
+    expect(normalizeTerritoryCode('Saint-Pierre-et-Miquelon')).toBe('pm');
+    expect(normalizeTerritoryCode('Saint-Barthélemy')).toBe('bl');
+    expect(normalizeTerritoryCode('Saint-Martin')).toBe('mf');
+    expect(normalizeTerritoryCode('Wallis-et-Futuna')).toBe('wf');
+    expect(normalizeTerritoryCode('Polynésie française')).toBe('pf');
+    expect(normalizeTerritoryCode('Nouvelle-Calédonie')).toBe('nc');
   });
 
   it('defaults to FR for missing or unknown values', () => {
-    expect(normalizeTerritoryCode()).toBe('FR');
-    expect(normalizeTerritoryCode('')).toBe('FR');
-    expect(normalizeTerritoryCode('Unknown')).toBe('FR');
+    expect(normalizeTerritoryCode()).toBe('fr');
+    expect(normalizeTerritoryCode('')).toBe('fr');
+    expect(normalizeTerritoryCode('Unknown')).toBe('fr');
   });
 });

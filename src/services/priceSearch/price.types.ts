@@ -8,7 +8,22 @@
  * - Normalization MUST occur at system boundaries
  */
 
-import type { TerritoryCode } from '@/types/territory';
+import type { PriceInterval } from '@/types/scanHubResult';
+
+export type TerritoryCode =
+  | 'fr'
+  | 'gp'
+  | 'mq'
+  | 'gf'
+  | 're'
+  | 'yt'
+  | 'pm'
+  | 'bl'
+  | 'mf'
+  | 'wf'
+  | 'pf'
+  | 'nc'
+  | 'tf';
 
 /* -----------------------------
  * Sources & Status
@@ -64,13 +79,7 @@ export interface PriceSearchInput {
   territory?: TerritoryCode;
 }
 
-export interface PriceInterval {
-  min: number | null;
-  median: number | null;
-  max: number | null;
-  currency: 'EUR';
-  priceCount: number;
-}
+export type { PriceInterval };
 
 export interface PriceSearchResult {
   status: PriceSearchStatus;

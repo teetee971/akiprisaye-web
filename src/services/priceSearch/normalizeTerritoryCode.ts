@@ -1,58 +1,76 @@
 // src/services/priceSearch/normalizeTerritoryCode.ts
 
-import type { TerritoryCode } from '../../types/PriceObservation';
+import type { TerritoryCode } from './price.types';
 
 /**
  * Normalise les codes territoire vers un format ISO DOM/FR cohérent
  */
-export function normalizeTerritoryCode(input: string): TerritoryCode {
-  const value = input.trim().toUpperCase();
+export function normalizeTerritoryCode(input?: string): TerritoryCode {
+  const normalizedInput = input?.trim();
+  if (!normalizedInput) {
+    return 'fr';
+  }
+  const value = normalizedInput
+    .toUpperCase()
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .replace(/-/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 
   switch (value) {
     case 'FR':
     case 'FRANCE':
-      return 'FR';
+    case 'FRANCE METROPOLE':
+    case 'FRANCE METROPOLITAINE':
+      return 'fr';
 
     case 'GP':
     case 'GUADELOUPE':
-      return 'GP';
+      return 'gp';
 
     case 'MQ':
     case 'MARTINIQUE':
-      return 'MQ';
+      return 'mq';
 
     case 'GF':
     case 'GUYANE':
-      return 'GF';
+      return 'gf';
 
     case 'RE':
     case 'REUNION':
-    case 'RÉUNION':
-      return 'RE';
+    case 'LA REUNION':
+      return 're';
 
     case 'YT':
     case 'MAYOTTE':
-      return 'YT';
+      return 'yt';
 
     case 'PM':
-      return 'PM';
+    case 'SAINT PIERRE ET MIQUELON':
+      return 'pm';
 
     case 'BL':
-      return 'BL';
+    case 'SAINT BARTHELEMY':
+      return 'bl';
 
     case 'MF':
-      return 'MF';
+    case 'SAINT MARTIN':
+      return 'mf';
 
     case 'WF':
-      return 'WF';
+    case 'WALLIS ET FUTUNA':
+      return 'wf';
 
     case 'PF':
-      return 'PF';
+    case 'POLYNESIE FRANCAISE':
+      return 'pf';
 
     case 'NC':
-      return 'NC';
+    case 'NOUVELLE CALEDONIE':
+      return 'nc';
 
     default:
-      throw new Error(`Unknown territory code: ${input}`);
+      return 'fr';
   }
 }

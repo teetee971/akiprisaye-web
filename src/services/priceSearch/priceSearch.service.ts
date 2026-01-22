@@ -1,10 +1,7 @@
-import {
-  computeMedian,
-  normalizeObservation,
-  normalizePriceValue,
-} from './priceNormalizer';
+import { computeMedian, normalizeObservation, normalizePriceValue } from './priceNormalizer';
 import { computePriceConfidence } from './priceConfidence';
 import { PRICE_PROVIDERS } from './priceProviders';
+import { normalizeTerritoryCode } from './normalizeTerritoryCode';
 import type {
   PriceInterval,
   PriceSearchInput,
@@ -15,14 +12,6 @@ import type {
 
 const DEFAULT_TERRITORY: TerritoryCode = 'fr';
 const PROVIDER_TIMEOUT_MS = 5000;
-const TERRITORY_CODES: TerritoryCode[] = ['fr', 'gp', 'mq', 'gf', 're', 'yt', 'pm', 'bl', 'mf'];
-
-function normalizeTerritoryCode(value?: string): TerritoryCode {
-  const normalized = (value ?? DEFAULT_TERRITORY).toLowerCase();
-  return TERRITORY_CODES.includes(normalized as TerritoryCode)
-    ? (normalized as TerritoryCode)
-    : DEFAULT_TERRITORY;
-}
 
 function withTimeout<T>(promise: Promise<T>, timeoutMs: number, signal: AbortSignal): Promise<T> {
   return new Promise((resolve, reject) => {
@@ -46,7 +35,7 @@ function territoryMessage(territory: TerritoryCode): string | undefined {
 }
 
 export async function searchProductPrices(input: PriceSearchInput): Promise<PriceSearchResult> {
-  const territory = normalizeTerritoryCode(input.territory);
+  const territory = normalizeTerritoryCode(input.territory ?? DEFAULT_TERRITORY);
   const normalizedInput: PriceSearchInput = {
     ...input,
     territory,
