@@ -1,58 +1,53 @@
-## 📋 Pre-merge Checklist
+## ✅ Checklist de conformité – A KI PRI SA YÉ
 
-- [ ] ✅ Branch synced with `main` (no conflicts)
-- [ ] ✅ CI checks passing
-- [ ] ✅ Code reviewed
+Merci de valider **chaque point** avant soumission.  
+Toute non-conformité entraînera le rejet automatique de la PR par la CI stricte (Codex Guard).
 
-## 🔄 Sync with main before requesting merge
+---
 
-```bash
-git fetch origin main
-git merge origin/main
-# Resolve conflicts if any
-git push
+### 1️⃣ Qualité & CI technique
+- [ ] Lint exécuté sans erreur (`npm run lint`)
+- [ ] Aucun espace ou erreur dans le glob ESLint (`**/*.{ts,tsx,js,jsx}`)
+- [ ] TypeScript strict activé (`noImplicitAny`, `noUnused*`)
+- [ ] Build Cloudflare Pages compatible Node >=20.19 (`package.json → engines` vérifié)
+- [ ] Tests unitaires exécutés localement ou en CI
 
-# 3. Commit les changements
-git add scripts/smart-merge.sh . github/pull_request_template. md
-git commit -m "chore: add merge tools to prevent conflicts
+---
 
-- Smart merge script with conflict detection
-- PR template with sync checklist"
-git push
-# Workflow pour notifier les PRs en retard
-cat > . github/workflows/pr-sync-reminder.yml << 'EOF'
-name: PR Sync Reminder
+### 2️⃣ Cohérence du modèle de données
+- [ ] Un seul modèle `PriceObservation` unifié (`storeLabel`, `currency`, `confidenceScore`, `observationsCount`)
+- [ ] Un seul modèle `TerritoryCode` utilisé (format ISO-like : `gp`, `mq`, `gf`, `re`, etc.)
+- [ ] Tous les adaptateurs (`priceSearch`, `SignalementForm`, `territoryComparisonService`) synchronisés
+- [ ] Aucune divergence entre les schémas de données (`priceSearch.service.ts`, `scanHubClassifier.ts`)
 
-on:
-  schedule:
-    - cron: '0 9 * * 1'  # Tous les lundis à 9h
-  workflow_dispatch:     # Manuel
+---
 
-jobs:
-  check-prs:
-    runs-on:  ubuntu-latest
-    steps: 
-      - uses: actions/checkout@v4
-      
-      - name: Check outdated PRs
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          echo "🔍 Checking open PRs..."
-          
-          gh pr list --state open --json number,title,headRefName,updatedAt | \
-          jq -r '.[] | select(.updatedAt < (now - 259200)) | "\(.number) \(.headRefName)"' | \
-          while read pr branch; do
-            echo "⚠️ PR #$pr is behind main"
-            
-            gh pr comment "$pr" --body "👋 **Reminder:** This PR may be behind \`main\`. 
+### 3️⃣ Sécurité & conformité RGPD
+- [ ] Aucun texte OCR ou image brute stocké en clair dans `localStorage`
+- [ ] Les logs console ne contiennent pas de texte OCR
+- [ ] Les données sensibles sont chiffrées ou temporisées (TTL ou IndexedDB avec expiration)
+- [ ] Les API externes (OpenFoodFacts, OpenPrices) affichent un message d’avertissement ou consentement
+- [ ] Aucune donnée utilisateur n’est transmise sans consentement explicite
 
-Please sync to avoid merge conflicts: 
-\`\`\`bash
-git fetch origin main
-git merge origin/main
-git push
-\`\`\`
+---
 
-Or use:  \`./scripts/smart-merge.sh $pr\`"
-          done
+### 4️⃣ Performance & accessibilité
+- [ ] Pas de chargement complet de `/data/prices.json` sans pagination
+- [ ] Caching ou indexation activée pour `priceObservationService`
+- [ ] Accessibilité conforme WCAG 2.1 (labels, ARIA, contrastes)
+- [ ] Poids total build ≤ 1.2 MB (scripts ≤ 350 KB, images ≤ 500 KB)
+
+---
+
+### 5️⃣ Conformité générale & documentation
+- [ ] README mis à jour avec les modèles normalisés
+- [ ] Changelog ou release note ajoutée (`vX.Y.Z`)
+- [ ] Aucune dépendance non autorisée ajoutée
+- [ ] Audit de sécurité npm (`npm audit`) exécuté sans vulnérabilité critique
+
+---
+
+**Dernière validation manuelle**
+- [ ] CI Codex Guard ✅
+- [ ] Cloudflare Pages preview ✅
+- [ ] Vérification visuelle post-déploiement ✅
