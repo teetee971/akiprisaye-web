@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Share2, Download, Copy, Check, TrendingUp } from 'lucide-react';
-import { safeLocalStorage } from '../../utils/safeLocalStorage';
+import { safeJsonParse, safeLocalStorage } from '../../utils/safeLocalStorage';
 
 interface VictoryData {
   monthlySavings: number;
@@ -28,9 +28,11 @@ export const ShareVictory: React.FC = () => {
     // Get user's victory data
     const savedData = safeLocalStorage.getItem('monthlySavings:v1');
     if (savedData) {
-      const data = JSON.parse(savedData);
+      const data = safeJsonParse<{ currentMonth?: { amount?: number } | number }>(savedData, {});
+      const currentMonthValue =
+        typeof data.currentMonth === 'number' ? data.currentMonth : data.currentMonth?.amount;
       setVictoryData({
-        monthlySavings: data.currentMonth || 0,
+        monthlySavings: currentMonthValue ?? 0,
         percentVsAverage: 23, // Example
         topProduct: 'Produits laitiers',
         territory: 'Guadeloupe'

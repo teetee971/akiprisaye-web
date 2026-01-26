@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Sparkles, Clock, TrendingDown, ShoppingBag } from 'lucide-react';
-import { safeLocalStorage } from '../../utils/safeLocalStorage';
+import { safeJsonParse, safeLocalStorage } from '../../utils/safeLocalStorage';
 
 interface DealOfDay {
   productName: string;
@@ -40,7 +40,7 @@ export const PersonalizedDealOfDay: React.FC = () => {
       if (lastDealDate === today) {
         // Already shown today, retrieve stored deal
         const storedDeal = safeLocalStorage.getItem('dealOfDay:current');
-        return storedDeal ? JSON.parse(storedDeal) : null;
+        return safeJsonParse<DealOfDay | null>(storedDeal, null);
       }
 
       // Example deals based on common products

@@ -1,4 +1,4 @@
-import { safeLocalStorage } from '../utils/safeLocalStorage';
+import { safeJsonParse, safeLocalStorage } from '../utils/safeLocalStorage';
 /**
  * Institutional Alert Service
  * Automatic detection and reporting of abnormal prices to authorities
@@ -119,9 +119,7 @@ export class InstitutionalAlertService {
    */
   getPendingAlerts(): InstitutionalAlert[] {
     const stored = safeLocalStorage.getItem('institutional_alerts');
-    if (!stored) return [];
-    
-    const alerts: InstitutionalAlert[] = JSON.parse(stored);
+    const alerts = safeJsonParse<InstitutionalAlert[]>(stored, []);
     return alerts.filter(a => a.status === 'pending');
   }
 
@@ -188,7 +186,7 @@ export class InstitutionalAlertService {
 
   private getAllAlerts(): InstitutionalAlert[] {
     const stored = safeLocalStorage.getItem('institutional_alerts');
-    return stored ? JSON.parse(stored) : [];
+    return safeJsonParse<InstitutionalAlert[]>(stored, []);
   }
 }
 

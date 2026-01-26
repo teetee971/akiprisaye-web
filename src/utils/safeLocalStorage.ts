@@ -32,3 +32,19 @@ export const safeLocalStorage = {
     }
   },
 };
+
+export function safeJsonParse<T>(raw: string | null, fallback: T): T {
+  if (!raw) return fallback;
+  try {
+    const parsed = JSON.parse(raw) as T;
+    if (Array.isArray(fallback)) {
+      return Array.isArray(parsed) ? (parsed as T) : fallback;
+    }
+    if (fallback && typeof fallback === 'object') {
+      return parsed && typeof parsed === 'object' ? (parsed as T) : fallback;
+    }
+    return (parsed ?? fallback) as T;
+  } catch {
+    return fallback;
+  }
+}

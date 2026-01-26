@@ -5,7 +5,7 @@
 
 import { GlassCard } from "../ui/glass-card";
 import { useEffect, useState } from "react";
-import { safeLocalStorage } from '../../utils/safeLocalStorage';
+import { safeJsonParse, safeLocalStorage } from '../../utils/safeLocalStorage';
 
 interface SavingsData {
   productName: string;
@@ -27,8 +27,9 @@ export function RealSavingsBlock() {
   useEffect(() => {
     // Load real savings data from safeLocalStorage or API
     const savedData = safeLocalStorage.getItem('latest_savings');
-    if (savedData) {
-      setSavingsData(JSON.parse(savedData));
+    const parsed = safeJsonParse<Partial<SavingsData>>(savedData, {});
+    if (parsed && typeof parsed === 'object') {
+      setSavingsData((prev) => ({ ...prev, ...parsed }));
     }
   }, []);
 

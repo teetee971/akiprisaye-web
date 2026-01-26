@@ -19,7 +19,7 @@ import { TerritorySignal } from "../components/home/TerritorySignal";
 import { AnonymousSocialComparison } from "../components/home/AnonymousSocialComparison";
 import { PersonalizedDealOfDay } from "../components/home/PersonalizedDealOfDay";
 import { ShareVictory } from "../components/home/ShareVictory";
-import { safeLocalStorage } from '../utils/safeLocalStorage';
+import { safeJsonParse, safeLocalStorage } from '../utils/safeLocalStorage';
 
 export default function HomeV3() {
   const [stats, setStats] = useState({
@@ -33,7 +33,8 @@ export default function HomeV3() {
     // Load real stats from safeLocalStorage or API
     const savedStats = safeLocalStorage.getItem('platform_stats');
     if (savedStats) {
-      setStats(JSON.parse(savedStats));
+      const parsed = safeJsonParse<typeof stats>(savedStats, stats);
+      setStats(parsed);
     }
   }, []);
 

@@ -5,7 +5,7 @@
 
 import { useState } from "react";
 import { GlassCard } from "../ui/glass-card";
-import { safeLocalStorage } from '../../utils/safeLocalStorage';
+import { safeJsonParse, safeLocalStorage } from '../../utils/safeLocalStorage';
 
 interface PriceAlert {
   productId: string;
@@ -35,7 +35,7 @@ export function PriceAlertButton({
   const [targetPercent, setTargetPercent] = useState(10);
 
   const handleSaveAlert = () => {
-    const alerts = JSON.parse(safeLocalStorage.getItem('priceAlerts:v1') || '[]') as PriceAlert[];
+    const alerts = safeJsonParse<PriceAlert[]>(safeLocalStorage.getItem('priceAlerts:v1'), []);
     
     const newAlert: PriceAlert = {
       productId,

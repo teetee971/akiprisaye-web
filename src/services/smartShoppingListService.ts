@@ -3,14 +3,14 @@
  * Manages shopping lists and budget optimization
  */
 
-import type { 
-import { safeLocalStorage } from '../utils/safeLocalStorage';
-  ShoppingList, 
-  ShoppingListItem, 
+import type {
+  ShoppingList,
+  ShoppingListItem,
   BudgetOptimization,
   StoreAllocation,
-  Coordinates 
+  Coordinates,
 } from '../types/shoppingList';
+import { safeJsonParse, safeLocalStorage } from '../utils/safeLocalStorage';
 
 export class ShoppingListService {
   private readonly STORAGE_KEY = 'shopping_lists';
@@ -40,7 +40,7 @@ export class ShoppingListService {
    */
   getLists(): ShoppingList[] {
     const stored = safeLocalStorage.getItem(this.STORAGE_KEY);
-    return stored ? JSON.parse(stored) : [];
+    return safeJsonParse<ShoppingList[]>(stored, []);
   }
 
   /**

@@ -13,7 +13,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
-import { safeLocalStorage } from '../utils/safeLocalStorage';
+import { safeJsonParse, safeLocalStorage } from '../utils/safeLocalStorage';
 
 export default function HomeV4() {
   const navigate = useNavigate();
@@ -38,7 +38,8 @@ export default function HomeV4() {
     // Load real stats from safeLocalStorage
     const savedStats = safeLocalStorage.getItem('platform_stats');
     if (savedStats) {
-      setStats(JSON.parse(savedStats));
+      const parsed = safeJsonParse<typeof stats>(savedStats, stats);
+      setStats(parsed);
     }
 
     // Cache window dimensions

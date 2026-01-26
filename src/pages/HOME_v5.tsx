@@ -25,7 +25,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
 import { getComparisonOfDay, type PriceComparison } from '../data/exampleComparisons';
 import '../styles/home-v5.css';
-import { safeLocalStorage } from '../utils/safeLocalStorage';
+import { safeJsonParse, safeLocalStorage } from '../utils/safeLocalStorage';
 
 export default function HomeV5() {
   const navigate = useNavigate();
@@ -52,7 +52,8 @@ export default function HomeV5() {
     // Load real stats from safeLocalStorage
     const savedStats = safeLocalStorage.getItem('platform_stats');
     if (savedStats) {
-      setStats(JSON.parse(savedStats));
+      const parsed = safeJsonParse<typeof stats>(savedStats, stats);
+      setStats(parsed);
     }
 
     // Update cached dimensions on resize

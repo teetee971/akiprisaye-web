@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import { safeLocalStorage } from '../utils/safeLocalStorage';
+import { safeJsonParse, safeLocalStorage } from '../utils/safeLocalStorage';
 
 /**
  * Patterns de vibration prédéfinis
@@ -55,13 +55,14 @@ class FeedbackService {
   constructor() {
     // Charger config depuis safeLocalStorage ou utiliser valeurs par défaut
     const savedConfig = safeLocalStorage.getItem('feedbackConfig');
-    this.config = savedConfig
-      ? JSON.parse(savedConfig)
-      : {
-          hapticEnabled: true,
-          audioEnabled: true,
-          volume: 0.5,
-        };
+    this.config = safeJsonParse<FeedbackConfig>(
+      savedConfig,
+      {
+        hapticEnabled: true,
+        audioEnabled: true,
+        volume: 0.5,
+      }
+    );
   }
 
   /**

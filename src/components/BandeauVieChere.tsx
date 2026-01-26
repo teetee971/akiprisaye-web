@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { AlertTriangle, X, ExternalLink } from 'lucide-react';
-import { safeLocalStorage } from '../utils/safeLocalStorage';
+import { safeJsonParse, safeLocalStorage } from '../utils/safeLocalStorage';
 
 interface BandeauMessage {
   id: string;
@@ -18,14 +18,8 @@ export function BandeauVieChere() {
   useEffect(() => {
     // Load dismissed messages from safeLocalStorage
     const stored = safeLocalStorage.getItem('dismissed_bandeaux');
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        setDismissed(new Set(parsed));
-      } catch (e) {
-        console.error('Failed to parse dismissed bandeaux:', e);
-      }
-    }
+    const parsed = safeJsonParse<string[]>(stored, []);
+    setDismissed(new Set(parsed));
 
     // Fetch from Firestore collection 'bandeau_messages'
     // TODO: Replace with real Firestore query

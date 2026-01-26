@@ -16,7 +16,7 @@
 
 import { useState, useEffect } from 'react';
 import { GlassCard } from '../ui/glass-card';
-import { safeLocalStorage } from '../../utils/safeLocalStorage';
+import { safeJsonParse, safeLocalStorage } from '../../utils/safeLocalStorage';
 
 interface MonthlySavings {
   currentMonth: {
@@ -89,28 +89,36 @@ export function MonthlySavingsDashboard() {
     // Load from safeLocalStorage
     const savedData = safeLocalStorage.getItem('monthlySavings:v1');
     
-    if (savedData) {
-      const data = JSON.parse(savedData);
-      setSavings(data);
-      updateBadges(data);
-    } else {
-      // Generate example data for demo
-      const exampleData: MonthlySavings = {
-        currentMonth: {
-          amount: 24.35,
-          percentage: 12.5,
-          transactions: 8
-        },
-        previousMonth: {
-          amount: 18.20,
-          percentage: 9.8
-        },
-        badges: ['hunter'],
-        annualProjection: 292.20
-      };
-      setSavings(exampleData);
-      updateBadges(exampleData);
+    const parsed = safeJsonParse<MonthlySavings | null>(savedData, null);
+    const hasValidData =
+      parsed &&
+      typeof parsed === 'object' &&
+      parsed.currentMonth &&
+      parsed.previousMonth &&
+      Array.isArray(parsed.badges);
+
+    if (hasValidData) {
+      setSavings(parsed);
+      updateBadges(parsed);
+      return;
     }
+
+    // Generate example data for demo
+    const exampleData: MonthlySavings = {
+      currentMonth: {
+        amount: 24.35,
+        percentage: 12.5,
+        transactions: 8
+      },
+      previousMonth: {
+        amount: 18.20,
+        percentage: 9.8
+      },
+      badges: ['hunter'],
+      annualProjection: 292.20
+    };
+    setSavings(exampleData);
+    updateBadges(exampleData);
   };
 
   const updateBadges = (data: MonthlySavings) => {

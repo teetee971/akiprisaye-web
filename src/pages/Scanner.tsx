@@ -4,7 +4,7 @@ import ProductDetails from '../components/products/ProductDetails';
 import { lookupProductByEan } from '../services/eanProductService';
 import { toProductViewModel } from '../services/productViewModelService';
 import type { ScanState, ScannerOptions } from '../types/scan';
-import { safeLocalStorage } from '../utils/safeLocalStorage';
+import { safeJsonParse, safeLocalStorage } from '../utils/safeLocalStorage';
 
 export default function Scanner() {
   const [showScanner, setShowScanner] = useState(false);
@@ -80,7 +80,7 @@ export default function Scanner() {
       window.location.href = searchUrl;
     } else if (behavior === 'local_save') {
       // Save to local storage for review
-      const savedScans = JSON.parse(safeLocalStorage.getItem('unrecognizedScans') || '[]');
+      const savedScans = safeJsonParse<any[]>(safeLocalStorage.getItem('unrecognizedScans'), []);
       savedScans.push({
         code: scanResult,
         timestamp: new Date().toISOString(),
