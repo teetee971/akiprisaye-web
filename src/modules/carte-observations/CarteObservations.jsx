@@ -1,17 +1,9 @@
 import { useState, useEffect } from 'react';
-import 'leaflet/dist/leaflet.css';
+import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 
-// Fix for default marker icon in React-Leaflet
-// Leaflet's default icon paths need to be set explicitly
-import L from 'leaflet';
-
-delete L.Icon.Default.prototype._getIconUrl;
-
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: '/images/marker-icon-2x.png',
-  iconUrl: '/images/marker-icon.png',
-  shadowUrl: '/images/marker-shadow.png',
-});
+import { loadLeaflet } from '../../utils/leafletClient';
+import { FiltresCarte } from './FiltresCarte';
+import { ObservationPopup } from './ObservationPopup';
 
 /**
  * Carte Observations Component
@@ -35,6 +27,25 @@ export default function CarteObservations({ territory = null, productFilter = nu
   // Default center (Guadeloupe)
   const defaultCenter = [16.265, -61.551];
   const defaultZoom = 10;
+
+  useEffect(() => {
+    let mounted = true;
+
+    loadLeaflet().then((leaflet) => {
+      if (!mounted || !leaflet) return;
+
+      delete leaflet.Icon.Default.prototype._getIconUrl;
+      leaflet.Icon.Default.mergeOptions({
+        iconRetinaUrl: '/images/marker-icon-2x.png',
+        iconUrl: '/images/marker-icon.png',
+        shadowUrl: '/images/marker-shadow.png',
+      });
+    });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   useEffect(() => {
     const loadObservations = async () => {
@@ -165,15 +176,13 @@ export default function CarteObservations({ territory = null, productFilter = nu
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-            <MarkerClusterGroup>
-              {filteredObservations.map((obs) => (
-                <Marker key={obs.id} position={[obs.geo.lat, obs.geo.lng]}>
-                  <Popup maxWidth={300}>
-                    <ObservationPopup observation={obs} />
-                  </Popup>
-                </Marker>
-              ))}
-            </MarkerClusterGroup>
+            {filteredObservations.map((obs) => (
+              <Marker key={obs.id} position={[obs.geo.lat, obs.geo.lng]}>
+                <Popup maxWidth={300}>
+                  <ObservationPopup observation={obs} />
+                </Popup>
+              </Marker>
+            ))}
           </MapContainer>
         ) : (
           <div className="h-full flex items-center justify-center bg-gray-50">

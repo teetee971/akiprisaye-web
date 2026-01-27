@@ -59,14 +59,32 @@ export default defineConfig({
     },
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor-react': ['react', 'react-dom'],
-          'vendor-leaflet': ['leaflet', 'react-leaflet'],
-          'vendor-chart': ['chart.js', 'react-chartjs-2'],
-          'vendor-recharts': ['recharts'],
-          'vendor-icons': ['lucide-react'],
-          'vendor-utils': ['lodash', 'date-fns', 'clsx'],
-          'vendor-tesseract': ['tesseract.js']
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return undefined
+
+          if (id.includes('/react/') || id.includes('/react-dom/')) {
+            return 'vendor-react'
+          }
+          if (id.includes('/leaflet/') || id.includes('/react-leaflet/')) {
+            return 'vendor-leaflet'
+          }
+          if (id.includes('/chart.js/') || id.includes('/react-chartjs-2/')) {
+            return 'vendor-chart'
+          }
+          if (id.includes('/recharts/')) {
+            return 'vendor-recharts'
+          }
+          if (id.includes('/lucide-react/')) {
+            return 'vendor-icons'
+          }
+          if (id.includes('/lodash/') || id.includes('/date-fns/') || id.includes('/clsx/')) {
+            return 'vendor-utils'
+          }
+          if (id.includes('/tesseract.js/')) {
+            return 'vendor-tesseract'
+          }
+
+          return undefined
         }
       }
     },

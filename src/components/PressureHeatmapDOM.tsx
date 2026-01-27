@@ -5,13 +5,17 @@ import {
   Circle,
   Tooltip,
 } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
 
 import { computePressureIndex } from '../services/pressureIndexService';
 import { DOM_COORDINATES } from '../data/domCoordinates';
+import { loadLeaflet } from '../utils/leafletClient';
 
 export default function PressureHeatmapDOM() {
   const [data, setData] = useState<any[]>([]);
+
+  useEffect(() => {
+    loadLeaflet();
+  }, []);
 
   useEffect(() => {
     let mounted = true;
