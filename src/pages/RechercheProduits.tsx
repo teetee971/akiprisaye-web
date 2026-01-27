@@ -1,6 +1,10 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
+import FavoritesPanel from '../components/search/FavoritesPanel';
+import SearchHistoryPanel from '../components/search/SearchHistoryPanel';
+import { useFavorites, type FavoriteItem } from '../hooks/useFavorites';
+import { useSearchHistory, type SearchHistoryEntry, type SearchHistoryType } from '../hooks/useSearchHistory';
 import { searchProductPrices } from '../services/priceSearch/priceSearch.service';
 import type { PriceSearchResult, TerritoryCode } from '../services/priceSearch/price.types';
 import type { ScanData, ScanHubResult } from '../types/scanHubResult';
@@ -20,6 +24,33 @@ const TERRITORIES: { code: TerritoryCode; label: string }[] = [
 
 const getTerritoryLabel = (code?: string) =>
   TERRITORIES.find((item) => item.code === code)?.label ?? 'Territoire non précisé';
+
+const buildSearchLabel = (queryValue: string, barcodeValue: string) => {
+  if (queryValue && barcodeValue) {
+    return `${queryValue} (EAN ${barcodeValue})`;
+  }
+  if (barcodeValue) {
+    return `EAN ${barcodeValue}`;
+  }
+  return queryValue || 'Recherche';
+};
+
+const buildProductFavoriteId = (params: {
+  barcode?: string;
+  query?: string;
+  productName?: string;
+}) => {
+  const normalizedBarcode = params.barcode?.trim();
+  if (normalizedBarcode) {
+    return `product:barcode:${normalizedBarcode}`;
+  }
+  const normalizedQuery = params.query?.trim().toLowerCase();
+  if (normalizedQuery) {
+    return `product:query:${normalizedQuery}`;
+  }
+  const normalizedName = params.productName?.trim().toLowerCase() ?? 'unknown';
+  return `product:name:${normalizedName}`;
+};
 
 export function SafeFallback({
   title,
@@ -235,21 +266,37 @@ export function PartialPriceState({
 
 export function PriceResults({
   result,
+  searchQuery,
+  searchBarcode,
   onReset,
   onScanTicket,
   onReturnToHub,
+  onFavoriteToast,
 }: {
   result: ScanData;
+  searchQuery?: string;
+  searchBarcode?: string;
   onReset: () => void;
   onScanTicket: () => void;
   onReturnToHub: () => void;
+  onFavoriteToast?: (message: string) => void;
 }) {
+  const { isFavorite, toggleFavorite } = useFavorites();
   const formatRange = (value: number | null) => (value === null ? '—' : `${value.toFixed(2)}€`);
 
   const interval = result.prices?.[0];
   const confidence = result.confidence ?? 0;
   const observations = interval?.priceCount ?? 0;
   const territoryLabel = getTerritoryLabel(result.territory);
+  const favoriteId = buildProductFavoriteId({
+    barcode: searchBarcode,
+    query: searchQuery,
+    productName: result.productName,
+  });
+  const favoriteLabel = searchQuery?.trim() || searchBarcode?.trim()
+    ? buildSearchLabel(searchQuery?.trim() ?? '', searchBarcode?.trim() ?? '')
+    : result.productName || 'Produit favori';
+  const favoriteActive = isFavorite(favoriteId);
 
   return (
     <section className="space-y-4">
@@ -263,8 +310,43 @@ export function PriceResults({
               Confiance: {confidence}/100 • Sources: {result.sourcesUsed?.length ?? 0}
             </p>
           </div>
-          <div className="text-sm text-blue-200 bg-blue-500/10 border border-blue-500/20 rounded-lg px-3 py-1">
-            Badge prix observé
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="text-sm text-emerald-200 bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-3 py-1">
+              📍 {territoryLabel}
+            </div>
+            <div className="text-sm text-slate-200 bg-slate-800/60 border border-slate-700 rounded-lg px-3 py-1">
+              Prix observés localement
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                const message = favoriteActive ? 'Favori retiré' : '⭐ Ajouté aux favoris';
+                toggleFavorite({
+                  id: favoriteId,
+                  label: favoriteLabel || result.productName || 'Produit favori',
+                  type: 'product',
+                  barcode: searchBarcode?.trim() || undefined,
+                  query: searchQuery?.trim() || undefined,
+                  productName: result.productName,
+                  route:
+                    searchBarcode?.trim() || searchQuery?.trim()
+                      ? `/recherche-produits?${new URLSearchParams({
+                          ...(searchBarcode?.trim() ? { ean: searchBarcode.trim() } : {}),
+                          ...(searchQuery?.trim() ? { q: searchQuery.trim() } : {}),
+                        }).toString()}`
+                      : undefined,
+                });
+                onFavoriteToast?.(message);
+              }}
+              className={`px-3 py-2 rounded-lg text-sm font-semibold border transition-colors ${
+                favoriteActive
+                  ? 'bg-amber-400/20 border-amber-400 text-amber-200'
+                  : 'bg-slate-900 border-slate-700 text-slate-300 hover:text-amber-200'
+              }`}
+              aria-pressed={favoriteActive}
+            >
+              {favoriteActive ? '⭐ Favori' : '☆ Favori'}
+            </button>
           </div>
         </div>
 
@@ -333,14 +415,20 @@ export function PriceResults({
 
 export function PriceSearchResults({
   result,
+  searchQuery,
+  searchBarcode,
   onReset,
   onScanTicket,
   onReturnToHub,
+  onFavoriteToast,
 }: {
   result: ScanHubResult | null;
+  searchQuery?: string;
+  searchBarcode?: string;
   onReset: () => void;
   onScanTicket: () => void;
   onReturnToHub: () => void;
+  onFavoriteToast?: (message: string) => void;
 }) {
   if (!result) {
     return <LoadingState />;
@@ -371,9 +459,12 @@ export function PriceSearchResults({
       return (
         <PriceResults
           result={result.data}
+          searchQuery={searchQuery}
+          searchBarcode={searchBarcode}
           onReset={onReset}
           onScanTicket={onScanTicket}
           onReturnToHub={onReturnToHub}
+          onFavoriteToast={onFavoriteToast}
         />
       );
     default:
@@ -387,6 +478,8 @@ export default function RechercheProduits() {
     [],
   );
   const navigate = useNavigate();
+  const { history, addEntry, removeEntry, clearHistory } = useSearchHistory();
+  const { favorites, removeFavorite } = useFavorites();
   const [query, setQuery] = useState(params.get('q') ?? '');
   const [barcode, setBarcode] = useState(params.get('ean') ?? '');
   const [territory, setTerritory] = useState<TerritoryCode>('fr');
@@ -395,18 +488,28 @@ export default function RechercheProduits() {
   const [error, setError] = useState<string | null>(null);
   const [hasAutoSearched, setHasAutoSearched] = useState(false);
   const [cachedAt, setCachedAt] = useState<string | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
   const hasSearchInput = Boolean(barcode.trim() || query.trim());
   const canSearch = hasSearchInput && !loading;
   const shouldShowReset = hasSearchInput || Boolean(result) || Boolean(error);
+  const showToast = useCallback((message: string) => {
+    setToastMessage(message);
+    window.setTimeout(() => setToastMessage(null), 1400);
+  }, []);
 
-  const buildCacheKey = useCallback(() => {
-    const normalizedQuery = query.trim().toLowerCase();
-    const normalizedBarcode = barcode.trim();
-    return `scanhub:price-search:${territory}:${normalizedBarcode || 'no-barcode'}:${normalizedQuery || 'no-query'}`;
+  const buildCacheKey = useCallback((input?: {
+    query?: string;
+    barcode?: string;
+    territory?: TerritoryCode;
+  }) => {
+    const normalizedQuery = (input?.query ?? query).trim().toLowerCase();
+    const normalizedBarcode = (input?.barcode ?? barcode).trim();
+    const normalizedTerritory = input?.territory ?? territory;
+    return `scanhub:price-search:${normalizedTerritory}:${normalizedBarcode || 'no-barcode'}:${normalizedQuery || 'no-query'}`;
   }, [barcode, query, territory]);
 
-  const readCache = useCallback(() => {
-    const key = buildCacheKey();
+  const readCache = useCallback((input?: { query?: string; barcode?: string; territory?: TerritoryCode }) => {
+    const key = buildCacheKey(input);
     const raw = safeLocalStorage.getItem(key);
     if (!raw) return null;
     try {
@@ -418,8 +521,8 @@ export default function RechercheProduits() {
   }, [buildCacheKey]);
 
   const writeCache = useCallback(
-    (payload: ScanHubResult) => {
-      const key = buildCacheKey();
+    (payload: ScanHubResult, input?: { query?: string; barcode?: string; territory?: TerritoryCode }) => {
+      const key = buildCacheKey(input);
       const cachedPayload = JSON.stringify({
         cachedAt: new Date().toISOString(),
         payload,
@@ -429,7 +532,34 @@ export default function RechercheProduits() {
     [buildCacheKey]
   );
 
-  const handleSearch = useCallback(async () => {
+  const runSearch = useCallback(async (input?: {
+    query?: string;
+    barcode?: string;
+    territory?: TerritoryCode;
+    source?: SearchHistoryType;
+    label?: string;
+    recordHistory?: boolean;
+  }) => {
+    const nextQuery = input?.query ?? query;
+    const nextBarcode = input?.barcode ?? barcode;
+    const nextTerritory = input?.territory ?? territory;
+    const trimmedQuery = nextQuery.trim();
+    const trimmedBarcode = nextBarcode.trim();
+    const hasInput = Boolean(trimmedQuery || trimmedBarcode);
+
+    if (input?.source && hasInput && input.recordHistory !== false) {
+      addEntry({
+        label: input.label ?? buildSearchLabel(trimmedQuery, trimmedBarcode),
+        type: input.source,
+        query: trimmedQuery || undefined,
+        barcode: trimmedBarcode || undefined,
+      });
+    }
+
+    setQuery(nextQuery);
+    setBarcode(nextBarcode);
+    setTerritory(nextTerritory);
+
     setLoading(true);
     setError(null);
     setResult(null);
@@ -437,20 +567,25 @@ export default function RechercheProduits() {
 
     try {
       const response = await searchProductPrices({
-        barcode: barcode.trim() || undefined,
-        query: query.trim() || undefined,
-        territory,
+        barcode: trimmedBarcode || undefined,
+        query: trimmedQuery || undefined,
+        territory: nextTerritory,
       });
       const mapped = mapPriceSearchResult(response);
       setResult(mapped);
-      writeCache(mapped);
+      writeCache(mapped, { query: trimmedQuery, barcode: trimmedBarcode, territory: nextTerritory });
     } catch (err: any) {
       console.error('Price search error:', err);
       setError('Impossible de récupérer les prix pour le moment.');
     } finally {
       setLoading(false);
     }
-  }, [barcode, query, territory]);
+  }, [addEntry, barcode, query, territory, writeCache]);
+
+  const handleSearch = useCallback(async () => {
+    const searchType = barcode.trim() ? 'barcode' : 'text';
+    return runSearch({ source: searchType });
+  }, [barcode, runSearch]);
 
   useEffect(() => {
     if (hasAutoSearched) {
@@ -459,14 +594,14 @@ export default function RechercheProduits() {
     if (!barcode.trim() && !query.trim()) {
       return;
     }
-    const cached = readCache();
+    const cached = readCache({ query, barcode, territory });
     if (cached?.payload) {
       setResult(cached.payload);
       setCachedAt(cached.cachedAt);
     }
-    void handleSearch();
+    void runSearch({ source: barcode.trim() ? 'barcode' : 'text', recordHistory: false });
     setHasAutoSearched(true);
-  }, [barcode, query, handleSearch, hasAutoSearched, readCache]);
+  }, [barcode, query, hasAutoSearched, readCache, runSearch, territory]);
 
   const handleReset = () => {
     setResult(null);
@@ -477,6 +612,41 @@ export default function RechercheProduits() {
     if (typeof window !== 'undefined') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+  };
+
+  const handleReplayHistory = (entry: SearchHistoryEntry) => {
+    void runSearch({
+      query: entry.query ?? '',
+      barcode: entry.barcode ?? '',
+      source: entry.type,
+      label: entry.label,
+    });
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const handleViewFavorite = (favorite: FavoriteItem) => {
+    if (favorite.type === 'comparison' && favorite.route) {
+      navigate(favorite.route);
+      return;
+    }
+    if (favorite.barcode || favorite.query) {
+      void runSearch({
+        query: favorite.query ?? '',
+        barcode: favorite.barcode ?? '',
+        source: favorite.barcode ? 'barcode' : 'text',
+        label: favorite.label,
+      });
+      return;
+    }
+    if (favorite.route) {
+      navigate(favorite.route);
+    }
+  };
+  const handleRemoveFavorite = (id: string) => {
+    removeFavorite(id);
+    showToast('Favori retiré');
   };
 
   return (
@@ -517,7 +687,7 @@ export default function RechercheProduits() {
               <input
                 value={barcode}
                 onChange={(event) => setBarcode(event.target.value)}
-                placeholder="Ex: 3229820129488"
+                placeholder="Scannez ou collez un EAN"
                 className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-white"
                 aria-label="Code-barres"
                 inputMode="numeric"
@@ -529,7 +699,7 @@ export default function RechercheProduits() {
               <input
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
-                placeholder="Ex: Lait demi-écrémé"
+                placeholder="Ex : riz 5kg, lait, eau…"
                 className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-white"
                 aria-label="Nom produit"
               />
@@ -576,6 +746,26 @@ export default function RechercheProduits() {
           </form>
         </section>
 
+        {loading && (
+          <div className="space-y-2 animate-pulse">
+            <div className="h-4 rounded-full bg-slate-800/80" />
+            <div className="h-4 rounded-full bg-slate-800/60 w-5/6" />
+          </div>
+        )}
+
+        <SearchHistoryPanel
+          entries={history}
+          onReplay={handleReplayHistory}
+          onRemove={removeEntry}
+          onClear={clearHistory}
+        />
+
+        <FavoritesPanel favorites={favorites} onView={handleViewFavorite} onRemove={handleRemoveFavorite} />
+
+        <p className="text-xs text-slate-400">
+          🔒 Les données restent sur votre appareil.
+        </p>
+
         <section className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 text-sm text-slate-300 space-y-2">
           <h2 className="font-semibold text-white">Conseils ScanHub</h2>
           <ul className="list-disc list-inside space-y-1 text-slate-300">
@@ -600,18 +790,33 @@ export default function RechercheProduits() {
         {loading && (
           <PriceSearchResults
             result={{ status: 'LOADING' }}
+            searchQuery={query}
+            searchBarcode={barcode}
             onReset={handleReset}
             onScanTicket={() => navigate('/scan')}
             onReturnToHub={() => navigate('/scanner')}
+            onFavoriteToast={showToast}
           />
         )}
         {!loading && result && (
           <PriceSearchResults
             result={result}
+            searchQuery={query}
+            searchBarcode={barcode}
             onReset={handleReset}
             onScanTicket={() => navigate('/scan')}
             onReturnToHub={() => navigate('/scanner')}
+            onFavoriteToast={showToast}
           />
+        )}
+        {toastMessage && (
+          <div
+            className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-slate-900/90 border border-slate-700 text-slate-100 text-sm px-4 py-2 rounded-full shadow-lg"
+            role="status"
+            aria-live="polite"
+          >
+            {toastMessage}
+          </div>
         )}
       </div>
     </div>

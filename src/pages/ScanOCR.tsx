@@ -18,6 +18,7 @@ import {
 import { buildPriceSearchInput } from '../services/scanHub/scanToPriceBridge';
 import type { ScanState, OcrOptions } from '../types/scan';
 import { useNavigate } from 'react-router-dom';
+import { useSearchHistory } from '../hooks/useSearchHistory';
 
 const SAMPLE_IMAGE = '/images/ocr-example.png';
 const COPY_FEEDBACK_DURATION = 2000;
@@ -55,6 +56,7 @@ export default function ScanOCR() {
   } | null>(null);
   const [autoSearchEnabled, setAutoSearchEnabled] = useState(true);
   const lastAutoSearchRef = useRef<string | null>(null);
+  const { addEntry } = useSearchHistory();
 
   const setImageSource = (url: string, isObjectUrl: boolean) => {
     if (imageObjectUrlRef.current) {
@@ -97,6 +99,15 @@ export default function ScanOCR() {
     const prices = extractPrices(trimmedText);
     const additives = extractAdditives(trimmedText);
     const priceInput = buildPriceSearchInput({ text: trimmedText });
+    const labelBase = priceInput.barcode
+      ? `OCR EAN ${priceInput.barcode}`
+      : `${getScanHubTypeLabel(classification.type)} (OCR)`;
+    addEntry({
+      label: labelBase,
+      type: 'ocr',
+      barcode: priceInput.barcode,
+      query: priceInput.query?.slice(0, 120),
+    });
     setScanSummary({
       typeLabel: getScanHubTypeLabel(classification.type),
       confidence: Math.round(classification.confidence),

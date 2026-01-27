@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import BarcodeScanner from '../components/BarcodeScanner';
 import ProductDetails from '../components/products/ProductDetails';
+import { useSearchHistory } from '../hooks/useSearchHistory';
 import { lookupProductByEan } from '../services/eanProductService';
 import { toProductViewModel } from '../services/productViewModelService';
 import type { ScanState, ScannerOptions } from '../types/scan';
@@ -13,6 +14,7 @@ export default function Scanner() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [scanState, setScanState] = useState<ScanState>('idle');
+  const { addEntry } = useSearchHistory();
   
   // Settings panel state
   const [showSettings, setShowSettings] = useState(false);
@@ -49,9 +51,20 @@ export default function Scanner() {
         const viewModel = toProductViewModel(result.product);
         setProductData(viewModel);
         setScanState('success');
+        addEntry({
+          label: viewModel.nom || `EAN ${code}`,
+          type: 'barcode',
+          barcode: code,
+          query: viewModel.nom || undefined,
+        });
       } else {
         setError('Produit non trouvé dans notre base de données');
         setScanState('not_found');
+        addEntry({
+          label: `EAN ${code}`,
+          type: 'barcode',
+          barcode: code,
+        });
       }
     } catch (err) {
       console.error('Product lookup error:', err);

@@ -8,6 +8,7 @@
  */
 
 import { useState, useEffect } from 'react';
+import { useFavorites } from '../../hooks/useFavorites';
 import type { ProductViewModel, UserPhoto } from '../types/productViewModel';
 import { getProductSubtitle, getTraceabilityText, hasCompleteInfo } from '../services/productViewModelService';
 import { getProductImageOrFallback } from '../utils/productImageFallback';
@@ -23,6 +24,8 @@ export default function ProductDetails({ product, onClose, onReportError }: Prod
   const [showPhotoGallery, setShowPhotoGallery] = useState(false);
   const [displayImageUrl, setDisplayImageUrl] = useState<string>('');
   const [imageFallbackAttempted, setImageFallbackAttempted] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const { isFavorite, toggleFavorite } = useFavorites();
 
   // Get image with fallback on mount and when product changes
   useEffect(() => {
@@ -41,6 +44,19 @@ export default function ProductDetails({ product, onClose, onReportError }: Prod
     'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
 
   const isComplete = hasCompleteInfo(product);
+  const favoriteId = `product:barcode:${product.ean}`;
+  const favoriteActive = isFavorite(favoriteId);
+  const showToast = (message: string) => {
+    setToastMessage(message);
+    window.setTimeout(() => setToastMessage(null), 1400);
+  };
+  const observationDate = new Date(product.dateObservation);
+  const isObservationValid = !Number.isNaN(observationDate.getTime());
+  const daysSinceObservation = isObservationValid
+    ? Math.floor((Date.now() - observationDate.getTime()) / 86400000)
+    : null;
+  const freshnessLabel =
+    daysSinceObservation === null ? null : daysSinceObservation <= 7 ? 'Récent' : 'À vérifier';
 
   return (
     <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl overflow-hidden max-w-2xl mx-auto">
@@ -112,13 +128,38 @@ export default function ProductDetails({ product, onClose, onReportError }: Prod
         {/* Product Identity Section */}
         <div className="space-y-3">
           {/* Product Name */}
-          <div>
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-              {product.nom}
-            </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-              {getProductSubtitle(product)}
-            </p>
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+            <div>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                {product.nom}
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                {getProductSubtitle(product)}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                const message = favoriteActive ? 'Favori retiré' : '⭐ Ajouté aux favoris';
+                toggleFavorite({
+                  id: favoriteId,
+                  label: product.nom,
+                  type: 'product',
+                  barcode: product.ean,
+                  productName: product.nom,
+                  route: `/recherche-produits?ean=${encodeURIComponent(product.ean)}`,
+                });
+                showToast(message);
+              }}
+              className={`px-3 py-2 rounded-lg text-sm font-semibold border transition-colors ${
+                favoriteActive
+                  ? 'bg-amber-400/20 border-amber-400 text-amber-600 dark:text-amber-200'
+                  : 'bg-white/80 dark:bg-slate-900 border-gray-200 dark:border-slate-700 text-gray-500 dark:text-gray-300'
+              }`}
+              aria-pressed={favoriteActive}
+            >
+              {favoriteActive ? '⭐ Favori' : '☆ Favori'}
+            </button>
           </div>
 
           {/* EAN Code */}
@@ -163,6 +204,22 @@ export default function ProductDetails({ product, onClose, onReportError }: Prod
                 <p className="text-lg font-bold text-gray-900 dark:text-white">
                   {product.prix}
                 </p>
+                <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  {isObservationValid
+                    ? `Prix observé le ${observationDate.toLocaleDateString('fr-FR')}`
+                    : "Date d’observation non disponible"}
+                </div>
+                {freshnessLabel && (
+                  <span
+                    className={`mt-1 inline-flex items-center rounded-full px-2 py-0.5 text-xs opacity-80 ${
+                      freshnessLabel === 'Récent'
+                        ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
+                        : 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300'
+                    }`}
+                  >
+                    {freshnessLabel}
+                  </span>
+                )}
               </div>
             )}
             
@@ -265,6 +322,10 @@ export default function ProductDetails({ product, onClose, onReportError }: Prod
         )}
       </div>
 
+      <p className="text-xs text-gray-500 dark:text-gray-400">
+        Les prix peuvent varier selon les magasins.
+      </p>
+
       {/* Photo Gallery Modal (simple implementation) */}
       {showPhotoGallery && product.userPhotos.length > 0 && (
         <div 
@@ -303,6 +364,15 @@ export default function ProductDetails({ product, onClose, onReportError }: Prod
               </div>
             )}
           </div>
+        </div>
+      )}
+      {toastMessage && (
+        <div
+          className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-slate-900/90 border border-slate-700 text-slate-100 text-sm px-4 py-2 rounded-full shadow-lg"
+          role="status"
+          aria-live="polite"
+        >
+          {toastMessage}
         </div>
       )}
     </div>
