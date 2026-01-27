@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState } from "react";
 import { recognizeImage } from "../ocr/loadTesseract";
 import { extractPrices } from "../utils/extractPrices";
@@ -167,3 +168,6 @@ const styles = {
     borderColor: "#2d3748",
   },
 };
+=======
+[COLLE ICI LE CONTENU COMPLET DU BLOC frontend/src/pages/OcrPage.jsx]
+>>>>>>> 1a032011 (chore(ocr): lazy-load tesseract in comparateurs and pages (use recognizeImage))
