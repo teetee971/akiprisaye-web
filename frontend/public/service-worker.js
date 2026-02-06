@@ -1,10 +1,9 @@
-// 🔹 Nom du cache - version incrémentée pour forcer le rafraîchissement
-const CACHE_NAME = 'akiprisaye-smart-cache-v3';
+// 🔹 Cache version - incremented to v4 for complete cache invalidation
+const CACHE_NAME = 'akiprisaye-smart-cache-v4';
 
-// 🔹 Ressources à précharger (sans index.html pour éviter le cache stale)
+// 🔹 Only precache essential non-HTML assets
 const ASSETS_TO_CACHE = [
   '/manifest.webmanifest',
-  '/assets/icon_512-3-9kYoTe.png',
 ];
 
 // 🔹 Installation du service worker
@@ -35,47 +34,48 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// 🔹 Interception des requêtes avec stratégie network-first pour HTML
+// 🔹 Fetch handler with strict network-first for HTML
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
   
-  // Pour les documents HTML, toujours essayer le réseau en premier
-  if (request.mode === 'navigate' || request.destination === 'document' || 
-      url.pathname === '/' || url.pathname.endsWith('.html')) {
+  // CRITICAL: Network-first for ALL HTML documents - NEVER serve cached HTML
+  if (request.mode === 'navigate' || 
+      request.destination === 'document' || 
+      url.pathname === '/' || 
+      url.pathname.endsWith('.html')) {
     event.respondWith(
-      fetch(request)
+      fetch(request, { cache: 'no-store' })
         .then((response) => {
-          // Ne pas cacher les documents HTML pour éviter le stale content
+          // NEVER cache HTML responses to prevent stale content
           return response;
         })
         .catch(() => {
-          // En cas d'erreur réseau, chercher dans le cache
-          return caches.match(request).then((cachedResponse) => {
-            if (cachedResponse) {
-              return cachedResponse;
+          // Only on network failure, return minimal offline message
+          return new Response(
+            '<!DOCTYPE html><html><body><h1>Hors ligne</h1><p>Veuillez vous reconnecter à Internet.</p></body></html>',
+            { 
+              status: 503,
+              headers: { 
+                'Content-Type': 'text/html',
+                'Cache-Control': 'no-store'
+              } 
             }
-            // Fallback offline basique si aucun cache
-            return new Response(
-              '<html><body><h1>Hors ligne</h1><p>Veuillez vous reconnecter à Internet.</p></body></html>',
-              { headers: { 'Content-Type': 'text/html' } }
-            );
-          });
+          );
         })
     );
     return;
   }
   
-  // Pour les autres ressources (JS, CSS, images), utiliser cache-first
+  // Cache-first for static assets (JS, CSS, images) with immutable hashes
   event.respondWith(
     caches.match(request).then((response) => {
       if (response) {
-        console.log('✅ Cache hit :', request.url);
         return response;
       }
       return fetch(request)
         .then((liveResponse) => {
-          // Mettre en cache uniquement les ressources statiques
+          // Only cache successful responses for same-origin requests
           if (liveResponse.ok && liveResponse.type === 'basic') {
             return caches.open(CACHE_NAME).then((cache) => {
               cache.put(request, liveResponse.clone());
@@ -85,7 +85,6 @@ self.addEventListener('fetch', (event) => {
           return liveResponse;
         })
         .catch(() => {
-          // Pas de fallback pour les ressources non-HTML
           return new Response('', { status: 503, statusText: 'Service Unavailable' });
         });
     })
