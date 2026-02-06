@@ -1,13 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <!-- Main Pages -->
+  <!-- Main Page -->
   <url>
     <loc>https://akiprisaye-web.pages.dev/</loc>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://akiprisaye-web.pages.dev/#/home</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -177,27 +172,5 @@
     <loc>https://akiprisaye-web.pages.dev/#/transparence</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
-  </url>
-  
-  <!-- User Account Pages (noindex via robots meta in pages) -->
-  <url>
-    <loc>https://akiprisaye-web.pages.dev/#/connexion</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
-    <loc>https://akiprisaye-web.pages.dev/#/inscription</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
-    <loc>https://akiprisaye-web.pages.dev/#/mon-compte</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  <url>
-    <loc>https://akiprisaye-web.pages.dev/#/parametres</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.2</priority>
   </url>
 </urlset>
