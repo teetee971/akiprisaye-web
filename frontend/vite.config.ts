@@ -44,8 +44,15 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src')
+      '@': path.resolve(__dirname, './src'),
+      // Force chart.js to resolve to its auto-registration ESM entry
+      // This ensures proper module resolution in CI environments like Cloudflare Pages
+      'chart.js': 'chart.js/auto'
     }
+  },
+  // Prebundle chart.js dependencies for better CI compatibility
+  optimizeDeps: {
+    include: ['chart.js', 'react-chartjs-2']
   },
   build: {
     outDir: 'dist',
