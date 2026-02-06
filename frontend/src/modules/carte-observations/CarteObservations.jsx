@@ -36,9 +36,9 @@ export default function CarteObservations({ territory = null, productFilter = nu
 
       delete leaflet.Icon.Default.prototype._getIconUrl;
       leaflet.Icon.Default.mergeOptions({
-        iconRetinaUrl: '/images/marker-icon-2x.png',
-        iconUrl: '/images/marker-icon.png',
-        shadowUrl: '/images/marker-shadow.png',
+        iconRetinaUrl: '/leaflet/marker-icon-2x.png',
+        iconUrl: '/leaflet/marker-icon.png',
+        shadowUrl: '/leaflet/marker-shadow.png',
       });
     });
 
