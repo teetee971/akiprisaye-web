@@ -1,16 +1,8 @@
-// 🔹 Nom du cache
-const CACHE_NAME = 'akiprisaye-smart-cache-v2';
+// 🔹 Nom du cache - version incrémentée pour forcer le rafraîchissement
+const CACHE_NAME = 'akiprisaye-smart-cache-v3';
 
-// 🔹 Ressources à précharger
+// 🔹 Ressources à précharger (sans index.html pour éviter le cache stale)
 const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/scanner',
-  '/comparateur',
-  '/historique-prix',
-  '/ia-conseiller',
-  '/contact',
-  '/carte',
   '/manifest.webmanifest',
   '/assets/icon_512-3-9kYoTe.png',
 ];
@@ -43,23 +35,60 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// 🔹 Interception des requêtes (offline fallback)
+// 🔹 Interception des requêtes avec stratégie network-first pour HTML
 self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      if (response) {
-        console.log('✅ Cache hit :', event.request.url);
-        return response;
-      }
-      return fetch(event.request)
-        .then((liveResponse) => {
-          return caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, liveResponse.clone());
-            return liveResponse;
+  const { request } = event;
+  const url = new URL(request.url);
+  
+  // Pour les documents HTML, toujours essayer le réseau en premier
+  if (request.mode === 'navigate' || request.destination === 'document' || 
+      url.pathname === '/' || url.pathname.endsWith('.html')) {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          // Ne pas cacher les documents HTML pour éviter le stale content
+          return response;
+        })
+        .catch(() => {
+          // En cas d'erreur réseau, chercher dans le cache
+          return caches.match(request).then((cachedResponse) => {
+            if (cachedResponse) {
+              return cachedResponse;
+            }
+            // Fallback offline basique si aucun cache
+            return new Response(
+              '<html><body><h1>Hors ligne</h1><p>Veuillez vous reconnecter à Internet.</p></body></html>',
+              { headers: { 'Content-Type': 'text/html' } }
+            );
           });
         })
-        .catch(() => caches.match('/index.html'));
-    }),
+    );
+    return;
+  }
+  
+  // Pour les autres ressources (JS, CSS, images), utiliser cache-first
+  event.respondWith(
+    caches.match(request).then((response) => {
+      if (response) {
+        console.log('✅ Cache hit :', request.url);
+        return response;
+      }
+      return fetch(request)
+        .then((liveResponse) => {
+          // Mettre en cache uniquement les ressources statiques
+          if (liveResponse.ok && liveResponse.type === 'basic') {
+            return caches.open(CACHE_NAME).then((cache) => {
+              cache.put(request, liveResponse.clone());
+              return liveResponse;
+            });
+          }
+          return liveResponse;
+        })
+        .catch(() => {
+          // Pas de fallback pour les ressources non-HTML
+          return new Response('', { status: 503, statusText: 'Service Unavailable' });
+        });
+    })
   );
 });
 
