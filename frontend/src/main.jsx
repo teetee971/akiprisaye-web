@@ -1,12 +1,22 @@
 import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
+import L from 'leaflet';
 
 import './styles/glass.css';
 import './styles/mobile-fixes.css';
 
 import Layout from './components/Layout';
 import ErrorBoundary from './components/ErrorBoundary';
+
+// Fix Leaflet marker icons for Vite/Cloudflare build
+// Point to our bundled markers in /public/leaflet/
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: '/leaflet/marker-icon-2x.png',
+  iconUrl: '/leaflet/marker-icon.png',
+  shadowUrl: '/leaflet/marker-shadow.png',
+});
 
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
