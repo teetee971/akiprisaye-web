@@ -46,16 +46,25 @@ import ComparateurCitoyen from './pages/ComparateurCitoyen';
 // Scanner & OCR pages
 import ScannerHub from './pages/ScannerHub';
 import OCRHub from './pages/ocr/OCRHub';
+import ScanEAN from './pages/ScanEAN';
+import ProductPhotoAnalysis from './pages/ProductPhotoAnalysis';
+import ComparaisonEnseignes from './pages/ComparaisonEnseignes';
 
 // Settings & History
 import Settings from './pages/Settings';
 import HistoriquePrix from './pages/HistoriquePrix';
 import RecherchePrix from './pages/RecherchePrix';
+import Alertes from './pages/Alertes';
 
 // Auth pages
 import Login from './pages/Login';
 import Inscription from './pages/Inscription';
 import ResetPassword from './pages/ResetPassword';
+import MonCompte from './pages/MonCompte';
+
+// Pricing & Subscription
+import Pricing from './pages/Pricing';
+import Subscribe from './pages/Subscribe';
 
 // Observatory real-time
 import ObservatoireTempsReel from './pages/ObservatoireTempsReel';
@@ -114,17 +123,32 @@ if (!rootElement) {
                     {/* Scanner & OCR routes */}
                     <Route path="scan" element={<ScannerHub />} />
                     <Route path="scanner" element={<ScannerHub />} />
+                    <Route path="scan-ean" element={<ScanEAN />} />
+                    <Route path="analyse-photo-produit" element={<ProductPhotoAnalysis />} />
                     <Route path="ocr" element={<OCRHub />} />
+                    
+                    {/* Comparison & Reporting */}
+                    <Route path="comparaison-enseignes" element={<ComparaisonEnseignes />} />
+                    <Route path="signalement" element={<SignalerAbus />} />
                     
                     {/* Settings & History */}
                     <Route path="parametres" element={<Settings />} />
                     <Route path="historique-prix" element={<HistoriquePrix />} />
+                    <Route path="historique" element={<HistoriquePrix />} />
                     <Route path="recherche-prix" element={<RecherchePrix />} />
+                    <Route path="alertes" element={<Alertes />} />
                     
                     {/* Auth routes */}
                     <Route path="login" element={<Login />} />
+                    <Route path="connexion" element={<Login />} />
                     <Route path="inscription" element={<Inscription />} />
                     <Route path="reset-password" element={<ResetPassword />} />
+                    <Route path="mon-compte" element={<MonCompte />} />
+                    
+                    {/* Pricing & Subscription */}
+                    <Route path="pricing" element={<Pricing />} />
+                    <Route path="subscribe" element={<Subscribe />} />
+                    <Route path="subscribe/success" element={<Subscribe />} />
                     
                     {/* Observatory real-time */}
                     <Route path="observatoire-temps-reel" element={<ObservatoireTempsReel />} />
