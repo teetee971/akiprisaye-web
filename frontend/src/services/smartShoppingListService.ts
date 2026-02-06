@@ -3,8 +3,8 @@
  * Manages shopping lists and budget optimization
  */
 
-import type { 
 import { safeLocalStorage } from '../utils/safeLocalStorage';
+import type { 
   ShoppingList, 
   ShoppingListItem, 
   BudgetOptimization,
