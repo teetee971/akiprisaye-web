@@ -1,21 +1,15 @@
+import tsParser from '@typescript-eslint/parser';
+
 export default [
   {
     ignores: [
-      'scanner.js',
-      'scripts/**',
+      'public/ocr/**',
+      'public/service-worker.js',
+      'src_old/**',
       'dist/**',
       'node_modules/**',
-      'audit-reports/**',
-      'frontend/public/ocr/**',
-      'frontend/public/service-worker.js',
-      'frontend/src_old/**',
-      'src_old/**',
-      '**/vite.config.ts',
-      '**/vite.config.js',
-      '**/tailwind.config.js',
-      '**/capacitor.config.ts',
-      '**/tsconfig.json',
-      '**/tsconfig.node.json',
+      'vite.config.ts',
+      'vite.config.js',
     ],
   },
   {
@@ -23,7 +17,7 @@ export default [
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
-      parser: await import('@typescript-eslint/parser'),
+      parser: tsParser,
       parserOptions: {
         ecmaFeatures: {
           jsx: true,
@@ -54,6 +48,10 @@ export default [
         ImageBitmapOptions: 'readonly',
         HTMLImageElement: 'readonly',
         HTMLCanvasElement: 'readonly',
+        HTMLVideoElement: 'readonly',
+        HTMLDivElement: 'readonly',
+        HTMLInputElement: 'readonly',
+        HTMLElement: 'readonly',
         CanvasRenderingContext2D: 'readonly',
         AbortController: 'readonly',
         AbortSignal: 'readonly',
@@ -73,11 +71,23 @@ export default [
         alert: 'readonly',
         confirm: 'readonly',
         prompt: 'readonly',
+        performance: 'readonly',
+        // Media APIs
+        MediaStream: 'readonly',
+        // Geolocation API
+        GeolocationPosition: 'readonly',
+        GeolocationPositionError: 'readonly',
+        PermissionState: 'readonly',
+        PermissionName: 'readonly',
+        // IndexedDB
+        IDBDatabase: 'readonly',
+        IDBOpenDBRequest: 'readonly',
+        IDBRequest: 'readonly',
+        indexedDB: 'readonly',
         // Service Worker and Web Worker globals
         self: 'readonly',
         caches: 'readonly',
         postMessage: 'readonly',
-        indexedDB: 'readonly',
         WebAssembly: 'readonly',
         MessageChannel: 'readonly',
         // Node.js process (for some build tools)
@@ -91,6 +101,13 @@ export default [
       'no-console': 'off',
       'no-undef': 'error',
       'no-useless-escape': 'error',
+    },
+  },
+  {
+    files: ['**/*.ts', '**/*.tsx'],
+    rules: {
+      // Disable no-undef for TypeScript files since TypeScript handles this
+      'no-undef': 'off',
     },
   },
   {
