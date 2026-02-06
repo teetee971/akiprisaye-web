@@ -7,8 +7,8 @@
  * @module productService
  */
 
-import type { 
 import { safeLocalStorage } from '../utils/safeLocalStorage';
+import type { 
   Product, 
   ProductSearchParams, 
   ProductListResponse,
