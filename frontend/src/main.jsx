@@ -6,6 +6,7 @@ import L from 'leaflet';
 import './styles/glass.css';
 import './styles/mobile-fixes.css';
 import './styles/leaflet-overrides.css';
+import './styles/a11y.css';
 
 import Layout from './components/Layout';
 import ErrorBoundary from './components/ErrorBoundary';

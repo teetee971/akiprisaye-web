@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useCallback } from 'react';
+import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { Link } from 'react-router-dom';
 import {
@@ -16,6 +16,7 @@ import { getStoresByTerritory } from '../services/mapService';
 import { getActiveTerritories, TERRITORIES } from '../constants/territories';
 import { safeLocalStorage } from '../utils/safeLocalStorage';
 import { loadLeafletWithMarkerCluster } from '../utils/leafletClient';
+import A11yLiveRegion from '../components/A11yLiveRegion';
 
 function MapUpdater({ map, position }) {
   useEffect(() => {
@@ -27,7 +28,7 @@ function MapUpdater({ map, position }) {
   return null;
 }
 
-function MarkerClusterGroup({ map, leaflet, stores, currentTerritory, formatDistance }) {
+function MarkerClusterGroup({ map, leaflet, stores, currentTerritory, formatDistance, markerRefs }) {
   useEffect(() => {
     if (!map || !leaflet) return;
 
@@ -59,31 +60,68 @@ function MarkerClusterGroup({ map, leaflet, stores, currentTerritory, formatDist
 
     stores.forEach((store) => {
       const leafletMarker = leaflet.marker([store.lat, store.lon]);
+      
+      // Store marker ref for accessibility
+      if (markerRefs && markerRefs.current) {
+        markerRefs.current.set(store.id || `${store.lat},${store.lon}`, leafletMarker);
+      }
 
+      // Create popup content using DOM (React-only approach)
       const popupContent = document.createElement('div');
       popupContent.className = 'text-slate-900';
-      popupContent.innerHTML = `
-        <h3 class="font-semibold">${store.name}</h3>
-        <p class="text-sm text-slate-600">${store.category}</p>
-        <p class="text-xs text-slate-500">${currentTerritory?.name || ''}</p>
-        ${store.distance ? `
-          <div class="text-xs mt-1 space-y-1">
-            <p class="text-blue-600 font-medium">
-              Distance: ${formatDistance(store.distance)} <span class="text-slate-500">(estimée)</span>
-            </p>
-          </div>
-        ` : ''}
-        <div class="mt-2">
-          <a 
-            href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${store.lat},${store.lon}" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            class="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-500 text-white text-xs rounded hover:bg-blue-600 transition-colors"
-          >
-            📸 Street View
-          </a>
-        </div>
-      `;
+      popupContent.setAttribute('role', 'dialog');
+      popupContent.setAttribute('aria-labelledby', `store-${store.id || store.lat}`);
+      
+      // Title
+      const title = document.createElement('h3');
+      title.className = 'font-semibold';
+      title.id = `store-${store.id || store.lat}`;
+      title.textContent = store.name;
+      popupContent.appendChild(title);
+      
+      // Category
+      const category = document.createElement('p');
+      category.className = 'text-sm text-slate-600';
+      category.textContent = store.category;
+      popupContent.appendChild(category);
+      
+      // Territory
+      const territoryEl = document.createElement('p');
+      territoryEl.className = 'text-xs text-slate-500';
+      territoryEl.textContent = currentTerritory?.name || '';
+      popupContent.appendChild(territoryEl);
+      
+      // Distance info
+      if (store.distance) {
+        const distanceDiv = document.createElement('div');
+        distanceDiv.className = 'text-xs mt-1 space-y-1';
+        
+        const distanceP = document.createElement('p');
+        distanceP.className = 'text-blue-600 font-medium';
+        distanceP.textContent = `Distance: ${formatDistance(store.distance)} `;
+        
+        const estimated = document.createElement('span');
+        estimated.className = 'text-slate-500';
+        estimated.textContent = '(estimée)';
+        distanceP.appendChild(estimated);
+        
+        distanceDiv.appendChild(distanceP);
+        popupContent.appendChild(distanceDiv);
+      }
+      
+      // Street View link
+      const linkDiv = document.createElement('div');
+      linkDiv.className = 'mt-2';
+      
+      const streetViewLink = document.createElement('a');
+      streetViewLink.href = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${store.lat},${store.lon}`;
+      streetViewLink.target = '_blank';
+      streetViewLink.rel = 'noopener noreferrer';
+      streetViewLink.className = 'inline-flex items-center gap-1 px-3 py-1.5 bg-blue-500 text-white text-xs rounded hover:bg-blue-600 transition-colors';
+      streetViewLink.textContent = '📸 Street View';
+      
+      linkDiv.appendChild(streetViewLink);
+      popupContent.appendChild(linkDiv);
 
       leafletMarker.bindPopup(popupContent, {
         maxWidth: 300,
@@ -98,7 +136,7 @@ function MarkerClusterGroup({ map, leaflet, stores, currentTerritory, formatDist
     return () => {
       map.removeLayer(markerClusterGroup);
     };
-  }, [map, leaflet, stores, currentTerritory, formatDistance]);
+  }, [map, leaflet, stores, currentTerritory, formatDistance, markerRefs]);
 
   return null;
 }
@@ -131,6 +169,10 @@ export default function Carte() {
   const [showNearMeOnly, setShowNearMeOnly] = useState(false);
 
   const [enableClustering, setEnableClustering] = useState(true);
+
+  // Refs for marker accessibility
+  const markerRefs = useRef(new Map()); // storeId -> LeafletMarker
+  const markerCleanup = useRef(new Map()); // storeId -> cleanupFn
 
   const NAVIGATION_TIMEOUT = 1000;
   const MAX_RECENT_DESTINATIONS = 5;
@@ -492,6 +534,50 @@ export default function Carte() {
     });
   }, [leaflet]);
 
+  // Make markers keyboard accessible
+  useEffect(() => {
+    // Clean up old handlers
+    markerCleanup.current.forEach((cleanup) => cleanup());
+    markerCleanup.current.clear();
+
+    markerRefs.current.forEach((marker, storeId) => {
+      const el = marker?.getElement?.();
+      if (!el) return;
+
+      // A11y attributes
+      el.setAttribute('tabindex', '0');
+      el.setAttribute('role', 'button');
+      el.classList.add('map-marker-focus');
+
+      // Find store data for aria-label
+      const store = filteredStores.find((s) => 
+        (s.id && s.id === storeId) || `${s.lat},${s.lon}` === storeId
+      );
+      const label = store 
+        ? `${store.name}${store.category ? `, ${store.category}` : ''}` 
+        : 'Magasin';
+      el.setAttribute('aria-label', label);
+
+      const onKeyDown = (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          marker.openPopup();
+        }
+      };
+
+      el.addEventListener('keydown', onKeyDown);
+
+      // Cleanup
+      const cleanup = () => el.removeEventListener('keydown', onKeyDown);
+      markerCleanup.current.set(storeId, cleanup);
+    });
+
+    return () => {
+      markerCleanup.current.forEach((cleanup) => cleanup());
+      markerCleanup.current.clear();
+    };
+  }, [filteredStores]);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 text-slate-100">
       <div className="max-w-7xl mx-auto py-8 px-4">
@@ -811,38 +897,50 @@ export default function Carte() {
           </span>
         </div>
 
-        <div className="rounded-lg overflow-hidden border border-slate-700 shadow-xl h-[600px] bg-slate-800">
-          {typeof window !== 'undefined' && (
-            <MapContainer
-              ref={setMapInstance}
-              center={defaultPosition}
-              zoom={currentTerritory?.zoom || 11}
-              style={{ height: '100%', width: '100%' }}
-            >
-              <TileLayer
-                url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-              />
-              <MapUpdater map={map} position={territoryPositions[territory]} />
-
-              {enableClustering ? (
-                <MarkerClusterGroup
-                  map={map}
-                  leaflet={leaflet}
-                  stores={filteredStores}
-                  currentTerritory={currentTerritory}
-                  formatDistance={formatDistance}
+        <div role="region" aria-label="Carte interactive des magasins">
+          <A11yLiveRegion text={`${filteredStores.length} magasins affichés`} />
+          <div className="rounded-lg overflow-hidden border border-slate-700 shadow-xl h-[600px] bg-slate-800">
+            {typeof window !== 'undefined' && (
+              <MapContainer
+                ref={setMapInstance}
+                center={defaultPosition}
+                zoom={currentTerritory?.zoom || 11}
+                style={{ height: '100%', width: '100%' }}
+              >
+                <TileLayer
+                  url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
                 />
-              ) : (
+                <MapUpdater map={map} position={territoryPositions[territory]} />
+
+                {enableClustering ? (
+                  <MarkerClusterGroup
+                    map={map}
+                    leaflet={leaflet}
+                    stores={filteredStores}
+                    currentTerritory={currentTerritory}
+                    formatDistance={formatDistance}
+                    markerRefs={markerRefs}
+                  />
+                ) : (
                 filteredStores.map((store, index) => {
                   const storeKey = `${store.lat},${store.lon}`;
                   const isStoreNavigating = isNavigating[storeKey] || false;
 
                   return (
-                    <Marker key={index} position={[store.lat, store.lon]}>
+                    <Marker 
+                      key={index} 
+                      position={[store.lat, store.lon]}
+                      ref={(m) => {
+                        if (m) {
+                          const storeId = store.id || storeKey;
+                          markerRefs.current.set(storeId, m);
+                        }
+                      }}
+                    >
                       <Popup>
-                        <div className="text-slate-900">
-                          <h3 className="font-semibold">{store.name}</h3>
+                        <div className="text-slate-900" role="dialog" aria-labelledby={`store-${store.id || store.lat}`}>
+                          <h3 className="font-semibold" id={`store-${store.id || store.lat}`}>{store.name}</h3>
                           <p className="text-sm text-slate-600">{store.category}</p>
                           <p className="text-xs text-slate-500">{currentTerritory?.name || territory}</p>
                           {store.distance && (
@@ -955,6 +1053,7 @@ export default function Carte() {
               )}
             </MapContainer>
           )}
+          </div>
         </div>
 
         <div className="mt-8">
