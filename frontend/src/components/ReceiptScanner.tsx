@@ -491,9 +491,10 @@ export default function ReceiptScanner({ onAnalysisComplete, onClose }: ReceiptS
                   className="flex items-start justify-between p-3 bg-slate-800/50 rounded-lg"
                 >
                   <div className="flex-1">
-                    <p className="text-white font-medium mb-1">
+                    {/* SECURITY: OCR text rendered as plain text to prevent XSS (CodeQL compliant) */}
+                    <div className="text-white font-medium mb-1 whitespace-pre-wrap break-words">
                       {line.normalizedLabel}
-                    </p>
+                    </div>
                     <div className="flex items-center gap-4 text-xs text-gray-400">
                       <span>Confiance: {line.confidence}%</span>
                       {line.quantity && <span>Qté: {line.quantity}</span>}
