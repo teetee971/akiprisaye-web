@@ -26,7 +26,10 @@ try {
   }
 } catch (error) {
   firebaseError = error?.message || 'Unknown Firebase initialization error';
-  console.error('⚠️ Firebase initialization failed:', firebaseError);
+  // Only log errors in development
+  if (import.meta.env?.DEV) {
+    console.error('⚠️ Firebase initialization failed:', firebaseError);
+  }
   // Services remain null - app will continue to function
 }
 
