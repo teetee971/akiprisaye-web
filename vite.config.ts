@@ -48,7 +48,7 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
-          if (!id.includes('node_modules')) return undefined
+          if (!id.includes('/node_modules/')) return undefined
 
           if (id.includes('/react/') || id.includes('/react-dom/')) {
             return 'vendor-react'
