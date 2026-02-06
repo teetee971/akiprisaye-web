@@ -22,30 +22,6 @@ export default defineConfig({
     react(),
     viteStaticCopy({
       targets: [
-        // Copie nos markers custom depuis /public/leaflet vers /leaflet
-        {
-          src: 'public/leaflet/*.png',
-          dest: 'leaflet'
-        },
-        // Copie aussi dans le sous-dossier images pour la compatibilité CSS
-        {
-          src: 'public/leaflet/images/*',
-          dest: 'leaflet/images'
-        },
-        // Copie aussi à la racine /images pour que le CSS bundlé les trouve
-        {
-          src: 'public/leaflet/images/*',
-          dest: 'images'
-        },
-        // Copie les images Leaflet seulement si elles existent (layers, etc.)
-        ...(existsSync('node_modules/leaflet/dist/images') ? [{
-          src: 'node_modules/leaflet/dist/images/layers*.png',
-          dest: 'leaflet/images'
-        }] : []),
-        ...(existsSync('node_modules/leaflet/dist/images') ? [{
-          src: 'node_modules/leaflet/dist/images/layers*.png',
-          dest: 'images'
-        }] : []),
         // Copie les workers Tesseract si disponibles
         ...(existsSync('node_modules/tesseract.js/dist/worker.min.js') ? [{
           src: 'node_modules/tesseract.js/dist/worker.min.js*',
