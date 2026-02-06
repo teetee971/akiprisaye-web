@@ -23,6 +23,18 @@ import { useSearchHistory } from '../hooks/useSearchHistory';
 const SAMPLE_IMAGE = '/images/ocr-example.png';
 const COPY_FEEDBACK_DURATION = 2000;
 
+/**
+ * SECURITY: Allowlist image sources to prevent XSS (CodeQL compliant)
+ * Only allows safe image formats (blob: and data:image base64 for png/jpeg/webp)
+ * Rejects SVG (can contain scripts), javascript:, and external URLs
+ */
+function toSafeImageSrc(src?: string | null): string | null {
+  if (!src) return null;
+  if (/^data:image\/(png|jpe?g|webp);base64,/i.test(src)) return src;
+  if (src.startsWith("blob:")) return src;
+  return null;
+}
+
 export default function ScanOCR() {
   const navigate = useNavigate();
   const [image, setImage] = useState<string | null>(null);
@@ -619,16 +631,20 @@ export default function ScanOCR() {
           )}
 
           {/* Image Preview */}
-          {image && !ocrResult && (
-            <div className="mt-6">
-              <h3 className="text-white font-semibold mb-2">Aperçu de l'image</h3>
-              <img 
-                src={image} 
-                alt="Image sélectionnée" 
-                className="w-full rounded-lg border border-slate-700"
-              />
-            </div>
-          )}
+          {/* SECURITY: image src allowlisted (no svg, no javascript:) to satisfy CodeQL XSS */}
+          {(() => {
+            const safeSrc = toSafeImageSrc(image);
+            return safeSrc && !ocrResult && (
+              <div className="mt-6">
+                <h3 className="text-white font-semibold mb-2">Aperçu de l'image</h3>
+                <img 
+                  src={safeSrc} 
+                  alt="Image sélectionnée" 
+                  className="w-full rounded-lg border border-slate-700"
+                />
+              </div>
+            );
+          })()}
         </div>
       </div>
     </div>

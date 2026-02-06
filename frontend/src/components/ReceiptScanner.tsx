@@ -37,6 +37,18 @@ type ScanStep = 'capture' | 'processing' | 'validation' | 'comparison';
 
 type ProcessingPhase = 'photo' | 'ocr' | 'comparison' | 'complete';
 
+/**
+ * SECURITY: Allowlist image sources to prevent XSS (CodeQL compliant)
+ * Only allows safe image formats (blob: and data:image base64 for png/jpeg/webp)
+ * Rejects SVG (can contain scripts), javascript:, and external URLs
+ */
+function toSafeImageSrc(src?: string | null): string | null {
+  if (!src) return null;
+  if (/^data:image\/(png|jpe?g|webp);base64,/i.test(src)) return src;
+  if (src.startsWith("blob:")) return src;
+  return null;
+}
+
 export default function ReceiptScanner({ onAnalysisComplete, onClose }: ReceiptScannerProps) {
   const [step, setStep] = useState<ScanStep>('capture');
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
@@ -313,15 +325,19 @@ export default function ReceiptScanner({ onAnalysisComplete, onClose }: ReceiptS
             </p>
           </div>
 
-          {capturedImage && (
-            <div className="mt-6">
-              <img 
-                src={capturedImage} 
-                alt="Ticket scanné" 
-                className="max-w-sm mx-auto rounded-lg border border-slate-700 opacity-50"
-              />
-            </div>
-          )}
+          {/* SECURITY: image src allowlisted (no svg, no javascript:) to satisfy CodeQL XSS */}
+          {(() => {
+            const safeSrc = toSafeImageSrc(capturedImage);
+            return safeSrc && (
+              <div className="mt-6">
+                <img 
+                  src={safeSrc} 
+                  alt="Ticket scanné" 
+                  className="max-w-sm mx-auto rounded-lg border border-slate-700 opacity-50"
+                />
+              </div>
+            );
+          })()}
         </div>
       )}
 
