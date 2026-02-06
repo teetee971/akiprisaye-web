@@ -4,13 +4,13 @@
  * Displays an interactive map with the optimized shopping route
  * Shows user position, store markers, and route polylines
  * 
- * Note: Uses Leaflet.js loaded dynamically. Type declarations for window.L
- * are not available since Leaflet is loaded at runtime via CDN.
+ * Note: Uses Leaflet.js loaded from npm package.
  */
 
 import { useEffect, useRef, useState } from 'react';
 import type { OptimalRoute } from '../utils/routeOptimization';
 import type { GeoPosition } from '../utils/geoLocation';
+import { loadLeaflet } from '../utils/leafletClient';
 
 interface RouteMapVisualizationProps {
   route: OptimalRoute;
@@ -52,39 +52,15 @@ export default function RouteMapVisualization({
    */
   async function loadLeafletAndInitMap() {
     try {
-      // Check if Leaflet is already loaded
-      if (window.L) {
-        initializeMap();
-        return;
-      }
-
-      // Load Leaflet CSS
-      if (!document.querySelector('link[href*="leaflet.css"]')) {
-        const cssLink = document.createElement('link');
-        cssLink.rel = 'stylesheet';
-        cssLink.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-        cssLink.integrity = 'sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=';
-        cssLink.crossOrigin = '';
-        document.head.appendChild(cssLink);
-      }
-
-      // Load Leaflet JS
-      const script = document.createElement('script');
-      script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-      script.integrity = 'sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=';
-      script.crossOrigin = '';
-      
-      script.onload = () => {
+      // Use the utility that imports from npm packages
+      const L = await loadLeaflet();
+      if (L) {
+        window.L = L;
         setIsLoading(false);
         initializeMap();
-      };
-
-      script.onerror = () => {
-        setError('Erreur lors du chargement de la carte');
-        setIsLoading(false);
-      };
-
-      document.head.appendChild(script);
+      } else {
+        throw new Error('Failed to load Leaflet');
+      }
     } catch (err) {
       console.error('Error loading Leaflet:', err);
       setError('Erreur lors du chargement de la carte');

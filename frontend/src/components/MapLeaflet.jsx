@@ -6,6 +6,7 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
+import { loadLeaflet } from '../utils/leafletClient';
 
 // Territory coordinates (center points)
 const TERRITORY_COORDINATES = {
@@ -30,8 +31,8 @@ export function MapLeaflet({ territory = 'GP', stores = [], onStoreClick = null 
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Load Leaflet CSS and JS dynamically
-    loadLeaflet();
+    // Load Leaflet from npm package (not CDN)
+    loadLeafletLibrary();
   }, []);
 
   useEffect(() => {
@@ -42,44 +43,22 @@ export function MapLeaflet({ territory = 'GP', stores = [], onStoreClick = null 
   }, [territory, stores]);
 
   /**
-   * Load Leaflet library dynamically
+   * Load Leaflet library from npm package
    */
-  async function loadLeaflet() {
+  async function loadLeafletLibrary() {
     try {
-      // Check if Leaflet is already loaded
-      if (window.L) {
+      // Use the utility that imports from npm packages
+      const L = await loadLeaflet();
+      if (L) {
+        window.L = L;
+        setIsLoading(false);
         initializeMap();
-        return;
+      } else {
+        throw new Error('Failed to load Leaflet');
       }
-
-      // Load Leaflet CSS
-      const cssLink = document.createElement('link');
-      cssLink.rel = 'stylesheet';
-      cssLink.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-      cssLink.integrity = 'sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=';
-      cssLink.crossOrigin = '';
-      document.head.appendChild(cssLink);
-
-      // Load Leaflet JS
-      const script = document.createElement('script');
-      script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-      script.integrity = 'sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=';
-      script.crossOrigin = '';
-      
-      script.onload = () => {
-        setIsLoading(false);
-        initializeMap();
-      };
-
-      script.onerror = () => {
-        setError('Erreur lors du chargement de la carte');
-        setIsLoading(false);
-      };
-
-      document.head.appendChild(script);
     } catch (err) {
       console.error('Error loading Leaflet:', err);
-      setError(err.message);
+      setError('Erreur lors du chargement de la carte');
       setIsLoading(false);
     }
   }
