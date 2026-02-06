@@ -1,11 +1,65 @@
+import { useState } from 'react';
+import toast from 'react-hot-toast';
+
 export default function Contact() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    // Validation
+    if (!formData.name || !formData.email || !formData.message) {
+      toast.error('Veuillez remplir tous les champs');
+      return;
+    }
+    
+    if (!formData.email.includes('@')) {
+      toast.error('Veuillez entrer une adresse email valide');
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    try {
+      // Simulate form submission (replace with actual API call)
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      toast.success('Message envoyé avec succès ! Nous vous répondrons bientôt.');
+      
+      // Reset form
+      setFormData({
+        name: '',
+        email: '',
+        message: ''
+      });
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      toast.error('Une erreur est survenue. Veuillez réessayer.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
       <h1 style={{ color: '#ffffff', marginBottom: '1rem' }}>Contact</h1>
       <p style={{ color: '#b8b8b8', marginBottom: '2rem' }}>
         Vous avez une question ou une suggestion ? N'hésitez pas à nous contacter.
       </p>
-      <form style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <div>
           <label htmlFor="name" style={{ display: 'block', color: '#ffffff', marginBottom: '0.5rem' }}>
             Nom
@@ -14,6 +68,9 @@ export default function Contact() {
             type="text"
             id="name"
             name="name"
+            value={formData.name}
+            onChange={handleChange}
+            required
             style={{
               width: '100%',
               padding: '0.5rem',
@@ -32,6 +89,9 @@ export default function Contact() {
             type="email"
             id="email"
             name="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
             style={{
               width: '100%',
               padding: '0.5rem',
@@ -50,6 +110,9 @@ export default function Contact() {
             id="message"
             name="message"
             rows="5"
+            value={formData.message}
+            onChange={handleChange}
+            required
             style={{
               width: '100%',
               padding: '0.5rem',
@@ -62,17 +125,19 @@ export default function Contact() {
         </div>
         <button
           type="submit"
+          disabled={isSubmitting}
           style={{
             padding: '0.75rem 1.5rem',
-            background: 'linear-gradient(135deg, #0f62fe, #0353e9)',
+            background: isSubmitting ? '#666' : 'linear-gradient(135deg, #0f62fe, #0353e9)',
             color: '#ffffff',
             border: 'none',
             borderRadius: '4px',
-            cursor: 'pointer',
+            cursor: isSubmitting ? 'not-allowed' : 'pointer',
             fontWeight: '500',
+            opacity: isSubmitting ? 0.6 : 1,
           }}
         >
-          Envoyer
+          {isSubmitting ? 'Envoi en cours...' : 'Envoyer'}
         </button>
       </form>
     </div>
