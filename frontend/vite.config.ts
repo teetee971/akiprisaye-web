@@ -44,8 +44,12 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src')
+      '@': path.resolve(__dirname, './src'),
+      'chart.js': 'chart.js/auto'
     }
+  },
+  optimizeDeps: {
+    include: ['chart.js', 'react-chartjs-2']
   },
   build: {
     outDir: 'dist',
