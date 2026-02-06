@@ -17,7 +17,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Navigation, MapPin, Camera, Image as ImageIcon, Receipt } from 'lucide-react';
 import EnhancedSearch from '../components/search/EnhancedSearch';
 import EnhancedComparisonDisplay from '../components/comparison/EnhancedComparisonDisplay';
@@ -28,7 +28,8 @@ import { getUserPosition, calculateDistance, formatDistance, type GeoPosition } 
 import type { ScanSource } from '../types/scanFlow';
 
 export default function EnhancedComparator() {
-  const [searchParams] = useSearchParams()
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   
   // Scan context from URL (if coming from unified flow)
   const scanEAN = searchParams.get('ean')
@@ -106,22 +107,22 @@ export default function EnhancedComparator() {
   
   const handleViewHistory = (ean: string) => {
     // Navigate to price history page
-    window.location.href = `/historique?ean=${ean}&territory=${territory}`;
+    navigate(`/historique?ean=${ean}&territory=${territory}`);
   };
   
   const handleCreateAlert = (ean: string) => {
     // Navigate to alert creation page
-    window.location.href = `/alertes?ean=${ean}&territory=${territory}`;
+    navigate(`/alertes?ean=${ean}&territory=${territory}`);
   };
   
   const handleReportAnomaly = (ean: string, storeId: string) => {
     // Navigate to anomaly report page
-    window.location.href = `/signalement?ean=${ean}&store=${encodeURIComponent(storeId)}&territory=${territory}`;
+    navigate(`/signalement?ean=${ean}&store=${encodeURIComponent(storeId)}&territory=${territory}`);
   };
   
   const handleCompareStores = () => {
     // Navigate to store comparison page
-    window.location.href = `/comparaison-enseignes?territory=${territory}`;
+    navigate(`/comparaison-enseignes?territory=${territory}`);
   };
 
   const handleGetLocation = async () => {
@@ -206,7 +207,7 @@ export default function EnhancedComparator() {
               </p>
             </div>
             <button
-              onClick={() => window.location.href = '/'}
+              onClick={() => navigate('/')}
               className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
             >
               ← Retour

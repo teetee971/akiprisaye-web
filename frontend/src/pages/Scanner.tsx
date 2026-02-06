@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import BarcodeScanner from '../components/BarcodeScanner';
 import ProductDetails from '../components/products/ProductDetails';
 import { useSearchHistory } from '../hooks/useSearchHistory';
@@ -8,6 +9,7 @@ import type { ScanState, ScannerOptions } from '../types/scan';
 import { safeLocalStorage } from '../utils/safeLocalStorage';
 
 export default function Scanner() {
+  const navigate = useNavigate();
   const [showScanner, setShowScanner] = useState(false);
   const [scanResult, setScanResult] = useState<string | null>(null);
   const [productData, setProductData] = useState<any | null>(null);
@@ -86,11 +88,9 @@ export default function Scanner() {
     const behavior = settings.notFoundBehavior;
     
     if (behavior === 'manual_search') {
-      // TODO: Use React Router's navigate function when available
-      // For now, using window.location as a fallback
-      const searchUrl = `/recherche?q=${encodeURIComponent(scanResult || '')}`;
-      console.log('[SCAN] Redirecting to search:', searchUrl);
-      window.location.href = searchUrl;
+      // Use React Router navigate instead of window.location
+      const searchQuery = encodeURIComponent(scanResult || '');
+      navigate(`/recherche?q=${searchQuery}`);
     } else if (behavior === 'local_save') {
       // Save to local storage for review
       const savedScans = JSON.parse(safeLocalStorage.getItem('unrecognizedScans') || '[]');

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Camera, Search, Barcode, Receipt } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import ReceiptScanner from '../components/ReceiptScanner';
 import uxMonitor from '../utils/uxMonitor';
 import type { ReceiptAnalysisResult } from '../services/receiptScanService';
@@ -24,6 +24,7 @@ type SearchMode = 'text' | 'barcode' | 'photo' | 'receipt';
 
 export default function RecherchePrix() {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [searchMode, setSearchMode] = useState<SearchMode | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [receiptAnalysis, setReceiptAnalysis] = useState<ReceiptAnalysisResult | null>(null);
@@ -66,10 +67,10 @@ export default function RecherchePrix() {
     // Redirect to appropriate scan interface if needed
     switch (mode) {
       case 'barcode':
-        window.location.href = '/scan-ean?from=recherche-prix';
+        navigate('/scan-ean?from=recherche-prix');
         break;
       case 'photo':
-        window.location.href = '/analyse-photo-produit?from=recherche-prix';
+        navigate('/analyse-photo-produit?from=recherche-prix');
         break;
       case 'receipt':
         // Stay on this page - render ReceiptScanner component
@@ -90,8 +91,8 @@ export default function RecherchePrix() {
   const handleTextSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      // Redirect to comparator with search query
-      window.location.href = `/comparateur?q=${encodeURIComponent(searchQuery)}`;
+      // Navigate to comparator with search query
+      navigate(`/comparateur?q=${encodeURIComponent(searchQuery)}`);
     }
   };
 

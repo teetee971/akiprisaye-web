@@ -33,7 +33,8 @@ export default function Login() {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       const nextParam = searchParams.get("next");
-      const safeNext = nextParam && nextParam.startsWith("/") ? nextParam : null;
+      // Prevent open redirect: must start with / but not with //
+      const safeNext = nextParam && nextParam.startsWith("/") && !nextParam.startsWith("//") ? nextParam : null;
       navigate(safeNext || "/mon-compte");
     } catch (err: any) {
       setError(getErrorMessage(err));
