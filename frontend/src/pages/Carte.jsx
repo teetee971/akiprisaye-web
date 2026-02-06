@@ -1,57 +1,97 @@
 export default function Carte() {
+  const pageMetadata = {
+    heading: "Carte Interactive des Commerces",
+    description: "Localisez les magasins et comparez leurs prix sur une carte interactive de la Guadeloupe"
+  };
+
+  const navigationLinks = [
+    { text: "🏠 Accueil", target: "#/home" },
+    { text: "📊 Stats", target: "#/dashboard" }
+  ];
+
+  const wrapperCSS = {
+    minHeight: "100vh",
+    background: "#0a0d12",
+    color: "#f3f4f6",
+    fontFamily: "system-ui, -apple-system, sans-serif"
+  };
+
+  const contentCSS = {
+    maxWidth: "72rem",
+    margin: "0 auto",
+    padding: "2.5rem 1.5rem"
+  };
+
+  const headingCSS = {
+    fontSize: "2rem",
+    fontWeight: "700",
+    marginBottom: "0.75rem",
+    color: "#10b981"
+  };
+
+  const descCSS = {
+    fontSize: "1rem",
+    opacity: 0.85,
+    marginBottom: "2rem",
+    lineHeight: "1.6"
+  };
+
+  const mapPlaceholderCSS = {
+    height: "28rem",
+    background: "linear-gradient(135deg, #1e293b 0%, #0f172a 100%)",
+    borderRadius: "0.75rem",
+    border: "2px dashed rgba(16, 185, 129, 0.3)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "1.25rem",
+    opacity: 0.7,
+    marginBottom: "2rem"
+  };
+
+  const navContainerCSS = {
+    display: "flex",
+    gap: "1rem",
+    flexWrap: "wrap"
+  };
+
+  const linkCSS = {
+    padding: "0.75rem 1.5rem",
+    borderRadius: "0.5rem",
+    textDecoration: "none",
+    fontWeight: "600",
+    fontSize: "0.95rem",
+    transition: "transform 0.2s"
+  };
+
   return (
-    <div style={{ 
-      minHeight: "100vh", 
-      padding: "24px",
-      background: "#0f1115",
-      color: "#ffffff",
-      fontFamily: "system-ui, sans-serif"
-    }}>
-      <header style={{ marginBottom: "32px" }}>
-        <h1 style={{ fontSize: "2rem", marginBottom: "8px" }}>
-          🗺️ Carte Interactive
-        </h1>
-        <p style={{ opacity: 0.85 }}>
-          Visualisez les commerces et comparez les prix en temps réel
-        </p>
-      </header>
-      
-      <main>
-        <div style={{
-          padding: "24px",
-          background: "#1a1d24",
-          borderRadius: "8px",
-          marginBottom: "16px"
-        }}>
-          <p>
-            La carte interactive affiche les magasins et leurs prix.<br />
-            Cette page sera connectée à la fonctionnalité complète.
-          </p>
+    <div style={wrapperCSS}>
+      <div style={contentCSS}>
+        <h1 style={headingCSS}>{pageMetadata.heading}</h1>
+        <p style={descCSS}>{pageMetadata.description}</p>
+
+        <div style={mapPlaceholderCSS}>
+          <span>🗺️ Zone cartographique (intégration à venir)</span>
         </div>
-        
-        <nav style={{ display: "flex", gap: "12px", marginTop: "24px" }}>
-          <a href="#/" style={{
-            padding: "10px 16px",
-            background: "#22c55e",
-            color: "#022c22",
-            borderRadius: "6px",
-            textDecoration: "none",
-            fontWeight: 600
-          }}>
-            Retour Accueil
-          </a>
-          <a href="#/dashboard" style={{
-            padding: "10px 16px",
-            background: "#3b82f6",
-            color: "#ffffff",
-            borderRadius: "6px",
-            textDecoration: "none",
-            fontWeight: 600
-          }}>
-            Dashboard
-          </a>
+
+        <nav style={navContainerCSS}>
+          {navigationLinks.map((link, i) => (
+            <a
+              key={i}
+              href={link.target}
+              style={{
+                ...linkCSS,
+                background: i === 0 ? "#10b981" : "#3b82f6",
+                color: i === 0 ? "#022c22" : "#fff"
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.05)"}
+              onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
+            >
+              {link.text}
+            </a>
+          ))}
         </nav>
-      </main>
+      </div>
     </div>
   );
 }

@@ -1,60 +1,134 @@
 export default function Dashboard() {
+  const dashboardConfig = {
+    title: "Tableau de Bord Analytique",
+    subtitle: "Visualisation des données de prix et tendances du marché",
+    statsCards: [
+      { label: "Produits suivis", value: "En cours", color: "#10b981" },
+      { label: "Commerces référencés", value: "En cours", color: "#3b82f6" },
+      { label: "Analyses effectuées", value: "En cours", color: "#f59e0b" }
+    ]
+  };
+
+  const quickLinks = [
+    { label: "🏠 Retour", href: "#/home" },
+    { label: "🗺️ Carte", href: "#/carte" }
+  ];
+
+  const layoutCSS = {
+    minHeight: "100vh",
+    background: "#0d1117",
+    color: "#e6edf3",
+    fontFamily: "system-ui, sans-serif",
+    padding: "2rem 1.25rem"
+  };
+
+  const containerCSS = {
+    maxWidth: "68rem",
+    margin: "0 auto"
+  };
+
+  const titleCSS = {
+    fontSize: "2.25rem",
+    fontWeight: "700",
+    marginBottom: "0.5rem",
+    color: "#58a6ff"
+  };
+
+  const subtitleCSS = {
+    fontSize: "1rem",
+    opacity: 0.8,
+    marginBottom: "2.5rem"
+  };
+
+  const cardsGridCSS = {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(14rem, 1fr))",
+    gap: "1.25rem",
+    marginBottom: "2.5rem"
+  };
+
+  const statCardCSS = {
+    padding: "1.75rem",
+    background: "rgba(255, 255, 255, 0.03)",
+    borderRadius: "0.625rem",
+    border: "1px solid rgba(255, 255, 255, 0.08)"
+  };
+
+  const chartAreaCSS = {
+    height: "22rem",
+    background: "linear-gradient(to bottom, #161b22, #0d1117)",
+    borderRadius: "0.75rem",
+    border: "1px solid rgba(255, 255, 255, 0.08)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: "2rem",
+    fontSize: "1.125rem",
+    opacity: 0.6
+  };
+
+  const linksCSS = {
+    display: "flex",
+    gap: "1rem"
+  };
+
+  const linkButtonCSS = {
+    padding: "0.875rem 1.75rem",
+    borderRadius: "0.5rem",
+    textDecoration: "none",
+    fontWeight: "600",
+    transition: "opacity 0.2s"
+  };
+
   return (
-    <div style={{ 
-      minHeight: "100vh", 
-      padding: "24px",
-      background: "#0f1115",
-      color: "#ffffff",
-      fontFamily: "system-ui, sans-serif"
-    }}>
-      <header style={{ marginBottom: "32px" }}>
-        <h1 style={{ fontSize: "2rem", marginBottom: "8px" }}>
-          📊 Dashboard
-        </h1>
-        <p style={{ opacity: 0.85 }}>
-          Tableau de bord des statistiques et analyses de prix
-        </p>
-      </header>
-      
-      <main>
-        <div style={{
-          padding: "24px",
-          background: "#1a1d24",
-          borderRadius: "8px",
-          marginBottom: "16px"
-        }}>
-          <h2 style={{ fontSize: "1.5rem", marginBottom: "12px" }}>
-            Aperçu des données
-          </h2>
-          <p>
-            Le dashboard présente les statistiques et analyses en temps réel.<br />
-            Cette page sera connectée aux données complètes.
-          </p>
+    <div style={layoutCSS}>
+      <div style={containerCSS}>
+        <h1 style={titleCSS}>{dashboardConfig.title}</h1>
+        <p style={subtitleCSS}>{dashboardConfig.subtitle}</p>
+
+        <div style={cardsGridCSS}>
+          {dashboardConfig.statsCards.map((card, idx) => (
+            <div key={idx} style={statCardCSS}>
+              <div style={{ 
+                fontSize: "0.875rem", 
+                opacity: 0.75, 
+                marginBottom: "0.5rem" 
+              }}>
+                {card.label}
+              </div>
+              <div style={{ 
+                fontSize: "1.75rem", 
+                fontWeight: "700",
+                color: card.color 
+              }}>
+                {card.value}
+              </div>
+            </div>
+          ))}
         </div>
-        
-        <nav style={{ display: "flex", gap: "12px", marginTop: "24px" }}>
-          <a href="#/" style={{
-            padding: "10px 16px",
-            background: "#22c55e",
-            color: "#022c22",
-            borderRadius: "6px",
-            textDecoration: "none",
-            fontWeight: 600
-          }}>
-            Retour Accueil
-          </a>
-          <a href="#/carte" style={{
-            padding: "10px 16px",
-            background: "#3b82f6",
-            color: "#ffffff",
-            borderRadius: "6px",
-            textDecoration: "none",
-            fontWeight: 600
-          }}>
-            Carte
-          </a>
+
+        <div style={chartAreaCSS}>
+          <span>📈 Espace graphiques analytiques (intégration prochaine)</span>
+        </div>
+
+        <nav style={linksCSS}>
+          {quickLinks.map((link, i) => (
+            <a
+              key={i}
+              href={link.href}
+              style={{
+                ...linkButtonCSS,
+                background: i === 0 ? "#238636" : "#1f6feb",
+                color: "#ffffff"
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.opacity = "0.85"}
+              onMouseLeave={(e) => e.currentTarget.style.opacity = "1"}
+            >
+              {link.label}
+            </a>
+          ))}
         </nav>
-      </main>
+      </div>
     </div>
   );
 }

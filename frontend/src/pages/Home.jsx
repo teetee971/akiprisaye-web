@@ -1,80 +1,92 @@
 export default function Home() {
+  const platformInfo = {
+    tagline: "Transparence des prix en Guadeloupe",
+    features: [
+      { icon: "🗺️", label: "Carte des magasins", path: "#/carte" },
+      { icon: "📊", label: "Statistiques prix", path: "#/dashboard" },
+      { icon: "📸", label: "Scanner ticket", path: "#/ocr" }
+    ]
+  };
+
+  const containerCSS = {
+    minHeight: "100vh",
+    padding: "2rem 1.5rem",
+    background: "linear-gradient(135deg, #0f1115 0%, #1a1d24 100%)",
+    color: "#e5e7eb",
+    fontFamily: "'Inter', system-ui, sans-serif"
+  };
+
+  const headerCSS = {
+    textAlign: "center",
+    maxWidth: "42rem",
+    margin: "0 auto 3rem"
+  };
+
+  const titleCSS = {
+    fontSize: "2.5rem",
+    fontWeight: "700",
+    marginBottom: "1rem",
+    background: "linear-gradient(90deg, #10b981 0%, #059669 100%)",
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent",
+    backgroundClip: "text"
+  };
+
+  const gridCSS = {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(15rem, 1fr))",
+    gap: "1.5rem",
+    maxWidth: "56rem",
+    margin: "0 auto"
+  };
+
+  const cardCSS = {
+    padding: "2rem",
+    background: "rgba(255, 255, 255, 0.05)",
+    borderRadius: "0.75rem",
+    border: "1px solid rgba(255, 255, 255, 0.1)",
+    textAlign: "center",
+    textDecoration: "none",
+    color: "inherit",
+    transition: "all 0.3s ease",
+    cursor: "pointer"
+  };
+
+  const iconCSS = {
+    fontSize: "3rem",
+    marginBottom: "1rem"
+  };
+
   return (
-    <div style={{ 
-      minHeight: "100vh", 
-      padding: "24px",
-      background: "#0f1115",
-      color: "#ffffff",
-      fontFamily: "system-ui, sans-serif"
-    }}>
-      <header style={{ marginBottom: "32px", textAlign: "center" }}>
-        <h1 style={{ fontSize: "2.5rem", marginBottom: "12px" }}>
-          🟢 A KI PRI SA YÉ
-        </h1>
-        <p style={{ fontSize: "1.2rem", opacity: 0.85 }}>
-          Plateforme citoyenne de transparence des prix
+    <div style={containerCSS}>
+      <header style={headerCSS}>
+        <h1 style={titleCSS}>A KI PRI SA YÉ</h1>
+        <p style={{ fontSize: "1.125rem", opacity: 0.9 }}>
+          {platformInfo.tagline}
         </p>
       </header>
-      
-      <main style={{ maxWidth: "800px", margin: "0 auto" }}>
-        <div style={{
-          padding: "24px",
-          background: "#1a1d24",
-          borderRadius: "8px",
-          marginBottom: "16px"
-        }}>
-          <h2 style={{ fontSize: "1.5rem", marginBottom: "12px" }}>
-            Bienvenue !
-          </h2>
-          <p style={{ lineHeight: 1.6, marginBottom: "16px" }}>
-            Notre plateforme vous permet de comparer les prix, visualiser les commerces 
-            et faire des économies au quotidien.
-          </p>
-          <p style={{ lineHeight: 1.6 }}>
-            Utilisez les boutons ci-dessous pour naviguer vers les différentes fonctionnalités.
-          </p>
-        </div>
-        
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-          gap: "16px",
-          marginTop: "32px"
-        }}>
-          <a href="#/carte" style={{
-            padding: "24px",
-            background: "#22c55e",
-            color: "#022c22",
-            borderRadius: "8px",
-            textDecoration: "none",
-            textAlign: "center",
-            fontWeight: 600
-          }}>
-            🗺️ Carte Interactive
+
+      <main style={gridCSS}>
+        {platformInfo.features.map((feat, idx) => (
+          <a
+            key={idx}
+            href={feat.path}
+            style={cardCSS}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = "translateY(-4px)";
+              e.currentTarget.style.background = "rgba(16, 185, 129, 0.1)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "translateY(0)";
+              e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)";
+            }}
+          >
+            <div style={iconCSS}>{feat.icon}</div>
+            <div style={{ fontWeight: "600", fontSize: "1.125rem" }}>
+              {feat.label}
+            </div>
           </a>
-          <a href="#/dashboard" style={{
-            padding: "24px",
-            background: "#3b82f6",
-            color: "#ffffff",
-            borderRadius: "8px",
-            textDecoration: "none",
-            textAlign: "center",
-            fontWeight: 600
-          }}>
-            📊 Dashboard
-          </a>
-          <a href="#/ocr" style={{
-            padding: "24px",
-            background: "#f59e0b",
-            color: "#000000",
-            borderRadius: "8px",
-            textDecoration: "none",
-            textAlign: "center",
-            fontWeight: 600
-          }}>
-            📸 Scanner OCR
-          </a>
-        </div>
+        ))}
       </main>
     </div>
   );

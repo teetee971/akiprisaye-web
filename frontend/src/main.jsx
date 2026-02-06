@@ -2,36 +2,39 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 
-import Home from "./pages/Home";
-import Carte from "./pages/Carte";
-import Dashboard from "./pages/Dashboard";
-import OcrPage from "./pages/OcrPage";
+import HomePage from "./pages/Home";
+import CarteInteractive from "./pages/Carte";
+import DashboardAnalytics from "./pages/Dashboard";
+import OcrScanner from "./pages/OcrPage";
 
-const container = document.getElementById("root");
+const rootElement = document.getElementById("root");
 
-if (container) {
+if (!rootElement) {
+  console.error("[AKIPRISAYE] Erreur: élément racine introuvable");
+} else {
+  const reactRoot = createRoot(rootElement);
+
+  const AppRouterConfig = () => (
+    <HashRouter>
+      <Routes>
+        <Route path="/" element={<Navigate to="/home" replace />} />
+        <Route path="/home" element={<HomePage />} />
+        <Route path="/carte" element={<CarteInteractive />} />
+        <Route path="/dashboard" element={<DashboardAnalytics />} />
+        <Route path="/ocr" element={<OcrScanner />} />
+        <Route path="*" element={<Navigate to="/carte" replace />} />
+      </Routes>
+    </HashRouter>
+  );
+
   try {
-    const root = createRoot(container);
-
-    root.render(
+    reactRoot.render(
       <React.StrictMode>
-        <HashRouter>
-          <Routes>
-            <Route path="/" element={<Navigate to="/home" replace />} />
-            <Route path="/home" element={<Home />} />
-            <Route path="/carte" element={<Carte />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/ocr" element={<OcrPage />} />
-            <Route path="*" element={<Navigate to="/carte" replace />} />
-          </Routes>
-        </HashRouter>
+        <AppRouterConfig />
       </React.StrictMode>
     );
-
-    console.info("[React] App montée avec succès (HashRouter actif)");
-  } catch (err) {
-    console.error("[React] Erreur au montage", err);
+    console.info("[AKIPRISAYE] Application démarrée avec HashRouter");
+  } catch (mountError) {
+    console.error("[AKIPRISAYE] Échec du montage:", mountError);
   }
-} else {
-  console.error("[React] Element #root introuvable");
 }
