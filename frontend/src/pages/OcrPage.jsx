@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, { useState } from "react";
 import { recognizeImage } from "../ocr/loadTesseract";
 import { extractPrices } from "../utils/extractPrices";
@@ -35,14 +34,14 @@ export default function OcrPage() {
         }
       });
 
-      const extractedText = result && (result as any).text ? (result as any).text.trim() : "";
+      const extractedText = result && result.text ? result.text.trim() : "";
       setText(extractedText);
 
       const extractedPrices = extractPrices(extractedText);
       setPricesData(extractedPrices);
     } catch (err) {
       console.error(err);
-      setError("Erreur lors de l’analyse OCR");
+      setError("Erreur lors de l'analyse OCR");
     } finally {
       setLoading(false);
     }
@@ -59,7 +58,7 @@ export default function OcrPage() {
 
       {image && (
         <button onClick={runOcr} disabled={loading} style={styles.button}>
-          {loading ? "Analyse en cours…" : "Lancer l’OCR"}
+          {loading ? "Analyse en cours…" : "Lancer l'OCR"}
         </button>
       )}
 
@@ -168,6 +167,3 @@ const styles = {
     borderColor: "#2d3748",
   },
 };
-=======
-[COLLE ICI LE CONTENU COMPLET DU BLOC frontend/src/pages/OcrPage.jsx]
->>>>>>> 1a032011 (chore(ocr): lazy-load tesseract in comparateurs and pages (use recognizeImage))
