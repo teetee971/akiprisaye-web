@@ -2,6 +2,8 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
+// Firebase configuration with environment variables
+// Fallback values are provided for backward compatibility but should be set via .env.local
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyDf_m8BzMVHFWoFhVLyThuKwWTMhB7u5ZY",
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "a-ki-pri-sa-ye.firebaseapp.com",
@@ -11,6 +13,11 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:187272078809:web:110a92e34493ef4506e5c8",
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "G-NFHCZTLPDM"
 };
+
+// Warn in development if using fallback values
+if (import.meta.env?.DEV && !import.meta.env.VITE_FIREBASE_API_KEY) {
+  console.warn('⚠️ Firebase: Using fallback configuration. Set VITE_FIREBASE_* environment variables for production.');
+}
 
 let app = null;
 let auth = null;

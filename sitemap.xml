@@ -1,10 +1,203 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://akiprisaye-web.pages.dev/</loc></url>
-  <url><loc>https://akiprisaye-web.pages.dev/comparateur.html</loc></url>
-  <url><loc>https://akiprisaye-web.pages.dev/scanner.html</loc></url>
-  <url><loc>https://akiprisaye-web.pages.dev/carte.html</loc></url>
-  <url><loc>https://akiprisaye-web.pages.dev/actualites.html</loc></url>
-  <url><loc>https://akiprisaye-web.pages.dev/modules.html</loc></url>
-  <url><loc>https://akiprisaye-web.pages.dev/mentions.html</loc></url>
+  <!-- Main Pages -->
+  <url>
+    <loc>https://akiprisaye-web.pages.dev/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://akiprisaye-web.pages.dev/#/home</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  
+  <!-- Core Features -->
+  <url>
+    <loc>https://akiprisaye-web.pages.dev/#/comparateur</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://akiprisaye-web.pages.dev/#/scanner</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://akiprisaye-web.pages.dev/#/carte</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://akiprisaye-web.pages.dev/#/observatoire</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Comparators Hub -->
+  <url>
+    <loc>https://akiprisaye-web.pages.dev/#/comparateurs</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://akiprisaye-web.pages.dev/#/comparateur-citoyen</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://akiprisaye-web.pages.dev/#/comparaison-enseignes</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Scanner & OCR -->
+  <url>
+    <loc>https://akiprisaye-web.pages.dev/#/scan</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://akiprisaye-web.pages.dev/#/scan-ean</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://akiprisaye-web.pages.dev/#/ocr</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://akiprisaye-web.pages.dev/#/analyse-photo-produit</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <!-- Map & Routes -->
+  <url>
+    <loc>https://akiprisaye-web.pages.dev/#/carte-itineraires</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- History & Alerts -->
+  <url>
+    <loc>https://akiprisaye-web.pages.dev/#/historique</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://akiprisaye-web.pages.dev/#/historique-prix</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://akiprisaye-web.pages.dev/#/alertes</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Observatory -->
+  <url>
+    <loc>https://akiprisaye-web.pages.dev/#/observatoire-temps-reel</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Contribution & Reporting -->
+  <url>
+    <loc>https://akiprisaye-web.pages.dev/#/contribuer</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://akiprisaye-web.pages.dev/#/contribuer-prix</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://akiprisaye-web.pages.dev/#/signalement</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://akiprisaye-web.pages.dev/#/signaler-abus</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <!-- Search & Prices -->
+  <url>
+    <loc>https://akiprisaye-web.pages.dev/#/recherche-prix</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Subscription & Pricing -->
+  <url>
+    <loc>https://akiprisaye-web.pages.dev/#/pricing</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://akiprisaye-web.pages.dev/#/subscribe</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <!-- Information Pages -->
+  <url>
+    <loc>https://akiprisaye-web.pages.dev/#/methodologie</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://akiprisaye-web.pages.dev/#/faq</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://akiprisaye-web.pages.dev/#/contact</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://akiprisaye-web.pages.dev/#/mentions-legales</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  
+  <!-- Open Data -->
+  <url>
+    <loc>https://akiprisaye-web.pages.dev/#/donnees-publiques</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://akiprisaye-web.pages.dev/#/transparence</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <!-- User Account Pages (noindex via robots meta in pages) -->
+  <url>
+    <loc>https://akiprisaye-web.pages.dev/#/connexion</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://akiprisaye-web.pages.dev/#/inscription</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://akiprisaye-web.pages.dev/#/mon-compte</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  <url>
+    <loc>https://akiprisaye-web.pages.dev/#/parametres</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
 </urlset>

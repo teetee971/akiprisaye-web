@@ -21,6 +21,14 @@ export default function Layout() {
 
   return (
     <div className="flex flex-col min-h-screen bg-slate-950 text-slate-100">
+      {/* Skip to main content link for accessibility */}
+      <a 
+        href="#main-content" 
+        className="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 focus:z-50 focus:bg-blue-600 focus:text-white focus:px-4 focus:py-2 focus:m-2 focus:rounded"
+      >
+        Aller au contenu principal
+      </a>
+      
       {/* HEADER */}
       <header className="fixed top-0 left-0 right-0 border-b border-slate-800 shadow-md bg-slate-900/70 backdrop-blur-lg z-header">
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between h-16">
@@ -99,7 +107,7 @@ export default function Layout() {
       <OfflineIndicator />
 
       {/* CONTENU */}
-      <main className="flex-1 pt-20 pb-12 px-4 md:px-8">
+      <main id="main-content" className="flex-1 pt-20 pb-12 px-4 md:px-8">
         <Outlet />
       </main>
 
