@@ -171,3 +171,4 @@ audit.json
 package-lock.json
 # CI fix – allow frontend lockfile for npm ci
 !frontend/package-lock.json
+ frontend/
