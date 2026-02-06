@@ -1,0 +1,269 @@
+/**
+ * CIVIC GLASS DESIGN SYSTEM - ShadCN/UI Theme
+ * Single source of truth using CSS tokens
+ * Light mode by default, dark mode via tokens
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Theme tokens only: avoid hard-coded colors in components to preserve A11y contrast. */
+  :root {
+    /* Backgrounds - RGB values for Tailwind - LIQUID GLASS CHIC INSTITUTIONAL */
+    --bg-main: 248 250 252;        /* #F8FAFC */
+    --bg-secondary: 241 245 249;   /* #F1F5F9 */
+    --bg-glass: 0 0 0;             /* Black glass base for light mode */
+
+    /* Text - RGB values - SOBER & READABLE */
+    --text-main: 30 41 59;         /* #1E293B */
+    --text-muted: 100 116 139;     /* #64748B */
+    --text-subtle: 148 163 184;    /* #94A3B8 */
+
+    /* Accents - RGB values - INSTITUTIONAL BLUE (RARE USAGE) */
+    --accent-primary: 58 122 254;  /* #3A7AFE - Institutional blue */
+    --accent-secondary: 46 196 182; /* #2EC4B6 - Teal civic (alternative) */
+
+    /* Borders - RGB values */
+    --border-glass: 255 255 255;   /* Glass borders */
+
+    /* Semantic colors - RGB values */
+    --info: 58 122 254;            /* Institutional blue */
+    --warning: 251 191 36;
+    --success: 46 196 182;         /* Teal civic */
+    --error: 239 68 68;
+
+    /* Glass opacity values - SUBTLE, NOT BLING */
+    --glass-opacity: 0.05;
+    --glass-opacity-hover: 0.08;
+    --glass-opacity-strong: 0.12;  /* Strong glass surfaces */
+    --border-opacity: 0.12;        /* Subtle borders */
+    --border-opacity-hover: 0.2;   /* More visible on hover */
+
+    /* Blur values - SERVES READABILITY, NOT EFFECT */
+    --blur-civic: 12px;            /* Reduced for subtlety */
+    --blur-strong: 16px;
+    --blur-background: 40px;
+
+    /* Radius */
+    --radius: 16px;
+    --radius-sm: 12px;
+    --radius-lg: 20px;
+
+    /* Z-index scale - normalized global values */
+    --z-base: 1;
+    --z-header: 100;
+    --z-dropdown: 200;
+    --z-floating: 1000;
+    --z-modal: 2000;
+
+    /* Typography - INSTITUTIONAL FONTS */
+    --font-sans: 'Inter', 'IBM Plex Sans', 'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, Monaco, monospace;
+
+    /* Animation timing - Standardized easing curves */
+    --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --ease-in: cubic-bezier(0.4, 0, 1, 1);
+    --ease-out: cubic-bezier(0, 0, 0.2, 1);
+    
+    /* Animation durations - Consistent timing */
+    --duration-fast: 150ms;
+    --duration-normal: 250ms;
+    --duration-slow: 350ms;
+    --duration-slower: 500ms;
+  }
+
+  /* Dark mode override using tokens only; extend here to preserve WCAG contrast. */
+  [data-theme="dark"] {
+    --bg-main: 14 17 22;           /* #0E1116 - Charcoal black */
+    --bg-secondary: 18 21 28;      /* Slightly lighter */
+    --bg-glass: 255 255 255;       /* Glass base color */
+    --text-main: 230 234 240;      /* #E6EAF0 - Primary text */
+    --text-muted: 169 176 194;     /* #A9B0C2 - Secondary text */
+    --text-subtle: 124 133 156;    /* #7C859C - Muted text */
+    --glass-opacity: 0.06;         /* Subtle glass background */
+    --glass-opacity-hover: 0.09;   /* Slightly more on hover */
+  }
+
+  /* Respect OS preference when no explicit theme is set. */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme]) {
+      --bg-main: 14 17 22;           /* #0E1116 - Charcoal black */
+      --bg-secondary: 18 21 28;      /* Slightly lighter */
+      --bg-glass: 255 255 255;       /* Glass base color */
+      --text-main: 230 234 240;      /* #E6EAF0 - Primary text */
+      --text-muted: 169 176 194;     /* #A9B0C2 - Secondary text */
+      --text-subtle: 124 133 156;    /* #7C859C - Muted text */
+      --glass-opacity: 0.06;         /* Subtle glass background */
+      --glass-opacity-hover: 0.09;   /* Slightly more on hover */
+    }
+  }
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    background-color: rgb(var(--bg-main));
+    color: rgb(var(--text-main));
+    font-family: var(--font-sans);
+    font-size: 14px; /* WCAG minimum */
+    font-feature-settings: "kern" 1, "liga" 1, "tnum" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Numbers, prices, distances use monospace */
+  .font-mono,
+  .price,
+  .number,
+  .distance {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+    letter-spacing: -0.02em;
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    :root {
+      --border-opacity: 0.4;
+      --text-muted: 176 184 192;
+    }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  /* Minimum touch targets for accessibility */
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    min-height: 44px;
+  }
+}
+
+@layer utilities {
+  /* Glass effect utilities */
+  .glass-effect {
+    background: rgba(var(--bg-glass), var(--glass-opacity));
+    backdrop-filter: blur(var(--blur-civic));
+    -webkit-backdrop-filter: blur(var(--blur-civic));
+    transition: all var(--duration-normal) var(--ease-smooth);
+  }
+  
+  .glass-effect:hover {
+    background: rgba(var(--bg-glass), var(--glass-opacity-hover));
+    border-color: rgba(var(--border-glass), var(--border-opacity-hover));
+  }
+
+  .glass-border {
+    border: 1px solid rgba(var(--border-glass), var(--border-opacity));
+    transition: border-color var(--duration-normal) var(--ease-smooth);
+  }
+
+  .glass-shadow {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+    transition: box-shadow var(--duration-normal) var(--ease-smooth);
+  }
+  
+  .glass-shadow:hover {
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  }
+
+  /* Civic utilities */
+  .civic-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  /* Background blur effect for institutional feel */
+  .bg-blur-civic {
+    filter: blur(var(--blur-background)) saturate(0.6);
+    opacity: 0.2;
+  }
+  
+  /* Smooth transitions - Standardized */
+  .transition-smooth {
+    transition: all var(--duration-normal) var(--ease-smooth);
+  }
+  
+  .transition-fast {
+    transition: all var(--duration-fast) var(--ease-smooth);
+  }
+  
+  .transition-slow {
+    transition: all var(--duration-slow) var(--ease-smooth);
+  }
+  
+  /* Transform utilities with GPU acceleration */
+  .transform-gpu {
+    transform: translateZ(0);
+    will-change: transform;
+  }
+  
+  /* Hover lift effect */
+  .hover-lift {
+    transition: transform var(--duration-normal) var(--ease-smooth),
+                box-shadow var(--duration-normal) var(--ease-smooth);
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-2px);
+  }
+  
+  /* Interactive scale effect */
+  .hover-scale {
+    transition: transform var(--duration-normal) var(--ease-smooth);
+  }
+  
+  .hover-scale:hover {
+    transform: scale(1.02);
+  }
+  
+  .hover-scale:active {
+    transform: scale(0.98);
+  }
+}
+
+/* Floating Actions Container - centralized positioning */
+.floating-actions {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: var(--z-floating);
+}
+
+/* Mobile prioritaire - évite la barre système Android */
+@media (max-width: 768px) {
+  .floating-actions {
+    bottom: 72px; /* évite la barre système Android */
+  }
+}
+
+/* Z-index utility classes */
+.z-header {
+  z-index: var(--z-header);
+}
+
+.z-modal {
+  z-index: var(--z-modal);
+}

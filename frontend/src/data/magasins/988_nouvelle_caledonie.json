@@ -1,0 +1,12 @@
+{
+  "territoire": "Nouvelle-Calédonie",
+  "code_territoire": "988",
+  "statut_territorial": "COM",
+  "magasins": [],
+  "metadata": {
+    "derniere_maj": "",
+    "statut_fichier": "template_vide",
+    "avertissement": "ATTENTION: Fichier template vide. Données à intégrer via ISEE (Institut de la Statistique et des Études Économiques de Nouvelle-Calédonie).",
+    "note": "Pas de couverture INSEE SIRENE - Utiliser ISEE comme source officielle"
+  }
+}

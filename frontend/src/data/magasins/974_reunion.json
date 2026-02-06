@@ -1,0 +1,11 @@
+{
+  "territoire": "La Réunion",
+  "code_territoire": "974",
+  "statut_territorial": "DROM",
+  "magasins": [],
+  "metadata": {
+    "derniere_maj": "",
+    "statut_fichier": "template_vide",
+    "avertissement": "ATTENTION: Fichier template vide. Données à intégrer via INSEE SIRENE ou OPMR."
+  }
+}

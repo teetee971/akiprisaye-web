@@ -1,0 +1,11 @@
+{
+  "territoire": "Saint-Pierre-et-Miquelon",
+  "code_territoire": "975",
+  "statut_territorial": "COM",
+  "magasins": [],
+  "metadata": {
+    "derniere_maj": "",
+    "statut_fichier": "template_vide",
+    "avertissement": "ATTENTION: Fichier template vide. Données à intégrer via sources officielles locales."
+  }
+}

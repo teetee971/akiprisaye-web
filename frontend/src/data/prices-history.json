@@ -1,0 +1,170 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "description": "Historique des prix - Données append-only pour traçabilité",
+    "lastUpdate": "2025-12-17",
+    "dataStatus": "DEMONSTRATION",
+    "warning": "⚠️ DONNÉES DE DÉMONSTRATION - À REMPLACER PAR HISTORIQUE OPMR",
+    "requiredSources": [
+      "OPMR - Observatoires des prix DOM-TOM",
+      "INSEE - Indice des prix à la consommation"
+    ]
+  },
+  "products": {
+    "pain-500g": {
+      "name": "Pain complet 500g",
+      "category": "alimentation",
+      "unit": "unité",
+      "history": [
+        {
+          "date": "2025-12-01",
+          "territory": "GP",
+          "price": 2.50,
+          "source": "observateur"
+        },
+        {
+          "date": "2025-11-01",
+          "territory": "GP",
+          "price": 2.45,
+          "source": "observateur"
+        },
+        {
+          "date": "2025-10-01",
+          "territory": "GP",
+          "price": 2.40,
+          "source": "observateur"
+        },
+        {
+          "date": "2024-12-01",
+          "territory": "GP",
+          "price": 2.30,
+          "source": "observateur"
+        }
+      ]
+    },
+    "lait-1l": {
+      "name": "Lait demi-écrémé 1L",
+      "category": "alimentation",
+      "unit": "litre",
+      "history": [
+        {
+          "date": "2025-12-01",
+          "territory": "GP",
+          "price": 1.85,
+          "source": "observateur"
+        },
+        {
+          "date": "2025-11-01",
+          "territory": "GP",
+          "price": 1.80,
+          "source": "observateur"
+        },
+        {
+          "date": "2025-10-01",
+          "territory": "GP",
+          "price": 1.75,
+          "source": "observateur"
+        },
+        {
+          "date": "2024-12-01",
+          "territory": "GP",
+          "price": 1.65,
+          "source": "observateur"
+        }
+      ]
+    },
+    "riz-1kg": {
+      "name": "Riz blanc 1kg",
+      "category": "alimentation",
+      "unit": "kg",
+      "history": [
+        {
+          "date": "2025-12-01",
+          "territory": "GP",
+          "price": 3.20,
+          "source": "observateur"
+        },
+        {
+          "date": "2025-11-01",
+          "territory": "GP",
+          "price": 3.15,
+          "source": "observateur"
+        },
+        {
+          "date": "2025-10-01",
+          "territory": "GP",
+          "price": 3.10,
+          "source": "observateur"
+        },
+        {
+          "date": "2024-12-01",
+          "territory": "GP",
+          "price": 2.95,
+          "source": "observateur"
+        }
+      ]
+    },
+    "savon-liquide-500ml": {
+      "name": "Savon liquide 500ml",
+      "category": "hygiene",
+      "unit": "unité",
+      "history": [
+        {
+          "date": "2025-12-01",
+          "territory": "GP",
+          "price": 4.50,
+          "source": "observateur"
+        },
+        {
+          "date": "2025-11-01",
+          "territory": "GP",
+          "price": 4.40,
+          "source": "observateur"
+        },
+        {
+          "date": "2025-10-01",
+          "territory": "GP",
+          "price": 4.30,
+          "source": "observateur"
+        },
+        {
+          "date": "2024-12-01",
+          "territory": "GP",
+          "price": 4.10,
+          "source": "observateur"
+        }
+      ]
+    },
+    "essence-sp95-1l": {
+      "name": "Essence SP95",
+      "category": "transport",
+      "unit": "litre",
+      "history": [
+        {
+          "date": "2025-12-01",
+          "territory": "GP",
+          "price": 1.75,
+          "source": "observateur"
+        },
+        {
+          "date": "2025-11-01",
+          "territory": "GP",
+          "price": 1.72,
+          "source": "observateur"
+        },
+        {
+          "date": "2025-10-01",
+          "territory": "GP",
+          "price": 1.70,
+          "source": "observateur"
+        },
+        {
+          "date": "2024-12-01",
+          "territory": "GP",
+          "price": 1.65,
+          "source": "observateur"
+        }
+      ]
+    }
+  }
+}

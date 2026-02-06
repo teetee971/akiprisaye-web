@@ -1,0 +1,159 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "description": "Exemples de produits avec différents formats pour détecter les faux bons plans",
+    "lastUpdate": "2025-12-17",
+    "dataStatus": "DEMONSTRATION",
+    "warning": "⚠️ DONNÉES DE DÉMONSTRATION - À REMPLACER PAR RELEVÉS TERRAIN SOURCÉS",
+    "requiredSources": [
+      "OPMR - Observatoires des prix DOM-TOM",
+      "Relevés terrain avec protocole défini"
+    ]
+  },
+  "products": [
+    {
+      "id": "riz-blanc",
+      "name": "Riz blanc",
+      "category": "alimentation",
+      "unit": "kg",
+      "formats": [
+        {
+          "label": "Petit format",
+          "quantity": 1,
+          "price": 3.20,
+          "unitPrice": 3.20
+        },
+        {
+          "label": "Format familial",
+          "quantity": 5,
+          "price": 14.50,
+          "unitPrice": 2.90
+        },
+        {
+          "label": "Grand format",
+          "quantity": 10,
+          "price": 27.00,
+          "unitPrice": 2.70
+        }
+      ]
+    },
+    {
+      "id": "lait-demi-ecreme",
+      "name": "Lait demi-écrémé",
+      "category": "alimentation",
+      "unit": "L",
+      "formats": [
+        {
+          "label": "Petit format",
+          "quantity": 1,
+          "price": 1.85,
+          "unitPrice": 1.85
+        },
+        {
+          "label": "Pack de 6",
+          "quantity": 6,
+          "price": 10.20,
+          "unitPrice": 1.70
+        }
+      ]
+    },
+    {
+      "id": "savon-liquide",
+      "name": "Savon liquide",
+      "category": "hygiene",
+      "unit": "L",
+      "formats": [
+        {
+          "label": "Petit format (250ml)",
+          "quantity": 0.25,
+          "price": 2.50,
+          "unitPrice": 10.00
+        },
+        {
+          "label": "Format standard (500ml)",
+          "quantity": 0.5,
+          "price": 4.50,
+          "unitPrice": 9.00
+        },
+        {
+          "label": "Grand format (1L)",
+          "quantity": 1,
+          "price": 8.20,
+          "unitPrice": 8.20
+        }
+      ]
+    },
+    {
+      "id": "huile-tournesol",
+      "name": "Huile de tournesol",
+      "category": "alimentation",
+      "unit": "L",
+      "formats": [
+        {
+          "label": "Format standard (1L)",
+          "quantity": 1,
+          "price": 4.80,
+          "unitPrice": 4.80
+        },
+        {
+          "label": "Grand format (2L)",
+          "quantity": 2,
+          "price": 9.90,
+          "unitPrice": 4.95
+        }
+      ]
+    },
+    {
+      "id": "pates",
+      "name": "Pâtes",
+      "category": "alimentation",
+      "unit": "kg",
+      "formats": [
+        {
+          "label": "Petit paquet (500g)",
+          "quantity": 0.5,
+          "price": 1.20,
+          "unitPrice": 2.40
+        },
+        {
+          "label": "Paquet standard (1kg)",
+          "quantity": 1,
+          "price": 2.10,
+          "unitPrice": 2.10
+        },
+        {
+          "label": "Grand paquet (3kg)",
+          "quantity": 3,
+          "price": 5.70,
+          "unitPrice": 1.90
+        }
+      ]
+    },
+    {
+      "id": "shampoing",
+      "name": "Shampoing",
+      "category": "hygiene",
+      "unit": "L",
+      "formats": [
+        {
+          "label": "Format voyage (100ml)",
+          "quantity": 0.1,
+          "price": 1.50,
+          "unitPrice": 15.00
+        },
+        {
+          "label": "Format standard (400ml)",
+          "quantity": 0.4,
+          "price": 4.20,
+          "unitPrice": 10.50
+        },
+        {
+          "label": "Format économique (750ml)",
+          "quantity": 0.75,
+          "price": 6.90,
+          "unitPrice": 9.20
+        }
+      ]
+    }
+  ]
+}

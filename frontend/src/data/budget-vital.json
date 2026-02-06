@@ -1,0 +1,236 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "description": "Budget minimum vital mensuel par profil et territoire",
+    "lastUpdate": "2025-12-17",
+    "source": "Estimation basée sur données publiques et panier IEVR",
+    "dataStatus": "DEMONSTRATION",
+    "warning": "⚠️ DONNÉES DE DÉMONSTRATION - À REMPLACER PAR DONNÉES OFFICIELLES",
+    "requiredSources": [
+      "INSEE - Budget des ménages",
+      "CAF - RSA par territoire",
+      "Service-public.fr - SMIC net"
+    ]
+  },
+  "profiles": {
+    "adulte-seul": {
+      "label": "Adulte seul",
+      "description": "Personne vivant seule",
+      "icon": "👤"
+    },
+    "couple": {
+      "label": "Couple",
+      "description": "Deux adultes sans enfant",
+      "icon": "👥"
+    },
+    "famille": {
+      "label": "Famille (2 adultes + 2 enfants)",
+      "description": "Famille avec deux enfants",
+      "icon": "👨‍👩‍👧‍👦"
+    },
+    "senior": {
+      "label": "Senior",
+      "description": "Personne de plus de 65 ans",
+      "icon": "👴"
+    }
+  },
+  "referenceIncomes": {
+    "GP": {
+      "SMIC": 1398.69,
+      "RSA": 607.75,
+      "description": "Revenus de référence en Guadeloupe (nets mensuels)"
+    },
+    "MQ": {
+      "SMIC": 1398.69,
+      "RSA": 607.75,
+      "description": "Revenus de référence en Martinique (nets mensuels)"
+    },
+    "GF": {
+      "SMIC": 1398.69,
+      "RSA": 607.75,
+      "description": "Revenus de référence en Guyane (nets mensuels)"
+    },
+    "RE": {
+      "SMIC": 1398.69,
+      "RSA": 607.75,
+      "description": "Revenus de référence à La Réunion (nets mensuels)"
+    },
+    "FR": {
+      "SMIC": 1398.69,
+      "RSA": 607.75,
+      "description": "Revenus de référence en France métropolitaine (nets mensuels)"
+    }
+  },
+  "budgets": {
+    "GP": {
+      "adulte-seul": {
+        "alimentation": 280,
+        "hygiene": 45,
+        "transport": 85,
+        "energie": 95,
+        "autres": 120,
+        "total": 625
+      },
+      "couple": {
+        "alimentation": 480,
+        "hygiene": 75,
+        "transport": 140,
+        "energie": 145,
+        "autres": 200,
+        "total": 1040
+      },
+      "famille": {
+        "alimentation": 720,
+        "hygiene": 110,
+        "transport": 180,
+        "energie": 185,
+        "autres": 305,
+        "total": 1500
+      },
+      "senior": {
+        "alimentation": 260,
+        "hygiene": 55,
+        "transport": 65,
+        "energie": 105,
+        "autres": 115,
+        "total": 600
+      }
+    },
+    "MQ": {
+      "adulte-seul": {
+        "alimentation": 285,
+        "hygiene": 46,
+        "transport": 87,
+        "energie": 97,
+        "autres": 122,
+        "total": 637
+      },
+      "couple": {
+        "alimentation": 490,
+        "hygiene": 77,
+        "transport": 143,
+        "energie": 148,
+        "autres": 204,
+        "total": 1062
+      },
+      "famille": {
+        "alimentation": 735,
+        "hygiene": 112,
+        "transport": 184,
+        "energie": 189,
+        "autres": 311,
+        "total": 1531
+      },
+      "senior": {
+        "alimentation": 265,
+        "hygiene": 56,
+        "transport": 67,
+        "energie": 107,
+        "autres": 117,
+        "total": 612
+      }
+    },
+    "GF": {
+      "adulte-seul": {
+        "alimentation": 310,
+        "hygiene": 52,
+        "transport": 95,
+        "energie": 105,
+        "autres": 135,
+        "total": 697
+      },
+      "couple": {
+        "alimentation": 530,
+        "hygiene": 87,
+        "transport": 155,
+        "energie": 160,
+        "autres": 225,
+        "total": 1157
+      },
+      "famille": {
+        "alimentation": 795,
+        "hygiene": 128,
+        "transport": 200,
+        "energie": 205,
+        "autres": 342,
+        "total": 1670
+      },
+      "senior": {
+        "alimentation": 290,
+        "hygiene": 63,
+        "transport": 75,
+        "energie": 115,
+        "autres": 129,
+        "total": 672
+      }
+    },
+    "RE": {
+      "adulte-seul": {
+        "alimentation": 270,
+        "hygiene": 43,
+        "transport": 80,
+        "energie": 88,
+        "autres": 112,
+        "total": 593
+      },
+      "couple": {
+        "alimentation": 465,
+        "hygiene": 72,
+        "transport": 132,
+        "energie": 135,
+        "autres": 187,
+        "total": 991
+      },
+      "famille": {
+        "alimentation": 695,
+        "hygiene": 106,
+        "transport": 170,
+        "energie": 172,
+        "autres": 285,
+        "total": 1428
+      },
+      "senior": {
+        "alimentation": 250,
+        "hygiene": 52,
+        "transport": 61,
+        "energie": 98,
+        "autres": 107,
+        "total": 568
+      }
+    },
+    "FR": {
+      "adulte-seul": {
+        "alimentation": 240,
+        "hygiene": 38,
+        "transport": 70,
+        "energie": 75,
+        "autres": 95,
+        "total": 518
+      },
+      "couple": {
+        "alimentation": 410,
+        "hygiene": 63,
+        "transport": 115,
+        "energie": 115,
+        "autres": 162,
+        "total": 865
+      },
+      "famille": {
+        "alimentation": 615,
+        "hygiene": 93,
+        "transport": 148,
+        "energie": 148,
+        "autres": 246,
+        "total": 1250
+      },
+      "senior": {
+        "alimentation": 220,
+        "hygiene": 45,
+        "transport": 53,
+        "energie": 85,
+        "autres": 92,
+        "total": 495
+      }
+    }
+  }
+}
