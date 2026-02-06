@@ -12,7 +12,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
 import { PerformanceMonitor } from './components/PerformanceMonitor';
 
-// Import real pages
+// Import real pages - Main routes
 import Home from './pages/Home';
 import Carte from './pages/Carte';
 import AdminDashboard from './pages/AdminDashboard';
@@ -22,6 +22,35 @@ import Methodologie from './pages/Methodologie';
 import Faq from './pages/Faq';
 import Contact from './pages/Contact';
 import MentionsLegales from './pages/MentionsLegales';
+
+// Additional feature pages
+import DonneesPubliques from './pages/DonneesPubliques';
+import Contribuer from './pages/Contribuer';
+import ContribuerPrix from './pages/ContribuerPrix';
+import Comparateurs from './pages/Comparateurs';
+import CarteItinerairesHub from './pages/CarteItinerairesHub';
+import ComparateurCitoyen from './pages/ComparateurCitoyen';
+
+// Scanner & OCR pages
+import ScannerHub from './pages/ScannerHub';
+import OCRHub from './pages/ocr/OCRHub';
+
+// Settings & History
+import Settings from './pages/Settings';
+import HistoriquePrix from './pages/HistoriquePrix';
+import RecherchePrix from './pages/RecherchePrix';
+
+// Auth pages
+import Login from './pages/Login';
+import Inscription from './pages/Inscription';
+import ResetPassword from './pages/ResetPassword';
+
+// Observatory real-time
+import ObservatoireTempsReel from './pages/ObservatoireTempsReel';
+
+// Transparency & reporting
+import Transparence from './pages/Transparence';
+import SignalerAbus from './pages/SignalerAbus';
 
 /**
  * Root application render with HashRouter for Cloudflare Pages SPA
@@ -61,6 +90,38 @@ if (!rootElement) {
                     <Route path="faq" element={<Faq />} />
                     <Route path="contact" element={<Contact />} />
                     <Route path="mentions-legales" element={<MentionsLegales />} />
+                    
+                    {/* Additional feature routes */}
+                    <Route path="donnees-publiques" element={<DonneesPubliques />} />
+                    <Route path="contribuer" element={<Contribuer />} />
+                    <Route path="contribuer-prix" element={<ContribuerPrix />} />
+                    <Route path="comparateurs" element={<Comparateurs />} />
+                    <Route path="carte-itineraires" element={<CarteItinerairesHub />} />
+                    <Route path="comparateur-citoyen" element={<ComparateurCitoyen />} />
+                    
+                    {/* Scanner & OCR routes */}
+                    <Route path="scan" element={<ScannerHub />} />
+                    <Route path="scanner" element={<ScannerHub />} />
+                    <Route path="ocr" element={<OCRHub />} />
+                    
+                    {/* Settings & History */}
+                    <Route path="parametres" element={<Settings />} />
+                    <Route path="historique-prix" element={<HistoriquePrix />} />
+                    <Route path="recherche-prix" element={<RecherchePrix />} />
+                    
+                    {/* Auth routes */}
+                    <Route path="login" element={<Login />} />
+                    <Route path="inscription" element={<Inscription />} />
+                    <Route path="reset-password" element={<ResetPassword />} />
+                    
+                    {/* Observatory real-time */}
+                    <Route path="observatoire-temps-reel" element={<ObservatoireTempsReel />} />
+                    
+                    {/* Transparency & reporting */}
+                    <Route path="transparence" element={<Transparence />} />
+                    <Route path="signaler-abus" element={<SignalerAbus />} />
+                    
+                    {/* Catch-all route */}
                     <Route path="*" element={<Navigate to="/carte" replace />} />
                   </Route>
                 </Routes>
