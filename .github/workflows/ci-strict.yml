@@ -22,8 +22,10 @@ jobs:
         with:
           node-version: "20"
           cache: "npm"
+          cache-dependency-path: 'frontend/package-lock.json'
 
       - name: Install dependencies
+        working-directory: frontend
         run: npm ci
 
       # -----------------------------
@@ -31,10 +33,12 @@ jobs:
       # -----------------------------
 
       - name: TypeScript strict check
+        working-directory: frontend
         run: npm run typecheck:ci
         continue-on-error: ${{ github.event_name == 'pull_request' }}
 
       - name: ESLint strict check (max-warnings=0)
+        working-directory: frontend
         run: npm run lint:ci
         continue-on-error: ${{ github.event_name == 'pull_request' }}
 
@@ -58,14 +62,17 @@ jobs:
           echo "✅ No blocking explicit any detected."
 
       - name: Build (Vite)
+        working-directory: frontend
         run: npm run build:ci
         continue-on-error: ${{ github.event_name == 'pull_request' }}
 
       - name: Run tests
+        working-directory: frontend
         run: npm run test:ci
         continue-on-error: ${{ github.event_name == 'pull_request' }}
 
       - name: Security audit (npm)
+        working-directory: frontend
         run: npm run audit:ci
         continue-on-error: true
 
@@ -75,11 +82,13 @@ jobs:
 
       - name: Accessibility testing (axe-core WCAG)
         id: axe
+        working-directory: frontend
         run: npm run axe:ci 2>&1 | tee axe-report.txt
         continue-on-error: true
 
       - name: Lighthouse CI
         id: lhci
+        working-directory: frontend
         run: npm run lhci
         continue-on-error: true
         env:
@@ -89,8 +98,8 @@ jobs:
         if: always()
         id: lhci-url
         run: |
-          if [ -f .lighthouseci/links.json ]; then
-            URL=$(cat .lighthouseci/links.json | grep -o 'https://[^"]*' | head -n 1)
+          if [ -f frontend/.lighthouseci/links.json ]; then
+            URL=$(cat frontend/.lighthouseci/links.json | grep -o 'https://[^"]*' | head -n 1)
             echo "report_url=$URL" >> $GITHUB_OUTPUT
           else
             echo "report_url=Not available" >> $GITHUB_OUTPUT
@@ -145,7 +154,7 @@ ${reportUrl !== 'Not available' ? `🔍 [Voir le rapport Lighthouse](${reportUrl
         uses: actions/upload-artifact@v4
         with:
           name: axe-report
-          path: axe-report.txt
+          path: frontend/axe-report.txt
           retention-days: 30
 
       - name: Upload Lighthouse results
@@ -153,5 +162,5 @@ ${reportUrl !== 'Not available' ? `🔍 [Voir le rapport Lighthouse](${reportUrl
         uses: actions/upload-artifact@v4
         with:
           name: lighthouse-results
-          path: .lighthouseci
+          path: frontend/.lighthouseci
           retention-days: 30
