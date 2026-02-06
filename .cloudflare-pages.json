@@ -1,7 +1,4 @@
-﻿{
-  "build": {
-    "command": "cd frontend && npm ci && npm run build",
-    "cwd": "/",
-    "output": "frontend/dist"
-  }
+{
+  "build_command": "npm run build",
+  "build_output_directory": "dist"
 }

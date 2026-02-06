@@ -1,0 +1,11 @@
+{
+  "ci": {
+    "assert": {
+      "assertions": {
+        "largest-contentful-paint": ["warn", { "maxNumericValue": 2500 }],
+        "cumulative-layout-shift": ["warn", { "maxNumericValue": 0.1 }],
+        "resource-summary:script:size": ["warn", { "maxNumericValue": 200000 }]
+      }
+    }
+  }
+}

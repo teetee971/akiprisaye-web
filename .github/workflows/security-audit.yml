@@ -1,0 +1,74 @@
+name: Security Audit Guard
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+jobs:
+  security-audit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Ensure SECURITY_AUDIT.md exists
+        run: |
+          if [ ! -f SECURITY_AUDIT.md ]; then
+            echo "❌ SECURITY_AUDIT.md is missing"
+            exit 1
+          fi
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies (lockfile only)
+        run: npm install --package-lock-only
+
+      - name: Run npm audit (JSON)
+        run: npm audit --json > audit.json || true
+
+      - name: Check for new HIGH vulnerabilities
+        run: |
+          HIGH_COUNT=$(node - <<'EOF'
+          const fs = require('fs');
+
+          if (!fs.existsSync('audit.json')) {
+            console.log(0);
+            process.exit(0);
+          }
+
+          const content = fs.readFileSync('audit.json', 'utf8').trim();
+          if (!content) {
+            console.log(0);
+            process.exit(0);
+          }
+
+          const audit = JSON.parse(content);
+          const vulns = audit.vulnerabilities || {};
+
+          let count = 0;
+          for (const name in vulns) {
+            if (vulns[name].severity === 'high') count++;
+          }
+
+          console.log(count);
+          EOF
+          )
+
+          echo "High vulnerabilities detected: $HIGH_COUNT"
+
+          # 🔐 Baseline documented in SECURITY_AUDIT.md
+          BASELINE=2
+
+          if [ "$HIGH_COUNT" -gt "$BASELINE" ]; then
+            echo "❌ New HIGH vulnerabilities detected (baseline: $BASELINE)"
+            echo "Update SECURITY_AUDIT.md to justify them."
+            exit 1
+          fi
+
+          echo "✅ Security audit within accepted baseline"

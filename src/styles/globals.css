@@ -1,7 +1,7 @@
 /**
  * CIVIC GLASS DESIGN SYSTEM - ShadCN/UI Theme
  * Single source of truth using CSS tokens
- * Dark mode by default, institutional & chic
+ * Light mode by default, dark mode via tokens
  */
 
 @tailwind base;
@@ -9,16 +9,17 @@
 @tailwind utilities;
 
 @layer base {
+  /* Theme tokens only: avoid hard-coded colors in components to preserve A11y contrast. */
   :root {
     /* Backgrounds - RGB values for Tailwind - LIQUID GLASS CHIC INSTITUTIONAL */
-    --bg-main: 14 17 22;           /* #0E1116 - Charcoal black */
-    --bg-secondary: 18 21 28;      /* Slightly lighter */
-    --bg-glass: 255 255 255;       /* Glass base color */
+    --bg-main: 248 250 252;        /* #F8FAFC */
+    --bg-secondary: 241 245 249;   /* #F1F5F9 */
+    --bg-glass: 0 0 0;             /* Black glass base for light mode */
 
     /* Text - RGB values - SOBER & READABLE */
-    --text-main: 230 234 240;      /* #E6EAF0 - Primary text */
-    --text-muted: 169 176 194;     /* #A9B0C2 - Secondary text */
-    --text-subtle: 124 133 156;    /* #7C859C - Muted text */
+    --text-main: 30 41 59;         /* #1E293B */
+    --text-muted: 100 116 139;     /* #64748B */
+    --text-subtle: 148 163 184;    /* #94A3B8 */
 
     /* Accents - RGB values - INSTITUTIONAL BLUE (RARE USAGE) */
     --accent-primary: 58 122 254;  /* #3A7AFE - Institutional blue */
@@ -34,8 +35,8 @@
     --error: 239 68 68;
 
     /* Glass opacity values - SUBTLE, NOT BLING */
-    --glass-opacity: 0.06;         /* Subtle glass background */
-    --glass-opacity-hover: 0.09;   /* Slightly more on hover */
+    --glass-opacity: 0.05;
+    --glass-opacity-hover: 0.08;
     --glass-opacity-strong: 0.12;  /* Strong glass surfaces */
     --border-opacity: 0.12;        /* Subtle borders */
     --border-opacity-hover: 0.2;   /* More visible on hover */
@@ -74,16 +75,30 @@
     --duration-slower: 500ms;
   }
 
-  /* Light mode override (not default, but available) */
-  .light {
-    --bg-main: 248 250 252;        /* #F8FAFC */
-    --bg-secondary: 241 245 249;   /* #F1F5F9 */
-    --text-main: 30 41 59;         /* #1E293B */
-    --text-muted: 100 116 139;     /* #64748B */
-    --text-subtle: 148 163 184;    /* #94A3B8 */
-    --bg-glass: 0 0 0;             /* Black glass base for light mode */
-    --glass-opacity: 0.05;
-    --glass-opacity-hover: 0.08;
+  /* Dark mode override using tokens only; extend here to preserve WCAG contrast. */
+  [data-theme="dark"] {
+    --bg-main: 14 17 22;           /* #0E1116 - Charcoal black */
+    --bg-secondary: 18 21 28;      /* Slightly lighter */
+    --bg-glass: 255 255 255;       /* Glass base color */
+    --text-main: 230 234 240;      /* #E6EAF0 - Primary text */
+    --text-muted: 169 176 194;     /* #A9B0C2 - Secondary text */
+    --text-subtle: 124 133 156;    /* #7C859C - Muted text */
+    --glass-opacity: 0.06;         /* Subtle glass background */
+    --glass-opacity-hover: 0.09;   /* Slightly more on hover */
+  }
+
+  /* Respect OS preference when no explicit theme is set. */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme]) {
+      --bg-main: 14 17 22;           /* #0E1116 - Charcoal black */
+      --bg-secondary: 18 21 28;      /* Slightly lighter */
+      --bg-glass: 255 255 255;       /* Glass base color */
+      --text-main: 230 234 240;      /* #E6EAF0 - Primary text */
+      --text-muted: 169 176 194;     /* #A9B0C2 - Secondary text */
+      --text-subtle: 124 133 156;    /* #7C859C - Muted text */
+      --glass-opacity: 0.06;         /* Subtle glass background */
+      --glass-opacity-hover: 0.09;   /* Slightly more on hover */
+    }
   }
 }
 

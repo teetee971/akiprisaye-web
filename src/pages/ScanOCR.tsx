@@ -1,12 +1,30 @@
 import { useEffect, useRef, useState } from 'react';
 import { runOCR, GENERIC_OCR_ERROR, type OCRResult } from '../services/ocrService';
 import OCRResultView from '../components/OCRResultView';
+import {
+  cacheOCRResult,
+  getCachedOCRResult,
+  hashImageFile,
+  resizeImageForOCR,
+} from '../utils/imageUtils';
+import {
+  classifyScanText,
+  estimateNutriScore,
+  estimateNovaIndex,
+  extractAdditives,
+  extractPrices,
+  getScanHubTypeLabel,
+} from '../services/scanHubClassifier';
+import { buildPriceSearchInput } from '../services/scanHub/scanToPriceBridge';
 import type { ScanState, OcrOptions } from '../types/scan';
+import { useNavigate } from 'react-router-dom';
+import { useSearchHistory } from '../hooks/useSearchHistory';
 
 const SAMPLE_IMAGE = '/images/ocr-example.png';
 const COPY_FEEDBACK_DURATION = 2000;
 
 export default function ScanOCR() {
+  const navigate = useNavigate();
   const [image, setImage] = useState<string | null>(null);
   const [ocrResult, setOcrResult] = useState<OCRResult | null>(null);
   const [loading, setLoading] = useState(false);
@@ -16,6 +34,7 @@ export default function ScanOCR() {
   const [manualCopied, setManualCopied] = useState(false);
   const uploadInputRef = useRef<HTMLInputElement | null>(null);
   const manualCopyTimeoutRef = useRef<number | null>(null);
+  const imageObjectUrlRef = useRef<string | null>(null);
   
   // Settings panel state
   const [showSettings, setShowSettings] = useState(false);
@@ -25,29 +44,109 @@ export default function ScanOCR() {
     language: 'fra',
     timeout: 30000,
   });
+  const [scanSummary, setScanSummary] = useState<{
+    typeLabel: string;
+    confidence: number;
+    signals: string[];
+    prices: number[];
+    additives: string[];
+    nutriScore: string;
+    novaIndex: string;
+    suggestedBarcode?: string;
+  } | null>(null);
+  const [autoSearchEnabled, setAutoSearchEnabled] = useState(true);
+  const lastAutoSearchRef = useRef<string | null>(null);
+  const { addEntry } = useSearchHistory();
 
-  const executeOcr = (source: string, cleanup?: () => void) => {
+  const setImageSource = (url: string, isObjectUrl: boolean) => {
+    if (imageObjectUrlRef.current) {
+      URL.revokeObjectURL(imageObjectUrlRef.current);
+      imageObjectUrlRef.current = null;
+    }
+    if (isObjectUrl) {
+      imageObjectUrlRef.current = url;
+    }
+    setImage(url);
+  };
+
+  const applyOcrResult = (result: OCRResult) => {
+    const trimmedText = (result.rawText || '').trim();
+
+    if (!result.success || trimmedText.length === 0) {
+      const message = result.success
+        ? "Aucun texte détecté. Essayez l'image d'exemple fournie."
+        : result.error ?? GENERIC_OCR_ERROR;
+      setError(message);
+      setScanState('error');
+      setOcrResult(null);
+      return;
+    }
+
+    if (result.confidence < settings.confidenceThreshold) {
+      setError(
+        `Confiance OCR trop faible (${Math.round(result.confidence)}%). ` +
+          'Essayez un meilleur éclairage ou réduisez le seuil.'
+      );
+      setScanState('error');
+      setOcrResult(null);
+      return;
+    }
+
+    setOcrResult(result);
+    setScanState('success');
+
+    const classification = classifyScanText(trimmedText);
+    const prices = extractPrices(trimmedText);
+    const additives = extractAdditives(trimmedText);
+    const priceInput = buildPriceSearchInput({ text: trimmedText });
+    const labelBase = priceInput.barcode
+      ? `OCR EAN ${priceInput.barcode}`
+      : `${getScanHubTypeLabel(classification.type)} (OCR)`;
+    addEntry({
+      label: labelBase,
+      type: 'ocr',
+      barcode: priceInput.barcode,
+      query: priceInput.query?.slice(0, 120),
+    });
+    setScanSummary({
+      typeLabel: getScanHubTypeLabel(classification.type),
+      confidence: Math.round(classification.confidence),
+      signals: classification.signals,
+      prices,
+      additives,
+      nutriScore: estimateNutriScore(trimmedText),
+      novaIndex: estimateNovaIndex(additives.length),
+      suggestedBarcode: priceInput.barcode,
+    });
+    const normalizedBarcode = priceInput.barcode?.replace(/\D/g, '') ?? '';
+    const isLikelyBarcode =
+      normalizedBarcode.length === 8 ||
+      normalizedBarcode.length === 13 ||
+      normalizedBarcode.length === 14;
+    if (
+      autoSearchEnabled &&
+      isLikelyBarcode &&
+      lastAutoSearchRef.current !== normalizedBarcode
+    ) {
+      lastAutoSearchRef.current = normalizedBarcode;
+      handleSearchPrices(normalizedBarcode);
+    }
+  };
+
+  const executeOcr = (source: string, cacheKey?: string, cleanup?: () => void) => {
     setLoading(true);
     setError(null);
     setOcrResult(null);
+    setScanSummary(null);
     setScanState('processing');
 
     void Promise.resolve().then(async () => {
       try {
         const result = await runOCR(source, settings.language, { timeout: settings.timeout });
-        const trimmedText = (result.rawText || '').trim();
-
-        if (!result.success || trimmedText.length === 0) {
-          const message = result.success
-            ? "Aucun texte détecté. Essayez l'image d'exemple fournie."
-            : result.error ?? GENERIC_OCR_ERROR;
-          setError(message);
-          setScanState('error');
-          setOcrResult(null);
-        } else {
-          setOcrResult(result);
-          setScanState('success');
+        if (cacheKey && result.success) {
+          cacheOCRResult(cacheKey, result);
         }
+        applyOcrResult(result);
       } catch (err: any) {
         console.error('OCR error:', err, err?.stack);
         setError(err?.message ?? GENERIC_OCR_ERROR);
@@ -71,9 +170,18 @@ export default function ScanOCR() {
     let objectUrl: string | null = null;
 
     try {
-      objectUrl = URL.createObjectURL(file);
-      setImage(objectUrl);
-      executeOcr(objectUrl, () => {
+      const cacheKey = `${hashImageFile(file)}:${settings.language}`;
+      const cachedResult = getCachedOCRResult(cacheKey) as OCRResult | null;
+      if (cachedResult) {
+        setImageSource(URL.createObjectURL(file), true);
+        applyOcrResult({ ...cachedResult, fromCache: true });
+        return;
+      }
+
+      const optimizedBlob = await resizeImageForOCR(file);
+      objectUrl = URL.createObjectURL(optimizedBlob);
+      setImageSource(objectUrl, true);
+      executeOcr(objectUrl, cacheKey, () => {
         if (objectUrl) {
           URL.revokeObjectURL(objectUrl);
         }
@@ -91,7 +199,7 @@ export default function ScanOCR() {
   };
 
   const handleUseSample = () => {
-    setImage(SAMPLE_IMAGE);
+    setImageSource(SAMPLE_IMAGE, false);
     executeOcr(SAMPLE_IMAGE);
   };
 
@@ -100,6 +208,10 @@ export default function ScanOCR() {
       if (manualCopyTimeoutRef.current) {
         window.clearTimeout(manualCopyTimeoutRef.current);
         manualCopyTimeoutRef.current = null;
+      }
+      if (imageObjectUrlRef.current) {
+        URL.revokeObjectURL(imageObjectUrlRef.current);
+        imageObjectUrlRef.current = null;
       }
     };
   }, []);
@@ -123,10 +235,19 @@ export default function ScanOCR() {
   };
 
   const handleRetry = () => {
+    if (imageObjectUrlRef.current) {
+      URL.revokeObjectURL(imageObjectUrlRef.current);
+      imageObjectUrlRef.current = null;
+    }
     setImage(null);
     setOcrResult(null);
+    setScanSummary(null);
     setError(null);
     setScanState('idle');
+  };
+
+  const handleSearchPrices = (barcode: string) => {
+    navigate(`/recherche-produits?ean=${encodeURIComponent(barcode)}`);
   };
 
   return (
@@ -164,6 +285,17 @@ export default function ScanOCR() {
 
               {settings.enabled && (
                 <>
+                  <div className="mb-4">
+                    <label className="flex items-center gap-2 text-gray-300 text-sm">
+                      <input
+                        type="checkbox"
+                        checked={autoSearchEnabled}
+                        onChange={(e) => setAutoSearchEnabled(e.target.checked)}
+                        className="rounded"
+                      />
+                      Lancer automatiquement la recherche prix si un code-barres est détecté
+                    </label>
+                  </div>
                   {/* Confidence threshold */}
                   <div className="mb-4">
                     <label className="block text-gray-300 text-sm mb-2">
@@ -389,12 +521,88 @@ export default function ScanOCR() {
 
           {/* Success State - Show Results */}
           {ocrResult && scanState === 'success' && (
-            <div className="space-y-4">
+            <div className="space-y-6">
               <div className="bg-green-900/20 border border-green-700 rounded-lg p-3 text-center">
                 <p className="text-green-200 text-sm">
                   ✅ Texte extrait avec succès!
                 </p>
               </div>
+              {scanSummary && (
+                <div className="rounded-2xl border border-slate-700 bg-slate-900/80 p-5 text-white shadow-lg">
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div>
+                      <p className="text-sm text-blue-300 font-semibold">ScanHub • Détection automatique</p>
+                      <h2 className="text-2xl font-bold mt-1">{scanSummary.typeLabel}</h2>
+                      <p className="text-sm text-slate-300 mt-1">
+                        Confiance OCR combinée : {scanSummary.confidence}%
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap gap-3 text-xs">
+                      <span className="px-3 py-1 rounded-full bg-blue-500/20 text-blue-200">
+                        {scanSummary.nutriScore}
+                      </span>
+                      <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-200">
+                        {scanSummary.novaIndex}
+                      </span>
+                      <span className="px-3 py-1 rounded-full bg-purple-500/20 text-purple-200">
+                        Prix détectés: {scanSummary.prices.length}
+                      </span>
+                      <span className="px-3 py-1 rounded-full bg-orange-500/20 text-orange-200">
+                        Additifs: {scanSummary.additives.length}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-200">
+                    <div className="rounded-xl bg-slate-800/70 p-4">
+                      <h3 className="font-semibold mb-2 text-blue-200">Signaux détectés</h3>
+                      {scanSummary.signals.length > 0 ? (
+                        <ul className="list-disc list-inside space-y-1 text-slate-300">
+                          {scanSummary.signals.map((signal) => (
+                            <li key={signal}>{signal}</li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p className="text-slate-400">Aucun signal fort détecté.</p>
+                      )}
+                    </div>
+                    <div className="rounded-xl bg-slate-800/70 p-4">
+                      <h3 className="font-semibold mb-2 text-blue-200">Prix & ingrédients</h3>
+                      <p className="text-slate-300">
+                        Prix détectés :{' '}
+                        {scanSummary.prices.length > 0
+                          ? scanSummary.prices.map((price) => `${price.toFixed(2)}€`).join(', ')
+                          : 'Aucun prix explicite'}
+                      </p>
+                      <p className="text-slate-300 mt-2">
+                        Additifs :{' '}
+                        {scanSummary.additives.length > 0
+                          ? scanSummary.additives.join(', ')
+                          : 'Aucun additif identifié'}
+                      </p>
+                      {scanSummary.suggestedBarcode && (
+                        <div className="mt-3 space-y-2">
+                          <button
+                            type="button"
+                            onClick={() => handleSearchPrices(scanSummary.suggestedBarcode)}
+                            className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-600/20 text-blue-200 hover:bg-blue-600/30 text-xs font-semibold"
+                          >
+                            🔎 Lancer la recherche prix ({scanSummary.suggestedBarcode})
+                          </button>
+                          <p className="text-[11px] text-slate-400">
+                            Ouvre la recherche produit avec le code-barres détecté pour obtenir les
+                            prix observés.
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="mt-4 text-xs text-slate-400">
+                    Résumé automatique. Vérifiez toujours sur l'emballage original.
+                  </div>
+                </div>
+              )}
               <OCRResultView 
                 result={ocrResult} 
                 onRetry={handleRetry}

@@ -92,7 +92,7 @@ export function formatPrice(
 export function calculatePricePerUnit(
   totalPrice: number,
   quantity: number,
-  unit: string = 'unit'
+  unit: string = '_unit'
 ): number {
   if (quantity === 0) return 0;
   return totalPrice / quantity;

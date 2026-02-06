@@ -189,6 +189,16 @@ export default function MentionsLegales() {
             <p className="text-gray-300">
               Cette approche protège juridiquement la plateforme et garantit la transparence de nos sources de données.
             </p>
+            <ul className="mt-3 list-disc list-inside space-y-2 text-gray-300">
+              <li>
+                <strong>APIs externes :</strong> Open Food Facts et Open Prices peuvent être consultées pour enrichir
+                les fiches produit et les fourchettes de prix (requêtes anonymisées).
+              </li>
+              <li>
+                <strong>Géolocalisation :</strong> la détection de territoire peut utiliser la géolocalisation navigateur,
+                ou une géolocalisation IP (ipapi.co) en mode de secours, avec stockage local du choix utilisateur.
+              </li>
+            </ul>
           </section>
 
           {/* 7. Payment */}

@@ -5,6 +5,7 @@ import { useSearchParams } from 'react-router-dom';
 import ReceiptScanner from '../components/ReceiptScanner';
 import uxMonitor from '../utils/uxMonitor';
 import type { ReceiptAnalysisResult } from '../services/receiptScanService';
+import { safeLocalStorage } from '../utils/safeLocalStorage';
 
 /**
  * UNIFIED PRICE SEARCH HUB
@@ -38,7 +39,7 @@ export default function RecherchePrix() {
 
   // OPTIMIZATION #1: Smart default - Show quick scan if camera available and no preference
   useEffect(() => {
-    const preferredMode = localStorage.getItem('preferredSearchMode');
+    const preferredMode = safeLocalStorage.getItem('preferredSearchMode');
     const hasCamera = typeof navigator !== 'undefined' && 'mediaDevices' in navigator;
     
     // Show quick scan shortcut for first-time users with camera
@@ -54,7 +55,7 @@ export default function RecherchePrix() {
     setSearchMode(mode);
     
     // Remember user preference for next time
-    localStorage.setItem('preferredSearchMode', mode);
+    safeLocalStorage.setItem('preferredSearchMode', mode);
     
     // PROMPT 4: Monitor search mode selection
     uxMonitor.searchModeSelected(mode);

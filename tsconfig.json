@@ -1,31 +1,76 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
-    "target": "ES2020",
+    /* =========================
+       CIBLE & ENVIRONNEMENT
+    ========================== */
+    "target": "ES2022",
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
     "useDefineForClassFields": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "module": "ESNext",
-    "skipLibCheck": true,
 
-    /* Bundler mode */
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
+    /* =========================
+       MODULES & BUNDLER
+    ========================== */
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx",
 
-    /* Linting */
+    /* =========================
+       STRICT (MAÎTRISÉ)
+    ========================== */
     "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "noUncheckedIndexedAccess": true,
+    "useUnknownInCatchVariables": true,
 
-    /* Path aliases */
+    /* =========================
+       ITERATION (FIX TS2802)
+       → PAS besoin de downlevelIteration
+       car ES2022 supporte Map / Set
+    ========================== */
+    "downlevelIteration": false,
+
+    /* =========================
+       ALIAS DE PATHS (@/)
+    ========================== */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
-    }
+      "@/*": ["src/*"]
+    },
+
+    /* =========================
+       INTEROP & QUALITÉ
+    ========================== */
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+
+    /* =========================
+       TYPES GLOBAUX
+    ========================== */
+    "types": ["vite/client"]
   },
-  "include": ["src"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+
+  /* =========================
+     FICHIERS INCLUS
+  ========================== */
+  "include": [
+    "src",
+    "src/types/**/*.d.ts",
+    "vite.config.ts"
+  ],
+
+  /* =========================
+     FICHIERS EXCLUS
+  ========================== */
+  "exclude": [
+    "node_modules",
+    "dist",
+    "backend"
+  ]
 }

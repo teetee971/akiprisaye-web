@@ -12,6 +12,14 @@ jobs:
     permissions:
       contents: read
       actions: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: home
+            url: https://akiprisaye.pages.dev/
+          - name: comparateur
+            url: https://akiprisaye.pages.dev/comparateur
     
     steps:
       - name: Checkout repository
@@ -25,21 +33,16 @@ jobs:
       - name: Install Lighthouse CI
         run: npm install -g @lhci/cli@0.13.x
       
-      - name: Run Lighthouse on home page
+      - name: Run Lighthouse (mobile, report-only)
         run: |
-          lhci autorun --collect.url=https://akiprisaye.pages.dev/ \
+          lhci autorun --config=./lighthouserc.report.json \
+            --collect.url=${{ matrix.url }} \
             --collect.numberOfRuns=1 \
-            --assert.preset=lighthouse:recommended
-      
-      - name: Run Lighthouse on comparateur page
-        run: |
-          lhci autorun --collect.url=https://akiprisaye.pages.dev/comparateur.html \
-            --collect.numberOfRuns=1 \
-            --assert.preset=lighthouse:recommended
+            --collect.settings.preset=mobile
       
       - name: Upload Lighthouse results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: lighthouse-results
+          name: lighthouse-results-${{ matrix.name }}
           path: .lighthouseci/

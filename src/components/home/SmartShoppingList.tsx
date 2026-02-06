@@ -13,11 +13,12 @@
  * - Quick add to shopping list
  * - Price trend indicators
  * 
- * Data: 100% localStorage (GDPR-compliant)
+ * Data: 100% safeLocalStorage (GDPR-compliant)
  */
 
 import { useState, useEffect } from 'react';
 import { GlassCard } from '../ui/glass-card';
+import { safeLocalStorage } from '../../utils/safeLocalStorage';
 
 interface ProductSuggestion {
   id: string;
@@ -44,9 +45,9 @@ export function SmartShoppingList() {
   }, []);
 
   const loadSmartSuggestions = () => {
-    // Load from localStorage
-    const recentProducts = localStorage.getItem('recentProducts:v1');
-    const purchaseHistory = localStorage.getItem('purchaseHistory:v1');
+    // Load from safeLocalStorage
+    const recentProducts = safeLocalStorage.getItem('recentProducts:v1');
+    const purchaseHistory = safeLocalStorage.getItem('purchaseHistory:v1');
 
     if (recentProducts && purchaseHistory) {
       const recent = JSON.parse(recentProducts);
@@ -127,7 +128,7 @@ export function SmartShoppingList() {
   };
 
   const addToShoppingList = (productId: string) => {
-    const existingList = localStorage.getItem('shoppingList:v1');
+    const existingList = safeLocalStorage.getItem('shoppingList:v1');
     const list = existingList ? JSON.parse(existingList) : [];
     
     const product = suggestions.find(p => p.id === productId);
@@ -139,7 +140,7 @@ export function SmartShoppingList() {
         targetPrice: product.currentPrice,
         addedAt: new Date().toISOString()
       });
-      localStorage.setItem('shoppingList:v1', JSON.stringify(list));
+      safeLocalStorage.setItem('shoppingList:v1', JSON.stringify(list));
       
       // Show feedback (in real app, would use toast notification)
       alert(`✅ "${product.name}" ajouté à votre liste de courses`);

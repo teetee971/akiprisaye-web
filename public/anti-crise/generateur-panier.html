@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<title>Générateur de panier – A KI PRI SA YÉ</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<style>
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background: #f5f5f5;
+    margin: 0;
+    padding: 16px;
+    color: #222;
+  }
+
+  .card {
+    max-width: 680px;
+    margin: auto;
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.08);
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 1.4rem;
+    margin-bottom: 12px;
+  }
+
+  select, label {
+    font-size: .95rem;
+  }
+
+  .section {
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .products label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    cursor: pointer;
+  }
+
+  .store {
+    background: #f1f1f1;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+  }
+
+  .cheapest {
+    background: #e7f6e7;
+    border-left: 4px solid #2e7d32;
+    font-weight: 600;
+  }
+
+  .total {
+    font-size: 1.05rem;
+  }
+
+  .delta {
+    font-size: .85rem;
+    margin-top: 6px;
+  }
+
+  .delta strong {
+    color: #c62828;
+  }
+
+  footer {
+    margin-top: 16px;
+    text-align: center;
+    font-size: .8rem;
+    color: #666;
+  }
+
+  .error {
+    color: #c62828;
+    text-align: center;
+    margin-top: 12px;
+  }
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <h1>Générateur de panier</h1>
+
+  <div class="section">
+    <label>
+      Panier :
+      <select id="basketSelect"></select>
+    </label>
+  </div>
+
+  <div class="section products" id="products"></div>
+
+  <div id="results"></div>
+  <div id="error" class="error"></div>
+</div>
+
+<footer>
+  Données indicatives — A KI PRI SA YÉ
+</footer>
+
+<script>
+const DATA_URL = '/data/mega-panier-anti-crise.json';
+
+let DATA;
+let ACTIVE_PRODUCTS = new Set();
+
+async function init() {
+  try {
+    const res = await fetch(DATA_URL);
+    if (!res.ok) throw new Error();
+    DATA = await res.json();
+
+    initBasketSelector();
+  } catch {
+    document.getElementById('error').textContent =
+      'Impossible de charger les données.';
+  }
+}
+
+function initBasketSelector() {
+  const select = document.getElementById('basketSelect');
+  select.innerHTML = '';
+
+  Object.values(DATA.basketProfiles).forEach(basket => {
+    const opt = document.createElement('option');
+    opt.value = basket.basketId;
+    opt.textContent = basket.label;
+    select.appendChild(opt);
+  });
+
+  select.addEventListener('change', () => {
+    loadBasket(select.value);
+  });
+
+  loadBasket(select.value);
+}
+
+function loadBasket(basketId) {
+  const basket = DATA.basketProfiles[basketId];
+  ACTIVE_PRODUCTS.clear();
+
+  Object.keys(basket.products).forEach(pid => {
+    ACTIVE_PRODUCTS.add(pid);
+  });
+
+  buildProductSelectors(basket);
+  recalc(basket);
+}
+
+function buildProductSelectors(basket) {
+  const container = document.getElementById('products');
+  container.innerHTML = '<strong>Produits :</strong><br>';
+
+  Object.keys(basket.products).forEach(pid => {
+    const product = DATA.products[pid];
+
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.checked = true;
+
+    cb.addEventListener('change', () => {
+      cb.checked
+        ? ACTIVE_PRODUCTS.add(pid)
+        : ACTIVE_PRODUCTS.delete(pid);
+      recalc(basket);
+    });
+
+    const label = document.createElement('label');
+    label.appendChild(cb);
+    label.append(product.label);
+
+    container.appendChild(label);
+  });
+}
+
+function recalc(basket) {
+  const results = document.getElementById('results');
+  results.innerHTML = '';
+
+  const totals = [];
+
+  Object.values(DATA.stores).forEach(store => {
+    let total = 0;
+    const list = [];
+
+    ACTIVE_PRODUCTS.forEach(pid => {
+      const price = store.prices[pid];
+      if (typeof price === 'number') {
+        total += price;
+        list.push(DATA.products[pid].label);
+      }
+    });
+
+    totals.push({
+      storeId: store.storeId,
+      name: store.name,
+      total,
+      products: list
+    });
+  });
+
+  totals.sort((a, b) => a.total - b.total);
+  const min = totals[0].total;
+
+  totals.forEach(s => {
+    const diff = s.total - min;
+    const pct = min > 0 ? (diff / min) * 100 : 0;
+
+    const div = document.createElement('div');
+    div.className = 'store' + (diff === 0 ? ' cheapest' : '');
+
+    div.innerHTML = `
+      <div class="total">${s.name} — ${s.total.toFixed(2)} €</div>
+      <div class="delta">
+        ${
+          diff === 0
+            ? 'Magasin le moins cher'
+            : `<strong>+${diff.toFixed(2)} €</strong> (${pct.toFixed(1)} %)`
+        }
+      </div>
+    `;
+
+    results.appendChild(div);
+  });
+}
+
+init();
+</script>
+
+</body>
+</html>

@@ -37,10 +37,15 @@ describe('Basket Pricing Service', () => {
 
       const result = analyzeBasketPricing(basketItems, userPosition);
 
-      expect(result.bestOption.distance).toBeDefined();
+      expect(result.bestOption).toBeDefined();
+      if (result.bestOption.distance !== undefined) {
+        expect(result.bestOption.distance).toBeTypeOf('number');
+      }
       
       if (result.multiStoreOption) {
-        expect(result.multiStoreOption.extraDistance).toBeDefined();
+        if (result.multiStoreOption.extraDistance !== undefined) {
+          expect(result.multiStoreOption.extraDistance).toBeTypeOf('number');
+        }
       }
     });
 

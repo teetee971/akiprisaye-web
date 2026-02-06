@@ -12,7 +12,7 @@ import {
   loadInsuranceData,
   filterInsurances,
 } from '../services/insuranceComparisonService';
-import PriceChart from '../components/comparateur/PriceChart';
+import PriceChart from '../components/comparateur/LazyPriceChart';
 import ComparisonSummary from '../components/comparateur/ComparisonSummary';
 import LoadingSkeleton from '../components/comparateur/LoadingSkeleton';
 import SortControl from '../components/comparateur/SortControl';
@@ -194,7 +194,7 @@ const InsuranceComparator: React.FC = () => {
   const territories: { value: Territory; label: string }[] = [
     { value: 'GP', label: 'Guadeloupe' },
     { value: 'MQ', label: 'Martinique' },
-    { value: 'GY', label: 'Guyane' },
+    { value: 'GF', label: 'Guyane' },
     { value: 'RE', label: 'La Réunion' },
     { value: 'YT', label: 'Mayotte' },
   ];

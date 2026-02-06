@@ -5,12 +5,13 @@
  * Features:
  * - Threshold configuration by user
  * - Abnormal increase detection (+X%)
- * - localStorage persistence
+ * - safeLocalStorage persistence
  * - Explainable logic
  * - No external dependencies
  */
 
 import { useState, useEffect } from 'react';
+import { safeLocalStorage } from '../utils/safeLocalStorage';
 
 const ALERT_THRESHOLD_KEY = 'akiprisaye_alert_thresholds';
 const USER_ALERTS_KEY = 'akiprisaye_user_alerts';
@@ -19,11 +20,11 @@ export function AlertesPrix() {
   const [alerts] = useState([]);
   const [watchedProducts] = useState([]);
 
-  // Load user preferences from localStorage
+  // Load user preferences from safeLocalStorage
   useEffect(() => {
     // Component simplified - full implementation requires all dependencies
-    localStorage.getItem(ALERT_THRESHOLD_KEY);
-    localStorage.getItem(USER_ALERTS_KEY);
+    safeLocalStorage.getItem(ALERT_THRESHOLD_KEY);
+    safeLocalStorage.getItem(USER_ALERTS_KEY);
   }, []);
 
   return (

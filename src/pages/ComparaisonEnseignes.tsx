@@ -2,7 +2,7 @@
 // PR-02: Inter-Store Comparison in Factual Observation Mode
 // Phase 2 - Strictly factual data, no predictions or recommendations
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { GlassCard } from '../components/ui/glass-card'
 import { EmptyState } from '../components/ui/DataStateIndicator'
 import PriceComparisonTable from '../components/PriceComparisonTable'
@@ -14,11 +14,7 @@ import PriceVariationAlert from '../components/PriceVariationAlert'
 import SignalementCitoyenModal from '../components/SignalementCitoyenModal'
 import TerritoryAdvancedFilter, { type TerritoryFilters } from '../components/TerritoryAdvancedFilter'
 import { useLocalHistory } from '../hooks/useLocalHistory'
-import {
-  getProductList,
-  getObservationsByEAN,
-  getUniqueTerritories,
-} from '../services/priceObservationService'
+import { priceObservationService } from '../services/priceObservationService'
 import {
   aggregateObservations,
   groupByStore,
@@ -26,26 +22,46 @@ import {
   countUniqueStores,
 } from '../services/priceAggregationService'
 import { initAutoUpdate, getLastUpdateDate } from '../services/priceUpdateScheduler'
-import type { PriceObservation } from '../types/priceObservation'
+import type { PriceObservation } from '../types/PriceObservation'
+
+type ProductOption = {
+  id: string
+  label: string
+}
 
 export default function ComparaisonEnseignes() {
   // Feature flag check
   const isFeatureEnabled = import.meta.env.VITE_FEATURE_COMPARAISON_ENSEIGNES === 'true'
   const isCitizenReportEnabled = import.meta.env.VITE_FEATURE_CITIZEN_REPORT === 'true'
 
-  const [selectedEAN, setSelectedEAN] = useState<string>('')
+  const [selectedProduct, setSelectedProduct] = useState<string>('')
   const [selectedTerritory, setSelectedTerritory] = useState<string>('all')
   const [territoryFilters, setTerritoryFilters] = useState<TerritoryFilters>({
     territory: 'all',
     zone: 'all',
     category: 'all',
   })
+  const [allObservations, setAllObservations] = useState<PriceObservation[]>([])
   const [observations, setObservations] = useState<PriceObservation[]>([])
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null)
   const [isReportModalOpen, setIsReportModalOpen] = useState(false)
 
-  const products = getProductList()
-  const territories = getUniqueTerritories()
+  const products = useMemo<ProductOption[]>(() => {
+    const map = new Map<string, ProductOption>()
+    allObservations.forEach((observation) => {
+      const label = observation.productLabel.trim()
+      const key = label.toLowerCase()
+      if (!map.has(key)) {
+        map.set(key, { id: label, label })
+      }
+    })
+    return Array.from(map.values()).sort((a, b) => a.label.localeCompare(b.label, 'fr'))
+  }, [allObservations])
+
+  const territories = useMemo(() => {
+    const unique = new Set(allObservations.map((observation) => observation.territory))
+    return Array.from(unique).sort((a, b) => a.localeCompare(b, 'fr'))
+  }, [allObservations])
   const { add: addToHistory } = useLocalHistory()
 
   // Initialiser la mise à jour automatique au montage
@@ -56,19 +72,56 @@ export default function ComparaisonEnseignes() {
     }
   }, [isFeatureEnabled])
 
+  useEffect(() => {
+    if (!isFeatureEnabled) {
+      setAllObservations([])
+      return
+    }
+
+    let cancelled = false
+
+    const loadObservations = async () => {
+      try {
+        const data = await priceObservationService.search({
+          query: '',
+          territory: 'all',
+          store: 'all',
+          source: 'all',
+          periodDays: 'all',
+        })
+
+        if (!cancelled) {
+          setAllObservations(data)
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des observations:', error)
+        if (!cancelled) {
+          setAllObservations([])
+        }
+      }
+    }
+
+    loadObservations()
+
+    return () => {
+      cancelled = true
+    }
+  }, [isFeatureEnabled])
+
   // Charger les observations quand un produit est sélectionné
   useEffect(() => {
-    if (!selectedEAN) {
+    if (!selectedProduct) {
       setObservations([])
       return
     }
 
-    let obs = getObservationsByEAN(selectedEAN)
+    let obs = allObservations.filter((observation) => observation.productLabel === selectedProduct)
 
     // Apply advanced territory filter if enabled (PR-12)
-    const effectiveTerritory = territoryFilters.territory !== 'all' 
-      ? territoryFilters.territory 
-      : selectedTerritory
+    const effectiveTerritory =
+      territoryFilters.territory !== 'all'
+        ? territoryFilters.territory
+        : selectedTerritory
 
     // Filtrer par territoire si sélectionné
     if (effectiveTerritory !== 'all') {
@@ -82,23 +135,28 @@ export default function ComparaisonEnseignes() {
     setObservations(obs)
 
     // Add to local history (PR-09)
-    const product = products.find((p) => p.ean === selectedEAN)
+    const product = products.find((p) => p.id === selectedProduct)
     if (product) {
       addToHistory({
-        id: `comparison-${selectedEAN}-${effectiveTerritory}`,
-        label: product.name,
+        id: `comparison-${selectedProduct}-${effectiveTerritory}`,
+        label: product.label,
         type: 'comparison',
         territory: effectiveTerritory !== 'all' ? effectiveTerritory : undefined,
       })
     }
-  }, [selectedEAN, selectedTerritory, territoryFilters, products, addToHistory])
+  }, [selectedProduct, selectedTerritory, territoryFilters, allObservations, products, addToHistory])
 
   // Sélectionner le premier produit par défaut
   useEffect(() => {
-    if (products.length > 0 && !selectedEAN) {
-      setSelectedEAN(products[0].ean)
+    if (products.length === 0) {
+      setSelectedProduct('')
+      return
     }
-  }, [products, selectedEAN])
+
+    if (!selectedProduct || !products.some((product) => product.id === selectedProduct)) {
+      setSelectedProduct(products[0].id)
+    }
+  }, [products, selectedProduct])
 
   const aggregation = aggregateObservations(observations)
   const groupedStores = groupByStore(observations)
@@ -152,14 +210,20 @@ export default function ComparaisonEnseignes() {
       <div className="grid md:grid-cols-2 gap-4 mb-6">
         <GlassCard title="Sélection du produit">
           <select
-            value={selectedEAN}
-            onChange={(e) => setSelectedEAN(e.target.value)}
+            value={selectedProduct}
+            onChange={(e) => setSelectedProduct(e.target.value)}
             className="w-full px-4 py-3 bg-white/[0.1] border border-white/[0.22] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             aria-label="Sélectionner un produit"
+            disabled={products.length === 0}
           >
+            {products.length === 0 && (
+              <option value="" className="bg-gray-800">
+                Aucun produit disponible
+              </option>
+            )}
             {products.map((product) => (
-              <option key={product.ean} value={product.ean} className="bg-gray-800">
-                {product.name} ({product.ean})
+              <option key={product.id} value={product.id} className="bg-gray-800">
+                {product.label}
               </option>
             ))}
           </select>
@@ -200,7 +264,7 @@ export default function ComparaisonEnseignes() {
           <PriceVariationAlert
             prices={observations.map((o) => ({
               value: o.price,
-              date: o.observationDate,
+              date: o.observedAt,
             }))}
           />
         </div>
@@ -302,10 +366,9 @@ export default function ComparaisonEnseignes() {
         isOpen={isReportModalOpen}
         onClose={() => setIsReportModalOpen(false)}
         productContext={
-          selectedEAN && products.find((p) => p.ean === selectedEAN)
+          selectedProduct && products.find((p) => p.id === selectedProduct)
             ? {
-                name: products.find((p) => p.ean === selectedEAN)!.name,
-                ean: selectedEAN,
+                name: products.find((p) => p.id === selectedProduct)!.label,
               }
             : undefined
         }

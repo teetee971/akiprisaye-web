@@ -1,8 +1,9 @@
+import { safeLocalStorage } from '../utils/safeLocalStorage';
 /**
  * antiCrisisAlertsStore.ts — Local storage for Anti-Crisis alert states
  * 
  * Purpose: Track alert states to prevent spam and duplicate notifications
- * Storage: localStorage (RGPD compliant - all data stored locally)
+ * Storage: safeLocalStorage (RGPD compliant - all data stored locally)
  * 
  * Anti-spam mechanism:
  * - Tracks last score for each basket/product
@@ -48,7 +49,7 @@ const MAX_STATE_AGE_MS = 90 * 24 * 60 * 60 * 1000;
  */
 function getStoredAlerts(): AlertStorageData {
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const stored = safeLocalStorage.getItem(STORAGE_KEY);
     if (!stored) {
       return {
         version: ALERT_VERSION,
@@ -81,11 +82,11 @@ function getStoredAlerts(): AlertStorageData {
 }
 
 /**
- * Save alert states to localStorage
+ * Save alert states to safeLocalStorage
  */
 function saveAlerts(data: AlertStorageData): void {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    safeLocalStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   } catch (error) {
     console.error('Error saving alert states:', error);
   }
@@ -171,7 +172,7 @@ export function clearAlertState(id: string): void {
  */
 export function clearAllAlertStates(): void {
   try {
-    localStorage.removeItem(STORAGE_KEY);
+    safeLocalStorage.removeItem(STORAGE_KEY);
   } catch (error) {
     console.error('Error clearing alert states:', error);
   }

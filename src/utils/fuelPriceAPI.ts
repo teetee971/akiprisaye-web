@@ -22,7 +22,7 @@ const API_BASE_URL = 'https://www.prix-carburants.gouv.fr';
 const TERRITORY_TO_DEPARTMENT: Record<string, string> = {
   GP: '971', // Guadeloupe
   MQ: '972', // Martinique
-  GY: '973', // Guyane
+  GF: '973', // Guyane
   RE: '974', // Réunion
   YT: '976', // Mayotte
 };
@@ -30,7 +30,7 @@ const TERRITORY_TO_DEPARTMENT: Record<string, string> = {
 /**
  * Mapping fuel types to API codes
  */
-const FUEL_TYPE_MAPPING: Record<FuelType, string> = {
+const _FUEL_TYPE_MAPPING: Record<FuelType, string> = {
   SP95: 'SP95',
   SP98: 'SP98',
   E10: 'E10',

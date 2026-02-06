@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Inflation & évolution des prix – A KI PRI SA YÉ</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #f7f7f7;
+  margin: 0;
+  padding: 16px;
+  color: #222;
+}
+
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  max-width: 700px;
+  margin: auto;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+}
+
+h1 {
+  text-align: center;
+  font-size: 1.4rem;
+  margin-bottom: 12px;
+}
+
+select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 12px;
+  font-size: 1rem;
+}
+
+canvas {
+  width: 100%;
+  height: 260px;
+}
+
+.info {
+  margin-top: 12px;
+  font-size: .9rem;
+  color: #555;
+  text-align: center;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+.up { background: #fdecea; color: #c62828; }
+.down { background: #e6f7e6; color: #2e7d32; }
+.stable { background: #eee; color: #444; }
+
+footer {
+  text-align: center;
+  margin-top: 16px;
+  font-size: .85rem;
+  color: #666;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <h1>Évolution des prix</h1>
+
+  <select id="productSelect"></select>
+  <select id="storeSelect"></select>
+
+  <canvas id="chart" width="600" height="260"></canvas>
+
+  <div id="info" class="info"></div>
+</div>
+
+<footer>
+  Données indicatives – A KI PRI SA YÉ
+</footer>
+
+<script>
+const DATA_URL = '/data/historique-prix-gp.json';
+const canvas = document.getElementById('chart');
+const ctx = canvas.getContext('2d');
+
+let DATA, timeline;
+
+async function init() {
+  const res = await fetch(DATA_URL);
+  DATA = await res.json();
+  timeline = DATA.timeline;
+
+  buildSelectors();
+  draw();
+}
+
+function buildSelectors() {
+  const productSelect = document.getElementById('productSelect');
+  const storeSelect = document.getElementById('storeSelect');
+
+  Object.entries(DATA.products).forEach(([id, p]) => {
+    const opt = document.createElement('option');
+    opt.value = id;
+    opt.textContent = p.label;
+    productSelect.appendChild(opt);
+  });
+
+  Object.entries(DATA.stores).forEach(([id, s]) => {
+    const opt = document.createElement('option');
+    opt.value = id;
+    opt.textContent = s.name;
+    storeSelect.appendChild(opt);
+  });
+
+  productSelect.onchange = draw;
+  storeSelect.onchange = draw;
+}
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  const productId = productSelect.value;
+  const storeId = storeSelect.value;
+  const prices = timeline.map(
+    t => DATA.stores[storeId].prices[t]?.[productId] ?? null
+  );
+
+  const max = Math.max(...prices.filter(Boolean));
+  const min = Math.min(...prices.filter(Boolean));
+  const padding = 30;
+
+  ctx.beginPath();
+  ctx.moveTo(padding, padding);
+
+  prices.forEach((price, i) => {
+    if (price === null) return;
+    const x = padding + (i / (prices.length - 1)) * (canvas.width - padding * 2);
+    const y = canvas.height - padding -
+      ((price - min) / (max - min)) * (canvas.height - padding * 2);
+    ctx.lineTo(x, y);
+  });
+
+  ctx.strokeStyle = '#0066cc';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Points
+  prices.forEach((price, i) => {
+    if (price === null) return;
+    const x = padding + (i / (prices.length - 1)) * (canvas.width - padding * 2);
+    const y = canvas.height - padding -
+      ((price - min) / (max - min)) * (canvas.height - padding * 2);
+    ctx.beginPath();
+    ctx.arc(x, y, 4, 0, Math.PI * 2);
+    ctx.fillStyle = '#0066cc';
+    ctx.fill();
+  });
+
+  renderInfo(prices);
+}
+
+function renderInfo(prices) {
+  const info = document.getElementById('info');
+  const valid = prices.filter(Boolean);
+  if (valid.length < 2) {
+    info.textContent = 'Données insuffisantes';
+    return;
+  }
+
+  const first = valid[0];
+  const last = valid[valid.length - 1];
+  const diff = last - first;
+  const percent = (diff / first) * 100;
+
+  let badgeClass = 'stable';
+  if (diff > 0.02) badgeClass = 'up';
+  if (diff < -0.02) badgeClass = 'down';
+
+  info.innerHTML = `
+    Évolution sur ${valid.length} périodes : 
+    <strong>${diff.toFixed(2)} €</strong>
+    (${percent.toFixed(1)} %)
+    <div class="badge ${badgeClass}">
+      ${badgeClass === 'up' ? 'Inflation en hausse' :
+        badgeClass === 'down' ? 'Prix en baisse' :
+        'Prix stable'}
+    </div>
+  `;
+}
+
+init();
+</script>
+
+</body>
+</html>

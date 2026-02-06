@@ -4,7 +4,7 @@ import { Chart, CategoryScale, LinearScale, BarElement, LineElement, PointElemen
 // Register Chart.js components
 Chart.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend);
 
-interface PriceChartProps {
+export interface PriceChartProps {
   data: {
     labels: string[];
     datasets: {

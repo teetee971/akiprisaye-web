@@ -1,120 +1,106 @@
 <!doctype html>
 <html lang="fr">
   <head>
-    <!-- ⚡ Performance: Preload Critical Resources -->
-    <link rel="modulepreload" href="/src/main.jsx" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="dns-prefetch" href="https://unpkg.com" />
     <meta charset="UTF-8" />
-    
-    <!-- Security Headers -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Security -->
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
     <meta http-equiv="X-Frame-Options" content="SAMEORIGIN" />
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
-    
+
+    <!-- App -->
+    <title>A KI PRI SA YÉ – Transparence des prix Outre-mer</title>
+    <meta
+      name="description"
+      content="Application citoyenne dédiée à la compréhension et à la transparence des prix dans les territoires d’Outre-mer."
+    />
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://akiprisaye.pages.dev/" />
+
+    <!-- Icons -->
     <link rel="icon" type="image/svg+xml" href="/logo-akiprisaye.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
-    <!-- Primary Meta Tags -->
-    <meta name="description" content="A KI PRI SA YÉ - Application citoyenne gratuite qui explique les écarts de prix dans les DOM. Comprendre pourquoi tout coûte plus cher." />
-    <meta name="keywords" content="prix, outre-mer, DOM-TOM, comparateur, vie chère, Guadeloupe, Martinique, Réunion, Guyane, Mayotte" />
-    <meta name="author" content="A KI PRI SA YÉ" />
-    <meta name="theme-color" content="#2563eb" />
-    
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://akiprisaye.pages.dev/" />
-    <meta property="og:title" content="A KI PRI SA YÉ - Transparence des prix Outre-mer" />
-    <meta property="og:description" content="Application citoyenne d'information dédiée à la compréhension des prix dans les territoires ultramarins. Comprendre pourquoi tout coûte plus cher." />
-    <meta property="og:image" content="https://akiprisaye.pages.dev/splash_lancement_appli.png" />
-    <meta property="og:locale" content="fr_FR" />
-    <meta property="og:site_name" content="A KI PRI SA YÉ" />
-    
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content="https://akiprisaye.pages.dev/" />
-    <meta name="twitter:title" content="A KI PRI SA YÉ - Transparence des prix Outre-mer" />
-    <meta name="twitter:description" content="Application citoyenne d'information dédiée à la compréhension des prix dans les territoires ultramarins." />
-    <meta name="twitter:image" content="https://akiprisaye.pages.dev/splash_lancement_appli.png" />
-    
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+
     <!-- PWA -->
     <link rel="manifest" href="/manifest.webmanifest" />
-    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
-    
-    <!-- Canonical URL -->
-    <link rel="canonical" href="https://akiprisaye.pages.dev/" />
-    
-    <!-- Fonts - Institutional Typography -->
+    <meta name="theme-color" content="#0f172a" />
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet" />
-    
-    <title>A KI PRI SA YÉ - Transparence des prix Outre-mer</title>
-    
-    <!-- Fallback styles in case JS/CSS fails to load -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Fallback CSS (ANTI BLACK SCREEN) -->
     <style>
-      /* Prevent black screen if CSS fails to load */
       body {
-        background-color: #0f172a;
-        color: #f1f5f9;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         margin: 0;
-        padding: 0;
-      }
-      
-      /* Loading indicator shown until React hydrates */
-      #root:empty::before {
-        content: "";
-        display: block;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 48px;
-        height: 48px;
-        border: 3px solid rgba(59, 130, 246, 0.2);
-        border-top-color: #3b82f6;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-      }
-      
-      #root:empty::after {
-        content: "Chargement...";
-        display: block;
-        position: fixed;
-        top: calc(50% + 40px);
-        left: 50%;
-        transform: translateX(-50%);
+        background: #0f172a;
         color: #f1f5f9;
-        font-size: 16px;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
       }
-      
-      @keyframes spin {
-        to { transform: translate(-50%, -50%) rotate(360deg); }
-      }
-      
-      /* Ensure no content is hidden behind black screen */
-      #root {
+
+      .fallback {
+        display: flex;
+        align-items: center;
+        justify-content: center;
         min-height: 100vh;
+        text-align: center;
+        padding: 24px;
+      }
+
+      .fallback-box {
+        max-width: 520px;
+      }
+
+      .badge {
+        display: inline-block;
+        margin-top: 16px;
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: #00a86b;
+        color: #000;
+        font-weight: 600;
+        font-size: 0.85rem;
       }
     </style>
-    
-    <script type="module" src="/src/main.jsx"></script>
   </head>
+
   <body>
-    <div id="root"></div>
-    
-    <!-- Noscript fallback -->
+    <!-- 🔒 Fallback statique TOUJOURS visible -->
+    <div class="fallback">
+      <div class="fallback-box">
+        <h1>🟢 A KI PRI SA YÉ</h1>
+        <p>
+          Le site est en ligne.<br />
+          L’infrastructure fonctionne.<br />
+          Le chargement React est progressif et sécurisé.
+        </p>
+        <div class="badge">Cloudflare Pages OK</div>
+      </div>
+    </div>
+
+    <!-- ⚛️ Point d’ancrage React (NON bloquant) -->
+    <div id="react-root"></div>
+
+    <!-- React loader progressif (sécurisé, non bloquant) -->
+    <script src="/react-entry.js"></script>
+
+    <!-- Legacy comparison tracker (optionnel, non bloquant) -->
+    <script src="/scripts/comparison-tracker.js" nomodule></script>
+
     <noscript>
-      <div style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: #0f172a; color: #f1f5f9; padding: 20px; text-align: center;">
-        <div>
-          <h1 style="font-size: 24px; margin-bottom: 16px;">⚠️ JavaScript requis</h1>
-          <p style="font-size: 16px; margin-bottom: 12px;">
-            Cette application nécessite JavaScript pour fonctionner.
-          </p>
-          <p style="font-size: 14px; color: #94a3b8;">
-            Veuillez activer JavaScript dans votre navigateur et rafraîchir la page.
+      <div class="fallback">
+        <div class="fallback-box">
+          <h1>JavaScript requis</h1>
+          <p>
+            Cette application nécessite JavaScript pour fonctionner.<br />
+            Veuillez l’activer dans votre navigateur.
           </p>
         </div>
       </div>

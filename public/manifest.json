@@ -1,42 +1,21 @@
 {
-  "name": "A KI PRI SA YÉ",
-  "short_name": "A KI PRI SA YÉ",
-  "description": "Application citoyenne gratuite qui explique les écarts de prix dans les DOM : transport, marges, taxes, logistique.",
-  "lang": "fr",
+  "name": "AkiPriSaYé Web",
+  "short_name": "AkiPriSaYé",
+  "description": "Comparateur de prix local + national, scan produits.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#000000",
+  "background_color": "#ffffff",
+  "theme_color": "#3498db",
   "icons": [
     {
-      "src": "assets/icon_192.png",
+      "src": "/icons/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "assets/icon_256.png",
-      "sizes": "256x256",
-      "type": "image/png"
-    },
-    {
-      "src": "assets/icon_512.png",
+      "src": "/icons/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png"
-    },
-    {
-      "src": "assets/icon_192.webp",
-      "sizes": "192x192",
-      "type": "image/webp"
-    },
-    {
-      "src": "assets/icon_256.webp",
-      "sizes": "256x256",
-      "type": "image/webp"
-    },
-    {
-      "src": "assets/icon_512.webp",
-      "sizes": "512x512",
-      "type": "image/webp"
     }
   ]
 }

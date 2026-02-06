@@ -18,6 +18,7 @@
  */
 
 import { isAndroid } from './platformService';
+import { safeLocalStorage } from '../utils/safeLocalStorage';
 
 /**
  * Premium subscription tiers
@@ -82,7 +83,7 @@ export async function getSubscriptionStatus(): Promise<SubscriptionStatus> {
 
   // On Android, check local storage (temporary until Google Play Billing integration)
   try {
-    const stored = localStorage.getItem(PREMIUM_STATUS_KEY);
+    const stored = safeLocalStorage.getItem(PREMIUM_STATUS_KEY);
     if (stored) {
       const parsed = JSON.parse(stored);
       return {
@@ -127,7 +128,7 @@ export async function getFeatureFlags(): Promise<PremiumFeatures> {
  */
 export function setSubscriptionStatus(status: SubscriptionStatus): void {
   try {
-    localStorage.setItem(PREMIUM_STATUS_KEY, JSON.stringify(status));
+    safeLocalStorage.setItem(PREMIUM_STATUS_KEY, JSON.stringify(status));
   } catch (error) {
     console.warn('Failed to save premium status:', error);
   }
@@ -139,7 +140,7 @@ export function setSubscriptionStatus(status: SubscriptionStatus): void {
  */
 export function clearSubscriptionStatus(): void {
   try {
-    localStorage.removeItem(PREMIUM_STATUS_KEY);
+    safeLocalStorage.removeItem(PREMIUM_STATUS_KEY);
   } catch (error) {
     console.warn('Failed to clear premium status:', error);
   }

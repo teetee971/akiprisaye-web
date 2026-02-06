@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Comparateur de prix – A KI PRI SA YÉ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f7f7f7;
+      margin: 0;
+      padding: 16px;
+      color: #222;
+    }
+
+    h1 {
+      font-size: 1.4rem;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 12px;
+      font-size: 1rem;
+      border-radius: 6px;
+      margin-bottom: 12px;
+    }
+
+    input {
+      border: 1px solid #ccc;
+    }
+
+    button {
+      border: none;
+      background: #0066cc;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .price {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      margin-bottom: 8px;
+      border-radius: 6px;
+      background: #f1f1f1;
+    }
+
+    .cheapest {
+      background: #e6f7e6;
+      border-left: 4px solid #2e7d32;
+      font-weight: 700;
+    }
+
+    .diff {
+      font-size: 0.85rem;
+      color: #555;
+    }
+
+    .error {
+      color: #c62828;
+      margin-top: 12px;
+      text-align: center;
+    }
+
+    footer {
+      margin-top: 16px;
+      font-size: 0.85rem;
+      color: #666;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="card">
+  <h1>Comparer les prix</h1>
+
+  <input id="query" placeholder="Ex : riz 1kg" />
+  <button id="btn">Comparer</button>
+
+  <div id="error" class="error"></div>
+  <div id="results"></div>
+</div>
+
+<footer>
+  Données indicatives – A KI PRI SA YÉ
+</footer>
+
+<script>
+const btn = document.getElementById('btn');
+const input = document.getElementById('query');
+const results = document.getElementById('results');
+const error = document.getElementById('error');
+
+btn.addEventListener('click', async () => {
+  results.innerHTML = '';
+  error.textContent = '';
+
+  const query = input.value.toLowerCase().trim();
+  if (!query) {
+    error.textContent = 'Veuillez saisir un produit.';
+    return;
+  }
+
+  try {
+    const res = await fetch('/data/prices.json');
+    const data = await res.json();
+
+    const matches = data.filter(p =>
+      p.productLabel.toLowerCase().includes(query)
+    );
+
+    if (matches.length === 0) {
+      error.textContent = 'Aucun prix trouvé.';
+      return;
+    }
+
+    const sorted = matches.sort((a, b) => a.price - b.price);
+    const minPrice = sorted[0].price;
+
+    sorted.forEach(p => {
+      const div = document.createElement('div');
+      const diff = (p.price - minPrice).toFixed(2);
+
+      div.className = 'price' + (p.price === minPrice ? ' cheapest' : '');
+      div.innerHTML = `
+        <span>${p.storeName}</span>
+        <span>
+          ${p.price.toFixed(2)} €
+          ${diff > 0 ? `<div class="diff">+${diff} €</div>` : ''}
+        </span>
+      `;
+      results.appendChild(div);
+    });
+
+  } catch (e) {
+    error.textContent = 'Erreur de chargement des données.';
+  }
+});
+</script>
+
+</body>
+</html>

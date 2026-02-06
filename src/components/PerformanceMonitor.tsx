@@ -8,16 +8,28 @@ interface Metric {
 }
 
 function sendToAnalytics(metric: Metric) {
-  // En production, envoyer à votre service d'analytics
-  if (import.meta.env.DEV) {
-    console.log('📊 Web Vital:', metric);
+  const payload = {
+    name: metric.name,
+    value: Math.round(metric.value),
+    rating: metric.rating,
+    path: window.location.pathname,
+    timestamp: Date.now(),
+  };
+
+  const endpoint = import.meta.env.VITE_WEB_VITALS_ENDPOINT;
+  if (endpoint && navigator.sendBeacon) {
+    navigator.sendBeacon(endpoint, JSON.stringify(payload));
+    return;
   }
-  
-  // Exemple:  envoyer à Google Analytics
-  // gtag('event', metric.name, {
-  //   value: Math.round(metric.value),
-  //   metric_rating: metric.rating,
-  // });
+
+  if (import.meta.env.PROD) {
+    console.info('📊 Web Vital:', payload);
+    return;
+  }
+
+  if (import.meta.env.DEV) {
+    console.log('📊 Web Vital:', payload);
+  }
 }
 
 export function PerformanceMonitor() {

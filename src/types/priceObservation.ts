@@ -1,12 +1,15 @@
-export type TerritoryCode = 'GP' | 'MQ' | 'GF' | 'RE' | 'FR';
+/**
+ * Legacy compatibility layer – DO NOT DEFINE TYPES HERE
+ *
+ * This file exists only to preserve backward compatibility
+ * with older imports across the codebase.
+ *
+ * Canonical source of truth:
+ * src/types/canonicalPriceObservation.ts
+ */
 
-export type Territory = TerritoryCode | 'YT';
-
-export interface PriceObservation {
-  productId: string;
-  productLabel: string;
-  territory: Territory;
-  price: number;
-  source: string;
-  observedAt: string; // ISO
-}
+export type {
+  CanonicalPriceObservation as PriceObservation,
+  CanonicalTerritoryCode as TerritoryCode,
+  CanonicalTerritory as Territory,
+} from './canonicalPriceObservation';

@@ -8,6 +8,7 @@
  * @module ingredientEvolutionService
  */
 
+import { safeLocalStorage } from '../utils/safeLocalStorage';
 import type {
   IngredientEvolutionRequest,
   IngredientEvolutionResponse,
@@ -35,7 +36,7 @@ function isFeatureEnabled(): boolean {
 async function loadFormulationSnapshots(ean: string): Promise<FormulationSnapshot[]> {
   try {
     const key = `formulation_history_${ean}`;
-    const data = localStorage.getItem(key);
+    const data = safeLocalStorage.getItem(key);
     
     if (data) {
       return JSON.parse(data) as FormulationSnapshot[];

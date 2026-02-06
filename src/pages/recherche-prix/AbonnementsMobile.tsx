@@ -6,7 +6,7 @@ import {
   getOfferTypes,
   type MobilePlanPrice,
 } from '../../services/mobilePlanPriceService';
-import PriceChart from '../../components/comparateur/PriceChart';
+import PriceChart from '../../components/comparateur/LazyPriceChart';
 import SortControl from '../../components/comparateur/SortControl';
 import ShareButton from '../../components/comparateur/ShareButton';
 

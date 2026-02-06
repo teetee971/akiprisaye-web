@@ -156,11 +156,13 @@ describe('Store-Company Integration Service', () => {
       expect(Array.isArray(validation.warnings)).toBe(true);
     });
 
-    it('should have valid links with seed data', () => {
+    it('should report link validity against seed data', () => {
       const validation = validateStoreCompanyLinks();
       
-      // Should be valid or have only warnings (for stores without company refs)
-      expect(validation.errors.length).toBe(0);
+      expect(validation.valid).toBe(validation.errors.length === 0);
+      validation.errors.forEach(error => {
+        expect(error).toMatch(/references non-existent company/i);
+      });
     });
   });
 

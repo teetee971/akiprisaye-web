@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import { safeLocalStorage } from '../utils/safeLocalStorage';
 
 /**
  * Patterns de vibration prédéfinis
@@ -52,8 +53,8 @@ class FeedbackService {
   private audioContext: AudioContext | null = null;
   
   constructor() {
-    // Charger config depuis localStorage ou utiliser valeurs par défaut
-    const savedConfig = localStorage.getItem('feedbackConfig');
+    // Charger config depuis safeLocalStorage ou utiliser valeurs par défaut
+    const savedConfig = safeLocalStorage.getItem('feedbackConfig');
     this.config = savedConfig
       ? JSON.parse(savedConfig)
       : {
@@ -68,7 +69,7 @@ class FeedbackService {
    */
   updateConfig(config: Partial<FeedbackConfig>): void {
     this.config = { ...this.config, ...config };
-    localStorage.setItem('feedbackConfig', JSON.stringify(this.config));
+    safeLocalStorage.setItem('feedbackConfig', JSON.stringify(this.config));
   }
 
   /**

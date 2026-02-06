@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Sparkles, Clock, TrendingDown, ShoppingBag } from 'lucide-react';
+import { safeLocalStorage } from '../../utils/safeLocalStorage';
 
 interface DealOfDay {
   productName: string;
@@ -30,15 +31,15 @@ export const PersonalizedDealOfDay: React.FC = () => {
     // Generate personalized deal based on user history
     const generateDealOfDay = (): DealOfDay | null => {
       // Get user's shopping history
-      const historyData = localStorage.getItem('shoppingHistory:v1');
+      const historyData = safeLocalStorage.getItem('shoppingHistory:v1');
       
       // Check if deal was already shown today
-      const lastDealDate = localStorage.getItem('dealOfDay:lastShown');
+      const lastDealDate = safeLocalStorage.getItem('dealOfDay:lastShown');
       const today = new Date().toDateString();
       
       if (lastDealDate === today) {
         // Already shown today, retrieve stored deal
-        const storedDeal = localStorage.getItem('dealOfDay:current');
+        const storedDeal = safeLocalStorage.getItem('dealOfDay:current');
         return storedDeal ? JSON.parse(storedDeal) : null;
       }
 
@@ -80,8 +81,8 @@ export const PersonalizedDealOfDay: React.FC = () => {
       const selectedDeal = possibleDeals[Math.floor(Math.random() * possibleDeals.length)];
 
       // Store deal for today
-      localStorage.setItem('dealOfDay:current', JSON.stringify(selectedDeal));
-      localStorage.setItem('dealOfDay:lastShown', today);
+      safeLocalStorage.setItem('dealOfDay:current', JSON.stringify(selectedDeal));
+      safeLocalStorage.setItem('dealOfDay:lastShown', today);
 
       return selectedDeal;
     };

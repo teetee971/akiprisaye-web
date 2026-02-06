@@ -7,6 +7,7 @@
  * @module productHistoryService
  */
 
+import { safeLocalStorage } from '../utils/safeLocalStorage';
 import type {
   ProductHistoryRequest,
   ProductHistoryResponse,
@@ -21,7 +22,7 @@ import type {
 async function loadDossierFromStorage(ean: string): Promise<ProductDossier | null> {
   try {
     const key = `product_dossier_${ean}`;
-    const data = localStorage.getItem(key);
+    const data = safeLocalStorage.getItem(key);
     
     if (data) {
       return JSON.parse(data) as ProductDossier;
@@ -297,4 +298,3 @@ export async function getProductEvolution(
     stabilityScore,
   };
 }
-

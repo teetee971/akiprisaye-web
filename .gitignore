@@ -166,3 +166,8 @@ ChatGPT*.png
 lighthouse-results.json
 build.log
 t
+
+audit.json
+package-lock.json
+# CI fix – allow frontend lockfile for npm ci
+!frontend/package-lock.json

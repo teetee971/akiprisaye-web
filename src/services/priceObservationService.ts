@@ -1,184 +1,242 @@
 // src/services/priceObservationService.ts
-// Service pour gérer les observations de prix factuelles
-// Données observées uniquement, aucune interprétation
 
-import type { PriceObservation } from '../types/priceObservation'
+import type { PriceObservation } from '../types/PriceObservation';
+import rawObservations from '../data/observations.json';
+import { normalizeTerritoryCode } from './priceSearch/normalizeTerritoryCode';
 
-// Données observées locales (peuvent être étendues avec open-data)
-const LOCAL_OBSERVATIONS: PriceObservation[] = [
-  {
-    ean: '3017620422003',
-    productName: 'Nutella 750g',
-    territory: 'GP',
-    store: 'Supermarché A',
-    price: 5.99,
-    currency: 'EUR',
-    observationDate: '2025-11-15T10:00:00Z',
-    source: 'agent_public',
-    sourceRef: 'OBS-GP-2025-001',
-  },
-  {
-    ean: '3017620422003',
-    productName: 'Nutella 750g',
-    territory: 'MQ',
-    store: 'Épicerie B',
-    price: 6.50,
-    currency: 'EUR',
-    observationDate: '2025-11-18T10:00:00Z',
-    source: 'agent_public',
-    sourceRef: 'OBS-MQ-2025-002',
-  },
-  {
-    ean: '3017620422003',
-    productName: 'Nutella 750g',
-    territory: 'RE',
-    store: 'Carrefour',
-    price: 5.85,
-    currency: 'EUR',
-    observationDate: '2025-11-20T10:00:00Z',
-    source: 'ticket_scan',
-  },
-  {
-    ean: '3228857000852',
-    productName: 'Riz Basmati 1kg',
-    territory: 'GP',
-    store: 'Supermarché A',
-    price: 2.50,
-    currency: 'EUR',
-    observationDate: '2025-11-22T10:00:00Z',
-    source: 'agent_public',
-    sourceRef: 'OBS-GP-2025-003',
-  },
-  {
-    ean: '3228857000852',
-    productName: 'Riz Basmati 1kg',
-    territory: 'GP',
-    store: 'Leader Price',
-    price: 2.35,
-    currency: 'EUR',
-    observationDate: '2025-11-23T10:00:00Z',
-    source: 'ticket_scan',
-  },
-  {
-    ean: '3228857000852',
-    productName: 'Riz Basmati 1kg',
-    territory: 'RE',
-    store: 'Super U',
-    price: 2.60,
-    currency: 'EUR',
-    observationDate: '2025-11-24T10:00:00Z',
-    source: 'open_data',
-    sourceRef: 'OPENDATA-RE-001',
-  },
-  {
-    ean: '3019081238957',
-    productName: 'Lait UHT Demi-écrémé 1L',
-    territory: 'RE',
-    store: 'Carrefour',
-    price: 1.20,
-    currency: 'EUR',
-    observationDate: '2025-11-25T10:00:00Z',
-    source: 'agent_public',
-    sourceRef: 'OBS-RE-2025-004',
-  },
-  {
-    ean: '3019081238957',
-    productName: 'Lait UHT Demi-écrémé 1L',
-    territory: 'MQ',
-    store: 'Super U',
-    price: 1.35,
-    currency: 'EUR',
-    observationDate: '2025-11-26T10:00:00Z',
-    source: 'ticket_scan',
-  },
-  {
-    ean: '3019081238957',
-    productName: 'Lait UHT Demi-écrémé 1L',
-    territory: 'GP',
-    store: 'Supermarché A',
-    price: 1.25,
-    currency: 'EUR',
-    observationDate: '2025-11-27T10:00:00Z',
-    source: 'agent_public',
-    sourceRef: 'OBS-GP-2025-005',
-  },
-]
+/* ============================================================================
+ * Configuration
+ * ========================================================================== */
 
-/**
- * Récupère toutes les observations
- */
-export function getAllObservations(): PriceObservation[] {
-  return [...LOCAL_OBSERVATIONS]
+const ENABLE_PARTNER_APIS = false;
+
+const ALLOWED_SOURCE_TYPES: PriceObservation['sourceType'][] = [
+  'citizen',
+  'open_data',
+  'partner',
+];
+
+/* ============================================================================
+ * Types internes (données brutes)
+ * ========================================================================== */
+
+interface RawProduct {
+  nom: string;
+  quantite: number;
+  prix_unitaire: number;
+  prix_total: number;
+  tva_pct: number;
+  categorie?: string;
 }
 
-/**
- * Filtre les observations par EAN
- */
-export function getObservationsByEAN(ean: string): PriceObservation[] {
-  return LOCAL_OBSERVATIONS.filter((obs) => obs.ean === ean)
+interface RawObservation {
+  territoire: string;
+  commune: string;
+  enseigne: string;
+  date: string;
+  heure: string;
+  produits: RawProduct[];
+  created_at: string;
 }
 
-/**
- * Filtre les observations par territoire
- */
-export function getObservationsByTerritory(territory: string): PriceObservation[] {
-  return LOCAL_OBSERVATIONS.filter((obs) => obs.territory === territory)
+interface SearchFilters {
+  query: string;
+  territory: string;
+  store: string;
+  source: PriceObservation['sourceType'] | 'all';
+  periodDays: number | 'all';
 }
 
-/**
- * Filtre les observations par EAN et territoire
- */
-export function getObservationsByEANAndTerritory(ean: string, territory: string): PriceObservation[] {
-  return LOCAL_OBSERVATIONS.filter((obs) => obs.ean === ean && obs.territory === territory)
-}
+/* ============================================================================
+ * Utilitaires
+ * ========================================================================== */
 
-/**
- * Liste tous les EAN uniques
- */
-export function getUniqueEANs(): string[] {
-  const eans = new Set(LOCAL_OBSERVATIONS.map((obs) => obs.ean))
-  return Array.from(eans).sort()
-}
+const normalizeText = (value: string): string =>
+  value
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9\s]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
 
-/**
- * Liste tous les territoires uniques
- */
-export function getUniqueTerritories(): string[] {
-  const territories = new Set(LOCAL_OBSERVATIONS.map((obs) => obs.territory))
-  return Array.from(territories).sort()
-}
+const computeConfidenceScore = (
+  observationsCount: number,
+  observedAt: string
+): number => {
+  const countScore = Math.min(observationsCount, 10) * 5;
 
-/**
- * Liste toutes les enseignes uniques
- */
-export function getUniqueStores(): string[] {
-  const stores = new Set(LOCAL_OBSERVATIONS.map((obs) => obs.store))
-  return Array.from(stores).sort()
-}
+  const daysAgo = Math.floor(
+    (Date.now() - new Date(observedAt).getTime()) / (1000 * 60 * 60 * 24)
+  );
 
-/**
- * Récupère les noms de produits uniques avec leur EAN
- */
-export function getProductList(): Array<{ ean: string; name: string }> {
-  const products = new Map<string, string>()
-  LOCAL_OBSERVATIONS.forEach((obs) => {
-    if (!products.has(obs.ean)) {
-      products.set(obs.ean, obs.productName)
+  const recencyScore =
+    daysAgo <= 7 ? 50 : daysAgo <= 30 ? 35 : daysAgo <= 90 ? 20 : 10;
+
+  return Math.min(100, countScore + recencyScore);
+};
+
+const assertSourceType = (sourceType: PriceObservation['sourceType']) => {
+  if (!ALLOWED_SOURCE_TYPES.includes(sourceType)) {
+    throw new Error('unsupported_source_type');
+  }
+  if (sourceType === 'partner' && !ENABLE_PARTNER_APIS) {
+    throw new Error('partner_sources_disabled');
+  }
+};
+
+/* ============================================================================
+ * Construction des observations citoyennes
+ * ========================================================================== */
+
+const buildCitizenObservations = (): PriceObservation[] => {
+  return (rawObservations as RawObservation[]).flatMap((observation) => {
+    const observedAt = new Date(
+      `${observation.date}T${observation.heure}`
+    ).toISOString();
+
+    const territory = normalizeTerritoryCode(observation.territoire);
+
+    return observation.produits.map((product) => {
+      const productLabel = product.nom.trim();
+      const observationsCount = 1;
+
+      return {
+        productId: `${observation.enseigne}-${productLabel}`,
+        productLabel,
+        territory,
+        storeLabel: observation.enseigne,
+        price: product.prix_unitaire,
+        currency: 'EUR',
+        observedAt,
+        sourceType: 'citizen',
+        observationsCount,
+        confidenceScore: computeConfidenceScore(
+          observationsCount,
+          observedAt
+        ),
+      };
+    });
+  });
+};
+
+/* ============================================================================
+ * Pool global d’observations
+ * ========================================================================== */
+
+const OPEN_DATA_OBSERVATIONS: PriceObservation[] = [];
+const PARTNER_OBSERVATIONS: PriceObservation[] = [];
+
+const buildObservationPool = (): PriceObservation[] => {
+  const observations = [
+    ...buildCitizenObservations(),
+    ...OPEN_DATA_OBSERVATIONS,
+    ...PARTNER_OBSERVATIONS,
+  ];
+
+  observations.forEach((o) => assertSourceType(o.sourceType));
+  return observations;
+};
+
+/* ============================================================================
+ * Agrégation (moyenne + dernière observation)
+ * ========================================================================== */
+
+const aggregateObservations = (
+  observations: PriceObservation[]
+): PriceObservation[] => {
+  const grouped = new Map<string, PriceObservation[]>();
+
+  observations.forEach((obs) => {
+    const key = [
+      obs.productLabel,
+      obs.territory,
+      obs.storeLabel,
+    ]
+      .map(normalizeText)
+      .join('|');
+
+    const bucket = grouped.get(key) ?? [];
+    bucket.push(obs);
+    grouped.set(key, bucket);
+  });
+
+  return Array.from(grouped.values()).map((entries) => {
+    const totalPrice = entries.reduce((sum, e) => sum + e.price, 0);
+    const averagePrice = totalPrice / entries.length;
+
+    const latest = entries.reduce((a, b) =>
+      new Date(b.observedAt) > new Date(a.observedAt) ? b : a
+    );
+
+    const observationsCount = entries.reduce(
+      (sum, e) => sum + (e.observationsCount ?? 1),
+      0
+    );
+
+    return {
+      ...latest,
+      price: Number(averagePrice.toFixed(2)),
+      observationsCount,
+      confidenceScore: computeConfidenceScore(
+        observationsCount,
+        latest.observedAt
+      ),
+    };
+  });
+};
+
+/* ============================================================================
+ * Service public
+ * ========================================================================== */
+
+export const priceObservationService = {
+  async search(filters: SearchFilters): Promise<PriceObservation[]> {
+    const query = normalizeText(filters.query);
+
+    if (filters.source !== 'all') {
+      assertSourceType(filters.source);
     }
-  })
-  
-  return Array.from(products.entries())
-    .map(([ean, name]) => ({ ean, name }))
-    .sort((a, b) => a.name.localeCompare(b.name))
-}
 
-export default {
-  getAllObservations,
-  getObservationsByEAN,
-  getObservationsByTerritory,
-  getObservationsByEANAndTerritory,
-  getUniqueEANs,
-  getUniqueTerritories,
-  getUniqueStores,
-  getProductList,
-}
+    const observations = aggregateObservations(
+      buildObservationPool().filter((obs) => {
+        const matchesQuery =
+          query.length === 0 ||
+          normalizeText(obs.productLabel).includes(query);
+
+        const matchesTerritory =
+          filters.territory === 'all' ||
+          obs.territory === filters.territory;
+
+        const matchesStore =
+          filters.store === 'all' ||
+          obs.storeLabel === filters.store;
+
+        const matchesSource =
+          filters.source === 'all' ||
+          obs.sourceType === filters.source;
+
+        const matchesPeriod =
+          filters.periodDays === 'all'
+            ? true
+            : Date.now() -
+                new Date(obs.observedAt).getTime() <=
+              filters.periodDays * 24 * 60 * 60 * 1000;
+
+        return (
+          matchesQuery &&
+          matchesTerritory &&
+          matchesStore &&
+          matchesSource &&
+          matchesPeriod
+        );
+      })
+    );
+
+    return observations.sort(
+      (a, b) =>
+        new Date(b.observedAt).getTime() -
+        new Date(a.observedAt).getTime()
+    );
+  },
+};

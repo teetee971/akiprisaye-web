@@ -8,31 +8,31 @@ describe('ToggleAnalyseCiblee', () => {
     const mockToggle = () => {};
     render(<ToggleAnalyseCiblee enabled={false} onToggle={mockToggle} />);
     
-    expect(screen.getByText('Mode Analyse Ciblée')).toBeDefined();
-    expect(screen.getByText('Inactif')).toBeDefined();
+    expect(screen.getByRole('heading', { name: /mode analyse ciblée/i })).toBeInTheDocument();
+    expect(screen.getByText(/inactif/i)).toBeInTheDocument();
   });
 
   it('shows active state when enabled', () => {
     const mockToggle = () => {};
     render(<ToggleAnalyseCiblee enabled={true} onToggle={mockToggle} />);
     
-    expect(screen.getByText('Actif')).toBeDefined();
-    expect(screen.getByText(/Mode exploratoire/)).toBeDefined();
+    expect(screen.getByText(/actif/i)).toBeInTheDocument();
+    expect(screen.getByText(/mode exploratoire/i)).toBeInTheDocument();
   });
 
   it('displays legal warning when active', () => {
     const mockToggle = () => {};
     render(<ToggleAnalyseCiblee enabled={true} onToggle={mockToggle} />);
     
-    expect(screen.getByText(/observations citoyennes ponctuelles/)).toBeDefined();
+    expect(screen.getByText(/observations citoyennes ponctuelles/i)).toBeInTheDocument();
   });
 
   it('displays default mode notice when inactive', () => {
     const mockToggle = () => {};
     render(<ToggleAnalyseCiblee enabled={false} onToggle={mockToggle} />);
     
-    expect(screen.getByText(/Mode par défaut/)).toBeDefined();
-    expect(screen.getByText(/Vue agrégée/)).toBeDefined();
+    expect(screen.getByText(/mode par défaut/i)).toBeInTheDocument();
+    expect(screen.getByText(/vue agrégée/i)).toBeInTheDocument();
   });
 
   it('calls onToggle when button is clicked', () => {

@@ -7,7 +7,7 @@ import {
   calculateDOMMetropoleGap,
   type ElectricityPrice,
 } from '../../services/electricityPriceService';
-import PriceChart from '../../components/comparateur/PriceChart';
+import PriceChart from '../../components/comparateur/LazyPriceChart';
 import SortControl from '../../components/comparateur/SortControl';
 import ShareButton from '../../components/comparateur/ShareButton';
 

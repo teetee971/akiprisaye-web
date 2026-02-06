@@ -1,18 +1,17 @@
-import { defineConfig } from 'vitest/config';
-import react from '@vitejs/plugin-react';
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
-  plugins: [react()],
   test: {
-    environment: 'jsdom',
-    setupFiles: ['./src/test/setup.ts'],
-    globals: false, // Recommended: explicit imports from vitest
-    exclude: [
-      '**/node_modules/**',
-      '**/dist/**',
-      '**/backend/**', // Backend uses Jest separately
-      '**/.{idea,git,cache,output,temp}/**',
-      '**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build}.config.*'
-    ],
+    environment: "jsdom",
+    globals: false,
+
+    // ✅ Autorise les fichiers avec 0 test
+    failOnNoTests: false,
+
+    // ✅ Tests uniquement côté src
+    include: ["src/**/*.{test,spec}.{ts,tsx,js,jsx}"],
+
+    // ✅ Ignore complètement frontend
+    exclude: ["frontend/**"],
   },
 });

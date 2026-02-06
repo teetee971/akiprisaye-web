@@ -1,3 +1,7 @@
+import ProductSearch from '../components/ProductSearch';
+import TerritorySelector from '../components/TerritorySelector';
+import EmptyState from '../components/EmptyState';
+import BarcodeScanner from '../components/BarcodeScanner';
 import { useState } from 'react';
 import { findProductByEan } from '../data/seedProducts';
 

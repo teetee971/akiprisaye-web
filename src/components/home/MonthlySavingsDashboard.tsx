@@ -11,11 +11,12 @@
  * - Annual projection
  * - Trend visualization
  * 
- * Data: 100% localStorage (GDPR-compliant)
+ * Data: 100% safeLocalStorage (GDPR-compliant)
  */
 
 import { useState, useEffect } from 'react';
 import { GlassCard } from '../ui/glass-card';
+import { safeLocalStorage } from '../../utils/safeLocalStorage';
 
 interface MonthlySavings {
   currentMonth: {
@@ -85,8 +86,8 @@ export function MonthlySavingsDashboard() {
   }, []);
 
   const loadSavingsData = () => {
-    // Load from localStorage
-    const savedData = localStorage.getItem('monthlySavings:v1');
+    // Load from safeLocalStorage
+    const savedData = safeLocalStorage.getItem('monthlySavings:v1');
     
     if (savedData) {
       const data = JSON.parse(savedData);

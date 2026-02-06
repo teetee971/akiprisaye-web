@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import Layout from '../Layout';
 
@@ -26,14 +26,13 @@ describe('Layout Component', () => {
 
   it('should render desktop navigation links', () => {
     renderLayout();
-    const comparateurLinks = screen.getAllByText('Comparateur');
-    expect(comparateurLinks.length).toBeGreaterThan(0);
+    expect(screen.getByRole('link', { name: /comparateur/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /observatoire/i })).toBeInTheDocument();
   });
 
-  it('should render OCR & Scan navigation link', () => {
+  it('should render Methodologie navigation link', () => {
     renderLayout();
-    const ocrLinks = screen.getAllByText('OCR & Scan');
-    expect(ocrLinks.length).toBeGreaterThan(0);
+    expect(screen.getByRole('link', { name: /méthodologie/i })).toBeInTheDocument();
   });
 
   it('should render mobile menu button', () => {
@@ -84,8 +83,10 @@ describe('Layout Component', () => {
 
   it('should render footer with links', () => {
     renderLayout();
-    expect(screen.getAllByText('Mentions légales').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Contact').length).toBeGreaterThan(0);
+    const footer = screen.getByRole('contentinfo');
+    const footerLinks = within(footer).getAllByRole('link');
+    expect(footerLinks.length).toBeGreaterThan(0);
+    expect(within(footer).getByRole('link', { name: /mentions légales/i })).toBeInTheDocument();
   });
 
   it('should render footer copyright', () => {

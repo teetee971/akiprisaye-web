@@ -225,7 +225,7 @@ export function generateQualityTips(quality: CameraQuality): QualityTip[] {
  * @param interval - Intervalle d'analyse en ms (défaut: 1000ms)
  */
 export function useCameraQualityAnalyzer(
-  videoRef: React.RefObject<HTMLVideoElement>,
+  videoRef: React.RefObject<HTMLVideoElement | null>,
   interval: number = 1000
 ): {
   quality: CameraQuality | null;

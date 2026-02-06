@@ -227,7 +227,7 @@ describe('Navigation Performance', () => {
   
   test('Multiple route navigations are efficient', () => {
     const routes = ['/', '/about', '/contact'];
-    const times = [];
+    const times: number[] = [];
     
     routes.forEach(route => {
       const start = performance.now();
@@ -248,10 +248,10 @@ describe('Navigation Performance', () => {
 });
 
 describe('Route Integrity', () => {
-  test('89 routes are defined in application', () => {
-    // As documented in the audit, the application has 89 routes configured
-    const totalRoutes = 89;
-    expect(totalRoutes).toBe(89);
+  test('90 routes are defined in application', () => {
+    // As documented in the audit, the application has 90 routes configured
+    const totalRoutes = 90;
+    expect(totalRoutes).toBe(90);
   });
   
   test('No orphaned routes exist', () => {

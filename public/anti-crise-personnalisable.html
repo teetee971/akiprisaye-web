@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Panier anti-crise – A KI PRI SA YÉ</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #f7f7f7;
+  padding: 16px;
+  margin: 0;
+  color: #222;
+}
+
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  max-width: 720px;
+  margin: auto;
+  box-shadow: 0 2px 10px rgba(0,0,0,.06);
+}
+
+h1 {
+  text-align: center;
+  font-size: 1.4rem;
+  margin-bottom: 8px;
+ note}
+
+.subtitle {
+  text-align: center;
+  font-size: .9rem;
+  color: #666;
+  margin-bottom: 16px;
+}
+
+.products-select {
+  margin-bottom: 16px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 12px;
+}
+
+.products-select label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .95rem;
+  margin-bottom: 6px;
+  cursor: pointer;
+}
+
+.store {
+  padding: 14px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  background: #f1f1f1;
+}
+
+.cheapest {
+  background: #e6f7e6;
+  border-left: 4px solid #2e7d32;
+}
+
+.store h2 {
+  font-size: 1.05rem;
+  margin: 0 0 6px 0;
+}
+
+.total {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.products {
+  font-size: .85rem;
+  color: #555;
+  margin-top: 6px;
+}
+
+.products ul {
+  padding-left: 16px;
+  margin: 6px 0;
+}
+
+.delta {
+  margin-top: 8px;
+  font-size: .85rem;
+}
+
+.delta strong {
+  color: #c62828;
+}
+
+.badge {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: .75rem;
+  background: #2e7d32;
+  color: #fff;
+}
+
+footer {
+  text-align: center;
+  margin-top: 16px;
+  font-size: .8rem;
+  color: #666;
+}
+
+.error {
+  text-align: center;
+  color: #c62828;
+  margin-top: 12px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <h1>Panier anti-crise</h1>
+  <div class="subtitle">
+    Comparaison transparente des paniers essentiels – Guadeloupe
+  </div>
+
+  <div class="products-select" id="selectors"></div>
+
+  <div id="results"></div>
+  <div id="error" class="error"></div>
+</div>
+
+<footer>
+  Données indicatives – A KI PRI SA YÉ<br>
+  Prix observés, aucune vente, aucune affiliation opaque
+</footer>
+
+<script>
+let ALL_PRICES = [];
+let SELECTED_PRODUCTS = new Set();
+
+/* INIT */
+async function init() {
+  try {
+    const res = await fetch('/data/prices.json');
+    if (!res.ok) throw new Error();
+
+    ALL_PRICES = await res.json();
+
+    if (!Array.isArray(ALL_PRICES) || ALL_PRICES.length === 0) {
+      showError('Aucune donnée disponible.');
+      return;
+    }
+
+    buildSelectors();
+    recalcBasket();
+
+  } catch {
+    showError('Impossible de charger les données.');
+  }
+}
+
+/* SELECTEURS PRODUITS */
+function buildSelectors() {
+  const container = document.getElementById('selectors');
+  container.innerHTML = '<strong>Produits inclus dans le panier :</strong><br>';
+
+  const products = [...new Map(
+    ALL_PRICES.map(p => [p.productId, p])
+  ).values()];
+
+  products.forEach(p => {
+    SELECTED_PRODUCTS.add(p.productId);
+
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = true;
+
+    checkbox.addEventListener('change', () => {
+      checkbox.checked
+        ? SELECTED_PRODUCTS.add(p.productId)
+        : SELECTED_PRODUCTS.delete(p.productId);
+      recalcBasket();
+    });
+
+    const label = document.createElement('label');
+    label.appendChild(checkbox);
+    label.append(`${p.productLabel} (${p.category || 'produit essentiel'})`);
+
+    container.appendChild(label);
+  });
+}
+
+/* CALCUL PANIER */
+function recalcBasket() {
+  const container = document.getElementById('results');
+  container.innerHTML = '';
+
+  const filtered = ALL_PRICES.filter(p =>
+    SELECTED_PRODUCTS.has(p.productId)
+  );
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<p>Aucun produit sélectionné.</p>';
+    return;
+  }
+
+  const byStore = {};
+
+  filtered.forEach(p => {
+    if (!byStore[p.storeName]) {
+      byStore[p.storeName] = { total: 0, items: [] };
+    }
+    byStore[p.storeName].total += p.price;
+    byStore[p.storeName].items.push(p);
+  });
+
+  const stores = Object.entries(byStore)
+    .map(([store, data]) => ({ store, ...data }))
+    .sort((a, b) => a.total - b.total);
+
+  const min = stores[0].total;
+
+  stores.forEach(s => {
+    const diff = s.total - min;
+    const percent = min > 0 ? (diff / min) * 100 : 0;
+
+    const div = document.createElement('div');
+    div.className = 'store' + (s.total === min ? ' cheapest' : '');
+
+    const productsHtml = s.items.map(i =>
+      `<li>
+        ${i.productLabel} – ${i.price.toFixed(2)} €
+        <br><small>${i.source || ''} · ${i.observedAt || ''}</small>
+      </li>`
+    ).join('');
+
+    div.innerHTML = `
+      <h2>${s.store}</h2>
+      <div class="total">Total panier : ${s.total.toFixed(2)} €</div>
+
+      <div class="products">
+        <ul>${productsHtml}</ul>
+      </div>
+
+      <div class="delta">
+        ${
+          diff > 0
+            ? `<strong>+${diff.toFixed(2)} €</strong> (${percent.toFixed(1)} %)`
+            : `<span class="badge">Panier le moins cher</span>`
+        }
+      </div>
+    `;
+
+    container.appendChild(div);
+  });
+}
+
+function showError(msg) {
+  document.getElementById('error').textContent = msg;
+}
+
+init();
+</script>
+
+</body>
+</html>

@@ -1,8 +1,9 @@
+import { safeLocalStorage } from '../utils/safeLocalStorage';
 /**
  * userPreferences.ts — User preferences and settings
  * 
  * Purpose: Centralized user preferences for Anti-Crisis features
- * Storage: localStorage
+ * Storage: safeLocalStorage
  * RGPD compliant: All data stored locally, user controlled
  * 
  * @module userPreferences
@@ -52,7 +53,7 @@ interface PreferencesData {
  */
 function getStoredPreferences(): PreferencesData {
   try {
-    const stored = localStorage.getItem(PREFERENCES_KEY);
+    const stored = safeLocalStorage.getItem(PREFERENCES_KEY);
     if (!stored) {
       return {
         version: PREFERENCES_VERSION,
@@ -86,7 +87,7 @@ function getStoredPreferences(): PreferencesData {
 }
 
 /**
- * Save user preferences to localStorage
+ * Save user preferences to safeLocalStorage
  */
 function savePreferences(preferences: UserPreferences): void {
   try {
@@ -94,7 +95,7 @@ function savePreferences(preferences: UserPreferences): void {
       version: PREFERENCES_VERSION,
       preferences,
     };
-    localStorage.setItem(PREFERENCES_KEY, JSON.stringify(data));
+    safeLocalStorage.setItem(PREFERENCES_KEY, JSON.stringify(data));
   } catch (error) {
     console.error('Error saving user preferences:', error);
   }

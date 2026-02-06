@@ -1,8 +1,9 @@
+import { safeLocalStorage } from './safeLocalStorage';
 /**
  * priceHistory.ts — Local price history tracking for baskets
  * 
  * Purpose: Track basket price evolution over time per territory
- * Storage: localStorage (lightweight) or IndexedDB for larger datasets
+ * Storage: safeLocalStorage (lightweight) or IndexedDB for larger datasets
  * RGPD compliant - all data stored locally
  * 
  * @module priceHistory
@@ -59,7 +60,7 @@ export type TimePeriod = 'day' | 'week' | 'month';
  */
 function getStoredHistory(): PriceHistoryData {
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const stored = safeLocalStorage.getItem(STORAGE_KEY);
     if (!stored) {
       return {
         version: HISTORY_VERSION,
@@ -96,13 +97,13 @@ function getStoredHistory(): PriceHistoryData {
  */
 function saveHistory(data: PriceHistoryData): void {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    safeLocalStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   } catch (error) {
     console.error('Error saving price history:', error);
-    // If localStorage is full, try to cleanup old data
+    // If safeLocalStorage is full, try to cleanup old data
     cleanupOldSnapshots(data, true);
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      safeLocalStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     } catch (retryError) {
       console.error('Failed to save after cleanup:', retryError);
     }
@@ -336,7 +337,7 @@ export function getBasketsWithHistory(): string[] {
  */
 export function clearPriceHistory(): void {
   try {
-    localStorage.removeItem(STORAGE_KEY);
+    safeLocalStorage.removeItem(STORAGE_KEY);
   } catch (error) {
     console.error('Error clearing price history:', error);
   }

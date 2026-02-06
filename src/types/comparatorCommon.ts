@@ -13,7 +13,7 @@ import type { ReactNode } from 'react';
 export type Territory = 
   | 'GP'  // Guadeloupe
   | 'MQ'  // Martinique
-  | 'GY'  // Guyane
+  | 'GF'  // Guyane (ISO code)
   | 'RE'  // La Réunion
   | 'YT'  // Mayotte
   | 'MF'  // Saint-Martin

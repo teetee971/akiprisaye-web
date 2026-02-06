@@ -1,94 +1,70 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import { fileURLToPath, URL } from 'node:url';
-import { viteStaticCopy } from 'vite-plugin-static-copy';
-import { visualizer } from 'rollup-plugin-visualizer';
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import { viteStaticCopy } from 'vite-plugin-static-copy'
+import { visualizer } from 'rollup-plugin-visualizer'
+import path from 'path'
+import { existsSync } from 'fs'
 
-// Plugin to suppress Leaflet asset resolution warnings
-function suppressLeafletWarnings() {
-  return {
-    name:  'suppress-leaflet-warnings',
-    configResolved() {
-      const originalWarn = console.warn;
-      console.warn = (...args) => {
-        const msg = args. join(' ');
-        if (
-          msg.includes('images/layers. png') ||
-          msg.includes('images/layers-2x.png') ||
-          msg.includes('images/marker-icon.png')
-        ) {
-          return;
-        }
-        originalWarn. apply(console, args);
-      };
-    },
-  };
-}
-
+// https://vitejs.dev/config/
 export default defineConfig({
-  base: '/',
   plugins: [
     react(),
-    suppressLeafletWarnings(),
     viteStaticCopy({
       targets: [
-        {
+        // Copie les images Leaflet seulement si elles existent
+        ...(existsSync('node_modules/leaflet/dist/images') ? [{
           src: 'node_modules/leaflet/dist/images/*',
-          dest: 'images',
-        },
-      ],
+          dest: 'leaflet/images'
+        }] : []),
+        // Copie les workers Tesseract
+        {
+          src: 'node_modules/tesseract.js/dist/worker.min.js*',
+          dest: 'tesseract'
+        }
+      ]
     }),
     visualizer({
+      filename: './dist/stats.html',
       open: false,
-      filename: 'dist/stats.html',
       gzipSize: true,
-      brotliSize: true,
-    }),
+      brotliSize: true
+    })
   ],
-  
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url)),
-    },
+      '@': path.resolve(__dirname, './src')
+    }
   },
-  
   build: {
-    chunkSizeWarningLimit: 600,
+    outDir: 'dist',
+    sourcemap: false,
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true
+      }
+    },
     rollupOptions: {
       output: {
         manualChunks: {
-          // Séparer React et ses dépendances
-          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          
-          // Séparer Leaflet (gros)
-          'vendor-leaflet':  ['leaflet', 'react-leaflet'],
-          
-          // Séparer Chart.js
+          'vendor-react': ['react', 'react-dom'],
+          'vendor-leaflet': ['leaflet', 'react-leaflet'],
           'vendor-chart': ['chart.js', 'react-chartjs-2'],
-          
-          // Séparer lucide-icons
+          'vendor-recharts': ['recharts'],
           'vendor-icons': ['lucide-react'],
-          
-          // Séparer les utilitaires
-          'vendor-utils': ['date-fns', 'clsx'],
-          
-          // Lazy load Tesseract OCR (17MB) - loaded only when scanner is used
-          'vendor-tesseract': ['tesseract.js'],
-        },
-      },
-      onwarn(warning, warn) {
-        if (
-          warning.code === 'UNRESOLVED_IMPORT' &&
-          warning.message &&
-          warning.message.includes('images/') &&
-          (warning.message.includes('layers.png') ||
-            warning.message.includes('layers-2x.png') ||
-            warning.message.includes('marker-icon.png'))
-        ) {
-          return;
+          'vendor-utils': ['lodash', 'date-fns', 'clsx'],
+          'vendor-tesseract': ['tesseract.js']
         }
-        warn(warning);
-      },
+      }
     },
+    chunkSizeWarningLimit: 1000
   },
-});
+  server: {
+    port: 3000,
+    open: true
+  },
+  preview: {
+    port: 4173
+  }
+})

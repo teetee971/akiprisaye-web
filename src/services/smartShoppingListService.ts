@@ -4,6 +4,7 @@
  */
 
 import type { 
+import { safeLocalStorage } from '../utils/safeLocalStorage';
   ShoppingList, 
   ShoppingListItem, 
   BudgetOptimization,
@@ -38,7 +39,7 @@ export class ShoppingListService {
    * Get all shopping lists
    */
   getLists(): ShoppingList[] {
-    const stored = localStorage.getItem(this.STORAGE_KEY);
+    const stored = safeLocalStorage.getItem(this.STORAGE_KEY);
     return stored ? JSON.parse(stored) : [];
   }
 
@@ -180,7 +181,7 @@ export class ShoppingListService {
 
   // Private helper methods
   private saveLists(lists: ShoppingList[]): void {
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(lists));
+    safeLocalStorage.setItem(this.STORAGE_KEY, JSON.stringify(lists));
   }
 
   private generateId(): string {

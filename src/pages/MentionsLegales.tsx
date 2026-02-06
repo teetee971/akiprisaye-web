@@ -27,6 +27,14 @@ export default function MentionsLegales() {
             <h2 className="text-xl font-semibold text-white">Données et confidentialité</h2>
             <ul className="mt-2 space-y-2 text-slate-300">
               <li><strong>Sources :</strong> données publiques et contributions ouvertes, non contractuelles.</li>
+              <li>
+                <strong>APIs externes :</strong> Open Food Facts et Open Prices peuvent être interrogées pour
+                enrichir les informations produit et prix (requêtes anonymes).
+              </li>
+              <li>
+                <strong>Géolocalisation :</strong> détection de territoire possible via géolocalisation navigateur
+                ou via IP (ipapi.co) en mode de secours, avec stockage local du choix.
+              </li>
               <li><strong>Données personnelles :</strong> aucune collecte, aucune exploitation nominative.</li>
               <li><strong>Cookies & trackers :</strong> aucun cookie publicitaire, aucun suivi utilisateur.</li>
               <li><strong>Stockage :</strong> uniquement local dans le navigateur pour les préférences et données chargées.</li>

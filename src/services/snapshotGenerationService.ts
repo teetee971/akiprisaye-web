@@ -7,10 +7,8 @@
  * @module snapshotGenerationService
  */
 
-import type {
-  CanonicalPriceObservation,
-  TerritoireName,
-} from '../types/canonicalPriceObservation';
+import type { PriceObservation, TerritoryCode } from '../types/PriceObservation';
+import { safeLocalStorage } from '../utils/safeLocalStorage';
 import type {
   IndicatorSnapshot,
   IndicatorCalculationConfig,
@@ -29,9 +27,9 @@ import { filterByQuality } from './dataValidationService';
  * Generate a complete indicator snapshot
  */
 export async function generateSnapshot(
-  observations: CanonicalPriceObservation[],
-  territoire?: TerritoireName,
-  minQualityScore: number = 0.5
+  observations: PriceObservation[],
+  territoire?: TerritoryCode,
+  minQualityScore: number = 50
 ): Promise<IndicatorSnapshot> {
   const version = '3.0.0';
   const dateSnapshot = new Date().toISOString();
@@ -41,11 +39,11 @@ export async function generateSnapshot(
   
   // Filter by territory if specified
   const filtered = territoire
-    ? qualityFiltered.filter((obs) => obs.territoire === territoire)
+    ? qualityFiltered.filter((obs) => obs.territory === territoire)
     : qualityFiltered;
   
   // Determine period covered
-  const dates = filtered.map((obs) => new Date(obs.date_releve).getTime());
+  const dates = filtered.map((obs) => new Date(obs.observedAt).getTime());
   const periodStart = new Date(Math.min(...dates)).toISOString().split('T')[0];
   const periodEnd = new Date(Math.max(...dates)).toISOString().split('T')[0];
   
@@ -63,12 +61,12 @@ export async function generateSnapshot(
   
   // Calculate IVC for all territories
   const indicesVieChere = [];
-  const territoires: TerritoireName[] = Array.from(
-    new Set(filtered.map((obs) => obs.territoire))
+  const territoires: TerritoryCode[] = Array.from(
+    new Set(filtered.map((obs) => obs.territory)),
   );
   
   for (const terr of territoires) {
-    if (terr !== 'Hexagone') {
+    if (terr !== 'FR') {
       const ivcResult = await calculateIVC(observations, terr, periodEnd);
       if (ivcResult.success && ivcResult.data) {
         indicesVieChere.push(ivcResult.data);
@@ -95,10 +93,10 @@ export async function generateSnapshot(
   // Calculate dispersions for top products with store data
   const dispersionsEnseignes = [];
   const productsWithStores = topProducts.filter((p) =>
-    filtered.some((obs) => 
-      (obs.produit.ean === p.ean || obs.produit.nom === p.produit) && 
-      obs.enseigne
-    )
+    filtered.some(
+      (obs) =>
+        (obs.barcode === p.ean || obs.productLabel === p.produit) && obs.storeLabel,
+    ),
   );
   
   for (const product of productsWithStores.slice(0, 10)) {
@@ -115,15 +113,18 @@ export async function generateSnapshot(
   }
   
   // Extract sources
-  const sources = Array.from(new Set(filtered.map((obs) => obs.source)));
+  const sources = Array.from(
+    new Set(filtered.map((obs) => obs.source ?? obs.sourceType ?? 'inconnue')),
+  );
   
   // Calculate average quality
   const qualityScores = filtered
-    .map((obs) => obs.qualite.score)
-    .filter((score) => score !== undefined) as number[];
-  const qualiteMoyenne = qualityScores.length > 0
-    ? qualityScores.reduce((sum, score) => sum + score, 0) / qualityScores.length
-    : 0;
+    .map((obs) => obs.confidenceScore)
+    .filter((score): score is number => score !== undefined);
+  const qualiteMoyenne =
+    qualityScores.length > 0
+      ? qualityScores.reduce((sum, score) => sum + score, 0) / qualityScores.length
+      : 0;
   
   return {
     version,
@@ -152,48 +153,51 @@ export async function generateSnapshot(
  * Generate global observatory statistics
  */
 export async function generateGlobalStats(
-  observations: CanonicalPriceObservation[]
+  observations: PriceObservation[]
 ): Promise<ObservatoryGlobalStats> {
   const dateCalcul = new Date().toISOString();
   
   // Extract unique territories
-  const territoiresCouvertsSet = new Set<TerritoireName>();
-  observations.forEach((obs) => territoiresCouvertsSet.add(obs.territoire));
+  const territoiresCouvertsSet = new Set<TerritoryCode>();
+  observations.forEach((obs) => territoiresCouvertsSet.add(obs.territory));
   const territoiresCouvertes = Array.from(territoiresCouvertsSet);
   
   // Extract unique products
   const produitsUniques = new Set<string>();
   observations.forEach((obs) => {
-    const key = obs.produit.ean || obs.produit.nom;
+    const key = obs.barcode || obs.productLabel;
     produitsUniques.add(key);
   });
   
   // Extract unique categories
-  const categoriesCouvertesSet = new Set(observations.map((obs) => obs.produit.categorie));
+  const categoriesCouvertesSet = new Set(
+    observations.map((obs) => obs.productCategory ?? 'Autres'),
+  );
   const categoriesCouvertes = Array.from(categoriesCouvertesSet);
   
   // Determine historical period
-  const dates = observations.map((obs) => obs.date_releve);
+  const dates = observations.map((obs) => obs.observedAt);
   const premiereObservation = dates.reduce((min, date) => (date < min ? date : min), dates[0]);
   const derniereObservation = dates.reduce((max, date) => (date > max ? date : max), dates[0]);
   
   // Calculate quality statistics
   const observationsVerifiees = observations.filter(
-    (obs) => obs.qualite.niveau === 'verifie'
+    (obs) => (obs.confidenceScore ?? 0) >= 80,
   ).length;
   const observationsProbables = observations.filter(
-    (obs) => obs.qualite.niveau === 'probable'
+    (obs) => (obs.confidenceScore ?? 0) >= 60 && (obs.confidenceScore ?? 0) < 80,
   ).length;
   const observationsAVerifier = observations.filter(
-    (obs) => obs.qualite.niveau === 'a_verifier'
+    (obs) => (obs.confidenceScore ?? 0) < 60,
   ).length;
   
   const qualityScores = observations
-    .map((obs) => obs.qualite.score)
-    .filter((score) => score !== undefined) as number[];
-  const scoreMoyen = qualityScores.length > 0
-    ? qualityScores.reduce((sum, score) => sum + score, 0) / qualityScores.length
-    : 0;
+    .map((obs) => obs.confidenceScore)
+    .filter((score): score is number => score !== undefined);
+  const scoreMoyen =
+    qualityScores.length > 0
+      ? qualityScores.reduce((sum, score) => sum + score, 0) / qualityScores.length
+      : 0;
   
   return {
     date_calcul: dateCalcul,
@@ -228,7 +232,7 @@ export function exportSnapshotToJSON(
 }
 
 /**
- * Save snapshot to localStorage with version
+ * Save snapshot to safeLocalStorage with version
  */
 export function saveSnapshotLocally(
   snapshot: IndicatorSnapshot,
@@ -236,9 +240,9 @@ export function saveSnapshotLocally(
 ): void {
   try {
     const data = JSON.stringify(snapshot);
-    localStorage.setItem(key, data);
-    localStorage.setItem(`${key}_version`, snapshot.version);
-    localStorage.setItem(`${key}_date`, snapshot.date_snapshot);
+    safeLocalStorage.setItem(key, data);
+    safeLocalStorage.setItem(`${key}_version`, snapshot.version);
+    safeLocalStorage.setItem(`${key}_date`, snapshot.date_snapshot);
   } catch (error) {
     if (import.meta.env.DEV) {
       console.error('Failed to save snapshot:', error);
@@ -247,13 +251,13 @@ export function saveSnapshotLocally(
 }
 
 /**
- * Load snapshot from localStorage
+ * Load snapshot from safeLocalStorage
  */
 export function loadSnapshotLocally(
   key: string = 'observatory_snapshot'
 ): IndicatorSnapshot | null {
   try {
-    const data = localStorage.getItem(key);
+    const data = safeLocalStorage.getItem(key);
     if (!data) return null;
     
     return JSON.parse(data) as IndicatorSnapshot;

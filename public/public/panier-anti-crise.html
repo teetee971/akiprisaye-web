@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Panier anti-crise – A KI PRI SA YÉ</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+  body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f7f7f7;
+    padding: 16px;
+    margin: 0;
+    color: #222;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 16px;
+    max-width: 600px;
+    margin: auto;
+    box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 1.4rem;
+    margin-bottom: 16px;
+  }
+
+  .store {
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    background: #f1f1f1;
+  }
+
+  .cheapest {
+    background: #e6f7e6;
+    border-left: 4px solid #2e7d32;
+    font-weight: 700;
+  }
+
+  .total {
+    font-size: 1.05rem;
+    margin-bottom: 4px;
+  }
+
+  .products {
+    font-size: .85rem;
+    color: #555;
+  }
+
+  .delta {
+    margin-top: 6px;
+    font-size: .85rem;
+    color: #444;
+  }
+
+  .delta strong {
+    color: #c62828;
+  }
+
+  footer {
+    text-align: center;
+    margin-top: 16px;
+    font-size: .85rem;
+    color: #666;
+  }
+
+  .error {
+    text-align: center;
+    color: #c62828;
+    margin-top: 12px;
+  }
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <h1>Panier anti-crise</h1>
+  <div id="results"></div>
+  <div id="error" class="error"></div>
+</div>
+
+<footer>
+  Données indicatives – A KI PRI SA YÉ
+</footer>
+
+<script>
+/**
+ * Produits de base du panier anti-crise
+ * (facilement modifiable ou personnalisable plus tard)
+ */
+const ANTI_CRISIS_PRODUCTS = [
+  'riz',
+  'lait',
+  'huile',
+  'pâtes',
+  'sucre'
+];
+
+async function loadBasket() {
+  const container = document.getElementById('results');
+  const errorDiv = document.getElementById('error');
+  container.innerHTML = '';
+  errorDiv.textContent = '';
+
+  try {
+    const res = await fetch('/data/prices.json');
+
+    if (!res.ok) {
+      throw new Error('Erreur de chargement des données');
+    }
+
+    const prices = await res.json();
+
+    if (!Array.isArray(prices) || prices.length === 0) {
+      errorDiv.textContent = 'Aucune donnée disponible.';
+      return;
+    }
+
+    // Filtrage des produits du panier anti-crise
+    const basket = prices.filter(p =>
+      ANTI_CRISIS_PRODUCTS.some(k =>
+        p.productLabel.toLowerCase().includes(k)
+      )
+    );
+
+    if (basket.length === 0) {
+      errorDiv.textContent = 'Aucun produit du panier anti-crise trouvé.';
+      return;
+    }
+
+    // Regroupement par magasin
+    const byStore = {};
+
+    basket.forEach(p => {
+      if (!byStore[p.storeName]) {
+        byStore[p.storeName] = {
+          total: 0,
+          products: []
+        };
+      }
+      byStore[p.storeName].total += p.price;
+      byStore[p.storeName].products.push(p.productLabel);
+    });
+
+    const stores = Object.entries(byStore)
+      .map(([store, data]) => ({ store, ...data }))
+      .sort((a, b) => a.total - b.total);
+
+    const min = stores[0].total;
+
+    // Affichage
+    stores.forEach(s => {
+      const diff = s.total - min;
+      const percent = min > 0 ? (diff / min) * 100 : 0;
+
+      const div = document.createElement('div');
+      div.className = 'store' + (s.total === min ? ' cheapest' : '');
+
+      div.innerHTML = `
+        <div class="total">
+          ${s.store} — ${s.total.toFixed(2)} €
+        </div>
+
+        <div class="products">
+          ${s.products.join(', ')}
+        </div>
+
+        <div class="delta">
+          ${
+            diff > 0
+              ? `<strong>+${diff.toFixed(2)} €</strong> (${percent.toFixed(1)} % plus cher)`
+              : `Magasin le moins cher`
+          }
+        </div>
+      `;
+
+      container.appendChild(div);
+    });
+
+  } catch (err) {
+    errorDiv.textContent = 'Impossible de charger le panier anti-crise.';
+  }
+}
+
+loadBasket();
+</script>
+
+</body>
+</html>

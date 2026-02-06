@@ -1,12 +1,17 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 // eslint-disable-next-line no-unused-vars -- Component is used in render() call below
 import SignalementForm from '../SignalementForm';
 
 describe('SignalementForm', () => {
   beforeEach(() => {
+    vi.stubGlobal('UploadPreuve', () => null);
     localStorage.clear();
     vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
   it('renders form with all required fields', () => {

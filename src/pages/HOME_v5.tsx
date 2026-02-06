@@ -6,10 +6,10 @@
  * - Conversion optimization
  * - Social proof immediately visible
  * - Clear user journey
- * - Territory personalization
+ * - Global territory coverage
  * 
  * Structure (9 sections):
- * 1. Hero Compact (70vh) with territory detection
+ * 1. Hero Compact (70vh) with global coverage messaging
  * 2. Proof Bar (stats + credibility)
  * 3. Benefits (concrete value proposition)
  * 4. Example Comparison (NEW - real data)
@@ -23,9 +23,9 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
-import { detectTerritory } from '../utils/territoryDetection';
 import { getComparisonOfDay, type PriceComparison } from '../data/exampleComparisons';
 import '../styles/home-v5.css';
+import { safeLocalStorage } from '../utils/safeLocalStorage';
 
 export default function HomeV5() {
   const navigate = useNavigate();
@@ -38,7 +38,6 @@ export default function HomeV5() {
   const [showScrollIndicator, setShowScrollIndicator] = useState(true);
   const [showMobileCTA, setShowMobileCTA] = useState(false);
   const [displayStats, setDisplayStats] = useState({ scans: 0, products: 0, territories: 0 });
-  const [detectedTerritory, setDetectedTerritory] = useState<string>('');
   const [exampleComparison] = useState<PriceComparison>(getComparisonOfDay());
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
   
@@ -49,16 +48,9 @@ export default function HomeV5() {
   const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
   const heroScale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95]);
 
-  // Detect territory on mount
   useEffect(() => {
-    detectTerritory().then(territory => {
-      setDetectedTerritory(territory);
-    });
-  }, []);
-
-  useEffect(() => {
-    // Load real stats from localStorage
-    const savedStats = localStorage.getItem('platform_stats');
+    // Load real stats from safeLocalStorage
+    const savedStats = safeLocalStorage.getItem('platform_stats');
     if (savedStats) {
       setStats(JSON.parse(savedStats));
     }
@@ -145,10 +137,7 @@ export default function HomeV5() {
   };
 
   const getTerritoryTitle = () => {
-    if (detectedTerritory && detectedTerritory !== 'DOM-TOM') {
-      return `Comparez les prix en ${detectedTerritory}`;
-    }
-    return 'Comparez les prix dans les territoires ultramarins français';
+    return 'Comparez les prix réels près de chez vous';
   };
 
   return (
@@ -158,7 +147,7 @@ export default function HomeV5() {
         Aller au contenu principal
       </a>
       
-      {/* 🏆 SECTION 1: HERO COMPACT with territory detection (70vh) */}
+      {/* 🏆 SECTION 1: HERO COMPACT with global coverage (70vh) */}
       <section className="hero-v5" ref={heroRef}>
         <motion.div
           style={{ opacity: heroOpacity, scale: heroScale }}
@@ -170,7 +159,7 @@ export default function HomeV5() {
             transition={{ duration: 0.6 }}
             className="hero-title"
           >
-            {getTerritoryTitle()}
+            {getTerritoryTitle()}.
           </motion.h1>
           
           <motion.p
@@ -179,8 +168,13 @@ export default function HomeV5() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="hero-subtitle"
           >
-            Données publiques • Sans publicité • Indépendant
+            Des prix observés localement, comparés entre enseignes,
+            <br />
+            pensés pour les DOM-TOM.
           </motion.p>
+          <p className="hero-reassurance">
+            Sans compte. Données locales. Historique conservé sur votre appareil.
+          </p>
           
           {/* Quick Search XXL - Dominant CTA */}
           <motion.form
@@ -192,28 +186,18 @@ export default function HomeV5() {
           >
             <input
               type="text"
-              placeholder="Rechercher un produit..."
+              placeholder="Ex : riz 5kg, lait, eau…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="hero-search-input-xxl"
               aria-label="Rechercher un produit"
             />
-            <button type="submit" className="hero-search-btn-xxl" aria-label="Rechercher">
-              🔍
+            <button type="submit" className="hero-search-btn-xxl" aria-label="Rechercher un produit">
+              Rechercher un produit
             </button>
           </motion.form>
-          
-          {/* Secondary CTA - Scanner */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="hero-secondary-cta"
-          >
-            <Link to="/scan" className="cta-link-secondary">
-              ou scanner un ticket
-            </Link>
-          </motion.div>
+          <p className="hero-explain">EAN, nom de produit ou scan → comparaison instantanée.</p>
+          <p className="hero-trust">🔒 Vos recherches restent sur votre appareil.</p>
         </motion.div>
         
         {/* Scroll Indicator */}
@@ -239,7 +223,55 @@ export default function HomeV5() {
 
       <main id="main-content">
 
-      {/* 📊 SECTION 2: PROOF BAR - Immediate credibility */}
+      <section className="hero-why">
+        <div className="hero-why-inner">
+          <h2 className="hero-why-title">Pourquoi A KI PRI SA YÉ ?</h2>
+          <div className="hero-why-grid">
+            <div className="hero-why-card">
+              <p className="hero-why-heading">Pourquoi ce service existe</p>
+              <p className="hero-why-text">
+                Parce que les comparateurs classiques ne montrent pas les vrais prix des DOM-TOM.
+              </p>
+            </div>
+            <div className="hero-why-card">
+              <p className="hero-why-heading">Ce que vous voyez ici</p>
+              <ul className="hero-why-list">
+                <li>Prix observés localement</li>
+                <li>Comparaison entre enseignes</li>
+                <li>Historique automatique</li>
+                <li>Favoris pour décider plus tard</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 🗺️ SECTION 2: TERRITOIRES */}
+      <section className="territories-section">
+        <div className="territories-header">
+          <h2>Territoires</h2>
+          <p>Choisissez votre territoire pour accéder au hub local.</p>
+        </div>
+        <div className="territories-grid">
+          <Link className="territory-card" to="/guadeloupe">
+            Guadeloupe
+          </Link>
+          <Link className="territory-card" to="/martinique">
+            Martinique
+          </Link>
+          <Link className="territory-card" to="/guyane">
+            Guyane
+          </Link>
+          <Link className="territory-card" to="/reunion">
+            La Réunion
+          </Link>
+          <Link className="territory-card" to="/mayotte">
+            Mayotte
+          </Link>
+        </div>
+      </section>
+
+      {/* 📊 SECTION 3: PROOF BAR - Immediate credibility */}
       <section className="proof-bar">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

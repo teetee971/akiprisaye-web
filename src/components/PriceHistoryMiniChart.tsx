@@ -1,6 +1,6 @@
 // src/components/PriceHistoryMiniChart.tsx
 import React from 'react'
-import type { PriceObservation } from '../types/priceObservation'
+import type { PriceObservation } from '../types/PriceObservation'
 
 type PriceHistoryMiniChartProps = {
   observations: PriceObservation[]
@@ -19,9 +19,14 @@ export default function PriceHistoryMiniChart({
     return <div className="text-xs text-white/40">Aucune donnée</div>
   }
 
+  const getTimestamp = (value: string) => {
+    const parsed = new Date(value)
+    return Number.isNaN(parsed.getTime()) ? 0 : parsed.getTime()
+  }
+
   // Trier par date
   const sorted = [...observations].sort(
-    (a, b) => new Date(a.observationDate).getTime() - new Date(b.observationDate).getTime()
+    (a, b) => getTimestamp(a.observedAt) - getTimestamp(b.observedAt)
   )
 
   const prices = sorted.map((obs) => obs.price)

@@ -8,6 +8,7 @@
  */
 
 import type { ProductPhoto, PhotoUploadConfig } from '../types/product';
+import { safeLocalStorage } from '../utils/safeLocalStorage';
 
 /**
  * Default photo upload configuration
@@ -107,10 +108,10 @@ export async function uploadPhoto(
       isMain: false
     };
     
-    // Store in localStorage for demo
+    // Store in safeLocalStorage for demo
     const photos = getStoredPhotos(productId);
     photos.push(photo);
-    localStorage.setItem(`photos_${productId}`, JSON.stringify(photos));
+    safeLocalStorage.setItem(`photos_${productId}`, JSON.stringify(photos));
     
     return photo;
   } catch (error) {
@@ -126,7 +127,7 @@ export async function uploadPhoto(
  */
 export function getStoredPhotos(productId: string): ProductPhoto[] {
   try {
-    const stored = localStorage.getItem(`photos_${productId}`);
+    const stored = safeLocalStorage.getItem(`photos_${productId}`);
     return stored ? JSON.parse(stored) : [];
   } catch {
     return [];
@@ -142,7 +143,7 @@ export function setMainPhoto(productId: string, photoId: string): void {
     ...p,
     isMain: p.id === photoId
   }));
-  localStorage.setItem(`photos_${productId}`, JSON.stringify(updated));
+  safeLocalStorage.setItem(`photos_${productId}`, JSON.stringify(updated));
 }
 
 /**
@@ -151,7 +152,7 @@ export function setMainPhoto(productId: string, photoId: string): void {
 export function deletePhoto(productId: string, photoId: string): void {
   const photos = getStoredPhotos(productId);
   const filtered = photos.filter(p => p.id !== photoId);
-  localStorage.setItem(`photos_${productId}`, JSON.stringify(filtered));
+  safeLocalStorage.setItem(`photos_${productId}`, JSON.stringify(filtered));
 }
 
 /**
