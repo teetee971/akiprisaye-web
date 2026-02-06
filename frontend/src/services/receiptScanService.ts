@@ -125,7 +125,7 @@ const MAX_REASONABLE_QUANTITY = 100; // Maximum quantity for validation
 const STORE_PATTERNS = [
   { pattern: /CARREFOUR[\s]*MARKET/i, name: 'Carrefour Market' },
   { pattern: /CARREFOUR/i, name: 'Carrefour' },
-  { pattern: /E[\.\s]*LECLERC/i, name: 'E.Leclerc' },
+  { pattern: /E[.\s]*LECLERC/i, name: 'E.Leclerc' },
   { pattern: /AUCHAN/i, name: 'Auchan' },
   { pattern: /CASINO/i, name: 'Casino' },
   { pattern: /INTERMARCHE/i, name: 'Intermarché' },
@@ -185,7 +185,7 @@ function detectStoreName(ocrText: string): string | undefined {
  */
 function detectReceiptDate(ocrText: string): string | undefined {
   // Chercher DD/MM/YYYY ou DD-MM-YYYY
-  const dateMatch = ocrText.match(/(\d{2})[\/-](\d{2})[\/-](\d{4})/);
+  const dateMatch = ocrText.match(/(\d{2})[/\-](\d{2})[/\-](\d{4})/);
   if (dateMatch) {
     const day = parseInt(dateMatch[1], 10);
     const month = parseInt(dateMatch[2], 10);
