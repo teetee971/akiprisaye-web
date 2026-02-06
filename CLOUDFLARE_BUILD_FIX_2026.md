@@ -100,7 +100,28 @@ curl -s https://akiprisaye-web.pages.dev/ | grep -E "(root|script)"
 
 Si vous voyez `<div id="root"></div>` et `<script type="module"`, le site est correctement déployé mais votre navigateur affiche une version cachée.
 
-### Solution : Purge des caches
+### ✅ Solution DÉFINITIVE appliquée (v4 - 2026-02-06)
+
+**Corrections critiques :**
+
+1. **Fichiers fallback éliminés**
+   - Tous les HTML racine renommés `.old` (ignorés par git)
+   - Plus aucun fallback ne peut être servi
+
+2. **Service Worker v4 - STRICT network-first**
+   - `fetch(request, {cache: 'no-store'})` pour HTML
+   - Réponses HTML JAMAIS mises en cache
+   - Cache version v3 → v4 pour forcer update
+
+3. **Headers HTTP anti-cache**
+   - HTML : `Cache-Control: no-store, no-cache, must-revalidate`
+   - Assets : `Cache-Control: public, max-age=31536000, immutable`
+
+**Résultat :** Aucune possibilité de servir du contenu obsolète.
+
+**Documentation complète :** Voir [docs/DEPLOYMENT_TROUBLESHOOTING.md](docs/DEPLOYMENT_TROUBLESHOOTING.md)
+
+### Solution pour utilisateurs : Purge des caches
 
 #### 1. Cache Cloudflare (si accès admin)
 - Dashboard Cloudflare Pages → Caching → Purge Everything
