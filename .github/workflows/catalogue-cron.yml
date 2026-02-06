@@ -21,7 +21,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          if [ -f package.json ]; then npm ci --prefer-offline; fi
+          echo "Scripts use only built-in Node.js modules - no dependencies needed"
 
       - name: Run generate-index
         run: node ./scripts/generate-index.mjs
