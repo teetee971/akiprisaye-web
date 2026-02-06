@@ -87,6 +87,62 @@ akiprisaye-web/
    - ✅ Pas d'erreurs 404 sur les fichiers `/assets/*.js`
    - ✅ L'app React se charge correctement
 
+## 🔧 Problème de cache : "Le site est en ligne..." persiste
+
+### Diagnostic
+
+Si après le déploiement vous voyez encore le message "Le site est en ligne...", c'est un **problème de cache** :
+
+**Test rapide avec curl :**
+```bash
+curl -s https://akiprisaye-web.pages.dev/ | grep -E "(root|script)"
+```
+
+Si vous voyez `<div id="root"></div>` et `<script type="module"`, le site est correctement déployé mais votre navigateur affiche une version cachée.
+
+### Solution : Purge des caches
+
+#### 1. Cache Cloudflare (si accès admin)
+- Dashboard Cloudflare Pages → Caching → Purge Everything
+- Ou : Redeploy latest commit
+
+#### 2. Service Worker (cause principale)
+Le site utilise un Service Worker qui peut cacher l'ancienne version.
+
+**Chrome/Edge (Desktop) :**
+1. DevTools (F12) → Application → Service Workers
+2. Cliquer "Unregister" sur tous les workers actifs
+3. Application → Clear storage → Clear site data
+4. Recharger avec Ctrl+Shift+R (hard refresh)
+
+**Chrome Android :**
+1. Ouvrir le site
+2. Menu ⋮ → Paramètres du site → Stockage → Effacer les données
+3. Si PWA installée : Désinstaller la PWA depuis les paramètres Android
+4. Revenir sur le site
+
+**Safari iOS :**
+1. Réglages → Safari → Effacer historique et données
+2. Ou : Réglages → Safari → Avancé → Données de sites → Supprimer akiprisaye-web.pages.dev
+
+#### 3. Cache navigateur classique
+**Tous navigateurs :**
+- Windows/Linux : Ctrl+Shift+R ou Ctrl+F5
+- Mac : Cmd+Shift+R
+- Mobile : Menu → Effacer cache et données
+
+### Correctif Service Worker (v3)
+
+Le Service Worker a été mis à jour pour :
+1. **Network-first pour HTML** : Les pages HTML sont toujours récupérées depuis le réseau
+2. **Cache invalidé** : Version bump v2 → v3 force tous les clients à rafraîchir
+3. **Pas de précache HTML** : `/index.html` n'est plus précaché
+
+**Après un redéploiement, le nouveau Service Worker :**
+- Supprime automatiquement les anciens caches (v1, v2)
+- Utilise network-first pour tous les documents HTML
+- Garde cache-first uniquement pour assets statiques (JS, CSS, images)
+
 ## 📚 Références
 
 - [Cloudflare Pages Configuration](https://developers.cloudflare.com/pages/configuration/build-configuration/)
@@ -99,8 +155,47 @@ Après avoir mergé cette PR, Cloudflare Pages rebuild automatiquement avec la n
 
 **Aucune action manuelle nécessaire** dans l'interface Cloudflare Pages - le fichier `.cloudflare-pages.json` est lu automatiquement.
 
+## 🐛 Troubleshooting
+
+### Problème : Users still see old content after deployment
+
+**Symptômes :**
+- Curl shows correct React HTML but browser shows old content
+- DevTools Console shows old bundle hashes
+- "Le site est en ligne..." message visible
+
+**Cause :** Service Worker cache
+
+**Solution pour les utilisateurs :**
+1. **Méthode automatique :** Le nouveau Service Worker (v3) devrait se mettre à jour automatiquement après 24h maximum
+2. **Méthode manuelle :** Suivre les étapes de purge cache ci-dessus
+
+**Solution pour les développeurs :**
+```javascript
+// Dans DevTools Console, forcer la mise à jour du SW :
+navigator.serviceWorker.getRegistrations().then(regs => {
+  regs.forEach(reg => reg.unregister());
+}).then(() => location.reload());
+```
+
+### Problème : Build fails on Cloudflare
+
+**Vérifier :**
+1. `.cloudflare-pages.json` contient `root_directory: "frontend"`
+2. `frontend/package.json` existe et contient les scripts build
+3. `frontend/package-lock.json` existe (nécessaire pour `npm ci`)
+
+### Problème : 404 sur les assets après build
+
+**Cause probable :** Mauvaise configuration du `build_output_directory`
+
+**Vérifier :**
+- Doit être `"dist"` (relatif à `frontend/`)
+- PAS `"frontend/dist"` (car root_directory = frontend)
+
 ---
 
 **Date :** 6 février 2026  
 **Auteur :** GitHub Copilot Agent  
-**Status :** ✅ Implémenté et testé
+**Status :** ✅ Implémenté et testé  
+**Dernière mise à jour :** Fix Service Worker cache strategy (v3)
