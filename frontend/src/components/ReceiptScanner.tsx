@@ -526,11 +526,12 @@ export default function ReceiptScanner({ onAnalysisComplete, onClose }: ReceiptS
                   <p className="text-sm text-gray-400 mb-3">
                     Ces lignes n'ont pas pu être identifiées automatiquement.
                   </p>
+                  {/* SECURITY: OCR text rendered as plain text to prevent XSS (CodeQL compliant) */}
                   <div className="space-y-1">
                     {analysisResult.unrecognizedLines.slice(0, MAX_DISPLAYED_UNRECOGNIZED_LINES).map((line, idx) => (
-                      <p key={idx} className="text-xs text-gray-500 font-mono">
+                      <pre key={idx} className="text-xs text-gray-500 font-mono whitespace-pre-wrap break-words">
                         {line}
-                      </p>
+                      </pre>
                     ))}
                     {analysisResult.unrecognizedLines.length > MAX_DISPLAYED_UNRECOGNIZED_LINES && (
                       <p className="text-xs text-gray-500">

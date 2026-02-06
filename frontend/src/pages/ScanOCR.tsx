@@ -556,10 +556,13 @@ export default function ScanOCR() {
                   <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-200">
                     <div className="rounded-xl bg-slate-800/70 p-4">
                       <h3 className="font-semibold mb-2 text-blue-200">Signaux détectés</h3>
+                      {/* SECURITY: OCR text rendered as plain text to prevent XSS (CodeQL compliant) */}
                       {scanSummary.signals.length > 0 ? (
                         <ul className="list-disc list-inside space-y-1 text-slate-300">
                           {scanSummary.signals.map((signal) => (
-                            <li key={signal}>{signal}</li>
+                            <li key={signal}>
+                              <span className="whitespace-pre-wrap break-words">{signal}</span>
+                            </li>
                           ))}
                         </ul>
                       ) : (
@@ -568,17 +571,22 @@ export default function ScanOCR() {
                     </div>
                     <div className="rounded-xl bg-slate-800/70 p-4">
                       <h3 className="font-semibold mb-2 text-blue-200">Prix & ingrédients</h3>
+                      {/* SECURITY: OCR text rendered as plain text to prevent XSS (CodeQL compliant) */}
                       <p className="text-slate-300">
-                        Prix détectés :{' '}
-                        {scanSummary.prices.length > 0
-                          ? scanSummary.prices.map((price) => `${price.toFixed(2)}€`).join(', ')
-                          : 'Aucun prix explicite'}
+                        <span>Prix détectés : </span>
+                        <span className="whitespace-pre-wrap break-words">
+                          {scanSummary.prices.length > 0
+                            ? scanSummary.prices.map((price) => `${price.toFixed(2)}€`).join(', ')
+                            : 'Aucun prix explicite'}
+                        </span>
                       </p>
                       <p className="text-slate-300 mt-2">
-                        Additifs :{' '}
-                        {scanSummary.additives.length > 0
-                          ? scanSummary.additives.join(', ')
-                          : 'Aucun additif identifié'}
+                        <span>Additifs : </span>
+                        <span className="whitespace-pre-wrap break-words">
+                          {scanSummary.additives.length > 0
+                            ? scanSummary.additives.join(', ')
+                            : 'Aucun additif identifié'}
+                        </span>
                       </p>
                       {scanSummary.suggestedBarcode && (
                         <div className="mt-3 space-y-2">
