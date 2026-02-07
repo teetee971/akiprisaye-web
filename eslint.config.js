@@ -109,6 +109,20 @@ export default [
         postMessage: 'readonly',
         performance: 'readonly',
 
+        // Additional DOM types needed for TypeScript
+        File: 'readonly',
+        HTMLButtonElement: 'readonly',
+        HTMLFormElement: 'readonly',
+        HTMLElement: 'readonly',
+        KeyboardEvent: 'readonly',
+        GeolocationPosition: 'readonly',
+        GeolocationPositionError: 'readonly',
+        AbortSignal: 'readonly',
+        PermissionState: 'readonly',
+        IDBDatabase: 'readonly',
+        IDBOpenDBRequest: 'readonly',
+        IDBRequest: 'readonly',
+
         // Service Worker APIs
         self: 'readonly',
         caches: 'readonly',
@@ -161,9 +175,9 @@ export default [
     },
   },
 
-  // Configuration for JavaScript/JSX files - keep no-undef enabled
+  // Configuration for JavaScript/JSX files only - keep no-undef enabled
   {
-    files: ['**/*.{js,jsx,ts,tsx}'],
+    files: ['**/*.{js,jsx}'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
