@@ -22,7 +22,7 @@ export const UPDATE_JOBS: UpdateJob[] = [
   {
     id: 'refresh-prices-daily',
     type: 'price_refresh',
-    schedule: '0 6 * * *', // 6h every day
+    schedule: '0 6 * * *', // 6am every day
     enabled: true,
     config: { maxAge: 7 },
   },

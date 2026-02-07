@@ -16,7 +16,7 @@ import {
   getAggregatedPriceHistory,
   detectAnomalies,
   getPriceVerificationStats,
-} from '../services/pricing/index.js';
+} from '../../services/pricing/index.js';
 
 const router = Router();
 
