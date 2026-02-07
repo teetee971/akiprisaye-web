@@ -8,7 +8,6 @@ import type {
   Territory,
   SyncResult,
   BulkSyncResult,
-  DOM_TOM_TERRITORIES,
 } from './types';
 
 const OP_API_BASE = 'https://prices.openfoodfacts.org';
@@ -140,7 +139,7 @@ export async function getRecentPrices(
  */
 export async function filterPricesByTerritory(
   prices: OPPrice[],
-  territoryName: keyof typeof import('./types').DOM_TOM_TERRITORIES
+  _territoryName: keyof typeof import('./types').DOM_TOM_TERRITORIES
 ): Promise<OPPrice[]> {
   // TODO: Implémenter le geocoding des location_osm_id pour obtenir lat/lon
   // Pour l'instant, on retourne tous les prix

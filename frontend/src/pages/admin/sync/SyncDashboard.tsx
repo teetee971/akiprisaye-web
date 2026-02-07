@@ -21,7 +21,14 @@ export default function SyncDashboard() {
   const navigate = useNavigate();
   const [jobs, setJobs] = useState<ScheduledJob[]>([]);
   const [logs, setLogs] = useState<SyncLog[]>([]);
-  const [stats, setStats] = useState<any>(null);
+  const [stats, setStats] = useState<{
+    total: number;
+    completed: number;
+    failed: number;
+    running: number;
+    successRate: number;
+    averageDuration: number;
+  } | null>(null);
   const [activeTab, setActiveTab] = useState<'overview' | 'history' | 'config'>('overview');
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);

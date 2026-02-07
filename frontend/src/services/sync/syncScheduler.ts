@@ -11,7 +11,6 @@ import type {
   SyncResult,
 } from './types';
 import { safeLocalStorage } from '../../utils/safeLocalStorage';
-import { openFoodFactsService } from './openFoodFactsService';
 import { openPricesService } from './openPricesService';
 import { syncLoggerService } from './syncLogger';
 
@@ -62,7 +61,6 @@ export function setSchedulerConfig(config: Partial<SyncSchedulerConfig>): void {
  * Handler pour la synchronisation des produits OpenFoodFacts
  */
 async function syncOpenFoodFactsProducts(): Promise<SyncResult> {
-  const config = getSchedulerConfig();
   syncLoggerService.logMessage('sync-off-products', 'info', 'Starting OpenFoodFacts sync...');
 
   // TODO: Récupérer la liste des EAN à synchroniser depuis la base locale
@@ -93,7 +91,6 @@ async function syncOpenFoodFactsProducts(): Promise<SyncResult> {
  * Handler pour la synchronisation des prix OpenPrices
  */
 async function syncOpenPrices(): Promise<SyncResult> {
-  const config = getSchedulerConfig();
   syncLoggerService.logMessage('sync-op-prices', 'info', 'Starting OpenPrices sync...');
 
   try {
@@ -335,7 +332,7 @@ export async function runJobManually(jobId: string): Promise<SyncResult> {
  * Obtient le prochain temps d'exécution d'un job (simplifié)
  * Note: Pour une vraie implémentation, utiliser une lib comme cron-parser
  */
-export function getNextRunTime(schedule: string): Date | null {
+export function getNextRunTime(_schedule: string): Date | null {
   // Implémentation simplifiée : retourne dans 1 heure pour l'instant
   const next = new Date();
   next.setHours(next.getHours() + 1);

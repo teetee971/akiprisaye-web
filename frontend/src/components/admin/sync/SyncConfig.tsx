@@ -2,7 +2,7 @@
  * Composant de configuration de la synchronisation
  */
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { syncSchedulerService, type SyncSchedulerConfig } from '../../../services/sync';
 
 interface SyncConfigProps {

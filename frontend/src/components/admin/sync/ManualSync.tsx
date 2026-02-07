@@ -12,7 +12,12 @@ interface ManualSyncProps {
 export default function ManualSync({ onSync }: ManualSyncProps) {
   const [ean, setEan] = useState('');
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<{
+    success: boolean;
+    message: string;
+    product?: any;
+    prices?: any[];
+  } | null>(null);
 
   const handleSyncProduct = async () => {
     if (!ean.trim()) return;
