@@ -15,19 +15,24 @@ permissions:
 jobs:
   smoke-test:
     runs-on: ubuntu-latest
+    env:
+      MAX_ATTEMPTS: 5
+      RETRY_DELAY: 30
+      DEPLOYMENT_WAIT: 60
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Wait for deployment
+        run: |
+          echo "⏳ Waiting for Cloudflare Pages deployment to complete..."
+          sleep $DEPLOYMENT_WAIT
+
       - name: Check root page content
         run: |
-          # Wait for Cloudflare Pages deployment to complete
-          echo "⏳ Waiting for Cloudflare Pages deployment to complete..."
-          sleep 60
-
           # Retry mechanism for root page check
-          max_attempts=5
+          max_attempts=$MAX_ATTEMPTS
           attempt=1
           while [ $attempt -le $max_attempts ]; do
             echo "🔍 Attempt $attempt/$max_attempts: Checking root page..."
@@ -47,16 +52,18 @@ jobs:
                   echo "❌ Error: Root page does not contain expected content after $max_attempts attempts"
                   exit 1
                 fi
+                echo "⚠️ Retrying in $RETRY_DELAY seconds..."
+                sleep $RETRY_DELAY
               fi
             else
               if [ $attempt -eq $max_attempts ]; then
                 echo "❌ Error: Root page returned HTTP $response after $max_attempts attempts"
                 exit 1
               fi
-              echo "⚠️ HTTP $response - retrying in 30 seconds..."
+              echo "⚠️ HTTP $response - retrying in $RETRY_DELAY seconds..."
+              sleep $RETRY_DELAY
             fi
 
-            sleep 30
             attempt=$((attempt + 1))
           done
 
@@ -65,7 +72,7 @@ jobs:
       - name: Check comparateur page
         run: |
           # Retry mechanism for comparateur page check
-          max_attempts=5
+          max_attempts=$MAX_ATTEMPTS
           attempt=1
           while [ $attempt -le $max_attempts ]; do
             echo "🔍 Attempt $attempt/$max_attempts: Checking comparateur page..."
@@ -85,16 +92,18 @@ jobs:
                   echo "❌ Error: Comparateur page does not contain expected content after $max_attempts attempts"
                   exit 1
                 fi
+                echo "⚠️ Retrying in $RETRY_DELAY seconds..."
+                sleep $RETRY_DELAY
               fi
             else
               if [ $attempt -eq $max_attempts ]; then
                 echo "❌ Error: Comparateur page returned HTTP $response after $max_attempts attempts"
                 exit 1
               fi
-              echo "⚠️ HTTP $response - retrying in 30 seconds..."
+              echo "⚠️ HTTP $response - retrying in $RETRY_DELAY seconds..."
+              sleep $RETRY_DELAY
             fi
 
-            sleep 30
             attempt=$((attempt + 1))
           done
 
@@ -103,7 +112,7 @@ jobs:
       - name: Check API endpoint
         run: |
           # Retry mechanism for API endpoint check
-          max_attempts=5
+          max_attempts=$MAX_ATTEMPTS
           attempt=1
           while [ $attempt -le $max_attempts ]; do
             echo "🔍 Attempt $attempt/$max_attempts: Checking API endpoint..."
@@ -125,8 +134,8 @@ jobs:
               break
             fi
 
-            echo "⚠️ HTTP $response - retrying in 30 seconds..."
-            sleep 30
+            echo "⚠️ HTTP $response - retrying in $RETRY_DELAY seconds..."
+            sleep $RETRY_DELAY
             attempt=$((attempt + 1))
           done
 
