@@ -27,9 +27,11 @@ Le fichier `frontend/public/_redirects` contient :
 
 Ce fichier indique à Cloudflare Pages de servir `index.html` pour toutes les routes, permettant à React Router de gérer la navigation. Le fichier est automatiquement copié dans `frontend/dist/` lors du build.
 
-### 2. Fichier `404.html`
+### 2. Fichier `404.html` fallback
 
-Le fichier `404.html` à la racine du projet est configuré pour charger l'application React, assurant que même si une page 404 est servie, l'application React se charge et React Router gère la route.
+Le fichier `frontend/public/404.html` est une page fallback simple qui s'affiche uniquement si le mécanisme `_redirects` échoue. Il affiche un message invitant l'utilisateur à retourner à l'accueil. Le fichier est copié dans `frontend/dist/` lors du build.
+
+**Note:** Le fichier `404.html` à la racine du dépôt (`/404.html`) est utilisé par d'autres services d'hébergement (comme GitHub Pages) et n'est pas déployé sur Cloudflare Pages, qui utilise uniquement le contenu de `frontend/dist/`.
 
 **Comportement attendu :**
 - ✅ Accès direct à `/comparateur` → Charge l'application React et affiche le comparateur
@@ -43,7 +45,7 @@ Pour vérifier localement que le build fonctionne :
 
 ```bash
 cd frontend
-npm ci --include=dev
+npm ci
 npm run build
 ```
 
