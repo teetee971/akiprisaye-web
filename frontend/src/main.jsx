@@ -28,6 +28,11 @@ import OnboardingTour from './components/OnboardingTour';
 import OnboardingAutoStart from './components/OnboardingAutoStart';
 import HelpButton from './components/HelpButton';
 
+// Load debug utilities in development
+if (import.meta.env.DEV) {
+  import('./utils/onboardingDebug');
+}
+
 // Lazy-loaded pages - Main routes
 const Home = React.lazy(() => import('./pages/Home'));
 const Carte = React.lazy(() => import('./pages/Carte'));
