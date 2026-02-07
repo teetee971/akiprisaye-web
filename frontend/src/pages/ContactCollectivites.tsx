@@ -6,7 +6,7 @@
  */
 import React, { useState } from 'react';
 import { GlassContainer } from '@/components/ui/GlassContainer';
-import { GlassCard } from '@/components/ui/GlassCard';
+import { GlassCard } from '@/components/ui/glass-card';
 import { CivicButton } from '@/components/ui/CivicButton';
 import { DataBadge } from '@/components/ui/DataBadge';
 import { LimitNote } from '@/components/ui/LimitNote';

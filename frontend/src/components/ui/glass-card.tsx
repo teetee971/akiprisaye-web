@@ -81,3 +81,6 @@ export function GlassCardStrong({
     </div>
   );
 }
+
+// Export Card alias for backward compatibility
+export { GlassCard as Card };

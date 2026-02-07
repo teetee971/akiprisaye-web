@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { GlassContainer } from '@/components/ui/GlassContainer';
-import { GlassCard } from '@/components/ui/GlassCard';
+import { GlassCard } from '@/components/ui/glass-card';
 import { FAQ_DATA, getFAQByCategory, searchFAQ, type FAQItem } from '@/data/faq';
 
 const FAQ_CATEGORIES = [

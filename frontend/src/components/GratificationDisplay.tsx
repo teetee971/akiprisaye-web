@@ -1,5 +1,5 @@
 import React from 'react';
-import { GlassCard } from '@/components/ui/GlassCard';
+import { GlassCard } from '@/components/ui/glass-card';
 import {
   GRATIFICATION_BADGES,
   getEarnedBadges,
