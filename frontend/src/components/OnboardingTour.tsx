@@ -37,7 +37,7 @@ const tourSteps: Step[] = [
     disableBeacon: true,
   },
   {
-    target: '[href="#/carte"]',
+    target: 'nav a[href*="carte"], nav a[href="#/carte"]',
     content: (
       <div>
         <h4 className="font-bold mb-1">🗺️ Carte interactive</h4>
@@ -50,7 +50,7 @@ const tourSteps: Step[] = [
     placement: 'bottom',
   },
   {
-    target: '[href="#/comparateur"]',
+    target: 'nav a[href*="comparateur"], nav a[href="#/comparateur"]',
     content: (
       <div>
         <h4 className="font-bold mb-1">📊 Comparateur de prix</h4>
@@ -63,7 +63,7 @@ const tourSteps: Step[] = [
     placement: 'bottom',
   },
   {
-    target: '[href="#/observatoire"]',
+    target: 'nav a[href*="observatoire"], nav a[href="#/observatoire"]',
     content: (
       <div>
         <h4 className="font-bold mb-1">📈 Observatoire des prix</h4>
@@ -99,7 +99,7 @@ const tourSteps: Step[] = [
           Explorez les fonctionnalités et économisez sur vos achats !
         </p>
         <p className="mt-2 text-sm text-slate-600">
-          💡 Astuce : Vous pouvez relancer ce guide à tout moment via le bouton "Aide".
+          💡 Astuce : Vous pouvez relancer ce guide à tout moment via le bouton "Aide" en bas à droite.
         </p>
       </div>
     ),
