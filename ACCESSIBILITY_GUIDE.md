@@ -1,13 +1,55 @@
 # Guide d'Amélioration de l'Accessibilité
-## A KI PRI SA YÉ - WCAG 2.1 Level AA
+## A KI PRI SA YÉ - WCAG 2.1 Level AA / RGAA 4.1
 
 ---
 
-## Objectif
+## 🎯 Objectif
 
 Rendre l'application **A KI PRI SA YÉ** accessible à tous les utilisateurs, y compris ceux utilisant des technologies d'assistance (lecteurs d'écran, navigation au clavier, etc.).
 
-**Norme cible:** WCAG 2.1 Level AA
+**Normes cibles:** WCAG 2.1 Level AA et RGAA 4.1
+
+---
+
+## ✨ Fonctionnalités d'Accessibilité Implémentées
+
+### 1. Skip Links (Liens d'évitement)
+- ✅ Composant `SkipLinks.tsx` intégré dans le Layout
+- ✅ Permet de sauter directement au contenu principal, à la navigation, ou au footer
+- ✅ Visible uniquement au focus clavier
+- ✅ Conforme WCAG 2.4.1 (Bypass Blocks)
+
+### 2. Panneau de Paramètres d'Accessibilité
+- ✅ Composant `A11ySettingsPanel.tsx` avec bouton flottant ♿
+- ✅ Contrôle de la taille du texte (80% à 200%)
+- ✅ Mode contraste élevé
+- ✅ Réduction des animations (respecte `prefers-reduced-motion`)
+- ✅ Mode daltonien (Protanopie, Deutéranopie, Tritanopie)
+- ✅ Préférences sauvegardées dans localStorage avec `safeLocalStorage`
+
+### 3. Hook useA11yPreferences
+- ✅ Gestion centralisée des préférences d'accessibilité
+- ✅ Synchronisation avec localStorage
+- ✅ Application automatique des préférences au DOM
+- ✅ Détection des préférences système (prefers-reduced-motion)
+
+### 4. Styles A11Y Avancés (a11y.css)
+- ✅ Focus visible global (outline bleu 3px)
+- ✅ Skip links stylisés
+- ✅ Mode contraste élevé avec variables CSS
+- ✅ Support des animations réduites
+- ✅ Filtres SVG pour modes daltoniens
+- ✅ Tailles minimales de zones de clic (44x44px)
+- ✅ Amélioration des contrastes et de la lisibilité
+
+### 5. ARIA et Sémantique HTML
+- ✅ `role="banner"` sur le header
+- ✅ `role="main"` sur le contenu principal
+- ✅ `role="contentinfo"` sur le footer
+- ✅ `role="navigation"` avec `aria-label` sur les navs
+- ✅ `aria-expanded` et `aria-controls` sur le menu mobile
+- ✅ `aria-hidden="true"` sur les icônes décoratives
+- ✅ Classes `.sr-only` pour le contenu destiné aux lecteurs d'écran
 
 ---
 
@@ -482,11 +524,55 @@ function toggleFavorite(btn) {
 ## Ressources
 
 - [WCAG 2.1 Guidelines](https://www.w3.org/WAI/WCAG21/quickref/)
+- [RGAA 4.1](https://accessibilite.numerique.gouv.fr/methode/criteres-et-tests/)
 - [MDN ARIA](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA)
 - [A11y Project](https://www.a11yproject.com/)
 - [WebAIM](https://webaim.org/)
+- [Keyboard Shortcuts Documentation](./KEYBOARD_SHORTCUTS.md)
+
+---
+
+## 🚀 Composants d'Accessibilité Disponibles
+
+### Utilisation des Composants
+
+```tsx
+// Layout.jsx - Déjà intégré
+import SkipLinks from './a11y/SkipLinks';
+import A11ySettingsPanel from './a11y/A11ySettingsPanel';
+
+// Dans n'importe quel composant
+import { useA11yPreferences } from '../hooks/useA11yPreferences';
+
+function MyComponent() {
+  const { preferences, setFontSize, toggleHighContrast } = useA11yPreferences();
+  
+  return (
+    <div>
+      <p>Taille de police actuelle: {preferences.fontSize}%</p>
+      <button onClick={() => setFontSize(preferences.fontSize + 10)}>
+        Augmenter
+      </button>
+    </div>
+  );
+}
+```
+
+### Composants Individuels
+
+```tsx
+// Contrôle de taille de police
+import FontSizeControl from './a11y/FontSizeControl';
+
+// Bascule contraste élevé
+import HighContrastToggle from './a11y/HighContrastToggle';
+
+// Bascule animations réduites
+import ReducedMotionToggle from './a11y/ReducedMotionToggle';
+```
 
 ---
 
 *Guide créé: Novembre 2025*  
-*Objectif: 95+ sur Lighthouse Accessibility*
+*Dernière mise à jour: Février 2026*  
+*Objectif: 95+ sur Lighthouse Accessibility - RGAA 4.1 Conforme*
