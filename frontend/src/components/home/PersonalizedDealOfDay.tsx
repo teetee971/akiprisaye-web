@@ -39,8 +39,8 @@ export const PersonalizedDealOfDay: React.FC = () => {
       
       if (lastDealDate === today) {
         // Already shown today, retrieve stored deal
-        const storedDeal = safeLocalStorage.getItem('dealOfDay:current');
-        return storedDeal ? JSON.parse(storedDeal) : null;
+        const storedDeal = safeLocalStorage.getJSON<DealOfDay | null>('dealOfDay:current', null);
+        return storedDeal;
       }
 
       // Example deals based on common products

@@ -26,11 +26,10 @@ export const ShareVictory: React.FC = () => {
 
   React.useEffect(() => {
     // Get user's victory data
-    const savedData = safeLocalStorage.getItem('monthlySavings:v1');
-    if (savedData) {
-      const data = JSON.parse(savedData);
+    const data = safeLocalStorage.getJSON<{ currentMonth?: number } | null>('monthlySavings:v1', null);
+    if (data && data.currentMonth) {
       setVictoryData({
-        monthlySavings: data.currentMonth || 0,
+        monthlySavings: data.currentMonth,
         percentVsAverage: 23, // Example
         topProduct: 'Produits laitiers',
         territory: 'Guadeloupe'
