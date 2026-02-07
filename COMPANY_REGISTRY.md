@@ -50,6 +50,55 @@ interface Company {
 - **SIRET** (14 digits): SIREN + NIC (5 digits) = Identifies a specific establishment
 - **Headquarters**: SIRET ending in `00001`
 
+## Registered Companies
+
+The application includes 31 companies in the seed data, covering all major retail chains operating in French overseas territories:
+
+### National Retail Chains
+- **Carrefour** (Carrefour Hypermarchés SAS) - Major hypermarket chain
+- **Système U** (Système U Centrale Nationale) - Cooperative supermarket chain
+- **E.Leclerc** (Association des Centres Distributeurs E.Leclerc) - Major hypermarket chain
+- **Intermarché** (Groupement Les Mousquetaires) - Supermarket chain
+- **Leader Price** (Leader Price Distribution France) - Discount chain
+- **Auchan** (Auchan Hypermarché) - Hypermarket chain
+- **Casino** (Casino Guichard-Perrachon) - Supermarket chain
+- **Simply Market** (Simply Market Distribution) - Supermarket chain
+
+### Regional Chains
+- **Match** (Match Distribution) - Supermarket chain
+- **8 à Huit** (8 à Huit Distribution) - Convenience stores
+- **Vival** (Vival Distribution) - Convenience stores
+- **Euromarché** (Euromarché Distribution) - Supermarket chain
+- **Cora** (Cora SA) - Hypermarket chain
+
+### DOM-TOM Specialized Chains
+- **Ecomax** (Ecomax Distribution) - Local retail chain in Guadeloupe/Martinique/Guyane
+- **Score** (Score Distribution) - Local retail chain in La Réunion and Mayotte
+- **Jumbo** (Jumbo Distribution) - Retail chain in DOM-TOM
+- **Shopi** (Shopi Distribution) - Local retail chain in Mayotte
+- **AMC** (AMC Distribution) - Local retail chain in Saint-Barthélemy
+
+### Regional Groups
+- **Groupe Bernard Hayot (GBH)** - Major retail group in French Antilles
+- **Groupe Caillé** - Major retail group in La Réunion
+- **Groupe Parfait** - Retail group in Guadeloupe and Martinique
+- **Groupe Hayot-Sodiprav** - Retail group in Martinique
+- **Groupe Loret** - Automotive and mobility group
+- **Sucreries de Bourbon** - Agro-food industry in La Réunion
+
+### DIY & Home Improvement
+- **Mr. Bricolage** (Mr. Bricolage SA) - DIY chain
+- **Bricopro** (Bricopro Distribution) - DIY chain
+- **Bricomarché** (Bricomarché SA) - DIY chain
+
+### Electronics & Furniture
+- **Darty** (Darty et Fils) - Electronics and appliance retailer
+- **BUT** (BUT International) - Furniture and appliance retailer
+
+### Sports
+- **Décathlon** (Decathlon SA) - Sports equipment retailer
+- **Intersport** (Intersport France) - Sports equipment retailer
+
 ## Usage Examples
 
 ### 1. Basic Company Lookup
