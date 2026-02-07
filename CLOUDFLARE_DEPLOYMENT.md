@@ -80,7 +80,7 @@ frontend/dist/
 1. Vérifier que la build command est bien `npm run build`
 2. Vérifier que le output directory est bien `frontend/dist`
 3. Vérifier les logs de déploiement dans Cloudflare Pages
-4. S'assurer qu'aucune erreur n'apparaît lors du build
+4. S'assurer qu'aucune erreur n'apparaît lors du build (exécuter `npm ci && npm run build` localement pour tester)
 5. Vérifier que le fichier `frontend/dist/index.html` existe
 
 ### Si les routes SPA ne fonctionnent pas (404 statique) :
