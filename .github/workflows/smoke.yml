@@ -15,61 +15,123 @@ permissions:
 jobs:
   smoke-test:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      
+
       - name: Check root page content
         run: |
-          echo "Checking root page..."
-          response=$(curl -s -o /dev/null -w "%{http_code}" https://akiprisaye.pages.dev/)
-          if [ "$response" != "200" ]; then
-            echo "Error: Root page returned HTTP $response"
-            exit 1
-          fi
-          
-          content=$(curl -s https://akiprisaye.pages.dev/)
-          if ! echo "$content" | grep -q "A KI PRI SA YÉ"; then
-            echo "Error: Root page does not contain expected content 'A KI PRI SA YÉ'"
-            exit 1
-          fi
-          
+          # Wait for Cloudflare Pages deployment to complete
+          echo "⏳ Waiting for Cloudflare Pages deployment to complete..."
+          sleep 60
+
+          # Retry mechanism for root page check
+          max_attempts=5
+          attempt=1
+          while [ $attempt -le $max_attempts ]; do
+            echo "🔍 Attempt $attempt/$max_attempts: Checking root page..."
+            response=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 10 https://akiprisaye.pages.dev/ 2>/dev/null || echo "000")
+
+            if [ "$response" = "200" ]; then
+              echo "✅ Root page returned HTTP 200"
+
+              # Check content
+              content=$(curl -s --connect-timeout 10 https://akiprisaye.pages.dev/ 2>/dev/null || echo "")
+              if echo "$content" | grep -q "A KI PRI SA YÉ"; then
+                echo "✅ Root page contains expected content 'A KI PRI SA YÉ'"
+                break
+              else
+                echo "⚠️ Root page accessible but content check failed - retrying..."
+                if [ $attempt -eq $max_attempts ]; then
+                  echo "❌ Error: Root page does not contain expected content after $max_attempts attempts"
+                  exit 1
+                fi
+              fi
+            else
+              if [ $attempt -eq $max_attempts ]; then
+                echo "❌ Error: Root page returned HTTP $response after $max_attempts attempts"
+                exit 1
+              fi
+              echo "⚠️ HTTP $response - retrying in 30 seconds..."
+            fi
+
+            sleep 30
+            attempt=$((attempt + 1))
+          done
+
           echo "✅ Root page check passed"
-      
+
       - name: Check comparateur page
         run: |
-          echo "Checking comparateur page..."
-          response=$(curl -s -o /dev/null -w "%{http_code}" https://akiprisaye.pages.dev/comparateur.html)
-          if [ "$response" != "200" ]; then
-            echo "Error: Comparateur page returned HTTP $response"
-            exit 1
-          fi
-          
-          content=$(curl -s https://akiprisaye.pages.dev/comparateur.html)
-          if ! echo "$content" | grep -q "Comparateur"; then
-            echo "Error: Comparateur page does not contain expected content 'Comparateur'"
-            exit 1
-          fi
-          
+          # Retry mechanism for comparateur page check
+          max_attempts=5
+          attempt=1
+          while [ $attempt -le $max_attempts ]; do
+            echo "🔍 Attempt $attempt/$max_attempts: Checking comparateur page..."
+            response=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 10 https://akiprisaye.pages.dev/comparateur.html 2>/dev/null || echo "000")
+
+            if [ "$response" = "200" ]; then
+              echo "✅ Comparateur page returned HTTP 200"
+
+              # Check content
+              content=$(curl -s --connect-timeout 10 https://akiprisaye.pages.dev/comparateur.html 2>/dev/null || echo "")
+              if echo "$content" | grep -q "Comparateur"; then
+                echo "✅ Comparateur page contains expected content 'Comparateur'"
+                break
+              else
+                echo "⚠️ Comparateur page accessible but content check failed - retrying..."
+                if [ $attempt -eq $max_attempts ]; then
+                  echo "❌ Error: Comparateur page does not contain expected content after $max_attempts attempts"
+                  exit 1
+                fi
+              fi
+            else
+              if [ $attempt -eq $max_attempts ]; then
+                echo "❌ Error: Comparateur page returned HTTP $response after $max_attempts attempts"
+                exit 1
+              fi
+              echo "⚠️ HTTP $response - retrying in 30 seconds..."
+            fi
+
+            sleep 30
+            attempt=$((attempt + 1))
+          done
+
           echo "✅ Comparateur page check passed"
-      
+
       - name: Check API endpoint
         run: |
-          echo "Checking API endpoint..."
-          # Test with invalid EAN to ensure endpoint responds
-          response=$(curl -s -o /dev/null -w "%{http_code}" "https://akiprisaye.pages.dev/api/prices")
-          if [ "$response" = "404" ]; then
-            echo "⚠️ API endpoint not yet deployed (expected for initial PR)"
-            exit 0
-          fi
-          
-          if [ "$response" != "400" ] && [ "$response" != "200" ]; then
-            echo "Warning: API endpoint returned unexpected HTTP $response"
-          else
-            echo "✅ API endpoint responds"
-          fi
-      
+          # Retry mechanism for API endpoint check
+          max_attempts=5
+          attempt=1
+          while [ $attempt -le $max_attempts ]; do
+            echo "🔍 Attempt $attempt/$max_attempts: Checking API endpoint..."
+            response=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 10 "https://akiprisaye.pages.dev/api/prices" 2>/dev/null || echo "000")
+
+            if [ "$response" = "404" ]; then
+              echo "⚠️ API endpoint not yet deployed (expected for initial PR)"
+              exit 0
+            fi
+
+            if [ "$response" = "400" ] || [ "$response" = "200" ]; then
+              echo "✅ API endpoint responds with HTTP $response"
+              break
+            fi
+
+            if [ $attempt -eq $max_attempts ]; then
+              echo "⚠️ Warning: API endpoint returned HTTP $response after $max_attempts attempts"
+              echo "⚠️ This may be expected if API is not yet deployed"
+              break
+            fi
+
+            echo "⚠️ HTTP $response - retrying in 30 seconds..."
+            sleep 30
+            attempt=$((attempt + 1))
+          done
+
+          echo "✅ API endpoint check completed"
+
       - name: Summary
         if: success()
         run: |
