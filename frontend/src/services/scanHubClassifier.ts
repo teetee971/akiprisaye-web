@@ -113,7 +113,7 @@ export function classifyScanText(text: string): ScanHubClassification {
 }
 
 export function extractPrices(text: string): number[] {
-  const priceRegex = /\b(\d{1,3}(?:[\.,]\d{2}))\b/g;
+  const priceRegex = /\b(\d{1,3}(?:[.,]\d{2}))\b/g;
   const matches = [...text.matchAll(priceRegex)];
   return matches
     .map((match) => parseFloat(match[1].replace(',', '.')))

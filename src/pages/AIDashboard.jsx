@@ -38,14 +38,12 @@ export default function AIDashboard() {
 
   useEffect(() => {
     checkAdminAccess();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   useEffect(() => {
     if (isAdmin) {
       loadDashboardData();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin, territory]);
 
   const checkAdminAccess = async () => {

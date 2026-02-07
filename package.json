@@ -1,9 +1,17 @@
 {
   "name": "akiprisaye-web-root",
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "cd frontend && npm ci --include=dev && npm run build",
     "dev": "cd frontend && npm run dev",
-    "preview": "cd frontend && npm run preview"
+    "preview": "cd frontend && npm run preview",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.19.1",
+    "@typescript-eslint/parser": "^8.19.1",
+    "eslint": "^9.15.0",
+    "typescript": "^5.4.5"
   }
 }

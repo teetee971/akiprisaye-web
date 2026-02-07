@@ -24,54 +24,54 @@ import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
 import { PerformanceMonitor } from './components/PerformanceMonitor';
 
-// Import real pages - Main routes
-import Home from './pages/Home';
-import Carte from './pages/Carte';
-import AdminDashboard from './pages/AdminDashboard';
-import Comparateur from './pages/Comparateur';
-import Observatoire from './pages/Observatoire';
-import Methodologie from './pages/Methodologie';
-import Faq from './pages/Faq';
-import Contact from './pages/Contact';
-import MentionsLegales from './pages/MentionsLegales';
+// Lazy-loaded pages - Main routes
+const Home = React.lazy(() => import('./pages/Home'));
+const Carte = React.lazy(() => import('./pages/Carte'));
+const AdminDashboard = React.lazy(() => import('./pages/AdminDashboard'));
+const Comparateur = React.lazy(() => import('./pages/Comparateur'));
+const Observatoire = React.lazy(() => import('./pages/Observatoire'));
+const Methodologie = React.lazy(() => import('./pages/Methodologie'));
+const Faq = React.lazy(() => import('./pages/Faq'));
+const Contact = React.lazy(() => import('./pages/Contact'));
+const MentionsLegales = React.lazy(() => import('./pages/MentionsLegales'));
 
 // Additional feature pages
-import DonneesPubliques from './pages/DonneesPubliques';
-import Contribuer from './pages/Contribuer';
-import ContribuerPrix from './pages/ContribuerPrix';
-import Comparateurs from './pages/Comparateurs';
-import CarteItinerairesHub from './pages/CarteItinerairesHub';
-import ComparateurCitoyen from './pages/ComparateurCitoyen';
+const DonneesPubliques = React.lazy(() => import('./pages/DonneesPubliques'));
+const Contribuer = React.lazy(() => import('./pages/Contribuer'));
+const ContribuerPrix = React.lazy(() => import('./pages/ContribuerPrix'));
+const Comparateurs = React.lazy(() => import('./pages/Comparateurs'));
+const CarteItinerairesHub = React.lazy(() => import('./pages/CarteItinerairesHub'));
+const ComparateurCitoyen = React.lazy(() => import('./pages/ComparateurCitoyen'));
 
 // Scanner & OCR pages
-import ScannerHub from './pages/ScannerHub';
-import OCRHub from './pages/ocr/OCRHub';
-import ScanEAN from './pages/ScanEAN';
-import ProductPhotoAnalysis from './pages/ProductPhotoAnalysis';
-import ComparaisonEnseignes from './pages/ComparaisonEnseignes';
+const ScannerHub = React.lazy(() => import('./pages/ScannerHub'));
+const OCRHub = React.lazy(() => import('./pages/ocr/OCRHub'));
+const ScanEAN = React.lazy(() => import('./pages/ScanEAN'));
+const ProductPhotoAnalysis = React.lazy(() => import('./pages/ProductPhotoAnalysis'));
+const ComparaisonEnseignes = React.lazy(() => import('./pages/ComparaisonEnseignes'));
 
 // Settings & History
-import Settings from './pages/Settings';
-import HistoriquePrix from './pages/HistoriquePrix';
-import RecherchePrix from './pages/RecherchePrix';
-import Alertes from './pages/Alertes';
+const Settings = React.lazy(() => import('./pages/Settings'));
+const HistoriquePrix = React.lazy(() => import('./pages/HistoriquePrix'));
+const RecherchePrix = React.lazy(() => import('./pages/RecherchePrix'));
+const Alertes = React.lazy(() => import('./pages/Alertes'));
 
 // Auth pages
-import Login from './pages/Login';
-import Inscription from './pages/Inscription';
-import ResetPassword from './pages/ResetPassword';
-import MonCompte from './pages/MonCompte';
+const Login = React.lazy(() => import('./pages/Login'));
+const Inscription = React.lazy(() => import('./pages/Inscription'));
+const ResetPassword = React.lazy(() => import('./pages/ResetPassword'));
+const MonCompte = React.lazy(() => import('./pages/MonCompte'));
 
 // Pricing & Subscription
-import Pricing from './pages/Pricing';
-import Subscribe from './pages/Subscribe';
+const Pricing = React.lazy(() => import('./pages/Pricing'));
+const Subscribe = React.lazy(() => import('./pages/Subscribe'));
 
 // Observatory real-time
-import ObservatoireTempsReel from './pages/ObservatoireTempsReel';
+const ObservatoireTempsReel = React.lazy(() => import('./pages/ObservatoireTempsReel'));
 
 // Transparency & reporting
-import Transparence from './pages/Transparence';
-import SignalerAbus from './pages/SignalerAbus';
+const Transparence = React.lazy(() => import('./pages/Transparence'));
+const SignalerAbus = React.lazy(() => import('./pages/SignalerAbus'));
 
 /**
  * Root application render with HashRouter for Cloudflare Pages SPA
