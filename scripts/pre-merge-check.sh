@@ -127,11 +127,11 @@ print_section "4. Installation des dépendances"
 
 echo -e "${CYAN}📦 Installation des dépendances avec npm ci...${NC}"
 cd frontend
-if npm ci --silent 2>&1 | grep -q "ERROR\|ERR!"; then
-    print_result "FAIL" "npm ci a échoué"
+if ! npm ci --silent 2>&1 | grep -q "ERROR\|ERR!"; then
+    print_result "OK" "Dépendances installées avec succès"
     cd ..
 else
-    print_result "OK" "Dépendances installées avec succès"
+    print_result "FAIL" "npm ci a échoué"
     cd ..
 fi
 

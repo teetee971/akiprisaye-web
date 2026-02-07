@@ -41,8 +41,7 @@ jobs:
         continue-on-error: true
         run: |
           echo "## 🔍 ESLint Results" >> $GITHUB_STEP_SUMMARY
-          npm run lint > eslint-output.txt 2>&1 || true
-          if [ $? -eq 0 ]; then
+          if npm run lint > eslint-output.txt 2>&1; then
             echo "✅ **No linting errors found**" >> $GITHUB_STEP_SUMMARY
           else
             echo "⚠️ **Linting issues detected**" >> $GITHUB_STEP_SUMMARY
@@ -56,8 +55,7 @@ jobs:
         continue-on-error: true
         run: |
           echo "## 📘 TypeScript Check" >> $GITHUB_STEP_SUMMARY
-          npx tsc --noEmit > tsc-output.txt 2>&1 || true
-          if [ $? -eq 0 ]; then
+          if npx tsc --noEmit > tsc-output.txt 2>&1; then
             echo "✅ **No TypeScript errors found**" >> $GITHUB_STEP_SUMMARY
           else
             echo "⚠️ **TypeScript errors detected**" >> $GITHUB_STEP_SUMMARY
@@ -103,8 +101,7 @@ jobs:
         continue-on-error: true
         run: |
           echo "## 🔒 Security Audit" >> $GITHUB_STEP_SUMMARY
-          npm audit --audit-level=moderate > audit-output.txt 2>&1 || true
-          if [ $? -eq 0 ]; then
+          if npm audit --audit-level=moderate > audit-output.txt 2>&1; then
             echo "✅ **No vulnerabilities found**" >> $GITHUB_STEP_SUMMARY
           else
             echo "⚠️ **Vulnerabilities detected**" >> $GITHUB_STEP_SUMMARY
