@@ -32,6 +32,7 @@ export default function TiPanierButton({ float = true, type = 'comparison' }: { 
         title={label}
         onClick={() => setOpen(true)}
         className={buttonClass}
+        data-tour="ti-panier"
       >
         <Icon size={18} aria-hidden />
         <span className="sr-only">{label}</span>

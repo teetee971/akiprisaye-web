@@ -22,7 +22,11 @@ L.Icon.Default.mergeOptions({
 
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
+import { OnboardingProvider } from './context/OnboardingContext';
 import { PerformanceMonitor } from './components/PerformanceMonitor';
+import OnboardingTour from './components/OnboardingTour';
+import OnboardingAutoStart from './components/OnboardingAutoStart';
+import HelpButton from './components/HelpButton';
 
 // Lazy-loaded pages - Main routes
 const Home = React.lazy(() => import('./pages/Home'));
@@ -89,16 +93,17 @@ if (!rootElement) {
       <ErrorBoundary>
         <ThemeProvider>
           <AuthProvider>
-            <HashRouter>
-              <Suspense
-                fallback={
-                  <div className="min-h-screen flex items-center justify-center">
-                    <div className="animate-pulse text-lg">
-                      Chargement…
+            <OnboardingProvider>
+              <HashRouter>
+                <Suspense
+                  fallback={
+                    <div className="min-h-screen flex items-center justify-center">
+                      <div className="animate-pulse text-lg">
+                        Chargement…
+                      </div>
                     </div>
-                  </div>
-                }
-              >
+                  }
+                >
                 <Routes>
                   <Route path="/" element={<Layout />}>
                     <Route index element={<Navigate to="/carte" replace />} />
@@ -162,11 +167,15 @@ if (!rootElement) {
                   </Route>
                 </Routes>
                 <PerformanceMonitor />
+                <OnboardingAutoStart />
+                <OnboardingTour />
+                <HelpButton />
               </Suspense>
             </HashRouter>
-          </AuthProvider>
-        </ThemeProvider>
-      </ErrorBoundary>
+          </OnboardingProvider>
+        </AuthProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
     </React.StrictMode>
   );
 }
