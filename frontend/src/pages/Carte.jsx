@@ -31,7 +31,7 @@ function MapUpdater({ map, position }) {
   return null;
 }
 
-function MarkerClusterGroup({ map, leaflet, stores, currentTerritory, formatDistance, markerRefs }) {
+function MarkerClusterGroup({ map, leaflet, stores, currentTerritory, formatDistance, markerRefs, territory }) {
   useEffect(() => {
     if (!map || !leaflet) return;
 
@@ -62,7 +62,45 @@ function MarkerClusterGroup({ map, leaflet, stores, currentTerritory, formatDist
     });
 
     stores.forEach((store) => {
-      const leafletMarker = leaflet.marker([store.lat, store.lon]);
+      // Get store hours and status
+      const storeHours = getStoreHours(store.id, territory);
+      const statusInfo = storeHours ? isStoreOpen(storeHours) : null;
+      
+      // Create custom icon with status indicator
+      let markerIcon;
+      if (statusInfo) {
+        const statusColors = {
+          open: '#10b981', // green
+          closing_soon: '#f59e0b', // orange
+          closed: '#ef4444', // red
+          unknown: '#9ca3af', // gray
+        };
+        
+        const color = statusColors[statusInfo.status] || statusColors.unknown;
+        
+        // Create a custom divIcon with colored marker
+        markerIcon = leaflet.divIcon({
+          html: `
+            <div style="position: relative;">
+              <svg width="25" height="41" viewBox="0 0 25 41" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12.5 0C5.596 0 0 5.596 0 12.5c0 9.375 12.5 28.125 12.5 28.125S25 21.875 25 12.5C25 5.596 19.404 0 12.5 0z" fill="${color}" stroke="#fff" stroke-width="2"/>
+                <circle cx="12.5" cy="12.5" r="6" fill="#fff"/>
+              </svg>
+              <div style="position: absolute; top: 0; left: 0; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center;">
+                <div style="width: 8px; height: 8px; background: ${color}; border-radius: 50%; animation: pulse 2s infinite;"></div>
+              </div>
+            </div>
+          `,
+          className: 'custom-marker-icon',
+          iconSize: [25, 41],
+          iconAnchor: [12, 41],
+          popupAnchor: [0, -41],
+        });
+      }
+      
+      const leafletMarker = markerIcon 
+        ? leaflet.marker([store.lat, store.lon], { icon: markerIcon })
+        : leaflet.marker([store.lat, store.lon]);
       
       // Store marker ref for accessibility
       if (markerRefs && markerRefs.current) {
@@ -93,6 +131,30 @@ function MarkerClusterGroup({ map, leaflet, stores, currentTerritory, formatDist
       territoryEl.className = 'text-xs text-slate-500';
       territoryEl.textContent = currentTerritory?.name || '';
       popupContent.appendChild(territoryEl);
+      
+      // Store Hours Status
+      if (statusInfo) {
+        const statusDiv = document.createElement('div');
+        statusDiv.className = 'mt-2 mb-2 p-2 rounded-lg';
+        
+        const statusColors = {
+          open: 'background: #d1fae5; color: #065f46;',
+          closing_soon: 'background: #fed7aa; color: #92400e;',
+          closed: 'background: #fee2e2; color: #991b1b;',
+          unknown: 'background: #f3f4f6; color: #374151;',
+        };
+        
+        const statusIcons = {
+          open: '🟢',
+          closing_soon: '🟠',
+          closed: '🔴',
+          unknown: '⚪',
+        };
+        
+        statusDiv.style.cssText = statusColors[statusInfo.status] || statusColors.unknown;
+        statusDiv.innerHTML = `<strong>${statusIcons[statusInfo.status]} ${statusInfo.message}</strong>`;
+        popupContent.appendChild(statusDiv);
+      }
       
       // Distance info
       if (store.distance) {
@@ -139,7 +201,7 @@ function MarkerClusterGroup({ map, leaflet, stores, currentTerritory, formatDist
     return () => {
       map.removeLayer(markerClusterGroup);
     };
-  }, [map, leaflet, stores, currentTerritory, formatDistance, markerRefs]);
+  }, [map, leaflet, stores, currentTerritory, formatDistance, markerRefs, territory]);
 
   return null;
 }
@@ -946,6 +1008,7 @@ export default function Carte() {
                     currentTerritory={currentTerritory}
                     formatDistance={formatDistance}
                     markerRefs={markerRefs}
+                    territory={territory}
                   />
                 ) : (
                 filteredStores.map((store, index) => {
