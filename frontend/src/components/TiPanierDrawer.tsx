@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
-import { X, Trash2, TrendingDown, TrendingUp } from "lucide-react";
+import { X, Trash2, TrendingDown, TrendingUp, BarChart3 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useTiPanier } from "../hooks/useTiPanier";
 import { GlassCard } from "./ui/glass-card";
 
@@ -18,6 +19,7 @@ const PRICE_COMPARISON_TOLERANCE = 0.01;
  */
 export default function TiPanierDrawer({ open, onClose, type = 'comparison' }: { open: boolean; onClose: () => void; type?: 'comparison' | 'wishlist' }) {
   const { items, removeItem, clear, priceStats, isAuthenticated } = useTiPanier(type);
+  const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const previouslyFocusedRef = useRef<HTMLElement | null>(null);
 
@@ -201,14 +203,31 @@ export default function TiPanierDrawer({ open, onClose, type = 'comparison' }: {
             </>
           )}
 
-          <div className="mt-4 flex gap-3 justify-end">
-            <button onClick={() => { clear(); onClose(); }} className="px-3 py-2 bg-red-600 hover:bg-red-500 rounded-md text-white text-sm" disabled={items.length === 0}>
-              Vider
-            </button>
+          <div className="mt-4 flex flex-col gap-3">
+            {/* Compare Button - Only for comparison type with items */}
+            {type === 'comparison' && items.length > 0 && (
+              <button 
+                onClick={() => {
+                  navigate('/comparaison-panier');
+                  onClose();
+                }}
+                className="w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-lg text-white text-sm font-semibold flex items-center justify-center gap-2 transition-all shadow-lg"
+              >
+                <BarChart3 size={18} />
+                Comparer mon panier
+              </button>
+            )}
 
-            <button onClick={onClose} className="px-3 py-2 bg-slate-700 hover:bg-slate-600 rounded-md text-white text-sm">
-              Fermer
-            </button>
+            {/* Action buttons row */}
+            <div className="flex gap-3 justify-end">
+              <button onClick={() => { clear(); onClose(); }} className="px-3 py-2 bg-red-600 hover:bg-red-500 rounded-md text-white text-sm" disabled={items.length === 0}>
+                Vider
+              </button>
+
+              <button onClick={onClose} className="px-3 py-2 bg-slate-700 hover:bg-slate-600 rounded-md text-white text-sm">
+                Fermer
+              </button>
+            </div>
           </div>
         </GlassCard>
       </div>

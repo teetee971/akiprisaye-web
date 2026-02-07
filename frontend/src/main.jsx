@@ -49,6 +49,7 @@ const OCRHub = React.lazy(() => import('./pages/ocr/OCRHub'));
 const ScanEAN = React.lazy(() => import('./pages/ScanEAN'));
 const ProductPhotoAnalysis = React.lazy(() => import('./pages/ProductPhotoAnalysis'));
 const ComparaisonEnseignes = React.lazy(() => import('./pages/ComparaisonEnseignes'));
+const BasketComparison = React.lazy(() => import('./pages/BasketComparison'));
 
 // Settings & History
 const Settings = React.lazy(() => import('./pages/Settings'));
@@ -129,6 +130,7 @@ if (!rootElement) {
                     
                     {/* Comparison & Reporting */}
                     <Route path="comparaison-enseignes" element={<ComparaisonEnseignes />} />
+                    <Route path="comparaison-panier" element={<BasketComparison />} />
                     <Route path="signalement" element={<SignalerAbus />} />
                     
                     {/* Settings & History */}
