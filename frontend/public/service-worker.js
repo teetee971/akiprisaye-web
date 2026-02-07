@@ -1,27 +1,9 @@
-<<<<<<< HEAD
-// 🔹 Nom du cache
-const CACHE_NAME = 'akiprisaye-smart-cache-v2';
-
-// 🔹 Ressources à précharger
-const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/scanner',
-  '/comparateur',
-  '/historique-prix',
-  '/ia-conseiller',
-  '/contact',
-  '/carte',
-  '/manifest.webmanifest',
-  '/assets/icon_512-3-9kYoTe.png',
-=======
 // 🔹 Cache version - incremented to v4 for complete cache invalidation
 const CACHE_NAME = 'akiprisaye-smart-cache-v4';
 
 // 🔹 Only precache essential non-HTML assets
 const ASSETS_TO_CACHE = [
   '/manifest.webmanifest',
->>>>>>> main
 ];
 
 // 🔹 Installation du service worker
@@ -52,25 +34,6 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-<<<<<<< HEAD
-// 🔹 Interception des requêtes (offline fallback)
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      if (response) {
-        console.log('✅ Cache hit :', event.request.url);
-        return response;
-      }
-      return fetch(event.request)
-        .then((liveResponse) => {
-          return caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, liveResponse.clone());
-            return liveResponse;
-          });
-        })
-        .catch(() => caches.match('/index.html'));
-    }),
-=======
 // 🔹 Fetch handler with strict network-first for HTML
 self.addEventListener('fetch', (event) => {
   const { request } = event;
@@ -125,7 +88,6 @@ self.addEventListener('fetch', (event) => {
           return new Response('', { status: 503, statusText: 'Service Unavailable' });
         });
     })
->>>>>>> main
   );
 });
 
