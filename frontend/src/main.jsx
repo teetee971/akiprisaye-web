@@ -45,9 +45,9 @@ const AdminDashboardNew = React.lazy(() => import('./pages/admin/AdminDashboard'
 const StoreList = React.lazy(() => import('./pages/admin/stores/StoreList'));
 const StoreForm = React.lazy(() => import('./pages/admin/stores/StoreForm'));
 const StoreDetail = React.lazy(() => import('./pages/admin/stores/StoreDetail'));
-const ProductList = React.lazy(() => import('./pages/admin/products/ProductList'));
-const ProductForm = React.lazy(() => import('./pages/admin/products/ProductForm'));
-const ProductDetail = React.lazy(() => import('./pages/admin/products/ProductDetail'));
+const ProductList = React.lazy(() => import('./pages/admin/products/ProductList').then(m => ({ default: m.ProductList })));
+const ProductForm = React.lazy(() => import('./pages/admin/products/ProductForm').then(m => ({ default: m.ProductForm })));
+const ProductDetail = React.lazy(() => import('./pages/admin/products/ProductDetail').then(m => ({ default: m.ProductDetail })));
 const ImportPage = React.lazy(() => import('./pages/admin/import/ImportPage'));
 const Observatoire = React.lazy(() => import('./pages/Observatoire'));
 const Methodologie = React.lazy(() => import('./pages/Methodologie'));
