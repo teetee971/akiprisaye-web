@@ -93,12 +93,12 @@ export default function Scanner() {
       navigate(`/recherche?q=${searchQuery}`);
     } else if (behavior === 'local_save') {
       // Save to local storage for review
-      const savedScans = JSON.parse(safeLocalStorage.getItem('unrecognizedScans') || '[]');
+      const savedScans = safeLocalStorage.getJSON<Array<{code: string; timestamp: string}>>('unrecognizedScans', []);
       savedScans.push({
         code: scanResult,
         timestamp: new Date().toISOString(),
       });
-      safeLocalStorage.setItem('unrecognizedScans', JSON.stringify(savedScans));
+      safeLocalStorage.setJSON('unrecognizedScans', savedScans);
       alert('Code enregistré localement pour revue ultérieure');
       handleReset();
     } else if (behavior === 'show_empty') {

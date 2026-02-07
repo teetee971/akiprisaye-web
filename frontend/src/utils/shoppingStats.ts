@@ -32,17 +32,8 @@ const BADGES_KEY = 'shopping-badges-v1';
  * Initialize or load stats from safeLocalStorage
  */
 export function loadStats(): ShoppingStats {
-  try {
-    const stored = safeLocalStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      return JSON.parse(stored);
-    }
-  } catch (error) {
-    console.error('Error loading stats:', error);
-  }
-
   // Default stats
-  return {
+  const defaultStats: ShoppingStats = {
     totalTrips: 0,
     totalDistance: 0,
     fuelSaved: 0,
@@ -51,18 +42,17 @@ export function loadStats(): ShoppingStats {
     mostBoughtProducts: [],
     lastUpdated: Date.now()
   };
+  
+  return safeLocalStorage.getJSON<ShoppingStats>(STORAGE_KEY, defaultStats);
 }
 
 /**
  * Save stats to safeLocalStorage
  */
 export function saveStats(stats: ShoppingStats): void {
-  try {
-    stats.lastUpdated = Date.now();
-    safeLocalStorage.setItem(STORAGE_KEY, JSON.stringify(stats));
-  } catch (error) {
-    console.error('Error saving stats:', error);
-  }
+  stats.lastUpdated = Date.now();
+  safeLocalStorage.setJSON(STORAGE_KEY, stats);
+}
 }
 
 /**
@@ -229,20 +219,14 @@ export function getBadges(stats: ShoppingStats): Badge[] {
  * Get newly unlocked badges since last check
  */
 export function getNewBadges(stats: ShoppingStats): Badge[] {
-  try {
-    const stored = safeLocalStorage.getItem(BADGES_KEY);
-    const previouslyUnlocked = stored ? JSON.parse(stored) : [];
-    const currentBadges = getBadges(stats);
-    const currentlyUnlocked = currentBadges.filter(b => b.unlocked).map(b => b.id);
+  const previouslyUnlocked = safeLocalStorage.getJSON<string[]>(BADGES_KEY, []);
+  const currentBadges = getBadges(stats);
+  const currentlyUnlocked = currentBadges.filter(b => b.unlocked).map(b => b.id);
 
-    const newlyUnlocked = currentlyUnlocked.filter(id => !previouslyUnlocked.includes(id));
-    
-    // Update stored badges
-    safeLocalStorage.setItem(BADGES_KEY, JSON.stringify(currentlyUnlocked));
+  const newlyUnlocked = currentlyUnlocked.filter(id => !previouslyUnlocked.includes(id));
+  
+  // Update stored badges
+  safeLocalStorage.setJSON(BADGES_KEY, currentlyUnlocked);
 
-    return currentBadges.filter(b => newlyUnlocked.includes(b.id));
-  } catch (error) {
-    console.error('Error getting new badges:', error);
-    return [];
-  }
+  return currentBadges.filter(b => newlyUnlocked.includes(b.id));
 }
