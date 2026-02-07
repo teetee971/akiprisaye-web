@@ -215,9 +215,12 @@ TODO: Intégrer Nominatim/Mapbox pour géolocaliser `location_osm_id`.
 
 ```
 Nouveaux fichiers créés: 13
-Lignes de code ajoutées: ~2,619
+  - Services: 7 fichiers TypeScript (~1,842 lignes)
+  - Components: 5 fichiers React (~777 lignes)
+  - Documentation: 2 READMEs (~547 lignes)
+  
+Lignes de code total: ~3,166 (code + docs)
 Fichiers modifiés: 1 (main.jsx)
-Documentation: 1 (README)
 ```
 
 ## ✨ Conclusion

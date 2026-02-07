@@ -191,8 +191,12 @@ Le dashboard de synchronisation est accessible à l'URL `/admin/sync`.
 
 Les services respectent les rate limits des API externes :
 
-- **OpenFoodFacts**: 600ms entre chaque requête (100 req/min max)
+- **OpenFoodFacts**: 600ms entre chaque requête (≈100 req/min max)
+  - Note: Ce délai inclut une marge de sécurité pour la latence réseau
+  - En production, monitorer et ajuster si nécessaire selon charge
 - **OpenPrices**: 500ms entre chaque requête
+  - Note: L'API OpenPrices n'a pas de limite documentée stricte
+  - Ce délai conservateur assure une utilisation respectueuse
 
 ## 🎯 Territoires DOM-TOM
 
