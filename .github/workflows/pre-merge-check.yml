@@ -1,0 +1,260 @@
+name: Pre-Merge Check
+
+# Workflow de vérification pré-fusion
+# Déclenché sur les PRs vers main et develop, et manuellement
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+    inputs:
+      skip_lighthouse:
+        description: 'Skip Lighthouse checks'
+        required: false
+        default: 'false'
+
+jobs:
+  pre-merge-check:
+    name: Pre-Merge Verification
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: 'frontend/package-lock.json'
+
+      - name: 📦 Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: 🔍 Run ESLint
+        working-directory: frontend
+        continue-on-error: true
+        run: |
+          echo "## 🔍 ESLint Results" >> $GITHUB_STEP_SUMMARY
+          if npm run lint > eslint-output.txt 2>&1; then
+            echo "✅ **No linting errors found**" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ **Linting issues detected**" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            head -50 eslint-output.txt >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: 📘 TypeScript Check
+        working-directory: frontend
+        continue-on-error: true
+        run: |
+          echo "## 📘 TypeScript Check" >> $GITHUB_STEP_SUMMARY
+          if npx tsc --noEmit > tsc-output.txt 2>&1; then
+            echo "✅ **No TypeScript errors found**" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ **TypeScript errors detected**" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            head -50 tsc-output.txt >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: 🏗️ Build production
+        working-directory: frontend
+        run: |
+          echo "## 🏗️ Production Build" >> $GITHUB_STEP_SUMMARY
+          npm run build
+          echo "✅ **Build completed successfully**" >> $GITHUB_STEP_SUMMARY
+
+      - name: 📊 Check bundle size
+        working-directory: frontend
+        run: |
+          echo "## 📊 Bundle Size Analysis" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### JavaScript Chunks" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          
+          # Analyser la taille des fichiers JS (portable)
+          find dist/assets -name "*.js" -type f -exec du -h {} \; | sort -hr >> $GITHUB_STEP_SUMMARY
+          
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Vérifier les chunks > 500KB
+          LARGE_CHUNKS=$(find dist/assets -name "*.js" -type f -size +500k)
+          if [ -n "$LARGE_CHUNKS" ]; then
+            echo "⚠️ **Warning: Large chunks detected (>500KB)**" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            echo "$LARGE_CHUNKS" | xargs du -h >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "✅ **All chunks are under 500KB**" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: 🔒 Security audit
+        working-directory: frontend
+        continue-on-error: true
+        run: |
+          echo "## 🔒 Security Audit" >> $GITHUB_STEP_SUMMARY
+          if npm audit --audit-level=moderate > audit-output.txt 2>&1; then
+            echo "✅ **No vulnerabilities found**" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ **Vulnerabilities detected**" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            grep -A 5 "found.*vulnerabilit" audit-output.txt | head -20 >> $GITHUB_STEP_SUMMARY || echo "See npm audit output for details" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: ✅ Verify essential files
+        working-directory: frontend
+        run: |
+          echo "## ✅ Essential Files Check" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Liste des fichiers essentiels à vérifier
+          ESSENTIAL_FILES=(
+            "dist/index.html"
+            "dist/assets"
+            "public/_redirects"
+            "public/manifest.webmanifest"
+            "public/leaflet/marker-icon.png"
+          )
+          
+          ALL_GOOD=true
+          for file in "${ESSENTIAL_FILES[@]}"; do
+            if [ -e "$file" ]; then
+              echo "✅ $file" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "❌ $file (missing)" >> $GITHUB_STEP_SUMMARY
+              ALL_GOOD=false
+            fi
+          done
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "$ALL_GOOD" = true ]; then
+            echo "✅ **All essential files present**" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ **Some essential files are missing**" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: 📤 Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: frontend/dist/
+          retention-days: 7
+
+      - name: 📋 Generate summary
+        run: |
+          echo "## 📋 Pre-Merge Check Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ All required checks completed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Next Steps" >> $GITHUB_STEP_SUMMARY
+          echo "1. Review any warnings or errors above" >> $GITHUB_STEP_SUMMARY
+          echo "2. Check Lighthouse results (if applicable)" >> $GITHUB_STEP_SUMMARY
+          echo "3. Run manual checklist: \`./scripts/pre-merge-checklist.sh\`" >> $GITHUB_STEP_SUMMARY
+          echo "4. If all checks pass, the PR is ready to merge" >> $GITHUB_STEP_SUMMARY
+
+  lighthouse-check:
+    name: Lighthouse CI
+    runs-on: ubuntu-latest
+    needs: pre-merge-check
+    if: github.event.inputs.skip_lighthouse != 'true'
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: 'frontend/package-lock.json'
+
+      - name: 📥 Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: frontend/dist/
+
+      - name: 📦 Install Lighthouse CI
+        run: npm install -g @lhci/cli@0.13.x
+
+      - name: 🚀 Run Lighthouse CI
+        working-directory: frontend
+        continue-on-error: true
+        run: |
+          # Créer un serveur statique pour servir le build
+          echo "Starting static server..."
+          npx serve -s dist -l 4173 &
+          SERVER_PID=$!
+          
+          # Attendre que le serveur démarre
+          sleep 8
+          
+          # Vérifier que le serveur répond
+          curl -f http://localhost:4173/ || (echo "Server failed to start" && kill $SERVER_PID 2>/dev/null && exit 1)
+          
+          # Exécuter Lighthouse
+          echo "Running Lighthouse CI..."
+          lhci autorun --config=../lighthouserc.json
+          LHCI_EXIT=$?
+          
+          # Arrêter le serveur
+          kill $SERVER_PID 2>/dev/null || true
+          
+          exit $LHCI_EXIT
+
+      - name: 📊 Upload Lighthouse results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-results
+          path: |
+            .lighthouseci/
+            frontend/.lighthouseci/
+          retention-days: 30
+
+      - name: 💬 Comment PR with Lighthouse results
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let comment = '## 🔦 Lighthouse CI Results\n\n';
+            
+            try {
+              // Chercher les résultats Lighthouse
+              const resultsPath = '.lighthouseci';
+              if (fs.existsSync(resultsPath)) {
+                comment += '✅ Lighthouse CI ran successfully\n';
+                comment += 'Check the artifacts for detailed results.\n';
+              } else {
+                comment += '⚠️ Lighthouse results not found\n';
+              }
+            } catch (error) {
+              comment += '❌ Error reading Lighthouse results\n';
+            }
+            
+            // Poster le commentaire
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });

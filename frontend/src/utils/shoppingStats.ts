@@ -53,7 +53,6 @@ export function saveStats(stats: ShoppingStats): void {
   stats.lastUpdated = Date.now();
   safeLocalStorage.setJSON(STORAGE_KEY, stats);
 }
-}
 
 /**
  * Track a completed shopping trip
