@@ -32,7 +32,12 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm ci
-    - run: npm run build --if-present
+        cache-dependency-path: 'frontend/package-lock.json'
+    - name: Install dependencies
+      working-directory: frontend
+      run: npm ci
+    - name: Build
+      working-directory: frontend
+      run: npm run build --if-present
     - name: Skip frontend tests (browser-only)
       run: echo "Skipping tests – browser-only frontend"

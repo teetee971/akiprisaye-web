@@ -1,0 +1,23 @@
+# Configuration pour l'étiquetage automatique des PR
+documentation:
+  - '**/*.md'
+  - 'docs/**/*'
+
+frontend:
+  - 'frontend/**/*'
+
+backend:
+  - 'backend/**/*'
+
+ci-cd:
+  - '.github/**/*'
+
+tests:
+  - '**/*.test.*'
+  - '**/*.spec.*'
+
+dependencies:
+  - 'package.json'
+  - 'package-lock.json'
+  - '**/package.json'
+  - '**/package-lock.json'

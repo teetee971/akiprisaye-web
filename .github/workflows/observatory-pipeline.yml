@@ -45,15 +45,19 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
+          cache-dependency-path: 'frontend/package-lock.json'
 
       - name: 📦 Install dependencies
+        working-directory: frontend
         run: npm ci
 
       - name: 🧹 Lint code
+        working-directory: frontend
         run: npm run lint
         continue-on-error: false
 
       - name: 🧪 Run tests
+        working-directory: frontend
         run: npm test
         continue-on-error: false
 
@@ -81,7 +85,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: 📦 Install dependencies
-        run: npm ci
+        run: echo "Scripts use only built-in Node.js modules - no dependencies needed"
 
       - name: 🔍 Validate data files
         run: node scripts/validate-data.js
@@ -120,30 +124,33 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
+          cache-dependency-path: 'frontend/package-lock.json'
 
       - name: 📦 Install dependencies
+        working-directory: frontend
         run: npm ci
 
       - name: 🏗️ Build production
+        working-directory: frontend
         run: npm run build
         env:
           NODE_ENV: production
 
       - name: 🔍 Verify build output
         run: |
-          if [ ! -f "dist/index.html" ]; then
-            echo "❌ dist/index.html not found"
+          if [ ! -f "frontend/dist/index.html" ]; then
+            echo "❌ frontend/dist/index.html not found"
             exit 1
           fi
           
-          if [ ! -d "dist/assets" ]; then
-            echo "❌ dist/assets directory not found"
+          if [ ! -d "frontend/dist/assets" ]; then
+            echo "❌ frontend/dist/assets directory not found"
             exit 1
           fi
           
           # Vérifier qu'il n'y a pas de répertoire Assets/ avec majuscule
-          if [ -d "dist/Assets" ]; then
-            echo "❌ dist/Assets/ found (should be lowercase 'assets')"
+          if [ -d "frontend/dist/Assets" ]; then
+            echo "❌ frontend/dist/Assets/ found (should be lowercase 'assets')"
             exit 1
           fi
           
@@ -153,7 +160,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: dist
-          path: dist/
+          path: frontend/dist/
           retention-days: 7
 
       - name: 📊 Build summary
@@ -162,8 +169,8 @@ jobs:
           echo "✅ Frontend built successfully" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Output:" >> $GITHUB_STEP_SUMMARY
-          echo "- \`dist/index.html\` ✅" >> $GITHUB_STEP_SUMMARY
-          echo "- \`dist/assets/\` ✅" >> $GITHUB_STEP_SUMMARY
+          echo "- \`frontend/dist/index.html\` ✅" >> $GITHUB_STEP_SUMMARY
+          echo "- \`frontend/dist/assets/\` ✅" >> $GITHUB_STEP_SUMMARY
 
   # ═══════════════════════════════════════════════════════════════
   # ÉTAPE 4: VALIDATION SÉCURITÉ
@@ -185,12 +192,12 @@ jobs:
 
       - name: 🔍 Check CSP headers
         run: |
-          if [ ! -f "public/_headers" ]; then
+          if [ ! -f "frontend/public/_headers" ]; then
             echo "⚠️  _headers file not found"
             exit 0
           fi
           
-          if grep -q "Content-Security-Policy" public/_headers; then
+          if grep -q "Content-Security-Policy" frontend/public/_headers; then
             echo "✅ CSP headers found"
           else
             echo "⚠️  CSP headers not found (optional)"
