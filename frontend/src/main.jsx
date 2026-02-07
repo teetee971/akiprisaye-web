@@ -86,6 +86,9 @@ const ObservatoireTempsReel = React.lazy(() => import('./pages/ObservatoireTemps
 const Transparence = React.lazy(() => import('./pages/Transparence'));
 const SignalerAbus = React.lazy(() => import('./pages/SignalerAbus'));
 
+// Admin Sync Dashboard
+const SyncDashboard = React.lazy(() => import('./pages/admin/sync/SyncDashboard'));
+
 /**
  * Root application render with HashRouter for Cloudflare Pages SPA
  * ErrorBoundary is intentionally placed at the highest level
@@ -175,6 +178,9 @@ if (!rootElement) {
                     {/* Transparency & reporting */}
                     <Route path="transparence" element={<Transparence />} />
                     <Route path="signaler-abus" element={<SignalerAbus />} />
+                    
+                    {/* Admin routes */}
+                    <Route path="admin/sync" element={<SyncDashboard />} />
                     
                     {/* Catch-all route */}
                     <Route path="*" element={<Navigate to="/carte" replace />} />
