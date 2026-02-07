@@ -207,7 +207,7 @@ function MarkerClusterGroup({ map, leaflet, stores, currentTerritory, formatDist
 }
 
 export default function Carte() {
-  const [territory, setTerritory] = useState('GP');
+  const [territory, setTerritory] = useState('gp');
   const [stores, setStores] = useState([]);
   const [userPosition, setUserPosition] = useState(null);
   const [isNavigating, setIsNavigating] = useState({});
@@ -498,6 +498,7 @@ export default function Carte() {
   }, [stores, userPosition]);
 
   const getStoreCategory = (store) => {
+    if (!store || !store.chain) return 'Autre';
     const chain = store.chain.toLowerCase();
     if (['système u', 'carrefour', 'casino', 'e.leclerc', 'leader price', 'auchan',
          'ecomax', 'simply market', 'intermarché', '8 à huit', 'vival',
