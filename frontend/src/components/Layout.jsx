@@ -9,11 +9,12 @@ import { OfflineIndicator } from './OfflineIndicator';
 export default function Layout() {
   const [open, setOpen] = React.useState(false);
 
-  // Navigation principale - V1 officielle (6 entrées)
+  // Navigation principale - V1 officielle (7 entrées)
   const navItems = [
     { path: '/', label: 'Accueil', icon: '🏠' },
     { path: '/comparateur', label: 'Comparateur', icon: '📊' },
     { path: '/observatoire', label: 'Observatoire', icon: '📈' },
+    { path: '/mes-economies', label: 'Mes Économies', icon: '💰' },
     { path: '/methodologie', label: 'Méthodologie', icon: '📚' },
     { path: '/faq', label: 'FAQ', icon: '❓' },
     { path: '/contact', label: 'Contact', icon: '✉️' },
