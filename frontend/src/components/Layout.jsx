@@ -5,15 +5,17 @@ import { Menu, X } from 'lucide-react';
 import TiPanierButton from './TiPanierButton';
 import FloatingActions from './ui/FloatingActions';
 import { OfflineIndicator } from './OfflineIndicator';
+import { OnboardingTour, HelpButton, useOnboarding } from './onboarding';
 
 export default function Layout() {
   const [open, setOpen] = React.useState(false);
+  const { isRunning, startTour, setIsRunning } = useOnboarding();
 
   // Navigation principale - V1 officielle (6 entrées)
   const navItems = [
-    { path: '/', label: 'Accueil', icon: '🏠' },
-    { path: '/comparateur', label: 'Comparateur', icon: '📊' },
-    { path: '/observatoire', label: 'Observatoire', icon: '📈' },
+    { path: '/', label: 'Accueil', icon: '🏠', dataTour: 'search' },
+    { path: '/comparateur', label: 'Comparateur', icon: '📊', dataTour: 'comparateur' },
+    { path: '/observatoire', label: 'Observatoire', icon: '📈', dataTour: 'carte' },
     { path: '/methodologie', label: 'Méthodologie', icon: '📚' },
     { path: '/faq', label: 'FAQ', icon: '❓' },
     { path: '/contact', label: 'Contact', icon: '✉️' },
@@ -42,8 +44,11 @@ export default function Layout() {
           </Link>
 
           {/* Ti‑panier (desktop placement) */}
-          <div className="hidden md:flex items-center">
-            <TiPanierButton float={false} />
+          <div className="hidden md:flex items-center gap-2">
+            <HelpButton onClick={startTour} className="text-slate-300 hover:text-blue-400 hover:bg-slate-800" />
+            <div data-tour="ti-panier">
+              <TiPanierButton float={false} />
+            </div>
           </div>
 
           {/* Menu desktop */}
@@ -52,6 +57,7 @@ export default function Layout() {
               <NavLink
                 key={item.path}
                 to={item.path}
+                data-tour={item.dataTour}
                 className={({ isActive }) =>
                   `flex items-center gap-1 px-3 py-2 rounded-lg transition-colors ${
                     isActive
@@ -84,6 +90,7 @@ export default function Layout() {
                 <NavLink
                   key={item.path}
                   to={item.path}
+                  data-tour={item.dataTour}
                   className={({ isActive }) =>
                     `flex items-center gap-3 px-6 py-3 transition-colors ${
                       isActive
@@ -122,6 +129,9 @@ export default function Layout() {
           Mentions légales
         </Link>
       </footer>
+
+      {/* Onboarding Tour */}
+      <OnboardingTour run={isRunning} onComplete={() => setIsRunning(false)} />
     </div>
   );
 }
