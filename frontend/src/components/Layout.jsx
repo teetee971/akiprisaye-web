@@ -5,6 +5,8 @@ import { Menu, X } from 'lucide-react';
 import TiPanierButton from './TiPanierButton';
 import FloatingActions from './ui/FloatingActions';
 import { OfflineIndicator } from './OfflineIndicator';
+import SkipLinks from './a11y/SkipLinks';
+import A11ySettingsPanel from './a11y/A11ySettingsPanel';
 
 export default function Layout() {
   const [open, setOpen] = React.useState(false);
@@ -21,16 +23,11 @@ export default function Layout() {
 
   return (
     <div className="flex flex-col min-h-screen bg-slate-950 text-slate-100">
-      {/* Skip to main content link for accessibility */}
-      <a 
-        href="#main-content" 
-        className="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 focus:z-50 focus:bg-blue-600 focus:text-white focus:px-4 focus:py-2 focus:m-2 focus:rounded"
-      >
-        Aller au contenu principal
-      </a>
+      {/* Skip Links - Accessibilité RGAA */}
+      <SkipLinks />
       
       {/* HEADER */}
-      <header className="fixed top-0 left-0 right-0 border-b border-slate-800 shadow-md bg-slate-900/70 backdrop-blur-lg z-header">
+      <header id="main-nav" className="fixed top-0 left-0 right-0 border-b border-slate-800 shadow-md bg-slate-900/70 backdrop-blur-lg z-header" role="banner">
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
@@ -47,7 +44,7 @@ export default function Layout() {
           </div>
 
           {/* Menu desktop */}
-          <nav className="hidden lg:flex items-center space-x-4">
+          <nav className="hidden lg:flex items-center space-x-4" aria-label="Navigation principale">
             {navItems.map((item) => (
               <NavLink
                 key={item.path}
@@ -70,15 +67,17 @@ export default function Layout() {
           <button
             className="lg:hidden text-slate-300"
             onClick={() => setOpen(!open)}
-            aria-label="Toggle menu"
+            aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
+            aria-expanded={open}
+            aria-controls="mobile-menu"
           >
-            {open ? <X size={24} /> : <Menu size={24} />}
+            {open ? <X size={24} aria-hidden="true" /> : <Menu size={24} aria-hidden="true" />}
           </button>
         </div>
 
         {/* Dropdown mobile */}
         {open && (
-          <div className="lg:hidden bg-slate-900/95 backdrop-blur-xl border-t border-slate-700">
+          <div id="mobile-menu" className="lg:hidden bg-slate-900/95 backdrop-blur-xl border-t border-slate-700" role="navigation" aria-label="Menu mobile">
             <div className="py-2">
               {navItems.map((item) => (
                 <NavLink
@@ -107,15 +106,18 @@ export default function Layout() {
       <OfflineIndicator />
 
       {/* CONTENU */}
-      <main id="main-content" className="flex-1 pt-20 pb-12 px-4 md:px-8">
+      <main id="main-content" className="flex-1 pt-20 pb-12 px-4 md:px-8" role="main">
         <Outlet />
       </main>
 
       {/* Floating actions (chat + panier) - managed by single container */}
       <FloatingActions />
 
+      {/* Panneau de paramètres d'accessibilité */}
+      <A11ySettingsPanel />
+
       {/* FOOTER */}
-      <footer className="border-t border-slate-800 bg-slate-900/90 text-center py-6 text-sm text-slate-400">
+      <footer id="footer" className="border-t border-slate-800 bg-slate-900/90 text-center py-6 text-sm text-slate-400" role="contentinfo">
         © {new Date().getFullYear()} A KI PRI SA YÉ — Transparence des prix Outre-mer.
         <br />
         <Link to="/mentions-legales" className="hover:text-blue-400">
