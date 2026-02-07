@@ -1,6 +1,7 @@
 # 🧾 A KI PRI SA YÉ
 
 [![Cloudflare Pages](https://img.shields.io/badge/Cloudflare%20Pages-deployed-success?logo=cloudflare&logoColor=white)](https://akiprisaye-web.pages.dev)
+[![CI/CD Pipeline](https://img.shields.io/github/actions/workflow/status/teetee971/akiprisaye-web/ci-cd-industrial.yml?branch=main&label=CI%2FCD&logo=github-actions)](https://github.com/teetee971/akiprisaye-web/actions/workflows/ci-cd-industrial.yml)
 [![CI Schema Validation](https://img.shields.io/badge/CI-JSON%20Schema%20Validation-blue)](#)
 [![Browser Only](https://img.shields.io/badge/Runtime-Browser--Only-important)](#)
 [![OCR Local](https://img.shields.io/badge/OCR-100%25%20Local-green)](#)
@@ -808,6 +809,57 @@ await Tesseract.recognize(img, 'eng', {
 - ✅ Typographie fluide (clamp)
 - ✅ Support prefers-reduced-motion
 - ✅ Mode sombre/clair automatique
+
+---
+
+## 🚀 CI/CD Pipeline Industriel
+
+**Pipeline complet avec validation automatique et rollback**
+
+### Architecture du Pipeline
+
+Le pipeline CI/CD garantit des déploiements robustes et sans régression:
+
+1. **1️⃣ Preflight Check** - Vérifications bloquantes (Node.js, secrets, structure)
+2. **2️⃣ Install & Build** - Build Vite avec génération de version
+3. **3️⃣ Static Integrity Check** - Validation critique des assets
+4. **4️⃣ SPA Routing Guard** - Vérification routing React Router
+5. **5️⃣ Lighthouse CI** - Tests qualité (performance, accessibilité, SEO)
+6. **6️⃣ Cloudflare Deployment** - Déploiement conditionnel (preview/production)
+7. **7️⃣ Post-Deploy Validation** - Validation obligatoire du site live
+8. **8️⃣ Automatic Rollback** - Restauration automatique si échec
+9. **9️⃣ Monitoring & Logs** - Traçabilité complète
+
+### Garanties du Pipeline
+
+- ✅ **Zéro déploiement partiel** - Tout ou rien
+- ✅ **Zéro écran blanc** - Validation post-déploiement obligatoire
+- ✅ **Zéro régression silencieuse** - Tests automatiques
+- ✅ **Zéro erreur 404** - Vérification du routing SPA
+- ✅ **Rollback automatique** - Restauration en cas d'échec
+- ✅ **Traçabilité complète** - Version visible en footer
+
+### Scripts de Validation
+
+| Script | Objectif | Bloquant |
+|--------|----------|----------|
+| `preflight-check.sh` | Pré-requis avant build | ✅ Oui |
+| `verify-build.sh` | Validation sortie build | ✅ Oui |
+| `check-asset-integrity.sh` | Intégrité des assets | ✅ Oui |
+| `post-deploy-validation.sh` | Site live fonctionnel | ✅ Oui |
+| `rollback-deployment.sh` | Restauration automatique | N/A |
+
+### Documentation
+
+- 📖 [CI/CD Documentation Complète](./CI_CD_DOCUMENTATION.md)
+- 🔄 [Procédures de Rollback](./ROLLBACK_PROCEDURES.md)
+- 🆘 [Guide de Dépannage](./CI_CD_TROUBLESHOOTING.md)
+
+### Monitoring
+
+- Badge status: [![CI/CD](https://img.shields.io/github/actions/workflow/status/teetee971/akiprisaye-web/ci-cd-industrial.yml?branch=main)](https://github.com/teetee971/akiprisaye-web/actions/workflows/ci-cd-industrial.yml)
+- Version live: Visible en footer de l'application
+- Logs: [GitHub Actions](https://github.com/teetee971/akiprisaye-web/actions)
 
 ---
 

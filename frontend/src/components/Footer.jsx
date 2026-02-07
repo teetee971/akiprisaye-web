@@ -1,4 +1,19 @@
+import { useState, useEffect } from 'react';
+
 export default function Footer() {
+  const [version, setVersion] = useState(null);
+
+  useEffect(() => {
+    // Fetch version information
+    fetch('/version.json')
+      .then(res => res.json())
+      .then(data => setVersion(data))
+      .catch(() => {
+        // Silently fail - version is optional
+        setVersion({ version: '3.0.1', commit: 'unknown' });
+      });
+  }, []);
+
   return (
     <footer
       className="bg-slate-900 border-t border-slate-800 mt-auto"
@@ -58,6 +73,11 @@ export default function Footer() {
           <p className="mt-2 text-xs text-slate-500">
             Plateforme citoyenne de transparence des prix en Outre-mer
           </p>
+          {version && (
+            <p className="mt-1 text-xs text-slate-600" title={`Build: ${version.buildTimestamp || 'N/A'}`}>
+              Version {version.version} • Build {version.commit}
+            </p>
+          )}
         </div>
       </div>
     </footer>
