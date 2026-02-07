@@ -17,6 +17,9 @@ import { getActiveTerritories, TERRITORIES } from '../constants/territories';
 import { safeLocalStorage } from '../utils/safeLocalStorage';
 import { loadLeafletWithMarkerCluster } from '../utils/leafletClient';
 import A11yLiveRegion from '../components/A11yLiveRegion';
+import { OpenNowFilter } from '../components/store/OpenNowFilter';
+import { getStoreHours } from '../services/storeHoursService';
+import { isStoreOpen } from '../utils/storeHoursUtils';
 
 function MapUpdater({ map, position }) {
   useEffect(() => {
@@ -163,6 +166,7 @@ export default function Carte() {
   const [selectedCategory, setSelectedCategory] = useState('Toutes');
   const [selectedServices, setSelectedServices] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
+  const [showOpenOnly, setShowOpenOnly] = useState(false);
 
   const [sortByDistance, setSortByDistance] = useState(false);
   const [nearMeRadius, setNearMeRadius] = useState(10);
@@ -463,6 +467,17 @@ export default function Carte() {
         if (store.distance > nearMeRadius) return false;
       }
 
+      // Filter by open status
+      if (showOpenOnly) {
+        const storeHours = getStoreHours(store.id, territory);
+        if (!storeHours) return false;
+        
+        const statusInfo = isStoreOpen(storeHours);
+        if (statusInfo.status !== 'open' && statusInfo.status !== 'closing_soon') {
+          return false;
+        }
+      }
+
       return true;
     });
 
@@ -475,7 +490,7 @@ export default function Carte() {
     }
 
     return filtered;
-  }, [storesWithDistance, selectedCategory, selectedServices, showNearMeOnly, nearMeRadius, sortByDistance, userPosition]);
+  }, [storesWithDistance, selectedCategory, selectedServices, showNearMeOnly, nearMeRadius, sortByDistance, userPosition, showOpenOnly, territory]);
 
   const storeStats = useMemo(() => {
     const categories = {};
@@ -764,6 +779,16 @@ export default function Carte() {
                     </label>
                   ))}
                 </div>
+              </div>
+
+              {/* Open Now Filter */}
+              <div className="pt-2 border-t border-slate-600">
+                <OpenNowFilter
+                  enabled={showOpenOnly}
+                  onChange={setShowOpenOnly}
+                  count={showOpenOnly ? filteredStores.length : undefined}
+                  className="w-full justify-center"
+                />
               </div>
 
               {(selectedCategory !== 'Toutes' || selectedServices.length > 0) && (
