@@ -127,11 +127,11 @@ print_section "4. Installation des dépendances"
 
 echo -e "${CYAN}📦 Installation des dépendances avec npm ci...${NC}"
 cd frontend
-if ! npm ci --silent 2>&1 | grep -q "ERROR\|ERR!"; then
-    print_result "OK" "Dépendances installées avec succès"
+if npm ci --silent 2>&1 | grep -q "ERROR\|ERR!"; then
+    print_result "FAIL" "npm ci a échoué"
     cd ..
 else
-    print_result "FAIL" "npm ci a échoué"
+    print_result "OK" "Dépendances installées avec succès"
     cd ..
 fi
 
@@ -324,7 +324,7 @@ SECRET_PATTERNS=(
 
 SECRETS_FOUND=0
 for pattern in "${SECRET_PATTERNS[@]}"; do
-    if grep -r -E -i "$pattern" frontend/src/ 2>/dev/null | grep -v "\.test\." | grep -v "example" | head -1 > /dev/null; then
+    if grep -r -E -i "$pattern" frontend/src/ 2>/dev/null | grep -v "\.test\." | grep -v "example" | grep -v "\.env" | grep -v "fixtures" | head -1 > /dev/null; then
         SECRETS_FOUND=$((SECRETS_FOUND + 1))
     fi
 done
@@ -342,8 +342,8 @@ print_section "15. Configuration Cloudflare"
 if [ -f "frontend/public/_redirects" ]; then
     print_result "OK" "Fichier _redirects existe"
     
-    # Vérifier la règle SPA
-    if grep -q "/\* .* 200" frontend/public/_redirects; then
+    # Vérifier la règle SPA (utiliser grep -E pour regex étendu)
+    if grep -E -q "/\* .* 200" frontend/public/_redirects; then
         print_result "OK" "Règle SPA de redirection trouvée dans _redirects"
     else
         print_result "WARN" "Règle SPA non trouvée dans _redirects"

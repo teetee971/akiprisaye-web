@@ -203,6 +203,12 @@ jobs:
           npx serve -s dist -l 4173 &
           SERVER_PID=$!
           
+          # Vérifier que le serveur a bien démarré
+          if ! ps -p $SERVER_PID > /dev/null; then
+            echo "Failed to start server"
+            exit 1
+          fi
+          
           # Attendre que le serveur démarre
           sleep 5
           
