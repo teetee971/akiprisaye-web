@@ -22,7 +22,16 @@ L.Icon.Default.mergeOptions({
 
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
+import { OnboardingProvider } from './context/OnboardingContext';
 import { PerformanceMonitor } from './components/PerformanceMonitor';
+import OnboardingTour from './components/OnboardingTour';
+import OnboardingAutoStart from './components/OnboardingAutoStart';
+import HelpButton from './components/HelpButton';
+
+// Load debug utilities in development
+if (import.meta.env.DEV) {
+  import('./utils/onboardingDebug');
+}
 
 // Lazy-loaded pages - Main routes
 const Home = React.lazy(() => import('./pages/Home'));
@@ -49,12 +58,16 @@ const OCRHub = React.lazy(() => import('./pages/ocr/OCRHub'));
 const ScanEAN = React.lazy(() => import('./pages/ScanEAN'));
 const ProductPhotoAnalysis = React.lazy(() => import('./pages/ProductPhotoAnalysis'));
 const ComparaisonEnseignes = React.lazy(() => import('./pages/ComparaisonEnseignes'));
+const BasketComparison = React.lazy(() => import('./pages/BasketComparison'));
 
 // Settings & History
 const Settings = React.lazy(() => import('./pages/Settings'));
 const HistoriquePrix = React.lazy(() => import('./pages/HistoriquePrix'));
 const RecherchePrix = React.lazy(() => import('./pages/RecherchePrix'));
 const Alertes = React.lazy(() => import('./pages/Alertes'));
+
+// Savings Dashboard
+const MesEconomies = React.lazy(() => import('./pages/MesEconomies'));
 
 // Auth pages
 const Login = React.lazy(() => import('./pages/Login'));
@@ -89,16 +102,17 @@ if (!rootElement) {
       <ErrorBoundary>
         <ThemeProvider>
           <AuthProvider>
-            <HashRouter>
-              <Suspense
-                fallback={
-                  <div className="min-h-screen flex items-center justify-center">
-                    <div className="animate-pulse text-lg">
-                      Chargement…
+            <OnboardingProvider>
+              <HashRouter>
+                <Suspense
+                  fallback={
+                    <div className="min-h-screen flex items-center justify-center">
+                      <div className="animate-pulse text-lg">
+                        Chargement…
+                      </div>
                     </div>
-                  </div>
-                }
-              >
+                  }
+                >
                 <Routes>
                   <Route path="/" element={<Layout />}>
                     <Route index element={<Navigate to="/carte" replace />} />
@@ -129,6 +143,7 @@ if (!rootElement) {
                     
                     {/* Comparison & Reporting */}
                     <Route path="comparaison-enseignes" element={<ComparaisonEnseignes />} />
+                    <Route path="comparaison-panier" element={<BasketComparison />} />
                     <Route path="signalement" element={<SignalerAbus />} />
                     
                     {/* Settings & History */}
@@ -137,6 +152,10 @@ if (!rootElement) {
                     <Route path="historique" element={<HistoriquePrix />} />
                     <Route path="recherche-prix" element={<RecherchePrix />} />
                     <Route path="alertes" element={<Alertes />} />
+                    
+                    {/* Savings Dashboard */}
+                    <Route path="mes-economies" element={<MesEconomies />} />
+                    <Route path="tableau-de-bord" element={<MesEconomies />} />
                     
                     {/* Auth routes */}
                     <Route path="login" element={<Login />} />
@@ -162,11 +181,15 @@ if (!rootElement) {
                   </Route>
                 </Routes>
                 <PerformanceMonitor />
+                <OnboardingAutoStart />
+                <OnboardingTour />
+                <HelpButton />
               </Suspense>
             </HashRouter>
-          </AuthProvider>
-        </ThemeProvider>
-      </ErrorBoundary>
+          </OnboardingProvider>
+        </AuthProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
     </React.StrictMode>
   );
 }
