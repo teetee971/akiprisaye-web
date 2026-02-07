@@ -6,8 +6,7 @@
     "build": "cd frontend && npm ci --include=dev && npm run build",
     "dev": "cd frontend && npm run dev",
     "preview": "cd frontend && npm run preview",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "test": "echo 'No tests configured' && exit 0"
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^8.19.1",
