@@ -91,7 +91,7 @@ router.get('/:id', async (req: Request, res: Response) => {
       });
     }
 
-    res.json({
+    return res.json({
       success: true,
       product,
     });

@@ -6,14 +6,12 @@
  */
 
 import axios, { AxiosInstance } from 'axios';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../../database/prisma.js';
 import { SYNC_CONFIG } from '../../config/syncConfig.js';
 import {
   createProductFromOpenPrices,
   OpenPriceProduct,
 } from '../products/autoProductCreation.js';
-
-const prisma = new PrismaClient();
 
 interface SyncResult {
   itemsProcessed: number;
@@ -130,8 +128,8 @@ export class OpenPricesSync {
     let page = 1;
     let hasMore = true;
 
-    while (hasMore && page <= 20) {
-      // Limit to 20 pages
+    while (hasMore && page <= SYNC_CONFIG.sync.maxPagesPerSync) {
+      // Limit based on config
       try {
         const prices = await this.fetchPrices({
           date_gte: since.toISOString().split('T')[0],

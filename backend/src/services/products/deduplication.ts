@@ -8,11 +8,9 @@
  */
 
 import Fuse from 'fuse.js';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../../database/prisma.js';
 import { normalizeProductName } from './normalization.js';
 import { SYNC_CONFIG } from '../../config/syncConfig.js';
-
-const prisma = new PrismaClient();
 
 export interface DeduplicationResult {
   isDuplicate: boolean;

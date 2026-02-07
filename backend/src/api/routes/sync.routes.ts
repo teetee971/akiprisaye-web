@@ -5,12 +5,11 @@
  */
 
 import { Router, Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../../database/prisma.js';
 import { syncOrchestrator } from '../../services/sync/syncOrchestrator.js';
 import { syncScheduler } from '../../services/scheduler/syncScheduler.js';
 
 const router = Router();
-const prisma = new PrismaClient();
 
 /**
  * POST /api/sync/openfoodfacts/trigger

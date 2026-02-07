@@ -4,10 +4,8 @@
  * Scheduled job to find and mark duplicate products
  */
 
-import { PrismaClient } from '@prisma/client';
+import prisma from '../../database/prisma.js';
 import { findDuplicate } from '../../products/deduplication.js';
-
-const prisma = new PrismaClient();
 
 export async function cleanupDuplicatesJob(): Promise<void> {
   console.info('🧹 [JOB] Starting duplicate cleanup...');

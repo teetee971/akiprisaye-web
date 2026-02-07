@@ -4,9 +4,8 @@
  * Manages the queue of products pending validation
  */
 
-import { PrismaClient, ProductStatus } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { ProductStatus } from '@prisma/client';
+import prisma from '../../database/prisma.js';
 
 export interface ValidationQueueItem {
   id: string;

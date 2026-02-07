@@ -41,10 +41,10 @@ export const SYNC_CONFIG = {
   scheduler: {
     timezone: 'America/Guadeloupe',
     jobs: {
-      syncOpenFoodFacts: '0 3 * * *', // 3h every day
+      syncOpenFoodFacts: '0 3 * * *', // 3:00 AM every day
       syncOpenPrices: '0 */6 * * *', // every 6 hours
       processOcrQueue: '*/5 * * * *', // every 5 minutes
-      cleanupDuplicates: '0 4 * * 0', // 4h on Sundays
+      cleanupDuplicates: '0 4 * * 0', // 4:00 AM on Sundays
     },
   },
 
@@ -63,6 +63,8 @@ export const SYNC_CONFIG = {
     maxRetries: 3,
     retryDelay: 5000, // milliseconds
     timeout: 30000, // milliseconds
+    maxPagesPerCategory: 10, // Maximum pages to fetch per category
+    maxPagesPerSync: 20, // Maximum pages to fetch per sync
   },
 } as const;
 

@@ -6,14 +6,12 @@
  */
 
 import axios, { AxiosInstance } from 'axios';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../../database/prisma.js';
 import { SYNC_CONFIG } from '../../config/syncConfig.js';
 import {
   createProductFromOpenFoodFacts,
   OpenFoodFactsProduct,
 } from '../products/autoProductCreation.js';
-
-const prisma = new PrismaClient();
 
 interface SyncResult {
   itemsProcessed: number;
@@ -240,8 +238,8 @@ export class OpenFoodFactsSync {
     let page = 1;
     let hasMore = true;
 
-    while (hasMore && page <= 10) {
-      // Limit to 10 pages per category
+    while (hasMore && page <= SYNC_CONFIG.sync.maxPagesPerCategory) {
+      // Limit based on config
       try {
         const products = await this.searchProducts(category, page);
 
