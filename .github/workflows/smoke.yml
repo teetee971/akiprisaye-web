@@ -19,6 +19,7 @@ jobs:
       MAX_ATTEMPTS: 5
       RETRY_DELAY: 30
       DEPLOYMENT_WAIT: 60
+      CONNECT_TIMEOUT: 10
 
     steps:
       - name: Checkout code
@@ -26,6 +27,8 @@ jobs:
 
       - name: Wait for deployment
         run: |
+          # Wait for Cloudflare Pages deployment to complete before running tests
+          # Cloudflare Pages needs time to deploy after a push to main
           echo "⏳ Waiting for Cloudflare Pages deployment to complete..."
           sleep $DEPLOYMENT_WAIT
 
@@ -36,13 +39,13 @@ jobs:
           attempt=1
           while [ $attempt -le $max_attempts ]; do
             echo "🔍 Attempt $attempt/$max_attempts: Checking root page..."
-            response=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 10 https://akiprisaye.pages.dev/ 2>/dev/null || echo "000")
+            response=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout $CONNECT_TIMEOUT https://akiprisaye.pages.dev/ 2>/dev/null || echo "000")
 
             if [ "$response" = "200" ]; then
               echo "✅ Root page returned HTTP 200"
 
               # Check content
-              content=$(curl -s --connect-timeout 10 https://akiprisaye.pages.dev/ 2>/dev/null || echo "")
+              content=$(curl -s --connect-timeout $CONNECT_TIMEOUT https://akiprisaye.pages.dev/ 2>/dev/null || echo "")
               if echo "$content" | grep -q "A KI PRI SA YÉ"; then
                 echo "✅ Root page contains expected content 'A KI PRI SA YÉ'"
                 break
@@ -76,13 +79,13 @@ jobs:
           attempt=1
           while [ $attempt -le $max_attempts ]; do
             echo "🔍 Attempt $attempt/$max_attempts: Checking comparateur page..."
-            response=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 10 https://akiprisaye.pages.dev/comparateur.html 2>/dev/null || echo "000")
+            response=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout $CONNECT_TIMEOUT https://akiprisaye.pages.dev/comparateur.html 2>/dev/null || echo "000")
 
             if [ "$response" = "200" ]; then
               echo "✅ Comparateur page returned HTTP 200"
 
               # Check content
-              content=$(curl -s --connect-timeout 10 https://akiprisaye.pages.dev/comparateur.html 2>/dev/null || echo "")
+              content=$(curl -s --connect-timeout $CONNECT_TIMEOUT https://akiprisaye.pages.dev/comparateur.html 2>/dev/null || echo "")
               if echo "$content" | grep -q "Comparateur"; then
                 echo "✅ Comparateur page contains expected content 'Comparateur'"
                 break
@@ -116,7 +119,7 @@ jobs:
           attempt=1
           while [ $attempt -le $max_attempts ]; do
             echo "🔍 Attempt $attempt/$max_attempts: Checking API endpoint..."
-            response=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 10 "https://akiprisaye.pages.dev/api/prices" 2>/dev/null || echo "000")
+            response=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout $CONNECT_TIMEOUT "https://akiprisaye.pages.dev/api/prices" 2>/dev/null || echo "000")
 
             if [ "$response" = "404" ]; then
               echo "⚠️ API endpoint not yet deployed (expected for initial PR)"
