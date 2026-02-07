@@ -12,7 +12,6 @@ import { Link, useLocation } from 'react-router-dom';
 // Import optionnels protégés
 let useAuthSafe = null;
 try {
-  // eslint-disable-next-line import/no-unresolved
   ({ useAuth: useAuthSafe } = await import('../context/AuthContext'));
 } catch {
   useAuthSafe = null;
@@ -20,7 +19,6 @@ try {
 
 let ThemeToggleSafe = null;
 try {
-  // eslint-disable-next-line import/no-unresolved
   ({ default: ThemeToggleSafe } = await import('./ThemeToggle'));
 } catch {
   ThemeToggleSafe = null;

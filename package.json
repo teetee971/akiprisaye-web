@@ -1,6 +1,7 @@
 {
   "name": "akiprisaye-web-root",
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "cd frontend && npm ci --include=dev && npm run build",
     "dev": "cd frontend && npm run dev",
