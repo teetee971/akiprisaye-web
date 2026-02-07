@@ -86,11 +86,11 @@ frontend/dist/
 ### Si les routes SPA ne fonctionnent pas (404 statique) :
 1. Vérifier que le fichier `frontend/dist/_redirects` existe après le build
 2. Vérifier son contenu : `/* /index.html 200`
-3. Vérifier que le fichier `404.html` à la racine charge bien React
+3. Vérifier que le fichier `frontend/dist/404.html` existe après le build
 4. Attendre quelques minutes après le déploiement (propagation CDN)
 5. Vider le cache du navigateur et réessayer
 
 ### Si le rafraîchissement de page ne fonctionne pas :
-1. Vérifier que les fichiers `_redirects` et `404.html` sont déployés
+1. Vérifier que les fichiers `frontend/dist/_redirects` et `frontend/dist/404.html` sont déployés
 2. Vérifier dans les Developer Tools → Network que `/index.html` est bien servi avec un code 200
 3. Consulter les logs Cloudflare Pages pour voir quelle ressource est servie
