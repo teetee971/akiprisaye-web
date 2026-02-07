@@ -196,7 +196,9 @@ export default function Pricing() {
   };
 
   const handleContactPlan = (ctaLink: string) => {
-    navigate(ctaLink);
+    if (ctaLink) {
+      navigate(ctaLink);
+    }
   };
 
   return (
