@@ -56,6 +56,9 @@ const HistoriquePrix = React.lazy(() => import('./pages/HistoriquePrix'));
 const RecherchePrix = React.lazy(() => import('./pages/RecherchePrix'));
 const Alertes = React.lazy(() => import('./pages/Alertes'));
 
+// Savings Dashboard
+const MesEconomies = React.lazy(() => import('./pages/MesEconomies'));
+
 // Auth pages
 const Login = React.lazy(() => import('./pages/Login'));
 const Inscription = React.lazy(() => import('./pages/Inscription'));
@@ -137,6 +140,10 @@ if (!rootElement) {
                     <Route path="historique" element={<HistoriquePrix />} />
                     <Route path="recherche-prix" element={<RecherchePrix />} />
                     <Route path="alertes" element={<Alertes />} />
+                    
+                    {/* Savings Dashboard */}
+                    <Route path="mes-economies" element={<MesEconomies />} />
+                    <Route path="tableau-de-bord" element={<MesEconomies />} />
                     
                     {/* Auth routes */}
                     <Route path="login" element={<Login />} />
