@@ -4,7 +4,6 @@ import tsparser from '@typescript-eslint/parser';
 export default [
   {
     ignores: [
-      // Legacy / tooling scripts (non frontend)
       'scanner.js',
       'scripts/**',
       'backend/**',
@@ -164,7 +163,7 @@ export default [
 
   // Configuration for JavaScript/JSX files - keep no-undef enabled
   {
-    files: ['**/*.{js,jsx}'],
+    files: ['**/*.{js,jsx,ts,tsx}'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
@@ -262,7 +261,6 @@ export default [
       },
     },
     rules: {
-      // React / JSX
       'react/react-in-jsx-scope': 'off',
 
       // Safety - downgraded to warnings
@@ -272,6 +270,26 @@ export default [
 
       // Keep no-undef strict for JavaScript files
       'no-undef': 'error',
+      'no-useless-escape': 'error',
+    },
+  },
+  {
+    files: ['**/*.test.{js,jsx,ts,tsx}', '**/*.spec.{js,jsx,ts,tsx}'],
+    languageOptions: {
+      globals: {
+        global: 'readonly',
+        describe: 'readonly',
+        it: 'readonly',
+        expect: 'readonly',
+        test: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+        jest: 'readonly',
+        vi: 'readonly',
+        vitest: 'readonly',
+      },
     },
   },
 ];
