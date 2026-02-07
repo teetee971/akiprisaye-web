@@ -102,7 +102,7 @@ if [ -d "$DIST_DIR/Assets" ]; then
 fi
 
 # Check index.html references
-if grep -qi '/Assets/' "$INDEX_HTML"; then
+if grep -q '/Assets/' "$INDEX_HTML"; then
   echo -e "${RED}❌ index.html references '/Assets/' (should be '/assets/')${NC}"
   CASING_ISSUES=1
   FAILED=1

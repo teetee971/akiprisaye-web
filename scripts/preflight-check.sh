@@ -88,7 +88,7 @@ echo ""
 echo "📋 Test 5: Common Issues Check"
 
 # Check for Git LFS pointers
-if git grep -I -n "version https://git-lfs.github.com/spec/v1" -- ':!.github/workflows/*' ':!.circleci/*' 2>/dev/null; then
+if git grep -I -n "version https://git-lfs.github.com/spec/v1" -- ':!.github/workflows/*' ':!.circleci/*' ':!scripts/*' ':!*.md' 2>/dev/null; then
   echo -e "${RED}❌ Git LFS pointers detected in repository${NC}"
   FAILED=1
 else
