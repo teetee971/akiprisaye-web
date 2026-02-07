@@ -43,17 +43,21 @@ jobs:
         with:
           node-version: 20
           cache: npm
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies (clean)
+        working-directory: frontend
         run: npm ci
 
       - name: Lint (non-blocking)
+        working-directory: frontend
         run: npm run lint || true
 
       - name: Skip frontend tests (browser-only)
         run: echo "Skipping tests – browser-only frontend"
 
       - name: Build (read-only)
+        working-directory: frontend
         run: npm run build
 
   snapshot-open-data:
@@ -71,10 +75,14 @@ jobs:
         with:
           node-version: 20
           cache: npm
+          cache-dependency-path: frontend/package-lock.json
 
-      - run: npm ci
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
 
       - name: Generate Open-Data snapshot
+        working-directory: frontend
         run: |
           npm run export:open-data
           find exports -type f -exec sha256sum {} \; > exports/CHECKSUMS.sha256
