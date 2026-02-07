@@ -127,12 +127,14 @@ print_section "4. Installation des dépendances"
 
 echo -e "${CYAN}📦 Installation des dépendances avec npm ci...${NC}"
 cd frontend
-if npm ci --silent 2>&1 | grep -q "ERROR\|ERR!"; then
-    print_result "FAIL" "npm ci a échoué"
-    cd ..
-else
+NPM_OUTPUT=$(npm ci --silent 2>&1)
+NPM_EXIT=$?
+cd ..
+
+if [ $NPM_EXIT -eq 0 ]; then
     print_result "OK" "Dépendances installées avec succès"
-    cd ..
+else
+    print_result "FAIL" "npm ci a échoué"
 fi
 
 ################################################################################
@@ -203,14 +205,15 @@ print_section "8. Vérification TypeScript"
 ################################################################################
 
 echo -e "${CYAN}📘 Vérification TypeScript (tsc --noEmit)...${NC}"
-cd frontend
-if npx tsc --noEmit > /tmp/tsc.log 2>&1; then
+(cd frontend && npx tsc --noEmit > /tmp/tsc.log 2>&1)
+TSC_EXIT=$?
+
+if [ $TSC_EXIT -eq 0 ]; then
     print_result "OK" "TypeScript: aucune erreur de type"
 else
     ERROR_COUNT=$(wc -l < /tmp/tsc.log 2>/dev/null || echo "0")
     print_result "FAIL" "TypeScript: erreurs de type détectées ($ERROR_COUNT lignes)"
 fi
-cd ..
 
 ################################################################################
 print_section "9. Routes essentielles"
@@ -362,7 +365,14 @@ if [ -d "frontend/dist/assets" ]; then
     # Trouver les fichiers JS et vérifier leur taille
     LARGE_CHUNKS=0
     while IFS= read -r file; do
-        size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file" 2>/dev/null)
+        # Essayer stat Linux d'abord, puis BSD/macOS
+        size=$(stat -c%s "$file" 2>/dev/null || stat -f%z "$file" 2>/dev/null || echo "0")
+        
+        if [ "$size" = "0" ] || [ -z "$size" ]; then
+            # Fallback: utiliser wc -c comme dernier recours
+            size=$(wc -c < "$file" 2>/dev/null || echo "0")
+        fi
+        
         size_kb=$((size / 1024))
         filename=$(basename "$file")
         

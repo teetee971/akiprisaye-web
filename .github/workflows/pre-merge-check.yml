@@ -82,8 +82,8 @@ jobs:
           echo "### JavaScript Chunks" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
           
-          # Analyser la taille des fichiers JS
-          find dist/assets -name "*.js" -type f -exec ls -lh {} \; | awk '{print $5 "\t" $9}' | sort -hr >> $GITHUB_STEP_SUMMARY
+          # Analyser la taille des fichiers JS (portable)
+          find dist/assets -name "*.js" -type f -exec du -h {} \; | sort -hr >> $GITHUB_STEP_SUMMARY
           
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -93,7 +93,7 @@ jobs:
           if [ -n "$LARGE_CHUNKS" ]; then
             echo "⚠️ **Warning: Large chunks detected (>500KB)**" >> $GITHUB_STEP_SUMMARY
             echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-            echo "$LARGE_CHUNKS" | xargs ls -lh | awk '{print $5 "\t" $9}' >> $GITHUB_STEP_SUMMARY
+            echo "$LARGE_CHUNKS" | xargs du -h >> $GITHUB_STEP_SUMMARY
             echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
           else
             echo "✅ **All chunks are under 500KB**" >> $GITHUB_STEP_SUMMARY
@@ -203,24 +203,21 @@ jobs:
           npx serve -s dist -l 4173 &
           SERVER_PID=$!
           
-          # Vérifier que le serveur a bien démarré
-          if ! ps -p $SERVER_PID > /dev/null; then
-            echo "Failed to start server"
-            exit 1
-          fi
-          
           # Attendre que le serveur démarre
-          sleep 5
+          sleep 8
           
           # Vérifier que le serveur répond
-          curl -f http://localhost:4173/ || (echo "Server failed to start" && exit 1)
+          curl -f http://localhost:4173/ || (echo "Server failed to start" && kill $SERVER_PID 2>/dev/null && exit 1)
           
           # Exécuter Lighthouse
           echo "Running Lighthouse CI..."
-          lhci autorun --config=../lighthouserc.json || true
+          lhci autorun --config=../lighthouserc.json
+          LHCI_EXIT=$?
           
           # Arrêter le serveur
-          kill $SERVER_PID || true
+          kill $SERVER_PID 2>/dev/null || true
+          
+          exit $LHCI_EXIT
 
       - name: 📊 Upload Lighthouse results
         uses: actions/upload-artifact@v4
