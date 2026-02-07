@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // 🔹 Nom du cache
 const CACHE_NAME = 'akiprisaye-smart-cache-v2';
 
@@ -13,6 +14,14 @@ const ASSETS_TO_CACHE = [
   '/carte',
   '/manifest.webmanifest',
   '/assets/icon_512-3-9kYoTe.png',
+=======
+// 🔹 Cache version - incremented to v4 for complete cache invalidation
+const CACHE_NAME = 'akiprisaye-smart-cache-v4';
+
+// 🔹 Only precache essential non-HTML assets
+const ASSETS_TO_CACHE = [
+  '/manifest.webmanifest',
+>>>>>>> main
 ];
 
 // 🔹 Installation du service worker
@@ -43,6 +52,7 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
+<<<<<<< HEAD
 // 🔹 Interception des requêtes (offline fallback)
 self.addEventListener('fetch', (event) => {
   event.respondWith(
@@ -60,6 +70,62 @@ self.addEventListener('fetch', (event) => {
         })
         .catch(() => caches.match('/index.html'));
     }),
+=======
+// 🔹 Fetch handler with strict network-first for HTML
+self.addEventListener('fetch', (event) => {
+  const { request } = event;
+  const url = new URL(request.url);
+  
+  // CRITICAL: Network-first for ALL HTML documents - NEVER serve cached HTML
+  if (request.mode === 'navigate' || 
+      request.destination === 'document' || 
+      url.pathname === '/' || 
+      url.pathname.endsWith('.html')) {
+    event.respondWith(
+      fetch(request, { cache: 'no-store' })
+        .then((response) => {
+          // NEVER cache HTML responses to prevent stale content
+          return response;
+        })
+        .catch(() => {
+          // Only on network failure, return minimal offline message
+          return new Response(
+            '<!DOCTYPE html><html><body><h1>Hors ligne</h1><p>Veuillez vous reconnecter à Internet.</p></body></html>',
+            { 
+              status: 503,
+              headers: { 
+                'Content-Type': 'text/html',
+                'Cache-Control': 'no-store'
+              } 
+            }
+          );
+        })
+    );
+    return;
+  }
+  
+  // Cache-first for static assets (JS, CSS, images) with immutable hashes
+  event.respondWith(
+    caches.match(request).then((response) => {
+      if (response) {
+        return response;
+      }
+      return fetch(request)
+        .then((liveResponse) => {
+          // Only cache successful responses for same-origin requests
+          if (liveResponse.ok && liveResponse.type === 'basic') {
+            return caches.open(CACHE_NAME).then((cache) => {
+              cache.put(request, liveResponse.clone());
+              return liveResponse;
+            });
+          }
+          return liveResponse;
+        })
+        .catch(() => {
+          return new Response('', { status: 503, statusText: 'Service Unavailable' });
+        });
+    })
+>>>>>>> main
   );
 });
 

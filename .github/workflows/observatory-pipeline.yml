@@ -45,15 +45,30 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
+<<<<<<< HEAD
 
       - name: 📦 Install dependencies
         run: npm ci
 
       - name: 🧹 Lint code
+=======
+          cache-dependency-path: 'frontend/package-lock.json'
+
+      - name: 📦 Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: 🧹 Lint code
+        working-directory: frontend
+>>>>>>> main
         run: npm run lint
         continue-on-error: false
 
       - name: 🧪 Run tests
+<<<<<<< HEAD
+=======
+        working-directory: frontend
+>>>>>>> main
         run: npm test
         continue-on-error: false
 
@@ -81,7 +96,11 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: 📦 Install dependencies
+<<<<<<< HEAD
         run: npm ci
+=======
+        run: echo "Scripts use only built-in Node.js modules - no dependencies needed"
+>>>>>>> main
 
       - name: 🔍 Validate data files
         run: node scripts/validate-data.js
@@ -120,17 +139,29 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
+<<<<<<< HEAD
 
       - name: 📦 Install dependencies
         run: npm ci
 
       - name: 🏗️ Build production
+=======
+          cache-dependency-path: 'frontend/package-lock.json'
+
+      - name: 📦 Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: 🏗️ Build production
+        working-directory: frontend
+>>>>>>> main
         run: npm run build
         env:
           NODE_ENV: production
 
       - name: 🔍 Verify build output
         run: |
+<<<<<<< HEAD
           if [ ! -f "dist/index.html" ]; then
             echo "❌ dist/index.html not found"
             exit 1
@@ -138,12 +169,26 @@ jobs:
           
           if [ ! -d "dist/assets" ]; then
             echo "❌ dist/assets directory not found"
+=======
+          if [ ! -f "frontend/dist/index.html" ]; then
+            echo "❌ frontend/dist/index.html not found"
+            exit 1
+          fi
+          
+          if [ ! -d "frontend/dist/assets" ]; then
+            echo "❌ frontend/dist/assets directory not found"
+>>>>>>> main
             exit 1
           fi
           
           # Vérifier qu'il n'y a pas de répertoire Assets/ avec majuscule
+<<<<<<< HEAD
           if [ -d "dist/Assets" ]; then
             echo "❌ dist/Assets/ found (should be lowercase 'assets')"
+=======
+          if [ -d "frontend/dist/Assets" ]; then
+            echo "❌ frontend/dist/Assets/ found (should be lowercase 'assets')"
+>>>>>>> main
             exit 1
           fi
           
@@ -153,7 +198,11 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: dist
+<<<<<<< HEAD
           path: dist/
+=======
+          path: frontend/dist/
+>>>>>>> main
           retention-days: 7
 
       - name: 📊 Build summary
@@ -162,8 +211,13 @@ jobs:
           echo "✅ Frontend built successfully" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Output:" >> $GITHUB_STEP_SUMMARY
+<<<<<<< HEAD
           echo "- \`dist/index.html\` ✅" >> $GITHUB_STEP_SUMMARY
           echo "- \`dist/assets/\` ✅" >> $GITHUB_STEP_SUMMARY
+=======
+          echo "- \`frontend/dist/index.html\` ✅" >> $GITHUB_STEP_SUMMARY
+          echo "- \`frontend/dist/assets/\` ✅" >> $GITHUB_STEP_SUMMARY
+>>>>>>> main
 
   # ═══════════════════════════════════════════════════════════════
   # ÉTAPE 4: VALIDATION SÉCURITÉ
@@ -185,12 +239,20 @@ jobs:
 
       - name: 🔍 Check CSP headers
         run: |
+<<<<<<< HEAD
           if [ ! -f "public/_headers" ]; then
+=======
+          if [ ! -f "frontend/public/_headers" ]; then
+>>>>>>> main
             echo "⚠️  _headers file not found"
             exit 0
           fi
           
+<<<<<<< HEAD
           if grep -q "Content-Security-Policy" public/_headers; then
+=======
+          if grep -q "Content-Security-Policy" frontend/public/_headers; then
+>>>>>>> main
             echo "✅ CSP headers found"
           else
             echo "⚠️  CSP headers not found (optional)"

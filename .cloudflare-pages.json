@@ -1,4 +1,5 @@
 {
-  "build_command": "npm run build",
-  "build_output_directory": "frontend/dist"
+  "root_directory": "frontend",
+  "build_command": "npm ci && npm run build",
+  "build_output_directory": "dist"
 }

@@ -43,7 +43,11 @@ jobs:
         with:
           node-version: 20
           cache: npm
+<<<<<<< HEAD
           cache-dependency-path: frontend/package-lock.json
+=======
+          cache-dependency-path: 'frontend/package-lock.json'
+>>>>>>> main
 
       - name: Install dependencies (clean)
         working-directory: frontend
@@ -75,7 +79,11 @@ jobs:
         with:
           node-version: 20
           cache: npm
+<<<<<<< HEAD
           cache-dependency-path: frontend/package-lock.json
+=======
+          cache-dependency-path: 'frontend/package-lock.json'
+>>>>>>> main
 
       - name: Install dependencies
         working-directory: frontend
@@ -91,7 +99,11 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: open-data-snapshot-${{ github.ref_name }}
+<<<<<<< HEAD
           path: exports/
+=======
+          path: frontend/exports/
+>>>>>>> main
           retention-days: 90
 
   release-assets:
