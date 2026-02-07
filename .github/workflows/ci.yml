@@ -17,12 +17,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-<<<<<<< HEAD
-
-      - run: npm ci
-      - run: npm run build
-      - run: npm run test:ci
-=======
           cache: 'npm'
           cache-dependency-path: 'frontend/package-lock.json'
 
@@ -35,4 +29,3 @@ jobs:
       - name: Run tests
         working-directory: frontend
         run: npm run test:ci || echo "Tests skipped (browser-only)"
->>>>>>> main

@@ -33,10 +33,7 @@ jobs:
         with:
           node-version: 20
           cache: npm
-<<<<<<< HEAD
-=======
           cache-dependency-path: 'frontend/package-lock.json'
->>>>>>> main
 
       # Installation des dépendances du projet
       - name: Install dependencies
@@ -53,11 +50,7 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: akiprisaye-web
-<<<<<<< HEAD
-          directory: dist             # important : dossier de build
-=======
           directory: frontend/dist             # important : dossier de build
->>>>>>> main
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
       # Purge du cache inutile (pas de domaine personnalisé)
