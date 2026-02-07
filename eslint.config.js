@@ -74,6 +74,7 @@ export default [
         TextEncoder: 'readonly',
         AbortController: 'readonly',
         Response: 'readonly',
+        Request: 'readonly',
         URLSearchParams: 'readonly',
         alert: 'readonly',
         confirm: 'readonly',
@@ -102,6 +103,8 @@ export default [
         Line: 'readonly',
         Blob: 'readonly',
         MutationObserver: 'readonly',
+        IntersectionObserver: 'readonly',
+        FileReader: 'readonly',
         WebAssembly: 'readonly',
         atob: 'readonly',
         btoa: 'readonly',
@@ -196,6 +199,7 @@ export default [
         TextEncoder: 'readonly',
         AbortController: 'readonly',
         Response: 'readonly',
+        Request: 'readonly',
         URLSearchParams: 'readonly',
         alert: 'readonly',
         confirm: 'readonly',
@@ -224,6 +228,8 @@ export default [
         Line: 'readonly',
         Blob: 'readonly',
         MutationObserver: 'readonly',
+        IntersectionObserver: 'readonly',
+        FileReader: 'readonly',
         WebAssembly: 'readonly',
         atob: 'readonly',
         btoa: 'readonly',
@@ -272,8 +278,8 @@ export default [
       'no-console': 'off',
       'no-useless-escape': 'warn',
 
-      // JSX components in scope - warn instead of error for no-undef in JSX
-      'no-undef': 'warn',
+      // Keep no-undef strict for JavaScript files
+      'no-undef': 'error',
     },
   },
 ];
