@@ -52,6 +52,28 @@ export function ProductList() {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
+  const fetchProducts = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const filters = {
+        search: searchQuery || undefined,
+        category: categoryFilter || undefined,
+        brand: brandFilter || undefined,
+        hasEan: hasEanFilter,
+      };
+      const data = await getProducts(filters, currentPage, 20);
+      setProducts(data.products);
+      setTotal(data.total);
+      setTotalPages(data.totalPages);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Failed to fetch products');
+      toast.error('Erreur lors du chargement des produits');
+    } finally {
+      setLoading(false);
+    }
+  }, [currentPage, searchQuery, categoryFilter, brandFilter, hasEanFilter]);
+
   const handleDelete = useCallback(async (id: string, name: string) => {
     if (!window.confirm(`Êtes-vous sûr de vouloir supprimer "${name}" ?`)) {
       return;
@@ -60,12 +82,12 @@ export function ProductList() {
     try {
       await deleteProduct(id);
       toast.success('Produit supprimé avec succès');
-      // Reload products after deletion
-      setCurrentPage(1);
+      // Force refresh by calling fetchProducts directly
+      await fetchProducts();
     } catch {
       toast.error('Erreur lors de la suppression du produit');
     }
-  }, []);
+  }, [fetchProducts]);
 
   const columns = useMemo<ColumnDef<Product>[]>(
     () => [
@@ -170,32 +192,9 @@ export function ProductList() {
     pageCount: totalPages,
   });
 
-  const fetchProducts = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const filters = {
-        search: searchQuery || undefined,
-        category: categoryFilter || undefined,
-        brand: brandFilter || undefined,
-        hasEan: hasEanFilter,
-      };
-      const data = await getProducts(filters, currentPage, 20);
-      setProducts(data.products);
-      setTotal(data.total);
-      setTotalPages(data.totalPages);
-    } catch (error) {
-      setError(error instanceof Error ? error.message : 'Failed to fetch products');
-      toast.error('Erreur lors du chargement des produits');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
     fetchProducts();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, searchQuery, categoryFilter, brandFilter, hasEanFilter]);
+  }, [fetchProducts]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

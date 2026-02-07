@@ -34,6 +34,7 @@ export interface UpdateProductInput {
   name?: string;
   brand?: string;
   category?: ProductCategory;
+  ean?: string;
   description?: string;
   unit?: Unit;
   quantity?: number;
@@ -124,8 +125,15 @@ export async function createProduct(data: CreateProductInput): Promise<Product> 
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to create product');
+    try {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to create product');
+    } catch (parseError) {
+      if (parseError instanceof Error && parseError.message !== 'Failed to create product') {
+        throw new Error('Failed to create product');
+      }
+      throw parseError;
+    }
   }
 
   return response.json();
@@ -147,8 +155,15 @@ export async function updateProduct(id: string, data: UpdateProductInput): Promi
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to update product');
+    try {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to update product');
+    } catch (parseError) {
+      if (parseError instanceof Error && parseError.message !== 'Failed to update product') {
+        throw new Error('Failed to update product');
+      }
+      throw parseError;
+    }
   }
 
   return response.json();
@@ -168,8 +183,15 @@ export async function deleteProduct(id: string): Promise<void> {
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to delete product');
+    try {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to delete product');
+    } catch (parseError) {
+      if (parseError instanceof Error && parseError.message !== 'Failed to delete product') {
+        throw new Error('Failed to delete product');
+      }
+      throw parseError;
+    }
   }
 }
 
@@ -187,6 +209,10 @@ export async function searchOpenFoodFacts(ean: string): Promise<any> {
 
   if (data.status === 0) {
     throw new Error('Product not found on OpenFoodFacts');
+  }
+
+  if (!data.product) {
+    throw new Error('Invalid product data from OpenFoodFacts');
   }
 
   return {
