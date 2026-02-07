@@ -27,8 +27,8 @@ export const AnonymousSocialComparison: React.FC = () => {
     // Calculate user's savings from safeLocalStorage
     const calculateUserSavings = (): ComparisonData => {
       // Get monthly savings from dashboard data
-      const savedData = safeLocalStorage.getItem('monthlySavings:v1');
-      const userSavings = savedData ? JSON.parse(savedData).currentMonth || 0 : 0;
+      const savedData = safeLocalStorage.getJSON<{ currentMonth?: number }>('monthlySavings:v1', {});
+      const userSavings = savedData.currentMonth || 0;
 
       // Simulated community average (would be from aggregated data in production)
       const averageSavings = 18.5;

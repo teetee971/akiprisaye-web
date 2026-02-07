@@ -31,10 +31,12 @@ export default function HomeV3() {
 
   useEffect(() => {
     // Load real stats from safeLocalStorage or API
-    const savedStats = safeLocalStorage.getItem('platform_stats');
-    if (savedStats) {
-      setStats(JSON.parse(savedStats));
-    }
+    const stats = safeLocalStorage.getJSON<typeof stats>('platform_stats', {
+      users: 1247,
+      scans: 0,
+      territories: 12
+    });
+    setStats(stats);
   }, []);
 
   return (

@@ -39,8 +39,7 @@ export class ShoppingListService {
    * Get all shopping lists
    */
   getLists(): ShoppingList[] {
-    const stored = safeLocalStorage.getItem(this.STORAGE_KEY);
-    return stored ? JSON.parse(stored) : [];
+    return safeLocalStorage.getJSON<ShoppingList[]>(this.STORAGE_KEY, []);
   }
 
   /**
@@ -181,7 +180,7 @@ export class ShoppingListService {
 
   // Private helper methods
   private saveLists(lists: ShoppingList[]): void {
-    safeLocalStorage.setItem(this.STORAGE_KEY, JSON.stringify(lists));
+    safeLocalStorage.setJSON(this.STORAGE_KEY, lists);
   }
 
   private generateId(): string {

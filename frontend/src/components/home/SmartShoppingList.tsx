@@ -46,13 +46,10 @@ export function SmartShoppingList() {
 
   const loadSmartSuggestions = () => {
     // Load from safeLocalStorage
-    const recentProducts = safeLocalStorage.getItem('recentProducts:v1');
-    const purchaseHistory = safeLocalStorage.getItem('purchaseHistory:v1');
+    const recent = safeLocalStorage.getJSON<any[]>('recentProducts:v1', []);
+    const history = safeLocalStorage.getJSON<any[]>('purchaseHistory:v1', []);
 
-    if (recentProducts && purchaseHistory) {
-      const recent = JSON.parse(recentProducts);
-      const history = JSON.parse(purchaseHistory);
-      
+    if (recent.length > 0 && history.length > 0) {
       const analyzed = analyzeRepurchaseSuggestions(recent, history);
       setSuggestions(analyzed);
     } else {
@@ -128,8 +125,7 @@ export function SmartShoppingList() {
   };
 
   const addToShoppingList = (productId: string) => {
-    const existingList = safeLocalStorage.getItem('shoppingList:v1');
-    const list = existingList ? JSON.parse(existingList) : [];
+    const list = safeLocalStorage.getJSON<any[]>('shoppingList:v1', []);
     
     const product = suggestions.find(p => p.id === productId);
     if (product && !list.find((item: any) => item.id === productId)) {
@@ -140,7 +136,7 @@ export function SmartShoppingList() {
         targetPrice: product.currentPrice,
         addedAt: new Date().toISOString()
       });
-      safeLocalStorage.setItem('shoppingList:v1', JSON.stringify(list));
+      safeLocalStorage.setJSON('shoppingList:v1', list);
       
       // Show feedback (in real app, would use toast notification)
       alert(`✅ "${product.name}" ajouté à votre liste de courses`);

@@ -35,7 +35,7 @@ export function PriceAlertButton({
   const [targetPercent, setTargetPercent] = useState(10);
 
   const handleSaveAlert = () => {
-    const alerts = JSON.parse(safeLocalStorage.getItem('priceAlerts:v1') || '[]') as PriceAlert[];
+    const alerts = safeLocalStorage.getJSON<PriceAlert[]>('priceAlerts:v1', []);
     
     const newAlert: PriceAlert = {
       productId,
@@ -47,7 +47,7 @@ export function PriceAlertButton({
     };
 
     alerts.push(newAlert);
-    safeLocalStorage.setItem('priceAlerts:v1', JSON.stringify(alerts));
+    safeLocalStorage.setJSON('priceAlerts:v1', alerts);
     
     setShowModal(false);
     

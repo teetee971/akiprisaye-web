@@ -87,10 +87,9 @@ export function MonthlySavingsDashboard() {
 
   const loadSavingsData = () => {
     // Load from safeLocalStorage
-    const savedData = safeLocalStorage.getItem('monthlySavings:v1');
+    const data = safeLocalStorage.getJSON<MonthlySavings | null>('monthlySavings:v1', null);
     
-    if (savedData) {
-      const data = JSON.parse(savedData);
+    if (data) {
       setSavings(data);
       updateBadges(data);
     } else {

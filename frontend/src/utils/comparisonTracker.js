@@ -1,3 +1,5 @@
+import { safeLocalStorage } from './safeLocalStorage';
+
 const STORAGE_COUNT_KEY = 'akp_comparisons_count';
 const STORAGE_SHOWN_KEY = 'akp_3x_message_shown';
 
@@ -11,11 +13,16 @@ function showMessage() {
 }
 
 export function trackComparison() {
-  const count = parseInt(localStorage.getItem(STORAGE_COUNT_KEY) || '0', 10) + 1;
-  localStorage.setItem(STORAGE_COUNT_KEY, count);
+  try {
+    const count = parseInt(safeLocalStorage.getItem(STORAGE_COUNT_KEY) || '0', 10) + 1;
+    safeLocalStorage.setItem(STORAGE_COUNT_KEY, count.toString());
 
-  if (count === 3 && !localStorage.getItem(STORAGE_SHOWN_KEY)) {
-    localStorage.setItem(STORAGE_SHOWN_KEY, 'true');
-    showMessage();
+    if (count === 3 && !safeLocalStorage.getItem(STORAGE_SHOWN_KEY)) {
+      safeLocalStorage.setItem(STORAGE_SHOWN_KEY, 'true');
+      showMessage();
+    }
+  } catch {
+    // Silently fail if localStorage operations fail
+    return;
   }
 }

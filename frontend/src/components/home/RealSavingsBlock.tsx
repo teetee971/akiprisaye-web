@@ -26,10 +26,14 @@ export function RealSavingsBlock() {
 
   useEffect(() => {
     // Load real savings data from safeLocalStorage or API
-    const savedData = safeLocalStorage.getItem('latest_savings');
-    if (savedData) {
-      setSavingsData(JSON.parse(savedData));
-    }
+    const savedData = safeLocalStorage.getJSON<SavingsData>('latest_savings', {
+      productName: "Jus de citron 1L",
+      savings: 2.43,
+      percentageSaved: 18,
+      cheapestStore: "Super U Jarry",
+      lastUpdate: "3h"
+    });
+    setSavingsData(savedData);
   }, []);
 
   return (

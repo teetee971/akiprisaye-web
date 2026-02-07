@@ -118,10 +118,7 @@ export class InstitutionalAlertService {
    * Get pending alerts
    */
   getPendingAlerts(): InstitutionalAlert[] {
-    const stored = safeLocalStorage.getItem('institutional_alerts');
-    if (!stored) return [];
-    
-    const alerts: InstitutionalAlert[] = JSON.parse(stored);
+    const alerts = safeLocalStorage.getJSON<InstitutionalAlert[]>('institutional_alerts', []);
     return alerts.filter(a => a.status === 'pending');
   }
 
@@ -183,12 +180,11 @@ export class InstitutionalAlertService {
       alerts.push(alert);
     }
     
-    safeLocalStorage.setItem('institutional_alerts', JSON.stringify(alerts));
+    safeLocalStorage.setJSON('institutional_alerts', alerts);
   }
 
   private getAllAlerts(): InstitutionalAlert[] {
-    const stored = safeLocalStorage.getItem('institutional_alerts');
-    return stored ? JSON.parse(stored) : [];
+    return safeLocalStorage.getJSON<InstitutionalAlert[]>('institutional_alerts', []);
   }
 }
 

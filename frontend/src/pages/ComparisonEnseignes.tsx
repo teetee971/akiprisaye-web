@@ -80,12 +80,11 @@ export default function ComparisonEnseignes() {
     }
     
     // Récupérer le panier existant
-    const existingCart = safeLocalStorage.getItem('ti-panier:items')
-    const cart = existingCart ? JSON.parse(existingCart) : []
+    const cart = safeLocalStorage.getJSON<typeof item[]>('ti-panier:items', [])
     
     // Ajouter le nouvel item
     cart.push(item)
-    safeLocalStorage.setItem('ti-panier:items', JSON.stringify(cart))
+    safeLocalStorage.setJSON('ti-panier:items', cart)
     
     // Notification simple
     alert(`${selectedProduct} de ${store} ajouté au ti-panier !`)

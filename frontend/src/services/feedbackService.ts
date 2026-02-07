@@ -54,14 +54,11 @@ class FeedbackService {
   
   constructor() {
     // Charger config depuis safeLocalStorage ou utiliser valeurs par défaut
-    const savedConfig = safeLocalStorage.getItem('feedbackConfig');
-    this.config = savedConfig
-      ? JSON.parse(savedConfig)
-      : {
-          hapticEnabled: true,
-          audioEnabled: true,
-          volume: 0.5,
-        };
+    this.config = safeLocalStorage.getJSON<FeedbackConfig>('feedbackConfig', {
+      hapticEnabled: true,
+      audioEnabled: true,
+      volume: 0.5,
+    });
   }
 
   /**
@@ -69,7 +66,7 @@ class FeedbackService {
    */
   updateConfig(config: Partial<FeedbackConfig>): void {
     this.config = { ...this.config, ...config };
-    safeLocalStorage.setItem('feedbackConfig', JSON.stringify(this.config));
+    safeLocalStorage.setJSON('feedbackConfig', this.config);
   }
 
   /**
