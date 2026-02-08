@@ -61,7 +61,15 @@ router.post('/', async (req: Request, res: Response) => {
   try {
     const validatedData = priceSubmissionSchema.parse(req.body);
     
-    const result = await submitAndVerifyPrice(validatedData);
+    const result = await submitAndVerifyPrice({
+      productId: validatedData.productId,
+      storeId: validatedData.storeId,
+      price: validatedData.price,
+      currency: validatedData.currency,
+      source: validatedData.source,
+      submittedBy: validatedData.submittedBy,
+      proofUrl: validatedData.proofUrl,
+    });
     
     if (!result.success) {
       return res.status(400).json({
@@ -75,8 +83,8 @@ router.post('/', async (req: Request, res: Response) => {
       success: true,
       priceId: result.priceId,
       confidenceScore: result.confidenceScore,
-      hasAnomalies: result.hasAnomalies,
-      anomalies: result.anomalies,
+      hasAnomalies: 'hasAnomalies' in result ? result.hasAnomalies : false,
+      anomalies: 'anomalies' in result ? result.anomalies : [],
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -236,7 +244,11 @@ router.post('/:id/verify', async (req: Request, res: Response) => {
     const result = await verifyPrice({
       priceId: id,
       userId,
-      ...validatedData,
+      status: validatedData.status,
+      comment: validatedData.comment,
+      proofUrl: validatedData.proofUrl,
+      suggestedPrice: validatedData.suggestedPrice,
+      suggestedSource: validatedData.suggestedSource,
     });
     
     if (!result.success) {

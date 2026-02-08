@@ -37,6 +37,8 @@ import subscriptionRoutes from './api/routes/subscription.routes.js';
 // Price Alerts & Notifications routes
 import alertsRoutes from './api/routes/alerts.routes.js';
 import notificationsRoutes from './api/routes/notifications.routes.js';
+// Verified Pricing System routes
+import pricesRoutes from './api/routes/prices.routes.js';
 
 // Import middlewares
 import { apiLimiter } from './api/middlewares/rateLimit.middleware.js';
@@ -208,6 +210,9 @@ app.use('/api/subscriptions', subscriptionRoutes);
 // Price Alerts & Notifications API routes (protected by JWT)
 app.use('/api/alerts', alertsRoutes);
 app.use('/api/notifications', notificationsRoutes);
+
+// Verified Pricing System API routes (public with rate limiting)
+app.use('/api/prices', pricesRoutes);
 
 // ========================================
 // Gestion des erreurs
