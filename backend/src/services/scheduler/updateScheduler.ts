@@ -22,21 +22,21 @@ const prisma = new PrismaClient();
 export function schedulePriceRefresh(): void {
   // Run at 6:00 AM every day
   cron.schedule('0 6 * * *', async () => {
-    console.log('[Price Refresh] Starting daily price freshness update...');
+    console.info('[Price Refresh] Starting daily price freshness update...');
     
     try {
       const updatedCount = await updateFreshnessStatus();
-      console.log(`[Price Refresh] Updated freshness status for ${updatedCount} prices`);
+      console.info(`[Price Refresh] Updated freshness status for ${updatedCount} prices`);
       
       // Log statistics
       const stats = await getPriceStats();
-      console.log(`[Price Refresh] Stats: ${stats.freshPrices} fresh / ${stats.activePrices} active`);
+      console.info(`[Price Refresh] Stats: ${stats.freshPrices} fresh / ${stats.activePrices} active`);
     } catch (error) {
       console.error('[Price Refresh] Error:', error);
     }
   });
   
-  console.log('[Scheduler] Price refresh job scheduled (daily at 6:00 AM)');
+  console.info('[Scheduler] Price refresh job scheduled (daily at 6:00 AM)');
 }
 
 /**
@@ -46,7 +46,7 @@ export function schedulePriceRefresh(): void {
 export function scheduleAnomalyCheck(): void {
   // Run every 4 hours
   cron.schedule('0 */4 * * *', async () => {
-    console.log('[Anomaly Check] Starting anomaly detection...');
+    console.info('[Anomaly Check] Starting anomaly detection...');
     
     try {
       // Get recent prices (last 48 hours) to check
@@ -74,13 +74,13 @@ export function scheduleAnomalyCheck(): void {
         }
       }
       
-      console.log(`[Anomaly Check] Checked ${recentPrices.length} prices, found ${anomalyCount} anomalies`);
+      console.info(`[Anomaly Check] Checked ${recentPrices.length} prices, found ${anomalyCount} anomalies`);
     } catch (error) {
       console.error('[Anomaly Check] Error:', error);
     }
   });
   
-  console.log('[Scheduler] Anomaly check job scheduled (every 4 hours)');
+  console.info('[Scheduler] Anomaly check job scheduled (every 4 hours)');
 }
 
 /**
@@ -90,7 +90,7 @@ export function scheduleAnomalyCheck(): void {
 export function scheduleDataSync(): void {
   // Run every Sunday at 3:00 AM
   cron.schedule('0 3 * * 0', async () => {
-    console.log('[Data Sync] Starting weekly data synchronization...');
+    console.info('[Data Sync] Starting weekly data synchronization...');
     
     try {
       // Recalculate confidence scores for all active prices
@@ -103,22 +103,22 @@ export function scheduleDataSync(): void {
         },
       });
       
-      console.log(`[Data Sync] Recalculating confidence scores for ${activePrices.length} prices...`);
+      console.info(`[Data Sync] Recalculating confidence scores for ${activePrices.length} prices...`);
       
       // This would normally involve more complex sync logic
       // For now, just log the count
       
       // Get updated statistics
       const stats = await getPriceStats();
-      console.log('[Data Sync] Current stats:', stats);
+      console.info('[Data Sync] Current stats:', stats);
       
-      console.log('[Data Sync] Weekly sync completed');
+      console.info('[Data Sync] Weekly sync completed');
     } catch (error) {
       console.error('[Data Sync] Error:', error);
     }
   });
   
-  console.log('[Scheduler] Data sync job scheduled (weekly on Sunday at 3:00 AM)');
+  console.info('[Scheduler] Data sync job scheduled (weekly on Sunday at 3:00 AM)');
 }
 
 /**
@@ -128,12 +128,12 @@ export function scheduleDataSync(): void {
 export function scheduleCleanup(): void {
   // Run every day at 2:00 AM
   cron.schedule('0 2 * * *', async () => {
-    console.log('[Cleanup] Starting daily cleanup...');
+    console.info('[Cleanup] Starting daily cleanup...');
     
     try {
       // Deactivate prices older than 90 days
       const deactivated = await deactivateOldPrices(90);
-      console.log(`[Cleanup] Deactivated ${deactivated} old prices`);
+      console.info(`[Cleanup] Deactivated ${deactivated} old prices`);
       
       // Clean up resolved anomalies older than 180 days
       const sixMonthsAgo = new Date();
@@ -148,7 +148,7 @@ export function scheduleCleanup(): void {
         },
       });
       
-      console.log(`[Cleanup] Deleted ${deletedAnomalies.count} old resolved anomalies`);
+      console.info(`[Cleanup] Deleted ${deletedAnomalies.count} old resolved anomalies`);
       
       // Clean up old rejected product updates
       const deletedupdates = await prisma.productUpdate.deleteMany({
@@ -160,42 +160,43 @@ export function scheduleCleanup(): void {
         },
       });
       
-      console.log(`[Cleanup] Deleted ${deletedupdates.count} old rejected updates`);
+      console.info(`[Cleanup] Deleted ${deletedupdates.count} old rejected updates`);
       
     } catch (error) {
       console.error('[Cleanup] Error:', error);
     }
   });
   
-  console.log('[Scheduler] Cleanup job scheduled (daily at 2:00 AM)');
+  console.info('[Scheduler] Cleanup job scheduled (daily at 2:00 AM)');
 }
 
 /**
  * Initialize all scheduled jobs
  */
 export function initializeScheduler(): void {
-  console.log('[Scheduler] Initializing pricing system scheduled jobs...');
+  console.info('[Scheduler] Initializing pricing system scheduled jobs...');
   
   schedulePriceRefresh();
   scheduleAnomalyCheck();
   scheduleDataSync();
   scheduleCleanup();
   
-  console.log('[Scheduler] All pricing jobs initialized successfully');
+  console.info('[Scheduler] All pricing jobs initialized successfully');
 }
 
 /**
  * Run jobs manually (for testing)
  */
 export async function runJobManually(jobName: 'refresh' | 'anomaly' | 'sync' | 'cleanup') {
-  console.log(`[Manual] Running ${jobName} job...`);
+  console.info(`[Manual] Running ${jobName} job...`);
   
   switch (jobName) {
-    case 'refresh':
+    case 'refresh': {
       const refreshed = await updateFreshnessStatus();
       return { success: true, updated: refreshed };
+    }
       
-    case 'anomaly':
+    case 'anomaly': {
       const recentPrices = await prisma.productPrice.findMany({
         where: { isActive: true },
         take: 100,
@@ -208,14 +209,17 @@ export async function runJobManually(jobName: 'refresh' | 'anomaly' | 'sync' | '
         if (result.hasAnomaly) anomalies += result.anomalies.length;
       }
       return { success: true, anomaliesFound: anomalies };
+    }
       
-    case 'sync':
+    case 'sync': {
       const stats = await getPriceStats();
       return { success: true, stats };
+    }
       
-    case 'cleanup':
+    case 'cleanup': {
       const deactivated = await deactivateOldPrices(90);
       return { success: true, deactivated };
+    }
       
     default:
       return { success: false, error: 'Invalid job name' };
