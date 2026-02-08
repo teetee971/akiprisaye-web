@@ -75,7 +75,7 @@ export async function findNearbyStores(
       lat,
       lon,
       store.coordinates!.lat,
-      store.coordinates.lon
+      store.coordinates!.lon
     ),
     address: store.address,
     city: store.city,

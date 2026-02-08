@@ -152,7 +152,7 @@ router.get('/nearby', async (req: Request, res: Response) => {
       radius: searchRadius,
       chains: chainList,
       limit: maxLimit,
-      sortBy: sortBy as 'distance' | 'priceIndex',
+      sortBy: sortBy as 'distance' | 'price' | 'name',
     });
 
     // Add price data
