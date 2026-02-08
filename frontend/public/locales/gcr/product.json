@@ -1,0 +1,20 @@
+{
+  "details": {
+    "title": "Détay pwodui-a",
+    "description": "Déskripsyon",
+    "ingredients": "Engrédyan",
+    "nutritionalInfo": "Enfo nitrisyonèl"
+  },
+  "priceComparison": {
+    "title": "Konparézon pri",
+    "bestPrice": "Meyè pri",
+    "averagePrice": "Pri mwayèn",
+    "priceRange": "Fouchèt pri"
+  },
+  "availability": {
+    "title": "Disponibilité",
+    "inStock": "An stòk",
+    "outOfStock": "Pa ni",
+    "limitedStock": "Stòk limité"
+  }
+}

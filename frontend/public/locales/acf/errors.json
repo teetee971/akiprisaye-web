@@ -1,0 +1,18 @@
+{
+  "network": {
+    "offline": "Ou pa konekté",
+    "reconnected": "Koneksyon rétabli",
+    "failed": "Échèk koneksyon"
+  },
+  "notFound": {
+    "title": "Paj pa trouvé",
+    "message": "Paj ou ka chaché-a pa ékzisté",
+    "backHome": "Rétounen lakay"
+  },
+  "server": {
+    "title": "Erè sèvè",
+    "message": "On erè pasé",
+    "retry": "Éséyé anko"
+  },
+  "generic": "On erè pasé"
+}

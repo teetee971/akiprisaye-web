@@ -1,0 +1,20 @@
+{
+  "title": "Mon profil",
+  "edit": "Modifier le profil",
+  "settings": {
+    "title": "Paramètres",
+    "language": "Langue",
+    "notifications": "Notifications",
+    "privacy": "Confidentialité"
+  },
+  "favorites": {
+    "title": "Mes favoris",
+    "stores": "Magasins favoris",
+    "products": "Produits favoris"
+  },
+  "history": {
+    "title": "Historique",
+    "searches": "Recherches récentes",
+    "scans": "Scans récents"
+  }
+}

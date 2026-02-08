@@ -1,0 +1,16 @@
+{
+  "title": "Rod in pwodwi",
+  "placeholder": "Rod...",
+  "filters": {
+    "category": "Katégori",
+    "price": "Pri",
+    "store": "Magazin",
+    "territory": "Téritwar"
+  },
+  "results": {
+    "found": "{{count}} rézilta trouvé",
+    "found_plural": "{{count}} rézilta trouvé",
+    "noResults": "Nana poin rézilta",
+    "tryAgain": "Ésèy èk dotr mo"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "title": "Ma liste de courses",
+  "empty": "Votre liste est vide",
+  "addItem": "Ajouter un article",
+  "total": "Total",
+  "items": "{{count}} article",
+  "items_plural": "{{count}} articles",
+  "clearAll": "Tout effacer",
+  "optimize": "Optimiser ma liste",
+  "share": "Partager ma liste"
+}

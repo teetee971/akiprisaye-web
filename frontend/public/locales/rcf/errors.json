@@ -1,0 +1,18 @@
+{
+  "network": {
+    "offline": "Ou lé pa konèkté",
+    "reconnected": "Konnèksion rétabli",
+    "failed": "Éshèk konnèksion"
+  },
+  "notFound": {
+    "title": "Paz pa trouvé",
+    "message": "La paz ou rod la lé pa la",
+    "backHome": "Artourne lakaz"
+  },
+  "server": {
+    "title": "Érèr sèrvèr",
+    "message": "In érèr la arrivé",
+    "retry": "Ésèy ankor"
+  },
+  "generic": "In érèr la arrivé"
+}
