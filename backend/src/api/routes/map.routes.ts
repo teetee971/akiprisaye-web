@@ -8,6 +8,10 @@ import { SEED_STORES } from '../../../../src/data/seedStores.js';
 import { calculatePriceIndex } from '../../services/stores/priceIndexCalculator.js';
 import { findNearbyStores } from '../../services/stores/nearbyStoresService.js';
 import { generateHeatmap } from '../../services/stores/heatmapService.js';
+import {
+  calculateDistance,
+  AVERAGE_SECONDS_PER_KM,
+} from '../../utils/geoUtils.js';
 
 // Helper function to get price category
 function getPriceCategory(priceIndex: number): 'cheap' | 'medium' | 'expensive' {
@@ -290,7 +294,7 @@ router.get('/route', async (req: Request, res: Response) => {
     // Mock route for now
     // In production, this would call OSRM API
     const distance = calculateDistance(fromLat, fromLon, toLat, toLon) * 1000; // Convert to meters
-    const duration = (distance / 1000) * 180; // Assume 180 seconds per km
+    const duration = (distance / 1000) * AVERAGE_SECONDS_PER_KM;
 
     return res.json({
       success: true,
@@ -326,33 +330,5 @@ router.get('/route', async (req: Request, res: Response) => {
     });
   }
 });
-
-/**
- * Helper function to calculate distance
- */
-function calculateDistance(
-  lat1: number,
-  lon1: number,
-  lat2: number,
-  lon2: number
-): number {
-  const R = 6371; // Earth's radius in km
-  const dLat = toRad(lat2 - lat1);
-  const dLon = toRad(lon2 - lon1);
-
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(toRad(lat1)) *
-      Math.cos(toRad(lat2)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
-
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
-}
-
-function toRad(deg: number): number {
-  return deg * (Math.PI / 180);
-}
 
 export default router;

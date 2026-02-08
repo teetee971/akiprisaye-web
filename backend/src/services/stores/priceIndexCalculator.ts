@@ -110,8 +110,14 @@ export async function calculatePriceIndex(
   const basketComposition = [];
 
   for (const item of REFERENCE_BASKET) {
-    const price = storePrices[item.productId] || 0;
-    const territoryAvg = TERRITORY_AVERAGES[item.productId] || 0;
+    const price = storePrices[item.productId];
+    const territoryAvg = TERRITORY_AVERAGES[item.productId];
+
+    // Skip items with missing prices to avoid incorrect calculations
+    if (!price || !territoryAvg) {
+      console.warn(`Missing price data for ${item.productId} in store ${storeId}`);
+      continue;
+    }
 
     basketTotal += price * item.quantity;
     territoryTotal += territoryAvg * item.quantity;
