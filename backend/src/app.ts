@@ -37,6 +37,9 @@ import subscriptionRoutes from './api/routes/subscription.routes.js';
 // Price Alerts & Notifications routes
 import alertsRoutes from './api/routes/alerts.routes.js';
 import notificationsRoutes from './api/routes/notifications.routes.js';
+// Inflation Dashboard routes
+import inflationRoutes from './api/routes/inflation.routes.js';
+import publicInflationRoutes from './api/routes/public/inflation.routes.js';
 
 // Import middlewares
 import { apiLimiter } from './api/middlewares/rateLimit.middleware.js';
@@ -208,6 +211,12 @@ app.use('/api/subscriptions', subscriptionRoutes);
 // Price Alerts & Notifications API routes (protected by JWT)
 app.use('/api/alerts', alertsRoutes);
 app.use('/api/notifications', notificationsRoutes);
+
+// Inflation Dashboard API routes (protected by JWT)
+app.use('/api/inflation', inflationRoutes);
+
+// Public Inflation API (with rate limiting)
+app.use('/api/v1/public/inflation', publicInflationRoutes);
 
 // ========================================
 // Gestion des erreurs
