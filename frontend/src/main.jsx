@@ -63,6 +63,7 @@ const ContribuerPrix = React.lazy(() => import('./pages/ContribuerPrix'));
 const Comparateurs = React.lazy(() => import('./pages/Comparateurs'));
 const CarteItinerairesHub = React.lazy(() => import('./pages/CarteItinerairesHub'));
 const ComparateurCitoyen = React.lazy(() => import('./pages/ComparateurCitoyen'));
+const MapPage = React.lazy(() => import('./pages/MapPage'));
 
 // Scanner & OCR pages
 const ScannerHub = React.lazy(() => import('./pages/ScannerHub'));
@@ -164,6 +165,7 @@ if (!rootElement) {
                     <Route path="comparateurs" element={<Comparateurs />} />
                     <Route path="carte-itineraires" element={<CarteItinerairesHub />} />
                     <Route path="comparateur-citoyen" element={<ComparateurCitoyen />} />
+                    <Route path="carte-interactive" element={<MapPage />} />
                     
                     {/* Scanner & OCR routes */}
                     <Route path="scan" element={<ScannerHub />} />
