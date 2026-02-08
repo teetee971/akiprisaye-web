@@ -50,12 +50,12 @@ export default function HomeV5() {
 
   useEffect(() => {
     // Load real stats from safeLocalStorage
-    const stats = safeLocalStorage.getJSON<typeof stats>('platform_stats', {
-      users: 1247,
-      scans: 0,
+    const loadedStats = safeLocalStorage.getJSON('platform_stats', {
+      scans: 1200,
+      products: 5000,
       territories: 12
     });
-    setStats(stats);
+    setStats(loadedStats);
 
     // Update cached dimensions on resize
     const handleResize = () => {
