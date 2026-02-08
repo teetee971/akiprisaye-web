@@ -101,6 +101,9 @@ const SignalerAbus = React.lazy(() => import('./pages/SignalerAbus'));
 // i18n Test page (for development/testing)
 const I18nTest = React.lazy(() => import('./pages/I18nTest'));
 
+// Admin Sync Dashboard
+const SyncDashboard = React.lazy(() => import('./pages/admin/sync/SyncDashboard'));
+
 /**
  * Root application render with HashRouter for Cloudflare Pages SPA
  * ErrorBoundary is intentionally placed at the highest level
@@ -142,6 +145,7 @@ if (!rootElement) {
                     <Route path="products/:id" element={<ProductDetail />} />
                     <Route path="products/:id/edit" element={<ProductForm />} />
                     <Route path="import" element={<ImportPage />} />
+                    <Route path="sync" element={<SyncDashboard />} />
                   </Route>
                   
                   {/* Main site routes */}
