@@ -109,6 +109,41 @@ enum ChallengeType {
   SPECIAL
 }
 
+/// Verified Pricing System Enums
+enum PriceSource {
+  USER_SUBMISSION
+  STORE_OFFICIAL
+  RECEIPT_SCAN
+  API_INTEGRATION
+  COMMUNITY_VERIFIED
+  ADMIN_OVERRIDE
+}
+
+enum VerificationStatus {
+  PENDING
+  CONFIRMED
+  DISPUTED
+  REJECTED
+  EXPIRED
+}
+
+enum AnomalyType {
+  SUDDEN_INCREASE
+  SUDDEN_DECREASE
+  OUTLIER_HIGH
+  OUTLIER_LOW
+  STALE_DATA
+  INCONSISTENT_SOURCE
+  DUPLICATE_ENTRY
+}
+
+enum Severity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
 /// ===============================
 /// MODELS
 /// ===============================
@@ -473,4 +508,140 @@ model MetroReferencePrice {
   @@unique([productCode, year, month])
   @@index([productCode])
   @@index([year, month])
+}
+
+/// ===============================
+/// VERIFIED PRICING SYSTEM MODELS
+/// ===============================
+
+/// Product Price with confidence scoring
+model ProductPrice {
+  id                String            @id @default(cuid())
+  productId         String
+  storeId           String
+  price             Float
+  currency          String            @default("EUR")
+  
+  // Source information
+  source            PriceSource
+  submittedBy       String?           /// User ID who submitted
+  proofUrl          String?           /// Receipt/photo URL
+  
+  // Confidence scoring
+  confidenceScore   Float             @default(0) /// 0-100
+  recencyScore      Float             @default(0) /// 0-30
+  sourceScore       Float             @default(0) /// 0-30
+  verificationScore Float             @default(0) /// 0-25
+  consistencyScore  Float             @default(0) /// 0-15
+  
+  // Status
+  isActive          Boolean           @default(true)
+  isFresh           Boolean           @default(true) /// <7 days
+  verifiedAt        DateTime?
+  
+  // Relationships
+  verifications     PriceVerification[]
+  anomalies         PriceAnomaly[]
+  
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  
+  @@index([productId])
+  @@index([storeId])
+  @@index([productId, storeId])
+  @@index([confidenceScore])
+  @@index([createdAt])
+  @@index([isActive, isFresh])
+}
+
+/// Community verification of prices
+model PriceVerification {
+  id                String            @id @default(cuid())
+  priceId           String
+  userId            String
+  
+  status            VerificationStatus
+  comment           String?
+  proofUrl          String?           /// Additional proof
+  
+  // Proposed update if disputing
+  suggestedPrice    Float?
+  suggestedSource   PriceSource?
+  
+  price             ProductPrice      @relation(fields: [priceId], references: [id], onDelete: Cascade)
+  
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  
+  @@index([priceId])
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+/// Price anomaly detection
+model PriceAnomaly {
+  id                String            @id @default(cuid())
+  priceId           String
+  
+  anomalyType       AnomalyType
+  severity          Severity
+  description       String
+  
+  // Detection metadata
+  detectedValue     Float?            /// Actual price
+  expectedValue     Float?            /// Expected price
+  deviation         Float?            /// Percentage deviation
+  
+  // Resolution
+  isResolved        Boolean           @default(false)
+  resolvedBy        String?           /// User/Admin ID
+  resolvedAt        DateTime?
+  resolutionNote    String?
+  
+  price             ProductPrice      @relation(fields: [priceId], references: [id], onDelete: Cascade)
+  
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  
+  @@index([priceId])
+  @@index([anomalyType])
+  @@index([severity])
+  @@index([isResolved])
+  @@index([createdAt])
+}
+
+/// Product update requests from community
+model ProductUpdate {
+  id                String            @id @default(cuid())
+  productId         String
+  submittedBy       String            /// User ID
+  
+  // Update fields
+  fieldName         String            /// Field to update (e.g., "name", "price", "category")
+  oldValue          String?           /// Current value
+  newValue          String            /// Proposed value
+  
+  // Trust & validation
+  isTrustedField    Boolean           @default(false) /// Auto-apply if true
+  requiresReview    Boolean           @default(true)
+  
+  // Status
+  status            String            @default("PENDING") /// PENDING, APPROVED, REJECTED
+  reviewedBy        String?           /// Admin/Moderator ID
+  reviewedAt        DateTime?
+  reviewNote        String?
+  
+  // Evidence
+  proofUrl          String?
+  confidence        Float             @default(0)
+  
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  
+  @@index([productId])
+  @@index([submittedBy])
+  @@index([status])
+  @@index([requiresReview])
+  @@index([createdAt])
 }
