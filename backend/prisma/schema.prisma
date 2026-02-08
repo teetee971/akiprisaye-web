@@ -73,6 +73,42 @@ enum DigestFrequency {
   NEVER
 }
 
+enum PointAction {
+  SUBMIT_PRICE
+  PRICE_VALIDATED
+  ADD_PRODUCT
+  REPORT_STORE
+  VERIFY_PRICE
+  STREAK_BONUS
+  REFERRAL
+  CHALLENGE_COMPLETED
+  BADGE_UNLOCKED
+  LEVEL_UP
+}
+
+enum BadgeCategory {
+  CONTRIBUTION
+  STREAK
+  SOCIAL
+  TERRITORY
+  SPECIAL
+}
+
+enum BadgeRarity {
+  COMMON
+  UNCOMMON
+  RARE
+  EPIC
+  LEGENDARY
+}
+
+enum ChallengeType {
+  DAILY
+  WEEKLY
+  MONTHLY
+  SPECIAL
+}
+
 /// ===============================
 /// MODELS
 /// ===============================
@@ -89,6 +125,7 @@ model User {
   notifications     Notification[]
   pushSubscriptions PushSubscription[]
   notificationPreference NotificationPreference?
+  gamification      UserGamification?
 
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @updatedAt
@@ -224,4 +261,139 @@ model NotificationPreference {
   updatedAt           DateTime @updatedAt
   
   user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/// ===============================
+/// GAMIFICATION MODELS
+/// ===============================
+
+model UserGamification {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  
+  totalXP         Int      @default(0)
+  currentLevel    Int      @default(1)
+  
+  // Streak
+  currentStreak   Int      @default(0)
+  longestStreak   Int      @default(0)
+  lastActivityAt  DateTime?
+  streakStartedAt DateTime?
+  
+  // Stats
+  pricesSubmitted Int      @default(0)
+  pricesVerified  Int      @default(0)
+  productsAdded   Int      @default(0)
+  storesVisited   Int      @default(0)
+  anomaliesReported Int    @default(0)
+  referralsCount  Int      @default(0)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badges          UserBadge[]
+  pointsHistory   PointsTransaction[]
+  challenges      UserChallenge[]
+  
+  @@index([totalXP])
+  @@index([currentLevel])
+  @@index([userId])
+}
+
+model PointsTransaction {
+  id              String   @id @default(cuid())
+  
+  userGamificationId String
+  action          PointAction
+  points          Int
+  bonusPoints     Int      @default(0)
+  reason          String
+  metadata        Json?
+  
+  createdAt       DateTime @default(now())
+  
+  userGamification UserGamification @relation(fields: [userGamificationId], references: [id], onDelete: Cascade)
+  
+  @@index([userGamificationId])
+  @@index([createdAt])
+}
+
+model Badge {
+  id              String   @id
+  name            String
+  description     String
+  icon            String
+  category        BadgeCategory
+  rarity          BadgeRarity
+  xpReward        Int
+  conditionType   String
+  conditionValue  Json
+  
+  createdAt       DateTime @default(now())
+  
+  users           UserBadge[]
+  
+  @@index([category])
+  @@index([rarity])
+}
+
+model UserBadge {
+  id              String   @id @default(cuid())
+  
+  userGamificationId String
+  badgeId         String
+  unlockedAt      DateTime @default(now())
+  
+  userGamification UserGamification @relation(fields: [userGamificationId], references: [id], onDelete: Cascade)
+  badge           Badge    @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+  
+  @@unique([userGamificationId, badgeId])
+  @@index([userGamificationId])
+  @@index([badgeId])
+}
+
+model Challenge {
+  id              String   @id @default(cuid())
+  name            String
+  description     String
+  icon            String
+  type            ChallengeType
+  conditionType   String
+  conditionValue  Int
+  xpReward        Int
+  badgeReward     String?
+  startsAt        DateTime
+  endsAt          DateTime
+  isActive        Boolean  @default(true)
+  
+  createdAt       DateTime @default(now())
+  
+  users           UserChallenge[]
+  
+  @@index([type])
+  @@index([isActive])
+  @@index([startsAt])
+  @@index([endsAt])
+}
+
+model UserChallenge {
+  id              String   @id @default(cuid())
+  
+  userGamificationId String
+  challengeId     String
+  progress        Int      @default(0)
+  isCompleted     Boolean  @default(false)
+  completedAt     DateTime?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  userGamification UserGamification @relation(fields: [userGamificationId], references: [id], onDelete: Cascade)
+  challenge       Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  
+  @@unique([userGamificationId, challengeId])
+  @@index([userGamificationId])
+  @@index([challengeId])
+  @@index([isCompleted])
 }
