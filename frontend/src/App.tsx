@@ -88,11 +88,15 @@ function LoadingFallback() {
   const [showTimeout, setShowTimeout] = useState(false);
   
   useEffect(() => {
+    console.log('⏳ LoadingFallback: Displayed');
     const timer = setTimeout(() => {
-      setShowTimeout(true);
       console.error('⚠️ Application timeout - Loading blocked for 10+ seconds');
+      setShowTimeout(true);
     }, 10000);
-    return () => clearTimeout(timer);
+    return () => {
+      console.log('✅ LoadingFallback: Hidden (component loaded successfully)');
+      clearTimeout(timer);
+    };
   }, []);
 
   if (showTimeout) {
@@ -125,6 +129,12 @@ function LoadingFallback() {
 
 export default function App() {
   const [providerError, setProviderError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    console.log('🚀 App: Starting initialization');
+    console.log('📍 App: Environment:', import.meta.env.MODE);
+    console.log('📍 App: Firebase configured:', import.meta.env.VITE_FIREBASE_API_KEY ? 'Yes' : 'No');
+  }, []);
 
   if (providerError) {
     return (

@@ -19,14 +19,28 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log('🔄 AuthProvider: Initializing...');
+    
+    // Hard timeout to prevent infinite loading - force render after 5 seconds
+    const timeoutId = setTimeout(() => {
+      if (loading) {
+        console.warn('⏱️ AuthProvider: Timeout reached (5s) - forcing render');
+        setLoading(false);
+        setUserRole('guest');
+      }
+    }, 5000);
+
     // If auth is not available (e.g., missing Firebase config), skip auth entirely
     if (!auth) {
       console.warn('⚠️ Firebase auth not initialized - running without authentication');
       setLoading(false);
+      clearTimeout(timeoutId);
       return;
     }
 
+    console.log('✅ AuthProvider: Setting up auth listener');
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      console.log('🔄 AuthProvider: Auth state changed', currentUser ? 'User logged in' : 'No user');
       setUser(currentUser);
       
       // Fetch user role from Firestore if available
@@ -47,10 +61,15 @@ export function AuthProvider({ children }) {
         setUserRole('guest');
       }
       
+      console.log('✅ AuthProvider: Initialization complete');
       setLoading(false);
+      clearTimeout(timeoutId);
     });
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+      clearTimeout(timeoutId);
+    };
   }, []);
 
   const value = {

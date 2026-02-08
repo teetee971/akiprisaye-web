@@ -15,6 +15,10 @@ interface LanguageProviderProps {
 }
 
 export function LanguageProvider({ children }: LanguageProviderProps) {
+  useEffect(() => {
+    console.log('🌐 LanguageProvider: Initializing i18n');
+  }, []);
+
   return (
     <I18nextProvider i18n={i18n}>
       <LanguageInitializer>

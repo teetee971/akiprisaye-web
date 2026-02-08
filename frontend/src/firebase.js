@@ -19,30 +19,31 @@ const missingVars = Object.entries(requiredEnvVars)
   .filter(([_, value]) => !value)
   .map(([key]) => `VITE_FIREBASE_${key.replace(/([A-Z])/g, '_$1').toUpperCase()}`);
 
-if (missingVars.length > 0) {
-  const errorMsg = `Missing required Firebase environment variables: ${missingVars.join(', ')}. Please configure them in .env.local`;
-  console.error('🔴 Firebase Configuration Error:', errorMsg);
-  throw new Error(errorMsg);
-}
-
-const firebaseConfig = requiredEnvVars;
-
 let app = null;
 let auth = null;
 let db = null;
 let firebaseError = null;
 
-try {
-  app = initializeApp(firebaseConfig);
-  auth = getAuth(app);
-  db = getFirestore(app);
-  if (import.meta.env?.DEV) {
+if (missingVars.length > 0) {
+  const errorMsg = `Missing required Firebase environment variables: ${missingVars.join(', ')}. Please configure them in .env.local`;
+  console.error('🔴 Firebase Configuration Error:', errorMsg);
+  firebaseError = errorMsg;
+  // DO NOT throw - allow app to run without Firebase
+  console.warn('⚠️ Running without Firebase authentication');
+} else {
+  const firebaseConfig = requiredEnvVars;
+
+  try {
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getFirestore(app);
     console.log('✅ Firebase initialized successfully');
+  } catch (error) {
+    firebaseError = error?.message || 'Unknown Firebase initialization error';
+    console.error('⚠️ Firebase initialization failed:', firebaseError);
+    // DO NOT throw - allow app to continue in degraded mode
+    console.warn('⚠️ Running without Firebase authentication');
   }
-} catch (error) {
-  firebaseError = error?.message || 'Unknown Firebase initialization error';
-  console.error('⚠️ Firebase initialization failed:', firebaseError);
-  throw error; // Fail fast - don't continue with broken Firebase
 }
 
 export { app, auth, db, firebaseError };

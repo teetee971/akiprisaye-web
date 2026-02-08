@@ -10,6 +10,8 @@ import Backend from 'i18next-http-backend';
 
 const SUPPORTED_LANGUAGES = ['fr', 'gcf', 'acf', 'rcf', 'gcr'];
 
+console.log('🌐 i18n: Starting initialization');
+
 i18n
   .use(Backend)
   .use(LanguageDetector)
@@ -93,13 +95,20 @@ i18n
     },
     
     react: {
-      useSuspense: true,
+      useSuspense: false, // Disable suspense to prevent blocking render
       bindI18n: 'languageChanged',
       bindI18nStore: '',
       transEmptyNodeValue: '',
       transSupportBasicHtmlNodes: true,
       transKeepBasicHtmlNodesFor: ['br', 'strong', 'em', 'i', 'b', 'u', 'span'],
     },
+  })
+  .then(() => {
+    console.log('✅ i18n: Initialized successfully');
+  })
+  .catch((error) => {
+    console.error('⚠️ i18n: Initialization failed', error);
+    // Don't throw - allow app to continue even if i18n fails
   });
 
 export default i18n;
