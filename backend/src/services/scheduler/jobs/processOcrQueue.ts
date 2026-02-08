@@ -4,7 +4,7 @@
  * Scheduled job to process pending OCR products
  */
 
-import prisma from '../../database/prisma.js';
+import prisma from '../../../database/prisma.js';
 
 export async function processOcrQueueJob(): Promise<void> {
   console.info('🔍 [JOB] Processing OCR queue...');

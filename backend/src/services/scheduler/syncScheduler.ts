@@ -93,14 +93,14 @@ export class SyncScheduler {
     };
 
     if (config.enabled) {
-      // Schedule the job
+      // Schedule the job with scheduled: false to prevent auto-start
       job.task = cron.schedule(
         config.cron,
         async () => {
           await this.runJob(config.id, config.handler);
         },
         {
-          scheduled: true,
+          scheduled: false, // Don't auto-start, will start explicitly in start()
           timezone: SYNC_CONFIG.scheduler.timezone,
         }
       );

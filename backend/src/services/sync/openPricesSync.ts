@@ -138,7 +138,6 @@ export class OpenPricesSync {
         });
 
         if (!prices || prices.length === 0) {
-          hasMore = false;
           break;
         }
 

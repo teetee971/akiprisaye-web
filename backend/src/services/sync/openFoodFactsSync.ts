@@ -244,7 +244,6 @@ export class OpenFoodFactsSync {
         const products = await this.searchProducts(category, page);
 
         if (products.length === 0) {
-          hasMore = false;
           break;
         }
 

@@ -55,13 +55,14 @@ export async function getValidationQueue(params: {
       ...(source && { source: source as any }),
     },
     orderBy: [
-      { createdAt: 'asc' }, // Oldest first
+      { createdAt: 'asc' }, // Oldest first within same priority
     ],
     take: limit,
     skip: offset,
   });
 
-  return products.map((product) => ({
+  // Map products and sort by priority
+  const queueItems = products.map((product) => ({
     id: product.id,
     product: {
       id: product.id,
@@ -83,6 +84,16 @@ export async function getValidationQueue(params: {
     reviewedBy: product.validatedBy,
     decision: mapStatusToDecision(product.status),
   }));
+
+  // Sort by priority (high -> medium -> low) then by date (oldest first)
+  const priorityOrder = { high: 0, medium: 1, low: 2 };
+  queueItems.sort((a, b) => {
+    const priorityDiff = priorityOrder[a.priority] - priorityOrder[b.priority];
+    if (priorityDiff !== 0) return priorityDiff;
+    return a.addedAt.getTime() - b.addedAt.getTime();
+  });
+
+  return queueItems;
 }
 
 /**
@@ -162,6 +173,20 @@ export async function mergeProduct(
   targetId: string,
   reviewedBy?: string
 ): Promise<void> {
+  // Verify both products exist before starting transaction
+  const [sourceProduct, targetProduct] = await Promise.all([
+    prisma.product.findUnique({ where: { id: sourceId } }),
+    prisma.product.findUnique({ where: { id: targetId } }),
+  ]);
+
+  if (!sourceProduct) {
+    throw new Error(`Source product ${sourceId} not found`);
+  }
+
+  if (!targetProduct) {
+    throw new Error(`Target product ${targetId} not found`);
+  }
+
   await prisma.$transaction(async (tx) => {
     // Update all prices to point to target
     await tx.productPrice.updateMany({

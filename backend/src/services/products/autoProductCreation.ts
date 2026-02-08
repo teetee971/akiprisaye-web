@@ -12,7 +12,6 @@ import { ProductSource, ProductStatus } from '@prisma/client';
 import prisma from '../../database/prisma.js';
 import { normalizeProductName } from './normalization.js';
 import { findDuplicate } from './deduplication.js';
-import { SYNC_CONFIG } from '../../config/syncConfig.js';
 
 export interface OCRProduct {
   rawName: string; // Raw name extracted from OCR

@@ -15,7 +15,7 @@
 import express, { Express, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { PrismaClient } from '@prisma/client';
+import prisma from './database/prisma.js';
 
 // Import routes
 import authRoutes from './api/routes/auth.routes.js';
@@ -59,10 +59,8 @@ const app: Express = express();
 const port = process.env.PORT || 3001;
 const nodeEnv = process.env.NODE_ENV || 'development';
 
-// Instance Prisma Client (singleton)
-export const prisma = new PrismaClient({
-  log: nodeEnv === 'development' ? ['query', 'info', 'warn', 'error'] : ['error'],
-});
+// Re-export shared Prisma client for backwards compatibility
+export { default as prisma } from './database/prisma.js';
 
 // ========================================
 // Middlewares globaux

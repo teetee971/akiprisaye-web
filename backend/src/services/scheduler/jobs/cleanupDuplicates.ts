@@ -4,82 +4,96 @@
  * Scheduled job to find and mark duplicate products
  */
 
-import prisma from '../../database/prisma.js';
+import prisma from '../../../database/prisma.js';
 import { findDuplicate } from '../../products/deduplication.js';
 
 export async function cleanupDuplicatesJob(): Promise<void> {
   console.info('🧹 [JOB] Starting duplicate cleanup...');
 
   try {
-    // Get all validated products
-    const products = await prisma.product.findMany({
-      where: {
-        status: 'VALIDATED',
-      },
-      orderBy: {
-        createdAt: 'asc',
-      },
-    });
+    const batchSize = 500;
+    let skip = 0;
 
     let duplicatesFound = 0;
     let duplicatesMarked = 0;
 
-    // Check each product for duplicates
-    for (const product of products) {
-      try {
-        const duplicationResult = await findDuplicate({
-          ean: product.ean,
-          name: product.name,
-          brand: product.brand,
-          category: product.category,
-        });
+    // Process validated products in batches to avoid loading all at once
+    // and to limit the impact of per-product queries.
+    while (true) {
+      const products = await prisma.product.findMany({
+        where: {
+          status: 'VALIDATED',
+        },
+        orderBy: {
+          createdAt: 'asc',
+        },
+        skip,
+        take: batchSize,
+      });
 
-        if (
-          duplicationResult.isDuplicate &&
-          duplicationResult.existingProductId &&
-          duplicationResult.existingProductId !== product.id
-        ) {
-          duplicatesFound++;
+      if (products.length === 0) {
+        break;
+      }
 
-          // Check if existing product was created before this one
-          const existingProduct = await prisma.product.findUnique({
-            where: { id: duplicationResult.existingProductId },
+      // Check each product in the current batch for duplicates
+      for (const product of products) {
+        try {
+          const duplicationResult = await findDuplicate({
+            ean: product.ean,
+            name: product.name,
+            brand: product.brand,
+            category: product.category,
           });
 
           if (
-            existingProduct &&
-            existingProduct.createdAt < product.createdAt
+            duplicationResult.isDuplicate &&
+            duplicationResult.existingProductId &&
+            duplicationResult.existingProductId !== product.id
           ) {
-            // Mark this product as duplicate (keep the older one)
-            await prisma.$transaction(async (tx) => {
-              // Move prices to existing product
-              await tx.productPrice.updateMany({
-                where: { productId: product.id },
-                data: { productId: existingProduct.id },
-              });
+            duplicatesFound++;
 
-              // Mark as merged
-              await tx.product.update({
-                where: { id: product.id },
-                data: {
-                  status: 'MERGED',
-                  validatedAt: new Date(),
-                },
-              });
+            // Check if existing product was created before this one
+            const existingProduct = await prisma.product.findUnique({
+              where: { id: duplicationResult.existingProductId },
             });
 
-            duplicatesMarked++;
-            console.info(
-              `🔗 [JOB] Merged duplicate: ${product.name} -> ${existingProduct.name}`
-            );
+            if (
+              existingProduct &&
+              existingProduct.createdAt < product.createdAt
+            ) {
+              // Mark this product as duplicate (keep the older one)
+              await prisma.$transaction(async (tx) => {
+                // Move prices to existing product
+                await tx.productPrice.updateMany({
+                  where: { productId: product.id },
+                  data: { productId: existingProduct.id },
+                });
+
+                // Mark as merged
+                await tx.product.update({
+                  where: { id: product.id },
+                  data: {
+                    status: 'MERGED',
+                    validatedAt: new Date(),
+                  },
+                });
+              });
+
+              duplicatesMarked++;
+              console.info(
+                `🔗 [JOB] Merged duplicate: ${product.name} -> ${existingProduct.name}`
+              );
+            }
           }
+        } catch (error) {
+          console.error(
+            `⚠️  [JOB] Error checking product ${product.id}:`,
+            error
+          );
         }
-      } catch (error) {
-        console.error(
-          `⚠️  [JOB] Error checking product ${product.id}:`,
-          error
-        );
       }
+
+      skip += batchSize;
     }
 
     console.info(

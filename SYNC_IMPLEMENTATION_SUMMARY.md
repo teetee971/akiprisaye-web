@@ -187,9 +187,9 @@ Successfully implemented a comprehensive automatic product addition system that 
 
 ```json
 {
-  "node-cron": "^3.0.3",
-  "fuse.js": "^7.0.0",
-  "axios": "^1.6.7",
+  "node-cron": "^4.2.1",
+  "fuse.js": "^7.1.0",
+  "axios": "^1.13.4",
   "@types/node-cron": "^3.0.11"
 }
 ```
