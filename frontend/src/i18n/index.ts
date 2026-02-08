@@ -50,7 +50,25 @@ i18n
     // Chargement des traductions
     backend: {
       loadPath: '/locales/{{lng}}/{{ns}}.json',
+      requestOptions: {
+        cache: 'no-cache',
+      },
+      // Add timeout to prevent hanging on slow networks
+      parse: (data: string) => {
+        try {
+          return JSON.parse(data);
+        } catch (e) {
+          console.error('Failed to parse translation file:', e);
+          return {};
+        }
+      },
     },
+    
+    // Partitioning - load namespaces on-demand instead of all at once
+    partialBundledLanguages: true,
+    
+    // Load only when needed, not all at initialization
+    load: 'languageOnly',
     
     // Interpolation et formatage
     interpolation: {
