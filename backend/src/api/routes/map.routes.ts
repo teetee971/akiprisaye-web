@@ -152,7 +152,7 @@ router.get('/nearby', async (req: Request, res: Response) => {
       radius: searchRadius,
       chains: chainList,
       limit: maxLimit,
-      sortBy: sortBy as any,
+      sortBy: sortBy as 'distance' | 'priceIndex',
     });
 
     // Add price data
@@ -166,7 +166,7 @@ router.get('/nearby', async (req: Request, res: Response) => {
             priceCategory: getPriceCategory(priceData.priceIndex),
             averageBasketPrice: priceData.averageBasketPrice,
           };
-        } catch (error) {
+        } catch {
           return {
             ...store,
             priceIndex: 50,

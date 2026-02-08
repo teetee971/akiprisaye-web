@@ -52,7 +52,7 @@ export function PriceHeatmap({ points, options }: PriceHeatmapProps) {
     };
 
     // Create heatmap layer
-    // @ts-ignore - leaflet.heat types not complete
+    // @ts-expect-error - leaflet.heat types not complete
     const heatLayer = L.heatLayer(heatmapData, heatmapOptions);
 
     // Add to map
