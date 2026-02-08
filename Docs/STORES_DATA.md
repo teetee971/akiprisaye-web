@@ -40,24 +40,24 @@ Ce fichier contient la base de données centralisée de tous les magasins réfé
 
 L'application couvre les 12 territoires DROM-COM:
 
-1. 🇬🇵 **Guadeloupe** - 29 magasins
-2. 🇲🇶 **Martinique** - 24 magasins
-3. 🇬🇫 **Guyane** - 12 magasins
-4. 🇷🇪 **La Réunion** - 27 magasins
-5. 🇾🇹 **Mayotte** - 8 magasins
+1. 🇬🇵 **Guadeloupe** - 38 magasins
+2. 🇲🇶 **Martinique** - 32 magasins
+3. 🇬🇫 **Guyane** - 17 magasins
+4. 🇷🇪 **La Réunion** - 36 magasins
+5. 🇾🇹 **Mayotte** - 11 magasins
 6. 🇵🇲 **Saint-Pierre-et-Miquelon** - 1 magasin
-7. 🇧🇱 **Saint-Barthélemy** - 1 magasin
-8. 🇲🇫 **Saint-Martin** - 2 magasins
+7. 🇧🇱 **Saint-Barthélemy** - 2 magasins
+8. 🇲🇫 **Saint-Martin** - 4 magasins
 9. 🇼🇫 **Wallis-et-Futuna** - 1 magasin
 10. 🇵🇫 **Polynésie française** - 2 magasins
 11. 🇳🇨 **Nouvelle-Calédonie** - 2 magasins
 12. 🇹🇫 **Terres australes** - (à venir)
 
-**Total: 109 magasins**
+**Total: 146 magasins**
 
 ## Chaînes de magasins
 
-Les chaînes représentées (35 enseignes):
+Les chaînes représentées (40+ enseignes):
 
 ### Groupe Casino
 - **Géant Casino** - Hypermarché
@@ -70,6 +70,7 @@ Les chaînes représentées (35 enseignes):
 - **Monoprix** - Supermarché urbain
 - **Leader Price** - Discount
 - **Score / Jumbo Score** - Supermarché local
+- **8 à Huit** - Supérette
 
 ### Groupe Carrefour
 - **Carrefour** - Hypermarché
@@ -95,16 +96,35 @@ Les chaînes représentées (35 enseignes):
 ### Autres grandes enseignes
 - **Auchan** - Hypermarché
 - **Lidl** - Discount
+- **Cora** - Hypermarché
+- **Simply Market** - Supermarché
+- **Euromarché** - Supermarché
 
 ### Surgelés
 - **Picard** - Surgelés
 - **Thiriet** - Surgelés
 
-### Enseignes locales
-- **Ecomax** - Discount local
+### Enseignes locales DOM-TOM
+- **Ecomax** - Supermarché local (Guadeloupe/Martinique/Guyane)
 - **Match** - Supermarché local
 - **Primantilles** - Supermarché local (Guadeloupe)
 - **Beraca** - Supermarché local (Guadeloupe/Saint-Martin)
+- **Jumbo** - Supermarché local (DOM-TOM)
+- **Shopi** - Supermarché local (Mayotte)
+- **AMC** - Supermarché local (Saint-Barthélemy)
+
+### DIY & Bricolage
+- **Mr. Bricolage** - Bricolage
+- **Bricopro** - Bricolage
+- **Bricomarché** - Bricolage
+
+### Électroménager & Ameublement
+- **Darty** - Électroménager
+- **BUT** - Ameublement et électroménager
+
+### Sport
+- **Décathlon** - Sport
+- **Intersport** - Sport
 
 
 ## Fonctions utilitaires
@@ -126,7 +146,7 @@ Récupère tous les magasins d'un territoire.
 import { getStoresByTerritory } from './src/data/seedStores.js';
 
 const stores = getStoresByTerritory('Guadeloupe');
-console.log(stores.length); // 5
+console.log(stores.length); // 38
 ```
 
 ### `getAllStores()`
@@ -136,7 +156,7 @@ Récupère tous les magasins.
 import { getAllStores } from './src/data/seedStores.js';
 
 const allStores = getAllStores();
-console.log(allStores.length); // 27
+console.log(allStores.length); // 146
 ```
 
 ### `searchStores(query)`

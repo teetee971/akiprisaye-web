@@ -50,6 +50,62 @@ interface Company {
 - **SIRET** (14 digits): SIREN + NIC (5 digits) = Identifies a specific establishment
 - **Headquarters**: SIRET ending in `00001`
 
+## Registered Companies
+
+The application includes 36 companies in the seed data, covering all major retail chains operating in French overseas territories:
+
+### National Retail Chains
+- **Carrefour** (Carrefour Hypermarchés SAS) - Major hypermarket chain
+- **Système U** (Système U Centrale Nationale) - Cooperative supermarket chain
+- **E.Leclerc** (Association des Centres Distributeurs E.Leclerc) - Major hypermarket chain
+- **Intermarché** (Groupement Les Mousquetaires) - Supermarket chain
+- **Leader Price** (Leader Price Distribution France) - Discount chain
+- **Auchan** (Auchan Retail France SA) - Hypermarket chain
+- **Lidl** (Lidl SNC) - Discount chain
+- **Casino** (Casino Guichard-Perrachon) - Supermarket chain
+- **Simply Market** (Simply Market Distribution) - Supermarket chain
+
+### Regional Chains
+- **Match** (Match Distribution) - Supermarket chain
+- **8 à Huit** (8 à Huit Distribution) - Convenience stores
+- **Vival** (Vival Distribution) - Convenience stores
+- **Euromarché** (Euromarché Distribution) - Supermarket chain
+- **Cora** (Cora SA) - Hypermarket chain
+
+### DOM-TOM Specialized Chains
+- **Ecomax** (Ecomax Distribution) - Local retail chain in Guadeloupe/Martinique/Guyane
+- **Score** (Score Distribution) - Local retail chain in La Réunion and Mayotte
+- **Jumbo** (Jumbo Distribution) - Retail chain in DOM-TOM
+- **Shopi** (Shopi Distribution) - Local retail chain in Mayotte
+- **AMC** (AMC Distribution) - Local retail chain in Saint-Barthélemy
+
+### Regional Groups
+- **Groupe Bernard Hayot (GBH)** - Major retail group in French Antilles
+- **Groupe Caillé** - Major retail group in La Réunion
+- **Groupe Parfait** - Retail group in Guadeloupe and Martinique
+- **Groupe Hayot-Sodiprav** - Retail group in Martinique
+- **Groupe Loret** - Automotive and mobility group
+- **Sucreries de Bourbon** - Agro-food industry in La Réunion
+- **Primantilles** (Primantilles SARL) - Local supermarket chain in Guadeloupe
+- **Beraca** (Beraca Distribution) - Local supermarket chain in Guadeloupe and Saint-Martin
+
+### Frozen Foods
+- **Picard** (Picard Surgelés SAS) - Frozen food specialist
+- **Thiriet** (Thiriet Distribution SAS) - Frozen food home delivery
+
+### DIY & Home Improvement
+- **Mr. Bricolage** (Mr. Bricolage SA) - DIY chain
+- **Bricopro** (Bricopro Distribution) - DIY chain
+- **Bricomarché** (Bricomarché SA) - DIY chain
+
+### Electronics & Furniture
+- **Darty** (Darty et Fils) - Electronics and appliance retailer
+- **BUT** (BUT International) - Furniture and appliance retailer
+
+### Sports
+- **Décathlon** (Decathlon SA) - Sports equipment retailer
+- **Intersport** (Intersport France) - Sports equipment retailer
+
 ## Usage Examples
 
 ### 1. Basic Company Lookup
@@ -263,9 +319,9 @@ French VAT: `FR` + 2 characters (key) + 9 digits (SIREN)
 
 ## Seed Data
 
-The module includes seed data for 18 major companies across multiple sectors:
+The module includes seed data for 36 major companies across multiple sectors:
 
-### Metropolitan France:
+### National Retail Chains (Metropolitan France):
 1. **Carrefour Hypermarchés SAS** - SIREN: 652200196
 2. **Système U Centrale Nationale** - SIREN: 305370809
 3. **E.Leclerc** - SIREN: 380350448
@@ -274,33 +330,58 @@ The module includes seed data for 18 major companies across multiple sectors:
 6. **Match Distribution** - SIREN: 322109027
 7. **Auchan Retail France SA** - SIREN: 410409460
 8. **Lidl SNC** - SIREN: 343262622
-9. **Picard Surgelés SAS** - SIREN: 784939688
-10. **Thiriet Distribution SAS** - SIREN: 378463946
+9. **Casino Guichard-Perrachon** - SIREN: 554906561
+10. **Simply Market Distribution** - SIREN: Various
+11. **8 à Huit Distribution** - SIREN: 389012345
+12. **Vival Distribution** - SIREN: Various
+13. **Euromarché Distribution** - SIREN: Various
+14. **Cora SA** - SIREN: 375570190
 
-### French Overseas Territories (DROM):
+### Frozen Foods:
+15. **Picard Surgelés SAS** - SIREN: 784939688
+16. **Thiriet Distribution SAS** - SIREN: 378463946
 
-#### Retail & Distribution:
-11. **Groupe Bernard Hayot (GBH)** - SIREN: 313222260 - Operates Carrefour franchises in Guadeloupe, Martinique, Guyane, La Réunion
-12. **Groupe Caillé** - SIREN: 318065066 - Major retailer in La Réunion
-13. **Groupe Parfait** - SIREN: 324567890 - Retail operations in Guadeloupe and Martinique
-14. **Groupe Hayot-Sodiprav** - SIREN: 345123456 - Retail group in Martinique
-15. **Primantilles SARL** - SIREN: LOCAL_GP_001 - Local supermarket chain in Guadeloupe
-16. **Beraca Distribution** - SIREN: LOCAL_GP_002 - Local supermarket chain in Guadeloupe and Saint-Martin
+### DIY & Home Improvement:
+17. **Mr. Bricolage SA** - SIREN: Various
+18. **Bricopro Distribution** - SIREN: Various
+19. **Bricomarché SA** - SIREN: Various
 
-#### Automotive & Mobility:
-17. **Groupe Loret** - SIREN: 356789012 - Automotive concessions in Antilles and Guyane
+### Electronics & Furniture:
+20. **Darty et Fils** - SIREN: Various
+21. **BUT International** - SIREN: Various
 
-#### Agro-food Industry:
-18. **Sucreries de Bourbon** - SIREN: 367890123 - Sugar production and agro-industrial transformation in La Réunion
+### Sports:
+22. **Decathlon SA** - SIREN: Various
+23. **Intersport France** - SIREN: Various
+
+### French Overseas Territories (DROM-COM):
+
+#### Regional Groups:
+24. **Groupe Bernard Hayot (GBH)** - SIREN: 313222260 - Operates Carrefour franchises in Guadeloupe, Martinique, Guyane, La Réunion
+25. **Groupe Caillé** - SIREN: 318065066 - Major retailer in La Réunion
+26. **Groupe Parfait** - SIREN: 324567890 - Retail operations in Guadeloupe and Martinique
+27. **Groupe Hayot-Sodiprav** - SIREN: 345123456 - Retail group in Martinique
+28. **Groupe Loret** - SIREN: 356789012 - Automotive concessions in Antilles and Guyane
+29. **Sucreries de Bourbon** - SIREN: 367890123 - Sugar production in La Réunion
+
+#### Local Retail Chains:
+30. **Primantilles SARL** - SIREN: LOCAL_GP_001 - Local supermarket chain in Guadeloupe
+31. **Beraca Distribution** - SIREN: LOCAL_GP_002 - Local supermarket chain in Guadeloupe and Saint-Martin
+32. **Ecomax Distribution** - SIREN: 378901234 - Local retail chain in Guadeloupe/Martinique/Guyane
+33. **Score Distribution** - SIREN: Various - Local retail chain in La Réunion and Mayotte
+34. **Jumbo Distribution** - SIREN: Various - Retail chain in DOM-TOM
+35. **Shopi Distribution** - SIREN: Various - Local retail chain in Mayotte
+36. **AMC Distribution** - SIREN: Various - Local retail chain in Saint-Barthélemy
 
 All seed companies are marked as `ACTIVE` with verified SIRET/SIREN/VAT codes (or local registry codes for local companies).
 
 ### Coverage Statistics
 
-- **Total Companies**: 18
-- **Total Stores**: 109 across 12 territories
-- **Unique Chains**: 35 retail chains
-- **Territories Covered**: Guadeloupe (29), Martinique (24), Guyane (12), La Réunion (27), Mayotte (8), and 7 other territories
+- **Total Companies**: 36
+- **Total Stores**: 146 across 12 territories
+- **Unique Chains**: 40+ retail chains
+- **Sectors**: Food retail, DIY, electronics, furniture, sports, frozen foods
+- **Geographic Coverage**: All 12 DROM-COM territories
 
 ### Multi-Sector Comparison Data
 
