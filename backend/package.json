@@ -25,6 +25,7 @@
     "db:seed": "tsx src/database/seed.ts"
   },
   "dependencies": {
+    "@e965/xlsx": "^0.20.3",
     "@prisma/client": "^5.22.0",
     "@sendgrid/mail": "^8.1.6",
     "bcrypt": "^5.1.1",
@@ -42,7 +43,6 @@
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "web-push": "^3.6.7",
-    "xlsx": "^0.18.5",
     "zod": "^3.23.8"
   },
   "devDependencies": {

@@ -6,7 +6,7 @@
 
 import { PrismaClient } from '@prisma/client';
 import Papa from 'papaparse';
-import * as XLSX from 'xlsx';
+import * as XLSX from '@e965/xlsx';
 import { INFLATION_CONFIG } from '../../config/inflationConfig.js';
 import { getInflationHistory } from './historyService.js';
 import { getMetroComparison } from './metroComparisonService.js';

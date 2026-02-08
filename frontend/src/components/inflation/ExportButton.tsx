@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Download, FileText, FileSpreadsheet, File } from 'lucide-react';
-import * as XLSX from 'xlsx';
+import * as XLSX from '@e965/xlsx';
 
 interface ExportButtonProps {
   data: any;
