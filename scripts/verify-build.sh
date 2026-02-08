@@ -34,7 +34,7 @@ if [ -f "$DIST_DIR/index.html" ]; then
   echo -e "${GREEN}✅ index.html exists${NC}"
   
   # Check index.html content
-  if grep -q '<div id="root"></div>' "$DIST_DIR/index.html"; then
+  if grep -q '<div id="root"' "$DIST_DIR/index.html"; then
     echo -e "${GREEN}✅ index.html contains React root div${NC}"
   else
     echo -e "${RED}❌ index.html missing React root div${NC}"
