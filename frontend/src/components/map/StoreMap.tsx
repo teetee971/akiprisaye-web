@@ -1,0 +1,260 @@
+/**
+ * StoreMap Component
+ * Main container for the interactive store map with clustering and filters
+ */
+
+import React, { useState, useEffect, useCallback } from 'react';
+import { MapContainer, TileLayer, useMap } from 'react-leaflet';
+import { Loader2 } from 'lucide-react';
+import 'leaflet/dist/leaflet.css';
+import 'leaflet.markercluster/dist/MarkerCluster.css';
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
+
+import MapFilters from './MapFilters';
+import PriceHeatmap from './PriceHeatmap';
+import NearbyStoresList from './NearbyStoresList';
+import { useGeolocation } from '../../hooks/useGeolocation';
+import { useNearbyStores } from '../../hooks/useNearbyStores';
+
+interface Store {
+  id: string;
+  name: string;
+  chain: string;
+  lat: number;
+  lon: number;
+  address?: string;
+  city?: string;
+  territory: string;
+  priceIndex?: number;
+  priceCategory?: 'cheap' | 'medium' | 'expensive';
+}
+
+interface HeatmapPoint {
+  lat: number;
+  lon: number;
+  intensity: number;
+}
+
+interface StoreMapProps {
+  initialTerritory?: string;
+  initialCenter?: [number, number];
+  initialZoom?: number;
+  enableClustering?: boolean;
+  enableHeatmap?: boolean;
+  showFilters?: boolean;
+  showNearbyList?: boolean;
+}
+
+const DEFAULT_CENTER: [number, number] = [16.265, -61.551]; // Guadeloupe
+const DEFAULT_ZOOM = 11;
+
+/**
+ * MapController - handles map interactions
+ */
+function MapController({
+  center,
+  zoom,
+}: {
+  center: [number, number];
+  zoom: number;
+}) {
+  const map = useMap();
+
+  useEffect(() => {
+    map.setView(center, zoom);
+  }, [map, center, zoom]);
+
+  return null;
+}
+
+/**
+ * StoreMap - Main map component
+ */
+export function StoreMap({
+  initialTerritory = 'GP',
+  initialCenter = DEFAULT_CENTER,
+  initialZoom = DEFAULT_ZOOM,
+  enableClustering: _enableClustering = true,
+  enableHeatmap = false,
+  showFilters = true,
+  showNearbyList = true,
+}: StoreMapProps) {
+  const [territory, setTerritory] = useState(initialTerritory);
+  const [selectedChains, setSelectedChains] = useState<string[]>([]);
+  const [priceCategory, setPriceCategory] = useState<
+    'all' | 'cheap' | 'medium' | 'expensive'
+  >('all');
+  const [selectedServices, setSelectedServices] = useState<string[]>([]);
+  const [radius, setRadius] = useState(10);
+  const [openOnly, setOpenOnly] = useState(false);
+  const [showHeatmap, setShowHeatmap] = useState(enableHeatmap);
+  const [mapCenter, setMapCenter] = useState<[number, number]>(initialCenter);
+  const [mapZoom, setMapZoom] = useState(initialZoom);
+
+  // Geolocation
+  const { position, permission, requestPermission } = useGeolocation({
+    enableHighAccuracy: true,
+    continuous: false,
+  });
+
+  // Nearby stores
+  const {
+    stores: nearbyStores,
+    loading: loadingStores,
+    error: storesError,
+    fetchStores,
+  } = useNearbyStores({
+    lat: position?.lat,
+    lon: position?.lon,
+    radius,
+    chains: selectedChains.length > 0 ? selectedChains : undefined,
+    autoFetch: false,
+  });
+
+  // Request geolocation on mount
+  useEffect(() => {
+    if (permission === 'prompt') {
+      requestPermission();
+    }
+  }, [permission, requestPermission]);
+
+  // Update map center when position changes
+  useEffect(() => {
+    if (position) {
+      setMapCenter([position.lat, position.lon]);
+      setMapZoom(13);
+    }
+  }, [position]);
+
+  // Fetch stores when position or filters change
+  useEffect(() => {
+    if (position) {
+      fetchStores();
+    }
+  }, [position, radius, selectedChains, fetchStores]);
+
+  // Mock heatmap data (replace with actual API call)
+  const heatmapPoints: HeatmapPoint[] = nearbyStores.map((store) => ({
+    lat: store.lat,
+    lon: store.lon,
+    intensity: store.priceIndex ? store.priceIndex / 100 : 0.5,
+  }));
+
+  const handleStoreClick = useCallback((store: Store) => {
+    setMapCenter([store.lat, store.lon]);
+    setMapZoom(15);
+  }, []);
+
+  const handleNavigate = useCallback((store: Store) => {
+    // Open navigation in external app
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${store.lat},${store.lon}`;
+    window.open(url, '_blank');
+  }, []);
+
+  return (
+    <div className="flex flex-col h-screen">
+      {/* Filters */}
+      {showFilters && (
+        <div className="p-4 bg-gray-50">
+          <MapFilters
+            territory={territory}
+            onTerritoryChange={setTerritory}
+            chains={selectedChains}
+            onChainsChange={setSelectedChains}
+            priceCategory={priceCategory}
+            onPriceCategoryChange={setPriceCategory}
+            services={selectedServices}
+            onServicesChange={setSelectedServices}
+            radius={radius}
+            onRadiusChange={setRadius}
+            openOnly={openOnly}
+            onOpenOnlyChange={setOpenOnly}
+          />
+        </div>
+      )}
+
+      {/* Map and List Container */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* Map */}
+        <div className="flex-1 relative">
+          <MapContainer
+            center={initialCenter}
+            zoom={initialZoom}
+            style={{ height: '100%', width: '100%' }}
+            scrollWheelZoom={true}
+          >
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+
+            <MapController center={mapCenter} zoom={mapZoom} />
+
+            {/* Heatmap Layer */}
+            {showHeatmap && heatmapPoints.length > 0 && (
+              <PriceHeatmap points={heatmapPoints} visible={showHeatmap} />
+            )}
+
+            {/* TODO: Add marker clustering layer here */}
+          </MapContainer>
+
+          {/* Heatmap Toggle */}
+          {enableHeatmap && (
+            <div className="absolute top-4 right-4 z-[1000]">
+              <button
+                onClick={() => setShowHeatmap(!showHeatmap)}
+                className={`px-4 py-2 rounded-lg shadow-lg font-medium transition-colors ${
+                  showHeatmap
+                    ? 'bg-blue-600 text-white hover:bg-blue-700'
+                    : 'bg-white text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                {showHeatmap ? '🗺️ Carte normale' : '🔥 Carte thermique'}
+              </button>
+            </div>
+          )}
+
+          {/* Loading Overlay */}
+          {loadingStores && (
+            <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-[1000]">
+              <div className="flex items-center gap-2 text-blue-600">
+                <Loader2 className="w-6 h-6 animate-spin" />
+                <span>Chargement des magasins...</span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Nearby Stores List */}
+        {showNearbyList && position && (
+          <div className="w-96 bg-white border-l overflow-y-auto p-4">
+            <h2 className="text-xl font-bold mb-4">
+              Magasins à proximité
+              {nearbyStores.length > 0 && (
+                <span className="ml-2 text-sm font-normal text-gray-600">
+                  ({nearbyStores.length})
+                </span>
+              )}
+            </h2>
+
+            {storesError && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
+                <p className="text-red-800 text-sm">{storesError}</p>
+              </div>
+            )}
+
+            <NearbyStoresList
+              stores={nearbyStores}
+              sortBy="distance"
+              onStoreClick={handleStoreClick}
+              onNavigate={handleNavigate}
+              showPrices={true}
+            />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default StoreMap;
