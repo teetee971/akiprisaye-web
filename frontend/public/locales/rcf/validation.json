@@ -1,0 +1,10 @@
+{
+  "required": "Shamp obligatwar",
+  "email": "Imèl pa valid",
+  "phone": "Niméro téléfon pa valid",
+  "minLength": "Minimoum {{min}} karaktèr",
+  "maxLength": "Maksimoum {{max}} karaktèr",
+  "numeric": "Doi èt in nonm",
+  "positive": "Doi èt pozitif",
+  "url": "URL pa valid"
+}

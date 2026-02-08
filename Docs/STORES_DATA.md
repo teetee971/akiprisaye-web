@@ -57,7 +57,20 @@ L'application couvre les 12 territoires DROM-COM:
 
 ## Chaînes de magasins
 
-Les principales chaînes représentées:
+Les chaînes représentées (40+ enseignes):
+
+### Groupe Casino
+- **Géant Casino** - Hypermarché
+- **Casino Supermarché** - Supermarché
+- **Petit Casino** - Proximité
+- **Casino Shop** - Proximité
+- **Spar** - Proximité
+- **Vival** - Proximité
+- **Franprix** - Proximité urbaine
+- **Monoprix** - Supermarché urbain
+- **Leader Price** - Discount
+- **Score / Jumbo Score** - Supermarché local
+- **8 à Huit** - Supérette
 
 - **Carrefour** / **Carrefour Market** - Hypermarché/Supermarché
 - **Système U** (Super U, Hyper U) - Supermarché

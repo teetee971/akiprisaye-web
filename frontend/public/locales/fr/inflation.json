@@ -1,0 +1,23 @@
+{
+  "dashboard": {
+    "title": "Tableau de bord inflation",
+    "overview": "Vue d'ensemble"
+  },
+  "indicators": {
+    "rate": "Taux d'inflation",
+    "vsMetro": "Écart avec la métropole",
+    "trend": "Tendance"
+  },
+  "categories": {
+    "title": "Par catégorie",
+    "food": "Alimentation",
+    "household": "Produits ménagers",
+    "personal": "Hygiène personnelle"
+  },
+  "evolution": {
+    "title": "Évolution",
+    "lastMonth": "Dernier mois",
+    "last3Months": "3 derniers mois",
+    "lastYear": "Dernière année"
+  }
+}

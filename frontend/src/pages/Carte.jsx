@@ -17,6 +17,9 @@ import { getActiveTerritories, TERRITORIES } from '../constants/territories';
 import { safeLocalStorage } from '../utils/safeLocalStorage';
 import { loadLeafletWithMarkerCluster } from '../utils/leafletClient';
 import A11yLiveRegion from '../components/A11yLiveRegion';
+import { OpenNowFilter } from '../components/store/OpenNowFilter';
+import { getStoreHours } from '../services/storeHoursService';
+import { isStoreOpen } from '../utils/storeHoursUtils';
 
 function MapUpdater({ map, position }) {
   useEffect(() => {
@@ -28,7 +31,7 @@ function MapUpdater({ map, position }) {
   return null;
 }
 
-function MarkerClusterGroup({ map, leaflet, stores, currentTerritory, formatDistance, markerRefs }) {
+function MarkerClusterGroup({ map, leaflet, stores, currentTerritory, formatDistance, markerRefs, territory }) {
   useEffect(() => {
     if (!map || !leaflet) return;
 
@@ -59,7 +62,45 @@ function MarkerClusterGroup({ map, leaflet, stores, currentTerritory, formatDist
     });
 
     stores.forEach((store) => {
-      const leafletMarker = leaflet.marker([store.lat, store.lon]);
+      // Get store hours and status
+      const storeHours = getStoreHours(store.id, territory);
+      const statusInfo = storeHours ? isStoreOpen(storeHours) : null;
+      
+      // Create custom icon with status indicator
+      let markerIcon;
+      if (statusInfo) {
+        const statusColors = {
+          open: '#10b981', // green
+          closing_soon: '#f59e0b', // orange
+          closed: '#ef4444', // red
+          unknown: '#9ca3af', // gray
+        };
+        
+        const color = statusColors[statusInfo.status] || statusColors.unknown;
+        
+        // Create a custom divIcon with colored marker
+        markerIcon = leaflet.divIcon({
+          html: `
+            <div style="position: relative;">
+              <svg width="25" height="41" viewBox="0 0 25 41" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12.5 0C5.596 0 0 5.596 0 12.5c0 9.375 12.5 28.125 12.5 28.125S25 21.875 25 12.5C25 5.596 19.404 0 12.5 0z" fill="${color}" stroke="#fff" stroke-width="2"/>
+                <circle cx="12.5" cy="12.5" r="6" fill="#fff"/>
+              </svg>
+              <div style="position: absolute; top: 0; left: 0; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center;">
+                <div style="width: 8px; height: 8px; background: ${color}; border-radius: 50%; animation: pulse 2s infinite;"></div>
+              </div>
+            </div>
+          `,
+          className: 'custom-marker-icon',
+          iconSize: [25, 41],
+          iconAnchor: [12, 41],
+          popupAnchor: [0, -41],
+        });
+      }
+      
+      const leafletMarker = markerIcon 
+        ? leaflet.marker([store.lat, store.lon], { icon: markerIcon })
+        : leaflet.marker([store.lat, store.lon]);
       
       // Store marker ref for accessibility
       if (markerRefs && markerRefs.current) {
@@ -90,6 +131,30 @@ function MarkerClusterGroup({ map, leaflet, stores, currentTerritory, formatDist
       territoryEl.className = 'text-xs text-slate-500';
       territoryEl.textContent = currentTerritory?.name || '';
       popupContent.appendChild(territoryEl);
+      
+      // Store Hours Status
+      if (statusInfo) {
+        const statusDiv = document.createElement('div');
+        statusDiv.className = 'mt-2 mb-2 p-2 rounded-lg';
+        
+        const statusColors = {
+          open: 'background: #d1fae5; color: #065f46;',
+          closing_soon: 'background: #fed7aa; color: #92400e;',
+          closed: 'background: #fee2e2; color: #991b1b;',
+          unknown: 'background: #f3f4f6; color: #374151;',
+        };
+        
+        const statusIcons = {
+          open: '🟢',
+          closing_soon: '🟠',
+          closed: '🔴',
+          unknown: '⚪',
+        };
+        
+        statusDiv.style.cssText = statusColors[statusInfo.status] || statusColors.unknown;
+        statusDiv.innerHTML = `<strong>${statusIcons[statusInfo.status]} ${statusInfo.message}</strong>`;
+        popupContent.appendChild(statusDiv);
+      }
       
       // Distance info
       if (store.distance) {
@@ -136,13 +201,13 @@ function MarkerClusterGroup({ map, leaflet, stores, currentTerritory, formatDist
     return () => {
       map.removeLayer(markerClusterGroup);
     };
-  }, [map, leaflet, stores, currentTerritory, formatDistance, markerRefs]);
+  }, [map, leaflet, stores, currentTerritory, formatDistance, markerRefs, territory]);
 
   return null;
 }
 
 export default function Carte() {
-  const [territory, setTerritory] = useState('GP');
+  const [territory, setTerritory] = useState('gp');
   const [stores, setStores] = useState([]);
   const [userPosition, setUserPosition] = useState(null);
   const [isNavigating, setIsNavigating] = useState({});
@@ -163,6 +228,7 @@ export default function Carte() {
   const [selectedCategory, setSelectedCategory] = useState('Toutes');
   const [selectedServices, setSelectedServices] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
+  const [showOpenOnly, setShowOpenOnly] = useState(false);
 
   const [sortByDistance, setSortByDistance] = useState(false);
   const [nearMeRadius, setNearMeRadius] = useState(10);
@@ -432,6 +498,7 @@ export default function Carte() {
   }, [stores, userPosition]);
 
   const getStoreCategory = (store) => {
+    if (!store || !store.chain) return 'Autre';
     const chain = store.chain.toLowerCase();
     if (['système u', 'carrefour', 'casino', 'e.leclerc', 'leader price', 'auchan',
          'ecomax', 'simply market', 'intermarché', '8 à huit', 'vival',
@@ -463,6 +530,17 @@ export default function Carte() {
         if (store.distance > nearMeRadius) return false;
       }
 
+      // Filter by open status
+      if (showOpenOnly) {
+        const storeHours = getStoreHours(store.id, territory);
+        if (!storeHours) return false;
+        
+        const statusInfo = isStoreOpen(storeHours);
+        if (statusInfo.status !== 'open' && statusInfo.status !== 'closing_soon') {
+          return false;
+        }
+      }
+
       return true;
     });
 
@@ -475,7 +553,7 @@ export default function Carte() {
     }
 
     return filtered;
-  }, [storesWithDistance, selectedCategory, selectedServices, showNearMeOnly, nearMeRadius, sortByDistance, userPosition]);
+  }, [storesWithDistance, selectedCategory, selectedServices, showNearMeOnly, nearMeRadius, sortByDistance, userPosition, showOpenOnly, territory]);
 
   const storeStats = useMemo(() => {
     const categories = {};
@@ -766,6 +844,16 @@ export default function Carte() {
                 </div>
               </div>
 
+              {/* Open Now Filter */}
+              <div className="pt-2 border-t border-slate-600">
+                <OpenNowFilter
+                  enabled={showOpenOnly}
+                  onChange={setShowOpenOnly}
+                  count={showOpenOnly ? filteredStores.length : undefined}
+                  className="w-full justify-center"
+                />
+              </div>
+
               {(selectedCategory !== 'Toutes' || selectedServices.length > 0) && (
                 <div className="flex items-center gap-2 text-sm pt-2 border-t border-slate-600">
                   <span className="text-slate-400">Filtres actifs:</span>
@@ -921,6 +1009,7 @@ export default function Carte() {
                     currentTerritory={currentTerritory}
                     formatDistance={formatDistance}
                     markerRefs={markerRefs}
+                    territory={territory}
                   />
                 ) : (
                 filteredStores.map((store, index) => {

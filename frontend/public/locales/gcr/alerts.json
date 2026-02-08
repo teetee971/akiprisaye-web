@@ -1,0 +1,20 @@
+{
+  "title": "Alèt an-mwen",
+  "create": "Kréyé on alèt",
+  "priceAlert": {
+    "title": "Alèt pri",
+    "description": "Résévi on notifikasyon lè pri-a ka bésé",
+    "threshold": "Limitt pri"
+  },
+  "stockAlert": {
+    "title": "Alèt disponibilité",
+    "description": "Résévi on notifikasyon lè pwodui-a disponib"
+  },
+  "promotionAlert": {
+    "title": "Alèt pwomosyon",
+    "description": "Résévi on notifikasyon pou pwomosyon"
+  },
+  "empty": "Pa ni alèt aktiv",
+  "active": "{{count}} alèt aktiv",
+  "active_plural": "{{count}} alèt aktiv"
+}

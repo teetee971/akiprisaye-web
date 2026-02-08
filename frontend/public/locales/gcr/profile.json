@@ -1,0 +1,20 @@
+{
+  "title": "Pwofil an-mwen",
+  "edit": "Modifyé pwofil-la",
+  "settings": {
+    "title": "Paramèt",
+    "language": "Lang",
+    "notifications": "Notifikasyon",
+    "privacy": "Konfidansyalité"
+  },
+  "favorites": {
+    "title": "Favori an-mwen",
+    "stores": "Magazen favori",
+    "products": "Pwodui favori"
+  },
+  "history": {
+    "title": "Listwarik",
+    "searches": "Réchèch résan",
+    "scans": "Skan résan"
+  }
+}

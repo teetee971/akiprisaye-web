@@ -34,6 +34,11 @@ import productsRoutes from './routes/products.js';
 import basketRoutes from './routes/basket.js';
 // Subscription & Payment routes
 import subscriptionRoutes from './api/routes/subscription.routes.js';
+// Price Alerts & Notifications routes
+import alertsRoutes from './api/routes/alerts.routes.js';
+import notificationsRoutes from './api/routes/notifications.routes.js';
+// Verified Pricing System routes
+import pricesRoutes from './api/routes/prices.routes.js';
 
 // Import middlewares
 import { apiLimiter } from './api/middlewares/rateLimit.middleware.js';
@@ -146,6 +151,8 @@ app.get('/', (_req: Request, res: Response) => {
       stores: '/api/stores', // Phase 7
       products: '/api/products', // Phase 7
       basket: '/api/basket', // Phase 8
+      sync: '/api/sync', // Product sync
+      validation: '/api/validation', // Product validation
     },
     legal: {
       rgpd: 'Conforme RGPD (EU) 2016/679',
@@ -201,6 +208,13 @@ app.use('/api/basket', basketRoutes);
 
 // Subscription & Payment API routes
 app.use('/api/subscriptions', subscriptionRoutes);
+
+// Price Alerts & Notifications API routes (protected by JWT)
+app.use('/api/alerts', alertsRoutes);
+app.use('/api/notifications', notificationsRoutes);
+
+// Verified Pricing System API routes (public with rate limiting)
+app.use('/api/prices', pricesRoutes);
 
 // ========================================
 // Gestion des erreurs

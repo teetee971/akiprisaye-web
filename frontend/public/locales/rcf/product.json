@@ -1,0 +1,20 @@
+{
+  "details": {
+    "title": "Détay pwodwi",
+    "description": "Déskription",
+    "ingredients": "Engrédian",
+    "nutritionalInfo": "Enfo nitrisionnèl"
+  },
+  "priceComparison": {
+    "title": "Konparézon pri",
+    "bestPrice": "Meyèr pri",
+    "averagePrice": "Pri moyin",
+    "priceRange": "Fourshèt pri"
+  },
+  "availability": {
+    "title": "Disponibilité",
+    "inStock": "An stok",
+    "outOfStock": "Nana poin",
+    "limitedStock": "Stok limité"
+  }
+}

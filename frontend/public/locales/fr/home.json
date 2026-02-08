@@ -1,0 +1,36 @@
+{
+  "hero": {
+    "title": "Trouvez les meilleurs prix",
+    "subtitle": "Comparez les prix des produits dans tous les magasins des DOM-TOM"
+  },
+  "nearby": {
+    "title": "Magasins à proximité",
+    "seeAll": "Voir tous les magasins",
+    "noStores": "Aucun magasin trouvé à proximité",
+    "enableLocation": "Activer la géolocalisation"
+  },
+  "promotions": {
+    "title": "Promotions du jour",
+    "seeAll": "Voir toutes les promos",
+    "noPromos": "Aucune promotion disponible",
+    "discount": "-{{percent}}%",
+    "wasPrice": "Était {{price, price}}"
+  },
+  "trending": {
+    "title": "Tendances",
+    "products": "Produits populaires",
+    "searches": "Recherches fréquentes"
+  },
+  "inflation": {
+    "title": "Indice d'inflation",
+    "vsMetro": "par rapport à la métropole",
+    "moreExpensive": "plus cher",
+    "lessExpensive": "moins cher"
+  },
+  "quickActions": {
+    "scan": "Scanner un produit",
+    "list": "Ma liste de courses",
+    "map": "Carte des magasins",
+    "alerts": "Mes alertes"
+  }
+}

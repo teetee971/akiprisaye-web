@@ -1,0 +1,16 @@
+{
+  "title": "Carte des magasins",
+  "filters": {
+    "all": "Tous les magasins",
+    "open": "Ouverts maintenant",
+    "favorites": "Mes favoris"
+  },
+  "legend": {
+    "cheap": "Prix bas",
+    "average": "Prix moyens",
+    "expensive": "Prix élevés"
+  },
+  "nearby": "À {{distance}} km",
+  "getDirections": "Itinéraire",
+  "cluster": "{{count}} magasins"
+}
