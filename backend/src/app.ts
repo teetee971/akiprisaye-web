@@ -40,6 +40,8 @@ import notificationsRoutes from './api/routes/notifications.routes.js';
 // Product Sync routes
 import syncRoutes from './api/routes/sync.routes.js';
 import validationRoutes from './api/routes/validation.routes.js';
+// Verified Pricing routes
+import pricesRoutes from './api/routes/prices.routes.js';
 
 // Import middlewares
 import { apiLimiter } from './api/middlewares/rateLimit.middleware.js';
@@ -217,6 +219,9 @@ app.use('/api/notifications', notificationsRoutes);
 // Product Sync API routes (protected by JWT + ADMIN role)
 app.use('/api/sync', syncRoutes);
 app.use('/api/validation', validationRoutes);
+
+// Verified Pricing API routes (public with rate limiting)
+app.use('/api/prices', pricesRoutes);
 
 // ========================================
 // Gestion des erreurs
