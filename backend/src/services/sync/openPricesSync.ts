@@ -52,6 +52,10 @@ export class OpenPricesSync {
   async syncTerritories(): Promise<SyncResult> {
     console.info('🔄 Starting Open Prices sync for DOM-TOM territories');
 
+    // TODO: Implement territory-specific filtering once location_osm_id mappings are available
+    // Currently syncs recent prices globally, which may include non-DOM-TOM data
+    // See: https://prices.openfoodfacts.org/api/docs for location filtering options
+
     const syncLog = await prisma.syncLog.create({
       data: {
         source: 'OPENPRICES',

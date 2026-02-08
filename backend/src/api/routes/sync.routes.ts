@@ -2,6 +2,12 @@
  * Sync Routes
  * 
  * API endpoints for synchronization management
+ * 
+ * TODO: Add authentication middleware before production deployment
+ * These endpoints trigger external API calls and should be restricted to:
+ * - Admin users only (JWT + RBAC)
+ * - Rate limited per user
+ * See existing auth middleware pattern in backend/src/api/middlewares/auth.middleware.ts
  */
 
 import { Router, Request, Response } from 'express';

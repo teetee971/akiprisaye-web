@@ -2,6 +2,12 @@
  * Validation Routes
  * 
  * API endpoints for product validation queue management
+ * 
+ * TODO: Add authentication middleware before production deployment
+ * These endpoints mutate product data and should be restricted to:
+ * - Moderator/Admin users only (JWT + RBAC)
+ * - Proper permission checks (PRODUCT_APPROVE, PRODUCT_REJECT, PRODUCT_MERGE)
+ * See existing auth middleware pattern in backend/src/api/middlewares/auth.middleware.ts
  */
 
 import { Router, Request, Response } from 'express';
