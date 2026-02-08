@@ -118,6 +118,26 @@ export async function submitPrice(request: SubmitPriceRequest): Promise<SubmitPr
   
   const observedAt = new Date(request.observedAt);
   
+  // Validate observedAt: must be a valid date and not in the future
+  if (isNaN(observedAt.getTime())) {
+    return {
+      id: '',
+      status: 'rejected',
+      confidenceScore: 0,
+      message: 'Date d\'observation invalide',
+    };
+  }
+  
+  const now = new Date();
+  if (observedAt.getTime() > now.getTime()) {
+    return {
+      id: '',
+      status: 'rejected',
+      confidenceScore: 0,
+      message: 'La date d\'observation ne peut pas être dans le futur',
+    };
+  }
+  
   // Check for duplicates
   const duplicateId = await findDuplicatePrice(
     request.productId,
@@ -127,10 +147,16 @@ export async function submitPrice(request: SubmitPriceRequest): Promise<SubmitPr
   );
   
   if (duplicateId) {
+    // Retrieve the existing price to return its real confidence score
+    const existingPrice = await prisma.productPrice.findUnique({
+      where: { id: duplicateId },
+      select: { confidenceScore: true },
+    });
+    
     return {
       id: duplicateId,
       status: 'accepted',
-      confidenceScore: 0,
+      confidenceScore: existingPrice?.confidenceScore ?? 0,
       message: 'Ce prix a déjà été signalé récemment',
       duplicateOf: duplicateId,
     };

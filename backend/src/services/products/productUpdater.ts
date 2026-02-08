@@ -3,7 +3,7 @@
  * Manages automatic updates of product information
  */
 
-import { PrismaClient, ReviewStatus } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -57,11 +57,11 @@ export async function submitProductUpdate(
   const oldValue = null; // Would fetch from product
 
   // Create update record
-  const update = await prisma.productUpdate.create({
+  await prisma.productUpdate.create({
     data: {
       productId,
       field,
-      oldValue: oldValue || 'N/A',
+      oldValue,
       newValue,
       source,
       autoApplied: shouldAutoApply,

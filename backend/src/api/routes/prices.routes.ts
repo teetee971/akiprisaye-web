@@ -14,7 +14,7 @@ import {
   getBestVerifiedPrice,
   getPriceHistory,
   getAggregatedPriceHistory,
-  detectAnomalies,
+  getAnomaliesForPrice,
   getPriceVerificationStats,
 } from '../../services/pricing/index.js';
 
@@ -77,10 +77,34 @@ router.get('/product/:productId', async (req: Request, res: Response) => {
     const { productId } = req.params;
     const { storeId, minConfidence, limit } = req.query;
 
+    // Validate and parse query parameters
+    let parsedMinConfidence: number | undefined;
+    let parsedLimit: number | undefined;
+
+    if (minConfidence) {
+      parsedMinConfidence = parseInt(minConfidence as string, 10);
+      if (isNaN(parsedMinConfidence) || parsedMinConfidence < 0 || parsedMinConfidence > 100) {
+        return res.status(400).json({
+          error: 'Invalid minConfidence parameter',
+          message: 'minConfidence must be a number between 0 and 100',
+        });
+      }
+    }
+
+    if (limit) {
+      parsedLimit = parseInt(limit as string, 10);
+      if (isNaN(parsedLimit) || parsedLimit < 1 || parsedLimit > 1000) {
+        return res.status(400).json({
+          error: 'Invalid limit parameter',
+          message: 'limit must be a number between 1 and 1000',
+        });
+      }
+    }
+
     const options = {
       storeId: storeId as string | undefined,
-      minConfidence: minConfidence ? parseInt(minConfidence as string, 10) : undefined,
-      limit: limit ? parseInt(limit as string, 10) : undefined,
+      minConfidence: parsedMinConfidence,
+      limit: parsedLimit,
     };
 
     const prices = await getVerifiedPricesByProduct(productId, options);
@@ -107,9 +131,33 @@ router.get('/store/:storeId', async (req: Request, res: Response) => {
     const { storeId } = req.params;
     const { minConfidence, limit } = req.query;
 
+    // Validate and parse query parameters
+    let parsedMinConfidence: number | undefined;
+    let parsedLimit: number | undefined;
+
+    if (minConfidence) {
+      parsedMinConfidence = parseInt(minConfidence as string, 10);
+      if (isNaN(parsedMinConfidence) || parsedMinConfidence < 0 || parsedMinConfidence > 100) {
+        return res.status(400).json({
+          error: 'Invalid minConfidence parameter',
+          message: 'minConfidence must be a number between 0 and 100',
+        });
+      }
+    }
+
+    if (limit) {
+      parsedLimit = parseInt(limit as string, 10);
+      if (isNaN(parsedLimit) || parsedLimit < 1 || parsedLimit > 1000) {
+        return res.status(400).json({
+          error: 'Invalid limit parameter',
+          message: 'limit must be a number between 1 and 1000',
+        });
+      }
+    }
+
     const options = {
-      minConfidence: minConfidence ? parseInt(minConfidence as string, 10) : undefined,
-      limit: limit ? parseInt(limit as string, 10) : undefined,
+      minConfidence: parsedMinConfidence,
+      limit: parsedLimit,
     };
 
     const prices = await getVerifiedPricesByStore(storeId, options);
@@ -157,11 +205,21 @@ router.get('/best/:productId', async (req: Request, res: Response) => {
 /**
  * POST /api/prices/:id/verify
  * Verify or dispute a price
+ * 
+ * NOTE: This endpoint currently accepts userId from request body, which allows
+ * impersonation. In production, this should require authentication middleware
+ * and derive userId from req.user (authenticated user) instead.
  */
 router.post('/:id/verify', async (req: Request, res: Response) => {
   try {
     const { id: priceId } = req.params;
     const validatedData = verifyPriceSchema.parse(req.body);
+
+    // TODO: Replace with authenticated userId from middleware
+    // const userId = req.user?.id;
+    // if (!userId) {
+    //   return res.status(401).json({ error: 'Authentication required' });
+    // }
 
     const result = await verifyPrice({
       priceId,
@@ -264,12 +322,14 @@ router.get('/history/:productId/aggregated', async (req: Request, res: Response)
 
 /**
  * GET /api/prices/:id/anomalies
- * Detect and get anomalies for a price
+ * Get existing anomalies for a price (read-only)
+ * Note: Anomaly detection is performed asynchronously by scheduled jobs.
+ * This endpoint only retrieves existing anomaly records.
  */
 router.get('/:id/anomalies', async (req: Request, res: Response) => {
   try {
     const { id: priceId } = req.params;
-    const anomalies = await detectAnomalies(priceId);
+    const anomalies = await getAnomaliesForPrice(priceId);
 
     res.json({
       priceId,
@@ -277,9 +337,9 @@ router.get('/:id/anomalies', async (req: Request, res: Response) => {
       anomalies,
     });
   } catch (error) {
-    console.error('Error detecting anomalies:', error);
+    console.error('Error fetching anomalies:', error);
     res.status(500).json({
-      error: 'Failed to detect anomalies',
+      error: 'Failed to fetch anomalies',
       message: error instanceof Error ? error.message : 'Unknown error',
     });
   }

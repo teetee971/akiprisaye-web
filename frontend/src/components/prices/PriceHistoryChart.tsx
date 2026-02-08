@@ -46,11 +46,11 @@ const PriceHistoryChart: React.FC<PriceHistoryChartProps> = ({
         const result = await response.json();
         
         if (storeId) {
-          // Single store history
+          // Single store history - reverse to show oldest to newest
           const formattedData = result.history.map((h: any) => ({
             date: new Date(h.observedAt).toLocaleDateString('fr-FR'),
             price: h.price,
-          }));
+          })).reverse();
           setData(formattedData);
         } else {
           // Aggregated history
@@ -107,6 +107,47 @@ const PriceHistoryChart: React.FC<PriceHistoryChartProps> = ({
     if (priceRange === 0) return chartHeight / 2;
     return chartHeight - ((price - minPrice) / priceRange) * chartHeight;
   };
+
+  // Handle single datapoint case
+  if (data.length === 1) {
+    const singlePoint = data[0];
+    return (
+      <div className="bg-white border border-gray-200 rounded-lg p-4">
+        <h3 className="text-lg font-semibold text-gray-800 mb-4">
+          Historique des prix
+        </h3>
+
+        <div className="mb-4">
+          <svg
+            viewBox={`0 0 ${chartWidth} ${chartHeight}`}
+            className="w-full h-48"
+            preserveAspectRatio="none"
+          >
+            {/* Single data point */}
+            <circle
+              cx={chartWidth / 2}
+              cy={chartHeight / 2}
+              r="6"
+              fill="#3b82f6"
+            >
+              <title>
+                {singlePoint.date}: {singlePoint.price.toFixed(2)}€
+              </title>
+            </circle>
+          </svg>
+        </div>
+
+        <div className="text-center text-sm text-gray-600">
+          <div>
+            <span className="font-medium">Prix unique:</span> {singlePoint.price.toFixed(2)}€
+          </div>
+          <div className="text-xs mt-1 text-gray-500">
+            Historique insuffisant pour afficher une tendance
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const pathData = data
     .map((d, i) => {
@@ -169,7 +210,7 @@ const PriceHistoryChart: React.FC<PriceHistoryChartProps> = ({
           <span className="font-medium">Min:</span> {minPrice.toFixed(2)}€
         </div>
         <div>
-          <span className="font-medium">Actuel:</span> {data[0]?.price.toFixed(2)}€
+          <span className="font-medium">Actuel:</span> {data[data.length - 1]?.price.toFixed(2)}€
         </div>
         <div>
           <span className="font-medium">Max:</span> {maxPrice.toFixed(2)}€

@@ -42,7 +42,12 @@ export function useProductUpdates(productId: string): UseProductUpdatesResult {
     setError(null);
 
     try {
-      // Note: This endpoint would need to be implemented in the backend
+      // NOTE: This endpoint is not yet implemented in the backend.
+      // Backend needs to add routes at:
+      // - GET /api/products/${productId}/updates
+      // - POST /api/products/updates/${updateId}/approve
+      // - POST /api/products/updates/${updateId}/reject
+      // Current products API uses :ean identifier, consider alignment.
       const response = await fetch(`/api/products/${productId}/updates`);
 
       if (!response.ok) {

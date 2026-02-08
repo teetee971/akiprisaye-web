@@ -4,7 +4,6 @@
  */
 
 import { PrismaClient, PriceSource, VerificationStatus } from '@prisma/client';
-import { calculateConfidenceScore } from './confidenceCalculator.js';
 
 const prisma = new PrismaClient();
 

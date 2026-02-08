@@ -50,7 +50,7 @@ async function calculateHistoricalAverage(
   }
   
   const priceValues = prices.map((p) => p.price);
-  const average = priceValues.reduce((sum, p) => sum + p, 0) / priceValues.length;
+  const average = priceValues.reduce((sum: number, p: number) => sum + p, 0) / priceValues.length;
   
   return { average, prices: priceValues };
 }
@@ -160,6 +160,7 @@ function checkOutlier(
   recentPrices: number[]
 ): DetectedAnomaly | null {
   if (recentPrices.length < 3) return null; // Need enough data
+  if (historicalAvg <= 0) return null; // Cannot calculate deviation with zero or negative average
   
   const deviation = ((currentPrice - historicalAvg) / historicalAvg) * 100;
   
@@ -270,21 +271,38 @@ export async function detectAnomalies(
     anomalies.push(staleAnomaly);
   }
   
-  // Save anomalies to database
+  // Save anomalies to database (with deduplication)
   for (const anomaly of anomalies) {
-    await prisma.priceAnomaly.create({
-      data: {
+    // Check if this anomaly type already exists for this price (within last 24 hours)
+    const recentThreshold = new Date();
+    recentThreshold.setHours(recentThreshold.getHours() - 24);
+    
+    const existingAnomaly = await prisma.priceAnomaly.findFirst({
+      where: {
         priceId: price.id,
-        productId: price.productId,
-        storeId: price.storeId,
         anomalyType: anomaly.type,
-        severity: anomaly.severity,
-        reportedPrice: price.price,
-        expectedPrice: historicalAvg || price.price,
-        deviation: anomaly.deviation,
-        context: anomaly.context,
+        createdAt: {
+          gte: recentThreshold,
+        },
       },
     });
+    
+    // Only create if no recent duplicate exists
+    if (!existingAnomaly) {
+      await prisma.priceAnomaly.create({
+        data: {
+          priceId: price.id,
+          productId: price.productId,
+          storeId: price.storeId,
+          anomalyType: anomaly.type,
+          severity: anomaly.severity,
+          reportedPrice: price.price,
+          expectedPrice: historicalAvg || price.price,
+          deviation: anomaly.deviation,
+          context: anomaly.context,
+        },
+      });
+    }
   }
   
   return anomalies;
@@ -313,4 +331,14 @@ export async function scanRecentPricesForAnomalies(hoursBack: number = 24): Prom
   }
   
   return anomalyCount;
+}
+
+/**
+ * Get existing anomalies for a price (read-only, no detection)
+ */
+export async function getAnomaliesForPrice(priceId: string) {
+  return await prisma.priceAnomaly.findMany({
+    where: { priceId },
+    orderBy: { createdAt: 'desc' },
+  });
 }

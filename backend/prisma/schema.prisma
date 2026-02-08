@@ -97,6 +97,7 @@ model User {
   isActive          Boolean       @default(true)
 
   subscription      Subscription?
+  priceVerifications PriceVerification[]
 
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @updatedAt
@@ -176,9 +177,11 @@ model PriceVerification {
   createdAt   DateTime            @default(now())
   
   price       ProductPrice        @relation(fields: [priceId], references: [id], onDelete: Cascade)
+  user        User                @relation(fields: [userId], references: [id], onDelete: Cascade)
   
   @@index([priceId])
   @@index([userId])
+  @@unique([priceId, userId])
 }
 
 model PriceAnomaly {

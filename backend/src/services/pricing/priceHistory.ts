@@ -125,7 +125,7 @@ export async function getPriceHistory(
   const priceValues = prices.map((p) => p.price);
   const minPrice = Math.min(...priceValues);
   const maxPrice = Math.max(...priceValues);
-  const avgPrice = priceValues.reduce((sum, p) => sum + p, 0) / priceValues.length;
+  const avgPrice = priceValues.reduce((sum: number, p: number) => sum + p, 0) / priceValues.length;
   const currentPrice = prices[0].price;
   const priceRange = maxPrice - minPrice;
   const volatility = calculateVolatility(priceValues);
@@ -203,16 +203,19 @@ export async function getAggregatedPriceHistory(
 
 /**
  * Compare price history between stores
+ * @param productId - Product to compare
+ * @param storeIds - List of store IDs
+ * @param limit - Maximum number of price entries per store (default: 30)
  */
 export async function comparePriceHistory(
   productId: string,
   storeIds: string[],
-  days: number = 30
+  limit: number = 30
 ): Promise<Map<string, PriceHistoryResponse>> {
   const results = new Map<string, PriceHistoryResponse>();
   
   for (const storeId of storeIds) {
-    const history = await getPriceHistory(productId, storeId, days);
+    const history = await getPriceHistory(productId, storeId, limit);
     results.set(storeId, history);
   }
   
