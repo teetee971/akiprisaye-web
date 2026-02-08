@@ -98,25 +98,22 @@ router.get('/latest', async (req: Request, res: Response) => {
       });
     }
 
-    let data;
+    let indices;
     if (territory) {
       // Get data for specific territory
-      data = await calculatePriceIndex(territory, period);
-      res.json({
-        period,
-        territory,
-        data,
-        generatedAt: new Date().toISOString(),
-      });
+      const priceIndex = await calculatePriceIndex(territory, period);
+      indices = [priceIndex];
     } else {
       // Get data for all territories
-      const territories = await calculateAllIndices(period);
-      res.json({
-        period,
-        territories,
-        generatedAt: new Date().toISOString(),
-      });
+      indices = await calculateAllIndices(period);
     }
+    
+    return res.json({
+      success: true,
+      period,
+      territories: indices,
+      generatedAt: new Date().toISOString(),
+    });
   } catch (error) {
     console.error('[PUBLIC API] Error fetching latest inflation:', error);
     return res.status(500).json({ 

@@ -36,11 +36,16 @@ async function getProductAveragePrice(
   period: string
 ): Promise<number | null> {
   try {
-    // In a real implementation, this would query actual price data
-    // For now, we'll use mock data from seed files
-    // TODO: Integrate with actual price observation data
+    // TODO: This function needs integration with actual price observation data
+    // For now, this is a placeholder that returns null
+    // Once price data is available in the database, implement the query here
     
-    // Placeholder: Return null to indicate no data
+    // In a real implementation, this would:
+    // 1. Query price observations matching the product pattern
+    // 2. Filter by territory and period
+    // 3. Calculate the average price
+    
+    console.warn(`⚠️  Price data integration incomplete. Cannot fetch price for ${productPattern} in ${territory} ${period}`);
     return null;
   } catch (error) {
     console.error(`Error getting price for ${productPattern} in ${territory}:`, error);
@@ -107,7 +112,7 @@ export async function calculatePriceIndex(
     const current = await calculateBasketPrice(territory, period);
     
     // Get base period price (January 2024)
-    const basePeriod = `${INFLATION_CONFIG.baseYear}-${String(INFLATION_CONFIG.baseMonth).padStart(2, '0')}`;
+    const basePeriod = formatPeriod(new Date(INFLATION_CONFIG.baseYear, INFLATION_CONFIG.baseMonth - 1, 1));
     const base = await calculateBasketPrice(territory, basePeriod);
     
     // Calculate index value (base 100)
