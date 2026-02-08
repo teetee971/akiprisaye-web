@@ -135,9 +135,9 @@ function validateSubmission(data: PriceSubmissionData): {
  */
 function isValidUrl(url: string): boolean {
   try {
-    // Use URL constructor from Node.js
-    const urlObj = new globalThis.URL(url);
-    return !!urlObj;
+    // URL is globally available in Node.js
+    new URL(url);
+    return true;
   } catch {
     return false;
   }

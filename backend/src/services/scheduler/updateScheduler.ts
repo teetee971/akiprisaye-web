@@ -151,7 +151,7 @@ export function scheduleCleanup(): void {
       console.info(`[Cleanup] Deleted ${deletedAnomalies.count} old resolved anomalies`);
       
       // Clean up old rejected product updates
-      const deletedupdates = await prisma.productUpdate.deleteMany({
+      const deletedUpdates = await prisma.productUpdate.deleteMany({
         where: {
           status: 'REJECTED',
           createdAt: {
@@ -160,7 +160,7 @@ export function scheduleCleanup(): void {
         },
       });
       
-      console.info(`[Cleanup] Deleted ${deletedupdates.count} old rejected updates`);
+      console.info(`[Cleanup] Deleted ${deletedUpdates.count} old rejected updates`);
       
     } catch (error) {
       console.error('[Cleanup] Error:', error);
