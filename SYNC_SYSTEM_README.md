@@ -1,316 +1,456 @@
-# Système de Synchronisation Automatique
+# Automatic Product Addition System
 
-## 📋 Vue d'ensemble
+## Overview
 
-Ce système permet la synchronisation automatique des données de produits et de prix depuis les sources externes OpenFoodFacts et OpenPrices.
+The automatic product addition system synchronizes products from open data sources and enables citizen contributions via OCR. This system enriches the product catalog automatically while maintaining quality through a validation queue.
 
-## 🗂️ Structure des fichiers
+## Architecture
+
+### Data Sources
+
+1. **Open Food Facts** - Global product database with nutritional information
+2. **Open Prices** - Crowdsourced price data from Open Food Facts
+3. **OCR Receipts** - Citizen-scanned receipts (future integration)
+4. **Citizen Contributions** - Manual product additions by users
+
+### Components
 
 ```
-frontend/src/
-├── services/sync/
-│   ├── types.ts                    # Types et interfaces TypeScript
-│   ├── openFoodFactsService.ts     # Service API OpenFoodFacts
-│   ├── openPricesService.ts        # Service API OpenPrices
-│   ├── conflictResolver.ts         # Résolution de conflits et déduplication
-│   ├── syncLogger.ts               # Logging des synchronisations
-│   ├── syncScheduler.ts            # Planificateur de tâches
-│   └── index.ts                    # Exports centralisés
-│
-├── pages/admin/sync/
-│   └── SyncDashboard.tsx           # Dashboard admin de synchronisation
-│
-└── components/admin/sync/
-    ├── SyncStats.tsx               # Statistiques de sync
-    ├── SyncHistory.tsx             # Historique des syncs
-    ├── SyncConfig.tsx              # Configuration du scheduler
-    └── ManualSync.tsx              # Synchronisation manuelle
+backend/src/
+├── config/
+│   └── syncConfig.ts           # Centralized configuration
+├── database/
+│   └── prisma.ts               # Shared Prisma client singleton
+├── services/
+│   ├── products/
+│   │   ├── normalization.ts    # Product name normalization
+│   │   ├── deduplication.ts    # Duplicate detection
+│   │   ├── autoProductCreation.ts  # Product creation logic
+│   │   └── validationQueue.ts  # Validation workflow
+│   ├── sync/
+│   │   ├── openFoodFactsSync.ts    # OFF synchronization
+│   │   ├── openPricesSync.ts       # Open Prices sync
+│   │   └── syncOrchestrator.ts     # Coordination
+│   └── scheduler/
+│       ├── syncScheduler.ts    # Job scheduling
+│       └── jobs/               # Individual job handlers
+└── api/routes/
+    ├── sync.routes.ts          # Sync API endpoints
+    └── validation.routes.ts    # Validation API endpoints
 ```
 
-## 🚀 Fonctionnalités
+## Database Schema
 
-### 1. Service OpenFoodFacts
+### Product Model
 
-Le service `openFoodFactsService` permet de :
+```prisma
+model Product {
+  id              String        @id @default(cuid())
+  ean             String?       @unique
+  name            String
+  normalizedName  String
+  brand           String?
+  category        String?
+  quantity        String?
+  imageUrl        String?
+  nutriscoreGrade String?
+  ecoscoreGrade   String?
+  source          ProductSource
+  status          ProductStatus @default(PENDING_REVIEW)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  validatedAt     DateTime?
+  validatedBy     String?
+  
+  prices          ProductPrice[]
+  
+  @@index([normalizedName])
+  @@index([status])
+  @@index([ean])
+}
+```
 
-- Récupérer un produit par code-barres (EAN)
-- Rechercher des produits
-- Synchroniser des produits en masse
-- Mapper les données OFF vers le modèle local
+### Enums
 
-**Exemple d'utilisation :**
+```prisma
+enum ProductSource {
+  MANUAL
+  OCR
+  OPENFOODFACTS
+  OPENPRICES
+  CITIZEN
+}
+
+enum ProductStatus {
+  PENDING_REVIEW
+  VALIDATED
+  REJECTED
+  MERGED
+}
+```
+
+## Synchronization
+
+### Scheduled Jobs
+
+| Job | Schedule | Description |
+|-----|----------|-------------|
+| `sync:openfoodfacts` | Daily at 3:00 AM | Sync products from Open Food Facts |
+| `sync:openprices` | Every 6 hours | Sync prices from Open Prices |
+| `process:ocr-queue` | Every 5 minutes | Process pending OCR products |
+| `cleanup:duplicates` | Sunday at 4:00 AM | Find and merge duplicates |
+
+### Rate Limiting
+
+- **Open Food Facts**: 100 requests/minute (600ms delay)
+- **Open Prices**: 60 requests/minute (1000ms delay)
+
+### Configuration
+
+Edit `backend/src/config/syncConfig.ts`:
 
 ```typescript
-import { openFoodFactsService } from './services/sync';
-
-// Récupérer un produit
-const product = await openFoodFactsService.getProductByBarcode('3017620422003');
-
-// Rechercher des produits
-const products = await openFoodFactsService.searchProducts('Nutella');
-
-// Synchronisation en masse
-const result = await openFoodFactsService.bulkSync(['ean1', 'ean2', 'ean3']);
+export const SYNC_CONFIG = {
+  openFoodFacts: {
+    apiUrl: 'https://world.openfoodfacts.org/api/v2',
+    userAgent: 'AKiPriSaYe/1.0 (contact@akiprisaye.com)',
+    batchSize: 100,
+    rateLimit: 100,
+    territories: ['gp', 'mq', 'gf', 're', 'yt'],
+  },
+  // ... more config
+};
 ```
 
-### 2. Service OpenPrices
+## API Endpoints
 
-Le service `openPricesService` permet de :
+### Sync Endpoints
 
-- Récupérer les prix d'un produit
-- Récupérer les prix par localisation
-- Filtrer par territoire DOM-TOM
-- Synchronisation complète
+#### Trigger Synchronization
 
-**Exemple d'utilisation :**
+```bash
+# Trigger Open Food Facts sync
+POST /api/sync/openfoodfacts/trigger
 
-```typescript
-import { openPricesService } from './services/sync';
+# Trigger Open Prices sync
+POST /api/sync/openprices/trigger
 
-// Récupérer les prix d'un produit
-const prices = await openPricesService.getPricesByProduct('3017620422003');
-
-// Synchronisation complète
-const result = await openPricesService.fullSync();
+# Trigger all syncs
+POST /api/sync/all/trigger
 ```
 
-### 3. Résolution de conflits
+#### Monitor Synchronization
 
-Le service `conflictResolverService` gère :
+```bash
+# Get current status
+GET /api/sync/status
 
-- Détection de doublons
-- Calcul de similarité entre produits
-- Fusion intelligente des données
-- Stratégies de résolution (local_wins, remote_wins, newest_wins, manual)
+# Get sync history with pagination
+GET /api/sync/history?page=1&limit=20&source=OPENFOODFACTS
 
-**Exemple d'utilisation :**
+# Get scheduled jobs status
+GET /api/sync/jobs
 
-```typescript
-import { conflictResolverService } from './services/sync';
-
-// Résoudre un conflit
-const resolved = conflictResolverService.resolveConflict(
-  localProduct,
-  remoteProduct,
-  'newest_wins'
-);
-
-// Dédupliquer une liste
-const unique = conflictResolverService.deduplicateProducts(products);
+# Manually trigger a job
+POST /api/sync/jobs/:jobId/trigger
 ```
 
-### 4. Logging
+### Validation Endpoints
 
-Le service `syncLoggerService` enregistre :
+#### Product Review Queue
 
-- Logs de synchronisation dans localStorage
-- Statistiques (taux de réussite, durée moyenne)
-- Historique des 100 derniers logs
+```bash
+# Get validation queue
+GET /api/validation/queue?status=PENDING_REVIEW&limit=50
 
-**Exemple d'utilisation :**
+# Get validation statistics
+GET /api/validation/stats
 
-```typescript
-import { syncLoggerService } from './services/sync';
-
-// Créer un log
-const log = syncLoggerService.createSyncLog('job-id');
-
-// Marquer comme complété
-syncLoggerService.completeSyncLog(log.id, result);
-
-// Obtenir les statistiques
-const stats = syncLoggerService.getLogsStats();
+# Get product details
+GET /api/validation/:id
 ```
 
-### 5. Scheduler
+#### Product Actions
 
-Le service `syncSchedulerService` gère :
+```bash
+# Approve a product
+POST /api/validation/:id/approve
+Body: { "reviewedBy": "user_id" }
 
-- 3 jobs planifiés par défaut :
-  - `sync-off-products`: Sync OpenFoodFacts (2h du matin)
-  - `sync-op-prices`: Sync OpenPrices (toutes les 6h)
-  - `cleanup-old-prices`: Nettoyage (dimanche à 3h)
-- Exécution manuelle
-- Configuration des intervalles
-- Retry automatique
+# Reject a product
+POST /api/validation/:id/reject
+Body: { "reviewedBy": "user_id" }
 
-**Exemple d'utilisation :**
-
-```typescript
-import { syncSchedulerService } from './services/sync';
-
-// Exécuter un job manuellement
-await syncSchedulerService.runJobManually('sync-op-prices');
-
-// Configurer le scheduler
-syncSchedulerService.setSchedulerConfig({
-  maxRetries: 5,
-  retryDelayMs: 3000,
-});
+# Merge duplicate products
+POST /api/validation/:id/merge/:targetId
+Body: { "reviewedBy": "user_id" }
 ```
 
-## 🖥️ Dashboard Admin
+## Deduplication Strategy
 
-Le dashboard de synchronisation est accessible à l'URL `/admin/sync`.
+The system uses a three-tier approach to detect duplicates:
 
-### Onglets disponibles :
+### 1. EAN Exact Match (Highest Priority)
+- Matches products by barcode/EAN
+- 100% accuracy for packaged products
 
-1. **Vue d'ensemble**
-   - Statistiques globales
-   - Statut des jobs planifiés
-   - Synchronisation manuelle
+### 2. Normalized Name Exact Match
+- Normalizes product names (lowercase, remove accents, standardize units)
+- Matches identical products with different formatting
 
-2. **Historique**
-   - Liste complète des synchronisations
-   - Détails des résultats
-   - Erreurs éventuelles
+### 3. Fuzzy Matching (Levenshtein Distance)
+- Uses similarity threshold (default: 0.85)
+- Catches variations in spelling or format
+- Returns top 3 candidates for review
 
-3. **Configuration**
-   - Intervalles de synchronisation (cron)
-   - Limites (max produits/prix)
-   - Retry et notifications
+Example normalization:
+```
+"Lait entier UHT 1L" → "lait entier uht 1l"
+"LAIT ENTIER U.H.T. 1 litre" → "lait entier uht 1l"
+```
 
-## ⚙️ Configuration
+## Product Normalization
 
-### Configuration par défaut :
+The normalization service standardizes product names for better matching:
+
+### Transformations
+
+1. **Case normalization**: Convert to lowercase
+2. **Accent removal**: Remove diacritics (é → e)
+3. **Prefix removal**: Remove "marque", "produit", "pack", etc.
+4. **Unit standardization**: "kilogramme" → "kg", "litre" → "l"
+5. **Special character removal**: Keep only alphanumeric, spaces, hyphens
+6. **Space normalization**: Multiple spaces → single space
+
+## Validation Queue
+
+Products from certain sources require manual review before being visible:
+
+### Auto-Validation
+- Open Food Facts products with Nutriscore and Ecoscore
+- Products matched with high confidence (>0.95)
+
+### Manual Review Required
+- OCR products (confidence-based)
+- Citizen contributions
+- Products without sufficient metadata
+- Fuzzy matches below auto-approval threshold
+
+### Workflow
+
+1. Product enters queue with `PENDING_REVIEW` status
+2. Moderator reviews product details
+3. Actions:
+   - **Approve**: Status → `VALIDATED`
+   - **Reject**: Status → `REJECTED`
+   - **Merge**: Status → `MERGED`, prices moved to target
+
+## Environment Variables
+
+```env
+# Database
+DATABASE_URL="postgresql://user:password@localhost:5432/akiprisaye"
+
+# Scheduler
+ENABLE_SCHEDULER=true  # Enable/disable scheduler (default: production only)
+
+# Node Environment
+NODE_ENV=production
+```
+
+## Development
+
+### Install Dependencies
+
+```bash
+cd backend
+npm install
+```
+
+### Generate Prisma Client
+
+```bash
+npm run prisma:generate
+```
+
+### Run Migrations
+
+```bash
+npm run prisma:migrate
+```
+
+### Start Development Server
+
+```bash
+npm run dev
+```
+
+The scheduler is **disabled** by default in development. To enable:
+
+```bash
+ENABLE_SCHEDULER=true npm run dev
+```
+
+### Manual Testing
+
+```bash
+# Trigger a sync manually
+curl -X POST http://localhost:3001/api/sync/openfoodfacts/trigger
+
+# Check sync status
+curl http://localhost:3001/api/sync/status
+
+# View validation queue
+curl http://localhost:3001/api/validation/queue
+```
+
+## Production Deployment
+
+1. **Set environment variables**
+   ```bash
+   DATABASE_URL=<production-db-url>
+   NODE_ENV=production
+   ```
+
+2. **Run migrations**
+   ```bash
+   npm run prisma:migrate:deploy
+   ```
+
+3. **Start server**
+   ```bash
+   npm run start
+   ```
+
+The scheduler starts automatically in production mode.
+
+## Monitoring
+
+### Sync Logs
+
+All synchronization runs are logged in the `SyncLog` table:
 
 ```typescript
 {
-  productsSyncInterval: '0 2 * * *',    // 2h du matin
-  pricesSyncInterval: '0 */6 * * *',    // Toutes les 6h
-  maxProductsPerSync: 1000,
-  maxPricesPerSync: 5000,
-  maxRetries: 3,
-  retryDelayMs: 5000,
-  notifyOnError: true,
-  notifyOnComplete: false,
+  source: 'OPENFOODFACTS',
+  startedAt: '2024-01-01T03:00:00Z',
+  completedAt: '2024-01-01T03:15:00Z',
+  status: 'completed',
+  itemsProcessed: 1500,
+  itemsCreated: 45,
+  itemsUpdated: 12,
+  itemsSkipped: 1443,
+  errors: []
 }
 ```
 
-## 🔒 Rate Limiting
+### Validation Statistics
 
-Les services respectent les rate limits des API externes :
+Track validation queue metrics:
 
-- **OpenFoodFacts**: 600ms entre chaque requête (≈100 req/min max)
-  - Note: Ce délai inclut une marge de sécurité pour la latence réseau
-  - En production, monitorer et ajuster si nécessaire selon charge
-- **OpenPrices**: 500ms entre chaque requête
-  - Note: L'API OpenPrices n'a pas de limite documentée stricte
-  - Ce délai conservateur assure une utilisation respectueuse
+```bash
+GET /api/validation/stats
+```
 
-## 🎯 Territoires DOM-TOM
-
-Les territoires supportés :
-
-- Guadeloupe
-- Martinique
-- Guyane
-- Réunion
-- Mayotte
-
-## 📊 Types de données
-
-### SyncResult
-
-```typescript
-interface SyncResult {
-  success: boolean;
-  itemsProcessed: number;
-  itemsAdded: number;
-  itemsUpdated: number;
-  itemsSkipped: number;
-  errors: string[];
-  startTime: Date;
-  endTime: Date;
-  duration: number; // ms
+Response:
+```json
+{
+  "success": true,
+  "stats": {
+    "pending": 156,
+    "validated": 2341,
+    "rejected": 23,
+    "merged": 45,
+    "bySource": {
+      "OCR": 89,
+      "OPENFOODFACTS": 34,
+      "OPENPRICES": 33
+    }
+  }
 }
 ```
 
-### Product
+## Best Practices
 
-```typescript
-interface Product {
-  id?: string;
-  ean: string;
-  nom: string;
-  marque?: string;
-  categorie?: string;
-  contenance?: number;
-  unite?: string;
-  imageUrl?: string;
-  metadata?: {
-    nutriscore?: string;
-    ecoscore?: string;
-    source?: string;
-    lastSync?: string;
-    manuallyEdited?: boolean;
-  };
-}
-```
+### 1. Regular Monitoring
+- Check sync logs daily
+- Monitor validation queue size
+- Review rejected products periodically
 
-## 🔧 Développement futur
+### 2. Rate Limiting
+- Respect external API rate limits
+- Adjust delays if receiving 429 errors
+- Monitor API response times
 
-### Backend (à implémenter)
+### 3. Data Quality
+- Review fuzzy matches manually
+- Keep deduplication threshold high (0.85+)
+- Validate OCR products thoroughly
 
-Pour une version production complète, il est recommandé d'ajouter :
+### 4. Performance
+- Use shared Prisma client (singleton)
+- Batch operations where possible
+- Index frequently queried fields
 
-1. **Backend Node.js avec cron jobs**
-   ```
-   backend/src/jobs/
-   ├── syncOpenFoodFactsJob.ts
-   ├── syncOpenPricesJob.ts
-   └── scheduler.ts
-   ```
+## Troubleshooting
 
-2. **Base de données**
-   - Table `products` pour les produits
-   - Table `prices` pour les prix
-   - Table `sync_logs` pour l'historique
+### Sync Failures
 
-3. **API endpoints**
-   ```
-   GET  /api/sync/jobs          - Liste des jobs
-   POST /api/sync/jobs/:id/run  - Exécuter un job
-   GET  /api/sync/logs          - Historique
-   GET  /api/sync/stats         - Statistiques
-   ```
+**Problem**: Sync job fails repeatedly
 
-4. **Notifications**
-   - Email en cas d'erreur
-   - Webhook Slack
-   - Dashboard temps réel
+**Solutions**:
+1. Check network connectivity to external APIs
+2. Verify API URLs are correct
+3. Review rate limiting settings
+4. Check database connection
 
-## 📝 Notes importantes
+### Duplicate Products
 
-1. **localStorage**: Les données sont actuellement stockées dans le localStorage du navigateur. En production, utiliser une vraie base de données.
+**Problem**: Same product appearing multiple times
 
-2. **Scheduler frontend**: Le scheduler actuel est côté client (frontend). Pour une vraie planification automatique, implémenter un scheduler backend avec node-cron ou Cloudflare Workers Cron Triggers.
+**Solutions**:
+1. Run cleanup duplicates job manually
+2. Adjust fuzzy matching threshold
+3. Review normalization rules
+4. Check EAN data quality
 
-3. **Sécurité**: Ajouter une vraie vérification de rôle admin pour accéder au dashboard.
+### High Validation Queue
 
-4. **Tests**: Ajouter des tests unitaires pour chaque service.
+**Problem**: Too many products pending review
 
-## 🧪 Tests manuels
+**Solutions**:
+1. Increase auto-validation threshold
+2. Add more moderators
+3. Improve source data quality
+4. Reduce sync frequency
 
-Pour tester le système :
+## Security Considerations
 
-1. Accéder à `/admin/sync`
-2. Onglet "Vue d'ensemble" > Synchronisation manuelle
-3. Entrer un EAN (ex: `3017620422003` pour Nutella)
-4. Cliquer sur "Sync Produit" ou "Sync Prix"
-5. Vérifier les résultats et l'historique
+1. **API Keys**: Store external API keys in environment variables
+2. **Rate Limiting**: Prevent abuse of sync endpoints
+3. **Input Validation**: Sanitize all external data
+4. **Authentication**: Protect admin endpoints (validation, sync triggers)
+5. **SQL Injection**: Use Prisma parameterized queries
 
-## 🤝 Contribution
+## Future Enhancements
 
-Pour contribuer au système de synchronisation :
+- [ ] OCR service integration for receipt scanning
+- [ ] Machine learning for auto-validation confidence
+- [ ] Bulk import/export functionality
+- [ ] Admin dashboard for monitoring
+- [ ] Webhook notifications for sync events
+- [ ] Advanced fuzzy matching (Jaro-Winkler, etc.)
+- [ ] Multi-language product name matching
+- [ ] Image comparison for duplicate detection
 
-1. Suivre la structure existante
-2. Ajouter des tests pour les nouvelles fonctionnalités
-3. Respecter les rate limits des API externes
-4. Documenter les changements
+## License
 
-## 📚 Ressources
+This system uses data from:
+- [Open Food Facts](https://openfoodfacts.org) - ODbL license
+- [Open Prices](https://prices.openfoodfacts.org) - ODbL license
 
-- [OpenFoodFacts API](https://world.openfoodfacts.org/data)
-- [OpenPrices API](https://prices.openfoodfacts.org/api/docs)
-- [Cron expressions](https://crontab.guru/)
+## Support
+
+For issues or questions:
+- GitHub Issues: https://github.com/teetee971/akiprisaye-web/issues
+- Email: contact@akiprisaye.com
