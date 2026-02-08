@@ -29,6 +29,7 @@ const pricingPlans = [
     note: '📌 Objectif : informer, comprendre, comparer. Cette formule restera toujours gratuite.',
     color: 'from-green-600 to-green-700',
     badge: null,
+    isPro: false,
   },
   {
     id: 'citoyen_plus',
@@ -54,6 +55,7 @@ const pricingPlans = [
     note: '📌 Objectif : gagner du temps sans perdre en neutralité. Aucune recommandation, aucun conseil d\'achat.',
     color: 'from-blue-600 to-blue-700',
     badge: '⭐ Populaire',
+    isPro: false,
   },
   {
     id: 'analyse',
@@ -81,6 +83,91 @@ const pricingPlans = [
     warning: '⚠️ Toujours : pas de notation de territoire, pas de jugement, pas de prédiction, pas d\'affiliation',
     color: 'from-purple-600 to-purple-700',
     badge: null,
+    isPro: false,
+  },
+  {
+    id: 'business_pro',
+    name: 'BUSINESS PRO',
+    icon: '💼',
+    price: '299',
+    period: '€ / mois',
+    subtitle: 'Enseignes & Grandes entreprises',
+    annualPrice: '2 990 € / an',
+    description: 'ou 2 990 € / an',
+    features: [
+      'Tout Analyse',
+      'API REST complète (50 000 req/jour)',
+      'Webhooks temps réel',
+      'Analytics avancés & prévisions',
+      'Suivi concurrence',
+      'Rapports marché détaillés',
+      'Profil entreprise visible',
+      'Badge "Pro" sur la plateforme',
+      'Support prioritaire (réponse 2h)',
+      '10 utilisateurs inclus',
+    ],
+    cta: 'Contacter l\'équipe',
+    ctaLink: '/contact?plan=business_pro',
+    popular: false,
+    note: '📌 Idéal pour les enseignes souhaitant optimiser leur positionnement prix.',
+    color: 'from-amber-600 to-amber-700',
+    badge: '💼 Pro',
+    isPro: true,
+  },
+  {
+    id: 'institutional',
+    name: 'INSTITUTIONNEL',
+    icon: '🏛️',
+    price: '1 500',
+    period: '€ / mois',
+    subtitle: 'Collectivités & Organismes publics',
+    annualPrice: '15 000 € / an',
+    description: 'ou 15 000 € / an',
+    features: [
+      'Tout Business Pro',
+      'API illimitée (500 000 req/jour)',
+      'White-label disponible',
+      'Rapports sur mesure',
+      'Utilisateurs illimités',
+      '20 clés API',
+      'Support dédié (réponse 1h)',
+      'Rétention données illimitée',
+      'Badge "Institutionnel"',
+      'Formation incluse',
+    ],
+    cta: 'Demander un devis',
+    ctaLink: '/contact-collectivites?plan=institutional',
+    popular: false,
+    note: '📌 Solution complète pour les acteurs publics du suivi des prix.',
+    color: 'from-indigo-600 to-indigo-700',
+    badge: '🏛️ Institutionnel',
+    isPro: true,
+  },
+  {
+    id: 'research',
+    name: 'RECHERCHE',
+    icon: '🎓',
+    price: 'Sur devis',
+    period: '',
+    subtitle: 'Universités & Recherche académique',
+    description: 'Tarif préférentiel',
+    features: [
+      'Accès données complet',
+      'API (100 000 req/jour)',
+      'Exports illimités (CSV, JSON, XML)',
+      'Historique complet toutes périodes',
+      '5 utilisateurs',
+      '3 clés API',
+      'Badge "Recherche"',
+      'Support email prioritaire',
+    ],
+    cta: 'Demander un accès',
+    ctaLink: '/contact?plan=research',
+    popular: false,
+    note: '📌 Accès privilégié pour la recherche académique et les publications.',
+    color: 'from-teal-600 to-teal-700',
+    badge: '🎓 Recherche',
+    isPro: true,
   },
 ];
 
@@ -95,6 +182,10 @@ export default function Pricing() {
   const navigate = useNavigate();
   const { user } = useAuth();
 
+  // Filter citizen and professional plans
+  const citizenPlans = pricingPlans.filter(plan => !plan.isPro);
+  const proPlans = pricingPlans.filter(plan => plan.isPro);
+
   const handleSelectPlan = (planId: string) => {
     const target = `/inscription?plan=${planId}`;
     if (!user) {
@@ -102,6 +193,12 @@ export default function Pricing() {
       return;
     }
     navigate(target);
+  };
+
+  const handleContactPlan = (ctaLink: string) => {
+    if (ctaLink) {
+      navigate(ctaLink);
+    }
   };
 
   return (
@@ -164,7 +261,7 @@ export default function Pricing() {
       {/* Pricing Cards */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
         <div className="grid md:grid-cols-3 gap-6 mb-12">
-          {pricingPlans.map((plan) => (
+          {citizenPlans.map((plan) => (
             <div
               key={plan.id}
               className={`relative bg-white dark:bg-slate-900 rounded-2xl shadow-lg border-2 ${
@@ -287,6 +384,113 @@ export default function Pricing() {
               </div>
             ))}
           </div>
+        </div>
+      </div>
+
+      {/* Separator */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-slate-300 dark:border-slate-600"></div>
+          </div>
+          <div className="relative flex justify-center">
+            <span className="px-4 bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 text-sm">
+              Offres sur mesure
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Professional Offers Section */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">
+            🏢 Offres Professionnelles
+          </h2>
+          <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+            Solutions sur mesure pour les entreprises, collectivités et institutions
+          </p>
+        </div>
+        
+        <div className="grid md:grid-cols-3 gap-6 mb-12">
+          {proPlans.map((plan) => (
+            <div
+              key={plan.id}
+              className="relative bg-slate-800/50 dark:bg-slate-800/80 rounded-2xl shadow-lg border-2 border-slate-700 dark:border-slate-600 p-6 flex flex-col transition-all hover:shadow-xl hover:border-slate-600 dark:hover:border-slate-500"
+            >
+              {/* Badge */}
+              {plan.badge && (
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                  <span className={`px-4 py-1 bg-gradient-to-r ${plan.color} text-white text-sm font-bold rounded-full shadow-lg`}>
+                    {plan.badge}
+                  </span>
+                </div>
+              )}
+
+              {/* Icon & Title */}
+              <div className="mb-4">
+                <div className="text-4xl mb-3">{plan.icon}</div>
+                <h3 className="text-2xl font-bold text-white mb-1">
+                  {plan.name}
+                </h3>
+                <p className="text-sm font-semibold text-slate-300 mb-1">
+                  {plan.subtitle}
+                </p>
+                <p className="text-sm text-slate-400">
+                  {plan.description}
+                </p>
+              </div>
+
+              {/* Price */}
+              <div className="mb-6">
+                <div className="flex items-baseline gap-1">
+                  <span className="text-4xl font-bold text-white">
+                    {plan.price}
+                  </span>
+                  <span className="text-lg text-slate-400">
+                    {plan.period}
+                  </span>
+                </div>
+                {plan.annualPrice && (
+                  <p className="text-sm text-slate-400 mt-1">
+                    {plan.annualPrice}
+                  </p>
+                )}
+              </div>
+
+              {/* Features */}
+              <div className="flex-1 mb-6">
+                <ul className="space-y-3">
+                  {plan.features.map((feature, idx) => (
+                    <li key={idx} className="flex items-start gap-2">
+                      <Check className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                      <span className="text-sm text-slate-300">
+                        {feature}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Note */}
+              {plan.note && (
+                <div className="mb-4 p-3 bg-slate-700/50 border border-slate-600 rounded-lg">
+                  <p className="text-xs text-slate-300">
+                    {plan.note}
+                  </p>
+                </div>
+              )}
+
+              {/* CTA Button */}
+              <button
+                type="button"
+                onClick={() => handleContactPlan(plan.ctaLink)}
+                className={`w-full py-3 px-6 text-center font-bold rounded-xl transition-all bg-gradient-to-r ${plan.color} hover:opacity-90 text-white shadow-lg hover:shadow-xl`}
+              >
+                {plan.cta}
+              </button>
+            </div>
+          ))}
         </div>
       </div>
 

@@ -1,0 +1,28 @@
+{
+  "level": {
+    "current": "Nivo {{level}}",
+    "progress": "Pwogresyon",
+    "nextLevel": "Pwochèn nivo"
+  },
+  "points": {
+    "total": "{{count}} pwen",
+    "total_plural": "{{count}} pwen",
+    "earned": "Pwen ganyé"
+  },
+  "badges": {
+    "title": "Bad",
+    "earned": "Bad débloké",
+    "locked": "Bad fèmé"
+  },
+  "challenges": {
+    "title": "Défi",
+    "daily": "Défi jou",
+    "weekly": "Défi simèn",
+    "completed": "Fini"
+  },
+  "leaderboard": {
+    "title": "Klasman",
+    "rank": "Ran",
+    "myRank": "Klasman an-mwen"
+  }
+}

@@ -23,6 +23,7 @@ L.Icon.Default.mergeOptions({
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
 import { OnboardingProvider } from './context/OnboardingContext';
+import { LanguageProvider } from './context/LanguageProvider';
 import { PerformanceMonitor } from './components/PerformanceMonitor';
 import OnboardingTour from './components/OnboardingTour';
 import OnboardingAutoStart from './components/OnboardingAutoStart';
@@ -39,6 +40,17 @@ const Carte = React.lazy(() => import('./pages/Carte'));
 const MapPage = React.lazy(() => import('./pages/MapPage'));
 const AdminDashboard = React.lazy(() => import('./pages/AdminDashboard'));
 const Comparateur = React.lazy(() => import('./pages/Comparateur'));
+
+// New Admin pages
+const AdminLayout = React.lazy(() => import('./pages/admin/AdminLayout'));
+const AdminDashboardNew = React.lazy(() => import('./pages/admin/AdminDashboard'));
+const StoreList = React.lazy(() => import('./pages/admin/stores/StoreList'));
+const StoreForm = React.lazy(() => import('./pages/admin/stores/StoreForm'));
+const StoreDetail = React.lazy(() => import('./pages/admin/stores/StoreDetail'));
+const ProductList = React.lazy(() => import('./pages/admin/products/ProductList').then(m => ({ default: m.ProductList })));
+const ProductForm = React.lazy(() => import('./pages/admin/products/ProductForm').then(m => ({ default: m.ProductForm })));
+const ProductDetail = React.lazy(() => import('./pages/admin/products/ProductDetail').then(m => ({ default: m.ProductDetail })));
+const ImportPage = React.lazy(() => import('./pages/admin/import/ImportPage'));
 const Observatoire = React.lazy(() => import('./pages/Observatoire'));
 const Methodologie = React.lazy(() => import('./pages/Methodologie'));
 const Faq = React.lazy(() => import('./pages/Faq'));
@@ -87,6 +99,9 @@ const ObservatoireTempsReel = React.lazy(() => import('./pages/ObservatoireTemps
 const Transparence = React.lazy(() => import('./pages/Transparence'));
 const SignalerAbus = React.lazy(() => import('./pages/SignalerAbus'));
 
+// Admin Sync Dashboard
+const SyncDashboard = React.lazy(() => import('./pages/admin/sync/SyncDashboard'));
+
 /**
  * Root application render with HashRouter for Cloudflare Pages SPA
  * ErrorBoundary is intentionally placed at the highest level
@@ -101,10 +116,11 @@ if (!rootElement) {
   ReactDOM.createRoot(rootElement).render(
     <React.StrictMode>
       <ErrorBoundary>
-        <ThemeProvider>
-          <AuthProvider>
-            <OnboardingProvider>
-              <HashRouter>
+        <LanguageProvider>
+          <ThemeProvider>
+            <AuthProvider>
+              <OnboardingProvider>
+                <HashRouter>
                 <Suspense
                   fallback={
                     <div className="min-h-screen flex items-center justify-center">
@@ -115,6 +131,22 @@ if (!rootElement) {
                   }
                 >
                 <Routes>
+                  {/* Admin routes with dedicated layout */}
+                  <Route path="/admin" element={<AdminLayout />}>
+                    <Route index element={<AdminDashboardNew />} />
+                    <Route path="stores" element={<StoreList />} />
+                    <Route path="stores/new" element={<StoreForm />} />
+                    <Route path="stores/:id" element={<StoreDetail />} />
+                    <Route path="stores/:id/edit" element={<StoreForm />} />
+                    <Route path="products" element={<ProductList />} />
+                    <Route path="products/new" element={<ProductForm />} />
+                    <Route path="products/:id" element={<ProductDetail />} />
+                    <Route path="products/:id/edit" element={<ProductForm />} />
+                    <Route path="import" element={<ImportPage />} />
+                    <Route path="sync" element={<SyncDashboard />} />
+                  </Route>
+                  
+                  {/* Main site routes */}
                   <Route path="/" element={<Layout />}>
                     <Route index element={<Navigate to="/carte" replace />} />
                     <Route path="carte" element={<Carte />} />
@@ -178,6 +210,9 @@ if (!rootElement) {
                     <Route path="transparence" element={<Transparence />} />
                     <Route path="signaler-abus" element={<SignalerAbus />} />
                     
+                    {/* Admin routes */}
+                    <Route path="admin/sync" element={<SyncDashboard />} />
+                    
                     {/* Catch-all route */}
                     <Route path="*" element={<Navigate to="/carte" replace />} />
                   </Route>
@@ -191,6 +226,7 @@ if (!rootElement) {
           </OnboardingProvider>
         </AuthProvider>
       </ThemeProvider>
+      </LanguageProvider>
     </ErrorBoundary>
     </React.StrictMode>
   );

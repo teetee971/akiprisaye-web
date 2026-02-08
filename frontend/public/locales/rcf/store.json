@@ -1,0 +1,39 @@
+{
+  "details": {
+    "title": "Détay magazin",
+    "address": "Adrès",
+    "phone": "Téléfon",
+    "hours": "Lèr ouvèrti",
+    "services": "Sèrvis",
+    "directions": "Shmin"
+  },
+  "hours": {
+    "monday": "Lindi",
+    "tuesday": "Mardi",
+    "wednesday": "Mèrkrédi",
+    "thursday": "Zédi",
+    "friday": "Vandrdi",
+    "saturday": "Samdi",
+    "sunday": "Dimansh",
+    "holiday": "Zour fériyé",
+    "closed": "Fermé"
+  },
+  "priceIndex": {
+    "title": "Indis pri",
+    "cheap": "Pa sèr",
+    "average": "Moyin",
+    "expensive": "Sèr",
+    "basket": "Panyé moyin"
+  },
+  "reviews": {
+    "title": "Avi",
+    "count": "{{count}} avi",
+    "writeReview": "Ékri in avi",
+    "noReviews": "Nana poin avi pou alé"
+  },
+  "products": {
+    "title": "Pwodwi disponib",
+    "count": "{{count}} pwodwi",
+    "seeAll": "Vwar tout pwodwi"
+  }
+}

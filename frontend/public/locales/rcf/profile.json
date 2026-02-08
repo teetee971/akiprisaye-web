@@ -1,0 +1,20 @@
+{
+  "title": "Mon profil",
+  "edit": "Sanz profil",
+  "settings": {
+    "title": "Paramèt",
+    "language": "Lang",
+    "notifications": "Notifikasion",
+    "privacy": "Konfidansialité"
+  },
+  "favorites": {
+    "title": "Mon bann favori",
+    "stores": "Magazin favori",
+    "products": "Pwodwi favori"
+  },
+  "history": {
+    "title": "Listorik",
+    "searches": "Réshèrsh résan",
+    "scans": "Skan résan"
+  }
+}

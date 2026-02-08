@@ -1,0 +1,28 @@
+{
+  "level": {
+    "current": "Nivo {{level}}",
+    "progress": "Pwogresion",
+    "nextLevel": "Proshèn nivo"
+  },
+  "points": {
+    "total": "{{count}} pwin",
+    "total_plural": "{{count}} pwin",
+    "earned": "Pwin ganyé"
+  },
+  "badges": {
+    "title": "Bad",
+    "earned": "Bad débloké",
+    "locked": "Bad fèrmé"
+  },
+  "challenges": {
+    "title": "Défi",
+    "daily": "Défi zournalié",
+    "weekly": "Défi èbdomadèr",
+    "completed": "Fini"
+  },
+  "leaderboard": {
+    "title": "Klasman",
+    "rank": "Ran",
+    "myRank": "Mon klasman"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "title": "Rechercher un produit",
+  "placeholder": "Rechercher...",
+  "filters": {
+    "category": "Catégorie",
+    "price": "Prix",
+    "store": "Magasin",
+    "territory": "Territoire"
+  },
+  "results": {
+    "found": "{{count}} résultat trouvé",
+    "found_plural": "{{count}} résultats trouvés",
+    "noResults": "Aucun résultat trouvé",
+    "tryAgain": "Essayez avec d'autres mots-clés"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "title": "Avis",
+  "write": "Écrire un avis",
+  "rating": "Note",
+  "comment": "Commentaire",
+  "submit": "Publier",
+  "helpful": "Utile",
+  "report": "Signaler",
+  "sort": {
+    "recent": "Plus récents",
+    "helpful": "Plus utiles",
+    "rating": "Meilleures notes"
+  }
+}
