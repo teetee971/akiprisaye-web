@@ -1,0 +1,16 @@
+{
+  "title": "Chaché on pwodui",
+  "placeholder": "Chaché...",
+  "filters": {
+    "category": "Katégori",
+    "price": "Pri",
+    "store": "Magazen",
+    "territory": "Téritwa"
+  },
+  "results": {
+    "found": "{{count}} rézilta trouvé",
+    "found_plural": "{{count}} rézilta trouvé",
+    "noResults": "Pa ni rézilta",
+    "tryAgain": "Éséyé épi lot mo"
+  }
+}

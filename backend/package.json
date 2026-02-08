@@ -25,6 +25,7 @@
     "db:seed": "tsx src/database/seed.ts"
   },
   "dependencies": {
+    "@e965/xlsx": "^0.20.3",
     "@prisma/client": "^5.22.0",
     "@types/node-cron": "^3.0.11",
     "axios": "^1.13.4",

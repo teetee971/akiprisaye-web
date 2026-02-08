@@ -152,6 +152,8 @@ app.get('/', (_req: Request, res: Response) => {
       stores: '/api/stores', // Phase 7
       products: '/api/products', // Phase 7
       basket: '/api/basket', // Phase 8
+      sync: '/api/sync', // Product sync
+      validation: '/api/validation', // Product validation
     },
     legal: {
       rgpd: 'Conforme RGPD (EU) 2016/679',

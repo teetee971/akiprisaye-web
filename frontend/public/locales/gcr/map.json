@@ -1,0 +1,16 @@
+{
+  "title": "Kat magazen",
+  "filters": {
+    "all": "Tout magazen",
+    "open": "Ouvè konnyéla",
+    "favorites": "Favori an-mwen"
+  },
+  "legend": {
+    "cheap": "Pri ba",
+    "average": "Pri mwayèn",
+    "expensive": "Pri wo"
+  },
+  "nearby": "A {{distance}} km",
+  "getDirections": "Chimen",
+  "cluster": "{{count}} magazen"
+}

@@ -1,0 +1,10 @@
+{
+  "required": "Ce champ est requis",
+  "email": "Email invalide",
+  "phone": "Numéro de téléphone invalide",
+  "minLength": "Minimum {{min}} caractères",
+  "maxLength": "Maximum {{max}} caractères",
+  "numeric": "Doit être un nombre",
+  "positive": "Doit être positif",
+  "url": "URL invalide"
+}

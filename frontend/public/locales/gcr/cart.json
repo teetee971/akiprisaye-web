@@ -1,0 +1,11 @@
+{
+  "title": "Lis a kous an-mwen",
+  "empty": "Lis-la vid",
+  "addItem": "Mété on bagay",
+  "total": "Total",
+  "items": "{{count}} bagay",
+  "items_plural": "{{count}} bagay",
+  "clearAll": "Éfasé tout",
+  "optimize": "Optimizé lis an-mwen",
+  "share": "Pataché lis an-mwen"
+}

@@ -1,0 +1,39 @@
+{
+  "details": {
+    "title": "Détay magazen-la",
+    "address": "Adrès",
+    "phone": "Téléfòn",
+    "hours": "Lè ouvèti",
+    "services": "Sèvis",
+    "directions": "Chimen"
+  },
+  "hours": {
+    "monday": "Lendi",
+    "tuesday": "Madi",
+    "wednesday": "Mèkredi",
+    "thursday": "Jédi",
+    "friday": "Vandrédi",
+    "saturday": "Samdi",
+    "sunday": "Dimanch",
+    "holiday": "Jou fériyé",
+    "closed": "Fèmé"
+  },
+  "priceIndex": {
+    "title": "Endis pri",
+    "cheap": "Pa chè",
+    "average": "Mwayèn",
+    "expensive": "Chè",
+    "basket": "Panyen mwayèn"
+  },
+  "reviews": {
+    "title": "Avi",
+    "count": "{{count}} avi",
+    "writeReview": "Ékri on avi",
+    "noReviews": "Pa ni avi pou konnyéla"
+  },
+  "products": {
+    "title": "Pwodui disponib",
+    "count": "{{count}} pwodui",
+    "seeAll": "Wè tout pwodui"
+  }
+}

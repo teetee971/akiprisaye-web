@@ -1,0 +1,10 @@
+{
+  "required": "Chan-la oblijatwa",
+  "email": "Imèl envalid",
+  "phone": "Niméwo téléfòn envalid",
+  "minLength": "Minimum {{min}} karaktè",
+  "maxLength": "Maximum {{max}} karaktè",
+  "numeric": "Divèt sa on nonm",
+  "positive": "Divèt sa pozitif",
+  "url": "URL envalid"
+}

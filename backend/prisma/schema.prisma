@@ -57,42 +57,47 @@ enum ProductStatus {
 /// MODELS
 /// ===============================
 model User {
-  id                String        @id @default(cuid())
-  email             String        @unique
-  name              String?
-  passwordHash      String
-  role              UserRole      @default(USER)
-  isActive          Boolean       @default(true)
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String?
+  passwordHash String
+  role         UserRole @default(USER)
+  isActive     Boolean  @default(true)
 
-  subscription      Subscription?
+  subscription           Subscription?
+  priceAlerts            PriceAlert[]
+  notifications          Notification[]
+  pushSubscriptions      PushSubscription[]
+  notificationPreference NotificationPreference?
+  gamification           UserGamification?
 
-  createdAt         DateTime      @default(now())
-  updatedAt         DateTime      @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Subscription {
-  id                String             @id @default(cuid())
-  userId            String             @unique
-  plan              SubscriptionPlan
-  status            SubscriptionStatus @default(ACTIVE)
-  startDate         DateTime           @default(now())
-  endDate           DateTime?
-  externalRef       String?            /// (option Stripe, extensible plus tard)
-  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id          String             @id @default(cuid())
+  userId      String             @unique
+  plan        SubscriptionPlan
+  status      SubscriptionStatus @default(ACTIVE)
+  startDate   DateTime           @default(now())
+  endDate     DateTime?
+  externalRef String? /// (option Stripe, extensible plus tard)
+  user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Price {
-  id                String           @id @default(cuid())
-  plan              SubscriptionPlan
-  interval          PriceInterval
-  amountCents       Int              /// Stocké en centimes (990 = 9.90€)
-  currency          String           @default("EUR")
-  isActive          Boolean          @default(true)
-  createdAt         DateTime         @default(now())
-  updatedAt         DateTime         @updatedAt
+  id          String           @id @default(cuid())
+  plan        SubscriptionPlan
+  interval    PriceInterval
+  amountCents Int /// Stocké en centimes (990 = 9.90€)
+  currency    String           @default("EUR")
+  isActive    Boolean          @default(true)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
 
   @@unique([plan, interval])
 }

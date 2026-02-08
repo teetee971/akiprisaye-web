@@ -1,0 +1,89 @@
+{
+  "app": {
+    "name": "AKiPriSaYe",
+    "tagline": "Konpar bann pri dann DOM-TOM"
+  },
+  "nav": {
+    "home": "Lakaz",
+    "search": "Rod",
+    "scan": "Skané",
+    "cart": "Mon list",
+    "profile": "Profil",
+    "map": "Kart",
+    "stores": "Magazin",
+    "alerts": "Alèrt",
+    "settings": "Paramèt"
+  },
+  "actions": {
+    "add": "Azout",
+    "edit": "Sanz",
+    "delete": "Efas",
+    "save": "Anrezistre",
+    "cancel": "Anile",
+    "confirm": "Konfirme",
+    "close": "Ferme",
+    "back": "Artourne",
+    "next": "Swivan",
+    "previous": "Avan",
+    "search": "Rod",
+    "filter": "Filtre",
+    "sort": "Tri",
+    "share": "Partaz",
+    "refresh": "Rafreshi",
+    "loadMore": "Sarz plis",
+    "seeAll": "Vwar tout",
+    "seeDetails": "Vwar détay"
+  },
+  "auth": {
+    "login": "Konèkté",
+    "logout": "Dékonektion",
+    "register": "Inskri aou",
+    "forgotPassword": "Ou la blouk out modpas ?",
+    "myAccount": "Mon kont"
+  },
+  "status": {
+    "open": "Ouver",
+    "closed": "Fermé",
+    "loading": "I sarz...",
+    "error": "Érèr",
+    "success": "Lé bon",
+    "empty": "Nana poin rézilta",
+    "offline": "San internèt",
+    "online": "An lign"
+  },
+  "time": {
+    "now": "Aléla",
+    "today": "Zordi",
+    "yesterday": "Yèr",
+    "tomorrow": "Domin",
+    "thisWeek": "Sèminn la",
+    "lastWeek": "Sèminn passé",
+    "closesAt": "I ferm a {{time}}",
+    "opensAt": "I ouv a {{time}}"
+  },
+  "units": {
+    "km": "km",
+    "m": "m",
+    "kg": "kg",
+    "g": "g",
+    "l": "L",
+    "ml": "mL",
+    "unit": "inité",
+    "units": "inité"
+  },
+  "price": {
+    "from": "Dépi",
+    "currency": "€",
+    "perKg": "€/kg",
+    "perL": "€/L",
+    "perUnit": "€/inité",
+    "cheapest": "Moin sèr",
+    "mostExpensive": "Pli sèr",
+    "average": "Pri moyin",
+    "savings": "Lékonomi"
+  },
+  "language": {
+    "select": "Swazi out lang",
+    "current": "Lang aktièl"
+  }
+}
