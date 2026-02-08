@@ -40,6 +40,34 @@ window.onerror = function(message, source, lineno, colno, error) {
   return true;
 };
 
+// Global timeout - if the app doesn't load in 15 seconds, show an error
+const globalLoadTimeout = setTimeout(() => {
+  const fallback = document.getElementById('loading-fallback');
+  // Only show error if fallback is still visible (app hasn't loaded)
+  if (fallback && fallback.style.display !== 'none') {
+    console.error('⏱️ Global timeout: App failed to load in 15 seconds');
+    fallback.innerHTML = `
+      <img src="/logo-akiprisaye.svg" alt="A KI PRI SA YÉ" style="height: 64px; margin-bottom: 24px;" />
+      <h1 style="font-size: 1.5rem; margin-bottom: 8px;">A KI PRI SA YÉ</h1>
+      <p style="color: #f87171; margin-bottom: 8px;">Le chargement prend trop de temps</p>
+      <p style="color: #94a3b8; font-size: 0.875rem; margin-bottom: 16px;">
+        L'application ne répond pas. Cela peut être dû à une connexion lente ou à un problème de configuration.
+      </p>
+      <button onclick="location.reload()" style="padding: 12px 24px; background: #3b82f6; color: white; border: none; border-radius: 8px; cursor: pointer; margin-bottom: 12px; display: block; width: 200px; margin-left: auto; margin-right: auto;">
+        Réessayer
+      </button>
+      <p style="color: #64748b; font-size: 0.75rem; margin-top: 16px;">
+        Si le problème persiste, essayez de vider le cache de votre navigateur.
+      </p>
+    `;
+  }
+}, 15000);
+
+// Clear the timeout if the app loads successfully
+window.addEventListener('load', () => {
+  clearTimeout(globalLoadTimeout);
+});
+
 /**
  * Root application render with HashRouter for Cloudflare Pages SPA
  * ErrorBoundary is intentionally placed at the highest level
@@ -51,9 +79,25 @@ const rootElement = document.getElementById('root');
 if (!rootElement) {
   console.error('❌ Root element #root not found');
 } else {
+  console.log('✅ main.jsx: Starting React render');
+  
+  // Remove the HTML loading fallback once React starts rendering
+  const loadingFallback = document.getElementById('loading-fallback');
+  if (loadingFallback) {
+    // Keep it visible briefly to prevent flash, then let React take over
+    setTimeout(() => {
+      if (loadingFallback && loadingFallback.parentNode) {
+        loadingFallback.style.display = 'none';
+        console.log('✅ main.jsx: HTML loading fallback hidden');
+      }
+    }, 100);
+  }
+  
   ReactDOM.createRoot(rootElement).render(
     <React.StrictMode>
       <App />
     </React.StrictMode>
   );
+  
+  console.log('✅ main.jsx: React render initiated');
 }
