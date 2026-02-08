@@ -1,6 +1,7 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useState, useEffect } from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 
+// Import Layout synchronously to prevent loading block
 import Layout from './components/Layout';
 import ErrorBoundary from './components/ErrorBoundary';
 import { ThemeProvider } from './context/ThemeContext';
@@ -84,9 +85,38 @@ const SyncDashboard = React.lazy(() => import('./pages/admin/sync/SyncDashboard'
 const I18nTest = React.lazy(() => import('./pages/I18nTest'));
 
 function LoadingFallback() {
+  const [showTimeout, setShowTimeout] = useState(false);
+  
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowTimeout(true);
+      console.error('⚠️ Application timeout - Loading blocked for 10+ seconds');
+    }, 10000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (showTimeout) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-900 text-white p-4">
+        <img src="/logo-akiprisaye.svg" alt="Logo" className="h-16 mb-4" />
+        <h1 className="text-xl font-bold mb-2">Chargement bloqué</h1>
+        <p className="text-slate-400 mb-4">L'application met trop de temps à charger.</p>
+        <button 
+          onClick={() => window.location.reload()} 
+          className="px-6 py-3 bg-blue-600 rounded-lg hover:bg-blue-700"
+        >
+          Recharger la page
+        </button>
+        <p className="text-xs text-slate-500 mt-4">
+          Si le problème persiste, videz le cache du navigateur.
+        </p>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="animate-pulse text-lg">
+    <div className="min-h-screen flex items-center justify-center bg-slate-900">
+      <div className="animate-pulse text-lg text-white">
         Chargement…
       </div>
     </div>
@@ -94,6 +124,24 @@ function LoadingFallback() {
 }
 
 export default function App() {
+  const [providerError, setProviderError] = useState<Error | null>(null);
+
+  if (providerError) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-900 text-white p-4">
+        <img src="/logo-akiprisaye.svg" alt="Logo" className="h-16 mb-4" />
+        <h1 className="text-xl font-bold mb-2">Erreur d'initialisation</h1>
+        <p className="text-red-400 mb-4">{providerError.message}</p>
+        <button 
+          onClick={() => window.location.reload()} 
+          className="px-6 py-3 bg-blue-600 rounded-lg hover:bg-blue-700"
+        >
+          Recharger
+        </button>
+      </div>
+    );
+  }
+
   return (
     <ErrorBoundary>
       <LanguageProvider>
