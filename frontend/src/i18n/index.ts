@@ -93,7 +93,7 @@ i18n
     },
     
     react: {
-      useSuspense: true,
+      useSuspense: false,
       bindI18n: 'languageChanged',
       bindI18nStore: '',
       transEmptyNodeValue: '',

@@ -3,7 +3,7 @@
  * Manages language state and provides i18n context
  */
 
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState, Suspense } from 'react';
 import { I18nextProvider } from 'react-i18next';
 import i18n from '../i18n';
 import { useLanguage } from '../hooks/useLanguage';
@@ -14,12 +14,24 @@ interface LanguageProviderProps {
   children: ReactNode;
 }
 
+function LoadingFallback() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-slate-900">
+      <div className="text-white text-lg animate-pulse">
+        Chargement des traductions...
+      </div>
+    </div>
+  );
+}
+
 export function LanguageProvider({ children }: LanguageProviderProps) {
   return (
     <I18nextProvider i18n={i18n}>
-      <LanguageInitializer>
-        {children}
-      </LanguageInitializer>
+      <Suspense fallback={<LoadingFallback />}>
+        <LanguageInitializer>
+          {children}
+        </LanguageInitializer>
+      </Suspense>
     </I18nextProvider>
   );
 }
