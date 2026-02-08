@@ -38,6 +38,17 @@ const Home = React.lazy(() => import('./pages/Home'));
 const Carte = React.lazy(() => import('./pages/Carte'));
 const AdminDashboard = React.lazy(() => import('./pages/AdminDashboard'));
 const Comparateur = React.lazy(() => import('./pages/Comparateur'));
+
+// New Admin pages
+const AdminLayout = React.lazy(() => import('./pages/admin/AdminLayout'));
+const AdminDashboardNew = React.lazy(() => import('./pages/admin/AdminDashboard'));
+const StoreList = React.lazy(() => import('./pages/admin/stores/StoreList'));
+const StoreForm = React.lazy(() => import('./pages/admin/stores/StoreForm'));
+const StoreDetail = React.lazy(() => import('./pages/admin/stores/StoreDetail'));
+const ProductList = React.lazy(() => import('./pages/admin/products/ProductList').then(m => ({ default: m.ProductList })));
+const ProductForm = React.lazy(() => import('./pages/admin/products/ProductForm').then(m => ({ default: m.ProductForm })));
+const ProductDetail = React.lazy(() => import('./pages/admin/products/ProductDetail').then(m => ({ default: m.ProductDetail })));
+const ImportPage = React.lazy(() => import('./pages/admin/import/ImportPage'));
 const Observatoire = React.lazy(() => import('./pages/Observatoire'));
 const Methodologie = React.lazy(() => import('./pages/Methodologie'));
 const Faq = React.lazy(() => import('./pages/Faq'));
@@ -114,6 +125,21 @@ if (!rootElement) {
                   }
                 >
                 <Routes>
+                  {/* Admin routes with dedicated layout */}
+                  <Route path="/admin" element={<AdminLayout />}>
+                    <Route index element={<AdminDashboardNew />} />
+                    <Route path="stores" element={<StoreList />} />
+                    <Route path="stores/new" element={<StoreForm />} />
+                    <Route path="stores/:id" element={<StoreDetail />} />
+                    <Route path="stores/:id/edit" element={<StoreForm />} />
+                    <Route path="products" element={<ProductList />} />
+                    <Route path="products/new" element={<ProductForm />} />
+                    <Route path="products/:id" element={<ProductDetail />} />
+                    <Route path="products/:id/edit" element={<ProductForm />} />
+                    <Route path="import" element={<ImportPage />} />
+                  </Route>
+                  
+                  {/* Main site routes */}
                   <Route path="/" element={<Layout />}>
                     <Route index element={<Navigate to="/carte" replace />} />
                     <Route path="carte" element={<Carte />} />
