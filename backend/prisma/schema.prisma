@@ -397,3 +397,80 @@ model UserChallenge {
   @@index([challengeId])
   @@index([isCompleted])
 }
+
+/// ===============================
+/// INFLATION DASHBOARD MODELS
+/// ===============================
+
+/// Price index by territory and month (base 100 = January 2024)
+model PriceIndex {
+  id              String   @id @default(cuid())
+  territory       String   /// Territory code (GP, MQ, GF, RE, YT)
+  year            Int
+  month           Int
+  indexValue      Float    /// Price index (base 100)
+  inflationRate   Float    /// Year-over-year inflation rate (%)
+  monthlyChange   Float    /// Month-over-month change (%)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@unique([territory, year, month])
+  @@index([territory])
+  @@index([year, month])
+}
+
+/// Category-level price indices
+model CategoryIndex {
+  id              String   @id @default(cuid())
+  territory       String   /// Territory code (GP, MQ, GF, RE, YT)
+  category        String   /// Category: dairy, meat, bread, grocery, fruits_vegetables, beverages, hygiene
+  year            Int
+  month           Int
+  indexValue      Float    /// Category price index
+  weight          Float    /// Category weight in reference basket (%)
+  contribution    Float    /// Contribution to overall inflation (%)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@unique([territory, category, year, month])
+  @@index([territory, year, month])
+  @@index([category])
+}
+
+/// Monthly inflation reports with metadata
+model InflationReport {
+  id              String   @id @default(cuid())
+  territory       String   /// Territory code (GP, MQ, GF, RE, YT)
+  year            Int
+  month           Int
+  
+  reportData      Json     /// Complete report data (metrics, trends, top movers)
+  pressKitUrl     String?  /// URL to press kit PDF/XLSX
+  
+  generatedAt     DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@unique([territory, year, month])
+  @@index([territory])
+  @@index([year, month])
+  @@index([generatedAt])
+}
+
+/// Metropolitan France reference prices for comparison
+model MetroReferencePrice {
+  id              String   @id @default(cuid())
+  productCode     String   /// Product code from reference basket
+  year            Int
+  month           Int
+  averagePrice    Float    /// Average price in France métropolitaine (EUR)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@unique([productCode, year, month])
+  @@index([productCode])
+  @@index([year, month])
+}

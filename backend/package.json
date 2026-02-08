@@ -25,6 +25,7 @@
     "db:seed": "tsx src/database/seed.ts"
   },
   "dependencies": {
+    "@e965/xlsx": "^0.20.3",
     "@prisma/client": "^5.22.0",
     "@sendgrid/mail": "^8.1.6",
     "bcrypt": "^5.1.1",
