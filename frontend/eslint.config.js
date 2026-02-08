@@ -51,6 +51,7 @@ export default [
         clearInterval: 'readonly',
         URL: 'readonly',
         URLSearchParams: 'readonly',
+        FormData: 'readonly',
         HTMLElement: 'readonly',
         HTMLInputElement: 'readonly',
         HTMLVideoElement: 'readonly',
