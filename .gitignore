@@ -172,3 +172,7 @@ package-lock.json
 # CI fix – allow frontend lockfile for npm ci
 !frontend/package-lock.json
  frontend/
+REBASE_*.md
+PR_DESCRIPTION.md
+MERGE_RESOLUTION_SUMMARY.md
+push-rebased-branch.sh
