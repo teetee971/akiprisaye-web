@@ -1,0 +1,89 @@
+{
+  "app": {
+    "name": "AKiPriSaYe",
+    "tagline": "Comparez les prix dans les DOM-TOM"
+  },
+  "nav": {
+    "home": "Accueil",
+    "search": "Rechercher",
+    "scan": "Scanner",
+    "cart": "Ma liste",
+    "profile": "Profil",
+    "map": "Carte",
+    "stores": "Magasins",
+    "alerts": "Alertes",
+    "settings": "Paramètres"
+  },
+  "actions": {
+    "add": "Ajouter",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "close": "Fermer",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "sort": "Trier",
+    "share": "Partager",
+    "refresh": "Actualiser",
+    "loadMore": "Charger plus",
+    "seeAll": "Voir tout",
+    "seeDetails": "Voir détails"
+  },
+  "auth": {
+    "login": "Se connecter",
+    "logout": "Se déconnecter",
+    "register": "S'inscrire",
+    "forgotPassword": "Mot de passe oublié ?",
+    "myAccount": "Mon compte"
+  },
+  "status": {
+    "open": "Ouvert",
+    "closed": "Fermé",
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "empty": "Aucun résultat",
+    "offline": "Hors ligne",
+    "online": "En ligne"
+  },
+  "time": {
+    "now": "Maintenant",
+    "today": "Aujourd'hui",
+    "yesterday": "Hier",
+    "tomorrow": "Demain",
+    "thisWeek": "Cette semaine",
+    "lastWeek": "La semaine dernière",
+    "closesAt": "Ferme à {{time}}",
+    "opensAt": "Ouvre à {{time}}"
+  },
+  "units": {
+    "km": "km",
+    "m": "m",
+    "kg": "kg",
+    "g": "g",
+    "l": "L",
+    "ml": "mL",
+    "unit": "unité",
+    "units": "unités"
+  },
+  "price": {
+    "from": "À partir de",
+    "currency": "€",
+    "perKg": "€/kg",
+    "perL": "€/L",
+    "perUnit": "€/unité",
+    "cheapest": "Moins cher",
+    "mostExpensive": "Plus cher",
+    "average": "Prix moyen",
+    "savings": "Économie"
+  },
+  "language": {
+    "select": "Choisir la langue",
+    "current": "Langue actuelle"
+  }
+}

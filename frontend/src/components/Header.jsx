@@ -24,6 +24,13 @@ try {
   ThemeToggleSafe = null;
 }
 
+let LanguageSelectorSafe = null;
+try {
+  ({ LanguageSelector: LanguageSelectorSafe } = await import('./i18n/LanguageSelector'));
+} catch {
+  LanguageSelectorSafe = null;
+}
+
 export default function Header() {
   // Sécurité Router
   let location = null;
@@ -97,6 +104,9 @@ export default function Header() {
 
         {/* Theme toggle (safe) */}
         {ThemeToggleSafe ? <ThemeToggleSafe /> : null}
+
+        {/* Language selector (safe) */}
+        {LanguageSelectorSafe ? <LanguageSelectorSafe variant="compact" /> : null}
       </nav>
     </header>
   );

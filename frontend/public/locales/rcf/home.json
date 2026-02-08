@@ -1,0 +1,36 @@
+{
+  "hero": {
+    "title": "Trouv meyèr pri",
+    "subtitle": "Konpar bann pri dann tout bann magazin DOM-TOM"
+  },
+  "nearby": {
+    "title": "Magazin kot aou",
+    "seeAll": "Vwar tout bann magazin",
+    "noStores": "Nana poin magazin kot aou",
+    "enable Location": "Mèt jéolokalizasion"
+  },
+  "promotions": {
+    "title": "Pwomosion zordi",
+    "seeAll": "Vwar tout pwomosion",
+    "noPromos": "Nana poin pwomosion aléla",
+    "discount": "-{{percent}}%",
+    "wasPrice": "Lété {{price, price}}"
+  },
+  "trending": {
+    "title": "Tandans",
+    "products": "Pwodwi popilèr",
+    "searches": "Réshèrsh frékan"
+  },
+  "inflation": {
+    "title": "Indis linflasion",
+    "vsMetro": "par rapor a Lafrans",
+    "moreExpensive": "pli sèr",
+    "lessExpensive": "moin sèr"
+  },
+  "quickActions": {
+    "scan": "Skané in pwodwi",
+    "list": "Mon list akour",
+    "map": "Kart bann magazin",
+    "alerts": "Mon bann alèrt"
+  }
+}

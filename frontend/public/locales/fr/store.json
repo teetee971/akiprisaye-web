@@ -1,0 +1,39 @@
+{
+  "details": {
+    "title": "Détails du magasin",
+    "address": "Adresse",
+    "phone": "Téléphone",
+    "hours": "Horaires d'ouverture",
+    "services": "Services",
+    "directions": "Itinéraire"
+  },
+  "hours": {
+    "monday": "Lundi",
+    "tuesday": "Mardi",
+    "wednesday": "Mercredi",
+    "thursday": "Jeudi",
+    "friday": "Vendredi",
+    "saturday": "Samedi",
+    "sunday": "Dimanche",
+    "holiday": "Jours fériés",
+    "closed": "Fermé"
+  },
+  "priceIndex": {
+    "title": "Indice de prix",
+    "cheap": "Pas cher",
+    "average": "Moyen",
+    "expensive": "Cher",
+    "basket": "Panier moyen"
+  },
+  "reviews": {
+    "title": "Avis",
+    "count": "{{count}} avis",
+    "writeReview": "Écrire un avis",
+    "noReviews": "Aucun avis pour le moment"
+  },
+  "products": {
+    "title": "Produits disponibles",
+    "count": "{{count}} produits",
+    "seeAll": "Voir tous les produits"
+  }
+}

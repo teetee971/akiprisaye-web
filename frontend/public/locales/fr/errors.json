@@ -1,0 +1,18 @@
+{
+  "network": {
+    "offline": "Vous êtes hors ligne",
+    "reconnected": "Connexion rétablie",
+    "failed": "Échec de la connexion"
+  },
+  "notFound": {
+    "title": "Page non trouvée",
+    "message": "La page que vous recherchez n'existe pas",
+    "backHome": "Retour à l'accueil"
+  },
+  "server": {
+    "title": "Erreur serveur",
+    "message": "Une erreur s'est produite",
+    "retry": "Réessayer"
+  },
+  "generic": "Une erreur s'est produite"
+}

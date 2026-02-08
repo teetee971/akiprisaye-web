@@ -1,0 +1,20 @@
+{
+  "details": {
+    "title": "Détails du produit",
+    "description": "Description",
+    "ingredients": "Ingrédients",
+    "nutritionalInfo": "Informations nutritionnelles"
+  },
+  "priceComparison": {
+    "title": "Comparaison des prix",
+    "bestPrice": "Meilleur prix",
+    "averagePrice": "Prix moyen",
+    "priceRange": "Fourchette de prix"
+  },
+  "availability": {
+    "title": "Disponibilité",
+    "inStock": "En stock",
+    "outOfStock": "Rupture de stock",
+    "limitedStock": "Stock limité"
+  }
+}

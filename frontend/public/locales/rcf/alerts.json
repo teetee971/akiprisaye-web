@@ -1,0 +1,20 @@
+{
+  "title": "Mon bann alèrt",
+  "create": "Kréyé in alèrt",
+  "priceAlert": {
+    "title": "Alèrt pri",
+    "description": "Reswa in notifikasion kann pri i bès",
+    "threshold": "Swèy pri"
+  },
+  "stockAlert": {
+    "title": "Alèrt disponibilité",
+    "description": "Reswa in notifikasion kann pwodwi lé disponib"
+  },
+  "promotionAlert": {
+    "title": "Alèrt pwomosion",
+    "description": "Reswa in notifikasion pou pwomosion"
+  },
+  "empty": "Nana poin alèrt aktiv",
+  "active": "{{count}} alèrt aktiv",
+  "active_plural": "{{count}} alèrt aktiv"
+}

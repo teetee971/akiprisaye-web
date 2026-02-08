@@ -23,6 +23,7 @@ L.Icon.Default.mergeOptions({
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
 import { OnboardingProvider } from './context/OnboardingContext';
+import { LanguageProvider } from './context/LanguageProvider';
 import { PerformanceMonitor } from './components/PerformanceMonitor';
 import OnboardingTour from './components/OnboardingTour';
 import OnboardingAutoStart from './components/OnboardingAutoStart';
@@ -36,6 +37,7 @@ if (import.meta.env.DEV) {
 // Lazy-loaded pages - Main routes
 const Home = React.lazy(() => import('./pages/Home'));
 const Carte = React.lazy(() => import('./pages/Carte'));
+const MapPage = React.lazy(() => import('./pages/MapPage'));
 const AdminDashboard = React.lazy(() => import('./pages/AdminDashboard'));
 const Comparateur = React.lazy(() => import('./pages/Comparateur'));
 
@@ -114,10 +116,11 @@ if (!rootElement) {
   ReactDOM.createRoot(rootElement).render(
     <React.StrictMode>
       <ErrorBoundary>
-        <ThemeProvider>
-          <AuthProvider>
-            <OnboardingProvider>
-              <HashRouter>
+        <LanguageProvider>
+          <ThemeProvider>
+            <AuthProvider>
+              <OnboardingProvider>
+                <HashRouter>
                 <Suspense
                   fallback={
                     <div className="min-h-screen flex items-center justify-center">
@@ -140,12 +143,14 @@ if (!rootElement) {
                     <Route path="products/:id" element={<ProductDetail />} />
                     <Route path="products/:id/edit" element={<ProductForm />} />
                     <Route path="import" element={<ImportPage />} />
+                    <Route path="sync" element={<SyncDashboard />} />
                   </Route>
                   
                   {/* Main site routes */}
                   <Route path="/" element={<Layout />}>
                     <Route index element={<Navigate to="/carte" replace />} />
                     <Route path="carte" element={<Carte />} />
+                    <Route path="carte-interactive" element={<MapPage />} />
                     <Route path="dashboard" element={<AdminDashboard />} />
                     <Route path="home" element={<Home />} />
                     <Route path="comparateur" element={<Comparateur />} />
@@ -221,6 +226,7 @@ if (!rootElement) {
           </OnboardingProvider>
         </AuthProvider>
       </ThemeProvider>
+      </LanguageProvider>
     </ErrorBoundary>
     </React.StrictMode>
   );

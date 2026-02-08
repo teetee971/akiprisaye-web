@@ -1,0 +1,23 @@
+{
+  "dashboard": {
+    "title": "Tablo dé bor linflasion",
+    "overview": "Vi dansamb"
+  },
+  "indicators": {
+    "rate": "To linflasion",
+    "vsMetro": "Ékar èk Lafrans",
+    "trend": "Tandans"
+  },
+  "categories": {
+    "title": "Par katégori",
+    "food": "Manzé",
+    "household": "Pwodwi pou lakaz",
+    "personal": "Izhyèn pèrsonnèl"
+  },
+  "evolution": {
+    "title": "Évolution",
+    "lastMonth": "Dèrnié mwa",
+    "last3Months": "3 dèrnié mwa",
+    "lastYear": "Dèrnié lanné"
+  }
+}

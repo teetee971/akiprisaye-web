@@ -1,0 +1,36 @@
+{
+  "hero": {
+    "title": "Trouvé meyè pri-a",
+    "subtitle": "Konparé pri-a an tout magazen DOM-TOM"
+  },
+  "nearby": {
+    "title": "Magazen bòkay-ou",
+    "seeAll": "Wè tout magazen",
+    "noStores": "Anyen magazen pa trouvé bòkay-ou",
+    "enableLocation": "Mété jéolokalizasyon"
+  },
+  "promotions": {
+    "title": "Pwomosyon jòdi-a",
+    "seeAll": "Wè tout pwomosyon",
+    "noPromos": "Pa ni pwomosyon konnyéla",
+    "discount": "-{{percent}}%",
+    "wasPrice": "Té {{price, price}}"
+  },
+  "trending": {
+    "title": "Tandans",
+    "products": "Pwodui popilè",
+    "searches": "Réchèch frékan"
+  },
+  "inflation": {
+    "title": "Endis enflasyon",
+    "vsMetro": "pa rapò a Lafrans",
+    "moreExpensive": "pli chè",
+    "lessExpensive": "mwen chè"
+  },
+  "quickActions": {
+    "scan": "Skané on pwodui",
+    "list": "Lis a kous an-mwen",
+    "map": "Kat magazen",
+    "alerts": "Alèt an-mwen"
+  }
+}

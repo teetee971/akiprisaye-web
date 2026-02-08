@@ -1,0 +1,20 @@
+{
+  "title": "Mes alertes",
+  "create": "Créer une alerte",
+  "priceAlert": {
+    "title": "Alerte prix",
+    "description": "Recevoir une notification quand le prix baisse",
+    "threshold": "Seuil de prix"
+  },
+  "stockAlert": {
+    "title": "Alerte disponibilité",
+    "description": "Recevoir une notification quand le produit est disponible"
+  },
+  "promotionAlert": {
+    "title": "Alerte promotion",
+    "description": "Recevoir une notification lors de promotions"
+  },
+  "empty": "Aucune alerte active",
+  "active": "{{count}} alerte active",
+  "active_plural": "{{count}} alertes actives"
+}

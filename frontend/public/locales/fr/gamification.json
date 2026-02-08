@@ -1,0 +1,28 @@
+{
+  "level": {
+    "current": "Niveau {{level}}",
+    "progress": "Progression",
+    "nextLevel": "Prochain niveau"
+  },
+  "points": {
+    "total": "{{count}} point",
+    "total_plural": "{{count}} points",
+    "earned": "Points gagnés"
+  },
+  "badges": {
+    "title": "Badges",
+    "earned": "Badge débloqué",
+    "locked": "Badge verrouillé"
+  },
+  "challenges": {
+    "title": "Défis",
+    "daily": "Défis quotidiens",
+    "weekly": "Défis hebdomadaires",
+    "completed": "Terminé"
+  },
+  "leaderboard": {
+    "title": "Classement",
+    "rank": "Rang",
+    "myRank": "Mon classement"
+  }
+}
