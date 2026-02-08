@@ -37,6 +37,7 @@ if (import.meta.env.DEV) {
 // Lazy-loaded pages - Main routes
 const Home = React.lazy(() => import('./pages/Home'));
 const Carte = React.lazy(() => import('./pages/Carte'));
+const MapPage = React.lazy(() => import('./pages/MapPage'));
 const AdminDashboard = React.lazy(() => import('./pages/AdminDashboard'));
 const Comparateur = React.lazy(() => import('./pages/Comparateur'));
 
@@ -152,6 +153,7 @@ if (!rootElement) {
                   <Route path="/" element={<Layout />}>
                     <Route index element={<Navigate to="/carte" replace />} />
                     <Route path="carte" element={<Carte />} />
+                    <Route path="carte-interactive" element={<MapPage />} />
                     <Route path="dashboard" element={<AdminDashboard />} />
                     <Route path="home" element={<Home />} />
                     <Route path="comparateur" element={<Comparateur />} />

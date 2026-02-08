@@ -42,6 +42,8 @@ import syncRoutes from './api/routes/sync.routes.js';
 import validationRoutes from './api/routes/validation.routes.js';
 // Verified Pricing routes
 import pricesRoutes from './api/routes/prices.routes.js';
+// Map routes
+import mapRoutes from './api/routes/map.routes.js';
 
 // Import middlewares
 import { apiLimiter } from './api/middlewares/rateLimit.middleware.js';
@@ -222,6 +224,9 @@ app.use('/api/validation', validationRoutes);
 
 // Verified Pricing API routes (public with rate limiting)
 app.use('/api/prices', pricesRoutes);
+
+// Map API routes (public with rate limiting)
+app.use('/api/map', mapRoutes);
 
 // ========================================
 // Gestion des erreurs
