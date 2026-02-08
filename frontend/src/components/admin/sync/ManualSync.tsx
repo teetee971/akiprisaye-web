@@ -130,7 +130,7 @@ export default function ManualSync({ onSync }: ManualSyncProps) {
                 {result.product.image_url && (
                   <img
                     src={result.product.image_url}
-                    alt={result.product.product_name}
+                    alt={result.product.product_name || 'Sans nom'}
                     className="mt-2 w-32 h-32 object-contain border rounded"
                   />
                 )}
