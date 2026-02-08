@@ -23,6 +23,7 @@ L.Icon.Default.mergeOptions({
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
 import { OnboardingProvider } from './context/OnboardingContext';
+import { LanguageProvider } from './context/LanguageProvider';
 import { PerformanceMonitor } from './components/PerformanceMonitor';
 import OnboardingTour from './components/OnboardingTour';
 import OnboardingAutoStart from './components/OnboardingAutoStart';
@@ -100,10 +101,11 @@ if (!rootElement) {
   ReactDOM.createRoot(rootElement).render(
     <React.StrictMode>
       <ErrorBoundary>
-        <ThemeProvider>
-          <AuthProvider>
-            <OnboardingProvider>
-              <HashRouter>
+        <LanguageProvider>
+          <ThemeProvider>
+            <AuthProvider>
+              <OnboardingProvider>
+                <HashRouter>
                 <Suspense
                   fallback={
                     <div className="min-h-screen flex items-center justify-center">
@@ -189,6 +191,7 @@ if (!rootElement) {
           </OnboardingProvider>
         </AuthProvider>
       </ThemeProvider>
+      </LanguageProvider>
     </ErrorBoundary>
     </React.StrictMode>
   );
