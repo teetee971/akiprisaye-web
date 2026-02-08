@@ -15,7 +15,7 @@
 import express, { Express, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { PrismaClient } from '@prisma/client';
+import prisma from './database/prisma.js';
 
 // Import routes
 import authRoutes from './api/routes/auth.routes.js';
@@ -47,6 +47,9 @@ import {
 // Import Swagger
 import { setupSwagger } from './api/docs/swagger.js';
 
+// Import Scheduler
+import { syncScheduler } from './services/scheduler/syncScheduler.js';
+
 // Charger les variables d'environnement
 dotenv.config();
 
@@ -55,10 +58,8 @@ const app: Express = express();
 const port = process.env.PORT || 3001;
 const nodeEnv = process.env.NODE_ENV || 'development';
 
-// Instance Prisma Client (singleton)
-export const prisma = new PrismaClient({
-  log: nodeEnv === 'development' ? ['query', 'info', 'warn', 'error'] : ['error'],
-});
+// Re-export shared Prisma client for backwards compatibility
+export { default as prisma } from './database/prisma.js';
 
 // ========================================
 // Middlewares globaux
@@ -229,6 +230,14 @@ async function startServer() {
     await prisma.$connect();
     console.info('✅ Connexion à la base de données établie');
 
+    // Initialiser le scheduler (en production uniquement)
+    if (nodeEnv === 'production' || process.env.ENABLE_SCHEDULER === 'true') {
+      syncScheduler.start();
+      console.info('✅ Scheduler de synchronisation démarré');
+    } else {
+      console.info('ℹ️  Scheduler de synchronisation désactivé (dev mode)');
+    }
+
     // Démarrer le serveur
     app.listen(port, () => {
       console.info('========================================');
@@ -242,6 +251,7 @@ async function startServer() {
       console.info('✅ Validation stricte des identifiants');
       console.info('✅ Conformité RGPD');
       console.info('✅ API REST avec JWT');
+      console.info('✅ Synchronisation automatique (Open Food Facts, Open Prices)');
       console.info('');
       console.info('📚 Documentation: /api/docs');
       console.info('🔒 Sécurité: JWT + Rate limiting');
@@ -258,6 +268,10 @@ async function shutdown() {
   console.info('\n🛑 Arrêt du serveur en cours...');
 
   try {
+    // Arrêter le scheduler
+    syncScheduler.stop();
+    console.info('✅ Scheduler arrêté');
+
     await prisma.$disconnect();
     console.info('✅ Déconnexion de la base de données réussie');
     process.exit(0);

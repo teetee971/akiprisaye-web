@@ -1,0 +1,110 @@
+/* Custom Marker Styles */
+.custom-marker {
+  background: none !important;
+  border: none !important;
+}
+
+.custom-marker svg {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+/* Marker Cluster Styles */
+.marker-cluster-small,
+.marker-cluster-medium,
+.marker-cluster-large {
+  background-color: rgba(59, 130, 246, 0.6);
+  border-radius: 50%;
+}
+
+.marker-cluster-small div {
+  background-color: rgba(37, 99, 235, 0.8);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 5px;
+}
+
+.marker-cluster-medium div {
+  background-color: rgba(37, 99, 235, 0.8);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 2px;
+}
+
+.marker-cluster-large div {
+  background-color: rgba(29, 78, 216, 0.9);
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 1px;
+}
+
+.marker-cluster div span {
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+/* Popup Styles */
+.leaflet-popup-content-wrapper {
+  border-radius: 8px;
+  padding: 0;
+}
+
+.leaflet-popup-content {
+  margin: 0;
+  width: 100% !important;
+}
+
+.store-popup-container {
+  min-width: 250px;
+  max-width: 300px;
+}
+
+/* Tooltip Styles */
+.leaflet-tooltip {
+  background-color: rgba(30, 41, 59, 0.95);
+  border: none;
+  border-radius: 4px;
+  padding: 6px 10px;
+  color: white;
+  font-size: 13px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.leaflet-tooltip-top:before {
+  border-top-color: rgba(30, 41, 59, 0.95);
+}
+
+.leaflet-tooltip-bottom:before {
+  border-bottom-color: rgba(30, 41, 59, 0.95);
+}
+
+.leaflet-tooltip-left:before {
+  border-left-color: rgba(30, 41, 59, 0.95);
+}
+
+.leaflet-tooltip-right:before {
+  border-right-color: rgba(30, 41, 59, 0.95);
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .leaflet-popup-content-wrapper {
+    max-width: 280px;
+  }
+
+  .store-popup-container {
+    min-width: 240px;
+  }
+}

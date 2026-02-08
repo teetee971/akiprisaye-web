@@ -1,0 +1,23 @@
+{
+  "dashboard": {
+    "title": "Tablo debò enflasyon",
+    "overview": "Vi dansamb"
+  },
+  "indicators": {
+    "rate": "To enflasyon",
+    "vsMetro": "Éka épi Lafrans",
+    "trend": "Tandans"
+  },
+  "categories": {
+    "title": "Pa katégori",
+    "food": "Manjé",
+    "household": "Pwodui pou kay-la",
+    "personal": "Ijyèn pèsonnèl"
+  },
+  "evolution": {
+    "title": "Évolusyon",
+    "lastMonth": "Dènié mwa",
+    "last3Months": "3 dènié mwa",
+    "lastYear": "Dènié lanné"
+  }
+}

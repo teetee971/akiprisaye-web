@@ -1,0 +1,218 @@
+/**
+ * Validation Routes
+ * 
+ * API endpoints for product validation queue management
+ * 
+ * TODO: Add authentication middleware before production deployment
+ * These endpoints mutate product data and should be restricted to:
+ * - Moderator/Admin users only (JWT + RBAC)
+ * - Proper permission checks (PRODUCT_APPROVE, PRODUCT_REJECT, PRODUCT_MERGE)
+ * See existing auth middleware pattern in backend/src/api/middlewares/auth.middleware.ts
+ */
+
+import { Router, Request, Response } from 'express';
+import {
+  getValidationQueue,
+  getValidationStats,
+  getProductForValidation,
+  approveProduct,
+  rejectProduct,
+  mergeProduct,
+} from '../../services/products/validationQueue.js';
+import { ProductStatus } from '@prisma/client';
+
+const router = Router();
+
+/**
+ * GET /api/validation/queue
+ * Get products in validation queue
+ */
+router.get('/queue', async (req: Request, res: Response) => {
+  try {
+    const statusParam = req.query.status as string | undefined;
+    const source = req.query.source as string | undefined;
+    const limitParam = req.query.limit as string | undefined;
+    const offsetParam = req.query.offset as string | undefined;
+
+    // Validate status parameter
+    const validStatuses: ProductStatus[] = ['PENDING_REVIEW', 'VALIDATED', 'REJECTED', 'MERGED'];
+    const status: ProductStatus = statusParam && validStatuses.includes(statusParam as ProductStatus)
+      ? (statusParam as ProductStatus)
+      : 'PENDING_REVIEW';
+
+    // Validate limit parameter
+    const limit = limitParam ? parseInt(limitParam, 10) : 50;
+    if (isNaN(limit) || limit < 1 || limit > 100) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid limit parameter. Must be between 1 and 100.',
+      });
+    }
+
+    // Validate offset parameter
+    const offset = offsetParam ? parseInt(offsetParam, 10) : 0;
+    if (isNaN(offset) || offset < 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid offset parameter. Must be >= 0.',
+      });
+    }
+
+    const queue = await getValidationQueue({
+      status,
+      source,
+      limit,
+      offset,
+    });
+
+    return res.json({
+      success: true,
+      queue,
+      pagination: {
+        limit,
+        offset,
+        count: queue.length,
+      },
+    });
+  } catch (error) {
+    console.error('Error getting validation queue:', error);
+    return res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+});
+
+/**
+ * GET /api/validation/stats
+ * Get validation queue statistics
+ */
+router.get('/stats', async (_req: Request, res: Response) => {
+  try {
+    const stats = await getValidationStats();
+
+    res.json({
+      success: true,
+      stats,
+    });
+  } catch (error) {
+    console.error('Error getting validation stats:', error);
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+});
+
+/**
+ * GET /api/validation/:id
+ * Get product details for validation
+ */
+router.get('/:id', async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    const product = await getProductForValidation(id);
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        error: 'Product not found',
+      });
+    }
+
+    return res.json({
+      success: true,
+      product,
+    });
+  } catch (error) {
+    console.error('Error getting product for validation:', error);
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+});
+
+/**
+ * POST /api/validation/:id/approve
+ * Approve a product
+ */
+router.post('/:id/approve', async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { reviewedBy } = req.body;
+
+    await approveProduct(id, reviewedBy);
+
+    res.json({
+      success: true,
+      message: 'Product approved',
+    });
+  } catch (error) {
+    console.error('Error approving product:', error);
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+});
+
+/**
+ * POST /api/validation/:id/reject
+ * Reject a product
+ */
+router.post('/:id/reject', async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { reviewedBy } = req.body;
+
+    await rejectProduct(id, reviewedBy);
+
+    res.json({
+      success: true,
+      message: 'Product rejected',
+    });
+  } catch (error) {
+    console.error('Error rejecting product:', error);
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+});
+
+/**
+ * POST /api/validation/:id/merge/:targetId
+ * Merge a product with another (mark as duplicate)
+ */
+router.post('/:id/merge/:targetId', async (req: Request, res: Response) => {
+  try {
+    const { id, targetId } = req.params;
+    const { reviewedBy } = req.body;
+
+    await mergeProduct(id, targetId, reviewedBy);
+
+    return res.json({
+      success: true,
+      message: 'Product merged',
+    });
+  } catch (error) {
+    console.error('Error merging product:', error);
+    
+    // Return 404 if product not found
+    if (error instanceof Error && error.message.includes('not found')) {
+      return res.status(404).json({
+        success: false,
+        error: error.message,
+      });
+    }
+    
+    return res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+});
+
+export default router;

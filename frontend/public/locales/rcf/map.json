@@ -1,0 +1,16 @@
+{
+  "title": "Kart bann magazin",
+  "filters": {
+    "all": "Tout bann magazin",
+    "open": "Ouver aléla",
+    "favorites": "Mon bann favori"
+  },
+  "legend": {
+    "cheap": "Pri ba",
+    "average": "Pri moyin",
+    "expensive": "Pri o"
+  },
+  "nearby": "A {{distance}} km",
+  "getDirections": "Shmin",
+  "cluster": "{{count}} magazin"
+}

@@ -50,6 +50,8 @@ export default [
         clearTimeout: 'readonly',
         clearInterval: 'readonly',
         URL: 'readonly',
+        URLSearchParams: 'readonly',
+        FormData: 'readonly',
         HTMLElement: 'readonly',
         HTMLInputElement: 'readonly',
         HTMLVideoElement: 'readonly',
@@ -84,7 +86,9 @@ export default [
         MutationObserver: 'readonly',
         ResizeObserver: 'readonly',
         requestAnimationFrame: 'readonly',
-        cancelAnimationFrame: 'readonly'
+        cancelAnimationFrame: 'readonly',
+        URLSearchParams: 'readonly',
+        FormData: 'readonly'
       }
     },
     plugins: {

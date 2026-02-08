@@ -1,0 +1,89 @@
+{
+  "app": {
+    "name": "AKiPriSaYe",
+    "tagline": "Konparé pri-a an tout DOM-TOM"
+  },
+  "nav": {
+    "home": "Lakay",
+    "search": "Chèché",
+    "scan": "Skané",
+    "cart": "Lis an-mwen",
+    "profile": "Pwofil",
+    "map": "Kat",
+    "stores": "Magazen",
+    "alerts": "Alèt",
+    "settings": "Paramèt"
+  },
+  "actions": {
+    "add": "Ajouté",
+    "edit": "Modifiyé",
+    "delete": "Éfasé",
+    "save": "Anréjistré",
+    "cancel": "Anilé",
+    "confirm": "Konfimé",
+    "close": "Fèmé",
+    "back": "Ritouné",
+    "next": "Swivan",
+    "previous": "Avan",
+    "search": "Chèché",
+    "filter": "Filtré",
+    "sort": "Triyé",
+    "share": "Patajé",
+    "refresh": "Aktualizé",
+    "loadMore": "Chajé plis",
+    "seeAll": "Wè tout",
+    "seeDetails": "Wè détay"
+  },
+  "auth": {
+    "login": "Konekté",
+    "logout": "Dékonekté",
+    "register": "Enskripsyon",
+    "forgotPassword": "Ou bliyé modpas-la ?",
+    "myAccount": "Kont an-mwen"
+  },
+  "status": {
+    "open": "Ouvè",
+    "closed": "Fèmé",
+    "loading": "Ka chajé...",
+    "error": "Erè",
+    "success": "Bon",
+    "empty": "Anyen pa trouvé",
+    "offline": "San entènèt",
+    "online": "Konekté"
+  },
+  "time": {
+    "now": "Konnyen",
+    "today": "Jòdi-a",
+    "yesterday": "Yè",
+    "tomorrow": "Dimen",
+    "thisWeek": "Simenn-lan",
+    "lastWeek": "Simenn pasé",
+    "closesAt": "Ka fèmé a {{time}}",
+    "opensAt": "Ka ouvè a {{time}}"
+  },
+  "units": {
+    "km": "km",
+    "m": "m",
+    "kg": "kg",
+    "g": "g",
+    "l": "L",
+    "ml": "mL",
+    "unit": "pyès",
+    "units": "pyès"
+  },
+  "price": {
+    "from": "Dèpi",
+    "currency": "€",
+    "perKg": "€/kg",
+    "perL": "€/L",
+    "perUnit": "€/pyès",
+    "cheapest": "Mwen chè",
+    "mostExpensive": "Pli chè",
+    "average": "Pri mwayenn",
+    "savings": "Ékonomi"
+  },
+  "language": {
+    "select": "Chwazi lang-la",
+    "current": "Lang konnyen"
+  }
+}

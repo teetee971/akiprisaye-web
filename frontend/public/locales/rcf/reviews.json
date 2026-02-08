@@ -1,0 +1,14 @@
+{
+  "title": "Avi",
+  "write": "Ékri in avi",
+  "rating": "Not",
+  "comment": "Komanntèr",
+  "submit": "Pibli",
+  "helpful": "Itil",
+  "report": "Sinyal",
+  "sort": {
+    "recent": "Pli résan",
+    "helpful": "Pli itil",
+    "rating": "Meyèr not"
+  }
+}
