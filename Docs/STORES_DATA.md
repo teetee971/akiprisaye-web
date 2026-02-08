@@ -40,11 +40,11 @@ Ce fichier contient la base de données centralisée de tous les magasins réfé
 
 L'application couvre les 12 territoires DROM-COM:
 
-1. 🇬🇵 **Guadeloupe** - 5 magasins
-2. 🇲🇶 **Martinique** - 4 magasins
-3. 🇬🇫 **Guyane** - 3 magasins
-4. 🇷🇪 **La Réunion** - 4 magasins
-5. 🇾🇹 **Mayotte** - 2 magasins
+1. 🇬🇵 **Guadeloupe** - 29 magasins
+2. 🇲🇶 **Martinique** - 24 magasins
+3. 🇬🇫 **Guyane** - 12 magasins
+4. 🇷🇪 **La Réunion** - 27 magasins
+5. 🇾🇹 **Mayotte** - 8 magasins
 6. 🇵🇲 **Saint-Pierre-et-Miquelon** - 1 magasin
 7. 🇧🇱 **Saint-Barthélemy** - 1 magasin
 8. 🇲🇫 **Saint-Martin** - 2 magasins
@@ -53,19 +53,59 @@ L'application couvre les 12 territoires DROM-COM:
 11. 🇳🇨 **Nouvelle-Calédonie** - 2 magasins
 12. 🇹🇫 **Terres australes** - (à venir)
 
-**Total: 27 magasins**
+**Total: 109 magasins**
 
 ## Chaînes de magasins
 
-Les principales chaînes représentées:
+Les chaînes représentées (35 enseignes):
 
-- **Carrefour** - Hypermarché
-- **Système U** (Super U, Hyper U) - Supermarché
-- **E.Leclerc** - Hypermarché
+### Groupe Casino
+- **Géant Casino** - Hypermarché
+- **Casino Supermarché** - Supermarché
+- **Petit Casino** - Proximité
+- **Casino Shop** - Proximité
+- **Spar** - Proximité
+- **Vival** - Proximité
+- **Franprix** - Proximité urbaine
+- **Monoprix** - Supermarché urbain
 - **Leader Price** - Discount
+- **Score / Jumbo Score** - Supermarché local
+
+### Groupe Carrefour
+- **Carrefour** - Hypermarché
+- **Carrefour Market** - Supermarché
+- **Carrefour Express** - Proximité
+- **Carrefour City** - Proximité urbaine
+
+### Groupe Système U
+- **Hyper U** - Hypermarché
+- **Super U** - Supermarché
+- **U Express** - Proximité
+
+### Groupe E.Leclerc
+- **E.Leclerc** - Hypermarché
+- **Leclerc Express** - Proximité
+- **Leclerc Drive** - Drive
+
+### Groupe Intermarché
 - **Intermarché** - Supermarché
-- **Match** - Supermarché
-- **Super Score** - Supermarché local
+- **Intermarché Contact** - Proximité
+- **Netto** - Discount
+
+### Autres grandes enseignes
+- **Auchan** - Hypermarché
+- **Lidl** - Discount
+
+### Surgelés
+- **Picard** - Surgelés
+- **Thiriet** - Surgelés
+
+### Enseignes locales
+- **Ecomax** - Discount local
+- **Match** - Supermarché local
+- **Primantilles** - Supermarché local (Guadeloupe)
+- **Beraca** - Supermarché local (Guadeloupe/Saint-Martin)
+
 
 ## Fonctions utilitaires
 

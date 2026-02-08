@@ -34,6 +34,9 @@ import productsRoutes from './routes/products.js';
 import basketRoutes from './routes/basket.js';
 // Subscription & Payment routes
 import subscriptionRoutes from './api/routes/subscription.routes.js';
+// Price Alerts & Notifications routes
+import alertsRoutes from './api/routes/alerts.routes.js';
+import notificationsRoutes from './api/routes/notifications.routes.js';
 
 // Import middlewares
 import { apiLimiter } from './api/middlewares/rateLimit.middleware.js';
@@ -201,6 +204,10 @@ app.use('/api/basket', basketRoutes);
 
 // Subscription & Payment API routes
 app.use('/api/subscriptions', subscriptionRoutes);
+
+// Price Alerts & Notifications API routes (protected by JWT)
+app.use('/api/alerts', alertsRoutes);
+app.use('/api/notifications', notificationsRoutes);
 
 // ========================================
 // Gestion des erreurs
