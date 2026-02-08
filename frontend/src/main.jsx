@@ -79,6 +79,9 @@ const MonCompte = React.lazy(() => import('./pages/MonCompte'));
 const Pricing = React.lazy(() => import('./pages/Pricing'));
 const Subscribe = React.lazy(() => import('./pages/Subscribe'));
 
+// Inflation Dashboard
+const InflationDashboardPage = React.lazy(() => import('./pages/InflationDashboardPage'));
+
 // Observatory real-time
 const ObservatoireTempsReel = React.lazy(() => import('./pages/ObservatoireTempsReel'));
 
@@ -175,6 +178,10 @@ if (!rootElement) {
                     {/* Transparency & reporting */}
                     <Route path="transparence" element={<Transparence />} />
                     <Route path="signaler-abus" element={<SignalerAbus />} />
+
+                    {/* Inflation Dashboard */}
+                    <Route path="inflation" element={<InflationDashboardPage />} />
+                    <Route path="inflation-dashboard" element={<InflationDashboardPage />} />
                     
                     {/* Catch-all route */}
                     <Route path="*" element={<Navigate to="/carte" replace />} />

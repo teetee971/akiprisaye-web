@@ -63,7 +63,7 @@ router.get('/overview', async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('Error fetching inflation overview:', error);
-    res.status(500).json({ 
+    return res.status(500).json({ 
       error: 'Failed to fetch inflation overview',
       message: error instanceof Error ? error.message : 'Unknown error'
     });
@@ -97,7 +97,7 @@ router.get('/territory/:code', async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('Error fetching territory inflation:', error);
-    res.status(500).json({ 
+    return res.status(500).json({ 
       error: 'Failed to fetch territory inflation data',
       message: error instanceof Error ? error.message : 'Unknown error'
     });
@@ -129,7 +129,7 @@ router.get('/categories', async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('Error fetching category data:', error);
-    res.status(500).json({ 
+    return res.status(500).json({ 
       error: 'Failed to fetch category inflation data',
       message: error instanceof Error ? error.message : 'Unknown error'
     });
@@ -158,7 +158,7 @@ router.get('/category/:category', async (req: Request, res: Response) => {
     res.json(categoryData);
   } catch (error) {
     console.error('Error fetching category inflation:', error);
-    res.status(500).json({ 
+    return res.status(500).json({ 
       error: 'Failed to fetch category inflation data',
       message: error instanceof Error ? error.message : 'Unknown error'
     });
@@ -187,7 +187,7 @@ router.get('/history', async (req: Request, res: Response) => {
     res.json(history);
   } catch (error) {
     console.error('Error fetching inflation history:', error);
-    res.status(500).json({ 
+    return res.status(500).json({ 
       error: 'Failed to fetch inflation history',
       message: error instanceof Error ? error.message : 'Unknown error'
     });
@@ -216,7 +216,7 @@ router.get('/top-movers', async (req: Request, res: Response) => {
     res.json(topMovers);
   } catch (error) {
     console.error('Error fetching top movers:', error);
-    res.status(500).json({ 
+    return res.status(500).json({ 
       error: 'Failed to fetch top movers',
       message: error instanceof Error ? error.message : 'Unknown error'
     });
@@ -249,7 +249,7 @@ router.get('/compare/metro', async (req: Request, res: Response) => {
     res.json(comparison);
   } catch (error) {
     console.error('Error fetching metro comparison:', error);
-    res.status(500).json({ 
+    return res.status(500).json({ 
       error: 'Failed to fetch metro comparison data',
       message: error instanceof Error ? error.message : 'Unknown error'
     });
@@ -283,7 +283,7 @@ router.get('/export', async (req: Request, res: Response) => {
     res.send(exportResult.data);
   } catch (error) {
     console.error('Error exporting inflation data:', error);
-    res.status(500).json({ 
+    return res.status(500).json({ 
       error: 'Failed to export inflation data',
       message: error instanceof Error ? error.message : 'Unknown error'
     });
@@ -319,7 +319,7 @@ router.get('/press-kit', async (req: Request, res: Response) => {
     res.json(pressKit);
   } catch (error) {
     console.error('Error generating press kit:', error);
-    res.status(500).json({ 
+    return res.status(500).json({ 
       error: 'Failed to generate press kit',
       message: error instanceof Error ? error.message : 'Unknown error'
     });

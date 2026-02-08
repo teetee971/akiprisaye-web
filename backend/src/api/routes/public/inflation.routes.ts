@@ -119,7 +119,7 @@ router.get('/latest', async (req: Request, res: Response) => {
     }
   } catch (error) {
     console.error('[PUBLIC API] Error fetching latest inflation:', error);
-    res.status(500).json({ 
+    return res.status(500).json({ 
       error: 'Failed to fetch inflation data',
       message: error instanceof Error ? error.message : 'Unknown error',
       timestamp: new Date().toISOString(),
@@ -260,7 +260,7 @@ router.get('/history', async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('[PUBLIC API] Error fetching inflation history:', error);
-    res.status(500).json({ 
+    return res.status(500).json({ 
       error: 'Failed to fetch inflation history',
       message: error instanceof Error ? error.message : 'Unknown error',
       timestamp: new Date().toISOString(),
@@ -320,7 +320,7 @@ router.get('/territories', async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('[PUBLIC API] Error fetching territories:', error);
-    res.status(500).json({ 
+    return res.status(500).json({ 
       error: 'Failed to fetch territories',
       message: error instanceof Error ? error.message : 'Unknown error',
       timestamp: new Date().toISOString(),
