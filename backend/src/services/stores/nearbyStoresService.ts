@@ -4,6 +4,7 @@
  */
 
 import { SEED_STORES } from '../../../../src/data/seedStores.js';
+import { calculateDistance } from '../../utils/geoUtils.js';
 
 export interface NearbyStoresOptions {
   lat: number;
