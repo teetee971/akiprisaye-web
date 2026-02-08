@@ -5,7 +5,7 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import './map.css';
-import { StoreMapProps, StoreMarker as StoreMarkerType, MapFilters as MapFiltersType } from '../../types/map';
+import { StoreMapProps, StoreMarker as StoreMarkerType, MapFilters as MapFiltersType, RouteResult } from '../../types/map';
 import { MAP_CONFIG, getTerritoryConfig } from '../../utils/mapConfig';
 import { calculateDistance } from '../../utils/geoUtils';
 import { getPriceCategory } from '../../utils/priceColors';
@@ -13,6 +13,8 @@ import StoreMarker from './StoreMarker';
 import StorePopup from './StorePopup';
 import MapLegend from './MapLegend';
 import MapFilters from './MapFilters';
+import { PriceHeatmap } from './PriceHeatmap';
+import { RouteLayer } from './RouteLayer';
 
 interface MarkerClusterGroupProps {
   stores: StoreMarkerType[];
@@ -180,18 +182,40 @@ function UserLocationMarker({ position }: { position: [number, number] }) {
   return null;
 }
 
+interface ExtendedStoreMapProps extends StoreMapProps {
+  stores?: StoreMarkerType[];
+  userPosition?: [number, number];
+  selectedStore?: StoreMarkerType | null;
+  route?: RouteResult | null;
+  filters?: MapFiltersType;
+  onFilterChange?: (filters: MapFiltersType) => void;
+  onStoreClick?: (store: StoreMarkerType) => void;
+  onGetDirections?: (store: StoreMarkerType) => void;
+  onClearRoute?: () => void;
+}
+
 export default function StoreMap({
   territory,
   chains,
   center,
   zoom,
   showUserLocation = false,
+  showHeatmap = false,
   radius = MAP_CONFIG.defaultRadius,
-}: StoreMapProps) {
-  const [stores, setStores] = useState<StoreMarkerType[]>([]);
-  const [selectedStore, setSelectedStore] = useState<StoreMarkerType | null>(null);
-  const [userPosition, setUserPosition] = useState<[number, number] | null>(null);
-  const [filters, setFilters] = useState<MapFiltersType>({
+  stores: storesProp = [],
+  userPosition: userPositionProp,
+  selectedStore: selectedStoreProp = null,
+  route = null,
+  filters: filtersProp,
+  onFilterChange,
+  onStoreClick: onStoreClickProp,
+  onGetDirections: onGetDirectionsProp,
+  onClearRoute,
+}: ExtendedStoreMapProps) {
+  const [stores, setStores] = useState<StoreMarkerType[]>(storesProp);
+  const [selectedStore, setSelectedStore] = useState<StoreMarkerType | null>(selectedStoreProp);
+  const [userPosition, setUserPosition] = useState<[number, number] | null>(userPositionProp || null);
+  const [filters, setFilters] = useState<MapFiltersType>(filtersProp || {
     territory: territory || null,
     chains: chains || [],
     priceCategory: [],
@@ -199,6 +223,23 @@ export default function StoreMap({
     radius: radius,
     onlyOpen: false,
   });
+
+  // Update state when props change
+  useEffect(() => {
+    if (storesProp) setStores(storesProp);
+  }, [storesProp]);
+
+  useEffect(() => {
+    if (selectedStoreProp !== undefined) setSelectedStore(selectedStoreProp);
+  }, [selectedStoreProp]);
+
+  useEffect(() => {
+    if (userPositionProp) setUserPosition(userPositionProp);
+  }, [userPositionProp]);
+
+  useEffect(() => {
+    if (filtersProp) setFilters(filtersProp);
+  }, [filtersProp]);
 
   // Load leaflet markercluster dynamically
   useEffect(() => {
@@ -311,13 +352,18 @@ export default function StoreMap({
   // Handle store click
   const handleStoreClick = useCallback((store: StoreMarkerType) => {
     setSelectedStore(store);
-  }, []);
+    onStoreClickProp?.(store);
+  }, [onStoreClickProp]);
 
   // Handle get directions
   const handleGetDirections = useCallback((store: StoreMarkerType) => {
-    const url = `https://www.google.com/maps/dir/?api=1&destination=${store.coordinates.lat},${store.coordinates.lon}`;
-    window.open(url, '_blank');
-  }, []);
+    if (onGetDirectionsProp) {
+      onGetDirectionsProp(store);
+    } else {
+      const url = `https://www.google.com/maps/dir/?api=1&destination=${store.coordinates.lat},${store.coordinates.lon}`;
+      window.open(url, '_blank');
+    }
+  }, [onGetDirectionsProp]);
 
   // Handle view details
   const handleViewDetails = useCallback((store: StoreMarkerType) => {
@@ -341,6 +387,22 @@ export default function StoreMap({
       delete (window as any).storeMapViewDetails;
     };
   }, [stores, handleGetDirections, handleViewDetails]);
+
+  // Handle filter changes
+  const handleFilterChange = useCallback((newFilters: MapFiltersType) => {
+    setFilters(newFilters);
+    onFilterChange?.(newFilters);
+  }, [onFilterChange]);
+
+  // Prepare heatmap data
+  const heatmapData = useMemo(() => {
+    if (!showHeatmap) return [];
+    return filteredStores.map(store => ({
+      lat: store.coordinates.lat,
+      lon: store.coordinates.lon,
+      intensity: store.priceIndex / 100, // Normalize 0-100 to 0-1
+    }));
+  }, [showHeatmap, filteredStores]);
 
   return (
     <div className="relative w-full h-full">
@@ -368,14 +430,24 @@ export default function StoreMap({
           onGetDirections={handleGetDirections}
           onViewDetails={handleViewDetails}
         />
+
+        {showHeatmap && heatmapData.length > 0 && (
+          <PriceHeatmap points={heatmapData} />
+        )}
+
+        {route && (
+          <RouteLayer route={route} onClear={onClearRoute} />
+        )}
       </MapContainer>
 
-      <MapFilters
-        filters={filters}
-        availableChains={availableChains}
-        availableServices={availableServices}
-        onFiltersChange={setFilters}
-      />
+      {!filtersProp && (
+        <MapFilters
+          filters={filters}
+          availableChains={availableChains}
+          availableServices={availableServices}
+          onFiltersChange={handleFilterChange}
+        />
+      )}
 
       <MapLegend />
     </div>
