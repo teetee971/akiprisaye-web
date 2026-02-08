@@ -140,7 +140,7 @@ export function checkPasswordStrength(password: string): {
  * @param length - Longueur souhaitée (min 12, défaut 16)
  * @returns Mot de passe aléatoire
  *
- * Utilise crypto.randomBytes pour une génération cryptographiquement sûre
+ * Utilise crypto.randomInt pour une génération cryptographiquement sûre
  */
 export function generateRandomPassword(length = 16): string {
   if (length < 12) {
@@ -159,20 +159,23 @@ export function generateRandomPassword(length = 16): string {
 
   let password = '';
 
-  // Assurer au moins un caractère de chaque type
-  password += chars.lowercase[Math.floor(Math.random() * chars.lowercase.length)];
-  password += chars.uppercase[Math.floor(Math.random() * chars.uppercase.length)];
-  password += chars.numbers[Math.floor(Math.random() * chars.numbers.length)];
-  password += chars.special[Math.floor(Math.random() * chars.special.length)];
+  // Assurer au moins un caractère de chaque type (utilise crypto.randomInt)
+  password += chars.lowercase[crypto.randomInt(0, chars.lowercase.length)];
+  password += chars.uppercase[crypto.randomInt(0, chars.uppercase.length)];
+  password += chars.numbers[crypto.randomInt(0, chars.numbers.length)];
+  password += chars.special[crypto.randomInt(0, chars.special.length)];
 
-  // Remplir le reste aléatoirement
+  // Remplir le reste aléatoirement (utilise crypto.randomInt)
   for (let i = password.length; i < length; i++) {
-    password += allChars[Math.floor(Math.random() * allChars.length)];
+    password += allChars[crypto.randomInt(0, allChars.length)];
   }
 
-  // Mélanger les caractères
-  return password
-    .split('')
-    .sort(() => Math.random() - 0.5)
-    .join('');
+  // Mélanger les caractères (utilise crypto.randomInt pour le shuffle)
+  const passwordArray = password.split('');
+  for (let i = passwordArray.length - 1; i > 0; i--) {
+    const j = crypto.randomInt(0, i + 1);
+    [passwordArray[i], passwordArray[j]] = [passwordArray[j], passwordArray[i]];
+  }
+  
+  return passwordArray.join('');
 }

@@ -85,19 +85,41 @@ enum ReviewStatus {
   REJECTED
 }
 
+enum SubscriptionTier {
+  FREE
+  CITIZEN_PREMIUM
+  SME
+  BUSINESS_PRO
+  INSTITUTIONAL
+}
+
+enum ApiPermission {
+  READ_PRICES
+  WRITE_PRICES
+  READ_STORES
+  WRITE_STORES
+  READ_PRODUCTS
+  WRITE_PRODUCTS
+  ADMIN
+}
+
 /// ===============================
 /// MODELS
 /// ===============================
 model User {
-  id           String   @id @default(cuid())
-  email        String   @unique
-  name         String?
-  passwordHash String
-  role         UserRole @default(USER)
-  isActive     Boolean  @default(true)
+  id               String           @id @default(cuid())
+  email            String           @unique
+  name             String?
+  passwordHash     String
+  role             UserRole         @default(USER)
+  isActive         Boolean          @default(true)
+  subscriptionTier SubscriptionTier @default(FREE)
+  lastLogin        DateTime?
 
-  subscription      Subscription?
+  subscription       Subscription?
   priceVerifications PriceVerification[]
+  refreshTokens      RefreshToken[]
+  apiKeys            ApiKey[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -228,4 +250,38 @@ model ProductUpdate {
   @@index([productId])
   @@index([reviewStatus])
   @@index([createdAt])
+}
+
+model RefreshToken {
+  id         String   @id @default(cuid())
+  tokenHash  String   @unique
+  userId     String
+  expiresAt  DateTime
+  isRevoked  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model ApiKey {
+  id          String         @id @default(cuid())
+  key         String         @unique
+  keyHash     String         @unique
+  name        String
+  userId      String
+  permissions ApiPermission[]
+  isActive    Boolean        @default(true)
+  expiresAt   DateTime?
+  lastUsedAt  DateTime?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([keyHash])
+  @@index([isActive])
 }

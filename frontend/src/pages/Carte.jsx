@@ -152,7 +152,12 @@ function MarkerClusterGroup({ map, leaflet, stores, currentTerritory, formatDist
         };
         
         statusDiv.style.cssText = statusColors[statusInfo.status] || statusColors.unknown;
-        statusDiv.innerHTML = `<strong>${statusIcons[statusInfo.status]} ${statusInfo.message}</strong>`;
+        
+        // Security: Use textContent for user-controlled message to prevent XSS
+        const iconSpan = document.createElement('strong');
+        iconSpan.textContent = `${statusIcons[statusInfo.status]} ${statusInfo.message}`;
+        statusDiv.appendChild(iconSpan);
+        
         popupContent.appendChild(statusDiv);
       }
       

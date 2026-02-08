@@ -5,6 +5,7 @@
 
 import express, { Request, Response, NextFunction } from 'express';
 import Stripe from 'stripe';
+import { authMiddleware } from '../middlewares/auth.middleware.js';
 import subscriptionService from '../../services/subscription/subscriptionService.js';
 import stripeWebhookHandler from '../../services/payment/stripeWebhookHandler.js';
 import { SubscriptionTier } from '../../types/subscription.js';
@@ -32,15 +33,25 @@ router.get('/plans', (_req: Request, res: Response) => {
 /**
  * POST /api/subscriptions
  * Create a new subscription
+ * Requires authentication - uses authenticated user ID
  */
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const { userId, planId, paymentMethodId, interval } = req.body;
+    // Get authenticated user ID from JWT token
+    const userId = req.user?.userId;
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        error: 'Authentication required'
+      });
+    }
     
-    if (!userId || !planId || !interval) {
+    const { planId, paymentMethodId, interval } = req.body;
+    
+    if (!planId || !interval) {
       return res.status(400).json({
         success: false,
-        error: 'Missing required fields: userId, planId, interval'
+        error: 'Missing required fields: planId, interval'
       });
     }
     
@@ -62,12 +73,20 @@ router.post('/', async (req: Request, res: Response) => {
 });
 
 /**
- * GET /api/subscriptions/:userId
- * Get active subscription for a user
+ * GET /api/subscriptions/me
+ * Get active subscription for the authenticated user
+ * Requires authentication
  */
-router.get('/:userId', async (req: Request, res: Response) => {
+router.get('/me', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const { userId } = req.params;
+    const userId = req.user?.userId;
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        error: 'Authentication required'
+      });
+    }
+    
     const subscription = await subscriptionService.getActiveSubscription(userId);
     
     if (!subscription) {
@@ -89,12 +108,20 @@ router.get('/:userId', async (req: Request, res: Response) => {
 });
 
 /**
- * POST /api/subscriptions/:userId/check-feature
- * Check if user has access to a feature
+ * POST /api/subscriptions/check-feature
+ * Check if authenticated user has access to a feature
+ * Requires authentication
  */
-router.post('/:userId/check-feature', async (req: Request, res: Response) => {
+router.post('/check-feature', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const { userId } = req.params;
+    const userId = req.user?.userId;
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        error: 'Authentication required'
+      });
+    }
+    
     const { feature } = req.body;
     
     if (!feature) {

@@ -6,8 +6,19 @@
  * - Déni de service (DoS)
  * - Abus de l'API
  *
- * Utilise express-rate-limit avec stockage en mémoire
- * Pour production: utiliser Redis ou autre store distribué
+ * IMPORTANT: Utilise express-rate-limit avec stockage EN MÉMOIRE
+ * 
+ * ⚠️ PRODUCTION WARNING:
+ * Dans un déploiement distribué/clusterisé, le stockage en mémoire ne fonctionne
+ * pas correctement car chaque instance a ses propres compteurs. Pour la production,
+ * il est CRITIQUE d'utiliser un store Redis avec rate-limit-redis.
+ * 
+ * Migration vers Redis:
+ * 1. Installer: npm install rate-limit-redis
+ * 2. Créer client Redis: const RedisStore = require('rate-limit-redis')
+ * 3. Ajouter 'store' à chaque limiter: store: new RedisStore({ client: redisClient })
+ * 
+ * Voir: https://github.com/wyattjoh/rate-limit-redis
  */
 
 import rateLimit from 'express-rate-limit';

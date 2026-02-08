@@ -6,6 +6,7 @@
 import { Router, Request, Response } from 'express';
 import { z } from 'zod';
 import { PriceSource, VerificationAction } from '@prisma/client';
+import { authMiddleware } from '../middlewares/auth.middleware.js';
 import {
   submitPrice,
   verifyPrice,
@@ -37,7 +38,6 @@ const submitPriceSchema = z.object({
 });
 
 const verifyPriceSchema = z.object({
-  userId: z.string().min(1, 'User ID is required'),
   action: z.nativeEnum(VerificationAction),
   comment: z.string().optional(),
 });
@@ -206,23 +206,22 @@ router.get('/best/:productId', async (req: Request, res: Response) => {
  * POST /api/prices/:id/verify
  * Verify or dispute a price
  * 
- * NOTE: This endpoint currently accepts userId from request body, which allows
- * impersonation. In production, this should require authentication middleware
- * and derive userId from req.user (authenticated user) instead.
+ * Requires authentication. Uses authenticated user ID from JWT token.
  */
-router.post('/:id/verify', async (req: Request, res: Response) => {
+router.post('/:id/verify', authMiddleware, async (req: Request, res: Response) => {
   try {
     const { id: priceId } = req.params;
     const validatedData = verifyPriceSchema.parse(req.body);
 
-    // TODO: Replace with authenticated userId from middleware
-    // const userId = req.user?.id;
-    // if (!userId) {
-    //   return res.status(401).json({ error: 'Authentication required' });
-    // }
+    // Get authenticated user ID from JWT token
+    const userId = req.user?.userId;
+    if (!userId) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
 
     const result = await verifyPrice({
       priceId,
+      userId,
       ...validatedData,
     });
 

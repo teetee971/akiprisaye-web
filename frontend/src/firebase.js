@@ -2,22 +2,30 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
-// Firebase configuration with environment variables
-// Fallback values are provided for backward compatibility but should be set via .env.local
-const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyDf_m8BzMVHFWoFhVLyThuKwWTMhB7u5ZY",
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "a-ki-pri-sa-ye.firebaseapp.com",
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "a-ki-pri-sa-ye",
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "a-ki-pri-sa-ye.firebasestorage.app",
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "187272078809",
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:187272078809:web:110a92e34493ef4506e5c8",
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "G-NFHCZTLPDM"
+// Firebase configuration - all values MUST be provided via environment variables
+// No fallback values to prevent credential exposure
+const requiredEnvVars = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
-// Warn in development if using fallback values
-if (import.meta.env?.DEV && !import.meta.env.VITE_FIREBASE_API_KEY) {
-  console.warn('⚠️ Firebase: Using fallback configuration. Set VITE_FIREBASE_* environment variables for production.');
+// Validate all required environment variables are present
+const missingVars = Object.entries(requiredEnvVars)
+  .filter(([_, value]) => !value)
+  .map(([key]) => `VITE_FIREBASE_${key.replace(/([A-Z])/g, '_$1').toUpperCase()}`);
+
+if (missingVars.length > 0) {
+  const errorMsg = `Missing required Firebase environment variables: ${missingVars.join(', ')}. Please configure them in .env.local`;
+  console.error('🔴 Firebase Configuration Error:', errorMsg);
+  throw new Error(errorMsg);
 }
+
+const firebaseConfig = requiredEnvVars;
 
 let app = null;
 let auth = null;
@@ -29,15 +37,12 @@ try {
   auth = getAuth(app);
   db = getFirestore(app);
   if (import.meta.env?.DEV) {
-    console.warn('✅ Firebase initialized successfully');
+    console.log('✅ Firebase initialized successfully');
   }
 } catch (error) {
   firebaseError = error?.message || 'Unknown Firebase initialization error';
-  // Only log errors in development
-  if (import.meta.env?.DEV) {
-    console.error('⚠️ Firebase initialization failed:', firebaseError);
-  }
-  // Services remain null - app will continue to function
+  console.error('⚠️ Firebase initialization failed:', firebaseError);
+  throw error; // Fail fast - don't continue with broken Firebase
 }
 
 export { app, auth, db, firebaseError };
