@@ -323,6 +323,160 @@ export const SEED_COMPANIES: Company[] = [
     lastUpdate: '2024-12-18T12:00:00Z',
     source: 'REGISTRE_ENTREPRISES',
   },
+
+  // Auchan Retail France
+  {
+    id: 'company-auchan',
+    siretCode: '41040946000015',
+    sirenCode: '410409460',
+    vatCode: 'FR89410409460',
+    legalName: 'Auchan Retail France SA',
+    tradeName: 'Auchan',
+    activityStatus: 'ACTIVE',
+    creationDate: '1961-01-01',
+    headOffice: {
+      streetNumber: '40',
+      streetName: 'Avenue de Flandre',
+      city: 'Croix',
+      department: '59',
+      postalCode: '59170',
+      country: 'France',
+    },
+    geoLocation: {
+      latitude: 50.6792,
+      longitude: 3.1517,
+    },
+    lastUpdate: '2026-02-08T00:00:00Z',
+    source: 'REGISTRE_ENTREPRISES',
+  },
+
+  // Lidl France
+  {
+    id: 'company-lidl',
+    siretCode: '34326262200018',
+    sirenCode: '343262622',
+    vatCode: 'FR80343262622',
+    legalName: 'Lidl SNC',
+    tradeName: 'Lidl',
+    activityStatus: 'ACTIVE',
+    creationDate: '1988-01-01',
+    headOffice: {
+      streetNumber: '1',
+      streetName: 'Place du Marché',
+      city: 'Strasbourg',
+      department: '67',
+      postalCode: '67000',
+      country: 'France',
+    },
+    geoLocation: {
+      latitude: 48.5734,
+      longitude: 7.7521,
+    },
+    lastUpdate: '2026-02-08T00:00:00Z',
+    source: 'REGISTRE_ENTREPRISES',
+  },
+
+  // Picard Surgelés
+  {
+    id: 'company-picard',
+    siretCode: '78493968800015',
+    sirenCode: '784939688',
+    vatCode: 'FR35784939688',
+    legalName: 'Picard Surgelés SAS',
+    tradeName: 'Picard',
+    activityStatus: 'ACTIVE',
+    creationDate: '1906-01-01',
+    headOffice: {
+      streetNumber: '17',
+      streetName: 'Rue de la Vanne',
+      city: 'Fontainebleau',
+      department: '77',
+      postalCode: '77300',
+      country: 'France',
+    },
+    geoLocation: {
+      latitude: 48.4084,
+      longitude: 2.7019,
+    },
+    lastUpdate: '2026-02-08T00:00:00Z',
+    source: 'REGISTRE_ENTREPRISES',
+  },
+
+  // Thiriet Distribution
+  {
+    id: 'company-thiriet',
+    siretCode: '37846394600015',
+    sirenCode: '378463946',
+    vatCode: 'FR26378463946',
+    legalName: 'Thiriet Distribution SAS',
+    tradeName: 'Thiriet',
+    activityStatus: 'ACTIVE',
+    creationDate: '1966-01-01',
+    headOffice: {
+      streetNumber: 'Zone',
+      streetName: 'Industrielle Sud',
+      city: 'Saint-Dizier',
+      department: '52',
+      postalCode: '52100',
+      country: 'France',
+    },
+    geoLocation: {
+      latitude: 48.6390,
+      longitude: 4.9460,
+    },
+    lastUpdate: '2026-02-08T00:00:00Z',
+    source: 'REGISTRE_ENTREPRISES',
+  },
+
+  // Primantilles (local Guadeloupe)
+  {
+    id: 'company-primantilles',
+    siretCode: 'LOCAL_GP_00100001',
+    sirenCode: 'LOCAL_GP_001',
+    legalName: 'Primantilles SARL',
+    tradeName: 'Primantilles',
+    activityStatus: 'ACTIVE',
+    creationDate: '1995-01-01',
+    headOffice: {
+      streetNumber: 'Zone',
+      streetName: 'Industrielle de Jarry',
+      city: 'Baie-Mahault',
+      department: '971',
+      postalCode: '97122',
+      country: 'France',
+    },
+    geoLocation: {
+      latitude: 16.2676,
+      longitude: -61.5252,
+    },
+    lastUpdate: '2026-02-08T00:00:00Z',
+    source: 'LOCAL_REGISTRY',
+  },
+
+  // Beraca (local Guadeloupe/Saint-Martin)
+  {
+    id: 'company-beraca',
+    siretCode: 'LOCAL_GP_00200001',
+    sirenCode: 'LOCAL_GP_002',
+    legalName: 'Beraca Distribution',
+    tradeName: 'Beraca',
+    activityStatus: 'ACTIVE',
+    creationDate: '1990-01-01',
+    headOffice: {
+      streetNumber: 'Centre',
+      streetName: 'Commercial Grand-Case',
+      city: 'Grand-Case',
+      department: '971',
+      postalCode: '97150',
+      country: 'France',
+    },
+    geoLocation: {
+      latitude: 18.1013,
+      longitude: -63.0535,
+    },
+    lastUpdate: '2026-02-08T00:00:00Z',
+    source: 'LOCAL_REGISTRY',
+  },
 ];
 
 /**
