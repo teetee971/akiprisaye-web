@@ -225,3 +225,78 @@ model NotificationPreference {
   
   user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
+/// ===============================
+/// INFLATION DASHBOARD MODELS
+/// ===============================
+
+model PriceIndex {
+  id              String   @id @default(cuid())
+  territory       String
+  period          String   // Format: "2026-02"
+  
+  indexValue      Float    // Base 100 = janvier 2024
+  basketPrice     Float    // Prix du panier en €
+  
+  monthlyChange   Float    // % vs M-1
+  yearlyChange    Float    // % vs M-12
+  
+  productCount    Int      // Produits dans le calcul
+  confidence      Float    // Score confiance 0-100
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@unique([territory, period])
+  @@index([territory])
+  @@index([period])
+}
+
+model CategoryIndex {
+  id              String   @id @default(cuid())
+  territory       String
+  category        String
+  period          String
+  
+  indexValue      Float
+  monthlyChange   Float
+  yearlyChange    Float
+  
+  productCount    Int
+  
+  createdAt       DateTime @default(now())
+  
+  @@unique([territory, category, period])
+  @@index([territory, period])
+  @@index([category])
+}
+
+model InflationReport {
+  id              String   @id @default(cuid())
+  period          String
+  
+  globalIndex     Float
+  
+  territoryData   Json     // { GP: {...}, MQ: {...}, ... }
+  categoryData    Json     // { dairy: {...}, meat: {...}, ... }
+  topMovers       Json     // { increases: [...], decreases: [...] }
+  metroComparison Json     // { gap: ..., ... }
+  
+  pressKitUrl     String?
+  
+  generatedAt     DateTime @default(now())
+  
+  @@unique([period])
+}
+
+model MetroReferencePrice {
+  id              String   @id @default(cuid())
+  productId       String
+  period          String
+  price           Float
+  source          String   // "insee", "estimate"
+  
+  createdAt       DateTime @default(now())
+  
+  @@unique([productId, period])
+}

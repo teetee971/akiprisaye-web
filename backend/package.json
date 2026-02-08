@@ -35,10 +35,14 @@
     "jsonwebtoken": "^9.0.2",
     "mjml": "^4.18.0",
     "node-cron": "^4.2.1",
+    "papaparse": "^5.5.3",
+    "pdfkit": "^0.17.2",
+    "regression": "^2.0.1",
     "stripe": "^14.21.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "web-push": "^3.6.7",
+    "xlsx": "^0.18.5",
     "zod": "^3.23.8"
   },
   "devDependencies": {
