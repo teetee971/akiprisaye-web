@@ -12,7 +12,9 @@
     "test": "echo '⚠️ Tests unitaires non configurés pour le moment' && exit 0"
   },
   "dependencies": {
-    "@turf/turf": "^7.3.4",
+    "@hookform/resolvers": "^5.2.2",
+    "@tanstack/react-table": "^8.21.3",
+    "@turf/turf": "^6.5.0",
     "@types/leaflet": "^1.9.21",
     "@zxing/library": "^0.21.3",
     "chart.js": "^4.5.1",

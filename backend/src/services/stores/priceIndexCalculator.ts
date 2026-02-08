@@ -1,186 +1,263 @@
 /**
  * Price Index Calculator Service
- * Calculates price indices for stores based on a reference basket
+ * Calculates price indices using a reference basket of 10 products
+ * Normalizes prices to a 0-100 scale for comparison
  */
 
-export interface ReferenceBasketItem {
-  productId: string;
-  quantity: number;
-}
-
-export interface PriceIndexResult {
-  storeId: string;
-  priceIndex: number; // 0-100
-  averageBasketPrice: number;
-  comparisonToTerritory: number;
-  comparisonToChain: number;
-  lastCalculatedAt: string;
-  basketComposition: Array<{
-    productId: string;
-    productName: string;
-    price: number;
-    territoryAverage: number;
-    chainAverage?: number;
-  }>;
-}
-
-// Reference basket for price comparison (10 essential products)
-export const REFERENCE_BASKET: ReferenceBasketItem[] = [
-  { productId: 'riz_1kg', quantity: 1 },
-  { productId: 'lait_1l', quantity: 2 },
-  { productId: 'pain_500g', quantity: 1 },
-  { productId: 'oeufs_x6', quantity: 1 },
-  { productId: 'huile_1l', quantity: 1 },
-  { productId: 'sucre_1kg', quantity: 1 },
-  { productId: 'eau_1.5l', quantity: 2 },
-  { productId: 'pates_500g', quantity: 1 },
-  { productId: 'beurre_250g', quantity: 1 },
-  { productId: 'cafe_250g', quantity: 1 },
+// Reference basket of 10 products (standardized names)
+const REFERENCE_BASKET = [
+  'riz_1kg',
+  'lait_1l', // x2
+  'lait_1l', // second unit
+  'pain_500g',
+  'oeufs_x6',
+  'huile_1l',
+  'sucre_1kg',
+  'eau_1.5l', // x2
+  'eau_1.5l', // second unit
+  'pates_500g',
+  'beurre_250g',
+  'cafe_250g',
 ];
 
-/**
- * Mock prices for demonstration
- * In production, this would query the database
- */
-const MOCK_PRICES: Record<string, Record<string, number>> = {
-  superu_petit_canal: {
-    riz_1kg: 2.99,
-    lait_1l: 1.29,
-    pain_500g: 1.49,
-    oeufs_x6: 2.79,
-    huile_1l: 4.99,
-    sucre_1kg: 1.89,
-    'eau_1.5l': 0.59,
-    pates_500g: 1.19,
-    beurre_250g: 2.49,
-    cafe_250g: 5.99,
-  },
-  carrefour_baie_mahault: {
-    riz_1kg: 3.29,
-    lait_1l: 1.39,
-    pain_500g: 1.59,
-    oeufs_x6: 2.99,
-    huile_1l: 5.49,
-    sucre_1kg: 1.99,
-    'eau_1.5l': 0.69,
-    pates_500g: 1.29,
-    beurre_250g: 2.69,
-    cafe_250g: 6.49,
-  },
-  leclerc_abymes: {
-    riz_1kg: 2.79,
-    lait_1l: 1.19,
-    pain_500g: 1.39,
-    oeufs_x6: 2.59,
-    huile_1l: 4.79,
-    sucre_1kg: 1.79,
-    'eau_1.5l': 0.49,
-    pates_500g: 1.09,
-    beurre_250g: 2.29,
-    cafe_250g: 5.79,
-  },
-};
+interface PriceData {
+  productKey: string;
+  price: number;
+  storeName: string;
+  storeId?: string;
+}
 
-// Territory averages
-const TERRITORY_AVERAGES: Record<string, number> = {
-  riz_1kg: 3.0,
-  lait_1l: 1.3,
-  pain_500g: 1.5,
-  oeufs_x6: 2.8,
-  huile_1l: 5.0,
-  sucre_1kg: 1.9,
-  'eau_1.5l': 0.6,
-  pates_500g: 1.2,
-  beurre_250g: 2.5,
-  cafe_250g: 6.0,
-};
+interface PriceIndexResult {
+  storeId: string;
+  storeName: string;
+  basketTotal: number;
+  territoryAverage: number;
+  priceIndex: number; // 0-100 scale
+  category: 'cheap' | 'medium' | 'expensive'; // green/orange/red
+  missingProducts: string[];
+  productsFound: number;
+  productsTotal: number;
+}
+
+interface TerritoryStats {
+  territory: string;
+  averageBasketPrice: number;
+  storeCount: number;
+  minPrice: number;
+  maxPrice: number;
+}
 
 /**
- * Calculate price index for a store
+ * Calculate the total price of the reference basket for a store
+ * @param prices Array of price data for products
+ * @returns Object with total price and list of missing products
  */
-export async function calculatePriceIndex(
-  storeId: string
-): Promise<PriceIndexResult> {
-  // Get store prices (mock data for now)
-  const storePrices = MOCK_PRICES[storeId] || MOCK_PRICES.superu_petit_canal;
+function calculateBasketTotal(prices: PriceData[]): {
+  total: number;
+  missingProducts: string[];
+  foundCount: number;
+} {
+  const priceMap = new Map<string, number>();
+  
+  // Build price map from available prices
+  prices.forEach((p) => {
+    priceMap.set(p.productKey.toLowerCase(), p.price);
+  });
 
-  // Calculate basket total
-  let basketTotal = 0;
-  let territoryTotal = 0;
-  const basketComposition = [];
+  let total = 0;
+  const missingProducts: string[] = [];
+  let foundCount = 0;
 
-  for (const item of REFERENCE_BASKET) {
-    const price = storePrices[item.productId];
-    const territoryAvg = TERRITORY_AVERAGES[item.productId];
-
-    // Skip items with missing prices to avoid incorrect calculations
-    if (!price || !territoryAvg) {
-      console.warn(`Missing price data for ${item.productId} in store ${storeId}`);
-      continue;
+  // Calculate total for reference basket
+  REFERENCE_BASKET.forEach((productKey) => {
+    const price = priceMap.get(productKey.toLowerCase());
+    if (price !== undefined && price > 0) {
+      total += price;
+      foundCount++;
+    } else {
+      if (!missingProducts.includes(productKey)) {
+        missingProducts.push(productKey);
+      }
     }
+  });
 
-    basketTotal += price * item.quantity;
-    territoryTotal += territoryAvg * item.quantity;
+  return { total, missingProducts, foundCount };
+}
 
-    basketComposition.push({
-      productId: item.productId,
-      productName: item.productId.replace(/_/g, ' '),
-      price: price * item.quantity,
-      territoryAverage: territoryAvg * item.quantity,
-    });
+/**
+ * Calculate price index for a store relative to territory average
+ * Formula: ((store_total - territory_avg) / territory_avg) * 100
+ * Normalized to [0, 100] scale
+ * @param storeTotal Total basket price for the store
+ * @param territoryAverage Average basket price for the territory
+ * @returns Price index from 0 (cheapest) to 100 (most expensive)
+ */
+function calculatePriceIndex(
+  storeTotal: number,
+  territoryAverage: number
+): number {
+  if (territoryAverage === 0) {
+    return 50; // Neutral if no reference
   }
 
-  // Calculate comparison percentage
-  const comparisonToTerritory =
-    territoryTotal > 0
-      ? ((basketTotal - territoryTotal) / territoryTotal) * 100
+  // Calculate relative difference
+  const relativeDiff = (storeTotal - territoryAverage) / territoryAverage;
+  
+  // Normalize to 0-100 scale
+  // -50% diff -> 0, 0% diff -> 50, +100% diff -> 100
+  // Using a scaling factor to map reasonable price ranges
+  const scaledIndex = 50 + (relativeDiff * 50);
+  
+  // Clamp to [0, 100]
+  return Math.max(0, Math.min(100, Math.round(scaledIndex)));
+}
+
+/**
+ * Categorize price index into cheap/medium/expensive
+ * @param priceIndex Price index value (0-100)
+ * @returns Category string
+ */
+function categorizePriceIndex(
+  priceIndex: number
+): 'cheap' | 'medium' | 'expensive' {
+  if (priceIndex <= 33) {
+    return 'cheap'; // Green (0-33)
+  } else if (priceIndex <= 66) {
+    return 'medium'; // Orange (34-66)
+  } else {
+    return 'expensive'; // Red (67-100)
+  }
+}
+
+/**
+ * Calculate price indices for multiple stores in a territory
+ * @param storesPrices Map of store prices: storeId -> array of price data
+ * @param territory Territory code (e.g., 'GP', 'MQ')
+ * @returns Array of price index results
+ */
+export function calculateTerritoryPriceIndices(
+  storesPrices: Map<string, PriceData[]>,
+  territory: string
+): PriceIndexResult[] {
+  const results: PriceIndexResult[] = [];
+  const basketTotals: number[] = [];
+
+  // First pass: calculate basket totals for all stores
+  storesPrices.forEach((prices, storeId) => {
+    const { total, missingProducts, foundCount } = calculateBasketTotal(prices);
+    
+    // Skip stores with insufficient data (less than 50% of basket)
+    if (foundCount < REFERENCE_BASKET.length * 0.5) {
+      console.warn(
+        `Store ${storeId} has only ${foundCount}/${REFERENCE_BASKET.length} products. Skipping.`
+      );
+      return;
+    }
+
+    if (total > 0) {
+      basketTotals.push(total);
+    }
+
+    const storeName = prices[0]?.storeName || storeId;
+
+    results.push({
+      storeId,
+      storeName,
+      basketTotal: total,
+      territoryAverage: 0, // Will be filled in second pass
+      priceIndex: 0, // Will be calculated in second pass
+      category: 'medium',
+      missingProducts,
+      productsFound: foundCount,
+      productsTotal: REFERENCE_BASKET.length,
+    });
+  });
+
+  // Calculate territory average (excluding zeros)
+  const validTotals = basketTotals.filter((t) => t > 0);
+  const territoryAverage =
+    validTotals.length > 0
+      ? validTotals.reduce((sum, t) => sum + t, 0) / validTotals.length
       : 0;
 
-  // Normalize to 0-100 scale (cheaper = lower index)
-  // If 20% more expensive, index = 60
-  // If same price, index = 50
-  // If 20% cheaper, index = 40
-  let priceIndex = 50 + comparisonToTerritory;
-  priceIndex = Math.max(0, Math.min(100, priceIndex));
+  // Second pass: calculate price indices
+  results.forEach((result) => {
+    if (result.basketTotal > 0) {
+      result.territoryAverage = territoryAverage;
+      result.priceIndex = calculatePriceIndex(
+        result.basketTotal,
+        territoryAverage
+      );
+      result.category = categorizePriceIndex(result.priceIndex);
+    }
+  });
+
+  // Log warnings for missing products
+  results.forEach((result) => {
+    if (result.missingProducts.length > 0) {
+      console.warn(
+        `Store ${result.storeName} (${result.storeId}) missing products: ${result.missingProducts.join(', ')}`
+      );
+    }
+  });
+
+  return results.sort((a, b) => a.priceIndex - b.priceIndex);
+}
+
+/**
+ * Calculate statistics for a territory
+ * @param priceIndices Array of price index results
+ * @param territory Territory code
+ * @returns Territory statistics
+ */
+export function calculateTerritoryStats(
+  priceIndices: PriceIndexResult[],
+  territory: string
+): TerritoryStats {
+  const validPrices = priceIndices
+    .filter((p) => p.basketTotal > 0)
+    .map((p) => p.basketTotal);
+
+  if (validPrices.length === 0) {
+    return {
+      territory,
+      averageBasketPrice: 0,
+      storeCount: 0,
+      minPrice: 0,
+      maxPrice: 0,
+    };
+  }
 
   return {
-    storeId,
-    priceIndex: Math.round(priceIndex),
-    averageBasketPrice: parseFloat(basketTotal.toFixed(2)),
-    comparisonToTerritory: parseFloat(comparisonToTerritory.toFixed(2)),
-    comparisonToChain: 0, // Would be calculated if we had chain data
-    lastCalculatedAt: new Date().toISOString(),
-    basketComposition,
+    territory,
+    averageBasketPrice:
+      validPrices.reduce((sum, p) => sum + p, 0) / validPrices.length,
+    storeCount: validPrices.length,
+    minPrice: Math.min(...validPrices),
+    maxPrice: Math.max(...validPrices),
   };
 }
 
 /**
- * Calculate price index for multiple stores
+ * Get color code for price category
+ * @param category Price category
+ * @returns Hex color code
  */
-export async function calculatePriceIndices(
-  storeIds: string[]
-): Promise<Map<string, PriceIndexResult>> {
-  const results = new Map<string, PriceIndexResult>();
-
-  for (const storeId of storeIds) {
-    try {
-      const result = await calculatePriceIndex(storeId);
-      results.set(storeId, result);
-    } catch (error) {
-      console.error(`Error calculating price index for ${storeId}:`, error);
-    }
-  }
-
-  return results;
+export function getPriceCategoryColor(
+  category: 'cheap' | 'medium' | 'expensive'
+): string {
+  const colors = {
+    cheap: '#22c55e', // Green
+    medium: '#f59e0b', // Orange
+    expensive: '#ef4444', // Red
+  };
+  return colors[category];
 }
 
 /**
- * Get territory average basket price
+ * Get reference basket products list
+ * @returns Array of product keys in the reference basket
  */
-export function getTerritoryAverageBasketPrice(): number {
-  let total = 0;
-  for (const item of REFERENCE_BASKET) {
-    total += (TERRITORY_AVERAGES[item.productId] || 0) * item.quantity;
-  }
-  return parseFloat(total.toFixed(2));
+export function getReferenceBasket(): string[] {
+  return [...new Set(REFERENCE_BASKET)]; // Return unique products
 }

@@ -37,6 +37,9 @@ import subscriptionRoutes from './api/routes/subscription.routes.js';
 // Price Alerts & Notifications routes
 import alertsRoutes from './api/routes/alerts.routes.js';
 import notificationsRoutes from './api/routes/notifications.routes.js';
+// Sync & Validation routes
+import syncRoutes from './api/routes/sync.routes.js';
+import validationRoutes from './api/routes/validation.routes.js';
 // Map routes
 import mapRoutes from './api/routes/map.routes.js';
 
@@ -154,6 +157,7 @@ app.get('/', (_req: Request, res: Response) => {
       basket: '/api/basket', // Phase 8
       sync: '/api/sync', // Product sync
       validation: '/api/validation', // Product validation
+      map: '/api/map', // Interactive map
     },
     legal: {
       rgpd: 'Conforme RGPD (EU) 2016/679',
@@ -213,6 +217,10 @@ app.use('/api/subscriptions', subscriptionRoutes);
 // Sync & Validation API routes (publiques avec rate limiting)
 app.use('/api/sync', syncRoutes);
 app.use('/api/validation', validationRoutes);
+
+// Price Alerts & Notifications API routes (protected by JWT)
+app.use('/api/alerts', alertsRoutes);
+app.use('/api/notifications', notificationsRoutes);
 
 // Map API routes (public with rate limiting)
 app.use('/api/map', mapRoutes);

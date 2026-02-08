@@ -1,167 +1,197 @@
 /**
  * NearbyStoresList Component
- * List of nearby stores with sorting options
+ * Displays a list of nearby stores sorted by distance or price
  */
 
-import React, { useState } from 'react';
-import { StoreMarker } from '../../types/map';
-import { formatDistance } from '../../utils/geoUtils';
-import { PRICE_COLORS } from '../../utils/priceColors';
+import React from 'react';
+import { MapPin, Navigation, Clock, DollarSign } from 'lucide-react';
 
-interface NearbyStoresListProps {
-  stores: StoreMarker[];
-  onStoreClick?: (store: StoreMarker) => void;
-  onGetDirections?: (store: StoreMarker) => void;
+interface Store {
+  id: string;
+  name: string;
+  chain: string;
+  lat: number;
+  lon: number;
+  address?: string;
+  city?: string;
+  distance?: number;
+  travelTimeSeconds?: number;
+  priceIndex?: number;
+  priceCategory?: 'cheap' | 'medium' | 'expensive';
 }
 
-type SortOption = 'distance' | 'price' | 'name';
+interface NearbyStoresListProps {
+  stores: Store[];
+  sortBy?: 'distance' | 'price';
+  onStoreClick?: (store: Store) => void;
+  onNavigate?: (store: Store) => void;
+  maxItems?: number;
+  showPrices?: boolean;
+}
 
+const PRICE_COLORS = {
+  cheap: '#22c55e', // Green
+  medium: '#f59e0b', // Orange
+  expensive: '#ef4444', // Red
+};
+
+const PRICE_LABELS = {
+  cheap: 'Pas cher',
+  medium: 'Moyen',
+  expensive: 'Cher',
+};
+
+/**
+ * Format distance for display
+ */
+function formatDistance(distanceKm: number): string {
+  if (distanceKm < 1) {
+    return `${Math.round(distanceKm * 1000)} m`;
+  }
+  return `${distanceKm.toFixed(1)} km`;
+}
+
+/**
+ * Format travel time for display
+ */
+function formatTravelTime(seconds: number): string {
+  if (seconds < 60) {
+    return `${seconds} sec`;
+  }
+  const minutes = Math.round(seconds / 60);
+  if (minutes < 60) {
+    return `${minutes} min`;
+  }
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+  return `${hours}h${remainingMinutes > 0 ? ` ${remainingMinutes}min` : ''}`;
+}
+
+/**
+ * NearbyStoresList component
+ */
 export function NearbyStoresList({
   stores,
+  sortBy = 'distance',
   onStoreClick,
-  onGetDirections,
+  onNavigate,
+  maxItems,
+  showPrices = true,
 }: NearbyStoresListProps) {
-  const [sortBy, setSortBy] = useState<SortOption>('distance');
-
+  // Sort stores
   const sortedStores = [...stores].sort((a, b) => {
-    switch (sortBy) {
-      case 'distance':
-        return (a.distance || 0) - (b.distance || 0);
-      case 'price':
-        return a.priceIndex - b.priceIndex;
-      case 'name':
-        return a.name.localeCompare(b.name);
-      default:
-        return 0;
+    if (sortBy === 'distance') {
+      return (a.distance || 0) - (b.distance || 0);
+    } else if (sortBy === 'price' && a.priceIndex !== undefined && b.priceIndex !== undefined) {
+      return a.priceIndex - b.priceIndex;
     }
+    return 0;
   });
 
-  return (
-    <div className="bg-white rounded-lg shadow-md">
-      <div className="p-4 border-b border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-800 mb-3">
-          📍 Magasins à proximité ({stores.length})
-        </h3>
-        
-        <div className="flex gap-2 flex-wrap">
-          <button
-            onClick={() => setSortBy('distance')}
-            className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-              sortBy === 'distance'
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            Plus proche
-          </button>
-          <button
-            onClick={() => setSortBy('price')}
-            className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-              sortBy === 'price'
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            Moins cher
-          </button>
-          <button
-            onClick={() => setSortBy('name')}
-            className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-              sortBy === 'name'
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            Nom A-Z
-          </button>
-        </div>
+  // Limit items if specified
+  const displayStores = maxItems ? sortedStores.slice(0, maxItems) : sortedStores;
+
+  if (displayStores.length === 0) {
+    return (
+      <div className="text-center py-8 text-gray-500">
+        <MapPin className="w-12 h-12 mx-auto mb-2 text-gray-400" />
+        <p>Aucun magasin trouvé à proximité</p>
       </div>
+    );
+  }
 
-      <div className="max-h-96 overflow-y-auto">
-        {sortedStores.length === 0 ? (
-          <div className="p-6 text-center text-gray-600">
-            Aucun magasin trouvé à proximité
-          </div>
-        ) : (
-          <div className="divide-y divide-gray-200">
-            {sortedStores.map(store => (
-              <div
-                key={store.id}
-                className="p-4 hover:bg-gray-50 transition-colors"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex-1">
-                    <button
-                      onClick={() => onStoreClick?.(store)}
-                      className="text-left w-full group"
-                    >
-                      <div className="flex items-center gap-2 mb-1">
-                        <span
-                          className="text-xl"
-                          aria-label={PRICE_COLORS[store.priceCategory].label}
-                        >
-                          {PRICE_COLORS[store.priceCategory].icon}
-                        </span>
-                        <h4 className="font-semibold text-gray-900 group-hover:text-blue-600">
-                          {store.name}
-                        </h4>
-                      </div>
-                      
-                      <p className="text-sm text-gray-600 mb-2">
-                        {store.chain}
-                      </p>
-                      
-                      <div className="flex items-center gap-3 text-sm text-gray-500">
-                        {store.distance !== undefined && (
-                          <span className="flex items-center gap-1">
-                            <span aria-label="Distance">📏</span>
-                            {formatDistance(store.distance)}
-                          </span>
-                        )}
-                        <span className="flex items-center gap-1">
-                          <span aria-label="Prix">💰</span>
-                          {store.averageBasketPrice.toFixed(2)}€
-                        </span>
-                        {store.isOpen !== undefined && (
-                          <span
-                            className={`font-medium ${
-                              store.isOpen ? 'text-green-600' : 'text-red-600'
-                            }`}
-                          >
-                            {store.isOpen ? '● Ouvert' : '○ Fermé'}
-                          </span>
-                        )}
-                      </div>
-                    </button>
-                  </div>
+  return (
+    <div className="space-y-2">
+      {displayStores.map((store) => (
+        <div
+          key={store.id}
+          className="bg-white rounded-lg shadow p-4 hover:shadow-md transition-shadow cursor-pointer"
+          onClick={() => onStoreClick?.(store)}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              onStoreClick?.(store);
+            }
+          }}
+        >
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex-1">
+              {/* Store Name and Chain */}
+              <h3 className="font-semibold text-gray-900">{store.name}</h3>
+              <p className="text-sm text-gray-600">{store.chain}</p>
 
-                  <button
-                    onClick={() => onGetDirections?.(store)}
-                    className="px-3 py-2 bg-blue-500 text-white text-sm font-medium rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-1"
-                    aria-label={`Itinéraire vers ${store.name}`}
-                  >
-                    <span aria-hidden="true">🗺️</span>
-                    <span className="hidden sm:inline">Itinéraire</span>
-                  </button>
-                </div>
+              {/* Location */}
+              {store.city && (
+                <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
+                  <MapPin className="w-3 h-3" />
+                  {store.city}
+                </p>
+              )}
 
-                {store.services && store.services.length > 0 && (
-                  <div className="flex gap-2 mt-2">
-                    {store.services.slice(0, 5).map(service => (
-                      <span
-                        key={service}
-                        className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded"
-                      >
-                        {service}
-                      </span>
-                    ))}
-                  </div>
+              {/* Distance and Travel Time */}
+              <div className="flex items-center gap-3 mt-2 text-sm">
+                {store.distance !== undefined && (
+                  <span className="text-blue-600 font-medium flex items-center gap-1">
+                    <Navigation className="w-4 h-4" />
+                    {formatDistance(store.distance)}
+                  </span>
+                )}
+                {store.travelTimeSeconds !== undefined && (
+                  <span className="text-gray-600 flex items-center gap-1">
+                    <Clock className="w-4 h-4" />
+                    {formatTravelTime(store.travelTimeSeconds)}
+                  </span>
                 )}
               </div>
-            ))}
+
+              {/* Price Category */}
+              {showPrices && store.priceCategory && (
+                <div className="mt-2">
+                  <span
+                    className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium text-white"
+                    style={{
+                      backgroundColor: PRICE_COLORS[store.priceCategory],
+                    }}
+                  >
+                    <DollarSign className="w-3 h-3" />
+                    {PRICE_LABELS[store.priceCategory]}
+                  </span>
+                  {store.priceIndex !== undefined && (
+                    <span className="ml-2 text-xs text-gray-500">
+                      Indice: {store.priceIndex}/100
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Navigate Button */}
+            {onNavigate && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onNavigate(store);
+                }}
+                className="p-2 text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
+                aria-label={`Naviguer vers ${store.name}`}
+              >
+                <Navigation className="w-5 h-5" />
+              </button>
+            )}
           </div>
-        )}
-      </div>
+        </div>
+      ))}
+
+      {/* Show count if limited */}
+      {maxItems && stores.length > maxItems && (
+        <p className="text-center text-sm text-gray-500 pt-2">
+          Affichage de {maxItems} magasins sur {stores.length}
+        </p>
+      )}
     </div>
   );
 }
+
+export default NearbyStoresList;

@@ -1,6 +1,6 @@
 /**
  * PriceHeatmap Component
- * Display price heatmap layer on the map
+ * Displays a heat map overlay showing price intensity across locations
  */
 
 import { useEffect } from 'react';
@@ -11,28 +11,46 @@ import 'leaflet.heat';
 interface HeatmapPoint {
   lat: number;
   lon: number;
-  intensity: number; // 0-1 (0=cheap, 1=expensive)
+  intensity: number; // 0-1 scale
 }
 
 interface PriceHeatmapProps {
   points: HeatmapPoint[];
-  options?: {
-    radius?: number;
-    blur?: number;
-    maxZoom?: number;
-    max?: number;
-    gradient?: Record<number, string>;
-  };
+  visible?: boolean;
+  radius?: number;
+  blur?: number;
+  maxZoom?: number;
+  minOpacity?: number;
+  gradient?: { [key: number]: string };
 }
 
-export function PriceHeatmap({ points, options }: PriceHeatmapProps) {
+/**
+ * PriceHeatmap component - Leaflet.heat integration
+ */
+export function PriceHeatmap({
+  points,
+  visible = true,
+  radius = 25,
+  blur = 15,
+  maxZoom = 15,
+  minOpacity = 0.2,
+  gradient = {
+    0.0: '#22c55e', // Green (cheap)
+    0.33: '#84cc16', // Light green
+    0.5: '#f59e0b', // Orange (medium)
+    0.67: '#f97316', // Dark orange
+    1.0: '#ef4444', // Red (expensive)
+  },
+}: PriceHeatmapProps) {
   const map = useMap();
 
   useEffect(() => {
-    if (!points || points.length === 0) return;
+    if (!map || !visible || points.length === 0) {
+      return;
+    }
 
-    // Convert points to heatmap format: [lat, lon, intensity]
-    const heatmapData: [number, number, number][] = points.map(point => [
+    // Convert points to leaflet.heat format: [lat, lng, intensity]
+    const heatData: [number, number, number][] = points.map((point) => [
       point.lat,
       point.lon,
       point.intensity,
@@ -62,7 +80,10 @@ export function PriceHeatmap({ points, options }: PriceHeatmapProps) {
     return () => {
       map.removeLayer(heatLayer);
     };
-  }, [map, points, options]);
+  }, [map, points, visible, radius, blur, maxZoom, minOpacity, gradient]);
 
-  return null; // This component doesn't render anything directly
+  // This component doesn't render anything visible itself
+  return null;
 }
+
+export default PriceHeatmap;
