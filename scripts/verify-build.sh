@@ -3,7 +3,6 @@
 # Checks that all expected files are present in dist/
 
 set -e  # Exit on any error
-
 echo "🔍 BUILD VERIFICATION"
 echo "====================="
 echo ""
@@ -33,8 +32,8 @@ echo "📋 Test 2: index.html"
 if [ -f "$DIST_DIR/index.html" ]; then
   echo -e "${GREEN}✅ index.html exists${NC}"
   
-  # Check index.html content
-  if grep -q '<div id="root"></div>' "$DIST_DIR/index.html"; then
+  # Check index.html content - allow fallback content inside root div
+  if grep -q '<div id="root"' "$DIST_DIR/index.html"; then
     echo -e "${GREEN}✅ index.html contains React root div${NC}"
   else
     echo -e "${RED}❌ index.html missing React root div${NC}"
