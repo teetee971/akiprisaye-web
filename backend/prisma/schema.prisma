@@ -109,6 +109,56 @@ enum ChallengeType {
   SPECIAL
 }
 
+enum PriceSource {
+  OCR_TICKET
+  OFFICIAL_API
+  OPEN_PRICES
+  MANUAL_ENTRY
+  CROWDSOURCED
+  SCRAPING_AUTHORIZED
+}
+
+enum VerificationStatus {
+  UNVERIFIED
+  VERIFIED
+  DISPUTED
+}
+
+enum VerificationAction {
+  CONFIRM
+  DISPUTE
+  UPDATE
+}
+
+enum AnomalyType {
+  SUDDEN_INCREASE
+  SUDDEN_DECREASE
+  OUTLIER_HIGH
+  OUTLIER_LOW
+  SHRINKFLATION
+  INCONSISTENT_REPORT
+  STALE_DATA
+}
+
+enum Severity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum AnomalyStatus {
+  PENDING
+  CONFIRMED
+  DISMISSED
+}
+
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 /// ===============================
 /// MODELS
 /// ===============================
@@ -473,4 +523,106 @@ model MetroReferencePrice {
   @@unique([productCode, year, month])
   @@index([productCode])
   @@index([year, month])
+}
+
+/// ===============================
+/// VERIFIED PRICING MODELS
+/// ===============================
+
+/// Product Price Observation (Prix produit)
+model ProductPrice {
+  id                  String              @id @default(cuid())
+  productId           String
+  storeId             String
+  price               Float
+  currency            String              @default("EUR")
+  
+  // Traçabilité
+  source              PriceSource
+  observedAt          DateTime
+  reportedBy          String?
+  proofUrl            String?
+  
+  // Vérification
+  verificationStatus  VerificationStatus  @default(UNVERIFIED)
+  verificationCount   Int                 @default(0)
+  lastVerifiedAt      DateTime?
+  
+  // Confiance
+  confidenceScore     Int                 @default(0)
+  confidenceFactors   Json?
+  
+  // Métadonnées
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  isActive            Boolean             @default(true)
+  
+  verifications       PriceVerification[]
+  anomalies           PriceAnomaly[]
+  
+  @@index([productId])
+  @@index([storeId])
+  @@index([observedAt])
+  @@index([confidenceScore])
+  @@index([verificationStatus])
+}
+
+model PriceVerification {
+  id          String              @id @default(cuid())
+  priceId     String
+  userId      String
+  action      VerificationAction
+  comment     String?
+  createdAt   DateTime            @default(now())
+  
+  price       ProductPrice        @relation(fields: [priceId], references: [id], onDelete: Cascade)
+  
+  @@index([priceId])
+  @@index([userId])
+}
+
+model PriceAnomaly {
+  id            String        @id @default(cuid())
+  priceId       String
+  productId     String
+  storeId       String
+  anomalyType   AnomalyType
+  severity      Severity
+  
+  reportedPrice Float
+  expectedPrice Float
+  deviation     Float
+  
+  status        AnomalyStatus @default(PENDING)
+  resolvedAt    DateTime?
+  resolvedBy    String?
+  resolution    String?
+  context       Json?
+  
+  createdAt     DateTime      @default(now())
+  
+  price         ProductPrice  @relation(fields: [priceId], references: [id], onDelete: Cascade)
+  
+  @@index([status])
+  @@index([severity])
+  @@index([productId])
+  @@index([storeId])
+}
+
+model ProductUpdate {
+  id            String        @id @default(cuid())
+  productId     String
+  field         String
+  oldValue      String?
+  newValue      String
+  source        String
+  autoApplied   Boolean       @default(false)
+  reviewStatus  ReviewStatus  @default(PENDING)
+  reviewedBy    String?
+  reviewedAt    DateTime?
+  createdAt     DateTime      @default(now())
+  
+  @@index([productId])
+  @@index([reviewStatus])
+  @@index([createdAt])
 }
