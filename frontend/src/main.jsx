@@ -37,6 +37,7 @@ if (import.meta.env.DEV) {
 // Lazy-loaded pages - Main routes
 const Home = React.lazy(() => import('./pages/Home'));
 const Carte = React.lazy(() => import('./pages/Carte'));
+const MapPage = React.lazy(() => import('./pages/MapPage'));
 const AdminDashboard = React.lazy(() => import('./pages/AdminDashboard'));
 const Comparateur = React.lazy(() => import('./pages/Comparateur'));
 
@@ -63,7 +64,6 @@ const ContribuerPrix = React.lazy(() => import('./pages/ContribuerPrix'));
 const Comparateurs = React.lazy(() => import('./pages/Comparateurs'));
 const CarteItinerairesHub = React.lazy(() => import('./pages/CarteItinerairesHub'));
 const ComparateurCitoyen = React.lazy(() => import('./pages/ComparateurCitoyen'));
-const MapPage = React.lazy(() => import('./pages/MapPage'));
 
 // Scanner & OCR pages
 const ScannerHub = React.lazy(() => import('./pages/ScannerHub'));
@@ -98,6 +98,9 @@ const ObservatoireTempsReel = React.lazy(() => import('./pages/ObservatoireTemps
 // Transparency & reporting
 const Transparence = React.lazy(() => import('./pages/Transparence'));
 const SignalerAbus = React.lazy(() => import('./pages/SignalerAbus'));
+
+// Admin Sync Dashboard
+const SyncDashboard = React.lazy(() => import('./pages/admin/sync/SyncDashboard'));
 
 // i18n Test page (for development/testing)
 const I18nTest = React.lazy(() => import('./pages/I18nTest'));
@@ -143,12 +146,14 @@ if (!rootElement) {
                     <Route path="products/:id" element={<ProductDetail />} />
                     <Route path="products/:id/edit" element={<ProductForm />} />
                     <Route path="import" element={<ImportPage />} />
+                    <Route path="sync" element={<SyncDashboard />} />
                   </Route>
                   
                   {/* Main site routes */}
                   <Route path="/" element={<Layout />}>
                     <Route index element={<Navigate to="/carte" replace />} />
                     <Route path="carte" element={<Carte />} />
+                    <Route path="carte-interactive" element={<MapPage />} />
                     <Route path="dashboard" element={<AdminDashboard />} />
                     <Route path="home" element={<Home />} />
                     <Route path="comparateur" element={<Comparateur />} />
@@ -165,7 +170,6 @@ if (!rootElement) {
                     <Route path="comparateurs" element={<Comparateurs />} />
                     <Route path="carte-itineraires" element={<CarteItinerairesHub />} />
                     <Route path="comparateur-citoyen" element={<ComparateurCitoyen />} />
-                    <Route path="carte-interactive" element={<MapPage />} />
                     
                     {/* Scanner & OCR routes */}
                     <Route path="scan" element={<ScannerHub />} />
@@ -208,6 +212,9 @@ if (!rootElement) {
                     {/* Transparency & reporting */}
                     <Route path="transparence" element={<Transparence />} />
                     <Route path="signaler-abus" element={<SignalerAbus />} />
+                    
+                    {/* Admin routes */}
+                    <Route path="admin/sync" element={<SyncDashboard />} />
                     
                     {/* i18n Test (development/testing) */}
                     <Route path="test-i18n" element={<I18nTest />} />
