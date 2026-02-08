@@ -49,10 +49,32 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
+    
+    <!-- Base styles to prevent white flash -->
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #0f172a;
+        color: white;
+        font-family: Inter, system-ui, -apple-system, sans-serif;
+      }
+      
+      #root {
+        min-height: 100vh;
+      }
+    </style>
   </head>
   
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Fallback content visible pendant le chargement ou en cas d'erreur -->
+      <div id="loading-fallback" style="min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #0f172a; color: white; font-family: system-ui, sans-serif;">
+        <img src="/logo-akiprisaye.svg" alt="A KI PRI SA YÉ" style="height: 64px; margin-bottom: 24px;" />
+        <h1 style="font-size: 1.5rem; margin-bottom: 8px;">A KI PRI SA YÉ</h1>
+        <p style="color: #94a3b8;">Chargement en cours...</p>
+      </div>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
