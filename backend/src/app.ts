@@ -37,6 +37,9 @@ import subscriptionRoutes from './api/routes/subscription.routes.js';
 // Price Alerts & Notifications routes
 import alertsRoutes from './api/routes/alerts.routes.js';
 import notificationsRoutes from './api/routes/notifications.routes.js';
+// Product Sync routes
+import syncRoutes from './api/routes/sync.routes.js';
+import validationRoutes from './api/routes/validation.routes.js';
 
 // Import middlewares
 import { apiLimiter } from './api/middlewares/rateLimit.middleware.js';
@@ -149,6 +152,8 @@ app.get('/', (_req: Request, res: Response) => {
       stores: '/api/stores', // Phase 7
       products: '/api/products', // Phase 7
       basket: '/api/basket', // Phase 8
+      sync: '/api/sync', // Product sync
+      validation: '/api/validation', // Product validation
     },
     legal: {
       rgpd: 'Conforme RGPD (EU) 2016/679',
@@ -208,6 +213,10 @@ app.use('/api/subscriptions', subscriptionRoutes);
 // Price Alerts & Notifications API routes (protected by JWT)
 app.use('/api/alerts', alertsRoutes);
 app.use('/api/notifications', notificationsRoutes);
+
+// Product Sync API routes (protected by JWT + ADMIN role)
+app.use('/api/sync', syncRoutes);
+app.use('/api/validation', validationRoutes);
 
 // ========================================
 // Gestion des erreurs

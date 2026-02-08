@@ -109,6 +109,21 @@ enum ChallengeType {
   SPECIAL
 }
 
+enum ProductSource {
+  MANUAL
+  OCR
+  OPENFOODFACTS
+  OPENPRICES
+  CITIZEN
+}
+
+enum ProductStatus {
+  PENDING_REVIEW
+  VALIDATED
+  REJECTED
+  MERGED
+}
+
 /// ===============================
 /// MODELS
 /// ===============================
@@ -473,4 +488,68 @@ model MetroReferencePrice {
   @@unique([productCode, year, month])
   @@index([productCode])
   @@index([year, month])
+}
+
+/// ===============================
+/// PRODUCT SYNC MODELS
+/// ===============================
+
+model Product {
+  id              String        @id @default(cuid())
+  ean             String?       @unique
+  name            String
+  normalizedName  String
+  brand           String?
+  category        String?
+  quantity        String?
+  imageUrl        String?
+  nutriscoreGrade String?
+  ecoscoreGrade   String?
+  source          ProductSource
+  status          ProductStatus @default(PENDING_REVIEW)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  validatedAt     DateTime?
+  validatedBy     String?
+  
+  prices          ProductPrice[]
+  
+  @@index([normalizedName])
+  @@index([status])
+  @@index([ean])
+}
+
+model ProductPrice {
+  id              String   @id @default(cuid())
+  productId       String
+  productCode     String?
+  price           Float
+  currency        String   @default("EUR")
+  storeId         String?
+  locationOsmId   String?
+  territory       String?
+  date            DateTime
+  source          String
+  createdAt       DateTime @default(now())
+  
+  product         Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  @@index([productId])
+  @@index([date])
+}
+
+model SyncLog {
+  id              String    @id @default(cuid())
+  source          String
+  startedAt       DateTime
+  completedAt     DateTime?
+  status          String
+  itemsProcessed  Int       @default(0)
+  itemsCreated    Int       @default(0)
+  itemsUpdated    Int       @default(0)
+  itemsSkipped    Int       @default(0)
+  errors          Json?
+  
+  @@index([source])
+  @@index([startedAt])
 }
