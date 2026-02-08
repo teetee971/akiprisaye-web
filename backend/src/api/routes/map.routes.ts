@@ -27,17 +27,37 @@ import { calculateDistance, calculateTravelTime } from '../../utils/geoUtils.js'
 
 const router = express.Router();
 
-// Mock store data loader - In production, this would load from database
-// For now, we'll assume stores are passed or loaded from a service
-let storesCache: Store[] = [];
+// Store data loader - in production, this should load from database or a seed service
+// We lazily initialize the cache from an environment-provided JSON payload
+let storesCache: Store[] | null = null;
 
 /**
  * Load stores from data source
- * This is a placeholder - implement actual data loading logic
+ * Currently loads from the STORES_DATA environment variable (JSON array)
+ * and caches the result for subsequent calls.
  */
 function loadStores(): Store[] {
-  // TODO: Implement actual store loading from database or seed data
-  // For now, return cached stores
+  if (storesCache && storesCache.length > 0) {
+    return storesCache;
+  }
+
+  const rawStoresData = process.env.STORES_DATA;
+  if (!rawStoresData) {
+    throw new Error('STORES_DATA environment variable is not set');
+  }
+
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(rawStoresData);
+  } catch (err) {
+    throw new Error('Failed to parse STORES_DATA environment variable as JSON');
+  }
+
+  if (!Array.isArray(parsed)) {
+    throw new Error('STORES_DATA JSON must be an array of stores');
+  }
+
+  storesCache = parsed as Store[];
   return storesCache;
 }
 
