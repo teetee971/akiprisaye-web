@@ -1,141 +1,168 @@
 /**
  * useProductUpdates Hook
- * 
- * Update workflow management for product data
+ * React hook for managing product updates
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 export interface ProductUpdate {
   id: string;
   productId: string;
-  submittedBy: string;
-  fieldName: string;
-  oldValue?: string;
+  field: string;
+  oldValue: string | null;
   newValue: string;
-  isTrustedField: boolean;
-  requiresReview: boolean;
-  status: string;
+  source: string;
+  autoApplied: boolean;
+  reviewStatus: 'PENDING' | 'APPROVED' | 'REJECTED';
   reviewedBy?: string;
-  reviewedAt?: Date | string;
-  reviewNote?: string;
-  proofUrl?: string;
-  confidence: number;
-  createdAt: Date | string;
-  updatedAt: Date | string;
+  reviewedAt?: string;
+  createdAt: string;
 }
 
 interface UseProductUpdatesResult {
   updates: ProductUpdate[];
-  isLoading: boolean;
+  loading: boolean;
   error: string | null;
-  submitUpdate: (data: ProductUpdateData) => Promise<SubmissionResult>;
-  refetch: () => Promise<void>;
+  refetch: () => void;
 }
 
-export interface ProductUpdateData {
-  productId: string;
-  submittedBy: string;
-  fieldName: string;
-  oldValue?: string;
-  newValue: string;
-  proofUrl?: string;
-  confidence?: number;
-}
-
-export interface SubmissionResult {
-  success: boolean;
-  updateId?: string;
-  autoApplied?: boolean;
-  requiresReview?: boolean;
-  error?: string;
-}
-
-export function useProductUpdates(productId?: string): UseProductUpdatesResult {
+export function useProductUpdates(productId: string): UseProductUpdatesResult {
   const [updates, setUpdates] = useState<ProductUpdate[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchUpdates = async () => {
+  const fetchUpdates = useCallback(async () => {
     if (!productId) {
-      setUpdates([]);
+      setError('Product ID is required');
+      setLoading(false);
       return;
     }
 
-    setIsLoading(true);
+    setLoading(true);
     setError(null);
 
     try {
-      const response = await fetch(`/api/product-updates/${productId}`);
+      // Note: This endpoint would need to be implemented in the backend
+      const response = await fetch(`/api/products/${productId}/updates`);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const result = await response.json();
-
-      if (result.success) {
-        setUpdates(result.data);
-      } else {
-        throw new Error(result.error || 'Failed to fetch product updates');
-      }
+      setUpdates(result.updates || []);
     } catch (err) {
-      console.error('Error fetching product updates:', err);
-      setError(err instanceof Error ? err.message : 'Unknown error occurred');
+      setError(err instanceof Error ? err.message : 'Failed to fetch product updates');
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
-  };
+  }, [productId]);
 
-  const submitUpdate = async (data: ProductUpdateData): Promise<SubmissionResult> => {
+  useEffect(() => {
+    fetchUpdates();
+  }, [fetchUpdates]);
+
+  return {
+    updates,
+    loading,
+    error,
+    refetch: fetchUpdates,
+  };
+}
+
+/**
+ * usePendingProductUpdates Hook
+ * Hook for fetching all pending product updates (admin use)
+ */
+interface UsePendingProductUpdatesResult {
+  pendingUpdates: ProductUpdate[];
+  loading: boolean;
+  error: string | null;
+  refetch: () => void;
+  approveUpdate: (updateId: string) => Promise<boolean>;
+  rejectUpdate: (updateId: string) => Promise<boolean>;
+}
+
+export function usePendingProductUpdates(): UsePendingProductUpdatesResult {
+  const [pendingUpdates, setPendingUpdates] = useState<ProductUpdate[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchPendingUpdates = useCallback(async () => {
+    setLoading(true);
     setError(null);
 
     try {
-      const response = await fetch('/api/product-updates', {
+      // Note: This endpoint would need to be implemented in the backend
+      const response = await fetch('/api/products/updates/pending');
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      setPendingUpdates(result.updates || []);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch pending updates');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const approveUpdate = useCallback(async (updateId: string): Promise<boolean> => {
+    try {
+      const response = await fetch(`/api/products/updates/${updateId}/approve`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
       });
 
-      const result = await response.json();
+      if (!response.ok) {
+        throw new Error('Failed to approve update');
+      }
+
+      // Refetch pending updates
+      await fetchPendingUpdates();
+      return true;
+    } catch (err) {
+      console.error('Error approving update:', err);
+      return false;
+    }
+  }, [fetchPendingUpdates]);
+
+  const rejectUpdate = useCallback(async (updateId: string): Promise<boolean> => {
+    try {
+      const response = await fetch(`/api/products/updates/${updateId}/reject`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
       if (!response.ok) {
-        setError(result.error || 'Failed to submit update');
-        return result;
+        throw new Error('Failed to reject update');
       }
 
-      // Refetch updates after successful submission
-      if (result.success && productId) {
-        await fetchUpdates();
-      }
-
-      return result;
+      // Refetch pending updates
+      await fetchPendingUpdates();
+      return true;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
-      console.error('Error submitting update:', err);
-      setError(errorMessage);
-
-      return {
-        success: false,
-        error: errorMessage,
-      };
+      console.error('Error rejecting update:', err);
+      return false;
     }
-  };
+  }, [fetchPendingUpdates]);
 
   useEffect(() => {
-    if (productId) {
-      fetchUpdates();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [productId]);
+    fetchPendingUpdates();
+  }, [fetchPendingUpdates]);
 
   return {
-    updates,
-    isLoading,
+    pendingUpdates,
+    loading,
     error,
-    submitUpdate,
-    refetch: fetchUpdates,
+    refetch: fetchPendingUpdates,
+    approveUpdate,
+    rejectUpdate,
   };
 }

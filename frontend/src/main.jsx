@@ -37,6 +37,7 @@ if (import.meta.env.DEV) {
 // Lazy-loaded pages - Main routes
 const Home = React.lazy(() => import('./pages/Home'));
 const Carte = React.lazy(() => import('./pages/Carte'));
+const MapPage = React.lazy(() => import('./pages/MapPage'));
 const AdminDashboard = React.lazy(() => import('./pages/AdminDashboard'));
 const Comparateur = React.lazy(() => import('./pages/Comparateur'));
 
@@ -101,6 +102,9 @@ const SignalerAbus = React.lazy(() => import('./pages/SignalerAbus'));
 // i18n Test page (for development/testing)
 const I18nTest = React.lazy(() => import('./pages/I18nTest'));
 
+// Admin Sync Dashboard
+const SyncDashboard = React.lazy(() => import('./pages/admin/sync/SyncDashboard'));
+
 /**
  * Root application render with HashRouter for Cloudflare Pages SPA
  * ErrorBoundary is intentionally placed at the highest level
@@ -142,12 +146,14 @@ if (!rootElement) {
                     <Route path="products/:id" element={<ProductDetail />} />
                     <Route path="products/:id/edit" element={<ProductForm />} />
                     <Route path="import" element={<ImportPage />} />
+                    <Route path="sync" element={<SyncDashboard />} />
                   </Route>
                   
                   {/* Main site routes */}
                   <Route path="/" element={<Layout />}>
                     <Route index element={<Navigate to="/carte" replace />} />
                     <Route path="carte" element={<Carte />} />
+                    <Route path="carte-interactive" element={<MapPage />} />
                     <Route path="dashboard" element={<AdminDashboard />} />
                     <Route path="home" element={<Home />} />
                     <Route path="comparateur" element={<Comparateur />} />

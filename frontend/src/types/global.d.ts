@@ -6,6 +6,8 @@ declare global {
   interface Window {
     L: any;
     gtag?: (...args: any[]) => void;
+    storeMapGetDirections?: (storeId: string) => void;
+    storeMapViewDetails?: (storeId: string) => void;
   }
 }
 
