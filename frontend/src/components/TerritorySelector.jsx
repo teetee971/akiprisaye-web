@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { getActiveTerritories, ALL_TERRITORIES } from '../constants/territories';
+import { getActiveTerritories } from '../constants/territories';
 
 // Construire la liste des territoires avec "Tous" en premier
-const allTerritoriesOption = { code: ALL_TERRITORIES, name: 'Tous les territoires', type: 'Tous', flag: '🌍' };
+const ALL_TERRITORY_CODE = 'all';
+const allTerritoriesOption = { code: ALL_TERRITORY_CODE, name: 'Tous les territoires', type: 'Tous', flag: '🌍' };
 const activeTerritories = getActiveTerritories().map(t => ({
   code: t.code,
   name: t.name,

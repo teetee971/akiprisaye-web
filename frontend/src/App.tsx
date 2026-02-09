@@ -186,6 +186,7 @@ export default function App() {
                       <Route path="comparateur" element={<Comparateur />} />
                       <Route path="observatoire" element={<Observatoire />} />
                       <Route path="methodologie" element={<Methodologie />} />
+                      <Route path="tarifs" element={<Pricing />} />
                       <Route path="faq" element={<Faq />} />
                       <Route path="contact" element={<Contact />} />
                       <Route path="mentions-legales" element={<MentionsLegales />} />

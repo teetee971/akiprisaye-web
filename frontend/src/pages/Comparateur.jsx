@@ -3,11 +3,12 @@ import TerritorySelector from '../components/TerritorySelector';
 import EmptyState from '../components/EmptyState';
 import BarcodeScanner from '../components/BarcodeScanner';
 import { useState } from 'react';
-import { findProductByEan } from '../data/seedProducts';
+import { findProductByEan, filterPricesByTerritory } from '../data/seedProducts';
+import { DEFAULT_TERRITORY, getTerritoryByCode } from '../constants/territories';
 
 export default function Comparateur() {
   const [ean, setEan] = useState('');
-  const [territory, setTerritory] = useState('GP');
+  const [territory, setTerritory] = useState(DEFAULT_TERRITORY);
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -61,6 +62,24 @@ export default function Comparateur() {
       const seededProduct = findProductByEan(ean);
       if (seededProduct?.name) {
         setProductName(seededProduct.name);
+        const territoryName = territory === 'all'
+          ? 'all'
+          : getTerritoryByCode(territory)?.name;
+        const seededPrices = filterPricesByTerritory(seededProduct, territoryName ?? 'all');
+        if (seededPrices.length > 0) {
+          setResults(
+            seededPrices.map((price) => ({
+              id: `${seededProduct.ean}-${price.storeId}`,
+              store: price.storeName,
+              location: price.city,
+              price: price.price,
+              unit: price.currency === 'EUR' ? '€' : price.currency,
+              lastUpdate: price.ts,
+              promotion: false,
+            })),
+          );
+          return;
+        }
       } else {
         setProductName('');
       }
