@@ -18,6 +18,7 @@ const Carte = React.lazy(() => import('./pages/Carte'));
 const MapPage = React.lazy(() => import('./pages/MapPage'));
 const AdminDashboard = React.lazy(() => import('./pages/AdminDashboard'));
 const Comparateur = React.lazy(() => import('./pages/Comparateur'));
+const CatalogueProduits = React.lazy(() => import('./pages/CatalogueProduits'));
 
 // New Admin pages
 const AdminLayout = React.lazy(() => import('./pages/admin/AdminLayout'));
@@ -42,6 +43,7 @@ const ContribuerPrix = React.lazy(() => import('./pages/ContribuerPrix'));
 const Comparateurs = React.lazy(() => import('./pages/Comparateurs'));
 const CarteItinerairesHub = React.lazy(() => import('./pages/CarteItinerairesHub'));
 const ComparateurCitoyen = React.lazy(() => import('./pages/ComparateurCitoyen'));
+const SolidariteHub = React.lazy(() => import('./pages/SolidariteHub'));
 
 // Scanner & OCR pages
 const ScannerHub = React.lazy(() => import('./pages/ScannerHub'));
@@ -126,6 +128,7 @@ export default function App() {
                       <Route path="dashboard" element={<AdminDashboard />} />
                       <Route path="home" element={<Home />} />
                       <Route path="comparateur" element={<Comparateur />} />
+                      <Route path="catalogue" element={<CatalogueProduits />} />
                       <Route path="observatoire" element={<Observatoire />} />
                       <Route path="methodologie" element={<Methodologie />} />
                       <Route path="faq" element={<Faq />} />
@@ -139,6 +142,7 @@ export default function App() {
                       <Route path="comparateurs" element={<Comparateurs />} />
                       <Route path="carte-itineraires" element={<CarteItinerairesHub />} />
                       <Route path="comparateur-citoyen" element={<ComparateurCitoyen />} />
+                      <Route path="solidarite" element={<SolidariteHub />} />
                       
                       {/* Scanner & OCR routes */}
                       <Route path="scan" element={<ScannerHub />} />

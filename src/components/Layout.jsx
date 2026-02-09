@@ -104,6 +104,8 @@ export default function Layout() {
   const navItems = [
     { path: '/', label: 'Accueil', icon: '🏠' },
     { path: '/comparateur', label: 'Comparateur', icon: '📊' },
+    { path: '/catalogue', label: 'Catalogue', icon: '🧺' },
+    { path: '/solidarite', label: 'Solidarité', icon: '🤝' },
     { path: '/observatoire', label: 'Observatoire', icon: '📈' },
     { path: '/methodologie', label: 'Méthodologie', icon: '📚' },
     { path: '/faq', label: 'FAQ', icon: '❓' },
@@ -112,6 +114,7 @@ export default function Layout() {
   const quickLinks = [
     ...navItems,
     { path: '/scan-ean', label: 'Scanner EAN', icon: '📷' },
+    { path: '/solidarite', label: 'Solidarité', icon: '🤝' },
   ];
   const filteredLinks = quickLinks.filter((item) =>
     item.label.toLowerCase().includes(paletteQuery.toLowerCase())
