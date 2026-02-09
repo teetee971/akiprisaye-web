@@ -23,20 +23,26 @@ if (import.meta.env.DEV) {
   import('./utils/onboardingDebug');
 }
 
+const showFallback = (html) => {
+  const fallback = document.getElementById('loading-fallback');
+  if (fallback) {
+    fallback.style.display = 'flex';
+    fallback.setAttribute('aria-hidden', 'false');
+    fallback.innerHTML = html;
+  }
+};
+
 // Global error handler to catch errors before React loads
 window.onerror = function(message, source, lineno, colno, error) {
   console.error('Erreur globale:', { message, source, lineno, colno, error });
-  const fallback = document.getElementById('loading-fallback');
-  if (fallback) {
-    fallback.innerHTML = `
-      <img src="/logo-akiprisaye.svg" alt="A KI PRI SA YÉ" style="height: 64px; margin-bottom: 24px;" />
-      <h1 style="font-size: 1.5rem; margin-bottom: 8px;">A KI PRI SA YÉ</h1>
-      <p style="color: #f87171; margin-bottom: 16px;">Une erreur est survenue</p>
-      <button onclick="location.reload()" style="padding: 12px 24px; background: #3b82f6; color: white; border: none; border-radius: 8px; cursor: pointer;">
-        Réessayer
-      </button>
-    `;
-  }
+  showFallback(`
+    <img src="/logo-akiprisaye.svg" alt="A KI PRI SA YÉ" style="height: 64px; margin-bottom: 24px;" />
+    <h1 style="font-size: 1.5rem; margin-bottom: 8px;">A KI PRI SA YÉ</h1>
+    <p style="color: #f87171; margin-bottom: 16px;">Une erreur est survenue</p>
+    <button onclick="location.reload()" style="padding: 12px 24px; background: #3b82f6; color: white; border: none; border-radius: 8px; cursor: pointer;">
+      Réessayer
+    </button>
+  `);
   return true;
 };
 
@@ -46,7 +52,7 @@ const globalLoadTimeout = setTimeout(() => {
   // Only show error if fallback is still visible (app hasn't loaded)
   if (fallback && fallback.style.display !== 'none') {
     console.error('⏱️ Global timeout: App failed to load in 15 seconds');
-    fallback.innerHTML = `
+    showFallback(`
       <img src="/logo-akiprisaye.svg" alt="A KI PRI SA YÉ" style="height: 64px; margin-bottom: 24px;" />
       <h1 style="font-size: 1.5rem; margin-bottom: 8px;">A KI PRI SA YÉ</h1>
       <p style="color: #f87171; margin-bottom: 8px;">Le chargement prend trop de temps</p>
@@ -59,7 +65,7 @@ const globalLoadTimeout = setTimeout(() => {
       <p style="color: #64748b; font-size: 0.75rem; margin-top: 16px;">
         Si le problème persiste, essayez de vider le cache de votre navigateur.
       </p>
-    `;
+    `);
   }
 }, 15000);
 

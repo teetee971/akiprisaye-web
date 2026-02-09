@@ -139,7 +139,7 @@ export default function App() {
     const fallback = document.getElementById('loading-fallback');
     if (fallback) {
       fallback.style.display = 'none';
-      console.log('✅ App: HTML loading fallback hidden');
+      fallback.setAttribute('aria-hidden', 'true');
     }
   }, []);
 
@@ -161,6 +161,7 @@ export default function App() {
 
   return (
     <ErrorBoundary>
+      <div id="app-mounted" style={{ display: 'none' }} />
       <LanguageProvider>
         <ThemeProvider>
           <AuthProvider>
