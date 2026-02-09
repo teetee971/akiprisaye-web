@@ -77,7 +77,6 @@ const Subscribe = React.lazy(() => import('./pages/Subscribe'));
 const ObservatoireTempsReel = React.lazy(() => import('./pages/ObservatoireTempsReel'));
 
 // Transparency & reporting
-const Transparence = React.lazy(() => import('./pages/Transparence'));
 const SignalerAbus = React.lazy(() => import('./pages/SignalerAbus'));
 
 // Admin Sync Dashboard
@@ -184,7 +183,6 @@ export default function App() {
                       <Route path="observatoire-temps-reel" element={<ObservatoireTempsReel />} />
                       
                       {/* Transparency & reporting */}
-                      <Route path="transparence" element={<Transparence />} />
                       <Route path="signaler-abus" element={<SignalerAbus />} />
                       
                       {/* Admin routes */}

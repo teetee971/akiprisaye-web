@@ -12,6 +12,23 @@ import {
 
 type ComparateurTab = 'prix' | 'kilo' | 'shrinkflation' | 'metropole' | 'historique';
 
+const computePricePerKg = (price: number, quantity: number, unit: string) => {
+  const normalizedUnit = unit.toLowerCase();
+  if (normalizedUnit === 'g') {
+    const kilograms = quantity / 1000;
+    return kilograms > 0 ? price / kilograms : price;
+  }
+  return price;
+};
+
+const formatUnitLabel = (unit: string) => {
+  const normalizedUnit = unit.toLowerCase();
+  if (normalizedUnit === 'g' || normalizedUnit === 'kg') {
+    return 'kg';
+  }
+  return unit;
+};
+
 export default function ComparateursHub() {
   const [activeTab, setActiveTab] = useState<ComparateurTab>('prix');
   
@@ -106,8 +123,10 @@ export default function ComparateursHub() {
                           <span className="text-xs text-slate-400">{item.territory}</span>
                         </div>
                         <p className="mt-3 text-sm text-blue-300 font-semibold">
-                          {item.price.toFixed(2)} € / {item.quantity}
-                          {item.unit}
+                          {computePricePerKg(item.price, item.quantity, item.unit).toFixed(2)} € / {formatUnitLabel(item.unit)}
+                        </p>
+                        <p className="text-xs text-slate-500 mt-1">
+                          {item.quantity}{item.unit} · prix observé
                         </p>
                       </div>
                     ))}

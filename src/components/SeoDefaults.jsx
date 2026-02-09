@@ -9,7 +9,7 @@ export default function SeoDefaults() {
   const location = useLocation();
   const canonical =
     typeof window !== 'undefined'
-      ? `${window.location.origin}/#${location.pathname}`
+      ? `${window.location.origin}${location.pathname}`
       : undefined;
 
   return (

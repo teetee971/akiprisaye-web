@@ -116,7 +116,6 @@ export default function Layout() {
   const quickLinks = [
     ...navItems,
     { path: '/scan-ean', label: 'Scanner EAN', icon: '📷' },
-    { path: '/solidarite', label: 'Solidarité', icon: '🤝' },
   ];
   const filteredLinks = quickLinks.filter((item) =>
     item.label.toLowerCase().includes(paletteQuery.toLowerCase())

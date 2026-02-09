@@ -67,28 +67,37 @@ export default function CatalogueProduits() {
         };
       });
 
-      const enriched = await Promise.all(
-        baseItems.map(async (item) => {
-          const offProduct = await fetchProductFromOpenFoodFacts(item.ean);
+      const enrichItem = async (item: CatalogueItem) => {
+        const offProduct = await fetchProductFromOpenFoodFacts(item.ean);
 
-          if (!offProduct) {
-            return item;
-          }
+        if (!offProduct) {
+          return item;
+        }
 
-          return {
-            ...item,
-            name: offProduct.name || item.name,
-            brand: offProduct.brand || item.brand,
-            size: offProduct.quantity || item.size,
-            category: offProduct.category || item.category,
-            image: offProduct.imageSmallUrl || offProduct.imageUrl || item.image,
-            ingredients: offProduct.ingredients,
-            nutriScore: offProduct.nutriScore,
-            ecoScore: offProduct.ecoScore,
-            source: offProduct.source || item.source,
-          };
-        }),
-      );
+        return {
+          ...item,
+          name: offProduct.name || item.name,
+          brand: offProduct.brand || item.brand,
+          size: offProduct.quantity || item.size,
+          category: offProduct.category || item.category,
+          image: offProduct.imageSmallUrl || offProduct.imageUrl || item.image,
+          ingredients: offProduct.ingredients,
+          nutriScore: offProduct.nutriScore,
+          ecoScore: offProduct.ecoScore,
+          source: offProduct.source || item.source,
+        };
+      };
+
+      const enriched: CatalogueItem[] = [];
+      const batchSize = 4;
+      for (let index = 0; index < baseItems.length; index += batchSize) {
+        const batch = baseItems.slice(index, index + batchSize);
+        const batchResults = await Promise.all(batch.map(enrichItem));
+        enriched.push(...batchResults);
+        if (index + batchSize < baseItems.length) {
+          await new Promise((resolve) => setTimeout(resolve, 150));
+        }
+      }
 
       if (isActive) {
         setItems(enriched);
@@ -145,9 +154,9 @@ export default function CatalogueProduits() {
       return items;
     }
     if (selectedCategory === fallbackCategory) {
-      return items.filter((item) => !item.category);
+      return items.filter((item) => !item.category?.trim());
     }
-    return items.filter((item) => item.category === selectedCategory);
+    return items.filter((item) => item.category?.trim() === selectedCategory);
   }, [items, selectedCategory]);
 
   return (

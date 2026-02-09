@@ -29,6 +29,7 @@ export default function AnalyticsTracker() {
       }
       events = [];
     }
+    events = Array.isArray(events) ? events : [];
     events.push(event);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(events.slice(-50)));
   }, [location.pathname, location.hash]);
