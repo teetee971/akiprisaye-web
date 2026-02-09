@@ -3,7 +3,6 @@
  * Comprehensive information about fighting high prices in French overseas territories
  */
 
-import { useState, useEffect } from 'react';
 import { 
   TrendingDown, 
   Users, 
@@ -15,26 +14,10 @@ import {
   CheckCircle,
   BarChart3
 } from 'lucide-react';
-
-interface Statistics {
-  totalReports: number;
-  activeActions: number;
-  averageSavings: number;
-  participatingUsers: number;
-}
+import { LUTTE_VIE_CHERE_STATS } from '../data/lutteVieChereStats';
 
 export function LutteVieChere() {
-  const [stats, setStats] = useState<Statistics>({
-    totalReports: 1247,
-    activeActions: 23,
-    averageSavings: 67,
-    participatingUsers: 8432
-  });
-
-  useEffect(() => {
-    // TODO: Fetch real-time statistics from Firestore
-    // For now using mock data
-  }, []);
+  const stats = LUTTE_VIE_CHERE_STATS;
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
@@ -66,6 +49,9 @@ export function LutteVieChere() {
 
       {/* Statistics Section */}
       <div className="container mx-auto px-4 -mt-8">
+        <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">
+          Dernière mise à jour : {stats.updatedAt}
+        </p>
         <div className="grid md:grid-cols-4 gap-4 mb-12">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex items-center gap-3 mb-2">

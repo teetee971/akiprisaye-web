@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Fuse from 'fuse.js';
 import { normalizeText } from '../utils/text';
 import { searchProductsByName } from '../data/seedProducts';
+import { searchProductsOnOpenFoodFacts } from '../data/openFoodFacts';
 import { useToast } from '../hooks/useToast';
 
 const DEBOUNCE = 250;
@@ -56,8 +57,21 @@ export default function ProductSearch({ territory = 'Guadeloupe', onPickEAN }) {
             ean: product.ean,
             name: product.name,
             brand: product.brand,
-            image: null, // No images in seed data
+            image: product.image || null,
           }));
+        }
+
+        // Secondary fallback: OpenFoodFacts search for richer results with real images
+        if (!data || data.length === 0) {
+          const offResults = await searchProductsOnOpenFoodFacts(trimmedQuery, 1, MAX_RESULTS);
+          if (offResults?.products?.length) {
+            data = offResults.products.map(product => ({
+              ean: product.ean,
+              name: product.name,
+              brand: product.brand,
+              image: product.imageSmallUrl || product.imageUrl || null,
+            }));
+          }
         }
         
         // Apply fuzzy re-ranking with Fuse.js if we have results
@@ -151,7 +165,7 @@ export default function ProductSearch({ territory = 'Guadeloupe', onPickEAN }) {
   };
 
   const handleSelectProduct = (product) => {
-    onPickEAN(product.ean);
+    onPickEAN(product.ean, product);
     setQuery('');
     setResults([]);
     setIsOpen(false);
