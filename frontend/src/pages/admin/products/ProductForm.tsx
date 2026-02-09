@@ -108,7 +108,6 @@ export function ProductForm() {
     if (isEditMode && id) {
       loadProduct(id);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, isEditMode]);
 
   const loadProduct = async (productId: string) => {

@@ -21,6 +21,8 @@ export default [
       // Generated/library files
       'frontend/public/tesseract-core-simd.wasm.js',
       'frontend/public/tesseract-core.wasm.js',
+      'frontend/public/ocr/worker.min.js',
+      'public/ocr/worker.min.js',
       
       // Service worker files (use different globals)
       '**/service-worker.js',
