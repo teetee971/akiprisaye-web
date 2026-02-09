@@ -23,7 +23,10 @@ export default function AnalyticsTracker() {
     let events = [];
     try {
       events = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-    } catch {
+    } catch (error) {
+      if (import.meta.env.DEV) {
+        console.error('Failed to parse analytics events from localStorage:', error);
+      }
       events = [];
     }
     events.push(event);
