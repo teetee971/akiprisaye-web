@@ -24,6 +24,9 @@ export default function ScanEAN() {
   
   const [manualEAN, setManualEAN] = useState('')
   const [manualError, setManualError] = useState<string | null>(null)
+  const [isPastingEAN, setIsPastingEAN] = useState(false)
+  const [offlineQueue, setOfflineQueue] = useState<Array<{ ean: string; queuedAt: string }>>([])
+  const [offlineQueueMessage, setOfflineQueueMessage] = useState<string | null>(null)
   const [showHistory, setShowHistory] = useState(false)
   const [imageUploadStatus, setImageUploadStatus] = useState<string | null>(null)
   const [isProcessingImage, setIsProcessingImage] = useState(false)
@@ -82,9 +85,23 @@ export default function ScanEAN() {
     }
   }, [resolver, addToHistory, isUnifiedFlow, isPhotoMode, scanFlow])
 
+  useEffect(() => {
+    try {
+      const storedQueue = JSON.parse(localStorage.getItem('offlineEANQueue') || '[]')
+      setOfflineQueue(Array.isArray(storedQueue) ? storedQueue : [])
+    } catch (error) {
+      console.error('Failed to read offline EAN queue:', error)
+    }
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem('offlineEANQueue', JSON.stringify(offlineQueue))
+  }, [offlineQueue])
+
   // Handle manual EAN search
   const handleManualSearch = async () => {
     setManualError(null)
+    setOfflineQueueMessage(null)
 
     if (!manualEAN.trim()) {
       setManualError('Veuillez saisir un code EAN')
@@ -97,8 +114,58 @@ export default function ScanEAN() {
       return
     }
 
+    if (!navigator.onLine) {
+      const queuedItem = { ean: manualEAN.trim(), queuedAt: new Date().toISOString() }
+      setOfflineQueue((prev) => [...prev, queuedItem])
+      setOfflineQueueMessage('📥 Vous êtes hors ligne. Recherche ajoutée à la file d’attente.')
+      return
+    }
+
     await handleEAN(manualEAN.trim())
   }
+
+  const handleProcessOfflineQueue = async () => {
+    if (!navigator.onLine || offlineQueue.length === 0) return
+    setOfflineQueueMessage('🔄 Traitement des recherches en attente...')
+    for (const item of offlineQueue) {
+      await handleEAN(item.ean)
+    }
+    setOfflineQueue([])
+    setOfflineQueueMessage('✅ Recherches en attente traitées.')
+    setTimeout(() => setOfflineQueueMessage(null), 3000)
+  }
+
+  const handlePasteFromClipboard = async () => {
+    setManualError(null)
+    setIsPastingEAN(true)
+
+    try {
+      const clipboardText = await navigator.clipboard.readText()
+      const digits = clipboardText.replace(/\D/g, '').slice(0, 13)
+
+      if (!digits) {
+        setManualError('Aucun code EAN trouvé dans le presse-papiers')
+        return
+      }
+
+      setManualEAN(digits)
+    } catch (error) {
+      console.error('Clipboard read error:', error)
+      setManualError('Accès au presse-papiers refusé ou indisponible')
+    } finally {
+      setIsPastingEAN(false)
+    }
+  }
+
+  const manualEANLength = manualEAN.trim().length
+  const isManualEANLengthValid = manualEANLength === 8 || manualEANLength === 13
+  const isManualEANValid = isManualEANLengthValid && validateEAN(manualEAN.trim())
+  const canSubmitManual = manualEAN.trim().length > 0 && isManualEANValid && !resolver.loading
+  const recentHistory = history.slice(0, 2)
+  const lastHistoryEntry = history[0]
+  const matchedCatalogProduct = manualEAN.trim()
+    ? productCatalog.find((product) => product.ean === manualEAN.trim())
+    : null
 
   // Handle camera detection
   const handleCameraDetection = async (ean: string) => {
@@ -278,6 +345,14 @@ export default function ScanEAN() {
             onStartScan={scanner.startScanning}
             onStopScan={scanner.stopScanning}
           />
+          <div className="mt-4 rounded-lg border border-white/10 bg-white/[0.03] p-3 text-xs text-white/70">
+            <div className="font-semibold text-white/80">Mode scan assisté</div>
+            <ol className="mt-2 list-decimal space-y-1 pl-4">
+              <li>Placez le code-barres dans le cadre et stabilisez.</li>
+              <li>Évitez les reflets, approchez progressivement.</li>
+              <li>Si l’auto-scan échoue, passez en saisie manuelle.</li>
+            </ol>
+          </div>
         </GlassCard>
 
         {/* Import image */}
@@ -337,6 +412,11 @@ export default function ScanEAN() {
                   setManualEAN(e.target.value.replace(/\D/g, ''))
                   setManualError(null)
                 }}
+                onBlur={() => {
+                  if (manualEAN.trim() && !isManualEANValid) {
+                    setManualError('Code EAN invalide (vérifiez la longueur et le checksum)')
+                  }
+                }}
                 onKeyPress={(e) => {
                   if (e.key === 'Enter') {
                     handleManualSearch()
@@ -347,6 +427,28 @@ export default function ScanEAN() {
                 aria-label="Saisir le code EAN manuellement"
                 aria-describedby={manualError ? 'manual-error' : undefined}
               />
+              <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-white/60">
+                <span className="rounded-full border border-white/20 px-2 py-1">
+                  {manualEANLength}/13 chiffres
+                </span>
+                {manualEANLength > 0 && (
+                  <span
+                    className={`rounded-full px-2 py-1 ${
+                      isManualEANValid
+                        ? 'bg-green-500/20 text-green-300 border border-green-500/40'
+                        : isManualEANLengthValid
+                        ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/40'
+                        : 'bg-white/10 text-white/60 border border-white/20'
+                    }`}
+                  >
+                    {isManualEANValid
+                      ? 'EAN valide'
+                      : isManualEANLengthValid
+                      ? 'Vérifiez le checksum'
+                      : 'Saisissez 8 ou 13 chiffres'}
+                  </span>
+                )}
+              </div>
               {manualError && (
                 <p id="manual-error" className="mt-2 text-sm text-red-400">
                   {manualError}
@@ -354,14 +456,113 @@ export default function ScanEAN() {
               )}
             </div>
 
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+              <button
+                type="button"
+                onClick={handlePasteFromClipboard}
+                disabled={isPastingEAN}
+                className="w-full px-4 py-2 text-sm bg-white/[0.08] hover:bg-white/[0.12] disabled:bg-white/[0.06] disabled:cursor-not-allowed text-white rounded-lg transition-colors"
+                aria-label="Coller le code EAN depuis le presse-papiers"
+              >
+                {isPastingEAN ? '📋 Lecture...' : '📋 Coller depuis le presse-papiers'}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setManualEAN('')
+                  setManualError(null)
+                }}
+                disabled={!manualEAN}
+                className="w-full px-4 py-2 text-sm bg-white/[0.08] hover:bg-white/[0.12] disabled:bg-white/[0.06] disabled:cursor-not-allowed text-white rounded-lg transition-colors"
+                aria-label="Effacer la saisie manuelle"
+              >
+                ✨ Effacer la saisie
+              </button>
+            </div>
+            {lastHistoryEntry && (
+              <button
+                type="button"
+                onClick={() => {
+                  setManualEAN(lastHistoryEntry.ean)
+                  setManualError(null)
+                }}
+                className="w-full px-4 py-2 text-xs bg-white/[0.08] hover:bg-white/[0.12] text-white/90 rounded-lg transition-colors"
+                aria-label="Pré-remplir avec le dernier EAN scanné"
+              >
+                🕘 Pré-remplir avec le dernier EAN ({lastHistoryEntry.ean})
+              </button>
+            )}
+            {recentHistory.length > 0 && (
+              <div className="rounded-lg border border-white/10 bg-white/[0.03] p-3">
+                <div className="text-xs font-semibold text-white/70">Derniers scans</div>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {recentHistory.map((entry) => (
+                    <button
+                      key={entry.ean}
+                      type="button"
+                      onClick={() => {
+                        setManualEAN(entry.ean)
+                        setManualError(null)
+                      }}
+                      className="rounded-full border border-white/15 px-3 py-1 text-xs text-white/80 hover:border-white/30 hover:bg-white/10 transition-colors"
+                      aria-label={`Réutiliser le code ${entry.ean}`}
+                    >
+                      {entry.productName ? `${entry.productName} • ${entry.ean}` : entry.ean}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+            {manualEAN.trim() && (
+              <div className="rounded-lg border border-white/10 bg-white/[0.03] p-3 text-xs text-white/70">
+                {matchedCatalogProduct ? (
+                  <div>
+                    ✅ Produit reconnu : <span className="text-white">{matchedCatalogProduct.label}</span>
+                  </div>
+                ) : (
+                  <div>🔎 Aucun produit connu trouvé pour cet EAN (vous pouvez tenter la recherche).</div>
+                )}
+              </div>
+            )}
+            {offlineQueue.length > 0 && (
+              <div className="rounded-lg border border-white/10 bg-white/[0.03] p-3 text-xs text-white/70">
+                <div>📦 {offlineQueue.length} recherche(s) en attente hors ligne.</div>
+                {navigator.onLine && (
+                  <button
+                    type="button"
+                    onClick={handleProcessOfflineQueue}
+                    className="mt-2 rounded-full border border-white/10 px-3 py-1 text-xs text-white/80 hover:bg-white/10"
+                  >
+                    Lancer les recherches en attente
+                  </button>
+                )}
+              </div>
+            )}
+            {offlineQueueMessage && (
+              <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3 text-xs text-emerald-200">
+                {offlineQueueMessage}
+              </div>
+            )}
+
             <button
               onClick={handleManualSearch}
-              disabled={resolver.loading}
+              disabled={!canSubmitManual}
               className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-colors"
               aria-label="Rechercher le produit"
             >
               {resolver.loading ? '🔍 Recherche...' : '🔍 Rechercher'}
             </button>
+            <div className="text-xs text-white/60">
+              💡 Astuce : vous pouvez coller un code EAN depuis votre presse-papiers pour gagner du temps.
+            </div>
+            <div className="text-xs text-white/50">
+              Le bouton de recherche s'active dès que le code est valide.
+            </div>
+            {isManualEANValid && !resolver.loading && (
+              <div className="text-xs text-green-300">
+                ✅ EAN valide, prêt à lancer la recherche.
+              </div>
+            )}
           </div>
         </GlassCard>
       </div>
