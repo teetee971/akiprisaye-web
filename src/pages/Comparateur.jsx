@@ -4,6 +4,7 @@ import EmptyState from '../components/EmptyState';
 import BarcodeScanner from '../components/BarcodeScanner';
 import { useState } from 'react';
 import { findProductByEan } from '../data/seedProducts';
+import { fetchProductFromOpenFoodFacts } from '../data/openFoodFacts';
 
 export default function Comparateur() {
   const [ean, setEan] = useState('');
@@ -14,10 +15,19 @@ export default function Comparateur() {
   const [showScanner, setShowScanner] = useState(false);
   const [productName, setProductName] = useState(''); // Pour afficher le nom du produit
   const [infoMessage, setInfoMessage] = useState('');
+  const [productDetails, setProductDetails] = useState(null);
 
-  const handlePickEAN = (code) => {
+  const handlePickEAN = (code, product) => {
     setEan(code);
     setResults([]);
+    if (product) {
+      setProductName(product.name || '');
+      setProductDetails({
+        name: product.name || '',
+        brand: product.brand || '',
+        image: product.image || null,
+      });
+    }
   };
 
   const handleScanResult = (code) => {
@@ -45,6 +55,7 @@ export default function Comparateur() {
     setError(null);
     setInfoMessage('');
     setResults([]);
+    setProductDetails(null);
 
     try {
       // Try to fetch from API, fallback to mock data
@@ -55,14 +66,53 @@ export default function Comparateur() {
         if (Array.isArray(data) && data.length > 0) {
           setResults(data);
           setProductName(data[0]?.product || productName);
+          if (!productDetails?.image) {
+            const offProduct = await fetchProductFromOpenFoodFacts(ean);
+            if (offProduct) {
+              setProductDetails({
+                name: offProduct.name || '',
+                brand: offProduct.brand || '',
+                quantity: offProduct.quantity || '',
+                category: offProduct.category || '',
+                image: offProduct.imageSmallUrl || offProduct.imageUrl || null,
+                nutriScore: offProduct.nutriScore || '',
+                ecoScore: offProduct.ecoScore || '',
+                source: offProduct.source || 'openfoodfacts',
+              });
+            }
+          }
           return;
         }
       }
       const seededProduct = findProductByEan(ean);
       if (seededProduct?.name) {
         setProductName(seededProduct.name);
+        setProductDetails({
+          name: seededProduct.name,
+          brand: seededProduct.brand,
+          quantity: seededProduct.size,
+          category: seededProduct.category,
+          image: seededProduct.image || null,
+          source: 'seed',
+        });
       } else {
         setProductName('');
+      }
+      if (!seededProduct?.image) {
+        const offProduct = await fetchProductFromOpenFoodFacts(ean);
+        if (offProduct) {
+          setProductName(offProduct.name || seededProduct?.name || '');
+          setProductDetails({
+            name: offProduct.name || '',
+            brand: offProduct.brand || '',
+            quantity: offProduct.quantity || '',
+            category: offProduct.category || '',
+            image: offProduct.imageSmallUrl || offProduct.imageUrl || null,
+            nutriScore: offProduct.nutriScore || '',
+            ecoScore: offProduct.ecoScore || '',
+            source: offProduct.source || 'openfoodfacts',
+          });
+        }
       }
       setInfoMessage("Données en cours d'intégration. Les comparaisons réelles seront publiées dès que l'API prix sera connectée.");
     } catch (err) {
@@ -261,6 +311,65 @@ export default function Comparateur() {
               >
                 Comprendre le périmètre
               </a>
+            </div>
+          </div>
+        )}
+
+        {productDetails && (
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-6 mb-6">
+            <div className="flex flex-col sm:flex-row gap-6">
+              <div className="w-32 h-32 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center overflow-hidden flex-shrink-0">
+                {productDetails.image ? (
+                  <img
+                    src={productDetails.image}
+                    alt={productDetails.name}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                ) : (
+                  <span className="text-4xl">🧾</span>
+                )}
+              </div>
+              <div className="flex-1 space-y-2">
+                <div>
+                  <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                    Fiche produit
+                  </p>
+                  <h3 className="text-xl font-bold text-slate-900 dark:text-white">
+                    {productDetails.name || 'Produit détecté'}
+                  </h3>
+                  {productDetails.brand && (
+                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                      Marque : <span className="font-semibold">{productDetails.brand}</span>
+                    </p>
+                  )}
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {productDetails.quantity && (
+                    <span className="px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs rounded-full">
+                      {productDetails.quantity}
+                    </span>
+                  )}
+                  {productDetails.category && (
+                    <span className="px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs rounded-full">
+                      {productDetails.category}
+                    </span>
+                  )}
+                  {productDetails.nutriScore && (
+                    <span className="px-3 py-1 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 text-xs rounded-full">
+                      Nutri-Score {productDetails.nutriScore.toUpperCase()}
+                    </span>
+                  )}
+                  {productDetails.ecoScore && (
+                    <span className="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-xs rounded-full">
+                      Eco-Score {productDetails.ecoScore.toUpperCase()}
+                    </span>
+                  )}
+                </div>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Source : {productDetails.source === 'openfoodfacts' ? 'Open Food Facts' : 'Base locale'}
+                </p>
+              </div>
             </div>
           </div>
         )}
