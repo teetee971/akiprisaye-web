@@ -7,6 +7,8 @@ import FloatingActions from './ui/FloatingActions';
 import { OfflineIndicator } from './OfflineIndicator';
 import SkipLinks from './a11y/SkipLinks';
 import A11ySettingsPanel from './a11y/A11ySettingsPanel';
+import SeoDefaults from './SeoDefaults';
+import { LanguageSelector } from './i18n/LanguageSelector';
 
 export default function Layout() {
   const location = useLocation();
@@ -151,6 +153,7 @@ export default function Layout() {
 
   return (
     <div className="flex flex-col min-h-screen bg-slate-950 text-slate-100">
+      <SeoDefaults />
       {/* Skip Links - Accessibilité RGAA */}
       <SkipLinks />
       
@@ -167,7 +170,8 @@ export default function Layout() {
           </Link>
 
           {/* Ti‑panier (desktop placement) */}
-          <div className="hidden md:flex items-center">
+          <div className="hidden md:flex items-center gap-3">
+            <LanguageSelector variant="compact" />
             <TiPanierButton float={false} />
           </div>
 

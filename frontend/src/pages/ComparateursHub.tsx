@@ -4,6 +4,11 @@ import { DollarSign, Weight, TrendingDown, Map, BarChart3 } from 'lucide-react';
 import { GlassCard } from '../components/ui/glass-card';
 import Comparateur from './Comparateur';
 import HistoriquePrix from './HistoriquePrix';
+import {
+  metropoleComparisonData,
+  pricePerKiloData,
+  shrinkflationData,
+} from '../data/comparateurAdvancedMocks';
 
 type ComparateurTab = 'prix' | 'kilo' | 'shrinkflation' | 'metropole' | 'historique';
 
@@ -74,47 +79,129 @@ export default function ComparateursHub() {
           <div>
             {activeTab === 'prix' && <Comparateur />}
             {activeTab === 'kilo' && (
-              <GlassCard>
+              <GlassCard className="space-y-6">
                 <h2 className="text-xl font-semibold text-white mb-4">
                   ⚖️ Comparateur Prix au Kilo
                 </h2>
                 <p className="text-gray-400 mb-6">
                   Comparez les prix au kilo ou au litre pour identifier les meilleures offres
                 </p>
-                <div className="bg-slate-900/50 rounded-xl p-8 text-center">
-                  <p className="text-gray-500">
-                    Module en cours d'intégration
-                  </p>
+                <div className="flex flex-wrap gap-3 text-xs text-slate-300">
+                  <span className="rounded-full border border-slate-700 px-3 py-1">
+                    Source : {pricePerKiloData.source}
+                  </span>
+                  <span className="rounded-full border border-slate-700 px-3 py-1">
+                    Mise à jour : {pricePerKiloData.lastUpdated}
+                  </span>
+                </div>
+                <div className="bg-slate-900/50 rounded-xl p-4">
+                  <div className="grid gap-3 md:grid-cols-2">
+                    {pricePerKiloData.items.map((item) => (
+                      <div key={item.id} className="rounded-xl border border-slate-800 p-4">
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <p className="text-white font-semibold">{item.product}</p>
+                            <p className="text-xs text-slate-400">{item.brand}</p>
+                          </div>
+                          <span className="text-xs text-slate-400">{item.territory}</span>
+                        </div>
+                        <p className="mt-3 text-sm text-blue-300 font-semibold">
+                          {item.price.toFixed(2)} € / {item.quantity}
+                          {item.unit}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </GlassCard>
             )}
             {activeTab === 'shrinkflation' && (
-              <GlassCard>
+              <GlassCard className="space-y-6">
                 <h2 className="text-xl font-semibold text-white mb-4">
                   📉 Détecteur de Shrinkflation
                 </h2>
                 <p className="text-gray-400 mb-6">
                   Identifiez les produits dont la quantité a diminué sans baisse de prix proportionnelle
                 </p>
-                <div className="bg-slate-900/50 rounded-xl p-8 text-center">
-                  <p className="text-gray-500">
-                    Module en cours d'intégration
-                  </p>
+                <div className="flex flex-wrap gap-3 text-xs text-slate-300">
+                  <span className="rounded-full border border-slate-700 px-3 py-1">
+                    Source : {shrinkflationData.source}
+                  </span>
+                  <span className="rounded-full border border-slate-700 px-3 py-1">
+                    Mise à jour : {shrinkflationData.lastUpdated}
+                  </span>
+                </div>
+                <div className="bg-slate-900/50 rounded-xl p-4 space-y-3">
+                  {shrinkflationData.items.map((item) => (
+                    <div key={item.id} className="rounded-xl border border-slate-800 p-4">
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                          <p className="text-white font-semibold">{item.product}</p>
+                          <p className="text-xs text-slate-400">{item.brand}</p>
+                        </div>
+                        <span className="text-xs text-slate-400">{item.territory}</span>
+                      </div>
+                      <div className="mt-3 grid gap-2 text-sm text-slate-200 md:grid-cols-3">
+                        <div>
+                          <p className="text-xs text-slate-400">Avant</p>
+                          <p>{item.previousSize} · {item.previousPrice.toFixed(2)} €</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-slate-400">Maintenant</p>
+                          <p>{item.currentSize} · {item.currentPrice.toFixed(2)} €</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-slate-400">Détection</p>
+                          <p>{item.detectedAt}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </GlassCard>
             )}
             {activeTab === 'metropole' && (
-              <GlassCard>
+              <GlassCard className="space-y-6">
                 <h2 className="text-xl font-semibold text-white mb-4">
                   🗺️ Équivalence Métropole
                 </h2>
                 <p className="text-gray-400 mb-6">
                   Comparez les prix DOM-COM avec ceux de la métropole
                 </p>
-                <div className="bg-slate-900/50 rounded-xl p-8 text-center">
-                  <p className="text-gray-500">
-                    Module en cours d'intégration
-                  </p>
+                <div className="flex flex-wrap gap-3 text-xs text-slate-300">
+                  <span className="rounded-full border border-slate-700 px-3 py-1">
+                    Source : {metropoleComparisonData.source}
+                  </span>
+                  <span className="rounded-full border border-slate-700 px-3 py-1">
+                    Mise à jour : {metropoleComparisonData.lastUpdated}
+                  </span>
+                </div>
+                <div className="bg-slate-900/50 rounded-xl p-4 space-y-3">
+                  {metropoleComparisonData.items.map((item) => {
+                    const delta = item.domPrice - item.metropolePrice;
+                    const deltaLabel = delta >= 0 ? `+${delta.toFixed(2)} €` : `${delta.toFixed(2)} €`;
+                    return (
+                      <div key={item.id} className="rounded-xl border border-slate-800 p-4">
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                          <div>
+                            <p className="text-white font-semibold">{item.product}</p>
+                            <p className="text-xs text-slate-400">{item.territory}</p>
+                          </div>
+                          <span className="text-sm font-semibold text-amber-300">{deltaLabel}</span>
+                        </div>
+                        <div className="mt-3 grid gap-2 text-sm text-slate-200 md:grid-cols-2">
+                          <div>
+                            <p className="text-xs text-slate-400">Territoire</p>
+                            <p>{item.domPrice.toFixed(2)} €</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-slate-400">Métropole</p>
+                            <p>{item.metropolePrice.toFixed(2)} €</p>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </GlassCard>
             )}
