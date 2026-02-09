@@ -8,7 +8,7 @@
  * - Data management (export, deletion)
  * - Legal links
  * 
- * READ-ONLY, no tracking
+ * READ-ONLY, opt-in analytics local
  */
 
 import { useState, useEffect } from 'react';
@@ -19,6 +19,9 @@ import { safeLocalStorage } from '../utils/safeLocalStorage';
 export default function Settings() {
   const [user, setUser] = useState<User | null>(null);
   const [cameraPermission, setCameraPermission] = useState<string>('unknown');
+  const [analyticsOptIn, setAnalyticsOptIn] = useState(
+    () => safeLocalStorage.getItem('akiprisaye-analytics-optin') === 'true'
+  );
   
   useEffect(() => {
     // Get current user
@@ -92,6 +95,12 @@ export default function Settings() {
       window.location.reload();
     }
   }
+
+  const handleAnalyticsToggle = () => {
+    const nextValue = !analyticsOptIn;
+    setAnalyticsOptIn(nextValue);
+    safeLocalStorage.setItem('akiprisaye-analytics-optin', String(nextValue));
+  };
 
   const getPermissionIcon = (state: string) => {
     switch (state) {
@@ -219,6 +228,36 @@ export default function Settings() {
             </div>
           </section>
 
+          {/* Analytics Section */}
+          <section className="mb-8">
+            <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 3v18m4-14v14m4-10v10M7 9v12M3 13v8" />
+              </svg>
+              Analytique éthique
+            </h2>
+            <div className="bg-slate-800/50 rounded-lg p-4 flex flex-col gap-3">
+              <p className="text-sm text-gray-400">
+                Mesure d’audience locale, sans cookies tiers, et désactivée par défaut.
+              </p>
+              <button
+                type="button"
+                onClick={handleAnalyticsToggle}
+                className={`flex items-center justify-between rounded-lg border px-4 py-2 text-sm font-semibold transition-colors ${
+                  analyticsOptIn
+                    ? 'border-green-500 text-green-300 bg-green-500/10'
+                    : 'border-slate-700 text-slate-300 bg-slate-900/40'
+                }`}
+              >
+                <span>{analyticsOptIn ? 'Analytique activée' : 'Analytique désactivée'}</span>
+                <span>{analyticsOptIn ? '✅' : '⚪️'}</span>
+              </button>
+              <p className="text-xs text-slate-500">
+                Vous pouvez modifier ce choix à tout moment. Aucun suivi publicitaire.
+              </p>
+            </div>
+          </section>
+
           {/* Data Management Section */}
           <section className="mb-8">
             <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
@@ -334,7 +373,7 @@ export default function Settings() {
               <div className="flex-1">
                 <p className="text-blue-200 font-semibold mb-1">Service citoyen gratuit</p>
                 <p className="text-sm text-blue-300">
-                  Aucun tracking, aucune publicité. Vos données restent privées et sont traitées localement.
+                  Pas de publicité ni de tracking tiers. Les métriques sont opt-in et restent locales.
                 </p>
               </div>
             </div>

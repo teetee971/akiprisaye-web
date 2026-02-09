@@ -37,6 +37,21 @@ export default function Transparence() {
             <li>Pas de collecte de données personnelles pour consulter l&apos;observatoire.</li>
           </ul>
         </section>
+
+        <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
+          <h2 className="text-xl font-semibold text-white">Open Data & téléchargements</h2>
+          <p className="text-slate-300">
+            Les exports Open Data sont en préparation et seront publiés ici dès que la CI de génération sera stabilisée.
+          </p>
+          <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-950/60 p-6 text-center text-slate-400">
+            Zone Open Data à activer (JSON/CSV, historique des snapshots, licence ODbL/Etalab).
+          </div>
+          <ul className="list-disc list-inside text-slate-200 space-y-2">
+            <li>Exports quotidiens des prix comparés (format JSON + CSV).</li>
+            <li>Historique des versions et date de mise à jour visible.</li>
+            <li>Licence et source affichées pour chaque dataset.</li>
+          </ul>
+        </section>
       </div>
     </div>
   );

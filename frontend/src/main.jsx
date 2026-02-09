@@ -81,18 +81,6 @@ if (!rootElement) {
 } else {
   console.log('✅ main.jsx: Starting React render');
   
-  // Remove the HTML loading fallback once React starts rendering
-  const loadingFallback = document.getElementById('loading-fallback');
-  if (loadingFallback) {
-    // Keep it visible briefly to prevent flash, then let React take over
-    setTimeout(() => {
-      if (loadingFallback && loadingFallback.parentNode) {
-        loadingFallback.style.display = 'none';
-        console.log('✅ main.jsx: HTML loading fallback hidden');
-      }
-    }, 100);
-  }
-  
   ReactDOM.createRoot(rootElement).render(
     <React.StrictMode>
       <App />

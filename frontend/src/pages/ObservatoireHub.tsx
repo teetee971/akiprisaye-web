@@ -3,11 +3,26 @@ import { Helmet } from 'react-helmet-async';
 import { BarChart3, Search, Award, Database } from 'lucide-react';
 import { GlassCard } from '../components/ui/glass-card';
 import Observatoire from './Observatoire';
+import { TERRITORIES, type TerritoryCode } from '../constants/territories';
+import { getPalmaresForTerritory, OBSERVATOIRE_PALMARES } from '../data/observatoirePalmares';
 
 type ObservatoireTab = 'dashboard' | 'diagnostic' | 'palmares' | 'donnees';
 
 export default function ObservatoireHub() {
   const [activeTab, setActiveTab] = useState<ObservatoireTab>('dashboard');
+  const [selectedTerritory, setSelectedTerritory] = useState<TerritoryCode>('gp');
+  const palmares = getPalmaresForTerritory(selectedTerritory);
+  const palmaresUpdatedAt = palmares?.updatedAt ?? '—';
+
+  const renderChangeBadge = (change: 'up' | 'down' | 'stable') => {
+    if (change === 'up') {
+      return <span className="rounded-full bg-emerald-500/20 px-2 py-0.5 text-xs text-emerald-200">🔼</span>;
+    }
+    if (change === 'down') {
+      return <span className="rounded-full bg-rose-500/20 px-2 py-0.5 text-xs text-rose-200">🔽</span>;
+    }
+    return <span className="rounded-full bg-slate-700/60 px-2 py-0.5 text-xs text-slate-200">⏺️</span>;
+  };
   
   return (
     <>
@@ -158,6 +173,26 @@ export default function ObservatoireHub() {
                 <p className="text-gray-400 mb-6">
                   Classement des enseignes selon différents critères
                 </p>
+
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+                  <div className="text-sm text-gray-400">
+                    Mise à jour palmarès : {palmaresUpdatedAt}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-gray-400 uppercase tracking-wide">Territoire</span>
+                    <select
+                      value={selectedTerritory}
+                      onChange={(event) => setSelectedTerritory(event.target.value as TerritoryCode)}
+                      className="bg-slate-900 text-white border border-slate-700 rounded-lg px-3 py-2 text-sm"
+                    >
+                      {OBSERVATOIRE_PALMARES.map((entry) => (
+                        <option key={entry.territory} value={entry.territory}>
+                          {TERRITORIES[entry.territory]?.name ?? entry.territory.toUpperCase()}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
                 
                 <div className="space-y-4 mb-6">
                   <div className="bg-slate-900/50 rounded-xl p-6 border border-slate-800">
@@ -171,13 +206,14 @@ export default function ObservatoireHub() {
                       Enseignes offrant les meilleurs prix sur le panier moyen
                     </p>
                     <div className="space-y-2">
-                      {[1, 2, 3].map((rank) => (
-                        <div key={rank} className="flex items-center gap-3 p-3 bg-slate-800/50 rounded-lg">
-                          <div className="text-2xl w-8 text-center">{rank === 1 ? '🥇' : rank === 2 ? '🥈' : '🥉'}</div>
+                      {palmares?.lowestPrices.map((entry, index) => (
+                        <div key={entry.name} className="flex items-center gap-3 p-3 bg-slate-800/50 rounded-lg">
+                          <div className="text-2xl w-8 text-center">{index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉'}</div>
                           <div className="flex-1">
-                            <div className="font-medium text-white">Enseigne #{rank}</div>
-                            <div className="text-xs text-gray-500">Score : {100 - rank * 5}/100</div>
+                            <div className="font-medium text-white">{entry.name}</div>
+                            <div className="text-xs text-gray-500">Score : {entry.score}/100 • {entry.note}</div>
                           </div>
+                          {renderChangeBadge(entry.change)}
                         </div>
                       ))}
                     </div>
@@ -193,6 +229,18 @@ export default function ObservatoireHub() {
                     <p className="text-gray-400 text-sm">
                       Enseignes offrant le meilleur équilibre prix/qualité
                     </p>
+                    <div className="mt-4 space-y-2">
+                      {palmares?.bestValue.map((entry, index) => (
+                        <div key={entry.name} className="flex items-center gap-3 p-3 bg-slate-800/50 rounded-lg">
+                          <div className="text-2xl w-8 text-center">{index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉'}</div>
+                          <div className="flex-1">
+                            <div className="font-medium text-white">{entry.name}</div>
+                            <div className="text-xs text-gray-500">Score : {entry.score}/100 • {entry.note}</div>
+                          </div>
+                          {renderChangeBadge(entry.change)}
+                        </div>
+                      ))}
+                    </div>
                   </div>
                   
                   <div className="bg-slate-900/50 rounded-xl p-6 border border-slate-800">
@@ -205,6 +253,18 @@ export default function ObservatoireHub() {
                     <p className="text-gray-400 text-sm">
                       Enseignes avec le plus grand nombre de références
                     </p>
+                    <div className="mt-4 space-y-2">
+                      {palmares?.widestSelection.map((entry, index) => (
+                        <div key={entry.name} className="flex items-center gap-3 p-3 bg-slate-800/50 rounded-lg">
+                          <div className="text-2xl w-8 text-center">{index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉'}</div>
+                          <div className="flex-1">
+                            <div className="font-medium text-white">{entry.name}</div>
+                            <div className="text-xs text-gray-500">Score : {entry.score}/100 • {entry.note}</div>
+                          </div>
+                          {renderChangeBadge(entry.change)}
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </GlassCard>
