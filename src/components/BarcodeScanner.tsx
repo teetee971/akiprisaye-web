@@ -10,6 +10,16 @@ interface BarcodeScannerProps {
   options?: ScannerOptions;
 }
 
+/**
+ * Render a fullscreen barcode scanner UI that supports camera-based scanning, image-upload fallback, OCR fallback, and manual entry.
+ *
+ * Renders a modal-like component that manages camera permissions, camera stream acquisition (with progressive constraint fallbacks), ZXing decoding from video, native BarcodeDetector and ZXing image decoding, and an optional Tesseract OCR fallback. Provides torch control, visual scan feedback, user guidance messages, and calls `onScan` when a code is obtained.
+ *
+ * @param onScan - Callback invoked with the detected barcode string when a scan succeeds
+ * @param onClose - Callback invoked to close the scanner UI
+ * @param options - Optional configuration: `timeout` (ms), `enableDebugLogging`, and `enableOcrFallback`
+ * @returns The React element for the barcode scanner UI
+ */
 export default function BarcodeScanner({ onScan, onClose, options = {} }: BarcodeScannerProps) {
   // Scan state management
   const [scanState, setScanState] = useState<ScanState>('idle');

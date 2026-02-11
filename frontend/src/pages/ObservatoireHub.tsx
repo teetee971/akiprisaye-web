@@ -8,6 +8,11 @@ import { getPalmaresForTerritory, OBSERVATOIRE_PALMARES } from '../data/observat
 
 type ObservatoireTab = 'dashboard' | 'diagnostic' | 'palmares' | 'donnees';
 
+/**
+ * Render the Observatoire hub UI with tabs for dashboard, diagnostic, palmarès, and public data.
+ *
+ * @returns The React element for the Observatoire hub interface.
+ */
 export default function ObservatoireHub() {
   const [activeTab, setActiveTab] = useState<ObservatoireTab>('dashboard');
   const [selectedTerritory, setSelectedTerritory] = useState<TerritoryCode>('gp');

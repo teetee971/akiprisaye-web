@@ -16,6 +16,13 @@ import {
 } from 'lucide-react';
 import { LUTTE_VIE_CHERE_STATS } from '../data/lutteVieChereStats';
 
+/**
+ * Renders the "Lutte contre la Vie Chère" page, a full-screen informational UI for reporting and tracking abusive prices.
+ *
+ * Displays statistics from LUTTE_VIE_CHERE_STATS (including last update, total reports, active actions, average savings, and participating users) and presents sections for the mission, active actions, institutional contacts, citizen resources, and call-to-action links for reporting and resources.
+ *
+ * @returns The React element representing the complete page layout for the "Lutte contre la Vie Chère" feature.
+ */
 export function LutteVieChere() {
   const stats = LUTTE_VIE_CHERE_STATS;
 

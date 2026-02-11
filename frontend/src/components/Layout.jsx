@@ -10,6 +10,11 @@ import A11ySettingsPanel from './a11y/A11ySettingsPanel';
 import SeoDefaults from './SeoDefaults';
 import { LanguageSelector } from './i18n/LanguageSelector';
 
+/**
+ * Renders the application's main layout including header, primary and mobile navigation, main content area with contextual banners and pinned links, floating actions, accessibility panels, the quick-search palette, quick actions sheet, and footer.
+ *
+ * @returns {JSX.Element} The root layout element that wraps page content and global UI controls.
+ */
 export default function Layout() {
   const location = useLocation();
   const [open, setOpen] = React.useState(false);

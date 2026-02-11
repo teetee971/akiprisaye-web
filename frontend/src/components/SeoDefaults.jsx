@@ -5,6 +5,13 @@ const BASE_TITLE = 'A KI PRI SA YÉ';
 const BASE_DESCRIPTION =
   "Plateforme citoyenne d'observation et de comparaison des prix en Outre-mer.";
 
+/**
+ * Injects site-wide default SEO and social sharing metadata into the document head.
+ *
+ * When running in a browser, includes a canonical URL and `og:url` derived from the current route.
+ *
+ * @returns {JSX.Element} A Helmet-managed React element that sets title, description, robots, Open Graph, canonical link (when available), and Twitter card meta tags.
+ */
 export default function SeoDefaults() {
   const location = useLocation();
   const canonical =

@@ -10,6 +10,13 @@ import {
 
 const defaultCenter: [number, number] = [14.6, -61.0];
 
+/**
+ * Render the MapPage that displays an interactive map of territories with color-coded price indices and a detail panel for the selected territory.
+ *
+ * The map shows markers for each territory (colored by price index) and a panel that displays the selected territory's metrics: price index, annual inflation, average basket, sample size, and last update. Clicking a marker selects the territory and updates the detail panel.
+ *
+ * @returns The React element for the interactive territories map and accompanying detail panel.
+ */
 export default function MapPage() {
   const [selectedTerritory, setSelectedTerritory] = useState<TerritoryCode>('gp');
 

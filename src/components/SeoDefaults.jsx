@@ -5,6 +5,14 @@ const BASE_TITLE = 'A KI PRI SA YÉ';
 const BASE_DESCRIPTION =
   "Plateforme citoyenne d'observation et de comparaison des prix en Outre-mer.";
 
+/**
+ * Render default SEO metadata for the site and include a canonical link when available.
+ *
+ * Renders title, description, robots, Open Graph, and Twitter card meta tags. When executed in a browser
+ * environment it computes and includes the current page's canonical URL as `og:url` and a `link[rel="canonical"]`.
+ *
+ * @returns {JSX.Element} A Helmet-wrapped React element containing the default SEO meta tags and optional canonical link.
+ */
 export default function SeoDefaults() {
   const location = useLocation();
   const canonical =

@@ -16,6 +16,13 @@ import { auth } from '../lib/firebase';
 import { User } from 'firebase/auth';
 import { safeLocalStorage } from '../utils/safeLocalStorage';
 
+/**
+ * Render the application's Settings page, exposing account info, permission statuses, analytics opt-in, and data management actions.
+ *
+ * The component subscribes to authentication state, checks camera permission on mount, persists an opt-in analytics choice to localStorage, and provides handlers to export or delete local data.
+ *
+ * @returns The JSX element for the Settings page.
+ */
 export default function Settings() {
   const [user, setUser] = useState<User | null>(null);
   const [cameraPermission, setCameraPermission] = useState<string>('unknown');

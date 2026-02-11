@@ -12,6 +12,16 @@ import { getPalmaresForTerritory } from '../data/observatoirePalmares';
 
 type ObservatoireTab = 'dashboard' | 'diagnostic' | 'palmares' | 'donnees';
 
+/**
+ * Renders the Observatoire hub UI with tabs for Dashboard, Diagnostic, Palmarès and Données,
+ * including territory selection, derived territory statistics, and key metrics.
+ *
+ * The component manages local UI state for the active tab and selected territory, computes
+ * derived data (selected statistics, palmarès and update timestamps), and provides a small
+ * helper to render change badges used across lists.
+ *
+ * @returns The Observatoire hub React element containing the full tabbed interface and metrics.
+ */
 export default function ObservatoireHub() {
   const [activeTab, setActiveTab] = useState<ObservatoireTab>('dashboard');
   const [selectedTerritory, setSelectedTerritory] = useState<TerritoryCode>('gp');

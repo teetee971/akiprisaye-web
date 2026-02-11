@@ -16,6 +16,13 @@ import {
 } from 'lucide-react';
 import { LUTTE_VIE_CHERE_STATS } from '../data/lutteVieChereStats';
 
+/**
+ * Renders the "Lutte contre la Vie Chère" page including hero, statistics, mission, active actions, contact institutions, citizen resources, and a reporting call-to-action.
+ *
+ * The component uses data from LUTTE_VIE_CHERE_STATS to populate the statistics and last-updated timestamp.
+ *
+ * @returns The React element representing the full page layout for the "Lutte contre la Vie Chère" section.
+ */
 export function LutteVieChere() {
   const stats = LUTTE_VIE_CHERE_STATS;
 

@@ -95,6 +95,13 @@ function LoadingFallback() {
   );
 }
 
+/**
+ * Root application component that sets up context providers, client-side routing, and global utilities.
+ *
+ * Renders the top-level provider tree (error, language, theme, auth, onboarding), a hash-based router with the app's admin and main routes, and global UI/behavior components such as analytics, performance monitoring, onboarding helpers, and the help button. Lazy-loaded routes display a full-screen loading fallback while resolving.
+ *
+ * @returns The root React element that composes providers, routes, and global application components
+ */
 export default function App() {
   return (
     <ErrorBoundary>
