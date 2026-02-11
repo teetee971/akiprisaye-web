@@ -85,7 +85,7 @@ describe('Redirect Configuration', () => {
   });
   
   test('SPA fallback is configured', () => {
-    // public/_redirects should have /* /index.html 200 as last line
+    // public/_redirects should have /* /app.html 200 as last line
     // This ensures client-side routing works
     expect(true).toBe(true);
   });

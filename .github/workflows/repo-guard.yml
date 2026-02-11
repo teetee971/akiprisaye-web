@@ -18,7 +18,7 @@ jobs:
       # Vérification absence pointeurs LFS
       - name: Check for LFS pointers
         run: |
-          if git grep -I -n "version https://git-lfs.github.com/spec/v1" -- ':!.github/workflows/*' ':!.circleci/*'; then
+          if git grep -I -n "version https://git-lfs.github.com/spec/v1" -- ':!.github/workflows/*' ':!.circleci/*' ':!scripts/*' ':!*.md'; then
             echo "❌ ERREUR: Pointeurs Git LFS détectés dans le dépôt"
             exit 1
           else

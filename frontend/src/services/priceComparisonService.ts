@@ -21,6 +21,7 @@ import type {
   ProductIdentifier,
 } from '../types/priceComparison';
 import type { Territory, DataSource } from '../types/priceAlerts';
+import { logRuntimeIssueOnce } from '../utils/runtimeDiagnostics';
 
 /**
  * Configuration constants for price comparison service
@@ -192,12 +193,19 @@ export function generateComparisonMetadata(
   // Aggregate sources
   const sourceCounts = new Map<DataSource, { count: number; stores: Set<string> }>();
   prices.forEach(price => {
-    if (!sourceCounts.has(price.source)) {
-      sourceCounts.set(price.source, { count: 0, stores: new Set() });
+    const sourceType = price?.source;
+    if (!sourceType) {
+      logRuntimeIssueOnce(
+        'price-comparison-metadata-missing-source',
+        'Missing source while aggregating price-comparison metadata. Entry ignored.',
+      );
+      return;
     }
-    const entry = sourceCounts.get(price.source)!;
+
+    const entry = sourceCounts.get(sourceType) ?? { count: 0, stores: new Set<string>() };
     entry.count += price.volume;
     entry.stores.add(price.storeId);
+    sourceCounts.set(sourceType, entry);
   });
 
   const totalObservations = prices.reduce((sum, p) => sum + p.volume, 0);
