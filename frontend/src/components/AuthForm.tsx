@@ -8,6 +8,7 @@ import {
 import { auth, db, firebaseError } from "@/lib/firebase";
 import { doc, setDoc } from "firebase/firestore";
 import { Button } from "@/components/ui/button";
+import { safeToText } from "../utils/safeToText";
 
 export default function AuthForm() {
   const [email, setEmail] = useState("");
@@ -20,7 +21,7 @@ export default function AuthForm() {
   // Check if Firebase is available
   React.useEffect(() => {
     if (firebaseError) {
-      setError(firebaseError);
+      setError(safeToText(firebaseError));
     }
   }, []);
 
@@ -138,7 +139,7 @@ export default function AuthForm() {
         <div className="mb-4 p-3 bg-red-900/30 border border-red-700 rounded-lg text-red-200 text-sm">
           <div className="flex items-start gap-2">
             <span className="flex-shrink-0">❌</span>
-            <span>{error}</span>
+            <span>{safeToText(error)}</span>
           </div>
         </div>
       )}
@@ -148,7 +149,7 @@ export default function AuthForm() {
         <div className="mb-4 p-3 bg-green-900/30 border border-green-700 rounded-lg text-green-200 text-sm">
           <div className="flex items-start gap-2">
             <span className="flex-shrink-0">✅</span>
-            <span>{success}</span>
+            <span>{safeToText(success)}</span>
           </div>
         </div>
       )}

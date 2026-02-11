@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import { safeToText } from '../utils/safeToText';
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -10,15 +11,15 @@ class ErrorBoundary extends Component {
     };
   }
 
-  static getDerivedStateFromError(error) {
-    return { hasError: true, error };
+  static getDerivedStateFromError() {
+    return { hasError: true };
   }
 
   componentDidCatch(error, errorInfo) {
     console.error('[ErrorBoundary]', error, errorInfo);
 
     this.setState({
-      error: error?.message || String(error),
+      error: safeToText(error),
       errorInfo: errorInfo?.componentStack || null,
     });
   }
@@ -63,9 +64,9 @@ class ErrorBoundary extends Component {
                 overflowX: 'auto',
               }}
             >
-              {this.state.error}
+              {safeToText(this.state.error)}
               {"\n"}
-              {this.state.errorInfo}
+              {safeToText(this.state.errorInfo)}
             </pre>
 
             <div className="flex gap-4 justify-center mt-6">
@@ -78,11 +79,11 @@ class ErrorBoundary extends Component {
 
               <button
                 onClick={() => {
-                  window.location.href = '/';
+                  window.location.reload();
                 }}
                 className="px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white font-semibold rounded-lg transition-colors"
               >
-                Retour à l’accueil
+                Recharger la page
               </button>
             </div>
           </div>
