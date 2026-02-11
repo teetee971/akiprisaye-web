@@ -23,12 +23,25 @@ if (import.meta.env.DEV) {
   import('./utils/onboardingDebug');
 }
 
+const fallbackElement = document.getElementById('loading-fallback');
+const rootElement = document.getElementById('root');
+
+if (fallbackElement && rootElement && rootElement.contains(fallbackElement)) {
+  document.body.appendChild(fallbackElement);
+}
+
 const showFallback = (html) => {
-  const fallback = document.getElementById('loading-fallback');
-  if (fallback) {
-    fallback.style.display = 'flex';
-    fallback.setAttribute('aria-hidden', 'false');
-    fallback.innerHTML = html;
+  if (fallbackElement) {
+    fallbackElement.style.display = 'flex';
+    fallbackElement.setAttribute('aria-hidden', 'false');
+    fallbackElement.innerHTML = html;
+  }
+};
+
+const hideFallback = () => {
+  if (fallbackElement) {
+    fallbackElement.style.display = 'none';
+    fallbackElement.setAttribute('aria-hidden', 'true');
   }
 };
 
@@ -48,9 +61,8 @@ window.onerror = function(message, source, lineno, colno, error) {
 
 // Global timeout - if the app doesn't load in 15 seconds, show an error
 const globalLoadTimeout = setTimeout(() => {
-  const fallback = document.getElementById('loading-fallback');
   // Only show error if fallback is still visible (app hasn't loaded)
-  if (fallback && fallback.style.display !== 'none') {
+  if (fallbackElement && fallbackElement.style.display !== 'none') {
     console.error('⏱️ Global timeout: App failed to load in 15 seconds');
     showFallback(`
       <img src="/logo-akiprisaye.svg" alt="A KI PRI SA YÉ" style="height: 64px; margin-bottom: 24px;" />
@@ -80,8 +92,6 @@ window.addEventListener('load', () => {
  * to avoid any blank screen in production.
  */
 
-const rootElement = document.getElementById('root');
-
 if (!rootElement) {
   console.error('❌ Root element #root not found');
 } else {
@@ -92,6 +102,16 @@ if (!rootElement) {
       <App />
     </React.StrictMode>
   );
+
+  const checkMount = () => {
+    if (rootElement.childElementCount > 0) {
+      hideFallback();
+    } else {
+      requestAnimationFrame(checkMount);
+    }
+  };
+
+  requestAnimationFrame(checkMount);
   
   console.log('✅ main.jsx: React render initiated');
 }

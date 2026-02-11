@@ -136,11 +136,6 @@ export default function App() {
     console.log('🚀 App: Starting initialization');
     console.log('📍 App: Environment:', import.meta.env.MODE);
     console.log('📍 App: Firebase configured:', import.meta.env.VITE_FIREBASE_API_KEY ? 'Yes' : 'No');
-    const fallback = document.getElementById('loading-fallback');
-    if (fallback) {
-      fallback.style.display = 'none';
-      fallback.setAttribute('aria-hidden', 'true');
-    }
   }, []);
 
   if (providerError) {
