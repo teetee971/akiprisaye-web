@@ -18,11 +18,6 @@ const consoleInfo = globalThis?.console?.info?.bind(globalThis.console);
 consoleInfo?.(`[build] A KI PRI SA YÉ boot sha=${BUILD_SHA}`);
 installRuntimeCrashProbe();
 
-const BUILD_SHA = import.meta.env.VITE_BUILD_SHA || 'unknown';
-window.__BUILD_SHA__ = BUILD_SHA;
-const consoleInfo = globalThis?.console?.info?.bind(globalThis.console);
-consoleInfo?.(`[build] A KI PRI SA YÉ boot sha=${BUILD_SHA}`);
-
 // Fix Leaflet marker icons for Vite/Cloudflare build
 // Point to our bundled markers in /public/leaflet/
 delete L.Icon.Default.prototype._getIconUrl;

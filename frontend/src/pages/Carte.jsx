@@ -33,33 +33,41 @@ function MapUpdater({ map, position }) {
 
 function MarkerClusterGroup({ map, leaflet, stores, currentTerritory, formatDistance, markerRefs, territory }) {
   useEffect(() => {
-    if (!map || !leaflet) return;
+    if (!map || !leaflet || typeof map.addLayer !== 'function') return;
 
-    const markerClusterGroup = leaflet.markerClusterGroup({
-      chunkedLoading: true,
-      spiderfyOnMaxZoom: true,
-      showCoverageOnHover: true,
-      zoomToBoundsOnClick: true,
-      maxClusterRadius: 60,
-      disableClusteringAtZoom: 15,
-      iconCreateFunction: function(cluster) {
-        const count = cluster.getChildCount();
-        let className = 'marker-cluster-';
-        if (count < 10) {
-          className += 'small';
-        } else if (count < 20) {
-          className += 'medium';
-        } else {
-          className += 'large';
-        }
+    const canUseMarkerCluster = typeof leaflet.markerClusterGroup === 'function';
+    const markerLayerGroup = canUseMarkerCluster
+      ? leaflet.markerClusterGroup({
+        chunkedLoading: true,
+        spiderfyOnMaxZoom: true,
+        showCoverageOnHover: true,
+        zoomToBoundsOnClick: true,
+        maxClusterRadius: 60,
+        disableClusteringAtZoom: 15,
+        iconCreateFunction: function(cluster) {
+          const count = cluster.getChildCount();
+          let className = 'marker-cluster-';
+          if (count < 10) {
+            className += 'small';
+          } else if (count < 20) {
+            className += 'medium';
+          } else {
+            className += 'large';
+          }
 
-        return leaflet.divIcon({
-          html: `<div><span>${count}</span></div>`,
-          className: `marker-cluster ${className}`,
-          iconSize: leaflet.point(40, 40),
-        });
-      },
-    });
+          return leaflet.divIcon({
+            html: `<div><span>${count}</span></div>`,
+            className: `marker-cluster ${className}`,
+            iconSize: leaflet.point(40, 40),
+          });
+        },
+      })
+      : leaflet.layerGroup();
+
+    if (!markerLayerGroup || typeof markerLayerGroup.addLayer !== 'function') {
+      console.warn('[Carte] Unable to initialize marker layer group; skipping map markers');
+      return;
+    }
 
     stores.forEach((store) => {
       // Get store hours and status
@@ -198,13 +206,15 @@ function MarkerClusterGroup({ map, leaflet, stores, currentTerritory, formatDist
         className: 'custom-popup',
       });
 
-      markerClusterGroup.addLayer(leafletMarker);
+      markerLayerGroup.addLayer(leafletMarker);
     });
 
-    map.addLayer(markerClusterGroup);
+    map.addLayer(markerLayerGroup);
 
     return () => {
-      map.removeLayer(markerClusterGroup);
+      if (typeof map.removeLayer === 'function') {
+        map.removeLayer(markerLayerGroup);
+      }
     };
   }, [map, leaflet, stores, currentTerritory, formatDistance, markerRefs, territory]);
 
