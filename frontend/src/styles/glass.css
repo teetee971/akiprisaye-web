@@ -3,6 +3,7 @@
 @import "leaflet.markercluster/dist/MarkerCluster.css";
 @import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 
+
 @theme {
   /* Civic Chic / Liquid Glass Design System */
   --color-background: #0B1220;
@@ -59,7 +60,7 @@ html, body, #root {
 body {
   background-color: var(--bg);
   color: var(--text);
-  font-family: "Inter", "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   line-height: 1.6;
   font-feature-settings: "kern" 1, "liga" 1;
   -webkit-font-smoothing: antialiased;
