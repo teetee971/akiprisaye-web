@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "lint": "eslint src --ext .ts,.tsx,.js,.jsx",
     "lint:fix": "eslint src --ext .ts,.tsx,.js,.jsx --fix",
-    "test": "echo '⚠️ Tests unitaires non configurés pour le moment' && exit 0"
+    "test": "echo '⚠️ Tests unitaires non configurés pour le moment' && exit 0",
+    "smoke:preview": "npm run build && node scripts/smoke-preview.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

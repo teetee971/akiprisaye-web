@@ -24,6 +24,7 @@ import type {
   RegularPassengerAnalysis,
   TerritoryBoatStatistics,
 } from '../types/boatComparison';
+import { logRuntimeIssueOnce } from '../utils/runtimeDiagnostics';
 
 /**
  * Configuration constants
@@ -323,17 +324,40 @@ export function analyzeRegularPassengers(
  */
 export function generateBoatMetadata(prices: BoatPricePoint[]): BoatComparisonMetadata {
   const operators = new Set(prices.map((p) => p.operator));
-  const sources = prices.reduce((acc, price) => {
-    const sourceType = price.source.type;
-    if (!acc[sourceType]) {
-      acc[sourceType] = { count: 0, operators: new Set<string>() };
-    }
-    acc[sourceType].count++;
-    acc[sourceType].operators.add(price.operator);
-    return acc;
-  }, {} as Record<string, { count: number; operators: Set<string> }>);
+  const sources = new Map<string, { count: number; operators: Set<string> }>();
+  prices.forEach((price) => {
+    const sourceType =
+      typeof price?.source?.type === 'string' && price.source.type.trim().length > 0
+        ? price.source.type
+        : 'unknown';
 
-  const sourceSummaries: BoatSourceSummary[] = Object.entries(sources).map(([source, data]) => ({
+    if (sourceType === 'unknown') {
+      logRuntimeIssueOnce(
+        'boat-metadata-invalid-source',
+        'Unexpected boat source type while generating metadata. Falling back to "unknown" source bucket.',
+        { price }
+      );
+    }
+
+    if (!sources.has(sourceType)) {
+      sources.set(sourceType, { count: 0, operators: new Set<string>() });
+    }
+
+    const sourceBucket = sources.get(sourceType);
+    if (!sourceBucket) {
+      logRuntimeIssueOnce(
+        'boat-metadata-source-bucket-missing',
+        'Unable to access boat source bucket after initialization. Metadata aggregation skipped for this item.',
+        { sourceType, price }
+      );
+      return;
+    }
+
+    sourceBucket.count++;
+    sourceBucket.operators.add(price.operator);
+  });
+
+  const sourceSummaries: BoatSourceSummary[] = Array.from(sources.entries()).map(([source, data]) => ({
     source: source as any,
     observationCount: data.count,
     operatorCount: data.operators.size,

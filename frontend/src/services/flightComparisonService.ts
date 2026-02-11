@@ -24,6 +24,7 @@ import type {
   SeasonalPriceAnalysis,
   TerritoryFlightStatistics,
 } from '../types/flightComparison';
+import { logRuntimeIssueOnce } from '../utils/runtimeDiagnostics';
 
 /**
  * Configuration constants
@@ -359,17 +360,40 @@ export function analyzeSeasonalPrices(
  */
 export function generateFlightMetadata(prices: FlightPricePoint[]): FlightComparisonMetadata {
   const airlines = new Set(prices.map((p) => p.airline));
-  const sources = prices.reduce((acc, price) => {
-    const sourceType = price.source.type;
-    if (!acc[sourceType]) {
-      acc[sourceType] = { count: 0, airlines: new Set<string>() };
-    }
-    acc[sourceType].count++;
-    acc[sourceType].airlines.add(price.airline);
-    return acc;
-  }, {} as Record<string, { count: number; airlines: Set<string> }>);
+  const sources = new Map<string, { count: number; airlines: Set<string> }>();
+  prices.forEach((price) => {
+    const sourceType =
+      typeof price?.source?.type === 'string' && price.source.type.trim().length > 0
+        ? price.source.type
+        : 'unknown';
 
-  const sourceSummaries: FlightSourceSummary[] = Object.entries(sources).map(([source, data]) => ({
+    if (sourceType === 'unknown') {
+      logRuntimeIssueOnce(
+        'flight-metadata-invalid-source',
+        'Unexpected flight source type while generating metadata. Falling back to "unknown" source bucket.',
+        { price }
+      );
+    }
+
+    if (!sources.has(sourceType)) {
+      sources.set(sourceType, { count: 0, airlines: new Set<string>() });
+    }
+
+    const sourceBucket = sources.get(sourceType);
+    if (!sourceBucket) {
+      logRuntimeIssueOnce(
+        'flight-metadata-source-bucket-missing',
+        'Unable to access flight source bucket after initialization. Metadata aggregation skipped for this item.',
+        { sourceType, price }
+      );
+      return;
+    }
+
+    sourceBucket.count++;
+    sourceBucket.airlines.add(price.airline);
+  });
+
+  const sourceSummaries: FlightSourceSummary[] = Array.from(sources.entries()).map(([source, data]) => ({
     source: source as any,
     observationCount: data.count,
     airlineCount: data.airlines.size,
