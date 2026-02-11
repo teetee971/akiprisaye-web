@@ -60,6 +60,9 @@ jobs:
         working-directory: frontend
         run: npm run build
 
+      - name: Verify Cloudflare SPA fallback rule
+        run: bash scripts/check-cloudflare-redirects.sh
+
   snapshot-open-data:
     name: Open-Data Snapshot
     runs-on: ubuntu-latest
