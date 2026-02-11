@@ -1,5 +1,6 @@
 import React, { Suspense, useState, useEffect } from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 
 // Import Layout synchronously to prevent loading block
 import Layout from './components/Layout';
@@ -156,13 +157,14 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-      <div id="app-mounted" style={{ display: 'none' }} />
-      <LanguageProvider>
-        <ThemeProvider>
-          <AuthProvider>
-            <OnboardingProvider>
-              <HashRouter>
-                <Suspense fallback={<LoadingFallback />}>
+      <HelmetProvider>
+        <div id="app-mounted" style={{ display: 'none' }} />
+        <LanguageProvider>
+          <ThemeProvider>
+            <AuthProvider>
+              <OnboardingProvider>
+                <HashRouter>
+                  <Suspense fallback={<LoadingFallback />}>
                   <Routes>
                     {/* Admin routes with dedicated layout */}
                     <Route path="/admin" element={<AdminLayout />}>
@@ -259,12 +261,13 @@ export default function App() {
                   <OnboardingAutoStart />
                   <OnboardingTour />
                   <HelpButton />
-                </Suspense>
-              </HashRouter>
-            </OnboardingProvider>
-          </AuthProvider>
-        </ThemeProvider>
-      </LanguageProvider>
+                  </Suspense>
+                </HashRouter>
+              </OnboardingProvider>
+            </AuthProvider>
+          </ThemeProvider>
+        </LanguageProvider>
+      </HelmetProvider>
     </ErrorBoundary>
   );
 }
