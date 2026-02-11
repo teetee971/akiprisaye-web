@@ -23,43 +23,124 @@ if (import.meta.env.DEV) {
   import('./utils/onboardingDebug');
 }
 
+const rootElement = document.getElementById('root');
+
+const createFallbackElement = () => {
+  const fallback = document.createElement('div');
+  fallback.id = 'loading-fallback';
+  fallback.style.minHeight = '100vh';
+  fallback.style.display = 'flex';
+  fallback.style.flexDirection = 'column';
+  fallback.style.alignItems = 'center';
+  fallback.style.justifyContent = 'center';
+  fallback.style.background = '#0f172a';
+  fallback.style.color = 'white';
+  fallback.style.fontFamily = 'system-ui, sans-serif';
+  fallback.innerHTML = `
+    <img src="/logo-akiprisaye.svg" alt="A KI PRI SA YÉ" style="height: 64px; margin-bottom: 24px;" />
+    <h1 style="font-size: 1.5rem; margin-bottom: 8px;">A KI PRI SA YÉ</h1>
+    <p style="color: #94a3b8;">Chargement en cours...</p>
+  `;
+  document.body.appendChild(fallback);
+  return fallback;
+};
+
+let fallbackElement = document.getElementById('loading-fallback');
+
+if (!fallbackElement) {
+  fallbackElement = createFallbackElement();
+} else if (rootElement && rootElement.contains(fallbackElement)) {
+  document.body.appendChild(fallbackElement);
+}
+
+const showFallback = (html) => {
+  if (fallbackElement) {
+    fallbackElement.style.display = 'flex';
+    fallbackElement.setAttribute('aria-hidden', 'false');
+    fallbackElement.innerHTML = html;
+  }
+};
+
+const hideFallback = () => {
+  if (fallbackElement) {
+    fallbackElement.style.display = 'none';
+    fallbackElement.setAttribute('aria-hidden', 'true');
+  }
+};
+
+const clearChunkReloadFlag = () => {
+  try {
+    sessionStorage.removeItem('akiprisaye:chunk-reload-attempted');
+  } catch (storageError) {
+    console.warn('⚠️ Unable to clear chunk reload flag:', storageError);
+  }
+};
+
+
+const renderRecoverableError = (message, details = '') => {
+  showFallback(`
+    <img src="/logo-akiprisaye.svg" alt="A KI PRI SA YÉ" style="height: 64px; margin-bottom: 24px;" />
+    <h1 style="font-size: 1.5rem; margin-bottom: 8px;">A KI PRI SA YÉ</h1>
+    <p style="color: #f87171; margin-bottom: 8px;">${message}</p>
+    <p style="color: #94a3b8; font-size: 0.875rem; margin-bottom: 16px;">${details}</p>
+    <button onclick="location.reload()" style="padding: 12px 24px; background: #3b82f6; color: white; border: none; border-radius: 8px; cursor: pointer; margin-bottom: 12px; display: block; width: 220px; margin-left: auto; margin-right: auto;">
+      Recharger l'application
+    </button>
+    <p style="color: #64748b; font-size: 0.75rem; margin-top: 16px;">
+      Si le problème persiste, vider le cache du navigateur.
+    </p>
+  `);
+};
+
+const isChunkLoadingError = (text = '') => {
+  const normalized = String(text || '').toLowerCase();
+  return (
+    normalized.includes('chunkloaderror') ||
+    normalized.includes('failed to fetch dynamically imported module') ||
+    normalized.includes('importing a module script failed')
+  );
+};
+
+const recoverFromChunkError = (error) => {
+  const errorText = String(error?.message || error || '');
+  if (!isChunkLoadingError(errorText)) {
+    return false;
+  }
+
+  console.error('⚠️ Chunk loading error detected:', errorText);
+  const reloadFlag = 'akiprisaye:chunk-reload-attempted';
+  const hasReloaded = sessionStorage.getItem(reloadFlag) === '1';
+
+  if (!hasReloaded) {
+    sessionStorage.setItem(reloadFlag, '1');
+    window.location.reload();
+    return true;
+  }
+
+  renderRecoverableError(
+    'Une mise à jour est en cours',
+    'Le contenu a changé sur le serveur. Rechargez la page pour récupérer la version la plus récente.'
+  );
+  return true;
+};
+
 // Global error handler to catch errors before React loads
 window.onerror = function(message, source, lineno, colno, error) {
   console.error('Erreur globale:', { message, source, lineno, colno, error });
-  const fallback = document.getElementById('loading-fallback');
-  if (fallback) {
-    fallback.innerHTML = `
-      <img src="/logo-akiprisaye.svg" alt="A KI PRI SA YÉ" style="height: 64px; margin-bottom: 24px;" />
-      <h1 style="font-size: 1.5rem; margin-bottom: 8px;">A KI PRI SA YÉ</h1>
-      <p style="color: #f87171; margin-bottom: 16px;">Une erreur est survenue</p>
-      <button onclick="location.reload()" style="padding: 12px 24px; background: #3b82f6; color: white; border: none; border-radius: 8px; cursor: pointer;">
-        Réessayer
-      </button>
-    `;
+  if (recoverFromChunkError(error || message)) {
+    return true;
   }
+
+  renderRecoverableError('Une erreur est survenue', "Réessayez pour recharger l'application.");
   return true;
 };
 
 // Global timeout - if the app doesn't load in 15 seconds, show an error
 const globalLoadTimeout = setTimeout(() => {
-  const fallback = document.getElementById('loading-fallback');
   // Only show error if fallback is still visible (app hasn't loaded)
-  if (fallback && fallback.style.display !== 'none') {
+  if (fallbackElement && fallbackElement.style.display !== 'none') {
     console.error('⏱️ Global timeout: App failed to load in 15 seconds');
-    fallback.innerHTML = `
-      <img src="/logo-akiprisaye.svg" alt="A KI PRI SA YÉ" style="height: 64px; margin-bottom: 24px;" />
-      <h1 style="font-size: 1.5rem; margin-bottom: 8px;">A KI PRI SA YÉ</h1>
-      <p style="color: #f87171; margin-bottom: 8px;">Le chargement prend trop de temps</p>
-      <p style="color: #94a3b8; font-size: 0.875rem; margin-bottom: 16px;">
-        L'application ne répond pas. Cela peut être dû à une connexion lente ou à un problème de configuration.
-      </p>
-      <button onclick="location.reload()" style="padding: 12px 24px; background: #3b82f6; color: white; border: none; border-radius: 8px; cursor: pointer; margin-bottom: 12px; display: block; width: 200px; margin-left: auto; margin-right: auto;">
-        Réessayer
-      </button>
-      <p style="color: #64748b; font-size: 0.75rem; margin-top: 16px;">
-        Si le problème persiste, essayez de vider le cache de votre navigateur.
-      </p>
-    `;
+    renderRecoverableError('Le chargement prend trop de temps', "L'application ne répond pas. Cela peut être dû à une connexion lente ou à une ancienne version en cache.");
   }
 }, 15000);
 
@@ -68,36 +149,83 @@ window.addEventListener('load', () => {
   clearTimeout(globalLoadTimeout);
 });
 
+
+window.addEventListener('unhandledrejection', (event) => {
+  if (recoverFromChunkError(event.reason)) {
+    event.preventDefault();
+  }
+});
+
+window.addEventListener('vite:preloadError', (event) => {
+  const error = event?.payload || event;
+  if (recoverFromChunkError(error)) {
+    event.preventDefault();
+  }
+});
+
+window.addEventListener('load', async () => {
+  if (!('serviceWorker' in navigator)) {
+    return;
+  }
+
+  try {
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    await Promise.all(registrations.map((registration) => registration.unregister()));
+  } catch (swError) {
+    console.warn('⚠️ Service Worker cleanup skipped:', swError);
+  }
+});
+
 /**
  * Root application render with HashRouter for Cloudflare Pages SPA
  * ErrorBoundary is intentionally placed at the highest level
  * to avoid any blank screen in production.
  */
 
-const rootElement = document.getElementById('root');
-
 if (!rootElement) {
   console.error('❌ Root element #root not found');
 } else {
   console.log('✅ main.jsx: Starting React render');
-  
-  // Remove the HTML loading fallback once React starts rendering
-  const loadingFallback = document.getElementById('loading-fallback');
-  if (loadingFallback) {
-    // Keep it visible briefly to prevent flash, then let React take over
-    setTimeout(() => {
-      if (loadingFallback && loadingFallback.parentNode) {
-        loadingFallback.style.display = 'none';
-        console.log('✅ main.jsx: HTML loading fallback hidden');
-      }
-    }, 100);
-  }
   
   ReactDOM.createRoot(rootElement).render(
     <React.StrictMode>
       <App />
     </React.StrictMode>
   );
+
+  const mountStart = performance.now();
+  const maxWaitMs = 15000;
+
+  const checkMount = () => {
+    const appMounted = document.getElementById('app-mounted');
+
+    if (appMounted) {
+      hideFallback();
+      clearChunkReloadFlag();
+      return;
+    }
+
+    if (performance.now() - mountStart > maxWaitMs) {
+      renderRecoverableError(
+        'Le démarrage de l\'application a échoué',
+        'Rechargez la page pour récupérer la version la plus récente.'
+      );
+      return;
+    }
+
+    requestAnimationFrame(checkMount);
+  };
+
+  requestAnimationFrame(checkMount);
+
+  setTimeout(() => {
+    if (rootElement.childElementCount === 0 && fallbackElement?.style.display === 'none') {
+      renderRecoverableError(
+        'Une erreur est survenue après le chargement',
+        'L\'écran est vide. Rechargez la page pour relancer l\'application.'
+      );
+    }
+  }, 3000);
   
   console.log('✅ main.jsx: React render initiated');
 }

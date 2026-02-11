@@ -120,15 +120,40 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
         if (enableDebugLogging) {
           console.log('[SCAN] 📷 Requesting camera access...');
         }
-        
-        // Request camera permission with proper constraints
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { 
-            facingMode: { ideal: 'environment' },
-            width: { ideal: 1280 },
-            height: { ideal: 720 }
-          },
-        });
+
+        const requestCameraStream = async () => {
+          const constraintSets: MediaStreamConstraints[] = [
+            {
+              video: {
+                facingMode: { ideal: 'environment' },
+                width: { ideal: 1280 },
+                height: { ideal: 720 },
+              },
+            },
+            { video: { facingMode: { ideal: 'environment' } } },
+            { video: true },
+          ];
+
+          let lastError: unknown = null;
+
+          for (const constraints of constraintSets) {
+            try {
+              if (enableDebugLogging) {
+                console.log('[SCAN] 📷 Trying constraints:', constraints);
+              }
+              return await navigator.mediaDevices.getUserMedia(constraints);
+            } catch (constraintError) {
+              lastError = constraintError;
+              if (enableDebugLogging) {
+                console.log('[SCAN] ⚠️ Constraint failed, trying fallback:', constraintError);
+              }
+            }
+          }
+
+          throw lastError ?? new Error('Aucune contrainte caméra compatible');
+        };
+
+        const stream = await requestCameraStream();
         
         if (enableDebugLogging) {
           console.log('[SCAN] ✅ Camera access granted');
@@ -138,6 +163,8 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
         
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
+          videoRef.current.setAttribute('playsinline', 'true');
+          videoRef.current.muted = true;
           
           // Wait for video to be ready
           await new Promise<void>((resolve, reject) => {
@@ -165,16 +192,20 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
 
         // Check if torch is supported
         const track = stream.getVideoTracks()[0];
-        const capabilities = track.getCapabilities() as any;
-        if (enableDebugLogging) {
-          console.log('[SCAN] 📱 Camera capabilities:', capabilities);
-        }
-        
-        if ('torch' in capabilities) {
-          setTorchSupported(true);
+        if (track) {
+          const capabilities = track.getCapabilities() as any;
           if (enableDebugLogging) {
-            console.log('[SCAN] 🔦 Torch supported');
+            console.log('[SCAN] 📱 Camera capabilities:', capabilities);
           }
+
+          if ('torch' in capabilities) {
+            setTorchSupported(true);
+            if (enableDebugLogging) {
+              console.log('[SCAN] 🔦 Torch supported');
+            }
+          }
+        } else if (enableDebugLogging) {
+          console.log('[SCAN] ⚠️ No video track available to check torch support');
         }
 
         // Start decoding with timeout

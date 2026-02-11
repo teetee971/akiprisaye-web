@@ -1,5 +1,6 @@
 import React, { Suspense, useState, useEffect } from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 
 // Import Layout synchronously to prevent loading block
 import Layout from './components/Layout';
@@ -12,6 +13,7 @@ import { PerformanceMonitor } from './components/PerformanceMonitor';
 import OnboardingTour from './components/OnboardingTour';
 import OnboardingAutoStart from './components/OnboardingAutoStart';
 import HelpButton from './components/HelpButton';
+import AnalyticsTracker from './components/analytics/AnalyticsTracker';
 
 // Lazy-loaded pages - Main routes
 const Home = React.lazy(() => import('./pages/Home'));
@@ -30,7 +32,7 @@ const ProductList = React.lazy(() => import('./pages/admin/products/ProductList'
 const ProductForm = React.lazy(() => import('./pages/admin/products/ProductForm').then(m => ({ default: m.ProductForm })));
 const ProductDetail = React.lazy(() => import('./pages/admin/products/ProductDetail').then(m => ({ default: m.ProductDetail })));
 const ImportPage = React.lazy(() => import('./pages/admin/import/ImportPage'));
-const Observatoire = React.lazy(() => import('./pages/Observatoire'));
+const ObservatoireHub = React.lazy(() => import('./pages/ObservatoireHub'));
 const Methodologie = React.lazy(() => import('./pages/Methodologie'));
 const Faq = React.lazy(() => import('./pages/Faq'));
 const Contact = React.lazy(() => import('./pages/Contact'));
@@ -43,6 +45,7 @@ const ContribuerPrix = React.lazy(() => import('./pages/ContribuerPrix'));
 const Comparateurs = React.lazy(() => import('./pages/Comparateurs'));
 const CarteItinerairesHub = React.lazy(() => import('./pages/CarteItinerairesHub'));
 const ComparateurCitoyen = React.lazy(() => import('./pages/ComparateurCitoyen'));
+const LutteVieChere = React.lazy(() => import('./pages/LutteVieChereIndexPage'));
 
 // Scanner & OCR pages
 const ScannerHub = React.lazy(() => import('./pages/ScannerHub'));
@@ -154,12 +157,14 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-      <LanguageProvider>
-        <ThemeProvider>
-          <AuthProvider>
-            <OnboardingProvider>
-              <HashRouter>
-                <Suspense fallback={<LoadingFallback />}>
+      <HelmetProvider>
+        <div id="app-mounted" style={{ display: 'none' }} />
+        <LanguageProvider>
+          <ThemeProvider>
+            <AuthProvider>
+              <OnboardingProvider>
+                <HashRouter>
+                  <Suspense fallback={<LoadingFallback />}>
                   <Routes>
                     {/* Admin routes with dedicated layout */}
                     <Route path="/admin" element={<AdminLayout />}>
@@ -184,7 +189,8 @@ export default function App() {
                       <Route path="dashboard" element={<AdminDashboard />} />
                       <Route path="home" element={<Home />} />
                       <Route path="comparateur" element={<Comparateur />} />
-                      <Route path="observatoire" element={<Observatoire />} />
+                      <Route path="observatoire" element={<ObservatoireHub />} />
+                      <Route path="vie-chere" element={<LutteVieChere />} />
                       <Route path="methodologie" element={<Methodologie />} />
                       <Route path="faq" element={<Faq />} />
                       <Route path="contact" element={<Contact />} />
@@ -250,16 +256,18 @@ export default function App() {
                       <Route path="*" element={<Navigate to="/" replace />} />
                     </Route>
                   </Routes>
+                  <AnalyticsTracker />
                   <PerformanceMonitor />
                   <OnboardingAutoStart />
                   <OnboardingTour />
                   <HelpButton />
-                </Suspense>
-              </HashRouter>
-            </OnboardingProvider>
-          </AuthProvider>
-        </ThemeProvider>
-      </LanguageProvider>
+                  </Suspense>
+                </HashRouter>
+              </OnboardingProvider>
+            </AuthProvider>
+          </ThemeProvider>
+        </LanguageProvider>
+      </HelmetProvider>
     </ErrorBoundary>
   );
 }

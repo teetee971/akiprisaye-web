@@ -32,6 +32,11 @@ class ErrorBoundary extends Component {
   };
 
   render() {
+    const errorText =
+      typeof this.state.error === 'string'
+        ? this.state.error
+        : this.state.error?.message || String(this.state.error || '');
+
     if (this.state.hasError) {
       return (
         <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
@@ -63,7 +68,7 @@ class ErrorBoundary extends Component {
                 overflowX: 'auto',
               }}
             >
-              {this.state.error}
+              {errorText}
               {"\n"}
               {this.state.errorInfo}
             </pre>

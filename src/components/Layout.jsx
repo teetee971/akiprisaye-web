@@ -5,6 +5,8 @@ import { Menu, X } from 'lucide-react';
 import TiPanierButton from './TiPanierButton';
 import FloatingActions from './ui/FloatingActions';
 import { OfflineIndicator } from './OfflineIndicator';
+import SeoDefaults from './SeoDefaults';
+import LanguageSelector from './i18n/LanguageSelector';
 
 export default function Layout() {
   const location = useLocation();
@@ -104,6 +106,8 @@ export default function Layout() {
   const navItems = [
     { path: '/', label: 'Accueil', icon: '🏠' },
     { path: '/comparateur', label: 'Comparateur', icon: '📊' },
+    { path: '/catalogue', label: 'Catalogue', icon: '🧺' },
+    { path: '/solidarite', label: 'Solidarité', icon: '🤝' },
     { path: '/observatoire', label: 'Observatoire', icon: '📈' },
     { path: '/methodologie', label: 'Méthodologie', icon: '📚' },
     { path: '/faq', label: 'FAQ', icon: '❓' },
@@ -148,6 +152,7 @@ export default function Layout() {
 
   return (
     <div className="flex flex-col min-h-screen bg-slate-950 text-slate-100">
+      <SeoDefaults />
       {/* HEADER */}
       <header className="fixed top-0 left-0 right-0 border-b border-slate-800 shadow-md bg-slate-900/70 backdrop-blur-lg z-header">
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between h-16">
@@ -161,7 +166,8 @@ export default function Layout() {
           </Link>
 
           {/* Ti‑panier (desktop placement) */}
-          <div className="hidden md:flex items-center">
+          <div className="hidden md:flex items-center gap-3">
+            <LanguageSelector />
             <TiPanierButton float={false} />
           </div>
 
