@@ -1,2 +1,1 @@
-# SPA fallback - redirect all non-file requests to index.html for React Router
-/*    /index.html   200
+/*  /index.html  200

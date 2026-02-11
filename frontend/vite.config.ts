@@ -4,6 +4,7 @@ import { viteStaticCopy } from 'vite-plugin-static-copy'
 import path from 'path'
 import { existsSync } from 'fs'
 import { createRequire } from 'module'
+import { execSync } from 'child_process'
 
 // Charge optionnelle de rollup-plugin-visualizer pour éviter l'échec en CI
 const require = createRequire(import.meta.url)
@@ -15,6 +16,16 @@ try {
   // plugin absent -> on continue sans lui (utile en CI où devDeps peuvent être omis)
   visualizerPlugin = null
 }
+
+const buildSha = process.env.BUILD_SHA || (() => {
+  try {
+    return execSync('git rev-parse --short HEAD', { stdio: ['ignore', 'pipe', 'ignore'] })
+      .toString()
+      .trim()
+  } catch {
+    return 'unknown'
+  }
+})()
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -97,6 +108,7 @@ export default defineConfig({
     port: 4173
   },
   define: {
+    'import.meta.env.VITE_BUILD_SHA': JSON.stringify(buildSha),
     'process.env.VITE_FIREBASE_API_KEY': JSON.stringify(process.env.VITE_FIREBASE_API_KEY),
     'process.env.VITE_FIREBASE_AUTH_DOMAIN': JSON.stringify(process.env.VITE_FIREBASE_AUTH_DOMAIN),
     'process.env.VITE_FIREBASE_PROJECT_ID': JSON.stringify(process.env.VITE_FIREBASE_PROJECT_ID)

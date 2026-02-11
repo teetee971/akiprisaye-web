@@ -10,6 +10,13 @@ import './styles/a11y.css';
 import App from './App';
 import ErrorBoundary from './components/ErrorBoundary';
 import { safeToText } from './utils/safeToText';
+import { installRuntimeCrashProbe } from './monitoring/runtimeCrashProbe';
+
+const BUILD_SHA = import.meta.env.VITE_BUILD_SHA || 'unknown';
+window.__BUILD_SHA__ = BUILD_SHA;
+const consoleInfo = globalThis?.console?.info?.bind(globalThis.console);
+consoleInfo?.(`[build] A KI PRI SA YÉ boot sha=${BUILD_SHA}`);
+installRuntimeCrashProbe();
 
 // Fix Leaflet marker icons for Vite/Cloudflare build
 // Point to our bundled markers in /public/leaflet/
