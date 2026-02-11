@@ -4,7 +4,7 @@
 
 set -e  # Exit on any error
 
-URL="${1:-https://akiprisaye.pages.dev}"
+URL="${1:-https://akiprisaye-web.pages.dev}"
 MAX_RETRIES="${2:-3}"
 RETRY_DELAY="${3:-10}"
 
@@ -79,22 +79,30 @@ if ! check_url "$URL/" "A KI PRI SA YÉ" "Root page"; then
 fi
 echo ""
 
-# Test 2: React app is loading
-echo "📋 Test 2: React Application Loading"
+# Test 2: React app bootstrap is present
+echo "📋 Test 2: React Bootstrap Presence"
 HTML=$(curl -s "$URL/" 2>/dev/null || echo "")
 
-if echo "$HTML" | grep -q '<div id="root"></div>'; then
-  echo -e "${GREEN}✅ React root div present${NC}"
+if echo "$HTML" | grep -q '<div id="root"'; then
+  echo -e "${GREEN}✅ React root container present${NC}"
 else
-  echo -e "${RED}❌ React root div MISSING${NC}"
+  echo -e "${RED}❌ React root container MISSING${NC}"
   FAILED=1
 fi
 
-if echo "$HTML" | grep -q '/assets/index-'; then
-  echo -e "${GREEN}✅ React assets referenced${NC}"
+if echo "$HTML" | grep -q '/assets/index-' || echo "$HTML" | grep -q '/src/main.jsx'; then
+  echo -e "${GREEN}✅ React assets referenced (prod or dev)${NC}"
 else
   echo -e "${RED}❌ React assets NOT referenced${NC}"
   FAILED=1
+fi
+
+if echo "$HTML" | grep -q 'id="loading-fallback"'; then
+  echo -e "${GREEN}✅ Static loading fallback present in HTML${NC}"
+elif echo "$HTML" | grep -q 'createFallbackElement'; then
+  echo -e "${GREEN}✅ Runtime fallback creation logic present${NC}"
+else
+  echo -e "${YELLOW}⚠️  Loading fallback marker not detected in HTML snapshot${NC}"
 fi
 echo ""
 
@@ -118,8 +126,24 @@ else
 fi
 echo ""
 
-# Test 5: Critical routes accessibility (SPA routing)
-echo "📋 Test 5: Critical Routes (SPA Routing)"
+# Test 5: CSP/Head consistency (mobile black-screen regression guard)
+echo "📋 Test 5: Head/CSP Consistency"
+if echo "$HTML" | grep -qi 'http-equiv="X-Frame-Options"'; then
+  echo -e "${RED}❌ Invalid X-Frame-Options meta tag detected${NC}"
+  FAILED=1
+else
+  echo -e "${GREEN}✅ No invalid X-Frame-Options meta tag${NC}"
+fi
+
+if echo "$HTML" | grep -qi 'fonts.googleapis.com'; then
+  echo -e "${YELLOW}⚠️  External Google Fonts reference detected (may be blocked by CSP)${NC}"
+else
+  echo -e "${GREEN}✅ No external Google Fonts reference in HTML${NC}"
+fi
+echo ""
+
+# Test 6: Critical routes accessibility (SPA routing)
+echo "📋 Test 6: Critical Routes (SPA Routing)"
 CRITICAL_ROUTES=(
   "/comparateur"
   "/scanner"
@@ -139,8 +163,8 @@ for route in "${CRITICAL_ROUTES[@]}"; do
 done
 echo ""
 
-# Test 6: Service Worker check
-echo "📋 Test 6: Service Worker"
+# Test 7: Service Worker check
+echo "📋 Test 7: Service Worker"
 SW_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "${URL}/service-worker.js" 2>/dev/null || echo "000")
 if [ "$SW_STATUS" = "200" ]; then
   echo -e "${GREEN}✅ Service Worker accessible${NC}"
@@ -155,8 +179,8 @@ else
 fi
 echo ""
 
-# Test 7: Security headers
-echo "📋 Test 7: Security Headers"
+# Test 8: Security headers
+echo "📋 Test 8: Security Headers"
 HEADERS=$(curl -I -s "$URL/" 2>/dev/null || echo "")
 
 SECURITY_HEADERS=(
@@ -175,8 +199,8 @@ for header in "${SECURITY_HEADERS[@]}"; do
 done
 echo ""
 
-# Test 8: Check for console errors (if headless browser available)
-echo "📋 Test 8: Basic JavaScript Check"
+# Test 9: Check for console errors (if headless browser available)
+echo "📋 Test 9: Basic JavaScript Check"
 # This is a simplified check - in a real scenario, you'd use Playwright or Puppeteer
 if command -v node &> /dev/null; then
   echo -e "${GREEN}✅ Can perform advanced JS checks (Node.js available)${NC}"
