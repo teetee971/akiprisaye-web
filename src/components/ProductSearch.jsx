@@ -9,6 +9,17 @@ import { useToast } from '../hooks/useToast';
 const DEBOUNCE = 250;
 const MAX_RESULTS = 15;
 
+/**
+ * Product search input with debounced search, multi-source fallbacks, fuzzy ranking, and keyboard-accessible results.
+ *
+ * Provides an input for querying products; displays a list of matching products (including images when available),
+ * supports Arrow/Enter/Escape/Tab keyboard navigation, and calls `onPickEAN` when a product is selected.
+ *
+ * @param {Object} props
+ * @param {string} [props.territory='Guadeloupe'] - Territory code used to scope searches.
+ * @param {(ean: string, product: Object) => void} props.onPickEAN - Callback invoked when a product is picked; receives the product EAN and the full product object.
+ * @returns {JSX.Element} The product search UI component.
+ */
 export default function ProductSearch({ territory = 'Guadeloupe', onPickEAN }) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);

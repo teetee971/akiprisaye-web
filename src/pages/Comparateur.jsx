@@ -6,6 +6,15 @@ import { useState } from 'react';
 import { findProductByEan } from '../data/seedProducts';
 import { fetchProductFromOpenFoodFacts } from '../data/openFoodFacts';
 
+/**
+ * User interface for searching and comparing product prices by EAN and territory.
+ *
+ * Performs EAN input/scan handling, queries the prices API, falls back to seeded data
+ * and Open Food Facts for product metadata, and displays search results, product details,
+ * loading and informational states.
+ *
+ * @returns {JSX.Element} The Comparateur React component rendering the price comparison UI.
+ */
 export default function Comparateur() {
   const [ean, setEan] = useState('');
   const [territory, setTerritory] = useState('GP');

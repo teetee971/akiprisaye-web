@@ -130,6 +130,15 @@ function LoadingFallback() {
   );
 }
 
+/**
+ * Root application component that configures providers, client-side routing, and global UI elements.
+ *
+ * Renders an initialization error screen when provider setup fails; otherwise composes ErrorBoundary, HelmetProvider,
+ * Language, Theme, Auth and Onboarding providers around a HashRouter with the app's route hierarchy and global tools
+ * such as analytics, performance monitoring, onboarding helpers, and the help button.
+ *
+ * @returns The root React element of the application.
+ */
 export default function App() {
   const [providerError, setProviderError] = useState<Error | null>(null);
 

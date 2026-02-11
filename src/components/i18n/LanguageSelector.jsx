@@ -5,6 +5,14 @@ const LANGUAGES = [
   { code: 'gcf', label: 'KR' },
 ];
 
+/**
+ * Render a language selector that applies the chosen language to the document and persists it.
+ *
+ * The component initializes the selected language from localStorage (key "akiprisaye-language", default "fr"),
+ * updates document.documentElement.lang when the selection changes, and saves the choice back to localStorage.
+ *
+ * @returns {JSX.Element} A labeled select control allowing the user to choose the UI language.
+ */
 export default function LanguageSelector() {
   const [language, setLanguage] = useState(() => localStorage.getItem('akiprisaye-language') || 'fr');
 

@@ -1,3 +1,8 @@
+/**
+ * Render the Transparence page showing what data is published, what is not yet covered, transparency commitments, and Open Data download information.
+ *
+ * @returns The React element for the Transparence page layout.
+ */
 export default function Transparence() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">

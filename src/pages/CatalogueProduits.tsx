@@ -34,6 +34,15 @@ const CATEGORY_DESCRIPTIONS: Record<string, string> = {
   'petit-déjeuner': 'Céréales, pâtes à tartiner et cafés.',
 };
 
+/**
+ * Renders the product catalogue UI with category filtering, counts, and detailed product cards.
+ *
+ * Populates the catalogue from seed data and progressively enriches items with external product
+ * information (images, category, ingredients, scores). Shows loading skeletons while data is being
+ * fetched and updates the displayed list as items are enriched.
+ *
+ * @returns A JSX element rendering the product catalogue with category controls, stats, and item cards.
+ */
 export default function CatalogueProduits() {
   const [items, setItems] = useState<CatalogueItem[]>([]);
   const [loading, setLoading] = useState(true);

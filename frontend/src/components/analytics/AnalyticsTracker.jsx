@@ -3,6 +3,16 @@ import { useLocation } from 'react-router-dom';
 
 const STORAGE_KEY = 'akiprisaye-analytics-events';
 
+/**
+ * Tracks route changes and records lightweight analytics events to localStorage when the user has opted in.
+ *
+ * When the opt-in flag `akiprisaye-analytics-optin` is set to `'true'`, the component records an event on changes
+ * to the current path or hash. Each event contains path, hash, ISO timestamp, referrer (or `'direct'`), and page
+ * language (or `'fr'` if unset). Events are persisted under `akiprisaye-analytics-events` and capped to the most
+ * recent 50 entries.
+ *
+ * @returns {null} Renders nothing (no UI).
+ */
 export default function AnalyticsTracker() {
   const location = useLocation();
 

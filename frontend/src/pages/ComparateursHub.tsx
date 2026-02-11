@@ -29,6 +29,15 @@ const formatUnitLabel = (unit: string) => {
   return unit;
 };
 
+/**
+ * Render the ComparateursHub interface with tabbed views for price comparison tools.
+ *
+ * Displays tabs for "Prix standards", "Prix au kilo", "Shrinkflation", "vs Métropole" and "Historique",
+ * and renders the corresponding content panel (including data-driven lists for kilo, shrinkflation and metropole),
+ * header metadata, and a statistics section.
+ *
+ * @returns The JSX element for the ComparateursHub UI.
+ */
 export default function ComparateursHub() {
   const [activeTab, setActiveTab] = useState<ComparateurTab>('prix');
   

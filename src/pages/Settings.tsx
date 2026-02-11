@@ -16,6 +16,13 @@ import { auth } from '../lib/firebase';
 import { User } from 'firebase/auth';
 import { safeLocalStorage } from '../utils/safeLocalStorage';
 
+/**
+ * Render the read-only Settings page that displays account information, permission statuses, data management tools, and an opt-in local analytics control.
+ *
+ * The component monitors Firebase authentication to show the current user, checks camera permission via the Permissions API (or marks it unavailable), provides JSON export and local deletion of stored data (localStorage, sessionStorage, cookies), and persists a local analytics opt-in flag.
+ *
+ * @returns A JSX element containing the settings UI: account info, camera and OCR permission blocks, an ethical analytics toggle, export/delete data controls, legal links, and an informational banner.
+ */
 export default function Settings() {
   const [user, setUser] = useState<User | null>(null);
   const [cameraPermission, setCameraPermission] = useState<string>('unknown');

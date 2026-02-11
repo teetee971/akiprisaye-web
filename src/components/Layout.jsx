@@ -8,6 +8,17 @@ import { OfflineIndicator } from './OfflineIndicator';
 import SeoDefaults from './SeoDefaults';
 import LanguageSelector from './i18n/LanguageSelector';
 
+/**
+ * Renders the global application layout: header with navigation, offline indicator,
+ * main content area (with coach, pinned items, contextual hints and Outlet), floating actions,
+ * mobile action bar, quick-search palette, quick actions panel and footer.
+ *
+ * The component also manages UI state (focus mode, palette, shortcuts, coach, pinned routes,
+ * quick actions), persists relevant preferences to localStorage, and registers global keyboard
+ * and scroll handlers used by the quick palette and scroll-to-top behaviour.
+ *
+ * @returns {JSX.Element} The rendered app layout component.
+ */
 export default function Layout() {
   const location = useLocation();
   const [open, setOpen] = React.useState(false);
