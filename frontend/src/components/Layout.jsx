@@ -104,6 +104,24 @@ export default function Layout() {
     }
   }, [showPalette]);
 
+  React.useEffect(() => {
+    setOpen(false);
+  }, [location.pathname]);
+
+  React.useEffect(() => {
+    if (!open) {
+      document.body.style.overflow = '';
+      return;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [open]);
+
   // Navigation principale - V1 officielle (7 entrées)
   const navItems = [
     { path: '/', label: 'Accueil', icon: '🏠' },
@@ -157,6 +175,15 @@ export default function Layout() {
       {/* Skip Links - Accessibilité RGAA */}
       <SkipLinks />
       
+      {open && (
+        <button
+          type="button"
+          className="fixed inset-0 z-40 bg-black/60 lg:hidden"
+          onClick={() => setOpen(false)}
+          aria-label="Fermer le menu mobile"
+        />
+      )}
+
       {/* HEADER */}
       <header id="main-nav" className="fixed top-0 left-0 right-0 border-b border-slate-800 shadow-md bg-slate-900/70 backdrop-blur-lg z-header" role="banner">
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between h-16">
@@ -197,6 +224,7 @@ export default function Layout() {
 
           {/* Menu mobile */}
           <button
+            type="button"
             className="lg:hidden text-slate-300"
             onClick={() => setOpen(!open)}
             aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
@@ -209,7 +237,7 @@ export default function Layout() {
 
         {/* Dropdown mobile */}
         {open && (
-          <div id="mobile-menu" className="lg:hidden bg-slate-900/95 backdrop-blur-xl border-t border-slate-700" role="navigation" aria-label="Menu mobile">
+          <div id="mobile-menu" className="lg:hidden bg-slate-900/95 backdrop-blur-xl border-t border-slate-700 relative z-50" role="navigation" aria-label="Menu mobile">
             <div className="py-2">
               {navItems.map((item) => (
                 <NavLink

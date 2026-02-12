@@ -24,7 +24,7 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
   const [torchEnabled, setTorchEnabled] = useState(false);
   const [scanMode, setScanMode] = useState<'camera' | 'upload'>('camera');
   const [userMessage, setUserMessage] = useState<ScannerMessage | null>(null);
-  const [canOpenSettings, setCanOpenSettings] = useState(false);
+  const [showPermissionGuide, setShowPermissionGuide] = useState(false);
   
   // OPTIMIZATION #2: Scan feedback state
   const [scanFeedback, setScanFeedback] = useState<'searching' | 'focusing' | 'detecting' | null>(null);
@@ -80,24 +80,9 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
     }
   };
 
-  const openCameraSettings = () => {
-    if (typeof window === 'undefined') return;
-
-    const userAgent = navigator.userAgent.toLowerCase();
-    let settingsUrl: string | null = null;
-
-    if (userAgent.includes('chrome') || userAgent.includes('edg')) {
-      settingsUrl = 'chrome://settings/content/camera';
-    } else if (userAgent.includes('firefox')) {
-      settingsUrl = 'about:preferences#privacy';
-    }
-
-    if (settingsUrl) {
-      window.open(settingsUrl, '_blank', 'noopener,noreferrer');
-      return;
-    }
-
-    setError('Ouvrez les paramètres du navigateur et autorisez la caméra pour ce site, puis réessayez.');
+  const requestClose = () => {
+    stopScanning();
+    onClose();
   };
 
   useEffect(() => {
@@ -109,10 +94,11 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
     };
   }, []);
 
+
   const startScanning = async () => {
     setError(null);
     setUserMessage(null);
-    setCanOpenSettings(false);
+    setShowPermissionGuide(false);
     setIsScanning(true);
     setHasPermission(null); // Reset permission state
     setScanFeedback('searching'); // OPTIMIZATION #2: Set initial feedback
@@ -247,7 +233,7 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
         setIsScanning(false);
 
         if (isPermissionDenied) {
-          setCanOpenSettings(true);
+          setShowPermissionGuide(false);
           activateImageUploadFallback(SCANNER_MESSAGES.CAMERA_PERMISSION_DENIED);
           transitionState('idle', 'Camera permission denied');
           return;
@@ -268,7 +254,7 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
     setIsScanning(false);
 
     if (permission === 'denied') {
-      setCanOpenSettings(true);
+      setShowPermissionGuide(false);
       activateImageUploadFallback(SCANNER_MESSAGES.CAMERA_PERMISSION_DENIED);
       transitionState('idle', 'Camera permission denied before prompt');
       return;
@@ -550,12 +536,18 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
 
   return (
     <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4">
-      <div className="bg-slate-900 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <button
+        type="button"
+        className="absolute inset-0"
+        aria-label="Fermer le scanner"
+        onClick={requestClose}
+      />
+      <div className="relative bg-slate-900 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-slate-700">
           <h2 className="text-xl font-bold text-white">📷 Scanner Code-Barres</h2>
           <button
-            onClick={onClose}
+            onClick={requestClose}
             className="text-gray-400 hover:text-white text-2xl"
             aria-label="Fermer"
           >
@@ -690,13 +682,13 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
                 </p>
               </div>
 
-              {userMessage.title === SCANNER_MESSAGES.CAMERA_PERMISSION_DENIED.title && canOpenSettings && (
+              {userMessage.title === SCANNER_MESSAGES.CAMERA_PERMISSION_DENIED.title && (
                 <button
                   type="button"
-                  onClick={openCameraSettings}
+                  onClick={() => setShowPermissionGuide(true)}
                   className="mt-3 w-full px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-md font-semibold transition-colors"
                 >
-                  ⚙️ Ouvrir les paramètres
+                  📖 Voir comment autoriser la caméra
                 </button>
               )}
             </div>
@@ -705,13 +697,15 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
           {/* Permission denied help */}
           {hasPermission === false && !userMessage && (
             <div className="bg-yellow-900/20 border border-yellow-700/30 rounded-lg p-4 text-sm text-yellow-200">
-              <p className="font-semibold mb-2">🔐 Comment autoriser l'accès à la caméra ?</p>
-              <ul className="space-y-2 ml-4 list-disc">
-                <li><strong>Chrome/Edge :</strong> Cliquez sur l'icône 🔒 ou ℹ️ dans la barre d'adresse → Paramètres du site → Caméra → Autoriser</li>
-                <li><strong>Safari (iOS) :</strong> Réglages → Safari → Caméra → Autoriser</li>
-                <li><strong>Firefox :</strong> Cliquez sur l'icône 🔒 → Autorisations → Caméra → Autoriser</li>
+              <p className="font-semibold mb-2">🔐 Caméra bloquée ou indisponible</p>
+              <p>Sur mobile Chrome/Android, ouvrez le menu ⋮ puis :</p>
+              <ul className="space-y-2 ml-4 list-disc mt-2">
+                <li>Paramètres</li>
+                <li>Paramètres du site</li>
+                <li>Caméra</li>
+                <li>Autoriser</li>
               </ul>
-              <p className="mt-3 text-xs">Une fois l'autorisation donnée, rechargez la page et réessayez.</p>
+              <p className="mt-3 text-xs">Ensuite, revenez ici et utilisez « Réessayer la caméra ». Si cela ne fonctionne pas, continuez avec l'import d'image ou la saisie manuelle.</p>
             </div>
           )}
 
@@ -797,6 +791,41 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
             </form>
           </div>
         </div>
+
+      {showPermissionGuide && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/70 p-4">
+          <div className="w-full max-w-md rounded-xl border border-white/10 bg-slate-900 p-4 text-sm text-slate-200">
+            <div className="flex items-center justify-between">
+              <h3 className="text-base font-semibold text-white">Aide caméra (Chrome Android)</h3>
+              <button
+                type="button"
+                onClick={() => setShowPermissionGuide(false)}
+                className="text-slate-300 hover:text-white"
+                aria-label="Fermer l'aide caméra"
+              >
+                ✕
+              </button>
+            </div>
+            <ol className="mt-3 space-y-2 list-decimal pl-5">
+              <li>Dans Chrome, ouvrez le menu <strong>⋮</strong>.</li>
+              <li>Allez dans <strong>Paramètres</strong>.</li>
+              <li>Ouvrez <strong>Paramètres du site</strong>.</li>
+              <li>Sélectionnez <strong>Caméra</strong>.</li>
+              <li>Choisissez <strong>Autoriser</strong> pour ce site.</li>
+            </ol>
+            <p className="mt-3 text-xs text-slate-400">
+              Puis revenez au scanner et appuyez sur « Réessayer la caméra ».
+            </p>
+            <button
+              type="button"
+              onClick={() => setShowPermissionGuide(false)}
+              className="mt-4 w-full rounded-lg bg-slate-700 px-4 py-2 font-medium text-white hover:bg-slate-600"
+            >
+              Compris
+            </button>
+          </div>
+        </div>
+      )}
       </div>
     </div>
   );

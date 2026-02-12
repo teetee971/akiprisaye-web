@@ -179,8 +179,7 @@ export default function ProductSearch({ territory = 'Guadeloupe', onPickEAN, onQ
 
   const handleSelectProduct = (product) => {
     onPickEAN(product.ean);
-    setQuery('');
-    onQueryChange?.('');
+    setQuery(product.name);
     setResults([]);
     setIsOpen(false);
     setActiveIndex(-1);
