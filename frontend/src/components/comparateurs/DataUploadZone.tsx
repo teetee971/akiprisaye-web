@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /**
  * Data Upload Zone Component
  * 

@@ -10,6 +10,7 @@ import {
   getRegulatoryReferences,
   getOfficialDatabases,
 } from '../services/cosmeticEvaluationService';
+import { Shield, BookOpen, AlertTriangle, Info, ExternalLink } from 'lucide-react';
 
 export default function CosmeticEvaluation() {
   const [productName, setProductName] = useState('');

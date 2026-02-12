@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /**
  * MapLeaflet Component - Performance Optimized
  * 

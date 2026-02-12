@@ -1,5 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { logMessage } from '@/firebase_log_service.js';
+import { Card, CardContent } from './card';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './select';
+import { Input } from './input';
+import { Button } from './button';
 
 const translations = {
   creole: {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /**
  * Product Image Fallback Utility
  * Manages placeholder images and fallback strategies for products

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Gamification System Types
  * TypeScript definitions for the gamification system

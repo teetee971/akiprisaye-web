@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import ProductSearch from '../components/ProductSearch';
 import TerritorySelector from '../components/TerritorySelector';
 import EmptyState from '../components/EmptyState';

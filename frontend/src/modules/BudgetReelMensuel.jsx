@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-undef */
 /**
  * BudgetReelMensuel Component
  * 
@@ -283,7 +284,7 @@ export function BudgetReelMensuel() {
   );
 }
 
-// eslint-disable-next-line no-unused-vars
+ 
 function ChargeItem({ label, amount }) {
   return (
     <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg">

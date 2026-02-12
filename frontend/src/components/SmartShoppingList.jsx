@@ -11,6 +11,7 @@ import { trackTrip } from '../utils/shoppingStats';
 import { OPTIMIZATION_MODES, DEFAULT_OPTIMIZATION_MODE } from '../config/optimizationModes';
 import { LOCATION_THRESHOLDS } from '../config/thresholds';
 import { DATA_FRESHNESS } from '../config/periods';
+import { ShoppingCart, AlertCircle, Info, Navigation, Plus, X, Save, Download, MapPin, Trash2 } from 'lucide-react';
 
 export default function SmartShoppingList({ territoire = 'Guadeloupe' }) {
   const [shoppingList, setShoppingList] = useState([]);
@@ -493,8 +494,8 @@ export default function SmartShoppingList({ territoire = 'Guadeloupe' }) {
     });
 
     const csvContent = csvRows.map(row => row.join(',')).join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
+    const blob = new globalThis.Blob([csvContent], { type: 'text/csv' });
+    const url = globalThis.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
     a.download = `plan-courses-${Date.now()}.csv`;
@@ -747,7 +748,7 @@ export default function SmartShoppingList({ territoire = 'Guadeloupe' }) {
               </h2>
               <div className="space-y-3">
                 {Object.values(OPTIMIZATION_MODES).map((mode) => {
-                  // eslint-disable-next-line no-unused-vars
+                   
                   const Icon = mode.icon;
                   return (
                     <label

@@ -4,6 +4,10 @@ import { solveShoppingRoute } from '../utils/routeOptimization';
 import { getSuggestedProducts } from '../utils/productSuggestions';
 import { loadStats, getBadges, clearStats } from '../utils/shoppingStats';
 import { PRODUCT_CATEGORIES, GENERIC_PRODUCTS } from '../config/categories';
+import { Info, ShoppingCart, Award, AlertCircle, Navigation, MapPin } from 'lucide-react';
+import StatsDisplay from './StatsDisplay';
+import ProductSuggestionsDisplay from './ProductSuggestionsDisplay';
+import OptimalRouteDisplay from './OptimalRouteDisplay';
 
 export default function ListeCourses({ territoire = '971' }) {
   const [listeCourses, setListeCourses] = useState([]);
@@ -38,7 +42,7 @@ export default function ListeCourses({ territoire = '971' }) {
         if (module.default && module.default.magasins) {
           setMagasins(module.default.magasins);
         }
-      } catch (_error) {
+      } catch {
         if (import.meta.env.DEV) {
           console.warn('Données magasins non disponibles pour ce territoire');
         }
@@ -198,7 +202,7 @@ export default function ListeCourses({ territoire = '971' }) {
   
   // Handle stats clear
   const handleClearStats = useCallback(() => {
-    if (confirm('Êtes-vous sûr de vouloir effacer toutes vos statistiques ?')) {
+    if (globalThis.confirm('Êtes-vous sûr de vouloir effacer toutes vos statistiques ?')) {
       clearStats();
       const freshStats = loadStats();
       setStats(freshStats);

@@ -20,7 +20,10 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
+import { Line } from 'react-chartjs-2';
 import pricesHistory from '../data/prices-history.json';
+import { Card } from './ui/card';
+import DataSourceWarning from './DataSourceWarning';
 
 ChartJS.register(
   CategoryScale,

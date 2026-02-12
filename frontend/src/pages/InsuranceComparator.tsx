@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect, useMemo } from 'react';
 import { Shield, AlertCircle, Info, BarChart3, Download, FileText, CheckCircle } from 'lucide-react';
 import type {

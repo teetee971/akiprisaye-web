@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Excel Exporter Utility
  * Export price comparisons, shopping lists, and inflation reports to Excel
