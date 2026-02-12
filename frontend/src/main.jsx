@@ -2,6 +2,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import L from 'leaflet';
+import { HelmetProvider } from 'react-helmet-async';
 
 import './styles/glass.css';
 import './styles/mobile-fixes.css';
@@ -80,9 +81,11 @@ if (!rootElement) {
 
   ReactDOM.createRoot(rootElement).render(
     <React.StrictMode>
-      <ErrorBoundary>
-        <App />
-      </ErrorBoundary>
+      <HelmetProvider>
+        <ErrorBoundary>
+          <App />
+        </ErrorBoundary>
+      </HelmetProvider>
     </React.StrictMode>
   );
 
