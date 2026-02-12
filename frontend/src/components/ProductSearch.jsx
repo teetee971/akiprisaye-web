@@ -8,7 +8,7 @@ import { useToast } from '../hooks/useToast';
 const DEBOUNCE = 250;
 const MAX_RESULTS = 15;
 
-export default function ProductSearch({ territory = 'Guadeloupe', onPickEAN }) {
+export default function ProductSearch({ territory = 'Guadeloupe', onPickEAN, onQueryChange }) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -202,7 +202,11 @@ export default function ProductSearch({ territory = 'Guadeloupe', onPickEAN }) {
         aria-activedescendant={activeIndex >= 0 ? getOptionId(activeIndex) : undefined}
         aria-describedby="search-instructions"
         value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        onChange={(e) => {
+          const nextQuery = e.target.value;
+          setQuery(nextQuery);
+          onQueryChange?.(nextQuery);
+        }}
         onKeyDown={handleKeyDown}
         onFocus={handleInputFocus}
         onBlur={handleInputBlur}
@@ -270,4 +274,5 @@ export default function ProductSearch({ territory = 'Guadeloupe', onPickEAN }) {
 ProductSearch.propTypes = {
   territory: PropTypes.string,
   onPickEAN: PropTypes.func.isRequired,
+  onQueryChange: PropTypes.func,
 };

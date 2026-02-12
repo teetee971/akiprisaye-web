@@ -7,7 +7,12 @@ export const SCANNER_MESSAGES = {
   CAMERA_UNAVAILABLE: {
     type: 'info' as const,
     title: 'Caméra indisponible',
-    message: 'La caméra n\'est pas accessible sur ce navigateur. Vous pouvez importer une photo du code-barres.'
+    message: 'Caméra non disponible sur ce navigateur. Utilisez la saisie manuelle ou importez une image.'
+  },
+  CAMERA_PERMISSION_DENIED: {
+    type: 'warning' as const,
+    title: 'Permission caméra refusée',
+    message: 'Permission caméra refusée. Autorisez l\'accès à la caméra dans les paramètres du navigateur puis réessayez.'
   }
 } as const;
 

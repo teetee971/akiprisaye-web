@@ -24,6 +24,7 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
   const [torchEnabled, setTorchEnabled] = useState(false);
   const [scanMode, setScanMode] = useState<'camera' | 'upload'>('camera');
   const [userMessage, setUserMessage] = useState<ScannerMessage | null>(null);
+  const [canOpenSettings, setCanOpenSettings] = useState(false);
   
   // OPTIMIZATION #2: Scan feedback state
   const [scanFeedback, setScanFeedback] = useState<'searching' | 'focusing' | 'detecting' | null>(null);
@@ -70,13 +71,33 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
   };
 
   // Activate fallback to image upload mode
-  const activateImageUploadFallback = () => {
+  const activateImageUploadFallback = (message: ScannerMessage = SCANNER_MESSAGES.CAMERA_UNAVAILABLE) => {
     setScanMode('upload');
-    setUserMessage(SCANNER_MESSAGES.CAMERA_UNAVAILABLE);
-    
+    setUserMessage(message);
+
     if (enableDebugLogging) {
       console.log('[SCAN] Fallback activated: Switching to image upload mode');
     }
+  };
+
+  const openCameraSettings = () => {
+    if (typeof window === 'undefined') return;
+
+    const userAgent = navigator.userAgent.toLowerCase();
+    let settingsUrl: string | null = null;
+
+    if (userAgent.includes('chrome') || userAgent.includes('edg')) {
+      settingsUrl = 'chrome://settings/content/camera';
+    } else if (userAgent.includes('firefox')) {
+      settingsUrl = 'about:preferences#privacy';
+    }
+
+    if (settingsUrl) {
+      window.open(settingsUrl, '_blank', 'noopener,noreferrer');
+      return;
+    }
+
+    setError('Ouvrez les paramètres du navigateur et autorisez la caméra pour ce site, puis réessayez.');
   };
 
   useEffect(() => {
@@ -91,6 +112,7 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
   const startScanning = async () => {
     setError(null);
     setUserMessage(null);
+    setCanOpenSettings(false);
     setIsScanning(true);
     setHasPermission(null); // Reset permission state
     setScanFeedback('searching'); // OPTIMIZATION #2: Set initial feedback
@@ -115,7 +137,11 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
       try {
         // Guard for non-browser environments
         if (typeof navigator === 'undefined' || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-          throw new Error('getUserMedia non disponible sur ce navigateur');
+          setHasPermission(false);
+          setIsScanning(false);
+          activateImageUploadFallback(SCANNER_MESSAGES.CAMERA_UNAVAILABLE);
+          transitionState('idle', 'getUserMedia non disponible');
+          return;
         }
 
         if (enableDebugLogging) {
@@ -214,7 +240,22 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
         return; // Success - camera is working
       } catch (err: any) {
         console.error('[SCAN] ❌ Camera error:', err);
-        // Camera technically inaccessible - fall through to fallback
+
+        const isPermissionDenied = err?.name === 'NotAllowedError' || permission === 'denied';
+
+        setHasPermission(false);
+        setIsScanning(false);
+
+        if (isPermissionDenied) {
+          setCanOpenSettings(true);
+          activateImageUploadFallback(SCANNER_MESSAGES.CAMERA_PERMISSION_DENIED);
+          transitionState('idle', 'Camera permission denied');
+          return;
+        }
+
+        activateImageUploadFallback(SCANNER_MESSAGES.CAMERA_UNAVAILABLE);
+        transitionState('idle', 'Camera unavailable - fallback to upload');
+        return;
       }
     }
 
@@ -222,10 +263,18 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
     if (enableDebugLogging) {
       console.log('[SCAN] 🔄 Activating automatic fallback to image upload');
     }
-    
+
     setHasPermission(false);
     setIsScanning(false);
-    activateImageUploadFallback();
+
+    if (permission === 'denied') {
+      setCanOpenSettings(true);
+      activateImageUploadFallback(SCANNER_MESSAGES.CAMERA_PERMISSION_DENIED);
+      transitionState('idle', 'Camera permission denied before prompt');
+      return;
+    }
+
+    activateImageUploadFallback(SCANNER_MESSAGES.CAMERA_UNAVAILABLE);
     transitionState('idle', 'Camera unavailable - fallback to upload');
   };
 
@@ -640,6 +689,16 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
                   💡 <strong>Astuce :</strong> Vous pouvez également utiliser la saisie manuelle en bas de page.
                 </p>
               </div>
+
+              {userMessage.title === SCANNER_MESSAGES.CAMERA_PERMISSION_DENIED.title && canOpenSettings && (
+                <button
+                  type="button"
+                  onClick={openCameraSettings}
+                  className="mt-3 w-full px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-md font-semibold transition-colors"
+                >
+                  ⚙️ Ouvrir les paramètres
+                </button>
+              )}
             </div>
           )}
 

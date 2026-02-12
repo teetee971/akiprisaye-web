@@ -4,7 +4,7 @@ import TerritorySelector from '../components/TerritorySelector';
 import EmptyState from '../components/EmptyState';
 import BarcodeScanner from '../components/BarcodeScanner';
 import { useState } from 'react';
-import { findProductByEan, filterPricesByTerritory } from '../data/seedProducts';
+import { findProductByEan, filterPricesByTerritory, searchProductsByName } from '../data/seedProducts';
 import { DEFAULT_TERRITORY, getTerritoryByCode } from '../constants/territories';
 
 export default function Comparateur() {
@@ -16,6 +16,7 @@ export default function Comparateur() {
   const [showScanner, setShowScanner] = useState(false);
   const [productName, setProductName] = useState(''); // Pour afficher le nom du produit
   const [infoMessage, setInfoMessage] = useState('');
+  const [query, setQuery] = useState('');
 
   const handlePickEAN = (code) => {
     setEan(code);
@@ -37,9 +38,17 @@ export default function Comparateur() {
 
   const searchPrices = async (e) => {
     e.preventDefault();
-    
-    if (!ean || ean.length < 8) {
-      setError('Veuillez entrer un code EAN valide (minimum 8 chiffres)');
+
+    const barcode = ean.trim();
+    const trimmedQuery = query.trim();
+
+    if (!barcode && !trimmedQuery) {
+      setError('Saisissez un EAN ou un nom de produit');
+      return;
+    }
+
+    if (barcode && !/^\d{8,13}$/.test(barcode)) {
+      setError('Veuillez entrer un code EAN valide (8 à 13 chiffres)');
       return;
     }
 
@@ -50,7 +59,14 @@ export default function Comparateur() {
 
     try {
       // Try to fetch from API, fallback to mock data
-      const response = await fetch(`/api/prices?ean=${ean}&territory=${territory}`).catch(() => null);
+      const searchParams = new URLSearchParams({ territory });
+      if (barcode) {
+        searchParams.set('ean', barcode);
+      } else {
+        searchParams.set('query', trimmedQuery);
+      }
+
+      const response = await fetch(`/api/prices?${searchParams.toString()}`).catch(() => null);
       
       if (response && response.ok) {
         const data = await response.json();
@@ -60,7 +76,10 @@ export default function Comparateur() {
           return;
         }
       }
-      const seededProduct = findProductByEan(ean);
+      const seededProduct = barcode
+        ? findProductByEan(barcode)
+        : searchProductsByName(trimmedQuery)[0] || null;
+
       if (seededProduct?.name) {
         setProductName(seededProduct.name);
         const territoryName = territory === 'all'
@@ -157,7 +176,11 @@ export default function Comparateur() {
               </p>
             </div>
           </div>
-          <ProductSearch territory={territory} onPickEAN={handlePickEAN} />
+          <ProductSearch
+            territory={territory}
+            onPickEAN={handlePickEAN}
+            onQueryChange={setQuery}
+          />
         </div>
 
         {/* Search Form - Design moderne */}
