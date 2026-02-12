@@ -1,30 +1,25 @@
-name:  PR Sync Reminder
+name: PR Sync Reminder
 
-on: 
-  schedule: 
+on:
+  schedule:
     - cron: '0 9 * * 1'
-  workflow_dispatch:  
+  workflow_dispatch:
 
 jobs:
-  remind:  
-    runs-on:  ubuntu-latest
-    steps:  
+  remind:
+    runs-on: ubuntu-latest
+    steps:
       - uses: actions/checkout@v4
-      
+
       - name: Check stale PRs
-        env: 
-          GH_TOKEN: ${{ github. token }}
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           echo "🔍 Checking open PRs..."
           gh pr list --state open --json number,title,updatedAt | \
-          jq -r '.[] | select(.updatedAt < (now - 259200)) | .number' | \
-          while read pr; do
-            echo "⚠️ Reminding PR #$pr"
-            gh pr comment "$pr" --body "👋 **Reminder:** Please sync with \\\`main\\\` to avoid conflicts! 
-
-\\\`\\\`\\\`bash
-git fetch origin main
-git merge origin/main
-git push
-\\\`\\\`\\\`"
-          done
+            jq -r '.[] | select((.updatedAt | fromdateiso8601) < (now - 259200)) | .number' | \
+            while read -r pr; do
+              [ -z "$pr" ] && continue
+              echo "⚠️ Reminding PR #$pr"
+              gh pr comment "$pr" --body $'👋 **Reminder:** Please sync with `main` to avoid conflicts!\n\n```bash\ngit fetch origin main\ngit merge origin/main\ngit push\n```'
+            done

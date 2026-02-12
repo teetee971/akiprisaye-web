@@ -33,6 +33,15 @@ jobs:
         working-directory: frontend
         run: npm ci
 
+      - name: Repository audit gate
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            ./scripts/audit-repo.sh --warn-only
+          else
+            ./scripts/audit-repo.sh --strict
+          fi
+
       # -----------------------------
       # STRICT CHECKS (BLOCKING ONLY ON main / production)
       # -----------------------------
@@ -127,7 +136,7 @@ jobs:
       - name: Security audit (npm)
         working-directory: frontend
         run: npm run audit:ci
-        continue-on-error: true
+        continue-on-error: ${{ github.event_name == 'pull_request' }}
 
       # -----------------------------
       # NON-BLOCKING QUALITY GATES
@@ -170,28 +179,31 @@ jobs:
           script: |
             const reportUrl = '${{ steps.lhci-url.outputs.report_url }}';
 
-            const body = `
-### 🧪 CI Strict – Quality Report (non bloquant)
-
-**Checks exécutés :**
-- TypeScript strict
-- ESLint (max-warnings=0)
-- Build
-- Tests
-- Audit sécurité (npm)
-- Accessibilité (WCAG 2.1 AA)
-- Lighthouse (Performance, A11y, Best Practices, SEO)
-
-**Standards cibles (post-V1) :**
-- Performance ≥ 85
-- Accessibilité ≥ 95
-- Best Practices ≥ 95
-- SEO ≥ 90
-
-${reportUrl !== 'Not available' ? `🔍 Voir le rapport Lighthouse : ${reportUrl}` : 'Rapport Lighthouse indisponible'}
-
-ℹ️ *Quality gate non bloquant – hardening progressif.*
-`;
+            const bodyLines = [
+              '### 🧪 CI Strict – Quality Report (non bloquant)',
+              '',
+              '**Checks exécutés :**',
+              '- TypeScript strict',
+              '- ESLint (max-warnings=0)',
+              '- Build',
+              '- Tests',
+              '- Audit sécurité (npm)',
+              '- Accessibilité (WCAG 2.1 AA)',
+              '- Lighthouse (Performance, A11y, Best Practices, SEO)',
+              '',
+              '**Standards cibles (post-V1) :**',
+              '- Performance ≥ 85',
+              '- Accessibilité ≥ 95',
+              '- Best Practices ≥ 95',
+              '- SEO ≥ 90',
+              '',
+              reportUrl !== 'Not available'
+                ? `🔍 Voir le rapport Lighthouse : ${reportUrl}`
+                : 'Rapport Lighthouse indisponible',
+              '',
+              'ℹ️ *Quality gate non bloquant – hardening progressif.*'
+            ];
+            const body = bodyLines.join('\n');
             await github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
