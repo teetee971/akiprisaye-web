@@ -2,6 +2,7 @@
 
 [![Cloudflare Pages](https://img.shields.io/badge/Cloudflare%20Pages-deployed-success?logo=cloudflare&logoColor=white)](https://akiprisaye-web.pages.dev)
 [![CI/CD Pipeline](https://img.shields.io/github/actions/workflow/status/teetee971/akiprisaye-web/ci-cd-industrial.yml?branch=main&label=CI%2FCD&logo=github-actions)](https://github.com/teetee971/akiprisaye-web/actions/workflows/ci-cd-industrial.yml)
+[![Repo Audit](https://img.shields.io/badge/repo_audit-enabled-success)](#)
 [![CI Schema Validation](https://img.shields.io/badge/CI-JSON%20Schema%20Validation-blue)](#)
 [![Browser Only](https://img.shields.io/badge/Runtime-Browser--Only-important)](#)
 [![OCR Local](https://img.shields.io/badge/OCR-100%25%20Local-green)](#)
@@ -937,4 +938,3 @@ Pour en savoir plus sur l'architecture et les fonctionnalités :
 - **[DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md)** - Checklist de déploiement
 
 Pour toute question ou problème, consultez d'abord le [NAVIGATION_GUIDE.md](NAVIGATION_GUIDE.md) ou ouvrez une issue GitHub.
-
