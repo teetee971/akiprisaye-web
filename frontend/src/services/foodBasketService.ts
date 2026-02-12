@@ -283,6 +283,15 @@ export function generateFoodBasketMetadata(
 
       const sourceData = sourceCounts.get(sourceType) ?? { count: 0, stores: new Set<string>() };
       sourceData.count++;
+      if (!sourceData?.stores) {
+        logRuntimeIssueOnce(
+          'food-basket-metadata-stores-set-missing',
+          'Food basket metadata stores set was missing while aggregating source data. Entry skipped.',
+        );
+        sourceCounts.set(sourceType, sourceData);
+        return;
+      }
+
       if (obs.storeName) {
         sourceData.stores.add(obs.storeName);
       }

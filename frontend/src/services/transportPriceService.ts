@@ -293,7 +293,16 @@ export function generateTransportMetadata(
 
     const sourceData = sourceCounts.get(sourceType) ?? { count: 0, operators: new Set<string>() };
     sourceData.count++;
-    sourceData.operators.add(price.operatorId);
+
+    if (sourceData?.operators) {
+      sourceData.operators.add(price.operatorId);
+    } else {
+      logRuntimeIssueOnce(
+        'transport-metadata-operators-set-missing',
+        'Transport metadata operators set was missing while aggregating source data. Entry skipped.',
+      );
+    }
+
     sourceCounts.set(sourceType, sourceData);
   });
 

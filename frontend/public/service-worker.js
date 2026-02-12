@@ -1,5 +1,5 @@
 // 🔹 Cache version - incremented to v4 for complete cache invalidation
-const CACHE_NAME = 'akiprisaye-smart-cache-v4';
+const CACHE_NAME = 'akiprisaye-smart-cache-v5';
 
 // 🔹 Only precache essential non-HTML assets
 const ASSETS_TO_CACHE = [
@@ -22,12 +22,10 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
       Promise.all(
-        keys
-          .filter((key) => key !== CACHE_NAME)
-          .map((key) => {
-            console.log('🧹 Suppression ancien cache :', key);
-            return caches.delete(key);
-          }),
+        keys.map((key) => {
+          console.log('🧹 Suppression cache :', key);
+          return caches.delete(key);
+        }),
       ),
     ),
   );

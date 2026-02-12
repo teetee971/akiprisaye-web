@@ -301,6 +301,15 @@ export function generateLandMobilityMetadata(
     sourceData.count++;
 
     // Add provider identifier
+    if (!sourceData?.providers) {
+      logRuntimeIssueOnce(
+        'land-mobility-metadata-providers-set-missing',
+        'Land mobility metadata providers set was missing while aggregating source data. Entry skipped.',
+      );
+      sourceCounts.set(sourceType, sourceData);
+      return;
+    }
+
     if (price.category === 'BUS') {
       sourceData.providers.add((price as BusPricePoint).line.operator);
     } else if (price.category === 'TAXI') {
