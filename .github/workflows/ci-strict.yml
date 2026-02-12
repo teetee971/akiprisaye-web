@@ -250,21 +250,26 @@ jobs:
         working-directory: frontend
         run: npm ci
 
-      - name: Install Playwright browser (Chromium)
-        working-directory: frontend
-        run: npx playwright install --with-deps chromium
+      - name: Setup Playwright browsers
+        uses: microsoft/playwright-github-action@v1
 
-      - name: Run UX audit in report-only mode (pull_request)
+
+      - name: Run UX audit in report-only mode on local preview (pull_request)
         if: github.event_name == 'pull_request'
         working-directory: frontend
+        env:
+          PLAYWRIGHT_USE_LOCAL_SERVER: '1'
         run: |
           npm run e2e:ci
           AXE_STRICT=0 npm run axe:ci
         continue-on-error: true
 
-      - name: Run UX audit in strict mode (push main/production)
+      - name: Run UX audit in strict mode on deployed Cloudflare site (push main/production)
         if: github.event_name != 'pull_request'
         working-directory: frontend
+        env:
+          PLAYWRIGHT_USE_LOCAL_SERVER: '0'
+          PLAYWRIGHT_BASE_URL: https://akiprisaye-web.pages.dev
         run: |
           npm run e2e:ci
           AXE_STRICT=1 npm run axe:ci

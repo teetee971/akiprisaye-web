@@ -2,6 +2,7 @@ import { defineConfig, devices } from '@playwright/test';
 
 const PORT = Number(process.env.PLAYWRIGHT_PORT ?? 4173);
 const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? `http://127.0.0.1:${PORT}`;
+const useLocalWebServer = process.env.PLAYWRIGHT_USE_LOCAL_SERVER !== '0';
 
 export default defineConfig({
   testDir: './tests/e2e',
@@ -20,12 +21,14 @@ export default defineConfig({
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
   },
-  webServer: {
-    command: `npm run build && npm run preview -- --host 127.0.0.1 --port ${PORT}`,
-    port: PORT,
-    reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
-  },
+  webServer: useLocalWebServer
+    ? {
+        command: `npm run build && npm run preview -- --host 127.0.0.1 --port ${PORT}`,
+        port: PORT,
+        reuseExistingServer: !process.env.CI,
+        timeout: 120_000,
+      }
+    : undefined,
   projects: [
     {
       name: 'chromium-mobile',

@@ -534,6 +534,9 @@ npm run e2e:ui
 
 En CI (workflow `CI Strict`), un job dédié **UX Audit (Playwright)** exécute :
 
+- **pull_request** : audit sur preview build locale (mode report-only, non bloquant)
+- **push main/production** : audit strict sur le site déployé Cloudflare (`https://akiprisaye-web.pages.dev`)
+
 ```bash
 npm run e2e:ci
 AXE_STRICT=0 npm run axe:ci   # pull_request (report-only)
