@@ -24,6 +24,7 @@ import type {
   TransportMode,
 } from '../types/transportComparison';
 import type { Territory, DataSource } from '../types/priceAlerts';
+import { logRuntimeIssueOnce } from '../utils/runtimeDiagnostics';
 
 /**
  * Configuration constants for transport comparison service
@@ -281,13 +282,19 @@ export function generateTransportMetadata(
   // Calculate source summary
   const sourceCounts = new Map<DataSource, { count: number; operators: Set<string> }>();
   prices.forEach((price) => {
-    const sourceType = price.source.type;
-    if (!sourceCounts.has(sourceType)) {
-      sourceCounts.set(sourceType, { count: 0, operators: new Set() });
+    const sourceType = price?.source?.type;
+    if (!sourceType) {
+      logRuntimeIssueOnce(
+        'transport-metadata-missing-source',
+        'Missing source type while aggregating transport metadata. Entry ignored.',
+      );
+      return;
     }
-    const sourceData = sourceCounts.get(sourceType)!;
+
+    const sourceData = sourceCounts.get(sourceType) ?? { count: 0, operators: new Set<string>() };
     sourceData.count++;
     sourceData.operators.add(price.operatorId);
+    sourceCounts.set(sourceType, sourceData);
   });
 
   const sources: SourceSummary[] = Array.from(sourceCounts.entries()).map(

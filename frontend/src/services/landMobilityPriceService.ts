@@ -26,6 +26,7 @@ import type {
   LandMobilityCategory,
 } from '../types/landMobilityComparison';
 import type { Territory, DataSource } from '../types/priceAlerts';
+import { logRuntimeIssueOnce } from '../utils/runtimeDiagnostics';
 
 /**
  * Configuration constants for land mobility comparison
@@ -287,13 +288,18 @@ export function generateLandMobilityMetadata(
   // Calculate source summary
   const sourceCounts = new Map<DataSource, { count: number; providers: Set<string> }>();
   prices.forEach((price) => {
-    const sourceType = price.source.type;
-    if (!sourceCounts.has(sourceType)) {
-      sourceCounts.set(sourceType, { count: 0, providers: new Set() });
+    const sourceType = price?.source?.type;
+    if (!sourceType) {
+      logRuntimeIssueOnce(
+        'land-mobility-metadata-missing-source',
+        'Missing source type while aggregating land mobility metadata. Entry ignored.',
+      );
+      return;
     }
-    const sourceData = sourceCounts.get(sourceType)!;
+
+    const sourceData = sourceCounts.get(sourceType) ?? { count: 0, providers: new Set<string>() };
     sourceData.count++;
-    
+
     // Add provider identifier
     if (price.category === 'BUS') {
       sourceData.providers.add((price as BusPricePoint).line.operator);
@@ -303,6 +309,8 @@ export function generateLandMobilityMetadata(
       const station = (price as FuelPricePoint).station;
       sourceData.providers.add(station.stationId || station.stationName || station.brand || 'unknown');
     }
+
+    sourceCounts.set(sourceType, sourceData);
   });
 
   const sources: SourceSummary[] = Array.from(sourceCounts.entries()).map(

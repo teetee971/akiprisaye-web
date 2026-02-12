@@ -79,11 +79,12 @@ echo ""
 echo "📋 Test 4: _redirects File"
 if [ -f "$DIST_DIR/_redirects" ]; then
   echo -e "${GREEN}✅ _redirects file exists in dist/${NC}"
-  
-  if grep -q "/* */index.html *200" "$DIST_DIR/_redirects"; then
+
+  if ./scripts/check-redirect-rules.sh "$DIST_DIR/_redirects" >/dev/null 2>&1; then
     echo -e "${GREEN}✅ _redirects correctly configured for SPA${NC}"
   else
     echo -e "${RED}❌ _redirects file not properly configured${NC}"
+    ./scripts/check-redirect-rules.sh "$DIST_DIR/_redirects" || true
     FAILED=1
   fi
 else

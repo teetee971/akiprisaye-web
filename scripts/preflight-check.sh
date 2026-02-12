@@ -72,10 +72,11 @@ done
 echo ""
 echo "📋 Test 4: SPA Routing Configuration"
 if [ -f "frontend/public/_redirects" ]; then
-  if grep -q "/* */index.html *200" frontend/public/_redirects; then
+  if ./scripts/check-redirect-rules.sh frontend/public/_redirects >/dev/null 2>&1; then
     echo -e "${GREEN}✅ _redirects file is correctly configured${NC}"
   else
     echo -e "${RED}❌ _redirects file exists but is not properly configured${NC}"
+    ./scripts/check-redirect-rules.sh frontend/public/_redirects || true
     FAILED=1
   fi
 else
@@ -88,11 +89,12 @@ echo ""
 echo "📋 Test 5: Common Issues Check"
 
 # Check for Git LFS pointers
-if git grep -I -n "version https://git-lfs.github.com/spec/v1" -- ':!.github/workflows/*' ':!.circleci/*' ':!scripts/*' ':!*.md' 2>/dev/null; then
-  echo -e "${RED}❌ Git LFS pointers detected in repository${NC}"
-  FAILED=1
-else
+if ./scripts/check-lfs-pointers.sh >/dev/null 2>&1; then
   echo -e "${GREEN}✅ No Git LFS pointers detected${NC}"
+else
+  echo -e "${RED}❌ Git LFS pointers detected in repository${NC}"
+  ./scripts/check-lfs-pointers.sh || true
+  FAILED=1
 fi
 
 # Check for node_modules in git
