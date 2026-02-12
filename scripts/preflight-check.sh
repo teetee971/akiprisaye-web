@@ -88,11 +88,18 @@ echo ""
 echo "📋 Test 5: Common Issues Check"
 
 # Check for Git LFS pointers
-if git grep -I -n "version https://git-lfs.github.com/spec/v1" -- ':!.github/workflows/*' ':!.circleci/*' ':!scripts/*' ':!*.md' 2>/dev/null; then
-  echo -e "${RED}❌ Git LFS pointers detected in repository${NC}"
+if git grep -I -n -E '^version https://git-lfs.github.com/spec/v1$' -- . | grep -vE '^(\.github/workflows/|\.circleci/|scripts/|.*\.md:)' >/dev/null 2>/dev/null; then
+  echo -e "${RED}❌ Git LFS signature detected in repository${NC}"
   FAILED=1
 else
-  echo -e "${GREEN}✅ No Git LFS pointers detected${NC}"
+  echo -e "${GREEN}✅ No Git LFS signature detected${NC}"
+fi
+
+if git grep -I -n -E '^oid sha256:[0-9a-f]{64}$' -- . | grep -vE '^(\.github/workflows/|\.circleci/|scripts/|.*\.md:)' >/dev/null 2>/dev/null; then
+  echo -e "${RED}❌ Probable Git LFS pointer (oid) detected in repository${NC}"
+  FAILED=1
+else
+  echo -e "${GREEN}✅ No Git LFS oid pointer detected${NC}"
 fi
 
 # Check for node_modules in git
