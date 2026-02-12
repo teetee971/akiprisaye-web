@@ -91,6 +91,7 @@ export default function ProductImage({
   const imageUrl = getImageUrl();
   const srcset = getSrcSet();
   const imageAlt = alt || productName;
+  const fetchPriority = loading === 'eager' ? 'high' : 'auto';
   
   // Size classes for different display modes
   const sizeClasses = {
@@ -118,6 +119,8 @@ export default function ProductImage({
         srcSet={srcset}
         alt={imageAlt}
         loading={loading}
+        decoding="async"
+        fetchPriority={fetchPriority}
         onError={handleError}
         onLoad={handleLoad}
         className={`${sizeClasses[size]} object-contain transition-opacity duration-300 ${
