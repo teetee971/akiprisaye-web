@@ -2,8 +2,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { computeMedian, normalizeObservation, normalizePriceValue } from './priceNormalizer';
 import { computePriceConfidence } from './priceConfidence';
-import { PRICE_PROVIDERS } from './priceProviders';
 import { normalizeTerritoryCode } from './normalizeTerritoryCode';
+import { queryProviders } from '../../providers';
 import type {
   PriceInterval,
   PriceSearchInput,
@@ -46,30 +46,23 @@ export async function searchProductPrices(input: PriceSearchInput): Promise<Pric
 
   try {
     const controller = new AbortController();
-    const providerResults = await Promise.allSettled(
-      PRICE_PROVIDERS.filter((provider) => provider.enabled).map((provider) =>
-        withTimeout(
-          provider.search(normalizedInput, controller.signal),
-          PROVIDER_TIMEOUT_MS,
-          controller.signal
-        )
-      )
+    const providerResults = await withTimeout(
+      queryProviders(normalizedInput, controller.signal),
+      PROVIDER_TIMEOUT_MS,
+      controller.signal
     );
 
     const observations = providerResults
-      .filter((result) => result.status === 'fulfilled')
-      .flatMap((result) => result.value.observations)
+      .flatMap((result) => result.observations)
       .map(normalizeObservation);
 
-    const warnings = providerResults
-      .filter((result) => result.status === 'fulfilled')
-      .flatMap((result) => result.value.warnings);
+    const warnings = providerResults.flatMap((result) => result.warnings);
 
     const sourcesUsed = Array.from(
       new Set(
         providerResults
-          .filter((result) => result.status === 'fulfilled')
-          .map((result) => result.value.provider)
+          .filter((result) => result.observations.length > 0)
+          .map((result) => result.source)
       )
     );
 
@@ -91,18 +84,19 @@ export async function searchProductPrices(input: PriceSearchInput): Promise<Pric
 
     const productName =
       providerResults
-        .filter((result) => result.status === 'fulfilled')
-        .map((result) => result.value.productName)
+        .map((result) => result.productName)
         .find(Boolean) ?? undefined;
 
     if (observations.length === 0) {
       warnings.push('Données insuffisantes pour établir une fourchette de prix fiable.');
     }
 
+    const hasUnavailableProvider = providerResults.some((result) => result.status === 'UNAVAILABLE');
+
     const status: PriceSearchStatus =
       observations.length === 0
         ? 'NO_DATA'
-        : confidence < 50 || warnings.length > 0
+        : confidence < 50 || warnings.length > 0 || hasUnavailableProvider
           ? 'PARTIAL'
           : 'OK';
 
