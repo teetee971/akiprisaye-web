@@ -6,6 +6,11 @@ on:
   push:
     branches: [ "main", "production" ]
 
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
 jobs:
   ci-strict:
     name: Strict CI – Zero Warnings Allowed
@@ -22,7 +27,7 @@ jobs:
         with:
           node-version: "20"
           cache: "npm"
-          cache-dependency-path: 'frontend/package-lock.json'
+          cache-dependency-path: "frontend/package-lock.json"
 
       - name: Install dependencies
         working-directory: frontend
@@ -43,23 +48,39 @@ jobs:
         continue-on-error: ${{ github.event_name == 'pull_request' }}
 
       - name: Block new explicit any (diff-based)
-        if: github.event_name != 'pull_request' || always()
+        shell: bash
         run: |
+          set -euo pipefail
+
+          # Base SHA: PR -> base.sha, Push -> before
           BASE_SHA="${{ github.event.pull_request.base.sha || github.event.before }}"
-          if [ -z "$BASE_SHA" ]; then
+          if [ -z "${BASE_SHA}" ]; then
             BASE_SHA="$(git rev-parse HEAD~1)"
           fi
 
-          git fetch --no-tags --depth=1 origin "$BASE_SHA" || true
-          DIFF=$(git diff -U0 "$BASE_SHA"...HEAD -- '*.ts' '*.tsx' | grep -n '^\+' | grep -n 'any' || true)
+          echo "Base SHA: ${BASE_SHA}"
+          echo "Head SHA: $(git rev-parse HEAD)"
 
-          if [ -n "$DIFF" ] && [ "${{ github.event_name }}" != "pull_request" ]; then
-            echo "❌ New explicit any detected:"
-            echo "$DIFF"
-            exit 1
+          # Added lines only, excluding diff headers. Match whole word 'any' only.
+          DIFF_LINES="$(git diff -U0 "${BASE_SHA}..HEAD" -- '*.ts' '*.tsx' \
+            | grep -E '^\+' \
+            | grep -vE '^\+\+\+' \
+            | grep -E '\bany\b' || true)"
+
+          if [ -n "${DIFF_LINES}" ]; then
+            echo "⚠️ New occurrences of word 'any' detected in added lines:"
+            echo "${DIFF_LINES}"
+
+            # Block only on push to main/production (not on PR)
+            if [ "${{ github.event_name }}" != "pull_request" ]; then
+              echo "❌ Blocking on push (main/production)."
+              exit 1
+            fi
+
+            echo "ℹ️ Non-blocking on PR (reported only)."
+          else
+            echo "✅ No new explicit 'any' detected."
           fi
-
-          echo "✅ No blocking explicit any detected."
 
       - name: Build (Vite)
         working-directory: frontend
@@ -97,12 +118,13 @@ jobs:
       - name: Extract Lighthouse report URL
         if: always()
         id: lhci-url
+        shell: bash
         run: |
           if [ -f frontend/.lighthouseci/links.json ]; then
-            URL=$(cat frontend/.lighthouseci/links.json | grep -o 'https://[^"]*' | head -n 1)
-            echo "report_url=$URL" >> $GITHUB_OUTPUT
+            URL=$(grep -oE 'https://[^"]+' frontend/.lighthouseci/links.json | head -n 1 || true)
+            echo "report_url=${URL:-Not available}" >> "$GITHUB_OUTPUT"
           else
-            echo "report_url=Not available" >> $GITHUB_OUTPUT
+            echo "report_url=Not available" >> "$GITHUB_OUTPUT"
           fi
 
       # -----------------------------
@@ -134,7 +156,7 @@ jobs:
 - Best Practices ≥ 95
 - SEO ≥ 90
 
-${reportUrl !== 'Not available' ? `🔍 [Voir le rapport Lighthouse](${reportUrl})` : 'Rapport Lighthouse indisponible'}
+${reportUrl !== 'Not available' ? `🔍 Voir le rapport Lighthouse : ${reportUrl}` : 'Rapport Lighthouse indisponible'}
 
 ℹ️ *Quality gate non bloquant – hardening progressif.*
 `;
