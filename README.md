@@ -523,6 +523,28 @@ npm run preview
 - `npm run format` - Formatter avec Prettier
 - `npm test` - Tests automatisés
 
+### 🧪 UX/UI Audit (Playwright + axe + Lighthouse artifacts)
+
+Depuis le dossier `frontend/` :
+
+```bash
+npm run e2e
+npm run e2e:ui
+```
+
+En CI (workflow `CI Strict`), un job dédié **UX Audit (Playwright)** exécute :
+
+```bash
+npm run e2e:ci
+AXE_STRICT=0 npm run axe:ci   # pull_request (report-only)
+AXE_STRICT=1 npm run axe:ci   # push main/production (strict)
+```
+
+Artifacts GitHub Actions à consulter après exécution :
+- `playwright-html-report` (rapport HTML Playwright)
+- `playwright-test-results` (traces, screenshots, vidéos en cas d'échec)
+- `lighthouse-results` et `axe-report` (job strict existant)
+
 ---
 
 ## 🔐 Sécurité & conformité
