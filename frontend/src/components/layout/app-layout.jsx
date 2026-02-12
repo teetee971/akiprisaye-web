@@ -1,4 +1,5 @@
 import { cn } from '../../lib/utils';
+import BackgroundMapBlur from '../BackgroundMapBlur';
 
 /**
  * AppLayout - Main application layout

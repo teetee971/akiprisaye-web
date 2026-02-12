@@ -41,7 +41,7 @@ export default function HistoryList() {
       setItems([]);
     }
 
-    function onStorage(e: StorageEvent) {
+    function onStorage(e: globalThis.StorageEvent) {
       if (e.key === STORAGE_KEY) {
         try {
           const next = e.newValue ? JSON.parse(e.newValue) : [];

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { BarChart3, Download, FileText, MapPin, AlertCircle } from 'lucide-react';
+import { MapPin, AlertCircle } from 'lucide-react';
 import type {
   FuelPrice,
   FuelType,
@@ -14,12 +14,6 @@ import {
 import PriceChart from '../../components/comparateur/LazyPriceChart';
 import ComparisonSummary from '../../components/comparateur/ComparisonSummary';
 import LoadingSkeleton from '../../components/comparateurs/LoadingSkeleton';
-import SortControl from '../../components/comparateurs/SortControl';
-import ShareButton from '../../components/comparateurs/ShareButton';
-import {
-  exportFuelComparisonToCSV,
-  exportFuelComparisonToText
-} from '../../utils/exportComparison';
 
 const FuelComparator: React.FC<FuelComparisonProps> = () => {
   // --- State ---
@@ -29,17 +23,17 @@ const FuelComparator: React.FC<FuelComparisonProps> = () => {
   const [comparisonResult, setComparisonResult] =
     useState<FuelComparisonResult | null>(null);
 
-  const [selectedTerritory, setSelectedTerritory] =
+  const [selectedTerritory] =
     useState<TerritoryCode>('GP');
-  const [selectedFuelType, setSelectedFuelType] =
+  const [selectedFuelType] =
     useState<FuelType>('SP95');
 
-  const [sortBy, setSortBy] =
+  const [sortBy] =
     useState<'price' | 'station' | 'city'>('price');
-  const [sortDirection, setSortDirection] =
+  const [sortDirection] =
     useState<'asc' | 'desc'>('asc');
 
-  const [filterCity, setFilterCity] = useState('');
+  const [filterCity] = useState('');
 
   // --- Load data ---
   useEffect(() => {

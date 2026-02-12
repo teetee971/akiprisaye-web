@@ -12,7 +12,6 @@ import type {
   ProductDossier,
   ProductDossierRequest,
   ProductDossierResponse,
-  TerritoryProductSnapshot,
   ProductAnalysisSnapshot,
   TransformationInsight,
   CategoryComparisonInsight,
@@ -20,13 +19,10 @@ import type {
   ReformulationEvent,
   ProductDelta,
   ProcessingLevel,
-  CategoryPositioning,
   ProductDataSource,
 } from '../types/productDossier';
 import type {
   ProductInsight,
-  IngredientInsight,
-  AdditiveInsight,
   NutritionPer100g,
 } from '../types/productInsight';
 import type { TerritoryCode } from '../types/extensions';
@@ -211,11 +207,11 @@ export function calculateTransformationInsight(
  * Calculate category comparison insight
  */
 export async function calculateCategoryComparison(
-  ean: string,
-  category: string,
-  nutrition: NutritionPer100g,
-  additiveCount: number,
-  territory?: TerritoryCode
+  _ean: string,
+  _category: string,
+  _nutrition: NutritionPer100g,
+  _additiveCount: number,
+  _territory?: TerritoryCode
 ): Promise<CategoryComparisonInsight | undefined> {
   // In production, would query database for category statistics
   // For now, return mock data for demonstration

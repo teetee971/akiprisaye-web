@@ -22,6 +22,8 @@ export default function AbonnementsMobile() {
   const [typeOffre, setTypeOffre] = useState('');
   const [results, setResults] = useState<MobilePlanPrice[]>([]);
   const [showResults, setShowResults] = useState(false);
+  const [sortBy, setSortBy] = useState('prixMensuel');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
   const territories = getTerritories();
   const offerTypes = getOfferTypes();
@@ -37,6 +39,11 @@ export default function AbonnementsMobile() {
       setShowResults(true);
     }
   };
+
+
+  const sortOptions = [
+    { value: 'prixMensuel', label: 'Prix' },
+  ];
 
   const handleSortChange = (sort: string, direction: 'asc' | 'desc') => {
     setSortBy(sort);

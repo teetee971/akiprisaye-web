@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Plane, Ship, Wifi, Smartphone, Droplet, Zap, TrendingUp } from 'lucide-react';
-import type { TerritoryCode, ServiceCategory } from '../types/service';
+import { Shield, Plane, Ship, Wifi, Smartphone, Droplet, Zap } from 'lucide-react';
+import type { TerritoryCode } from '../types/service';
 import {
   searchFlights,
   searchBoats,

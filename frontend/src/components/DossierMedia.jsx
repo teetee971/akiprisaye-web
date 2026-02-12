@@ -11,6 +11,7 @@
  */
 
 import { useState } from 'react';
+import { Card } from './card';
 import ievrData from '../data/ievr-data.json';
 import { getTerritoryStatus } from '../utils/ievrCalculations.js';
 

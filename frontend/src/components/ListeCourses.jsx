@@ -4,6 +4,10 @@ import { solveShoppingRoute } from '../utils/routeOptimization';
 import { getSuggestedProducts } from '../utils/productSuggestions';
 import { loadStats, getBadges, clearStats } from '../utils/shoppingStats';
 import { PRODUCT_CATEGORIES, GENERIC_PRODUCTS } from '../config/categories';
+import { AlertCircle, Award, Info, MapPin, Navigation, ShoppingCart } from 'lucide-react';
+import OptimalRouteDisplay from './OptimalRouteDisplay';
+import ProductSuggestionsDisplay from './ProductSuggestionsDisplay';
+import StatsDisplay from './StatsDisplay';
 
 export default function ListeCourses({ territoire = '971' }) {
   const [listeCourses, setListeCourses] = useState([]);
@@ -38,7 +42,7 @@ export default function ListeCourses({ territoire = '971' }) {
         if (module.default && module.default.magasins) {
           setMagasins(module.default.magasins);
         }
-      } catch (_error) {
+      } catch {
         if (import.meta.env.DEV) {
           console.warn('Données magasins non disponibles pour ce territoire');
         }

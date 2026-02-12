@@ -18,18 +18,14 @@ import { Helmet } from 'react-helmet-async';
 import {
   Package,
   Ship,
-  Plane,
   AlertCircle,
   Info,
   TrendingUp,
   Star,
   Clock,
   Download,
-  Upload,
-  Bell,
   BarChart3,
   FileText,
-  CheckCircle2,
   AlertTriangle,
 } from 'lucide-react';
 import type {
@@ -37,7 +33,6 @@ import type {
   FreightRoute,
   PackageDetails,
   UrgencyLevel,
-  FreightQuoteRanking,
 } from '../types/freightComparison';
 import type { Territory } from '../types/priceAlerts';
 import {
@@ -68,9 +63,9 @@ const FreightComparator: React.FC = () => {
 
   // UI state
   const [sortBy, setSortBy] = useState<'price' | 'reliability' | 'delay'>('price');
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
-  const [showContributionForm, setShowContributionForm] = useState(false);
-  const [showAlertForm, setShowAlertForm] = useState(false);
+  const [sortDirection] = useState<'asc' | 'desc'>('asc');
+  
+  
 
   // Territories
   const territories: { code: Territory; name: string }[] = [
@@ -158,13 +153,7 @@ const FreightComparator: React.FC = () => {
   };
 
   // Get reliability stars
-  const getReliabilityStars = (score: number) => {
-    const fullStars = Math.floor(score);
-    const hasHalfStar = score % 1 >= 0.5;
-    return { fullStars, hasHalfStar };
-  };
-
-  // Sorted quotes
+    // Sorted quotes
   const sortedQuotes = useMemo(() => {
     if (!comparisonResult) return [];
 

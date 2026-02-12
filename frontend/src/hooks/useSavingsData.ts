@@ -37,7 +37,7 @@ export function useSavingsData() {
     setIsLoading(false);
 
     // Listen for storage changes from other tabs
-    const handleStorageChange = (e: StorageEvent) => {
+    const handleStorageChange = (e: globalThis.StorageEvent) => {
       if (e.key === 'akiprisaye_savings' || e.key === 'akiprisaye_savings_badges') {
         refresh();
       }

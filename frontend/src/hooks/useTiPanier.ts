@@ -135,7 +135,7 @@ export function useTiPanier(type: PanierType = 'comparison') {
 
   // listen for storage changes from other tabs/windows
   useEffect(() => {
-    function onStorage(e: StorageEvent) {
+    function onStorage(e: globalThis.StorageEvent) {
       const key = type === 'wishlist' ? `${STORAGE_KEY}:wishlist` : STORAGE_KEY;
       if (e.key === key) {
         setItems(readFromStorage(type));

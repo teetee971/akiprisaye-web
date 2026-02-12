@@ -13,8 +13,8 @@ describe('Enhanced Geolocation Utility', () => {
   describe('requestGeolocation', () => {
     it('should return error when geolocation API is not available', async () => {
       // Mock navigator without geolocation
-      const originalNavigator = global.navigator;
-      Object.defineProperty(global, 'navigator', {
+      const originalNavigator = globalThis.navigator;
+      Object.defineProperty(globalThis, 'navigator', {
         value: {},
         writable: true,
         configurable: true
@@ -27,7 +27,7 @@ describe('Enhanced Geolocation Utility', () => {
       expect(result.error?.userMessage).toContain('ne supporte pas');
 
       // Restore navigator
-      Object.defineProperty(global, 'navigator', {
+      Object.defineProperty(globalThis, 'navigator', {
         value: originalNavigator,
         writable: true,
         configurable: true
@@ -49,7 +49,7 @@ describe('Enhanced Geolocation Utility', () => {
         success(mockPosition);
       });
 
-      Object.defineProperty(global.navigator, 'geolocation', {
+      Object.defineProperty(globalThis.navigator, 'geolocation', {
         value: { getCurrentPosition: mockGetCurrentPosition },
         writable: true,
         configurable: true
@@ -81,7 +81,7 @@ describe('Enhanced Geolocation Utility', () => {
         error(mockError);
       });
 
-      Object.defineProperty(global.navigator, 'geolocation', {
+      Object.defineProperty(globalThis.navigator, 'geolocation', {
         value: { getCurrentPosition: mockGetCurrentPosition },
         writable: true,
         configurable: true
@@ -111,7 +111,7 @@ describe('Enhanced Geolocation Utility', () => {
         error(mockError);
       });
 
-      Object.defineProperty(global.navigator, 'geolocation', {
+      Object.defineProperty(globalThis.navigator, 'geolocation', {
         value: { getCurrentPosition: mockGetCurrentPosition },
         writable: true,
         configurable: true
@@ -132,8 +132,8 @@ describe('Enhanced Geolocation Utility', () => {
   describe('isGeolocationAvailable', () => {
     it('should return false when geolocation API is not available', async () => {
       // Mock navigator without geolocation
-      const originalNavigator = global.navigator;
-      Object.defineProperty(global, 'navigator', {
+      const originalNavigator = globalThis.navigator;
+      Object.defineProperty(globalThis, 'navigator', {
         value: {},
         writable: true,
         configurable: true
@@ -145,7 +145,7 @@ describe('Enhanced Geolocation Utility', () => {
       expect(result.reason).toBeDefined();
 
       // Restore navigator
-      Object.defineProperty(global, 'navigator', {
+      Object.defineProperty(globalThis, 'navigator', {
         value: originalNavigator,
         writable: true,
         configurable: true
@@ -154,7 +154,7 @@ describe('Enhanced Geolocation Utility', () => {
 
     it('should return true when geolocation API is available', async () => {
       // Mock geolocation API
-      Object.defineProperty(global.navigator, 'geolocation', {
+      Object.defineProperty(globalThis.navigator, 'geolocation', {
         value: { getCurrentPosition: vi.fn() },
         writable: true,
         configurable: true
@@ -169,7 +169,7 @@ describe('Enhanced Geolocation Utility', () => {
   describe('getGeolocationDiagnostics', () => {
     it('should return diagnostic information', async () => {
       // Mock geolocation API
-      Object.defineProperty(global.navigator, 'geolocation', {
+      Object.defineProperty(globalThis.navigator, 'geolocation', {
         value: { getCurrentPosition: vi.fn() },
         writable: true,
         configurable: true

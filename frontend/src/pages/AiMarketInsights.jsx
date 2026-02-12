@@ -13,6 +13,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { checkIsAdmin } from '../services/adminPanieService';
+import { Bar, Line } from 'react-chartjs-2';
 import {
   getMarketInsights,
   getInsightsHistory,

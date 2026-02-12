@@ -1,4 +1,8 @@
 import { useState, useEffect } from 'react';
+import ToggleAnalyseCiblee from './ToggleAnalyseCiblee';
+import SelectMagasin from './SelectMagasin';
+import SelectProduit from './SelectProduit';
+import ObservationContextuelle from './ObservationContextuelle';
 
 /**
  * Evolution Prix Component

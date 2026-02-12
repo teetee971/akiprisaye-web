@@ -17,11 +17,11 @@ describe('BarcodeScanner - Navigator Guard', () => {
 
   it('should handle undefined navigator gracefully', () => {
     // Save original navigator
-    const originalNavigator = global.navigator;
+    const originalNavigator = globalThis.navigator;
     
     try {
       // Simulate missing navigator (SSR/Node environment)
-      (global as any).navigator = undefined;
+      (globalThis as any).navigator = undefined;
       
       // Import should not throw
       expect(async () => {
@@ -29,17 +29,17 @@ describe('BarcodeScanner - Navigator Guard', () => {
       }).not.toThrow();
     } finally {
       // Restore navigator
-      (global as any).navigator = originalNavigator;
+      (globalThis as any).navigator = originalNavigator;
     }
   });
 
   it('should handle missing permissions API gracefully', () => {
     // Save original navigator
-    const originalNavigator = global.navigator;
+    const originalNavigator = globalThis.navigator;
     
     try {
       // Simulate navigator without permissions API (older browsers)
-      (global as any).navigator = {
+      (globalThis as any).navigator = {
         userAgent: 'test',
         // permissions is missing
       };
@@ -50,7 +50,7 @@ describe('BarcodeScanner - Navigator Guard', () => {
       }).not.toThrow();
     } finally {
       // Restore navigator
-      (global as any).navigator = originalNavigator;
+      (globalThis as any).navigator = originalNavigator;
     }
   });
 });

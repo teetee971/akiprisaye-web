@@ -69,16 +69,16 @@ export function generateMetadata(
  * Falls back to a simple hash for environments without SubtleCrypto
  */
 export async function generateDataHash(data: string): Promise<string> {
-  if (typeof crypto === 'undefined' || !crypto.subtle) {
-    // Production environments should have crypto.subtle
+  if (typeof globalThis.crypto === 'undefined' || !globalThis.crypto.subtle) {
+    // Production environments should have globalThis.crypto.subtle
     // This fallback is for development/testing only
     console.warn('SubtleCrypto not available - using fallback hash (not suitable for production)');
     return `fallback-${Date.now()}-${data.length}`;
   }
 
   try {
-    const msgBuffer = new TextEncoder().encode(data);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+    const msgBuffer = new globalThis.TextEncoder().encode(data);
+    const hashBuffer = await globalThis.crypto.subtle.digest('SHA-256', msgBuffer);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     return hashHex;

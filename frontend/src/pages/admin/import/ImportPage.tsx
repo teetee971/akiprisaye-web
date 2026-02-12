@@ -4,14 +4,12 @@
  */
 import { useState, useCallback } from 'react';
 import { 
-  FileSpreadsheet, 
   Download, 
   Upload, 
   Store, 
   Package, 
   DollarSign,
   Info,
-  CheckCircle,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { GlassCard } from '@/components/ui/GlassCard';
@@ -27,8 +25,6 @@ import {
   downloadCSV,
   type ImportResult,
   type ImportError,
-  type StoreCSVRecord,
-  type ProductCSVRecord,
 } from '@/services/csvImportService';
 import { stringifyCsv } from '@/utils/csv';
 

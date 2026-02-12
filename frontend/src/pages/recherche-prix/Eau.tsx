@@ -23,6 +23,8 @@ export default function Eau() {
   const [typeService, setTypeService] = useState('');
   const [results, setResults] = useState<WaterPrice[]>([]);
   const [showResults, setShowResults] = useState(false);
+  const [sortBy, setSortBy] = useState('prixM3');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
   const territories = getTerritories();
   const serviceTypes = getServiceTypes();
@@ -38,6 +40,11 @@ export default function Eau() {
       setShowResults(true);
     }
   };
+
+
+  const sortOptions = [
+    { value: 'prixM3', label: 'Prix' },
+  ];
 
   const handleSortChange = (sort: string, direction: 'asc' | 'desc') => {
     setSortBy(sort);

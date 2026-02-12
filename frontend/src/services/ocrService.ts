@@ -153,13 +153,13 @@ async function preprocessImage(
 
   try {
     // Try to honor EXIF orientation when supported
-    bitmap = await createImageBitmap(originalBlob, { imageOrientation: 'from-image' } as ImageBitmapOptions);
+    bitmap = await globalThis.createImageBitmap(originalBlob, { imageOrientation: 'from-image' } as globalThis.ImageBitmapOptions);
   } catch {
     const fallbackImg = document.createElement('img');
     const url = URL.createObjectURL(originalBlob);
     fallbackImg.src = url;
     await fallbackImg.decode();
-    bitmap = await createImageBitmap(fallbackImg);
+    bitmap = await globalThis.createImageBitmap(fallbackImg);
     URL.revokeObjectURL(url);
   }
 

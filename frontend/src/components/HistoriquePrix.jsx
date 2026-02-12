@@ -21,6 +21,9 @@ import {
   Legend,
 } from 'chart.js';
 import pricesHistory from '../data/prices-history.json';
+import { Line } from 'react-chartjs-2';
+import { Card } from './card';
+import DataSourceWarning from './DataSourceWarning';
 
 ChartJS.register(
   CategoryScale,

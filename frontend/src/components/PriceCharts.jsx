@@ -7,6 +7,22 @@
 
 import { useState } from 'react';
 import {
+  ResponsiveContainer,
+  LineChart,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  Line,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+} from 'recharts';
+import { Card } from './card';
+import {
   CHART_COLORS,
   CHART_THEME,
   getTerritoryColor,

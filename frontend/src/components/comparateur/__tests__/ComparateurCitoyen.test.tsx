@@ -5,7 +5,7 @@ import ComparateurCitoyen from '../../../pages/ComparateurCitoyen';
 
 // Mock fetch globally
 const mockFetch = vi.fn();
-global.fetch = mockFetch;
+globalThis.fetch = mockFetch;
 
 const mockObservatoireData = {
   territoire: 'Guadeloupe',
@@ -44,7 +44,7 @@ describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
     mockFetch.mockResolvedValueOnce({
       ok: true,
       json: async () => mockObservatoireData,
-    } as Response);
+    } as globalThis.Response);
 
     render(<ComparateurCitoyen />);
 
@@ -71,7 +71,7 @@ describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
       ok: false,
       status: 404,
       statusText: 'Not Found',
-    } as Response);
+    } as globalThis.Response);
 
     // Second file succeeds
     mockFetch.mockResolvedValueOnce({
@@ -80,7 +80,7 @@ describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
         ...mockObservatoireData,
         date_snapshot: '2026-01-15',
       }),
-    } as Response);
+    } as globalThis.Response);
 
     render(<ComparateurCitoyen />);
 
@@ -104,7 +104,7 @@ describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
       ok: false,
       status: 404,
       statusText: 'Not Found',
-    } as Response);
+    } as globalThis.Response);
 
     render(<ComparateurCitoyen />);
 
@@ -122,7 +122,7 @@ describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
       ok: false,
       status: 500,
       statusText: 'Internal Server Error',
-    } as Response);
+    } as globalThis.Response);
 
     render(<ComparateurCitoyen />);
 
@@ -137,19 +137,19 @@ describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
       ok: false,
       status: 404,
       statusText: 'Not Found',
-    } as Response);
+    } as globalThis.Response);
 
     mockFetch.mockResolvedValueOnce({
       ok: false,
       status: 404,
       statusText: 'Not Found',
-    } as Response);
+    } as globalThis.Response);
 
     mockFetch.mockResolvedValueOnce({
       ok: false,
       status: 404,
       statusText: 'Not Found',
-    } as Response);
+    } as globalThis.Response);
 
     render(<ComparateurCitoyen />);
 
@@ -165,7 +165,7 @@ describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
     mockFetch.mockResolvedValueOnce({
       ok: true,
       json: async () => mockObservatoireData,
-    } as Response);
+    } as globalThis.Response);
 
     // Click retry button
     const retryButton = screen.getByText(/réessayer/i);
@@ -191,7 +191,7 @@ describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
         territoire: 'Test',
         // Missing donnees field
       }),
-    } as Response);
+    } as globalThis.Response);
 
     render(<ComparateurCitoyen />);
 
@@ -204,7 +204,7 @@ describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
     mockFetch.mockResolvedValueOnce({
       ok: true,
       json: async () => mockObservatoireData,
-    } as Response);
+    } as globalThis.Response);
 
     render(<ComparateurCitoyen />);
 
@@ -223,13 +223,13 @@ describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
     mockFetch.mockResolvedValueOnce({
       ok: true,
       json: async () => mockObservatoireData,
-    } as Response);
+    } as globalThis.Response);
 
     render(<ComparateurCitoyen />);
 
     await waitFor(() => {
       // Product should be selected in dropdown
-      const productSelect = screen.getByLabelText(/produit/i) as HTMLSelectElement;
+      const productSelect = screen.getByLabelText(/produit/i) as globalThis.HTMLSelectElement;
       expect(productSelect.value).toBe('3560070123456');
     });
   });

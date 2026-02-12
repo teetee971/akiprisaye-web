@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { AlertCircle, Download, Info, MapPin, Navigation, Plus, Save, ShoppingCart, Trash2, X } from 'lucide-react';
 import {
   getProductByEan,
   getPricesByEan,
@@ -493,9 +494,9 @@ export default function SmartShoppingList({ territoire = 'Guadeloupe' }) {
     });
 
     const csvContent = csvRows.map(row => row.join(',')).join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const blob = new globalThis.Blob([csvContent], { type: 'text/csv' });
+    const url = globalThis.URL.createObjectURL(blob);
+    const a = globalThis.document.createElement('a');
     a.href = url;
     a.download = `plan-courses-${Date.now()}.csv`;
     a.click();
@@ -747,7 +748,7 @@ export default function SmartShoppingList({ territoire = 'Guadeloupe' }) {
               </h2>
               <div className="space-y-3">
                 {Object.values(OPTIMIZATION_MODES).map((mode) => {
-                  // eslint-disable-next-line no-unused-vars
+                   
                   const Icon = mode.icon;
                   return (
                     <label

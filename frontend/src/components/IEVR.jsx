@@ -14,6 +14,8 @@
 
 import { useState, useEffect } from 'react';
 import ievrData from '../data/ievr-data.json';
+import { Card } from './card';
+import DataSourceWarning from './DataSourceWarning';
 import {
   compareToReference,
   calculateEvolution,

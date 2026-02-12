@@ -7,9 +7,7 @@ import {
   MapPin, 
   TrendingUp, 
   CheckCircle,
-  Filter,
   Search,
-  Award,
   Clock,
   Target,
   DollarSign
@@ -21,24 +19,16 @@ import type {
   TrainingLevel,
   TrainingMode,
   JobMarket,
-  UserProfile,
   JobMatch
 } from '../types/trainingComparison';
 import {
   getAllTrainings,
-  searchTrainings,
   getAvailableDomains,
-  getTrainingStatistics,
-  compareTrainings
 } from '../services/trainingCatalogService';
 import {
   getJobsInDemand,
-  matchJobsToUser,
   getTopJobOpportunitiesWithROI
 } from '../services/jobMatchingService';
-import {
-  simulateFunding
-} from '../services/fundingService';
 
 const TrainingComparator: React.FC = () => {
   const [territory, setTerritory] = useState<Territory>('MQ');

@@ -25,7 +25,7 @@ interface Props {
 
 export function ProductTextReviewModal({ suggestions, onConfirm, onCancel }: Props) {
   const modalRef = useRef<HTMLDivElement>(null);
-  const firstButtonRef = useRef<HTMLButtonElement>(null);
+  const firstButtonRef = useRef<globalThis.HTMLButtonElement>(null);
 
   // Focus management and keyboard navigation
   useEffect(() => {
@@ -33,14 +33,14 @@ export function ProductTextReviewModal({ suggestions, onConfirm, onCancel }: Pro
     firstButtonRef.current?.focus();
 
     // Handle Escape key
-    const handleEscape = (e: KeyboardEvent) => {
+    const handleEscape = (e: globalThis.KeyboardEvent) => {
       if (e.key === 'Escape') {
         onCancel();
       }
     };
 
     // Trap focus within modal
-    const handleTab = (e: KeyboardEvent) => {
+    const handleTab = (e: globalThis.KeyboardEvent) => {
       if (e.key !== 'Tab' || !modalRef.current) return;
 
       const focusableElements = modalRef.current.querySelectorAll(

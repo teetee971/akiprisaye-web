@@ -10,8 +10,10 @@
  * - Legal compliance (neutral language, disclaimers)
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import priceAlertService from '../services/priceAlertService';
+import { AlertTriangle, Bell, CheckCircle, Eye, Info, Package, Settings, TrendingDown, TrendingUp } from 'lucide-react';
+import { Card } from './card';
 
 const TERRITORY_NAMES = {
   'GP': 'Guadeloupe',
@@ -54,11 +56,7 @@ export function PriceAlertCenter({ userId = 'demo-user' }) {
   const [showSettings, setShowSettings] = useState(false);
 
   // Load alerts
-  useEffect(() => {
-    loadAlerts();
-  }, [userId, filter]);
-
-  const loadAlerts = async () => {
+  const loadAlerts = useCallback(async () => {
     setLoading(true);
     try {
       const fetchedAlerts = await priceAlertService.getUserAlerts(userId, filter);
@@ -70,7 +68,11 @@ export function PriceAlertCenter({ userId = 'demo-user' }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filter, userId]);
+
+  useEffect(() => {
+    loadAlerts();
+  }, [loadAlerts]);
 
   const handleAcknowledge = async (alertId) => {
     try {
