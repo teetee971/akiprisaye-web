@@ -3,30 +3,71 @@ import ProductSearch from '../components/ProductSearch';
 import TerritorySelector from '../components/TerritorySelector';
 import EmptyState from '../components/EmptyState';
 import BarcodeScanner from '../components/BarcodeScanner';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { findProductByEan, filterPricesByTerritory, searchProductsByName } from '../data/seedProducts';
 import { DEFAULT_TERRITORY, getTerritoryByCode } from '../constants/territories';
+
+const MIN_QUERY_LENGTH = 3;
+
+const EMPTY_RESULTS_STATE = {
+  stores: [],
+  productLabel: null,
+  error: null,
+  infoMessage: '',
+};
+
+const getSearchDescriptor = ({ ean = '', query = '' }) => {
+  const barcode = ean.trim();
+  const trimmedQuery = query.trim().toLowerCase();
+
+  if (/^\d{8,13}$/.test(barcode)) {
+    return { mode: 'EAN', key: barcode };
+  }
+
+  if (trimmedQuery.length >= MIN_QUERY_LENGTH) {
+    return { mode: 'QUERY', key: trimmedQuery };
+  }
+
+  return { mode: 'NONE', key: '' };
+};
 
 export default function Comparateur() {
   const [ean, setEan] = useState('');
   const [territory, setTerritory] = useState(DEFAULT_TERRITORY);
-  const [results, setResults] = useState([]);
+  const [results, setResults] = useState(EMPTY_RESULTS_STATE);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [showScanner, setShowScanner] = useState(false);
-  const [productName, setProductName] = useState(''); // Pour afficher le nom du produit
-  const [infoMessage, setInfoMessage] = useState('');
   const [query, setQuery] = useState('');
+  const [currentSearch, setCurrentSearch] = useState({ mode: 'NONE', key: '', territory, requestId: 0 });
+  const requestIdRef = useRef(0);
+  const abortRef = useRef(null);
+
+  const resetDisplayedResults = () => {
+    setResults(EMPTY_RESULTS_STATE);
+  };
+
+  useEffect(() => {
+    const searchDescriptor = getSearchDescriptor({ ean, query });
+    const shouldReset = searchDescriptor.mode !== currentSearch.mode || searchDescriptor.key !== currentSearch.key;
+
+    if (shouldReset) {
+      resetDisplayedResults();
+    }
+  }, [ean, query, currentSearch.key, currentSearch.mode]);
+
+  useEffect(() => () => abortRef.current?.abort(), []);
 
   const handlePickEAN = (code) => {
     setEan(code);
-    setResults([]);
+    setQuery('');
+    resetDisplayedResults();
   };
 
   const handleScanResult = (code) => {
     setEan(code);
+    setQuery('');
     setShowScanner(false);
-    setResults([]);
+    resetDisplayedResults();
     // Auto-trigger search after scan
     setTimeout(() => {
       const form = document.querySelector('form');
@@ -43,52 +84,83 @@ export default function Comparateur() {
     const trimmedQuery = query.trim();
 
     if (!barcode && !trimmedQuery) {
-      setError('Saisissez un EAN ou un nom de produit');
+      setResults((prev) => ({ ...prev, error: 'Saisissez un EAN ou un nom de produit' }));
       return;
     }
 
     if (barcode && !/^\d{8,13}$/.test(barcode)) {
-      setError('Veuillez entrer un code EAN valide (8 à 13 chiffres)');
+      setResults((prev) => ({ ...prev, error: 'Veuillez entrer un code EAN valide (8 à 13 chiffres)' }));
       return;
     }
 
+    if (!barcode && trimmedQuery.length < MIN_QUERY_LENGTH) {
+      setResults((prev) => ({ ...prev, error: `Saisissez au moins ${MIN_QUERY_LENGTH} caractères pour la recherche` }));
+      return;
+    }
+
+    const descriptor = getSearchDescriptor({ ean: barcode, query: trimmedQuery });
+    const requestId = requestIdRef.current + 1;
+    requestIdRef.current = requestId;
+    setCurrentSearch({ ...descriptor, territory, requestId });
+
+    if (abortRef.current) {
+      abortRef.current.abort();
+    }
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     setLoading(true);
-    setError(null);
-    setInfoMessage('');
-    setResults([]);
+    resetDisplayedResults();
 
     try {
       // Try to fetch from API, fallback to mock data
       const searchParams = new URLSearchParams({ territory });
-      if (barcode) {
+      if (descriptor.mode === 'EAN') {
         searchParams.set('ean', barcode);
       } else {
-        searchParams.set('query', trimmedQuery);
+        searchParams.set('query', descriptor.key);
       }
 
-      const response = await fetch(`/api/prices?${searchParams.toString()}`).catch(() => null);
+      const response = await fetch(`/api/prices?${searchParams.toString()}`, { signal: controller.signal }).catch(() => null);
+
+      if (requestId !== requestIdRef.current) {
+        return;
+      }
       
       if (response && response.ok) {
         const data = await response.json();
-        if (Array.isArray(data) && data.length > 0) {
-          setResults(data);
-          setProductName(data[0]?.product || productName);
+        if (requestId !== requestIdRef.current) {
+          return;
+        }
+
+        if (Array.isArray(data)) {
+          setResults({
+            stores: data,
+            productLabel: data[0]?.product || null,
+            error: null,
+            infoMessage: data.length === 0
+              ? "Aucun résultat trouvé pour cette recherche."
+              : '',
+          });
           return;
         }
       }
-      const seededProduct = barcode
+      const seededProduct = descriptor.mode === 'EAN'
         ? findProductByEan(barcode)
-        : searchProductsByName(trimmedQuery)[0] || null;
+        : searchProductsByName(descriptor.key)[0] || null;
+
+      if (requestId !== requestIdRef.current) {
+        return;
+      }
 
       if (seededProduct?.name) {
-        setProductName(seededProduct.name);
         const territoryName = territory === 'all'
           ? 'all'
           : getTerritoryByCode(territory)?.name;
         const seededPrices = filterPricesByTerritory(seededProduct, territoryName ?? 'all');
         if (seededPrices.length > 0) {
-          setResults(
-            seededPrices.map((price) => ({
+          setResults({
+            stores: seededPrices.map((price) => ({
               id: `${seededProduct.ean}-${price.storeId}`,
               store: price.storeName,
               location: price.city,
@@ -97,18 +169,34 @@ export default function Comparateur() {
               lastUpdate: price.ts,
               promotion: false,
             })),
-          );
+            productLabel: seededProduct.name,
+            error: null,
+            infoMessage: '',
+          });
           return;
         }
-      } else {
-        setProductName('');
       }
-      setInfoMessage("Données en cours d'intégration. Les comparaisons réelles seront publiées dès que l'API prix sera connectée.");
+      setResults({
+        stores: [],
+        productLabel: null,
+        error: null,
+        infoMessage: "Données en cours d'intégration. Les comparaisons réelles seront publiées dès que l'API prix sera connectée.",
+      });
     } catch (err) {
+      if (err.name === 'AbortError') {
+        return;
+      }
       console.error('Error fetching prices:', err);
-      setInfoMessage("Données en cours d'intégration. Les comparaisons réelles seront publiées dès que l'API prix sera connectée.");
+      if (requestId === requestIdRef.current) {
+        setResults((prev) => ({
+          ...prev,
+          infoMessage: "Données en cours d'intégration. Les comparaisons réelles seront publiées dès que l'API prix sera connectée.",
+        }));
+      }
     } finally {
-      setLoading(false);
+      if (requestId === requestIdRef.current) {
+        setLoading(false);
+      }
     }
   };
 
@@ -123,8 +211,8 @@ export default function Comparateur() {
   };
 
   const getBestPrice = () => {
-    if (results.length === 0) return null;
-    return Math.min(...results.map(r => parseFloat(r.price)));
+    if (results.stores.length === 0) return null;
+    return Math.min(...results.stores.map(r => parseFloat(r.price)));
   };
 
   const bestPrice = getBestPrice();
@@ -179,7 +267,10 @@ export default function Comparateur() {
           <ProductSearch
             territory={territory}
             onPickEAN={handlePickEAN}
-            onQueryChange={setQuery}
+            onQueryChange={(nextQuery) => {
+              setQuery(nextQuery);
+              setEan('');
+            }}
           />
         </div>
 
@@ -230,11 +321,11 @@ export default function Comparateur() {
             </div>
 
             {/* Error Message */}
-            {error && (
+            {results.error && (
               <div className="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 rounded-lg p-4">
                 <div className="flex items-center gap-3">
                   <span className="text-2xl">⚠️</span>
-                  <p className="text-red-700 dark:text-red-400 text-sm font-medium">{error}</p>
+                  <p className="text-red-700 dark:text-red-400 text-sm font-medium">{results.error}</p>
                 </div>
               </div>
             )}
@@ -289,10 +380,10 @@ export default function Comparateur() {
           </div>
         )}
 
-        {infoMessage && (
+        {results.infoMessage && (
           <div className="bg-amber-50 dark:bg-amber-900/20 border-l-4 border-amber-500 rounded-xl p-4 mb-6">
             <p className="text-amber-800 dark:text-amber-200 text-sm font-semibold">
-              {infoMessage}
+              {results.infoMessage}
             </p>
             <p className="text-amber-700 dark:text-amber-300 text-xs mt-2">
               Transparence : nous n'affichons pas de prix simulés. Les tarifs seront visibles dès que les relevés publics seront connectés.
@@ -309,18 +400,18 @@ export default function Comparateur() {
         )}
 
         {/* Results - Display */}
-        {!loading && results.length > 0 && (
+        {!loading && results.stores.length > 0 && (
           <div className="space-y-6">
             {/* Results Header */}
             <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-6">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
                   <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-1">
-                    {results.length} {results.length > 1 ? 'magasins trouvés' : 'magasin trouvé'}
+                    {results.stores.length} {results.stores.length > 1 ? 'magasins trouvés' : 'magasin trouvé'}
                   </h2>
-                  {productName && (
+                  {results.productLabel && (
                     <p className="text-sm text-slate-600 dark:text-slate-400">
-                      Pour le produit : <span className="font-semibold">{productName}</span>
+                      Pour le produit : <span className="font-semibold">{results.productLabel}</span>
                     </p>
                   )}
                 </div>
@@ -339,7 +430,7 @@ export default function Comparateur() {
 
             {/* Results Grid - Style moderne avec cartes aérées */}
             <div className="grid gap-4">
-              {results.map((result) => {
+              {results.stores.map((result) => {
                 const isBestPrice = parseFloat(result.price) === bestPrice;
                 const priceDiff = bestPrice ? ((parseFloat(result.price) - bestPrice) / bestPrice * 100).toFixed(1) : 0;
                 
@@ -420,17 +511,17 @@ export default function Comparateur() {
         )}
 
         {/* No Results */}
-        {!loading && results.length === 0 && ean && (
+        {!loading && results.stores.length === 0 && currentSearch.mode === 'EAN' && currentSearch.key && (
           <div className="space-y-4">
             <EmptyState 
               title="Données en cours d'intégration"
-              message={`Ce produit (code EAN ${ean}) n'affiche pas encore de prix publics pour ce territoire. Les données seront publiées dès leur validation.`}
+              message={`Ce produit (code EAN ${currentSearch.key}) n'affiche pas encore de prix publics pour ce territoire. Les données seront publiées dès leur validation.`}
             />
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <button
                 onClick={() => {
                   setEan('');
-                  setError(null);
+                  resetDisplayedResults();
                 }}
                 className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-all"
               >

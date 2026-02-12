@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+
 import PropTypes from 'prop-types';
 import Fuse from 'fuse.js';
 import { normalizeText } from '../utils/text';
@@ -20,6 +21,8 @@ export default function ProductSearch({ territory = 'Guadeloupe', onPickEAN, onQ
   const listboxRef = useRef(null);
   // ignoreBlurRef prevents blur from closing list when clicking an option
   const ignoreBlurRef = useRef(false);
+  const requestIdRef = useRef(0);
+  const abortRef = useRef(null);
 
   // Search products when query changes (debounced)
   useEffect(() => {
@@ -32,6 +35,15 @@ export default function ProductSearch({ territory = 'Guadeloupe', onPickEAN, onQ
     }
 
     const timer = setTimeout(async () => {
+      const requestId = requestIdRef.current + 1;
+      requestIdRef.current = requestId;
+
+      if (abortRef.current) {
+        abortRef.current.abort();
+      }
+      const controller = new window.AbortController();
+      abortRef.current = controller;
+
       setLoading(true);
       try {
         // Try to fetch from API first
@@ -39,6 +51,7 @@ export default function ProductSearch({ territory = 'Guadeloupe', onPickEAN, onQ
         try {
           const res = await fetch(
             `/api/products/search?q=${encodeURIComponent(trimmedQuery)}&territory=${encodeURIComponent(territory)}`,
+            { signal: controller.signal },
           );
           if (res.ok) {
             data = await res.json();
@@ -89,6 +102,10 @@ export default function ProductSearch({ territory = 'Guadeloupe', onPickEAN, onQ
             : data;
         }
         
+        if (requestId !== requestIdRef.current) {
+          return;
+        }
+
         setResults(rankedResults.slice(0, MAX_RESULTS));
         setIsOpen(rankedResults.length > 0);
         setActiveIndex(-1);
@@ -100,15 +117,25 @@ export default function ProductSearch({ territory = 'Guadeloupe', onPickEAN, onQ
           });
         }
       } catch (err) {
+        if (err.name === 'AbortError') {
+          return;
+        }
         console.error('Erreur recherche produit :', err);
-        setResults([]);
-        setIsOpen(false);
+        if (requestId === requestIdRef.current) {
+          setResults([]);
+          setIsOpen(false);
+        }
       } finally {
-        setLoading(false);
+        if (requestId === requestIdRef.current) {
+          setLoading(false);
+        }
       }
     }, DEBOUNCE);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      abortRef.current?.abort();
+    };
   }, [query, territory]);
 
   // Handle keyboard navigation
@@ -153,10 +180,11 @@ export default function ProductSearch({ territory = 'Guadeloupe', onPickEAN, onQ
   const handleSelectProduct = (product) => {
     onPickEAN(product.ean);
     setQuery('');
+    onQueryChange?.('');
     setResults([]);
     setIsOpen(false);
     setActiveIndex(-1);
-    inputRef.current?.focus();
+    inputRef.current?.blur();
   };
 
   const handleInputFocus = () => {
