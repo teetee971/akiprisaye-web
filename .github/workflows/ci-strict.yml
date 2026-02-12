@@ -171,27 +171,27 @@ jobs:
             const reportUrl = '${{ steps.lhci-url.outputs.report_url }}';
 
             const body = `
-### 🧪 CI Strict – Quality Report (non bloquant)
+            ### 🧪 CI Strict – Quality Report (non bloquant)
 
-**Checks exécutés :**
-- TypeScript strict
-- ESLint (max-warnings=0)
-- Build
-- Tests
-- Audit sécurité (npm)
-- Accessibilité (WCAG 2.1 AA)
-- Lighthouse (Performance, A11y, Best Practices, SEO)
+            **Checks exécutés :**
+            - TypeScript strict
+            - ESLint (max-warnings=0)
+            - Build
+            - Tests
+            - Audit sécurité (npm)
+            - Accessibilité (WCAG 2.1 AA)
+            - Lighthouse (Performance, A11y, Best Practices, SEO)
 
-**Standards cibles (post-V1) :**
-- Performance ≥ 85
-- Accessibilité ≥ 95
-- Best Practices ≥ 95
-- SEO ≥ 90
+            **Standards cibles (post-V1) :**
+            - Performance ≥ 85
+            - Accessibilité ≥ 95
+            - Best Practices ≥ 95
+            - SEO ≥ 90
 
-${reportUrl !== 'Not available' ? `🔍 Voir le rapport Lighthouse : ${reportUrl}` : 'Rapport Lighthouse indisponible'}
+            ${reportUrl !== 'Not available' ? `🔍 Voir le rapport Lighthouse : ${reportUrl}` : 'Rapport Lighthouse indisponible'}
 
-ℹ️ *Quality gate non bloquant – hardening progressif.*
-`;
+            ℹ️ *Quality gate non bloquant – hardening progressif.*
+            `;
             await github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
