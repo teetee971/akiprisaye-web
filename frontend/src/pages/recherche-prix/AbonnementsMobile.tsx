@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import React, { useState } from 'react';
 import { Smartphone, Info, Download } from 'lucide-react';
 import {

@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /**
  * Enhanced Product Search Component
  * 

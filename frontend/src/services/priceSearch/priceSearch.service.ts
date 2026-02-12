@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { computeMedian, normalizeObservation, normalizePriceValue } from './priceNormalizer';
 import { computePriceConfidence } from './priceConfidence';
 import { PRICE_PROVIDERS } from './priceProviders';

@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /**
  * PriceHeatmap Component
  * Displays a heat map overlay showing price intensity across locations

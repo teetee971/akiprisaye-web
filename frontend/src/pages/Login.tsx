@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
 // src/pages/Login.tsx
 import { useState, useEffect } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";

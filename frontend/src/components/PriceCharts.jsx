@@ -6,6 +6,22 @@
  */
 
 import { useState } from 'react';
+import { Card } from './ui/card';
+import {
+  ResponsiveContainer,
+  LineChart,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  Line,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+} from 'recharts';
 import {
   CHART_COLORS,
   CHART_THEME,

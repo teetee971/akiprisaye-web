@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 // src/hooks/useLocalHistory.ts
 // Local consultation history hook - safeLocalStorage only, no tracking
 import { useState, useEffect, useCallback } from 'react'

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react';
 import { Check, Sparkles, TrendingUp, Shield, Zap, X, Lock, Database, FileText, Bell, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';

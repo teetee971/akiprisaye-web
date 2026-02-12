@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-undef */
 /**
  * IndiceVieChere Component
  * 

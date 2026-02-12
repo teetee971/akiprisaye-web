@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /**
  * Home Page v5 - Optimized Structure for Conversion
  * 

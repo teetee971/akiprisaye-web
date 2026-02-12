@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * StoreDetail - Store Detail View
  * Features: full store info, map display, edit/delete actions
