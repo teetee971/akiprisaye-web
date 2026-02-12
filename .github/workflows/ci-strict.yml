@@ -82,6 +82,38 @@ jobs:
             echo "✅ No new explicit 'any' detected."
           fi
 
+      - name: Block new console.log in TS/TSX (diff-based)
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          BASE_SHA="${{ github.event.pull_request.base.sha || github.event.before }}"
+          if [ -z "${BASE_SHA}" ]; then
+            BASE_SHA="$(git rev-parse HEAD~1)"
+          fi
+
+          echo "Base SHA: ${BASE_SHA}"
+          echo "Head SHA: $(git rev-parse HEAD)"
+
+          DIFF_LINES="$(git diff -U0 "${BASE_SHA}..HEAD" -- '*.ts' '*.tsx' \
+            | grep -E '^\+' \
+            | grep -vE '^\+\+\+' \
+            | grep -E 'console\.log\s*\(' || true)"
+
+          if [ -n "${DIFF_LINES}" ]; then
+            echo "⚠️ New console.log detected in added TS/TSX lines:"
+            echo "${DIFF_LINES}"
+
+            if [ "${{ github.event_name }}" != "pull_request" ]; then
+              echo "❌ Blocking on push (main/production)."
+              exit 1
+            fi
+
+            echo "ℹ️ Non-blocking on PR (reported only)."
+          else
+            echo "✅ No new console.log detected."
+          fi
+
       - name: Build (Vite)
         working-directory: frontend
         run: npm run build:ci
