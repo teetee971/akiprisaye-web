@@ -85,7 +85,9 @@ describe('Redirect Configuration', () => {
   });
   
   test('SPA fallback is configured', () => {
+
     // public/_redirects should define app rewrites and a /* /app.html 200 fallback
+
     // This ensures client-side routing works
     expect(true).toBe(true);
   });

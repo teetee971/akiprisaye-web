@@ -294,6 +294,7 @@ export function generateTransportMetadata(
     const sourceData = sourceCounts.get(sourceType) ?? { count: 0, operators: new Set<string>() };
     sourceData.count++;
 
+
     if (sourceData?.operators) {
       sourceData.operators.add(price.operatorId);
     } else {
@@ -302,6 +303,7 @@ export function generateTransportMetadata(
         'Transport metadata operators set was missing while aggregating source data. Entry skipped.',
       );
     }
+
 
     sourceCounts.set(sourceType, sourceData);
   });

@@ -205,6 +205,7 @@ export function generateComparisonMetadata(
     const entry = sourceCounts.get(sourceType) ?? { count: 0, stores: new Set<string>() };
     entry.count += price.volume;
 
+
     if (entry?.stores) {
       entry.stores.add(price.storeId);
     } else {
@@ -213,6 +214,7 @@ export function generateComparisonMetadata(
         'Price comparison metadata stores set was missing while aggregating source data. Entry skipped.',
       );
     }
+
 
     sourceCounts.set(sourceType, entry);
   });
