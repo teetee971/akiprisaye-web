@@ -163,7 +163,6 @@ jobs:
             echo "❌ _redirects file missing from dist/"
             exit 1
           fi
-
           ./scripts/check-redirect-rules.sh frontend/dist/_redirects
 
       - name: 📋 Test critical routes structure
