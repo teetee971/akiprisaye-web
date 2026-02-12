@@ -2,7 +2,7 @@ import ProductSearch from '../components/ProductSearch';
 import TerritorySelector from '../components/TerritorySelector';
 import EmptyState from '../components/EmptyState';
 import BarcodeScanner from '../components/BarcodeScanner';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { findProductByEan } from '../data/seedProducts';
 import { fetchProductFromOpenFoodFacts } from '../data/openFoodFacts';
 
@@ -16,10 +16,38 @@ export default function Comparateur() {
   const [productName, setProductName] = useState(''); // Pour afficher le nom du produit
   const [infoMessage, setInfoMessage] = useState('');
   const [productDetails, setProductDetails] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [hasSearched, setHasSearched] = useState(false);
+
+  const eanInputRef = useRef(null);
+  const resultsContainerRef = useRef(null);
+
+  const isMobileViewport = () => typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches;
+  const isValidEan = ean.length >= 8;
+  const normalizedQuery = searchQuery.trim();
+  const canSearch = isValidEan || normalizedQuery.length >= 2;
+
+  const scrollToResults = () => {
+    if (!isMobileViewport()) return;
+    resultsContainerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  useEffect(() => {
+    setHasSearched(false);
+  }, [ean, territory]);
+
+  useEffect(() => {
+    if (!loading && hasSearched) {
+      scrollToResults();
+    }
+  }, [loading, hasSearched, results.length]);
 
   const handlePickEAN = (code, product) => {
     setEan(code);
     setResults([]);
+    setError(null);
+    setInfoMessage('');
+    setHasSearched(false);
     if (product) {
       setProductName(product.name || '');
       setProductDetails({
@@ -45,9 +73,24 @@ export default function Comparateur() {
 
   const searchPrices = async (e) => {
     e.preventDefault();
-    
+
+    if (loading) return;
+
+    eanInputRef.current?.blur();
+
     if (!ean || ean.length < 8) {
-      setError('Veuillez entrer un code EAN valide (minimum 8 chiffres)');
+      if (normalizedQuery.length >= 2) {
+        setError(null);
+        setInfoMessage('');
+        setResults([]);
+        setProductDetails(null);
+        setHasSearched(true);
+        scrollToResults();
+        return;
+      }
+
+      setError('Saisissez un code EAN valide (8 à 13 chiffres) ou recherchez un produit (au moins 2 caractères).');
+      setHasSearched(false);
       return;
     }
 
@@ -65,6 +108,7 @@ export default function Comparateur() {
         const data = await response.json();
         if (Array.isArray(data) && data.length > 0) {
           setResults(data);
+          setHasSearched(true);
           setProductName(data[0]?.product || productName);
           if (!productDetails?.image) {
             const offProduct = await fetchProductFromOpenFoodFacts(ean);
@@ -114,10 +158,12 @@ export default function Comparateur() {
           });
         }
       }
+      setHasSearched(true);
       setInfoMessage("Données en cours d'intégration. Les comparaisons réelles seront publiées dès que l'API prix sera connectée.");
     } catch (err) {
       console.error('Error fetching prices:', err);
-      setInfoMessage("Données en cours d'intégration. Les comparaisons réelles seront publiées dès que l'API prix sera connectée.");
+      setError('Impossible de récupérer les prix pour le moment. Réessayez dans quelques instants.');
+      setHasSearched(false);
     } finally {
       setLoading(false);
     }
@@ -139,6 +185,31 @@ export default function Comparateur() {
   };
 
   const bestPrice = getBestPrice();
+
+  const feedback = error
+    ? {
+        variant: 'error',
+        title: 'Action requise',
+        body: error,
+      }
+    : infoMessage
+      ? {
+          variant: 'info',
+          title: 'Information',
+          body: infoMessage,
+          helper: "Transparence : nous n'affichons pas de prix simulés. Les tarifs seront visibles dès que les relevés publics seront connectés.",
+        }
+      : (!loading && hasSearched && results.length === 0)
+        ? {
+            variant: 'neutral',
+            title: normalizedQuery.length >= 2
+              ? `Aucun produit trouvé pour "${normalizedQuery}".`
+              : 'Aucun prix disponible pour le moment',
+            body: normalizedQuery.length >= 2
+              ? 'Essayez un nom plus précis ou un code-barres.'
+              : `Nous n'avons pas encore de relevés validés pour le code EAN ${ean} dans ce territoire.`,
+          }
+        : null;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
@@ -187,7 +258,7 @@ export default function Comparateur() {
               </p>
             </div>
           </div>
-          <ProductSearch territory={territory} onPickEAN={handlePickEAN} />
+          <ProductSearch territory={territory} onPickEAN={handlePickEAN} onQueryChange={setSearchQuery} />
         </div>
 
         {/* Search Form - Design moderne */}
@@ -201,6 +272,7 @@ export default function Comparateur() {
                 </label>
                 <div className="flex gap-2">
                   <input
+                    ref={eanInputRef}
                     id="ean"
                     type="text"
                     value={ean}
@@ -236,20 +308,10 @@ export default function Comparateur() {
               </div>
             </div>
 
-            {/* Error Message */}
-            {error && (
-              <div className="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 rounded-lg p-4">
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">⚠️</span>
-                  <p className="text-red-700 dark:text-red-400 text-sm font-medium">{error}</p>
-                </div>
-              </div>
-            )}
-
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || !canSearch}
               className="w-full md:w-auto px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:from-slate-400 disabled:to-slate-500 disabled:cursor-not-allowed text-white rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl disabled:shadow-none flex items-center justify-center gap-2"
             >
               {loading ? (
@@ -270,6 +332,26 @@ export default function Comparateur() {
           </form>
         </div>
 
+
+        {feedback && (
+          <div
+            className={`rounded-xl p-4 mb-6 border-l-4 ${
+              feedback.variant === 'error'
+                ? 'bg-red-50 dark:bg-red-900/20 border-red-500'
+                : feedback.variant === 'info'
+                  ? 'bg-amber-50 dark:bg-amber-900/20 border-amber-500'
+                  : 'bg-slate-100 dark:bg-slate-800 border-slate-400 dark:border-slate-600'
+            }`}
+          >
+            <p className="text-sm font-semibold text-slate-900 dark:text-white">{feedback.title}</p>
+            <p className="text-sm mt-1 text-slate-700 dark:text-slate-300">{feedback.body}</p>
+            {feedback.helper && (
+              <p className="text-xs mt-2 text-slate-600 dark:text-slate-400">{feedback.helper}</p>
+            )}
+          </div>
+        )}
+
+        <div ref={resultsContainerRef}>
         {/* Results - Loading State */}
         {loading && (
           <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg border border-blue-200 dark:border-blue-700 p-8">
@@ -292,25 +374,6 @@ export default function Comparateur() {
                   </div>
                 </div>
               ))}
-            </div>
-          </div>
-        )}
-
-        {infoMessage && (
-          <div className="bg-amber-50 dark:bg-amber-900/20 border-l-4 border-amber-500 rounded-xl p-4 mb-6">
-            <p className="text-amber-800 dark:text-amber-200 text-sm font-semibold">
-              {infoMessage}
-            </p>
-            <p className="text-amber-700 dark:text-amber-300 text-xs mt-2">
-              Transparence : nous n'affichons pas de prix simulés. Les tarifs seront visibles dès que les relevés publics seront connectés.
-            </p>
-            <div className="mt-3">
-              <a
-                href="/observatoire/methodologie"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-sm font-semibold transition-colors"
-              >
-                Comprendre le périmètre
-              </a>
             </div>
           </div>
         )}
@@ -486,7 +549,7 @@ export default function Comparateur() {
         )}
 
         {/* No Results */}
-        {!loading && results.length === 0 && ean && (
+        {!loading && hasSearched && results.length === 0 && ean && (
           <div className="space-y-4">
             <EmptyState 
               title="Données en cours d'intégration"
@@ -511,6 +574,8 @@ export default function Comparateur() {
             </div>
           </div>
         )}
+
+        </div>
 
         {/* Info Section - Style institutionnel */}
         <div className="mt-8 space-y-4">

@@ -39,6 +39,25 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
     enableOcrFallback = true, // OCR enabled by default for better detection
   } = options;
 
+  const getSettingsLink = () => {
+    if (typeof navigator === 'undefined') return null;
+
+    const ua = navigator.userAgent || '';
+    const isIos = /iPhone|iPad|iPod/i.test(ua);
+    if (isIos) {
+      return 'app-settings:';
+    }
+
+    return null;
+  };
+
+  const settingsLink = getSettingsLink();
+
+  const openDeviceSettings = () => {
+    if (!settingsLink || typeof window === 'undefined') return;
+    window.location.href = settingsLink;
+  };
+
   // State transition handler with logging
   const transitionState = (to: ScanState, reason?: string) => {
     const from = scanState;
@@ -665,10 +684,19 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
               <p className="font-semibold mb-2">📷 {userMessage.title}</p>
               <p>{userMessage.message}</p>
               
-              <div className="mt-3 pt-3 border-t border-current/30">
+              <div className="mt-3 pt-3 border-t border-current/30 space-y-2">
                 <p className="text-xs opacity-80">
-                  💡 <strong>Astuce :</strong> Vous pouvez également utiliser la saisie manuelle en bas de page.
+                  💡 <strong>Astuce :</strong> Vous pouvez aussi importer une image ou utiliser la saisie manuelle ci-dessous.
                 </p>
+                {settingsLink && hasPermission === false && (
+                  <button
+                    type="button"
+                    onClick={openDeviceSettings}
+                    className="text-xs underline underline-offset-2"
+                  >
+                    Ouvrir les paramètres
+                  </button>
+                )}
               </div>
             </div>
           )}
@@ -683,6 +711,15 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
                 <li><strong>Firefox :</strong> Cliquez sur l'icône 🔒 → Autorisations → Caméra → Autoriser</li>
               </ul>
               <p className="mt-3 text-xs">Une fois l'autorisation donnée, rechargez la page et réessayez.</p>
+              {settingsLink && (
+                <button
+                  type="button"
+                  onClick={openDeviceSettings}
+                  className="mt-3 text-xs underline underline-offset-2"
+                >
+                  Ouvrir les paramètres
+                </button>
+              )}
             </div>
           )}
 
@@ -706,6 +743,9 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
           {/* Fallback mode buttons */}
           {scanMode === 'upload' && userMessage && (
             <div className="space-y-3">
+              <div className="rounded-lg border border-slate-700 bg-slate-900/50 p-3 text-sm text-slate-200">
+                Caméra indisponible : utilisez <strong>Importer une image</strong> ou <strong>Saisie manuelle</strong> ci-dessous.
+              </div>
               {/* Primary: Image upload */}
               <label className="block w-full">
                 <div className="px-6 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold text-lg text-center cursor-pointer transition-colors">

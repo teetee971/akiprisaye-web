@@ -7,7 +7,7 @@ export const SCANNER_MESSAGES = {
   CAMERA_UNAVAILABLE: {
     type: 'info' as const,
     title: 'Caméra indisponible',
-    message: 'La caméra n\'est pas accessible sur ce navigateur. Vous pouvez importer une photo du code-barres.'
+    message: 'La caméra n\'est pas accessible sur ce navigateur. Importez une photo du code-barres ou saisissez le code manuellement.'
   }
 } as const;
 

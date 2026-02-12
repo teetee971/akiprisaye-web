@@ -9,7 +9,7 @@ import { useToast } from '../hooks/useToast';
 const DEBOUNCE = 250;
 const MAX_RESULTS = 15;
 
-export default function ProductSearch({ territory = 'Guadeloupe', onPickEAN }) {
+export default function ProductSearch({ territory = 'Guadeloupe', onPickEAN, onQueryChange }) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -23,6 +23,10 @@ export default function ProductSearch({ territory = 'Guadeloupe', onPickEAN }) {
   const ignoreBlurRef = useRef(false);
 
   // Search products when query changes (debounced)
+  useEffect(() => {
+    onQueryChange?.(query);
+  }, [query, onQueryChange]);
+
   useEffect(() => {
     const trimmedQuery = query.trim();
     
@@ -170,7 +174,7 @@ export default function ProductSearch({ territory = 'Guadeloupe', onPickEAN }) {
     setResults([]);
     setIsOpen(false);
     setActiveIndex(-1);
-    inputRef.current?.focus();
+    inputRef.current?.blur();
   };
 
   const handleInputFocus = () => {
@@ -284,4 +288,5 @@ export default function ProductSearch({ territory = 'Guadeloupe', onPickEAN }) {
 ProductSearch.propTypes = {
   territory: PropTypes.string,
   onPickEAN: PropTypes.func.isRequired,
+  onQueryChange: PropTypes.func,
 };
