@@ -18,7 +18,9 @@
     "test:ci": "npm run test",
     "audit:ci": "npm audit --audit-level=high",
     "axe:ci": "echo \"axe check placeholder: no dedicated suite configured\"",
-    "lhci": "echo \"lhci placeholder: no dedicated config found\""
+    "lhci": "echo \"lhci placeholder: no dedicated config found\"",
+    "e2e": "playwright test",
+    "e2e:report": "playwright show-report"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -76,7 +78,9 @@
     "terser": "^5.46.0",
     "typescript": "^5.4.5",
     "vite": "^7.3.1",
-    "vite-plugin-static-copy": "^3.1.6"
+    "vite-plugin-static-copy": "^3.1.6",
+    "@axe-core/playwright": "^4.10.2",
+    "@playwright/test": "^1.55.0"
   },
   "overrides": {
     "tmp": "^0.2.5"
