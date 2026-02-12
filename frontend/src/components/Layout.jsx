@@ -161,7 +161,7 @@ export default function Layout() {
       <header id="main-nav" className="fixed top-0 left-0 right-0 border-b border-slate-800 shadow-md bg-slate-900/70 backdrop-blur-lg z-header" role="banner">
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
+          <Link to="/" className="flex items-center space-x-2" aria-label="Retour à l'accueil">
             <img
               src="/logo-akiprisaye.svg"
               alt="A KI PRI SA YÉ Logo"
