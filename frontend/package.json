@@ -5,12 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && node scripts/postbuild-cloudflare.mjs",
     "preview": "vite preview",
     "lint": "eslint src --ext .ts,.tsx,.js,.jsx",
     "lint:fix": "eslint src --ext .ts,.tsx,.js,.jsx --fix",
     "test": "echo '⚠️ Tests unitaires non configurés pour le moment' && exit 0",
-    "smoke:preview": "npm run build && node scripts/smoke-preview.mjs"
+    "smoke:preview": "npm run build && node scripts/smoke-preview.mjs",
+    "lint:changed": "node scripts/lint-changed.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

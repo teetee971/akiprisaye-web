@@ -23,6 +23,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       # Prévention Git LFS (empêche l'ajout accidentel de pointeurs LFS)
       - name: Disable Git LFS
@@ -31,12 +33,7 @@ jobs:
       # Garde préventive : vérifier l'absence de pointeurs LFS
       - name: Check for LFS pointers
         run: |
-          if git grep -I -n "version https://git-lfs.github.com/spec/v1" -- ':!.github/workflows/*' ':!.circleci/*'; then
-            echo "❌ ERREUR: Pointeurs Git LFS détectés dans le dépôt"
-            exit 1
-          else
-            echo "✅ OK: Aucun pointeur Git LFS détecté"
-          fi
+          ./scripts/check-lfs-pointers.sh
 
       - name: Setup Node.js 20 (LTS)
         uses: actions/setup-node@v4
@@ -49,9 +46,26 @@ jobs:
         working-directory: frontend
         run: npm ci
 
-      - name: Lint (non-blocking)
+      - name: Lint changed files (PR)
+        if: github.event_name == 'pull_request'
         working-directory: frontend
-        run: npm run lint || true
+        env:
+          LINT_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          LINT_HEAD_SHA: ${{ github.sha }}
+        run: node scripts/lint-changed.mjs
+
+      - name: Lint full codebase (main/tags)
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/'))
+        working-directory: frontend
+        run: npm run lint
+
+      - name: Lint mode summary
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "ℹ️ Lint mode: changed-only (PR)"
+          else
+            echo "ℹ️ Lint mode: strict full lint (push main/tags)"
+          fi
 
       - name: Skip frontend tests (browser-only)
         run: echo "Skipping tests – browser-only frontend"

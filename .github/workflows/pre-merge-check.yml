@@ -39,18 +39,23 @@ jobs:
         working-directory: frontend
         run: npm ci
 
-      - name: 🔍 Run ESLint
+      - name: 🔍 Run ESLint (changed files only)
         working-directory: frontend
-        continue-on-error: true
+        continue-on-error: false
+        env:
+          LINT_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          LINT_HEAD_SHA: ${{ github.sha }}
         run: |
-          echo "## 🔍 ESLint Results" >> $GITHUB_STEP_SUMMARY
-          if npm run lint > eslint-output.txt 2>&1; then
-            echo "✅ **No linting errors found**" >> $GITHUB_STEP_SUMMARY
+          echo "## 🔍 ESLint Results (changed files only)" >> $GITHUB_STEP_SUMMARY
+          if node scripts/lint-changed.mjs > eslint-output.txt 2>&1; then
+            echo "✅ **No linting errors found on changed files**" >> $GITHUB_STEP_SUMMARY
           else
-            echo "⚠️ **Linting issues detected**" >> $GITHUB_STEP_SUMMARY
+            echo "❌ **Linting errors detected on changed files**" >> $GITHUB_STEP_SUMMARY
             echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
             head -50 eslint-output.txt >> $GITHUB_STEP_SUMMARY
             echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            cat eslint-output.txt
+            exit 1
           fi
 
       - name: 📘 TypeScript Check
