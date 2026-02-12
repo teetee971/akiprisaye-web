@@ -2,9 +2,9 @@ name: CI Strict (Zero Warning)
 
 on:
   pull_request:
-    branches: [ "main", "production" ]
+    branches: ["main", "production"]
   push:
-    branches: [ "main", "production" ]
+    branches: ["main", "production"]
 
 permissions:
   contents: read
@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   ci-strict:
-    name: Strict CI – Zero Warnings Allowed
+    name: Strict CI - Zero Warnings Allowed
     runs-on: ubuntu-latest
 
     steps:
@@ -26,16 +26,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "npm"
-          cache-dependency-path: "frontend/package-lock.json"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
         working-directory: frontend
         run: npm ci
-
-      # -----------------------------
-      # STRICT CHECKS (BLOCKING ONLY ON main / production)
-      # -----------------------------
 
       - name: TypeScript strict check
         working-directory: frontend
@@ -52,7 +48,6 @@ jobs:
         run: |
           set -euo pipefail
 
-          # Base SHA: PR -> base.sha, Push -> before
           BASE_SHA="${{ github.event.pull_request.base.sha || github.event.before }}"
           if [ -z "${BASE_SHA}" ]; then
             BASE_SHA="$(git rev-parse HEAD~1)"
@@ -61,25 +56,23 @@ jobs:
           echo "Base SHA: ${BASE_SHA}"
           echo "Head SHA: $(git rev-parse HEAD)"
 
-          # Added lines only, excluding diff headers. Match whole word 'any' only.
           DIFF_LINES="$(git diff -U0 "${BASE_SHA}..HEAD" -- '*.ts' '*.tsx' \
             | grep -E '^\+' \
             | grep -vE '^\+\+\+' \
             | grep -E '\bany\b' || true)"
 
           if [ -n "${DIFF_LINES}" ]; then
-            echo "⚠️ New occurrences of word 'any' detected in added lines:"
+            echo "New occurrences of word 'any' detected in added lines:"
             echo "${DIFF_LINES}"
 
-            # Block only on push to main/production (not on PR)
             if [ "${{ github.event_name }}" != "pull_request" ]; then
-              echo "❌ Blocking on push (main/production)."
+              echo "Blocking on push (main/production)."
               exit 1
             fi
 
-            echo "ℹ️ Non-blocking on PR (reported only)."
+            echo "Non-blocking on PR (reported only)."
           else
-            echo "✅ No new explicit 'any' detected."
+            echo "No new explicit 'any' detected."
           fi
 
       - name: Block new console.log in TS/TSX (diff-based)
@@ -101,17 +94,17 @@ jobs:
             | grep -E 'console\.log\s*\(' || true)"
 
           if [ -n "${DIFF_LINES}" ]; then
-            echo "⚠️ New console.log detected in added TS/TSX lines:"
+            echo "New console.log detected in added TS/TSX lines:"
             echo "${DIFF_LINES}"
 
             if [ "${{ github.event_name }}" != "pull_request" ]; then
-              echo "❌ Blocking on push (main/production)."
+              echo "Blocking on push (main/production)."
               exit 1
             fi
 
-            echo "ℹ️ Non-blocking on PR (reported only)."
+            echo "Non-blocking on PR (reported only)."
           else
-            echo "✅ No new console.log detected."
+            echo "No new console.log detected."
           fi
 
       - name: Build (Vite)
@@ -128,10 +121,6 @@ jobs:
         working-directory: frontend
         run: npm run audit:ci
         continue-on-error: true
-
-      # -----------------------------
-      # NON-BLOCKING QUALITY GATES
-      # -----------------------------
 
       - name: Accessibility testing (axe-core WCAG)
         id: axe
@@ -159,10 +148,6 @@ jobs:
             echo "report_url=Not available" >> "$GITHUB_OUTPUT"
           fi
 
-      # -----------------------------
-      # PR COMMENT (INFORMATION ONLY)
-      # -----------------------------
-
       - name: Comment PR with quality report
         if: github.event_name == 'pull_request'
         uses: actions/github-script@v7
@@ -170,38 +155,37 @@ jobs:
           script: |
             const reportUrl = '${{ steps.lhci-url.outputs.report_url }}';
 
-            const body = `
-### 🧪 CI Strict – Quality Report (non bloquant)
+            const body = [
+              '### CI Strict - Quality Report (non bloquant)',
+              '',
+              '**Checks executés :**',
+              '- TypeScript strict',
+              '- ESLint (max-warnings=0)',
+              '- Build',
+              '- Tests',
+              '- Audit sécurité (npm)',
+              '- Accessibilité (WCAG 2.1 AA)',
+              '- Lighthouse (Performance, A11y, Best Practices, SEO)',
+              '',
+              '**Standards cibles (post-V1) :**',
+              '- Performance >= 85',
+              '- Accessibilité >= 95',
+              '- Best Practices >= 95',
+              '- SEO >= 90',
+              '',
+              reportUrl !== 'Not available'
+                ? `Voir le rapport Lighthouse : ${reportUrl}`
+                : 'Rapport Lighthouse indisponible',
+              '',
+              'Quality gate non bloquant - hardening progressif.'
+            ].join('\n');
 
-**Checks exécutés :**
-- TypeScript strict
-- ESLint (max-warnings=0)
-- Build
-- Tests
-- Audit sécurité (npm)
-- Accessibilité (WCAG 2.1 AA)
-- Lighthouse (Performance, A11y, Best Practices, SEO)
-
-**Standards cibles (post-V1) :**
-- Performance ≥ 85
-- Accessibilité ≥ 95
-- Best Practices ≥ 95
-- SEO ≥ 90
-
-${reportUrl !== 'Not available' ? `🔍 Voir le rapport Lighthouse : ${reportUrl}` : 'Rapport Lighthouse indisponible'}
-
-ℹ️ *Quality gate non bloquant – hardening progressif.*
-`;
             await github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               body
             });
-
-      # -----------------------------
-      # ARTIFACTS (DEBUG / AUDIT)
-      # -----------------------------
 
       - name: Upload accessibility report
         if: always()
