@@ -4,18 +4,55 @@ function sh(cmd) {
   return execSync(cmd, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
 }
 
-const baseSha = process.env.LINT_BASE_SHA;
-const headSha = process.env.LINT_HEAD_SHA || process.env.GITHUB_SHA;
+function trySh(cmd) {
+  try {
+    return { ok: true, output: sh(cmd) };
+  } catch (error) {
+    return { ok: false, error };
+  }
+}
 
-if (!baseSha || !headSha) {
-  console.log('ℹ️ LINT_BASE_SHA/LINT_HEAD_SHA not set, running full lint fallback.');
+function hasCommit(sha) {
+  if (!sha) return false;
+  return trySh(`git cat-file -e ${sha}^{commit}`).ok;
+}
+
+function getChangedFiles() {
+  const baseSha = process.env.LINT_BASE_SHA;
+  const headSha = process.env.LINT_HEAD_SHA || process.env.GITHUB_SHA;
+
+  if (baseSha && headSha && hasCommit(baseSha) && hasCommit(headSha)) {
+    const diffRange = `${baseSha}...${headSha}`;
+    const diff = trySh(`git diff --name-only ${diffRange}`);
+
+    if (diff.ok) {
+      return { files: diff.output, strategy: `range ${diffRange}` };
+    }
+
+    console.warn(`⚠️ Unable to diff ${diffRange}, falling back.`, diff.error?.message ?? '');
+  } else if (baseSha || headSha) {
+    console.warn('⚠️ Provided LINT_BASE_SHA/LINT_HEAD_SHA are not available locally (shallow clone or missing refs).');
+  }
+
+  const headOnlyDiff = trySh('git diff --name-only HEAD~1..HEAD');
+  if (headOnlyDiff.ok) {
+    return { files: headOnlyDiff.output, strategy: 'HEAD~1..HEAD fallback' };
+  }
+
+  return { files: null, strategy: 'full-lint fallback' };
+}
+
+const diffResult = getChangedFiles();
+
+if (diffResult.files === null) {
+  console.log('ℹ️ Could not compute changed-file diff, running full lint fallback.');
   const fallback = spawnSync('npm', ['run', 'lint'], { stdio: 'inherit' });
   process.exit(fallback.status ?? 1);
 }
 
-const diffRange = `${baseSha}...${headSha}`;
-const diffOutput = sh(`git diff --name-only ${diffRange}`);
-const changedFiles = diffOutput
+console.log(`ℹ️ Using changed-files strategy: ${diffResult.strategy}`);
+
+const changedFiles = diffResult.files
   .split('\n')
   .map((f) => f.trim())
   .filter(Boolean)
