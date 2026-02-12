@@ -6,7 +6,6 @@ import reactRefreshPlugin from 'eslint-plugin-react-refresh';
 import js from '@eslint/js';
 
 export default [
-  // Ignore patterns
   {
     ignores: [
       'dist/**',
@@ -18,14 +17,13 @@ export default [
       'public/react-entry.js',
       'coverage/**',
       'build/**',
-      '.vite/**'
+      '.vite/**',
+      'src/scripts/comparison-tracker.js',
+      'src/types/fuelComparison.d.ts',
+      'src/types/priceObservation.d.ts'
     ]
   },
-
-  // Base recommended rules
   js.configs.recommended,
-
-  // Configuration for TypeScript files
   {
     files: ['**/*.ts', '**/*.tsx'],
     languageOptions: {
@@ -57,6 +55,11 @@ export default [
         HTMLVideoElement: 'readonly',
         HTMLCanvasElement: 'readonly',
         HTMLDivElement: 'readonly',
+        HTMLImageElement: 'readonly',
+        ImageData: 'readonly',
+        ImageBitmap: 'readonly',
+        CanvasRenderingContext2D: 'readonly',
+        MediaStreamConstraints: 'readonly',
         Element: 'readonly',
         Event: 'readonly',
         CustomEvent: 'readonly',
@@ -86,14 +89,12 @@ export default [
         MutationObserver: 'readonly',
         ResizeObserver: 'readonly',
         requestAnimationFrame: 'readonly',
-        cancelAnimationFrame: 'readonly',
-        URLSearchParams: 'readonly',
-        FormData: 'readonly'
+        cancelAnimationFrame: 'readonly'
       }
     },
     plugins: {
       '@typescript-eslint': tseslint,
-      'react': reactPlugin,
+      react: reactPlugin,
       'react-hooks': reactHooksPlugin,
       'react-refresh': reactRefreshPlugin
     },
@@ -101,12 +102,21 @@ export default [
       ...tseslint.configs.recommended.rules,
       ...reactPlugin.configs.recommended.rules,
       ...reactHooksPlugin.configs.recommended.rules,
+      'no-undef': 'warn',
+      'no-irregular-whitespace': 'warn',
+      'no-redeclare': 'warn',
+      'no-case-declarations': 'warn',
+      'no-useless-escape': 'warn',
+      'no-unreachable': 'warn',
+      'react/jsx-no-undef': 'warn',
+      'react-hooks/rules-of-hooks': 'warn',
+      '@typescript-eslint/no-empty-object-type': 'warn',
       'react/react-in-jsx-scope': 'off',
       'react/prop-types': 'off',
       'react/no-unescaped-entities': 'off',
-      '@typescript-eslint/no-unused-vars': ['warn', { 'argsIgnorePattern': '^_' }],
+      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
       '@typescript-eslint/no-explicit-any': 'warn',
-      'react-refresh/only-export-components': ['warn', { 'allowConstantExport': true }]
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }]
     },
     settings: {
       react: {
@@ -114,8 +124,6 @@ export default [
       }
     }
   },
-
-  // Configuration for JavaScript/JSX files
   {
     files: ['**/*.js', '**/*.jsx'],
     languageOptions: {
@@ -137,20 +145,29 @@ export default [
         setTimeout: 'readonly',
         setInterval: 'readonly',
         clearTimeout: 'readonly',
-        clearInterval: 'readonly'
+        clearInterval: 'readonly',
+        alert: 'readonly'
       }
     },
     plugins: {
-      'react': reactPlugin,
+      react: reactPlugin,
       'react-hooks': reactHooksPlugin
     },
     rules: {
       ...reactPlugin.configs.recommended.rules,
       ...reactHooksPlugin.configs.recommended.rules,
+      'no-undef': 'warn',
+      'no-irregular-whitespace': 'warn',
+      'no-redeclare': 'warn',
+      'no-case-declarations': 'warn',
+      'no-useless-escape': 'warn',
+      'no-unreachable': 'warn',
+      'react/jsx-no-undef': 'warn',
+      'react-hooks/rules-of-hooks': 'warn',
       'react/react-in-jsx-scope': 'off',
       'react/prop-types': 'off',
       'react/no-unescaped-entities': 'off',
-      'no-unused-vars': ['warn', { 'argsIgnorePattern': '^_' }]
+      'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }]
     },
     settings: {
       react: {

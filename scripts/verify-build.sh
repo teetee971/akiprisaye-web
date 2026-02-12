@@ -80,10 +80,14 @@ echo "📋 Test 4: _redirects File"
 if [ -f "$DIST_DIR/_redirects" ]; then
   echo -e "${GREEN}✅ _redirects file exists in dist/${NC}"
   
-  if grep -q "/* */index.html *200" "$DIST_DIR/_redirects"; then
+  # Accept both SPA fallback strategies used in the repo:
+  # - legacy: /* /index.html 200
+  # - current Cloudflare strategy: /* /app.html 200
+  if grep -Eq '^/\*\s+/((index|app)\.html)\s+200$' "$DIST_DIR/_redirects"; then
     echo -e "${GREEN}✅ _redirects correctly configured for SPA${NC}"
   else
     echo -e "${RED}❌ _redirects file not properly configured${NC}"
+    echo "   Expected one of: '/* /index.html 200' or '/* /app.html 200'"
     FAILED=1
   fi
 else
