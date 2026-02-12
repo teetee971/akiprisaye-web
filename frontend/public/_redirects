@@ -1,1 +1,5 @@
-/*  /index.html  200
+/assets/*  /assets/:splat  200
+/logo-akiprisaye.svg  /logo-akiprisaye.svg  200
+/manifest.webmanifest  /manifest.webmanifest  200
+/robots.txt  /robots.txt  200
+/*  /app.html  200

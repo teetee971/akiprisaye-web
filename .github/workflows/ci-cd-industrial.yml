@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+    tags:
+      - '*'
   pull_request:
     branches:
       - main
@@ -40,6 +42,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: 🔐 Verify secrets (without logging)
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/'))
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -59,11 +62,17 @@ jobs:
           echo "✅ Workflow YAML is valid (passed GitHub Actions parser)"
 
       - name: 🏗️ Run preflight check
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/'))
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           ./scripts/preflight-check.sh
+
+      - name: ℹ️ Skip Cloudflare secret checks on PR
+        if: github.event_name == 'pull_request'
+        run: |
+          echo "ℹ️ Pull request detected: Cloudflare secret checks are skipped."
 
   # ========================================
   # 2️⃣ INSTALL & BUILD
@@ -155,7 +164,7 @@ jobs:
             exit 1
           fi
           
-          if grep -q "/* */index.html *200" frontend/dist/_redirects; then
+          if grep -q "/\*  /app.html  200" frontend/dist/_redirects; then
             echo "✅ _redirects correctly configured for SPA routing"
           else
             echo "❌ _redirects file not properly configured"
@@ -209,6 +218,7 @@ jobs:
   # ========================================
   deploy:
     name: 6️⃣ Deploy to Cloudflare Pages
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/'))
     needs: [preflight, build, integrity-check, routing-check]
     runs-on: ubuntu-latest
     outputs:
@@ -258,6 +268,7 @@ jobs:
   post-deploy-validation:
     name: 7️⃣ Post-Deploy Validation
     needs: deploy
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')) && needs.deploy.result == 'success'
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout code
@@ -285,7 +296,7 @@ jobs:
   rollback:
     name: 8️⃣ Automatic Rollback
     needs: [deploy, post-deploy-validation]
-    if: failure()
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')) && (needs.deploy.result == 'failure' || needs.post-deploy-validation.result == 'failure')
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout code
@@ -333,8 +344,13 @@ jobs:
           echo "- ✅ 3️⃣ Static Integrity Check" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ 4️⃣ SPA Routing Guard" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ 5️⃣ Lighthouse CI" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ 6️⃣ Cloudflare Pages Deployment" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ 7️⃣ Post-Deploy Validation" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ github.event_name }}" = "push" ] && { [ "${{ github.ref }}" = "refs/heads/main" ] || [[ "${{ github.ref }}" == refs/tags/* ]]; }; then
+            echo "- ✅ 6️⃣ Cloudflare Pages Deployment" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ 7️⃣ Post-Deploy Validation" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- ⏭️ 6️⃣ Cloudflare Pages Deployment (skipped on PR)" >> $GITHUB_STEP_SUMMARY
+            echo "- ⏭️ 7️⃣ Post-Deploy Validation (skipped on PR)" >> $GITHUB_STEP_SUMMARY
+          fi
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "---" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY

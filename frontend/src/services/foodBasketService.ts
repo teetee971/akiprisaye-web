@@ -28,6 +28,7 @@ import type {
   FoodBasketItemPrice,
 } from '../types/foodBasket';
 import type { Territory } from '../types/priceAlerts';
+import { logRuntimeIssueOnce } from '../utils/runtimeDiagnostics';
 
 /**
  * Configuration constants
@@ -271,15 +272,21 @@ export function generateFoodBasketMetadata(
   const sourceCounts = new Map<string, { count: number; stores: Set<string> }>();
   observations.forEach(obs => {
     obs.sources.forEach(source => {
-      const sourceType = source.type;
-      if (!sourceCounts.has(sourceType)) {
-        sourceCounts.set(sourceType, { count: 0, stores: new Set() });
+      const sourceType = source?.type;
+      if (!sourceType) {
+        logRuntimeIssueOnce(
+          'food-basket-metadata-missing-source',
+          'Missing source type while aggregating food basket metadata. Entry ignored.',
+        );
+        return;
       }
-      const sourceData = sourceCounts.get(sourceType)!;
+
+      const sourceData = sourceCounts.get(sourceType) ?? { count: 0, stores: new Set<string>() };
       sourceData.count++;
       if (obs.storeName) {
         sourceData.stores.add(obs.storeName);
       }
+      sourceCounts.set(sourceType, sourceData);
     });
   });
 
