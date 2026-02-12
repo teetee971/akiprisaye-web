@@ -33,11 +33,18 @@ jobs:
       # Garde préventive : vérifier l'absence de pointeurs LFS
       - name: Check for LFS pointers
         run: |
-          if git grep -I -n "version https://git-lfs.github.com/spec/v1" -- ':!.github/workflows/*' ':!.circleci/*'; then
+          if git grep -I -n -E '^version https://git-lfs.github.com/spec/v1$' -- . | grep -vE '^(\.github/workflows/|\.circleci/|scripts/|.*\.md:)' >/dev/null; then
             echo "❌ ERREUR: Pointeurs Git LFS détectés dans le dépôt"
             exit 1
           else
             echo "✅ OK: Aucun pointeur Git LFS détecté"
+          fi
+
+          if git grep -I -n -E '^oid sha256:[0-9a-f]{64}$' -- . | grep -vE '^(\.github/workflows/|\.circleci/|scripts/|.*\.md:)' >/dev/null; then
+            echo "❌ ERREUR: Pointeur LFS probable (oid)"
+            exit 1
+          else
+            echo "✅ OK: Aucun oid LFS détecté"
           fi
 
       - name: Setup Node.js 20 (LTS)
