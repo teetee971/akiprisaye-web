@@ -3,11 +3,6 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { HelmetProvider } from 'react-helmet-async';
 
-import './styles/glass.css';
-import './styles/mobile-fixes.css';
-import './styles/leaflet-overrides.css';
-import './styles/a11y.css';
-
 import App from './App';
 import ErrorBoundary from './components/ErrorBoundary';
 import { safeToText } from './utils/safeToText';
@@ -29,7 +24,7 @@ const renderFallbackError = (title, message) => {
   if (!fallback) return;
 
   fallback.innerHTML = `
-    <img src="/logo-akiprisaye.svg" alt="A KI PRI SA YÉ" style="height: 64px; margin-bottom: 24px;" />
+    <img src="/logo-akiprisaye.svg" alt="A KI PRI SA YÉ" width="64" height="64" fetchpriority="high" decoding="async" style="height: 64px; margin-bottom: 24px;" />
     <h1 style="font-size: 1.5rem; margin-bottom: 8px;">${title}</h1>
     <p style="color: #f87171; margin-bottom: 8px;">${message}</p>
     <button onclick="location.reload()" style="padding: 12px 24px; background: #3b82f6; color: white; border: none; border-radius: 8px; cursor: pointer;">

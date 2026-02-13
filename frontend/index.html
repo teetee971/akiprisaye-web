@@ -43,12 +43,15 @@
     <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin />
     <link rel="dns-prefetch" href="https://www.googleapis.com" />
     <link rel="preconnect" href="https://www.googleapis.com" crossorigin />
+
+    <link rel="preload" href="/src/styles/mobile-fixes.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="preload" href="/src/styles/a11y.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
     
     <!-- PWA -->
     <link rel="manifest" href="/manifest.webmanifest" />
     <meta name="theme-color" content="#0f172a" />
     
-    <!-- Base styles to prevent white flash -->
+    <!-- Base + critical mobile hero styles for faster first render -->
     <style>
       body {
         margin: 0;
@@ -61,14 +64,96 @@
       #root {
         min-height: 100vh;
       }
+
+      .home-v5 {
+        width: 100%;
+        min-height: 100vh;
+        background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+        color: #f1f5f9;
+      }
+
+      .hero-v5 {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 70vh;
+        padding: 3rem 1.5rem 2rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero-v5::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+        pointer-events: none;
+      }
+
+      .hero-content {
+        max-width: 800px;
+        width: 100%;
+        position: relative;
+        z-index: 1;
+      }
+
+      .hero-title {
+        font-size: 1.875rem;
+        font-weight: 700;
+        line-height: 1.1;
+        margin-bottom: 1.5rem;
+        color: #f8fafc;
+      }
+
+      .hero-subtitle {
+        font-size: 1rem;
+        color: #cbd5e1;
+        margin-bottom: 0.75rem;
+      }
+
+      .hero-search-xxl {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        max-width: 100%;
+        margin: 0 auto 0.5rem;
+        background: rgba(30, 41, 59, 0.8);
+        border: 2px solid rgba(34, 197, 94, 0.3);
+        border-radius: 16px;
+        overflow: hidden;
+      }
+
+      .hero-search-input-xxl {
+        flex: 1;
+        padding: 1.25rem 1.5rem;
+        border: none;
+        background: transparent;
+        color: #f1f5f9;
+        font-size: 1rem;
+      }
+
+      .hero-search-btn-xxl {
+        width: 100%;
+        padding: 1rem 1.25rem;
+        border: none;
+        color: #f8fafc;
+        font-size: 0.95rem;
+        font-weight: 600;
+        background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+      }
     </style>
+    <noscript>
+      <link rel="stylesheet" href="/src/styles/mobile-fixes.css" />
+      <link rel="stylesheet" href="/src/styles/a11y.css" />
+    </noscript>
   </head>
   
   <body>
     <div id="root">
       <!-- Fallback content visible pendant le chargement ou en cas d'erreur -->
       <div id="loading-fallback" style="min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #0f172a; color: white; font-family: system-ui, sans-serif;">
-        <img src="/logo-akiprisaye.svg" alt="A KI PRI SA YÉ" style="height: 64px; margin-bottom: 24px;" />
+        <img src="/logo-akiprisaye.svg" alt="A KI PRI SA YÉ" width="64" height="64" fetchpriority="high" decoding="async" style="height: 64px; margin-bottom: 24px;" />
         <h1 style="font-size: 1.5rem; margin-bottom: 8px;">A KI PRI SA YÉ</h1>
         <p style="color: #94a3b8;">Chargement en cours...</p>
       </div>

@@ -1,8 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { getComparisonOfDay, type PriceComparison } from '../data/exampleComparisons';
-import '../styles/home-v5.css';
-import '../styles/animations.css';
 import { safeLocalStorage } from '../utils/safeLocalStorage';
 
 const HowItWorksSection = lazy(() => import('./home-v5/HowItWorksSection'));
@@ -20,6 +18,22 @@ export default function HomeV5() {
   const statsRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
+    const deferredStyles = ['/src/styles/home-v5.css', '/src/styles/animations.css'];
+
+    deferredStyles.forEach((href) => {
+      if (document.querySelector(`link[data-deferred-style="${href}"]`)) return;
+
+      const preload = document.createElement('link');
+      preload.rel = 'preload';
+      preload.as = 'style';
+      preload.href = href;
+      preload.setAttribute('data-deferred-style', href);
+      preload.onload = () => {
+        preload.rel = 'stylesheet';
+      };
+      document.head.appendChild(preload);
+    });
+
     const loadedStats = safeLocalStorage.getJSON('platform_stats', {
       scans: 1200,
       products: 5000,
