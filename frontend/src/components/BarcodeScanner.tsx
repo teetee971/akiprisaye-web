@@ -34,6 +34,8 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
   const [debugInfo, setDebugInfo] = useState({
     permission: 'unknown' as 'granted' | 'prompt' | 'denied' | 'unsupported' | 'unknown',
     selectedDeviceId: 'n/a',
+    chosenDeviceId: 'n/a',
+    chosenDeviceLabel: 'n/a',
     constraints: 'n/a',
     videoSize: '0x0',
     playState: 'idle',
@@ -93,6 +95,56 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
     setScanMode('upload');
     setUserMessage(SCANNER_MESSAGES.CAMERA_UNAVAILABLE);
     if (debugEnabled) console.log('[SCAN] Fallback activated: Switching to image upload mode');
+  };
+
+  const stopStreamTracks = (stream: MediaStream | null | undefined) => {
+    if (!stream) return;
+    stream.getTracks().forEach((track) => track.stop());
+  };
+
+  const pickBestVideoDeviceId = async (): Promise<{ deviceId: string; label?: string } | null> => {
+    if (typeof navigator === 'undefined' || !navigator.mediaDevices?.enumerateDevices) {
+      return null;
+    }
+
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const videoInputs = devices.filter((device) => device.kind === 'videoinput');
+
+    if (!videoInputs.length) return null;
+
+    const rearCamera = videoInputs.find((device) => /(back|rear|environment)/i.test(device.label));
+    const picked = rearCamera ?? videoInputs[videoInputs.length - 1];
+
+    return {
+      deviceId: picked.deviceId,
+      label: picked.label || undefined,
+    };
+  };
+
+  const ensureVideoIsActuallyPlaying = async (videoElement: HTMLVideoElement) => {
+    await new Promise((r) => setTimeout(r, 250));
+
+    const isVideoReady = Boolean(videoElement.videoWidth && videoElement.videoHeight);
+    const isPlaying = !videoElement.paused;
+
+    updateDebugInfo({
+      playState: isPlaying ? 'playing' : 'paused-after-play',
+      videoSize: `${videoElement.videoWidth ?? 0}x${videoElement.videoHeight ?? 0}`,
+    });
+
+    if (!isVideoReady || !isPlaying) {
+      if (debugEnabled) {
+        console.warn('[SCAN] ⚠️ VIDEO_NOT_READY after play', {
+          videoWidth: videoElement.videoWidth,
+          videoHeight: videoElement.videoHeight,
+          paused: videoElement.paused,
+          readyState: videoElement.readyState,
+        });
+      }
+      const videoNotReadyError = new Error('VIDEO_NOT_READY');
+      videoNotReadyError.name = 'VIDEO_NOT_READY';
+      throw videoNotReadyError;
+    }
   };
 
   useEffect(() => {
@@ -209,23 +261,61 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
           ];
 
           let lastError: unknown = null;
+          let stream: MediaStream | null = null;
 
           for (const constraints of constraintSets) {
             try {
               if (debugEnabled) console.log('[SCAN] 📷 Trying constraints:', constraints);
-              const stream = await navigator.mediaDevices.getUserMedia(constraints);
+              stream = await navigator.mediaDevices.getUserMedia(constraints);
               updateDebugInfo({ constraints: JSON.stringify((constraints as any).video ?? constraints) });
               return stream;
             } catch (constraintError) {
+              stopStreamTracks(stream);
+              stream = null;
               lastError = constraintError;
               if (debugEnabled) console.log('[SCAN] ⚠️ Constraint failed, trying fallback:', constraintError);
+            }
+          }
+
+          const pickedDevice = await pickBestVideoDeviceId();
+          if (pickedDevice?.deviceId) {
+            updateDebugInfo({
+              chosenDeviceId: pickedDevice.deviceId,
+              chosenDeviceLabel: pickedDevice.label || 'unknown-label',
+            });
+
+            const byDeviceConstraints: MediaStreamConstraints[] = [
+              {
+                video: {
+                  deviceId: { exact: pickedDevice.deviceId },
+                  width: { ideal: 1280 },
+                  height: { ideal: 720 },
+                },
+              },
+              { video: { deviceId: { exact: pickedDevice.deviceId } } },
+            ];
+
+            for (const constraints of byDeviceConstraints) {
+              try {
+                if (debugEnabled) {
+                  console.log('[SCAN] Retrying with exact deviceId ...', pickedDevice.deviceId, constraints);
+                }
+                stream = await navigator.mediaDevices.getUserMedia(constraints);
+                updateDebugInfo({ constraints: JSON.stringify((constraints as any).video ?? constraints) });
+                return stream;
+              } catch (deviceIdError) {
+                stopStreamTracks(stream);
+                stream = null;
+                lastError = deviceIdError;
+                if (debugEnabled) console.log('[SCAN] ⚠️ deviceId exact failed:', deviceIdError);
+              }
             }
           }
 
           throw lastError ?? new Error('Aucune contrainte caméra compatible');
         };
 
-        const stream = await requestCameraStream();
+        let stream = await requestCameraStream();
 
         if (debugEnabled) console.log('[SCAN] ✅ Camera access granted');
         streamRef.current = stream;
@@ -263,15 +353,65 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
             // continue; decoding may still work in some cases
           });
 
-          // Anti-black-preview guard: if video has 0x0 after play, likely CSS/overlay or device issue
-          await new Promise((r) => setTimeout(r, 250));
-          updateDebugInfo({
-            playState: v.paused ? 'paused-after-play' : 'playing',
-            videoSize: `${v.videoWidth ?? 0}x${v.videoHeight ?? 0}`,
-          });
+          try {
+            await ensureVideoIsActuallyPlaying(v);
+          } catch (videoError) {
+            const streamError = videoError as { name?: string; message?: string };
+            if (streamError?.name !== 'VIDEO_NOT_READY' && streamError?.message !== 'VIDEO_NOT_READY') {
+              throw videoError;
+            }
 
-          if ((!v.videoWidth || !v.videoHeight) && debugEnabled) {
-            console.warn('[SCAN] ⚠️ Video dimensions are 0x0 after play (possible black preview/CSS overlay).');
+            stopStreamTracks(streamRef.current);
+            streamRef.current = null;
+
+            const pickedDevice = await pickBestVideoDeviceId();
+            if (!pickedDevice?.deviceId) {
+              throw videoError;
+            }
+
+            updateDebugInfo({
+              chosenDeviceId: pickedDevice.deviceId,
+              chosenDeviceLabel: pickedDevice.label || 'unknown-label',
+            });
+
+            const retryConstraints: MediaStreamConstraints[] = [
+              {
+                video: {
+                  deviceId: { exact: pickedDevice.deviceId },
+                  width: { ideal: 1280 },
+                  height: { ideal: 720 },
+                },
+              },
+              { video: { deviceId: { exact: pickedDevice.deviceId } } },
+            ];
+
+            let retryStream: MediaStream | null = null;
+            let retryError: unknown = videoError;
+
+            for (const constraints of retryConstraints) {
+              try {
+                if (debugEnabled) {
+                  console.log('[SCAN] Retrying with exact deviceId ...', pickedDevice.deviceId, constraints);
+                }
+                retryStream = await navigator.mediaDevices.getUserMedia(constraints);
+                updateDebugInfo({ constraints: JSON.stringify((constraints as any).video ?? constraints) });
+                break;
+              } catch (getUserMediaError) {
+                stopStreamTracks(retryStream);
+                retryStream = null;
+                retryError = getUserMediaError;
+              }
+            }
+
+            if (!retryStream) throw retryError;
+
+            stream = retryStream;
+            streamRef.current = retryStream;
+            v.srcObject = retryStream;
+            await v.play().catch((e) => {
+              debugLog('video.play() failed after deviceId fallback', e);
+            });
+            await ensureVideoIsActuallyPlaying(v);
           }
 
           // clean handlers (we keep playback)
@@ -902,7 +1042,9 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
               <p className="font-semibold text-amber-300">🧪 Debug scanner (?scanDebug=1)</p>
               <ul className="space-y-1 font-mono bg-slate-950/80 border border-slate-700 rounded p-3">
                 <li>permission: {debugInfo.permission}</li>
-                <li>deviceId: {debugInfo.selectedDeviceId}</li>
+                <li>deviceId (track): {debugInfo.selectedDeviceId}</li>
+                <li>deviceId (chosen): {debugInfo.chosenDeviceId}</li>
+                <li>device label: {debugInfo.chosenDeviceLabel}</li>
                 <li>constraints: {debugInfo.constraints}</li>
                 <li>video: {debugInfo.videoSize}</li>
                 <li>play: {debugInfo.playState}</li>
@@ -919,4 +1061,3 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
     </div>
   );
 }
-
