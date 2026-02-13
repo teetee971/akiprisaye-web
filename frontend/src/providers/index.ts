@@ -1,5 +1,6 @@
 import type { PriceSearchInput } from '../services/priceSearch/price.types';
 import { normalizeText } from './normalize';
+import { openPricesProvider } from './openPricesProvider';
 import { seedProvider } from './seedProvider';
 import type { PriceProvider, ProviderResult } from './types';
 
@@ -79,20 +80,7 @@ const dataGouvStubProvider: PriceProvider = {
   },
 };
 
-const openPricesStubProvider: PriceProvider = {
-  source: 'open_prices',
-  isEnabled: () => parseFlag(env.VITE_PRICE_PROVIDER_OPEN_PRICES, false),
-  async search() {
-    return {
-      source: 'open_prices',
-      status: 'UNAVAILABLE',
-      observations: [],
-      warnings: ['open_prices indisponible (stub provider).'],
-    };
-  },
-};
-
-const PROVIDERS: PriceProvider[] = [openFoodFactsProvider, openPricesStubProvider, dataGouvStubProvider];
+const PROVIDERS: PriceProvider[] = [openPricesProvider, openFoodFactsProvider, dataGouvStubProvider];
 
 export async function queryProviders(input: PriceSearchInput, signal: AbortSignal): Promise<ProviderResult[]> {
   const enabledProviders = PROVIDERS.filter((provider) => provider.isEnabled());
