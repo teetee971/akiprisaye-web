@@ -149,10 +149,9 @@ jobs:
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 
-      - name: Install Playwright browsers (official action)
-        uses: microsoft/playwright-github-action@v1
-        with:
-          working-directory: frontend
+      - name: Install Playwright browsers
+        working-directory: frontend
+        run: npx playwright install --with-deps chromium
 
       - name: Production UX audit (PR report-only)
         if: github.event_name == 'pull_request'
