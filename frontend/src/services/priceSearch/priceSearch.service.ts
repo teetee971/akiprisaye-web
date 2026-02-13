@@ -4,6 +4,7 @@ import { computeMedian, normalizeObservation, normalizePriceValue } from './pric
 import { computePriceConfidence } from './priceConfidence';
 import { normalizeTerritoryCode } from './normalizeTerritoryCode';
 import { queryProviders } from '../../providers';
+import { buildCacheKey, getCache, purgeExpiredCache, setCache } from '../../providers/cache';
 import type {
   PriceInterval,
   PriceSearchInput,
@@ -36,6 +37,101 @@ function territoryMessage(territory: TerritoryCode): string | undefined {
   return 'Données DOM en cours d’enrichissement. Les prix affichés restent indicatifs.';
 }
 
+function buildSearchCacheKey(input: PriceSearchInput, territory: TerritoryCode): string {
+  const mode = input.barcode ? 'ean' : 'query';
+  return buildCacheKey({
+    territory,
+    mode,
+    ean: input.barcode,
+    query: input.query,
+  });
+}
+
+function shouldCacheResult(result: PriceSearchResult): boolean {
+  return result.status === 'OK' || result.status === 'PARTIAL';
+}
+
+function areResultsDifferent(a: PriceSearchResult, b: PriceSearchResult): boolean {
+  return JSON.stringify(a) !== JSON.stringify(b);
+}
+
+async function fetchLiveResult(
+  normalizedInput: PriceSearchInput,
+  territory: TerritoryCode,
+  queryUsed: string
+): Promise<PriceSearchResult> {
+  const controller = new AbortController();
+  const providerResults = await withTimeout(
+    queryProviders(normalizedInput, controller.signal),
+    PROVIDER_TIMEOUT_MS,
+    controller.signal
+  );
+
+  const observations = providerResults
+    .flatMap((result) => result.observations)
+    .map(normalizeObservation);
+
+  const warnings = providerResults.flatMap((result) => result.warnings);
+
+  const sourcesUsed = Array.from(
+    new Set(
+      providerResults
+        .filter((result) => result.observations.length > 0)
+        .map((result) => result.source)
+    )
+  );
+
+  const priceValues = observations.map((obs) => obs.price);
+  const interval: PriceInterval = {
+    min: priceValues.length > 0 ? normalizePriceValue(Math.min(...priceValues)) : null,
+    median: computeMedian(priceValues),
+    max: priceValues.length > 0 ? normalizePriceValue(Math.max(...priceValues)) : null,
+    currency: 'EUR',
+    priceCount: priceValues.length,
+  };
+
+  const confidence = computePriceConfidence({
+    territoryMatch: observations.some(
+      (obs) => normalizeTerritoryCode(obs.territory) === territory
+    ),
+    observations,
+  });
+
+  const productName =
+    providerResults
+      .map((result) => result.productName)
+      .find(Boolean) ?? undefined;
+
+  if (observations.length === 0) {
+    warnings.push('Données insuffisantes pour établir une fourchette de prix fiable.');
+  }
+
+  const hasUnavailableProvider = providerResults.some((result) => result.status === 'UNAVAILABLE');
+
+  const status: PriceSearchStatus =
+    observations.length === 0
+      ? 'NO_DATA'
+      : confidence < 50 || warnings.length > 0 || hasUnavailableProvider
+        ? 'PARTIAL'
+        : 'OK';
+
+  return {
+    status,
+    intervals: observations.length > 0 ? [interval] : [],
+    confidence,
+    observations,
+    warnings,
+    sourcesUsed,
+    territory,
+    productName,
+    metadata: {
+      queriedAt: new Date().toISOString(),
+      queryUsed,
+      territoryMessage: territoryMessage(territory),
+    },
+  };
+}
+
 export async function searchProductPrices(input: PriceSearchInput): Promise<PriceSearchResult> {
   const territory = normalizeTerritoryCode(input.territory ?? DEFAULT_TERRITORY);
   const normalizedInput: PriceSearchInput = {
@@ -43,79 +139,43 @@ export async function searchProductPrices(input: PriceSearchInput): Promise<Pric
     territory,
   };
   const queryUsed = input.barcode || input.query || 'recherche libre';
+  const cacheKey = buildSearchCacheKey(normalizedInput, territory);
+  const hasSearchTerm = Boolean((normalizedInput.barcode ?? '').trim() || (normalizedInput.query ?? '').trim());
 
-  try {
-    const controller = new AbortController();
-    const providerResults = await withTimeout(
-      queryProviders(normalizedInput, controller.signal),
-      PROVIDER_TIMEOUT_MS,
-      controller.signal
-    );
+  purgeExpiredCache();
+  const cached = getCache<PriceSearchResult>(cacheKey);
 
-    const observations = providerResults
-      .flatMap((result) => result.observations)
-      .map(normalizeObservation);
-
-    const warnings = providerResults.flatMap((result) => result.warnings);
-
-    const sourcesUsed = Array.from(
-      new Set(
-        providerResults
-          .filter((result) => result.observations.length > 0)
-          .map((result) => result.source)
-      )
-    );
-
-    const priceValues = observations.map((obs) => obs.price);
-    const interval: PriceInterval = {
-      min: priceValues.length > 0 ? normalizePriceValue(Math.min(...priceValues)) : null,
-      median: computeMedian(priceValues),
-      max: priceValues.length > 0 ? normalizePriceValue(Math.max(...priceValues)) : null,
-      currency: 'EUR',
-      priceCount: priceValues.length,
-    };
-
-    const confidence = computePriceConfidence({
-      territoryMatch: observations.some(
-        (obs) => normalizeTerritoryCode(obs.territory) === territory
-      ),
-      observations,
-    });
-
-    const productName =
-      providerResults
-        .map((result) => result.productName)
-        .find(Boolean) ?? undefined;
-
-    if (observations.length === 0) {
-      warnings.push('Données insuffisantes pour établir une fourchette de prix fiable.');
+  if (cached?.isFresh) {
+    if (hasSearchTerm) {
+      void fetchLiveResult(normalizedInput, territory, queryUsed)
+        .then((liveResult) => {
+          if (shouldCacheResult(liveResult) && areResultsDifferent(cached.value, liveResult)) {
+            setCache(cacheKey, liveResult);
+          }
+        })
+        .catch(() => {
+          // Silent background refresh failure.
+        });
     }
 
-    const hasUnavailableProvider = providerResults.some((result) => result.status === 'UNAVAILABLE');
+    return cached.value;
+  }
 
-    const status: PriceSearchStatus =
-      observations.length === 0
-        ? 'NO_DATA'
-        : confidence < 50 || warnings.length > 0 || hasUnavailableProvider
-          ? 'PARTIAL'
-          : 'OK';
+  if (cached && !hasSearchTerm) {
+    return cached.value;
+  }
 
-    return {
-      status,
-      intervals: observations.length > 0 ? [interval] : [],
-      confidence,
-      observations,
-      warnings,
-      sourcesUsed,
-      territory,
-      productName,
-      metadata: {
-        queriedAt: new Date().toISOString(),
-        queryUsed,
-        territoryMessage: territoryMessage(territory),
-      },
-    };
-  } catch (error) {
+  try {
+    const liveResult = await fetchLiveResult(normalizedInput, territory, queryUsed);
+    if (shouldCacheResult(liveResult)) {
+      setCache(cacheKey, liveResult);
+    }
+    return liveResult;
+  } catch {
+    if (cached) {
+      return cached.value;
+    }
+
     return {
       status: 'UNAVAILABLE',
       intervals: [],
