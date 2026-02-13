@@ -2,6 +2,7 @@ import type { PriceSearchInput } from '../services/priceSearch/price.types';
 import { normalizeText } from './normalize';
 import { seedProvider } from './seedProvider';
 import type { PriceProvider, ProviderResult } from './types';
+import { track } from '../telemetry';
 
 const OPEN_FOOD_FACTS_ENDPOINT = 'https://world.openfoodfacts.org';
 
@@ -95,18 +96,59 @@ const openPricesStubProvider: PriceProvider = {
 const PROVIDERS: PriceProvider[] = [openFoodFactsProvider, openPricesStubProvider, dataGouvStubProvider];
 
 export async function queryProviders(input: PriceSearchInput, signal: AbortSignal): Promise<ProviderResult[]> {
+  const mode = input.barcode && input.query ? 'mixed' : input.barcode ? 'ean' : 'query';
+  const territory = input.territory ?? 'fr';
+  const queryLen = input.query?.trim().length ?? 0;
+  const eanLen = input.barcode?.trim().length ?? 0;
   const enabledProviders = PROVIDERS.filter((provider) => provider.isEnabled());
 
   if (enabledProviders.length === 0) {
-    return [await seedProvider.search(input, signal)];
+    const seedOnly = await seedProvider.search(input, signal);
+    track({
+      kind: 'provider_run',
+      territory,
+      mode,
+      queryLen,
+      eanLen,
+      durationMs: null,
+      status: seedOnly.status,
+      sourcesUsed: [seedOnly.source],
+      warningsCount: seedOnly.warnings.length,
+      meta: { provider: seedOnly.source, observations: seedOnly.observations.length },
+    });
+    return [seedOnly];
   }
 
   const settled = await Promise.allSettled(enabledProviders.map((provider) => provider.search(input, signal)));
   const liveResults = settled.flatMap((result, index) => {
     const provider = enabledProviders[index];
     if (result.status === 'fulfilled') {
+      track({
+        kind: 'provider_run',
+        territory,
+        mode,
+        queryLen,
+        eanLen,
+        durationMs: null,
+        status: result.value.status,
+        sourcesUsed: [provider.source],
+        warningsCount: result.value.warnings.length,
+        meta: { provider: provider.source, observations: result.value.observations.length },
+      });
       return [result.value];
     }
+    track({
+      kind: 'provider_run',
+      territory,
+      mode,
+      queryLen,
+      eanLen,
+      durationMs: null,
+      status: 'UNAVAILABLE',
+      sourcesUsed: [provider.source],
+      warningsCount: 0,
+      meta: { provider: provider.source, error: 'provider_rejected' },
+    });
     return [{ source: provider.source, status: 'UNAVAILABLE', observations: [], warnings: [] } as ProviderResult];
   });
 
@@ -116,5 +158,18 @@ export async function queryProviders(input: PriceSearchInput, signal: AbortSigna
   }
 
   const seedResult = await seedProvider.search(input, signal);
+  track({
+    kind: 'provider_run',
+    territory,
+    mode,
+    queryLen,
+    eanLen,
+    durationMs: null,
+    status: seedResult.status,
+    sourcesUsed: [seedResult.source],
+    warningsCount: seedResult.warnings.length,
+    meta: { provider: seedResult.source, observations: seedResult.observations.length },
+  });
   return [...liveResults, seedResult];
 }
+
