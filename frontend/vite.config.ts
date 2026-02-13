@@ -62,19 +62,6 @@ export default defineConfig({
     minify: 'esbuild',
     sourcemap: false,
     chunkSizeWarningLimit: 300,
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (id.includes('node_modules')) {
-            if (id.includes('react')) return 'vendor.react'
-            if (id.includes('leaflet')) return 'vendor.leaflet'
-            if (id.includes('framer-motion')) return 'vendor.motion'
-            return 'vendor.misc'
-          }
-          return undefined
-        }
-      }
-    }
   },
   server: {
     port: 3000,

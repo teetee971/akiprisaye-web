@@ -1,7 +1,6 @@
 /* eslint-disable no-undef */
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import L from 'leaflet';
 import { HelmetProvider } from 'react-helmet-async';
 
 import './styles/glass.css';
@@ -19,15 +18,6 @@ window.__BUILD_SHA__ = BUILD_SHA;
 const consoleInfo = globalThis?.console?.info?.bind(globalThis.console);
 consoleInfo?.(`[build] A KI PRI SA YÉ boot sha=${BUILD_SHA}`);
 installRuntimeCrashProbe();
-
-// Fix Leaflet marker icons for Vite/Cloudflare build
-// Point to our bundled markers in /public/leaflet/
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: '/leaflet/marker-icon-2x.png',
-  iconUrl: '/leaflet/marker-icon.png',
-  shadowUrl: '/leaflet/marker-shadow.png',
-});
 
 // Load debug utilities in development
 if (import.meta.env.DEV) {

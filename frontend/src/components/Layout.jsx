@@ -267,7 +267,7 @@ export default function Layout() {
 
       {/* CONTENU */}
       <main
-        id="main-content"
+        id="main"
         className={`flex-1 pt-20 pb-24 px-4 md:px-8 ${focusMode ? 'max-w-4xl mx-auto' : ''}`}
         style={{ fontSize: 'clamp(0.95rem, 0.2vw + 0.9rem, 1.05rem)' }}
         role="main"
