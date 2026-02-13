@@ -5,6 +5,7 @@ import { computePriceConfidence } from './priceConfidence';
 import { normalizeTerritoryCode } from './normalizeTerritoryCode';
 import { queryProviders } from '../../providers';
 import { buildCacheKey, getCache, purgeExpiredCache, setCache } from '../../providers/cache';
+import { track } from '../../telemetry';
 import type {
   PriceInterval,
   PriceSearchInput,
@@ -15,6 +16,35 @@ import type {
 
 const DEFAULT_TERRITORY: TerritoryCode = 'fr';
 const PROVIDER_TIMEOUT_MS = 5000;
+
+function getMode(input: PriceSearchInput): 'ean' | 'query' | 'mixed' {
+  if (input.barcode && input.query) return 'mixed';
+  if (input.barcode) return 'ean';
+  return 'query';
+}
+
+function trackSearchEvent(
+  kind: 'search_start' | 'cache_hit' | 'cache_miss' | 'cache_stale_used' | 'search_result' | 'error',
+  input: PriceSearchInput,
+  territory: TerritoryCode,
+  payload: Partial<PriceSearchResult> & {
+    durationMs?: number | null;
+    meta?: Record<string, string | number>;
+  } = {}
+): void {
+  track({
+    kind,
+    territory,
+    mode: getMode(input),
+    queryLen: input.query?.trim().length ?? 0,
+    eanLen: input.barcode?.trim().length ?? 0,
+    durationMs: payload.durationMs ?? null,
+    status: payload.status ?? null,
+    sourcesUsed: payload.sourcesUsed ?? [],
+    warningsCount: payload.warnings?.length ?? 0,
+    meta: payload.meta,
+  });
+}
 
 function withTimeout<T>(promise: Promise<T>, timeoutMs: number, signal: AbortSignal): Promise<T> {
   return new Promise((resolve, reject) => {
@@ -141,11 +171,21 @@ export async function searchProductPrices(input: PriceSearchInput): Promise<Pric
   const queryUsed = input.barcode || input.query || 'recherche libre';
   const cacheKey = buildSearchCacheKey(normalizedInput, territory);
   const hasSearchTerm = Boolean((normalizedInput.barcode ?? '').trim() || (normalizedInput.query ?? '').trim());
+  const startedAt = performance.now();
+
+  trackSearchEvent('search_start', normalizedInput, territory);
 
   purgeExpiredCache();
   const cached = getCache<PriceSearchResult>(cacheKey);
 
   if (cached?.isFresh) {
+    trackSearchEvent('cache_hit', normalizedInput, territory, {
+      status: cached.value.status,
+      sourcesUsed: cached.value.sourcesUsed,
+      warnings: cached.value.warnings,
+      durationMs: Math.round(performance.now() - startedAt),
+    });
+
     if (hasSearchTerm) {
       void fetchLiveResult(normalizedInput, territory, queryUsed)
         .then((liveResult) => {
@@ -158,10 +198,33 @@ export async function searchProductPrices(input: PriceSearchInput): Promise<Pric
         });
     }
 
+    trackSearchEvent('search_result', normalizedInput, territory, {
+      status: cached.value.status,
+      sourcesUsed: cached.value.sourcesUsed,
+      warnings: cached.value.warnings,
+      durationMs: Math.round(performance.now() - startedAt),
+      meta: { cache: 1 },
+    });
+
     return cached.value;
   }
 
+  trackSearchEvent('cache_miss', normalizedInput, territory);
+
   if (cached && !hasSearchTerm) {
+    trackSearchEvent('cache_stale_used', normalizedInput, territory, {
+      status: cached.value.status,
+      sourcesUsed: cached.value.sourcesUsed,
+      warnings: cached.value.warnings,
+      durationMs: Math.round(performance.now() - startedAt),
+    });
+    trackSearchEvent('search_result', normalizedInput, territory, {
+      status: cached.value.status,
+      sourcesUsed: cached.value.sourcesUsed,
+      warnings: cached.value.warnings,
+      durationMs: Math.round(performance.now() - startedAt),
+      meta: { stale: 1 },
+    });
     return cached.value;
   }
 
@@ -170,13 +233,41 @@ export async function searchProductPrices(input: PriceSearchInput): Promise<Pric
     if (shouldCacheResult(liveResult)) {
       setCache(cacheKey, liveResult);
     }
+
+    trackSearchEvent('search_result', normalizedInput, territory, {
+      status: liveResult.status,
+      sourcesUsed: liveResult.sourcesUsed,
+      warnings: liveResult.warnings,
+      durationMs: Math.round(performance.now() - startedAt),
+      meta: { cache: 0 },
+    });
+
     return liveResult;
   } catch {
     if (cached) {
+      trackSearchEvent('cache_stale_used', normalizedInput, territory, {
+        status: cached.value.status,
+        sourcesUsed: cached.value.sourcesUsed,
+        warnings: cached.value.warnings,
+        durationMs: Math.round(performance.now() - startedAt),
+        meta: { reason: 'provider_failure' },
+      });
+      trackSearchEvent('search_result', normalizedInput, territory, {
+        status: cached.value.status,
+        sourcesUsed: cached.value.sourcesUsed,
+        warnings: cached.value.warnings,
+        durationMs: Math.round(performance.now() - startedAt),
+        meta: { stale: 1 },
+      });
+      trackSearchEvent('error', normalizedInput, territory, {
+        status: 'UNAVAILABLE',
+        durationMs: Math.round(performance.now() - startedAt),
+        meta: { message: 'provider_failure_with_stale' },
+      });
       return cached.value;
     }
 
-    return {
+    const unavailable: PriceSearchResult = {
       status: 'UNAVAILABLE',
       intervals: [],
       confidence: 0,
@@ -190,5 +281,20 @@ export async function searchProductPrices(input: PriceSearchInput): Promise<Pric
         territoryMessage: territoryMessage(territory),
       },
     };
+
+    trackSearchEvent('error', normalizedInput, territory, {
+      status: 'UNAVAILABLE',
+      durationMs: Math.round(performance.now() - startedAt),
+      meta: { message: 'provider_failure_no_stale' },
+    });
+    trackSearchEvent('search_result', normalizedInput, territory, {
+      status: unavailable.status,
+      sourcesUsed: unavailable.sourcesUsed,
+      warnings: unavailable.warnings,
+      durationMs: Math.round(performance.now() - startedAt),
+      meta: { cache: 0 },
+    });
+
+    return unavailable;
   }
 }

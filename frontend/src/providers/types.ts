@@ -1,6 +1,6 @@
 import type { PriceObservation, PriceSearchInput, PriceSourceId } from '../services/priceSearch/price.types';
 
-export type ProviderStatus = 'OK' | 'NO_DATA' | 'UNAVAILABLE';
+export type ProviderStatus = 'OK' | 'NO_DATA' | 'UNAVAILABLE' | 'PARTIAL';
 
 export interface ProviderResult {
   source: PriceSourceId;

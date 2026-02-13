@@ -1,7 +1,9 @@
 import type { PriceSearchInput } from '../services/priceSearch/price.types';
 import { normalizeText } from './normalize';
+import { openPricesProvider } from './openPricesProvider';
 import { seedProvider } from './seedProvider';
 import type { PriceProvider, ProviderResult } from './types';
+import { track } from '../telemetry';
 
 const OPEN_FOOD_FACTS_ENDPOINT = 'https://world.openfoodfacts.org';
 
@@ -11,11 +13,21 @@ const parseFlag = (value: string | boolean | undefined, fallback: boolean): bool
   return ['1', 'true', 'on', 'yes'].includes(value.toLowerCase());
 };
 
-const env = import.meta.env;
+const env = (import.meta as ImportMeta & { env?: Record<string, string | boolean | undefined> }).env ?? {};
+
+function readEnv(name: string): string | boolean | undefined {
+  const fromVite = env[name];
+  if (fromVite !== undefined) return fromVite;
+  const runtime = globalThis as typeof globalThis & { process?: { env?: Record<string, string | undefined> } };
+  if (runtime.process?.env) {
+    return runtime.process.env[name];
+  }
+  return undefined;
+}
 
 const openFoodFactsProvider: PriceProvider = {
   source: 'open_food_facts',
-  isEnabled: () => parseFlag(env.VITE_PRICE_PROVIDER_OPEN_FOOD_FACTS, true),
+  isEnabled: () => parseFlag(readEnv('VITE_PRICE_PROVIDER_OPEN_FOOD_FACTS'), true),
   async search(input, signal) {
     if (!input.barcode && !input.query) {
       return {
@@ -68,7 +80,7 @@ const openFoodFactsProvider: PriceProvider = {
 
 const dataGouvStubProvider: PriceProvider = {
   source: 'data_gouv',
-  isEnabled: () => parseFlag(env.VITE_PRICE_PROVIDER_DATA_GOUV, false),
+  isEnabled: () => parseFlag(readEnv('VITE_PRICE_PROVIDER_DATA_GOUV'), false),
   async search() {
     return {
       source: 'data_gouv',
@@ -79,42 +91,105 @@ const dataGouvStubProvider: PriceProvider = {
   },
 };
 
-const openPricesStubProvider: PriceProvider = {
-  source: 'open_prices',
-  isEnabled: () => parseFlag(env.VITE_PRICE_PROVIDER_OPEN_PRICES, false),
-  async search() {
-    return {
-      source: 'open_prices',
-      status: 'UNAVAILABLE',
-      observations: [],
-      warnings: ['open_prices indisponible (stub provider).'],
-    };
-  },
+const PROVIDERS: PriceProvider[] = [openFoodFactsProvider, openPricesProvider, dataGouvStubProvider];
+
+type ProviderRun = {
+  result: ProviderResult;
+  durationMs: number;
+  errorType?: string;
 };
 
-const PROVIDERS: PriceProvider[] = [openFoodFactsProvider, openPricesStubProvider, dataGouvStubProvider];
+async function runProvider(provider: PriceProvider, input: PriceSearchInput, signal: AbortSignal): Promise<ProviderRun> {
+  const startedAt = performance.now();
+  try {
+    const result = await provider.search(input, signal);
+    return {
+      result,
+      durationMs: Math.round(performance.now() - startedAt),
+    };
+  } catch {
+    return {
+      result: {
+        source: provider.source,
+        status: 'UNAVAILABLE',
+        observations: [],
+        warnings: [`${provider.source} indisponible (exception provider).`],
+      },
+      durationMs: Math.round(performance.now() - startedAt),
+      errorType: 'provider_rejected',
+    };
+  }
+}
+
+function trackProviderRun(
+  input: PriceSearchInput,
+  run: { source: string; status: ProviderResult['status']; warningsCount: number; observationsCount: number; durationMs: number; errorType?: string }
+): void {
+  const mode = input.barcode && input.query ? 'mixed' : input.barcode ? 'ean' : 'query';
+  const territory = input.territory ?? 'fr';
+  const queryLen = input.query?.trim().length ?? 0;
+  const eanLen = input.barcode?.trim().length ?? 0;
+
+  track({
+    kind: 'provider_run',
+    territory,
+    mode,
+    queryLen,
+    eanLen,
+    durationMs: run.durationMs,
+    status: run.status,
+    sourcesUsed: [run.source],
+    warningsCount: run.warningsCount,
+    meta: {
+      provider: run.source,
+      observations: run.observationsCount,
+      ...(run.errorType ? { errorType: run.errorType } : {}),
+    },
+  });
+}
 
 export async function queryProviders(input: PriceSearchInput, signal: AbortSignal): Promise<ProviderResult[]> {
   const enabledProviders = PROVIDERS.filter((provider) => provider.isEnabled());
 
   if (enabledProviders.length === 0) {
-    return [await seedProvider.search(input, signal)];
+    const seedRun = await runProvider(seedProvider, input, signal);
+    trackProviderRun(input, {
+      source: seedRun.result.source,
+      status: seedRun.result.status,
+      warningsCount: seedRun.result.warnings.length,
+      observationsCount: seedRun.result.observations.length,
+      durationMs: seedRun.durationMs,
+      errorType: seedRun.errorType,
+    });
+    return [seedRun.result];
   }
 
-  const settled = await Promise.allSettled(enabledProviders.map((provider) => provider.search(input, signal)));
-  const liveResults = settled.flatMap((result, index) => {
-    const provider = enabledProviders[index];
-    if (result.status === 'fulfilled') {
-      return [result.value];
-    }
-    return [{ source: provider.source, status: 'UNAVAILABLE', observations: [], warnings: [] } as ProviderResult];
-  });
+  const liveRuns = await Promise.all(enabledProviders.map((provider) => runProvider(provider, input, signal)));
+  for (const run of liveRuns) {
+    trackProviderRun(input, {
+      source: run.result.source,
+      status: run.result.status,
+      warningsCount: run.result.warnings.length,
+      observationsCount: run.result.observations.length,
+      durationMs: run.durationMs,
+      errorType: run.errorType,
+    });
+  }
 
+  const liveResults = liveRuns.map((run) => run.result);
   const hasPriceObservations = liveResults.some((result) => result.observations.length > 0);
   if (hasPriceObservations) {
     return liveResults;
   }
 
-  const seedResult = await seedProvider.search(input, signal);
-  return [...liveResults, seedResult];
+  const seedRun = await runProvider(seedProvider, input, signal);
+  trackProviderRun(input, {
+    source: seedRun.result.source,
+    status: seedRun.result.status,
+    warningsCount: seedRun.result.warnings.length,
+    observationsCount: seedRun.result.observations.length,
+    durationMs: seedRun.durationMs,
+    errorType: seedRun.errorType,
+  });
+  return [...liveResults, seedRun.result];
 }

@@ -14,6 +14,7 @@ import OnboardingTour from './components/OnboardingTour';
 import OnboardingAutoStart from './components/OnboardingAutoStart';
 import HelpButton from './components/HelpButton';
 import AnalyticsTracker from './components/analytics/AnalyticsTracker';
+import { isTelemetryEnabled } from './telemetry';
 
 // Lazy-loaded pages - Main routes
 const Home = React.lazy(() => import('./pages/Home'));
@@ -86,6 +87,7 @@ const SyncDashboard = React.lazy(() => import('./pages/admin/sync/SyncDashboard'
 
 // i18n Test page (for development/testing)
 const I18nTest = React.lazy(() => import('./pages/I18nTest'));
+const Diagnostics = React.lazy(() => import('./pages/Diagnostics'));
 
 function LoadingFallback() {
   const [showTimeout, setShowTimeout] = useState(false);
@@ -132,6 +134,7 @@ function LoadingFallback() {
 
 export default function App() {
   const [providerError, setProviderError] = useState<Error | null>(null);
+  const debugTelemetryEnabled = isTelemetryEnabled();
 
   useEffect(() => {
     console.log('🚀 App: Starting initialization');
@@ -254,6 +257,7 @@ export default function App() {
                       
                       {/* i18n Test (development/testing) */}
                       <Route path="test-i18n" element={<I18nTest />} />
+                      {debugTelemetryEnabled && <Route path="diagnostics" element={<Diagnostics />} />}
                       
                       {/* Catch-all route - redirect to home */}
                       <Route path="*" element={<Navigate to="/" replace />} />
