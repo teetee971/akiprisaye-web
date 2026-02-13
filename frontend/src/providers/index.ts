@@ -94,7 +94,7 @@ const openPricesStubProvider: PriceProvider = {
 
 const PROVIDERS: PriceProvider[] = [openFoodFactsProvider, openPricesStubProvider, dataGouvStubProvider];
 
-export async function queryProviders(input: PriceSearchInput, signal: AbortSignal): Promise<ProviderResult[]> {
+export async function runPriceProviders(input: PriceSearchInput, signal: AbortSignal): Promise<ProviderResult[]> {
   const enabledProviders = PROVIDERS.filter((provider) => provider.isEnabled());
 
   if (enabledProviders.length === 0) {
@@ -118,3 +118,5 @@ export async function queryProviders(input: PriceSearchInput, signal: AbortSigna
   const seedResult = await seedProvider.search(input, signal);
   return [...liveResults, seedResult];
 }
+
+export const queryProviders = runPriceProviders;

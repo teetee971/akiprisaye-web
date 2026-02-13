@@ -3,8 +3,9 @@
 import { computeMedian, normalizeObservation, normalizePriceValue } from './priceNormalizer';
 import { computePriceConfidence } from './priceConfidence';
 import { normalizeTerritoryCode } from './normalizeTerritoryCode';
-import { queryProviders } from '../../providers';
+import { runPriceProviders } from '../../providers';
 import { buildCacheKey, getCache, purgeExpiredCache, setCache } from '../../providers/cache';
+import { trackSearchError, trackSearchResult, trackSearchStart } from './telemetry';
 import type {
   PriceInterval,
   PriceSearchInput,
@@ -62,7 +63,7 @@ async function fetchLiveResult(
 ): Promise<PriceSearchResult> {
   const controller = new AbortController();
   const providerResults = await withTimeout(
-    queryProviders(normalizedInput, controller.signal),
+    runPriceProviders(normalizedInput, controller.signal),
     PROVIDER_TIMEOUT_MS,
     controller.signal
   );
@@ -141,6 +142,12 @@ export async function searchProductPrices(input: PriceSearchInput): Promise<Pric
   const queryUsed = input.barcode || input.query || 'recherche libre';
   const cacheKey = buildSearchCacheKey(normalizedInput, territory);
   const hasSearchTerm = Boolean((normalizedInput.barcode ?? '').trim() || (normalizedInput.query ?? '').trim());
+  trackSearchStart({
+    territory,
+    hasBarcode: Boolean((normalizedInput.barcode ?? '').trim()),
+    hasQuery: Boolean((normalizedInput.query ?? '').trim()),
+    cacheKey,
+  });
 
   purgeExpiredCache();
   const cached = getCache<PriceSearchResult>(cacheKey);
@@ -158,10 +165,26 @@ export async function searchProductPrices(input: PriceSearchInput): Promise<Pric
         });
     }
 
+    trackSearchResult({
+      territory,
+      status: cached.value.status,
+      confidence: cached.value.confidence,
+      sourceCount: cached.value.sourcesUsed.length,
+      warningCount: cached.value.warnings.length,
+      cacheHit: true,
+    });
     return cached.value;
   }
 
   if (cached && !hasSearchTerm) {
+    trackSearchResult({
+      territory,
+      status: cached.value.status,
+      confidence: cached.value.confidence,
+      sourceCount: cached.value.sourcesUsed.length,
+      warningCount: cached.value.warnings.length,
+      cacheHit: true,
+    });
     return cached.value;
   }
 
@@ -170,13 +193,34 @@ export async function searchProductPrices(input: PriceSearchInput): Promise<Pric
     if (shouldCacheResult(liveResult)) {
       setCache(cacheKey, liveResult);
     }
+    trackSearchResult({
+      territory,
+      status: liveResult.status,
+      confidence: liveResult.confidence,
+      sourceCount: liveResult.sourcesUsed.length,
+      warningCount: liveResult.warnings.length,
+      cacheHit: false,
+    });
     return liveResult;
   } catch {
     if (cached) {
+      trackSearchError({
+        territory,
+        cacheHit: true,
+        reason: 'live_fetch_failed',
+      });
+      trackSearchResult({
+        territory,
+        status: cached.value.status,
+        confidence: cached.value.confidence,
+        sourceCount: cached.value.sourcesUsed.length,
+        warningCount: cached.value.warnings.length,
+        cacheHit: true,
+      });
       return cached.value;
     }
 
-    return {
+    const unavailableResult: PriceSearchResult = {
       status: 'UNAVAILABLE',
       intervals: [],
       confidence: 0,
@@ -190,5 +234,21 @@ export async function searchProductPrices(input: PriceSearchInput): Promise<Pric
         territoryMessage: territoryMessage(territory),
       },
     };
+
+    trackSearchError({
+      territory,
+      cacheHit: false,
+      reason: 'live_fetch_failed',
+    });
+    trackSearchResult({
+      territory,
+      status: unavailableResult.status,
+      confidence: unavailableResult.confidence,
+      sourceCount: unavailableResult.sourcesUsed.length,
+      warningCount: unavailableResult.warnings.length,
+      cacheHit: false,
+    });
+
+    return unavailableResult;
   }
 }
