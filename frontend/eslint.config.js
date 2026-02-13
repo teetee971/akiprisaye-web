@@ -14,7 +14,6 @@ export default [
       '*.config.ts',
       'public/ocr/**',
       'public/service-worker.js',
-      'public/react-entry.js',
       'coverage/**',
       'build/**',
       '.vite/**',
