@@ -149,10 +149,9 @@ jobs:
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 
-      - name: Install Playwright browsers (official action)
-        uses: microsoft/playwright-github-action@v1
-        with:
-          working-directory: frontend
+      - name: Install Playwright browser (Chromium)
+        working-directory: frontend
+        run: npx playwright install --with-deps chromium
 
       - name: Production UX audit (PR report-only)
         if: github.event_name == 'pull_request'
@@ -222,7 +221,7 @@ jobs:
             });
 
       - name: Upload accessibility report
-        if: always()
+        if: always() && hashFiles('frontend/axe-report.txt') != ''
         uses: actions/upload-artifact@v4
         with:
           name: axe-report
@@ -230,7 +229,7 @@ jobs:
           retention-days: 30
 
       - name: Upload Lighthouse results
-        if: always()
+        if: always() && hashFiles('frontend/.lighthouseci/**') != ''
         uses: actions/upload-artifact@v4
         with:
           name: lighthouse-results
@@ -238,7 +237,7 @@ jobs:
           retention-days: 30
 
       - name: Upload Playwright report
-        if: always()
+        if: always() && hashFiles('frontend/playwright-report/**') != ''
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
@@ -246,7 +245,7 @@ jobs:
           retention-days: 30
 
       - name: Upload Playwright test results
-        if: always()
+        if: always() && hashFiles('frontend/test-results/**') != ''
         uses: actions/upload-artifact@v4
         with:
           name: test-results
@@ -254,7 +253,7 @@ jobs:
           retention-days: 30
 
       - name: Upload UX axe report
-        if: always()
+        if: always() && hashFiles('frontend/ux-axe-report.txt') != ''
         uses: actions/upload-artifact@v4
         with:
           name: ux-axe-report
