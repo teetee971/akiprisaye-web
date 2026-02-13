@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect, useRef } from 'react';
-import { BrowserMultiFormatReader, NotFoundException } from '@zxing/library';
+import { BarcodeFormat, BrowserMultiFormatReader, DecodeHintType, NotFoundException } from '@zxing/library';
 import uxMonitor from '../utils/uxMonitor';
 import type { ScanState, ScannerOptions } from '../types/scan';
 import { SCANNER_MESSAGES, type ScannerMessage } from '../constants/scannerMessages';
@@ -40,6 +40,8 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
     videoSize: '0x0',
     playState: 'idle',
     framesReceived: 0,
+    lastResult: 'none',
+    lastError: 'none',
   });
 
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -48,7 +50,23 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
   const scanStartTimeRef = useRef<number>(0);
   const timeoutRef = useRef<number | null>(null);
   const debugFrameCounterRef = useRef<number>(0);
+  const lastDebugUpdateAtRef = useRef<number>(0);
   const debugIntervalRef = useRef<number | null>(null);
+
+  const createReader = () => {
+    const hints = new Map();
+    hints.set(DecodeHintType.POSSIBLE_FORMATS, [
+      BarcodeFormat.EAN_13,
+      BarcodeFormat.EAN_8,
+      BarcodeFormat.CODE_128,
+      BarcodeFormat.UPC_A,
+      BarcodeFormat.UPC_E,
+    ]);
+    hints.set(DecodeHintType.TRY_HARDER, true);
+
+    // Faster decode cadence for mobile live scanning.
+    return new BrowserMultiFormatReader(hints, 120);
+  };
 
   // Helpers to avoid stale state in async callbacks
   const scanStateRef = useRef<ScanState>('idle');
@@ -148,7 +166,7 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
   };
 
   useEffect(() => {
-    readerRef.current = new BrowserMultiFormatReader();
+    readerRef.current = createReader();
     setScanState('idle');
 
     return () => {
@@ -233,6 +251,7 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
     uxMonitor.cameraPermissionRequested();
 
     updateDebugInfo({ framesReceived: 0, videoSize: '0x0', playState: 'requesting' });
+    lastDebugUpdateAtRef.current = 0;
     if (debugEnabled) console.log('[SCAN] Camera permission state:', permission);
     updateDebugInfo({ permission });
 
@@ -441,7 +460,9 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
         if (timeoutRef.current !== null) window.clearTimeout(timeoutRef.current);
         timeoutRef.current = window.setTimeout(() => {
           console.warn('[SCAN] ⏱️ Scan timeout');
-          setError('⏱️ Timeout: Approchez le code-barres de la caméra (10-20 cm)');
+          setError('⏱️ Timeout: Approchez le code-barres de la caméra (10-20 cm). Passage en mode import.');
+          setUserMessage(SCANNER_MESSAGES.CAMERA_UNAVAILABLE);
+          setScanMode('upload');
           transitionState('error', `Timeout after ${timeout}ms`);
           uxMonitor.scanCompleted('barcode', false);
         }, timeout);
@@ -468,6 +489,7 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
 
           readerRef.current.decodeFromStream(stream, videoRef.current, (result, err) => {
             debugFrameCounterRef.current += 1;
+            const now = Date.now();
 
             if (firstFramesAt === null && debugFrameCounterRef.current > 10) {
               firstFramesAt = Date.now();
@@ -484,6 +506,11 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
 
               const code = normalizeDetectedCode(result.getText());
               const duration = Date.now() - scanStartTimeRef.current;
+
+              if (debugEnabled && now - lastDebugUpdateAtRef.current > 1000) {
+                updateDebugInfo({ lastResult: code, lastError: 'none' });
+                lastDebugUpdateAtRef.current = now;
+              }
 
               if (!isAcceptedEanCode(code)) {
                 if (debugEnabled) console.log('[SCAN] Ignored non-EAN code from camera:', code);
@@ -503,6 +530,12 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
 
             if (err && !(err instanceof NotFoundException)) {
               console.error('[SCAN] Scan error:', err);
+              if (debugEnabled && now - lastDebugUpdateAtRef.current > 1000) {
+                updateDebugInfo({
+                  lastError: err instanceof Error ? err.message : String(err),
+                });
+                lastDebugUpdateAtRef.current = now;
+              }
             }
 
             // if nothing found, keep searching state
@@ -1049,6 +1082,8 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
                 <li>video: {debugInfo.videoSize}</li>
                 <li>play: {debugInfo.playState}</li>
                 <li>frames: {debugInfo.framesReceived}</li>
+                <li>lastResult: {debugInfo.lastResult}</li>
+                <li>lastError: {debugInfo.lastError}</li>
               </ul>
               <p className="text-slate-400">
                 Test rapide: autoriser la caméra, vérifier que video {'>'} 0x0, puis essayer aussi l’import d’image (ex:
