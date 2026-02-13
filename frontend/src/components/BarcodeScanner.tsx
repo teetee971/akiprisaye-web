@@ -4,6 +4,7 @@ import { BrowserMultiFormatReader, NotFoundException } from '@zxing/library';
 import uxMonitor from '../utils/uxMonitor';
 import type { ScanState, ScannerOptions, ScanStateTransition } from '../types/scan';
 import { SCANNER_MESSAGES, type ScannerMessage } from '../constants/scannerMessages';
+import { isAcceptedEanCode, normalizeDetectedCode } from '../utils/eanScan';
 
 interface BarcodeScannerProps {
   onScan: (code: string) => void;
@@ -12,6 +13,8 @@ interface BarcodeScannerProps {
 }
 
 export default function BarcodeScanner({ onScan, onClose, options = {} }: BarcodeScannerProps) {
+  const isScanDebug = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('scanDebug') === '1';
+
   // Scan state management
   const [scanState, setScanState] = useState<ScanState>('idle');
   
@@ -24,15 +27,25 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
   const [torchEnabled, setTorchEnabled] = useState(false);
   const [scanMode, setScanMode] = useState<'camera' | 'upload'>('camera');
   const [userMessage, setUserMessage] = useState<ScannerMessage | null>(null);
-  const [showPermissionGuide, setShowPermissionGuide] = useState(false);
   
   // OPTIMIZATION #2: Scan feedback state
   const [scanFeedback, setScanFeedback] = useState<'searching' | 'focusing' | 'detecting' | null>(null);
+  const [debugInfo, setDebugInfo] = useState({
+    permission: 'unknown' as 'granted' | 'prompt' | 'denied' | 'unsupported' | 'unknown',
+    selectedDeviceId: 'n/a',
+    constraints: 'n/a',
+    videoSize: '0x0',
+    playState: 'idle',
+    framesReceived: 0,
+  });
   
   const videoRef = useRef<HTMLVideoElement>(null);
   const readerRef = useRef<BrowserMultiFormatReader | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const scanStartTimeRef = useRef<number>(0);
+  const timeoutRef = useRef<number | null>(null);
+  const debugFrameCounterRef = useRef<number>(0);
+  const debugIntervalRef = useRef<number | null>(null);
   
   // Configuration with defaults
   const {
@@ -40,6 +53,21 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
     enableDebugLogging = false,
     enableOcrFallback = true, // OCR enabled by default for better detection
   } = options;
+  const debugEnabled = enableDebugLogging || isScanDebug;
+
+  const updateDebugInfo = (patch: Partial<typeof debugInfo>) => {
+    if (!debugEnabled) {
+      return;
+    }
+
+    setDebugInfo((previous) => ({ ...previous, ...patch }));
+  };
+
+  const debugLog = (...args: unknown[]) => {
+    if (debugEnabled) {
+      console.log('[SCAN_DEBUG]', ...args);
+    }
+  };
 
   // State transition handler with logging
   const transitionState = (to: ScanState, reason?: string) => {
@@ -47,7 +75,7 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
     
     setScanState(to);
     
-    if (enableDebugLogging) {
+    if (debugEnabled) {
       console.log(`[SCAN] State transition: ${from} → ${to}`, reason || '');
     }
   };
@@ -63,7 +91,7 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
       const result = await navigator.permissions.query({ name: "camera" as PermissionName });
       return result.state as 'granted' | 'prompt' | 'denied';
     } catch (error) {
-      if (enableDebugLogging) {
+      if (debugEnabled) {
         console.log('[SCAN] Permissions API not available or error:', error);
       }
       return 'unsupported';
@@ -71,34 +99,56 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
   };
 
   // Activate fallback to image upload mode
-  const activateImageUploadFallback = (message: ScannerMessage = SCANNER_MESSAGES.CAMERA_UNAVAILABLE) => {
+  const activateImageUploadFallback = () => {
     setScanMode('upload');
-    setUserMessage(message);
-
-    if (enableDebugLogging) {
+    setUserMessage(SCANNER_MESSAGES.CAMERA_UNAVAILABLE);
+    
+    if (debugEnabled) {
       console.log('[SCAN] Fallback activated: Switching to image upload mode');
     }
   };
 
-  const requestClose = () => {
-    stopScanning();
-    onClose();
-  };
-
   useEffect(() => {
     readerRef.current = new BrowserMultiFormatReader();
-    transitionState('idle', 'Component mounted');
+    setScanState('idle');
     
     return () => {
-      stopScanning();
+      const videoElement = videoRef.current;
+
+      setIsScanning(false);
+
+      if (readerRef.current) {
+        readerRef.current.reset();
+      }
+
+      if (timeoutRef.current !== null) {
+        window.clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+
+      if (debugIntervalRef.current !== null) {
+        window.clearInterval(debugIntervalRef.current);
+        debugIntervalRef.current = null;
+      }
+
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
+        streamRef.current = null;
+      }
+
+      if (videoElement) {
+        videoElement.onloadedmetadata = null;
+        videoElement.onerror = null;
+        videoElement.pause();
+        videoElement.srcObject = null;
+      }
     };
   }, []);
 
-
   const startScanning = async () => {
+    stopScanning();
     setError(null);
     setUserMessage(null);
-    setShowPermissionGuide(false);
     setIsScanning(true);
     setHasPermission(null); // Reset permission state
     setScanFeedback('searching'); // OPTIMIZATION #2: Set initial feedback
@@ -114,36 +164,62 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
     // PROMPT 4: Monitor permission request
     uxMonitor.cameraPermissionRequested();
     
-    if (enableDebugLogging) {
+    updateDebugInfo({ framesReceived: 0, videoSize: '0x0', playState: 'requesting' });
+
+    if (debugEnabled) {
       console.log('[SCAN] Camera permission state:', permission);
     }
+    updateDebugInfo({ permission });
 
     // Try camera if permission is granted, prompt, or unsupported (browsers without Permissions API)
     if (permission === 'granted' || permission === 'prompt' || permission === 'unsupported') {
       try {
         // Guard for non-browser environments
         if (typeof navigator === 'undefined' || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-          setHasPermission(false);
-          setIsScanning(false);
-          activateImageUploadFallback(SCANNER_MESSAGES.CAMERA_UNAVAILABLE);
-          transitionState('idle', 'getUserMedia non disponible');
-          return;
+          throw new Error('getUserMedia non disponible sur ce navigateur');
         }
 
-        if (enableDebugLogging) {
+        if (debugEnabled) {
           console.log('[SCAN] 📷 Requesting camera access...');
         }
+
+        const requestCameraStream = async () => {
+          const constraintSets: MediaStreamConstraints[] = [
+            {
+              video: {
+                facingMode: { ideal: 'environment' },
+                width: { ideal: 1280 },
+                height: { ideal: 720 },
+              },
+            },
+            { video: { facingMode: { ideal: 'environment' } } },
+            { video: true },
+          ];
+
+          let lastError: unknown = null;
+
+          for (const constraints of constraintSets) {
+            try {
+              if (debugEnabled) {
+                console.log('[SCAN] 📷 Trying constraints:', constraints);
+              }
+              const stream = await navigator.mediaDevices.getUserMedia(constraints);
+              updateDebugInfo({ constraints: JSON.stringify(constraints.video ?? constraints) });
+              return stream;
+            } catch (constraintError) {
+              lastError = constraintError;
+              if (debugEnabled) {
+                console.log('[SCAN] ⚠️ Constraint failed, trying fallback:', constraintError);
+              }
+            }
+          }
+
+          throw lastError ?? new Error('Aucune contrainte caméra compatible');
+        };
+
+        const stream = await requestCameraStream();
         
-        // Request camera permission with proper constraints
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { 
-            facingMode: { ideal: 'environment' },
-            width: { ideal: 1280 },
-            height: { ideal: 720 }
-          },
-        });
-        
-        if (enableDebugLogging) {
+        if (debugEnabled) {
           console.log('[SCAN] ✅ Camera access granted');
         }
         streamRef.current = stream;
@@ -151,18 +227,26 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
         
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
+          videoRef.current.setAttribute('playsinline', 'true');
+          videoRef.current.autoplay = true;
+          videoRef.current.muted = true;
           
           // Wait for video to be ready
           await new Promise<void>((resolve, reject) => {
             if (videoRef.current) {
               videoRef.current.onloadedmetadata = () => {
-                if (enableDebugLogging) {
+                if (debugEnabled) {
                   console.log('[SCAN] 📹 Video metadata loaded');
                 }
+                updateDebugInfo({
+                  videoSize: `${videoRef.current?.videoWidth ?? 0}x${videoRef.current?.videoHeight ?? 0}`,
+                  playState: 'metadata-ready',
+                });
                 resolve();
               };
               videoRef.current.onerror = () => {
                 console.error('[SCAN] ❌ Video error');
+                updateDebugInfo({ playState: 'video-error' });
                 reject(new Error('Erreur de chargement vidéo'));
               };
             } else {
@@ -171,44 +255,90 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
           });
           
           await videoRef.current.play();
-          if (enableDebugLogging) {
+          updateDebugInfo({
+            playState: videoRef.current.paused ? 'paused-after-play' : 'playing',
+            videoSize: `${videoRef.current.videoWidth}x${videoRef.current.videoHeight}`,
+          });
+          if (debugEnabled) {
             console.log('[SCAN] ▶️ Video playing');
           }
+          videoRef.current.onloadedmetadata = null;
+          videoRef.current.onerror = null;
         }
 
         // Check if torch is supported
         const track = stream.getVideoTracks()[0];
-        const capabilities = track.getCapabilities() as any;
-        if (enableDebugLogging) {
-          console.log('[SCAN] 📱 Camera capabilities:', capabilities);
-        }
-        
-        if ('torch' in capabilities) {
-          setTorchSupported(true);
-          if (enableDebugLogging) {
-            console.log('[SCAN] 🔦 Torch supported');
+        if (track) {
+          const capabilities = track.getCapabilities() as any;
+          if (debugEnabled) {
+            console.log('[SCAN] 📱 Camera capabilities:', capabilities);
           }
+
+          if ('torch' in capabilities) {
+            setTorchSupported(true);
+            if (debugEnabled) {
+              console.log('[SCAN] 🔦 Torch supported');
+            }
+          }
+          const settings = track.getSettings();
+          updateDebugInfo({
+            selectedDeviceId: settings.deviceId || 'unknown-device',
+          });
+          debugLog('Track settings', settings);
+        } else if (debugEnabled) {
+          console.log('[SCAN] ⚠️ No video track available to check torch support');
         }
 
         // Start decoding with timeout
-        const timeoutId = setTimeout(() => {
+        if (timeoutRef.current !== null) {
+          window.clearTimeout(timeoutRef.current);
+        }
+
+        timeoutRef.current = window.setTimeout(() => {
           console.warn('[SCAN] ⏱️ Scan timeout');
           setError('⏱️ Timeout: Approchez le code-barres de la caméra (10-20 cm)');
           transitionState('error', `Timeout after ${timeout}ms`);
         }, timeout);
 
-        if (enableDebugLogging) {
+        if (debugEnabled) {
           console.log('[SCAN] 🔍 Starting barcode detection...');
+        }
+
+        if (debugEnabled) {
+          if (debugIntervalRef.current !== null) {
+            window.clearInterval(debugIntervalRef.current);
+          }
+          debugIntervalRef.current = window.setInterval(() => {
+            const video = videoRef.current;
+            updateDebugInfo({
+              framesReceived: debugFrameCounterRef.current,
+              videoSize: `${video?.videoWidth ?? 0}x${video?.videoHeight ?? 0}`,
+              playState: video
+                ? `${video.paused ? 'paused' : 'playing'} / ${video.readyState}`
+                : 'no-video',
+            });
+          }, 500);
         }
         
         if (readerRef.current && videoRef.current) {
-          readerRef.current.decodeFromVideoDevice(null, videoRef.current, (result, err) => {
+          readerRef.current.decodeFromStream(stream, videoRef.current, (result, err) => {
+            debugFrameCounterRef.current += 1;
             if (result) {
-              clearTimeout(timeoutId);
-              const code = result.getText();
+              if (timeoutRef.current !== null) {
+                window.clearTimeout(timeoutRef.current);
+                timeoutRef.current = null;
+              }
+              const code = normalizeDetectedCode(result.getText());
               const duration = Date.now() - scanStartTimeRef.current;
+
+              if (!isAcceptedEanCode(code)) {
+                if (debugEnabled) {
+                  console.log('[SCAN] Ignored non-EAN code from camera:', code);
+                }
+                return;
+              }
               
-              if (enableDebugLogging) {
+              if (debugEnabled) {
                 console.log(`[SCAN] ✅ Barcode detected in ${duration}ms:`, code);
               }
               
@@ -224,43 +354,31 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
         }
 
         return; // Success - camera is working
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('[SCAN] ❌ Camera error:', err);
-
-        const isPermissionDenied = err?.name === 'NotAllowedError' || permission === 'denied';
-
-        setHasPermission(false);
-        setIsScanning(false);
-
-        if (isPermissionDenied) {
-          setShowPermissionGuide(false);
-          activateImageUploadFallback(SCANNER_MESSAGES.CAMERA_PERMISSION_DENIED);
-          transitionState('idle', 'Camera permission denied');
-          return;
+        const mediaError = err as { name?: string; message?: string };
+        if (mediaError?.name === 'NotAllowedError') {
+          setError('Accès caméra refusé. Autorisez la caméra puis réessayez.');
+        } else if (mediaError?.name === 'NotFoundError') {
+          setError('Aucune caméra détectée sur cet appareil.');
+        } else if (mediaError?.name === 'NotReadableError') {
+          setError('Caméra indisponible (déjà utilisée par une autre application).');
+        } else if (mediaError?.name === 'OverconstrainedError') {
+          setError('Contraintes caméra non compatibles. Nouvelle tentative avec réglages simplifiés.');
         }
-
-        activateImageUploadFallback(SCANNER_MESSAGES.CAMERA_UNAVAILABLE);
-        transitionState('idle', 'Camera unavailable - fallback to upload');
-        return;
+        debugLog('Camera startup failure details', mediaError?.name, mediaError?.message);
+        // Camera technically inaccessible - fall through to fallback
       }
     }
 
     // 🔴 FALLBACK AUTOMATIQUE - Camera denied, not supported, or failed
-    if (enableDebugLogging) {
+    if (debugEnabled) {
       console.log('[SCAN] 🔄 Activating automatic fallback to image upload');
     }
-
+    
     setHasPermission(false);
     setIsScanning(false);
-
-    if (permission === 'denied') {
-      setShowPermissionGuide(false);
-      activateImageUploadFallback(SCANNER_MESSAGES.CAMERA_PERMISSION_DENIED);
-      transitionState('idle', 'Camera permission denied before prompt');
-      return;
-    }
-
-    activateImageUploadFallback(SCANNER_MESSAGES.CAMERA_UNAVAILABLE);
+    activateImageUploadFallback();
     transitionState('idle', 'Camera unavailable - fallback to upload');
   };
 
@@ -270,6 +388,16 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
     if (readerRef.current) {
       readerRef.current.reset();
     }
+
+    if (timeoutRef.current !== null) {
+      window.clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+
+    if (debugIntervalRef.current !== null) {
+      window.clearInterval(debugIntervalRef.current);
+      debugIntervalRef.current = null;
+    }
     
     if (streamRef.current) {
       streamRef.current.getTracks().forEach(track => track.stop());
@@ -277,8 +405,13 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
     }
     
     if (videoRef.current) {
+      videoRef.current.onloadedmetadata = null;
+      videoRef.current.onerror = null;
+      videoRef.current.pause();
       videoRef.current.srcObject = null;
     }
+
+    debugFrameCounterRef.current = 0;
 
     setTorchEnabled(false);
     
@@ -456,6 +589,17 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
 
       // Step 4: Handle result
       if (ean) {
+        const normalizedEan = normalizeDetectedCode(ean);
+        if (!isAcceptedEanCode(normalizedEan)) {
+          setUserMessage({
+            type: 'warning',
+            title: 'Code non supporté',
+            message: 'Le scan a détecté un code, mais ce n’est pas un EAN-8/EAN-13 valide.',
+          });
+          transitionState('idle', 'Unsupported barcode format from image');
+          return;
+        }
+
         // SUCCESS CASE
         // TODO: Externalize detection method names to constants or i18n for better maintainability
         const methodName = 
@@ -467,7 +611,7 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
         setUserMessage({ 
           type: 'info', 
           title: 'Code détecté', 
-          message: `✅ Code détecté avec ${methodName}: ${ean}` 
+          message: `✅ Code détecté avec ${methodName}: ${normalizedEan}` 
         });
         
         if (enableDebugLogging) {
@@ -483,7 +627,7 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
         uxMonitor.scanCompleted('barcode', true);
         
         try {
-          onScan(ean);
+          onScan(normalizedEan);
         } catch (err) {
           console.error('[SCAN] Error in onScan callback:', err);
           setError('Erreur lors du traitement du code détecté');
@@ -524,30 +668,31 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
 
   const handleManualSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (manualInput.length >= 8) {
-      if (enableDebugLogging) {
-        console.log('[SCAN] Manual input submitted:', manualInput);
+    const normalizedManualInput = normalizeDetectedCode(manualInput);
+    if (isAcceptedEanCode(normalizedManualInput)) {
+      if (debugEnabled) {
+        console.log('[SCAN] Manual input submitted:', normalizedManualInput);
       }
-      transitionState('processing', `Manual input: ${manualInput}`);
-      onScan(manualInput);
+      transitionState('processing', `Manual input: ${normalizedManualInput}`);
+      onScan(normalizedManualInput);
       setManualInput('');
+      return;
     }
+
+    setError('Veuillez saisir un code EAN-8 ou EAN-13 valide.');
   };
 
   return (
     <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4">
-      <button
-        type="button"
-        className="absolute inset-0"
-        aria-label="Fermer le scanner"
-        onClick={requestClose}
-      />
-      <div className="relative bg-slate-900 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-slate-900 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-slate-700">
           <h2 className="text-xl font-bold text-white">📷 Scanner Code-Barres</h2>
           <button
-            onClick={requestClose}
+            onClick={() => {
+              stopScanning();
+              onClose();
+            }}
             className="text-gray-400 hover:text-white text-2xl"
             aria-label="Fermer"
           >
@@ -572,13 +717,14 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
             <div className="relative bg-black rounded-lg overflow-hidden">
               <video
                 ref={videoRef}
-                className="w-full h-64 object-cover"
+                className="relative z-10 block w-full h-64 object-cover bg-black"
                 playsInline
                 muted
+                autoPlay
               />
               
               {/* OPTIMIZATION #2: Enhanced scanning overlay with real-time feedback */}
-              <div className="absolute inset-0 flex items-center justify-center">
+              <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
                 {/* Scan frame with dynamic border */}
                 <div className={`border-2 w-64 h-32 rounded-lg shadow-lg transition-all ${
                   scanFeedback === 'searching' ? 'border-blue-500 animate-pulse' :
@@ -681,31 +827,19 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
                   💡 <strong>Astuce :</strong> Vous pouvez également utiliser la saisie manuelle en bas de page.
                 </p>
               </div>
-
-              {userMessage.title === SCANNER_MESSAGES.CAMERA_PERMISSION_DENIED.title && (
-                <button
-                  type="button"
-                  onClick={() => setShowPermissionGuide(true)}
-                  className="mt-3 w-full px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-md font-semibold transition-colors"
-                >
-                  📖 Voir comment autoriser la caméra
-                </button>
-              )}
             </div>
           )}
 
           {/* Permission denied help */}
           {hasPermission === false && !userMessage && (
             <div className="bg-yellow-900/20 border border-yellow-700/30 rounded-lg p-4 text-sm text-yellow-200">
-              <p className="font-semibold mb-2">🔐 Caméra bloquée ou indisponible</p>
-              <p>Sur mobile Chrome/Android, ouvrez le menu ⋮ puis :</p>
-              <ul className="space-y-2 ml-4 list-disc mt-2">
-                <li>Paramètres</li>
-                <li>Paramètres du site</li>
-                <li>Caméra</li>
-                <li>Autoriser</li>
+              <p className="font-semibold mb-2">🔐 Comment autoriser l'accès à la caméra ?</p>
+              <ul className="space-y-2 ml-4 list-disc">
+                <li><strong>Chrome/Edge :</strong> Cliquez sur l'icône 🔒 ou ℹ️ dans la barre d'adresse → Paramètres du site → Caméra → Autoriser</li>
+                <li><strong>Safari (iOS) :</strong> Réglages → Safari → Caméra → Autoriser</li>
+                <li><strong>Firefox :</strong> Cliquez sur l'icône 🔒 → Autorisations → Caméra → Autoriser</li>
               </ul>
-              <p className="mt-3 text-xs">Ensuite, revenez ici et utilisez « Réessayer la caméra ». Si cela ne fonctionne pas, continuez avec l'import d'image ou la saisie manuelle.</p>
+              <p className="mt-3 text-xs">Une fois l'autorisation donnée, rechargez la page et réessayez.</p>
             </div>
           )}
 
@@ -790,42 +924,24 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
               </button>
             </form>
           </div>
-        </div>
 
-      {showPermissionGuide && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/70 p-4">
-          <div className="w-full max-w-md rounded-xl border border-white/10 bg-slate-900 p-4 text-sm text-slate-200">
-            <div className="flex items-center justify-between">
-              <h3 className="text-base font-semibold text-white">Aide caméra (Chrome Android)</h3>
-              <button
-                type="button"
-                onClick={() => setShowPermissionGuide(false)}
-                className="text-slate-300 hover:text-white"
-                aria-label="Fermer l'aide caméra"
-              >
-                ✕
-              </button>
+          {isScanDebug && (
+            <div className="border-t border-slate-700 pt-4 text-xs text-slate-200 space-y-2">
+              <p className="font-semibold text-amber-300">🧪 Debug scanner (?scanDebug=1)</p>
+              <ul className="space-y-1 font-mono bg-slate-950/80 border border-slate-700 rounded p-3">
+                <li>permission: {debugInfo.permission}</li>
+                <li>deviceId: {debugInfo.selectedDeviceId}</li>
+                <li>constraints: {debugInfo.constraints}</li>
+                <li>video: {debugInfo.videoSize}</li>
+                <li>play: {debugInfo.playState}</li>
+                <li>frames: {debugInfo.framesReceived}</li>
+              </ul>
+              <p className="text-slate-400">
+                Test rapide: autoriser la caméra, vérifier que video {'>'} 0x0, puis essayer aussi l’import d’image (ex: EAN 3292090000016).
+              </p>
             </div>
-            <ol className="mt-3 space-y-2 list-decimal pl-5">
-              <li>Dans Chrome, ouvrez le menu <strong>⋮</strong>.</li>
-              <li>Allez dans <strong>Paramètres</strong>.</li>
-              <li>Ouvrez <strong>Paramètres du site</strong>.</li>
-              <li>Sélectionnez <strong>Caméra</strong>.</li>
-              <li>Choisissez <strong>Autoriser</strong> pour ce site.</li>
-            </ol>
-            <p className="mt-3 text-xs text-slate-400">
-              Puis revenez au scanner et appuyez sur « Réessayer la caméra ».
-            </p>
-            <button
-              type="button"
-              onClick={() => setShowPermissionGuide(false)}
-              className="mt-4 w-full rounded-lg bg-slate-700 px-4 py-2 font-medium text-white hover:bg-slate-600"
-            >
-              Compris
-            </button>
-          </div>
+          )}
         </div>
-      )}
       </div>
     </div>
   );
