@@ -17,6 +17,7 @@ Cette couche introduit une architecture provider minimale et sûre dans `fronten
 
 - `VITE_PRICE_PROVIDER_OPEN_FOOD_FACTS` (défaut: `true`)
 - `VITE_PRICE_PROVIDER_OPEN_PRICES` (défaut: `false`)
+- `VITE_PRICE_PROVIDER_OPEN_PRICES_ENDPOINT` (défaut: non défini, requis pour activer l'appel live)
 - `VITE_PRICE_PROVIDER_DATA_GOUV` (défaut: `false`)
 
 Valeurs truthy acceptées: `1`, `true`, `on`, `yes`.
@@ -30,7 +31,7 @@ Valeurs truthy acceptées: `1`, `true`, `on`, `yes`.
 ## État actuel
 
 - `open_food_facts`: enrichissement métadonnées produit (non bloquant).
-- `open_prices`: stub contrôlé par flag.
+- `open_prices`: provider live via endpoint configurable (timeout 5s, parsing défensif, filtre territoire si disponible).
 - `data_gouv`: stub contrôlé par flag.
 - `seedProducts`: fallback de sécurité (obligatoire).
 

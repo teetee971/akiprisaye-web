@@ -1,20 +1,17 @@
 import { describe, expect, test } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 
 describe('Cloudflare SPA routing config', () => {
-  test('_redirects uses app.html fallback to avoid infinite loop', () => {
-    const redirectsPath = path.resolve('public/_redirects');
-    const content = readFileSync(redirectsPath, 'utf8');
-
-    expect(content).toContain('/*  /app.html  200');
-    expect(content).not.toContain('/*  /index.html  200');
+  test('no custom Cloudflare routing rules are shipped from public/', () => {
+    expect(existsSync(path.resolve('public/_redirects'))).toBe(false);
+    expect(existsSync(path.resolve('public/_headers'))).toBe(false);
   });
 
-  test('build script runs postbuild step that creates app.html', () => {
+  test('build script relies on native Cloudflare Pages SPA fallback', () => {
     const packageJsonPath = path.resolve('package.json');
     const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8')) as { scripts?: Record<string, string> };
 
-    expect(packageJson.scripts?.build).toContain('postbuild-cloudflare.mjs');
+    expect(packageJson.scripts?.build).toBe('vite build');
   });
 });
