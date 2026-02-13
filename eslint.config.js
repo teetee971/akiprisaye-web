@@ -1,5 +1,6 @@
 import tseslint from '@typescript-eslint/eslint-plugin';
 import tsparser from '@typescript-eslint/parser';
+import reactPlugin from 'eslint-plugin-react';
 
 export default [
   {
@@ -157,10 +158,12 @@ export default [
     },
     plugins: {
       '@typescript-eslint': tseslint,
+      react: reactPlugin,
     },
     rules: {
       // React / JSX
       'react/react-in-jsx-scope': 'off',
+      'react/jsx-no-undef': 'warn',
 
       // Safety - downgraded to warnings
       'no-unused-vars': 'off', // Disabled in favor of TypeScript version
@@ -276,8 +279,12 @@ export default [
         clearImmediate: 'readonly',
       },
     },
+    plugins: {
+      react: reactPlugin,
+    },
     rules: {
       'react/react-in-jsx-scope': 'off',
+      'react/jsx-no-undef': 'warn',
 
       // Safety - downgraded to warnings
       'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],

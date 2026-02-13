@@ -139,7 +139,7 @@ export default function HomeV5() {
   };
 
   const getTerritoryTitle = () => {
-    return 'Comparez les prix réels près de chez vous';
+    return 'Comparez les prix près de chez vous';
   };
 
   return (
@@ -170,13 +170,8 @@ export default function HomeV5() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="hero-subtitle"
           >
-            Des prix observés localement, comparés entre enseignes,
-            <br />
-            pensés pour les DOM-TOM.
+            Prix observés localement • Comparaison entre enseignes • DOM-TOM
           </motion.p>
-          <p className="hero-reassurance">
-            Sans compte. Données locales. Historique conservé sur votre appareil.
-          </p>
           
           {/* Quick Search XXL - Dominant CTA */}
           <motion.form
@@ -195,11 +190,10 @@ export default function HomeV5() {
               aria-label="Rechercher un produit"
             />
             <button type="submit" className="hero-search-btn-xxl" aria-label="Rechercher un produit">
-              Rechercher un produit
+              Comparer maintenant
             </button>
           </motion.form>
-          <p className="hero-explain">EAN, nom de produit ou scan → comparaison instantanée.</p>
-          <p className="hero-trust">🔒 Vos recherches restent sur votre appareil.</p>
+          <p className="hero-reassurance">Sans compte. Données locales. Historique conservé sur votre appareil.</p>
         </motion.div>
         
         {/* Scroll Indicator */}
@@ -221,6 +215,22 @@ export default function HomeV5() {
             <span className="scroll-text">Découvrir</span>
           </motion.div>
         )}
+      </section>
+
+      <section className="mobile-sticky-search" aria-label="Recherche rapide mobile">
+        <form onSubmit={handleSearch} className="mobile-sticky-search-inner">
+          <input
+            type="text"
+            placeholder="Rechercher un produit…"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="mobile-sticky-input"
+            aria-label="Rechercher un produit rapidement"
+          />
+          <button type="submit" className="mobile-sticky-button" aria-label="Lancer la recherche rapide">
+            Rechercher
+          </button>
+        </form>
       </section>
 
       <main id="main-content">
@@ -395,7 +405,8 @@ export default function HomeV5() {
         >
           12 territoires couverts
         </motion.h2>
-        <div className="territories-grid-v5">
+        <div className="territories-scroll-v5">
+          <div className="territories-grid-v5">
           {[
             { code: 'GP', name: 'Guadeloupe', flag: '🇬🇵' },
             { code: 'MQ', name: 'Martinique', flag: '🇲🇶' },
@@ -424,6 +435,7 @@ export default function HomeV5() {
               <span className="territory-flag-v5">{t.flag}</span>
             </motion.div>
           ))}
+          </div>
         </div>
       </section>
 
