@@ -21,7 +21,7 @@
  */
 
 // Feature flag - Single point to enable/disable
-const UX_MONITOR_ENABLED = import.meta.env.VITE_UX_MONITOR_ENABLED !== 'false';
+const UX_MONITOR_ENABLED = ((meta: ImportMeta & { env?: Record<string, string | undefined> }) => (meta.env?.VITE_UX_MONITOR_ENABLED ?? 'true') !== 'false')(import.meta);
 
 // Log prefix for easy filtering
 const PREFIX = '[UX_MONITOR]';
