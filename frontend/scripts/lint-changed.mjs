@@ -70,5 +70,6 @@ for (const file of changedFiles) {
 }
 
 const relativeToFrontend = changedFiles.map((file) => file.replace(/^frontend\//, ''));
-const lint = spawnSync('npx', ['eslint', ...relativeToFrontend], { stdio: 'inherit' });
+const extraArgs = process.argv.slice(2);
+const lint = spawnSync('npx', ['eslint', ...relativeToFrontend, ...extraArgs], { stdio: 'inherit' });
 process.exit(lint.status ?? 1);
