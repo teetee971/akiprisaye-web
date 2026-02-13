@@ -1,0 +1,60 @@
+.fade-in {
+  opacity: 0;
+  animation: fadeIn 0.45s ease-out forwards;
+}
+
+.slide-up {
+  opacity: 0;
+  transform: translateY(14px);
+  animation: slideUp 0.45s ease-out forwards;
+}
+
+.delay-100 { animation-delay: 100ms; }
+.delay-150 { animation-delay: 150ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+
+.float-y {
+  animation: floatY 1.5s ease-in-out infinite;
+}
+
+.section-reveal {
+  content-visibility: auto;
+  contain-intrinsic-size: 800px;
+}
+
+.faq-open {
+  animation: expandFade 0.25s ease-out;
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes floatY {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(10px); }
+}
+
+@keyframes expandFade {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-in,
+  .slide-up,
+  .float-y,
+  .faq-open {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
