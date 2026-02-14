@@ -1,9 +1,6 @@
-const corsHeaders: Record<string, string> = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-  'Content-Type': 'application/json; charset=utf-8',
-};
+import { errorResponse, getRequestId, handleOptions, jsonResponse, methodGuard, parseQuery, setCacheHeaders, softRateLimit } from '../_lib/http';
+import { logError, logInfo, logWarn } from '../_lib/log';
+import { isBarcode, isEnumValue, parseDays } from '../_lib/validate';
 
 type FirestoreValue =
   | { stringValue: string }
@@ -231,19 +228,53 @@ const computeAggregateFromObservations = async (
   };
 };
 
-export const onRequestOptions: PagesFunction = async () => new Response(null, { status: 204, headers: corsHeaders });
+export const onRequestOptions: PagesFunction = async ({ request }) => handleOptions(request, ['GET']) ?? new Response(null, { status: 204 });
 
 export const onRequestGet: PagesFunction = async ({ request, env }) => {
-  const url = new URL(request.url);
-  const barcode = (url.searchParams.get('barcode') ?? '').trim();
-  const territory = (url.searchParams.get('territory') ?? 'fr').trim().toLowerCase();
-  const days = Math.min(90, Math.max(7, Number(url.searchParams.get('days') ?? '30')));
+  const t0 = Date.now();
+  const endpoint = '/api/local-price';
+  const requestId = getRequestId(request);
+
+  const optionsResponse = handleOptions(request, ['GET']);
+  if (optionsResponse) return optionsResponse;
+
+  const blocked = methodGuard(request, ['GET']);
+  if (blocked) return blocked;
+
+  const rate = softRateLimit(request);
+  if (!rate.ok) {
+    return jsonResponse(
+      { ok: false, code: 'RATE_LIMITED', message: 'Too many requests', requestId, retryAfter: rate.retryAfter },
+      { status: 429, request, headers: { 'Retry-After': String(rate.retryAfter) } },
+    );
+  }
+
+  const query = parseQuery(request);
+  const barcode = (query.get('barcode') ?? '').trim();
+  const territory = (query.get('territory') ?? 'fr').trim().toLowerCase();
+  const days = parseDays(query.get('days'));
 
   if (!barcode) {
-    return new Response(JSON.stringify({ ok: false, error: 'missing_barcode' }), {
+    const response = errorResponse('MISSING_PARAM', 'Missing barcode query parameter', {
       status: 400,
-      headers: corsHeaders,
+      request,
+      requestId,
+      details: { error: 'missing_barcode' },
     });
+    logWarn('local-price.missing_barcode', { requestId, endpoint, status: response.status, durationMs: Date.now() - t0 });
+    return response;
+  }
+
+  if (!isBarcode(barcode)) {
+    const response = errorResponse('INVALID_INPUT', 'Invalid barcode format', { status: 400, request, requestId });
+    logWarn('local-price.invalid_barcode', { requestId, endpoint, status: response.status, durationMs: Date.now() - t0 });
+    return response;
+  }
+
+  if (!isEnumValue(territory, ['gp', 'mq', 'gf', 're', 'yt', 'fr'])) {
+    const response = errorResponse('INVALID_INPUT', 'Invalid territory parameter', { status: 400, request, requestId });
+    logWarn('local-price.invalid_territory', { requestId, endpoint, status: response.status, durationMs: Date.now() - t0 });
+    return response;
   }
 
   const envObj = env as Record<string, string | undefined>;
@@ -257,16 +288,18 @@ export const onRequestGet: PagesFunction = async ({ request, env }) => {
   const fallbackProduct = await fetchProductFromOFF(barcode);
 
   if (!projectId) {
-    return new Response(
-      JSON.stringify({
+    const response = jsonResponse(
+      {
         ok: true,
         product: fallbackProduct,
         aggregate: null,
         timeseries: [],
         warning: 'firestore_unconfigured',
-      }),
-      { status: 200, headers: corsHeaders },
+      },
+      { status: 200, request, cache: 'no-store' },
     );
+    logWarn('local-price.firestore_unconfigured', { requestId, endpoint, status: response.status, durationMs: Date.now() - t0 });
+    return response;
   }
 
   const base = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents`;
@@ -289,20 +322,31 @@ export const onRequestGet: PagesFunction = async ({ request, env }) => {
     const aggregate = aggregateDoc ?? (await computeAggregateFromObservations(base, barcode, territory, days, headers, apiKey));
     const timeseries = await fetchTimeseries(base, barcode, territory, days, headers, apiKey);
 
-    return new Response(JSON.stringify({ ok: true, product: product ?? fallbackProduct, aggregate, timeseries }), {
+    const response = jsonResponse({ ok: true, product: product ?? fallbackProduct, aggregate, timeseries }, {
       status: 200,
-      headers: { ...corsHeaders, 'Cache-Control': 'public, max-age=120' },
+      request,
+      headers: setCacheHeaders('short'),
     });
+    logInfo('local-price.success', { requestId, endpoint, status: response.status, durationMs: Date.now() - t0 });
+    return response;
   } catch (error) {
-    return new Response(
-      JSON.stringify({
+    const response = jsonResponse(
+      {
         ok: true,
         product: fallbackProduct,
         aggregate: null,
         timeseries: [],
         warning: error instanceof Error ? error.message : String(error),
-      }),
-      { status: 200, headers: corsHeaders },
+      },
+      { status: 200, request, cache: 'no-store' },
     );
+    logError('local-price.fetch_failed', {
+      requestId,
+      endpoint,
+      status: response.status,
+      durationMs: Date.now() - t0,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return response;
   }
 };

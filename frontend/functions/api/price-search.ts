@@ -1,102 +1,147 @@
-const OP_BASE = 'https://prices.openfoodfacts.org/api/v1/prices';
+import { errorResponse, getRequestId, handleOptions, jsonResponse, methodGuard, parseQuery, setCacheHeaders, softRateLimit } from '../_lib/http';
+import { logError, logInfo, logWarn } from '../_lib/log';
+import { isBarcode, isEnumValue, isNonEmptyString } from '../_lib/validate';
 
-const corsHeaders: Record<string, string> = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-  'Content-Type': 'application/json; charset=utf-8',
+const TERRITORY_GL: Record<string, string> = {
+  gp: 'fr',
+  mq: 'fr',
+  gf: 'fr',
+  re: 'fr',
+  yt: 'fr',
+  fr: 'fr',
 };
 
-const withTimeout = async (url: string, timeoutMs = 7000) => {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+const parsePrice = (value: unknown): number | null => {
+  if (typeof value === 'number' && Number.isFinite(value)) return value;
+  if (typeof value !== 'string') return null;
+  const cleaned = value.replace(/[^\d,.-]/g, '').replace(',', '.');
+  const n = Number(cleaned);
+  return Number.isFinite(n) ? n : null;
+};
 
-  try {
-    return await fetch(url, {
-      headers: {
-        Accept: 'application/json',
-        'User-Agent': 'A-KI-PRI-SA-YE/1.0 (+https://akiprisaye-web.pages.dev)',
-      },
-      signal: controller.signal,
-    });
-  } finally {
-    clearTimeout(timeout);
+export const onRequestOptions: PagesFunction = async ({ request }) => handleOptions(request, ['GET']) ?? new Response(null, { status: 204 });
+
+export const onRequestGet: PagesFunction = async ({ request, env }) => {
+  const t0 = Date.now();
+  const endpoint = '/api/price-search';
+  const requestId = getRequestId(request);
+
+  const optionsResponse = handleOptions(request, ['GET']);
+  if (optionsResponse) return optionsResponse;
+
+  const blocked = methodGuard(request, ['GET']);
+  if (blocked) return blocked;
+
+  const rate = softRateLimit(request);
+  if (!rate.ok) {
+    return jsonResponse(
+      { ok: false, code: 'RATE_LIMITED', message: 'Too many requests', requestId, retryAfter: rate.retryAfter },
+      { status: 429, request, headers: { 'Retry-After': String(rate.retryAfter) } },
+    );
   }
-};
 
-export const onRequestOptions: PagesFunction = async () => {
-  return new Response(null, { status: 204, headers: corsHeaders });
-};
+  const urlParams = parseQuery(request);
+  const q = (urlParams.get('q') ?? '').trim();
+  const barcode = (urlParams.get('barcode') ?? '').trim();
+  const territory = (urlParams.get('territory') ?? 'fr').trim().toLowerCase();
 
-export const onRequestGet: PagesFunction = async ({ request }) => {
-  const url = new URL(request.url);
-  const barcode = (url.searchParams.get('barcode') ?? '').trim();
-  const pageSize = Math.min(30, Math.max(1, Number(url.searchParams.get('pageSize') ?? '10')));
-
-  if (!barcode) {
-    return new Response(JSON.stringify({ ok: false, error: 'missing_barcode', observations: [] }), {
+  const query = q || barcode;
+  if (!query) {
+    const response = errorResponse('MISSING_PARAM', 'Missing q or barcode query parameter', {
       status: 400,
-      headers: corsHeaders,
+      request,
+      requestId,
+      details: { error: 'missing_query', results: [] },
     });
+    logWarn('price-search.missing_query', { requestId, endpoint, status: response.status, durationMs: Date.now() - t0 });
+    return response;
   }
 
-  const endpoint = `${OP_BASE}?${new URLSearchParams({
-    product_code: barcode,
-    page_size: String(pageSize),
-    ordering: '-date',
+  if (barcode && !isBarcode(barcode)) {
+    const response = errorResponse('INVALID_INPUT', 'Invalid barcode format', { status: 400, request, requestId });
+    logWarn('price-search.invalid_barcode', { requestId, endpoint, status: response.status, durationMs: Date.now() - t0 });
+    return response;
+  }
+
+  if (!isNonEmptyString(query, 120)) {
+    const response = errorResponse('INVALID_INPUT', 'Invalid query parameter', { status: 400, request, requestId });
+    logWarn('price-search.invalid_query', { requestId, endpoint, status: response.status, durationMs: Date.now() - t0 });
+    return response;
+  }
+
+  if (!isEnumValue(territory, ['gp', 'mq', 'gf', 're', 'yt', 'fr'])) {
+    const response = errorResponse('INVALID_INPUT', 'Invalid territory parameter', { status: 400, request, requestId });
+    logWarn('price-search.invalid_territory', { requestId, endpoint, status: response.status, durationMs: Date.now() - t0 });
+    return response;
+  }
+
+  const apiKey = (env as Record<string, string | undefined>).SERP_API_KEY;
+  if (!apiKey) {
+    const response = jsonResponse(
+      { ok: true, query, results: [], warning: 'serp_api_key_unconfigured' },
+      { status: 200, request, cache: 'no-store' },
+    );
+    logWarn('price-search.api_key_missing', { requestId, endpoint, status: response.status, durationMs: Date.now() - t0 });
+    return response;
+  }
+
+  const gl = TERRITORY_GL[territory] ?? 'fr';
+  const serpEndpoint = `https://serpapi.com/search.json?${new URLSearchParams({
+    engine: 'google_shopping',
+    q: query,
+    api_key: apiKey,
+    hl: 'fr',
+    gl,
   }).toString()}`;
 
   try {
-    const upstream = await withTimeout(endpoint);
-
-    if (!upstream.ok) {
-      return new Response(
-        JSON.stringify({ ok: false, error: 'open_prices_unavailable', observations: [] }),
-        { status: 200, headers: corsHeaders },
+    const response = await fetch(serpEndpoint, { headers: { Accept: 'application/json' } });
+    if (!response.ok) {
+      const apiResponse = jsonResponse(
+        { ok: true, query, results: [], warning: `serpapi_error_${response.status}` },
+        { status: 200, request, cache: 'no-store' },
       );
+      logWarn('price-search.serp_error', { requestId, endpoint, status: apiResponse.status, durationMs: Date.now() - t0 });
+      return apiResponse;
     }
 
-    const payload = (await upstream.json()) as { results?: Array<Record<string, unknown>> };
-    const rows = Array.isArray(payload.results) ? payload.results : [];
-
-    const observations = rows
-      .map((row) => {
-        const price = Number(row.price);
-        const currency = String(row.currency ?? '').toUpperCase();
-
-        if (!Number.isFinite(price) || currency !== 'EUR') {
-          return null;
-        }
+    const payload = (await response.json()) as { shopping_results?: Array<Record<string, unknown>> };
+    const results = (payload.shopping_results ?? [])
+      .map((item) => {
+        const price = parsePrice(item.extracted_price ?? item.price);
+        if (price === null) return null;
 
         return {
-          source: 'open_prices',
-          barcode,
+          title: String(item.title ?? '').trim(),
+          merchant: String(item.source ?? item.merchant ?? 'Marchand web').trim(),
           price,
           currency: 'EUR',
-          date: (row.date as string) || (row.created as string) || null,
-          locationId: row.location_id ? String(row.location_id) : null,
-          proofId: row.proof_id ? String(row.proof_id) : null,
+          url: String(item.link ?? item.product_link ?? '').trim(),
+          source: 'serpapi',
         };
       })
-      .filter((row): row is NonNullable<typeof row> => row !== null);
+      .filter((item): item is NonNullable<typeof item> => item !== null)
+      .slice(0, 12);
 
-    return new Response(JSON.stringify({ ok: true, barcode, observations }), {
+    const apiResponse = jsonResponse({ ok: true, query, results }, {
       status: 200,
-      headers: {
-        ...corsHeaders,
-        'Cache-Control': 'public, max-age=180',
-      },
+      request,
+      headers: setCacheHeaders('medium'),
     });
+    logInfo('price-search.success', { requestId, endpoint, status: apiResponse.status, durationMs: Date.now() - t0 });
+    return apiResponse;
   } catch (error) {
-    const timeout = error instanceof Error && error.name === 'AbortError';
-
-    return new Response(
-      JSON.stringify({
-        ok: false,
-        error: timeout ? 'open_prices_timeout' : 'open_prices_fetch_failed',
-        observations: [],
-      }),
-      { status: 200, headers: corsHeaders },
+    const apiResponse = jsonResponse(
+      { ok: true, query, results: [], warning: error instanceof Error ? error.message : String(error) },
+      { status: 200, request, cache: 'no-store' },
     );
+    logError('price-search.fetch_failed', {
+      requestId,
+      endpoint,
+      status: apiResponse.status,
+      durationMs: Date.now() - t0,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return apiResponse;
   }
 };

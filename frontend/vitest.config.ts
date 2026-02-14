@@ -4,6 +4,6 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
-    include: ['src/services/openFoodFacts.test.ts'],
+    include: ['src/services/openFoodFacts.test.ts', 'functions/**/*.test.ts'],
   },
 });

@@ -1,9 +1,6 @@
-const corsHeaders: Record<string, string> = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-  'Content-Type': 'application/json; charset=utf-8',
-};
+import { errorResponse, getRequestId, handleOptions, jsonResponse, methodGuard, parseQuery, setCacheHeaders, softRateLimit } from '../_lib/http';
+import { logError, logInfo, logWarn } from '../_lib/log';
+import { isBarcode, isEnumValue, isNonEmptyString } from '../_lib/validate';
 
 const TERRITORY_GL: Record<string, string> = {
   gp: 'fr',
@@ -22,29 +19,74 @@ const parsePrice = (value: unknown): number | null => {
   return Number.isFinite(n) ? n : null;
 };
 
-export const onRequestOptions: PagesFunction = async () => new Response(null, { status: 204, headers: corsHeaders });
+export const onRequestOptions: PagesFunction = async ({ request }) => handleOptions(request, ['GET']) ?? new Response(null, { status: 204 });
 
 export const onRequestGet: PagesFunction = async ({ request, env }) => {
-  const url = new URL(request.url);
-  const q = (url.searchParams.get('q') ?? '').trim();
-  const barcode = (url.searchParams.get('barcode') ?? '').trim();
-  const territory = (url.searchParams.get('territory') ?? 'fr').trim().toLowerCase();
+  const t0 = Date.now();
+  const endpoint = '/api/web-price';
+  const requestId = getRequestId(request);
+
+  const optionsResponse = handleOptions(request, ['GET']);
+  if (optionsResponse) return optionsResponse;
+
+  const blocked = methodGuard(request, ['GET']);
+  if (blocked) return blocked;
+
+  const rate = softRateLimit(request);
+  if (!rate.ok) {
+    return jsonResponse(
+      { ok: false, code: 'RATE_LIMITED', message: 'Too many requests', requestId, retryAfter: rate.retryAfter },
+      { status: 429, request, headers: { 'Retry-After': String(rate.retryAfter) } },
+    );
+  }
+
+  const urlParams = parseQuery(request);
+  const q = (urlParams.get('q') ?? '').trim();
+  const barcode = (urlParams.get('barcode') ?? '').trim();
+  const territory = (urlParams.get('territory') ?? 'fr').trim().toLowerCase();
 
   const query = q || barcode;
   if (!query) {
-    return new Response(JSON.stringify({ ok: false, error: 'missing_query', results: [] }), { status: 400, headers: corsHeaders });
+    const response = errorResponse('MISSING_PARAM', 'Missing q or barcode query parameter', {
+      status: 400,
+      request,
+      requestId,
+      details: { error: 'missing_query', results: [] },
+    });
+    logWarn('web-price.missing_query', { requestId, endpoint, status: response.status, durationMs: Date.now() - t0 });
+    return response;
+  }
+
+  if (barcode && !isBarcode(barcode)) {
+    const response = errorResponse('INVALID_INPUT', 'Invalid barcode format', { status: 400, request, requestId });
+    logWarn('web-price.invalid_barcode', { requestId, endpoint, status: response.status, durationMs: Date.now() - t0 });
+    return response;
+  }
+
+  if (!isNonEmptyString(query, 120)) {
+    const response = errorResponse('INVALID_INPUT', 'Invalid query parameter', { status: 400, request, requestId });
+    logWarn('web-price.invalid_query', { requestId, endpoint, status: response.status, durationMs: Date.now() - t0 });
+    return response;
+  }
+
+  if (!isEnumValue(territory, ['gp', 'mq', 'gf', 're', 'yt', 'fr'])) {
+    const response = errorResponse('INVALID_INPUT', 'Invalid territory parameter', { status: 400, request, requestId });
+    logWarn('web-price.invalid_territory', { requestId, endpoint, status: response.status, durationMs: Date.now() - t0 });
+    return response;
   }
 
   const apiKey = (env as Record<string, string | undefined>).SERP_API_KEY;
   if (!apiKey) {
-    return new Response(
-      JSON.stringify({ ok: true, query, results: [], warning: 'serp_api_key_unconfigured' }),
-      { status: 200, headers: corsHeaders },
+    const response = jsonResponse(
+      { ok: true, query, results: [], warning: 'serp_api_key_unconfigured' },
+      { status: 200, request, cache: 'no-store' },
     );
+    logWarn('web-price.api_key_missing', { requestId, endpoint, status: response.status, durationMs: Date.now() - t0 });
+    return response;
   }
 
   const gl = TERRITORY_GL[territory] ?? 'fr';
-  const endpoint = `https://serpapi.com/search.json?${new URLSearchParams({
+  const serpEndpoint = `https://serpapi.com/search.json?${new URLSearchParams({
     engine: 'google_shopping',
     q: query,
     api_key: apiKey,
@@ -53,12 +95,14 @@ export const onRequestGet: PagesFunction = async ({ request, env }) => {
   }).toString()}`;
 
   try {
-    const response = await fetch(endpoint, { headers: { Accept: 'application/json' } });
+    const response = await fetch(serpEndpoint, { headers: { Accept: 'application/json' } });
     if (!response.ok) {
-      return new Response(JSON.stringify({ ok: true, query, results: [], warning: `serpapi_error_${response.status}` }), {
-        status: 200,
-        headers: corsHeaders,
-      });
+      const apiResponse = jsonResponse(
+        { ok: true, query, results: [], warning: `serpapi_error_${response.status}` },
+        { status: 200, request, cache: 'no-store' },
+      );
+      logWarn('web-price.serp_error', { requestId, endpoint, status: apiResponse.status, durationMs: Date.now() - t0 });
+      return apiResponse;
     }
 
     const payload = (await response.json()) as { shopping_results?: Array<Record<string, unknown>> };
@@ -79,14 +123,25 @@ export const onRequestGet: PagesFunction = async ({ request, env }) => {
       .filter((item): item is NonNullable<typeof item> => item !== null)
       .slice(0, 12);
 
-    return new Response(JSON.stringify({ ok: true, query, results }), {
+    const apiResponse = jsonResponse({ ok: true, query, results }, {
       status: 200,
-      headers: { ...corsHeaders, 'Cache-Control': 'public, max-age=300' },
+      request,
+      headers: setCacheHeaders('medium'),
     });
+    logInfo('web-price.success', { requestId, endpoint, status: apiResponse.status, durationMs: Date.now() - t0 });
+    return apiResponse;
   } catch (error) {
-    return new Response(
-      JSON.stringify({ ok: true, query, results: [], warning: error instanceof Error ? error.message : String(error) }),
-      { status: 200, headers: corsHeaders },
+    const apiResponse = jsonResponse(
+      { ok: true, query, results: [], warning: error instanceof Error ? error.message : String(error) },
+      { status: 200, request, cache: 'no-store' },
     );
+    logError('web-price.fetch_failed', {
+      requestId,
+      endpoint,
+      status: apiResponse.status,
+      durationMs: Date.now() - t0,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return apiResponse;
   }
 };

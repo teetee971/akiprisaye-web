@@ -1,11 +1,8 @@
-const OFF_BASE = 'https://world.openfoodfacts.org';
+import { errorResponse, getRequestId, handleOptions, jsonResponse, methodGuard, parseQuery, setCacheHeaders, softRateLimit } from '../_lib/http';
+import { logError, logInfo, logWarn } from '../_lib/log';
+import { isBarcode } from '../_lib/validate';
 
-const corsHeaders: Record<string, string> = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-  'Content-Type': 'application/json; charset=utf-8',
-};
+const OFF_BASE = 'https://world.openfoodfacts.org';
 
 const withTimeout = async (url: string, timeoutMs = 7000) => {
   const controller = new AbortController();
@@ -24,42 +21,71 @@ const withTimeout = async (url: string, timeoutMs = 7000) => {
   }
 };
 
-export const onRequestOptions: PagesFunction = async () => {
-  return new Response(null, { status: 204, headers: corsHeaders });
-};
+export const onRequestOptions: PagesFunction = async ({ request }) => handleOptions(request, ['GET']) ?? new Response(null, { status: 204 });
 
 export const onRequestGet: PagesFunction = async ({ request }) => {
-  const url = new URL(request.url);
-  const barcode = (url.searchParams.get('barcode') ?? '').trim();
+  const t0 = Date.now();
+  const requestId = getRequestId(request);
+  const endpoint = '/api/product';
 
-  if (!barcode) {
-    return new Response(JSON.stringify({ ok: false, error: 'missing_barcode', data: null }), {
-      status: 400,
-      headers: corsHeaders,
-    });
+  const optionsResponse = handleOptions(request, ['GET']);
+  if (optionsResponse) return optionsResponse;
+
+  const blocked = methodGuard(request, ['GET']);
+  if (blocked) return blocked;
+
+  const rate = softRateLimit(request);
+  if (!rate.ok) {
+    const response = jsonResponse(
+      { ok: false, code: 'RATE_LIMITED', message: 'Too many requests', requestId, retryAfter: rate.retryAfter },
+      { status: 429, request, headers: { 'Retry-After': String(rate.retryAfter) } },
+    );
+    logWarn('product.rate_limited', { requestId, endpoint, status: response.status, durationMs: Date.now() - t0 });
+    return response;
   }
 
-  const endpoint = `${OFF_BASE}/api/v2/product/${encodeURIComponent(barcode)}.json`;
+  const query = parseQuery(request);
+  const barcode = (query.get('barcode') ?? '').trim();
+
+  if (!barcode) {
+    const response = errorResponse('MISSING_PARAM', 'Missing barcode query parameter', {
+      status: 400,
+      request,
+      requestId,
+      details: { error: 'missing_barcode' },
+    });
+    logWarn('product.missing_barcode', { requestId, endpoint, status: response.status, durationMs: Date.now() - t0 });
+    return response;
+  }
+
+  if (!isBarcode(barcode)) {
+    const response = errorResponse('INVALID_INPUT', 'Invalid barcode format', {
+      status: 400,
+      request,
+      requestId,
+      details: { barcode },
+    });
+    logWarn('product.invalid_barcode', { requestId, endpoint, status: response.status, durationMs: Date.now() - t0 });
+    return response;
+  }
+
+  const offEndpoint = `${OFF_BASE}/api/v2/product/${encodeURIComponent(barcode)}.json`;
 
   try {
-    const upstream = await withTimeout(endpoint);
+    const upstream = await withTimeout(offEndpoint);
 
     if (!upstream.ok) {
-      return new Response(
-        JSON.stringify({
-          ok: false,
-          error: 'off_upstream_error',
-          status: upstream.status,
-          data: null,
-        }),
-        { status: 200, headers: corsHeaders },
+      const response = jsonResponse(
+        { ok: false, error: 'off_upstream_error', status: upstream.status, data: null, requestId },
+        { status: 200, request, cache: 'no-store' },
       );
+      logWarn('product.off_upstream_error', { requestId, endpoint, status: response.status, durationMs: Date.now() - t0 });
+      return response;
     }
 
     const payload = (await upstream.json()) as {
       product?: Record<string, unknown>;
       status?: number;
-      code?: string;
     };
 
     const p = payload.product ?? {};
@@ -78,23 +104,26 @@ export const onRequestGet: PagesFunction = async ({ request }) => {
       raw: p,
     };
 
-    return new Response(JSON.stringify({ ok: true, data: normalized }), {
+    const response = jsonResponse({ ok: true, data: normalized }, {
       status: 200,
-      headers: {
-        ...corsHeaders,
-        'Cache-Control': 'public, max-age=300',
-      },
+      request,
+      headers: setCacheHeaders('medium'),
     });
+    logInfo('product.success', { requestId, endpoint, status: response.status, durationMs: Date.now() - t0 });
+    return response;
   } catch (error) {
     const timeout = error instanceof Error && error.name === 'AbortError';
-
-    return new Response(
-      JSON.stringify({
-        ok: false,
-        error: timeout ? 'off_timeout' : 'off_fetch_failed',
-        data: null,
-      }),
-      { status: 200, headers: corsHeaders },
+    const response = jsonResponse(
+      { ok: false, error: timeout ? 'off_timeout' : 'off_fetch_failed', data: null, requestId },
+      { status: 200, request, cache: 'no-store' },
     );
+    logError('product.fetch_failed', {
+      requestId,
+      endpoint,
+      status: response.status,
+      durationMs: Date.now() - t0,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return response;
   }
 };
