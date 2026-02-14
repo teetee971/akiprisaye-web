@@ -7,7 +7,9 @@ export type AlertStatus = 'active' | 'resolved';
 export interface SanitaryAlert {
   id: string;
   territory: TerritoryCode;
+  territories?: TerritoryCode[];
   severity: AlertSeverity;
+  riskLevel?: AlertSeverity;
   status: AlertStatus;
   title: string;
   productName?: string;
@@ -24,4 +26,16 @@ export interface SanitaryAlert {
   sourceName: string;
   sourceUrl?: string;
   updatedAt?: string;
+}
+
+export interface SanitaryAlertsMetadata {
+  source: 'rappelconso' | 'fallback';
+  fetchedAt: string;
+  total: number;
+}
+
+export interface SanitaryAlertsResponse {
+  alerts: SanitaryAlert[];
+  metadata: SanitaryAlertsMetadata;
+  nextCursor?: string;
 }

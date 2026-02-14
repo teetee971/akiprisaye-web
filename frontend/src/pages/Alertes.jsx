@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useStoreSelection } from '../context/StoreSelectionContext';
 import { getAlerts } from '../services/alertsService';
@@ -27,14 +27,27 @@ export default function Alertes() {
   const [category, setCategory] = useState(searchParams.get('category') ?? '');
   const [severity, setSeverity] = useState(searchParams.get('severity') ?? '');
   const [q, setQ] = useState(searchParams.get('q') ?? '');
+  const [alerts, setAlerts] = useState([]);
+  const [metadata, setMetadata] = useState(null);
 
-  const alerts = useMemo(() => getAlerts({
-    territory,
-    onlyActive,
-    category: category || undefined,
-    severity: severity || undefined,
-    q: q || undefined,
-  }), [territory, onlyActive, category, severity, q]);
+  useEffect(() => {
+    let mounted = true;
+    getAlerts({
+      territory,
+      onlyActive,
+      category: category || undefined,
+      severity: severity || undefined,
+      q: q || undefined,
+    }).then((result) => {
+      if (!mounted) return;
+      setAlerts(result.alerts);
+      setMetadata(result.metadata);
+    });
+
+    return () => {
+      mounted = false;
+    };
+  }, [territory, onlyActive, category, severity, q]);
 
   const syncQueryString = (next) => {
     const params = new URLSearchParams();
@@ -49,6 +62,10 @@ export default function Alertes() {
     <main className="max-w-6xl mx-auto px-4 py-8 text-slate-100">
       <h1 className="text-2xl font-bold mb-2">Alertes sanitaires</h1>
       <p className="text-sm text-slate-400 mb-6">Territoire: <strong className="uppercase">{territory}</strong></p>
+      <p className="text-xs text-slate-500 mb-6">
+        Source: {metadata?.source === 'fallback' ? 'fallback local' : 'RappelConso'}
+        {metadata?.fetchedAt ? ` • fraîcheur ${new Date(metadata.fetchedAt).toLocaleString('fr-FR')}` : ''}
+      </p>
 
       <section className="grid md:grid-cols-4 gap-3 mb-6">
         <label className="flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-900 px-3 py-2">

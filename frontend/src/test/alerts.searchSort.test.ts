@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { getAlerts } from '../services/alertsService';
 
 describe('alertsService search and sort', () => {
-  it('sorts by severity then by publishedAt desc', () => {
-    const alerts = getAlerts({ territory: 'gp' });
+  it('sorts by severity then by publishedAt desc', async () => {
+    const { alerts } = await getAlerts({ territory: 'gp' });
     const criticalIndex = alerts.findIndex((a) => a.severity === 'critical');
     const importantIndex = alerts.findIndex((a) => a.severity === 'important');
     const infoIndex = alerts.findIndex((a) => a.severity === 'info');
@@ -18,10 +18,10 @@ describe('alertsService search and sort', () => {
     );
   });
 
-  it('matches q against title, brand, productName, ean and lot', () => {
-    expect(getAlerts({ territory: 'gp', q: 'omega croissance' }).length).toBeGreaterThan(0);
-    expect(getAlerts({ territory: 'gp', q: 'Omega Baby' }).length).toBeGreaterThan(0);
-    expect(getAlerts({ territory: 'gp', q: '3760123456789' }).length).toBeGreaterThan(0);
-    expect(getAlerts({ territory: 'gp', q: 'L24011A' }).length).toBeGreaterThan(0);
+  it('matches q against title, brand, productName, ean and lot', async () => {
+    expect((await getAlerts({ territory: 'gp', q: 'omega croissance' })).alerts.length).toBeGreaterThan(0);
+    expect((await getAlerts({ territory: 'gp', q: 'Omega Baby' })).alerts.length).toBeGreaterThan(0);
+    expect((await getAlerts({ territory: 'gp', q: '3760123456789' })).alerts.length).toBeGreaterThan(0);
+    expect((await getAlerts({ territory: 'gp', q: 'L24011A' })).alerts.length).toBeGreaterThan(0);
   });
 });

@@ -1,11 +1,13 @@
 import { alertsDataset } from '../data/alerts';
-import type { AlertSeverity, SanitaryAlert, TerritoryCode } from '../types/alerts';
+import type { AlertSeverity, SanitaryAlert, SanitaryAlertsResponse, TerritoryCode } from '../types/alerts';
 
 const severityOrder: Record<AlertSeverity, number> = {
   critical: 3,
   important: 2,
   info: 1,
 };
+
+let latestSnapshot: SanitaryAlert[] = [];
 
 function parseDate(value?: string): number {
   if (!value) return 0;
@@ -64,7 +66,12 @@ interface GetAlertsOptions {
   severity?: AlertSeverity;
 }
 
-export function getAlerts(options: GetAlertsOptions = {}): SanitaryAlert[] {
+export interface FetchAlertsResult {
+  alerts: SanitaryAlert[];
+  metadata: SanitaryAlertsResponse['metadata'];
+}
+
+function localFallback(options: GetAlertsOptions = {}): FetchAlertsResult {
   const { territory, onlyActive = false, q, category, severity } = options;
   const normalizedCategory = category ? normalizeText(category) : '';
 
@@ -75,9 +82,58 @@ export function getAlerts(options: GetAlertsOptions = {}): SanitaryAlert[] {
     .filter((alert) => !normalizedCategory || normalizeText(alert.category ?? '') === normalizedCategory)
     .filter((alert) => matchesSearch(alert, q));
 
-  return sortAlerts(filtered);
+  const sorted = sortAlerts(filtered);
+  latestSnapshot = sorted;
+
+  return {
+    alerts: sorted,
+    metadata: {
+      source: 'fallback',
+      fetchedAt: new Date().toISOString(),
+      total: sorted.length,
+    },
+  };
 }
 
-export function getAlertById(id: string): SanitaryAlert | null {
-  return alertsDataset.find((alert) => alert.id === id) ?? null;
+export async function getAlerts(options: GetAlertsOptions = {}): Promise<FetchAlertsResult> {
+  const params = new URLSearchParams();
+  if (options.territory) params.set('territory', options.territory);
+  if (options.q) params.set('q', options.q);
+  if (options.category) params.set('category', options.category);
+  if (options.severity) params.set('severity', options.severity);
+  if (options.onlyActive) params.set('activeOnly', 'true');
+
+  try {
+    const response = await fetch(`/api/sanitary-alerts?${params.toString()}`, {
+      method: 'GET',
+      headers: { Accept: 'application/json' },
+    });
+
+    if (!response.ok) throw new Error(`HTTP_${response.status}`);
+
+    const payload = await response.json() as SanitaryAlertsResponse;
+    latestSnapshot = sortAlerts(payload.alerts ?? []);
+    return {
+      alerts: latestSnapshot,
+      metadata: payload.metadata,
+    };
+  } catch {
+    return localFallback(options);
+  }
+}
+
+export async function getAlertById(id: string): Promise<SanitaryAlert | null> {
+  const inSnapshot = latestSnapshot.find((alert) => alert.id === id);
+  if (inSnapshot) return inSnapshot;
+
+  try {
+    const response = await fetch(`/api/sanitary-alerts?id=${encodeURIComponent(id)}`);
+    if (!response.ok) throw new Error('id_lookup_failed');
+    const payload = await response.json() as SanitaryAlertsResponse;
+    const resolved = payload.alerts.find((alert) => alert.id === id) ?? null;
+    if (resolved) latestSnapshot = [resolved, ...latestSnapshot.filter((alert) => alert.id !== id)];
+    return resolved;
+  } catch {
+    return alertsDataset.find((alert) => alert.id === id) ?? null;
+  }
 }

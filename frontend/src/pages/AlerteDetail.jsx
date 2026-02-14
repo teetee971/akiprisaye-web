@@ -1,9 +1,24 @@
+import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getAlertById } from '../services/alertsService';
 
 export default function AlerteDetail() {
   const { id = '' } = useParams();
-  const alert = getAlertById(id);
+  const [alert, setAlert] = useState(undefined);
+
+  useEffect(() => {
+    let mounted = true;
+    getAlertById(id).then((item) => {
+      if (mounted) setAlert(item);
+    });
+    return () => {
+      mounted = false;
+    };
+  }, [id]);
+
+  if (typeof alert === 'undefined') {
+    return <main className="max-w-4xl mx-auto px-4 py-8 text-slate-100">Chargement…</main>;
+  }
 
   if (!alert) {
     return (
