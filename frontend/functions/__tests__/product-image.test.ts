@@ -31,7 +31,7 @@ describe('/api/product-image content negotiation', () => {
     vi.restoreAllMocks();
   });
 
-  it('returns image-compatible response in default mode', async () => {
+  it('returns redirect for browser requests (Accept: text/html)', async () => {
     vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
       new Response(JSON.stringify({ status: 0 }), {
         status: 200,
@@ -41,12 +41,41 @@ describe('/api/product-image content negotiation', () => {
 
     const response = await onRequestGet({ request: makeRequest('/api/product-image?ean=3274080005003&v=1', 'text/html') } as never);
 
-    expect([302, 200]).toContain(response.status);
-    if (response.status === 302) {
-      expect(response.headers.get('location')).toBe('/assets/placeholders/placeholder-default.svg');
-    }
-
+    expect(response.status).toBe(302);
+    expect(response.headers.get('location')).toBe('/assets/placeholders/placeholder-default.svg');
+    expect(response.headers.get('cache-control')).toContain('max-age=');
     expect(response.headers.get('vary')).toContain('Accept');
+  });
+
+  it('returns redirect for image clients (Accept: image/*)', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
+      new Response(JSON.stringify({ status: 0 }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
+
+    const response = await onRequestGet({ request: makeRequest('/api/product-image?ean=3274080005003&v=1', 'image/*') } as never);
+
+    expect(response.status).toBe(302);
+    expect(response.headers.get('location')).toBe('/assets/placeholders/placeholder-default.svg');
+    expect(response.headers.get('cache-control')).toContain('max-age=');
+    expect(response.headers.get('vary')).toContain('Accept');
+  });
+
+  it('returns redirect for wildcard Accept and fallback is still an image', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
+      new Response(JSON.stringify({ status: 0 }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
+
+    const response = await onRequestGet({ request: makeRequest('/api/product-image?ean=3274080005003&v=1', '*/*') } as never);
+
+    expect(response.status).toBe(302);
+    expect(response.headers.get('location')).toBe('/assets/placeholders/placeholder-default.svg');
+    expect(response.headers.get('content-type')).toBeNull();
   });
 
   it('returns JSON when format=json is provided', async () => {
@@ -62,6 +91,7 @@ describe('/api/product-image content negotiation', () => {
 
     expect(response.status).toBe(200);
     expect(response.headers.get('content-type')).toContain('application/json');
+    expect(response.headers.get('cache-control')).toContain('max-age=');
     expect(response.headers.get('vary')).toContain('Accept');
     expect(body.source).toBe('placeholder');
     expect(body.url).toBe('/assets/placeholders/placeholder-default.svg');
@@ -79,6 +109,7 @@ describe('/api/product-image content negotiation', () => {
 
     expect(response.status).toBe(200);
     expect(response.headers.get('content-type')).toContain('application/json');
+    expect(response.headers.get('cache-control')).toContain('max-age=');
     expect(response.headers.get('vary')).toContain('Accept');
     await expect(response.json()).resolves.toMatchObject({ source: 'placeholder' });
   });

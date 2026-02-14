@@ -88,6 +88,15 @@ function imageRedirectResponse(targetUrl: string): Response {
   });
 }
 
+function wantsJsonResponse(request: Request, searchParams: URLSearchParams): boolean {
+  if (searchParams.get('format') === 'json') {
+    return true;
+  }
+
+  const accept = request.headers.get('accept') ?? '';
+  return accept.toLowerCase().includes('application/json');
+}
+
 function placeholderSvgResponse(status = 200): Response {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="640" viewBox="0 0 640 640" role="img" aria-label="Image produit indisponible"><rect width="640" height="640" fill="#f3f4f6"/><g fill="none" stroke="#9ca3af" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"><rect x="120" y="150" width="400" height="300" rx="24"/><path d="M165 395l92-92 74 74 54-54 90 90"/><circle cx="250" cy="240" r="38"/></g><text x="320" y="520" text-anchor="middle" fill="#6b7280" font-family="Arial, Helvetica, sans-serif" font-size="36">Image indisponible</text></svg>`;
 
@@ -102,9 +111,7 @@ export const onRequestGet: PagesFunction = async ({ request }) => {
   const ean = (url.searchParams.get('ean') ?? '').trim();
   const category = url.searchParams.get('category');
   const accept = request.headers.get('accept') ?? '';
-  const wantsJson =
-    url.searchParams.get('format') === 'json'
-    || accept.includes('application/json');
+  const wantsJson = wantsJsonResponse(request, url.searchParams);
 
   if (!ean) {
     const placeholder = getPlaceholderUrl(category);
