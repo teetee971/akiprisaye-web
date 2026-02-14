@@ -938,3 +938,7 @@ Pour en savoir plus sur l'architecture et les fonctionnalités :
 
 Pour toute question ou problème, consultez d'abord le [NAVIGATION_GUIDE.md](NAVIGATION_GUIDE.md) ou ouvrez une issue GitHub.
 
+
+## Statut backend (production)
+
+Le dossier `backend/` est actuellement conservé comme prototype non déployé. La production utilise Cloudflare Pages + Pages Functions (`frontend/functions/api/*`). Voir `BACKEND_STATUS.md`.

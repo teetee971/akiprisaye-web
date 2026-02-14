@@ -4,6 +4,7 @@
  */
 
 import { useState, useCallback } from 'react';
+import { buildApiUrl } from '../utils/apiBaseUrl';
 
 interface RoutePoint {
   lat: number;
@@ -32,8 +33,6 @@ interface UseRouteReturn {
   clearRoute: () => void;
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-
 /**
  * Custom hook to calculate routes
  * @returns Route state and controls
@@ -57,7 +56,7 @@ export function useRoute(): UseRouteReturn {
         });
 
         const response = await fetch(
-          `${API_BASE_URL}/api/map/route?${params.toString()}`
+          buildApiUrl(`/api/map/route?${params.toString()}`)
         );
 
         if (!response.ok) {

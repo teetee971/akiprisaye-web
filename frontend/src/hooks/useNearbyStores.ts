@@ -4,6 +4,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import { buildApiUrl } from '../utils/apiBaseUrl';
 
 interface Store {
   id: string;
@@ -35,8 +36,6 @@ interface UseNearbyStoresReturn {
   refetch: () => Promise<void>;
   clear: () => void;
 }
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 /**
  * Custom hook to fetch nearby stores
@@ -87,7 +86,7 @@ export function useNearbyStores(
       }
 
       const response = await fetch(
-        `${API_BASE_URL}/api/map/nearby?${params.toString()}`
+        buildApiUrl(`/api/map/nearby?${params.toString()}`)
       );
 
       if (!response.ok) {
