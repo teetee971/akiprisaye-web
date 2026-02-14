@@ -21,6 +21,41 @@ function writeJson<T>(key: string, value: T) {
   window.localStorage.setItem(key, JSON.stringify(value));
 }
 
+type LocalStoreRecord<T> = {
+  value: T;
+  savedAt: number;
+};
+
+/**
+ * Read JSON value with TTL. Invalid/corrupted payloads are discarded safely.
+ */
+export function getCachedWithTTL<T>(key: string, ttlMs: number): T | null {
+  const payload = readJson<LocalStoreRecord<T> | null>(key, null);
+  if (!payload || typeof payload.savedAt !== 'number') {
+    return null;
+  }
+
+  const isExpired = Date.now() - payload.savedAt > ttlMs;
+  if (isExpired) {
+    if (typeof window !== 'undefined') {
+      window.localStorage.removeItem(key);
+    }
+    return null;
+  }
+
+  return payload.value;
+}
+
+/**
+ * Write compact JSON payload that can be retrieved with getCachedWithTTL.
+ */
+export function setCachedJson<T>(key: string, value: T): void {
+  writeJson<LocalStoreRecord<T>>(key, {
+    value,
+    savedAt: Date.now(),
+  });
+}
+
 export function getFavorites(): LocalProductItem[] {
   return readJson<LocalProductItem[]>(FAVORITES_KEY, []);
 }
@@ -79,7 +114,10 @@ export function saveReport(
   const reports = getReports();
   const report: LocalPriceReport = {
     ...payload,
-    id: typeof crypto !== 'undefined' && 'randomUUID' in crypto ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
+    id:
+      typeof window !== 'undefined' && window.crypto && 'randomUUID' in window.crypto
+        ? window.crypto.randomUUID()
+        : `${Date.now()}-${Math.random()}`,
     createdAt: new Date().toISOString(),
     source: 'user_report',
     currency: 'EUR',
