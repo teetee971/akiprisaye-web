@@ -51,10 +51,20 @@ jobs:
         working-directory: frontend
         run: npm ci
 
-      - name: 🧹 Lint code
+      - name: 🧹 Lint changed files (PR)
+        if: github.event_name == 'pull_request'
         working-directory: frontend
-        run: npm run lint
+        env:
+          LINT_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          LINT_HEAD_SHA: ${{ github.sha }}
+        run: npm run lint:ci
         continue-on-error: false
+
+      - name: 🧹 Lint full codebase (non-blocking)
+        if: github.event_name != 'pull_request'
+        working-directory: frontend
+        run: npm run lint:full:ci
+        continue-on-error: true
 
       - name: 🧪 Run tests
         working-directory: frontend
