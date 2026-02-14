@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { Suspense, useState, useEffect } from 'react';
-import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 // Import Layout synchronously to prevent loading block
 import Layout from './components/Layout';
@@ -166,7 +166,7 @@ export default function App() {
         <ThemeProvider>
           <AuthProvider>
             <OnboardingProvider>
-              <HashRouter>
+              <BrowserRouter>
                 <Suspense fallback={<LoadingFallback />}>
                   <Routes>
                     {/* Admin routes with dedicated layout */}
@@ -265,7 +265,7 @@ export default function App() {
                   <OnboardingTour />
                   <HelpButton />
                 </Suspense>
-              </HashRouter>
+              </BrowserRouter>
             </OnboardingProvider>
           </AuthProvider>
         </ThemeProvider>
