@@ -33,9 +33,19 @@ jobs:
           cache: "npm"
           cache-dependency-path: "frontend/package-lock.json"
 
+      - name: Configure npm registry and network resilience
+        working-directory: frontend
+        run: |
+          npm config set registry https://registry.npmjs.org/
+          npm config set fetch-retries 5
+          npm config set fetch-retry-factor 2
+          npm config set fetch-retry-mintimeout 20000
+          npm config set fetch-retry-maxtimeout 120000
+          npm config set fetch-timeout 180000
+
       - name: Install dependencies
         working-directory: frontend
-        run: npm ci
+        run: npm ci --include=dev
 
       - name: Repository audit gate
         shell: bash
