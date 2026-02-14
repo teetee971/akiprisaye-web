@@ -5,8 +5,10 @@ import EmptyState from '../components/EmptyState';
 import BarcodeScanner from '../components/BarcodeScanner';
 import PriceSparkline from '../components/PriceSparkline';
 import { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { findProductByEan, filterPricesByTerritory, searchProductsByName } from '../data/seedProducts';
 import { DEFAULT_TERRITORY, getTerritoryByCode } from '../constants/territories';
+import { useStoreContext } from '../context/StoreContext';
 
 const MIN_QUERY_LENGTH = 3;
 
@@ -33,8 +35,9 @@ const getSearchDescriptor = ({ ean = '', query = '' }) => {
 };
 
 export default function Comparateur() {
+  const { preferredStore, preferredTerritory } = useStoreContext();
   const [ean, setEan] = useState('');
-  const [territory, setTerritory] = useState(DEFAULT_TERRITORY);
+  const [territory, setTerritory] = useState(preferredTerritory || DEFAULT_TERRITORY);
   const [results, setResults] = useState(EMPTY_RESULTS_STATE);
   const [loading, setLoading] = useState(false);
   const [showScanner, setShowScanner] = useState(false);
@@ -47,6 +50,10 @@ export default function Comparateur() {
   const requestIdRef = useRef(0);
   const abortRef = useRef(null);
 
+
+  useEffect(() => {
+    setTerritory(preferredTerritory || DEFAULT_TERRITORY);
+  }, [preferredTerritory]);
   const resetDisplayedResults = () => {
     setResults(EMPTY_RESULTS_STATE);
   };
@@ -322,6 +329,13 @@ export default function Comparateur() {
               <span>←</span>
               <span>Accueil</span>
             </a>
+          </div>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 px-4 py-2 text-sm text-slate-700 dark:text-slate-200">
+            Territoire: <strong>{territory.toUpperCase()}</strong> • Magasin: <strong>{preferredStore?.name ?? 'Non défini'}</strong>{' '}
+            <Link to="/stores" className="text-blue-600 dark:text-blue-300 underline">(modifier)</Link>
           </div>
         </div>
 

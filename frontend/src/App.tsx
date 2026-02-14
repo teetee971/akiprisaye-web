@@ -8,6 +8,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
 import { OnboardingProvider } from './context/OnboardingContext';
+import { StoreProvider } from './context/StoreContext';
 import { LanguageProvider } from './context/LanguageProvider';
 import { PerformanceMonitor } from './components/PerformanceMonitor';
 import OnboardingTour from './components/OnboardingTour';
@@ -64,6 +65,8 @@ const MesListes = React.lazy(() => import('./pages/MesListes'));
 
 // Savings Dashboard
 const MesEconomies = React.lazy(() => import('./pages/MesEconomies'));
+const StoresPage = React.lazy(() => import('./pages/stores/StoresPage'));
+const StoreDetailsPage = React.lazy(() => import('./pages/stores/StoreDetailsPage'));
 
 // Auth pages
 const Login = React.lazy(() => import('./pages/Login'));
@@ -167,6 +170,7 @@ export default function App() {
         <ThemeProvider>
           <AuthProvider>
             <OnboardingProvider>
+              <StoreProvider>
               <BrowserRouter>
                 <Suspense fallback={<LoadingFallback />}>
                   <Routes>
@@ -225,6 +229,9 @@ export default function App() {
                       <Route path="historique-prix" element={<HistoriquePrix />} />
                       <Route path="historique" element={<HistoriquePrix />} />
                       <Route path="recherche-prix" element={<RecherchePrix />} />
+                      <Route path="stores" element={<StoresPage />} />
+                      <Route path="magasins" element={<StoresPage />} />
+                      <Route path="stores/:id" element={<StoreDetailsPage />} />
                       <Route path="alertes" element={<Alertes />} />
                       <Route path="mes-listes" element={<MesListes />} />
                       
@@ -268,6 +275,7 @@ export default function App() {
                   <HelpButton />
                 </Suspense>
               </BrowserRouter>
+              </StoreProvider>
             </OnboardingProvider>
           </AuthProvider>
         </ThemeProvider>

@@ -9,9 +9,11 @@ import SkipLinks from './a11y/SkipLinks';
 import A11ySettingsPanel from './a11y/A11ySettingsPanel';
 import SeoDefaults from './SeoDefaults';
 import { LanguageSelector } from './i18n/LanguageSelector';
+import { useStoreContext } from '../context/StoreContext';
 
 export default function Layout() {
   const location = useLocation();
+  const { preferredStore } = useStoreContext();
   const [open, setOpen] = React.useState(false);
   const [showScrollTop, setShowScrollTop] = React.useState(false);
   const [focusMode, setFocusMode] = React.useState(() => localStorage.getItem('focusMode') === 'true');
@@ -132,6 +134,7 @@ export default function Layout() {
     { path: '/methodologie', label: 'Méthodologie', icon: '📚' },
     { path: '/faq', label: 'FAQ', icon: '❓' },
     { path: '/contact', label: 'Contact', icon: '✉️' },
+    { path: '/stores', label: 'Magasins', icon: '🏬' },
   ];
   const quickLinks = [
     ...navItems,
@@ -199,6 +202,9 @@ export default function Layout() {
 
           {/* Ti‑panier (desktop placement) */}
           <div className="hidden md:flex items-center gap-3">
+            <Link to="/stores" className="text-xs rounded-lg border border-slate-700 px-3 py-2 text-slate-200 hover:border-blue-500">
+              {preferredStore ? `Magasin: ${preferredStore.city}` : 'Changer de magasin'}
+            </Link>
             <LanguageSelector variant="compact" />
             <TiPanierButton float={false} />
           </div>
