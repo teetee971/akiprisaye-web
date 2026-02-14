@@ -493,6 +493,22 @@ Rollback possible
 **URL officielle :**  
 👉 [https://akiprisaye-web.pages.dev](https://akiprisaye-web.pages.dev)
 
+### Variables d'environnement Cloudflare Pages (Vite)
+
+Définissez **toutes** les variables `VITE_*` requises dans **Cloudflare Pages → Settings → Environment variables** (Production + Preview).  
+Pour Firebase :
+
+- `VITE_FIREBASE_API_KEY`
+- `VITE_FIREBASE_AUTH_DOMAIN`
+- `VITE_FIREBASE_PROJECT_ID`
+- `VITE_FIREBASE_STORAGE_BUCKET`
+- `VITE_FIREBASE_MESSAGING_SENDER_ID`
+- `VITE_FIREBASE_APP_ID`
+- `VITE_FIREBASE_MEASUREMENT_ID` *(optionnel, uniquement pour Analytics)*
+- `VITE_AUTH_ANON_ENABLED` (`true`/`false`)
+
+> `VITE_FIREBASE_MEASUREMENT_ID` est optionnel : son absence ne doit pas bloquer l'application ni l'authentification.
+
 ---
 
 ## 🚀 Démarrage Rapide

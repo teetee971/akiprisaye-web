@@ -7,6 +7,7 @@ import Layout from './components/Layout';
 import ErrorBoundary from './components/ErrorBoundary';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
+import { firebaseError, hasCriticalFirebaseError } from './lib/firebase';
 import { OnboardingProvider } from './context/OnboardingContext';
 import { LanguageProvider } from './context/LanguageProvider';
 import { PerformanceMonitor } from './components/PerformanceMonitor';
@@ -143,6 +144,20 @@ export default function App() {
       console.log('✅ App: HTML loading fallback hidden');
     }
   }, []);
+
+
+  if (hasCriticalFirebaseError && import.meta.env.PROD) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-900 text-white p-4">
+        <img src="/logo-akiprisaye.svg" alt="Logo" className="h-16 mb-4" />
+        <h1 className="text-xl font-bold mb-2">Configuration Firebase incomplète</h1>
+        <p className="text-slate-300 mb-4 text-center max-w-lg">
+          L'application est disponible en mode limité. Merci de vérifier les variables d'environnement Firebase sur Cloudflare Pages.
+        </p>
+        {firebaseError ? <p className="text-red-400 text-sm text-center max-w-lg">{firebaseError}</p> : null}
+      </div>
+    );
+  }
 
   if (providerError) {
     return (
