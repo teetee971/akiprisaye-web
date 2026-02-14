@@ -1,15 +1,22 @@
 export type TerritoryCode = 'gp' | 'mq' | 'fr' | 'gf' | 're' | 'yt';
 
-export type PromoSource = {
+export type PromoCategory = 'bebe' | 'hygiene' | 'epicerie';
+export type PromoMode = 'inStore' | 'drive' | 'delivery';
+
+export type Promo = {
   id: string;
-  name: string;
-  territory: TerritoryCode;
-  storeId?: string;
   title: string;
-  periodStart: string;
-  periodEnd: string;
-  url: string;
-  tags?: string[];
+  brand?: string;
+  category: PromoCategory;
+  price?: number;
+  oldPrice?: number;
+  discountPct?: number;
+  validFrom?: string;
+  validTo?: string;
+  storeId?: string;
+  mode?: PromoMode;
+  territory: TerritoryCode;
+  source: 'dataset';
 };
 
 export type AlertSeverity = 'info' | 'warning' | 'critical';
