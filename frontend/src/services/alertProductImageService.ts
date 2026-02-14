@@ -123,6 +123,7 @@ async function fetchFromApi(ean: string, category?: string): Promise<{ url?: str
     if (category) {
       params.set('category', category);
     }
+    params.set('format', 'json');
 
     const response = await fetch(`/api/product-image?${params.toString()}`, {
       method: 'GET',

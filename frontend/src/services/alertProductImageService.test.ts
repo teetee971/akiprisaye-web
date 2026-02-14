@@ -42,18 +42,20 @@ describe('alertProductImageService fallback and cache', () => {
   });
 
   it('returns category placeholder when backend has no image', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn(async () => ({
-        ok: true,
-        json: async () => ({ source: 'none' }),
-      }) as unknown as globalThis.Response)
-    );
+    const fetchMock = vi.fn(async () => ({
+      ok: true,
+      json: async () => ({ source: 'none' }),
+    }) as unknown as globalThis.Response);
+    vi.stubGlobal('fetch', fetchMock);
 
     const result = await getProductImageUrl('3760123456789', 'bébé');
 
     expect(result.source).toBe('placeholder');
     expect(result.url).toBe('/assets/placeholders/placeholder-bebe.svg');
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.stringContaining('format=json'),
+      expect.objectContaining({ method: 'GET' })
+    );
   });
 
   it('returns placeholder on network error and keeps local cache entry', async () => {

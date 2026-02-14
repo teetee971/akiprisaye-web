@@ -66,16 +66,51 @@ function jsonResponse(body: { url?: string; source: ImageSource }, status = 200)
   });
 }
 
+function imageModeHeaders(contentType: string): HeadersInit {
+  return {
+    'content-type': contentType,
+    'Cache-Control': `public, max-age=${EDGE_CACHE_TTL}`,
+  };
+}
+
+function imageRedirectResponse(targetUrl: string): Response {
+  return new Response(null, {
+    status: 302,
+    headers: {
+      Location: targetUrl,
+      'Cache-Control': `public, max-age=${EDGE_CACHE_TTL}`,
+    },
+  });
+}
+
+function placeholderSvgResponse(status = 200): Response {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="640" viewBox="0 0 640 640" role="img" aria-label="Image produit indisponible"><rect width="640" height="640" fill="#f3f4f6"/><g fill="none" stroke="#9ca3af" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"><rect x="120" y="150" width="400" height="300" rx="24"/><path d="M165 395l92-92 74 74 54-54 90 90"/><circle cx="250" cy="240" r="38"/></g><text x="320" y="520" text-anchor="middle" fill="#6b7280" font-family="Arial, Helvetica, sans-serif" font-size="36">Image indisponible</text></svg>`;
+
+  return new Response(svg, {
+    status,
+    headers: imageModeHeaders('image/svg+xml; charset=utf-8'),
+  });
+}
+
 export const onRequestGet: PagesFunction = async ({ request }) => {
   const url = new URL(request.url);
   const ean = (url.searchParams.get('ean') ?? '').trim();
   const category = url.searchParams.get('category');
+  const wantsJson = url.searchParams.get('format') === 'json';
 
   if (!ean) {
     const placeholder = getPlaceholderUrl(category);
-    return jsonResponse(placeholder
-      ? { url: placeholder, source: 'placeholder' }
-      : { source: 'none' });
+    if (wantsJson) {
+      return jsonResponse(placeholder
+        ? { url: placeholder, source: 'placeholder' }
+        : { source: 'none' });
+    }
+
+    if (placeholder) {
+      return imageRedirectResponse(placeholder);
+    }
+
+    return placeholderSvgResponse();
   }
 
   const cache = caches.default;
@@ -117,12 +152,28 @@ export const onRequestGet: PagesFunction = async ({ request }) => {
       body = placeholder ? { url: placeholder, source: 'placeholder' } : { source: 'none' };
     }
 
-    const result = jsonResponse(body);
+    let result: Response;
+    if (wantsJson) {
+      result = jsonResponse(body);
+    } else if (body.url) {
+      result = imageRedirectResponse(body.url);
+    } else {
+      result = placeholderSvgResponse();
+    }
+
     await cache.put(cacheKey, result.clone());
     return result;
   } catch {
     const placeholder = getPlaceholderUrl(category);
-    return jsonResponse(placeholder ? { url: placeholder, source: 'placeholder' } : { source: 'none' });
+    if (wantsJson) {
+      return jsonResponse(placeholder ? { url: placeholder, source: 'placeholder' } : { source: 'none' });
+    }
+
+    if (placeholder) {
+      return imageRedirectResponse(placeholder);
+    }
+
+    return placeholderSvgResponse();
   } finally {
     clearTimeout(timeoutId);
   }
