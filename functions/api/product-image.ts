@@ -2,7 +2,9 @@ const OFF_BASE_URL = 'https://world.openfoodfacts.org';
 const EDGE_CACHE_TTL = 7 * 24 * 60 * 60;
 const FETCH_TIMEOUT_MS = 5000;
 
-type ImageSource = 'off' | 'placeholder' | 'none';
+type ImageSource = 'off' | 'placeholder';
+
+const DEFAULT_PLACEHOLDER_URL = '/assets/placeholders/placeholder-default.svg';
 
 type OffImagePayload = {
   image_url?: unknown;
@@ -36,12 +38,12 @@ function normalizeCategory(category: string): string {
     .trim();
 }
 
-function getPlaceholderUrl(category?: string | null): string | undefined {
+function getPlaceholderUrl(category?: string | null): string {
   if (!category || !category.trim()) {
-    return undefined;
+    return DEFAULT_PLACEHOLDER_URL;
   }
 
-  return PLACEHOLDER_BY_CATEGORY[normalizeCategory(category)] ?? '/assets/placeholders/placeholder-default.svg';
+  return PLACEHOLDER_BY_CATEGORY[normalizeCategory(category)] ?? DEFAULT_PLACEHOLDER_URL;
 }
 
 function asNonEmptyString(value: unknown): string | undefined {
@@ -62,6 +64,7 @@ function jsonResponse(body: { url?: string; source: ImageSource }, status = 200)
     headers: {
       'content-type': 'application/json; charset=utf-8',
       'Cache-Control': `public, max-age=${EDGE_CACHE_TTL}`,
+      Vary: 'Accept',
     },
   });
 }
@@ -70,6 +73,7 @@ function imageModeHeaders(contentType: string): HeadersInit {
   return {
     'content-type': contentType,
     'Cache-Control': `public, max-age=${EDGE_CACHE_TTL}`,
+    Vary: 'Accept',
   };
 }
 
@@ -79,6 +83,7 @@ function imageRedirectResponse(targetUrl: string): Response {
     headers: {
       Location: targetUrl,
       'Cache-Control': `public, max-age=${EDGE_CACHE_TTL}`,
+      Vary: 'Accept',
     },
   });
 }
@@ -96,25 +101,25 @@ export const onRequestGet: PagesFunction = async ({ request }) => {
   const url = new URL(request.url);
   const ean = (url.searchParams.get('ean') ?? '').trim();
   const category = url.searchParams.get('category');
-  const wantsJson = url.searchParams.get('format') === 'json';
+  const accept = request.headers.get('accept') ?? '';
+  const wantsJson =
+    url.searchParams.get('format') === 'json'
+    || accept.includes('application/json');
 
   if (!ean) {
     const placeholder = getPlaceholderUrl(category);
     if (wantsJson) {
-      return jsonResponse(placeholder
-        ? { url: placeholder, source: 'placeholder' }
-        : { source: 'none' });
+      return jsonResponse({ url: placeholder, source: 'placeholder' });
     }
 
-    if (placeholder) {
-      return imageRedirectResponse(placeholder);
-    }
-
-    return placeholderSvgResponse();
+    return imageRedirectResponse(placeholder);
   }
 
   const cache = caches.default;
-  const cacheKey = new Request(url.toString(), { method: 'GET' });
+  const cacheKey = new Request(url.toString(), {
+    method: 'GET',
+    headers: { Accept: accept },
+  });
   const cached = await cache.match(cacheKey);
 
   if (cached) {
@@ -144,12 +149,10 @@ export const onRequestGet: PagesFunction = async ({ request }) => {
       if (offImage) {
         body = { url: offImage, source: 'off' };
       } else {
-        const placeholder = getPlaceholderUrl(category);
-        body = placeholder ? { url: placeholder, source: 'placeholder' } : { source: 'none' };
+        body = { url: getPlaceholderUrl(category), source: 'placeholder' };
       }
     } else {
-      const placeholder = getPlaceholderUrl(category);
-      body = placeholder ? { url: placeholder, source: 'placeholder' } : { source: 'none' };
+      body = { url: getPlaceholderUrl(category), source: 'placeholder' };
     }
 
     let result: Response;
@@ -166,14 +169,10 @@ export const onRequestGet: PagesFunction = async ({ request }) => {
   } catch {
     const placeholder = getPlaceholderUrl(category);
     if (wantsJson) {
-      return jsonResponse(placeholder ? { url: placeholder, source: 'placeholder' } : { source: 'none' });
+      return jsonResponse({ url: placeholder, source: 'placeholder' });
     }
 
-    if (placeholder) {
-      return imageRedirectResponse(placeholder);
-    }
-
-    return placeholderSvgResponse();
+    return imageRedirectResponse(placeholder);
   } finally {
     clearTimeout(timeoutId);
   }

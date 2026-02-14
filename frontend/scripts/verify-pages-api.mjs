@@ -10,7 +10,9 @@ async function checkHealth() {
 }
 
 async function checkProductImageJson() {
-  const response = await fetch(`${baseUrl}/api/product-image?ean=3274080005003&format=json&v=2`);
+  const response = await fetch(`${baseUrl}/api/product-image?ean=3274080005003&format=json&v=2`, {
+    headers: { Accept: 'text/html' },
+  });
   const body = await response.text();
   if (response.status !== 200) {
     throw new Error(`/api/product-image?format=json expected 200, received ${response.status}. body=${body.slice(0, 180)}`);
@@ -23,15 +25,23 @@ async function checkProductImageJson() {
     throw new Error(`/api/product-image?format=json did not return JSON. body=${body.slice(0, 180)}`);
   }
 
-  if (!['off', 'placeholder', 'none'].includes(parsed?.source)) {
+  if (!['off', 'placeholder'].includes(parsed?.source)) {
     throw new Error(`/api/product-image?format=json returned unexpected payload: ${body.slice(0, 180)}`);
+  }
+
+  const vary = response.headers.get('vary') || '';
+  if (!vary.toLowerCase().includes('accept')) {
+    throw new Error(`/api/product-image?format=json expected Vary: Accept, received "${vary}"`);
   }
 
   console.log(`OK /api/product-image?format=json -> ${response.status} source=${parsed.source}`);
 }
 
 async function checkProductImageMode() {
-  const response = await fetch(`${baseUrl}/api/product-image?ean=3274080005003&v=2`, { redirect: 'manual' });
+  const response = await fetch(`${baseUrl}/api/product-image?ean=3274080005003&v=2`, {
+    redirect: 'manual',
+    headers: { Accept: 'text/html' },
+  });
   const contentType = response.headers.get('content-type') || '';
   const isRedirect = response.status === 302;
   const isSvg = response.status === 200 && contentType.includes('image/svg+xml');
@@ -41,13 +51,48 @@ async function checkProductImageMode() {
     throw new Error(`/api/product-image image mode expected 302 or 200 image/svg+xml, received ${response.status} content-type=${contentType}. body=${body.slice(0, 180)}`);
   }
 
+  const vary = response.headers.get('vary') || '';
+  if (!vary.toLowerCase().includes('accept')) {
+    throw new Error(`/api/product-image image mode expected Vary: Accept, received "${vary}"`);
+  }
+
   console.log(`OK /api/product-image image mode -> ${response.status} content-type=${contentType || 'n/a'}`);
+}
+
+async function checkProductImageJsonByAccept() {
+  const response = await fetch(`${baseUrl}/api/product-image?ean=3274080005003&v=2`, {
+    headers: { Accept: 'application/json' },
+  });
+  const body = await response.text();
+
+  if (response.status !== 200) {
+    throw new Error(`/api/product-image Accept: application/json expected 200, received ${response.status}. body=${body.slice(0, 180)}`);
+  }
+
+  let parsed;
+  try {
+    parsed = JSON.parse(body);
+  } catch {
+    throw new Error(`/api/product-image Accept: application/json did not return JSON. body=${body.slice(0, 180)}`);
+  }
+
+  if (!['off', 'placeholder'].includes(parsed?.source)) {
+    throw new Error(`/api/product-image Accept: application/json returned unexpected payload: ${body.slice(0, 180)}`);
+  }
+
+  const vary = response.headers.get('vary') || '';
+  if (!vary.toLowerCase().includes('accept')) {
+    throw new Error(`/api/product-image Accept: application/json expected Vary: Accept, received "${vary}"`);
+  }
+
+  console.log(`OK /api/product-image Accept: application/json -> ${response.status} source=${parsed.source}`);
 }
 
 async function run() {
   await checkHealth();
   await checkProductImageJson();
   await checkProductImageMode();
+  await checkProductImageJsonByAccept();
   console.log('API verification completed successfully.');
 }
 
