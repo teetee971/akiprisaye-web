@@ -7,6 +7,8 @@ import PriceSparkline from '../components/PriceSparkline';
 import { useEffect, useRef, useState } from 'react';
 import { findProductByEan, filterPricesByTerritory, searchProductsByName } from '../data/seedProducts';
 import { DEFAULT_TERRITORY, getTerritoryByCode } from '../constants/territories';
+import { useStoreSelection } from '../context/StoreSelectionContext';
+import { getEffectiveSelection } from '../modules/store/storeSelection';
 
 const MIN_QUERY_LENGTH = 3;
 
@@ -43,9 +45,14 @@ export default function Comparateur() {
   const [localPriceInsight, setLocalPriceInsight] = useState({ product: null, aggregate: null, timeseries: [] });
   const [webPriceInsight, setWebPriceInsight] = useState([]);
   const [debugApi, setDebugApi] = useState({ local: null, web: null });
+  const { selection } = useStoreSelection();
   const [loadingLocalPrice, setLoadingLocalPrice] = useState(false);
+  const [observationMeta, setObservationMeta] = useState({ status: 'NO_DATA', lastUpdatedAt: null, total: 0 });
+  const [observationHistory, setObservationHistory] = useState([]);
+  const [showHistory, setShowHistory] = useState(false);
   const requestIdRef = useRef(0);
   const abortRef = useRef(null);
+  const allowedModes = new Set(['inStore', 'drive', 'delivery']);
 
   const resetDisplayedResults = () => {
     setResults(EMPTY_RESULTS_STATE);
@@ -114,16 +121,26 @@ export default function Comparateur() {
     const controller = new AbortController();
     abortRef.current = controller;
 
+    const fallbackTerritory = 'gp';
+    const effectiveSelection = selection ?? getEffectiveSelection(fallbackTerritory);
+    const activeTerritory = effectiveSelection?.territory || territory || DEFAULT_TERRITORY || fallbackTerritory;
+
     setLoading(true);
     setLoadingLocalPrice(false);
     setLocalPriceInsight({ product: null, aggregate: null, timeseries: [] });
     setWebPriceInsight([]);
     setDebugApi({ local: null, web: null });
+    setObservationMeta({ status: 'NO_DATA', lastUpdatedAt: null, total: 0 });
+    setObservationHistory([]);
     resetDisplayedResults();
 
     try {
       // Try to fetch from API, fallback to mock data
-      const searchParams = new URLSearchParams({ territory });
+      const searchParams = new URLSearchParams({ territory: activeTerritory });
+      if (effectiveSelection?.storeId) searchParams.set('storeId', effectiveSelection.storeId);
+      if (effectiveSelection?.serviceMode && allowedModes.has(effectiveSelection.serviceMode)) {
+        searchParams.set('serviceMode', effectiveSelection.serviceMode);
+      }
       if (descriptor.mode === 'EAN') {
         searchParams.set('ean', barcode);
       } else {
@@ -131,6 +148,23 @@ export default function Comparateur() {
       }
 
       const response = await fetch(`/api/prices?${searchParams.toString()}`, { signal: controller.signal }).catch(() => null);
+
+      const observationParams = new URLSearchParams({
+        territory: activeTerritory || 'gp',
+        barcode: barcode || '',
+        q: descriptor.mode === 'QUERY' ? descriptor.key : '',
+      });
+      if (effectiveSelection?.storeId) observationParams.set('storeId', effectiveSelection.storeId);
+      if (effectiveSelection?.serviceMode && allowedModes.has(effectiveSelection.serviceMode)) {
+        observationParams.set('mode', effectiveSelection.serviceMode);
+      }
+
+      const observationResponse = await fetch(`/api/observations?${observationParams.toString()}`).catch(() => null);
+      if (observationResponse?.ok) {
+        const payload = await observationResponse.json();
+        setObservationMeta(payload.metadata ?? { status: 'NO_DATA', lastUpdatedAt: null, total: 0 });
+        setObservationHistory(Array.isArray(payload.observations) ? payload.observations : []);
+      }
 
       if (requestId !== requestIdRef.current) {
         return;
@@ -313,6 +347,7 @@ export default function Comparateur() {
                 <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
                   Service public de transparence des prix en Outre-mer
                 </p>
+                <a href="/promos" className="text-sm text-blue-600 dark:text-blue-400 underline">Voir promos</a>
               </div>
             </div>
             <a 
@@ -369,6 +404,11 @@ export default function Comparateur() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {!selection && (
+          <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 text-amber-900 px-4 py-3 text-sm">
+            Choisis ton magasin pour des résultats plus précis.
+          </div>
+        )}
         {/* Product Search Section */}
         <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-6 mb-6">
           <div className="flex items-start gap-3 mb-4">
@@ -396,6 +436,11 @@ export default function Comparateur() {
 
         {/* Search Form - Design moderne */}
         <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-6 mb-6">
+          {observationMeta.status === 'NO_DATA' && (
+            <div className="mb-4 rounded-lg border border-blue-200 bg-blue-50 text-blue-900 px-4 py-3 text-sm">
+              Pas encore de données d'observation consolidées pour cette recherche. <a href="/transparence" className="underline font-medium">Pourquoi ?</a>
+            </div>
+          )}
           <form onSubmit={searchPrices} className="space-y-6">
             <div className="grid gap-6 md:grid-cols-2">
               {/* EAN Input */}
@@ -534,6 +579,7 @@ export default function Comparateur() {
                       Pour le produit : <span className="font-semibold">{results.productLabel}</span>
                     </p>
                   )}
+                  <p className="text-xs text-slate-500 mt-2">Dernière mise à jour: {observationMeta.lastUpdatedAt ? formatDate(observationMeta.lastUpdatedAt) : 'n/a'} · Source: observations déclaratives · Fiabilité: {observationMeta.status === 'OK' ? 'élevée' : observationMeta.status === 'PARTIAL' ? 'moyenne' : 'faible'}</p>
                 </div>
                 {bestPrice && (
                   <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-2 border-green-500 dark:border-green-600 px-6 py-3 rounded-xl">
@@ -545,6 +591,7 @@ export default function Comparateur() {
                     </div>
                   </div>
                 )}
+                <button type="button" onClick={() => setShowHistory(true)} className="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 text-sm">Historique</button>
               </div>
             </div>
 
@@ -736,6 +783,17 @@ export default function Comparateur() {
           onScan={handleScanResult}
           onClose={() => setShowScanner(false)}
         />
+      )}
+
+      {showHistory && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-end md:items-center justify-center" onClick={() => setShowHistory(false)}>
+          <div className="bg-white dark:bg-slate-900 w-full md:max-w-xl rounded-t-2xl md:rounded-2xl p-4 max-h-[70vh] overflow-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="flex justify-between items-center mb-3"><h3 className="font-semibold">Historique des observations</h3><button onClick={() => setShowHistory(false)}>Fermer</button></div>
+            <ul className="space-y-2 text-sm">
+              {observationHistory.map((item) => <li key={item.id} className="border border-slate-200 dark:border-slate-700 rounded p-2">{item.storeName} · {item.price} € · {formatDate(item.observedAt)}</li>)}
+            </ul>
+          </div>
+        </div>
       )}
     </div>
   );

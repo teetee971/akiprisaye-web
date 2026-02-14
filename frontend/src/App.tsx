@@ -14,6 +14,7 @@ import OnboardingTour from './components/OnboardingTour';
 import OnboardingAutoStart from './components/OnboardingAutoStart';
 import HelpButton from './components/HelpButton';
 import AnalyticsTracker from './components/analytics/AnalyticsTracker';
+import { StoreSelectionProvider } from './context/StoreSelectionContext';
 
 // Lazy-loaded pages - Main routes
 const Home = React.lazy(() => import('./pages/Home'));
@@ -60,6 +61,7 @@ const Settings = React.lazy(() => import('./pages/Settings'));
 const HistoriquePrix = React.lazy(() => import('./pages/HistoriquePrix'));
 const RecherchePrix = React.lazy(() => import('./pages/RecherchePrix'));
 const Alertes = React.lazy(() => import('./pages/Alertes'));
+const Promos = React.lazy(() => import('./pages/Promos'));
 const MesListes = React.lazy(() => import('./pages/MesListes'));
 
 // Savings Dashboard
@@ -167,6 +169,7 @@ export default function App() {
         <ThemeProvider>
           <AuthProvider>
             <OnboardingProvider>
+              <StoreSelectionProvider>
               <BrowserRouter>
                 <Suspense fallback={<LoadingFallback />}>
                   <Routes>
@@ -226,6 +229,7 @@ export default function App() {
                       <Route path="historique" element={<HistoriquePrix />} />
                       <Route path="recherche-prix" element={<RecherchePrix />} />
                       <Route path="alertes" element={<Alertes />} />
+                      <Route path="promos" element={<Promos />} />
                       <Route path="mes-listes" element={<MesListes />} />
                       
                       {/* Savings Dashboard */}
@@ -268,6 +272,7 @@ export default function App() {
                   <HelpButton />
                 </Suspense>
               </BrowserRouter>
+              </StoreSelectionProvider>
             </OnboardingProvider>
           </AuthProvider>
         </ThemeProvider>

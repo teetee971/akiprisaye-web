@@ -9,6 +9,8 @@ import SkipLinks from './a11y/SkipLinks';
 import A11ySettingsPanel from './a11y/A11ySettingsPanel';
 import SeoDefaults from './SeoDefaults';
 import { LanguageSelector } from './i18n/LanguageSelector';
+import AlertBanner from './AlertBanner';
+import StoreChip from './store/StoreChip';
 
 export default function Layout() {
   const location = useLocation();
@@ -126,6 +128,7 @@ export default function Layout() {
   const navItems = [
     { path: '/', label: 'Accueil', icon: '🏠' },
     { path: '/comparateur', label: 'Comparateur', icon: '📊' },
+    { path: '/promos', label: 'Promos', icon: '📰' },
     { path: '/observatoire', label: 'Observatoire', icon: '📈' },
     { path: '/mes-economies', label: 'Mes Économies', icon: '💰' },
     { path: '/mes-listes', label: 'Mes listes', icon: '⭐' },
@@ -199,6 +202,7 @@ export default function Layout() {
 
           {/* Ti‑panier (desktop placement) */}
           <div className="hidden md:flex items-center gap-3">
+            <StoreChip />
             <LanguageSelector variant="compact" />
             <TiPanierButton float={false} />
           </div>
@@ -240,6 +244,9 @@ export default function Layout() {
         {open && (
           <div id="mobile-menu" className="lg:hidden bg-slate-900/95 backdrop-blur-xl border-t border-slate-700 relative z-50" role="navigation" aria-label="Menu mobile">
             <div className="py-2">
+              <div className="px-6 py-2">
+                <StoreChip />
+              </div>
               {navItems.map((item) => (
                 <NavLink
                   key={item.path}
@@ -262,6 +269,8 @@ export default function Layout() {
           </div>
         )}
       </header>
+
+      <AlertBanner />
 
       {/* Offline/Network Indicator */}
       <OfflineIndicator />
