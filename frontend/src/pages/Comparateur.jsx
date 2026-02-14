@@ -5,6 +5,7 @@ import EmptyState from '../components/EmptyState';
 import BarcodeScanner from '../components/BarcodeScanner';
 import PriceSparkline from '../components/PriceSparkline';
 import { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { findProductByEan, filterPricesByTerritory, searchProductsByName } from '../data/seedProducts';
 import { DEFAULT_TERRITORY, getTerritoryByCode } from '../constants/territories';
 import { useStoreSelection } from '../context/StoreSelectionContext';
@@ -347,7 +348,7 @@ export default function Comparateur() {
                 <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
                   Service public de transparence des prix en Outre-mer
                 </p>
-                <a href="/promos" className="text-sm text-blue-600 dark:text-blue-400 underline">Voir promos</a>
+                <Link to="/promos" className="text-sm text-blue-600 dark:text-blue-400 underline">Voir promos</Link>
               </div>
             </div>
             <a 
