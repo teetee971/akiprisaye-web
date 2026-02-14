@@ -17,6 +17,12 @@ export interface ScanData {
   sourcesUsed?: string[];
   warnings?: string[];
   territoryMessage?: string;
+  observations?: Array<{
+    source: 'open_food_facts' | 'open_prices' | 'user_report';
+    price: number;
+    observedAt?: string;
+    normalizedLabel?: string;
+  }>;
 }
 
 export interface PriceInterval {

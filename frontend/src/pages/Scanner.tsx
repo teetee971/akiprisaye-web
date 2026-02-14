@@ -1,19 +1,20 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BarcodeScanner from '../components/BarcodeScanner';
 import ProductDetails from '../components/products/ProductDetails';
 import { useSearchHistory } from '../hooks/useSearchHistory';
 import { lookupProductByEan } from '../services/eanProductService';
+import { fetchOffProductByBarcode } from '../services/openFoodFacts';
 import { toProductViewModel } from '../services/productViewModelService';
 import type { ScanState, ScannerOptions } from '../types/scan';
+import type { ProductViewModel } from '../types/productViewModel';
 import { safeLocalStorage } from '../utils/safeLocalStorage';
 
 export default function Scanner() {
   const navigate = useNavigate();
   const [showScanner, setShowScanner] = useState(false);
   const [scanResult, setScanResult] = useState<string | null>(null);
-  const [productData, setProductData] = useState<any | null>(null);
+  const [productData, setProductData] = useState<ProductViewModel | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [scanState, setScanState] = useState<ScanState>('idle');
@@ -54,6 +55,37 @@ export default function Scanner() {
         const viewModel = toProductViewModel(result.product);
         setProductData(viewModel);
         setScanState('success');
+
+        const needsOffEnrichment =
+          viewModel.nom === 'Produit inconnu' ||
+          viewModel.marque === 'Non spécifiée' ||
+          !viewModel.imageUrl;
+
+        if (needsOffEnrichment) {
+          void fetchOffProductByBarcode(code).then((offResult) => {
+            if (offResult.status === 'OK' && offResult.product) {
+              setProductData((current) => {
+                if (!current) {
+                  return current;
+                }
+
+                return {
+                  ...current,
+                  nom: current.nom === 'Produit inconnu' ? (offResult.product?.name ?? current.nom) : current.nom,
+                  marque:
+                    current.marque === 'Non spécifiée'
+                      ? (offResult.product?.brands ?? current.marque)
+                      : current.marque,
+                  imageUrl: current.imageUrl ?? offResult.product?.imageUrl,
+                  hasImage: Boolean(current.imageUrl ?? offResult.product?.imageUrl),
+                };
+              });
+            } else if (offResult.status === 'ERROR' && import.meta.env.DEV) {
+              console.debug('[OFF] lookup error', offResult.error);
+            }
+          });
+        }
+
         addEntry({
           label: viewModel.nom || `EAN ${code}`,
           type: 'barcode',

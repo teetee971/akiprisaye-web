@@ -128,6 +128,7 @@ export default function Layout() {
     { path: '/comparateur', label: 'Comparateur', icon: '📊' },
     { path: '/observatoire', label: 'Observatoire', icon: '📈' },
     { path: '/mes-economies', label: 'Mes Économies', icon: '💰' },
+    { path: '/mes-listes', label: 'Mes listes', icon: '⭐' },
     { path: '/methodologie', label: 'Méthodologie', icon: '📚' },
     { path: '/faq', label: 'FAQ', icon: '❓' },
     { path: '/contact', label: 'Contact', icon: '✉️' },
