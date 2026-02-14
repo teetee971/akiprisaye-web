@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import AlertProductImage from '../components/alerts/AlertProductImage';
 import { getAlertById } from '../services/alertsService';
 
 export default function AlerteDetail() {
@@ -39,6 +40,13 @@ export default function AlerteDetail() {
       </p>
 
       <section className="mt-6 space-y-4 rounded-xl border border-slate-700 bg-slate-900 p-5">
+        <AlertProductImage
+          ean={alert.ean}
+          category={alert.category}
+          alt={alert.productName ?? alert.title}
+          size={220}
+          className="mx-auto"
+        />
         <p><strong>Produit:</strong> {alert.productName ?? 'Non précisé'}</p>
         <p><strong>Marque:</strong> {alert.brand ?? 'Non précisée'}</p>
         <p><strong>Catégorie:</strong> {alert.category ?? 'Non précisée'}</p>
@@ -52,7 +60,7 @@ export default function AlerteDetail() {
           <a
             href={alert.sourceUrl}
             target="_blank"
-            rel="noopener"
+            rel="noopener noreferrer"
             className="inline-block text-blue-300 underline"
           >
             Consulter la source officielle

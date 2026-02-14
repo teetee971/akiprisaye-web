@@ -26,6 +26,8 @@ export interface SanitaryAlert {
   sourceName: string;
   sourceUrl?: string;
   updatedAt?: string;
+  productImageUrl?: string;
+  imageSource?: 'off' | 'placeholder' | 'none';
 }
 
 export interface SanitaryAlertsMetadata {

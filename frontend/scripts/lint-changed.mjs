@@ -34,6 +34,11 @@ function getChangedFiles() {
     console.warn('⚠️ Provided LINT_BASE_SHA/LINT_HEAD_SHA are not available locally (shallow clone or missing refs).');
   }
 
+  const originMainDiff = trySh('git diff --name-only origin/main...HEAD');
+  if (originMainDiff.ok) {
+    return { files: originMainDiff.output, strategy: 'origin/main...HEAD fallback' };
+  }
+
   const headOnlyDiff = trySh('git diff --name-only HEAD~1..HEAD');
   if (headOnlyDiff.ok) {
     return { files: headOnlyDiff.output, strategy: 'HEAD~1..HEAD fallback' };

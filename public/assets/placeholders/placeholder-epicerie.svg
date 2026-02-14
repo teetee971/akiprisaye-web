@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Placeholder épicerie">
+  <rect width="200" height="200" fill="#1e293b"/>
+  <rect x="58" y="44" width="84" height="112" rx="12" fill="#64748b"/>
+  <rect x="76" y="66" width="48" height="12" rx="6" fill="#94a3b8"/>
+  <rect x="76" y="92" width="48" height="42" rx="8" fill="#94a3b8"/>
+</svg>

@@ -6,6 +6,7 @@ export default defineConfig({
     globals: true,
     include: [
       'src/services/openFoodFacts.test.ts',
+      'src/services/alertProductImageService.test.ts',
       'functions/**/*.test.ts',
       'src/test/alerts.filterActive.test.ts',
       'src/test/alerts.searchSort.test.ts',

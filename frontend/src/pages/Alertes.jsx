@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import AlertProductImage from '../components/alerts/AlertProductImage';
 import { useStoreSelection } from '../context/StoreSelectionContext';
 import { getAlerts } from '../services/alertsService';
 
@@ -50,7 +51,7 @@ export default function Alertes() {
   }, [territory, onlyActive, category, severity, q]);
 
   const syncQueryString = (next) => {
-    const params = new URLSearchParams();
+    const params = new window.URLSearchParams();
     if (next.onlyActive) params.set('active', '1');
     if (next.category) params.set('category', next.category);
     if (next.severity) params.set('severity', next.severity);
@@ -126,8 +127,18 @@ export default function Alertes() {
         {alerts.map((alert) => (
           <article key={alert.id} className="rounded-xl border border-slate-700 bg-slate-900 p-4">
             <p className="text-xs uppercase text-slate-400 mb-1">{alert.severity} • {alert.status}</p>
-            <h2 className="font-semibold text-lg">{alert.title}</h2>
-            <p className="text-sm text-slate-300 mt-2">{alert.reason}</p>
+            <div className="flex gap-3 items-start">
+              <AlertProductImage
+                ean={alert.ean}
+                category={alert.category}
+                alt={alert.productName ?? alert.title}
+                size={56}
+              />
+              <div>
+                <h2 className="font-semibold text-lg">{alert.title}</h2>
+                <p className="text-sm text-slate-300 mt-2">{alert.reason}</p>
+              </div>
+            </div>
             <p className="text-xs text-slate-500 mt-3">
               {alert.publishedAt ? `Publié le ${new Date(alert.publishedAt).toLocaleDateString('fr-FR')} • ` : ''}
               {alert.category ? `${alert.category} • ` : ''}

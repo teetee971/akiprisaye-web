@@ -49,7 +49,7 @@ jobs:
           LINT_HEAD_SHA: ${{ github.sha }}
         run: |
           echo "## 🔍 ESLint Results (changed files only)" >> $GITHUB_STEP_SUMMARY
-          if node scripts/lint-changed.mjs > eslint-output.txt 2>&1; then
+          if node scripts/lint-changed.mjs --max-warnings=0 > eslint-output.txt 2>&1; then
             echo "✅ **No linting errors found on changed files**" >> $GITHUB_STEP_SUMMARY
           else
             echo "❌ **Linting errors detected on changed files**" >> $GITHUB_STEP_SUMMARY

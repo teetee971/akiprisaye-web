@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Placeholder hygiène">
+  <rect width="200" height="200" fill="#1e293b"/>
+  <rect x="74" y="38" width="52" height="124" rx="16" fill="#64748b"/>
+  <rect x="86" y="24" width="28" height="18" rx="6" fill="#94a3b8"/>
+  <rect x="82" y="90" width="36" height="48" rx="8" fill="#94a3b8"/>
+</svg>
