@@ -15,6 +15,7 @@ import OnboardingAutoStart from './components/OnboardingAutoStart';
 import HelpButton from './components/HelpButton';
 import AnalyticsTracker from './components/analytics/AnalyticsTracker';
 import { StoreSelectionProvider } from './context/StoreSelectionContext';
+import { logDebug } from './utils/logger';
 
 // Lazy-loaded pages - Main routes
 const Home = React.lazy(() => import('./pages/Home'));
@@ -95,13 +96,13 @@ function LoadingFallback() {
   const [showTimeout, setShowTimeout] = useState(false);
   
   useEffect(() => {
-    console.log('⏳ LoadingFallback: Displayed');
+    logDebug('⏳ LoadingFallback: Displayed');
     const timer = setTimeout(() => {
       console.error('⚠️ Application timeout - Loading blocked for 10+ seconds');
       setShowTimeout(true);
     }, 10000);
     return () => {
-      console.log('✅ LoadingFallback: Hidden (component loaded successfully)');
+      logDebug('✅ LoadingFallback: Hidden (component loaded successfully)');
       clearTimeout(timer);
     };
   }, []);
@@ -138,13 +139,13 @@ export default function App() {
   const [providerError, setProviderError] = useState<Error | null>(null);
 
   useEffect(() => {
-    console.log('🚀 App: Starting initialization');
-    console.log('📍 App: Environment:', import.meta.env.MODE);
-    console.log('📍 App: Firebase configured:', import.meta.env.VITE_FIREBASE_API_KEY ? 'Yes' : 'No');
+    logDebug('🚀 App: Starting initialization');
+    logDebug('📍 App: Environment:', import.meta.env.MODE);
+    logDebug('📍 App: Firebase configured:', import.meta.env.VITE_FIREBASE_API_KEY ? 'Yes' : 'No');
     const fallback = document.getElementById('loading-fallback');
     if (fallback) {
       fallback.style.display = 'none';
-      console.log('✅ App: HTML loading fallback hidden');
+      logDebug('✅ App: HTML loading fallback hidden');
     }
   }, []);
 

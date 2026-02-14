@@ -9,6 +9,7 @@ import i18n from '../i18n';
 import { useLanguage } from '../hooks/useLanguage';
 import { LanguageSuggestionModal } from '../components/i18n/LanguageSuggestionModal';
 import { Language } from '../i18n/languages';
+import { logDebug } from '../utils/logger';
 
 interface LanguageProviderProps {
   children: ReactNode;
@@ -16,7 +17,7 @@ interface LanguageProviderProps {
 
 export function LanguageProvider({ children }: LanguageProviderProps) {
   useEffect(() => {
-    console.log('🌐 LanguageProvider: Initializing i18n');
+    logDebug('🌐 LanguageProvider: Initializing i18n');
   }, []);
 
   return (

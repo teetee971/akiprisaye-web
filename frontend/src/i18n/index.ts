@@ -7,10 +7,11 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import Backend from 'i18next-http-backend';
+import { logDebug } from '../utils/logger';
 
 const SUPPORTED_LANGUAGES = ['fr', 'gcf', 'acf', 'rcf', 'gcr'];
 
-console.log('🌐 i18n: Starting initialization');
+logDebug('🌐 i18n: Starting initialization');
 
 i18n
   .use(Backend)
@@ -122,7 +123,7 @@ i18n
     },
   })
   .then(() => {
-    console.log('✅ i18n: Initialized successfully');
+    logDebug('✅ i18n: Initialized successfully');
   })
   .catch((error) => {
     console.error('⚠️ i18n: Initialization failed', error);
