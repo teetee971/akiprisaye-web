@@ -1,19 +1,23 @@
 import { Link } from 'react-router-dom';
-import { getTopActiveAlert } from '../services/alertsService';
-import { getPreferredTerritory } from '../utils/userPreferences';
+import { useStoreSelection } from '../context/StoreSelectionContext';
+import { getAlerts } from '../services/alertsService';
 
 export default function AlertBanner() {
-  const alert = getTopActiveAlert(getPreferredTerritory());
+  const { selection } = useStoreSelection();
+  const territory = selection?.territory ?? 'gp';
+  const criticalActiveAlerts = getAlerts({ territory, onlyActive: true, severity: 'critical' });
 
-  if (!alert) return null;
-
-  const tone = alert.severity === 'critical' ? 'border-red-700 bg-red-950/60' : alert.severity === 'warning' ? 'border-amber-700 bg-amber-950/40' : 'border-blue-700 bg-blue-950/40';
+  if (criticalActiveAlerts.length === 0) return null;
 
   return (
-    <div className={`border-b ${tone}`}>
-      <div className="max-w-7xl mx-auto px-4 py-2 text-sm flex items-center justify-between gap-3">
-        <p className="text-slate-100 truncate"><strong>{alert.title}</strong> — {alert.message}</p>
-        <Link className="text-blue-300 shrink-0 underline" to="/alertes">Voir détails</Link>
+    <div className="border-b border-amber-700/50 bg-amber-950/30">
+      <div className="max-w-7xl mx-auto px-4 py-2 text-sm text-amber-100 flex items-center justify-between gap-3">
+        <p>
+          Rappel produits : {criticalActiveAlerts.length} alerte(s) critique(s)
+        </p>
+        <Link className="underline text-amber-200 hover:text-amber-100" to="/alertes?severity=critical&active=1">
+          Voir
+        </Link>
       </div>
     </div>
   );

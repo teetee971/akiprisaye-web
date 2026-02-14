@@ -1,10 +1,16 @@
 import { describe, expect, it } from 'vitest';
-import { filterActiveAlerts } from '../services/alertsService';
+import { getAlerts } from '../services/alertsService';
 
-describe('filterActiveAlerts', () => {
-  it('filters active alerts by territory', () => {
-    const alerts = filterActiveAlerts({ territory: 'gp', now: new Date('2026-02-13T10:00:00.000Z') });
+describe('alertsService onlyActive filter', () => {
+  it('returns only active alerts when onlyActive=true', () => {
+    const alerts = getAlerts({ territory: 'gp', onlyActive: true });
+
     expect(alerts.length).toBeGreaterThan(0);
-    expect(alerts.every((a) => !a.territory || a.territory === 'gp')).toBe(true);
+    expect(alerts.every((alert) => alert.status === 'active')).toBe(true);
+  });
+
+  it('keeps resolved alerts when onlyActive=false', () => {
+    const alerts = getAlerts({ territory: 'gp', onlyActive: false });
+    expect(alerts.some((alert) => alert.status === 'resolved')).toBe(true);
   });
 });

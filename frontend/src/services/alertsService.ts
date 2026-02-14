@@ -1,28 +1,83 @@
 import { alertsDataset } from '../data/alerts';
-import type { Alert, AlertSeverity, TerritoryCode } from '../types/market';
+import type { AlertSeverity, SanitaryAlert, TerritoryCode } from '../types/alerts';
 
-const severityRank: Record<AlertSeverity, number> = {
+const severityOrder: Record<AlertSeverity, number> = {
   critical: 3,
-  warning: 2,
+  important: 2,
   info: 1,
 };
 
-export function isAlertActive(alert: Alert, now = new Date()): boolean {
-  const start = new Date(alert.startsAt).getTime();
-  const end = alert.endsAt ? new Date(alert.endsAt).getTime() : Number.POSITIVE_INFINITY;
-  const ts = now.getTime();
-  return ts >= start && ts <= end;
+function parseDate(value?: string): number {
+  if (!value) return 0;
+  const parsed = Date.parse(value);
+  return Number.isNaN(parsed) ? 0 : parsed;
 }
 
-export function filterActiveAlerts(options: { territory?: TerritoryCode; severity?: AlertSeverity; now?: Date } = {}) {
-  const { territory, severity, now = new Date() } = options;
-  return alertsDataset
-    .filter((alert) => isAlertActive(alert, now))
-    .filter((alert) => !territory || !alert.territory || alert.territory === territory)
+export function normalizeText(value: string): string {
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim();
+}
+
+export function tokenize(value: string): string[] {
+  return normalizeText(value)
+    .split(/\s+/)
+    .filter(Boolean);
+}
+
+export function matchesSearch(alert: SanitaryAlert, q?: string): boolean {
+  if (!q) return true;
+  const tokens = tokenize(q);
+  if (tokens.length === 0) return true;
+
+  const haystack = normalizeText([
+    alert.title,
+    alert.brand,
+    alert.productName,
+    alert.ean,
+    alert.lot,
+  ]
+    .filter(Boolean)
+    .join(' '));
+
+  return tokens.every((token) => haystack.includes(token));
+}
+
+export function sortAlerts(items: SanitaryAlert[]): SanitaryAlert[] {
+  return [...items].sort((a, b) => {
+    const severityDiff = severityOrder[b.severity] - severityOrder[a.severity];
+    if (severityDiff !== 0) return severityDiff;
+
+    const dateA = parseDate(a.publishedAt);
+    const dateB = parseDate(b.publishedAt);
+    return dateB - dateA;
+  });
+}
+
+interface GetAlertsOptions {
+  territory?: TerritoryCode;
+  onlyActive?: boolean;
+  q?: string;
+  category?: string;
+  severity?: AlertSeverity;
+}
+
+export function getAlerts(options: GetAlertsOptions = {}): SanitaryAlert[] {
+  const { territory, onlyActive = false, q, category, severity } = options;
+  const normalizedCategory = category ? normalizeText(category) : '';
+
+  const filtered = alertsDataset
+    .filter((alert) => !territory || alert.territory === territory)
+    .filter((alert) => !onlyActive || alert.status === 'active')
     .filter((alert) => !severity || alert.severity === severity)
-    .sort((a, b) => severityRank[b.severity] - severityRank[a.severity]);
+    .filter((alert) => !normalizedCategory || normalizeText(alert.category ?? '') === normalizedCategory)
+    .filter((alert) => matchesSearch(alert, q));
+
+  return sortAlerts(filtered);
 }
 
-export function getTopActiveAlert(territory?: TerritoryCode) {
-  return filterActiveAlerts({ territory })[0] ?? null;
+export function getAlertById(id: string): SanitaryAlert | null {
+  return alertsDataset.find((alert) => alert.id === id) ?? null;
 }

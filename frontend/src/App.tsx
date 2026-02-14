@@ -61,6 +61,7 @@ const Settings = React.lazy(() => import('./pages/Settings'));
 const HistoriquePrix = React.lazy(() => import('./pages/HistoriquePrix'));
 const RecherchePrix = React.lazy(() => import('./pages/RecherchePrix'));
 const Alertes = React.lazy(() => import('./pages/Alertes'));
+const AlerteDetail = React.lazy(() => import('./pages/AlerteDetail'));
 const Promos = React.lazy(() => import('./pages/Promos'));
 const MesListes = React.lazy(() => import('./pages/MesListes'));
 
@@ -229,6 +230,7 @@ export default function App() {
                       <Route path="historique" element={<HistoriquePrix />} />
                       <Route path="recherche-prix" element={<RecherchePrix />} />
                       <Route path="alertes" element={<Alertes />} />
+                      <Route path="alertes/:id" element={<AlerteDetail />} />
                       <Route path="promos" element={<Promos />} />
                       <Route path="mes-listes" element={<MesListes />} />
                       

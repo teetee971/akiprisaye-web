@@ -129,6 +129,7 @@ export default function Layout() {
     { path: '/', label: 'Accueil', icon: '🏠' },
     { path: '/comparateur', label: 'Comparateur', icon: '📊' },
     { path: '/promos', label: 'Promos', icon: '📰' },
+    { path: '/alertes', label: 'Alertes sanitaires', icon: '🚨' },
     { path: '/observatoire', label: 'Observatoire', icon: '📈' },
     { path: '/mes-economies', label: 'Mes Économies', icon: '💰' },
     { path: '/mes-listes', label: 'Mes listes', icon: '⭐' },

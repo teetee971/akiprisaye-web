@@ -1,40 +1,133 @@
 import { useMemo, useState } from 'react';
-import { filterActiveAlerts } from '../services/alertsService';
-import { getPreferredTerritory } from '../utils/userPreferences';
+import { Link, useSearchParams } from 'react-router-dom';
+import { useStoreSelection } from '../context/StoreSelectionContext';
+import { getAlerts } from '../services/alertsService';
+
+const severityOptions = [
+  { value: '', label: 'Toutes sévérités' },
+  { value: 'critical', label: 'Critique' },
+  { value: 'important', label: 'Importante' },
+  { value: 'info', label: 'Information' },
+];
+
+const categoryOptions = [
+  { value: '', label: 'Toutes catégories' },
+  { value: 'bébé', label: 'Bébé' },
+  { value: 'épicerie', label: 'Épicerie' },
+  { value: 'viande/poisson', label: 'Viande / poisson' },
+  { value: 'hygiène', label: 'Hygiène' },
+];
 
 export default function Alertes() {
-  const [territory, setTerritory] = useState(getPreferredTerritory());
-  const [severity, setSeverity] = useState('all');
+  const { selection } = useStoreSelection();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const territory = selection?.territory ?? 'gp';
 
-  const alerts = useMemo(() => filterActiveAlerts({ territory, severity: severity === 'all' ? undefined : severity }), [territory, severity]);
+  const [onlyActive, setOnlyActive] = useState(searchParams.get('active') === '1');
+  const [category, setCategory] = useState(searchParams.get('category') ?? '');
+  const [severity, setSeverity] = useState(searchParams.get('severity') ?? '');
+  const [q, setQ] = useState(searchParams.get('q') ?? '');
+
+  const alerts = useMemo(() => getAlerts({
+    territory,
+    onlyActive,
+    category: category || undefined,
+    severity: severity || undefined,
+    q: q || undefined,
+  }), [territory, onlyActive, category, severity, q]);
+
+  const syncQueryString = (next) => {
+    const params = new URLSearchParams();
+    if (next.onlyActive) params.set('active', '1');
+    if (next.category) params.set('category', next.category);
+    if (next.severity) params.set('severity', next.severity);
+    if (next.q) params.set('q', next.q);
+    setSearchParams(params, { replace: true });
+  };
 
   return (
     <main className="max-w-6xl mx-auto px-4 py-8 text-slate-100">
-      <h1 className="text-2xl font-bold mb-4">Alertes prix</h1>
-      <div className="grid md:grid-cols-2 gap-3 mb-6">
-        <select className="bg-slate-800 border border-slate-700 rounded-lg p-2" value={territory} onChange={(e) => setTerritory(e.target.value)}>
-          <option value="gp">Guadeloupe</option>
-          <option value="mq">Martinique</option>
-          <option value="fr">France hexagonale</option>
+      <h1 className="text-2xl font-bold mb-2">Alertes sanitaires</h1>
+      <p className="text-sm text-slate-400 mb-6">Territoire: <strong className="uppercase">{territory}</strong></p>
+
+      <section className="grid md:grid-cols-4 gap-3 mb-6">
+        <label className="flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-900 px-3 py-2">
+          <input
+            type="checkbox"
+            checked={onlyActive}
+            onChange={(e) => {
+              const nextValue = e.target.checked;
+              setOnlyActive(nextValue);
+              syncQueryString({ onlyActive: nextValue, category, severity, q });
+            }}
+          />
+          <span className="text-sm">Actives uniquement</span>
+        </label>
+
+        <select
+          className="bg-slate-900 border border-slate-700 rounded-lg p-2"
+          value={category}
+          onChange={(e) => {
+            const nextValue = e.target.value;
+            setCategory(nextValue);
+            syncQueryString({ onlyActive, category: nextValue, severity, q });
+          }}
+        >
+          {categoryOptions.map((option) => (
+            <option key={option.value} value={option.value}>{option.label}</option>
+          ))}
         </select>
-        <select className="bg-slate-800 border border-slate-700 rounded-lg p-2" value={severity} onChange={(e) => setSeverity(e.target.value)}>
-          <option value="all">Toutes sévérités</option>
-          <option value="critical">Critique</option>
-          <option value="warning">Avertissement</option>
-          <option value="info">Information</option>
+
+        <select
+          className="bg-slate-900 border border-slate-700 rounded-lg p-2"
+          value={severity}
+          onChange={(e) => {
+            const nextValue = e.target.value;
+            setSeverity(nextValue);
+            syncQueryString({ onlyActive, category, severity: nextValue, q });
+          }}
+        >
+          {severityOptions.map((option) => (
+            <option key={option.value} value={option.value}>{option.label}</option>
+          ))}
         </select>
-      </div>
-      <div className="space-y-3">
+
+        <input
+          type="search"
+          placeholder="Rechercher (titre, marque, lot, EAN...)"
+          value={q}
+          className="bg-slate-900 border border-slate-700 rounded-lg p-2"
+          onChange={(e) => {
+            const nextValue = e.target.value;
+            setQ(nextValue);
+            syncQueryString({ onlyActive, category, severity, q: nextValue });
+          }}
+        />
+      </section>
+
+      <section className="space-y-3">
         {alerts.map((alert) => (
           <article key={alert.id} className="rounded-xl border border-slate-700 bg-slate-900 p-4">
-            <p className="text-xs uppercase text-slate-400 mb-1">{alert.severity}</p>
-            <h2 className="font-semibold">{alert.title}</h2>
-            <p className="text-sm text-slate-300">{alert.message}</p>
-            <p className="text-xs text-slate-500 mt-2">Source: {alert.sourceName}</p>
+            <p className="text-xs uppercase text-slate-400 mb-1">{alert.severity} • {alert.status}</p>
+            <h2 className="font-semibold text-lg">{alert.title}</h2>
+            <p className="text-sm text-slate-300 mt-2">{alert.reason}</p>
+            <p className="text-xs text-slate-500 mt-3">
+              {alert.publishedAt ? `Publié le ${new Date(alert.publishedAt).toLocaleDateString('fr-FR')} • ` : ''}
+              {alert.category ? `${alert.category} • ` : ''}
+              {alert.brand ? `${alert.brand} • ` : ''}
+              {alert.ean ? `EAN ${alert.ean} • ` : ''}
+              {alert.lot ? `Lot ${alert.lot}` : ''}
+            </p>
+            <Link className="inline-block mt-3 text-blue-300 hover:text-blue-200 underline" to={`/alertes/${alert.id}`}>
+              Voir détails
+            </Link>
           </article>
         ))}
-        {alerts.length === 0 && <p className="text-slate-400">Aucune alerte active pour ces filtres.</p>}
-      </div>
+
+        {alerts.length === 0 && (
+          <p className="text-slate-400">Aucune alerte sanitaire ne correspond à vos filtres.</p>
+        )}
+      </section>
     </main>
   );
 }
