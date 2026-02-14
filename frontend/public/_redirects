@@ -1,3 +1,6 @@
+# API: never SPA-fallback
+/api/*    /api/:splat    200
+
 # Assets: never SPA-fallback (serve files as-is)
 /assets/*  /assets/:splat  200
 

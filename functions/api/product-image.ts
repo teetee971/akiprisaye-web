@@ -108,7 +108,7 @@ function placeholderSvgResponse(status = 200): Response {
 
 export const onRequestGet: PagesFunction = async ({ request }) => {
   const url = new URL(request.url);
-  const ean = (url.searchParams.get('ean') ?? '').trim();
+  const ean = (url.searchParams.get('ean') ?? url.searchParams.get('barcode') ?? '').trim();
   const category = url.searchParams.get('category');
   const accept = request.headers.get('accept') ?? '';
   const wantsJson = wantsJsonResponse(request, url.searchParams);

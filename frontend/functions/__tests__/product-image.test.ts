@@ -78,6 +78,22 @@ describe('/api/product-image content negotiation', () => {
     expect(response.headers.get('content-type')).toBeNull();
   });
 
+
+  it('supports barcode as alias and redirects to an image by default', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
+      new Response(JSON.stringify({ status: 0 }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
+
+    const response = await onRequestGet({ request: makeRequest('/api/product-image?barcode=3017620422003&v=1', 'text/html') } as never);
+
+    expect(response.status).toBe(302);
+    expect(response.headers.get('location')).toBe('/assets/placeholders/placeholder-default.svg');
+    expect(response.headers.get('content-type')).toBeNull();
+  });
+
   it('returns JSON when format=json is provided', async () => {
     vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
       new Response(JSON.stringify({ status: 0 }), {
