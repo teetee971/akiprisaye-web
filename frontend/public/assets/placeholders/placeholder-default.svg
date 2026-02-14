@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600" role="img" aria-labelledby="title desc">
+  <title id="title">Image indisponible</title>
+  <desc id="desc">Placeholder utilisé quand aucune image produit n'est disponible.</desc>
+  <rect width="600" height="600" fill="#111827" />
+  <rect x="40" y="40" width="520" height="520" rx="24" fill="none" stroke="#374151" stroke-width="8" />
+  <g fill="none" stroke="#6B7280" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="155" y="155" width="290" height="230" rx="16" />
+    <path d="M190 338l70-80 62 66 42-48 46 62" />
+    <circle cx="250" cy="228" r="22" />
+  </g>
+  <text x="300" y="452" text-anchor="middle" fill="#F9FAFB" font-size="38" font-family="Arial, Helvetica, sans-serif" font-weight="700">
+    Image indisponible
+  </text>
+</svg>

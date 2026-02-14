@@ -23,7 +23,8 @@
     "lhci": "echo \"lhci placeholder: no dedicated config found\"",
     "e2e": "playwright test",
     "e2e:report": "playwright show-report",
-    "verify:pages-api": "node scripts/verify-pages-api.mjs"
+    "verify:pages-api": "node scripts/verify-pages-api.mjs",
+    "verify:placeholder-routing": "npm run build && node scripts/verify-placeholder-routing.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
