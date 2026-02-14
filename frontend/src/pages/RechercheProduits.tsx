@@ -9,6 +9,8 @@ import { useSearchHistory, type SearchHistoryEntry, type SearchHistoryType } fro
 import { searchProductPrices } from '../services/priceSearch/priceSearch.service';
 import type { PriceSearchResult, TerritoryCode } from '../services/priceSearch/price.types';
 import type { ScanData, ScanHubResult } from '../types/scanHubResult';
+import type { ProductCard } from '../types/productCard';
+import { getProductImageFallback } from '../utils/productImageFallback';
 import { safeLocalStorage } from '../utils/safeLocalStorage';
 
 const TERRITORIES: { code: TerritoryCode; label: string }[] = [
@@ -52,6 +54,16 @@ const buildProductFavoriteId = (params: {
   const normalizedName = params.productName?.trim().toLowerCase() ?? 'unknown';
   return `product:name:${normalizedName}`;
 };
+
+interface ApiPriceObservation {
+  source?: string;
+  price?: number;
+  observedAt?: string;
+}
+
+interface ApiPricesResponse {
+  observations?: ApiPriceObservation[];
+}
 
 export function SafeFallback({
   title,
@@ -298,6 +310,170 @@ export function PriceResults({
     ? buildSearchLabel(searchQuery?.trim() ?? '', searchBarcode?.trim() ?? '')
     : result.productName || 'Produit favori';
   const favoriteActive = isFavorite(favoriteId);
+  const [productCard, setProductCard] = useState<ProductCard | null>(null);
+  const [apiPrices, setApiPrices] = useState<ApiPriceObservation[]>([]);
+
+  useEffect(() => {
+    const barcode = searchBarcode?.trim();
+    if (!barcode) {
+      setProductCard(null);
+      setApiPrices([]);
+      return;
+    }
+
+    const controller = new AbortController();
+    const territory = (result.territory ?? 'fr').trim();
+
+    const loadProductCard = async () => {
+      try {
+        const response = await fetch(`/api/product?barcode=${encodeURIComponent(barcode)}`, {
+          signal: controller.signal,
+        });
+        if (!response.ok) {
+          setProductCard(null);
+          return;
+        }
+        const payload = (await response.json()) as { product?: ProductCard };
+        setProductCard(payload.product ?? null);
+      } catch {
+        setProductCard(null);
+      }
+    };
+
+    const loadPrices = async () => {
+      try {
+        const response = await fetch(
+          `/api/prices?barcode=${encodeURIComponent(barcode)}&territory=${encodeURIComponent(territory)}`,
+          { signal: controller.signal },
+        );
+        if (!response.ok) {
+          setApiPrices([]);
+          return;
+        }
+        const payload = (await response.json()) as ApiPricesResponse;
+        setApiPrices(Array.isArray(payload.observations) ? payload.observations : []);
+      } catch {
+        setApiPrices([]);
+      }
+    };
+
+    void Promise.all([loadProductCard(), loadPrices()]);
+    return () => controller.abort();
+  }, [result.territory, searchBarcode]);
+
+  const productTitle = productCard?.title || result.productName || 'Produit analysé';
+  const productImages = productCard?.images ?? [];
+
+  const rawPricedObservations = useMemo(
+    () =>
+      apiPrices.filter(
+        (item): item is ApiPriceObservation & { price: number } =>
+          typeof item.price === 'number' && Number.isFinite(item.price) && item.price > 0,
+      ),
+    [apiPrices],
+  );
+
+  const baselineMedian = useMemo(() => {
+    if (rawPricedObservations.length === 0) return null;
+
+    const sorted = [...rawPricedObservations].sort((a, b) => a.price - b.price);
+    const middle = Math.floor(sorted.length / 2);
+    return sorted.length % 2 === 1
+      ? sorted[middle].price
+      : (sorted[middle - 1].price + sorted[middle].price) / 2;
+  }, [rawPricedObservations]);
+
+  const filteredObservations = useMemo(() => {
+    if (!baselineMedian) return rawPricedObservations;
+    return rawPricedObservations.filter((entry) => entry.price <= baselineMedian * 5);
+  }, [baselineMedian, rawPricedObservations]);
+
+  const getFreshnessLabel = useCallback((observedAt?: string) => {
+    if (!observedAt) return 'Date non fournie';
+    const parsed = new Date(observedAt).getTime();
+    if (!Number.isFinite(parsed)) return 'Date non fournie';
+
+    const diffDays = (Date.now() - parsed) / (1000 * 60 * 60 * 24);
+    if (diffDays <= 7) return 'Récent';
+    if (diffDays <= 30) return 'À vérifier';
+    return 'Ancien';
+  }, []);
+
+  const latestObservation = useMemo(() => {
+    const dated = filteredObservations
+      .filter((entry) => entry.observedAt)
+      .map((entry) => ({
+        ...entry,
+        timestamp: new Date(entry.observedAt as string).getTime(),
+      }))
+      .filter((entry) => Number.isFinite(entry.timestamp))
+      .sort((a, b) => b.timestamp - a.timestamp);
+
+    return dated[0] ?? null;
+  }, [filteredObservations]);
+
+  const priceSummary = useMemo(() => {
+    if (filteredObservations.length === 0) return null;
+
+    const sorted = [...filteredObservations].sort((a, b) => a.price - b.price);
+    const middle = Math.floor(sorted.length / 2);
+    const median =
+      sorted.length % 2 === 1
+        ? sorted[middle].price
+        : (sorted[middle - 1].price + sorted[middle].price) / 2;
+
+    const latest = latestObservation?.observedAt
+      ? new Date(latestObservation.observedAt).toLocaleDateString('fr-FR')
+      : 'Date non fournie';
+
+    return {
+      min: sorted[0].price,
+      max: sorted[sorted.length - 1].price,
+      median,
+      count: sorted.length,
+      latest,
+      freshness: getFreshnessLabel(latestObservation?.observedAt),
+    };
+  }, [filteredObservations, getFreshnessLabel, latestObservation]);
+
+  const recentPriceBadge = useMemo(() => {
+    if (!priceSummary || !latestObservation) return null;
+    const latest = latestObservation.price;
+
+    if (latest <= priceSummary.median * 0.95) {
+      return { label: 'Prix bas', className: 'text-emerald-200 bg-emerald-500/10 border-emerald-500/30' };
+    }
+
+    if (latest >= priceSummary.median * 1.05) {
+      return { label: 'Prix élevé', className: 'text-rose-200 bg-rose-500/10 border-rose-500/30' };
+    }
+
+    return { label: 'Prix moyen', className: 'text-blue-200 bg-blue-500/10 border-blue-500/30' };
+  }, [latestObservation, priceSummary]);
+
+  const chartPoints = useMemo(() => {
+    const dated = filteredObservations
+      .filter((entry) => entry.observedAt)
+      .map((entry) => ({ price: entry.price, ts: new Date(entry.observedAt as string).getTime() }))
+      .filter((entry) => Number.isFinite(entry.ts))
+      .sort((a, b) => a.ts - b.ts);
+
+    if (dated.length < 2) return '';
+
+    const width = 320;
+    const height = 80;
+    const minPrice = Math.min(...dated.map((entry) => entry.price));
+    const maxPrice = Math.max(...dated.map((entry) => entry.price));
+    const priceRange = maxPrice - minPrice || 1;
+
+    return dated
+      .map((entry, index) => {
+        const x = (index / (dated.length - 1)) * width;
+        const y = height - ((entry.price - minPrice) / priceRange) * height;
+        return `${x},${y}`;
+      })
+      .join(' ');
+  }, [filteredObservations]);
 
   return (
     <section className="space-y-4">
@@ -305,7 +481,7 @@ export function PriceResults({
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
           <div>
             <h2 className="text-2xl font-semibold">
-              {result.productName || 'Produit analysé'}
+              {productTitle}
             </h2>
             <p className="text-sm text-slate-400">
               Confiance: {confidence}/100 • Sources: {result.sourcesUsed?.length ?? 0}
@@ -351,6 +527,30 @@ export function PriceResults({
           </div>
         </div>
 
+        {productImages.length > 0 ? (
+          <div className="grid grid-cols-2 gap-2">
+            {productImages.map((img) => (
+              <img
+                key={img.url}
+                src={img.url}
+                alt={productTitle}
+                className="rounded-xl object-cover w-full h-32 bg-slate-800"
+                loading="lazy"
+                onError={(event) => {
+                  event.currentTarget.src = getProductImageFallback({ productName: productTitle });
+                }}
+              />
+            ))}
+          </div>
+        ) : (
+          <img
+            src={getProductImageFallback({ productName: productTitle })}
+            alt={productTitle}
+            className="rounded-xl object-cover w-full h-40 bg-slate-800"
+            loading="lazy"
+          />
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
           <div className="bg-slate-950 rounded-lg p-4">
             <p className="text-xs text-slate-400">Indice de confiance</p>
@@ -364,7 +564,7 @@ export function PriceResults({
           </div>
           <div className="bg-slate-950 rounded-lg p-4">
             <p className="text-xs text-slate-400">Observations</p>
-            <p className="text-xl font-semibold">{observations}</p>
+            <p className="text-xl font-semibold">{filteredObservations.length || observations}</p>
             <p className="text-xs text-slate-500 mt-1">Prix agrégés</p>
           </div>
           <div className="bg-slate-950 rounded-lg p-4">
@@ -398,6 +598,78 @@ export function PriceResults({
         <div className="text-xs text-slate-400">
           Sources utilisées : {result.sourcesUsed?.join(', ') || 'Aucune'}
         </div>
+      </div>
+
+      <div className="bg-slate-900/70 border border-slate-700 rounded-2xl p-6 space-y-3">
+        <div className="flex items-center justify-between gap-2">
+          <h3 className="text-sm font-semibold text-slate-200">Observations de prix réelles</h3>
+          <span className="text-xs text-slate-400">Prix observés en {territoryLabel}</span>
+          {recentPriceBadge && (
+            <span className={`text-xs border rounded-full px-2 py-1 ${recentPriceBadge.className}`}>
+              {recentPriceBadge.label}
+            </span>
+          )}
+        </div>
+
+        {priceSummary && (
+          <div className="bg-slate-950 rounded-xl p-4 space-y-3">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-3 text-center">
+              <div>
+                <div className="text-xs text-slate-400">Min</div>
+                <div className="font-semibold">{priceSummary.min.toFixed(2)} €</div>
+              </div>
+              <div>
+                <div className="text-xs text-slate-400">Médiane</div>
+                <div className="font-semibold">{priceSummary.median.toFixed(2)} €</div>
+              </div>
+              <div>
+                <div className="text-xs text-slate-400">Max</div>
+                <div className="font-semibold">{priceSummary.max.toFixed(2)} €</div>
+              </div>
+              <div>
+                <div className="text-xs text-slate-400">Observations</div>
+                <div className="font-semibold">{priceSummary.count}</div>
+              </div>
+              <div>
+                <div className="text-xs text-slate-400">Dernier relevé</div>
+                <div className="font-semibold">{priceSummary.latest}</div>
+                <div className="text-[11px] text-slate-400">{priceSummary.freshness}</div>
+              </div>
+            </div>
+
+            {chartPoints && (
+              <svg viewBox="0 0 320 80" className="w-full h-20" role="img" aria-label="Historique des prix observés">
+                <polyline
+                  fill="none"
+                  stroke="#22d3ee"
+                  strokeWidth="2.5"
+                  points={chartPoints}
+                />
+              </svg>
+            )}
+          </div>
+        )}
+
+        {filteredObservations.length > 0 ? (
+          <div className="space-y-2">
+            {filteredObservations.map((price, index) => {
+              const label = price.observedAt
+                ? new Date(price.observedAt).toLocaleDateString('fr-FR')
+                : 'Date non fournie';
+
+              const freshness = getFreshnessLabel(price.observedAt);
+
+              return (
+                <div key={`${price.source ?? 'source'}-${index}`} className="flex items-center justify-between bg-slate-950 p-3 rounded-lg text-sm">
+                  <span className="text-slate-300">{price.source ?? 'source inconnue'} • {label} • {freshness}</span>
+                  <span className="font-semibold text-white">{typeof price.price === 'number' ? `${price.price.toFixed(2)} €` : '—'}</span>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <p className="text-sm text-slate-400">Aucun prix récent disponible.</p>
+        )}
       </div>
 
       {result.warnings && result.warnings.length > 0 && (
