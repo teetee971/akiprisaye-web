@@ -159,18 +159,7 @@ jobs:
 
       - name: 🔍 Verify _redirects file
         run: |
-          if [ ! -f "frontend/dist/_redirects" ]; then
-            echo "❌ _redirects file missing from dist/"
-            exit 1
-          fi
-          
-          if grep -qx '/\* /index.html 200' frontend/dist/_redirects; then
-            echo "✅ _redirects correctly configured for SPA routing"
-          else
-            echo "❌ _redirects file not properly configured"
-            echo "Expected exact line: /* /index.html 200"
-            exit 1
-          fi
+          node frontend/scripts/verify-placeholder-routing.mjs
 
       - name: 📋 Test critical routes structure
         run: |

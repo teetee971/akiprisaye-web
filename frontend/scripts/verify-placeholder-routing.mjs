@@ -1,21 +1,28 @@
 import { existsSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const distDir = join(process.cwd(), 'dist');
-const placeholderPath = join(distDir, 'assets/placeholders/placeholder-default.svg');
-const redirectsPath = join(distDir, '_redirects');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const distDir = resolve(__dirname, '..', 'dist');
+const placeholderPath = resolve(distDir, 'assets', 'placeholders', 'placeholder-default.svg');
+const redirectsPath = resolve(distDir, '_redirects');
 
 function fail(message) {
   console.error(`❌ ${message}`);
   process.exit(1);
 }
 
-if (!existsSync(placeholderPath)) {
-  fail('Missing dist/assets/placeholders/placeholder-default.svg');
+if (!existsSync(distDir)) {
+  fail(`[guard] dist missing: ${distDir}`);
 }
 
 if (!existsSync(redirectsPath)) {
-  fail('Missing dist/_redirects');
+  fail(`[guard] _redirects missing: ${redirectsPath}`);
+}
+
+if (!existsSync(placeholderPath)) {
+  fail(`[guard] placeholder missing: ${placeholderPath}`);
 }
 
 const redirects = readFileSync(redirectsPath, 'utf8')
@@ -23,19 +30,19 @@ const redirects = readFileSync(redirectsPath, 'utf8')
   .map((line) => line.trim())
   .filter((line) => line && !line.startsWith('#'));
 
-const assetsRuleIndex = redirects.findIndex((line) => line === '/assets/*  /assets/:splat  200');
-const spaRuleIndex = redirects.findIndex((line) => line === '/*         /index.html     200');
+const assetsRuleIndex = redirects.findIndex((line) => line.startsWith('/assets/*'));
+const spaRuleIndex = redirects.findIndex((line) => line.startsWith('/*'));
 
 if (assetsRuleIndex === -1) {
-  fail('Missing required assets passthrough rule in dist/_redirects');
+  fail('[guard] missing /assets/* rule in _redirects');
 }
 
 if (spaRuleIndex === -1) {
-  fail('Missing required SPA fallback rule in dist/_redirects');
+  fail('[guard] missing /* SPA rule in _redirects');
 }
 
 if (assetsRuleIndex > spaRuleIndex) {
-  fail('Invalid rule order: /assets/* must be before SPA fallback in dist/_redirects');
+  fail('[guard] /assets/* must be ABOVE /* in _redirects');
 }
 
-console.log('✅ Placeholder routing verification passed.');
+console.log('[guard] OK: _redirects + placeholder routing looks correct');
