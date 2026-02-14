@@ -3,6 +3,7 @@ import ProductSearch from '../components/ProductSearch';
 import TerritorySelector from '../components/TerritorySelector';
 import EmptyState from '../components/EmptyState';
 import BarcodeScanner from '../components/BarcodeScanner';
+import PriceSparkline from '../components/PriceSparkline';
 import { useEffect, useRef, useState } from 'react';
 import { findProductByEan, filterPricesByTerritory, searchProductsByName } from '../data/seedProducts';
 import { DEFAULT_TERRITORY, getTerritoryByCode } from '../constants/territories';
@@ -39,6 +40,10 @@ export default function Comparateur() {
   const [showScanner, setShowScanner] = useState(false);
   const [query, setQuery] = useState('');
   const [currentSearch, setCurrentSearch] = useState({ mode: 'NONE', key: '', territory, requestId: 0 });
+  const [localPriceInsight, setLocalPriceInsight] = useState({ product: null, aggregate: null, timeseries: [] });
+  const [webPriceInsight, setWebPriceInsight] = useState([]);
+  const [debugApi, setDebugApi] = useState({ local: null, web: null });
+  const [loadingLocalPrice, setLoadingLocalPrice] = useState(false);
   const requestIdRef = useRef(0);
   const abortRef = useRef(null);
 
@@ -110,6 +115,10 @@ export default function Comparateur() {
     abortRef.current = controller;
 
     setLoading(true);
+    setLoadingLocalPrice(false);
+    setLocalPriceInsight({ product: null, aggregate: null, timeseries: [] });
+    setWebPriceInsight([]);
+    setDebugApi({ local: null, web: null });
     resetDisplayedResults();
 
     try {
@@ -176,12 +185,82 @@ export default function Comparateur() {
           return;
         }
       }
-      setResults({
-        stores: [],
-        productLabel: null,
-        error: null,
-        infoMessage: "Données en cours d'intégration. Les comparaisons réelles seront publiées dès que l'API prix sera connectée.",
-      });
+
+      let hasLocalInsight = false;
+      if (descriptor.mode === 'EAN') {
+        setLoadingLocalPrice(true);
+        let localPayload = null;
+
+        try {
+          const localRes = await fetch(`/api/local-price?${new URLSearchParams({ barcode, territory, days: '30' }).toString()}`);
+          localPayload = localRes.ok ? await localRes.json() : null;
+        } catch (_error) {
+          localPayload = null;
+        }
+
+        if (requestId !== requestIdRef.current) {
+          return;
+        }
+
+        setDebugApi((prev) => ({ ...prev, local: localPayload }));
+        setLocalPriceInsight({
+          product: localPayload?.product ?? null,
+          aggregate: localPayload?.aggregate ?? null,
+          timeseries: Array.isArray(localPayload?.timeseries) ? localPayload.timeseries : [],
+        });
+
+        const localCount = Number(localPayload?.aggregate?.sampleCount ?? 0);
+        hasLocalInsight = Boolean(localPayload?.aggregate || (Array.isArray(localPayload?.timeseries) && localPayload.timeseries.length > 0));
+        const needWebFallback = localCount < 2;
+
+        if (needWebFallback) {
+          try {
+            const webQuery = localPayload?.product?.name || barcode;
+            const webRes = await fetch(`/api/web-price?${new URLSearchParams({ q: String(webQuery), barcode, territory }).toString()}`);
+            const webPayload = webRes.ok ? await webRes.json() : null;
+
+            if (requestId !== requestIdRef.current) {
+              return;
+            }
+
+            const normalizedWeb = Array.isArray(webPayload?.results) ? webPayload.results : [];
+            setWebPriceInsight(normalizedWeb);
+            setDebugApi((prev) => ({ ...prev, web: webPayload }));
+
+            if (results.stores.length === 0 && normalizedWeb.length > 0) {
+              setResults({
+                stores: normalizedWeb.map((row, index) => ({
+                  id: `web-${index}`,
+                  store: row.merchant || 'Marchand web',
+                  location: 'Web',
+                  price: Number(row.price).toFixed(2),
+                  unit: row.currency || '€',
+                  lastUpdate: new Date().toISOString(),
+                  promotion: false,
+                })),
+                productLabel: localPayload?.product?.name || String(webQuery),
+                error: null,
+                infoMessage: '',
+              });
+              setLoadingLocalPrice(false);
+              return;
+            }
+          } catch (_error) {
+            setDebugApi((prev) => ({ ...prev, web: { ok: false, error: 'web_fetch_failed' } }));
+          }
+        }
+
+        setLoadingLocalPrice(false);
+      }
+
+      if (!hasLocalInsight && results.stores.length === 0) {
+        setResults({
+          stores: [],
+          productLabel: null,
+          error: null,
+          infoMessage: "Données en cours d'intégration. Les comparaisons réelles seront publiées dès que l'API prix sera connectée.",
+        });
+      }
     } catch (err) {
       if (err.name === 'AbortError') {
         return;
@@ -245,6 +324,47 @@ export default function Comparateur() {
             </a>
           </div>
         </div>
+
+        {currentSearch.mode === 'EAN' && (
+          <section className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-6 mb-6">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-base font-semibold text-slate-900 dark:text-white">Prix locaux (Firestore) · 30 jours</h3>
+              {loadingLocalPrice && <span className="text-xs text-slate-500">Chargement…</span>}
+            </div>
+
+            {localPriceInsight.aggregate && (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-800">
+                  <div className="text-xs text-slate-500">Médiane</div>
+                  <div className="font-semibold">{Number(localPriceInsight.aggregate.median ?? 0).toFixed(2)} €</div>
+                </div>
+                <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-800">
+                  <div className="text-xs text-slate-500">Minimum</div>
+                  <div className="font-semibold">{Number(localPriceInsight.aggregate.min ?? 0).toFixed(2)} €</div>
+                </div>
+                <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-800">
+                  <div className="text-xs text-slate-500">Maximum</div>
+                  <div className="font-semibold">{Number(localPriceInsight.aggregate.max ?? 0).toFixed(2)} €</div>
+                </div>
+                <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-800">
+                  <div className="text-xs text-slate-500">Observations</div>
+                  <div className="font-semibold">{Number(localPriceInsight.aggregate.sampleCount ?? 0)}</div>
+                </div>
+              </div>
+            )}
+
+            {Array.isArray(localPriceInsight.timeseries) && localPriceInsight.timeseries.length > 0 ? (
+              <PriceSparkline series={localPriceInsight.timeseries} />
+            ) : (
+              !loadingLocalPrice && <p className="text-sm text-slate-500">Pas encore assez de données locales pour afficher une courbe.</p>
+            )}
+
+            <details className="mt-3">
+              <summary className="cursor-pointer text-sm text-slate-600 dark:text-slate-300">Tester API</summary>
+              <pre className="mt-2 text-xs overflow-auto bg-slate-50 dark:bg-slate-800 p-3 rounded-lg">{JSON.stringify({ local: debugApi.local, web: debugApi.web, webResultsCount: webPriceInsight.length }, null, 2)}</pre>
+            </details>
+          </section>
+        )}
       </header>
 
       {/* Main Content */}
