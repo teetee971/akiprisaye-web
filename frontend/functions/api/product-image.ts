@@ -267,7 +267,7 @@ export function createProductImageHandler(offFetch: OffFetch = fetch): PagesFunc
         signal: controller.signal,
         headers: {
           Accept: 'application/json',
-          'User-Agent': 'akiprisaye-web/1.0 (contact: github.com/teetee971)',
+          'User-Agent': 'akiprisaye-web/1.0 (contact: https://github.com/teetee971/akiprisaye-web)',
         },
       });
 
@@ -341,7 +341,9 @@ export function createProductImageHandler(offFetch: OffFetch = fetch): PagesFunc
         redirectTo: placeholder,
       });
 
-      return wantsJson ? jsonResponse(debug) : imageRedirectResponse(placeholder, debug);
+      const result = wantsJson ? jsonResponse(debug) : imageRedirectResponse(placeholder, debug);
+      await cache.put(cacheKey, result.clone());
+      return result;
     } finally {
       clearTimeout(timeoutId);
     }

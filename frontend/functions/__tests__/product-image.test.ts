@@ -78,6 +78,22 @@ describe('/api/product-image', () => {
     expect(response.headers.get('x-akps-reason')).toBe('timeout');
   });
 
+
+  it('caches network-error fallback responses to avoid repeated OFF calls', async () => {
+    const offFetch = vi.fn(async () => {
+      throw new Error('network down');
+    });
+    const handler = createProductImageHandler(offFetch as never);
+
+    const first = await handler({ request: makeRequest('/api/product-image?barcode=3017620422003&v=cache-1', 'text/html') } as never);
+    const second = await handler({ request: makeRequest('/api/product-image?barcode=3017620422003&v=cache-1', 'text/html') } as never);
+
+    expect(first.status).toBe(302);
+    expect(first.headers.get('x-akps-reason')).toBe('network_error');
+    expect(second.status).toBe(302);
+    expect(offFetch).toHaveBeenCalledTimes(1);
+  });
+
   it('returns detailed json payload when format=json is requested', async () => {
     const imageUrl = 'https://images.openfoodfacts.org/images/products/301/762/042/2003/front_en.200.jpg';
     const handler = createProductImageHandler(async () => new Response(JSON.stringify({
