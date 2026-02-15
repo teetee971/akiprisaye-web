@@ -3,9 +3,13 @@ name: Deploy to Cloudflare Pages
 on:
   push:
     branches:
-      - main        # déclenchement sur main
-      - copilot/create-citizen-support-service  # déclenchement sur la branche de développement
+      - main
+      - copilot/create-citizen-support-service
   workflow_dispatch:
+
+env:
+  NODE_VERSION: '20'
+  DEPLOYMENT_URL: 'https://akiprisaye-web.pages.dev'
 
 jobs:
   build-and-deploy:
@@ -34,35 +38,36 @@ jobs:
             echo "✅ OK: Aucun oid LFS détecté"
           fi
 
-      # Installation de Node.js et mise en cache des dépendances npm
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: ${{ env.NODE_VERSION }}
           cache: npm
           cache-dependency-path: 'frontend/package-lock.json'
 
-      # Installation des dépendances du projet
-      - name: Install dependencies
+      - name: Install frontend dependencies
+        working-directory: frontend
         run: npm ci
 
-      # Build de l'application Vite/React (génère le dossier dist)
       - name: Build application
+        working-directory: frontend
         run: npm run build
 
-      # Déploiement du contenu du dossier dist vers Cloudflare Pages
-      - name: Deploy to Cloudflare Pages
-        uses: cloudflare/pages-action@v1
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: akiprisaye-web
-          directory: frontend/dist             # important : dossier de build
-          functionsDirectory: functions
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build Pages Functions worker
+        run: |
+          set -euo pipefail
+          test -f frontend/functions/api/health.ts
+          npx wrangler@3 pages functions build frontend/functions --outdir frontend/dist
+          test -s frontend/dist/_worker.js
 
-      # Purge du cache inutile (pas de domaine personnalisé)
-      - name: Skip cache purge
+      - name: Deploy to Cloudflare Pages (Wrangler)
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          npx wrangler@3 pages deploy frontend/dist --project-name akiprisaye-web --branch main
+
+      - name: Deployment summary
         if: success()
         run: |
-          echo "Purge skipped: Cloudflare Pages without custom domain does not support API cache purge."
+          echo "✅ Deployed to: ${{ env.DEPLOYMENT_URL }}"
