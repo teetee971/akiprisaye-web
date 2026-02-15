@@ -267,6 +267,7 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: akiprisaye-web
           directory: dist
+          functionsDirectory: functions
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 📊 Deployment summary

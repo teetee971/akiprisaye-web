@@ -243,6 +243,7 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: akiprisaye-web
           directory: frontend/dist
+          functionsDirectory: functions
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 📝 Log deployment

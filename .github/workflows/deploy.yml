@@ -58,6 +58,7 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: akiprisaye-web
           directory: frontend/dist             # important : dossier de build
+          functionsDirectory: functions
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
       # Purge du cache inutile (pas de domaine personnalisé)
