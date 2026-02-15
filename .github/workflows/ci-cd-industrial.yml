@@ -212,7 +212,7 @@ jobs:
     needs: [preflight, build, integrity-check, routing-check]
     runs-on: ubuntu-latest
     outputs:
-      deployment-url: ${{ steps.deploy.outputs.url }}
+      deployment-url: https://akiprisaye-web.pages.dev
       environment: ${{ steps.set-env.outputs.environment }}
     steps:
       - name: 📥 Checkout code
@@ -248,9 +248,43 @@ jobs:
       - name: 📝 Log deployment
         run: |
           echo "🎉 Deployment completed"
-          echo "URL: ${{ steps.deploy.outputs.url }}"
+          echo "URL: https://akiprisaye-web.pages.dev"
           echo "Environment: ${{ steps.set-env.outputs.environment }}"
           echo "Timestamp: $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+
+
+      - name: 🔎 Verify /api/health returns JSON
+        run: |
+          set -euo pipefail
+
+          url="https://akiprisaye-web.pages.dev/api/health"
+          ok=0
+
+          for attempt in {1..8}; do
+            headers_file="$(mktemp)"
+            body_file="$(mktemp)"
+
+            status="$(curl -sS -D "$headers_file" -o "$body_file" -w "%{http_code}" "$url")"
+            content_type="$(awk 'BEGIN{IGNORECASE=1} /^content-type:/ {print tolower($0)}' "$headers_file" | tr -d '\r')"
+
+            if [ "$status" = "200" ] \
+              && echo "$content_type" | grep -q "application/json" \
+              && head -c 1 "$body_file" | grep -q '{'; then
+              echo "✅ /api/health OK (status=200, content-type JSON)"
+              ok=1
+              break
+            fi
+
+            echo "⚠️ Attempt ${attempt}/8 failed: status=$status, content-type=${content_type:-<missing>}"
+            echo "Body preview: $(head -c 160 "$body_file")"
+            sleep 10
+          done
+
+          if [ "$ok" -ne 1 ]; then
+            echo "❌ /api/health is not returning JSON from Pages Functions"
+            exit 1
+          fi
+
 
   # ========================================
   # 7️⃣ POST-DEPLOY VALIDATION (OBLIGATOIRE)
