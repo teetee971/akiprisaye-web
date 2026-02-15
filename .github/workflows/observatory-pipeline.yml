@@ -267,16 +267,16 @@ jobs:
           cache: npm
           cache-dependency-path: 'frontend/package-lock.json'
 
-      - name: 📦 Install frontend dependencies
-        working-directory: frontend
-        run: npm ci
-
       - name: 🧱 Build Pages Functions worker
         run: |
           set -euo pipefail
           test -f frontend/functions/api/health.ts
           npx wrangler@3 pages functions build frontend/functions --outdir dist
           test -s dist/_worker.js
+
+      - name: 🧾 Inspect worker bundle for API markers
+        run: |
+          node -e "const fs=require('fs');const s=fs.readFileSync('dist/_worker.js','utf8');if(!(s.includes('/api')||s.includes('api/'))){console.error('No /api markers found in _worker.js');process.exit(1)}"
 
       - name: 🚀 Deploy to Cloudflare Pages (Wrangler)
         env:

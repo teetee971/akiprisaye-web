@@ -60,6 +60,10 @@ jobs:
           npx wrangler@3 pages functions build frontend/functions --outdir frontend/dist
           test -s frontend/dist/_worker.js
 
+      - name: 🧾 Inspect worker bundle for API markers
+        run: |
+          node -e "const fs=require('fs');const s=fs.readFileSync('frontend/dist/_worker.js','utf8');if(!(s.includes('/api')||s.includes('api/'))){console.error('No /api markers found in _worker.js');process.exit(1)}"
+
       - name: Deploy to Cloudflare Pages (Wrangler)
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
