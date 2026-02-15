@@ -11,10 +11,10 @@ on:
       - main
   workflow_dispatch:
 
-# Ensure only one deployment runs at a time
+# Ensure only one Pages deployment runs at a time
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: false
+  group: pages-deploy-akiprisaye-web-main
+  cancel-in-progress: true
 
 permissions:
   contents: read
