@@ -23,7 +23,7 @@ permissions:
 
 env:
   NODE_VERSION: '20.19.0'
-  DEPLOYMENT_URL: 'https://akiprisaye.pages.dev'
+  DEPLOYMENT_URL: 'https://akiprisaye-web.pages.dev'
 
 jobs:
   # ========================================
@@ -212,7 +212,6 @@ jobs:
     needs: [preflight, build, integrity-check, routing-check]
     runs-on: ubuntu-latest
     outputs:
-      deployment-url: ${{ steps.deploy.outputs.url }}
       environment: ${{ steps.set-env.outputs.environment }}
     steps:
       - name: 📥 Checkout code
@@ -227,29 +226,52 @@ jobs:
       - name: 🎯 Determine environment
         id: set-env
         run: |
-          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
-            echo "environment=production" >> $GITHUB_OUTPUT
-            echo "📦 Deploying to PRODUCTION"
-          else
-            echo "environment=preview" >> $GITHUB_OUTPUT
-            echo "📦 Deploying to PREVIEW"
+          echo "environment=production" >> $GITHUB_OUTPUT
+          echo "📦 Deploying to PRODUCTION"
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: 'frontend/package-lock.json'
+
+      - name: 📦 Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: 🏗️ Build Pages Functions worker
+        run: |
+          npx wrangler@3 pages functions build frontend/functions --outfile frontend/dist/_worker.js
+
+      - name: 🔎 Sanity check Functions roots
+        run: |
+          set -euo pipefail
+          test -f frontend/functions/api/health.ts
+          if [ -d functions ]; then
+            echo "ℹ️ Root ./functions exists (likely non-Pages). Ensure CI deploy uses frontend/functions only."
           fi
 
-      - name: 🚀 Deploy to Cloudflare Pages
-        id: deploy
-        uses: cloudflare/pages-action@v1
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: akiprisaye-web
-          directory: frontend/dist
-          functionsDirectory: functions
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+      - name: 🧱 Verify worker bundle is generated
+        run: |
+          test -s frontend/dist/_worker.js
+
+      - name: 🧾 Inspect worker bundle for API markers
+        run: |
+          node -e "const fs=require('fs'); const s=fs.readFileSync('frontend/dist/_worker.js','utf8'); console.log('bytes', s.length); if(!(s.includes('/api')||s.includes('api/'))) { console.error('No /api markers found in _worker.js'); process.exit(1);} console.log('OK: api markers present');"
+
+      - name: 🚀 Deploy to Cloudflare Pages (Wrangler)
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          DEPLOY_BRANCH="main"
+          npx wrangler@3 pages deploy frontend/dist --project-name akiprisaye-web --branch "$DEPLOY_BRANCH"
 
       - name: 📝 Log deployment
         run: |
           echo "🎉 Deployment completed"
-          echo "URL: ${{ steps.deploy.outputs.url }}"
+          echo "URL: ${{ env.DEPLOYMENT_URL }}"
           echo "Environment: ${{ steps.set-env.outputs.environment }}"
           echo "Timestamp: $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 
@@ -274,6 +296,13 @@ jobs:
         id: validate
         run: |
           ./scripts/post-deploy-validation.sh "${{ env.DEPLOYMENT_URL }}" 3 15
+
+      - name: 🔍 Verify Pages API (strict)
+        working-directory: frontend
+        env:
+          API_BASE_URL: ${{ env.DEPLOYMENT_URL }}
+          CI_STRICT_API_VERIFY: "1"
+        run: node scripts/verify-pages-api.mjs
 
       - name: ✅ Validation successful
         if: success()
