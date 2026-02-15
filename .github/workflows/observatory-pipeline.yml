@@ -248,7 +248,7 @@ jobs:
     name: 🚀 Deploy to Cloudflare Pages
     runs-on: ubuntu-latest
     needs: [build-frontend, validate-security]
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    if: github.event_name == 'workflow_dispatch'
     
     steps:
       - name: 📥 Checkout code
