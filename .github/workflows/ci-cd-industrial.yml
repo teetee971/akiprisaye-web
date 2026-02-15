@@ -70,11 +70,48 @@ jobs:
           echo "ℹ️ Pull request detected: Cloudflare secret checks are skipped."
 
   # ========================================
+  # 1️⃣bis DEPLOY REGRESSION GUARD (BLOQUANT)
+  # ========================================
+  deploy-regression-guard:
+    name: 1️⃣bis Deploy Regression Guard
+    needs: preflight
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🧰 Install ripgrep
+        run: |
+          if ! command -v rg >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y ripgrep
+          fi
+
+      - name: 🔍 Ensure legacy deploy.yml is manual-only
+        run: |
+          set -euo pipefail
+
+          DEPLOY_WORKFLOW=".github/workflows/deploy.yml"
+          test -f "$DEPLOY_WORKFLOW"
+
+          if ! rg -n '^\s*workflow_dispatch\s*:' "$DEPLOY_WORKFLOW" >/dev/null; then
+            echo "❌ $DEPLOY_WORKFLOW must expose workflow_dispatch"
+            exit 1
+          fi
+
+          if rg -n '^\s*(push|pull_request|schedule|workflow_run|repository_dispatch)\s*:' "$DEPLOY_WORKFLOW"; then
+            echo "❌ $DEPLOY_WORKFLOW must remain manual-only"
+            exit 1
+          fi
+
+          echo "✅ deploy.yml is manual-only"
+
+  # ========================================
   # 2️⃣ INSTALL & BUILD
   # ========================================
   build:
     name: 2️⃣ Install & Build
-    needs: preflight
+    needs: [preflight, deploy-regression-guard]
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout code
