@@ -60,6 +60,13 @@ jobs:
           directory: frontend/dist             # important : dossier de build
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Verify Pages API (health + product-image + headers)
+        env:
+          API_BASE_URL: https://akiprisaye-web.pages.dev
+        run: |
+          cd frontend
+          node scripts/verify-pages-api.mjs
+
       # Purge du cache inutile (pas de domaine personnalisé)
       - name: Skip cache purge
         if: success()

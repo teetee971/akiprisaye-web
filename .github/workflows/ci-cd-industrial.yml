@@ -245,6 +245,13 @@ jobs:
           directory: frontend/dist
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: 🔍 Verify Pages API (health + product-image + headers)
+        env:
+          API_BASE_URL: https://akiprisaye-web.pages.dev
+        run: |
+          cd frontend
+          node scripts/verify-pages-api.mjs
+
       - name: 📝 Log deployment
         run: |
           echo "🎉 Deployment completed"
