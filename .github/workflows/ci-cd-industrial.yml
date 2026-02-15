@@ -212,7 +212,7 @@ jobs:
     needs: [preflight, build, integrity-check, routing-check]
     runs-on: ubuntu-latest
     outputs:
-      deployment-url: ${{ steps.deploy.outputs.url }}
+      deployment-url: https://akiprisaye-web.pages.dev
       environment: ${{ steps.set-env.outputs.environment }}
     steps:
       - name: 📥 Checkout code
@@ -223,6 +223,31 @@ jobs:
         with:
           name: dist
           path: frontend/dist
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      # Pages Functions are bundled as frontend/dist/_worker.js before deploy.
+      - name: 🧱 Build Pages Functions bundle (_worker.js)
+        run: |
+          npx wrangler@3 pages functions build functions --outfile frontend/dist/_worker.js
+
+      - name: ✅ Verify worker bundle
+        run: |
+          test -s frontend/dist/_worker.js
+
+      - name: 🔀 Resolve Pages branch
+        id: pages-branch
+        run: |
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            echo "branch=main" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "branch=${{ github.head_ref }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "branch=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: 🎯 Determine environment
         id: set-env
@@ -235,20 +260,18 @@ jobs:
             echo "📦 Deploying to PREVIEW"
           fi
 
-      - name: 🚀 Deploy to Cloudflare Pages
+      - name: 🚀 Deploy to Cloudflare Pages with Wrangler
         id: deploy
-        uses: cloudflare/pages-action@v1
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: akiprisaye-web
-          directory: frontend/dist
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          npx wrangler@3 pages deploy frontend/dist --project-name akiprisaye-web --branch "${{ steps.pages-branch.outputs.branch }}"
 
       - name: 📝 Log deployment
         run: |
           echo "🎉 Deployment completed"
-          echo "URL: ${{ steps.deploy.outputs.url }}"
+          echo "URL: https://akiprisaye-web.pages.dev"
           echo "Environment: ${{ steps.set-env.outputs.environment }}"
           echo "Timestamp: $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 
@@ -273,6 +296,13 @@ jobs:
         id: validate
         run: |
           ./scripts/post-deploy-validation.sh "${{ env.DEPLOYMENT_URL }}" 3 15
+
+      - name: 🔍 Smoke test API health
+        if: github.ref == 'refs/heads/main'
+        run: |
+          body=$(curl -fsS https://akiprisaye-web.pages.dev/api/health)
+          echo "$body"
+          echo "$body" | grep -Eq '"ok"[[:space:]]*:[[:space:]]*true|"status"[[:space:]]*:[[:space:]]*"ok"'
 
       - name: ✅ Validation successful
         if: success()

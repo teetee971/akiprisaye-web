@@ -47,6 +47,21 @@ Headers de diagnostic renvoyés (y compris sur `302`) :
 - `x-akps-off-status`: code HTTP OFF ou `n/a`
 - `x-akps-selected`: `front` | `small` | `thumb` | `none`
 
+
+## ☁️ Déploiement Cloudflare Pages Functions
+
+Les endpoints `/api/*` sont déployés via **Wrangler** (et non via `cloudflare/pages-action`).
+
+- Le frontend est généré dans `frontend/dist`.
+- Les Pages Functions (`functions/**`) sont compilées en `frontend/dist/_worker.js` avec :
+  - `npx wrangler pages functions build functions --outfile frontend/dist/_worker.js`
+- Le déploiement Pages est ensuite fait avec :
+  - `npx wrangler pages deploy frontend/dist --project-name akiprisaye-web --branch <branch>`
+
+Ce packaging garantit que les routes API (ex: `/api/health`) ne retombent pas sur un fallback HTML 404 en production.
+
+---
+
 ## ⚡ Performance & Web Vitals
 
 **World-class performance optimization** - **Top 1%** of websites globally! 🏆
