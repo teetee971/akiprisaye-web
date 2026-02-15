@@ -23,7 +23,7 @@ permissions:
 
 env:
   NODE_VERSION: '20.19.0'
-  DEPLOYMENT_URL: 'https://akiprisaye.pages.dev'
+  DEPLOYMENT_URL: 'https://akiprisaye-web.pages.dev'
 
 jobs:
   # ========================================
@@ -212,11 +212,16 @@ jobs:
     needs: [preflight, build, integrity-check, routing-check]
     runs-on: ubuntu-latest
     outputs:
-      deployment-url: ${{ steps.deploy.outputs.url }}
+      deployment-url: ${{ env.DEPLOYMENT_URL }}
       environment: ${{ steps.set-env.outputs.environment }}
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: 📥 Download build artifact
         uses: actions/download-artifact@v4
@@ -235,27 +240,28 @@ jobs:
             echo "📦 Deploying to PREVIEW"
           fi
 
-      - name: 🚀 Deploy to Cloudflare Pages
-        id: deploy
-        uses: cloudflare/pages-action@v1
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: akiprisaye-web
-          directory: frontend/dist
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+      - name: 🏗️ Build Pages Functions worker bundle
+        run: |
+          npx wrangler@3 pages functions build frontend/functions --outfile frontend/dist/_worker.js
+          test -s frontend/dist/_worker.js
+
+      - name: 🚀 Deploy to Cloudflare Pages (Wrangler)
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          npx wrangler@3 pages deploy frontend/dist --project-name akiprisaye-web --branch "${{ github.ref_name }}"
 
       - name: 🔍 Verify Pages API (health + product-image + headers)
+        working-directory: frontend
         env:
-          API_BASE_URL: https://akiprisaye-web.pages.dev
-        run: |
-          cd frontend
-          node scripts/verify-pages-api.mjs
+          API_BASE_URL: ${{ env.DEPLOYMENT_URL }}
+        run: node scripts/verify-pages-api.mjs
 
       - name: 📝 Log deployment
         run: |
           echo "🎉 Deployment completed"
-          echo "URL: ${{ steps.deploy.outputs.url }}"
+          echo "URL: ${{ env.DEPLOYMENT_URL }}"
           echo "Environment: ${{ steps.set-env.outputs.environment }}"
           echo "Timestamp: $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 
