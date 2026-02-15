@@ -1,10 +1,6 @@
 name: Deploy to Cloudflare Pages
 
 on:
-  push:
-    branches:
-      - main        # déclenchement sur main
-      - copilot/create-citizen-support-service  # déclenchement sur la branche de développement
   workflow_dispatch:
 
 jobs:
@@ -58,6 +54,7 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: akiprisaye-web
           directory: frontend/dist             # important : dossier de build
+          functionsDirectory: functions
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
       # Purge du cache inutile (pas de domaine personnalisé)

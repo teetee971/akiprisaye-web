@@ -77,6 +77,9 @@ export interface PriceSearchInput {
   brand?: string;
   category?: string;
   territory?: TerritoryCode;
+  storeId?: string;
+  serviceMode?: 'inStore' | 'drive' | 'delivery';
+  metadata?: Record<string, string>;
 }
 
 export type { PriceInterval };

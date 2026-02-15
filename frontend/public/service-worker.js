@@ -38,6 +38,15 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
+
+  if (request.method !== 'GET') {
+    return;
+  }
+
+  if (url.origin === self.location.origin && url.pathname.startsWith('/api/')) {
+    event.respondWith(fetch(request, { cache: 'no-store' }));
+    return;
+  }
   
   // CRITICAL: Network-first for ALL HTML documents - NEVER serve cached HTML
   if (request.mode === 'navigate' || 
@@ -75,8 +84,11 @@ self.addEventListener('fetch', (event) => {
       }
       return fetch(request)
         .then((liveResponse) => {
+          const cacheControl = (liveResponse.headers.get('cache-control') || '').toLowerCase();
+          const shouldBypassCache = cacheControl.includes('no-store') || cacheControl.includes('no-cache');
+
           // Only cache successful responses for same-origin requests
-          if (liveResponse.ok && liveResponse.type === 'basic') {
+          if (liveResponse.ok && liveResponse.type === 'basic' && !shouldBypassCache) {
             return caches.open(CACHE_NAME).then((cache) => {
               cache.put(request, liveResponse.clone());
               return liveResponse;

@@ -6,6 +6,8 @@ import type {
   TerritoryCode,
 } from '../services/priceSearch/price.types';
 import { comparePrices } from '../services/priceComparator';
+import { computePriceReliability } from '../services/priceSearch/priceReliability';
+import { PriceInsightsPanel } from './price/PriceInsightsPanel';
 
 const TERRITORY_OPTIONS: Array<{ code: TerritoryCode; label: string }> = [
   { code: 'fr', label: 'France métropolitaine' },
@@ -33,6 +35,7 @@ export function PriceComparison() {
   const [territory, setTerritory] = useState<TerritoryCode>('fr');
   const [result, setResult] = useState<ComparisonResult>(initialResult);
   const [isLoading, setIsLoading] = useState(false);
+  const reliability = computePriceReliability(result.items, result.interval);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -108,6 +111,9 @@ export function PriceComparison() {
             {result.interval.max?.toFixed(2)}€ (médiane{' '}
             {result.interval.median?.toFixed(2)}€)
           </p>
+
+          <PriceInsightsPanel reliability={reliability} />
+
           <table>
             <caption>Observations disponibles</caption>
             <thead>

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Placeholder viande poisson">
+  <rect width="200" height="200" fill="#1e293b"/>
+  <ellipse cx="92" cy="100" rx="56" ry="30" fill="#64748b"/>
+  <polygon points="138,100 172,76 172,124" fill="#94a3b8"/>
+  <circle cx="78" cy="95" r="4" fill="#e2e8f0"/>
+</svg>

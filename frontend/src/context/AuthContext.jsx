@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import { auth, db } from '../lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
+import { logDebug } from '../utils/logger';
 
 const AuthContext = createContext();
 
@@ -19,7 +20,7 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log('🔄 AuthProvider: Initializing...');
+    logDebug('🔄 AuthProvider: Initializing...');
     
     // Hard timeout to prevent infinite loading - force render after 5 seconds
     const timeoutId = setTimeout(() => {
@@ -38,9 +39,9 @@ export function AuthProvider({ children }) {
       return;
     }
 
-    console.log('✅ AuthProvider: Setting up auth listener');
+    logDebug('✅ AuthProvider: Setting up auth listener');
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      console.log('🔄 AuthProvider: Auth state changed', currentUser ? 'User logged in' : 'No user');
+      logDebug('🔄 AuthProvider: Auth state changed', currentUser ? 'User logged in' : 'No user');
       setUser(currentUser);
       
       // Fetch user role from Firestore if available
@@ -61,7 +62,7 @@ export function AuthProvider({ children }) {
         setUserRole('guest');
       }
       
-      console.log('✅ AuthProvider: Initialization complete');
+      logDebug('✅ AuthProvider: Initialization complete');
       setLoading(false);
       clearTimeout(timeoutId);
     });

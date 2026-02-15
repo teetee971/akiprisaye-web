@@ -1,12 +1,13 @@
 import { defineConfig, devices } from '@playwright/test';
 
 const useLocalServer = process.env.PLAYWRIGHT_USE_LOCAL_SERVER === '1';
+const strictUxAudit = process.env.UX_AUDIT_STRICT === '1';
 
 export default defineConfig({
   testDir: './tests/e2e',
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 1 : 0,
+  retries: process.env.CI ? (strictUxAudit ? 1 : 0) : 0,
   workers: process.env.CI ? 1 : undefined,
   reporter: [['html', { open: 'never' }], ['list']],
   use: {

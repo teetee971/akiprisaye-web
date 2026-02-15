@@ -581,6 +581,9 @@ export default function ScanEAN() {
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-white mb-4">Résultat</h2>
           <ScanErrorState message={resolver.error} />
+          <div className="mt-3 rounded-lg border border-blue-500/40 bg-blue-500/10 p-3 text-sm text-blue-200">
+            Données indisponibles pour ce code (statut NO_DATA). <a href="/transparence" className="underline font-semibold">Pourquoi ?</a>
+          </div>
         </div>
       )}
 

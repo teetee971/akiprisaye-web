@@ -14,6 +14,8 @@ import OnboardingTour from './components/OnboardingTour';
 import OnboardingAutoStart from './components/OnboardingAutoStart';
 import HelpButton from './components/HelpButton';
 import AnalyticsTracker from './components/analytics/AnalyticsTracker';
+import { StoreSelectionProvider } from './context/StoreSelectionContext';
+import { logDebug } from './utils/logger';
 
 // Lazy-loaded pages - Main routes
 const Home = React.lazy(() => import('./pages/Home'));
@@ -59,7 +61,10 @@ const BasketComparison = React.lazy(() => import('./pages/BasketComparison'));
 const Settings = React.lazy(() => import('./pages/Settings'));
 const HistoriquePrix = React.lazy(() => import('./pages/HistoriquePrix'));
 const RecherchePrix = React.lazy(() => import('./pages/RecherchePrix'));
+const ProductDetailPage = React.lazy(() => import('./pages/ProductDetail'));
 const Alertes = React.lazy(() => import('./pages/Alertes'));
+const AlerteDetail = React.lazy(() => import('./pages/AlerteDetail'));
+const Promos = React.lazy(() => import('./pages/Promos'));
 const MesListes = React.lazy(() => import('./pages/MesListes'));
 
 // Savings Dashboard
@@ -70,6 +75,7 @@ const Login = React.lazy(() => import('./pages/Login'));
 const Inscription = React.lazy(() => import('./pages/Inscription'));
 const ResetPassword = React.lazy(() => import('./pages/ResetPassword'));
 const MonCompte = React.lazy(() => import('./pages/MonCompte'));
+const AuthHub = React.lazy(() => import('./pages/AuthHub'));
 
 // Pricing & Subscription
 const Pricing = React.lazy(() => import('./pages/Pricing'));
@@ -92,13 +98,13 @@ function LoadingFallback() {
   const [showTimeout, setShowTimeout] = useState(false);
   
   useEffect(() => {
-    console.log('⏳ LoadingFallback: Displayed');
+    logDebug('⏳ LoadingFallback: Displayed');
     const timer = setTimeout(() => {
       console.error('⚠️ Application timeout - Loading blocked for 10+ seconds');
       setShowTimeout(true);
     }, 10000);
     return () => {
-      console.log('✅ LoadingFallback: Hidden (component loaded successfully)');
+      logDebug('✅ LoadingFallback: Hidden (component loaded successfully)');
       clearTimeout(timer);
     };
   }, []);
@@ -135,13 +141,13 @@ export default function App() {
   const [providerError, setProviderError] = useState<Error | null>(null);
 
   useEffect(() => {
-    console.log('🚀 App: Starting initialization');
-    console.log('📍 App: Environment:', import.meta.env.MODE);
-    console.log('📍 App: Firebase configured:', import.meta.env.VITE_FIREBASE_API_KEY ? 'Yes' : 'No');
+    logDebug('🚀 App: Starting initialization');
+    logDebug('📍 App: Environment:', import.meta.env.MODE);
+    logDebug('📍 App: Firebase configured:', import.meta.env.VITE_FIREBASE_API_KEY ? 'Yes' : 'No');
     const fallback = document.getElementById('loading-fallback');
     if (fallback) {
       fallback.style.display = 'none';
-      console.log('✅ App: HTML loading fallback hidden');
+      logDebug('✅ App: HTML loading fallback hidden');
     }
   }, []);
 
@@ -167,6 +173,7 @@ export default function App() {
         <ThemeProvider>
           <AuthProvider>
             <OnboardingProvider>
+              <StoreSelectionProvider>
               <BrowserRouter>
                 <Suspense fallback={<LoadingFallback />}>
                   <Routes>
@@ -224,8 +231,11 @@ export default function App() {
                       <Route path="parametres" element={<Settings />} />
                       <Route path="historique-prix" element={<HistoriquePrix />} />
                       <Route path="historique" element={<HistoriquePrix />} />
+                      <Route path="p/:id" element={<ProductDetailPage />} />
                       <Route path="recherche-prix" element={<RecherchePrix />} />
                       <Route path="alertes" element={<Alertes />} />
+                      <Route path="alertes/:id" element={<AlerteDetail />} />
+                      <Route path="promos" element={<Promos />} />
                       <Route path="mes-listes" element={<MesListes />} />
                       
                       {/* Savings Dashboard */}
@@ -237,6 +247,7 @@ export default function App() {
                       <Route path="connexion" element={<Login />} />
                       <Route path="inscription" element={<Inscription />} />
                       <Route path="reset-password" element={<ResetPassword />} />
+                      <Route path="auth" element={<AuthHub />} />
                       <Route path="mon-compte" element={<MonCompte />} />
                       
                       {/* Pricing & Subscription */}
@@ -268,6 +279,7 @@ export default function App() {
                   <HelpButton />
                 </Suspense>
               </BrowserRouter>
+              </StoreSelectionProvider>
             </OnboardingProvider>
           </AuthProvider>
         </ThemeProvider>

@@ -13,6 +13,8 @@ export function buildPriceSearchInput(params: {
   brand?: string;
   category?: string;
   territory?: TerritoryCode;
+  storeId?: string;
+  serviceMode?: 'inStore' | 'drive' | 'delivery';
 }): PriceSearchInput {
   const barcode = params.barcode ?? (params.text ? extractBarcode(params.text) : undefined);
   const query = params.text?.trim();
@@ -23,5 +25,12 @@ export function buildPriceSearchInput(params: {
     brand: params.brand,
     category: params.category,
     territory: params.territory,
+    storeId: params.storeId,
+    serviceMode: params.serviceMode,
+    metadata: {
+      storeId: params.storeId ?? '',
+      serviceMode: params.serviceMode ?? '',
+      territory: params.territory ?? '',
+    },
   };
 }

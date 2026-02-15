@@ -26,6 +26,7 @@ const buildSha = process.env.BUILD_SHA || (() => {
 })()
 
 export default defineConfig({
+  base: '/',
   plugins: [
     react(),
     viteStaticCopy({

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Placeholder produit">
+  <rect width="200" height="200" fill="#1e293b"/>
+  <rect x="54" y="44" width="92" height="112" rx="14" fill="#64748b"/>
+  <rect x="78" y="66" width="44" height="14" rx="6" fill="#94a3b8"/>
+  <rect x="70" y="94" width="60" height="48" rx="8" fill="#94a3b8"/>
+</svg>
