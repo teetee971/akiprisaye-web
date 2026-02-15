@@ -40,10 +40,12 @@ jobs:
 
       # Installation des dépendances du projet
       - name: Install dependencies
+        working-directory: frontend
         run: npm ci
 
       # Build de l'application Vite/React (génère le dossier dist)
       - name: Build application
+        working-directory: frontend
         run: npm run build
 
       # Déploiement du contenu du dossier dist vers Cloudflare Pages
