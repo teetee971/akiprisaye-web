@@ -1,10 +1,6 @@
 name: Deploy to Cloudflare Pages
 
 on:
-  push:
-    branches:
-      - main
-      - copilot/create-citizen-support-service
   workflow_dispatch:
 
 env:
