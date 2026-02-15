@@ -24,7 +24,8 @@
     "e2e": "playwright test",
     "e2e:report": "playwright show-report",
     "verify:pages-api": "node scripts/verify-pages-api.mjs",
-    "verify:placeholder-routing": "npm run build && node scripts/verify-placeholder-routing.mjs"
+    "verify:placeholder-routing": "npm run build && node scripts/verify-placeholder-routing.mjs",
+    "verify:redirects-order": "node scripts/verify-redirects-order.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

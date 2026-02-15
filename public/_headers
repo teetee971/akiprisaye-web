@@ -13,3 +13,6 @@
 
 /*.html
   Cache-Control: public, max-age=0, must-revalidate, stale-while-revalidate=600
+
+/assets/placeholders/*.svg
+  Content-Type: image/svg+xml; charset=utf-8

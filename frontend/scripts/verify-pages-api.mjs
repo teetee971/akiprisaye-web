@@ -1,5 +1,23 @@
 const baseUrl = process.env.API_BASE_URL || 'http://127.0.0.1:8788';
 
+function assertDebugHeaders(response, context) {
+  const source = response.headers.get('x-akps-source') || '';
+  const reason = response.headers.get('x-akps-reason') || '';
+  const selected = response.headers.get('x-akps-selected') || '';
+
+  if (!['openfoodfacts', 'placeholder'].includes(source)) {
+    throw new Error(`${context} expected x-akps-source header, received "${source}"`);
+  }
+
+  if (!reason) {
+    throw new Error(`${context} expected x-akps-reason header`);
+  }
+
+  if (!selected) {
+    throw new Error(`${context} expected x-akps-selected header`);
+  }
+}
+
 async function checkHealth() {
   const response = await fetch(`${baseUrl}/api/health`);
   const body = await response.text();
@@ -25,7 +43,7 @@ async function checkProductImageJson() {
     throw new Error(`/api/product-image?format=json did not return JSON. body=${body.slice(0, 180)}`);
   }
 
-  if (!['off', 'placeholder'].includes(parsed?.source)) {
+  if (!['openfoodfacts', 'placeholder'].includes(parsed?.source)) {
     throw new Error(`/api/product-image?format=json returned unexpected payload: ${body.slice(0, 180)}`);
   }
 
@@ -34,6 +52,7 @@ async function checkProductImageJson() {
     throw new Error(`/api/product-image?format=json expected Vary: Accept, received "${vary}"`);
   }
 
+  assertDebugHeaders(response, '/api/product-image?format=json');
   console.log(`OK /api/product-image?format=json -> ${response.status} source=${parsed.source}`);
 }
 
@@ -56,6 +75,7 @@ async function checkProductImageMode() {
     throw new Error(`/api/product-image image mode expected Vary: Accept, received "${vary}"`);
   }
 
+  assertDebugHeaders(response, '/api/product-image image mode');
   console.log(`OK /api/product-image image mode -> ${response.status} content-type=${contentType || 'n/a'}`);
 }
 
@@ -76,7 +96,7 @@ async function checkProductImageJsonByAccept() {
     throw new Error(`/api/product-image Accept: application/json did not return JSON. body=${body.slice(0, 180)}`);
   }
 
-  if (!['off', 'placeholder'].includes(parsed?.source)) {
+  if (!['openfoodfacts', 'placeholder'].includes(parsed?.source)) {
     throw new Error(`/api/product-image Accept: application/json returned unexpected payload: ${body.slice(0, 180)}`);
   }
 
@@ -85,6 +105,7 @@ async function checkProductImageJsonByAccept() {
     throw new Error(`/api/product-image Accept: application/json expected Vary: Accept, received "${vary}"`);
   }
 
+  assertDebugHeaders(response, '/api/product-image Accept: application/json');
   console.log(`OK /api/product-image Accept: application/json -> ${response.status} source=${parsed.source}`);
 }
 

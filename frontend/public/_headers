@@ -17,3 +17,6 @@
 # Hashed assets: cache forever
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
+
+/assets/placeholders/*.svg
+  Content-Type: image/svg+xml; charset=utf-8
