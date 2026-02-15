@@ -1,10 +1,6 @@
 name: Deploy to Cloudflare Pages
 
 on:
-  push:
-    branches:
-      - main        # déclenchement sur main
-      - copilot/create-citizen-support-service  # déclenchement sur la branche de développement
   workflow_dispatch:
 
 jobs:
