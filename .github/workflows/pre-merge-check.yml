@@ -41,6 +41,14 @@ jobs:
         working-directory: frontend
         run: npm ci
 
+      - name: 🧰 Install ripgrep
+        run: |
+          if ! command -v rg >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y ripgrep
+          fi
+
+
       - name: 🔍 Run ESLint (changed files only)
         working-directory: frontend
         continue-on-error: false
