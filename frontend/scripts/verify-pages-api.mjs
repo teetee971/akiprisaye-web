@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 const DEFAULT_BASE_URL = 'https://akiprisaye-web.pages.dev';
 const baseUrl = process.env.API_BASE_URL || DEFAULT_BASE_URL;
 const REQUEST_TIMEOUT_MS = Number(process.env.API_VERIFY_TIMEOUT_MS || 9000);
+const STRICT_API_VERIFY = process.env.CI_STRICT_API_VERIFY === '1';
 
 const NETWORK_ERROR_PATTERNS = [
   /fetch failed/i,
@@ -171,6 +172,11 @@ async function main() {
     await runVerification();
   } catch (error) {
     if (isNetworkEnvironmentError(error)) {
+      if (STRICT_API_VERIFY) {
+        console.error(`API verification failed in strict mode while checking ${baseUrl}: ${error instanceof Error ? error.message : String(error)}`);
+        process.exit(1);
+      }
+
       console.warn(`SKIPPED: network/environment issue while checking ${baseUrl}: ${error instanceof Error ? error.message : String(error)}`);
       process.exit(0);
     }
