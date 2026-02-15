@@ -11,11 +11,6 @@ on:
       - main
   workflow_dispatch:
 
-# Ensure only one deployment runs at a time
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: false
-
 permissions:
   contents: read
   deployments: write
@@ -208,6 +203,9 @@ jobs:
   # ========================================
   deploy:
     name: 6️⃣ Deploy to Cloudflare Pages
+    concurrency:
+      group: pages-deploy-akiprisaye-web-main
+      cancel-in-progress: true
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/'))
     needs: [preflight, build, integrity-check, routing-check]
     runs-on: ubuntu-latest
