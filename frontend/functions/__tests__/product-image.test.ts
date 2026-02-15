@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { onRequestGet } from '../api/product-image';
+import { createProductImageHandler } from '../api/product-image';
 
 function makeRequest(path: string, accept = 'text/html'): Request {
   return new Request(`https://example.com${path}`, {
@@ -7,7 +7,7 @@ function makeRequest(path: string, accept = 'text/html'): Request {
   });
 }
 
-describe('/api/product-image content negotiation', () => {
+describe('/api/product-image', () => {
   const cacheStore = new Map<string, Response>();
 
   beforeEach(() => {
@@ -31,102 +31,101 @@ describe('/api/product-image content negotiation', () => {
     vi.restoreAllMocks();
   });
 
-  it('returns redirect for browser requests (Accept: text/html)', async () => {
-    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
-      new Response(JSON.stringify({ status: 0 }), {
-        status: 200,
-        headers: { 'content-type': 'application/json' },
-      }),
-    );
+  it('redirects to OFF image and exposes debug headers', async () => {
+    const imageUrl = 'https://images.openfoodfacts.org/images/products/301/762/042/2003/front_fr.400.jpg';
+    const handler = createProductImageHandler(async () => new Response(JSON.stringify({
+      status: 1,
+      product: { image_url: imageUrl },
+    }), {
+      status: 200,
+      headers: { 'content-type': 'application/json' },
+    }));
 
-    const response = await onRequestGet({ request: makeRequest('/api/product-image?ean=3274080005003&v=1', 'text/html') } as never);
-
-    expect(response.status).toBe(302);
-    expect(response.headers.get('location')).toBe('/assets/placeholders/placeholder-default.svg');
-    expect(response.headers.get('cache-control')).toContain('max-age=');
-    expect(response.headers.get('vary')).toContain('Accept');
-  });
-
-  it('returns redirect for image clients (Accept: image/*)', async () => {
-    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
-      new Response(JSON.stringify({ status: 0 }), {
-        status: 200,
-        headers: { 'content-type': 'application/json' },
-      }),
-    );
-
-    const response = await onRequestGet({ request: makeRequest('/api/product-image?ean=3274080005003&v=1', 'image/*') } as never);
+    const response = await handler({ request: makeRequest('/api/product-image?ean=3017620422003&v=1', 'text/html') } as never);
 
     expect(response.status).toBe(302);
-    expect(response.headers.get('location')).toBe('/assets/placeholders/placeholder-default.svg');
-    expect(response.headers.get('cache-control')).toContain('max-age=');
-    expect(response.headers.get('vary')).toContain('Accept');
+    expect(response.headers.get('location')).toBe(imageUrl);
+    expect(response.headers.get('x-akps-source')).toBe('openfoodfacts');
+    expect(response.headers.get('x-akps-reason')).toBe('ok');
+    expect(response.headers.get('x-akps-selected')).toBe('thumb');
   });
 
-  it('returns redirect for wildcard Accept and fallback is still an image', async () => {
-    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
-      new Response(JSON.stringify({ status: 0 }), {
-        status: 200,
-        headers: { 'content-type': 'application/json' },
-      }),
-    );
+  it('maps OFF 403 and 429 to placeholder with explicit reasons', async () => {
+    const handler403 = createProductImageHandler(async () => new Response('', { status: 403 }));
+    const response403 = await handler403({ request: makeRequest('/api/product-image?ean=3017620422003&v=1', 'text/html') } as never);
 
-    const response = await onRequestGet({ request: makeRequest('/api/product-image?ean=3274080005003&v=1', '*/*') } as never);
+    expect(response403.status).toBe(302);
+    expect(response403.headers.get('location')).toBe('/assets/placeholders/placeholder-default.svg');
+    expect(response403.headers.get('x-akps-reason')).toBe('forbidden');
 
-    expect(response.status).toBe(302);
-    expect(response.headers.get('location')).toBe('/assets/placeholders/placeholder-default.svg');
-    expect(response.headers.get('content-type')).toBeNull();
+    const handler429 = createProductImageHandler(async () => new Response('', { status: 429 }));
+    const response429 = await handler429({ request: makeRequest('/api/product-image?ean=3017620422003&v=2', 'text/html') } as never);
+
+    expect(response429.status).toBe(302);
+    expect(response429.headers.get('x-akps-reason')).toBe('rate_limited');
   });
 
+  it('returns timeout reason when OFF fetch aborts', async () => {
+    const abortError = Object.assign(new Error('aborted'), { name: 'AbortError' });
+    const handler = createProductImageHandler(async () => { throw abortError; });
 
-  it('supports barcode as alias and redirects to an image by default', async () => {
-    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
-      new Response(JSON.stringify({ status: 0 }), {
-        status: 200,
-        headers: { 'content-type': 'application/json' },
-      }),
-    );
-
-    const response = await onRequestGet({ request: makeRequest('/api/product-image?barcode=3017620422003&v=1', 'text/html') } as never);
-
-    expect(response.status).toBe(302);
-    expect(response.headers.get('location')).toBe('/assets/placeholders/placeholder-default.svg');
-    expect(response.headers.get('content-type')).toBeNull();
-  });
-
-  it('returns JSON when format=json is provided', async () => {
-    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
-      new Response(JSON.stringify({ status: 0 }), {
-        status: 200,
-        headers: { 'content-type': 'application/json' },
-      }),
-    );
-
-    const response = await onRequestGet({ request: makeRequest('/api/product-image?ean=3274080005003&format=json&v=1', 'text/html') } as never);
-    const body = await response.json() as { source: string; url?: string };
+    const response = await handler({ request: makeRequest('/api/product-image?barcode=3017620422003&format=json&v=1', 'text/html') } as never);
+    const body = await response.json() as { reason: string; redirect_to: string };
 
     expect(response.status).toBe(200);
-    expect(response.headers.get('content-type')).toContain('application/json');
-    expect(response.headers.get('cache-control')).toContain('max-age=');
-    expect(response.headers.get('vary')).toContain('Accept');
-    expect(body.source).toBe('placeholder');
-    expect(body.url).toBe('/assets/placeholders/placeholder-default.svg');
+    expect(body.reason).toBe('timeout');
+    expect(body.redirect_to).toBe('/assets/placeholders/placeholder-default.svg');
+    expect(response.headers.get('x-akps-reason')).toBe('timeout');
   });
 
-  it('returns JSON when Accept requests application/json', async () => {
-    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
-      new Response(JSON.stringify({ status: 0 }), {
-        status: 200,
-        headers: { 'content-type': 'application/json' },
-      }),
-    );
 
-    const response = await onRequestGet({ request: makeRequest('/api/product-image?ean=3274080005003&v=1', 'application/json') } as never);
+  it('caches network-error fallback responses to avoid repeated OFF calls', async () => {
+    const offFetch = vi.fn(async () => {
+      throw new Error('network down');
+    });
+    const handler = createProductImageHandler(offFetch as never);
+
+    const first = await handler({ request: makeRequest('/api/product-image?barcode=3017620422003&v=cache-1', 'text/html') } as never);
+    const second = await handler({ request: makeRequest('/api/product-image?barcode=3017620422003&v=cache-1', 'text/html') } as never);
+
+    expect(first.status).toBe(302);
+    expect(first.headers.get('x-akps-reason')).toBe('network_error');
+    expect(second.status).toBe(302);
+    expect(offFetch).toHaveBeenCalledTimes(1);
+  });
+
+  it('returns detailed json payload when format=json is requested', async () => {
+    const imageUrl = 'https://images.openfoodfacts.org/images/products/301/762/042/2003/front_en.200.jpg';
+    const handler = createProductImageHandler(async () => new Response(JSON.stringify({
+      status: 1,
+      product: {
+        selected_images: {
+          front: {
+            display: { en: imageUrl },
+          },
+        },
+      },
+    }), {
+      status: 200,
+      headers: { 'content-type': 'application/json' },
+    }));
+
+    const response = await handler({ request: makeRequest('/api/product-image?barcode=3017620422003&format=json&v=1', 'text/html') } as never);
+    const body = await response.json() as {
+      ok: boolean;
+      source: string;
+      reason: string;
+      status?: number;
+      image_url?: string;
+      redirect_to: string;
+    };
 
     expect(response.status).toBe(200);
-    expect(response.headers.get('content-type')).toContain('application/json');
-    expect(response.headers.get('cache-control')).toContain('max-age=');
-    expect(response.headers.get('vary')).toContain('Accept');
-    await expect(response.json()).resolves.toMatchObject({ source: 'placeholder' });
+    expect(body.ok).toBe(true);
+    expect(body.source).toBe('openfoodfacts');
+    expect(body.reason).toBe('ok');
+    expect(body.status).toBe(200);
+    expect(body.image_url).toBe(imageUrl);
+    expect(body.redirect_to).toBe(imageUrl);
   });
 });

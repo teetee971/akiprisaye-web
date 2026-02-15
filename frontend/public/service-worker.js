@@ -39,6 +39,13 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
   
+
+  // NEVER cache API calls (especially /api/product-image diagnostics)
+  if (url.pathname.startsWith('/api/')) {
+    event.respondWith(fetch(request, { cache: 'no-store' }));
+    return;
+  }
+
   // CRITICAL: Network-first for ALL HTML documents - NEVER serve cached HTML
   if (request.mode === 'navigate' || 
       request.destination === 'document' || 

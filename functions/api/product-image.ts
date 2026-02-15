@@ -1,26 +1,45 @@
 const OFF_BASE_URL = 'https://world.openfoodfacts.org';
 const EDGE_CACHE_TTL = 7 * 24 * 60 * 60;
-const FETCH_TIMEOUT_MS = 5000;
-
-type ImageSource = 'off' | 'placeholder';
+const FETCH_TIMEOUT_MS = 8000;
 
 const DEFAULT_PLACEHOLDER_URL = '/assets/placeholders/placeholder-default.svg';
 
-type OffImagePayload = {
-  image_url?: unknown;
-  selected_images?: {
-    front?: {
-      display?: {
-        fr?: unknown;
-        en?: unknown;
+type ImageSource = 'openfoodfacts' | 'placeholder';
+type DebugReason = 'ok' | 'forbidden' | 'rate_limited' | 'no_image' | 'timeout' | 'bad_response' | 'network_error' | 'unknown';
+type SelectedImage = 'front' | 'small' | 'thumb' | 'none';
+type OffFetch = typeof fetch;
+
+type OffProductResponse = {
+  status?: unknown;
+  product?: {
+    image_url?: unknown;
+    image_front_url?: unknown;
+    image_small_url?: unknown;
+    selected_images?: {
+      front?: {
+        display?: unknown;
       };
     };
   };
 };
 
-type OffProductResponse = {
-  status?: unknown;
-  product?: OffImagePayload;
+type DebugPayload = {
+  ok: boolean;
+  source: ImageSource;
+  barcode: string;
+  tried: {
+    endpoint: string;
+  };
+  status?: number;
+  reason: DebugReason;
+  image_url?: string;
+  selected_image?: SelectedImage;
+  redirect_to: string;
+};
+
+type ImageSelection = {
+  url?: string;
+  selected: SelectedImage;
 };
 
 const PLACEHOLDER_BY_CATEGORY: Record<string, string> = {
@@ -50,42 +69,73 @@ function asNonEmptyString(value: unknown): string | undefined {
   return typeof value === 'string' && value.trim().length > 0 ? value.trim() : undefined;
 }
 
-function extractOffImageUrl(payload: OffProductResponse): string | undefined {
-  if (payload.status === 0 || !payload.product) return undefined;
-
-  return asNonEmptyString(payload.product.selected_images?.front?.display?.fr)
-    ?? asNonEmptyString(payload.product.selected_images?.front?.display?.en)
-    ?? asNonEmptyString(payload.product.image_url);
+function asValidHttpUrl(value: unknown): string | undefined {
+  const raw = asNonEmptyString(value);
+  return raw && /^https?:\/\//i.test(raw) ? raw : undefined;
 }
 
-function jsonResponse(body: { url?: string; source: ImageSource }, status = 200): Response {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: {
-      'content-type': 'application/json; charset=utf-8',
-      'Cache-Control': `public, max-age=${EDGE_CACHE_TTL}`,
-      Vary: 'Accept',
-    },
-  });
+function pickFromDisplay(display: unknown): string | undefined {
+  if (typeof display === 'string') {
+    return asValidHttpUrl(display);
+  }
+
+  if (!display || typeof display !== 'object') {
+    return undefined;
+  }
+
+  const record = display as Record<string, unknown>;
+  const direct = asValidHttpUrl(record.fr) ?? asValidHttpUrl(record.en);
+  if (direct) {
+    return direct;
+  }
+
+  for (const value of Object.values(record)) {
+    const candidate = asValidHttpUrl(value);
+    if (candidate) {
+      return candidate;
+    }
+  }
+
+  return undefined;
 }
 
-function imageModeHeaders(contentType: string): HeadersInit {
-  return {
-    'content-type': contentType,
-    'Cache-Control': `public, max-age=${EDGE_CACHE_TTL}`,
-    Vary: 'Accept',
-  };
-}
+function extractOffImage(payload: OffProductResponse): ImageSelection {
+  if (!payload.product) {
+    return { selected: 'none' };
+  }
 
-function imageRedirectResponse(targetUrl: string): Response {
-  return new Response(null, {
-    status: 302,
-    headers: {
-      Location: targetUrl,
-      'Cache-Control': `public, max-age=${EDGE_CACHE_TTL}`,
-      Vary: 'Accept',
-    },
-  });
+  const imageUrl = asValidHttpUrl(payload.product.image_url);
+  if (imageUrl) {
+    return { url: imageUrl, selected: 'thumb' };
+  }
+
+  const imageFrontUrl = asValidHttpUrl(payload.product.image_front_url);
+  if (imageFrontUrl) {
+    return { url: imageFrontUrl, selected: 'front' };
+  }
+
+  const imageSmallUrl = asValidHttpUrl(payload.product.image_small_url);
+  if (imageSmallUrl) {
+    return { url: imageSmallUrl, selected: 'small' };
+  }
+
+  const display = payload.product.selected_images?.front?.display;
+  const displayFr = asValidHttpUrl((display as Record<string, unknown> | undefined)?.fr);
+  if (displayFr) {
+    return { url: displayFr, selected: 'front' };
+  }
+
+  const displayEn = asValidHttpUrl((display as Record<string, unknown> | undefined)?.en);
+  if (displayEn) {
+    return { url: displayEn, selected: 'front' };
+  }
+
+  const fallbackDisplay = pickFromDisplay(display);
+  if (fallbackDisplay) {
+    return { url: fallbackDisplay, selected: 'front' };
+  }
+
+  return { selected: 'none' };
 }
 
 function wantsJsonResponse(request: Request, searchParams: URLSearchParams): boolean {
@@ -97,90 +147,207 @@ function wantsJsonResponse(request: Request, searchParams: URLSearchParams): boo
   return accept.toLowerCase().includes('application/json');
 }
 
-function placeholderSvgResponse(status = 200): Response {
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="640" viewBox="0 0 640 640" role="img" aria-label="Image produit indisponible"><rect width="640" height="640" fill="#f3f4f6"/><g fill="none" stroke="#9ca3af" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"><rect x="120" y="150" width="400" height="300" rx="24"/><path d="M165 395l92-92 74 74 54-54 90 90"/><circle cx="250" cy="240" r="38"/></g><text x="320" y="520" text-anchor="middle" fill="#6b7280" font-family="Arial, Helvetica, sans-serif" font-size="36">Image indisponible</text></svg>`;
+function buildDebugHeaders(payload: DebugPayload): HeadersInit {
+  return {
+    'x-akps-source': payload.source,
+    'x-akps-reason': payload.reason,
+    'x-akps-off-status': typeof payload.status === 'number' ? String(payload.status) : 'n/a',
+    'x-akps-selected': payload.selected_image ?? 'none',
+  };
+}
 
-  return new Response(svg, {
-    status,
-    headers: imageModeHeaders('image/svg+xml; charset=utf-8'),
+function jsonResponse(body: DebugPayload): Response {
+  return new Response(JSON.stringify(body), {
+    status: 200,
+    headers: {
+      'content-type': 'application/json; charset=utf-8',
+      'cache-control': `public, max-age=${EDGE_CACHE_TTL}`,
+      vary: 'Accept',
+      ...buildDebugHeaders(body),
+    },
   });
 }
 
-export const onRequestGet: PagesFunction = async ({ request }) => {
-  const url = new URL(request.url);
-  const ean = (url.searchParams.get('ean') ?? url.searchParams.get('barcode') ?? '').trim();
-  const category = url.searchParams.get('category');
-  const accept = request.headers.get('accept') ?? '';
-  const wantsJson = wantsJsonResponse(request, url.searchParams);
+function imageRedirectResponse(targetUrl: string, body: DebugPayload): Response {
+  return new Response(null, {
+    status: 302,
+    headers: {
+      location: targetUrl,
+      'cache-control': `public, max-age=${EDGE_CACHE_TTL}`,
+      vary: 'Accept',
+      ...buildDebugHeaders(body),
+    },
+  });
+}
 
-  if (!ean) {
+function buildDebug(params: {
+  source: ImageSource;
+  barcode: string;
+  endpoint: string;
+  redirectTo: string;
+  reason: DebugReason;
+  status?: number;
+  imageUrl?: string;
+  selectedImage?: SelectedImage;
+}): DebugPayload {
+  return {
+    ok: params.source === 'openfoodfacts',
+    source: params.source,
+    barcode: params.barcode,
+    tried: { endpoint: params.endpoint },
+    ...(typeof params.status === 'number' ? { status: params.status } : {}),
+    reason: params.reason,
+    ...(params.imageUrl ? { image_url: params.imageUrl } : {}),
+    ...(params.selectedImage ? { selected_image: params.selectedImage } : {}),
+    redirect_to: params.redirectTo,
+  };
+}
+
+function mapStatusReason(status: number): DebugReason {
+  if (status === 403) return 'forbidden';
+  if (status === 429) return 'rate_limited';
+  if (status >= 400) return 'bad_response';
+  return 'unknown';
+}
+
+function mapErrorReason(error: unknown): DebugReason {
+  if (error && typeof error === 'object' && 'name' in error) {
+    const errorName = String((error as { name?: unknown }).name ?? '');
+    if (errorName === 'AbortError') {
+      return 'timeout';
+    }
+  }
+
+  return 'network_error';
+}
+
+export function createProductImageHandler(offFetch: OffFetch = fetch): PagesFunction {
+  return async ({ request }) => {
+    const url = new URL(request.url);
+    const barcode = (url.searchParams.get('ean') ?? url.searchParams.get('barcode') ?? '').trim();
+    const category = url.searchParams.get('category');
+    const wantsJson = wantsJsonResponse(request, url.searchParams);
     const placeholder = getPlaceholderUrl(category);
-    if (wantsJson) {
-      return jsonResponse({ url: placeholder, source: 'placeholder' });
+    const endpoint = barcode
+      ? `${OFF_BASE_URL}/api/v2/product/${encodeURIComponent(barcode)}`
+      : `${OFF_BASE_URL}/api/v2/product/`;
+
+    if (!barcode) {
+      const debug = buildDebug({
+        source: 'placeholder',
+        barcode,
+        endpoint,
+        redirectTo: placeholder,
+        reason: 'unknown',
+        selectedImage: 'none',
+      });
+
+      return wantsJson ? jsonResponse(debug) : imageRedirectResponse(placeholder, debug);
     }
 
-    return imageRedirectResponse(placeholder);
-  }
-
-  const cache = caches.default;
-  const cacheKey = new Request(url.toString(), {
-    method: 'GET',
-    headers: { Accept: accept },
-  });
-  const cached = await cache.match(cacheKey);
-
-  if (cached) {
-    return cached;
-  }
-
-  const offUrl = `${OFF_BASE_URL}/api/v2/product/${encodeURIComponent(ean)}.json`;
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
-
-  try {
-    const response = await fetch(offUrl, {
+    const cache = caches.default;
+    const cacheKey = new Request(url.toString(), {
       method: 'GET',
-      signal: controller.signal,
       headers: {
-        Accept: 'application/json',
-        'User-Agent': 'A-KI-PRI-SA-YE (contact: support@akiprisaye.app)',
+        accept: request.headers.get('accept') ?? '',
       },
     });
 
-    let body: { url?: string; source: ImageSource };
+    const cached = await cache.match(cacheKey);
+    if (cached) {
+      return cached;
+    }
 
-    if (response.ok) {
-      const payload = (await response.json()) as OffProductResponse;
-      const offImage = extractOffImageUrl(payload);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
 
-      if (offImage) {
-        body = { url: offImage, source: 'off' };
+    try {
+      const response = await offFetch(endpoint, {
+        method: 'GET',
+        signal: controller.signal,
+        headers: {
+          Accept: 'application/json',
+          'User-Agent': 'akiprisaye-web/1.0 (contact: https://github.com/teetee971/akiprisaye-web)',
+        },
+      });
+
+      let debug: DebugPayload;
+
+      if (!response.ok) {
+        debug = buildDebug({
+          source: 'placeholder',
+          barcode,
+          endpoint,
+          status: response.status,
+          reason: mapStatusReason(response.status),
+          redirectTo: placeholder,
+          selectedImage: 'none',
+        });
       } else {
-        body = { url: getPlaceholderUrl(category), source: 'placeholder' };
+        let payload: OffProductResponse;
+        try {
+          payload = (await response.json()) as OffProductResponse;
+        } catch {
+          debug = buildDebug({
+            source: 'placeholder',
+            barcode,
+            endpoint,
+            status: response.status,
+            reason: 'bad_response',
+            redirectTo: placeholder,
+            selectedImage: 'none',
+          });
+
+          const result = wantsJson ? jsonResponse(debug) : imageRedirectResponse(placeholder, debug);
+          await cache.put(cacheKey, result.clone());
+          return result;
+        }
+
+        const selection = extractOffImage(payload);
+        if (selection.url) {
+          debug = buildDebug({
+            source: 'openfoodfacts',
+            barcode,
+            endpoint,
+            status: response.status,
+            reason: 'ok',
+            imageUrl: selection.url,
+            selectedImage: selection.selected,
+            redirectTo: selection.url,
+          });
+        } else {
+          debug = buildDebug({
+            source: 'placeholder',
+            barcode,
+            endpoint,
+            status: response.status,
+            reason: 'no_image',
+            selectedImage: 'none',
+            redirectTo: placeholder,
+          });
+        }
       }
-    } else {
-      body = { url: getPlaceholderUrl(category), source: 'placeholder' };
-    }
 
-    let result: Response;
-    if (wantsJson) {
-      result = jsonResponse(body);
-    } else if (body.url) {
-      result = imageRedirectResponse(body.url);
-    } else {
-      result = placeholderSvgResponse();
-    }
+      const result = wantsJson ? jsonResponse(debug) : imageRedirectResponse(debug.redirect_to, debug);
+      await cache.put(cacheKey, result.clone());
+      return result;
+    } catch (error) {
+      const debug = buildDebug({
+        source: 'placeholder',
+        barcode,
+        endpoint,
+        reason: mapErrorReason(error),
+        selectedImage: 'none',
+        redirectTo: placeholder,
+      });
 
-    await cache.put(cacheKey, result.clone());
-    return result;
-  } catch {
-    const placeholder = getPlaceholderUrl(category);
-    if (wantsJson) {
-      return jsonResponse({ url: placeholder, source: 'placeholder' });
+      const result = wantsJson ? jsonResponse(debug) : imageRedirectResponse(placeholder, debug);
+      await cache.put(cacheKey, result.clone());
+      return result;
+    } finally {
+      clearTimeout(timeoutId);
     }
+  };
+}
 
-    return imageRedirectResponse(placeholder);
-  } finally {
-    clearTimeout(timeoutId);
-  }
-};
+export const onRequestGet = createProductImageHandler();

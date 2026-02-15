@@ -27,6 +27,26 @@ L'application ne vend aucun produit et ne réalise aucune transaction commercial
 
 ---
 
+
+## 🧪 Debug product-image API
+
+L’endpoint `/api/product-image` supporte deux modes :
+
+- **Mode image (par défaut)** : redirection `302` vers une image OFF, ou vers le placeholder.
+- **Mode JSON diagnostic** : activer avec `?format=json` ou `Accept: application/json`.
+
+Exemples :
+
+- `GET /api/product-image?barcode=3017620422003`
+- `GET /api/product-image?barcode=3017620422003&format=json`
+
+Headers de diagnostic renvoyés (y compris sur `302`) :
+
+- `x-akps-source`: `openfoodfacts` | `placeholder`
+- `x-akps-reason`: `ok` | `forbidden` | `rate_limited` | `no_image` | `timeout` | `bad_response` | `network_error` | `unknown`
+- `x-akps-off-status`: code HTTP OFF ou `n/a`
+- `x-akps-selected`: `front` | `small` | `thumb` | `none`
+
 ## ⚡ Performance & Web Vitals
 
 **World-class performance optimization** - **Top 1%** of websites globally! 🏆

@@ -34,10 +34,10 @@ type OffResponsePayload = {
 };
 
 const PLACEHOLDER_BY_CATEGORY: Record<string, string> = {
-  'bebe': '/assets/placeholders/placeholder-bebe.svg',
-  'epicerie': '/assets/placeholders/placeholder-epicerie.svg',
+  bebe: '/assets/placeholders/placeholder-bebe.svg',
+  epicerie: '/assets/placeholders/placeholder-epicerie.svg',
   'viande/poisson': '/assets/placeholders/placeholder-viande-poisson.svg',
-  'hygiene': '/assets/placeholders/placeholder-hygiene.svg',
+  hygiene: '/assets/placeholders/placeholder-hygiene.svg',
 };
 
 const pendingRequests = new Map<string, Promise<CachedImageEntry>>();
@@ -105,13 +105,22 @@ function asNonEmptyString(value: unknown): string | undefined {
   return typeof value === 'string' && value.trim().length > 0 ? value.trim() : undefined;
 }
 
+function asHttpUrl(value: unknown): string | undefined {
+  const parsed = asNonEmptyString(value);
+  if (!parsed) {
+    return undefined;
+  }
+
+  return /^https?:\/\//i.test(parsed) ? parsed : undefined;
+}
+
 export function extractOffImageUrl(payload: OffResponsePayload): string | undefined {
   const product = payload.product;
   if (!product || payload.status === 0) return undefined;
 
-  return asNonEmptyString(product.selected_images?.front?.display?.fr)
-    ?? asNonEmptyString(product.selected_images?.front?.display?.en)
-    ?? asNonEmptyString(product.image_url);
+  return asHttpUrl(product.selected_images?.front?.display?.fr)
+    ?? asHttpUrl(product.selected_images?.front?.display?.en)
+    ?? asHttpUrl(product.image_url);
 }
 
 async function fetchFromApi(ean: string, category?: string): Promise<{ url?: string; source: ImageSource }> {
@@ -125,30 +134,44 @@ async function fetchFromApi(ean: string, category?: string): Promise<{ url?: str
     }
     params.set('format', 'json');
     params.set('v', '2');
+    if (import.meta.env.DEV) {
+      params.set('nocache', '1');
+    }
 
     const response = await fetch(`/api/product-image?${params.toString()}`, {
       method: 'GET',
       signal: controller.signal,
       headers: {
         Accept: 'application/json',
+        'Cache-Control': 'no-store',
       },
+      cache: 'no-store',
     });
 
     if (!response.ok) {
       return { source: 'none' };
     }
 
-    const payload = (await response.json()) as { url?: unknown; source?: unknown };
-    const source = payload.source === 'off' || payload.source === 'placeholder' || payload.source === 'none'
+    const payload = (await response.json()) as {
+      url?: unknown;
+      source?: unknown;
+      image_url?: unknown;
+      redirect_to?: unknown;
+    };
+
+    const source = payload.source === 'off' || payload.source === 'openfoodfacts' || payload.source === 'placeholder' || payload.source === 'none'
       ? payload.source
       : 'none';
-    const url = asNonEmptyString(payload.url);
 
-    if (!url || source === 'none') {
+    const directUrl = asHttpUrl(payload.url);
+    const fallbackUrl = asHttpUrl(payload.image_url) ?? asHttpUrl(payload.redirect_to);
+    const url = directUrl ?? fallbackUrl;
+
+    if (!url || source === 'none' || source === 'placeholder') {
       return { source: 'none' };
     }
 
-    return { url, source };
+    return { url, source: 'off' };
   } catch {
     return { source: 'none' };
   } finally {
@@ -208,8 +231,8 @@ export async function getProductImageUrl(
 }
 
 export const __alertImageInternals = {
-  getPlaceholderUrl,
-  getCacheKey,
   IMAGE_CACHE_KEY,
-  IMAGE_TTL_MS,
+  getCacheKey,
+  normalizeCategory,
+  getPlaceholderUrl,
 };

@@ -44,7 +44,7 @@ describe('alertProductImageService fallback and cache', () => {
   it('returns category placeholder when backend has no image', async () => {
     const fetchMock = vi.fn(async () => ({
       ok: true,
-      json: async () => ({ source: 'none' }),
+      json: async () => ({ source: 'placeholder' }),
     }) as unknown as globalThis.Response);
     vi.stubGlobal('fetch', fetchMock);
 
@@ -56,6 +56,23 @@ describe('alertProductImageService fallback and cache', () => {
       expect.stringContaining('format=json'),
       expect.objectContaining({ method: 'GET' })
     );
+  });
+
+
+  it('uses strict payload.url when API returns OpenFoodFacts source', async () => {
+    const fetchMock = vi.fn(async () => ({
+      ok: true,
+      json: async () => ({
+        url: 'https://images.openfoodfacts.org/images/products/376/012/345/6789/front_fr.400.jpg',
+        source: 'openfoodfacts',
+      }),
+    }) as unknown as globalThis.Response);
+    vi.stubGlobal('fetch', fetchMock);
+
+    const result = await getProductImageUrl('3760123456789', 'epicerie');
+
+    expect(result.source).toBe('off');
+    expect(result.url).toContain('images.openfoodfacts.org');
   });
 
   it('returns placeholder on network error and keeps local cache entry', async () => {
