@@ -15,6 +15,7 @@ export default defineConfig({
       'src/test/observations.normalize.test.ts',
       'src/test/storeSelection.test.ts',
       'src/test/promosService.test.ts',
+      'src/test/freemium.test.ts',
       'scripts/verify-pages-api.test.ts',
     ],
   },

@@ -958,3 +958,28 @@ Pour en savoir plus sur l'architecture et les fonctionnalités :
 
 Pour toute question ou problème, consultez d'abord le [NAVIGATION_GUIDE.md](NAVIGATION_GUIDE.md) ou ouvrez une issue GitHub.
 
+
+---
+
+## 🆓 Freemium Comparateur (MVP)
+
+### Règles verrouillées
+- Territoire par défaut : `fr`
+- Guest (non connecté) : `5 recherches / jour` (stockage local)
+- Free (connecté) : `20 recherches / jour`
+- Pro : quota très élevé + fonctions avancées (export, alertes, insights complets)
+
+### Parcours principal
+- `/` → CTA vers `/comparateur`
+- `/comparateur` → recherche + résultats + tri + teaser Pro
+- `/p/:id` → détail produit (min/médiane/max, source, fiabilité, teaser insights)
+- `/historique` → historique des recherches (guest local / user cloud)
+- `/auth` → accès login/register/reset
+- `/pricing` → upsell Pro
+
+### Checklist manuelle de test
+1. **Guest quota** : faire 5 recherches sur `/comparateur`, vérifier la modal paywall sur la 6e.
+2. **Historique guest** : ouvrir `/historique`, vérifier que les recherches apparaissent.
+3. **Détail produit** : depuis un résultat, ouvrir `/p/:id` et vérifier les cartes min/médiane/max.
+4. **Free quota connecté** : se connecter puis effectuer 20 recherches, vérifier blocage à la 21e.
+5. **Feature Pro** : cliquer Export / Alertes / Insights complets, vérifier modal “Fonction Pro”.

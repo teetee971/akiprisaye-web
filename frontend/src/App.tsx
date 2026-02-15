@@ -61,6 +61,7 @@ const BasketComparison = React.lazy(() => import('./pages/BasketComparison'));
 const Settings = React.lazy(() => import('./pages/Settings'));
 const HistoriquePrix = React.lazy(() => import('./pages/HistoriquePrix'));
 const RecherchePrix = React.lazy(() => import('./pages/RecherchePrix'));
+const ProductDetailPage = React.lazy(() => import('./pages/ProductDetail'));
 const Alertes = React.lazy(() => import('./pages/Alertes'));
 const AlerteDetail = React.lazy(() => import('./pages/AlerteDetail'));
 const Promos = React.lazy(() => import('./pages/Promos'));
@@ -74,6 +75,7 @@ const Login = React.lazy(() => import('./pages/Login'));
 const Inscription = React.lazy(() => import('./pages/Inscription'));
 const ResetPassword = React.lazy(() => import('./pages/ResetPassword'));
 const MonCompte = React.lazy(() => import('./pages/MonCompte'));
+const AuthHub = React.lazy(() => import('./pages/AuthHub'));
 
 // Pricing & Subscription
 const Pricing = React.lazy(() => import('./pages/Pricing'));
@@ -229,6 +231,7 @@ export default function App() {
                       <Route path="parametres" element={<Settings />} />
                       <Route path="historique-prix" element={<HistoriquePrix />} />
                       <Route path="historique" element={<HistoriquePrix />} />
+                      <Route path="p/:id" element={<ProductDetailPage />} />
                       <Route path="recherche-prix" element={<RecherchePrix />} />
                       <Route path="alertes" element={<Alertes />} />
                       <Route path="alertes/:id" element={<AlerteDetail />} />
@@ -244,6 +247,7 @@ export default function App() {
                       <Route path="connexion" element={<Login />} />
                       <Route path="inscription" element={<Inscription />} />
                       <Route path="reset-password" element={<ResetPassword />} />
+                      <Route path="auth" element={<AuthHub />} />
                       <Route path="mon-compte" element={<MonCompte />} />
                       
                       {/* Pricing & Subscription */}
