@@ -56,9 +56,29 @@ describe('alertProductImageService fallback and cache', () => {
       expect.stringContaining('format=json'),
       expect.objectContaining({ method: 'GET' })
     );
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.stringContaining('nocache=1'),
+      expect.objectContaining({ method: 'GET' })
+    );
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.stringMatching(/(?:\?|&)t=\d+/),
+      expect.objectContaining({ method: 'GET' })
+    );
   });
 
-  it('returns placeholder on network error and keeps local cache entry', async () => {
+  it('accepts redirect_to fallback field when url is absent', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => ({
+      ok: true,
+      json: async () => ({ source: 'off', redirect_to: 'https://images.openfoodfacts.org/test.jpg' }),
+    }) as unknown as globalThis.Response));
+
+    const result = await getProductImageUrl('3017620422003', 'epicerie');
+
+    expect(result.source).toBe('off');
+    expect(result.url).toBe('https://images.openfoodfacts.org/test.jpg');
+  });
+
+  it('returns placeholder on network error and does not persist sticky ean placeholder cache', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn(async () => {
@@ -73,7 +93,7 @@ describe('alertProductImageService fallback and cache', () => {
     expect(first.url).toBe('/assets/placeholders/placeholder-viande-poisson.svg');
     expect(second.url).toBe(first.url);
 
-    const rawCache = window.localStorage.getItem(__alertImageInternals.IMAGE_CACHE_KEY);
-    expect(rawCache).toContain('ean:3390011200456');
+    const rawCache = window.localStorage.getItem(__alertImageInternals.IMAGE_CACHE_KEY) ?? '{}';
+    expect(rawCache).not.toContain('ean:3390011200456');
   });
 });

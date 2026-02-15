@@ -31,11 +31,11 @@ describe('/api/product-image', () => {
     vi.restoreAllMocks();
   });
 
-  it('redirects to OFF image and exposes debug headers', async () => {
+  it('redirects to OFF image and exposes debug headers in image mode', async () => {
     const imageUrl = 'https://images.openfoodfacts.org/images/products/301/762/042/2003/front_fr.400.jpg';
     const handler = createProductImageHandler(async () => new Response(JSON.stringify({
       status: 1,
-      product: { image_url: imageUrl },
+      product: { image_front_url: imageUrl },
     }), {
       status: 200,
       headers: { 'content-type': 'application/json' },
@@ -45,56 +45,12 @@ describe('/api/product-image', () => {
 
     expect(response.status).toBe(302);
     expect(response.headers.get('location')).toBe(imageUrl);
-    expect(response.headers.get('x-akps-source')).toBe('openfoodfacts');
+    expect(response.headers.get('x-akps-source')).toBe('off');
     expect(response.headers.get('x-akps-reason')).toBe('ok');
-    expect(response.headers.get('x-akps-selected')).toBe('thumb');
+    expect(response.headers.get('x-akps-selected')).toBe('front');
   });
 
-  it('maps OFF 403 and 429 to placeholder with explicit reasons', async () => {
-    const handler403 = createProductImageHandler(async () => new Response('', { status: 403 }));
-    const response403 = await handler403({ request: makeRequest('/api/product-image?ean=3017620422003&v=1', 'text/html') } as never);
-
-    expect(response403.status).toBe(302);
-    expect(response403.headers.get('location')).toBe('/assets/placeholders/placeholder-default.svg');
-    expect(response403.headers.get('x-akps-reason')).toBe('forbidden');
-
-    const handler429 = createProductImageHandler(async () => new Response('', { status: 429 }));
-    const response429 = await handler429({ request: makeRequest('/api/product-image?ean=3017620422003&v=2', 'text/html') } as never);
-
-    expect(response429.status).toBe(302);
-    expect(response429.headers.get('x-akps-reason')).toBe('rate_limited');
-  });
-
-  it('returns timeout reason when OFF fetch aborts', async () => {
-    const abortError = Object.assign(new Error('aborted'), { name: 'AbortError' });
-    const handler = createProductImageHandler(async () => { throw abortError; });
-
-    const response = await handler({ request: makeRequest('/api/product-image?barcode=3017620422003&format=json&v=1', 'text/html') } as never);
-    const body = await response.json() as { reason: string; redirect_to: string };
-
-    expect(response.status).toBe(200);
-    expect(body.reason).toBe('timeout');
-    expect(body.redirect_to).toBe('/assets/placeholders/placeholder-default.svg');
-    expect(response.headers.get('x-akps-reason')).toBe('timeout');
-  });
-
-
-  it('caches network-error fallback responses to avoid repeated OFF calls', async () => {
-    const offFetch = vi.fn(async () => {
-      throw new Error('network down');
-    });
-    const handler = createProductImageHandler(offFetch as never);
-
-    const first = await handler({ request: makeRequest('/api/product-image?barcode=3017620422003&v=cache-1', 'text/html') } as never);
-    const second = await handler({ request: makeRequest('/api/product-image?barcode=3017620422003&v=cache-1', 'text/html') } as never);
-
-    expect(first.status).toBe(302);
-    expect(first.headers.get('x-akps-reason')).toBe('network_error');
-    expect(second.status).toBe(302);
-    expect(offFetch).toHaveBeenCalledTimes(1);
-  });
-
-  it('returns detailed json payload when format=json is requested', async () => {
+  it('returns JSON when format=json is requested explicitly', async () => {
     const imageUrl = 'https://images.openfoodfacts.org/images/products/301/762/042/2003/front_en.200.jpg';
     const handler = createProductImageHandler(async () => new Response(JSON.stringify({
       status: 1,
@@ -116,16 +72,79 @@ describe('/api/product-image', () => {
       source: string;
       reason: string;
       status?: number;
-      image_url?: string;
-      redirect_to: string;
+      url?: string;
+      tried_endpoint?: string;
     };
 
     expect(response.status).toBe(200);
     expect(body.ok).toBe(true);
-    expect(body.source).toBe('openfoodfacts');
+    expect(body.source).toBe('off');
     expect(body.reason).toBe('ok');
     expect(body.status).toBe(200);
-    expect(body.image_url).toBe(imageUrl);
-    expect(body.redirect_to).toBe(imageUrl);
+    expect(body.url).toBe(imageUrl);
+    expect(body.tried_endpoint).toContain('/api/v2/product/3017620422003');
+  });
+
+
+  it('keeps image mode when Accept contains both html and json', async () => {
+    const imageUrl = 'https://images.openfoodfacts.org/images/products/301/762/042/2003/front_fr.400.jpg';
+    const handler = createProductImageHandler(async () => new Response(JSON.stringify({
+      status: 1,
+      product: { image_front_url: imageUrl },
+    }), {
+      status: 200,
+      headers: { 'content-type': 'application/json' },
+    }));
+
+    const response = await handler({ request: makeRequest('/api/product-image?barcode=3017620422003&nocache=1', 'text/html,application/json;q=0.9,*/*;q=0.8') } as never);
+
+    expect(response.status).toBe(302);
+    expect(response.headers.get('location')).toBe(imageUrl);
+  });
+
+  it('returns JSON when Accept is application/json', async () => {
+    const handler = createProductImageHandler(async () => new Response(JSON.stringify({ status: 1, product: {} }), {
+      status: 200,
+      headers: { 'content-type': 'application/json' },
+    }));
+
+    const response = await handler({ request: makeRequest('/api/product-image?barcode=3017620422003&nocache=1', 'application/json') } as never);
+    const body = await response.json() as { source: string; reason: string; url: string };
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get('cache-control')).toContain('no-store');
+    expect(body.source).toBe('placeholder');
+    expect(body.reason).toBe('no_image');
+    expect(body.url).toBe('/assets/placeholders/placeholder-default.svg');
+  });
+
+  it('maps OFF 403 and 429 to placeholder with explicit reasons (json mode)', async () => {
+    const handler403 = createProductImageHandler(async () => new Response('', { status: 403 }));
+    const response403 = await handler403({ request: makeRequest('/api/product-image?ean=3017620422003&format=json&v=1', 'application/json') } as never);
+    const body403 = await response403.json() as { reason: string; url: string };
+
+    expect(response403.status).toBe(200);
+    expect(body403.url).toBe('/assets/placeholders/placeholder-default.svg');
+    expect(body403.reason).toBe('forbidden');
+
+    const handler429 = createProductImageHandler(async () => new Response('', { status: 429 }));
+    const response429 = await handler429({ request: makeRequest('/api/product-image?ean=3017620422003&format=json&v=2', 'application/json') } as never);
+    const body429 = await response429.json() as { reason: string };
+
+    expect(response429.status).toBe(200);
+    expect(body429.reason).toBe('rate_limited');
+  });
+
+  it('returns timeout reason when OFF fetch aborts', async () => {
+    const abortError = Object.assign(new Error('aborted'), { name: 'AbortError' });
+    const handler = createProductImageHandler(async () => { throw abortError; });
+
+    const response = await handler({ request: makeRequest('/api/product-image?barcode=3017620422003&format=json&v=1', 'text/html') } as never);
+    const body = await response.json() as { reason: string; url: string };
+
+    expect(response.status).toBe(200);
+    expect(body.reason).toBe('timeout');
+    expect(body.url).toBe('/assets/placeholders/placeholder-default.svg');
+    expect(response.headers.get('x-akps-reason')).toBe('timeout');
   });
 });

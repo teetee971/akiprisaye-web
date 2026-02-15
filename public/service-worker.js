@@ -42,7 +42,10 @@ const networkFirst = async (request, cacheName, fallbackUrl = '/') => {
   const cache = await caches.open(cacheName);
   try {
     const response = await fetch(request);
-    if (response.ok) {
+    const cacheControl = (response.headers.get('cache-control') || '').toLowerCase();
+    const shouldBypassCache = cacheControl.includes('no-store') || cacheControl.includes('no-cache');
+
+    if (response.ok && !shouldBypassCache) {
       cache.put(request, response.clone());
     }
     return response;
@@ -61,6 +64,11 @@ self.addEventListener('fetch', (event) => {
   }
 
   const url = new URL(event.request.url);
+
+  if (url.origin === self.location.origin && url.pathname.startsWith('/api/')) {
+    event.respondWith(fetch(event.request, { cache: 'no-store' }));
+    return;
+  }
 
   if (TERRITORY_JSON_PATTERN.test(url.pathname)) {
     event.respondWith(cacheFirst(event.request, TERRITORY_CACHE));

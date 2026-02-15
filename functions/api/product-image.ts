@@ -1,11 +1,19 @@
 const OFF_BASE_URL = 'https://world.openfoodfacts.org';
-const EDGE_CACHE_TTL = 7 * 24 * 60 * 60;
 const FETCH_TIMEOUT_MS = 8000;
+const MAX_OFF_ATTEMPTS = 2;
 
 const DEFAULT_PLACEHOLDER_URL = '/assets/placeholders/placeholder-default.svg';
 
-type ImageSource = 'openfoodfacts' | 'placeholder';
-type DebugReason = 'ok' | 'forbidden' | 'rate_limited' | 'no_image' | 'timeout' | 'bad_response' | 'network_error' | 'unknown';
+type ImageSource = 'off' | 'placeholder';
+type DebugReason =
+  | 'ok'
+  | 'forbidden'
+  | 'rate_limited'
+  | 'no_image'
+  | 'timeout'
+  | 'bad_response'
+  | 'network_error'
+  | 'unknown';
 type SelectedImage = 'front' | 'small' | 'thumb' | 'none';
 type OffFetch = typeof fetch;
 
@@ -30,8 +38,10 @@ type DebugPayload = {
   tried: {
     endpoint: string;
   };
+  tried_endpoint: string;
   status?: number;
   reason: DebugReason;
+  url: string;
   image_url?: string;
   selected_image?: SelectedImage;
   redirect_to: string;
@@ -104,14 +114,14 @@ function extractOffImage(payload: OffProductResponse): ImageSelection {
     return { selected: 'none' };
   }
 
-  const imageUrl = asValidHttpUrl(payload.product.image_url);
-  if (imageUrl) {
-    return { url: imageUrl, selected: 'thumb' };
-  }
-
   const imageFrontUrl = asValidHttpUrl(payload.product.image_front_url);
   if (imageFrontUrl) {
     return { url: imageFrontUrl, selected: 'front' };
+  }
+
+  const imageUrl = asValidHttpUrl(payload.product.image_url);
+  if (imageUrl) {
+    return { url: imageUrl, selected: 'thumb' };
   }
 
   const imageSmallUrl = asValidHttpUrl(payload.product.image_small_url);
@@ -143,8 +153,19 @@ function wantsJsonResponse(request: Request, searchParams: URLSearchParams): boo
     return true;
   }
 
-  const accept = request.headers.get('accept') ?? '';
-  return accept.toLowerCase().includes('application/json');
+  const accept = (request.headers.get('accept') ?? '').toLowerCase();
+  const acceptsJson = accept.includes('application/json');
+  const acceptsHtml = accept.includes('text/html') || accept.includes('application/xhtml+xml');
+
+  if (!acceptsJson) {
+    return false;
+  }
+
+  return !acceptsHtml;
+}
+
+function buildCacheControl(): string {
+  return 'no-store, max-age=0, must-revalidate';
 }
 
 function buildDebugHeaders(payload: DebugPayload): HeadersInit {
@@ -156,14 +177,22 @@ function buildDebugHeaders(payload: DebugPayload): HeadersInit {
   };
 }
 
+function buildCommonHeaders(body: DebugPayload): Record<string, string> {
+  return {
+    'cache-control': buildCacheControl(),
+    pragma: 'no-cache',
+    expires: '0',
+    vary: 'Accept',
+    ...buildDebugHeaders(body) as Record<string, string>,
+  };
+}
+
 function jsonResponse(body: DebugPayload): Response {
   return new Response(JSON.stringify(body), {
     status: 200,
     headers: {
       'content-type': 'application/json; charset=utf-8',
-      'cache-control': `public, max-age=${EDGE_CACHE_TTL}`,
-      vary: 'Accept',
-      ...buildDebugHeaders(body),
+      ...buildCommonHeaders(body),
     },
   });
 }
@@ -173,9 +202,7 @@ function imageRedirectResponse(targetUrl: string, body: DebugPayload): Response 
     status: 302,
     headers: {
       location: targetUrl,
-      'cache-control': `public, max-age=${EDGE_CACHE_TTL}`,
-      vary: 'Accept',
-      ...buildDebugHeaders(body),
+      ...buildCommonHeaders(body),
     },
   });
 }
@@ -184,22 +211,23 @@ function buildDebug(params: {
   source: ImageSource;
   barcode: string;
   endpoint: string;
-  redirectTo: string;
+  url: string;
   reason: DebugReason;
   status?: number;
-  imageUrl?: string;
   selectedImage?: SelectedImage;
 }): DebugPayload {
   return {
-    ok: params.source === 'openfoodfacts',
+    ok: params.source === 'off',
     source: params.source,
     barcode: params.barcode,
     tried: { endpoint: params.endpoint },
+    tried_endpoint: params.endpoint,
     ...(typeof params.status === 'number' ? { status: params.status } : {}),
     reason: params.reason,
-    ...(params.imageUrl ? { image_url: params.imageUrl } : {}),
+    url: params.url,
+    ...(params.source === 'off' ? { image_url: params.url } : {}),
     ...(params.selectedImage ? { selected_image: params.selectedImage } : {}),
-    redirect_to: params.redirectTo,
+    redirect_to: params.url,
   };
 }
 
@@ -221,12 +249,44 @@ function mapErrorReason(error: unknown): DebugReason {
   return 'network_error';
 }
 
+async function fetchOffWithRetry(offFetch: OffFetch, endpoint: string, signal: AbortSignal): Promise<Response> {
+  let lastError: unknown;
+
+  for (let attempt = 1; attempt <= MAX_OFF_ATTEMPTS; attempt += 1) {
+    try {
+      const response = await offFetch(endpoint, {
+        method: 'GET',
+        signal,
+        headers: {
+          Accept: 'application/json',
+          'User-Agent': 'akiprisaye-web/1.0 (contact: https://github.com/teetee971/akiprisaye-web)',
+        },
+      });
+
+      if (response.status === 429 && attempt < MAX_OFF_ATTEMPTS) {
+        continue;
+      }
+
+      return response;
+    } catch (error) {
+      lastError = error;
+      const isAbort = error && typeof error === 'object' && 'name' in error && (error as { name?: unknown }).name === 'AbortError';
+      if (isAbort || attempt >= MAX_OFF_ATTEMPTS) {
+        throw error;
+      }
+    }
+  }
+
+  throw lastError ?? new Error('Unknown OFF fetch error');
+}
+
 export function createProductImageHandler(offFetch: OffFetch = fetch): PagesFunction {
   return async ({ request }) => {
     const url = new URL(request.url);
     const barcode = (url.searchParams.get('ean') ?? url.searchParams.get('barcode') ?? '').trim();
     const category = url.searchParams.get('category');
     const wantsJson = wantsJsonResponse(request, url.searchParams);
+    const noStore = true;
     const placeholder = getPlaceholderUrl(category);
     const endpoint = barcode
       ? `${OFF_BASE_URL}/api/v2/product/${encodeURIComponent(barcode)}`
@@ -237,7 +297,7 @@ export function createProductImageHandler(offFetch: OffFetch = fetch): PagesFunc
         source: 'placeholder',
         barcode,
         endpoint,
-        redirectTo: placeholder,
+        url: placeholder,
         reason: 'unknown',
         selectedImage: 'none',
       });
@@ -253,23 +313,18 @@ export function createProductImageHandler(offFetch: OffFetch = fetch): PagesFunc
       },
     });
 
-    const cached = await cache.match(cacheKey);
-    if (cached) {
-      return cached;
+    if (!noStore) {
+      const cached = await cache.match(cacheKey);
+      if (cached) {
+        return cached;
+      }
     }
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
 
     try {
-      const response = await offFetch(endpoint, {
-        method: 'GET',
-        signal: controller.signal,
-        headers: {
-          Accept: 'application/json',
-          'User-Agent': 'akiprisaye-web/1.0 (contact: https://github.com/teetee971/akiprisaye-web)',
-        },
-      });
+      const response = await fetchOffWithRetry(offFetch, endpoint, controller.signal);
 
       let debug: DebugPayload;
 
@@ -280,7 +335,7 @@ export function createProductImageHandler(offFetch: OffFetch = fetch): PagesFunc
           endpoint,
           status: response.status,
           reason: mapStatusReason(response.status),
-          redirectTo: placeholder,
+          url: placeholder,
           selectedImage: 'none',
         });
       } else {
@@ -294,26 +349,27 @@ export function createProductImageHandler(offFetch: OffFetch = fetch): PagesFunc
             endpoint,
             status: response.status,
             reason: 'bad_response',
-            redirectTo: placeholder,
+            url: placeholder,
             selectedImage: 'none',
           });
 
           const result = wantsJson ? jsonResponse(debug) : imageRedirectResponse(placeholder, debug);
-          await cache.put(cacheKey, result.clone());
+          if (!noStore) {
+            await cache.put(cacheKey, result.clone());
+          }
           return result;
         }
 
         const selection = extractOffImage(payload);
         if (selection.url) {
           debug = buildDebug({
-            source: 'openfoodfacts',
+            source: 'off',
             barcode,
             endpoint,
             status: response.status,
             reason: 'ok',
-            imageUrl: selection.url,
+            url: selection.url,
             selectedImage: selection.selected,
-            redirectTo: selection.url,
           });
         } else {
           debug = buildDebug({
@@ -323,13 +379,15 @@ export function createProductImageHandler(offFetch: OffFetch = fetch): PagesFunc
             status: response.status,
             reason: 'no_image',
             selectedImage: 'none',
-            redirectTo: placeholder,
+            url: placeholder,
           });
         }
       }
 
-      const result = wantsJson ? jsonResponse(debug) : imageRedirectResponse(debug.redirect_to, debug);
-      await cache.put(cacheKey, result.clone());
+      const result = wantsJson ? jsonResponse(debug) : imageRedirectResponse(debug.url, debug);
+      if (!noStore) {
+        await cache.put(cacheKey, result.clone());
+      }
       return result;
     } catch (error) {
       const debug = buildDebug({
@@ -338,11 +396,13 @@ export function createProductImageHandler(offFetch: OffFetch = fetch): PagesFunc
         endpoint,
         reason: mapErrorReason(error),
         selectedImage: 'none',
-        redirectTo: placeholder,
+        url: placeholder,
       });
 
       const result = wantsJson ? jsonResponse(debug) : imageRedirectResponse(placeholder, debug);
-      await cache.put(cacheKey, result.clone());
+      if (!noStore) {
+        await cache.put(cacheKey, result.clone());
+      }
       return result;
     } finally {
       clearTimeout(timeoutId);

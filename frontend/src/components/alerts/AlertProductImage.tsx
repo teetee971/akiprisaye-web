@@ -22,6 +22,7 @@ export default function AlertProductImage({
   useEffect(() => {
     let isMounted = true;
     setIsLoading(true);
+    setImageUrl(null);
 
     getProductImageUrl(ean, category)
       .then((result) => {
@@ -49,6 +50,7 @@ export default function AlertProductImage({
       {isLoading && <div className="absolute inset-0 animate-pulse bg-slate-700/70" />}
       {imageUrl && (
         <img
+          key={`${ean || 'no-ean'}-${category || 'no-category'}`}
           src={imageUrl}
           alt={alt}
           loading="lazy"

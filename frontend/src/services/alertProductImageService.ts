@@ -40,7 +40,7 @@ const PLACEHOLDER_BY_CATEGORY: Record<string, string> = {
   'hygiene': '/assets/placeholders/placeholder-hygiene.svg',
 };
 
-const pendingRequests = new Map<string, Promise<CachedImageEntry>>();
+const pendingRequests = new Map<string, Promise<{ url?: string; source: ImageSource }>>();
 
 function normalizeCategory(category?: string): string {
   return (category ?? '')
@@ -83,10 +83,27 @@ function pruneExpired(cache: CachedImageMap): CachedImageMap {
   return Object.fromEntries(entries);
 }
 
+
+function isEntryFresh(entry: CachedImageEntry, now: number): boolean {
+  if (entry.source === 'off') {
+    return now - entry.cachedAt <= IMAGE_TTL_MS;
+  }
+
+  return now - entry.cachedAt <= 5 * 60 * 1000;
+}
+
 function getFreshCachedEntry(key: string): CachedImageEntry | null {
-  const nextCache = pruneExpired(readLocalCache());
-  const entry = nextCache[key];
-  writeLocalCache(nextCache);
+  const cache = pruneExpired(readLocalCache());
+  const now = Date.now();
+
+  for (const [cacheKey, entry] of Object.entries(cache)) {
+    if (!isEntryFresh(entry, now)) {
+      delete cache[cacheKey];
+    }
+  }
+
+  const entry = cache[key];
+  writeLocalCache(cache);
   return entry ?? null;
 }
 
@@ -115,45 +132,62 @@ export function extractOffImageUrl(payload: OffResponsePayload): string | undefi
 }
 
 async function fetchFromApi(ean: string, category?: string): Promise<{ url?: string; source: ImageSource }> {
-  const controller = new window.AbortController();
-  const timeoutId = window.setTimeout(() => controller.abort(), API_TIMEOUT_MS);
+  const fetchAttempt = async (): Promise<{ url?: string; source: ImageSource }> => {
+    const controller = new window.AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), API_TIMEOUT_MS);
 
-  try {
-    const params = new URLSearchParams({ ean });
-    if (category) {
-      params.set('category', category);
-    }
-    params.set('format', 'json');
-    params.set('v', '2');
+    try {
+      const params = new URLSearchParams({ ean });
+      if (category) {
+        params.set('category', category);
+      }
+      params.set('format', 'json');
+      params.set('v', '3');
+      params.set('nocache', '1');
+      params.set('t', String(Date.now()));
 
-    const response = await fetch(`/api/product-image?${params.toString()}`, {
-      method: 'GET',
-      signal: controller.signal,
-      headers: {
-        Accept: 'application/json',
-      },
-    });
+      const response = await fetch(`/api/product-image?${params.toString()}`, {
+        method: 'GET',
+        signal: controller.signal,
+        headers: {
+          Accept: 'application/json',
+        },
+      });
 
-    if (!response.ok) {
+      if (!response.ok) {
+        return { source: 'none' };
+      }
+
+      const payload = (await response.json()) as { url?: unknown; source?: unknown; image_url?: unknown; redirect_to?: unknown };
+      const source = payload.source === 'off'
+        || payload.source === 'openfoodfacts'
+        || payload.source === 'placeholder'
+        || payload.source === 'none'
+        ? payload.source
+        : 'none';
+      const url = asNonEmptyString(payload.url)
+        ?? asNonEmptyString(payload.redirect_to)
+        ?? asNonEmptyString(payload.image_url);
+
+      if (!url || source === 'none') {
+        return { source: 'none' };
+      }
+
+      return { url, source: source === 'openfoodfacts' ? 'off' : source };
+    } catch {
       return { source: 'none' };
+    } finally {
+      window.clearTimeout(timeoutId);
     }
+  };
 
-    const payload = (await response.json()) as { url?: unknown; source?: unknown };
-    const source = payload.source === 'off' || payload.source === 'placeholder' || payload.source === 'none'
-      ? payload.source
-      : 'none';
-    const url = asNonEmptyString(payload.url);
-
-    if (!url || source === 'none') {
-      return { source: 'none' };
-    }
-
-    return { url, source };
-  } catch {
-    return { source: 'none' };
-  } finally {
-    window.clearTimeout(timeoutId);
+  const firstAttempt = await fetchAttempt();
+  if (firstAttempt.source === 'off') {
+    return firstAttempt;
   }
+
+  await new Promise((resolve) => window.setTimeout(resolve, 250));
+  return fetchAttempt();
 }
 
 export async function getProductImageUrl(
@@ -181,27 +215,27 @@ export async function getProductImageUrl(
     if (shared) return { url: shared.url || undefined, source: shared.source };
   }
 
-  const request = (async () => {
+  const request = (async (): Promise<{ url?: string; source: ImageSource }> => {
     const apiResult = await fetchFromApi(normalizedEan, category);
 
-    if (apiResult.url && apiResult.source !== 'none') {
-      return setCachedEntry(cacheKey, {
+    if (apiResult.url && apiResult.source === 'off') {
+      const entry = setCachedEntry(cacheKey, {
         url: apiResult.url,
         source: apiResult.source,
       });
+      return { url: entry.url || undefined, source: entry.source };
     }
 
-    return setCachedEntry(cacheKey, {
+    return {
       url: getPlaceholderUrl(category),
       source: 'placeholder',
-    });
+    };
   })();
 
   pendingRequests.set(cacheKey, request);
 
   try {
-    const entry = await request;
-    return { url: entry.url || undefined, source: entry.source };
+    return await request;
   } finally {
     pendingRequests.delete(cacheKey);
   }
