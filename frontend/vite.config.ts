@@ -62,7 +62,41 @@ export default defineConfig({
     target: 'es2019',
     minify: 'esbuild',
     sourcemap: false,
-    chunkSizeWarningLimit: 300,
+    cssCodeSplit: true,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return;
+
+          if (id.includes('leaflet.markercluster')) {
+            return 'leaflet-cluster-vendor';
+          }
+
+          if (id.includes('leaflet') || id.includes('react-leaflet')) {
+            return 'leaflet-vendor';
+          }
+
+          if (id.includes('zod')) {
+            return 'zod-vendor';
+          }
+
+          if (id.includes('recharts') || id.includes('d3') || id.includes('chart.js') || id.includes('react-chartjs-2')) {
+            return 'charts-vendor';
+          }
+
+          if (id.includes('@tanstack')) {
+            return 'tanstack-vendor';
+          }
+
+          if (id.includes('i18next') || id.includes('react-i18next')) {
+            return 'i18n-vendor';
+          }
+
+          return 'vendor';
+        }
+      }
+    },
+    chunkSizeWarningLimit: 700,
   },
   server: {
     port: 3000,

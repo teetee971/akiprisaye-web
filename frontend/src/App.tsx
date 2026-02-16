@@ -17,82 +17,88 @@ import AnalyticsTracker from './components/analytics/AnalyticsTracker';
 import { StoreSelectionProvider } from './context/StoreSelectionContext';
 import { logDebug } from './utils/logger';
 
-// Lazy-loaded pages - Main routes
-const Home = React.lazy(() => import('./pages/Home'));
-const Carte = React.lazy(() => import('./pages/Carte'));
-const MapPage = React.lazy(() => import('./pages/MapPage'));
-const AdminDashboard = React.lazy(() => import('./pages/AdminDashboard'));
-const Comparateur = React.lazy(() => import('./pages/Comparateur'));
+const lazyPage = <T extends React.ComponentType<any>>(
+  loader: () => Promise<{ default: T }>
+) => React.lazy(loader);
 
-// New Admin pages
-const AdminLayout = React.lazy(() => import('./pages/admin/AdminLayout'));
-const AdminDashboardNew = React.lazy(() => import('./pages/admin/AdminDashboard'));
-const StoreList = React.lazy(() => import('./pages/admin/stores/StoreList'));
-const StoreForm = React.lazy(() => import('./pages/admin/stores/StoreForm'));
-const StoreDetail = React.lazy(() => import('./pages/admin/stores/StoreDetail'));
-const ProductList = React.lazy(() => import('./pages/admin/products/ProductList').then(m => ({ default: m.ProductList })));
-const ProductForm = React.lazy(() => import('./pages/admin/products/ProductForm').then(m => ({ default: m.ProductForm })));
-const ProductDetail = React.lazy(() => import('./pages/admin/products/ProductDetail').then(m => ({ default: m.ProductDetail })));
-const ImportPage = React.lazy(() => import('./pages/admin/import/ImportPage'));
-const ObservatoireHub = React.lazy(() => import('./pages/ObservatoireHub'));
-const Methodologie = React.lazy(() => import('./pages/Methodologie'));
-const Faq = React.lazy(() => import('./pages/Faq'));
-const Contact = React.lazy(() => import('./pages/Contact'));
-const MentionsLegales = React.lazy(() => import('./pages/MentionsLegales'));
+const prefetch = (loader: () => Promise<unknown>) => {
+  const run = () => loader().catch(() => undefined);
+
+  if (typeof window === 'undefined') return;
+
+  if ('requestIdleCallback' in window) {
+    (window as Window & {
+      requestIdleCallback: (callback: IdleRequestCallback) => number;
+    }).requestIdleCallback(run);
+    return;
+  }
+
+  window.setTimeout(run, 1500);
+};
+
+// Lazy-loaded pages - Main routes
+const Home = lazyPage(() => import('./pages/Home'));
+const Carte = lazyPage(() => import('./pages/Carte'));
+const MapPage = lazyPage(() => import('./pages/MapPage'));
+const AdminDashboard = lazyPage(() => import('./pages/AdminDashboard'));
+const Comparateur = lazyPage(() => import('./pages/Comparateur'));
+const AdminRoutes = lazyPage(() => import('./pages/admin/AdminRoutes'));
+const ObservatoireHub = lazyPage(() => import('./pages/ObservatoireHub'));
+const Methodologie = lazyPage(() => import('./pages/Methodologie'));
+const Faq = lazyPage(() => import('./pages/Faq'));
+const Contact = lazyPage(() => import('./pages/Contact'));
+const MentionsLegales = lazyPage(() => import('./pages/MentionsLegales'));
 
 // Additional feature pages
-const DonneesPubliques = React.lazy(() => import('./pages/DonneesPubliques'));
-const Contribuer = React.lazy(() => import('./pages/Contribuer'));
-const ContribuerPrix = React.lazy(() => import('./pages/ContribuerPrix'));
-const Comparateurs = React.lazy(() => import('./pages/Comparateurs'));
-const CarteItinerairesHub = React.lazy(() => import('./pages/CarteItinerairesHub'));
-const ComparateurCitoyen = React.lazy(() => import('./pages/ComparateurCitoyen'));
-const LutteVieChere = React.lazy(() => import('./pages/LutteVieChereIndexPage'));
+const DonneesPubliques = lazyPage(() => import('./pages/DonneesPubliques'));
+const Contribuer = lazyPage(() => import('./pages/Contribuer'));
+const ContribuerPrix = lazyPage(() => import('./pages/ContribuerPrix'));
+const Comparateurs = lazyPage(() => import('./pages/Comparateurs'));
+const CarteItinerairesHub = lazyPage(() => import('./pages/CarteItinerairesHub'));
+const ComparateurCitoyen = lazyPage(() => import('./pages/ComparateurCitoyen'));
+const LutteVieChere = lazyPage(() => import('./pages/LutteVieChereIndexPage'));
 
 // Scanner & OCR pages
-const ScannerHub = React.lazy(() => import('./pages/ScannerHub'));
-const OCRHub = React.lazy(() => import('./pages/ocr/OCRHub'));
-const ScanEAN = React.lazy(() => import('./pages/ScanEAN'));
-const ProductPhotoAnalysis = React.lazy(() => import('./pages/ProductPhotoAnalysis'));
-const ComparaisonEnseignes = React.lazy(() => import('./pages/ComparaisonEnseignes'));
-const BasketComparison = React.lazy(() => import('./pages/BasketComparison'));
+const ScannerHub = lazyPage(() => import('./pages/ScannerHub'));
+const OCRHub = lazyPage(() => import('./pages/ocr/OCRHub'));
+const ScanEAN = lazyPage(() => import('./pages/ScanEAN'));
+const ProductPhotoAnalysis = lazyPage(() => import('./pages/ProductPhotoAnalysis'));
+const ComparaisonEnseignes = lazyPage(() => import('./pages/ComparaisonEnseignes'));
+const BasketComparison = lazyPage(() => import('./pages/BasketComparison'));
 
 // Settings & History
-const Settings = React.lazy(() => import('./pages/Settings'));
-const HistoriquePrix = React.lazy(() => import('./pages/HistoriquePrix'));
-const RecherchePrix = React.lazy(() => import('./pages/RecherchePrix'));
-const ProductDetailPage = React.lazy(() => import('./pages/ProductDetail'));
-const Alertes = React.lazy(() => import('./pages/Alertes'));
-const AlerteDetail = React.lazy(() => import('./pages/AlerteDetail'));
-const Promos = React.lazy(() => import('./pages/Promos'));
-const MesListes = React.lazy(() => import('./pages/MesListes'));
+const Settings = lazyPage(() => import('./pages/Settings'));
+const HistoriquePrix = lazyPage(() => import('./pages/HistoriquePrix'));
+const RecherchePrix = lazyPage(() => import('./pages/RecherchePrix'));
+const ProductDetailPage = lazyPage(() => import('./pages/ProductDetail'));
+const Alertes = lazyPage(() => import('./pages/Alertes'));
+const AlerteDetail = lazyPage(() => import('./pages/AlerteDetail'));
+const Promos = lazyPage(() => import('./pages/Promos'));
+const MesListes = lazyPage(() => import('./pages/MesListes'));
 
 // Savings Dashboard
-const MesEconomies = React.lazy(() => import('./pages/MesEconomies'));
+const MesEconomies = lazyPage(() => import('./pages/MesEconomies'));
 
 // Auth pages
-const Login = React.lazy(() => import('./pages/Login'));
-const Inscription = React.lazy(() => import('./pages/Inscription'));
-const ResetPassword = React.lazy(() => import('./pages/ResetPassword'));
-const MonCompte = React.lazy(() => import('./pages/MonCompte'));
-const AuthHub = React.lazy(() => import('./pages/AuthHub'));
+const Login = lazyPage(() => import('./pages/Login'));
+const Inscription = lazyPage(() => import('./pages/Inscription'));
+const ResetPassword = lazyPage(() => import('./pages/ResetPassword'));
+const MonCompte = lazyPage(() => import('./pages/MonCompte'));
+const AuthHub = lazyPage(() => import('./pages/AuthHub'));
 
 // Pricing & Subscription
-const Pricing = React.lazy(() => import('./pages/Pricing'));
-const Subscribe = React.lazy(() => import('./pages/Subscribe'));
+const Pricing = lazyPage(() => import('./pages/Pricing'));
+const Subscribe = lazyPage(() => import('./pages/Subscribe'));
 
 // Observatory real-time
-const ObservatoireTempsReel = React.lazy(() => import('./pages/ObservatoireTempsReel'));
+const ObservatoireTempsReel = lazyPage(() => import('./pages/ObservatoireTempsReel'));
 
 // Transparency & reporting
-const Transparence = React.lazy(() => import('./pages/Transparence'));
-const SignalerAbus = React.lazy(() => import('./pages/SignalerAbus'));
-
-// Admin Sync Dashboard
-const SyncDashboard = React.lazy(() => import('./pages/admin/sync/SyncDashboard'));
+const Transparence = lazyPage(() => import('./pages/Transparence'));
+const SignalerAbus = lazyPage(() => import('./pages/SignalerAbus'));
 
 // i18n Test page (for development/testing)
-const I18nTest = React.lazy(() => import('./pages/I18nTest'));
+const I18nTest = lazyPage(() => import('./pages/I18nTest'));
 
 function LoadingFallback() {
   const [showTimeout, setShowTimeout] = useState(false);
@@ -151,6 +157,11 @@ export default function App() {
     }
   }, []);
 
+  useEffect(() => {
+    prefetch(() => import('./pages/Comparateur'));
+    prefetch(() => import('./pages/ObservatoireHub'));
+  }, []);
+
   if (providerError) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-slate-900 text-white p-4">
@@ -177,20 +188,8 @@ export default function App() {
               <BrowserRouter>
                 <Suspense fallback={<LoadingFallback />}>
                   <Routes>
-                    {/* Admin routes with dedicated layout */}
-                    <Route path="/admin" element={<AdminLayout />}>
-                      <Route index element={<AdminDashboardNew />} />
-                      <Route path="stores" element={<StoreList />} />
-                      <Route path="stores/new" element={<StoreForm />} />
-                      <Route path="stores/:id" element={<StoreDetail />} />
-                      <Route path="stores/:id/edit" element={<StoreForm />} />
-                      <Route path="products" element={<ProductList />} />
-                      <Route path="products/new" element={<ProductForm />} />
-                      <Route path="products/:id" element={<ProductDetail />} />
-                      <Route path="products/:id/edit" element={<ProductForm />} />
-                      <Route path="import" element={<ImportPage />} />
-                      <Route path="sync" element={<SyncDashboard />} />
-                    </Route>
+                    {/* Admin routes as isolated lazy bundle */}
+                    <Route path="/admin/*" element={<AdminRoutes />} />
                     
                     {/* Main site routes with Layout */}
                     <Route path="/" element={<Layout />}>
@@ -261,9 +260,6 @@ export default function App() {
                       {/* Transparency & reporting */}
                       <Route path="transparence" element={<Transparence />} />
                       <Route path="signaler-abus" element={<SignalerAbus />} />
-                      
-                      {/* Admin routes */}
-                      <Route path="admin/sync" element={<SyncDashboard />} />
                       
                       {/* i18n Test (development/testing) */}
                       <Route path="test-i18n" element={<I18nTest />} />
