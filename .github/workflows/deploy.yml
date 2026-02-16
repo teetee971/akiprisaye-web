@@ -6,15 +6,20 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
     steps:
       - uses: actions/checkout@v4
 
       # Prévention Git LFS (empêche l'ajout accidentel de pointeurs LFS)
       - name: Disable Git LFS
+        working-directory: ..
         run: git config --global filter.lfs.required false
 
       # Garde préventive : vérifier l'absence de pointeurs LFS
       - name: Check for LFS pointers
+        working-directory: ..
         run: |
           if git grep -I -n -E '^version https://git-lfs.github.com/spec/v1$' -- . | grep -vE '^(\.github/workflows/|\.circleci/|scripts/|.*\.md:)' >/dev/null; then
             echo "❌ ERREUR: Pointeurs Git LFS détectés dans le dépôt"
@@ -62,5 +67,6 @@ jobs:
       # Purge du cache inutile (pas de domaine personnalisé)
       - name: Skip cache purge
         if: success()
+        working-directory: ..
         run: |
           echo "Purge skipped: Cloudflare Pages without custom domain does not support API cache purge."
