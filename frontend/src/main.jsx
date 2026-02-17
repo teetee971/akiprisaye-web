@@ -13,6 +13,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import { safeToText } from './utils/safeToText';
 import { installRuntimeCrashProbe } from './monitoring/runtimeCrashProbe';
 import { logDebug } from './utils/logger';
+import { applyBuildVersionGuard, registerServiceWorker } from './utils/buildVersionGuard';
 
 const BUILD_SHA = import.meta.env.VITE_BUILD_SHA || 'unknown';
 window.__BUILD_SHA__ = BUILD_SHA;
@@ -62,11 +63,16 @@ const globalLoadTimeout = setTimeout(() => {
   }
 }, 15000);
 
-const rootElement = document.getElementById('root');
+const bootstrap = async () => {
+  await applyBuildVersionGuard();
 
-if (!rootElement) {
-  console.error('❌ Root element #root not found');
-} else {
+  const rootElement = document.getElementById('root');
+
+  if (!rootElement) {
+    console.error('❌ Root element #root not found');
+    return;
+  }
+
   logDebug('✅ main.jsx: Starting React render');
 
   ReactDOM.createRoot(rootElement).render(
@@ -87,5 +93,8 @@ if (!rootElement) {
     clearTimeout(globalLoadTimeout);
   });
 
+  await registerServiceWorker();
   logDebug('✅ main.jsx: React render initiated');
-}
+};
+
+bootstrap();

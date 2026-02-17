@@ -25,6 +25,8 @@ const buildSha = process.env.BUILD_SHA || (() => {
   }
 })()
 
+const appBuildId = process.env.VITE_APP_BUILD_ID || buildSha
+
 export default defineConfig({
   base: '/',
   plugins: [
@@ -160,6 +162,7 @@ export default defineConfig({
   },
   define: {
     'import.meta.env.VITE_BUILD_SHA': JSON.stringify(buildSha),
+    'import.meta.env.VITE_APP_BUILD_ID': JSON.stringify(appBuildId),
     'process.env.VITE_FIREBASE_API_KEY': JSON.stringify(process.env.VITE_FIREBASE_API_KEY),
     'process.env.VITE_FIREBASE_AUTH_DOMAIN': JSON.stringify(process.env.VITE_FIREBASE_AUTH_DOMAIN),
     'process.env.VITE_FIREBASE_PROJECT_ID': JSON.stringify(process.env.VITE_FIREBASE_PROJECT_ID)

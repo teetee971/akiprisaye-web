@@ -1,5 +1,5 @@
-// 🔹 Cache version - incremented to v4 for complete cache invalidation
-const CACHE_NAME = 'akiprisaye-smart-cache-v4';
+// 🔹 Cache version - incremented to v5 for complete cache invalidation
+const CACHE_NAME = 'akiprisaye-smart-cache-v5';
 
 // 🔹 Only precache essential non-HTML assets
 const ASSETS_TO_CACHE = [
