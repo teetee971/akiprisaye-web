@@ -14,7 +14,7 @@
     "smoke:preview": "npm run build && node scripts/smoke-preview.mjs",
     "lint:changed": "node scripts/lint-changed.mjs",
     "typecheck:ci": "node scripts/typecheck-changed.mjs",
-    "lint:ci": "node scripts/lint-changed.mjs --max-warnings=0",
+    "lint:ci": "node scripts/lint-changed.mjs",
     "lint:full:ci": "npm run lint:full",
     "build:ci": "npm run build",
     "test:ci": "npm run test",

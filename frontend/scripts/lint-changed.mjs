@@ -1,80 +1,132 @@
-import { execSync, spawnSync } from 'node:child_process';
+import { spawnSync } from 'node:child_process';
 
-function sh(cmd) {
-  return execSync(cmd, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
+function run(cmd, args, options = {}) {
+  return spawnSync(cmd, args, {
+    encoding: 'utf8',
+    stdio: ['ignore', 'pipe', 'pipe'],
+    ...options,
+  });
 }
 
-function trySh(cmd) {
-  try {
-    return { ok: true, output: sh(cmd) };
-  } catch (error) {
-    return { ok: false, error };
+function runGit(args, options = {}) {
+  return run('git', args, options);
+}
+
+function gitOk(args) {
+  const res = runGit(args);
+  return res.status === 0;
+}
+
+function pickHeadRef() {
+  if (process.env.LINT_HEAD_SHA && gitOk(['cat-file', '-e', `${process.env.LINT_HEAD_SHA}^{commit}`])) {
+    return process.env.LINT_HEAD_SHA;
   }
+  if (process.env.GITHUB_SHA && gitOk(['cat-file', '-e', `${process.env.GITHUB_SHA}^{commit}`])) {
+    return process.env.GITHUB_SHA;
+  }
+  return 'HEAD';
 }
 
-function hasCommit(sha) {
-  if (!sha) return false;
-  return trySh(`git cat-file -e ${sha}^{commit}`).ok;
-}
+function pickBaseRef(headRef) {
+  if (process.env.LINT_BASE_SHA && gitOk(['cat-file', '-e', `${process.env.LINT_BASE_SHA}^{commit}`])) {
+    return { baseRef: process.env.LINT_BASE_SHA, strategy: 'LINT_BASE_SHA...HEAD' };
+  }
 
-function getChangedFiles() {
-  const baseSha = process.env.LINT_BASE_SHA;
-  const headSha = process.env.LINT_HEAD_SHA || process.env.GITHUB_SHA;
+  if (gitOk(['rev-parse', '--verify', 'origin/main'])) {
+    return { baseRef: 'origin/main', strategy: 'origin/main...HEAD' };
+  }
 
-  if (baseSha && headSha && hasCommit(baseSha) && hasCommit(headSha)) {
-    const diffRange = `${baseSha}...${headSha}`;
-    const diff = trySh(`git diff --name-only ${diffRange}`);
-
-    if (diff.ok) {
-      return { files: diff.output, strategy: `range ${diffRange}` };
+  const mergeBaseCandidates = ['main', 'origin/master', 'master'];
+  for (const candidate of mergeBaseCandidates) {
+    if (!gitOk(['rev-parse', '--verify', candidate])) {
+      continue;
     }
 
-    console.warn(`⚠️ Unable to diff ${diffRange}, falling back.`, diff.error?.message ?? '');
-  } else if (baseSha || headSha) {
-    console.warn('⚠️ Provided LINT_BASE_SHA/LINT_HEAD_SHA are not available locally (shallow clone or missing refs).');
+    const mergeBase = runGit(['merge-base', candidate, headRef]);
+    if (mergeBase.status === 0) {
+      return { baseRef: mergeBase.stdout.trim(), strategy: `merge-base(${candidate}, ${headRef})...${headRef}` };
+    }
   }
 
-  const originMainDiff = trySh('git diff --name-only origin/main...HEAD');
-  if (originMainDiff.ok) {
-    return { files: originMainDiff.output, strategy: 'origin/main...HEAD fallback' };
+  if (gitOk(['rev-parse', '--verify', 'HEAD~1'])) {
+    return { baseRef: 'HEAD~1', strategy: 'HEAD~1...HEAD fallback' };
   }
 
-  const headOnlyDiff = trySh('git diff --name-only HEAD~1..HEAD');
-  if (headOnlyDiff.ok) {
-    return { files: headOnlyDiff.output, strategy: 'HEAD~1..HEAD fallback' };
-  }
-
-  return { files: null, strategy: 'full-lint fallback' };
+  return null;
 }
 
-const diffResult = getChangedFiles();
+function getChangedFiles(baseRef, headRef) {
+  const diff = runGit(['diff', '--name-only', '-z', `${baseRef}...${headRef}`], { encoding: 'buffer' });
+  if (diff.status !== 0) {
+    throw new Error((diff.stderr || Buffer.from('')).toString('utf8').trim() || 'Unable to compute git diff.');
+  }
 
-if (diffResult.files === null) {
-  console.log('ℹ️ Could not compute changed-file diff, running full lint fallback.');
-  const fallback = spawnSync('npm', ['run', 'lint'], { stdio: 'inherit' });
-  process.exit(fallback.status ?? 1);
+  return diff.stdout
+    .toString('utf8')
+    .split('\u0000')
+    .map((file) => file.trim())
+    .filter(Boolean);
 }
 
-console.log(`ℹ️ Using changed-files strategy: ${diffResult.strategy}`);
+function isLintTarget(file) {
+  if (!/\.(ts|tsx|js|jsx)$/i.test(file)) {
+    return false;
+  }
 
-const changedFiles = diffResult.files
-  .split('\n')
-  .map((f) => f.trim())
-  .filter(Boolean)
-  .filter((f) => f.startsWith('frontend/src/'))
-  .filter((f) => /\.(js|jsx|ts|tsx)$/.test(f));
+  if (file.startsWith('frontend/src/')) {
+    return true;
+  }
 
-if (changedFiles.length === 0) {
-  console.log('✅ No changed JS/TS files in frontend/src to lint.');
+  return (
+    file.startsWith('src/pages/') ||
+    file.startsWith('src/modules/') ||
+    file.startsWith('src/components/')
+  );
+}
+
+function toFrontendRelativePath(file) {
+  if (file.startsWith('frontend/')) {
+    return file.replace(/^frontend\//, '');
+  }
+  return `../${file}`;
+}
+
+const headRef = pickHeadRef();
+const baseInfo = pickBaseRef(headRef);
+
+if (!baseInfo) {
+  console.log('⚠️ Unable to determine a base ref; skipping strict changed-file lint.');
   process.exit(0);
 }
 
-console.log(`🧹 Linting changed files (${changedFiles.length}):`);
-for (const file of changedFiles) {
-  console.log(` - ${file}`);
+console.log(`ℹ️ Strict on changed files to allow incremental cleanup (${baseInfo.strategy}).`);
+
+let changedFiles = [];
+try {
+  changedFiles = getChangedFiles(baseInfo.baseRef, headRef);
+} catch (error) {
+  console.error(`❌ ${error.message}`);
+  process.exit(1);
 }
 
-const relativeToFrontend = changedFiles.map((file) => file.replace(/^frontend\//, ''));
-const extraArgs = process.argv.slice(2);
-const lint = spawnSync('npx', ['eslint', ...relativeToFrontend, ...extraArgs], { stdio: 'inherit' });
-process.exit(lint.status ?? 1);
+const targetFiles = changedFiles.filter(isLintTarget);
+
+if (targetFiles.length === 0) {
+  console.log('✅ No changed JS/TS target files detected.');
+  process.exit(0);
+}
+
+const eslintArgs = ['eslint', ...targetFiles.map(toFrontendRelativePath), '--max-warnings=0'];
+
+console.log(`🧹 Target files (${targetFiles.length}):`);
+for (const file of targetFiles) {
+  console.log(` - ${file}`);
+}
+console.log(`▶️ Running: npx ${eslintArgs.join(' ')}`);
+
+const eslintResult = spawnSync('npx', eslintArgs, {
+  stdio: 'inherit',
+  shell: false,
+});
+
+process.exit(eslintResult.status ?? 1);

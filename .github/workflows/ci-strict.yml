@@ -63,10 +63,10 @@ jobs:
         run: npm run typecheck:ci
         continue-on-error: ${{ github.event_name == 'pull_request' }}
 
-      - name: ESLint strict check (max-warnings=0)
+      - name: ESLint strict check (changed files only)
         working-directory: frontend
+        # Strict on changed files to allow incremental cleanup while keeping CI blocking for modified code.
         run: npm run lint:ci
-        continue-on-error: ${{ github.event_name == 'pull_request' }}
 
       - name: Block new explicit any (diff-based)
         shell: bash
@@ -206,7 +206,7 @@ jobs:
               '',
               '**Checks exécutés :**',
               '- TypeScript strict',
-              '- ESLint (max-warnings=0)',
+              '- ESLint strict on changed files (warnings blocked)',
               '- Build',
               '- Tests',
               '- Audit sécurité (npm)',
