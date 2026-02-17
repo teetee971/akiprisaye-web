@@ -1,5 +1,9 @@
 name: CI Strict (Zero Warning)
 
+permissions:
+  contents: read
+  pull-requests: write
+
 on:
   pull_request:
     branches: [ "main", "production" ]
@@ -26,9 +30,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # -----------------------------
+      # ------------------------------------------------------------
       # STRICT CHECKS (BLOCKING ONLY ON main / production)
-      # -----------------------------
+      # ------------------------------------------------------------
 
       - name: TypeScript strict check
         run: npm run typecheck:ci
@@ -47,7 +51,7 @@ jobs:
           fi
 
           git fetch --no-tags --depth=1 origin "$BASE_SHA" || true
-          DIFF=$(git diff -U0 "$BASE_SHA"...HEAD -- '*.ts' '*.tsx' | grep -n '^\+' | grep -n 'any' || true)
+          DIFF=$(git diff -U0 "$BASE_SHA"...HEAD -- '*.ts' '*.tsx' | grep -n '\bany\b' || true)
 
           if [ -n "$DIFF" ] && [ "${{ github.event_name }}" != "pull_request" ]; then
             echo "❌ New explicit any detected:"
@@ -69,9 +73,9 @@ jobs:
         run: npm run audit:ci
         continue-on-error: true
 
-      # -----------------------------
+      # ------------------------------------------------------------
       # NON-BLOCKING QUALITY GATES
-      # -----------------------------
+      # ------------------------------------------------------------
 
       - name: Accessibility testing (axe-core WCAG)
         id: axe
@@ -90,15 +94,15 @@ jobs:
         id: lhci-url
         run: |
           if [ -f .lighthouseci/links.json ]; then
-            URL=$(cat .lighthouseci/links.json | grep -o 'https://[^"]*' | head -n 1)
+            URL=$(cat .lighthouseci/links.json | grep -o 'https://[^"]*' | head -n1)
             echo "report_url=$URL" >> $GITHUB_OUTPUT
           else
             echo "report_url=Not available" >> $GITHUB_OUTPUT
           fi
 
-      # -----------------------------
+      # ------------------------------------------------------------
       # PR COMMENT (INFORMATION ONLY)
-      # -----------------------------
+      # ------------------------------------------------------------
 
       - name: Comment PR with quality report
         if: github.event_name == 'pull_request'
@@ -125,10 +129,11 @@ jobs:
 - Best Practices ≥ 95
 - SEO ≥ 90
 
-${reportUrl !== 'Not available' ? `🔍 [Voir le rapport Lighthouse](${reportUrl})` : 'Rapport Lighthouse indisponible'}
+${reportUrl !== 'Not available' ? `🔎 [Voir le rapport Lighthouse](${reportUrl})` : ''}
 
-ℹ️ *Quality gate non bloquant – hardening progressif.*
-`;
+ℹ️ *Quality gate non bloquant – durcissement progressif.*
+            `;
+
             await github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
@@ -136,9 +141,9 @@ ${reportUrl !== 'Not available' ? `🔍 [Voir le rapport Lighthouse](${reportUrl
               body
             });
 
-      # -----------------------------
+      # ------------------------------------------------------------
       # ARTIFACTS (DEBUG / AUDIT)
-      # -----------------------------
+      # ------------------------------------------------------------
 
       - name: Upload accessibility report
         if: always()
