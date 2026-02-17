@@ -98,7 +98,8 @@ jobs:
         run: |
           ls -la frontend/dist
           test -f frontend/dist/index.html
-          test -f frontend/dist/404.html
+          test -f frontend/dist/_redirects
+          test ! -f frontend/dist/404.html
 
       - name: Verify routing files if present
         shell: bash
@@ -154,9 +155,9 @@ jobs:
               echo "- dist/index.html: ❌"
             fi
             if [ -f frontend/dist/404.html ]; then
-              echo "- dist/404.html: ✅"
+              echo "- dist/404.html: ❌ (unexpected, should not be deployed for SPA fallback)"
             else
-              echo "- dist/404.html: ❌"
+              echo "- dist/404.html: ✅ (absent)"
             fi
           } >> "$GITHUB_STEP_SUMMARY"
 
@@ -198,8 +199,8 @@ jobs:
 
           index_status="❌"
           [ -f frontend/dist/index.html ] && index_status="✅"
-          page404_status="❌"
-          [ -f frontend/dist/404.html ] && page404_status="✅"
+          page404_status="✅ (absent)"
+          [ -f frontend/dist/404.html ] && page404_status="❌ (unexpected present)"
           redirects_status="❌"
           [ -f frontend/dist/_redirects ] && redirects_status="✅"
           headers_status="❌"
@@ -229,7 +230,6 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Smoke routes (preview)
-        continue-on-error: true
         shell: bash
         env:
           DEPLOY_URL: ${{ steps.deploy_preview.outputs.url }}
@@ -240,13 +240,22 @@ jobs:
             if [ -z "${DEPLOY_URL}" ]; then
               echo "- ⚠️ DEPLOY_URL unavailable, skipping smoke checks."
             else
-              for route in / /comparateur /scanner-ean; do
-                http_code="$(curl -sS -o /dev/null -w "%{http_code}" "${DEPLOY_URL}${route}" || echo "curl_error")"
+              for route in /login /mon-compte /reset-password /inscription; do
+                response_headers="$(mktemp)"
+                http_code="$(curl -sS -D "${response_headers}" -o /dev/null -w "%{http_code}" "${DEPLOY_URL}${route}" || echo "curl_error")"
                 if [ "${http_code}" = "curl_error" ]; then
                   echo "- ${DEPLOY_URL}${route} → ⚠️ curl error"
                 else
-                  echo "- ${DEPLOY_URL}${route} → HTTP ${http_code}"
+                  content_type="$(grep -i '^content-type:' "${response_headers}" | awk -F': ' '{print $2}' | tr -d '\r')"
+                  cache_status="$(grep -i '^cf-cache-status:' "${response_headers}" | awk -F': ' '{print $2}' | tr -d '\r')"
+                  age_status="$(grep -i '^age:' "${response_headers}" | awk -F': ' '{print $2}' | tr -d '\r')"
+                  if [ "${http_code}" != "200" ] || ! echo "${content_type}" | grep -qi 'text/html'; then
+                    echo "- ${DEPLOY_URL}${route} → ❌ HTTP ${http_code} | content-type=${content_type:-n/a} | cf-cache-status=${cache_status:-n/a} | age=${age_status:-n/a}"
+                    exit 1
+                  fi
+                  echo "- ${DEPLOY_URL}${route} → ✅ HTTP ${http_code} | content-type=${content_type:-n/a} | cf-cache-status=${cache_status:-n/a} | age=${age_status:-n/a}"
                 fi
+                rm -f "${response_headers}"
               done
             fi
           } >> "$GITHUB_STEP_SUMMARY"
@@ -305,8 +314,8 @@ jobs:
 
           index_status="❌"
           [ -f frontend/dist/index.html ] && index_status="✅"
-          page404_status="❌"
-          [ -f frontend/dist/404.html ] && page404_status="✅"
+          page404_status="✅ (absent)"
+          [ -f frontend/dist/404.html ] && page404_status="❌ (unexpected present)"
           redirects_status="❌"
           [ -f frontend/dist/_redirects ] && redirects_status="✅"
           headers_status="❌"
@@ -336,7 +345,6 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Smoke routes (production)
-        continue-on-error: true
         shell: bash
         env:
           DEPLOY_URL: ${{ steps.deploy_production.outputs.url }}
@@ -347,13 +355,47 @@ jobs:
             if [ -z "${DEPLOY_URL}" ]; then
               echo "- ⚠️ DEPLOY_URL unavailable, skipping smoke checks."
             else
-              for route in / /comparateur /scanner-ean; do
-                http_code="$(curl -sS -o /dev/null -w "%{http_code}" "${DEPLOY_URL}${route}" || echo "curl_error")"
+              for route in /login /mon-compte /reset-password /inscription; do
+                response_headers="$(mktemp)"
+                http_code="$(curl -sS -D "${response_headers}" -o /dev/null -w "%{http_code}" "${DEPLOY_URL}${route}" || echo "curl_error")"
                 if [ "${http_code}" = "curl_error" ]; then
                   echo "- ${DEPLOY_URL}${route} → ⚠️ curl error"
                 else
-                  echo "- ${DEPLOY_URL}${route} → HTTP ${http_code}"
+                  content_type="$(grep -i '^content-type:' "${response_headers}" | awk -F': ' '{print $2}' | tr -d '\r')"
+                  cache_status="$(grep -i '^cf-cache-status:' "${response_headers}" | awk -F': ' '{print $2}' | tr -d '\r')"
+                  age_status="$(grep -i '^age:' "${response_headers}" | awk -F': ' '{print $2}' | tr -d '\r')"
+                  if [ "${http_code}" != "200" ] || ! echo "${content_type}" | grep -qi 'text/html'; then
+                    echo "- ${DEPLOY_URL}${route} → ❌ HTTP ${http_code} | content-type=${content_type:-n/a} | cf-cache-status=${cache_status:-n/a} | age=${age_status:-n/a}"
+                    exit 1
+                  fi
+                  echo "- ${DEPLOY_URL}${route} → ✅ HTTP ${http_code} | content-type=${content_type:-n/a} | cf-cache-status=${cache_status:-n/a} | age=${age_status:-n/a}"
                 fi
+                rm -f "${response_headers}"
               done
             fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Smoke routes (production canonical domain)
+        shell: bash
+        run: |
+          {
+            echo ""
+            echo "### Smoke routes (canonical domain)"
+            for route in /login /mon-compte /reset-password /inscription; do
+              response_headers="$(mktemp)"
+              http_code="$(curl -sS -D "${response_headers}" -o /dev/null -w "%{http_code}" "https://akiprisaye-web.pages.dev${route}" || echo "curl_error")"
+              if [ "${http_code}" = "curl_error" ]; then
+                echo "- https://akiprisaye-web.pages.dev${route} → ⚠️ curl error"
+              else
+                content_type="$(grep -i '^content-type:' "${response_headers}" | awk -F': ' '{print $2}' | tr -d '\r')"
+                cache_status="$(grep -i '^cf-cache-status:' "${response_headers}" | awk -F': ' '{print $2}' | tr -d '\r')"
+                age_status="$(grep -i '^age:' "${response_headers}" | awk -F': ' '{print $2}' | tr -d '\r')"
+                if [ "${http_code}" != "200" ] || ! echo "${content_type}" | grep -qi 'text/html'; then
+                  echo "- https://akiprisaye-web.pages.dev${route} → ❌ HTTP ${http_code} | content-type=${content_type:-n/a} | cf-cache-status=${cache_status:-n/a} | age=${age_status:-n/a}"
+                  exit 1
+                fi
+                echo "- https://akiprisaye-web.pages.dev${route} → ✅ HTTP ${http_code} | content-type=${content_type:-n/a} | cf-cache-status=${cache_status:-n/a} | age=${age_status:-n/a}"
+              fi
+              rm -f "${response_headers}"
+            done
           } >> "$GITHUB_STEP_SUMMARY"

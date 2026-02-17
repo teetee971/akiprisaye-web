@@ -18,8 +18,8 @@ function assertOrdering(path) {
     throw new Error(`${path}: missing one of required rules (/api/*, /assets/*, /*)`);
   }
 
-  if (!(apiIndex < assetsIndex && assetsIndex < spaIndex)) {
-    throw new Error(`${path}: invalid ordering, expected /api/* then /assets/* then /*`);
+  if (!(assetsIndex < apiIndex && apiIndex < spaIndex)) {
+    throw new Error(`${path}: invalid ordering, expected /assets/* then /api/* then /*`);
   }
 
   console.log(`OK ${path}: redirects order is valid`);
