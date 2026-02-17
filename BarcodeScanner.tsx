@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { BrowserMultiFormatReader, Result } from "@zxing/browser";
+import { BrowserMultiFormatReader, Result } from "@zxing/library";
 import { SCANNER_MESSAGES, type ScannerMessage } from "./src/constants/scannerMessages";
 
 export default function BarcodeScanner() {

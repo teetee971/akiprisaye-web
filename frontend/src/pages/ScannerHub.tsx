@@ -1,6 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { BrowserMultiFormatReader } from '@zxing/browser';
+import {
+  BarcodeFormat,
+  BinaryBitmap,
+  DecodeHintType,
+  HTMLCanvasElementLuminanceSource,
+  HybridBinarizer,
+  MultiFormatReader,
+  NotFoundException,
+} from '@zxing/library';
 import { useNavigate } from 'react-router-dom';
 
 type ScanStatus =
@@ -13,11 +21,6 @@ type ScanStatus =
   | 'errorNetwork'
   | 'notFound';
 
-type ScannerControls = {
-  stop: () => void;
-  switchTorch?: (on: boolean) => Promise<void>;
-};
-
 const EAN_REGEX = /^[0-9]{8,14}$/;
 const SCAN_TIMEOUT_MS = 10_000;
 const SUCCESS_LOCK_MS = 1_500;
@@ -26,11 +29,12 @@ export default function ScannerHub() {
   const navigate = useNavigate();
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const readerRef = useRef<BrowserMultiFormatReader | null>(null);
-  const controlsRef = useRef<ScannerControls | null>(null);
+  const readerRef = useRef<MultiFormatReader | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const timeoutRef = useRef<number | null>(null);
   const successLockRef = useRef<number | null>(null);
+  const frameRequestRef = useRef<number | null>(null);
 
   const [status, setStatus] = useState<ScanStatus>('idle');
   const [lastDetectedCode, setLastDetectedCode] = useState<string | null>(null);
@@ -44,15 +48,19 @@ export default function ScannerHub() {
   const [isScanning, setIsScanning] = useState(false);
 
   const stopCamera = useCallback(() => {
-    controlsRef.current?.stop();
-    controlsRef.current = null;
-
     if (timeoutRef.current !== null) {
       window.clearTimeout(timeoutRef.current);
       timeoutRef.current = null;
     }
 
-    const stream = streamRef.current ?? (videoRef.current?.srcObject instanceof MediaStream ? videoRef.current.srcObject : null);
+    if (frameRequestRef.current !== null) {
+      window.cancelAnimationFrame(frameRequestRef.current);
+      frameRequestRef.current = null;
+    }
+
+    const stream =
+      streamRef.current ??
+      (videoRef.current?.srcObject instanceof MediaStream ? videoRef.current.srcObject : null);
     if (stream) {
       stream.getTracks().forEach((track) => track.stop());
       streamRef.current = null;
@@ -117,6 +125,22 @@ export default function ScannerHub() {
     setTorchSupported(Boolean(capabilities.torch));
   }, []);
 
+  const createReader = useCallback(() => {
+    const hints = new Map();
+    hints.set(DecodeHintType.POSSIBLE_FORMATS, [
+      BarcodeFormat.EAN_13,
+      BarcodeFormat.EAN_8,
+      BarcodeFormat.CODE_128,
+      BarcodeFormat.UPC_A,
+      BarcodeFormat.UPC_E,
+    ]);
+    hints.set(DecodeHintType.TRY_HARDER, true);
+
+    const reader = new MultiFormatReader();
+    reader.setHints(hints);
+    return reader;
+  }, []);
+
   const resetForNewScan = useCallback(() => {
     setLastDetectedCode(null);
     setStableCounter(0);
@@ -138,50 +162,94 @@ export default function ScannerHub() {
     }
 
     try {
-      if (!readerRef.current) {
-        readerRef.current = new BrowserMultiFormatReader();
-      }
-
       setStatus('scanning');
       setIsScanning(true);
 
-      const controls = await readerRef.current.decodeFromConstraints(
-        {
-          video: { facingMode: { ideal: 'environment' } },
-          audio: false,
-        },
-        videoRef.current,
-        (result) => {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: 'environment' } },
+        audio: false,
+      });
+      streamRef.current = stream;
+
+      videoRef.current.srcObject = stream;
+      await videoRef.current.play();
+
+      detectTorchSupport();
+
+      if (!readerRef.current) {
+        readerRef.current = createReader();
+      }
+
+      const scanFrame = () => {
+        const video = videoRef.current;
+        const reader = readerRef.current;
+
+        if (!video || !reader || !streamRef.current || !canFinalize()) {
+          return;
+        }
+
+        const width = video.videoWidth;
+        const height = video.videoHeight;
+
+        if (!width || !height) {
+          frameRequestRef.current = window.requestAnimationFrame(scanFrame);
+          return;
+        }
+
+        if (!canvasRef.current) {
+          canvasRef.current = document.createElement('canvas');
+        }
+
+        const canvas = canvasRef.current;
+        canvas.width = width;
+        canvas.height = height;
+
+        const context = canvas.getContext('2d', { willReadFrequently: true });
+        if (!context) {
+          setStatus('errorNetwork');
+          setManualInputVisible(true);
+          stopCamera();
+          return;
+        }
+
+        context.drawImage(video, 0, 0, width, height);
+
+        try {
+          const luminanceSource = new HTMLCanvasElementLuminanceSource(canvas);
+          const binaryBitmap = new BinaryBitmap(new HybridBinarizer(luminanceSource));
+          const result = reader.decode(binaryBitmap);
           const text = result?.getText()?.trim();
-          if (!text || !canFinalize()) {
+
+          if (text) {
+            setLastDetectedCode((previousCode) => {
+              if (previousCode === text) {
+                setStableCounter((previousCounter) => {
+                  const nextCounter = previousCounter + 1;
+                  if (nextCounter >= 2) {
+                    finalizeScan(text);
+                  }
+                  return nextCounter;
+                });
+                return previousCode;
+              }
+
+              setStableCounter(1);
+              return text;
+            });
+          }
+        } catch (error) {
+          if (!(error instanceof NotFoundException)) {
+            setStatus('errorNetwork');
+            setManualInputVisible(true);
+            stopCamera();
             return;
           }
-
-          setLastDetectedCode((previousCode) => {
-            if (previousCode === text) {
-              setStableCounter((previousCounter) => {
-                const nextCounter = previousCounter + 1;
-                if (nextCounter >= 2) {
-                  finalizeScan(text);
-                }
-                return nextCounter;
-              });
-              return previousCode;
-            }
-
-            setStableCounter(1);
-            return text;
-          });
         }
-      );
 
-      controlsRef.current = controls as ScannerControls;
+        frameRequestRef.current = window.requestAnimationFrame(scanFrame);
+      };
 
-      const media = videoRef.current.srcObject;
-      if (media instanceof MediaStream) {
-        streamRef.current = media;
-        detectTorchSupport();
-      }
+      frameRequestRef.current = window.requestAnimationFrame(scanFrame);
 
       timeoutRef.current = window.setTimeout(() => {
         if (canFinalize()) {
@@ -209,7 +277,7 @@ export default function ScannerHub() {
       setStatus('errorNetwork');
       setManualInputVisible(true);
     }
-  }, [detectTorchSupport, finalizeScan, resetForNewScan, stopCamera]);
+  }, [createReader, detectTorchSupport, finalizeScan, resetForNewScan, stopCamera]);
 
   const handleManualSearch = useCallback(() => {
     const normalized = manualEAN.replace(/\D/g, '');
@@ -224,13 +292,17 @@ export default function ScannerHub() {
   }, [finalizeScan, manualEAN]);
 
   const toggleTorch = useCallback(async () => {
-    const controls = controlsRef.current;
-    if (!controls || typeof controls.switchTorch !== 'function' || !torchSupported) {
+    if (!torchSupported || !streamRef.current) {
+      return;
+    }
+
+    const [track] = streamRef.current.getVideoTracks();
+    if (!track) {
       return;
     }
 
     const nextState = !torchEnabled;
-    await controls.switchTorch(nextState);
+    await track.applyConstraints({ advanced: [{ torch: nextState }] });
     setTorchEnabled(nextState);
   }, [torchEnabled, torchSupported]);
 

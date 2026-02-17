@@ -92,7 +92,7 @@ npm install @zxing/browser @zxing/library
 
 **Exemple d'utilisation**:
 ```typescript
-import { BrowserMultiFormatReader } from '@zxing/browser';
+import { BrowserMultiFormatReader } from '@zxing/library';
 
 const codeReader = new BrowserMultiFormatReader();
 const result = await codeReader.decodeFromImageElement(imageElement);
