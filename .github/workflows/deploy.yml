@@ -48,6 +48,9 @@ jobs:
         working-directory: ./frontend
         run: npm ci
 
+      - name: Inject build id
+        run: echo "VITE_APP_BUILD_ID=${GITHUB_SHA}" >> $GITHUB_ENV
+
       # Build de l'application Vite/React (génère le dossier dist)
       - name: Build application
         working-directory: ./frontend

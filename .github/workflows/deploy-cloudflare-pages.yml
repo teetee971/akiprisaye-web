@@ -89,6 +89,9 @@ jobs:
         if: steps.detect_scripts.outputs.has_test != 'true'
         run: echo "No test script found in frontend/package.json, skipping."
 
+      - name: Inject build id
+        run: echo "VITE_APP_BUILD_ID=${GITHUB_SHA}" >> $GITHUB_ENV
+
       - name: Build
         working-directory: frontend
         run: npm run build

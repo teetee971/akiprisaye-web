@@ -24,3 +24,6 @@
 /api/*
   Cache-Control: no-store, max-age=0, must-revalidate
   Pragma: no-cache
+
+/service-worker.js
+  Cache-Control: no-store, must-revalidate
