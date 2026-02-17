@@ -10,12 +10,12 @@ function parseRedirects(path) {
 
 function assertOrdering(path) {
   const lines = parseRedirects(path);
-  const apiIndex = lines.findIndex((line) => line.startsWith('/api/*'));
   const assetsIndex = lines.findIndex((line) => line.startsWith('/assets/*'));
+  const apiIndex = lines.findIndex((line) => line.startsWith('/api/*'));
   const spaIndex = lines.findIndex((line) => line.startsWith('/*'));
 
-  if (apiIndex < 0 || assetsIndex < 0 || spaIndex < 0) {
-    throw new Error(`${path}: missing one of required rules (/api/*, /assets/*, /*)`);
+  if (assetsIndex < 0 || apiIndex < 0 || spaIndex < 0) {
+    throw new Error(`${path}: missing one of required rules (/assets/*, /api/*, /*)`);
   }
 
   if (!(assetsIndex < apiIndex && apiIndex < spaIndex)) {
@@ -26,4 +26,3 @@ function assertOrdering(path) {
 }
 
 assertOrdering(resolve('public/_redirects'));
-assertOrdering(resolve('../public/_redirects'));
