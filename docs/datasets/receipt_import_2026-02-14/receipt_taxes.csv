@@ -1,0 +1,4 @@
+tax_id,receipt_id,tax_rate,tax_amount,amount_ht,amount_ttc
+1,1,0.00,0.00,6.64,6.64
+2,1,2.10,0.16,7.70,7.86
+3,1,8.50,0.19,2.21,2.40
