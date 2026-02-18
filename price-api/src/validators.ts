@@ -18,6 +18,11 @@ const isoDateSchema = z
   .or(z.string().datetime())
   .transform((value) => new Date(value).toISOString());
 
+const positiveIntegerFromUnknown = z
+  .union([z.number(), z.string()])
+  .transform((value) => Number(value))
+  .pipe(z.number().int().positive());
+
 export const getPricesQuerySchema = z.object({
   ean: z.string().regex(EAN_REGEX, 'ean must have 8-14 digits'),
   territory: territoryEnum.optional(),
@@ -50,6 +55,20 @@ export const adminObservationSchema = z.object({
   confidence: z.number().min(0).max(1).optional(),
   metadata: z.record(z.string(), z.unknown()).optional(),
 });
+
+export const adminFetchRunSchema = z.object({
+  territory: territoryEnum,
+  sourceId: z.string().min(2).max(100).optional(),
+  limit: positiveIntegerFromUnknown.refine((value) => value <= 500, "limit must be <= 500").optional(),
+});
+
+export const adminFetchJobsQuerySchema = z.object({
+  territory: territoryEnum.optional(),
+  sourceId: z.string().min(2).max(100).optional(),
+  limit: positiveIntegerFromUnknown.refine((value) => value <= 200, "limit must be <= 200").optional(),
+});
+
+export const eanListSchema = z.array(z.string().regex(EAN_REGEX, 'ean must have 8-14 digits')).min(1).max(500);
 
 export function assertAdminToken(request: Request, expectedToken: string): boolean {
   const authHeader = request.headers.get('Authorization');

@@ -1,16 +1,23 @@
 import { buildEtag, shouldReturnNotModified, storeInCache } from './cache';
 import {
   applySimpleRateLimit,
+  ensureDefaultSources,
   getAggregateFingerprint,
   getPriceAggregates,
   getProduct,
   getRecentObservations,
   insertObservationAndRefreshAggregate,
+  listFetchJobs,
   upsertProduct,
 } from './db';
 import { withCors } from './cors';
+import { getEnabledConnectorsForTerritory } from './connectors/registry';
+import { createJob, runJob } from './fetch/runner';
+import { selectEansToRefresh } from './fetch/selectors';
 import type { Env, PriceAggregateRecord, PriceObservationRecord, PriceStatus, PricesResponse, ProductResponse } from './types';
 import {
+  adminFetchJobsQuerySchema,
+  adminFetchRunSchema,
   adminObservationSchema,
   adminProductSchema,
   assertAdminToken,
@@ -164,6 +171,21 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
       );
     }
 
+    if (request.method === 'GET' && url.pathname === '/v1/admin/fetch/jobs') {
+      if (!assertAdminToken(request, env.PRICE_ADMIN_TOKEN)) {
+        return withCors(json({ error: 'unauthorized' }, 401), origin, env);
+      }
+
+      const parsed = adminFetchJobsQuerySchema.parse(Object.fromEntries(url.searchParams.entries()));
+      const jobs = await listFetchJobs(env.PRICE_DB, {
+        territory: parsed.territory,
+        sourceId: parsed.sourceId,
+        limit: parsed.limit,
+      });
+
+      return withCors(json({ status: 'OK', jobs }, 200), origin, env);
+    }
+
     if (request.method === 'POST' && url.pathname.startsWith('/v1/admin/')) {
       if (!assertAdminToken(request, env.PRICE_ADMIN_TOKEN)) {
         return withCors(json({ error: 'unauthorized' }, 401), origin, env);
@@ -199,6 +221,21 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
         });
 
         return withCors(json({ status: 'OK', ean: body.ean }, 201), origin, env);
+      }
+
+      if (url.pathname === '/v1/admin/fetch/run') {
+        const body = adminFetchRunSchema.parse(await request.json());
+        await ensureDefaultSources(env.PRICE_DB);
+        const sourceId = body.sourceId ?? getEnabledConnectorsForTerritory(body.territory)[0]?.id ?? 'backoffice';
+        const eans = await selectEansToRefresh(env.PRICE_DB, body.limit ?? 25);
+        const jobId = await createJob(env, sourceId, body.territory);
+        const result = await runJob(env, jobId, { eans });
+
+        return withCors(
+          json({ status: 'OK', jobId, sourceId, territory: body.territory, selectedEans: eans.length, result }, 200),
+          origin,
+          env,
+        );
       }
 
       if (url.pathname === '/v1/admin/seed') {

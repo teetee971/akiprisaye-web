@@ -5,6 +5,8 @@ export type Territory = (typeof TERRITORIES)[number];
 export type Retailer = (typeof RETAILERS)[number] | string;
 export type Currency = 'EUR';
 export type PriceStatus = 'OK' | 'NO_DATA' | 'PARTIAL' | 'UNAVAILABLE';
+export type FetchJobStatus = 'queued' | 'running' | 'success' | 'partial' | 'failed';
+export type FetchJobItemStatus = 'ok' | 'no_data' | 'invalid' | 'error';
 
 export interface Env {
   PRICE_DB: D1Database;
@@ -52,6 +54,34 @@ export interface PriceObservationRecord {
   confidence: number;
   metadata_json: string | null;
   created_at: string;
+}
+
+export interface SourceRecord {
+  id: string;
+  name: string;
+  type: 'partner_api' | 'open_data' | 'backoffice';
+  base_url: string | null;
+  auth_type: 'none' | 'bearer' | 'api_key';
+  enabled: number;
+  territory_scope: string;
+  created_at: string;
+}
+
+export interface FetchJobRecord {
+  id: string;
+  source_id: string;
+  territory: Territory;
+  status: FetchJobStatus;
+  started_at: string | null;
+  finished_at: string | null;
+  error: string | null;
+}
+
+export interface FetchJobListRecord extends FetchJobRecord {
+  ok_count: number;
+  no_data_count: number;
+  error_count: number;
+  invalid_count: number;
 }
 
 export interface ApiResponseBase {

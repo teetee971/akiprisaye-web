@@ -1,8 +1,12 @@
 import type {
+  FetchJobListRecord,
+  FetchJobRecord,
+  FetchJobStatus,
   InsertObservationInput,
   PriceAggregateRecord,
   PriceObservationRecord,
   ProductRecord,
+  SourceRecord,
   Territory,
 } from './types';
 
@@ -127,10 +131,7 @@ export async function upsertProduct(
     .run();
 }
 
-export async function insertObservationAndRefreshAggregate(
-  db: D1Database,
-  input: InsertObservationInput,
-): Promise<void> {
+export async function insertObservationAndRefreshAggregate(db: D1Database, input: InsertObservationInput): Promise<void> {
   const priceCents = Math.round(input.price * 100);
   const observedAt = input.observedAt ?? new Date().toISOString();
   const id = crypto.randomUUID();
@@ -288,12 +289,7 @@ export async function refreshAggregate(
     .run();
 }
 
-export async function applySimpleRateLimit(
-  db: D1Database,
-  key: string,
-  limit = 60,
-  windowSeconds = 60,
-): Promise<boolean> {
+export async function applySimpleRateLimit(db: D1Database, key: string, limit = 60, windowSeconds = 60): Promise<boolean> {
   const now = new Date();
   const currentWindow = new Date(Math.floor(now.getTime() / (windowSeconds * 1000)) * windowSeconds * 1000).toISOString();
 
@@ -321,4 +317,163 @@ export async function applySimpleRateLimit(
 
   await db.prepare('UPDATE rate_limits SET count = count + 1 WHERE key = ?').bind(key).run();
   return true;
+}
+
+export async function upsertSource(db: D1Database, source: Omit<SourceRecord, 'created_at'>): Promise<void> {
+  await db
+    .prepare(
+      `INSERT INTO sources (id, name, type, base_url, auth_type, enabled, territory_scope, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'))
+       ON CONFLICT(id) DO UPDATE SET
+         name = excluded.name,
+         type = excluded.type,
+         base_url = excluded.base_url,
+         auth_type = excluded.auth_type,
+         enabled = excluded.enabled,
+         territory_scope = excluded.territory_scope`,
+    )
+    .bind(source.id, source.name, source.type, source.base_url, source.auth_type, source.enabled, source.territory_scope)
+    .run();
+}
+
+export async function ensureDefaultSources(db: D1Database): Promise<void> {
+  const defaults: Omit<SourceRecord, 'created_at'>[] = [
+    {
+      id: 'backoffice',
+      name: 'Backoffice Placeholder',
+      type: 'backoffice',
+      base_url: null,
+      auth_type: 'none',
+      enabled: 1,
+      territory_scope: 'fr,gp,mq',
+    },
+    {
+      id: 'open_data_dummy',
+      name: 'Open Data Dummy',
+      type: 'open_data',
+      base_url: null,
+      auth_type: 'none',
+      enabled: 1,
+      territory_scope: 'fr,gp,mq',
+    },
+  ];
+
+  for (const source of defaults) {
+    await upsertSource(db, source);
+  }
+}
+
+export async function createFetchJob(db: D1Database, sourceId: string, territory: Territory): Promise<string> {
+  const id = crypto.randomUUID();
+  await db.prepare('INSERT INTO fetch_jobs (id, source_id, territory, status) VALUES (?, ?, ?, ?)').bind(id, sourceId, territory, 'queued').run();
+  return id;
+}
+
+export async function getFetchJob(db: D1Database, jobId: string): Promise<FetchJobRecord | null> {
+  return db.prepare('SELECT * FROM fetch_jobs WHERE id = ?').bind(jobId).first<FetchJobRecord>();
+}
+
+export async function updateFetchJobStatus(
+  db: D1Database,
+  jobId: string,
+  status: FetchJobStatus,
+  patch?: { startedAt?: string; finishedAt?: string; error?: string | null },
+): Promise<void> {
+  await db
+    .prepare(
+      `UPDATE fetch_jobs
+       SET status = ?,
+           started_at = COALESCE(?, started_at),
+           finished_at = COALESCE(?, finished_at),
+           error = ?
+       WHERE id = ?`,
+    )
+    .bind(status, patch?.startedAt ?? null, patch?.finishedAt ?? null, patch?.error ?? null, jobId)
+    .run();
+}
+
+export async function insertFetchJobItem(
+  db: D1Database,
+  input: {
+    jobId: string;
+    ean: string;
+    retailer?: string;
+    status: 'ok' | 'no_data' | 'invalid' | 'error';
+    rawRef?: string;
+    rawPayloadJson?: string;
+    observedPriceCents?: number;
+    currency?: string;
+    unit?: string;
+    observedAt?: string;
+  },
+): Promise<void> {
+  await db
+    .prepare(
+      `INSERT INTO fetch_job_items (
+        id, job_id, ean, retailer, status, raw_ref, raw_payload_json,
+        observed_price_cents, currency, unit, observed_at, created_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))`,
+    )
+    .bind(
+      crypto.randomUUID(),
+      input.jobId,
+      input.ean,
+      input.retailer ?? null,
+      input.status,
+      input.rawRef ?? null,
+      input.rawPayloadJson ?? null,
+      input.observedPriceCents ?? null,
+      input.currency ?? null,
+      input.unit ?? null,
+      input.observedAt ?? null,
+    )
+    .run();
+}
+
+export async function listFetchJobs(
+  db: D1Database,
+  filters: { territory?: Territory; sourceId?: string; limit?: number },
+): Promise<FetchJobListRecord[]> {
+  let sql = `
+    SELECT
+      j.*,
+      SUM(CASE WHEN i.status = 'ok' THEN 1 ELSE 0 END) AS ok_count,
+      SUM(CASE WHEN i.status = 'no_data' THEN 1 ELSE 0 END) AS no_data_count,
+      SUM(CASE WHEN i.status = 'error' THEN 1 ELSE 0 END) AS error_count,
+      SUM(CASE WHEN i.status = 'invalid' THEN 1 ELSE 0 END) AS invalid_count
+    FROM fetch_jobs j
+    LEFT JOIN fetch_job_items i ON i.job_id = j.id
+    WHERE 1=1
+  `;
+  const binds: (string | number)[] = [];
+
+  if (filters.territory) {
+    sql += ' AND j.territory = ?';
+    binds.push(filters.territory);
+  }
+
+  if (filters.sourceId) {
+    sql += ' AND j.source_id = ?';
+    binds.push(filters.sourceId);
+  }
+
+  sql += ' GROUP BY j.id ORDER BY COALESCE(j.started_at, j.finished_at) DESC, j.id DESC LIMIT ?';
+  binds.push(filters.limit ?? 20);
+
+  const { results } = await db.prepare(sql).bind(...binds).all<FetchJobListRecord>();
+  return (results ?? []).map((item) => ({
+    ...item,
+    ok_count: Number(item.ok_count ?? 0),
+    no_data_count: Number(item.no_data_count ?? 0),
+    error_count: Number(item.error_count ?? 0),
+    invalid_count: Number(item.invalid_count ?? 0),
+  }));
+}
+
+export async function selectKnownEans(db: D1Database, limit: number): Promise<string[]> {
+  const { results } = await db
+    .prepare('SELECT ean FROM products ORDER BY updated_at DESC LIMIT ?')
+    .bind(limit)
+    .all<{ ean: string }>();
+  return (results ?? []).map((item) => item.ean);
 }
