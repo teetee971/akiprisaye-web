@@ -1,6 +1,7 @@
 import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
+import { useTiPanier } from '../../hooks/useTiPanier';
 
 const links = [
   { to: '/search', label: 'Recherche' },
@@ -14,6 +15,7 @@ const links = [
 
 export default function Header() {
   const [open, setOpen] = useState(false);
+  const { count } = useTiPanier('comparison');
 
   return (
     <header className="sticky top-0 z-40 border-b border-slate-800 bg-slate-950/95 backdrop-blur">
@@ -47,6 +49,19 @@ export default function Header() {
                 </NavLink>
               </li>
             ))}
+
+            <li>
+              <NavLink
+                to="/comparaison-panier"
+                onClick={() => setOpen(false)}
+                className={({ isActive }) =>
+                  `flex items-center justify-between rounded-lg px-3 py-2 text-sm ${isActive ? 'bg-slate-800 text-white' : 'text-slate-200'}`
+                }
+              >
+                <span>Panier</span>
+                <span className="rounded-full bg-blue-600 px-2 py-0.5 text-xs text-white">{count}</span>
+              </NavLink>
+            </li>
           </ul>
         </nav>
       )}

@@ -1,16 +1,19 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-
-const actions = [
-  { to: '/search', label: 'Rechercher' },
-  { to: '/scan?mode=ean', label: 'Scanner EAN' },
-  { to: '/scan?mode=ticket', label: 'Scanner ticket' },
-  { to: '/faq', label: 'Aide' },
-];
+import { useTiPanier } from '../../hooks/useTiPanier';
 
 export default function FabActions() {
   const [open, setOpen] = useState(false);
   const [compact, setCompact] = useState(false);
+  const { count } = useTiPanier('comparison');
+
+  const actions = [
+    { to: '/comparaison-panier', label: count > 0 ? `Voir panier (${count})` : 'Voir panier' },
+    { to: '/search', label: 'Rechercher' },
+    { to: '/scan?mode=ean', label: 'Scanner EAN' },
+    { to: '/scan?mode=ticket', label: 'Scanner ticket' },
+    { to: '/faq', label: 'Aide' },
+  ];
 
   useEffect(() => {
     const onScroll = () => setCompact(window.scrollY > window.innerHeight * 0.25);

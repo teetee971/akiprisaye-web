@@ -24,6 +24,7 @@ import CheapestProductsSection from '../components/store/CheapestProductsSection
 import { useTiPanier } from '../hooks/useTiPanier';
 import { requestGeolocation } from '../utils/geolocationEnhanced';
 import { calculateDistance } from '../utils/geoLocation';
+import NavigateButtons from '../components/NavigateButtons';
 
 export default function StoreDetail() {
   const { storeId } = useParams<{ storeId: string }>();
@@ -84,7 +85,6 @@ export default function StoreDetail() {
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
         <div className="max-w-md bg-slate-900 rounded-xl p-6 text-center">
-          <div className="text-5xl mb-4">🏪</div>
           <h2 className="text-xl font-semibold text-white mb-2">Enseigne non trouvée</h2>
           <p className="text-gray-300 mb-4">
             Cette enseigne n'existe pas ou a été supprimée de notre base de données.
@@ -105,8 +105,7 @@ export default function StoreDetail() {
       <div className="max-w-7xl mx-auto">
         {/* Neutral Banner - Credibility */}
         <div className="bg-blue-900/20 border border-blue-700/50 rounded-xl p-5 mb-6">
-          <div className="flex items-start gap-4">
-            <span className="text-3xl">🏛️</span>
+          <div className="flex items-start">
             <div className="flex-1">
               <h2 className="text-lg font-semibold text-blue-200 mb-2">
                 Données issues de sources publiques et d'observations citoyennes
@@ -131,9 +130,6 @@ export default function StoreDetail() {
             <div className="flex items-start justify-between flex-wrap gap-4">
               <div className="flex-1 min-w-[300px]">
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center text-2xl">
-                    🏪
-                  </div>
                   <div>
                     <h1 className="text-2xl font-bold text-white">{store.name}</h1>
                     <p className="text-gray-400 text-sm">{store.chain}</p>
@@ -142,18 +138,15 @@ export default function StoreDetail() {
                 
                 <div className="space-y-2 text-sm">
                   <div className="flex items-center gap-2 text-gray-300">
-                    <span className="text-gray-500">📍</span>
                     <span>{store.address}, {store.postalCode} {store.city}</span>
                   </div>
                   <div className="flex items-center gap-2 text-gray-300">
-                    <span className="text-gray-500">🌍</span>
                     <span className="px-2 py-0.5 bg-blue-900/30 text-blue-300 rounded">
                       {store.territory}
                     </span>
                   </div>
                   {store.phone && (
                     <div className="flex items-center gap-2 text-gray-300">
-                      <span className="text-gray-500">📞</span>
                       <a href={`tel:${store.phone}`} className="hover:text-blue-400 transition-colors">
                         {store.phone}
                       </a>
@@ -161,7 +154,6 @@ export default function StoreDetail() {
                   )}
                   {distance !== null && (
                     <div className="flex items-center gap-2 text-gray-300">
-                      <span className="text-gray-500">📏</span>
                       <span>
                         {distance < 1 
                           ? `${Math.round(distance * 1000)} m` 
@@ -180,7 +172,7 @@ export default function StoreDetail() {
                       ? 'bg-green-900/30 text-green-300 border border-green-700'
                       : 'bg-red-900/30 text-red-300 border border-red-700'
                   }`}>
-                    {store.isCompanyActive ? '✅ Entreprise active' : '⚠️ Entreprise cessée'}
+                    {store.isCompanyActive ? 'Entreprise active' : 'Entreprise cessée'}
                   </div>
                 )}
                 
@@ -195,23 +187,24 @@ export default function StoreDetail() {
             {/* Action Buttons - PROMPT 7 */}
             <div className="mt-4 pt-4 border-t border-slate-800 flex flex-wrap gap-3">
               {store.coordinates && (
-                <a
-                  href={`https://www.google.com/maps/dir/?api=1&destination=${store.coordinates.lat},${store.coordinates.lon}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1 min-w-[200px] px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
-                >
-                  <span>🧭</span>
-                  <span>Y aller (GPS)</span>
-                </a>
+                <div className="flex-1 min-w-[220px]">
+                  <p className="mb-2 text-xs uppercase tracking-wide text-slate-400">Y aller</p>
+                  <NavigateButtons lat={store.coordinates.lat} lng={store.coordinates.lon} />
+                </div>
               )}
+
+              <Link
+                to={`/contribuer-prix?storeId=${store.id}`}
+                className="flex-1 min-w-[200px] px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+              >
+                <span>Contribuer prix ici</span>
+              </Link>
               
               {basketCount > 0 && (
                 <Link
-                  to={`/comparer-panier?storeId=${store.id}`}
+                  to={`/comparaison-panier?storeId=${store.id}`}
                   className="flex-1 min-w-[200px] px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
                 >
-                  <span>🛒</span>
                   <span>Comparer avec mon panier ({basketCount})</span>
                 </Link>
               )}
@@ -221,8 +214,7 @@ export default function StoreDetail() {
 
         {/* Disclaimer */}
         <div className="bg-amber-900/20 border border-amber-700/50 rounded-lg p-4 mb-6">
-          <div className="flex items-start gap-3">
-            <span className="text-2xl">ℹ️</span>
+          <div className="flex items-start">
             <div className="flex-1">
               <p className="text-amber-200 text-sm font-medium mb-1">
                 Outil d'observation - Aucun conseil

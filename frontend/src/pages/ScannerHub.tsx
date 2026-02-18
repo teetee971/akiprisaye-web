@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { BrowserMultiFormatReader } from '@zxing/browser';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { pickBestBackCameraDeviceId } from '../utils/cameraUtils';
 
 type ScanStatus =
   | 'idle'
@@ -11,20 +12,54 @@ type ScanStatus =
   | 'notDetectedTimeout'
   | 'success'
   | 'errorNetwork'
-  | 'notFound';
+  | 'notFound'
+  | 'invalidBarcode';
 
 type ScannerControls = {
   stop: () => void;
   switchTorch?: (on: boolean) => Promise<void>;
 };
 
-const EAN_REGEX = /^[0-9]{8,14}$/;
+const EAN13_REGEX = /^\d{13}$/;
+const EAN8_REGEX = /^\d{8}$/;
+const UPC_A_REGEX = /^\d{12}$/;
+const GTIN14_REGEX = /^\d{14}$/;
 const SCAN_TIMEOUT_MS = 10_000;
 const SUCCESS_LOCK_MS = 1_500;
 const UI_COOLDOWN_MS = 1_500;
 
+function hasValidCheckDigit(code: string): boolean {
+  if (!/^\d+$/.test(code) || code.length < 8) {
+    return false;
+  }
+
+  const digits = code.split('').map(Number);
+  const checkDigit = digits.pop() as number;
+  const weightedSum = digits
+    .slice()
+    .reverse()
+    .reduce((accumulator, digit, index) => {
+      return accumulator + digit * (index % 2 === 0 ? 3 : 1);
+    }, 0);
+  const computed = (10 - (weightedSum % 10)) % 10;
+
+  return computed === checkDigit;
+}
+
+function normalizeAndValidateGtin(rawCode: string): string | null {
+  const code = rawCode.replace(/\D/g, '');
+
+  if (EAN8_REGEX.test(code) || UPC_A_REGEX.test(code) || EAN13_REGEX.test(code) || GTIN14_REGEX.test(code)) {
+    return hasValidCheckDigit(code) ? code : null;
+  }
+
+  return null;
+}
+
 export default function ScannerHub() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const debugEnabled = new URLSearchParams(location.search).get('debug') === '1';
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const readerRef = useRef<BrowserMultiFormatReader | null>(null);
@@ -32,12 +67,19 @@ export default function ScannerHub() {
   const streamRef = useRef<MediaStream | null>(null);
   const timeoutRef = useRef<number | null>(null);
   const successLockRef = useRef<number | null>(null);
+  const cameraRetryTimeoutRef = useRef<number | null>(null);
+  const detectionCountRef = useRef(0);
+  const resultCountRef = useRef(0);
+  const lastAcceptedDetectionAtRef = useRef(0);
+  const lastDetectionTimestampsRef = useRef<Record<string, number>>({});
   const startingRef = useRef(false);
   const lastUiEmitRef = useRef<{ code: string; at: number } | null>(null);
 
   const [status, setStatus] = useState<ScanStatus>('idle');
   const [lastDetectedCode, setLastDetectedCode] = useState<string | null>(null);
+  const [lastRawDetectedCode, setLastRawDetectedCode] = useState<string | null>(null);
   const [stableCounter, setStableCounter] = useState(0);
+  const [resultCount, setResultCount] = useState(0);
   const [manualInputVisible, setManualInputVisible] = useState(false);
   const [manualEAN, setManualEAN] = useState('');
   const [manualError, setManualError] = useState<string | null>(null);
@@ -46,6 +88,11 @@ export default function ScannerHub() {
   const [successOverlayVisible, setSuccessOverlayVisible] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
+  const [selectedDeviceId, setSelectedDeviceId] = useState<string>('fallback');
+  const [zoomApplied, setZoomApplied] = useState(false);
+  const [zoomValue, setZoomValue] = useState<number | null>(null);
+  const [cameraInputsDebug, setCameraInputsDebug] = useState<string[]>([]);
+  const barcodeSupport = typeof window !== 'undefined' && 'BarcodeDetector' in window;
 
   const stopCamera = useCallback(() => {
     controlsRef.current?.stop();
@@ -54,6 +101,11 @@ export default function ScannerHub() {
     if (timeoutRef.current !== null) {
       window.clearTimeout(timeoutRef.current);
       timeoutRef.current = null;
+    }
+
+    if (cameraRetryTimeoutRef.current !== null) {
+      window.clearTimeout(cameraRetryTimeoutRef.current);
+      cameraRetryTimeoutRef.current = null;
     }
 
     const stream = streamRef.current ?? (videoRef.current?.srcObject instanceof MediaStream ? videoRef.current.srcObject : null);
@@ -73,15 +125,30 @@ export default function ScannerHub() {
 
   const canFinalize = () => successLockRef.current === null;
 
+  const scheduleNotDetectedTimeout = useCallback(() => {
+    if (timeoutRef.current !== null) {
+      window.clearTimeout(timeoutRef.current);
+    }
+
+    timeoutRef.current = window.setTimeout(() => {
+      if (successLockRef.current === null && resultCountRef.current === 0) {
+        setStatus('notDetectedTimeout');
+        setManualInputVisible(true);
+      }
+    }, SCAN_TIMEOUT_MS);
+  }, []);
+
   const finalizeScan = useCallback(
     (rawCode: string) => {
       if (!canFinalize()) {
         return;
       }
 
-      const code = rawCode.replace(/\D/g, '');
-      if (!EAN_REGEX.test(code)) {
-        setStatus('notFound');
+      const code = normalizeAndValidateGtin(rawCode);
+      if (!code) {
+        setStatus('invalidBarcode');
+        setManualInputVisible(true);
+        setManualError('Code-barres invalide (8/12/13/14 chiffres + check digit).');
         return;
       }
 
@@ -123,7 +190,18 @@ export default function ScannerHub() {
 
   const resetForNewScan = useCallback(() => {
     setLastDetectedCode(null);
+    setLastRawDetectedCode(null);
     setStableCounter(0);
+    setResultCount(0);
+    resultCountRef.current = 0;
+    detectionCountRef.current = 0;
+    lastAcceptedDetectionAtRef.current = 0;
+    lastDetectionTimestampsRef.current = {};
+    setSelectedDeviceId('fallback');
+    setZoomApplied(false);
+    setZoomValue(null);
+    setCameraInputsDebug([]);
+    lastUiEmitRef.current = null;
     setManualError(null);
     setSuccessOverlayVisible(false);
     if (status !== 'permissionDenied' && status !== 'cameraNotFound') {
@@ -158,61 +236,191 @@ export default function ScannerHub() {
       setStatus('scanning');
       setIsScanning(true);
 
-      const controls = await readerRef.current.decodeFromConstraints(
-        {
-          video: { facingMode: { ideal: 'environment' } },
-          audio: false,
-        },
-        videoRef.current,
-        (result) => {
-          const text = result?.getText()?.trim();
-          if (!text) {
-            return;
-          }
+      const cameraSelection = await pickBestBackCameraDeviceId();
+      const reversedDeviceIds = cameraSelection.videoInputs.map((device) => device.deviceId).reverse();
+      const cameraAttemptIds = cameraSelection.selectedDeviceId
+        ? [cameraSelection.selectedDeviceId, ...reversedDeviceIds.filter((deviceId) => deviceId !== cameraSelection.selectedDeviceId)]
+        : reversedDeviceIds;
 
-          const code = text.replace(/\D/g, '');
-          if (!EAN_REGEX.test(code)) {
-            return;
-          }
-
-          const now = Date.now();
-          const lastUiEmit = lastUiEmitRef.current;
-          if (lastUiEmit && lastUiEmit.code === code && now - lastUiEmit.at < UI_COOLDOWN_MS) {
-            return;
-          }
-
-          lastUiEmitRef.current = { code, at: now };
-
-          setLastDetectedCode((previousCode) => {
-            if (previousCode === code) {
-              setStableCounter((previousCounter) => {
-                return previousCounter + 1;
-              });
-              return previousCode;
-            }
-
-            setStableCounter(1);
-            return code;
-          });
-
-          setStatus('scanning');
-        }
+      setCameraInputsDebug(
+        cameraSelection.videoInputs.map((device) => `${device.label || '(label indisponible)'} [${device.deviceId}]`)
       );
 
-      controlsRef.current = controls as ScannerControls;
-
-      const media = videoRef.current.srcObject;
-      if (media instanceof MediaStream) {
-        streamRef.current = media;
-        detectTorchSupport();
-      }
-
-      timeoutRef.current = window.setTimeout(() => {
-        if (canFinalize()) {
-          setStatus('notDetectedTimeout');
-          setManualInputVisible(true);
+      const runAttempt = async (attemptIndex: number): Promise<void> => {
+        if (!videoRef.current || !readerRef.current) {
+          return;
         }
-      }, SCAN_TIMEOUT_MS);
+
+        const attemptDeviceId = cameraAttemptIds[attemptIndex] ?? null;
+        const videoConstraints = attemptDeviceId
+          ? {
+              deviceId: { exact: attemptDeviceId },
+              width: { ideal: 1280 },
+              height: { ideal: 720 },
+            }
+          : {
+              facingMode: { ideal: 'environment' as const },
+              width: { ideal: 1280 },
+              height: { ideal: 720 },
+            };
+
+        setSelectedDeviceId(attemptDeviceId ?? 'fallback');
+
+        if (debugEnabled) {
+          console.info('[ScannerHub][debug] Démarrage scan', {
+            selectedDeviceId: attemptDeviceId ?? 'fallback',
+            tryingDeviceIndex: attemptIndex,
+            videoInputs: cameraSelection.videoInputs.map((device) => device.label || '(label indisponible)'),
+            constraints: videoConstraints,
+          });
+        }
+
+        const controls = await readerRef.current.decodeFromConstraints(
+          {
+            video: videoConstraints,
+            audio: false,
+          },
+          videoRef.current,
+          (result) => {
+            const text = result?.getText()?.trim();
+            if (!text) {
+              return;
+            }
+
+            setLastRawDetectedCode(text);
+
+            const code = normalizeAndValidateGtin(text);
+            if (!code) {
+              return;
+            }
+
+            const now = Date.now();
+            const lastSameCodeAt = lastDetectionTimestampsRef.current[code] ?? 0;
+            if (now - lastSameCodeAt < 500) {
+              return;
+            }
+
+            if (now - lastAcceptedDetectionAtRef.current < 700) {
+              return;
+            }
+
+            lastDetectionTimestampsRef.current[code] = now;
+            lastAcceptedDetectionAtRef.current = now;
+
+            detectionCountRef.current += 1;
+            resultCountRef.current += 1;
+            setResultCount(resultCountRef.current);
+            setManualInputVisible(false);
+            scheduleNotDetectedTimeout();
+
+            setLastDetectedCode((previousCode) => {
+              if (previousCode === code) {
+                setStableCounter((previousCounter) => {
+                  return previousCounter + 1;
+                });
+                return previousCode;
+              }
+
+              setStableCounter(1);
+              return code;
+            });
+
+            const lastUiEmit = lastUiEmitRef.current;
+            if (!lastUiEmit || lastUiEmit.code !== code || now - lastUiEmit.at >= UI_COOLDOWN_MS) {
+              lastUiEmitRef.current = { code, at: now };
+
+              if (debugEnabled) {
+                console.info('[ScannerHub][debug] Détection valide', { code });
+              }
+            }
+
+            setStatus('scanning');
+          }
+        );
+
+        controlsRef.current = controls as ScannerControls;
+
+        const media = videoRef.current.srcObject;
+        if (media instanceof MediaStream) {
+          streamRef.current = media;
+          detectTorchSupport();
+
+          const [track] = media.getVideoTracks();
+          if (track && typeof track.getCapabilities === 'function') {
+            const capabilities = track.getCapabilities() as MediaTrackCapabilities & {
+              zoom?: { min?: number; max?: number };
+              torch?: boolean;
+            };
+
+            let applied = false;
+            let appliedZoomValue: number | null = null;
+            const zoomCapabilities = capabilities.zoom;
+            if (zoomCapabilities && typeof track.applyConstraints === 'function') {
+              const minZoom = typeof zoomCapabilities.min === 'number' ? zoomCapabilities.min : 1;
+              const maxZoom = typeof zoomCapabilities.max === 'number' ? zoomCapabilities.max : 2;
+              const targetZoom = Math.max(minZoom, Math.min(maxZoom, 2));
+
+              try {
+                await track.applyConstraints({ advanced: [{ zoom: targetZoom }] });
+                applied = true;
+                appliedZoomValue = targetZoom;
+              } catch {
+                applied = false;
+                appliedZoomValue = null;
+              }
+            }
+
+            setZoomApplied(applied);
+            setZoomValue(appliedZoomValue);
+
+            if (debugEnabled) {
+              console.info('[ScannerHub][debug] Capacités caméra', {
+                zoom: zoomCapabilities,
+                torch: capabilities.torch,
+                zoomApplied: applied,
+                zoomValue: appliedZoomValue,
+              });
+            }
+          } else {
+            setZoomApplied(false);
+            setZoomValue(null);
+          }
+        }
+
+        scheduleNotDetectedTimeout();
+
+        if (cameraAttemptIds.length > 1 && attemptIndex < cameraAttemptIds.length - 1) {
+          if (cameraRetryTimeoutRef.current !== null) {
+            window.clearTimeout(cameraRetryTimeoutRef.current);
+          }
+
+          cameraRetryTimeoutRef.current = window.setTimeout(async () => {
+            if (detectionCountRef.current > 0 || successLockRef.current !== null) {
+              return;
+            }
+
+            if (debugEnabled) {
+              console.info('[ScannerHub][debug] Aucun résultat, tentative caméra suivante', {
+                nextDeviceIndex: attemptIndex + 1,
+                nextDeviceId: cameraAttemptIds[attemptIndex + 1],
+              });
+            }
+
+            stopCamera();
+            setStatus('scanning');
+            setIsScanning(true);
+
+            try {
+              await runAttempt(attemptIndex + 1);
+            } catch {
+              setStatus('cameraNotFound');
+              setManualInputVisible(true);
+            }
+          }, 2_500);
+        }
+      };
+
+      await runAttempt(0);
     } catch (error) {
       stopCamera();
       const message = error instanceof Error ? error.message : '';
@@ -235,13 +443,50 @@ export default function ScannerHub() {
       startingRef.current = false;
       setIsStarting(false);
     }
-  }, [detectTorchSupport, isScanning, resetForNewScan, stopCamera]);
+  }, [debugEnabled, detectTorchSupport, isScanning, resetForNewScan, scheduleNotDetectedTimeout, stopCamera]);
+
+  useEffect(() => {
+    if (!isScanning || !lastDetectedCode || stableCounter < 2) {
+      return;
+    }
+
+    finalizeScan(lastDetectedCode);
+  }, [finalizeScan, isScanning, lastDetectedCode, stableCounter]);
+
+  useEffect(() => {
+    if (!debugEnabled) {
+      return;
+    }
+
+    console.info('[ScannerHub][debug] État scanner', {
+      barcodeSupport,
+      cameraError: status,
+      scanActive: isScanning,
+      lastSeen: lastDetectedCode,
+      lastRawDetectedCode,
+      resultCount,
+      selectedDeviceId,
+      zoomApplied,
+      zoomValue,
+    });
+  }, [
+    barcodeSupport,
+    debugEnabled,
+    isScanning,
+    lastDetectedCode,
+    lastRawDetectedCode,
+    resultCount,
+    selectedDeviceId,
+    status,
+    zoomApplied,
+    zoomValue,
+  ]);
 
   const handleManualSearch = useCallback(() => {
-    const normalized = manualEAN.replace(/\D/g, '');
+    const normalized = normalizeAndValidateGtin(manualEAN);
 
-    if (!EAN_REGEX.test(normalized)) {
-      setManualError('Code EAN invalide. Entrez 8 à 14 chiffres.');
+    if (!normalized) {
+      setManualError('Code-barres invalide (8/12/13/14 chiffres + check digit).');
       return;
     }
 
@@ -360,6 +605,24 @@ export default function ScannerHub() {
             <p>Validation stable: {stableCounter}/2</p>
           </div>
 
+          {debugEnabled && (
+            <div className="mt-4 rounded-xl border border-cyan-700 bg-cyan-950/30 p-3 text-sm text-cyan-100">
+              <h2 className="mb-2 text-base font-semibold">Debug</h2>
+              <ul className="space-y-1">
+                <li>barcodeSupport: {String(barcodeSupport)}</li>
+                <li>cameraError: {status}</li>
+                <li>scanActive: {String(isScanning)}</li>
+                <li>lastSeen: {lastDetectedCode ?? '—'}</li>
+                <li>dernier raw détecté: {lastRawDetectedCode ?? '—'}</li>
+                <li>results: {resultCount}</li>
+                <li>selectedDeviceId: {selectedDeviceId}</li>
+                <li>zoomApplied: {String(zoomApplied)}{zoomValue !== null ? ` (${zoomValue}x)` : ''}</li>
+                <li>videoInputs: {cameraInputsDebug.length}</li>
+                <li>videoInputsLabels: {cameraInputsDebug.slice(0, 3).join(' | ') || '—'}</li>
+              </ul>
+            </div>
+          )}
+
           {status === 'permissionDenied' && (
             <p className="mt-3 rounded-lg border border-red-700 bg-red-500/10 p-3 text-sm text-red-200">
               Permission caméra refusée. Utilisez la saisie manuelle.
@@ -384,10 +647,17 @@ export default function ScannerHub() {
             </p>
           )}
 
+
+          {status === 'invalidBarcode' && (
+            <p className="mt-3 rounded-lg border border-amber-700 bg-amber-500/10 p-3 text-sm text-amber-200">
+              Code-barres invalide. Vérifiez les chiffres et le check digit, ou ressaisissez le code manuellement.
+            </p>
+          )}
+
           {manualInputVisible && (
             <div className="mt-4 rounded-xl border border-slate-700 p-3">
               <label htmlFor="manual-ean" className="mb-2 block text-sm font-medium">
-                Code EAN (8 à 14 chiffres)
+                Code EAN (8, 12, 13 ou 14 chiffres)
               </label>
               <div className="flex flex-col gap-2 sm:flex-row">
                 <input

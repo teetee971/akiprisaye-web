@@ -149,17 +149,35 @@ export function useTiPanier(type: PanierType = 'comparison') {
   }, [type]);
 
   const addItem = useCallback((item: TiPanierItem) => {
+    const qtyRaw = typeof item.quantity === 'number' && Number.isFinite(item.quantity) ? Math.floor(item.quantity) : 1;
+    if (qtyRaw <= 0) {
+      return;
+    }
+
+    const qty = Math.max(1, qtyRaw);
+
     setItems((prev) => {
       const idx = prev.findIndex((p) => p.id === item.id);
-      const qty = typeof item.quantity === 'number' && Number.isFinite(item.quantity) ? Math.max(0, Math.floor(item.quantity)) : 1;
       if (idx === -1) {
         return [...prev, { ...item, quantity: qty }];
       }
       const updated = [...prev];
-      updated[idx] = { ...updated[idx], quantity: Math.max(0, updated[idx].quantity + qty), meta: item.meta ?? updated[idx].meta };
+      updated[idx] = { ...updated[idx], quantity: Math.max(1, updated[idx].quantity + qty), meta: item.meta ?? updated[idx].meta };
       return updated;
     });
-  }, []);
+
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(
+        new CustomEvent('ti-panier:item-added', {
+          detail: {
+            id: item.id,
+            quantity: qty,
+            type,
+          },
+        })
+      );
+    }
+  }, [type]);
 
   const removeItem = useCallback((id: string) => {
     setItems((prev) => prev.filter((p) => p.id !== id));

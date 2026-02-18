@@ -9,6 +9,7 @@ export default [
   {
     ignores: [
       'dist/**',
+      'frontend/dist/**',
       'node_modules/**',
       '*.config.js',
       '*.config.ts',

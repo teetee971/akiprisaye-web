@@ -33,7 +33,7 @@ const AdminLayout = lazyPage(() => import('./pages/admin/AdminLayout'));
 const AdminDashboardNew = lazyPage(() => import('./pages/admin/AdminDashboard'));
 const StoreList = lazyPage(() => import('./pages/admin/stores/StoreList'));
 const StoreForm = lazyPage(() => import('./pages/admin/stores/StoreForm'));
-const StoreDetail = lazyPage(() => import('./pages/admin/stores/StoreDetail'));
+const AdminStoreDetail = lazyPage(() => import('./pages/admin/stores/StoreDetail'));
 const ProductList = lazyPage(() => import('./pages/admin/products/ProductList').then(m => ({ default: m.ProductList })));
 const ProductForm = lazyPage(() => import('./pages/admin/products/ProductForm').then(m => ({ default: m.ProductForm })));
 const ProductDetail = lazyPage(() => import('./pages/admin/products/ProductDetail').then(m => ({ default: m.ProductDetail })));
@@ -67,6 +67,7 @@ const Settings = lazyPage(() => import('./pages/Settings'));
 const HistoriquePrix = lazyPage(() => import('./pages/HistoriquePrix'));
 const RecherchePrix = lazyPage(() => import('./pages/RecherchePrix'));
 const ProductDetailPage = lazyPage(() => import('./pages/ProductDetail'));
+const PublicStoreDetailPage = lazyPage(() => import('./pages/StoreQuickDetail'));
 const Alertes = lazyPage(() => import('./pages/Alertes'));
 const AlerteDetail = lazyPage(() => import('./pages/AlerteDetail'));
 const Promos = lazyPage(() => import('./pages/Promos'));
@@ -187,7 +188,7 @@ export default function App() {
                       <Route index element={<AdminDashboardNew />} />
                       <Route path="stores" element={<StoreList />} />
                       <Route path="stores/new" element={<StoreForm />} />
-                      <Route path="stores/:id" element={<StoreDetail />} />
+                      <Route path="stores/:id" element={<AdminStoreDetail />} />
                       <Route path="stores/:id/edit" element={<StoreForm />} />
                       <Route path="products" element={<ProductList />} />
                       <Route path="products/new" element={<ProductForm />} />
@@ -225,6 +226,7 @@ export default function App() {
                       {/* Scanner & OCR routes */}
                       <Route path="scan" element={<ScanPage />} />
                       <Route path="scanner" element={<ScannerHub />} />
+                      <Route path="dev/scanner" element={<ScannerHub />} />
                       <Route path="scan-ean" element={<ScanEAN />} />
                       <Route path="analyse-photo-produit" element={<ProductPhotoAnalysis />} />
                       <Route path="product/:barcode" element={<ProductScanResult />} />
@@ -240,6 +242,7 @@ export default function App() {
                       <Route path="historique-prix" element={<HistoriquePrix />} />
                       <Route path="historique" element={<HistoriquePrix />} />
                       <Route path="p/:id" element={<ProductDetailPage />} />
+                      <Route path="store/:storeId" element={<PublicStoreDetailPage />} />
                       <Route path="recherche-prix" element={<RecherchePrix />} />
                       <Route path="alertes" element={<Alertes />} />
                       <Route path="alertes/:id" element={<AlerteDetail />} />
