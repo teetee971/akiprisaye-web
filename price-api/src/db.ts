@@ -1,4 +1,9 @@
 import type {
+  ImportJobRecord,
+  ImportJobStatus,
+  ImportRowRecord,
+  ImportRowStatus,
+  InsertObservationCentsInput,
   InsertObservationInput,
   ProductCandidateRecord,
   PriceAggregateRecord,
@@ -98,6 +103,19 @@ export async function getProduct(db: D1Database, ean: string): Promise<ProductRe
   return db.prepare('SELECT * FROM products WHERE ean = ?').bind(ean).first<ProductRecord>();
 }
 
+export async function ensureProductExists(
+  db: D1Database,
+  input: {
+    ean: string;
+    quantity?: string;
+  },
+): Promise<void> {
+  await db
+    .prepare(`INSERT OR IGNORE INTO products (ean, product_name, quantity, updated_at) VALUES (?, NULL, ?, datetime('now'))`)
+    .bind(input.ean, input.quantity ?? null)
+    .run();
+}
+
 export async function upsertProduct(
   db: D1Database,
   input: {
@@ -133,7 +151,16 @@ export async function insertObservationAndRefreshAggregate(
   db: D1Database,
   input: InsertObservationInput,
 ): Promise<void> {
-  const priceCents = Math.round(input.price * 100);
+  await insertObservationCentsAndRefreshAggregate(db, {
+    ...input,
+    priceCents: Math.round(input.price * 100),
+  });
+}
+
+export async function insertObservationCentsAndRefreshAggregate(
+  db: D1Database,
+  input: InsertObservationCentsInput,
+): Promise<void> {
   const observedAt = input.observedAt ?? new Date().toISOString();
   const id = crypto.randomUUID();
 
@@ -151,7 +178,7 @@ export async function insertObservationAndRefreshAggregate(
       input.retailer,
       input.storeId ?? null,
       input.storeName ?? null,
-      priceCents,
+      input.priceCents,
       input.currency,
       input.unit ?? null,
       observedAt,
@@ -286,6 +313,92 @@ export async function refreshAggregate(
       stats.median_price_cents,
       stats.count_observations,
       stats.last_observed_at,
+    )
+    .run();
+}
+
+export async function createImportJob(
+  db: D1Database,
+  payload: { id: string; filename: string; r2Key: string; territory: Territory; status?: ImportJobStatus },
+): Promise<void> {
+  await db
+    .prepare(
+      `INSERT INTO import_jobs (id, filename, r2_key, territory, status, total_rows, success_rows, error_rows)
+       VALUES (?, ?, ?, ?, ?, 0, 0, 0)`,
+    )
+    .bind(payload.id, payload.filename, payload.r2Key, payload.territory, payload.status ?? 'queued')
+    .run();
+}
+
+export async function updateImportJobProgress(
+  db: D1Database,
+  payload: {
+    id: string;
+    status: ImportJobStatus;
+    totalRows: number;
+    successRows: number;
+    errorRows: number;
+    finished: boolean;
+  },
+): Promise<void> {
+  await db
+    .prepare(
+      `UPDATE import_jobs
+       SET status = ?, total_rows = ?, success_rows = ?, error_rows = ?, finished_at = CASE WHEN ? THEN datetime('now') ELSE NULL END
+       WHERE id = ?`,
+    )
+    .bind(payload.status, payload.totalRows, payload.successRows, payload.errorRows, payload.finished ? 1 : 0, payload.id)
+    .run();
+}
+
+export async function getImportJobs(db: D1Database, limit = 50): Promise<ImportJobRecord[]> {
+  const { results } = await db
+    .prepare('SELECT * FROM import_jobs ORDER BY created_at DESC LIMIT ?')
+    .bind(limit)
+    .all<ImportJobRecord>();
+  return results ?? [];
+}
+
+export async function getImportJobById(db: D1Database, jobId: string): Promise<ImportJobRecord | null> {
+  return db.prepare('SELECT * FROM import_jobs WHERE id = ?').bind(jobId).first<ImportJobRecord>();
+}
+
+export async function getImportRowsByJobId(db: D1Database, jobId: string, limit = 200): Promise<ImportRowRecord[]> {
+  const { results } = await db
+    .prepare('SELECT * FROM import_rows WHERE job_id = ? ORDER BY row_number ASC LIMIT ?')
+    .bind(jobId, limit)
+    .all<ImportRowRecord>();
+  return results ?? [];
+}
+
+export async function insertImportRow(
+  db: D1Database,
+  payload: {
+    jobId: string;
+    rowNumber: number;
+    ean?: string | null;
+    retailer?: string | null;
+    territory?: string | null;
+    priceCents?: number | null;
+    status: ImportRowStatus;
+    errorMessage?: string | null;
+  },
+): Promise<void> {
+  await db
+    .prepare(
+      `INSERT INTO import_rows (id, job_id, row_number, ean, retailer, territory, price_cents, status, error_message)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    )
+    .bind(
+      crypto.randomUUID(),
+      payload.jobId,
+      payload.rowNumber,
+      payload.ean ?? null,
+      payload.retailer ?? null,
+      payload.territory ?? null,
+      payload.priceCents ?? null,
+      payload.status,
+      payload.errorMessage ?? null,
     )
     .run();
 }

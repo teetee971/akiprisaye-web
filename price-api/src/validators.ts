@@ -74,7 +74,7 @@ export function assertAdminToken(request: Request, expectedToken: string): boole
 }
 
 export function validateRetailer(retailer: string): string {
-  const normalized = retailer.trim().toLowerCase();
+  const normalized = retailer.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   if (RETAILERS.includes(normalized as (typeof RETAILERS)[number])) {
     return normalized;
   }

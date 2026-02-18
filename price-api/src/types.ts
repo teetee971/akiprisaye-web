@@ -1,15 +1,18 @@
 export const TERRITORIES = ['fr', 'gp', 'mq'] as const;
-export const RETAILERS = ['carrefour', 'leclerc', 'intermarché', 'superu'] as const;
+export const RETAILERS = ['carrefour', 'leclerc', 'intermarché', 'intermarche', 'superu', 'auchan', 'match', 'autre'] as const;
 
 export type Territory = (typeof TERRITORIES)[number];
 export type Retailer = (typeof RETAILERS)[number] | string;
 export type Currency = 'EUR';
 export type PriceStatus = 'OK' | 'NO_DATA' | 'PARTIAL' | 'UNAVAILABLE';
+export type ImportJobStatus = 'queued' | 'running' | 'success' | 'partial' | 'failed';
+export type ImportRowStatus = 'ok' | 'invalid' | 'error';
 
 export interface Env {
   PRICE_DB: D1Database;
   PRICE_ADMIN_TOKEN: string;
   ALLOWED_ORIGINS?: string;
+  PRICE_IMPORTS: R2Bucket;
 }
 
 export interface ReceiptItemRecord {
@@ -71,6 +74,32 @@ export interface PriceObservationRecord {
   source: string;
   confidence: number;
   metadata_json: string | null;
+  created_at: string;
+}
+
+export interface ImportJobRecord {
+  id: string;
+  filename: string;
+  r2_key: string;
+  territory: Territory;
+  status: ImportJobStatus;
+  total_rows: number;
+  success_rows: number;
+  error_rows: number;
+  created_at: string;
+  finished_at: string | null;
+}
+
+export interface ImportRowRecord {
+  id: string;
+  job_id: string;
+  row_number: number;
+  ean: string | null;
+  retailer: string | null;
+  territory: string | null;
+  price_cents: number | null;
+  status: ImportRowStatus;
+  error_message: string | null;
   created_at: string;
 }
 
@@ -142,6 +171,21 @@ export interface InsertObservationInput {
   storeId?: string;
   storeName?: string;
   price: number;
+  currency: Currency;
+  unit?: string;
+  observedAt?: string;
+  source: string;
+  confidence?: number;
+  metadata?: Record<string, unknown>;
+}
+
+export interface InsertObservationCentsInput {
+  ean: string;
+  territory: Territory;
+  retailer: string;
+  storeId?: string;
+  storeName?: string;
+  priceCents: number;
   currency: Currency;
   unit?: string;
   observedAt?: string;

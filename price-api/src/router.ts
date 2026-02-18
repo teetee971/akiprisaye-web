@@ -2,6 +2,9 @@ import { buildEtag, shouldReturnNotModified, storeInCache } from './cache';
 import {
   applySimpleRateLimit,
   getAggregateFingerprint,
+  getImportJobById,
+  getImportJobs,
+  getImportRowsByJobId,
   getPriceAggregates,
   getProduct,
   getRecentObservations,
@@ -9,6 +12,7 @@ import {
   upsertProduct,
 } from './db';
 import { withCors } from './cors';
+import { queueCsvImport } from './importCsv';
 import type { Env, PriceAggregateRecord, PriceObservationRecord, PriceStatus, PricesResponse, ProductResponse } from './types';
 import {
   adminObservationSchema,
@@ -30,6 +34,10 @@ function json(data: unknown, status = 200, headers?: HeadersInit): Response {
       ...headers,
     },
   });
+}
+
+function adminJson(data: unknown, status = 200): Response {
+  return json(data, status, { 'Cache-Control': 'no-store' });
 }
 
 function toAggregateView(aggregate: PriceAggregateRecord) {
@@ -77,7 +85,7 @@ function computeStatus(hasAggregates: boolean, hasProduct = false): PriceStatus 
   return 'NO_DATA';
 }
 
-export async function handleRequest(request: Request, env: Env): Promise<Response> {
+export async function handleRequest(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
   const url = new URL(request.url);
   const origin = request.headers.get('Origin');
 
@@ -185,24 +193,49 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
       );
     }
 
-    if (request.method === 'POST' && url.pathname.startsWith('/v1/admin/')) {
+    if (
+      (request.method === 'POST' && url.pathname.startsWith('/v1/admin/')) ||
+      (request.method === 'GET' && url.pathname.startsWith('/v1/admin/import/'))
+    ) {
       if (!assertAdminToken(request, env.PRICE_ADMIN_TOKEN)) {
-        return withCors(json({ error: 'unauthorized' }, 401), origin, env);
+        return withCors(adminJson({ error: 'unauthorized' }, 401), origin, env);
       }
 
       const ipKey = request.headers.get('CF-Connecting-IP') ?? 'unknown';
       const allowed = await applySimpleRateLimit(env.PRICE_DB, `admin:${ipKey}`, 120, 60);
       if (!allowed) {
-        return withCors(json({ error: 'rate_limited' }, 429), origin, env);
+        return withCors(adminJson({ error: 'rate_limited' }, 429), origin, env);
       }
 
-      if (url.pathname === '/v1/admin/products') {
+      if (request.method === 'POST' && url.pathname === '/v1/admin/import/csv') {
+        const queued = await queueCsvImport(request, env, ctx);
+        return withCors(adminJson({ status: 'queued', jobId: queued.jobId, filename: queued.filename }, 202), origin, env);
+      }
+
+      if (request.method === 'GET' && url.pathname === '/v1/admin/import/jobs') {
+        const limit = Number(url.searchParams.get('limit') ?? '50');
+        const jobs = await getImportJobs(env.PRICE_DB, Number.isFinite(limit) ? Math.min(Math.max(limit, 1), 200) : 50);
+        return withCors(adminJson({ status: 'OK', jobs }, 200), origin, env);
+      }
+
+      if (request.method === 'GET' && /^\/v1\/admin\/import\/jobs\/[^/]+$/.test(url.pathname)) {
+        const jobId = decodeURIComponent(url.pathname.replace('/v1/admin/import/jobs/', ''));
+        const [job, rows] = await Promise.all([getImportJobById(env.PRICE_DB, jobId), getImportRowsByJobId(env.PRICE_DB, jobId, 500)]);
+
+        if (!job) {
+          return withCors(adminJson({ error: 'not_found' }, 404), origin, env);
+        }
+
+        return withCors(adminJson({ status: 'OK', job, rows }, 200), origin, env);
+      }
+
+      if (request.method === 'POST' && url.pathname === '/v1/admin/products') {
         const body = adminProductSchema.parse(await request.json());
         await upsertProduct(env.PRICE_DB, body);
-        return withCors(json({ status: 'OK', ean: body.ean }, 200), origin, env);
+        return withCors(adminJson({ status: 'OK', ean: body.ean }, 200), origin, env);
       }
 
-      if (url.pathname === '/v1/admin/observations') {
+      if (request.method === 'POST' && url.pathname === '/v1/admin/observations') {
         const body = adminObservationSchema.parse(await request.json());
         await insertObservationAndRefreshAggregate(env.PRICE_DB, {
           ean: body.ean,
@@ -219,10 +252,10 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
           metadata: body.metadata,
         });
 
-        return withCors(json({ status: 'OK', ean: body.ean }, 201), origin, env);
+        return withCors(adminJson({ status: 'OK', ean: body.ean }, 201), origin, env);
       }
 
-      if (url.pathname === '/v1/admin/seed') {
+      if (request.method === 'POST' && url.pathname === '/v1/admin/seed') {
         const ean = '3560070894222';
         await upsertProduct(env.PRICE_DB, {
           ean,
@@ -258,16 +291,16 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
           });
         }
 
-        return withCors(json({ status: 'OK', ean, inserted: seedPayloads.length }, 201), origin, env);
+        return withCors(adminJson({ status: 'OK', ean, inserted: seedPayloads.length }, 201), origin, env);
       }
     }
 
     return withCors(json({ error: 'not_found' }, 404), origin, env);
   } catch (error) {
     if (error instanceof Error) {
-      return withCors(json({ error: 'bad_request', message: error.message }, 400), origin, env);
+      return withCors(adminJson({ error: 'bad_request', message: error.message }, 400), origin, env);
     }
 
-    return withCors(json({ error: 'unavailable' }, 503), origin, env);
+    return withCors(adminJson({ error: 'unavailable' }, 503), origin, env);
   }
 }

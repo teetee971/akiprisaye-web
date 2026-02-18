@@ -11,3 +11,7 @@ binding = "PRICE_DB"
 database_name = "price-db"
 database_id = "REPLACE_WITH_D1_DATABASE_ID"
 migrations_dir = "migrations"
+
+[[r2_buckets]]
+binding = "PRICE_IMPORTS"
+bucket_name = "price-imports"
