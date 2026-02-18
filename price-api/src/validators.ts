@@ -46,9 +46,36 @@ export const adminObservationSchema = z.object({
   observedAt: isoDateSchema.optional(),
   storeId: z.string().min(1).max(128).optional(),
   storeName: z.string().min(1).max(255).optional(),
-  source: z.enum(['admin', 'admin_seed', 'partner', 'receipt']).default('admin'),
+  source: z.enum(['admin', 'admin_seed', 'partner', 'receipt', 'receipt_user']).default('admin'),
   confidence: z.number().min(0).max(1).optional(),
   metadata: z.record(z.string(), z.unknown()).optional(),
+});
+
+const receiptItemSchema = z.object({
+  label: z.string().min(1).max(255),
+  qty: z.number().positive().max(9999).optional(),
+  unit: z.string().min(1).max(32).optional(),
+  priceCents: z.number().int().positive().max(1_000_000),
+  ean: z.string().regex(EAN_REGEX, 'ean must have 8-14 digits').optional(),
+  confidence: z.number().min(0).max(1).default(0.5),
+});
+
+export const receiptCompleteSchema = z.object({
+  jobId: z.string().uuid().optional(),
+  territory: territoryEnum,
+  retailer: retailerSchema,
+  storeLabel: z.string().min(1).max(255).optional(),
+  purchasedAt: isoDateSchema.optional(),
+  currency: currencyEnum.default('EUR'),
+  confidence: z.number().min(0).max(1).default(0.5),
+  redactedText: z.string().min(1).max(100_000),
+  ocrText: z.string().min(1).max(100_000),
+  items: z.array(receiptItemSchema).min(1).max(500),
+  totals: z
+    .object({
+      totalCents: z.number().int().positive().max(10_000_000).optional(),
+    })
+    .optional(),
 });
 
 export function assertAdminToken(request: Request, expectedToken: string): boolean {

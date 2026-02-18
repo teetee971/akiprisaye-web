@@ -1,11 +1,15 @@
 import { buildEtag, shouldReturnNotModified, storeInCache } from './cache';
 import {
   applySimpleRateLimit,
+  createReceiptJob,
   getAggregateFingerprint,
   getPriceAggregates,
   getProduct,
+  getReceiptJob,
   getRecentObservations,
   insertObservationAndRefreshAggregate,
+  insertReceiptItem,
+  updateReceiptJobStatus,
   upsertProduct,
 } from './db';
 import { withCors } from './cors';
@@ -16,6 +20,7 @@ import {
   assertAdminToken,
   getPricesQuerySchema,
   getProductParamsSchema,
+  receiptCompleteSchema,
   validateRetailer,
 } from './validators';
 
@@ -62,6 +67,17 @@ function toObservationView(observation: PriceObservationRecord) {
     confidence: observation.confidence,
     metadata: observation.metadata_json ? (JSON.parse(observation.metadata_json) as Record<string, unknown>) : null,
   };
+}
+
+
+function redactServerText(text: string): string {
+  const piiPatterns = [
+    /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[A-Za-z]{2,}/g,
+    /\b(?:\+33|0)[1-9](?:[\s.-]?\d{2}){4}\b/g,
+    /\b(?:\d{4}[\s.-]?){3}\d{4}\b/g,
+    /\b[A-Z]{2}\d{2}[A-Z0-9]{11,30}\b/gi,
+  ];
+  return piiPatterns.reduce((acc, pattern) => acc.replace(pattern, '[REDACTED]'), text);
 }
 
 function computeStatus(hasAggregates: boolean, hasProduct = false): PriceStatus {
@@ -159,6 +175,80 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
         json(response, 200, {
           'Cache-Control': 'public, max-age=120, s-maxage=300',
         }),
+        origin,
+        env,
+      );
+    }
+
+    if (request.method === 'POST' && url.pathname === '/v1/ingest/receipt/init') {
+      const body = (await request.json()) as { territory?: 'fr' | 'gp' | 'mq' };
+      const territory = body.territory ?? 'gp';
+      const jobId = await createReceiptJob(env.PRICE_DB, territory);
+      return withCors(json({ status: 'OK', jobId }, 201), origin, env);
+    }
+
+    if (request.method === 'GET' && url.pathname.startsWith('/v1/ingest/receipt/jobs/')) {
+      const jobId = decodeURIComponent(url.pathname.replace('/v1/ingest/receipt/jobs/', ''));
+      const job = await getReceiptJob(env.PRICE_DB, jobId);
+      if (!job) {
+        return withCors(json({ error: 'not_found' }, 404), origin, env);
+      }
+      return withCors(json({ status: 'OK', job }, 200), origin, env);
+    }
+
+    if (request.method === 'POST' && url.pathname === '/v1/ingest/receipt/confirm') {
+      const body = (await request.json()) as { jobId?: string };
+      if (!body.jobId) {
+        return withCors(json({ error: 'bad_request', message: 'jobId is required' }, 400), origin, env);
+      }
+      await updateReceiptJobStatus(env.PRICE_DB, body.jobId, 'confirmed');
+      return withCors(json({ status: 'OK', jobId: body.jobId }, 200), origin, env);
+    }
+
+    if (request.method === 'POST' && url.pathname === '/v1/ingest/receipt/complete') {
+      const body = receiptCompleteSchema.parse(await request.json());
+      const jobId = body.jobId ?? (await createReceiptJob(env.PRICE_DB, body.territory));
+      const redactedText = redactServerText(body.redactedText);
+      const observedAt = body.purchasedAt ?? new Date().toISOString();
+      let insertedObservations = 0;
+
+      for (const item of body.items) {
+        await insertReceiptItem(env.PRICE_DB, {
+          jobId,
+          label: redactServerText(item.label),
+          qty: item.qty,
+          unit: item.unit,
+          priceCents: item.priceCents,
+          confidence: item.confidence,
+          ean: item.ean,
+        });
+
+        if (item.ean) {
+          await insertObservationAndRefreshAggregate(env.PRICE_DB, {
+            ean: item.ean,
+            territory: body.territory,
+            retailer: validateRetailer(body.retailer),
+            price: item.priceCents / 100,
+            currency: body.currency,
+            unit: item.unit,
+            observedAt,
+            storeName: body.storeLabel ? redactServerText(body.storeLabel) : undefined,
+            source: 'receipt_user',
+            confidence: item.confidence,
+            metadata: {
+              jobId,
+              redactedTextPreview: redactedText.slice(0, 500),
+            },
+          });
+          insertedObservations += 1;
+        }
+      }
+
+      const status = insertedObservations === body.items.length ? 'success' : insertedObservations > 0 ? 'partial' : 'failed';
+      await updateReceiptJobStatus(env.PRICE_DB, jobId, status, insertedObservations === 0 ? 'No EAN in payload items' : undefined);
+
+      return withCors(
+        json({ status: 'OK', jobId, jobStatus: status, insertedItems: body.items.length, insertedObservations }, 201),
         origin,
         env,
       );

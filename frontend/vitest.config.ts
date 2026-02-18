@@ -18,6 +18,7 @@ export default defineConfig({
       'src/test/freemium.test.ts',
       'src/test/cloudflareRouting.test.ts',
       'src/test/serviceWorkerCacheStrategy.test.ts',
+      'src/test/receiptOcrClient.test.ts',
       'scripts/verify-pages-api.test.ts',
     ],
   },

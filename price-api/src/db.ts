@@ -322,3 +322,63 @@ export async function applySimpleRateLimit(
   await db.prepare('UPDATE rate_limits SET count = count + 1 WHERE key = ?').bind(key).run();
   return true;
 }
+
+export async function createReceiptJob(db: D1Database, territory: Territory): Promise<string> {
+  const id = crypto.randomUUID();
+  await db
+    .prepare(
+      `INSERT INTO receipt_jobs (id, status, territory, created_at, updated_at)
+       VALUES (?, 'pending', ?, datetime('now'), datetime('now'))`,
+    )
+    .bind(id, territory)
+    .run();
+  return id;
+}
+
+export async function getReceiptJob(db: D1Database, jobId: string): Promise<Record<string, unknown> | null> {
+  return db.prepare('SELECT * FROM receipt_jobs WHERE id = ?').bind(jobId).first<Record<string, unknown>>();
+}
+
+export async function updateReceiptJobStatus(
+  db: D1Database,
+  jobId: string,
+  status: 'pending' | 'partial' | 'success' | 'failed' | 'confirmed',
+  reason?: string,
+): Promise<void> {
+  await db
+    .prepare(
+      `UPDATE receipt_jobs SET status = ?, failure_reason = ?, updated_at = datetime('now') WHERE id = ?`,
+    )
+    .bind(status, reason ?? null, jobId)
+    .run();
+}
+
+export async function insertReceiptItem(
+  db: D1Database,
+  input: {
+    jobId: string;
+    label: string;
+    qty?: number;
+    unit?: string;
+    priceCents: number;
+    confidence: number;
+    ean?: string;
+  },
+): Promise<void> {
+  await db
+    .prepare(
+      `INSERT INTO receipt_items (id, job_id, label, qty, unit, price_cents, confidence, ean, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))`,
+    )
+    .bind(
+      crypto.randomUUID(),
+      input.jobId,
+      input.label,
+      input.qty ?? null,
+      input.unit ?? null,
+      input.priceCents,
+      input.confidence,
+      input.ean ?? null,
+    )
+    .run();
+}

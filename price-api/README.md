@@ -107,3 +107,47 @@ curl -s -X POST "http://127.0.0.1:8787/v1/admin/seed" \
 
 `POST /v1/admin/seed` insère le produit EAN `3560070894222` et des prix **placeholder** (`source=admin_seed`) pour démonstration.
 Ces valeurs ne sont pas des prix réels et doivent être remplacées via back-office / sources autorisées.
+
+## Receipt ingestion (free OCR)
+
+Flux recommandé “100% gratuit” : OCR côté client (Tesseract.js), redaction PII client + serveur, puis envoi d’un payload normalisé vers le Worker.
+
+Endpoints ingestion:
+
+- `POST /v1/ingest/receipt/init`
+- `POST /v1/ingest/receipt/complete`
+- `GET /v1/ingest/receipt/jobs/:jobId`
+- `POST /v1/ingest/receipt/confirm`
+
+Exemple payload `POST /v1/ingest/receipt/complete`:
+
+```json
+{
+  "territory": "gp",
+  "retailer": "carrefour",
+  "storeLabel": "CARREFOUR MARKET BAIE-MAHAULT",
+  "purchasedAt": "2026-02-12T14:33:00.000Z",
+  "currency": "EUR",
+  "confidence": 0.78,
+  "redactedText": "...texte OCR déjà redacted...",
+  "ocrText": "...texte OCR brut...",
+  "items": [
+    {
+      "label": "POMME GOLDEN",
+      "qty": 1,
+      "unit": "kg",
+      "priceCents": 299,
+      "confidence": 0.82,
+      "ean": "3560070894222"
+    }
+  ],
+  "totals": {
+    "totalCents": 299
+  }
+}
+```
+
+Notes RGPD:
+- Le Worker re-redacte les champs texte même si le client l’a déjà fait.
+- Aucune clé API externe requise.
+- Les observations de prix sont écrites avec `source=receipt_user` quand un EAN est présent.

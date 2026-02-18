@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { adminObservationSchema, adminProductSchema, getPricesQuerySchema } from '../src/validators';
+import { adminObservationSchema, adminProductSchema, getPricesQuerySchema, receiptCompleteSchema } from '../src/validators';
 
 describe('validators', () => {
   it('validates public prices query', () => {
@@ -40,5 +40,20 @@ describe('validators', () => {
 
     expect(payload.retailer).toBe('leclerc');
     expect(payload.observedAt).toBe('2026-02-18T12:00:00.000Z');
+  });
+
+  it('validates receipt complete payload', () => {
+    const payload = receiptCompleteSchema.parse({
+      territory: 'gp',
+      retailer: 'Carrefour',
+      currency: 'EUR',
+      confidence: 0.7,
+      redactedText: 'TOTAL [REDACTED]',
+      ocrText: 'TOTAL 5,90',
+      items: [{ label: 'POMME GOLDEN', priceCents: 299, confidence: 0.8, ean: '3560070894222' }],
+    });
+
+    expect(payload.retailer).toBe('carrefour');
+    expect(payload.items[0].priceCents).toBe(299);
   });
 });
