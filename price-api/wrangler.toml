@@ -1,17 +1,13 @@
-name = "akiprisaye-price-api"
+name = "price-api"
 main = "src/index.ts"
-compatibility_date = "2025-02-01"
-
-[observability]
-enabled = true
+compatibility_date = "2026-02-18"
+workers_dev = true
 
 [vars]
-ALLOWED_ORIGINS = "https://akiprisaye-web.pages.dev"
-AGG_WINDOW_DAYS = "60"
-CACHE_TTL_SECONDS = "21600" # 6h
-POST_RATE_LIMIT_PER_MIN = "30"
+ALLOWED_ORIGINS = "http://localhost:5173,http://127.0.0.1:5173"
 
 [[d1_databases]]
 binding = "PRICE_DB"
-database_name = "akiprisaye_price_db"
-database_id = "REPLACE_WITH_D1_ID"
+database_name = "price-db"
+database_id = "REPLACE_WITH_D1_DATABASE_ID"
+migrations_dir = "migrations"

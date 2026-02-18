@@ -1,67 +1,109 @@
-# akiprisaye-price-api
+# price-api (Cloudflare Worker + D1)
 
-Cloudflare Worker + D1 API for price observations and aggregates.
+Micro-service TypeScript pour centraliser les prix (`GET` public) et administrer les données (`POST` admin protégé par token).
+
+## Fonctionnalités
+
+- Source unique des prix pour les territoires `gp`, `mq`, `fr`.
+- Agrégats stockés par `(ean, territory, retailer, currency, unit)` : `last/min/max/median/count`.
+- Historique des observations avec `source`, `confidence`, `metadata_json` (extensible pour flux autorisés/back-office).
+- Endpoints `GET` cacheables (Cloudflare cache + ETag).
+- Endpoints `POST /v1/admin/*` protégés par `PRICE_ADMIN_TOKEN` + rate limit D1.
 
 ## Setup
 
 ```bash
 cd price-api
-npm install
-wrangler d1 create akiprisaye_price_db
-# copy database_id into wrangler.toml
-wrangler secret put ADMIN_API_KEY
+npm i
 ```
 
-Optional secret override:
+Créer la base D1 (remplacer le nom si besoin) :
 
 ```bash
-wrangler secret put ALLOWED_ORIGINS
+npx wrangler d1 create price-db
 ```
 
-## Migrations
+Mettre à jour `wrangler.toml` avec le `database_id` retourné, puis appliquer la migration :
 
 ```bash
-npm run d1:migrate:local
-npm run d1:migrate
+npx wrangler d1 migrations apply PRICE_DB --local
+npx wrangler d1 migrations apply PRICE_DB --remote
 ```
 
-## Env
+Configurer le secret admin :
 
-- `ADMIN_API_KEY` (secret, required)
-- `ALLOWED_ORIGINS` (CSV, defaults to wrangler vars)
-- `AGG_WINDOW_DAYS` (default `60`)
-- `CACHE_TTL_SECONDS` (default `21600`)
-- `POST_RATE_LIMIT_PER_MIN` (default `30`)
-
-## API contract
-
-- `GET /v1/health` → `{ "ok": true, "service": "price-api", "ts": "..." }`
-- `GET /v1/prices?ean=3560070894222&territory=gp&retailers=carrefour,leclerc&include=obs`
-- `POST /v1/prices` with `Authorization: Bearer <ADMIN_API_KEY>`
-
-Example POST body:
-
-```json
-{
-  "ean": "3560070894222",
-  "territory": "gp",
-  "retailer": "carrefour",
-  "price": 3.29,
-  "currency": "EUR",
-  "unit": "l",
-  "pricePerUnit": 4.39,
-  "observedAt": "2026-02-17T12:00:00.000Z",
-  "source": "manual",
-  "storeRef": "carrefour-destreland",
-  "metadata": { "note": "promo", "photo": "optional" }
-}
+```bash
+npx wrangler secret put PRICE_ADMIN_TOKEN
 ```
 
-## Notes
+Configurer CORS en production via `ALLOWED_ORIGINS` (origines Cloudflare Pages exactes, séparées par virgule).
 
-- CORS is strict from `ALLOWED_ORIGINS`.
-- `OPTIONS` always responds for preflight.
-- `POST` requires both valid Origin and admin key.
-- `GET` uses Cache API (`caches.default`) and ETag based on aggregate freshness and URL params.
-- Territories: `fr`, `gp`, `mq`.
-- Retailers: `carrefour`, `leclerc`, `intermarche`, `superu`.
+Lancer en dev :
+
+```bash
+npm run dev
+```
+
+## Endpoints
+
+### Public (GET)
+
+- `GET /v1/prices?ean=...&territory=gp&retailer=carrefour`
+- `GET /v1/prices?ean=...&territory=gp`
+- `GET /v1/products/:ean`
+
+### Admin (POST)
+
+Header requis : `Authorization: Bearer <PRICE_ADMIN_TOKEN>`
+
+- `POST /v1/admin/products`
+- `POST /v1/admin/observations`
+- `POST /v1/admin/seed`
+
+## Exemples cURL
+
+```bash
+curl -s "http://127.0.0.1:8787/v1/prices?ean=3560070894222&territory=gp"
+```
+
+```bash
+curl -s "http://127.0.0.1:8787/v1/products/3560070894222"
+```
+
+```bash
+curl -s -X POST "http://127.0.0.1:8787/v1/admin/products" \
+  -H "Authorization: Bearer $PRICE_ADMIN_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "ean":"3560070894222",
+    "productName":"Carrefour Classic’ Sirop de cerise / Cerise-Kers 75 cl",
+    "brand":"Carrefour Classic’",
+    "quantity":"75 cl"
+  }'
+```
+
+```bash
+curl -s -X POST "http://127.0.0.1:8787/v1/admin/observations" \
+  -H "Authorization: Bearer $PRICE_ADMIN_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "ean":"3560070894222",
+    "territory":"gp",
+    "retailer":"carrefour",
+    "price":3.49,
+    "currency":"EUR",
+    "unit":"l",
+    "source":"admin",
+    "confidence":0.9
+  }'
+```
+
+```bash
+curl -s -X POST "http://127.0.0.1:8787/v1/admin/seed" \
+  -H "Authorization: Bearer $PRICE_ADMIN_TOKEN"
+```
+
+## Seed
+
+`POST /v1/admin/seed` insère le produit EAN `3560070894222` et des prix **placeholder** (`source=admin_seed`) pour démonstration.
+Ces valeurs ne sont pas des prix réels et doivent être remplacées via back-office / sources autorisées.

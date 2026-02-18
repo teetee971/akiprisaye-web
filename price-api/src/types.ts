@@ -1,62 +1,131 @@
 export const TERRITORIES = ['fr', 'gp', 'mq'] as const;
-export const RETAILERS = ['carrefour', 'leclerc', 'intermarche', 'superu'] as const;
-export const SOURCES = ['manual', 'partner_api', 'open_data', 'import'] as const;
-export const UNITS = ['unit', 'kg', 'l'] as const;
+export const RETAILERS = ['carrefour', 'leclerc', 'intermarché', 'superu'] as const;
 
 export type Territory = (typeof TERRITORIES)[number];
-export type Retailer = (typeof RETAILERS)[number];
-export type Source = (typeof SOURCES)[number];
-export type Unit = (typeof UNITS)[number];
+export type Retailer = (typeof RETAILERS)[number] | string;
+export type Currency = 'EUR';
+export type PriceStatus = 'OK' | 'NO_DATA' | 'PARTIAL' | 'UNAVAILABLE';
 
 export interface Env {
   PRICE_DB: D1Database;
-  ADMIN_API_KEY: string;
+  PRICE_ADMIN_TOKEN: string;
   ALLOWED_ORIGINS?: string;
-  AGG_WINDOW_DAYS?: string;
-  CACHE_TTL_SECONDS?: string;
-  POST_RATE_LIMIT_PER_MIN?: string;
 }
 
-export interface PriceObservationInput {
+export interface ProductRecord {
   ean: string;
-  territory: Territory;
-  retailer: Retailer;
-  price: number;
-  currency?: string;
-  unit?: Unit;
-  pricePerUnit?: number;
-  observedAt: string;
-  source: Source;
-  storeRef?: string;
-  metadata?: Record<string, unknown>;
-}
-
-export interface PriceAggregateRow {
-  key: string;
-  ean: string;
-  territory: Territory;
-  retailer: Retailer;
-  last_price_cents: number | null;
-  last_observed_at: string | null;
-  min_price_cents: number | null;
-  max_price_cents: number | null;
-  median_price_cents: number | null;
-  count_obs: number;
+  product_name: string | null;
+  brand: string | null;
+  quantity: string | null;
+  ingredients_text: string | null;
+  created_at: string;
   updated_at: string;
 }
 
-export interface PriceObservationRow {
+export interface PriceAggregateRecord {
+  ean: string;
+  territory: Territory;
+  retailer: string;
+  currency: Currency;
+  unit: string | null;
+  last_price_cents: number | null;
+  min_price_cents: number | null;
+  max_price_cents: number | null;
+  median_price_cents: number | null;
+  count_observations: number;
+  last_observed_at: string | null;
+  updated_at: string;
+}
+
+export interface PriceObservationRecord {
   id: string;
   ean: string;
   territory: Territory;
-  retailer: Retailer;
+  retailer: string;
+  store_id: string | null;
+  store_name: string | null;
   price_cents: number;
-  currency: string;
+  currency: Currency;
   unit: string | null;
-  price_per_unit_cents: number | null;
   observed_at: string;
-  source: Source;
-  store_ref: string | null;
+  source: string;
+  confidence: number;
   metadata_json: string | null;
   created_at: string;
+}
+
+export interface ApiResponseBase {
+  status: PriceStatus;
+  timestamp: string;
+}
+
+export interface PriceAggregateView {
+  territory: Territory;
+  retailer: string;
+  currency: Currency;
+  unit: string | null;
+  stats: {
+    lastPrice: number | null;
+    minPrice: number | null;
+    maxPrice: number | null;
+    medianPrice: number | null;
+    count: number;
+    lastObservedAt: string | null;
+  };
+  updatedAt: string;
+}
+
+export interface PriceObservationView {
+  id: string;
+  territory: Territory;
+  retailer: string;
+  storeId: string | null;
+  storeName: string | null;
+  price: number;
+  currency: Currency;
+  unit: string | null;
+  observedAt: string;
+  source: string;
+  confidence: number;
+  metadata: Record<string, unknown> | null;
+}
+
+export interface PricesResponse extends ApiResponseBase {
+  ean: string;
+  territory?: Territory;
+  retailers: string[];
+  aggregates: PriceAggregateView[];
+  recentObservations: PriceObservationView[];
+  meta: {
+    etag: string;
+    updatedAt: string | null;
+  };
+}
+
+export interface ProductResponse extends ApiResponseBase {
+  product: {
+    ean: string;
+    productName: string | null;
+    brand: string | null;
+    quantity: string | null;
+    ingredientsText: string | null;
+    createdAt: string;
+    updatedAt: string;
+  } | null;
+  aggregates: PriceAggregateView[];
+}
+
+export interface InsertObservationInput {
+  ean: string;
+  territory: Territory;
+  retailer: string;
+  storeId?: string;
+  storeName?: string;
+  price: number;
+  currency: Currency;
+  unit?: string;
+  observedAt?: string;
+  source: string;
+  confidence?: number;
+  metadata?: Record<string, unknown>;
 }

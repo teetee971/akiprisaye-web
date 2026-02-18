@@ -1,119 +1,252 @@
-import { applyRateLimit, getAggregateFingerprint, getAggregates, getObservations, insertObservation } from './db';
-import { assertOriginAllowed, corsHeaders, getCorsOrigin, preflight } from './cors';
-import { buildEtag, readFromCache, withCommonHeaders, writeToCache } from './cache';
-import { assertValidQuery, parseIncludeObs, parsePostBody, parseRetailersParam } from './validators';
-import type { Env } from './types';
+import { buildEtag, shouldReturnNotModified, storeInCache } from './cache';
+import {
+  applySimpleRateLimit,
+  getAggregateFingerprint,
+  getPriceAggregates,
+  getProduct,
+  getRecentObservations,
+  insertObservationAndRefreshAggregate,
+  upsertProduct,
+} from './db';
+import { withCors } from './cors';
+import type { Env, PriceAggregateRecord, PriceObservationRecord, PriceStatus, PricesResponse, ProductResponse } from './types';
+import {
+  adminObservationSchema,
+  adminProductSchema,
+  assertAdminToken,
+  getPricesQuerySchema,
+  getProductParamsSchema,
+  validateRetailer,
+} from './validators';
 
-function json(data: unknown, init: ResponseInit = {}, env?: Env): Response {
-  const headers = new Headers(init.headers);
-  headers.set('Content-Type', 'application/json; charset=utf-8');
-
-  if (env) {
-    const ttl = Number(env.CACHE_TTL_SECONDS ?? '21600');
-    headers.set('Cache-Control', `public, max-age=${ttl}`);
-  }
-
-  return new Response(JSON.stringify(data), { ...init, headers });
+function json(data: unknown, status = 200, headers?: HeadersInit): Response {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+      ...headers,
+    },
+  });
 }
 
-export async function route(req: Request, env: Env): Promise<Response> {
-  const url = new URL(req.url);
+function toAggregateView(aggregate: PriceAggregateRecord) {
+  return {
+    territory: aggregate.territory,
+    retailer: aggregate.retailer,
+    currency: aggregate.currency,
+    unit: aggregate.unit,
+    stats: {
+      lastPrice: aggregate.last_price_cents !== null ? aggregate.last_price_cents / 100 : null,
+      minPrice: aggregate.min_price_cents !== null ? aggregate.min_price_cents / 100 : null,
+      maxPrice: aggregate.max_price_cents !== null ? aggregate.max_price_cents / 100 : null,
+      medianPrice: aggregate.median_price_cents !== null ? aggregate.median_price_cents / 100 : null,
+      count: aggregate.count_observations,
+      lastObservedAt: aggregate.last_observed_at,
+    },
+    updatedAt: aggregate.updated_at,
+  };
+}
 
-  if (req.method === 'OPTIONS') {
-    return preflight(req, env);
+function toObservationView(observation: PriceObservationRecord) {
+  return {
+    id: observation.id,
+    territory: observation.territory,
+    retailer: observation.retailer,
+    storeId: observation.store_id,
+    storeName: observation.store_name,
+    price: observation.price_cents / 100,
+    currency: observation.currency,
+    unit: observation.unit,
+    observedAt: observation.observed_at,
+    source: observation.source,
+    confidence: observation.confidence,
+    metadata: observation.metadata_json ? (JSON.parse(observation.metadata_json) as Record<string, unknown>) : null,
+  };
+}
+
+function computeStatus(hasAggregates: boolean, hasProduct = false): PriceStatus {
+  if (hasAggregates) {
+    return 'OK';
+  }
+  if (hasProduct) {
+    return 'PARTIAL';
+  }
+  return 'NO_DATA';
+}
+
+export async function handleRequest(request: Request, env: Env): Promise<Response> {
+  const url = new URL(request.url);
+  const origin = request.headers.get('Origin');
+
+  if (request.method === 'OPTIONS') {
+    return withCors(new Response(null, { status: 204 }), origin, env);
   }
 
-  if (req.method === 'GET' && url.pathname === '/v1/health') {
-    const origin = getCorsOrigin(req, env);
-    return json(
-      { ok: true, service: 'price-api', ts: new Date().toISOString() },
-      { headers: corsHeaders(origin) }
-    );
-  }
+  try {
+    if (request.method === 'GET' && url.pathname === '/v1/prices') {
+      const parsed = getPricesQuerySchema.parse(Object.fromEntries(url.searchParams.entries()));
+      const retailer = parsed.retailer ? validateRetailer(parsed.retailer) : undefined;
+      const fingerprint = await getAggregateFingerprint(env.PRICE_DB, parsed.ean, parsed.territory, retailer);
+      const etag = buildEtag(`${parsed.ean}:${parsed.territory ?? 'all'}:${retailer ?? 'all'}:${fingerprint.maxUpdatedAt ?? 'none'}:${fingerprint.rowCount}`);
 
-  if (req.method === 'GET' && url.pathname === '/v1/prices') {
-    const origin = getCorsOrigin(req, env);
-    const query = assertValidQuery(url.searchParams.get('ean'), url.searchParams.get('territory'));
-    const retailers = parseRetailersParam(url.searchParams.get('retailers'));
-    const includeObs = parseIncludeObs(url.searchParams.get('include'));
-    const windowDays = Number(env.AGG_WINDOW_DAYS ?? '60');
+      if (shouldReturnNotModified(request, etag)) {
+        return withCors(
+          new Response(null, {
+            status: 304,
+            headers: {
+              ETag: etag,
+              'Cache-Control': 'public, max-age=120, s-maxage=300',
+            },
+          }),
+          origin,
+          env,
+        );
+      }
 
-    const fingerprint = await getAggregateFingerprint(env, query.ean, query.territory, retailers);
-    const etag = buildEtag(`${fingerprint}:${url.searchParams.toString()}`);
+      const [aggregates, observations] = await Promise.all([
+        getPriceAggregates(env.PRICE_DB, parsed.ean, parsed.territory, retailer),
+        getRecentObservations(env.PRICE_DB, parsed.ean, parsed.territory, retailer, 25),
+      ]);
 
-    if (req.headers.get('If-None-Match') === etag) {
-      return new Response(null, {
-        status: 304,
-        headers: {
-          ...corsHeaders(origin),
-          ETag: etag
-        }
+      const payload: PricesResponse = {
+        status: computeStatus(aggregates.length > 0),
+        timestamp: new Date().toISOString(),
+        ean: parsed.ean,
+        territory: parsed.territory,
+        retailers: Array.from(new Set(aggregates.map((item) => item.retailer))),
+        aggregates: aggregates.map(toAggregateView),
+        recentObservations: observations.map(toObservationView),
+        meta: {
+          etag,
+          updatedAt: fingerprint.maxUpdatedAt,
+        },
+      };
+
+      const response = json(payload, 200, {
+        ETag: etag,
+        'Cache-Control': 'public, max-age=120, s-maxage=300',
       });
+      await storeInCache(request, response);
+      return withCors(response, origin, env);
     }
 
-    const cached = await readFromCache(req);
-    if (cached) {
-      const cachedHeaders = new Headers(cached.headers);
-      cachedHeaders.set('ETag', etag);
-      Object.entries(corsHeaders(origin)).forEach(([k, v]) => cachedHeaders.set(k, v));
-      return new Response(cached.body, { status: cached.status, headers: cachedHeaders });
+    if (request.method === 'GET' && url.pathname.startsWith('/v1/products/')) {
+      const ean = decodeURIComponent(url.pathname.replace('/v1/products/', ''));
+      const parsed = getProductParamsSchema.parse({ ean });
+      const [product, aggregates] = await Promise.all([
+        getProduct(env.PRICE_DB, parsed.ean),
+        getPriceAggregates(env.PRICE_DB, parsed.ean),
+      ]);
+
+      const response: ProductResponse = {
+        status: computeStatus(aggregates.length > 0, Boolean(product)),
+        timestamp: new Date().toISOString(),
+        product: product
+          ? {
+              ean: product.ean,
+              productName: product.product_name,
+              brand: product.brand,
+              quantity: product.quantity,
+              ingredientsText: product.ingredients_text,
+              createdAt: product.created_at,
+              updatedAt: product.updated_at,
+            }
+          : null,
+        aggregates: aggregates.map(toAggregateView),
+      };
+
+      return withCors(
+        json(response, 200, {
+          'Cache-Control': 'public, max-age=120, s-maxage=300',
+        }),
+        origin,
+        env,
+      );
     }
 
-    const aggregates = await getAggregates(env, query.ean, query.territory, retailers, windowDays);
-    const observations = includeObs
-      ? await getObservations(env, query.ean, query.territory, retailers)
-      : undefined;
+    if (request.method === 'POST' && url.pathname.startsWith('/v1/admin/')) {
+      if (!assertAdminToken(request, env.PRICE_ADMIN_TOKEN)) {
+        return withCors(json({ error: 'unauthorized' }, 401), origin, env);
+      }
 
-    const response = withCommonHeaders(
-      JSON.stringify({
-        ean: query.ean,
-        territory: query.territory,
-        retailers,
-        aggregates,
-        observations
-      }),
-      {
-        status: 200,
-        headers: {
-          ...corsHeaders(origin),
-          ETag: etag
+      const ipKey = request.headers.get('CF-Connecting-IP') ?? 'unknown';
+      const allowed = await applySimpleRateLimit(env.PRICE_DB, `admin:${ipKey}`, 120, 60);
+      if (!allowed) {
+        return withCors(json({ error: 'rate_limited' }, 429), origin, env);
+      }
+
+      if (url.pathname === '/v1/admin/products') {
+        const body = adminProductSchema.parse(await request.json());
+        await upsertProduct(env.PRICE_DB, body);
+        return withCors(json({ status: 'OK', ean: body.ean }, 200), origin, env);
+      }
+
+      if (url.pathname === '/v1/admin/observations') {
+        const body = adminObservationSchema.parse(await request.json());
+        await insertObservationAndRefreshAggregate(env.PRICE_DB, {
+          ean: body.ean,
+          territory: body.territory,
+          retailer: validateRetailer(body.retailer),
+          price: body.price,
+          currency: body.currency,
+          unit: body.unit,
+          observedAt: body.observedAt,
+          storeId: body.storeId,
+          storeName: body.storeName,
+          source: body.source,
+          confidence: body.confidence,
+          metadata: body.metadata,
+        });
+
+        return withCors(json({ status: 'OK', ean: body.ean }, 201), origin, env);
+      }
+
+      if (url.pathname === '/v1/admin/seed') {
+        const ean = '3560070894222';
+        await upsertProduct(env.PRICE_DB, {
+          ean,
+          productName: "Carrefour Classic’ Sirop de cerise / Cerise-Kers 75 cl",
+          brand: 'Carrefour Classic’',
+          quantity: '75 cl',
+          ingredientsText: 'Placeholder seed data. Renseigner les ingrédients exacts via back-office.',
+        });
+
+        const seedPayloads = [
+          { territory: 'gp', retailer: 'carrefour', price: 3.49 },
+          { territory: 'gp', retailer: 'leclerc', price: 3.75 },
+          { territory: 'mq', retailer: 'carrefour', price: 3.89 },
+          { territory: 'mq', retailer: 'superu', price: 4.1 },
+          { territory: 'fr', retailer: 'carrefour', price: 2.99 },
+          { territory: 'fr', retailer: 'intermarché', price: 3.19 },
+        ] as const;
+
+        for (const item of seedPayloads) {
+          await insertObservationAndRefreshAggregate(env.PRICE_DB, {
+            ean,
+            territory: item.territory,
+            retailer: item.retailer,
+            price: item.price,
+            currency: 'EUR',
+            unit: 'l',
+            source: 'admin_seed',
+            confidence: 0.5,
+            metadata: {
+              placeholder: true,
+              note: 'Prix de démonstration à remplacer via back-office',
+            },
+          });
         }
-      },
-      env
-    );
 
-    await writeToCache(req, response);
-    return response;
-  }
-
-  if (req.method === 'POST' && url.pathname === '/v1/prices') {
-    const origin = getCorsOrigin(req, env);
-    assertOriginAllowed(req, env);
-
-    const auth = req.headers.get('Authorization');
-    if (!auth || auth !== `Bearer ${env.ADMIN_API_KEY}`) {
-      return json({ error: 'Unauthorized' }, { status: 401, headers: corsHeaders(origin) });
+        return withCors(json({ status: 'OK', ean, inserted: seedPayloads.length }, 201), origin, env);
+      }
     }
 
-    const maxPerMinute = Number(env.POST_RATE_LIMIT_PER_MIN ?? '30');
-    const ip = req.headers.get('CF-Connecting-IP') ?? 'unknown';
-    const allowed = await applyRateLimit(env, `post:${ip}`, maxPerMinute);
-
-    if (!allowed) {
-      return json({ error: 'Rate limit exceeded' }, { status: 429, headers: corsHeaders(origin) });
+    return withCors(json({ error: 'not_found' }, 404), origin, env);
+  } catch (error) {
+    if (error instanceof Error) {
+      return withCors(json({ error: 'bad_request', message: error.message }, 400), origin, env);
     }
 
-    const payload = await parsePostBody(req);
-    const id = await insertObservation(env, payload);
-
-    return json(
-      {
-        ok: true,
-        id
-      },
-      { status: 201, headers: corsHeaders(origin) }
-    );
+    return withCors(json({ error: 'unavailable' }, 503), origin, env);
   }
-
-  return json({ error: 'Not found' }, { status: 404 });
 }

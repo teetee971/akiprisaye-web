@@ -1,93 +1,79 @@
-import { RETAILERS, SOURCES, TERRITORIES, UNITS, type PriceObservationInput } from './types';
+import { z } from 'zod';
+import { RETAILERS, TERRITORIES, type Territory } from './types';
 
-const EAN_REGEX = /^\d{8,14}$/;
+export const EAN_REGEX = /^\d{8,14}$/;
 
-function parseCsv(input?: string): string[] {
-  if (!input) return [];
-  return input
-    .split(',')
-    .map((v) => v.trim())
-    .filter(Boolean);
+const territoryEnum = z.enum(TERRITORIES);
+const currencyEnum = z.literal('EUR');
+
+const retailerSchema = z
+  .string()
+  .min(2)
+  .max(64)
+  .transform((value) => value.trim().toLowerCase());
+
+const isoDateSchema = z
+  .string()
+  .datetime({ offset: true })
+  .or(z.string().datetime())
+  .transform((value) => new Date(value).toISOString());
+
+export const getPricesQuerySchema = z.object({
+  ean: z.string().regex(EAN_REGEX, 'ean must have 8-14 digits'),
+  territory: territoryEnum.optional(),
+  retailer: retailerSchema.optional(),
+});
+
+export const getProductParamsSchema = z.object({
+  ean: z.string().regex(EAN_REGEX, 'ean must have 8-14 digits'),
+});
+
+export const adminProductSchema = z.object({
+  ean: z.string().regex(EAN_REGEX, 'ean must have 8-14 digits'),
+  productName: z.string().min(1).max(255),
+  brand: z.string().min(1).max(255).optional(),
+  quantity: z.string().min(1).max(128).optional(),
+  ingredientsText: z.string().min(1).max(5000).optional(),
+});
+
+export const adminObservationSchema = z.object({
+  ean: z.string().regex(EAN_REGEX, 'ean must have 8-14 digits'),
+  territory: territoryEnum,
+  retailer: retailerSchema,
+  price: z.number().positive(),
+  currency: currencyEnum.default('EUR'),
+  unit: z.string().min(1).max(32).optional(),
+  observedAt: isoDateSchema.optional(),
+  storeId: z.string().min(1).max(128).optional(),
+  storeName: z.string().min(1).max(255).optional(),
+  source: z.enum(['admin', 'admin_seed', 'partner', 'receipt']).default('admin'),
+  confidence: z.number().min(0).max(1).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
+});
+
+export function assertAdminToken(request: Request, expectedToken: string): boolean {
+  const authHeader = request.headers.get('Authorization');
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return false;
+  }
+
+  return authHeader.slice('Bearer '.length) === expectedToken;
 }
 
-export function parseRetailersParam(value: string | null): string[] {
-  const retailers = parseCsv(value ?? undefined);
-  if (retailers.length === 0) {
-    return [...RETAILERS];
+export function validateRetailer(retailer: string): string {
+  const normalized = retailer.trim().toLowerCase();
+  if (RETAILERS.includes(normalized as (typeof RETAILERS)[number])) {
+    return normalized;
   }
 
-  for (const retailer of retailers) {
-    if (!RETAILERS.includes(retailer as (typeof RETAILERS)[number])) {
-      throw new Error(`Invalid retailer: ${retailer}`);
-    }
-  }
-  return retailers;
+  return normalized;
 }
 
-export function parseIncludeObs(value: string | null): boolean {
-  return value === 'obs';
-}
-
-export function assertValidQuery(ean: string | null, territory: string | null): { ean: string; territory: string } {
-  if (!ean || !EAN_REGEX.test(ean)) {
-    throw new Error('Invalid ean');
+export function validateTerritory(territory: string): Territory {
+  const parsed = territoryEnum.safeParse(territory);
+  if (!parsed.success) {
+    throw new Error('invalid territory');
   }
 
-  if (!territory || !TERRITORIES.includes(territory as (typeof TERRITORIES)[number])) {
-    throw new Error('Invalid territory');
-  }
-
-  return { ean, territory };
-}
-
-export async function parsePostBody(req: Request): Promise<PriceObservationInput> {
-  const body = (await req.json()) as Partial<PriceObservationInput>;
-
-  if (!body.ean || !EAN_REGEX.test(body.ean)) {
-    throw new Error('Invalid ean');
-  }
-  if (!body.territory || !TERRITORIES.includes(body.territory)) {
-    throw new Error('Invalid territory');
-  }
-  if (!body.retailer || !RETAILERS.includes(body.retailer)) {
-    throw new Error('Invalid retailer');
-  }
-  if (typeof body.price !== 'number' || body.price <= 0) {
-    throw new Error('Invalid price');
-  }
-  if (body.currency && typeof body.currency !== 'string') {
-    throw new Error('Invalid currency');
-  }
-  if (body.unit && !UNITS.includes(body.unit)) {
-    throw new Error('Invalid unit');
-  }
-  if (body.pricePerUnit !== undefined && (typeof body.pricePerUnit !== 'number' || body.pricePerUnit <= 0)) {
-    throw new Error('Invalid pricePerUnit');
-  }
-  if (!body.observedAt || Number.isNaN(Date.parse(body.observedAt))) {
-    throw new Error('Invalid observedAt');
-  }
-  if (!body.source || !SOURCES.includes(body.source)) {
-    throw new Error('Invalid source');
-  }
-  if (body.storeRef && typeof body.storeRef !== 'string') {
-    throw new Error('Invalid storeRef');
-  }
-  if (body.metadata && typeof body.metadata !== 'object') {
-    throw new Error('Invalid metadata');
-  }
-
-  return {
-    ean: body.ean,
-    territory: body.territory,
-    retailer: body.retailer,
-    price: body.price,
-    currency: body.currency ?? 'EUR',
-    unit: body.unit,
-    pricePerUnit: body.pricePerUnit,
-    observedAt: body.observedAt,
-    source: body.source,
-    storeRef: body.storeRef,
-    metadata: body.metadata
-  };
+  return parsed.data;
 }

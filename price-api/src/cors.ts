@@ -1,45 +1,55 @@
 import type { Env } from './types';
 
-function getAllowedOrigins(env: Env): string[] {
-  const value = env.ALLOWED_ORIGINS ?? '';
-  return value
+const LOCALHOST_ALLOWLIST = new Set([
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+  'http://localhost:4173',
+  'http://127.0.0.1:4173',
+]);
+
+function normalizeOrigin(origin: string): string {
+  return origin.trim().replace(/\/$/, '');
+}
+
+export function isOriginAllowed(origin: string | null, env: Env): boolean {
+  if (!origin) {
+    return false;
+  }
+
+  const normalized = normalizeOrigin(origin);
+  if (LOCALHOST_ALLOWLIST.has(normalized)) {
+    return true;
+  }
+
+  const fromEnv = (env.ALLOWED_ORIGINS ?? '')
     .split(',')
-    .map((origin) => origin.trim())
+    .map(normalizeOrigin)
     .filter(Boolean);
+
+  return fromEnv.includes(normalized);
 }
 
-export function getCorsOrigin(req: Request, env: Env): string | null {
-  const origin = req.headers.get('Origin');
-  if (!origin) return null;
-
-  const allowed = getAllowedOrigins(env);
-  return allowed.includes(origin) ? origin : null;
-}
-
-export function corsHeaders(origin: string | null): HeadersInit {
-  const base: Record<string, string> = {
-    'Vary': 'Origin',
+export function buildCorsHeaders(origin: string | null, env: Env): Headers {
+  const headers = new Headers({
+    Vary: 'Origin',
     'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization'
-  };
+    'Access-Control-Allow-Headers': 'Content-Type,Authorization,If-None-Match',
+    'Access-Control-Max-Age': '86400',
+  });
 
-  if (origin) {
-    base['Access-Control-Allow-Origin'] = origin;
+  if (isOriginAllowed(origin, env)) {
+    headers.set('Access-Control-Allow-Origin', normalizeOrigin(origin!));
   }
 
-  return base;
+  return headers;
 }
 
-export function preflight(req: Request, env: Env): Response {
-  const origin = getCorsOrigin(req, env);
-  return new Response(null, { status: 204, headers: corsHeaders(origin) });
-}
-
-export function assertOriginAllowed(req: Request, env: Env): void {
-  const origin = req.headers.get('Origin');
-  if (!origin) return;
-
-  if (!getCorsOrigin(req, env)) {
-    throw new Error('Origin not allowed');
-  }
+export function withCors(response: Response, origin: string | null, env: Env): Response {
+  const headers = new Headers(response.headers);
+  const corsHeaders = buildCorsHeaders(origin, env);
+  corsHeaders.forEach((value, key) => headers.set(key, value));
+  return new Response(response.body, {
+    status: response.status,
+    headers,
+  });
 }

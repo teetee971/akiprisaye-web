@@ -1,37 +1,55 @@
-PRAGMA foreign_keys = ON;
+CREATE TABLE IF NOT EXISTS products (
+  ean TEXT PRIMARY KEY,
+  product_name TEXT,
+  brand TEXT,
+  quantity TEXT,
+  ingredients_text TEXT,
+  created_at TEXT DEFAULT (datetime('now')),
+  updated_at TEXT DEFAULT (datetime('now'))
+);
 
 CREATE TABLE IF NOT EXISTS price_observations (
   id TEXT PRIMARY KEY,
   ean TEXT NOT NULL,
-  territory TEXT NOT NULL,
+  territory TEXT NOT NULL CHECK (territory IN ('fr','gp','mq')),
   retailer TEXT NOT NULL,
+  store_id TEXT,
+  store_name TEXT,
   price_cents INTEGER NOT NULL,
   currency TEXT NOT NULL DEFAULT 'EUR',
-  unit TEXT NULL,
-  price_per_unit_cents INTEGER NULL,
+  unit TEXT,
   observed_at TEXT NOT NULL,
   source TEXT NOT NULL,
-  store_ref TEXT NULL,
-  metadata_json TEXT NULL,
-  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  confidence REAL NOT NULL DEFAULT 1.0,
+  metadata_json TEXT,
+  created_at TEXT DEFAULT (datetime('now')),
+  FOREIGN KEY (ean) REFERENCES products(ean)
 );
 
-CREATE INDEX IF NOT EXISTS idx_obs_ean_terr_retailer_time
-ON price_observations (ean, territory, retailer, observed_at DESC);
+CREATE INDEX IF NOT EXISTS idx_price_observations_lookup
+ON price_observations(ean, territory, retailer);
+
+CREATE INDEX IF NOT EXISTS idx_price_observations_observed_at
+ON price_observations(observed_at);
 
 CREATE TABLE IF NOT EXISTS price_aggregates (
-  key TEXT PRIMARY KEY,
   ean TEXT NOT NULL,
   territory TEXT NOT NULL,
   retailer TEXT NOT NULL,
-  last_price_cents INTEGER NULL,
-  last_observed_at TEXT NULL,
-  min_price_cents INTEGER NULL,
-  max_price_cents INTEGER NULL,
-  median_price_cents INTEGER NULL,
-  count_obs INTEGER NOT NULL DEFAULT 0,
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  currency TEXT NOT NULL,
+  unit TEXT,
+  last_price_cents INTEGER,
+  min_price_cents INTEGER,
+  max_price_cents INTEGER,
+  median_price_cents INTEGER,
+  count_observations INTEGER NOT NULL DEFAULT 0,
+  last_observed_at TEXT,
+  updated_at TEXT DEFAULT (datetime('now')),
+  PRIMARY KEY (ean, territory, retailer, currency, unit)
 );
 
-CREATE INDEX IF NOT EXISTS idx_aggr_ean_terr
-ON price_aggregates (ean, territory);
+CREATE TABLE IF NOT EXISTS rate_limits (
+  key TEXT PRIMARY KEY,
+  count INTEGER NOT NULL,
+  window_start TEXT NOT NULL
+);
