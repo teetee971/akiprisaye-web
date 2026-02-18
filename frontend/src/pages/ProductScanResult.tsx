@@ -9,6 +9,7 @@ export default function ProductScanResult() {
   const navigate = useNavigate();
   const [state, setState] = useState<LoadState>('loading');
   const [product, setProduct] = useState<OffProductUiModel | null>(null);
+  const [productSource, setProductSource] = useState<'openfoodfacts' | 'local_override' | null>(null);
 
   const loadProduct = useCallback(async () => {
     setState('loading');
@@ -16,6 +17,7 @@ export default function ProductScanResult() {
 
     if (result.status === 'OK' && result.ui) {
       setProduct(result.ui);
+      setProductSource(result.source ?? result.ui.source ?? null);
       setState('success');
       return;
     }
@@ -64,6 +66,9 @@ export default function ProductScanResult() {
             <header>
               <h2 className="text-2xl font-semibold">{product.name ?? 'Produit sans nom'}</h2>
               <p className="text-slate-300">{product.brand ?? 'Marque non renseignée'}{product.quantity ? ` · ${product.quantity}` : ''}</p>
+              {productSource === 'local_override' && (
+                <p className="mt-1 text-xs text-slate-400">Source: Catalogue interne</p>
+              )}
             </header>
 
             {product.image && <img src={product.image} alt={product.name ?? 'Produit'} className="max-h-64 w-full rounded-xl object-contain bg-white p-2" />}
@@ -78,8 +83,13 @@ export default function ProductScanResult() {
               <h3 className="mb-3 text-lg font-semibold">Nutrition (pour 100g)</h3>
               <div className="grid grid-cols-2 gap-2 text-sm text-slate-200">
                 <div>kcal: {product.nutriments.kcal ?? 'n/d'}</div>
+                <div>Énergie: {product.nutritionPer100g?.energyKj ?? 'n/d'} kJ</div>
                 <div>Sucres: {product.nutriments.sugars ?? 'n/d'} g</div>
                 <div>Matières grasses: {product.nutriments.fat ?? 'n/d'} g</div>
+                <div>Acides gras saturés: {product.nutritionPer100g?.saturatedFat ?? 'n/d'} g</div>
+                <div>Glucides: {product.nutritionPer100g?.carbs ?? 'n/d'} g</div>
+                <div>Fibres: {product.nutritionPer100g?.fiber ?? 'n/d'} g</div>
+                <div>Protéines: {product.nutritionPer100g?.protein ?? 'n/d'} g</div>
                 <div>Sel: {product.nutriments.salt ?? 'n/d'} g</div>
               </div>
             </section>

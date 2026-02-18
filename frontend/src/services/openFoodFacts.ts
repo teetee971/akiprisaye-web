@@ -1,13 +1,17 @@
 import { getCachedWithTTL, setCachedJson } from './localStore';
+import { getProductOverride } from '../data/product_overrides';
 
 const OFF_DEFAULT_BASE_URL = 'https://world.openfoodfacts.org';
 const OFF_PRODUCT_CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 const OFF_TIMEOUT_MS = 8000;
 
 type OffStatus = 'OK' | 'NOT_FOUND' | 'INVALID' | 'ERROR';
+type OffSource = 'openfoodfacts' | 'local_override';
 
 export type OffProductResult = {
   status: OffStatus;
+  source?: OffSource;
+  message?: string;
   barcode: string;
   product?: {
     name?: string;
@@ -56,6 +60,20 @@ export type OffProductUiModel = {
   };
   ingredients?: string;
   allergens?: string;
+  categories?: string[];
+  nutritionPer100g?: {
+    energyKj?: number;
+    energyKcal?: number;
+    fat?: number;
+    saturatedFat?: number;
+    carbs?: number;
+    sugars?: number;
+    fiber?: number;
+    protein?: number;
+    salt?: number;
+  };
+  source?: OffSource;
+  sourceMessage?: string;
 };
 
 function getOffBaseUrl(): string {
@@ -118,9 +136,30 @@ function mapApiResponse(barcode: string, payload: OffApiResponse): OffProductRes
 
   return {
     status: 'OK',
+    source: 'openfoodfacts',
     barcode,
     product: normalizedProduct,
     ...(import.meta.env.DEV ? { raw: payload } : {}),
+  };
+}
+
+function getLocalOverrideResult(barcode: string): OffProductResult | null {
+  const override = getProductOverride(barcode);
+  if (!override) {
+    return null;
+  }
+
+  return {
+    status: 'OK',
+    source: 'local_override',
+    message: 'données internes',
+    barcode,
+    product: {
+      name: override.productName,
+      brands: override.brand,
+      quantity: override.quantity,
+      categories: override.categories,
+    },
   };
 }
 
@@ -174,6 +213,12 @@ export async function fetchOffProductByBarcode(
     );
 
     if (!response.ok) {
+      if (response.status === 404) {
+        const local = getLocalOverrideResult(barcode);
+        if (local) {
+          return local;
+        }
+      }
       return {
         status: 'ERROR',
         barcode,
@@ -186,6 +231,13 @@ export async function fetchOffProductByBarcode(
 
     const payload = (await response.json()) as OffApiResponse;
     const mapped = mapApiResponse(barcode, payload);
+
+    if (mapped.status === 'NOT_FOUND') {
+      const local = getLocalOverrideResult(barcode);
+      if (local) {
+        return local;
+      }
+    }
 
     if (mapped.status === 'OK' || mapped.status === 'NOT_FOUND') {
       setCachedJson(cacheKey(barcode), {
@@ -264,6 +316,32 @@ function mapToUiModel(barcode: string, product: OffApiProduct): OffProductUiMode
     },
     ingredients: safeString(product.ingredients_text),
     allergens: safeString(product.allergens),
+    source: 'openfoodfacts',
+  };
+}
+
+function mapOverrideToUiModel(barcode: string): OffProductUiModel | null {
+  const override = getProductOverride(barcode);
+  if (!override) {
+    return null;
+  }
+
+  return {
+    barcode,
+    name: override.productName,
+    brand: override.brand,
+    quantity: override.quantity,
+    nutriments: {
+      kcal: override.nutritionPer100g?.energyKcal,
+      sugars: override.nutritionPer100g?.sugars,
+      fat: override.nutritionPer100g?.fat,
+      salt: override.nutritionPer100g?.salt,
+    },
+    ingredients: override.ingredientsText,
+    categories: override.categories,
+    nutritionPer100g: override.nutritionPer100g,
+    source: 'local_override',
+    sourceMessage: 'données internes',
   };
 }
 
@@ -289,6 +367,24 @@ export async function fetchOffProductDetails(
     );
 
     if (!response.ok) {
+      if (response.status === 404) {
+        const localUi = mapOverrideToUiModel(barcode);
+        if (localUi) {
+          return {
+            status: 'OK',
+            source: 'local_override',
+            message: 'données internes',
+            barcode,
+            ui: localUi,
+            product: {
+              name: localUi.name,
+              brands: localUi.brand,
+              quantity: localUi.quantity,
+              categories: localUi.categories,
+            },
+          };
+        }
+      }
       return {
         status: response.status === 404 ? 'NOT_FOUND' : 'ERROR',
         barcode,
@@ -302,6 +398,22 @@ export async function fetchOffProductDetails(
     const payload = (await response.json()) as OffApiResponse;
 
     if (payload.status === 0 || !payload.product) {
+      const localUi = mapOverrideToUiModel(barcode);
+      if (localUi) {
+        return {
+          status: 'OK',
+          source: 'local_override',
+          message: 'données internes',
+          barcode,
+          ui: localUi,
+          product: {
+            name: localUi.name,
+            brands: localUi.brand,
+            quantity: localUi.quantity,
+            categories: localUi.categories,
+          },
+        };
+      }
       return {
         status: 'NOT_FOUND',
         barcode,
@@ -321,6 +433,7 @@ export async function fetchOffProductDetails(
 
     return {
       status: 'OK',
+      source: 'openfoodfacts',
       barcode,
       ui: mapToUiModel(barcode, payload.product),
       product: {

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { fetchOffProductByBarcode, validateBarcode, __offInternals } from './openFoodFacts';
+import { fetchOffProductByBarcode, fetchOffProductDetails, validateBarcode, __offInternals } from './openFoodFacts';
 import { getCachedWithTTL, setCachedJson } from './localStore';
 
 describe('openFoodFacts barcode validation', () => {
@@ -86,6 +86,22 @@ describe('openFoodFacts response mapping', () => {
 
     const result = await fetchOffProductByBarcode('12345678');
     expect(result.status).toBe('NOT_FOUND');
+  });
+
+
+  it('uses local override when OFF returns empty for seeded barcode', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => ({ ok: true, status: 200, json: async () => ({ status: 0 }) } as unknown as globalThis.Response))
+    );
+
+    const result = await fetchOffProductDetails('3179142767304');
+    expect(result.status).toBe('OK');
+    expect(result.source).toBe('local_override');
+    expect(result.message).toBe('données internes');
+    expect(result.ui?.name).toBe('Levure du Boulanger – Levée rapide');
+    expect(result.ui?.brand).toBe('Vahiné');
+    expect(result.ui?.nutritionPer100g?.protein).toBe(44);
   });
 
   it('returns error for network failure', async () => {
