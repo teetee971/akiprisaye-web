@@ -38,6 +38,7 @@ const ProductDetail = lazyPage(() => import('./pages/admin/products/ProductDetai
 const ImportPage = lazyPage(() => import('./pages/admin/import/ImportPage').then(m => ({ default: m.ImportPage })));
 const ObservatoireHub = lazyPage(() => import('./pages/ObservatoireHub'));
 const Methodologie = lazyPage(() => import('./pages/Methodologie'));
+const About = lazyPage(() => import('./pages/About'));
 const Faq = lazyPage(() => import('./pages/Faq'));
 const Contact = lazyPage(() => import('./pages/Contact'));
 const MentionsLegales = lazyPage(() => import('./pages/MentionsLegales'));
@@ -206,6 +207,7 @@ export default function App() {
                       <Route path="observatoire" element={<ObservatoireHub />} />
                       <Route path="vie-chere" element={<LutteVieChere />} />
                       <Route path="methodologie" element={<Methodologie />} />
+                      <Route path="about" element={<About />} />
                       <Route path="faq" element={<Faq />} />
                       <Route path="contact" element={<Contact />} />
                       <Route path="mentions-legales" element={<MentionsLegales />} />

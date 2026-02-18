@@ -21,7 +21,6 @@ export default function Layout() {
   const [paletteQuery, setPaletteQuery] = React.useState('');
   const [showShortcuts, setShowShortcuts] = React.useState(false);
   const [showCoach, setShowCoach] = React.useState(() => localStorage.getItem('coachDismissed') !== 'true');
-  const [showQuickActions, setShowQuickActions] = React.useState(false);
   const [pinnedRoutes, setPinnedRoutes] = React.useState(() => {
     try {
       return JSON.parse(localStorage.getItem('pinnedRoutes') || '[]');
@@ -161,6 +160,8 @@ export default function Layout() {
       ? { path: match.target, label: match.label }
       : null;
   })();
+  const isHomeRoute = location.pathname === '/' || location.pathname === '/home';
+
   const moduleHint = (() => {
     if (location.pathname.startsWith('/comparateur')) {
       return 'Astuce : comparez sur plusieurs enseignes pour révéler les écarts réels.';
@@ -283,7 +284,7 @@ export default function Layout() {
         style={{ fontSize: 'clamp(0.95rem, 0.2vw + 0.9rem, 1.05rem)' }}
         role="main"
       >
-        {showCoach && (
+        {!isHomeRoute && showCoach && (
           <div className="mb-6 rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-sm text-white/80">
             <div className="flex items-start justify-between gap-4">
               <div>
@@ -310,7 +311,7 @@ export default function Layout() {
             </div>
           </div>
         )}
-        {pinnedItems.length > 0 && (
+        {!isHomeRoute && pinnedItems.length > 0 && (
           <div className="mb-6 rounded-2xl border border-white/10 bg-white/[0.04] p-4">
             <div className="text-xs font-semibold text-white/70">Accès rapides</div>
             <div className="mt-2 flex flex-wrap gap-2">
@@ -326,7 +327,7 @@ export default function Layout() {
             </div>
           </div>
         )}
-        {nextSuggestion && (
+        {!isHomeRoute && nextSuggestion && (
           <div className="mb-6 rounded-2xl border border-blue-500/30 bg-blue-500/10 p-4 text-xs text-blue-100">
             👉 Étape suivante recommandée :{' '}
             <Link to={nextSuggestion.path} className="font-semibold text-white underline">
@@ -334,7 +335,7 @@ export default function Layout() {
             </Link>
           </div>
         )}
-        {moduleHint && (
+        {!isHomeRoute && moduleHint && (
           <div className="mb-6 rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-xs text-white/70">
             {moduleHint}
           </div>
@@ -364,22 +365,10 @@ export default function Layout() {
               </Link>
             ) : null;
           })}
-          <button
-            type="button"
-            onClick={() => {
-              triggerHaptic(8);
-              setShowQuickActions(true);
-            }}
-            className="flex flex-col items-center gap-1 rounded-lg px-2 py-1 text-slate-200"
-            aria-label="Ouvrir les actions rapides"
-          >
-            <span className="text-base">⚡</span>
-            <span className="text-[10px]">Actions</span>
-          </button>
         </div>
       </div>
 
-      {showScrollTop && (
+      {!isHomeRoute && showScrollTop && (
         <button
           type="button"
           onClick={() => {
@@ -410,7 +399,7 @@ export default function Layout() {
               placeholder="Rechercher une page, un module..."
               className="mt-3 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            {pinnedItems.length > 0 && (
+            {!isHomeRoute && pinnedItems.length > 0 && (
               <div className="mt-4">
                 <div className="text-xs font-semibold text-white/70">Épinglés</div>
                 <div className="mt-2 flex flex-wrap gap-2">
@@ -491,39 +480,6 @@ export default function Layout() {
                 </ul>
               </div>
             )}
-          </div>
-        </div>
-      )}
-
-      {showQuickActions && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm">
-          <div className="fixed bottom-0 left-0 right-0 rounded-t-2xl border-t border-white/10 bg-slate-900 p-4 shadow-2xl">
-            <div className="flex items-center justify-between">
-              <div className="text-sm font-semibold text-white">Actions rapides</div>
-              <button
-                type="button"
-                onClick={() => setShowQuickActions(false)}
-                className="rounded-full border border-white/10 px-3 py-1 text-xs text-white/70"
-              >
-                Fermer
-              </button>
-            </div>
-            <div className="mt-4 grid grid-cols-2 gap-2 text-xs text-white/80">
-              {quickLinks.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  onClick={() => {
-                    triggerHaptic(8);
-                    setShowQuickActions(false);
-                  }}
-                  className="rounded-lg border border-white/10 px-3 py-3 text-center hover:bg-white/10"
-                >
-                  <div className="text-base">{item.icon}</div>
-                  <div className="mt-1">{item.label}</div>
-                </Link>
-              ))}
-            </div>
           </div>
         </div>
       )}

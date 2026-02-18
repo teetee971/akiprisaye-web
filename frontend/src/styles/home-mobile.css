@@ -1,0 +1,124 @@
+.home-mobile {
+  max-width: 720px;
+  margin: 0 auto;
+  display: grid;
+  gap: 1rem;
+}
+
+.home-mobile__hero {
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 18px;
+  background: linear-gradient(160deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.9));
+  padding: 1.1rem;
+}
+
+.home-mobile__eyebrow {
+  margin: 0;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #7dd3fc;
+}
+
+.home-mobile h1 {
+  margin: 0.45rem 0;
+  font-size: clamp(1.2rem, 4.8vw, 1.9rem);
+  line-height: 1.2;
+}
+
+.home-mobile__subtitle {
+  margin: 0;
+  color: #cbd5e1;
+  font-size: 0.94rem;
+}
+
+.home-mobile__search {
+  margin-top: 0.95rem;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.home-mobile__search input,
+.home-mobile__search button,
+.home-mobile__action,
+.home-mobile__accordionTrigger {
+  min-height: 48px;
+  border-radius: 12px;
+}
+
+.home-mobile__search input {
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  background: rgba(15, 23, 42, 0.75);
+  color: #f8fafc;
+  padding: 0.7rem 0.9rem;
+}
+
+.home-mobile__search button {
+  border: 0;
+  background: #2563eb;
+  color: #fff;
+  font-weight: 600;
+}
+
+.home-mobile__actions {
+  margin-top: 0.85rem;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.home-mobile__action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(15, 23, 42, 0.78);
+  color: #e2e8f0;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.home-mobile__details {
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 16px;
+  background: rgba(15, 23, 42, 0.55);
+  overflow: hidden;
+}
+
+.home-mobile__accordionTrigger {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: #f8fafc;
+  text-align: left;
+  font-weight: 600;
+  padding: 0.8rem 1rem;
+}
+
+.home-mobile__accordionContent {
+  border-top: 1px solid rgba(148, 163, 184, 0.25);
+  padding: 0.8rem 1rem 1rem;
+  color: #cbd5e1;
+  font-size: 0.92rem;
+}
+
+.home-mobile__links {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.home-mobile__links a {
+  color: #93c5fd;
+  text-decoration: none;
+}
+
+@media (min-width: 768px) {
+  .home-mobile__hero {
+    padding: 1.5rem;
+  }
+
+  .home-mobile__actions {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

@@ -1,51 +1,114 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { useLocation } from "react-router-dom";
-import AssistantChatButton from "../AssistantChat";
-import PanierButton from "../TiPanierButton";
-import "../../styles/floating-actions.css";
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import AssistantChat from '../AssistantChat';
+import '../../styles/floating-actions.css';
 
-interface FloatingActionsProps {
-  cartCount?: number;
-  onChatClick?: () => void;
-  onCartClick?: () => void;
-  raised?: boolean;
-}
+type ActionItem = {
+  key: string;
+  label: string;
+  to?: string;
+  onClick?: () => void;
+};
 
-/**
- * FloatingActions - Unified container for floating action buttons
- * Prevents overlap on mobile by stacking chat and cart buttons vertically
- * 
- * Features:
- * - Stacked vertical layout with responsive sizing
- * - Pointer-events handling prevents blocking underlying UI
- * - Optional raised state to avoid covering bottom inputs/controls
- * - Accessible and keyboard-navigable
- * 
- * @param cartCount - Optional cart item count to pass to cart button
- * @param onChatClick - Optional callback for chat button clicks
- * @param onCartClick - Optional callback for cart button clicks
- * @param raised - Optional flag to raise the container (e.g., when bottom input is focused)
- */
-export default function FloatingActions({ 
-  cartCount, 
-  onChatClick, 
-  onCartClick,
-  raised = false 
-}: FloatingActionsProps) {
+export default function FloatingActions() {
   const location = useLocation();
-  const disabledRoutes = ['/observatoire', '/pricing', '/tarifs', '/inscription', '/login', '/connexion', '/subscribe'];
-  const isDisabled = disabledRoutes.some((path) => location.pathname.startsWith(path));
+  const navigate = useNavigate();
+  const menuRef = useRef<HTMLDivElement | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
 
-  if (isDisabled) {
-    return null;
-  }
+  const isHelpRoute = location.pathname.startsWith('/faq') || location.pathname.startsWith('/contact');
 
-  const containerClass = `floating-actions${raised ? ' fab-container--raised' : ''}`;
+  useEffect(() => {
+    setIsOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (!menuRef.current) {
+        return;
+      }
+      if (!menuRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleOutsideClick);
+    document.addEventListener('keydown', handleEscape);
+
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, []);
+
+  const actions = useMemo<ActionItem[]>(
+    () => [
+      {
+        key: 'search',
+        label: 'Rechercher un produit',
+        onClick: () => {
+          if (location.pathname === '/' || location.pathname === '/home') {
+            const input = document.getElementById('home-search-input') as HTMLInputElement | null;
+            input?.focus();
+            input?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return;
+          }
+          navigate('/recherche-prix');
+        }
+      },
+      { key: 'scan-ean', label: 'Scanner EAN', to: '/scan-ean' },
+      { key: 'scan-ticket', label: 'Scanner ticket', to: '/recherche-prix?source=ticket' },
+      { key: 'help', label: 'Aide / FAQ', to: '/faq' }
+    ],
+    [location.pathname, navigate]
+  );
+
+  const handleActionClick = (action: ActionItem) => {
+    setIsOpen(false);
+    action.onClick?.();
+  };
 
   return (
-    <div className={containerClass}>
-      <AssistantChatButton />
-      <PanierButton />
-    </div>
+    <>
+      <div ref={menuRef}>
+        {isOpen && (
+          <div className="fabMenu" role="menu" aria-label="Actions rapides">
+            <ul className="fabMenuList">
+              {actions.map((action) => (
+                <li key={action.key}>
+                  {action.to ? (
+                    <Link to={action.to} className="fabMenuItem" role="menuitem" onClick={() => setIsOpen(false)}>
+                      {action.label}
+                    </Link>
+                  ) : (
+                    <button type="button" className="fabMenuItem" role="menuitem" onClick={() => handleActionClick(action)}>
+                      {action.label}
+                    </button>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <button
+          type="button"
+          className="fab"
+          aria-label={isOpen ? 'Fermer les actions' : 'Ouvrir les actions rapides'}
+          aria-expanded={isOpen}
+          onClick={() => setIsOpen((prev) => !prev)}
+        >
+          Actions
+        </button>
+      </div>
+
+      {isHelpRoute && <div className="helpChatAnchor"><AssistantChat /></div>}
+    </>
   );
 }
