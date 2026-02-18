@@ -5,9 +5,15 @@ workers_dev = true
 
 [vars]
 ALLOWED_ORIGINS = "http://localhost:5173,http://127.0.0.1:5173"
+OCR_PROVIDER = "dummy"
+RECEIPT_AUTOCONFIRM = "false"
 
 [[d1_databases]]
 binding = "PRICE_DB"
 database_name = "price-db"
 database_id = "REPLACE_WITH_D1_DATABASE_ID"
 migrations_dir = "migrations"
+
+[[r2_buckets]]
+binding = "RECEIPT_BUCKET"
+bucket_name = "REPLACE_WITH_RECEIPT_BUCKET"

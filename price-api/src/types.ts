@@ -9,6 +9,12 @@ export type PriceStatus = 'OK' | 'NO_DATA' | 'PARTIAL' | 'UNAVAILABLE';
 export interface Env {
   PRICE_DB: D1Database;
   PRICE_ADMIN_TOKEN: string;
+  RECEIPT_BUCKET: R2Bucket;
+  RECEIPT_USER_TOKEN?: string;
+  RECEIPT_AUTOCONFIRM?: string;
+  OCR_PROVIDER?: 'google' | 'azure' | 'aws' | 'mindee' | 'dummy';
+  OCR_API_KEY?: string;
+  OCR_ENDPOINT?: string;
   ALLOWED_ORIGINS?: string;
 }
 
@@ -52,6 +58,37 @@ export interface PriceObservationRecord {
   confidence: number;
   metadata_json: string | null;
   created_at: string;
+}
+
+export interface ReceiptJobRecord {
+  id: string;
+  territory: Territory;
+  status: 'queued' | 'running' | 'success' | 'partial' | 'failed';
+  created_at: string;
+  completed_at: string | null;
+  images_count: number;
+  source_type: 'receipt' | 'invoice' | 'quote';
+  retailer: string | null;
+  store_name: string | null;
+  observed_at: string | null;
+  totals_json: string | null;
+  pii_redaction_json: string | null;
+  confidence: number;
+  error: string | null;
+}
+
+export interface ReceiptItemRecord {
+  id: string;
+  job_id: string;
+  line_index: number;
+  product_label: string;
+  quantity: number | null;
+  unit_price_cents: number | null;
+  line_total_cents: number | null;
+  ean: string | null;
+  brand: string | null;
+  category: string | null;
+  confidence: number;
 }
 
 export interface ApiResponseBase {

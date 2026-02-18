@@ -9,13 +9,24 @@ import {
   upsertProduct,
 } from './db';
 import { withCors } from './cors';
+import {
+  completeReceiptUpload,
+  confirmReceiptJob,
+  createReceiptJob,
+  getReceiptJobWithItems,
+  processReceiptJob,
+} from './receiptIngest';
 import type { Env, PriceAggregateRecord, PriceObservationRecord, PriceStatus, PricesResponse, ProductResponse } from './types';
 import {
   adminObservationSchema,
   adminProductSchema,
   assertAdminToken,
+  assertUserIngestToken,
   getPricesQuerySchema,
   getProductParamsSchema,
+  receiptCompleteSchema,
+  receiptConfirmSchema,
+  receiptInitSchema,
   validateRetailer,
 } from './validators';
 
@@ -65,16 +76,21 @@ function toObservationView(observation: PriceObservationRecord) {
 }
 
 function computeStatus(hasAggregates: boolean, hasProduct = false): PriceStatus {
-  if (hasAggregates) {
-    return 'OK';
-  }
-  if (hasProduct) {
-    return 'PARTIAL';
-  }
+  if (hasAggregates) return 'OK';
+  if (hasProduct) return 'PARTIAL';
   return 'NO_DATA';
 }
 
-export async function handleRequest(request: Request, env: Env): Promise<Response> {
+function ingestAuthAndRateLimit(request: Request, env: Env): Promise<boolean> {
+  if (!assertUserIngestToken(request, env.RECEIPT_USER_TOKEN)) {
+    return Promise.resolve(false);
+  }
+
+  const ipKey = request.headers.get('CF-Connecting-IP') ?? 'unknown';
+  return applySimpleRateLimit(env.PRICE_DB, `ingest:${ipKey}`, 30, 60);
+}
+
+export async function handleRequest(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
   const url = new URL(request.url);
   const origin = request.headers.get('Origin');
 
@@ -83,6 +99,70 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
   }
 
   try {
+    if (request.method === 'POST' && url.pathname === '/v1/ingest/receipt/init') {
+      const allowed = await ingestAuthAndRateLimit(request, env);
+      if (!allowed) return withCors(json({ error: 'unauthorized_or_rate_limited' }, 401), origin, env);
+
+      const body = receiptInitSchema.parse(await request.json());
+      const result = await createReceiptJob(env, body);
+      return withCors(json({ jobId: result.jobId, uploadUrls: result.uploads, expiresInSec: 600 }, 201), origin, env);
+    }
+
+    if (request.method === 'POST' && url.pathname === '/v1/ingest/receipt/complete') {
+      const allowed = await ingestAuthAndRateLimit(request, env);
+      if (!allowed) return withCors(json({ error: 'unauthorized_or_rate_limited' }, 401), origin, env);
+
+      const body = receiptCompleteSchema.parse(await request.json());
+      await completeReceiptUpload(env, body.jobId, body.images);
+      ctx.waitUntil(processReceiptJob(env, body.jobId));
+      return withCors(json({ ok: true }, 200), origin, env);
+    }
+
+    if (request.method === 'GET' && url.pathname.startsWith('/v1/ingest/receipt/jobs/')) {
+      const allowed = await ingestAuthAndRateLimit(request, env);
+      if (!allowed) return withCors(json({ error: 'unauthorized_or_rate_limited' }, 401), origin, env);
+
+      const jobId = decodeURIComponent(url.pathname.replace('/v1/ingest/receipt/jobs/', ''));
+      const { job, items } = await getReceiptJobWithItems(env, jobId);
+      if (!job) return withCors(json({ error: 'not_found' }, 404), origin, env);
+
+      return withCors(
+        json({
+          jobId: job.id,
+          status: job.status,
+          territory: job.territory,
+          sourceType: job.source_type,
+          retailer: job.retailer,
+          storeName: job.store_name,
+          observedAt: job.observed_at,
+          confidence: job.confidence,
+          totals: job.totals_json ? JSON.parse(job.totals_json) : null,
+          piiRedaction: job.pii_redaction_json ? JSON.parse(job.pii_redaction_json) : null,
+          items: items.map((item) => ({
+            lineIndex: item.line_index,
+            productLabel: item.product_label,
+            quantity: item.quantity,
+            unitPrice: item.unit_price_cents !== null ? item.unit_price_cents / 100 : null,
+            lineTotal: item.line_total_cents !== null ? item.line_total_cents / 100 : null,
+            ean: item.ean,
+            brand: item.brand,
+            category: item.category,
+            confidence: item.confidence,
+          })),
+          error: job.error,
+        }, 200), origin, env);
+    }
+
+    if (request.method === 'POST' && /\/v1\/ingest\/receipt\/jobs\/[^/]+\/confirm$/.test(url.pathname)) {
+      const allowed = await ingestAuthAndRateLimit(request, env);
+      if (!allowed) return withCors(json({ error: 'unauthorized_or_rate_limited' }, 401), origin, env);
+
+      const jobId = decodeURIComponent(url.pathname.split('/')[5] ?? '');
+      const body = receiptConfirmSchema.parse(await request.json());
+      await confirmReceiptJob(env, jobId, body);
+      return withCors(json({ ok: true }, 200), origin, env);
+    }
+
     if (request.method === 'GET' && url.pathname === '/v1/prices') {
       const parsed = getPricesQuerySchema.parse(Object.fromEntries(url.searchParams.entries()));
       const retailer = parsed.retailer ? validateRetailer(parsed.retailer) : undefined;
@@ -93,10 +173,7 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
         return withCors(
           new Response(null, {
             status: 304,
-            headers: {
-              ETag: etag,
-              'Cache-Control': 'public, max-age=120, s-maxage=300',
-            },
+            headers: { ETag: etag, 'Cache-Control': 'public, max-age=120, s-maxage=300' },
           }),
           origin,
           env,
@@ -116,16 +193,10 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
         retailers: Array.from(new Set(aggregates.map((item) => item.retailer))),
         aggregates: aggregates.map(toAggregateView),
         recentObservations: observations.map(toObservationView),
-        meta: {
-          etag,
-          updatedAt: fingerprint.maxUpdatedAt,
-        },
+        meta: { etag, updatedAt: fingerprint.maxUpdatedAt },
       };
 
-      const response = json(payload, 200, {
-        ETag: etag,
-        'Cache-Control': 'public, max-age=120, s-maxage=300',
-      });
+      const response = json(payload, 200, { ETag: etag, 'Cache-Control': 'public, max-age=120, s-maxage=300' });
       await storeInCache(request, response);
       return withCors(response, origin, env);
     }
@@ -133,10 +204,7 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
     if (request.method === 'GET' && url.pathname.startsWith('/v1/products/')) {
       const ean = decodeURIComponent(url.pathname.replace('/v1/products/', ''));
       const parsed = getProductParamsSchema.parse({ ean });
-      const [product, aggregates] = await Promise.all([
-        getProduct(env.PRICE_DB, parsed.ean),
-        getPriceAggregates(env.PRICE_DB, parsed.ean),
-      ]);
+      const [product, aggregates] = await Promise.all([getProduct(env.PRICE_DB, parsed.ean), getPriceAggregates(env.PRICE_DB, parsed.ean)]);
 
       const response: ProductResponse = {
         status: computeStatus(aggregates.length > 0, Boolean(product)),
@@ -155,13 +223,7 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
         aggregates: aggregates.map(toAggregateView),
       };
 
-      return withCors(
-        json(response, 200, {
-          'Cache-Control': 'public, max-age=120, s-maxage=300',
-        }),
-        origin,
-        env,
-      );
+      return withCors(json(response, 200, { 'Cache-Control': 'public, max-age=120, s-maxage=300' }), origin, env);
     }
 
     if (request.method === 'POST' && url.pathname.startsWith('/v1/admin/')) {
@@ -171,9 +233,7 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
 
       const ipKey = request.headers.get('CF-Connecting-IP') ?? 'unknown';
       const allowed = await applySimpleRateLimit(env.PRICE_DB, `admin:${ipKey}`, 120, 60);
-      if (!allowed) {
-        return withCors(json({ error: 'rate_limited' }, 429), origin, env);
-      }
+      if (!allowed) return withCors(json({ error: 'rate_limited' }, 429), origin, env);
 
       if (url.pathname === '/v1/admin/products') {
         const body = adminProductSchema.parse(await request.json());
@@ -200,53 +260,11 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
 
         return withCors(json({ status: 'OK', ean: body.ean }, 201), origin, env);
       }
-
-      if (url.pathname === '/v1/admin/seed') {
-        const ean = '3560070894222';
-        await upsertProduct(env.PRICE_DB, {
-          ean,
-          productName: "Carrefour Classic’ Sirop de cerise / Cerise-Kers 75 cl",
-          brand: 'Carrefour Classic’',
-          quantity: '75 cl',
-          ingredientsText: 'Placeholder seed data. Renseigner les ingrédients exacts via back-office.',
-        });
-
-        const seedPayloads = [
-          { territory: 'gp', retailer: 'carrefour', price: 3.49 },
-          { territory: 'gp', retailer: 'leclerc', price: 3.75 },
-          { territory: 'mq', retailer: 'carrefour', price: 3.89 },
-          { territory: 'mq', retailer: 'superu', price: 4.1 },
-          { territory: 'fr', retailer: 'carrefour', price: 2.99 },
-          { territory: 'fr', retailer: 'intermarché', price: 3.19 },
-        ] as const;
-
-        for (const item of seedPayloads) {
-          await insertObservationAndRefreshAggregate(env.PRICE_DB, {
-            ean,
-            territory: item.territory,
-            retailer: item.retailer,
-            price: item.price,
-            currency: 'EUR',
-            unit: 'l',
-            source: 'admin_seed',
-            confidence: 0.5,
-            metadata: {
-              placeholder: true,
-              note: 'Prix de démonstration à remplacer via back-office',
-            },
-          });
-        }
-
-        return withCors(json({ status: 'OK', ean, inserted: seedPayloads.length }, 201), origin, env);
-      }
     }
 
     return withCors(json({ error: 'not_found' }, 404), origin, env);
   } catch (error) {
-    if (error instanceof Error) {
-      return withCors(json({ error: 'bad_request', message: error.message }, 400), origin, env);
-    }
-
+    if (error instanceof Error) return withCors(json({ error: 'bad_request', message: error.message }, 400), origin, env);
     return withCors(json({ error: 'unavailable' }, 503), origin, env);
   }
 }

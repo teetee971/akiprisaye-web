@@ -7,6 +7,8 @@ interface ImportMetaEnv {
   readonly VITE_FIREBASE_PROJECT_ID?: string;
   readonly VITE_BUILD_SHA?: string;
   readonly VITE_APP_BUILD_ID?: string;
+  readonly VITE_RECEIPT_INGEST_TOKEN?: string;
+  readonly VITE_PRICE_API_BASE?: string;
   // Ajoute tes autres variables ici si besoin
 }
 
