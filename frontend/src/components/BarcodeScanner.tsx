@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect, useRef } from 'react';
 import { BrowserMultiFormatReader } from '@zxing/browser';
@@ -7,13 +8,18 @@ import { SCANNER_MESSAGES, type ScannerMessage } from '../constants/scannerMessa
 import { isAcceptedEanCode, normalizeDetectedCode } from '../utils/eanScan';
 import { validateEan } from '../services/eanValidator';
 import { startScan, type ScanController } from '../lib/barcodeEngine';
+=======
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { validateEan } from '../services/eanValidator';
+import { startScan, stop, setTorch, setZoom, type ScannerDebugInfo } from '../lib/barcodeEngine';
+>>>>>>> b405bad7 (fix(frontend): use decodeFromStream to avoid camera stream conflicts)
 
 interface BarcodeScannerProps {
   onScan: (code: string) => void;
   onClose: () => void;
-  options?: ScannerOptions;
 }
 
+<<<<<<< HEAD
 export default function BarcodeScanner({ onScan, onClose, options = {} }: BarcodeScannerProps) {
   const isScanDebug = typeof window !== 'undefined' && ['scanDebug', 'debug'].some(
     (param) => new URLSearchParams(window.location.search).get(param) === '1',
@@ -56,8 +62,25 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
     cameraSettings: 'n/a',
     cameraCapabilities: 'n/a',
   });
+=======
+const EMPTY_DEBUG: ScannerDebugInfo = {
+  engineUsed: 'idle',
+  userAgent: '',
+  barcodeDetectorSupported: false,
+  fps: 0,
+  framesProcessed: 0,
+  roi: { x: 0, y: 0, w: 0, h: 0 },
+  lastDetectedAt: null,
+  lastCode: null,
+  errors: null,
+  settings: null,
+  capabilities: null,
+};
+>>>>>>> b405bad7 (fix(frontend): use decodeFromStream to avoid camera stream conflicts)
 
+export default function BarcodeScanner({ onScan, onClose }: BarcodeScannerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
+<<<<<<< HEAD
   const readerRef = useRef<BrowserMultiFormatReader | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const scanControllerRef = useRef<ScanController | null>(null);
@@ -135,8 +158,40 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
       videoNotReadyError.name = 'VIDEO_NOT_READY';
       throw videoNotReadyError;
     }
+=======
+  const scanHintTimerRef = useRef<number | null>(null);
+
+  const [isActive, setIsActive] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [manualCode, setManualCode] = useState('');
+  const [debugInfo, setDebugInfo] = useState<ScannerDebugInfo>(EMPTY_DEBUG);
+  const [torchEnabled, setTorchEnabled] = useState(false);
+  const [zoomValue, setZoomValue] = useState<number | null>(null);
+  const [showManualHint, setShowManualHint] = useState(false);
+
+  const showDebug = useMemo(() => {
+    if (typeof window === 'undefined') return false;
+    const params = new URLSearchParams(window.location.search);
+    return params.get('debug') === '1' || params.get('scanDebug') === '1';
+  }, []);
+
+  const clearHintTimer = () => {
+    if (scanHintTimerRef.current !== null) {
+      window.clearTimeout(scanHintTimerRef.current);
+      scanHintTimerRef.current = null;
+    }
+  };
+
+  const stopCamera = async () => {
+    clearHintTimer();
+    await stop();
+    setIsActive(false);
+    setTorchEnabled(false);
+    setShowManualHint(false);
+>>>>>>> b405bad7 (fix(frontend): use decodeFromStream to avoid camera stream conflicts)
   };
   useEffect(() => {
+<<<<<<< HEAD
     readerRef.current = new BrowserMultiFormatReader();
     setScanState('idle');
 
@@ -462,250 +517,102 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+=======
+    return () => {
+      clearHintTimer();
+      void stop();
+    };
+  }, []);
+
+  const handleScanResult = async (code: string) => {
+    await stopCamera();
+    onScan(code);
+  };
+
+  const handleActivateCamera = async () => {
+    if (!videoRef.current) return;
+>>>>>>> b405bad7 (fix(frontend): use decodeFromStream to avoid camera stream conflicts)
 
     setError(null);
-    setIsScanning(true);
-    setUserMessage({
-      type: 'info',
-      title: 'Traitement en cours',
-      message: "Analyse de l'image...",
-    });
-    transitionState('processing', 'Processing uploaded image');
-
-    let ean: string | null = null;
-    let detectionMethod: 'native' | 'zxing' | 'ocr' | null = null;
+    setDebugInfo(EMPTY_DEBUG);
+    setShowManualHint(false);
 
     try {
-      const img = new Image();
-      const imageUrl = URL.createObjectURL(file);
-      img.src = imageUrl;
-
-      await new Promise<void>((resolve, reject) => {
-        img.onload = () => resolve();
-        img.onerror = () => reject(new Error('Failed to load image'));
-      });
-
-      await img.decode();
-
-      if (enableDebugLogging) console.log('[SCAN] 📷 Image loaded successfully');
-
-      // Native BarcodeDetector
-      if ('BarcodeDetector' in window) {
-        try {
-          if (enableDebugLogging) console.log('[SCAN] 🔍 Attempting native BarcodeDetector...');
-
-          setUserMessage({
-            type: 'info',
-            title: 'Détection native en cours',
-            message: 'Utilisation du détecteur natif du navigateur...',
-          });
-
-          const detector = new (window as any).BarcodeDetector({
-            formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e'],
-          });
-          const codes = await detector.detect(img);
-
-          if (codes.length > 0) {
-            ean = codes[0].rawValue;
-            detectionMethod = 'native';
-            if (enableDebugLogging) console.log('[SCAN] ✅ Barcode detected with BarcodeDetector:', ean);
-          } else if (enableDebugLogging) {
-            console.log('[SCAN] ℹ️ BarcodeDetector found no codes, trying ZXing...');
-          }
-        } catch (detErr) {
-          if (enableDebugLogging) console.log('[SCAN] BarcodeDetector failed, will try other methods:', detErr);
-        }
-      } else if (enableDebugLogging) {
-        console.log('[SCAN] ℹ️ Native BarcodeDetector not available, using ZXing');
-      }
-
-      // ZXing
-      if (!ean && readerRef.current) {
-        try {
-          if (enableDebugLogging) console.log('[SCAN] 🔍 Attempting ZXing barcode detection...');
-
-          setUserMessage({
-            type: 'info',
-            title: 'Détection ZXing en cours',
-            message: 'Analyse avec bibliothèque ZXing...',
-          });
-
-          const result = await readerRef.current.decodeFromImageUrl(imageUrl);
-          ean = result.getText();
-          detectionMethod = 'zxing';
-          if (enableDebugLogging) console.log('[SCAN] ✅ Barcode detected with ZXing:', ean);
-        } catch (zErr) {
-          if (enableDebugLogging) console.log('[SCAN] ZXing detection failed, will try OCR:', zErr);
-        }
-      }
-
-      // OCR fallback
-      if (!ean && enableOcrFallback) {
-        if (enableDebugLogging) console.log('[SCAN] 📝 Starting OCR fallback with Tesseract.js...');
-
-        setUserMessage({
-          type: 'info',
-          title: 'Détection OCR en cours',
-          message: "Recherche du code dans l'image...",
-        });
-
-        try {
-          const Tesseract = await import('tesseract.js');
-          const { data } = await Tesseract.recognize(img, 'eng');
-
-          if (enableDebugLogging) console.log('[SCAN] OCR raw text:', data.text);
-
-          const match = data.text.match(/\b\d{13}\b|\b\d{8}\b/);
-          if (match) {
-            ean = match[0];
-            detectionMethod = 'ocr';
-            if (enableDebugLogging) console.log('[SCAN] ✅ EAN detected via OCR:', ean);
-          } else if (enableDebugLogging) {
-            console.log('[SCAN] ⚠️ No EAN pattern found in OCR text');
-          }
-        } catch (ocrErr) {
-          console.error('[SCAN] OCR error:', ocrErr);
-          if (enableDebugLogging) console.log('[SCAN] ⚠️ OCR fallback failed, will prompt for manual entry');
-        }
-      } else if (!ean && !enableOcrFallback && enableDebugLogging) {
-        console.log('[SCAN] ℹ️ OCR fallback is disabled - skipping OCR detection');
-      }
-
-      URL.revokeObjectURL(imageUrl);
-      setIsScanning(false);
-
-      if (ean) {
-        const normalizedEan = normalizeDetectedCode(ean);
-        if (!isAcceptedEanCode(normalizedEan)) {
-          setUserMessage({
-            type: 'warning',
-            title: 'Code non supporté',
-            message: 'Le scan a détecté un code, mais ce n’est pas un EAN-8/EAN-13 valide.',
-          });
-          transitionState('idle', 'Unsupported barcode format from image');
-          uxMonitor.scanCompleted('barcode', false);
-          return;
-        }
-
-        const methodName =
-          detectionMethod === 'native'
-            ? 'détecteur natif'
-            : detectionMethod === 'zxing'
-              ? 'bibliothèque ZXing'
-              : detectionMethod === 'ocr'
-                ? 'OCR Tesseract'
-                : 'méthode inconnue';
-
-        setUserMessage({
-          type: 'info',
-          title: 'Code détecté',
-          message: `✅ Code détecté avec ${methodName}: ${normalizedEan}`,
-        });
-
-        if (enableDebugLogging) console.log('[SCAN] ✅ Final EAN to process:', ean, 'via', detectionMethod);
-
-        transitionState('processing', `Barcode from image: ${ean}`);
-
-        setTimeout(() => setUserMessage(null), 2000);
-
-        uxMonitor.scanCompleted('barcode', true);
-
-        try {
-          onScan(normalizedEan);
-        } catch (cbErr) {
-          console.error('[SCAN] Error in onScan callback:', cbErr);
-          setError('Erreur lors du traitement du code détecté');
-          uxMonitor.scanCompleted('barcode', false);
-        }
-      } else {
-        setError('❌ Aucun code détecté automatiquement');
-        setUserMessage({
-          type: 'warning',
-          title: 'Code non détecté',
-          message:
-            "❌ Aucun code détecté automatiquement. 💡 Conseils : assurez-vous que le code-barres est bien visible, net et bien éclairé. Vous pouvez aussi saisir le code manuellement ci-dessous.",
-        });
-        transitionState('error', 'No barcode found in image');
-
-        if (enableDebugLogging) {
-          console.log('[SCAN] ⚠️ Detection summary:');
-          console.log('  - Native BarcodeDetector:', 'BarcodeDetector' in window ? 'tried but no result' : 'not available');
-          console.log('  - ZXing detection: tried but no result');
-          console.log('  - OCR fallback:', enableOcrFallback ? 'tried but no EAN pattern found' : 'disabled');
-        }
-
-        uxMonitor.scanCompleted('barcode', false);
-      }
-    } catch (err: any) {
-      console.error('[SCAN] Image processing error:', err);
-      setError("❌ Erreur lors du traitement de l'image");
-      setUserMessage({
-        type: 'error',
-        title: 'Erreur',
-        message: 'Une erreur est survenue lors du traitement de l’image. Essayez la saisie manuelle.',
-      });
-      setIsScanning(false);
-      transitionState('error', 'Image processing failed');
-      uxMonitor.scanCompleted('barcode', false);
+      await startScan(videoRef.current, handleScanResult, setDebugInfo);
+      setIsActive(true);
+      clearHintTimer();
+      scanHintTimerRef.current = window.setTimeout(() => {
+        setShowManualHint(true);
+      }, 10000);
+    } catch (scanError) {
+      setError(scanError instanceof Error ? scanError.message : 'Impossible de démarrer la caméra');
+      setIsActive(false);
     }
   };
 
-  const handleManualSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const normalizedManualInput = normalizeDetectedCode(manualInput);
-    if (isAcceptedEanCode(normalizedManualInput)) {
-      if (debugEnabled) console.log('[SCAN] Manual input submitted:', normalizedManualInput);
-      transitionState('processing', `Manual input: ${normalizedManualInput}`);
-      uxMonitor.scanCompleted('barcode', true);
-      onScan(normalizedManualInput);
-      setManualInput('');
+  const handleManualSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    const value = manualCode.trim();
+    if (!validateEan(value).valid) {
+      setError('Code EAN invalide (longueur ou checksum).');
       return;
     }
-    setError('Veuillez saisir un code EAN-8 ou EAN-13 valide.');
-    uxMonitor.scanCompleted('barcode', false);
+    void stopCamera();
+    onScan(value);
   };
 
+  const handleTorchToggle = async () => {
+    const ok = await setTorch(!torchEnabled);
+    if (ok) setTorchEnabled((prev) => !prev);
+  };
+
+  const handleZoomChange = async (value: number) => {
+    setZoomValue(value);
+    await setZoom(value);
+  };
+
+  const handleCopyDebug = async () => {
+    try {
+      await navigator.clipboard.writeText(JSON.stringify(debugInfo, null, 2));
+    } catch {
+      setError('Impossible de copier le debug.');
+    }
+  };
+
+  const capabilities = debugInfo.capabilities;
+  const torchSupported = Boolean((capabilities as any)?.torch);
+  const zoomCap = capabilities?.zoom;
+  const zoomSupported = Boolean(zoomCap && typeof zoomCap.min === 'number' && typeof zoomCap.max === 'number');
+
   return (
-    <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4">
-      <div className="bg-slate-900 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-slate-700">
-          <h2 className="text-xl font-bold text-white">📷 Scanner Code-Barres</h2>
+    <div className="fixed inset-0 z-50 bg-black/90 p-4 overflow-y-auto">
+      <div className="max-w-3xl mx-auto bg-slate-900 rounded-xl border border-slate-700 p-5 space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold text-white">Scanner code-barres</h2>
+          <button onClick={onClose} className="text-slate-300 hover:text-white">✕</button>
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          <button onClick={handleActivateCamera} className="px-4 py-2 rounded bg-blue-600 hover:bg-blue-500 text-white">
+            Activer la caméra
+          </button>
+          <button onClick={stopCamera} className="px-4 py-2 rounded bg-red-700 hover:bg-red-600 text-white">
+            Stop caméra
+          </button>
           <button
-            onClick={() => {
-              stopScanning();
-              onClose();
-            }}
-            className="text-gray-400 hover:text-white text-2xl"
-            aria-label="Fermer"
+            onClick={() => document.getElementById('manual-ean-input')?.focus()}
+            className="px-4 py-2 rounded bg-slate-700 hover:bg-slate-600 text-white"
           >
-            ×
+            Saisir manuellement
           </button>
         </div>
 
-        {/* Content */}
-        <div className="p-6 space-y-4">
-          {/* Scanning indicator with state */}
-          {isScanning && scanState === 'scanning' && (
-            <div className="bg-blue-900/20 border border-blue-700/30 rounded-lg p-3 text-center">
-              <div className="inline-flex items-center gap-2 text-blue-200 text-sm">
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-400"></div>
-                <span>Scan en cours... État: {scanState}</span>
-              </div>
-            </div>
-          )}
+        <p className="text-sm text-slate-200">Placez le code-barres dans le cadre.</p>
 
-          {/* Video Preview (FIXED: ensures video is actually visible; overlays cannot hide it) */}
-          {isScanning && hasPermission && (
-            <div className="relative w-full max-w-2xl mx-auto aspect-[4/3] rounded-lg overflow-hidden bg-black">
-              <video
-                ref={videoRef}
-                className="absolute inset-0 w-full h-full object-cover"
-                playsInline
-                muted
-                autoPlay
-              />
+        <div className="relative aspect-[4/3] w-full rounded-lg overflow-hidden border border-slate-700 bg-black">
+          <video ref={videoRef} className="absolute inset-0 h-full w-full object-cover" playsInline muted autoPlay />
 
+<<<<<<< HEAD
               {/* Overlay must be transparent and non-blocking */}
               <div className="absolute inset-0 pointer-events-none">
                 <div className="absolute inset-0 flex items-center justify-center">
@@ -846,26 +753,16 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
 
           {/* User Message (Fallback Info) */}
           {userMessage && (
+=======
+          {(showDebug || isActive) && (
+>>>>>>> b405bad7 (fix(frontend): use decodeFromStream to avoid camera stream conflicts)
             <div
-              className={`rounded-lg p-4 text-sm ${
-                userMessage.type === 'info'
-                  ? 'bg-blue-900/20 border border-blue-700/30 text-blue-200'
-                  : userMessage.type === 'warning'
-                    ? 'bg-yellow-900/20 border border-yellow-700/30 text-yellow-200'
-                    : 'bg-red-900/20 border border-red-700/30 text-red-200'
-              }`}
-            >
-              <p className="font-semibold mb-2">📷 {userMessage.title}</p>
-              <p>{userMessage.message}</p>
-
-              <div className="mt-3 pt-3 border-t border-current/30">
-                <p className="text-xs opacity-80">
-                  💡 <strong>Astuce :</strong> Vous pouvez également utiliser la saisie manuelle en bas de page.
-                </p>
-              </div>
-            </div>
+              className={`absolute border-2 ${showDebug ? 'border-amber-400' : 'border-white/60'}`}
+              style={{ left: '20%', top: '33%', width: '60%', height: '34%' }}
+            />
           )}
 
+<<<<<<< HEAD
           {/* Permission denied help */}
           {hasPermission === false && !userMessage && (
             <div className="bg-yellow-900/20 border border-yellow-700/30 rounded-lg p-4 text-sm text-yellow-200">
@@ -999,7 +896,80 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
               </p>
             </div>
           )}
+=======
+          {!isActive && <div className="absolute inset-0 grid place-items-center text-slate-400">Caméra inactive</div>}
+>>>>>>> b405bad7 (fix(frontend): use decodeFromStream to avoid camera stream conflicts)
         </div>
+
+        {showManualHint && isActive && (
+          <div className="rounded border border-amber-500/40 bg-amber-900/20 p-3 text-sm text-amber-200">
+            Aucun code détecté pour l’instant. Améliorez la netteté, rapprochez le code ou activez la torche. Le scan continue.
+          </div>
+        )}
+
+        {(torchSupported || zoomSupported) && (
+          <div className="flex flex-wrap items-center gap-4">
+            {torchSupported && (
+              <button
+                onClick={handleTorchToggle}
+                className={`px-3 py-2 rounded text-white ${torchEnabled ? 'bg-amber-500' : 'bg-slate-700 hover:bg-slate-600'}`}
+              >
+                {torchEnabled ? 'Torch ON' : 'Torch OFF'}
+              </button>
+            )}
+
+            {zoomSupported && zoomCap && (
+              <label className="text-sm text-slate-200 flex items-center gap-2">
+                Zoom
+                <input
+                  type="range"
+                  min={zoomCap.min}
+                  max={zoomCap.max}
+                  step={zoomCap.step || 0.1}
+                  value={zoomValue ?? debugInfo.settings?.zoom ?? zoomCap.min}
+                  onChange={(event) => {
+                    void handleZoomChange(Number(event.target.value));
+                  }}
+                />
+              </label>
+            )}
+          </div>
+        )}
+
+        {error && <div className="rounded border border-red-500/40 bg-red-900/20 p-3 text-sm text-red-200">{error}</div>}
+
+        <form onSubmit={handleManualSubmit} className="flex gap-2 border-t border-slate-700 pt-4">
+          <input
+            id="manual-ean-input"
+            type="text"
+            value={manualCode}
+            onChange={(event) => setManualCode(event.target.value.replace(/\D/g, '').slice(0, 13))}
+            placeholder="Code EAN"
+            className="flex-1 rounded border border-slate-600 bg-slate-950 px-3 py-2 text-white"
+          />
+          <button type="submit" className="px-4 py-2 rounded bg-green-600 text-white font-semibold">
+            Valider
+          </button>
+        </form>
+
+        {showDebug && (
+          <div className="space-y-2 rounded border border-slate-700 bg-slate-950 p-3 text-xs text-slate-200 font-mono">
+            <div>engineUsed: {debugInfo.engineUsed}</div>
+            <div>fps: {debugInfo.fps}</div>
+            <div>
+              roi: {'{'}x:{debugInfo.roi.x}, y:{debugInfo.roi.y}, w:{debugInfo.roi.w}, h:{debugInfo.roi.h}{'}'}
+            </div>
+            <div>lastDetectedAt: {debugInfo.lastDetectedAt ?? 'n/a'}</div>
+            <div>lastCode: {debugInfo.lastCode ?? 'n/a'}</div>
+            <div>errors: {debugInfo.errors ?? 'none'}</div>
+            <div>frames: {debugInfo.framesProcessed}</div>
+            <div>BarcodeDetector: {String(debugInfo.barcodeDetectorSupported)}</div>
+            <div>userAgent: {debugInfo.userAgent}</div>
+            <button onClick={handleCopyDebug} className="mt-1 px-2 py-1 rounded bg-slate-700 hover:bg-slate-600 text-white">
+              Copy debug
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
