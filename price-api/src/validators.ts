@@ -61,7 +61,20 @@ export function assertAdminToken(request: Request, expectedToken: string): boole
 }
 
 export function validateRetailer(retailer: string): string {
-  const normalized = retailer.trim().toLowerCase();
+  const normalized = retailer.trim().replace(/\s+/g, ' ').toLowerCase();
+
+  if (normalized === 'e.leclerc' || normalized === 'e leclerc' || normalized === 'leclerc') {
+    return 'leclerc';
+  }
+
+  if (normalized === 'super u' || normalized === 'super-u' || normalized === 'superu') {
+    return 'superu';
+  }
+
+  if (normalized === 'intermarche' || normalized === 'intermarché') {
+    return 'intermarché';
+  }
+
   if (RETAILERS.includes(normalized as (typeof RETAILERS)[number])) {
     return normalized;
   }

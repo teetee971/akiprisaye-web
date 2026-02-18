@@ -9,6 +9,7 @@ import {
   upsertProduct,
 } from './db';
 import { withCors } from './cors';
+import { importCsvContent, PRICE_IMPORT_TEMPLATE_V1 } from './importCsv';
 import type { Env, PriceAggregateRecord, PriceObservationRecord, PriceStatus, PricesResponse, ProductResponse } from './types';
 import {
   adminObservationSchema,
@@ -164,9 +165,28 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
       );
     }
 
-    if (request.method === 'POST' && url.pathname.startsWith('/v1/admin/')) {
+    if (url.pathname.startsWith('/v1/admin/')) {
       if (!assertAdminToken(request, env.PRICE_ADMIN_TOKEN)) {
         return withCors(json({ error: 'unauthorized' }, 401), origin, env);
+      }
+
+      if (request.method === 'GET' && url.pathname === '/v1/admin/import/template') {
+        return withCors(
+          new Response(PRICE_IMPORT_TEMPLATE_V1, {
+            status: 200,
+            headers: {
+              'Content-Type': 'text/csv; charset=utf-8',
+              'Content-Disposition': 'attachment; filename="price_import_template_v1.csv"',
+              'Cache-Control': 'no-store',
+            },
+          }),
+          origin,
+          env,
+        );
+      }
+
+      if (request.method !== 'POST') {
+        return withCors(json({ error: 'not_found' }, 404), origin, env);
       }
 
       const ipKey = request.headers.get('CF-Connecting-IP') ?? 'unknown';
@@ -238,6 +258,12 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
         }
 
         return withCors(json({ status: 'OK', ean, inserted: seedPayloads.length }, 201), origin, env);
+      }
+
+      if (url.pathname === '/v1/admin/import/csv') {
+        const csvContent = await request.text();
+        const result = await importCsvContent(csvContent, env);
+        return withCors(json(result, 200), origin, env);
       }
     }
 
