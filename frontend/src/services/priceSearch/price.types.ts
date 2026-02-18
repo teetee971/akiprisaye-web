@@ -32,7 +32,8 @@ export type TerritoryCode =
 export type PriceSourceId =
   | 'open_food_facts'
   | 'open_prices'
-  | 'data_gouv';
+  | 'data_gouv'
+  | 'local_override';
 
 export type PriceSearchStatus =
   | 'OK'

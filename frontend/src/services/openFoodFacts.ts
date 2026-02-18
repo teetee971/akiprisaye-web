@@ -1,4 +1,5 @@
 import { getCachedWithTTL, setCachedJson } from './localStore';
+import { getProductOverrideByEan } from '../data/product_overrides';
 
 const OFF_DEFAULT_BASE_URL = 'https://world.openfoodfacts.org';
 const OFF_PRODUCT_CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
@@ -40,6 +41,7 @@ type OffApiResponse = {
 };
 
 export type OffProductUiModel = {
+  source?: 'open_food_facts' | 'local_override';
   barcode: string;
   name?: string;
   brand?: string;
@@ -248,6 +250,7 @@ function mapToUiModel(barcode: string, product: OffApiProduct): OffProductUiMode
     : {};
 
   return {
+    source: 'open_food_facts',
     barcode,
     name: safeString(product.product_name),
     brand: safeString(product.brands),
@@ -264,6 +267,30 @@ function mapToUiModel(barcode: string, product: OffApiProduct): OffProductUiMode
     },
     ingredients: safeString(product.ingredients_text),
     allergens: safeString(product.allergens),
+  };
+}
+
+function mapOverrideToUiModel(barcode: string): OffProductUiModel | null {
+  const override = getProductOverrideByEan(barcode);
+
+  if (!override) {
+    return null;
+  }
+
+  return {
+    source: 'local_override',
+    barcode,
+    name: override.productName,
+    brand: override.brand,
+    quantity: override.quantity,
+    nutriScore: override.nutriScore,
+    nutriments: {
+      kcal: override.nutritionPer100g?.energyKcal,
+      sugars: override.nutritionPer100g?.sugars,
+      fat: undefined,
+      salt: undefined,
+    },
+    ingredients: override.ingredientsText,
   };
 }
 
@@ -289,6 +316,24 @@ export async function fetchOffProductDetails(
     );
 
     if (!response.ok) {
+      if (response.status === 404) {
+        const overrideUi = mapOverrideToUiModel(barcode);
+        if (overrideUi) {
+          const override = getProductOverrideByEan(barcode);
+          return {
+            status: 'OK',
+            barcode,
+            ui: overrideUi,
+            product: {
+              name: overrideUi.name,
+              brands: overrideUi.brand,
+              quantity: overrideUi.quantity,
+              categories: override?.categories,
+            },
+          };
+        }
+      }
+
       return {
         status: response.status === 404 ? 'NOT_FOUND' : 'ERROR',
         barcode,
@@ -302,6 +347,22 @@ export async function fetchOffProductDetails(
     const payload = (await response.json()) as OffApiResponse;
 
     if (payload.status === 0 || !payload.product) {
+      const overrideUi = mapOverrideToUiModel(barcode);
+      const override = getProductOverrideByEan(barcode);
+      if (overrideUi) {
+        return {
+          status: 'OK',
+          barcode,
+          ui: overrideUi,
+          product: {
+            name: overrideUi.name,
+            brands: overrideUi.brand,
+            quantity: overrideUi.quantity,
+            categories: override?.categories,
+          },
+        };
+      }
+
       return {
         status: 'NOT_FOUND',
         barcode,
@@ -331,6 +392,22 @@ export async function fetchOffProductDetails(
       },
     };
   } catch (error: unknown) {
+    const overrideUi = mapOverrideToUiModel(barcode);
+    const override = getProductOverrideByEan(barcode);
+    if (overrideUi) {
+      return {
+        status: 'OK',
+        barcode,
+        ui: overrideUi,
+        product: {
+          name: overrideUi.name,
+          brands: overrideUi.brand,
+          quantity: overrideUi.quantity,
+          categories: override?.categories,
+        },
+      };
+    }
+
     const errorName = error instanceof Error ? error.name : '';
     const isAbortError = errorName === 'AbortError';
     return {

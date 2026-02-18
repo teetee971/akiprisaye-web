@@ -1,5 +1,6 @@
 /* eslint-disable no-undef */
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { findLocalPriceOverrides, type RetailerId } from '../../data/price_overrides';
 import { computeMedian, normalizeObservation, normalizePriceValue } from './priceNormalizer';
 import { computePriceConfidence } from './priceConfidence';
 import { normalizeTerritoryCode } from './normalizeTerritoryCode';
@@ -8,6 +9,7 @@ import { buildCacheKey, getCache, purgeExpiredCache, setCache } from '../../prov
 import { trackSearchError, trackSearchResult, trackSearchStart } from './telemetry';
 import type {
   PriceInterval,
+  PriceObservation,
   PriceSearchInput,
   PriceSearchResult,
   PriceSearchStatus,
@@ -56,6 +58,77 @@ function areResultsDifferent(a: PriceSearchResult, b: PriceSearchResult): boolea
   return JSON.stringify(a) !== JSON.stringify(b);
 }
 
+function mapStoreToRetailerId(storeId?: string): RetailerId | undefined {
+  const normalized = (storeId ?? '').trim().toLowerCase();
+  switch (normalized) {
+    case 'carrefour':
+      return 'carrefour';
+    case 'leclerc':
+    case 'e.leclerc':
+    case 'e-leclerc':
+      return 'leclerc';
+    case 'intermarche':
+    case 'intermarché':
+      return 'intermarche';
+    case 'superu':
+    case 'super u':
+      return 'superu';
+    default:
+      return undefined;
+  }
+}
+
+function computeInterval(observations: ReturnType<typeof normalizeObservation>[]): PriceInterval {
+  const priceValues = observations.map((obs) => obs.price);
+  return {
+    min: priceValues.length > 0 ? normalizePriceValue(Math.min(...priceValues)) : null,
+    median: computeMedian(priceValues),
+    max: priceValues.length > 0 ? normalizePriceValue(Math.max(...priceValues)) : null,
+    currency: 'EUR',
+    priceCount: priceValues.length,
+  };
+}
+
+function buildLocalOverrideObservations(
+  input: PriceSearchInput,
+  territory: TerritoryCode
+): PriceObservation[] {
+  if (!input.barcode) {
+    return [];
+  }
+
+  const retailer = mapStoreToRetailerId(input.storeId);
+  const localEntries = findLocalPriceOverrides(input.barcode, territory, retailer);
+
+  return localEntries.map((entry) => {
+    const price = entry.price ?? Number.NaN;
+
+    return {
+      source: 'local_override',
+      barcode: entry.ean,
+      price,
+      currency: entry.currency,
+      unit: entry.unit,
+      observedAt: entry.observedAt,
+      territory,
+      metadata: {
+        retailer: entry.retailer,
+        territory,
+        note: entry.sourceNote ?? 'Catalogue interne (prix).',
+        priceStatus: entry.price === null ? 'missing' : 'available',
+      },
+    };
+  });
+}
+
+function shouldUseLocalOverride(
+  status: PriceSearchStatus,
+  observationsCount: number,
+  hasUnavailableProvider: boolean
+): boolean {
+  return observationsCount === 0 || status === 'NO_DATA' || status === 'UNAVAILABLE' || hasUnavailableProvider;
+}
+
 async function fetchLiveResult(
   normalizedInput: PriceSearchInput,
   territory: TerritoryCode,
@@ -68,7 +141,7 @@ async function fetchLiveResult(
     controller.signal
   );
 
-  const observations = providerResults
+  const providerObservations = providerResults
     .flatMap((result) => result.observations)
     .map(normalizeObservation);
 
@@ -82,20 +155,11 @@ async function fetchLiveResult(
     )
   );
 
-  const priceValues = observations.map((obs) => obs.price);
-  const interval: PriceInterval = {
-    min: priceValues.length > 0 ? normalizePriceValue(Math.min(...priceValues)) : null,
-    median: computeMedian(priceValues),
-    max: priceValues.length > 0 ? normalizePriceValue(Math.max(...priceValues)) : null,
-    currency: 'EUR',
-    priceCount: priceValues.length,
-  };
-
   const confidence = computePriceConfidence({
-    territoryMatch: observations.some(
+    territoryMatch: providerObservations.some(
       (obs) => normalizeTerritoryCode(obs.territory) === territory
     ),
-    observations,
+    observations: providerObservations,
   });
 
   const productName =
@@ -103,26 +167,48 @@ async function fetchLiveResult(
       .map((result) => result.productName)
       .find(Boolean) ?? undefined;
 
-  if (observations.length === 0) {
-    warnings.push('Données insuffisantes pour établir une fourchette de prix fiable.');
-  }
-
   const hasUnavailableProvider = providerResults.some((result) => result.status === 'UNAVAILABLE');
 
-  const status: PriceSearchStatus =
-    observations.length === 0
+  const providerStatus: PriceSearchStatus =
+    providerObservations.length === 0
       ? 'NO_DATA'
       : confidence < 50 || warnings.length > 0 || hasUnavailableProvider
         ? 'PARTIAL'
         : 'OK';
 
+  const useLocalOverride = shouldUseLocalOverride(providerStatus, providerObservations.length, hasUnavailableProvider);
+  const localOverrides = useLocalOverride ? buildLocalOverrideObservations(normalizedInput, territory) : [];
+  const normalizedLocalOverrides = localOverrides.map(normalizeObservation);
+
+  if (providerObservations.length === 0 && normalizedLocalOverrides.length === 0) {
+    warnings.push('Données insuffisantes pour établir une fourchette de prix fiable.');
+  }
+
+  const observations = providerObservations.length > 0 ? providerObservations : normalizedLocalOverrides;
+  const localOverrideFound = normalizedLocalOverrides.length > 0;
+  const status: PriceSearchStatus =
+    providerObservations.length > 0
+      ? providerStatus
+      : localOverrideFound
+        ? 'PARTIAL'
+        : 'NO_DATA';
+
+  const finalWarnings = [...warnings];
+  if (localOverrideFound) {
+    finalWarnings.push('Source: Catalogue interne (prix).');
+  }
+
+  const finalSourcesUsed = localOverrideFound
+    ? Array.from(new Set([...sourcesUsed, 'local_override']))
+    : sourcesUsed;
+
   return {
     status,
-    intervals: observations.length > 0 ? [interval] : [],
+    intervals: observations.length > 0 ? [computeInterval(observations)] : [],
     confidence,
     observations,
-    warnings,
-    sourcesUsed,
+    warnings: finalWarnings,
+    sourcesUsed: finalSourcesUsed,
     territory,
     productName,
     metadata: {
@@ -218,6 +304,36 @@ export async function searchProductPrices(input: PriceSearchInput): Promise<Pric
         cacheHit: true,
       });
       return cached.value;
+    }
+
+    const localOverrides = buildLocalOverrideObservations(normalizedInput, territory).map(normalizeObservation);
+    if (localOverrides.length > 0) {
+      const localResult: PriceSearchResult = {
+        status: 'PARTIAL',
+        intervals: [computeInterval(localOverrides)],
+        confidence: 20,
+        observations: localOverrides,
+        warnings: ['Service indisponible pour le moment.', 'Source: Catalogue interne (prix).'],
+        sourcesUsed: ['local_override'],
+        territory,
+        metadata: {
+          queriedAt: new Date().toISOString(),
+          queryUsed,
+          territoryMessage: territoryMessage(territory),
+        },
+      };
+
+      trackSearchError({ territory, cacheHit: false, reason: 'live_fetch_failed' });
+      trackSearchResult({
+        territory,
+        status: localResult.status,
+        confidence: localResult.confidence,
+        sourceCount: localResult.sourcesUsed.length,
+        warningCount: localResult.warnings.length,
+        cacheHit: false,
+      });
+
+      return localResult;
     }
 
     const unavailableResult: PriceSearchResult = {
