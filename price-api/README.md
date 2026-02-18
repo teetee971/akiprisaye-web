@@ -156,6 +156,7 @@ curl -X POST "$PRICE_API_BASE/v1/ingest/receipt/jobs/<jobId>/confirm" \
 - Keeps only business-safe fields: enseigne/magasin, date, item lines, totals, confidence, proof hashes/R2 keys.
 - Redaction report is stored as counters (`pii_redaction_json`) without original values.
 - `rawText` from OCR is internal-only and never returned in API responses.
+- During confirmation, only lines with a valid EAN (`8-14` digits) are written to `price_observations`; others remain available in receipt job results for user correction.
 
 ### Security
 - R2 bucket is private and used through signed URLs with short expiry (`expiresInSec=600`).

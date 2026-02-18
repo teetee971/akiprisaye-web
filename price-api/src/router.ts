@@ -81,13 +81,21 @@ function computeStatus(hasAggregates: boolean, hasProduct = false): PriceStatus 
   return 'NO_DATA';
 }
 
-function ingestAuthAndRateLimit(request: Request, env: Env): Promise<boolean> {
+async function ingestAuthAndRateLimit(
+  request: Request,
+  env: Env,
+): Promise<{ ok: true } | { ok: false; code: 401 | 429; error: 'unauthorized' | 'rate_limited' }> {
   if (!assertUserIngestToken(request, env.RECEIPT_USER_TOKEN)) {
-    return Promise.resolve(false);
+    return { ok: false, code: 401, error: 'unauthorized' };
   }
 
   const ipKey = request.headers.get('CF-Connecting-IP') ?? 'unknown';
-  return applySimpleRateLimit(env.PRICE_DB, `ingest:${ipKey}`, 30, 60);
+  const allowed = await applySimpleRateLimit(env.PRICE_DB, `ingest:${ipKey}`, 30, 60);
+  if (!allowed) {
+    return { ok: false, code: 429, error: 'rate_limited' };
+  }
+
+  return { ok: true };
 }
 
 export async function handleRequest(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
@@ -101,7 +109,7 @@ export async function handleRequest(request: Request, env: Env, ctx: ExecutionCo
   try {
     if (request.method === 'POST' && url.pathname === '/v1/ingest/receipt/init') {
       const allowed = await ingestAuthAndRateLimit(request, env);
-      if (!allowed) return withCors(json({ error: 'unauthorized_or_rate_limited' }, 401), origin, env);
+      if (!allowed.ok) return withCors(json({ error: allowed.error }, allowed.code), origin, env);
 
       const body = receiptInitSchema.parse(await request.json());
       const result = await createReceiptJob(env, body);
@@ -110,7 +118,7 @@ export async function handleRequest(request: Request, env: Env, ctx: ExecutionCo
 
     if (request.method === 'POST' && url.pathname === '/v1/ingest/receipt/complete') {
       const allowed = await ingestAuthAndRateLimit(request, env);
-      if (!allowed) return withCors(json({ error: 'unauthorized_or_rate_limited' }, 401), origin, env);
+      if (!allowed.ok) return withCors(json({ error: allowed.error }, allowed.code), origin, env);
 
       const body = receiptCompleteSchema.parse(await request.json());
       await completeReceiptUpload(env, body.jobId, body.images);
@@ -120,7 +128,7 @@ export async function handleRequest(request: Request, env: Env, ctx: ExecutionCo
 
     if (request.method === 'GET' && url.pathname.startsWith('/v1/ingest/receipt/jobs/')) {
       const allowed = await ingestAuthAndRateLimit(request, env);
-      if (!allowed) return withCors(json({ error: 'unauthorized_or_rate_limited' }, 401), origin, env);
+      if (!allowed.ok) return withCors(json({ error: allowed.error }, allowed.code), origin, env);
 
       const jobId = decodeURIComponent(url.pathname.replace('/v1/ingest/receipt/jobs/', ''));
       const { job, items } = await getReceiptJobWithItems(env, jobId);
@@ -155,7 +163,7 @@ export async function handleRequest(request: Request, env: Env, ctx: ExecutionCo
 
     if (request.method === 'POST' && /\/v1\/ingest\/receipt\/jobs\/[^/]+\/confirm$/.test(url.pathname)) {
       const allowed = await ingestAuthAndRateLimit(request, env);
-      if (!allowed) return withCors(json({ error: 'unauthorized_or_rate_limited' }, 401), origin, env);
+      if (!allowed.ok) return withCors(json({ error: allowed.error }, allowed.code), origin, env);
 
       const jobId = decodeURIComponent(url.pathname.split('/')[5] ?? '');
       const body = receiptConfirmSchema.parse(await request.json());

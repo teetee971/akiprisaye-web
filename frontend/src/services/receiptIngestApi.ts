@@ -25,6 +25,7 @@ interface JobResult {
     unitPrice: number | null;
     lineTotal: number | null;
     confidence: number;
+    ean: string | null;
   }>;
   error?: string | null;
 }
