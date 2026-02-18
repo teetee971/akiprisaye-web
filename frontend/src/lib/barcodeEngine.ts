@@ -33,10 +33,9 @@ type ScanSession = {
   track: MediaStreamTrack | null;
   reader: BrowserMultiFormatReader | null;
   stopped: boolean;
-  engineUsed: EngineUsed;
   frameHandle: number | null;
   frameCallbackId: number | null;
-  lastTickAt: number;
+  detector: BarcodeDetector | null;
   startedAt: number;
   framesThisSecond: number;
   fpsWindowStartedAt: number;
@@ -57,8 +56,6 @@ const ROI_W = 0.6;
 const ROI_H = 0.34;
 
 let session: ScanSession | null = null;
-
-const isMobileUa = () => /Android|iPhone|iPad|Mobile/i.test(navigator.userAgent);
 
 const getRoiRect = (video: HTMLVideoElement): RoiRect => ({
   x: Math.floor(video.videoWidth * ROI_X),
@@ -84,31 +81,36 @@ const updateFps = (onDebug?: DebugCallback) => {
   }
 };
 
-const getValidEan = (rawCode?: string) => {
+const getValidEan = (rawCode?: string | null) => {
   if (!rawCode) return null;
   const normalized = normalizeDetectedCode(rawCode);
   return validateEan(normalized).valid ? normalized : null;
 };
 
-const getThrottleIntervalMs = () => {
-  if (!session) return 0;
-  const elapsed = Date.now() - session.startedAt;
-  if (elapsed <= 3000) return 0;
-  return 83;
-};
+const triggerResult = (code: string, onResult: (code: string) => void, onDebug?: DebugCallback) => {
+  if (!session) return;
+  const now = Date.now();
 
-const scheduleNextFrame = (tick: (timestamp: number) => void) => {
-  if (!session || session.stopped || !session.videoEl) return;
-
-  if ('requestVideoFrameCallback' in session.videoEl) {
-    session.frameCallbackId = (session.videoEl as any).requestVideoFrameCallback(() => tick(performance.now()));
+  if (session.lastTriggeredCode === code && now - session.lastTriggeredAt < 1200) {
     return;
   }
 
-  session.frameHandle = requestAnimationFrame(tick);
+  session.lastTriggeredCode = code;
+  session.lastTriggeredAt = now;
+  patchDebug({ lastCode: code, lastDetectedAt: now, errors: null }, onDebug);
+  onResult(code);
 };
 
-const cancelScheduledFrame = () => {
+const scheduleDetectorFrame = (tick: (timestamp: number) => void) => {
+  if (!session || session.stopped || !session.videoEl) return;
+  if ('requestVideoFrameCallback' in session.videoEl) {
+    session.frameCallbackId = (session.videoEl as any).requestVideoFrameCallback(() => tick(performance.now()));
+  } else {
+    session.frameHandle = requestAnimationFrame(tick);
+  }
+};
+
+const clearScheduledFrames = () => {
   if (!session || !session.videoEl) return;
 
   if (session.frameHandle !== null) {
@@ -150,7 +152,7 @@ const applyTrackConstraints = async (track: MediaStreamTrack, capabilities: Medi
 
   const zoom = capabilities?.zoom;
   if (zoom && typeof zoom.min === 'number' && typeof zoom.max === 'number') {
-    (advanced as any).zoom = Math.min(Math.max(1.35, zoom.min), zoom.max);
+    (advanced as any).zoom = Math.min(Math.max(1.5, zoom.min), zoom.max);
   }
 
   if (Object.keys(advanced).length > 0) {
@@ -170,107 +172,34 @@ const waitReady = async (videoEl: HTMLVideoElement) => {
   }
 };
 
-const triggerResult = (code: string, onResult: (code: string) => void, onDebug?: DebugCallback) => {
-  if (!session) return;
-  const now = Date.now();
+const tryBuildBarcodeDetector = async (): Promise<BarcodeDetector | null> => {
+  if (typeof (window as any).BarcodeDetector === 'undefined') return null;
 
-  if (session.lastTriggeredCode === code && now - session.lastTriggeredAt < 1200) {
-    return;
+  const ctor = (window as any).BarcodeDetector;
+  if (typeof ctor.getSupportedFormats !== 'function') return null;
+
+  try {
+    const supportedFormats = await ctor.getSupportedFormats();
+    const hasEanSupport = ['ean_13', 'ean_8', 'upc_a', 'upc_e'].some((format) => supportedFormats.includes(format));
+    if (!hasEanSupport) return null;
+    return new ctor({ formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e'] });
+  } catch {
+    return null;
   }
-
-  session.lastTriggeredCode = code;
-  session.lastTriggeredAt = now;
-  patchDebug({ lastCode: code, lastDetectedAt: now, errors: null }, onDebug);
-  onResult(code);
 };
 
-const runZxingRoiLoop = (videoEl: HTMLVideoElement, onResult: (code: string) => void, onDebug?: DebugCallback) => {
-  if (!session) return;
+const startBarcodeDetectorLoop = (onResult: (code: string) => void, onDebug?: DebugCallback) => {
+  if (!session || !session.videoEl || !session.detector) return;
+  const videoEl = session.videoEl;
 
-  session.engineUsed = 'zxing';
-  patchDebug({ engineUsed: 'zxing' }, onDebug);
-
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d', { willReadFrequently: true });
-  if (!ctx) {
-    patchDebug({ errors: 'Canvas context unavailable for ZXing loop' }, onDebug);
-    return;
-  }
-
-  const tick = (timestamp: number) => {
-    if (!session || session.stopped) return;
-
-    const interval = getThrottleIntervalMs();
-    if (interval > 0 && timestamp - session.lastTickAt < interval) {
-      scheduleNextFrame(tick);
-      return;
-    }
-    session.lastTickAt = timestamp;
+  const tick = async (_timestamp: number) => {
+    if (!session || session.stopped || !session.detector) return;
 
     const roi = getRoiRect(videoEl);
     patchDebug({ roi }, onDebug);
 
     if (!roi.w || !roi.h) {
-      scheduleNextFrame(tick);
-      return;
-    }
-
-    canvas.width = roi.w;
-    canvas.height = roi.h;
-    ctx.drawImage(videoEl, roi.x, roi.y, roi.w, roi.h, 0, 0, roi.w, roi.h);
-
-    try {
-      const result = session.reader?.decodeFromCanvas(canvas);
-      const valid = getValidEan(result?.getText());
-      if (valid) {
-        triggerResult(valid, onResult, onDebug);
-        return;
-      }
-    } catch (error) {
-      if (!(error instanceof NotFoundException)) {
-        patchDebug({ errors: error instanceof Error ? error.message : String(error) }, onDebug);
-      }
-    }
-
-    if (session) {
-      session.debug.framesProcessed += 1;
-      patchDebug({ framesProcessed: session.debug.framesProcessed }, onDebug);
-      updateFps(onDebug);
-    }
-
-    scheduleNextFrame(tick);
-  };
-
-  scheduleNextFrame(tick);
-};
-
-const runBarcodeDetectorLoop = async (
-  videoEl: HTMLVideoElement,
-  onResult: (code: string) => void,
-  onDebug?: DebugCallback,
-): Promise<boolean> => {
-  const detectorCtor = (window as any).BarcodeDetector;
-  if (!detectorCtor || !session) return false;
-
-  const detector = new detectorCtor({ formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e'] });
-  session.engineUsed = 'barcode_detector';
-  patchDebug({ engineUsed: 'barcode_detector' }, onDebug);
-
-  const tick = async (timestamp: number) => {
-    if (!session || session.stopped) return;
-
-    const interval = getThrottleIntervalMs();
-    if (interval > 0 && timestamp - session.lastTickAt < interval) {
-      scheduleNextFrame(tick);
-      return;
-    }
-    session.lastTickAt = timestamp;
-
-    const roi = getRoiRect(videoEl);
-    patchDebug({ roi }, onDebug);
-
-    if (!roi.w || !roi.h) {
-      scheduleNextFrame(tick);
+      scheduleDetectorFrame(tick);
       return;
     }
 
@@ -279,31 +208,22 @@ const runBarcodeDetectorLoop = async (
     try {
       bitmap = await createImageBitmap(videoEl, roi.x, roi.y, roi.w, roi.h);
       session.pendingBitmap = bitmap;
-      const foundCodes = await detector.detect(bitmap);
+      const foundCodes = await session.detector.detect(bitmap);
 
       if (foundCodes?.length) {
         for (const foundCode of foundCodes) {
           const valid = getValidEan(foundCode.rawValue);
           if (valid) {
+            patchDebug({ engineUsed: 'barcode_detector' }, onDebug);
             triggerResult(valid, onResult, onDebug);
             return;
           }
         }
       }
-
-      const fallbackAfterMs = 2000;
-      if (Date.now() - session.startedAt >= fallbackAfterMs) {
-        runZxingRoiLoop(videoEl, onResult, onDebug);
-        return;
-      }
     } catch (error) {
       patchDebug({ errors: error instanceof Error ? error.message : String(error) }, onDebug);
-      runZxingRoiLoop(videoEl, onResult, onDebug);
-      return;
     } finally {
-      if (bitmap) {
-        bitmap.close();
-      }
+      if (bitmap) bitmap.close();
       if (session) {
         session.pendingBitmap = null;
         session.debug.framesProcessed += 1;
@@ -312,30 +232,24 @@ const runBarcodeDetectorLoop = async (
       }
     }
 
-    scheduleNextFrame(tick);
+    scheduleDetectorFrame(tick);
   };
 
-  scheduleNextFrame(tick);
-  return true;
+  scheduleDetectorFrame(tick);
 };
 
-export async function startScan(
-  videoEl: HTMLVideoElement,
-  onResult: (code: string) => void,
-  onDebug?: DebugCallback,
-): Promise<void> {
+export async function startScan(videoEl: HTMLVideoElement, onResult: (code: string) => void, onDebug?: DebugCallback): Promise<void> {
   await stop();
 
   session = {
     videoEl,
     stream: null,
     track: null,
-    reader: new BrowserMultiFormatReader(hints, 60),
+    reader: new BrowserMultiFormatReader(hints, 90),
     stopped: false,
-    engineUsed: 'idle',
     frameHandle: null,
     frameCallbackId: null,
-    lastTickAt: 0,
+    detector: null,
     startedAt: Date.now(),
     framesThisSecond: 0,
     fpsWindowStartedAt: Date.now(),
@@ -377,14 +291,35 @@ export async function startScan(
   await videoEl.play();
   await waitReady(videoEl);
 
-  const useFastScan = isMobileUa();
-  if (!useFastScan) {
-    patchDebug({ errors: null }, onDebug);
-  }
+  if (!session || !session.reader) return;
 
-  const usingNative = await runBarcodeDetectorLoop(videoEl, onResult, onDebug);
-  if (!usingNative) {
-    runZxingRoiLoop(videoEl, onResult, onDebug);
+  const barcodeDetector = await tryBuildBarcodeDetector();
+  session.detector = barcodeDetector;
+
+  // ZXing continuous loop is the primary engine (OFF-like behavior).
+  session.reader.decodeFromVideoDevice(undefined, videoEl, (result, error) => {
+    if (!session || session.stopped) return;
+
+    session.debug.framesProcessed += 1;
+    patchDebug({ framesProcessed: session.debug.framesProcessed, roi: getRoiRect(videoEl) }, onDebug);
+    updateFps(onDebug);
+
+    if (result) {
+      const valid = getValidEan(result.getText());
+      if (valid) {
+        patchDebug({ engineUsed: 'zxing' }, onDebug);
+        triggerResult(valid, onResult, onDebug);
+      }
+      return;
+    }
+
+    if (error && !(error instanceof NotFoundException)) {
+      patchDebug({ errors: error instanceof Error ? error.message : String(error) }, onDebug);
+    }
+  });
+
+  if (barcodeDetector) {
+    startBarcodeDetectorLoop(onResult, onDebug);
   }
 }
 
@@ -392,7 +327,7 @@ export async function stop(): Promise<void> {
   if (!session) return;
 
   session.stopped = true;
-  cancelScheduledFrame();
+  clearScheduledFrames();
 
   if (session.pendingBitmap) {
     session.pendingBitmap.close();

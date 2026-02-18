@@ -23,26 +23,40 @@ const EMPTY_DEBUG: ScannerDebugInfo = {
 
 export default function BarcodeScanner({ onScan, onClose }: BarcodeScannerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const scanHintTimerRef = useRef<number | null>(null);
+
   const [isActive, setIsActive] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [manualCode, setManualCode] = useState('');
   const [debugInfo, setDebugInfo] = useState<ScannerDebugInfo>(EMPTY_DEBUG);
   const [torchEnabled, setTorchEnabled] = useState(false);
   const [zoomValue, setZoomValue] = useState<number | null>(null);
+  const [showManualHint, setShowManualHint] = useState(false);
 
   const showDebug = useMemo(() => {
     if (typeof window === 'undefined') return false;
-    return new URLSearchParams(window.location.search).get('debug') === '1';
+    const params = new URLSearchParams(window.location.search);
+    return params.get('debug') === '1' || params.get('scanDebug') === '1';
   }, []);
 
+  const clearHintTimer = () => {
+    if (scanHintTimerRef.current !== null) {
+      window.clearTimeout(scanHintTimerRef.current);
+      scanHintTimerRef.current = null;
+    }
+  };
+
   const stopCamera = async () => {
+    clearHintTimer();
     await stop();
     setIsActive(false);
     setTorchEnabled(false);
+    setShowManualHint(false);
   };
 
   useEffect(() => {
     return () => {
+      clearHintTimer();
       void stop();
     };
   }, []);
@@ -57,10 +71,15 @@ export default function BarcodeScanner({ onScan, onClose }: BarcodeScannerProps)
 
     setError(null);
     setDebugInfo(EMPTY_DEBUG);
+    setShowManualHint(false);
 
     try {
       await startScan(videoRef.current, handleScanResult, setDebugInfo);
       setIsActive(true);
+      clearHintTimer();
+      scanHintTimerRef.current = window.setTimeout(() => {
+        setShowManualHint(true);
+      }, 10000);
     } catch (scanError) {
       setError(scanError instanceof Error ? scanError.message : 'Impossible de démarrer la caméra');
       setIsActive(false);
@@ -132,17 +151,18 @@ export default function BarcodeScanner({ onScan, onClose }: BarcodeScannerProps)
           {(showDebug || isActive) && (
             <div
               className={`absolute border-2 ${showDebug ? 'border-amber-400' : 'border-white/60'}`}
-              style={{
-                left: '20%',
-                top: '33%',
-                width: '60%',
-                height: '34%',
-              }}
+              style={{ left: '20%', top: '33%', width: '60%', height: '34%' }}
             />
           )}
 
           {!isActive && <div className="absolute inset-0 grid place-items-center text-slate-400">Caméra inactive</div>}
         </div>
+
+        {showManualHint && isActive && (
+          <div className="rounded border border-amber-500/40 bg-amber-900/20 p-3 text-sm text-amber-200">
+            Aucun code détecté pour l’instant. Améliorez la netteté, rapprochez le code ou activez la torche. Le scan continue.
+          </div>
+        )}
 
         {(torchSupported || zoomSupported) && (
           <div className="flex flex-wrap items-center gap-4">
