@@ -1,0 +1,23 @@
+{
+  "name": "price-api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Akiprisaye price micro-service on Cloudflare Workers + D1",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:migrate:local": "wrangler d1 migrations apply PRICE_DB --local",
+    "db:migrate:prod": "wrangler d1 migrations apply PRICE_DB --remote",
+    "db:migrate": "npm run db:migrate:local && npm run db:migrate:prod",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "itty-router": "^5.0.22"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260208.0",
+    "typescript": "^5.9.2",
+    "wrangler": "^4.31.1"
+  }
+}
