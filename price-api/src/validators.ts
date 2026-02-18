@@ -51,6 +51,19 @@ export const adminObservationSchema = z.object({
   metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
+
+export const enrichOffSchema = z.object({
+  receiptItemId: z.string().min(1).max(128),
+});
+
+export const enrichResolveSchema = z.object({
+  receiptItemId: z.string().min(1).max(128),
+  chosenEan: z.string().regex(EAN_REGEX, 'ean must have 8-14 digits').optional(),
+  chosenCandidateId: z.string().min(1).max(128).optional(),
+}).refine((value) => Boolean(value.chosenEan || value.chosenCandidateId), {
+  message: 'chosenEan or chosenCandidateId is required',
+});
+
 export function assertAdminToken(request: Request, expectedToken: string): boolean {
   const authHeader = request.headers.get('Authorization');
   if (!authHeader || !authHeader.startsWith('Bearer ')) {

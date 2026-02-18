@@ -1,8 +1,10 @@
 import type {
   InsertObservationInput,
+  ProductCandidateRecord,
   PriceAggregateRecord,
   PriceObservationRecord,
   ProductRecord,
+  ReceiptItemRecord,
   Territory,
 } from './types';
 
@@ -321,4 +323,93 @@ export async function applySimpleRateLimit(
 
   await db.prepare('UPDATE rate_limits SET count = count + 1 WHERE key = ?').bind(key).run();
   return true;
+}
+
+export async function getReceiptItemById(db: D1Database, receiptItemId: string): Promise<ReceiptItemRecord | null> {
+  return db
+    .prepare('SELECT id, name, quantity, ean FROM receipt_items WHERE id = ?')
+    .bind(receiptItemId)
+    .first<ReceiptItemRecord>();
+}
+
+export async function clearProductCandidatesForReceiptItem(db: D1Database, receiptItemId: string): Promise<void> {
+  await db.prepare('DELETE FROM product_candidates WHERE receipt_item_id = ?').bind(receiptItemId).run();
+}
+
+export async function insertProductCandidate(
+  db: D1Database,
+  candidate: Omit<ProductCandidateRecord, 'created_at'>,
+): Promise<void> {
+  await db
+    .prepare(
+      `INSERT INTO product_candidates (id, receipt_item_id, source, ean, name, brand, image_url, quantity, score)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    )
+    .bind(
+      candidate.id,
+      candidate.receipt_item_id,
+      candidate.source,
+      candidate.ean,
+      candidate.name,
+      candidate.brand,
+      candidate.image_url,
+      candidate.quantity,
+      candidate.score,
+    )
+    .run();
+}
+
+export async function getProductCandidatesByReceiptItem(
+  db: D1Database,
+  receiptItemId: string,
+): Promise<ProductCandidateRecord[]> {
+  const { results } = await db
+    .prepare('SELECT * FROM product_candidates WHERE receipt_item_id = ? ORDER BY score DESC LIMIT 5')
+    .bind(receiptItemId)
+    .all<ProductCandidateRecord>();
+
+  return results ?? [];
+}
+
+export async function getProductCandidateById(db: D1Database, candidateId: string): Promise<ProductCandidateRecord | null> {
+  return db.prepare('SELECT * FROM product_candidates WHERE id = ?').bind(candidateId).first<ProductCandidateRecord>();
+}
+
+export async function cacheProductMedia(db: D1Database, ean: string, imageUrl: string): Promise<void> {
+  await db
+    .prepare(
+      `INSERT INTO product_media_cache (ean, image_url, cached_at)
+       VALUES (?, ?, datetime('now'))
+       ON CONFLICT(ean) DO UPDATE SET image_url = excluded.image_url, cached_at = datetime('now')`,
+    )
+    .bind(ean, imageUrl)
+    .run();
+}
+
+export async function insertReceiptUserResolution(
+  db: D1Database,
+  input: { ean: string; imageUrl?: string; confidenceScore: number },
+): Promise<string> {
+  const id = crypto.randomUUID();
+  await db
+    .prepare(
+      `INSERT INTO price_observations (
+        id, ean, territory, retailer, price_cents, currency, observed_at, source, confidence, metadata_json
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    )
+    .bind(
+      id,
+      input.ean,
+      'fr',
+      'receipt_user',
+      0,
+      'EUR',
+      new Date().toISOString(),
+      'receipt_user',
+      input.confidenceScore,
+      JSON.stringify({ image_url: input.imageUrl ?? null }),
+    )
+    .run();
+
+  return id;
 }

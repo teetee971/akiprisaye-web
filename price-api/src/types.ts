@@ -12,6 +12,26 @@ export interface Env {
   ALLOWED_ORIGINS?: string;
 }
 
+export interface ReceiptItemRecord {
+  id: string;
+  name: string;
+  quantity: string | null;
+  ean: string | null;
+}
+
+export interface ProductCandidateRecord {
+  id: string;
+  receipt_item_id: string;
+  source: string;
+  ean: string | null;
+  name: string;
+  brand: string | null;
+  image_url: string | null;
+  quantity: string | null;
+  score: number;
+  created_at: string;
+}
+
 export interface ProductRecord {
   ean: string;
   product_name: string | null;

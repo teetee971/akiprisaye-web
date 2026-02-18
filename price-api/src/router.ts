@@ -14,10 +14,13 @@ import {
   adminObservationSchema,
   adminProductSchema,
   assertAdminToken,
+  enrichOffSchema,
+  enrichResolveSchema,
   getPricesQuerySchema,
   getProductParamsSchema,
   validateRetailer,
 } from './validators';
+import { enrichReceiptItemWithOff, listReceiptItemCandidates, resolveReceiptItemCandidate } from './enrich/productEnrichService';
 
 function json(data: unknown, status = 200, headers?: HeadersInit): Response {
   return new Response(JSON.stringify(data), {
@@ -83,6 +86,24 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
   }
 
   try {
+    if (request.method === 'POST' && url.pathname === '/v1/enrich/off') {
+      const body = enrichOffSchema.parse(await request.json());
+      const candidates = await enrichReceiptItemWithOff(env.PRICE_DB, body.receiptItemId);
+      return withCors(json({ status: 'OK', receiptItemId: body.receiptItemId, candidates }, 200), origin, env);
+    }
+
+    if (request.method === 'POST' && url.pathname === '/v1/enrich/resolve') {
+      const body = enrichResolveSchema.parse(await request.json());
+      const resolution = await resolveReceiptItemCandidate(env.PRICE_DB, body);
+      return withCors(json({ status: 'OK', receiptItemId: body.receiptItemId, ...resolution }, 201), origin, env);
+    }
+
+    if (request.method === 'GET' && url.pathname.startsWith('/v1/enrich/candidates/')) {
+      const receiptItemId = decodeURIComponent(url.pathname.replace('/v1/enrich/candidates/', ''));
+      const candidates = await listReceiptItemCandidates(env.PRICE_DB, receiptItemId);
+      return withCors(json({ status: 'OK', receiptItemId, candidates }, 200), origin, env);
+    }
+
     if (request.method === 'GET' && url.pathname === '/v1/prices') {
       const parsed = getPricesQuerySchema.parse(Object.fromEntries(url.searchParams.entries()));
       const retailer = parsed.retailer ? validateRetailer(parsed.retailer) : undefined;
