@@ -1,0 +1,8 @@
+item_id,receipt_id,line_no,description,quantity,unit,unit_price,line_total
+1,1,1,NETTO SIROP MENTHE BLLE 1L,1,unit,3.75,3.75
+2,1,2,VINAIGRE ALCOOL BLANC 8% 1L SOCARIZ,1,unit,1.35,1.35
+3,1,3,COCA COLA BTLLE 2L,1,unit,3.49,3.49
+4,1,4,SUPPLEMENT FRAIS,1,unit,0.30,0.30
+5,1,5,CITRON VERT LE KG,0.195,kg,3.20,0.62
+6,1,6,LE LYNX 480G TAB LAVE VAISSELLE,1,unit,2.40,2.40
+7,1,7,CHIPS LAY'S 250G,1,unit,4.99,4.99

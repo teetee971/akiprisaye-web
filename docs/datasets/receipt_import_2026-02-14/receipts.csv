@@ -1,0 +1,2 @@
+receipt_id,store_name,address_line,postal_code,city,phone,siret,receipt_date,receipt_time,ticket_number,register_number,cashier,currency,items_count,total_to_pay,payment_method,payment_amount
+1,SHILO H INTERNATIONAL,65 RUE BRION,97111,MORNE A L'EAU,0590 47 58 61,82019082500027,2026-02-14,18:36,1599588,02,ANISSA (12),EUR,7,16.90,CB,16.90
