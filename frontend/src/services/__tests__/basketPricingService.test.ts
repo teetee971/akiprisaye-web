@@ -1,203 +1,94 @@
-/**
- * Tests for Basket Pricing Service
- * Phase 8: Test basket analysis and optimization
- */
-
 import { describe, it, expect } from 'vitest';
-import {
-  analyzeBasketPricing,
-  analyzeBasketPriceTrends,
-} from '../basketPricingService';
+import { calculateBasketPrices } from '../basketPricingService';
 
-describe('Basket Pricing Service', () => {
-  describe('analyzeBasketPricing', () => {
-    it('should analyze basket pricing without user position', () => {
-      const basketItems = [
-        { id: '3017620422003', quantity: 1, meta: { name: 'Nutella 400g' } },
-        { id: '3029330003533', quantity: 2, meta: { name: 'Ricoré 100g' } },
-      ];
+vi.mock('../../data/seedStores', () => ({
+  SEED_STORES: [
+    {
+      id: 'store-a',
+      name: 'Store A',
+      territory: 'GP',
+    },
+    {
+      id: 'store-b',
+      name: 'Store B',
+      territory: 'GP',
+    },
+    {
+      id: 'store-fr',
+      name: 'Store FR',
+      territory: 'FR',
+    },
+  ],
+}));
 
-      const result = analyzeBasketPricing(basketItems);
+vi.mock('../../data/seedProducts', () => ({
+  SEED_PRODUCTS: [
+    {
+      id: 'prod-1',
+      prices: [
+        { storeId: 'store-a', price: 2.5 },
+        { storeId: 'store-b', price: 3.0 },
+      ],
+    },
+    {
+      id: 'prod-2',
+      prices: [
+        { storeId: 'store-a', price: 1.0 },
+        { storeId: 'store-b', price: 1.8 },
+      ],
+    },
+  ],
+}));
 
-      expect(result).toBeDefined();
-      expect(result.basket.items).toBe(2);
-      expect(result.basket.totalQuantity).toBe(3);
-      expect(result.bestOption).toBeDefined();
-      expect(result.comparison).toBeDefined();
-      expect(result.recommendations).toBeDefined();
-      expect(Array.isArray(result.recommendations)).toBe(true);
-    });
+describe('basketPricingService.calculateBasketPrices', () => {
+  it('returns only stores for the requested territory', () => {
+    const basket = [{ productId: 'prod-1', quantity: 1 }];
 
-    it('should include distance calculations with user position', () => {
-      const basketItems = [
-        { id: '3017620422003', quantity: 1, meta: { name: 'Nutella 400g' } },
-      ];
+    const results = calculateBasketPrices(basket, 'GP');
 
-      const userPosition = { lat: 16.2415, lon: -61.5331 };
-
-      const result = analyzeBasketPricing(basketItems, userPosition);
-
-      expect(result.bestOption).toBeDefined();
-      if (result.bestOption.distance !== undefined) {
-        expect(result.bestOption.distance).toBeTypeOf('number');
-      }
-      
-      if (result.multiStoreOption) {
-        if (result.multiStoreOption.extraDistance !== undefined) {
-          expect(result.multiStoreOption.extraDistance).toBeTypeOf('number');
-        }
-      }
-    });
-
-    it('should calculate price comparisons', () => {
-      const basketItems = [
-        { id: '3017620422003', quantity: 2, meta: { name: 'Nutella 400g' } },
-      ];
-
-      const result = analyzeBasketPricing(basketItems);
-
-      expect(result.comparison.lowestPrice).toBeDefined();
-      expect(result.comparison.highestPrice).toBeDefined();
-      expect(result.comparison.averagePrice).toBeDefined();
-      expect(result.comparison.priceRange).toBe(
-        result.comparison.highestPrice - result.comparison.lowestPrice
-      );
-      expect(result.comparison.potentialSavings).toBe(result.comparison.priceRange);
-    });
-
-    it('should generate recommendations', () => {
-      const basketItems = [
-        { id: '3017620422003', quantity: 1, meta: { name: 'Nutella 400g' } },
-        { id: '3029330003533', quantity: 1, meta: { name: 'Ricoré 100g' } },
-      ];
-
-      const result = analyzeBasketPricing(basketItems);
-
-      expect(result.recommendations).toBeDefined();
-      expect(Array.isArray(result.recommendations)).toBe(true);
-
-      if (result.recommendations.length > 0) {
-        const rec = result.recommendations[0];
-        expect(rec.type).toBeDefined();
-        expect(rec.priority).toBeDefined();
-        expect(rec.title).toBeDefined();
-        expect(rec.description).toBeDefined();
-      }
-    });
-
-    it('should sort recommendations by priority', () => {
-      const basketItems = [
-        { id: '3017620422003', quantity: 1, meta: { name: 'Nutella 400g' } },
-      ];
-
-      const result = analyzeBasketPricing(basketItems);
-
-      if (result.recommendations.length > 1) {
-        const priorities = result.recommendations.map(r => r.priority);
-        const priorityOrder = { high: 0, medium: 1, low: 2 };
-
-        for (let i = 1; i < priorities.length; i++) {
-          expect(priorityOrder[priorities[i]]).toBeGreaterThanOrEqual(
-            priorityOrder[priorities[i - 1]]
-          );
-        }
-      }
-    });
-
-    it('should handle empty basket', () => {
-      const result = analyzeBasketPricing([]);
-
-      expect(result.basket.items).toBe(0);
-      expect(result.basket.totalQuantity).toBe(0);
-    });
-
-    it('should calculate multi-store strategy', () => {
-      const basketItems = [
-        { id: '3017620422003', quantity: 1, meta: { name: 'Nutella 400g' } },
-        { id: '3029330003533', quantity: 1, meta: { name: 'Ricoré 100g' } },
-      ];
-
-      const result = analyzeBasketPricing(basketItems);
-
-      if (result.multiStoreOption) {
-        expect(result.multiStoreOption.stores).toBeDefined();
-        expect(Array.isArray(result.multiStoreOption.stores)).toBe(true);
-        expect(result.multiStoreOption.totalPrice).toBeDefined();
-        expect(result.multiStoreOption.savings).toBeDefined();
-        expect(result.multiStoreOption.worthwhile).toBeDefined();
-        expect(result.multiStoreOption.reason).toBeDefined();
-      }
-    });
+    expect(results).toHaveLength(2);
+    expect(results.every((s) => s.territory === 'GP')).toBe(true);
   });
 
-  describe('analyzeBasketPriceTrends', () => {
-    it('should analyze price trends for basket items', () => {
-      const basketItems = [
-        { id: '3017620422003', quantity: 1, meta: { name: 'Nutella 400g' } },
-      ];
+  it('computes line totals and basket totals per store', () => {
+    const basket = [
+      { productId: 'prod-1', quantity: 2 },
+      { productId: 'prod-2', quantity: 3 },
+    ];
 
-      const trends = analyzeBasketPriceTrends(basketItems);
+    const results = calculateBasketPrices(basket, 'GP');
+    const storeA = results.find((s) => s.storeId === 'store-a');
 
-      expect(Array.isArray(trends)).toBe(true);
-    });
-
-    it('should return trend data for valid products', () => {
-      const basketItems = [
-        { id: '3017620422003', quantity: 1, meta: { name: 'Nutella 400g' } },
-      ];
-
-      const trends = analyzeBasketPriceTrends(basketItems);
-
-      trends.forEach(trend => {
-        expect(trend.product).toBeDefined();
-        expect(trend.currentPrice).toBeDefined();
-        expect(trend.trend).toBeDefined();
-        expect(trend.recommendation).toBeDefined();
-      });
-    });
-
-    it('should handle empty basket', () => {
-      const trends = analyzeBasketPriceTrends([]);
-      expect(trends).toEqual([]);
-    });
-
-    it('should skip invalid products', () => {
-      const basketItems = [
-        { id: 'invalid-ean', quantity: 1, meta: { name: 'Unknown Product' } },
-      ];
-
-      const trends = analyzeBasketPriceTrends(basketItems);
-      expect(trends).toEqual([]);
-    });
+    expect(storeA).toBeDefined();
+    expect(storeA?.lines).toEqual([
+      { productId: 'prod-1', unitPrice: 2.5, quantity: 2, totalPrice: 5.0 },
+      { productId: 'prod-2', unitPrice: 1.0, quantity: 3, totalPrice: 3.0 },
+    ]);
+    expect(storeA?.total).toBe(8.0);
   });
 
-  describe('recommendation types', () => {
-    it('should generate price recommendations', () => {
-      const basketItems = [
-        { id: '3017620422003', quantity: 1, meta: { name: 'Nutella 400g' } },
-      ];
+  it('sorts stores by ascending total price', () => {
+    const basket = [{ productId: 'prod-1', quantity: 1 }];
 
-      const result = analyzeBasketPricing(basketItems);
-      const priceRecs = result.recommendations.filter(r => r.type === 'price');
+    const results = calculateBasketPrices(basket, 'GP');
 
-      priceRecs.forEach(rec => {
-        expect(rec.savings).toBeDefined();
-        expect(rec.savings).toBeGreaterThan(0);
-      });
-    });
+    expect(results.map((r) => r.storeId)).toEqual(['store-a', 'store-b']);
+    expect(results[0].total).toBeLessThanOrEqual(results[1].total);
+  });
 
-    it('should generate distance recommendations with user position', () => {
-      const basketItems = [
-        { id: '3017620422003', quantity: 1, meta: { name: 'Nutella 400g' } },
-      ];
+  it('ignores unknown products and missing store prices', () => {
+    const basket = [
+      { productId: 'unknown', quantity: 2 },
+      { productId: 'prod-2', quantity: 1 },
+    ];
 
-      const userPosition = { lat: 16.2415, lon: -61.5331 };
-      const result = analyzeBasketPricing(basketItems, userPosition);
-      const distanceRecs = result.recommendations.filter(r => r.type === 'distance');
+    const results = calculateBasketPrices(basket, 'GP');
 
-      distanceRecs.forEach(rec => {
-        expect(rec.extraDistance).toBeDefined();
-      });
-    });
+    expect(results[0].lines).toEqual([
+      { productId: 'prod-2', unitPrice: 1.0, quantity: 1, totalPrice: 1.0 },
+    ]);
+    expect(results[1].lines).toEqual([
+      { productId: 'prod-2', unitPrice: 1.8, quantity: 1, totalPrice: 1.8 },
+    ]);
   });
 });

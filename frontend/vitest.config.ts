@@ -23,6 +23,7 @@ export default defineConfig({
     include: [
       abs('./src/services/openFoodFacts.test.ts'),
       abs('./src/services/alertProductImageService.test.ts'),
+      abs('./src/services/__tests__/basketPricingService.test.ts'),
       abs('./functions/**/__tests__/*.test.ts'),
       abs('./src/test/alerts.filterActive.test.ts'),
       abs('./src/test/alerts.searchSort.test.ts'),

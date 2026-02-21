@@ -120,8 +120,11 @@ export default defineConfig({
           const parts = modulePath.split('/')
           const packageName = parts[0].startsWith('@') ? `${parts[0]}/${parts[1]}` : parts[0]
 
+          // Keep React/router in the main vendor chunk to avoid cross-chunk TDZ
+          // runtime errors (e.g. "Cannot access 'X' before initialization") from
+          // circular references between custom vendor splits.
           if (['react', 'react-dom', 'react-router', 'react-router-dom', 'scheduler'].includes(packageName)) {
-            return 'react-vendor'
+            return 'vendor'
           }
 
           if (packageName.startsWith('firebase') || packageName.startsWith('@firebase/')) {

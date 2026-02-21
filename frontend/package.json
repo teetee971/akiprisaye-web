@@ -17,10 +17,40 @@
     "audit:ci": "npm audit --omit=dev --audit-level=high"
   },
   "dependencies": {
+    "@capacitor/core": "^6.2.1",
+    "@hookform/resolvers": "^3.10.0",
+    "@tanstack/react-table": "^8.21.3",
+    "@zxing/browser": "^0.1.5",
+    "chart.js": "^4.5.1",
+    "clsx": "^2.1.1",
+    "exceljs": "^4.4.0",
     "firebase": "^12.9.0",
+    "framer-motion": "^11.18.2",
+    "fuse.js": "^7.1.0",
+    "i18next": "^24.2.3",
+    "i18next-browser-languagedetector": "^8.2.1",
+    "i18next-http-backend": "^3.0.2",
+    "leaflet": "^1.9.4",
+    "leaflet.heat": "^0.2.0",
+    "leaflet.markercluster": "^1.5.3",
+    "lucide-react": "^0.469.0",
+    "papaparse": "^5.5.3",
+    "prop-types": "^15.8.1",
     "react": "^18.3.1",
+    "react-chartjs-2": "^5.3.1",
     "react-dom": "^18.3.1",
-    "react-helmet-async": "^2.0.5"
+    "react-helmet-async": "^2.0.5",
+    "react-hook-form": "^7.71.2",
+    "react-hot-toast": "^2.6.0",
+    "react-i18next": "^15.7.4",
+    "react-joyride": "^2.9.3",
+    "react-leaflet": "^4.2.1",
+    "react-router-dom": "^6.30.3",
+    "recharts": "^2.15.4",
+    "tailwind-merge": "^2.6.1",
+    "tesseract.js": "^5.1.1",
+    "web-vitals": "^4.2.4",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.2.0",
@@ -36,6 +66,7 @@
     "tailwindcss": "^4.2.0",
     "typescript": "^5.4.5",
     "vite": "^5.2.0",
+    "vite-plugin-static-copy": "^1.0.6",
     "vitest": "^1.6.0"
   }
 }
