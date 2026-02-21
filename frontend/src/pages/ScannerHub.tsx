@@ -1,6 +1,8 @@
 import { useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useSearchParams } from 'react-router-dom';
+import { useToast } from '../hooks/useToast';
+import { useShoppingListStore } from '../store/useShoppingListStore';
 import {
   DEFAULT_LOOKUP_TERRITORY,
   useContinuousBarcodeScanner,
@@ -30,6 +32,25 @@ function getTerritoire(value: string | null): Territoire {
   return DEFAULT_LOOKUP_TERRITORY;
 }
 
+
+
+function toTerritoryCode(territoire: Territoire): 'gp' | 'mq' | 'gf' | 're' | 'yt' | 'fr' {
+  switch (territoire) {
+    case 'guadeloupe':
+      return 'gp';
+    case 'martinique':
+      return 'mq';
+    case 'guyane':
+      return 'gf';
+    case 'reunion':
+      return 're';
+    case 'mayotte':
+      return 'yt';
+    default:
+      return 'fr';
+  }
+}
+
 function StatusBadge({ status }: { status: ScanStatus }) {
   const tone =
     status === 'ok'
@@ -52,6 +73,8 @@ function StatusBadge({ status }: { status: ScanStatus }) {
 export default function ScannerHub() {
   const [searchParams] = useSearchParams();
   const debugEnabled = searchParams.get('debug') === '1';
+  const toast = useToast();
+  const { addItem } = useShoppingListStore();
 
   const territoire = useMemo(
     () => getTerritoire(searchParams.get('territoire')),
@@ -90,7 +113,7 @@ export default function ScannerHub() {
         <section className="mx-auto w-full max-w-4xl rounded-2xl border border-slate-800 bg-slate-900 p-4">
           <h1 className="mb-3 text-2xl font-semibold">SCANNER V3 DEV TEST</h1>
           <p className="mb-4 text-sm text-slate-300">
-            Scan continu actif: caméra en boucle, anti-doublon et ajout rapide au panier.
+            Scan continu actif: caméra en boucle, anti-doublon et ajout rapide à la liste.
           </p>
 
           <div className="mb-4 flex flex-wrap gap-2">
@@ -109,17 +132,37 @@ export default function ScannerHub() {
                 type="checkbox"
                 checked={autoAddToCart}
                 onChange={(event) => setAutoAddToCart(event.target.checked)}
-                aria-label="Activer l’ajout automatique au panier pour les résultats OK"
+                aria-label="Activer l’ajout automatique à la liste pour les résultats OK"
               />
-              Ajout auto au panier (OK)
+              Ajout auto à la liste (OK)
             </label>
 
             <button
               type="button"
-              onClick={addAllOk}
+              onClick={() => {
+                const territoryCode = toTerritoryCode(territoire);
+                okItems.forEach((entry) => {
+                  if (!entry.product) return;
+                  addItem({
+                    id: `${entry.barcode}:${territoryCode}`,
+                    barcode: entry.barcode,
+                    name: entry.product.name || '(Nom indisponible)',
+                    brand: entry.product.brand || '',
+                    territory: territoryCode,
+                    addedAt: Date.now(),
+                    desiredQuantity: 1,
+                    lastPrice: entry.product.price,
+                    lastPriceDate: new Date().toISOString(),
+                  });
+                });
+                addAllOk();
+                if (okItems.length > 0) {
+                  toast.success(`🧾 ${okItems.length} article${okItems.length > 1 ? 's' : ''} ajouté${okItems.length > 1 ? 's' : ''} à la liste`);
+                }
+              }}
               disabled={okItems.length === 0}
               className="rounded-lg border border-emerald-500/60 px-4 py-3 text-sm font-semibold text-emerald-200 disabled:cursor-not-allowed disabled:opacity-50"
-              aria-label={`Ajouter tous les produits valides au panier (${okItems.length})`}
+              aria-label={`Ajouter tous les produits valides à la liste (${okItems.length})`}
             >
               Ajouter tous les OK ({okItems.length})
             </button>
@@ -209,12 +252,28 @@ export default function ScannerHub() {
                     <div className="flex shrink-0 gap-2">
                       <button
                         type="button"
-                        onClick={() => addItemToCart(item.id)}
+                        onClick={() => {
+                          if (!item.product) return;
+                          const territoryCode = toTerritoryCode(territoire);
+                          addItem({
+                            id: `${item.barcode}:${territoryCode}`,
+                            barcode: item.barcode,
+                            name: item.product.name || '(Nom indisponible)',
+                            brand: item.product.brand || '',
+                            territory: territoryCode,
+                            addedAt: Date.now(),
+                            desiredQuantity: 1,
+                            lastPrice: item.product.price,
+                            lastPriceDate: new Date().toISOString(),
+                          });
+                          addItemToCart(item.id);
+                          toast.success('🧾 Ajouté à la liste');
+                        }}
                         disabled={item.status !== 'ok' || !item.product}
                         className="rounded-lg border border-emerald-500/60 px-3 py-2 text-sm font-semibold text-emerald-200 disabled:cursor-not-allowed disabled:opacity-50"
-                        aria-label={`Ajouter ${item.barcode} au panier`}
+                        aria-label={`Ajouter ${item.barcode} à la liste`}
                       >
-                        Ajouter au panier
+                        Ajouter à la liste
                       </button>
 
                       <button

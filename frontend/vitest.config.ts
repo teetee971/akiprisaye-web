@@ -35,6 +35,8 @@ export default defineConfig({
       abs('./src/test/cloudflareRouting.test.ts'),
       abs('./src/test/actualites.page.test.jsx'),
       abs('./src/test/serviceWorkerCacheStrategy.test.ts'),
+      abs('./src/test/shoppingListStore.test.ts'),
+      abs('./src/test/priceDecisionEngine.test.ts'),
       abs('./scripts/verify-pages-api.test.ts'),
     ],
 

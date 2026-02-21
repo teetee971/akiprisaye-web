@@ -15,6 +15,7 @@ import OnboardingTour from './components/OnboardingTour';
 import OnboardingAutoStart from './components/OnboardingAutoStart';
 import HelpButton from './components/HelpButton';
 import AnalyticsTracker from './components/analytics/AnalyticsTracker';
+import { ToastProvider } from './components/Toast/ToastProvider';
 import { StoreSelectionProvider } from './context/StoreSelectionContext';
 import RequireAuth from './components/auth/RequireAuth';
 import { logDebug } from './utils/logger';
@@ -58,6 +59,8 @@ const ScannerHub = lazyPage(() => import('./pages/ScannerHub'));
 const OCRHub = lazyPage(() => import('./pages/ocr/OCRHub'));
 const ScanEAN = lazyPage(() => import('./pages/ScanEAN'));
 const ProductPhotoAnalysis = lazyPage(() => import('./pages/ProductPhotoAnalysis'));
+const ListePage = lazyPage(() => import('./pages/ListePage'));
+const ItemDetailPage = lazyPage(() => import('./pages/ItemDetailPage'));
 const ProductScanResult = lazyPage(() => import('./pages/ProductScanResult'));
 const ComparaisonEnseignes = lazyPage(() => import('./pages/ComparaisonEnseignes'));
 const BasketComparison = lazyPage(() => import('./pages/BasketComparison'));
@@ -264,6 +267,11 @@ export default function App() {
                         {/* Comparison & Reporting */}
                         <Route path="comparaison-enseignes" element={<ComparaisonEnseignes />} />
                         <Route path="comparaison-panier" element={<BasketComparison />} />
+                        <Route path="liste" element={<ListePage />} />
+                        <Route path="liste/:id" element={<ItemDetailPage />} />
+                        <Route path="panier" element={<Navigate to="/liste" replace />} />
+                        <Route path="cart" element={<Navigate to="/liste" replace />} />
+                        <Route path="checkout" element={<Navigate to="/liste" replace />} />
                         <Route path="signalement" element={<SignalerAbus />} />
 
                         {/* Settings & History */}
@@ -327,6 +335,7 @@ export default function App() {
                     <OnboardingAutoStart />
                     <OnboardingTour />
                     <HelpButton />
+                    <ToastProvider />
                   </Suspense>
                 </BrowserRouter>
               </StoreSelectionProvider>
