@@ -154,6 +154,7 @@ export default function ListePage() {
           const rec = recommendations.find((r) => r.itemId === item.id)?.rec;
           return (
             <li key={item.id} className="rounded border border-slate-700 p-3">
+
               <div className="flex items-start gap-3">
                 {item.imageThumbUrl ? (
                   <img
@@ -186,6 +187,7 @@ export default function ListePage() {
                   )}
                 </div>
               </div>
+
             </li>
           );
         })}
