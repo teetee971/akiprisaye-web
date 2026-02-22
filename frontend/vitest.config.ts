@@ -36,6 +36,19 @@ export default defineConfig({
       abs('./src/test/cloudflareRouting.test.ts'),
       abs('./src/test/actualites.page.test.jsx'),
       abs('./src/test/serviceWorkerCacheStrategy.test.ts'),
+      abs('./src/test/app.aliases.test.ts'),
+      abs('./src/test/entitlements.test.ts'),
+      abs('./src/test/quotaService.test.ts'),
+      abs('./src/test/shoppingListStore.test.ts'),
+      abs('./src/test/shoppingListPersistence.test.ts'),
+      abs('./src/test/offCacheFallback.test.ts'),
+      abs('./src/test/scannerFallback.test.tsx'),
+
+      abs('./src/test/listePage.thumbnails.test.tsx'),
+
+      abs('./src/test/decisionEngine.test.ts'),
+      abs('./src/domain/decision/__tests__/decisionEngine.test.ts'),
+      abs('./src/domain/shoppingList/premium/tests/*.test.ts'),
       abs('./scripts/verify-pages-api.test.ts'),
     ],
 

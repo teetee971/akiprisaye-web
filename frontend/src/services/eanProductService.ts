@@ -31,7 +31,12 @@ export interface ProductImages {
   imageFront?: string | null;
   imageIngredients?: string | null;
   imageNutrition?: string | null;
+  productName?: string | null;
+  brands?: string | null;
+  quantity?: string | null;
 }
+
+const OFF_CACHE = new Map<string, ProductImages>();
 
 /**
  * Product lookup result with validation
@@ -128,14 +133,15 @@ export async function lookupProductByEan(
   // Step 4: Try Open Food Facts for unknown products
   try {
     const images = await enrichProductWithImages(validation.ean);
-    
-    if (images.imageUrl) {
+
+    if (images.imageUrl || images.productName || images.brands) {
       // Found in Open Food Facts - create partial product
       const offProduct: PartialProduct = {
         ean: validation.ean,
         status: 'partiel',
-        nom: 'Produit trouvé dans Open Food Facts',
-        imageUrl: images.imageUrl,
+        nom: images.productName || `Produit (EAN: ${validation.ean})`,
+        marque: images.brands || undefined,
+        imageUrl: images.imageUrl || undefined,
         traceability: {
           ...traceability,
           source: 'open_food_facts'
@@ -184,6 +190,9 @@ export async function lookupProductByEan(
  * @returns Product images or null values if not found
  */
 async function enrichProductWithImages(ean: string): Promise<ProductImages> {
+  const cached = OFF_CACHE.get(ean);
+  if (cached) return cached;
+
   try {
     const response = await fetch(
       `https://world.openfoodfacts.org/api/v0/product/${ean}.json`,
@@ -193,41 +202,42 @@ async function enrichProductWithImages(ean: string): Promise<ProductImages> {
         }
       }
     );
-    
+
     if (!response.ok) {
-      // Handle rate limiting (429) specifically
       if (response.status === 429) {
         console.warn(`[IMAGES] Open Food Facts rate limit reached for EAN ${ean}. Please retry later.`);
       } else {
         console.warn(`[IMAGES] Open Food Facts API error for EAN ${ean}: ${response.status}`);
       }
-      return {
-        imageUrl: null,
-        imageThumbnail: null,
-      };
+      const empty = { imageUrl: null, imageThumbnail: null };
+      OFF_CACHE.set(ean, empty);
+      return empty;
     }
-    
+
     const data = await response.json();
-    
+
     if (data.status === 1 && data.product) {
       const product = data.product;
-      
-      return {
+      const resolved = {
         imageUrl: product.image_url || product.image_front_url || null,
         imageThumbnail: product.image_small_url || product.image_thumb_url || null,
         imageFront: product.image_front_url || null,
         imageIngredients: product.image_ingredients_url || null,
         imageNutrition: product.image_nutrition_url || null,
+        productName: product.product_name || null,
+        brands: product.brands || null,
+        quantity: product.quantity || null,
       };
+      OFF_CACHE.set(ean, resolved);
+      return resolved;
     }
   } catch (error) {
     console.error('[IMAGES] Error fetching from Open Food Facts:', error);
   }
-  
-  return {
-    imageUrl: null,
-    imageThumbnail: null,
-  };
+
+  const empty = { imageUrl: null, imageThumbnail: null };
+  OFF_CACHE.set(ean, empty);
+  return empty;
 }
 
 /**

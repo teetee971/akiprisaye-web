@@ -2,20 +2,18 @@
   "name": "akiprisaye-web-root",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=20.19.0"
+  },
   "scripts": {
     "build": "vite build",
     "dev": "cd frontend && npm run dev",
     "preview": "cd frontend && npm run preview",
     "build:frontend": "cd frontend && npm ci --include=dev && npm run build",
     "install:frontend": "cd frontend && npm ci --include=dev",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
+    "lint": "cd frontend && npm run lint"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^8.19.1",
-    "@typescript-eslint/parser": "^8.19.1",
-    "eslint": "^9.15.0",
-    "eslint-plugin-react": "^7.37.5",
-    "typescript": "^5.4.5",
     "vite": "^7.3.1"
   }
 }

@@ -1,10 +1,16 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import Header from './layout/Header';
 import Footer from './layout/Footer';
 import FabActions from './ui/FabActions';
+import UpgradePromptModal from './billing/UpgradePromptModal';
+import { hydrateShoppingList } from '../store/useShoppingListStore';
 
 export default function Layout() {
+  useEffect(() => {
+    hydrateShoppingList();
+  }, []);
+
   return (
     <div className="flex min-h-screen flex-col bg-slate-950 text-slate-100">
       <Header />
@@ -12,6 +18,7 @@ export default function Layout() {
         <Outlet />
       </main>
       <FabActions />
+      <UpgradePromptModal />
       <Footer />
     </div>
   );

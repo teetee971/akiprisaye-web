@@ -15,7 +15,9 @@ import OnboardingTour from './components/OnboardingTour';
 import OnboardingAutoStart from './components/OnboardingAutoStart';
 import HelpButton from './components/HelpButton';
 import AnalyticsTracker from './components/analytics/AnalyticsTracker';
+import { ToastProvider } from './components/Toast/ToastProvider';
 import { StoreSelectionProvider } from './context/StoreSelectionContext';
+import { EntitlementProvider } from './billing/EntitlementProvider';
 import RequireAuth from './components/auth/RequireAuth';
 import { logDebug } from './utils/logger';
 
@@ -71,6 +73,8 @@ const Alertes = lazyPage(() => import('./pages/Alertes'));
 const AlerteDetail = lazyPage(() => import('./pages/AlerteDetail'));
 const Promos = lazyPage(() => import('./pages/Promos'));
 const MesListes = lazyPage(() => import('./pages/MesListes'));
+const ListePage = lazyPage(() => import('./pages/ListePage'));
+const UpgradePage = lazyPage(() => import('./pages/UpgradePage'));
 
 // Savings Dashboard
 const MesEconomies = lazyPage(() => import('./pages/MesEconomies'));
@@ -112,6 +116,9 @@ function LegacyAliasRoutes() {
     <>
       {/* Actualités */}
       <Route path="actus" element={<Navigate to="/actualites" replace />} />
+      <Route path="panier" element={<Navigate to="/liste" replace />} />
+      <Route path="cart" element={<Navigate to="/liste" replace />} />
+      <Route path="checkout" element={<Navigate to="/liste" replace />} />
       <Route path="news" element={<Navigate to="/actualites" replace />} />
 
       {/* Scanner */}
@@ -210,6 +217,7 @@ export default function App() {
           <AuthProvider>
             <OnboardingProvider>
               <StoreSelectionProvider>
+                <EntitlementProvider>
                 <BrowserRouter>
                   <Suspense fallback={<LoadingFallback />}>
                     <Routes>
@@ -276,6 +284,8 @@ export default function App() {
                         <Route path="alertes/:id" element={<AlerteDetail />} />
                         <Route path="promos" element={<Promos />} />
                         <Route path="mes-listes" element={<MesListes />} />
+                        <Route path="liste" element={<ListePage />} />
+                        <Route path="upgrade" element={<UpgradePage />} />
 
                         {/* Savings Dashboard */}
                         <Route path="mes-economies" element={<MesEconomies />} />
@@ -297,7 +307,7 @@ export default function App() {
                         />
 
                         {/* Aliases legacy (stables CI) */}
-                        <LegacyAliasRoutes />
+                        {LegacyAliasRoutes()}
 
                         {/* Pricing & Subscription */}
                         <Route path="pricing" element={<Pricing />} />
@@ -327,8 +337,10 @@ export default function App() {
                     <OnboardingAutoStart />
                     <OnboardingTour />
                     <HelpButton />
+                    <ToastProvider />
                   </Suspense>
                 </BrowserRouter>
+                </EntitlementProvider>
               </StoreSelectionProvider>
             </OnboardingProvider>
           </AuthProvider>

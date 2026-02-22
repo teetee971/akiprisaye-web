@@ -61,6 +61,7 @@ export default [
         MediaStreamConstraints: 'readonly',
         Element: 'readonly',
         Event: 'readonly',
+        EventListener: 'readonly',
         CustomEvent: 'readonly',
         Promise: 'readonly',
         Map: 'readonly',
@@ -145,7 +146,8 @@ export default [
         setInterval: 'readonly',
         clearTimeout: 'readonly',
         clearInterval: 'readonly',
-        alert: 'readonly'
+        alert: 'readonly',
+        EventListener: 'readonly'
       }
     },
     plugins: {
