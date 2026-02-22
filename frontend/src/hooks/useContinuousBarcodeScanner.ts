@@ -104,7 +104,10 @@ export async function resolveBarcode(
     name: viewModel.nom || `Produit (EAN: ${barcode})`,
     brand: viewModel.marque !== 'Non spécifiée' ? viewModel.marque : ((result.product as { marque?: string }).marque),
     quantity: viewModel.contenance ?? (result.product as { quantity?: string }).quantity,
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/main
     imageThumbUrl: (result.product as { imageThumbnail?: string; image_small_url?: string; image_thumb_url?: string }).imageThumbnail
       ?? (result.product as { image_small_url?: string; image_thumb_url?: string }).image_small_url
       ?? (result.product as { image_thumb_url?: string }).image_thumb_url
@@ -113,7 +116,10 @@ export async function resolveBarcode(
     imageUrl: viewModel.imageUrl
       ?? (result.product as { imageThumbnail?: string }).imageThumbnail
       ?? undefined,
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/main
     price: parseDisplayPrice(viewModel.prix),
   };
 
@@ -199,7 +205,10 @@ export function useContinuousBarcodeScanner(options: UseContinuousBarcodeScanner
         history: product.price ? [product.price] : undefined,
         source: 'scan_utilisateur',
         lastObservedAt: new Date().toISOString(),
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/main
         imageThumbUrl: product.imageThumbUrl ?? product.imageUrl ?? undefined,
         imageUrl: product.imageUrl ?? product.imageThumbUrl ?? undefined,
         ...quantityDetails,

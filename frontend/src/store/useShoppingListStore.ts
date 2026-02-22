@@ -64,7 +64,10 @@ export interface ShoppingListStoreItem {
   history?: number[];
   source?: string;
   lastObservedAt?: string;
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/main
   imageUrl?: string;
   imageThumbUrl?: string;
   unit?: 'unit' | 'kg' | 'l';

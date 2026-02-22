@@ -43,9 +43,13 @@ export default defineConfig({
       abs('./src/test/shoppingListPersistence.test.ts'),
       abs('./src/test/offCacheFallback.test.ts'),
       abs('./src/test/scannerFallback.test.tsx'),
+<<<<<<< HEAD
 
       abs('./src/test/listePage.thumbnails.test.tsx'),
 
+=======
+      abs('./src/test/listePage.thumbnails.test.tsx'),
+>>>>>>> origin/main
       abs('./src/test/decisionEngine.test.ts'),
       abs('./src/domain/decision/__tests__/decisionEngine.test.ts'),
       abs('./src/domain/shoppingList/premium/tests/*.test.ts'),
