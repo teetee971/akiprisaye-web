@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { useEntitlements } from '../billing/useEntitlements';
 import { assertQuotaOrThrow, QuotaExceededError } from '../billing/quotaService';
 import { decideForItem } from '../domain/decision/decisionEngine';
-import { addShoppingListItem, getShoppingListItems, removeShoppingListItem } from '../store/useShoppingListStore';
+import { addShoppingListItem, getShoppingListItems, getUserAccessState, isPremiumAccessActive, removeShoppingListItem, setUserPlan, startPremiumTrial } from '../store/useShoppingListStore';
+import { simulateMonthlySavings } from '../domain/shoppingList/premium';
 
 export default function ListePage() {
   const { can, quota, explain } = useEntitlements();
@@ -11,6 +12,10 @@ export default function ListePage() {
   const [name, setName] = useState('');
   const [territories, setTerritories] = useState<string[]>(['Guadeloupe']);
   const [alerts, setAlerts] = useState<{ threshold?: number; dropPercent?: number }>({});
+  const [userAccess, setUserAccess] = useState(() => getUserAccessState());
+  const [isPremiumEnabled, setIsPremiumEnabled] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const isPremium = isPremiumAccessActive(userAccess);
 
   const stats = useMemo(() => {
     const prices = items.flatMap((it) => it.history ?? []).filter((n): n is number => Number.isFinite(n));
@@ -42,6 +47,21 @@ export default function ListePage() {
       })),
     [items],
   );
+
+
+  const savingsSimulation = useMemo(() => simulateMonthlySavings(
+    items.map((item) => ({
+      quantity: item.quantity,
+      lastPrice: item.history?.[item.history.length - 1],
+      trend30: item.premium?.trend30,
+      priceHistory: (item.history ?? []).map((price, index, array) => ({
+        price,
+        observedAt: new Date(Date.now() - ((array.length - 1 - index) * 24 * 60 * 60 * 1000)).toISOString(),
+      })),
+    })),
+  ), [items]);
+
+  const displaySavings = isPremium ? `${savingsSimulation.potentialSavings.toFixed(2)} €` : `${Math.floor(savingsSimulation.potentialSavings)}€ ···`;
 
   const onAdd = () => {
     if (!name.trim()) return;
@@ -148,6 +168,77 @@ export default function ListePage() {
         )}
       </div>
 
+
+      <div className="rounded-lg border border-slate-700 p-3">
+        <h2 className="font-semibold">Mode Premium</h2>
+        <p className="text-sm text-slate-300">
+          Plan actuel: <strong>{userAccess.userPlan === 'premium' ? 'Premium' : 'Gratuit'}</strong>
+        </p>
+        <div className="mt-2 flex flex-wrap items-center gap-2">
+          <button
+            className="rounded border border-slate-600 px-3 py-1 text-sm"
+            onClick={() => {
+              setUserPlan('free');
+              setUserAccess(getUserAccessState());
+              setIsPremiumEnabled(false);
+            }}
+          >
+            Basculer en Free
+          </button>
+          <button
+            className="rounded border border-emerald-600 px-3 py-1 text-sm"
+            onClick={() => {
+              setUserPlan('premium');
+              setUserAccess(getUserAccessState());
+            }}
+          >
+            Basculer en Premium
+          </button>
+          <button
+            className="rounded border border-indigo-500 px-3 py-1 text-sm"
+            onClick={() => {
+              startPremiumTrial();
+              setUserAccess(getUserAccessState());
+              setShowUpgradeModal(false);
+            }}
+          >
+            Essai gratuit 7 jours
+          </button>
+          <label className="ml-2 flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={isPremiumEnabled}
+              disabled={!isPremium}
+              onChange={(event) => setIsPremiumEnabled(event.target.checked)}
+            />
+            Activer l'affichage premium
+          </label>
+        </div>
+        <div className="mt-3 rounded border border-indigo-500/40 bg-indigo-950/20 p-3 text-sm">
+          <p className="font-medium">Simulateur d'économie mensuelle</p>
+          <p className="text-indigo-100">Vous auriez pu économiser ce mois-ci : <strong>{displaySavings}</strong></p>
+          {!isPremium && (
+            <button className="mt-2 rounded bg-indigo-600 px-3 py-1 text-xs" onClick={() => setShowUpgradeModal(true)}>
+              Débloquer analyse complète
+            </button>
+          )}
+        </div>
+        <div className="mt-3 flex flex-wrap gap-2 text-xs">
+          {['Voir tendance 30 jours', 'Voir recommandation détaillée', 'Activer alerte personnalisée'].map((label) => (
+            <button
+              key={label}
+              type="button"
+              className="rounded border border-slate-600 px-2 py-1"
+              onClick={() => {
+                if (!isPremium) setShowUpgradeModal(true);
+              }}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <ul className="space-y-2">
         {items.map((item) => {
           const lastPrice = item.history?.[item.history.length - 1];
@@ -180,6 +271,15 @@ export default function ListePage() {
                   <div className="mt-1 text-xs text-slate-400">
                     Dernier prix: {lastPrice ? `${lastPrice.toFixed(2)} €` : 'N/A'} · Source: {item.source ?? 'local'} · Date: {item.lastObservedAt ? new Date(item.lastObservedAt).toLocaleString() : 'N/A'}
                   </div>
+                  {isPremiumEnabled && isPremium && (
+                    <div className="mt-1 rounded border border-indigo-500/40 bg-indigo-900/20 px-2 py-1 text-xs text-indigo-100">
+                      <span>
+                        {item.normalized?.normalizedLabel ?? 'Prix unitaire indisponible'} · Trend 7j: {item.premium?.trend7 ?? 'flat'} · Trend 30j: {item.premium?.trend30 ?? 'flat'}
+                      </span>
+                      <span className="ml-2">Score: {item.premium?.score ?? 0}/100</span>
+                      {item.premium?.alerts?.length ? <span className="ml-2">Alertes: {item.premium.alerts.join(' | ')}</span> : null}
+                    </div>
+                  )}
                   {rec && (
                     <div className="mt-1 text-sm text-blue-200">
                       Décision: <strong>{rec.verdict}</strong> — {rec.reason}
@@ -192,6 +292,36 @@ export default function ListePage() {
           );
         })}
       </ul>
+
+      {showUpgradeModal && !isPremium && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div className="w-full max-w-lg rounded-xl border border-indigo-500/40 bg-slate-900 p-5">
+            <h3 className="text-xl font-semibold">Optimisez vos achats intelligemment</h3>
+            <p className="mt-2 text-sm text-slate-300">
+              Détection automatique des meilleures périodes, alertes personnalisées, comparaison multi-magasins et simulation d'économies mensuelles.
+            </p>
+            <div className="mt-4 rounded border border-indigo-500/30 bg-indigo-950/20 p-3 text-sm">
+              <p>Premium: <strong>2.99€ / mois</strong> ou <strong>24.99€ / an</strong></p>
+            </div>
+            <div className="mt-4 flex gap-2">
+              <button
+                className="rounded bg-indigo-600 px-3 py-2 text-sm"
+                onClick={() => {
+                  startPremiumTrial();
+                  setUserAccess(getUserAccessState());
+                  setShowUpgradeModal(false);
+                }}
+              >
+                Essai gratuit 7 jours
+              </button>
+              <button className="rounded border border-slate-600 px-3 py-2 text-sm" onClick={() => setShowUpgradeModal(false)}>
+                Continuer en version gratuite
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

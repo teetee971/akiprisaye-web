@@ -141,4 +141,3 @@ function bootstrap() {
 }
 
 bootstrap();
-```0

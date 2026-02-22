@@ -52,6 +52,24 @@ function nowIso() {
   return new Date().toISOString();
 }
 
+
+function parseQuantityDetails(quantity?: string): { quantityValue?: number; quantityUnit?: 'kg' | 'g' | 'l' | 'ml' | 'unit'; unit?: 'kg' | 'l' | 'unit' } {
+  if (!quantity) return {};
+  const match = quantity.toLowerCase().replace(',', '.').match(/(\d+(?:\.\d+)?)\s*(kg|g|ml|l|x|unite|unité|unit)/);
+  if (!match) return {};
+
+  const quantityValue = Number.parseFloat(match[1]);
+  if (!Number.isFinite(quantityValue) || quantityValue <= 0) return {};
+
+  const raw = match[2];
+  if (raw === 'kg' || raw === 'g') {
+    return { quantityValue, quantityUnit: raw, unit: 'kg' };
+  }
+  if (raw === 'l' || raw === 'ml') {
+    return { quantityValue, quantityUnit: raw, unit: 'l' };
+  }
+  return { quantityValue, quantityUnit: 'unit', unit: 'unit' };
+}
 function parseDisplayPrice(displayPrice?: string) {
   if (!displayPrice) return undefined;
   const normalized = displayPrice.replace(',', '.').match(/\d+(?:\.\d+)?/);
@@ -170,6 +188,8 @@ export function useContinuousBarcodeScanner(options: UseContinuousBarcodeScanner
       },
     });
 
+    const quantityDetails = parseQuantityDetails(product.quantity);
+
     addShoppingListItem(
       {
         id: barcode,
@@ -182,7 +202,11 @@ export function useContinuousBarcodeScanner(options: UseContinuousBarcodeScanner
 
         imageThumbUrl: product.imageThumbUrl ?? product.imageUrl ?? undefined,
         imageUrl: product.imageUrl ?? product.imageThumbUrl ?? undefined,
+<<<<<<< HEAD
 
+=======
+        ...quantityDetails,
+>>>>>>> origin/main
       },
       maxItems,
     );
