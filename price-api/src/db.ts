@@ -8,12 +8,22 @@ import type {
   PriceAggregateRecord,
   PriceObservationRecord,
   ProductRecord,
+  SubscriptionRecord,
   Territory,
 } from './types';
 
 interface AggregateFingerprint {
   maxUpdatedAt: string | null;
   rowCount: number;
+}
+
+export interface SubscriptionUpsertPayload {
+  userId: string;
+  plan: string;
+  status: 'CREATED' | 'ACTIVE' | 'SUSPENDED' | 'CANCELLED';
+  paypalSubscriptionId: string;
+  payerId?: string;
+  email?: string;
 }
 
 export async function getAggregateFingerprint(
@@ -449,4 +459,61 @@ export async function updateReceiptJobCashier(
     )
     .bind(fields.cashierLabelRaw, fields.cashierHash, fields.cashierOperatorId, jobId)
     .run();
+}
+
+export async function recordWebhookEventIfNew(
+  db: D1Database,
+  payload: { eventId: string; eventType: string; createTime?: string; rawJson: string },
+): Promise<boolean> {
+  const cappedRawJson = payload.rawJson.length > 64000 ? payload.rawJson.slice(0, 64000) : payload.rawJson;
+  const result = await db
+    .prepare(
+      `INSERT OR IGNORE INTO webhook_events (event_id, event_type, create_time, raw_json)
+       VALUES (?, ?, ?, ?)`,
+    )
+    .bind(payload.eventId, payload.eventType, payload.createTime ?? null, cappedRawJson)
+    .run();
+
+  return Boolean(result.meta.changes && result.meta.changes > 0);
+}
+
+export async function upsertSubscriptionByPayPalId(db: D1Database, payload: SubscriptionUpsertPayload): Promise<void> {
+  await db
+    .prepare(
+      `INSERT INTO subscriptions (user_id, plan, status, paypal_subscription_id, payer_id, email)
+       VALUES (?, ?, ?, ?, ?, ?)
+       ON CONFLICT(paypal_subscription_id) DO UPDATE SET
+         user_id = excluded.user_id,
+         plan = excluded.plan,
+         status = excluded.status,
+         payer_id = excluded.payer_id,
+         email = excluded.email,
+         updated_at = datetime('now')`,
+    )
+    .bind(
+      payload.userId,
+      payload.plan,
+      payload.status,
+      payload.paypalSubscriptionId,
+      payload.payerId ?? null,
+      payload.email ?? null,
+    )
+    .run();
+}
+
+export async function getLatestSubscriptions(db: D1Database, limit = 50): Promise<SubscriptionRecord[]> {
+  const safeLimit = Number.isFinite(limit) ? Math.min(Math.max(limit, 1), 200) : 50;
+  const { results } = await db
+    .prepare('SELECT * FROM subscriptions ORDER BY updated_at DESC LIMIT ?')
+    .bind(safeLimit)
+    .all<SubscriptionRecord>();
+
+  return results ?? [];
+}
+
+export async function getSubscriptionByUserId(db: D1Database, userId: string): Promise<SubscriptionRecord | null> {
+  return db
+    .prepare('SELECT * FROM subscriptions WHERE user_id = ? ORDER BY updated_at DESC LIMIT 1')
+    .bind(userId)
+    .first<SubscriptionRecord>();
 }

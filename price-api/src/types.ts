@@ -14,6 +14,10 @@ export interface Env {
   ALLOWED_ORIGINS?: string;
   CASHIER_HASH_SALT?: string;
   PRICE_IMPORTS: R2Bucket;
+  PAYPAL_CLIENT_ID: string;
+  PAYPAL_CLIENT_SECRET: string;
+  PAYPAL_WEBHOOK_ID: string;
+  PAYPAL_ENV: 'sandbox' | 'live';
 }
 
 export type ReceiptJobStatus = 'created' | 'processing' | 'completed' | 'failed';
@@ -94,6 +98,18 @@ export interface ImportRowRecord {
   status: ImportRowStatus;
   error_message: string | null;
   created_at: string;
+}
+
+export interface SubscriptionRecord {
+  id: number;
+  user_id: string;
+  plan: string;
+  status: string;
+  paypal_subscription_id: string | null;
+  payer_id: string | null;
+  email: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface ApiResponseBase {
