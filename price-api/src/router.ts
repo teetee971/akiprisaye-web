@@ -184,6 +184,7 @@ async function syncPaypalSubscriptionEvent(db: D1Database, event: PayPalWebhookE
   });
 }
 
+
 export async function handleRequest(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
   const url = new URL(request.url);
   const origin = request.headers.get('Origin');
@@ -239,16 +240,27 @@ export async function handleRequest(request: Request, env: Env, ctx: ExecutionCo
 
       // Duplicate: on resynchronise l’état subscription (safe), puis on sort (ne traite pas 2 fois)
       if (!isNewEvent) {
+
+        const duplicateSubscriptionId = event.resource?.id;
+ ddd71508 (Simplify PayPal duplicate resync handling)
         await syncPaypalSubscriptionEvent(env.PRICE_DB, event);
         console.log('paypal_webhook_duplicate_resynced', {
           eventId,
           eventType,
+
           paypalSubscriptionId: getPaypalSubscriptionId(event) ?? 'unknown',
         });
         return withCors(json({ status: 'ignored', reason: 'duplicate_event' }, 200), origin, env);
       }
 
       // Resync-first flow: si headers signature absents (souvent en sandbox / simulateur), on ne bloque pas
+          paypalSubscriptionId: duplicateSubscriptionId ?? 'unknown',
+        });
+        console.log('paypal_webhook_ignored', { eventId, eventType, reason: 'duplicate_event' });
+        return withCors(json({ status: 'ignored', reason: 'duplicate_event' }, 200), origin, env);
+      }
+
+ ddd71508 (Simplify PayPal duplicate resync handling)
       if (hasMissingPayPalSignatureHeaders(request)) {
         await syncPaypalSubscriptionEvent(env.PRICE_DB, event);
         console.warn('paypal_webhook_processed_unverified', {
@@ -270,9 +282,13 @@ export async function handleRequest(request: Request, env: Env, ctx: ExecutionCo
         return withCors(json({ error: 'invalid_signature' }, 401), origin, env);
       }
 
+
       // Verified -> sync + logs métier
       await syncPaypalSubscriptionEvent(env.PRICE_DB, event);
 
+
+      await syncPaypalSubscriptionEvent(env.PRICE_DB, event);
+ ddd71508 (Simplify PayPal duplicate resync handling)
       const status = mapPayPalEventTypeToSubscriptionStatus(event.event_type);
       if (!status) {
         console.log('paypal_webhook_ignored', { eventId, eventType, reason: 'unsupported_event_type' });
