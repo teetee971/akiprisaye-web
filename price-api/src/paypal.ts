@@ -5,11 +5,8 @@ export interface PayPalWebhookEvent {
   id?: string;
   event_type?: string;
   create_time?: string;
-  resource_type?: string;
   resource?: {
     id?: string;
-    billing_agreement_id?: string;
-    subscription_id?: string;
     custom_id?: string;
     plan_id?: string;
     subscriber?: {
