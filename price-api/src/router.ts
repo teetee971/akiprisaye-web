@@ -13,14 +13,20 @@ import {
   getSubscriptionByUserId,
   insertObservationAndRefreshAggregate,
   recordWebhookEventIfNew,
-  upsertSubscriptionByPayPalId,
   upsertProduct,
   upsertSubscriptionByPayPalId,
 } from './db';
 import { queueCsvImport } from './importCsv';
 import { verifyPayPalWebhookSignature, type PayPalWebhookEvent } from './paypal';
 import { mapPayPalEventTypeToSubscriptionStatus, mapPayPalPlanIdToInternalPlan } from './subscriptionPlans';
-import type { Env, PriceAggregateRecord, PriceObservationRecord, PriceStatus, PricesResponse, ProductResponse } from './types';
+import type {
+  Env,
+  PriceAggregateRecord,
+  PriceObservationRecord,
+  PriceStatus,
+  PricesResponse,
+  ProductResponse,
+} from './types';
 import {
   adminObservationSchema,
   adminProductSchema,
@@ -101,7 +107,6 @@ function hasMissingPayPalSignatureHeaders(request: Request): boolean {
   return requiredHeaders.some((headerName) => !request.headers.get(headerName));
 }
 
-
 const UNKNOWN_USER_ID = '__unknown__';
 const UNKNOWN_PLAN_CODE = 'UNKNOWN';
 
@@ -129,54 +134,33 @@ function getPayerEmail(event: PayPalWebhookEvent): string | null {
  * Sync minimal subscription info into D1.
  * - Safe to call multiple times (idempotent via ON CONFLICT in db.ts).
  * - Can be called even when webhook is unverified (resync-first flow).
+ *
+ * NOTE: on force db: any pour éviter une erreur TS si D1Database n'est pas typé/importé ici.
  */
-async function syncPaypalSubscriptionEvent(db: D1Database, event: PayPalWebhookEvent): Promise<void> {
-
-export function getPaypalSubscriptionId(event: PayPalWebhookEvent): string | null {
-  const candidateIds = [event.resource?.id, event.resource?.billing_agreement_id, event.resource?.subscription_id];
-  return (
-    candidateIds.find((candidate): candidate is string => typeof candidate === 'string' && candidate.startsWith('I-')) ?? null
-  );
-}
-
-export async function syncPaypalSubscriptionEvent(db: D1Database, event: PayPalWebhookEvent): Promise<void> {
- 863c8826 (Merge origin/main into work and resolve webhook conflict)
+async function syncPaypalSubscriptionEvent(db: any, event: PayPalWebhookEvent): Promise<void> {
   const subscriptionId = getPaypalSubscriptionId(event);
 
-
-async function syncPaypalSubscriptionEvent(db: D1Database, event: PayPalWebhookEvent): Promise<void> {
-  const subscriptionId = event.resource?.id;
- 28053346 (Simplify PayPal duplicate resync handling)
   if (!subscriptionId) {
+    console.warn('paypal_webhook_ignored', {
+      eventId: event.id ?? 'unknown',
+      eventType: event.event_type ?? 'unknown',
+      reason: 'missing_paypal_subscription_id',
+      resourceType: event.resource_type ?? 'unknown',
+    });
     return;
   }
 
-  if (event.event_type === 'BILLING.SUBSCRIPTION.CREATED') {
-    await db
-      .prepare(
-        `INSERT INTO subscriptions (
-          id,
-          user_id,
-          plan_code,
-          status,
-          paypal_subscription_id,
-          created_at,
-          updated_at
-        ) VALUES (?, ?, ?, ?, ?, datetime('now'), datetime('now'))
-        ON CONFLICT(id) DO UPDATE SET
-          user_id = excluded.user_id,
-          plan_code = excluded.plan_code,
-          status = excluded.status,
-          paypal_subscription_id = excluded.paypal_subscription_id,
-          updated_at = datetime('now')`,
-      )
-      .bind(subscriptionId, 'sandbox-user', 'premium', 'active', subscriptionId)
-      .run();
-
+  const mappedStatus = mapPayPalEventTypeToSubscriptionStatus(event.event_type);
+  if (!mappedStatus) {
+    console.log('paypal_webhook_ignored', {
+      eventId: event.id ?? 'unknown',
+      eventType: event.event_type ?? 'unknown',
+      reason: 'unsupported_event_type_for_sync',
+      paypalSubscriptionId: subscriptionId,
+      resourceType: event.resource_type ?? 'unknown',
+    });
     return;
   }
-
-
 
   const userId =
     (typeof event.resource?.custom_id === 'string' && event.resource.custom_id.length > 0
@@ -200,47 +184,6 @@ async function syncPaypalSubscriptionEvent(db: D1Database, event: PayPalWebhookE
     email: email ?? undefined,
   });
 
-
-  await db
-    .prepare(
-      `INSERT INTO subscriptions (
-        id,
-        user_id,
-        plan_code,
-        status,
-        paypal_subscription_id,
-        created_at,
-        updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?)
-      ON CONFLICT(id) DO UPDATE SET
-        user_id = CASE
-          WHEN subscriptions.user_id IS NULL OR subscriptions.user_id = ?
-          THEN excluded.user_id
-          ELSE subscriptions.user_id
-        END,
-        plan_code = CASE
-          WHEN subscriptions.plan_code IS NULL OR subscriptions.plan_code = ? OR subscriptions.plan_code = 'PLAN_UNKNOWN'
-          THEN excluded.plan_code
-          ELSE subscriptions.plan_code
-        END,
-        status = excluded.status,
-        paypal_subscription_id = excluded.paypal_subscription_id,
-        updated_at = excluded.updated_at`,
-    )
-    .bind(
-      subscriptionId,
-      event.resource?.custom_id ?? UNKNOWN_USER_ID,
-      event.resource?.plan_id ? mapPayPalPlanIdToInternalPlan(event.resource.plan_id) : UNKNOWN_PLAN_CODE,
-      mappedStatus,
-      subscriptionId,
-      new Date().toISOString(),
-      new Date().toISOString(),
-      UNKNOWN_USER_ID,
-      UNKNOWN_PLAN_CODE,
-    )
-    .run();
-
- 863c8826 (Merge origin/main into work and resolve webhook conflict)
   console.log('paypal_subscription_synced', {
     eventId: event.id ?? 'unknown',
     eventType: event.event_type,
@@ -248,25 +191,7 @@ async function syncPaypalSubscriptionEvent(db: D1Database, event: PayPalWebhookE
     paypalSubscriptionId: subscriptionId,
     status: mappedStatus,
   });
-
-  if (event.event_type === 'BILLING.SUBSCRIPTION.CANCELLED') {
-    await db
-      .prepare(`UPDATE subscriptions SET status = 'cancelled', updated_at = datetime('now') WHERE id = ?`)
-      .bind(subscriptionId)
-      .run();
-
-    return;
-  }
-
-  if (event.event_type === 'BILLING.SUBSCRIPTION.SUSPENDED') {
-    await db
-      .prepare(`UPDATE subscriptions SET status = 'suspended', updated_at = datetime('now') WHERE id = ?`)
-      .bind(subscriptionId)
-      .run();
-  }
- 28053346 (Simplify PayPal duplicate resync handling)
 }
-
 
 export async function handleRequest(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
   const url = new URL(request.url);
@@ -323,28 +248,16 @@ export async function handleRequest(request: Request, env: Env, ctx: ExecutionCo
 
       // Duplicate: on resynchronise l’état subscription (safe), puis on sort (ne traite pas 2 fois)
       if (!isNewEvent) {
- 
-
-        const duplicateSubscriptionId = getPaypalSubscriptionId(event);
- 
         await syncPaypalSubscriptionEvent(env.PRICE_DB, event);
         console.log('paypal_webhook_duplicate_resynced', {
           eventId,
           eventType,
-
           paypalSubscriptionId: getPaypalSubscriptionId(event) ?? 'unknown',
         });
         return withCors(json({ status: 'ignored', reason: 'duplicate_event' }, 200), origin, env);
       }
 
       // Resync-first flow: si headers signature absents (souvent en sandbox / simulateur), on ne bloque pas
-          paypalSubscriptionId: duplicateSubscriptionId ?? 'unknown',
-          reason: 'duplicate_event',
-        });
-        return withCors(json({ status: 'ignored', reason: 'duplicate_event' }, 200), origin, env);
-      }
-
- ddd71508 (Simplify PayPal duplicate resync handling)
       if (hasMissingPayPalSignatureHeaders(request)) {
         await syncPaypalSubscriptionEvent(env.PRICE_DB, event);
         console.warn('paypal_webhook_processed_unverified', {
@@ -366,31 +279,20 @@ export async function handleRequest(request: Request, env: Env, ctx: ExecutionCo
         return withCors(json({ error: 'invalid_signature' }, 401), origin, env);
       }
 
-
       // Verified -> sync + logs métier
       await syncPaypalSubscriptionEvent(env.PRICE_DB, event);
 
-
-      await syncPaypalSubscriptionEvent(env.PRICE_DB, event);
- ddd71508 (Simplify PayPal duplicate resync handling)
       const status = mapPayPalEventTypeToSubscriptionStatus(event.event_type);
       if (!status) {
         console.log('paypal_webhook_ignored', { eventId, eventType, reason: 'unsupported_event_type' });
         return withCors(json({ status: 'ignored', reason: 'unsupported_event_type' }, 200), origin, env);
       }
 
-      const userId = event.resource?.custom_id;
-      if (!userId) {
-        console.warn('paypal_webhook_ignored', { eventId, eventType, reason: 'missing_custom_id' });
-        return withCors(json({ status: 'ignored', reason: 'missing_custom_id' }, 200), origin, env);
-      }
-
-      const subscriptionId = event.resource?.id;
+      const subscriptionId = getPaypalSubscriptionId(event);
       if (!subscriptionId) {
         console.warn('paypal_webhook_ignored', { eventId, eventType, reason: 'missing_subscription_id' });
         return withCors(json({ status: 'ignored', reason: 'missing_subscription_id' }, 200), origin, env);
       }
-
 
       console.log('paypal_webhook_processed', {
         eventId,
@@ -402,22 +304,6 @@ export async function handleRequest(request: Request, env: Env, ctx: ExecutionCo
       });
 
       return withCors(json({ status: 'processed', verified: true }, 200), origin, env);
-
-
-      await upsertSubscriptionByPayPalId(env.PRICE_DB, {
-        userId,
-        plan: mapPayPalPlanIdToInternalPlan(event.resource?.plan_id),
- 28053346 (Simplify PayPal duplicate resync handling)
-        status,
-        paypalSubscriptionId: subscriptionId,
-        payerId: event.resource?.subscriber?.payer_id,
-        email: event.resource?.subscriber?.email_address,
-      });
-
-      console.log('paypal_webhook_processed', { eventId, eventType, status, userId, subscriptionId });
-
-      return withCors(json({ status: 'processed' }, 200), origin, env);
- 863c8826 (Merge origin/main into work and resolve webhook conflict)
     }
 
     // --- SUBSCRIPTION LOOKUP (ADMIN) ---
@@ -503,10 +389,7 @@ export async function handleRequest(request: Request, env: Env, ctx: ExecutionCo
       const ean = decodeURIComponent(url.pathname.replace('/v1/products/', ''));
       const parsed = getProductParamsSchema.parse({ ean });
 
-      const [product, aggregates] = await Promise.all([
-        getProduct(env.PRICE_DB, parsed.ean),
-        getPriceAggregates(env.PRICE_DB, parsed.ean),
-      ]);
+      const [product, aggregates] = await Promise.all([getProduct(env.PRICE_DB, parsed.ean), getPriceAggregates(env.PRICE_DB, parsed.ean)]);
 
       const response: ProductResponse = {
         status: computeStatus(aggregates.length > 0, Boolean(product)),
@@ -568,10 +451,7 @@ export async function handleRequest(request: Request, env: Env, ctx: ExecutionCo
 
       if (request.method === 'GET' && /^\/v1\/admin\/import\/jobs\/[^/]+$/.test(url.pathname)) {
         const jobId = decodeURIComponent(url.pathname.replace('/v1/admin/import/jobs/', ''));
-        const [job, rows] = await Promise.all([
-          getImportJobById(env.PRICE_DB, jobId),
-          getImportRowsByJobId(env.PRICE_DB, jobId, 500),
-        ]);
+        const [job, rows] = await Promise.all([getImportJobById(env.PRICE_DB, jobId), getImportRowsByJobId(env.PRICE_DB, jobId, 500)]);
 
         if (!job) {
           return withCors(adminJson({ error: 'not_found' }, 404), origin, env);
