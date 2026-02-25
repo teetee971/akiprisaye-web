@@ -18,6 +18,7 @@ interface AggregateFingerprint {
 }
 
 export interface SubscriptionUpsertPayload {
+  id?: string;
   userId: string;
   plan: string;
   status: 'CREATED' | 'ACTIVE' | 'SUSPENDED' | 'CANCELLED';
@@ -520,6 +521,8 @@ export async function recordPayPalWebhookIfNew(
 }
 
 export async function upsertSubscriptionByPayPalId(db: D1Database, payload: SubscriptionUpsertPayload): Promise<void> {
+  const subscriptionId = payload.paypalSubscriptionId;
+
   await db
     .prepare(
       `INSERT INTO subscriptions (user_id, plan, status, paypal_subscription_id, payer_id, email)
@@ -533,10 +536,10 @@ export async function upsertSubscriptionByPayPalId(db: D1Database, payload: Subs
          updated_at = datetime('now')`,
     )
     .bind(
-      payload.userId,
+      payload.paypalSubscriptionId,
       payload.plan,
       payload.status,
-      payload.paypalSubscriptionId,
+      subscriptionId,
       payload.payerId ?? null,
       payload.email ?? null,
     )
