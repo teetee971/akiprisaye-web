@@ -339,8 +339,8 @@ export async function handleRequest(request: Request, env: Env, ctx: ExecutionCo
 
       // Resync-first flow: si headers signature absents (souvent en sandbox / simulateur), on ne bloque pas
           paypalSubscriptionId: duplicateSubscriptionId ?? 'unknown',
+          reason: 'duplicate_event',
         });
-        console.log('paypal_webhook_ignored', { eventId, eventType, reason: 'duplicate_event' });
         return withCors(json({ status: 'ignored', reason: 'duplicate_event' }, 200), origin, env);
       }
 
