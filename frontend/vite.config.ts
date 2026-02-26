@@ -13,6 +13,6 @@ export default defineConfig({
       { find: /^@$/, replacement: srcPath },
     ],
   },
-  // GitHub Pages sert le site sous /<repo>/
-  base: '/akiprisaye-web/',
+  // Cloudflare Pages sert le site à la racine "/"
+  base: '/',
 })
