@@ -1,0 +1,199 @@
+{
+  "version": "1.0",
+  "last_update": "2026-01-12",
+  "currency": "EUR",
+  "territories": [
+    {
+      "code": "GP",
+      "label": "Guadeloupe",
+      "stores": [
+        {
+          "id": "carrefour_gp",
+          "label": "Carrefour",
+          "products": [
+            {
+              "id": "riz_1kg",
+              "label": "Riz long grain 1kg",
+              "observations": 42,
+              "price_min": 1.89,
+              "price_max": 2.35
+            },
+            {
+              "id": "sucre_1kg",
+              "label": "Sucre blanc 1kg",
+              "observations": 38,
+              "price_min": 1.12,
+              "price_max": 1.45
+            },
+            {
+              "id": "lait_1l",
+              "label": "Lait demi-écrémé 1L",
+              "observations": 51,
+              "price_min": 1.35,
+              "price_max": 1.65
+            },
+            {
+              "id": "huile_1l",
+              "label": "Huile de tournesol 1L",
+              "observations": 29,
+              "price_min": 2.95,
+              "price_max": 3.45
+            }
+          ]
+        },
+        {
+          "id": "leader_price_gp",
+          "label": "Leader Price",
+          "products": [
+            {
+              "id": "riz_1kg",
+              "label": "Riz long grain 1kg",
+              "observations": 35,
+              "price_min": 1.72,
+              "price_max": 2.15
+            },
+            {
+              "id": "sucre_1kg",
+              "label": "Sucre blanc 1kg",
+              "observations": 41,
+              "price_min": 1.05,
+              "price_max": 1.38
+            },
+            {
+              "id": "pates_500g",
+              "label": "Pâtes 500g",
+              "observations": 27,
+              "price_min": 0.85,
+              "price_max": 1.15
+            }
+          ]
+        },
+        {
+          "id": "super_u_gp",
+          "label": "Super U",
+          "products": [
+            {
+              "id": "riz_1kg",
+              "label": "Riz long grain 1kg",
+              "observations": 47,
+              "price_min": 1.95,
+              "price_max": 2.42
+            },
+            {
+              "id": "lait_1l",
+              "label": "Lait demi-écrémé 1L",
+              "observations": 33,
+              "price_min": 1.38,
+              "price_max": 1.72
+            },
+            {
+              "id": "huile_1l",
+              "label": "Huile de tournesol 1L",
+              "observations": 25,
+              "price_min": 3.05,
+              "price_max": 3.55
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "MQ",
+      "label": "Martinique",
+      "stores": [
+        {
+          "id": "carrefour_mq",
+          "label": "Carrefour",
+          "products": [
+            {
+              "id": "riz_1kg",
+              "label": "Riz long grain 1kg",
+              "observations": 39,
+              "price_min": 1.95,
+              "price_max": 2.45
+            },
+            {
+              "id": "sucre_1kg",
+              "label": "Sucre blanc 1kg",
+              "observations": 44,
+              "price_min": 1.18,
+              "price_max": 1.52
+            }
+          ]
+        },
+        {
+          "id": "leader_price_mq",
+          "label": "Leader Price",
+          "products": [
+            {
+              "id": "riz_1kg",
+              "label": "Riz long grain 1kg",
+              "observations": 31,
+              "price_min": 1.78,
+              "price_max": 2.25
+            },
+            {
+              "id": "lait_1l",
+              "label": "Lait demi-écrémé 1L",
+              "observations": 28,
+              "price_min": 1.42,
+              "price_max": 1.78
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "GF",
+      "label": "Guyane",
+      "stores": [
+        {
+          "id": "carrefour_gf",
+          "label": "Carrefour",
+          "products": [
+            {
+              "id": "riz_1kg",
+              "label": "Riz long grain 1kg",
+              "observations": 22,
+              "price_min": 2.15,
+              "price_max": 2.75
+            },
+            {
+              "id": "huile_1l",
+              "label": "Huile de tournesol 1L",
+              "observations": 18,
+              "price_min": 3.25,
+              "price_max": 3.95
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "RE",
+      "label": "La Réunion",
+      "stores": [
+        {
+          "id": "super_u_re",
+          "label": "Super U",
+          "products": [
+            {
+              "id": "riz_1kg",
+              "label": "Riz long grain 1kg",
+              "observations": 36,
+              "price_min": 2.05,
+              "price_max": 2.55
+            },
+            {
+              "id": "sucre_1kg",
+              "label": "Sucre blanc 1kg",
+              "observations": 42,
+              "price_min": 1.25,
+              "price_max": 1.62
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

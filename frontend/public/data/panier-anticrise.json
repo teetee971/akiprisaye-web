@@ -1,0 +1,59 @@
+{
+  "version": "1.0",
+  "last_update": "2026-01-12",
+  "currency": "EUR",
+  "territories": {
+    "guadeloupe": {
+      "label": "Guadeloupe",
+      "basket": {
+        "essentiel": [
+          { "id": "riz_1kg", "label": "Riz 1kg", "price_min": 1.89, "store": "Carrefour" },
+          { "id": "sucre_1kg", "label": "Sucre 1kg", "price_min": 1.12, "store": "Leader Price" },
+          { "id": "lait_1l", "label": "Lait 1L", "price_min": 1.45, "store": "Super U" },
+          { "id": "huile_1l", "label": "Huile 1L", "price_min": 2.89, "store": "Leader Price" },
+          { "id": "pates_500g", "label": "Pâtes 500g", "price_min": 0.95, "store": "Carrefour" },
+          { "id": "farine_1kg", "label": "Farine 1kg", "price_min": 1.35, "store": "Leader Price" }
+        ],
+        "equilibre": [
+          { "id": "tomates_1kg", "label": "Tomates 1kg", "price_min": 2.95, "store": "Marché local" },
+          { "id": "bananes_1kg", "label": "Bananes 1kg", "price_min": 1.89, "store": "Marché local" },
+          { "id": "poulet_1kg", "label": "Poulet 1kg", "price_min": 6.90, "store": "Super U" },
+          { "id": "yaourt_pack4", "label": "Yaourt pack 4", "price_min": 2.15, "store": "Carrefour" }
+        ],
+        "inflation_subie": [
+          { "id": "pain_400g", "label": "Pain 400g", "price_min": 1.85, "store": "Boulangerie" },
+          { "id": "cafe_250g", "label": "Café 250g", "price_min": 4.50, "store": "Carrefour" },
+          { "id": "savon_pack", "label": "Savon pack", "price_min": 3.20, "store": "Leader Price" }
+        ]
+      },
+      "score": 82
+    },
+    "martinique": {
+      "label": "Martinique",
+      "basket": {
+        "essentiel": [],
+        "equilibre": [],
+        "inflation_subie": []
+      },
+      "score": 0
+    },
+    "guyane": {
+      "label": "Guyane",
+      "basket": {
+        "essentiel": [],
+        "equilibre": [],
+        "inflation_subie": []
+      },
+      "score": 0
+    },
+    "reunion": {
+      "label": "La Réunion",
+      "basket": {
+        "essentiel": [],
+        "equilibre": [],
+        "inflation_subie": []
+      },
+      "score": 0
+    }
+  }
+}

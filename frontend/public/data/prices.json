@@ -1,0 +1,34 @@
+[
+  {
+    "productId": "riz-1kg",
+    "productLabel": "Riz blanc 1kg",
+    "category": "féculents",
+    "brand": "Marque distributeur",
+    "unit": "kg",
+    "territory": "GP",
+    "storeId": "carrefour-abymes",
+    "storeName": "Carrefour Abymes",
+    "price": 2.45,
+    "currency": "EUR",
+    "source": "Relevé terrain",
+    "observedAt": "2026-01-06T11:30:00Z",
+    "confidence": "élevée",
+    "notes": ""
+  },
+  {
+    "productId": "lait-1l",
+    "productLabel": "Lait UHT demi-écrémé 1L",
+    "category": "produits laitiers",
+    "brand": "Marque distributeur",
+    "unit": "L",
+    "territory": "GP",
+    "storeId": "leclerc-jarry",
+    "storeName": "E.Leclerc Jarry",
+    "price": 1.05,
+    "currency": "EUR",
+    "source": "Relevé terrain",
+    "observedAt": "2026-01-06T11:30:00Z",
+    "confidence": "moyenne",
+    "notes": ""
+  }
+]
