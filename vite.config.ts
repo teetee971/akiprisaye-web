@@ -5,22 +5,31 @@ import { visualizer } from 'rollup-plugin-visualizer';
 import path from 'node:path';
 import { existsSync } from 'node:fs';
 
-// Important: sur GitHub Pages (project site), il faut le prefix /akiprisaye-web/
-const isGitHubActions = process.env.GITHUB_ACTIONS === 'true';
-const repoName = 'akiprisaye-web';
+/**
+ * Base URL:
+ * - GitHub Pages (project site): "/<repo>/"
+ * - Cloudflare Pages / local: "/"
+ *
+ * On déduit le repo depuis GITHUB_REPOSITORY (owner/repo).
+ * Si absent, on retombe sur "/" (Cloudflare/local).
+ */
+function computeBase() {
+  const ghRepo = process.env.GITHUB_REPOSITORY; // ex: "teetee971/akiprisaye-web"
+  if (process.env.GITHUB_PAGES === 'true' || process.env.GITHUB_ACTIONS === 'true') {
+    const repo = ghRepo?.split('/')[1] || 'akiprisaye-web';
+    return `/${repo}/`;
+  }
+  return '/';
+}
 
 export default defineConfig({
-  // Si ce fichier est dans frontend/vite.config.ts, NE PAS définir root vers /frontend
-  // root: process.cwd(),
-
-  base: isGitHubActions ? `/${repoName}/` : '/',
+  base: computeBase(),
 
   plugins: [
     react(),
 
     viteStaticCopy({
       targets: [
-        // Leaflet images (si présent dans node_modules du frontend)
         ...(existsSync(path.resolve(__dirname, 'node_modules/leaflet/dist/images'))
           ? [
               {
@@ -30,7 +39,6 @@ export default defineConfig({
             ]
           : []),
 
-        // Tesseract worker (si présent)
         ...(existsSync(path.resolve(__dirname, 'node_modules/tesseract.js/dist/worker.min.js'))
           ? [
               {
@@ -57,7 +65,6 @@ export default defineConfig({
   },
 
   build: {
-    // Dans frontend/, dist est correct (pas frontend/dist)
     outDir: 'dist',
     emptyOutDir: true,
     sourcemap: false,
@@ -91,8 +98,6 @@ export default defineConfig({
   server: { port: 3000, open: true },
   preview: { port: 4173 },
 
-  // IMPORTANT: côté client, Vite utilise import.meta.env
-  // Si ton code lit encore process.env.*, ce define évite des crashs.
   define: {
     'process.env.VITE_FIREBASE_API_KEY': JSON.stringify(process.env.VITE_FIREBASE_API_KEY),
     'process.env.VITE_FIREBASE_AUTH_DOMAIN': JSON.stringify(process.env.VITE_FIREBASE_AUTH_DOMAIN),
