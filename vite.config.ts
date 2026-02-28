@@ -5,14 +5,28 @@ import { visualizer } from 'rollup-plugin-visualizer';
 import path from 'path';
 import { existsSync } from 'fs';
 
+/**
+ * GitHub Pages (project pages) sert le site sous /<repo>/
+ * => il faut que Vite génère des URLs d’assets en /akiprisaye-web/assets/...
+ */
+const isGitHubPages =
+  process.env.GITHUB_ACTIONS === 'true' ||
+  process.env.GITHUB_PAGES === 'true' ||
+  process.env.DEPLOY_TARGET === 'github-pages';
+
+const repoBase = '/akiprisaye-web/';
+
 export default defineConfig({
   // IMPORTANT: le projet Vite est dans /frontend
   root: path.resolve(__dirname, 'frontend'),
 
+  // ✅ Fix principal: base correct pour GitHub Pages
+  base: isGitHubPages ? repoBase : '/',
+
   plugins: [
     react(),
 
-    // On copie depuis node_modules (à la racine du repo)
+    // Copie depuis node_modules (à la racine du repo)
     viteStaticCopy({
       targets: [
         ...(existsSync(path.resolve(__dirname, 'node_modules/leaflet/dist/images'))
@@ -36,6 +50,7 @@ export default defineConfig({
     }),
 
     visualizer({
+      // stats dans le dist final (sur GH Pages ça reste accessible)
       filename: path.resolve(__dirname, 'frontend/dist/stats.html'),
       open: false,
       gzipSize: true,
@@ -50,8 +65,8 @@ export default defineConfig({
   },
 
   build: {
-    // outDir est relatif à root => frontend/dist
-    outDir: path.resolve(__dirname, 'frontend/dist'),
+    // ✅ Plus propre: outDir relatif à root (= frontend/dist)
+    outDir: 'dist',
     emptyOutDir: true,
     sourcemap: false,
     minify: 'terser',
@@ -84,8 +99,7 @@ export default defineConfig({
   server: { port: 3000, open: true },
   preview: { port: 4173 },
 
-  // Si tu utilises vraiment process.env côté client, garde-le,
-  // sinon tu peux supprimer ce bloc.
+  // Optionnel. (Idéalement utiliser import.meta.env côté client)
   define: {
     'process.env.VITE_FIREBASE_API_KEY': JSON.stringify(process.env.VITE_FIREBASE_API_KEY),
     'process.env.VITE_FIREBASE_AUTH_DOMAIN': JSON.stringify(process.env.VITE_FIREBASE_AUTH_DOMAIN),
