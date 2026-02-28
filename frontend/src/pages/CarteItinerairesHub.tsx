@@ -1,9 +1,8 @@
-import { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Map as MapIcon, Navigation, Zap } from 'lucide-react';
 import { GlassCard } from '../components/ui/glass-card';
-import Carte from './Carte';
-
+const Carte = React.lazy(() => import('./Carte'));
 type MapMode = 'carte' | 'itineraire' | 'optimisation';
 
 export default function CarteItinerairesHub() {

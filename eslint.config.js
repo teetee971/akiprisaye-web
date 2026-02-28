@@ -154,7 +154,7 @@ const sharedReactRules = {
 
 const reactSettings = {
   react: {
-    version: 'detect',
+    version: '18.0',
   },
 };
 

@@ -228,7 +228,7 @@ stripe trigger customer.subscription.created
 
 - Tous les paiements sont traités par Stripe (PCI-DSS Level 1 compliant)
 - Les webhooks sont vérifiés avec la signature Stripe
-- Les mots de passe et tokens sont hashés avec bcrypt
+- Les mots de passe et tokens sont hashés avec bcryptjs
 - Les données utilisateur sont minimales (RGPD compliant)
 - Aucune donnée de carte bancaire n'est stockée
 

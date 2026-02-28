@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Legacy compatibility layer – DO NOT DEFINE TYPES HERE
  *

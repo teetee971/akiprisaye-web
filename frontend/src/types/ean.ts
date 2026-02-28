@@ -35,7 +35,8 @@ export type DataSource =
   | 'base_officielle'         // Official government data
   | 'partenaire_enseigne'     // Retail partner data
   | 'open_food_facts'         // Open Food Facts API
-  | 'manuel';                 // Manual entry
+  | 'manuel'                 // Manual entry
+  | 'scan_utilisateur';      // User barcode scan session
 
 /**
  * EAN Validation Result

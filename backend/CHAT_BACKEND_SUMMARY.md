@@ -315,7 +315,7 @@ s3://akiprisaye-chat/
 | Art. 17 | Right to erasure | CASCADE delete on user deletion |
 | Art. 25 | Privacy by design | Private groups by default, opt-in notifications |
 | Art. 30 | Processing register | `ChatModerationAction` audit trail |
-| Art. 32 | Security | JWT auth, HTTPS, bcrypt passwords |
+| Art. 32 | Security | JWT auth, HTTPS, bcryptjs passwords |
 
 ### Data Retention
 

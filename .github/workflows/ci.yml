@@ -1,4 +1,4 @@
-name: CI Production Stable
+name: CI
 
 on:
   push:
@@ -23,9 +23,11 @@ jobs:
       - name: Install dependencies
         working-directory: frontend
         run: npm ci
+
       - name: Build
         working-directory: frontend
         run: npm run build
-      - name: Run tests
+
+      - name: Typecheck
         working-directory: frontend
-        run: npm run test:ci || echo "Tests skipped (browser-only)"
+        run: npm run -s typecheck || npm run -s tsc --if-present

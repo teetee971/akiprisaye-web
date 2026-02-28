@@ -1092,7 +1092,7 @@ export default function RechercheProduits() {
             searchQuery={query}
             searchBarcode={barcode}
             onReset={handleReset}
-            onScanTicket={() => navigate('/scan')}
+            onScanTicket={() => navigate('/scanner')}
             onReturnToHub={() => navigate('/scanner')}
             onFavoriteToast={showToast}
           />
@@ -1103,7 +1103,7 @@ export default function RechercheProduits() {
             searchQuery={query}
             searchBarcode={barcode}
             onReset={handleReset}
-            onScanTicket={() => navigate('/scan')}
+            onScanTicket={() => navigate('/scanner')}
             onReturnToHub={() => navigate('/scanner')}
             onFavoriteToast={showToast}
           />

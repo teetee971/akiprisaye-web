@@ -3,33 +3,51 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
+
     <!-- App -->
     <title>A KI PRI SA YÉ – Transparence des prix Outre-mer</title>
     <meta
       name="description"
       content="Application citoyenne dédiée à la compréhension et à la transparence des prix dans les territoires d'Outre-mer."
     />
-    
+
     <!-- Canonical -->
     <link rel="canonical" href="https://akiprisaye-web.pages.dev/" />
-    
-    <!-- Open Graph / Facebook -->
+
+    <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://akiprisaye-web.pages.dev/" />
-    <meta property="og:title" content="A KI PRI SA YÉ – Transparence des prix Outre-mer" />
-    <meta property="og:description" content="Application citoyenne dédiée à la compréhension et à la transparence des prix dans les territoires d'Outre-mer." />
-    <meta property="og:image" content="https://akiprisaye-web.pages.dev/logo-akiprisaye.svg" />
+    <meta
+      property="og:title"
+      content="A KI PRI SA YÉ – Transparence des prix Outre-mer"
+    />
+    <meta
+      property="og:description"
+      content="Application citoyenne dédiée à la compréhension et à la transparence des prix dans les territoires d'Outre-mer."
+    />
+    <meta
+      property="og:image"
+      content="https://akiprisaye-web.pages.dev/logo-akiprisaye.svg"
+    />
     <meta property="og:locale" content="fr_FR" />
     <meta property="og:site_name" content="A KI PRI SA YÉ" />
-    
+
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:url" content="https://akiprisaye-web.pages.dev/" />
-    <meta name="twitter:title" content="A KI PRI SA YÉ – Transparence des prix Outre-mer" />
-    <meta name="twitter:description" content="Application citoyenne dédiée à la compréhension et à la transparence des prix dans les territoires d'Outre-mer." />
-    <meta name="twitter:image" content="https://akiprisaye-web.pages.dev/logo-akiprisaye.svg" />
-    
+    <meta
+      name="twitter:title"
+      content="A KI PRI SA YÉ – Transparence des prix Outre-mer"
+    />
+    <meta
+      name="twitter:description"
+      content="Application citoyenne dédiée à la compréhension et à la transparence des prix dans les territoires d'Outre-mer."
+    />
+    <meta
+      name="twitter:image"
+      content="https://akiprisaye-web.pages.dev/logo-akiprisaye.svg"
+    />
+
     <!-- Icons -->
     <link rel="icon" type="image/svg+xml" href="/logo-akiprisaye.svg" />
 
@@ -38,16 +56,11 @@
     <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
-    <link rel="modulepreload" href="/src/main.jsx" />
-    <link rel="dns-prefetch" href="https://firestore.googleapis.com" />
-    <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin />
-    <link rel="dns-prefetch" href="https://www.googleapis.com" />
-    <link rel="preconnect" href="https://www.googleapis.com" crossorigin />
-    
+
     <!-- PWA -->
     <link rel="manifest" href="/manifest.webmanifest" />
     <meta name="theme-color" content="#0f172a" />
-    
+
     <!-- Base styles to prevent white flash -->
     <style>
       body {
@@ -57,22 +70,56 @@
         color: white;
         font-family: Inter, system-ui, -apple-system, sans-serif;
       }
-      
       #root {
         min-height: 100vh;
       }
+    
+      /* Loading fallback overlay */
+      #loading-fallback {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 12px;
+        background: #0f172a;
+        z-index: 1;
+      }
+      /* App always above fallback once React mounts */
+      #root { position: relative; z-index: 2; }
+
     </style>
   </head>
-  
+
   <body>
     <div id="root">
       <!-- Fallback content visible pendant le chargement ou en cas d'erreur -->
-      <div id="loading-fallback" style="min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #0f172a; color: white; font-family: system-ui, sans-serif;">
-        <img src="/logo-akiprisaye.svg" alt="A KI PRI SA YÉ" style="height: 64px; margin-bottom: 24px;" />
-        <h1 style="font-size: 1.5rem; margin-bottom: 8px;">A KI PRI SA YÉ</h1>
-        <p style="color: #94a3b8;">Chargement en cours...</p>
+      <div
+        id="loading-fallback"
+        style="
+          min-height: 100vh;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          background: #0f172a;
+          color: white;
+          font-family: system-ui, sans-serif;
+        "
+      >
+        <img
+          src="/logo-akiprisaye.svg"
+          alt="A KI PRI SA YÉ"
+          style="height: 64px; margin-bottom: 24px"
+        />
+        <h1 style="font-size: 1.5rem; margin-bottom: 8px">A KI PRI SA YÉ</h1>
+        <p style="color: #94a3b8">Chargement en cours...</p>
       </div>
     </div>
-    <script type="module" src="/src/main.jsx"></script>
+
+    <!-- Entrypoint Vite (TSX OK) -->
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
+```0

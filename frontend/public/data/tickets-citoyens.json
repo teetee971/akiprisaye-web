@@ -1,0 +1,54 @@
+{
+  "meta": {
+    "dataset": "tickets-citoyens",
+    "project": "A KI PRI SA YÉ",
+    "description": "Tickets et factures transmis par les citoyens pour validation des prix",
+    "version": "1.0.0",
+    "status": "active",
+    "currency": "EUR",
+    "lastUpdated": "2026-01-08T00:00:00Z"
+  },
+
+  "tickets": [
+    {
+      "ticketId": "ticket-2026-01-08-0001",
+      "type": "ticket_caisse",
+      "territory": "GP",
+      "store": {
+        "storeId": "carrefour-abymes",
+        "storeName": "Carrefour Abymes",
+        "location": "Les Abymes"
+      },
+      "purchase": {
+        "date": "2026-01-08",
+        "time": "14:22",
+        "total": 18.45,
+        "paymentMethod": "CB"
+      },
+      "items": [
+        {
+          "productId": "riz-1kg",
+          "labelOnTicket": "RIZ BLANC 1KG",
+          "price": 2.39,
+          "quantity": 1
+        },
+        {
+          "productId": "lait-1l",
+          "labelOnTicket": "LAIT UHT DEMI ECREME",
+          "price": 1.09,
+          "quantity": 1
+        }
+      ],
+      "source": {
+        "submittedBy": "citoyen_anonyme",
+        "submissionMethod": "manuel",
+        "proofAvailable": true
+      },
+      "validation": {
+        "status": "validated",
+        "validatedAt": "2026-01-08T15:10:00Z",
+        "notes": "Ticket lisible, cohérent avec marché local"
+      }
+    }
+  ]
+}

@@ -75,7 +75,7 @@ export function RealSavingsBlock() {
         {/* CTA */}
         <div className="mt-6">
           <a 
-            href="/scan"
+            href="/scanner"
             className="inline-block px-6 py-3 bg-green-600 hover:bg-green-500 rounded-xl font-semibold transition-all transform hover:scale-105 shadow-lg"
           >
             🔍 Trouver mes économies

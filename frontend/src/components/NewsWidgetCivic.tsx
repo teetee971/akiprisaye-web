@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Calendar } from 'lucide-react';
-import SourceFooter from '../ui/SourceFooter';
+import SourceFooter from './ui/SourceFooter';
 
 export interface CivicNewsItem {
   id: string;

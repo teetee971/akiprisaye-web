@@ -1,7 +1,7 @@
 /**
  * Utilitaires pour la gestion sécurisée des mots de passe
  *
- * Utilise bcrypt pour le hashing:
+ * Utilise bcryptjs pour le hashing:
  * - Salt rounds: 12 (recommandé pour 2024+)
  * - Résistant aux attaques par force brute
  * - Timing-safe comparison
@@ -9,7 +9,7 @@
  * RGPD: Les mots de passe ne sont jamais stockés en clair (Art. 32 - sécurité)
  */
 
-import bcrypt from 'bcrypt';
+import bcryptjs from 'bcryptjs';
 import { z } from 'zod';
 
 // Configuration
@@ -37,10 +37,10 @@ export const passwordSchema = z
   );
 
 /**
- * Hash un mot de passe avec bcrypt
+ * Hash un mot de passe avec bcryptjs
  *
  * @param password - Mot de passe en clair
- * @returns Hash bcrypt du mot de passe
+ * @returns Hash bcryptjs du mot de passe
  *
  * Utilise 12 salt rounds (~250ms de calcul)
  * Le hash résultant contient le salt et le coût
@@ -50,7 +50,7 @@ export async function hashPassword(password: string): Promise<string> {
   passwordSchema.parse(password);
 
   // Génération du hash avec salt automatique
-  const hash = await bcrypt.hash(password, SALT_ROUNDS);
+  const hash = await bcryptjs.hash(password, SALT_ROUNDS);
 
   return hash;
 }
@@ -59,7 +59,7 @@ export async function hashPassword(password: string): Promise<string> {
  * Vérifie un mot de passe contre son hash
  *
  * @param password - Mot de passe en clair
- * @param hash - Hash bcrypt à comparer
+ * @param hash - Hash bcryptjs à comparer
  * @returns true si le mot de passe correspond, false sinon
  *
  * Utilise une comparaison timing-safe pour éviter les timing attacks
@@ -69,8 +69,8 @@ export async function verifyPassword(
   hash: string
 ): Promise<boolean> {
   try {
-    // bcrypt.compare est timing-safe
-    const isMatch = await bcrypt.compare(password, hash);
+    // bcryptjs.compare est timing-safe
+    const isMatch = await bcryptjs.compare(password, hash);
     return isMatch;
   } catch (error) {
     // En cas d'erreur (hash malformé, etc.), retourner false

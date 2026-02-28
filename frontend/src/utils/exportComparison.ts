@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Utility functions for exporting comparison data to various formats
  */

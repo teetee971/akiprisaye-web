@@ -69,7 +69,7 @@ export default function ScanFlow() {
       // Navigate to new comprehensive product photo analysis
       navigate('/analyse-photo-produit');
     } else if (source === 'ticket') {
-      navigate('/scan?flow=unified');
+      navigate('/scanner?flow=unified');
     }
   };
 

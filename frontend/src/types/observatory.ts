@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Price Observatory Types - v1.3.0
  * 

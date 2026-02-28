@@ -36,7 +36,7 @@ const OCR_MODES: OCRMode[] = [
     title: 'Scanner texte & tickets',
     description: 'Extraction de texte brut depuis images, tickets de caisse, documents',
     icon: '📝',
-    route: '/scan',
+    route: '/scanner',
     color: 'blue',
     available: true,
   },

@@ -1,9 +1,32 @@
-/**
- * Civic News Types for A KI PRI SA YÉ
- * All news items MUST have verifiable official sources
- */
+export type NewsType = 'bons_plans' | 'rappels' | 'reglementaire' | 'indice' | 'dossiers' | 'press' | 'partner' | 'user';
 
-export type NewsCategory = "PRIX" | "POLITIQUE" | "ALERTE" | "INNOVATION";
+export type NewsTerritory = 'gp' | 'mq' | 'gf' | 're' | 'yt' | 'fr' | 'all';
+
+export type NewsImpact = 'fort' | 'moyen' | 'info';
+
+export type NewsConfidence = 'official' | 'partner' | 'press' | 'user';
+
+export interface NewsItem {
+  id: string;
+  type: NewsType;
+  territory: NewsTerritory;
+  title: string;
+  summary: string;
+  source_name: string;
+  source_url: string;
+  published_at: string;
+  impact: NewsImpact;
+  isSponsored: boolean;
+  confidence: NewsConfidence;
+  tags?: string[];
+  evidence?: Record<string, unknown>;
+  canonical_url?: string;
+  expires_at?: string;
+  verified: boolean;
+}
+
+// Legacy civic exports kept for compatibility with existing components
+export type NewsCategory = 'PRIX' | 'POLITIQUE' | 'ALERTE' | 'INNOVATION';
 
 export interface OfficialSource {
   name: string;
@@ -21,14 +44,10 @@ export interface CivicNewsItem {
   source: OfficialSource;
 }
 
-/**
- * Authorized official sources only
- * Any news without these sources should be rejected
- */
 export const AUTHORIZED_SOURCES = [
   'data.gouv.fr',
   'insee.fr',
-  'economie.gouv.fr', // DGCCRF
+  'economie.gouv.fr',
   'outre-mer.gouv.fr',
   'guadeloupe.pref.gouv.fr',
   'martinique.pref.gouv.fr',
@@ -37,17 +56,11 @@ export const AUTHORIZED_SOURCES = [
   'mayotte.pref.gouv.fr',
 ] as const;
 
-/**
- * Fixed: Use proper URL parsing to prevent false positives
- * e.g., "fake-insee.fr.malicious.com" should be rejected
- */
 function extractHostname(url: string): string | null {
   try {
-    // Try parsing as a full URL first
     return new URL(url).hostname;
   } catch {
     try {
-      // Fallback: allow hostnames without protocol (e.g. "insee.fr")
       return new URL(`https://${url}`).hostname;
     } catch {
       return null;
@@ -59,20 +72,9 @@ export function isAuthorizedSource(url: string): boolean {
   const hostname = extractHostname(url);
   if (!hostname) return false;
 
-  return AUTHORIZED_SOURCES.some((source) => {
-    return hostname === source || hostname.endsWith(`.${source}`);
-  });
+  return AUTHORIZED_SOURCES.some((source) => hostname === source || hostname.endsWith(`.${source}`));
 }
 
-/**
- * Legacy NewsItem interface for backward compatibility
- * @deprecated Use CivicNewsItem instead
- */
-export interface NewsItem extends CivicNewsItem {}
-
-/**
- * Category configuration for visual display
- */
 export interface CategoryConfig {
   label: string;
   color: string;
@@ -82,32 +84,8 @@ export interface CategoryConfig {
 }
 
 export const categoryConfigs: Record<NewsCategory, CategoryConfig> = {
-  PRIX: {
-    label: 'PRIX',
-    color: 'text-green-400',
-    bgColor: 'bg-green-500/10',
-    borderColor: 'border-green-500/30',
-    icon: '📉'
-  },
-  POLITIQUE: {
-    label: 'POLITIQUE',
-    color: 'text-purple-400',
-    bgColor: 'bg-purple-500/10',
-    borderColor: 'border-purple-500/30',
-    icon: '🏛️'
-  },
-  ALERTE: {
-    label: 'ALERTE',
-    color: 'text-red-400',
-    bgColor: 'bg-red-500/10',
-    borderColor: 'border-red-500/30',
-    icon: '⚠️'
-  },
-  INNOVATION: {
-    label: 'INNOVATION',
-    color: 'text-blue-400',
-    bgColor: 'bg-blue-500/10',
-    borderColor: 'border-blue-500/30',
-    icon: '💡'
-  }
+  PRIX: { label: 'PRIX', color: 'text-green-400', bgColor: 'bg-green-500/10', borderColor: 'border-green-500/30', icon: '📉' },
+  POLITIQUE: { label: 'POLITIQUE', color: 'text-purple-400', bgColor: 'bg-purple-500/10', borderColor: 'border-purple-500/30', icon: '🏛️' },
+  ALERTE: { label: 'ALERTE', color: 'text-red-400', bgColor: 'bg-red-500/10', borderColor: 'border-red-500/30', icon: '⚠️' },
+  INNOVATION: { label: 'INNOVATION', color: 'text-blue-400', bgColor: 'bg-blue-500/10', borderColor: 'border-blue-500/30', icon: '💡' },
 };

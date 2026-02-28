@@ -15,6 +15,7 @@ import ScanErrorState from '../components/ScanErrorState'
 import AddToTiPanierButton from '../components/AddToTiPanierButton'
 import { ProductTextReviewModal } from '../components/ProductTextReviewModal'
 import { GlassCard } from '../components/ui/glass-card'
+import { getShoppingListCount } from '../store/useShoppingListStore'
 import type { ScannedProductContext } from '../types/scanFlow'
 
 export default function ScanEAN() {
@@ -33,6 +34,7 @@ export default function ScanEAN() {
   const [isProcessingImage, setIsProcessingImage] = useState(false)
   const [textProductSuggestions, setTextProductSuggestions] = useState<Array<{ label: string; score: number }>>([])
   const [showTextProductModal, setShowTextProductModal] = useState(false)
+  const [shoppingListCount, setShoppingListCount] = useState(() => getShoppingListCount())
 
   const scanner = useEANScanner()
   const resolver = useEANResolver()
@@ -41,6 +43,18 @@ export default function ScanEAN() {
   
   // Cache product catalog to avoid repeated calls
   const productCatalog = React.useMemo(() => getAllProducts().map(p => ({ label: p.name, ean: p.ean })), [])
+
+  useEffect(() => {
+    const syncCount = () => setShoppingListCount(getShoppingListCount())
+    window.addEventListener('storage', syncCount)
+    window.addEventListener('focus', syncCount)
+    window.addEventListener('akiprisaye:shopping-list-updated', syncCount as EventListener)
+    return () => {
+      window.removeEventListener('storage', syncCount)
+      window.removeEventListener('focus', syncCount)
+      window.removeEventListener('akiprisaye:shopping-list-updated', syncCount as EventListener)
+    }
+  }, [])
 
   /**
    * Unified EAN handler - Single source of truth
@@ -574,6 +588,14 @@ export default function ScanEAN() {
           <h2 className="text-2xl font-bold text-white">Résultat</h2>
           <ScanResultCard product={resolver.product} />
           <AddToTiPanierButton product={resolver.product} />
+          {shoppingListCount > 0 && (
+            <button
+              onClick={() => navigate('/liste')}
+              className="rounded-lg border border-blue-500/60 px-4 py-2 text-sm font-semibold text-blue-200"
+            >
+              Voir la liste ({shoppingListCount})
+            </button>
+          )}
         </div>
       )}
 

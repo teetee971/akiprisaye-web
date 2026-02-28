@@ -155,7 +155,7 @@ export default function HomeV3() {
               Scanner un ticket →
             </Link>
             <Link 
-              to="/scan" 
+              to="/scanner" 
               className="inline-block px-6 py-2 bg-blue-600/20 hover:bg-blue-600/30 rounded-lg text-blue-400 font-medium transition-colors text-sm"
             >
               Ou scanner un produit

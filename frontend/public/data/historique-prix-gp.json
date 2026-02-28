@@ -1,0 +1,99 @@
+{
+  "meta": {
+    "dataset": "historique-prix",
+    "territory": "GP",
+    "currency": "EUR",
+    "granularity": "monthly",
+    "lastUpdated": "2026-01-06T11:30:00Z",
+    "methodology": {
+      "source": "relevés terrain + consolidations mensuelles",
+      "calculation": "variation calculée par produit, par magasin, entre deux dates consécutives",
+      "note": "Les données manquantes ne sont jamais extrapolées."
+    }
+  },
+
+  "timeline": [
+    "2025-11",
+    "2025-12",
+    "2026-01"
+  ],
+
+  "products": {
+    "riz-1kg": {
+      "label": "Riz blanc 1kg",
+      "unit": "kg"
+    },
+    "lait-1l": {
+      "label": "Lait UHT demi-écrémé 1L",
+      "unit": "l"
+    },
+    "huile-1l": {
+      "label": "Huile végétale 1L",
+      "unit": "l"
+    },
+    "pates-500g": {
+      "label": "Pâtes alimentaires 500g",
+      "unit": "g"
+    },
+    "sucre-1kg": {
+      "label": "Sucre blanc 1kg",
+      "unit": "kg"
+    }
+  },
+
+  "stores": {
+    "carrefour-abymes": {
+      "name": "Carrefour Abymes",
+      "prices": {
+        "2025-11": {
+          "riz-1kg": 2.30,
+          "lait-1l": 1.05,
+          "huile-1l": 3.00,
+          "pates-500g": 1.25,
+          "sucre-1kg": 1.50
+        },
+        "2025-12": {
+          "riz-1kg": 2.40,
+          "lait-1l": 1.08,
+          "huile-1l": 3.10,
+          "pates-500g": 1.30,
+          "sucre-1kg": 1.55
+        },
+        "2026-01": {
+          "riz-1kg": 2.45,
+          "lait-1l": 1.10,
+          "huile-1l": 3.20,
+          "pates-500g": 1.35,
+          "sucre-1kg": 1.60
+        }
+      }
+    },
+
+    "leclerc-jarry": {
+      "name": "E.Leclerc Jarry",
+      "prices": {
+        "2025-11": {
+          "riz-1kg": 2.35,
+          "lait-1l": 1.00,
+          "huile-1l": 3.10,
+          "pates-500g": 1.20,
+          "sucre-1kg": 1.55
+        },
+        "2025-12": {
+          "riz-1kg": 2.45,
+          "lait-1l": 1.02,
+          "huile-1l": 3.20,
+          "pates-500g": 1.25,
+          "sucre-1kg": 1.60
+        },
+        "2026-01": {
+          "riz-1kg": 2.50,
+          "lait-1l": 1.05,
+          "huile-1l": 3.30,
+          "pates-500g": 1.30,
+          "sucre-1kg": 1.65
+        }
+      }
+    }
+  }
+}

@@ -34,7 +34,7 @@ self.addEventListener('fetch', (event) => {
   }
 
   if (
-    request.mode === 'navigate' ||
+    event.request.mode === 'navigate' ||
     request.destination === 'document' ||
     url.pathname === '/' ||
     url.pathname.endsWith('.html')

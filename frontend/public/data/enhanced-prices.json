@@ -1,0 +1,335 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "lastUpdate": "2025-01-07T02:00:00Z",
+    "description": "Enhanced price data with product normalization and reliability scoring",
+    "territories": ["GP", "MQ", "GF", "RE", "FR"]
+  },
+  "products": [
+    {
+      "canonicalId": "lait-uht-demi-ecreme-1l",
+      "ean": "3560070123456",
+      "name": "Lait demi-écrémé UHT",
+      "normalizedName": "lait demi ecreme uht",
+      "brand": "Lactel",
+      "normalizedBrand": "lactel",
+      "category": "produits-laitiers",
+      "format": {
+        "quantity": 1,
+        "unit": "L",
+        "displayText": "1L"
+      },
+      "synonyms": ["lait UHT", "lait en brique", "lait longue conservation"],
+      "prices": [
+        {
+          "priceId": "price-001",
+          "territory": "GP",
+          "storeChain": "Carrefour",
+          "storeName": "Carrefour Les Abymes",
+          "storeId": "store-gp-carrefour-001",
+          "price": 1.48,
+          "observedAt": "2025-01-06T10:30:00Z",
+          "source": {
+            "type": "user_receipt",
+            "description": "Ticket utilisateur vérifié"
+          },
+          "reliability": {
+            "score": 85,
+            "level": "high",
+            "confirmations": 12,
+            "verifiedBy": ["user", "community"],
+            "lastVerified": "2025-01-06T10:30:00Z"
+          }
+        },
+        {
+          "priceId": "price-002",
+          "territory": "GP",
+          "storeChain": "E.Leclerc",
+          "storeName": "E.Leclerc Les Abymes",
+          "storeId": "store-gp-leclerc-001",
+          "price": 1.39,
+          "observedAt": "2025-01-05T14:20:00Z",
+          "source": {
+            "type": "field_observation",
+            "description": "Observation terrain vérifiée"
+          },
+          "reliability": {
+            "score": 92,
+            "level": "high",
+            "confirmations": 18,
+            "verifiedBy": ["field_agent", "user", "community"],
+            "lastVerified": "2025-01-05T14:20:00Z"
+          }
+        },
+        {
+          "priceId": "price-003",
+          "territory": "GP",
+          "storeChain": "Leader Price",
+          "storeName": "Leader Price Pointe-à-Pitre",
+          "storeId": "store-gp-leaderprice-001",
+          "price": 1.55,
+          "observedAt": "2025-01-04T09:15:00Z",
+          "source": {
+            "type": "user_report",
+            "description": "Signalement utilisateur"
+          },
+          "reliability": {
+            "score": 68,
+            "level": "medium",
+            "confirmations": 4,
+            "verifiedBy": ["user"],
+            "lastVerified": "2025-01-04T09:15:00Z"
+          }
+        }
+      ]
+    },
+    {
+      "canonicalId": "riz-long-blanc-1kg",
+      "ean": "3250391234567",
+      "name": "Riz long blanc",
+      "normalizedName": "riz long blanc",
+      "brand": "Taureau Ailé",
+      "normalizedBrand": "taureau aile",
+      "category": "epicerie",
+      "format": {
+        "quantity": 1,
+        "unit": "kg",
+        "displayText": "1kg"
+      },
+      "synonyms": ["riz blanc", "riz grain long", "riz basmati"],
+      "prices": [
+        {
+          "priceId": "price-004",
+          "territory": "GP",
+          "storeChain": "Carrefour",
+          "storeName": "Carrefour Les Abymes",
+          "storeId": "store-gp-carrefour-001",
+          "price": 1.99,
+          "observedAt": "2025-01-07T08:45:00Z",
+          "source": {
+            "type": "official_api",
+            "description": "API officielle enseigne"
+          },
+          "reliability": {
+            "score": 98,
+            "level": "high",
+            "confirmations": 25,
+            "verifiedBy": ["official_api", "field_agent", "user"],
+            "lastVerified": "2025-01-07T08:45:00Z"
+          }
+        },
+        {
+          "priceId": "price-005",
+          "territory": "GP",
+          "storeChain": "E.Leclerc",
+          "storeName": "E.Leclerc Baie-Mahault",
+          "storeId": "store-gp-leclerc-002",
+          "price": 1.89,
+          "observedAt": "2025-01-06T15:30:00Z",
+          "source": {
+            "type": "field_observation",
+            "description": "Observation terrain vérifiée"
+          },
+          "reliability": {
+            "score": 90,
+            "level": "high",
+            "confirmations": 15,
+            "verifiedBy": ["field_agent", "user"],
+            "lastVerified": "2025-01-06T15:30:00Z"
+          }
+        },
+        {
+          "priceId": "price-006",
+          "territory": "GP",
+          "storeChain": "Indépendants",
+          "storeName": "Super U Pointe-à-Pitre",
+          "storeId": "store-gp-superu-001",
+          "price": 2.15,
+          "observedAt": "2025-01-05T11:00:00Z",
+          "source": {
+            "type": "user_receipt",
+            "description": "Ticket utilisateur vérifié"
+          },
+          "reliability": {
+            "score": 75,
+            "level": "medium",
+            "confirmations": 8,
+            "verifiedBy": ["user", "community"],
+            "lastVerified": "2025-01-05T11:00:00Z"
+          }
+        }
+      ]
+    },
+    {
+      "canonicalId": "yaourt-nature-4x125g",
+      "ean": "3560070789012",
+      "name": "Yaourt nature",
+      "normalizedName": "yaourt nature",
+      "brand": "Danone",
+      "normalizedBrand": "danone",
+      "category": "produits-laitiers",
+      "format": {
+        "quantity": 500,
+        "unit": "g",
+        "displayText": "4x125g"
+      },
+      "synonyms": ["yaourt blanc", "yogourt nature"],
+      "prices": [
+        {
+          "priceId": "price-007",
+          "territory": "GP",
+          "storeChain": "E.Leclerc",
+          "storeName": "E.Leclerc Pointe-à-Pitre",
+          "storeId": "store-gp-leclerc-003",
+          "price": 1.92,
+          "observedAt": "2025-01-06T16:20:00Z",
+          "source": {
+            "type": "field_observation",
+            "description": "Observation terrain vérifiée"
+          },
+          "reliability": {
+            "score": 88,
+            "level": "high",
+            "confirmations": 10,
+            "verifiedBy": ["field_agent", "user"],
+            "lastVerified": "2025-01-06T16:20:00Z"
+          }
+        },
+        {
+          "priceId": "price-008",
+          "territory": "GP",
+          "storeChain": "Carrefour",
+          "storeName": "Carrefour Jarry",
+          "storeId": "store-gp-carrefour-002",
+          "price": 2.05,
+          "observedAt": "2025-01-05T13:10:00Z",
+          "source": {
+            "type": "user_receipt",
+            "description": "Ticket utilisateur vérifié"
+          },
+          "reliability": {
+            "score": 80,
+            "level": "high",
+            "confirmations": 9,
+            "verifiedBy": ["user"],
+            "lastVerified": "2025-01-05T13:10:00Z"
+          }
+        }
+      ]
+    },
+    {
+      "canonicalId": "huile-tournesol-1l",
+      "ean": "3250391567890",
+      "name": "Huile de tournesol",
+      "normalizedName": "huile tournesol",
+      "brand": "Lesieur",
+      "normalizedBrand": "lesieur",
+      "category": "epicerie",
+      "format": {
+        "quantity": 1,
+        "unit": "L",
+        "displayText": "1L"
+      },
+      "synonyms": ["huile végétale", "huile alimentaire"],
+      "prices": [
+        {
+          "priceId": "price-009",
+          "territory": "GP",
+          "storeChain": "E.Leclerc",
+          "storeName": "E.Leclerc Les Abymes",
+          "storeId": "store-gp-leclerc-001",
+          "price": 2.99,
+          "observedAt": "2025-01-07T09:00:00Z",
+          "source": {
+            "type": "official_api",
+            "description": "API officielle enseigne"
+          },
+          "reliability": {
+            "score": 95,
+            "level": "high",
+            "confirmations": 20,
+            "verifiedBy": ["official_api", "user"],
+            "lastVerified": "2025-01-07T09:00:00Z"
+          }
+        },
+        {
+          "priceId": "price-010",
+          "territory": "GP",
+          "storeChain": "Carrefour",
+          "storeName": "Carrefour Les Abymes",
+          "storeId": "store-gp-carrefour-001",
+          "price": 3.15,
+          "observedAt": "2025-01-06T10:30:00Z",
+          "source": {
+            "type": "user_receipt",
+            "description": "Ticket utilisateur vérifié"
+          },
+          "reliability": {
+            "score": 82,
+            "level": "high",
+            "confirmations": 11,
+            "verifiedBy": ["user", "community"],
+            "lastVerified": "2025-01-06T10:30:00Z"
+          }
+        }
+      ]
+    },
+    {
+      "canonicalId": "pates-penne-500g",
+      "ean": "8076800123456",
+      "name": "Pâtes penne",
+      "normalizedName": "pates penne",
+      "brand": "Barilla",
+      "normalizedBrand": "barilla",
+      "category": "epicerie",
+      "format": {
+        "quantity": 500,
+        "unit": "g",
+        "displayText": "500g"
+      },
+      "synonyms": ["pâtes", "penne rigate", "nouilles"],
+      "prices": [
+        {
+          "priceId": "price-011",
+          "territory": "GP",
+          "storeChain": "Carrefour",
+          "storeName": "Carrefour Baie-Mahault",
+          "storeId": "store-gp-carrefour-003",
+          "price": 1.45,
+          "observedAt": "2025-01-06T11:00:00Z",
+          "source": {
+            "type": "field_observation",
+            "description": "Observation terrain vérifiée"
+          },
+          "reliability": {
+            "score": 89,
+            "level": "high",
+            "confirmations": 14,
+            "verifiedBy": ["field_agent", "user"],
+            "lastVerified": "2025-01-06T11:00:00Z"
+          }
+        },
+        {
+          "priceId": "price-012",
+          "territory": "GP",
+          "storeChain": "E.Leclerc",
+          "storeName": "E.Leclerc Les Abymes",
+          "storeId": "store-gp-leclerc-001",
+          "price": 1.39,
+          "observedAt": "2025-01-07T08:30:00Z",
+          "source": {
+            "type": "official_api",
+            "description": "API officielle enseigne"
+          },
+          "reliability": {
+            "score": 96,
+            "level": "high",
+            "confirmations": 22,
+            "verifiedBy": ["official_api", "field_agent"],
+            "lastVerified": "2025-01-07T08:30:00Z"
+          }
+        }
+      ]
+    }
+  ]
+}

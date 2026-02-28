@@ -1,0 +1,280 @@
+name: CI Strict (Zero Warning)
+
+on:
+  pull_request:
+    branches: ["main", "production"]
+  push:
+    branches: ["main", "production"]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  ci-strict:
+    name: Strict CI – Zero Warnings Allowed
+    runs-on: ubuntu-latest
+
+    env:
+      PLAYWRIGHT_BASE_URL: https://akiprisaye-web.pages.dev
+      PLAYWRIGHT_USE_LOCAL_SERVER: '0'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Sanitize npm proxy env (avoid deprecated key warnings)
+        shell: bash
+        run: |
+          {
+            echo "npm_config_http_proxy="
+            echo "npm_config_https_proxy="
+            echo "npm_config_proxy="
+            echo "NPM_CONFIG_HTTP_PROXY="
+            echo "NPM_CONFIG_HTTPS_PROXY="
+            echo "NPM_CONFIG_PROXY="
+          } >> "$GITHUB_ENV"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: "frontend/package-lock.json"
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Install ripgrep (rg)
+        run: sudo apt-get update && sudo apt-get install -y ripgrep
+      - name: Repository audit gate
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            bash ./scripts/audit-repo.sh --warn-only
+          else
+            bash ./scripts/audit-repo.sh --strict
+          fi
+
+      - name: TypeScript strict check
+        working-directory: frontend
+        run: npm run typecheck:ci
+        continue-on-error: ${{ github.event_name == 'pull_request' }}
+
+      - name: Install root dependencies
+        run: npm ci || npm install
+
+      - name: ESLint strict check (max-warnings=0)
+        working-directory: frontend
+        run: npm run lint:ci
+        continue-on-error: ${{ github.event_name == 'pull_request' }}
+
+      - name: Block new explicit any (diff-based)
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          BASE_SHA="${{ github.event.pull_request.base.sha || github.event.before }}"
+          if [ -z "${BASE_SHA}" ]; then
+            BASE_SHA="$(git rev-parse HEAD~1)"
+          fi
+
+          echo "Base SHA: ${BASE_SHA}"
+          echo "Head SHA: $(git rev-parse HEAD)"
+
+          DIFF_LINES="$(git diff -U0 "${BASE_SHA}..HEAD" -- '*.ts' '*.tsx' \
+            | grep -E '^\+' \
+            | grep -vE '^\+\+\+' \
+            | grep -E '\bany\b' || true)"
+
+          if [ -n "${DIFF_LINES}" ]; then
+            echo "⚠️ New occurrences of word 'any' detected in added lines:"
+            echo "${DIFF_LINES}"
+
+            if [ "${{ github.event_name }}" != "pull_request" ]; then
+              echo "❌ Blocking on push (main/production)."
+              exit 1
+            fi
+
+            echo "ℹ️ Non-blocking on PR (reported only)."
+          else
+            echo "✅ No new explicit 'any' detected."
+          fi
+
+      - name: Block new console.log in TS/TSX (diff-based)
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          BASE_SHA="${{ github.event.pull_request.base.sha || github.event.before }}"
+          if [ -z "${BASE_SHA}" ]; then
+            BASE_SHA="$(git rev-parse HEAD~1)"
+          fi
+
+          echo "Base SHA: ${BASE_SHA}"
+          echo "Head SHA: $(git rev-parse HEAD)"
+
+          DIFF_LINES="$(git diff -U0 "${BASE_SHA}..HEAD" -- '*.ts' '*.tsx' \
+            | grep -E '^\+' \
+            | grep -vE '^\+\+\+' \
+            | grep -E 'console\.log\s*\(' || true)"
+
+          if [ -n "${DIFF_LINES}" ]; then
+            echo "⚠️ New console.log detected in added TS/TSX lines:"
+            echo "${DIFF_LINES}"
+
+            if [ "${{ github.event_name }}" != "pull_request" ]; then
+              echo "❌ Blocking on push (main/production)."
+              exit 1
+            fi
+
+            echo "ℹ️ Non-blocking on PR (reported only)."
+          else
+            echo "✅ No new console.log detected."
+          fi
+
+      - name: Build (Vite)
+        working-directory: frontend
+        run: npm run build:ci
+        continue-on-error: ${{ github.event_name == 'pull_request' }}
+
+      - name: Run tests
+        working-directory: frontend
+        run: npm run test:ci
+        continue-on-error: ${{ github.event_name == 'pull_request' }}
+
+      - name: Security audit (npm)
+        working-directory: frontend
+        run: npm run audit:ci
+        continue-on-error: ${{ github.event_name == 'pull_request' }}
+
+      - name: Accessibility testing (axe-core WCAG)
+        id: axe
+        working-directory: frontend
+        run: npm run axe:ci 2>&1 | tee axe-report.txt
+        continue-on-error: true
+
+      - name: Lighthouse CI
+        id: lhci
+        working-directory: frontend
+        run: npm run lhci
+        continue-on-error: true
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+      - name: Install Playwright browser (Chromium)
+        working-directory: frontend
+        run: npx playwright install --with-deps chromium
+
+      - name: Production UX audit (PR report-only)
+        if: github.event_name == 'pull_request'
+        working-directory: frontend
+        timeout-minutes: 15
+        env:
+          UX_AUDIT_STRICT: '0'
+        run: npm run e2e
+        continue-on-error: true
+
+      - name: Production UX audit (push strict)
+        if: github.event_name == 'push'
+        working-directory: frontend
+        timeout-minutes: 15
+        env:
+          UX_AUDIT_STRICT: '1'
+        run: npm run e2e
+
+      - name: Extract Lighthouse report URL
+        if: always()
+        id: lhci-url
+        shell: bash
+        run: |
+          if [ -f frontend/.lighthouseci/links.json ]; then
+            URL=$(grep -oE 'https://[^"]+' frontend/.lighthouseci/links.json | head -n 1 || true)
+            echo "report_url=${URL:-Not available}" >> "$GITHUB_OUTPUT"
+          else
+            echo "report_url=Not available" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Comment PR with quality report
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const reportUrl = '${{ steps.lhci-url.outputs.report_url }}';
+
+            const bodyLines = [
+              '### 🧪 CI Strict – Quality Report (non bloquant)',
+              '',
+              '**Checks exécutés :**',
+              '- TypeScript strict',
+              '- ESLint (max-warnings=0)',
+              '- Build',
+              '- Tests',
+              '- Audit sécurité (npm)',
+              '- Accessibilité (WCAG 2.1 AA)',
+              '- Lighthouse (Performance, A11y, Best Practices, SEO)',
+              '- UX audit Playwright + axe-core (production, report-only en PR)',
+              '',
+              '**Standards cibles (post-V1) :**',
+              '- Performance ≥ 85',
+              '- Accessibilité ≥ 95',
+              '- Best Practices ≥ 95',
+              '- SEO ≥ 90',
+              '',
+              reportUrl !== 'Not available'
+                ? `🔍 Voir le rapport Lighthouse : ${reportUrl}`
+                : 'Rapport Lighthouse indisponible',
+              '',
+              'ℹ️ *Quality gate non bloquant – hardening progressif.*'
+            ];
+            const body = bodyLines.join('\n');
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body
+            });
+
+      - name: Upload accessibility report
+        if: always() && hashFiles('frontend/axe-report.txt') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: axe-report
+          path: frontend/axe-report.txt
+          retention-days: 30
+
+      - name: Upload Lighthouse results
+        if: always() && hashFiles('frontend/.lighthouseci/**') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-results
+          path: frontend/.lighthouseci
+          retention-days: 30
+
+      - name: Upload Playwright report
+        if: always() && hashFiles('frontend/playwright-report/**') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: frontend/playwright-report
+          retention-days: 30
+
+      - name: Upload Playwright test results
+        if: always() && hashFiles('frontend/test-results/**') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: frontend/test-results
+          retention-days: 30
+
+      - name: Upload UX axe report
+        if: always() && hashFiles('frontend/ux-axe-report.txt') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: ux-axe-report
+          path: frontend/ux-axe-report.txt
+          retention-days: 30

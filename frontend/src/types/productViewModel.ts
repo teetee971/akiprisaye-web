@@ -91,7 +91,8 @@ export const SOURCE_LABELS: Record<DataSource, string> = {
   base_officielle: 'Base officielle',
   partenaire_enseigne: 'Partenaire enseigne',
   open_food_facts: 'Open Food Facts',
-  manuel: 'Saisie manuelle'
+  manuel: 'Saisie manuelle',
+  scan_utilisateur: 'Scan utilisateur'
 };
 
 /**

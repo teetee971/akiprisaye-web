@@ -183,7 +183,18 @@ export function generateComparisonMetadata(
   prices: StorePricePoint[]
 ): PriceComparisonMetadata {
   const totalStores = prices.length;
-  const storesWithData = prices.filter(p => p.volume > 0).length;
+  const storesWithData = prices.filter((p) => {
+    const hasNumericPrice =
+      typeof p?.storePrice?.price === 'number' &&
+      Number.isFinite(p.storePrice.price);
+
+    const d = new Date(p?.observationDate);
+    const hasValidDate =
+      typeof p?.observationDate === 'string' &&
+      Number.isFinite(d.getTime());
+
+    return hasNumericPrice && hasValidDate;
+  }).length;
   const coveragePercentage = (storesWithData / totalStores) * 100;
 
   const dates = prices.map(p => new Date(p.observationDate).getTime());

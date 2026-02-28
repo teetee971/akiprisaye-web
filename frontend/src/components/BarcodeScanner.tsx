@@ -1,10 +1,12 @@
-/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect, useRef } from 'react';
-import { BarcodeFormat, BrowserMultiFormatReader, DecodeHintType, NotFoundException } from '@zxing/library';
+import { BrowserMultiFormatReader } from '@zxing/browser';
 import uxMonitor from '../utils/uxMonitor';
 import type { ScanState, ScannerOptions } from '../types/scan';
 import { SCANNER_MESSAGES, type ScannerMessage } from '../constants/scannerMessages';
 import { isAcceptedEanCode, normalizeDetectedCode } from '../utils/eanScan';
+import { validateEan } from '../services/eanValidator';
+import { startScan, type ScanController } from '../lib/barcodeEngine';
 
 interface BarcodeScannerProps {
   onScan: (code: string) => void;
@@ -12,9 +14,12 @@ interface BarcodeScannerProps {
   options?: ScannerOptions;
 }
 
+const UI_COOLDOWN_MS = 1500;
+
 export default function BarcodeScanner({ onScan, onClose, options = {} }: BarcodeScannerProps) {
-  const isScanDebug =
-    typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('scanDebug') === '1';
+  const isScanDebug = typeof window !== 'undefined' && ['scanDebug', 'debug'].some(
+    (param) => new URLSearchParams(window.location.search).get(param) === '1',
+  );
 
   // Scan state management
   const [scanState, setScanState] = useState<ScanState>('idle');
@@ -26,6 +31,9 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
   const [manualInput, setManualInput] = useState('');
   const [torchSupported, setTorchSupported] = useState(false);
   const [torchEnabled, setTorchEnabled] = useState(false);
+  const [zoomSupported, setZoomSupported] = useState(false);
+  const [zoomValue, setZoomValue] = useState(1);
+  const [zoomRange, setZoomRange] = useState<{ min: number; max: number; step: number } | null>(null);
   const [scanMode, setScanMode] = useState<'camera' | 'upload'>('camera');
   const [userMessage, setUserMessage] = useState<ScannerMessage | null>(null);
 
@@ -40,36 +48,28 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
     constraints: 'n/a',
     videoSize: '0x0',
     streamActive: false,
+    scanEngine: 'n/a',
     playState: 'idle',
     framesReceived: 0,
+    lastDetectedAt: 'never',
+    userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'n/a',
     lastResult: 'none',
     lastError: 'none',
+    cameraSettings: 'n/a',
+    cameraCapabilities: 'n/a',
   });
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const readerRef = useRef<BrowserMultiFormatReader | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const scanControllerRef = useRef<ScanController | null>(null);
+  const activeTrackRef = useRef<any>(null);
   const scanStartTimeRef = useRef<number>(0);
   const timeoutRef = useRef<number | null>(null);
-  const debugFrameCounterRef = useRef<number>(0);
+  const lastDetectedRef = useRef<{ code: string; timestamp: number } | null>(null);
+  const lastUiEmitRef = useRef<{ code: string; at: number } | null>(null);
   const lastDebugUpdateAtRef = useRef<number>(0);
-  const debugIntervalRef = useRef<number | null>(null);
-
-  const createReader = () => {
-    const hints = new Map();
-    hints.set(DecodeHintType.POSSIBLE_FORMATS, [
-      BarcodeFormat.EAN_13,
-      BarcodeFormat.EAN_8,
-      BarcodeFormat.CODE_128,
-      BarcodeFormat.UPC_A,
-      BarcodeFormat.UPC_E,
-    ]);
-    hints.set(DecodeHintType.TRY_HARDER, true);
-    hints.set(DecodeHintType.ALSO_INVERTED, true);
-
-    // Faster decode cadence for mobile live scanning.
-    return new BrowserMultiFormatReader(hints, 120);
-  };
+  const startingRef = useRef(false);
 
   // Helpers to avoid stale state in async callbacks
   const scanStateRef = useRef<ScanState>('idle');
@@ -90,14 +90,12 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
     if (debugEnabled) console.log('[SCAN_DEBUG]', ...args);
   };
 
-  // State transition handler with logging
   const transitionState = (to: ScanState, reason?: string) => {
     const from = scanStateRef.current;
     setScanState(to);
     if (debugEnabled) console.log(`[SCAN] State transition: ${from} → ${to}`, reason || '');
   };
 
-  // Check camera permission state using Permissions API
   const checkCameraPermission = async (): Promise<'granted' | 'prompt' | 'denied' | 'unsupported'> => {
     try {
       if (typeof navigator === 'undefined' || !navigator.permissions || !navigator.permissions.query) {
@@ -111,35 +109,10 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
     }
   };
 
-  // Activate fallback to image upload mode
   const activateImageUploadFallback = () => {
     setScanMode('upload');
     setUserMessage(SCANNER_MESSAGES.CAMERA_UNAVAILABLE);
     if (debugEnabled) console.log('[SCAN] Fallback activated: Switching to image upload mode');
-  };
-
-  const stopStreamTracks = (stream: MediaStream | null | undefined) => {
-    if (!stream) return;
-    stream.getTracks().forEach((track) => track.stop());
-  };
-
-  const pickBestVideoDeviceId = async (): Promise<{ deviceId: string; label?: string } | null> => {
-    if (typeof navigator === 'undefined' || !navigator.mediaDevices?.enumerateDevices) {
-      return null;
-    }
-
-    const devices = await navigator.mediaDevices.enumerateDevices();
-    const videoInputs = devices.filter((device) => device.kind === 'videoinput');
-
-    if (!videoInputs.length) return null;
-
-    const rearCamera = videoInputs.find((device) => /(back|rear|environment)/i.test(device.label));
-    const picked = rearCamera ?? videoInputs[videoInputs.length - 1];
-
-    return {
-      deviceId: picked.deviceId,
-      label: picked.label || undefined,
-    };
   };
 
   const ensureVideoIsActuallyPlaying = async (videoElement: HTMLVideoElement) => {
@@ -167,32 +140,29 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
       throw videoNotReadyError;
     }
   };
-
   useEffect(() => {
-    readerRef.current = createReader();
+    readerRef.current = new BrowserMultiFormatReader();
     setScanState('idle');
 
     return () => {
       const videoElement = videoRef.current;
-
       setIsScanning(false);
 
-      if (readerRef.current) readerRef.current.reset();
+      if (scanControllerRef.current) {
+        scanControllerRef.current.stop();
+        scanControllerRef.current = null;
+      }
 
       if (timeoutRef.current !== null) {
         window.clearTimeout(timeoutRef.current);
         timeoutRef.current = null;
       }
 
-      if (debugIntervalRef.current !== null) {
-        window.clearInterval(debugIntervalRef.current);
-        debugIntervalRef.current = null;
-      }
-
       if (streamRef.current) {
         streamRef.current.getTracks().forEach((track) => track.stop());
         streamRef.current = null;
       }
+      activeTrackRef.current = null;
 
       if (videoElement) {
         videoElement.onloadedmetadata = null;
@@ -206,22 +176,21 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
   const stopScanning = () => {
     setIsScanning(false);
 
-    if (readerRef.current) readerRef.current.reset();
+    if (scanControllerRef.current) {
+      scanControllerRef.current.stop();
+      scanControllerRef.current = null;
+    }
 
     if (timeoutRef.current !== null) {
       window.clearTimeout(timeoutRef.current);
       timeoutRef.current = null;
     }
 
-    if (debugIntervalRef.current !== null) {
-      window.clearInterval(debugIntervalRef.current);
-      debugIntervalRef.current = null;
-    }
-
     if (streamRef.current) {
       streamRef.current.getTracks().forEach((track) => track.stop());
       streamRef.current = null;
     }
+    activeTrackRef.current = null;
 
     updateDebugInfo({ streamActive: false });
 
@@ -232,14 +201,19 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
       videoRef.current.srcObject = null;
     }
 
-    debugFrameCounterRef.current = 0;
     setTorchEnabled(false);
+    setTorchSupported(false);
+    setZoomSupported(false);
+    setZoomRange(null);
     setScanFeedback(null);
 
     if (scanStateRef.current === 'scanning') transitionState('idle', 'Scanning stopped by user');
   };
 
   const startScanning = async () => {
+    if (startingRef.current || isScanning) return;
+
+    startingRef.current = true;
     stopScanning();
     setError(null);
     setUserMessage(null);
@@ -256,8 +230,16 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
     const permission = await checkCameraPermission();
     uxMonitor.cameraPermissionRequested();
 
-    updateDebugInfo({ framesReceived: 0, videoSize: '0x0', playState: 'requesting' });
+    updateDebugInfo({
+      framesReceived: 0,
+      videoSize: '0x0',
+      playState: 'requesting',
+      lastDetectedAt: 'never',
+      scanEngine: 'initializing',
+      userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'n/a',
+    });
     lastDebugUpdateAtRef.current = 0;
+
     if (debugEnabled) console.log('[SCAN] Camera permission state:', permission);
     updateDebugInfo({ permission });
 
@@ -269,251 +251,93 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
 
         if (debugEnabled) console.log('[SCAN] 📷 Requesting camera access...');
 
-        const requestCameraStream = async () => {
-          const pickedDevice = await pickBestVideoDeviceId();
-          if (pickedDevice?.deviceId) {
-            updateDebugInfo({
-              chosenDeviceId: pickedDevice.deviceId,
-              chosenDeviceLabel: pickedDevice.label || 'unknown-label',
-            });
-          }
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode: { ideal: 'environment' },
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+            frameRate: { ideal: 30 },
+          },
+          audio: false,
+        });
 
-          const constraintSets: MediaStreamConstraints[] = [
-            {
-              video: {
-                ...(pickedDevice?.deviceId ? { deviceId: { exact: pickedDevice.deviceId } } : {}),
-                facingMode: { exact: 'environment' },
-                width: { ideal: 960 },
-                height: { ideal: 540 },
-              },
-            },
-            {
-              video: {
-                ...(pickedDevice?.deviceId ? { deviceId: { exact: pickedDevice.deviceId } } : {}),
-                facingMode: 'environment' as any,
-              },
-            },
-            { video: { facingMode: { ideal: 'environment' }, width: { ideal: 640 }, height: { ideal: 480 } } },
-            { video: { facingMode: 'environment' as any } },
-            { video: true },
-          ];
-
-          let lastError: unknown = null;
-          let stream: MediaStream | null = null;
-
-          for (const constraints of constraintSets) {
-            try {
-              if (debugEnabled) console.log('[SCAN] 📷 Trying constraints:', constraints);
-              stream = await navigator.mediaDevices.getUserMedia(constraints);
-              updateDebugInfo({ constraints: JSON.stringify((constraints as any).video ?? constraints) });
-              return stream;
-            } catch (constraintError) {
-              stopStreamTracks(stream);
-              stream = null;
-              lastError = constraintError;
-              if (debugEnabled) console.log('[SCAN] ⚠️ Constraint failed, trying fallback:', constraintError);
-            }
-          }
-
-          if (pickedDevice?.deviceId) {
-            const byDeviceConstraints: MediaStreamConstraints[] = [
-              {
-                video: {
-                  deviceId: { exact: pickedDevice.deviceId },
-                  width: { ideal: 960 },
-                  height: { ideal: 540 },
-                },
-              },
-              { video: { deviceId: { exact: pickedDevice.deviceId } } },
-            ];
-
-            for (const constraints of byDeviceConstraints) {
-              try {
-                if (debugEnabled) {
-                  console.log('[SCAN] Retrying with exact deviceId ...', pickedDevice.deviceId, constraints);
-                }
-                stream = await navigator.mediaDevices.getUserMedia(constraints);
-                updateDebugInfo({ constraints: JSON.stringify((constraints as any).video ?? constraints) });
-                return stream;
-              } catch (deviceIdError) {
-                stopStreamTracks(stream);
-                stream = null;
-                lastError = deviceIdError;
-                if (debugEnabled) console.log('[SCAN] ⚠️ deviceId exact failed:', deviceIdError);
-              }
-            }
-          }
-
-          throw lastError ?? new Error('Aucune contrainte caméra compatible');
-        };
-
-        let stream = await requestCameraStream();
-
-        if (debugEnabled) console.log('[SCAN] ✅ Camera access granted');
         streamRef.current = stream;
-        updateDebugInfo({ streamActive: true });
         setHasPermission(true);
+        updateDebugInfo({
+          streamActive: true,
+          constraints: JSON.stringify({
+            facingMode: { ideal: 'environment' },
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+            frameRate: { ideal: 30 },
+          }),
+        });
 
-        // Attach stream to video
         if (videoRef.current) {
           const v = videoRef.current;
-
           v.srcObject = stream;
           v.setAttribute('playsinline', 'true');
           v.autoplay = true;
           v.muted = true;
 
-          // Wait metadata
           await new Promise<void>((resolve, reject) => {
-            v.onloadedmetadata = () => {
-              if (debugEnabled) console.log('[SCAN] 📹 Video metadata loaded');
-              updateDebugInfo({
-                videoSize: `${v.videoWidth ?? 0}x${v.videoHeight ?? 0}`,
-                playState: 'metadata-ready',
-              });
-              resolve();
-            };
-            v.onerror = () => {
-              console.error('[SCAN] ❌ Video error');
-              updateDebugInfo({ playState: 'video-error' });
-              reject(new Error('Erreur de chargement vidéo'));
-            };
+            v.onloadedmetadata = () => resolve();
+            v.onerror = () => reject(new Error('Erreur de chargement vidéo'));
           });
 
-          // Force play (mobile Safari/Chrome policies)
-          await v.play().catch((e) => {
-            debugLog('video.play() failed', e);
-            // continue; decoding may still work in some cases
-          });
+          await v.play().catch((e) => debugLog('video.play() failed', e));
+          await ensureVideoIsActuallyPlaying(v);
 
-          try {
-            await ensureVideoIsActuallyPlaying(v);
-          } catch (videoError) {
-            const streamError = videoError as { name?: string; message?: string };
-            if (streamError?.name !== 'VIDEO_NOT_READY' && streamError?.message !== 'VIDEO_NOT_READY') {
-              throw videoError;
-            }
-
-            stopStreamTracks(streamRef.current);
-            streamRef.current = null;
-
-            const pickedDevice = await pickBestVideoDeviceId();
-            if (!pickedDevice?.deviceId) {
-              throw videoError;
-            }
-
-            updateDebugInfo({
-              chosenDeviceId: pickedDevice.deviceId,
-              chosenDeviceLabel: pickedDevice.label || 'unknown-label',
-            });
-
-            const retryConstraints: MediaStreamConstraints[] = [
-              {
-                video: {
-                  deviceId: { exact: pickedDevice.deviceId },
-                  width: { ideal: 1280 },
-                  height: { ideal: 720 },
-                },
-              },
-              { video: { deviceId: { exact: pickedDevice.deviceId } } },
-            ];
-
-            let retryStream: MediaStream | null = null;
-            let retryError: unknown = videoError;
-
-            for (const constraints of retryConstraints) {
-              try {
-                if (debugEnabled) {
-                  console.log('[SCAN] Retrying with exact deviceId ...', pickedDevice.deviceId, constraints);
-                }
-                retryStream = await navigator.mediaDevices.getUserMedia(constraints);
-                updateDebugInfo({ constraints: JSON.stringify((constraints as any).video ?? constraints) });
-                break;
-              } catch (getUserMediaError) {
-                stopStreamTracks(retryStream);
-                retryStream = null;
-                retryError = getUserMediaError;
-              }
-            }
-
-            if (!retryStream) throw retryError;
-
-            stream = retryStream;
-            streamRef.current = retryStream;
-            v.srcObject = retryStream;
-            await v.play().catch((e) => {
-              debugLog('video.play() failed after deviceId fallback', e);
-            });
-            await ensureVideoIsActuallyPlaying(v);
-          }
-
-          // clean handlers (we keep playback)
           v.onloadedmetadata = null;
           v.onerror = null;
-
-          if (debugEnabled) console.log('[SCAN] ▶️ Video playing');
         }
 
-        // Torch capability
-        const track = stream.getVideoTracks()[0];
+        const track = stream.getVideoTracks()[0] ?? null;
+        activeTrackRef.current = track;
+
         if (track) {
-          const capabilities = track.getCapabilities() as any;
-          if (debugEnabled) console.log('[SCAN] 📱 Camera capabilities:', capabilities);
-          if ('torch' in capabilities) {
-            setTorchSupported(true);
-            if (debugEnabled) console.log('[SCAN] 🔦 Torch supported');
-          }
           const settings = track.getSettings();
-          updateDebugInfo({ selectedDeviceId: settings.deviceId || 'unknown-device' });
-          debugLog('Track settings', settings);
-        } else if (debugEnabled) {
-          console.log('[SCAN] ⚠️ No video track available to check torch support');
+          const capabilities = typeof track.getCapabilities === 'function' ? track.getCapabilities() : null;
+
+          const hasTorch = Boolean(capabilities && 'torch' in capabilities && capabilities.torch);
+          setTorchSupported(hasTorch);
+
+          const zoomCaps = capabilities?.zoom;
+          if (zoomCaps) {
+            const min = zoomCaps.min ?? 1;
+            const max = zoomCaps.max ?? Math.max(min, 1);
+            const step = zoomCaps.step ?? 0.1;
+            const initialZoom = Math.max(min, Math.min(max, settings.zoom ?? (min + max) / 2));
+            setZoomSupported(true);
+            setZoomRange({ min, max, step });
+            setZoomValue(initialZoom);
+            await track.applyConstraints({ advanced: [{ zoom: initialZoom }] as any });
+          }
+
+          updateDebugInfo({
+            selectedDeviceId: settings.deviceId || 'unknown-device',
+            cameraSettings: JSON.stringify(settings),
+            cameraCapabilities: JSON.stringify(capabilities),
+          });
         }
 
-        // Timeout
         if (timeoutRef.current !== null) window.clearTimeout(timeoutRef.current);
         timeoutRef.current = window.setTimeout(() => {
-          console.warn('[SCAN] ⏱️ Scan timeout');
           setShowNoResultFallback(true);
           setUserMessage({
             type: 'warning',
             title: 'Toujours rien détecté',
             message:
-              "Aucun code détecté après quelques secondes. Vous pouvez continuer le scan caméra, saisir le code manuellement, ou importer une photo sans couper la caméra.",
+              "Aucun code détecté après quelques secondes. Continuez le scan, saisissez le code manuellement, ou prenez une photo du code-barres.",
           });
           transitionState('scanning', `No result after ${timeout}ms - fallback suggested`);
         }, timeout);
 
-        if (debugEnabled) console.log('[SCAN] 🔍 Starting barcode detection...');
-
-        // Debug heartbeat
-        if (debugEnabled) {
-          if (debugIntervalRef.current !== null) window.clearInterval(debugIntervalRef.current);
-          debugIntervalRef.current = window.setInterval(() => {
-            const v = videoRef.current;
-            updateDebugInfo({
-              framesReceived: debugFrameCounterRef.current,
-              videoSize: `${v?.videoWidth ?? 0}x${v?.videoHeight ?? 0}`,
-              playState: v ? `${v.paused ? 'paused' : 'playing'} / ${v.readyState}` : 'no-video',
-            });
-          }, 500);
-        }
-
-        // Decode
-        if (readerRef.current && videoRef.current) {
-          // small UX improvement: after some frames, switch to focusing
-          let firstFramesAt: number | null = null;
-
-          readerRef.current.decodeFromStream(stream, videoRef.current, (result, err) => {
-            debugFrameCounterRef.current += 1;
-            const now = Date.now();
-
-            if (firstFramesAt === null && debugFrameCounterRef.current > 10) {
-              firstFramesAt = Date.now();
-              setScanFeedback('focusing');
-            }
-
-            if (result) {
+        if (videoRef.current) {
+          scanControllerRef.current = await startScan(
+            videoRef.current,
+            (rawValue) => {
+              const now = Date.now();
               setScanFeedback('detecting');
 
               if (timeoutRef.current !== null) {
@@ -521,49 +345,67 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
                 timeoutRef.current = null;
               }
 
-              const code = normalizeDetectedCode(result.getText());
-              const duration = Date.now() - scanStartTimeRef.current;
+              const code = normalizeDetectedCode(rawValue);
+              const validation = validateEan(code);
 
-              if (debugEnabled && now - lastDebugUpdateAtRef.current > 1000) {
-                updateDebugInfo({ lastResult: code, lastError: 'none' });
-                lastDebugUpdateAtRef.current = now;
-              }
-
-              if (!isAcceptedEanCode(code)) {
-                if (debugEnabled) console.log('[SCAN] Ignored non-EAN code from camera:', code);
-                // keep searching
+              if (!validation.valid || !isAcceptedEanCode(validation.ean)) {
+                if (debugEnabled) console.log('[SCAN] Ignored non-valid EAN code from camera:', code, validation);
                 setScanFeedback('searching');
                 return;
               }
 
-              if (debugEnabled) console.log(`[SCAN] ✅ Barcode detected in ${duration}ms:`, code);
+              const lastSeen = lastDetectedRef.current;
+              if (lastSeen?.code === validation.ean && now - lastSeen.timestamp <= 2000) {
+                setUserMessage({
+                  type: 'info',
+                  title: 'Code confirmé',
+                  message: `Deux lectures cohérentes en moins de 2s: ${validation.ean}`,
+                });
+              }
+              lastDetectedRef.current = { code: validation.ean, timestamp: now };
+
+              const lastUiEmit = lastUiEmitRef.current;
+              if (lastUiEmit && lastUiEmit.code === validation.ean && now - lastUiEmit.at < UI_COOLDOWN_MS) {
+                setScanFeedback('searching');
+                return;
+              }
+
+              lastUiEmitRef.current = { code: validation.ean, at: now };
+
+              updateDebugInfo({
+                lastResult: validation.ean,
+                lastError: 'none',
+                lastDetectedAt: new Date(now).toISOString(),
+              });
 
               setShowNoResultFallback(false);
-              setUserMessage(null);
-
-              transitionState('processing', `Barcode detected: ${code}`);
+              transitionState('scanning', `Barcode detected: ${validation.ean}`);
               uxMonitor.scanCompleted('barcode', true);
-              stopScanning();
-              onScan(code);
-              return;
-            }
-
-            if (err && !(err instanceof NotFoundException)) {
-              console.error('[SCAN] Scan error:', err);
-              if (debugEnabled && now - lastDebugUpdateAtRef.current > 1000) {
+              onScan(validation.ean);
+              setScanFeedback('searching');
+            },
+            (debug) => {
+              const now = Date.now();
+              if (debug.framesProcessed > 8) setScanFeedback('focusing');
+              if (now - lastDebugUpdateAtRef.current > 250) {
                 updateDebugInfo({
-                  lastError: err instanceof Error ? err.message : String(err),
+                  scanEngine: debug.engine,
+                  framesReceived: debug.framesProcessed,
+                  videoSize: `${debug.videoWidth}x${debug.videoHeight}`,
+                  playState: `readyState=${debug.readyState}`,
+                  ...(debug.lastDetectedAt
+                    ? { lastDetectedAt: new Date(debug.lastDetectedAt).toISOString() }
+                    : {}),
+                  ...(debug.error ? { lastError: debug.error } : {}),
                 });
                 lastDebugUpdateAtRef.current = now;
               }
-            }
-
-            // if nothing found, keep searching state
-            if (!result) setScanFeedback('searching');
-          });
+            },
+          );
         }
 
-        return; // Camera path success
+        startingRef.current = false;
+        return;
       } catch (err: unknown) {
         console.error('[SCAN] ❌ Camera error:', err);
         const mediaError = err as { name?: string; message?: string };
@@ -574,18 +416,14 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
           setError('Aucune caméra détectée sur cet appareil.');
         } else if (mediaError?.name === 'NotReadableError') {
           setError('Caméra indisponible (déjà utilisée par une autre application).');
-        } else if (mediaError?.name === 'OverconstrainedError') {
-          setError('Contraintes caméra non compatibles. Nouvelle tentative avec réglages simplifiés.');
         } else {
-          setError('Caméra indisponible. Utilisez l’import d’image ou la saisie manuelle.');
+          setError('Caméra indisponible. Utilisez la photo du code-barres ou la saisie manuelle.');
         }
 
         debugLog('Camera startup failure details', mediaError?.name, mediaError?.message);
-        // fall through to fallback
       }
     }
 
-    // Fallback
     if (debugEnabled) console.log('[SCAN] 🔄 Activating automatic fallback to image upload');
 
     setHasPermission(false);
@@ -593,6 +431,7 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
     setScanFeedback(null);
     activateImageUploadFallback();
     transitionState('idle', 'Camera unavailable - fallback to upload');
+    startingRef.current = false;
   };
 
   const retryCamera = () => {
@@ -604,15 +443,33 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
   };
 
   const toggleTorch = async () => {
-    if (!streamRef.current || !torchSupported) return;
+    const track = activeTrackRef.current;
+    if (!track || !torchSupported) return;
+
     try {
-      const track = streamRef.current.getVideoTracks()[0];
       await track.applyConstraints({
         advanced: [{ torch: !torchEnabled } as any],
       });
       setTorchEnabled(!torchEnabled);
     } catch (err) {
       console.error('[SCAN] Torch error:', err);
+    }
+  };
+
+  const applyZoom = async (nextZoom: number) => {
+    const track = activeTrackRef.current;
+    if (!track || !zoomSupported || !zoomRange) return;
+
+    const normalized = Math.max(zoomRange.min, Math.min(zoomRange.max, nextZoom));
+    setZoomValue(normalized);
+
+    try {
+      await track.applyConstraints({
+        advanced: [{ zoom: normalized } as any],
+      });
+      updateDebugInfo({ cameraSettings: JSON.stringify(track.getSettings()) });
+    } catch (err) {
+      console.error('[SCAN] Zoom error:', err);
     }
   };
 
@@ -938,6 +795,28 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
                 )}
               </div>
 
+              {zoomSupported && zoomRange && (
+                <div className="absolute bottom-20 left-4 right-4 bg-slate-900/80 border border-slate-600 rounded-lg p-3 text-xs text-white">
+                  <div className="flex items-center justify-between mb-2">
+                    <span>Zoom</span>
+                    <span>{zoomValue.toFixed(1)}x</span>
+                  </div>
+                  <input
+                    type="range"
+                    min={zoomRange.min}
+                    max={zoomRange.max}
+                    step={zoomRange.step}
+                    value={zoomValue}
+                    onChange={(e) => {
+                      const next = Number(e.target.value);
+                      setZoomValue(next);
+                      void applyZoom(next);
+                    }}
+                    className="w-full"
+                  />
+                </div>
+              )}
+
               {/* Torch button */}
               {torchSupported && (
                 <button
@@ -947,7 +826,7 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
                   } text-white`}
                   aria-label="Lampe torche"
                 >
-                  {torchEnabled ? '🔦' : '💡'}
+                  {torchEnabled ? 'Torch OFF' : 'Torch ON'}
                 </button>
               )}
 
@@ -956,7 +835,7 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
                 onClick={stopScanning}
                 className="absolute bottom-4 left-4 px-4 py-2 bg-red-600 text-white rounded-lg font-semibold"
               >
-                Arrêter
+                Stop caméra
               </button>
             </div>
           )}
@@ -966,7 +845,7 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
             <div className="bg-blue-900/20 border border-blue-700/30 rounded-lg p-4 text-sm text-blue-200">
               <p className="font-semibold mb-2">📋 Instructions :</p>
               <ul className="space-y-1 ml-4 list-disc">
-                <li>Cliquez sur "Scanner avec la caméra" pour activer la caméra</li>
+                <li>Cliquez sur "Activer la caméra" pour démarrer le scan</li>
                 <li>Autorisez l'accès à la caméra quand le navigateur le demande</li>
                 <li>Positionnez le code-barres à 10-20 cm de la caméra</li>
                 <li>Assurez-vous d'avoir un bon éclairage</li>
@@ -1028,11 +907,17 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
           {error && <div className="bg-red-900/20 border border-red-700/30 rounded-lg p-4 text-red-200">{error}</div>}
 
           {isScanning && showNoResultFallback && (
-            <div className="bg-amber-900/30 border border-amber-600/40 rounded-lg p-4 text-amber-100 text-sm">
+            <div className="bg-amber-900/30 border border-amber-600/40 rounded-lg p-4 text-amber-100 text-sm space-y-3">
               <p className="font-semibold">⏱️ Astuce rapide</p>
               <p className="mt-1">
-                Continuez à viser le code au centre, ou utilisez immédiatement l’import d’image / la saisie manuelle ci-dessous.
+                Continuez à viser le code au centre, ou utilisez immédiatement la photo du code-barres / la saisie manuelle ci-dessous.
               </p>
+              <label className="block">
+                <div className="px-4 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold text-center cursor-pointer transition-colors">
+                  📸 Prendre une photo du code-barres
+                </div>
+                <input type="file" accept="image/*" capture="environment" onChange={handleImageUpload} className="hidden" />
+              </label>
             </div>
           )}
 
@@ -1042,18 +927,25 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
               onClick={startScanning}
               className="w-full px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold text-lg transition-colors"
             >
-              📷 Scanner avec la caméra
+              📷 Activer la caméra
             </button>
           )}
+
+          <button
+            onClick={() => document.getElementById('manual-entry')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+            className="w-full px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-semibold transition-colors"
+          >
+            ✍️ Saisir manuellement
+          </button>
 
           {/* Fallback mode buttons */}
           {scanMode === 'upload' && userMessage && (
             <div className="space-y-3">
               <label className="block w-full">
                 <div className="px-6 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold text-lg text-center cursor-pointer transition-colors">
-                  🖼️ Importer une image
+                  🖼️ Prendre une photo du code-barres
                 </div>
-                <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+                <input type="file" accept="image/*" capture="environment" onChange={handleImageUpload} className="hidden" />
               </label>
 
               <button
@@ -1070,16 +962,16 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
             <div>
               <label className="block w-full">
                 <div className="px-6 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold text-center cursor-pointer transition-colors">
-                  🖼️ Importer une image
+                  🖼️ Prendre une photo du code-barres
                 </div>
-                <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+                <input type="file" accept="image/*" capture="environment" onChange={handleImageUpload} className="hidden" />
               </label>
             </div>
           )}
 
           {/* Manual input */}
           <div className="border-t border-slate-700 pt-4">
-            <p className="text-gray-400 text-sm mb-3">Ou saisir manuellement :</p>
+            <p id="manual-entry" className="text-gray-400 text-sm mb-3">Ou saisir manuellement :</p>
             <form onSubmit={handleManualSubmit} className="flex gap-2">
               <input
                 type="text"
@@ -1101,19 +993,22 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
 
           {isScanDebug && (
             <div className="border-t border-slate-700 pt-4 text-xs text-slate-200 space-y-2">
-              <p className="font-semibold text-amber-300">🧪 Debug scanner (?scanDebug=1)</p>
+              <p className="font-semibold text-amber-300">🧪 Debug scanner (?debug=1 ou ?scanDebug=1)</p>
               <ul className="space-y-1 font-mono bg-slate-950/80 border border-slate-700 rounded p-3">
+                <li>userAgent: {debugInfo.userAgent}</li>
                 <li>permission: {debugInfo.permission}</li>
+                <li>engine: {debugInfo.scanEngine}</li>
                 <li>deviceId (track): {debugInfo.selectedDeviceId}</li>
-                <li>deviceId (chosen): {debugInfo.chosenDeviceId}</li>
-                <li>device label: {debugInfo.chosenDeviceLabel}</li>
                 <li>constraints: {debugInfo.constraints}</li>
                 <li>video: {debugInfo.videoSize}</li>
                 <li>streamActive: {String(debugInfo.streamActive)}</li>
                 <li>play: {debugInfo.playState}</li>
                 <li>frames: {debugInfo.framesReceived}</li>
+                <li>lastDetectedAt: {debugInfo.lastDetectedAt}</li>
                 <li>lastResult: {debugInfo.lastResult}</li>
                 <li>lastError: {debugInfo.lastError}</li>
+                <li>settings: {debugInfo.cameraSettings}</li>
+                <li>capabilities: {debugInfo.cameraCapabilities}</li>
               </ul>
               <p className="text-slate-400">
                 Test rapide: autoriser la caméra, vérifier que video {'>'} 0x0, puis essayer aussi l’import d’image (ex:

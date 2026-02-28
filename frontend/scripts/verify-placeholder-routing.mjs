@@ -1,21 +1,34 @@
 import { existsSync, readFileSync } from 'node:fs';
-import { dirname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const distDir = resolve(__dirname, '..', 'dist');
-const placeholderPath = resolve(distDir, 'assets', 'placeholders', 'placeholder-default.svg');
-const redirectsPath = resolve(distDir, '_redirects');
+import { resolve } from 'node:path';
 
 function fail(message) {
   console.error(`❌ ${message}`);
   process.exit(1);
 }
 
-if (!existsSync(distDir)) {
-  fail(`[guard] dist missing: ${distDir}`);
+/*
+  Détection robuste du dossier dist :
+  - si exécuté depuis frontend → ./dist
+  - si exécuté depuis la racine → ./frontend/dist
+*/
+const candidates = [
+  resolve(process.cwd(), 'dist'),
+  resolve(process.cwd(), 'frontend', 'dist'),
+];
+
+const distDir = candidates.find((p) => existsSync(p));
+
+if (!distDir) {
+  fail(`[guard] dist missing. Tried: ${candidates.join(', ')}`);
 }
+
+const redirectsPath = resolve(distDir, '_redirects');
+const placeholderPath = resolve(
+  distDir,
+  'assets',
+  'placeholders',
+  'placeholder-default.svg'
+);
 
 if (!existsSync(redirectsPath)) {
   fail(`[guard] _redirects missing: ${redirectsPath}`);
@@ -30,8 +43,13 @@ const redirects = readFileSync(redirectsPath, 'utf8')
   .map((line) => line.trim())
   .filter((line) => line && !line.startsWith('#'));
 
-const assetsRuleIndex = redirects.findIndex((line) => line.startsWith('/assets/*'));
-const spaRuleIndex = redirects.findIndex((line) => line.startsWith('/*'));
+const assetsRuleIndex = redirects.findIndex((line) =>
+  line.startsWith('/assets/*')
+);
+
+const spaRuleIndex = redirects.findIndex((line) =>
+  line.startsWith('/*')
+);
 
 if (assetsRuleIndex === -1) {
   fail('[guard] missing /assets/* rule in _redirects');

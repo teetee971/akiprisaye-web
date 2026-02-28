@@ -1,0 +1,72 @@
+{
+  "meta": {
+    "project": "A KI PRI SA YÉ",
+    "indicator": {
+      "id": "indice-panier-anti-crise",
+      "label": "Indice officiel du panier anti-crise",
+      "base": 100,
+      "baseDate": "2026-01-01",
+      "territory": {
+        "code": "GP",
+        "label": "Guadeloupe"
+      }
+    },
+    "currency": "EUR",
+    "methodology": {
+      "description": "Indice basé exclusivement sur un panier de produits alimentaires essentiels, comparé dans le temps.",
+      "formula": "(Prix du panier courant / Prix du panier de référence) × 100",
+      "scope": "Consommation quotidienne essentielle",
+      "transparency": "Aucune pondération cachée, aucune affiliation commerciale."
+    },
+    "disclaimer": "Indice indicatif à vocation citoyenne. Les prix peuvent varier selon les points de vente."
+  },
+
+  "basketDefinition": {
+    "basketId": "anti-crise-officiel",
+    "products": [
+      { "productId": "riz-1kg", "label": "Riz blanc 1kg" },
+      { "productId": "lait-1l", "label": "Lait UHT demi-écrémé 1L" },
+      { "productId": "huile-1l", "label": "Huile végétale 1L" },
+      { "productId": "pates-500g", "label": "Pâtes alimentaires 500g" },
+      { "productId": "sucre-1kg", "label": "Sucre blanc 1kg" }
+    ]
+  },
+
+  "reference": {
+    "date": "2026-01-01",
+    "basketTotal": 9.70,
+    "indexValue": 100,
+    "note": "Période de référence"
+  },
+
+  "history": [
+    {
+      "date": "2026-01-01",
+      "basketTotal": 9.70,
+      "indexValue": 100,
+      "variation": 0,
+      "trend": "stable"
+    },
+    {
+      "date": "2026-02-01",
+      "basketTotal": 9.85,
+      "indexValue": 101.5,
+      "variation": 1.5,
+      "trend": "up"
+    },
+    {
+      "date": "2026-03-01",
+      "basketTotal": 10.05,
+      "indexValue": 103.6,
+      "variation": 3.6,
+      "trend": "up"
+    }
+  ],
+
+  "currentStatus": {
+    "date": "2026-03-01",
+    "indexValue": 103.6,
+    "annualizedInflationEstimate": 3.6,
+    "interpretation": "Hausse modérée mais continue du coût des produits essentiels."
+  }
+}

@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Merci — Abonnement</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:40px;line-height:1.4}
+    code{background:#f2f2f2;padding:2px 6px;border-radius:6px}
+  </style>
+</head>
+<body>
+  <h1>Merci.</h1>
+  <p>Ton paiement PayPal est en cours de validation.</p>
+  <p>ID abonnement: <code id="sub">—</code></p>
+  <p>Tu peux fermer cette page.</p>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+    const sub = params.get('sub') || '—';
+    document.getElementById('sub').textContent = sub;
+  </script>
+</body>
+</html>

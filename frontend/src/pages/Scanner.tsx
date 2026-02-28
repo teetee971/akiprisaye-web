@@ -40,7 +40,6 @@ export default function Scanner() {
     console.info('[SCAN_PERF] EAN detected, skipping OCR:', code);
     
     setScanResult(code);
-    setShowScanner(false);
     setLoading(true);
     setError(null);
     setScanState('processing');

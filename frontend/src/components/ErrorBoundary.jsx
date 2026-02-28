@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import { safeToText } from '../utils/safeToText';
 
 class ErrorBoundary extends Component {

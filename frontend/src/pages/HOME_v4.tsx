@@ -188,7 +188,7 @@ export default function HomeV4() {
             </Link>
             
             <Link 
-              to="/scan" 
+              to="/scanner" 
               className="cta-secondary"
             >
               ou scanner un ticket
@@ -223,7 +223,7 @@ export default function HomeV4() {
       <section className="steps">
         <div className="steps-grid">
           {[
-            { icon: '🧾', title: 'Scanner', desc: 'Ticket ou code-barres', link: '/scan' },
+            { icon: '🧾', title: 'Scanner', desc: 'Ticket ou code-barres', link: '/scanner' },
             { icon: '💡', title: 'Comprendre', desc: 'Infos et équivalences', link: '/comprendre-prix' },
             { icon: '⚖️', title: 'Comparer', desc: 'Entre enseignes', link: '/comparateur' }
           ].map((step, i) => (

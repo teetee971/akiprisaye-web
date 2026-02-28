@@ -1,0 +1,23 @@
+{
+  "name": "@akiprisaye/price-api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "migrations:apply:local": "wrangler d1 migrations apply PRICE_DB --local",
+    "migrations:apply:remote": "wrangler d1 migrations apply PRICE_DB --remote",
+    "test": "vitest run --config vitest.config.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "^4.1.11"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260208.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.0",
+    "wrangler": "^4.16.0"
+  }
+}
