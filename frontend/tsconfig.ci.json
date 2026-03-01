@@ -25,6 +25,6 @@
     "forceConsistentCasingInFileNames": true
   },
   "include": [
-    "src/ci-entry.ts"
+    "src"
   ]
 }

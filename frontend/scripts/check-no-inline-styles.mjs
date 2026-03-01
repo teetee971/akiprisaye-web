@@ -9,7 +9,7 @@ const allowlist = new Set([
 
 const filePatterns = [
   /<style\b/i,
-  /\bstyle=\{\{/,
+  /\bstyle\s*=\s*\{/i,
   /\bstyle\s*=\s*["']/i,
 ];
 

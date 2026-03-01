@@ -18,7 +18,7 @@
     "test:ci": "vitest run --config vitest.config.ts",
     "audit": "npm audit --omit=dev --audit-level=high",
     "audit:ci": "npm audit --omit=dev --audit-level=high",
-    "postbuild": "node -e \"const fs=require('fs');fs.mkdirSync('dist',{recursive:true});if(fs.existsSync('public/_redirects'))fs.copyFileSync('public/_redirects','dist/_redirects');if(fs.existsSync('public/_headers'))fs.copyFileSync('public/_headers','dist/_headers');if(fs.existsSync('dist/index.html'))fs.copyFileSync('dist/index.html','dist/404.html');\"",
+    "postbuild": "node scripts/postbuild.mjs",
     "lint:ci": "cd .. && npm run lint:ci",
     "build:ci": "npm run build",
     "csp:lint": "node scripts/check-no-inline-styles.mjs",

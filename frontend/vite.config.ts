@@ -14,8 +14,7 @@ function normalizeBase(input: string): string {
 export default defineConfig(() => {
   const repositoryName = process.env.GITHUB_REPOSITORY?.split('/')[1] || 'akiprisaye-web'
   const explicitBasePath = process.env.BASE_PATH
-  const runningInGitHubPages =
-    process.env.GITHUB_PAGES === 'true' || process.env.GITHUB_ACTIONS === 'true'
+  const runningInGitHubPages = process.env.GITHUB_PAGES === 'true'
 
   const base = explicitBasePath
     ? normalizeBase(explicitBasePath)
