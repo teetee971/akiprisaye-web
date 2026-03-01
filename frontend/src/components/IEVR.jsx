@@ -180,7 +180,7 @@ export function IEVR({ selectedTerritory = null }) {
               />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <div className="text-5xl font-bold" style={{ color: getScoreColor(currentScore) }}>
+              <div className="text-5xl font-bold" style={ { color: getScoreColor(currentScore) }}>
                 {currentScore}
               </div>
               <div className="text-sm text-gray-500 dark:text-gray-400">
@@ -197,7 +197,7 @@ export function IEVR({ selectedTerritory = null }) {
           {/* Territory Status Badge */}
           <div 
             className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-semibold text-lg"
-            style={{ 
+            style={ { 
               backgroundColor: `${territoryStatus.color}20`,
               color: territoryStatus.color,
               border: `2px solid ${territoryStatus.color}`,
@@ -298,13 +298,13 @@ export function IEVR({ selectedTerritory = null }) {
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-xl">{entryStatus.icon}</span>
-                      <span className="font-semibold" style={{ color: entryStatus.color }}>
+                      <span className="font-semibold" style={ { color: entryStatus.color }}>
                         {entryStatus.label}
                       </span>
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-lg font-bold" style={{ color: entryStatus.color }}>
+                    <div className="text-lg font-bold" style={ { color: entryStatus.color }}>
                       {entry.score}
                     </div>
                     <div className="text-xs text-gray-500 dark:text-gray-400">
@@ -339,7 +339,7 @@ export function IEVR({ selectedTerritory = null }) {
                       (pondération: {percentage}%)
                     </span>
                   </div>
-                  <span className="text-lg font-bold" style={{ color: getScoreColor(categoryScore) }}>
+                  <span className="text-lg font-bold" style={ { color: getScoreColor(categoryScore) }}>
                     {categoryScore}
                   </span>
                 </div>
@@ -348,7 +348,7 @@ export function IEVR({ selectedTerritory = null }) {
                 <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                   <div
                     className="h-2 rounded-full transition-all duration-500"
-                    style={{
+                    style={ {
                       width: `${categoryScore}%`,
                       backgroundColor: getScoreColor(categoryScore),
                     }}

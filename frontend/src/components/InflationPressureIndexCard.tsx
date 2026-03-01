@@ -104,7 +104,7 @@ const InflationPressureIndexCard: React.FC<InflationPressureIndexCardProps> = ({
         {/* Pressure level badge */}
         <div className="flex items-center gap-3">
           <span className={`px-4 py-2 rounded-full text-sm font-medium ${textColorClass}`}
-                style={{ 
+                style={ { 
                   backgroundColor: barColorClass.includes('green') ? 'rgb(220 252 231)' :
                                   barColorClass.includes('blue') ? 'rgb(219 234 254)' :
                                   barColorClass.includes('yellow') ? 'rgb(254 249 195)' :
@@ -123,7 +123,7 @@ const InflationPressureIndexCard: React.FC<InflationPressureIndexCardProps> = ({
           <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
             <div
               className={`h-full ${barColorClass} transition-all duration-500 ease-out rounded-full`}
-              style={{ width: `${ilpp.score}%` }}
+              style={ { width: `${ilpp.score}%` }}
               role="progressbar"
               aria-valuenow={ilpp.score}
               aria-valuemin={0}

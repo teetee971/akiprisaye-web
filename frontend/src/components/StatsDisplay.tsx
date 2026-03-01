@@ -141,7 +141,7 @@ export default function StatsDisplay({ stats, badges, onClearStats }: StatsDispl
                   <div className="w-full bg-slate-700 rounded-full h-2" role="progressbar" aria-valuenow={percentage} aria-valuemin={0} aria-valuemax={100} aria-label={`${badge.name} : ${percentage.toFixed(0)}% complété`}>
                     <div
                       className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${percentage}%` }}
+                      style={ { width: `${percentage}%` }}
                     />
                   </div>
                   <div className="text-xs text-gray-500">{badge.description}</div>

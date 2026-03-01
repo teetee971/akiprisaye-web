@@ -212,7 +212,7 @@ export default function AiMarketInsights() {
           {data.byCategory && data.byCategory.length > 0 && (
             <div className="bg-slate-900/50 border border-slate-800 rounded-lg p-6">
               <h2 className="text-xl font-semibold mb-4">Écarts par Catégorie</h2>
-              <div style={{ height: '300px' }}>
+              <div style={ { height: '300px' }}>
                 <Bar data={categoryChartData} options={chartOptions} />
               </div>
             </div>
@@ -222,7 +222,7 @@ export default function AiMarketInsights() {
           {data.byTerritory && data.byTerritory.length > 0 && (
             <div className="bg-slate-900/50 border border-slate-800 rounded-lg p-6">
               <h2 className="text-xl font-semibold mb-4">Écarts par Territoire</h2>
-              <div style={{ height: '300px' }}>
+              <div style={ { height: '300px' }}>
                 <Bar data={territoryChartData} options={chartOptions} />
               </div>
             </div>
@@ -233,7 +233,7 @@ export default function AiMarketInsights() {
         {history.length > 0 && (
           <div className="bg-slate-900/50 border border-slate-800 rounded-lg p-6 mb-8">
             <h2 className="text-xl font-semibold mb-4">Tendance 7 jours</h2>
-            <div style={{ height: '250px' }}>
+            <div style={ { height: '250px' }}>
               <Line data={trendData} options={chartOptions} />
             </div>
           </div>

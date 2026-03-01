@@ -1,0 +1,60 @@
+body.app-body {
+  margin: 0;
+  padding: 0;
+  background-color: #0f172a;
+  color: #ffffff;
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+}
+
+#root {
+  min-height: 100vh;
+  position: relative;
+  z-index: 2;
+}
+
+#loading-fallback {
+  position: fixed;
+  inset: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: #0f172a;
+  color: #ffffff;
+  font-family: system-ui, -apple-system, sans-serif;
+  z-index: 1;
+}
+
+#loading-fallback.loading-fallback-hidden {
+  display: none;
+}
+
+.loading-logo {
+  height: 64px;
+  margin-bottom: 24px;
+}
+
+.loading-title {
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+}
+
+.loading-subtitle {
+  color: #94a3b8;
+}
+
+.loading-error {
+  color: #f87171;
+  margin-bottom: 8px;
+}
+
+.loading-retry-btn {
+  padding: 12px 24px;
+  background: #3b82f6;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}

@@ -51,7 +51,7 @@ export default function DomVsMetropoleEvolution() {
                 <span>{territory}</span>
                 <span
                   className="font-mono"
-                  style={{ color: deltaColor(delta) }}
+                  style={ { color: deltaColor(delta) }}
                 >
                   +{delta.toFixed(1)} %
                 </span>
@@ -62,7 +62,7 @@ export default function DomVsMetropoleEvolution() {
                   <div
                     key={i}
                     className="h-2 flex-1 rounded"
-                    style={{
+                    style={ {
                       backgroundColor: barColor(v),
                     }}
                     title={`${MONTHS[i]} : ${v.toFixed(1)}`}

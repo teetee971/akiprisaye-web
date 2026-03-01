@@ -61,7 +61,7 @@ export function PriceBreakdownPieChart({ breakdown }: PriceBreakdownPieChartProp
             <span className="flex items-center gap-2">
               <div 
                 className="w-3 h-3 rounded-full" 
-                style={{ backgroundColor: item.color }}
+                style={ { backgroundColor: item.color }}
                 aria-hidden="true"
               />
               <span className="text-slate-700 dark:text-slate-300">{item.name}</span>

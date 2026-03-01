@@ -40,7 +40,7 @@ class ErrorBoundary extends Component {
             <img 
               src="/logo-akiprisaye.svg" 
               alt="A KI PRI SA YÉ" 
-              style={{ height: '64px', margin: '0 auto 24px' }}
+              style={ { height: '64px', margin: '0 auto 24px' }}
             />
             
             <h1 className="text-3xl font-bold text-white mb-4">
@@ -52,7 +52,7 @@ class ErrorBoundary extends Component {
             </p>
 
             <pre
-              style={{
+              style={ {
                 marginTop: '16px',
                 color: '#ff6b6b',
                 background: '#020617',

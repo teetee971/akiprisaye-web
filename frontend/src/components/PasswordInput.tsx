@@ -219,7 +219,7 @@ export function PasswordInput({
             <div className="flex-1 h-2 bg-gray-700 rounded-full overflow-hidden">
               <div 
                 className={`h-full ${currentStrength.color} transition-all duration-300`}
-                style={{ 
+                style={ { 
                   width: strength === 'weak' ? '33%' : strength === 'medium' ? '66%' : '100%' 
                 }}
               />

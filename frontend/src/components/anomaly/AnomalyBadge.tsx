@@ -90,7 +90,7 @@ export function AnomalyBadge({ anomaly, showTooltip = true }: AnomalyBadgeProps)
 
   return (
     <div
-      style={{
+      style={ {
         position: 'relative',
         display: 'inline-block',
       }}
@@ -99,7 +99,7 @@ export function AnomalyBadge({ anomaly, showTooltip = true }: AnomalyBadgeProps)
     >
       {/* Badge */}
       <div
-        style={{
+        style={ {
           display: 'inline-flex',
           alignItems: 'center',
           gap: '4px',
@@ -122,7 +122,7 @@ export function AnomalyBadge({ anomaly, showTooltip = true }: AnomalyBadgeProps)
       {/* Tooltip */}
       {showTooltip && tooltipVisible && (
         <div
-          style={{
+          style={ {
             position: 'absolute',
             top: 'calc(100% + 8px)',
             left: '50%',
@@ -143,7 +143,7 @@ export function AnomalyBadge({ anomaly, showTooltip = true }: AnomalyBadgeProps)
         >
           {/* Arrow */}
           <div
-            style={{
+            style={ {
               position: 'absolute',
               top: '-6px',
               left: '50%',
@@ -158,19 +158,19 @@ export function AnomalyBadge({ anomaly, showTooltip = true }: AnomalyBadgeProps)
           />
 
           {/* Content */}
-          <div style={{ position: 'relative', zIndex: 1 }}>
-            <div style={{ fontWeight: '600', marginBottom: '6px', color: '#f1f5f9' }}>
+          <div style={ { position: 'relative', zIndex: 1 }}>
+            <div style={ { fontWeight: '600', marginBottom: '6px', color: '#f1f5f9' }}>
               {typeLabel}
             </div>
 
-            <div style={{ marginBottom: '8px', color: '#cbd5e1' }}>
+            <div style={ { marginBottom: '8px', color: '#cbd5e1' }}>
               {anomaly.description}
             </div>
 
             {/* Details */}
             {(anomaly.details.currentPrice || anomaly.details.referencePrice) && (
               <div
-                style={{
+                style={ {
                   fontSize: '12px',
                   color: '#94a3b8',
                   paddingTop: '8px',
@@ -188,7 +188,7 @@ export function AnomalyBadge({ anomaly, showTooltip = true }: AnomalyBadgeProps)
 
             {/* Disclaimer */}
             <div
-              style={{
+              style={ {
                 fontSize: '11px',
                 color: '#64748b',
                 marginTop: '8px',
@@ -226,7 +226,7 @@ export function AnomalyList({ anomalies, maxVisible = 2 }: AnomalyListProps) {
 
   return (
     <div
-      style={{
+      style={ {
         display: 'flex',
         flexDirection: 'column',
         gap: '4px',
@@ -239,7 +239,7 @@ export function AnomalyList({ anomalies, maxVisible = 2 }: AnomalyListProps) {
       {hasMore && !showAll && (
         <button
           onClick={() => setShowAll(true)}
-          style={{
+          style={ {
             background: 'transparent',
             border: '1px solid #334155',
             borderRadius: '6px',
@@ -265,7 +265,7 @@ export function AnomalyList({ anomalies, maxVisible = 2 }: AnomalyListProps) {
       {showAll && hasMore && (
         <button
           onClick={() => setShowAll(false)}
-          style={{
+          style={ {
             background: 'transparent',
             border: '1px solid #334155',
             borderRadius: '6px',

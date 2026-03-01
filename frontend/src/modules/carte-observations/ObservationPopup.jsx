@@ -24,7 +24,7 @@ export function ObservationPopup({ observation }) {
   };
 
   return (
-    <div className="p-2 space-y-3" style={{ minWidth: '250px' }}>
+    <div className="p-2 space-y-3" style={ { minWidth: '250px' }}>
       {/* Product Name */}
       <div className="border-b border-gray-200 pb-2">
         <h3 className="font-semibold text-gray-900 text-base">

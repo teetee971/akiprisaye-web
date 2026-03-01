@@ -19,7 +19,7 @@ export default function ScanCamera({
 }: ScanCameraProps) {
   return (
     <div className="space-y-4">
-      <div className="relative bg-black rounded-lg overflow-hidden" style={{ aspectRatio: '4/3' }}>
+      <div className="relative bg-black rounded-lg overflow-hidden" style={ { aspectRatio: '4/3' }}>
         <video
           ref={videoRef}
           className="w-full h-full object-cover"

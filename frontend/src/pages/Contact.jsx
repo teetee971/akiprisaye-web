@@ -54,14 +54,14 @@ export default function Contact() {
   };
 
   return (
-    <div style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
-      <h1 style={{ color: '#ffffff', marginBottom: '1rem' }}>Contact</h1>
-      <p style={{ color: '#b8b8b8', marginBottom: '2rem' }}>
+    <div style={ { padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
+      <h1 style={ { color: '#ffffff', marginBottom: '1rem' }}>Contact</h1>
+      <p style={ { color: '#b8b8b8', marginBottom: '2rem' }}>
         Vous avez une question ou une suggestion ? N'hésitez pas à nous contacter.
       </p>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      <form onSubmit={handleSubmit} style={ { display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <div>
-          <label htmlFor="name" style={{ display: 'block', color: '#ffffff', marginBottom: '0.5rem' }}>
+          <label htmlFor="name" style={ { display: 'block', color: '#ffffff', marginBottom: '0.5rem' }}>
             Nom
           </label>
           <input
@@ -71,7 +71,7 @@ export default function Contact() {
             value={formData.name}
             onChange={handleChange}
             required
-            style={{
+            style={ {
               width: '100%',
               padding: '0.5rem',
               borderRadius: '4px',
@@ -82,7 +82,7 @@ export default function Contact() {
           />
         </div>
         <div>
-          <label htmlFor="email" style={{ display: 'block', color: '#ffffff', marginBottom: '0.5rem' }}>
+          <label htmlFor="email" style={ { display: 'block', color: '#ffffff', marginBottom: '0.5rem' }}>
             Email
           </label>
           <input
@@ -92,7 +92,7 @@ export default function Contact() {
             value={formData.email}
             onChange={handleChange}
             required
-            style={{
+            style={ {
               width: '100%',
               padding: '0.5rem',
               borderRadius: '4px',
@@ -103,7 +103,7 @@ export default function Contact() {
           />
         </div>
         <div>
-          <label htmlFor="message" style={{ display: 'block', color: '#ffffff', marginBottom: '0.5rem' }}>
+          <label htmlFor="message" style={ { display: 'block', color: '#ffffff', marginBottom: '0.5rem' }}>
             Message
           </label>
           <textarea
@@ -113,7 +113,7 @@ export default function Contact() {
             value={formData.message}
             onChange={handleChange}
             required
-            style={{
+            style={ {
               width: '100%',
               padding: '0.5rem',
               borderRadius: '4px',
@@ -126,7 +126,7 @@ export default function Contact() {
         <button
           type="submit"
           disabled={isSubmitting}
-          style={{
+          style={ {
             padding: '0.75rem 1.5rem',
             background: isSubmitting ? '#666' : 'linear-gradient(135deg, #0f62fe, #0353e9)',
             color: '#ffffff',

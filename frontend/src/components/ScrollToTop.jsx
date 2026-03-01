@@ -43,7 +43,7 @@ export default function ScrollToTop() {
           onClick={scrollToTop}
           className="fixed bottom-8 right-8 z-40 p-3 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg transition-all hover:scale-110 motion-reduce:transform-none motion-reduce:hover:scale-100"
           aria-label="Retour en haut"
-          style={{ paddingBottom: 'max(0.75rem, calc(0.75rem + var(--safe-bottom)))' }}
+          style={ { paddingBottom: 'max(0.75rem, calc(0.75rem + var(--safe-bottom)))' }}
         >
           <svg
             className="w-6 h-6"

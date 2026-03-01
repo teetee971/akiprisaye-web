@@ -40,7 +40,7 @@ export function BeforeAfterComparison({
           <div className="w-full h-8 bg-slate-800/50 rounded-lg overflow-hidden">
             <div 
               className="h-full bg-gradient-to-r from-red-600 to-red-500 flex items-center justify-end pr-3"
-              style={{ width: `${currentBarWidth}%` }}
+              style={ { width: `${currentBarWidth}%` }}
             >
               <span className="text-xs font-semibold text-white">{currentPrice.toFixed(2)} €</span>
             </div>
@@ -56,7 +56,7 @@ export function BeforeAfterComparison({
           <div className="w-full h-8 bg-slate-800/50 rounded-lg overflow-hidden">
             <div 
               className="h-full bg-gradient-to-r from-green-600 to-green-500 flex items-center justify-end pr-3"
-              style={{ width: `${bestBarWidth}%` }}
+              style={ { width: `${bestBarWidth}%` }}
             >
               <span className="text-xs font-semibold text-white">{bestPrice.toFixed(2)} €</span>
             </div>

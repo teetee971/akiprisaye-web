@@ -94,13 +94,13 @@ function MarkerClusterGroup({ map, leaflet, stores, currentTerritory, formatDist
         // Create a custom divIcon with colored marker
         markerIcon = leaflet.divIcon({
           html: `
-            <div style="position: relative;">
+            <div class="ak-marker-shell">
               <svg width="25" height="41" viewBox="0 0 25 41" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12.5 0C5.596 0 0 5.596 0 12.5c0 9.375 12.5 28.125 12.5 28.125S25 21.875 25 12.5C25 5.596 19.404 0 12.5 0z" fill="${color}" stroke="#fff" stroke-width="2"/>
                 <circle cx="12.5" cy="12.5" r="6" fill="#fff"/>
               </svg>
-              <div style="position: absolute; top: 0; left: 0; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center;">
-                <div style="width: 8px; height: 8px; background: ${color}; border-radius: 50%; animation: pulse 2s infinite;"></div>
+              <div class="ak-marker-status-overlay">
+                <div class="ak-marker-status-dot ak-status-${statusInfo.status}"></div>
               </div>
             </div>
           `,
@@ -1013,7 +1013,7 @@ export default function Carte() {
                 ref={setMapInstance}
                 center={defaultPosition}
                 zoom={currentTerritory?.zoom || 11}
-                style={{ height: '100%', width: '100%' }}
+                style={ { height: '100%', width: '100%' }}
               >
                 <TileLayer
                   url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"

@@ -106,7 +106,7 @@ export function ImportReport({ result, onReset, entityType }: ImportReportProps)
               successRate >= 80 ? 'bg-yellow-500' :
               'bg-red-500'
             )}
-            style={{ width: `${successRate}%` }}
+            style={ { width: `${successRate}%` }}
           />
         </div>
       </div>

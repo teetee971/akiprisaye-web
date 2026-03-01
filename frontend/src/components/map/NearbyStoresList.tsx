@@ -151,7 +151,7 @@ export function NearbyStoresList({
                 <div className="mt-2">
                   <span
                     className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium text-white"
-                    style={{
+                    style={ {
                       backgroundColor: PRICE_COLORS[store.priceCategory],
                     }}
                   >

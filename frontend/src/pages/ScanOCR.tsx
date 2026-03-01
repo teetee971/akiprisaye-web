@@ -452,7 +452,7 @@ export default function ScanOCR() {
                   <p className="text-gray-400 text-sm mt-2">Extraction du texte de l'image</p>
                   {/* Progress bar - indeterminate */}
                   <div className="w-64 h-2 bg-gray-700 rounded-full mx-auto mt-4 overflow-hidden">
-                    <div className="h-full bg-blue-500 rounded-full animate-pulse" style={{ width: '60%' }}></div>
+                    <div className="h-full bg-blue-500 rounded-full animate-pulse" style={ { width: '60%' }}></div>
                   </div>
                   <p className="text-gray-500 text-xs mt-2">
                     Seuil: {settings.confidenceThreshold}% | Timeout: {(settings.timeout ?? 30000) / 1000}s
@@ -642,7 +642,7 @@ export default function ScanOCR() {
                   role="img"
                   aria-label="Image sélectionnée" 
                   className="w-full rounded-lg border border-slate-700 h-96 bg-contain bg-no-repeat bg-center"
-                  style={{ backgroundImage: `url(${safeSrc})` }}
+                  style={ { backgroundImage: `url(${safeSrc})` }}
                 />
               </div>
             );

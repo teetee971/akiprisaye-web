@@ -21,14 +21,14 @@ export function RouteLayer({ route, onClear }: RouteLayerProps) {
 
   // Start and end markers
   const startIcon = L.divIcon({
-    html: `<div style="background-color: #22c55e; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white;"></div>`,
+    html: '<div class="ak-status-open ak-marker-status-dot"></div>', 
     className: 'custom-div-icon',
     iconSize: [12, 12],
     iconAnchor: [6, 6],
   });
 
   const endIcon = L.divIcon({
-    html: `<div style="background-color: #ef4444; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white;"></div>`,
+    html: '<div class="ak-status-closed ak-marker-status-dot"></div>', 
     className: 'custom-div-icon',
     iconSize: [12, 12],
     iconAnchor: [6, 6],

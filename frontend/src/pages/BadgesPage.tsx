@@ -98,7 +98,7 @@ export default function BadgesPage() {
             <div className="w-full h-4 bg-white/20 rounded-full overflow-hidden">
               <div 
                 className="h-full bg-gradient-to-r from-yellow-400 to-yellow-600 transition-all duration-500 shadow-lg"
-                style={{ width: `${stats.percentage}%` }}
+                style={ { width: `${stats.percentage}%` }}
               >
                 <div className="h-full w-full bg-gradient-to-r from-transparent to-white opacity-30"></div>
               </div>

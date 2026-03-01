@@ -164,12 +164,12 @@ export default function CarteObservations({ territory = null, productFilter = nu
       </div>
 
       {/* Map */}
-      <div className="bg-white rounded-lg shadow-md overflow-hidden" style={{ height: '600px' }}>
+      <div className="bg-white rounded-lg shadow-md overflow-hidden" style={ { height: '600px' }}>
         {filteredObservations.length > 0 ? (
           <MapContainer
             center={defaultCenter}
             zoom={defaultZoom}
-            style={{ height: '100%', width: '100%' }}
+            style={ { height: '100%', width: '100%' }}
             scrollWheelZoom={true}
           >
             <TileLayer

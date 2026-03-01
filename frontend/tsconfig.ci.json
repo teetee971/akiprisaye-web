@@ -3,15 +3,26 @@
   "compilerOptions": {
     "noEmit": true,
     "skipLibCheck": true,
-
-    "strict": false,
-    "noImplicitAny": false,
-    "strictNullChecks": false,
-
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
     "allowJs": true,
     "checkJs": false,
-
-    "types": ["node"]
+    "types": [
+      "node"
+    ],
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "useUnknownInCatchVariables": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "forceConsistentCasingInFileNames": true
   },
   "include": [
     "src/ci-entry.ts"

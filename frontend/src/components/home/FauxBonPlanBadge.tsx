@@ -97,7 +97,7 @@ export function FauxBonPlanBadge({
                     result.percentAboveAverage > 10 ? 'bg-orange-500' :
                     'bg-yellow-500'
                   }`}
-                  style={{ width: `${Math.min(100, result.percentAboveAverage * 2)}%` }}
+                  style={ { width: `${Math.min(100, result.percentAboveAverage * 2)}%` }}
                 />
               </div>
               <div className="text-xs text-right text-gray-400">

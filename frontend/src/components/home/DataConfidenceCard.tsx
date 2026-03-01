@@ -78,7 +78,7 @@ export function DataConfidenceCard({
                 score.total >= 40 ? 'bg-yellow-500' :
                 'bg-red-500'
               }`}
-              style={{ width: `${score.total}%` }}
+              style={ { width: `${score.total}%` }}
             />
           </div>
         </div>

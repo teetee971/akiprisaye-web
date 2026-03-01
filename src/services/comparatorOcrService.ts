@@ -95,7 +95,7 @@ export function parseInvoice(text: string): InvoiceParsed {
   }
   
   // Extract date (look for date patterns)
-  const datePattern = /(\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{2,4})/;
+  const datePattern = /(\d{1,2}[./-]\d{1,2}[./-]\d{2,4})/;
   for (const line of lines) {
     const match = line.match(datePattern);
     if (match) {
@@ -105,7 +105,7 @@ export function parseInvoice(text: string): InvoiceParsed {
   }
   
   // Extract total amount (look for "total", "montant", etc.)
-  const totalPattern = /(?:total|montant|ttc|à payer)[\s:]*(\d+[,\.]\d{2})/i;
+  const totalPattern = /(?:total|montant|ttc|à payer)[\s:]*(\d+[,.]\d{2})/i;
   for (const line of lines) {
     const match = line.match(totalPattern);
     if (match) {
@@ -115,7 +115,7 @@ export function parseInvoice(text: string): InvoiceParsed {
   }
   
   // Extract items (look for price patterns)
-  const itemPattern = /(.+?)\s+(\d+[,\.]\d{2})\s*€?/;
+  const itemPattern = /(.+?)\s+(\d+[,.]\d{2})\s*€?/;
   for (const line of lines) {
     const match = line.match(itemPattern);
     if (match) {
@@ -167,7 +167,7 @@ export function parseReceipt(text: string): ReceiptParsed {
   }
   
   // Extract date
-  const datePattern = /(\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{2,4})/;
+  const datePattern = /(\d{1,2}[./-]\d{1,2}[./-]\d{2,4})/;
   for (const line of lines) {
     const match = line.match(datePattern);
     if (match) {
@@ -178,7 +178,7 @@ export function parseReceipt(text: string): ReceiptParsed {
   
   // Extract items with quantity and price
   // Format: "Product Name x 2 4.50"
-  const itemPattern = /(.+?)\s+(?:x\s*)?(\d+)?\s+(\d+[,\.]\d{2})\s*€?/;
+  const itemPattern = /(.+?)\s+(?:x\s*)?(\d+)?\s+(\d+[,.]\d{2})\s*€?/;
   for (const line of lines) {
     const match = line.match(itemPattern);
     if (match) {
@@ -194,7 +194,7 @@ export function parseReceipt(text: string): ReceiptParsed {
   }
   
   // Extract total
-  const totalPattern = /(?:total|montant|ttc)[\s:]*(\d+[,\.]\d{2})/i;
+  const totalPattern = /(?:total|montant|ttc)[\s:]*(\d+[,.]\d{2})/i;
   for (const line of lines) {
     const match = line.match(totalPattern);
     if (match) {

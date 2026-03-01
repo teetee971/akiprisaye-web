@@ -75,12 +75,12 @@ export function PriceHistoryChart({ data, showTrendLine = false, showAverage = f
               <XAxis 
                 dataKey="date" 
                 stroke="#64748b"
-                style={{ fontSize: '12px' }}
+                style={ { fontSize: '12px' }}
                 label={{ value: 'Date', position: 'insideBottom', offset: -5, fill: '#64748b' }}
               />
               <YAxis 
                 stroke="#64748b"
-                style={{ fontSize: '12px' }}
+                style={ { fontSize: '12px' }}
                 tickFormatter={(value) => `${value.toFixed(2)}€`}
                 label={{ value: 'Prix (€)', angle: -90, position: 'insideLeft', fill: '#64748b' }}
               />

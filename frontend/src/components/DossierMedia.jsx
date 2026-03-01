@@ -221,7 +221,7 @@ export function DossierMedia() {
                       <strong>{territory.name}</strong>
                     </td>
                     <td className="border border-gray-300 px-4 py-2 text-center">
-                      <span className="font-bold text-lg" style={{ color: territory.status.color }}>
+                      <span className="font-bold text-lg" style={ { color: territory.status.color }}>
                         {territory.current.score}
                       </span>
                     </td>

@@ -130,7 +130,7 @@ export default function HomeV4() {
       {/* 🏆 HERO SECTION WITH PARALLAX */}
       <section className="hero" ref={heroRef}>
         <motion.div
-          style={{ opacity: heroOpacity, scale: heroScale }}
+          style={ { opacity: heroOpacity, scale: heroScale }}
           className="hero-content"
         >
           <motion.h1

@@ -1,6 +1,7 @@
 import tseslint from '@typescript-eslint/eslint-plugin';
 import tsparser from '@typescript-eslint/parser';
 import reactPlugin from 'eslint-plugin-react';
+import reactRefreshPlugin from 'eslint-plugin-react-refresh';
 
 const ignoredPaths = [
   'scanner.js',
@@ -147,7 +148,7 @@ const reactRecommendedRules = reactPlugin.configs.recommended.rules;
 const sharedReactRules = {
   ...reactRecommendedRules,
   'react/react-in-jsx-scope': 'off',
-  'react/jsx-no-undef': 'warn',
+  'react/jsx-no-undef': 'error',
   'react/prop-types': 'off',
   'react/no-unescaped-entities': 'off',
 };
@@ -189,6 +190,7 @@ export default [
     plugins: {
       '@typescript-eslint': tseslint,
       react: reactPlugin,
+      'react-refresh': reactRefreshPlugin,
     },
     settings: reactSettings,
     rules: {
@@ -199,7 +201,7 @@ export default [
       'no-unused-vars': 'off', // Disabled in favor of TypeScript version
       '@typescript-eslint/no-unused-vars': 'off',
       'no-console': 'off',
-      'no-useless-escape': 'warn',
+      'no-useless-escape': 'error',
 
       // TypeScript rules - downgraded to warnings
       '@typescript-eslint/no-explicit-any': 'off',
@@ -226,6 +228,7 @@ export default [
     },
     plugins: {
       react: reactPlugin,
+      'react-refresh': reactRefreshPlugin,
     },
     settings: reactSettings,
     rules: {
@@ -238,6 +241,15 @@ export default [
 
       // Keep no-undef strict for JavaScript files
       'no-undef': 'error',
+    },
+  },
+
+  // Legacy root src (historical React JSX) still contains unresolved UI symbols.
+  // Keep this scoped while frontend/ stays strict.
+  {
+    files: ['src/**/*.{js,jsx}'],
+    rules: {
+      'react/jsx-no-undef': 'off',
     },
   },
   {

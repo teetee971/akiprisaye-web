@@ -195,7 +195,7 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
             <div className="quality-bar">
               <div
                 className="quality-fill"
-                style={{ width: `${metadata.qualite_moyenne}%` }}
+                style={ { width: `${metadata.qualite_moyenne}%` }}
               ></div>
             </div>
           </div>
@@ -377,7 +377,7 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
       )}
 
       {!hasData && (
-        <div className="warning-banner" style={{ marginTop: '2rem' }}>
+        <div className="warning-banner" style={ { marginTop: '2rem' }}>
           <span>ℹ️</span> Données en mode dégradé. Les listes ci-dessous peuvent être limitées.
         </div>
       )}

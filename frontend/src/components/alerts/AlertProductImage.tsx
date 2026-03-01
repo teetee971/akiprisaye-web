@@ -44,7 +44,7 @@ export default function AlertProductImage({
   return (
     <div
       className={`relative overflow-hidden rounded-lg bg-slate-800 border border-slate-700 shrink-0 ${className}`}
-      style={{ width: size, height: size }}
+      style={ { width: size, height: size }}
       aria-hidden="true"
     >
       {isLoading && <div className="absolute inset-0 animate-pulse bg-slate-700/70" />}

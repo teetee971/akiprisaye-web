@@ -80,7 +80,7 @@ export function ResponsiveMapExample() {
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Magasins près de chez vous</h1>
-      <div className="rounded-lg overflow-hidden shadow-lg" style={{ height: '600px' }}>
+      <div className="rounded-lg overflow-hidden shadow-lg" style={ { height: '600px' }}>
         <StoreMap
           showUserLocation={true}
           radius={15}

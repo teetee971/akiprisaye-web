@@ -8,7 +8,7 @@ export default function VersionBanner({ className }: VersionBannerProps) {
   return (
     <div
       className={className}
-      style={{
+      style={ {
         background: '#0f172a',
         border: '1px solid #1e293b',
         borderRadius: '12px',
@@ -26,7 +26,7 @@ export default function VersionBanner({ className }: VersionBannerProps) {
         href="https://github.com/teetee971/akiprisaye-web/releases/latest"
         target="_blank"
         rel="noopener noreferrer"
-        style={{ color: '#60a5fa', textDecoration: 'underline' }}
+        style={ { color: '#60a5fa', textDecoration: 'underline' }}
       >
         Voir la version de référence
       </a>

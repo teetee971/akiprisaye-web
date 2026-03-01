@@ -106,7 +106,7 @@ export default function SavingsGoal({
             <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
               <div
                 className={`${progressColor} h-3 rounded-full transition-all duration-500 ease-out`}
-                style={{ width: `${Math.min(progress, 100)}%` }}
+                style={ { width: `${Math.min(progress, 100)}%` }}
               />
             </div>
           </div>

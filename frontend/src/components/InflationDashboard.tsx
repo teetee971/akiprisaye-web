@@ -284,7 +284,7 @@ export function InflationDashboard() {
                       territory.overallInflationRate > 3 ? 'bg-orange-500' :
                       'bg-green-500'
                     }`}
-                    style={{ width: `${Math.min(territory.overallInflationRate * 10, 100)}%` }}
+                    style={ { width: `${Math.min(territory.overallInflationRate * 10, 100)}%` }}
                   />
                 </div>
 

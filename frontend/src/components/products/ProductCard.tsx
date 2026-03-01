@@ -40,7 +40,7 @@ export function ProductCard({ product, onClick, onValidate, anomalies }: Product
     <div
       className="product-card"
       onClick={onClick}
-      style={{
+      style={ {
         background: '#1e293b',
         border: '1px solid #334155',
         borderRadius: '12px',
@@ -63,7 +63,7 @@ export function ProductCard({ product, onClick, onValidate, anomalies }: Product
     >
       {/* Photo */}
       {mainPhoto ? (
-        <div style={{
+        <div style={ {
           width: '100%',
           height: '180px',
           borderRadius: '8px',
@@ -74,7 +74,7 @@ export function ProductCard({ product, onClick, onValidate, anomalies }: Product
           <img
             src={mainPhoto.url}
             alt={product.nom}
-            style={{
+            style={ {
               width: '100%',
               height: '100%',
               objectFit: 'cover'
@@ -83,7 +83,7 @@ export function ProductCard({ product, onClick, onValidate, anomalies }: Product
           />
         </div>
       ) : (
-        <div style={{
+        <div style={ {
           width: '100%',
           height: '180px',
           borderRadius: '8px',
@@ -101,7 +101,7 @@ export function ProductCard({ product, onClick, onValidate, anomalies }: Product
       {/* Product Info */}
       <div>
         {/* Name and Brand */}
-        <h3 style={{
+        <h3 style={ {
           fontSize: '16px',
           fontWeight: '600',
           color: '#f1f5f9',
@@ -112,7 +112,7 @@ export function ProductCard({ product, onClick, onValidate, anomalies }: Product
         </h3>
         
         {product.marque && (
-          <p style={{
+          <p style={ {
             fontSize: '13px',
             color: '#94a3b8',
             marginBottom: '8px'
@@ -122,13 +122,13 @@ export function ProductCard({ product, onClick, onValidate, anomalies }: Product
         )}
         
         {/* Price */}
-        <div style={{
+        <div style={ {
           display: 'flex',
           alignItems: 'baseline',
           gap: '8px',
           marginBottom: '6px'
         }}>
-          <span style={{
+          <span style={ {
             fontSize: '24px',
             fontWeight: '700',
             color: '#3b82f6'
@@ -137,7 +137,7 @@ export function ProductCard({ product, onClick, onValidate, anomalies }: Product
           </span>
           
           {priceChangeIcon && (
-            <span style={{ fontSize: '16px' }} title={
+            <span style={ { fontSize: '16px' }} title={
               product.price_change 
                 ? `${product.price_change.trend === 'up' ? '+' : ''}${product.price_change.percentage.toFixed(1)}%`
                 : ''
@@ -148,7 +148,7 @@ export function ProductCard({ product, onClick, onValidate, anomalies }: Product
         </div>
         
         {/* Price per unit */}
-        <p style={{
+        <p style={ {
           fontSize: '13px',
           color: '#cbd5e1',
           marginBottom: '12px'
@@ -157,13 +157,13 @@ export function ProductCard({ product, onClick, onValidate, anomalies }: Product
         </p>
         
         {/* Store and Territory */}
-        <div style={{
+        <div style={ {
           display: 'flex',
           gap: '8px',
           flexWrap: 'wrap',
           marginBottom: '12px'
         }}>
-          <span style={{
+          <span style={ {
             fontSize: '12px',
             padding: '4px 8px',
             borderRadius: '6px',
@@ -173,7 +173,7 @@ export function ProductCard({ product, onClick, onValidate, anomalies }: Product
             🏪 {product.enseigne}
           </span>
           
-          <span style={{
+          <span style={ {
             fontSize: '12px',
             padding: '4px 8px',
             borderRadius: '6px',
@@ -186,13 +186,13 @@ export function ProductCard({ product, onClick, onValidate, anomalies }: Product
         
         {/* Anomaly badges */}
         {anomalies && anomalies.length > 0 && (
-          <div style={{ marginBottom: '12px' }}>
+          <div style={ { marginBottom: '12px' }}>
             <AnomalyList anomalies={anomalies} maxVisible={2} />
           </div>
         )}
         
         {/* Source badge */}
-        <div style={{
+        <div style={ {
           fontSize: '11px',
           padding: '4px 8px',
           borderRadius: '6px',
@@ -209,28 +209,28 @@ export function ProductCard({ product, onClick, onValidate, anomalies }: Product
         </div>
         
         {/* Reliability and validation */}
-        <div style={{
+        <div style={ {
           paddingTop: '12px',
           borderTop: '1px solid #334155'
         }}>
-          <div style={{
+          <div style={ {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             marginBottom: '8px'
           }}>
-            <div style={{
+            <div style={ {
               display: 'flex',
               alignItems: 'center',
               gap: '6px'
             }}>
-              <div style={{
+              <div style={ {
                 width: '8px',
                 height: '8px',
                 borderRadius: '50%',
                 background: getReliabilityColor(product.fiabilite_score)
               }} />
-              <span style={{
+              <span style={ {
                 fontSize: '12px',
                 color: '#94a3b8'
               }}>
@@ -238,7 +238,7 @@ export function ProductCard({ product, onClick, onValidate, anomalies }: Product
               </span>
             </div>
             
-            <span style={{
+            <span style={ {
               fontSize: '11px',
               color: '#64748b'
             }}>
@@ -248,14 +248,14 @@ export function ProductCard({ product, onClick, onValidate, anomalies }: Product
           
           {/* Validation buttons */}
           {onValidate && (
-            <div style={{
+            <div style={ {
               display: 'flex',
               gap: '8px',
               marginTop: '8px'
             }}>
               <button
                 onClick={(e) => handleValidation(e, true)}
-                style={{
+                style={ {
                   flex: 1,
                   padding: '6px',
                   background: '#10b981',
@@ -274,7 +274,7 @@ export function ProductCard({ product, onClick, onValidate, anomalies }: Product
               </button>
               <button
                 onClick={(e) => handleValidation(e, false)}
-                style={{
+                style={ {
                   flex: 1,
                   padding: '6px',
                   background: '#ef4444',
@@ -304,14 +304,14 @@ export function ProductCard({ product, onClick, onValidate, anomalies }: Product
  */
 export function ProductCardSkeleton() {
   return (
-    <div style={{
+    <div style={ {
       background: '#1e293b',
       border: '1px solid #334155',
       borderRadius: '12px',
       padding: '12px',
       animation: 'pulse 2s infinite'
     }}>
-      <div style={{
+      <div style={ {
         width: '100%',
         height: '180px',
         borderRadius: '8px',
@@ -319,7 +319,7 @@ export function ProductCardSkeleton() {
         marginBottom: '12px'
       }} />
       
-      <div style={{
+      <div style={ {
         height: '20px',
         background: '#334155',
         borderRadius: '4px',
@@ -327,7 +327,7 @@ export function ProductCardSkeleton() {
         width: '80%'
       }} />
       
-      <div style={{
+      <div style={ {
         height: '16px',
         background: '#334155',
         borderRadius: '4px',
@@ -335,7 +335,7 @@ export function ProductCardSkeleton() {
         width: '50%'
       }} />
       
-      <div style={{
+      <div style={ {
         height: '32px',
         background: '#334155',
         borderRadius: '4px',
