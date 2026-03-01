@@ -130,7 +130,7 @@ const PriceChart: React.FC<PriceChartProps> = ({ data, type = 'bar', title, heig
   }, [data, type, title]);
 
   return (
-    <div style={{ height: `${height}px`, position: 'relative' }}>
+    <div style={ { height: `${height}px`, position: 'relative' }}>
       <canvas ref={chartRef} />
     </div>
   );

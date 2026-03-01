@@ -54,7 +54,7 @@ export function BadgeUnlockModal({ badge, isOpen, onClose }: BadgeUnlockModalPro
               <div
                 key={i}
                 className="absolute animate-float"
-                style={{
+                style={ {
                   left: `${Math.random() * 100}%`,
                   top: `${Math.random() * 100}%`,
                   animationDelay: `${Math.random() * 2}s`,
@@ -117,24 +117,7 @@ export function BadgeUnlockModal({ badge, isOpen, onClose }: BadgeUnlockModalPro
         </div>
       </div>
 
-      <style>{`
-        @keyframes float {
-          0%, 100% {
-            transform: translateY(0) rotate(0deg);
-            opacity: 0;
-          }
-          50% {
-            opacity: 1;
-          }
-          100% {
-            transform: translateY(-100px) rotate(360deg);
-            opacity: 0;
-          }
-        }
-        .animate-float {
-          animation: float 3s ease-in-out infinite;
-        }
-      `}</style>
+      
     </div>
   );
 }

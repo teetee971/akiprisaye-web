@@ -147,7 +147,7 @@ export default function ComprehensiveProductSheet({
               <div className="space-y-6">
                 {/* Product image */}
                 {productSheet.imageUrl && (
-                  <div className="relative bg-gray-100 dark:bg-gray-900 rounded-xl overflow-hidden" style={{ aspectRatio: '16/9' }}>
+                  <div className="relative bg-gray-100 dark:bg-gray-900 rounded-xl overflow-hidden" style={ { aspectRatio: '16/9' }}>
                     <img
                       src={productSheet.imageUrl}
                       alt={productSheet.name}

@@ -66,7 +66,7 @@ export default function StorePopup({
             </span>
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-bold" style={{ color: priceConfig.color }}>
+            <span className="text-2xl font-bold" style={ { color: priceConfig.color }}>
               {store.priceIndex}
             </span>
             <span className="text-sm text-slate-600">/100</span>

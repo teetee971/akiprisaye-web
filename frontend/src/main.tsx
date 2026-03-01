@@ -46,23 +46,28 @@ function renderFallbackError(title: unknown, message: unknown) {
   const safeMessage = safeToText(message);
 
   fallback.innerHTML = `
-    <img src="/logo-akiprisaye.svg" alt="A KI PRI SA YÉ" style="height: 64px; margin-bottom: 24px;" />
-    <h1 style="font-size: 1.5rem; margin-bottom: 8px;">${safeTitle}</h1>
-    <p style="color: #f87171; margin-bottom: 8px;">${safeMessage}</p>
-    <button onclick="location.reload()" style="padding: 12px 24px; background: #3b82f6; color: white; border: none; border-radius: 8px; cursor: pointer;">
+    <img src="${import.meta.env.BASE_URL}logo-akiprisaye.svg" alt="A KI PRI SA YÉ" class="loading-logo" />
+    <h1 class="loading-title">${safeTitle}</h1>
+    <p class="loading-error">${safeMessage}</p>
+    <button type="button" class="loading-retry-btn" data-action="reload">
       Recharger
     </button>
   `;
+
+  const reloadButton = fallback.querySelector<HTMLButtonElement>('[data-action="reload"]');
+  reloadButton?.addEventListener('click', () => {
+    window.location.reload();
+  });
 }
 
 function hideHtmlFallback() {
   const fallback = document.getElementById('loading-fallback');
-  if (fallback) fallback.style.display = 'none';
+  if (fallback) fallback.classList.add('loading-fallback-hidden');
 }
 
 function isFallbackVisible() {
   const fallback = document.getElementById('loading-fallback');
-  return Boolean(fallback && fallback.style.display !== 'none');
+  return Boolean(fallback && !fallback.classList.contains('loading-fallback-hidden'));
 }
 
 window.addEventListener('error', (event) => {

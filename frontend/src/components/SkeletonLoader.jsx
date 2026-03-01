@@ -16,7 +16,7 @@ export function SkeletonText({ lines = 3 }) {
         <div
           key={index}
           className="h-4 bg-slate-700 dark:bg-slate-600 rounded"
-          style={{ width: index === lines - 1 ? '60%' : '100%' }}
+          style={ { width: index === lines - 1 ? '60%' : '100%' }}
         ></div>
       ))}
     </div>
@@ -38,7 +38,7 @@ export function SkeletonButton() {
 export function SkeletonTable({ rows = 5, columns = 4 }) {
   return (
     <div className="animate-pulse">
-      <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}>
+      <div className="grid gap-4" style={ { gridTemplateColumns: `repeat(${columns}, 1fr)` }}>
         {/* Header */}
         {Array.from({ length: columns }).map((_, i) => (
           <div key={`header-${i}`} className="h-8 bg-slate-700 dark:bg-slate-600 rounded"></div>

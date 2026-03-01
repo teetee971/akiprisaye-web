@@ -41,7 +41,7 @@ export default function DataReliabilityBadge({
       <button
         onClick={() => setShowDetails(!showDetails)}
         className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
-        style={{
+        style={ {
           backgroundColor: `${color}15`,
           color: color,
           border: `1px solid ${color}40`,
@@ -66,7 +66,7 @@ export default function DataReliabilityBadge({
       {showDetails && (
         <div
           className="mt-2 p-4 rounded-lg text-sm"
-          style={{
+          style={ {
             backgroundColor: 'rgba(255, 255, 255, 0.05)',
             border: '1px solid rgba(255, 255, 255, 0.1)',
           }}
@@ -102,7 +102,7 @@ export default function DataReliabilityBadge({
           <div className="mt-4 pt-3 border-t border-gray-700">
             <div className="flex justify-between items-center font-semibold">
               <span>Score total:</span>
-              <span style={{ color }}>{reliability.score}/100</span>
+              <span style={ { color }}>{reliability.score}/100</span>
             </div>
           </div>
 

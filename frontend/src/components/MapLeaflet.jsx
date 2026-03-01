@@ -189,15 +189,15 @@ export function MapLeaflet({ territory = 'GP', stores = [], onStoreClick = null 
 
       // Create popup content
       const popupContent = `
-        <div style="min-width: 200px;">
-          <h3 style="margin: 0 0 8px 0; color: #0f62fe; font-size: 16px;">
+        <div class="ak-map-popup-min-200">
+          <h3 class="ak-map-popup-title">
             ${store.name}
           </h3>
-          ${store.address ? `<p style="margin: 4px 0; font-size: 14px;">📍 ${store.address}</p>` : ''}
-          ${store.phone ? `<p style="margin: 4px 0; font-size: 14px;">📞 ${store.phone}</p>` : ''}
-          ${store.productCount ? `<p style="margin: 4px 0; font-size: 14px;">🛒 ${store.productCount} produits</p>` : ''}
-          ${store.avgPrice ? `<p style="margin: 4px 0; font-size: 14px;">💰 Prix moyen: ${store.avgPrice.toFixed(2)}€</p>` : ''}
-          ${onStoreClick ? `<button onclick="window.handleStoreClick('${store.id}')" style="margin-top: 8px; padding: 6px 12px; background: #0f62fe; color: white; border: none; border-radius: 4px; cursor: pointer; width: 100%;">Voir les prix</button>` : ''}
+          ${store.address ? `<p class="ak-map-popup-text">📍 ${store.address}</p>` : ''}
+          ${store.phone ? `<p class="ak-map-popup-text">📞 ${store.phone}</p>` : ''}
+          ${store.productCount ? `<p class="ak-map-popup-text">🛒 ${store.productCount} produits</p>` : ''}
+          ${store.avgPrice ? `<p class="ak-map-popup-text">💰 Prix moyen: ${store.avgPrice.toFixed(2)}€</p>` : ''}
+          ${onStoreClick ? `<button onclick="window.handleStoreClick('${store.id}')" class="ak-map-popup-btn">Voir les prix</button>` : ''}
         </div>
       `;
 
@@ -267,7 +267,7 @@ export function MapLeaflet({ territory = 'GP', stores = [], onStoreClick = null 
       <div 
         ref={mapRef}
         className="flex items-center justify-center p-8 bg-gray-100 dark:bg-gray-800 rounded-lg"
-        style={{ height: '500px', minHeight: '400px' }}
+        style={ { height: '500px', minHeight: '400px' }}
       >
         <div className="text-center">
           <div className="mb-4 text-4xl">🗺️</div>
@@ -285,7 +285,7 @@ export function MapLeaflet({ territory = 'GP', stores = [], onStoreClick = null 
       <div 
         ref={mapRef}
         className="flex items-center justify-center p-8 bg-gray-100 dark:bg-gray-800 rounded-lg"
-        style={{ height: '500px', minHeight: '400px' }}
+        style={ { height: '500px', minHeight: '400px' }}
       >
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500 mx-auto mb-4"></div>
@@ -310,7 +310,7 @@ export function MapLeaflet({ territory = 'GP', stores = [], onStoreClick = null 
       <div
         ref={mapRef}
         className="w-full rounded-lg overflow-hidden shadow-lg"
-        style={{ height: '500px', minHeight: '400px' }}
+        style={ { height: '500px', minHeight: '400px' }}
       />
       
       {stores.length === 0 && (

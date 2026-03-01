@@ -91,7 +91,7 @@ export function ChallengeCard({ challenge, compact = false, className = '' }: Ch
                 ? 'bg-green-500' 
                 : `bg-gradient-to-r ${gradient}`
             }`}
-            style={{ width: `${progress}%` }}
+            style={ { width: `${progress}%` }}
           />
         </div>
       </div>

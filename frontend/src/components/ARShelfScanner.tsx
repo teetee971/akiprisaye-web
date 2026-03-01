@@ -129,7 +129,7 @@ export function ARShelfScanner() {
             <div
               key={i}
               className="absolute border-4 border-green-500 rounded-lg"
-              style={{
+              style={ {
                 left: `${detection.x}px`,
                 top: `${detection.y}px`,
                 width: `${detection.width}px`,

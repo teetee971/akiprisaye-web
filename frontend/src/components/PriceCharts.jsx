@@ -239,7 +239,7 @@ export function PriceBreakdownChart({ data = null }) {
               <div className="flex items-center gap-2">
                 <div 
                   className="w-4 h-4 rounded"
-                  style={{ backgroundColor: getBreakdownColor(index) }}
+                  style={ { backgroundColor: getBreakdownColor(index) }}
                 />
                 <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   {item.name}

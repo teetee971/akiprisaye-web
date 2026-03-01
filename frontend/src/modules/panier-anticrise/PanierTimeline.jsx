@@ -68,7 +68,7 @@ export function PanierTimeline({ history = [] }) {
         <svg
           viewBox={`0 0 ${width} ${height}`}
           className="w-full h-auto"
-          style={{ maxHeight: '250px' }}
+          style={ { maxHeight: '250px' }}
         >
           {/* Grid lines */}
           {[0, 1, 2, 3, 4].map((i) => {

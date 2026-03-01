@@ -180,7 +180,7 @@ export function StoreMap({
           <MapContainer
             center={initialCenter}
             zoom={initialZoom}
-            style={{ height: '100%', width: '100%' }}
+            style={ { height: '100%', width: '100%' }}
             scrollWheelZoom={true}
           >
             <TileLayer

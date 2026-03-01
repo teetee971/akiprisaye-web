@@ -65,7 +65,7 @@ export default function BadgesDisplay({ badges, className = '' }: BadgesDisplayP
                     <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
                       <div
                         className="bg-blue-600 h-1.5 rounded-full transition-all"
-                        style={{ width: `${(badge.progress / badge.target) * 100}%` }}
+                        style={ { width: `${(badge.progress / badge.target) * 100}%` }}
                       />
                     </div>
                     <p className="text-xs text-gray-500 dark:text-gray-400 text-center mt-1">

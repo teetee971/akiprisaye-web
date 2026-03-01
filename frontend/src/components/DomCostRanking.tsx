@@ -49,7 +49,7 @@ export default function DomCostRanking() {
             <div className="flex items-center gap-4">
               <span
                 className="px-2 py-0.5 rounded text-xs font-medium"
-                style={{
+                style={ {
                   backgroundColor: color(t.index),
                   color: '#000',
                 }}

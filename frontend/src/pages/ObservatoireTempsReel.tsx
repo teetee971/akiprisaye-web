@@ -309,7 +309,7 @@ export default function ObservatoireTempsReel() {
                   >
                     <span
                       className="px-3 py-1 rounded-full text-sm font-semibold"
-                      style={{
+                      style={ {
                         backgroundColor: `${display.color}20`,
                         color: display.color,
                         border: `1px solid ${display.color}40`,

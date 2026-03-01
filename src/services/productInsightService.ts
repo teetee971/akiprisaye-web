@@ -415,15 +415,15 @@ function parseNutritionTable(text: string): NutritionPer100g {
   };
   
   return {
-    energyKcal: extractValue(/(\d+[\.,]?\d*)\s*kcal/i),
-    energyKj: extractValue(/(\d+[\.,]?\d*)\s*kj/i),
-    fats: extractValue(/(?:matières grasses|lipides|fats?)[\s:]*(\d+[\.,]?\d*)\s*g/i),
-    saturatedFats: extractValue(/(?:acides gras saturés|saturated)[\s:]*(\d+[\.,]?\d*)\s*g/i),
-    carbohydrates: extractValue(/(?:glucides|carbohydrates)[\s:]*(\d+[\.,]?\d*)\s*g/i),
-    sugars: extractValue(/(?:sucres|sugars)[\s:]*(\d+[\.,]?\d*)\s*g/i),
-    fiber: extractValue(/(?:fibres|fiber)[\s:]*(\d+[\.,]?\d*)\s*g/i),
-    proteins: extractValue(/(?:protéines|proteins)[\s:]*(\d+[\.,]?\d*)\s*g/i),
-    salt: extractValue(/(?:sel|salt)[\s:]*(\d+[\.,]?\d*)\s*g/i),
+    energyKcal: extractValue(/(\d+[.,]?\d*)\s*kcal/i),
+    energyKj: extractValue(/(\d+[.,]?\d*)\s*kj/i),
+    fats: extractValue(/(?:matières grasses|lipides|fats?)[\s:]*(\d+[.,]?\d*)\s*g/i),
+    saturatedFats: extractValue(/(?:acides gras saturés|saturated)[\s:]*(\d+[.,]?\d*)\s*g/i),
+    carbohydrates: extractValue(/(?:glucides|carbohydrates)[\s:]*(\d+[.,]?\d*)\s*g/i),
+    sugars: extractValue(/(?:sucres|sugars)[\s:]*(\d+[.,]?\d*)\s*g/i),
+    fiber: extractValue(/(?:fibres|fiber)[\s:]*(\d+[.,]?\d*)\s*g/i),
+    proteins: extractValue(/(?:protéines|proteins)[\s:]*(\d+[.,]?\d*)\s*g/i),
+    salt: extractValue(/(?:sel|salt)[\s:]*(\d+[.,]?\d*)\s*g/i),
   };
 }
 

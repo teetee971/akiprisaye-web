@@ -458,11 +458,11 @@ export default function ObservatoireVivant() {
                       dataKey="timestamp"
                       tickFormatter={formatTick}
                       stroke="#94a3b8"
-                      style={{ fontSize: '12px' }}
+                      style={ { fontSize: '12px' }}
                     />
                     <YAxis
                       stroke="#94a3b8"
-                      style={{ fontSize: '12px' }}
+                      style={ { fontSize: '12px' }}
                       tickFormatter={(value) => `${value.toFixed(2)}`}
                     />
                     <Tooltip

@@ -49,7 +49,7 @@ export function PriceChart({ data, type = 'bar' }: PriceChartProps) {
             angle={-45}
             textAnchor="end"
             height={100}
-            style={{ fontSize: '12px' }}
+            style={ { fontSize: '12px' }}
           />
           <YAxis 
             stroke="#94a3b8"
@@ -59,7 +59,7 @@ export function PriceChart({ data, type = 'bar' }: PriceChartProps) {
               position: 'insideLeft',
               style: { fill: '#94a3b8' }
             }}
-            style={{ fontSize: '12px' }}
+            style={ { fontSize: '12px' }}
           />
           <Tooltip 
             contentStyle={{
@@ -94,11 +94,11 @@ export function PriceChart({ data, type = 'bar' }: PriceChartProps) {
       
       <div className="flex items-center justify-center gap-6 text-sm">
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded" style={{ backgroundColor: '#4ade80' }}></div>
+          <div className="w-4 h-4 rounded" style={ { backgroundColor: '#4ade80' }}></div>
           <span className="text-slate-300">Meilleur prix</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded" style={{ backgroundColor: '#60a5fa' }}></div>
+          <div className="w-4 h-4 rounded" style={ { backgroundColor: '#60a5fa' }}></div>
           <span className="text-slate-300">Prix standard</span>
         </div>
       </div>

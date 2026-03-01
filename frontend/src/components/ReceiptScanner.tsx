@@ -335,7 +335,7 @@ export default function ReceiptScanner({ onAnalysisComplete, onClose }: ReceiptS
                   role="img"
                   aria-label="Ticket scanné" 
                   className="max-w-sm mx-auto rounded-lg border border-slate-700 opacity-50 h-96 bg-contain bg-no-repeat bg-center"
-                  style={{ backgroundImage: `url(${safeSrc})` }}
+                  style={ { backgroundImage: `url(${safeSrc})` }}
                 />
               </div>
             );
@@ -423,7 +423,7 @@ export default function ReceiptScanner({ onAnalysisComplete, onClose }: ReceiptS
                     <p className="text-xs text-gray-400 mb-2">Évolution des prix observés (7 derniers jours)</p>
                     <div className="flex items-end gap-1 h-16">
                       {[65, 72, 68, 70, 74, 69, 71].map((height, idx) => (
-                        <div key={idx} className="flex-1 bg-blue-500/30 rounded-t" style={{ height: `${height}%` }}></div>
+                        <div key={idx} className="flex-1 bg-blue-500/30 rounded-t" style={ { height: `${height}%` }}></div>
                       ))}
                     </div>
                   </div>
@@ -490,7 +490,7 @@ export default function ReceiptScanner({ onAnalysisComplete, onClose }: ReceiptS
               <div className="w-full bg-slate-700 rounded-full h-2">
                 <div
                   className="bg-blue-500 h-2 rounded-full transition-all"
-                  style={{ width: `${analysisResult.recognitionRate}%` }}
+                  style={ { width: `${analysisResult.recognitionRate}%` }}
                 ></div>
               </div>
             </div>

@@ -64,7 +64,7 @@ export default function DomVsMetropole() {
 
                 <td
                   className="py-2 text-right font-mono"
-                  style={{ color: deltaColor(delta) }}
+                  style={ { color: deltaColor(delta) }}
                 >
                   +{delta.toFixed(0)} %
                 </td>

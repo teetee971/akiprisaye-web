@@ -34,7 +34,7 @@ export default function PressureHeatmapDOM() {
         center={[14, -60]}
         zoom={4}
         scrollWheelZoom={false}
-        style={{ height: '100%', width: '100%' }}
+        style={ { height: '100%', width: '100%' }}
       >
         <TileLayer
           attribution="© OpenStreetMap"

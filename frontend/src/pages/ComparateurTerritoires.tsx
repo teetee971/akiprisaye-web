@@ -150,10 +150,10 @@ export default function ComparateurTerritoires() {
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={timeSeries} margin={{ left: 10, right: 10, top: 10, bottom: 10 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
-                <XAxis dataKey="date" stroke="#94a3b8" style={{ fontSize: '12px' }} />
+                <XAxis dataKey="date" stroke="#94a3b8" style={ { fontSize: '12px' }} />
                 <YAxis
                   stroke="#94a3b8"
-                  style={{ fontSize: '12px' }}
+                  style={ { fontSize: '12px' }}
                   tickFormatter={(value) => Number(value).toFixed(2)}
                 />
                 <Tooltip

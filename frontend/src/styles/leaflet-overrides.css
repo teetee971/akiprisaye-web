@@ -13,3 +13,25 @@
     background-image: url("/leaflet/layers-2x.png") !important;
   }
 }
+
+
+/* Inline-style replacement classes for leaflet popup/template content */
+.ak-marker-shell { position: relative; }
+.ak-marker-status-overlay { position: absolute; top: 0; left: 0; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; }
+.ak-marker-status-dot { width: 8px; height: 8px; border-radius: 50%; animation: pulse 2s infinite; }
+.ak-status-open { background: #10b981; }
+.ak-status-closing_soon { background: #f59e0b; }
+.ak-status-closed { background: #ef4444; }
+.ak-status-unknown { background: #9ca3af; }
+.ak-route-pin { color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,.3); }
+.ak-route-pin-home { background: #3b82f6; font-size: 18px; }
+.ak-route-pin-stop { background: #10b981; font-weight: 700; font-size: 14px; }
+.ak-route-popup-min-150 { min-width: 150px; }
+.ak-route-popup-min-200 { min-width: 200px; }
+.ak-route-popup-title-home { margin: 0 0 8px; color: #3b82f6; font-size: 16px; font-weight: 700; }
+.ak-route-popup-title-stop { margin: 0 0 8px; color: #10b981; font-size: 16px; font-weight: 700; }
+.ak-route-popup-text { margin: 4px 0; font-size: 14px; }
+.ak-map-popup-min-200 { min-width: 200px; }
+.ak-map-popup-title { margin: 0 0 8px; color: #0f62fe; font-size: 16px; }
+.ak-map-popup-text { margin: 4px 0; font-size: 14px; }
+.ak-map-popup-btn { margin-top: 8px; padding: 6px 12px; background: #0f62fe; color: #fff; border: none; border-radius: 4px; cursor: pointer; width: 100%; }

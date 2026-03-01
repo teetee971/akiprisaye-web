@@ -41,7 +41,7 @@ export function LevelProgressBar({ currentXP, level, showDetails = true, classNa
       <div className="relative w-full h-3 bg-gray-200 rounded-full overflow-hidden shadow-inner">
         <div 
           className="h-full rounded-full transition-all duration-500 ease-out relative"
-          style={{ 
+          style={ { 
             width: `${percentage}%`,
             backgroundColor: currentLevelData.color
           }}

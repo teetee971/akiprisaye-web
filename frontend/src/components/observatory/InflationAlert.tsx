@@ -40,15 +40,15 @@ export function InflationAlert({ territory, period = '30d' }: InflationAlertProp
   
   if (loading) {
     return (
-      <div style={{
+      <div style={ {
         background: '#1e293b',
         border: '1px solid #334155',
         borderRadius: '12px',
         padding: '16px',
         animation: 'pulse 2s infinite'
       }}>
-        <div style={{ height: '20px', background: '#334155', borderRadius: '4px', marginBottom: '12px' }} />
-        <div style={{ height: '16px', background: '#334155', borderRadius: '4px', width: '70%' }} />
+        <div style={ { height: '20px', background: '#334155', borderRadius: '4px', marginBottom: '12px' }} />
+        <div style={ { height: '16px', background: '#334155', borderRadius: '4px', width: '70%' }} />
       </div>
     );
   }
@@ -64,7 +64,7 @@ export function InflationAlert({ territory, period = '30d' }: InflationAlertProp
   }[period];
   
   return (
-    <div style={{
+    <div style={ {
       background: '#1e293b',
       border: `2px solid ${severityColor}`,
       borderRadius: '12px',
@@ -72,19 +72,19 @@ export function InflationAlert({ territory, period = '30d' }: InflationAlertProp
       marginBottom: '16px'
     }}>
       {/* Header */}
-      <div style={{
+      <div style={ {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         marginBottom: '12px'
       }}>
-        <div style={{
+        <div style={ {
           display: 'flex',
           alignItems: 'center',
           gap: '8px'
         }}>
-          <span style={{ fontSize: '24px' }}>📊</span>
-          <h3 style={{
+          <span style={ { fontSize: '24px' }}>📊</span>
+          <h3 style={ {
             fontSize: '18px',
             fontWeight: '600',
             color: '#f1f5f9',
@@ -94,7 +94,7 @@ export function InflationAlert({ territory, period = '30d' }: InflationAlertProp
           </h3>
         </div>
         
-        <span style={{
+        <span style={ {
           fontSize: '24px',
           fontWeight: '700',
           color: severityColor
@@ -104,7 +104,7 @@ export function InflationAlert({ territory, period = '30d' }: InflationAlertProp
       </div>
       
       {/* Period */}
-      <p style={{
+      <p style={ {
         fontSize: '13px',
         color: '#94a3b8',
         marginBottom: '16px'
@@ -113,18 +113,18 @@ export function InflationAlert({ territory, period = '30d' }: InflationAlertProp
       </p>
       
       {/* Stats */}
-      <div style={{
+      <div style={ {
         display: 'grid',
         gridTemplateColumns: 'repeat(2, 1fr)',
         gap: '12px',
         marginBottom: '16px'
       }}>
-        <div style={{
+        <div style={ {
           background: '#0f172a',
           padding: '12px',
           borderRadius: '8px'
         }}>
-          <div style={{
+          <div style={ {
             fontSize: '24px',
             fontWeight: '700',
             color: '#3b82f6',
@@ -132,7 +132,7 @@ export function InflationAlert({ territory, period = '30d' }: InflationAlertProp
           }}>
             {analysis.affectedProducts}
           </div>
-          <div style={{
+          <div style={ {
             fontSize: '12px',
             color: '#94a3b8'
           }}>
@@ -140,12 +140,12 @@ export function InflationAlert({ territory, period = '30d' }: InflationAlertProp
           </div>
         </div>
         
-        <div style={{
+        <div style={ {
           background: '#0f172a',
           padding: '12px',
           borderRadius: '8px'
         }}>
-          <div style={{
+          <div style={ {
             fontSize: '24px',
             fontWeight: '700',
             color: '#10b981',
@@ -153,7 +153,7 @@ export function InflationAlert({ territory, period = '30d' }: InflationAlertProp
           }}>
             {analysis.totalProducts}
           </div>
-          <div style={{
+          <div style={ {
             fontSize: '12px',
             color: '#94a3b8'
           }}>
@@ -164,7 +164,7 @@ export function InflationAlert({ territory, period = '30d' }: InflationAlertProp
       
       {/* Categories impacted */}
       <div>
-        <h4 style={{
+        <h4 style={ {
           fontSize: '14px',
           fontWeight: '600',
           color: '#e2e8f0',
@@ -174,7 +174,7 @@ export function InflationAlert({ territory, period = '30d' }: InflationAlertProp
         </h4>
         
         {analysis.categoriesImpacted.map((cat, idx) => (
-          <div key={idx} style={{
+          <div key={idx} style={ {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -183,14 +183,14 @@ export function InflationAlert({ territory, period = '30d' }: InflationAlertProp
             borderRadius: '6px',
             marginBottom: '6px'
           }}>
-            <span style={{
+            <span style={ {
               fontSize: '13px',
               color: '#cbd5e1',
               textTransform: 'capitalize'
             }}>
               {cat.category}
             </span>
-            <span style={{
+            <span style={ {
               fontSize: '14px',
               fontWeight: '600',
               color: cat.rate > 5 ? '#ef4444' : cat.rate > 3 ? '#f59e0b' : '#10b981'
@@ -202,7 +202,7 @@ export function InflationAlert({ territory, period = '30d' }: InflationAlertProp
       </div>
       
       {/* Transparency note */}
-      <div style={{
+      <div style={ {
         marginTop: '16px',
         padding: '12px',
         background: '#0f172a',
@@ -210,7 +210,7 @@ export function InflationAlert({ territory, period = '30d' }: InflationAlertProp
         fontSize: '12px',
         color: '#94a3b8'
       }}>
-        <strong style={{ color: '#e2e8f0' }}>Calcul transparent:</strong> Moyenne des variations de prix sur {analysis.totalProducts} produits suivis.
+        <strong style={ { color: '#e2e8f0' }}>Calcul transparent:</strong> Moyenne des variations de prix sur {analysis.totalProducts} produits suivis.
         Données: API officielles + contributions utilisateurs vérifiées.
       </div>
     </div>

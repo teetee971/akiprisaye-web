@@ -94,7 +94,7 @@ const AntiCrisisReadingPanel: React.FC<AntiCrisisReadingPanelProps> = ({
         </div>
         
         <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium`}
-             style={{
+             style={ {
                backgroundColor: colorClass.includes('green') ? 'rgb(220 252 231)' :
                               colorClass.includes('blue') ? 'rgb(219 234 254)' :
                               colorClass.includes('yellow') ? 'rgb(254 249 195)' :

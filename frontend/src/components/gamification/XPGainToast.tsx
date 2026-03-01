@@ -86,21 +86,11 @@ export function XPGainToast({ event, onDismiss, duration = 4000 }: XPGainToastPr
 
         {/* Progress Bar */}
         <div className="mt-3 h-1 bg-white/20 rounded-full overflow-hidden">
-          <div 
-            className="h-full bg-white/60 rounded-full transition-all"
-            style={{
-              animation: `shrink ${duration}ms linear forwards`
-            }}
-          />
+          <div className={`h-full bg-white/60 rounded-full transition-all ${getShrinkClass(duration)}`} />
         </div>
       </div>
 
-      <style>{`
-        @keyframes shrink {
-          from { width: 100%; }
-          to { width: 0%; }
-        }
-      `}</style>
+      
     </div>
   );
 }

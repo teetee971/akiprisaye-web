@@ -266,7 +266,7 @@ export function PalmaresEnseignes({ territoire = null }) {
                             ? 'bg-yellow-500'
                             : 'bg-orange-500'
                       }`}
-                      style={{ width: `${store.score}%` }}
+                      style={ { width: `${store.score}%` }}
                     />
                   </div>
                 </div>

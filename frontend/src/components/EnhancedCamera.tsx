@@ -376,15 +376,7 @@ export default function EnhancedCamera({
       </div>
 
       {/* Animation de scan */}
-      <style>{`
-        @keyframes scan {
-          0%, 100% { top: 0; }
-          50% { top: calc(100% - 4px); }
-        }
-        .animate-scan {
-          animation: scan 2s ease-in-out infinite;
-        }
-      `}</style>
+      
     </div>
   );
 }

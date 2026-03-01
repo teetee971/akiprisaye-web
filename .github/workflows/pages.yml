@@ -35,7 +35,18 @@ jobs:
         run: npm ci
 
       - name: Build
+        env:
+          GITHUB_PAGES: 'true'
+          BASE_PATH: '/akiprisaye-web/'
         run: npm run build
+
+      - name: Validate GitHub Pages asset base paths
+        run: |
+          if grep -nE 'src="/assets/|href="/assets/|href="/manifest\.webmanifest|href="/logo-akiprisaye\.svg|src="/logo-akiprisaye\.svg|href="/favicon|href="/apple-touch-icon|href="/mask-icon' dist/index.html; then
+            echo '❌ Found bare root paths in dist/index.html (forbidden: /assets, /manifest.webmanifest, /logo-akiprisaye.svg, /favicon*, /apple-touch-icon*, /mask-icon*)'
+            exit 1
+          fi
+          echo '✅ Asset paths are correctly prefixed for GitHub Pages.'
 
       - name: Configure Pages
         uses: actions/configure-pages@v5

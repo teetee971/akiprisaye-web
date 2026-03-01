@@ -127,7 +127,7 @@ export const OCRScanner: React.FC<OCRScannerProps> = ({
                   <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
                     <div
                       className="h-full bg-blue-500 transition-all duration-300"
-                      style={{ width: `${progress}%` }}
+                      style={ { width: `${progress}%` }}
                     />
                   </div>
                   <p className="text-xs text-gray-500 mt-1">{progress}%</p>

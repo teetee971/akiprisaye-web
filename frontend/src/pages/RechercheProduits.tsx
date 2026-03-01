@@ -225,7 +225,7 @@ export function PartialPriceState({
           <div className="h-2 bg-slate-800 rounded-full mt-2">
             <div
               className="h-2 rounded-full bg-amber-400"
-              style={{ width: `${Math.min(confidence, 100)}%` }}
+              style={ { width: `${Math.min(confidence, 100)}%` }}
             />
           </div>
         </div>
@@ -582,7 +582,7 @@ export function PriceResults({
             <div className="h-2 bg-slate-800 rounded-full mt-2">
               <div
                 className="h-2 rounded-full bg-emerald-400"
-                style={{ width: `${Math.min(confidence, 100)}%` }}
+                style={ { width: `${Math.min(confidence, 100)}%` }}
               />
             </div>
           </div>

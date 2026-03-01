@@ -111,14 +111,14 @@ export default function RouteMapVisualization({
 
     // Define custom icons
     const homeIcon = window.L.divIcon({
-      html: '<div style="background: #3b82f6; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">🏠</div>',
+      html: '<div class="ak-route-pin ak-route-pin-home">🏠</div>',
       className: 'custom-div-icon',
       iconSize: [32, 32],
       iconAnchor: [16, 16],
     });
 
     const storeIcon = (index: number) => window.L.divIcon({
-      html: `<div style="background: #10b981; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">${index + 1}</div>`,
+      html: `<div class="ak-route-pin ak-route-pin-stop">${index + 1}</div>`,
       className: 'custom-div-icon',
       iconSize: [32, 32],
       iconAnchor: [16, 16],
@@ -127,11 +127,11 @@ export default function RouteMapVisualization({
     // Add user position marker
     const homeMarker = window.L.marker([userPosition.lat, userPosition.lon], { icon: homeIcon });
     homeMarker.bindPopup(`
-      <div style="min-width: 150px;">
-        <h3 style="margin: 0 0 8px 0; color: #3b82f6; font-size: 16px; font-weight: bold;">
+      <div class="ak-route-popup-min-150">
+        <h3 class="ak-route-popup-title-home">
           🏠 Votre position
         </h3>
-        <p style="margin: 4px 0; font-size: 14px;">Point de départ et retour</p>
+        <p class="ak-route-popup-text">Point de départ et retour</p>
       </div>
     `);
     homeMarker.addTo(map);
@@ -147,12 +147,12 @@ export default function RouteMapVisualization({
       const storeType = store.type_magasin || 'Magasin';
       
       storeMarker.bindPopup(`
-        <div style="min-width: 200px;">
-          <h3 style="margin: 0 0 8px 0; color: #10b981; font-size: 16px; font-weight: bold;">
+        <div class="ak-route-popup-min-200">
+          <h3 class="ak-route-popup-title-stop">
             ${index + 1}. ${storeName}
           </h3>
-          <p style="margin: 4px 0; font-size: 14px;">📍 ${storeType}</p>
-          <p style="margin: 4px 0; font-size: 14px;">📏 ${store.distance.toFixed(1)} km du départ</p>
+          <p class="ak-route-popup-text">📍 ${storeType}</p>
+          <p class="ak-route-popup-text">📏 ${store.distance.toFixed(1)} km du départ</p>
         </div>
       `);
       
@@ -226,7 +226,7 @@ export default function RouteMapVisualization({
       <div
         ref={mapRef}
         className="w-full rounded-lg overflow-hidden shadow-lg border border-slate-700"
-        style={{ height: '400px', minHeight: '300px' }}
+        style={ { height: '400px', minHeight: '300px' }}
       />
       
       {/* Legend */}
@@ -240,7 +240,7 @@ export default function RouteMapVisualization({
           <span>Magasins (ordre de visite)</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-8 h-1 bg-emerald-500" style={{ backgroundImage: 'repeating-linear-gradient(90deg, #10b981, #10b981 10px, transparent 10px, transparent 20px)' }}></div>
+          <div className="w-8 h-1 bg-emerald-500" style={ { backgroundImage: 'repeating-linear-gradient(90deg, #10b981, #10b981 10px, transparent 10px, transparent 20px)' }}></div>
           <span>Itinéraire optimisé</span>
         </div>
       </div>

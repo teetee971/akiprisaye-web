@@ -13,14 +13,18 @@
     "preview": "vite preview",
     "lint": "eslint src --ext .ts,.tsx,.js,.jsx --cache --cache-location .eslintcache",
     "lint:fix": "eslint src --ext .ts,.tsx,.js,.jsx --fix",
-    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "typecheck": "tsc -p tsconfig.ci.json --noEmit",
     "typecheck:ci": "tsc -p tsconfig.ci.json",
     "test:ci": "vitest run --config vitest.config.ts",
     "audit": "npm audit --omit=dev --audit-level=high",
     "audit:ci": "npm audit --omit=dev --audit-level=high",
-    "postbuild": "node -e \"const fs=require('fs');fs.mkdirSync('dist',{recursive:true});fs.copyFileSync('public/_redirects','dist/_redirects');\"",
+    "postbuild": "node scripts/postbuild.mjs",
     "lint:ci": "cd .. && npm run lint:ci",
-    "build:ci": "npm run build"
+    "build:ci": "npm run build",
+    "csp:lint": "node scripts/check-no-inline-styles.mjs",
+    "csp:headers:lint": "node scripts/check-csp-headers.mjs",
+    "domains:lint": "node scripts/check-external-domains.mjs",
+    "e2e:ci": "playwright test --config playwright.config.ts"
   },
   "dependencies": {
     "@capacitor/core": "^8.1.0",
@@ -84,7 +88,9 @@
     "typescript": "^5.4.5",
     "vite": "^7.3.1",
     "vite-plugin-static-copy": "^3.2.0",
-    "vitest": "^4.0.18"
+    "vitest": "^4.0.18",
+    "@playwright/test": "^1.55.0",
+    "@axe-core/playwright": "^4.10.2"
   },
   "overrides": {
     "minimatch": "^10.2.1"

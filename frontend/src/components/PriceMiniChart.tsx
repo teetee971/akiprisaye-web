@@ -12,7 +12,7 @@ export function PriceMiniChart({ data }: { data: Point[] }) {
   if (!data?.length) return null;
 
   return (
-    <div style={{ width: '100%', height: 180 }}>
+    <div style={ { width: '100%', height: 180 }}>
       <ResponsiveContainer>
         <LineChart data={data}>
           <XAxis dataKey="date" hide />

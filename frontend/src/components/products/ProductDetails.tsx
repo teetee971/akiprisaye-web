@@ -96,7 +96,7 @@ export default function ProductDetails({ product, onClose, onReportError }: Prod
         </div>
 
         {/* Product Image or Placeholder */}
-        <div className="relative bg-gray-100 dark:bg-gray-900 rounded-xl overflow-hidden" style={{ aspectRatio: '16/9' }}>
+        <div className="relative bg-gray-100 dark:bg-gray-900 rounded-xl overflow-hidden" style={ { aspectRatio: '16/9' }}>
           {displayImageUrl ? (
             <img
               src={displayImageUrl}

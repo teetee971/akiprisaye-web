@@ -285,3 +285,41 @@ th {
   outline: 3px solid #2563eb;
   outline-offset: 2px;
 }
+
+
+@keyframes scan {
+  0%, 100% { top: 0; }
+  50% { top: calc(100% - 4px); }
+}
+
+.animate-scan {
+  animation: scan 2s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes shrink {
+  from { width: 100%; }
+  to { width: 0%; }
+}
+
+.animate-shrink-2s { animation: shrink 2000ms linear forwards; }
+.animate-shrink-3s { animation: shrink 3000ms linear forwards; }
+.animate-shrink-4s { animation: shrink 4000ms linear forwards; }
+.animate-shrink-5s { animation: shrink 5000ms linear forwards; }

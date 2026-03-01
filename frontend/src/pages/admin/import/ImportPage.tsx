@@ -411,7 +411,7 @@ export function ImportPage() {
                 <div className="h-2 bg-white/10 rounded-full overflow-hidden">
                   <div
                     className="h-full bg-blue-500 transition-all duration-300 rounded-full"
-                    style={{ width: `${importProgress}%` }}
+                    style={ { width: `${importProgress}%` }}
                   />
                 </div>
               </div>

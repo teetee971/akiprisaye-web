@@ -240,11 +240,11 @@ export default function ProductPhotoAnalysis() {
             <div className="flex justify-center gap-2 text-xs text-gray-500">
               <span className="animate-pulse">OCR en cours</span>
               <span>•</span>
-              <span className="animate-pulse" style={{ animationDelay: '0.2s' }}>
+              <span className="animate-pulse" style={ { animationDelay: '0.2s' }}>
                 Détection ingrédients
               </span>
               <span>•</span>
-              <span className="animate-pulse" style={{ animationDelay: '0.4s' }}>
+              <span className="animate-pulse" style={ { animationDelay: '0.4s' }}>
                 Analyse nutrition
               </span>
             </div>

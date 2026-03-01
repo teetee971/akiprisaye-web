@@ -85,7 +85,7 @@ export default function SignalementCitoyenModal({
     >
       <div
         className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl shadow-2xl"
-        style={{
+        style={ {
           background: 'linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05))',
           backdropFilter: 'blur(10px)',
           border: '1px solid rgba(255,255,255,0.22)',

@@ -66,7 +66,7 @@ export function ProductList({ filters, onProductClick }: ProductListProps) {
   // Loading state
   if (loading) {
     return (
-      <div style={{
+      <div style={ {
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
         gap: '16px',
@@ -82,16 +82,16 @@ export function ProductList({ filters, onProductClick }: ProductListProps) {
   // Error state
   if (error) {
     return (
-      <div style={{
+      <div style={ {
         padding: '40px 20px',
         textAlign: 'center',
         color: '#94a3b8'
       }}>
-        <div style={{ fontSize: '48px', marginBottom: '16px' }}>⚠️</div>
+        <div style={ { fontSize: '48px', marginBottom: '16px' }}>⚠️</div>
         <p>{error}</p>
         <button
           onClick={loadProducts}
-          style={{
+          style={ {
             marginTop: '16px',
             padding: '8px 16px',
             background: '#3b82f6',
@@ -110,14 +110,14 @@ export function ProductList({ filters, onProductClick }: ProductListProps) {
   // Empty state
   if (products.length === 0) {
     return (
-      <div style={{
+      <div style={ {
         padding: '40px 20px',
         textAlign: 'center',
         color: '#94a3b8'
       }}>
-        <div style={{ fontSize: '48px', marginBottom: '16px' }}>📦</div>
+        <div style={ { fontSize: '48px', marginBottom: '16px' }}>📦</div>
         <p>Aucun produit trouvé</p>
-        <p style={{ fontSize: '14px', marginTop: '8px' }}>
+        <p style={ { fontSize: '14px', marginTop: '8px' }}>
           Essayez de modifier vos filtres ou scannez un ticket
         </p>
       </div>
@@ -128,7 +128,7 @@ export function ProductList({ filters, onProductClick }: ProductListProps) {
   return (
     <div>
       {/* Data transparency disclaimer */}
-      <div style={{
+      <div style={ {
         background: '#0f172a',
         border: '1px solid #1e293b',
         borderRadius: '8px',
@@ -137,9 +137,9 @@ export function ProductList({ filters, onProductClick }: ProductListProps) {
         fontSize: '13px',
         color: '#94a3b8'
       }}>
-        <strong style={{ color: '#e2e8f0' }}>ℹ️ Transparence des données</strong>
+        <strong style={ { color: '#e2e8f0' }}>ℹ️ Transparence des données</strong>
         <br />
-        <span style={{ fontSize: '12px' }}>
+        <span style={ { fontSize: '12px' }}>
           Prix indicatifs mis à jour régulièrement. 
           Sources: API officielles, utilisateurs vérifiés, données historiques.
           Vos validations améliorent la fiabilité pour tous.
@@ -147,7 +147,7 @@ export function ProductList({ filters, onProductClick }: ProductListProps) {
       </div>
       
       {/* Products grid */}
-      <div style={{
+      <div style={ {
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
         gap: '16px',
@@ -164,7 +164,7 @@ export function ProductList({ filters, onProductClick }: ProductListProps) {
       </div>
       
       {/* Load more indicator */}
-      <div style={{
+      <div style={ {
         textAlign: 'center',
         padding: '20px',
         color: '#64748b',

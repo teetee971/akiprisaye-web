@@ -254,7 +254,7 @@ export default function Bateaux() {
                             <div className="relative h-8 bg-slate-800 rounded overflow-hidden">
                               <div
                                 className="absolute h-full bg-blue-500/30 rounded"
-                                style={{
+                                style={ {
                                   width: `${(data.prixMoyen / Math.max(...chartData.map(d => d.prixMax))) * 100}%`,
                                 }}
                               />

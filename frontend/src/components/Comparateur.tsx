@@ -79,7 +79,7 @@ export default function Comparateur() {
   };
 
   return (
-    <div style={{ padding: "1rem", maxWidth: 600, margin: "0 auto" }}>
+    <div style={ { padding: "1rem", maxWidth: 600, margin: "0 auto" }}>
       <h2>Comparer les prix</h2>
 
       <input
@@ -87,21 +87,21 @@ export default function Comparateur() {
         placeholder="Entrer ou scanner un EAN"
         value={ean}
         onChange={(e) => setEan(e.target.value)}
-        style={{ width: "100%", padding: "0.75rem", marginBottom: "0.5rem" }}
+        style={ { width: "100%", padding: "0.75rem", marginBottom: "0.5rem" }}
       />
 
       <button
         onClick={searchProduct}
-        style={{ width: "100%", padding: "0.75rem", marginBottom: "1rem" }}
+        style={ { width: "100%", padding: "0.75rem", marginBottom: "1rem" }}
       >
         Rechercher
       </button>
 
       {loading && <p>Chargement…</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p style={ { color: "red" }}>{error}</p>}
 
       {products.map((product) => (
-        <div key={product.id} style={{ marginBottom: "1rem" }}>
+        <div key={product.id} style={ { marginBottom: "1rem" }}>
           <strong>{product.name}</strong>
         </div>
       ))}
@@ -121,7 +121,7 @@ export default function Comparateur() {
         return (
         <div
           key={price.id}
-          style={{
+          style={ {
             border: "1px solid #ddd",
             borderRadius: 6,
             padding: "0.75rem",

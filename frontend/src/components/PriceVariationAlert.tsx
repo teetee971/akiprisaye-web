@@ -67,7 +67,7 @@ export default function PriceVariationAlert({ prices, className = '' }: PriceVar
   return (
     <div
       className={`p-4 rounded-lg border ${className}`}
-      style={{
+      style={ {
         backgroundColor: `${color}15`,
         borderColor: `${color}40`,
       }}
@@ -80,7 +80,7 @@ export default function PriceVariationAlert({ prices, className = '' }: PriceVar
         </div>
 
         <div className="flex-1">
-          <div className="font-semibold mb-2" style={{ color }}>
+          <div className="font-semibold mb-2" style={ { color }}>
             {message}
           </div>
 
