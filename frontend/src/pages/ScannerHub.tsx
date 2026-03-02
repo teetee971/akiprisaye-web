@@ -101,7 +101,9 @@ export default function ScannerHub() {
           </div>
 
           <div className="relative overflow-hidden rounded-xl border border-slate-700 bg-black">
-            <video ref={videoRef} playsInline muted autoPlay className="aspect-video w-full object-cover" aria-label="Caméra de scan" />
+            <video ref={videoRef} playsInline muted autoPlay className="aspect-video w-full object-cover" aria-label="Caméra de scan">
+              <track kind="captions" src="" srcLang="fr" label="Captions" default />
+            </video>
             <div className="pointer-events-none absolute inset-0 flex items-center justify-center"><div className="h-[45%] w-[70%] rounded-xl border-2 border-white/60" /></div>
             <div className="absolute left-3 top-3 rounded-full bg-black/50 px-3 py-1 text-xs text-white">Caméra: {scanActive ? 'ACTIVE' : 'PAUSE'}</div>
           </div>
