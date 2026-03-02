@@ -86,12 +86,24 @@ const globalLoadTimeout = window.setTimeout(() => {
 }, 15000);
 
 /**
+ * Determine whether the current hostname corresponds to a GitHub Pages site.
+ * We consider hostnames of the form "<user>.github.io" (at least three labels).
+ */
+function isGitHubPagesHost(hostname: string): boolean {
+  const parts = hostname.split('.');
+  if (parts.length < 3) return false;
+  const last = parts[parts.length - 1];
+  const secondLast = parts[parts.length - 2];
+  return last === 'io' && secondLast === 'github';
+}
+
+/**
  * GitHub Pages self-heal: if the app is served from a github.io subdirectory
  * and a stale service worker might be intercepting requests with wrong paths,
  * purge all SW registrations + caches and reload once.
  */
 async function githubPagesSelfHeal(): Promise<boolean> {
-  if (!window.location.hostname.endsWith('github.io')) return false;
+  if (!isGitHubPagesHost(window.location.hostname)) return false;
   const HEAL_KEY = 'gh_pages_healed_v2';
   if (sessionStorage.getItem(HEAL_KEY)) return false;
 
