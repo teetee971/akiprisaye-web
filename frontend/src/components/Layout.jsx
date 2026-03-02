@@ -5,6 +5,7 @@ import Footer from './layout/Footer';
 import FabActions from './ui/FabActions';
 import UpgradePromptModal from './billing/UpgradePromptModal';
 import SkipLinks from './a11y/SkipLinks';
+import PrivacyConsentBanner from './PrivacyConsentBanner';
 import { hydrateShoppingList } from '../store/useShoppingListStore';
 
 export default function Layout() {
@@ -21,6 +22,7 @@ export default function Layout() {
       </main>
       <FabActions />
       <UpgradePromptModal />
+      <PrivacyConsentBanner />
       <Footer />
     </div>
   );
