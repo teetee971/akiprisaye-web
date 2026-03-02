@@ -24,7 +24,7 @@ interface Store {
   lon: number;
   address?: string;
   city?: string;
-  territory: string;
+  territory?: string;
   priceIndex?: number;
   priceCategory?: 'cheap' | 'medium' | 'expensive';
 }

@@ -151,7 +151,7 @@ const aggregateObservations = (
     const key = [
       obs.productLabel,
       obs.territory,
-      obs.storeLabel,
+      obs.storeLabel ?? '',
     ]
       .map(normalizeText)
       .join('|');

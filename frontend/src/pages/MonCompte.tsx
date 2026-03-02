@@ -14,17 +14,17 @@ export default function MonCompte() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+    const unsubscribe = auth ? onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       setLoading(false);
-    });
+    }) : (() => { setLoading(false); });
 
     return () => unsubscribe();
   }, []);
 
   const handleSignOut = async () => {
     try {
-      await signOut(auth);
+      await signOut(auth!);
       navigate("/");
     } catch (err) {
       alert("Erreur lors de la déconnexion : " + err);

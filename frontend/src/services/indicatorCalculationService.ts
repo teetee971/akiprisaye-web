@@ -45,7 +45,7 @@ export function calculateAveragePrices(
     // Apply quality filter
     if (config.qualite_minimale !== undefined) {
       filtered = filtered.filter(
-        (obs) => obs.confidenceScore !== undefined && obs.confidenceScore >= config.qualite_minimale,
+        (obs) => obs.confidenceScore !== undefined && obs.confidenceScore >= (config.qualite_minimale ?? 0),
       );
     }
     

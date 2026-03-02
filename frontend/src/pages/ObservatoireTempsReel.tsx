@@ -351,7 +351,7 @@ export default function ObservatoireTempsReel() {
                       borderRadius: '8px',
                       color: '#f1f5f9',
                     }}
-                    formatter={(value: number) => [`${value.toFixed(2)}€`, '']}
+                    formatter={(value: number | undefined) => [`${(value ?? 0).toFixed(2)}€`, '']}
                   />
                   <Legend />
                   <Line

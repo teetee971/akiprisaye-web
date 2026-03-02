@@ -64,10 +64,11 @@ export function getStoreWithCompany(storeId: string): StoreWithCompany | null {
   if (!store) return null;
 
   const companyData = store.companyId ? getCompanyById(store.companyId) : null;
-  return {
+  const result = {
     ...store,
-    company: companyData ?? store.company,
+    company: (companyData ?? store.company) as Company | string,
     companyData,
     isCompanyActive: companyData ? companyData.activityStatus === 'ACTIVE' : undefined,
   };
+  return result as StoreWithCompany;
 }

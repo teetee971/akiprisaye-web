@@ -17,7 +17,8 @@
 import React, { useState, useCallback } from 'react';
 import { Send, Check, AlertCircle, Lock } from 'lucide-react';
 import type { ContributionField, Territory } from '../../types/comparatorCommon';
-import { validateContribution, type ValidationResult } from '../../utils/dataValidator';
+import { validateContribution } from '../../utils/dataValidator';
+import type { ValidationResult } from '../../types/comparatorCommon';
 import { getAllTerritories } from '../../utils/territoryMapper';
 
 export interface ContributionFormProps {

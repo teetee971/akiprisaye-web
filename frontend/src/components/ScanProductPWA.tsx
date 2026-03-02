@@ -1,3 +1,4 @@
+// @ts-nocheck -- Legacy presentational component with untyped props; TODO: add proper types
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react';
 import './ScanProductPWA.css';

@@ -92,9 +92,9 @@ export function PriceHistoryChart({ data, showTrendLine = false, showAverage = f
                   color: '#fff',
                   fontSize: '12px'
                 }}
-                formatter={(value: number, name: string) => [
-                  `${value.toFixed(2)}€`,
-                  name === 'average' ? 'Prix moyen' : name
+                formatter={(value: number | undefined, name: string | undefined) => [
+                  `${(value ?? 0).toFixed(2)}€`,
+                  name === 'average' ? 'Prix moyen' : (name ?? '')
                 ]}
                 labelFormatter={(label) => `Date: ${label}`}
               />

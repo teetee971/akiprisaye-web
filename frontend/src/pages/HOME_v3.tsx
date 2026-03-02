@@ -31,12 +31,13 @@ export default function HomeV3() {
 
   useEffect(() => {
     // Load real stats from safeLocalStorage or API
-    const stats = safeLocalStorage.getJSON<typeof stats>('platform_stats', {
+    const loadedStats = safeLocalStorage.getJSON<typeof stats>('platform_stats', {
       users: 1247,
+      products: 0,
       scans: 0,
       territories: 12
     });
-    setStats(stats);
+    setStats(loadedStats);
   }, []);
 
   return (
