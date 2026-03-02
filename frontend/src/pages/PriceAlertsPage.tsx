@@ -7,6 +7,7 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { AlertForm } from '../components/AlertForm';
+import { UpgradeGate } from '../components/billing/UpgradeGate';
 import { Bell, CheckCircle, Info } from 'lucide-react';
 
 export default function PriceAlertsPage() {
@@ -73,7 +74,9 @@ export default function PriceAlertsPage() {
             </div>
           )}
 
-          <AlertForm onSave={handleSave} onCancel={handleCancel} />
+          <UpgradeGate feature="PRICE_ALERTS">
+            <AlertForm onSave={handleSave} onCancel={handleCancel} />
+          </UpgradeGate>
 
           {/* Section "Aucune alerte active" (TODO: afficher seulement si liste vide) */}
           <div className="mt-8 bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-6 text-center">

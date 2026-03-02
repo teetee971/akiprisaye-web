@@ -16,6 +16,7 @@ import OnboardingAutoStart from './components/OnboardingAutoStart';
 import HelpButton from './components/HelpButton';
 import AnalyticsTracker from './components/analytics/AnalyticsTracker';
 import { ToastProvider } from './components/Toast/ToastProvider';
+import UpgradePromptModal from './components/billing/UpgradePromptModal';
 import { StoreSelectionProvider } from './context/StoreSelectionContext';
 import { EntitlementProvider } from './billing/EntitlementProvider';
 import RequireAuth from './components/auth/RequireAuth';
@@ -343,6 +344,7 @@ export default function App() {
                       <OnboardingTour />
                       <HelpButton />
                       <ToastProvider />
+                      <UpgradePromptModal />
                     </Suspense>
                   </BrowserRouter>
                 </EntitlementProvider>

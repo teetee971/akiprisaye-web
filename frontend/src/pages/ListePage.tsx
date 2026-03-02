@@ -5,6 +5,7 @@ import { assertQuotaOrThrow, QuotaExceededError } from '../billing/quotaService'
 import { decideForItem } from '../domain/decision/decisionEngine';
 import { addShoppingListItem, getShoppingListItems, getUserAccessState, isPremiumAccessActive, removeShoppingListItem, setUserPlan, startPremiumTrial } from '../store/useShoppingListStore';
 import { simulateMonthlySavings } from '../domain/shoppingList/premium';
+import { UpgradeBanner } from '../components/billing/UpgradeBanner';
 
 export default function ListePage() {
   const { can, quota, explain } = useEntitlements();
@@ -124,9 +125,7 @@ export default function ListePage() {
       </div>
 
       {isAtMax && (
-        <div className="rounded-lg border border-amber-500/40 bg-amber-900/20 p-3 text-sm text-amber-200">
-          Limite FREE atteinte ({quota('maxItems')} articles). <Link to="/upgrade" className="underline font-semibold">Passer Pro</Link>
-        </div>
+        <UpgradeBanner usedItems={items.length} className="mb-2" />
       )}
 
       <div className="rounded-lg border border-slate-700 p-3">
