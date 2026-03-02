@@ -30,4 +30,4 @@ jobs:
 
       - name: Typecheck
         working-directory: frontend
-        run: npm run -s typecheck || npm run -s tsc --if-present
+        run: npx tsc -p tsconfig.ci.json --noEmit

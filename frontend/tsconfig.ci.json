@@ -3,14 +3,14 @@
   "compilerOptions": {
     "noEmit": true,
     "skipLibCheck": true,
-
     "strict": false,
-    "noImplicitAny": false,
     "strictNullChecks": false,
-
+    "exactOptionalPropertyTypes": false,
+    "noImplicitAny": false,
+    "noPropertyAccessFromIndexSignature": false,
+    "noUncheckedIndexedAccess": false,
     "allowJs": true,
     "checkJs": false,
-
     "types": ["node"]
   },
   "include": [

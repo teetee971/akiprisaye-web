@@ -17,7 +17,7 @@ function getPlanFromAuthUser(): PlanId | null {
 }
 
 function resolvePlan(): PlanId {
-  const override = import.meta.env.VITE_PLAN_OVERRIDE as PlanId | undefined;
+  const override = import.meta.env['VITE_PLAN_OVERRIDE'] as PlanId | undefined;
   if (override && PLAN_DEFINITIONS[override]) return override;
   return getPlanFromAuthUser() ?? 'FREE';
 }

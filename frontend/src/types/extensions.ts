@@ -14,6 +14,7 @@
  * Territory code following ISO 3166-2:FR
  */
 export type TerritoryCode = 
+  | 'FR' // France métropolitaine
   | 'GP' // Guadeloupe
   | 'MQ' // Martinique
   | 'GF' // Guyane

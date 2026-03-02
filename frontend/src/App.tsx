@@ -7,7 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
 import ErrorBoundary from './components/ErrorBoundary';
 import { ThemeProvider } from './context/ThemeContext';
-import { AuthProvider } from './context/AuthContext';
+import AuthProvider from './context/AuthContext';
 import { OnboardingProvider } from './context/OnboardingContext';
 import { LanguageProvider } from './context/LanguageProvider';
 import { PerformanceMonitor } from './components/PerformanceMonitor';
