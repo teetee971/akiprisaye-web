@@ -36,7 +36,7 @@ export default function Header() {
     <header className="sticky top-0 z-40 border-b border-slate-800 bg-slate-950/95 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
         <Link to="/" className="flex items-center" aria-label="Accueil">
-          <img src="/logo-akiprisaye.svg" alt="A KI PRI SA YÉ" className="h-8 w-auto" />
+          <img src={`${import.meta.env.BASE_URL}logo-akiprisaye.svg`} alt="A KI PRI SA YÉ" className="h-8 w-auto" />
         </Link>
         <Link to="/liste" className="mr-3 rounded-lg border border-slate-700 px-3 py-1 text-sm text-slate-100">
           Liste <span className="ml-1 rounded-full bg-blue-600 px-2 py-0.5 text-xs">{count}</span>

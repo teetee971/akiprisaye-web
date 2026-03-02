@@ -1,12 +1,9 @@
 const CACHE_NAME = 'akiprisaye-smart-cache-v5';
 
-const ASSETS_TO_CACHE = [
-  '/manifest.webmanifest',
-];
-
 self.addEventListener('install', (event) => {
+  const base = new URL('./', self.registration.scope).href;
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS_TO_CACHE)),
+    caches.open(CACHE_NAME).then((cache) => cache.addAll([`${base}manifest.webmanifest`])),
   );
   self.skipWaiting();
 });
@@ -28,7 +25,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  if (url.origin === self.location.origin && url.pathname.startsWith('/api/')) {
+  if (url.origin === self.location.origin && url.pathname.startsWith(new URL('api/', self.registration.scope).pathname)) {
     event.respondWith(fetch(request, { cache: 'no-store' }));
     return;
   }

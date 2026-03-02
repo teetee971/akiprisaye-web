@@ -4,6 +4,9 @@ import { fileURLToPath, URL } from 'node:url'
 
 const srcPath = fileURLToPath(new URL('./src', import.meta.url))
 
+// GitHub Pages serves from /akiprisaye-web/ subpath; all other hosts use "/"
+const base = process.env.GITHUB_PAGES === 'true' ? '/akiprisaye-web/' : '/'
+
 export default defineConfig({
   plugins: [react()],
   resolve: {
@@ -13,6 +16,5 @@ export default defineConfig({
       { find: /^@$/, replacement: srcPath },
     ],
   },
-  // Cloudflare Pages sert le site à la racine "/"
-  base: '/',
+  base,
 })

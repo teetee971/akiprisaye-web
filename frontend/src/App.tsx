@@ -168,7 +168,7 @@ function LoadingFallback() {
   if (showTimeout) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-slate-900 text-white p-4">
-        <img src="/logo-akiprisaye.svg" alt="Logo" className="h-16 mb-4" />
+        <img src={`${import.meta.env.BASE_URL}logo-akiprisaye.svg`} alt="Logo" className="h-16 mb-4" />
         <h1 className="text-xl font-bold mb-2">Chargement bloqué</h1>
         <p className="text-slate-400 mb-4">L'application met trop de temps à charger.</p>
         <button onClick={() => window.location.reload()} className="px-6 py-3 bg-blue-600 rounded-lg hover:bg-blue-700">
@@ -205,7 +205,7 @@ export default function App() {
   if (providerError) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-slate-900 text-white p-4">
-        <img src="/logo-akiprisaye.svg" alt="Logo" className="h-16 mb-4" />
+        <img src={`${import.meta.env.BASE_URL}logo-akiprisaye.svg`} alt="Logo" className="h-16 mb-4" />
         <h1 className="text-xl font-bold mb-2">Erreur d'initialisation</h1>
         <p className="text-red-400 mb-4">{providerError.message}</p>
         <button onClick={() => window.location.reload()} className="px-6 py-3 bg-blue-600 rounded-lg hover:bg-blue-700">
@@ -223,7 +223,7 @@ export default function App() {
             <OnboardingProvider>
               <StoreSelectionProvider>
                 <EntitlementProvider>
-                  <BrowserRouter>
+                  <BrowserRouter basename={import.meta.env.BASE_URL}>
                     <Suspense fallback={<LoadingFallback />}>
                       <Routes>
                         {/* Admin routes with dedicated layout */}
