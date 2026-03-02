@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react'
 import { fileURLToPath, URL } from 'node:url'
 
 const srcPath = fileURLToPath(new URL('./src', import.meta.url))
+const isGhPages = process.env.GITHUB_PAGES === 'true'
 
 export default defineConfig({
   plugins: [react()],
@@ -13,6 +14,5 @@ export default defineConfig({
       { find: /^@$/, replacement: srcPath },
     ],
   },
-  // Cloudflare Pages sert le site à la racine "/"
-  base: '/',
+  base: isGhPages ? '/akiprisaye-web/' : '/',
 })

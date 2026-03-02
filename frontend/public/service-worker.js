@@ -1,7 +1,11 @@
-const CACHE_NAME = 'akiprisaye-smart-cache-v5';
+const SW_VERSION = new URL(self.location.href).searchParams.get('v') || 'v1';
+const CACHE_PREFIX = 'akiprisaye-smart-cache-';
+const CACHE_NAME = `${CACHE_PREFIX}${SW_VERSION}`;
 
 const ASSETS_TO_CACHE = [
-  '/manifest.webmanifest',
+  'manifest.webmanifest',
+  'icon-192.png',
+  'icon-512.png',
 ];
 
 self.addEventListener('install', (event) => {
@@ -14,7 +18,11 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
-      Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))),
+      Promise.all(
+        keys
+          .filter((key) => key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME)
+          .map((key) => caches.delete(key)),
+      ),
     ),
   );
   self.clients.claim();

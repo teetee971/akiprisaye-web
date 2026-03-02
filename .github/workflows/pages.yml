@@ -35,7 +35,15 @@ jobs:
         run: npm ci
 
       - name: Build
+        env:
+          GITHUB_PAGES: "true"
         run: npm run build
+
+      - name: Guardrails (dist + base path)
+        run: |
+          test -f dist/index.html
+          grep -q "/akiprisaye-web/" dist/index.html
+          ! grep -Eq 'src="/assets/|href="/assets/|"/manifest\.webmanifest|"/icon-[0-9]+\.png|"/scanner\.html|"/comparateur\.html|"/historique\.html' dist/index.html manifest.webmanifest
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
