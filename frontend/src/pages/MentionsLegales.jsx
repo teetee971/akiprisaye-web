@@ -1,6 +1,14 @@
+import { Helmet } from 'react-helmet-async';
+
 export default function MentionsLegales() {
   return (
     <div className="min-h-screen bg-[#121212] text-white">
+      <Helmet>
+        <title>Mentions Légales & RGPD – A KI PRI SA YÉ</title>
+        <meta name="description" content="Mentions légales et conformité RGPD de l'application A KI PRI SA YÉ : identité, données personnelles, droits des utilisateurs, cookies et conformité OCR/IA." />
+        <meta property="og:title" content="Mentions Légales – A KI PRI SA YÉ" />
+        <meta property="og:description" content="Mentions légales, politique de confidentialité et conformité RGPD de l'application citoyenne A KI PRI SA YÉ." />
+      </Helmet>
       {/* Header */}
       <div className="bg-gradient-to-r from-[#0f62fe] to-[#0353e9] p-6 shadow-lg">
         <div className="max-w-4xl mx-auto">

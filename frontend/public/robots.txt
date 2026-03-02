@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /mon-compte
+Disallow: /parametres
+
+Sitemap: https://akiprisaye-web.pages.dev/sitemap.xml

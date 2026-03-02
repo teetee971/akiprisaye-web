@@ -99,6 +99,7 @@ const SignalerAbus = lazyPage(() => import('./pages/SignalerAbus'));
 
 // Admin Sync Dashboard
 const SyncDashboard = lazyPage(() => import('./pages/admin/sync/SyncDashboard'));
+const SignalementModeration = lazyPage(() => import('./pages/admin/moderation/SignalementModeration'));
 
 // i18n Test page (for development/testing)
 const I18nTest = lazyPage(() => import('./pages/I18nTest'));
@@ -235,6 +236,7 @@ export default function App() {
                           <Route path="products/:id/edit" element={<ProductForm />} />
                           <Route path="import" element={<ImportPage />} />
                           <Route path="sync" element={<SyncDashboard />} />
+                          <Route path="moderation" element={<SignalementModeration />} />
                         </Route>
 
                         {/* Main site routes with Layout */}
