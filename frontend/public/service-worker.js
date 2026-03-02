@@ -30,9 +30,26 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Locale files must always be fetched fresh (never serve stale translations)
+  // Locale files: network-first with cache fallback for offline support
   if (url.origin === self.location.origin && url.pathname.startsWith(new URL('locales/', self.registration.scope).pathname)) {
-    event.respondWith(fetch(request, { cache: 'no-store' }));
+    event.respondWith(
+      (async () => {
+        try {
+          const networkResponse = await fetch(request, { cache: 'no-store' });
+          if (networkResponse && networkResponse.ok) {
+            const cache = await caches.open(CACHE_NAME);
+            cache.put(request, networkResponse.clone());
+          }
+          return networkResponse;
+        } catch (_e) {
+          const cachedResponse = await caches.match(request);
+          if (cachedResponse) {
+            return cachedResponse;
+          }
+          return new Response('', { status: 503, statusText: 'Service Unavailable' });
+        }
+      })(),
+    );
     return;
   }
 

@@ -55,11 +55,20 @@ jobs:
 
       - name: Verify locale files in dist
         run: |
-          for f in public/locales/fr/*.json; do
-            ns=$(basename "$f" .json)
-            test -f dist/locales/fr/${ns}.json || (echo "ERROR: dist/locales/fr/${ns}.json not found" && exit 1)
+          for langdir in public/locales/*; do
+            if [ -d "$langdir" ]; then
+              lang=$(basename "$langdir")
+              for f in "$langdir"/*.json; do
+                [ -f "$f" ] || continue
+                ns=$(basename "$f" .json)
+                if [ ! -f "dist/locales/${lang}/${ns}.json" ]; then
+                  echo "ERROR: dist/locales/${lang}/${ns}.json not found"
+                  exit 1
+                fi
+              done
+            fi
           done
-          echo "OK: dist/locales/fr/*.json locale files are present"
+          echo "OK: dist locale *.json files are present for all languages in public/locales"
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
