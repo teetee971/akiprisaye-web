@@ -120,7 +120,7 @@ export default function StoreForm() {
       setValue('address', store.address);
       setValue('postalCode', store.postalCode);
       setValue('city', store.city);
-      setValue('territory', store.territory);
+      setValue('territory', store.territory as 'GP' | 'MQ' | 'RE' | 'GF' | 'YT' | 'BL' | 'MF' | 'NC' | 'PF' | 'WF' | 'PM');
       setValue('latitude', store.latitude);
       setValue('longitude', store.longitude);
       setValue('phone', store.phone || '');

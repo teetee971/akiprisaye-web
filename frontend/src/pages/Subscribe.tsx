@@ -16,7 +16,7 @@ import TerritorySelector from '@/components/TerritorySelector';
 
 type Step = 1 | 2 | 3;
 
-const plans = {
+const plans: Record<string, { name: string; monthly?: number; yearly?: number; yearlyRange?: string }> = {
   CITIZEN_PREMIUM: { name: 'Citoyen Premium', monthly: 3.99, yearly: 39 },
   PRO: { name: 'Professionnel', monthly: 19, yearly: 190 },
   BUSINESS: { name: 'Business', monthly: 99, yearly: 990 },

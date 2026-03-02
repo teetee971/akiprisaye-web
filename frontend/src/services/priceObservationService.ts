@@ -1,6 +1,6 @@
 // src/services/priceObservationService.ts
 
-import type { PriceObservation } from '../types/PriceObservation';
+import type { PriceObservation, TerritoryCode } from '../types/PriceObservation';
 import rawObservations from '../data/observations.json';
 import { normalizeTerritoryCode } from './priceSearch/normalizeTerritoryCode';
 
@@ -95,7 +95,7 @@ const buildCitizenObservations = (): PriceObservation[] => {
       `${observation.date}T${observation.heure}`
     ).toISOString();
 
-    const territory = normalizeTerritoryCode(observation.territoire);
+    const territory = normalizeTerritoryCode(observation.territoire).toUpperCase() as TerritoryCode;
 
     return observation.produits.map((product) => {
       const productLabel = product.nom.trim();

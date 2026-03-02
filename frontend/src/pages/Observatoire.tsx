@@ -94,7 +94,7 @@ export default function Observatoire() {
 
   useEffect(() => {
     if (!data) return;
-    safeLocalStorage.set(
+    safeLocalStorage.setItem(
       "akiprisaye:observatoire:last",
       JSON.stringify({
         territoire: data.territoire,

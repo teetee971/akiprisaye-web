@@ -39,6 +39,36 @@ export interface CheapestProductResult {
   territory: Territory;
 }
 
+/** Extended product record used by StoreCheapestProductsPanel / CheapestProductsSection */
+export interface CheapestProduct {
+  id: string;
+  name: string;
+  brand?: string;
+  size?: string;
+  category?: string;
+  price: number;
+  savingsPercent?: number;
+  isCheapestInTerritory?: boolean;
+  observationDate: string;
+  territoryAverage?: number;
+  priceComparison?: string;
+}
+
+/** Aggregated cheapest-products data for a given store */
+export interface CheapestByStore {
+  store: {
+    id: string;
+    name: string;
+    chain?: string;
+    territory: string;
+    address?: string;
+    postalCode?: string;
+    city?: string;
+  };
+  cheapestProducts: CheapestProduct[];
+  lastObservation: string;
+}
+
 export function getStoreCheapestProducts(territory: Territory): CheapestProductResult[] {
   const stores = (SEED_STORES as Store[]).filter((store) => store.territory === territory);
   const products = SEED_PRODUCTS as readonly Product[];
@@ -98,4 +128,62 @@ export function calculateDataReliability(products: CheapestProductResult[]): num
   if (products.length === 0) return 0;
   const withPrice = products.filter((p) => Number.isFinite(p.price) && p.price > 0).length;
   return Math.round((withPrice / products.length) * 100);
+}
+
+/** Returns how many cheapest products are tracked at a given store */
+export function getCheapestProductsCount(storeId: string): number {
+  return getCheapestProductsAtStore(storeId).length;
+}
+
+/** Returns CheapestByStore aggregation for the panel, or null if store not found */
+export function getCheapestProductsByStore(storeId: string): CheapestByStore | null {
+  const storeData = (SEED_STORES as (Store & { chain?: string; address?: string; postalCode?: string; city?: string })[]).find(
+    (s) => s.id === storeId,
+  );
+  if (!storeData) return null;
+
+  const products = getCheapestProductsAtStore(storeId, 20);
+  return {
+    store: {
+      id: storeData.id,
+      name: storeData.name,
+      chain: storeData.chain,
+      territory: storeData.territory,
+      address: storeData.address,
+      postalCode: storeData.postalCode,
+      city: storeData.city,
+    },
+    cheapestProducts: products.map((p) => ({
+      id: p.productId,
+      name: p.productName,
+      price: p.price,
+      observationDate: new Date().toISOString(),
+    })),
+    lastObservation: new Date().toISOString(),
+  };
+}
+
+/** Formats an ISO observation date string into a human-readable date */
+export function formatObservationDate(dateStr: string): string {
+  try {
+    return new Date(dateStr).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
+  } catch {
+    return dateStr;
+  }
+}
+
+/** Returns a visual icon for the given price comparison label */
+export function getPriceComparisonIcon(comparison?: string): string {
+  if (!comparison) return '→';
+  if (comparison === 'below' || comparison === 'cheaper') return '↓';
+  if (comparison === 'above' || comparison === 'expensive') return '↑';
+  return '→';
+}
+
+/** Returns a Tailwind CSS color class for the given price comparison label */
+export function getPriceComparisonColor(comparison?: string): string {
+  if (!comparison) return 'text-gray-400';
+  if (comparison === 'below' || comparison === 'cheaper') return 'text-green-400';
+  if (comparison === 'above' || comparison === 'expensive') return 'text-red-400';
+  return 'text-gray-400';
 }

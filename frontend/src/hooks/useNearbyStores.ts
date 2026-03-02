@@ -16,6 +16,7 @@ interface Store {
   territory: string;
   distance?: number;
   travelTimeSeconds?: number;
+  priceIndex?: number;
 }
 
 interface UseNearbyStoresOptions {

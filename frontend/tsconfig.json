@@ -78,6 +78,7 @@
     "src/services/storeCompanyService.ts",
     "src/services/storeHoursService.ts",
     "src/services/sync/syncLogger.ts",
-    "src/services/sync/syncScheduler.ts"
+    "src/services/sync/syncScheduler.ts",
+    "src/types/priceObservation.ts"
   ]
 }

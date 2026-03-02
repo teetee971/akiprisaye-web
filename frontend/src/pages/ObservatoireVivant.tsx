@@ -12,7 +12,7 @@ import {
 } from 'recharts';
 import { PriceChart } from '../components/PriceChart';
 import { filterByRange } from '../utils/priceRange';
-import type { PriceObservation } from '../types/priceObservation';
+import type { PriceObservation } from '../types/PriceObservation';
 import { getRealtimePrices, type RealtimePriceState } from '../services/realtimePricesService';
 
 type Period = 'hour' | 'day' | 'week' | 'month';

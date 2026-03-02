@@ -340,19 +340,22 @@ export async function exportOpenData(
   
   try {
     let records: any[] = [];
-    let dataType = request.dataType;
+    const dataType = request.dataType;
     
-    // Load data based on type
+    // Load data based on type - use independent ifs so 'all' loads everything
     if (dataType === 'products' || dataType === 'all') {
       const products = await loadProductData();
-      records = products;
-    } else if (dataType === 'prices' || dataType === 'all') {
+      records = records.concat(products);
+    }
+    if (dataType === 'prices' || dataType === 'all') {
       const prices = await loadPriceData();
-      records = prices;
-    } else if (dataType === 'ingredients' || dataType === 'all') {
+      records = records.concat(prices);
+    }
+    if (dataType === 'ingredients' || dataType === 'all') {
       const ingredients = await loadIngredientData();
       records = records.concat(ingredients);
-    } else if (dataType === 'stores' || dataType === 'all') {
+    }
+    if (dataType === 'stores' || dataType === 'all') {
       const stores = await loadStoreData();
       records = records.concat(stores);
     }
