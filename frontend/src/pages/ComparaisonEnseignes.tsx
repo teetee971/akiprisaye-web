@@ -166,7 +166,7 @@ export default function ComparaisonEnseignes() {
   // Feature disabled state
   if (!isFeatureEnabled) {
     return (
-      <main className="container mx-auto px-4 py-8 max-w-7xl" role="main">
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white mb-4">Comparaison inter-enseignes</h1>
         </div>
@@ -181,12 +181,12 @@ export default function ComparaisonEnseignes() {
             </p>
           </div>
         </GlassCard>
-      </main>
+      </div>
     )
   }
 
   return (
-    <main className="container mx-auto px-4 py-8 max-w-7xl" role="main">
+    <div className="container mx-auto px-4 py-8 max-w-7xl">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-white mb-4">Comparaison inter-enseignes</h1>
 
@@ -373,6 +373,6 @@ export default function ComparaisonEnseignes() {
             : undefined
         }
       />
-    </main>
+    </div>
   )
 }

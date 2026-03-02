@@ -16,7 +16,7 @@ export default function Layout() {
     <div className="flex min-h-screen flex-col bg-slate-950 text-slate-100">
       <SkipLinks />
       <Header />
-      <main id="main" className="mx-auto w-full max-w-6xl flex-1 px-4 pb-28 pt-4 md:pb-10" role="main">
+      <main id="main" className="mx-auto w-full max-w-6xl flex-1 px-4 pb-28 pt-4 md:pb-10">
         <Outlet />
       </main>
       <FabActions />

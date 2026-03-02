@@ -131,7 +131,7 @@ export const SolidaryBadge: React.FC<SolidaryBadgeProps> = ({
       title={showTooltip ? config.tooltip : undefined}
       aria-label={displayLabel}
     >
-      <span className={sizeConfig.icon} role="img" aria-hidden="true">
+      <span className={sizeConfig.icon} aria-hidden="true">
         {config.icon}
       </span>
       <span>{displayLabel}</span>

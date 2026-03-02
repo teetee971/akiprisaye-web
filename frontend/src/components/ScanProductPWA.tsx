@@ -10,9 +10,9 @@ export default function ScanProductPWA({ product, stores, france, history, insig
   return (
     <div className="scan-pwa-card">
       <header className="pwa-header">
-        <button className="pwa-back">←</button>
+        <button className="pwa-back" aria-label="Retour"><span aria-hidden="true">←</span></button>
         <span className="pwa-title">Produit scanné</span>
-        <button className="pwa-share">🔗</button>
+        <button className="pwa-share" aria-label="Partager"><span aria-hidden="true">🔗</span></button>
       </header>
       <section className="pwa-info">
         <img src={product.image} alt={product.name} className="pwa-img"/>
