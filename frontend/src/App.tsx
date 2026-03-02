@@ -69,6 +69,7 @@ const Settings = lazyPage(() => import('./pages/Settings'));
 const HistoriquePrix = lazyPage(() => import('./pages/HistoriquePrix'));
 const RecherchePrix = lazyPage(() => import('./pages/RecherchePrix'));
 const ProductDetailPage = lazyPage(() => import('./pages/ProductDetail'));
+const ProduitPage = lazyPage(() => import('./pages/ProduitPage'));
 const Alertes = lazyPage(() => import('./pages/Alertes'));
 const AlerteDetail = lazyPage(() => import('./pages/AlerteDetail'));
 const Promos = lazyPage(() => import('./pages/Promos'));
@@ -282,6 +283,7 @@ export default function App() {
                           <Route path="historique-prix" element={<HistoriquePrix />} />
                           <Route path="historique" element={<HistoriquePrix />} />
                           <Route path="p/:id" element={<ProductDetailPage />} />
+                          <Route path="produit/:ean" element={<ProduitPage />} />
                           <Route path="recherche-prix" element={<RecherchePrix />} />
                           <Route path="alertes" element={<Alertes />} />
                           <Route path="alertes/:id" element={<AlerteDetail />} />

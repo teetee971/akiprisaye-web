@@ -48,6 +48,7 @@ export default defineConfig({
       abs('./src/test/decisionEngine.test.ts'),
       abs('./src/domain/decision/__tests__/decisionEngine.test.ts'),
       abs('./src/domain/shoppingList/premium/tests/*.test.ts'),
+      abs('./src/test/produitPage.test.ts'),
       // NOTE: si scripts/ est à la racine du repo, remplace par ../scripts/...
       abs('./scripts/verify-pages-api.test.ts'),
     ],
