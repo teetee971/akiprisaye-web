@@ -70,7 +70,7 @@ export default function Observatoire() {
       .catch(() => {
         if (mounted) {
           setError(
-            "La donnée de l’observatoire est momentanément indisponible. Merci de réessayer ultérieurement."
+            "La donnée de l'observatoire est momentanément indisponible. Merci de réessayer ultérieurement."
           );
         }
       })

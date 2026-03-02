@@ -1,0 +1,89 @@
+{
+  "territoire": "Hexagone",
+  "date_snapshot": "2026-02-03",
+  "source": "donnee_ouverte",
+  "qualite": "verifie",
+  "donnees": [
+    {
+      "commune": "Paris",
+      "enseigne": "Carrefour",
+      "categorie": "Produits laitiers",
+      "produit": "Lait demi-écrémé UHT 1L",
+      "ean": "3560070123456",
+      "unite": "1L",
+      "prix": 1.16
+    },
+    {
+      "commune": "Paris",
+      "enseigne": "E.Leclerc",
+      "categorie": "Produits laitiers",
+      "produit": "Lait demi-écrémé UHT 1L",
+      "ean": "3560070123456",
+      "unite": "1L",
+      "prix": 1.10
+    },
+    {
+      "commune": "Lyon",
+      "enseigne": "Carrefour",
+      "categorie": "Produits laitiers",
+      "produit": "Lait demi-écrémé UHT 1L",
+      "ean": "3560070123456",
+      "unite": "1L",
+      "prix": 1.13
+    },
+    {
+      "commune": "Marseille",
+      "enseigne": "Auchan",
+      "categorie": "Produits laitiers",
+      "produit": "Lait demi-écrémé UHT 1L",
+      "ean": "3560070123456",
+      "unite": "1L",
+      "prix": 1.19
+    },
+    {
+      "commune": "Lyon",
+      "enseigne": "Intermarché",
+      "categorie": "Épicerie",
+      "produit": "Riz long blanc 1kg",
+      "ean": "3250391234567",
+      "unite": "1kg",
+      "prix": 1.78
+    },
+    {
+      "commune": "Paris",
+      "enseigne": "Monoprix",
+      "categorie": "Épicerie",
+      "produit": "Riz long blanc 1kg",
+      "ean": "3250391234567",
+      "unite": "1kg",
+      "prix": 1.88
+    },
+    {
+      "commune": "Marseille",
+      "enseigne": "E.Leclerc",
+      "categorie": "Produits laitiers",
+      "produit": "Yaourt nature 4x125g",
+      "ean": "3560070789012",
+      "unite": "4x125g",
+      "prix": 1.47
+    },
+    {
+      "commune": "Paris",
+      "enseigne": "Carrefour",
+      "categorie": "Épicerie",
+      "produit": "Sucre blanc 1kg",
+      "ean": "3560071112345",
+      "unite": "1kg",
+      "prix": 1.05
+    },
+    {
+      "commune": "Lyon",
+      "enseigne": "Auchan",
+      "categorie": "Épicerie",
+      "produit": "Huile de tournesol 1L",
+      "ean": "3250399876543",
+      "unite": "1L",
+      "prix": 1.98
+    }
+  ]
+}
