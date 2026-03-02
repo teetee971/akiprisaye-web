@@ -1,4 +1,4 @@
-const CACHE_NAME = 'akiprisaye-smart-cache-v5';
+const CACHE_NAME = 'akiprisaye-smart-cache-v6';
 
 self.addEventListener('install', (event) => {
   const base = new URL('./', self.registration.scope).href;
@@ -26,6 +26,12 @@ self.addEventListener('fetch', (event) => {
   }
 
   if (url.origin === self.location.origin && url.pathname.startsWith(new URL('api/', self.registration.scope).pathname)) {
+    event.respondWith(fetch(request, { cache: 'no-store' }));
+    return;
+  }
+
+  // Locale files must always be fetched fresh (never serve stale translations)
+  if (url.origin === self.location.origin && url.pathname.startsWith(new URL('locales/', self.registration.scope).pathname)) {
     event.respondWith(fetch(request, { cache: 'no-store' }));
     return;
   }

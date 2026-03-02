@@ -53,6 +53,14 @@ jobs:
           grep -q '/akiprisaye-web/' dist/index.html || (echo "ERROR: /akiprisaye-web/ prefix not found in dist/index.html" && exit 1)
           echo "OK: dist/index.html paths are correctly prefixed with /akiprisaye-web/"
 
+      - name: Verify locale files in dist
+        run: |
+          for f in public/locales/fr/*.json; do
+            ns=$(basename "$f" .json)
+            test -f dist/locales/fr/${ns}.json || (echo "ERROR: dist/locales/fr/${ns}.json not found" && exit 1)
+          done
+          echo "OK: dist/locales/fr/*.json locale files are present"
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
