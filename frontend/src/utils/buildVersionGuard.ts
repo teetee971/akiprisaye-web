@@ -1,17 +1,18 @@
-export function enforceBuildVersionSync() {
-  const buildId = import.meta.env.VITE_APP_BUILD_ID;
-  if (!buildId) return;
+export function enforceBuildVersionSync(buildId?: string): boolean {
+  const id = buildId || import.meta.env.VITE_APP_BUILD_ID;
+  if (!id) return false;
 
   const key = 'app_build_id';
   const stored = localStorage.getItem(key);
 
-  if (stored && stored !== buildId) {
+  if (stored && stored !== id) {
     localStorage.clear();
     location.reload();
-    return;
+    return true;
   }
 
-  localStorage.setItem(key, buildId);
+  localStorage.setItem(key, id);
+  return false;
 }
 
 export function registerAppServiceWorker() {
