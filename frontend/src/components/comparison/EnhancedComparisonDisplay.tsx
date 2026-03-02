@@ -17,6 +17,7 @@ import { computePrediction } from '../../services/predictionService';
 import type { EnhancedPriceComparison } from '../../types/enhancedPrice';
 
 interface EnhancedComparisonDisplayProps {
+  const images = (product as any)?.images;
   comparison: EnhancedPriceComparison;
   onCompareStores?: () => void;
   onViewHistory?: (ean: string) => void;
@@ -82,7 +83,7 @@ export default function EnhancedComparisonDisplay({
             {/* Product Image */}
             <div className="flex-shrink-0">
               <ProductImage
-                images={comparison.product.images}
+                images={comparison.images}
                 productName={comparison.product.name}
                 size="card"
                 className="rounded-lg w-32 h-32"

@@ -17,20 +17,23 @@ export function buildPriceSearchInput(params: {
   serviceMode?: 'inStore' | 'drive' | 'delivery';
 }): PriceSearchInput {
   const barcode = params.barcode ?? (params.text ? extractBarcode(params.text) : undefined);
-  const query = params.text?.trim();
+  const query = params.text?.trim() || undefined;
+
+  const brand = params.brand?.trim() || undefined;
+  const category = params.category?.trim() || undefined;
+  const territory = params.territory;
+  const storeId = params.storeId?.trim() || undefined;
+  const serviceMode = params.serviceMode;
+  const metadata: Record<string, string> = {};
 
   return {
-    barcode,
-    query: barcode ? undefined : query,
-    brand: params.brand,
-    category: params.category,
-    territory: params.territory,
-    storeId: params.storeId,
-    serviceMode: params.serviceMode,
-    metadata: {
-      storeId: params.storeId ?? '',
-      serviceMode: params.serviceMode ?? '',
-      territory: params.territory ?? '',
-    },
+    ...(barcode ? { barcode } : {}),
+    ...(query ? { query } : {}),
+    ...(brand ? { brand } : {}),
+    ...(category ? { category } : {}),
+    ...(territory ? { territory } : {}),
+    ...(storeId ? { storeId } : {}),
+    ...(serviceMode ? { serviceMode } : {}),
+    metadata,
   };
 }

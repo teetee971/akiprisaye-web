@@ -20,7 +20,7 @@ function generateLogId(): string {
  */
 export function getSyncLogs(): SyncLog[] {
   try {
-    const logs = safeLocalStorage.getJSON<SyncLog[]>(STORAGE_KEY);
+    const logs = safeLocalStorage.getJSON<SyncLog[]>((STORAGE_KEY), []);
     return logs || [];
   } catch (error) {
     console.error('Error loading sync logs:', error);
@@ -71,8 +71,8 @@ export function updateSyncLog(
 
   if (index !== -1) {
     logs[index] = {
-      ...logs[index],
-      ...updates,
+      ...(logs[index] ?? { id: `log-${Date.now()}`, jobId: `job-${Date.now()}` }),
+      ...(logs[index]?.jobId ? {} : { jobId: `job-${Date.now()}` }),
     };
     saveSyncLogs(logs);
   }
@@ -119,7 +119,7 @@ export function getLogsByJobId(jobId: string): SyncLog[] {
  */
 export function getLastLogByJobId(jobId: string): SyncLog | null {
   const logs = getLogsByJobId(jobId);
-  return logs.length > 0 ? logs[logs.length - 1] : null;
+  return logs.at(-1) ?? null;
 }
 
 /**

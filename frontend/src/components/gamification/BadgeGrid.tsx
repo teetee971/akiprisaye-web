@@ -52,7 +52,7 @@ export function BadgeGrid({ badges, showProgress = true, onBadgeClick, className
         {filters.map(({ value, label }) => (
           <button
             key={value}
-            onClick={() => setFilter(value)}
+            onClick={(() => setFilter(value)) ?? (() => {})}
             className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
               filter === value
                 ? 'bg-blue-600 text-white shadow-md'

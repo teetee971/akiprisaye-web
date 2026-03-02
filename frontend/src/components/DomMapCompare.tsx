@@ -11,8 +11,8 @@ const PERIODS = [
 type ValueMap = Record<string, number>;
 
 export default function DomMapCompare() {
-  const [before, setBefore] = useState(PERIODS[0].month);
-  const [after, setAfter] = useState(PERIODS[2].month);
+  const [before, setBefore] = useState(PERIODS[0]?.month ?? '2025-11');
+  const [after, setAfter] = useState(PERIODS[2]?.month ?? '2026-01');
 
   const [deltaValues, setDeltaValues] = useState<ValueMap>({});
   const [loading, setLoading] = useState(false);
@@ -37,6 +37,7 @@ export default function DomMapCompare() {
 
       Object.keys(afterMap).forEach((territory) => {
         const a = afterMap[territory];
+          if (a === undefined) return;
         const b = beforeMap[territory];
         if (b !== undefined && b !== 0) {
           delta[territory] = Number((((a - b) / b) * 100).toFixed(1));
@@ -89,7 +90,7 @@ export default function DomMapCompare() {
       {loading ? (
         <div className="text-sm opacity-70">Calcul en cours…</div>
       ) : (
-        <DomMapSvg values={deltaValues} mode="delta" />
+        <DomMapSvg values={deltaValues} />
       )}
 
       {/* Légende */}

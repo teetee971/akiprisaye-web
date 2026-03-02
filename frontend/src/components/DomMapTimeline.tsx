@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { loadDomIndexesForMonth } from '../services/domMapTimelineService';
 import DomMapSvg from './DomMapSvg';
 
+const DEFAULT_STEP = { month: '2025-11', comment: '' };
+
 const TIMELINE = [
   {
     month: '2025-11',
@@ -27,11 +29,14 @@ export default function DomMapTimeline() {
 
   const timerRef = useRef<number | null>(null);
 
-  // Chargement des données
+  
+
+  const current = TIMELINE[step] ?? TIMELINE[0] ?? DEFAULT_STEP;
+// Chargement des données
   useEffect(() => {
     let alive = true;
 
-    loadDomIndexesForMonth(TIMELINE[step].month).then((data) => {
+    loadDomIndexesForMonth(current.month).then((data) => {
       if (!alive) return;
 
       const map: Record<string, number> = {};
@@ -71,7 +76,7 @@ export default function DomMapTimeline() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <h2 className="font-semibold">
-          Carte du surcoût — {TIMELINE[step].month}
+          Carte du surcoût — {current.month}
         </h2>
 
         <button
@@ -87,7 +92,7 @@ export default function DomMapTimeline() {
 
       {/* Commentaire synchronisé */}
       <div className="bg-white/5 border border-white/10 rounded-lg p-3 text-sm leading-relaxed">
-        {TIMELINE[step].comment}
+        {current.comment}
       </div>
 
       {/* Slider */}

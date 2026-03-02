@@ -52,7 +52,7 @@ const PriceSubmitForm: React.FC<PriceSubmitFormProps> = ({
         productId,
         storeId,
         price: priceValue,
-        observedAt: new Date(observedAt).toISOString(),
+        observedAt: new Date(observedAt ?? '').toISOString(),
         source,
       };
 

@@ -82,7 +82,7 @@ export function LanguageSelector({
         onClick={() => setIsOpen(!isOpen)}
         aria-label={t('language.select')}
       >
-        <span className="text-2xl">{currentLang.flag}</span>
+        <span className="text-2xl">{(currentLang?.flag ?? '')}</span>
       </button>
     );
   }
@@ -95,8 +95,8 @@ export function LanguageSelector({
         aria-expanded={isOpen}
         aria-haspopup="listbox"
       >
-        <span className="text-xl">{currentLang.flag}</span>
-        <span className="font-medium">{currentLang.code.toUpperCase()}</span>
+        <span className="text-xl">{(currentLang?.flag ?? '')}</span>
+        <span className="font-medium">{(currentLang?.code ?? '').toUpperCase()}</span>
         <span className="text-sm">{isOpen ? '▲' : '▼'}</span>
       </button>
       

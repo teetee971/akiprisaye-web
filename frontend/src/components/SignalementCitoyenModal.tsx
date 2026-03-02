@@ -43,7 +43,7 @@ export default function SignalementCitoyenModal({
   const [submitted, setSubmitted] = useState(false)
 
   // Check feature flag
-  const isEnabled = import.meta.env.VITE_FEATURE_CITIZEN_REPORT === 'true'
+  const isEnabled = import.meta.env['VITE_FEATURE_CITIZEN_REPORT'] === 'true'
 
   if (!isOpen || !isEnabled) {
     return null
@@ -60,7 +60,7 @@ export default function SignalementCitoyenModal({
       type,
       description: description.trim(),
       observationDate: `${observationDate}T12:00:00Z`,
-      store: store.trim() || undefined,
+      ...((store.trim() || undefined) ? { store: (store.trim() || undefined) } : {}),
     })
 
     setSubmitted(true)

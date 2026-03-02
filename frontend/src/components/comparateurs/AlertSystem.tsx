@@ -80,13 +80,13 @@ export const AlertSystem: React.FC<AlertSystemProps> = ({
 
     switch (alert.type) {
       case 'price_threshold':
-        return `Prix ${conditions.operator === 'below' ? '≤' : '≥'} ${conditions.threshold}€`;
+        return `Prix ${conditions['operator'] === 'below' ? '≤' : '≥'} ${conditions['threshold']}€`;
       case 'availability':
         return 'Produit disponible';
       case 'new_item':
         return 'Nouvel élément ajouté';
       case 'significant_change':
-        return `Changement ≥ ${conditions.threshold}%`;
+        return `Changement ≥ ${conditions['threshold']}%`;
       default:
         return alert.type;
     }

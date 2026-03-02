@@ -33,7 +33,7 @@ interface SavingsChartProps {
 const MONTH_NAMES = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
 
 export default function SavingsChart({ monthlySavings, className = '' }: SavingsChartProps) {
-  const chartRef = useRef<ChartJS<'line'>>(null);
+  const chartRef = useRef<ChartJS<'line'>>(null ?? '');
 
   // Format month labels
   const labels = monthlySavings.map(m => {

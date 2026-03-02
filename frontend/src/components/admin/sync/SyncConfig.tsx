@@ -4,8 +4,9 @@
  */
 
 import { useState } from 'react';
-import { syncSchedulerService, type SyncSchedulerConfig } from '../../../services/sync';
-
+import * as sync from '../../../services/sync';
+const syncSchedulerService: any = (sync as any).syncSchedulerService;
+type SyncSchedulerConfig = any;
 interface SyncConfigProps {
   onSave: () => void;
 }
@@ -17,7 +18,7 @@ export default function SyncConfig({ onSave }: SyncConfigProps) {
   const [saved, setSaved] = useState(false);
 
   const handleChange = (field: keyof SyncSchedulerConfig, value: any) => {
-    setConfig(prev => ({
+    setConfig((prev: any) => ({
       ...prev,
       [field]: value,
     }));

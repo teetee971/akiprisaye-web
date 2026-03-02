@@ -23,7 +23,7 @@ export default function DataReliabilityBadge({
   const [showDetails, setShowDetails] = useState(false)
 
   // Check feature flag
-  const isEnabled = import.meta.env.VITE_FEATURE_DATA_RELIABILITY === 'true'
+  const isEnabled = import.meta.env['VITE_FEATURE_DATA_RELIABILITY'] === 'true'
 
   if (!isEnabled) {
     return null // Hide completely when disabled

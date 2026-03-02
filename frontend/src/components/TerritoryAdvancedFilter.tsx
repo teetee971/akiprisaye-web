@@ -82,7 +82,7 @@ export default function TerritoryAdvancedFilter({
   className = '',
 }: TerritoryAdvancedFilterProps) {
   // Check feature flag
-  const isEnabled = import.meta.env.VITE_FEATURE_TERRITORY_FILTERS === 'true'
+  const isEnabled = import.meta.env['VITE_FEATURE_TERRITORY_FILTERS'] === 'true'
 
   if (!isEnabled) {
     return null

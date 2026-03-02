@@ -112,6 +112,7 @@ const PriceHistoryChart: React.FC<PriceHistoryChartProps> = ({
   // Handle single datapoint case
   if (data.length === 1) {
     const singlePoint = data[0];
+  if (!singlePoint) return null;
     return (
       <div className="bg-white border border-gray-200 rounded-lg p-4">
         <h3 className="text-lg font-semibold text-gray-800 mb-4">

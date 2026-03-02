@@ -25,13 +25,14 @@ export default function PriceComparisonTable({
 
   // Meilleur prix par territoire
   const bestPriceByTerritory = sorted.reduce<Record<string, number>>((acc, obs) => {
-    if (!acc[obs.territory] || obs.price < acc[obs.territory]) {
-      acc[obs.territory] = obs.price
-    }
-    return acc
-  }, {})
-
-  const STORAGE_KEY = 'comparateur:watched-prices:v1'
+      const key = obs.territory ?? 'unknown';
+      const prev = acc[key];
+      if (prev === undefined || obs.price < prev) {
+        acc[key] = obs.price;
+      }
+      return acc;
+    }, {})
+const STORAGE_KEY = 'comparateur:watched-prices:v1'
 
   const buildWatchKey = (observation: PriceObservation, storeLabel: string) =>
     `${observation.productId}:${storeLabel}:${observation.territory}`

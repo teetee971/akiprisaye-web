@@ -81,7 +81,7 @@ export function PriceHistoryChart({ data, showTrendLine = false, showAverage = f
               <YAxis 
                 stroke="#64748b"
                 style={ { fontSize: '12px' }}
-                tickFormatter={(value) => `${value.toFixed(2)}€`}
+                tickFormatter={(value) => `${(value ?? 0).toFixed(2)}€`}
                 label={{ value: 'Prix (€)', angle: -90, position: 'insideLeft', fill: '#64748b' }}
               />
               <Tooltip
@@ -92,8 +92,8 @@ export function PriceHistoryChart({ data, showTrendLine = false, showAverage = f
                   color: '#fff',
                   fontSize: '12px'
                 }}
-                formatter={(value: number, name: string) => [
-                  `${value.toFixed(2)}€`,
+                formatter={(value?: number, name?: string) => [
+                  `${(value ?? 0).toFixed(2)}€`,
                   name === 'average' ? 'Prix moyen' : name
                 ]}
                 labelFormatter={(label) => `Date: ${label}`}
@@ -108,7 +108,7 @@ export function PriceHistoryChart({ data, showTrendLine = false, showAverage = f
                   key={store}
                   type="monotone"
                   dataKey={store}
-                  stroke={colors[i % colors.length]}
+                  stroke={(colors[i % colors.length] ?? '')}
                   strokeWidth={2}
                   dot={{ r: 4 }}
                   activeDot={{ r: 6 }}

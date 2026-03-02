@@ -37,14 +37,14 @@ export function PriceBreakdownPieChart({ breakdown }: PriceBreakdownPieChartProp
             cx="50%"
             cy="50%"
             outerRadius={100}
-            label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+            label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}
           >
             {data.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={entry.color} />
             ))}
           </Pie>
           <Tooltip 
-            formatter={(value: number) => `${value.toFixed(2)}€`}
+            formatter={(value?: number) => `${(value ?? 0).toFixed(2)}€`}
             contentStyle={{
               backgroundColor: 'rgba(0, 0, 0, 0.8)',
               border: 'none',
@@ -67,7 +67,7 @@ export function PriceBreakdownPieChart({ breakdown }: PriceBreakdownPieChartProp
               <span className="text-slate-700 dark:text-slate-300">{item.name}</span>
             </span>
             <strong className="text-slate-900 dark:text-white">
-              {item.value.toFixed(2)}€
+              {(item.value ?? 0).toFixed(2)}€
             </strong>
           </div>
         ))}

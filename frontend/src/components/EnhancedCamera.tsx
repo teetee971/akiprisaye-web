@@ -86,7 +86,7 @@ export default function EnhancedCamera({
    */
   const stopCamera = () => {
     if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current.getTracks().forEach(track => track?.stop());
       streamRef.current = null;
     }
     setIsActive(false);
@@ -99,11 +99,11 @@ export default function EnhancedCamera({
     if (!streamRef.current) return;
 
     const track = streamRef.current.getVideoTracks()[0];
-    const capabilities = track.getCapabilities() as any;
+    const capabilities = track?.getCapabilities() as any;
 
     if (capabilities.torch) {
       try {
-        await track.applyConstraints({
+        await track?.applyConstraints({
           advanced: [{ torch: !flashEnabled } as any],
         });
         setFlashEnabled(!flashEnabled);
@@ -126,7 +126,7 @@ export default function EnhancedCamera({
     if (!streamRef.current) return;
 
     const track = streamRef.current.getVideoTracks()[0];
-    const capabilities = track.getCapabilities() as any;
+    const capabilities = track?.getCapabilities() as any;
 
     if (capabilities.zoom) {
       const newZoom = Math.max(
@@ -135,7 +135,7 @@ export default function EnhancedCamera({
       );
 
       try {
-        await track.applyConstraints({
+        await track?.applyConstraints({
           advanced: [{ zoom: newZoom } as any],
         });
         setZoomLevel(newZoom);

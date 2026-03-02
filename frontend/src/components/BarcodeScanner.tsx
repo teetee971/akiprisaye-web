@@ -302,7 +302,7 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
           const hasTorch = Boolean(capabilities && 'torch' in capabilities && capabilities.torch);
           setTorchSupported(hasTorch);
 
-          const zoomCaps = capabilities?.zoom;
+          const zoomCaps = (capabilities as any)?.['zoom'];
           if (zoomCaps) {
             const min = zoomCaps.min ?? 1;
             const max = zoomCaps.max ?? Math.max(min, 1);

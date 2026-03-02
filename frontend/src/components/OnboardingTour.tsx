@@ -112,16 +112,17 @@ export default function OnboardingTour() {
   const [run, setRun] = useState(false);
 
   useEffect(() => {
-    if (isTourActive) {
-      // Petit délai pour s'assurer que les éléments DOM sont présents
-      const timer = setTimeout(() => {
-        setRun(true);
-      }, 500);
-      return () => clearTimeout(timer);
-    } else {
+      if (isTourActive) {
+        // Petit délai pour s'assurer que les éléments DOM sont présents
+        const timer = setTimeout(() => {
+          setRun(true);
+        }, 500);
+        return () => clearTimeout(timer);
+      }
+
       setRun(false);
-    }
-  }, [isTourActive]);
+      return undefined;
+    }, [isTourActive]);
 
   const handleJoyrideCallback = (data: CallBackProps) => {
     const { status, action } = data;
@@ -138,6 +139,7 @@ export default function OnboardingTour() {
         completeOnboarding();
       }
     }
+    return;
   };
 
   return (

@@ -5,10 +5,10 @@ type Props = {
 export default function DomMapSvg({ values }: Props) {
   return (
     <svg viewBox="0 0 400 260" className="w-full max-w-xl mx-auto">
-      {region(80, 120, values.guadeloupe, 'Guadeloupe')}
-      {region(160, 120, values.martinique, 'Martinique')}
-      {region(240, 90, values.guyane, 'Guyane')}
-      {region(320, 160, values.reunion, 'Réunion')}
+      {region(80, 120, values['guadeloupe'], 'Guadeloupe')}
+      {region(160, 120, values['martinique'], 'Martinique')}
+      {region(240, 90, values['guyane'], 'Guyane')}
+      {region(320, 160, values['reunion'], 'Réunion')}
     </svg>
   );
 }

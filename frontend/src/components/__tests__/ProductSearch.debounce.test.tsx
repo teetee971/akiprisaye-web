@@ -5,9 +5,8 @@ import { render, screen, waitFor, fireEvent, act } from '@testing-library/react'
 import ProductSearch from '../ProductSearch';
 
 describe('ProductSearch - Debounce Logic', () => {
-  let mockFetch;
-
-  beforeEach(() => {
+  let mockFetch: any;
+beforeEach(() => {
     // Mock the global fetch
     mockFetch = vi.fn();
     global.fetch = mockFetch;
@@ -45,7 +44,7 @@ describe('ProductSearch - Debounce Logic', () => {
   });
 
   it('should trigger debounced request after 250ms of inactivity', async () => {
-    const mockProducts = [
+    const mockProducts: any[] = [
       { ean: '123', name: 'Riz Basmati', brand: 'Brand A', image: null },
     ];
     mockFetch.mockResolvedValue({
@@ -80,7 +79,7 @@ describe('ProductSearch - Debounce Logic', () => {
   });
 
   it('should cancel pending calls when new input arrives before 250ms', async () => {
-    const mockProducts = [
+    const mockProducts: any[] = [
       { ean: '456', name: 'Lait', brand: 'Brand B', image: null },
     ];
     mockFetch.mockResolvedValue({
@@ -143,7 +142,7 @@ describe('ProductSearch - Debounce Logic', () => {
   });
 
   it('should handle rapid typing correctly with multiple debounce resets', async () => {
-    const mockProducts = [
+    const mockProducts: any[] = [
       { ean: '999', name: 'Final Product', brand: 'Final Brand', image: null },
     ];
     mockFetch.mockResolvedValue({
@@ -186,7 +185,7 @@ describe('ProductSearch - Debounce Logic', () => {
   });
 
   it('should respect territory parameter in API calls', async () => {
-    const mockProducts = [];
+    const mockProducts: any[] = [];
     mockFetch.mockResolvedValue({
       json: async () => mockProducts,
     });

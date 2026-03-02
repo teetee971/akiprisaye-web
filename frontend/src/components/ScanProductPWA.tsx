@@ -2,7 +2,7 @@
 import React from 'react';
 import './ScanProductPWA.css';
 
-export default function ScanProductPWA({ product, stores, france, history, insights, features, territories, pwaInstallPrompt }) {
+export default function ScanProductPWA({ product, stores, france, history, insights, features, territories, pwaInstallPrompt  }: any) {
   const diffEuro = (stores[0].price - france.price).toFixed(2);
   const diffPct = ((stores[0].price - france.price) / france.price * 100).toFixed(2);
 
@@ -23,7 +23,7 @@ export default function ScanProductPWA({ product, stores, france, history, insig
         </div>
       </section>
       <div className="pwa-cards">
-        {stores.map((store,idx)=>(
+        {stores.map((store: any, idx: any) =>(
           <div key={idx} className="pwa-card" title={`Top ${store.rank} territoire`}>
             <div className="pwa-card-label">{store.label}</div>
             <img src={store.logo} alt={store.brand} className="pwa-card-logo"/>
@@ -40,29 +40,29 @@ export default function ScanProductPWA({ product, stores, france, history, insig
       </div>
       <section className="pwa-graph">
         <svg width="130" height="38">
-          {history.map((v,i) =>
+          {history.map((v: any, i: any) =>
             i>0?
               <line key={i}
                 x1={(i-1)*18} y1={38-history[i-1]*8}
                 x2={i*18} y2={38-v*8}
                 stroke="#12b8ff" strokeWidth="2"/>:null)}
-          {history.map((v,i)=>(
+          {history.map((v: any, i: any) =>(
             <circle key={i} cx={i*18} cy={38-v*8} r="3" fill="#fa6c2a"/>
           ))}
         </svg>
         <span>Tendance prix / 6 mois</span>
       </section>
       <section className="pwa-insights">
-        {insights.map((ins,i)=><span key={i} className="pwa-insight">{ins}</span>)}
+        {insights.map((ins: any, i: any) =><span key={i} className="pwa-insight">{ins}</span>)}
       </section>
       <section className="pwa-actions">
-        {features.map((f,i) => (
+        {features.map((f: any, i: any) => (
           <button key={i} className="pwa-feature">{f.icon} {f.label}</button>
         ))}
       </section>
       <section className="pwa-ter-row">
         <span>Compare aussi :</span>
-        {territories.map((t,i) => <span key={i} className="pwa-ter">{t}</span>)}
+        {territories.map((t: any, i: any) => <span key={i} className="pwa-ter">{t}</span>)}
       </section>
     </div>
   );

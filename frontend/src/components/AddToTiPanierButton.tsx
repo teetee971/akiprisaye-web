@@ -37,9 +37,9 @@ export default function AddToTiPanierButton({ product }: AddToTiPanierButtonProp
         id: product.ean,
         name: product.name,
         quantity: 1,
-        price: latestPrice?.price,
-        territory: latestPrice?.territory,
-        history: latestPrice?.price ? [latestPrice.price] : undefined,
+        ...(latestPrice?.price != null ? { price: latestPrice.price } : {}),
+        ...(latestPrice?.territory ? { territory: latestPrice.territory } : {}),
+        ...(latestPrice?.price != null ? { history: [latestPrice.price] } : {}),
       },
       quota('maxItems'),
     );

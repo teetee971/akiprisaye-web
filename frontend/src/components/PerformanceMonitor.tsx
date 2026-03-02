@@ -16,7 +16,7 @@ function sendToAnalytics(metric: Metric) {
     timestamp: Date.now(),
   };
 
-  const endpoint = import.meta.env.VITE_WEB_VITALS_ENDPOINT;
+  const endpoint = import.meta.env['VITE_WEB_VITALS_ENDPOINT'];
   if (endpoint && navigator.sendBeacon) {
     navigator.sendBeacon(endpoint, JSON.stringify(payload));
     return;

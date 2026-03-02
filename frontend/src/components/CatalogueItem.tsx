@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
 import React, { useMemo } from 'react';
 import { GlassCard } from './ui/glass-card';
-import { CatalogueItemRaw } from '../services/catalogueService';
+import type { CatalogueItemRaw } from '../services/catalogueService';
 import { computeComparison } from '../services/comparisonService';
 import { computePrediction } from '../services/predictionService';
 import { useTiPanier } from '../hooks/useTiPanier';
@@ -16,37 +16,64 @@ type Props = {
     avg30: number | null;
     percentFrom30: number | null;
     isSignificantDecrease: boolean;
-  }
+  };
 };
 
 export default function CatalogueItem({ item, metrics }: Props) {
   const { addItem } = useTiPanier();
 
+  // noPropertyAccessFromIndexSignature => accès via crochets (item est très probablement un type "raw" permissif)
+  const observations = (item as any)['observations'] as any[] | undefined;
+  const store = (item as any)['store'] as string | undefined;
+  const currency = (item as any)['currency'] as string | undefined;
+  const territory = (item as any)['territory'] as string | undefined;
+  const id = (item as any)['id'] as string;
+  const name = (item as any)['name'] as string;
+
   const allObsWithStore = useMemo(() => {
-    return (item.observations || []).map(o => ({ ...o, store: (o as any).store ?? item.store ?? 'Inconnu' })).filter(o => !!o.store);
-  }, [item]);
+    return (observations || [])
+      .map((o: Record<string, any>) => ({
+        ...o,
+        store: o['store'] ?? store ?? 'Inconnu',
+      }))
+      .filter((o: Record<string, any>) => !!o['store']);
+  }, [observations, store]);
 
   const comparison = useMemo(() => computeComparison(allObsWithStore as any), [allObsWithStore]);
-  const prediction = useMemo(() => computePrediction(item.observations || []), [item]);
+  const prediction = useMemo(() => computePrediction(observations || []), [observations]);
 
   const handleAdd = () => {
     addItem({
-      id: `${item.id}:${item.store ?? ''}:${item.territory ?? ''}`,
+      id: `${id}:${store ?? ''}:${territory ?? ''}`,
       quantity: 1,
-      meta: { name: item.name, price: metrics.latestPrice ?? '', store: item.store, territory: item.territory }
+      meta: {
+        name,
+        price: metrics.latestPrice ?? '',
+        store,
+        territory,
+      },
     });
-    recordHistory({ id: item.id, name: item.name, price: metrics.latestPrice ?? '', store: item.store, territory: item.territory });
+
+    // exactOptionalPropertyTypes => n’inclure territory que si défini
+    recordHistory({
+      id,
+      name,
+      price: metrics.latestPrice ?? '',
+      store,
+      ...(territory ? { territory } : {}),
+    } as any);
   };
 
   const percent = metrics.percentFrom30;
-  const showBadge = metrics.isSignificantDecrease;
 
   return (
     <GlassCard className="relative">
       <div className="flex items-start justify-between">
         <div>
-          <h3 className="text-lg font-semibold">{item.name}</h3>
-          <div className="text-sm text-gray-400">{item.store} — {item.territory}</div>
+          <h3 className="text-lg font-semibold">{name}</h3>
+          <div className="text-sm text-gray-400">
+            {store} — {territory}
+          </div>
         </div>
 
         {/* Predictive badge with tooltip/explanation */}
@@ -63,44 +90,71 @@ export default function CatalogueItem({ item, metrics }: Props) {
 
       <div className="mt-3">
         <div className="text-xl font-medium">
-          {metrics.latestPrice !== null ? `${metrics.latestPrice.toFixed(2)} ${item.currency ?? '€'}` : '—'}
+          {metrics.latestPrice !== null ? `${metrics.latestPrice.toFixed(2)} ${currency ?? '€'}` : '—'}
         </div>
+
         <div className="text-xs text-gray-400 mt-1">
-          Dernière observation : {metrics.lastObservationDate ? new Date(metrics.lastObservationDate).toLocaleDateString() : '—'}
+          Dernière observation :{' '}
+          {metrics.lastObservationDate ? new Date(metrics.lastObservationDate).toLocaleDateString() : '—'}
         </div>
 
         <div className="mt-3">
           <div className="text-sm text-gray-300 mb-1">Comparaison par enseigne (prix le plus récent)</div>
+
           {comparison.list.length === 0 ? (
             <div className="text-xs text-gray-400">Pas d’observations par enseigne disponibles.</div>
           ) : (
             <ul role="table" className="space-y-1 text-sm">
-              {comparison.list.map((row) => (
-                <li key={row.store} role="row" className="flex justify-between items-center text-xs text-gray-200">
-                  <span role="cell" className="font-medium">{row.store}</span>
-                  <span role="cell">{row.price.toFixed(2)} {item.currency ?? '€'}</span>
+              {comparison.list.map((row: any) => (
+                <li
+                  key={row.store}
+                  role="row"
+                  className="flex justify-between items-center text-xs text-gray-200"
+                >
+                  <span role="cell" className="font-medium">
+                    {row.store}
+                  </span>
+                  <span role="cell">
+                    {row.price.toFixed(2)} {currency ?? '€'}
+                  </span>
                 </li>
               ))}
             </ul>
           )}
+
           {comparison.best && (
             <div className="text-xs text-gray-300 mt-1" aria-live="polite">
-              Meilleur prix : <strong className="text-white">{comparison.best.store} — {comparison.best.price.toFixed(2)} {item.currency ?? '€'}</strong>
+              Meilleur prix :{' '}
+              <strong className="text-white">
+                {comparison.best.store} — {comparison.best.price.toFixed(2)} {currency ?? '€'}
+              </strong>
             </div>
           )}
         </div>
 
         {percent !== null && (
           <div className="mt-2 text-sm" aria-live="polite">
-            Variation depuis moyenne 30j : <strong className={percent >= 0 ? 'text-green-300' : 'text-gray-300'}>{percent >= 0 ? '−' : ''}{Math.abs(percent).toFixed(1)}%</strong>
+            Variation depuis moyenne 30j :{' '}
+            <strong className={percent >= 0 ? 'text-green-300' : 'text-gray-300'}>
+              {percent >= 0 ? '−' : ''}
+              {Math.abs(percent).toFixed(1)}%
+            </strong>
           </div>
         )}
 
         <div className="mt-3 flex gap-2">
-          <button onClick={handleAdd} className="px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded" aria-label={`Ajouter ${item.name} au ti-panier`}>
+          <button
+            onClick={handleAdd}
+            className="px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded"
+            aria-label={`Ajouter ${name} au ti-panier`}
+          >
             Ajouter au ti-panier
           </button>
-          <button className="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded" aria-label={`Comparer ${item.name}`}>
+
+          <button
+            className="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded"
+            aria-label={`Comparer ${name}`}
+          >
             Comparer
           </button>
         </div>

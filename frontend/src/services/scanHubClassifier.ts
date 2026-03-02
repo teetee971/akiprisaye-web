@@ -94,13 +94,13 @@ export function classifyScanText(text: string): ScanHubClassification {
     bestType = 'product';
   }
 
-  if (matches.receipt > 0) signals.push('Mention “ticket/caisse” détectée');
-  if (matches.ingredients > 0) signals.push('Mots-clés ingrédients/allergènes');
-  if (matches.nutrition > 0) signals.push('Mots-clés nutritionnels');
-  if (matches.shelf_label > 0) signals.push('Prix unitaire / étiquette');
-  if (matches.barcode > 0) signals.push('Séquence numérique type code-barres');
-  if (matches.promotion > 0) signals.push('Mention promotionnelle');
-  if (matches.legal > 0) signals.push('Mentions légales');
+  if ((matches['receipt'] ?? 0) > 0) signals.push('Mention “ticket/caisse” détectée');
+  if ((matches['ingredients'] ?? 0) > 0) signals.push('Mots-clés ingrédients/allergènes');
+  if ((matches['nutrition'] ?? 0) > 0) signals.push('Mots-clés nutritionnels');
+  if ((matches['shelf_label'] ?? 0) > 0) signals.push('Prix unitaire / étiquette');
+  if ((matches['barcode'] ?? 0) > 0) signals.push('Séquence numérique type code-barres');
+  if ((matches['promotion'] ?? 0) > 0) signals.push('Mention promotionnelle');
+  if ((matches['legal'] ?? 0) > 0) signals.push('Mentions légales');
 
   const confidence = Math.min(98, Math.max(35, bestScore * 20 + Math.min(normalized.length / 40, 10)));
 
@@ -116,7 +116,7 @@ export function extractPrices(text: string): number[] {
   const priceRegex = /\b(\d{1,3}(?:[.,]\d{2}))\b/g;
   const matches = [...text.matchAll(priceRegex)];
   return matches
-    .map((match) => parseFloat(match[1].replace(',', '.')))
+    .map((match) => parseFloat((match[1] ?? '').replace(',', '.')))
     .filter((value) => !Number.isNaN(value));
 }
 

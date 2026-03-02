@@ -53,9 +53,11 @@ export const OCRScanner: React.FC<OCRScannerProps> = ({
     async (files: File[]) => {
       if (files.length === 0) return;
 
-      const file = files[0]; // Take first file only
+      const file = files.at(0);
 
-      try {
+        if (!file) return;
+
+        try {
         const ocrResult = await processFile(file, documentType, language);
         setEditedText(ocrResult.text);
         onTextExtracted(ocrResult.text, ocrResult.structured);
@@ -147,7 +149,7 @@ export const OCRScanner: React.FC<OCRScannerProps> = ({
               <p className="text-sm font-medium text-red-300">
                 Erreur d'extraction
               </p>
-              <p className="text-xs text-red-200 mt-1">{ocrError}</p>
+              <p className="text-xs text-red-200 mt-1">{String(ocrError)}</p>
             </div>
           </div>
         </div>

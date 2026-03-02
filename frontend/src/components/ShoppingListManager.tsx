@@ -23,7 +23,7 @@ export function ShoppingListManager() {
     const loadedLists = shoppingListService.getLists();
     setLists(loadedLists);
     if (loadedLists.length > 0 && !selectedList) {
-      setSelectedList(loadedLists[0]);
+      setSelectedList((loadedLists[0]) ?? null);
     }
   };
 

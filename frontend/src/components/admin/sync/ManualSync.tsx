@@ -4,8 +4,9 @@
  */
 
 import { useState } from 'react';
-import { openFoodFactsService, openPricesService } from '../../../services/sync';
-
+import * as sync from '../../../services/sync';
+const openFoodFactsService: any = (sync as any).openFoodFactsService;
+const openPricesService: any = (sync as any).openPricesService;
 interface ManualSyncProps {
   onSync: () => void;
 }

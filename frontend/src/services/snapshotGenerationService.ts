@@ -47,10 +47,14 @@ export async function generateSnapshot(
   const periodStart = new Date(Math.min(...dates)).toISOString().split('T')[0];
   const periodEnd = new Date(Math.max(...dates)).toISOString().split('T')[0];
   
+  const __periodFallbackNow = new Date().toISOString().slice(0, 10);
+  const periodStartSafe = (periodStart ?? __periodFallbackNow);
+  const periodEndSafe = (periodEnd ?? __periodFallbackNow);
+
   const config: IndicatorCalculationConfig = {
     territoire,
-    periode_debut: periodStart,
-    periode_fin: periodEnd,
+    periode_debut: periodStartSafe,
+    periode_fin: periodEndSafe,
     qualite_minimale: minQualityScore,
     agregation: 'moyenne',
   };
@@ -67,7 +71,9 @@ export async function generateSnapshot(
   
   for (const terr of territoires) {
     if (terr !== 'FR') {
-      const ivcResult = await calculateIVC(observations, terr, periodEnd);
+      const __periodFallbackNow = new Date().toISOString().slice(0, 10);
+      const ivcResult = await calculateIVC(observations, terr, periodEndSafe);
+      await calculateIVC(observations, terr, periodEndSafe);
       if (ivcResult.success && ivcResult.data) {
         indicesVieChere.push(ivcResult.data);
       }
@@ -140,8 +146,8 @@ export async function generateSnapshot(
     metadata: {
       nombre_observations_total: filtered.length,
       periode_couverte: {
-        debut: periodStart,
-        fin: periodEnd,
+        debut: periodStartSafe,
+        fin: periodEndSafe,
       },
       sources,
       qualite_moyenne: Math.round(qualiteMoyenne * 100) / 100,
@@ -177,8 +183,10 @@ export async function generateGlobalStats(
   
   // Determine historical period
   const dates = observations.map((obs) => obs.observedAt);
-  const premiereObservation = dates.reduce((min, date) => (date < min ? date : min), dates[0]);
-  const derniereObservation = dates.reduce((max, date) => (date > max ? date : max), dates[0]);
+  const __firstDate = dates.at(0);
+  const premiereObservation = __firstDate ? dates.reduce((min, date) => (date < min ? date : min), __firstDate) : '';
+  const __firstDate2 = dates.at(0);
+  const derniereObservation = __firstDate2 ? dates.reduce((max, date) => (date > max ? date : max), __firstDate2) : '';
   
   // Calculate quality statistics
   const observationsVerifiees = observations.filter(
@@ -206,8 +214,8 @@ export async function generateGlobalStats(
     nombre_produits_uniques: produitsUniques.size,
     categories_couvertes: categoriesCouvertes,
     periode_historique: {
-      premiere_observation: premiereObservation,
-      derniere_observation: derniereObservation,
+      premiere_observation: (premiereObservation ?? ''),
+      derniere_observation: (derniereObservation ?? ''),
     },
     qualite: {
       score_moyen: Math.round(scoreMoyen * 100) / 100,

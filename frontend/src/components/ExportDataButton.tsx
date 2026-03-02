@@ -21,7 +21,7 @@ export default function ExportDataButton({ observations, disabled = false, label
   const toast = useToast()
 
   // Feature flag check
-  const isFeatureEnabled = import.meta.env.VITE_FEATURE_DATA_EXPORT === 'true'
+  const isFeatureEnabled = import.meta.env['VITE_FEATURE_DATA_EXPORT'] === 'true'
 
   if (!isFeatureEnabled) {
     return null

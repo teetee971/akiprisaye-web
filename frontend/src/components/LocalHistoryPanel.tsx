@@ -65,7 +65,7 @@ export default function LocalHistoryPanel() {
   const { history, clear } = useLocalHistory()
 
   // Check feature flag
-  const isEnabled = import.meta.env.VITE_FEATURE_HISTORY === 'true'
+  const isEnabled = import.meta.env['VITE_FEATURE_HISTORY'] === 'true'
 
   if (!isEnabled) {
     return null // Hide completely when disabled

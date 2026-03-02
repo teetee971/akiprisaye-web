@@ -368,7 +368,7 @@ export default function ReceiptScanner({ onAnalysisComplete, onClose }: ReceiptS
                   // Simple logic to determine basket comparison
                   const diff = analysisResult.totalAmount > 15 ? 5.20 : 
                               analysisResult.totalAmount < 10 ? -3.50 : 0.80;
-                  const territory = analysisResult.territory || 'Guadeloupe'; // Default or from detection
+                  const territory = (analysisResult as any).territory || 'Guadeloupe'; // Default or from detection
                   
                   if (diff > 0) {
                     return (

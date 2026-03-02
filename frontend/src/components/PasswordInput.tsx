@@ -76,11 +76,11 @@ function secureShuffle(array: string[]): string[] {
   crypto.getRandomValues(randomValues);
 
   for (let i = result.length - 1; i > 0; i--) {
-    const j = randomValues[i] % (i + 1);
-    [result[i], result[j]] = [result[j], result[i]];
+    const j = (randomValues[i] ?? 0) % (i + 1);
+    [result[i]!, result[j]!] = [result[j]!, result[i]!];
   }
 
-  return result;
+  return result as string[];
 }
 
 /**
@@ -91,15 +91,15 @@ function generateSecurePassword(length = 16): string {
   const chars = Array.from({ length }, () => {
     const random = new Uint32Array(1);
     crypto.getRandomValues(random);
-    return CHARSET[random[0] % CHARSET.length];
+    return CHARSET[(random[0] ?? 0) % CHARSET.length];
   });
 
-  return secureShuffle(chars).join('');
+  return secureShuffle(chars).filter(Boolean).join('');
 }
 
 export function PasswordInput({
   id,
-  value,
+  value = '',
   onChange,
   label = 'Mot de passe',
   placeholder = 'Minimum 8 caractères',
@@ -111,8 +111,10 @@ export function PasswordInput({
   const [showPassword, setShowPassword] = useState(false);
   const [copyFeedback, setCopyFeedback] = useState(false);
   
-  const strength = getPasswordStrength(value);
-  const tooShort = value.length > 0 && value.length < minLength;
+
+  const v = value ?? '';
+  const strength = getPasswordStrength(value ?? '');
+  const tooShort = (value ?? '').length > 0 && (value ?? '').length < minLength;
   
   /**
    * Toggle password visibility
@@ -135,7 +137,7 @@ export function PasswordInput({
    */
   const handleCopy = useCallback(async () => {
     try {
-      await navigator.clipboard.writeText(value);
+      await navigator.clipboard.writeText(v);
       setCopyFeedback(true);
       setTimeout(() => setCopyFeedback(false), 2000);
     } catch (err) {
@@ -168,7 +170,7 @@ export function PasswordInput({
           minLength={minLength}
           autoComplete={autoComplete}
           className="w-full p-3 pr-32 rounded-lg bg-slate-800 text-white border border-gray-700 focus:border-blue-500 focus:outline-none"
-          value={value}
+          value={value ?? ''}
           onChange={(e) => onChange(e.target.value)}
           aria-invalid={tooShort}
           aria-describedby={tooShort ? `${id}-error` : undefined}

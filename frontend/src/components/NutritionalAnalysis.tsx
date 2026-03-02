@@ -1,3 +1,10 @@
+
+type NutriGrade = 'A' | 'B' | 'C' | 'D' | 'E';
+function normalizeNutriGrade(v: unknown): NutriGrade {
+  const g = typeof v === 'string' ? v.toUpperCase() : 'C';
+  return (g === 'A' || g === 'B' || g === 'C' || g === 'D' || g === 'E') ? (g as NutriGrade) : 'C';
+}
+
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /**
  * Nutritional Analysis Component
@@ -48,7 +55,7 @@ export function NutritionalAnalysis({
       'D': 'bg-orange-500',
       'E': 'bg-red-600'
     };
-    return score ? colors[score] : 'bg-gray-400';
+    return score ? colors[normalizeNutriGrade(score)] : 'bg-gray-400';
   };
 
   const getHealthWarnings = (): string[] => {

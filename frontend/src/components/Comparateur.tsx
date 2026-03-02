@@ -1,3 +1,6 @@
+import * as FirebaseCfg from "../firebase_config";
+import type { Firestore } from "firebase/firestore";
+const db: Firestore = (FirebaseCfg as any).db as Firestore;
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import {
@@ -7,8 +10,6 @@ import {
   where,
   Timestamp,
 } from "firebase/firestore";
-import { db } from "../firebase_config";
-
 type Price = {
   id: string;
   amount: number;

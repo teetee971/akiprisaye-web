@@ -15,6 +15,7 @@ interface LevelProgressBarProps {
 
 export function LevelProgressBar({ currentXP, level, showDetails = true, className = '' }: LevelProgressBarProps) {
   const currentLevelData = LEVELS.find(l => l.level === level) || LEVELS[0];
+  if (!currentLevelData) return null;
   const nextLevelIndex = LEVELS.findIndex(l => l.level === level) + 1;
   const nextLevelData = nextLevelIndex < LEVELS.length ? LEVELS[nextLevelIndex] : null;
 

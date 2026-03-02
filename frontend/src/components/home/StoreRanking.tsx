@@ -8,8 +8,9 @@
 
 import React, { useState, useMemo } from "react";
 import { GlassCard } from "../ui/glass-card";
-import { SEED_STORES } from "../../data/seedStores";
-import { getCheapestProductsCount, getCheapestProductsByStore } from "../../services/storeCheapestProductsService";
+import SEED_STORES from '../../data/seedStores';
+import * as svc from '../../services/storeCheapestProductsService';
+const storeCheapestProductsService: any = svc as any;
 import StoreCheapestProductsPanel from "../store/StoreCheapestProductsPanel";
 import type { CheapestByStore } from "../../services/storeCheapestProductsService";
 
@@ -39,12 +40,12 @@ export function StoreRanking() {
       productsCount: getCheapestProductsCount(store.id),
     }))
     .filter(store => store.productsCount > 0) // Only include stores with cheapest products
-    .sort((a, b) => b.productsCount - a.productsCount) // Sort by count descending
+    .sort((a: any, b: any) => b.productsCount - a.productsCount) // Sort by count descending
     .slice(0, 3); // Top 3
 
     // Add ranks and medals
     const medals = ["🥇", "🥈", "🥉"];
-    return storesWithCounts.map((store, index) => ({
+    return storesWithCounts.map((store: any, index: any) => ({
       ...store,
       rank: index + 1,
       medal: medals[index] || "",
@@ -78,7 +79,7 @@ export function StoreRanking() {
                 <p className="text-gray-400">Aucune donnée disponible pour ce territoire</p>
               </div>
             ) : (
-              rankings.map((store) => (
+              rankings.map((store: any) => (
                 <button
                   key={store.rank}
                   onClick={() => handleStoreClick(store.storeId)}

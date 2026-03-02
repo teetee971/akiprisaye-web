@@ -17,7 +17,7 @@
 import React, { useState, useCallback } from 'react';
 import { Send, Check, AlertCircle, Lock } from 'lucide-react';
 import type { ContributionField, Territory } from '../../types/comparatorCommon';
-import { validateContribution, type ValidationResult } from '../../utils/dataValidator';
+import { validateContribution, type  } from '../../utils/dataValidator';
 import { getAllTerritories } from '../../utils/territoryMapper';
 
 export interface ContributionFormProps {
@@ -41,8 +41,7 @@ export const ContributionForm: React.FC<ContributionFormProps> = ({
   fields,
   onSubmit,
   requireProof = false,
-  allowAnonymous = true,
-}) => {
+  allowAnonymous = true }) => {
   const [formData, setFormData] = useState<Record<string, unknown>>({});
   const [proofFile, setProofFile] = useState<File | null>(null);
   const [anonymous, setAnonymous] = useState(false);
@@ -95,12 +94,12 @@ export const ContributionForm: React.FC<ContributionFormProps> = ({
 
     // Validate proof requirement
     if (requireProof && !proofFile) {
-      validationErrors.proof = 'Une preuve est requise pour cette contribution';
+      validationErrors['proof'] = 'Une preuve est requise pour cette contribution';
     }
 
     // Validate consent
     if (!consentGiven) {
-      validationErrors.consent = 'Vous devez accepter les conditions d\'utilisation';
+      validationErrors['consent'] = 'Vous devez accepter les conditions d\'utilisation';
     }
 
     setErrors(validationErrors);
@@ -127,15 +126,13 @@ export const ContributionForm: React.FC<ContributionFormProps> = ({
           anonymous,
           consentGiven,
           proof: proofFile,
-          timestamp: new Date().toISOString(),
-        };
+          timestamp: new Date().toISOString() };
 
         await onSubmit(contributionData);
         setSubmitted(true);
       } catch (err) {
         setErrors({
-          submit: err instanceof Error ? err.message : 'Erreur lors de la soumission',
-        });
+          submit: err instanceof Error ? err.message : 'Erreur lors de la soumission' });
       } finally {
         setSubmitting(false);
       }
@@ -290,8 +287,8 @@ export const ContributionForm: React.FC<ContributionFormProps> = ({
             accept="image/*,application/pdf"
             className="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
           />
-          {errors.proof && (
-            <p className="mt-1 text-xs text-red-400">{errors.proof}</p>
+          {errors['proof'] && (
+            <p className="mt-1 text-xs text-red-400">{errors['proof']}</p>
           )}
         </div>
       )}
@@ -327,8 +324,8 @@ export const ContributionForm: React.FC<ContributionFormProps> = ({
             (RGPD - Données traitées de manière anonymisée)
           </label>
         </div>
-        {errors.consent && (
-          <p className="text-xs text-red-400 ml-6">{errors.consent}</p>
+        {errors['consent'] && (
+          <p className="text-xs text-red-400 ml-6">{errors['consent']}</p>
         )}
       </div>
 
@@ -343,11 +340,11 @@ export const ContributionForm: React.FC<ContributionFormProps> = ({
       </div>
 
       {/* Submit Error */}
-      {errors.submit && (
+      {errors['submit'] && (
         <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3">
           <div className="flex gap-2">
             <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
-            <p className="text-xs text-red-300">{errors.submit}</p>
+            <p className="text-xs text-red-300">{errors['submit']}</p>
           </div>
         </div>
       )}

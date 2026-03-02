@@ -106,9 +106,9 @@ export async function getRecentPrices(
   try {
     await rateLimit();
 
-    const params = new URLSearchParams({
-      date__gte: since.toISOString().split('T')[0], // Format YYYY-MM-DD
-    });
+    const params = new URLSearchParams();
+    const dateGte = since.toISOString().slice(0, 10); // YYYY-MM-DD
+    params.set('date__gte', dateGte);
 
     if (options.limit) {
       params.append('page_size', String(options.limit));

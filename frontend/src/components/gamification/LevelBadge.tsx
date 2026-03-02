@@ -30,6 +30,7 @@ const iconSizes = {
 export function LevelBadge({ level, size = 'md', showName = false, className = '' }: LevelBadgeProps) {
   const levelData = LEVELS.find(l => l.level === level) || LEVELS[0];
 
+  if (!levelData) return null;
   return (
     <div className={`inline-flex flex-col items-center gap-2 ${className}`}>
       <div 
