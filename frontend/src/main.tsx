@@ -35,6 +35,13 @@ logDebug(`[build] A KI PRI SA YÉ boot id=${BUILD_ID}`);
 initSentry();
 installRuntimeCrashProbe();
 
+// A) Purge stale price data from IndexedDB on startup (non-blocking)
+import('./services/priceCacheService').then(({ purgeExpiredPriceCache }) => {
+  purgeExpiredPriceCache().then((count) => {
+    if (count > 0) logDebug(`[cache] Purged ${count} stale price records`);
+  });
+});
+
 // Load debug utilities in development
 if (import.meta.env.DEV) {
   import('./utils/onboardingDebug');
