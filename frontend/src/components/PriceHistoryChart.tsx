@@ -1,17 +1,30 @@
 /* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
 /**
  * Price History Chart Component
- * Interactive chart displaying price evolution over time
+ * Interactive chart displaying price evolution over time with variation indicators
  */
 
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Info } from 'lucide-react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
+import { Info, TrendingDown, TrendingUp, Minus } from 'lucide-react';
 import type { PriceHistoryPoint } from '../types/priceHistory';
 
 interface PriceHistoryChartProps {
   data: PriceHistoryPoint[];
   showTrendLine?: boolean;
   showAverage?: boolean;
+}
+
+/** Compute overall variation % between first and last average price across all stores */
+function computeVariation(data: PriceHistoryPoint[]): { pct: number; trend: 'down' | 'up' | 'stable' } {
+  if (data.length < 2) return { pct: 0, trend: 'stable' };
+  const sorted = [...data].sort((a, b) => a.date.localeCompare(b.date));
+  const first = sorted.slice(0, Math.ceil(sorted.length * 0.1) || 1);
+  const last = sorted.slice(-Math.ceil(sorted.length * 0.1) || -1);
+  const avgFirst = first.reduce((s, p) => s + p.price, 0) / first.length;
+  const avgLast = last.reduce((s, p) => s + p.price, 0) / last.length;
+  const pct = ((avgLast - avgFirst) / avgFirst) * 100;
+  const trend = pct < -2 ? 'down' : pct > 2 ? 'up' : 'stable';
+  return { pct, trend };
 }
 
 export function PriceHistoryChart({ data, showTrendLine = false, showAverage = false }: PriceHistoryChartProps) {
@@ -36,8 +49,8 @@ export function PriceHistoryChart({ data, showTrendLine = false, showAverage = f
   ).map(([_, value]) => value);
 
   // Calculate average if needed
+  const avgPrice = data.length > 0 ? data.reduce((sum, p) => sum + p.price, 0) / data.length : 0;
   if (showAverage) {
-    const avgPrice = data.reduce((sum, p) => sum + p.price, 0) / data.length;
     chartData.forEach(entry => {
       entry.average = avgPrice;
     });
@@ -47,14 +60,30 @@ export function PriceHistoryChart({ data, showTrendLine = false, showAverage = f
   const stores = Array.from(storeData.keys());
   const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
 
+  // Compute variation badge
+  const { pct, trend } = computeVariation(data);
+  const variationBadge = trend === 'down'
+    ? { label: `${Math.abs(pct).toFixed(1)}% en baisse`, icon: <TrendingDown className="w-4 h-4" />, className: 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-green-300 dark:border-green-700' }
+    : trend === 'up'
+    ? { label: `${Math.abs(pct).toFixed(1)}% en hausse`, icon: <TrendingUp className="w-4 h-4" />, className: 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 border-red-300 dark:border-red-700' }
+    : { label: 'Prix stable', icon: <Minus className="w-4 h-4" />, className: 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-600' };
+
   return (
     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
         <h3 className="text-xl font-bold text-slate-900 dark:text-white">
           Évolution des Prix
         </h3>
-        <div className="text-xs text-slate-500 dark:text-slate-400">
-          {data.length} observations
+        <div className="flex items-center gap-3">
+          {data.length > 1 && (
+            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-xs font-semibold ${variationBadge.className}`}>
+              {variationBadge.icon}
+              {variationBadge.label}
+            </span>
+          )}
+          <div className="text-xs text-slate-500 dark:text-slate-400">
+            {data.length} observations
+          </div>
         </div>
       </div>
 
@@ -117,18 +146,50 @@ export function PriceHistoryChart({ data, showTrendLine = false, showAverage = f
               ))}
 
               {showAverage && (
-                <Line
-                  type="monotone"
-                  dataKey="average"
-                  stroke="#94a3b8"
-                  strokeWidth={2}
-                  strokeDasharray="5 5"
-                  dot={false}
-                  name="average"
-                />
+                <>
+                  <ReferenceLine
+                    y={avgPrice}
+                    stroke="#94a3b8"
+                    strokeDasharray="6 3"
+                    label={{ value: `Moy. territoire ${avgPrice.toFixed(2)}€`, fill: '#94a3b8', fontSize: 11, position: 'insideTopRight' }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="average"
+                    stroke="#94a3b8"
+                    strokeWidth={2}
+                    strokeDasharray="5 5"
+                    dot={false}
+                    name="average"
+                  />
+                </>
               )}
             </LineChart>
           </ResponsiveContainer>
+
+          {/* Statistiques résumées */}
+          {data.length > 0 && (
+            <div className="mt-4 grid grid-cols-3 gap-3 text-center">
+              <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-3">
+                <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Prix min</p>
+                <p className="font-bold text-green-600 dark:text-green-400">
+                  {Math.min(...data.map(p => p.price)).toFixed(2)} €
+                </p>
+              </div>
+              <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-3">
+                <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Moy. territoire</p>
+                <p className="font-bold text-slate-700 dark:text-slate-300">
+                  {avgPrice.toFixed(2)} €
+                </p>
+              </div>
+              <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-3">
+                <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Prix max</p>
+                <p className="font-bold text-red-500 dark:text-red-400">
+                  {Math.max(...data.map(p => p.price)).toFixed(2)} €
+                </p>
+              </div>
+            </div>
+          )}
 
           {/* Légende et contexte */}
           <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-700">

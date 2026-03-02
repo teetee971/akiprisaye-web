@@ -4,24 +4,92 @@
  * Manage price alerts for products
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { AlertForm } from '../components/AlertForm';
 import { UpgradeGate } from '../components/billing/UpgradeGate';
-import { Bell, CheckCircle, Info } from 'lucide-react';
+import { Bell, CheckCircle, Info, Trash2, TrendingDown, TrendingUp, Package } from 'lucide-react';
+import { safeLocalStorage } from '../utils/safeLocalStorage';
+
+const ALERTS_STORAGE_KEY = 'akiprisaye:price_alerts:v1';
+
+interface SavedAlert {
+  id: string;
+  productName: string;
+  productEAN: string;
+  alertType: string;
+  thresholdMode: string;
+  threshold: number;
+  absolutePrice: string | number;
+  territory: string;
+  createdAt: string;
+}
 
 export default function PriceAlertsPage() {
   const [showSuccess, setShowSuccess] = useState(false);
+  const [alerts, setAlerts] = useState<SavedAlert[]>([]);
+
+  useEffect(() => {
+    const raw = safeLocalStorage?.getItem(ALERTS_STORAGE_KEY);
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) setAlerts(parsed);
+      } catch { /* ignore */ }
+    }
+  }, []);
+
+  const saveAlerts = (updated: SavedAlert[]) => {
+    setAlerts(updated);
+    safeLocalStorage?.setItem(ALERTS_STORAGE_KEY, JSON.stringify(updated));
+  };
 
   const handleSave = (alertData: any) => {
-    console.log('Alert created:', alertData);
-    // TODO: Implement actual alert creation with backend
+    const newAlert: SavedAlert = {
+      id: `alert-${Date.now()}`,
+      productName: alertData.productName,
+      productEAN: alertData.productEAN || '',
+      alertType: alertData.alertType,
+      thresholdMode: alertData.thresholdMode || 'percentage',
+      threshold: alertData.threshold,
+      absolutePrice: alertData.absolutePrice || '',
+      territory: alertData.territory,
+      createdAt: new Date().toISOString(),
+    };
+    saveAlerts([newAlert, ...alerts]);
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 5000);
   };
 
   const handleCancel = () => {
     console.log('Alert creation cancelled');
+  };
+
+  const handleRemoveAlert = (id: string) => {
+    saveAlerts(alerts.filter(a => a.id !== id));
+  };
+
+  const alertTypeIcon = (type: string) => {
+    if (type === 'price_drop') return <TrendingDown className="w-4 h-4 text-green-500" />;
+    if (type === 'price_increase') return <TrendingUp className="w-4 h-4 text-red-500" />;
+    return <Package className="w-4 h-4 text-orange-500" />;
+  };
+
+  const alertTypeLabel = (type: string) => {
+    if (type === 'price_drop') return 'Baisse de prix';
+    if (type === 'price_increase') return 'Hausse de prix';
+    return 'Shrinkflation';
+  };
+
+  const thresholdLabel = (alert: SavedAlert) => {
+    if (alert.alertType === 'shrinkflation') return `${alert.threshold} g/ml`;
+    if (alert.thresholdMode === 'absolute') return `< ${alert.absolutePrice} €`;
+    return `${alert.threshold}%`;
+  };
+
+  const territoryLabel: Record<string, string> = {
+    GP: '🏝️ Guadeloupe', MQ: '🏝️ Martinique', GF: '🌴 Guyane',
+    RE: '🌋 La Réunion', YT: '🏖️ Mayotte',
   };
 
   return (
@@ -78,15 +146,66 @@ export default function PriceAlertsPage() {
             <AlertForm onSave={handleSave} onCancel={handleCancel} />
           </UpgradeGate>
 
-          {/* Section "Aucune alerte active" (TODO: afficher seulement si liste vide) */}
-          <div className="mt-8 bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-6 text-center">
-            <Bell className="w-12 h-12 text-slate-400 mx-auto mb-3" />
-            <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-1">
-              Aucune alerte active pour le moment
-            </h3>
-            <p className="text-sm text-slate-600 dark:text-slate-400">
-              Créez votre première alerte ci-dessus pour commencer à suivre les prix
-            </p>
+          {/* Liste des alertes actives */}
+          <div className="mt-8">
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+              <Bell className="w-5 h-5 text-blue-600" />
+              Mes alertes actives
+              {alerts.length > 0 && (
+                <span className="ml-1 px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs font-bold rounded-full">
+                  {alerts.length}
+                </span>
+              )}
+            </h2>
+
+            {alerts.length === 0 ? (
+              <div className="bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-6 text-center">
+                <Bell className="w-12 h-12 text-slate-400 mx-auto mb-3" />
+                <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  Aucune alerte active pour le moment
+                </h3>
+                <p className="text-sm text-slate-600 dark:text-slate-400">
+                  Créez votre première alerte ci-dessus pour commencer à suivre les prix
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-3" role="list" aria-label="Alertes actives">
+                {alerts.map((alert) => (
+                  <div
+                    key={alert.id}
+                    role="listitem"
+                    className="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between gap-3"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      {alertTypeIcon(alert.alertType)}
+                      <div className="min-w-0">
+                        <p className="font-semibold text-slate-900 dark:text-white truncate">
+                          {alert.productName}
+                        </p>
+                        <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                          <span className="text-xs text-slate-500 dark:text-slate-400">
+                            {alertTypeLabel(alert.alertType)}
+                          </span>
+                          <span className="text-xs px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded">
+                            Seuil : {thresholdLabel(alert)}
+                          </span>
+                          <span className="text-xs text-slate-400 dark:text-slate-500">
+                            {territoryLabel[alert.territory] ?? alert.territory}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => handleRemoveAlert(alert.id)}
+                      aria-label={`Supprimer l'alerte ${alert.productName}`}
+                      className="flex-shrink-0 p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
