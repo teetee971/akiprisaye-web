@@ -51,6 +51,7 @@ export default defineConfig({
       abs('./src/test/produitPage.test.ts'),
       abs('./src/test/upgradeUpsell.test.ts'),
       abs('./src/test/observatoire.unavailable.test.ts'),
+      abs('./src/test/observatory.mapping.test.ts'),
       // NOTE: si scripts/ est à la racine du repo, remplace par ../scripts/...
       abs('./scripts/verify-pages-api.test.ts'),
     ],

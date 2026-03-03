@@ -21,7 +21,7 @@ type ObservatoireData = {
   note?: string;
 };
 
-const DATA_URL = "/data/observatoire/prix-panier-base.json";
+const DATA_URL = `${import.meta.env.BASE_URL}data/observatoire/prix-panier-base.json`;
 
 export default function Observatoire() {
   const [data, setData] = useState<ObservatoireData | null>(null);
@@ -53,10 +53,6 @@ export default function Observatoire() {
     fetch(DATA_URL)
       .then((res) => {
         if (!res.ok) throw new Error("Chargement impossible");
-        const ct = res.headers.get("content-type") ?? "";
-        if (!ct.includes("application/json")) {
-          throw new Error("Format invalide");
-        }
         return res.json();
       })
       .then((json) => {
