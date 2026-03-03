@@ -1,7 +1,14 @@
 const BUILD_ID_KEY = 'app_build_id'
 const GH_HEAL_FLAG = 'akiprisaye:gh-pages-self-healed'
 
-const isGithubPagesHost = () => window.location.hostname.endsWith('github.io')
+const isGithubPagesHost = () => {
+  const hostname = window.location.hostname
+  const parts = hostname.split('.')
+  // Require at least one subdomain and a final "github.io" suffix
+  if (parts.length < 3) return false
+  const [secondLast, last] = parts.slice(-2)
+  return secondLast === 'github' && last === 'io'
+}
 
 const isAssetLoadError = (message: string) =>
   /Loading chunk|Failed to fetch dynamically imported module|Importing a module script failed|ERR_ABORTED/i.test(message)
