@@ -17,8 +17,11 @@ jobs:
         with:
           node-version: 20
 
-      - run: npm ci
+      - name: Install dependencies
 
+        working-directory: frontend
+
+        run: npm ci
       - name: Create D1
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
