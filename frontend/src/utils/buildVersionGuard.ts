@@ -73,7 +73,7 @@ export function registerAppServiceWorker(buildId?: string) {
   if (!('serviceWorker' in navigator)) return
 
   const baseUrl = import.meta.env.BASE_URL || '/'
-  const swVersion = buildId || (import.meta.env.VITE_BUILD_SHA as string | undefined) || (import.meta.env.VITE_APP_BUILD_ID as string | undefined) || 'v1'
+  const swVersion = buildId || (import.meta.env.VITE_APP_BUILD_ID as string | undefined) || (import.meta.env.VITE_BUILD_SHA as string | undefined) || 'v1'
   const swUrl = `${baseUrl}service-worker.js?v=${encodeURIComponent(swVersion)}`
 
   window.addEventListener('load', () => {
