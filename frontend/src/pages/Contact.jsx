@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
 
 export default function Contact() {
@@ -55,6 +56,12 @@ export default function Contact() {
 
   return (
     <div style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
+      <Helmet>
+        <title>Contact – A KI PRI SA YÉ</title>
+        <meta name="description" content="Contactez l'équipe A KI PRI SA YÉ pour toute question, suggestion ou signalement concernant les prix Outre-mer." />
+        <meta property="og:title" content="Contact – A KI PRI SA YÉ" />
+        <meta property="og:description" content="Envoyez-nous un message pour toute question sur l'application citoyenne de transparence des prix." />
+      </Helmet>
       <h1 style={{ color: '#ffffff', marginBottom: '1rem' }}>Contact</h1>
       <p style={{ color: '#b8b8b8', marginBottom: '2rem' }}>
         Vous avez une question ou une suggestion ? N'hésitez pas à nous contacter.

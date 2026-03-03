@@ -19,7 +19,7 @@ export class HistoryService {
   async getPriceHistory(ean: string, timeframe: Timeframe): Promise<PriceTimeSeries> {
     // TODO: Fetch from Firestore or API
     // Mock implementation
-    const mockData: PriceHistoryPoint[] = this.generateMockHistory(timeframe);
+    const mockData: PriceHistoryPoint[] = this.generateMockHistory(timeframe, ean);
     
     return {
       productEAN: ean,
@@ -120,28 +120,48 @@ export class HistoryService {
 
   /**
    * Generate mock history data for testing
+   * Uses EAN-based seed so each product has consistent (deterministic) prices.
+   * Generates data for multiple stores to enable multi-store charts.
    */
-  private generateMockHistory(timeframe: Timeframe): PriceHistoryPoint[] {
-    const days = timeframe === '7d' ? 7 : timeframe === '30d' ? 30 : 
+  private generateMockHistory(timeframe: Timeframe, ean?: string): PriceHistoryPoint[] {
+    const days = timeframe === '7d' ? 7 : timeframe === '30d' ? 30 :
                   timeframe === '90d' ? 90 : 365;
-    
+
+    // Deterministic base price derived from EAN
+    const seed = ean
+      ? ean.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0)
+      : 0;
+    const basePrice = 1.5 + (seed % 300) / 100;
+
+    const stores = [
+      { id: 'carrefour-jarry', name: 'Carrefour Jarry', offset: 0.05 },
+      { id: 'leader-price-gp', name: 'Leader Price', offset: -0.05 },
+    ];
+
     const data: PriceHistoryPoint[] = [];
-    const basePrice = 2.50;
-    
-    for (let i = 0; i < days; i++) {
-      const date = new Date();
-      date.setDate(date.getDate() - (days - i));
-      
-      data.push({
-        date: date.toISOString().split('T')[0],
-        price: basePrice + (Math.random() - 0.5) * 0.5,
-        storeId: 'store-1',
-        storeName: 'Carrefour Jarry',
-        reliability: 0.9,
-        source: 'user'
-      });
+
+    for (const store of stores) {
+      // Use a reproducible pseudo-random sequence per store
+      let rand = seed ^ store.id.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+      for (let i = 0; i < days; i++) {
+        const date = new Date();
+        date.setDate(date.getDate() - (days - i));
+
+        // Lightweight LCG pseudo-random
+        rand = (rand * 1664525 + 1013904223) & 0xffffffff;
+        const delta = ((rand >>> 0) / 0xffffffff - 0.5) * 0.4;
+
+        data.push({
+          date: date.toISOString().split('T')[0],
+          price: Math.max(0.5, parseFloat((basePrice + store.offset + delta).toFixed(2))),
+          storeId: store.id,
+          storeName: store.name,
+          reliability: 0.9,
+          source: 'user',
+        });
+      }
     }
-    
+
     return data;
   }
 }

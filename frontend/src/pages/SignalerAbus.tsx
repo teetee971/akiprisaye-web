@@ -60,7 +60,7 @@ export default function SignalerAbus() {
     }
 
     // Check if user is authenticated
-    if (!user || !auth.currentUser) {
+    if (!user || !auth || !auth.currentUser) {
       setError("Vous devez être connecté pour effectuer un signalement.");
       return;
     }

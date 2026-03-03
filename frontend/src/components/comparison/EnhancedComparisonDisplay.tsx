@@ -227,7 +227,7 @@ export default function EnhancedComparisonDisplay({
                         <>
                           <span>•</span>
                           <span className="flex items-center gap-1 text-blue-600 font-medium">
-                            📍 {priceData.distance!.toFixed(1)} km
+                            📍 {(priceData.distance as number).toFixed(1)} km
                           </span>
                         </>
                       )}

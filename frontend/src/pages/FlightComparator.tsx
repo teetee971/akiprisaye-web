@@ -222,8 +222,8 @@ const FlightComparator: React.FC = () => {
           break;
         case 'duration':
           // Parse duration string (e.g., "8h30" -> minutes)
-          const aDuration = parseDuration(a.flightPrice.duration);
-          const bDuration = parseDuration(b.flightPrice.duration);
+          const aDuration = parseDuration(a.flightPrice.duration ?? '');
+          const bDuration = parseDuration(b.flightPrice.duration ?? '');
           comparison = aDuration - bDuration;
           break;
         case 'airline':

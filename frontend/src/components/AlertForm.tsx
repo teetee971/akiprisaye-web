@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Alert Form Component
- * Create and edit price alerts
+ * Create and edit price alerts with support for % or absolute price threshold
  */
 
 import { useState } from 'react';
 import { AlertTriangle, Save, X, HelpCircle } from 'lucide-react';
 import type { AlertType } from '../types/priceAlerts';
+
+type ThresholdMode = 'percentage' | 'absolute';
 
 interface AlertFormProps {
   productEAN?: string;
@@ -20,7 +22,9 @@ export function AlertForm({ productEAN = '', productName = '', onSave, onCancel 
     productEAN,
     productName,
     alertType: 'price_drop' as AlertType,
+    thresholdMode: 'percentage' as ThresholdMode,
     threshold: 10,
+    absolutePrice: '' as string | number,
     territory: 'GP',
     emailEnabled: true,
     pushEnabled: false
@@ -30,6 +34,9 @@ export function AlertForm({ productEAN = '', productName = '', onSave, onCancel 
     e.preventDefault();
     onSave(formData);
   };
+
+  const isShrinkflation = formData.alertType === 'shrinkflation';
+  const isAbsolute = !isShrinkflation && formData.thresholdMode === 'absolute';
 
   return (
     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
@@ -83,7 +90,7 @@ export function AlertForm({ productEAN = '', productName = '', onSave, onCancel 
           </label>
           <select
             value={formData.alertType}
-            onChange={(e) => setFormData({ ...formData, alertType: e.target.value as AlertType })}
+            onChange={(e) => setFormData({ ...formData, alertType: e.target.value as AlertType, thresholdMode: 'percentage' })}
             required
             className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
@@ -96,31 +103,89 @@ export function AlertForm({ productEAN = '', productName = '', onSave, onCancel 
           </p>
         </div>
 
+        {/* Threshold Mode — only for price drop / price increase */}
+        {!isShrinkflation && (
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Mode de seuil
+            </label>
+            <div className="flex rounded-lg overflow-hidden border border-slate-300 dark:border-slate-600">
+              <button
+                type="button"
+                onClick={() => setFormData({ ...formData, thresholdMode: 'percentage' })}
+                className={`flex-1 py-2 text-sm font-medium transition-colors ${
+                  formData.thresholdMode === 'percentage'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-600'
+                }`}
+              >
+                % Variation
+              </button>
+              <button
+                type="button"
+                onClick={() => setFormData({ ...formData, thresholdMode: 'absolute' })}
+                className={`flex-1 py-2 text-sm font-medium transition-colors ${
+                  formData.thresholdMode === 'absolute'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-600'
+                }`}
+              >
+                € Seuil absolu
+              </button>
+            </div>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+              {formData.thresholdMode === 'absolute'
+                ? 'Recevoir l\'alerte si le prix passe sous (ou dépasse) ce montant exact en euros'
+                : 'Recevoir l\'alerte si le prix varie de plus de ce pourcentage'}
+            </p>
+          </div>
+        )}
+
         {/* Threshold */}
         <div>
           <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
-            Seuil de déclenchement ({formData.alertType === 'shrinkflation' ? 'g/ml' : '%'}) <span className="text-red-500">*</span>
+            Seuil de déclenchement ({isShrinkflation ? 'g/ml' : isAbsolute ? '€' : '%'}) <span className="text-red-500">*</span>
             <div className="relative group">
               <HelpCircle className="w-4 h-4 text-slate-400 cursor-help" />
               <div className="absolute left-0 top-6 hidden group-hover:block w-64 bg-slate-900 text-white text-xs rounded-lg p-3 shadow-xl z-10">
-                {formData.alertType === 'shrinkflation' 
+                {isShrinkflation
                   ? 'Quantité minimale de réduction pour déclencher l\'alerte'
+                  : isAbsolute
+                  ? 'Prix absolu en euros pour déclencher l\'alerte (ex: 1,89 = alerter si prix < 1,89 €)'
                   : 'Pourcentage minimum de variation pour déclencher l\'alerte'}
               </div>
             </div>
           </label>
-          <input
-            type="number"
-            value={formData.threshold}
-            onChange={(e) => setFormData({ ...formData, threshold: Number(e.target.value) })}
-            min="1"
-            max="100"
-            required
-            className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
+          {isAbsolute ? (
+            <div className="relative">
+              <input
+                type="number"
+                value={formData.absolutePrice}
+                onChange={(e) => setFormData({ ...formData, absolutePrice: e.target.value })}
+                placeholder="Ex: 1.89"
+                min="0"
+                step="0.01"
+                required
+                className="w-full px-4 py-2 pr-10 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 font-medium">€</span>
+            </div>
+          ) : (
+            <input
+              type="number"
+              value={formData.threshold}
+              onChange={(e) => setFormData({ ...formData, threshold: Number(e.target.value) })}
+              min="1"
+              max="100"
+              required
+              className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          )}
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-            {formData.alertType === 'price_drop' && '✓ Vous serez notifié si le prix baisse de plus de ce pourcentage'}
-            {formData.alertType === 'price_increase' && '⚠️ Vous serez notifié si le prix augmente de plus de ce pourcentage'}
+            {formData.alertType === 'price_drop' && !isAbsolute && '✓ Vous serez notifié si le prix baisse de plus de ce pourcentage'}
+            {formData.alertType === 'price_drop' && isAbsolute && `✓ Vous serez notifié si le prix passe sous ${formData.absolutePrice || '…'} €`}
+            {formData.alertType === 'price_increase' && !isAbsolute && '⚠️ Vous serez notifié si le prix augmente de plus de ce pourcentage'}
+            {formData.alertType === 'price_increase' && isAbsolute && `⚠️ Vous serez notifié si le prix dépasse ${formData.absolutePrice || '…'} €`}
             {formData.alertType === 'shrinkflation' && '📉 Vous serez notifié si la quantité diminue (même prix, moins de produit)'}
           </p>
         </div>

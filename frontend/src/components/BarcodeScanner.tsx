@@ -721,7 +721,9 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
                 playsInline
                 muted
                 autoPlay
-              />
+              >
+                <track kind="captions" src="" srcLang="fr" label="Captions" default />
+              </video>
 
               {/* Overlay must be transparent and non-blocking */}
               <div className="absolute inset-0 pointer-events-none">

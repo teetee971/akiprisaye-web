@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { buildRealtimeFallback } from '../../shared/realtimeFallback';
+import { buildRealtimeFallback } from '../utils/realtimeFallbackProxy';
 
 export type RealtimePriceState = 'live' | 'cached' | 'offline';
 

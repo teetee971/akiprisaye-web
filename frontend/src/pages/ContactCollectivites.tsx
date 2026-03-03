@@ -265,7 +265,7 @@ export default function ContactCollectivites() {
                   </label>
                   <TerritorySelector
                     value={formData.territoire}
-                    onChange={(value) => handleChange('territoire', value)}
+                    onChange={(value: string) => handleChange('territoire', value)}
                   />
                 </div>
 

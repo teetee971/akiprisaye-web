@@ -122,7 +122,7 @@ export interface LeaderboardEntry {
 }
 
 export interface LeaderboardFilters {
-  period: 'all_time' | 'monthly' | 'weekly';
+  period?: 'all_time' | 'monthly' | 'weekly';
   territory?: string;
   limit?: number;
 }

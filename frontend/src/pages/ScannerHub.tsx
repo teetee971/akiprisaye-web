@@ -87,7 +87,7 @@ export default function ScannerHub() {
   return (
     <>
       <Helmet><title>Scanner - A KI PRI SA YÉ</title><meta name="description" content="Scanner continu: code-barres avec historique et ajout rapide au panier" /></Helmet>
-      <main className="min-h-screen bg-slate-950 p-4 pt-24 text-white">
+      <div className="min-h-screen bg-slate-950 p-4 pt-24 text-white">
         <section className="mx-auto w-full max-w-4xl rounded-2xl border border-slate-800 bg-slate-900 p-4">
           <h1 className="mb-3 text-2xl font-semibold">SCANNER V3 DEV TEST</h1>
           <p className="mb-4 text-sm text-slate-300">Scan continu actif: caméra en boucle, anti-doublon et ajout rapide au panier.</p>
@@ -101,7 +101,9 @@ export default function ScannerHub() {
           </div>
 
           <div className="relative overflow-hidden rounded-xl border border-slate-700 bg-black">
-            <video ref={videoRef} playsInline muted autoPlay className="aspect-video w-full object-cover" aria-label="Caméra de scan" />
+            <video ref={videoRef} playsInline muted autoPlay className="aspect-video w-full object-cover" aria-label="Caméra de scan">
+              <track kind="captions" src="" srcLang="fr" label="Captions" default />
+            </video>
             <div className="pointer-events-none absolute inset-0 flex items-center justify-center"><div className="h-[45%] w-[70%] rounded-xl border-2 border-white/60" /></div>
             <div className="absolute left-3 top-3 rounded-full bg-black/50 px-3 py-1 text-xs text-white">Caméra: {scanActive ? 'ACTIVE' : 'PAUSE'}</div>
           </div>
@@ -112,7 +114,7 @@ export default function ScannerHub() {
                 <div>BarcodeDetector non disponible sur ce navigateur.</div>
                 <button type="button" onClick={() => navigate('/scan-ean')} className="rounded-lg border border-blue-500/60 px-3 py-2 text-xs font-semibold text-blue-200">Utiliser le scan manuel (/scan-ean)</button>
                 <div className="flex flex-wrap gap-2">
-                  <input value={manualEan} onChange={(e) => setManualEan(e.target.value)} placeholder="Saisir EAN (fallback)" className="rounded border border-slate-600 bg-slate-900 px-2 py-1 text-sm" />
+                  <input value={manualEan} onChange={(e) => setManualEan(e.target.value)} placeholder="Saisir EAN (fallback)" className="rounded border border-slate-600 bg-slate-900 px-2 py-1 text-sm" aria-label="Saisir un code EAN manuellement" />
                   <button type="button" onClick={handleManualLookup} className="rounded border border-blue-500/60 px-3 py-1 text-xs font-semibold text-blue-100">Rechercher</button>
                 </div>
                 {manualError ? <div className="text-xs text-rose-300">{manualError}</div> : null}
@@ -150,7 +152,7 @@ export default function ScannerHub() {
             )}
           </div>
         </section>
-      </main>
+      </div>
     </>
   );
 }

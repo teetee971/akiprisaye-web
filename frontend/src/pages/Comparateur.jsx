@@ -85,6 +85,7 @@ export default function Comparateur() {
           value={query}
           placeholder="Nom, marque ou code-barres"
           onChange={(e) => setQuery(e.target.value)}
+          aria-label="Rechercher un produit par nom, marque ou code-barres"
         />
         <button type="submit" className="px-4 py-2 rounded bg-blue-600 text-white" disabled={loading}>
           {loading ? 'Recherche…' : 'Rechercher'}

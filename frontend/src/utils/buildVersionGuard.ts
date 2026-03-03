@@ -1,5 +1,8 @@
 const BUILD_ID_KEY = 'app_build_id'
 const GH_HEAL_FLAG = 'akiprisaye:gh-pages-self-healed'
+export function enforceBuildVersionSync(buildId?: string): boolean {
+  const id = buildId || import.meta.env.VITE_APP_BUILD_ID;
+  if (!id) return false;
 
 const isGithubPagesHost = () => {
   const hostname = window.location.hostname
@@ -43,6 +46,14 @@ async function clearServiceWorkersAndCaches() {
     const keys = await caches.keys()
     await Promise.all(keys.map((key) => caches.delete(key)))
   }
+  if (stored && stored !== id) {
+    localStorage.clear();
+    location.reload();
+    return true;
+  }
+
+  localStorage.setItem(key, id);
+  return false;
 }
 
 export async function selfHealGithubPagesIfNeeded(reason?: unknown): Promise<boolean> {
@@ -81,4 +92,11 @@ export function registerAppServiceWorker(buildId?: string) {
       if (import.meta.env.DEV) console.warn('SW error:', err)
     })
   })
+}
+    navigator.serviceWorker
+      .register(import.meta.env.BASE_URL + 'service-worker.js')
+      .catch((err) => {
+        if (import.meta.env.DEV) console.warn('SW error:', err);
+      });
+  });
 }

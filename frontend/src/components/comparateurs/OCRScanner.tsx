@@ -208,7 +208,7 @@ export const OCRScanner: React.FC<OCRScannerProps> = ({
           )}
 
           {/* Structured Data Preview (if available) */}
-          {result.structured && !isEditing && (
+          {!!result.structured && !isEditing && (
             <div className="pt-4 border-t border-slate-700">
               <h4 className="text-sm font-semibold text-gray-300 mb-2">
                 Données structurées détectées

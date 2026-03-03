@@ -20,7 +20,7 @@ function generateLogId(): string {
  */
 export function getSyncLogs(): SyncLog[] {
   try {
-    const logs = safeLocalStorage.getJSON<SyncLog[]>(STORAGE_KEY);
+    const logs = safeLocalStorage.getJSON<SyncLog[]>(STORAGE_KEY, []);
     return logs || [];
   } catch (error) {
     console.error('Error loading sync logs:', error);

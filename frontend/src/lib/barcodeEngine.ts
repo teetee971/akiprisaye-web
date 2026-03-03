@@ -14,7 +14,7 @@ export interface ScanController {
   stop: () => void;
 }
 
-type BarcodeDetectorFormat = 'ean_13' | 'ean_8' | 'upc_a' | 'code_128';
+type LocalBarcodeFormat = 'ean_13' | 'ean_8' | 'upc_a' | 'code_128';
 
 interface BarcodeDetectorLike {
   detect: (source: HTMLVideoElement) => Promise<Array<{ rawValue?: string }>>;
@@ -22,19 +22,20 @@ interface BarcodeDetectorLike {
 
 declare global {
   interface Window {
-    BarcodeDetector?: new (options?: { formats?: BarcodeDetectorFormat[] }) => BarcodeDetectorLike;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    NativeBarcodeDetector?: new (options?: { formats?: LocalBarcodeFormat[] }) => BarcodeDetectorLike;
   }
 }
 
-const SUPPORTED_FORMATS: BarcodeDetectorFormat[] = ['ean_13', 'ean_8', 'upc_a', 'code_128'];
+const SUPPORTED_FORMATS: LocalBarcodeFormat[] = ['ean_13', 'ean_8', 'upc_a', 'code_128'];
 
 export async function startScan(
   videoEl: HTMLVideoElement,
   onResult: (code: string) => void,
   onDebug?: (debug: ScanDebugPayload) => void,
 ): Promise<ScanController> {
-  if (typeof window !== 'undefined' && window.BarcodeDetector) {
-    const detector = new window.BarcodeDetector({ formats: SUPPORTED_FORMATS });
+  if (typeof window !== 'undefined' && window.NativeBarcodeDetector) {
+    const detector = new window.NativeBarcodeDetector({ formats: SUPPORTED_FORMATS });
 
     let stopped = false;
     let rafId = 0;
@@ -129,7 +130,7 @@ export async function startScan(
     stop: () => {
       stopped = true;
       controls.stop();
-      reader.reset();
+      // BrowserMultiFormatReader doesn't expose reset() — stopping controls is sufficient
     },
   };
 }

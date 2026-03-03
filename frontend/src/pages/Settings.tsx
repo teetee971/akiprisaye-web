@@ -26,9 +26,9 @@ export default function Settings() {
   
   useEffect(() => {
     // Get current user
-    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+    const unsubscribe = auth?.onAuthStateChanged((currentUser) => {
       setUser(currentUser);
-    });
+    }) ?? (() => {});
     
     // Check camera permission
     checkCameraPermission();

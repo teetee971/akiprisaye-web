@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { AlertCircle, RefreshCw } from "lucide-react";
 import safeLocalStorage from "../utils/safeLocalStorage";
 
 type PanierItem = {
@@ -26,6 +27,7 @@ export default function Observatoire() {
   const [data, setData] = useState<ObservatoireData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
 
   const isValidData = (value: unknown): value is ObservatoireData => {
     if (!value || typeof value !== "object") return false;
@@ -68,7 +70,7 @@ export default function Observatoire() {
       .catch(() => {
         if (mounted) {
           setError(
-            "La donnée de l’observatoire est momentanément indisponible. Merci de réessayer ultérieurement."
+            "La donnée de l'observatoire est momentanément indisponible. Merci de réessayer ultérieurement."
           );
         }
       })
@@ -79,7 +81,7 @@ export default function Observatoire() {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [retryCount]);
 
   const formattedPeriod = useMemo(() => {
     if (!data?.periode) return "—";
@@ -94,7 +96,7 @@ export default function Observatoire() {
 
   useEffect(() => {
     if (!data) return;
-    safeLocalStorage.set(
+    safeLocalStorage.setItem(
       "akiprisaye:observatoire:last",
       JSON.stringify({
         territoire: data.territoire,
@@ -173,8 +175,28 @@ export default function Observatoire() {
         )}
 
         {error && !loading && (
-          <div className="rounded-lg border border-red-600 bg-red-900/30 px-4 py-3 text-red-200">
-            {error}
+          <div
+            role="alert"
+            aria-live="assertive"
+            className="rounded-xl border border-orange-500/40 bg-orange-950/30 px-6 py-8 text-center space-y-4"
+          >
+            <AlertCircle className="w-10 h-10 text-orange-400 mx-auto" aria-hidden="true" />
+            <div>
+              <p className="text-lg font-semibold text-orange-200">
+                Données momentanément indisponibles
+              </p>
+              <p className="mt-1 text-sm text-orange-300/80">
+                {error}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setRetryCount((c) => c + 1)}
+              className="inline-flex items-center gap-2 px-5 py-2 rounded-lg bg-orange-600 hover:bg-orange-500 text-white text-sm font-semibold transition-colors"
+            >
+              <RefreshCw className="w-4 h-4" aria-hidden="true" />
+              Réessayer
+            </button>
           </div>
         )}
 

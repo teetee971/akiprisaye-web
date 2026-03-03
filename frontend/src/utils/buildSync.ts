@@ -20,7 +20,7 @@ export function registerAppServiceWorker(): void {
   if (!('serviceWorker' in navigator)) return;
 
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js').catch((err) => {
+    navigator.serviceWorker.register(import.meta.env.BASE_URL + 'service-worker.js').catch((err) => {
       if (import.meta.env.DEV) console.warn('SW register error:', err);
     });
   });

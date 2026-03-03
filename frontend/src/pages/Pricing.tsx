@@ -1,110 +1,318 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Check, Minus } from 'lucide-react'
+
+/* ------------------------------------------------------------------ */
+/* Données des plans — source unique pour l'UI                         */
+/* Synchronisées avec billing/plans.ts + Subscribe.tsx                */
+/* ------------------------------------------------------------------ */
+
+interface PlanUI {
+  id: string
+  label: string
+  tagline: string
+  monthly: number | null     // null = sur devis
+  yearly: number | null      // null = sur devis
+  domDiscount: boolean       // remise -30% DOM disponible
+  highlight: boolean         // carte mise en avant
+  cta: string
+  ctaHref: (cycle: 'monthly' | 'yearly') => string
+  features: string[]
+  notIncluded?: string[]
+}
+
+const PLANS: PlanUI[] = [
+  {
+    id: 'FREE',
+    label: 'Gratuit',
+    tagline: 'Découvrir et contribuer.',
+    monthly: 0,
+    yearly: 0,
+    domDiscount: false,
+    highlight: false,
+    cta: 'Commencer gratuitement',
+    ctaHref: () => '/inscription',
+    features: [
+      '30 articles suivis',
+      'Actualisation des prix (10×/jour)',
+      'Historique basique',
+      'Export CSV basique',
+      '1 territoire',
+    ],
+    notIncluded: [
+      'Alertes prix',
+      'Historique avancé',
+      'Multi-territoires',
+    ],
+  },
+  {
+    id: 'CITIZEN_PREMIUM',
+    label: 'Citoyen Premium',
+    tagline: 'Outil citoyen complet.',
+    monthly: 3.99,
+    yearly: 39,
+    domDiscount: false,
+    highlight: false,
+    cta: 'Choisir Citoyen Premium',
+    ctaHref: (c) => `/subscribe?plan=CITIZEN_PREMIUM&cycle=${c}`,
+    features: [
+      '100 articles suivis',
+      'Actualisation des prix (50×/jour)',
+      'Historique avancé (12 mois)',
+      'Alertes prix locales',
+      'Export CSV basique',
+      '2 territoires',
+    ],
+    notIncluded: [
+      'Multi-territoires (5+)',
+      'Export avancé',
+    ],
+  },
+  {
+    id: 'PRO',
+    label: 'Pro',
+    tagline: 'Pour pros, associations, analystes.',
+    monthly: 19,
+    yearly: 190,
+    domDiscount: true,
+    highlight: true,
+    cta: 'Choisir Pro',
+    ctaHref: (c) => `/subscribe?plan=PRO&cycle=${c}`,
+    features: [
+      '300 articles suivis',
+      'Actualisation (500×/jour)',
+      'Historique avancé',
+      'Alertes prix',
+      'Export avancé (CSV, JSON)',
+      '5 territoires',
+    ],
+    notIncluded: [
+      'Listes partagées équipe',
+      'Tableau de bord budget',
+    ],
+  },
+  {
+    id: 'BUSINESS',
+    label: 'Business',
+    tagline: 'Pour équipes et exploitation intensive.',
+    monthly: 99,
+    yearly: 990,
+    domDiscount: true,
+    highlight: false,
+    cta: 'Choisir Business',
+    ctaHref: (c) => `/subscribe?plan=BUSINESS&cycle=${c}`,
+    features: [
+      '2 000 articles suivis',
+      'Actualisation (5 000×/jour)',
+      'Historique avancé',
+      'Alertes prix',
+      'Export avancé',
+      '10 territoires',
+      'Listes partagées équipe',
+      'Tableau de bord budget',
+    ],
+    notIncluded: [
+      'Rapports automatiques',
+      'Accès API',
+    ],
+  },
+  {
+    id: 'INSTITUTION',
+    label: 'Institution',
+    tagline: 'Collectivités, organismes publics, chercheurs.',
+    monthly: null,
+    yearly: null,
+    domDiscount: false,
+    highlight: false,
+    cta: 'Demander un devis',
+    ctaHref: () => '/contact?subject=licence-institutionnelle',
+    features: [
+      '20 000 articles suivis',
+      'Actualisation illimitée',
+      'Historique complet',
+      'Alertes prix',
+      'Export avancé + open-data',
+      '20 territoires',
+      'Listes partagées',
+      'Tableau de bord budget',
+      'Rapports automatiques',
+      'Accès API',
+    ],
+  },
+]
+
+/* ------------------------------------------------------------------ */
+/* Composant principal                                                  */
+/* ------------------------------------------------------------------ */
 
 export default function PricingPage() {
+  const [cycle, setCycle] = useState<'monthly' | 'yearly'>('monthly')
+
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
 
-        <header className="mb-12">
+        {/* En-tête */}
+        <header className="text-center mb-12">
           <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-            Abonnements & Options
+            Abonnements &amp; Options
           </h1>
-          <p className="mt-4 text-base text-slate-600 dark:text-slate-300 max-w-3xl">
-            Commence en gratuit. Passe ensuite en Pro ou Business selon ton niveau
-            d’exploitation (analyses avancées, alertes prix, API, exports, multi-territoires).
+          <p className="mt-4 text-base text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
+            Commence gratuitement. Passe ensuite au niveau adapté à ton usage — analyse
+            citoyenne, pro, équipe ou institution.
           </p>
+
+          {/* Toggle mensuel / annuel */}
+          <div className="mt-8 inline-flex items-center gap-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-full px-2 py-1.5 shadow-sm">
+            <button
+              onClick={() => setCycle('monthly')}
+              aria-pressed={cycle === 'monthly'}
+              className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-colors ${
+                cycle === 'monthly'
+                  ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+              }`}
+            >
+              Mensuel
+            </button>
+            <button
+              onClick={() => setCycle('yearly')}
+              aria-pressed={cycle === 'yearly'}
+              className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-colors ${
+                cycle === 'yearly'
+                  ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+              }`}
+            >
+              Annuel{' '}
+              <span className="ml-1 text-xs px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+                −17 %
+              </span>
+            </button>
+          </div>
         </header>
 
-        <section className="grid gap-8 md:grid-cols-3">
+        {/* Grille des plans */}
+        <section
+          className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
+          aria-label="Plans d'abonnement"
+        >
+          {PLANS.map((plan) => {
+            const price =
+              plan.monthly === null
+                ? null
+                : cycle === 'yearly'
+                ? plan.yearly
+                : plan.monthly
+            const monthlyEquiv =
+              cycle === 'yearly' && plan.yearly !== null && plan.monthly !== null && plan.monthly > 0
+                ? plan.yearly / 12
+                : null
 
-          {/* GRATUIT */}
-          <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm p-8 flex flex-col">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
-              Gratuit
-            </h2>
-            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-              Découvrir et contribuer.
-            </p>
-            <div className="mt-6 text-4xl font-extrabold text-slate-900 dark:text-white">
-              0 €
-            </div>
+            return (
+              <article
+                key={plan.id}
+                className={`rounded-2xl p-6 flex flex-col ${
+                  plan.highlight
+                    ? 'border-2 border-slate-900 dark:border-white bg-white dark:bg-slate-900 shadow-lg relative'
+                    : 'border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm'
+                }`}
+              >
+                {plan.highlight && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-slate-900 text-white dark:bg-white dark:text-slate-900 text-xs font-semibold px-3 py-1 rounded-full whitespace-nowrap">
+                    Recommandé
+                  </div>
+                )}
 
-            <ul className="mt-8 space-y-2 text-sm text-slate-600 dark:text-slate-300">
-              <li>✓ 60 scans / mois</li>
-              <li>✓ Accès prix & agrégats</li>
-              <li>✓ Contribution citoyenne</li>
-            </ul>
+                <div className="flex-1">
+                  {/* Nom & tagline */}
+                  <h2 className="text-base font-bold text-slate-900 dark:text-white">
+                    {plan.label}
+                  </h2>
+                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                    {plan.tagline}
+                  </p>
 
-            <Link
-              to="/signup"
-              className="mt-8 inline-flex items-center justify-center rounded-xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 px-5 py-3 text-sm font-semibold hover:opacity-90 transition"
-            >
-              Commencer
-            </Link>
-          </div>
+                  {/* Prix */}
+                  <div className="mt-4">
+                    {price === null ? (
+                      <p className="text-2xl font-extrabold text-slate-900 dark:text-white">
+                        Sur devis
+                      </p>
+                    ) : price === 0 ? (
+                      <p className="text-2xl font-extrabold text-slate-900 dark:text-white">
+                        Gratuit
+                      </p>
+                    ) : (
+                      <>
+                        <p className="text-2xl font-extrabold text-slate-900 dark:text-white">
+                          {price.toFixed(2).replace('.', ',')} €
+                          <span className="text-sm font-medium text-slate-500 ml-1">
+                            /{cycle === 'yearly' ? 'an' : 'mois'}
+                          </span>
+                        </p>
+                        {monthlyEquiv !== null && (
+                          <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-0.5">
+                            soit {monthlyEquiv.toFixed(2).replace('.', ',')} €/mois
+                          </p>
+                        )}
+                        {plan.domDiscount && cycle === 'monthly' && (
+                          <p className="text-xs text-blue-600 dark:text-blue-400 mt-0.5">
+                            −30 % DOM disponible *
+                          </p>
+                        )}
+                      </>
+                    )}
+                  </div>
 
-          {/* PRO */}
-          <div className="rounded-2xl border-2 border-black dark:border-white bg-white dark:bg-slate-900 shadow-md p-8 flex flex-col relative">
-            <div className="absolute -top-3 right-6 bg-black text-white dark:bg-white dark:text-slate-900 text-xs font-semibold px-3 py-1 rounded-full">
-              Recommandé
-            </div>
+                  {/* Features incluses */}
+                  <ul className="mt-5 space-y-1.5" aria-label={`Fonctionnalités ${plan.label}`}>
+                    {plan.features.map((f) => (
+                      <li key={f} className="flex items-start gap-2 text-xs text-slate-700 dark:text-slate-300">
+                        <Check className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0 mt-0.5" aria-hidden="true" />
+                        {f}
+                      </li>
+                    ))}
+                    {plan.notIncluded?.map((f) => (
+                      <li key={f} className="flex items-start gap-2 text-xs text-slate-400 dark:text-slate-600">
+                        <Minus className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" aria-hidden="true" />
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
 
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
-              Pro
-            </h2>
-            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-              Pour pros, associations, médias, analystes.
-            </p>
-
-            <div className="mt-6 text-4xl font-extrabold text-slate-900 dark:text-white">
-              49 € <span className="text-base font-medium">/mois</span>
-            </div>
-
-            <ul className="mt-8 space-y-2 text-sm text-slate-600 dark:text-slate-300">
-              <li>✓ 1000 scans / mois</li>
-              <li>✓ Historique avancé</li>
-              <li>✓ Alertes prix</li>
-              <li>✓ Accès API</li>
-            </ul>
-
-            <Link
-              to="/checkout?plan=pro"
-              className="mt-8 inline-flex items-center justify-center rounded-xl bg-black text-white dark:bg-white dark:text-slate-900 px-5 py-3 text-sm font-semibold hover:opacity-90 transition"
-            >
-              Choisir Pro
-            </Link>
-          </div>
-
-          {/* BUSINESS */}
-          <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm p-8 flex flex-col">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
-              Business
-            </h2>
-            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-              Pour équipes et exploitation intensive.
-            </p>
-
-            <div className="mt-6 text-4xl font-extrabold text-slate-900 dark:text-white">
-              99 € <span className="text-base font-medium">/mois</span>
-            </div>
-
-            <ul className="mt-8 space-y-2 text-sm text-slate-600 dark:text-slate-300">
-              <li>✓ Scans illimités</li>
-              <li>✓ 9 territoires</li>
-              <li>✓ 5 sièges équipe</li>
-              <li>✓ Exports avancés</li>
-            </ul>
-
-            <Link
-              to="/checkout?plan=business"
-              className="mt-8 inline-flex items-center justify-center rounded-xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 px-5 py-3 text-sm font-semibold hover:opacity-90 transition"
-            >
-              Choisir Business
-            </Link>
-          </div>
-
+                {/* CTA */}
+                <Link
+                  to={plan.ctaHref(cycle)}
+                  className={`mt-6 inline-flex items-center justify-center rounded-xl px-4 py-2.5 text-sm font-semibold hover:opacity-90 transition ${
+                    plan.highlight
+                      ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900'
+                      : 'bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700'
+                  }`}
+                >
+                  {plan.cta}
+                </Link>
+              </article>
+            )
+          })}
         </section>
+
+        {/* Note DOM */}
+        <p className="mt-8 text-center text-xs text-slate-500 dark:text-slate-400">
+          * Remise de 30 % applicable aux plans Pro et Business pour les résidents des territoires
+          DOM · ROM · COM — activée automatiquement lors de l'abonnement.
+        </p>
+
+        {/* Lien vers tarifs détaillés */}
+        <div className="mt-6 text-center">
+          <Link
+            to="/tarifs-details"
+            className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+          >
+            Voir la comparaison complète des fonctionnalités →
+          </Link>
+        </div>
 
       </div>
     </div>

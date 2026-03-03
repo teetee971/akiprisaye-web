@@ -18,20 +18,20 @@ export default function AlerteDetail() {
   }, [id]);
 
   if (typeof alert === 'undefined') {
-    return <main className="max-w-4xl mx-auto px-4 py-8 text-slate-100">Chargement…</main>;
+    return <div className="max-w-4xl mx-auto px-4 py-8 text-slate-100">Chargement…</div>;
   }
 
   if (!alert) {
     return (
-      <main className="max-w-4xl mx-auto px-4 py-8 text-slate-100">
+      <div className="max-w-4xl mx-auto px-4 py-8 text-slate-100">
         <h1 className="text-2xl font-bold mb-4">Alerte introuvable</h1>
         <Link to="/alertes" className="text-blue-300 underline">Retour aux alertes</Link>
-      </main>
+      </div>
     );
   }
 
   return (
-    <main className="max-w-4xl mx-auto px-4 py-8 text-slate-100">
+    <div className="max-w-4xl mx-auto px-4 py-8 text-slate-100">
       <Link to="/alertes" className="text-sm text-blue-300 underline">← Retour aux alertes</Link>
       <h1 className="text-2xl font-bold mt-3">{alert.title}</h1>
       <p className="text-sm text-slate-400 mt-2">
@@ -67,6 +67,6 @@ export default function AlerteDetail() {
           </a>
         )}
       </section>
-    </main>
+    </div>
   );
 }

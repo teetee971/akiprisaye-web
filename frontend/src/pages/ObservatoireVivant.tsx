@@ -12,7 +12,7 @@ import {
 } from 'recharts';
 import { PriceChart } from '../components/PriceChart';
 import { filterByRange } from '../utils/priceRange';
-import type { PriceObservation } from '../types/priceObservation';
+import type { PriceObservation } from '../types/PriceObservation';
 import { getRealtimePrices, type RealtimePriceState } from '../services/realtimePricesService';
 
 type Period = 'hour' | 'day' | 'week' | 'month';
@@ -472,7 +472,7 @@ export default function ObservatoireVivant() {
                         borderRadius: '12px',
                         color: '#e2e8f0',
                       }}
-                      formatter={(value: number) => [`${value.toFixed(2)} ${currency}`, 'Prix']}
+                      formatter={(value: number | undefined) => [`${(value ?? 0).toFixed(2)} ${currency}`, 'Prix']}
                       labelFormatter={(label) => formatDate(label)}
                     />
                     <Line

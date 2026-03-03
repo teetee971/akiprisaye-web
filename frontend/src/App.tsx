@@ -16,6 +16,7 @@ import OnboardingAutoStart from './components/OnboardingAutoStart';
 import HelpButton from './components/HelpButton';
 import AnalyticsTracker from './components/analytics/AnalyticsTracker';
 import { ToastProvider } from './components/Toast/ToastProvider';
+import UpgradePromptModal from './components/billing/UpgradePromptModal';
 import { StoreSelectionProvider } from './context/StoreSelectionContext';
 import { EntitlementProvider } from './billing/EntitlementProvider';
 import RequireAuth from './components/auth/RequireAuth';
@@ -69,6 +70,7 @@ const Settings = lazyPage(() => import('./pages/Settings'));
 const HistoriquePrix = lazyPage(() => import('./pages/HistoriquePrix'));
 const RecherchePrix = lazyPage(() => import('./pages/RecherchePrix'));
 const ProductDetailPage = lazyPage(() => import('./pages/ProductDetail'));
+const ProduitPage = lazyPage(() => import('./pages/ProduitPage'));
 const Alertes = lazyPage(() => import('./pages/Alertes'));
 const AlerteDetail = lazyPage(() => import('./pages/AlerteDetail'));
 const Promos = lazyPage(() => import('./pages/Promos'));
@@ -99,6 +101,7 @@ const SignalerAbus = lazyPage(() => import('./pages/SignalerAbus'));
 
 // Admin Sync Dashboard
 const SyncDashboard = lazyPage(() => import('./pages/admin/sync/SyncDashboard'));
+const SignalementModeration = lazyPage(() => import('./pages/admin/moderation/SignalementModeration'));
 
 // i18n Test page (for development/testing)
 const I18nTest = lazyPage(() => import('./pages/I18nTest'));
@@ -113,43 +116,39 @@ const logoUrl = `${import.meta.env.BASE_URL}logo-akiprisaye.svg`;
  *
  * Tu ajoutes un alias ? Ajoute 1 ligne ici. Point final.
  */
-function LegacyAliasRoutes() {
-  return (
-    <>
-      {/* Actualités */}
-      <Route path="actus" element={<Navigate to="/actualites" replace />} />
-      <Route path="panier" element={<Navigate to="/liste" replace />} />
-      <Route path="cart" element={<Navigate to="/liste" replace />} />
-      <Route path="checkout" element={<Navigate to="/liste" replace />} />
-      <Route path="news" element={<Navigate to="/actualites" replace />} />
+const LEGACY_ALIAS_ROUTES = [
+  /* Actualités */
+  <Route path="actus" element={<Navigate to="/actualites" replace />} />,
+  <Route path="panier" element={<Navigate to="/liste" replace />} />,
+  <Route path="cart" element={<Navigate to="/liste" replace />} />,
+  <Route path="checkout" element={<Navigate to="/liste" replace />} />,
+  <Route path="news" element={<Navigate to="/actualites" replace />} />,
 
-      {/* Scanner */}
-      <Route path="scan" element={<Navigate to="/scanner" replace />} />
+  /* Scanner */
+  <Route path="scan" element={<Navigate to="/scanner" replace />} />,
 
-      {/* Offres / Tarifs (aliases utiles si un lien pointe vers /offres) */}
-      <Route path="offres" element={<Navigate to="/pricing" replace />} />
-      <Route path="tarifs" element={<Navigate to="/pricing" replace />} />
-      <Route path="abonnements" element={<Navigate to="/pricing" replace />} />
+  /* Offres / Tarifs (aliases utiles si un lien pointe vers /offres) */
+  <Route path="offres" element={<Navigate to="/pricing" replace />} />,
+  <Route path="tarifs" element={<Navigate to="/pricing" replace />} />,
+  <Route path="abonnements" element={<Navigate to="/pricing" replace />} />,
 
-      {/* Auth: login (legacy deep-links) */}
-      <Route path="Login" element={<Navigate to="/login" replace />} />
-      <Route path="auth/login" element={<Navigate to="/login" replace />} />
-      <Route path="signin" element={<Navigate to="/login" replace />} />
+  /* Auth: login (legacy deep-links) */
+  <Route path="Login" element={<Navigate to="/login" replace />} />,
+  <Route path="auth/login" element={<Navigate to="/login" replace />} />,
+  <Route path="signin" element={<Navigate to="/login" replace />} />,
 
-      {/* Auth: register */}
-      <Route path="auth/register" element={<Navigate to="/inscription" replace />} />
-      <Route path="signup" element={<Navigate to="/inscription" replace />} />
+  /* Auth: register */
+  <Route path="auth/register" element={<Navigate to="/inscription" replace />} />,
+  <Route path="signup" element={<Navigate to="/inscription" replace />} />,
 
-      {/* Auth: reset */}
-      <Route path="auth/reset-password" element={<Navigate to="/reset-password" replace />} />
-      <Route path="forgot-password" element={<Navigate to="/reset-password" replace />} />
+  /* Auth: reset */
+  <Route path="auth/reset-password" element={<Navigate to="/reset-password" replace />} />,
+  <Route path="forgot-password" element={<Navigate to="/reset-password" replace />} />,
 
-      {/* Account */}
-      <Route path="moncompte" element={<Navigate to="/mon-compte" replace />} />
-      <Route path="account" element={<Navigate to="/mon-compte" replace />} />
-    </>
-  );
-}
+  /* Account */
+  <Route path="moncompte" element={<Navigate to="/mon-compte" replace />} />,
+  <Route path="account" element={<Navigate to="/mon-compte" replace />} />,
+];
 
 function LoadingFallback() {
   const [showTimeout, setShowTimeout] = useState(false);
@@ -171,6 +170,7 @@ function LoadingFallback() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-slate-900 text-white p-4">
         <img src={logoUrl} alt="Logo" className="h-16 mb-4" />
+        <img src={`${import.meta.env.BASE_URL}logo-akiprisaye.svg`} alt="Logo" className="h-16 mb-4" />
         <h1 className="text-xl font-bold mb-2">Chargement bloqué</h1>
         <p className="text-slate-400 mb-4">L'application met trop de temps à charger.</p>
         <button onClick={() => window.location.reload()} className="px-6 py-3 bg-blue-600 rounded-lg hover:bg-blue-700">
@@ -208,6 +208,7 @@ export default function App() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-slate-900 text-white p-4">
         <img src={logoUrl} alt="Logo" className="h-16 mb-4" />
+        <img src={`${import.meta.env.BASE_URL}logo-akiprisaye.svg`} alt="Logo" className="h-16 mb-4" />
         <h1 className="text-xl font-bold mb-2">Erreur d'initialisation</h1>
         <p className="text-red-400 mb-4">{providerError.message}</p>
         <button onClick={() => window.location.reload()} className="px-6 py-3 bg-blue-600 rounded-lg hover:bg-blue-700">
@@ -241,6 +242,7 @@ export default function App() {
                           <Route path="products/:id/edit" element={<ProductForm />} />
                           <Route path="import" element={<ImportPage />} />
                           <Route path="sync" element={<SyncDashboard />} />
+                          <Route path="moderation" element={<SignalementModeration />} />
                         </Route>
 
                         {/* Main site routes with Layout */}
@@ -286,6 +288,7 @@ export default function App() {
                           <Route path="historique-prix" element={<HistoriquePrix />} />
                           <Route path="historique" element={<HistoriquePrix />} />
                           <Route path="p/:id" element={<ProductDetailPage />} />
+                          <Route path="produit/:ean" element={<ProduitPage />} />
                           <Route path="recherche-prix" element={<RecherchePrix />} />
                           <Route path="alertes" element={<Alertes />} />
                           <Route path="alertes/:id" element={<AlerteDetail />} />
@@ -314,7 +317,7 @@ export default function App() {
                           />
 
                           {/* Aliases legacy (stables CI) */}
-                          <LegacyAliasRoutes />
+                          {LEGACY_ALIAS_ROUTES}
 
                           {/* Pricing & Subscription */}
                           <Route path="pricing" element={<Pricing />} />
@@ -345,6 +348,7 @@ export default function App() {
                       <OnboardingTour />
                       <HelpButton />
                       <ToastProvider />
+                      <UpgradePromptModal />
                     </Suspense>
                   </BrowserRouter>
                 </EntitlementProvider>

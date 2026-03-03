@@ -4,6 +4,8 @@ import Header from './layout/Header';
 import Footer from './layout/Footer';
 import FabActions from './ui/FabActions';
 import UpgradePromptModal from './billing/UpgradePromptModal';
+import SkipLinks from './a11y/SkipLinks';
+import PrivacyConsentBanner from './PrivacyConsentBanner';
 import { hydrateShoppingList } from '../store/useShoppingListStore';
 
 export default function Layout() {
@@ -13,12 +15,14 @@ export default function Layout() {
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-950 text-slate-100">
+      <SkipLinks />
       <Header />
-      <main id="main" className="mx-auto w-full max-w-6xl flex-1 px-4 pb-28 pt-4 md:pb-10" role="main">
+      <main id="main" className="mx-auto w-full max-w-6xl flex-1 px-4 pb-28 pt-4 md:pb-10">
         <Outlet />
       </main>
       <FabActions />
       <UpgradePromptModal />
+      <PrivacyConsentBanner />
       <Footer />
     </div>
   );

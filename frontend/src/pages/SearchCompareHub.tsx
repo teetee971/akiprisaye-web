@@ -75,7 +75,7 @@ export default function SearchCompareHub() {
           return;
         }
         const territories = Array.from(new Set(items.map((item) => item.territory))).sort();
-        const stores = Array.from(new Set(items.map((item) => item.storeLabel))).sort();
+        const stores = Array.from(new Set(items.map((item) => item.storeLabel).filter((s): s is string => s !== undefined))).sort();
         setOptions({ territories, stores });
       })
       .catch(() => {
@@ -271,8 +271,8 @@ export default function SearchCompareHub() {
         {!loading && results.length > 0 && (
           <ul className={styles.resultList}>
             {results.map((item) => {
-              const confidenceLabel = getConfidenceLabel(item.confidenceScore);
-              const storeLabel = storeAliases.get(item.storeLabel) ?? 'Enseigne locale';
+              const confidenceLabel = getConfidenceLabel(item.confidenceScore ?? 0);
+              const storeLabel = storeAliases.get(item.storeLabel ?? '') ?? 'Enseigne locale';
               const tooltipId = `tooltip-${item.productId}`;
               const isExpanded = expandedId === item.productId;
 
@@ -290,8 +290,8 @@ export default function SearchCompareHub() {
                       <span className={styles.resultBadge}>Confiance : {confidenceLabel}</span>
                     </div>
                     <p className={styles.resultDetails}>
-                      {getSourceLabel(item.sourceType)} · {item.observationsCount} ticket
-                      {item.observationsCount > 1 ? 's' : ''} ·{' '}
+                      {getSourceLabel(item.sourceType)} · {item.observationsCount ?? 0} ticket
+                      {(item.observationsCount ?? 0) > 1 ? 's' : ''} ·{' '}
                       {new Date(item.observedAt).toLocaleDateString('fr-FR', {
                         day: '2-digit',
                         month: 'short',

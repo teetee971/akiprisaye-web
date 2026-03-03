@@ -160,7 +160,7 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
     <div className="observatory-dashboard">
       {/* Header */}
       <header className="dashboard-header">
-        <h1>📊 Observatoire des Prix</h1>
+        <h2>📊 Observatoire des Prix</h2>
         <p className="subtitle">
           Données publiques - {metadata.nombre_observations_total} observations
         </p>
@@ -318,7 +318,7 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
           <div className="evolution-grid">
             {indicateurs.evolutions_temporelles.slice(0, 10).map((evolution, idx) => (
               <div key={idx} className="evolution-card">
-                <h4>{evolution.produit}</h4>
+                <h3>{evolution.produit}</h3>
                 <div className="current-price">
                   Prix actuel: <strong>{evolution.prix_actuel.toFixed(2)} €</strong>
                 </div>
@@ -352,7 +352,7 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
           <div className="dispersion-grid">
             {indicateurs.dispersions_enseignes.slice(0, 6).map((dispersion, idx) => (
               <div key={idx} className="dispersion-card">
-                <h4>{dispersion.produit}</h4>
+                <h3>{dispersion.produit}</h3>
                 <div className="stats">
                   <div className="stat">
                     <span className="label">Min</span>

@@ -41,6 +41,7 @@ class ErrorBoundary extends Component {
           <div className="max-w-2xl w-full bg-slate-900 border border-red-500/30 rounded-xl p-8 text-center">
             <img 
               src={logoUrl} 
+              src={`${import.meta.env.BASE_URL}logo-akiprisaye.svg`}
               alt="A KI PRI SA YÉ" 
               style={{ height: '64px', margin: '0 auto 24px' }}
             />

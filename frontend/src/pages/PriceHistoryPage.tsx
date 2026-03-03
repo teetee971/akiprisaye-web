@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Info, TrendingUp, AlertCircle } from 'lucide-react';
 import { PriceHistoryChart } from '../components/PriceHistoryChart';
+import { UpgradeGate } from '../components/billing/UpgradeGate';
 import { historyService } from '../services/historyService';
 import type { PriceHistoryPoint, Timeframe } from '../types/priceHistory';
 
@@ -118,7 +119,9 @@ export default function PriceHistoryPage() {
               </button>
             </div>
           ) : (
-            <PriceHistoryChart data={data} showTrendLine showAverage />
+            <UpgradeGate feature="PRICE_HISTORY_ADVANCED">
+              <PriceHistoryChart data={data} showTrendLine showAverage />
+            </UpgradeGate>
           )}
 
           {/* CTA discret */}

@@ -110,8 +110,38 @@ async function checkRateLimit(userId?: string, ipAddress?: string): Promise<bool
 }
 
 /**
- * Upload photo contribution to Firebase Storage
+ * Anti-fraud: detect duplicate price observation
+ * Returns true if a similar observation (same barcode + store + rounded price) was
+ * already submitted within the last 24 hours, regardless of user.
  */
+async function isDuplicatePriceObservation(obs: PriceObservation): Promise<boolean> {
+  if (!obs.barcode) return false;
+  const db = getFirestore();
+  const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+  // Round price to nearest 5 cents to catch near-duplicate submissions
+  const roundedPrice = Math.round(obs.price * 20) / 20;
+  try {
+    const q = query(
+      collection(db, 'contributions'),
+      where('barcode', '==', obs.barcode),
+      where('storeName', '==', obs.storeName),
+      where('submittedAt', '>=', oneDayAgo),
+      orderBy('submittedAt', 'desc'),
+      limit(5),
+    );
+    const snap = await getDocs(q);
+    return snap.docs.some((d) => {
+      const data = d.data();
+      const storedRounded = Math.round((data.price ?? 0) * 20) / 20;
+      return Math.abs(storedRounded - roundedPrice) < 0.01;
+    });
+  } catch {
+    // Silently ignore query errors (e.g., missing index) – don't block submission
+    return false;
+  }
+}
+
+
 async function uploadContributionPhoto(
   contribution: PhotoContribution,
   contributionId: string
@@ -210,6 +240,12 @@ export async function submitPriceObservation(
   const canSubmit = await checkRateLimit(userId);
   if (!canSubmit) {
     throw new Error('Trop de contributions récentes. Veuillez réessayer dans une heure.');
+  }
+
+  // Anti-fraud: reject duplicate submissions within 24 h
+  const isDuplicate = await isDuplicatePriceObservation(observation);
+  if (isDuplicate) {
+    throw new Error('Une observation similaire a déjà été soumise récemment pour ce produit et cette enseigne.');
   }
   
   const db = getFirestore();
