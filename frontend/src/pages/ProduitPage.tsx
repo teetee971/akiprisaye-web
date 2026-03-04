@@ -32,6 +32,7 @@ import { historyService } from '../services/historyService';
 import { useFavorites } from '../hooks/useFavorites';
 import { useGeolocation } from '../hooks/useGeolocation';
 import { calculateDistancesBatch, formatDistance } from '../utils/geoLocation';
+import { fetchOffProductByBarcode } from '../services/openFoodFacts';
 import type { PriceHistoryPoint, Timeframe } from '../types/priceHistory';
 
 /* ------------------------------------------------------------------ */
@@ -50,51 +51,33 @@ interface StorePrice {
 }
 
 /* ------------------------------------------------------------------ */
-/* Données mock (remplacées par API réelle ultérieurement)             */
+/* Helper : mappe les observations /api/local-price en StorePrice[]    */
 /* ------------------------------------------------------------------ */
 
-function buildMockStorePrices(ean: string): StorePrice[] {
-  // Seed déterministe basée sur l'EAN pour des valeurs cohérentes
-  const seed = ean.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
-  const base = 1.5 + (seed % 300) / 100;
-  return [
-    {
-      storeId: 'carrefour-jarry',
-      storeName: 'Carrefour Jarry',
-      price: parseFloat((base * 1.05).toFixed(2)),
-      isPromo: false,
-      lastUpdated: new Date(Date.now() - 3600000).toISOString(),
-      lat: 16.271,
-      lon: -61.588,
-    },
-    {
-      storeId: 'leader-price-gp',
-      storeName: 'Leader Price Guadeloupe',
-      price: parseFloat((base * 0.95).toFixed(2)),
-      isPromo: true,
-      lastUpdated: new Date(Date.now() - 7200000).toISOString(),
-      lat: 16.2415,
-      lon: -61.5331,
-    },
-    {
-      storeId: 'match-gp',
-      storeName: 'Hyper Match',
-      price: parseFloat((base * 1.02).toFixed(2)),
-      isPromo: false,
-      lastUpdated: new Date(Date.now() - 86400000).toISOString(),
-      lat: 16.2544,
-      lon: -61.5602,
-    },
-    {
-      storeId: 'leclerc-gp',
-      storeName: 'E.Leclerc Guadeloupe',
-      price: parseFloat((base * 0.98).toFixed(2)),
-      isPromo: false,
-      lastUpdated: new Date(Date.now() - 43200000).toISOString(),
-      lat: 16.23,
-      lon: -61.508,
-    },
-  ];
+function observationsToStorePrices(
+  observations: Array<{ id: string; storeName?: string | null; storeId?: string | null; price: number; observedAt: string }>,
+): StorePrice[] {
+  const byStore = new Map<string, StorePrice>();
+  for (const obs of observations) {
+    const sid = obs.storeId ?? obs.storeName ?? obs.id;
+    if (!byStore.has(sid)) {
+      byStore.set(sid, {
+        storeId: sid,
+        storeName: obs.storeName ?? obs.storeId ?? 'Magasin',
+        price: obs.price,
+        isPromo: false,
+        lastUpdated: obs.observedAt,
+      });
+    } else {
+      const existing = byStore.get(sid)!;
+      // Keep the most recent observation
+      if (obs.observedAt > existing.lastUpdated) {
+        existing.price = obs.price;
+        existing.lastUpdated = obs.observedAt;
+      }
+    }
+  }
+  return Array.from(byStore.values());
 }
 
 /* ------------------------------------------------------------------ */
@@ -105,6 +88,7 @@ export default function ProduitPage() {
   const { ean = '' } = useParams<{ ean: string }>();
 
   const [productName, setProductName] = useState<string>('Chargement…');
+  const [productImage, setProductImage] = useState<string | undefined>();
   const [storePrices, setStorePrices] = useState<StorePrice[]>([]);
   const [historyData, setHistoryData] = useState<PriceHistoryPoint[]>([]);
   const [timeframe, setTimeframe] = useState<Timeframe>('30d');
@@ -125,18 +109,90 @@ export default function ProduitPage() {
   });
 
   /* ---------------------------------------------------------------- */
-  /* Chargement produit + prix                                          */
+  /* Chargement produit + prix réels                                    */
   /* ---------------------------------------------------------------- */
   useEffect(() => {
     if (!ean) return;
     setLoading(true);
 
-    // En production : appel API par EAN (Open Food Facts, base interne, etc.)
-    setTimeout(() => {
-      setProductName(`Produit EAN ${ean}`);
-      setStorePrices(buildMockStorePrices(ean));
+    const controller = new AbortController();
+
+    const load = async () => {
+      // 1. Open Food Facts — nom et image du produit
+      const offResult = await fetchOffProductByBarcode(ean).catch(() => null);
+      if (offResult?.product?.name) setProductName(offResult.product.name);
+      if (offResult?.product?.imageUrl) setProductImage(offResult.product.imageUrl);
+
+      // 2. /api/local-price — prix par enseigne depuis Firestore
+      try {
+        const territory = 'gp';
+        const params = new URLSearchParams({ barcode: ean, territory, days: '30' });
+        const res = await fetch(`/api/local-price?${params.toString()}`, {
+          headers: { Accept: 'application/json' },
+          signal: controller.signal,
+        });
+        if (res.ok) {
+          const payload = await res.json() as {
+            ok?: boolean;
+            product?: { name?: string };
+            aggregate?: { min?: number | null; median?: number | null; max?: number | null; lastObservedAt?: number | null; sampleCount?: number };
+          };
+          if (payload.ok) {
+            if (payload.product?.name && (!offResult?.product?.name)) {
+              setProductName(payload.product.name as string);
+            }
+            // Build store prices from aggregate if we have data
+            if (payload.aggregate?.median != null) {
+              const agg = payload.aggregate;
+              setStorePrices([
+                {
+                  storeId: 'aggregate',
+                  storeName: 'Prix médian observé',
+                  price: agg.median as number,
+                  isPromo: false,
+                  lastUpdated: agg.lastObservedAt
+                    ? new Date(agg.lastObservedAt).toISOString()
+                    : new Date().toISOString(),
+                },
+                ...(agg.min != null && agg.min !== agg.median
+                  ? [{ storeId: 'min', storeName: 'Meilleur prix observé', price: agg.min, isPromo: true, lastUpdated: new Date().toISOString() }]
+                  : []),
+                ...(agg.max != null && agg.max !== agg.median
+                  ? [{ storeId: 'max', storeName: 'Prix le plus élevé', price: agg.max, isPromo: false, lastUpdated: new Date().toISOString() }]
+                  : []),
+              ]);
+            }
+          }
+        }
+      } catch {
+        // Ignore — observations endpoint fallback below
+      }
+
+      // 3. /api/observations — prix contributeurs par magasin
+      try {
+        const params = new URLSearchParams({ barcode: ean });
+        const res = await fetch(`/api/observations?${params.toString()}`, {
+          headers: { Accept: 'application/json' },
+          signal: controller.signal,
+        });
+        if (res.ok) {
+          const payload = await res.json() as {
+            observations?: Array<{ id: string; storeName?: string | null; storeId?: string | null; price: number; observedAt: string }>;
+          };
+          if (Array.isArray(payload.observations) && payload.observations.length > 0) {
+            const prices = observationsToStorePrices(payload.observations);
+            if (prices.length > 0) setStorePrices(prices);
+          }
+        }
+      } catch {
+        // Silently ignore
+      }
+
       setLoading(false);
-    }, 400);
+    };
+
+    load();
+    return () => controller.abort();
   }, [ean]);
 
   /* ---------------------------------------------------------------- */
