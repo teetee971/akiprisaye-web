@@ -28,6 +28,24 @@ export default function HomePage() {
         </p>
       </section>
 
+      <section className="space-y-2 rounded-2xl border border-slate-800 bg-slate-900 p-4">
+        <h2 className="text-lg font-semibold text-white">Fonctionnalités avancées</h2>
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <Link to="/alertes-prix" className="rounded-xl border border-slate-700 px-3 py-3 text-center text-slate-100 hover:border-emerald-500 hover:text-emerald-400">
+            🔔 Alertes Prix
+          </Link>
+          <Link to="/liste-intelligente" className="rounded-xl border border-slate-700 px-3 py-3 text-center text-slate-100 hover:border-emerald-500 hover:text-emerald-400">
+            🛒 Liste Intelligente
+          </Link>
+          <Link to="/tableau-inflation" className="rounded-xl border border-slate-700 px-3 py-3 text-center text-slate-100 hover:border-emerald-500 hover:text-emerald-400">
+            📈 Inflation
+          </Link>
+          <Link to="/gamification" className="rounded-xl border border-slate-700 px-3 py-3 text-center text-slate-100 hover:border-emerald-500 hover:text-emerald-400">
+            🏆 Mon Profil
+          </Link>
+        </div>
+      </section>
+
       <HomeFAQ />
     </div>
   );

@@ -81,6 +81,15 @@ const UpgradePage = lazyPage(() => import('./pages/UpgradePage'));
 // Savings Dashboard
 const MesEconomies = lazyPage(() => import('./pages/MesEconomies'));
 
+// Advanced feature pages (v7.0.0)
+const PriceAlertsPage = lazyPage(() => import('./pages/PriceAlertsPage'));
+const PriceHistoryPage = lazyPage(() => import('./pages/PriceHistoryPage'));
+const SmartShoppingListPage = lazyPage(() => import('./pages/SmartShoppingListPage'));
+const InflationDashboardPage = lazyPage(() => import('./pages/InflationDashboardPage'));
+const GamificationProfilePage = lazyPage(() => import('./pages/GamificationProfilePage'));
+const LeaderboardPage = lazyPage(() => import('./pages/LeaderboardPage'));
+const BadgesPage = lazyPage(() => import('./pages/BadgesPage'));
+
 // Auth pages
 const Login = lazyPage(() => import('./pages/Login'));
 const Inscription = lazyPage(() => import('./pages/Inscription'));
@@ -296,6 +305,15 @@ export default function App() {
                           {/* Savings Dashboard */}
                           <Route path="mes-economies" element={<MesEconomies />} />
                           <Route path="tableau-de-bord" element={<MesEconomies />} />
+
+                          {/* Advanced features (v7.0.0) */}
+                          <Route path="alertes-prix" element={<PriceAlertsPage />} />
+                          <Route path="prix-historique" element={<PriceHistoryPage />} />
+                          <Route path="liste-intelligente" element={<SmartShoppingListPage />} />
+                          <Route path="tableau-inflation" element={<InflationDashboardPage />} />
+                          <Route path="gamification" element={<GamificationProfilePage />} />
+                          <Route path="gamification/leaderboard" element={<LeaderboardPage />} />
+                          <Route path="gamification/badges" element={<BadgesPage />} />
 
                           {/* Auth routes (canoniques) */}
                           <Route path="login" element={<Login />} />
