@@ -115,6 +115,35 @@ const SignalementModeration = lazyPage(() => import('./pages/admin/moderation/Si
 // i18n Test page (for development/testing)
 const I18nTest = lazyPage(() => import('./pages/I18nTest'));
 
+// About & institutional pages
+const APropos = lazyPage(() => import('./pages/APropos'));
+const PricingDetailed = lazyPage(() => import('./pages/PricingDetailed'));
+const LicenceInstitution = lazyPage(() => import('./pages/LicenceInstitution'));
+
+// Specialised comparators
+const FlightComparator = lazyPage(() => import('./pages/FlightComparator'));
+const BoatComparator = lazyPage(() => import('./pages/BoatComparator'));
+
+// Cosmetic evaluation
+const EvaluationCosmetique = lazyPage(() => import('./pages/EvaluationCosmetique'));
+
+// OCR history
+const OCRHistory = lazyPage(() => import('./pages/ocr/OCRHistory'));
+
+// Observatory methodology
+const ObservatoryMethodology = lazyPage(() => import('./pages/ObservatoryMethodology'));
+
+// Recherche-prix sub-pages
+const DelaisTensionsLogistiques = lazyPage(() => import('./pages/recherche-prix/DelaisTensionsLogistiques'));
+const IndiceLogistique = lazyPage(() => import('./pages/recherche-prix/IndiceLogistique'));
+const PourquoiDelaisProduit = lazyPage(() => import('./pages/recherche-prix/PourquoiDelaisProduit'));
+
+// Ressources pages
+const QuestionsLogistiqueDOM = lazyPage(() => import('./pages/ressources/QuestionsLogistiqueDOM'));
+const GlossaireLogistiqueDOM = lazyPage(() => import('./pages/ressources/GlossaireLogistiqueDOM'));
+const ComprendrePromotionsPrixBarres = lazyPage(() => import('./pages/ressources/ComprendrePromotionsPrixBarres'));
+const PourquoiPrixVarieSansChangement = lazyPage(() => import('./pages/ressources/PourquoiPrixVarieSansChangement'));
+
 /**
  * IMPORTANT — NE PAS SUPPRIMER
  * Les tests CI vérifient la présence LITTÉRALE de certaines routes alias
@@ -350,6 +379,36 @@ export default function App() {
 
                           {/* i18n Test (development/testing) */}
                           <Route path="test-i18n" element={<I18nTest />} />
+
+                          {/* À propos & institutional */}
+                          <Route path="a-propos" element={<APropos />} />
+                          <Route path="tarifs-details" element={<PricingDetailed />} />
+                          <Route path="licence-institution" element={<LicenceInstitution />} />
+                          <Route path="inflation" element={<Navigate to="/tableau-inflation" replace />} />
+
+                          {/* Comparateurs spécialisés */}
+                          <Route path="comparateur-vols" element={<FlightComparator />} />
+                          <Route path="comparateur-bateaux" element={<BoatComparator />} />
+
+                          {/* Évaluation cosmétique */}
+                          <Route path="evaluation-cosmetique" element={<EvaluationCosmetique />} />
+
+                          {/* OCR history */}
+                          <Route path="ocr/history" element={<OCRHistory />} />
+
+                          {/* Observatory methodology */}
+                          <Route path="observatoire/methodologie" element={<ObservatoryMethodology />} />
+
+                          {/* Recherche-prix sous-pages */}
+                          <Route path="recherche-prix/delais-logistiques" element={<DelaisTensionsLogistiques />} />
+                          <Route path="recherche-prix/indice-logistique" element={<IndiceLogistique />} />
+                          <Route path="recherche-prix/pourquoi-delais-produit" element={<PourquoiDelaisProduit />} />
+
+                          {/* Ressources pédagogiques */}
+                          <Route path="ressources/questions-logistique-dom" element={<QuestionsLogistiqueDOM />} />
+                          <Route path="ressources/glossaire-logistique-dom" element={<GlossaireLogistiqueDOM />} />
+                          <Route path="ressources/comprendre-promotions-prix-barres" element={<ComprendrePromotionsPrixBarres />} />
+                          <Route path="ressources/pourquoi-prix-varie-sans-changement" element={<PourquoiPrixVarieSansChangement />} />
 
                           {/* Catch-all route - redirect to home */}
                           <Route path="*" element={<Navigate to="/" replace />} />
