@@ -83,17 +83,40 @@ export default function ListePage() {
     }
   };
 
-  const refreshPrices = () => {
+  const refreshPrices = async () => {
     try {
       assertQuotaOrThrow('refreshPerDay', quota('refreshPerDay'));
-      setItems((prev) =>
-        prev.map((it) => ({
-          ...it,
-          history: [...(it.history ?? []), Number((Math.random() * 5 + 1).toFixed(2))],
-          lastObservedAt: new Date().toISOString(),
-          source: it.source ?? 'refresh_local',
-        })),
+      // Fetch real latest prices from /api/observations for each item that has an EAN id
+      const updated = await Promise.all(
+        items.map(async (it) => {
+          // Only fetch if the item id looks like a barcode
+          const looksLikeEan = /^\d{8,14}$/.test(it.id);
+          if (!looksLikeEan) return it;
+          try {
+            const params = new URLSearchParams({ barcode: it.id });
+            const res = await fetch(`/api/observations?${params.toString()}`, {
+              headers: { Accept: 'application/json' },
+            });
+            if (!res.ok) return it;
+            const payload = await res.json() as {
+              observations?: Array<{ price: number; observedAt: string }>;
+            };
+            const obs = payload.observations;
+            if (!Array.isArray(obs) || obs.length === 0) return it;
+            // Use the most recent price
+            const latest = obs.sort((a, b) => b.observedAt.localeCompare(a.observedAt))[0];
+            return {
+              ...it,
+              history: [...(it.history ?? []), latest.price],
+              lastObservedAt: latest.observedAt,
+              source: 'api',
+            };
+          } catch {
+            return it;
+          }
+        }),
       );
+      setItems(updated);
     } catch (error) {
       if (!(error instanceof QuotaExceededError)) throw error;
     }

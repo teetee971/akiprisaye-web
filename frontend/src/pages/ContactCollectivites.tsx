@@ -68,21 +68,34 @@ export default function ContactCollectivites() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!validateForm()) {
       return;
     }
-    
-    // Simulate form submission
-    if (import.meta.env.DEV) {
-      console.log('Form submitted:', formData);
+
+    // Try POST to /api/contact or mailto fallback
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ ...formData, submittedAt: new Date().toISOString(), type: 'collectivite' }),
+      });
+      // Accept any 2xx or gracefully degrade if endpoint not deployed
+      if (!res.ok && res.status !== 404 && res.status !== 405) {
+        throw new Error(`api_${res.status}`);
+      }
+    } catch {
+      // If API not available, open mailto as fallback
+      const subject = encodeURIComponent(`Demande collectivité — ${formData.organisme}`);
+      const body = encodeURIComponent(
+        `Organisme: ${formData.organisme}\nType: ${formData.typeOrganisme}\nContact: ${formData.nom} (${formData.fonction})\nEmail: ${formData.email}\nTéléphone: ${formData.telephone}\nTerritoire: ${formData.territoire}\n\nMessage:\n${formData.message}`,
+      );
+      window.location.href = `mailto:contact@akiprisaye.fr?subject=${subject}&body=${body}`;
     }
-    setSubmitted(true);
     
-    // In production, this would send to backend
-    // For now, just show success message
+    setSubmitted(true);
   };
 
   const handleChange = (field: string, value: string) => {

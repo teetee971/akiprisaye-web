@@ -211,7 +211,7 @@ export default function ObservatoireVivant() {
 
   useEffect(() => {
     let cancelled = false;
-    fetch('/data/prices.json')
+    fetch(`${import.meta.env.BASE_URL}data/prices.json`)
       .then((res) => (res.ok ? res.json() : null))
       .then((json: PriceObservation[] | null) => {
         if (!cancelled && Array.isArray(json)) {

@@ -2,8 +2,9 @@
  * ProduitPage — Fiche produit dédiée (/produit/:ean)
  *
  * Fonctionnalités :
- * - Infos produit par code EAN
- * - Prix par enseigne
+ * - Infos produit par code EAN (Open Food Facts)
+ * - Prix agrégés depuis TOUTES les sources : sites marchands web (Google Shopping),
+ *   base Firestore, observations citoyennes, prix temps-réel
  * - Graphique mini d'évolution des prix (PriceHistoryChart)
  * - Signaler un prix (PriceReport modal)
  * - Ajouter aux favoris (useFavorites)
@@ -25,6 +26,8 @@ import {
   Minus,
   AlertCircle,
   Loader2,
+  Globe,
+  RefreshCw,
 } from 'lucide-react';
 import { PriceHistoryChart } from '../components/PriceHistoryChart';
 import PriceReport from '../components/products/PriceReport';
@@ -32,7 +35,24 @@ import { historyService } from '../services/historyService';
 import { useFavorites } from '../hooks/useFavorites';
 import { useGeolocation } from '../hooks/useGeolocation';
 import { calculateDistancesBatch, formatDistance } from '../utils/geoLocation';
+import { aggregateAllPrices, type AggregatedPrice, type ProductInfo } from '../services/allPriceAggregatorService';
 import type { PriceHistoryPoint, Timeframe } from '../types/priceHistory';
+
+/* ------------------------------------------------------------------ */
+/* Badge source                                                         */
+/* ------------------------------------------------------------------ */
+
+function SourceBadge({ source }: { source: AggregatedPrice['source'] }) {
+  const map: Record<AggregatedPrice['source'], { label: string; className: string }> = {
+    web_merchant: { label: '🌐 Web', className: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' },
+    firestore: { label: '📊 Base', className: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300' },
+    observation: { label: '👥 Citoyen', className: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300' },
+    realtime: { label: '⚡ Live', className: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' },
+    fallback: { label: '💾 Local', className: 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300' },
+  };
+  const { label, className } = map[source] ?? map.fallback;
+  return <span className={`text-xs px-1.5 py-0.5 rounded font-medium ${className}`}>{label}</span>;
+}
 
 /* ------------------------------------------------------------------ */
 /* Types locaux                                                         */
@@ -50,51 +70,33 @@ interface StorePrice {
 }
 
 /* ------------------------------------------------------------------ */
-/* Données mock (remplacées par API réelle ultérieurement)             */
+/* Helper : mappe les observations /api/local-price en StorePrice[]    */
 /* ------------------------------------------------------------------ */
 
-function buildMockStorePrices(ean: string): StorePrice[] {
-  // Seed déterministe basée sur l'EAN pour des valeurs cohérentes
-  const seed = ean.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
-  const base = 1.5 + (seed % 300) / 100;
-  return [
-    {
-      storeId: 'carrefour-jarry',
-      storeName: 'Carrefour Jarry',
-      price: parseFloat((base * 1.05).toFixed(2)),
-      isPromo: false,
-      lastUpdated: new Date(Date.now() - 3600000).toISOString(),
-      lat: 16.271,
-      lon: -61.588,
-    },
-    {
-      storeId: 'leader-price-gp',
-      storeName: 'Leader Price Guadeloupe',
-      price: parseFloat((base * 0.95).toFixed(2)),
-      isPromo: true,
-      lastUpdated: new Date(Date.now() - 7200000).toISOString(),
-      lat: 16.2415,
-      lon: -61.5331,
-    },
-    {
-      storeId: 'match-gp',
-      storeName: 'Hyper Match',
-      price: parseFloat((base * 1.02).toFixed(2)),
-      isPromo: false,
-      lastUpdated: new Date(Date.now() - 86400000).toISOString(),
-      lat: 16.2544,
-      lon: -61.5602,
-    },
-    {
-      storeId: 'leclerc-gp',
-      storeName: 'E.Leclerc Guadeloupe',
-      price: parseFloat((base * 0.98).toFixed(2)),
-      isPromo: false,
-      lastUpdated: new Date(Date.now() - 43200000).toISOString(),
-      lat: 16.23,
-      lon: -61.508,
-    },
-  ];
+function observationsToStorePrices(
+  observations: Array<{ id: string; storeName?: string | null; storeId?: string | null; price: number; observedAt: string }>,
+): StorePrice[] {
+  const byStore = new Map<string, StorePrice>();
+  for (const obs of observations) {
+    const sid = obs.storeId ?? obs.storeName ?? obs.id;
+    if (!byStore.has(sid)) {
+      byStore.set(sid, {
+        storeId: sid,
+        storeName: obs.storeName ?? obs.storeId ?? 'Magasin',
+        price: obs.price,
+        isPromo: false,
+        lastUpdated: obs.observedAt,
+      });
+    } else {
+      const existing = byStore.get(sid)!;
+      // Keep the most recent observation
+      if (obs.observedAt > existing.lastUpdated) {
+        existing.price = obs.price;
+        existing.lastUpdated = obs.observedAt;
+      }
+    }
+  }
+  return Array.from(byStore.values());
 }
 
 /* ------------------------------------------------------------------ */
@@ -104,14 +106,22 @@ function buildMockStorePrices(ean: string): StorePrice[] {
 export default function ProduitPage() {
   const { ean = '' } = useParams<{ ean: string }>();
 
+  const [productInfo, setProductInfo] = useState<ProductInfo | null>(null);
   const [productName, setProductName] = useState<string>('Chargement…');
+  const [productImage, setProductImage] = useState<string | undefined>();
+  // All aggregated prices (local + web merchants)
+  const [allPrices, setAllPrices] = useState<AggregatedPrice[]>([]);
+  const [aggWarnings, setAggWarnings] = useState<string[]>([]);
+  const [aggLoading, setAggLoading] = useState(true);
+  const [aggRefreshing, setAggRefreshing] = useState(false);
+  // Legacy local prices with GPS support
   const [storePrices, setStorePrices] = useState<StorePrice[]>([]);
   const [historyData, setHistoryData] = useState<PriceHistoryPoint[]>([]);
   const [timeframe, setTimeframe] = useState<Timeframe>('30d');
-  const [loading, setLoading] = useState(true);
   const [historyLoading, setHistoryLoading] = useState(true);
   const [showReportModal, setShowReportModal] = useState(false);
   const [reportSuccess, setReportSuccess] = useState(false);
+  const [priceTab, setPriceTab] = useState<'all' | 'local' | 'web'>('all');
 
   /* Favoris */
   const { isFavorite, toggleFavorite } = useFavorites();
@@ -125,19 +135,47 @@ export default function ProduitPage() {
   });
 
   /* ---------------------------------------------------------------- */
-  /* Chargement produit + prix                                          */
+  /* Agrégation complète de tous les prix                               */
   /* ---------------------------------------------------------------- */
+  const loadAggregatedPrices = useCallback(async (signal?: AbortSignal) => {
+    if (!ean) return;
+    const result = await aggregateAllPrices(ean, ean, 'gp', signal).catch(() => null);
+    if (!result) return;
+
+    if (result.product) {
+      setProductInfo(result.product);
+      if (result.product.name) setProductName(result.product.name);
+      if (result.product.imageUrl) setProductImage(result.product.imageUrl);
+    }
+
+    setAllPrices(result.prices);
+    setAggWarnings(result.warnings);
+
+    // Populate legacy storePrices for GPS sort
+    const localPrices = result.prices
+      .filter((p) => p.source !== 'web_merchant')
+      .map((p) => ({
+        storeId: p.id,
+        storeName: p.merchant,
+        price: p.price,
+        isPromo: p.isPromo,
+        lastUpdated: p.observedAt,
+      }));
+    if (localPrices.length > 0) setStorePrices(localPrices);
+  }, [ean]);
+
   useEffect(() => {
     if (!ean) return;
-    setLoading(true);
+    setAggLoading(true);
+    const controller = new AbortController();
+    loadAggregatedPrices(controller.signal).finally(() => setAggLoading(false));
+    return () => controller.abort();
+  }, [ean, loadAggregatedPrices]);
 
-    // En production : appel API par EAN (Open Food Facts, base interne, etc.)
-    setTimeout(() => {
-      setProductName(`Produit EAN ${ean}`);
-      setStorePrices(buildMockStorePrices(ean));
-      setLoading(false);
-    }, 400);
-  }, [ean]);
+  const handleRefresh = async () => {
+    setAggRefreshing(true);
+    await loadAggregatedPrices().finally(() => setAggRefreshing(false));
+  };
 
   /* ---------------------------------------------------------------- */
   /* Chargement historique prix                                         */
@@ -149,7 +187,7 @@ export default function ProduitPage() {
       .getPriceHistory(ean, timeframe)
       .then((series) => {
         setHistoryData(series.dataPoints);
-        if (series.productName && series.productName !== 'Produit Example') {
+        if (series.productName && series.productName !== `Produit ${ean}` && series.productName !== 'Produit Example') {
           setProductName(series.productName);
         }
       })
@@ -162,10 +200,9 @@ export default function ProduitPage() {
   /* ---------------------------------------------------------------- */
   const sortedPrices = useCallback((): StorePrice[] => {
     if (!position) return [...storePrices].sort((a, b) => a.price - b.price);
-    const withCoords = storePrices.filter((s) => s.lat !== undefined && s.lon !== undefined) as (StorePrice & {
-      lat: number;
-      lon: number;
-    })[];
+    const withCoords = storePrices
+      .filter((s) => s.lat !== undefined && s.lon !== undefined)
+      .map((s) => ({ ...s, id: s.storeId, lat: s.lat as number, lon: s.lon as number }));
     const withDist = calculateDistancesBatch({ lat: position.lat, lon: position.lon }, withCoords);
     return withDist
       .map((s) => ({ ...s, distance: s.distance }))
@@ -175,8 +212,14 @@ export default function ProduitPage() {
   /* ---------------------------------------------------------------- */
   /* Helpers UI                                                         */
   /* ---------------------------------------------------------------- */
-  const bestPrice = sortedPrices.length ? Math.min(...sortedPrices.map((s) => s.price)) : null;
-  const worstPrice = sortedPrices.length ? Math.max(...sortedPrices.map((s) => s.price)) : null;
+  const bestPrice = allPrices.length > 0 ? allPrices[0].price : (sortedPrices.length ? Math.min(...sortedPrices.map((s) => s.price)) : null);
+  const worstPrice = allPrices.length > 0 ? allPrices[allPrices.length - 1].price : (sortedPrices.length ? Math.max(...sortedPrices.map((s) => s.price)) : null);
+
+  const filteredPrices = priceTab === 'web'
+    ? allPrices.filter((p) => p.source === 'web_merchant')
+    : priceTab === 'local'
+    ? allPrices.filter((p) => p.source !== 'web_merchant')
+    : allPrices;
 
   const trendIcon = (trend: string) => {
     if (trend === 'increasing') return <TrendingUp className="w-4 h-4 text-red-500" />;
@@ -236,154 +279,204 @@ export default function ProduitPage() {
 
           {/* ---- En-tête produit ---- */}
           <header className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-slate-700">
-            {loading ? (
+            {aggLoading ? (
               <div className="animate-pulse space-y-3">
                 <div className="h-6 bg-slate-200 dark:bg-slate-700 rounded w-2/3" />
                 <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-1/3" />
               </div>
             ) : (
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
-                    {productName}
-                  </h1>
-                  <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-                    EAN : <span className="font-mono">{ean}</span>
-                  </p>
-                  {bestPrice !== null && (
-                    <p className="mt-2 text-xl font-semibold text-green-600 dark:text-green-400">
-                      À partir de {bestPrice.toFixed(2)} €
-                    </p>
-                  )}
-                </div>
-
-                {/* Boutons actions */}
-                <div className="flex gap-2 flex-shrink-0">
-                  <button
-                    onClick={handleToggleFavorite}
-                    aria-label={isFav ? 'Retirer des favoris' : 'Ajouter aux favoris'}
-                    className={`p-2 rounded-lg border transition-colors ${
-                      isFav
-                        ? 'bg-red-50 border-red-200 text-red-600 dark:bg-red-900/20 dark:border-red-800 dark:text-red-400'
-                        : 'bg-white border-slate-200 text-slate-500 hover:border-red-300 hover:text-red-500 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-400'
-                    }`}
-                  >
-                    <Heart className={`w-5 h-5 ${isFav ? 'fill-current' : ''}`} />
-                  </button>
-                  <button
-                    onClick={() => setShowReportModal(true)}
-                    aria-label="Signaler un prix"
-                    className="p-2 rounded-lg border border-slate-200 bg-white text-slate-500 hover:border-orange-300 hover:text-orange-500 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-400 transition-colors"
-                  >
-                    <Flag className="w-5 h-5" />
-                  </button>
+              <div className="flex items-start gap-4">
+                {/* Image produit */}
+                {productImage && (
+                  <img
+                    src={productImage}
+                    alt={productName}
+                    className="w-20 h-20 object-contain rounded-lg border border-slate-200 dark:border-slate-700 bg-white flex-shrink-0"
+                  />
+                )}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <h1 className="text-2xl font-bold text-slate-900 dark:text-white">{productName}</h1>
+                      {productInfo?.brand && (
+                        <p className="text-sm text-slate-500 dark:text-slate-400">{productInfo.brand}</p>
+                      )}
+                      <p className="text-xs text-slate-400 mt-0.5 font-mono">EAN : {ean}</p>
+                      {bestPrice !== null && (
+                        <p className="mt-2 text-2xl font-bold text-green-600 dark:text-green-400">
+                          🏷️ À partir de {bestPrice.toFixed(2)} €
+                        </p>
+                      )}
+                      {allPrices.length > 0 && (
+                        <p className="text-xs text-slate-400 mt-1">
+                          {allPrices.length} prix trouvés sur {[...new Set(allPrices.map((p) => p.source))].length} source(s)
+                        </p>
+                      )}
+                    </div>
+                    {/* Actions */}
+                    <div className="flex gap-2 flex-shrink-0">
+                      <button
+                        onClick={handleRefresh}
+                        disabled={aggRefreshing}
+                        aria-label="Actualiser les prix"
+                        className="p-2 rounded-lg border border-slate-200 bg-white text-slate-500 hover:border-blue-300 hover:text-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-400 transition-colors disabled:opacity-50"
+                      >
+                        <RefreshCw className={`w-5 h-5 ${aggRefreshing ? 'animate-spin' : ''}`} />
+                      </button>
+                      <button
+                        onClick={handleToggleFavorite}
+                        aria-label={isFav ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+                        className={`p-2 rounded-lg border transition-colors ${
+                          isFav
+                            ? 'bg-red-50 border-red-200 text-red-600 dark:bg-red-900/20 dark:border-red-800 dark:text-red-400'
+                            : 'bg-white border-slate-200 text-slate-500 hover:border-red-300 hover:text-red-500 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-400'
+                        }`}
+                      >
+                        <Heart className={`w-5 h-5 ${isFav ? 'fill-current' : ''}`} />
+                      </button>
+                      <button
+                        onClick={() => setShowReportModal(true)}
+                        aria-label="Signaler un prix"
+                        className="p-2 rounded-lg border border-slate-200 bg-white text-slate-500 hover:border-orange-300 hover:text-orange-500 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-400 transition-colors"
+                      >
+                        <Flag className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
           </header>
 
-          {/* ---- Prix par enseigne + GPS ---- */}
+          {/* ---- Comparateur de prix multi-sources ---- */}
           <section aria-labelledby="prices-heading">
-            <div className="flex items-center justify-between mb-3">
-              <h2 id="prices-heading" className="text-lg font-semibold text-slate-900 dark:text-white">
-                Prix par enseigne
+            <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+              <h2 id="prices-heading" className="text-lg font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                <Globe className="w-5 h-5 text-blue-500" />
+                Comparaison de prix toutes sources
               </h2>
-              {!position && (
-                <button
-                  onClick={requestPermission}
-                  disabled={gpsLoading}
-                  className="inline-flex items-center gap-1.5 text-sm px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-60 transition-colors"
-                >
-                  {gpsLoading ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <Navigation className="w-4 h-4" />
-                  )}
-                  Trier par distance
-                </button>
-              )}
-              {position && (
-                <span className="inline-flex items-center gap-1 text-xs text-green-600 dark:text-green-400">
-                  <MapPin className="w-3.5 h-3.5" />
-                  Trié par distance GPS
-                </span>
-              )}
+              <div className="flex gap-1">
+                {!position && (
+                  <button
+                    onClick={requestPermission}
+                    disabled={gpsLoading}
+                    className="inline-flex items-center gap-1.5 text-sm px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-60 transition-colors"
+                  >
+                    {gpsLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Navigation className="w-4 h-4" />}
+                    Distance GPS
+                  </button>
+                )}
+              </div>
             </div>
 
-            {loading ? (
+            {/* Onglets de filtrage */}
+            <div className="flex gap-1 mb-3 bg-slate-100 dark:bg-slate-800 rounded-lg p-1">
+              {([['all', `Tous (${allPrices.length})`], ['web', `🌐 Web (${allPrices.filter(p => p.source === 'web_merchant').length})`], ['local', `📊 Local (${allPrices.filter(p => p.source !== 'web_merchant').length})`]] as [typeof priceTab, string][]).map(([tab, label]) => (
+                <button
+                  key={tab}
+                  onClick={() => setPriceTab(tab)}
+                  className={`flex-1 text-sm px-3 py-1.5 rounded font-medium transition-colors ${
+                    priceTab === tab
+                      ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm'
+                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+
+            {aggLoading ? (
               <div className="space-y-3">
-                {[1, 2, 3].map((i) => (
-                  <div
-                    key={i}
-                    className="h-16 bg-white dark:bg-slate-800 rounded-xl animate-pulse border border-slate-200 dark:border-slate-700"
-                  />
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="h-16 bg-white dark:bg-slate-800 rounded-xl animate-pulse border border-slate-200 dark:border-slate-700" />
                 ))}
               </div>
+            ) : filteredPrices.length === 0 ? (
+              <div className="bg-white dark:bg-slate-800 rounded-xl p-8 text-center border border-slate-200 dark:border-slate-700">
+                <Globe className="w-10 h-10 text-slate-300 mx-auto mb-3" />
+                <p className="text-slate-500 dark:text-slate-400 text-sm">
+                  {priceTab === 'web' ? 'Prix marchands web non disponibles (clé API non configurée)' : 'Aucun prix local trouvé pour ce produit.'}
+                </p>
+                <button onClick={handleRefresh} className="mt-3 text-sm text-blue-600 hover:underline">
+                  Réessayer
+                </button>
+              </div>
             ) : (
-              <div className="space-y-3" role="list" aria-label="Liste des enseignes">
-                {sortedPrices.map((store, idx) => {
-                  const isBest = store.price === bestPrice;
-                  const isWorst = store.price === worstPrice && sortedPrices.length > 1;
+              <div className="space-y-2" role="list" aria-label="Liste des prix">
+                {filteredPrices.map((p, idx) => {
+                  const isBest = p.price === bestPrice;
+                  const isWorst = p.price === worstPrice && filteredPrices.length > 1;
+                  const savingVsWorst = worstPrice && worstPrice > p.price
+                    ? Math.round(((worstPrice - p.price) / worstPrice) * 100)
+                    : 0;
                   return (
                     <div
-                      key={store.storeId}
+                      key={p.id}
                       role="listitem"
                       className={`bg-white dark:bg-slate-800 rounded-xl p-4 border shadow-sm flex items-center justify-between gap-4 transition-all ${
-                        isBest
-                          ? 'border-green-300 dark:border-green-700'
-                          : 'border-slate-200 dark:border-slate-700'
+                        isBest ? 'border-green-300 dark:border-green-700' : 'border-slate-200 dark:border-slate-700'
                       }`}
                     >
                       <div className="flex items-center gap-3 min-w-0">
-                        {/* Rang */}
-                        <span className="text-sm font-bold text-slate-400 w-5 flex-shrink-0">
-                          {idx + 1}
-                        </span>
+                        <span className="text-sm font-bold text-slate-400 w-5 flex-shrink-0">{idx + 1}</span>
                         <div className="min-w-0">
-                          <p className="font-semibold text-slate-900 dark:text-white truncate">
-                            {store.storeName}
-                          </p>
-                          <div className="flex items-center gap-2 mt-0.5">
-                            {store.distance !== undefined && (
-                              <span className="inline-flex items-center gap-0.5 text-xs text-slate-500 dark:text-slate-400">
-                                <MapPin className="w-3 h-3" />
-                                {formatDistance(store.distance)}
-                              </span>
-                            )}
-                            {store.isPromo && (
+                          <p className="font-semibold text-slate-900 dark:text-white truncate">{p.merchant}</p>
+                          <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
+                            <SourceBadge source={p.source} />
+                            {p.isPromo && (
                               <span className="text-xs px-1.5 py-0.5 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 rounded font-medium">
                                 Promo
                               </span>
                             )}
                             {isBest && (
                               <span className="inline-flex items-center gap-0.5 text-xs px-1.5 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded font-medium">
-                                <Star className="w-3 h-3" />
-                                Meilleur prix
+                                <Star className="w-3 h-3" /> Meilleur
                               </span>
+                            )}
+                            {savingVsWorst > 0 && isBest && (
+                              <span className="text-xs text-green-600 dark:text-green-400 font-medium">-{savingVsWorst}%</span>
                             )}
                           </div>
                         </div>
                       </div>
-
-                      <div className="text-right flex-shrink-0">
-                        <p
-                          className={`text-xl font-bold ${
-                            isBest
-                              ? 'text-green-600 dark:text-green-400'
-                              : isWorst
-                              ? 'text-red-500 dark:text-red-400'
-                              : 'text-slate-900 dark:text-white'
-                          }`}
-                        >
-                          {store.price.toFixed(2)} €
-                        </p>
-                        <p className="text-xs text-slate-400 dark:text-slate-500">
-                          {new Date(store.lastUpdated).toLocaleDateString('fr-FR')}
-                        </p>
+                      <div className="text-right flex-shrink-0 flex items-center gap-3">
+                        <div>
+                          <p className={`text-xl font-bold ${isBest ? 'text-green-600 dark:text-green-400' : isWorst ? 'text-red-500 dark:text-red-400' : 'text-slate-900 dark:text-white'}`}>
+                            {p.price.toFixed(2)} €
+                          </p>
+                          <p className="text-xs text-slate-400 dark:text-slate-500">
+                            {new Date(p.observedAt).toLocaleDateString('fr-FR')}
+                          </p>
+                        </div>
+                        {p.url && (
+                          <a
+                            href={p.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-xs px-2.5 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex-shrink-0"
+                            aria-label={`Voir sur ${p.merchant}`}
+                          >
+                            <Globe className="w-3.5 h-3.5" />
+                            Voir
+                          </a>
+                        )}
                       </div>
                     </div>
                   );
                 })}
+              </div>
+            )}
+
+            {/* Avertissements sources */}
+            {aggWarnings.length > 0 && (
+              <div className="mt-3 space-y-1">
+                {aggWarnings.map((w, i) => (
+                  <p key={i} className="text-xs text-amber-600 dark:text-amber-400 flex items-start gap-1">
+                    <AlertCircle className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
+                    {w}
+                  </p>
+                ))}
               </div>
             )}
           </section>
@@ -402,8 +495,6 @@ export default function ProduitPage() {
                 )}
                 Évolution des prix
               </h2>
-
-              {/* Sélecteur période */}
               <div className="flex gap-1" role="group" aria-label="Période">
                 {(['7d', '30d', '90d', '365d'] as Timeframe[]).map((tf) => (
                   <button
@@ -416,15 +507,11 @@ export default function ProduitPage() {
                         : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700'
                     }`}
                   >
-                    {tf === '7d' && '7j'}
-                    {tf === '30d' && '30j'}
-                    {tf === '90d' && '90j'}
-                    {tf === '365d' && '1an'}
+                    {tf === '7d' && '7j'}{tf === '30d' && '30j'}{tf === '90d' && '90j'}{tf === '365d' && '1an'}
                   </button>
                 ))}
               </div>
             </div>
-
             {historyLoading ? (
               <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 animate-pulse">
                 <div className="h-64 bg-slate-200 dark:bg-slate-700 rounded" />
@@ -438,12 +525,8 @@ export default function ProduitPage() {
           <section className="bg-gradient-to-r from-blue-600 to-blue-500 rounded-xl p-5 text-white">
             <div className="flex items-center justify-between gap-4 flex-wrap">
               <div>
-                <h3 className="font-bold text-lg mb-1">
-                  Soyez alerté d'une baisse de prix
-                </h3>
-                <p className="text-blue-100 text-sm">
-                  Définissez un seuil et recevez une notification dès que le prix baisse.
-                </p>
+                <h3 className="font-bold text-lg mb-1">Soyez alerté d'une baisse de prix</h3>
+                <p className="text-blue-100 text-sm">Définissez un seuil et recevez une notification dès que le prix baisse.</p>
               </div>
               <Link
                 to={`/alertes?ean=${ean}&name=${encodeURIComponent(productName)}`}

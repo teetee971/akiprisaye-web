@@ -55,6 +55,9 @@ const Comparateurs = lazyPage(() => import('./pages/Comparateurs'));
 const CarteItinerairesHub = lazyPage(() => import('./pages/CarteItinerairesHub'));
 const ComparateurCitoyen = lazyPage(() => import('./pages/ComparateurCitoyen'));
 const LutteVieChere = lazyPage(() => import('./pages/LutteVieChereIndexPage'));
+const SolidariteHub = lazyPage(() => import('./pages/SolidariteHub'));
+const InscriptionPro = lazyPage(() => import('./pages/InscriptionPro'));
+const EspacePro = lazyPage(() => import('./pages/EspacePro'));
 
 // Scanner & OCR pages
 const ScannerHub = lazyPage(() => import('./pages/ScannerHub'));
@@ -81,6 +84,15 @@ const UpgradePage = lazyPage(() => import('./pages/UpgradePage'));
 // Savings Dashboard
 const MesEconomies = lazyPage(() => import('./pages/MesEconomies'));
 
+// Advanced feature pages (v7.0.0)
+const PriceAlertsPage = lazyPage(() => import('./pages/PriceAlertsPage'));
+const PriceHistoryPage = lazyPage(() => import('./pages/PriceHistoryPage'));
+const SmartShoppingListPage = lazyPage(() => import('./pages/SmartShoppingListPage'));
+const InflationDashboardPage = lazyPage(() => import('./pages/InflationDashboardPage'));
+const GamificationProfilePage = lazyPage(() => import('./pages/GamificationProfilePage'));
+const LeaderboardPage = lazyPage(() => import('./pages/LeaderboardPage'));
+const BadgesPage = lazyPage(() => import('./pages/BadgesPage'));
+
 // Auth pages
 const Login = lazyPage(() => import('./pages/Login'));
 const Inscription = lazyPage(() => import('./pages/Inscription'));
@@ -105,6 +117,35 @@ const SignalementModeration = lazyPage(() => import('./pages/admin/moderation/Si
 
 // i18n Test page (for development/testing)
 const I18nTest = lazyPage(() => import('./pages/I18nTest'));
+
+// About & institutional pages
+const APropos = lazyPage(() => import('./pages/APropos'));
+const PricingDetailed = lazyPage(() => import('./pages/PricingDetailed'));
+const LicenceInstitution = lazyPage(() => import('./pages/LicenceInstitution'));
+
+// Specialised comparators
+const FlightComparator = lazyPage(() => import('./pages/FlightComparator'));
+const BoatComparator = lazyPage(() => import('./pages/BoatComparator'));
+
+// Cosmetic evaluation
+const EvaluationCosmetique = lazyPage(() => import('./pages/EvaluationCosmetique'));
+
+// OCR history
+const OCRHistory = lazyPage(() => import('./pages/ocr/OCRHistory'));
+
+// Observatory methodology
+const ObservatoryMethodology = lazyPage(() => import('./pages/ObservatoryMethodology'));
+
+// Recherche-prix sub-pages
+const DelaisTensionsLogistiques = lazyPage(() => import('./pages/recherche-prix/DelaisTensionsLogistiques'));
+const IndiceLogistique = lazyPage(() => import('./pages/recherche-prix/IndiceLogistique'));
+const PourquoiDelaisProduit = lazyPage(() => import('./pages/recherche-prix/PourquoiDelaisProduit'));
+
+// Ressources pages
+const QuestionsLogistiqueDOM = lazyPage(() => import('./pages/ressources/QuestionsLogistiqueDOM'));
+const GlossaireLogistiqueDOM = lazyPage(() => import('./pages/ressources/GlossaireLogistiqueDOM'));
+const ComprendrePromotionsPrixBarres = lazyPage(() => import('./pages/ressources/ComprendrePromotionsPrixBarres'));
+const PourquoiPrixVarieSansChangement = lazyPage(() => import('./pages/ressources/PourquoiPrixVarieSansChangement'));
 
 /**
  * IMPORTANT — NE PAS SUPPRIMER
@@ -259,6 +300,13 @@ export default function App() {
                           <Route path="mentions-legales" element={<MentionsLegales />} />
                           <Route path="privacy" element={<Transparence />} />
 
+                          {/* Solidarité & Entraide */}
+                          <Route path="solidarite" element={<SolidariteHub />} />
+
+                          {/* Espace Professionnel */}
+                          <Route path="inscription-pro" element={<InscriptionPro />} />
+                          <Route path="espace-pro" element={<EspacePro />} />
+
                           {/* Additional feature routes */}
                           <Route path="donnees-publiques" element={<DonneesPubliques />} />
                           <Route path="contribuer" element={<Contribuer />} />
@@ -297,6 +345,15 @@ export default function App() {
                           <Route path="mes-economies" element={<MesEconomies />} />
                           <Route path="tableau-de-bord" element={<MesEconomies />} />
 
+                          {/* Advanced features (v7.0.0) */}
+                          <Route path="alertes-prix" element={<PriceAlertsPage />} />
+                          <Route path="prix-historique" element={<PriceHistoryPage />} />
+                          <Route path="liste-intelligente" element={<SmartShoppingListPage />} />
+                          <Route path="tableau-inflation" element={<InflationDashboardPage />} />
+                          <Route path="gamification" element={<GamificationProfilePage />} />
+                          <Route path="gamification/leaderboard" element={<LeaderboardPage />} />
+                          <Route path="gamification/badges" element={<BadgesPage />} />
+
                           {/* Auth routes (canoniques) */}
                           <Route path="login" element={<Login />} />
                           <Route path="connexion" element={<Login />} />
@@ -332,6 +389,36 @@ export default function App() {
 
                           {/* i18n Test (development/testing) */}
                           <Route path="test-i18n" element={<I18nTest />} />
+
+                          {/* À propos & institutional */}
+                          <Route path="a-propos" element={<APropos />} />
+                          <Route path="tarifs-details" element={<PricingDetailed />} />
+                          <Route path="licence-institution" element={<LicenceInstitution />} />
+                          <Route path="inflation" element={<Navigate to="/tableau-inflation" replace />} />
+
+                          {/* Comparateurs spécialisés */}
+                          <Route path="comparateur-vols" element={<FlightComparator />} />
+                          <Route path="comparateur-bateaux" element={<BoatComparator />} />
+
+                          {/* Évaluation cosmétique */}
+                          <Route path="evaluation-cosmetique" element={<EvaluationCosmetique />} />
+
+                          {/* OCR history */}
+                          <Route path="ocr/history" element={<OCRHistory />} />
+
+                          {/* Observatory methodology */}
+                          <Route path="observatoire/methodologie" element={<ObservatoryMethodology />} />
+
+                          {/* Recherche-prix sous-pages */}
+                          <Route path="recherche-prix/delais-logistiques" element={<DelaisTensionsLogistiques />} />
+                          <Route path="recherche-prix/indice-logistique" element={<IndiceLogistique />} />
+                          <Route path="recherche-prix/pourquoi-delais-produit" element={<PourquoiDelaisProduit />} />
+
+                          {/* Ressources pédagogiques */}
+                          <Route path="ressources/questions-logistique-dom" element={<QuestionsLogistiqueDOM />} />
+                          <Route path="ressources/glossaire-logistique-dom" element={<GlossaireLogistiqueDOM />} />
+                          <Route path="ressources/comprendre-promotions-prix-barres" element={<ComprendrePromotionsPrixBarres />} />
+                          <Route path="ressources/pourquoi-prix-varie-sans-changement" element={<PourquoiPrixVarieSansChangement />} />
 
                           {/* Catch-all route - redirect to home */}
                           <Route path="*" element={<Navigate to="/" replace />} />

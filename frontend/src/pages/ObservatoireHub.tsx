@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { BarChart3, Search, Award, Database } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { GlassCard } from '../components/ui/glass-card';
 import Observatoire from './Observatoire';
 import { TERRITORIES, type TerritoryCode } from '../constants/territories';
@@ -156,10 +157,21 @@ export default function ObservatoireHub() {
                   </div>
                 </div>
                 
-                <div className="bg-slate-900/50 rounded-xl p-8 text-center">
-                  <p className="text-gray-500">
-                    Module en cours d'intégration
-                  </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-2">
+                  {[
+                    { emoji: '📊', label: 'Comparaison enseignes', to: '/comparaison-enseignes' },
+                    { emoji: '🛒', label: 'Comparaison panier',    to: '/comparaison-panier' },
+                    { emoji: '🌍', label: 'Comparateur citoyen',   to: '/comparateur-citoyen' },
+                  ].map((item) => (
+                    <Link
+                      key={item.to}
+                      to={item.to}
+                      className="flex flex-col items-center gap-2 p-4 bg-slate-800/50 border border-slate-700/50 rounded-xl hover:border-emerald-500/50 transition-all text-center"
+                    >
+                      <span className="text-2xl">{item.emoji}</span>
+                      <span className="text-xs font-medium text-gray-300">{item.label}</span>
+                    </Link>
+                  ))}
                 </div>
               </GlassCard>
             )}

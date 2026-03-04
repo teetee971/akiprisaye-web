@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { MessageCircle, TrendingUp, ShoppingCart } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { GlassCard } from '../components/ui/glass-card';
 import IaConseiller from './IaConseiller';
 
@@ -108,14 +109,26 @@ export default function AssistantIAHub() {
                   </div>
                 </div>
                 
-                <div className="bg-slate-900/50 rounded-xl p-8 text-center">
-                  <p className="text-gray-500">
-                    Module en cours d'intégration
-                  </p>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-2">
+                  {[
+                    { emoji: '📊', label: 'Mes Économies',    to: '/mes-economies' },
+                    { emoji: '🔔', label: 'Alertes Prix',     to: '/alertes-prix' },
+                    { emoji: '🛒', label: 'Liste Intelligente',to: '/liste-intelligente' },
+                    { emoji: '📈', label: 'Tableau Inflation', to: '/tableau-inflation' },
+                  ].map((item) => (
+                    <Link
+                      key={item.to}
+                      to={item.to}
+                      className="flex flex-col items-center gap-2 p-4 bg-slate-800/50 border border-slate-700/50 rounded-xl hover:border-purple-500/50 hover:bg-slate-800 transition-all text-center"
+                    >
+                      <span className="text-2xl">{item.emoji}</span>
+                      <span className="text-xs font-medium text-gray-300">{item.label}</span>
+                    </Link>
+                  ))}
                 </div>
               </GlassCard>
             )}
-            
+
             {activeSection === 'rayon' && (
               <GlassCard>
                 <h2 className="text-2xl font-semibold text-white mb-4 flex items-center gap-3">
@@ -123,45 +136,28 @@ export default function AssistantIAHub() {
                   Rayon IA
                 </h2>
                 <p className="text-gray-400 mb-6">
-                  Découvrez les meilleures offres du moment dans chaque rayon
+                  Trouvez rapidement les meilleures offres par catégorie de produits
                 </p>
-                
+
                 <div className="grid md:grid-cols-3 gap-4 mb-6">
-                  <div className="bg-slate-900/50 rounded-xl p-6 border border-slate-800">
-                    <div className="text-3xl mb-3">🥖</div>
-                    <h3 className="font-semibold text-lg mb-2 text-white">
-                      Épicerie
-                    </h3>
-                    <p className="text-gray-400 text-sm">
-                      Produits de base et essentiels
-                    </p>
-                  </div>
-                  
-                  <div className="bg-slate-900/50 rounded-xl p-6 border border-slate-800">
-                    <div className="text-3xl mb-3">🥩</div>
-                    <h3 className="font-semibold text-lg mb-2 text-white">
-                      Viande & Poisson
-                    </h3>
-                    <p className="text-gray-400 text-sm">
-                      Produits frais et surgelés
-                    </p>
-                  </div>
-                  
-                  <div className="bg-slate-900/50 rounded-xl p-6 border border-slate-800">
-                    <div className="text-3xl mb-3">🥬</div>
-                    <h3 className="font-semibold text-lg mb-2 text-white">
-                      Fruits & Légumes
-                    </h3>
-                    <p className="text-gray-400 text-sm">
-                      Produits de saison locaux
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="bg-slate-900/50 rounded-xl p-8 text-center">
-                  <p className="text-gray-500">
-                    Module en cours d'intégration
-                  </p>
+                  {[
+                    { emoji: '🥖', label: 'Épicerie',         detail: 'Produits de base et essentiels', to: '/comparateur' },
+                    { emoji: '🥩', label: 'Viande & Poisson', detail: 'Produits frais et surgelés',     to: '/comparateur' },
+                    { emoji: '🥬', label: 'Fruits & Légumes', detail: 'Produits de saison locaux',      to: '/comparateur' },
+                    { emoji: '🧴', label: 'Hygiène & Beauté', detail: 'Cosmétiques et soins',           to: '/evaluation-cosmetique' },
+                    { emoji: '🍼', label: 'Bébé & Puéri.',    detail: 'Produits pour nourrissons',      to: '/comparateur' },
+                    { emoji: '🧹', label: 'Entretien',        detail: 'Produits ménagers',              to: '/comparateur' },
+                  ].map((item) => (
+                    <Link
+                      key={item.label}
+                      to={item.to}
+                      className="bg-slate-900/50 rounded-xl p-5 border border-slate-800 hover:border-purple-600/40 transition-all"
+                    >
+                      <div className="text-3xl mb-2">{item.emoji}</div>
+                      <h3 className="font-semibold text-base mb-1 text-white">{item.label}</h3>
+                      <p className="text-gray-400 text-sm">{item.detail}</p>
+                    </Link>
+                  ))}
                 </div>
               </GlassCard>
             )}

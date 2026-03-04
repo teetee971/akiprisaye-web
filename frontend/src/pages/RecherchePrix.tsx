@@ -84,9 +84,13 @@ export default function RecherchePrix() {
   
   const handleReceiptAnalysisComplete = (result: ReceiptAnalysisResult) => {
     setReceiptAnalysis(result);
-    // TODO: Navigate to comparison view with receipt data
-    // For now, just log it
-    console.log('Receipt analysis complete:', result);
+    // Extraire le premier produit du ticket et naviguer vers le comparateur
+    const firstProduct = result.productLines?.[0];
+    if (firstProduct?.normalizedLabel) {
+      navigate(`/comparateur?q=${encodeURIComponent(firstProduct.normalizedLabel)}`);
+    } else {
+      navigate('/comparateur');
+    }
   };
 
   const handleTextSearch = (e: React.FormEvent) => {
