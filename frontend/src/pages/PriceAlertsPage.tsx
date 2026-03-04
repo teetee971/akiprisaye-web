@@ -9,40 +9,19 @@ import { Helmet } from 'react-helmet-async';
 import { AlertForm } from '../components/AlertForm';
 import { UpgradeGate } from '../components/billing/UpgradeGate';
 import { Bell, CheckCircle, Info, Trash2, TrendingDown, TrendingUp, Package } from 'lucide-react';
-import { safeLocalStorage } from '../utils/safeLocalStorage';
-
-const ALERTS_STORAGE_KEY = 'akiprisaye:price_alerts:v1';
-
-interface SavedAlert {
-  id: string;
-  productName: string;
-  productEAN: string;
-  alertType: string;
-  thresholdMode: string;
-  threshold: number;
-  absolutePrice: string | number;
-  territory: string;
-  createdAt: string;
-}
+import {
+  type SavedAlert,
+  loadAlerts,
+  persistAlerts,
+} from '../services/priceAlertsStorage';
 
 export default function PriceAlertsPage() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [alerts, setAlerts] = useState<SavedAlert[]>([]);
 
   useEffect(() => {
-    const raw = safeLocalStorage?.getItem(ALERTS_STORAGE_KEY);
-    if (raw) {
-      try {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) setAlerts(parsed);
-      } catch { /* ignore */ }
-    }
+    setAlerts(loadAlerts());
   }, []);
-
-  const saveAlerts = (updated: SavedAlert[]) => {
-    setAlerts(updated);
-    safeLocalStorage?.setItem(ALERTS_STORAGE_KEY, JSON.stringify(updated));
-  };
 
   const handleSave = (alertData: any) => {
     const newAlert: SavedAlert = {
@@ -56,7 +35,11 @@ export default function PriceAlertsPage() {
       territory: alertData.territory,
       createdAt: new Date().toISOString(),
     };
-    saveAlerts([newAlert, ...alerts]);
+    setAlerts(prev => {
+      const updated = [newAlert, ...prev];
+      persistAlerts(updated);
+      return updated;
+    });
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 5000);
   };
@@ -66,7 +49,11 @@ export default function PriceAlertsPage() {
   };
 
   const handleRemoveAlert = (id: string) => {
-    saveAlerts(alerts.filter(a => a.id !== id));
+    setAlerts(prev => {
+      const updated = prev.filter(a => a.id !== id);
+      persistAlerts(updated);
+      return updated;
+    });
   };
 
   const alertTypeIcon = (type: string) => {

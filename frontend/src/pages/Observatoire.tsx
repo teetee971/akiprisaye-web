@@ -50,6 +50,9 @@ export default function Observatoire() {
   useEffect(() => {
     let mounted = true;
 
+    setLoading(true);
+    setError(null);
+
     fetch(DATA_URL)
       .then((res) => {
         if (!res.ok) throw new Error("Chargement impossible");
