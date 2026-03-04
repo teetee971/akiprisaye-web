@@ -20,7 +20,7 @@ function timeframeToDays(timeframe: Timeframe): number {
     case '7d': return 7;
     case '30d': return 30;
     case '90d': return 90;
-    case '1y': return 365;
+    case '365d': return 365;
     default: return 30;
   }
 }
@@ -77,8 +77,8 @@ export class HistoryService {
             .map((p) => ({
               date: p.date,
               price: p.median as number,
-              storeId: undefined,
-              storeName: undefined,
+              storeId: '',
+              storeName: '',
               reliability: p.sampleCount ? Math.min(p.sampleCount / 10, 1) : 0.5,
               source: 'api',
             }));
@@ -106,8 +106,8 @@ export class HistoryService {
           points.push({
             date: snap.date_snapshot,
             price: obs.prix,
-            storeId: obs.enseigne?.toLowerCase().replace(/\s+/g, '-'),
-            storeName: obs.enseigne,
+            storeId: obs.enseigne?.toLowerCase().replace(/\s+/g, '-') ?? '',
+            storeName: obs.enseigne ?? '',
             reliability: 0.8,
             source: snap.source ?? 'observatoire',
           });

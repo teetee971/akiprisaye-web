@@ -85,11 +85,9 @@ export default function RecherchePrix() {
   const handleReceiptAnalysisComplete = (result: ReceiptAnalysisResult) => {
     setReceiptAnalysis(result);
     // Extraire le premier produit du ticket et naviguer vers le comparateur
-    const firstProduct = result.items?.[0];
-    if (firstProduct?.barcode) {
-      navigate(`/produit/${firstProduct.barcode}`);
-    } else if (firstProduct?.name) {
-      navigate(`/comparateur?q=${encodeURIComponent(firstProduct.name)}`);
+    const firstProduct = result.productLines?.[0];
+    if (firstProduct?.normalizedLabel) {
+      navigate(`/comparateur?q=${encodeURIComponent(firstProduct.normalizedLabel)}`);
     } else {
       navigate('/comparateur');
     }

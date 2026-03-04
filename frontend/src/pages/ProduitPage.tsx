@@ -200,10 +200,9 @@ export default function ProduitPage() {
   /* ---------------------------------------------------------------- */
   const sortedPrices = useCallback((): StorePrice[] => {
     if (!position) return [...storePrices].sort((a, b) => a.price - b.price);
-    const withCoords = storePrices.filter((s) => s.lat !== undefined && s.lon !== undefined) as (StorePrice & {
-      lat: number;
-      lon: number;
-    })[];
+    const withCoords = storePrices
+      .filter((s) => s.lat !== undefined && s.lon !== undefined)
+      .map((s) => ({ ...s, id: s.storeId, lat: s.lat as number, lon: s.lon as number }));
     const withDist = calculateDistancesBatch({ lat: position.lat, lon: position.lon }, withCoords);
     return withDist
       .map((s) => ({ ...s, distance: s.distance }))

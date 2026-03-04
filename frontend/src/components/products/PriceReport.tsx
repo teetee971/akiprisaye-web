@@ -119,7 +119,7 @@ export default function PriceReport({
         observedAt: new Date().toISOString(),
         source: 'user',
         reliability: 'medium',
-        ...(location ? { lat: location.lat, lon: location.lon } : {}),
+        ...(location ? { lat: location.latitude, lon: location.longitude } : {}),
         ...(comment.trim() ? { comment: comment.trim() } : {}),
         ...(isPromo ? { isPromo: true } : {}),
       };

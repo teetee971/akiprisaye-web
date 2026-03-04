@@ -173,7 +173,7 @@ export async function getPriceHistory(
             date: snap.date_snapshot,
             price: o.prix,
             pricePerUnit: o.prix,
-            source: snap.source ?? 'observatoire',
+            source: (snap.source === 'api' || snap.source === 'user' ? snap.source : 'historical') as 'api' | 'user' | 'historical',
             enseigne: o.enseigne ?? '',
           });
         }
