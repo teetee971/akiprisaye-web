@@ -1,8 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /admin/
-Disallow: /api/
-Disallow: /mon-compte
-Disallow: /parametres
 
-Sitemap: https://akiprisaye-web.pages.dev/sitemap.xml
+Sitemap: https://teetee971.github.io/akiprisaye-web/sitemap.xml
