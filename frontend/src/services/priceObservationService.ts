@@ -206,7 +206,7 @@ export const priceObservationService = {
 
         const matchesTerritory =
           filters.territory === 'all' ||
-          obs.territory === filters.territory;
+          obs.territory.toLowerCase() === filters.territory.toLowerCase();
 
         const matchesStore =
           filters.store === 'all' ||

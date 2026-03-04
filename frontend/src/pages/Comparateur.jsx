@@ -47,17 +47,80 @@ export default function Comparateur() {
 
     setLoading(true);
     try {
-      const response = await fetch(`/api/price-search?q=${encodeURIComponent(trimmed)}&territory=fr`);
-      const payload = await response.json();
-      const normalized = (payload.results ?? []).map((item, index) => ({ ...item, id: `${trimmed}-${index}` }));
+      // Fetch from all sources in parallel
+      const territory = 'gp';
+      const isBarcode = /^\d{8,14}$/.test(trimmed);
+
+      const [searchRes, obsRes, webRes] = await Promise.allSettled([
+        // 1. /api/price-search (SerpAPI Google Shopping)
+        fetch(`/api/price-search?q=${encodeURIComponent(trimmed)}&territory=${territory}`)
+          .then((r) => r.ok ? r.json() : { results: [] })
+          .catch(() => ({ results: [] })),
+        // 2. /api/observations (contributions citoyennes, si barcode)
+        isBarcode
+          ? fetch(`/api/observations?barcode=${encodeURIComponent(trimmed)}&territory=${territory}`)
+            .then((r) => r.ok ? r.json() : { observations: [] })
+            .catch(() => ({ observations: [] }))
+          : Promise.resolve({ observations: [] }),
+        // 3. /api/web-price (Google Shopping enrichi)
+        fetch(`/api/web-price?q=${encodeURIComponent(trimmed)}&territory=${territory}`)
+          .then((r) => r.ok ? r.json() : { results: [] })
+          .catch(() => ({ results: [] })),
+      ]);
+
+      const searchPayload = searchRes.status === 'fulfilled' ? searchRes.value : { results: [] };
+      const obsPayload = obsRes.status === 'fulfilled' ? obsRes.value : { observations: [] };
+      const webPayload = webRes.status === 'fulfilled' ? webRes.value : { results: [] };
+
+      // Normalize all results to the same format
+      const fromSearch = (searchPayload.results ?? []).map((item, i) => ({
+        id: `search-${trimmed}-${i}`,
+        title: item.title ?? item.name ?? trimmed,
+        merchant: item.merchant ?? item.source ?? 'Web',
+        price: Number(item.price ?? item.extracted_price ?? 0),
+        url: item.url ?? item.link ?? '',
+        source: 'price-search',
+      }));
+
+      const fromObs = (obsPayload.observations ?? []).map((obs) => ({
+        id: `obs-${obs.id}`,
+        title: obs.productName ?? trimmed,
+        merchant: obs.storeName ?? obs.storeId ?? 'Contribution citoyenne',
+        price: Number(obs.price ?? 0),
+        url: '',
+        source: 'observation',
+      }));
+
+      const fromWeb = (webPayload.results ?? []).map((item, i) => ({
+        id: `web-${trimmed}-${i}`,
+        title: item.title ?? trimmed,
+        merchant: item.merchant ?? 'Web',
+        price: Number(item.price ?? 0),
+        url: item.url ?? '',
+        source: 'web',
+      }));
+
+      // Merge and deduplicate by merchant+price
+      const all = [...fromObs, ...fromSearch, ...fromWeb];
+      const seen = new Set();
+      const normalized = all
+        .filter((item) => item.price > 0)
+        .filter((item) => {
+          const key = `${item.merchant.toLowerCase()}-${item.price.toFixed(2)}`;
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        })
+        .map((item, index) => ({ ...item, id: item.id || `${trimmed}-${index}` }));
+
       setResults(normalized);
       cacheProductResults(normalized);
       const entry = {
         query: trimmed,
-        territory: 'fr',
+        territory,
         resultCount: normalized.length,
         topResult: normalized[0]
-          ? { id: normalized[0].id, name: normalized[0].title, price: Number(normalized[0].price) }
+          ? { id: normalized[0].id, name: normalized[0].title, price: normalized[0].price }
           : undefined,
       };
       if (user) {
@@ -108,14 +171,29 @@ export default function Comparateur() {
 
       <ul className="space-y-2">
         {sorted.map((result) => (
-          <li key={result.id} className="border rounded p-3 flex justify-between items-center">
-            <div>
-              <p className="font-semibold">{result.title}</p>
-              <p className="text-sm text-slate-500">{result.merchant}</p>
+          <li key={result.id} className="border rounded p-3 flex justify-between items-center gap-4">
+            <div className="min-w-0">
+              <p className="font-semibold truncate">{result.title}</p>
+              <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                <p className="text-sm text-slate-500">{result.merchant}</p>
+                {result.source === 'observation' && (
+                  <span className="text-xs px-1.5 py-0.5 bg-orange-100 text-orange-700 rounded">👥 Citoyen</span>
+                )}
+                {(result.source === 'web' || result.source === 'price-search') && (
+                  <span className="text-xs px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded">🌐 Web</span>
+                )}
+              </div>
             </div>
-            <div className="text-right">
-              <p className="font-bold">{result.price} €</p>
-              <Link to={`/p/${encodeURIComponent(result.id)}`} className="text-sm text-blue-600">Détail produit</Link>
+            <div className="text-right flex-shrink-0">
+              <p className="font-bold text-lg">{Number(result.price).toFixed(2)} €</p>
+              <div className="flex gap-2 justify-end mt-0.5">
+                {result.url && (
+                  <a href={result.url} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">
+                    Voir →
+                  </a>
+                )}
+                <Link to={`/produit/${encodeURIComponent(result.id)}`} className="text-xs text-slate-400 hover:text-blue-600">Fiche</Link>
+              </div>
             </div>
           </li>
         ))}

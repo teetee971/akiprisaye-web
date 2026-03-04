@@ -13,7 +13,7 @@ import { safeToText } from './utils/safeToText';
 import { installRuntimeCrashProbe } from './monitoring/runtimeCrashProbe';
 import { initSentry } from './monitoring/sentry';
 import { logDebug } from './utils/logger';
-import { enforceBuildVersionSync, registerAppServiceWorker } from './utils/buildVersionGuard';
+import { enforceBuildVersionSync, registerAppServiceWorker } from './utils/buildVersionGuard.client';
 
 declare global {
   interface Window {
