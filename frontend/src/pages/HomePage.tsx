@@ -4,12 +4,14 @@ import TerritoryChips from '../components/home/TerritoryChips';
 import ProofStats from '../components/home/ProofStats';
 import HowItWorks from '../components/home/HowItWorks';
 import HomeFAQ from '../components/home/HomeFAQ';
+import ConseilBudgetDuJour from '../components/home/ConseilBudgetDuJour';
 
 export default function HomePage() {
   return (
     <div className="space-y-8 pb-28 md:pb-12">
       <HeroSearch />
       <TerritoryChips />
+      <ConseilBudgetDuJour />
       <ProofStats />
       <HowItWorks />
 

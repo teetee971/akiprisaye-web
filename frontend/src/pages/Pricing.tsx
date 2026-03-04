@@ -162,7 +162,20 @@ export default function PricingPage() {
             citoyenne, pro, équipe ou institution.
           </p>
 
-          {/* Toggle mensuel / annuel */}
+          {/* Bandeau Espace Pro */}
+          <div className="mt-6 inline-flex flex-wrap items-center justify-center gap-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700/50 rounded-xl px-5 py-3">
+            <span className="text-xl">💼</span>
+            <div className="text-left">
+              <p className="text-sm font-semibold text-blue-900 dark:text-blue-200">Vous êtes commerçant ou prestataire ?</p>
+              <p className="text-xs text-blue-700 dark:text-blue-400">Publiez vos prix avec toutes vos infos. Compte pro dédié.</p>
+            </div>
+            <Link
+              to="/inscription-pro"
+              className="shrink-0 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
+            >
+              Espace Pro →
+            </Link>
+          </div>
           <div className="mt-8 inline-flex items-center gap-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-full px-2 py-1.5 shadow-sm">
             <button
               onClick={() => setCycle('monthly')}
