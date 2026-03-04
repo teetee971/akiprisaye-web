@@ -18,6 +18,10 @@ jobs:
         with:
           node-version: 20
 
+      - name: Validate frontend package-lock.json (must be valid JSON)
+        working-directory: frontend
+        run: node -e "JSON.parse(require('fs').readFileSync('package-lock.json','utf8')); console.log('package-lock.json OK')"
+
       - name: Diagnose environment
         working-directory: ${{ github.workspace }}
         run: |
