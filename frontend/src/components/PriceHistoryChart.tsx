@@ -22,6 +22,9 @@ function computeVariation(data: PriceHistoryPoint[]): { pct: number; trend: 'dow
   const last = sorted.slice(-Math.ceil(sorted.length * 0.1) || -1);
   const avgFirst = first.reduce((s, p) => s + p.price, 0) / first.length;
   const avgLast = last.reduce((s, p) => s + p.price, 0) / last.length;
+  if (!Number.isFinite(avgFirst) || avgFirst <= 0) {
+    return { pct: 0, trend: 'stable' };
+  }
   const pct = ((avgLast - avgFirst) / avgFirst) * 100;
   const trend = pct < -2 ? 'down' : pct > 2 ? 'up' : 'stable';
   return { pct, trend };
