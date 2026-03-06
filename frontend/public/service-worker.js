@@ -1,5 +1,6 @@
 const CACHE_NAME = 'akiprisaye-smart-cache-v7';
 const PRICE_DATA_CACHE = 'akiprisaye-price-data-v1';
+const SCOPE_PATHNAME = new URL(self.registration.scope).pathname;
 
 // Offline fallback page HTML (embedded for reliability)
 const OFFLINE_HTML = `<!DOCTYPE html>
@@ -104,7 +105,7 @@ self.addEventListener('fetch', (event) => {
   if (
     event.request.mode === 'navigate' ||
     request.destination === 'document' ||
-    url.pathname === '/' ||
+    url.pathname === SCOPE_PATHNAME ||
     url.pathname.endsWith('.html')
   ) {
     event.respondWith(
