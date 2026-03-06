@@ -10,6 +10,8 @@ import { PriceHistoryChart } from '../components/PriceHistoryChart';
 import { UpgradeGate } from '../components/billing/UpgradeGate';
 import { historyService } from '../services/historyService';
 import { loadObservatoireData } from '../services/observatoireDataLoader';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 import {
   buildMonthlyAggregates,
   buildPriceTrendSeries,
@@ -166,15 +168,20 @@ export default function PriceHistoryPage() {
       <div className="min-h-screen bg-slate-50 dark:bg-slate-900 py-8">
         <div className="container mx-auto px-4 max-w-5xl">
 
-          {/* Header */}
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
+          <HeroImage
+            src={PAGE_HERO_IMAGES.priceHistory}
+            alt="Étiquettes de prix en supermarché"
+            gradient="from-blue-900 to-slate-950"
+            height="h-44 sm:h-56"
+            className="mb-6"
+          >
+            <h1 className="text-2xl sm:text-3xl font-bold text-white drop-shadow-lg">
               Historique des prix observés
             </h1>
-            <p className="text-slate-600 dark:text-slate-400">
-              Évolution réelle des prix sur plusieurs mois et années à partir des relevés citoyens
+            <p className="text-blue-100 text-sm mt-1 drop-shadow">
+              Multi-mois · Multi-années · Filtres territoire, catégorie, enseigne
             </p>
-          </div>
+          </HeroImage>
 
           {/* Context banner */}
           <div className="mb-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">

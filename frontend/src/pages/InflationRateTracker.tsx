@@ -18,6 +18,9 @@ import {
   type MonthlyAggregate,
 } from '../services/temporalAggregationService';
 import { TERRITORIES } from '../services/territoryNormalizationService';
+import { HeroImage } from '../components/ui/HeroImage';
+import { CategoryIcon } from '../components/ui/CategoryIcon';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 // ─── Config ───────────────────────────────────────────────────────────────────
 
@@ -211,17 +214,22 @@ export default function InflationRateTracker() {
       <div className="min-h-screen bg-slate-50 dark:bg-slate-900 py-8">
         <div className="container mx-auto px-4 max-w-5xl">
 
-          {/* Header */}
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-3">
-              <TrendingUp className="w-8 h-8 text-red-500" />
+          {/* Hero */}
+          <HeroImage
+            src={PAGE_HERO_IMAGES.inflation}
+            alt="Graphiques financiers et évolution des prix"
+            gradient="from-red-900 to-slate-950"
+            height="h-48 sm:h-60"
+            className="mb-8"
+          >
+            <h1 className="text-2xl sm:text-3xl font-bold text-white drop-shadow-lg flex items-center gap-3">
+              <TrendingUp className="w-8 h-8 text-red-300" />
               Suivi de l'inflation par catégorie
             </h1>
-            <p className="text-slate-600 dark:text-slate-400">
-              Taux mensuel (MoM) et annuel (YoY) calculés directement depuis les relevés citoyens.
-              Aucune donnée fictive — uniquement des prix observés.
+            <p className="text-red-100 text-sm mt-1 drop-shadow">
+              Taux MoM &amp; YoY calculés sur les relevés citoyens réels · Aucune donnée fictive
             </p>
-          </div>
+          </HeroImage>
 
           <div className="mb-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
             <div className="flex items-start gap-3">
@@ -337,7 +345,10 @@ export default function InflationRateTracker() {
                             <span className="mr-1">{row.territoryFlag}</span>
                             <span className="text-slate-700 dark:text-slate-300">{row.territory}</span>
                           </td>
-                          <td className="px-4 py-3 text-slate-700 dark:text-slate-300">{row.category}</td>
+                          <td className="px-4 py-3 text-slate-700 dark:text-slate-300">
+                            <CategoryIcon category={row.category} size="sm" className="mr-2 inline-block align-middle" />
+                            {row.category}
+                          </td>
                           <td className="px-4 py-3 text-right font-semibold text-slate-900 dark:text-white">
                             {latest ? `${latest.avgPrice.toFixed(2)} €` : '—'}
                             {latest && <span className="block text-xs font-normal text-slate-400">{latest.month}</span>}

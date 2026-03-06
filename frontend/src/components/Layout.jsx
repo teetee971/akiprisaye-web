@@ -11,8 +11,8 @@ import { usePriceAlertEvaluator } from '../hooks/usePriceAlertEvaluator';
 import { usePrivacyConsent } from '../hooks/usePrivacyConsent';
 
 function AlertEvaluatorSideEffect() {
-  const { consented } = usePrivacyConsent();
-  usePriceAlertEvaluator(consented);
+  const { consent } = usePrivacyConsent();
+  usePriceAlertEvaluator(consent.analytics);
   return null;
 }
 

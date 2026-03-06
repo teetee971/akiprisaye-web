@@ -12,6 +12,8 @@ import { CheckCircle, AlertCircle, Clock, Store } from 'lucide-react';
 import { loadObservatoireData } from '../services/observatoireDataLoader';
 import { getCategories, getEnseignes } from '../services/temporalAggregationService';
 import { TERRITORIES } from '../services/territoryNormalizationService';
+import { HeroImage } from '../components/ui/HeroImage';
+import { getTerritoryAsset, getTerritoryGradient, PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 const ALL_TERRITORIES = TERRITORIES.filter((t) =>
   ['gp', 'mq', 'gf', 're', 'yt', 'fr', 'pm', 'nc', 'pf', 'wf', 'bl', 'mf'].includes(t.code),
@@ -94,14 +96,20 @@ export default function TerritoryCoverageReport() {
       <div className="min-h-screen bg-slate-50 dark:bg-slate-900 py-8">
         <div className="container mx-auto px-4 max-w-5xl">
 
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
+          <HeroImage
+            src={PAGE_HERO_IMAGES.coverage}
+            alt="Carte du monde et données géographiques"
+            gradient="from-slate-900 to-blue-950"
+            height="h-48 sm:h-60"
+            className="mb-8"
+          >
+            <h1 className="text-2xl sm:text-3xl font-bold text-white drop-shadow-lg">
               Couverture des données territoriales
             </h1>
-            <p className="text-slate-600 dark:text-slate-400">
-              État en temps réel de la disponibilité des données de prix par territoire, catégorie et enseigne.
+            <p className="text-slate-200 text-sm mt-1 drop-shadow">
+              État en temps réel · Fraîcheur · Enseignes couvertes · Catégories disponibles
             </p>
-          </div>
+          </HeroImage>
 
           {/* Summary */}
           {!loading && (
@@ -129,14 +137,28 @@ export default function TerritoryCoverageReport() {
             </div>
           ) : (
             <div className="space-y-3">
-              {reports.map((r) => (
+              {reports.map((r) => {
+                const terrAsset = getTerritoryAsset(r.code);
+                const terrGradient = getTerritoryGradient(r.code);
+                return (
                 <div
                   key={r.code}
-                  className={`bg-white dark:bg-slate-800 rounded-xl p-5 border shadow-sm transition-colors
+                  className={`relative overflow-hidden bg-white dark:bg-slate-800 rounded-xl p-5 border shadow-sm transition-colors
                     ${r.freshness === 'fresh' ? 'border-green-200 dark:border-green-800' :
                       r.freshness === 'stale' ? 'border-amber-200 dark:border-amber-800' :
                       'border-slate-200 dark:border-slate-700 opacity-60'}`}
                 >
+                  {/* Territory background image strip */}
+                  <img
+                    src={terrAsset.url}
+                    alt={terrAsset.alt}
+                    loading="lazy"
+                    decoding="async"
+                    onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                    className="absolute inset-0 h-full w-32 object-cover opacity-10 pointer-events-none"
+                  />
+                  <div className={`absolute inset-0 w-32 bg-gradient-to-r ${terrGradient} opacity-10 pointer-events-none`} />
+                  <div className="relative z-10">
                   <div className="flex items-start justify-between gap-4 flex-wrap">
                     <div className="flex items-center gap-3">
                       <span className="text-3xl">{r.flag}</span>
@@ -191,8 +213,10 @@ export default function TerritoryCoverageReport() {
                       ))}
                     </div>
                   )}
+                  </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
