@@ -16,7 +16,7 @@ export default function PanierAntiCrise({ territory = 'guadeloupe', mode = 'esse
     const loadData = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/data/panier-anticrise.json');
+        const response = await fetch(`${import.meta.env.BASE_URL}data/panier-anticrise.json`);
         if (!response.ok) {
           throw new Error('Impossible de charger les données du panier');
         }

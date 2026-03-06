@@ -15,7 +15,7 @@ export interface TerritoryPressureIndex {
 const TERRITORIES = ['guadeloupe', 'martinique', 'guyane', 'reunion'];
 
 async function loadTerritory(territory: string): Promise<PriceObservation[]> {
-  const res = await fetch(`/data/territories/${territory}.json`, {
+  const res = await fetch(`${import.meta.env.BASE_URL}data/territories/${territory}.json`, {
     cache: 'no-store',
   });
   if (!res.ok) throw new Error(`Territory not found: ${territory}`);

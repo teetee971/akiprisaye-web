@@ -18,7 +18,7 @@ export default function ObservatoireMarges({ territory = 'guadeloupe', productId
     const loadData = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/data/observatoire-marges.json');
+        const response = await fetch(`${import.meta.env.BASE_URL}data/observatoire-marges.json`);
         if (!response.ok) {
           throw new Error('Impossible de charger les données de l\'observatoire');
         }

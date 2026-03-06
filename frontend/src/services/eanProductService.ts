@@ -250,7 +250,7 @@ async function enrichProductWithImages(ean: string): Promise<ProductImages> {
 async function fetchProductFromDatabase(ean: string): Promise<ProductResult | null> {
   try {
     // Try to fetch from public data file
-    const response = await fetch('/data/prices.json', { cache: 'no-store' });
+    const response = await fetch(`${import.meta.env.BASE_URL}data/prices.json`, { cache: 'no-store' });
     
     if (!response.ok) {
       return null;
