@@ -4,77 +4,33 @@
   "source": "releve_citoyen",
   "qualite": "verifie",
   "donnees": [
-    {
-      "commune": "Cayenne",
-      "enseigne": "Carrefour",
-      "categorie": "Produits laitiers",
-      "produit": "Lait demi-écrémé UHT 1L",
-      "ean": "3560070123456",
-      "unite": "1L",
-      "prix": 1.62
-    },
-    {
-      "commune": "Cayenne",
-      "enseigne": "Score",
-      "categorie": "Produits laitiers",
-      "produit": "Lait demi-écrémé UHT 1L",
-      "ean": "3560070123456",
-      "unite": "1L",
-      "prix": 1.58
-    },
-    {
-      "commune": "Saint-Laurent-du-Maroni",
-      "enseigne": "Hyper U",
-      "categorie": "Produits laitiers",
-      "produit": "Lait demi-écrémé UHT 1L",
-      "ean": "3560070123456",
-      "unite": "1L",
-      "prix": 1.72
-    },
-    {
-      "commune": "Cayenne",
-      "enseigne": "Carrefour",
-      "categorie": "Épicerie",
-      "produit": "Riz long blanc 1kg",
-      "ean": "3250391234567",
-      "unite": "1kg",
-      "prix": 2.20
-    },
-    {
-      "commune": "Saint-Laurent-du-Maroni",
-      "enseigne": "Score",
-      "categorie": "Épicerie",
-      "produit": "Riz long blanc 1kg",
-      "ean": "3250391234567",
-      "unite": "1kg",
-      "prix": 2.38
-    },
-    {
-      "commune": "Cayenne",
-      "enseigne": "Hyper U",
-      "categorie": "Produits laitiers",
-      "produit": "Yaourt nature 4x125g",
-      "ean": "3560070789012",
-      "unite": "4x125g",
-      "prix": 2.10
-    },
-    {
-      "commune": "Cayenne",
-      "enseigne": "Carrefour",
-      "categorie": "Épicerie",
-      "produit": "Sucre blanc 1kg",
-      "ean": "3560071112345",
-      "unite": "1kg",
-      "prix": 1.85
-    },
-    {
-      "commune": "Cayenne",
-      "enseigne": "Score",
-      "categorie": "Épicerie",
-      "produit": "Huile de tournesol 1L",
-      "ean": "3250399876543",
-      "unite": "1L",
-      "prix": 3.45
-    }
+    {"commune":"Cayenne","enseigne":"Carrefour","categorie":"Produits laitiers","produit":"Lait demi-écrémé UHT 1L","ean":"3560070123456","unite":"1L","prix":1.62},
+    {"commune":"Cayenne","enseigne":"Score","categorie":"Produits laitiers","produit":"Lait demi-écrémé UHT 1L","ean":"3560070123456","unite":"1L","prix":1.58},
+    {"commune":"Saint-Laurent-du-Maroni","enseigne":"Hyper U","categorie":"Produits laitiers","produit":"Lait demi-écrémé UHT 1L","ean":"3560070123456","unite":"1L","prix":1.72},
+    {"commune":"Kourou","enseigne":"Cora","categorie":"Produits laitiers","produit":"Lait demi-écrémé UHT 1L","ean":"3560070123456","unite":"1L","prix":1.65},
+    {"commune":"Matoury","enseigne":"Leader Price","categorie":"Produits laitiers","produit":"Lait demi-écrémé UHT 1L","ean":"3560070123456","unite":"1L","prix":1.55},
+    {"commune":"Cayenne","enseigne":"Carrefour","categorie":"Épicerie","produit":"Riz long blanc 1kg","ean":"3250391234567","unite":"1kg","prix":2.20},
+    {"commune":"Saint-Laurent-du-Maroni","enseigne":"Score","categorie":"Épicerie","produit":"Riz long blanc 1kg","ean":"3250391234567","unite":"1kg","prix":2.38},
+    {"commune":"Kourou","enseigne":"Cora","categorie":"Épicerie","produit":"Riz long blanc 1kg","ean":"3250391234567","unite":"1kg","prix":2.28},
+    {"commune":"Matoury","enseigne":"Hyper U","categorie":"Épicerie","produit":"Riz long blanc 1kg","ean":"3250391234567","unite":"1kg","prix":2.15},
+    {"commune":"Cayenne","enseigne":"Hyper U","categorie":"Produits laitiers","produit":"Yaourt nature 4x125g","ean":"3560070789012","unite":"4x125g","prix":2.10},
+    {"commune":"Cayenne","enseigne":"Carrefour","categorie":"Épicerie","produit":"Sucre blanc 1kg","ean":"3560071112345","unite":"1kg","prix":1.85},
+    {"commune":"Kourou","enseigne":"Score","categorie":"Épicerie","produit":"Sucre blanc 1kg","ean":"3560071112345","unite":"1kg","prix":1.92},
+    {"commune":"Cayenne","enseigne":"Score","categorie":"Épicerie","produit":"Huile de tournesol 1L","ean":"3250399876543","unite":"1L","prix":3.45},
+    {"commune":"Cayenne","enseigne":"Carrefour","categorie":"Épicerie","produit":"Huile de tournesol 1L","ean":"3250399876543","unite":"1L","prix":3.35},
+    {"commune":"Cayenne","enseigne":"Carrefour","categorie":"Hygiène","produit":"Gel douche 250ml","ean":"3600523540023","unite":"250ml","prix":2.85},
+    {"commune":"Kourou","enseigne":"Cora","categorie":"Hygiène","produit":"Gel douche 250ml","ean":"3600523540023","unite":"250ml","prix":2.92},
+    {"commune":"Matoury","enseigne":"Leader Price","categorie":"Hygiène","produit":"Gel douche 250ml","ean":"3600523540023","unite":"250ml","prix":2.70},
+    {"commune":"Cayenne","enseigne":"Score","categorie":"Entretien / Nettoyage","produit":"Liquide vaisselle 500ml","ean":"3017620429002","unite":"500ml","prix":2.10},
+    {"commune":"Cayenne","enseigne":"Carrefour","categorie":"Entretien / Nettoyage","produit":"Liquide vaisselle 500ml","ean":"3017620429002","unite":"500ml","prix":2.02},
+    {"commune":"Cayenne","enseigne":"Carrefour","categorie":"Lessive","produit":"Lessive liquide 1.5L","ean":"8001841556307","unite":"1.5L","prix":4.85},
+    {"commune":"Kourou","enseigne":"Cora","categorie":"Lessive","produit":"Lessive liquide 1.5L","ean":"8001841556307","unite":"1.5L","prix":4.95},
+    {"commune":"Cayenne","enseigne":"Carrefour","categorie":"Cosmétiques","produit":"Crème hydratante visage 50ml","ean":"3600523100023","unite":"50ml","prix":6.50},
+    {"commune":"Cayenne","enseigne":"Carrefour","categorie":"Pharmacie","produit":"Paracétamol 500mg x16","ean":"3400936251015","unite":"16cp","prix":2.80},
+    {"commune":"Cayenne","enseigne":"Carrefour","categorie":"Boissons","produit":"Eau minérale 1.5L","ean":"5410013116118","unite":"1.5L","prix":1.05},
+    {"commune":"Saint-Laurent-du-Maroni","enseigne":"Score","categorie":"Boissons","produit":"Eau minérale 1.5L","ean":"5410013116118","unite":"1.5L","prix":1.18},
+    {"commune":"Cayenne","enseigne":"Carrefour","categorie":"Épicerie","produit":"Pâtes spaghetti 500g","ean":"3017760641452","unite":"500g","prix":1.88},
+    {"commune":"Cayenne","enseigne":"Carrefour","categorie":"Fruits et légumes","produit":"Tomates rondes 1kg","ean":"","unite":"1kg","prix":3.80},
+    {"commune":"Cayenne","enseigne":"Carrefour","categorie":"Boucherie / Charcuterie","produit":"Poulet entier 1kg","ean":"","unite":"1kg","prix":9.20}
   ]
 }

@@ -47,45 +47,75 @@ export interface PriceStatistics {
 
 /**
  * Load observatoire data from JSON files
- * Fetches data from public folder
+ * Fetches data from public folder.
+ * Pass `months` to override the default list of month keys to attempt.
  */
+/** Default months to probe when no explicit list is provided (most recent first). */
+const DEFAULT_SNAPSHOT_MONTHS = [
+  '2026-02',
+  '2026-01',
+  '2025-12',
+  '2025-11',
+  '2025-10',
+  '2025-09',
+];
+
 export async function loadObservatoireData(
-  territory: string = 'Guadeloupe'
+  territory: string = 'Guadeloupe',
+  months: string[] = DEFAULT_SNAPSHOT_MONTHS,
 ): Promise<ObservatoireSnapshot[]> {
   try {
-    // Fetch all available snapshots for the territory
     const territoryKey = territory.toLowerCase().replace(/\s+/g, '_');
-    
-    // Try to load two snapshots (current and previous month)
     const snapshots: ObservatoireSnapshot[] = [];
-    
-    // Load January snapshot
-    try {
-      const response1 = await fetch(`${import.meta.env.BASE_URL}data/observatoire/${territoryKey}_2026-01.json`);
-      if (response1.ok) {
-        const data1 = await response1.json();
-        snapshots.push(data1);
+
+    const fetches = months.map(async (month) => {
+      try {
+        const url = `${import.meta.env.BASE_URL}data/observatoire/${territoryKey}_${month}.json`;
+        const res = await fetch(url);
+        if (res.ok) {
+          const data: ObservatoireSnapshot = await res.json();
+          return data;
+        }
+      } catch {
+        // Snapshot not available for this month – ignore silently
       }
-    } catch (error) {
-      console.warn(`Could not load ${territoryKey}_2026-01.json`);
+      return null;
+    });
+
+    const results = await Promise.all(fetches);
+    for (const r of results) {
+      if (r) snapshots.push(r);
     }
-    
-    // Load February snapshot
-    try {
-      const response2 = await fetch(`${import.meta.env.BASE_URL}data/observatoire/${territoryKey}_2026-02.json`);
-      if (response2.ok) {
-        const data2 = await response2.json();
-        snapshots.push(data2);
-      }
-    } catch (error) {
-      console.warn(`Could not load ${territoryKey}_2026-02.json`);
-    }
-    
+
+    // Sort chronologically (oldest first for aggregation)
+    snapshots.sort((a, b) => a.date_snapshot.localeCompare(b.date_snapshot));
+
     return snapshots;
   } catch (error) {
     console.error('Error loading observatoire data:', error);
     return [];
   }
+}
+
+/**
+ * Load observatoire snapshots for all territories.
+ * Returns a map keyed by territory file stem.
+ */
+export async function loadAllTerritories(
+  months: string[] = DEFAULT_SNAPSHOT_MONTHS,
+): Promise<Map<string, ObservatoireSnapshot[]>> {
+  const { TERRITORIES } = await import('./territoryNormalizationService');
+  const result = new Map<string, ObservatoireSnapshot[]>();
+
+  await Promise.all(
+    TERRITORIES.map(async (t) => {
+      const snaps = await loadObservatoireData(t.labelFull, months);
+      if (snaps.length > 0) {
+        result.set(t.code, snaps);
+      }
+    }),
+  );
+  return result;
 }
 
 /**
