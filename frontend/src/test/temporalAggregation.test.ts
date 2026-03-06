@@ -17,7 +17,7 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import type { ObservatoireSnapshot } from '../../services/observatoireDataLoader';
+import type { ObservatoireSnapshot } from '../services/observatoireDataLoader';
 import {
   buildMonthlyAggregates,
   buildAnnualAggregates,
@@ -26,13 +26,13 @@ import {
   getCategories,
   getEnseignes,
   detectPriceAnomalies,
-} from '../../services/temporalAggregationService';
+} from '../services/temporalAggregationService';
 
 // ─── Load real JSON files ──────────────────────────────────────────────────────
 
 const DATA_DIR = resolve(
   fileURLToPath(import.meta.url),
-  '../../../../public/data/observatoire',
+  '../../../public/data/observatoire',
 );
 
 function loadSnapshot(filename: string): ObservatoireSnapshot {
@@ -203,7 +203,9 @@ describe('buildPriceTrendSeries — real 4-month Guadeloupe series', () => {
   it('returns a series entry for every distinct product in the real snapshots', () => {
     const series = buildPriceTrendSeries(gpSnapshots);
     const allProductKeys = new Set(
-      gpSnapshots.flatMap((s) => s.donnees.map((o) => o.ean ?? o.produit)),
+      gpSnapshots.flatMap((s) =>
+        s.donnees.map((o) => (o.ean || o.produit)),
+      ),
     );
     for (const key of allProductKeys) {
       expect(series.some((ts) => ts.productKey === key)).toBe(true);
