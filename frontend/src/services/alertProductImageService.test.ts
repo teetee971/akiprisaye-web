@@ -5,8 +5,6 @@ import {
   getProductImageUrl,
 } from './alertProductImageService';
 
-const PLACEHOLDER_BASE = `${import.meta.env.BASE_URL}assets/placeholders/`;
-
 describe('alertProductImageService OFF parsing', () => {
   it('prioritizes selected_images.front.display.fr over other fields', () => {
     const url = extractOffImageUrl({
@@ -53,7 +51,7 @@ describe('alertProductImageService fallback and cache', () => {
     const result = await getProductImageUrl('3760123456789', 'bébé');
 
     expect(result.source).toBe('placeholder');
-    expect(result.url).toBe(`${PLACEHOLDER_BASE}placeholder-bebe.svg`);
+    expect(result.url).toBe('/assets/placeholders/placeholder-bebe.svg');
     expect(fetchMock).toHaveBeenCalledWith(
       expect.stringContaining('format=json'),
       expect.objectContaining({ method: 'GET' })
@@ -92,7 +90,7 @@ describe('alertProductImageService fallback and cache', () => {
     const second = await getProductImageUrl('3390011200456', 'viande/poisson');
 
     expect(first.source).toBe('placeholder');
-    expect(first.url).toBe(`${PLACEHOLDER_BASE}placeholder-viande-poisson.svg`);
+    expect(first.url).toBe('/assets/placeholders/placeholder-viande-poisson.svg');
     expect(second.url).toBe(first.url);
 
     const rawCache = window.localStorage.getItem(__alertImageInternals.IMAGE_CACHE_KEY) ?? '{}';

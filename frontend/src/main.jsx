@@ -36,8 +36,6 @@ if (import.meta.env.DEV) {
   import('./utils/onboardingDebug');
 }
 
-const logoUrl = `${import.meta.env.BASE_URL}logo-akiprisaye.svg`;
-
 const renderFallbackError = (title, message) => {
   const fallback = document.getElementById('loading-fallback');
   if (!fallback) return;
@@ -46,7 +44,7 @@ const renderFallbackError = (title, message) => {
   const safeMessage = safeToText(message);
 
   fallback.innerHTML = `
-    <img src="${logoUrl}" alt="A KI PRI SA YÉ" style="height: 64px; margin-bottom: 24px;" />
+    <img src="/logo-akiprisaye.svg" alt="A KI PRI SA YÉ" style="height: 64px; margin-bottom: 24px;" />
     <h1 style="font-size: 1.5rem; margin-bottom: 8px;">${safeTitle}</h1>
     <p style="color: #f87171; margin-bottom: 8px;">${safeMessage}</p>
     <button onclick="location.reload()" style="padding: 12px 24px; background: #3b82f6; color: white; border: none; border-radius: 8px; cursor: pointer;">

@@ -3,7 +3,6 @@ import type { SanitaryAlert } from '../types/alerts';
 const IMAGE_CACHE_KEY = 'akps_alert_img_cache_v1';
 const IMAGE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 const API_TIMEOUT_MS = 6000;
-const PLACEHOLDER_BASE = `${import.meta.env.BASE_URL}assets/placeholders/`;
 
 type ImageSource = NonNullable<SanitaryAlert['imageSource']>;
 
@@ -35,10 +34,10 @@ type OffResponsePayload = {
 };
 
 const PLACEHOLDER_BY_CATEGORY: Record<string, string> = {
-  'bebe': `${PLACEHOLDER_BASE}placeholder-bebe.svg`,
-  'epicerie': `${PLACEHOLDER_BASE}placeholder-epicerie.svg`,
-  'viande/poisson': `${PLACEHOLDER_BASE}placeholder-viande-poisson.svg`,
-  'hygiene': `${PLACEHOLDER_BASE}placeholder-hygiene.svg`,
+  'bebe': '/assets/placeholders/placeholder-bebe.svg',
+  'epicerie': '/assets/placeholders/placeholder-epicerie.svg',
+  'viande/poisson': '/assets/placeholders/placeholder-viande-poisson.svg',
+  'hygiene': '/assets/placeholders/placeholder-hygiene.svg',
 };
 
 const pendingRequests = new Map<string, Promise<{ url?: string; source: ImageSource }>>();
@@ -52,7 +51,7 @@ function normalizeCategory(category?: string): string {
 }
 
 function getPlaceholderUrl(category?: string): string {
-  return PLACEHOLDER_BY_CATEGORY[normalizeCategory(category)] ?? `${PLACEHOLDER_BASE}placeholder-default.svg`;
+  return PLACEHOLDER_BY_CATEGORY[normalizeCategory(category)] ?? '/assets/placeholders/placeholder-default.svg';
 }
 
 function getCacheKey(ean?: string, category?: string): string {
