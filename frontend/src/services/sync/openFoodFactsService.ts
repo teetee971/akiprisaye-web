@@ -47,8 +47,14 @@ export function parseQuantity(quantity: string | undefined): QuantityParsed {
     return { value: 0, unit: '' };
   }
 
-  const value = parseFloat(match[1].replace(',', '.'));
-  const unit = match[2].toLowerCase();
+  const valuePart = match?.[1];
+  const unitPart = match?.[2];
+  if (!valuePart || !unitPart) {
+    return { value: 0, unit: '' };
+  }
+
+  const value = parseFloat(valuePart.replace(',', '.'));
+  const unit = unitPart.toLowerCase();
 
   return { value, unit };
 }
@@ -96,13 +102,13 @@ export function mapOFFToProduct(off: OFFProduct): Partial<Product> {
     unite: quantity.unit,
     imageUrl: off.image_url || off.image_small_url || undefined,
     metadata: {
-      nutriscore: off.nutriscore_grade,
-      ecoscore: off.ecoscore_grade,
+      ...(off.nutriscore_grade ? { nutriscore: off.nutriscore_grade } : {}),
+      ...(off.ecoscore_grade ? { ecoscore: off.ecoscore_grade } : {}),
       source: 'openfoodfacts',
       lastSync: new Date().toISOString(),
-      ingredients: off.ingredients_text,
-      allergens: off.allergens_tags,
-      countries: off.countries_tags,
+      ...(off.ingredients_text ? { ingredients: off.ingredients_text } : {}),
+      ...(off.allergens_tags ? { allergens: off.allergens_tags } : {}),
+      ...(off.countries_tags ? { countries: off.countries_tags } : {}),
     },
   };
 }

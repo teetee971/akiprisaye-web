@@ -1,0 +1,43 @@
+name: Deploy Worker
+
+on:
+  push:
+    branches:
+      - main
+      - codex/*
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: |
+          cd price-api
+          npm ci
+
+      - name: Typecheck
+        run: |
+          cd price-api
+          npm run typecheck
+
+      - name: Run tests
+        run: |
+          cd price-api
+          npm test -- --run
+
+      - name: Deploy Worker
+        run: |
+          cd price-api
+          npx wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}

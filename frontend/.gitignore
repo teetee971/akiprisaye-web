@@ -1,0 +1,7 @@
+
+# backups / legacy folders (must never be linted or committed)
+src_old/
+src.bak.*/
+**/*.bak
+**/*.bak.*
+**/*.old

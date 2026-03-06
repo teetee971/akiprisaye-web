@@ -1,0 +1,87 @@
+{
+  "version": "1.0",
+  "currency": "EUR",
+  "products": {
+    "riz_1kg": {
+      "label": "Riz 1 kg",
+      "unit": "kg",
+      "history": {
+        "guadeloupe": {
+          "Carrefour": [
+            { "date": "2025-09-01", "price": 1.49 },
+            { "date": "2025-11-01", "price": 1.69 },
+            { "date": "2026-01-01", "price": 1.89 }
+          ],
+          "Leader Price": [
+            { "date": "2025-09-01", "price": 1.42 },
+            { "date": "2025-12-01", "price": 1.62 },
+            { "date": "2026-01-01", "price": 1.72 }
+          ],
+          "Super U": [
+            { "date": "2025-09-01", "price": 1.55 },
+            { "date": "2025-10-15", "price": 1.75 },
+            { "date": "2026-01-01", "price": 1.95 }
+          ]
+        }
+      }
+    },
+    "sucre_1kg": {
+      "label": "Sucre 1 kg",
+      "unit": "kg",
+      "history": {
+        "guadeloupe": {
+          "Leader Price": [
+            { "date": "2025-09-01", "price": 0.98 },
+            { "date": "2025-12-01", "price": 1.05 },
+            { "date": "2026-01-01", "price": 1.12 }
+          ],
+          "Carrefour": [
+            { "date": "2025-09-01", "price": 1.05 },
+            { "date": "2025-11-15", "price": 1.18 },
+            { "date": "2026-01-01", "price": 1.25 }
+          ]
+        }
+      }
+    },
+    "lait_1l": {
+      "label": "Lait 1 litre",
+      "unit": "litre",
+      "history": {
+        "guadeloupe": {
+          "Super U": [
+            { "date": "2025-09-01", "price": 1.25 },
+            { "date": "2025-11-01", "price": 1.35 },
+            { "date": "2026-01-01", "price": 1.45 }
+          ],
+          "Carrefour": [
+            { "date": "2025-09-01", "price": 1.30 },
+            { "date": "2025-10-20", "price": 1.42 },
+            { "date": "2026-01-01", "price": 1.50 }
+          ],
+          "Leader Price": [
+            { "date": "2025-09-01", "price": 1.20 },
+            { "date": "2026-01-01", "price": 1.38 }
+          ]
+        }
+      }
+    },
+    "huile_1l": {
+      "label": "Huile 1 litre",
+      "unit": "litre",
+      "history": {
+        "guadeloupe": {
+          "Leader Price": [
+            { "date": "2025-08-01", "price": 2.45 },
+            { "date": "2025-10-01", "price": 2.65 },
+            { "date": "2026-01-01", "price": 2.89 }
+          ],
+          "Carrefour": [
+            { "date": "2025-08-01", "price": 2.65 },
+            { "date": "2025-11-01", "price": 2.90 },
+            { "date": "2026-01-01", "price": 3.10 }
+          ]
+        }
+      }
+    }
+  }
+}

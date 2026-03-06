@@ -45,7 +45,7 @@ const parseRssItems = (xml: string): Array<{ title: string; link: string; descri
 
 export class RssIngester implements Ingester {
   id: string;
-  confidence: 'press' = 'press';
+  confidence = 'press' as const;
   private config: RssIngesterConfig;
 
   constructor(config: RssIngesterConfig) {

@@ -166,7 +166,7 @@ export default function ComparateurCitoyen() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
       {/* Header */}
-      <header className="bg-white dark:bg-slate-900 shadow-md border-b border-blue-100 dark:border-slate-700">
+      <div className="bg-white dark:bg-slate-900 shadow-md border-b border-blue-100 dark:border-slate-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -191,10 +191,10 @@ export default function ComparateurCitoyen() {
             </a>
           </div>
         </div>
-      </header>
+      </div>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Data Info Banner */}
         {snapshot && !loading && !error && (
           <DataInfo
@@ -299,10 +299,10 @@ export default function ComparateurCitoyen() {
             </div>
           </div>
         </div>
-      </main>
+      </div>
 
       {/* Footer */}
-      <footer className="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 mt-12 py-8">
+      <div className="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 mt-12 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-slate-600 dark:text-slate-400 text-sm">
             © 2025 A KI PRI SA YÉ - Service public de transparence des prix
@@ -311,7 +311,7 @@ export default function ComparateurCitoyen() {
             Tous droits réservés • <a href="/mentions-legales" className="hover:text-blue-600 dark:hover:text-blue-400">Mentions légales</a>
           </p>
         </div>
-      </footer>
+      </div>
     </div>
   );
 }

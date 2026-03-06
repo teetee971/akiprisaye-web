@@ -9,7 +9,7 @@
  * - Statistiques d'utilisation
  * 
  * Sécurité:
- * - Clés hashées avec bcrypt
+ * - Clés hashées avec bcryptjs
  * - Préfixe visible pour identification
  * - Rate limiting par clé
  * - Révocation instantanée
@@ -19,7 +19,7 @@
 
 import { PrismaClient, ApiKey, ApiKeyStatus, ApiPermission, SubscriptionTier } from '@prisma/client';
 import * as crypto from 'crypto';
-import * as bcrypt from 'bcrypt';
+import * as bcryptjs from 'bcryptjs';
 import { ApiKeyWithSecret, UsageStats, SUBSCRIPTION_PLANS, DEFAULT_PERMISSIONS } from '../../types/api.js';
 
 export class ApiKeyService {
@@ -77,7 +77,7 @@ export class ApiKeyService {
     const key = `${this.API_KEY_PREFIX}${secret}`;
 
     // Hasher la clé pour stockage
-    const keyHash = await bcrypt.hash(key, this.BCRYPT_ROUNDS);
+    const keyHash = await bcryptjs.hash(key, this.BCRYPT_ROUNDS);
 
     // Déterminer les permissions (utiliser les permissions par défaut si non spécifiées)
     const defaultPermissions = this.getDefaultPermissions(user.subscriptionTier);
@@ -142,7 +142,7 @@ export class ApiKeyService {
 
     // Comparer le hash
     for (const apiKey of apiKeys) {
-      const isValid = await bcrypt.compare(key, apiKey.keyHash);
+      const isValid = await bcryptjs.compare(key, apiKey.keyHash);
 
       if (isValid) {
         // Vérifier l'expiration

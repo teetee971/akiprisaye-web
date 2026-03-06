@@ -142,13 +142,20 @@ test('ACCESSIBILITÉ: axe scan home + comparateur with serious/critical gate onl
   const pagesToAudit = [
     { name: 'home', url: '/' },
     { name: 'comparateur', url: '/comparateur' },
+    { name: 'faq', url: '/faq' },
+    { name: 'observatoire', url: '/observatoire' },
+    { name: 'contact', url: '/contact' },
+    { name: 'mentions-legales', url: '/mentions-legales' },
+    { name: 'scanner', url: '/scanner' },
   ];
 
   for (const target of pagesToAudit) {
     await page.goto(target.url);
     await page.waitForLoadState('networkidle');
 
-    const axeResults = await new AxeBuilder({ page }).analyze();
+    const axeResults = await new AxeBuilder({ page })
+      .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
+      .analyze();
     const blockingViolations = axeResults.violations.filter((violation) =>
       ['serious', 'critical'].includes(violation.impact ?? ''),
     );
@@ -170,6 +177,30 @@ test('ACCESSIBILITÉ: axe scan home + comparateur with serious/critical gate onl
       ).toEqual([]);
     } else {
       expect.soft(blockingViolations.length).toBe(0);
+    }
+  }
+});
+
+test('ACCESSIBILITÉ: page headings – chaque page a exactement un H1', async ({ page }) => {
+  const pagesToCheck = [
+    { name: 'home', url: '/' },
+    { name: 'faq', url: '/faq' },
+    { name: 'observatoire', url: '/observatoire' },
+    { name: 'contact', url: '/contact' },
+    { name: 'scanner', url: '/scanner' },
+  ];
+
+  for (const target of pagesToCheck) {
+    await page.goto(target.url);
+    await page.waitForLoadState('networkidle');
+
+    const h1Count = await page.locator('h1').count();
+    appendFileSync(axeReportPath, `[H1] ${target.name}: h1_count=${h1Count}\n`, 'utf8');
+
+    if (strictMode) {
+      expect(h1Count, `Expected exactly 1 <h1> on ${target.name}, found ${h1Count}`).toBe(1);
+    } else {
+      expect.soft(h1Count, `Expected exactly 1 <h1> on ${target.name}`).toBe(1);
     }
   }
 });

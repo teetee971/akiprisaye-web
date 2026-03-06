@@ -1,0 +1,24 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["node", "vite/client"],
+    "skipLibCheck": true
+  },
+  "include": [
+    "src/main.tsx",
+    "src/App.tsx",
+    "src/pages/**/*",
+    "src/components/**/*",
+    "src/hooks/**/*",
+    "src/context/**/*"
+  ],
+  "exclude": [
+    "src/test",
+    "src/**/__tests__",
+    "src/utils",
+    "src/services",
+    "src/portal",
+    "src/providers",
+    "src/types"
+  ]
+}

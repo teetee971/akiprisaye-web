@@ -1,0 +1,10 @@
+{
+  "stores": [
+    {
+      "id": "carrefour-baie-mahault",
+      "name": "Carrefour Baie-Mahault",
+      "lat": 16.265,
+      "lng": -61.586
+    }
+  ]
+}

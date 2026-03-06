@@ -1,0 +1,50 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2026-01-24T21:05:21.499Z",
+  "territories": [
+    {
+      "code": "GP",
+      "name": "guadeloupe",
+      "filename": "guadeloupe.json",
+      "observationCount": 2937,
+      "productCount": 89,
+      "size": 902485
+    },
+    {
+      "code": "MQ",
+      "name": "martinique",
+      "filename": "martinique.json",
+      "observationCount": 979,
+      "productCount": 89,
+      "size": 313003
+    },
+    {
+      "code": "GF",
+      "name": "guyane",
+      "filename": "guyane.json",
+      "observationCount": 445,
+      "productCount": 89,
+      "size": 151538
+    },
+    {
+      "code": "RE",
+      "name": "reunion",
+      "filename": "reunion.json",
+      "observationCount": 712,
+      "productCount": 89,
+      "size": 235654
+    }
+  ],
+  "statistics": {
+    "totalTerritories": 4,
+    "totalProducts": 89,
+    "totalObservations": 5073,
+    "originalFileSize": 2324394,
+    "totalSplitSize": 1602680,
+    "averageTerritorySize": 400670,
+    "sizeReduction": {
+      "bytes": 721714,
+      "percentage": 31.05
+    }
+  }
+}

@@ -14,7 +14,7 @@ L'API REST sécurisée pour A KI PRI SA YÉ est **opérationnelle** et prête po
 | **Authentification JWT** | Access + Refresh tokens | ✅ |
 | **Rate Limiting** | 3 niveaux (auth, create, api) | ✅ |
 | **Documentation Swagger** | OpenAPI 3.0 complet | ✅ |
-| **Sécurité** | JWT + bcrypt + validation | ✅ |
+| **Sécurité** | JWT + bcryptjs + validation | ✅ |
 | **Conformité RGPD** | Privacy by design | ✅ |
 | **Tests unitaires** | 58 (Sprint 1) + À compléter | ⚠️ |
 
@@ -40,7 +40,7 @@ backend/
 │   │       └── swagger.ts                  ✅ OpenAPI 3.0
 │   ├── security/
 │   │   ├── jwt.ts                          ✅ Génération/validation tokens
-│   │   └── password.ts                     ✅ Hash bcrypt
+│   │   └── password.ts                     ✅ Hash bcryptjs
 │   └── services/
 │       └── auth/
 │           └── AuthService.ts              ✅ Logique auth
@@ -149,7 +149,7 @@ Authorization: Bearer <access_token>
 
 ### Mots de Passe
 
-**Hash: bcrypt**
+**Hash: bcryptjs**
 - Salt rounds: 12 (~250ms)
 - Jamais stockés en clair
 - Validation force:
@@ -296,7 +296,7 @@ model RefreshToken {
 | **Art. 5.2** | Traçabilité (lastLogin, createdAt) | ✅ |
 | **Art. 6.1** | Base légale claire | ✅ |
 | **Art. 25** | Privacy by design (hash, révocation) | ✅ |
-| **Art. 32** | Sécurité (bcrypt, JWT, rate limit) | ✅ |
+| **Art. 32** | Sécurité (bcryptjs, JWT, rate limit) | ✅ |
 | **Art. 33** | Notification breach (à implémenter) | ⚠️ Sprint 3 |
 
 **Données personnelles:**

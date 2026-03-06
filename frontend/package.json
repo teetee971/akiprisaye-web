@@ -14,18 +14,23 @@
     "lint": "eslint src --ext .ts,.tsx,.js,.jsx --cache --cache-location .eslintcache",
     "lint:fix": "eslint src --ext .ts,.tsx,.js,.jsx --fix",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "typecheck:ci": "tsc -p tsconfig.json --noEmit",
+    "typecheck:ci": "tsc -p tsconfig.ci.json",
     "test:ci": "vitest run --config vitest.config.ts",
     "audit": "npm audit --omit=dev --audit-level=high",
-    "audit:ci": "npm audit --omit=dev --audit-level=high"
+    "audit:ci": "npm audit --omit=dev --audit-level=high",
+    "postbuild": "node -e \"const fs=require('fs');fs.mkdirSync('dist',{recursive:true});fs.copyFileSync('public/_redirects','dist/_redirects');\"",
+    "lint:ci": "cd .. && npm run lint:ci",
+    "build:ci": "npm run build"
   },
   "dependencies": {
     "@capacitor/core": "^8.1.0",
     "@hookform/resolvers": "^5.2.2",
+    "@sentry/react": "^10.41.0",
     "@tanstack/react-table": "^8.21.3",
     "@zxing/browser": "^0.1.5",
     "chart.js": "^4.5.1",
     "clsx": "^2.1.1",
+    "exceljs": "^4.4.0",
     "firebase": "^12.9.0",
     "framer-motion": "^12.34.3",
     "fuse.js": "^7.1.0",
@@ -45,6 +50,7 @@
     "react-hook-form": "^7.71.2",
     "react-hot-toast": "^2.6.0",
     "react-i18next": "^16.5.4",
+    "react-is": "^19.2.4",
     "react-joyride": "^2.9.3",
     "react-leaflet": "^4.2.1",
     "react-router-dom": "^7.13.0",
@@ -60,6 +66,10 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
+    "@types/geojson": "^7946.0.16",
+    "@types/leaflet": "^1.9.21",
+    "@types/node": "^25.3.1",
+    "@types/papaparse": "^5.5.2",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "@typescript-eslint/eslint-plugin": "^8.46.0",
@@ -72,10 +82,14 @@
     "eslint-plugin-react-refresh": "^0.4.24",
     "jsdom": "^28.1.0",
     "postcss": "^8.5.6",
+    "rollup": "^4.59.0",
     "tailwindcss": "^4.2.0",
     "typescript": "^5.4.5",
     "vite": "^7.3.1",
     "vite-plugin-static-copy": "^3.2.0",
     "vitest": "^4.0.18"
+  },
+  "overrides": {
+    "minimatch": "^10.2.1"
   }
 }

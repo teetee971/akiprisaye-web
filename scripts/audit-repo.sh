@@ -1,6 +1,16 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Prefer ripgrep if available, otherwise fallback to grep.
+rg_cmd() {
+  if command -v rg >/dev/null 2>&1; then
+    rg "$@"
+  else
+    grep -R --line-number --binary-files=without-match --color=never "$@"
+  fi
+}
+
+
 MODE="${1:---strict}"
 STRICT=true
 if [[ "$MODE" == "--warn-only" ]]; then

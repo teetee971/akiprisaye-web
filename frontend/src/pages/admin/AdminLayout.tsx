@@ -12,7 +12,8 @@ import {
   Upload, 
   Menu, 
   X,
-  BarChart3 
+  BarChart3,
+  Flag
 } from 'lucide-react';
 
 const navigation = [
@@ -20,6 +21,7 @@ const navigation = [
   { name: 'Enseignes', href: '/admin/stores', icon: Store },
   { name: 'Articles', href: '/admin/products', icon: Package },
   { name: 'Import', href: '/admin/import', icon: Upload },
+  { name: 'Modération', href: '/admin/moderation', icon: Flag },
   { name: 'Statistiques', href: '/admin/stats', icon: BarChart3 },
 ];
 

@@ -24,6 +24,7 @@ export default defineConfig({
       abs('./src/services/openFoodFacts.test.ts'),
       abs('./src/services/alertProductImageService.test.ts'),
       abs('./src/services/__tests__/basketPricingService.test.ts'),
+      // NOTE: si functions/ est à la racine du repo, remplace par ../functions/...
       abs('./functions/**/__tests__/*.test.ts'),
       abs('./src/test/alerts.filterActive.test.ts'),
       abs('./src/test/alerts.searchSort.test.ts'),
@@ -53,10 +54,15 @@ export default defineConfig({
       abs('./src/test/decisionEngine.test.ts'),
       abs('./src/domain/decision/__tests__/decisionEngine.test.ts'),
       abs('./src/domain/shoppingList/premium/tests/*.test.ts'),
+      abs('./src/test/produitPage.test.ts'),
+      abs('./src/test/upgradeUpsell.test.ts'),
+      abs('./src/test/observatoire.unavailable.test.ts'),
+      abs('./src/test/observatory.mapping.test.ts'),
+      // NOTE: si scripts/ est à la racine du repo, remplace par ../scripts/...
       abs('./scripts/verify-pages-api.test.ts'),
     ],
 
-    exclude: ['**/node_modules/**', '**/.git/**'],
+    exclude: ['**/node_modules/**', '**/.git/**', '**/dist/**', '**/coverage/**'],
 
     testTimeout: 10_000,
     hookTimeout: 10_000,

@@ -1,629 +1,333 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import React from 'react';
-import { Check, Sparkles, TrendingUp, Shield, Zap, X, Lock, Database, FileText, Bell, AlertCircle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { Check, Minus } from 'lucide-react'
 
-const pricingPlans = [
+/* ------------------------------------------------------------------ */
+/* Données des plans — source unique pour l'UI                         */
+/* Synchronisées avec billing/plans.ts + Subscribe.tsx                */
+/* ------------------------------------------------------------------ */
+
+interface PlanUI {
+  id: string
+  label: string
+  tagline: string
+  monthly: number | null     // null = sur devis
+  yearly: number | null      // null = sur devis
+  domDiscount: boolean       // remise -30% DOM disponible
+  highlight: boolean         // carte mise en avant
+  cta: string
+  ctaHref: (cycle: 'monthly' | 'yearly') => string
+  features: string[]
+  notIncluded?: string[]
+}
+
+const PLANS: PlanUI[] = [
   {
-    id: 'citoyen',
-    name: 'CITOYEN',
-    icon: '🟢',
-    price: '0',
-    period: '€ / mois',
-    subtitle: 'Gratuite – sans limite',
-    description: 'Toujours gratuit',
-    features: [
-      'Accès complet aux données publiques observées',
-      'Fiches enseignes (localisation GPS, infos pratiques)',
-      'Produits les moins chers par magasin',
-      'Ajout de produits observés au panier citoyen',
-      'Comparateurs essentiels : Vols, Bateaux/ferries, Forfaits mobiles & internet, Eau & électricité',
-      'Modules pédagogiques (prix, logistique, délais)',
-      'Glossaire & FAQ citoyenne',
-      'Sans compte obligatoire',
-      'Sans publicité – sans affiliation',
-    ],
+    id: 'FREE',
+    label: 'Gratuit',
+    tagline: 'Découvrir et contribuer.',
+    monthly: 0,
+    yearly: 0,
+    domDiscount: false,
+    highlight: false,
     cta: 'Commencer gratuitement',
-    ctaLink: '/',
-    popular: false,
-    note: '📌 Objectif : informer, comprendre, comparer. Cette formule restera toujours gratuite.',
-    color: 'from-green-600 to-green-700',
-    badge: null,
-    isPro: false,
+    ctaHref: () => '/inscription',
+    features: [
+      '30 articles suivis',
+      'Actualisation des prix (10×/jour)',
+      'Historique basique',
+      'Export CSV basique',
+      '1 territoire',
+    ],
+    notIncluded: [
+      'Alertes prix',
+      'Historique avancé',
+      'Multi-territoires',
+    ],
   },
   {
-    id: 'citoyen_plus',
-    name: 'CITOYEN+',
-    icon: '🔵',
-    price: '3,99',
-    period: '€ / mois',
-    subtitle: 'Confort & gain de temps',
-    annualPrice: '39 € / an',
-    description: 'ou 39 € / an',
+    id: 'CITIZEN_PREMIUM',
+    label: 'Citoyen Premium',
+    tagline: 'Outil citoyen complet.',
+    monthly: 3.99,
+    yearly: 39,
+    domDiscount: false,
+    highlight: false,
+    cta: 'Choisir Citoyen Premium',
+    ctaHref: (c) => `/subscribe?plan=CITIZEN_PREMIUM&cycle=${c}`,
     features: [
-      'Tout le mode Citoyen',
-      'Comparaison multi-enseignes sur votre panier',
-      'Historique des prix (3, 6, 12 mois)',
-      'Filtres avancés (territoire, période, type de produit)',
-      'Export PDF "panier observé"',
-      'Interface allégée (moins d\'écrans pédagogiques répétitifs)',
-      'Accès prioritaire aux nouvelles fonctionnalités de confort',
+      '100 articles suivis',
+      'Actualisation des prix (50×/jour)',
+      'Historique avancé (12 mois)',
+      'Alertes prix locales',
+      'Export CSV basique',
+      '2 territoires',
     ],
-    cta: 'Choisir Citoyen+',
-    ctaLink: '/inscription?plan=citoyen_plus',
-    popular: true,
-    note: '📌 Objectif : gagner du temps sans perdre en neutralité. Aucune recommandation, aucun conseil d\'achat.',
-    color: 'from-blue-600 to-blue-700',
-    badge: '⭐ Populaire',
-    isPro: false,
+    notIncluded: [
+      'Multi-territoires (5+)',
+      'Export avancé',
+    ],
   },
   {
-    id: 'analyse',
-    name: 'ANALYSE',
-    icon: '🟣',
-    price: '9,90',
-    period: '€ / mois',
-    subtitle: 'Associations · Journalistes · Experts · Institutions',
-    annualPrice: '99 € / an',
-    description: 'ou 99 € / an',
+    id: 'PRO',
+    label: 'Pro',
+    tagline: 'Pour pros, associations, analystes.',
+    monthly: 19,
+    yearly: 190,
+    domDiscount: true,
+    highlight: true,
+    cta: 'Choisir Pro',
+    ctaHref: (c) => `/subscribe?plan=PRO&cycle=${c}`,
     features: [
-      'Tout Citoyen+',
-      'Indices territoriaux détaillés',
-      'Comparaisons DOM ↔ Métropole',
-      'Accès complet aux modules logistiques : fret maritime & aérien, délais & tensions, chaîne complète',
-      'Historique étendu multi-années',
-      'Exports CSV & graphiques',
-      'Vue agrégée multi-territoires',
-      'Données prêtes pour étude, rapport ou publication',
+      '300 articles suivis',
+      'Actualisation (500×/jour)',
+      'Historique avancé',
+      'Alertes prix',
+      'Export avancé (CSV, JSON)',
+      '5 territoires',
     ],
-    cta: 'Choisir Analyse',
-    ctaLink: '/inscription?plan=analyse',
-    popular: false,
-    note: '📌 Objectif : analyser, documenter, expliquer.',
-    warning: '⚠️ Toujours : pas de notation de territoire, pas de jugement, pas de prédiction, pas d\'affiliation',
-    color: 'from-purple-600 to-purple-700',
-    badge: null,
-    isPro: false,
+    notIncluded: [
+      'Listes partagées équipe',
+      'Tableau de bord budget',
+    ],
   },
   {
-    id: 'business_pro',
-    name: 'BUSINESS PRO',
-    icon: '💼',
-    price: '299',
-    period: '€ / mois',
-    subtitle: 'Enseignes & Grandes entreprises',
-    annualPrice: '2 990 € / an',
-    description: 'ou 2 990 € / an',
+    id: 'BUSINESS',
+    label: 'Business',
+    tagline: 'Pour équipes et exploitation intensive.',
+    monthly: 99,
+    yearly: 990,
+    domDiscount: true,
+    highlight: false,
+    cta: 'Choisir Business',
+    ctaHref: (c) => `/subscribe?plan=BUSINESS&cycle=${c}`,
     features: [
-      'Tout Analyse',
-      'API REST complète (50 000 req/jour)',
-      'Webhooks temps réel',
-      'Analytics avancés & prévisions',
-      'Suivi concurrence',
-      'Rapports marché détaillés',
-      'Profil entreprise visible',
-      'Badge "Pro" sur la plateforme',
-      'Support prioritaire (réponse 2h)',
-      '10 utilisateurs inclus',
+      '2 000 articles suivis',
+      'Actualisation (5 000×/jour)',
+      'Historique avancé',
+      'Alertes prix',
+      'Export avancé',
+      '10 territoires',
+      'Listes partagées équipe',
+      'Tableau de bord budget',
     ],
-    cta: 'Contacter l\'équipe',
-    ctaLink: '/contact?plan=business_pro',
-    popular: false,
-    note: '📌 Idéal pour les enseignes souhaitant optimiser leur positionnement prix.',
-    color: 'from-amber-600 to-amber-700',
-    badge: '💼 Pro',
-    isPro: true,
+    notIncluded: [
+      'Rapports automatiques',
+      'Accès API',
+    ],
   },
   {
-    id: 'institutional',
-    name: 'INSTITUTIONNEL',
-    icon: '🏛️',
-    price: '1 500',
-    period: '€ / mois',
-    subtitle: 'Collectivités & Organismes publics',
-    annualPrice: '15 000 € / an',
-    description: 'ou 15 000 € / an',
-    features: [
-      'Tout Business Pro',
-      'API illimitée (500 000 req/jour)',
-      'White-label disponible',
-      'Rapports sur mesure',
-      'Utilisateurs illimités',
-      '20 clés API',
-      'Support dédié (réponse 1h)',
-      'Rétention données illimitée',
-      'Badge "Institutionnel"',
-      'Formation incluse',
-    ],
+    id: 'INSTITUTION',
+    label: 'Institution',
+    tagline: 'Collectivités, organismes publics, chercheurs.',
+    monthly: null,
+    yearly: null,
+    domDiscount: false,
+    highlight: false,
     cta: 'Demander un devis',
-    ctaLink: '/contact-collectivites?plan=institutional',
-    popular: false,
-    note: '📌 Solution complète pour les acteurs publics du suivi des prix.',
-    color: 'from-indigo-600 to-indigo-700',
-    badge: '🏛️ Institutionnel',
-    isPro: true,
-  },
-  {
-    id: 'research',
-    name: 'RECHERCHE',
-    icon: '🎓',
-    price: 'Sur devis',
-    period: '',
-    subtitle: 'Universités & Recherche académique',
-    description: 'Tarif préférentiel',
+    ctaHref: () => '/contact?subject=licence-institutionnelle',
     features: [
-      'Accès données complet',
-      'API (100 000 req/jour)',
-      'Exports illimités (CSV, JSON, XML)',
-      'Historique complet toutes périodes',
-      '5 utilisateurs',
-      '3 clés API',
-      'Badge "Recherche"',
-      'Support email prioritaire',
+      '20 000 articles suivis',
+      'Actualisation illimitée',
+      'Historique complet',
+      'Alertes prix',
+      'Export avancé + open-data',
+      '20 territoires',
+      'Listes partagées',
+      'Tableau de bord budget',
+      'Rapports automatiques',
+      'Accès API',
     ],
-    cta: 'Demander un accès',
-    ctaLink: '/contact?plan=research',
-    popular: false,
-    note: '📌 Accès privilégié pour la recherche académique et les publications.',
-    color: 'from-teal-600 to-teal-700',
-    badge: '🎓 Recherche',
-    isPro: true,
   },
-];
+]
 
-const optionalFeatures = [
-  { id: 'history_extended', name: 'Historique étendu 24–36 mois', icon: '📊', price: '+1,99 €' },
-  { id: 'exports_unlimited', name: 'Exports illimités', icon: '📁', price: '+1,99 €' },
-  { id: 'price_alerts', name: 'Alertes de variation de prix observé', icon: '🔔', price: '+2,99 €' },
-  { id: 'monthly_report', name: 'Rapport mensuel automatique (PDF)', icon: '🧾', price: '+2,99 €' },
-];
+/* ------------------------------------------------------------------ */
+/* Composant principal                                                  */
+/* ------------------------------------------------------------------ */
 
-export default function Pricing() {
-  const navigate = useNavigate();
-  const { user } = useAuth();
-
-  // Filter citizen and professional plans
-  const citizenPlans = pricingPlans.filter(plan => !plan.isPro);
-  const proPlans = pricingPlans.filter(plan => plan.isPro);
-
-  const handleSelectPlan = (planId: string) => {
-    const target = `/inscription?plan=${planId}`;
-    if (!user) {
-      navigate(`/connexion?next=${encodeURIComponent(target)}`);
-      return;
-    }
-    navigate(target);
-  };
-
-  const handleContactPlan = (ctaLink: string) => {
-    if (ctaLink) {
-      navigate(ctaLink);
-    }
-  };
+export default function PricingPage() {
+  const [cycle, setCycle] = useState<'monthly' | 'yearly'>('monthly')
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-      {/* Header */}
-      <div className="bg-white dark:bg-slate-900 shadow-md border-b border-blue-100 dark:border-slate-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-900/30 rounded-full mb-4">
-            <Sparkles className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-            <span className="text-sm font-semibold text-blue-700 dark:text-blue-300">
-              Observatoire citoyen des prix – données publiques agrégées
-            </span>
-          </div>
-          <h1 className="text-4xl sm:text-5xl font-bold text-slate-900 dark:text-white mb-4">
-            💰 Tarifs & Accès
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+
+        {/* En-tête */}
+        <header className="text-center mb-12">
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+            Abonnements &amp; Options
           </h1>
-          <h2 className="text-2xl sm:text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-4">
-            A KI PRI SA YÉ
-          </h2>
-          <p className="text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">
-            Observatoire citoyen des prix – données publiques agrégées
+          <p className="mt-4 text-base text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
+            Commence gratuitement. Passe ensuite au niveau adapté à ton usage — analyse
+            citoyenne, pro, équipe ou institution.
           </p>
-        </div>
-      </div>
 
-      {/* Fundamental Principle */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-2 border-blue-500 dark:border-blue-600 rounded-2xl p-8 mb-12">
-          <div className="flex items-start gap-4 mb-4">
-            <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center flex-shrink-0">
-              <Lock className="w-6 h-6 text-white" />
+          {/* Bandeau Espace Pro */}
+          <div className="mt-6 inline-flex flex-wrap items-center justify-center gap-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700/50 rounded-xl px-5 py-3">
+            <span className="text-xl">💼</span>
+            <div className="text-left">
+              <p className="text-sm font-semibold text-blue-900 dark:text-blue-200">Vous êtes commerçant ou prestataire ?</p>
+              <p className="text-xs text-blue-700 dark:text-blue-400">Publiez vos prix avec toutes vos infos. Compte pro dédié.</p>
             </div>
-            <div>
-              <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">
-                🔒 Principe fondamental
-              </h2>
-              <p className="text-slate-700 dark:text-slate-300 text-lg leading-relaxed mb-4">
-                <strong>L'accès à l'information citoyenne reste gratuit. Toujours.</strong>
-              </p>
-              <p className="text-slate-700 dark:text-slate-300 leading-relaxed mb-4">
-                A KI PRI SA YÉ est un outil d'information, pas un service commercial.
-              </p>
-              <p className="text-slate-700 dark:text-slate-300 leading-relaxed mb-4">
-                Les données affichées sont publiques, observées, descriptives, <strong>sans affiliation</strong>, <strong>sans publicité</strong>, <strong>sans vente de données</strong>.
-              </p>
-              <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
-                Les formules payantes servent uniquement à financer :
-              </p>
-              <ul className="list-disc list-inside text-slate-700 dark:text-slate-300 ml-4 mt-2 space-y-1">
-                <li>l'analyse</li>
-                <li>l'agrégation</li>
-                <li>les outils de confort</li>
-                <li>et la maintenance de la plateforme</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Pricing Cards */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
-        <div className="grid md:grid-cols-3 gap-6 mb-12">
-          {citizenPlans.map((plan) => (
-            <div
-              key={plan.id}
-              className={`relative bg-white dark:bg-slate-900 rounded-2xl shadow-lg border-2 ${
-                plan.popular
-                  ? 'border-blue-500 dark:border-blue-600 transform scale-105'
-                  : 'border-slate-200 dark:border-slate-700'
-              } p-6 flex flex-col transition-all hover:shadow-xl`}
+            <Link
+              to="/inscription-pro"
+              className="shrink-0 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
             >
-              {/* Badge */}
-              {plan.badge && (
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                  <span className="px-4 py-1 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-sm font-bold rounded-full shadow-lg">
-                    {plan.badge}
-                  </span>
-                </div>
-              )}
+              Espace Pro →
+            </Link>
+          </div>
+          <div className="mt-8 inline-flex items-center gap-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-full px-2 py-1.5 shadow-sm">
+            <button
+              onClick={() => setCycle('monthly')}
+              aria-pressed={cycle === 'monthly'}
+              className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-colors ${
+                cycle === 'monthly'
+                  ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+              }`}
+            >
+              Mensuel
+            </button>
+            <button
+              onClick={() => setCycle('yearly')}
+              aria-pressed={cycle === 'yearly'}
+              className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-colors ${
+                cycle === 'yearly'
+                  ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+              }`}
+            >
+              Annuel{' '}
+              <span className="ml-1 text-xs px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+                −17 %
+              </span>
+            </button>
+          </div>
+        </header>
 
-              {/* Icon & Title */}
-              <div className="mb-4">
-                <div className="text-4xl mb-3">{plan.icon}</div>
-                <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-1">
-                  {plan.name}
-                </h3>
-                <p className="text-sm font-semibold text-blue-600 dark:text-blue-400 mb-1">
-                  {plan.subtitle}
-                </p>
-                <p className="text-sm text-slate-600 dark:text-slate-400">
-                  {plan.description}
-                </p>
-              </div>
+        {/* Grille des plans */}
+        <section
+          className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
+          aria-label="Plans d'abonnement"
+        >
+          {PLANS.map((plan) => {
+            const price =
+              plan.monthly === null
+                ? null
+                : cycle === 'yearly'
+                ? plan.yearly
+                : plan.monthly
+            const monthlyEquiv =
+              cycle === 'yearly' && plan.yearly !== null && plan.monthly !== null && plan.monthly > 0
+                ? plan.yearly / 12
+                : null
 
-              {/* Price */}
-              <div className="mb-6">
-                <div className="flex items-baseline gap-1">
-                  <span className="text-4xl font-bold text-slate-900 dark:text-white">
-                    {plan.price}
-                  </span>
-                  <span className="text-lg text-slate-600 dark:text-slate-400">
-                    {plan.period}
-                  </span>
-                </div>
-                {plan.annualPrice && (
-                  <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-                    {plan.annualPrice}
-                  </p>
-                )}
-              </div>
-
-              {/* Features */}
-              <div className="flex-1 mb-6">
-                <ul className="space-y-3">
-                  {plan.features.map((feature, idx) => (
-                    <li key={idx} className="flex items-start gap-2">
-                      <Check className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-slate-700 dark:text-slate-300">
-                        {feature}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Note */}
-              {plan.note && (
-                <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg">
-                  <p className="text-xs text-blue-700 dark:text-blue-300">
-                    {plan.note}
-                  </p>
-                </div>
-              )}
-
-              {/* Warning */}
-              {plan.warning && (
-                <div className="mb-4 p-3 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-700 rounded-lg">
-                  <p className="text-xs text-orange-700 dark:text-orange-300">
-                    {plan.warning}
-                  </p>
-                </div>
-              )}
-
-              {/* CTA Button */}
-              <button
-                type="button"
-                onClick={() => handleSelectPlan(plan.id)}
-                className={`w-full py-3 px-6 text-center font-bold rounded-xl transition-all ${
-                  plan.popular
-                    ? 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg hover:shadow-xl'
-                    : `bg-gradient-to-r ${plan.color} hover:opacity-90 text-white`
+            return (
+              <article
+                key={plan.id}
+                className={`rounded-2xl p-6 flex flex-col ${
+                  plan.highlight
+                    ? 'border-2 border-slate-900 dark:border-white bg-white dark:bg-slate-900 shadow-lg relative'
+                    : 'border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm'
                 }`}
               >
-                {plan.cta}
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Optional Features */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
-        <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 border border-slate-200 dark:border-slate-700 mb-12">
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
-            ➕ Options (facultatives)
-          </h2>
-          <p className="text-sm text-slate-600 dark:text-slate-400 mb-6">
-            (Aucune option ne bloque l'accès citoyen)
-          </p>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {optionalFeatures.map((feature) => (
-              <div
-                key={feature.id}
-                className="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700"
-              >
-                <div className="text-3xl mb-2">{feature.icon}</div>
-                <h3 className="font-semibold text-slate-900 dark:text-white text-sm mb-2">
-                  {feature.name}
-                </h3>
-                <p className="text-lg font-bold text-blue-600 dark:text-blue-400">
-                  {feature.price}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Separator */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-slate-300 dark:border-slate-600"></div>
-          </div>
-          <div className="relative flex justify-center">
-            <span className="px-4 bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 text-sm">
-              Offres sur mesure
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Professional Offers Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">
-            🏢 Offres Professionnelles
-          </h2>
-          <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-            Solutions sur mesure pour les entreprises, collectivités et institutions
-          </p>
-        </div>
-        
-        <div className="grid md:grid-cols-3 gap-6 mb-12">
-          {proPlans.map((plan) => (
-            <div
-              key={plan.id}
-              className="relative bg-slate-800/50 dark:bg-slate-800/80 rounded-2xl shadow-lg border-2 border-slate-700 dark:border-slate-600 p-6 flex flex-col transition-all hover:shadow-xl hover:border-slate-600 dark:hover:border-slate-500"
-            >
-              {/* Badge */}
-              {plan.badge && (
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                  <span className={`px-4 py-1 bg-gradient-to-r ${plan.color} text-white text-sm font-bold rounded-full shadow-lg`}>
-                    {plan.badge}
-                  </span>
-                </div>
-              )}
-
-              {/* Icon & Title */}
-              <div className="mb-4">
-                <div className="text-4xl mb-3">{plan.icon}</div>
-                <h3 className="text-2xl font-bold text-white mb-1">
-                  {plan.name}
-                </h3>
-                <p className="text-sm font-semibold text-slate-300 mb-1">
-                  {plan.subtitle}
-                </p>
-                <p className="text-sm text-slate-400">
-                  {plan.description}
-                </p>
-              </div>
-
-              {/* Price */}
-              <div className="mb-6">
-                <div className="flex items-baseline gap-1">
-                  <span className="text-4xl font-bold text-white">
-                    {plan.price}
-                  </span>
-                  <span className="text-lg text-slate-400">
-                    {plan.period}
-                  </span>
-                </div>
-                {plan.annualPrice && (
-                  <p className="text-sm text-slate-400 mt-1">
-                    {plan.annualPrice}
-                  </p>
+                {plan.highlight && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-slate-900 text-white dark:bg-white dark:text-slate-900 text-xs font-semibold px-3 py-1 rounded-full whitespace-nowrap">
+                    Recommandé
+                  </div>
                 )}
-              </div>
 
-              {/* Features */}
-              <div className="flex-1 mb-6">
-                <ul className="space-y-3">
-                  {plan.features.map((feature, idx) => (
-                    <li key={idx} className="flex items-start gap-2">
-                      <Check className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-slate-300">
-                        {feature}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Note */}
-              {plan.note && (
-                <div className="mb-4 p-3 bg-slate-700/50 border border-slate-600 rounded-lg">
-                  <p className="text-xs text-slate-300">
-                    {plan.note}
+                <div className="flex-1">
+                  {/* Nom & tagline */}
+                  <h2 className="text-base font-bold text-slate-900 dark:text-white">
+                    {plan.label}
+                  </h2>
+                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                    {plan.tagline}
                   </p>
+
+                  {/* Prix */}
+                  <div className="mt-4">
+                    {price === null ? (
+                      <p className="text-2xl font-extrabold text-slate-900 dark:text-white">
+                        Sur devis
+                      </p>
+                    ) : price === 0 ? (
+                      <p className="text-2xl font-extrabold text-slate-900 dark:text-white">
+                        Gratuit
+                      </p>
+                    ) : (
+                      <>
+                        <p className="text-2xl font-extrabold text-slate-900 dark:text-white">
+                          {price.toFixed(2).replace('.', ',')} €
+                          <span className="text-sm font-medium text-slate-500 ml-1">
+                            /{cycle === 'yearly' ? 'an' : 'mois'}
+                          </span>
+                        </p>
+                        {monthlyEquiv !== null && (
+                          <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-0.5">
+                            soit {monthlyEquiv.toFixed(2).replace('.', ',')} €/mois
+                          </p>
+                        )}
+                        {plan.domDiscount && cycle === 'monthly' && (
+                          <p className="text-xs text-blue-600 dark:text-blue-400 mt-0.5">
+                            −30 % DOM disponible *
+                          </p>
+                        )}
+                      </>
+                    )}
+                  </div>
+
+                  {/* Features incluses */}
+                  <ul className="mt-5 space-y-1.5" aria-label={`Fonctionnalités ${plan.label}`}>
+                    {plan.features.map((f) => (
+                      <li key={f} className="flex items-start gap-2 text-xs text-slate-700 dark:text-slate-300">
+                        <Check className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0 mt-0.5" aria-hidden="true" />
+                        {f}
+                      </li>
+                    ))}
+                    {plan.notIncluded?.map((f) => (
+                      <li key={f} className="flex items-start gap-2 text-xs text-slate-400 dark:text-slate-600">
+                        <Minus className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" aria-hidden="true" />
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              )}
 
-              {/* CTA Button */}
-              <button
-                type="button"
-                onClick={() => handleContactPlan(plan.ctaLink)}
-                className={`w-full py-3 px-6 text-center font-bold rounded-xl transition-all bg-gradient-to-r ${plan.color} hover:opacity-90 text-white shadow-lg hover:shadow-xl`}
-              >
-                {plan.cta}
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
+                {/* CTA */}
+                <Link
+                  to={plan.ctaHref(cycle)}
+                  className={`mt-6 inline-flex items-center justify-center rounded-xl px-4 py-2.5 text-sm font-semibold hover:opacity-90 transition ${
+                    plan.highlight
+                      ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900'
+                      : 'bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700'
+                  }`}
+                >
+                  {plan.cta}
+                </Link>
+              </article>
+            )
+          })}
+        </section>
 
-      {/* Transparency & Ethics */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
-        <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-2 border-green-500 dark:border-green-600 rounded-2xl p-8 mb-12">
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6 text-center">
-            🧭 Transparence & cadre éthique
-          </h2>
-          <div className="grid md:grid-cols-2 gap-8">
-            <div>
-              <h3 className="font-bold text-lg text-slate-900 dark:text-white mb-4">
-                Ce que fait A KI PRI SA YÉ
-              </h3>
-              <ul className="space-y-2">
-                <li className="flex items-center gap-2">
-                  <Check className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0" />
-                  <span className="text-slate-700 dark:text-slate-300">Observer</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0" />
-                  <span className="text-slate-700 dark:text-slate-300">Comparer</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0" />
-                  <span className="text-slate-700 dark:text-slate-300">Décrire</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0" />
-                  <span className="text-slate-700 dark:text-slate-300">Expliquer</span>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-bold text-lg text-slate-900 dark:text-white mb-4">
-                Ce que l'outil ne fait pas
-              </h3>
-              <ul className="space-y-2">
-                <li className="flex items-center gap-2">
-                  <X className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
-                  <span className="text-slate-700 dark:text-slate-300">Ne conseille pas</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <X className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
-                  <span className="text-slate-700 dark:text-slate-300">Ne vend pas</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <X className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
-                  <span className="text-slate-700 dark:text-slate-300">Ne classe pas les territoires</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <X className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
-                  <span className="text-slate-700 dark:text-slate-300">Ne collecte pas de données personnelles sensibles</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <X className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
-                  <span className="text-slate-700 dark:text-slate-300">Ne suit pas les utilisateurs</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
+        {/* Note DOM */}
+        <p className="mt-8 text-center text-xs text-slate-500 dark:text-slate-400">
+          * Remise de 30 % applicable aux plans Pro et Business pour les résidents des territoires
+          DOM · ROM · COM — activée automatiquement lors de l'abonnement.
+        </p>
 
-      {/* Why Paid Features */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
-        <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 border border-slate-200 dark:border-slate-700 mb-12">
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4 text-center">
-            📘 Pourquoi certaines fonctionnalités sont payantes ?
-          </h2>
-          <p className="text-slate-700 dark:text-slate-300 text-center mb-4 max-w-3xl mx-auto">
-            Les données observées restent accessibles gratuitement.
-          </p>
-          <p className="text-slate-700 dark:text-slate-300 text-center mb-6 max-w-3xl mx-auto">
-            Les formules payantes financent :
-          </p>
-          <div className="grid md:grid-cols-4 gap-4 max-w-4xl mx-auto">
-            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 text-center border border-blue-200 dark:border-blue-700">
-              <Database className="w-8 h-8 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
-              <p className="text-sm font-semibold text-slate-900 dark:text-white">l'infrastructure</p>
-            </div>
-            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 text-center border border-blue-200 dark:border-blue-700">
-              <TrendingUp className="w-8 h-8 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
-              <p className="text-sm font-semibold text-slate-900 dark:text-white">l'agrégation intelligente</p>
-            </div>
-            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 text-center border border-blue-200 dark:border-blue-700">
-              <FileText className="w-8 h-8 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
-              <p className="text-sm font-semibold text-slate-900 dark:text-white">l'historique</p>
-            </div>
-            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 text-center border border-blue-200 dark:border-blue-700">
-              <Zap className="w-8 h-8 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
-              <p className="text-sm font-semibold text-slate-900 dark:text-white">les outils d'analyse</p>
-            </div>
-          </div>
-          <p className="text-slate-600 dark:text-slate-400 text-center mt-6 text-sm">
-            sans publicité, sans affiliation, sans conflit d'intérêt.
-          </p>
+        {/* Lien vers tarifs détaillés */}
+        <div className="mt-6 text-center">
+          <Link
+            to="/tarifs-details"
+            className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+          >
+            Voir la comparaison complète des fonctionnalités →
+          </Link>
         </div>
-      </div>
 
-      {/* Public Commitment */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-        <div className="bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-700 dark:to-blue-800 rounded-2xl p-8 text-white shadow-xl">
-          <div className="flex items-start gap-4 mb-4">
-            <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0">
-              <Bell className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold mb-4">
-                🔔 Engagement public
-              </h2>
-              <p className="text-blue-100 mb-4 leading-relaxed">
-                A KI PRI SA YÉ s'engage à maintenir :
-              </p>
-              <ul className="space-y-2">
-                <li className="flex items-center gap-2">
-                  <Check className="w-5 h-5 flex-shrink-0" />
-                  <span>un socle citoyen gratuit</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check className="w-5 h-5 flex-shrink-0" />
-                  <span>une neutralité stricte</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check className="w-5 h-5 flex-shrink-0" />
-                  <span>une transparence totale sur ses méthodes</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
-  );
+  )
 }

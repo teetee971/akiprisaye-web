@@ -8,11 +8,17 @@ import {
   getPriceAggregates,
   getProduct,
   getRecentObservations,
+  getLatestSubscriptions,
+  getSubscriptionByUserId,
   insertObservationAndRefreshAggregate,
+  recordWebhookEventIfNew,
+  upsertSubscriptionByPayPalId,
   upsertProduct,
 } from './db';
 import { withCors } from './cors';
 import { queueCsvImport } from './importCsv';
+import { verifyPayPalWebhookSignature, type PayPalWebhookEvent } from './paypal';
+import { mapPayPalEventTypeToSubscriptionStatus, mapPayPalPlanIdToInternalPlan } from './subscriptionPlans';
 import type { Env, PriceAggregateRecord, PriceObservationRecord, PriceStatus, PricesResponse, ProductResponse } from './types';
 import {
   adminObservationSchema,
@@ -82,6 +88,11 @@ function computeStatus(hasAggregates: boolean, hasProduct = false): PriceStatus 
   return 'NO_DATA';
 }
 
+function assertSubscriptionLookupToken(request: Request, adminToken: string): boolean {
+  const token = request.headers.get('X-Admin-Token');
+  return Boolean(token && token === adminToken);
+}
+
 export async function handleRequest(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
   const url = new URL(request.url);
   const origin = request.headers.get('Origin');
@@ -91,6 +102,101 @@ export async function handleRequest(request: Request, env: Env, ctx: ExecutionCo
   }
 
   try {
+    if (request.method === 'POST' && url.pathname === '/v1/webhooks/paypal') {
+      const bodyText = await request.text();
+      let event: PayPalWebhookEvent;
+      try {
+        event = JSON.parse(bodyText) as PayPalWebhookEvent;
+      } catch {
+        console.warn('paypal_webhook_ignored', { reason: 'invalid_json' });
+        return withCors(json({ error: 'invalid_json' }, 400), origin, env);
+      }
+
+      const eventId = event.id ?? 'unknown';
+      const eventType = event.event_type ?? 'unknown';
+
+      if (!event.id || !event.event_type) {
+        console.warn('paypal_webhook_ignored', { eventId, eventType, reason: 'missing_event_identity' });
+        return withCors(json({ status: 'ignored', reason: 'missing_event_identity' }, 200), origin, env);
+      }
+
+      const isVerified = await verifyPayPalWebhookSignature(request, env, event);
+      if (!isVerified) {
+        console.warn('paypal_webhook_rejected', { eventId, eventType, reason: 'invalid_signature' });
+        return withCors(json({ error: 'invalid_signature' }, 401), origin, env);
+      }
+
+      const status = mapPayPalEventTypeToSubscriptionStatus(event.event_type);
+      if (!status) {
+        console.log('paypal_webhook_ignored', { eventId, eventType, reason: 'unsupported_event_type' });
+        return withCors(json({ status: 'ignored', reason: 'unsupported_event_type' }, 200), origin, env);
+      }
+
+      const isNewEvent = await recordWebhookEventIfNew(env.PRICE_DB, {
+        eventId: event.id,
+        eventType: event.event_type,
+        createTime: event.create_time,
+        rawJson: bodyText,
+      });
+
+      if (!isNewEvent) {
+        console.log('paypal_webhook_ignored', { eventId, eventType, reason: 'duplicate_event' });
+        return withCors(json({ status: 'ignored', reason: 'duplicate_event' }, 200), origin, env);
+      }
+
+      const userId = event.resource?.custom_id;
+      if (!userId) {
+        console.warn('paypal_webhook_ignored', { eventId, eventType, reason: 'missing_custom_id' });
+        return withCors(json({ status: 'ignored', reason: 'missing_custom_id' }, 200), origin, env);
+      }
+
+      const subscriptionId = event.resource?.id;
+      if (!subscriptionId) {
+        console.warn('paypal_webhook_ignored', { eventId, eventType, reason: 'missing_subscription_id' });
+        return withCors(json({ status: 'ignored', reason: 'missing_subscription_id' }, 200), origin, env);
+      }
+
+      await upsertSubscriptionByPayPalId(env.PRICE_DB, {
+        userId,
+        plan: mapPayPalPlanIdToInternalPlan(event.resource?.plan_id),
+        status,
+        paypalSubscriptionId: subscriptionId,
+        payerId: event.resource?.subscriber?.payer_id,
+        email: event.resource?.subscriber?.email_address,
+      });
+
+      console.log('paypal_webhook_processed', { eventId, eventType, status, userId, subscriptionId });
+
+      return withCors(json({ status: 'processed' }, 200), origin, env);
+    }
+
+    if (request.method === 'GET' && url.pathname === '/v1/me/subscription') {
+      if (!assertSubscriptionLookupToken(request, env.PRICE_ADMIN_TOKEN)) {
+        return withCors(json({ error: 'unauthorized' }, 401), origin, env);
+      }
+
+      const userId = url.searchParams.get('user_id');
+      if (!userId) {
+        return withCors(json({ error: 'missing_user_id' }, 400), origin, env);
+      }
+
+      // TODO: remplacer user_id query param par une authentification utilisateur (JWT/session).
+      const subscription = await getSubscriptionByUserId(env.PRICE_DB, userId);
+      if (!subscription) {
+        return withCors(json({ status: 'FREE' }, 200), origin, env);
+      }
+
+      return withCors(
+        json({
+          status: subscription.status,
+          plan: subscription.plan,
+          updatedAt: subscription.updated_at,
+        }),
+        origin,
+        env,
+      );
+    }
+
     if (request.method === 'GET' && url.pathname === '/v1/prices') {
       const parsed = getPricesQuerySchema.parse(Object.fromEntries(url.searchParams.entries()));
       const retailer = parsed.retailer ? validateRetailer(parsed.retailer) : undefined;
@@ -195,6 +301,12 @@ export async function handleRequest(request: Request, env: Env, ctx: ExecutionCo
         const limit = Number(url.searchParams.get('limit') ?? '50');
         const jobs = await getImportJobs(env.PRICE_DB, Number.isFinite(limit) ? Math.min(Math.max(limit, 1), 200) : 50);
         return withCors(adminJson({ status: 'OK', jobs }, 200), origin, env);
+      }
+
+      if (request.method === 'GET' && url.pathname === '/v1/admin/subscriptions') {
+        const limit = Number(url.searchParams.get('limit') ?? '50');
+        const subscriptions = await getLatestSubscriptions(env.PRICE_DB, limit);
+        return withCors(adminJson({ status: 'OK', subscriptions }, 200), origin, env);
       }
 
       if (request.method === 'GET' && /^\/v1\/admin\/import\/jobs\/[^/]+$/.test(url.pathname)) {

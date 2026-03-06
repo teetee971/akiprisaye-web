@@ -36,7 +36,7 @@ export const DEFAULT_CONFIG: SyncSchedulerConfig = {
  */
 export function getSchedulerConfig(): SyncSchedulerConfig {
   try {
-    const config = safeLocalStorage.getJSON<SyncSchedulerConfig>(CONFIG_KEY);
+    const config = safeLocalStorage.getJSON<SyncSchedulerConfig>(CONFIG_KEY, DEFAULT_CONFIG);
     return config || DEFAULT_CONFIG;
   } catch (error) {
     console.error('Error loading scheduler config:', error);
@@ -180,7 +180,7 @@ export const SYNC_JOBS: JobDefinition[] = [
  */
 export function getScheduledJobs(): ScheduledJob[] {
   try {
-    const jobs = safeLocalStorage.getJSON<ScheduledJob[]>(STORAGE_KEY);
+    const jobs = safeLocalStorage.getJSON<ScheduledJob[]>(STORAGE_KEY, []);
     if (jobs && jobs.length > 0) {
       return jobs;
     }

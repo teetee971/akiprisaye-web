@@ -1,8 +1,16 @@
+import { Helmet } from 'react-helmet-async';
+
 export default function MentionsLegales() {
   return (
     <div className="min-h-screen bg-[#121212] text-white">
+      <Helmet>
+        <title>Mentions Légales & RGPD – A KI PRI SA YÉ</title>
+        <meta name="description" content="Mentions légales et conformité RGPD de l'application A KI PRI SA YÉ : identité, données personnelles, droits des utilisateurs, cookies et conformité OCR/IA." />
+        <meta property="og:title" content="Mentions Légales – A KI PRI SA YÉ" />
+        <meta property="og:description" content="Mentions légales, politique de confidentialité et conformité RGPD de l'application citoyenne A KI PRI SA YÉ." />
+      </Helmet>
       {/* Header */}
-      <header className="bg-gradient-to-r from-[#0f62fe] to-[#0353e9] p-6 shadow-lg">
+      <div className="bg-gradient-to-r from-[#0f62fe] to-[#0353e9] p-6 shadow-lg">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-between mb-2">
             <h1 className="text-3xl font-bold">Mentions Légales & Conformité RGPD</h1>
@@ -14,10 +22,10 @@ export default function MentionsLegales() {
             </a>
           </div>
         </div>
-      </header>
+      </div>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto p-6">
+      <div className="max-w-4xl mx-auto p-6">
         <div className="bg-[#1e1e1e] rounded-xl border border-gray-700 p-8 space-y-6">
           
           {/* Summary Box */}
@@ -322,10 +330,10 @@ export default function MentionsLegales() {
             </p>
           </section>
         </div>
-      </main>
+      </div>
 
       {/* Footer */}
-      <footer className="bg-[#1e1e1e] border-t border-gray-700 mt-12 p-6 text-center text-gray-400">
+      <div className="bg-[#1e1e1e] border-t border-gray-700 mt-12 p-6 text-center text-gray-400">
         <p>© 2026 A KI PRI SA YÉ - Tous droits réservés</p>
         <div className="flex justify-center gap-4 mt-4 text-sm">
           <a href="/" className="hover:text-white transition-colors">
@@ -338,7 +346,7 @@ export default function MentionsLegales() {
             FAQ
           </a>
         </div>
-      </footer>
+      </div>
     </div>
   );
 }

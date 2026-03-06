@@ -61,7 +61,7 @@ export function StoreOpenStatus({
       >
         {showIcon && (
           <span 
-            className={`w-2 h-2 rounded-full ${dotColorClasses[colorClass]}`}
+            className={`w-2 h-2 rounded-full ${dotColorClasses[colorClass as keyof typeof dotColorClasses]}`}
             aria-hidden="true"
           />
         )}
@@ -74,13 +74,13 @@ export function StoreOpenStatus({
 
   return (
     <div 
-      className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border ${bgColorClasses[colorClass]} ${className}`}
+      className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border ${bgColorClasses[colorClass as keyof typeof bgColorClasses]} ${className}`}
       role="status"
       aria-label={`Statut: ${statusInfo.message}`}
     >
       {showIcon && (
         <span 
-          className={`w-2.5 h-2.5 rounded-full ${dotColorClasses[colorClass]} animate-pulse`}
+          className={`w-2.5 h-2.5 rounded-full ${dotColorClasses[colorClass as keyof typeof dotColorClasses]} animate-pulse`}
           aria-hidden="true"
         />
       )}

@@ -4,13 +4,14 @@ compatibility_date = "2026-02-18"
 workers_dev = true
 
 [vars]
+# En dev local (Vite). En prod, on ajoutera https://akiprisaye-web.pages.dev et/ou ton domaine.
 ALLOWED_ORIGINS = "http://localhost:5173,http://127.0.0.1:5173"
 CASHIER_HASH_SALT = "CHANGE_ME_LONG_RANDOM"
 
 [[d1_databases]]
 binding = "PRICE_DB"
 database_name = "price-db"
-database_id = "REPLACE_WITH_D1_DATABASE_ID"
+database_id = "c7ae3626-9154-4625-9d25-606d6dcf5374"
 migrations_dir = "migrations"
 
 [[r2_buckets]]

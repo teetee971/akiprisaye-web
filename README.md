@@ -1065,3 +1065,5 @@ Et **ne pas** générer un `404.html` top-level dans `frontend/dist/` (pas de co
 - [ ] Refresh page conserve la session utilisateur
 - [ ] Route protégée (`/mon-compte`) redirige vers `/login` si non connecté
 - [ ] En cas d'erreur `auth/unauthorized-domain`, ajouter le domaine courant dans Firebase > Authorized domains
+
+<- name: PR smoke test extra: 2026-02-26T17:24:31Z -->

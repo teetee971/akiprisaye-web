@@ -1,4 +1,4 @@
-import { errorResponse, handleOptions, jsonResponse, parseQuery } from '../_lib/http';
+import { handleOptions, jsonResponse, parseQuery } from '../_lib/http';
 import { normalizeRappelConsoAlert } from '../../src/services/sanitaryAlertsNormalizer';
 import type { SanitaryAlert, TerritoryCode } from '../../src/types/alerts';
 

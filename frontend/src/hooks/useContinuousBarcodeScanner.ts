@@ -320,7 +320,7 @@ export function useContinuousBarcodeScanner(options: UseContinuousBarcodeScanner
         {
           id,
           barcode,
-          status: 'loading',
+          status: 'loading' as const,
           detectedAt: nowIso(),
         },
         ...prev,

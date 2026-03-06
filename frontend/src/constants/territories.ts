@@ -302,3 +302,8 @@ export function formatPriceForTerritory(value: number, territoryCode: TerritoryC
     maximumFractionDigits: 2,
   }).format(value);
 }
+
+export function getTerritoryDisplayName(code: string): string {
+  const territory = getTerritoryByCode(code);
+  return territory?.name ?? code;
+}

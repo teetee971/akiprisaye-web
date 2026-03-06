@@ -1,0 +1,1470 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "lastUpdated": "2025-01-05T10:00:00Z",
+    "territories": [
+      "GP",
+      "MQ",
+      "GF",
+      "RE"
+    ],
+    "categories": [
+      "transport_aerien",
+      "transport_maritime",
+      "telecoms_internet",
+      "telecoms_mobile",
+      "utilities_eau",
+      "utilities_electricite"
+    ]
+  },
+  "providers": [
+    {
+      "id": "air-caraibes",
+      "name": "Air Caraïbes",
+      "type": "airline",
+      "territory": "GP",
+      "logo": "/logos/air-caraibes.png",
+      "website": "https://www.aircaraibes.com",
+      "phone": "+590 590 82 47 47"
+    },
+    {
+      "id": "air-france",
+      "name": "Air France",
+      "type": "airline",
+      "territory": "GP",
+      "logo": "/logos/air-france.png",
+      "website": "https://www.airfrance.fr",
+      "phone": "+590 590 21 12 75"
+    },
+    {
+      "id": "corsair",
+      "name": "Corsair",
+      "type": "airline",
+      "territory": "GP",
+      "logo": "/logos/corsair.png",
+      "website": "https://www.corsair.fr",
+      "phone": "+590 590 21 13 13"
+    },
+    {
+      "id": "air-antilles",
+      "name": "Air Antilles",
+      "type": "airline",
+      "territory": "GP",
+      "logo": "/logos/air-antilles.png",
+      "website": "https://www.airantilles.com",
+      "phone": "+590 590 64 86 48"
+    },
+    {
+      "id": "express-des-iles",
+      "name": "L'Express des Îles",
+      "type": "ferry",
+      "territory": "GP",
+      "logo": "/logos/express-iles.png",
+      "website": "https://www.express-des-iles.com",
+      "phone": "+590 590 83 12 45"
+    },
+    {
+      "id": "jeans-for-freedom",
+      "name": "Jeans for Freedom",
+      "type": "ferry",
+      "territory": "GP",
+      "logo": "/logos/jff.png",
+      "website": "https://www.jeansforfreedom.fr",
+      "phone": "+590 590 91 70 71"
+    },
+    {
+      "id": "orange-caraibes",
+      "name": "Orange Caraïbe",
+      "type": "isp",
+      "territory": "GP",
+      "logo": "/logos/orange.png",
+      "website": "https://www.orange.fr",
+      "phone": "3900"
+    },
+    {
+      "id": "sfr-caraibes",
+      "name": "SFR Caraïbe",
+      "type": "isp",
+      "territory": "GP",
+      "logo": "/logos/sfr.png",
+      "website": "https://www.sfr.fr",
+      "phone": "1023"
+    },
+    {
+      "id": "only",
+      "name": "Only",
+      "type": "isp",
+      "territory": "GP",
+      "logo": "/logos/only.png",
+      "website": "https://www.only.fr",
+      "phone": "+590 590 38 38 38"
+    },
+    {
+      "id": "orange-mobile",
+      "name": "Orange Caraïbe Mobile",
+      "type": "mobile_operator",
+      "territory": "GP",
+      "logo": "/logos/orange.png",
+      "website": "https://www.orange.fr",
+      "phone": "3900"
+    },
+    {
+      "id": "sfr-mobile",
+      "name": "SFR Caraïbe Mobile",
+      "type": "mobile_operator",
+      "territory": "GP",
+      "logo": "/logos/sfr.png",
+      "website": "https://www.sfr.fr",
+      "phone": "1023"
+    },
+    {
+      "id": "digicel",
+      "name": "Digicel",
+      "type": "mobile_operator",
+      "territory": "GP",
+      "logo": "/logos/digicel.png",
+      "website": "https://www.digicelgroup.com",
+      "phone": "+590 590 26 26 26"
+    },
+    {
+      "id": "generale-eaux-gpe",
+      "name": "Générale des Eaux Guadeloupe",
+      "type": "water_utility",
+      "territory": "GP",
+      "phone": "+590 590 99 45 45"
+    },
+    {
+      "id": "odyssi",
+      "name": "ODYSSI",
+      "type": "water_utility",
+      "territory": "MQ",
+      "phone": "+596 596 71 76 76"
+    },
+    {
+      "id": "sgeg",
+      "name": "SGEG",
+      "type": "water_utility",
+      "territory": "GF",
+      "phone": "+594 594 29 90 00"
+    },
+    {
+      "id": "cise-reunion",
+      "name": "CISE Réunion",
+      "type": "water_utility",
+      "territory": "RE",
+      "phone": "+262 262 42 70 00"
+    },
+    {
+      "id": "edf-gpe",
+      "name": "EDF Guadeloupe",
+      "type": "electricity_utility",
+      "territory": "GP",
+      "logo": "/logos/edf.png",
+      "website": "https://www.edf.gp",
+      "phone": "09 69 32 15 15"
+    },
+    {
+      "id": "edf-mtq",
+      "name": "EDF Martinique",
+      "type": "electricity_utility",
+      "territory": "MQ",
+      "logo": "/logos/edf.png",
+      "website": "https://www.edf.mq",
+      "phone": "09 69 32 15 15"
+    },
+    {
+      "id": "edf-gf",
+      "name": "EDF Guyane",
+      "type": "electricity_utility",
+      "territory": "GF",
+      "logo": "/logos/edf.png",
+      "website": "https://www.edf.gf",
+      "phone": "09 69 32 15 15"
+    },
+    {
+      "id": "edf-re",
+      "name": "EDF Réunion",
+      "type": "electricity_utility",
+      "territory": "RE",
+      "logo": "/logos/edf.png",
+      "website": "https://www.edf.re",
+      "phone": "09 69 32 15 15"
+    }
+  ],
+  "flights": [
+    {
+      "id": "gp-paris-1",
+      "provider": "air-france",
+      "route": {
+        "from": "Pointe-à-Pitre",
+        "to": "Paris CDG",
+        "fromCode": "PTP",
+        "toCode": "CDG"
+      },
+      "price": {
+        "min": 350,
+        "max": 1500,
+        "average": 650,
+        "currency": "EUR"
+      },
+      "duration": "8h30",
+      "frequency": "daily",
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 95,
+        "level": "high",
+        "confirmations": 45
+      }
+    },
+    {
+      "id": "gp-paris-2",
+      "provider": "air-caraibes",
+      "route": {
+        "from": "Pointe-à-Pitre",
+        "to": "Paris Orly",
+        "fromCode": "PTP",
+        "toCode": "ORY"
+      },
+      "price": {
+        "min": 320,
+        "max": 1400,
+        "average": 620,
+        "currency": "EUR"
+      },
+      "duration": "8h45",
+      "frequency": "daily",
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 93,
+        "level": "high",
+        "confirmations": 38
+      }
+    },
+    {
+      "id": "gp-paris-3",
+      "provider": "corsair",
+      "route": {
+        "from": "Pointe-à-Pitre",
+        "to": "Paris Orly",
+        "fromCode": "PTP",
+        "toCode": "ORY"
+      },
+      "price": {
+        "min": 300,
+        "max": 1200,
+        "average": 580,
+        "currency": "EUR"
+      },
+      "duration": "8h40",
+      "frequency": "5x/week",
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 90,
+        "level": "high",
+        "confirmations": 32
+      }
+    },
+    {
+      "id": "gp-mq-1",
+      "provider": "air-antilles",
+      "route": {
+        "from": "Pointe-à-Pitre",
+        "to": "Fort-de-France",
+        "fromCode": "PTP",
+        "toCode": "FDF"
+      },
+      "price": {
+        "min": 80,
+        "max": 180,
+        "average": 120,
+        "currency": "EUR"
+      },
+      "duration": "40min",
+      "frequency": "daily",
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 88,
+        "level": "high",
+        "confirmations": 28
+      }
+    },
+    {
+      "id": "gp-stjean-1",
+      "provider": "air-antilles",
+      "route": {
+        "from": "Pointe-à-Pitre",
+        "to": "Saint-Barthélemy",
+        "fromCode": "PTP",
+        "toCode": "SBH"
+      },
+      "price": {
+        "min": 90,
+        "max": 200,
+        "average": 140,
+        "currency": "EUR"
+      },
+      "duration": "15min",
+      "frequency": "daily",
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 85,
+        "level": "high",
+        "confirmations": 22
+      }
+    },
+    {
+      "id": "mq-paris-1",
+      "provider": "air-france",
+      "route": {
+        "from": "Fort-de-France",
+        "to": "Paris CDG",
+        "fromCode": "FDF",
+        "toCode": "CDG"
+      },
+      "price": {
+        "min": 360,
+        "max": 1550,
+        "average": 670,
+        "currency": "EUR"
+      },
+      "duration": "8h20",
+      "frequency": "daily",
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 96,
+        "level": "high",
+        "confirmations": 42
+      }
+    },
+    {
+      "id": "mq-paris-2",
+      "provider": "air-caraibes",
+      "route": {
+        "from": "Fort-de-France",
+        "to": "Paris Orly",
+        "fromCode": "FDF",
+        "toCode": "ORY"
+      },
+      "price": {
+        "min": 330,
+        "max": 1450,
+        "average": 640,
+        "currency": "EUR"
+      },
+      "duration": "8h35",
+      "frequency": "daily",
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 94,
+        "level": "high",
+        "confirmations": 39
+      }
+    },
+    {
+      "id": "gf-paris-1",
+      "provider": "air-france",
+      "route": {
+        "from": "Cayenne",
+        "to": "Paris CDG",
+        "fromCode": "CAY",
+        "toCode": "CDG"
+      },
+      "price": {
+        "min": 400,
+        "max": 1700,
+        "average": 750,
+        "currency": "EUR"
+      },
+      "duration": "8h50",
+      "frequency": "daily",
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 94,
+        "level": "high",
+        "confirmations": 35
+      }
+    },
+    {
+      "id": "gf-paris-2",
+      "provider": "air-caraibes",
+      "route": {
+        "from": "Cayenne",
+        "to": "Paris Orly",
+        "fromCode": "CAY",
+        "toCode": "ORY"
+      },
+      "price": {
+        "min": 380,
+        "max": 1600,
+        "average": 720,
+        "currency": "EUR"
+      },
+      "duration": "9h00",
+      "frequency": "6x/week",
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 91,
+        "level": "high",
+        "confirmations": 30
+      }
+    },
+    {
+      "id": "re-paris-1",
+      "provider": "air-france",
+      "route": {
+        "from": "Saint-Denis",
+        "to": "Paris CDG",
+        "fromCode": "RUN",
+        "toCode": "CDG"
+      },
+      "price": {
+        "min": 450,
+        "max": 2000,
+        "average": 850,
+        "currency": "EUR"
+      },
+      "duration": "11h00",
+      "frequency": "daily",
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 97,
+        "level": "high",
+        "confirmations": 50
+      }
+    },
+    {
+      "id": "re-paris-2",
+      "provider": "corsair",
+      "route": {
+        "from": "Saint-Denis",
+        "to": "Paris Orly",
+        "fromCode": "RUN",
+        "toCode": "ORY"
+      },
+      "price": {
+        "min": 420,
+        "max": 1850,
+        "average": 800,
+        "currency": "EUR"
+      },
+      "duration": "11h15",
+      "frequency": "5x/week",
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 92,
+        "level": "high",
+        "confirmations": 38
+      }
+    }
+  ],
+  "boats": [
+    {
+      "id": "gp-mq-ferry-1",
+      "provider": "express-des-iles",
+      "route": {
+        "from": "Pointe-à-Pitre",
+        "to": "Fort-de-France"
+      },
+      "price": {
+        "min": 65,
+        "max": 180,
+        "average": 95,
+        "currency": "EUR"
+      },
+      "duration": "3h30",
+      "frequency": "daily",
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 90,
+        "level": "high",
+        "confirmations": 35
+      }
+    },
+    {
+      "id": "gp-dom-ferry-1",
+      "provider": "express-des-iles",
+      "route": {
+        "from": "Pointe-à-Pitre",
+        "to": "Roseau (Dominique)"
+      },
+      "price": {
+        "min": 55,
+        "max": 150,
+        "average": 80,
+        "currency": "EUR"
+      },
+      "duration": "2h45",
+      "frequency": "5x/week",
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 88,
+        "level": "high",
+        "confirmations": 28
+      }
+    },
+    {
+      "id": "gp-mariesgalante-ferry-1",
+      "provider": "jeans-for-freedom",
+      "route": {
+        "from": "Pointe-à-Pitre",
+        "to": "Grand-Bourg (Marie-Galante)"
+      },
+      "price": {
+        "min": 25,
+        "max": 80,
+        "average": 42,
+        "currency": "EUR"
+      },
+      "duration": "45min",
+      "frequency": "daily",
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 92,
+        "level": "high",
+        "confirmations": 40
+      }
+    },
+    {
+      "id": "gp-lessaintes-ferry-1",
+      "provider": "jeans-for-freedom",
+      "route": {
+        "from": "Trois-Rivières",
+        "to": "Terre-de-Haut (Les Saintes)"
+      },
+      "price": {
+        "min": 20,
+        "max": 60,
+        "average": 35,
+        "currency": "EUR"
+      },
+      "duration": "20min",
+      "frequency": "daily",
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 93,
+        "level": "high",
+        "confirmations": 45
+      }
+    },
+    {
+      "id": "mq-stlucia-ferry-1",
+      "provider": "express-des-iles",
+      "route": {
+        "from": "Fort-de-France",
+        "to": "Castries (Sainte-Lucie)"
+      },
+      "price": {
+        "min": 60,
+        "max": 165,
+        "average": 90,
+        "currency": "EUR"
+      },
+      "duration": "1h30",
+      "frequency": "4x/week",
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 87,
+        "level": "high",
+        "confirmations": 25
+      }
+    }
+  ],
+  "internet": [
+    {
+      "id": "orange-fiber-gp-1",
+      "provider": "orange-caraibes",
+      "name": "Livebox Fibre 300",
+      "speed": {
+        "download": 300,
+        "upload": 100
+      },
+      "price": {
+        "monthly": 39.99,
+        "installation": 49,
+        "currency": "EUR"
+      },
+      "features": [
+        "TV incluse (150 chaînes)",
+        "Appels illimités"
+      ],
+      "commitment": "12 mois",
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 93,
+        "level": "high",
+        "confirmations": 42
+      }
+    },
+    {
+      "id": "orange-fiber-gp-2",
+      "provider": "orange-caraibes",
+      "name": "Livebox Fibre 1 Gb",
+      "speed": {
+        "download": 1000,
+        "upload": 400
+      },
+      "price": {
+        "monthly": 49.99,
+        "installation": 49,
+        "currency": "EUR"
+      },
+      "features": [
+        "TV incluse (200 chaînes)",
+        "Appels illimités",
+        "Décodeur 4K"
+      ],
+      "commitment": "12 mois",
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 95,
+        "level": "high",
+        "confirmations": 48
+      }
+    },
+    {
+      "id": "sfr-fiber-gp-1",
+      "provider": "sfr-caraibes",
+      "name": "SFR Fibre Power 500",
+      "speed": {
+        "download": 500,
+        "upload": 200
+      },
+      "price": {
+        "monthly": 42.99,
+        "installation": 39,
+        "currency": "EUR"
+      },
+      "features": [
+        "TV incluse (160 chaînes)",
+        "Appels illimités"
+      ],
+      "commitment": "12 mois",
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 91,
+        "level": "high",
+        "confirmations": 38
+      }
+    },
+    {
+      "id": "only-fiber-gp-1",
+      "provider": "only",
+      "name": "Only Fibre 300",
+      "speed": {
+        "download": 300,
+        "upload": 100
+      },
+      "price": {
+        "monthly": 34.99,
+        "currency": "EUR"
+      },
+      "features": [
+        "Appels illimités",
+        "Sans TV"
+      ],
+      "commitment": "sans engagement",
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 88,
+        "level": "high",
+        "confirmations": 32
+      }
+    },
+    {
+      "id": "orange-fiber-mq-1",
+      "provider": "orange-caraibes",
+      "name": "Livebox Fibre 300",
+      "speed": {
+        "download": 300,
+        "upload": 100
+      },
+      "price": {
+        "monthly": 39.99,
+        "installation": 49,
+        "currency": "EUR"
+      },
+      "features": [
+        "TV incluse",
+        "Appels illimités"
+      ],
+      "commitment": "12 mois",
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 94,
+        "level": "high",
+        "confirmations": 40
+      }
+    },
+    {
+      "id": "sfr-fiber-mq-1",
+      "provider": "sfr-caraibes",
+      "name": "SFR Fibre Power 500",
+      "speed": {
+        "download": 500,
+        "upload": 200
+      },
+      "price": {
+        "monthly": 42.99,
+        "installation": 39,
+        "currency": "EUR"
+      },
+      "features": [
+        "TV incluse",
+        "Appels illimités"
+      ],
+      "commitment": "12 mois",
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 92,
+        "level": "high",
+        "confirmations": 36
+      }
+    },
+    {
+      "id": "orange-fiber-gf-1",
+      "provider": "orange-caraibes",
+      "name": "Livebox Fibre 300",
+      "speed": {
+        "download": 300,
+        "upload": 100
+      },
+      "price": {
+        "monthly": 44.99,
+        "installation": 59,
+        "currency": "EUR"
+      },
+      "features": [
+        "TV incluse",
+        "Appels illimités"
+      ],
+      "commitment": "12 mois",
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 89,
+        "level": "high",
+        "confirmations": 28
+      }
+    },
+    {
+      "id": "orange-fiber-re-1",
+      "provider": "orange-caraibes",
+      "name": "Livebox Fibre 500",
+      "speed": {
+        "download": 500,
+        "upload": 200
+      },
+      "price": {
+        "monthly": 41.99,
+        "installation": 49,
+        "currency": "EUR"
+      },
+      "features": [
+        "TV incluse",
+        "Appels illimités"
+      ],
+      "commitment": "12 mois",
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 96,
+        "level": "high",
+        "confirmations": 45
+      }
+    },
+    {
+      "id": "sfr-fiber-re-1",
+      "provider": "sfr-caraibes",
+      "name": "SFR Fibre Power 1 Gb",
+      "speed": {
+        "download": 1000,
+        "upload": 400
+      },
+      "price": {
+        "monthly": 45.99,
+        "installation": 39,
+        "currency": "EUR"
+      },
+      "features": [
+        "TV incluse",
+        "Appels illimités"
+      ],
+      "commitment": "12 mois",
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 94,
+        "level": "high",
+        "confirmations": 42
+      }
+    }
+  ],
+  "mobile": [
+    {
+      "id": "orange-mobile-gp-1",
+      "provider": "orange-mobile",
+      "name": "Orange 20 Go",
+      "data": 20,
+      "price": {
+        "monthly": 19.99,
+        "currency": "EUR"
+      },
+      "features": [
+        "Appels illimités",
+        "SMS/MMS illimités"
+      ],
+      "commitment": "sans engagement",
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 92,
+        "level": "high",
+        "confirmations": 45
+      }
+    },
+    {
+      "id": "orange-mobile-gp-2",
+      "provider": "orange-mobile",
+      "name": "Orange 100 Go",
+      "data": 100,
+      "price": {
+        "monthly": 29.99,
+        "currency": "EUR"
+      },
+      "features": [
+        "Appels illimités",
+        "SMS/MMS illimités",
+        "4G+"
+      ],
+      "commitment": "sans engagement",
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 94,
+        "level": "high",
+        "confirmations": 50
+      }
+    },
+    {
+      "id": "sfr-mobile-gp-1",
+      "provider": "sfr-mobile",
+      "name": "SFR 50 Go",
+      "data": 50,
+      "price": {
+        "monthly": 24.99,
+        "currency": "EUR"
+      },
+      "features": [
+        "Appels illimités",
+        "SMS/MMS illimités"
+      ],
+      "commitment": "sans engagement",
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 90,
+        "level": "high",
+        "confirmations": 42
+      }
+    },
+    {
+      "id": "digicel-mobile-gp-1",
+      "provider": "digicel",
+      "name": "Digicel Unlimited 30 Go",
+      "data": 30,
+      "price": {
+        "monthly": 22.99,
+        "currency": "EUR"
+      },
+      "features": [
+        "Appels illimités",
+        "SMS illimités"
+      ],
+      "commitment": "sans engagement",
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 88,
+        "level": "high",
+        "confirmations": 38
+      }
+    },
+    {
+      "id": "orange-mobile-mq-1",
+      "provider": "orange-mobile",
+      "name": "Orange 20 Go",
+      "data": 20,
+      "price": {
+        "monthly": 19.99,
+        "currency": "EUR"
+      },
+      "features": [
+        "Appels illimités",
+        "SMS/MMS illimités"
+      ],
+      "commitment": "sans engagement",
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 93,
+        "level": "high",
+        "confirmations": 43
+      }
+    },
+    {
+      "id": "sfr-mobile-mq-1",
+      "provider": "sfr-mobile",
+      "name": "SFR 50 Go",
+      "data": 50,
+      "price": {
+        "monthly": 24.99,
+        "currency": "EUR"
+      },
+      "features": [
+        "Appels illimités",
+        "SMS/MMS illimités"
+      ],
+      "commitment": "sans engagement",
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 91,
+        "level": "high",
+        "confirmations": 40
+      }
+    },
+    {
+      "id": "orange-mobile-gf-1",
+      "provider": "orange-mobile",
+      "name": "Orange 20 Go",
+      "data": 20,
+      "price": {
+        "monthly": 21.99,
+        "currency": "EUR"
+      },
+      "features": [
+        "Appels illimités",
+        "SMS/MMS illimités"
+      ],
+      "commitment": "sans engagement",
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 89,
+        "level": "high",
+        "confirmations": 35
+      }
+    },
+    {
+      "id": "digicel-mobile-gf-1",
+      "provider": "digicel",
+      "name": "Digicel 40 Go",
+      "data": 40,
+      "price": {
+        "monthly": 25.99,
+        "currency": "EUR"
+      },
+      "features": [
+        "Appels illimités",
+        "SMS illimités"
+      ],
+      "commitment": "sans engagement",
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 87,
+        "level": "high",
+        "confirmations": 32
+      }
+    },
+    {
+      "id": "orange-mobile-re-1",
+      "provider": "orange-mobile",
+      "name": "Orange 40 Go",
+      "data": 40,
+      "price": {
+        "monthly": 23.99,
+        "currency": "EUR"
+      },
+      "features": [
+        "Appels illimités",
+        "SMS/MMS illimités"
+      ],
+      "commitment": "sans engagement",
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 95,
+        "level": "high",
+        "confirmations": 48
+      }
+    },
+    {
+      "id": "sfr-mobile-re-1",
+      "provider": "sfr-mobile",
+      "name": "SFR 80 Go",
+      "data": 80,
+      "price": {
+        "monthly": 27.99,
+        "currency": "EUR"
+      },
+      "features": [
+        "Appels illimités",
+        "SMS/MMS illimités"
+      ],
+      "commitment": "sans engagement",
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 93,
+        "level": "high",
+        "confirmations": 45
+      }
+    }
+  ],
+  "water": [
+    {
+      "id": "water-gp-pap",
+      "provider": "generale-eaux-gpe",
+      "territory": "GP",
+      "commune": "Pointe-à-Pitre",
+      "price": {
+        "fixedMonthly": 8.5,
+        "perCubicMeter": 2.85,
+        "currency": "EUR"
+      },
+      "averageMonthlyBill": {
+        "min": 25,
+        "average": 45,
+        "max": 80
+      },
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 92,
+        "level": "high",
+        "confirmations": 40
+      }
+    },
+    {
+      "id": "water-gp-lesgosier",
+      "provider": "generale-eaux-gpe",
+      "territory": "GP",
+      "commune": "Le Gosier",
+      "price": {
+        "fixedMonthly": 8.5,
+        "perCubicMeter": 2.9,
+        "currency": "EUR"
+      },
+      "averageMonthlyBill": {
+        "min": 26,
+        "average": 47,
+        "max": 82
+      },
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 90,
+        "level": "high",
+        "confirmations": 38
+      }
+    },
+    {
+      "id": "water-gp-baiemahault",
+      "provider": "generale-eaux-gpe",
+      "territory": "GP",
+      "commune": "Baie-Mahault",
+      "price": {
+        "fixedMonthly": 8.5,
+        "perCubicMeter": 2.88,
+        "currency": "EUR"
+      },
+      "averageMonthlyBill": {
+        "min": 25,
+        "average": 46,
+        "max": 81
+      },
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 91,
+        "level": "high",
+        "confirmations": 39
+      }
+    },
+    {
+      "id": "water-mq-fortdefrance",
+      "provider": "odyssi",
+      "territory": "MQ",
+      "commune": "Fort-de-France",
+      "price": {
+        "fixedMonthly": 9.2,
+        "perCubicMeter": 3.1,
+        "currency": "EUR"
+      },
+      "averageMonthlyBill": {
+        "min": 28,
+        "average": 52,
+        "max": 90
+      },
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 93,
+        "level": "high",
+        "confirmations": 42
+      }
+    },
+    {
+      "id": "water-mq-schoelcher",
+      "provider": "odyssi",
+      "territory": "MQ",
+      "commune": "Schoelcher",
+      "price": {
+        "fixedMonthly": 9.2,
+        "perCubicMeter": 3.05,
+        "currency": "EUR"
+      },
+      "averageMonthlyBill": {
+        "min": 27,
+        "average": 51,
+        "max": 88
+      },
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 91,
+        "level": "high",
+        "confirmations": 40
+      }
+    },
+    {
+      "id": "water-gf-cayenne",
+      "provider": "sgeg",
+      "territory": "GF",
+      "commune": "Cayenne",
+      "price": {
+        "fixedMonthly": 10.5,
+        "perCubicMeter": 3.45,
+        "currency": "EUR"
+      },
+      "averageMonthlyBill": {
+        "min": 32,
+        "average": 60,
+        "max": 105
+      },
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 88,
+        "level": "high",
+        "confirmations": 35
+      }
+    },
+    {
+      "id": "water-gf-remire",
+      "provider": "sgeg",
+      "territory": "GF",
+      "commune": "Rémire-Montjoly",
+      "price": {
+        "fixedMonthly": 10.5,
+        "perCubicMeter": 3.5,
+        "currency": "EUR"
+      },
+      "averageMonthlyBill": {
+        "min": 33,
+        "average": 62,
+        "max": 108
+      },
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 87,
+        "level": "high",
+        "confirmations": 33
+      }
+    },
+    {
+      "id": "water-re-stdenis",
+      "provider": "cise-reunion",
+      "territory": "RE",
+      "commune": "Saint-Denis",
+      "price": {
+        "fixedMonthly": 7.8,
+        "perCubicMeter": 2.65,
+        "currency": "EUR"
+      },
+      "averageMonthlyBill": {
+        "min": 23,
+        "average": 42,
+        "max": 75
+      },
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 94,
+        "level": "high",
+        "confirmations": 45
+      }
+    },
+    {
+      "id": "water-re-stpierre",
+      "provider": "cise-reunion",
+      "territory": "RE",
+      "commune": "Saint-Pierre",
+      "price": {
+        "fixedMonthly": 7.8,
+        "perCubicMeter": 2.7,
+        "currency": "EUR"
+      },
+      "averageMonthlyBill": {
+        "min": 24,
+        "average": 43,
+        "max": 77
+      },
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 93,
+        "level": "high",
+        "confirmations": 43
+      }
+    }
+  ],
+  "electricity": [
+    {
+      "id": "elec-gp-base-6kva",
+      "provider": "edf-gpe",
+      "territory": "GP",
+      "offerType": "base",
+      "price": {
+        "subscription": 13.5,
+        "perKwh": 0.1825,
+        "currency": "EUR"
+      },
+      "power": 6,
+      "averageMonthlyBill": {
+        "min": 55,
+        "average": 95,
+        "max": 180
+      },
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 95,
+        "level": "high",
+        "confirmations": 50
+      }
+    },
+    {
+      "id": "elec-gp-base-9kva",
+      "provider": "edf-gpe",
+      "territory": "GP",
+      "offerType": "base",
+      "price": {
+        "subscription": 18.2,
+        "perKwh": 0.1825,
+        "currency": "EUR"
+      },
+      "power": 9,
+      "averageMonthlyBill": {
+        "min": 75,
+        "average": 130,
+        "max": 250
+      },
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 95,
+        "level": "high",
+        "confirmations": 48
+      }
+    },
+    {
+      "id": "elec-gp-hc-6kva",
+      "provider": "edf-gpe",
+      "territory": "GP",
+      "offerType": "heures_creuses",
+      "price": {
+        "subscription": 15.2,
+        "perKwh": 0.195,
+        "perKwhOffPeak": 0.145,
+        "currency": "EUR"
+      },
+      "power": 6,
+      "averageMonthlyBill": {
+        "min": 52,
+        "average": 90,
+        "max": 170
+      },
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 94,
+        "level": "high",
+        "confirmations": 45
+      }
+    },
+    {
+      "id": "elec-mq-base-6kva",
+      "provider": "edf-mtq",
+      "territory": "MQ",
+      "offerType": "base",
+      "price": {
+        "subscription": 13.8,
+        "perKwh": 0.185,
+        "currency": "EUR"
+      },
+      "power": 6,
+      "averageMonthlyBill": {
+        "min": 56,
+        "average": 97,
+        "max": 185
+      },
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 96,
+        "level": "high",
+        "confirmations": 48
+      }
+    },
+    {
+      "id": "elec-mq-base-9kva",
+      "provider": "edf-mtq",
+      "territory": "MQ",
+      "offerType": "base",
+      "price": {
+        "subscription": 18.5,
+        "perKwh": 0.185,
+        "currency": "EUR"
+      },
+      "power": 9,
+      "averageMonthlyBill": {
+        "min": 77,
+        "average": 132,
+        "max": 255
+      },
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 96,
+        "level": "high",
+        "confirmations": 46
+      }
+    },
+    {
+      "id": "elec-mq-hc-6kva",
+      "provider": "edf-mtq",
+      "territory": "MQ",
+      "offerType": "heures_creuses",
+      "price": {
+        "subscription": 15.5,
+        "perKwh": 0.1975,
+        "perKwhOffPeak": 0.1475,
+        "currency": "EUR"
+      },
+      "power": 6,
+      "averageMonthlyBill": {
+        "min": 53,
+        "average": 92,
+        "max": 172
+      },
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 95,
+        "level": "high",
+        "confirmations": 44
+      }
+    },
+    {
+      "id": "elec-gf-base-6kva",
+      "provider": "edf-gf",
+      "territory": "GF",
+      "offerType": "base",
+      "price": {
+        "subscription": 14.5,
+        "perKwh": 0.195,
+        "currency": "EUR"
+      },
+      "power": 6,
+      "averageMonthlyBill": {
+        "min": 60,
+        "average": 105,
+        "max": 200
+      },
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 92,
+        "level": "high",
+        "confirmations": 40
+      }
+    },
+    {
+      "id": "elec-gf-base-9kva",
+      "provider": "edf-gf",
+      "territory": "GF",
+      "offerType": "base",
+      "price": {
+        "subscription": 19.5,
+        "perKwh": 0.195,
+        "currency": "EUR"
+      },
+      "power": 9,
+      "averageMonthlyBill": {
+        "min": 82,
+        "average": 140,
+        "max": 270
+      },
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 92,
+        "level": "high",
+        "confirmations": 38
+      }
+    },
+    {
+      "id": "elec-re-base-6kva",
+      "provider": "edf-re",
+      "territory": "RE",
+      "offerType": "base",
+      "price": {
+        "subscription": 12.8,
+        "perKwh": 0.175,
+        "currency": "EUR"
+      },
+      "power": 6,
+      "averageMonthlyBill": {
+        "min": 52,
+        "average": 90,
+        "max": 170
+      },
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 97,
+        "level": "high",
+        "confirmations": 52
+      }
+    },
+    {
+      "id": "elec-re-base-9kva",
+      "provider": "edf-re",
+      "territory": "RE",
+      "offerType": "base",
+      "price": {
+        "subscription": 17.2,
+        "perKwh": 0.175,
+        "currency": "EUR"
+      },
+      "power": 9,
+      "averageMonthlyBill": {
+        "min": 70,
+        "average": 125,
+        "max": 240
+      },
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 97,
+        "level": "high",
+        "confirmations": 50
+      }
+    },
+    {
+      "id": "elec-re-hc-6kva",
+      "provider": "edf-re",
+      "territory": "RE",
+      "offerType": "heures_creuses",
+      "price": {
+        "subscription": 14.5,
+        "perKwh": 0.1875,
+        "perKwhOffPeak": 0.1375,
+        "currency": "EUR"
+      },
+      "power": 6,
+      "averageMonthlyBill": {
+        "min": 49,
+        "average": 85,
+        "max": 160
+      },
+      "lastUpdated": "2025-01-05T10:00:00Z",
+      "reliability": {
+        "score": 96,
+        "level": "high",
+        "confirmations": 48
+      }
+    }
+  ]
+}

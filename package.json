@@ -9,11 +9,20 @@
     "build": "vite build",
     "dev": "cd frontend && npm run dev",
     "preview": "cd frontend && npm run preview",
+    "typecheck": "cd frontend && npm run -s typecheck",
     "build:frontend": "cd frontend && npm ci --include=dev && npm run build",
     "install:frontend": "cd frontend && npm ci --include=dev",
-    "lint": "cd frontend && npm run lint"
+    "lint": "cd frontend && npm run lint",
+    "lint:ci": "eslint \"src/**/*.{js,jsx,ts,tsx}\" \"frontend/src/**/*.{js,jsx,ts,tsx}\" \"price-api/src/**/*.{js,jsx,ts,tsx}\" --max-warnings=0"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.56.1",
+    "@typescript-eslint/parser": "^8.56.1",
+    "eslint": "^9.39.3",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "typescript": "^5.9.3",
     "vite": "^7.3.1"
   }
 }

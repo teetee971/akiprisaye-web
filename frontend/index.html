@@ -10,13 +10,14 @@
       name="description"
       content="Application citoyenne dédiée à la compréhension et à la transparence des prix dans les territoires d'Outre-mer."
     />
+    <meta name="robots" content="index, follow" />
 
     <!-- Canonical -->
-    <link rel="canonical" href="https://akiprisaye-web.pages.dev/" />
+    <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://akiprisaye-web.pages.dev/" />
+    <meta property="og:url" content="https://teetee971.github.io/akiprisaye-web/" />
     <meta
       property="og:title"
       content="A KI PRI SA YÉ – Transparence des prix Outre-mer"
@@ -27,14 +28,14 @@
     />
     <meta
       property="og:image"
-      content="https://akiprisaye-web.pages.dev/logo-akiprisaye.svg"
+      content="https://teetee971.github.io/akiprisaye-web/logo-akiprisaye.svg"
     />
     <meta property="og:locale" content="fr_FR" />
     <meta property="og:site_name" content="A KI PRI SA YÉ" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content="https://akiprisaye-web.pages.dev/" />
+    <meta name="twitter:url" content="https://teetee971.github.io/akiprisaye-web/" />
     <meta
       name="twitter:title"
       content="A KI PRI SA YÉ – Transparence des prix Outre-mer"
@@ -45,20 +46,25 @@
     />
     <meta
       name="twitter:image"
-      content="https://akiprisaye-web.pages.dev/logo-akiprisaye.svg"
+      content="https://teetee971.github.io/akiprisaye-web/logo-akiprisaye.svg"
     />
 
     <!-- Icons -->
-    <link rel="icon" type="image/svg+xml" href="/logo-akiprisaye.svg" />
+    <link rel="icon" type="image/svg+xml" href="%BASE_URL%logo-akiprisaye.svg" />
 
-    <!-- Performance hints -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "A KI PRI SA YÉ",
+      "url": "https://teetee971.github.io/akiprisaye-web/",
+      "description": "Application citoyenne dédiée à la compréhension et à la transparence des prix dans les territoires d'Outre-mer."
+    }
+    </script>
 
     <!-- PWA -->
-    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="manifest" href="%BASE_URL%manifest.webmanifest" />
     <meta name="theme-color" content="#0f172a" />
 
     <!-- Base styles to prevent white flash -->
@@ -73,6 +79,22 @@
       #root {
         min-height: 100vh;
       }
+    
+      /* Loading fallback overlay */
+      #loading-fallback {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 12px;
+        background: #0f172a;
+        z-index: 1;
+      }
+      /* App always above fallback once React mounts */
+      #root { position: relative; z-index: 2; }
+
     </style>
   </head>
 
@@ -93,8 +115,10 @@
         "
       >
         <img
-          src="/logo-akiprisaye.svg"
+          src="%BASE_URL%logo-akiprisaye.svg"
           alt="A KI PRI SA YÉ"
+          width="64"
+          height="64"
           style="height: 64px; margin-bottom: 24px"
         />
         <h1 style="font-size: 1.5rem; margin-bottom: 8px">A KI PRI SA YÉ</h1>
@@ -106,4 +130,3 @@
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-```0

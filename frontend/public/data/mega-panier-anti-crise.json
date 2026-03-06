@@ -1,0 +1,183 @@
+{
+  "meta": {
+    "project": {
+      "name": "A KI PRI SA YÉ",
+      "type": "comparateur citoyen",
+      "mission": "Informer les consommateurs sur le coût réel de la vie avec transparence, neutralité et données vérifiables.",
+      "operator": "initiative citoyenne",
+      "affiliation": "aucune"
+    },
+    "dataset": {
+      "id": "mega-panier-anti-crise",
+      "label": "Méga dataset – paniers essentiels & comparaisons",
+      "version": "2.1.0",
+      "status": "stable",
+      "schema": "akipsy.mega.basket.v2"
+    },
+    "currency": {
+      "code": "EUR",
+      "symbol": "€",
+      "precision": 2
+    },
+    "timestamps": {
+      "createdAt": "2026-01-01T00:00:00Z",
+      "lastUpdated": "2026-01-06T11:30:00Z"
+    },
+    "methodology": {
+      "selectionCriteria": [
+        "Produits de première nécessité",
+        "Formats standards (1kg, 1L, 500g)",
+        "Disponibilité locale vérifiée",
+        "Relevés terrain ou sources publiques"
+      ],
+      "calculation": {
+        "basketTotal": "Somme des prix unitaires par produit et par magasin",
+        "ranking": "Classement croissant par total",
+        "recommendation": "Magasin au total le plus bas"
+      },
+      "transparency": {
+        "commercialAffiliation": false,
+        "dataOwnership": "observée",
+        "dataResale": false
+      }
+    },
+    "disclaimer": "Données indicatives. Les prix peuvent varier selon la date, le magasin et la disponibilité. A KI PRI SA YÉ n’est pas un vendeur."
+  },
+
+  "territories": {
+    "GP": {
+      "code": "GP",
+      "label": "Guadeloupe",
+      "country": "FR",
+      "regionType": "DOM",
+      "population": 375000
+    }
+  },
+
+  "products": {
+    "riz-1kg": {
+      "productId": "riz-1kg",
+      "label": "Riz blanc 1kg",
+      "category": "alimentation",
+      "essential": true,
+      "unit": "kg",
+      "baseQuantity": 1
+    },
+    "lait-1l": {
+      "productId": "lait-1l",
+      "label": "Lait UHT demi-écrémé 1L",
+      "category": "alimentation",
+      "essential": true,
+      "unit": "l",
+      "baseQuantity": 1
+    },
+    "huile-1l": {
+      "productId": "huile-1l",
+      "label": "Huile végétale 1L",
+      "category": "alimentation",
+      "essential": true,
+      "unit": "l",
+      "baseQuantity": 1
+    },
+    "pates-500g": {
+      "productId": "pates-500g",
+      "label": "Pâtes alimentaires 500g",
+      "category": "alimentation",
+      "essential": true,
+      "unit": "g",
+      "baseQuantity": 500
+    },
+    "sucre-1kg": {
+      "productId": "sucre-1kg",
+      "label": "Sucre blanc 1kg",
+      "category": "alimentation",
+      "essential": true,
+      "unit": "kg",
+      "baseQuantity": 1
+    }
+  },
+
+  "stores": {
+    "carrefour-abymes": {
+      "storeId": "carrefour-abymes",
+      "name": "Carrefour Abymes",
+      "type": "hypermarché",
+      "location": "Les Abymes",
+      "territory": "GP",
+      "prices": {
+        "riz-1kg": 2.45,
+        "lait-1l": 1.10,
+        "huile-1l": 3.20,
+        "pates-500g": 1.35,
+        "sucre-1kg": 1.60
+      },
+      "lastObservedAt": "2026-01-06"
+    },
+    "super-u-basse-terre": {
+      "storeId": "super-u-basse-terre",
+      "name": "Super U Basse-Terre",
+      "type": "supermarché",
+      "location": "Basse-Terre",
+      "territory": "GP",
+      "prices": {
+        "riz-1kg": 2.60,
+        "lait-1l": 1.15,
+        "huile-1l": 3.10,
+        "pates-500g": 1.40,
+        "sucre-1kg": 1.55
+      },
+      "lastObservedAt": "2026-01-06"
+    },
+    "leclerc-jarry": {
+      "storeId": "leclerc-jarry",
+      "name": "E.Leclerc Jarry",
+      "type": "hypermarché",
+      "location": "Jarry",
+      "territory": "GP",
+      "prices": {
+        "riz-1kg": 2.50,
+        "lait-1l": 1.05,
+        "huile-1l": 3.30,
+        "pates-500g": 1.30,
+        "sucre-1kg": 1.65
+      },
+      "lastObservedAt": "2026-01-06"
+    }
+  },
+
+  "basketProfiles": {
+    "anti-crise-officiel": {
+      "basketId": "anti-crise-officiel",
+      "label": "Panier anti-crise officiel",
+      "territory": "GP",
+      "products": {
+        "riz-1kg": 1,
+        "lait-1l": 1,
+        "huile-1l": 1,
+        "pates-500g": 1,
+        "sucre-1kg": 1
+      },
+      "description": "Panier de référence basé sur les produits essentiels du quotidien",
+      "recommendedLogic": "min_total"
+    }
+  },
+
+  "analytics": {
+    "priceRange": {
+      "minTotal": 9.70,
+      "maxTotal": 9.80,
+      "delta": 0.10,
+      "relativeDeltaPercent": 1.03
+    },
+    "ranking": [
+      { "storeId": "carrefour-abymes", "rank": 1 },
+      { "storeId": "super-u-basse-terre", "rank": 2 },
+      { "storeId": "leclerc-jarry", "rank": 2 }
+    ],
+    "inflation": {
+      "status": "ready",
+      "history": [],
+      "note": "Structure prête pour séries temporelles mensuelles"
+    }
+  }
+}

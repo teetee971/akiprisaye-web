@@ -7,7 +7,7 @@ import type { Ingester, NewsItem } from '../types/news';
  */
 export class RappelConsoIngester implements Ingester {
   id = 'rappel-conso';
-  confidence: 'official' = 'official';
+  confidence = 'official' as const;
 
   async fetch(): Promise<NewsItem[]> {
     return [];

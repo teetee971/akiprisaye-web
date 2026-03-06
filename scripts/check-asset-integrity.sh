@@ -18,6 +18,22 @@ FAILED=0
 DIST_DIR="frontend/dist"
 INDEX_HTML="$DIST_DIR/index.html"
 
+# Base path for deployments where the app is served under a subpath (e.g. GitHub Pages)
+# - Cloudflare Pages root: BASE_PATH=""  (recommended)
+# - GitHub Pages:          BASE_PATH="akiprisaye-web"
+BASE_PATH="${BASE_PATH:-akiprisaye-web}"
+
+normalize_path() {
+  local p="$1"
+  # Remove leading slash
+  p="${p#/}"
+  # Remove base path prefix if present: akiprisaye-web/...
+  if [[ -n "$BASE_PATH" && "$p" == "$BASE_PATH/"* ]]; then
+    p="${p#"$BASE_PATH/"}"
+  fi
+  echo "$p"
+}
+
 # Check if index.html exists
 if [ ! -f "$INDEX_HTML" ]; then
   echo -e "${RED}❌ ERROR: $INDEX_HTML not found${NC}"
@@ -33,12 +49,11 @@ SCRIPT_MISSING=0
 while IFS= read -r line; do
   # Extract src attribute from script tags
   SRC=$(echo "$line" | grep -oP 'src="\K[^"]+' || echo "")
-  
+
   if [ -n "$SRC" ]; then
-    # Remove leading slash if present
-    CLEAN_SRC="${SRC#/}"
+    CLEAN_SRC="$(normalize_path "$SRC")"
     ASSET_PATH="$DIST_DIR/$CLEAN_SRC"
-    
+
     if [ -f "$ASSET_PATH" ]; then
       echo -e "${GREEN}✅ $SRC${NC}"
     else
@@ -56,23 +71,22 @@ fi
 
 echo ""
 
-# Extract link href (stylesheets)
+# Extract link href (stylesheets + other local assets referenced via <link>)
 echo "🔍 Checking CSS files..."
 CSS_MISSING=0
 while IFS= read -r line; do
   # Extract href attribute from link tags
   HREF=$(echo "$line" | grep -oP 'href="\K[^"]+' || echo "")
-  
+
   if [ -n "$HREF" ]; then
     # Skip external URLs and data URIs
     if [[ "$HREF" =~ ^https?:// ]] || [[ "$HREF" =~ ^data: ]]; then
       continue
     fi
-    
-    # Remove leading slash if present
-    CLEAN_HREF="${HREF#/}"
+
+    CLEAN_HREF="$(normalize_path "$HREF")"
     ASSET_PATH="$DIST_DIR/$CLEAN_HREF"
-    
+
     if [ -f "$ASSET_PATH" ]; then
       echo -e "${GREEN}✅ $HREF${NC}"
     else

@@ -266,7 +266,7 @@ Total prévu: **45+ endpoints**
 - ✅ Art. 22: Pas décision automatisée (IA explicative uniquement)
 - ✅ Art. 25: Privacy by design
 - ✅ Art. 30: Registre activités traitement (SourceDataLog, AuditLog)
-- ✅ Art. 32: Sécurité traitement (bcrypt, SHA-256, audit)
+- ✅ Art. 32: Sécurité traitement (bcryptjs, SHA-256, audit)
 
 ### Droit Français
 - ✅ Code Commerce (Art. R123-220): SIREN/SIRET

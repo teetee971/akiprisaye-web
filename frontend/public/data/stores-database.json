@@ -1,0 +1,839 @@
+{
+  "metadata": {
+    "version": "4.0.0",
+    "generatedAt": "2026-01-07T03:02:18.123Z",
+    "storeCount": 57,
+    "territories": [
+      "GP",
+      "MQ",
+      "GF",
+      "RE"
+    ]
+  },
+  "stores": [
+    {
+      "id": "carrefour-jarry-gp",
+      "name": "Carrefour Jarry",
+      "type": "hypermarket",
+      "territory": "GP",
+      "commune": "Baie-Mahault",
+      "address": "Zone Industrielle de Jarry",
+      "lat": 16.235,
+      "lon": -61.54,
+      "phone": "0590 83 00 00",
+      "services": [
+        "parking",
+        "pharmacy",
+        "gas_station",
+        "bakery",
+        "optical",
+        "restaurant"
+      ]
+    },
+    {
+      "id": "carrefour-milenis-gp",
+      "name": "Carrefour Milénis",
+      "type": "hypermarket",
+      "territory": "GP",
+      "commune": "Baie-Mahault",
+      "address": "Centre Commercial Milénis",
+      "lat": 16.24,
+      "lon": -61.535,
+      "phone": "0590 38 68 00",
+      "services": [
+        "parking",
+        "pharmacy",
+        "optical",
+        "restaurant",
+        "electronics"
+      ]
+    },
+    {
+      "id": "carrefour-destrellan-gp",
+      "name": "Carrefour Destreland",
+      "type": "hypermarket",
+      "territory": "GP",
+      "commune": "Baie-Mahault",
+      "address": "Zone Commerciale Destreland",
+      "lat": 16.238,
+      "lon": -61.542,
+      "phone": "0590 32 89 00",
+      "services": [
+        "parking",
+        "bakery",
+        "gas_station"
+      ]
+    },
+    {
+      "id": "leclerc-jarry-gp",
+      "name": "E.Leclerc Jarry",
+      "type": "supermarket",
+      "territory": "GP",
+      "commune": "Baie-Mahault",
+      "address": "Jarry",
+      "lat": 16.236,
+      "lon": -61.538,
+      "phone": "0590 26 85 00",
+      "services": [
+        "parking",
+        "pharmacy",
+        "gas_station"
+      ]
+    },
+    {
+      "id": "leclerc-gosier-gp",
+      "name": "E.Leclerc Le Gosier",
+      "type": "supermarket",
+      "territory": "GP",
+      "commune": "Le Gosier",
+      "address": "Zone Commerciale",
+      "lat": 16.21,
+      "lon": -61.51,
+      "phone": "0590 84 53 00",
+      "services": [
+        "parking",
+        "bakery"
+      ]
+    },
+    {
+      "id": "leclerc-abymes-gp",
+      "name": "E.Leclerc Les Abymes",
+      "type": "supermarket",
+      "territory": "GP",
+      "commune": "Les Abymes",
+      "address": "Rue Ferdinand Forest",
+      "lat": 16.265,
+      "lon": -61.525,
+      "phone": "0590 21 26 00",
+      "services": [
+        "parking",
+        "pharmacy"
+      ]
+    },
+    {
+      "id": "leclerc-stfrancois-gp",
+      "name": "E.Leclerc Saint-François",
+      "type": "supermarket",
+      "territory": "GP",
+      "commune": "Saint-François",
+      "address": "Avenue de l'Europe",
+      "lat": 16.255,
+      "lon": -61.275,
+      "phone": "0590 88 60 00",
+      "services": [
+        "parking"
+      ]
+    },
+    {
+      "id": "superu-pointeapitre-gp",
+      "name": "Super U Pointe-à-Pitre",
+      "type": "supermarket",
+      "territory": "GP",
+      "commune": "Pointe-à-Pitre",
+      "address": "Boulevard Chanzy",
+      "lat": 16.2415,
+      "lon": -61.533,
+      "phone": "0590 82 15 00",
+      "services": [
+        "parking",
+        "bakery"
+      ]
+    },
+    {
+      "id": "superu-gosier-gp",
+      "name": "Super U Le Gosier",
+      "type": "supermarket",
+      "territory": "GP",
+      "commune": "Le Gosier",
+      "address": "Bas du Fort",
+      "lat": 16.22,
+      "lon": -61.505,
+      "phone": "0590 90 85 00",
+      "services": [
+        "parking"
+      ]
+    },
+    {
+      "id": "superu-moule-gp",
+      "name": "Super U Le Moule",
+      "type": "supermarket",
+      "territory": "GP",
+      "commune": "Le Moule",
+      "address": "Route Nationale",
+      "lat": 16.335,
+      "lon": -61.345,
+      "phone": "0590 23 56 00",
+      "services": [
+        "parking",
+        "bakery"
+      ]
+    },
+    {
+      "id": "intermarche-abymes-gp",
+      "name": "Intermarché Les Abymes",
+      "type": "supermarket",
+      "territory": "GP",
+      "commune": "Les Abymes",
+      "address": "Centre Commercial",
+      "lat": 16.27,
+      "lon": -61.52,
+      "phone": "0590 20 75 00",
+      "services": [
+        "parking"
+      ]
+    },
+    {
+      "id": "intermarche-capesterre-gp",
+      "name": "Intermarché Capesterre",
+      "type": "supermarket",
+      "territory": "GP",
+      "commune": "Capesterre-Belle-Eau",
+      "address": "Rue Principale",
+      "lat": 16.045,
+      "lon": -61.565,
+      "phone": "0590 86 35 00",
+      "services": [
+        "parking",
+        "bakery"
+      ]
+    },
+    {
+      "id": "intermarche-sainterose-gp",
+      "name": "Intermarché Sainte-Rose",
+      "type": "supermarket",
+      "territory": "GP",
+      "commune": "Sainte-Rose",
+      "address": "Centre Bourg",
+      "lat": 16.33,
+      "lon": -61.705,
+      "phone": "0590 28 45 00",
+      "services": [
+        "parking"
+      ]
+    },
+    {
+      "id": "intermarche-stjean-gp",
+      "name": "Intermarché Saint-Jean",
+      "type": "supermarket",
+      "territory": "GP",
+      "commune": "Saint-François",
+      "address": "Route de Pointe-des-Châteaux",
+      "lat": 16.25,
+      "lon": -61.28,
+      "phone": "0590 88 72 00",
+      "services": [
+        "parking",
+        "gas_station"
+      ]
+    },
+    {
+      "id": "match-jarry-gp",
+      "name": "Match Jarry",
+      "type": "supermarket",
+      "territory": "GP",
+      "commune": "Baie-Mahault",
+      "address": "Zone Jarry",
+      "lat": 16.234,
+      "lon": -61.539,
+      "phone": "0590 26 92 00",
+      "services": [
+        "parking"
+      ]
+    },
+    {
+      "id": "match-gosier-gp",
+      "name": "Match Le Gosier",
+      "type": "supermarket",
+      "territory": "GP",
+      "commune": "Le Gosier",
+      "address": "Marina",
+      "lat": 16.218,
+      "lon": -61.508,
+      "phone": "0590 84 62 00",
+      "services": [
+        "parking",
+        "bakery"
+      ]
+    },
+    {
+      "id": "leaderprice-abymes-gp",
+      "name": "Leader Price Les Abymes",
+      "type": "discount",
+      "territory": "GP",
+      "commune": "Les Abymes",
+      "address": "Rue de la République",
+      "lat": 16.268,
+      "lon": -61.523,
+      "phone": "0590 21 38 00",
+      "services": [
+        "parking"
+      ]
+    },
+    {
+      "id": "leaderprice-gosier-gp",
+      "name": "Leader Price Le Gosier",
+      "type": "discount",
+      "territory": "GP",
+      "commune": "Le Gosier",
+      "address": "Centre Ville",
+      "lat": 16.215,
+      "lon": -61.512,
+      "phone": "0590 84 71 00",
+      "services": [
+        "parking"
+      ]
+    },
+    {
+      "id": "casino-pointeapitre-gp",
+      "name": "Casino Pointe-à-Pitre",
+      "type": "supermarket",
+      "territory": "GP",
+      "commune": "Pointe-à-Pitre",
+      "address": "Rue Frébault",
+      "lat": 16.242,
+      "lon": -61.534,
+      "phone": "0590 82 24 00",
+      "services": [
+        "parking"
+      ]
+    },
+    {
+      "id": "casino-abymes-gp",
+      "name": "Casino Les Abymes",
+      "type": "supermarket",
+      "territory": "GP",
+      "commune": "Les Abymes",
+      "address": "Avenue de la Liberté",
+      "lat": 16.272,
+      "lon": -61.518,
+      "phone": "0590 20 82 00",
+      "services": [
+        "parking",
+        "bakery"
+      ]
+    },
+    {
+      "id": "superette-pap-gp",
+      "name": "Supérette Centre-Ville",
+      "type": "superette",
+      "territory": "GP",
+      "commune": "Pointe-à-Pitre",
+      "address": "Rue Achille René Boisneuf",
+      "lat": 16.24,
+      "lon": -61.535,
+      "phone": "0590 83 42 10",
+      "services": []
+    },
+    {
+      "id": "superette-sainterose-gp",
+      "name": "Supérette Sainte-Rose",
+      "type": "superette",
+      "territory": "GP",
+      "commune": "Sainte-Rose",
+      "address": "Route de la Traversée",
+      "lat": 16.328,
+      "lon": -61.702,
+      "phone": "0590 28 50 15",
+      "services": []
+    },
+    {
+      "id": "superette-capesterre-gp",
+      "name": "Supérette Capesterre",
+      "type": "superette",
+      "territory": "GP",
+      "commune": "Capesterre-Belle-Eau",
+      "address": "Bourg",
+      "lat": 16.048,
+      "lon": -61.568,
+      "phone": "0590 86 40 20",
+      "services": []
+    },
+    {
+      "id": "superette-petitcanal-gp",
+      "name": "Supérette Petit-Canal",
+      "type": "superette",
+      "territory": "GP",
+      "commune": "Petit-Canal",
+      "address": "Centre Bourg",
+      "lat": 16.365,
+      "lon": -61.455,
+      "phone": "0590 22 68 30",
+      "services": []
+    },
+    {
+      "id": "superette-stfrancois-gp",
+      "name": "Supérette Saint-François",
+      "type": "superette",
+      "territory": "GP",
+      "commune": "Saint-François",
+      "address": "Avenue de la Plage",
+      "lat": 16.258,
+      "lon": -61.272,
+      "phone": "0590 88 54 25",
+      "services": []
+    },
+    {
+      "id": "superette-moule-gp",
+      "name": "Supérette Le Moule",
+      "type": "superette",
+      "territory": "GP",
+      "commune": "Le Moule",
+      "address": "Place de la Mairie",
+      "lat": 16.333,
+      "lon": -61.347,
+      "phone": "0590 23 61 18",
+      "services": []
+    },
+    {
+      "id": "superette-portlouis-gp",
+      "name": "Supérette Port-Louis",
+      "type": "superette",
+      "territory": "GP",
+      "commune": "Port-Louis",
+      "address": "Centre Ville",
+      "lat": 16.43,
+      "lon": -61.535,
+      "phone": "0590 22 75 32",
+      "services": []
+    },
+    {
+      "id": "superette-ansebert-gp",
+      "name": "Supérette Anse-Bertrand",
+      "type": "superette",
+      "territory": "GP",
+      "commune": "Anse-Bertrand",
+      "address": "Bourg",
+      "lat": 16.47,
+      "lon": -61.505,
+      "phone": "0590 22 92 45",
+      "services": []
+    },
+    {
+      "id": "proxi-abymes-gp",
+      "name": "Proxi Les Abymes",
+      "type": "franchise",
+      "territory": "GP",
+      "commune": "Les Abymes",
+      "address": "Quartier Chazeau",
+      "lat": 16.275,
+      "lon": -61.515,
+      "phone": "0590 21 45 60",
+      "services": []
+    },
+    {
+      "id": "vival-gosier-gp",
+      "name": "Vival Le Gosier",
+      "type": "franchise",
+      "territory": "GP",
+      "commune": "Le Gosier",
+      "address": "Quartier Montauban",
+      "lat": 16.225,
+      "lon": -61.5,
+      "phone": "0590 84 78 90",
+      "services": []
+    },
+    {
+      "id": "8a8-jarry-gp",
+      "name": "8 à Huit Jarry",
+      "type": "superette",
+      "territory": "GP",
+      "commune": "Baie-Mahault",
+      "address": "Zone Jarry",
+      "lat": 16.237,
+      "lon": -61.541,
+      "phone": "0590 26 88 45",
+      "services": []
+    },
+    {
+      "id": "8a8-gosier-gp",
+      "name": "8 à Huit Le Gosier",
+      "type": "superette",
+      "territory": "GP",
+      "commune": "Le Gosier",
+      "address": "Rue Principale",
+      "lat": 16.217,
+      "lon": -61.509,
+      "phone": "0590 84 65 72",
+      "services": []
+    },
+    {
+      "id": "8a8-abymes-gp",
+      "name": "8 à Huit Les Abymes",
+      "type": "superette",
+      "territory": "GP",
+      "commune": "Les Abymes",
+      "address": "Résidence Chazeau",
+      "lat": 16.277,
+      "lon": -61.514,
+      "phone": "0590 21 52 88",
+      "services": []
+    },
+    {
+      "id": "carrefour-fdf-mq",
+      "name": "Carrefour Fort-de-France",
+      "type": "hypermarket",
+      "territory": "MQ",
+      "commune": "Fort-de-France",
+      "address": "Centre Commercial Dillon",
+      "lat": 14.62,
+      "lon": -61.05,
+      "phone": "0596 71 40 00",
+      "services": [
+        "parking",
+        "pharmacy",
+        "gas_station",
+        "bakery",
+        "optical"
+      ]
+    },
+    {
+      "id": "carrefour-lamentin-mq",
+      "name": "Carrefour Le Lamentin",
+      "type": "hypermarket",
+      "territory": "MQ",
+      "commune": "Le Lamentin",
+      "address": "Place d'Armes",
+      "lat": 14.61,
+      "lon": -61.005,
+      "phone": "0596 50 85 00",
+      "services": [
+        "parking",
+        "pharmacy",
+        "gas_station",
+        "optical"
+      ]
+    },
+    {
+      "id": "carrefour-schoelcher-mq",
+      "name": "Carrefour Schoelcher",
+      "type": "hypermarket",
+      "territory": "MQ",
+      "commune": "Schoelcher",
+      "address": "Zone Commerciale",
+      "lat": 14.615,
+      "lon": -61.098,
+      "phone": "0596 61 24 00",
+      "services": [
+        "parking",
+        "pharmacy",
+        "bakery"
+      ]
+    },
+    {
+      "id": "leclerc-robert-mq",
+      "name": "E.Leclerc Le Robert",
+      "type": "supermarket",
+      "territory": "MQ",
+      "commune": "Le Robert",
+      "address": "Zone Commerciale Génipa",
+      "lat": 14.675,
+      "lon": -60.94,
+      "phone": "0596 65 60 00",
+      "services": [
+        "parking",
+        "gas_station"
+      ]
+    },
+    {
+      "id": "leclerc-ducos-mq",
+      "name": "E.Leclerc Ducos",
+      "type": "supermarket",
+      "territory": "MQ",
+      "commune": "Ducos",
+      "address": "Zone de Manhity",
+      "lat": 14.59,
+      "lon": -60.975,
+      "phone": "0596 56 23 00",
+      "services": [
+        "parking",
+        "pharmacy"
+      ]
+    },
+    {
+      "id": "leclerc-francois-mq",
+      "name": "E.Leclerc Le François",
+      "type": "supermarket",
+      "territory": "MQ",
+      "commune": "Le François",
+      "address": "Boulevard du François",
+      "lat": 14.62,
+      "lon": -60.905,
+      "phone": "0596 54 38 00",
+      "services": [
+        "parking",
+        "bakery"
+      ]
+    },
+    {
+      "id": "leclerc-trinite-mq",
+      "name": "E.Leclerc La Trinité",
+      "type": "supermarket",
+      "territory": "MQ",
+      "commune": "La Trinité",
+      "address": "Centre Commercial",
+      "lat": 14.74,
+      "lon": -60.965,
+      "phone": "0596 58 42 00",
+      "services": [
+        "parking"
+      ]
+    },
+    {
+      "id": "superu-fdf-mq",
+      "name": "Super U Fort-de-France",
+      "type": "supermarket",
+      "territory": "MQ",
+      "commune": "Fort-de-France",
+      "address": "Rue Victor Hugo",
+      "lat": 14.605,
+      "lon": -61.06,
+      "phone": "0596 73 28 00",
+      "services": [
+        "parking"
+      ]
+    },
+    {
+      "id": "superu-trinite-mq",
+      "name": "Super U La Trinité",
+      "type": "supermarket",
+      "territory": "MQ",
+      "commune": "La Trinité",
+      "address": "Route de l'Atlantique",
+      "lat": 14.735,
+      "lon": -60.97,
+      "phone": "0596 58 55 00",
+      "services": [
+        "parking",
+        "bakery"
+      ]
+    },
+    {
+      "id": "leaderprice-fdf-mq",
+      "name": "Leader Price Fort-de-France",
+      "type": "discount",
+      "territory": "MQ",
+      "commune": "Fort-de-France",
+      "address": "Quartier Texaco",
+      "lat": 14.61,
+      "lon": -61.065,
+      "phone": "0596 70 82 00",
+      "services": [
+        "parking"
+      ]
+    },
+    {
+      "id": "leaderprice-lamentin-mq",
+      "name": "Leader Price Le Lamentin",
+      "type": "discount",
+      "territory": "MQ",
+      "commune": "Le Lamentin",
+      "address": "Zone Commerciale",
+      "lat": 14.605,
+      "lon": -61.01,
+      "phone": "0596 51 45 00",
+      "services": [
+        "parking"
+      ]
+    },
+    {
+      "id": "carrefour-cayenne-gf",
+      "name": "Carrefour Cayenne",
+      "type": "hypermarket",
+      "territory": "GF",
+      "commune": "Cayenne",
+      "address": "Avenue de la Liberté",
+      "lat": 4.935,
+      "lon": -52.325,
+      "phone": "0594 39 70 00",
+      "services": [
+        "parking",
+        "pharmacy",
+        "gas_station",
+        "bakery"
+      ]
+    },
+    {
+      "id": "carrefour-remire-gf",
+      "name": "Carrefour Rémire-Montjoly",
+      "type": "hypermarket",
+      "territory": "GF",
+      "commune": "Rémire-Montjoly",
+      "address": "Route de Montabo",
+      "lat": 4.91,
+      "lon": -52.285,
+      "phone": "0594 31 55 00",
+      "services": [
+        "parking",
+        "pharmacy",
+        "bakery"
+      ]
+    },
+    {
+      "id": "leader-cayenne-gf",
+      "name": "Leader Price Cayenne",
+      "type": "discount",
+      "territory": "GF",
+      "commune": "Cayenne",
+      "address": "Centre Ville",
+      "lat": 4.94,
+      "lon": -52.33,
+      "phone": "0594 28 62 00",
+      "services": [
+        "parking"
+      ]
+    },
+    {
+      "id": "leader-remire-gf",
+      "name": "Leader Price Rémire",
+      "type": "discount",
+      "territory": "GF",
+      "commune": "Rémire-Montjoly",
+      "address": "Zone Collery",
+      "lat": 4.915,
+      "lon": -52.28,
+      "phone": "0594 35 48 00",
+      "services": [
+        "parking"
+      ]
+    },
+    {
+      "id": "score-cayenne-gf",
+      "name": "Jumbo Score Cayenne",
+      "type": "supermarket",
+      "territory": "GF",
+      "commune": "Cayenne",
+      "address": "Route de Baduel",
+      "lat": 4.93,
+      "lon": -52.32,
+      "phone": "0594 30 75 00",
+      "services": [
+        "parking",
+        "bakery"
+      ]
+    },
+    {
+      "id": "leclerc-sainte-marie-re",
+      "name": "E.Leclerc Sainte-Marie",
+      "type": "supermarket",
+      "territory": "RE",
+      "commune": "Sainte-Marie",
+      "address": "Avenue de la République",
+      "lat": -20.895,
+      "lon": 55.55,
+      "phone": "0262 53 30 00",
+      "services": [
+        "parking",
+        "pharmacy",
+        "gas_station"
+      ]
+    },
+    {
+      "id": "leclerc-saint-pierre-re",
+      "name": "E.Leclerc Saint-Pierre",
+      "type": "supermarket",
+      "territory": "RE",
+      "commune": "Saint-Pierre",
+      "address": "Terre Sainte",
+      "lat": -21.34,
+      "lon": 55.475,
+      "phone": "0262 96 15 00",
+      "services": [
+        "parking",
+        "pharmacy"
+      ]
+    },
+    {
+      "id": "leclerc-saint-paul-re",
+      "name": "E.Leclerc Saint-Paul",
+      "type": "supermarket",
+      "territory": "RE",
+      "commune": "Saint-Paul",
+      "address": "Savanna",
+      "lat": -21.01,
+      "lon": 55.27,
+      "phone": "0262 45 68 00",
+      "services": [
+        "parking",
+        "bakery",
+        "gas_station"
+      ]
+    },
+    {
+      "id": "leclerc-saint-andre-re",
+      "name": "E.Leclerc Saint-André",
+      "type": "supermarket",
+      "territory": "RE",
+      "commune": "Saint-André",
+      "address": "Champ Borne",
+      "lat": -20.96,
+      "lon": 55.655,
+      "phone": "0262 58 42 00",
+      "services": [
+        "parking",
+        "pharmacy"
+      ]
+    },
+    {
+      "id": "carrefour-sainte-marie-re",
+      "name": "Carrefour Sainte-Marie",
+      "type": "hypermarket",
+      "territory": "RE",
+      "commune": "Sainte-Marie",
+      "address": "Duparc",
+      "lat": -20.9,
+      "lon": 55.545,
+      "phone": "0262 53 85 00",
+      "services": [
+        "parking",
+        "pharmacy",
+        "optical",
+        "gas_station"
+      ]
+    },
+    {
+      "id": "carrefour-saint-denis-re",
+      "name": "Carrefour Saint-Denis",
+      "type": "hypermarket",
+      "territory": "RE",
+      "commune": "Saint-Denis",
+      "address": "Sainte-Clotilde",
+      "lat": -20.91,
+      "lon": 55.485,
+      "phone": "0262 92 40 00",
+      "services": [
+        "parking",
+        "pharmacy",
+        "bakery"
+      ]
+    },
+    {
+      "id": "superu-saint-paul-re",
+      "name": "Super U Saint-Paul",
+      "type": "supermarket",
+      "territory": "RE",
+      "commune": "Saint-Paul",
+      "address": "Centre Commercial",
+      "lat": -21.005,
+      "lon": 55.275,
+      "phone": "0262 22 85 00",
+      "services": [
+        "parking",
+        "bakery"
+      ]
+    },
+    {
+      "id": "superu-saint-pierre-re",
+      "name": "Super U Saint-Pierre",
+      "type": "supermarket",
+      "territory": "RE",
+      "commune": "Saint-Pierre",
+      "address": "Ravine Blanche",
+      "lat": -21.335,
+      "lon": 55.48,
+      "phone": "0262 25 72 00",
+      "services": [
+        "parking"
+      ]
+    }
+  ]
+}

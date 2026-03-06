@@ -48,7 +48,7 @@ export function NutritionalAnalysis({
       'D': 'bg-orange-500',
       'E': 'bg-red-600'
     };
-    return score ? colors[score] : 'bg-gray-400';
+    return score ? colors[score as keyof typeof colors] : 'bg-gray-400';
   };
 
   const getHealthWarnings = (): string[] => {

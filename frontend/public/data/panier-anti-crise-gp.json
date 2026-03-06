@@ -1,0 +1,165 @@
+{
+  "meta": {
+    "project": {
+      "name": "A KI PRI SA YÉ",
+      "type": "comparateur citoyen",
+      "mission": "Informer les consommateurs sur le coût réel de la vie en toute transparence"
+    },
+    "dataset": {
+      "id": "panier-anti-crise-officiel",
+      "label": "Panier anti-crise – produits essentiels",
+      "version": "1.1.0",
+      "status": "stable"
+    },
+    "territory": {
+      "code": "GP",
+      "label": "Guadeloupe",
+      "country": "FR",
+      "regionType": "DOM"
+    },
+    "currency": {
+      "code": "EUR",
+      "symbol": "€"
+    },
+    "timestamps": {
+      "createdAt": "2026-01-01T00:00:00Z",
+      "lastUpdated": "2026-01-06T11:30:00Z"
+    },
+    "methodology": {
+      "description": "Panier anti-crise basé sur des produits alimentaires essentiels, relevés manuellement sur le terrain et comparés entre enseignes locales.",
+      "selectionCriteria": [
+        "Produits de première nécessité",
+        "Formats standards (1kg, 1L, 500g)",
+        "Disponibilité large en Guadeloupe",
+        "Prix TTC"
+      ],
+      "calculationRule": "Somme des prix unitaires par magasin pour les produits sélectionnés",
+      "updateFrequency": "ponctuelle"
+    },
+    "legal": {
+      "disclaimer": "Données indicatives. A KI PRI SA YÉ n’est pas un vendeur. Les prix peuvent varier selon la date et le point de vente.",
+      "affiliation": "Aucune affiliation commerciale",
+      "transparency": "Données brutes accessibles et vérifiables"
+    }
+  },
+
+  "catalog": {
+    "products": [
+      {
+        "id": "riz-1kg",
+        "label": "Riz blanc 1kg",
+        "category": "alimentation",
+        "subcategory": "féculents",
+        "essential": true,
+        "unit": "kg",
+        "quantity": 1,
+        "averageConsumption": "mensuelle",
+        "notes": ""
+      },
+      {
+        "id": "lait-1l",
+        "label": "Lait UHT demi-écrémé 1L",
+        "category": "alimentation",
+        "subcategory": "produits laitiers",
+        "essential": true,
+        "unit": "L",
+        "quantity": 1,
+        "averageConsumption": "hebdomadaire",
+        "notes": ""
+      },
+      {
+        "id": "huile-1l",
+        "label": "Huile végétale 1L",
+        "category": "alimentation",
+        "subcategory": "corps gras",
+        "essential": true,
+        "unit": "L",
+        "quantity": 1
+      },
+      {
+        "id": "pates-500g",
+        "label": "Pâtes alimentaires 500g",
+        "category": "alimentation",
+        "subcategory": "féculents",
+        "essential": true,
+        "unit": "g",
+        "quantity": 500
+      },
+      {
+        "id": "sucre-1kg",
+        "label": "Sucre blanc 1kg",
+        "category": "alimentation",
+        "subcategory": "épicerie",
+        "essential": true,
+        "unit": "kg",
+        "quantity": 1
+      }
+    ]
+  },
+
+  "stores": [
+    {
+      "id": "carrefour-abymes",
+      "name": "Carrefour Abymes",
+      "type": "hypermarché",
+      "location": "Les Abymes",
+      "prices": {
+        "riz-1kg": 2.45,
+        "lait-1l": 1.10,
+        "huile-1l": 3.20,
+        "pates-500g": 1.35,
+        "sucre-1kg": 1.60
+      },
+      "total": 9.70,
+      "confidenceScore": 0.95,
+      "observedAt": "2026-01-06T11:30:00Z"
+    },
+    {
+      "id": "super-u-basse-terre",
+      "name": "Super U Basse-Terre",
+      "type": "supermarché",
+      "location": "Basse-Terre",
+      "prices": {
+        "riz-1kg": 2.60,
+        "lait-1l": 1.15,
+        "huile-1l": 3.10,
+        "pates-500g": 1.40,
+        "sucre-1kg": 1.55
+      },
+      "total": 9.80,
+      "confidenceScore": 0.90,
+      "observedAt": "2026-01-06T11:30:00Z"
+    },
+    {
+      "id": "leclerc-jarry",
+      "name": "E.Leclerc Jarry",
+      "type": "hypermarché",
+      "location": "Jarry",
+      "prices": {
+        "riz-1kg": 2.50,
+        "lait-1l": 1.05,
+        "huile-1l": 3.30,
+        "pates-500g": 1.30,
+        "sucre-1kg": 1.65
+      },
+      "total": 9.80,
+      "confidenceScore": 0.92,
+      "observedAt": "2026-01-06T11:30:00Z"
+    }
+  ],
+
+  "analytics": {
+    "minTotal": 9.70,
+    "maxTotal": 9.80,
+    "averageTotal": 9.77,
+    "priceSpread": 0.10,
+    "cheapestStoreId": "carrefour-abymes"
+  },
+
+  "recommendation": {
+    "storeId": "carrefour-abymes",
+    "label": "Carrefour Abymes",
+    "reason": "Panier anti-crise le moins cher pour les produits essentiels sélectionnés",
+    "confidence": "élevée"
+  }
+}

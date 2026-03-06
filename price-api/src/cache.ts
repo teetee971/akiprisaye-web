@@ -6,7 +6,7 @@ export function buildEtag(fingerprint: string): string {
     hash |= 0;
   }
 
-  return `W/\"${Math.abs(hash)}\"`;
+  return `W/"${Math.abs(hash)}"`;
 }
 
 export function shouldReturnNotModified(request: Request, etag: string): boolean {
