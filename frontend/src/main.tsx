@@ -13,7 +13,7 @@ import { safeToText } from './utils/safeToText';
 import { installRuntimeCrashProbe } from './monitoring/runtimeCrashProbe';
 import { initSentry } from './monitoring/sentry';
 import { logDebug } from './utils/logger';
-import { enforceBuildVersionSync, registerAppServiceWorker } from './utils/buildVersionGuard.client';
+import { enforceBuildVersionSyncAsync, registerAppServiceWorker } from './utils/buildVersionGuard.client';
 
 declare global {
   interface Window {
@@ -170,7 +170,7 @@ async function bootstrap() {
 
   if (import.meta.env.PROD) {
 
-    const versionChanged = await enforceBuildVersionSync(BUILD_ID);
+    const versionChanged = await enforceBuildVersionSyncAsync(BUILD_ID);
 
     if (versionChanged) return;
 

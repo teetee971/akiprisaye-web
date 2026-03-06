@@ -48,6 +48,7 @@ export default defineConfig({
       abs('./src/test/decisionEngine.test.ts'),
       abs('./src/domain/decision/__tests__/decisionEngine.test.ts'),
       abs('./src/domain/shoppingList/premium/tests/*.test.ts'),
+      abs('./src/test/mergeConflictMarkers.test.ts'),
       abs('./src/test/produitPage.test.ts'),
       abs('./src/test/upgradeUpsell.test.ts'),
       abs('./src/test/observatoire.unavailable.test.ts'),
