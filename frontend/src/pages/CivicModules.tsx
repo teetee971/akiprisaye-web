@@ -115,6 +115,24 @@ export default function CivicModules() {
               
               {/* Secondary CTAs Grid */}
               <div className="grid md:grid-cols-2 gap-3">
+                <Link
+                  to="/solidarite"
+                  className="block p-3 bg-slate-800/50 border border-orange-700/50 rounded-lg hover:bg-slate-800/70 transition-colors"
+                >
+                  <h3 className="font-medium text-orange-200 mb-1 text-sm">🤝 Entraide & Coup de Main</h3>
+                  <p className="text-xs text-gray-400 leading-relaxed">
+                    Jardinage, bricolage, transport — proposez ou demandez de l'aide
+                  </p>
+                </Link>
+                <Link
+                  to="/solidarite"
+                  className="block p-3 bg-slate-800/50 border border-green-700/50 rounded-lg hover:bg-slate-800/70 transition-colors"
+                >
+                  <h3 className="font-medium text-green-200 mb-1 text-sm">🌱 Prêt de Matériel</h3>
+                  <p className="text-xs text-gray-400 leading-relaxed">
+                    Jardinage, cuisine, jouets — empruntez ou prêtez du matériel
+                  </p>
+                </Link>
                 <a
                   href="#gps-shopping"
                   onClick={(e) => {

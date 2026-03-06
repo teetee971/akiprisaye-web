@@ -6,6 +6,8 @@ import BadgesDisplay from '../components/dashboard/BadgesDisplay';
 import SavingsGoal from '../components/dashboard/SavingsGoal';
 import { setMonthlyGoal } from '../services/savingsService';
 import { addDemoSavingsData } from '../utils/demoSavingsData';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 export default function MesEconomies() {
   const {
@@ -36,14 +38,17 @@ export default function MesEconomies() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-          💰 Mes Économies
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          Suivez vos économies réalisées grâce à A KI PRI SA YÉ
-        </p>
+      {/* Hero banner */}
+      <div className="mb-6 animate-fade-in">
+        <HeroImage
+          src={PAGE_HERO_IMAGES.shoppingList}
+          alt="Mes économies — suivi des prix"
+          gradient="from-emerald-950 to-slate-900"
+          height="h-36 sm:h-48"
+        >
+          <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow">💰 Mes Économies</h1>
+          <p className="text-slate-200 text-sm drop-shadow">Suivez vos économies réalisées grâce à A KI PRI SA YÉ</p>
+        </HeroImage>
       </div>
 
       {/* Summary Cards */}

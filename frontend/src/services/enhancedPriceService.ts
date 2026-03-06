@@ -48,7 +48,7 @@ async function loadTerritoryData(territory?: string): Promise<EnhancedPriceData>
   }
 
   // Try to load territory-specific file
-  const filename = TERRITORY_FILENAMES[territory];
+  const filename = TERRITORY_FILENAMES[territory as keyof typeof TERRITORY_FILENAMES];
   if (filename) {
     try {
       const response = await fetch(`/data/territories/${filename}`);
@@ -211,7 +211,7 @@ function processSearchFilters(
   // Filter by minimum reliability
   if (filters.minReliability !== undefined) {
     filteredProducts = filteredProducts.filter(p =>
-      p.prices.some(price => price.reliability.score >= filters.minReliability)
+      p.prices.some(price => price.reliability.score >= (filters.minReliability ?? 0))
     );
   }
   

@@ -1,17 +1,26 @@
 import { Link } from 'react-router-dom';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 export default function Contribuer() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-        <header className="space-y-2">
-          <p className="text-sm text-blue-200 uppercase tracking-wide">Contribution citoyenne</p>
-          <h1 className="text-3xl sm:text-4xl font-bold text-white">Contribuer aux données</h1>
-          <p className="text-slate-300 max-w-3xl">
-            Un canal clair, sans scraping ni API privées : contributions humaines vérifiées, publiées en open-data,
-            avec source affichée.
-          </p>
-        </header>
+        {/* Hero banner */}
+        <div className="animate-fade-in">
+          <HeroImage
+            src={PAGE_HERO_IMAGES.contribuer}
+            alt="Contribution citoyenne — équipe terrain"
+            gradient="from-emerald-950 to-slate-900"
+            height="h-40 sm:h-52"
+          >
+            <p className="text-xs text-emerald-300 uppercase tracking-wide font-semibold">Contribution citoyenne</p>
+            <h1 className="text-3xl sm:text-4xl font-bold text-white drop-shadow">Contribuer aux données</h1>
+            <p className="text-slate-200 text-sm drop-shadow max-w-2xl">
+              Un canal clair, sans scraping ni API privées : contributions humaines vérifiées, publiées en open-data.
+            </p>
+          </HeroImage>
+        </div>
 
         <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-3">
           <h2 className="text-xl font-semibold text-white">Qui peut contribuer ?</h2>

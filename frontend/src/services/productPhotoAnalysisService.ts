@@ -18,7 +18,6 @@
 import { runOCR } from './ocrService';
 import { lookupProductByEan } from './eanProductService';
 import { getProductDossier } from './productDossierService';
-import { getProductInsights } from './productInsightService';
 import type { ScannedProductContext } from '../types/scanFlow';
 import type { ProductDossier } from '../types/productDossier';
 import type { ProductInsight } from '../types/productInsight';
@@ -331,8 +330,8 @@ export async function analyzeProductPhoto(
     if (detectedEAN) {
       try {
         const productLookup = await lookupProductByEan(detectedEAN, {
-          territoire: options.territoire || 'martinique',
-          source: 'scan_photo',
+          territoire: (options.territoire || 'martinique') as import('../types/ean').Territoire,
+          source: 'scan_utilisateur',
         });
         
         if (productLookup.success && productLookup.product) {
@@ -343,7 +342,7 @@ export async function analyzeProductPhoto(
           // Get comprehensive product dossier
           const dossierResponse = await getProductDossier({
             ean: detectedEAN,
-            territory: options.territoire,
+            territory: (options.territoire as unknown as import('../types/PriceObservation').TerritoryCode) || undefined,
             includeHistory: options.includeHistory !== false,
           });
           
@@ -441,9 +440,9 @@ async function buildProductSheet(
     ingredients: {
       list: extractedIngredients.length > 0 
         ? extractedIngredients 
-        : (latestSnapshot?.ingredients || []),
+        : (latestSnapshot?.ingredients || []).map((i) => (typeof i === 'string' ? i : i.name)),
       rawText: ingredientsRawText || '',
-      additives: latestSnapshot?.additives || [],
+      additives: (latestSnapshot?.additives || []).map((a) => (typeof a === 'string' ? a : a.code)),
       allergens: latestSnapshot?.allergens || [],
     },
     
@@ -467,9 +466,17 @@ async function buildProductSheet(
     
     traceability: {
       source: 'photo_analysis',
-      territory: dossier.territorySnapshots[0]?.territory || 'unknown',
-      lastUpdate: dossier.lastUpdate,
-      dataQuality: dossier.dataQuality,
+      territory: (dossier.territorySnapshots ?? dossier.territories)[0]?.territory || 'unknown',
+      lastUpdate: dossier.lastUpdate ?? dossier.lastUpdated,
+      dataQuality: ((): 'excellent' | 'good' | 'partial' | 'limited' => {
+        const q = dossier.dataQuality;
+        if (!q) return 'limited';
+        const completeness = (q as { dataCompleteness?: number }).dataCompleteness ?? 0;
+        if (completeness >= 0.9) return 'excellent';
+        if (completeness >= 0.7) return 'good';
+        if (completeness >= 0.4) return 'partial';
+        return 'limited';
+      })(),
     },
   };
 }

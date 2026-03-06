@@ -22,7 +22,7 @@ export async function simulateFunding(
   let cpfAmount = 0;
   let poleEmploiAmount = 0;
   let regionAmount = 0;
-  let otherAmount = 0;
+  const otherAmount = 0;
 
   // CPF calculation
   if (training.pricing.cpfEligible && profile.cpfBalance) {

@@ -1,10 +1,14 @@
 <!doctype html>
-<html>
+<html lang="fr">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="refresh" content="0; url=./" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Redirect</title>
+    <script>
+      // SPA redirect for GitHub Pages / Cloudflare Pages
+      var l = window.location;
+      l.replace(l.protocol + '//' + l.host + l.pathname.split('/').slice(0, 1).join('/') + '/?p=' + encodeURIComponent(l.pathname + l.search) + l.hash);
+    </script>
   </head>
   <body></body>
 </html>

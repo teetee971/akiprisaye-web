@@ -27,6 +27,18 @@
   animation: expandFade 0.25s ease-out;
 }
 
+/* Skeleton shimmer for image loading placeholders */
+.shimmer-bg {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.8s linear infinite;
+}
+
 @keyframes fadeIn {
   to { opacity: 1; }
 }
@@ -48,11 +60,17 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .fade-in,
   .slide-up,
   .float-y,
-  .faq-open {
+  .faq-open,
+  .shimmer-bg {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;

@@ -103,7 +103,7 @@ function buildTerritoryProfile(
 ): TerritoryMobilityProfile {
   // Determine territory classification
   const islandTerritories: Territory[] = ['MQ', 'GP', 'GF', 'RE', 'YT', 'PF', 'NC', 'WF', 'PM', 'BL', 'MF', 'TF'];
-  const continentalTerritories: Territory[] = ['FR'];
+  const continentalTerritories: string[] = ['FR'];
   
   let classification: 'ISLAND' | 'CONTINENTAL' | 'ARCHIPELAGO';
   if (islandTerritories.includes(territory)) {

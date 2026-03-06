@@ -96,7 +96,7 @@ const FreshnessIndicator: React.FC<FreshnessIndicatorProps> = ({
       className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg border ${config.bgColor} ${config.borderColor}`}
       title={`Observé le ${formattedDate}`}
     >
-      <span className="text-lg" role="img" aria-hidden="true">
+      <span className="text-lg" aria-hidden="true">
         {config.icon}
       </span>
       <div className="flex flex-col">

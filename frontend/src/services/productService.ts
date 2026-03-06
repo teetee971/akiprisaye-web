@@ -219,6 +219,16 @@ export function getReliabilityLabel(score: number): string {
 }
 
 /**
+ * Get reliability color (CSS background color) based on score (0-100)
+ */
+export function getReliabilityColor(score: number): string {
+  if (score >= 90) return '#10b981'; // green
+  if (score >= 70) return '#3b82f6'; // blue
+  if (score >= 50) return '#f59e0b'; // amber
+  return '#6b7280'; // gray
+}
+
+/**
  * Validate price (citizen validation)
  */
 export async function validatePrice(productId: string, isValid: boolean): Promise<void> {

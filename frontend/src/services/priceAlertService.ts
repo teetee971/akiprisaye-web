@@ -14,6 +14,132 @@ export interface PriceAlert {
   lastNotifiedAt: number | null;
 }
 
+// ─── Alert detection helpers ────────────────────────────────────────────────
+
+export interface AlertPreferences {
+  priceDropEnabled: boolean;
+  dropPercentageThreshold: number;      // e.g. 5 → triggered when drop >= 5%
+  priceIncreaseEnabled: boolean;
+  increasePercentageThreshold: number;  // e.g. 5 → triggered when increase >= 5%
+  increaseAbsoluteThreshold: number;    // e.g. 0.50 € → triggered when increase >= 0.50 €
+  shrinkflationEnabled: boolean;
+  shrinkflationQuantityThreshold: number; // e.g. 5 → triggered when reduction >= 5%
+}
+
+export const DEFAULT_ALERT_PREFERENCES: AlertPreferences = {
+  priceDropEnabled: true,
+  dropPercentageThreshold: 3,
+  priceIncreaseEnabled: true,
+  increasePercentageThreshold: 5,
+  increaseAbsoluteThreshold: 0.50,
+  shrinkflationEnabled: true,
+  shrinkflationQuantityThreshold: 5,
+};
+
+export type AlertSeverity = 'low' | 'medium' | 'high';
+
+export interface AlertDetectionResult {
+  triggered: true;
+  absoluteChange: number;
+  percentageChange: number;
+  severity: AlertSeverity;
+  shrinkflationDetails?: {
+    quantityReduction: number;
+    quantityReductionPercentage: number;
+    effectivePriceIncrease: number;
+  };
+}
+
+function severity(pctAbs: number): AlertSeverity {
+  if (pctAbs >= 10) return 'high';
+  if (pctAbs >= 5) return 'medium';
+  return 'low';
+}
+
+/**
+ * Détecte une baisse de prix.
+ * Retourne null si non déclenchée ou désactivée.
+ */
+export function detectPriceDrop(
+  previousPrice: number,
+  currentPrice: number,
+  prefs: AlertPreferences = DEFAULT_ALERT_PREFERENCES,
+): AlertDetectionResult | null {
+  if (!prefs.priceDropEnabled) return null;
+  if (previousPrice <= 0) return null;
+  const absoluteChange = currentPrice - previousPrice;
+  if (absoluteChange >= 0) return null;
+  const percentageChange = (absoluteChange / previousPrice) * 100;
+  if (Math.abs(percentageChange) < prefs.dropPercentageThreshold) return null;
+  return {
+    triggered: true,
+    absoluteChange: Math.round(absoluteChange * 100) / 100,
+    percentageChange: Math.round(percentageChange * 10) / 10,
+    severity: severity(Math.abs(percentageChange)),
+  };
+}
+
+/**
+ * Détecte une hausse de prix (pourcentage OU montant absolu).
+ * Retourne null si non déclenchée ou désactivée.
+ */
+export function detectPriceIncrease(
+  previousPrice: number,
+  currentPrice: number,
+  prefs: AlertPreferences = DEFAULT_ALERT_PREFERENCES,
+): AlertDetectionResult | null {
+  if (!prefs.priceIncreaseEnabled) return null;
+  if (previousPrice <= 0) return null;
+  const absoluteChange = currentPrice - previousPrice;
+  if (absoluteChange <= 0) return null;
+  const percentageChange = (absoluteChange / previousPrice) * 100;
+  const exceedsPct = percentageChange >= prefs.increasePercentageThreshold;
+  const exceedsAbs = absoluteChange >= prefs.increaseAbsoluteThreshold;
+  if (!exceedsPct && !exceedsAbs) return null;
+  return {
+    triggered: true,
+    absoluteChange: Math.round(absoluteChange * 100) / 100,
+    percentageChange: Math.round(percentageChange * 10) / 10,
+    severity: severity(percentageChange),
+  };
+}
+
+/**
+ * Détecte une shrinkflation : réduction de quantité sans baisse de prix unitaire.
+ * Retourne null si non déclenchée, désactivée ou données manquantes.
+ */
+export function detectShrinkflation(
+  previousPrice: number,
+  currentPrice: number,
+  previousQuantity: number | null,
+  currentQuantity: number | null,
+  prefs: AlertPreferences = DEFAULT_ALERT_PREFERENCES,
+): AlertDetectionResult | null {
+  if (!prefs.shrinkflationEnabled) return null;
+  if (previousQuantity == null || currentQuantity == null) return null;
+  if (currentQuantity >= previousQuantity) return null;
+  if (previousQuantity <= 0 || currentQuantity <= 0) return null;
+  const quantityReduction = previousQuantity - currentQuantity;
+  const quantityReductionPercentage = (quantityReduction / previousQuantity) * 100;
+  if (quantityReductionPercentage < prefs.shrinkflationQuantityThreshold) return null;
+  // Price per unit comparison
+  const prevPricePerUnit = previousPrice / previousQuantity;
+  const currPricePerUnit = currentPrice / currentQuantity;
+  if (currPricePerUnit <= prevPricePerUnit) return null;
+  const effectivePriceIncrease = ((currPricePerUnit - prevPricePerUnit) / prevPricePerUnit) * 100;
+  return {
+    triggered: true,
+    absoluteChange: Math.round((currentPrice - previousPrice) * 100) / 100,
+    percentageChange: Math.round(((currentPrice - previousPrice) / previousPrice) * 100 * 10) / 10,
+    severity: severity(effectivePriceIncrease),
+    shrinkflationDetails: {
+      quantityReduction,
+      quantityReductionPercentage: Math.round(quantityReductionPercentage * 10) / 10,
+      effectivePriceIncrease: Math.round(effectivePriceIncrease * 100) / 100,
+    },
+  };
+}
+
 const STORAGE_KEY = 'priceAlerts:v1';
 const NOTIFICATION_COOLDOWN = 24 * 60 * 60 * 1000; // 24h
 

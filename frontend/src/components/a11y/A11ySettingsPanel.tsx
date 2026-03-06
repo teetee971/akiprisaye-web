@@ -57,28 +57,28 @@ export default function A11ySettingsPanel() {
             {/* Contenu */}
             <div className="space-y-6">
               {/* Taille du texte */}
-              <section aria-labelledby="font-size-section">
+              <section aria-label="Taille du texte">
                 <FontSizeControl />
               </section>
 
               <hr className="border-slate-700" />
 
               {/* Contraste élevé */}
-              <section aria-labelledby="contrast-section">
+              <section aria-label="Contraste élevé">
                 <HighContrastToggle />
               </section>
 
               <hr className="border-slate-700" />
 
               {/* Animations réduites */}
-              <section aria-labelledby="motion-section">
+              <section aria-label="Animations réduites">
                 <ReducedMotionToggle />
               </section>
 
               <hr className="border-slate-700" />
 
               {/* Mode daltonien */}
-              <section aria-labelledby="colorblind-section">
+              <section aria-label="Mode daltonien">
                 <label htmlFor="colorblind-mode" className="block text-sm font-medium mb-2">
                   Mode daltonien
                 </label>

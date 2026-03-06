@@ -16,6 +16,7 @@ import OnboardingAutoStart from './components/OnboardingAutoStart';
 import HelpButton from './components/HelpButton';
 import AnalyticsTracker from './components/analytics/AnalyticsTracker';
 import { ToastProvider } from './components/Toast/ToastProvider';
+import UpgradePromptModal from './components/billing/UpgradePromptModal';
 import { StoreSelectionProvider } from './context/StoreSelectionContext';
 import { EntitlementProvider } from './billing/EntitlementProvider';
 import RequireAuth from './components/auth/RequireAuth';
@@ -54,6 +55,9 @@ const Comparateurs = lazyPage(() => import('./pages/Comparateurs'));
 const CarteItinerairesHub = lazyPage(() => import('./pages/CarteItinerairesHub'));
 const ComparateurCitoyen = lazyPage(() => import('./pages/ComparateurCitoyen'));
 const LutteVieChere = lazyPage(() => import('./pages/LutteVieChereIndexPage'));
+const SolidariteHub = lazyPage(() => import('./pages/SolidariteHub'));
+const InscriptionPro = lazyPage(() => import('./pages/InscriptionPro'));
+const EspacePro = lazyPage(() => import('./pages/EspacePro'));
 
 // Scanner & OCR pages
 const ScannerHub = lazyPage(() => import('./pages/ScannerHub'));
@@ -69,6 +73,7 @@ const Settings = lazyPage(() => import('./pages/Settings'));
 const HistoriquePrix = lazyPage(() => import('./pages/HistoriquePrix'));
 const RecherchePrix = lazyPage(() => import('./pages/RecherchePrix'));
 const ProductDetailPage = lazyPage(() => import('./pages/ProductDetail'));
+const ProduitPage = lazyPage(() => import('./pages/ProduitPage'));
 const Alertes = lazyPage(() => import('./pages/Alertes'));
 const AlerteDetail = lazyPage(() => import('./pages/AlerteDetail'));
 const Promos = lazyPage(() => import('./pages/Promos'));
@@ -78,6 +83,15 @@ const UpgradePage = lazyPage(() => import('./pages/UpgradePage'));
 
 // Savings Dashboard
 const MesEconomies = lazyPage(() => import('./pages/MesEconomies'));
+
+// Advanced feature pages (v7.0.0)
+const PriceAlertsPage = lazyPage(() => import('./pages/PriceAlertsPage'));
+const PriceHistoryPage = lazyPage(() => import('./pages/PriceHistoryPage'));
+const SmartShoppingListPage = lazyPage(() => import('./pages/SmartShoppingListPage'));
+const InflationDashboardPage = lazyPage(() => import('./pages/InflationDashboardPage'));
+const GamificationProfilePage = lazyPage(() => import('./pages/GamificationProfilePage'));
+const LeaderboardPage = lazyPage(() => import('./pages/LeaderboardPage'));
+const BadgesPage = lazyPage(() => import('./pages/BadgesPage'));
 
 // Auth pages
 const Login = lazyPage(() => import('./pages/Login'));
@@ -99,9 +113,44 @@ const SignalerAbus = lazyPage(() => import('./pages/SignalerAbus'));
 
 // Admin Sync Dashboard
 const SyncDashboard = lazyPage(() => import('./pages/admin/sync/SyncDashboard'));
+const SignalementModeration = lazyPage(() => import('./pages/admin/moderation/SignalementModeration'));
 
 // i18n Test page (for development/testing)
 const I18nTest = lazyPage(() => import('./pages/I18nTest'));
+
+// About & institutional pages
+const APropos = lazyPage(() => import('./pages/APropos'));
+const PricingDetailed = lazyPage(() => import('./pages/PricingDetailed'));
+const LicenceInstitution = lazyPage(() => import('./pages/LicenceInstitution'));
+
+// Specialised comparators
+const FlightComparator = lazyPage(() => import('./pages/FlightComparator'));
+const BoatComparator = lazyPage(() => import('./pages/BoatComparator'));
+
+// Cosmetic evaluation
+const EvaluationCosmetique = lazyPage(() => import('./pages/EvaluationCosmetique'));
+
+// OCR history
+const OCRHistory = lazyPage(() => import('./pages/ocr/OCRHistory'));
+
+// Observatory methodology
+const ObservatoryMethodology = lazyPage(() => import('./pages/ObservatoryMethodology'));
+
+// Recherche-prix sub-pages
+const DelaisTensionsLogistiques = lazyPage(() => import('./pages/recherche-prix/DelaisTensionsLogistiques'));
+const IndiceLogistique = lazyPage(() => import('./pages/recherche-prix/IndiceLogistique'));
+const PourquoiDelaisProduit = lazyPage(() => import('./pages/recherche-prix/PourquoiDelaisProduit'));
+
+// Ressources pages
+const QuestionsLogistiqueDOM = lazyPage(() => import('./pages/ressources/QuestionsLogistiqueDOM'));
+const GlossaireLogistiqueDOM = lazyPage(() => import('./pages/ressources/GlossaireLogistiqueDOM'));
+const ComprendrePromotionsPrixBarres = lazyPage(() => import('./pages/ressources/ComprendrePromotionsPrixBarres'));
+const PourquoiPrixVarieSansChangement = lazyPage(() => import('./pages/ressources/PourquoiPrixVarieSansChangement'));
+
+// ── Nouvelles pages : historique, comparateur inter-territoires, inflation, couverture ──
+const CrossTerritoryComparator = lazyPage(() => import('./pages/CrossTerritoryComparator'));
+const InflationRateTracker = lazyPage(() => import('./pages/InflationRateTracker'));
+const TerritoryCoverageReport = lazyPage(() => import('./pages/TerritoryCoverageReport'));
 
 /**
  * IMPORTANT — NE PAS SUPPRIMER
@@ -111,43 +160,39 @@ const I18nTest = lazyPage(() => import('./pages/I18nTest'));
  *
  * Tu ajoutes un alias ? Ajoute 1 ligne ici. Point final.
  */
-function LegacyAliasRoutes() {
-  return (
-    <>
-      {/* Actualités */}
-      <Route path="actus" element={<Navigate to="/actualites" replace />} />
-      <Route path="panier" element={<Navigate to="/liste" replace />} />
-      <Route path="cart" element={<Navigate to="/liste" replace />} />
-      <Route path="checkout" element={<Navigate to="/liste" replace />} />
-      <Route path="news" element={<Navigate to="/actualites" replace />} />
+const LEGACY_ALIAS_ROUTES = [
+  /* Actualités */
+  <Route path="actus" element={<Navigate to="/actualites" replace />} />,
+  <Route path="panier" element={<Navigate to="/liste" replace />} />,
+  <Route path="cart" element={<Navigate to="/liste" replace />} />,
+  <Route path="checkout" element={<Navigate to="/liste" replace />} />,
+  <Route path="news" element={<Navigate to="/actualites" replace />} />,
 
-      {/* Scanner */}
-      <Route path="scan" element={<Navigate to="/scanner" replace />} />
+  /* Scanner */
+  <Route path="scan" element={<Navigate to="/scanner" replace />} />,
 
-      {/* Offres / Tarifs (aliases utiles si un lien pointe vers /offres) */}
-      <Route path="offres" element={<Navigate to="/pricing" replace />} />
-      <Route path="tarifs" element={<Navigate to="/pricing" replace />} />
-      <Route path="abonnements" element={<Navigate to="/pricing" replace />} />
+  /* Offres / Tarifs (aliases utiles si un lien pointe vers /offres) */
+  <Route path="offres" element={<Navigate to="/pricing" replace />} />,
+  <Route path="tarifs" element={<Navigate to="/pricing" replace />} />,
+  <Route path="abonnements" element={<Navigate to="/pricing" replace />} />,
 
-      {/* Auth: login (legacy deep-links) */}
-      <Route path="Login" element={<Navigate to="/login" replace />} />
-      <Route path="auth/login" element={<Navigate to="/login" replace />} />
-      <Route path="signin" element={<Navigate to="/login" replace />} />
+  /* Auth: login (legacy deep-links) */
+  <Route path="Login" element={<Navigate to="/login" replace />} />,
+  <Route path="auth/login" element={<Navigate to="/login" replace />} />,
+  <Route path="signin" element={<Navigate to="/login" replace />} />,
 
-      {/* Auth: register */}
-      <Route path="auth/register" element={<Navigate to="/inscription" replace />} />
-      <Route path="signup" element={<Navigate to="/inscription" replace />} />
+  /* Auth: register */
+  <Route path="auth/register" element={<Navigate to="/inscription" replace />} />,
+  <Route path="signup" element={<Navigate to="/inscription" replace />} />,
 
-      {/* Auth: reset */}
-      <Route path="auth/reset-password" element={<Navigate to="/reset-password" replace />} />
-      <Route path="forgot-password" element={<Navigate to="/reset-password" replace />} />
+  /* Auth: reset */
+  <Route path="auth/reset-password" element={<Navigate to="/reset-password" replace />} />,
+  <Route path="forgot-password" element={<Navigate to="/reset-password" replace />} />,
 
-      {/* Account */}
-      <Route path="moncompte" element={<Navigate to="/mon-compte" replace />} />
-      <Route path="account" element={<Navigate to="/mon-compte" replace />} />
-    </>
-  );
-}
+  /* Account */
+  <Route path="moncompte" element={<Navigate to="/mon-compte" replace />} />,
+  <Route path="account" element={<Navigate to="/mon-compte" replace />} />,
+];
 
 function LoadingFallback() {
   const [showTimeout, setShowTimeout] = useState(false);
@@ -239,6 +284,7 @@ export default function App() {
                           <Route path="products/:id/edit" element={<ProductForm />} />
                           <Route path="import" element={<ImportPage />} />
                           <Route path="sync" element={<SyncDashboard />} />
+                          <Route path="moderation" element={<SignalementModeration />} />
                         </Route>
 
                         {/* Main site routes with Layout */}
@@ -258,6 +304,13 @@ export default function App() {
                           <Route path="actualites" element={<Actualites />} />
                           <Route path="mentions-legales" element={<MentionsLegales />} />
                           <Route path="privacy" element={<Transparence />} />
+
+                          {/* Solidarité & Entraide */}
+                          <Route path="solidarite" element={<SolidariteHub />} />
+
+                          {/* Espace Professionnel */}
+                          <Route path="inscription-pro" element={<InscriptionPro />} />
+                          <Route path="espace-pro" element={<EspacePro />} />
 
                           {/* Additional feature routes */}
                           <Route path="donnees-publiques" element={<DonneesPubliques />} />
@@ -284,6 +337,7 @@ export default function App() {
                           <Route path="historique-prix" element={<HistoriquePrix />} />
                           <Route path="historique" element={<HistoriquePrix />} />
                           <Route path="p/:id" element={<ProductDetailPage />} />
+                          <Route path="produit/:ean" element={<ProduitPage />} />
                           <Route path="recherche-prix" element={<RecherchePrix />} />
                           <Route path="alertes" element={<Alertes />} />
                           <Route path="alertes/:id" element={<AlerteDetail />} />
@@ -295,6 +349,15 @@ export default function App() {
                           {/* Savings Dashboard */}
                           <Route path="mes-economies" element={<MesEconomies />} />
                           <Route path="tableau-de-bord" element={<MesEconomies />} />
+
+                          {/* Advanced features (v7.0.0) */}
+                          <Route path="alertes-prix" element={<PriceAlertsPage />} />
+                          <Route path="prix-historique" element={<PriceHistoryPage />} />
+                          <Route path="liste-intelligente" element={<SmartShoppingListPage />} />
+                          <Route path="tableau-inflation" element={<InflationDashboardPage />} />
+                          <Route path="gamification" element={<GamificationProfilePage />} />
+                          <Route path="gamification/leaderboard" element={<LeaderboardPage />} />
+                          <Route path="gamification/badges" element={<BadgesPage />} />
 
                           {/* Auth routes (canoniques) */}
                           <Route path="login" element={<Login />} />
@@ -312,7 +375,7 @@ export default function App() {
                           />
 
                           {/* Aliases legacy (stables CI) */}
-                          <LegacyAliasRoutes />
+                          {LEGACY_ALIAS_ROUTES}
 
                           {/* Pricing & Subscription */}
                           <Route path="pricing" element={<Pricing />} />
@@ -332,6 +395,41 @@ export default function App() {
                           {/* i18n Test (development/testing) */}
                           <Route path="test-i18n" element={<I18nTest />} />
 
+                          {/* À propos & institutional */}
+                          <Route path="a-propos" element={<APropos />} />
+                          <Route path="tarifs-details" element={<PricingDetailed />} />
+                          <Route path="licence-institution" element={<LicenceInstitution />} />
+                          <Route path="inflation" element={<Navigate to="/tableau-inflation" replace />} />
+
+                          {/* Comparateurs spécialisés */}
+                          <Route path="comparateur-vols" element={<FlightComparator />} />
+                          <Route path="comparateur-bateaux" element={<BoatComparator />} />
+
+                          {/* Évaluation cosmétique */}
+                          <Route path="evaluation-cosmetique" element={<EvaluationCosmetique />} />
+
+                          {/* OCR history */}
+                          <Route path="ocr/history" element={<OCRHistory />} />
+
+                          {/* Observatory methodology */}
+                          <Route path="observatoire/methodologie" element={<ObservatoryMethodology />} />
+
+                          {/* Recherche-prix sous-pages */}
+                          <Route path="recherche-prix/delais-logistiques" element={<DelaisTensionsLogistiques />} />
+                          <Route path="recherche-prix/indice-logistique" element={<IndiceLogistique />} />
+                          <Route path="recherche-prix/pourquoi-delais-produit" element={<PourquoiDelaisProduit />} />
+
+                          {/* Ressources pédagogiques */}
+                          <Route path="ressources/questions-logistique-dom" element={<QuestionsLogistiqueDOM />} />
+                          <Route path="ressources/glossaire-logistique-dom" element={<GlossaireLogistiqueDOM />} />
+                          <Route path="ressources/comprendre-promotions-prix-barres" element={<ComprendrePromotionsPrixBarres />} />
+                          <Route path="ressources/pourquoi-prix-varie-sans-changement" element={<PourquoiPrixVarieSansChangement />} />
+
+                          {/* ── Nouvelles pages observatoire enrichi ── */}
+                          <Route path="comparateur-territoires" element={<CrossTerritoryComparator />} />
+                          <Route path="inflation-categories" element={<InflationRateTracker />} />
+                          <Route path="couverture-territoires" element={<TerritoryCoverageReport />} />
+
                           {/* Catch-all route - redirect to home */}
                           <Route path="*" element={<Navigate to="/" replace />} />
                         </Route>
@@ -343,6 +441,7 @@ export default function App() {
                       <OnboardingTour />
                       <HelpButton />
                       <ToastProvider />
+                      <UpgradePromptModal />
                     </Suspense>
                   </BrowserRouter>
                 </EntitlementProvider>

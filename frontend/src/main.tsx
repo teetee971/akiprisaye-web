@@ -11,8 +11,9 @@ import App from './App';
 import ErrorBoundary from './components/ErrorBoundary';
 import { safeToText } from './utils/safeToText';
 import { installRuntimeCrashProbe } from './monitoring/runtimeCrashProbe';
+import { initSentry } from './monitoring/sentry';
 import { logDebug } from './utils/logger';
-import { enforceBuildVersionSync, registerAppServiceWorker } from './utils/buildVersionGuard';
+import { enforceBuildVersionSyncAsync, registerAppServiceWorker } from './utils/buildVersionGuard.client';
 
 declare global {
   interface Window {
@@ -31,7 +32,15 @@ const BUILD_ID = VITE_APP_BUILD_ID || (import.meta.env.VITE_BUILD_SHA as string 
 window.__BUILD_SHA__ = BUILD_ID;
 
 logDebug(`[build] A KI PRI SA YÉ boot id=${BUILD_ID}`);
+initSentry();
 installRuntimeCrashProbe();
+
+// A) Purge stale price data from IndexedDB on startup (non-blocking)
+import('./services/priceCacheService').then(({ purgeExpiredPriceCache }) => {
+  purgeExpiredPriceCache().then((count) => {
+    if (count > 0) logDebug(`[cache] Purged ${count} stale price records`);
+  });
+});
 
 // Load debug utilities in development
 if (import.meta.env.DEV) {
@@ -161,7 +170,7 @@ async function bootstrap() {
 
   if (import.meta.env.PROD) {
 
-    const versionChanged = await enforceBuildVersionSync(BUILD_ID);
+    const versionChanged = await enforceBuildVersionSyncAsync(BUILD_ID);
 
     if (versionChanged) return;
 

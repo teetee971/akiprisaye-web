@@ -185,8 +185,8 @@ export function generateComparisonMetadata(
   const totalStores = prices.length;
   const storesWithData = prices.filter((p) => {
     const hasNumericPrice =
-      typeof p?.storePrice?.price === 'number' &&
-      Number.isFinite(p.storePrice.price);
+      typeof p?.price === 'number' &&
+      Number.isFinite(p.price);
 
     const d = new Date(p?.observationDate);
     const hasValidDate =

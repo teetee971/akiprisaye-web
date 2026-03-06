@@ -70,6 +70,7 @@ export interface BaseProduct {
   nom?: string;
   marque?: string;
   categorie?: string;
+  imageUrl?: string;
   traceability: ProductTraceability;
 }
 

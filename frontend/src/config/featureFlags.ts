@@ -127,3 +127,67 @@ export function devOverrideFlag(flagName: keyof FeatureFlags, value: boolean): v
   featureFlags[flagName] = value;
   console.log(`Feature flag ${flagName} overridden to ${value}`);
 }
+
+// ---------------------------------------------------------------------------
+// Territory-scoped feature flags
+// Allows activating specific features only for certain territories.
+// ---------------------------------------------------------------------------
+
+import type { TerritoryCode } from '../constants/territories';
+
+/**
+ * Maps each flag to the set of territories where it is enabled.
+ * An empty array means the feature is disabled in all territories.
+ * '*' as the only entry means the feature is enabled everywhere.
+ */
+const TERRITORY_FLAGS: Partial<Record<keyof FeatureFlags, TerritoryCode[] | ['*']>> = {
+  /** Real-time observatory enabled for the 4 main DOM territories */
+  FEATURE_EXTENDED_ANALYTICS: ['gp', 'mq', 're', 'gf'],
+
+  /** Multi-territory comparison everywhere */
+  FEATURE_MULTI_TERRITORY_COMPARE: ['*'],
+
+  /** Cost-of-living index enabled for DOM territories */
+  FEATURE_COST_OF_LIVING: ['gp', 'mq', 're', 'gf', 'yt'],
+
+  /** Custom alerts: DOM + COM */
+  FEATURE_CUSTOM_ALERTS: ['gp', 'mq', 're', 'gf', 'yt', 'pf', 'nc'],
+
+  /** Product history everywhere */
+  FEATURE_PRODUCT_HISTORY: ['*'],
+};
+
+/**
+ * Check whether a feature flag is enabled for a specific territory.
+ *
+ * If there is no territory override defined for the flag, falls back to
+ * the global `isFeatureEnabled()` logic.
+ *
+ * @example
+ * if (isFeatureEnabledForTerritory('FEATURE_COST_OF_LIVING', userTerritory)) {
+ *   // show IEVR widget
+ * }
+ */
+export function isFeatureEnabledForTerritory(
+  flagName: keyof FeatureFlags,
+  territory: TerritoryCode,
+): boolean {
+  const territories = TERRITORY_FLAGS[flagName];
+  if (!territories) {
+    // No territory override: fall back to global flag
+    return isFeatureEnabled(flagName);
+  }
+  if (territories[0] === '*') return true;
+  return (territories as TerritoryCode[]).includes(territory);
+}
+
+/**
+ * Return all feature flags evaluated for a given territory.
+ * Useful for admin dashboards and debugging.
+ */
+export function getFeatureFlagsForTerritory(territory: TerritoryCode): Record<keyof FeatureFlags, boolean> {
+  const keys = Object.keys(featureFlags) as (keyof FeatureFlags)[];
+  return Object.fromEntries(
+    keys.map((k) => [k, isFeatureEnabledForTerritory(k, territory)]),
+  ) as Record<keyof FeatureFlags, boolean>;
+}

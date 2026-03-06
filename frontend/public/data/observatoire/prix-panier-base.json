@@ -1,0 +1,33 @@
+{
+  "titre": "Prix du panier alimentaire de base — Guadeloupe",
+  "territoire": "Guadeloupe",
+  "periode": "2026-02",
+  "devise": "EUR",
+  "source": {
+    "nom": "Relevé terrain citoyen — février 2026",
+    "url": "https://www.insee.fr/fr/statistiques/zones/2011101"
+  },
+  "panier": [
+    { "produit": "Riz long blanc 1kg",         "prix_moyen": 2.05 },
+    { "produit": "Lait demi-écrémé UHT 1L",    "prix_moyen": 1.44 },
+    { "produit": "Poulet entier 1kg",           "prix_moyen": 5.90 },
+    { "produit": "Œufs calibre M (boîte 12)",  "prix_moyen": 3.20 },
+    { "produit": "Pain de mie 500g",            "prix_moyen": 2.15 },
+    { "produit": "Bananes 1kg",                "prix_moyen": 1.20 },
+    { "produit": "Tomates 1kg",                "prix_moyen": 2.80 },
+    { "produit": "Sucre blanc 1kg",            "prix_moyen": 1.65 },
+    { "produit": "Huile de tournesol 1L",      "prix_moyen": 2.95 },
+    { "produit": "Pâtes sèches 500g",          "prix_moyen": 1.45 },
+    { "produit": "Farine de blé T55 1kg",      "prix_moyen": 1.35 },
+    { "produit": "Bœuf haché 5% MG 500g",      "prix_moyen": 5.20 },
+    { "produit": "Jambon blanc (4 tranches)",   "prix_moyen": 2.90 },
+    { "produit": "Fromage râpé 200g",          "prix_moyen": 3.10 },
+    { "produit": "Yaourt nature 4×125g",       "prix_moyen": 1.89 },
+    { "produit": "Eau minérale 1,5L",          "prix_moyen": 0.75 },
+    { "produit": "Café moulu 250g",            "prix_moyen": 3.50 },
+    { "produit": "Beurre doux 250g",           "prix_moyen": 3.20 },
+    { "produit": "Lentilles 500g",             "prix_moyen": 1.80 },
+    { "produit": "Conserve thon 185g",         "prix_moyen": 2.10 }
+  ],
+  "note": "Données issues de relevés citoyens vérifiés sur les principales enseignes de Guadeloupe (Carrefour, E.Leclerc, Hyper Match, Leader Price). Les prix incluent la TVA applicable localement. Comparaison indicative avec l'Hexagone : surcoût moyen estimé à +26%."
+}

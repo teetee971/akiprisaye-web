@@ -26,7 +26,7 @@ export function computeObservationStatus(observations: NormalizedPriceObservatio
 export function getObservationsForQuery(query: { territory?: string; barcode?: string; q?: string }) {
   const normalized = observationsMock.map((item) => normalizeObservation(item));
   const filtered = normalized
-    .filter((obs) => !query.territory || obs.territory === query.territory)
+    .filter((obs) => !query.territory || obs.territory.toLowerCase() === query.territory.toLowerCase())
     .filter((obs) => !query.barcode || obs.barcode === query.barcode)
     .filter((obs) => !query.q || obs.productName.toLowerCase().includes(query.q.toLowerCase()))
     .sort((a, b) => +new Date(b.observedAt) - +new Date(a.observedAt));
