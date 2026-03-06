@@ -102,7 +102,7 @@ export async function loadObservatoireData(
 
 /**
  * Load observatoire snapshots for all territories.
- * Returns a map keyed by territory file stem.
+ * Returns a map keyed by territory code (e.g. 'gp', 'mq').
  */
 export async function loadAllTerritories(
   months: string[] = DEFAULT_SNAPSHOT_MONTHS,

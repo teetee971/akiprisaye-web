@@ -30,7 +30,7 @@ const TERRITORY_NAME_MAP: Partial<Record<TerritoryCode, string>> = {
   RE: 'La Réunion',
   YT: 'Mayotte',
   MF: 'Saint-Martin',
-  BL: 'Saint-Barthelemy',
+  BL: 'Saint-Barthélemy',
   PM: 'Saint-Pierre-et-Miquelon',
 };
 
