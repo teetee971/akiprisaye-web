@@ -1,5 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 type StorePrice = {
   store: string;
@@ -73,9 +75,18 @@ export default function Comparateurs() {
   return (
     <div className="min-h-screen bg-slate-950 text-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Comparer les prix</h1>
-          <p className="text-white/70">Données indicatives – territoires ultramarins • {new Date().toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}</p>
+        <div className="mb-6 animate-fade-in">
+          <HeroImage
+            src={PAGE_HERO_IMAGES.search}
+            alt="Comparer les prix — marchés ultramarins"
+            gradient="from-blue-950 to-slate-900"
+            height="h-36 sm:h-48"
+          >
+            <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow">⚖️ Comparer les prix</h1>
+            <p className="text-slate-200 text-sm drop-shadow">
+              Données indicatives – territoires ultramarins · {new Date().toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}
+            </p>
+          </HeroImage>
         </div>
 
         {/* Sélecteur territoire */}

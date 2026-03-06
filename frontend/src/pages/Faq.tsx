@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { GlassContainer } from '@/components/ui/GlassContainer';
 import { GlassCard } from '@/components/ui/glass-card';
+import { HeroImage } from '@/components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '@/config/imageAssets';
 import { FAQ_DATA, getFAQByCategory, searchFAQ, type FAQItem } from '@/data/faq';
 
 const FAQ_CATEGORIES = [
@@ -55,20 +57,18 @@ export default function Faq() {
         <meta property="og:title" content="FAQ – A KI PRI SA YÉ" />
         <meta property="og:description" content="Tout ce que vous devez savoir sur A KI PRI SA YÉ, l'application citoyenne de transparence des prix Outre-mer." />
       </Helmet>
+      <div className="max-w-6xl mx-auto px-4 pb-4 animate-fade-in">
+        <HeroImage
+          src={PAGE_HERO_IMAGES.faq}
+          alt="FAQ — questions et réponses"
+          gradient="from-slate-900 to-blue-950"
+          height="h-36 sm:h-48"
+        >
+          <h1 className="text-3xl font-bold text-white drop-shadow">Questions Fréquentes (FAQ)</h1>
+          <p className="text-slate-300 text-sm drop-shadow">Tout ce que vous devez savoir sur A KI PRI SA YÉ — du public aux institutions</p>
+        </HeroImage>
+      </div>
       <GlassContainer className="max-w-6xl mx-auto p-8">
-        {/* Header */}
-        <div className="mb-8 text-center">
-          <h1 className="text-4xl font-bold text-white mb-4">
-            Questions Fréquentes (FAQ)
-          </h1>
-          <p className="text-gray-300 text-lg">
-            Tout ce que vous devez savoir sur A KI PRI SA YÉ
-          </p>
-          <p className="text-gray-400 text-sm mt-2">
-            Du public lambda aux institutions — ~20 Q/R
-          </p>
-        </div>
-
         {/* Search Bar */}
         <div className="mb-6">
           <input

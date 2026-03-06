@@ -4,6 +4,8 @@
 
 import React, { useEffect, useMemo, useState } from 'react'
 import { GlassCard } from '../components/ui/glass-card'
+import { HeroImage } from '../components/ui/HeroImage'
+import { PAGE_HERO_IMAGES } from '../config/imageAssets'
 import { EmptyState } from '../components/ui/DataStateIndicator'
 import PriceComparisonTable from '../components/PriceComparisonTable'
 import PriceDataWarning from '../components/PriceDataWarning'
@@ -187,24 +189,32 @@ export default function ComparaisonEnseignes() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white mb-4">Comparaison inter-enseignes</h1>
-
-        {/* Avertissement institutionnel obligatoire (PR-02) */}
-        <div className="p-4 bg-blue-500/20 border border-blue-500/50 rounded-lg text-sm text-blue-200 mb-6">
-          <strong>ℹ️ Information importante</strong>
-          <p className="mt-2">
-            Comparaison strictement factuelle entre enseignes, basée sur des observations déclarées ou ouvertes.
-            Aucun classement, aucune recommandation, aucune analyse prédictive n'est réalisée.
-          </p>
-        </div>
-
-        {lastUpdate && (
-          <div className="text-xs text-white/50 mb-4">
-            Dernière mise à jour: {lastUpdate.toLocaleString('fr-FR')}
-          </div>
-        )}
+      <div className="mb-6 animate-fade-in">
+        <HeroImage
+          src={PAGE_HERO_IMAGES.comparaisonEnseignes}
+          alt="Comparaison inter-enseignes — rayons supermarché"
+          gradient="from-slate-900 to-indigo-950"
+          height="h-36 sm:h-48"
+        >
+          <h1 className="text-2xl font-bold text-white drop-shadow">🏪 Comparaison inter-enseignes</h1>
+          <p className="text-slate-200 text-sm drop-shadow">Données factuelles — aucun classement, aucune recommandation</p>
+        </HeroImage>
       </div>
+
+      {/* Avertissement institutionnel obligatoire (PR-02) */}
+      <div className="p-4 bg-blue-500/20 border border-blue-500/50 rounded-lg text-sm text-blue-200 mb-6">
+        <strong>ℹ️ Information importante</strong>
+        <p className="mt-2">
+          Comparaison strictement factuelle entre enseignes, basée sur des observations déclarées ou ouvertes.
+          Aucun classement, aucune recommandation, aucune analyse prédictive n'est réalisée.
+        </p>
+      </div>
+
+      {lastUpdate && (
+        <div className="text-xs text-white/50 mb-4">
+          Dernière mise à jour: {lastUpdate.toLocaleString('fr-FR')}
+        </div>
+      )}
 
       {/* Filtres */}
       <div className="grid md:grid-cols-2 gap-4 mb-6">
