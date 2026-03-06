@@ -109,9 +109,15 @@ export function AlertForm({ productEAN = '', productName = '', onSave, onCancel 
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
               Mode de seuil
             </label>
-            <div className="flex rounded-lg overflow-hidden border border-slate-300 dark:border-slate-600">
+            <div
+              role="radiogroup"
+              aria-label="Mode de seuil"
+              className="flex rounded-lg overflow-hidden border border-slate-300 dark:border-slate-600"
+            >
               <button
                 type="button"
+                role="radio"
+                aria-checked={formData.thresholdMode === 'percentage'}
                 onClick={() => setFormData({ ...formData, thresholdMode: 'percentage' })}
                 className={`flex-1 py-2 text-sm font-medium transition-colors ${
                   formData.thresholdMode === 'percentage'
@@ -123,6 +129,8 @@ export function AlertForm({ productEAN = '', productName = '', onSave, onCancel 
               </button>
               <button
                 type="button"
+                role="radio"
+                aria-checked={formData.thresholdMode === 'absolute'}
                 onClick={() => setFormData({ ...formData, thresholdMode: 'absolute' })}
                 className={`flex-1 py-2 text-sm font-medium transition-colors ${
                   formData.thresholdMode === 'absolute'

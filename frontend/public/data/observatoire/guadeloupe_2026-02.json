@@ -1,53 +1,42 @@
 {
   "territoire": "Guadeloupe",
-  "date_snapshot": "2026-02-03",
+  "date_snapshot": "2026-02-05",
   "source": "releve_citoyen",
   "qualite": "verifie",
   "donnees": [
-    {
-      "commune": "Les Abymes",
-      "enseigne": "Carrefour",
-      "categorie": "Produits laitiers",
-      "produit": "Lait demi-écrémé UHT 1L",
-      "ean": "3560070123456",
-      "unite": "1L",
-      "prix": 1.48
-    },
-    {
-      "commune": "Les Abymes",
-      "enseigne": "E.Leclerc",
-      "categorie": "Produits laitiers",
-      "produit": "Lait demi-écrémé UHT 1L",
-      "ean": "3560070123456",
-      "unite": "1L",
-      "prix": 1.39
-    },
-    {
-      "commune": "Pointe-à-Pitre",
-      "enseigne": "Indépendants",
-      "categorie": "Épicerie",
-      "produit": "Riz long blanc 1kg",
-      "ean": "3250391234567",
-      "unite": "1kg",
-      "prix": 2.15
-    },
-    {
-      "commune": "Les Abymes",
-      "enseigne": "Carrefour",
-      "categorie": "Épicerie",
-      "produit": "Riz long blanc 1kg",
-      "ean": "3250391234567",
-      "unite": "1kg",
-      "prix": 1.99
-    },
-    {
-      "commune": "Pointe-à-Pitre",
-      "enseigne": "E.Leclerc",
-      "categorie": "Produits laitiers",
-      "produit": "Yaourt nature 4x125g",
-      "ean": "3560070789012",
-      "unite": "4x125g",
-      "prix": 1.92
-    }
+    {"commune":"Les Abymes","enseigne":"Carrefour","categorie":"Produits laitiers","produit":"Lait demi-écrémé UHT 1L","ean":"3560070123456","unite":"1L","prix":1.44},
+    {"commune":"Les Abymes","enseigne":"E.Leclerc","categorie":"Produits laitiers","produit":"Lait demi-écrémé UHT 1L","ean":"3560070123456","unite":"1L","prix":1.37},
+    {"commune":"Pointe-à-Pitre","enseigne":"Hyper U","categorie":"Produits laitiers","produit":"Lait demi-écrémé UHT 1L","ean":"3560070123456","unite":"1L","prix":1.42},
+    {"commune":"Basse-Terre","enseigne":"Cora","categorie":"Produits laitiers","produit":"Lait demi-écrémé UHT 1L","ean":"3560070123456","unite":"1L","prix":1.40},
+    {"commune":"Sainte-Anne","enseigne":"Jumbo Score","categorie":"Produits laitiers","produit":"Lait demi-écrémé UHT 1L","ean":"3560070123456","unite":"1L","prix":1.47},
+    {"commune":"Le Gosier","enseigne":"Leader Price","categorie":"Produits laitiers","produit":"Lait demi-écrémé UHT 1L","ean":"3560070123456","unite":"1L","prix":1.34},
+    {"commune":"Baie-Mahault","enseigne":"Lidl","categorie":"Produits laitiers","produit":"Lait demi-écrémé UHT 1L","ean":"3560070123456","unite":"1L","prix":1.30},
+    {"commune":"Pointe-à-Pitre","enseigne":"Indépendants","categorie":"Épicerie","produit":"Riz long blanc 1kg","ean":"3250391234567","unite":"1kg","prix":2.15},
+    {"commune":"Les Abymes","enseigne":"Carrefour","categorie":"Épicerie","produit":"Riz long blanc 1kg","ean":"3250391234567","unite":"1kg","prix":1.98},
+    {"commune":"Basse-Terre","enseigne":"E.Leclerc","categorie":"Épicerie","produit":"Riz long blanc 1kg","ean":"3250391234567","unite":"1kg","prix":1.92},
+    {"commune":"Sainte-Anne","enseigne":"Hyper U","categorie":"Épicerie","produit":"Riz long blanc 1kg","ean":"3250391234567","unite":"1kg","prix":2.05},
+    {"commune":"Pointe-à-Pitre","enseigne":"E.Leclerc","categorie":"Produits laitiers","produit":"Yaourt nature 4x125g","ean":"3560070789012","unite":"4x125g","prix":1.92},
+    {"commune":"Les Abymes","enseigne":"Carrefour","categorie":"Produits laitiers","produit":"Yaourt nature 4x125g","ean":"3560070789012","unite":"4x125g","prix":1.98},
+    {"commune":"Basse-Terre","enseigne":"Cora","categorie":"Épicerie","produit":"Sucre blanc 1kg","ean":"3560071112345","unite":"1kg","prix":1.62},
+    {"commune":"Les Abymes","enseigne":"Carrefour","categorie":"Épicerie","produit":"Sucre blanc 1kg","ean":"3560071112345","unite":"1kg","prix":1.60},
+    {"commune":"Les Abymes","enseigne":"E.Leclerc","categorie":"Épicerie","produit":"Huile de tournesol 1L","ean":"3250399876543","unite":"1L","prix":2.88},
+    {"commune":"Pointe-à-Pitre","enseigne":"Carrefour","categorie":"Épicerie","produit":"Huile de tournesol 1L","ean":"3250399876543","unite":"1L","prix":2.99},
+    {"commune":"Basse-Terre","enseigne":"Carrefour","categorie":"Hygiène","produit":"Gel douche 250ml","ean":"3600523540023","unite":"250ml","prix":2.55},
+    {"commune":"Les Abymes","enseigne":"E.Leclerc","categorie":"Hygiène","produit":"Gel douche 250ml","ean":"3600523540023","unite":"250ml","prix":2.42},
+    {"commune":"Baie-Mahault","enseigne":"Lidl","categorie":"Hygiène","produit":"Gel douche 250ml","ean":"3600523540023","unite":"250ml","prix":2.22},
+    {"commune":"Basse-Terre","enseigne":"E.Leclerc","categorie":"Entretien / Nettoyage","produit":"Liquide vaisselle 500ml","ean":"3017620429002","unite":"500ml","prix":1.88},
+    {"commune":"Les Abymes","enseigne":"Leader Price","categorie":"Entretien / Nettoyage","produit":"Liquide vaisselle 500ml","ean":"3017620429002","unite":"500ml","prix":1.78},
+    {"commune":"Les Abymes","enseigne":"E.Leclerc","categorie":"Lessive","produit":"Lessive liquide 1.5L","ean":"8001841556307","unite":"1.5L","prix":4.20},
+    {"commune":"Les Abymes","enseigne":"Carrefour","categorie":"Lessive","produit":"Lessive liquide 1.5L","ean":"8001841556307","unite":"1.5L","prix":4.30},
+    {"commune":"Pointe-à-Pitre","enseigne":"Carrefour","categorie":"Cosmétiques","produit":"Crème hydratante visage 50ml","ean":"3600523100023","unite":"50ml","prix":5.90},
+    {"commune":"Les Abymes","enseigne":"E.Leclerc","categorie":"Cosmétiques","produit":"Crème hydratante visage 50ml","ean":"3600523100023","unite":"50ml","prix":5.68},
+    {"commune":"Les Abymes","enseigne":"Carrefour","categorie":"Pharmacie","produit":"Paracétamol 500mg x16","ean":"3400936251015","unite":"16cp","prix":2.55},
+    {"commune":"Les Abymes","enseigne":"Carrefour","categorie":"Boissons","produit":"Eau minérale 1.5L","ean":"5410013116118","unite":"1.5L","prix":0.88},
+    {"commune":"Basse-Terre","enseigne":"Leader Price","categorie":"Boissons","produit":"Eau minérale 1.5L","ean":"5410013116118","unite":"1.5L","prix":0.74},
+    {"commune":"Les Abymes","enseigne":"Carrefour","categorie":"Épicerie","produit":"Pâtes spaghetti 500g","ean":"3017760641452","unite":"500g","prix":1.58},
+    {"commune":"Pointe-à-Pitre","enseigne":"Leader Price","categorie":"Épicerie","produit":"Pâtes spaghetti 500g","ean":"3017760641452","unite":"500g","prix":1.50},
+    {"commune":"Les Abymes","enseigne":"Carrefour","categorie":"Fruits et légumes","produit":"Tomates rondes 1kg","ean":"","unite":"1kg","prix":3.30},
+    {"commune":"Les Abymes","enseigne":"Carrefour","categorie":"Boucherie / Charcuterie","produit":"Poulet entier 1kg","ean":"","unite":"1kg","prix":7.60},
+    {"commune":"Pointe-à-Pitre","enseigne":"E.Leclerc","categorie":"Boucherie / Charcuterie","produit":"Poulet entier 1kg","ean":"","unite":"1kg","prix":7.30}
   ]
 }

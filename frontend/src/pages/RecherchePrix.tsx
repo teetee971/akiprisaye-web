@@ -4,6 +4,8 @@ import { Camera, Search, Barcode, Receipt } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import ReceiptScanner from '../components/ReceiptScanner';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 import uxMonitor from '../utils/uxMonitor';
 import type { ReceiptAnalysisResult } from '../services/receiptScanService';
 import { safeLocalStorage } from '../utils/safeLocalStorage';
@@ -122,14 +124,19 @@ export default function RecherchePrix() {
             />
           ) : (
             <>
-              {/* Header - Sticky */}
-              <div className="sticky top-16 z-10 bg-slate-950/95 backdrop-blur-sm pb-6 mb-8 border-b border-slate-800">
-                <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 text-center">
-                  Que souhaitez-vous comparer ?
-                </h1>
-                <p className="text-base text-gray-400 text-center">
-                  Choisissez votre mode de recherche
-                </p>
+              {/* Hero banner */}
+              <div className="mb-6 animate-fade-in">
+                <HeroImage
+                  src={PAGE_HERO_IMAGES.search}
+                  alt="Marché local — recherche de prix"
+                  gradient="from-blue-950 to-slate-900"
+                  height="h-36 sm:h-48"
+                >
+                  <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow">
+                    Que souhaitez-vous comparer ?
+                  </h1>
+                  <p className="text-slate-300 text-sm drop-shadow">Recherche par nom, code-barres, photo ou ticket de caisse</p>
+                </HeroImage>
               </div>
 
           {/* Main Search Input - Text Search */}

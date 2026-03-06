@@ -8,9 +8,9 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import { useFavorites } from "@/hooks/useFavorites";
 import { safeLocalStorage } from "@/utils/safeLocalStorage";
+import { ALERTS_STORAGE_KEY } from "@/services/priceAlertsStorage";
 import { Heart, Bell, Globe, CreditCard, User as UserIcon, Trash2 } from "lucide-react";
 
-const ALERTS_STORAGE_KEY = 'akiprisaye:price_alerts:v1';
 const TERRITORY_STORAGE_KEY = 'akiprisaye:main_territory:v1';
 
 const TERRITORY_OPTIONS = [
@@ -106,11 +106,24 @@ export default function MonCompte() {
           <h1 className="text-3xl font-bold text-white p-6 pb-0">👤 Mon Compte</h1>
 
           {/* Tabs */}
-          <div className="flex overflow-x-auto border-b border-slate-700 px-6 pt-4 gap-1">
+          <div role="tablist" aria-label="Sections du compte" className="flex overflow-x-auto border-b border-slate-700 px-6 pt-4 gap-1">
             {tabs.map(tab => (
               <button
                 key={tab.id}
+                role="tab"
+                id={`tab-${tab.id}`}
+                aria-selected={activeTab === tab.id}
+                aria-controls={`tabpanel-${tab.id}`}
+                tabIndex={activeTab === tab.id ? 0 : -1}
                 onClick={() => setActiveTab(tab.id)}
+                onKeyDown={(e) => {
+                  const ids = tabs.map(t => t.id);
+                  const idx = ids.indexOf(tab.id);
+                  if (e.key === 'ArrowRight') setActiveTab(ids[(idx + 1) % ids.length]);
+                  if (e.key === 'ArrowLeft') setActiveTab(ids[(idx - 1 + ids.length) % ids.length]);
+                  if (e.key === 'Home') setActiveTab(ids[0]);
+                  if (e.key === 'End') setActiveTab(ids[ids.length - 1]);
+                }}
                 className={`flex items-center gap-1.5 px-3 py-2 rounded-t-lg text-sm font-medium transition-colors whitespace-nowrap ${
                   activeTab === tab.id
                     ? 'bg-slate-800 text-white border border-slate-700 border-b-slate-800 -mb-px'
@@ -131,7 +144,7 @@ export default function MonCompte() {
           <div className="p-6">
             {/* Profil */}
             {activeTab === 'profil' && (
-              <div>
+              <div role="tabpanel" id="tabpanel-profil" aria-labelledby="tab-profil">
                 <h2 className="text-xl font-semibold text-white mb-4">Informations du compte</h2>
                 <div className="space-y-3 text-gray-300 mb-6">
                   <div className="flex items-start gap-2">
@@ -175,7 +188,7 @@ export default function MonCompte() {
 
             {/* Favoris */}
             {activeTab === 'favoris' && (
-              <div>
+              <div role="tabpanel" id="tabpanel-favoris" aria-labelledby="tab-favoris">
                 <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
                   <Heart className="w-5 h-5 text-red-400" /> Mes produits favoris
                 </h2>
@@ -218,7 +231,7 @@ export default function MonCompte() {
 
             {/* Alertes */}
             {activeTab === 'alertes' && (
-              <div>
+              <div role="tabpanel" id="tabpanel-alertes" aria-labelledby="tab-alertes">
                 <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
                   <Bell className="w-5 h-5 text-blue-400" /> Mes alertes prix
                 </h2>
@@ -254,7 +267,7 @@ export default function MonCompte() {
 
             {/* Territoire */}
             {activeTab === 'territoire' && (
-              <div>
+              <div role="tabpanel" id="tabpanel-territoire" aria-labelledby="tab-territoire">
                 <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
                   <Globe className="w-5 h-5 text-green-400" /> Mon territoire principal
                 </h2>
@@ -285,7 +298,7 @@ export default function MonCompte() {
 
             {/* Plan */}
             {activeTab === 'plan' && (
-              <div>
+              <div role="tabpanel" id="tabpanel-plan" aria-labelledby="tab-plan">
                 <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
                   <CreditCard className="w-5 h-5 text-yellow-400" /> Mon plan
                 </h2>

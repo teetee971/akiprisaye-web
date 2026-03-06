@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -62,10 +64,17 @@ export default function Contact() {
         <meta property="og:title" content="Contact – A KI PRI SA YÉ" />
         <meta property="og:description" content="Envoyez-nous un message pour toute question sur l'application citoyenne de transparence des prix." />
       </Helmet>
-      <h1 style={{ color: '#ffffff', marginBottom: '1rem' }}>Contact</h1>
-      <p style={{ color: '#b8b8b8', marginBottom: '2rem' }}>
-        Vous avez une question ou une suggestion ? N'hésitez pas à nous contacter.
-      </p>
+      <div className="mb-6 animate-fade-in">
+        <HeroImage
+          src={PAGE_HERO_IMAGES.contact}
+          alt="Contact — nous contacter"
+          gradient="from-slate-900 to-blue-950"
+          height="h-32 sm:h-44"
+        >
+          <h1 className="text-2xl font-bold text-white drop-shadow">✉️ Contact</h1>
+          <p className="text-slate-200 text-sm drop-shadow">Question, suggestion ou signalement — nous répondons sous 48h</p>
+        </HeroImage>
+      </div>
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <div>
           <label htmlFor="name" style={{ display: 'block', color: '#ffffff', marginBottom: '0.5rem' }}>

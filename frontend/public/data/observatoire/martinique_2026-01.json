@@ -4,77 +4,35 @@
   "source": "releve_citoyen",
   "qualite": "verifie",
   "donnees": [
-    {
-      "commune": "Fort-de-France",
-      "enseigne": "Carrefour",
-      "categorie": "Produits laitiers",
-      "produit": "Lait demi-écrémé UHT 1L",
-      "ean": "3560070123456",
-      "unite": "1L",
-      "prix": 1.45
-    },
-    {
-      "commune": "Fort-de-France",
-      "enseigne": "E.Leclerc",
-      "categorie": "Produits laitiers",
-      "produit": "Lait demi-écrémé UHT 1L",
-      "ean": "3560070123456",
-      "unite": "1L",
-      "prix": 1.38
-    },
-    {
-      "commune": "Le Lamentin",
-      "enseigne": "Hyper U",
-      "categorie": "Produits laitiers",
-      "produit": "Lait demi-écrémé UHT 1L",
-      "ean": "3560070123456",
-      "unite": "1L",
-      "prix": 1.42
-    },
-    {
-      "commune": "Fort-de-France",
-      "enseigne": "Carrefour",
-      "categorie": "Épicerie",
-      "produit": "Riz long blanc 1kg",
-      "ean": "3250391234567",
-      "unite": "1kg",
-      "prix": 2.08
-    },
-    {
-      "commune": "Le Lamentin",
-      "enseigne": "E.Leclerc",
-      "categorie": "Épicerie",
-      "produit": "Riz long blanc 1kg",
-      "ean": "3250391234567",
-      "unite": "1kg",
-      "prix": 1.98
-    },
-    {
-      "commune": "Fort-de-France",
-      "enseigne": "Carrefour",
-      "categorie": "Produits laitiers",
-      "produit": "Yaourt nature 4x125g",
-      "ean": "3560070789012",
-      "unite": "4x125g",
-      "prix": 1.92
-    },
-    {
-      "commune": "Le Lamentin",
-      "enseigne": "Hyper U",
-      "categorie": "Épicerie",
-      "produit": "Sucre blanc 1kg",
-      "ean": "3560071112345",
-      "unite": "1kg",
-      "prix": 1.68
-    },
-    {
-      "commune": "Fort-de-France",
-      "enseigne": "E.Leclerc",
-      "categorie": "Épicerie",
-      "produit": "Huile de tournesol 1L",
-      "ean": "3250399876543",
-      "unite": "1L",
-      "prix": 2.98
-    }
+    {"commune":"Fort-de-France","enseigne":"Carrefour","categorie":"Produits laitiers","produit":"Lait demi-écrémé UHT 1L","ean":"3560070123456","unite":"1L","prix":1.45},
+    {"commune":"Fort-de-France","enseigne":"E.Leclerc","categorie":"Produits laitiers","produit":"Lait demi-écrémé UHT 1L","ean":"3560070123456","unite":"1L","prix":1.38},
+    {"commune":"Le Lamentin","enseigne":"Hyper U","categorie":"Produits laitiers","produit":"Lait demi-écrémé UHT 1L","ean":"3560070123456","unite":"1L","prix":1.42},
+    {"commune":"Le Robert","enseigne":"Géant Casino","categorie":"Produits laitiers","produit":"Lait demi-écrémé UHT 1L","ean":"3560070123456","unite":"1L","prix":1.44},
+    {"commune":"Sainte-Marie","enseigne":"Jumbo Score","categorie":"Produits laitiers","produit":"Lait demi-écrémé UHT 1L","ean":"3560070123456","unite":"1L","prix":1.48},
+    {"commune":"Le François","enseigne":"Leader Price","categorie":"Produits laitiers","produit":"Lait demi-écrémé UHT 1L","ean":"3560070123456","unite":"1L","prix":1.35},
+    {"commune":"Fort-de-France","enseigne":"Simply Market","categorie":"Produits laitiers","produit":"Lait demi-écrémé UHT 1L","ean":"3560070123456","unite":"1L","prix":1.40},
+    {"commune":"Fort-de-France","enseigne":"Carrefour","categorie":"Épicerie","produit":"Riz long blanc 1kg","ean":"3250391234567","unite":"1kg","prix":2.08},
+    {"commune":"Le Lamentin","enseigne":"E.Leclerc","categorie":"Épicerie","produit":"Riz long blanc 1kg","ean":"3250391234567","unite":"1kg","prix":1.98},
+    {"commune":"Fort-de-France","enseigne":"Hyper U","categorie":"Épicerie","produit":"Riz long blanc 1kg","ean":"3250391234567","unite":"1kg","prix":2.05},
+    {"commune":"Le Robert","enseigne":"Géant Casino","categorie":"Épicerie","produit":"Riz long blanc 1kg","ean":"3250391234567","unite":"1kg","prix":2.12},
+    {"commune":"Sainte-Marie","enseigne":"Leader Price","categorie":"Épicerie","produit":"Riz long blanc 1kg","ean":"3250391234567","unite":"1kg","prix":1.92},
+    {"commune":"Fort-de-France","enseigne":"Carrefour","categorie":"Produits laitiers","produit":"Yaourt nature 4x125g","ean":"3560070789012","unite":"4x125g","prix":1.92},
+    {"commune":"Le Lamentin","enseigne":"Hyper U","categorie":"Épicerie","produit":"Sucre blanc 1kg","ean":"3560071112345","unite":"1kg","prix":1.68},
+    {"commune":"Fort-de-France","enseigne":"E.Leclerc","categorie":"Épicerie","produit":"Huile de tournesol 1L","ean":"3250399876543","unite":"1L","prix":2.98},
+    {"commune":"Fort-de-France","enseigne":"Carrefour","categorie":"Hygiène","produit":"Gel douche 250ml","ean":"3600523540023","unite":"250ml","prix":2.60},
+    {"commune":"Le Lamentin","enseigne":"E.Leclerc","categorie":"Hygiène","produit":"Gel douche 250ml","ean":"3600523540023","unite":"250ml","prix":2.48},
+    {"commune":"Fort-de-France","enseigne":"Géant Casino","categorie":"Hygiène","produit":"Gel douche 250ml","ean":"3600523540023","unite":"250ml","prix":2.65},
+    {"commune":"Fort-de-France","enseigne":"Carrefour","categorie":"Entretien / Nettoyage","produit":"Liquide vaisselle 500ml","ean":"3017620429002","unite":"500ml","prix":1.92},
+    {"commune":"Le Lamentin","enseigne":"Leader Price","categorie":"Entretien / Nettoyage","produit":"Liquide vaisselle 500ml","ean":"3017620429002","unite":"500ml","prix":1.80},
+    {"commune":"Fort-de-France","enseigne":"E.Leclerc","categorie":"Lessive","produit":"Lessive liquide 1.5L","ean":"8001841556307","unite":"1.5L","prix":4.30},
+    {"commune":"Le Lamentin","enseigne":"Hyper U","categorie":"Lessive","produit":"Lessive liquide 1.5L","ean":"8001841556307","unite":"1.5L","prix":4.45},
+    {"commune":"Fort-de-France","enseigne":"Carrefour","categorie":"Cosmétiques","produit":"Crème hydratante visage 50ml","ean":"3600523100023","unite":"50ml","prix":6.10},
+    {"commune":"Le Lamentin","enseigne":"E.Leclerc","categorie":"Cosmétiques","produit":"Crème hydratante visage 50ml","ean":"3600523100023","unite":"50ml","prix":5.85},
+    {"commune":"Fort-de-France","enseigne":"Carrefour","categorie":"Pharmacie","produit":"Paracétamol 500mg x16","ean":"3400936251015","unite":"16cp","prix":2.60},
+    {"commune":"Fort-de-France","enseigne":"Carrefour","categorie":"Boissons","produit":"Eau minérale 1.5L","ean":"5410013116118","unite":"1.5L","prix":0.90},
+    {"commune":"Le Lamentin","enseigne":"Leader Price","categorie":"Boissons","produit":"Eau minérale 1.5L","ean":"5410013116118","unite":"1.5L","prix":0.80},
+    {"commune":"Fort-de-France","enseigne":"Carrefour","categorie":"Épicerie","produit":"Pâtes spaghetti 500g","ean":"3017760641452","unite":"500g","prix":1.65},
+    {"commune":"Fort-de-France","enseigne":"Carrefour","categorie":"Fruits et légumes","produit":"Tomates rondes 1kg","ean":"","unite":"1kg","prix":3.50},
+    {"commune":"Fort-de-France","enseigne":"Carrefour","categorie":"Boucherie / Charcuterie","produit":"Poulet entier 1kg","ean":"","unite":"1kg","prix":7.90}
   ]
 }

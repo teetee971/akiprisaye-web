@@ -1,12 +1,11 @@
-/* eslint-disable no-undef */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-// src/pages/SignalerAbus.tsx
 import React, { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { db, auth } from "@/lib/firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { AlertTriangle, MapPin, Package, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { HeroImage } from "@/components/ui/HeroImage";
+import { PAGE_HERO_IMAGES } from "@/config/imageAssets";
 
 export default function SignalerAbus() {
   const { user, isGuest } = useAuth();
@@ -136,14 +135,21 @@ export default function SignalerAbus() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 py-12 px-4">
       <div className="max-w-3xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-4">
-            🚨 Signaler un abus ou un prix anormal
-          </h1>
-          <p className="text-xl text-gray-300">
-            Aidez à protéger les consommateurs en signalant les pratiques douteuses
-          </p>
+        {/* Hero banner */}
+        <div className="mb-6 animate-fade-in">
+          <HeroImage
+            src={PAGE_HERO_IMAGES.contribuer}
+            alt="Signaler un abus — protection des consommateurs"
+            gradient="from-red-950 to-slate-900"
+            height="h-36 sm:h-48"
+          >
+            <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow">
+              🚨 Signaler un abus ou un prix anormal
+            </h1>
+            <p className="text-slate-200 text-sm drop-shadow">
+              Aidez à protéger les consommateurs en signalant les pratiques douteuses
+            </p>
+          </HeroImage>
         </div>
 
         {/* Warning Banner */}
