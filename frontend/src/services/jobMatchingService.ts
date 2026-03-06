@@ -17,7 +17,7 @@ import type {
  */
 async function loadTrainingData(): Promise<TrainingDatabase> {
   try {
-    const response = await fetch('/data/training-programs.json');
+    const response = await fetch(`${import.meta.env.BASE_URL}data/training-programs.json`);
     if (!response.ok) {
       throw new Error('Failed to load training data');
     }

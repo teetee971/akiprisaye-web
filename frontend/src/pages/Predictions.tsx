@@ -23,7 +23,7 @@ export default function Predictions() {
     async function load() {
       setLoading(true)
       try {
-        const response = await fetch('/data/catalogue.json')
+        const response = await fetch(`${import.meta.env.BASE_URL}data/catalogue.json`)
         if (!response.ok) throw new Error('Erreur chargement catalogue')
         
         const data = await response.json()

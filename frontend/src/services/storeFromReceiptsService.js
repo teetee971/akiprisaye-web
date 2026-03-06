@@ -15,7 +15,7 @@
 export async function loadReceiptObservations() {
   try {
     // Import the observations index
-    const response = await fetch('/data/observations/index.json');
+    const response = await fetch(`${import.meta.env.BASE_URL}data/observations/index.json`);
     if (!response.ok) {
       console.warn(`Could not load observations index (HTTP ${response.status})`);
       return [];

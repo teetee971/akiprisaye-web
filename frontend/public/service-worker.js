@@ -1,6 +1,8 @@
-const CACHE_NAME = 'akiprisaye-smart-cache-v7';
+const CACHE_NAME = 'akiprisaye-smart-cache-v8';
 const PRICE_DATA_CACHE = 'akiprisaye-price-data-v1';
 const SCOPE_PATHNAME = new URL(self.registration.scope).pathname;
+// Absolute base URL of the SW scope (e.g. "https://teetee971.github.io/akiprisaye-web/")
+const SCOPE_BASE = new URL('./', self.registration.scope).href;
 
 // Offline fallback page HTML (embedded for reliability)
 const OFFLINE_HTML = `<!DOCTYPE html>
@@ -20,15 +22,14 @@ const OFFLINE_HTML = `<!DOCTYPE html>
   <div>
     <h1>📵 Hors ligne</h1>
     <p>Vous êtes actuellement sans connexion Internet. Les données de prix mises en cache restent disponibles.</p>
-    <p><a href="/">Réessayer</a></p>
+    <p><a href="${SCOPE_PATHNAME}">Réessayer</a></p>
   </div>
 </body>
 </html>`;
 
 self.addEventListener('install', (event) => {
-  const base = new URL('./', self.registration.scope).href;
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll([`${base}manifest.webmanifest`])),
+    caches.open(CACHE_NAME).then((cache) => cache.addAll([`${SCOPE_BASE}manifest.webmanifest`])),
   );
   self.skipWaiting();
 });
@@ -163,10 +164,10 @@ self.addEventListener('push', (event) => {
   const title = payload.title || 'A KI PRI SA YÉ';
   const options = {
     body: payload.body || 'Nouvelle notification',
-    icon: '/icon-192.png',
-    badge: '/icon-192.png',
+    icon: `${SCOPE_BASE}icon-192.png`,
+    badge: `${SCOPE_BASE}icon-192.png`,
     tag: payload.tag || 'akiprisaye-notification',
-    data: { url: payload.url || '/' },
+    data: { url: payload.url || SCOPE_PATHNAME },
     requireInteraction: false,
   };
 
@@ -175,7 +176,7 @@ self.addEventListener('push', (event) => {
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-  const targetUrl = (event.notification.data && event.notification.data.url) || '/';
+  const targetUrl = (event.notification.data && event.notification.data.url) || SCOPE_PATHNAME;
 
   event.waitUntil(
     self.clients

@@ -73,7 +73,7 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
       
       // Fallback to bundled snapshot if local storage is empty or broken
       if (!loaded) {
-        const res = await fetch('/data/observatory_snapshot.json', { cache: 'no-store' });
+        const res = await fetch(`${import.meta.env.BASE_URL}data/observatory_snapshot.json`, { cache: 'no-store' });
         if (!res.ok) {
           throw new Error(`Impossible de charger les données (${res.status})`);
         }

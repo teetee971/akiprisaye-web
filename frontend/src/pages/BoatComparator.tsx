@@ -41,7 +41,7 @@ const BoatComparator: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('/data/boat-prices.json');
+      const response = await fetch(`${import.meta.env.BASE_URL}data/boat-prices.json`);
       if (!response.ok) {
         throw new Error('Impossible de charger les données des bateaux');
       }
