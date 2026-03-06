@@ -197,7 +197,7 @@ export function MapLeaflet({ territory = 'GP', stores = [], onStoreClick = null 
           ${store.phone ? `<p class="ak-map-popup-text">📞 ${store.phone}</p>` : ''}
           ${store.productCount ? `<p class="ak-map-popup-text">🛒 ${store.productCount} produits</p>` : ''}
           ${store.avgPrice ? `<p class="ak-map-popup-text">💰 Prix moyen: ${store.avgPrice.toFixed(2)}€</p>` : ''}
-          ${onStoreClick ? `<button onclick="window.handleStoreClick('${store.id}')" class="ak-map-popup-btn">Voir les prix</button>` : ''}
+          ${onStoreClick ? `<button data-store-id="${store.id}" class="ak-map-popup-btn">Voir les prix</button>` : ''}
         </div>
       `;
 
@@ -218,27 +218,26 @@ export function MapLeaflet({ territory = 'GP', stores = [], onStoreClick = null 
       markersRef.current.push(marker);
     });
 
+    // Wire up popup button clicks via popupopen (CSP-compatible; no inline onclick)
+    map.off('popupopen');
+    if (onStoreClick) {
+      map.on('popupopen', (e) => {
+        const btn = e.popup.getElement()?.querySelector('[data-store-id]');
+        if (btn) {
+          const storeId = btn.getAttribute('data-store-id');
+          const store = stores.find(s => s.id === storeId);
+          if (store) {
+            btn.addEventListener('click', () => onStoreClick(store), { once: true });
+          }
+        }
+      });
+    }
+
     // Show warning if markers were limited
     if (config.isMobile && stores.length > config.maxVisibleMarkers) {
       console.info(`Showing ${config.maxVisibleMarkers} of ${stores.length} markers for performance`);
     }
   }
-
-  // Expose store click handler globally for popup buttons
-  useEffect(() => {
-    if (onStoreClick) {
-      window.handleStoreClick = (storeId) => {
-        const store = stores.find(s => s.id === storeId);
-        if (store) {
-          onStoreClick(store);
-        }
-      };
-    }
-
-    return () => {
-      delete window.handleStoreClick;
-    };
-  }, [stores, onStoreClick]);
 
   // Cleanup on unmount
   useEffect(() => {

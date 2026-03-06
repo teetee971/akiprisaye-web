@@ -24,6 +24,13 @@ const sourceIcons: Record<string, string> = {
   social: '👥'
 };
 
+function getShrinkClass(duration: number): string {
+  if (duration <= 2000) return 'animate-shrink-2s';
+  if (duration <= 3000) return 'animate-shrink-3s';
+  if (duration <= 4000) return 'animate-shrink-4s';
+  return 'animate-shrink-5s';
+}
+
 export function XPGainToast({ event, onDismiss, duration = 4000 }: XPGainToastProps) {
   const [isVisible, setIsVisible] = useState(true);
   const [isLeaving, setIsLeaving] = useState(false);

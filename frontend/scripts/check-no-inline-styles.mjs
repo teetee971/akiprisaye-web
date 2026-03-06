@@ -8,8 +8,9 @@ const allowlist = new Set([
 ]);
 
 const filePatterns = [
+  // HTML <style> tags (inline or in template literals)
   /<style\b/i,
-  /\bstyle\s*=\s*\{/i,
+  // HTML inline style attributes: style="..." or style='...'
   /\bstyle\s*=\s*["']/i,
 ];
 
