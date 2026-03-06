@@ -6,7 +6,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 
-interface GeolocationPosition {
+interface UserPosition {
   lat: number;
   lon: number;
   accuracy?: number;
@@ -26,7 +26,7 @@ interface UseGeolocationOptions {
 }
 
 interface UseGeolocationReturn {
-  position: GeolocationPosition | null;
+  position: UserPosition | null;
   error: GeolocationError | null;
   loading: boolean;
   permission: 'granted' | 'denied' | 'prompt' | 'unknown';
@@ -50,7 +50,7 @@ export function useGeolocation(
     continuous = false,
   } = options;
 
-  const [position, setPosition] = useState<GeolocationPosition | null>(null);
+  const [position, setPosition] = useState<UserPosition | null>(null);
   const [error, setError] = useState<GeolocationError | null>(null);
   const [loading, setLoading] = useState(false);
   const [permission, setPermission] = useState<
@@ -90,8 +90,8 @@ export function useGeolocation(
   }, [isSupported]);
 
   // Handle position success
-  const handleSuccess = useCallback((pos: GeolocationPosition) => {
-    const newPosition: GeolocationPosition = {
+  const handleSuccess = useCallback((pos: globalThis.GeolocationPosition) => {
+    const newPosition: UserPosition = {
       lat: pos.coords.latitude,
       lon: pos.coords.longitude,
       accuracy: pos.coords.accuracy,

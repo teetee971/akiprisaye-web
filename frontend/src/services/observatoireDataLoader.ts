@@ -61,7 +61,7 @@ export async function loadObservatoireData(
     
     // Load January snapshot
     try {
-      const response1 = await fetch(`/data/observatoire/${territoryKey}_2026-01.json`);
+      const response1 = await fetch(`${import.meta.env.BASE_URL}data/observatoire/${territoryKey}_2026-01.json`);
       if (response1.ok) {
         const data1 = await response1.json();
         snapshots.push(data1);
@@ -72,7 +72,7 @@ export async function loadObservatoireData(
     
     // Load February snapshot
     try {
-      const response2 = await fetch(`/data/observatoire/${territoryKey}_2026-02.json`);
+      const response2 = await fetch(`${import.meta.env.BASE_URL}data/observatoire/${territoryKey}_2026-02.json`);
       if (response2.ok) {
         const data2 = await response2.json();
         snapshots.push(data2);

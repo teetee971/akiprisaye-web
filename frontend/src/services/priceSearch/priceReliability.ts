@@ -37,7 +37,7 @@ const computeFreshnessScore = (observations: NormalizedPriceObservation[]): numb
   if (observations.length === 0) return 0;
 
   const newestTimestamp = observations.reduce<number>((latest, obs) => {
-    const timestamp = new Date(obs.observedAt).getTime();
+    const timestamp = new Date(obs.observedAt ?? '').getTime();
     return Number.isFinite(timestamp) ? Math.max(latest, timestamp) : latest;
   }, Number.NEGATIVE_INFINITY);
 

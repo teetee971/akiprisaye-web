@@ -1,20 +1,42 @@
-const CACHE_NAME = 'akiprisaye-smart-cache-v5';
+const CACHE_NAME = 'akiprisaye-smart-cache-v7';
+const PRICE_DATA_CACHE = 'akiprisaye-price-data-v1';
 
-const ASSETS_TO_CACHE = [
-  '/manifest.webmanifest',
-];
+// Offline fallback page HTML (embedded for reliability)
+const OFFLINE_HTML = `<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Hors ligne – A KI PRI SA YÉ</title>
+  <style>
+    body{font-family:system-ui,sans-serif;background:#0f172a;color:#e2e8f0;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;padding:1rem;text-align:center}
+    h1{font-size:1.5rem;margin-bottom:.75rem}
+    p{color:#94a3b8;font-size:.9rem;max-width:320px}
+    a{color:#34d399;text-decoration:underline}
+  </style>
+</head>
+<body>
+  <div>
+    <h1>📵 Hors ligne</h1>
+    <p>Vous êtes actuellement sans connexion Internet. Les données de prix mises en cache restent disponibles.</p>
+    <p><a href="/">Réessayer</a></p>
+  </div>
+</body>
+</html>`;
 
 self.addEventListener('install', (event) => {
+  const base = new URL('./', self.registration.scope).href;
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS_TO_CACHE)),
+    caches.open(CACHE_NAME).then((cache) => cache.addAll([`${base}manifest.webmanifest`])),
   );
   self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
+  const validCaches = new Set([CACHE_NAME, PRICE_DATA_CACHE]);
   event.waitUntil(
     caches.keys().then((keys) =>
-      Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))),
+      Promise.all(keys.filter((key) => !validCaches.has(key)).map((key) => caches.delete(key))),
     ),
   );
   self.clients.claim();
@@ -28,8 +50,54 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  if (url.origin === self.location.origin && url.pathname.startsWith('/api/')) {
+  if (url.origin === self.location.origin && url.pathname.startsWith(new URL('api/', self.registration.scope).pathname)) {
     event.respondWith(fetch(request, { cache: 'no-store' }));
+    return;
+  }
+
+  // Price data JSON files: stale-while-revalidate (24h TTL)
+  if (
+    url.origin === self.location.origin &&
+    url.pathname.startsWith(new URL('data/', self.registration.scope).pathname) &&
+    url.pathname.endsWith('.json')
+  ) {
+    event.respondWith(
+      (async () => {
+        const priceCache = await caches.open(PRICE_DATA_CACHE);
+        const cached = await priceCache.match(request);
+        const fetchPromise = fetch(request).then((res) => {
+          if (res.ok) {
+            priceCache.put(request, res.clone());
+          }
+          return res;
+        });
+        // Return cached immediately if available, update in background
+        return cached || fetchPromise;
+      })(),
+    );
+    return;
+  }
+
+  // Locale files: network-first with cache fallback for offline support
+  if (url.origin === self.location.origin && url.pathname.startsWith(new URL('locales/', self.registration.scope).pathname)) {
+    event.respondWith(
+      (async () => {
+        try {
+          const networkResponse = await fetch(request, { cache: 'no-store' });
+          if (networkResponse && networkResponse.ok) {
+            const cache = await caches.open(CACHE_NAME);
+            cache.put(request, networkResponse.clone());
+          }
+          return networkResponse;
+        } catch (_e) {
+          const cachedResponse = await caches.match(request);
+          if (cachedResponse) {
+            return cachedResponse;
+          }
+          return new Response('', { status: 503, statusText: 'Service Unavailable' });
+        }
+      })(),
+    );
     return;
   }
 
@@ -41,16 +109,13 @@ self.addEventListener('fetch', (event) => {
   ) {
     event.respondWith(
       fetch(request, { cache: 'no-store' }).catch(() =>
-        new Response(
-          '<!DOCTYPE html><html><body><h1>Hors ligne</h1><p>Veuillez vous reconnecter à Internet.</p></body></html>',
-          {
-            status: 503,
-            headers: {
-              'Content-Type': 'text/html',
-              'Cache-Control': 'no-store',
-            },
+        new Response(OFFLINE_HTML, {
+          status: 503,
+          headers: {
+            'Content-Type': 'text/html',
+            'Cache-Control': 'no-store',
           },
-        ),
+        }),
       ),
     );
     return;
@@ -78,6 +143,47 @@ self.addEventListener('fetch', (event) => {
         })
         .catch(() => new Response('', { status: 503, statusText: 'Service Unavailable' }));
     }),
+  );
+});
+
+// ---------------------------------------------------------------------------
+// Push notifications (E – Alertes & notifications)
+// ---------------------------------------------------------------------------
+self.addEventListener('push', (event) => {
+  if (!event.data) return;
+
+  let payload;
+  try {
+    payload = event.data.json();
+  } catch {
+    payload = { title: 'A KI PRI SA YÉ', body: event.data.text() };
+  }
+
+  const title = payload.title || 'A KI PRI SA YÉ';
+  const options = {
+    body: payload.body || 'Nouvelle notification',
+    icon: '/icon-192.png',
+    badge: '/icon-192.png',
+    tag: payload.tag || 'akiprisaye-notification',
+    data: { url: payload.url || '/' },
+    requireInteraction: false,
+  };
+
+  event.waitUntil(self.registration.showNotification(title, options));
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const targetUrl = (event.notification.data && event.notification.data.url) || '/';
+
+  event.waitUntil(
+    self.clients
+      .matchAll({ type: 'window', includeUncontrolled: true })
+      .then((clients) => {
+        const existing = clients.find((c) => c.url === targetUrl && 'focus' in c);
+        if (existing) return existing.focus();
+        return self.clients.openWindow(targetUrl);
+      }),
   );
 });
 

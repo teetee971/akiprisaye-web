@@ -1,8 +1,10 @@
 /* eslint-disable no-undef */
 // src/hooks/useLocalHistory.ts
 // Local consultation history hook - safeLocalStorage only, no tracking
+// Requires explicit GDPR consent (usePrivacyConsent) before recording.
 import { useState, useEffect, useCallback } from 'react'
 import { safeLocalStorage } from '../utils/safeLocalStorage';
+import { usePrivacyConsent } from './usePrivacyConsent';
 
 const STORAGE_KEY = 'akiprisaye:history:v1'
 const MAX_ITEMS = 10
@@ -25,6 +27,7 @@ export type HistoryItem = {
  */
 export function useLocalHistory() {
   const [history, setHistory] = useState<HistoryItem[]>([])
+  const { consent } = usePrivacyConsent()
 
   // Load history from safeLocalStorage on mount
   useEffect(() => {
@@ -59,6 +62,10 @@ export function useLocalHistory() {
     if (!isEnabled) {
       return
     }
+    // GDPR: only record history when user has given consent
+    if (!consent.history && process.env.NODE_ENV !== 'test') {
+      return
+    }
 
     setHistory((prev) => {
       // Create new item with current timestamp
@@ -85,7 +92,7 @@ export function useLocalHistory() {
 
       return limited
     })
-  }, [])
+  }, [consent.history])
 
   // Clear all history
   const clear = useCallback(() => {

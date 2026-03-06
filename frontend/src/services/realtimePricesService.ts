@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { buildRealtimeFallback } from '../../shared/realtimeFallback';
+import { buildRealtimeFallback } from '../utils/realtimeFallbackProxy';
 
 export type RealtimePriceState = 'live' | 'cached' | 'offline';
 
@@ -24,7 +24,7 @@ export type RealtimePriceResult = {
 };
 
 const API_URL = '/api/prices/realtime';
-const FALLBACK_URL = '/data/prices.json';
+const FALLBACK_URL = `${import.meta.env.BASE_URL}data/prices.json`;
 const DEFAULT_TIMEOUT_MS = 6000;
 const MIN_TIMEOUT_MS = 2000;
 

@@ -157,6 +157,7 @@ export interface EnhancedPriceComparison {
     brand: string;
     format: ProductFormat;
     ean: string;
+    images?: ProductImages;
   };
   territory: string;
   pricesByStore: Array<{
@@ -191,6 +192,7 @@ export interface EnhancedPriceComparison {
       absolute: number;
       percentage: number;
     };
+    distance?: number;
   }>;
   statistics: {
     cheapestPrice: number;

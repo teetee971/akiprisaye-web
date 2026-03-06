@@ -1,0 +1,80 @@
+{
+  "territoire": "Martinique",
+  "date_snapshot": "2026-01-05",
+  "source": "releve_citoyen",
+  "qualite": "verifie",
+  "donnees": [
+    {
+      "commune": "Fort-de-France",
+      "enseigne": "Carrefour",
+      "categorie": "Produits laitiers",
+      "produit": "Lait demi-écrémé UHT 1L",
+      "ean": "3560070123456",
+      "unite": "1L",
+      "prix": 1.45
+    },
+    {
+      "commune": "Fort-de-France",
+      "enseigne": "E.Leclerc",
+      "categorie": "Produits laitiers",
+      "produit": "Lait demi-écrémé UHT 1L",
+      "ean": "3560070123456",
+      "unite": "1L",
+      "prix": 1.38
+    },
+    {
+      "commune": "Le Lamentin",
+      "enseigne": "Hyper U",
+      "categorie": "Produits laitiers",
+      "produit": "Lait demi-écrémé UHT 1L",
+      "ean": "3560070123456",
+      "unite": "1L",
+      "prix": 1.42
+    },
+    {
+      "commune": "Fort-de-France",
+      "enseigne": "Carrefour",
+      "categorie": "Épicerie",
+      "produit": "Riz long blanc 1kg",
+      "ean": "3250391234567",
+      "unite": "1kg",
+      "prix": 2.08
+    },
+    {
+      "commune": "Le Lamentin",
+      "enseigne": "E.Leclerc",
+      "categorie": "Épicerie",
+      "produit": "Riz long blanc 1kg",
+      "ean": "3250391234567",
+      "unite": "1kg",
+      "prix": 1.98
+    },
+    {
+      "commune": "Fort-de-France",
+      "enseigne": "Carrefour",
+      "categorie": "Produits laitiers",
+      "produit": "Yaourt nature 4x125g",
+      "ean": "3560070789012",
+      "unite": "4x125g",
+      "prix": 1.92
+    },
+    {
+      "commune": "Le Lamentin",
+      "enseigne": "Hyper U",
+      "categorie": "Épicerie",
+      "produit": "Sucre blanc 1kg",
+      "ean": "3560071112345",
+      "unite": "1kg",
+      "prix": 1.68
+    },
+    {
+      "commune": "Fort-de-France",
+      "enseigne": "E.Leclerc",
+      "categorie": "Épicerie",
+      "produit": "Huile de tournesol 1L",
+      "ean": "3250399876543",
+      "unite": "1L",
+      "prix": 2.98
+    }
+  ]
+}

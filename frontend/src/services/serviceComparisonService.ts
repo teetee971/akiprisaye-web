@@ -29,7 +29,7 @@ export async function loadServicesDatabase(): Promise<ServicesDatabase> {
     if (!response.ok) {
       throw new Error(`Failed to load services database: ${response.statusText}`);
     }
-    cachedDatabase = await response.json();
+    cachedDatabase = await response.json() as ServicesDatabase;
     return cachedDatabase;
   } catch (error) {
     console.error('Error loading services database:', error);

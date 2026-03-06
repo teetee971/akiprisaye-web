@@ -1,4 +1,4 @@
-export type PlanId = 'FREE' | 'PRO' | 'BUSINESS' | 'INSTITUTION';
+export type PlanId = 'FREE' | 'FREEMIUM' | 'CITIZEN_PREMIUM' | 'PRO' | 'BUSINESS' | 'INSTITUTION';
 
 export type FeatureId =
   | 'WATCHLIST_BASE'
@@ -52,6 +52,32 @@ export const PLAN_DEFINITIONS: Record<PlanId, PlanDefinition> = {
       EXPORT_CSV_BASIC: true,
     },
     quotas: { maxItems: 30, refreshPerDay: 10, maxTerritories: 1 },
+  },
+  FREEMIUM: {
+    id: 'FREEMIUM',
+    label: 'Freemium',
+    features: {
+      ...allFeatures,
+      WATCHLIST_BASE: true,
+      PRICE_REFRESH: true,
+      PRICE_HISTORY_BASIC: true,
+      EXPORT_CSV_BASIC: true,
+    },
+    quotas: { maxItems: 50, refreshPerDay: 20, maxTerritories: 1 },
+  },
+  CITIZEN_PREMIUM: {
+    id: 'CITIZEN_PREMIUM',
+    label: 'Citoyen Premium',
+    features: {
+      ...allFeatures,
+      WATCHLIST_BASE: true,
+      PRICE_REFRESH: true,
+      PRICE_HISTORY_BASIC: true,
+      PRICE_HISTORY_ADVANCED: true,
+      PRICE_ALERTS: true,
+      EXPORT_CSV_BASIC: true,
+    },
+    quotas: { maxItems: 100, refreshPerDay: 50, maxTerritories: 2 },
   },
   PRO: {
     id: 'PRO',

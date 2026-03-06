@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { GlassContainer } from '@/components/ui/GlassContainer';
 import { GlassCard } from '@/components/ui/glass-card';
 import { FAQ_DATA, getFAQByCategory, searchFAQ, type FAQItem } from '@/data/faq';
@@ -48,6 +49,12 @@ export default function Faq() {
 
   return (
     <div className="min-h-screen bg-slate-950 p-4 md:p-8">
+      <Helmet>
+        <title>FAQ – A KI PRI SA YÉ</title>
+        <meta name="description" content="Questions fréquentes sur A KI PRI SA YÉ : transparence des prix, données, abonnements, technique et conformité institutionnelle." />
+        <meta property="og:title" content="FAQ – A KI PRI SA YÉ" />
+        <meta property="og:description" content="Tout ce que vous devez savoir sur A KI PRI SA YÉ, l'application citoyenne de transparence des prix Outre-mer." />
+      </Helmet>
       <GlassContainer className="max-w-6xl mx-auto p-8">
         {/* Header */}
         <div className="mb-8 text-center">

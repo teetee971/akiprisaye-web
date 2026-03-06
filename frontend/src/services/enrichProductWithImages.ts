@@ -79,7 +79,7 @@ function saveImageCache(cache: Map<string, ImageCacheEntry>): void {
 async function validateImageUrl(url: string): Promise<boolean> {
   try {
     const response = await fetch(url, { method: 'HEAD' });
-    return response.ok && response.headers.get('content-type')?.startsWith('image/');
+    return response.ok && (response.headers.get('content-type')?.startsWith('image/') ?? false);
   } catch (error) {
     return false;
   }
@@ -139,7 +139,7 @@ export async function enrichProductWithImages(
 
   try {
     // Fetch from Open Food Facts
-    const productData = await fetchProductFromOpenFoodFacts(barcode);
+    const productData = await fetchProductFromOpenFoodFacts(barcode) as { imageUrl?: string; imageSmallUrl?: string } | null;
     
     if (!productData || !productData.imageUrl) {
       return null;
