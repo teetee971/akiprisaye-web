@@ -1,0 +1,602 @@
+{
+  "territoire": "Hexagone",
+  "date_snapshot": "2026-03-04",
+  "source": "donnee_ouverte",
+  "qualite": "verifie",
+  "donnees": [
+    {
+      "commune": "Paris",
+      "enseigne": "Carrefour",
+      "categorie": "Produits laitiers",
+      "produit": "Lait demi-écrémé UHT 1L",
+      "ean": "3560070123456",
+      "unite": "1L",
+      "prix": 1.17
+    },
+    {
+      "commune": "Paris",
+      "enseigne": "E.Leclerc",
+      "categorie": "Produits laitiers",
+      "produit": "Lait demi-écrémé UHT 1L",
+      "ean": "3560070123456",
+      "unite": "1L",
+      "prix": 1.11
+    },
+    {
+      "commune": "Lyon",
+      "enseigne": "Carrefour",
+      "categorie": "Produits laitiers",
+      "produit": "Lait demi-écrémé UHT 1L",
+      "ean": "3560070123456",
+      "unite": "1L",
+      "prix": 1.14
+    },
+    {
+      "commune": "Marseille",
+      "enseigne": "Auchan",
+      "categorie": "Produits laitiers",
+      "produit": "Lait demi-écrémé UHT 1L",
+      "ean": "3560070123456",
+      "unite": "1L",
+      "prix": 1.2
+    },
+    {
+      "commune": "Bordeaux",
+      "enseigne": "Intermarché",
+      "categorie": "Produits laitiers",
+      "produit": "Lait demi-écrémé UHT 1L",
+      "ean": "3560070123456",
+      "unite": "1L",
+      "prix": 1.13
+    },
+    {
+      "commune": "Toulouse",
+      "enseigne": "Lidl",
+      "categorie": "Produits laitiers",
+      "produit": "Lait demi-écrémé UHT 1L",
+      "ean": "3560070123456",
+      "unite": "1L",
+      "prix": 1.06
+    },
+    {
+      "commune": "Nantes",
+      "enseigne": "Aldi",
+      "categorie": "Produits laitiers",
+      "produit": "Lait demi-écrémé UHT 1L",
+      "ean": "3560070123456",
+      "unite": "1L",
+      "prix": 1.04
+    },
+    {
+      "commune": "Strasbourg",
+      "enseigne": "Casino",
+      "categorie": "Produits laitiers",
+      "produit": "Lait demi-écrémé UHT 1L",
+      "ean": "3560070123456",
+      "unite": "1L",
+      "prix": 1.21
+    },
+    {
+      "commune": "Paris",
+      "enseigne": "Monoprix",
+      "categorie": "Produits laitiers",
+      "produit": "Lait demi-écrémé UHT 1L",
+      "ean": "3560070123456",
+      "unite": "1L",
+      "prix": 1.28
+    },
+    {
+      "commune": "Lille",
+      "enseigne": "Franprix",
+      "categorie": "Produits laitiers",
+      "produit": "Lait demi-écrémé UHT 1L",
+      "ean": "3560070123456",
+      "unite": "1L",
+      "prix": 1.25
+    },
+    {
+      "commune": "Rennes",
+      "enseigne": "Super U",
+      "categorie": "Produits laitiers",
+      "produit": "Lait demi-écrémé UHT 1L",
+      "ean": "3560070123456",
+      "unite": "1L",
+      "prix": 1.13
+    },
+    {
+      "commune": "Nice",
+      "enseigne": "Carrefour Market",
+      "categorie": "Produits laitiers",
+      "produit": "Lait demi-écrémé UHT 1L",
+      "ean": "3560070123456",
+      "unite": "1L",
+      "prix": 1.19
+    },
+    {
+      "commune": "Lyon",
+      "enseigne": "Intermarché",
+      "categorie": "Épicerie",
+      "produit": "Riz long blanc 1kg",
+      "ean": "3250391234567",
+      "unite": "1kg",
+      "prix": 1.79
+    },
+    {
+      "commune": "Paris",
+      "enseigne": "Monoprix",
+      "categorie": "Épicerie",
+      "produit": "Riz long blanc 1kg",
+      "ean": "3250391234567",
+      "unite": "1kg",
+      "prix": 1.9
+    },
+    {
+      "commune": "Marseille",
+      "enseigne": "Lidl",
+      "categorie": "Épicerie",
+      "produit": "Riz long blanc 1kg",
+      "ean": "3250391234567",
+      "unite": "1kg",
+      "prix": 1.58
+    },
+    {
+      "commune": "Bordeaux",
+      "enseigne": "E.Leclerc",
+      "categorie": "Épicerie",
+      "produit": "Riz long blanc 1kg",
+      "ean": "3250391234567",
+      "unite": "1kg",
+      "prix": 1.68
+    },
+    {
+      "commune": "Toulouse",
+      "enseigne": "Aldi",
+      "categorie": "Épicerie",
+      "produit": "Riz long blanc 1kg",
+      "ean": "3250391234567",
+      "unite": "1kg",
+      "prix": 1.51
+    },
+    {
+      "commune": "Nantes",
+      "enseigne": "Carrefour",
+      "categorie": "Épicerie",
+      "produit": "Riz long blanc 1kg",
+      "ean": "3250391234567",
+      "unite": "1kg",
+      "prix": 1.75
+    },
+    {
+      "commune": "Strasbourg",
+      "enseigne": "Auchan",
+      "categorie": "Épicerie",
+      "produit": "Riz long blanc 1kg",
+      "ean": "3250391234567",
+      "unite": "1kg",
+      "prix": 1.71
+    },
+    {
+      "commune": "Lille",
+      "enseigne": "Casino",
+      "categorie": "Épicerie",
+      "produit": "Riz long blanc 1kg",
+      "ean": "3250391234567",
+      "unite": "1kg",
+      "prix": 1.81
+    },
+    {
+      "commune": "Marseille",
+      "enseigne": "E.Leclerc",
+      "categorie": "Produits laitiers",
+      "produit": "Yaourt nature 4x125g",
+      "ean": "3560070789012",
+      "unite": "4x125g",
+      "prix": 1.49
+    },
+    {
+      "commune": "Paris",
+      "enseigne": "Carrefour",
+      "categorie": "Produits laitiers",
+      "produit": "Yaourt nature 4x125g",
+      "ean": "3560070789012",
+      "unite": "4x125g",
+      "prix": 1.59
+    },
+    {
+      "commune": "Lyon",
+      "enseigne": "Auchan",
+      "categorie": "Produits laitiers",
+      "produit": "Yaourt nature 4x125g",
+      "ean": "3560070789012",
+      "unite": "4x125g",
+      "prix": 1.53
+    },
+    {
+      "commune": "Bordeaux",
+      "enseigne": "Lidl",
+      "categorie": "Produits laitiers",
+      "produit": "Yaourt nature 4x125g",
+      "ean": "3560070789012",
+      "unite": "4x125g",
+      "prix": 1.39
+    },
+    {
+      "commune": "Paris",
+      "enseigne": "Monoprix",
+      "categorie": "Produits laitiers",
+      "produit": "Yaourt nature 4x125g",
+      "ean": "3560070789012",
+      "unite": "4x125g",
+      "prix": 1.73
+    },
+    {
+      "commune": "Lyon",
+      "enseigne": "Intermarché",
+      "categorie": "Épicerie",
+      "produit": "Sucre blanc 1kg",
+      "ean": "3560071112345",
+      "unite": "1kg",
+      "prix": 1.29
+    },
+    {
+      "commune": "Paris",
+      "enseigne": "E.Leclerc",
+      "categorie": "Épicerie",
+      "produit": "Sucre blanc 1kg",
+      "ean": "3560071112345",
+      "unite": "1kg",
+      "prix": 1.2
+    },
+    {
+      "commune": "Marseille",
+      "enseigne": "Lidl",
+      "categorie": "Épicerie",
+      "produit": "Sucre blanc 1kg",
+      "ean": "3560071112345",
+      "unite": "1kg",
+      "prix": 1.1
+    },
+    {
+      "commune": "Toulouse",
+      "enseigne": "Aldi",
+      "categorie": "Épicerie",
+      "produit": "Sucre blanc 1kg",
+      "ean": "3560071112345",
+      "unite": "1kg",
+      "prix": 1.07
+    },
+    {
+      "commune": "Nantes",
+      "enseigne": "Carrefour",
+      "categorie": "Épicerie",
+      "produit": "Sucre blanc 1kg",
+      "ean": "3560071112345",
+      "unite": "1kg",
+      "prix": 1.25
+    },
+    {
+      "commune": "Paris",
+      "enseigne": "Carrefour",
+      "categorie": "Épicerie",
+      "produit": "Huile de tournesol 1L",
+      "ean": "3250399876543",
+      "unite": "1L",
+      "prix": 2.02
+    },
+    {
+      "commune": "Lyon",
+      "enseigne": "E.Leclerc",
+      "categorie": "Épicerie",
+      "produit": "Huile de tournesol 1L",
+      "ean": "3250399876543",
+      "unite": "1L",
+      "prix": 1.92
+    },
+    {
+      "commune": "Marseille",
+      "enseigne": "Auchan",
+      "categorie": "Épicerie",
+      "produit": "Huile de tournesol 1L",
+      "ean": "3250399876543",
+      "unite": "1L",
+      "prix": 2.09
+    },
+    {
+      "commune": "Toulouse",
+      "enseigne": "Lidl",
+      "categorie": "Épicerie",
+      "produit": "Huile de tournesol 1L",
+      "ean": "3250399876543",
+      "unite": "1L",
+      "prix": 1.79
+    },
+    {
+      "commune": "Nantes",
+      "enseigne": "Aldi",
+      "categorie": "Épicerie",
+      "produit": "Huile de tournesol 1L",
+      "ean": "3250399876543",
+      "unite": "1L",
+      "prix": 1.75
+    },
+    {
+      "commune": "Paris",
+      "enseigne": "Carrefour",
+      "categorie": "Hygiène",
+      "produit": "Gel douche 250ml",
+      "ean": "3600523540023",
+      "unite": "250ml",
+      "prix": 2.06
+    },
+    {
+      "commune": "Lyon",
+      "enseigne": "E.Leclerc",
+      "categorie": "Hygiène",
+      "produit": "Gel douche 250ml",
+      "ean": "3600523540023",
+      "unite": "250ml",
+      "prix": 1.9
+    },
+    {
+      "commune": "Marseille",
+      "enseigne": "Lidl",
+      "categorie": "Hygiène",
+      "produit": "Gel douche 250ml",
+      "ean": "3600523540023",
+      "unite": "250ml",
+      "prix": 1.53
+    },
+    {
+      "commune": "Paris",
+      "enseigne": "Monoprix",
+      "categorie": "Hygiène",
+      "produit": "Gel douche 250ml",
+      "ean": "3600523540023",
+      "unite": "250ml",
+      "prix": 2.32
+    },
+    {
+      "commune": "Paris",
+      "enseigne": "Carrefour",
+      "categorie": "Entretien / Nettoyage",
+      "produit": "Liquide vaisselle 500ml",
+      "ean": "3017620429002",
+      "unite": "500ml",
+      "prix": 1.5
+    },
+    {
+      "commune": "Lyon",
+      "enseigne": "Auchan",
+      "categorie": "Entretien / Nettoyage",
+      "produit": "Liquide vaisselle 500ml",
+      "ean": "3017620429002",
+      "unite": "500ml",
+      "prix": 1.41
+    },
+    {
+      "commune": "Marseille",
+      "enseigne": "Lidl",
+      "categorie": "Entretien / Nettoyage",
+      "produit": "Liquide vaisselle 500ml",
+      "ean": "3017620429002",
+      "unite": "500ml",
+      "prix": 1.29
+    },
+    {
+      "commune": "Paris",
+      "enseigne": "E.Leclerc",
+      "categorie": "Lessive",
+      "produit": "Lessive liquide 1.5L",
+      "ean": "8001841556307",
+      "unite": "1.5L",
+      "prix": 3.56
+    },
+    {
+      "commune": "Lyon",
+      "enseigne": "Carrefour",
+      "categorie": "Lessive",
+      "produit": "Lessive liquide 1.5L",
+      "ean": "8001841556307",
+      "unite": "1.5L",
+      "prix": 3.71
+    },
+    {
+      "commune": "Marseille",
+      "enseigne": "Lidl",
+      "categorie": "Lessive",
+      "produit": "Lessive liquide 1.5L",
+      "ean": "8001841556307",
+      "unite": "1.5L",
+      "prix": 3.26
+    },
+    {
+      "commune": "Toulouse",
+      "enseigne": "Aldi",
+      "categorie": "Lessive",
+      "produit": "Lessive liquide 1.5L",
+      "ean": "8001841556307",
+      "unite": "1.5L",
+      "prix": 3.1
+    },
+    {
+      "commune": "Paris",
+      "enseigne": "Carrefour",
+      "categorie": "Cosmétiques",
+      "produit": "Crème hydratante visage 50ml",
+      "ean": "3600523100023",
+      "unite": "50ml",
+      "prix": 4.59
+    },
+    {
+      "commune": "Paris",
+      "enseigne": "Monoprix",
+      "categorie": "Cosmétiques",
+      "produit": "Crème hydratante visage 50ml",
+      "ean": "3600523100023",
+      "unite": "50ml",
+      "prix": 5.3
+    },
+    {
+      "commune": "Lyon",
+      "enseigne": "E.Leclerc",
+      "categorie": "Cosmétiques",
+      "produit": "Crème hydratante visage 50ml",
+      "ean": "3600523100023",
+      "unite": "50ml",
+      "prix": 4.39
+    },
+    {
+      "commune": "Paris",
+      "enseigne": "Carrefour",
+      "categorie": "Pharmacie",
+      "produit": "Paracétamol 500mg x16",
+      "ean": "3400936251015",
+      "unite": "16cp",
+      "prix": 1.99
+    },
+    {
+      "commune": "Lyon",
+      "enseigne": "Intermarché",
+      "categorie": "Pharmacie",
+      "produit": "Paracétamol 500mg x16",
+      "ean": "3400936251015",
+      "unite": "16cp",
+      "prix": 1.93
+    },
+    {
+      "commune": "Paris",
+      "enseigne": "Carrefour",
+      "categorie": "Fruits et légumes",
+      "produit": "Tomates rondes 1kg",
+      "ean": "",
+      "unite": "1kg",
+      "prix": 2.67
+    },
+    {
+      "commune": "Lyon",
+      "enseigne": "Grand Frais",
+      "categorie": "Fruits et légumes",
+      "produit": "Tomates rondes 1kg",
+      "ean": "",
+      "unite": "1kg",
+      "prix": 2.26
+    },
+    {
+      "commune": "Marseille",
+      "enseigne": "Lidl",
+      "categorie": "Fruits et légumes",
+      "produit": "Tomates rondes 1kg",
+      "ean": "",
+      "unite": "1kg",
+      "prix": 2.06
+    },
+    {
+      "commune": "Paris",
+      "enseigne": "Carrefour",
+      "categorie": "Boissons",
+      "produit": "Eau minérale 1.5L",
+      "ean": "5410013116118",
+      "unite": "1.5L",
+      "prix": 0.46
+    },
+    {
+      "commune": "Lyon",
+      "enseigne": "E.Leclerc",
+      "categorie": "Boissons",
+      "produit": "Eau minérale 1.5L",
+      "ean": "5410013116118",
+      "unite": "1.5L",
+      "prix": 0.39
+    },
+    {
+      "commune": "Marseille",
+      "enseigne": "Lidl",
+      "categorie": "Boissons",
+      "produit": "Eau minérale 1.5L",
+      "ean": "5410013116118",
+      "unite": "1.5L",
+      "prix": 0.36
+    },
+    {
+      "commune": "Paris",
+      "enseigne": "Carrefour",
+      "categorie": "Épicerie",
+      "produit": "Pâtes spaghetti 500g",
+      "ean": "3017760641452",
+      "unite": "500g",
+      "prix": 1.02
+    },
+    {
+      "commune": "Lyon",
+      "enseigne": "Aldi",
+      "categorie": "Épicerie",
+      "produit": "Pâtes spaghetti 500g",
+      "ean": "3017760641452",
+      "unite": "500g",
+      "prix": 0.82
+    },
+    {
+      "commune": "Marseille",
+      "enseigne": "Lidl",
+      "categorie": "Épicerie",
+      "produit": "Pâtes spaghetti 500g",
+      "ean": "3017760641452",
+      "unite": "500g",
+      "prix": 0.77
+    },
+    {
+      "commune": "Paris",
+      "enseigne": "Carrefour",
+      "categorie": "Épicerie",
+      "produit": "Café moulu 250g",
+      "ean": "3228857000999",
+      "unite": "250g",
+      "prix": 3.07
+    },
+    {
+      "commune": "Lyon",
+      "enseigne": "E.Leclerc",
+      "categorie": "Épicerie",
+      "produit": "Café moulu 250g",
+      "ean": "3228857000999",
+      "unite": "250g",
+      "prix": 2.91
+    },
+    {
+      "commune": "Paris",
+      "enseigne": "Carrefour",
+      "categorie": "Surgelés",
+      "produit": "Épinards hachés 600g",
+      "ean": "3270160501280",
+      "unite": "600g",
+      "prix": 1.9
+    },
+    {
+      "commune": "Lyon",
+      "enseigne": "Lidl",
+      "categorie": "Surgelés",
+      "produit": "Épinards hachés 600g",
+      "ean": "3270160501280",
+      "unite": "600g",
+      "prix": 1.6
+    },
+    {
+      "commune": "Marseille",
+      "enseigne": "Picard",
+      "categorie": "Surgelés",
+      "produit": "Épinards hachés 600g",
+      "ean": "3270160501280",
+      "unite": "600g",
+      "prix": 2.16
+    },
+    {
+      "commune": "Paris",
+      "enseigne": "Picard",
+      "categorie": "Surgelés",
+      "produit": "Épinards hachés 600g",
+      "ean": "3270160501280",
+      "unite": "600g",
+      "prix": 2.31
+    }
+  ]
+}

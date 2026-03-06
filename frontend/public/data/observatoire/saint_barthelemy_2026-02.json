@@ -1,0 +1,143 @@
+{
+  "territoire": "Saint-Barthélemy",
+  "date_snapshot": "2026-02-08",
+  "source": "releve_citoyen",
+  "qualite": "verifie",
+  "donnees": [
+    {
+      "commune": "Gustavia",
+      "enseigne": "Marché U",
+      "categorie": "Produits laitiers",
+      "produit": "Lait demi-écrémé UHT 1L",
+      "ean": "3560070123456",
+      "unite": "1L",
+      "prix": 2.06
+    },
+    {
+      "commune": "Saint-Jean",
+      "enseigne": "Jojo Supermarché",
+      "categorie": "Produits laitiers",
+      "produit": "Lait demi-écrémé UHT 1L",
+      "ean": "3560070123456",
+      "unite": "1L",
+      "prix": 1.96
+    },
+    {
+      "commune": "Gustavia",
+      "enseigne": "Marché U",
+      "categorie": "Épicerie",
+      "produit": "Riz long blanc 1kg",
+      "ean": "3250391234567",
+      "unite": "1kg",
+      "prix": 2.77
+    },
+    {
+      "commune": "Saint-Jean",
+      "enseigne": "Jojo Supermarché",
+      "categorie": "Épicerie",
+      "produit": "Riz long blanc 1kg",
+      "ean": "3250391234567",
+      "unite": "1kg",
+      "prix": 2.62
+    },
+    {
+      "commune": "Gustavia",
+      "enseigne": "Marché U",
+      "categorie": "Produits laitiers",
+      "produit": "Yaourt nature 4x125g",
+      "ean": "3560070789012",
+      "unite": "4x125g",
+      "prix": 2.82
+    },
+    {
+      "commune": "Gustavia",
+      "enseigne": "Marché U",
+      "categorie": "Épicerie",
+      "produit": "Sucre blanc 1kg",
+      "ean": "3560071112345",
+      "unite": "1kg",
+      "prix": 2.11
+    },
+    {
+      "commune": "Saint-Jean",
+      "enseigne": "Jojo Supermarché",
+      "categorie": "Épicerie",
+      "produit": "Huile de tournesol 1L",
+      "ean": "3250399876543",
+      "unite": "1L",
+      "prix": 3.87
+    },
+    {
+      "commune": "Gustavia",
+      "enseigne": "Marché U",
+      "categorie": "Hygiène",
+      "produit": "Gel douche 250ml",
+      "ean": "3600523540023",
+      "unite": "250ml",
+      "prix": 3.42
+    },
+    {
+      "commune": "Gustavia",
+      "enseigne": "Marché U",
+      "categorie": "Entretien / Nettoyage",
+      "produit": "Liquide vaisselle 500ml",
+      "ean": "3017620429002",
+      "unite": "500ml",
+      "prix": 2.62
+    },
+    {
+      "commune": "Saint-Jean",
+      "enseigne": "Jojo Supermarché",
+      "categorie": "Lessive",
+      "produit": "Lessive liquide 1.5L",
+      "ean": "8001841556307",
+      "unite": "1.5L",
+      "prix": 5.68
+    },
+    {
+      "commune": "Gustavia",
+      "enseigne": "Marché U",
+      "categorie": "Épicerie",
+      "produit": "Pâtes spaghetti 500g",
+      "ean": "3017760641452",
+      "unite": "500g",
+      "prix": 2.16
+    },
+    {
+      "commune": "Gustavia",
+      "enseigne": "Marché U",
+      "categorie": "Boissons",
+      "produit": "Eau minérale 1.5L",
+      "ean": "5410013116118",
+      "unite": "1.5L",
+      "prix": 1.26
+    },
+    {
+      "commune": "Gustavia",
+      "enseigne": "Marché U",
+      "categorie": "Pharmacie",
+      "produit": "Paracétamol 500mg x16",
+      "ean": "3400936251015",
+      "unite": "16cp",
+      "prix": 3.22
+    },
+    {
+      "commune": "Gustavia",
+      "enseigne": "Marché U",
+      "categorie": "Fruits et légumes",
+      "produit": "Tomates rondes 1kg",
+      "ean": "",
+      "unite": "1kg",
+      "prix": 5.53
+    },
+    {
+      "commune": "Gustavia",
+      "enseigne": "Marché U",
+      "categorie": "Boucherie / Charcuterie",
+      "produit": "Poulet entier 1kg",
+      "ean": "",
+      "unite": "1kg",
+      "prix": 10.86
+    }
+  ]
+}

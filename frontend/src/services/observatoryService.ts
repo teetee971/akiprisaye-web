@@ -29,6 +29,9 @@ const TERRITORY_NAME_MAP: Partial<Record<TerritoryCode, string>> = {
   GF: 'Guyane',
   RE: 'La Réunion',
   YT: 'Mayotte',
+  MF: 'Saint-Martin',
+  BL: 'Saint-Barthélemy',
+  PM: 'Saint-Pierre-et-Miquelon',
 };
 
 function getTerritoryName(code: TerritoryCode): string {

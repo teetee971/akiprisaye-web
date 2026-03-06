@@ -24,10 +24,14 @@ type ObservatoireSnapshot = {
 };
 
 // Liste de fichiers à essayer dans l'ordre (du plus récent au plus ancien)
+const _BASE = import.meta.env.BASE_URL;
 const DATA_FILES = [
-  '/data/observatoire/guadeloupe_2026-02.json',
-  '/data/observatoire/guadeloupe_2026-01.json',
-  '/data/observatoire/hexagone_2026-01.json',
+  `${_BASE}data/observatoire/guadeloupe_2026-03.json`,
+  `${_BASE}data/observatoire/guadeloupe_2026-02.json`,
+  `${_BASE}data/observatoire/guadeloupe_2026-01.json`,
+  `${_BASE}data/observatoire/hexagone_2026-03.json`,
+  `${_BASE}data/observatoire/hexagone_2026-02.json`,
+  `${_BASE}data/observatoire/hexagone_2026-01.json`,
 ];
 
 export default function ComparateurCitoyen() {

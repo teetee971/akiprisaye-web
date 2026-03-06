@@ -52,6 +52,7 @@ export interface PriceStatistics {
  */
 /** Default months to probe when no explicit list is provided (most recent first). */
 const DEFAULT_SNAPSHOT_MONTHS = [
+  '2026-03',
   '2026-02',
   '2026-01',
   '2025-12',
@@ -65,7 +66,9 @@ export async function loadObservatoireData(
   months: string[] = DEFAULT_SNAPSHOT_MONTHS,
 ): Promise<ObservatoireSnapshot[]> {
   try {
-    const territoryKey = territory.toLowerCase().replace(/\s+/g, '_');
+    // Replace spaces and hyphens with underscores to match file stems
+    // e.g. "La Réunion" → "la_réunion", "Saint-Martin" → "saint_martin"
+    const territoryKey = territory.toLowerCase().replace(/[\s-]+/g, '_');
     const snapshots: ObservatoireSnapshot[] = [];
 
     const fetches = months.map(async (month) => {
@@ -99,7 +102,7 @@ export async function loadObservatoireData(
 
 /**
  * Load observatoire snapshots for all territories.
- * Returns a map keyed by territory file stem.
+ * Returns a map keyed by territory code (e.g. 'gp', 'mq').
  */
 export async function loadAllTerritories(
   months: string[] = DEFAULT_SNAPSHOT_MONTHS,
@@ -109,7 +112,8 @@ export async function loadAllTerritories(
 
   await Promise.all(
     TERRITORIES.map(async (t) => {
-      const snaps = await loadObservatoireData(t.labelFull, months);
+      // Use dataFileStem directly to avoid any name→key conversion mismatch
+      const snaps = await loadObservatoireData(t.dataFileStem, months);
       if (snaps.length > 0) {
         result.set(t.code, snaps);
       }
