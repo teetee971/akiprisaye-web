@@ -22,6 +22,9 @@ const TERRITORY_MAP: Array<{ code: string; name: string; key: string }> = [
   { code: 'GF', name: 'Guyane', key: 'guyane' },
   { code: 'RE', name: 'La Réunion', key: 'la_réunion' },
   { code: 'YT', name: 'Mayotte', key: 'mayotte' },
+  { code: 'MF', name: 'Saint-Martin', key: 'saint_martin' },
+  { code: 'BL', name: 'Saint-Barthélemy', key: 'saint_barthelemy' },
+  { code: 'PM', name: 'Saint-Pierre-et-Miquelon', key: 'saint_pierre_et_miquelon' },
 ];
 
 // Metropole reference key used to compute gap
