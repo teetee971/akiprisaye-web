@@ -1,8 +1,6 @@
 const BUILD_ID_KEY = 'app_build_id'
 const GH_HEAL_FLAG = 'akiprisaye:gh-pages-self-healed'
-export function enforceBuildVersionSync(buildId?: string): boolean {
-  const id = buildId || import.meta.env.VITE_APP_BUILD_ID;
-  if (!id) return false;
+const APP_CACHE_PREFIX = 'akiprisaye-'
 
 const isGithubPagesHost = () => {
   const hostname = window.location.hostname
@@ -37,23 +35,25 @@ export async function enforceBuildVersionSync(currentBuildId?: string): Promise<
 }
 
 async function clearServiceWorkersAndCaches() {
+  const appScope = import.meta.env.BASE_URL || '/'
+
   if ('serviceWorker' in navigator) {
     const regs = await navigator.serviceWorker.getRegistrations()
-    await Promise.all(regs.map((reg) => reg.unregister()))
+    await Promise.all(
+      regs
+        .filter((reg) => reg.scope.includes(appScope))
+        .map((reg) => reg.unregister()),
+    )
   }
 
   if ('caches' in window) {
     const keys = await caches.keys()
-    await Promise.all(keys.map((key) => caches.delete(key)))
+    await Promise.all(
+      keys
+        .filter((key) => key.startsWith(APP_CACHE_PREFIX))
+        .map((key) => caches.delete(key)),
+    )
   }
-  if (stored && stored !== id) {
-    localStorage.clear();
-    location.reload();
-    return true;
-  }
-
-  localStorage.setItem(key, id);
-  return false;
 }
 
 export async function selfHealGithubPagesIfNeeded(reason?: unknown): Promise<boolean> {
@@ -84,7 +84,11 @@ export function registerAppServiceWorker(buildId?: string) {
   if (!('serviceWorker' in navigator)) return
 
   const baseUrl = import.meta.env.BASE_URL || '/'
-  const swVersion = buildId || (import.meta.env.VITE_APP_BUILD_ID as string | undefined) || (import.meta.env.VITE_BUILD_SHA as string | undefined) || 'v1'
+  const swVersion =
+    buildId ||
+    (import.meta.env.VITE_APP_BUILD_ID as string | undefined) ||
+    (import.meta.env.VITE_BUILD_SHA as string | undefined) ||
+    'v1'
   const swUrl = `${baseUrl}service-worker.js?v=${encodeURIComponent(swVersion)}`
 
   window.addEventListener('load', () => {
@@ -92,11 +96,4 @@ export function registerAppServiceWorker(buildId?: string) {
       if (import.meta.env.DEV) console.warn('SW error:', err)
     })
   })
-}
-    navigator.serviceWorker
-      .register(import.meta.env.BASE_URL + 'service-worker.js')
-      .catch((err) => {
-        if (import.meta.env.DEV) console.warn('SW error:', err);
-      });
-  });
 }
