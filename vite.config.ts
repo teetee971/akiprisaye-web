@@ -5,6 +5,8 @@ import { visualizer } from 'rollup-plugin-visualizer';
 import path from 'node:path';
 import { existsSync } from 'node:fs';
 
+const frontendRoot = path.resolve(__dirname, 'frontend');
+
 function normalizeBase(input: string) {
   let b = (input || '/').trim();
   if (!b.startsWith('/')) b = `/${b}`;
@@ -24,6 +26,7 @@ export default defineConfig(() => {
         : '/';
 
   return {
+    root: frontendRoot,
     base,
 
     plugins: [
@@ -31,19 +34,19 @@ export default defineConfig(() => {
 
       viteStaticCopy({
         targets: [
-          ...(existsSync(path.resolve(__dirname, '../node_modules/leaflet/dist/images'))
+          ...(existsSync(path.resolve(__dirname, 'node_modules/leaflet/dist/images'))
             ? [
                 {
-                  src: path.resolve(__dirname, '../node_modules/leaflet/dist/images/*'),
+                  src: path.resolve(__dirname, 'node_modules/leaflet/dist/images/*'),
                   dest: 'leaflet/images',
                 },
               ]
             : []),
 
-          ...(existsSync(path.resolve(__dirname, '../node_modules/tesseract.js/dist/worker.min.js'))
+          ...(existsSync(path.resolve(__dirname, 'node_modules/tesseract.js/dist/worker.min.js'))
             ? [
                 {
-                  src: path.resolve(__dirname, '../node_modules/tesseract.js/dist/worker.min.js*'),
+                  src: path.resolve(__dirname, 'node_modules/tesseract.js/dist/worker.min.js*'),
                   dest: 'tesseract',
                 },
               ]
@@ -52,7 +55,7 @@ export default defineConfig(() => {
       }),
 
       visualizer({
-        filename: path.resolve(__dirname, 'dist/stats.html'),
+        filename: path.resolve(frontendRoot, 'dist/stats.html'),
         open: false,
         gzipSize: true,
         brotliSize: true,
@@ -61,7 +64,7 @@ export default defineConfig(() => {
 
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, 'src'),
+        '@': path.resolve(frontendRoot, 'src'),
       },
     },
 

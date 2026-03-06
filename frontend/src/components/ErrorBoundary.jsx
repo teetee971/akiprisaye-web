@@ -38,9 +38,9 @@ class ErrorBoundary extends Component {
         <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
           <div className="max-w-2xl w-full bg-slate-900 border border-red-500/30 rounded-xl p-8 text-center">
             <img 
-              src="/logo-akiprisaye.svg" 
+              src={`${import.meta.env.BASE_URL}logo-akiprisaye.svg`}
               alt="A KI PRI SA YÉ" 
-              style={ { height: '64px', margin: '0 auto 24px' }}
+              className="h-16 mx-auto mb-6"
             />
             
             <h1 className="text-3xl font-bold text-white mb-4">
@@ -52,17 +52,7 @@ class ErrorBoundary extends Component {
             </p>
 
             <pre
-              style={ {
-                marginTop: '16px',
-                color: '#ff6b6b',
-                background: '#020617',
-                padding: '12px',
-                borderRadius: '8px',
-                fontSize: '12px',
-                textAlign: 'left',
-                whiteSpace: 'pre-wrap',
-                overflowX: 'auto',
-              }}
+              className="mt-4 text-red-400 bg-slate-950 p-3 rounded-lg text-xs text-left whitespace-pre-wrap overflow-x-auto"
             >
               {safeToText(this.state.error)}
               {"\n"}

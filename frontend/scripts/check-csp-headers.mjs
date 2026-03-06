@@ -31,8 +31,12 @@ if (missing.length > 0) {
   process.exit(1);
 }
 
-if (csp.includes("'unsafe-inline'")) {
-  console.error("❌ CSP must not include 'unsafe-inline'.");
+// 'unsafe-inline' is permitted only for style-src (needed for React style={} props).
+// It must NOT appear in script-src (inline event handlers are disallowed).
+const scriptSrcMatch = csp.match(/script-src\s+([^;]+)/);
+const scriptSrcValue = scriptSrcMatch ? scriptSrcMatch[1] : '';
+if (scriptSrcValue.includes("'unsafe-inline'")) {
+  console.error("❌ CSP script-src must not include 'unsafe-inline'.");
   process.exit(1);
 }
 

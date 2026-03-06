@@ -40,22 +40,32 @@ const renderFallbackError = (title, message) => {
   const fallback = document.getElementById('loading-fallback');
   if (!fallback) return;
 
-  const safeTitle = safeToText(title);
-  const safeMessage = safeToText(message);
+  // Build DOM nodes so textContent assignment prevents XSS
+  const img = document.createElement('img');
+  img.src = `${import.meta.env.BASE_URL}logo-akiprisaye.svg`;
+  img.alt = 'A KI PRI SA YÉ';
+  img.className = 'loading-logo';
 
-  fallback.innerHTML = `
-    <img src="${import.meta.env.BASE_URL}logo-akiprisaye.svg" alt="A KI PRI SA YÉ" class="loading-logo" />
-    <h1 class="loading-title">${safeTitle}</h1>
-    <p class="loading-error">${safeMessage}</p>
-    <button type="button" class="loading-retry-btn" data-action="reload">
-      Recharger
-    </button>
-  `;
+  const h1 = document.createElement('h1');
+  h1.className = 'loading-title';
+  h1.textContent = safeToText(title);
 
-  const reloadButton = fallback.querySelector('[data-action="reload"]');
-  reloadButton?.addEventListener('click', () => {
-    window.location.reload();
-  });
+  const p = document.createElement('p');
+  p.className = 'loading-error';
+  p.textContent = safeToText(message);
+
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'loading-retry-btn';
+  button.dataset.action = 'reload';
+  button.textContent = 'Recharger';
+  button.addEventListener('click', () => window.location.reload());
+
+  fallback.innerHTML = '';
+  fallback.appendChild(img);
+  fallback.appendChild(h1);
+  fallback.appendChild(p);
+  fallback.appendChild(button);
 };
 
 const hideHtmlFallback = () => {

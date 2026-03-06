@@ -1,19 +1,8 @@
 /* 
  * Leaflet overrides for Cloudflare Pages / Vite builds
- * Force absolute paths for Leaflet control layer icons
+ * Note: control-layers toggle background-images are handled by the
+ * Vite-processed leaflet/dist/leaflet.css import (URL-rewriting is automatic).
  */
-
-.leaflet-control-layers-toggle {
-  background-image: url("/leaflet/layers.png") !important;
-  background-size: 26px 26px;
-}
-
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-  .leaflet-control-layers-toggle {
-    background-image: url("/leaflet/layers-2x.png") !important;
-  }
-}
-
 
 /* Inline-style replacement classes for leaflet popup/template content */
 .ak-marker-shell { position: relative; }
