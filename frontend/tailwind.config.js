@@ -68,10 +68,16 @@ export default {
         '44': '2.75rem',
       },
       
-      // Animations essentielles uniquement
+            // Animations essentielles uniquement
       animation: {
         'fade-in': 'fadeIn 0.5s ease-out',
         'slide-up':  'slideUp 0.5s ease-out',
+        'slide-up-delay-1': 'slideUp 0.5s ease-out 0.1s both',
+        'slide-up-delay-2': 'slideUp 0.5s ease-out 0.2s both',
+        'slide-up-delay-3': 'slideUp 0.5s ease-out 0.3s both',
+        'float': 'floatY 4s ease-in-out infinite',
+        'shimmer': 'shimmer 1.8s linear infinite',
+        'pulse-slow': 'pulse 3s cubic-bezier(0.4,0,0.6,1) infinite',
       },
       
       keyframes:  {
@@ -82,6 +88,14 @@ export default {
         slideUp: {
           '0%':  { transform: 'translateY(20px)', opacity: '0' },
           '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        floatY: {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-8px)' },
+        },
+        shimmer: {
+          '0%': { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition: '200% 0' },
         },
       },
     },

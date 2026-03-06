@@ -18,6 +18,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useGamification } from '../hooks/useGamification';
 import { useBadges } from '../hooks/useBadges';
 import { useChallenges } from '../hooks/useChallenges';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 import {
   LevelBadge,
   LevelProgressBar,
@@ -94,62 +96,37 @@ export default function GamificationProfilePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex items-center justify-between mb-6">
+      {/* Hero banner — real Unsplash photo with gradient fallback */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
+        <HeroImage
+          src={PAGE_HERO_IMAGES.gamification}
+          alt="Récompenses et badges — profil citoyen"
+          gradient="from-blue-900 to-purple-950"
+          height="h-44 sm:h-56"
+        >
+          <div className="flex items-center justify-between w-full mb-2">
             <button
               onClick={() => navigate(-1)}
-              className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
+              className="flex items-center gap-2 px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg transition-colors text-sm"
             >
-              <ArrowLeft size={20} />
+              <ArrowLeft size={16} />
               <span>Retour</span>
             </button>
             <button
               onClick={handleRefresh}
-              className="p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
+              className="p-1.5 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
               aria-label="Actualiser"
             >
-              <RefreshCw size={20} />
+              <RefreshCw size={16} />
             </button>
           </div>
-
-          <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
-            {/* Avatar & Level */}
-            <div className="flex items-center gap-4">
-              <LevelBadge level={profile.level} size="xl" />
-              <div>
-                <h1 className="text-3xl font-bold mb-1">
-                  {profile.username || `Utilisateur ${profile.userId.slice(0, 6)}`}
-                </h1>
-                <div className="flex items-center gap-2 text-white/80">
-                  <User size={16} />
-                  <span>{profile.userId.slice(0, 12)}...</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Quick Stats */}
-            <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="bg-white/10 rounded-lg p-3 backdrop-blur-sm">
-                <div className="text-2xl font-bold">{profile.totalXP.toLocaleString()}</div>
-                <div className="text-sm text-white/80">XP Total</div>
-              </div>
-              <div className="bg-white/10 rounded-lg p-3 backdrop-blur-sm">
-                <div className="text-2xl font-bold">{badges.filter(b => b.isUnlocked).length}</div>
-                <div className="text-sm text-white/80">Badges</div>
-              </div>
-              <div className="bg-white/10 rounded-lg p-3 backdrop-blur-sm">
-                <div className="text-2xl font-bold">{profile.completedChallenges.length}</div>
-                <div className="text-sm text-white/80">Défis</div>
-              </div>
-              <div className="bg-white/10 rounded-lg p-3 backdrop-blur-sm">
-                <div className="text-2xl font-bold">{profile.currentStreak}</div>
-                <div className="text-sm text-white/80">Jours</div>
-              </div>
-            </div>
-          </div>
-        </div>
+          <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow">
+            🏆 {profile.username || `Utilisateur ${profile.userId.slice(0, 6)}`}
+          </h1>
+          <p className="text-slate-200 text-sm drop-shadow">
+            Niveau {profile.level} · {profile.totalPoints?.toLocaleString() ?? profile.totalXP?.toLocaleString() ?? 0} points
+          </p>
+        </HeroImage>
       </div>
 
       {/* Main Content */}

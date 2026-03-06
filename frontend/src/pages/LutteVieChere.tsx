@@ -15,6 +15,8 @@ import {
   CheckCircle,
   BarChart3
 } from 'lucide-react';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 import { LUTTE_VIE_CHERE_STATS } from '../data/lutteVieChereStats';
 
 export function LutteVieChere() {
@@ -22,30 +24,35 @@ export function LutteVieChere() {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
-      {/* Hero Section */}
-      <div className="bg-gradient-to-br from-blue-600 to-purple-600 text-white py-16">
-        <div className="container mx-auto px-4">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+      {/* Hero Section — real Unsplash photo with gradient fallback */}
+      <div className="container mx-auto px-4 pt-6 pb-2">
+        <HeroImage
+          src={PAGE_HERO_IMAGES.lutteVieChere}
+          alt="Solidarité citoyenne — lutte contre la vie chère"
+          gradient="from-blue-900 to-purple-950"
+          height="h-52 sm:h-72"
+        >
+          <h1 className="text-3xl md:text-5xl font-bold text-white drop-shadow-lg">
             Lutte contre la Vie Chère
           </h1>
-          <p className="text-xl md:text-2xl opacity-90 mb-8 max-w-3xl">
+          <p className="text-lg md:text-xl text-slate-200 drop-shadow max-w-3xl">
             Ensemble, agissons pour des prix justes dans les territoires d'Outre-mer
           </p>
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-wrap gap-3 mt-2">
             <a
               href="#signaler"
-              className="px-6 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-slate-100 transition-colors"
+              className="px-5 py-2 bg-white text-blue-700 rounded-lg font-semibold hover:bg-slate-100 transition-colors text-sm"
             >
               Signaler un prix abusif
             </a>
             <a
               href="#ressources"
-              className="px-6 py-3 bg-transparent border-2 border-white text-white rounded-lg font-semibold hover:bg-white/10 transition-colors"
+              className="px-5 py-2 bg-transparent border-2 border-white text-white rounded-lg font-semibold hover:bg-white/10 transition-colors text-sm"
             >
               Accéder aux ressources
             </a>
           </div>
-        </div>
+        </HeroImage>
       </div>
 
       {/* Statistics Section */}

@@ -2,6 +2,7 @@
  * HeroImage
  * Full-width hero banner with a real Unsplash photo and a dark gradient overlay.
  * Falls back gracefully to a CSS gradient if the image fails to load.
+ * Shows a shimmer skeleton while the image is loading.
  */
 
 import { useState } from 'react';
@@ -24,9 +25,15 @@ export function HeroImage({
   className = '',
 }: HeroImageProps) {
   const [imgFailed, setImgFailed] = useState(false);
+  const [imgLoaded, setImgLoaded] = useState(false);
 
   return (
     <div className={`relative w-full overflow-hidden rounded-2xl ${height} ${className}`}>
+      {/* Shimmer skeleton while image loads */}
+      {!imgLoaded && !imgFailed && (
+        <div className={`absolute inset-0 bg-gradient-to-br ${gradient} shimmer-bg`} />
+      )}
+
       {/* Background image */}
       {!imgFailed && (
         <img
@@ -34,8 +41,9 @@ export function HeroImage({
           alt={alt}
           loading="lazy"
           decoding="async"
+          onLoad={() => setImgLoaded(true)}
           onError={() => setImgFailed(true)}
-          className="absolute inset-0 h-full w-full object-cover"
+          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
         />
       )}
 

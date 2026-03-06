@@ -127,9 +127,35 @@ export function getTerritoryGradient(code: string): string {
 
 // Hero images for specific pages
 export const PAGE_HERO_IMAGES = {
+  // ── Pages already enriched ───────────────────────────────────────────────
   priceHistory: 'https://images.unsplash.com/photo-1607082348351-cef5cd02c7b0?auto=format&fit=crop&w=1600&q=80',
   crossTerritory: 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&w=1600&q=80',
   inflation: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=1600&q=80',
   coverage: 'https://images.unsplash.com/photo-1526628953301-3cd8e16b67b1?auto=format&fit=crop&w=1600&q=80',
   alerts: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=1600&q=80',
+  // ── New page heroes ──────────────────────────────────────────────────────
+  /** Recherche de prix — fresh market/search */
+  search: 'https://images.unsplash.com/photo-1506617564039-2f3b650b7010?auto=format&fit=crop&w=1600&q=80',
+  /** Scanner EAN — barcode scan at checkout */
+  scanner: 'https://images.unsplash.com/photo-1516594915697-87eb3b1c14ea?auto=format&fit=crop&w=1600&q=80',
+  /** Liste de courses intelligente — shopping cart */
+  shoppingList: 'https://images.unsplash.com/photo-1534723452862-4c874018d66d?auto=format&fit=crop&w=1600&q=80',
+  /** Lutte contre la vie chère — community solidarity */
+  lutteVieChere: 'https://images.unsplash.com/photo-1593113630400-ea4288922497?auto=format&fit=crop&w=1600&q=80',
+  /** Contribuer — open data / teamwork */
+  contribuer: 'https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=1600&q=80',
+  /** Solidarité — helping hands */
+  solidarite: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?auto=format&fit=crop&w=1600&q=80',
+  /** À Propos — French overseas territory sunset */
+  aPropos: 'https://images.unsplash.com/photo-1433086966358-54859d0ed716?auto=format&fit=crop&w=1600&q=80',
+  /** Pricing — premium subscription */
+  pricing: 'https://images.unsplash.com/photo-1620714223084-8fcacc2523dc?auto=format&fit=crop&w=1600&q=80',
+  /** FAQ — question marks / knowledge */
+  faq: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1600&q=80',
+  /** Contact — friendly communication */
+  contact: 'https://images.unsplash.com/photo-1521791055366-0d553872952f?auto=format&fit=crop&w=1600&q=80',
+  /** Gamification profile — trophy/achievement */
+  gamification: 'https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?auto=format&fit=crop&w=1600&q=80',
+  /** Comparaison enseignes — supermarket aisle */
+  comparaisonEnseignes: 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=1600&q=80',
 };
