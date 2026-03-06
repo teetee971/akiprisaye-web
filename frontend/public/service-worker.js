@@ -1,4 +1,5 @@
-const CACHE_NAME = 'akiprisaye-smart-cache-v5';
+const CACHE_NAME = 'akiprisaye-smart-cache-v6';
+const SCOPE_PATHNAME = new URL(self.registration.scope).pathname;
 
 self.addEventListener('install', (event) => {
   const base = new URL('./', self.registration.scope).href;
@@ -33,7 +34,7 @@ self.addEventListener('fetch', (event) => {
   if (
     event.request.mode === 'navigate' ||
     request.destination === 'document' ||
-    url.pathname === '/' ||
+    url.pathname === SCOPE_PATHNAME ||
     url.pathname.endsWith('.html')
   ) {
     event.respondWith(
