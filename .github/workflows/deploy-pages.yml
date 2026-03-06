@@ -40,8 +40,11 @@ jobs:
         env:
           GITHUB_PAGES: 'true'
 
-      - name: Debug dist contents
-        run: ls -R dist
+      - name: Verify build paths
+        run: node scripts/verify-pages-build.mjs
+
+      - name: Production-like runtime check (GitHub Pages base path)
+        run: node scripts/verify-pages-runtime.mjs
 
       - name: Configure Pages
         uses: actions/configure-pages@v5

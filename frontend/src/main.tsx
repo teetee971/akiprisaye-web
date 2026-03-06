@@ -113,19 +113,35 @@ function isGitHubPagesHost(hostname: string): boolean {
  */
 async function githubPagesSelfHeal(): Promise<boolean> {
   if (!isGitHubPagesHost(window.location.hostname)) return false;
-  const HEAL_KEY = 'gh_pages_healed_v2';
+  const HEAL_KEY = 'gh_pages_healed_v3';
   if (sessionStorage.getItem(HEAL_KEY)) return false;
 
   try {
+    const baseUrl = import.meta.env.BASE_URL;
+    const probePaths = [
+      `${baseUrl}manifest.webmanifest`,
+      `${baseUrl}icon-192.png`,
+    ];
+
+    const probeResults = await Promise.allSettled(
+      probePaths.map(async (path) => {
+        const response = await fetch(path, { method: 'GET', cache: 'no-store' });
+        return { path, status: response.status };
+      }),
+    );
+
+    const has404 = probeResults.some(
+      (result) => result.status === 'fulfilled' && result.value.status === 404,
+    );
+
+    if (!has404) return false;
+
     let didHeal = false;
     if ('serviceWorker' in navigator) {
       const registrations = await navigator.serviceWorker.getRegistrations();
       for (const reg of registrations) {
-        // Unregister any SW not scoped to our subdir
-        if (!reg.scope.includes('/akiprisaye-web/')) {
-          await reg.unregister();
-          didHeal = true;
-        }
+        await reg.unregister();
+        didHeal = true;
       }
     }
     if ('caches' in window) {
