@@ -9,11 +9,15 @@ import { Helmet } from 'react-helmet-async';
 import { AlertForm } from '../components/AlertForm';
 import { UpgradeGate } from '../components/billing/UpgradeGate';
 import { Bell, CheckCircle, Info, Trash2, TrendingDown, TrendingUp, Package } from 'lucide-react';
+import { HeroImage } from '../components/ui/HeroImage';
 import {
   type SavedAlert,
   loadAlerts,
   persistAlerts,
 } from '../services/priceAlertsStorage';
+
+// Real Unsplash photo: shopping price tags
+const HERO_IMG = 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=1600&q=80';
 
 export default function PriceAlertsPage() {
   const [showSuccess, setShowSuccess] = useState(false);
@@ -90,25 +94,32 @@ export default function PriceAlertsPage() {
       </Helmet>
       <div className="min-h-screen bg-slate-50 dark:bg-slate-900 py-8">
         <div className="container mx-auto px-4 max-w-2xl">
-          {/* Texte introductif */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-3 flex items-center gap-3">
-              <Bell className="w-8 h-8 text-blue-600" />
-              Alertes Prix
-            </h1>
-            <p className="text-lg text-slate-600 dark:text-slate-400 mb-4">
-              Recevez une alerte lorsqu'un prix évolue significativement
-            </p>
-            
-            {/* Texte rassurant */}
-            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-              <div className="flex items-start gap-3">
-                <Info className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-blue-800 dark:text-blue-200">
-                  Les alertes sont basées sur les données réellement observées et vérifiées dans votre territoire.
-                  Vous ne recevrez que des notifications pertinentes et fiables.
-                </p>
-              </div>
+          {/* Hero banner */}
+          <div className="mb-6">
+            <HeroImage
+              src={HERO_IMG}
+              alt="Étiquettes de prix en supermarché"
+              gradient="from-blue-900 to-slate-900"
+              height="h-40 sm:h-52"
+            >
+              <h1 className="text-3xl font-bold text-white drop-shadow flex items-center gap-3">
+                <Bell className="w-8 h-8" />
+                Alertes Prix
+              </h1>
+              <p className="text-slate-200 drop-shadow text-sm">
+                Soyez notifié dès qu'un prix change dans votre territoire
+              </p>
+            </HeroImage>
+          </div>
+
+          {/* Texte rassurant */}
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
+            <div className="flex items-start gap-3">
+              <Info className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
+              <p className="text-sm text-blue-800 dark:text-blue-200">
+                Les alertes sont basées sur les données réellement observées et vérifiées dans votre territoire.
+                Vous ne recevrez que des notifications pertinentes et fiables.
+              </p>
             </div>
           </div>
 
