@@ -127,6 +127,13 @@ const LicenceInstitution = lazyPage(() => import('./pages/LicenceInstitution'));
 // Specialised comparators
 const FlightComparator = lazyPage(() => import('./pages/FlightComparator'));
 const BoatComparator = lazyPage(() => import('./pages/BoatComparator'));
+const FreightComparator = lazyPage(() => import('./pages/FreightComparator'));
+const FuelComparator = lazyPage(() => import('./pages/FuelComparator'));
+const InsuranceComparator = lazyPage(() => import('./pages/InsuranceComparator'));
+const TrainingComparator = lazyPage(() => import('./pages/TrainingComparator'));
+const ServiceComparator = lazyPage(() => import('./pages/ServiceComparator'));
+const CarRentalComparator = lazyPage(() => import('./pages/CarRentalComparator'));
+const BuildingMaterialsComparator = lazyPage(() => import('./pages/BuildingMaterialsComparator'));
 
 // Cosmetic evaluation
 const EvaluationCosmetique = lazyPage(() => import('./pages/EvaluationCosmetique'));
@@ -407,6 +414,13 @@ export default function App() {
                           {/* Comparateurs spécialisés */}
                           <Route path="comparateur-vols" element={<FlightComparator />} />
                           <Route path="comparateur-bateaux" element={<BoatComparator />} />
+                          <Route path="comparateur-fret" element={<FreightComparator />} />
+                          <Route path="comparateur-carburants" element={<FuelComparator />} />
+                          <Route path="comparateur-assurances" element={<InsuranceComparator />} />
+                          <Route path="comparateur-formations" element={<TrainingComparator />} />
+                          <Route path="comparateur-services" element={<ServiceComparator />} />
+                          <Route path="comparateur-location-voiture" element={<CarRentalComparator />} />
+                          <Route path="comparateur-materiaux-batiment" element={<BuildingMaterialsComparator />} />
 
                           {/* Évaluation cosmétique */}
                           <Route path="evaluation-cosmetique" element={<EvaluationCosmetique />} />

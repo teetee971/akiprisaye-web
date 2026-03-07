@@ -1,0 +1,982 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "generated_at": "2026-03-01T00:00:00Z",
+    "source": "Rapport Sénat 2024-2025 « Le coût de la vie dans les outre-mer » · OPMR Guadeloupe 2023 · OPMR Martinique 2023 · OPMR La Réunion 2023 · Relevés citoyens observatoire A KI PRI SA YÉ",
+    "methodology": "Prix moyens observés en grande surface de bricolage et négoces professionnels (Leroy Merlin DOM, Mr. Bricolage Antilles, Point P DOM, Bondis Bwa Guadeloupe). Surcoûts liés au transport maritime, à l'octroi de mer et à la concentration des marchés insulaires.",
+    "disclaimer": "Observer, pas vendre. Ces données sont à titre informatif et citoyen. Aucun lien d'affiliation. Les prix peuvent varier selon les fournisseurs, volumes et saisons.",
+    "lastUpdate": "2026-03-01T00:00:00Z",
+    "territories": [
+      "GP",
+      "MQ",
+      "GF",
+      "RE",
+      "YT",
+      "PM",
+      "FR"
+    ],
+    "categories": [
+      "Gros œuvre",
+      "Charpente / Couverture",
+      "Isolation",
+      "Menuiserie",
+      "Plomberie / Sanitaire",
+      "Électricité",
+      "Peinture / Revêtement",
+      "Outillage professionnel"
+    ]
+  },
+  "territories": [
+    {
+      "code": "GP",
+      "name": "Guadeloupe",
+      "surcoûtMoyen": "+42 %"
+    },
+    {
+      "code": "MQ",
+      "name": "Martinique",
+      "surcoûtMoyen": "+45 %"
+    },
+    {
+      "code": "GF",
+      "name": "Guyane",
+      "surcoûtMoyen": "+60 %"
+    },
+    {
+      "code": "RE",
+      "name": "La Réunion",
+      "surcoûtMoyen": "+38 %"
+    },
+    {
+      "code": "YT",
+      "name": "Mayotte",
+      "surcoûtMoyen": "+55 %"
+    },
+    {
+      "code": "PM",
+      "name": "Saint-Pierre-et-Miquelon",
+      "surcoûtMoyen": "+50 %"
+    },
+    {
+      "code": "FR",
+      "name": "Hexagone (référence)",
+      "surcoûtMoyen": "Référence"
+    }
+  ],
+  "suppliers": [
+    {
+      "id": "leroy-dom",
+      "name": "Leroy Merlin DOM",
+      "territories": [
+        "GP",
+        "MQ",
+        "GF",
+        "RE"
+      ],
+      "website": "https://www.leroymerlin.fr",
+      "type": "grande_surface"
+    },
+    {
+      "id": "mr-brico",
+      "name": "Mr. Bricolage Antilles",
+      "territories": [
+        "GP",
+        "MQ"
+      ],
+      "website": "https://www.mr-bricolage.fr",
+      "type": "franchise"
+    },
+    {
+      "id": "pointp-dom",
+      "name": "Point P DOM",
+      "territories": [
+        "GP",
+        "MQ",
+        "GF",
+        "RE",
+        "YT"
+      ],
+      "website": "https://www.pointp.fr",
+      "type": "negociant_pro"
+    },
+    {
+      "id": "bondis-bwa",
+      "name": "Bondis Bwa",
+      "territories": [
+        "GP"
+      ],
+      "website": "https://www.bondisbwa.fr",
+      "type": "negociant_local"
+    },
+    {
+      "id": "batimat-oc",
+      "name": "Batimat Océan Indien",
+      "territories": [
+        "RE",
+        "YT"
+      ],
+      "website": "https://batimat-oi.re",
+      "type": "negociant_pro"
+    },
+    {
+      "id": "castorama-re",
+      "name": "Castorama La Réunion",
+      "territories": [
+        "RE"
+      ],
+      "website": "https://www.castorama.fr",
+      "type": "grande_surface"
+    },
+    {
+      "id": "leroy-fr",
+      "name": "Leroy Merlin France",
+      "territories": [
+        "FR"
+      ],
+      "website": "https://www.leroymerlin.fr",
+      "type": "grande_surface"
+    }
+  ],
+  "materials": [
+    {
+      "id": "mat-001",
+      "name": "Ciment Portland CEM II 42.5N – sac 35 kg",
+      "category": "Gros œuvre",
+      "unit": "sac 35 kg",
+      "reference": "Lafarge / Holcim / CIMENTS ANTILLAIS",
+      "usage": "Fondations, dalles béton, enduits",
+      "prices": [
+        {
+          "territory": "GP",
+          "avgPrice": 11.2,
+          "minPrice": 9.8,
+          "maxPrice": 12.9,
+          "supplier": "Point P / Bondis Bwa",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "élevée"
+        },
+        {
+          "territory": "MQ",
+          "avgPrice": 10.8,
+          "minPrice": 9.5,
+          "maxPrice": 12.2,
+          "supplier": "Point P / Mr. Bricolage",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "élevée"
+        },
+        {
+          "territory": "GF",
+          "avgPrice": 13.5,
+          "minPrice": 11.0,
+          "maxPrice": 16.0,
+          "supplier": "Point P Guyane",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "moyenne"
+        },
+        {
+          "territory": "RE",
+          "avgPrice": 9.9,
+          "minPrice": 8.8,
+          "maxPrice": 11.2,
+          "supplier": "Batimat / Castorama",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "élevée"
+        },
+        {
+          "territory": "YT",
+          "avgPrice": 12.5,
+          "minPrice": 10.5,
+          "maxPrice": 14.5,
+          "supplier": "Point P Mayotte",
+          "observationDate": "2025-12-01",
+          "source": "relevé_citoyen",
+          "confidence": "moyenne"
+        },
+        {
+          "territory": "FR",
+          "avgPrice": 6.9,
+          "minPrice": 5.8,
+          "maxPrice": 8.2,
+          "supplier": "Leroy Merlin / Point P",
+          "observationDate": "2026-02-01",
+          "source": "officiel",
+          "confidence": "élevée"
+        }
+      ]
+    },
+    {
+      "id": "mat-002",
+      "name": "Parpaing creux 20×20×50 cm – unité",
+      "category": "Gros œuvre",
+      "unit": "unité",
+      "reference": "Parpaing standard béton",
+      "usage": "Maçonnerie murs porteurs et cloisons",
+      "prices": [
+        {
+          "territory": "GP",
+          "avgPrice": 1.55,
+          "minPrice": 1.3,
+          "maxPrice": 1.8,
+          "supplier": "Leroy Merlin / Bondis Bwa",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "élevée"
+        },
+        {
+          "territory": "MQ",
+          "avgPrice": 1.5,
+          "minPrice": 1.25,
+          "maxPrice": 1.75,
+          "supplier": "Leroy Merlin / Mr. Bricolage",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "élevée"
+        },
+        {
+          "territory": "GF",
+          "avgPrice": 1.8,
+          "minPrice": 1.5,
+          "maxPrice": 2.1,
+          "supplier": "Point P Guyane",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "moyenne"
+        },
+        {
+          "territory": "RE",
+          "avgPrice": 1.35,
+          "minPrice": 1.1,
+          "maxPrice": 1.6,
+          "supplier": "Castorama / Batimat",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "élevée"
+        },
+        {
+          "territory": "YT",
+          "avgPrice": 1.7,
+          "minPrice": 1.4,
+          "maxPrice": 2.0,
+          "supplier": "Point P Mayotte",
+          "observationDate": "2025-12-01",
+          "source": "relevé_citoyen",
+          "confidence": "moyenne"
+        },
+        {
+          "territory": "FR",
+          "avgPrice": 0.95,
+          "minPrice": 0.75,
+          "maxPrice": 1.15,
+          "supplier": "Leroy Merlin / Point P",
+          "observationDate": "2026-02-01",
+          "source": "officiel",
+          "confidence": "élevée"
+        }
+      ]
+    },
+    {
+      "id": "mat-003",
+      "name": "Fer à béton HA 10 mm – barre 6 m",
+      "category": "Gros œuvre",
+      "unit": "barre 6 m",
+      "reference": "Acier HA ribé – armatures béton",
+      "usage": "Dalles, poteaux, armatures",
+      "prices": [
+        {
+          "territory": "GP",
+          "avgPrice": 10.5,
+          "minPrice": 9.0,
+          "maxPrice": 12.5,
+          "supplier": "Bondis Bwa / Leroy Merlin",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "élevée"
+        },
+        {
+          "territory": "MQ",
+          "avgPrice": 10.8,
+          "minPrice": 9.2,
+          "maxPrice": 13.0,
+          "supplier": "Leroy Merlin / Point P",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "élevée"
+        },
+        {
+          "territory": "GF",
+          "avgPrice": 13.0,
+          "minPrice": 10.5,
+          "maxPrice": 15.5,
+          "supplier": "Point P Guyane",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "moyenne"
+        },
+        {
+          "territory": "RE",
+          "avgPrice": 9.2,
+          "minPrice": 8.0,
+          "maxPrice": 11.0,
+          "supplier": "Batimat / Castorama",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "élevée"
+        },
+        {
+          "territory": "YT",
+          "avgPrice": 12.0,
+          "minPrice": 10.0,
+          "maxPrice": 14.5,
+          "supplier": "Point P Mayotte",
+          "observationDate": "2025-12-01",
+          "source": "relevé_citoyen",
+          "confidence": "moyenne"
+        },
+        {
+          "territory": "FR",
+          "avgPrice": 6.5,
+          "minPrice": 5.2,
+          "maxPrice": 8.0,
+          "supplier": "Leroy Merlin / Acemo",
+          "observationDate": "2026-02-01",
+          "source": "officiel",
+          "confidence": "élevée"
+        }
+      ]
+    },
+    {
+      "id": "mat-004",
+      "name": "Sable 0/4 – big bag 1 m³",
+      "category": "Gros œuvre",
+      "unit": "big bag 1 m³",
+      "reference": "Sable fin de construction",
+      "usage": "Mortier, enduits, béton",
+      "prices": [
+        {
+          "territory": "GP",
+          "avgPrice": 72.0,
+          "minPrice": 60.0,
+          "maxPrice": 88.0,
+          "supplier": "Bondis Bwa / carrières locales",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "élevée"
+        },
+        {
+          "territory": "MQ",
+          "avgPrice": 78.0,
+          "minPrice": 65.0,
+          "maxPrice": 92.0,
+          "supplier": "Point P / carrières locales",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "élevée"
+        },
+        {
+          "territory": "GF",
+          "avgPrice": 85.0,
+          "minPrice": 70.0,
+          "maxPrice": 105.0,
+          "supplier": "Point P Guyane",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "moyenne"
+        },
+        {
+          "territory": "RE",
+          "avgPrice": 65.0,
+          "minPrice": 55.0,
+          "maxPrice": 80.0,
+          "supplier": "Batimat / carrières locales",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "élevée"
+        },
+        {
+          "territory": "YT",
+          "avgPrice": 80.0,
+          "minPrice": 65.0,
+          "maxPrice": 95.0,
+          "supplier": "négoces locaux",
+          "observationDate": "2025-12-01",
+          "source": "relevé_citoyen",
+          "confidence": "faible"
+        },
+        {
+          "territory": "FR",
+          "avgPrice": 45.0,
+          "minPrice": 32.0,
+          "maxPrice": 58.0,
+          "supplier": "Point P / Lafarge",
+          "observationDate": "2026-02-01",
+          "source": "officiel",
+          "confidence": "élevée"
+        }
+      ]
+    },
+    {
+      "id": "mat-005",
+      "name": "Tôle bac acier ondulée – 3 m",
+      "category": "Charpente / Couverture",
+      "unit": "barre 3 m",
+      "reference": "Tôle acier galvanisé ondulée – épaisseur 0,6 mm",
+      "usage": "Toitures, bardages, abris",
+      "prices": [
+        {
+          "territory": "GP",
+          "avgPrice": 30.0,
+          "minPrice": 25.0,
+          "maxPrice": 38.0,
+          "supplier": "Leroy Merlin / Bondis Bwa",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "élevée"
+        },
+        {
+          "territory": "MQ",
+          "avgPrice": 32.0,
+          "minPrice": 26.0,
+          "maxPrice": 40.0,
+          "supplier": "Leroy Merlin / Point P",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "élevée"
+        },
+        {
+          "territory": "GF",
+          "avgPrice": 38.0,
+          "minPrice": 30.0,
+          "maxPrice": 48.0,
+          "supplier": "Point P Guyane",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "moyenne"
+        },
+        {
+          "territory": "RE",
+          "avgPrice": 26.0,
+          "minPrice": 21.0,
+          "maxPrice": 33.0,
+          "supplier": "Castorama / Batimat",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "élevée"
+        },
+        {
+          "territory": "YT",
+          "avgPrice": 35.0,
+          "minPrice": 28.0,
+          "maxPrice": 44.0,
+          "supplier": "négoces locaux",
+          "observationDate": "2025-12-01",
+          "source": "relevé_citoyen",
+          "confidence": "faible"
+        },
+        {
+          "territory": "FR",
+          "avgPrice": 18.5,
+          "minPrice": 14.5,
+          "maxPrice": 23.0,
+          "supplier": "Leroy Merlin / Würth",
+          "observationDate": "2026-02-01",
+          "source": "officiel",
+          "confidence": "élevée"
+        }
+      ]
+    },
+    {
+      "id": "mat-006",
+      "name": "Plaque de plâtre BA 13 – 1200×2500 mm",
+      "category": "Isolation",
+      "unit": "plaque",
+      "reference": "Plaque standard BA 13 (Placoplatre / Knauf)",
+      "usage": "Cloisons, doublages, faux-plafonds",
+      "prices": [
+        {
+          "territory": "GP",
+          "avgPrice": 14.9,
+          "minPrice": 12.5,
+          "maxPrice": 17.5,
+          "supplier": "Leroy Merlin / Mr. Bricolage",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "élevée"
+        },
+        {
+          "territory": "MQ",
+          "avgPrice": 15.5,
+          "minPrice": 13.0,
+          "maxPrice": 18.5,
+          "supplier": "Leroy Merlin / Point P",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "élevée"
+        },
+        {
+          "territory": "GF",
+          "avgPrice": 18.0,
+          "minPrice": 14.5,
+          "maxPrice": 22.0,
+          "supplier": "Point P Guyane",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "moyenne"
+        },
+        {
+          "territory": "RE",
+          "avgPrice": 13.5,
+          "minPrice": 11.0,
+          "maxPrice": 16.0,
+          "supplier": "Castorama / Batimat",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "élevée"
+        },
+        {
+          "territory": "YT",
+          "avgPrice": 17.0,
+          "minPrice": 14.0,
+          "maxPrice": 20.0,
+          "supplier": "négoces locaux",
+          "observationDate": "2025-12-01",
+          "source": "relevé_citoyen",
+          "confidence": "faible"
+        },
+        {
+          "territory": "FR",
+          "avgPrice": 9.5,
+          "minPrice": 7.5,
+          "maxPrice": 12.0,
+          "supplier": "Leroy Merlin / Brico Dépôt",
+          "observationDate": "2026-02-01",
+          "source": "officiel",
+          "confidence": "élevée"
+        }
+      ]
+    },
+    {
+      "id": "mat-007",
+      "name": "Peinture façade acrylique – bidon 15 L",
+      "category": "Peinture / Revêtement",
+      "unit": "bidon 15 L",
+      "reference": "Peinture façade type Tollens / Seigneurie / V33",
+      "usage": "Façades extérieures, anti-intempéries",
+      "prices": [
+        {
+          "territory": "GP",
+          "avgPrice": 72.0,
+          "minPrice": 62.0,
+          "maxPrice": 85.0,
+          "supplier": "Leroy Merlin / Mr. Bricolage",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "élevée"
+        },
+        {
+          "territory": "MQ",
+          "avgPrice": 75.0,
+          "minPrice": 64.0,
+          "maxPrice": 88.0,
+          "supplier": "Leroy Merlin",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "élevée"
+        },
+        {
+          "territory": "GF",
+          "avgPrice": 85.0,
+          "minPrice": 72.0,
+          "maxPrice": 100.0,
+          "supplier": "Point P Guyane",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "moyenne"
+        },
+        {
+          "territory": "RE",
+          "avgPrice": 68.0,
+          "minPrice": 58.0,
+          "maxPrice": 80.0,
+          "supplier": "Castorama / Batimat",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "élevée"
+        },
+        {
+          "territory": "YT",
+          "avgPrice": 80.0,
+          "minPrice": 68.0,
+          "maxPrice": 95.0,
+          "supplier": "négoces locaux",
+          "observationDate": "2025-12-01",
+          "source": "relevé_citoyen",
+          "confidence": "faible"
+        },
+        {
+          "territory": "FR",
+          "avgPrice": 48.0,
+          "minPrice": 38.0,
+          "maxPrice": 62.0,
+          "supplier": "Leroy Merlin / Castorama",
+          "observationDate": "2026-02-01",
+          "source": "officiel",
+          "confidence": "élevée"
+        }
+      ]
+    },
+    {
+      "id": "mat-008",
+      "name": "Câble électrique 2,5 mm² – rouleau 100 m",
+      "category": "Électricité",
+      "unit": "rouleau 100 m",
+      "reference": "Câble H07VU 2,5 mm² (Nexans / Legrand / Draka)",
+      "usage": "Circuits prise de courant 16 A",
+      "prices": [
+        {
+          "territory": "GP",
+          "avgPrice": 96.0,
+          "minPrice": 82.0,
+          "maxPrice": 112.0,
+          "supplier": "Leroy Merlin / Mr. Bricolage",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "élevée"
+        },
+        {
+          "territory": "MQ",
+          "avgPrice": 99.0,
+          "minPrice": 85.0,
+          "maxPrice": 115.0,
+          "supplier": "Leroy Merlin / Point P",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "élevée"
+        },
+        {
+          "territory": "GF",
+          "avgPrice": 115.0,
+          "minPrice": 98.0,
+          "maxPrice": 135.0,
+          "supplier": "Point P Guyane",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "moyenne"
+        },
+        {
+          "territory": "RE",
+          "avgPrice": 88.0,
+          "minPrice": 75.0,
+          "maxPrice": 102.0,
+          "supplier": "Castorama / Batimat",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "élevée"
+        },
+        {
+          "territory": "YT",
+          "avgPrice": 110.0,
+          "minPrice": 92.0,
+          "maxPrice": 130.0,
+          "supplier": "négoces locaux",
+          "observationDate": "2025-12-01",
+          "source": "relevé_citoyen",
+          "confidence": "faible"
+        },
+        {
+          "territory": "FR",
+          "avgPrice": 65.0,
+          "minPrice": 52.0,
+          "maxPrice": 80.0,
+          "supplier": "Leroy Merlin / Brico Dépôt",
+          "observationDate": "2026-02-01",
+          "source": "officiel",
+          "confidence": "élevée"
+        }
+      ]
+    },
+    {
+      "id": "mat-009",
+      "name": "Tube PVC évacuation DN 100 – 3 m",
+      "category": "Plomberie / Sanitaire",
+      "unit": "tube 3 m",
+      "reference": "PVC évacuation NF + pression (Nicoll / Wavin / Girpi)",
+      "usage": "Évacuations sanitaires, réseaux EU/EP",
+      "prices": [
+        {
+          "territory": "GP",
+          "avgPrice": 17.5,
+          "minPrice": 14.5,
+          "maxPrice": 21.0,
+          "supplier": "Leroy Merlin / Mr. Bricolage",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "élevée"
+        },
+        {
+          "territory": "MQ",
+          "avgPrice": 18.2,
+          "minPrice": 15.0,
+          "maxPrice": 22.0,
+          "supplier": "Leroy Merlin / Point P",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "élevée"
+        },
+        {
+          "territory": "GF",
+          "avgPrice": 22.0,
+          "minPrice": 18.0,
+          "maxPrice": 27.0,
+          "supplier": "Point P Guyane",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "moyenne"
+        },
+        {
+          "territory": "RE",
+          "avgPrice": 16.0,
+          "minPrice": 13.0,
+          "maxPrice": 20.0,
+          "supplier": "Castorama / Batimat",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "élevée"
+        },
+        {
+          "territory": "YT",
+          "avgPrice": 20.0,
+          "minPrice": 16.5,
+          "maxPrice": 25.0,
+          "supplier": "négoces locaux",
+          "observationDate": "2025-12-01",
+          "source": "relevé_citoyen",
+          "confidence": "faible"
+        },
+        {
+          "territory": "FR",
+          "avgPrice": 10.8,
+          "minPrice": 8.5,
+          "maxPrice": 14.0,
+          "supplier": "Leroy Merlin / Brico Dépôt",
+          "observationDate": "2026-02-01",
+          "source": "officiel",
+          "confidence": "élevée"
+        }
+      ]
+    },
+    {
+      "id": "mat-010",
+      "name": "Chevron sapin 60×80 mm – 3 m",
+      "category": "Charpente / Couverture",
+      "unit": "pièce 3 m",
+      "reference": "Bois de charpente classe C24",
+      "usage": "Charpentes légères, ossature bois",
+      "prices": [
+        {
+          "territory": "GP",
+          "avgPrice": 9.8,
+          "minPrice": 8.2,
+          "maxPrice": 12.0,
+          "supplier": "Leroy Merlin / Bondis Bwa",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "élevée"
+        },
+        {
+          "territory": "MQ",
+          "avgPrice": 10.2,
+          "minPrice": 8.5,
+          "maxPrice": 12.5,
+          "supplier": "Leroy Merlin / négoces",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "élevée"
+        },
+        {
+          "territory": "GF",
+          "avgPrice": 12.0,
+          "minPrice": 9.8,
+          "maxPrice": 15.0,
+          "supplier": "Point P Guyane / bois locaux",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "moyenne"
+        },
+        {
+          "territory": "RE",
+          "avgPrice": 9.2,
+          "minPrice": 7.8,
+          "maxPrice": 11.0,
+          "supplier": "Castorama / Batimat",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "élevée"
+        },
+        {
+          "territory": "YT",
+          "avgPrice": 12.5,
+          "minPrice": 10.0,
+          "maxPrice": 15.5,
+          "supplier": "négoces locaux",
+          "observationDate": "2025-12-01",
+          "source": "relevé_citoyen",
+          "confidence": "faible"
+        },
+        {
+          "territory": "FR",
+          "avgPrice": 6.5,
+          "minPrice": 5.0,
+          "maxPrice": 8.5,
+          "supplier": "Leroy Merlin / Brico Dépôt",
+          "observationDate": "2026-02-01",
+          "source": "officiel",
+          "confidence": "élevée"
+        }
+      ]
+    },
+    {
+      "id": "mat-011",
+      "name": "Mortier colle carrelage C2 – sac 25 kg",
+      "category": "Peinture / Revêtement",
+      "unit": "sac 25 kg",
+      "reference": "Colle carrelage classe C2 (Weber / Parex / Mapei)",
+      "usage": "Pose carrelage sol et mur (intérieur/extérieur)",
+      "prices": [
+        {
+          "territory": "GP",
+          "avgPrice": 14.5,
+          "minPrice": 12.0,
+          "maxPrice": 17.0,
+          "supplier": "Leroy Merlin / Mr. Bricolage",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "élevée"
+        },
+        {
+          "territory": "MQ",
+          "avgPrice": 15.0,
+          "minPrice": 12.5,
+          "maxPrice": 18.0,
+          "supplier": "Leroy Merlin / Point P",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "élevée"
+        },
+        {
+          "territory": "GF",
+          "avgPrice": 18.5,
+          "minPrice": 15.0,
+          "maxPrice": 22.0,
+          "supplier": "Point P Guyane",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "moyenne"
+        },
+        {
+          "territory": "RE",
+          "avgPrice": 13.0,
+          "minPrice": 10.5,
+          "maxPrice": 16.0,
+          "supplier": "Castorama / Batimat",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "élevée"
+        },
+        {
+          "territory": "YT",
+          "avgPrice": 17.0,
+          "minPrice": 14.0,
+          "maxPrice": 21.0,
+          "supplier": "négoces locaux",
+          "observationDate": "2025-12-01",
+          "source": "relevé_citoyen",
+          "confidence": "faible"
+        },
+        {
+          "territory": "FR",
+          "avgPrice": 8.8,
+          "minPrice": 6.5,
+          "maxPrice": 11.5,
+          "supplier": "Leroy Merlin / Brico Dépôt",
+          "observationDate": "2026-02-01",
+          "source": "officiel",
+          "confidence": "élevée"
+        }
+      ]
+    },
+    {
+      "id": "mat-012",
+      "name": "Isolation laine de verre 100 mm – rouleau 6 m²",
+      "category": "Isolation",
+      "unit": "rouleau 6 m²",
+      "reference": "Laine de verre Isover / Ursa R=3,00",
+      "usage": "Isolation toiture, combles, cloisons",
+      "prices": [
+        {
+          "territory": "GP",
+          "avgPrice": 28.0,
+          "minPrice": 23.0,
+          "maxPrice": 34.0,
+          "supplier": "Leroy Merlin / Mr. Bricolage",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "élevée"
+        },
+        {
+          "territory": "MQ",
+          "avgPrice": 29.0,
+          "minPrice": 24.0,
+          "maxPrice": 36.0,
+          "supplier": "Leroy Merlin / Point P",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "élevée"
+        },
+        {
+          "territory": "GF",
+          "avgPrice": 35.0,
+          "minPrice": 29.0,
+          "maxPrice": 43.0,
+          "supplier": "Point P Guyane",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "moyenne"
+        },
+        {
+          "territory": "RE",
+          "avgPrice": 25.0,
+          "minPrice": 21.0,
+          "maxPrice": 31.0,
+          "supplier": "Castorama / Batimat",
+          "observationDate": "2026-02-01",
+          "source": "relevé_citoyen",
+          "confidence": "élevée"
+        },
+        {
+          "territory": "YT",
+          "avgPrice": 33.0,
+          "minPrice": 27.0,
+          "maxPrice": 40.0,
+          "supplier": "négoces locaux",
+          "observationDate": "2025-12-01",
+          "source": "relevé_citoyen",
+          "confidence": "faible"
+        },
+        {
+          "territory": "FR",
+          "avgPrice": 18.0,
+          "minPrice": 13.5,
+          "maxPrice": 23.0,
+          "supplier": "Leroy Merlin / Brico Dépôt",
+          "observationDate": "2026-02-01",
+          "source": "officiel",
+          "confidence": "élevée"
+        }
+      ]
+    }
+  ]
+}
