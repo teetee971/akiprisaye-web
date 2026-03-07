@@ -11,6 +11,7 @@ export default function Footer() {
           <Link to="/methodologie" className="hover:text-white">Méthodologie</Link>
           <Link to="/faq" className="hover:text-white">FAQ</Link>
           <Link to="/solidarite" className="hover:text-orange-300">🤝 Entraide</Link>
+          <Link to="/messagerie" className="hover:text-indigo-300">💬 Messagerie</Link>
           <Link to="/inscription-pro" className="hover:text-blue-300">💼 Espace Pro</Link>
           <Link to="/gouvernance" className="hover:text-slate-300">Gouvernance</Link>
           <Link to="/presse" className="hover:text-slate-300">Presse</Link>

@@ -192,6 +192,9 @@ const IEVRPage = lazyPage(() => import('./pages/IEVR'));
 const Versions = lazyPage(() => import('./pages/Versions'));
 const ScanOCR = lazyPage(() => import('./pages/ScanOCR'));
 
+// Messagerie interne
+const Messagerie = lazyPage(() => import('./pages/Messagerie'));
+
 /**
  * IMPORTANT — NE PAS SUPPRIMER
  * Les tests CI vérifient la présence LITTÉRALE de certaines routes alias
@@ -511,6 +514,9 @@ export default function App() {
                           <Route path="budget-vital" element={<BudgetVital />} />
                           <Route path="ievr" element={<IEVRPage />} />
                           <Route path="versions" element={<Versions />} />
+
+                          {/* Messagerie interne */}
+                          <Route path="messagerie" element={<Messagerie />} />
 
                           {/* Catch-all route - redirect to home */}
                           <Route path="*" element={<Navigate to="/" replace />} />

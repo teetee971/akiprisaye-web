@@ -9,7 +9,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useFavorites } from "@/hooks/useFavorites";
 import { safeLocalStorage } from "@/utils/safeLocalStorage";
 import { ALERTS_STORAGE_KEY } from "@/services/priceAlertsStorage";
-import { Heart, Bell, Globe, CreditCard, User as UserIcon, Trash2 } from "lucide-react";
+import { Heart, Bell, Globe, CreditCard, User as UserIcon, Trash2, MessageCircle } from "lucide-react";
 
 const TERRITORY_STORAGE_KEY = 'akiprisaye:main_territory:v1';
 
@@ -169,6 +169,19 @@ export default function MonCompte() {
                     </div>
                   </div>
                 </div>
+
+                {/* Messagerie shortcut */}
+                <Link
+                  to="/messagerie"
+                  className="flex items-center gap-3 mb-6 p-4 bg-indigo-900/30 border border-indigo-700 rounded-lg hover:bg-indigo-900/50 transition-colors group"
+                >
+                  <MessageCircle className="w-6 h-6 text-indigo-400 group-hover:scale-110 transition-transform" />
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-indigo-200">💬 Messagerie interne</p>
+                    <p className="text-indigo-300 text-sm">Discutez avec d'autres utilisateurs inscrits.</p>
+                  </div>
+                  <span className="text-indigo-400 text-xs font-semibold">Ouvrir →</span>
+                </Link>
 
                 <div className="mb-6 p-4 bg-blue-900/30 border border-blue-700 rounded-lg">
                   <h3 className="text-blue-200 font-semibold mb-2">🔐 Le compte est facultatif</h3>
