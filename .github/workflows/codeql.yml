@@ -46,6 +46,8 @@ jobs:
         include:
         - language: actions
           build-mode: none
+        - language: java-kotlin
+          build-mode: none # This mode only analyzes Java. Set this to 'autobuild' or 'manual' to analyze Kotlin too.
         - language: javascript-typescript
           build-mode: none
         # CodeQL supports the following values keywords for 'language': 'actions', 'c-cpp', 'csharp', 'go', 'java-kotlin', 'javascript-typescript', 'python', 'ruby', 'rust', 'swift'
@@ -66,6 +68,11 @@ jobs:
       with:
         languages: ${{ matrix.language }}
         build-mode: ${{ matrix.build-mode }}
+        # Exclude the auto-generated Capacitor Android wrapper code from all scans.
+        # The android/ directory contains only scaffolding – not application logic.
+        config: |
+          paths-ignore:
+            - android/**
         # If you wish to specify custom queries, you can do so here or in a config file.
         # By default, queries listed here will override any specified in a config file.
         # Prefix the list here with "+" to use these queries and those in the config file.
