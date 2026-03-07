@@ -1913,7 +1913,8 @@
   margin: 0 auto;
   width: 100%;
   box-sizing: border-box;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: visible;
 }
 
 .panier-vital-header {
