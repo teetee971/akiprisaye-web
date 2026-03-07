@@ -57,7 +57,7 @@ export default function ContribuerPrix() {
     }
 
     // Check if user is authenticated
-    if (!user || !auth.currentUser) {
+    if (!user || !auth || !auth.currentUser) {
       setError("Vous devez être connecté pour contribuer.");
       return;
     }

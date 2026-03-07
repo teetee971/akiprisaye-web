@@ -63,7 +63,7 @@ describe('Institutional Portal Service', () => {
     });
 
     it('should verify access to dataset with territory', async () => {
-      const hasAccess = await verifyAccess('user-123', 'test-dataset', 'MTQ');
+      const hasAccess = await verifyAccess('user-123', 'test-dataset', 'MQ');
       
       expect(typeof hasAccess).toBe('boolean');
     });
@@ -125,11 +125,11 @@ describe('Institutional Portal Service', () => {
     });
 
     it('should return indices for specific territory', async () => {
-      const indices = await getGlobalIndices('user-123', 'MTQ');
+      const indices = await getGlobalIndices('user-123', 'MQ');
       
       expect(Array.isArray(indices)).toBe(true);
       expect(indices.length).toBeGreaterThan(0);
-      expect(indices[0].territory).toBe('MTQ');
+      expect(indices[0].territory).toBe('MQ');
     });
 
     it('should include index components', async () => {
@@ -159,14 +159,14 @@ describe('Institutional Portal Service', () => {
     it('should return multi-territory comparison', async () => {
       const comparison = await getMultiTerritoryComparison(
         'user-123',
-        'FRA',
-        ['GLP', 'MTQ'],
+        'FR',
+        ['GP', 'MQ'],
         'cost-of-living-index'
       );
       
       expect(comparison).toBeDefined();
-      expect(comparison.referenceTerritory).toBe('FRA');
-      expect(comparison.comparisonTerritories).toEqual(['GLP', 'MTQ']);
+      expect(comparison.referenceTerritory).toBe('FR');
+      expect(comparison.comparisonTerritories).toEqual(['GP', 'MQ']);
       expect(comparison.indicator).toBe('cost-of-living-index');
       expect(comparison.results).toBeDefined();
       expect(Array.isArray(comparison.results)).toBe(true);
@@ -175,8 +175,8 @@ describe('Institutional Portal Service', () => {
     it('should include percentage differences', async () => {
       const comparison = await getMultiTerritoryComparison(
         'user-123',
-        'FRA',
-        ['GLP', 'MTQ'],
+        'FR',
+        ['GP', 'MQ'],
         'cost-of-living-index'
       );
       
@@ -193,7 +193,7 @@ describe('Institutional Portal Service', () => {
     it('should return historical data', async () => {
       const request = {
         datasetId: 'cost-of-living-index',
-        territory: 'MTQ' as const,
+        territory: 'MQ' as const,
         startDate: '2024-01-01T00:00:00Z',
         endDate: '2024-12-31T00:00:00Z',
         aggregation: 'monthly' as const
@@ -211,7 +211,7 @@ describe('Institutional Portal Service', () => {
     it('should include data points with required fields', async () => {
       const request = {
         datasetId: 'cost-of-living-index',
-        territory: 'MTQ' as const,
+        territory: 'MQ' as const,
         startDate: '2024-01-01T00:00:00Z',
         endDate: '2024-03-31T00:00:00Z',
         aggregation: 'monthly' as const
@@ -230,7 +230,7 @@ describe('Institutional Portal Service', () => {
     it('should respect aggregation parameter', async () => {
       const monthlyRequest = {
         datasetId: 'cost-of-living-index',
-        territory: 'MTQ' as const,
+        territory: 'MQ' as const,
         startDate: '2024-01-01T00:00:00Z',
         endDate: '2024-12-31T00:00:00Z',
         aggregation: 'monthly' as const
@@ -349,8 +349,8 @@ describe('Institutional Portal Service', () => {
 
   describe('Data integrity', () => {
     it('should provide consistent data across calls', async () => {
-      const indices1 = await getGlobalIndices('user-123', 'MTQ');
-      const indices2 = await getGlobalIndices('user-123', 'MTQ');
+      const indices1 = await getGlobalIndices('user-123', 'MQ');
+      const indices2 = await getGlobalIndices('user-123', 'MQ');
       
       // In mock implementation, values may vary slightly, but structure should be same
       expect(indices1.length).toBe(indices2.length);

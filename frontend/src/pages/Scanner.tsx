@@ -127,7 +127,7 @@ export default function Scanner() {
       // Save to local storage for review
       const savedScans = safeLocalStorage.getJSON<Array<{code: string; timestamp: string}>>('unrecognizedScans', []);
       savedScans.push({
-        code: scanResult,
+        code: scanResult ?? '',
         timestamp: new Date().toISOString(),
       });
       safeLocalStorage.setJSON('unrecognizedScans', savedScans);

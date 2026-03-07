@@ -49,7 +49,7 @@ export function useLeaderboard(options: UseLeaderboardOptions = {}): UseLeaderbo
 
     try {
       const params = new URLSearchParams({
-        period: filters.period,
+        period: filters.period ?? 'all_time',
         limit: filters.limit?.toString() || '100'
       });
 
@@ -77,7 +77,7 @@ export function useLeaderboard(options: UseLeaderboardOptions = {}): UseLeaderbo
     try {
       const params = new URLSearchParams({
         userId,
-        period: filters.period
+        period: filters.period ?? 'all_time'
       });
 
       const response = await fetch(`${API_BASE}/leaderboard/rank?${params}`);

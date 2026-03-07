@@ -56,7 +56,7 @@ export default function PromosPage() {
   }, [basePromos, brand, category, sortBy]);
 
   return (
-    <main className="max-w-6xl mx-auto px-4 py-8 text-slate-100">
+    <div className="max-w-6xl mx-auto px-4 py-8 text-slate-100">
       <h1 className="text-2xl font-bold mb-2">Promos & catalogues</h1>
       <p className="text-sm text-slate-400 mb-6">
         Offres locales en mode {effectiveSelection.serviceMode ?? 'inStore'} · territoire {territoryLabels[territory]}
@@ -136,6 +136,6 @@ export default function PromosPage() {
       <Link to="/comparateur" className="inline-block mt-6 text-sm text-blue-400 underline">
         Retour au comparateur
       </Link>
-    </main>
+    </div>
   );
 }

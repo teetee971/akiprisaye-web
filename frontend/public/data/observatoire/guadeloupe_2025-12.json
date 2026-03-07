@@ -1,0 +1,89 @@
+{
+  "territoire": "Guadeloupe",
+  "date_snapshot": "2025-12-04",
+  "source": "releve_citoyen",
+  "qualite": "verifie",
+  "donnees": [
+    {
+      "commune": "Les Abymes",
+      "enseigne": "Carrefour",
+      "categorie": "Produits laitiers",
+      "produit": "Lait demi-écrémé UHT 1L",
+      "ean": "3560070123456",
+      "unite": "1L",
+      "prix": 1.40
+    },
+    {
+      "commune": "Les Abymes",
+      "enseigne": "E.Leclerc",
+      "categorie": "Produits laitiers",
+      "produit": "Lait demi-écrémé UHT 1L",
+      "ean": "3560070123456",
+      "unite": "1L",
+      "prix": 1.33
+    },
+    {
+      "commune": "Pointe-à-Pitre",
+      "enseigne": "Indépendants",
+      "categorie": "Épicerie",
+      "produit": "Riz long blanc 1kg",
+      "ean": "3250391234567",
+      "unite": "1kg",
+      "prix": 2.05
+    },
+    {
+      "commune": "Les Abymes",
+      "enseigne": "Carrefour",
+      "categorie": "Épicerie",
+      "produit": "Riz long blanc 1kg",
+      "ean": "3250391234567",
+      "unite": "1kg",
+      "prix": 1.92
+    },
+    {
+      "commune": "Pointe-à-Pitre",
+      "enseigne": "E.Leclerc",
+      "categorie": "Produits laitiers",
+      "produit": "Yaourt nature 4x125g",
+      "ean": "3560070789012",
+      "unite": "4x125g",
+      "prix": 1.85
+    },
+    {
+      "commune": "Basse-Terre",
+      "enseigne": "Carrefour",
+      "categorie": "Hygiène",
+      "produit": "Gel douche 250ml",
+      "ean": "3600523540023",
+      "unite": "250ml",
+      "prix": 2.45
+    },
+    {
+      "commune": "Basse-Terre",
+      "enseigne": "E.Leclerc",
+      "categorie": "Entretien / Nettoyage",
+      "produit": "Liquide vaisselle 500ml",
+      "ean": "3017620429002",
+      "unite": "500ml",
+      "prix": 1.80
+    },
+    {
+      "commune": "Les Abymes",
+      "enseigne": "Carrefour",
+      "categorie": "Épicerie",
+      "produit": "Sucre blanc 1kg",
+      "ean": "3560071112345",
+      "unite": "1kg",
+      "prix": 1.55
+    },
+    {
+      "commune": "Les Abymes",
+      "enseigne": "E.Leclerc",
+      "categorie": "Épicerie",
+      "produit": "Huile de tournesol 1L",
+      "ean": "3250399876543",
+      "unite": "1L",
+      "prix": 2.78
+    }
+  ]
+}

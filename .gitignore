@@ -179,3 +179,4 @@ push-rebased-branch.sh
 *.bak.*
 frontend/dist/
 *.orig
+frontend/.eslintcache

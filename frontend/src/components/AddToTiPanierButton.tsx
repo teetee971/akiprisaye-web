@@ -5,6 +5,7 @@ import type { PublicProduct } from '../services/eanPublicCatalog';
 import { useToast } from '../hooks/useToast';
 import { useEntitlements } from '../billing/useEntitlements';
 import { addShoppingListItem } from '../store/useShoppingListStore';
+import { isTerritoryCode } from '../types/territory';
 
 type AddToTiPanierButtonProps = {
   product: PublicProduct;
@@ -18,6 +19,7 @@ export default function AddToTiPanierButton({ product }: AddToTiPanierButtonProp
 
   const handleAdd = () => {
     const latestPrice = product.observedPrices?.[product.observedPrices.length - 1];
+    const territory = isTerritoryCode(latestPrice?.territory) ? latestPrice.territory : undefined;
 
     addItem({
       id: product.ean,
@@ -27,7 +29,7 @@ export default function AddToTiPanierButton({ product }: AddToTiPanierButtonProp
         name: product.name,
         price: latestPrice?.price,
         store: latestPrice?.store,
-        territory: latestPrice?.territory,
+        ...(territory ? { territory } : {}),
         category: product.category,
       },
     });
@@ -38,7 +40,7 @@ export default function AddToTiPanierButton({ product }: AddToTiPanierButtonProp
         name: product.name,
         quantity: 1,
         price: latestPrice?.price,
-        territory: latestPrice?.territory,
+        ...(territory ? { territory } : {}),
         history: latestPrice?.price ? [latestPrice.price] : undefined,
       },
       quota('maxItems'),

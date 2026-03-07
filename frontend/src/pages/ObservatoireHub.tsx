@@ -1,10 +1,16 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { BarChart3, Search, Award, Database } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { GlassCard } from '../components/ui/glass-card';
+import { HeroImage } from '../components/ui/HeroImage';
 import Observatoire from './Observatoire';
 import { TERRITORIES, type TerritoryCode } from '../constants/territories';
 import { getPalmaresForTerritory, OBSERVATOIRE_PALMARES } from '../data/observatoirePalmares';
+
+
+// Real Unsplash photo: supermarket shelves
+const HERO_IMG = 'https://images.unsplash.com/photo-1607082348351-cef5cd02c7b0?auto=format&fit=crop&w=1600&q=80';
 
 type ObservatoireTab = 'dashboard' | 'diagnostic' | 'palmares' | 'donnees';
 
@@ -33,13 +39,21 @@ export default function ObservatoireHub() {
       
       <div className="min-h-screen bg-slate-950 p-4 pt-24">
         <div className="max-w-7xl mx-auto">
+          {/* Hero banner */}
           <div className="mb-8">
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
-              📈 Observatoire des Prix
-            </h1>
-            <p className="text-gray-400 text-lg">
-              Données transparentes et analyses approfondies des prix DOM-COM
-            </p>
+            <HeroImage
+              src={HERO_IMG}
+              alt="Rayons de supermarché — comparaison des prix"
+              gradient="from-slate-900 to-emerald-950"
+              height="h-44 sm:h-60"
+            >
+              <h1 className="text-3xl md:text-4xl font-bold text-white drop-shadow">
+                📈 Observatoire des Prix
+              </h1>
+              <p className="text-slate-200 drop-shadow">
+                Données transparentes et analyses approfondies des prix DOM-COM &amp; France
+              </p>
+            </HeroImage>
           </div>
           
           {/* Tabs */}
@@ -156,10 +170,21 @@ export default function ObservatoireHub() {
                   </div>
                 </div>
                 
-                <div className="bg-slate-900/50 rounded-xl p-8 text-center">
-                  <p className="text-gray-500">
-                    Module en cours d'intégration
-                  </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-2">
+                  {[
+                    { emoji: '📊', label: 'Comparaison enseignes', to: '/comparaison-enseignes' },
+                    { emoji: '🛒', label: 'Comparaison panier',    to: '/comparaison-panier' },
+                    { emoji: '🌍', label: 'Comparateur citoyen',   to: '/comparateur-citoyen' },
+                  ].map((item) => (
+                    <Link
+                      key={item.to}
+                      to={item.to}
+                      className="flex flex-col items-center gap-2 p-4 bg-slate-800/50 border border-slate-700/50 rounded-xl hover:border-emerald-500/50 transition-all text-center"
+                    >
+                      <span className="text-2xl">{item.emoji}</span>
+                      <span className="text-xs font-medium text-gray-300">{item.label}</span>
+                    </Link>
+                  ))}
                 </div>
               </GlassCard>
             )}

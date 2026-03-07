@@ -199,7 +199,7 @@ export async function importStoresFromCSV(
   records.forEach((record, index) => {
     // Calculate row number accounting for 0-based index and header row
     const row = index + 2; // +2 because index is 0-based and row 1 is headers
-    const storeRecord = record as StoreCSVRecord;
+    const storeRecord = record as unknown as StoreCSVRecord;
     const validationErrors = validateStoreRecord(storeRecord, row);
     
     if (validationErrors.length > 0) {
@@ -289,7 +289,7 @@ export async function importProductsFromCSV(
 
   records.forEach((record, index) => {
     const row = index + 2;
-    const productRecord = record as ProductCSVRecord;
+    const productRecord = record as unknown as ProductCSVRecord;
     
     if (onProgress) {
       onProgress(index + 1, records.length);

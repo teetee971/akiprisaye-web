@@ -1,0 +1,80 @@
+{
+  "territoire": "Guyane",
+  "date_snapshot": "2026-02-06",
+  "source": "releve_citoyen",
+  "qualite": "verifie",
+  "donnees": [
+    {
+      "commune": "Cayenne",
+      "enseigne": "Carrefour",
+      "categorie": "Produits laitiers",
+      "produit": "Lait demi-écrémé UHT 1L",
+      "ean": "3560070123456",
+      "unite": "1L",
+      "prix": 1.65
+    },
+    {
+      "commune": "Cayenne",
+      "enseigne": "Score",
+      "categorie": "Produits laitiers",
+      "produit": "Lait demi-écrémé UHT 1L",
+      "ean": "3560070123456",
+      "unite": "1L",
+      "prix": 1.60
+    },
+    {
+      "commune": "Saint-Laurent-du-Maroni",
+      "enseigne": "Hyper U",
+      "categorie": "Produits laitiers",
+      "produit": "Lait demi-écrémé UHT 1L",
+      "ean": "3560070123456",
+      "unite": "1L",
+      "prix": 1.75
+    },
+    {
+      "commune": "Cayenne",
+      "enseigne": "Carrefour",
+      "categorie": "Épicerie",
+      "produit": "Riz long blanc 1kg",
+      "ean": "3250391234567",
+      "unite": "1kg",
+      "prix": 2.25
+    },
+    {
+      "commune": "Saint-Laurent-du-Maroni",
+      "enseigne": "Score",
+      "categorie": "Épicerie",
+      "produit": "Riz long blanc 1kg",
+      "ean": "3250391234567",
+      "unite": "1kg",
+      "prix": 2.42
+    },
+    {
+      "commune": "Cayenne",
+      "enseigne": "Hyper U",
+      "categorie": "Produits laitiers",
+      "produit": "Yaourt nature 4x125g",
+      "ean": "3560070789012",
+      "unite": "4x125g",
+      "prix": 2.15
+    },
+    {
+      "commune": "Cayenne",
+      "enseigne": "Carrefour",
+      "categorie": "Épicerie",
+      "produit": "Sucre blanc 1kg",
+      "ean": "3560071112345",
+      "unite": "1kg",
+      "prix": 1.88
+    },
+    {
+      "commune": "Cayenne",
+      "enseigne": "Score",
+      "categorie": "Épicerie",
+      "produit": "Huile de tournesol 1L",
+      "ean": "3250399876543",
+      "unite": "1L",
+      "prix": 3.52
+    }
+  ]
+}

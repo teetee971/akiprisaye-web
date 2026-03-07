@@ -197,15 +197,15 @@ export function ProductCard({ product, onClick, onValidate, anomalies }: Product
           padding: '4px 8px',
           borderRadius: '6px',
           background: product.source_prix === 'api' ? '#10b981' : 
-                      product.source_prix === 'utilisateur' ? '#3b82f6' :
-                      product.source_prix === 'estimation' ? '#f59e0b' : '#6b7280',
+                      product.source_prix === 'user' ? '#3b82f6' :
+                      product.source_prix === 'estimated' ? '#f59e0b' : '#6b7280',
           color: 'white',
           display: 'inline-block',
           marginBottom: '12px'
         }}>
           Source: {product.source_prix === 'api' ? 'API officielle' :
-                   product.source_prix === 'utilisateur' ? 'Utilisateur vérifié' :
-                   product.source_prix === 'estimation' ? 'Estimation' : 'Historique'}
+                   product.source_prix === 'user' ? 'Utilisateur vérifié' :
+                   product.source_prix === 'estimated' ? 'Estimation' : 'Historique'}
         </div>
         
         {/* Reliability and validation */}

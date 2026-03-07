@@ -17,14 +17,14 @@ function getPlanFromAuthUser(): PlanId | null {
 }
 
 function resolvePlan(): PlanId {
-  const override = import.meta.env.VITE_PLAN_OVERRIDE as PlanId | undefined;
+  const override = import.meta.env['VITE_PLAN_OVERRIDE'] as PlanId | undefined;
   if (override && PLAN_DEFINITIONS[override]) return override;
   return getPlanFromAuthUser() ?? 'FREE';
 }
 
 const FEATURE_MIN_PLAN: Partial<Record<FeatureId, PlanId>> = {
-  PRICE_HISTORY_ADVANCED: 'PRO',
-  PRICE_ALERTS: 'PRO',
+  PRICE_HISTORY_ADVANCED: 'CITIZEN_PREMIUM',
+  PRICE_ALERTS: 'CITIZEN_PREMIUM',
   EXPORT_ADVANCED: 'PRO',
   MULTI_TERRITORY: 'PRO',
   SHARED_LISTS: 'BUSINESS',

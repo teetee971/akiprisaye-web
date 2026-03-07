@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 import { newsFallback } from '../data/newsFallback';
 
 const TERRITORY_LABELS = {
@@ -80,9 +82,16 @@ export default function Actualites() {
         <meta name="description" content="Rappels sanitaires, bons plans vérifiés, réglementaire et signaux conso avec source obligatoire." />
       </Helmet>
 
-      <section className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur">
-        <h1 className="text-2xl font-semibold">Actualités & Bons plans consommateurs</h1>
-        <p className="mt-2 text-sm text-slate-300">Mode API: <span className="font-medium text-slate-100">{state.mode}</span></p>
+      <section className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur animate-fade-in">
+        <HeroImage
+          src={PAGE_HERO_IMAGES.contact}
+          alt="Actualités consommateurs"
+          gradient="from-slate-900 to-teal-950"
+          height="h-32 sm:h-44"
+        >
+          <h1 className="text-2xl font-bold text-white drop-shadow">📰 Actualités &amp; Bons plans</h1>
+          <p className="text-slate-200 text-sm drop-shadow">Rappels sanitaires, bons plans vérifiés et signaux conso</p>
+        </HeroImage>
       </section>
 
       <section className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur space-y-4">

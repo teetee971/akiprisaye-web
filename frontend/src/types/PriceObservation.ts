@@ -47,6 +47,9 @@ export interface PriceObservation {
   /** Nom de l’enseigne */
   storeLabel?: string;
 
+  /** Alias tolérant pour les sources JSON retournant storeName */
+  storeName?: string;
+
   /** Catégorie produit */
   productCategory?: ProductCategory;
 
@@ -58,6 +61,9 @@ export interface PriceObservation {
 
   /** Score de confiance calculé */
   confidenceScore?: number;
+
+  /** Alias tolérant pour les sources JSON retournant confidence */
+  confidence?: string | number;
 
   /** Nombre d’observations agrégées */
   observationsCount?: number;

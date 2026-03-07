@@ -58,6 +58,9 @@ export const safeLocalStorage = {
       return false;
     }
   },
+  remove(key: string): boolean {
+    return this.removeItem(key);
+  },
   clear(): void {
     if (typeof window === 'undefined' || !window.localStorage) return;
     try {

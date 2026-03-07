@@ -302,7 +302,7 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
           const hasTorch = Boolean(capabilities && 'torch' in capabilities && capabilities.torch);
           setTorchSupported(hasTorch);
 
-          const zoomCaps = capabilities?.zoom;
+          const zoomCaps = capabilities ? (capabilities as any)['zoom'] : undefined;
           if (zoomCaps) {
             const min = zoomCaps.min ?? 1;
             const max = zoomCaps.max ?? Math.max(min, 1);
@@ -721,7 +721,9 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
                 playsInline
                 muted
                 autoPlay
-              />
+              >
+                <track kind="captions" src="" srcLang="fr" label="Captions" default />
+              </video>
 
               {/* Overlay must be transparent and non-blocking */}
               <div className="absolute inset-0 pointer-events-none">

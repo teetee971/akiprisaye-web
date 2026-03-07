@@ -8,6 +8,8 @@ import React, { useState } from 'react';
 import { Trophy, Filter, ArrowLeft, RefreshCw, MapPin, Calendar } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useLeaderboard } from '../hooks/useLeaderboard';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 import { LeaderboardTable, UserRankBadge } from '../components/gamification';
 
 const TERRITORIES = [
@@ -66,58 +68,37 @@ export default function LeaderboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-yellow-500 to-orange-600 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex items-center justify-between mb-6">
+      {/* Hero banner — real Unsplash photo with gradient fallback */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2 animate-fade-in">
+        <HeroImage
+          src={PAGE_HERO_IMAGES.gamification}
+          alt="Classement des meilleurs contributeurs"
+          gradient="from-yellow-900 to-orange-950"
+          height="h-44 sm:h-56"
+        >
+          <div className="flex items-center justify-between w-full mb-2">
             <button
               onClick={() => navigate(-1)}
-              className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
+              className="flex items-center gap-2 px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg transition-colors text-sm"
             >
-              <ArrowLeft size={20} />
+              <ArrowLeft size={16} />
               <span>Retour</span>
             </button>
             <button
               onClick={refresh}
               disabled={loading}
-              className="p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors disabled:opacity-50"
+              className="p-1.5 bg-white/10 hover:bg-white/20 rounded-lg transition-colors disabled:opacity-50"
               aria-label="Actualiser"
             >
-              <RefreshCw size={20} className={loading ? 'animate-spin' : ''} />
+              <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
             </button>
           </div>
-
-          <div className="flex items-center gap-4 mb-6">
-            <Trophy size={40} />
-            <div>
-              <h1 className="text-3xl font-bold mb-1">Classement</h1>
-              <p className="text-white/80">Les meilleurs contributeurs de la plateforme</p>
-            </div>
+          <div className="flex items-center gap-3">
+            <Trophy size={32} />
+            <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow">Classement</h1>
           </div>
-
-          {/* User Rank Card */}
-          {userRank && (
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <UserRankBadge rank={userRank.rank} size="md" />
-                  <div>
-                    <div className="text-sm text-white/80">Votre position</div>
-                    <div className="text-2xl font-bold">#{userRank.rank}</div>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-sm text-white/80">Top</div>
-                  <div className="text-2xl font-bold">{userRank.percentile.toFixed(1)}%</div>
-                </div>
-                <div className="text-right">
-                  <div className="text-sm text-white/80">XP Total</div>
-                  <div className="text-2xl font-bold">{userRank.totalXP.toLocaleString()}</div>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
+          <p className="text-slate-200 text-sm drop-shadow">Les meilleurs contributeurs de la plateforme</p>
+        </HeroImage>
       </div>
 
       {/* Main Content */}

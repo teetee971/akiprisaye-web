@@ -71,7 +71,7 @@ export type Feature = keyof typeof FEATURES;
  * Check if an access level has a specific feature
  */
 export const canUse = (level: AccessLevel, feature: Feature): boolean => {
-  return FEATURES[feature].includes(level);
+  return (FEATURES[feature] as ReadonlyArray<string>).includes(level);
 };
 
 /**

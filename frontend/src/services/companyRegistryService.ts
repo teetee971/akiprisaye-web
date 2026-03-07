@@ -171,7 +171,7 @@ export function searchCompanies(
       ok =
         ok &&
         (company.legalName.toLowerCase().includes(q) ||
-          company.tradeName?.toLowerCase().includes(q));
+          (company.tradeName?.toLowerCase().includes(q) ?? false));
     }
 
     if (criteria.territory) {

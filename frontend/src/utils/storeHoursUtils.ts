@@ -10,8 +10,8 @@
  * Store opening hours for a single day
  */
 export interface DayHours {
-  open: string;   // e.g., "08:00"
-  close: string;  // e.g., "20:00"
+  open?: string;   // e.g., "08:00"
+  close?: string;  // e.g., "20:00"
   closed?: boolean; // true if closed all day
 }
 

@@ -12,7 +12,7 @@ const normalizeKey = (value: string): string =>
     .trim();
 
 const getProductKey = (product: ProductPrice): string =>
-  [product.name, product.brand].filter(Boolean).map(normalizeKey).join('|');
+  [product.name, product.brand].filter((v): v is string => v !== undefined).map(normalizeKey).join('|');
 
 const confidenceRank: Record<ProductPrice['confidence'], number> = {
   high: 3,

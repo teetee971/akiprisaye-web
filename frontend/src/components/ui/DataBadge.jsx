@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 
 export function DataBadge({ 
   source,
-  date,
+  date = '',
   className = '',
   ...props 
 }) {

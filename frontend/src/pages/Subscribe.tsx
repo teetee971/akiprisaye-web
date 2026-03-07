@@ -16,7 +16,7 @@ import TerritorySelector from '@/components/TerritorySelector';
 
 type Step = 1 | 2 | 3;
 
-const plans = {
+const plans: Record<string, { name: string; monthly?: number; yearly?: number; yearlyRange?: string }> = {
   CITIZEN_PREMIUM: { name: 'Citoyen Premium', monthly: 3.99, yearly: 39 },
   PRO: { name: 'Professionnel', monthly: 19, yearly: 190 },
   BUSINESS: { name: 'Business', monthly: 99, yearly: 990 },
@@ -51,7 +51,7 @@ export default function Subscribe() {
   const domPrice = isCustomPricing
     ? null
     : (isDOMTerritory && (planId === 'PRO' || planId === 'BUSINESS') 
-      ? price * 0.7 
+      ? (price ?? 0) * 0.7 
       : price);
 
   const validateEmail = (value: string) => {
@@ -82,7 +82,7 @@ export default function Subscribe() {
 
   const handleConfirmPayment = () => {
     // In production, this would integrate with a payment processor (Stripe, etc.)
-    alert(`Paiement simulé pour ${email}\nPlan: ${currentPlan.name}\nMontant: ${domPrice.toFixed(2)} €`);
+    alert(`Paiement simulé pour ${email}\nPlan: ${currentPlan.name}\nMontant: ${(domPrice ?? 0).toFixed(2)} €`);
     // Redirect to success page
     navigate('/subscribe/success');
   };
@@ -147,7 +147,7 @@ export default function Subscribe() {
                 ) : (
                   <>
                     <p className="text-4xl font-bold text-blue-400">
-                      {domPrice.toFixed(2)} €
+                      {(domPrice ?? 0).toFixed(2)} €
                       <span className="text-base text-gray-400 ml-2">
                         / {cycle === 'yearly' ? 'an' : 'mois'}
                       </span>
@@ -381,7 +381,7 @@ export default function Subscribe() {
                     <span className="text-blue-400">
                       {isCustomPricing 
                         ? (currentPlan as any).yearlyRange 
-                        : `${domPrice.toFixed(2)} € / ${cycle === 'yearly' ? 'an' : 'mois'}`
+                        : `${(domPrice ?? 0).toFixed(2)} € / ${cycle === 'yearly' ? 'an' : 'mois'}`
                       }
                     </span>
                   </div>

@@ -23,7 +23,10 @@ export default function CatalogueItem({ item, metrics }: Props) {
   const { addItem } = useTiPanier();
 
   const allObsWithStore = useMemo(() => {
-    return (item.observations || []).map(o => ({ ...o, store: (o as any).store ?? item.store ?? 'Inconnu' })).filter(o => !!o.store);
+    const observations = (item['observations'] ?? []) as Array<Record<string, unknown>>;
+    return observations
+      .map((o: Record<string, unknown>) => ({ ...o, store: o['store'] ?? item['store'] ?? 'Inconnu' }))
+      .filter((o: Record<string, unknown>) => Boolean(o['store']));
   }, [item]);
 
   const comparison = useMemo(() => computeComparison(allObsWithStore as any), [allObsWithStore]);
