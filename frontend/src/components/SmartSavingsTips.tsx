@@ -10,6 +10,7 @@
  */
 
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Lightbulb, TrendingDown, ShoppingCart, ArrowRight } from 'lucide-react';
 import { computePrediction } from '../services/predictionService';
 import { buildObservatoirePriceSeries, KNOWN_OBSERVATOIRE_PRODUCTS } from '../services/observatoirePriceSeries';
@@ -62,6 +63,7 @@ export default function SmartSavingsTips({
 }: SmartSavingsTipsProps) {
   const [tips, setTips] = useState<Tip[]>([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
   const stem = toStem(territory);
   const territoryName = TERRITORY_DISPLAY[stem] ?? territory;
 
@@ -162,7 +164,12 @@ export default function SmartSavingsTips({
         {tips.map((tip, i) => {
           const { bg, text, Icon } = ICON_CONFIG[tip.icon];
           return (
-            <div key={i} className="px-4 py-3 flex items-start gap-3">
+            <button
+              key={i}
+              type="button"
+              onClick={() => navigate(`/comparateur?q=${encodeURIComponent(tip.product)}`)}
+              className="w-full px-4 py-3 flex items-start gap-3 text-left hover:bg-slate-800/60 transition-colors cursor-pointer"
+            >
               <div className={`flex-shrink-0 w-8 h-8 rounded-lg border ${bg} flex items-center justify-center`}>
                 <Icon className={`w-4 h-4 ${text}`} />
               </div>
@@ -170,8 +177,8 @@ export default function SmartSavingsTips({
                 <p className="text-sm font-medium text-white">{tip.message}</p>
                 <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">{tip.detail}</p>
               </div>
-              <ArrowRight className="w-4 h-4 text-slate-600 flex-shrink-0 mt-1" />
-            </div>
+              <ArrowRight className="w-4 h-4 text-slate-400 flex-shrink-0 mt-1" />
+            </button>
           );
         })}
       </div>
