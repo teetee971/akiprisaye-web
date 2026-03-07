@@ -134,7 +134,7 @@ export async function getCarrierQuotes(
 ): Promise<FreightQuote[]> {
   try {
     // Charger les données depuis le fichier JSON
-    const response = await fetch('/data/freight-prices.json');
+    const response = await fetch(`${import.meta.env.BASE_URL}data/freight-prices.json`);
     if (!response.ok) {
       throw new Error('Impossible de charger les données des transporteurs');
     }

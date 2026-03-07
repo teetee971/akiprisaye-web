@@ -78,6 +78,10 @@ export default function ObservatoireTempsReel() {
     setError(null);
     loadObservatoireData(selectedTerritory)
       .then(data => {
+        if (data.length === 0) {
+          setError("La donnée de l'observatoire est momentanément indisponible. Merci de réessayer ultérieurement.");
+          return;
+        }
         setSnapshots(data);
         const stats = calculateStatistics(data);
         setStatistics(stats);

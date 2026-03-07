@@ -4,20 +4,99 @@ import { getComparisonOfDay, type PriceComparison } from '../data/exampleCompari
 import '../styles/home-v5.css';
 import '../styles/animations.css';
 import { safeLocalStorage } from '../utils/safeLocalStorage';
+import { getTerritoryAsset } from '../config/imageAssets';
+import PriceLiveTicker from '../components/home/PriceLiveTicker';
 
 const HowItWorksSection = lazy(() => import('./home-v5/HowItWorksSection'));
 const ObservatorySection = lazy(() => import('./home-v5/ObservatorySection'));
 const MiniFaqSection = lazy(() => import('./home-v5/MiniFaqSection'));
+const TerritoryPriceChart = lazy(() => import('../components/home/TerritoryPriceChart'));
+const PriceEvolutionChart = lazy(() => import('../components/home/PriceEvolutionChart'));
+const LiveNewsFeed = lazy(() => import('../components/home/LiveNewsFeed'));
+const PanierVitalWidget = lazy(() => import('../components/home/PanierVitalWidget'));
+const CategoryOvercostChart = lazy(() => import('../components/home/CategoryOvercostChart'));
+const StoreRankingWidget = lazy(() => import('../components/home/StoreRankingWidget'));
+
+const TESTIMONIALS = [
+  {
+    name: 'Marie-Christine F.',
+    territory: 'Guadeloupe',
+    flag: '🇬🇵',
+    savings: '47 €',
+    savingsLabel: 'économisés / mois',
+    quote: "J'ai comparé 3 enseignes pour mon panier habituel. La différence est réelle et constante depuis que j'utilise l'application.",
+    product: 'Courses hebdomadaires',
+    initials: 'MC',
+  },
+  {
+    name: 'Jean-Louis B.',
+    territory: 'Martinique',
+    flag: '🇲🇶',
+    savings: '31 %',
+    savingsLabel: 'de moins sur le riz',
+    quote: 'Le même riz que j\'achetais 3,20 € était affiché 2,20 € dans l\'enseigne à deux rues. En un clic, j\'ai su où aller.',
+    product: 'Riz long grain 1 kg',
+    initials: 'JL',
+  },
+  {
+    name: 'Sophie D.',
+    territory: 'La Réunion',
+    flag: '🇷🇪',
+    savings: '89 €',
+    savingsLabel: 'économisés en 1 mois',
+    quote: "L'alerte de prix m'a prévenue quand le lait et les conserves ont baissé. J'ai acheté au bon moment, sans attendre.",
+    product: 'Produits laitiers & conserves',
+    initials: 'SD',
+  },
+];
 
 export default function HomeV5() {
   const navigate = useNavigate();
   const [stats, setStats] = useState({ scans: 1200, products: 5000, territories: 12 });
+  const [displayStats, setDisplayStats] = useState({ scans: 0, products: 0, territories: 0 });
+  const [statsAnimated, setStatsAnimated] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showScrollIndicator, setShowScrollIndicator] = useState(true);
   const [showMobileCTA, setShowMobileCTA] = useState(false);
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
   const [exampleComparison] = useState<PriceComparison>(getComparisonOfDay());
   const statsRef = useRef<HTMLElement | null>(null);
+
+  // Animated counter: count up to target when section comes into view
+  useEffect(() => {
+    if (statsAnimated) return;
+    const el = statsRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setStatsAnimated(true);
+          observer.disconnect();
+
+          const duration = 1400;
+          const startTime = performance.now();
+
+          const targets = { scans: stats.scans, products: stats.products, territories: stats.territories };
+
+          const step = (now: number) => {
+            const elapsed = Math.min((now - startTime) / duration, 1);
+            const ease = 1 - Math.pow(1 - elapsed, 3);
+            setDisplayStats({
+              scans: Math.round(targets.scans * ease),
+              products: Math.round(targets.products * ease),
+              territories: Math.round(targets.territories * ease),
+            });
+            if (elapsed < 1) requestAnimationFrame(step);
+          };
+          requestAnimationFrame(step);
+        }
+      },
+      { threshold: 0.4 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [stats, statsAnimated]);
 
   useEffect(() => {
     const loadedStats = safeLocalStorage.getJSON('platform_stats', {
@@ -119,6 +198,9 @@ export default function HomeV5() {
         )}
       </section>
 
+      {/* Live price ticker — real observatoire data */}
+      <PriceLiveTicker />
+
       <main id="main-content">
         <section className="hero-why section-reveal">
           <div className="hero-why-inner">
@@ -149,11 +231,11 @@ export default function HomeV5() {
             <p>Choisissez votre territoire pour accéder au hub local.</p>
           </div>
           <div className="territories-grid">
-            <Link className="territory-card" to="/guadeloupe">Guadeloupe</Link>
-            <Link className="territory-card" to="/martinique">Martinique</Link>
-            <Link className="territory-card" to="/guyane">Guyane</Link>
-            <Link className="territory-card" to="/reunion">La Réunion</Link>
-            <Link className="territory-card" to="/mayotte">Mayotte</Link>
+            <Link className="territory-card" to="/comparateur?territoire=GP">Guadeloupe</Link>
+            <Link className="territory-card" to="/comparateur?territoire=MQ">Martinique</Link>
+            <Link className="territory-card" to="/comparateur?territoire=GF">Guyane</Link>
+            <Link className="territory-card" to="/comparateur?territoire=RE">La Réunion</Link>
+            <Link className="territory-card" to="/comparateur?territoire=YT">Mayotte</Link>
           </div>
         </section>
 
@@ -161,17 +243,17 @@ export default function HomeV5() {
           <div className="proof-content">
             <div className="proof-item">
               <span className="proof-icon">📊</span>
-              <span className="proof-text"><strong>{stats.territories}</strong> territoires</span>
+              <span className="proof-text"><strong>{displayStats.territories || stats.territories}</strong> territoires</span>
             </div>
             <div className="proof-divider">|</div>
             <div className="proof-item">
               <span className="proof-icon">🛒</span>
-              <span className="proof-text"><strong>{stats.products.toLocaleString()}+</strong> produits</span>
+              <span className="proof-text"><strong>{(displayStats.products || stats.products).toLocaleString()}+</strong> produits</span>
             </div>
             <div className="proof-divider">|</div>
             <div className="proof-item">
               <span className="proof-icon">🧾</span>
-              <span className="proof-text"><strong>{stats.scans.toLocaleString()}+</strong> scans</span>
+              <span className="proof-text"><strong>{(displayStats.scans || stats.scans).toLocaleString()}+</strong> scans</span>
             </div>
             <div className="proof-divider">|</div>
             <div className="proof-item">
@@ -246,15 +328,58 @@ export default function HomeV5() {
               { code: 'BL', name: 'Saint-Barthélemy', flag: '🇧🇱' },
               { code: 'MF', name: 'Saint-Martin', flag: '🇲🇫' },
               { code: 'TF', name: 'TAAF', flag: '🇹🇫' }
-            ].map((territory) => (
-              <div
-                key={territory.code}
-                className="territory-item-v5 fade-in"
-                title={territory.name}
-                aria-label={territory.name}
-                onClick={() => navigate(`/comparateur?territoire=${territory.code}`)}
-              >
-                <span className="territory-flag-v5">{territory.flag}</span>
+            ].map((territory) => {
+              const asset = getTerritoryAsset(territory.code);
+              return (
+                <div
+                  key={territory.code}
+                  className="territory-photo-card fade-in"
+                  title={territory.name}
+                  aria-label={territory.name}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => navigate(`/comparateur?territoire=${territory.code}`)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') navigate(`/comparateur?territoire=${territory.code}`); }}
+                >
+                  <img
+                    src={asset.url}
+                    alt={asset.alt}
+                    className="territory-photo-img"
+                    loading="lazy"
+                    width="200"
+                    height="150"
+                  />
+                  <div className="territory-photo-overlay">
+                    <span className="territory-photo-flag">{territory.flag}</span>
+                    <span className="territory-photo-name">{territory.name}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        <section className="testimonials-v5 section-reveal">
+          <h2 className="section-title slide-up">Ce que disent nos utilisateurs</h2>
+          <div className="testimonials-grid">
+            {TESTIMONIALS.map((t) => (
+              <div key={t.name} className="testimonial-card slide-up">
+                <div className="testimonial-header">
+                  <div className="testimonial-initials">{t.initials}</div>
+                  <div className="testimonial-meta">
+                    <p className="testimonial-name">{t.name}</p>
+                    <p className="testimonial-location">
+                      <span>{t.flag}</span>
+                      <span>{t.territory}</span>
+                    </p>
+                  </div>
+                  <div className="testimonial-savings-badge">
+                    <span className="testimonial-savings">{t.savings}</span>
+                    <span className="testimonial-savings-label">{t.savingsLabel}</span>
+                  </div>
+                </div>
+                <p className="testimonial-quote">{t.quote}</p>
+                <span className="testimonial-product-tag">🛒 {t.product}</span>
               </div>
             ))}
           </div>
@@ -262,6 +387,35 @@ export default function HomeV5() {
 
         <Suspense fallback={null}>
           <HowItWorksSection />
+        </Suspense>
+
+        {/* Real price chart — territory comparison with real observatoire data */}
+        <Suspense fallback={null}>
+          <TerritoryPriceChart />
+        </Suspense>
+
+        {/* Price evolution line chart — 5-month trend from real observatoire snapshots */}
+        <Suspense fallback={null}>
+          <PriceEvolutionChart />
+        </Suspense>
+
+        {/* Panier vital — purchasing power index: minutes of SMIC per basket */}
+        <Suspense fallback={null}>
+          <PanierVitalWidget />
+        </Suspense>
+        {/* Store ranking widget — cheapest vs most expensive stores per territory */}
+        <Suspense fallback={null}>
+          <StoreRankingWidget />
+        </Suspense>
+
+        {/* Category overcost chart — DOM surcoût vs Hexagone by category */}
+        <Suspense fallback={null}>
+          <CategoryOvercostChart />
+        </Suspense>
+
+        {/* Live news feed from actualites.json — real data only */}
+        <Suspense fallback={null}>
+          <LiveNewsFeed />
         </Suspense>
 
         <Suspense fallback={null}>

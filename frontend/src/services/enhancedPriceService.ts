@@ -30,10 +30,10 @@ const territoryDataCache = new Map<string, EnhancedPriceData>();
 async function loadTerritoryData(territory?: string): Promise<EnhancedPriceData> {
   // If no territory specified or 'ALL', load full file
   if (!territory || territory === 'ALL') {
-    const response = await fetch('/data/expanded-prices.json');
+    const response = await fetch(`${import.meta.env.BASE_URL}data/expanded-prices.json`);
     if (!response.ok) {
       // Fallback to smaller database
-      const fallbackResponse = await fetch('/data/enhanced-prices.json');
+      const fallbackResponse = await fetch(`${import.meta.env.BASE_URL}data/enhanced-prices.json`);
       if (!fallbackResponse.ok) {
         throw new Error('Failed to fetch price data');
       }
@@ -51,7 +51,7 @@ async function loadTerritoryData(territory?: string): Promise<EnhancedPriceData>
   const filename = TERRITORY_FILENAMES[territory as keyof typeof TERRITORY_FILENAMES];
   if (filename) {
     try {
-      const response = await fetch(`/data/territories/${filename}`);
+      const response = await fetch(`${import.meta.env.BASE_URL}data/territories/${filename}`);
       if (response.ok) {
         const data = await response.json();
         territoryDataCache.set(territory, data);
@@ -67,9 +67,9 @@ async function loadTerritoryData(territory?: string): Promise<EnhancedPriceData>
   }
 
   // Fallback: load full file and filter
-  const response = await fetch('/data/expanded-prices.json');
+  const response = await fetch(`${import.meta.env.BASE_URL}data/expanded-prices.json`);
   if (!response.ok) {
-    const fallbackResponse = await fetch('/data/enhanced-prices.json');
+    const fallbackResponse = await fetch(`${import.meta.env.BASE_URL}data/enhanced-prices.json`);
     if (!fallbackResponse.ok) {
       throw new Error('Failed to fetch price data');
     }
@@ -328,7 +328,7 @@ export async function comparePrices(
     // Load stores database
     let storesData: any = null;
     try {
-      const storesResponse = await fetch('/data/stores-database.json');
+      const storesResponse = await fetch(`${import.meta.env.BASE_URL}data/stores-database.json`);
       if (storesResponse.ok) {
         storesData = await storesResponse.json();
       }

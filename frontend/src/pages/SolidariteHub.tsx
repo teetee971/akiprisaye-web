@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ShoppingBasket, HandHeart, Store, RefreshCw } from 'lucide-react';
 import { GlassCard } from '../components/ui/glass-card';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 import TiPanie from './TiPanie';
 import EntraideCoupDeMain from '../components/solidarite/EntraideCoupDeMain';
 import PretMateriel from '../components/solidarite/PretMateriel';
@@ -20,13 +22,21 @@ export default function SolidariteHub() {
       
       <div className="min-h-screen bg-slate-950 p-4 pt-24">
         <div className="max-w-6xl mx-auto">
-          <div className="mb-8">
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
-              🤝 Solidarité & Entraide
-            </h1>
-            <p className="text-gray-400 text-lg">
-              Ensemble pour un accès équitable à l'alimentation
-            </p>
+          {/* Hero banner */}
+          <div className="mb-8 animate-fade-in">
+            <HeroImage
+              src={PAGE_HERO_IMAGES.solidarite}
+              alt="Solidarité — mains tendues, entraide citoyenne"
+              gradient="from-orange-950 to-slate-900"
+              height="h-44 sm:h-60"
+            >
+              <h1 className="text-3xl md:text-4xl font-bold text-white drop-shadow">
+                🤝 Solidarité &amp; Entraide
+              </h1>
+              <p className="text-slate-200 drop-shadow">
+                Ensemble pour un accès équitable à l'alimentation
+              </p>
+            </HeroImage>
           </div>
           
           {/* Section Selector */}

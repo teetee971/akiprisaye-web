@@ -17,4 +17,22 @@ export default defineConfig({
     ],
   },
   base,
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Core React runtime (tiny, always needed)
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          // Charting libraries (large, only loaded on chart pages)
+          'vendor-charts': ['recharts'],
+          // Mapping libraries (large, only loaded on map pages)
+          'vendor-leaflet': ['leaflet', 'react-leaflet'],
+          // i18n (only loaded after initial render)
+          'vendor-i18n': ['i18next', 'react-i18next'],
+          // Validation
+          'vendor-zod': ['zod'],
+        },
+      },
+    },
+  },
 })

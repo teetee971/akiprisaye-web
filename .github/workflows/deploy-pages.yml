@@ -29,6 +29,9 @@ jobs:
         with:
           node-version-file: .nvmrc
 
+      - name: Validate package-lock.json (must be valid JSON)
+        run: node -e "JSON.parse(require('fs').readFileSync('package-lock.json','utf8')); console.log('package-lock.json OK')"
+
       - name: Install
         run: npm ci --no-audit --no-fund
 
@@ -36,6 +39,13 @@ jobs:
         run: npm run build
         env:
           GITHUB_PAGES: 'true'
+          VITE_APP_BUILD_ID: ${{ github.sha }}
+
+      - name: Verify build paths
+        run: node scripts/verify-pages-build.mjs
+
+      - name: Production-like runtime check (GitHub Pages base path)
+        run: node scripts/verify-pages-runtime.mjs
 
       - name: Debug dist contents
         run: ls -R dist

@@ -43,7 +43,7 @@ export default function ComparateurTerritoires() {
 
   useEffect(() => {
     let cancelled = false;
-    fetch('/data/prices-territories.json')
+    fetch(`${import.meta.env.BASE_URL}data/prices-territories.json`)
       .then((res) => (res.ok ? res.json() : null))
       .then((json: PriceObservation[] | null) => {
         if (!cancelled && Array.isArray(json)) {

@@ -1,20 +1,28 @@
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
+
 export default function APropos() {
   return (
     <div className="min-h-screen bg-[#121212] text-white">
-      {/* Header */}
-      <header className="bg-gradient-to-r from-[#0f62fe] to-[#0353e9] p-6 shadow-lg">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-between mb-2">
-            <h1 className="text-3xl font-bold">À Propos</h1>
-            <a 
-              href="/" 
-              className="text-white hover:text-gray-200 transition-colors"
+      {/* Hero banner — real Unsplash photo with gradient fallback */}
+      <div className="px-4 pt-6 max-w-4xl mx-auto">
+        <HeroImage
+          src={PAGE_HERO_IMAGES.aPropos}
+          alt="Paysage naturel — territoires d'Outre-mer"
+          gradient="from-blue-950 to-indigo-950"
+          height="h-44 sm:h-60"
+        >
+          <div className="flex items-center justify-between w-full">
+            <h1 className="text-3xl font-bold text-white drop-shadow">À Propos</h1>
+            <a
+              href="/"
+              className="text-white/80 hover:text-white transition-colors text-sm"
             >
               ← Accueil
             </a>
           </div>
-        </div>
-      </header>
+        </HeroImage>
+      </div>
 
       {/* Main Content */}
       <main className="max-w-4xl mx-auto p-6">

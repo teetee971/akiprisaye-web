@@ -36,8 +36,8 @@ export function useDailyPriceShock(territory: string = 'GP') {
 
         // Charger les données
         const [productsRes, servicesRes] = await Promise.all([
-          fetch('/data/expanded-prices.json'),
-          fetch('/data/services-prices.json')
+          fetch(`${import.meta.env.BASE_URL}data/expanded-prices.json`),
+          fetch(`${import.meta.env.BASE_URL}data/services-prices.json`)
         ]);
 
         if (!productsRes.ok || !servicesRes.ok) {

@@ -3,9 +3,14 @@ import { Helmet } from 'react-helmet-async';
 import { BarChart3, Search, Award, Database } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { GlassCard } from '../components/ui/glass-card';
+import { HeroImage } from '../components/ui/HeroImage';
 import Observatoire from './Observatoire';
 import { TERRITORIES, type TerritoryCode } from '../constants/territories';
 import { getPalmaresForTerritory, OBSERVATOIRE_PALMARES } from '../data/observatoirePalmares';
+
+
+// Real Unsplash photo: supermarket shelves
+const HERO_IMG = 'https://images.unsplash.com/photo-1607082348351-cef5cd02c7b0?auto=format&fit=crop&w=1600&q=80';
 
 type ObservatoireTab = 'dashboard' | 'diagnostic' | 'palmares' | 'donnees';
 
@@ -34,13 +39,21 @@ export default function ObservatoireHub() {
       
       <div className="min-h-screen bg-slate-950 p-4 pt-24">
         <div className="max-w-7xl mx-auto">
+          {/* Hero banner */}
           <div className="mb-8">
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
-              📈 Observatoire des Prix
-            </h1>
-            <p className="text-gray-400 text-lg">
-              Données transparentes et analyses approfondies des prix DOM-COM
-            </p>
+            <HeroImage
+              src={HERO_IMG}
+              alt="Rayons de supermarché — comparaison des prix"
+              gradient="from-slate-900 to-emerald-950"
+              height="h-44 sm:h-60"
+            >
+              <h1 className="text-3xl md:text-4xl font-bold text-white drop-shadow">
+                📈 Observatoire des Prix
+              </h1>
+              <p className="text-slate-200 drop-shadow">
+                Données transparentes et analyses approfondies des prix DOM-COM &amp; France
+              </p>
+            </HeroImage>
           </div>
           
           {/* Tabs */}

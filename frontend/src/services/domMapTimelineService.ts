@@ -6,7 +6,7 @@ export type DomIndex = {
 export async function loadDomIndexesForMonth(
   month: string
 ): Promise<DomIndex[]> {
-  const territories = ['guadeloupe', 'martinique', 'guyane', 'reunion'];
+  const territories = ['guadeloupe', 'martinique', 'guyane', 'la_réunion', 'mayotte'];
 
   const results: DomIndex[] = [];
 

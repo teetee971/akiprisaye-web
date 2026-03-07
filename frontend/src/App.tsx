@@ -147,6 +147,12 @@ const GlossaireLogistiqueDOM = lazyPage(() => import('./pages/ressources/Glossai
 const ComprendrePromotionsPrixBarres = lazyPage(() => import('./pages/ressources/ComprendrePromotionsPrixBarres'));
 const PourquoiPrixVarieSansChangement = lazyPage(() => import('./pages/ressources/PourquoiPrixVarieSansChangement'));
 
+// ── Nouvelles pages : historique, comparateur inter-territoires, inflation, couverture ──
+const CrossTerritoryComparator = lazyPage(() => import('./pages/CrossTerritoryComparator'));
+const ComparaisonTerritoires = lazyPage(() => import('./pages/ComparaisonTerritoires'));
+const InflationRateTracker = lazyPage(() => import('./pages/InflationRateTracker'));
+const TerritoryCoverageReport = lazyPage(() => import('./pages/TerritoryCoverageReport'));
+
 /**
  * IMPORTANT — NE PAS SUPPRIMER
  * Les tests CI vérifient la présence LITTÉRALE de certaines routes alias
@@ -419,6 +425,12 @@ export default function App() {
                           <Route path="ressources/glossaire-logistique-dom" element={<GlossaireLogistiqueDOM />} />
                           <Route path="ressources/comprendre-promotions-prix-barres" element={<ComprendrePromotionsPrixBarres />} />
                           <Route path="ressources/pourquoi-prix-varie-sans-changement" element={<PourquoiPrixVarieSansChangement />} />
+
+                          {/* ── Nouvelles pages observatoire enrichi ── */}
+                          <Route path="comparateur-territoires" element={<CrossTerritoryComparator />} />
+                          <Route path="comparaison-territoires" element={<ComparaisonTerritoires />} />
+                          <Route path="inflation-categories" element={<InflationRateTracker />} />
+                          <Route path="couverture-territoires" element={<TerritoryCoverageReport />} />
 
                           {/* Catch-all route - redirect to home */}
                           <Route path="*" element={<Navigate to="/" replace />} />

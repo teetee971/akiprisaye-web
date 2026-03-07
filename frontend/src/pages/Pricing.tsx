@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Check, Minus } from 'lucide-react'
+import { HeroImage } from '../components/ui/HeroImage'
+import { PAGE_HERO_IMAGES } from '../config/imageAssets'
 
 /* ------------------------------------------------------------------ */
 /* Données des plans — source unique pour l'UI                         */
@@ -152,15 +154,25 @@ export default function PricingPage() {
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
 
+        {/* Hero banner */}
+        <div className="mb-10 animate-fade-in">
+          <HeroImage
+            src={PAGE_HERO_IMAGES.pricing}
+            alt="Abonnements — options tarifaires A KI PRI SA YÉ"
+            gradient="from-slate-900 to-blue-950"
+            height="h-36 sm:h-48"
+          >
+            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white drop-shadow">
+              Abonnements &amp; Options
+            </h1>
+            <p className="text-slate-200 text-sm drop-shadow max-w-2xl">
+              Commence gratuitement. Passe ensuite au niveau adapté à ton usage.
+            </p>
+          </HeroImage>
+        </div>
+
         {/* En-tête */}
         <header className="text-center mb-12">
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-            Abonnements &amp; Options
-          </h1>
-          <p className="mt-4 text-base text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
-            Commence gratuitement. Passe ensuite au niveau adapté à ton usage — analyse
-            citoyenne, pro, équipe ou institution.
-          </p>
 
           {/* Bandeau Espace Pro */}
           <div className="mt-6 inline-flex flex-wrap items-center justify-center gap-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700/50 rounded-xl px-5 py-3">

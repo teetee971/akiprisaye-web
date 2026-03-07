@@ -24,7 +24,7 @@ export default function HistoriqueVariations({
     const loadData = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/data/historique-prix.json');
+        const response = await fetch(`${import.meta.env.BASE_URL}data/historique-prix.json`);
         if (!response.ok) {
           throw new Error('Impossible de charger l\'historique des prix');
         }

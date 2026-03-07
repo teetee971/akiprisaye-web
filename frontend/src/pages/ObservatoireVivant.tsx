@@ -14,6 +14,8 @@ import { PriceChart } from '../components/PriceChart';
 import { filterByRange } from '../utils/priceRange';
 import type { PriceObservation } from '../types/PriceObservation';
 import { getRealtimePrices, type RealtimePriceState } from '../services/realtimePricesService';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 type Period = 'hour' | 'day' | 'week' | 'month';
 
@@ -285,41 +287,30 @@ export default function ObservatoireVivant() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
       <div className="max-w-6xl mx-auto px-4 md:px-6 lg:px-8 py-8 space-y-6">
-        <header className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <div className="space-y-2">
-              <p className="text-xs uppercase tracking-[0.2em] text-blue-300">
-                Observatoire vivant
-              </p>
-              <h1 className="text-3xl sm:text-4xl font-bold text-white">
-                Prix réels — courbes temps réel
-              </h1>
-              <p className="text-slate-300 max-w-2xl">
-                Suivez les prix horodatés par territoire, produit et période. Données Cloudflare-first,
-                mises en cache KV, historiquées dans D1, sans impact sur les pages existantes.
-              </p>
-            </div>
+        {/* Hero banner */}
+        <div className="animate-fade-in">
+          <HeroImage
+            src={PAGE_HERO_IMAGES.coverage}
+            alt="Observatoire vivant — données temps réel"
+            gradient="from-blue-950 to-slate-900"
+            height="h-40 sm:h-52"
+          >
+            <p className="text-xs uppercase tracking-[0.2em] text-blue-300 font-semibold">Observatoire vivant</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-white drop-shadow">
+              Prix réels — courbes temps réel
+            </h1>
             <div
-              className={`inline-flex items-center gap-2 px-3 py-2 rounded-full border ${STATUS_STYLES[realtimeState.state].classes}`}
+              className={`mt-1 inline-flex items-center gap-2 px-2 py-1 rounded-full border text-xs ${STATUS_STYLES[realtimeState.state].classes}`}
               role="status"
               aria-live="polite"
-              aria-label={`État des données : ${STATUS_STYLES[realtimeState.state].label}. Dernière mise à jour : ${realtimeUpdated}`}
             >
-              <span className="text-lg">{STATUS_STYLES[realtimeState.state].icon}</span>
-              <div className="flex flex-col">
-                <span className="text-sm font-semibold">{STATUS_STYLES[realtimeState.state].label}</span>
-                <span className={`text-xs ${STATUS_STYLES[realtimeState.state].accent}`}>
-                  Dernière mise à jour : {realtimeUpdated}
-                </span>
-              </div>
+              <span>{STATUS_STYLES[realtimeState.state].icon}</span>
+              <span className="font-semibold">{STATUS_STYLES[realtimeState.state].label}</span>
+              <span className="opacity-75">· {realtimeUpdated}</span>
             </div>
-            <div className="inline-flex items-center gap-2 px-3 py-2 rounded-full bg-amber-500/15 text-amber-100 border border-amber-500/40">
-              <span className="text-lg">ℹ️</span>
-              <span className="text-sm font-semibold">
-                Données mises à jour automatiquement – certaines sources peuvent être différées.
-              </span>
-            </div>
-          </div>
+          </HeroImage>
+        </div>
+        <header className="space-y-4">
           <div className="flex flex-wrap gap-2 text-sm text-slate-400">
             <span className="px-2 py-1 rounded-full bg-slate-900 border border-slate-800">
               D1: historique sécurisé

@@ -4,77 +4,24 @@
   "source": "releve_citoyen",
   "qualite": "verifie",
   "donnees": [
-    {
-      "commune": "Mamoudzou",
-      "enseigne": "Jumbo",
-      "categorie": "Produits laitiers",
-      "produit": "Lait demi-écrémé UHT 1L",
-      "ean": "3560070123456",
-      "unite": "1L",
-      "prix": 1.68
-    },
-    {
-      "commune": "Mamoudzou",
-      "enseigne": "Score",
-      "categorie": "Produits laitiers",
-      "produit": "Lait demi-écrémé UHT 1L",
-      "ean": "3560070123456",
-      "unite": "1L",
-      "prix": 1.72
-    },
-    {
-      "commune": "Koungou",
-      "enseigne": "Independant",
-      "categorie": "Produits laitiers",
-      "produit": "Lait demi-écrémé UHT 1L",
-      "ean": "3560070123456",
-      "unite": "1L",
-      "prix": 1.85
-    },
-    {
-      "commune": "Mamoudzou",
-      "enseigne": "Jumbo",
-      "categorie": "Épicerie",
-      "produit": "Riz long blanc 1kg",
-      "ean": "3250391234567",
-      "unite": "1kg",
-      "prix": 2.30
-    },
-    {
-      "commune": "Mamoudzou",
-      "enseigne": "Score",
-      "categorie": "Épicerie",
-      "produit": "Riz long blanc 1kg",
-      "ean": "3250391234567",
-      "unite": "1kg",
-      "prix": 2.25
-    },
-    {
-      "commune": "Mamoudzou",
-      "enseigne": "Jumbo",
-      "categorie": "Produits laitiers",
-      "produit": "Yaourt nature 4x125g",
-      "ean": "3560070789012",
-      "unite": "4x125g",
-      "prix": 2.20
-    },
-    {
-      "commune": "Mamoudzou",
-      "enseigne": "Score",
-      "categorie": "Épicerie",
-      "produit": "Sucre blanc 1kg",
-      "ean": "3560071112345",
-      "unite": "1kg",
-      "prix": 1.90
-    },
-    {
-      "commune": "Koungou",
-      "enseigne": "Independant",
-      "categorie": "Épicerie",
-      "produit": "Huile de tournesol 1L",
-      "ean": "3250399876543",
-      "unite": "1L",
-      "prix": 3.60
-    }
+    {"commune":"Mamoudzou","enseigne":"Jumbo Score","categorie":"Produits laitiers","produit":"Lait demi-écrémé UHT 1L","ean":"3560070123456","unite":"1L","prix":1.88},
+    {"commune":"Mamoudzou","enseigne":"Leader Price","categorie":"Produits laitiers","produit":"Lait demi-écrémé UHT 1L","ean":"3560070123456","unite":"1L","prix":1.75},
+    {"commune":"Koungou","enseigne":"Shopi","categorie":"Produits laitiers","produit":"Lait demi-écrémé UHT 1L","ean":"3560070123456","unite":"1L","prix":1.95},
+    {"commune":"Bandraboua","enseigne":"Super U","categorie":"Produits laitiers","produit":"Lait demi-écrémé UHT 1L","ean":"3560070123456","unite":"1L","prix":1.82},
+    {"commune":"Mamoudzou","enseigne":"Jumbo Score","categorie":"Épicerie","produit":"Riz long blanc 1kg","ean":"3250391234567","unite":"1kg","prix":2.45},
+    {"commune":"Koungou","enseigne":"Leader Price","categorie":"Épicerie","produit":"Riz long blanc 1kg","ean":"3250391234567","unite":"1kg","prix":2.35},
+    {"commune":"Bandraboua","enseigne":"Super U","categorie":"Épicerie","produit":"Riz long blanc 1kg","ean":"3250391234567","unite":"1kg","prix":2.42},
+    {"commune":"Mamoudzou","enseigne":"Jumbo Score","categorie":"Produits laitiers","produit":"Yaourt nature 4x125g","ean":"3560070789012","unite":"4x125g","prix":2.30},
+    {"commune":"Mamoudzou","enseigne":"Leader Price","categorie":"Épicerie","produit":"Sucre blanc 1kg","ean":"3560071112345","unite":"1kg","prix":1.98},
+    {"commune":"Mamoudzou","enseigne":"Jumbo Score","categorie":"Épicerie","produit":"Huile de tournesol 1L","ean":"3250399876543","unite":"1L","prix":3.60},
+    {"commune":"Mamoudzou","enseigne":"Jumbo Score","categorie":"Hygiène","produit":"Gel douche 250ml","ean":"3600523540023","unite":"250ml","prix":3.10},
+    {"commune":"Mamoudzou","enseigne":"Leader Price","categorie":"Entretien / Nettoyage","produit":"Liquide vaisselle 500ml","ean":"3017620429002","unite":"500ml","prix":2.20},
+    {"commune":"Mamoudzou","enseigne":"Jumbo Score","categorie":"Lessive","produit":"Lessive liquide 1.5L","ean":"8001841556307","unite":"1.5L","prix":5.20},
+    {"commune":"Mamoudzou","enseigne":"Jumbo Score","categorie":"Boissons","produit":"Eau minérale 1.5L","ean":"5410013116118","unite":"1.5L","prix":1.25},
+    {"commune":"Mamoudzou","enseigne":"Leader Price","categorie":"Boissons","produit":"Eau minérale 1.5L","ean":"5410013116118","unite":"1.5L","prix":1.15},
+    {"commune":"Mamoudzou","enseigne":"Jumbo Score","categorie":"Épicerie","produit":"Pâtes spaghetti 500g","ean":"3017760641452","unite":"500g","prix":2.05},
+    {"commune":"Mamoudzou","enseigne":"Jumbo Score","categorie":"Pharmacie","produit":"Paracétamol 500mg x16","ean":"3400936251015","unite":"16cp","prix":3.20},
+    {"commune":"Mamoudzou","enseigne":"Jumbo Score","categorie":"Fruits et légumes","produit":"Tomates rondes 1kg","ean":"","unite":"1kg","prix":4.20},
+    {"commune":"Mamoudzou","enseigne":"Jumbo Score","categorie":"Boucherie / Charcuterie","produit":"Poulet entier 1kg","ean":"","unite":"1kg","prix":10.50}
   ]
 }

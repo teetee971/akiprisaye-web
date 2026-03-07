@@ -2,6 +2,7 @@ import { Menu, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { getShoppingListCount } from '../../store/useShoppingListStore';
+import { NotificationCenter } from '../NotificationCenter';
 
 const links = [
   { to: '/search', label: 'Recherche' },
@@ -67,11 +68,14 @@ export default function Header() {
         </Link>
         <Link
           to="/liste"
-          className="mr-3 rounded-lg border border-slate-700 px-3 py-1 text-sm text-slate-100"
+          className="mr-1 rounded-lg border border-slate-700 px-3 py-1 text-sm text-slate-100"
           aria-label={`Ma liste (${count} article${count !== 1 ? 's' : ''})`}
         >
           Liste <span className="ml-1 rounded-full bg-blue-600 px-2 py-0.5 text-xs" aria-hidden="true">{count}</span>
         </Link>
+        <div className="mr-2">
+          <NotificationCenter />
+        </div>
         <button
           ref={buttonRef}
           type="button"
