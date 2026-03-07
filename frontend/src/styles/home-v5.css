@@ -2028,3 +2028,214 @@
     font-size: 1.6rem;
   }
 }
+
+/* =====================================================================
+   INFLATION BAROMETER WIDGET
+   ===================================================================== */
+
+.ibw-section {
+  padding: 4rem 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.ibw-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.ibw-subtitle {
+  font-size: 0.95rem;
+  color: #94a3b8;
+  margin-top: 0.5rem;
+}
+
+.ibw-hex-ref {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.ibw-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  margin: 0 auto 1.5rem;
+  max-width: 680px;
+  padding: 0.8rem 1.2rem;
+  border-radius: 10px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  font-size: 0.88rem;
+  color: #fca5a5;
+  line-height: 1.5;
+}
+
+.ibw-alert-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  margin-top: 0.05rem;
+}
+
+.ibw-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.ibw-card {
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.08);
+  border-radius: 14px;
+  padding: 1.1rem 1.2rem;
+  transition: transform 0.18s ease, border-color 0.18s ease;
+}
+
+.ibw-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(148, 163, 184, 0.2);
+}
+
+.ibw-card--reference {
+  border-color: rgba(100, 116, 139, 0.3);
+  background: rgba(15, 23, 42, 0.55);
+}
+
+.ibw-card--alert {
+  border-color: rgba(239, 68, 68, 0.35);
+  background: rgba(239, 68, 68, 0.06);
+}
+
+.ibw-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.ibw-flag {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.ibw-territory {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  flex: 1;
+  min-width: 0;
+}
+
+.ibw-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 0.2rem 0.5rem;
+  border-radius: 99px;
+  text-transform: uppercase;
+}
+
+.ibw-badge--ref {
+  background: rgba(100, 116, 139, 0.2);
+  color: #94a3b8;
+  border: 1px solid rgba(100, 116, 139, 0.3);
+}
+
+.ibw-spark-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.ibw-sparkline {
+  flex-shrink: 0;
+  overflow: visible;
+}
+
+.ibw-trend {
+  display: flex;
+  align-items: baseline;
+  gap: 0.2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.ibw-arrow {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.ibw-pct {
+  font-size: 1.25rem;
+}
+
+.ibw-prices {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  margin-bottom: 0.4rem;
+}
+
+.ibw-price-old {
+  color: #64748b;
+  text-decoration: line-through;
+}
+
+.ibw-price-arrow {
+  color: #475569;
+  font-size: 0.75rem;
+}
+
+.ibw-price-new {
+  font-weight: 600;
+}
+
+.ibw-vs-hex {
+  font-size: 0.73rem;
+  color: #64748b;
+  margin-top: 0.3rem;
+}
+
+.ibw-source {
+  margin-top: 1.5rem;
+  font-size: 0.72rem;
+  color: #475569;
+  text-align: center;
+  line-height: 1.6;
+}
+
+/* Skeleton loading state */
+.ibw-skeleton {
+  height: 180px;
+  border-radius: 14px;
+  background: linear-gradient(90deg, rgba(30, 41, 59, 0.4) 25%, rgba(51, 65, 85, 0.4) 50%, rgba(30, 41, 59, 0.4) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+}
+
+@keyframes skeleton-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@media (max-width: 600px) {
+  .ibw-section {
+    padding: 3rem 1rem;
+  }
+
+  .ibw-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .ibw-card {
+    padding: 0.9rem 1rem;
+  }
+
+  .ibw-pct {
+    font-size: 1.05rem;
+  }
+}

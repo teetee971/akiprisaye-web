@@ -55,6 +55,8 @@ export default defineConfig({
       abs('./src/test/observatory.mapping.test.ts'),
       // Temporal aggregation — real observatoire JSON data (no mocks)
       abs('./src/test/temporalAggregation.test.ts'),
+      // Inflation barometer — basket computation from real observatoire JSON data
+      abs('./src/test/inflationBarometer.test.ts'),
       // NOTE: si scripts/ est à la racine du repo, remplace par ../scripts/...
       abs('./scripts/verify-pages-api.test.ts'),
     ],

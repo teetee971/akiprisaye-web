@@ -16,6 +16,7 @@ const LiveNewsFeed = lazy(() => import('../components/home/LiveNewsFeed'));
 const PanierVitalWidget = lazy(() => import('../components/home/PanierVitalWidget'));
 const CategoryOvercostChart = lazy(() => import('../components/home/CategoryOvercostChart'));
 const StoreRankingWidget = lazy(() => import('../components/home/StoreRankingWidget'));
+const InflationBarometerWidget = lazy(() => import('../components/home/InflationBarometerWidget'));
 
 const TESTIMONIALS = [
   {
@@ -406,6 +407,11 @@ export default function HomeV5() {
         {/* Store ranking widget — cheapest vs most expensive stores per territory */}
         <Suspense fallback={null}>
           <StoreRankingWidget />
+        </Suspense>
+
+        {/* Inflation barometer — dynamic month-over-month basket trend from real snapshots */}
+        <Suspense fallback={null}>
+          <InflationBarometerWidget />
         </Suspense>
 
         {/* Category overcost chart — DOM surcoût vs Hexagone by category */}
