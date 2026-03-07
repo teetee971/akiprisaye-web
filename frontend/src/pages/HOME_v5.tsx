@@ -5,10 +5,13 @@ import '../styles/home-v5.css';
 import '../styles/animations.css';
 import { safeLocalStorage } from '../utils/safeLocalStorage';
 import { getTerritoryAsset } from '../config/imageAssets';
+import PriceLiveTicker from '../components/home/PriceLiveTicker';
 
 const HowItWorksSection = lazy(() => import('./home-v5/HowItWorksSection'));
 const ObservatorySection = lazy(() => import('./home-v5/ObservatorySection'));
 const MiniFaqSection = lazy(() => import('./home-v5/MiniFaqSection'));
+const TerritoryPriceChart = lazy(() => import('../components/home/TerritoryPriceChart'));
+const LiveNewsFeed = lazy(() => import('../components/home/LiveNewsFeed'));
 
 const TESTIMONIALS = [
   {
@@ -46,12 +49,50 @@ const TESTIMONIALS = [
 export default function HomeV5() {
   const navigate = useNavigate();
   const [stats, setStats] = useState({ scans: 1200, products: 5000, territories: 12 });
+  const [displayStats, setDisplayStats] = useState({ scans: 0, products: 0, territories: 0 });
+  const [statsAnimated, setStatsAnimated] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showScrollIndicator, setShowScrollIndicator] = useState(true);
   const [showMobileCTA, setShowMobileCTA] = useState(false);
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
   const [exampleComparison] = useState<PriceComparison>(getComparisonOfDay());
   const statsRef = useRef<HTMLElement | null>(null);
+
+  // Animated counter: count up to target when section comes into view
+  useEffect(() => {
+    if (statsAnimated) return;
+    const el = statsRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setStatsAnimated(true);
+          observer.disconnect();
+
+          const duration = 1400;
+          const startTime = performance.now();
+
+          const targets = { scans: stats.scans, products: stats.products, territories: stats.territories };
+
+          const step = (now: number) => {
+            const elapsed = Math.min((now - startTime) / duration, 1);
+            const ease = 1 - Math.pow(1 - elapsed, 3);
+            setDisplayStats({
+              scans: Math.round(targets.scans * ease),
+              products: Math.round(targets.products * ease),
+              territories: Math.round(targets.territories * ease),
+            });
+            if (elapsed < 1) requestAnimationFrame(step);
+          };
+          requestAnimationFrame(step);
+        }
+      },
+      { threshold: 0.4 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [stats, statsAnimated]);
 
   useEffect(() => {
     const loadedStats = safeLocalStorage.getJSON('platform_stats', {
@@ -153,6 +194,9 @@ export default function HomeV5() {
         )}
       </section>
 
+      {/* Live price ticker — real observatoire data */}
+      <PriceLiveTicker />
+
       <main id="main-content">
         <section className="hero-why section-reveal">
           <div className="hero-why-inner">
@@ -195,17 +239,17 @@ export default function HomeV5() {
           <div className="proof-content">
             <div className="proof-item">
               <span className="proof-icon">📊</span>
-              <span className="proof-text"><strong>{stats.territories}</strong> territoires</span>
+              <span className="proof-text"><strong>{displayStats.territories || stats.territories}</strong> territoires</span>
             </div>
             <div className="proof-divider">|</div>
             <div className="proof-item">
               <span className="proof-icon">🛒</span>
-              <span className="proof-text"><strong>{stats.products.toLocaleString()}+</strong> produits</span>
+              <span className="proof-text"><strong>{(displayStats.products || stats.products).toLocaleString()}+</strong> produits</span>
             </div>
             <div className="proof-divider">|</div>
             <div className="proof-item">
               <span className="proof-icon">🧾</span>
-              <span className="proof-text"><strong>{stats.scans.toLocaleString()}+</strong> scans</span>
+              <span className="proof-text"><strong>{(displayStats.scans || stats.scans).toLocaleString()}+</strong> scans</span>
             </div>
             <div className="proof-divider">|</div>
             <div className="proof-item">
@@ -339,6 +383,16 @@ export default function HomeV5() {
 
         <Suspense fallback={null}>
           <HowItWorksSection />
+        </Suspense>
+
+        {/* Real price chart — territory comparison with real observatoire data */}
+        <Suspense fallback={null}>
+          <TerritoryPriceChart />
+        </Suspense>
+
+        {/* Live news feed from actualites.json — real data only */}
+        <Suspense fallback={null}>
+          <LiveNewsFeed />
         </Suspense>
 
         <Suspense fallback={null}>
