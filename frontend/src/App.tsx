@@ -122,6 +122,7 @@ const I18nTest = lazyPage(() => import('./pages/I18nTest'));
 // About & institutional pages
 const APropos = lazyPage(() => import('./pages/APropos'));
 const PricingDetailed = lazyPage(() => import('./pages/PricingDetailed'));
+const ComparatifConcurrence = lazyPage(() => import('./pages/ComparatifConcurrence'));
 const LicenceInstitution = lazyPage(() => import('./pages/LicenceInstitution'));
 
 // Specialised comparators
@@ -444,6 +445,7 @@ export default function App() {
                           {/* À propos & institutional */}
                           <Route path="a-propos" element={<APropos />} />
                           <Route path="tarifs-details" element={<PricingDetailed />} />
+                          <Route path="comparatif-concurrence" element={<ComparatifConcurrence />} />
                           <Route path="licence-institution" element={<LicenceInstitution />} />
                           <Route path="inflation" element={<Navigate to="/tableau-inflation" replace />} />
 

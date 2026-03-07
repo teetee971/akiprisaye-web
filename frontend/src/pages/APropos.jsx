@@ -160,6 +160,24 @@ export default function APropos() {
             </div>
           </section>
 
+          {/* Comparatif concurrence */}
+          <section className="bg-[#1e1e1e] rounded-xl border border-gray-700 p-8">
+            <h2 className="text-2xl font-semibold mb-4 text-blue-400">⚖️ Comparatif avec la concurrence</h2>
+            <div className="text-gray-300 space-y-3">
+              <p>
+                Vous souhaitez comprendre en quoi A KI PRI SA YÉ se distingue des autres
+                comparateurs de prix disponibles ? Consultez notre tableau comparatif
+                des fonctionnalités.
+              </p>
+              <a
+                href="/comparatif-concurrence"
+                className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-lg transition-all"
+              >
+                Voir le comparatif →
+              </a>
+            </div>
+          </section>
+
           {/* Contact */}
           <section className="bg-[#1e1e1e] rounded-xl border border-gray-700 p-8">
             <h2 className="text-2xl font-semibold mb-4 text-blue-400">📧 Contact</h2>

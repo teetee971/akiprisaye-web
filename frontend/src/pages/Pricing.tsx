@@ -330,13 +330,23 @@ export default function PricingPage() {
         </p>
 
         {/* Lien vers tarifs détaillés */}
-        <div className="mt-6 text-center">
-          <Link
-            to="/tarifs-details"
-            className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
-          >
-            Voir la comparaison complète des fonctionnalités →
-          </Link>
+        <div className="mt-6 text-center space-y-2">
+          <div>
+            <Link
+              to="/tarifs-details"
+              className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+            >
+              Voir la comparaison complète des fonctionnalités →
+            </Link>
+          </div>
+          <div>
+            <Link
+              to="/comparatif-concurrence"
+              className="text-sm text-slate-500 dark:text-slate-400 hover:underline"
+            >
+              ⚖️ Comparer avec la concurrence →
+            </Link>
+          </div>
         </div>
 
       </div>
