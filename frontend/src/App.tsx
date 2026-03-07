@@ -161,6 +161,13 @@ const ComparaisonTerritoires = lazyPage(() => import('./pages/ComparaisonTerrito
 const InflationRateTracker = lazyPage(() => import('./pages/InflationRateTracker'));
 const TerritoryCoverageReport = lazyPage(() => import('./pages/TerritoryCoverageReport'));
 
+// ── Pages supplémentaires sans itinéraire ──
+const ContactCollectivites = lazyPage(() => import('./pages/ContactCollectivites'));
+const DossierMedia = lazyPage(() => import('./pages/DossierMedia'));
+const BudgetReelMensuel = lazyPage(() => import('./pages/BudgetReelMensuel'));
+const RechercheHub = lazyPage(() => import('./pages/RechercheHub'));
+const SearchCompareHub = lazyPage(() => import('./pages/SearchCompareHub'));
+
 // ── Pages institutionnelles & civiques manquantes ──
 const TiPanie = lazyPage(() => import('./pages/TiPanie'));
 const Gouvernance = lazyPage(() => import('./pages/Gouvernance'));
@@ -465,6 +472,14 @@ export default function App() {
                           <Route path="comparaison-territoires" element={<ComparaisonTerritoires />} />
                           <Route path="inflation-categories" element={<InflationRateTracker />} />
                           <Route path="couverture-territoires" element={<TerritoryCoverageReport />} />
+
+                          {/* ── Itinéraires pour pages supplémentaires ── */}
+                          <Route path="contact-collectivites" element={<ContactCollectivites />} />
+                          <Route path="dossier-media" element={<DossierMedia />} />
+                          <Route path="budget-reel-mensuel" element={<BudgetReelMensuel />} />
+                          <Route path="recherche-hub" element={<RechercheHub />} />
+                          <Route path="recherche-avancee" element={<SearchCompareHub />} />
+                          <Route path="ressources/comprendre-prix" element={<Navigate to="/comprendre-prix" replace />} />
 
                           {/* ── Pages institutionnelles & civiques ── */}
                           <Route path="ti-panie" element={<TiPanie />} />

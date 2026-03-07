@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import {
   DollarSign, Weight, TrendingDown, Map, BarChart3,
   Plane, Ship, Package, Droplet, Shield, GraduationCap,
-  Car, HardHat, Wifi, ArrowRight,
+  Car, HardHat, Wifi, ArrowRight, Users, ShoppingCart, Globe, Search,
 } from 'lucide-react';
 import { GlassCard } from '../components/ui/glass-card';
 import Comparateur from './Comparateur';
@@ -36,6 +36,15 @@ const SPECIALIZED = [
   { path: '/comparateur-location-voiture',icon: Car,         label: 'Location voiture',  color: 'text-emerald-400',  bg: 'bg-emerald-500/10 border-emerald-500/30', desc: 'Agences locales et internationales' },
   { path: '/comparateur-materiaux-batiment', icon: HardHat,  label: 'Matériaux BTP',     color: 'text-orange-400',   bg: 'bg-orange-500/10 border-orange-500/30', desc: 'Ciment, acier, bois, tôles, PVC…' },
   { path: '/comparateur-services',        icon: Wifi,        label: 'Télécoms / Services', color: 'text-indigo-400', bg: 'bg-indigo-500/10 border-indigo-500/30', desc: 'Internet, mobile, eau, électricité' },
+];
+
+// ── General comparators navigation cards ─────────────────────────────────────
+const GENERAL_COMPARATEURS = [
+  { path: '/comparateur-citoyen',     icon: Users,       label: 'Comparateur Citoyen',      color: 'text-green-400',   bg: 'bg-green-500/10 border-green-500/30',   desc: 'Comparaison participative, données citoyennes' },
+  { path: '/comparaison-enseignes',   icon: Search,      label: 'Comparaison Enseignes',     color: 'text-blue-400',    bg: 'bg-blue-500/10 border-blue-500/30',     desc: 'Comparer les prix entre supermarchés' },
+  { path: '/comparaison-panier',      icon: ShoppingCart,label: 'Comparaison Panier',        color: 'text-teal-400',    bg: 'bg-teal-500/10 border-teal-500/30',     desc: 'Simuler votre panier dans différentes enseignes' },
+  { path: '/comparateur-territoires', icon: Globe,       label: 'Comparateur Territoires',   color: 'text-violet-400',  bg: 'bg-violet-500/10 border-violet-500/30', desc: 'Comparer les prix entre territoires DOM–COM' },
+  { path: '/comparaison-territoires', icon: Map,         label: 'Bilan des Territoires',     color: 'text-rose-400',    bg: 'bg-rose-500/10 border-rose-500/30',     desc: 'Vue d\'ensemble des écarts DOM vs Hexagone' },
 ];
 
 export default function ComparateursHub() {
@@ -305,8 +314,35 @@ export default function ComparateursHub() {
             {activeTab === 'historique' && <HistoriquePrix />}
           </div>
 
+          {/* ── General comparators navigation ── */}
+          <div className="mt-10">
+            <h2 className="text-2xl font-bold text-white mb-2">⚖️ Comparateurs généraux</h2>
+            <p className="text-gray-400 text-sm mb-6">
+              Prix citoyens, enseignes, panier et comparaisons inter-territoires.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {GENERAL_COMPARATEURS.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={`group flex items-start gap-3 rounded-xl border p-4 transition-all hover:scale-[1.02] hover:shadow-lg ${item.bg}`}
+                  >
+                    <Icon className={`w-6 h-6 mt-0.5 flex-shrink-0 ${item.color}`} />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-white">{item.label}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">{item.desc}</p>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-gray-600 group-hover:text-white transition-colors mt-1 flex-shrink-0" />
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+
           {/* ── Specialized comparators navigation ── */}
-          <div className="mt-12">
+          <div className="mt-10">
             <h2 className="text-2xl font-bold text-white mb-2">🔍 Comparateurs spécialisés</h2>
             <p className="text-gray-400 text-sm mb-6">
               Transports, énergie, assurances, formations, BTP — accédez directement à chaque outil.

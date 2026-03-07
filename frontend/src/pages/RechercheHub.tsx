@@ -18,12 +18,12 @@ const destinations = [
   {
     title: 'Prix observés',
     description: 'Consulter les prix observés et leurs sources par territoire.',
-    to: '/recherche-prix-observes',
+    to: '/observatoire',
   },
   {
     title: 'Recherche produit',
     description: 'Accéder à la recherche produit existante.',
-    to: '/comparateur-formats',
+    to: '/comparateurs',
   },
   {
     title: 'Recherche enseigne',
