@@ -254,7 +254,7 @@ export function LutteVieChere() {
           </h2>
           <div className="grid md:grid-cols-3 gap-4">
             <a 
-              href="/guide-consommateur.pdf"
+              href="/methodologie"
               className="p-4 bg-slate-50 dark:bg-slate-700 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors"
             >
               <h4 className="font-semibold mb-2 text-slate-900 dark:text-white">
@@ -266,7 +266,7 @@ export function LutteVieChere() {
             </a>
 
             <a 
-              href="/observatoire-prix"
+              href="/observatoire"
               className="p-4 bg-slate-50 dark:bg-slate-700 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors"
             >
               <h4 className="font-semibold mb-2 text-slate-900 dark:text-white">

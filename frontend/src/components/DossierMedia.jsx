@@ -67,7 +67,7 @@ export function DossierMedia() {
           🖨️ Imprimer / Sauvegarder PDF
         </button>
         <button
-          onClick={() => window.location.href = '/METHODOLOGIE_IEVR_v1.0.md'}
+          onClick={() => window.location.href = '/ievr'}
           className="px-6 py-3 bg-slate-600 hover:bg-slate-700 text-white rounded-lg font-semibold transition-colors"
         >
           📄 Télécharger méthodologie

@@ -392,7 +392,7 @@ export function IEVR({ selectedTerritory = null }) {
           </p>
           <p className="text-xs">
             📄 <a 
-              href="/METHODOLOGIE_IEVR_v1.0.md" 
+              href="/ievr" 
               className="text-blue-600 dark:text-blue-400 hover:underline"
               target="_blank"
               rel="noopener noreferrer"

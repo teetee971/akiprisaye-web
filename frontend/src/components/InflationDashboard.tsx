@@ -320,7 +320,7 @@ export function InflationDashboard() {
               </p>
             </div>
             <a
-              href="/historique-prix-new"
+              href="/historique-prix"
               className="px-6 py-3 bg-white text-blue-700 rounded-lg hover:bg-blue-50 transition-colors font-semibold whitespace-nowrap shadow-lg"
             >
               Consulter l'historique

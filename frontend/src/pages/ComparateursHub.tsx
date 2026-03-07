@@ -5,6 +5,7 @@ import {
   DollarSign, Weight, TrendingDown, Map, BarChart3,
   Plane, Ship, Package, Droplet, Shield, GraduationCap,
   Car, HardHat, Wifi, ArrowRight, Users, ShoppingCart, Globe, Search,
+  TrendingUp, Activity, Sparkles,
 } from 'lucide-react';
 import { GlassCard } from '../components/ui/glass-card';
 import Comparateur from './Comparateur';
@@ -36,15 +37,19 @@ const SPECIALIZED = [
   { path: '/comparateur-location-voiture',icon: Car,         label: 'Location voiture',  color: 'text-emerald-400',  bg: 'bg-emerald-500/10 border-emerald-500/30', desc: 'Agences locales et internationales' },
   { path: '/comparateur-materiaux-batiment', icon: HardHat,  label: 'Matériaux BTP',     color: 'text-orange-400',   bg: 'bg-orange-500/10 border-orange-500/30', desc: 'Ciment, acier, bois, tôles, PVC…' },
   { path: '/comparateur-services',        icon: Wifi,        label: 'Télécoms / Services', color: 'text-indigo-400', bg: 'bg-indigo-500/10 border-indigo-500/30', desc: 'Internet, mobile, eau, électricité' },
+  { path: '/evaluation-cosmetique',       icon: Sparkles,    label: 'Cosmétiques',        color: 'text-fuchsia-400', bg: 'bg-fuchsia-500/10 border-fuchsia-500/30', desc: 'Évaluation des produits cosmétiques DOM' },
 ];
 
 // ── General comparators navigation cards ─────────────────────────────────────
 const GENERAL_COMPARATEURS = [
-  { path: '/comparateur-citoyen',     icon: Users,       label: 'Comparateur Citoyen',      color: 'text-green-400',   bg: 'bg-green-500/10 border-green-500/30',   desc: 'Comparaison participative, données citoyennes' },
-  { path: '/comparaison-enseignes',   icon: Search,      label: 'Comparaison Enseignes',     color: 'text-blue-400',    bg: 'bg-blue-500/10 border-blue-500/30',     desc: 'Comparer les prix entre supermarchés' },
-  { path: '/comparaison-panier',      icon: ShoppingCart,label: 'Comparaison Panier',        color: 'text-teal-400',    bg: 'bg-teal-500/10 border-teal-500/30',     desc: 'Simuler votre panier dans différentes enseignes' },
-  { path: '/comparateur-territoires', icon: Globe,       label: 'Comparateur Territoires',   color: 'text-violet-400',  bg: 'bg-violet-500/10 border-violet-500/30', desc: 'Comparer les prix entre territoires DOM–COM' },
-  { path: '/comparaison-territoires', icon: Map,         label: 'Bilan des Territoires',     color: 'text-rose-400',    bg: 'bg-rose-500/10 border-rose-500/30',     desc: 'Vue d\'ensemble des écarts DOM vs Hexagone' },
+  { path: '/comparateur',            icon: DollarSign,  label: 'Comparateur Prix',          color: 'text-lime-400',    bg: 'bg-lime-500/10 border-lime-500/30',     desc: 'Comparer les prix produits en temps réel' },
+  { path: '/comparateur-citoyen',    icon: Users,       label: 'Comparateur Citoyen',       color: 'text-green-400',   bg: 'bg-green-500/10 border-green-500/30',   desc: 'Comparaison participative, données citoyennes' },
+  { path: '/comparaison-enseignes',  icon: Search,      label: 'Comparaison Enseignes',     color: 'text-blue-400',    bg: 'bg-blue-500/10 border-blue-500/30',     desc: 'Comparer les prix entre supermarchés' },
+  { path: '/comparaison-panier',     icon: ShoppingCart,label: 'Comparaison Panier',        color: 'text-teal-400',    bg: 'bg-teal-500/10 border-teal-500/30',     desc: 'Simuler votre panier dans différentes enseignes' },
+  { path: '/comparateur-territoires',icon: Globe,       label: 'Comparateur Territoires',   color: 'text-violet-400',  bg: 'bg-violet-500/10 border-violet-500/30', desc: 'Comparer les prix entre territoires DOM–COM' },
+  { path: '/comparaison-territoires',icon: Map,         label: 'Bilan des Territoires',     color: 'text-rose-400',    bg: 'bg-rose-500/10 border-rose-500/30',     desc: 'Vue d\'ensemble des écarts DOM vs Hexagone' },
+  { path: '/inflation-categories',   icon: TrendingUp,  label: 'Inflation par Catégorie',   color: 'text-orange-400',  bg: 'bg-orange-500/10 border-orange-500/30', desc: 'Suivi de l\'inflation par famille de produits' },
+  { path: '/couverture-territoires', icon: Activity,    label: 'Couverture Territoires',    color: 'text-cyan-400',    bg: 'bg-cyan-500/10 border-cyan-500/30',     desc: 'Rapport de couverture des données par territoire' },
 ];
 
 export default function ComparateursHub() {
