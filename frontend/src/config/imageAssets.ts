@@ -6,58 +6,58 @@
 
 export const TERRITORY_IMAGES: Record<string, { url: string; alt: string; credit: string }> = {
   gp: {
-    url: 'https://images.unsplash.com/photo-1564890369478-c89ca3d9cde4?auto=format&fit=crop&w=800&q=80',
-    alt: 'Guadeloupe — îles et forêt tropicale',
+    url: 'https://images.unsplash.com/photo-1605217613423-0edd1894f97e?auto=format&fit=crop&w=800&q=80',
+    alt: 'Guadeloupe — marché tropical, fruits et légumes locaux',
     credit: 'Unsplash',
   },
   mq: {
-    url: 'https://images.unsplash.com/photo-1598924700218-b7cbfbf39e91?auto=format&fit=crop&w=800&q=80',
-    alt: 'Martinique — paysage tropical',
+    url: 'https://images.unsplash.com/photo-1548199569-11d10e2bf305?auto=format&fit=crop&w=800&q=80',
+    alt: 'Martinique — littoral et végétation tropicale',
     credit: 'Unsplash',
   },
   gf: {
     url: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=800&q=80',
-    alt: 'Guyane — forêt amazonienne',
+    alt: 'Guyane — forêt amazonienne luxuriante',
     credit: 'Unsplash',
   },
   re: {
-    url: 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&w=800&q=80',
-    alt: 'La Réunion — paysage volcanique',
+    url: 'https://images.unsplash.com/photo-1583429289032-bf0985d4a4dc?auto=format&fit=crop&w=800&q=80',
+    alt: 'La Réunion — paysage volcanique, piton de la Fournaise',
     credit: 'Unsplash',
   },
   yt: {
-    url: 'https://images.unsplash.com/photo-1505118380757-91f5f5632de0?auto=format&fit=crop&w=800&q=80',
-    alt: 'Mayotte — lagon turquoise',
+    url: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=800&q=80',
+    alt: 'Mayotte — lagon turquoise et mangrove',
     credit: 'Unsplash',
   },
   nc: {
     url: 'https://images.unsplash.com/photo-1582139329536-e7284fece509?auto=format&fit=crop&w=800&q=80',
-    alt: 'Nouvelle-Calédonie — lagon et récif corallien',
+    alt: 'Nouvelle-Calédonie — lagon et récif corallien classé UNESCO',
     credit: 'Unsplash',
   },
   pf: {
     url: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=800&q=80',
-    alt: 'Polynésie française — lagon de Bora Bora',
+    alt: 'Polynésie française — bungalows sur l\u2019eau de Bora Bora',
     credit: 'Unsplash',
   },
   wf: {
     url: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?auto=format&fit=crop&w=800&q=80',
-    alt: 'Wallis-et-Futuna — île du Pacifique',
+    alt: 'Wallis-et-Futuna — île volcanique du Pacifique',
     credit: 'Unsplash',
   },
   pm: {
     url: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=800&q=80',
-    alt: 'Saint-Pierre-et-Miquelon — paysage atlantique',
+    alt: 'Saint-Pierre-et-Miquelon — côte rocheuse atlantique',
     credit: 'Unsplash',
   },
   bl: {
     url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
-    alt: 'Saint-Barthélemy — plage des Caraïbes',
+    alt: 'Saint-Barthélemy — plage de sable blanc des Caraïbes',
     credit: 'Unsplash',
   },
   mf: {
-    url: 'https://images.unsplash.com/photo-1552083375-1447ce886485?auto=format&fit=crop&w=800&q=80',
-    alt: 'Saint-Martin — côte caribéenne',
+    url: 'https://images.unsplash.com/photo-1543965170-e399380ef7f6?auto=format&fit=crop&w=800&q=80',
+    alt: 'Saint-Martin — côte caribéenne aux eaux cristallines',
     credit: 'Unsplash',
   },
   tf: {
@@ -67,7 +67,7 @@ export const TERRITORY_IMAGES: Record<string, { url: string; alt: string; credit
   },
   fr: {
     url: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=800&q=80',
-    alt: 'France métropolitaine — Paris',
+    alt: 'France métropolitaine — Paris, Tour Eiffel',
     credit: 'Unsplash',
   },
 };
