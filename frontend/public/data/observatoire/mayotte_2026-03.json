@@ -1,80 +1,242 @@
 {
   "territoire": "Mayotte",
-  "date_snapshot": "2026-03-06",
+  "date_snapshot": "2026-03-05",
   "source": "releve_citoyen",
   "qualite": "verifie",
   "donnees": [
     {
       "commune": "Mamoudzou",
-      "enseigne": "Jumbo",
+      "enseigne": "Sodifram",
       "categorie": "Produits laitiers",
       "produit": "Lait demi-écrémé UHT 1L",
       "ean": "3560070123456",
       "unite": "1L",
-      "prix": 1.73
+      "prix": 1.89
     },
     {
       "commune": "Mamoudzou",
-      "enseigne": "Score",
+      "enseigne": "Mahodis",
       "categorie": "Produits laitiers",
       "produit": "Lait demi-écrémé UHT 1L",
       "ean": "3560070123456",
       "unite": "1L",
-      "prix": 1.76
+      "prix": 1.95
     },
     {
       "commune": "Koungou",
-      "enseigne": "Independant",
+      "enseigne": "Sodifram",
       "categorie": "Produits laitiers",
       "produit": "Lait demi-écrémé UHT 1L",
       "ean": "3560070123456",
       "unite": "1L",
-      "prix": 1.9
+      "prix": 2.09
     },
     {
       "commune": "Mamoudzou",
-      "enseigne": "Jumbo",
+      "enseigne": "Sodifram",
       "categorie": "Épicerie",
       "produit": "Riz long blanc 1kg",
       "ean": "3250391234567",
       "unite": "1kg",
-      "prix": 2.36
+      "prix": 2.65
     },
     {
       "commune": "Mamoudzou",
-      "enseigne": "Score",
+      "enseigne": "Mahodis",
       "categorie": "Épicerie",
       "produit": "Riz long blanc 1kg",
       "ean": "3250391234567",
       "unite": "1kg",
-      "prix": 2.29
+      "prix": 2.55
+    },
+    {
+      "commune": "Koungou",
+      "enseigne": "Sodifram",
+      "categorie": "Épicerie",
+      "produit": "Riz long blanc 1kg",
+      "ean": "3250391234567",
+      "unite": "1kg",
+      "prix": 2.89
     },
     {
       "commune": "Mamoudzou",
-      "enseigne": "Jumbo",
+      "enseigne": "Sodifram",
       "categorie": "Produits laitiers",
       "produit": "Yaourt nature 4x125g",
       "ean": "3560070789012",
       "unite": "4x125g",
-      "prix": 2.26
+      "prix": 2.55
     },
     {
       "commune": "Mamoudzou",
-      "enseigne": "Score",
+      "enseigne": "Sodifram",
       "categorie": "Épicerie",
       "produit": "Sucre blanc 1kg",
       "ean": "3560071112345",
       "unite": "1kg",
-      "prix": 1.96
+      "prix": 1.99
     },
     {
-      "commune": "Koungou",
-      "enseigne": "Independant",
+      "commune": "Mamoudzou",
+      "enseigne": "Mahodis",
+      "categorie": "Épicerie",
+      "produit": "Sucre blanc 1kg",
+      "ean": "3560071112345",
+      "unite": "1kg",
+      "prix": 1.89
+    },
+    {
+      "commune": "Mamoudzou",
+      "enseigne": "Sodifram",
       "categorie": "Épicerie",
       "produit": "Huile de tournesol 1L",
       "ean": "3250399876543",
       "unite": "1L",
-      "prix": 3.67
+      "prix": 3.45
+    },
+    {
+      "commune": "Mamoudzou",
+      "enseigne": "Mahodis",
+      "categorie": "Épicerie",
+      "produit": "Huile de tournesol 1L",
+      "ean": "3250399876543",
+      "unite": "1L",
+      "prix": 3.29
+    },
+    {
+      "commune": "Mamoudzou",
+      "enseigne": "Sodifram",
+      "categorie": "Boissons",
+      "produit": "Eau minérale 1.5L",
+      "ean": "3124480015443",
+      "unite": "1.5L",
+      "prix": 1.15
+    },
+    {
+      "commune": "Mamoudzou",
+      "enseigne": "Mahodis",
+      "categorie": "Boissons",
+      "produit": "Eau minérale 1.5L",
+      "ean": "3124480015443",
+      "unite": "1.5L",
+      "prix": 1.09
+    },
+    {
+      "commune": "Mamoudzou",
+      "enseigne": "Sodifram",
+      "categorie": "Épicerie",
+      "produit": "Pâtes spaghetti 500g",
+      "ean": "3017620101010",
+      "unite": "500g",
+      "prix": 1.69
+    },
+    {
+      "commune": "Mamoudzou",
+      "enseigne": "Mahodis",
+      "categorie": "Épicerie",
+      "produit": "Pâtes spaghetti 500g",
+      "ean": "3017620101010",
+      "unite": "500g",
+      "prix": 1.59
+    },
+    {
+      "commune": "Mamoudzou",
+      "enseigne": "Sodifram",
+      "categorie": "Lessive",
+      "produit": "Lessive liquide 1.5L",
+      "ean": "8720182073534",
+      "unite": "1.5L",
+      "prix": 6.25
+    },
+    {
+      "commune": "Mamoudzou",
+      "enseigne": "Mahodis",
+      "categorie": "Lessive",
+      "produit": "Lessive liquide 1.5L",
+      "ean": "8720182073534",
+      "unite": "1.5L",
+      "prix": 5.89
+    },
+    {
+      "commune": "Mamoudzou",
+      "enseigne": "Sodifram",
+      "categorie": "Hygiène",
+      "produit": "Gel douche 250ml",
+      "ean": "3574660329919",
+      "unite": "250ml",
+      "prix": 3.45
+    },
+    {
+      "commune": "Mamoudzou",
+      "enseigne": "Mahodis",
+      "categorie": "Hygiène",
+      "produit": "Gel douche 250ml",
+      "ean": "3574660329919",
+      "unite": "250ml",
+      "prix": 3.19
+    },
+    {
+      "commune": "Mamoudzou",
+      "enseigne": "Sodifram",
+      "categorie": "Fruits et légumes",
+      "produit": "Tomates rondes 1kg",
+      "ean": "0000000000000",
+      "unite": "1kg",
+      "prix": 4.85
+    },
+    {
+      "commune": "Mamoudzou",
+      "enseigne": "Mahodis",
+      "categorie": "Fruits et légumes",
+      "produit": "Tomates rondes 1kg",
+      "ean": "0000000000000",
+      "unite": "1kg",
+      "prix": 4.45
+    },
+    {
+      "commune": "Mamoudzou",
+      "enseigne": "Sodifram",
+      "categorie": "Boucherie / Charcuterie",
+      "produit": "Poulet entier 1kg",
+      "ean": "0000000000001",
+      "unite": "1kg",
+      "prix": 10.50
+    },
+    {
+      "commune": "Mamoudzou",
+      "enseigne": "Mahodis",
+      "categorie": "Boucherie / Charcuterie",
+      "produit": "Poulet entier 1kg",
+      "ean": "0000000000001",
+      "unite": "1kg",
+      "prix": 9.99
+    },
+    {
+      "commune": "Mamoudzou",
+      "enseigne": "Sodifram",
+      "categorie": "Épicerie",
+      "produit": "Café moulu 250g",
+      "ean": "8711000530016",
+      "unite": "250g",
+      "prix": 4.75
+    },
+    {
+      "commune": "Mamoudzou",
+      "enseigne": "Mahodis",
+      "categorie": "Entretien / Nettoyage",
+      "produit": "Liquide vaisselle 500ml",
+      "ean": "8718114690728",
+      "unite": "500ml",
+      "prix": 2.79
+    },
+    {
+      "commune": "Mamoudzou",
+      "enseigne": "Pharmacie de Mamoudzou",
+      "categorie": "Pharmacie",
+      "produit": "Paracétamol 500mg x16",
+      "ean": "3400936191594",
+      "unite": "16cp",
+      "prix": 3.15
     }
   ]
 }

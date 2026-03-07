@@ -13,6 +13,7 @@ const MiniFaqSection = lazy(() => import('./home-v5/MiniFaqSection'));
 const TerritoryPriceChart = lazy(() => import('../components/home/TerritoryPriceChart'));
 const PriceEvolutionChart = lazy(() => import('../components/home/PriceEvolutionChart'));
 const LiveNewsFeed = lazy(() => import('../components/home/LiveNewsFeed'));
+const PanierVitalWidget = lazy(() => import('../components/home/PanierVitalWidget'));
 
 const TESTIMONIALS = [
   {
@@ -394,6 +395,11 @@ export default function HomeV5() {
         {/* Price evolution line chart — 5-month trend from real observatoire snapshots */}
         <Suspense fallback={null}>
           <PriceEvolutionChart />
+        </Suspense>
+
+        {/* Panier vital — purchasing power index: minutes of SMIC per basket */}
+        <Suspense fallback={null}>
+          <PanierVitalWidget />
         </Suspense>
 
         {/* Live news feed from actualites.json — real data only */}
