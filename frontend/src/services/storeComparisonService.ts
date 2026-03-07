@@ -162,7 +162,7 @@ export function compareStoresForProduct(
  */
 export async function loadCatalogueData(): Promise<CatalogueItem[]> {
   try {
-    const response = await fetch('/data/catalogue.json')
+    const response = await fetch(`${import.meta.env.BASE_URL}data/catalogue.json`)
     if (!response.ok) {
       console.error('Erreur lors du chargement du catalogue')
       return []

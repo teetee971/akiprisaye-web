@@ -95,7 +95,7 @@ export default function ScanOCR() {
       return;
     }
 
-    if (result.confidence < settings.confidenceThreshold) {
+    if (result.confidence < (settings.confidenceThreshold ?? 60)) {
       setError(
         `Confiance OCR trop faible (${Math.round(result.confidence)}%). ` +
           'Essayez un meilleur éclairage ou réduisez le seuil.'
@@ -605,7 +605,7 @@ export default function ScanOCR() {
                         <div className="mt-3 space-y-2">
                           <button
                             type="button"
-                            onClick={() => handleSearchPrices(scanSummary.suggestedBarcode)}
+                            onClick={() => handleSearchPrices(scanSummary.suggestedBarcode!)}
                             className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-600/20 text-blue-200 hover:bg-blue-600/30 text-xs font-semibold"
                           >
                             🔎 Lancer la recherche prix ({scanSummary.suggestedBarcode})

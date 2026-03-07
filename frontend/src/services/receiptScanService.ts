@@ -111,6 +111,11 @@ export interface ReceiptAnalysisResult {
    * Score de confiance global
    */
   overallConfidence: number;
+  
+  /**
+   * Territoire détecté (si disponible)
+   */
+  territory?: string;
 }
 
 /**

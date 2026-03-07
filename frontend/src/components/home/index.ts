@@ -28,3 +28,9 @@ export { TerritorySignal } from './TerritorySignal';
 export { AnonymousSocialComparison } from './AnonymousSocialComparison';
 export { PersonalizedDealOfDay } from './PersonalizedDealOfDay';
 export { ShareVictory } from './ShareVictory';
+
+// Composants données réelles — tendances & actualités
+export { default as PriceLiveTicker } from './PriceLiveTicker';
+export { default as TerritoryPriceChart } from './TerritoryPriceChart';
+export { default as PriceEvolutionChart } from './PriceEvolutionChart';
+export { default as LiveNewsFeed } from './LiveNewsFeed';

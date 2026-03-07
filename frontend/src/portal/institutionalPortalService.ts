@@ -128,7 +128,7 @@ export async function getAvailableDatasets(userId: string): Promise<DatasetDescr
       lastUpdate: new Date().toISOString(),
       updateFrequency: 'monthly',
       coverage: {
-        territories: ['FRA', 'GLP', 'MTQ', 'GUF', 'REU', 'MYT'],
+        territories: ['FR', 'GP', 'MQ', 'GF', 'RE', 'YT'],
         startDate: '2024-01-01T00:00:00Z'
       },
       fields: [
@@ -154,7 +154,7 @@ export async function getAvailableDatasets(userId: string): Promise<DatasetDescr
       lastUpdate: new Date().toISOString(),
       updateFrequency: 'weekly',
       coverage: {
-        territories: ['FRA', 'GLP', 'MTQ', 'GUF', 'REU', 'MYT'],
+        territories: ['FR', 'GP', 'MQ', 'GF', 'RE', 'YT'],
         startDate: '2024-01-01T00:00:00Z'
       },
       fields: [
@@ -190,13 +190,13 @@ export async function getGlobalIndices(
   }
   
   // Mock implementation
-  const territories: TerritoryCode[] = territory ? [territory] : ['FRA', 'GLP', 'MTQ'];
+  const territories: TerritoryCode[] = territory ? [territory] : ['FR', 'GP', 'MQ'];
   
   const mockIndices: GlobalIndex[] = territories.map(terr => ({
     id: `ievr-${terr}`,
     name: 'Indice d\'Équivalence de Vie Réelle (IEVR)',
     description: 'Indice agrégé du coût de la vie',
-    value: terr === 'FRA' ? 100 : 112.5,
+    value: terr === 'FR' ? 100 : 112.5,
     unit: 'index (base 100 = métropole)',
     territory: terr,
     date: new Date().toISOString(),
@@ -206,28 +206,28 @@ export async function getGlobalIndices(
         id: 'food',
         name: 'Alimentation',
         weight: 0.35,
-        value: terr === 'FRA' ? 100 : 115,
+        value: terr === 'FR' ? 100 : 115,
         unit: 'index'
       },
       {
         id: 'transport',
         name: 'Transport',
         weight: 0.25,
-        value: terr === 'FRA' ? 100 : 110,
+        value: terr === 'FR' ? 100 : 110,
         unit: 'index'
       },
       {
         id: 'housing',
         name: 'Logement',
         weight: 0.30,
-        value: terr === 'FRA' ? 100 : 112,
+        value: terr === 'FR' ? 100 : 112,
         unit: 'index'
       },
       {
         id: 'other',
         name: 'Autres',
         weight: 0.10,
-        value: terr === 'FRA' ? 100 : 108,
+        value: terr === 'FR' ? 100 : 108,
         unit: 'index'
       }
     ]
@@ -254,7 +254,7 @@ export async function getMultiTerritoryComparison(
   // Mock implementation
   const results: TerritoryComparisonResult[] = comparisonTerritories.map((terr, idx) => {
     const baseValue = 100;
-    const territoryValue = terr === 'FRA' ? 100 : 112 + idx * 2;
+    const territoryValue = terr === 'FR' ? 100 : 112 + idx * 2;
     
     return {
       territory: terr,
@@ -345,7 +345,7 @@ export async function getMetadata(userId: string): Promise<MetadataResponse> {
   
   const territories: TerritoryMetadata[] = [
     {
-      code: 'FRA',
+      code: 'FR',
       name: 'France Métropolitaine',
       type: 'metropole',
       population: 65000000,
@@ -357,7 +357,7 @@ export async function getMetadata(userId: string): Promise<MetadataResponse> {
       }
     },
     {
-      code: 'GLP',
+      code: 'GP',
       name: 'Guadeloupe',
       type: 'dom',
       population: 380000,
@@ -369,7 +369,7 @@ export async function getMetadata(userId: string): Promise<MetadataResponse> {
       }
     },
     {
-      code: 'MTQ',
+      code: 'MQ',
       name: 'Martinique',
       type: 'dom',
       population: 360000,

@@ -145,6 +145,19 @@ export interface ProductAnalysisSnapshot {
   
   /** Data sources */
   sources: SourceReference[];
+
+  // Extended fields used by productPhotoAnalysisService
+  productName?: string;
+  brand?: string;
+  images?: string[];
+  allergens?: string[];
+  nutriScore?: string;
+  novaGroup?: number;
+  ecoScore?: string;
+  processingLevel?: string;
+  origin?: string;
+  labels?: string[];
+  certifications?: string[];
 }
 
 /**
@@ -304,11 +317,17 @@ export interface ProductDossier {
   /** Last update timestamp */
   lastUpdated: string; // ISO 8601
   
+  /** Alias for lastUpdated (legacy compat) */
+  lastUpdate?: string;
+  
   /** Total number of analyses */
   totalAnalyses: number;
   
   /** Product snapshots by territory */
   territories: TerritoryProductSnapshot[];
+  
+  /** Alias for territories (legacy compat) */
+  territorySnapshots?: TerritoryProductSnapshot[];
   
   /** Complete analysis history */
   analysisHistory: ProductAnalysisSnapshot[];

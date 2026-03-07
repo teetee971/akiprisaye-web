@@ -21,7 +21,7 @@ export default function EvolutionPrix({ territory: _territory = 'guadeloupe' }) 
     const loadData = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/data/evolution-prix-analysable.json');
+        const response = await fetch(`${import.meta.env.BASE_URL}data/evolution-prix-analysable.json`);
         if (!response.ok) {
           throw new Error('Impossible de charger les données d\'évolution');
         }

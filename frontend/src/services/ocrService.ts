@@ -262,7 +262,7 @@ export async function runOCR(
     corePath: CORE_PATH,
     langPath: LANG_PATH,
     gzip: true,
-    logger: (m) => console.debug('[OCR]', m),
+    logger: (m: unknown) => console.debug('[OCR]', m),
   });
 
   let timeoutTriggered = false;

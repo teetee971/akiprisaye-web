@@ -64,7 +64,7 @@ function writeToStorage(items: TiPanierItem[], type: PanierType = 'comparison') 
 
 // Write to Firestore for authenticated users
 async function writeToFirestore(items: TiPanierItem[], type: PanierType = 'comparison') {
-  if (!auth.currentUser || !db) return;
+  if (!auth || !auth.currentUser || !db) return;
   try {
     const userDocRef = doc(db, 'users', auth.currentUser.uid);
     const field = type === 'wishlist' ? 'wishlist' : 'cart';
@@ -79,7 +79,7 @@ async function writeToFirestore(items: TiPanierItem[], type: PanierType = 'compa
 
 // Read from Firestore for authenticated users
 async function readFromFirestore(type: PanierType = 'comparison'): Promise<TiPanierItem[]> {
-  if (!auth.currentUser || !db) return [];
+  if (!auth || !auth.currentUser || !db) return [];
   try {
     const userDocRef = doc(db, 'users', auth.currentUser.uid);
     const userDoc = await getDoc(userDocRef);

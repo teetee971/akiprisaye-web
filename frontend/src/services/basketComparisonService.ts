@@ -133,7 +133,7 @@ export function compareBasketAcrossStores(
       }
 
       // Find price at this store
-      const storePrice = product.prices.find(p => p.storeId === store.id);
+      const storePrice = product.prices.find((p: { storeId?: string; price?: number; ts?: string }) => p.storeId === store.id);
       
       if (storePrice) {
         storeItems.push({

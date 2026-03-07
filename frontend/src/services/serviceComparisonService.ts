@@ -25,11 +25,11 @@ export async function loadServicesDatabase(): Promise<ServicesDatabase> {
   }
 
   try {
-    const response = await fetch('/data/services-prices.json');
+    const response = await fetch(`${import.meta.env.BASE_URL}data/services-prices.json`);
     if (!response.ok) {
       throw new Error(`Failed to load services database: ${response.statusText}`);
     }
-    cachedDatabase = await response.json();
+    cachedDatabase = await response.json() as ServicesDatabase;
     return cachedDatabase;
   } catch (error) {
     console.error('Error loading services database:', error);

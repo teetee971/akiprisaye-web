@@ -7,7 +7,7 @@ import {
   where,
   Timestamp,
 } from "firebase/firestore";
-import { db } from "../firebase_config";
+import { db } from "@/lib/firebase";
 
 type Price = {
   id: string;
@@ -39,6 +39,11 @@ export default function Comparateur() {
     setPrices([]);
 
     try {
+      if (!db) {
+        setError("Service non disponible.");
+        setLoading(false);
+        return;
+      }
       // Recherche du produit
       const productQuery = query(
         collection(db, "products"),

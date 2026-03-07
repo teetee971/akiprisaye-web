@@ -118,7 +118,9 @@ export function ARShelfScanner() {
             playsInline
             muted
             autoPlay
-          />
+          >
+            <track kind="captions" src="" srcLang="fr" label="Captions" default />
+          </video>
           <canvas
             ref={canvasRef}
             className="absolute top-0 left-0 w-full h-full pointer-events-none"

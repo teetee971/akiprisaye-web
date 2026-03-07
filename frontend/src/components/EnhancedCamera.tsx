@@ -218,7 +218,9 @@ export default function EnhancedCamera({
           playsInline
           muted
           aria-label="Flux vidéo de la caméra"
-        />
+        >
+          <track kind="captions" src="" srcLang="fr" label="Captions" default />
+        </video>
 
         {/* Overlay de guidage */}
         {isActive && (

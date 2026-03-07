@@ -27,7 +27,7 @@ describe('Cloudflare SPA routing config', () => {
     const redirectsPath = P('public/_redirects');
     const redirects = readFileSync(redirectsPath, 'utf8')
       .split('\n')
-      .map((line) => line.trim())
+      .map((line: string) => line.trim())
       .filter(Boolean)
       // rend le test tolérant aux espaces multiples
       .map((line) => line.replace(/\s+/g, ' '));

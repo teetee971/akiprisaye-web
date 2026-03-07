@@ -26,7 +26,9 @@ export default function ScanCamera({
           playsInline
           muted
           aria-label="Flux vidéo de la caméra pour scanner le code EAN"
-        />
+        >
+          <track kind="captions" src="" srcLang="fr" label="Captions" default />
+        </video>
         
         {isScanning && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">

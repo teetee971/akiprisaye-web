@@ -1,5 +1,8 @@
 import { useEffect } from 'react';
 
+const SITE_URL = 'https://teetee971.github.io/akiprisaye-web';
+const SITE_LOGO = `${SITE_URL}/logo-akiprisaye.svg`;
+
 export default function StructuredData() {
   useEffect(() => {
     // Organization Schema
@@ -8,8 +11,8 @@ export default function StructuredData() {
       '@type': 'Organization',
       name: 'A KI PRI SA YÉ',
       alternateName: 'AKPSY',
-      url: 'https://akiprisaye.pages.dev',
-      logo: 'https://akiprisaye.pages.dev/logo-akpsy.svg',
+      url: SITE_URL,
+      logo: SITE_LOGO,
       description: 'Plateforme citoyenne de transparence des prix en Outre-mer',
       foundingDate: '2025',
       address: {
@@ -17,9 +20,7 @@ export default function StructuredData() {
         addressCountry: 'FR',
         addressRegion: 'Outre-mer',
       },
-      sameAs: [
-        // Add social media links when available
-      ],
+      sameAs: [],
       contactPoint: {
         '@type': 'ContactPoint',
         contactType: 'customer service',
@@ -32,14 +33,14 @@ export default function StructuredData() {
       '@context': 'https://schema.org',
       '@type': 'WebSite',
       name: 'A KI PRI SA YÉ',
-      url: 'https://akiprisaye.pages.dev',
+      url: SITE_URL,
       description: 'Comparez les prix et luttez contre la vie chère en Outre-mer',
       inLanguage: 'fr-FR',
       potentialAction: {
         '@type': 'SearchAction',
         target: {
           '@type': 'EntryPoint',
-          urlTemplate: 'https://akiprisaye.pages.dev/comparateur?q={search_term_string}',
+          urlTemplate: `${SITE_URL}/comparateur?q={search_term_string}`,
         },
         'query-input': 'required name=search_term_string',
       },
@@ -57,45 +58,24 @@ export default function StructuredData() {
         price: '0',
         priceCurrency: 'EUR',
       },
-      aggregateRating: {
-        '@type': 'AggregateRating',
-        ratingValue: '4.8',
-        ratingCount: '150',
-      },
     };
 
     // LocalBusiness Schema (for each territory)
     const localBusinessSchema = {
       '@context': 'https://schema.org',
       '@type': 'LocalBusiness',
-      '@id': 'https://akiprisaye.pages.dev/#organization',
+      '@id': `${SITE_URL}/#organization`,
       name: 'A KI PRI SA YÉ',
-      image: 'https://akiprisaye.pages.dev/og/cover-akpsy.png',
-      description: 'Comparateur de prix citoyen pour l\'Outre-mer français',
-      url: 'https://akiprisaye.pages.dev',
-      telephone: '',
+      image: SITE_LOGO,
+      description: "Comparateur de prix citoyen pour l'Outre-mer français",
+      url: SITE_URL,
       priceRange: 'Gratuit',
       areaServed: [
-        {
-          '@type': 'AdministrativeArea',
-          name: 'Guadeloupe',
-        },
-        {
-          '@type': 'AdministrativeArea',
-          name: 'Martinique',
-        },
-        {
-          '@type': 'AdministrativeArea',
-          name: 'Guyane',
-        },
-        {
-          '@type': 'AdministrativeArea',
-          name: 'La Réunion',
-        },
-        {
-          '@type': 'AdministrativeArea',
-          name: 'Mayotte',
-        },
+        { '@type': 'AdministrativeArea', name: 'Guadeloupe' },
+        { '@type': 'AdministrativeArea', name: 'Martinique' },
+        { '@type': 'AdministrativeArea', name: 'Guyane' },
+        { '@type': 'AdministrativeArea', name: 'La Réunion' },
+        { '@type': 'AdministrativeArea', name: 'Mayotte' },
       ],
     };
 

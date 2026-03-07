@@ -10,9 +10,9 @@
 
 import { useState, useEffect } from 'react';
 import { useFavorites } from '../../hooks/useFavorites';
-import type { ProductViewModel, UserPhoto } from '../types/productViewModel';
-import { getProductSubtitle, getTraceabilityText, hasCompleteInfo } from '../services/productViewModelService';
-import { getProductImageOrFallback } from '../utils/productImageFallback';
+import type { ProductViewModel, UserPhoto } from '../../types/productViewModel';
+import { getProductSubtitle, getTraceabilityText, hasCompleteInfo } from '../../services/productViewModelService';
+import { getProductImageOrFallback } from '../../utils/productImageFallback';
 
 interface ProductDetailsProps {
   product: ProductViewModel;

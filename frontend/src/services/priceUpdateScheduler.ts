@@ -54,7 +54,7 @@ export async function loadPriceData(): Promise<boolean> {
   try {
     // Tentative de chargement depuis un fichier JSON public versionné
     // ou depuis open-data public (sans clé API)
-    const response = await fetch('/data/price-observations.json')
+    const response = await fetch(`${import.meta.env.BASE_URL}data/price-observations.json`)
     
     if (response.ok) {
       const data = await response.json()

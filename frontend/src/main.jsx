@@ -16,7 +16,7 @@ import { logDebug } from './utils/logger';
 import {
   enforceBuildVersionSync,
   registerAppServiceWorker,
-} from './utils/buildVersionGuard';
+} from './utils/buildVersionGuard.client';
 
 /**
  * IMPORTANT (tests Vitest):

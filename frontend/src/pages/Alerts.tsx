@@ -1,14 +1,17 @@
 // src/pages/Alerts.tsx
 import React, { useEffect, useState } from 'react'
-import alertsService, { Alert } from '../services/alertsService'
+import { getAlerts } from '../services/alertsService'
+import type { SanitaryAlert } from '../types/alerts'
+
+type Alert = SanitaryAlert;
 
 export default function AlertsPage() {
   const [alerts, setAlerts] = useState<Alert[]>([])
 
   useEffect(() => {
     async function load() {
-      const a = await alertsService.getAlerts()
-      setAlerts(a)
+      const result = await getAlerts()
+      setAlerts(result.alerts)
     }
     load()
   }, [])
@@ -23,8 +26,8 @@ export default function AlertsPage() {
           {alerts.map((al) => (
             <li key={al.id}>
               <strong>{al.title}</strong>
-              <div>{al.body}</div>
-              <small>{al.level} — {al.resolved ? 'resolved' : 'open'}</small>
+              <div>{al.reason ?? al.risk ?? al.instructions}</div>
+              <small>{al.severity} — {al.status === 'resolved' ? 'resolved' : 'open'}</small>
             </li>
           ))}
         </ul>

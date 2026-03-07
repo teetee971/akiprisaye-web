@@ -38,10 +38,12 @@ function stringSimilarity(str1: string, str2: string): number {
  * Calcule la distance de Levenshtein entre deux chaînes
  */
 function levenshteinDistance(str1: string, str2: string): number {
-  const matrix: number[][] = [];
+  const matrix: number[][] = Array.from({ length: str2.length + 1 }, () =>
+    Array.from({ length: str1.length + 1 }, () => 0),
+  );
 
   for (let i = 0; i <= str2.length; i++) {
-    matrix[i] = [i];
+    matrix[i][0] = i;
   }
 
   for (let j = 0; j <= str1.length; j++) {
@@ -62,7 +64,7 @@ function levenshteinDistance(str1: string, str2: string): number {
     }
   }
 
-  return matrix[str2.length][str1.length];
+  return matrix[str2.length][str1.length] ?? 0;
 }
 
 /**
@@ -144,7 +146,7 @@ export function resolveConflict(
     case 'remote_wins':
       return {
         ...remoteProduct,
-        id: local.id, // Conserver l'ID local
+        id: local.id ?? remoteProduct.id ?? remoteProduct.ean, // Conserver un ID déterministe
         metadata: {
           ...remoteProduct.metadata,
           lastSync: new Date().toISOString(),
@@ -158,7 +160,7 @@ export function resolveConflict(
       if (remoteDate > localDate) {
         return {
           ...remoteProduct,
-          id: local.id,
+          id: local.id ?? remoteProduct.id ?? remoteProduct.ean,
           metadata: {
             ...remoteProduct.metadata,
             lastSync: new Date().toISOString(),
@@ -180,7 +182,7 @@ export function resolveConflict(
  */
 export function mergeProducts(local: Product, remote: Product): Product {
   return {
-    id: local.id,
+    id: local.id ?? remote.id ?? local.ean ?? remote.ean,
     ean: local.ean || remote.ean,
     nom: remote.nom || local.nom,
     marque: remote.marque || local.marque,

@@ -21,7 +21,7 @@ export interface TerritoryAnalytics {
 const cache = new Map<string, TerritoryAnalytics>();
 
 async function loadTerritoryData(territory: string): Promise<PriceObservation[]> {
-  const res = await fetch(`/data/territories/${territory}.json`, { cache: 'no-store' });
+  const res = await fetch(`${import.meta.env.BASE_URL}data/territories/${territory}.json`, { cache: 'no-store' });
   if (!res.ok) throw new Error(`Territory data not found: ${territory}`);
   return res.json();
 }

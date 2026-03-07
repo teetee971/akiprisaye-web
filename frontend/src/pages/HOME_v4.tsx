@@ -36,12 +36,12 @@ export default function HomeV4() {
 
   useEffect(() => {
     // Load real stats from safeLocalStorage
-    const stats = safeLocalStorage.getJSON<typeof stats>('platform_stats', {
-      users: 1247,
+    const loadedStats = safeLocalStorage.getJSON<typeof stats>('platform_stats', {
       scans: 0,
+      products: 0,
       territories: 12
     });
-    setStats(stats);
+    setStats(loadedStats);
 
     // Cache window dimensions
     let windowHeight = window.innerHeight;

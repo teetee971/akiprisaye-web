@@ -1,11 +1,31 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useStoreSelection } from '../context/StoreSelectionContext';
 import { getAlerts } from '../services/alertsService';
+import type { SanitaryAlert, TerritoryCode } from '../types/alerts';
 
 export default function AlertBanner() {
   const { selection } = useStoreSelection();
-  const territory = selection?.territory ?? 'gp';
-  const criticalActiveAlerts = getAlerts({ territory, onlyActive: true, severity: 'critical' });
+  const [criticalActiveAlerts, setCriticalActiveAlerts] = useState<SanitaryAlert[]>([]);
+
+  useEffect(() => {
+    let active = true;
+    const territory = (selection?.territory ?? 'gp') as TerritoryCode;
+
+    void getAlerts({ territory, onlyActive: true, severity: 'critical' })
+      .then((result) => {
+        if (!active) return;
+        setCriticalActiveAlerts(result.alerts);
+      })
+      .catch(() => {
+        if (!active) return;
+        setCriticalActiveAlerts([]);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [selection?.territory]);
 
   if (criticalActiveAlerts.length === 0) return null;
 

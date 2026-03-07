@@ -51,7 +51,7 @@ export default function CarteObservations({ territory = null, productFilter = nu
     const loadObservations = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/data/observations-validees.json');
+        const response = await fetch(`${import.meta.env.BASE_URL}data/observations-validees.json`);
         if (!response.ok) {
           throw new Error('Impossible de charger les observations');
         }

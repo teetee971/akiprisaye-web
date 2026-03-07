@@ -45,7 +45,7 @@ const FlightComparator: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('/data/flight-prices.json');
+      const response = await fetch(`${import.meta.env.BASE_URL}data/flight-prices.json`);
       if (!response.ok) {
         throw new Error('Impossible de charger les données de vols');
       }
@@ -222,8 +222,8 @@ const FlightComparator: React.FC = () => {
           break;
         case 'duration':
           // Parse duration string (e.g., "8h30" -> minutes)
-          const aDuration = parseDuration(a.flightPrice.duration);
-          const bDuration = parseDuration(b.flightPrice.duration);
+          const aDuration = parseDuration(a.flightPrice.duration ?? '');
+          const bDuration = parseDuration(b.flightPrice.duration ?? '');
           comparison = aDuration - bDuration;
           break;
         case 'airline':
