@@ -9,6 +9,8 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { loadLeaflet } from '../utils/leafletClient';
 import { getOptimizedMapConfig } from '../utils/deviceDetection';
+import { getStoreHours } from '../services/storeHoursService';
+import { isStoreOpen } from '../utils/storeHoursUtils';
 
 // Territory coordinates (center points)
 const TERRITORY_COORDINATES = {
@@ -169,6 +171,21 @@ export function MapLeaflet({ territory = 'GP', stores = [], onStoreClick = null 
 
     const config = mapConfig.current;
 
+    // Status color palette for marker icons
+    const STATUS_COLORS = {
+      open: '#10b981',        // green
+      closing_soon: '#f59e0b', // orange
+      closed: '#ef4444',       // red
+      unknown: '#9ca3af',      // gray
+    };
+
+    const STATUS_ICONS = {
+      open: '🟢',
+      closing_soon: '🟠',
+      closed: '🔴',
+      unknown: '⚪',
+    };
+
     // Clear existing markers
     markersRef.current.forEach(marker => map.removeLayer(marker));
     markersRef.current = [];
@@ -182,26 +199,93 @@ export function MapLeaflet({ territory = 'GP', stores = [], onStoreClick = null 
     visibleStores.forEach((store) => {
       if (!store.lat || !store.lng) return;
 
+      // Determine store open status for colored marker
+      const storeHours = store.id ? getStoreHours(store.id, store.territory || territory) : null;
+      const statusInfo = storeHours ? isStoreOpen(storeHours) : null;
+      const statusColor = statusInfo ? (STATUS_COLORS[statusInfo.status] || STATUS_COLORS.unknown) : STATUS_COLORS.unknown;
+
+      // Create colored SVG marker icon based on open status
+      const markerIcon = window.L.divIcon({
+        html: `
+          <div style="position: relative;">
+            <svg width="25" height="41" viewBox="0 0 25 41" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12.5 0C5.596 0 0 5.596 0 12.5c0 9.375 12.5 28.125 12.5 28.125S25 21.875 25 12.5C25 5.596 19.404 0 12.5 0z" fill="${statusColor}" stroke="#fff" stroke-width="2"/>
+              <circle cx="12.5" cy="12.5" r="6" fill="#fff"/>
+            </svg>
+          </div>
+        `,
+        className: 'custom-marker-icon',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [0, -41],
+      });
+
       const marker = window.L.marker([store.lat, store.lng], {
+        icon: markerIcon,
         // Disable marker animation on low-end devices
         riseOnHover: config.performanceTier !== 'low',
       });
 
-      // Create popup content
-      const popupContent = `
-        <div style="min-width: 200px;">
-          <h3 style="margin: 0 0 8px 0; color: #0f62fe; font-size: 16px;">
-            ${store.name}
-          </h3>
-          ${store.address ? `<p style="margin: 4px 0; font-size: 14px;">📍 ${store.address}</p>` : ''}
-          ${store.phone ? `<p style="margin: 4px 0; font-size: 14px;">📞 ${store.phone}</p>` : ''}
-          ${store.productCount ? `<p style="margin: 4px 0; font-size: 14px;">🛒 ${store.productCount} produits</p>` : ''}
-          ${store.avgPrice ? `<p style="margin: 4px 0; font-size: 14px;">💰 Prix moyen: ${store.avgPrice.toFixed(2)}€</p>` : ''}
-          ${onStoreClick ? `<button onclick="window.handleStoreClick('${store.id}')" style="margin-top: 8px; padding: 6px 12px; background: #0f62fe; color: white; border: none; border-radius: 4px; cursor: pointer; width: 100%;">Voir les prix</button>` : ''}
-        </div>
-      `;
+      // Build popup content using DOM API to prevent XSS
+      const popupEl = document.createElement('div');
+      popupEl.style.minWidth = '200px';
 
-      marker.bindPopup(popupContent, {
+      const title = document.createElement('h3');
+      title.style.cssText = 'margin: 0 0 8px 0; color: #0f62fe; font-size: 16px;';
+      title.textContent = store.name;
+      popupEl.appendChild(title);
+
+      // Open status badge
+      if (statusInfo) {
+        const statusDiv = document.createElement('div');
+        const statusBg = {
+          open: 'background:#d1fae5;color:#065f46;',
+          closing_soon: 'background:#fed7aa;color:#92400e;',
+          closed: 'background:#fee2e2;color:#991b1b;',
+          unknown: 'background:#f3f4f6;color:#374151;',
+        };
+        statusDiv.style.cssText = `${statusBg[statusInfo.status] || statusBg.unknown} padding: 4px 8px; border-radius: 6px; margin-bottom: 6px; font-size: 13px; font-weight: 600;`;
+        statusDiv.textContent = `${STATUS_ICONS[statusInfo.status]} ${statusInfo.message}`;
+        popupEl.appendChild(statusDiv);
+      }
+
+      if (store.address) {
+        const addr = document.createElement('p');
+        addr.style.cssText = 'margin: 4px 0; font-size: 14px;';
+        addr.textContent = `📍 ${store.address}`;
+        popupEl.appendChild(addr);
+      }
+
+      if (store.phone) {
+        const phone = document.createElement('p');
+        phone.style.cssText = 'margin: 4px 0; font-size: 14px;';
+        phone.textContent = `📞 ${store.phone}`;
+        popupEl.appendChild(phone);
+      }
+
+      if (store.productCount) {
+        const products = document.createElement('p');
+        products.style.cssText = 'margin: 4px 0; font-size: 14px;';
+        products.textContent = `🛒 ${store.productCount} produits`;
+        popupEl.appendChild(products);
+      }
+
+      if (store.avgPrice) {
+        const price = document.createElement('p');
+        price.style.cssText = 'margin: 4px 0; font-size: 14px;';
+        price.textContent = `💰 Prix moyen: ${store.avgPrice.toFixed(2)}€`;
+        popupEl.appendChild(price);
+      }
+
+      if (onStoreClick && store.id) {
+        const btn = document.createElement('button');
+        btn.style.cssText = 'margin-top: 8px; padding: 6px 12px; background: #0f62fe; color: white; border: none; border-radius: 4px; cursor: pointer; width: 100%;';
+        btn.textContent = 'Voir les prix';
+        btn.addEventListener('click', () => window.handleStoreClick && window.handleStoreClick(store.id));
+        popupEl.appendChild(btn);
+      }
+
+      marker.bindPopup(popupEl, {
         // Optimize popup on mobile
         maxWidth: config.isMobile ? 250 : 300,
         autoPan: !config.isMobile, // Disable auto-pan on mobile
