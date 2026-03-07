@@ -48,6 +48,24 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section className="space-y-2 rounded-2xl border border-slate-800 bg-slate-900 p-4">
+        <h2 className="text-lg font-semibold text-white">Analyses économiques</h2>
+        <p className="text-xs text-slate-400">
+          Données réelles IEDOM · INSEE · CEROM · Observatoire citoyens
+        </p>
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+          <Link to="/comparaison-territoires" className="rounded-xl border border-indigo-700/50 bg-indigo-900/20 px-3 py-3 text-center text-slate-100 hover:border-indigo-400 hover:text-indigo-300">
+            🗺️ Bilan des territoires
+          </Link>
+          <Link to="/comparateur-territoires" className="rounded-xl border border-slate-700 px-3 py-3 text-center text-slate-100 hover:border-emerald-500 hover:text-emerald-400">
+            ⚖️ Comparateur de prix
+          </Link>
+          <Link to="/ressources/comprendre-prix" className="rounded-xl border border-slate-700 px-3 py-3 text-center text-slate-100 hover:border-emerald-500 hover:text-emerald-400">
+            💡 Comprendre les prix
+          </Link>
+        </div>
+      </section>
+
       <HomeFAQ />
     </div>
   );
