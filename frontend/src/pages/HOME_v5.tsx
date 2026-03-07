@@ -402,6 +402,7 @@ export default function HomeV5() {
         {/* Panier vital — purchasing power index: minutes of SMIC per basket */}
         <Suspense fallback={null}>
           <PanierVitalWidget />
+        </Suspense>
         {/* Store ranking widget — cheapest vs most expensive stores per territory */}
         <Suspense fallback={null}>
           <StoreRankingWidget />

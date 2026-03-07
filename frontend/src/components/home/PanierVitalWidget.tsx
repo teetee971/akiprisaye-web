@@ -18,21 +18,27 @@
  */
 
 import { useEffect, useState } from 'react';
+import { TERRITORIES as TERRITORY_META } from '../../services/territoryNormalizationService';
+import { TERRITORIES as TERRITORY_DEFS } from '../../constants/territories';
+import type { TerritoryCode } from '../../constants/territories';
 
 interface BasketEntry {
   territory: string;
   flag: string;
-  code: string;
+  code: TerritoryCode;
   basketPrice: number;      // €
   minutesOfWork: number;    // at SMIC net hourly rate
   vsHexagone: number;       // extra minutes vs hexagone baseline
-  deltaPercent: number;     // % more expensive than hexagone
+  deltaPercent: number;     // % more expensive than hexagone (unrounded for threshold logic)
   highlight?: boolean;      // highlight most expensive
 }
 
 // SMIC net hourly rate (INSEE 2025): 1383€ / 151.67h = 9.12€/h
 const SMIC_HOURLY_NET = 9.12; // €/h
 const SMIC_PER_MINUTE = SMIC_HOURLY_NET / 60; // €/min ≈ 0.152
+
+// TerritoryCode for metropolitan France reference (canonical)
+const HEX_CODE: TerritoryCode = 'fr';
 
 // Basket products (EAN match keys)
 const BASKET_PRODUCTS = [
@@ -43,6 +49,26 @@ const BASKET_PRODUCTS = [
   'Sucre blanc 1kg',
   'Huile de tournesol 1L',
 ];
+
+// Codes to display — derived from canonical TERRITORY_META (has dataFileStem)
+// and cross-referenced with TERRITORY_DEFS for proper country flag emojis.
+const PANIER_TERRITORY_CODES: TerritoryCode[] = ['fr', 'gp', 'mq', 'gf', 're', 'yt'];
+
+interface PanierTerritory {
+  code: TerritoryCode;
+  label: string;
+  flag: string;
+  stem: string; // observatoire JSON filename stem (from TERRITORY_META.dataFileStem)
+}
+
+const PANIER_TERRITORIES: PanierTerritory[] = PANIER_TERRITORY_CODES.flatMap((code) => {
+  const meta = TERRITORY_META.find((t) => t.code === code);
+  const def = TERRITORY_DEFS[code];
+  if (!meta || !def) return [];
+  return [{ code, label: meta.labelFull, flag: def.flag, stem: meta.dataFileStem }];
+});
+
+const SNAPSHOT_DATE = '2026-03';
 
 interface ObsEntry {
   produit: string;
@@ -78,21 +104,9 @@ function computeBasket(donnees: ObsEntry[]): number | null {
   return Math.round(total * 100) / 100;
 }
 
-const TERRITORIES = [
-  { code: 'hexagone', label: 'Hexagone', flag: '🇫🇷', stem: 'hexagone' },
-  { code: 'GP', label: 'Guadeloupe', flag: '🇬🇵', stem: 'guadeloupe' },
-  { code: 'MQ', label: 'Martinique', flag: '🇲🇶', stem: 'martinique' },
-  { code: 'GF', label: 'Guyane', flag: '🇬🇫', stem: 'guyane' },
-  { code: 'RE', label: 'La Réunion', flag: '🇷🇪', stem: 'la_r\u00e9union' },
-  { code: 'YT', label: 'Mayotte', flag: '🇾🇹', stem: 'mayotte' },
-];
-
-const SNAPSHOT_DATE = '2026-03';
-
 export default function PanierVitalWidget() {
   const [entries, setEntries] = useState<BasketEntry[]>([]);
   const [loading, setLoading] = useState(true);
-  const [hexMinutes, setHexMinutes] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -101,7 +115,7 @@ export default function PanierVitalWidget() {
       const results: BasketEntry[] = [];
       let hexBasket: number | null = null;
 
-      for (const t of TERRITORIES) {
+      for (const t of PANIER_TERRITORIES) {
         try {
           const url = `${import.meta.env.BASE_URL}data/observatoire/${t.stem}_${SNAPSHOT_DATE}.json`;
           const resp = await fetch(url);
@@ -110,7 +124,7 @@ export default function PanierVitalWidget() {
           const basket = computeBasket(snap.donnees);
           if (basket === null) continue;
 
-          if (t.code === 'hexagone') {
+          if (t.code === HEX_CODE) {
             hexBasket = basket;
           }
 
@@ -132,20 +146,20 @@ export default function PanierVitalWidget() {
         const hexMins = Math.round(hexBasket / SMIC_PER_MINUTE);
         for (const e of results) {
           e.vsHexagone = e.minutesOfWork - hexMins;
+          // Keep unrounded so BQP threshold check (> 30) is not skewed by rounding
           e.deltaPercent = ((e.basketPrice - hexBasket) / hexBasket) * 100;
         }
-        if (!cancelled) setHexMinutes(hexMins);
       }
 
       // Sort: hexagone first, then by price ascending
       results.sort((a, b) => {
-        if (a.code === 'hexagone') return -1;
-        if (b.code === 'hexagone') return 1;
+        if (a.code === HEX_CODE) return -1;
+        if (b.code === HEX_CODE) return 1;
         return a.basketPrice - b.basketPrice;
       });
 
       // Flag the most expensive
-      const dom = results.filter((e) => e.code !== 'hexagone');
+      const dom = results.filter((e) => e.code !== HEX_CODE);
       if (dom.length) {
         const max = Math.max(...dom.map((e) => e.basketPrice));
         for (const e of results) {
@@ -178,7 +192,7 @@ export default function PanierVitalWidget() {
 
   if (!entries.length) return null;
 
-  const hexEntry = entries.find((e) => e.code === 'hexagone');
+  const hexEntry = entries.find((e) => e.code === HEX_CODE);
 
   return (
     <section className="panier-vital-section section-reveal" aria-labelledby="panier-vital-heading">
@@ -199,7 +213,7 @@ export default function PanierVitalWidget() {
 
       <div className="panier-vital-grid" role="list">
         {entries.map((entry) => {
-          const isHex = entry.code === 'hexagone';
+          const isHex = entry.code === HEX_CODE;
           const barWidth = hexEntry
             ? Math.min(100, Math.round((entry.minutesOfWork / (hexEntry.minutesOfWork * 1.8)) * 100))
             : 50;
