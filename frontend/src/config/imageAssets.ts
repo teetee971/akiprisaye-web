@@ -30,6 +30,41 @@ export const TERRITORY_IMAGES: Record<string, { url: string; alt: string; credit
     alt: 'Mayotte — lagon turquoise',
     credit: 'Unsplash',
   },
+  nc: {
+    url: 'https://images.unsplash.com/photo-1582139329536-e7284fece509?auto=format&fit=crop&w=800&q=80',
+    alt: 'Nouvelle-Calédonie — lagon et récif corallien',
+    credit: 'Unsplash',
+  },
+  pf: {
+    url: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=800&q=80',
+    alt: 'Polynésie française — lagon de Bora Bora',
+    credit: 'Unsplash',
+  },
+  wf: {
+    url: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?auto=format&fit=crop&w=800&q=80',
+    alt: 'Wallis-et-Futuna — île du Pacifique',
+    credit: 'Unsplash',
+  },
+  pm: {
+    url: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=800&q=80',
+    alt: 'Saint-Pierre-et-Miquelon — paysage atlantique',
+    credit: 'Unsplash',
+  },
+  bl: {
+    url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
+    alt: 'Saint-Barthélemy — plage des Caraïbes',
+    credit: 'Unsplash',
+  },
+  mf: {
+    url: 'https://images.unsplash.com/photo-1552083375-1447ce886485?auto=format&fit=crop&w=800&q=80',
+    alt: 'Saint-Martin — côte caribéenne',
+    credit: 'Unsplash',
+  },
+  tf: {
+    url: 'https://images.unsplash.com/photo-1516912481808-3406841bd33c?auto=format&fit=crop&w=800&q=80',
+    alt: 'TAAF — terres australes et antarctiques françaises',
+    credit: 'Unsplash',
+  },
   fr: {
     url: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=800&q=80',
     alt: 'France métropolitaine — Paris',
