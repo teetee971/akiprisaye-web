@@ -149,6 +149,7 @@ const PourquoiPrixVarieSansChangement = lazyPage(() => import('./pages/ressource
 
 // ── Nouvelles pages : historique, comparateur inter-territoires, inflation, couverture ──
 const CrossTerritoryComparator = lazyPage(() => import('./pages/CrossTerritoryComparator'));
+const ComparaisonTerritoires = lazyPage(() => import('./pages/ComparaisonTerritoires'));
 const InflationRateTracker = lazyPage(() => import('./pages/InflationRateTracker'));
 const TerritoryCoverageReport = lazyPage(() => import('./pages/TerritoryCoverageReport'));
 
@@ -427,6 +428,7 @@ export default function App() {
 
                           {/* ── Nouvelles pages observatoire enrichi ── */}
                           <Route path="comparateur-territoires" element={<CrossTerritoryComparator />} />
+                          <Route path="comparaison-territoires" element={<ComparaisonTerritoires />} />
                           <Route path="inflation-categories" element={<InflationRateTracker />} />
                           <Route path="couverture-territoires" element={<TerritoryCoverageReport />} />
 

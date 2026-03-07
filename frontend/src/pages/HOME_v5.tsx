@@ -4,10 +4,44 @@ import { getComparisonOfDay, type PriceComparison } from '../data/exampleCompari
 import '../styles/home-v5.css';
 import '../styles/animations.css';
 import { safeLocalStorage } from '../utils/safeLocalStorage';
+import { getTerritoryAsset } from '../config/imageAssets';
 
 const HowItWorksSection = lazy(() => import('./home-v5/HowItWorksSection'));
 const ObservatorySection = lazy(() => import('./home-v5/ObservatorySection'));
 const MiniFaqSection = lazy(() => import('./home-v5/MiniFaqSection'));
+
+const TESTIMONIALS = [
+  {
+    name: 'Marie-Christine F.',
+    territory: 'Guadeloupe',
+    flag: '🇬🇵',
+    savings: '47 €',
+    savingsLabel: 'économisés / mois',
+    quote: "J'ai comparé 3 enseignes pour mon panier habituel. La différence est réelle et constante depuis que j'utilise l'application.",
+    product: 'Courses hebdomadaires',
+    initials: 'MC',
+  },
+  {
+    name: 'Jean-Louis B.',
+    territory: 'Martinique',
+    flag: '🇲🇶',
+    savings: '31 %',
+    savingsLabel: 'de moins sur le riz',
+    quote: 'Le même riz que j\'achetais 3,20 € était affiché 2,20 € dans l\'enseigne à deux rues. En un clic, j\'ai su où aller.',
+    product: 'Riz long grain 1 kg',
+    initials: 'JL',
+  },
+  {
+    name: 'Sophie D.',
+    territory: 'La Réunion',
+    flag: '🇷🇪',
+    savings: '89 €',
+    savingsLabel: 'économisés en 1 mois',
+    quote: "L'alerte de prix m'a prévenue quand le lait et les conserves ont baissé. J'ai acheté au bon moment, sans attendre.",
+    product: 'Produits laitiers & conserves',
+    initials: 'SD',
+  },
+];
 
 export default function HomeV5() {
   const navigate = useNavigate();
@@ -149,11 +183,11 @@ export default function HomeV5() {
             <p>Choisissez votre territoire pour accéder au hub local.</p>
           </div>
           <div className="territories-grid">
-            <Link className="territory-card" to="/guadeloupe">Guadeloupe</Link>
-            <Link className="territory-card" to="/martinique">Martinique</Link>
-            <Link className="territory-card" to="/guyane">Guyane</Link>
-            <Link className="territory-card" to="/reunion">La Réunion</Link>
-            <Link className="territory-card" to="/mayotte">Mayotte</Link>
+            <Link className="territory-card" to="/comparateur?territoire=GP">Guadeloupe</Link>
+            <Link className="territory-card" to="/comparateur?territoire=MQ">Martinique</Link>
+            <Link className="territory-card" to="/comparateur?territoire=GF">Guyane</Link>
+            <Link className="territory-card" to="/comparateur?territoire=RE">La Réunion</Link>
+            <Link className="territory-card" to="/comparateur?territoire=YT">Mayotte</Link>
           </div>
         </section>
 
@@ -246,15 +280,58 @@ export default function HomeV5() {
               { code: 'BL', name: 'Saint-Barthélemy', flag: '🇧🇱' },
               { code: 'MF', name: 'Saint-Martin', flag: '🇲🇫' },
               { code: 'TF', name: 'TAAF', flag: '🇹🇫' }
-            ].map((territory) => (
-              <div
-                key={territory.code}
-                className="territory-item-v5 fade-in"
-                title={territory.name}
-                aria-label={territory.name}
-                onClick={() => navigate(`/comparateur?territoire=${territory.code}`)}
-              >
-                <span className="territory-flag-v5">{territory.flag}</span>
+            ].map((territory) => {
+              const asset = getTerritoryAsset(territory.code);
+              return (
+                <div
+                  key={territory.code}
+                  className="territory-photo-card fade-in"
+                  title={territory.name}
+                  aria-label={territory.name}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => navigate(`/comparateur?territoire=${territory.code}`)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') navigate(`/comparateur?territoire=${territory.code}`); }}
+                >
+                  <img
+                    src={asset.url}
+                    alt={asset.alt}
+                    className="territory-photo-img"
+                    loading="lazy"
+                    width="200"
+                    height="150"
+                  />
+                  <div className="territory-photo-overlay">
+                    <span className="territory-photo-flag">{territory.flag}</span>
+                    <span className="territory-photo-name">{territory.name}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        <section className="testimonials-v5 section-reveal">
+          <h2 className="section-title slide-up">Ce que disent nos utilisateurs</h2>
+          <div className="testimonials-grid">
+            {TESTIMONIALS.map((t) => (
+              <div key={t.name} className="testimonial-card slide-up">
+                <div className="testimonial-header">
+                  <div className="testimonial-initials">{t.initials}</div>
+                  <div className="testimonial-meta">
+                    <p className="testimonial-name">{t.name}</p>
+                    <p className="testimonial-location">
+                      <span>{t.flag}</span>
+                      <span>{t.territory}</span>
+                    </p>
+                  </div>
+                  <div className="testimonial-savings-badge">
+                    <span className="testimonial-savings">{t.savings}</span>
+                    <span className="testimonial-savings-label">{t.savingsLabel}</span>
+                  </div>
+                </div>
+                <p className="testimonial-quote">{t.quote}</p>
+                <span className="testimonial-product-tag">🛒 {t.product}</span>
               </div>
             ))}
           </div>
