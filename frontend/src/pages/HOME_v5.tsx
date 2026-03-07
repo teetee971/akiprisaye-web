@@ -11,6 +11,7 @@ const HowItWorksSection = lazy(() => import('./home-v5/HowItWorksSection'));
 const ObservatorySection = lazy(() => import('./home-v5/ObservatorySection'));
 const MiniFaqSection = lazy(() => import('./home-v5/MiniFaqSection'));
 const TerritoryPriceChart = lazy(() => import('../components/home/TerritoryPriceChart'));
+const PriceEvolutionChart = lazy(() => import('../components/home/PriceEvolutionChart'));
 const LiveNewsFeed = lazy(() => import('../components/home/LiveNewsFeed'));
 
 const TESTIMONIALS = [
@@ -388,6 +389,11 @@ export default function HomeV5() {
         {/* Real price chart — territory comparison with real observatoire data */}
         <Suspense fallback={null}>
           <TerritoryPriceChart />
+        </Suspense>
+
+        {/* Price evolution line chart — 5-month trend from real observatoire snapshots */}
+        <Suspense fallback={null}>
+          <PriceEvolutionChart />
         </Suspense>
 
         {/* Live news feed from actualites.json — real data only */}

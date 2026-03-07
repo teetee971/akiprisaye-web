@@ -1,6 +1,26 @@
 {
   "articles": [
     {
+      "id": "2026-03-05-inflation-dom-mars",
+      "title": "Inflation DOM : +7,4% sur un an en février 2026",
+      "icon": "📈",
+      "date": "2026-03-05",
+      "content": "L'INSEE publie l'IPC des DOM pour février 2026 : +7,4% sur un an en Guadeloupe, +6,9% en Martinique, +8,1% en Guyane et +6,5% à La Réunion. L'alimentaire reste le premier poste de dépenses sous pression (+9,2% en moyenne).",
+      "link": "https://www.insee.fr/fr/statistiques/zones/2388681",
+      "category": "économie",
+      "territory": "all"
+    },
+    {
+      "id": "2026-03-03-bouclier-qualite-prix-2026",
+      "title": "Bouclier qualité-prix 2026 : liste étendue à 6 200 produits",
+      "icon": "🛡️",
+      "date": "2026-03-03",
+      "content": "Le gouvernement annonce l'extension du Bouclier qualité-prix à 6 200 références pour 2026, soit +200 produits supplémentaires. Les enseignes s'engagent à un écart maximal de +30% vs métropole sur ces produits. La DGCCRF renforcera ses contrôles dès avril.",
+      "link": "https://www.economie.gouv.fr/dgccrf/bouclier-qualite-prix-outre-mer",
+      "category": "réglementation",
+      "territory": "all"
+    },
+    {
       "id": "2026-01-12-inflation-dom",
       "title": "Inflation dans les DOM : +8,2% en décembre 2025",
       "icon": "📈",
@@ -101,7 +121,7 @@
       "territory": "all"
     }
   ],
-  "lastUpdated": "2026-01-12T13:44:00Z",
+  "lastUpdated": "2026-03-05T08:00:00Z",
   "version": "1.0",
   "sources": [
     "INSEE - Institut national de la statistique et des études économiques",

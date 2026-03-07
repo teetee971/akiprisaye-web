@@ -1738,3 +1738,74 @@
 @media (prefers-reduced-motion: reduce) {
   .news-card-skeleton { animation: none; }
 }
+
+/* ============================================
+   PRICE EVOLUTION LINE CHART
+   ============================================ */
+
+.price-evo-section {
+  padding: 4rem 2rem;
+  background: linear-gradient(180deg, rgba(15,23,42,0.3) 0%, rgba(15,23,42,0) 100%);
+}
+
+.price-evo-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.price-evo-sub {
+  font-size: 0.9rem;
+  color: #94a3b8;
+  margin-bottom: 1.25rem;
+}
+
+.price-evo-wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 16px;
+  padding: 1.5rem;
+  backdrop-filter: blur(8px);
+}
+
+.price-evo-note {
+  margin-top: 1rem;
+  font-size: 0.75rem;
+  color: #64748b;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.evo-tooltip {
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(59, 130, 246, 0.35);
+  border-radius: 8px;
+  padding: 0.65rem 1rem;
+  font-size: 0.82rem;
+  color: #e2e8f0;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  min-width: 180px;
+}
+
+.evo-tooltip-month {
+  font-weight: 700;
+  color: #93c5fd;
+  margin-bottom: 0.35rem;
+  font-size: 0.85rem;
+}
+
+.evo-tooltip-row {
+  margin: 0.1rem 0;
+  font-size: 0.8rem;
+}
+
+@media (max-width: 600px) {
+  .price-evo-wrap {
+    padding: 1rem 0.75rem;
+  }
+  .evo-tooltip {
+    min-width: 140px;
+    font-size: 0.75rem;
+  }
+}
