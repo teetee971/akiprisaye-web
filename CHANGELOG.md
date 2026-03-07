@@ -3,6 +3,37 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 
 Le format s'inspire de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et ce projet adhère à la [sémantique de versionnage](https://semver.org/lang/fr/).
 
+## [3.1.1] - 2026-03-07
+
+### Added
+
+- **ComparateursHub — liens complets** : ajout de 3 nouvelles fiches dans la section « Recherche & Tarifs »
+  (`/recherche-prix/delais-logistiques`, `/recherche-prix/indice-logistique`,
+  `/recherche-prix/pourquoi-delais-produit`) et d'une nouvelle section « Ressources & Comprendre »
+  (5 fiches : `/comprendre-prix`, `/ressources/questions-logistique-dom`,
+  `/ressources/glossaire-logistique-dom`, `/ressources/comprendre-promotions-prix-barres`,
+  `/ressources/pourquoi-prix-varie-sans-changement`). Le hub liste désormais la totalité des
+  comparateurs et ressources disponibles dans l'application.
+- **Icônes `BookOpen` et `FileText`** (Lucide React) importées dans `ComparateursHub.tsx` pour les
+  nouvelles fiches documentation.
+
+### Changed
+
+- **Alignement des versions** : tous les `package.json` du monorepo sont maintenant à `3.1.1` :
+  - `backend/package.json` : 1.0.0 → 3.1.1
+  - `functions/package.json` : ajout du champ `version: 3.1.1`
+  - `price-api/package.json` : 0.1.0 → 3.1.1
+- **README.md** : section Navigation mise à jour avec les nouvelles rubriques Ressources, liste
+  exhaustive des comparateurs corrigée (29 → 34+ liens dans le hub), date de dernier audit.
+- CHANGELOG.md mis à jour avec toutes les fonctionnalités déployées depuis v2.1.0.
+
+### Fixed
+
+- Aucun lien interne brisé détecté : audit exhaustif des `to="…"` dans les composants vs routes
+  définies dans `App.tsx` — 0 lien orphelin.
+
+---
+
 ## [3.1.0] - 2026-03-07
 
 ### Added

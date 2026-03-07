@@ -5,7 +5,7 @@ import {
   DollarSign, Weight, TrendingDown, Map, BarChart3,
   Plane, Ship, Package, Droplet, Shield, GraduationCap,
   Car, HardHat, Wifi, ArrowRight, Users, ShoppingCart, Globe, Search,
-  TrendingUp, Activity, Sparkles, Zap, Bell, Clock,
+  TrendingUp, Activity, Sparkles, Zap, Bell, Clock, BookOpen, FileText,
 } from 'lucide-react';
 import { GlassCard } from '../components/ui/glass-card';
 import Comparateur from './Comparateur';
@@ -65,6 +65,18 @@ const RECHERCHE_PRIX = [
   { path: '/recherche-prix/eau',                 icon: Droplet,    label: 'Tarifs Eau',               color: 'text-blue-400',    bg: 'bg-blue-500/10 border-blue-500/30',   desc: 'Prix de l\'eau potable par collectivité' },
   { path: '/recherche-prix/abonnements-internet',icon: Wifi,       label: 'Abonnements Internet',     color: 'text-indigo-400',  bg: 'bg-indigo-500/10 border-indigo-500/30', desc: 'Offres fibre, ADSL et satellite par territoire' },
   { path: '/recherche-prix/abonnements-mobile',  icon: Wifi,       label: 'Abonnements Mobile',       color: 'text-violet-400',  bg: 'bg-violet-500/10 border-violet-500/30', desc: 'Forfaits mobiles 4G/5G en DOM–COM' },
+  { path: '/recherche-prix/delais-logistiques',  icon: Clock,      label: 'Délais Logistiques',       color: 'text-rose-400',    bg: 'bg-rose-500/10 border-rose-500/30',   desc: 'Tensions et délais d\'approvisionnement vers les DOM' },
+  { path: '/recherche-prix/indice-logistique',   icon: BarChart3,  label: 'Indice Logistique',        color: 'text-teal-400',    bg: 'bg-teal-500/10 border-teal-500/30',   desc: 'Indice synthétique du coût logistique par territoire' },
+  { path: '/recherche-prix/pourquoi-delais-produit', icon: Activity, label: 'Pourquoi ces délais ?', color: 'text-lime-400',    bg: 'bg-lime-500/10 border-lime-500/30',   desc: 'Comprendre les causes des délais produits en DOM–COM' },
+];
+
+// ── Ressources & documentation ─────────────────────────────────────────────────
+const RESSOURCES = [
+  { path: '/comprendre-prix',                              icon: DollarSign,   label: 'Comprendre les Prix',              color: 'text-lime-400',    bg: 'bg-lime-500/10 border-lime-500/30',     desc: 'Décrypter la formation des prix en DOM–COM' },
+  { path: '/ressources/questions-logistique-dom',          icon: BookOpen,     label: 'Questions Logistique DOM',         color: 'text-sky-400',     bg: 'bg-sky-500/10 border-sky-500/30',       desc: 'FAQ sur la logistique et les surcoûts en outre-mer' },
+  { path: '/ressources/glossaire-logistique-dom',          icon: FileText,     label: 'Glossaire Logistique',             color: 'text-cyan-400',    bg: 'bg-cyan-500/10 border-cyan-500/30',     desc: 'Définitions clés : fret, octroi de mer, COTRAM…' },
+  { path: '/ressources/comprendre-promotions-prix-barres', icon: TrendingDown, label: 'Promotions & Prix Barrés',         color: 'text-orange-400',  bg: 'bg-orange-500/10 border-orange-500/30', desc: 'Décoder les promotions et les prix barrés en grande surface' },
+  { path: '/ressources/pourquoi-prix-varie-sans-changement', icon: TrendingUp, label: 'Variations de Prix Silencieuses', color: 'text-yellow-400',  bg: 'bg-yellow-500/10 border-yellow-500/30', desc: 'Pourquoi un prix change sans que le produit évolue' },
 ];
 
 export default function ComparateursHub() {
@@ -396,6 +408,33 @@ export default function ComparateursHub() {
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {RECHERCHE_PRIX.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={`group flex items-start gap-3 rounded-xl border p-4 transition-all hover:scale-[1.02] hover:shadow-lg ${item.bg}`}
+                  >
+                    <Icon className={`w-6 h-6 mt-0.5 flex-shrink-0 ${item.color}`} />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-white">{item.label}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">{item.desc}</p>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-gray-600 group-hover:text-white transition-colors mt-1 flex-shrink-0" />
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* ── Ressources & documentation ── */}
+          <div className="mt-10">
+            <h2 className="text-2xl font-bold text-white mb-2">📚 Ressources &amp; Comprendre</h2>
+            <p className="text-gray-400 text-sm mb-6">
+              Guides pédagogiques, glossaire et analyses pour comprendre la formation des prix en DOM–COM.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {RESSOURCES.map((item) => {
                 const Icon = item.icon;
                 return (
                   <Link

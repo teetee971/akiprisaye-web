@@ -113,6 +113,16 @@ Hub unifié regroupant tous les outils de comparaison :
 **Recherche prix :**
 - Tarifs avions, bateaux, fret maritime et aérien
 - Tarifs électricité, eau, abonnements internet et mobile
+- Délais logistiques et tensions d'approvisionnement DOM
+- Indice synthétique du coût logistique par territoire
+- Comprendre les causes des délais produits
+
+**Ressources & Documentation :**
+- Comprendre la formation des prix en DOM–COM
+- Questions fréquentes sur la logistique outre-mer
+- Glossaire logistique (fret, octroi de mer, COTRAM…)
+- Décoder les promotions et prix barrés
+- Pourquoi les prix varient sans évolution du produit
 
 **Route:** `/comparateurs`
 
@@ -707,7 +717,7 @@ pour les applications web exploitant des API navigateur.
 
 | Élément | Statut |
 |---------|--------|
-| Version | **3.1.0** |
+| Version | **3.1.1** |
 | CI/CD | ✅ Opérationnel |
 | Architecture | ✅ Validée |
 | Déploiement | ✅ Cloudflare Pages |
