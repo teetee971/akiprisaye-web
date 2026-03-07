@@ -132,7 +132,7 @@ export default function PanierVitalWidget() {
         const hexMins = Math.round(hexBasket / SMIC_PER_MINUTE);
         for (const e of results) {
           e.vsHexagone = e.minutesOfWork - hexMins;
-          e.deltaPercent = Math.round(((e.basketPrice - hexBasket) / hexBasket) * 100);
+          e.deltaPercent = ((e.basketPrice - hexBasket) / hexBasket) * 100;
         }
         if (!cancelled) setHexMinutes(hexMins);
       }
