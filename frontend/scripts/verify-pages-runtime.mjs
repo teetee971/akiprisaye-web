@@ -19,7 +19,7 @@ function startPreview() {
 
 const stripAnsi = (str) => str.replace(/\x1b\[[0-9;]*[a-zA-Z]/g, '');
 
-function waitForReady(preview, timeoutMs = 20000) {
+function waitForReady(preview, timeoutMs = 60000) {
   return new Promise((resolve, reject) => {
     const timeout = setTimeout(() => {
       cleanup();
@@ -83,11 +83,16 @@ async function assertOk(pathname, requiredText) {
 
 async function run() {
   const preview = startPreview();
+
+  // Register readiness detection BEFORE logging listeners to avoid a race
+  // condition where the 'Local:' chunk is drained before waitForReady can see it.
+  const readyPromise = waitForReady(preview);
+
   preview.stdout?.on('data', (chunk) => process.stdout.write(chunk));
   preview.stderr?.on('data', (chunk) => process.stderr.write(chunk));
 
   try {
-    await waitForReady(preview);
+    await readyPromise;
     await assertOk(BASE_PATH, 'id="root"');
     await assertOk(`${BASE_PATH}manifest.webmanifest`);
     await assertOk(`${BASE_PATH}icon-192.png`);
