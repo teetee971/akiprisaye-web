@@ -1,19 +1,25 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /**
- * International Comparison Service - v4.1.0
- * 
+ * International Comparison Service - v4.2.0
+ *
  * Service for comparing cost of living between countries and territories
  * Supports:
  * - DOM vs Metropolitan France
  * - France vs EU
  * - EU vs International
- * 
+ *
  * All comparisons use:
  * - Monetary normalization (EUR)
  * - PPP adjustment (Purchasing Power Parity)
  * - Transparent methodology
  * - No subjective ranking or "best country" selection
- * 
+ *
+ * Data sources:
+ * - Eurostat Comparative Price Level Indices 2024 (EU27=100)
+ * - OECD Purchasing Power Parities 2024
+ * - INSEE Prix à la consommation DOM vs Hexagone 2023
+ * - IEDOM/IEOM rapports annuels 2023
+ *
  * @module internationalComparisonService
  */
 
@@ -36,54 +42,170 @@ import type {
 } from '../types/internationalComparison';
 import type { TerritoryCode } from '../types/extensions';
 
+// ---------------------------------------------------------------------------
+// Static reference data (loaded once, cached in module scope)
+// ---------------------------------------------------------------------------
+
+interface RawCountryProfile {
+  name: string;
+  currency: CurrencyCode;
+  overallCostIndex: number;
+  foodCostIndex: number;
+  housingCostIndex: number;
+  transportCostIndex: number;
+  healthcareCostIndex: number;
+  educationCostIndex: number;
+  averageMonthlyIncome: number;
+  averageRent: number;
+  basicGroceriesCost: number;
+  dataQuality: 'high' | 'medium' | 'low';
+  sourcesCount: number;
+}
+
+interface RawPPP {
+  exchangeRate: number;
+  pppRate: number;
+  adjustmentFactor: number;
+}
+
+interface CostProfilesData {
+  countries: Record<string, RawCountryProfile>;
+  pppAdjustments: Record<string, RawPPP>;
+}
+
+let _profilesCache: CostProfilesData | null = null;
+
+async function loadCostProfiles(): Promise<CostProfilesData> {
+  if (_profilesCache) return _profilesCache;
+  try {
+    const url = `${import.meta.env.BASE_URL}data/international-cost-profiles.json`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    _profilesCache = (await res.json()) as CostProfilesData;
+    return _profilesCache;
+  } catch {
+    // Fallback: minimal inline data so the service never hard-fails
+    _profilesCache = {
+      countries: {
+        FRA: {
+          name: 'France', currency: 'EUR',
+          overallCostIndex: 107, foodCostIndex: 107, housingCostIndex: 120,
+          transportCostIndex: 104, healthcareCostIndex: 100, educationCostIndex: 102,
+          averageMonthlyIncome: 2700, averageRent: 980, basicGroceriesCost: 380,
+          dataQuality: 'high', sourcesCount: 15
+        }
+      },
+      pppAdjustments: {
+        EUR_EUR: { exchangeRate: 1, pppRate: 1, adjustmentFactor: 1 }
+      }
+    };
+    return _profilesCache;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Public API
+// ---------------------------------------------------------------------------
+
 /**
- * Get country cost profile
+ * Get country cost profile — real data from international-cost-profiles.json
+ * (Eurostat 2024, OECD PPP 2024, INSEE DOM 2023)
  */
 export async function getCountryCostProfile(countryCode: CountryCode): Promise<CountryCostProfile> {
-  // Mock implementation - in production, would fetch from database or external API
-  const mockProfile: CountryCostProfile = {
+  const profiles = await loadCostProfiles();
+  const raw = profiles.countries[countryCode];
+
+  if (raw) {
+    return {
+      country: countryCode,
+      countryName: raw.name,
+      currency: raw.currency,
+      data: {
+        overallCostIndex: raw.overallCostIndex,
+        foodCostIndex: raw.foodCostIndex,
+        housingCostIndex: raw.housingCostIndex,
+        transportCostIndex: raw.transportCostIndex,
+        healthcareCostIndex: raw.healthcareCostIndex,
+        educationCostIndex: raw.educationCostIndex,
+        averageMonthlyIncome: raw.averageMonthlyIncome,
+        averageRent: raw.averageRent,
+        basicGroceriesCost: raw.basicGroceriesCost,
+      },
+      lastUpdate: '2025-01-01T00:00:00.000Z',
+      dataQuality: raw.dataQuality,
+      sourcesCount: raw.sourcesCount,
+      methodology: 'https://akiprisaye.fr/docs/methodologie-comparaisons-internationales',
+    };
+  }
+
+  // Unknown country — return a neutral placeholder (index=100 = EU average)
+  return {
     country: countryCode,
     countryName: getCountryName(countryCode),
     currency: getCurrency(countryCode),
     data: {
-      overallCostIndex: 100 + Math.random() * 40 - 20, // 80-120
-      foodCostIndex: 100 + Math.random() * 30 - 15,
-      housingCostIndex: 100 + Math.random() * 50 - 25,
-      transportCostIndex: 100 + Math.random() * 35 - 17,
-      healthcareCostIndex: 100 + Math.random() * 60 - 30,
-      educationCostIndex: 100 + Math.random() * 45 - 22,
-      averageMonthlyIncome: 2500 + Math.random() * 2000,
-      averageRent: 800 + Math.random() * 800,
-      basicGroceriesCost: 300 + Math.random() * 200
+      overallCostIndex: 100,
+      foodCostIndex: 100,
+      housingCostIndex: 100,
+      transportCostIndex: 100,
+      healthcareCostIndex: 100,
+      educationCostIndex: 100,
+      averageMonthlyIncome: 2000,
+      averageRent: 800,
+      basicGroceriesCost: 320,
     },
-    lastUpdate: new Date().toISOString(),
-    dataQuality: 'high',
-    sourcesCount: 12,
-    methodology: 'https://akiprisaye.fr/docs/methodologie-comparaisons-internationales'
+    lastUpdate: '2025-01-01T00:00:00.000Z',
+    dataQuality: 'low',
+    sourcesCount: 0,
+    methodology: 'https://akiprisaye.fr/docs/methodologie-comparaisons-internationales',
   };
-  
-  return mockProfile;
 }
 
 /**
- * Get PPP adjustment between two currencies
+ * Get PPP adjustment between two currencies — OECD/IMF 2024 data
  */
 export async function getPPPAdjustment(
   fromCurrency: CurrencyCode,
   toCurrency: CurrencyCode
 ): Promise<PPPAdjustment> {
-  // Mock implementation - in production, would fetch from OECD/Eurostat
+  if (fromCurrency === toCurrency) {
+    return {
+      fromCurrency,
+      toCurrency,
+      pppRate: 1,
+      exchangeRate: 1,
+      adjustmentFactor: 1,
+      referenceYear: 2024,
+      source: 'OECD',
+    };
+  }
+
+  const profiles = await loadCostProfiles();
+  const key = `${fromCurrency}_${toCurrency}`;
+  const raw = profiles.pppAdjustments[key];
+
+  if (raw) {
+    return {
+      fromCurrency,
+      toCurrency,
+      pppRate: raw.pppRate,
+      exchangeRate: raw.exchangeRate,
+      adjustmentFactor: raw.adjustmentFactor,
+      referenceYear: 2024,
+      source: 'OECD',
+    };
+  }
+
+  // Fallback: use market exchange rate only (no PPP adjustment)
   const exchangeRate = getExchangeRate(fromCurrency, toCurrency);
-  const pppRate = exchangeRate * (0.8 + Math.random() * 0.4); // PPP typically differs from exchange rate
-  
   return {
     fromCurrency,
     toCurrency,
-    pppRate,
+    pppRate: exchangeRate,
     exchangeRate,
-    adjustmentFactor: pppRate / exchangeRate,
-    referenceYear: 2025,
-    source: 'OECD'
+    adjustmentFactor: 1,
+    referenceYear: 2024,
+    source: 'OECD',
   };
 }
 
@@ -121,60 +243,79 @@ export async function normalizeToEUR(
 
 /**
  * Compare DOM vs Metropolitan France
+ * Real data: INSEE 2023, IEDOM/IEOM rapports annuels 2023 (base Hexagone=100)
  */
 export async function compareDOMToMetropole(
   domTerritory: TerritoryCode
 ): Promise<DOMMetropoleComparison> {
-  // Mock implementation - in production, would use real data
-  const comparison: DOMMetropoleComparison = {
+  const profiles = await loadCostProfiles();
+  // domTerritories uses short codes (GP, MQ, GF, RE, YT, MF, BL, PM)
+  const raw = (profiles as unknown as Record<string, Record<string, {
+    name: string;
+    foodBasket: number;
+    housing: number;
+    transport: number;
+    energy: number;
+    overall: number;
+    octroisDeMerEffect: number;
+    shippingCostsEffect: number;
+    localProductionRate: number;
+  }>>)['domTerritories']?.[domTerritory as string];
+
+  const foodBasket = raw?.foodBasket ?? 138;
+  const housing = raw?.housing ?? 124;
+  const transport = raw?.transport ?? 131;
+  const energy = raw?.energy ?? 143;
+  const overall = raw?.overall ?? 136;
+
+  return {
     dom: domTerritory,
     domName: getTerritoryName(domTerritory),
     metropole: 'FRA',
     metropoleName: 'France Métropolitaine',
     comparison: {
       foodBasket: {
-        dom: 130.5,
+        dom: foodBasket,
         metropole: 100,
-        difference: 30.5,
-        percentageDifference: 30.5
+        difference: foodBasket - 100,
+        percentageDifference: foodBasket - 100,
       },
       housing: {
-        dom: 115.2,
+        dom: housing,
         metropole: 100,
-        difference: 15.2,
-        percentageDifference: 15.2
+        difference: housing - 100,
+        percentageDifference: housing - 100,
       },
       transport: {
-        dom: 125.8,
+        dom: transport,
         metropole: 100,
-        difference: 25.8,
-        percentageDifference: 25.8
+        difference: transport - 100,
+        percentageDifference: transport - 100,
       },
       energy: {
-        dom: 140.3,
+        dom: energy,
         metropole: 100,
-        difference: 40.3,
-        percentageDifference: 40.3
+        difference: energy - 100,
+        percentageDifference: energy - 100,
       },
       overall: {
-        dom: 127.9,
+        dom: overall,
         metropole: 100,
-        difference: 27.9,
-        percentageDifference: 27.9
-      }
+        difference: overall - 100,
+        percentageDifference: overall - 100,
+      },
     },
-    octroisDeMerEffect: 8.5, // Estimated impact of octroi de mer
-    shippingCostsEffect: 12.3, // Estimated impact of shipping
-    localProductionRate: 15.7, // Percentage of locally produced goods
+    octroisDeMerEffect: raw?.octroisDeMerEffect ?? 8.5,
+    shippingCostsEffect: raw?.shippingCostsEffect ?? 12.3,
+    localProductionRate: raw?.localProductionRate ?? 15.7,
     date: new Date().toISOString(),
-    methodology: 'https://akiprisaye.fr/docs/methodologie-dom-metropole-v4.1.0'
+    methodology: 'https://akiprisaye.fr/docs/methodologie-dom-metropole-v4.2.0',
   };
-  
-  return comparison;
 }
 
 /**
  * Compare France vs EU
+ * Uses real Eurostat 2024 price level indices (EU27=100)
  */
 export async function compareFranceToEU(
   indicator: string = 'overall-cost'
@@ -184,53 +325,79 @@ export async function compareFranceToEU(
     'FIN', 'DNK', 'SWE', 'POL', 'CZE', 'HUN', 'ROU', 'BGR', 'HRV', 'SVK',
     'SVN', 'LTU', 'LVA', 'EST', 'LUX', 'CYP', 'MLT'
   ];
-  
-  // Mock France data
+
+  const pppEurEur = await getPPPAdjustment('EUR', 'EUR');
+  const franceProfile = await getCountryCostProfile('FRA');
+  const frIndex = franceProfile.data.overallCostIndex; // 107
+
+  // Compute real EU average and median from known data
+  const allProfiles = await Promise.all(euCountries.map(c => getCountryCostProfile(c)));
+  const indices = allProfiles.map(p => p.data.overallCostIndex);
+  const euAvgVal = Math.round(indices.reduce((a, b) => a + b, 0) / indices.length * 10) / 10;
+  const sortedIdx = [...indices].sort((a, b) => a - b);
+  const euMedVal = sortedIdx[Math.floor(sortedIdx.length / 2)];
+
   const france: ComparedCountryResult = {
     country: 'FRA',
     countryName: 'France',
-    rawValue: 100,
+    rawValue: frIndex,
     rawCurrency: 'EUR',
-    normalizedValue: 100,
+    normalizedValue: frIndex,
     normalizedCurrency: 'EUR',
-    pppAdjustedValue: 100,
-    pppAdjustment: await getPPPAdjustment('EUR', 'EUR'),
+    pppAdjustedValue: frIndex,
+    pppAdjustment: pppEurEur,
     differenceFromReference: 0,
     percentageDifference: 0,
-    ranking: 10,
-    confidence: 'high'
+    ranking: sortedIdx.indexOf(frIndex) + 1,
+    confidence: 'high',
   };
-  
-  // Mock EU average
+
   const euAverage: ComparedCountryResult = {
     country: 'EU27',
     countryName: 'EU Average',
-    rawValue: 95.5,
+    rawValue: euAvgVal,
     rawCurrency: 'EUR',
-    normalizedValue: 95.5,
+    normalizedValue: euAvgVal,
     normalizedCurrency: 'EUR',
-    pppAdjustedValue: 95.5,
-    pppAdjustment: await getPPPAdjustment('EUR', 'EUR'),
-    differenceFromReference: -4.5,
-    percentageDifference: -4.5,
-    confidence: 'high'
+    pppAdjustedValue: euAvgVal,
+    pppAdjustment: pppEurEur,
+    differenceFromReference: euAvgVal - frIndex,
+    percentageDifference: Math.round(((euAvgVal - frIndex) / frIndex) * 1000) / 10,
+    confidence: 'high',
   };
-  
-  // Mock EU median
+
   const euMedian: ComparedCountryResult = {
     country: 'EU27',
     countryName: 'EU Median',
-    rawValue: 93.2,
+    rawValue: euMedVal,
     rawCurrency: 'EUR',
-    normalizedValue: 93.2,
+    normalizedValue: euMedVal,
     normalizedCurrency: 'EUR',
-    pppAdjustedValue: 93.2,
-    pppAdjustment: await getPPPAdjustment('EUR', 'EUR'),
-    differenceFromReference: -6.8,
-    percentageDifference: -6.8,
-    confidence: 'high'
+    pppAdjustedValue: euMedVal,
+    pppAdjustment: pppEurEur,
+    differenceFromReference: euMedVal - frIndex,
+    percentageDifference: Math.round(((euMedVal - frIndex) / frIndex) * 1000) / 10,
+    confidence: 'high',
   };
-  
+
+  const euCountryResults: ComparedCountryResult[] = allProfiles.map((p, i) => ({
+    country: euCountries[i],
+    countryName: p.countryName,
+    rawValue: p.data.overallCostIndex,
+    rawCurrency: 'EUR',
+    normalizedValue: p.data.overallCostIndex,
+    normalizedCurrency: 'EUR',
+    pppAdjustedValue: p.data.overallCostIndex,
+    pppAdjustment: pppEurEur,
+    differenceFromReference: p.data.overallCostIndex - frIndex,
+    percentageDifference: Math.round(((p.data.overallCostIndex - frIndex) / frIndex) * 1000) / 10,
+    ranking: sortedIdx.indexOf(p.data.overallCostIndex) + 1,
+    confidence: p.dataQuality === 'high' ? 'high' : p.dataQuality === 'medium' ? 'medium' : 'low',
+  }));
+
+  // France rank among EU countries (sorted ascending = cheapest first)
+  const franceRank = [...indices].sort((a, b) => a - b).indexOf(frIndex) + 1;
+
   return {
     france: 'FRA',
     euCountries,
@@ -239,23 +406,24 @@ export async function compareFranceToEU(
       france,
       euAverage,
       euMedian,
-      euCountries: [france] // Would include all EU countries in production
+      euCountries: euCountryResults,
     },
-    franceRankInEU: 10,
-    totalEUCountries: 27,
+    franceRankInEU: franceRank,
+    totalEUCountries: euCountries.length,
     date: new Date().toISOString(),
-    methodology: 'https://akiprisaye.fr/docs/methodologie-france-eu-v4.1.0'
+    methodology: 'https://akiprisaye.fr/docs/methodologie-france-eu-v4.2.0',
   };
 }
 
 /**
  * Compare EU vs International
+ * Uses real data from international-cost-profiles.json
  */
 export async function compareEUToInternational(
   internationalCountries: CountryCode[],
   indicator: string = 'overall-cost'
 ): Promise<EUInternationalComparison> {
-  // Mock EU average
+  const pppEurEur = await getPPPAdjustment('EUR', 'EUR');
   const euAverage: ComparedCountryResult = {
     country: 'EU27',
     countryName: 'EU Average',
@@ -264,24 +432,24 @@ export async function compareEUToInternational(
     normalizedValue: 100,
     normalizedCurrency: 'EUR',
     pppAdjustedValue: 100,
-    pppAdjustment: await getPPPAdjustment('EUR', 'EUR'),
+    pppAdjustment: pppEurEur,
     differenceFromReference: 0,
     percentageDifference: 0,
-    confidence: 'high'
+    confidence: 'high',
   };
-  
-  // Mock international countries
+
   const internationalResults: ComparedCountryResult[] = [];
   for (const country of internationalCountries) {
-    const currency = getCurrency(country);
-    const rawValue = 80 + Math.random() * 60; // 80-140
+    const profile = await getCountryCostProfile(country);
+    const currency = profile.currency;
+    const rawValue = profile.data.overallCostIndex;
     const normalization = await normalizeToEUR(rawValue, currency);
     const pppAdjustment = await getPPPAdjustment(currency, 'EUR');
     const pppAdjustedValue = normalization.normalizedValue * pppAdjustment.adjustmentFactor;
-    
+
     internationalResults.push({
       country,
-      countryName: getCountryName(country),
+      countryName: profile.countryName,
       rawValue,
       rawCurrency: currency,
       normalizedValue: normalization.normalizedValue,
@@ -289,21 +457,21 @@ export async function compareEUToInternational(
       pppAdjustedValue,
       pppAdjustment,
       differenceFromReference: pppAdjustedValue - 100,
-      percentageDifference: ((pppAdjustedValue - 100) / 100) * 100,
-      confidence: 'medium'
+      percentageDifference: Math.round(((pppAdjustedValue - 100) / 100) * 1000) / 10,
+      confidence: profile.dataQuality === 'high' ? 'high' : profile.dataQuality === 'medium' ? 'medium' : 'low',
     });
   }
-  
+
   return {
     eu: 'EU27',
     internationalCountries,
     indicator,
     results: {
       euAverage,
-      internationalCountries: internationalResults
+      internationalCountries: internationalResults,
     },
     date: new Date().toISOString(),
-    methodology: 'https://akiprisaye.fr/docs/methodologie-eu-international-v4.1.0'
+    methodology: 'https://akiprisaye.fr/docs/methodologie-eu-international-v4.2.0',
   };
 }
 
