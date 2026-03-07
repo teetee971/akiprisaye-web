@@ -1522,6 +1522,9 @@
 .price-chart-section {
   padding: 4rem 2rem;
   background: linear-gradient(180deg, rgba(15,23,42,0) 0%, rgba(15,23,42,0.6) 100%);
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .price-chart-header {
@@ -1652,6 +1655,9 @@
 
 .news-feed-section {
   padding: 4rem 2rem;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .news-feed-header {
@@ -1787,6 +1793,9 @@
 .price-evo-section {
   padding: 4rem 2rem;
   background: linear-gradient(180deg, rgba(15,23,42,0.3) 0%, rgba(15,23,42,0) 100%);
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .price-evo-header {
@@ -1848,6 +1857,27 @@
   .evo-tooltip {
     min-width: 140px;
     font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 479px) {
+  .price-evo-section {
+    padding: 2.5rem 0.5rem;
+  }
+  .price-evo-wrap {
+    padding: 0.75rem 0.5rem;
+  }
+  .price-chart-section {
+    padding: 2.5rem 0.5rem;
+  }
+  .price-chart-wrap {
+    padding: 0.75rem 0.5rem;
+  }
+  .news-feed-section {
+    padding: 2.5rem 0.75rem;
+  }
+  .choc-section {
+    padding: 2.5rem 0.75rem;
   }
 }
 
@@ -2324,6 +2354,9 @@
 
 .choc-section {
   padding: 4rem 2rem;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .choc-header {

@@ -6,6 +6,7 @@
  * (guadeloupe, martinique, la_réunion, guyane, mayotte × 2026-03).
  */
 
+import { useEffect, useState } from 'react';
 import {
   Bar,
   BarChart,
@@ -67,6 +68,23 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
 }
 
 export default function CategoryOvercostChart() {
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(max-width: 479px)').matches
+  );
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 479px)');
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+
+  const yAxisWidth = isMobile ? 80 : 138;
+  const chartMargin = isMobile
+    ? { top: 4, right: 36, left: 82, bottom: 4 }
+    : { top: 4, right: 56, left: 140, bottom: 4 };
+  const chartHeight = isMobile ? 270 : 310;
+
   return (
     <section className="price-chart-section section-reveal" aria-label="Surcoût par catégorie DOM vs Hexagone">
       <div className="price-chart-header">
@@ -81,11 +99,11 @@ export default function CategoryOvercostChart() {
       </div>
 
       <div className="price-chart-wrap" style={{ maxWidth: 760 }}>
-        <ResponsiveContainer width="100%" height={310}>
+        <ResponsiveContainer width="100%" height={chartHeight}>
           <BarChart
             layout="vertical"
             data={OVERCOST_DATA}
-            margin={{ top: 4, right: 56, left: 140, bottom: 4 }}
+            margin={chartMargin}
           >
             <XAxis
               type="number"
@@ -101,10 +119,12 @@ export default function CategoryOvercostChart() {
               tick={{ fill: '#cbd5e1', fontSize: 12 }}
               axisLine={false}
               tickLine={false}
-              width={138}
-              tickFormatter={(v: string, i: number) =>
-                `${OVERCOST_DATA[i]?.icon ?? ''} ${v}`
-              }
+              width={yAxisWidth}
+              tickFormatter={(v: string, i: number) => {
+                const icon = OVERCOST_DATA[i]?.icon ?? '';
+                const label = isMobile && v.length > 9 ? v.slice(0, 8) + '…' : v;
+                return `${icon} ${label}`;
+              }}
             />
             <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.04)' }} />
             <Bar dataKey="pct" radius={[0, 6, 6, 0]} isAnimationActive>
