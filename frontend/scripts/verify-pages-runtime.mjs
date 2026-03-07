@@ -12,10 +12,12 @@ function wait(ms) {
 function startPreview() {
   return spawn(process.platform === 'win32' ? 'npm.cmd' : 'npm', ['run', 'preview', '--', '--host', HOST, '--port', PORT, '--strictPort'], {
     stdio: ['ignore', 'pipe', 'pipe'],
-    env: process.env,
+    env: { ...process.env, GITHUB_PAGES: 'true' },
     detached: process.platform !== 'win32',
   });
 }
+
+const stripAnsi = (str) => str.replace(/\x1b\[[0-9;]*[a-zA-Z]/g, '');
 
 function waitForReady(preview, timeoutMs = 20000) {
   return new Promise((resolve, reject) => {
@@ -25,7 +27,7 @@ function waitForReady(preview, timeoutMs = 20000) {
     }, timeoutMs);
 
     const onData = (chunk) => {
-      const text = chunk.toString();
+      const text = stripAnsi(chunk.toString());
       if (text.includes('Local:')) {
         cleanup();
         resolve();

@@ -6,6 +6,7 @@ const ROUTES = ['/', '/login', '/comparateur'];
 const ADD_CRASH_FRAGMENT = "Cannot read properties of undefined (reading 'add')";
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const stripAnsi = (str) => str.replace(/\x1b\[[0-9;]*[a-zA-Z]/g, '');
 
 async function waitForPreviewReady(proc, timeoutMs = 20000) {
   return new Promise((resolve, reject) => {
@@ -15,7 +16,7 @@ async function waitForPreviewReady(proc, timeoutMs = 20000) {
     }, timeoutMs);
 
     const onData = (chunk) => {
-      const text = chunk.toString();
+      const text = stripAnsi(chunk.toString());
       if (text.includes(READY_TOKEN)) {
         cleanup();
         resolve();
