@@ -12,6 +12,7 @@ import {
 import { useToast } from '../hooks/useToast';
 import { getShoppingListCount } from '../store/useShoppingListStore';
 import type { Territoire } from '../types/ean';
+import SmartSavingsTips from '../components/SmartSavingsTips';
 
 const TERRITORIES: Territoire[] = [
   'guadeloupe', 'martinique', 'guyane', 'reunion', 'mayotte', 'polynesie', 'nouvelle_caledonie', 'wallis_et_futuna', 'saint_martin', 'saint_barthelemy', 'saint_pierre_et_miquelon',
@@ -160,6 +161,11 @@ export default function ScannerHub() {
               </div>
             )}
           </div>
+        </section>
+
+        {/* Smart savings tips — below the scanner, above the fold on mobile */}
+        <section className="mx-auto w-full max-w-4xl mt-4">
+          <SmartSavingsTips territory={territoire} maxTips={3} />
         </section>
       </div>
     </>

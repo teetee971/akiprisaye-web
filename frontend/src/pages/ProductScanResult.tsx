@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { fetchOffProductDetails, type OffProductUiModel } from '../services/openFoodFacts';
 import { fetchProductPrices, type PriceListing } from '../services/photoProductSearchService';
+import PriceTrendWidget from '../components/PriceTrendWidget';
 
 type LoadState = 'loading' | 'success' | 'notFound' | 'errorNetwork';
 
@@ -18,6 +19,8 @@ function formatDate(dateStr: string) {
 
 export default function ProductScanResult() {
   const { barcode = '' } = useParams();
+  const [searchParams] = useSearchParams();
+  const territory = searchParams.get('territoire') ?? 'mq';
   const navigate = useNavigate();
   const [state, setState] = useState<LoadState>('loading');
   const [product, setProduct] = useState<OffProductUiModel | null>(null);
@@ -95,6 +98,12 @@ export default function ProductScanResult() {
             </header>
 
             {product.image && <img src={product.image} alt={product.name ?? 'Produit'} className="max-h-64 w-full rounded-xl object-contain bg-white p-2" />}
+
+            {/* ── Tendance des prix (données observatoire réelles) ── */}
+            <PriceTrendWidget
+              productName={product.name}
+              territory={territory}
+            />
 
             <div className="flex flex-wrap gap-2 text-sm">
               {product.nutriScore && <span className="rounded-full bg-green-500/20 px-3 py-1">Nutri-Score {product.nutriScore}</span>}

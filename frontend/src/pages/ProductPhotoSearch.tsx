@@ -5,6 +5,7 @@ import {
   searchProductFromPhoto,
   type PhotoSearchResult,
 } from '../services/photoProductSearchService';
+import PriceTrendWidget from '../components/PriceTrendWidget';
 
 // ─── constants ────────────────────────────────────────────────────────────────
 
@@ -347,6 +348,15 @@ export default function ProductPhotoSearch() {
                   </button>
                 </div>
               </div>
+            )}
+
+            {/* Price trend prediction from real observatoire data */}
+            {product && (
+              <PriceTrendWidget
+                productName={product.name}
+                territory="mq"
+                className="rounded-2xl"
+              />
             )}
 
             {/* Price comparison */}
