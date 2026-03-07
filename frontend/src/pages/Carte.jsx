@@ -217,8 +217,12 @@ function MarkerClusterGroup({ map, leaflet, stores, currentTerritory, formatDist
     map.addLayer(markerLayerGroup);
 
     return () => {
-      if (typeof map.removeLayer === 'function') {
-        map.removeLayer(markerLayerGroup);
+      try {
+        if (typeof map.removeLayer === 'function') {
+          map.removeLayer(markerLayerGroup);
+        }
+      } catch (_e) {
+        // Map may have been destroyed before this cleanup runs (e.g. during navigation)
       }
     };
   }, [map, leaflet, stores, currentTerritory, formatDistance, markerRefs, territory]);
@@ -276,9 +280,9 @@ export default function Carte() {
 
       delete leafletInstance.Icon.Default.prototype._getIconUrl;
       leafletInstance.Icon.Default.mergeOptions({
-        iconRetinaUrl: '/leaflet/marker-icon-2x.png',
-        iconUrl: '/leaflet/marker-icon.png',
-        shadowUrl: '/leaflet/marker-shadow.png',
+        iconRetinaUrl: `${import.meta.env.BASE_URL}leaflet/marker-icon-2x.png`,
+        iconUrl: `${import.meta.env.BASE_URL}leaflet/marker-icon.png`,
+        shadowUrl: `${import.meta.env.BASE_URL}leaflet/marker-shadow.png`,
       });
 
       setLeaflet(leafletInstance);
@@ -624,7 +628,7 @@ export default function Carte() {
     if (!leaflet) return null;
     return leaflet.icon({
       iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-      shadowUrl: '/leaflet/marker-shadow.png',
+      shadowUrl: `${import.meta.env.BASE_URL}leaflet/marker-shadow.png`,
       iconSize: [25, 41],
       iconAnchor: [12, 41],
       popupAnchor: [1, -34],
@@ -1148,10 +1152,10 @@ export default function Carte() {
                 })
               )}
 
-              {userPosition && (
+              {userPosition && userIcon && (
                 <Marker
                   position={userPosition}
-                  icon={userIcon ?? undefined}
+                  icon={userIcon}
                 >
                   <Popup>
                     <div className="text-slate-900">
