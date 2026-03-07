@@ -1847,11 +1847,11 @@
   height: 180px;
   background: linear-gradient(90deg, rgba(30,41,59,0.4) 25%, rgba(51,65,85,0.5) 50%, rgba(30,41,59,0.4) 75%);
   background-size: 400% 100%;
-  animation: shimmer 1.4s infinite;
+  animation: panier-vital-shimmer 1.4s infinite;
   border-radius: 12px;
 }
 
-@keyframes shimmer {
+@keyframes panier-vital-shimmer {
   0%   { background-position: 100% 0; }
   100% { background-position: -100% 0; }
 }
