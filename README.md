@@ -1,5 +1,6 @@
 # 🧾 A KI PRI SA YÉ
 
+[![Version](https://img.shields.io/badge/version-3.1.0-blue)](#-état-du-projet)
 [![Cloudflare Pages](https://img.shields.io/badge/Cloudflare%20Pages-deployed-success?logo=cloudflare&logoColor=white)](https://akiprisaye-web.pages.dev)
 [![CI/CD Pipeline](https://img.shields.io/github/actions/workflow/status/teetee971/akiprisaye-web/ci-cd-industrial.yml?branch=main&label=CI%2FCD&logo=github-actions)](https://github.com/teetee971/akiprisaye-web/actions/workflows/ci-cd-industrial.yml)
 [![CI Schema Validation](https://img.shields.io/badge/CI-JSON%20Schema%20Validation-blue)](#)
@@ -20,32 +21,20 @@ Elle permet d'analyser les écarts de prix entre les territoires, de comprendre 
 L'application ne vend aucun produit et ne réalise aucune transaction commerciale. Elle a pour objectif de rendre les mécanismes de formation des prix plus lisibles pour tous.
 
 **Territoires couverts :**
-- **DOM** (Guadeloupe, Martinique, Guyane, La Réunion, Mayotte)
-- **ROM / COM** (Saint-Martin, Saint-Barthélemy, Polynésie française, Nouvelle-Calédonie, Wallis-et-Futuna, Saint-Pierre-et-Miquelon, Terres australes, etc.)
+
+**DROM (Départements et Régions d'Outre-Mer) :**
+- 🇬🇵 Guadeloupe (971) · 🇲🇶 Martinique (972) · 🇬🇫 Guyane (973) · 🇷🇪 La Réunion (974) · 🇾🇹 Mayotte (976)
+
+**COM (Collectivités d'Outre-Mer) :**
+- 🇵🇫 Polynésie française · 🇳🇨 Nouvelle-Calédonie · 🇼🇫 Wallis-et-Futuna
+- 🇲🇫 Saint-Martin · 🇧🇱 Saint-Barthélemy · 🇵🇲 Saint-Pierre-et-Miquelon
+
+**Référence :**
+- 🇫🇷 France métropolitaine (base de comparaison)
 
 **🎯 Phrase d'accroche : Comprendre pourquoi tout coûte plus cher.**
 
 ---
-
-
-## 🧪 Debug product-image API
-
-L’endpoint `/api/product-image` supporte deux modes :
-
-- **Mode image (par défaut)** : redirection `302` vers une image OFF, ou vers le placeholder.
-- **Mode JSON diagnostic** : activer avec `?format=json` ou `Accept: application/json`.
-
-Exemples :
-
-- `GET /api/product-image?barcode=3017620422003`
-- `GET /api/product-image?barcode=3017620422003&format=json`
-
-Headers de diagnostic renvoyés (y compris sur `302`) :
-
-- `x-akps-source`: `openfoodfacts` | `placeholder`
-- `x-akps-reason`: `ok` | `forbidden` | `rate_limited` | `no_image` | `timeout` | `bad_response` | `network_error` | `unknown`
-- `x-akps-off-status`: code HTTP OFF ou `n/a`
-- `x-akps-selected`: `front` | `small` | `thumb` | `none`
 
 ## ⚡ Performance & Web Vitals
 
@@ -82,7 +71,7 @@ Headers de diagnostic renvoyés (y compris sur `302`) :
 - 📘 **[Mission H: Preload Hints Implementation](docs/performance/MISSION_H_PRELOAD_HINTS.md)** - Detailed performance optimization documentation
 - 🧪 **[How to Test Performance](docs/performance/MISSION_H_PRELOAD_HINTS.md#-testing--validation)** - Local testing with Lighthouse & PageSpeed Insights
 
-**Last Performance Audit:** January 15, 2026
+**Last Performance Audit:** March 7, 2026
 
 ---
 
@@ -155,12 +144,14 @@ Intelligence artificielle locale et respectueuse de la vie privée :
 **Route:** `/assistant-ia`
 
 ### 📈 Observatoire
-Données agrégées et analyses de marché issues de **snapshots mensuels réels** (données Observatoire A KI PRI SA YÉ, de nov. 2025 à mars 2026) :
+Données agrégées et analyses de marché issues de **32 snapshots mensuels réels** (nov. 2025 → mars 2026, 11 territoires actifs) :
 - Dashboard prix en temps réel
 - Observatoire vivant (séries temporelles par produit et territoire)
+- **Indice Panier Vital** : minutes de SMIC net pour acheter 6 produits essentiels par territoire
 - Prédictions de prix basées sur l'historique réel (`observatoirePriceSeries`)
+- **Comparaison internationale** : indices Eurostat 2024 / OECD PPP 2024 / INSEE DOM 2023
 - Méthodologie publique
-- Données ouvertes
+- Données ouvertes (CSV / JSON avec signature SHA-256)
 
 **Route:** `/observatoire`
 
@@ -172,6 +163,15 @@ Actions solidaires et anti-gaspillage :
 - Initiatives locales
 
 **Route:** `/solidarite`
+
+### 🏆 Gamification
+Engagement et fidélisation des contributeurs :
+- Système de points pour chaque contribution de prix
+- Badges débloquables (contributeur, expert, ambassadeur)
+- Classement des contributeurs par territoire
+- Historique des actions et récompenses
+
+**Route:** `/gamification`
 
 ### 💡 Bénéfices de la Nouvelle Navigation
 - **-70% d'entrées menu** : Passage de 15+ à 7 entrées principales
@@ -322,7 +322,11 @@ Comparateur de prix existant
 
 ### 💬 Communication
 
-- Messagerie interne sécurisée
+- **Messagerie interne sécurisée** (Firebase Firestore, synchronisation en temps réel)
+  - Messages entre citoyens, enseignes et institutions
+  - Notifications de nouveaux messages (badge non-lus)
+  - Accessible depuis Mon Compte et le Footer
+  - **Route :** `/messagerie`
 - Citoyens ↔ Enseignes ↔ Institutions
 
 ---
@@ -588,7 +592,32 @@ npm run preview
 - `npm run check-assets` - Vérification d'intégrité des assets
 - `npm run lint` - Linter ESLint
 - `npm run format` - Formatter avec Prettier
+- `npm run dev` (dans `frontend/`) - Serveur de développement Vite
+- `npm run typecheck` - Vérification TypeScript sans compilation
 - `npm test` - Tests automatisés
+
+### 🧪 Debug API product-image (développement)
+
+L'endpoint `/api/product-image` supporte deux modes :
+
+- **Mode image (par défaut)** : redirection `302` vers une image OFF, ou vers le placeholder.
+- **Mode JSON diagnostic** : activer avec `?format=json` ou `Accept: application/json`.
+
+Exemples :
+
+```bash
+GET /api/product-image?barcode=3017620422003
+GET /api/product-image?barcode=3017620422003&format=json
+```
+
+Headers de diagnostic renvoyés (y compris sur `302`) :
+
+| Header | Valeurs possibles |
+|--------|------------------|
+| `x-akps-source` | `openfoodfacts` \| `placeholder` |
+| `x-akps-reason` | `ok` \| `forbidden` \| `rate_limited` \| `no_image` \| `timeout` \| `bad_response` \| `network_error` \| `unknown` |
+| `x-akps-off-status` | code HTTP OFF ou `n/a` |
+| `x-akps-selected` | `front` \| `small` \| `thumb` \| `none` |
 
 ---
 
@@ -676,10 +705,17 @@ pour les applications web exploitant des API navigateur.
 
 ## 📌 État du projet
 
-✅ CI/CD opérationnel  
-✅ Architecture validée  
-🔄 Modules en cours d'intégration via Issues GitHub  
-🤖 Développement piloté par prompts Copilot
+| Élément | Statut |
+|---------|--------|
+| Version | **3.1.0** |
+| CI/CD | ✅ Opérationnel |
+| Architecture | ✅ Validée |
+| Déploiement | ✅ Cloudflare Pages |
+| Snapshots Observatoire | ✅ 32 fichiers (nov. 2025 – mars 2026) |
+| Messagerie | ✅ Opérationnelle |
+| Gamification | ✅ Opérationnelle |
+| Modules en cours | 🔄 Issues GitHub actives |
+| Développement | 🤖 Piloté par prompts Copilot |
 
 ---
 
@@ -742,7 +778,7 @@ Module centralisé de gestion des données d'entreprises avec qualité instituti
 
 ### 🌍 Sélecteur de Territoires DROM-COM
 
-Nouveau composant `TerritorySelector` avec support complet des 12 territoires :
+Nouveau composant `TerritorySelector` avec support complet des 13 territoires :
 
 - 🇬🇵 Guadeloupe
 - 🇲🇶 Martinique
@@ -755,7 +791,8 @@ Nouveau composant `TerritorySelector` avec support complet des 12 territoires :
 - 🇼🇫 Wallis-et-Futuna
 - 🇵🇫 Polynésie française
 - 🇳🇨 Nouvelle-Calédonie
-- 🇹🇫 Terres australes et antarctiques françaises
+- 🇹🇫 Terres australes et antarctiques françaises (TAAF)
+- 🇫🇷 France métropolitaine (référence de comparaison)
 
 ### 📱 PWA Améliorée
 
@@ -1089,5 +1126,3 @@ Et **ne pas** générer un `404.html` top-level dans `frontend/dist/` (pas de co
 - [ ] Refresh page conserve la session utilisateur
 - [ ] Route protégée (`/mon-compte`) redirige vers `/login` si non connecté
 - [ ] En cas d'erreur `auth/unauthorized-domain`, ajouter le domaine courant dans Firebase > Authorized domains
-
-<- name: PR smoke test extra: 2026-02-26T17:24:31Z -->

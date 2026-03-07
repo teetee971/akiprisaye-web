@@ -3,6 +3,58 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 
 Le format s'inspire de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et ce projet adhère à la [sémantique de versionnage](https://semver.org/lang/fr/).
 
+## [3.1.0] - 2026-03-07
+
+### Added
+
+- **Messagerie interne** : système de messagerie sécurisé Firebase (Firestore + `onSnapshot`) entre
+  citoyens, enseignes et institutions — accessible depuis Mon Compte et le Footer, route `/messagerie`.
+- **Indice Panier Vital** (`PanierVitalWidget`) : calcul du temps de travail au SMIC net (9,12 €/h)
+  nécessaire pour acheter un panier de 6 produits essentiels (lait, riz, eau, pâtes, sucre, huile)
+  par territoire, alimenté par les snapshots Observatoire mensuels.
+- **Comparaison internationale** (`internationalComparisonService`) : indices de coût de la vie basés
+  sur Eurostat 2024, OECD PPP 2024 et INSEE DOM 2023 — couvre 40+ pays et 8 territoires DOM.
+- **Gamification** : système de points, badges et classement contributeurs — route `/gamification`.
+- **Snapshots Observatoire mars 2026** : couverture mensuelle complète de nov. 2025 à mars 2026
+  pour les 11 territoires actifs (32 snapshots au total).
+- **Validation EAN GS1** (`lib/eanValidator.ts`) : nouveau moteur GS1 avec
+  `validateEAN13` / `validateEAN8` / `validateUPCA` / `validateGTIN` / `getGS1CountryLabel` /
+  `computeCheckDigit`.
+- **Territoire France métropolitaine** (`fr`) ajouté comme référence de comparaison dans
+  `territories.ts` (type `Metro`).
+
+### Changed
+
+- Version `frontend/package.json` : 3.0.1 → **3.1.0**.
+- Version `package.json` (root) : ajout du champ `version: 3.1.0`.
+- README.md mis à jour : fonctionnalités manquantes ajoutées, liste des territoires complétée,
+  commentaire parasite de fin de fichier supprimé, date d'audit de performance actualisée.
+- CHANGELOG aligné avec les versions réelles du projet (3.0.1 manquait dans le journal).
+
+### Fixed
+
+- Commentaire HTML parasite en fin de `README.md` supprimé
+  (`<- name: PR smoke test extra: 2026-02-26T17:24:31Z -->`).
+
+### Security
+
+- Messagerie chiffrée bout-en-bout via Firestore Security Rules.
+- OCR 100 % local (Tesseract.js WASM) — aucune transmission serveur.
+- `auth` et `db` Firebase gérés en mode `null`-safe si les variables d'environnement manquent.
+
+---
+
+## [3.0.1] - 2026-02-26
+
+### Fixed
+
+- Correction du timeout de readiness Vite preview et de la race condition du listener dans
+  `verify-pages-runtime.mjs`.
+- Stabilisation du pipeline CI/CD : déploiement Cloudflare Pages toujours précédé d'une validation
+  post-déploiement bloquante.
+
+---
+
 ## [2.1.0] - 2026-01-02
 ### Added
 - **v1.5.0 - Product Insight System**: Analyse complète des produits à partir de photos d'étiquettes avec OCR, analyse des ingrédients et interprétation nutritionnelle
