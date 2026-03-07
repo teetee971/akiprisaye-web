@@ -4,6 +4,7 @@
  */
 
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { TrendingUp, TrendingDown, AlertTriangle, Info, HelpCircle, MapPin } from 'lucide-react';
 import { inflationService } from '../services/inflationService';
 import type { InflationMetrics } from '../types/inflation';
@@ -319,12 +320,12 @@ export function InflationDashboard() {
                 Identifiez quels produits contribuent le plus à la hausse des prix dans votre territoire
               </p>
             </div>
-            <a
-              href="/historique-prix"
+            <Link
+              to="/historique-prix"
               className="px-6 py-3 bg-white text-blue-700 rounded-lg hover:bg-blue-50 transition-colors font-semibold whitespace-nowrap shadow-lg"
             >
               Consulter l'historique
-            </a>
+            </Link>
           </div>
         </div>
 

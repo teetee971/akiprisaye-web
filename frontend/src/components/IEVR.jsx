@@ -14,6 +14,7 @@
  */
 
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import ievrData from '../data/ievr-data.json';
 import {
   compareToReference,
@@ -391,14 +392,12 @@ export function IEVR({ selectedTerritory = null }) {
             {data.metadata.methodologyLocked && ' • 🔒 Méthodologie verrouillée'}
           </p>
           <p className="text-xs">
-            📄 <a 
-              href="/ievr" 
+            📄 <Link 
+              to="/ievr"
               className="text-blue-600 dark:text-blue-400 hover:underline"
-              target="_blank"
-              rel="noopener noreferrer"
             >
               Consulter la méthodologie complète (v{data.metadata.methodologyVersion})
-            </a>
+            </Link>
           </p>
         </div>
       </div>

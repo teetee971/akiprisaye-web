@@ -182,7 +182,7 @@ const ServiceComparator: React.FC = () => {
             ⬇️ {internet.speed.download} Mbps / ⬆️ {internet.speed.upload} Mbps
           </p>
           <div className="mt-2">
-            {internet.features.map((feature: string, idx: number) => (
+            {(internet.features ?? []).map((feature: string, idx: number) => (
               <span key={idx} className="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded mr-2 mb-1">
                 {feature}
               </span>
@@ -212,7 +212,7 @@ const ServiceComparator: React.FC = () => {
           <h3 className="text-lg font-bold text-gray-900">{mobile.name}</h3>
           <p className="text-sm text-gray-600 mt-1">📱 {mobile.data} Go de data</p>
           <div className="mt-2">
-            {mobile.features.map((feature: string, idx: number) => (
+            {(mobile.features ?? []).map((feature: string, idx: number) => (
               <span key={idx} className="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded mr-2 mb-1">
                 {feature}
               </span>
@@ -376,7 +376,7 @@ const ServiceComparator: React.FC = () => {
               <p className="text-sm text-gray-600">Services publics</p>
             </div>
             <div className="bg-white rounded-lg shadow p-4 text-center">
-              <p className="text-3xl font-bold text-orange-600">{stats.territories.length}</p>
+              <p className="text-3xl font-bold text-orange-600">{(stats.territories ?? []).length}</p>
               <p className="text-sm text-gray-600">Territoires couverts</p>
             </div>
           </div>

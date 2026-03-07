@@ -121,7 +121,13 @@ export class InflationService {
     const comparisonDate = new Date(now);
     comparisonDate.setMonth(comparisonDate.getMonth() - monthsAgo);
 
-    const territories = await this.getTerritoryInflations();
+    // Build the two month keys to compare (current vs N months ago)
+    const toMonthKey = (d: Date) =>
+      `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    const currentMonthKey = toMonthKey(now);
+    const comparisonMonthKey = toMonthKey(comparisonDate);
+
+    const territories = await this.getTerritoryInflations(currentMonthKey, comparisonMonthKey);
 
     return {
       territories,
@@ -248,15 +254,24 @@ export class InflationService {
   // Private helpers
   // ---------------------------------------------------------------------------
 
-  private async getTerritoryInflations(): Promise<TerritoryInflation[]> {
-    const metropoleSnapshots = await loadObservatoireData('Hexagone');
+  private async getTerritoryInflations(
+    currentMonthKey?: string,
+    comparisonMonthKey?: string,
+  ): Promise<TerritoryInflation[]> {
+    // Load specific months when provided (period-aware) or fall back to defaults
+    const months: string[] | undefined =
+      currentMonthKey && comparisonMonthKey
+        ? [comparisonMonthKey, currentMonthKey]  // older first so sort works correctly
+        : undefined;
+
+    const metropoleSnapshots = await loadObservatoireData('Hexagone', months);
     const metropoleStats = calculateStatistics(metropoleSnapshots);
 
     const results: TerritoryInflation[] = [];
 
     for (const t of TERRITORY_MAP) {
       try {
-        const snapshots = await loadObservatoireData(t.name);
+        const snapshots = await loadObservatoireData(t.name, months);
         const overallInflationRate = computeOverallRate(snapshots);
         const categories = computeCategories(snapshots);
         const territoryStats = calculateStatistics(snapshots);
