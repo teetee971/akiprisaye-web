@@ -6,12 +6,12 @@
 
 export const TERRITORY_IMAGES: Record<string, { url: string; alt: string; credit: string }> = {
   gp: {
-    url: 'https://images.unsplash.com/photo-1605217613423-0edd1894f97e?auto=format&fit=crop&w=800&q=80',
+    url: 'https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fit=crop&w=800&q=80',
     alt: 'Guadeloupe — marché tropical, fruits et légumes locaux',
     credit: 'Unsplash',
   },
   mq: {
-    url: 'https://images.unsplash.com/photo-1548199569-11d10e2bf305?auto=format&fit=crop&w=800&q=80',
+    url: 'https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=800&q=80',
     alt: 'Martinique — littoral et végétation tropicale',
     credit: 'Unsplash',
   },
@@ -21,7 +21,7 @@ export const TERRITORY_IMAGES: Record<string, { url: string; alt: string; credit
     credit: 'Unsplash',
   },
   re: {
-    url: 'https://images.unsplash.com/photo-1583429289032-bf0985d4a4dc?auto=format&fit=crop&w=800&q=80',
+    url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=800&q=80',
     alt: 'La Réunion — paysage volcanique, piton de la Fournaise',
     credit: 'Unsplash',
   },
@@ -56,7 +56,7 @@ export const TERRITORY_IMAGES: Record<string, { url: string; alt: string; credit
     credit: 'Unsplash',
   },
   mf: {
-    url: 'https://images.unsplash.com/photo-1543965170-e399380ef7f6?auto=format&fit=crop&w=800&q=80',
+    url: 'https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?auto=format&fit=crop&w=800&q=80',
     alt: 'Saint-Martin — côte caribéenne aux eaux cristallines',
     credit: 'Unsplash',
   },

@@ -385,6 +385,7 @@ export default function HomeV5() {
                     loading="lazy"
                     width="200"
                     height="150"
+                    onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
                   />
                   <div className="territory-photo-overlay">
                     <span className="territory-photo-flag">{territory.flag}</span>
