@@ -95,12 +95,35 @@ Point d'entrée principal avec vue d'ensemble et accès rapide à toutes les fon
 
 ### 📊 Comparateurs
 Hub unifié regroupant tous les outils de comparaison :
+
+**Comparateurs généraux :**
 - Comparateur prix classique
-- Prix au kilo / formats
-- Détection shrinkflation
-- Équivalence Métropole (IEVR)
+- Comparateur citoyen (données participatives)
+- Comparaison enseignes
+- Comparaison panier
+- Comparateur territoires DOM–COM
+- Bilan des territoires (vue d'ensemble écarts DOM vs Hexagone)
+- Inflation par catégorie
+- Tableau de bord inflation multi-territoires
+- Couverture des données par territoire
+- Alertes prix
 - Historique des prix
-- Comparateurs services (vols, bateaux, télécoms)
+
+**Comparateurs spécialisés :**
+- Vols DOM–Métropole et inter-îles
+- Bateaux / Ferries inter-îles Antilles
+- Fret / Colis (Colissimo, DHL, GLS, UPS vers les DOM)
+- Carburants (SP95, Diesel, GPL par territoire)
+- Assurances (auto, habitation, santé en DOM)
+- Formations professionnelles
+- Location voiture
+- Matériaux BTP (ciment, acier, bois, tôles…)
+- Télécoms / Services (internet, mobile, eau, électricité)
+- Évaluation cosmétiques DOM
+
+**Recherche prix :**
+- Tarifs avions, bateaux, fret maritime et aérien
+- Tarifs électricité, eau, abonnements internet et mobile
 
 **Route:** `/comparateurs`
 
@@ -132,9 +155,10 @@ Intelligence artificielle locale et respectueuse de la vie privée :
 **Route:** `/assistant-ia`
 
 ### 📈 Observatoire
-Données agrégées et analyses de marché :
+Données agrégées et analyses de marché issues de **snapshots mensuels réels** (données Observatoire A KI PRI SA YÉ, de nov. 2025 à mars 2026) :
 - Dashboard prix en temps réel
-- Observatoire vivant
+- Observatoire vivant (séries temporelles par produit et territoire)
+- Prédictions de prix basées sur l'historique réel (`observatoirePriceSeries`)
 - Méthodologie publique
 - Données ouvertes
 
