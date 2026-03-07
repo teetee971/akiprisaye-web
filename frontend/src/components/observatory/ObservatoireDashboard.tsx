@@ -54,40 +54,67 @@ export default function ObservatoireDashboard() {
   const loadPriceData = async () => {
     setLoading(true);
     try {
-      // Load mock aggregated data for demonstration
-      const mockData: PriceStats[] = [
-        {
-          productName: 'Lait entier UHT 1L',
-          category: 'Produits laitiers',
-          avgPrice: 1.35,
-          minPrice: 1.15,
-          maxPrice: 1.65,
-          priceChange30d: 2.5,
-          lastUpdate: new Date().toISOString(),
-          ean: '3560070000000'
-        },
-        {
-          productName: 'Pain de mie complet 500g',
-          category: 'Boulangerie',
-          avgPrice: 2.20,
-          minPrice: 1.80,
-          maxPrice: 2.80,
-          priceChange30d: -1.2,
-          lastUpdate: new Date().toISOString(),
-          ean: '3560070000001'
-        },
-        {
-          productName: 'Riz blanc 1kg',
-          category: 'Épicerie',
-          avgPrice: 2.50,
-          minPrice: 2.10,
-          maxPrice: 3.20,
-          priceChange30d: 5.8,
-          lastUpdate: new Date().toISOString(),
-          ean: '3560070000002'
-        }
-      ];
-      setStats(mockData);
+      // Load real aggregated data from observatoire snapshots
+      const STEMS = ['guadeloupe', 'martinique', 'guyane', 'la_r\u00e9union', 'mayotte', 'hexagone'];
+      const MONTH = '2026-03';
+      const snapshots = await Promise.all(
+        STEMS.map((stem) =>
+          fetch(`${import.meta.env.BASE_URL}data/observatoire/${stem}_${MONTH}.json`)
+            .then((r) => (r.ok ? r.json() : null))
+            .catch(() => null),
+        ),
+      );
+      const prevSnapshots = await Promise.all(
+        STEMS.map((stem) =>
+          fetch(`${import.meta.env.BASE_URL}data/observatoire/${stem}_2026-02.json`)
+            .then((r) => (r.ok ? r.json() : null))
+            .catch(() => null),
+        ),
+      );
+
+      // Aggregate prices by product across all territories
+      const byProduct: Record<string, { prices: number[]; prevPrices: number[]; category: string; ean: string }> = {};
+
+      snapshots.forEach((snap, snapIdx) => {
+        if (!snap?.donnees) return;
+        snap.donnees.forEach((item: { produit: string; prix: number; categorie: string; ean: string }) => {
+          if (!byProduct[item.produit]) {
+            byProduct[item.produit] = { prices: [], prevPrices: [], category: item.categorie ?? 'Épicerie', ean: item.ean ?? '' };
+          }
+          byProduct[item.produit].prices.push(item.prix);
+          // Previous month
+          const prevSnap = prevSnapshots[snapIdx];
+          if (prevSnap?.donnees) {
+            const prev = prevSnap.donnees.find((d: { produit: string }) => d.produit === item.produit);
+            if (prev) byProduct[item.produit].prevPrices.push(prev.prix);
+          }
+        });
+      });
+
+      const realData: PriceStats[] = Object.entries(byProduct)
+        .filter(([, v]) => v.prices.length > 0)
+        .map(([productName, v]) => {
+          const avg = v.prices.reduce((s, p) => s + p, 0) / v.prices.length;
+          const min = Math.min(...v.prices);
+          const max = Math.max(...v.prices);
+          const prevAvg = v.prevPrices.length > 0
+            ? v.prevPrices.reduce((s, p) => s + p, 0) / v.prevPrices.length
+            : avg;
+          const change = prevAvg > 0 ? Math.round(((avg - prevAvg) / prevAvg) * 1000) / 10 : 0;
+          return {
+            productName,
+            category: v.category,
+            avgPrice: Math.round(avg * 100) / 100,
+            minPrice: Math.round(min * 100) / 100,
+            maxPrice: Math.round(max * 100) / 100,
+            priceChange30d: change,
+            lastUpdate: new Date().toISOString(),
+            ean: v.ean,
+          };
+        })
+        .sort((a, b) => b.avgPrice - a.avgPrice);
+
+      setStats(realData);
     } catch (error) {
       console.error('Failed to load price data:', error);
     } finally {

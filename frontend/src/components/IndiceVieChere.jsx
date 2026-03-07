@@ -1,27 +1,44 @@
- 
 /**
  * IndiceVieChere Component
- * 
+ *
  * Displays the "Cost of Living Index" for DOM-COM territories
- * Shows average prices, comparisons, and territory rankings
+ * Uses real observatoire price snapshots (public/data/observatoire/*.json)
+ * — zero fictional data.
  */
 
 import { useState, useEffect } from 'react';
 
-const TERRITORIES = [
-  { code: 'GP', name: 'Guadeloupe', flag: '🇬🇵' },
-  { code: 'MQ', name: 'Martinique', flag: '🇲🇶' },
-  { code: 'GF', name: 'Guyane', flag: '🇬🇫' },
-  { code: 'RE', name: 'La Réunion', flag: '🇷🇪' },
-  { code: 'YT', name: 'Mayotte', flag: '🇾🇹' },
-  { code: 'PM', name: 'Saint-Pierre-et-Miquelon', flag: '🇵🇲' },
-  { code: 'BL', name: 'Saint-Barthélemy', flag: '🇧🇱' },
-  { code: 'MF', name: 'Saint-Martin', flag: '🇲🇫' },
-  { code: 'WF', name: 'Wallis-et-Futuna', flag: '🇼🇫' },
-  { code: 'PF', name: 'Polynésie française', flag: '🇵🇫' },
-  { code: 'NC', name: 'Nouvelle-Calédonie', flag: '🇳🇨' },
-  { code: 'TF', name: 'TAAF', flag: '🇹🇫' },
+/** Territories that have real observatoire snapshots */
+const TERRITORY_STEMS = [
+  { code: 'GP', name: 'Guadeloupe',              flag: '🇬🇵', stem: 'guadeloupe' },
+  { code: 'MQ', name: 'Martinique',              flag: '🇲🇶', stem: 'martinique' },
+  { code: 'GF', name: 'Guyane',                  flag: '🇬🇫', stem: 'guyane' },
+  { code: 'RE', name: 'La Réunion',              flag: '🇷🇪', stem: 'la_r\u00e9union' },
+  { code: 'YT', name: 'Mayotte',                 flag: '🇾🇹', stem: 'mayotte' },
+  { code: 'BL', name: 'Saint-Barthélemy',        flag: '🇧🇱', stem: 'saint_barthelemy' },
+  { code: 'MF', name: 'Saint-Martin',            flag: '🇲🇫', stem: 'saint_martin' },
+  { code: 'PM', name: 'Saint-Pierre-et-Miquelon',flag: '🇵🇲', stem: 'saint_pierre_et_miquelon' },
 ];
+
+const CURRENT_MONTH  = '2026-03';
+const PREVIOUS_MONTH = '2026-02';
+const BASE_URL = typeof import.meta !== 'undefined' ? (import.meta.env?.BASE_URL ?? '/') : '/';
+
+async function fetchSnapshot(stem, month) {
+  try {
+    const r = await fetch(`${BASE_URL}data/observatoire/${stem}_${month}.json`);
+    if (!r.ok) return null;
+    return r.json();
+  } catch {
+    return null;
+  }
+}
+
+function avgPrices(snapshot) {
+  if (!snapshot?.donnees?.length) return 0;
+  const sum = snapshot.donnees.reduce((s, d) => s + d.prix, 0);
+  return sum / snapshot.donnees.length;
+}
 
 export function IndiceVieChere({ selectedTerritory = null }) {
   const [indices, setIndices] = useState([]);
@@ -30,69 +47,61 @@ export function IndiceVieChere({ selectedTerritory = null }) {
   const [selectedCategory, setSelectedCategory] = useState('all');
 
   useEffect(() => {
-    fetchIndices();
+    loadIndices();
   }, [selectedTerritory, selectedCategory]);
 
-  /**
-   * Fetch cost of living indices from Firestore
-   * TODO: Connect to real Firestore data
-   */
-  async function fetchIndices() {
+  async function loadIndices() {
     setLoading(true);
     setError(null);
 
     try {
-      // TODO: PRODUCTION IMPLEMENTATION
-      // const db = getFirestore();
-      // const pricesRef = collection(db, 'prices');
-      // const query = query(pricesRef, where('expiresAt', '>', Date.now()));
-      // const snapshot = await getDocs(query);
-      // 
-      // Calculate average prices by territory:
-      // const territoryAverages = {};
-      // snapshot.forEach(doc => {
-      //   const data = doc.data();
-      //   if (!territoryAverages[data.territory]) {
-      //     territoryAverages[data.territory] = { sum: 0, count: 0 };
-      //   }
-      //   territoryAverages[data.territory].sum += data.price;
-      //   territoryAverages[data.territory].count += 1;
-      // });
-      // 
-      // const indices = Object.entries(territoryAverages).map(([code, data]) => ({
-      //   territory: code,
-      //   avgPrice: data.sum / data.count,
-      //   productCount: data.count,
-      // }));
+      // Load hexagone as baseline
+      const hexSnap = await fetchSnapshot('hexagone', CURRENT_MONTH);
+      const hexAvg  = avgPrices(hexSnap);
 
-      // Mock data for development
-      const mockIndices = TERRITORIES.map((territory, index) => ({
-        territory: territory.code,
-        territoryName: territory.name,
-        flag: territory.flag,
-        avgPrice: 100 + (index * 5) + Math.random() * 10,
-        productCount: 150 + Math.floor(Math.random() * 100),
-        vsMetropole: 15 + (index * 2) + Math.random() * 5,
-        trend: Math.random() > 0.5 ? 'up' : 'down',
-        trendPercent: Math.random() * 3,
-      }));
+      const results = await Promise.all(
+        TERRITORY_STEMS.map(async (t) => {
+          const [curr, prev] = await Promise.all([
+            fetchSnapshot(t.stem, CURRENT_MONTH),
+            fetchSnapshot(t.stem, PREVIOUS_MONTH),
+          ]);
+          if (!curr) return null;
 
-      // Sort by avgPrice (descending)
-      mockIndices.sort((a, b) => b.avgPrice - a.avgPrice);
+          const currAvg = avgPrices(curr);
+          const prevAvg = avgPrices(prev);
+          const vsMetropole = hexAvg > 0 ? ((currAvg - hexAvg) / hexAvg) * 100 : 0;
 
-      // Filter by selected territory if specified
+          let trend = 'stable';
+          let trendPercent = 0;
+          if (prevAvg > 0) {
+            const delta = ((currAvg - prevAvg) / prevAvg) * 100;
+            trendPercent = Math.abs(delta);
+            trend = delta > 0.1 ? 'up' : delta < -0.1 ? 'down' : 'stable';
+          }
+
+          return {
+            territory: t.code,
+            territoryName: t.name,
+            flag: t.flag,
+            avgPrice: Math.round(currAvg * 100) / 100,
+            productCount: curr.donnees.length,
+            vsMetropole: Math.round(vsMetropole * 10) / 10,
+            trend,
+            trendPercent: Math.round(trendPercent * 10) / 10,
+          };
+        }),
+      );
+
+      let data = results.filter(Boolean).sort((a, b) => b.vsMetropole - a.vsMetropole);
+
       if (selectedTerritory) {
-        const filtered = mockIndices.filter(
-          i => i.territory === selectedTerritory,
-        );
-        setIndices(filtered);
-      } else {
-        setIndices(mockIndices);
+        data = data.filter((i) => i.territory === selectedTerritory);
       }
 
+      setIndices(data);
       setLoading(false);
     } catch (err) {
-      console.error('Error fetching indices:', err);
+      console.error('Error loading observatoire indices:', err);
       setError(err.message);
       setLoading(false);
     }

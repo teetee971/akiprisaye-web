@@ -5,7 +5,7 @@ import {
   DollarSign, Weight, TrendingDown, Map, BarChart3,
   Plane, Ship, Package, Droplet, Shield, GraduationCap,
   Car, HardHat, Wifi, ArrowRight, Users, ShoppingCart, Globe, Search,
-  TrendingUp, Activity, Sparkles,
+  TrendingUp, Activity, Sparkles, Zap, Bell, Clock,
 } from 'lucide-react';
 import { GlassCard } from '../components/ui/glass-card';
 import Comparateur from './Comparateur';
@@ -26,6 +26,21 @@ async function loadObsSnapshot(stem: string, month: string): Promise<ObsSnapshot
   } catch { return null; }
 }
 
+// ── General comparators navigation cards ─────────────────────────────────────
+const GENERAL_COMPARATEURS = [
+  { path: '/comparateur',            icon: DollarSign,  label: 'Comparateur Prix',          color: 'text-lime-400',    bg: 'bg-lime-500/10 border-lime-500/30',     desc: 'Comparer les prix produits en temps réel' },
+  { path: '/comparateur-citoyen',    icon: Users,       label: 'Comparateur Citoyen',       color: 'text-green-400',   bg: 'bg-green-500/10 border-green-500/30',   desc: 'Comparaison participative, données citoyennes' },
+  { path: '/comparaison-enseignes',  icon: Search,      label: 'Comparaison Enseignes',     color: 'text-blue-400',    bg: 'bg-blue-500/10 border-blue-500/30',     desc: 'Comparer les prix entre supermarchés' },
+  { path: '/comparaison-panier',     icon: ShoppingCart,label: 'Comparaison Panier',        color: 'text-teal-400',    bg: 'bg-teal-500/10 border-teal-500/30',     desc: 'Simuler votre panier dans différentes enseignes' },
+  { path: '/comparateur-territoires',icon: Globe,       label: 'Comparateur Territoires',   color: 'text-violet-400',  bg: 'bg-violet-500/10 border-violet-500/30', desc: 'Comparer les prix entre territoires DOM–COM' },
+  { path: '/comparaison-territoires',icon: Map,         label: 'Bilan des Territoires',     color: 'text-rose-400',    bg: 'bg-rose-500/10 border-rose-500/30',     desc: 'Vue d\'ensemble des écarts DOM vs Hexagone' },
+  { path: '/inflation-categories',   icon: TrendingUp,  label: 'Inflation par Catégorie',   color: 'text-orange-400',  bg: 'bg-orange-500/10 border-orange-500/30', desc: 'Suivi de l\'inflation par famille de produits' },
+  { path: '/tableau-inflation',      icon: BarChart3,   label: 'Tableau de l\'Inflation',   color: 'text-yellow-400',  bg: 'bg-yellow-500/10 border-yellow-500/30', desc: 'Tableau de bord inflation multi-territoires' },
+  { path: '/couverture-territoires', icon: Activity,    label: 'Couverture Territoires',    color: 'text-cyan-400',    bg: 'bg-cyan-500/10 border-cyan-500/30',     desc: 'Rapport de couverture des données par territoire' },
+  { path: '/alertes-prix',           icon: Bell,        label: 'Alertes Prix',              color: 'text-red-400',     bg: 'bg-red-500/10 border-red-500/30',       desc: 'Soyez alerté quand un prix baisse' },
+  { path: '/prix-historique',        icon: Clock,       label: 'Historique des Prix',       color: 'text-slate-400',   bg: 'bg-slate-500/10 border-slate-500/30',   desc: 'Courbes d\'évolution des prix dans le temps' },
+];
+
 // ── Specialized comparators navigation cards ──────────────────────────────────
 const SPECIALIZED = [
   { path: '/comparateur-vols',            icon: Plane,       label: 'Vols',              color: 'text-sky-400',      bg: 'bg-sky-500/10 border-sky-500/30',    desc: 'Billets d\'avion DOM–Métropole et inter-îles' },
@@ -40,16 +55,16 @@ const SPECIALIZED = [
   { path: '/evaluation-cosmetique',       icon: Sparkles,    label: 'Cosmétiques',        color: 'text-fuchsia-400', bg: 'bg-fuchsia-500/10 border-fuchsia-500/30', desc: 'Évaluation des produits cosmétiques DOM' },
 ];
 
-// ── General comparators navigation cards ─────────────────────────────────────
-const GENERAL_COMPARATEURS = [
-  { path: '/comparateur',            icon: DollarSign,  label: 'Comparateur Prix',          color: 'text-lime-400',    bg: 'bg-lime-500/10 border-lime-500/30',     desc: 'Comparer les prix produits en temps réel' },
-  { path: '/comparateur-citoyen',    icon: Users,       label: 'Comparateur Citoyen',       color: 'text-green-400',   bg: 'bg-green-500/10 border-green-500/30',   desc: 'Comparaison participative, données citoyennes' },
-  { path: '/comparaison-enseignes',  icon: Search,      label: 'Comparaison Enseignes',     color: 'text-blue-400',    bg: 'bg-blue-500/10 border-blue-500/30',     desc: 'Comparer les prix entre supermarchés' },
-  { path: '/comparaison-panier',     icon: ShoppingCart,label: 'Comparaison Panier',        color: 'text-teal-400',    bg: 'bg-teal-500/10 border-teal-500/30',     desc: 'Simuler votre panier dans différentes enseignes' },
-  { path: '/comparateur-territoires',icon: Globe,       label: 'Comparateur Territoires',   color: 'text-violet-400',  bg: 'bg-violet-500/10 border-violet-500/30', desc: 'Comparer les prix entre territoires DOM–COM' },
-  { path: '/comparaison-territoires',icon: Map,         label: 'Bilan des Territoires',     color: 'text-rose-400',    bg: 'bg-rose-500/10 border-rose-500/30',     desc: 'Vue d\'ensemble des écarts DOM vs Hexagone' },
-  { path: '/inflation-categories',   icon: TrendingUp,  label: 'Inflation par Catégorie',   color: 'text-orange-400',  bg: 'bg-orange-500/10 border-orange-500/30', desc: 'Suivi de l\'inflation par famille de produits' },
-  { path: '/couverture-territoires', icon: Activity,    label: 'Couverture Territoires',    color: 'text-cyan-400',    bg: 'bg-cyan-500/10 border-cyan-500/30',     desc: 'Rapport de couverture des données par territoire' },
+// ── Recherche-prix sub-comparators ─────────────────────────────────────────────
+const RECHERCHE_PRIX = [
+  { path: '/recherche-prix/avions',              icon: Plane,      label: 'Tarifs Avions',            color: 'text-sky-400',     bg: 'bg-sky-500/10 border-sky-500/30',     desc: 'Prix des billets d\'avion DOM–Métropole par mois' },
+  { path: '/recherche-prix/bateaux',             icon: Ship,       label: 'Tarifs Bateaux',           color: 'text-cyan-400',    bg: 'bg-cyan-500/10 border-cyan-500/30',   desc: 'Traversées et ferries Antilles / Réunion' },
+  { path: '/recherche-prix/fret',                icon: Package,    label: 'Prix Fret Maritime',       color: 'text-amber-400',   bg: 'bg-amber-500/10 border-amber-500/30', desc: 'Coûts du fret maritime vers les DOM' },
+  { path: '/recherche-prix/fret-aerien',         icon: Package,    label: 'Prix Fret Aérien',         color: 'text-orange-400',  bg: 'bg-orange-500/10 border-orange-500/30', desc: 'Tarifs de fret aérien express vers les DOM' },
+  { path: '/recherche-prix/electricite',         icon: Zap,        label: 'Tarifs Électricité',       color: 'text-yellow-400',  bg: 'bg-yellow-500/10 border-yellow-500/30', desc: 'Prix du kWh par territoire DOM–COM' },
+  { path: '/recherche-prix/eau',                 icon: Droplet,    label: 'Tarifs Eau',               color: 'text-blue-400',    bg: 'bg-blue-500/10 border-blue-500/30',   desc: 'Prix de l\'eau potable par collectivité' },
+  { path: '/recherche-prix/abonnements-internet',icon: Wifi,       label: 'Abonnements Internet',     color: 'text-indigo-400',  bg: 'bg-indigo-500/10 border-indigo-500/30', desc: 'Offres fibre, ADSL et satellite par territoire' },
+  { path: '/recherche-prix/abonnements-mobile',  icon: Wifi,       label: 'Abonnements Mobile',       color: 'text-violet-400',  bg: 'bg-violet-500/10 border-violet-500/30', desc: 'Forfaits mobiles 4G/5G en DOM–COM' },
 ];
 
 export default function ComparateursHub() {
@@ -354,6 +369,33 @@ export default function ComparateursHub() {
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {SPECIALIZED.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={`group flex items-start gap-3 rounded-xl border p-4 transition-all hover:scale-[1.02] hover:shadow-lg ${item.bg}`}
+                  >
+                    <Icon className={`w-6 h-6 mt-0.5 flex-shrink-0 ${item.color}`} />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-white">{item.label}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">{item.desc}</p>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-gray-600 group-hover:text-white transition-colors mt-1 flex-shrink-0" />
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* ── Recherche Prix sub-comparators ── */}
+          <div className="mt-10">
+            <h2 className="text-2xl font-bold text-white mb-2">🔎 Recherche &amp; Tarifs</h2>
+            <p className="text-gray-400 text-sm mb-6">
+              Transports, énergie, eau, télécoms — tarifs détaillés par territoire et par période.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {RECHERCHE_PRIX.map((item) => {
                 const Icon = item.icon;
                 return (
                   <Link
