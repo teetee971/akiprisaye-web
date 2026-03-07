@@ -14,6 +14,8 @@ const TerritoryPriceChart = lazy(() => import('../components/home/TerritoryPrice
 const PriceEvolutionChart = lazy(() => import('../components/home/PriceEvolutionChart'));
 const LiveNewsFeed = lazy(() => import('../components/home/LiveNewsFeed'));
 const PanierVitalWidget = lazy(() => import('../components/home/PanierVitalWidget'));
+const CategoryOvercostChart = lazy(() => import('../components/home/CategoryOvercostChart'));
+const StoreRankingWidget = lazy(() => import('../components/home/StoreRankingWidget'));
 
 const TESTIMONIALS = [
   {
@@ -400,6 +402,14 @@ export default function HomeV5() {
         {/* Panier vital — purchasing power index: minutes of SMIC per basket */}
         <Suspense fallback={null}>
           <PanierVitalWidget />
+        {/* Store ranking widget — cheapest vs most expensive stores per territory */}
+        <Suspense fallback={null}>
+          <StoreRankingWidget />
+        </Suspense>
+
+        {/* Category overcost chart — DOM surcoût vs Hexagone by category */}
+        <Suspense fallback={null}>
+          <CategoryOvercostChart />
         </Suspense>
 
         {/* Live news feed from actualites.json — real data only */}
