@@ -14,6 +14,9 @@ interface NewsArticle {
   link: string;
   category: string;
   territory: string;
+  imageUrl?: string;
+  source_name?: string;
+  source_url?: string;
 }
 
 interface ActualitesData {
@@ -78,8 +81,19 @@ export default function LiveNewsFeed() {
       <div className="news-feed-grid">
         {articles.map((article) => {
           const color = CATEGORY_COLORS[article.category] ?? CATEGORY_COLORS.default;
+          const sourceHref = article.source_url || article.link;
           return (
             <article key={article.id} className="news-card fade-in">
+              {article.imageUrl && (
+                <img
+                  src={article.imageUrl}
+                  alt={article.title}
+                  loading="lazy"
+                  className="news-card-image"
+                  onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                />
+              )}
+              <div className="news-card-body">
               <div className="news-card-top">
                 <span className="news-card-icon" role="img" aria-label={article.category}>
                   {article.icon}
@@ -94,17 +108,20 @@ export default function LiveNewsFeed() {
               <h3 className="news-card-title">{article.title}</h3>
               <p className="news-card-date">{formatDate(article.date)}</p>
               <p className="news-card-content">{article.content}</p>
-              {article.link && (
-                <a
-                  href={article.link}
-                  className="news-card-link"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`Lire l'article : ${article.title}`}
-                >
-                  Lire la source →
-                </a>
-              )}
+              <div className="news-card-footer">
+                {sourceHref && (
+                  <a
+                    href={sourceHref}
+                    className="news-card-link"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Lire l'article : ${article.title}`}
+                  >
+                    {article.source_name ? `Source : ${article.source_name} →` : 'Lire la source →'}
+                  </a>
+                )}
+              </div>
+              </div>
             </article>
           );
         })}

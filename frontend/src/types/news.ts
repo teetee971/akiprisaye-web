@@ -23,6 +23,7 @@ export interface NewsItem {
   canonical_url?: string;
   expires_at?: string;
   verified: boolean;
+  imageUrl?: string;
 }
 
 // Legacy civic exports kept for compatibility with existing components

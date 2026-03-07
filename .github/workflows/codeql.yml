@@ -46,8 +46,6 @@ jobs:
         include:
         - language: actions
           build-mode: none
-        - language: java-kotlin
-          build-mode: none # This mode only analyzes Java. Set this to 'autobuild' or 'manual' to analyze Kotlin too.
         - language: javascript-typescript
           build-mode: none
         # CodeQL supports the following values keywords for 'language': 'actions', 'c-cpp', 'csharp', 'go', 'java-kotlin', 'javascript-typescript', 'python', 'ruby', 'rust', 'swift'
@@ -61,19 +59,6 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-
-    - name: Setup Node.js for Android dependencies
-      if: matrix.language == 'java-kotlin'
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-
-    - name: Install Android build prerequisites for CodeQL
-      if: matrix.language == 'java-kotlin'
-      run: |
-        npm install --no-save @capacitor/android@8 @capacitor/core@8
-        mkdir -p android/capacitor-cordova-android-plugins/src/main/libs
-        echo "sdk.dir=${ANDROID_SDK_ROOT}" > android/local.properties
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL

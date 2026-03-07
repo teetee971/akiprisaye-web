@@ -139,7 +139,17 @@ export default function Actualites() {
         {displayedItems.map((item) => {
           const evidenceOpen = Boolean(openEvidence[item.id]);
           return (
-            <article key={item.id} className="rounded-2xl border border-white/10 bg-slate-900/70 p-4">
+            <article key={item.id} className="rounded-2xl border border-white/10 bg-slate-900/70 overflow-hidden">
+              {item.imageUrl && (
+                <img
+                  src={item.imageUrl}
+                  alt={item.title}
+                  loading="lazy"
+                  className="w-full h-36 object-cover"
+                  onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                />
+              )}
+              <div className="p-4">
               <div className="mb-2 flex flex-wrap gap-2 text-xs">
                 <span className="rounded bg-slate-800 px-2 py-1">{TERRITORY_LABELS[item.territory] ?? item.territory}</span>
                 <span className="rounded bg-slate-800 px-2 py-1">{IMPACT_LABELS[item.impact] ?? item.impact}</span>
@@ -166,6 +176,7 @@ export default function Actualites() {
                   )}
                 </div>
               )}
+              </div>
             </article>
           );
         })}

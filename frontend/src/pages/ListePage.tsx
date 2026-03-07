@@ -140,11 +140,11 @@ export default function ListePage() {
   return (
     <div className="space-y-4">
       <h1 className="text-3xl font-bold">Liste de Courses Intelligente</h1>
-      <div className="flex gap-2">
-        <input className="rounded border border-slate-700 bg-slate-900 px-3 py-2" value={name} onChange={(e) => setName(e.target.value)} placeholder="Ajouter un article" />
-        <button className="rounded bg-blue-600 px-4 py-2" onClick={onAdd}>Ajouter</button>
-        <button className="rounded bg-slate-700 px-4 py-2" onClick={refreshPrices}>Refresh prix</button>
-        <button className="rounded bg-emerald-700 px-4 py-2" onClick={exportData}>Exporter</button>
+      <div className="flex flex-wrap gap-2">
+        <input className="flex-1 min-w-0 rounded border border-slate-700 bg-slate-900 px-3 py-2" value={name} onChange={(e) => setName(e.target.value)} placeholder="Ajouter un article" />
+        <button className="rounded bg-blue-600 px-4 py-2 whitespace-nowrap" onClick={onAdd}>Ajouter</button>
+        <button className="rounded bg-slate-700 px-4 py-2 whitespace-nowrap" onClick={refreshPrices}>Refresh prix</button>
+        <button className="rounded bg-emerald-700 px-4 py-2 whitespace-nowrap" onClick={exportData}>Exporter</button>
       </div>
 
       {isAtMax && (

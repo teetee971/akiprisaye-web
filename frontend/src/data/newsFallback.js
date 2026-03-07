@@ -15,6 +15,7 @@ export const newsFallback = [
     verified: true,
     tags: ['alimentaire', 'sécurité', 'rappel'],
     evidence: { lot: 'LC2501', confidence: 'official' },
+    imageUrl: 'https://images.unsplash.com/photo-1534483509719-3feaee7c30da?auto=format&fit=crop&w=600&q=75',
   },
   {
     id: 'fallback-bonsplans-mq-002',
@@ -33,6 +34,7 @@ export const newsFallback = [
     expires_at: '2026-01-30T23:59:59.000Z',
     tags: ['bébé', 'promotion', 'panier'],
     evidence: { deltaPct: -22, periodDays: 7, confidence: 'partner' },
+    imageUrl: 'https://images.unsplash.com/photo-1519689373023-dd07c7988603?auto=format&fit=crop&w=600&q=75',
   },
   {
     id: 'fallback-reg-fr-003',
@@ -49,6 +51,7 @@ export const newsFallback = [
     confidence: 'official',
     verified: true,
     tags: ['aides', 'énergie', 'réglementation'],
+    imageUrl: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=600&q=75',
   },
   {
     id: 'fallback-indice-all-004',
@@ -65,6 +68,7 @@ export const newsFallback = [
     verified: true,
     tags: ['indice', 'inflation', 'panier'],
     evidence: { deltaPct: -1.8, periodDays: 7, confidence: 'partner' },
+    imageUrl: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=600&q=75',
   },
   {
     id: 'fallback-dossier-re-005',
@@ -81,6 +85,7 @@ export const newsFallback = [
     confidence: 'press',
     verified: true,
     tags: ['dossier', 'comparatif', 'consommation'],
+    imageUrl: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=600&q=75',
   },
   {
     id: 'fallback-press-gf-006',
@@ -97,6 +102,7 @@ export const newsFallback = [
     confidence: 'press',
     verified: false,
     tags: ['presse', 'écarts-prix'],
+    imageUrl: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=600&q=75',
   },
   {
     id: 'fallback-bonsplans-yt-007',
@@ -113,6 +119,7 @@ export const newsFallback = [
     verified: false,
     expires_at: '2026-01-22T23:59:59.000Z',
     tags: ['signalement', 'à confirmer'],
+    imageUrl: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=600&q=75',
   },
   {
     id: 'fallback-reg-gp-008',
@@ -129,6 +136,7 @@ export const newsFallback = [
     confidence: 'official',
     verified: true,
     tags: ['carburants', 'préfecture'],
+    imageUrl: 'https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fit=crop&w=600&q=75',
   },
   {
     id: 'fallback-rappel-fr-009',
@@ -145,6 +153,7 @@ export const newsFallback = [
     confidence: 'official',
     verified: true,
     tags: ['dgccrf', 'sécurité'],
+    imageUrl: 'https://images.unsplash.com/photo-1563453392212-326f5e854473?auto=format&fit=crop&w=600&q=75',
   },
   {
     id: 'fallback-dossier-mq-010',
@@ -161,5 +170,6 @@ export const newsFallback = [
     confidence: 'press',
     verified: false,
     tags: ['comparatif', 'panier'],
+    imageUrl: 'https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=600&q=75',
   },
 ];

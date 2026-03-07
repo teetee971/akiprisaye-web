@@ -8,7 +8,11 @@
       "content": "Selon l'Observatoire citoyen A KI PRI SA YÉ, un panier de 6 produits essentiels (lait, riz, eau, pâtes, sucre, huile) nécessite en moyenne 48 min de travail au SMIC en Hexagone contre 117 min en Guyane, 88 min en Mayotte et 79 min en Guadeloupe. L'écart dépasse le plafond légal BQP (+30%) pour 4 des 6 produits en Guyane.",
       "link": "https://akiprisaye-web.pages.dev/observatoire",
       "category": "économie",
-      "territory": "all"
+      "territory": "all",
+      "imageUrl": "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=600&q=75",
+      "source_name": "Observatoire A KI PRI SA YÉ",
+      "source_url": "https://akiprisaye-web.pages.dev/observatoire",
+      "verified": true
     },
     {
       "id": "2026-03-06-octroi-mer-reforme",
@@ -18,17 +22,11 @@
       "content": "Le gouvernement lance des consultations sur la réforme de l'octroi de mer, taxe locale dont le taux moyen atteint 8,5% en Guadeloupe et 7,8% en Martinique. Les associations de consommateurs réclament une réduction ciblée sur les produits alimentaires de première nécessité.",
       "link": "https://www.economie.gouv.fr/dgccrf/outre-mer",
       "category": "réglementation",
-      "territory": "all"
-    },
-    {
-      "id": "2026-03-04-guyane-fret-record",
-      "title": "Guyane : coûts de fret record, +18% sur 6 mois",
-      "icon": "🚢",
-      "date": "2026-03-04",
-      "content": "Les données de la DAAF Guyane confirment une hausse de 18% des coûts de transport maritime depuis le second semestre 2025. Ce surcoût se répercute directement sur les prix à la consommation, portant l'écart alimentaire moyen Guyane/Hexagone à +43% en mars 2026.",
-      "link": "https://daaf.guyane.agriculture.gouv.fr",
-      "category": "logistique",
-      "territory": "GF"
+      "territory": "all",
+      "imageUrl": "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=600&q=75",
+      "source_name": "DGCCRF",
+      "source_url": "https://www.economie.gouv.fr/dgccrf/outre-mer",
+      "verified": true
     },
     {
       "id": "2026-03-05-inflation-dom-mars",
@@ -38,7 +36,25 @@
       "content": "L'INSEE publie l'IPC des DOM pour février 2026 : +7,4% sur un an en Guadeloupe, +6,9% en Martinique, +8,1% en Guyane et +6,5% à La Réunion. L'alimentaire reste le premier poste de dépenses sous pression (+9,2% en moyenne).",
       "link": "https://www.insee.fr/fr/statistiques/zones/2388681",
       "category": "économie",
-      "territory": "all"
+      "territory": "all",
+      "imageUrl": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=600&q=75",
+      "source_name": "INSEE",
+      "source_url": "https://www.insee.fr/fr/statistiques/zones/2388681",
+      "verified": true
+    },
+    {
+      "id": "2026-03-04-guyane-fret-record",
+      "title": "Guyane : coûts de fret record, +18% sur 6 mois",
+      "icon": "🚢",
+      "date": "2026-03-04",
+      "content": "Les données de la DAAF Guyane confirment une hausse de 18% des coûts de transport maritime depuis le second semestre 2025. Ce surcoût se répercute directement sur les prix à la consommation, portant l'écart alimentaire moyen Guyane/Hexagone à +43% en mars 2026.",
+      "link": "https://daaf.guyane.agriculture.gouv.fr",
+      "category": "logistique",
+      "territory": "GF",
+      "imageUrl": "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=600&q=75",
+      "source_name": "DAAF Guyane",
+      "source_url": "https://daaf.guyane.agriculture.gouv.fr",
+      "verified": true
     },
     {
       "id": "2026-03-03-bouclier-qualite-prix-2026",
@@ -48,115 +64,160 @@
       "content": "Le gouvernement annonce l'extension du Bouclier qualité-prix à 6 200 références pour 2026, soit +200 produits supplémentaires. Les enseignes s'engagent à un écart maximal de +30% vs métropole sur ces produits. La DGCCRF renforcera ses contrôles dès avril.",
       "link": "https://www.economie.gouv.fr/dgccrf/bouclier-qualite-prix-outre-mer",
       "category": "réglementation",
-      "territory": "all"
+      "territory": "all",
+      "imageUrl": "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=75",
+      "source_name": "DGCCRF",
+      "source_url": "https://www.economie.gouv.fr/dgccrf/bouclier-qualite-prix-outre-mer",
+      "verified": true
+    },
+    {
+      "id": "2026-03-01-reunion-leclerc-ouverture",
+      "title": "Réunion : ouverture E.Leclerc Saint-Denis, -20% annoncé",
+      "icon": "🏪",
+      "date": "2026-03-01",
+      "content": "Le nouveau centre E.Leclerc de Saint-Denis (3 500 m²) a ouvert ses portes avec une politique tarifaire affichant -20% sur les prix de la concurrence locale. Premiers relevés terrain de l'Observatoire AKPSY confirment des écarts allant de -14% à -23% selon les rayons.",
+      "link": "https://www.e-leclerc.com/magasins",
+      "category": "distribution",
+      "territory": "reunion",
+      "imageUrl": "https://images.unsplash.com/photo-1604719312566-8912e9227c6a?auto=format&fit=crop&w=600&q=75",
+      "source_name": "E.Leclerc",
+      "source_url": "https://www.e-leclerc.com/magasins",
+      "verified": true
+    },
+    {
+      "id": "2026-02-28-rappel-conserves-sardines",
+      "title": "Rappel : conserves de sardines lot LC2602 — histamine élevée",
+      "icon": "⚠️",
+      "date": "2026-02-28",
+      "content": "RappelConso signale un lot de sardines en conserve (lot LC2602, DLC mars 2026) distribué en Guadeloupe et Martinique avec un taux d'histamine dépassant le seuil réglementaire de 200 mg/kg. Ne pas consommer, rapporter en magasin pour remboursement.",
+      "link": "https://rappel.conso.gouv.fr",
+      "category": "sécurité",
+      "territory": "all",
+      "imageUrl": "https://images.unsplash.com/photo-1534483509719-3feaee7c30da?auto=format&fit=crop&w=600&q=75",
+      "source_name": "RappelConso (DGCCRF)",
+      "source_url": "https://rappel.conso.gouv.fr",
+      "verified": true
+    },
+    {
+      "id": "2026-02-25-bons-plans-lessive-gp",
+      "title": "Bon plan Guadeloupe : lessive liquide 5L à -28%",
+      "icon": "🧺",
+      "date": "2026-02-25",
+      "content": "Promotion vérifiée par nos contributeurs dans 3 enseignes de Guadeloupe : lessive liquide 5L passe de 9,80€ à 7,05€ (lot de 3 unités). Valable jusqu'au 8 mars 2026. Prix confirmés par tickets de caisse déposés sur la plateforme.",
+      "link": "https://akiprisaye-web.pages.dev/contribuer",
+      "category": "bon plan",
+      "territory": "guadeloupe",
+      "imageUrl": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=600&q=75",
+      "source_name": "Observatoire AKPSY — Contributeurs",
+      "source_url": "https://akiprisaye-web.pages.dev/contribuer",
+      "verified": true
+    },
+    {
+      "id": "2026-02-20-aide-alimentaire-martinique",
+      "title": "Aide alimentaire : 18 000 bénéficiaires en Martinique",
+      "icon": "🤝",
+      "date": "2026-02-20",
+      "content": "Les associations d'aide alimentaire en Martinique accompagnent désormais 18 000 personnes (+22% en un an). Face à la cherté de la vie, les dispositifs Ti Panié Solidaire se multiplient dans les communes. Nouveau partenariat avec la Région pour augmenter les capacités.",
+      "link": "https://www.martinique.gouv.fr/Politiques-publiques/Solidarite-et-cohesion-sociale",
+      "category": "solidarité",
+      "territory": "martinique",
+      "imageUrl": "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=600&q=75",
+      "source_name": "Préfecture de Martinique",
+      "source_url": "https://www.martinique.gouv.fr/Politiques-publiques/Solidarite-et-cohesion-sociale",
+      "verified": true
+    },
+    {
+      "id": "2026-02-15-carburant-guadeloupe",
+      "title": "Prix du carburant en Guadeloupe : -0,12€/L en février",
+      "icon": "⛽",
+      "date": "2026-02-15",
+      "content": "Bonne nouvelle pour les automobilistes guadeloupéens : le prix à la pompe baisse de 12 centimes en moyenne en février 2026. Le gazole passe à 1,68€/L et le sans-plomb 95 à 1,74€/L. Première baisse depuis 6 mois.",
+      "link": "https://www.guadeloupe.gouv.fr/Politiques-publiques/Economie-et-finances/Prix-des-carburants",
+      "category": "énergie",
+      "territory": "guadeloupe",
+      "imageUrl": "https://images.unsplash.com/photo-1524779709304-40b5a3560c64?auto=format&fit=crop&w=600&q=75",
+      "source_name": "Préfecture de Guadeloupe",
+      "source_url": "https://www.guadeloupe.gouv.fr/Politiques-publiques/Economie-et-finances/Prix-des-carburants",
+      "verified": true
+    },
+    {
+      "id": "2026-02-10-panier-moyen-dom",
+      "title": "Panier moyen : 127€ dans les DOM vs 89€ en métropole",
+      "icon": "🛒",
+      "date": "2026-02-10",
+      "content": "Étude comparative de 50 produits de consommation courante : le panier moyen dans les DOM s'établit à 127€ contre 89€ en métropole (+43%). L'écart le plus important concerne les produits laitiers (+68%) et les fruits (+54%).",
+      "link": "https://www.insee.fr/fr/statistiques?theme=18&geo=DROM-1",
+      "category": "étude",
+      "territory": "all",
+      "imageUrl": "https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=600&q=75",
+      "source_name": "INSEE — Statistiques Outre-mer",
+      "source_url": "https://www.insee.fr/fr/statistiques?theme=18&geo=DROM-1",
+      "verified": true
+    },
+    {
+      "id": "2026-02-05-dgccrf-controles-dom",
+      "title": "DGCCRF : 47 infractions relevées dans la grande distribution DOM",
+      "icon": "🔎",
+      "date": "2026-02-05",
+      "content": "La DGCCRF publie son bilan des contrôles réalisés dans la grande distribution des DOM au 1er semestre 2025 : 47 infractions relevées, dont 12 concernant des marges abusives sur produits alimentaires. 8 mises en demeure adressées à des enseignes.",
+      "link": "https://www.economie.gouv.fr/dgccrf/resultats-enquetes-dom",
+      "category": "réglementation",
+      "territory": "all",
+      "imageUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=75",
+      "source_name": "DGCCRF",
+      "source_url": "https://www.economie.gouv.fr/dgccrf/resultats-enquetes-dom",
+      "verified": true
+    },
+    {
+      "id": "2026-01-25-bio-local-dom",
+      "title": "Produits bio locaux : +35% de disponibilité en 2025",
+      "icon": "🌱",
+      "date": "2026-01-25",
+      "content": "La production locale de fruits et légumes bio progresse fortement dans les DOM : +35% en 2025. Les circuits courts se développent, permettant des prix 20% moins chers que les produits bio importés. La Réunion et la Guadeloupe sont en tête.",
+      "link": "https://agriculture.gouv.fr/lagriculture-biologique-en-outre-mer",
+      "category": "agriculture",
+      "territory": "all",
+      "imageUrl": "https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&w=600&q=75",
+      "source_name": "Ministère de l'Agriculture",
+      "source_url": "https://agriculture.gouv.fr/lagriculture-biologique-en-outre-mer",
+      "verified": true
     },
     {
       "id": "2026-01-12-inflation-dom",
       "title": "Inflation dans les DOM : +8,2% en décembre 2025",
       "icon": "📈",
       "date": "2026-01-12",
-      "content": "L'Insee révèle une inflation de 8,2% dans les territoires d'Outre-mer en décembre 2025, contre 5,1% en métropole. Les produits alimentaires de base enregistrent les plus fortes hausses: +12% pour les fruits et légumes, +9% pour les produits laitiers.",
+      "content": "L'Insee révèle une inflation de 8,2% dans les territoires d'Outre-mer en décembre 2025, contre 5,1% en métropole. Les produits alimentaires de base enregistrent les plus fortes hausses : +12% pour les fruits et légumes, +9% pour les produits laitiers.",
       "link": "https://www.insee.fr",
       "category": "économie",
-      "territory": "all"
+      "territory": "all",
+      "imageUrl": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=600&q=75",
+      "source_name": "INSEE",
+      "source_url": "https://www.insee.fr",
+      "verified": true
     },
     {
       "id": "2026-01-10-transport-maritime",
-      "title": "Coûts du fret maritime: nouvelle hausse de 15%",
+      "title": "Coûts du fret maritime : nouvelle hausse de 15%",
       "icon": "🚢",
       "date": "2026-01-10",
-      "content": "Les compagnies maritimes annoncent une augmentation de 15% des tarifs de fret vers la Guadeloupe, la Martinique et la Réunion. Cette hausse s'explique par l'augmentation du prix du carburant et les tensions géopolitiques. Impact attendu sur les prix des produits importés d'ici février 2026.",
+      "content": "Les compagnies maritimes annoncent une augmentation de 15% des tarifs de fret vers la Guadeloupe, la Martinique et la Réunion. Cette hausse s'explique par l'augmentation du prix du carburant et les tensions géopolitiques.",
       "link": "https://www.ecologie.gouv.fr/politiques-publiques/transport-maritime",
       "category": "logistique",
-      "territory": "all"
-    },
-    {
-      "id": "2026-01-08-bouclier-qualite-prix",
-      "title": "Bouclier qualité-prix: 6 000 produits concernés",
-      "icon": "🛡️",
-      "date": "2026-01-08",
-      "content": "Le dispositif Bouclier qualité-prix dans les DOM est étendu à 6 000 références de produits. Les enseignes s'engagent à limiter les écarts de prix avec la métropole à +30% maximum. Contrôles renforcés par la DGCCRF dans les semaines à venir.",
-      "link": "https://www.economie.gouv.fr/dgccrf/bouclier-qualite-prix-outre-mer",
-      "category": "réglementation",
-      "territory": "all"
-    },
-    {
-      "id": "2026-01-05-carburant-guadeloupe",
-      "title": "Prix du carburant en Guadeloupe: -0,12€/L en janvier",
-      "icon": "⛽",
-      "date": "2026-01-05",
-      "content": "Bonne nouvelle pour les automobilistes guadeloupéens: le prix à la pompe baisse de 12 centimes en moyenne en janvier 2026. Le gazole passe à 1,68€/L et le sans-plomb 95 à 1,74€/L. Première baisse depuis 6 mois.",
-      "link": "https://www.guadeloupe.gouv.fr/Politiques-publiques/Economie-et-finances/Prix-des-carburants",
-      "category": "énergie",
-      "territory": "guadeloupe"
-    },
-    {
-      "id": "2026-01-03-grande-distribution",
-      "title": "Nouvelle enseigne Leclerc à Saint-Denis (Réunion)",
-      "icon": "🏪",
-      "date": "2026-01-03",
-      "content": "Ouverture prévue en mars 2026 d'un nouveau centre E.Leclerc à Saint-Denis, Réunion. 3 500 m² de surface de vente, avec engagement de prix -20% par rapport à la concurrence locale. 120 emplois créés.",
-      "link": "https://www.e-leclerc.com/magasins",
-      "category": "distribution",
-      "territory": "reunion"
-    },
-    {
-      "id": "2025-12-28-panier-moyen",
-      "title": "Panier moyen: 127€ en DOM vs 89€ en métropole",
-      "icon": "🛒",
-      "date": "2025-12-28",
-      "content": "Étude comparative de 50 produits de consommation courante: le panier moyen dans les DOM s'établit à 127€ contre 89€ en métropole (+43%). L'écart le plus important concerne les produits laitiers (+68%) et les fruits (+54%).",
-      "link": "https://www.insee.fr/fr/statistiques?theme=18&amp;geo=DROM-1",
-      "category": "étude",
-      "territory": "all"
-    },
-    {
-      "id": "2025-12-22-aide-alimentaire",
-      "title": "Aide alimentaire: 18 000 bénéficiaires en Martinique",
-      "icon": "🤝",
-      "date": "2025-12-22",
-      "content": "Les associations d'aide alimentaire en Martinique accompagnent désormais 18 000 personnes (+22% en un an). Face à la cherté de la vie, les dispositifs Ti Panié Solidaire se multiplient dans les communes.",
-      "link": "https://www.martinique.gouv.fr/Politiques-publiques/Solidarite-et-cohesion-sociale",
-      "category": "social",
-      "territory": "martinique"
-    },
-    {
-      "id": "2025-12-18-octroi-mer",
-      "title": "Réforme de l'octroi de mer: impact sur les prix",
-      "icon": "💶",
-      "date": "2025-12-18",
-      "content": "La réforme de l'octroi de mer entre en vigueur en janvier 2026. Baisse attendue de 3 à 5% sur certains produits manufacturés importés. Les produits alimentaires restent exemptés de cette taxe régionale.",
-      "link": "https://www.douane.gouv.fr/fiche/loctroi-de-mer",
-      "category": "fiscalité",
-      "territory": "all"
-    },
-    {
-      "id": "2025-12-15-comparateur-prix",
-      "title": "Application A KI PRI SA YÉ: 50 000 utilisateurs",
-      "icon": "📱",
-      "date": "2025-12-15",
-      "content": "L'application citoyenne de comparaison des prix dans les DOM franchit le cap des 50 000 utilisateurs actifs. Plus de 200 000 prix comparés, permettant aux consommateurs d'économiser en moyenne 15% sur leurs courses.",
-      "link": "https://akiprisaye.pages.dev",
-      "category": "tech",
-      "territory": "all"
-    },
-    {
-      "id": "2025-12-10-bio-local",
-      "title": "Produits bio locaux: +35% de disponibilité en 2025",
-      "icon": "🌱",
-      "date": "2025-12-10",
-      "content": "La production locale de fruits et légumes bio progresse fortement dans les DOM: +35% en 2025. Les circuits courts se développent, permettant des prix 20% moins chers que les produits bio importés.",
-      "link": "https://agriculture.gouv.fr/lagriculture-biologique-en-outre-mer",
-      "category": "agriculture",
-      "territory": "all"
+      "territory": "all",
+      "imageUrl": "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=600&q=75",
+      "source_name": "Ministère de l'Écologie — Transport maritime",
+      "source_url": "https://www.ecologie.gouv.fr/politiques-publiques/transport-maritime",
+      "verified": true
     }
   ],
   "lastUpdated": "2026-03-07",
-  "version": "1.0",
+  "version": "2.0",
   "sources": [
-    "INSEE - Institut national de la statistique et des études économiques",
-    "DGCCRF - Direction générale de la concurrence, de la consommation et de la répression des fraudes",
-    "Observatoires des prix DOM",
+    "INSEE — Institut national de la statistique et des études économiques",
+    "DGCCRF — Direction générale de la concurrence, de la consommation et de la répression des fraudes",
+    "RappelConso — Plateforme officielle de rappels produits",
+    "Préfectures des DOM-TOM",
     "Données terrain collectées par A KI PRI SA YÉ"
   ]
 }
