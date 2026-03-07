@@ -16,16 +16,18 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const { data: prs } = await github.rest.pulls.list({
+            // PRs à conserver (PR courante du nettoyage)
+            const keepPRs = new Set([1161]);
+
+            // Récupère toutes les PRs ouvertes avec pagination
+            const prs = await github.paginate(github.rest.pulls.list, {
               owner: context.repo.owner,
               repo: context.repo.repo,
               state: 'open',
               per_page: 100,
             });
 
-            // PRs à conserver (PR courante du nettoyage)
-            const keepPRs = new Set([1161]);
-
+            const skipped = prs.filter(pr => keepPRs.has(pr.number)).length;
             let closed = 0;
             for (const pr of prs) {
               if (keepPRs.has(pr.number)) {
@@ -45,4 +47,4 @@ jobs:
                 console.error(`❌ Erreur PR #${pr.number}: ${err.message}`);
               }
             }
-            console.log(`\n🧹 Total fermées : ${closed}/${prs.length - keepPRs.size}`);
+            console.log(`\n🧹 Total fermées : ${closed}/${prs.length - skipped}`);
