@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Check, X, Minus, ChevronDown, ChevronUp } from 'lucide-react';
 import { HeroImage } from '../components/ui/HeroImage';
@@ -369,8 +369,95 @@ const FEATURE_CATEGORIES: FeatureCategory[] = [
 ];
 
 /* ──────────────────────────────────────────────────────────────────────────── */
-/* Composant valeur de feature                                                  */
+/* Ce que fait la concurrence que nous ne faisons pas (encore)                  */
 /* ──────────────────────────────────────────────────────────────────────────── */
+
+interface GapItem {
+  icon: string;
+  feature: string;
+  who: string;       // which competitor(s) already do it
+  status: 'roadmap' | 'considered' | 'out-of-scope';
+  statusLabel: string;
+  statusColor: string;
+  desc: string;
+}
+
+const COMPETITOR_GAPS: GapItem[] = [
+  {
+    icon: '💻',
+    feature: 'Comparaison high-tech & électroménager',
+    who: 'Idealo, Quiestlemoinscher',
+    status: 'roadmap',
+    statusLabel: '🗓️ Sur la roadmap',
+    statusColor: 'text-blue-400 bg-blue-900/30 border-blue-700/40',
+    desc: 'Idealo et Quiestlemoinscher couvrent smartphones, TV, électroménager avec des dizaines de milliers de références. Nous couvrons aujourd\'hui principalement l\'alimentaire et les services.',
+  },
+  {
+    icon: '🌍',
+    feature: 'Interface multilingue complète (14+ langues)',
+    who: 'Idealo',
+    status: 'roadmap',
+    statusLabel: '🗓️ Sur la roadmap',
+    statusColor: 'text-blue-400 bg-blue-900/30 border-blue-700/40',
+    desc: 'Idealo est disponible en 14 langues dont l\'espagnol et le portugais. Notre support multilingue est en cours (créole, anglais) mais pas encore complet.',
+  },
+  {
+    icon: '🤖',
+    feature: 'Flux de prix automatisés (scraping temps réel)',
+    who: 'Idealo, Quiestlemoinscher',
+    status: 'considered',
+    statusLabel: '🔍 Étudié',
+    statusColor: 'text-yellow-400 bg-yellow-900/20 border-yellow-700/30',
+    desc: 'Ces plateformes collectent des prix en temps réel via des partenariats API marchands ou du scraping. Nous privilégions la contribution citoyenne et des snapshots périodiques vérifiés.',
+  },
+  {
+    icon: '🎁',
+    feature: 'Cashback & bons de réduction numériques',
+    who: 'App Carrefour / Leclerc',
+    status: 'out-of-scope',
+    statusLabel: '❌ Hors périmètre',
+    statusColor: 'text-slate-400 bg-slate-800/40 border-slate-700/30',
+    desc: 'Les apps enseignes proposent des coupons et cashback directement liés à leur réseau. Incompatible avec notre principe d\'indépendance : nous n\'avons pas de relation commerciale avec les distributeurs.',
+  },
+  {
+    icon: '🔊',
+    feature: 'Recherche vocale',
+    who: 'Idealo (assistant vocal)',
+    status: 'considered',
+    statusLabel: '🔍 Étudié',
+    statusColor: 'text-yellow-400 bg-yellow-900/20 border-yellow-700/30',
+    desc: 'Idealo propose une recherche produit par commande vocale sur mobile. Fonctionnalité intéressante pour accessibilité, à étudier dans une prochaine version.',
+  },
+  {
+    icon: '🔗',
+    feature: 'Widget / Intégration pour sites tiers',
+    who: 'Idealo',
+    status: 'roadmap',
+    statusLabel: '🗓️ Sur la roadmap',
+    statusColor: 'text-blue-400 bg-blue-900/30 border-blue-700/40',
+    desc: 'Idealo propose un widget embarquable sur des sites e-commerce pour afficher la comparaison de prix. Nous envisageons un module similaire pour les associations et collectivités partenaires.',
+  },
+  {
+    icon: '🛍️',
+    feature: 'Programme de fidélité numérique intégré',
+    who: 'App Carrefour / Leclerc',
+    status: 'out-of-scope',
+    statusLabel: '❌ Hors périmètre',
+    statusColor: 'text-slate-400 bg-slate-800/40 border-slate-700/30',
+    desc: 'Les apps enseignes incluent la carte de fidélité avec points et avantages. Hors périmètre pour nous : nous ne sommes pas une app enseigne mais un observatoire indépendant.',
+  },
+  {
+    icon: '⭐',
+    feature: 'Avis & notes produits consommateurs',
+    who: 'Idealo, Quiestlemoinscher',
+    status: 'roadmap',
+    statusLabel: '🗓️ Sur la roadmap',
+    statusColor: 'text-blue-400 bg-blue-900/30 border-blue-700/40',
+    desc: 'Idealo et Quiestlemoinscher affichent des avis vérifiés sur les produits. Nous réfléchissons à une fonctionnalité similaire adaptée aux produits DOM avec validation citoyenne.',
+  },
+];
+
+
 
 function FeatureCell({ value, isOurs }: { value: FeatureValue; isOurs: boolean }) {
   if (value === true) {
@@ -414,8 +501,8 @@ export default function ComparatifConcurrence() {
   const toggleCategory = (cat: string) =>
     setOpenCategories((prev) => ({ ...prev, [cat]: !prev[cat] }));
 
-  // Compute score per competitor (count of `true` values)
-  const scores = COMPETITORS.map((comp) => {
+  // Compute score per competitor (count of `true` + 0.5 for `partial`)
+  const scores = useMemo(() => COMPETITORS.map((comp) => {
     let yes = 0;
     let total = 0;
     FEATURE_CATEGORIES.forEach((cat) =>
@@ -426,10 +513,32 @@ export default function ComparatifConcurrence() {
         total++;
       })
     );
-    return { id: comp.id, score: Math.round((yes / total) * 100) };
-  });
+    return { ...comp, score: Math.round((yes / total) * 100) };
+  }), []);
 
-  const getScore = (id: string) => scores.find((s) => s.id === id)?.score ?? 0;
+  // Ranking sorted by score descending
+  const ranked = useMemo(
+    () => [...scores].sort((a, b) => b.score - a.score),
+    [scores]
+  );
+
+  const MEDAL = ['🥇', '🥈', '🥉'];
+  const PODIUM_BG    = [
+    'bg-yellow-500/20 border-yellow-500/50',
+    'bg-slate-500/20 border-slate-400/40',
+    'bg-amber-700/20 border-amber-600/40',
+  ];
+  const PODIUM_TEXT  = ['text-yellow-300', 'text-slate-300', 'text-amber-400'];
+  const PODIUM_SCORE = ['text-yellow-400', 'text-slate-400', 'text-amber-500'];
+
+  // Podium display: 2nd | 1st | 3rd (classic Olympic layout)
+  const podiumOrder = ranked.length >= 3 ? [ranked[1], ranked[0], ranked[2]] : ranked;
+  const podiumBarHeight = (pos: number) => {
+    if (pos === 1) return 'h-28 sm:h-36';
+    if (pos === 0) return 'h-20 sm:h-24';
+    return 'h-14 sm:h-16';
+  };
+  const podiumRank = (comp: typeof ranked[0]) => ranked.findIndex((r) => r.id === comp.id);
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
@@ -453,6 +562,69 @@ export default function ComparatifConcurrence() {
           </HeroImage>
         </div>
 
+        {/* ── PODIUM ─────────────────────────────────────────────────────────── */}
+        <section className="mb-10" aria-label="Podium des comparateurs">
+          <h2 className="text-lg font-bold text-white/90 mb-6 text-center">
+            🏆 Podium des comparateurs
+          </h2>
+
+          {/* Olympic podium */}
+          <div className="flex items-end justify-center gap-3 sm:gap-6 mb-6">
+            {podiumOrder.map((comp) => {
+              const rank = podiumRank(comp);         // 0-indexed
+              const medal = MEDAL[rank] ?? '';
+              const bg    = PODIUM_BG[rank]   ?? 'bg-slate-800/30 border-slate-700/30';
+              const tc    = PODIUM_TEXT[rank]  ?? 'text-white/60';
+              const sc    = PODIUM_SCORE[rank] ?? 'text-white/40';
+              const isFirst = rank === 0;
+              return (
+                <div key={comp.id} className="flex flex-col items-center gap-2 min-w-0">
+                  {/* Competitor card above bar */}
+                  <div className={`rounded-xl border p-3 sm:p-4 text-center w-32 sm:w-40 ${bg} ${isFirst ? 'shadow-lg shadow-yellow-500/10' : ''}`}>
+                    <p className="text-2xl sm:text-3xl mb-1">{medal}</p>
+                    {comp.flag && <p className="text-lg sm:text-xl">{comp.flag}</p>}
+                    <p className={`text-xs font-bold mt-1 leading-tight ${tc}`}>
+                      {comp.name}
+                    </p>
+                    <p className={`text-lg sm:text-xl font-extrabold mt-1 ${sc}`}>
+                      {comp.score}%
+                    </p>
+                    <p className="text-[10px] text-white/30 mt-0.5">{comp.focus}</p>
+                  </div>
+
+                  {/* Podium bar */}
+                  <div
+                    className={`w-32 sm:w-40 rounded-t-lg ${podiumBarHeight(rank === 0 ? 1 : rank === 1 ? 0 : 2)} flex items-end justify-center pb-2 ${bg}`}
+                    aria-hidden="true"
+                  >
+                    <span className={`text-xl font-black ${tc}`}>{rank + 1}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Remaining ranked list (4th, 5th…) */}
+          {ranked.length > 3 && (
+            <div className="max-w-md mx-auto space-y-2">
+              {ranked.slice(3).map((comp, i) => (
+                <div
+                  key={comp.id}
+                  className="flex items-center justify-between bg-slate-900/50 border border-slate-800 rounded-lg px-4 py-2.5"
+                >
+                  <span className="text-white/50 font-semibold text-sm w-8">{i + 4}.</span>
+                  <span className="flex-1 text-white/70 text-sm">
+                    {comp.flag && <span className="mr-1">{comp.flag}</span>}
+                    {comp.name}
+                  </span>
+                  <span className="text-xs text-white/40 mr-3">{comp.focus}</span>
+                  <span className="text-sm font-bold text-white/50">{comp.score}%</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
         {/* Intro disclaimer */}
         <div className="bg-blue-900/20 border border-blue-700/30 rounded-xl p-4 mb-8 text-sm text-blue-200">
           <span className="font-semibold">📌 Note méthodologique : </span>
@@ -460,33 +632,6 @@ export default function ComparatifConcurrence() {
           au {new Date().toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}. Les
           mentions « Partiel » (—) indiquent une fonctionnalité présente mais limitée ou non
           adaptée aux territoires d'Outre-mer.
-        </div>
-
-        {/* Score cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-10">
-          {COMPETITORS.map((comp) => {
-            const score = getScore(comp.id);
-            const isOurs = comp.id === 'akiprisaye';
-            return (
-              <div
-                key={comp.id}
-                className={`rounded-xl p-4 text-center border ${
-                  isOurs
-                    ? 'bg-blue-900/30 border-blue-500/50'
-                    : 'bg-slate-900/50 border-slate-800'
-                }`}
-              >
-                <p className={`text-2xl font-extrabold ${isOurs ? 'text-blue-300' : 'text-white/70'}`}>
-                  {score}%
-                </p>
-                <p className={`text-xs mt-1 font-semibold ${isOurs ? 'text-blue-200' : 'text-white/50'}`}>
-                  {comp.flag && <span className="mr-1">{comp.flag}</span>}
-                  {comp.name}
-                </p>
-                <p className="text-[10px] text-white/30 mt-0.5">{comp.focus}</p>
-              </div>
-            );
-          })}
         </div>
 
         {/* Legend */}
@@ -583,6 +728,58 @@ export default function ComparatifConcurrence() {
             );
           })}
         </div>
+
+        {/* ── CE QUE FAIT LA CONCURRENCE, PAS NOUS ENCORE ─────────────────── */}
+        <section className="mt-10 bg-slate-900/60 border border-slate-800 rounded-xl p-6" aria-label="Analyse des écarts">
+          <h2 className="text-lg font-bold text-white/90 mb-1">
+            🚀 Ce que fait la concurrence — et notre feuille de route
+          </h2>
+          <p className="text-sm text-white/50 mb-6">
+            Fonctionnalités proposées par au moins un concurrent que nous ne couvrons pas encore
+            pleinement — avec notre positionnement.
+          </p>
+
+          <div className="grid sm:grid-cols-2 gap-4">
+            {COMPETITOR_GAPS.map((gap) => (
+              <div
+                key={gap.feature}
+                className="bg-slate-900/80 border border-slate-800 rounded-xl p-4"
+              >
+                <div className="flex items-start gap-3">
+                  <span className="text-2xl flex-shrink-0">{gap.icon}</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-start gap-2 mb-1">
+                      <h3 className="text-sm font-semibold text-white">{gap.feature}</h3>
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full border font-medium ${gap.statusColor}`}>
+                        {gap.statusLabel}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-white/40 mb-1.5">
+                      Proposé par : <span className="text-white/60">{gap.who}</span>
+                    </p>
+                    <p className="text-xs text-white/60 leading-relaxed">{gap.desc}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Legend for gap statuses */}
+          <div className="flex flex-wrap gap-4 mt-5 text-xs text-white/40">
+            <span className="flex items-center gap-1.5">
+              <span className="px-2 py-0.5 rounded-full border text-blue-400 bg-blue-900/30 border-blue-700/40">🗓️ Sur la roadmap</span>
+              Prévu dans une prochaine version
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="px-2 py-0.5 rounded-full border text-yellow-400 bg-yellow-900/20 border-yellow-700/30">🔍 Étudié</span>
+              En cours d'analyse
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="px-2 py-0.5 rounded-full border text-slate-400 bg-slate-800/40 border-slate-700/30">❌ Hors périmètre</span>
+              Incompatible avec nos valeurs
+            </span>
+          </div>
+        </section>
 
         {/* Unique selling points */}
         <section className="mt-10 bg-blue-900/20 border border-blue-700/30 rounded-xl p-6">
