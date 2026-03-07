@@ -1809,3 +1809,222 @@
     font-size: 0.75rem;
   }
 }
+
+/* ============================================================
+   PANIER VITAL WIDGET — Indice minutes de SMIC
+   ============================================================ */
+
+.panier-vital-section {
+  padding: 4rem 1.5rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.panier-vital-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.panier-vital-subtitle {
+  color: #94a3b8;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+  line-height: 1.6;
+}
+
+.panier-vital-ref {
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+  color: #cbd5e1;
+  background: rgba(59, 130, 246, 0.08);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 8px;
+  display: inline-block;
+  padding: 0.4rem 1rem;
+}
+
+.panier-vital-skeleton {
+  height: 180px;
+  background: linear-gradient(90deg, rgba(30,41,59,0.4) 25%, rgba(51,65,85,0.5) 50%, rgba(30,41,59,0.4) 75%);
+  background-size: 400% 100%;
+  animation: panier-vital-shimmer 1.4s infinite;
+  border-radius: 12px;
+}
+
+@keyframes panier-vital-shimmer {
+  0%   { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+.panier-vital-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.panier-vital-card {
+  background: rgba(30, 41, 59, 0.65);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  border-radius: 14px;
+  padding: 1.25rem;
+  backdrop-filter: blur(8px);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.panier-vital-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.panier-vital-card--reference {
+  border-color: rgba(59, 130, 246, 0.35);
+  background: rgba(59, 130, 246, 0.06);
+}
+
+.panier-vital-card--alert {
+  border-color: rgba(239, 68, 68, 0.4);
+  background: rgba(239, 68, 68, 0.05);
+}
+
+.pvc-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.pvc-flag {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.pvc-territory {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  flex: 1;
+}
+
+.pvc-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+.pvc-badge--ref {
+  background: rgba(59, 130, 246, 0.2);
+  color: #93c5fd;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.pvc-badge--alert {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.pvc-price {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  margin-bottom: 0.75rem;
+}
+
+.pvc-price-value {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #f1f5f9;
+  line-height: 1;
+}
+
+.pvc-price-label {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.pvc-bar-wrapper {
+  height: 6px;
+  background: rgba(148, 163, 184, 0.1);
+  border-radius: 3px;
+  margin-bottom: 0.75rem;
+  overflow: hidden;
+}
+
+.pvc-bar {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #3b82f6, #6366f1);
+  transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.pvc-bar--reference {
+  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+}
+
+.pvc-bar--alert {
+  background: linear-gradient(90deg, #ef4444, #f97316);
+}
+
+.pvc-minutes {
+  display: flex;
+  align-items: baseline;
+  gap: 0.3rem;
+}
+
+.pvc-minutes-value {
+  font-size: 2rem;
+  font-weight: 900;
+  color: #f1f5f9;
+  line-height: 1;
+}
+
+.pvc-minutes-label {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.pvc-extra {
+  margin-top: 0.6rem;
+  font-size: 0.78rem;
+  color: #f97316;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.pvc-bqp-alert {
+  font-size: 0.72rem;
+  color: #ef4444;
+  font-weight: 600;
+}
+
+.panier-vital-source {
+  margin-top: 1.5rem;
+  font-size: 0.72rem;
+  color: #475569;
+  text-align: center;
+  line-height: 1.6;
+}
+
+@media (max-width: 600px) {
+  .panier-vital-section {
+    padding: 3rem 1rem;
+  }
+
+  .panier-vital-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .pvc-price-value {
+    font-size: 1.3rem;
+  }
+
+  .pvc-minutes-value {
+    font-size: 1.6rem;
+  }
+}

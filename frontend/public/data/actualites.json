@@ -1,6 +1,36 @@
 {
   "articles": [
     {
+      "id": "2026-03-07-indice-panier-vital",
+      "title": "Indice panier vital : jusqu'à +69 min de travail au SMIC en Guyane",
+      "icon": "⏱️",
+      "date": "2026-03-07",
+      "content": "Selon l'Observatoire citoyen A KI PRI SA YÉ, un panier de 6 produits essentiels (lait, riz, eau, pâtes, sucre, huile) nécessite en moyenne 48 min de travail au SMIC en Hexagone contre 117 min en Guyane, 88 min en Mayotte et 79 min en Guadeloupe. L'écart dépasse le plafond légal BQP (+30%) pour 4 des 6 produits en Guyane.",
+      "link": "https://akiprisaye-web.pages.dev/observatoire",
+      "category": "économie",
+      "territory": "all"
+    },
+    {
+      "id": "2026-03-06-octroi-mer-reforme",
+      "title": "Réforme de l'octroi de mer : consultations publiques ouvertes",
+      "icon": "🏛️",
+      "date": "2026-03-06",
+      "content": "Le gouvernement lance des consultations sur la réforme de l'octroi de mer, taxe locale dont le taux moyen atteint 8,5% en Guadeloupe et 7,8% en Martinique. Les associations de consommateurs réclament une réduction ciblée sur les produits alimentaires de première nécessité.",
+      "link": "https://www.economie.gouv.fr/dgccrf/outre-mer",
+      "category": "réglementation",
+      "territory": "all"
+    },
+    {
+      "id": "2026-03-04-guyane-fret-record",
+      "title": "Guyane : coûts de fret record, +18% sur 6 mois",
+      "icon": "🚢",
+      "date": "2026-03-04",
+      "content": "Les données de la DAAF Guyane confirment une hausse de 18% des coûts de transport maritime depuis le second semestre 2025. Ce surcoût se répercute directement sur les prix à la consommation, portant l'écart alimentaire moyen Guyane/Hexagone à +43% en mars 2026.",
+      "link": "https://daaf.guyane.agriculture.gouv.fr",
+      "category": "logistique",
+      "territory": "GF"
+    },
+    {
       "id": "2026-03-05-inflation-dom-mars",
       "title": "Inflation DOM : +7,4% sur un an en février 2026",
       "icon": "📈",
@@ -121,7 +151,7 @@
       "territory": "all"
     }
   ],
-  "lastUpdated": "2026-03-05T08:00:00Z",
+  "lastUpdated": "2026-03-07",
   "version": "1.0",
   "sources": [
     "INSEE - Institut national de la statistique et des études économiques",

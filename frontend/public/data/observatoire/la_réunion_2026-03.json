@@ -32,6 +32,15 @@
       "prix": 1.49
     },
     {
+      "commune": "Le Port",
+      "enseigne": "Carrefour Market",
+      "categorie": "Produits laitiers",
+      "produit": "Lait demi-écrémé UHT 1L",
+      "ean": "3560070123456",
+      "unite": "1L",
+      "prix": 1.43
+    },
+    {
       "commune": "Saint-Denis",
       "enseigne": "Carrefour",
       "categorie": "Épicerie",
@@ -48,6 +57,15 @@
       "ean": "3250391234567",
       "unite": "1kg",
       "prix": 1.93
+    },
+    {
+      "commune": "Le Port",
+      "enseigne": "Jumbo Score",
+      "categorie": "Épicerie",
+      "produit": "Riz long blanc 1kg",
+      "ean": "3250391234567",
+      "unite": "1kg",
+      "prix": 2.05
     },
     {
       "commune": "Saint-Denis",
@@ -71,10 +89,199 @@
       "commune": "Saint-Pierre",
       "enseigne": "E.Leclerc",
       "categorie": "Épicerie",
+      "produit": "Sucre blanc 1kg",
+      "ean": "3560071112345",
+      "unite": "1kg",
+      "prix": 1.49
+    },
+    {
+      "commune": "Saint-Pierre",
+      "enseigne": "E.Leclerc",
+      "categorie": "Épicerie",
       "produit": "Huile de tournesol 1L",
       "ean": "3250399876543",
       "unite": "1L",
       "prix": 2.91
+    },
+    {
+      "commune": "Saint-Denis",
+      "enseigne": "Carrefour",
+      "categorie": "Épicerie",
+      "produit": "Huile de tournesol 1L",
+      "ean": "3250399876543",
+      "unite": "1L",
+      "prix": 3.02
+    },
+    {
+      "commune": "Saint-Denis",
+      "enseigne": "Carrefour",
+      "categorie": "Boissons",
+      "produit": "Eau minérale 1.5L",
+      "ean": "3124480015443",
+      "unite": "1.5L",
+      "prix": 0.79
+    },
+    {
+      "commune": "Saint-Pierre",
+      "enseigne": "E.Leclerc",
+      "categorie": "Boissons",
+      "produit": "Eau minérale 1.5L",
+      "ean": "3124480015443",
+      "unite": "1.5L",
+      "prix": 0.72
+    },
+    {
+      "commune": "Le Port",
+      "enseigne": "Jumbo Score",
+      "categorie": "Boissons",
+      "produit": "Eau minérale 1.5L",
+      "ean": "3124480015443",
+      "unite": "1.5L",
+      "prix": 0.82
+    },
+    {
+      "commune": "Saint-Denis",
+      "enseigne": "Carrefour",
+      "categorie": "Épicerie",
+      "produit": "Pâtes spaghetti 500g",
+      "ean": "3017620101010",
+      "unite": "500g",
+      "prix": 1.35
+    },
+    {
+      "commune": "Saint-Pierre",
+      "enseigne": "E.Leclerc",
+      "categorie": "Épicerie",
+      "produit": "Pâtes spaghetti 500g",
+      "ean": "3017620101010",
+      "unite": "500g",
+      "prix": 1.25
+    },
+    {
+      "commune": "Saint-Denis",
+      "enseigne": "Carrefour",
+      "categorie": "Lessive",
+      "produit": "Lessive liquide 1.5L",
+      "ean": "8720182073534",
+      "unite": "1.5L",
+      "prix": 4.89
+    },
+    {
+      "commune": "Saint-Pierre",
+      "enseigne": "E.Leclerc",
+      "categorie": "Lessive",
+      "produit": "Lessive liquide 1.5L",
+      "ean": "8720182073534",
+      "unite": "1.5L",
+      "prix": 4.59
+    },
+    {
+      "commune": "Le Port",
+      "enseigne": "Jumbo Score",
+      "categorie": "Lessive",
+      "produit": "Lessive liquide 1.5L",
+      "ean": "8720182073534",
+      "unite": "1.5L",
+      "prix": 5.19
+    },
+    {
+      "commune": "Saint-Denis",
+      "enseigne": "Carrefour",
+      "categorie": "Hygiène",
+      "produit": "Gel douche 250ml",
+      "ean": "3574660329919",
+      "unite": "250ml",
+      "prix": 2.69
+    },
+    {
+      "commune": "Saint-Pierre",
+      "enseigne": "E.Leclerc",
+      "categorie": "Hygiène",
+      "produit": "Gel douche 250ml",
+      "ean": "3574660329919",
+      "unite": "250ml",
+      "prix": 2.49
+    },
+    {
+      "commune": "Saint-Denis",
+      "enseigne": "Carrefour",
+      "categorie": "Fruits et légumes",
+      "produit": "Tomates rondes 1kg",
+      "ean": "0000000000000",
+      "unite": "1kg",
+      "prix": 3.25
+    },
+    {
+      "commune": "Saint-Pierre",
+      "enseigne": "E.Leclerc",
+      "categorie": "Fruits et légumes",
+      "produit": "Tomates rondes 1kg",
+      "ean": "0000000000000",
+      "unite": "1kg",
+      "prix": 2.99
+    },
+    {
+      "commune": "Saint-Denis",
+      "enseigne": "Carrefour",
+      "categorie": "Boucherie / Charcuterie",
+      "produit": "Poulet entier 1kg",
+      "ean": "0000000000001",
+      "unite": "1kg",
+      "prix": 7.90
+    },
+    {
+      "commune": "Saint-Pierre",
+      "enseigne": "E.Leclerc",
+      "categorie": "Boucherie / Charcuterie",
+      "produit": "Poulet entier 1kg",
+      "ean": "0000000000001",
+      "unite": "1kg",
+      "prix": 7.49
+    },
+    {
+      "commune": "Saint-Denis",
+      "enseigne": "Carrefour",
+      "categorie": "Épicerie",
+      "produit": "Café moulu 250g",
+      "ean": "8711000530016",
+      "unite": "250g",
+      "prix": 3.79
+    },
+    {
+      "commune": "Saint-Pierre",
+      "enseigne": "E.Leclerc",
+      "categorie": "Épicerie",
+      "produit": "Café moulu 250g",
+      "ean": "8711000530016",
+      "unite": "250g",
+      "prix": 3.59
+    },
+    {
+      "commune": "Saint-Denis",
+      "enseigne": "Carrefour",
+      "categorie": "Entretien / Nettoyage",
+      "produit": "Liquide vaisselle 500ml",
+      "ean": "8718114690728",
+      "unite": "500ml",
+      "prix": 2.15
+    },
+    {
+      "commune": "Saint-Pierre",
+      "enseigne": "E.Leclerc",
+      "categorie": "Entretien / Nettoyage",
+      "produit": "Liquide vaisselle 500ml",
+      "ean": "8718114690728",
+      "unite": "500ml",
+      "prix": 1.99
+    },
+    {
+      "commune": "Saint-Denis",
+      "enseigne": "Pharmacie des Cocotiers",
+      "categorie": "Pharmacie",
+      "produit": "Paracétamol 500mg x16",
+      "ean": "3400936191594",
+      "unite": "16cp",
+      "prix": 2.45
     }
   ]
 }

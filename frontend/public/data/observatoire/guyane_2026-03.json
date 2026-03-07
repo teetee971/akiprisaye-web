@@ -1,6 +1,6 @@
 {
   "territoire": "Guyane",
-  "date_snapshot": "2026-03-06",
+  "date_snapshot": "2026-03-05",
   "source": "releve_citoyen",
   "qualite": "verifie",
   "donnees": [
@@ -20,16 +20,25 @@
       "produit": "Lait demi-écrémé UHT 1L",
       "ean": "3560070123456",
       "unite": "1L",
-      "prix": 1.61
+      "prix": 1.72
     },
     {
-      "commune": "Saint-Laurent-du-Maroni",
+      "commune": "Kourou",
       "enseigne": "Hyper U",
       "categorie": "Produits laitiers",
       "produit": "Lait demi-écrémé UHT 1L",
       "ean": "3560070123456",
       "unite": "1L",
-      "prix": 1.76
+      "prix": 1.59
+    },
+    {
+      "commune": "Saint-Laurent-du-Maroni",
+      "enseigne": "Score",
+      "categorie": "Produits laitiers",
+      "produit": "Lait demi-écrémé UHT 1L",
+      "ean": "3560070123456",
+      "unite": "1L",
+      "prix": 1.83
     },
     {
       "commune": "Cayenne",
@@ -38,7 +47,25 @@
       "produit": "Riz long blanc 1kg",
       "ean": "3250391234567",
       "unite": "1kg",
-      "prix": 2.26
+      "prix": 2.35
+    },
+    {
+      "commune": "Cayenne",
+      "enseigne": "Score",
+      "categorie": "Épicerie",
+      "produit": "Riz long blanc 1kg",
+      "ean": "3250391234567",
+      "unite": "1kg",
+      "prix": 2.29
+    },
+    {
+      "commune": "Kourou",
+      "enseigne": "Hyper U",
+      "categorie": "Épicerie",
+      "produit": "Riz long blanc 1kg",
+      "ean": "3250391234567",
+      "unite": "1kg",
+      "prix": 2.45
     },
     {
       "commune": "Saint-Laurent-du-Maroni",
@@ -47,25 +74,43 @@
       "produit": "Riz long blanc 1kg",
       "ean": "3250391234567",
       "unite": "1kg",
-      "prix": 2.43
+      "prix": 2.59
     },
     {
       "commune": "Cayenne",
-      "enseigne": "Hyper U",
+      "enseigne": "Carrefour",
       "categorie": "Produits laitiers",
       "produit": "Yaourt nature 4x125g",
       "ean": "3560070789012",
       "unite": "4x125g",
-      "prix": 2.16
+      "prix": 2.19
+    },
+    {
+      "commune": "Cayenne",
+      "enseigne": "Score",
+      "categorie": "Épicerie",
+      "produit": "Sucre blanc 1kg",
+      "ean": "3560071112345",
+      "unite": "1kg",
+      "prix": 1.87
+    },
+    {
+      "commune": "Kourou",
+      "enseigne": "Hyper U",
+      "categorie": "Épicerie",
+      "produit": "Sucre blanc 1kg",
+      "ean": "3560071112345",
+      "unite": "1kg",
+      "prix": 1.93
     },
     {
       "commune": "Cayenne",
       "enseigne": "Carrefour",
       "categorie": "Épicerie",
-      "produit": "Sucre blanc 1kg",
-      "ean": "3560071112345",
-      "unite": "1kg",
-      "prix": 1.89
+      "produit": "Huile de tournesol 1L",
+      "ean": "3250399876543",
+      "unite": "1L",
+      "prix": 2.89
     },
     {
       "commune": "Cayenne",
@@ -74,7 +119,178 @@
       "produit": "Huile de tournesol 1L",
       "ean": "3250399876543",
       "unite": "1L",
-      "prix": 3.51
+      "prix": 2.79
+    },
+    {
+      "commune": "Cayenne",
+      "enseigne": "Carrefour",
+      "categorie": "Boissons",
+      "produit": "Eau minérale 1.5L",
+      "ean": "3124480015443",
+      "unite": "1.5L",
+      "prix": 0.98
+    },
+    {
+      "commune": "Cayenne",
+      "enseigne": "Score",
+      "categorie": "Boissons",
+      "produit": "Eau minérale 1.5L",
+      "ean": "3124480015443",
+      "unite": "1.5L",
+      "prix": 0.92
+    },
+    {
+      "commune": "Kourou",
+      "enseigne": "Hyper U",
+      "categorie": "Boissons",
+      "produit": "Eau minérale 1.5L",
+      "ean": "3124480015443",
+      "unite": "1.5L",
+      "prix": 0.88
+    },
+    {
+      "commune": "Cayenne",
+      "enseigne": "Carrefour",
+      "categorie": "Épicerie",
+      "produit": "Pâtes spaghetti 500g",
+      "ean": "3017620101010",
+      "unite": "500g",
+      "prix": 1.52
+    },
+    {
+      "commune": "Cayenne",
+      "enseigne": "Score",
+      "categorie": "Épicerie",
+      "produit": "Pâtes spaghetti 500g",
+      "ean": "3017620101010",
+      "unite": "500g",
+      "prix": 1.45
+    },
+    {
+      "commune": "Cayenne",
+      "enseigne": "Carrefour",
+      "categorie": "Lessive",
+      "produit": "Lessive liquide 1.5L",
+      "ean": "8720182073534",
+      "unite": "1.5L",
+      "prix": 5.49
+    },
+    {
+      "commune": "Cayenne",
+      "enseigne": "Score",
+      "categorie": "Lessive",
+      "produit": "Lessive liquide 1.5L",
+      "ean": "8720182073534",
+      "unite": "1.5L",
+      "prix": 5.09
+    },
+    {
+      "commune": "Cayenne",
+      "enseigne": "Carrefour",
+      "categorie": "Hygiène",
+      "produit": "Gel douche 250ml",
+      "ean": "3574660329919",
+      "unite": "250ml",
+      "prix": 3.09
+    },
+    {
+      "commune": "Cayenne",
+      "enseigne": "Score",
+      "categorie": "Hygiène",
+      "produit": "Gel douche 250ml",
+      "ean": "3574660329919",
+      "unite": "250ml",
+      "prix": 2.89
+    },
+    {
+      "commune": "Cayenne",
+      "enseigne": "Carrefour",
+      "categorie": "Fruits et légumes",
+      "produit": "Tomates rondes 1kg",
+      "ean": "0000000000000",
+      "unite": "1kg",
+      "prix": 4.25
+    },
+    {
+      "commune": "Cayenne",
+      "enseigne": "Score",
+      "categorie": "Fruits et légumes",
+      "produit": "Tomates rondes 1kg",
+      "ean": "0000000000000",
+      "unite": "1kg",
+      "prix": 3.99
+    },
+    {
+      "commune": "Cayenne",
+      "enseigne": "Carrefour",
+      "categorie": "Boucherie / Charcuterie",
+      "produit": "Poulet entier 1kg",
+      "ean": "0000000000001",
+      "unite": "1kg",
+      "prix": 9.25
+    },
+    {
+      "commune": "Cayenne",
+      "enseigne": "Score",
+      "categorie": "Boucherie / Charcuterie",
+      "produit": "Poulet entier 1kg",
+      "ean": "0000000000001",
+      "unite": "1kg",
+      "prix": 8.75
+    },
+    {
+      "commune": "Kourou",
+      "enseigne": "Hyper U",
+      "categorie": "Boucherie / Charcuterie",
+      "produit": "Poulet entier 1kg",
+      "ean": "0000000000001",
+      "unite": "1kg",
+      "prix": 9.75
+    },
+    {
+      "commune": "Cayenne",
+      "enseigne": "Carrefour",
+      "categorie": "Épicerie",
+      "produit": "Café moulu 250g",
+      "ean": "8711000530016",
+      "unite": "250g",
+      "prix": 4.25
+    },
+    {
+      "commune": "Cayenne",
+      "enseigne": "Score",
+      "categorie": "Épicerie",
+      "produit": "Café moulu 250g",
+      "ean": "8711000530016",
+      "unite": "250g",
+      "prix": 3.99
+    },
+    {
+      "commune": "Cayenne",
+      "enseigne": "Carrefour",
+      "categorie": "Entretien / Nettoyage",
+      "produit": "Liquide vaisselle 500ml",
+      "ean": "8718114690728",
+      "unite": "500ml",
+      "prix": 2.45
+    },
+    {
+      "commune": "Cayenne",
+      "enseigne": "Score",
+      "categorie": "Entretien / Nettoyage",
+      "produit": "Liquide vaisselle 500ml",
+      "ean": "8718114690728",
+      "unite": "500ml",
+      "prix": 2.25
+    },
+    {
+      "commune": "Cayenne",
+      "enseigne": "Pharmacie",
+      "categorie": "Pharmacie",
+      "produit": "Paracétamol 500mg x16",
+      "ean": "3400936191594",
+      "unite": "16cp",
+      "prix": 2.79
     }
   ]
 }

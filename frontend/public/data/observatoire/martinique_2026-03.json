@@ -11,7 +11,7 @@
       "produit": "Lait demi-écrémé UHT 1L",
       "ean": "3560070123456",
       "unite": "1L",
-      "prix": 1.5
+      "prix": 1.50
     },
     {
       "commune": "Fort-de-France",
@@ -32,6 +32,15 @@
       "prix": 1.45
     },
     {
+      "commune": "Sainte-Marie",
+      "enseigne": "Leader Price",
+      "categorie": "Produits laitiers",
+      "produit": "Lait demi-écrémé UHT 1L",
+      "ean": "3560070123456",
+      "unite": "1L",
+      "prix": 1.38
+    },
+    {
       "commune": "Fort-de-France",
       "enseigne": "Carrefour",
       "categorie": "Épicerie",
@@ -48,6 +57,15 @@
       "ean": "3250391234567",
       "unite": "1kg",
       "prix": 2.03
+    },
+    {
+      "commune": "Sainte-Marie",
+      "enseigne": "Jumbo Score",
+      "categorie": "Épicerie",
+      "produit": "Riz long blanc 1kg",
+      "ean": "3250391234567",
+      "unite": "1kg",
+      "prix": 2.19
     },
     {
       "commune": "Fort-de-France",
@@ -71,10 +89,208 @@
       "commune": "Fort-de-France",
       "enseigne": "E.Leclerc",
       "categorie": "Épicerie",
+      "produit": "Sucre blanc 1kg",
+      "ean": "3560071112345",
+      "unite": "1kg",
+      "prix": 1.63
+    },
+    {
+      "commune": "Fort-de-France",
+      "enseigne": "E.Leclerc",
+      "categorie": "Épicerie",
       "produit": "Huile de tournesol 1L",
       "ean": "3250399876543",
       "unite": "1L",
       "prix": 3.04
+    },
+    {
+      "commune": "Fort-de-France",
+      "enseigne": "Carrefour",
+      "categorie": "Épicerie",
+      "produit": "Huile de tournesol 1L",
+      "ean": "3250399876543",
+      "unite": "1L",
+      "prix": 3.15
+    },
+    {
+      "commune": "Le Lamentin",
+      "enseigne": "Hyper U",
+      "categorie": "Boissons",
+      "produit": "Eau minérale 1.5L",
+      "ean": "3124480015443",
+      "unite": "1.5L",
+      "prix": 0.72
+    },
+    {
+      "commune": "Fort-de-France",
+      "enseigne": "Carrefour",
+      "categorie": "Boissons",
+      "produit": "Eau minérale 1.5L",
+      "ean": "3124480015443",
+      "unite": "1.5L",
+      "prix": 0.69
+    },
+    {
+      "commune": "Sainte-Marie",
+      "enseigne": "E.Leclerc",
+      "categorie": "Boissons",
+      "produit": "Eau minérale 1.5L",
+      "ean": "3124480015443",
+      "unite": "1.5L",
+      "prix": 0.65
+    },
+    {
+      "commune": "Fort-de-France",
+      "enseigne": "Carrefour",
+      "categorie": "Épicerie",
+      "produit": "Pâtes spaghetti 500g",
+      "ean": "3017620101010",
+      "unite": "500g",
+      "prix": 1.29
+    },
+    {
+      "commune": "Le Lamentin",
+      "enseigne": "E.Leclerc",
+      "categorie": "Épicerie",
+      "produit": "Pâtes spaghetti 500g",
+      "ean": "3017620101010",
+      "unite": "500g",
+      "prix": 1.19
+    },
+    {
+      "commune": "Fort-de-France",
+      "enseigne": "Carrefour",
+      "categorie": "Lessive",
+      "produit": "Lessive liquide 1.5L",
+      "ean": "8720182073534",
+      "unite": "1.5L",
+      "prix": 4.79
+    },
+    {
+      "commune": "Le Lamentin",
+      "enseigne": "E.Leclerc",
+      "categorie": "Lessive",
+      "produit": "Lessive liquide 1.5L",
+      "ean": "8720182073534",
+      "unite": "1.5L",
+      "prix": 4.49
+    },
+    {
+      "commune": "Sainte-Marie",
+      "enseigne": "Hyper U",
+      "categorie": "Lessive",
+      "produit": "Lessive liquide 1.5L",
+      "ean": "8720182073534",
+      "unite": "1.5L",
+      "prix": 5.09
+    },
+    {
+      "commune": "Fort-de-France",
+      "enseigne": "Carrefour",
+      "categorie": "Hygiène",
+      "produit": "Gel douche 250ml",
+      "ean": "3574660329919",
+      "unite": "250ml",
+      "prix": 2.75
+    },
+    {
+      "commune": "Le Lamentin",
+      "enseigne": "Leader Price",
+      "categorie": "Hygiène",
+      "produit": "Gel douche 250ml",
+      "ean": "3574660329919",
+      "unite": "250ml",
+      "prix": 2.49
+    },
+    {
+      "commune": "Fort-de-France",
+      "enseigne": "Carrefour",
+      "categorie": "Fruits et légumes",
+      "produit": "Tomates rondes 1kg",
+      "ean": "0000000000000",
+      "unite": "1kg",
+      "prix": 3.15
+    },
+    {
+      "commune": "Le Lamentin",
+      "enseigne": "E.Leclerc",
+      "categorie": "Fruits et légumes",
+      "produit": "Tomates rondes 1kg",
+      "ean": "0000000000000",
+      "unite": "1kg",
+      "prix": 2.89
+    },
+    {
+      "commune": "Fort-de-France",
+      "enseigne": "Carrefour",
+      "categorie": "Boucherie / Charcuterie",
+      "produit": "Poulet entier 1kg",
+      "ean": "0000000000001",
+      "unite": "1kg",
+      "prix": 7.90
+    },
+    {
+      "commune": "Le Lamentin",
+      "enseigne": "E.Leclerc",
+      "categorie": "Boucherie / Charcuterie",
+      "produit": "Poulet entier 1kg",
+      "ean": "0000000000001",
+      "unite": "1kg",
+      "prix": 7.45
+    },
+    {
+      "commune": "Sainte-Marie",
+      "enseigne": "Jumbo Score",
+      "categorie": "Boucherie / Charcuterie",
+      "produit": "Poulet entier 1kg",
+      "ean": "0000000000001",
+      "unite": "1kg",
+      "prix": 7.69
+    },
+    {
+      "commune": "Fort-de-France",
+      "enseigne": "Carrefour",
+      "categorie": "Épicerie",
+      "produit": "Café moulu 250g",
+      "ean": "8711000530016",
+      "unite": "250g",
+      "prix": 3.85
+    },
+    {
+      "commune": "Le Lamentin",
+      "enseigne": "E.Leclerc",
+      "categorie": "Épicerie",
+      "produit": "Café moulu 250g",
+      "ean": "8711000530016",
+      "unite": "250g",
+      "prix": 3.65
+    },
+    {
+      "commune": "Fort-de-France",
+      "enseigne": "Pharmacie Centrale",
+      "categorie": "Pharmacie",
+      "produit": "Paracétamol 500mg x16",
+      "ean": "3400936191594",
+      "unite": "16cp",
+      "prix": 2.39
+    },
+    {
+      "commune": "Fort-de-France",
+      "enseigne": "Carrefour",
+      "categorie": "Entretien / Nettoyage",
+      "produit": "Liquide vaisselle 500ml",
+      "ean": "8718114690728",
+      "unite": "500ml",
+      "prix": 2.09
+    },
+    {
+      "commune": "Le Lamentin",
+      "enseigne": "E.Leclerc",
+      "categorie": "Entretien / Nettoyage",
+      "produit": "Liquide vaisselle 500ml",
+      "ean": "8718114690728",
+      "unite": "500ml",
+      "prix": 1.99
     }
   ]
 }

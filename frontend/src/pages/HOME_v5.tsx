@@ -13,6 +13,7 @@ const MiniFaqSection = lazy(() => import('./home-v5/MiniFaqSection'));
 const TerritoryPriceChart = lazy(() => import('../components/home/TerritoryPriceChart'));
 const PriceEvolutionChart = lazy(() => import('../components/home/PriceEvolutionChart'));
 const LiveNewsFeed = lazy(() => import('../components/home/LiveNewsFeed'));
+const PanierVitalWidget = lazy(() => import('../components/home/PanierVitalWidget'));
 const CategoryOvercostChart = lazy(() => import('../components/home/CategoryOvercostChart'));
 const StoreRankingWidget = lazy(() => import('../components/home/StoreRankingWidget'));
 
@@ -398,6 +399,10 @@ export default function HomeV5() {
           <PriceEvolutionChart />
         </Suspense>
 
+        {/* Panier vital — purchasing power index: minutes of SMIC per basket */}
+        <Suspense fallback={null}>
+          <PanierVitalWidget />
+        </Suspense>
         {/* Store ranking widget — cheapest vs most expensive stores per territory */}
         <Suspense fallback={null}>
           <StoreRankingWidget />
