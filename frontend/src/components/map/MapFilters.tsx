@@ -5,6 +5,7 @@
 
 import React, { useState } from 'react';
 import { Filter, X, ChevronDown, ChevronUp } from 'lucide-react';
+import { OpenNowFilter } from '../store/OpenNowFilter';
 
 interface MapFiltersProps {
   territory: string;
@@ -167,6 +168,16 @@ export function MapFilters({
         </select>
       </div>
 
+      {/* Open Now Toggle - Always visible */}
+      {onOpenOnlyChange && (
+        <div className="mb-3">
+          <OpenNowFilter
+            enabled={openOnly}
+            onChange={onOpenOnlyChange}
+          />
+        </div>
+      )}
+
       {/* Expanded Filters */}
       {isExpanded && (
         <div className="space-y-4 pt-3 border-t">
@@ -288,23 +299,6 @@ export function MapFilters({
                 <span>1 km</span>
                 <span>50 km</span>
               </div>
-            </div>
-          )}
-
-          {/* Open Only Toggle */}
-          {onOpenOnlyChange && (
-            <div>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={openOnly}
-                  onChange={(e) => onOpenOnlyChange(e.target.checked)}
-                  className="rounded text-blue-600 focus:ring-blue-500"
-                />
-                <span className="text-sm font-medium text-gray-700">
-                  Afficher uniquement les magasins ouverts
-                </span>
-              </label>
             </div>
           )}
         </div>

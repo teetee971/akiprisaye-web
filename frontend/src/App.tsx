@@ -27,6 +27,7 @@ const Home = lazyPage(() => import('./pages/Home'));
 const SearchPage = lazyPage(() => import('./pages/SearchPage'));
 const Carte = lazyPage(() => import('./pages/Carte'));
 const MapPage = lazyPage(() => import('./pages/MapPage'));
+const PublicStoreDetail = lazyPage(() => import('./pages/StoreDetail'));
 const AdminDashboard = lazyPage(() => import('./pages/AdminDashboard'));
 const Comparateur = lazyPage(() => import('./pages/Comparateur'));
 
@@ -336,6 +337,7 @@ export default function App() {
                           <Route index element={<Home />} />
                           <Route path="carte" element={<Carte />} />
                           <Route path="carte-interactive" element={<MapPage />} />
+                          <Route path="enseigne/:storeId" element={<PublicStoreDetail />} />
                           <Route path="dashboard" element={<AdminDashboard />} />
                           <Route path="home" element={<Home />} />
                           <Route path="comparateur" element={<Comparateur />} />

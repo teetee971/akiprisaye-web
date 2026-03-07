@@ -22,6 +22,9 @@ import type { StoreWithCompany } from '../services/storeCompanyService';
 import type { Company } from '../types/company';
 import { getCheapestProductsAtStore, calculateDataReliability } from '../services/storeCheapestProductsService';
 import CheapestProductsSection from '../components/store/CheapestProductsSection';
+import { StoreOpenStatus } from '../components/store/StoreOpenStatus';
+import { StoreHoursDisplay } from '../components/store/StoreHoursDisplay';
+import { getStoreHours } from '../services/storeHoursService';
 import { useTiPanier } from '../hooks/useTiPanier';
 import { requestGeolocation } from '../utils/geolocationEnhanced';
 import { calculateDistance } from '../utils/geoLocation';
@@ -175,6 +178,11 @@ export default function StoreDetail() {
 
               {/* Status Badge */}
               <div className="flex flex-col gap-2">
+                {/* Open/Closed Status */}
+                <StoreOpenStatus
+                  hours={getStoreHours(store.id, store.territory?.toLowerCase())}
+                />
+
                 {store.isCompanyActive !== undefined && (
                   <div className={`px-3 py-1.5 rounded-lg text-sm font-medium ${
                     store.isCompanyActive 
@@ -294,14 +302,16 @@ export default function StoreDetail() {
                   </div>
                 )}
 
-                {store.openingHours && (
-                  <div>
-                    <h3 className="text-lg font-semibold text-white mb-4">Horaires d'ouverture</h3>
-                    <div className="bg-slate-800 rounded-lg p-4">
-                      <p className="text-gray-300 whitespace-pre-line">{store.openingHours}</p>
-                    </div>
+                {/* Opening Hours */}
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-4">Horaires d'ouverture</h3>
+                  <div className="bg-slate-800 rounded-lg p-4">
+                    <StoreHoursDisplay
+                      hours={getStoreHours(store.id, store.territory?.toLowerCase())}
+                      className="text-gray-200"
+                    />
                   </div>
-                )}
+                </div>
               </div>
             )}
 

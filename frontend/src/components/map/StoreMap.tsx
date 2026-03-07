@@ -3,7 +3,7 @@
  * Main container for the interactive store map with clustering and filters
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import { Loader2 } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
@@ -15,6 +15,8 @@ import PriceHeatmap from './PriceHeatmap';
 import NearbyStoresList from './NearbyStoresList';
 import { useGeolocation } from '../../hooks/useGeolocation';
 import { useNearbyStores } from '../../hooks/useNearbyStores';
+import { getStoreHours } from '../../services/storeHoursService';
+import { isStoreOpen } from '../../utils/storeHoursUtils';
 
 interface Store {
   id: string;
@@ -140,6 +142,17 @@ export function StoreMap({
     intensity: store.priceIndex ? store.priceIndex / 100 : 0.5,
   }));
 
+  // Filter stores by open status when openOnly is enabled
+  const displayedStores = useMemo(() => {
+    if (!openOnly) return nearbyStores;
+    return nearbyStores.filter((store) => {
+      const hours = getStoreHours(store.id, store.territory);
+      if (!hours) return false;
+      const status = isStoreOpen(hours);
+      return status.status === 'open' || status.status === 'closing_soon';
+    });
+  }, [nearbyStores, openOnly]);
+
   const handleStoreClick = useCallback((store: Store) => {
     setMapCenter([store.lat, store.lon]);
     setMapZoom(15);
@@ -230,9 +243,9 @@ export function StoreMap({
           <div className="w-96 bg-white border-l overflow-y-auto p-4">
             <h2 className="text-xl font-bold mb-4">
               Magasins à proximité
-              {nearbyStores.length > 0 && (
+              {displayedStores.length > 0 && (
                 <span className="ml-2 text-sm font-normal text-gray-600">
-                  ({nearbyStores.length})
+                  ({displayedStores.length}{openOnly && nearbyStores.length !== displayedStores.length ? ` ouverts sur ${nearbyStores.length}` : ''})
                 </span>
               )}
             </h2>
@@ -244,7 +257,7 @@ export function StoreMap({
             )}
 
             <NearbyStoresList
-              stores={nearbyStores}
+              stores={displayedStores}
               sortBy="distance"
               onStoreClick={handleStoreClick}
               onNavigate={handleNavigate}

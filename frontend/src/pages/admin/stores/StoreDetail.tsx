@@ -18,6 +18,9 @@ import {
   type Store,
 } from '../../../services/admin/storeAdminService';
 import type { TerritoryCode } from '../../../types/extensions';
+import { StoreOpenStatus } from '../../../components/store/StoreOpenStatus';
+import { StoreHoursDisplay } from '../../../components/store/StoreHoursDisplay';
+import { getStoreHours } from '../../../services/storeHoursService';
 
 // Fix for Leaflet default marker icon
 import L from 'leaflet';
@@ -144,7 +147,13 @@ export default function StoreDetail() {
         {/* Details */}
         <GlassCard title="Informations">
           <div className="space-y-4">
-            {/* Brand ID */}
+            {/* Open Status */}
+            <div>
+              <div className="text-sm text-white/60 mb-1">Statut d'ouverture</div>
+              <StoreOpenStatus
+                hours={getStoreHours(store.id, store.territory?.toLowerCase())}
+              />
+            </div>
             <div className="flex items-start gap-3">
               <Building className="h-5 w-5 text-white/60 mt-0.5" />
               <div>
@@ -290,6 +299,14 @@ export default function StoreDetail() {
           </GlassCard>
         )}
       </div>
+
+      {/* Opening Hours */}
+      <GlassCard title="Horaires d'ouverture">
+        <StoreHoursDisplay
+          hours={getStoreHours(store.id, store.territory?.toLowerCase())}
+          className="text-white/80"
+        />
+      </GlassCard>
     </div>
   );
 }

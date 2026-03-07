@@ -5,6 +5,8 @@
 
 import React from 'react';
 import { MapPin, Navigation, Clock, DollarSign } from 'lucide-react';
+import { StoreOpenStatus } from '../store/StoreOpenStatus';
+import { getStoreHours } from '../../services/storeHoursService';
 
 interface Store {
   id: string;
@@ -14,6 +16,7 @@ interface Store {
   lon: number;
   address?: string;
   city?: string;
+  territory?: string;
   distance?: number;
   travelTimeSeconds?: number;
   priceIndex?: number;
@@ -121,6 +124,14 @@ export function NearbyStoresList({
               {/* Store Name and Chain */}
               <h3 className="font-semibold text-gray-900">{store.name}</h3>
               <p className="text-sm text-gray-600">{store.chain}</p>
+
+              {/* Open Status Badge */}
+              <div className="mt-1">
+                <StoreOpenStatus
+                  hours={getStoreHours(store.id, store.territory)}
+                  compact={true}
+                />
+              </div>
 
               {/* Location */}
               {store.city && (

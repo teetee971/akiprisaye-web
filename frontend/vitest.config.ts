@@ -67,6 +67,8 @@ export default defineConfig({
       abs('./src/test/receiptParser.test.ts'),
       // ScanHub classifier — text classification and extraction
       abs('./src/test/scanHubClassifier.test.ts'),
+      // Store hours — open/closed status logic and utilities
+      abs('./src/test/storeHours.test.ts'),
     ],
 
     exclude: ['**/node_modules/**', '**/.git/**', '**/dist/**', '**/coverage/**'],
