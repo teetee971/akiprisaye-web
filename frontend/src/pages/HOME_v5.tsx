@@ -4,7 +4,7 @@ import { getComparisonOfDay, type PriceComparison } from '../data/exampleCompari
 import '../styles/home-v5.css';
 import '../styles/animations.css';
 import { safeLocalStorage } from '../utils/safeLocalStorage';
-import { getTerritoryAsset } from '../config/imageAssets';
+import { getTerritoryAsset, getProductImage } from '../config/imageAssets';
 import PriceLiveTicker from '../components/home/PriceLiveTicker';
 
 const HowItWorksSection = lazy(() => import('./home-v5/HowItWorksSection'));
@@ -19,6 +19,8 @@ const StoreRankingWidget = lazy(() => import('../components/home/StoreRankingWid
 const InflationBarometerWidget = lazy(() => import('../components/home/InflationBarometerWidget'));
 const ProduitChocWidget = lazy(() => import('../components/home/ProduitChocWidget'));
 const IndiceEquiteWidget = lazy(() => import('../components/home/IndiceEquiteWidget'));
+const AppDemoShowcase = lazy(() => import('../components/home/AppDemoShowcase'));
+const VideoVieChere = lazy(() => import('../components/home/VideoVieChere'));
 
 const TESTIMONIALS = [
   {
@@ -286,26 +288,45 @@ export default function HomeV5() {
         <section className="example-comparison section-reveal">
           <h2 className="section-title slide-up">Exemple de comparaison</h2>
           <div className="comparison-card fade-in">
-            <div className="comparison-col">
-              <div className="comparison-header">
-                <span className="comparison-flag">{exampleComparison.territoryFlag}</span>
-                <h3 className="comparison-territory">{exampleComparison.territory}</h3>
+            {/* Product image strip */}
+            {(() => {
+              const prodImg = getProductImage(exampleComparison.product);
+              return (
+                <div className="comparison-product-img-wrap">
+                  <img
+                    src={prodImg.url}
+                    alt={prodImg.alt}
+                    className="comparison-product-img"
+                    loading="lazy"
+                    width="300"
+                    height="120"
+                  />
+                  <div className="comparison-product-img-overlay" aria-hidden="true" />
+                </div>
+              );
+            })()}
+            <div className="comparison-cols">
+              <div className="comparison-col">
+                <div className="comparison-header">
+                  <span className="comparison-flag">{exampleComparison.territoryFlag}</span>
+                  <h3 className="comparison-territory">{exampleComparison.territory}</h3>
+                </div>
+                <p className="comparison-product">{exampleComparison.product}</p>
+                <p className="comparison-price">{exampleComparison.territoryPrice.toFixed(2)} €</p>
+                <p className="comparison-delta">+{exampleComparison.deltaPercent}% plus cher</p>
               </div>
-              <p className="comparison-product">{exampleComparison.product}</p>
-              <p className="comparison-price">{exampleComparison.territoryPrice.toFixed(2)} €</p>
-              <p className="comparison-delta">+{exampleComparison.deltaPercent}% plus cher</p>
-            </div>
-            <div className="comparison-divider">
-              <span className="comparison-vs">VS</span>
-            </div>
-            <div className="comparison-col">
-              <div className="comparison-header">
-                <span className="comparison-flag">🇫🇷</span>
-                <h3 className="comparison-territory">Métropole</h3>
+              <div className="comparison-divider">
+                <span className="comparison-vs">VS</span>
               </div>
-              <p className="comparison-product">{exampleComparison.product}</p>
-              <p className="comparison-price">{exampleComparison.metropolePrice.toFixed(2)} €</p>
-              <p className="comparison-reference">Prix de référence</p>
+              <div className="comparison-col">
+                <div className="comparison-header">
+                  <span className="comparison-flag">🇫🇷</span>
+                  <h3 className="comparison-territory">Métropole</h3>
+                </div>
+                <p className="comparison-product">{exampleComparison.product}</p>
+                <p className="comparison-price">{exampleComparison.metropolePrice.toFixed(2)} €</p>
+                <p className="comparison-reference">Prix de référence</p>
+              </div>
             </div>
           </div>
           <div className="comparison-cta fade-in">
@@ -392,6 +413,11 @@ export default function HomeV5() {
           <HowItWorksSection />
         </Suspense>
 
+        {/* App demo showcase — CSS phone mockup with real data screens */}
+        <Suspense fallback={null}>
+          <AppDemoShowcase />
+        </Suspense>
+
         {/* Real price chart — territory comparison with real observatoire data */}
         <Suspense fallback={null}>
           <TerritoryPriceChart />
@@ -429,6 +455,11 @@ export default function HomeV5() {
         {/* Category overcost chart — DOM surcoût vs Hexagone by category */}
         <Suspense fallback={null}>
           <CategoryOvercostChart />
+        </Suspense>
+
+        {/* Video section — vie chère outre-mer explained with lazy YouTube embeds */}
+        <Suspense fallback={null}>
+          <VideoVieChere />
         </Suspense>
 
         {/* Live news feed from actualites.json — real data only */}

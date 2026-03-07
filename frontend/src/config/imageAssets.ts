@@ -193,4 +193,84 @@ export const PAGE_HERO_IMAGES = {
   gamification: 'https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?auto=format&fit=crop&w=1600&q=80',
   /** Comparaison enseignes — supermarket aisle */
   comparaisonEnseignes: 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=1600&q=80',
+  /** App demo — person scanning barcode in tropical supermarket */
+  appDemo: 'https://images.unsplash.com/photo-1607082348351-cef5cd02c7b0?auto=format&fit=crop&w=1600&q=80',
+  /** Vie chère poster — supermarket shelves with price tags */
+  videoPoster: 'https://images.unsplash.com/photo-1542838132-2b1a08e4b1a0?auto=format&fit=crop&w=1200&q=80',
 };
+
+/**
+ * Product images for the 14 observatoire tracked products.
+ * All photos are free to use under the Unsplash License.
+ */
+export const PRODUCT_IMAGES: Record<string, { url: string; alt: string }> = {
+  'Lait demi-écrémé UHT 1L': {
+    url: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=300&q=80',
+    alt: 'Lait demi-écrémé UHT 1 litre',
+  },
+  'Riz long blanc 1kg': {
+    url: 'https://images.unsplash.com/photo-1516684669134-de2d4a1c0e8a?auto=format&fit=crop&w=300&q=80',
+    alt: 'Riz long blanc 1 kilogramme',
+  },
+  'Eau minérale 1.5L': {
+    url: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=300&q=80',
+    alt: 'Bouteille d\'eau minérale 1,5 litre',
+  },
+  'Pâtes spaghetti 500g': {
+    url: 'https://images.unsplash.com/photo-1551462147-ff29053bfc14?auto=format&fit=crop&w=300&q=80',
+    alt: 'Pâtes spaghetti 500 grammes',
+  },
+  'Sucre blanc 1kg': {
+    url: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=300&q=80',
+    alt: 'Sucre blanc en poudre 1 kilogramme',
+  },
+  'Huile de tournesol 1L': {
+    url: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=300&q=80',
+    alt: 'Huile de tournesol 1 litre',
+  },
+  'Tomates rondes 1kg': {
+    url: 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&w=300&q=80',
+    alt: 'Tomates rondes fraîches 1 kilogramme',
+  },
+  'Poulet entier 1kg': {
+    url: 'https://images.unsplash.com/photo-1587593810167-a84920ea0781?auto=format&fit=crop&w=300&q=80',
+    alt: 'Poulet entier 1 kilogramme',
+  },
+  'Yaourt nature 4x125g': {
+    url: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=300&q=80',
+    alt: 'Yaourt nature 4×125 g',
+  },
+  'Lessive liquide 1.5L': {
+    url: 'https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?auto=format&fit=crop&w=300&q=80',
+    alt: 'Lessive liquide 1,5 litre',
+  },
+  'Liquide vaisselle 500ml': {
+    url: 'https://images.unsplash.com/photo-1563453392212-326f5e854473?auto=format&fit=crop&w=300&q=80',
+    alt: 'Liquide vaisselle 500 ml',
+  },
+  'Gel douche 250ml': {
+    url: 'https://images.unsplash.com/photo-1556228578-8c89e6adf883?auto=format&fit=crop&w=300&q=80',
+    alt: 'Gel douche 250 ml',
+  },
+  'Crème hydratante visage 50ml': {
+    url: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=300&q=80',
+    alt: 'Crème hydratante visage 50 ml',
+  },
+  'Paracétamol 500mg x16': {
+    url: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=300&q=80',
+    alt: 'Paracétamol 500 mg boîte de 16 comprimés',
+  },
+  'Café moulu 250g': {
+    url: 'https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=300&q=80',
+    alt: 'Café moulu 250 grammes',
+  },
+};
+
+export function getProductImage(productName: string): { url: string; alt: string } {
+  return (
+    PRODUCT_IMAGES[productName] ?? {
+      url: 'https://images.unsplash.com/photo-1542838132-2b1a08e4b1a0?auto=format&fit=crop&w=300&q=80',
+      alt: productName,
+    }
+  );
+}
