@@ -17,6 +17,8 @@ const PanierVitalWidget = lazy(() => import('../components/home/PanierVitalWidge
 const CategoryOvercostChart = lazy(() => import('../components/home/CategoryOvercostChart'));
 const StoreRankingWidget = lazy(() => import('../components/home/StoreRankingWidget'));
 const InflationBarometerWidget = lazy(() => import('../components/home/InflationBarometerWidget'));
+const ProduitChocWidget = lazy(() => import('../components/home/ProduitChocWidget'));
+const IndiceEquiteWidget = lazy(() => import('../components/home/IndiceEquiteWidget'));
 
 const TESTIMONIALS = [
   {
@@ -412,6 +414,16 @@ export default function HomeV5() {
         {/* Inflation barometer — dynamic month-over-month basket trend from real snapshots */}
         <Suspense fallback={null}>
           <InflationBarometerWidget />
+        </Suspense>
+
+        {/* Price shock ranking — top 5 products with biggest inter-territory price gap */}
+        <Suspense fallback={null}>
+          <ProduitChocWidget />
+        </Suspense>
+
+        {/* Equity index — composite multi-product price equity score per territory vs hexagone */}
+        <Suspense fallback={null}>
+          <IndiceEquiteWidget />
         </Suspense>
 
         {/* Category overcost chart — DOM surcoût vs Hexagone by category */}

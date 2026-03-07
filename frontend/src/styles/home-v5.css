@@ -2239,3 +2239,405 @@
     font-size: 1.05rem;
   }
 }
+
+/* ========================================================
+   ProduitChocWidget — Chocs de Prix DOM
+   ======================================================== */
+
+.choc-section {
+  padding: 4rem 2rem;
+}
+
+.choc-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.choc-subtitle {
+  font-size: 0.9rem;
+  color: #94a3b8;
+  margin-bottom: 1rem;
+  line-height: 1.55;
+}
+
+.choc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 auto 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 680px;
+}
+
+.choc-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 14px;
+  padding: 1.1rem 1.25rem;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.choc-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(148, 163, 184, 0.2);
+}
+
+.choc-rank {
+  font-size: 1.3rem;
+  font-weight: 800;
+  line-height: 1;
+  min-width: 2rem;
+  padding-top: 0.2rem;
+}
+
+.choc-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.choc-product-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.65rem;
+}
+
+.choc-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.choc-product-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  flex: 1;
+  min-width: 0;
+}
+
+.choc-severity-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 0.2rem 0.55rem;
+  border-radius: 99px;
+  border: 1px solid;
+  white-space: nowrap;
+}
+
+.choc-bar-wrap {
+  height: 5px;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+}
+
+.choc-bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+.choc-compare-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.choc-cheapest,
+.choc-most-expensive {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.choc-flag {
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+.choc-territory-name {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100px;
+}
+
+.choc-price {
+  font-size: 0.92rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.choc-price--low {
+  color: #22c55e;
+}
+
+.choc-price--high {
+  color: #ef4444;
+}
+
+.choc-ratio-pill {
+  font-size: 0.8rem;
+  font-weight: 800;
+  padding: 0.2rem 0.55rem;
+  border-radius: 99px;
+  white-space: nowrap;
+}
+
+.choc-vs-hex {
+  font-size: 0.72rem;
+  color: #64748b;
+  margin-top: 0.45rem;
+}
+
+.choc-source {
+  max-width: 680px;
+  margin: 0 auto;
+  font-size: 0.72rem;
+  color: #475569;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.choc-skeleton {
+  height: 220px;
+  max-width: 680px;
+  margin: 0 auto;
+  border-radius: 14px;
+  background: linear-gradient(
+    90deg,
+    rgba(30, 41, 59, 0.4) 25%,
+    rgba(51, 65, 85, 0.4) 50%,
+    rgba(30, 41, 59, 0.4) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+}
+
+@media (max-width: 600px) {
+  .choc-section {
+    padding: 3rem 1rem;
+  }
+
+  .choc-territory-name {
+    max-width: 70px;
+  }
+
+  .choc-rank {
+    font-size: 1.1rem;
+  }
+}
+
+/* ========================================================
+   IndiceEquiteWidget — Indice d'Équité Tarifaire
+   ======================================================== */
+
+.equite-section {
+  padding: 4rem 2rem;
+}
+
+.equite-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.equite-subtitle {
+  font-size: 0.9rem;
+  color: #94a3b8;
+  margin-bottom: 1rem;
+  line-height: 1.55;
+}
+
+.equite-bqp-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: #94a3b8;
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  border-radius: 99px;
+  padding: 0.3rem 0.9rem;
+}
+
+.equite-bqp-marker {
+  display: inline-block;
+  width: 2px;
+  height: 14px;
+  background: #f59e0b;
+  border-radius: 2px;
+}
+
+.equite-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  max-width: 680px;
+  margin: 0 auto 1.5rem;
+  padding: 0.85rem 1.1rem;
+  border-radius: 12px;
+  background: rgba(239, 68, 68, 0.06);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  font-size: 0.85rem;
+  color: #fca5a5;
+  line-height: 1.5;
+}
+
+.equite-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  max-width: 820px;
+  margin: 0 auto 1.5rem;
+}
+
+.equite-card {
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 14px;
+  padding: 1.1rem 1.2rem;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.equite-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(148, 163, 184, 0.2);
+}
+
+.equite-card--breach {
+  border-color: rgba(239, 68, 68, 0.25);
+}
+
+.equite-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.equite-flag {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.equite-territory {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  flex: 1;
+  min-width: 0;
+}
+
+.equite-status-badge {
+  font-size: 0.63rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  padding: 0.2rem 0.5rem;
+  border-radius: 99px;
+  border: 1px solid;
+  white-space: nowrap;
+}
+
+.equite-bar-container {
+  position: relative;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 0.6rem;
+}
+
+.equite-bqp-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: rgba(245, 158, 11, 0.7);
+  z-index: 2;
+  border-radius: 2px;
+}
+
+.equite-bar {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.5s ease;
+}
+
+.equite-score-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.equite-score {
+  font-size: 1.3rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.equite-products {
+  font-size: 0.72rem;
+  color: #475569;
+}
+
+.equite-breach-note {
+  font-size: 0.71rem;
+  color: #f87171;
+  margin-top: 0.4rem;
+}
+
+.equite-source {
+  max-width: 820px;
+  margin: 0 auto;
+  font-size: 0.72rem;
+  color: #475569;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.equite-skeleton {
+  height: 200px;
+  max-width: 820px;
+  margin: 0 auto;
+  border-radius: 14px;
+  background: linear-gradient(
+    90deg,
+    rgba(30, 41, 59, 0.4) 25%,
+    rgba(51, 65, 85, 0.4) 50%,
+    rgba(30, 41, 59, 0.4) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+}
+
+@media (max-width: 600px) {
+  .equite-section {
+    padding: 3rem 1rem;
+  }
+
+  .equite-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .equite-card {
+    padding: 0.9rem 0.9rem;
+  }
+
+  .equite-score {
+    font-size: 1.1rem;
+  }
+}
