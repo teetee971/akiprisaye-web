@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 // src/utils/csv.ts
 // Minimal CSV parser to avoid adding a dependency. Returns an array of objects
 

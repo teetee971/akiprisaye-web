@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
+ 
 /**
  * Freight Comparator - Comparateur Fret Maritime & Colis
  * 

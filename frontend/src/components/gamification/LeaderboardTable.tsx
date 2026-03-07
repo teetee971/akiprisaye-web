@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 /**
  * LeaderboardTable Component
  * Full leaderboard table with rankings

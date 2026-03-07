@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+ 
 import { useState, type FormEvent } from 'react';
 import type {
   NormalizedPriceObservation,

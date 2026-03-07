@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
+ 
 /**
  * Route Optimization Utilities
  * Implements TSP (Traveling Salesman Problem) solver for multi-store shopping trips

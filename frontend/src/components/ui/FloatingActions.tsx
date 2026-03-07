@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 import { useLocation } from "react-router-dom";
 import AssistantChatButton from "../AssistantChat";
 import PanierButton from "../TiPanierButton";

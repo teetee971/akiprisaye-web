@@ -42,6 +42,7 @@ interface EconomicIndicator {
   label: string;
   flag: string;
   population: number;
+  population_year: number;
   pib_par_habitant_eur: number;
   pib_year: number;
   taux_chomage_pct: number;
@@ -53,6 +54,7 @@ interface EconomicIndicator {
   transport_maritime_duree_jours: number;
   salaire_median_mensuel_net_eur: number;
   smic_mensuel_net_eur: number;
+  sursalaire_fonctionnaire_pct: number;
   source_note: string;
 }
 

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 // src/services/catalogueService.ts
 // Catalogue service: small scaffolding for roadmap
 

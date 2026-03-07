@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 // src/components/ScanCamera.tsx
 import React, { useEffect } from 'react'
 

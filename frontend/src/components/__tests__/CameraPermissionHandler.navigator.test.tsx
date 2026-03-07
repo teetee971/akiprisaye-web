@@ -1,5 +1,5 @@
-/* eslint-disable no-undef */
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
+ 
 /**
  * Test suite to verify CameraPermissionHandler handles missing navigator API correctly
  * This ensures CI builds don't fail when navigator is undefined (Node.js environment)

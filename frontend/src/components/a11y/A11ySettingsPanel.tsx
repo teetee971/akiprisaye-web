@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 import React, { useState } from 'react';
 import { X, Accessibility } from 'lucide-react';
 import FontSizeControl from './FontSizeControl';

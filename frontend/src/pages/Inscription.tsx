@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 // src/pages/Inscription.tsx
 import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";

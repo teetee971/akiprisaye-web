@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 import React, { useState, useEffect } from 'react';
 import { Sparkles, Clock, TrendingDown, ShoppingBag } from 'lucide-react';
 import { safeLocalStorage } from '../../utils/safeLocalStorage';

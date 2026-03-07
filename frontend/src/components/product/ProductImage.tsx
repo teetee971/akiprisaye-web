@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 /**
  * Product Image Component - Mobile Optimized for Samsung S24+
  * 

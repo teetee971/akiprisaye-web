@@ -1,5 +1,5 @@
 // @ts-nocheck -- Multiple Company type union issues; TODO: fix storeCompanyService types
-/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
+ 
 /**
  * Store Detail Page
  * 

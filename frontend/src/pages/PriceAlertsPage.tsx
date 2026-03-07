@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 /**
  * Price Alerts Page
  * Manage price alerts for products — with real observatoire check

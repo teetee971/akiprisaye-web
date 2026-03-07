@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
+ 
 // src/pages/Subscribe.tsx
 /**
  * Ethical Subscription Tunnel - 3 Steps Max

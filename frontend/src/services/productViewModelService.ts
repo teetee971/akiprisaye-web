@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 /**
  * Product View Model Service
  * Transforms ProductResult from eanProductService into UI-ready ProductViewModel

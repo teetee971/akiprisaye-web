@@ -1,5 +1,5 @@
-/* eslint-disable no-undef */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
+ 
 /**
  * Type definitions for leaflet.heat
  * https://github.com/Leaflet/Leaflet.heat

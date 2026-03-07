@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 /**
  * Module : Pourquoi certains produits mettent plus de temps à arriver ici
  * 

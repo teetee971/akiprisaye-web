@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
+ 
 /**
  * antiCrisisReading.ts — Anti-Crisis Reading Logic
  * 

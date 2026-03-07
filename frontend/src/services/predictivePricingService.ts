@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 // src/services/predictivePricingService.ts
 // Service d'IA prédictive pour anticiper les baisses de prix et promotions
 // 100% frontend, aucun appel externe

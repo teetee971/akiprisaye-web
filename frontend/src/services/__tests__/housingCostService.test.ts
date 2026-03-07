@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 /**
  * Unit Tests for Housing Cost Observatory Service v2.4.0
  */

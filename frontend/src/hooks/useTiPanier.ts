@@ -1,5 +1,5 @@
-/* eslint-disable no-undef */
-/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
+ 
+ 
 import { useCallback, useEffect, useState } from 'react';
 import { auth, db } from '../lib/firebase';
 import { doc, setDoc, getDoc, collection, onSnapshot } from 'firebase/firestore';

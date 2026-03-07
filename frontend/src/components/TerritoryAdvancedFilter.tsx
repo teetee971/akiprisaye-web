@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 // src/components/TerritoryAdvancedFilter.tsx
 // Advanced territorial filters - client-side filtering only
 import React, { useState } from 'react'

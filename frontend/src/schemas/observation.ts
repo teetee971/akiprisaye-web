@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 /**
  * TypeScript schema for price observations from receipt tickets
  * "A KI PRI SA YÉ" - Manual ingestion module

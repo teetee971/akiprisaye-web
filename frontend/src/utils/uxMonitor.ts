@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 /**
  * UX Monitor - Lightweight Client-Side Observability
  * 

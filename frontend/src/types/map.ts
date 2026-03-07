@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+ 
 /**
  * Map Types
  * Type definitions for the interactive map feature

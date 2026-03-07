@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 /**
  * Tests for GPS/Geolocation Utilities
  * Validates caching, batch calculations, and performance optimizations

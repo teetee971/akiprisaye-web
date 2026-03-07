@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
+ 
 import React, { useState, useEffect } from 'react';
 import { Plane, Info, TrendingUp } from 'lucide-react';
 import {

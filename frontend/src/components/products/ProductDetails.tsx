@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 /**
  * ProductDetails Component
  * Mobile-first product information display with citizen data badges

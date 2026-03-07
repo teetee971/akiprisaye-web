@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 /**
  * Camera Permission Handler
  * Part of PR #3 - OCR Ingredients Extension

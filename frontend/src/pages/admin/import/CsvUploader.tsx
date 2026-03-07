@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 /**
  * CsvUploader Component
  * Drag & drop file upload component for CSV files

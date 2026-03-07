@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 import { expect, test } from 'vitest';
 import { computeComparison } from './comparisonService';
 

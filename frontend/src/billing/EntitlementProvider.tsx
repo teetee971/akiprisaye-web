@@ -1,4 +1,4 @@
-/* eslint-disable react-refresh/only-export-components */
+ 
 import React, { createContext, useContext, useMemo } from 'react';
 import { FeatureId, PLAN_DEFINITIONS, PlanId } from './plans';
 

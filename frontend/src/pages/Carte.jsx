@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+ 
 import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 // Leaflet styles are imported here on the map route to keep HOME's initial bundle lighter.

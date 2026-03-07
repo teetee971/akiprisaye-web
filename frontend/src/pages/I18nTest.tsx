@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 /**
  * i18n Test Page
  * Demonstrates usage of translation components and hooks

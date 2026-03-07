@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 // src/pages/ResetPassword.tsx
 import { useState, useEffect } from "react";
 import { sendPasswordResetEmail } from "firebase/auth";

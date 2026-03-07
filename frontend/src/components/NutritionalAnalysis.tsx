@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 /**
  * Nutritional Analysis Component
  * Intelligent nutritional analysis with Nutri-Score and health warnings

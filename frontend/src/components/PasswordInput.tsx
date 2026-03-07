@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+ 
 /**
  * Enhanced Password Input Component
  * 

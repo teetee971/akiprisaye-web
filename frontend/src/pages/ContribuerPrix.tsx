@@ -1,5 +1,5 @@
-/* eslint-disable no-undef */
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
+ 
 // src/pages/ContribuerPrix.tsx
 import React, { useState } from "react";
 import { useAuth } from "@/context/AuthContext";

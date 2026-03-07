@@ -107,7 +107,7 @@ function parseTimeToMinutes(time: string): number {
  * Format time in minutes to HH:MM string
  * (Currently unused but kept for future use)
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+ 
 function formatMinutesToTime(minutes: number): string {
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;

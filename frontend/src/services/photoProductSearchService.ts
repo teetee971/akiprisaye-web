@@ -53,7 +53,7 @@ interface PhotoBarcodeResult {
 
 interface PhotoBarcodeDetector {
   // Web standard: accepts any image source (img, canvas, video, blob…)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   detect(source: any): Promise<PhotoBarcodeResult[]>;
 }
 
@@ -63,7 +63,7 @@ interface PhotoBarcodeDetectorCtor {
 
 function getNativeBarcodeDetector(): PhotoBarcodeDetectorCtor | undefined {
   if (typeof window === 'undefined') return undefined;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   return (window as any).BarcodeDetector as PhotoBarcodeDetectorCtor | undefined;
 }
 

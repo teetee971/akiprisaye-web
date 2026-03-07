@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 import React from 'react';
 import { MessageSquarePlus, Lightbulb, Bug, HelpCircle, Database, Sparkles } from 'lucide-react';
 import TicketForm from '../components/TicketForm';

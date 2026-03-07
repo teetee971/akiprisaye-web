@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 /**
  * Optimal Route Display Component
  * Shows the optimized multi-store shopping route with map visualization

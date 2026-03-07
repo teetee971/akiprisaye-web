@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+ 
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';

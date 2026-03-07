@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 /**
  * Localized Text Component
  * Provides text localization with support for rich formatting

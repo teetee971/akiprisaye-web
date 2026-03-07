@@ -1,5 +1,5 @@
-/* eslint-disable no-undef */
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
+ 
 import React, { useEffect, useRef } from "react";
 import { X, Trash2, TrendingDown, TrendingUp, BarChart3 } from "lucide-react";
 import { useNavigate } from "react-router-dom";

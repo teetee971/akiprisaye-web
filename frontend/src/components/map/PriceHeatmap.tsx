@@ -1,5 +1,5 @@
-/* eslint-disable no-undef */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
+ 
 /**
  * PriceHeatmap Component
  * Displays a heat map overlay showing price intensity across locations
@@ -72,7 +72,7 @@ export function PriceHeatmap({
     };
 
     // Create heatmap layer
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     const heatLayer = (L as any).heatLayer(heatData, heatmapOptions);
 
     // Add to map

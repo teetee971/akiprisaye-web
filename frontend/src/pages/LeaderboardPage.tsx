@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 /**
  * Leaderboard Page
  * Leaderboard page with filters (all-time, monthly, weekly, by territory)

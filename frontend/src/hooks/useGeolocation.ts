@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 /**
  * useGeolocation Hook
  * Manages geolocation permissions and provides position tracking

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 /**
  * Unit Tests for Land Mobility Price Service v2.3.0
  */

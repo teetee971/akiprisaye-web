@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+ 
 import React, { useState } from 'react';
 import { Send, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
 import type { TicketType, CreateTicketData } from '../types/ticket';

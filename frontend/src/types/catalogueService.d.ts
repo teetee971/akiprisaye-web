@@ -1,5 +1,5 @@
-/* eslint-disable no-undef */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
+ 
 import { CatalogueItemRaw } from '../services/catalogueService';
 
 // Type principal

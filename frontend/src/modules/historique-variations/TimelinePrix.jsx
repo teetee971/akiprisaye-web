@@ -1,4 +1,4 @@
-/* eslint-disable react/jsx-no-undef */
+ 
 /**
  * Timeline Prix Component
  * Displays chronological price history with variation calculations

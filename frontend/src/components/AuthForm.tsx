@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 // src/components/AuthForm.tsx
 import React, { useState } from "react";
 import {

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 /**
  * Service OpenPrices - Synchronisation des prix crowdsourcés
  */

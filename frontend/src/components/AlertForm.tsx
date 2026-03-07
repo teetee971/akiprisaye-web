@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 /**
  * Alert Form Component
  * Create and edit price alerts with support for % or absolute price threshold

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 import React, { useState, useEffect } from 'react';
 import { Ticket as TicketIcon, Search, Filter, Clock, CheckCircle2, XCircle, AlertCircle } from 'lucide-react';
 import type { Ticket, TicketStatus } from '../types/ticket';

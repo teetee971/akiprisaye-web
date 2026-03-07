@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 /**
  * EAN Product Service with Strict Validation and Traceability
  * Handles EAN-based product lookup with fallback for unknown products

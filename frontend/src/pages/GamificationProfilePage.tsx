@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
+ 
 /**
  * Gamification Profile Page
  * Complete user profile page with all stats, badges, challenges, and progress

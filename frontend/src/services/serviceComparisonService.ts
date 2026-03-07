@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 // Service for handling services (transport, telecoms, utilities) comparison
 
 import type {

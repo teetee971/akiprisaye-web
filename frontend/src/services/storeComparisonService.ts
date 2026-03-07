@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
+ 
 // src/services/storeComparisonService.ts
 // Service de comparaison entre enseignes basé sur le catalogue local
 

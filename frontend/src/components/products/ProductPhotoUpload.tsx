@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 /**
  * ProductPhotoUpload Component
  * Allows users to upload photos of products with GDPR compliance

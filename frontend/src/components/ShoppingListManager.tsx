@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+ 
 /**
  * Shopping List Manager Component
  * Main component for managing shopping lists

@@ -1,5 +1,5 @@
 // @ts-nocheck
-/* eslint-disable no-undef */
+ 
 import React, { useState } from 'react';
 import { Droplet, Info, Download } from 'lucide-react';
 import {

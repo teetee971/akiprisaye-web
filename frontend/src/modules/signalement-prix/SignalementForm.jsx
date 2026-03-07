@@ -1,4 +1,4 @@
-/* eslint-disable react/jsx-no-undef */
+ 
 import { useState } from 'react';
 import { safeLocalStorage } from '../../utils/safeLocalStorage';
 

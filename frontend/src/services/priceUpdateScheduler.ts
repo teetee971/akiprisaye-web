@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 import { safeLocalStorage } from '../utils/safeLocalStorage';
 // src/services/priceUpdateScheduler.ts
 // Planificateur de mise à jour automatique des données de prix

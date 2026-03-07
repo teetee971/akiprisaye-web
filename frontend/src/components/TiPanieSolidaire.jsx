@@ -1,4 +1,4 @@
-/* eslint-disable react/jsx-no-undef */
+ 
 /**
  * TiPanieSolidaire Component
  * * Solidarity basket feature for sharing unsold items and local produce

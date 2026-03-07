@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 // src/components/LocalHistoryPanel.tsx
 // Local History Panel Component - displays recent consultations
 import React from 'react'

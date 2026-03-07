@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
+ 
 import React, { useState, useEffect } from 'react';
 import { Shield, Plane, Ship, Wifi, Smartphone, Droplet, Zap, TrendingUp } from 'lucide-react';
 import type { TerritoryCode, ServiceCategory } from '../types/service';

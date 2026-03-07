@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 /**
  * Product View Model Types
  * UI-specific types for product display (PR #2)

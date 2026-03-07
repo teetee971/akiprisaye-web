@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 /**
  * PriceChart Component (Mission M-B)
  * Visual chart for price comparison using Recharts

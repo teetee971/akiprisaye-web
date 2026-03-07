@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 /**
  * Utilitaire de test pour le système d'onboarding
  * Permet de tester facilement les différents états de l'onboarding

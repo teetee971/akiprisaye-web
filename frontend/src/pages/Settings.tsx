@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+ 
 /**
  * Settings Page
  * Part of Ticket 4: User Settings

@@ -1,4 +1,4 @@
-/* eslint-disable react/jsx-no-undef */
+ 
 import { useEffect, useState } from 'react';
 import {
   Chart as ChartJS,

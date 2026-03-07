@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+ 
 import { safeLocalStorage } from '../../utils/safeLocalStorage';
 /**
  * OCR History Service

@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+ 
 /**
  * Product Text Review Modal
  * Part of PR D - Text-based Product Recognition

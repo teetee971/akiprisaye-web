@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 /**
  * priceAnalysis.ts — Price calculation and analysis utilities
  * 

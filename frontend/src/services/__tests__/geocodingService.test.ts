@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 /**
  * Tests for Geocoding Service
  * Phase 7: Test address-to-coordinates conversion and batch operations

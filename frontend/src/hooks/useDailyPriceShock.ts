@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 /**
  * ⑭ RÉSUMÉ DES HAUSSES DU JOUR
  * Hook pour analyser les hausses récentes de prix

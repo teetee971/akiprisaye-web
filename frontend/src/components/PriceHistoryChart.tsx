@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
+ 
 /**
  * Price History Chart Component
  * Interactive chart displaying price evolution over time with variation indicators

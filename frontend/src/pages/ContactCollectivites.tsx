@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 // src/pages/ContactCollectivites.tsx
 /**
  * Page Contact Collectivités

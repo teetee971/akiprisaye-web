@@ -1,4 +1,4 @@
-/* eslint-disable react/jsx-no-undef */
+ 
 import { useState, useEffect } from 'react';
 
 /**

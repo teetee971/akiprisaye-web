@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+ 
 import { describe, it, expect } from 'vitest';
 import { existsSync, statSync } from 'node:fs';
 import path from 'node:path';

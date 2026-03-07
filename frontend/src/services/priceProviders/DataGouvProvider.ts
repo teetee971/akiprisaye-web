@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+ 
 import type { ProductPrice } from '../../types/ProductPrice';
 import type { PriceProvider } from './PriceProvider';
 

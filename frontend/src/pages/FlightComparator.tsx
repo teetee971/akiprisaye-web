@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 import React, { useState, useEffect, useMemo } from 'react';
 import { Plane, AlertCircle, Info, Clock, BarChart3, Download, FileText } from 'lucide-react';
 import type {

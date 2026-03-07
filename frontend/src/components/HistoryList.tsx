@@ -1,5 +1,5 @@
-/* eslint-disable no-undef */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
+ 
 import React, { useEffect, useState } from 'react';
 import { GlassCard } from './ui/glass-card';
 import { safeLocalStorage } from '../utils/safeLocalStorage';

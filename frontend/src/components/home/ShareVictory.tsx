@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 import React, { useState } from 'react';
 import { Share2, Download, Copy, Check, TrendingUp } from 'lucide-react';
 import { safeLocalStorage } from '../../utils/safeLocalStorage';

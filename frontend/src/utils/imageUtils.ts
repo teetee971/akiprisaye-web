@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 /**
  * Image Utilities for Performance Optimization
  * Mobile-first image preprocessing for OCR and scanning

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 /**
  * inflationPressureIndex.ts — Local Inflation Pressure Index (ILPP)
  * 

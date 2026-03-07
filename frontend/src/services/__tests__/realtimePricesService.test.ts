@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+ 
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { getRealtimePrices, type RealtimePrice } from '../realtimePricesService';
 

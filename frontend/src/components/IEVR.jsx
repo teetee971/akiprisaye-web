@@ -1,4 +1,4 @@
-/* eslint-disable react/jsx-no-undef */
+ 
 /**
  * IEVR (Indice d'Écart de Vie Réelle) Component
  * 

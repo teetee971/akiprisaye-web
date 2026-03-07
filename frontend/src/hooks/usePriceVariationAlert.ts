@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+ 
 // src/hooks/usePriceVariationAlert.ts
 // Price variation alert hook - client-side calculation only
 import { useMemo } from 'react'

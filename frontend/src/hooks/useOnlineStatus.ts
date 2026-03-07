@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 /**
  * Online/Offline Detection Hook
  * Phase 2 - Offline OCR Support

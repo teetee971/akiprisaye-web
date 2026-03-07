@@ -1,5 +1,5 @@
 // @ts-nocheck -- StoreMapProps mismatches with example usage; TODO: update StoreMap interface
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 /**
  * Example usage of StoreMap components
  * 

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 /**
  * Assistant Service - A KI PRI SA YÉ v1.6.0
  * Chatbot assistant lecture seule

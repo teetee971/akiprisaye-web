@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 // src/utils/dataReliability.ts
 // Data Reliability Score Calculator - Factual Quality Indicator
 // Based on observable metrics: observation count, recency, and coherence

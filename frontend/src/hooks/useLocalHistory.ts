@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+ 
 // src/hooks/useLocalHistory.ts
 // Local consultation history hook - safeLocalStorage only, no tracking
 // Requires explicit GDPR consent (usePrivacyConsent) before recording.

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 import React, { useState, useEffect } from 'react';
 import { Camera, Search, Barcode, Receipt } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';

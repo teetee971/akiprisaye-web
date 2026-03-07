@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 import type { PriceObservation, PriceSearchInput, PriceSourceId } from './price.types';
 
 export interface PriceProviderResult {

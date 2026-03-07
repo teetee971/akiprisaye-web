@@ -1,5 +1,5 @@
 // @ts-nocheck -- Territory type not exported from fuelComparison types; TODO: export type
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 /**
  * Fuel Comparison Service v1.0.0
  * 

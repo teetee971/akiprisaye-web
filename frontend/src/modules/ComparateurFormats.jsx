@@ -1,4 +1,4 @@
-/* eslint-disable react/jsx-no-undef */
+ 
 /**
  * ComparateurFormats Component
  * 

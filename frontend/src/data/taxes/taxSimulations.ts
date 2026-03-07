@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 // src/data/taxes/taxSimulations.ts
 /**
  * Pedagogical tax simulations (READ-ONLY, EDUCATIONAL PURPOSE)
