@@ -1859,6 +1859,9 @@
   padding: 4rem 1.5rem;
   max-width: 900px;
   margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .panier-vital-header {
@@ -1930,6 +1933,7 @@
 .pvc-header {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 0.5rem;
   margin-bottom: 0.75rem;
 }
@@ -2070,6 +2074,25 @@
   }
 }
 
+@media (max-width: 479px) {
+  .panier-vital-section {
+    padding: 2.5rem 0.75rem;
+  }
+
+  .panier-vital-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .pvc-price-value {
+    font-size: 1.4rem;
+  }
+
+  .pvc-minutes-value {
+    font-size: 1.8rem;
+  }
+}
+
 /* =====================================================================
    INFLATION BAROMETER WIDGET
    ===================================================================== */
@@ -2078,6 +2101,9 @@
   padding: 4rem 2rem;
   max-width: 900px;
   margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .ibw-header {
@@ -2278,6 +2304,17 @@
 
   .ibw-pct {
     font-size: 1.05rem;
+  }
+}
+
+@media (max-width: 479px) {
+  .ibw-section {
+    padding: 2.5rem 0.75rem;
+  }
+
+  .ibw-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
   }
 }
 
@@ -2486,6 +2523,11 @@
 
 .equite-section {
   padding: 4rem 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .equite-header {
@@ -2680,6 +2722,17 @@
 
   .equite-score {
     font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 479px) {
+  .equite-section {
+    padding: 2.5rem 0.75rem;
+  }
+
+  .equite-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
   }
 }
 
