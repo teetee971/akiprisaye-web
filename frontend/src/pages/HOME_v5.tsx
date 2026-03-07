@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { getComparisonOfDay, type PriceComparison } from '../data/exampleComparisons';
 import '../styles/home-v5.css';
 import '../styles/animations.css';
@@ -157,6 +158,18 @@ export default function HomeV5() {
   const getTerritoryTitle = () => 'Comparez les prix réels près de chez vous';
 
   return (
+    <>
+      <Helmet>
+        <title>A KI PRI SA YÉ – Transparence des prix Outre-mer</title>
+        <meta name="description" content="Comparez les prix en Guadeloupe, Martinique, Guyane, La Réunion et dans tous les territoires ultramarins. Données citoyennes réelles, scanneur de produits, observatoire des prix." />
+        <meta property="og:title" content="A KI PRI SA YÉ – Transparence des prix Outre-mer" />
+        <meta property="og:description" content="Comparez les prix en Guadeloupe, Martinique, Guyane, La Réunion et dans tous les territoires ultramarins. Données citoyennes réelles, scanneur de produits, observatoire des prix." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://teetee971.github.io/akiprisaye-web/" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="A KI PRI SA YÉ – Transparence des prix Outre-mer" />
+        <meta name="twitter:description" content="Comparez les prix en Guadeloupe, Martinique, Guyane, La Réunion et dans tous les territoires ultramarins." />
+      </Helmet>
     <div className="home-v5">
       <a href="#main-content" className="skip-link">
         Aller au contenu principal
@@ -494,5 +507,6 @@ export default function HomeV5() {
         </div>
       )}
     </div>
+    </>
   );
 }

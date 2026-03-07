@@ -1,18 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
-  <!-- Home -->
+  <!-- ── Accueil ── -->
   <url>
     <loc>https://teetee971.github.io/akiprisaye-web/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
 
-  <!-- Core features -->
+  <!-- ── Observatoire ── -->
   <url>
     <loc>https://teetee971.github.io/akiprisaye-web/observatoire</loc>
     <changefreq>daily</changefreq>
-    <priority>0.9</priority>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/observatoire-vivant</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/observatoire/methodologie</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- ── Comparateurs généraux ── -->
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/comparateurs</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
   </url>
   <url>
     <loc>https://teetee971.github.io/akiprisaye-web/comparateur</loc>
@@ -20,9 +37,327 @@
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://teetee971.github.io/akiprisaye-web/carte</loc>
+    <loc>https://teetee971.github.io/akiprisaye-web/comparateur-citoyen</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/comparaison-enseignes</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/comparaison-panier</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/comparateur-territoires</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/comparaison-territoires</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/inflation-categories</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/tableau-inflation</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/couverture-territoires</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/alertes-prix</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/prix-historique</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+  </url>
+
+  <!-- ── Comparateurs spécialisés ── -->
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/comparateur-vols</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/comparateur-bateaux</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/comparateur-fret</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/comparateur-carburants</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/comparateur-assurances</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/comparateur-formations</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/comparateur-location-voiture</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/comparateur-materiaux-batiment</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/comparateur-services</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/evaluation-cosmetique</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- ── Recherche & Tarifs ── -->
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/recherche-prix</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/recherche-prix/avions</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/recherche-prix/bateaux</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/recherche-prix/fret</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/recherche-prix/fret-aerien</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/recherche-prix/electricite</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/recherche-prix/eau</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/recherche-prix/abonnements-internet</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/recherche-prix/abonnements-mobile</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/recherche-prix/delais-logistiques</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/recherche-prix/indice-logistique</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- ── Ressources & Documentation ── -->
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/comprendre-prix</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/ressources/questions-logistique-dom</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/ressources/glossaire-logistique-dom</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/ressources/comprendre-promotions-prix-barres</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/ressources/pourquoi-prix-varie-sans-changement</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- ── Carte & Itinéraires ── -->
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/carte</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/carte-itineraires</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+  </url>
+
+  <!-- ── Scanner & OCR ── -->
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/scanner</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/scan-ean</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/ocr</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- ── Assistant IA ── -->
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/assistant-ia</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- ── Civic & Solidarité ── -->
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/solidarite</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/ti-panie</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/ievr</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/budget-vital</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/contribuer-prix</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/signaler-abus</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- ── Espace Pro & Institutionnel ── -->
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/inscription-pro</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/espace-pro</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/donnees-publiques</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/gouvernance</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/presse</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- ── Informations ── -->
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/actualites</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/methodologie</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/faq</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/contact</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/a-propos</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/mentions-legales</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/transparence</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/versions</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url>
 
 </urlset>
