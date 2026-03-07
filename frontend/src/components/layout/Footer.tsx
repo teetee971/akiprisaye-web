@@ -12,6 +12,9 @@ export default function Footer() {
           <Link to="/faq" className="hover:text-white">FAQ</Link>
           <Link to="/solidarite" className="hover:text-orange-300">🤝 Entraide</Link>
           <Link to="/inscription-pro" className="hover:text-blue-300">💼 Espace Pro</Link>
+          <Link to="/gouvernance" className="hover:text-slate-300">Gouvernance</Link>
+          <Link to="/presse" className="hover:text-slate-300">Presse</Link>
+          <Link to="/versions" className="hover:text-slate-300">Versions</Link>
         </div>
         <p className="text-center text-xs text-slate-600">
           © {new Date().getFullYear()} A KI PRI SA YÉ — Observer, pas vendre. Données citoyennes pour les territoires ultramarins.

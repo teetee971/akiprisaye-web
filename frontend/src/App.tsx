@@ -51,7 +51,7 @@ const Actualites = lazyPage(() => import('./pages/Actualites'));
 const DonneesPubliques = lazyPage(() => import('./pages/DonneesPubliques'));
 const Contribuer = lazyPage(() => import('./pages/Contribuer'));
 const ContribuerPrix = lazyPage(() => import('./pages/ContribuerPrix'));
-const Comparateurs = lazyPage(() => import('./pages/Comparateurs'));
+const ComparateursHub = lazyPage(() => import('./pages/ComparateursHub'));
 const CarteItinerairesHub = lazyPage(() => import('./pages/CarteItinerairesHub'));
 const ComparateurCitoyen = lazyPage(() => import('./pages/ComparateurCitoyen'));
 const LutteVieChere = lazyPage(() => import('./pages/LutteVieChereIndexPage'));
@@ -160,6 +160,22 @@ const CrossTerritoryComparator = lazyPage(() => import('./pages/CrossTerritoryCo
 const ComparaisonTerritoires = lazyPage(() => import('./pages/ComparaisonTerritoires'));
 const InflationRateTracker = lazyPage(() => import('./pages/InflationRateTracker'));
 const TerritoryCoverageReport = lazyPage(() => import('./pages/TerritoryCoverageReport'));
+
+// ── Pages institutionnelles & civiques manquantes ──
+const TiPanie = lazyPage(() => import('./pages/TiPanie'));
+const Gouvernance = lazyPage(() => import('./pages/Gouvernance'));
+const Presse = lazyPage(() => import('./pages/Presse'));
+const ComprendrePrix = lazyPage(() => import('./pages/ComprendrePrix'));
+const CivicModules = lazyPage(() => import('./pages/CivicModules'));
+const ObservatoireVivant = lazyPage(() => import('./pages/ObservatoireVivant'));
+const AssistantIAHub = lazyPage(() => import('./pages/AssistantIAHub'));
+const Suggestions = lazyPage(() => import('./pages/Suggestions'));
+const MesDemandes = lazyPage(() => import('./pages/MesDemandes'));
+const Promotions = lazyPage(() => import('./pages/Promotions'));
+const BudgetVital = lazyPage(() => import('./pages/BudgetVital'));
+const IEVRPage = lazyPage(() => import('./pages/IEVR'));
+const Versions = lazyPage(() => import('./pages/Versions'));
+const ScanOCR = lazyPage(() => import('./pages/ScanOCR'));
 
 /**
  * IMPORTANT — NE PAS SUPPRIMER
@@ -325,13 +341,15 @@ export default function App() {
                           <Route path="donnees-publiques" element={<DonneesPubliques />} />
                           <Route path="contribuer" element={<Contribuer />} />
                           <Route path="contribuer-prix" element={<ContribuerPrix />} />
-                          <Route path="comparateurs" element={<Comparateurs />} />
+                          <Route path="comparateurs" element={<ComparateursHub />} />
+                          <Route path="comparateurs-hub" element={<Navigate to="/comparateurs" replace />} />
                           <Route path="carte-itineraires" element={<CarteItinerairesHub />} />
                           <Route path="comparateur-citoyen" element={<ComparateurCitoyen />} />
 
                           {/* Scanner & OCR routes */}
                           <Route path="scanner" element={<ScannerHub />} />
                           <Route path="scan-ean" element={<ScanEAN />} />
+                          <Route path="scan-ocr" element={<ScanOCR />} />
                           <Route path="scan-photo" element={<ProductPhotoSearch />} />
                           <Route path="analyse-photo-produit" element={<ProductPhotoAnalysis />} />
                           <Route path="product/:barcode" element={<ProductScanResult />} />
@@ -447,6 +465,21 @@ export default function App() {
                           <Route path="comparaison-territoires" element={<ComparaisonTerritoires />} />
                           <Route path="inflation-categories" element={<InflationRateTracker />} />
                           <Route path="couverture-territoires" element={<TerritoryCoverageReport />} />
+
+                          {/* ── Pages institutionnelles & civiques ── */}
+                          <Route path="ti-panie" element={<TiPanie />} />
+                          <Route path="gouvernance" element={<Gouvernance />} />
+                          <Route path="presse" element={<Presse />} />
+                          <Route path="comprendre-prix" element={<ComprendrePrix />} />
+                          <Route path="civic-modules" element={<CivicModules />} />
+                          <Route path="observatoire-vivant" element={<ObservatoireVivant />} />
+                          <Route path="assistant-ia" element={<AssistantIAHub />} />
+                          <Route path="suggestions" element={<Suggestions />} />
+                          <Route path="mes-demandes" element={<MesDemandes />} />
+                          <Route path="promotions" element={<Promotions />} />
+                          <Route path="budget-vital" element={<BudgetVital />} />
+                          <Route path="ievr" element={<IEVRPage />} />
+                          <Route path="versions" element={<Versions />} />
 
                           {/* Catch-all route - redirect to home */}
                           <Route path="*" element={<Navigate to="/" replace />} />

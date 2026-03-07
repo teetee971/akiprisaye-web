@@ -7,6 +7,7 @@ import { NotificationCenter } from '../NotificationCenter';
 const links = [
   { to: '/search', label: 'Recherche' },
   { to: '/scanner', label: 'Scan' },
+  { to: '/comparateurs', label: 'Comparateurs' },
   { to: '/pricing', label: 'Offres' },
   { to: '/liste', label: 'Liste' },
   { to: '/observatoire', label: 'Observatoire' },
