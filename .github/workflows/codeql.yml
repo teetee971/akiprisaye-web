@@ -62,11 +62,18 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    # Add any setup steps before running the `github/codeql-action/init` action.
-    # This includes steps like installing compilers or runtimes (`actions/setup-node`
-    # or others). This is typically only required for manual builds.
-    # - name: Setup runtime (example)
-    #   uses: actions/setup-example@v1
+    - name: Setup Node.js for Android dependencies
+      if: matrix.language == 'java-kotlin'
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install Android build prerequisites for CodeQL
+      if: matrix.language == 'java-kotlin'
+      run: |
+        npm install --no-save @capacitor/android@8 @capacitor/core@8
+        mkdir -p android/capacitor-cordova-android-plugins/src/main/libs
+        echo "sdk.dir=${ANDROID_SDK_ROOT}" > android/local.properties
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
