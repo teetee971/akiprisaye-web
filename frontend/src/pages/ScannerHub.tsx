@@ -128,7 +128,16 @@ export default function ScannerHub() {
           {debugEnabled && <div className="mt-4 rounded-xl border border-amber-500/50 bg-amber-500/10 p-3 text-sm text-amber-100"><p><strong>Mode debug</strong> (debug=1)</p><p>État: {debugInfo.status}</p><p>Dernier code: {debugInfo.lastCode ?? '—'}</p><p>Validation stable: {debugInfo.stableCounter}/2</p><p>Aucun code détecté depuis: {debugInfo.secondsSinceLastDetection === null ? '—' : `${debugInfo.secondsSinceLastDetection} s`}</p></div>}
 
           <div className="mt-6">
-            <div className="mb-3 text-lg font-semibold text-white">Résultats (scan continu)</div>
+            <div className="mb-3 flex items-center justify-between">
+              <div className="text-lg font-semibold text-white">Résultats (scan continu)</div>
+              <button
+                type="button"
+                onClick={() => navigate('/scan-photo')}
+                className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 px-4 py-2 text-sm font-semibold text-white hover:from-blue-700 hover:to-purple-700 transition-all"
+              >
+                📷 Recherche par photo
+              </button>
+            </div>
             {results.length === 0 ? <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-4 text-sm text-gray-400">Aucun scan pour l'instant.</div> : (
               <div className="grid gap-3">
                 {results.map((item) => (

@@ -64,6 +64,7 @@ const ScannerHub = lazyPage(() => import('./pages/ScannerHub'));
 const OCRHub = lazyPage(() => import('./pages/ocr/OCRHub'));
 const ScanEAN = lazyPage(() => import('./pages/ScanEAN'));
 const ProductPhotoAnalysis = lazyPage(() => import('./pages/ProductPhotoAnalysis'));
+const ProductPhotoSearch = lazyPage(() => import('./pages/ProductPhotoSearch'));
 const ProductScanResult = lazyPage(() => import('./pages/ProductScanResult'));
 const ComparaisonEnseignes = lazyPage(() => import('./pages/ComparaisonEnseignes'));
 const BasketComparison = lazyPage(() => import('./pages/BasketComparison'));
@@ -324,6 +325,7 @@ export default function App() {
                           {/* Scanner & OCR routes */}
                           <Route path="scanner" element={<ScannerHub />} />
                           <Route path="scan-ean" element={<ScanEAN />} />
+                          <Route path="scan-photo" element={<ProductPhotoSearch />} />
                           <Route path="analyse-photo-produit" element={<ProductPhotoAnalysis />} />
                           <Route path="product/:barcode" element={<ProductScanResult />} />
                           <Route path="ocr" element={<OCRHub />} />
