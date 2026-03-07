@@ -79,7 +79,7 @@ const RANKINGS: Record<string, TerritoryRanking> = {
     ],
   },
   saint_martin: {
-    flag: '🇸🇽',
+    flag: '🇲🇫',
     label: 'Saint-Martin',
     stores: [
       { store: 'Leader Price', avg: 2.22 },
@@ -111,7 +111,7 @@ export default function StoreRankingWidget() {
   const cheapest = sorted[0];
   const mostExpensive = sorted[sorted.length - 1];
   const savingsEuro = mostExpensive.avg - cheapest.avg;
-  const savingsPct = (savingsEuro / mostExpensive.avg) * 100;
+  const savingsPct = (savingsEuro / cheapest.avg) * 100;
   // Extrapolate to a ~50-product monthly basket
   const monthlySavings = savingsEuro * 50;
 
@@ -130,15 +130,26 @@ export default function StoreRankingWidget() {
 
       {/* Territory tabs */}
       <div className="price-chart-tabs" role="tablist" aria-label="Sélection territoire">
-        {TERRITORY_KEYS.map((key) => {
+        {TERRITORY_KEYS.map((key, idx) => {
           const t = RANKINGS[key];
           return (
             <button
               key={key}
               role="tab"
+              id={`store-tab-${key}`}
               aria-selected={key === activeKey}
+              aria-controls={`store-tabpanel-${key}`}
+              tabIndex={key === activeKey ? 0 : -1}
               className={`price-chart-tab${key === activeKey ? ' price-chart-tab--active' : ''}`}
               onClick={() => setActiveKey(key)}
+              onKeyDown={(e) => {
+                if (e.key === 'ArrowRight')
+                  setActiveKey(TERRITORY_KEYS[(idx + 1) % TERRITORY_KEYS.length]);
+                else if (e.key === 'ArrowLeft')
+                  setActiveKey(TERRITORY_KEYS[(idx - 1 + TERRITORY_KEYS.length) % TERRITORY_KEYS.length]);
+                else if (e.key === 'Home') setActiveKey(TERRITORY_KEYS[0]);
+                else if (e.key === 'End') setActiveKey(TERRITORY_KEYS[TERRITORY_KEYS.length - 1]);
+              }}
             >
               {t.flag} {t.label}
             </button>
@@ -146,7 +157,13 @@ export default function StoreRankingWidget() {
         })}
       </div>
 
-      <div className="price-chart-wrap" style={{ maxWidth: 560 }}>
+      <div
+        role="tabpanel"
+        id={`store-tabpanel-${activeKey}`}
+        aria-labelledby={`store-tab-${activeKey}`}
+        className="price-chart-wrap"
+        style={{ maxWidth: 560 }}
+      >
         {/* Store list */}
         <ol style={{ listStyle: 'none', padding: 0, margin: 0 }}>
           {sorted.map((entry, idx) => {
