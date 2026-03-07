@@ -29,6 +29,23 @@
  * Base légale : Consentement explicite (RGPD Art. 6.1.a)
  */
 
+/**
+ * Tesseract PSM (Page Segmentation Mode) constants.
+ * @see https://tesseract-ocr.github.io/tessdoc/ImproveQuality.html
+ */
+export const OCR_PSM = {
+  /** Fully automatic page segmentation (default) */
+  AUTO: 3,
+  /** Single column of text of variable sizes */
+  SINGLE_COLUMN: 4,
+  /** Single uniform block of text (best for dense body text) */
+  SINGLE_BLOCK: 6,
+  /** Single text line */
+  SINGLE_LINE: 7,
+  /** Single word */
+  SINGLE_WORD: 8,
+} as const;
+
 // Dynamic import for lazy loading (loaded only when OCR is actually used)
 // This reduces initial bundle size by ~17MB
 let TesseractModule: any = null;
@@ -65,6 +82,9 @@ const DEFAULT_LANG = 'fra';
 // Gentle post-processing boosts to improve OCR legibility on low-light mobile captures
 const CONTRAST_BOOST = 1.08;
 const SATURATION_BOOST = 1.02;
+// Receipt mode: stronger contrast + desaturation for black-on-white thermal paper
+const RECEIPT_CONTRAST_BOOST = 1.25;
+const RECEIPT_BRIGHTNESS_BOOST = 1.05;
 
 /**
  * OCR Result structure (for compatibility with existing components)
@@ -84,6 +104,8 @@ export interface OCRResult {
   rawText: string;
   confidence: number;
   processingTime: number;
+  wordCount?: number;
+  lineCount?: number;
   timeoutTriggered?: boolean;
   fromCache?: boolean;
   sections?: OCRSections;
@@ -139,9 +161,45 @@ function isAssetLoadError(error: unknown): boolean {
   return status === 404;
 }
 
+/**
+ * Apply a 3×3 sharpening convolution kernel to improve character edge definition.
+ * Kernel: [[ 0,-1, 0],[-1, 5,-1],[ 0,-1, 0]] (Laplacian sharpening)
+ * This significantly improves OCR accuracy on blurry or low-resolution images.
+ */
+function applySharpenKernel(imageData: ImageData): ImageData {
+  const { data, width, height } = imageData;
+  const output = new Uint8ClampedArray(data.length);
+  const kernel = [0, -1, 0, -1, 5, -1, 0, -1, 0];
+
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      let r = 0, g = 0, b = 0;
+      for (let ky = -1; ky <= 1; ky++) {
+        for (let kx = -1; kx <= 1; kx++) {
+          const px = Math.min(width - 1, Math.max(0, x + kx));
+          const py = Math.min(height - 1, Math.max(0, y + ky));
+          const idx = (py * width + px) * 4;
+          const kIdx = (ky + 1) * 3 + (kx + 1);
+          r += data[idx] * kernel[kIdx];
+          g += data[idx + 1] * kernel[kIdx];
+          b += data[idx + 2] * kernel[kIdx];
+        }
+      }
+      const outIdx = (y * width + x) * 4;
+      output[outIdx] = Math.min(255, Math.max(0, r));
+      output[outIdx + 1] = Math.min(255, Math.max(0, g));
+      output[outIdx + 2] = Math.min(255, Math.max(0, b));
+      output[outIdx + 3] = data[outIdx + 3]; // preserve alpha
+    }
+  }
+
+  return new ImageData(output, width, height);
+}
+
 async function preprocessImage(
   imageUrl: string,
-  maxWidth = 1600
+  maxWidth = 1600,
+  receiptMode = false,
 ): Promise<{ blob: Blob; width: number; height: number; originalSize: number; processedSize: number }> {
   const response = await fetch(imageUrl);
   if (!response.ok) {
@@ -181,11 +239,27 @@ async function preprocessImage(
     throw new Error('Canvas context not available');
   }
 
-  ctx.filter = `contrast(${CONTRAST_BOOST}) saturate(${SATURATION_BOOST})`;
-  try {
-    ctx.drawImage(bitmap, 0, 0, width, height);
-  } finally {
-    ctx.filter = 'none';
+  if (receiptMode) {
+    // Receipt mode: thermal paper is black text on white — boost contrast + brightness,
+    // desaturate to pure grayscale. A sharpen pass is applied via a convolution kernel.
+    ctx.filter = `grayscale(1) contrast(${RECEIPT_CONTRAST_BOOST}) brightness(${RECEIPT_BRIGHTNESS_BOOST})`;
+    try {
+      ctx.drawImage(bitmap, 0, 0, width, height);
+    } finally {
+      ctx.filter = 'none';
+    }
+
+    // Sharpen kernel (3×3 unsharp mask approximation) for crisper character edges
+    const imageData = ctx.getImageData(0, 0, width, height);
+    const sharpened = applySharpenKernel(imageData);
+    ctx.putImageData(sharpened, 0, 0);
+  } else {
+    ctx.filter = `contrast(${CONTRAST_BOOST}) saturate(${SATURATION_BOOST})`;
+    try {
+      ctx.drawImage(bitmap, 0, 0, width, height);
+    } finally {
+      ctx.filter = 'none';
+    }
   }
 
   const processedBlob = await new Promise<Blob>((resolve, reject) => {
@@ -220,6 +294,16 @@ async function preprocessImage(
 
 interface RunOCROptions {
   timeout?: number;
+  /**
+   * Receipt mode — enables stronger contrast/brightness preprocessing and
+   * single-column page segmentation (PSM 4), optimal for thermal paper receipts.
+   */
+  receiptMode?: boolean;
+  /**
+   * Tesseract PSM override. Use OCR_PSM constants.
+   * Defaults to OCR_PSM.AUTO (3) for generic images, OCR_PSM.SINGLE_COLUMN (4) for receipts.
+   */
+  psm?: number;
 }
 
 /**
@@ -228,11 +312,12 @@ interface RunOCROptions {
  * - Espaces inter-mots préservés
  * - Français par défaut
  * - Works offline (local WASM processing)
+ * - receiptMode: activates sharpen preprocessing + single-column PSM
  * 
  * @param imageUrl - URL or path to image
  * @param language - ISO language code (defaults to 'fra')
- * @param options - OCR options (timeout, etc.)
- * @returns Extracted text
+ * @param options - OCR options (timeout, receiptMode, psm)
+ * @returns Extracted text with wordCount and lineCount
  */
 export async function runOCR(
   imageUrl: string,
@@ -243,10 +328,12 @@ export async function runOCR(
   const startedAt = performance.now();
   const effectiveLang = language || DEFAULT_LANG;
   const timeoutMs = Math.max(5000, options?.timeout ?? 30000);
+  const receiptMode = options?.receiptMode ?? false;
+  const psmMode = options?.psm ?? (receiptMode ? OCR_PSM.SINGLE_COLUMN : OCR_PSM.AUTO);
   let timeoutId: number | undefined;
   
   // Log mode for debugging
-  console.log(`OCR mode: ${offline ? 'OFFLINE (local WASM)' : 'ONLINE'}`);
+  console.log(`OCR mode: ${offline ? 'OFFLINE (local WASM)' : 'ONLINE'} receiptMode=${receiptMode} psm=${psmMode}`);
   console.log('[OCR] Asset paths', { WORKER_PATH, CORE_PATH, LANG_PATH, lang: effectiveLang });
 
   // Lazy load Tesseract module (17MB) - only loads when OCR is actually used
@@ -256,7 +343,7 @@ export async function runOCR(
   await ensureAssetAvailable(CORE_PATH, 'core');
   await ensureAssetAvailable(`${LANG_PATH}/${effectiveLang}.traineddata.gz`, 'language');
 
-  const preprocessed = await preprocessImage(imageUrl);
+  const preprocessed = await preprocessImage(imageUrl, 1600, receiptMode);
   const worker = await Tesseract.createWorker({
     workerPath: WORKER_PATH,
     corePath: CORE_PATH,
@@ -275,6 +362,7 @@ export async function runOCR(
 
     await worker.setParameters({
       preserve_interword_spaces: '1',
+      tessedit_pageseg_mode: String(psmMode),
     });
 
     const timeoutPromise = new Promise<never>((_, reject) => {
@@ -286,7 +374,7 @@ export async function runOCR(
 
     const recognitionPromise = (async () => {
       const { data } = await worker.recognize(preprocessed.blob);
-      return { text: data.text, confidence: data.confidence };
+      return { text: data.text as string, confidence: data.confidence as number };
     })();
 
     const { text, confidence } = await Promise.race([recognitionPromise, timeoutPromise]);
@@ -295,12 +383,16 @@ export async function runOCR(
     }
 
     const normalizedConfidence = normalizeConfidence(confidence);
+    const lines = text.split('\n').filter((l: string) => l.trim().length > 0);
+    const words = text.split(/\s+/).filter((w: string) => w.length > 0);
 
     return {
       success: true,
       rawText: text,
       confidence: normalizedConfidence,
       processingTime: performance.now() - startedAt,
+      wordCount: words.length,
+      lineCount: lines.length,
       timeoutTriggered,
     };
   } catch (error) {

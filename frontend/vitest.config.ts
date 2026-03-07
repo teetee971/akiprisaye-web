@@ -61,6 +61,12 @@ export default defineConfig({
       abs('./src/test/inflationBarometer.test.ts'),
       // NOTE: si scripts/ est à la racine du repo, remplace par ../scripts/...
       abs('./scripts/verify-pages-api.test.ts'),
+      // EAN / GTIN validation — GS1 checksum and country label
+      abs('./src/test/eanValidator.test.ts'),
+      // Structured receipt parser — French ticket OCR
+      abs('./src/test/receiptParser.test.ts'),
+      // ScanHub classifier — text classification and extraction
+      abs('./src/test/scanHubClassifier.test.ts'),
     ],
 
     exclude: ['**/node_modules/**', '**/.git/**', '**/dist/**', '**/coverage/**'],

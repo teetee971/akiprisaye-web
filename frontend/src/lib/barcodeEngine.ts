@@ -1,9 +1,30 @@
 import { BrowserMultiFormatReader } from '@zxing/browser';
 
+/**
+ * All barcode formats supported by the engine.
+ * Includes formats from both the native BarcodeDetector API and ZXing.
+ */
+export type BarcodeFormatType =
+  | 'ean_13'
+  | 'ean_8'
+  | 'upc_a'
+  | 'upc_e'
+  | 'code_128'
+  | 'code_39'
+  | 'code_93'
+  | 'codabar'
+  | 'itf'
+  | 'qr_code'
+  | 'data_matrix'
+  | 'pdf417'
+  | 'aztec'
+  | 'unknown';
+
 export interface ScanDebugPayload {
   engine: 'barcode_detector' | 'zxing';
   framesProcessed: number;
   lastDetectedAt: number | null;
+  lastFormat: BarcodeFormatType | null;
   videoWidth: number;
   videoHeight: number;
   readyState: number;
@@ -14,26 +35,78 @@ export interface ScanController {
   stop: () => void;
 }
 
-type LocalBarcodeFormat = 'ean_13' | 'ean_8' | 'upc_a' | 'code_128';
+/** Full scan result with format metadata */
+export interface BarcodeResult {
+  value: string;
+  format: BarcodeFormatType;
+  timestamp: number;
+}
+
+interface BarcodeDetectorEntry {
+  rawValue?: string;
+  format?: string;
+}
 
 interface BarcodeDetectorLike {
-  detect: (source: HTMLVideoElement) => Promise<Array<{ rawValue?: string }>>;
+  detect: (source: HTMLVideoElement) => Promise<BarcodeDetectorEntry[]>;
 }
 
 declare global {
   interface Window {
-     
-    NativeBarcodeDetector?: new (options?: { formats?: LocalBarcodeFormat[] }) => BarcodeDetectorLike;
+    NativeBarcodeDetector?: new (options?: { formats?: string[] }) => BarcodeDetectorLike;
   }
 }
 
-const SUPPORTED_FORMATS: LocalBarcodeFormat[] = ['ean_13', 'ean_8', 'upc_a', 'code_128'];
+/**
+ * Extended list of supported formats — covers 1D (retail/logistics), 2D (QR/DataMatrix/PDF417)
+ * and postal/specialty codes for comprehensive real-world coverage.
+ */
+const SUPPORTED_FORMATS: string[] = [
+  'ean_13',
+  'ean_8',
+  'upc_a',
+  'upc_e',
+  'code_128',
+  'code_39',
+  'code_93',
+  'codabar',
+  'itf',
+  'qr_code',
+  'data_matrix',
+  'pdf417',
+  'aztec',
+];
+
+/** Deduplication window in ms — ignore the same code if re-detected within this window */
+const DEDUP_WINDOW_MS = 600;
+
+function normalizeFormat(raw: string | undefined): BarcodeFormatType {
+  if (!raw) return 'unknown';
+  const lower = raw.toLowerCase().replace(/[-\s]/g, '_');
+  const known: BarcodeFormatType[] = [
+    'ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'code_39', 'code_93',
+    'codabar', 'itf', 'qr_code', 'data_matrix', 'pdf417', 'aztec',
+  ];
+  return (known as string[]).includes(lower) ? (lower as BarcodeFormatType) : 'unknown';
+}
 
 export async function startScan(
   videoEl: HTMLVideoElement,
   onResult: (code: string) => void,
   onDebug?: (debug: ScanDebugPayload) => void,
+  onScanResult?: (result: BarcodeResult) => void,
 ): Promise<ScanController> {
+  /** Per-code last-seen timestamp for deduplication */
+  const lastSeenAt = new Map<string, number>();
+
+  function shouldEmit(value: string): boolean {
+    const now = Date.now();
+    const last = lastSeenAt.get(value) ?? 0;
+    if (now - last < DEDUP_WINDOW_MS) return false;
+    lastSeenAt.set(value, now);
+    return true;
+  }
+
   if (typeof window !== 'undefined' && window.NativeBarcodeDetector) {
     const detector = new window.NativeBarcodeDetector({ formats: SUPPORTED_FORMATS });
 
@@ -41,6 +114,7 @@ export async function startScan(
     let rafId = 0;
     let framesProcessed = 0;
     let lastDetectedAt: number | null = null;
+    let lastFormat: BarcodeFormatType | null = null;
     let loopActive = false;
 
     const loop = async () => {
@@ -52,11 +126,13 @@ export async function startScan(
           framesProcessed += 1;
           const barcodes = await detector.detect(videoEl);
           if (barcodes.length > 0) {
-            const value = barcodes[0]?.rawValue?.trim();
-            if (value) {
+            const entry = barcodes[0];
+            const value = entry?.rawValue?.trim();
+            if (value && shouldEmit(value)) {
               lastDetectedAt = Date.now();
+              lastFormat = normalizeFormat(entry?.format);
               onResult(value);
-              // Continuous scan: do not return early, keep the RAF loop running.
+              onScanResult?.({ value, format: lastFormat, timestamp: lastDetectedAt });
             }
           }
         }
@@ -65,6 +141,7 @@ export async function startScan(
           engine: 'barcode_detector',
           framesProcessed,
           lastDetectedAt,
+          lastFormat,
           videoWidth: videoEl.videoWidth,
           videoHeight: videoEl.videoHeight,
           readyState: videoEl.readyState,
@@ -74,6 +151,7 @@ export async function startScan(
           engine: 'barcode_detector',
           framesProcessed,
           lastDetectedAt,
+          lastFormat,
           videoWidth: videoEl.videoWidth,
           videoHeight: videoEl.videoHeight,
           readyState: videoEl.readyState,
@@ -97,10 +175,12 @@ export async function startScan(
     };
   }
 
+  // ZXing fallback — BrowserMultiFormatReader handles all formats automatically
   const reader = new BrowserMultiFormatReader();
   let stopped = false;
   let framesProcessed = 0;
   let lastDetectedAt: number | null = null;
+  let lastFormat: BarcodeFormatType | null = null;
 
   const controls = await reader.decodeFromVideoDevice(undefined, videoEl, (result, error) => {
     if (stopped) return;
@@ -109,9 +189,11 @@ export async function startScan(
 
     if (result) {
       const value = result.getText()?.trim();
-      if (value) {
+      if (value && shouldEmit(value)) {
         lastDetectedAt = Date.now();
+        lastFormat = normalizeFormat(result.getBarcodeFormat?.()?.toString());
         onResult(value);
+        onScanResult?.({ value, format: lastFormat, timestamp: lastDetectedAt });
       }
     }
 
@@ -119,6 +201,7 @@ export async function startScan(
       engine: 'zxing',
       framesProcessed,
       lastDetectedAt,
+      lastFormat,
       videoWidth: videoEl.videoWidth,
       videoHeight: videoEl.videoHeight,
       readyState: videoEl.readyState,
@@ -130,7 +213,6 @@ export async function startScan(
     stop: () => {
       stopped = true;
       controls.stop();
-      // BrowserMultiFormatReader doesn't expose reset() — stopping controls is sufficient
     },
   };
 }
