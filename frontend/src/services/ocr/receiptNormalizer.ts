@@ -97,7 +97,7 @@ const CATEGORY_RULES: Array<[RegExp, ObsCategory]> = [
     'Produits laitiers',
   ],
   [
-    /\b(fruits?|pommes?|poires?|oranges?|citrons?|mangues?|ananas|bananes?|fraises?|raisins?|l[eé]gumes?|carottes?|tomates?|haricots?|poireaux?|oignons?|ail|brocolis?|courgettes?|aubergines?|salades?|concombres?|[eé]pinards?|choux?)\b/i,
+    /\b(fruits?|pommes?|poires?|oranges?|citrons?|mangues?|ananas|bananes?|fraises?|raisins?|l[eé]gumes?|carottes?|tomates?|poireaux?|oignons?|ail|brocolis?|courgettes?|aubergines?|salades?|concombres?|[eé]pinards?|choux?)\b/i,
     'Fruits et légumes',
   ],
   [
@@ -105,34 +105,38 @@ const CATEGORY_RULES: Array<[RegExp, ObsCategory]> = [
     'Viandes et poissons',
   ],
   [
-    /\b(caf[eé]|chocolat|sucres?|farine|p[âa]tes?|biscuits?|g[âa]teaux?|bonbons?|confiture|miel|huile|vinaigre|sel|poivre|lentilles?|riz|semoule|pain|brioche|crackers?|chips)\b/i,
+    /\b(cafe|chocolat|sucres?|farine|pates?|biscuits?|gateaux?|bonbons?|confiture|miel|huile|vinaigre|sel|poivre|lentilles?|haricots?|riz|semoule|pain|brioche|crackers?|chips)\b/i,
     'Épicerie',
   ],
   [
-    /\b(eau|jus|soda|coca|pepsi|limonade|sirop|bi[eè]re|vin|champagne|rhum|whisky|vodka|alcool|margarine)\b/i,
+    /\b(eau|jus|soda|coca|pepsi|limonade|sirop|bieres?|vin|champagne|rhum|whisky|vodka|alcool|margarine)\b/i,
     'Boissons',
   ],
   [
-    /\b(shampooing?|gel\s*douche|dentifrice|brosse|rasoir|parfum|d[eé]odorant|savon|lotion|maquillage|coton|hygi[eè]ne|lingette)\b/i,
+    /\b(shampooing?|gel\s*douche|dentifrice|brosse|rasoir|parfum|deodorant|savon|lotion|maquillage|coton|hygiene|lingette)\b/i,
     'Hygiène et beauté',
   ],
   [
-    /\b(lessive|javel|nettoyant|d[eé]tergent|essuie.?tout|torchon|[eé]ponge|sac.?poubelle|papier.toilette|entretien)\b/i,
+    /\b(lessive|javel|nettoyant|detergent|essuie.?tout|torchon|eponge|sac.?poubelle|papier.toilette|entretien)\b/i,
     'Entretien',
   ],
   [
-    /\b(couche|b[eé]b[eé]|lait.?maternelle?|biberon|linge.?b[eé]b[eé])\b/i,
+    /\b(couche|bebe|lait.?maternell[e]?|biberon|linge.?bebe)\b/i,
     'Bébé',
   ],
 ];
 
 /**
  * Infer the product category from its label.
+ * Strips combining diacritics before matching so that word-boundary assertions
+ * work correctly for accented words (e.g. "Café" → "Cafe").
  * Returns 'Autres' when no rule matches.
  */
 export function detectCategory(label: string): ObsCategory {
+  // Strip combining diacritical marks so \b works on accented word endings
+  const ascii = label.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   for (const [pattern, category] of CATEGORY_RULES) {
-    if (pattern.test(label)) return category;
+    if (pattern.test(ascii)) return category;
   }
   return 'Autres';
 }
@@ -172,8 +176,8 @@ const AMBIGUOUS_PATTERNS = [
   /\bnoix\b/i,
   /\bvirianna\b/i,
   /\bcanard\b.*\bcomplet\b/i,
-  /^\s*PDN\b/i,
-  /^\s*[A-Z]{2,4}\s/,  // starts with uppercase abbreviation likely a POS code
+  // Known POS internal codes that appear at the start of a label
+  /^\s*(?:PDN|PXM|PQC|UX\d+|UC\d+|LS)\s/i,
 ];
 
 /**
