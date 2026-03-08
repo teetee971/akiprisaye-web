@@ -1,19 +1,25 @@
 /**
  * Tests pour les fournisseurs de catalogues Calameo.
- * Couvre la factory createCalameoCatalogProvider et l'instance ecologiteGuadeloupeProvider.
+ * Couvre la factory createCalameoCatalogProvider et toutes les instances.
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { createCalameoCatalogProvider } from '../createCalameoCatalogProvider';
 import { ecologiteGuadeloupeProvider } from '../ecologiteGuadeloupeProvider';
+import { huitAHuitGuadeloupeProvider } from '../huitAHuitGuadeloupeProvider';
+import { supecoGuyaneProvider } from '../supecoGuyaneProvider';
 
 const makeController = () => new AbortController();
 
 const ECOLOGITE_FLAG = 'VITE_PRICE_PROVIDER_ECOLOGITE_GUADELOUPE';
+const HUITAHUIT_FLAG = 'VITE_PRICE_PROVIDER_HUIT_A_HUIT_GUADELOUPE';
+const SUPECO_FLAG    = 'VITE_PRICE_PROVIDER_SUPECO_GUYANE';
 
 beforeEach(() => {
   vi.restoreAllMocks();
   vi.stubEnv(ECOLOGITE_FLAG, 'false');
+  vi.stubEnv(HUITAHUIT_FLAG, 'false');
+  vi.stubEnv(SUPECO_FLAG, 'false');
   vi.stubEnv('VITE_PRICE_API_BASE', '');
 });
 
@@ -174,5 +180,85 @@ describe('createCalameoCatalogProvider (factory)', () => {
     expect(result.status).toBe('NO_DATA');
     expect(result.observations).toHaveLength(0);
     expect(result.warnings.length).toBeGreaterThan(0);
+  });
+});
+
+// ─── huitAHuitGuadeloupeProvider ────────────────────────────────────────────
+
+describe('huitAHuitGuadeloupeProvider', () => {
+  it('has correct source ID and book code in request', async () => {
+    expect(huitAHuitGuadeloupeProvider.source).toBe('huit_a_huit_guadeloupe');
+
+    vi.stubEnv(HUITAHUIT_FLAG, 'true');
+    vi.stubEnv('VITE_PRICE_API_BASE', 'https://example.com');
+
+    let capturedUrl = '';
+    vi.stubGlobal('fetch', vi.fn().mockImplementation((url: string) => {
+      capturedUrl = url;
+      return Promise.resolve({ ok: true, json: async () => ({ status: 'PARTIAL', observations: [], warnings: [] }) });
+    }));
+
+    await huitAHuitGuadeloupeProvider.search({ query: 'biscuits' }, makeController().signal);
+    expect(capturedUrl).toContain('bkcode=00672206587e18c17d3bd');
+    expect(capturedUrl).toContain('source=huit_a_huit_guadeloupe');
+  });
+
+  it('is disabled by default', () => {
+    expect(huitAHuitGuadeloupeProvider.isEnabled()).toBe(false);
+  });
+
+  it('is enabled when env flag is set', () => {
+    vi.stubEnv(HUITAHUIT_FLAG, 'true');
+    expect(huitAHuitGuadeloupeProvider.isEnabled()).toBe(true);
+  });
+
+  it('returns UNAVAILABLE when fetch throws', async () => {
+    vi.stubEnv(HUITAHUIT_FLAG, 'true');
+    vi.stubEnv('VITE_PRICE_API_BASE', 'https://example.com');
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('timeout')));
+
+    const result = await huitAHuitGuadeloupeProvider.search({ query: 'rhum' }, makeController().signal);
+    expect(result.status).toBe('UNAVAILABLE');
+    expect(result.observations).toHaveLength(0);
+  });
+});
+
+// ─── supecoGuyaneProvider ────────────────────────────────────────────────────
+
+describe('supecoGuyaneProvider', () => {
+  it('has correct source ID and book code in request', async () => {
+    expect(supecoGuyaneProvider.source).toBe('supeco_guyane');
+
+    vi.stubEnv(SUPECO_FLAG, 'true');
+    vi.stubEnv('VITE_PRICE_API_BASE', 'https://example.com');
+
+    let capturedUrl = '';
+    vi.stubGlobal('fetch', vi.fn().mockImplementation((url: string) => {
+      capturedUrl = url;
+      return Promise.resolve({ ok: true, json: async () => ({ status: 'PARTIAL', observations: [], warnings: [] }) });
+    }));
+
+    await supecoGuyaneProvider.search({ query: 'riz' }, makeController().signal);
+    expect(capturedUrl).toContain('bkcode=0067220656cd5be3f9f3a');
+    expect(capturedUrl).toContain('source=supeco_guyane');
+  });
+
+  it('is disabled by default', () => {
+    expect(supecoGuyaneProvider.isEnabled()).toBe(false);
+  });
+
+  it('is enabled when env flag is set', () => {
+    vi.stubEnv(SUPECO_FLAG, 'true');
+    expect(supecoGuyaneProvider.isEnabled()).toBe(true);
+  });
+
+  it('returns UNAVAILABLE when fetch throws', async () => {
+    vi.stubEnv(SUPECO_FLAG, 'true');
+    vi.stubEnv('VITE_PRICE_API_BASE', 'https://example.com');
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('timeout')));
+
+    const result = await supecoGuyaneProvider.search({ query: 'huile' }, makeController().signal);
+    expect(result.status).toBe('UNAVAILABLE');
+    expect(result.observations).toHaveLength(0);
   });
 });

@@ -40,7 +40,9 @@ export type PriceSourceId =
   | 'leclerc_electromenager'
   | 'leclerc_parapharmacie'
   | 'leclerc_secondevie'
-  | 'ecologite_guadeloupe';
+  | 'ecologite_guadeloupe'
+  | 'huit_a_huit_guadeloupe'
+  | 'supeco_guyane';
 
 export type PriceSearchStatus =
   | 'OK'

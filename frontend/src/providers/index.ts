@@ -1,5 +1,6 @@
 import type { PriceSearchInput } from '../services/priceSearch/price.types';
 import { ecologiteGuadeloupeProvider } from './ecologiteGuadeloupeProvider';
+import { huitAHuitGuadeloupeProvider } from './huitAHuitGuadeloupeProvider';
 import { leclercCatalogProvider } from './leclercCatalogProvider';
 import { leclercElectromenagerProvider } from './leclercElectromenagerProvider';
 import { leclercHighTechProvider } from './leclercHighTechProvider';
@@ -10,6 +11,7 @@ import { macaveLeclercProvider } from './macaveLeclercProvider';
 import { normalizeText } from './normalize';
 import { openPricesProvider } from './openPricesProvider';
 import { seedProvider } from './seedProvider';
+import { supecoGuyaneProvider } from './supecoGuyaneProvider';
 import type { PriceProvider, ProviderResult } from './types';
 
 const OPEN_FOOD_FACTS_ENDPOINT = 'https://world.openfoodfacts.org';
@@ -100,6 +102,8 @@ const PROVIDERS: PriceProvider[] = [
   leclercParapharmacieProvider,
   leclercSecondeVieProvider,
   ecologiteGuadeloupeProvider,
+  huitAHuitGuadeloupeProvider,
+  supecoGuyaneProvider,
 ];
 
 export async function runPriceProviders(input: PriceSearchInput, signal: AbortSignal): Promise<ProviderResult[]> {
