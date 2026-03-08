@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { BarChart2, ShoppingCart, Receipt, Landmark, Search } from 'lucide-react';
 import { getComparisonOfDay, type PriceComparison } from '../data/exampleComparisons';
 import '../styles/home-v5.css';
 import '../styles/animations.css';
@@ -262,22 +263,22 @@ export default function HomeV5() {
         <section ref={statsRef} className="proof-bar fade-in section-reveal">
           <div className="proof-content">
             <div className="proof-item">
-              <span className="proof-icon">📊</span>
+              <span className="proof-icon"><BarChart2 className="w-5 h-5 text-blue-400" aria-hidden="true" /></span>
               <span className="proof-text"><strong>{displayStats.territories || stats.territories}</strong> territoires</span>
             </div>
             <div className="proof-divider">|</div>
             <div className="proof-item">
-              <span className="proof-icon">🛒</span>
+              <span className="proof-icon"><ShoppingCart className="w-5 h-5 text-blue-400" aria-hidden="true" /></span>
               <span className="proof-text"><strong>{(displayStats.products || stats.products).toLocaleString()}+</strong> produits</span>
             </div>
             <div className="proof-divider">|</div>
             <div className="proof-item">
-              <span className="proof-icon">🧾</span>
+              <span className="proof-icon"><Receipt className="w-5 h-5 text-blue-400" aria-hidden="true" /></span>
               <span className="proof-text"><strong>{(displayStats.scans || stats.scans).toLocaleString()}+</strong> scans</span>
             </div>
             <div className="proof-divider">|</div>
             <div className="proof-item">
-              <span className="proof-icon">🏛️</span>
+              <span className="proof-icon"><Landmark className="w-5 h-5 text-blue-400" aria-hidden="true" /></span>
               <span className="proof-text">Observatoire indépendant</span>
             </div>
           </div>
@@ -515,7 +516,7 @@ export default function HomeV5() {
       {showMobileCTA && (
         <div className="mobile-sticky-cta slide-up">
           <Link to="/comparateur" className="mobile-cta-btn">
-            🔍 Rechercher un produit
+            <Search className="w-4 h-4 inline-block mr-1 align-text-bottom" aria-hidden="true" /> Rechercher un produit
           </Link>
         </div>
       )}

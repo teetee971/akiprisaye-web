@@ -7,7 +7,7 @@
 
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { Lightbulb } from 'lucide-react';
+import { Lightbulb, ShoppingBasket, Car, TrendingDown, Leaf, Users, Smartphone } from 'lucide-react';
 
 interface Conseil {
   texte: string;
@@ -15,6 +15,15 @@ interface Conseil {
   lien?: { to: string; label: string };
   categorie: 'alimentation' | 'transport' | 'economie' | 'local' | 'entraide' | 'numerique';
 }
+
+const CATEGORY_ICON: Record<Conseil['categorie'], React.ElementType> = {
+  alimentation: ShoppingBasket,
+  transport:    Car,
+  economie:     TrendingDown,
+  local:        Leaf,
+  entraide:     Users,
+  numerique:    Smartphone,
+};
 
 const CONSEILS: Conseil[] = [
   { emoji: '🛒', categorie: 'alimentation', texte: "Comparez les prix avant de faire vos courses : un même produit peut varier de 15 à 30 % entre enseignes.", lien: { to: '/comparateur', label: 'Comparer les prix' } },
@@ -54,7 +63,9 @@ export default function ConseilBudgetDuJour() {
       aria-label="Conseil budget du jour"
     >
       <div className="flex items-start gap-3">
-        <div className="shrink-0 text-2xl">{conseil.emoji}</div>
+        <div className="shrink-0 flex items-center justify-center w-10 h-10 rounded-xl bg-amber-900/40 border border-amber-700/40">
+          {(() => { const Icon = CATEGORY_ICON[conseil.categorie]; return <Icon className="w-5 h-5 text-amber-400" aria-hidden="true" />; })()}
+        </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
             <Lightbulb className="w-3.5 h-3.5 text-amber-400" />

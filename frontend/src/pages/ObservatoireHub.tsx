@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { BarChart3, Search, Award, Database } from 'lucide-react';
+import { BarChart3, Search, Award, Database, TrendingUp, BarChart2, Store, Globe, Download, FileText, ShoppingCart, ChevronUp, ChevronDown, Minus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { GlassCard } from '../components/ui/glass-card';
 import { HeroImage } from '../components/ui/HeroImage';
@@ -22,12 +22,12 @@ export default function ObservatoireHub() {
 
   const renderChangeBadge = (change: 'up' | 'down' | 'stable') => {
     if (change === 'up') {
-      return <span className="rounded-full bg-emerald-500/20 px-2 py-0.5 text-xs text-emerald-200">🔼</span>;
+      return <span className="rounded-full bg-emerald-500/20 px-2 py-0.5 text-xs text-emerald-200 inline-flex items-center gap-1"><ChevronUp className="w-3 h-3" aria-hidden="true" /></span>;
     }
     if (change === 'down') {
-      return <span className="rounded-full bg-rose-500/20 px-2 py-0.5 text-xs text-rose-200">🔽</span>;
+      return <span className="rounded-full bg-rose-500/20 px-2 py-0.5 text-xs text-rose-200 inline-flex items-center gap-1"><ChevronDown className="w-3 h-3" aria-hidden="true" /></span>;
     }
-    return <span className="rounded-full bg-slate-700/60 px-2 py-0.5 text-xs text-slate-200">⏺️</span>;
+    return <span className="rounded-full bg-slate-700/60 px-2 py-0.5 text-xs text-slate-200 inline-flex items-center gap-1"><Minus className="w-3 h-3" aria-hidden="true" /></span>;
   };
   
   return (
@@ -47,8 +47,8 @@ export default function ObservatoireHub() {
               gradient="from-slate-900 to-emerald-950"
               height="h-44 sm:h-60"
             >
-              <h1 className="text-3xl md:text-4xl font-bold text-white drop-shadow">
-                📈 Observatoire des Prix
+              <h1 className="text-3xl md:text-4xl font-bold text-white drop-shadow flex items-center gap-3">
+                <TrendingUp className="w-9 h-9 text-emerald-300" aria-hidden="true" /> Observatoire des Prix
               </h1>
               <p className="text-slate-200 drop-shadow">
                 Données transparentes et analyses approfondies des prix DOM-COM &amp; France
@@ -130,7 +130,7 @@ export default function ObservatoireHub() {
                 
                 <div className="grid md:grid-cols-2 gap-4 mb-6">
                   <div className="bg-slate-900/50 rounded-xl p-6 border border-slate-800">
-                    <div className="text-3xl mb-3">📊</div>
+                    <BarChart2 className="w-8 h-8 text-blue-400 mb-3" aria-hidden="true" />
                     <h3 className="font-semibold text-lg mb-2 text-white">
                       Analyse par catégorie
                     </h3>
@@ -140,7 +140,7 @@ export default function ObservatoireHub() {
                   </div>
                   
                   <div className="bg-slate-900/50 rounded-xl p-6 border border-slate-800">
-                    <div className="text-3xl mb-3">🏪</div>
+                    <Store className="w-8 h-8 text-green-400 mb-3" aria-hidden="true" />
                     <h3 className="font-semibold text-lg mb-2 text-white">
                       Analyse par enseigne
                     </h3>
@@ -150,7 +150,7 @@ export default function ObservatoireHub() {
                   </div>
                   
                   <div className="bg-slate-900/50 rounded-xl p-6 border border-slate-800">
-                    <div className="text-3xl mb-3">📈</div>
+                    <TrendingUp className="w-8 h-8 text-orange-400 mb-3" aria-hidden="true" />
                     <h3 className="font-semibold text-lg mb-2 text-white">
                       Évolution temporelle
                     </h3>
@@ -160,7 +160,7 @@ export default function ObservatoireHub() {
                   </div>
                   
                   <div className="bg-slate-900/50 rounded-xl p-6 border border-slate-800">
-                    <div className="text-3xl mb-3">🌍</div>
+                    <Globe className="w-8 h-8 text-purple-400 mb-3" aria-hidden="true" />
                     <h3 className="font-semibold text-lg mb-2 text-white">
                       Comparaison territoriale
                     </h3>
@@ -172,16 +172,16 @@ export default function ObservatoireHub() {
                 
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-2">
                   {[
-                    { emoji: '📊', label: 'Comparaison enseignes', to: '/comparaison-enseignes' },
-                    { emoji: '🛒', label: 'Comparaison panier',    to: '/comparaison-panier' },
-                    { emoji: '🌍', label: 'Comparateur citoyen',   to: '/comparateur-citoyen' },
+                    { Icon: BarChart2, label: 'Comparaison enseignes', to: '/comparaison-enseignes' },
+                    { Icon: ShoppingCart, label: 'Comparaison panier',    to: '/comparaison-panier' },
+                    { Icon: Globe,        label: 'Comparateur citoyen',   to: '/comparateur-citoyen' },
                   ].map((item) => (
                     <Link
                       key={item.to}
                       to={item.to}
                       className="flex flex-col items-center gap-2 p-4 bg-slate-800/50 border border-slate-700/50 rounded-xl hover:border-emerald-500/50 transition-all text-center"
                     >
-                      <span className="text-2xl">{item.emoji}</span>
+                      <item.Icon className="w-6 h-6 text-slate-300" aria-hidden="true" />
                       <span className="text-xs font-medium text-gray-300">{item.label}</span>
                     </Link>
                   ))}
@@ -307,7 +307,7 @@ export default function ObservatoireHub() {
                 
                 <div className="grid md:grid-cols-2 gap-4 mb-6">
                   <div className="bg-slate-900/50 rounded-xl p-6 border border-slate-800">
-                    <div className="text-3xl mb-3">📥</div>
+                    <Download className="w-8 h-8 text-blue-400 mb-3" aria-hidden="true" />
                     <h3 className="font-semibold text-lg mb-2 text-white">
                       Export de données
                     </h3>
@@ -320,7 +320,7 @@ export default function ObservatoireHub() {
                   </div>
                   
                   <div className="bg-slate-900/50 rounded-xl p-6 border border-slate-800">
-                    <div className="text-3xl mb-3">📊</div>
+                    <BarChart2 className="w-8 h-8 text-emerald-400 mb-3" aria-hidden="true" />
                     <h3 className="font-semibold text-lg mb-2 text-white">
                       API ouverte
                     </h3>
@@ -335,7 +335,7 @@ export default function ObservatoireHub() {
                 
                 <div className="bg-blue-900/20 border border-blue-700/30 rounded-xl p-6">
                   <h3 className="font-semibold text-blue-300 mb-3 flex items-center gap-2">
-                    <span>📜</span>
+                    <FileText className="w-5 h-5" aria-hidden="true" />
                     <span>Licence des données</span>
                   </h3>
                   <p className="text-gray-300 text-sm mb-3">
