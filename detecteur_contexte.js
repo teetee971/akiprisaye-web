@@ -1,1 +1,0 @@
-// Analyse commune, territoire, enseigne

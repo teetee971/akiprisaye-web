@@ -1,6 +1,6 @@
 # 🧾 A KI PRI SA YÉ
 
-[![Version](https://img.shields.io/badge/version-3.1.0-blue)](#-état-du-projet)
+[![Version](https://img.shields.io/badge/version-3.1.3-blue)](#-état-du-projet)
 [![Cloudflare Pages](https://img.shields.io/badge/Cloudflare%20Pages-deployed-success?logo=cloudflare&logoColor=white)](https://akiprisaye-web.pages.dev)
 [![CI/CD Pipeline](https://img.shields.io/github/actions/workflow/status/teetee971/akiprisaye-web/ci-cd-industrial.yml?branch=main&label=CI%2FCD&logo=github-actions)](https://github.com/teetee971/akiprisaye-web/actions/workflows/ci-cd-industrial.yml)
 [![CI Schema Validation](https://img.shields.io/badge/CI-JSON%20Schema%20Validation-blue)](#)

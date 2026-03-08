@@ -1,1 +1,0 @@
-// Générateur de réponses IA

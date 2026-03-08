@@ -8,13 +8,13 @@ export { default as Compare } from './Compare'
 export { default as ContactCollectivites } from './ContactCollectivites'
 export { default as Faq } from './Faq'
 export { default as Home } from './Home'
-export { default as Home_old } from './Home_old'
+
 export { default as LicenceInstitution } from './LicenceInstitution'
 export { default as MonCompte } from './MonCompte'
-export { default as News } from './News'
+
 export { default as Pricing } from './Pricing'
 export { default as PricingDetailed } from './PricingDetailed'
-export { default as PricingDetailed_old } from './PricingDetailed_old'
+
 export { default as ProductDetail } from './ProductDetail'
 export { default as Promotions } from './Promotions'
 export { default as Subscribe } from './Subscribe'

@@ -3,6 +3,52 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 
 Le format s'inspire de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et ce projet adhère à la [sémantique de versionnage](https://semver.org/lang/fr/).
 
+## [3.1.3] - 2026-03-08
+
+### Removed — Nettoyage complet des fichiers obsolètes
+
+#### Pages `frontend/src/pages/` supprimées (23 fichiers)
+- **Anciennes versions de la page d'accueil** : `HOME_v3.tsx`, `HOME_v4.tsx`, `HomePage.tsx`,
+  `Home_old.tsx` — supersédées par `Home.tsx` (anciennement `HOME_v5.tsx`, maintenant consolidé).
+- **Ancienne page de tarifs** : `PricingDetailed_old.tsx` — supersédée par `PricingDetailed.tsx`.
+- **Pages scan legacy** : `ScanPage.tsx` (simple wrapper de ScannerHub), `ScanFlow.tsx` (page
+  non routée), `ProductScanPage.tsx` (composant legacy `@ts-nocheck`).
+- **Comparateurs obsolètes** : `ComparaisonPage.tsx` (@ts-nocheck, non routée),
+  `ComparisonEnseignes.tsx` (doublon de `ComparaisonEnseignes.tsx`),
+  `ComparateurTerritoires.tsx` (@ts-nocheck, non routée), `TerritoryComparateurs.tsx` (stub).
+- **Pages stubs « en développement »** : `AlertesPrix.jsx`, `ComparateurFormats.jsx`,
+  `FauxBonsPlan.jsx`, `ListeCourses.jsx`, `News.tsx`, `ComingSoon.tsx`, `NotFound.jsx`.
+
+#### Fichiers racine supprimés (19 fichiers + 2 répertoires)
+- **Scripts prototype** : `app.js`, `interpreteur_local.js`, `score_utilisateur.js`,
+  `firebase_log_service.js`, `vwapei_voice.js`.
+- **Doublons / legacy** : `BarcodeScanner.tsx` (doublon de `frontend/src/components/`),
+  `exportComparisons.ts`.
+- **Scripts comparateur legacy** : `comparateur-autofill.js`, `comparateur-fetch.js`,
+  `product-search.js`, `detecteur_contexte.js`, `entraide_local.js`, `repondeur_intelligent.js`,
+  `scanner.js`, `signalement_auto.js`.
+- **CSS partagé legacy** : `cookie-consent.css`, `cookie-consent.js`,
+  `shared-nav.css`, `shared-nav.js`.
+- **Répertoires UI prototype** : `ui_components/` (composants Vue), `chat_ia_local/`.
+
+#### Artefacts de build supprimés (`Assets/`, 87 fichiers)
+- Répertoire `Assets/` contenant d'anciens bundles JS/sourcemaps générés, désormais
+  correctement ignoré par `.gitignore` (entrée `Assets/` pré-existante).
+
+### Fixed
+- **TypeScript TS2307** dans `frontend/src/pages/index.ts` : suppression des exports
+  `Home_old`, `News` et `PricingDetailed_old` qui pointaient vers des fichiers maintenant supprimés.
+- **TypeScript TS1261** (conflit de casse) : suppression de `frontend/src/types/priceObservation.ts`
+  (minuscule), un fichier de compatibilité legacy avec `// @ts-nocheck` qui n'était importé par aucun
+  fichier mais provoquait un conflit de casse avec `PriceObservation.ts`. Compilation TypeScript : **0 erreur**.
+
+### Changed
+- **`Home.tsx`** : consolidé directement avec le contenu de `HOME_v5.tsx` — suppression de
+  l'indirection `export { default } from './HOME_v5'`. La page d'accueil est maintenant auto-contenue.
+- **Alignement versions** → `3.1.3` sur tous les `package.json` du monorepo.
+
+---
+
 ## [3.1.2] - 2026-03-08
 
 ### Added
