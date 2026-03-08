@@ -1,11 +1,23 @@
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 
+// Build-time metadata injected by Vite (Issue #0.2)
+const BUILD_SHA: string = import.meta.env.VITE_BUILD_SHA ?? 'dev';
+const BUILD_DATE: string = import.meta.env.VITE_BUILD_DATE ?? '';
+const BUILD_ENV: string = import.meta.env.VITE_BUILD_ENV ?? 'development';
+
 const APP_VERSIONS = [
+  {
+    version: 'v3.2.0',
+    date: 'mars 2026',
+    label: 'latest',
+    description: 'Groupes de Parole Citoyens (Issue #7) : groupes de discussion par territoire, messagerie temps réel Firestore, partage de photos, modération IA automatique par filtre de mots-clés, signalement manuel. Affichage de la version, de l\'environnement et du hash Git dans le pied de page (Issue #0.2).',
+    changelog: null,
+  },
   {
     version: 'v3.1.1',
     date: 'mars 2026',
-    label: 'latest',
+    label: null,
     description: 'ComparateursHub exhaustif (34+ liens), nouvelle section Ressources & Comprendre. Alignement de toutes les versions package.json du monorepo (root, frontend, backend, functions, price-api). Sitemap étendu à 60+ URLs. Footer multi-colonnes. manifest.webmanifest PWA corrigé.',
     changelog: '/CHANGELOG.md',
   },
@@ -89,8 +101,12 @@ export default function Versions() {
             Traçabilité complète de l'application et de l'observatoire citoyen. Chaque version documente les fonctionnalités ajoutées, les données publiées et les corrections apportées.
           </p>
           <p className="text-sm text-slate-400">
-            Version actuelle : <span className="font-semibold text-white">v3.1.1</span> — mars 2026 —{' '}
+            Version actuelle : <span className="font-semibold text-white">v3.2.0</span> — mars 2026 —{' '}
             <Link to="/comparateurs" className="text-blue-400 hover:text-blue-300 underline">Voir tous les comparateurs</Link>
+          </p>
+          {/* Build metadata (Issue #0.2) */}
+          <p className="text-xs text-slate-600 font-mono">
+            build: {BUILD_SHA || 'dev'}{BUILD_DATE ? ` · ${BUILD_DATE}` : ''} · env: {BUILD_ENV}
           </p>
         </header>
 

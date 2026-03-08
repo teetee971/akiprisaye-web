@@ -173,7 +173,7 @@ export default function MonCompte() {
                 {/* Messagerie shortcut */}
                 <Link
                   to="/messagerie"
-                  className="flex items-center gap-3 mb-6 p-4 bg-indigo-900/30 border border-indigo-700 rounded-lg hover:bg-indigo-900/50 transition-colors group"
+                  className="flex items-center gap-3 mb-4 p-4 bg-indigo-900/30 border border-indigo-700 rounded-lg hover:bg-indigo-900/50 transition-colors group"
                 >
                   <MessageCircle className="w-6 h-6 text-indigo-400 group-hover:scale-110 transition-transform" />
                   <div className="flex-1 min-w-0">
@@ -181,6 +181,19 @@ export default function MonCompte() {
                     <p className="text-indigo-300 text-sm">Discutez avec d'autres utilisateurs inscrits.</p>
                   </div>
                   <span className="text-indigo-400 text-xs font-semibold">Ouvrir →</span>
+                </Link>
+
+                {/* Groupes de Parole shortcut */}
+                <Link
+                  to="/groupes-parole"
+                  className="flex items-center gap-3 mb-6 p-4 bg-purple-900/30 border border-purple-700 rounded-lg hover:bg-purple-900/50 transition-colors group"
+                >
+                  <span className="text-2xl group-hover:scale-110 transition-transform select-none">🗣️</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-purple-200">Groupes de Parole Citoyens</p>
+                    <p className="text-purple-300 text-sm">Échangez par territoire sur la vie chère.</p>
+                  </div>
+                  <span className="text-purple-400 text-xs font-semibold">Ouvrir →</span>
                 </Link>
 
                 <div className="mb-6 p-4 bg-blue-900/30 border border-blue-700 rounded-lg">
