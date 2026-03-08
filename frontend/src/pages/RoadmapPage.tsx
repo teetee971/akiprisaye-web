@@ -15,6 +15,7 @@
  */
 
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import {
   CheckCircle,
@@ -368,10 +369,18 @@ export default function RoadmapPage() {
           {/* ── MODULES ────────────────────────────────────────────────── */}
           {activeTab === 'modules' && (
             <div className="space-y-4">
-              <div className="flex gap-4 text-xs text-gray-500 mb-2">
-                <span className="flex items-center gap-1"><CheckCircle className="w-3.5 h-3.5 text-green-500" /> Opérationnel</span>
-                <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5 text-yellow-500" /> Partiel</span>
-                <span className="flex items-center gap-1"><Circle className="w-3.5 h-3.5 text-gray-300" /> Planifié</span>
+              <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div className="flex gap-4 text-xs text-gray-500">
+                  <span className="flex items-center gap-1"><CheckCircle className="w-3.5 h-3.5 text-green-500" /> Opérationnel</span>
+                  <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5 text-yellow-500" /> Partiel</span>
+                  <span className="flex items-center gap-1"><Circle className="w-3.5 h-3.5 text-gray-300" /> Planifié</span>
+                </div>
+                <Link
+                  to="/module-audit"
+                  className="text-xs text-indigo-600 hover:underline font-medium"
+                >
+                  → Audit complet de tous les modules
+                </Link>
               </div>
               {MODULES.map((mod) => (
                 <div key={mod.name} className="bg-white border border-gray-200 rounded-xl p-5">

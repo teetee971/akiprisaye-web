@@ -210,6 +210,7 @@ const DevisTracking = lazyPage(() => import('./pages/DevisTracking'));
 const AdminDevis = lazyPage(() => import('./pages/admin/AdminDevis'));
 const RoadmapPage = lazyPage(() => import('./pages/RoadmapPage'));
 const DossierInvestisseurs = lazyPage(() => import('./pages/DossierInvestisseurs'));
+const ModuleAuditPage = lazyPage(() => import('./pages/ModuleAuditPage'));
 
 /**
  * IMPORTANT — NE PAS SUPPRIMER
@@ -556,6 +557,9 @@ export default function App() {
 
                           {/* Dossier Investisseurs — Issue #503 */}
                           <Route path="dossier-investisseurs" element={<DossierInvestisseurs />} />
+
+                          {/* Audit des modules — comprehensive module audit */}
+                          <Route path="module-audit" element={<ModuleAuditPage />} />
 
                           {/* Catch-all route - redirect to home */}
                           <Route path="*" element={<Navigate to="/" replace />} />

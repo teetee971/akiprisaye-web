@@ -70,6 +70,7 @@ export default function Footer() {
               <li><Link to="/gouvernance" className="text-slate-400 hover:text-slate-200 transition-colors">Gouvernance</Link></li>
               <li><Link to="/presse" className="text-slate-400 hover:text-slate-200 transition-colors">Presse</Link></li>
               <li><Link to="/inscription-pro" className="text-slate-400 hover:text-blue-300 transition-colors">💼 Espace Pro</Link></li>
+              <li><Link to="/module-audit" className="text-slate-400 hover:text-indigo-300 transition-colors">🔍 Audit modules</Link></li>
             </ul>
           </div>
 
