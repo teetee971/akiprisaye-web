@@ -129,7 +129,7 @@ export default function AnalyseConcurrence() {
               </div>
               <p style={{ margin: '0 0 0.4rem', fontSize: '0.7rem', color: '#64748b' }}>{c.desc}</p>
               <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#6366f1' }}>
-                {FEATURES.filter(f => (f as Record<string, unknown>)[c.id] === true || (f as Record<string, unknown>)[c.id] === 'partial').length} fonctionnalités
+                {FEATURES.filter(f => (f as unknown as Record<string, unknown>)[c.id] === true || (f as unknown as Record<string, unknown>)[c.id] === 'partial').length} fonctionnalités
               </div>
             </div>
           ))}
@@ -226,7 +226,7 @@ export default function AnalyseConcurrence() {
                 <span style={{ color: '#f59e0b' }}>◉</span>
                 <span>{f.label}</span>
                 <span style={{ fontSize: '0.65rem', color: '#475569' }}>
-                  (présent chez : {['kiprix','kosto','circl','shopmium'].filter(c => (f as Record<string, unknown>)[c] === true || (f as Record<string, unknown>)[c] === 'partial').join(', ')})
+                  (présent chez : {['kiprix','kosto','circl','shopmium'].filter(c => (f as unknown as Record<string, unknown>)[c] === true || (f as unknown as Record<string, unknown>)[c] === 'partial').join(', ')})
                 </span>
               </div>
             ))}

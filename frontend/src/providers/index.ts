@@ -1,7 +1,20 @@
 import type { PriceSearchInput } from '../services/priceSearch/price.types';
+import { calameoDynamicProvider } from './calameoDynamicProvider';
+import { carrefourMilenisGuadeloupeProvider } from './carrefourMilenisGuadeloupeProvider';
+import { connexionGuadeloupeProvider } from './connexionGuadeloupeProvider';
+import { ecologiteGuadeloupeProvider } from './ecologiteGuadeloupeProvider';
+import { huitAHuitGuadeloupeProvider } from './huitAHuitGuadeloupeProvider';
+import { leclercCatalogProvider } from './leclercCatalogProvider';
+import { leclercElectromenagerProvider } from './leclercElectromenagerProvider';
+import { leclercHighTechProvider } from './leclercHighTechProvider';
+import { leclercJardinProvider } from './leclercJardinProvider';
+import { leclercParapharmacieProvider } from './leclercParapharmacieProvider';
+import { leclercSecondeVieProvider } from './leclercSecondeVieProvider';
+import { macaveLeclercProvider } from './macaveLeclercProvider';
 import { normalizeText } from './normalize';
 import { openPricesProvider } from './openPricesProvider';
 import { seedProvider } from './seedProvider';
+import { supecoGuyaneProvider } from './supecoGuyaneProvider';
 import type { PriceProvider, ProviderResult } from './types';
 
 const OPEN_FOOD_FACTS_ENDPOINT = 'https://world.openfoodfacts.org';
@@ -80,7 +93,24 @@ const dataGouvStubProvider: PriceProvider = {
   },
 };
 
-const PROVIDERS: PriceProvider[] = [openPricesProvider, openFoodFactsProvider, dataGouvStubProvider];
+const PROVIDERS: PriceProvider[] = [
+  openPricesProvider,
+  openFoodFactsProvider,
+  dataGouvStubProvider,
+  leclercCatalogProvider,
+  macaveLeclercProvider,
+  leclercJardinProvider,
+  leclercHighTechProvider,
+  leclercElectromenagerProvider,
+  leclercParapharmacieProvider,
+  leclercSecondeVieProvider,
+  ecologiteGuadeloupeProvider,
+  huitAHuitGuadeloupeProvider,
+  supecoGuyaneProvider,
+  carrefourMilenisGuadeloupeProvider,
+  connexionGuadeloupeProvider,
+  calameoDynamicProvider,
+];
 
 export async function runPriceProviders(input: PriceSearchInput, signal: AbortSignal): Promise<ProviderResult[]> {
   const enabledProviders = PROVIDERS.filter((provider) => provider.isEnabled());

@@ -1,8 +1,8 @@
 import React, { useRef, useEffect } from 'react';
-import { Chart, CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend, ChartConfiguration } from 'chart.js';
+import { Chart, BarController, LineController, CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend, ChartConfiguration } from 'chart.js';
 
-// Register Chart.js components
-Chart.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend);
+// Register Chart.js components (controllers must be registered alongside elements)
+Chart.register(BarController, LineController, CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend);
 
 export interface PriceChartProps {
   data: {

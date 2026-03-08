@@ -1,0 +1,89 @@
+{
+  "store": {
+    "normalizedName": "Colprix Morne-à-l'Eau",
+    "rawName": "Colprix",
+    "brand": "Colprix",
+    "siret": "88412538600018",
+    "address": "LD Richeval",
+    "postalCode": "97111",
+    "city": "Morne-à-l'Eau",
+    "territory": "gp"
+  },
+  "receipt": {
+    "receiptDate": "2026-03-07",
+    "receiptTime": "10:52:00",
+    "currency": "EUR",
+    "itemsCount": 5,
+    "linesCount": 4,
+    "totalTtc": 15.33,
+    "paymentMethod": "card",
+    "needsReview": true,
+    "_note": "itemsCount=5 mais seulement 4 lignes parsées — une ligne manquante, ticket marqué needsReview"
+  },
+  "items": [
+    {
+      "lineIndex": 1,
+      "rawLabel": "ESSUIE TOUT 2RLX PAPECO",
+      "normalizedLabel": "Essuie-tout Papeco 2 rouleaux",
+      "productKey": "papeco_essuie_tout_2_rouleaux",
+      "brand": "Papeco",
+      "category": "entretien",
+      "quantity": 1,
+      "unit": "unit",
+      "totalPrice": 1.99,
+      "confidenceScore": 0.92,
+      "needsReview": false
+    },
+    {
+      "lineIndex": 2,
+      "rawLabel": "PDN CANARD COMPLET ECO 675G",
+      "normalizedLabel": "Canard complet ECO 675 g",
+      "productKey": "eco_canard_complet_675g",
+      "brand": "ECO",
+      "category": "volaille",
+      "sizeText": "675g",
+      "packageSizeValue": 675,
+      "packageSizeUnit": "g",
+      "weightKg": 0.675,
+      "quantity": 1,
+      "unit": "kg",
+      "totalPrice": 3.59,
+      "unitPrice": 5.32,
+      "confidenceScore": 0.78,
+      "needsReview": true,
+      "reviewNote": "PDN probablement code interne ticket ou 'portion de canard'. À valider manuellement."
+    },
+    {
+      "lineIndex": 3,
+      "rawLabel": "SAUCISSES DE STRASBOURG 350G",
+      "normalizedLabel": "Saucisses de Strasbourg 350 g",
+      "productKey": "saucisses_strasbourg_350g",
+      "brand": null,
+      "category": "charcuterie",
+      "sizeText": "350g",
+      "packageSizeValue": 350,
+      "packageSizeUnit": "g",
+      "weightKg": 0.35,
+      "quantity": 2,
+      "unit": "kg",
+      "unitPrice": 2.65,
+      "totalPrice": 5.30,
+      "confidenceScore": 0.90,
+      "needsReview": false
+    },
+    {
+      "lineIndex": 4,
+      "rawLabel": "PAPIER TOILETTES DOUDOU 10+2",
+      "normalizedLabel": "Papier toilette Doudou 10+2 rouleaux",
+      "productKey": "doudou_papier_toilette_10_plus_2",
+      "brand": "Doudou",
+      "category": "hygiene",
+      "quantity": 1,
+      "unit": "unit",
+      "totalPrice": 4.45,
+      "confidenceScore": 0.88,
+      "needsReview": false
+    }
+  ],
+  "rawOcrText": "Colprix\nSIRET 88412538600018\nLD Richeval 97111 Morne-à-l'Eau\n2026-03-07 10:52 - Ticket #189918\n---\nESSUIE TOUT 2RLX PAPECO  1.99\nPDN CANARD COMPLET ECO 675G  3.59\nSAUCISSES DE STRASBOURG 350G x2  5.30\nPAPIER TOILETTES DOUDOU 10+2  4.45\nTOTAL TTC  15.33\nPAIEMENT CB"
+}

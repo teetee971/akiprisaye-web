@@ -1,3 +1,6 @@
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
+
 const BASE_URL = import.meta.env.BASE_URL;
 
 const dataFiles = [

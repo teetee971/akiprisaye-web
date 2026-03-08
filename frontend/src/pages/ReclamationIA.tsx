@@ -227,7 +227,7 @@ export default function ReclamationIA() {
               ].map(field => (
                 <div key={field.key}>
                   <label style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 600, display: 'block', marginBottom: '0.3rem' }}>{field.label}</label>
-                  <input value={(form as Record<string, string>)[field.key]} onChange={e => setForm(f => ({ ...f, [field.key]: e.target.value }))}
+                  <input value={(form as unknown as Record<string, string>)[field.key]} onChange={e => setForm(f => ({ ...f, [field.key]: e.target.value }))}
                     placeholder={field.placeholder} required={field.required}
                     style={{ width: '100%', padding: '0.5rem 0.7rem', borderRadius: 8, background: 'rgba(30,41,59,0.8)', border: '1px solid rgba(99,102,241,0.35)', color: '#f1f5f9', fontSize: '0.85rem', boxSizing: 'border-box' }} />
                 </div>

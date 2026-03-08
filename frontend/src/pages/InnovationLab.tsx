@@ -61,6 +61,9 @@ const INNOVATIONS: Innovation[] = [
     tags: ['OCR', 'IA Vision', 'Mobile', 'UX'],
     accentColor: '#22c55e',
     route: '/scan-ocr',
+  },
+  {
+    id: 'prediction',
     emoji: '📈',
     titre: 'IA prédictive des prix — "Acheter maintenant ou attendre ?"',
     description: 'Prédiction de l\'évolution des prix sur 4-8 semaines basée sur les données historiques et les indicateurs macro.',
@@ -158,6 +161,9 @@ const INNOVATIONS: Innovation[] = [
     tags: ['Pédagogie', 'Octroi de mer', 'Transparence', 'Outil'],
     accentColor: '#a855f7',
     route: '/calculateur-octroi',
+  },
+  {
+    id: 'rapport-citoyen',
     emoji: '📄',
     titre: 'Rapport citoyen PDF exportable',
     description: 'Générez en un clic un rapport PDF personnalisé sur les prix de votre territoire, à partager avec élus, associations ou médias.',
@@ -167,6 +173,9 @@ const INNOVATIONS: Innovation[] = [
     tags: ['PDF', 'Export', 'Plaidoyer', 'Associations'],
     accentColor: '#f43f5e',
     route: '/rapport-citoyen',
+  },
+  {
+    id: 'gamification',
     emoji: '🎖️',
     titre: 'Programme de fidélité citoyen',
     description: 'Gagnez des badges et des points en contribuant à l\'observatoire : chaque scan vérifié compte.',
@@ -187,6 +196,9 @@ const INNOVATIONS: Innovation[] = [
     tags: ['PWA', 'Offline', 'Accessibilité', 'Zones rurales'],
     accentColor: '#0ea5e9',
     route: '/dlc-antigaspi',
+  },
+  {
+    id: 'opmr',
     emoji: '🏛️',
     titre: 'Intégration officielle avec les OPMR',
     description: 'Partage automatique des relevés citoyens avec les Observatoires des Prix, Marges et Revenus de chaque territoire.',
@@ -230,6 +242,9 @@ const INNOVATIONS: Innovation[] = [
     tags: ['Santé', 'Médicaments', 'ANSM', 'Pharmacie'],
     accentColor: '#06b6d4',
     route: '/analyse-nutri',
+  },
+  {
+    id: 'carburant',
     emoji: '⛽',
     titre: 'Baromètre carburant DOM — prix à la pompe en temps réel',
     description: 'Le prix de l\'essence et du gasoil est réglementé dans certains DOM mais varie en pratique. Suivez et comparez.',
@@ -239,6 +254,9 @@ const INNOVATIONS: Innovation[] = [
     tags: ['Carburant', 'Transport', 'API gov', 'Carte'],
     accentColor: '#f59e0b',
     route: '/comparateur-carburants',
+  },
+  {
+    id: 'creole-ui',
     emoji: '🗣️',
     titre: 'Interface en langues régionales — créole, tahitien, kanak',
     description: 'La plateforme traduite en créole martiniquais, guadeloupéen, réunionnais, tahitien et langues kanak pour toucher tous les citoyens.',
@@ -292,6 +310,9 @@ const INNOVATIONS: Innovation[] = [
     tags: ['Budget', 'Famille', 'Simulateur', 'CAF', 'Pouvoir d\'achat'],
     accentColor: '#f97316',
     route: '/simulateur-budget',
+  },
+  {
+    id: 'alertes-rupture',
     emoji: '🚨',
     titre: 'Alerte rupture de stock & pénuries',
     description: 'Signalement citoyen des ruptures de stock anormales (notamment produits de première nécessité) avec carte temps réel.',
@@ -301,6 +322,9 @@ const INNOVATIONS: Innovation[] = [
     tags: ['Rupture', 'Pénurie', 'Alerte', 'Signalement', 'Crise'],
     accentColor: '#ef4444',
     route: '/alertes-rupture',
+  },
+  {
+    id: 'ia-reclamation',
     emoji: '⚖️',
     titre: 'Rédacteur IA de lettres de réclamation',
     description: 'Vous avez payé trop cher ? L\'IA rédige automatiquement votre lettre de réclamation officielle à envoyer à l\'enseigne ou à la DGCCRF.',

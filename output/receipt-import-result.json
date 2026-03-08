@@ -1,0 +1,34 @@
+{
+  "success": true,
+  "receiptId": "clx9k2m4b0000abc123def456",
+  "storeId": "clx9k1p3c0000xyz789ghi012",
+  "createdProducts": 4,
+  "updatedProducts": 0,
+  "createdObservations": 4,
+  "createdHistoryMonthly": 4,
+  "createdHistoryYearly": 4,
+  "createdAlertEvents": 0,
+  "reviewItems": 2,
+  "warnings": [
+    "Ticket marqué needsReview: itemsCount=5 mais seulement 4 lignes parsées"
+  ],
+  "_meta": {
+    "checksum": "a3f8c1d2e4b5f6a7b8c9d0e1f2a3b4c5",
+    "territory": "gp",
+    "storeNormalizedName": "Colprix Morne-à-l'Eau",
+    "receiptDate": "2026-03-07",
+    "processedAt": "2026-03-08T15:43:00.000Z",
+    "reviewQueueItems": [
+      {
+        "entityType": "receipt_item",
+        "rawLabel": "PDN CANARD COMPLET ECO 675G",
+        "reason": "Item marqué needsReview par le pipeline OCR"
+      },
+      {
+        "entityType": "receipt",
+        "rawLabel": null,
+        "reason": "itemsCount déclaré (5) ≠ lignes parsées (4)"
+      }
+    ]
+  }
+}

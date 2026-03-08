@@ -3,6 +3,7 @@
 // Phase 2 - Strictly factual data, no predictions or recommendations
 
 import React, { useEffect, useMemo, useState } from 'react'
+import { Lock } from 'lucide-react'
 import { GlassCard } from '../components/ui/glass-card'
 import { HeroImage } from '../components/ui/HeroImage'
 import { PAGE_HERO_IMAGES } from '../config/imageAssets'
@@ -174,7 +175,9 @@ export default function ComparaisonEnseignes() {
         </div>
         <GlassCard>
           <div className="text-center py-8">
-            <div className="text-5xl mb-4">🔒</div>
+            <div className="flex justify-center mb-4">
+              <Lock className="w-12 h-12 text-slate-400" />
+            </div>
             <h2 className="text-xl font-semibold text-white mb-4">
               Module de comparaison inter-enseignes désactivé dans cette phase.
             </h2>
@@ -196,7 +199,7 @@ export default function ComparaisonEnseignes() {
           gradient="from-slate-900 to-indigo-950"
           height="h-36 sm:h-48"
         >
-          <h1 className="text-2xl font-bold text-white drop-shadow">🏪 Comparaison inter-enseignes</h1>
+          <h1 className="text-2xl font-bold text-white drop-shadow">Comparaison inter-enseignes</h1>
           <p className="text-slate-200 text-sm drop-shadow">Données factuelles — aucun classement, aucune recommandation</p>
         </HeroImage>
       </div>
