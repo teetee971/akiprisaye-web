@@ -22,6 +22,8 @@ const ProduitChocWidget = lazy(() => import('../components/home/ProduitChocWidge
 const IndiceEquiteWidget = lazy(() => import('../components/home/IndiceEquiteWidget'));
 const AppDemoShowcase = lazy(() => import('../components/home/AppDemoShowcase'));
 const VideoVieChere = lazy(() => import('../components/home/VideoVieChere'));
+const PriceExplainerBanner = lazy(() => import('../components/home/PriceExplainerBanner'));
+const LettreHebdoWidget = lazy(() => import('../components/home/LettreHebdoWidget'));
 
 const TESTIMONIALS = [
   {
@@ -449,6 +451,16 @@ export default function HomeV5() {
         {/* Store ranking widget — cheapest vs most expensive stores per territory */}
         <Suspense fallback={null}>
           <StoreRankingWidget />
+        </Suspense>
+
+        {/* Why such price gaps? Explainer fiche with source links + conference CTA */}
+        <Suspense fallback={null}>
+          <PriceExplainerBanner />
+        </Suspense>
+
+        {/* AI weekly letter — latest editorial about DOM/COM news */}
+        <Suspense fallback={null}>
+          <LettreHebdoWidget />
         </Suspense>
 
         {/* Inflation barometer — dynamic month-over-month basket trend from real snapshots */}

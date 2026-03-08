@@ -41,7 +41,7 @@ interface Slide {
 
 const SLIDES: Slide[] = [
   { id: 'cover',       emoji: '🎙️', title: 'Vie chère en Outre-Mer',               subtitle: 'Comprendre les écarts de prix',                  accentColor: '#6366f1' },
-  { id: 'constat',     emoji: '📊', title: 'Le constat chiffré',                   subtitle: 'Des écarts allant jusqu'à +40 %',               accentColor: '#3b82f6' },
+  { id: 'constat',     emoji: '📊', title: 'Le constat chiffré',                   subtitle: 'Des écarts allant jusqu\'à +40 %',               accentColor: '#3b82f6' },
   { id: 'fret',        emoji: '🚢', title: 'Facteur 1 — Le fret maritime',          subtitle: '+6 % à +18 % selon le territoire',              accentColor: '#0ea5e9' },
   { id: 'octroi',      emoji: '🏛️', title: 'Facteur 2 — L\'Octroi de mer',          subtitle: 'Une taxe vieille de 350 ans',                   accentColor: '#a855f7' },
   { id: 'marche',      emoji: '🏪', title: 'Facteur 3 — Concentration du marché',   subtitle: 'Oligopole et faible concurrence',               accentColor: '#f59e0b' },
@@ -590,7 +590,7 @@ function SolutionsSlide() {
     {
       emoji: '🛡️',
       title: 'Bouclier Qualité Prix (BQP)',
-      desc: 'Accord annuel entre l'État, les distributeurs et les industriels fixant une liste de produits à prix modérés. Renouvelé chaque année depuis 2013 dans chaque DROM.',
+      desc: 'Accord annuel entre l\'État, les distributeurs et les industriels fixant une liste de produits à prix modérés. Renouvelé chaque année depuis 2013 dans chaque DROM.',
       source: { label: 'economie.gouv.fr — BQP', url: 'https://www.economie.gouv.fr/outre-mer/bouclier-qualite-prix' },
       color: '#22c55e',
     },

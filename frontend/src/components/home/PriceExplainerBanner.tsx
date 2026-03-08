@@ -22,6 +22,8 @@ interface Factor {
   accentColor: string;
   bg: string;
   border: string;
+  sourceLabel: string;
+  sourceUrl: string;
 }
 
 const FACTORS: Factor[] = [
@@ -30,10 +32,12 @@ const FACTORS: Factor[] = [
     title: 'Fret maritime',
     badge: '+6 % à +18 %',
     detail:
-      'Les produits arrivent par bateau depuis l'Hexagone (10 à 22 jours de traversée). Plus la distance est grande, plus le coût de transport pèse sur le prix final.',
+      'Les produits arrivent par bateau depuis l\'Hexagone (10 à 22 jours de traversée). Plus la distance est grande, plus le coût de transport pèse sur le prix final.',
     accentColor: '#60a5fa',
     bg: 'rgba(59,130,246,0.08)',
     border: 'rgba(59,130,246,0.25)',
+    sourceLabel: 'Armateurs de France — Rapport 2023',
+    sourceUrl: 'https://www.armateursdefrance.org/',
   },
   {
     emoji: '🏛️',
@@ -44,6 +48,8 @@ const FACTORS: Factor[] = [
     accentColor: '#c084fc',
     bg: 'rgba(168,85,247,0.08)',
     border: 'rgba(168,85,247,0.25)',
+    sourceLabel: 'EUR-Lex — Règlement UE 2022/2',
+    sourceUrl: 'https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX:32022R0002',
   },
   {
     emoji: '🏪',
@@ -54,16 +60,20 @@ const FACTORS: Factor[] = [
     accentColor: '#fbbf24',
     bg: 'rgba(245,158,11,0.08)',
     border: 'rgba(245,158,11,0.25)',
+    sourceLabel: 'Autorité de la concurrence — Avis 09-A-45',
+    sourceUrl: 'https://www.autoritedelaconcurrence.fr/fr/decision/relatif-au-fonctionnement-de-la-grande-distribution-dans-les-departements-doutre-mer',
   },
   {
     emoji: '💸',
     title: 'Revenus plus faibles',
     badge: 'Double impact',
     detail:
-      'Le revenu médian disponible en Martinique est de 15 000 €/an contre 23 300 €/an en métropole (INSEE 2023). Des prix plus élevés avec des revenus inférieurs amplifient le décrochage du pouvoir d'achat.',
+      'Le revenu médian disponible en Martinique est de 15 000 €/an contre 23 300 €/an en métropole (INSEE 2023). Des prix plus élevés avec des revenus inférieurs amplifient le décrochage du pouvoir d\'achat.',
     accentColor: '#f87171',
     bg: 'rgba(239,68,68,0.08)',
     border: 'rgba(239,68,68,0.25)',
+    sourceLabel: 'INSEE — Revenus Disponibles Localisés 2021',
+    sourceUrl: 'https://www.insee.fr/fr/statistiques/6436428',
   },
 ];
 
@@ -92,7 +102,7 @@ const IMAGES = {
   port: {
     src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Fort-de-France_panorama.jpg/640px-Fort-de-France_panorama.jpg',
     alt: 'Vue panoramique de Fort-de-France, Martinique — chef-lieu et principale zone commerciale',
-    caption: 'Fort-de-France, Martinique — centre commercial et portuaire de l'île.',
+    caption: 'Fort-de-France, Martinique — centre commercial et portuaire de l\'île.',
     credit: 'Wikimedia Commons — CC BY-SA 3.0',
     creditUrl: 'https://commons.wikimedia.org/wiki/File:Fort-de-France_panorama.jpg',
   },
@@ -244,12 +254,30 @@ export default function PriceExplainerBanner() {
                 style={{
                   fontSize: '0.78rem',
                   color: '#94a3b8',
-                  margin: 0,
+                  margin: '0 0 0.5rem',
                   lineHeight: 1.6,
                 }}
               >
                 {f.detail}
               </p>
+              {/* Official source link */}
+              <a
+                href={f.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.2rem',
+                  fontSize: '0.65rem',
+                  color: f.accentColor,
+                  textDecoration: 'none',
+                  fontWeight: 600,
+                  opacity: 0.8,
+                }}
+              >
+                🔗 {f.sourceLabel}
+              </a>
             </div>
           ))}
         </div>
@@ -336,29 +364,33 @@ export default function PriceExplainerBanner() {
           </p>
         </div>
 
-        {/* CTA */}
+        {/* CTA — 3 buttons */}
         <div
           style={{
             display: 'flex',
             justifyContent: 'center',
-            gap: '0.75rem',
+            gap: '0.6rem',
             flexWrap: 'wrap',
           }}
         >
           <Link
+            to="/conference-prix"
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
+              padding: '0.55rem 1.15rem', borderRadius: 8,
+              background: 'rgba(99,102,241,0.75)', color: '#fff',
+              fontSize: '0.82rem', fontWeight: 700, textDecoration: 'none',
+            }}
+          >
+            🎙️ Voir la présentation →
+          </Link>
+          <Link
             to="/comprendre-prix"
             style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-              padding: '0.55rem 1.25rem',
-              borderRadius: 8,
-              background: 'rgba(99,102,241,0.14)',
-              border: '1px solid rgba(99,102,241,0.4)',
-              color: '#a5b4fc',
-              fontSize: '0.83rem',
-              fontWeight: 600,
-              textDecoration: 'none',
+              display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
+              padding: '0.55rem 1.15rem', borderRadius: 8,
+              background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.35)',
+              color: '#a5b4fc', fontSize: '0.82rem', fontWeight: 600, textDecoration: 'none',
             }}
           >
             📖 Analyse complète →
@@ -366,17 +398,10 @@ export default function PriceExplainerBanner() {
           <Link
             to="/comparaison-territoires"
             style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-              padding: '0.55rem 1.25rem',
-              borderRadius: 8,
-              background: 'rgba(30,41,59,0.6)',
-              border: '1px solid rgba(148,163,184,0.2)',
-              color: '#94a3b8',
-              fontSize: '0.83rem',
-              fontWeight: 600,
-              textDecoration: 'none',
+              display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
+              padding: '0.55rem 1.15rem', borderRadius: 8,
+              background: 'rgba(30,41,59,0.6)', border: '1px solid rgba(148,163,184,0.2)',
+              color: '#94a3b8', fontSize: '0.82rem', fontWeight: 600, textDecoration: 'none',
             }}
           >
             📊 Tableau économique →

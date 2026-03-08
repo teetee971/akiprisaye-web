@@ -1,0 +1,90 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# 🤖 Lettre Hebdomadaire IA — Actualité des territoires ultramarins
+# ──────────────────────────────────────────────────────────────────────────────
+#
+# Déclenchement :
+#   - Automatique : chaque lundi à 7h00 UTC (8h heure de Paris en hiver,
+#     9h en été). L'éditorial couvre la semaine écoulée (lundi → dimanche).
+#   - Manuel      : via "Run workflow" depuis l'onglet Actions de GitHub.
+#
+# Secrets GitHub à configurer (Settings > Secrets and variables > Actions) :
+#
+#   OPENAI_API_KEY
+#     → Clé API OpenAI.
+#     → Créer sur : https://platform.openai.com/api-keys
+#     → Modèle utilisé : gpt-4o-mini (~0,01 € par génération)
+#
+#   FIREBASE_SERVICE_ACCOUNT
+#     → Credentials du compte de service Firebase Admin, en JSON brut
+#       ou encodés en base64.
+#     → Générer sur : Firebase Console > Paramètres du projet >
+#       Comptes de service > Générer une nouvelle clé privée
+#     → Encoder en base64 (Linux/macOS) :
+#         base64 -w 0 service-account.json
+#     → Assigner le rôle "Cloud Datastore User" au compte de service
+#       pour autoriser les écritures Firestore.
+#
+# Règles Firestore à configurer (pour lecture publique) :
+#   match /lettre_hebdo_ia/{weekId} {
+#     allow read: if true;
+#     allow write: if false;   // écriture uniquement via Admin SDK
+#   }
+# ──────────────────────────────────────────────────────────────────────────────
+
+name: 🤖 Lettre Hebdo IA — DOM/COM
+
+on:
+  schedule:
+    - cron: '0 7 * * 1'   # Chaque lundi à 7h UTC
+  workflow_dispatch:        # Déclenchement manuel possible
+    inputs:
+      dry_run:
+        description: 'Simulation (affiche le résultat sans écrire dans Firestore)'
+        required: false
+        default: 'false'
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  generate-lettre:
+    name: Générer la lettre hebdomadaire
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v6
+
+      - name: ⚙️ Setup Node.js 20
+        uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: scripts/lettre-hebdo/package.json
+
+      - name: 📦 Installer les dépendances
+        working-directory: scripts/lettre-hebdo
+        run: npm install
+
+      - name: 🤖 Générer la lettre hebdomadaire
+        working-directory: scripts/lettre-hebdo
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            node generate.js --dry-run
+          else
+            node generate.js
+          fi
+
+      - name: 📢 Notification en cas d'échec
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const date = new Date().toLocaleString('fr-FR', { timeZone: 'America/Guadeloupe' });
+            console.log(`⚠️ Échec de la génération de la Lettre Hebdo IA le ${date}`);
+            // Pour envoyer une notification Slack/Discord, ajouter ici le webhook

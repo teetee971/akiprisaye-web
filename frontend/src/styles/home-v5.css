@@ -1590,6 +1590,13 @@
   color: #c7d2fe;
 }
 
+/* Two-column grid for price explainer factor cards */
+.explainer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 0.85rem;
+}
+
 .price-chart-wrap {
   max-width: 720px;
   margin: 0 auto;

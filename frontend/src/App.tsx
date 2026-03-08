@@ -183,6 +183,9 @@ const TiPanie = lazyPage(() => import('./pages/TiPanie'));
 const Gouvernance = lazyPage(() => import('./pages/Gouvernance'));
 const Presse = lazyPage(() => import('./pages/Presse'));
 const ComprendrePrix = lazyPage(() => import('./pages/ComprendrePrix'));
+const ConferencePrix = lazyPage(() => import('./pages/ConferencePrix'));
+const LettreHebdoIA = lazyPage(() => import('./pages/LettreHebdoIA'));
+const InnovationLab = lazyPage(() => import('./pages/InnovationLab'));
 const CivicModules = lazyPage(() => import('./pages/CivicModules'));
 const ObservatoireVivant = lazyPage(() => import('./pages/ObservatoireVivant'));
 const AssistantIAHub = lazyPage(() => import('./pages/AssistantIAHub'));
@@ -533,6 +536,9 @@ export default function App() {
                           <Route path="gouvernance" element={<Gouvernance />} />
                           <Route path="presse" element={<Presse />} />
                           <Route path="comprendre-prix" element={<ComprendrePrix />} />
+                          <Route path="conference-prix" element={<ConferencePrix />} />
+                          <Route path="lettre-hebdo" element={<LettreHebdoIA />} />
+                          <Route path="innovation-lab" element={<InnovationLab />} />
                           <Route path="civic-modules" element={<CivicModules />} />
                           <Route path="observatoire-vivant" element={<ObservatoireVivant />} />
                           <Route path="assistant-ia" element={<AssistantIAHub />} />
