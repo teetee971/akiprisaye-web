@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
+
+const territoiresCouverts = [
   'Guadeloupe — périmètre pilote construit avec des relevés citoyens et des données publiques.',
   'Martinique — relevés ponctuels vérifiés manuellement avant publication.',
 ];
