@@ -42,13 +42,13 @@ const DelaisTensionsLogistiques: React.FC = () => {
   const getDelayLevelColor = (level: string) => {
     switch (level) {
       case 'faible':
-        return 'bg-green-100 text-green-800 border-green-200';
+        return 'bg-green-900/50 text-green-300 border-green-700';
       case 'modéré':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+        return 'bg-yellow-900/50 text-yellow-300 border-yellow-700';
       case 'élevé':
-        return 'bg-red-100 text-red-800 border-red-200';
+        return 'bg-red-900/50 text-red-300 border-red-700';
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-gray-800 text-gray-300 border-gray-700';
     }
   };
 
@@ -71,7 +71,7 @@ const DelaisTensionsLogistiques: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen bg-slate-950 pb-20">
       {/* En-tête */}
       <div className="bg-gradient-to-r from-orange-600 to-orange-800 text-white px-4 py-6">
         <div className="max-w-4xl mx-auto">
@@ -87,10 +87,10 @@ const DelaisTensionsLogistiques: React.FC = () => {
 
       {/* Avertissement institutionnel */}
       <div className="max-w-4xl mx-auto px-4 py-4">
-        <div className="bg-orange-50 border-l-4 border-orange-600 p-4 rounded-r-lg">
+        <div className="bg-orange-950/30 border-l-4 border-orange-500 p-4 rounded-r-lg">
           <div className="flex items-start">
-            <Info className="w-5 h-5 text-orange-600 mr-3 flex-shrink-0 mt-0.5" />
-            <div className="text-sm text-orange-900">
+            <Info className="w-5 h-5 text-orange-400 mr-3 flex-shrink-0 mt-0.5" />
+            <div className="text-sm text-orange-200">
               <p className="font-semibold mb-1">Module d'information historique</p>
               <p>
                 Ce module présente des <strong>observations historiques</strong> des délais 
@@ -106,14 +106,14 @@ const DelaisTensionsLogistiques: React.FC = () => {
 
       {/* Section pédagogique */}
       <div className="max-w-4xl mx-auto px-4 py-6">
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <h2 className="text-lg font-bold text-gray-900 mb-4">
+        <div className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-6">
+          <h2 className="text-lg font-bold text-gray-100 mb-4">
             À quoi servent ces observations ?
           </h2>
           
-          <div className="space-y-4 text-sm text-gray-700">
+          <div className="space-y-4 text-sm text-gray-300">
             <div>
-              <h3 className="font-semibold text-gray-900 mb-2">Objectif du module</h3>
+              <h3 className="font-semibold text-gray-100 mb-2">Objectif du module</h3>
               <p>
                 Documenter de manière <strong>factuelle et neutre</strong> les événements passés 
                 ayant affecté les délais d'acheminement des marchandises vers les territoires ultramarins.
@@ -121,9 +121,9 @@ const DelaisTensionsLogistiques: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-              <div className="border border-green-200 bg-green-50 rounded-lg p-4">
-                <h4 className="font-semibold text-green-900 mb-2">Ce que c'est :</h4>
-                <ul className="space-y-1 text-green-800 text-xs">
+              <div className="border border-green-800 bg-green-950/30 rounded-lg p-4">
+                <h4 className="font-semibold text-green-300 mb-2">Ce que c'est :</h4>
+                <ul className="space-y-1 text-green-400 text-xs">
                   <li>✓ Observations factuelles passées</li>
                   <li>✓ Documentation d'événements avérés</li>
                   <li>✓ Sources publiques citées</li>
@@ -131,9 +131,9 @@ const DelaisTensionsLogistiques: React.FC = () => {
                 </ul>
               </div>
 
-              <div className="border border-red-200 bg-red-50 rounded-lg p-4">
-                <h4 className="font-semibold text-red-900 mb-2">Ce que ce n'est PAS :</h4>
-                <ul className="space-y-1 text-red-800 text-xs">
+              <div className="border border-red-800 bg-red-950/30 rounded-lg p-4">
+                <h4 className="font-semibold text-red-300 mb-2">Ce que ce n'est PAS :</h4>
+                <ul className="space-y-1 text-red-400 text-xs">
                   <li>✗ Une prévision des délais futurs</li>
                   <li>✗ Une explication des prix</li>
                   <li>✗ Une attribution de responsabilité</li>
@@ -142,13 +142,13 @@ const DelaisTensionsLogistiques: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-gray-50 rounded-lg p-4 mt-4">
-              <h4 className="font-semibold text-gray-900 mb-2">Distinction importante</h4>
-              <p className="text-xs text-gray-700">
+            <div className="bg-slate-800/50 rounded-lg p-4 mt-4">
+              <h4 className="font-semibold text-gray-100 mb-2">Distinction importante</h4>
+              <p className="text-xs text-gray-300">
                 <strong>Observation ≠ Prévision</strong> — Ces données décrivent des événements passés 
                 et ne permettent pas de prédire les situations futures.
               </p>
-              <p className="text-xs text-gray-700 mt-2">
+              <p className="text-xs text-gray-300 mt-2">
                 <strong>Information ≠ Explication des prix</strong> — Les tensions logistiques sont 
                 l'un des nombreux facteurs pouvant affecter l'approvisionnement, mais ce module ne 
                 calcule pas leur impact économique.
@@ -160,15 +160,15 @@ const DelaisTensionsLogistiques: React.FC = () => {
 
       {/* Filtre par territoire */}
       <div className="max-w-4xl mx-auto px-4 py-4">
-        <div className="bg-white rounded-lg shadow-sm p-4">
-          <label htmlFor="territory-filter" className="block text-sm font-medium text-gray-700 mb-2">
+        <div className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-4">
+          <label htmlFor="territory-filter" className="block text-sm font-medium text-gray-300 mb-2">
             Filtrer par territoire
           </label>
           <select
             id="territory-filter"
             value={selectedTerritory}
             onChange={(e) => setSelectedTerritory(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+            className="w-full px-4 py-2 bg-slate-800 border border-slate-600 text-gray-100 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
           >
             <option value="ALL">Tous les territoires</option>
             {territories.map(t => (
@@ -183,19 +183,19 @@ const DelaisTensionsLogistiques: React.FC = () => {
       {/* Chronologie des observations */}
       <div className="max-w-4xl mx-auto px-4 space-y-6">
         {Object.entries(observationsByTerritory).map(([territoryCode, territoryObs]) => (
-          <div key={territoryCode} className="bg-white rounded-lg shadow-sm p-6">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">
+          <div key={territoryCode} className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-6">
+            <h3 className="text-lg font-bold text-gray-100 mb-4">
               {territoryObs[0].territoryName}
             </h3>
 
             <div className="space-y-4">
               {territoryObs.map((obs, index) => (
-                <div key={index} className="border border-gray-200 rounded-lg p-4">
+                <div key={index} className="border border-slate-700 rounded-lg p-4">
                   {/* En-tête de l'observation */}
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center space-x-2">
                       <Calendar className="w-4 h-4 text-gray-500" />
-                      <span className="font-semibold text-gray-900">{obs.period}</span>
+                      <span className="font-semibold text-gray-100">{obs.period}</span>
                     </div>
                     <div className="flex items-center space-x-2">
                       {getTransportIcon(obs.transport_type)}
@@ -210,18 +210,18 @@ const DelaisTensionsLogistiques: React.FC = () => {
                   </div>
 
                   {/* Description */}
-                  <p className="text-sm text-gray-700 mb-3">
+                  <p className="text-sm text-gray-300 mb-3">
                     {obs.description}
                   </p>
 
                   {/* Nature des tensions */}
                   <div className="mb-3">
-                    <h4 className="text-xs font-semibold text-gray-900 mb-2">
+                    <h4 className="text-xs font-semibold text-gray-100 mb-2">
                       Nature des tensions observées :
                     </h4>
                     <div className="flex flex-wrap gap-2">
                       {obs.nature_tension.map((tension, i) => (
-                        <span key={i} className="inline-flex items-center px-2 py-1 bg-orange-50 text-orange-700 text-xs rounded border border-orange-200">
+                        <span key={i} className="inline-flex items-center px-2 py-1 bg-orange-900/30 text-orange-300 text-xs rounded border border-orange-700">
                           <AlertCircle className="w-3 h-3 mr-1" />
                           {tension}
                         </span>
@@ -231,13 +231,13 @@ const DelaisTensionsLogistiques: React.FC = () => {
 
                   {/* Impacts observés */}
                   <div className="mb-3">
-                    <h4 className="text-xs font-semibold text-gray-900 mb-2">
+                    <h4 className="text-xs font-semibold text-gray-100 mb-2">
                       Impacts observés :
                     </h4>
                     <ul className="space-y-1">
                       {obs.impact_type.map((impact, i) => (
-                        <li key={i} className="text-xs text-gray-600 flex items-start">
-                          <span className="text-orange-600 mr-2">•</span>
+                        <li key={i} className="text-xs text-gray-400 flex items-start">
+                          <span className="text-orange-400 mr-2">•</span>
                           {impact}
                         </li>
                       ))}
@@ -245,11 +245,11 @@ const DelaisTensionsLogistiques: React.FC = () => {
                   </div>
 
                   {/* Sources */}
-                  <div className="border-t border-gray-200 pt-3 mt-3">
+                  <div className="border-t border-slate-700 pt-3 mt-3">
                     <div className="flex items-start">
                       <FileText className="w-3 h-3 text-gray-400 mr-2 mt-0.5 flex-shrink-0" />
                       <div>
-                        <h4 className="text-xs font-semibold text-gray-700 mb-1">
+                        <h4 className="text-xs font-semibold text-gray-300 mb-1">
                           Sources publiques :
                         </h4>
                         <ul className="space-y-0.5">
@@ -278,14 +278,14 @@ const DelaisTensionsLogistiques: React.FC = () => {
 
       {/* Section explicative finale */}
       <div className="max-w-4xl mx-auto px-4 py-6">
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <h2 className="text-lg font-bold text-gray-900 mb-4">
+        <div className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-6">
+          <h2 className="text-lg font-bold text-gray-100 mb-4">
             Comprendre les observations logistiques
           </h2>
           
-          <div className="space-y-4 text-sm text-gray-700">
+          <div className="space-y-4 text-sm text-gray-300">
             <div>
-              <h3 className="font-semibold text-gray-900 mb-2">Pourquoi documenter ces événements ?</h3>
+              <h3 className="font-semibold text-gray-100 mb-2">Pourquoi documenter ces événements ?</h3>
               <p>
                 Les territoires ultramarins, de par leur <strong>éloignement et leur insularité</strong>, 
                 sont particulièrement exposés aux perturbations des chaînes logistiques mondiales. 
@@ -295,29 +295,29 @@ const DelaisTensionsLogistiques: React.FC = () => {
             </div>
 
             <div>
-              <h3 className="font-semibold text-gray-900 mb-2">Facteurs observés historiquement</h3>
+              <h3 className="font-semibold text-gray-100 mb-2">Facteurs observés historiquement</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div className="bg-gray-50 rounded p-3">
-                  <h4 className="font-semibold text-gray-800 text-xs mb-2">Facteurs climatiques</h4>
-                  <p className="text-xs text-gray-600">
+                <div className="bg-slate-800/50 rounded p-3">
+                  <h4 className="font-semibold text-gray-200 text-xs mb-2">Facteurs climatiques</h4>
+                  <p className="text-xs text-gray-400">
                     Cyclones, saisons des pluies, conditions météorologiques défavorables
                   </p>
                 </div>
-                <div className="bg-gray-50 rounded p-3">
-                  <h4 className="font-semibold text-gray-800 text-xs mb-2">Facteurs structurels</h4>
-                  <p className="text-xs text-gray-600">
+                <div className="bg-slate-800/50 rounded p-3">
+                  <h4 className="font-semibold text-gray-200 text-xs mb-2">Facteurs structurels</h4>
+                  <p className="text-xs text-gray-400">
                     Capacités portuaires, infrastructures, éloignement géographique
                   </p>
                 </div>
-                <div className="bg-gray-50 rounded p-3">
-                  <h4 className="font-semibold text-gray-800 text-xs mb-2">Facteurs internationaux</h4>
-                  <p className="text-xs text-gray-600">
+                <div className="bg-slate-800/50 rounded p-3">
+                  <h4 className="font-semibold text-gray-200 text-xs mb-2">Facteurs internationaux</h4>
+                  <p className="text-xs text-gray-400">
                     Crises sanitaires, tensions géopolitiques, congestion ports mondiaux
                   </p>
                 </div>
-                <div className="bg-gray-50 rounded p-3">
-                  <h4 className="font-semibold text-gray-800 text-xs mb-2">Facteurs organisationnels</h4>
-                  <p className="text-xs text-gray-600">
+                <div className="bg-slate-800/50 rounded p-3">
+                  <h4 className="font-semibold text-gray-200 text-xs mb-2">Facteurs organisationnels</h4>
+                  <p className="text-xs text-gray-400">
                     Réorganisations maritimes, modifications de rotations, grèves
                   </p>
                 </div>
@@ -325,7 +325,7 @@ const DelaisTensionsLogistiques: React.FC = () => {
             </div>
 
             <div>
-              <h3 className="font-semibold text-gray-900 mb-2">Limite de ces observations</h3>
+              <h3 className="font-semibold text-gray-100 mb-2">Limite de ces observations</h3>
               <p>
                 Ces observations <strong>décrivent le passé</strong>. Elles ne permettent pas de :
               </p>
@@ -342,8 +342,8 @@ const DelaisTensionsLogistiques: React.FC = () => {
 
       {/* Mention légale */}
       <div className="max-w-4xl mx-auto px-4 py-6">
-        <div className="bg-gray-100 rounded-lg p-4 text-center">
-          <p className="text-xs text-gray-600">
+        <div className="bg-slate-800/50 rounded-lg p-4 text-center">
+          <p className="text-xs text-gray-400">
             <strong>A KI PRI SA YÉ</strong> — Outil d'intérêt général
           </p>
           <p className="text-xs text-gray-500 mt-1">
