@@ -89,6 +89,7 @@ export const macaveLeclercProvider: PriceProvider = {
     const params = new URLSearchParams();
     if (input.barcode) params.set('barcode', input.barcode);
     if (input.query) params.set('q', input.query);
+    if (input.territory) params.set('territory', input.territory);
     // Toujours demander les promos en priorité pour ce fournisseur
     params.set('promoOnly', 'false');
 

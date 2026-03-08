@@ -34,7 +34,13 @@ export type PriceSourceId =
   | 'open_prices'
   | 'data_gouv'
   | 'leclerc_catalog'
-  | 'macave_leclerc';
+  | 'macave_leclerc'
+  | 'leclerc_jardin'
+  | 'leclerc_hightech'
+  | 'leclerc_electromenager'
+  | 'leclerc_parapharmacie'
+  | 'leclerc_secondevie'
+  | 'ecologite_guadeloupe';
 
 export type PriceSearchStatus =
   | 'OK'

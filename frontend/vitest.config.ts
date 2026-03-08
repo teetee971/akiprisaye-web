@@ -79,6 +79,10 @@ export default defineConfig({
       abs('./src/test/devisService.test.ts'),
       // Catalogue E.Leclerc — fournisseur de prix catalogue DOM-TOM
       abs('./src/providers/__tests__/leclercCatalogProvider.test.ts'),
+      // Catalogues E.Leclerc catégories (MaCave, Jardin, High-Tech, Électroménager, Parapharmacie, Seconde Vie)
+      abs('./src/providers/__tests__/leclercCategoryProviders.test.ts'),
+      // Catalogues visuels Calameo (Ecologite Guadeloupe 2026)
+      abs('./src/providers/__tests__/calameoCatalogProvider.test.ts'),
     ],
 
     exclude: ['**/node_modules/**', '**/.git/**', '**/dist/**', '**/coverage/**'],

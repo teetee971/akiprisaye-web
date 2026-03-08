@@ -35,7 +35,9 @@ export type LeclercSourceId =
   | 'leclerc_catalog'
   | 'leclerc_jardin'
   | 'leclerc_hightech'
-  | 'leclerc_electromenager';
+  | 'leclerc_electromenager'
+  | 'leclerc_parapharmacie'
+  | 'leclerc_secondevie';
 
 type PriceObservation = {
   source: LeclercSourceId;

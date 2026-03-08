@@ -1,5 +1,12 @@
 import type { PriceSearchInput } from '../services/priceSearch/price.types';
+import { ecologiteGuadeloupeProvider } from './ecologiteGuadeloupeProvider';
 import { leclercCatalogProvider } from './leclercCatalogProvider';
+import { leclercElectromenagerProvider } from './leclercElectromenagerProvider';
+import { leclercHighTechProvider } from './leclercHighTechProvider';
+import { leclercJardinProvider } from './leclercJardinProvider';
+import { leclercParapharmacieProvider } from './leclercParapharmacieProvider';
+import { leclercSecondeVieProvider } from './leclercSecondeVieProvider';
+import { macaveLeclercProvider } from './macaveLeclercProvider';
 import { normalizeText } from './normalize';
 import { openPricesProvider } from './openPricesProvider';
 import { seedProvider } from './seedProvider';
@@ -81,7 +88,19 @@ const dataGouvStubProvider: PriceProvider = {
   },
 };
 
-const PROVIDERS: PriceProvider[] = [openPricesProvider, openFoodFactsProvider, dataGouvStubProvider, leclercCatalogProvider];
+const PROVIDERS: PriceProvider[] = [
+  openPricesProvider,
+  openFoodFactsProvider,
+  dataGouvStubProvider,
+  leclercCatalogProvider,
+  macaveLeclercProvider,
+  leclercJardinProvider,
+  leclercHighTechProvider,
+  leclercElectromenagerProvider,
+  leclercParapharmacieProvider,
+  leclercSecondeVieProvider,
+  ecologiteGuadeloupeProvider,
+];
 
 export async function runPriceProviders(input: PriceSearchInput, signal: AbortSignal): Promise<ProviderResult[]> {
   const enabledProviders = PROVIDERS.filter((provider) => provider.isEnabled());
