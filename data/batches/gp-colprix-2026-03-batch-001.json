@@ -1,0 +1,92 @@
+{
+  "importBatch": {
+    "batchId": "gp_colprix_2026_03_batch_001",
+    "territory": "gp",
+    "sourceType": "ticket_caisse",
+    "currency": "EUR",
+    "schemaVersion": "observatoire.v1",
+    "receipts": [
+      {
+        "store": {
+          "storeKey": "colprix_morne_a_leau_richeval",
+          "storeLabel": "Colprix Morne-à-l'Eau",
+          "normalizedName": "Colprix Morne-à-l'Eau",
+          "brand": "Colprix",
+          "city": "Morne-à-l'Eau",
+          "postalCode": "97111",
+          "address": "LD Richeval",
+          "siret": "88412538600018",
+          "territory": "gp"
+        },
+        "receiptMeta": {
+          "ticketNumber": "189918",
+          "observedAt": "2026-03-07T10:52:00-04:00",
+          "itemsCount": 5,
+          "totalTtc": 15.33,
+          "paymentMethod": "card",
+          "needsReview": true
+        },
+        "items": [
+          {
+            "productKey": "papeco_essuie_tout_2_rouleaux",
+            "rawLabel": "ESSUIE-TOUT 2RLX PAPECO",
+            "normalizedLabel": "Essuie-tout Papeco 2 rouleaux",
+            "category": "entretien",
+            "brand": "Papeco",
+            "quantity": 1,
+            "unit": "unit",
+            "price": 1.99,
+            "currency": "EUR",
+            "confidenceScore": 0.92
+          },
+          {
+            "productKey": "eco_canard_complet_675g",
+            "rawLabel": "PDN CANARD COMPLET ECO 675G",
+            "normalizedLabel": "Canard complet ECO 675 g",
+            "category": "volaille",
+            "brand": "ECO",
+            "quantity": 1,
+            "unit": "kg",
+            "weightKg": 0.675,
+            "packageSizeValue": 675,
+            "packageSizeUnit": "g",
+            "unitPrice": 5.32,
+            "price": 3.59,
+            "currency": "EUR",
+            "confidenceScore": 0.78,
+            "needsReview": true,
+            "reviewNote": "PDN semble être un code ticket interne, à vérifier"
+          },
+          {
+            "productKey": "saucisses_strasbourg_350g",
+            "rawLabel": "SAUCISSES DE STRASBOURG 350G",
+            "normalizedLabel": "Saucisses de Strasbourg 350 g",
+            "category": "charcuterie",
+            "brand": null,
+            "quantity": 2,
+            "unit": "kg",
+            "weightKg": 0.35,
+            "packageSizeValue": 350,
+            "packageSizeUnit": "g",
+            "unitPrice": 2.65,
+            "price": 5.30,
+            "currency": "EUR",
+            "confidenceScore": 0.90
+          },
+          {
+            "productKey": "doudou_papier_toilette_10_plus_2",
+            "rawLabel": "PAPIER TOILETTES DOUDOU 10+2 roule",
+            "normalizedLabel": "Papier toilette Doudou 10+2 rouleaux",
+            "category": "hygiene",
+            "brand": "Doudou",
+            "quantity": 1,
+            "unit": "unit",
+            "price": 4.45,
+            "currency": "EUR",
+            "confidenceScore": 0.88
+          }
+        ]
+      }
+    ]
+  }
+}
