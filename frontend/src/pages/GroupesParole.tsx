@@ -234,6 +234,12 @@ export default function GroupesParole() {
 
   const handleFlag = async () => {
     if (!flagMsgId || !activeGroupId || !flagReason.trim()) return;
+    // '__report__' is a sentinel for a general group problem report (not a specific message)
+    if (flagMsgId === '__report__') {
+      setFlagMsgId(null);
+      setFlagReasonText('');
+      return;
+    }
     setFlagging(true);
     try {
       await flagMessage(activeGroupId, flagMsgId, flagReason.trim());
