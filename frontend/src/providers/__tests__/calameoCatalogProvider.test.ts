@@ -5,21 +5,24 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { createCalameoCatalogProvider } from '../createCalameoCatalogProvider';
+import { carrefourMilenisGuadeloupeProvider } from '../carrefourMilenisGuadeloupeProvider';
 import { ecologiteGuadeloupeProvider } from '../ecologiteGuadeloupeProvider';
 import { huitAHuitGuadeloupeProvider } from '../huitAHuitGuadeloupeProvider';
 import { supecoGuyaneProvider } from '../supecoGuyaneProvider';
 
 const makeController = () => new AbortController();
 
-const ECOLOGITE_FLAG = 'VITE_PRICE_PROVIDER_ECOLOGITE_GUADELOUPE';
-const HUITAHUIT_FLAG = 'VITE_PRICE_PROVIDER_HUIT_A_HUIT_GUADELOUPE';
-const SUPECO_FLAG    = 'VITE_PRICE_PROVIDER_SUPECO_GUYANE';
+const ECOLOGITE_FLAG    = 'VITE_PRICE_PROVIDER_ECOLOGITE_GUADELOUPE';
+const HUITAHUIT_FLAG    = 'VITE_PRICE_PROVIDER_HUIT_A_HUIT_GUADELOUPE';
+const SUPECO_FLAG       = 'VITE_PRICE_PROVIDER_SUPECO_GUYANE';
+const CARREFOUR_FLAG    = 'VITE_PRICE_PROVIDER_CARREFOUR_MILENIS_GUADELOUPE';
 
 beforeEach(() => {
   vi.restoreAllMocks();
   vi.stubEnv(ECOLOGITE_FLAG, 'false');
   vi.stubEnv(HUITAHUIT_FLAG, 'false');
   vi.stubEnv(SUPECO_FLAG, 'false');
+  vi.stubEnv(CARREFOUR_FLAG, 'false');
   vi.stubEnv('VITE_PRICE_API_BASE', '');
 });
 
@@ -260,5 +263,80 @@ describe('supecoGuyaneProvider', () => {
     const result = await supecoGuyaneProvider.search({ query: 'huile' }, makeController().signal);
     expect(result.status).toBe('UNAVAILABLE');
     expect(result.observations).toHaveLength(0);
+  });
+});
+
+// ─── carrefourMilenisGuadeloupeProvider ─────────────────────────────────────
+
+describe('carrefourMilenisGuadeloupeProvider', () => {
+  it('has correct source ID and book code in request', async () => {
+    expect(carrefourMilenisGuadeloupeProvider.source).toBe('carrefour_milenis_guadeloupe');
+
+    vi.stubEnv(CARREFOUR_FLAG, 'true');
+    vi.stubEnv('VITE_PRICE_API_BASE', 'https://example.com');
+
+    let capturedUrl = '';
+    vi.stubGlobal('fetch', vi.fn().mockImplementation((url: string) => {
+      capturedUrl = url;
+      return Promise.resolve({ ok: true, json: async () => ({ status: 'PARTIAL', observations: [], warnings: [] }) });
+    }));
+
+    await carrefourMilenisGuadeloupeProvider.search({ query: 'crème solaire' }, makeController().signal);
+    expect(capturedUrl).toContain('bkcode=0067220659b9adde1c784');
+    expect(capturedUrl).toContain('source=carrefour_milenis_guadeloupe');
+  });
+
+  it('is disabled by default', () => {
+    expect(carrefourMilenisGuadeloupeProvider.isEnabled()).toBe(false);
+  });
+
+  it('is enabled when env flag is set', () => {
+    vi.stubEnv(CARREFOUR_FLAG, 'true');
+    expect(carrefourMilenisGuadeloupeProvider.isEnabled()).toBe(true);
+  });
+
+  it('returns UNAVAILABLE when fetch throws', async () => {
+    vi.stubEnv(CARREFOUR_FLAG, 'true');
+    vi.stubEnv('VITE_PRICE_API_BASE', 'https://example.com');
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('timeout')));
+
+    const result = await carrefourMilenisGuadeloupeProvider.search(
+      { query: 'shampoing' },
+      makeController().signal,
+    );
+    expect(result.status).toBe('UNAVAILABLE');
+    expect(result.observations).toHaveLength(0);
+  });
+
+  it('returns NO_DATA with catalog link warning on success', async () => {
+    vi.stubEnv(CARREFOUR_FLAG, 'true');
+    vi.stubEnv('VITE_PRICE_API_BASE', 'https://example.com');
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          status: 'PARTIAL',
+          observations: [],
+          warnings: [
+            'Catalogue visuel (Carrefour Milénis Guadeloupe — Spécial Beauté 2026) : ' +
+              'extraction automatique des prix non disponible. ' +
+              'Consulter le catalogue : https://www.calameo.com/books/0067220659b9adde1c784',
+          ],
+        }),
+      }),
+    );
+
+    const result = await carrefourMilenisGuadeloupeProvider.search(
+      { query: 'rouge à lèvres' },
+      makeController().signal,
+    );
+
+    expect(result.source).toBe('carrefour_milenis_guadeloupe');
+    expect(result.status).toBe('NO_DATA');
+    expect(result.observations).toHaveLength(0);
+    expect(
+      result.warnings.some((w) => w.toLowerCase().includes('milenis') || w.toLowerCase().includes('beauté') || w.includes('calameo')),
+    ).toBe(true);
   });
 });

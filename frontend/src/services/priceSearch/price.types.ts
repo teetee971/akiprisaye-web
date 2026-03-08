@@ -43,6 +43,7 @@ export type PriceSourceId =
   | 'ecologite_guadeloupe'
   | 'huit_a_huit_guadeloupe'
   | 'supeco_guyane'
+  | 'carrefour_milenis_guadeloupe'
   | 'calameo_catalog';
 
 export type PriceSearchStatus =
