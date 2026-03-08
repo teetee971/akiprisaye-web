@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react'
 import { GlassCard } from '../components/ui/glass-card'
 import PredictionBadge from '../components/PredictionBadge'
 import Sparkline from '../components/Sparkline'
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 import {
   analyzeCatalogue,
   filterByStatus,
@@ -79,11 +81,19 @@ export default function Predictions() {
   return (
     <main className="container mx-auto px-4 py-8" role="main">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white mb-4">Prédictions IA</h1>
-        <p className="text-white/70 mb-6">
-          Anticipez les baisses de prix grâce à notre algorithme d'analyse prédictive.
-          Toutes les prédictions sont calculées localement à partir de l'historique des prix.
-        </p>
+        <HeroImage
+          src={PAGE_HERO_IMAGES.predictions}
+          alt="Prédictions de prix"
+          gradient="from-slate-950 to-cyan-900"
+          height="h-40 sm:h-52"
+        >
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+            🔮 Prédictions de prix
+          </h1>
+          <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
+            Anticipez l'évolution des prix dans votre territoire
+          </p>
+        </HeroImage>
       </div>
 
       {/* Statistiques */}

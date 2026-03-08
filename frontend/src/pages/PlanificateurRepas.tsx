@@ -11,6 +11,8 @@
 
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES, RECIPE_IMAGES } from '../config/imageAssets';
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
@@ -33,6 +35,7 @@ interface Recipe {
   id: string;
   name: string;
   emoji: string;
+  imgUrl?: string;
   type: Meal;
   duree: number;    // minutes
   personnes: number;
@@ -50,6 +53,7 @@ const RECIPES: Recipe[] = [
     id: 'pain-beurre',
     name: 'Pain beurre & café',
     emoji: '🍞',
+    imgUrl: RECIPE_IMAGES['pain-beurre'],
     type: 'petit-dejeuner',
     duree: 5,
     personnes: 2,
@@ -67,6 +71,7 @@ const RECIPES: Recipe[] = [
     id: 'fruits-yaourt',
     name: 'Fruits locaux & yaourt',
     emoji: '🍌',
+    imgUrl: RECIPE_IMAGES['fruits-yaourt'],
     type: 'petit-dejeuner',
     duree: 5,
     personnes: 2,
@@ -84,6 +89,7 @@ const RECIPES: Recipe[] = [
     id: 'colombo-poulet',
     name: 'Colombo de poulet créole',
     emoji: '🍛',
+    imgUrl: RECIPE_IMAGES['colombo-poulet'],
     type: 'dejeuner',
     duree: 45,
     personnes: 4,
@@ -102,6 +108,7 @@ const RECIPES: Recipe[] = [
     id: 'acras-morue',
     name: 'Acras de morue & féroce',
     emoji: '🐟',
+    imgUrl: RECIPE_IMAGES['acras-morue'],
     type: 'dejeuner',
     duree: 60,
     personnes: 4,
@@ -122,6 +129,7 @@ const RECIPES: Recipe[] = [
     id: 'riz-haricots',
     name: 'Riz aux haricots rouges',
     emoji: '🫘',
+    imgUrl: RECIPE_IMAGES['riz-haricots'],
     type: 'dejeuner',
     duree: 30,
     personnes: 4,
@@ -140,6 +148,7 @@ const RECIPES: Recipe[] = [
     id: 'poisson-grillé',
     name: 'Poisson grillé & légumes pays',
     emoji: '🐠',
+    imgUrl: RECIPE_IMAGES['poisson-grillé'],
     type: 'dejeuner',
     duree: 35,
     personnes: 4,
@@ -158,6 +167,7 @@ const RECIPES: Recipe[] = [
     id: 'salade-lentilles',
     name: 'Salade de lentilles créole',
     emoji: '🥗',
+    imgUrl: RECIPE_IMAGES['salade-lentilles'],
     type: 'dejeuner',
     duree: 25,
     personnes: 4,
@@ -177,6 +187,7 @@ const RECIPES: Recipe[] = [
     id: 'gratin-légumes',
     name: 'Gratin de légumes pays',
     emoji: '🫕',
+    imgUrl: RECIPE_IMAGES['gratin-légumes'],
     type: 'diner',
     duree: 50,
     personnes: 4,
@@ -195,6 +206,7 @@ const RECIPES: Recipe[] = [
     id: 'soupe-legumes',
     name: 'Soupe pays au giraumon',
     emoji: '🎃',
+    imgUrl: RECIPE_IMAGES['soupe-legumes'],
     type: 'diner',
     duree: 40,
     personnes: 6,
@@ -213,6 +225,7 @@ const RECIPES: Recipe[] = [
     id: 'blaff-poisson',
     name: 'Blaff de poisson',
     emoji: '🍲',
+    imgUrl: RECIPE_IMAGES['blaff-poisson'],
     type: 'diner',
     duree: 30,
     personnes: 4,
@@ -231,6 +244,7 @@ const RECIPES: Recipe[] = [
     id: 'omelette-légumes',
     name: 'Omelette aux légumes du jardin',
     emoji: '🍳',
+    imgUrl: RECIPE_IMAGES['omelette-légumes'],
     type: 'diner',
     duree: 20,
     personnes: 2,
@@ -333,17 +347,19 @@ export default function PlanificateurRepas() {
           <Link to="/innovation-lab" style={{ fontSize: '0.8rem', color: '#64748b', textDecoration: 'none' }}>← Innovation Lab</Link>
         </div>
 
-        <div style={{ textAlign: 'center', marginBottom: '1.75rem' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.3rem 1rem', borderRadius: 20, background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.3)', marginBottom: '0.75rem' }}>
-            <span style={{ fontSize: '0.78rem', color: '#34d399', fontWeight: 700 }}>🍽️ Planificateur hebdomadaire</span>
-          </div>
-          <h1 style={{ margin: '0 0 0.4rem', fontSize: '1.7rem', fontWeight: 900, color: '#f1f5f9' }}>
-            Planificateur de repas DOM
+        <HeroImage
+          src={PAGE_HERO_IMAGES.planificateurRepas}
+          alt="Planificateur de repas DOM"
+          gradient="from-slate-950 to-green-900"
+          height="h-40 sm:h-52"
+        >
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+            🍽️ Planificateur de repas DOM
           </h1>
-          <p style={{ margin: 0, fontSize: '0.88rem', color: '#64748b' }}>
+          <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
             Planifiez vos repas créoles et locaux — liste de courses et budget générés automatiquement
           </p>
-        </div>
+        </HeroImage>
 
         {/* Config bar */}
         <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1.25rem', flexWrap: 'wrap', alignItems: 'flex-end' }}>
@@ -398,7 +414,11 @@ export default function PlanificateurRepas() {
                         transition: 'border-color 0.15s' }}>
                       {recipe ? (
                         <div>
-                          <div style={{ fontSize: '0.75rem' }}>{recipe.emoji}</div>
+                          {recipe.imgUrl ? (
+                            <img src={recipe.imgUrl} alt={recipe.name} style={{ width: 28, height: 28, objectFit: 'cover', borderRadius: 4, marginBottom: '0.1rem' }} loading="lazy" />
+                          ) : (
+                            <div style={{ fontSize: '0.75rem' }}>{recipe.emoji}</div>
+                          )}
                           <div style={{ fontSize: '0.62rem', color: '#d1fae5', lineHeight: 1.3, marginTop: '0.1rem' }}>{recipe.name.slice(0, 22)}{recipe.name.length > 22 ? '…' : ''}</div>
                           <div style={{ fontSize: '0.58rem', color: '#6b7280', marginTop: '0.1rem' }}>{(recipe.prixPar * personnes * surcoeft).toFixed(2)} €</div>
                         </div>
@@ -435,7 +455,11 @@ export default function PlanificateurRepas() {
                 {pickRecipes.map(r => (
                   <button key={r.id} onClick={() => setRecipe(pickingFor.day, pickingFor.meal, r.id)}
                     style={{ padding: '0.7rem 0.9rem', borderRadius: 10, border: '1px solid rgba(148,163,184,0.15)', background: 'rgba(15,23,42,0.7)', cursor: 'pointer', textAlign: 'left', display: 'flex', gap: '0.7rem', alignItems: 'flex-start' }}>
-                    <span style={{ fontSize: '1.4rem', flexShrink: 0 }}>{r.emoji}</span>
+                    {r.imgUrl ? (
+                      <img src={r.imgUrl} alt={r.name} style={{ width: 56, height: 56, objectFit: 'cover', borderRadius: 8, flexShrink: 0 }} loading="lazy" />
+                    ) : (
+                      <span style={{ fontSize: '1.4rem', flexShrink: 0 }}>{r.emoji}</span>
+                    )}
                     <div style={{ flex: 1 }}>
                       <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#e2e8f0', marginBottom: '0.1rem' }}>{r.name}</div>
                       <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>

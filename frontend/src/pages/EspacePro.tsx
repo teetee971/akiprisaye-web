@@ -10,6 +10,8 @@
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link, useNavigate } from 'react-router-dom';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 import {
   Building2, Plus, Eye, Trash2, BadgeCheck, AlertCircle,
   CheckCircle, Clock, BarChart3, Tag, MapPin, RefreshCw,
@@ -343,6 +345,22 @@ export default function EspacePro() {
       </Helmet>
 
       <div className="min-h-screen bg-slate-950">
+        {/* Hero banner */}
+        <div className="px-4 pt-4 pb-0 max-w-5xl mx-auto">
+          <HeroImage
+            src={PAGE_HERO_IMAGES.espacePro}
+            alt="Espace Professionnel"
+            gradient="from-slate-950 to-blue-900"
+            height="h-40 sm:h-52"
+          >
+            <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+              💼 Espace Professionnel
+            </h1>
+            <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
+              Outils avancés pour professionnels et institutions
+            </p>
+          </HeroImage>
+        </div>
         {/* Header */}
         <header className="bg-gradient-to-r from-slate-900 to-slate-800 border-b border-slate-700">
           <div className="max-w-5xl mx-auto px-4 py-5">

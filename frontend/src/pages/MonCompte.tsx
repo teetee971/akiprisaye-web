@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import { useFavorites } from "@/hooks/useFavorites";
 import { safeLocalStorage } from "@/utils/safeLocalStorage";
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 import { ALERTS_STORAGE_KEY } from "@/services/priceAlertsStorage";
 import { Heart, Bell, Globe, CreditCard, User as UserIcon, Trash2, MessageCircle } from "lucide-react";
 
@@ -102,8 +104,22 @@ export default function MonCompte() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 p-4">
       <div className="max-w-4xl mx-auto">
+        <div className="mb-4">
+          <HeroImage
+            src={PAGE_HERO_IMAGES.monCompte}
+            alt="Mon compte"
+            gradient="from-slate-950 to-slate-800"
+            height="h-40 sm:h-52"
+          >
+            <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+              👤 Mon compte
+            </h1>
+            <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
+              Gérez votre profil, vos alertes et vos préférences
+            </p>
+          </HeroImage>
+        </div>
         <div className="bg-slate-900 rounded-2xl shadow-lg overflow-hidden">
-          <h1 className="text-3xl font-bold text-white p-6 pb-0">👤 Mon Compte</h1>
 
           {/* Tabs */}
           <div role="tablist" aria-label="Sections du compte" className="flex overflow-x-auto border-b border-slate-700 px-6 pt-4 gap-1">

@@ -9,6 +9,8 @@
 
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 // ─── Data ──────────────────────────────────────────────────────────────────────
 
@@ -74,13 +76,19 @@ export default function RapportCitoyen() {
               <Link to="/innovation-lab" style={{ fontSize: '0.8rem', color: '#64748b', textDecoration: 'none' }}>← Innovation Lab</Link>
             </div>
 
-            <div style={{ textAlign: 'center', marginBottom: '1.75rem' }}>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.3rem 1rem', borderRadius: 20, background: 'rgba(243,63,94,0.1)', border: '1px solid rgba(243,63,94,0.3)', marginBottom: '0.75rem' }}>
-                <span style={{ fontSize: '0.78rem', color: '#fb7185', fontWeight: 700 }}>📄 Rapport exportable</span>
-              </div>
-              <h1 style={{ margin: '0 0 0.4rem', fontSize: '1.7rem', fontWeight: 900, color: '#f1f5f9' }}>Rapport citoyen PDF</h1>
-              <p style={{ margin: 0, fontSize: '0.88rem', color: '#64748b' }}>Générez un rapport imprimable sur les prix des territoires ultramarins</p>
-            </div>
+            <HeroImage
+              src={PAGE_HERO_IMAGES.rapportCitoyen}
+              alt="Rapport citoyen"
+              gradient="from-slate-950 to-cyan-900"
+              height="h-40 sm:h-52"
+            >
+              <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+                📊 Rapport citoyen
+              </h1>
+              <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
+                Générez un rapport des prix de votre territoire, prêt à imprimer
+              </p>
+            </HeroImage>
 
             {/* Config */}
             <div style={{ padding: '1rem 1.2rem', borderRadius: 14, background: 'rgba(15,23,42,0.75)', border: '1px solid rgba(148,163,184,0.12)', marginBottom: '1.5rem' }}>

@@ -41,6 +41,8 @@ import {
   Printer,
   ExternalLink,
 } from 'lucide-react';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 // ── Section config ─────────────────────────────────────────────────────────────
 
@@ -81,19 +83,20 @@ export default function DossierInvestisseurs() {
       </Helmet>
 
       {/* Header */}
-      <div className="bg-gradient-to-r from-slate-900 to-indigo-900 text-white print:bg-white print:text-black">
-        <div className="max-w-6xl mx-auto px-4 py-12">
-          <div className="flex items-start justify-between flex-wrap gap-4">
+      <div className="max-w-6xl mx-auto px-4 pt-6">
+        <HeroImage
+          src={PAGE_HERO_IMAGES.dossierInvestisseurs}
+          alt="Dossier Investisseurs"
+          gradient="from-slate-950 to-indigo-900"
+          height="h-40 sm:h-52"
+        >
+          <div className="flex items-start justify-between w-full flex-wrap gap-4">
             <div>
-              <div className="text-indigo-300 text-sm font-medium tracking-widest uppercase mb-2 print:text-gray-500">
-                Document confidentiel — Usage investisseurs
-              </div>
-              <h1 className="text-4xl font-bold mb-2">A KI PRI SA YÉ</h1>
-              <p className="text-xl text-indigo-200 print:text-gray-600">
-                Observatoire public des prix — Territoires français d'Outre-mer
-              </p>
-              <p className="text-sm text-indigo-300 mt-3 print:text-gray-500">
-                Dossier investisseurs · Version 1.0 · 2026
+              <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+                📊 Dossier Investisseurs
+              </h1>
+              <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
+                Présentation complète pour les investisseurs et partenaires institutionnels
               </p>
             </div>
             <button
@@ -104,6 +107,10 @@ export default function DossierInvestisseurs() {
               Imprimer / PDF
             </button>
           </div>
+        </HeroImage>
+      </div>
+      <div className="max-w-6xl mx-auto px-4 py-6">
+        <div>
 
           {/* Disclaimer */}
           <div className="mt-6 bg-amber-900/40 border border-amber-700/50 rounded-xl px-5 py-4 text-sm text-amber-200 print:border-amber-400 print:text-amber-900 print:bg-amber-50">

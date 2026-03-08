@@ -8,6 +8,8 @@
 
 import React from 'react';
 import { Card } from '../components/card.jsx';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 export default function Presse() {
   const currentDate = new Date().toLocaleDateString('fr-FR', {
@@ -24,17 +26,19 @@ export default function Presse() {
     <div className="min-h-screen bg-slate-50 py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-lg p-8 text-white print:bg-white print:text-black print:border-2 print:border-gray-300">
-          <h1 className="text-4xl font-bold mb-3">
-            📰 Pack Presse Officiel
+        <HeroImage
+          src={PAGE_HERO_IMAGES.presse}
+          alt="Espace Presse"
+          gradient="from-slate-950 to-amber-900"
+          height="h-40 sm:h-52"
+        >
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+            📰 Espace Presse
           </h1>
-          <p className="text-xl text-blue-100 print:text-gray-700">
-            A KI PRI SA YÉ — Observatoire citoyen des prix
+          <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
+            Ressources et contacts pour les journalistes
           </p>
-          <p className="text-sm text-blue-200 print:text-gray-600 mt-3">
-            Document officiel — {currentDate}
-          </p>
-        </div>
+        </HeroImage>
 
         {/* Action Button */}
         <div className="print:hidden">

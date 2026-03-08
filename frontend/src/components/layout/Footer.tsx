@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { Scale, BarChart2, Wrench, Info, Heart, MessageCircle, Users, Briefcase, Search } from 'lucide-react';
 
 const VERSION = '3.2.0';
 
@@ -22,7 +23,7 @@ export default function Footer() {
 
           {/* Col 1 – Comparateurs */}
           <div>
-            <p className="font-semibold text-slate-300 mb-3 uppercase tracking-wider text-xs">⚖️ Comparateurs</p>
+            <p className="font-semibold text-slate-300 mb-3 uppercase tracking-wider text-xs"><Scale className="inline-block w-3.5 h-3.5 mr-1.5 opacity-60" /> Comparateurs</p>
             <ul className="space-y-2">
               <li><Link to="/comparateurs" className="text-slate-400 hover:text-white transition-colors">Tous les comparateurs</Link></li>
               <li><Link to="/comparateur" className="text-slate-400 hover:text-white transition-colors">Comparateur prix</Link></li>
@@ -35,7 +36,7 @@ export default function Footer() {
 
           {/* Col 2 – Données */}
           <div>
-            <p className="font-semibold text-slate-300 mb-3 uppercase tracking-wider text-xs">📊 Données</p>
+            <p className="font-semibold text-slate-300 mb-3 uppercase tracking-wider text-xs"><BarChart2 className="inline-block w-3.5 h-3.5 mr-1.5 opacity-60" /> Données</p>
             <ul className="space-y-2">
               <li><Link to="/observatoire" className="text-slate-400 hover:text-white transition-colors">Observatoire</Link></li>
               <li><Link to="/donnees-publiques" className="text-slate-400 hover:text-white transition-colors">Données publiques</Link></li>
@@ -48,29 +49,29 @@ export default function Footer() {
 
           {/* Col 3 – Outils */}
           <div>
-            <p className="font-semibold text-slate-300 mb-3 uppercase tracking-wider text-xs">🔧 Outils</p>
+            <p className="font-semibold text-slate-300 mb-3 uppercase tracking-wider text-xs"><Wrench className="inline-block w-3.5 h-3.5 mr-1.5 opacity-60" /> Outils</p>
             <ul className="space-y-2">
               <li><Link to="/scanner" className="text-slate-400 hover:text-white transition-colors">Scanner</Link></li>
               <li><Link to="/assistant-ia" className="text-slate-400 hover:text-white transition-colors">Assistant IA</Link></li>
               <li><Link to="/liste" className="text-slate-400 hover:text-white transition-colors">Liste de courses</Link></li>
               <li><Link to="/alertes-prix" className="text-slate-400 hover:text-white transition-colors">Alertes prix</Link></li>
               <li><Link to="/contribuer-prix" className="text-slate-400 hover:text-white transition-colors">Contribuer</Link></li>
-              <li><Link to="/messagerie" className="text-slate-400 hover:text-indigo-300 transition-colors">💬 Messagerie</Link></li>
-              <li><Link to="/groupes-parole" className="text-slate-400 hover:text-purple-300 transition-colors">🗣️ Groupes de Parole</Link></li>
+              <li><Link to="/messagerie" className="text-slate-400 hover:text-indigo-300 transition-colors"><MessageCircle className="inline-block w-3.5 h-3.5 mr-1" /> Messagerie</Link></li>
+              <li><Link to="/groupes-parole" className="text-slate-400 hover:text-purple-300 transition-colors"><Users className="inline-block w-3.5 h-3.5 mr-1" /> Groupes de Parole</Link></li>
             </ul>
           </div>
 
           {/* Col 4 – À propos */}
           <div>
-            <p className="font-semibold text-slate-300 mb-3 uppercase tracking-wider text-xs">ℹ️ À propos</p>
+            <p className="font-semibold text-slate-300 mb-3 uppercase tracking-wider text-xs"><Info className="inline-block w-3.5 h-3.5 mr-1.5 opacity-60" /> À propos</p>
             <ul className="space-y-2">
               <li><Link to="/faq" className="text-slate-400 hover:text-white transition-colors">FAQ</Link></li>
               <li><Link to="/contact" className="text-slate-400 hover:text-white transition-colors">Contact</Link></li>
-              <li><Link to="/solidarite" className="text-slate-400 hover:text-orange-300 transition-colors">🤝 Entraide</Link></li>
+              <li><Link to="/solidarite" className="text-slate-400 hover:text-orange-300 transition-colors"><Heart className="inline-block w-3.5 h-3.5 mr-1" /> Entraide</Link></li>
               <li><Link to="/gouvernance" className="text-slate-400 hover:text-slate-200 transition-colors">Gouvernance</Link></li>
               <li><Link to="/presse" className="text-slate-400 hover:text-slate-200 transition-colors">Presse</Link></li>
-              <li><Link to="/inscription-pro" className="text-slate-400 hover:text-blue-300 transition-colors">💼 Espace Pro</Link></li>
-              <li><Link to="/module-audit" className="text-slate-400 hover:text-indigo-300 transition-colors">🔍 Audit modules</Link></li>
+              <li><Link to="/inscription-pro" className="text-slate-400 hover:text-blue-300 transition-colors"><Briefcase className="inline-block w-3.5 h-3.5 mr-1" /> Espace Pro</Link></li>
+              <li><Link to="/module-audit" className="text-slate-400 hover:text-indigo-300 transition-colors"><Search className="inline-block w-3.5 h-3.5 mr-1" /> Audit modules</Link></li>
             </ul>
           </div>
 

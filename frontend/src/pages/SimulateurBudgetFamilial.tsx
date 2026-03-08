@@ -13,6 +13,8 @@
 
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 // ─── Territory data ─────────────────────────────────────────────────────────────
 
@@ -123,17 +125,19 @@ export default function SimulateurBudgetFamilial() {
           <Link to="/innovation-lab" style={{ fontSize: '0.8rem', color: '#64748b', textDecoration: 'none' }}>← Innovation Lab</Link>
         </div>
 
-        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.3rem 1rem', borderRadius: 20, background: 'rgba(249,115,22,0.1)', border: '1px solid rgba(249,115,22,0.3)', marginBottom: '0.75rem' }}>
-            <span style={{ fontSize: '0.78rem', color: '#fb923c', fontWeight: 700 }}>🧮 Simulateur interactif</span>
-          </div>
-          <h1 style={{ margin: '0 0 0.4rem', fontSize: '1.7rem', fontWeight: 900, color: '#f1f5f9' }}>
-            Simulateur budgétaire familial DOM
+        <HeroImage
+          src={PAGE_HERO_IMAGES.simulateurBudget}
+          alt="Simulateur budget familial DOM"
+          gradient="from-slate-950 to-emerald-900"
+          height="h-40 sm:h-52"
+        >
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+            🧮 Simulateur budget familial DOM
           </h1>
-          <p style={{ margin: 0, fontSize: '0.88rem', color: '#64748b' }}>
-            Calculez ce qu'il vous reste vraiment après toutes les dépenses contraintes
+          <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
+            Estimez votre budget alimentation selon votre territoire et composition familiale
           </p>
-        </div>
+        </HeroImage>
 
         {/* Controls */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.85rem', marginBottom: '1.5rem' }}>

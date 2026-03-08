@@ -1,16 +1,23 @@
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
+
 export default function Transparence() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-        <div className="animate-fade-in">
-          <header className="space-y-2">
-            <p className="text-sm text-blue-200 uppercase tracking-wide">Service public</p>
-            <h1 className="text-3xl sm:text-4xl font-bold text-white">Données &amp; transparence</h1>
-            <p className="text-slate-300">
-              Ce qui est publié aujourd&apos;hui, ce qui ne l&apos;est pas encore, et nos engagements de mise à jour.
-            </p>
-          </header>
-        </div>
+        <HeroImage
+          src={PAGE_HERO_IMAGES.transparence}
+          alt="Politique de confidentialité"
+          gradient="from-slate-950 to-slate-800"
+          height="h-40 sm:h-52"
+        >
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+            🔒 Politique de confidentialité
+          </h1>
+          <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
+            Comment nous protégeons vos données personnelles
+          </p>
+        </HeroImage>
 
         <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
           <h2 className="text-xl font-semibold text-white">Données publiées</h2>

@@ -8,6 +8,8 @@
 
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 import {
   getLatestLettre,
   getRecentLettres,
@@ -235,24 +237,19 @@ export default function LettreHebdoIA() {
         </div>
 
         {/* Page title */}
-        <div style={{ marginBottom: '1.75rem', display: 'flex', alignItems: 'flex-start', gap: '1rem', flexWrap: 'wrap', justifyContent: 'space-between' }}>
-          <div>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.3rem 0.9rem', borderRadius: 20, background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.3)', marginBottom: '0.5rem' }}>
-              <span style={{ fontSize: '0.75rem', color: '#a5b4fc', fontWeight: 700 }}>🤖 Lettres générées par IA · Chaque lundi</span>
-            </div>
-            <h1 style={{ margin: 0, fontSize: '1.7rem', fontWeight: 900, color: '#f1f5f9', lineHeight: 1.2 }}>
-              Lettre Hebdomadaire IA
-            </h1>
-            <p style={{ margin: '0.4rem 0 0', fontSize: '0.88rem', color: '#64748b' }}>
-              Actualité économique et sociale des territoires ultramarins — sans intervention humaine
-            </p>
-          </div>
-          <div style={{ fontSize: '0.72rem', color: '#334155', lineHeight: 1.6, textAlign: 'right' }}>
-            <div>Sources : La1ère, Outremers360°</div>
-            <div>IA : GPT-4o-mini (OpenAI)</div>
-            <div>Fréquence : hebdomadaire (lundi)</div>
-          </div>
-        </div>
+        <HeroImage
+          src={PAGE_HERO_IMAGES.lettreHebdo}
+          alt="Lettre hebdo IA"
+          gradient="from-slate-950 to-amber-900"
+          height="h-40 sm:h-52"
+        >
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+            📰 Lettre hebdo IA
+          </h1>
+          <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
+            L'actualité des prix dans les DOM, générée chaque lundi par l'IA
+          </p>
+        </HeroImage>
 
         <div style={{ display: 'grid', gridTemplateColumns: archive.length > 1 ? '1fr 200px' : '1fr', gap: '1.5rem', alignItems: 'start' }}>
 

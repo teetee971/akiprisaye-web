@@ -50,7 +50,7 @@ export default function BadgesPage() {
       {/* Hero banner */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2 animate-fade-in">
         <HeroImage
-          src={PAGE_HERO_IMAGES.gamification}
+          src={PAGE_HERO_IMAGES.badges}
           alt="Collection de badges — récompenses citoyens"
           gradient="from-purple-900 to-pink-950"
           height="h-44 sm:h-52"
@@ -74,7 +74,8 @@ export default function BadgesPage() {
           </div>
           <div className="flex items-center gap-3">
             <Award size={32} />
-            <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow">Collection de badges</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow">🏆 Mes Badges</h1>
+            <p className="text-slate-200 text-sm drop-shadow">Vos récompenses pour votre contribution à la communauté</p>
           </div>
           <p className="text-slate-200 text-sm drop-shadow">
             {stats.unlocked}/{stats.unlocked + stats.locked} débloqués · {stats.percentage.toFixed(0)}% de progression

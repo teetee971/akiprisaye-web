@@ -12,6 +12,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { FileText, ArrowRight, ArrowLeft, CheckCircle, AlertTriangle, Info } from 'lucide-react';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 import { auth } from '@/lib/firebase';
 import { onAuthStateChanged, type User } from 'firebase/auth';
 import {
@@ -267,16 +269,20 @@ export default function DevisIA() {
 
       <div className="min-h-screen bg-gray-50">
         {/* Header */}
-        <div className="bg-indigo-700 text-white py-10 px-4">
-          <div className="max-w-3xl mx-auto">
-            <div className="flex items-center gap-3 mb-2">
-              <FileText className="w-8 h-8" />
-              <h1 className="text-2xl font-bold">Devis IA — Services Institutionnels</h1>
-            </div>
-            <p className="text-indigo-200 text-sm">
-              Décrivez votre besoin, obtenez une estimation transparente, validée par notre équipe.
+        <div className="px-4 pt-4">
+          <HeroImage
+            src={PAGE_HERO_IMAGES.devisIA}
+            alt="Devis IA"
+            gradient="from-slate-950 to-violet-900"
+            height="h-40 sm:h-52"
+          >
+            <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+              📋 Devis IA
+            </h1>
+            <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
+              Obtenez un devis estimatif intelligent pour vos projets
             </p>
-          </div>
+          </HeroImage>
         </div>
 
         {/* Progress stepper */}

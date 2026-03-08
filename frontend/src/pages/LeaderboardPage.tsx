@@ -71,9 +71,9 @@ export default function LeaderboardPage() {
       {/* Hero banner — real Unsplash photo with gradient fallback */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2 animate-fade-in">
         <HeroImage
-          src={PAGE_HERO_IMAGES.gamification}
+          src={PAGE_HERO_IMAGES.leaderboard}
           alt="Classement des meilleurs contributeurs"
-          gradient="from-yellow-900 to-orange-950"
+          gradient="from-slate-950 to-yellow-900"
           height="h-44 sm:h-56"
         >
           <div className="flex items-center justify-between w-full mb-2">

@@ -7,6 +7,8 @@
 
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES, INNOVATION_IMAGES } from '../config/imageAssets';
 
 // ─── Data ──────────────────────────────────────────────────────────────────────
 
@@ -338,7 +340,17 @@ function InnovationCard({ item, votes, onVote }: {
     }}>
       {/* Header row */}
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
-        <span style={{ fontSize: '1.6rem', flexShrink: 0, lineHeight: 1 }}>{item.emoji}</span>
+        {INNOVATION_IMAGES[item.id] ? (
+          <img
+            src={INNOVATION_IMAGES[item.id]}
+            alt={item.titre}
+            style={{ width: 52, height: 52, objectFit: 'cover', borderRadius: 10, flexShrink: 0, border: `1px solid ${item.accentColor}33` }}
+            loading="lazy"
+            onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
+          />
+        ) : (
+          <span style={{ fontSize: '1.6rem', flexShrink: 0, lineHeight: 1 }}>{item.emoji}</span>
+        )}
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.3rem', flexWrap: 'wrap' }}>
             <h3 style={{ margin: 0, fontSize: '0.9rem', fontWeight: 800, color: '#e2e8f0', lineHeight: 1.3 }}>{item.titre}</h3>
@@ -420,19 +432,19 @@ export default function InnovationLab() {
           <Link to="/" style={{ fontSize: '0.8rem', color: '#64748b', textDecoration: 'none' }}>← Retour à l'accueil</Link>
         </div>
 
-        {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.3rem 1rem', borderRadius: 20, background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.3)', marginBottom: '0.75rem' }}>
-            <span style={{ fontSize: '0.78rem', color: '#a5b4fc', fontWeight: 700 }}>🧪 Innovation Lab — A KI PRI SA YÉ</span>
-          </div>
-          <h1 style={{ margin: '0 0 0.5rem', fontSize: '1.8rem', fontWeight: 900, color: '#f1f5f9' }}>
-            28 innovations pour demain
+        <HeroImage
+          src={PAGE_HERO_IMAGES.innovationLab}
+          alt="Innovation Lab"
+          gradient="from-slate-950 to-indigo-900"
+          height="h-40 sm:h-52"
+        >
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+            🔬 Innovation Lab
           </h1>
-          <p style={{ margin: 0, fontSize: '0.9rem', color: '#64748b', lineHeight: 1.65 }}>
-            Feuille de route des prochaines évolutions de la plateforme.<br />
-            Votez pour les fonctionnalités qui vous semblent les plus utiles 👇
+          <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
+            Les prochaines évolutions de la plateforme — votez pour vos priorités
           </p>
-        </div>
+        </HeroImage>
 
         {/* Phase filters */}
         <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>

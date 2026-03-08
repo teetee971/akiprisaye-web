@@ -14,6 +14,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link, useParams, useNavigate } from 'react-router-dom';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 import {
   MessageCircle,
   Send,
@@ -295,6 +297,22 @@ export default function GroupesParole() {
       </Helmet>
 
       <div className="min-h-screen bg-slate-950 pt-16 flex flex-col">
+        {/* Hero banner */}
+        <div className="px-4 pt-4 pb-0">
+          <HeroImage
+            src={PAGE_HERO_IMAGES.groupesParole}
+            alt="Groupes de Parole Citoyens"
+            gradient="from-slate-950 to-teal-900"
+            height="h-40 sm:h-52"
+          >
+            <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+              🗣️ Groupes de Parole Citoyens
+            </h1>
+            <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
+              Échangez avec d'autres consommateurs de votre territoire
+            </p>
+          </HeroImage>
+        </div>
         {/* ── Page header ── */}
         <div className="bg-slate-900 border-b border-slate-800 px-4 py-3 sticky top-16 z-10">
           <div className="max-w-6xl mx-auto flex items-center gap-3 flex-wrap">

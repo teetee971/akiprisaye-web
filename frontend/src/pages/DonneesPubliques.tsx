@@ -240,13 +240,19 @@ export default function DonneesPubliques() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
       <div className="max-w-5xl mx-auto px-4 py-12 space-y-8">
-        <header className="space-y-2">
-          <p className="text-xs uppercase tracking-wide text-blue-200">Open-data officiel</p>
-          <h1 className="text-3xl font-bold text-white">Données publiques</h1>
-          <p className="text-slate-300 max-w-3xl">
-            Liste des fichiers statiques mis à disposition par l’observatoire citoyen. Aucun appel réseau dynamique, aucune API : les données sont servies par Cloudflare Pages.
+        <HeroImage
+          src={PAGE_HERO_IMAGES.donneesPubliques}
+          alt="Données Publiques"
+          gradient="from-slate-950 to-green-900"
+          height="h-40 sm:h-52"
+        >
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+            📂 Données Publiques
+          </h1>
+          <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
+            Accédez aux jeux de données ouverts de la plateforme
           </p>
-        </header>
+        </HeroImage>
 
         <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-6 space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">

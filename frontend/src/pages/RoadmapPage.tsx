@@ -17,6 +17,8 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 import {
   CheckCircle,
   Clock,
@@ -284,16 +286,21 @@ export default function RoadmapPage() {
 
       <div className="min-h-screen bg-gray-50">
         {/* Header */}
-        <div className="bg-slate-900 text-white py-10 px-4">
+        <div className="bg-slate-900 text-white py-6 px-4">
           <div className="max-w-5xl mx-auto">
-            <p className="text-slate-400 text-xs font-semibold uppercase tracking-widest mb-2">
-              Documentation publique
-            </p>
-            <h1 className="text-3xl font-bold mb-2">Roadmap & Architecture</h1>
-            <p className="text-slate-300 text-sm max-w-2xl">
-              État des modules, feuille de route MVP → V1 → V2, schémas de données,
-              design system, stratégie IA responsable et checklist de conformité.
-            </p>
+            <HeroImage
+              src={PAGE_HERO_IMAGES.roadmap}
+              alt="Roadmap"
+              gradient="from-slate-950 to-purple-900"
+              height="h-40 sm:h-52"
+            >
+              <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+                🗺️ Roadmap
+              </h1>
+              <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
+                Les évolutions prévues de la plateforme
+              </p>
+            </HeroImage>
           </div>
         </div>
 

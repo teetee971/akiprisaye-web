@@ -3,6 +3,8 @@ import React from 'react';
 import { MessageSquarePlus, Lightbulb, Bug, HelpCircle, Database, Sparkles } from 'lucide-react';
 import TicketForm from '../components/TicketForm';
 import type { TicketType } from '../types/ticket';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 /**
  * Page de soumission de suggestions et demandes
@@ -80,19 +82,21 @@ export default function Suggestions() {
   return (
     <div className="min-h-screen bg-slate-950">
       {/* Header */}
-      <header className="bg-gradient-to-r from-slate-900 to-slate-800 border-b border-slate-700">
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          <div className="flex items-center gap-3 mb-2">
-            <MessageSquarePlus className="w-6 h-6 text-blue-400" />
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-100">
-              Suggestions & Demandes
-            </h1>
-          </div>
-          <p className="text-sm text-gray-400">
-            Votre avis compte ! Aidez-nous à améliorer A KI PRI SA YÉ
+      <div className="px-4 pt-4 max-w-7xl mx-auto">
+        <HeroImage
+          src={PAGE_HERO_IMAGES.suggestions}
+          alt="Suggestions"
+          gradient="from-slate-950 to-yellow-900"
+          height="h-40 sm:h-52"
+        >
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+            💡 Suggestions
+          </h1>
+          <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
+            Proposez vos idées pour améliorer la plateforme
           </p>
-        </div>
-      </header>
+        </HeroImage>
+      </div>
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 py-6">

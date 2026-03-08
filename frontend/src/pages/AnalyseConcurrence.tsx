@@ -8,6 +8,8 @@
 
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 // ─── Data ──────────────────────────────────────────────────────────────────────
 
@@ -103,17 +105,19 @@ export default function AnalyseConcurrence() {
           <Link to="/innovation-lab" style={{ fontSize: '0.8rem', color: '#64748b', textDecoration: 'none' }}>← Innovation Lab</Link>
         </div>
 
-        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.3rem 1rem', borderRadius: 20, background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.3)', marginBottom: '0.75rem' }}>
-            <span style={{ fontSize: '0.78rem', color: '#a5b4fc', fontWeight: 700 }}>🔭 Veille concurrentielle</span>
-          </div>
-          <h1 style={{ margin: '0 0 0.4rem', fontSize: '1.7rem', fontWeight: 900, color: '#f1f5f9' }}>
-            Analyse concurrentielle
+        <HeroImage
+          src={PAGE_HERO_IMAGES.analyseConcurrence}
+          alt="Analyse concurrentielle"
+          gradient="from-slate-950 to-indigo-900"
+          height="h-40 sm:h-52"
+        >
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+            🔭 Analyse concurrentielle
           </h1>
-          <p style={{ margin: 0, fontSize: '0.88rem', color: '#64748b' }}>
+          <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
             Ce que nos concurrents font — et ce qu'on a intégré en réponse
           </p>
-        </div>
+        </HeroImage>
 
         {/* Competitor cards */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.75rem', marginBottom: '1.5rem' }}>

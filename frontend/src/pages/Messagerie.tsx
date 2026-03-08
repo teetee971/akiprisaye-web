@@ -10,6 +10,8 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { MessageCircle, Send, UserPlus, ArrowLeft, Search, Loader2, X } from 'lucide-react';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 import { auth } from '@/lib/firebase';
 import { onAuthStateChanged, type User } from 'firebase/auth';
 import {
@@ -200,6 +202,22 @@ export default function Messagerie() {
       </Helmet>
 
       <div className="min-h-screen bg-slate-950 pt-16 flex flex-col">
+        {/* Hero banner */}
+        <div className="px-4 pt-4 pb-0">
+          <HeroImage
+            src={PAGE_HERO_IMAGES.messagerie}
+            alt="Messagerie"
+            gradient="from-slate-950 to-blue-900"
+            height="h-40 sm:h-52"
+          >
+            <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+              💬 Messagerie
+            </h1>
+            <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
+              Vos messages et échanges avec la communauté
+            </p>
+          </HeroImage>
+        </div>
         {/* Header */}
         <div className="bg-slate-900 border-b border-slate-800 px-4 py-3 flex items-center gap-3 sticky top-16 z-10">
           <Link to="/mon-compte" className="text-slate-400 hover:text-white transition-colors">

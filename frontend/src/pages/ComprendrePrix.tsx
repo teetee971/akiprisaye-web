@@ -2,6 +2,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { TrendingUp, Globe, Package, Ship, DollarSign, AlertTriangle, BarChart2, ExternalLink } from "lucide-react";
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 // ─── Real statistics sourced from INSEE / IEDOM / CEROM publications ─────────
 // INSEE — "Les niveaux de vie dans les DOM" (2017, updated 2023)
@@ -29,15 +31,19 @@ export default function ComprendrePrix() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 py-12 px-4">
       <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-white mb-4">
-            💡 Comprendre les prix
-          </h1>
-          <p className="text-xl text-gray-300">
-            Pourquoi les prix sont-ils différents entre les territoires ?
-          </p>
-        </div>
+      <HeroImage
+        src={PAGE_HERO_IMAGES.comprendrePrix}
+        alt="Comprendre les prix"
+        gradient="from-slate-950 to-orange-900"
+        height="h-40 sm:h-52"
+      >
+        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+          🔍 Comprendre les prix
+        </h1>
+        <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
+          Décryptez les mécanismes derrière la vie chère dans les DOM
+        </p>
+      </HeroImage>
 
         {/* Main Explanation */}
         <div className="bg-slate-900 rounded-2xl p-6 shadow-lg mb-8">

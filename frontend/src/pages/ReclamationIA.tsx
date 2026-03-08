@@ -15,6 +15,8 @@
 
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
@@ -169,17 +171,19 @@ export default function ReclamationIA() {
           <Link to="/innovation-lab" style={{ fontSize: '0.8rem', color: '#64748b', textDecoration: 'none' }}>← Innovation Lab</Link>
         </div>
 
-        <div style={{ textAlign: 'center', marginBottom: '1.75rem' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.3rem 1rem', borderRadius: 20, background: 'rgba(168,85,247,0.1)', border: '1px solid rgba(168,85,247,0.3)', marginBottom: '0.75rem' }}>
-            <span style={{ fontSize: '0.78rem', color: '#c084fc', fontWeight: 700 }}>⚖️ Générateur de lettre</span>
-          </div>
-          <h1 style={{ margin: '0 0 0.4rem', fontSize: '1.7rem', fontWeight: 900, color: '#f1f5f9' }}>
-            Rédacteur de réclamation consommateur
+        <HeroImage
+          src={PAGE_HERO_IMAGES.reclamationIA}
+          alt="Réclamation IA"
+          gradient="from-slate-950 to-violet-900"
+          height="h-40 sm:h-52"
+        >
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+            ✍️ Réclamation IA
           </h1>
-          <p style={{ margin: 0, fontSize: '0.88rem', color: '#64748b' }}>
-            Générez en 2 minutes une lettre officielle à envoyer à une enseigne ou à la DGCCRF
+          <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
+            Générez une lettre de réclamation officielle en 2 minutes
           </p>
-        </div>
+        </HeroImage>
 
         {/* Tabs */}
         <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.25rem' }}>

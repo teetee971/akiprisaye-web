@@ -1,5 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 // Build-time metadata injected by Vite (Issue #0.2)
 const BUILD_SHA: string = import.meta.env.VITE_BUILD_SHA ?? 'dev';
@@ -94,21 +96,19 @@ export default function Versions() {
         <meta name="description" content="Historique complet des versions de l'application A KI PRI SA YÉ. Traçabilité des données et des fonctionnalités publiées." />
       </Helmet>
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-        <header className="space-y-2">
-          <p className="text-sm text-blue-200 uppercase tracking-wide">Application citoyenne</p>
-          <h1 className="text-3xl sm:text-4xl font-bold text-white">Historique &amp; versions</h1>
-          <p className="text-slate-300 max-w-3xl">
-            Traçabilité complète de l'application et de l'observatoire citoyen. Chaque version documente les fonctionnalités ajoutées, les données publiées et les corrections apportées.
-          </p>
-          <p className="text-sm text-slate-400">
-            Version actuelle : <span className="font-semibold text-white">v3.2.0</span> — mars 2026 —{' '}
-            <Link to="/comparateurs" className="text-blue-400 hover:text-blue-300 underline">Voir tous les comparateurs</Link>
-          </p>
-          {/* Build metadata (Issue #0.2) */}
-          <p className="text-xs text-slate-600 font-mono">
-            build: {BUILD_SHA || 'dev'}{BUILD_DATE ? ` · ${BUILD_DATE}` : ''} · env: {BUILD_ENV}
-          </p>
-        </header>
+      <HeroImage
+        src={PAGE_HERO_IMAGES.versions}
+        alt="Versions & Changelog"
+        gradient="from-slate-950 to-slate-800"
+        height="h-40 sm:h-52"
+      >
+        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+          📋 Versions & Changelog
+        </h1>
+        <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
+          Historique des évolutions de la plateforme
+        </p>
+      </HeroImage>
 
         <section className="space-y-4">
           {APP_VERSIONS.map((item) => (

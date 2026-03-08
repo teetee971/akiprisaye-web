@@ -13,6 +13,8 @@
 
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 // ─── Data ──────────────────────────────────────────────────────────────────────
 
@@ -142,18 +144,19 @@ export default function CalculateurOctroi() {
           <Link to="/innovation-lab" style={{ fontSize: '0.8rem', color: '#64748b', textDecoration: 'none' }}>← Innovation Lab</Link>
         </div>
 
-        {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.3rem 1rem', borderRadius: 20, background: 'rgba(168,85,247,0.1)', border: '1px solid rgba(168,85,247,0.3)', marginBottom: '0.75rem' }}>
-            <span style={{ fontSize: '0.78rem', color: '#c084fc', fontWeight: 700 }}>🧮 Outil pédagogique interactif</span>
-          </div>
-          <h1 style={{ margin: '0 0 0.4rem', fontSize: '1.7rem', fontWeight: 900, color: '#f1f5f9' }}>
-            Calculateur de l'octroi de mer
+        <HeroImage
+          src={PAGE_HERO_IMAGES.calculateurOctroi}
+          alt="Calculateur octroi de mer"
+          gradient="from-slate-950 to-blue-900"
+          height="h-40 sm:h-52"
+        >
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+            🧮 Calculateur de l'octroi de mer
           </h1>
-          <p style={{ margin: 0, fontSize: '0.88rem', color: '#64748b' }}>
-            Décomposez le prix d'un produit pour comprendre comment il passe de l'usine au rayon
+          <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
+            Décomposez le vrai prix de vos produits — fret, taxes, marges
           </p>
-        </div>
+        </HeroImage>
 
         {/* Controls */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>

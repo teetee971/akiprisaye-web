@@ -21,6 +21,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 interface Source {
@@ -702,13 +704,19 @@ export default function ConferencePrix() {
           </Link>
         </div>
 
-        {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.35rem 1rem', borderRadius: 20, background: 'rgba(99,102,241,0.12)', border: '1px solid rgba(99,102,241,0.3)', marginBottom: '0.75rem' }}>
-            <span style={{ fontSize: '0.8rem', color: '#a5b4fc', fontWeight: 600 }}>🎙️ Présentation conférence</span>
-            <span style={{ fontSize: '0.72rem', color: '#64748b' }}>— Observatoire citoyen A KI PRI SA YÉ</span>
-          </div>
-        </div>
+        <HeroImage
+          src={PAGE_HERO_IMAGES.conferencePrix}
+          alt="Conférence — Comprendre les prix dans les DOM"
+          gradient="from-slate-950 to-purple-900"
+          height="h-40 sm:h-52"
+        >
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+            🎓 Conférence — Comprendre les prix dans les DOM
+          </h1>
+          <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
+            6 diapositives pour expliquer la vie chère aux Antilles et en Outre-Mer
+          </p>
+        </HeroImage>
 
         {/* Progress dots */}
         <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', marginBottom: '1.2rem' }}>
