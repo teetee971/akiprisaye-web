@@ -20,9 +20,18 @@
 import { XMLParser } from 'fast-xml-parser';
 import OpenAI from 'openai';
 import admin from 'firebase-admin';
+import sanitizeHtml from 'sanitize-html';
 
 const DRY_RUN = process.argv.includes('--dry-run');
 const MODEL = 'gpt-4o-mini';
+
+function stripHtmlToText(input) {
+  if (typeof input !== 'string') {
+    input = String(input ?? '');
+  }
+  // Remove all HTML tags and attributes to get safe plain text
+  return sanitizeHtml(input, { allowedTags: [], allowedAttributes: {} });
+}
 
 // ─── Sources RSS ────────────────────────────────────────────────────────────────
 // Médias publics et indépendants couvrant les territoires ultramarins français.
@@ -74,9 +83,8 @@ async function fetchFeed(feed, parser) {
     const rawItems = parsed?.rss?.channel?.item ?? [];
     const items = Array.isArray(rawItems) ? rawItems : [rawItems];
     return items.slice(0, 10).map((item) => ({
-      title: String(item.title ?? '').replace(/<[^>]+>/g, '').trim(),
-      description: String(item.description ?? '')
-        .replace(/<[^>]+>/g, '')
+      title: stripHtmlToText(item.title ?? '').trim(),
+      description: stripHtmlToText(item.description ?? '')
         .trim()
         .slice(0, 350),
       url: String(item.link ?? item.guid ?? ''),
