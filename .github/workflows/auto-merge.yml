@@ -2,7 +2,7 @@ name: Auto-merge on CI pass
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
+    types: [opened, synchronize, reopened, ready_for_review]
 
 permissions:
   contents: write
@@ -11,11 +11,13 @@ permissions:
 jobs:
   enable-auto-merge:
     runs-on: ubuntu-latest
-    # Only auto-merge PRs created by GitHub Copilot or Dependabot
+    # Only auto-merge non-draft PRs created by GitHub Copilot or Dependabot
     if: >
-      github.actor == 'github-actions[bot]' ||
-      github.actor == 'dependabot[bot]' ||
-      startsWith(github.head_ref, 'copilot/')
+      !github.event.pull_request.draft && (
+        github.actor == 'github-actions[bot]' ||
+        github.actor == 'dependabot[bot]' ||
+        startsWith(github.head_ref, 'copilot/')
+      )
     steps:
       - name: Enable auto-merge
         run: gh pr merge --auto --squash "${{ github.event.pull_request.html_url }}"
