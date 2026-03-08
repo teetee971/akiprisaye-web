@@ -32,7 +32,20 @@ export type TerritoryCode =
 export type PriceSourceId =
   | 'open_food_facts'
   | 'open_prices'
-  | 'data_gouv';
+  | 'data_gouv'
+  | 'leclerc_catalog'
+  | 'macave_leclerc'
+  | 'leclerc_jardin'
+  | 'leclerc_hightech'
+  | 'leclerc_electromenager'
+  | 'leclerc_parapharmacie'
+  | 'leclerc_secondevie'
+  | 'ecologite_guadeloupe'
+  | 'huit_a_huit_guadeloupe'
+  | 'supeco_guyane'
+  | 'carrefour_milenis_guadeloupe'
+  | 'connexion_guadeloupe'
+  | 'calameo_catalog';
 
 export type PriceSearchStatus =
   | 'OK'

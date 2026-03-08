@@ -1,0 +1,231 @@
+{
+  "store": {
+    "normalizedName": "U Express Horne à l'Eau",
+    "rawName": "JEN SARL",
+    "brand": "U Express",
+    "company": "JEN SARL",
+    "siret": "4903865100018",
+    "phone": "0590900308",
+    "address": "Quartier l'Espérance RN5",
+    "postalCode": "97111",
+    "city": "Morne-à-l'Eau",
+    "territory": "gp"
+  },
+  "receipt": {
+    "receiptDate": "2026-03-04",
+    "receiptTime": "17:30:05",
+    "currency": "EUR",
+    "itemsCount": 21,
+    "linesCount": 20,
+    "subtotalHt": 70.01,
+    "totalTtc": 72.00,
+    "paymentMethod": "card_contactless"
+  },
+  "vatLines": [
+    { "rate": 0,   "amount": 0.00 },
+    { "rate": 2.1, "amount": 1.03 },
+    { "rate": 8.5, "amount": 0.96 }
+  ],
+  "items": [
+    {
+      "lineIndex": 1,
+      "rawLabel": "TORTILLAS CHIPS NATURE U 300G",
+      "normalizedLabel": "Tortillas chips nature U 300g",
+      "brand": "U",
+      "category": "chips_apero",
+      "sizeText": "300g",
+      "totalPrice": 3.21,
+      "confidenceScore": 0.95,
+      "needsReview": false
+    },
+    {
+      "lineIndex": 2,
+      "rawLabel": "SAUCE PESTO VERDE U 190G",
+      "normalizedLabel": "Sauce pesto verde U 190g",
+      "brand": "U",
+      "category": "epicerie_salee",
+      "sizeText": "190g",
+      "totalPrice": 3.75,
+      "confidenceScore": 0.90,
+      "needsReview": false
+    },
+    {
+      "lineIndex": 3,
+      "rawLabel": "SAUCISSON SEC CHORIZO PUR PORC 225G",
+      "normalizedLabel": "Saucisson sec chorizo pur porc 225g",
+      "brand": null,
+      "category": "charcuterie",
+      "sizeText": "225g",
+      "totalPrice": 4.29,
+      "confidenceScore": 0.78,
+      "needsReview": true
+    },
+    {
+      "lineIndex": 4,
+      "rawLabel": "SIROP CITRON VERT U 75CL",
+      "normalizedLabel": "Sirop citron vert U 75cl",
+      "brand": "U",
+      "category": "boissons_sirops",
+      "sizeText": "75cl",
+      "totalPrice": 4.78,
+      "confidenceScore": 0.94,
+      "needsReview": false
+    },
+    {
+      "lineIndex": 5,
+      "rawLabel": "SUCRE BATONNETS VAN/PISTAC UX10 370G",
+      "normalizedLabel": "Sucre bâtonnets vanille pistache 370g",
+      "brand": null,
+      "category": "epicerie_sucree",
+      "sizeText": "370g",
+      "totalPrice": 6.58,
+      "confidenceScore": 0.72,
+      "needsReview": true
+    },
+    {
+      "lineIndex": 6,
+      "rawLabel": "TRAITEUR LS UC1 MUSEAU BOEUF LYONNAISE 300G",
+      "normalizedLabel": "Museau de bœuf à la lyonnaise 300g",
+      "brand": "U",
+      "category": "traiteur_frais",
+      "sizeText": "300g",
+      "totalPrice": 3.56,
+      "confidenceScore": 0.84,
+      "needsReview": true
+    },
+    {
+      "lineIndex": 7,
+      "rawLabel": "PATE FEUILLETEE EPAISSE U 280G",
+      "normalizedLabel": "Pâte feuilletée épaisse U 280g",
+      "brand": "U",
+      "category": "ultra_frais_pate",
+      "sizeText": "280g",
+      "totalPrice": 1.78,
+      "confidenceScore": 0.96,
+      "needsReview": false
+    },
+    {
+      "lineIndex": 8,
+      "rawLabel": "CHIPS EXTRA CRAQUANTES U 150G",
+      "normalizedLabel": "Chips extra craquantes U 150g",
+      "brand": "U",
+      "category": "chips_apero",
+      "sizeText": "150g",
+      "totalPrice": 1.87,
+      "confidenceScore": 0.92,
+      "needsReview": false
+    },
+    {
+      "lineIndex": 9,
+      "rawLabel": "SAUCISSON AIL FUME PXM 400G",
+      "normalizedLabel": "Saucisson ail fumé 400g",
+      "brand": null,
+      "category": "charcuterie",
+      "sizeText": "400g",
+      "totalPrice": 2.91,
+      "confidenceScore": 0.80,
+      "needsReview": true
+    },
+    {
+      "lineIndex": 10,
+      "rawLabel": "CONSERVES POISSON SARDINES SCE CITRONNEE U",
+      "normalizedLabel": "Sardines sauce citronnée U",
+      "brand": "U",
+      "category": "conserve_poisson",
+      "sizeText": null,
+      "totalPrice": 1.92,
+      "confidenceScore": 0.88,
+      "needsReview": false
+    },
+    {
+      "lineIndex": 11,
+      "rawLabel": "FILET MAQUEREAUX NATUREL U",
+      "normalizedLabel": "Filet de maquereaux nature U",
+      "brand": "U",
+      "category": "conserve_poisson",
+      "sizeText": null,
+      "totalPrice": 2.90,
+      "confidenceScore": 0.86,
+      "needsReview": false
+    },
+    {
+      "lineIndex": 12,
+      "rawLabel": "FROMAGE LS FROMAGE PAST NOIX 258G U 50G",
+      "normalizedLabel": "Fromage pasteurisé noix",
+      "brand": "U",
+      "category": "fromage",
+      "sizeText": null,
+      "totalPrice": 2.11,
+      "confidenceScore": 0.60,
+      "needsReview": true
+    },
+    {
+      "lineIndex": 13,
+      "rawLabel": "PARMIG. RAPP. AOP LC 30% USAU 60G",
+      "normalizedLabel": "Parmigiano râpé AOP 30%",
+      "brand": null,
+      "category": "fromage_rape",
+      "sizeText": null,
+      "totalPrice": 2.39,
+      "confidenceScore": 0.63,
+      "needsReview": true
+    },
+    {
+      "lineIndex": 14,
+      "rawLabel": "EMMENT. RAPE PAST. 30% 200G PXM",
+      "normalizedLabel": "Emmental râpé pasteurisé 200g",
+      "brand": null,
+      "category": "fromage_rape",
+      "sizeText": "200g",
+      "totalPrice": 2.41,
+      "confidenceScore": 0.79,
+      "needsReview": true
+    },
+    {
+      "lineIndex": 15,
+      "rawLabel": "LAITS U1/2 ECREMES LAIT UHT U BIO 1L",
+      "normalizedLabel": "Lait UHT demi-écrémé U Bio 1L",
+      "brand": "U Bio",
+      "category": "lait",
+      "sizeText": "1l",
+      "quantity": 2,
+      "totalPrice": 3.40,
+      "confidenceScore": 0.93,
+      "needsReview": false
+    },
+    {
+      "lineIndex": 16,
+      "rawLabel": "BOISSONS SANS ALCOOL COCA COLA PET 2L",
+      "normalizedLabel": "Coca-Cola PET 2L",
+      "brand": "Coca-Cola",
+      "category": "soda",
+      "sizeText": "2l",
+      "totalPrice": 2.80,
+      "confidenceScore": 0.97,
+      "needsReview": false
+    },
+    {
+      "lineIndex": 17,
+      "rawLabel": "ALCOOLS RHUM DAMOISEAU BLANC 1L 50°",
+      "normalizedLabel": "Rhum Damoiseau blanc 1L",
+      "brand": "Damoiseau",
+      "category": "rhum",
+      "sizeText": "1l",
+      "totalPrice": 12.31,
+      "confidenceScore": 0.98,
+      "needsReview": false
+    },
+    {
+      "lineIndex": 18,
+      "rawLabel": "CONFISERIE HITCOKO NOIR PQC SACHET 260G",
+      "normalizedLabel": "Hitcoko noir sachet 260g",
+      "brand": null,
+      "category": "confiserie_chocolat",
+      "sizeText": "260g",
+      "totalPrice": 4.27,
+      "confidenceScore": 0.67,
+      "needsReview": true
+    }
+  ],
+  "rawOcrText": "U Express Horne à l'Eau\nJEN SARL - SIRET 4903865100018\n0590900308\nQuartier l'Espérance RN5 - 97111 Morne-à-l'Eau\n2026-03-04 17:30:05 - Ticket #13942-1\n---\nTORTILLAS CHIPS NATURE U 300G  3.21\nSAUCE PESTO VERDE U 190G  3.75\n...\nTOTAL TTC  72.00\nPAIEMENT CB SANS CONTACT"
+}
