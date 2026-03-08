@@ -1,4 +1,5 @@
 import type { PriceSearchInput } from '../services/priceSearch/price.types';
+import { leclercCatalogProvider } from './leclercCatalogProvider';
 import { normalizeText } from './normalize';
 import { openPricesProvider } from './openPricesProvider';
 import { seedProvider } from './seedProvider';
@@ -80,7 +81,7 @@ const dataGouvStubProvider: PriceProvider = {
   },
 };
 
-const PROVIDERS: PriceProvider[] = [openPricesProvider, openFoodFactsProvider, dataGouvStubProvider];
+const PROVIDERS: PriceProvider[] = [openPricesProvider, openFoodFactsProvider, dataGouvStubProvider, leclercCatalogProvider];
 
 export async function runPriceProviders(input: PriceSearchInput, signal: AbortSignal): Promise<ProviderResult[]> {
   const enabledProviders = PROVIDERS.filter((provider) => provider.isEnabled());

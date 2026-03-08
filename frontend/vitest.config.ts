@@ -77,6 +77,8 @@ export default defineConfig({
       abs('./src/test/merchantService.test.ts'),
       // Devis IA — moteur d'estimation explicable + constantes (Issues #501, #492)
       abs('./src/test/devisService.test.ts'),
+      // Catalogue E.Leclerc — fournisseur de prix catalogue DOM-TOM
+      abs('./src/providers/__tests__/leclercCatalogProvider.test.ts'),
     ],
 
     exclude: ['**/node_modules/**', '**/.git/**', '**/dist/**', '**/coverage/**'],
