@@ -22,7 +22,7 @@
 
 const CALAMEO_API_BASE = 'https://api.calameo.com/1.0';
 const CALAMEO_BOOK_BASE = 'https://www.calameo.com/books';
-const CACHE_MAX_AGE_SECONDS = 3600; // 1 h — les catalogues changent rarement
+const CACHE_MAX_AGE_SECONDS = 3600; // 1h — les catalogues changent rarement
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',

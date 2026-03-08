@@ -1,4 +1,5 @@
 import type { PriceSearchInput } from '../services/priceSearch/price.types';
+import { calameoDynamicProvider } from './calameoDynamicProvider';
 import { ecologiteGuadeloupeProvider } from './ecologiteGuadeloupeProvider';
 import { huitAHuitGuadeloupeProvider } from './huitAHuitGuadeloupeProvider';
 import { leclercCatalogProvider } from './leclercCatalogProvider';
@@ -104,6 +105,7 @@ const PROVIDERS: PriceProvider[] = [
   ecologiteGuadeloupeProvider,
   huitAHuitGuadeloupeProvider,
   supecoGuyaneProvider,
+  calameoDynamicProvider,
 ];
 
 export async function runPriceProviders(input: PriceSearchInput, signal: AbortSignal): Promise<ProviderResult[]> {

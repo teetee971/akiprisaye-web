@@ -42,7 +42,8 @@ export type PriceSourceId =
   | 'leclerc_secondevie'
   | 'ecologite_guadeloupe'
   | 'huit_a_huit_guadeloupe'
-  | 'supeco_guyane';
+  | 'supeco_guyane'
+  | 'calameo_catalog';
 
 export type PriceSearchStatus =
   | 'OK'
