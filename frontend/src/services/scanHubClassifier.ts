@@ -104,14 +104,14 @@ export function classifyScanText(text: string): ScanHubClassification {
   let bestType: ScanHubType = 'unknown';
   let bestScore = 0;
 
-  (Object.keys(TYPE_KEYWORDS) as ScanHubType[]).forEach((type) => {
+  for (const type of Object.keys(TYPE_KEYWORDS) as ScanHubType[]) {
     const score = countMatches(normalized, TYPE_KEYWORDS[type]);
     matches[type] = score;
     if (score > bestScore) {
       bestScore = score;
       bestType = type;
     }
-  });
+  }
 
   // Tiebreaker: receipt wins over generic "product" when monetary amounts are present
   if (bestType === 'product' && matches.receipt > 0) {

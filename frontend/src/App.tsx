@@ -211,6 +211,12 @@ const AdminDevis = lazyPage(() => import('./pages/admin/AdminDevis'));
 const RoadmapPage = lazyPage(() => import('./pages/RoadmapPage'));
 const DossierInvestisseurs = lazyPage(() => import('./pages/DossierInvestisseurs'));
 const ModuleAuditPage = lazyPage(() => import('./pages/ModuleAuditPage'));
+const Perimetre = lazyPage(() => import('./pages/Perimetre'));
+const Predictions = lazyPage(() => import('./pages/Predictions'));
+const IaConseiller = lazyPage(() => import('./pages/IaConseiller'));
+const AiMarketInsights = lazyPage(() => import('./pages/AiMarketInsights'));
+const TerritoryHub = lazyPage(() => import('./pages/TerritoryHub'));
+const TerritoryScanner = lazyPage(() => import('./pages/TerritoryScanner'));
 
 /**
  * IMPORTANT — NE PAS SUPPRIMER
@@ -560,6 +566,16 @@ export default function App() {
 
                           {/* Audit des modules — comprehensive module audit */}
                           <Route path="module-audit" element={<ModuleAuditPage />} />
+
+                          {/* Pages territoire — hub par territoire et scanner territorial */}
+                          <Route path="territoire/:territory" element={<TerritoryHub />} />
+                          <Route path="territoire/:territory/scanner" element={<TerritoryScanner />} />
+
+                          {/* Pages fonctionnelles sans itinéraire précédent */}
+                          <Route path="perimetre" element={<Perimetre />} />
+                          <Route path="predictions" element={<Predictions />} />
+                          <Route path="ia-conseiller" element={<IaConseiller />} />
+                          <Route path="ai-insights" element={<AiMarketInsights />} />
 
                           {/* Catch-all route - redirect to home */}
                           <Route path="*" element={<Navigate to="/" replace />} />

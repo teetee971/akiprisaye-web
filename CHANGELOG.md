@@ -3,6 +3,34 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 
 Le format s'inspire de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et ce projet adhère à la [sémantique de versionnage](https://semver.org/lang/fr/).
 
+## [3.1.2] - 2026-03-08
+
+### Added
+
+- **Itinéraires manquants — 7 nouvelles routes** dans `App.tsx` pour les pages fonctionnelles
+  précédemment sans itinéraire :
+  - `/perimetre` → `Perimetre.tsx` — couverture territoriale et limites de l'observatoire
+  - `/predictions` → `Predictions.tsx` — prédictions de prix IA par produit et enseigne
+  - `/ia-conseiller` → `IaConseiller.jsx` — conseiller budget IA personnalisé
+  - `/ai-insights` → `AiMarketInsights.jsx` — tableau de bord IA sur les tendances de marché
+  - `/territoire/:territory` → `TerritoryHub.tsx` — hub d'accès rapide par territoire
+  - `/territoire/:territory/scanner` → `TerritoryScanner.tsx` — scanner territorial
+- **ComparateursHub — liens exhaustifs** : ajout de 3 nouvelles fiches dans la section
+  « Comparateurs généraux » :
+  - `/historique-prix` — Évolution des Prix (graphes HistoriquePrix)
+  - `/comparatif-concurrence` — Comparatif Concurrence (positionnement vs alternatives)
+  - `/recherche-avancee` — Recherche Avancée (moteur multi-critères)
+- **Icônes `Scale` et `SlidersHorizontal`** (Lucide React) ajoutées dans `ComparateursHub.tsx`
+  pour les nouvelles fiches.
+
+### Fixed
+
+- **TypeScript TS2367** dans `scanHubClassifier.ts` (ligne 117) : remplacé `forEach` par `for…of`
+  pour éviter que TypeScript 5.4+ ne rétrécisse le type `ScanHubType` de `bestType` à `'unknown'`
+  dans la boucle de classification OCR. La compilation TypeScript est désormais sans erreur.
+
+---
+
 ## [3.1.1] - 2026-03-07
 
 ### Added

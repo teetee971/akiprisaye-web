@@ -6,6 +6,7 @@ import {
   Plane, Ship, Package, Droplet, Shield, GraduationCap,
   Car, HardHat, Wifi, ArrowRight, Users, ShoppingCart, Globe, Search,
   TrendingUp, Activity, Sparkles, Zap, Bell, Clock, BookOpen, FileText,
+  Scale, SlidersHorizontal,
 } from 'lucide-react';
 import { GlassCard } from '../components/ui/glass-card';
 import Comparateur from './Comparateur';
@@ -28,17 +29,20 @@ async function loadObsSnapshot(stem: string, month: string): Promise<ObsSnapshot
 
 // ── General comparators navigation cards ─────────────────────────────────────
 const GENERAL_COMPARATEURS = [
-  { path: '/comparateur',            icon: DollarSign,  label: 'Comparateur Prix',          color: 'text-lime-400',    bg: 'bg-lime-500/10 border-lime-500/30',     desc: 'Comparer les prix produits en temps réel' },
-  { path: '/comparateur-citoyen',    icon: Users,       label: 'Comparateur Citoyen',       color: 'text-green-400',   bg: 'bg-green-500/10 border-green-500/30',   desc: 'Comparaison participative, données citoyennes' },
-  { path: '/comparaison-enseignes',  icon: Search,      label: 'Comparaison Enseignes',     color: 'text-blue-400',    bg: 'bg-blue-500/10 border-blue-500/30',     desc: 'Comparer les prix entre supermarchés' },
-  { path: '/comparaison-panier',     icon: ShoppingCart,label: 'Comparaison Panier',        color: 'text-teal-400',    bg: 'bg-teal-500/10 border-teal-500/30',     desc: 'Simuler votre panier dans différentes enseignes' },
-  { path: '/comparateur-territoires',icon: Globe,       label: 'Comparateur Territoires',   color: 'text-violet-400',  bg: 'bg-violet-500/10 border-violet-500/30', desc: 'Comparer les prix entre territoires DOM–COM' },
-  { path: '/comparaison-territoires',icon: Map,         label: 'Bilan des Territoires',     color: 'text-rose-400',    bg: 'bg-rose-500/10 border-rose-500/30',     desc: 'Vue d\'ensemble des écarts DOM vs Hexagone' },
-  { path: '/inflation-categories',   icon: TrendingUp,  label: 'Inflation par Catégorie',   color: 'text-orange-400',  bg: 'bg-orange-500/10 border-orange-500/30', desc: 'Suivi de l\'inflation par famille de produits' },
-  { path: '/tableau-inflation',      icon: BarChart3,   label: 'Tableau de l\'Inflation',   color: 'text-yellow-400',  bg: 'bg-yellow-500/10 border-yellow-500/30', desc: 'Tableau de bord inflation multi-territoires' },
-  { path: '/couverture-territoires', icon: Activity,    label: 'Couverture Territoires',    color: 'text-cyan-400',    bg: 'bg-cyan-500/10 border-cyan-500/30',     desc: 'Rapport de couverture des données par territoire' },
-  { path: '/alertes-prix',           icon: Bell,        label: 'Alertes Prix',              color: 'text-red-400',     bg: 'bg-red-500/10 border-red-500/30',       desc: 'Soyez alerté quand un prix baisse' },
-  { path: '/prix-historique',        icon: Clock,       label: 'Historique des Prix',       color: 'text-slate-400',   bg: 'bg-slate-500/10 border-slate-500/30',   desc: 'Courbes d\'évolution des prix dans le temps' },
+  { path: '/comparateur',            icon: DollarSign,        label: 'Comparateur Prix',          color: 'text-lime-400',    bg: 'bg-lime-500/10 border-lime-500/30',     desc: 'Comparer les prix produits en temps réel' },
+  { path: '/comparateur-citoyen',    icon: Users,             label: 'Comparateur Citoyen',       color: 'text-green-400',   bg: 'bg-green-500/10 border-green-500/30',   desc: 'Comparaison participative, données citoyennes' },
+  { path: '/comparaison-enseignes',  icon: Search,            label: 'Comparaison Enseignes',     color: 'text-blue-400',    bg: 'bg-blue-500/10 border-blue-500/30',     desc: 'Comparer les prix entre supermarchés' },
+  { path: '/comparaison-panier',     icon: ShoppingCart,      label: 'Comparaison Panier',        color: 'text-teal-400',    bg: 'bg-teal-500/10 border-teal-500/30',     desc: 'Simuler votre panier dans différentes enseignes' },
+  { path: '/comparateur-territoires',icon: Globe,             label: 'Comparateur Territoires',   color: 'text-violet-400',  bg: 'bg-violet-500/10 border-violet-500/30', desc: 'Comparer les prix entre territoires DOM–COM' },
+  { path: '/comparaison-territoires',icon: Map,               label: 'Bilan des Territoires',     color: 'text-rose-400',    bg: 'bg-rose-500/10 border-rose-500/30',     desc: 'Vue d\'ensemble des écarts DOM vs Hexagone' },
+  { path: '/inflation-categories',   icon: TrendingUp,        label: 'Inflation par Catégorie',   color: 'text-orange-400',  bg: 'bg-orange-500/10 border-orange-500/30', desc: 'Suivi de l\'inflation par famille de produits' },
+  { path: '/tableau-inflation',      icon: BarChart3,         label: 'Tableau de l\'Inflation',   color: 'text-yellow-400',  bg: 'bg-yellow-500/10 border-yellow-500/30', desc: 'Tableau de bord inflation multi-territoires' },
+  { path: '/couverture-territoires', icon: Activity,          label: 'Couverture Territoires',    color: 'text-cyan-400',    bg: 'bg-cyan-500/10 border-cyan-500/30',     desc: 'Rapport de couverture des données par territoire' },
+  { path: '/alertes-prix',           icon: Bell,              label: 'Alertes Prix',              color: 'text-red-400',     bg: 'bg-red-500/10 border-red-500/30',       desc: 'Soyez alerté quand un prix baisse' },
+  { path: '/prix-historique',        icon: Clock,             label: 'Historique des Prix',       color: 'text-slate-400',   bg: 'bg-slate-500/10 border-slate-500/30',   desc: 'Courbes d\'évolution des prix dans le temps' },
+  { path: '/historique-prix',        icon: BarChart3,         label: 'Évolution des Prix',        color: 'text-purple-400',  bg: 'bg-purple-500/10 border-purple-500/30', desc: 'Graphes d\'évolution des prix par produit' },
+  { path: '/comparatif-concurrence', icon: Scale,             label: 'Comparatif Concurrence',    color: 'text-amber-400',   bg: 'bg-amber-500/10 border-amber-500/30',   desc: 'Positionnement d\'A KI PRI SA YÉ face aux alternatives' },
+  { path: '/recherche-avancee',      icon: SlidersHorizontal, label: 'Recherche Avancée',         color: 'text-indigo-400',  bg: 'bg-indigo-500/10 border-indigo-500/30', desc: 'Moteur de recherche multi-critères et comparaison' },
 ];
 
 // ── Specialized comparators navigation cards ──────────────────────────────────
