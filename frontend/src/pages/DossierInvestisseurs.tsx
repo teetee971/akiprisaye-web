@@ -158,13 +158,13 @@ export default function DossierInvestisseurs() {
             </p>
 
             <KeyValueGrid items={[
-              { label: 'Problème', value: 'Vie chère structurelle dans les DOM-COM, opacité des prix, absence d'outil citoyen indépendant' },
+              { label: 'Problème', value: "Vie chère structurelle dans les DOM-COM, opacité des prix, absence d'outil citoyen indépendant" },
               { label: 'Solution', value: 'Plateforme modulaire : comparateur, scanner, observatoire, alertes, prédictions, devis institutionnels' },
               { label: 'Cible', value: 'Citoyens ultramarins, enseignes locales, collectivités territoriales, institutions publiques' },
               { label: 'Modèle', value: 'Abonnements (B2C) + Licences (B2B) + Prestations sur devis (B2G)' },
               { label: 'Tech', value: 'React 18 / TypeScript / Firebase / Cloudflare Pages — stack moderne, ouverte, auditée' },
               { label: 'Statut', value: 'Plateforme opérationnelle — phase pilote en cours dans les DOM' },
-              { label: 'Ambition', value: 'Référence ultramarine indépendante, extensible à l'ensemble du territoire national' },
+              { label: 'Ambition', value: "Référence ultramarine indépendante, extensible à l'ensemble du territoire national" },
             ]} />
 
             <Callout type="info">
@@ -247,7 +247,7 @@ export default function DossierInvestisseurs() {
                 { title: 'Comparateur de prix', desc: 'Comparaison multi-enseignes, multi-territoires, données observées et datées.' },
                 { title: 'Scanner produits & tickets', desc: 'Scan EAN, OCR tickets de caisse, identification produit par photo.' },
                 { title: 'Carte interactive DOM/COM', desc: 'Visualisation géographique des prix et des enseignes par territoire.' },
-                { title: 'Alertes consommateurs', desc: 'Notifications en temps réel sur les variations de prix d'intérêt.' },
+                { title: 'Alertes consommateurs', desc: "Notifications en temps réel sur les variations de prix d'intérêt." },
                 { title: 'Prédiction de prix explicable', desc: 'Estimation tendancielle basée sur données historiques, avec justification visible.' },
                 { title: 'Observatoire public', desc: 'Données agrégées ouvertes aux institutions, chercheurs et journalistes.' },
                 { title: 'Marketplace enseignes', desc: 'Référencement des enseignes locales avec leurs catalogues vérifiés.' },
@@ -281,8 +281,8 @@ export default function DossierInvestisseurs() {
               {[
                 {
                   segment: 'Citoyens ultramarins',
-                  desc: 'Population des DOM-COM cherchant à mieux maîtriser son budget alimentaire et de consommation courante. Le pouvoir d'achat est une préoccupation structurelle et documentée.',
-                  note: 'Population totale des 5 DOM : environ 2,2 millions d'habitants (source INSEE, estimations 2022–2024).',
+                  desc: "Population des DOM-COM cherchant à mieux maîtriser son budget alimentaire et de consommation courante. Le pouvoir d'achat est une préoccupation structurelle et documentée.",
+                  note: "Population totale des 5 DOM : environ 2,2 millions d'habitants (source INSEE, estimations 2022–2024).",
                 },
                 {
                   segment: 'Enseignes locales et nationales',
@@ -291,17 +291,17 @@ export default function DossierInvestisseurs() {
                 },
                 {
                   segment: 'Collectivités territoriales',
-                  desc: 'Régions, départements, mairies cherchant un outil d'analyse pour accompagner leurs politiques de lutte contre la vie chère.',
+                  desc: "Régions, départements, mairies cherchant un outil d'analyse pour accompagner leurs politiques de lutte contre la vie chère.",
                   note: '',
                 },
                 {
                   segment: 'Institutions publiques & État',
-                  desc: 'Préfectures, DGCCRF, observatoires officiels des prix, ministères souhaitant disposer d'un outil citoyen indépendant en complément de leurs propres données.',
+                  desc: "Préfectures, DGCCRF, observatoires officiels des prix, ministères souhaitant disposer d'un outil citoyen indépendant en complément de leurs propres données.",
                   note: '',
                 },
                 {
                   segment: 'Chercheurs & ONG',
-                  desc: 'Accès à des données structurées pour l'analyse des dynamiques de prix dans les territoires ultramarins.',
+                  desc: "Accès à des données structurées pour l'analyse des dynamiques de prix dans les territoires ultramarins.",
                   note: '',
                 },
               ].map((s) => (
@@ -443,19 +443,19 @@ export default function DossierInvestisseurs() {
               {[
                 {
                   title: 'Données territoriales fines',
-                  desc: 'La plateforme est la seule à couvrir l'ensemble des DOM-COM avec une granularité par enseigne, produit et date d'observation.',
+                  desc: "La plateforme est la seule à couvrir l'ensemble des DOM-COM avec une granularité par enseigne, produit et date d'observation.",
                 },
                 {
                   title: 'Transparence totale',
-                  desc: 'Chaque donnée est datée, sourcée et auditable. L'IA est explicable — les facteurs de calcul sont visibles pour l'utilisateur.',
+                  desc: "Chaque donnée est datée, sourcée et auditable. L'IA est explicable — les facteurs de calcul sont visibles pour l'utilisateur.",
                 },
                 {
                   title: 'Double approche B2C + B2G',
-                  desc: 'Rare combinaison d'un outil grand public et d'une offre institutionnelle structurée avec traçabilité légale complète.',
+                  desc: "Rare combinaison d'un outil grand public et d'une offre institutionnelle structurée avec traçabilité légale complète.",
                 },
                 {
                   title: 'Conformité RGPD native',
-                  desc: 'Architecture conçue dès l'origine avec minimisation des données, accès restreint et consentement explicite.',
+                  desc: "Architecture conçue dès l'origine avec minimisation des données, accès restreint et consentement explicite.",
                 },
                 {
                   title: 'Modularité technique',
@@ -463,15 +463,15 @@ export default function DossierInvestisseurs() {
                 },
                 {
                   title: 'Crédibilité publique',
-                  desc: 'Positionnement d'observatoire citoyen indépendant — sans conflits d'intérêts avec les enseignes ou les producteurs.',
+                  desc: "Positionnement d'observatoire citoyen indépendant — sans conflits d'intérêts avec les enseignes ou les producteurs.",
                 },
                 {
                   title: 'Absence de modèle publicitaire',
-                  desc: 'L'indépendance éditoriale est préservée structurellement, ce qui renforce la confiance des institutions.',
+                  desc: "L'indépendance éditoriale est préservée structurellement, ce qui renforce la confiance des institutions.",
                 },
                 {
                   title: 'Ancrage culturel fort',
-                  desc: 'Nom créole, approche communautaire, connexion avec les réalités quotidiennes des territoires d'Outre-mer.',
+                  desc: "Nom créole, approche communautaire, connexion avec les réalités quotidiennes des territoires d'Outre-mer.",
                 },
               ].map((a) => (
                 <div key={a.title} className="border border-gray-200 rounded-xl p-4">
@@ -583,7 +583,7 @@ export default function DossierInvestisseurs() {
                     'Partenariats formels avec les observatoires des prix territoriaux',
                     'Intégration avec des sources de données officielles (INSEE, DIECCTE)',
                     'Consolidation des revenus B2G',
-                    'Publication de rapports d'observatoire co-labellisés',
+                    "Publication de rapports d'observatoire co-labellisés",
                   ],
                 },
                 {
@@ -592,8 +592,8 @@ export default function DossierInvestisseurs() {
                   color: 'gray',
                   items: [
                     'Levée de fonds sur la base de métriques consolidées',
-                    'Expansion de l'équipe technique et data',
-                    'Développement de l'extension nationale comparative',
+                    "Expansion de l'équipe technique et data",
+                    "Développement de l'extension nationale comparative",
                     'Internationalisation vers les territoires francophones comparables',
                   ],
                 },
@@ -639,11 +639,11 @@ export default function DossierInvestisseurs() {
                 },
                 {
                   role: 'Rôle : Technologie & Data',
-                  profil: 'Architecture logicielle, pipeline de données, système d'IA explicable, sécurité et conformité RGPD.',
+                  profil: "Architecture logicielle, pipeline de données, système d'IA explicable, sécurité et conformité RGPD.",
                 },
                 {
                   role: 'Rôle : Relations institutionnelles',
-                  profil: 'Engagement avec les collectivités, les services de l'État et les observatoires des prix. Construction des partenariats B2G.',
+                  profil: "Engagement avec les collectivités, les services de l'État et les observatoires des prix. Construction des partenariats B2G.",
                 },
                 {
                   role: 'Partenaires locaux',
@@ -688,17 +688,17 @@ export default function DossierInvestisseurs() {
               {[
                 {
                   poste: 'Développement produit',
-                  desc: 'Renforcement de l'équipe technique, amélioration des modules existants, développement des fonctionnalités B2G prioritaires.',
+                  desc: "Renforcement de l'équipe technique, amélioration des modules existants, développement des fonctionnalités B2G prioritaires.",
                   priorite: 'Haute',
                 },
                 {
                   poste: 'Collecte & qualité des données',
-                  desc: 'Structuration des partenariats de collecte, validation des sources, amélioration de la chaîne d'observation des prix.',
+                  desc: "Structuration des partenariats de collecte, validation des sources, amélioration de la chaîne d'observation des prix.",
                   priorite: 'Haute',
                 },
                 {
                   poste: 'Partenariats institutionnels',
-                  desc: 'Démarches commerciales et de conventionnement avec les collectivités et services de l'État.',
+                  desc: "Démarches commerciales et de conventionnement avec les collectivités et services de l'État.",
                   priorite: 'Moyenne',
                 },
                 {
@@ -752,7 +752,7 @@ export default function DossierInvestisseurs() {
                 },
                 {
                   risque: 'Adoption utilisateurs',
-                  description: 'La plateforme nécessite une masse critique d'utilisateurs pour être utile.',
+                  description: "La plateforme nécessite une masse critique d'utilisateurs pour être utile.",
                   mesure: 'Phasage progressif, ancrage communautaire, fonctions utiles même en faible trafic (observatoire en lecture).',
                   niveau: 'Suivi',
                 },
@@ -764,20 +764,20 @@ export default function DossierInvestisseurs() {
                 },
                 {
                   risque: 'Dépendance aux partenaires',
-                  description: 'Dépendance à Firebase et Cloudflare pour l'infrastructure.',
+                  description: "Dépendance à Firebase et Cloudflare pour l'infrastructure.",
                   mesure: 'Architecture exportable (données Firestore exportables), pas de vendor lock-in sur la logique métier.',
                   niveau: 'Suivi',
                 },
                 {
                   risque: 'Concurrence institutionnelle',
-                  description: 'Un service public similaire pourrait être développé par l'État.',
+                  description: "Un service public similaire pourrait être développé par l'État.",
                   mesure: 'Positionnement complémentaire (outil citoyen indépendant vs. données officielles), partenariats plutôt que compétition.',
                   niveau: 'Faible',
                 },
                 {
                   risque: 'Soutenabilité financière',
                   description: 'Délai entre investissement et revenus récurrents.',
-                  mesure: 'Coûts d'infrastructure actuellement maîtrisés. Le modèle B2G vise des contrats à haute valeur unitaire pour limiter la dépendance au volume B2C.',
+                  mesure: "Coûts d'infrastructure actuellement maîtrisés. Le modèle B2G vise des contrats à haute valeur unitaire pour limiter la dépendance au volume B2C.",
                   niveau: 'Suivi',
                 },
               ].map((r) => (
@@ -821,14 +821,14 @@ export default function DossierInvestisseurs() {
                   objectif: 'Consolidation ultramarine',
                   items: [
                     'Plateforme de référence pour les DOM-COM en matière de transparence des prix',
-                    'Métriques d'usage consolidées et communicables',
-                    'Au moins une convention formelle avec une collectivité territoriale ou un service de l'État',
+                    "Métriques d'usage consolidées et communicables",
+                    "Au moins une convention formelle avec une collectivité territoriale ou un service de l'État",
                     'Module B2G (devis institutionnels) avec les premiers clients actifs',
                   ],
                 },
                 {
                   horizon: 'Horizon 3 ans',
-                  objectif: 'Outil d'aide à la décision publique',
+                  objectif: "Outil d'aide à la décision publique",
                   items: [
                     'Partenariats formels avec les observatoires des prix DOM-COM',
                     'Données de la plateforme citées dans des rapports officiels',
@@ -841,9 +841,9 @@ export default function DossierInvestisseurs() {
                   objectif: 'Plateforme data territoriale de référence',
                   items: [
                     'Extension possible vers la France métropolitaine comme comparatif national',
-                    'Plateforme ouverte aux collectivités pour co-construction d'observatoires locaux',
-                    'Potentiel d'extension vers les territoires francophones comparables (DROM, Outre-mer belges et canadiens)',
-                    'Modèle reproductible pour d'autres pays en situation de vie chère documentée',
+                    "Plateforme ouverte aux collectivités pour co-construction d'observatoires locaux",
+                    "Potentiel d'extension vers les territoires francophones comparables (DROM, Outre-mer belges et canadiens)",
+                    "Modèle reproductible pour d'autres pays en situation de vie chère documentée",
                   ],
                 },
               ].map((v) => (

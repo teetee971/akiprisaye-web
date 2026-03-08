@@ -73,6 +73,8 @@ export default defineConfig({
       abs('./src/test/groupesParoleService.test.ts'),
       // Marketplace Enseignes — merchant service (onboarding, stores, products, billing)
       abs('./src/test/merchantService.test.ts'),
+      // Devis IA — moteur d'estimation explicable + constantes (Issues #501, #492)
+      abs('./src/test/devisService.test.ts'),
     ],
 
     exclude: ['**/node_modules/**', '**/.git/**', '**/dist/**', '**/coverage/**'],

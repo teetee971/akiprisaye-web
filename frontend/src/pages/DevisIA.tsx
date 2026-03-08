@@ -8,11 +8,12 @@
  *   4. Confirmation & soumission
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { FileText, ArrowRight, ArrowLeft, CheckCircle, AlertTriangle, Info } from 'lucide-react';
-import { useAuth } from '@/context/AuthContext';
+import { auth } from '@/lib/firebase';
+import { onAuthStateChanged, type User } from 'firebase/auth';
 import {
   createDevisRequest,
   type ClientType,
@@ -106,7 +107,11 @@ const INITIAL_FORM: FormData = {
 
 export default function DevisIA() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    return onAuthStateChanged(auth!, (u) => setUser(u));
+  }, []);
 
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<FormData>(INITIAL_FORM);

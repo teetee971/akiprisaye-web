@@ -204,6 +204,13 @@ const MerchantOnboarding = lazyPage(() => import('./pages/marketplace/MerchantOn
 const MerchantDashboard = lazyPage(() => import('./pages/marketplace/MerchantDashboard'));
 const AdminMarketplace = lazyPage(() => import('./pages/admin/marketplace/AdminMarketplace'));
 
+// Devis IA (Issue #501) + Roadmap (Issue #492) + Dossier Investisseurs (Issue #503)
+const DevisIA = lazyPage(() => import('./pages/DevisIA'));
+const DevisTracking = lazyPage(() => import('./pages/DevisTracking'));
+const AdminDevis = lazyPage(() => import('./pages/admin/AdminDevis'));
+const RoadmapPage = lazyPage(() => import('./pages/RoadmapPage'));
+const DossierInvestisseurs = lazyPage(() => import('./pages/DossierInvestisseurs'));
+
 /**
  * IMPORTANT — NE PAS SUPPRIMER
  * Les tests CI vérifient la présence LITTÉRALE de certaines routes alias
@@ -338,6 +345,8 @@ export default function App() {
                           <Route path="sync" element={<SyncDashboard />} />
                           <Route path="moderation" element={<SignalementModeration />} />
                           <Route path="marketplace" element={<AdminMarketplace />} />
+                          {/* Devis IA admin pipeline */}
+                          <Route path="devis" element={<AdminDevis />} />
                         </Route>
 
                         {/* Main site routes with Layout */}
@@ -536,6 +545,17 @@ export default function App() {
                           {/* Marketplace Enseignes */}
                           <Route path="marketplace/inscription" element={<MerchantOnboarding />} />
                           <Route path="marketplace/dashboard" element={<MerchantDashboard />} />
+
+                          {/* Devis IA — Issue #501 */}
+                          <Route path="devis-ia" element={<DevisIA />} />
+                          <Route path="devis-ia/:devisId" element={<DevisTracking />} />
+                          <Route path="mes-devis" element={<DevisTracking />} />
+
+                          {/* Roadmap & Architecture — Issue #492 */}
+                          <Route path="roadmap" element={<RoadmapPage />} />
+
+                          {/* Dossier Investisseurs — Issue #503 */}
+                          <Route path="dossier-investisseurs" element={<DossierInvestisseurs />} />
 
                           {/* Catch-all route - redirect to home */}
                           <Route path="*" element={<Navigate to="/" replace />} />
