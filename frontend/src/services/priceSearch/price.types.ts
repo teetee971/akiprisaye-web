@@ -33,7 +33,8 @@ export type PriceSourceId =
   | 'open_food_facts'
   | 'open_prices'
   | 'data_gouv'
-  | 'leclerc_catalog';
+  | 'leclerc_catalog'
+  | 'macave_leclerc';
 
 export type PriceSearchStatus =
   | 'OK'
