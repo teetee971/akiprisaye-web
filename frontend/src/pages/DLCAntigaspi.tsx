@@ -165,10 +165,10 @@ export default function DLCAntigaspi() {
         {/* Stats */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.6rem', marginBottom: '1.25rem' }}>
           {[
-            { label: 'Périmés', value: expire, ...URGENCE_STYLES.expire },
-            { label: 'Urgents', value: urgent, ...URGENCE_STYLES.urgent },
-            { label: 'Bientôt', value: proche, ...URGENCE_STYLES.proche },
-            { label: 'En ordre', value: ok,    ...URGENCE_STYLES.ok     },
+            { value: expire, ...URGENCE_STYLES.expire, label: 'Périmés'  },
+            { value: urgent, ...URGENCE_STYLES.urgent, label: 'Urgents'  },
+            { value: proche, ...URGENCE_STYLES.proche, label: 'Bientôt'  },
+            { value: ok,     ...URGENCE_STYLES.ok,     label: 'En ordre' },
           ].map(s => (
             <div key={s.label} style={{ padding: '0.65rem 0.5rem', borderRadius: 10, background: s.bg, border: `1px solid ${s.border}`, textAlign: 'center' }}>
               <div style={{ fontSize: '1.4rem', fontWeight: 900, color: s.color, lineHeight: 1 }}>{s.value}</div>

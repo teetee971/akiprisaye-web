@@ -35,6 +35,13 @@ export default defineConfig({
     'import.meta.env.VITE_BUILD_SHA': JSON.stringify(gitSha),
     'import.meta.env.VITE_BUILD_DATE': JSON.stringify(buildDate),
     'import.meta.env.VITE_BUILD_ENV': JSON.stringify(buildEnv),
+    // Feature flags — enabled for production build
+    'import.meta.env.VITE_FEATURE_COMPARAISON_ENSEIGNES': JSON.stringify(
+      process.env.VITE_FEATURE_COMPARAISON_ENSEIGNES ?? 'true'
+    ),
+    'import.meta.env.VITE_FEATURE_CITIZEN_REPORT': JSON.stringify(
+      process.env.VITE_FEATURE_CITIZEN_REPORT ?? 'true'
+    ),
   },
   build: {
     rollupOptions: {

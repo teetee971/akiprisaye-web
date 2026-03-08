@@ -349,10 +349,10 @@ const InsuranceComparator: React.FC = () => {
             <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
               <div className="flex items-center gap-2">
                 <SortControl
-                  sortBy={sortBy}
-                  sortDirection={sortDirection}
+                  currentSort={sortBy}
+                  currentDirection={sortDirection}
                   onSortChange={handleSortChange}
-                  sortOptions={[
+                  options={[
                     { value: 'price', label: 'Prix' },
                     { value: 'provider', label: 'Assureur' },
                     { value: 'coverage', label: 'Niveau' },
