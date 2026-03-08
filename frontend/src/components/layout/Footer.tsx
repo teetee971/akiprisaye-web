@@ -45,6 +45,7 @@ export default function Footer() {
               <li><Link to="/alertes-prix" className="text-slate-400 hover:text-white transition-colors">Alertes prix</Link></li>
               <li><Link to="/contribuer-prix" className="text-slate-400 hover:text-white transition-colors">Contribuer</Link></li>
               <li><Link to="/messagerie" className="text-slate-400 hover:text-indigo-300 transition-colors">💬 Messagerie</Link></li>
+              <li><Link to="/groupes-parole" className="text-slate-400 hover:text-purple-300 transition-colors">🗣️ Groupes de Parole</Link></li>
             </ul>
           </div>
 

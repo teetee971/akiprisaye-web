@@ -197,6 +197,9 @@ const ScanOCR = lazyPage(() => import('./pages/ScanOCR'));
 // Messagerie interne
 const Messagerie = lazyPage(() => import('./pages/Messagerie'));
 
+// Groupes de Parole Citoyens
+const GroupesParole = lazyPage(() => import('./pages/GroupesParole'));
+
 /**
  * IMPORTANT — NE PAS SUPPRIMER
  * Les tests CI vérifient la présence LITTÉRALE de certaines routes alias
@@ -521,6 +524,10 @@ export default function App() {
 
                           {/* Messagerie interne */}
                           <Route path="messagerie" element={<Messagerie />} />
+
+                          {/* Groupes de Parole Citoyens */}
+                          <Route path="groupes-parole" element={<GroupesParole />} />
+                          <Route path="groupes-parole/:groupId" element={<GroupesParole />} />
 
                           {/* Catch-all route - redirect to home */}
                           <Route path="*" element={<Navigate to="/" replace />} />
