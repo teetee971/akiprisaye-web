@@ -69,6 +69,8 @@ export default defineConfig({
       abs('./src/test/scanHubClassifier.test.ts'),
       // Store hours — open/closed status logic and utilities
       abs('./src/test/storeHours.test.ts'),
+      // Marketplace Enseignes — merchant service (onboarding, stores, products, billing)
+      abs('./src/test/merchantService.test.ts'),
     ],
 
     exclude: ['**/node_modules/**', '**/.git/**', '**/dist/**', '**/coverage/**'],

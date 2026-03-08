@@ -197,6 +197,11 @@ const ScanOCR = lazyPage(() => import('./pages/ScanOCR'));
 // Messagerie interne
 const Messagerie = lazyPage(() => import('./pages/Messagerie'));
 
+// Marketplace Enseignes
+const MerchantOnboarding = lazyPage(() => import('./pages/marketplace/MerchantOnboarding'));
+const MerchantDashboard = lazyPage(() => import('./pages/marketplace/MerchantDashboard'));
+const AdminMarketplace = lazyPage(() => import('./pages/admin/marketplace/AdminMarketplace'));
+
 /**
  * IMPORTANT — NE PAS SUPPRIMER
  * Les tests CI vérifient la présence LITTÉRALE de certaines routes alias
@@ -330,6 +335,7 @@ export default function App() {
                           <Route path="import" element={<ImportPage />} />
                           <Route path="sync" element={<SyncDashboard />} />
                           <Route path="moderation" element={<SignalementModeration />} />
+                          <Route path="marketplace" element={<AdminMarketplace />} />
                         </Route>
 
                         {/* Main site routes with Layout */}
@@ -521,6 +527,10 @@ export default function App() {
 
                           {/* Messagerie interne */}
                           <Route path="messagerie" element={<Messagerie />} />
+
+                          {/* Marketplace Enseignes */}
+                          <Route path="marketplace/inscription" element={<MerchantOnboarding />} />
+                          <Route path="marketplace/dashboard" element={<MerchantDashboard />} />
 
                           {/* Catch-all route - redirect to home */}
                           <Route path="*" element={<Navigate to="/" replace />} />
