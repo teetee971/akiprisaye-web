@@ -191,7 +191,19 @@ describe('calameoDynamicProvider', () => {
     expect(result.status).toBe('NO_DATA');
     expect(result.observations).toHaveLength(0);
     // Warnings should contain catalog URLs
-    expect(result.warnings.some((w) => w.includes('calameo.com'))).toBe(true);
+    expect(
+      result.warnings.some((w) => {
+        try {
+          const url = new URL(w);
+          return (
+            url.hostname === 'calameo.com' ||
+            url.hostname.endsWith('.calameo.com')
+          );
+        } catch {
+          return false;
+        }
+      }),
+    ).toBe(true);
   });
 
   it('returns all catalogs when no query given', async () => {
