@@ -1,8 +1,19 @@
 import { Link } from 'react-router-dom';
 
-const VERSION = '3.1.1';
+const VERSION = '3.2.0';
+
+// Build-time metadata injected by Vite (Issue #0.2)
+const BUILD_SHA: string = import.meta.env.VITE_BUILD_SHA ?? 'dev';
+const BUILD_DATE: string = import.meta.env.VITE_BUILD_DATE ?? '';
+const BUILD_ENV: string = import.meta.env.VITE_BUILD_ENV ?? 'development';
+
+const isProduction = BUILD_ENV === 'production';
 
 export default function Footer() {
+  const buildInfo = BUILD_DATE
+    ? `${BUILD_ENV} · ${BUILD_DATE} · ${BUILD_SHA}`
+    : `${BUILD_ENV} · ${BUILD_SHA}`;
+
   return (
     <footer id="footer" className="border-t border-slate-800 bg-slate-950">
       {/* ── Multi-column navigation ── */}
@@ -45,6 +56,7 @@ export default function Footer() {
               <li><Link to="/alertes-prix" className="text-slate-400 hover:text-white transition-colors">Alertes prix</Link></li>
               <li><Link to="/contribuer-prix" className="text-slate-400 hover:text-white transition-colors">Contribuer</Link></li>
               <li><Link to="/messagerie" className="text-slate-400 hover:text-indigo-300 transition-colors">💬 Messagerie</Link></li>
+              <li><Link to="/groupes-parole" className="text-slate-400 hover:text-purple-300 transition-colors">🗣️ Groupes de Parole</Link></li>
             </ul>
           </div>
 
@@ -68,10 +80,20 @@ export default function Footer() {
       <div className="border-t border-slate-800/60 py-4">
         <div className="mx-auto max-w-6xl px-4 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-600">
           <p>© {new Date().getFullYear()} A KI PRI SA YÉ — Observer, pas vendre. Données citoyennes pour les territoires ultramarins.</p>
-          <div className="flex gap-3">
+          <div className="flex gap-3 items-center">
             <Link to="/mentions-legales" className="hover:text-slate-400 transition-colors">Mentions légales</Link>
             <Link to="/transparence" className="hover:text-slate-400 transition-colors">Confidentialité</Link>
-            <Link to="/versions" className="hover:text-slate-400 transition-colors">v{VERSION}</Link>
+            <Link
+              to="/versions"
+              className="hover:text-slate-400 transition-colors"
+              title={buildInfo}
+              aria-label={`Version v${VERSION} — ${buildInfo}`}
+            >
+              v{VERSION}
+              {!isProduction && (
+                <span className="ml-1 text-amber-600">({BUILD_ENV})</span>
+              )}
+            </Link>
           </div>
         </div>
       </div>
