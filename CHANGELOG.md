@@ -3,6 +3,20 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 
 Le format s'inspire de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et ce projet adhère à la [sémantique de versionnage](https://semver.org/lang/fr/).
 
+## [3.1.4] - 2026-03-08
+
+### Added — Checklist Production
+
+- **`ChecklistProduction.tsx`** (route `/checklist-prod`) : page de vérification des tâches
+  avant mise en production. Couvre 9 sections (sécurité, frontend, performance, tests,
+  conformité RGPD, accessibilité, infrastructure, documentation, IA responsable) avec
+  statut par tâche (Fait / En cours / À faire / Critique), priorité (haute/moyenne/basse),
+  barre de progression globale et affichage multi-sections. Répond à l'issue
+  « Vérifie siriste à faire donne logiciel pour la production ».
+- **`PAGE_HERO_IMAGES.checklistProduction`** ajouté dans `imageAssets.ts`.
+
+---
+
 ## [3.1.3] - 2026-03-08
 
 ### Removed — Nettoyage complet des fichiers obsolètes

@@ -225,6 +225,7 @@ const DevisTracking = lazyPage(() => import('./pages/DevisTracking'));
 const AdminDevis = lazyPage(() => import('./pages/admin/AdminDevis'));
 const RoadmapPage = lazyPage(() => import('./pages/RoadmapPage'));
 const DossierInvestisseurs = lazyPage(() => import('./pages/DossierInvestisseurs'));
+const ChecklistProduction = lazyPage(() => import('./pages/ChecklistProduction'));
 const ModuleAuditPage = lazyPage(() => import('./pages/ModuleAuditPage'));
 const Perimetre = lazyPage(() => import('./pages/Perimetre'));
 const Predictions = lazyPage(() => import('./pages/Predictions'));
@@ -590,6 +591,9 @@ export default function App() {
 
                           {/* Dossier Investisseurs — Issue #503 */}
                           <Route path="dossier-investisseurs" element={<DossierInvestisseurs />} />
+
+                          {/* Checklist Production — siriste à faire pour la mise en production */}
+                          <Route path="checklist-prod" element={<ChecklistProduction />} />
 
                           {/* Audit des modules — comprehensive module audit */}
                           <Route path="module-audit" element={<ModuleAuditPage />} />

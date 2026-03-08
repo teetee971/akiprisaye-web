@@ -238,6 +238,8 @@ export const PAGE_HERO_IMAGES = {
   // ── Data & analysis ──────────────────────────────────────────────────────
   /** Roadmap — planning / calendar */
   roadmap: 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?auto=format&fit=crop&w=1600&q=80',
+  /** Checklist Production — to-do list / clipboard */
+  checklistProduction: 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?auto=format&fit=crop&w=1600&q=80',
   /** Versions — software update / code */
   versions: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1600&q=80',
   /** Methodologie — research / methodology */
