@@ -212,6 +212,119 @@ const INNOVATIONS: Innovation[] = [
     tags: ['OCR', 'Ticket', 'IA Vision', 'Économies'],
     accentColor: '#10b981',
   },
+
+  // ── Batch 2 — Nouvelles suggestions ──────────────────────────────────────────
+
+  {
+    id: 'podcast-ia',
+    emoji: '🎙️',
+    titre: 'Podcast IA hebdomadaire — "La Voix des Prix"',
+    description: 'La lettre hebdomadaire transformée en podcast audio de 5 minutes, générée automatiquement en créole et en français.',
+    detail: 'Pipeline complet sans intervention humaine : lettre IA → synthèse vocale (OpenAI TTS ou ElevenLabs) → fichier MP3 publié automatiquement → RSS podcast compatible Spotify, Apple Podcasts, Deezer. Versions bilingues français/créole martiniquais ou guadeloupéen. Idéal pour les personnes peu à l\'aise avec la lecture ou en déplacement.',
+    phase: 'soon',
+    impact: 'high',
+    tags: ['Audio', 'Podcast', 'Créole', 'Accessibilité', 'TTS'],
+    accentColor: '#f43f5e',
+  },
+  {
+    id: 'medicaments',
+    emoji: '💊',
+    titre: 'Comparateur de prix des médicaments',
+    description: 'Les médicaments coûtent jusqu\'à 40 % plus cher dans les DOM. Comparez les prix des pharmacies par territoire en temps réel.',
+    detail: 'Intégration avec la base de données publique de l\'ANSM (Agence Nationale de Sécurité du Médicament) et du Comité Économique des Produits de Santé. Comparaison des génériques vs princeps. Alerte automatique quand un médicament est disponible moins cher dans une pharmacie voisine. Source officielle : data.ansm.sante.fr.',
+    phase: 'soon',
+    impact: 'high',
+    tags: ['Santé', 'Médicaments', 'ANSM', 'Pharmacie'],
+    accentColor: '#06b6d4',
+  },
+  {
+    id: 'carburant',
+    emoji: '⛽',
+    titre: 'Baromètre carburant DOM — prix à la pompe en temps réel',
+    description: 'Le prix de l\'essence et du gasoil est réglementé dans certains DOM mais varie en pratique. Suivez et comparez.',
+    detail: 'Intégration avec l\'API gouvernementale des prix des carburants (prix-carburants.gouv.fr). Carte interactive des stations-service les moins chères par territoire. Alerte SMS/push quand un prix passe sous un seuil. Comparaison avec le prix métropolitain et calcul du surcoût annuel pour une famille type DOM.',
+    phase: 'now',
+    impact: 'high',
+    tags: ['Carburant', 'Transport', 'API gov', 'Carte'],
+    accentColor: '#f59e0b',
+  },
+  {
+    id: 'creole-ui',
+    emoji: '🗣️',
+    titre: 'Interface en langues régionales — créole, tahitien, kanak',
+    description: 'La plateforme traduite en créole martiniquais, guadeloupéen, réunionnais, tahitien et langues kanak pour toucher tous les citoyens.',
+    detail: 'Internationalisation (i18n) complète via react-i18next. Traductions humaines validées par des locuteurs natifs + IA pour les mises à jour automatiques. Touche des populations qui se sentent exclues des outils numériques en français standard. Partenariat possible avec l\'Académie Créole de Martinique et l\'Académie des Langues Kanak.',
+    phase: 'later',
+    impact: 'high',
+    tags: ['i18n', 'Créole', 'Tahitien', 'Inclusion', 'Langues'],
+    accentColor: '#8b5cf6',
+  },
+  {
+    id: 'impact-carbone',
+    emoji: '🌿',
+    titre: 'Empreinte carbone du panier de courses',
+    description: 'Pour chaque produit importé par bateau, affichez son bilan carbone. Favorisez les productions locales DOM.',
+    detail: 'Base de données carbone (Agrybalise / Base Carbone ADEME) croisée avec l\'origine des produits (étiquetage + EAN). Calcul de l\'empreinte CO₂ du panier complet en kg équivalent CO₂. Badge "Produit local" pour les produits fabriqués dans le territoire. Score éco-citoyen mensuel. Partenariat avec les chambres d\'agriculture DOM.',
+    phase: 'later',
+    impact: 'medium',
+    tags: ['Écologie', 'Carbone', 'ADEME', 'Local', 'Durabilité'],
+    accentColor: '#22c55e',
+  },
+  {
+    id: 'loyers-immobilier',
+    emoji: '🏠',
+    titre: 'Observatoire des loyers & coût du logement',
+    description: 'Le logement représente 30-40 % du budget des ménages DOM. Comparez les loyers et charges entre communes et territoires.',
+    detail: 'Collecte citoyenne des loyers (anonymisée) + données ADIL (Agences Départementales d\'Information sur le Logement). Carte de chaleur des loyers par commune. Calcul du "reste pour vivre" après logement selon territoire et revenu médian. Comparatif DOM vs métropole des charges (eau, électricité, internet). Source : observatoire-des-loyers.adil.org.',
+    phase: 'later',
+    impact: 'high',
+    tags: ['Logement', 'Loyers', 'ADIL', 'Budget', 'Pouvoir d\'achat'],
+    accentColor: '#0ea5e9',
+  },
+  {
+    id: 'widget-embarquable',
+    emoji: '🔌',
+    titre: 'Widget embarquable pour associations & médias',
+    description: 'Un petit composant que n\'importe quelle association ou journal local peut intégrer sur son site pour afficher les prix du marché.',
+    detail: 'Widget JavaScript < 10 Ko, intégrable via une simple balise <script>. Configure par territoire, par catégorie de produit et par thème (clair/sombre). API REST publique en arrière-plan. Mis à jour automatiquement. Les journaux locaux, les syndicats de consommateurs et les mairies peuvent l\'afficher en temps réel. Marque blanche possible.',
+    phase: 'soon',
+    impact: 'medium',
+    tags: ['Widget', 'Embed', 'API', 'Médias', 'Associations'],
+    accentColor: '#6366f1',
+  },
+  {
+    id: 'budget-simulateur',
+    emoji: '🧮',
+    titre: 'Simulateur budgétaire familial DOM',
+    description: 'Saisissez votre composition familiale et votre salaire : l\'outil calcule ce qu\'il vous reste réellement après toutes les dépenses contraintes.',
+    detail: 'Simulateur interactif : revenus (salaire, APL, allocs) − dépenses contraintes (loyer médian local, alimentation panier type, carburant, assurances, factures) = reste pour vivre. Comparaison avec le territoire voisin et la métropole. Identification des postes où économiser. Lien direct vers le comparateur de prix pour les produits alimentaires. Sources : CAF, INSEE, IEDOM.',
+    phase: 'soon',
+    impact: 'high',
+    tags: ['Budget', 'Famille', 'Simulateur', 'CAF', 'Pouvoir d\'achat'],
+    accentColor: '#f97316',
+  },
+  {
+    id: 'alertes-rupture',
+    emoji: '🚨',
+    titre: 'Alerte rupture de stock & pénuries',
+    description: 'Signalement citoyen des ruptures de stock anormales (notamment produits de première nécessité) avec carte temps réel.',
+    detail: 'Formulaire rapide de signalement de rupture (produit, magasin, date). Carte en temps réel des pénuries par territoire. Détection automatique des patterns anormaux (si 5+ signalements du même produit dans 24h → alerte). Notification aux élus et OPMR concernés. Particulièrement pertinent pour les DOM en période cyclonique ou de grève portuaire.',
+    phase: 'soon',
+    impact: 'high',
+    tags: ['Rupture', 'Pénurie', 'Alerte', 'Signalement', 'Crise'],
+    accentColor: '#ef4444',
+  },
+  {
+    id: 'ia-plainte',
+    emoji: '⚖️',
+    titre: 'Rédacteur IA de lettres de réclamation',
+    description: 'Vous avez payé trop cher ? L\'IA rédige automatiquement votre lettre de réclamation officielle à envoyer à l\'enseigne ou à la DGCCRF.',
+    detail: 'À partir du produit, du prix constaté et du prix de référence observatoire, l\'IA génère une lettre de réclamation formelle prête à envoyer. Modèles pré-remplis pour : surcharge de prix injustifiée, publicité mensongère sur promotion, non-respect du bouclier qualité-prix. Export PDF + envoi email intégré. Lien direct vers dgccrf.fr pour signalement officiel.',
+    phase: 'later',
+    impact: 'medium',
+    tags: ['IA', 'Réclamation', 'DGCCRF', 'Droit', 'Consommateur'],
+    accentColor: '#a855f7',
+  },
 ];
 
 const PHASE_LABELS: Record<Phase, { label: string; color: string; bg: string; border: string }> = {
@@ -323,7 +436,7 @@ export default function InnovationLab() {
             <span style={{ fontSize: '0.78rem', color: '#a5b4fc', fontWeight: 700 }}>🧪 Innovation Lab — A KI PRI SA YÉ</span>
           </div>
           <h1 style={{ margin: '0 0 0.5rem', fontSize: '1.8rem', fontWeight: 900, color: '#f1f5f9' }}>
-            18 innovations pour demain
+            28 innovations pour demain
           </h1>
           <p style={{ margin: 0, fontSize: '0.9rem', color: '#64748b', lineHeight: 1.65 }}>
             Feuille de route des prochaines évolutions de la plateforme.<br />
