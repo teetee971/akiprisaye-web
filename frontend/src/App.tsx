@@ -186,6 +186,15 @@ const ComprendrePrix = lazyPage(() => import('./pages/ComprendrePrix'));
 const ConferencePrix = lazyPage(() => import('./pages/ConferencePrix'));
 const LettreHebdoIA = lazyPage(() => import('./pages/LettreHebdoIA'));
 const InnovationLab = lazyPage(() => import('./pages/InnovationLab'));
+const CalculateurOctroi = lazyPage(() => import('./pages/CalculateurOctroi'));
+const SimulateurBudgetFamilial = lazyPage(() => import('./pages/SimulateurBudgetFamilial'));
+const AlertesRupture = lazyPage(() => import('./pages/AlertesRupture'));
+const ReclamationIA = lazyPage(() => import('./pages/ReclamationIA'));
+const RapportCitoyen = lazyPage(() => import('./pages/RapportCitoyen'));
+const PlanificateurRepas = lazyPage(() => import('./pages/PlanificateurRepas'));
+const DLCAntigaspi = lazyPage(() => import('./pages/DLCAntigaspi'));
+const AnalyseNutri = lazyPage(() => import('./pages/AnalyseNutri'));
+const AnalyseConcurrence = lazyPage(() => import('./pages/AnalyseConcurrence'));
 const CivicModules = lazyPage(() => import('./pages/CivicModules'));
 const ObservatoireVivant = lazyPage(() => import('./pages/ObservatoireVivant'));
 const AssistantIAHub = lazyPage(() => import('./pages/AssistantIAHub'));
@@ -539,6 +548,15 @@ export default function App() {
                           <Route path="conference-prix" element={<ConferencePrix />} />
                           <Route path="lettre-hebdo" element={<LettreHebdoIA />} />
                           <Route path="innovation-lab" element={<InnovationLab />} />
+                          <Route path="calculateur-octroi" element={<CalculateurOctroi />} />
+                          <Route path="simulateur-budget" element={<SimulateurBudgetFamilial />} />
+                          <Route path="alertes-rupture" element={<AlertesRupture />} />
+                          <Route path="ia-reclamation" element={<ReclamationIA />} />
+                          <Route path="rapport-citoyen" element={<RapportCitoyen />} />
+                          <Route path="planificateur-repas" element={<PlanificateurRepas />} />
+                          <Route path="dlc-antigaspi" element={<DLCAntigaspi />} />
+                          <Route path="analyse-nutri" element={<AnalyseNutri />} />
+                          <Route path="analyse-concurrence" element={<AnalyseConcurrence />} />
                           <Route path="civic-modules" element={<CivicModules />} />
                           <Route path="observatoire-vivant" element={<ObservatoireVivant />} />
                           <Route path="assistant-ia" element={<AssistantIAHub />} />

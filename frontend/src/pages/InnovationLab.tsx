@@ -22,6 +22,7 @@ interface Innovation {
   impact: 'high' | 'medium';
   tags: string[];
   accentColor: string;
+  route?: string;  // live route if already implemented
 }
 
 const INNOVATIONS: Innovation[] = [
@@ -57,9 +58,7 @@ const INNOVATIONS: Innovation[] = [
     impact: 'high',
     tags: ['OCR', 'IA Vision', 'Mobile', 'UX'],
     accentColor: '#22c55e',
-  },
-  {
-    id: 'prediction',
+    route: '/scan-ocr',
     emoji: '📈',
     titre: 'IA prédictive des prix — "Acheter maintenant ou attendre ?"',
     description: 'Prédiction de l\'évolution des prix sur 4-8 semaines basée sur les données historiques et les indicateurs macro.',
@@ -156,9 +155,7 @@ const INNOVATIONS: Innovation[] = [
     impact: 'medium',
     tags: ['Pédagogie', 'Octroi de mer', 'Transparence', 'Outil'],
     accentColor: '#a855f7',
-  },
-  {
-    id: 'rapport-pdf',
+    route: '/calculateur-octroi',
     emoji: '📄',
     titre: 'Rapport citoyen PDF exportable',
     description: 'Générez en un clic un rapport PDF personnalisé sur les prix de votre territoire, à partager avec élus, associations ou médias.',
@@ -167,9 +164,7 @@ const INNOVATIONS: Innovation[] = [
     impact: 'high',
     tags: ['PDF', 'Export', 'Plaidoyer', 'Associations'],
     accentColor: '#f43f5e',
-  },
-  {
-    id: 'programme-fidelite',
+    route: '/rapport-citoyen',
     emoji: '🎖️',
     titre: 'Programme de fidélité citoyen',
     description: 'Gagnez des badges et des points en contribuant à l\'observatoire : chaque scan vérifié compte.',
@@ -189,9 +184,7 @@ const INNOVATIONS: Innovation[] = [
     impact: 'high',
     tags: ['PWA', 'Offline', 'Accessibilité', 'Zones rurales'],
     accentColor: '#0ea5e9',
-  },
-  {
-    id: 'partenariats-opmr',
+    route: '/dlc-antigaspi',
     emoji: '🏛️',
     titre: 'Intégration officielle avec les OPMR',
     description: 'Partage automatique des relevés citoyens avec les Observatoires des Prix, Marges et Revenus de chaque territoire.',
@@ -211,10 +204,8 @@ const INNOVATIONS: Innovation[] = [
     impact: 'high',
     tags: ['OCR', 'Ticket', 'IA Vision', 'Économies'],
     accentColor: '#10b981',
+    route: '/scan-ocr',
   },
-
-  // ── Batch 2 — Nouvelles suggestions ──────────────────────────────────────────
-
   {
     id: 'podcast-ia',
     emoji: '🎙️',
@@ -236,9 +227,7 @@ const INNOVATIONS: Innovation[] = [
     impact: 'high',
     tags: ['Santé', 'Médicaments', 'ANSM', 'Pharmacie'],
     accentColor: '#06b6d4',
-  },
-  {
-    id: 'carburant',
+    route: '/analyse-nutri',
     emoji: '⛽',
     titre: 'Baromètre carburant DOM — prix à la pompe en temps réel',
     description: 'Le prix de l\'essence et du gasoil est réglementé dans certains DOM mais varie en pratique. Suivez et comparez.',
@@ -247,9 +236,7 @@ const INNOVATIONS: Innovation[] = [
     impact: 'high',
     tags: ['Carburant', 'Transport', 'API gov', 'Carte'],
     accentColor: '#f59e0b',
-  },
-  {
-    id: 'creole-ui',
+    route: '/comparateur-carburants',
     emoji: '🗣️',
     titre: 'Interface en langues régionales — créole, tahitien, kanak',
     description: 'La plateforme traduite en créole martiniquais, guadeloupéen, réunionnais, tahitien et langues kanak pour toucher tous les citoyens.',
@@ -302,9 +289,7 @@ const INNOVATIONS: Innovation[] = [
     impact: 'high',
     tags: ['Budget', 'Famille', 'Simulateur', 'CAF', 'Pouvoir d\'achat'],
     accentColor: '#f97316',
-  },
-  {
-    id: 'alertes-rupture',
+    route: '/simulateur-budget',
     emoji: '🚨',
     titre: 'Alerte rupture de stock & pénuries',
     description: 'Signalement citoyen des ruptures de stock anormales (notamment produits de première nécessité) avec carte temps réel.',
@@ -313,9 +298,7 @@ const INNOVATIONS: Innovation[] = [
     impact: 'high',
     tags: ['Rupture', 'Pénurie', 'Alerte', 'Signalement', 'Crise'],
     accentColor: '#ef4444',
-  },
-  {
-    id: 'ia-plainte',
+    route: '/alertes-rupture',
     emoji: '⚖️',
     titre: 'Rédacteur IA de lettres de réclamation',
     description: 'Vous avez payé trop cher ? L\'IA rédige automatiquement votre lettre de réclamation officielle à envoyer à l\'enseigne ou à la DGCCRF.',
@@ -324,6 +307,7 @@ const INNOVATIONS: Innovation[] = [
     impact: 'medium',
     tags: ['IA', 'Réclamation', 'DGCCRF', 'Droit', 'Consommateur'],
     accentColor: '#a855f7',
+    route: '/ia-reclamation',
   },
 ];
 
@@ -384,12 +368,18 @@ function InnovationCard({ item, votes, onVote }: {
       </div>
 
       {/* Tags */}
-      <div style={{ display: 'flex', gap: '0.3rem', flexWrap: 'wrap', marginTop: '0.6rem' }}>
+      <div style={{ display: 'flex', gap: '0.3rem', flexWrap: 'wrap', marginTop: '0.6rem', alignItems: 'center' }}>
         {item.tags.map((tag) => (
           <span key={tag} style={{ fontSize: '0.62rem', color: '#475569', padding: '1px 7px', borderRadius: 20, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(148,163,184,0.1)' }}>
             {tag}
           </span>
         ))}
+        {item.route && (
+          <Link to={item.route}
+            style={{ marginLeft: '0.25rem', fontSize: '0.65rem', padding: '2px 9px', borderRadius: 20, background: `${item.accentColor}18`, border: `1px solid ${item.accentColor}44`, color: item.accentColor, textDecoration: 'none', fontWeight: 700 }}>
+            ✅ Accéder →
+          </Link>
+        )}
       </div>
 
       {/* Expand detail */}
@@ -477,6 +467,9 @@ export default function InnovationLab() {
           <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
             <Link to="/suggestions" style={{ padding: '0.5rem 1.2rem', borderRadius: 8, background: 'rgba(99,102,241,0.8)', color: '#fff', fontSize: '0.82rem', fontWeight: 700, textDecoration: 'none' }}>
               ✉️ Suggérer une innovation
+            </Link>
+            <Link to="/analyse-concurrence" style={{ padding: '0.5rem 1.2rem', borderRadius: 8, background: 'rgba(14,165,233,0.15)', border: '1px solid rgba(14,165,233,0.35)', color: '#38bdf8', fontSize: '0.82rem', fontWeight: 700, textDecoration: 'none' }}>
+              🔭 Analyse concurrentielle
             </Link>
             <Link to="/roadmap" style={{ padding: '0.5rem 1.2rem', borderRadius: 8, background: 'rgba(30,41,59,0.8)', border: '1px solid rgba(148,163,184,0.2)', color: '#94a3b8', fontSize: '0.82rem', fontWeight: 600, textDecoration: 'none' }}>
               📋 Roadmap complète
