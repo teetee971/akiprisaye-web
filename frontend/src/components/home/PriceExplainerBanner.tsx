@@ -1,0 +1,399 @@
+/**
+ * PriceExplainerBanner
+ *
+ * Educational "fiche" that explains the 4 structural reasons behind
+ * the higher cost of living in French overseas territories (DOM/COM)
+ * compared to metropolitan France.
+ *
+ * Illustrated with freely-licensed images (Wikimedia Commons).
+ * Statistics sourced from INSEE / IEDOM / CEROM publications (2023).
+ */
+
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+
+// ─── Data ─────────────────────────────────────────────────────────────────────
+
+interface Factor {
+  emoji: string;
+  title: string;
+  badge: string;
+  detail: string;
+  accentColor: string;
+  bg: string;
+  border: string;
+}
+
+const FACTORS: Factor[] = [
+  {
+    emoji: '🚢',
+    title: 'Fret maritime',
+    badge: '+6 % à +18 %',
+    detail:
+      'Les produits arrivent par bateau depuis l'Hexagone (10 à 22 jours de traversée). Plus la distance est grande, plus le coût de transport pèse sur le prix final.',
+    accentColor: '#60a5fa',
+    bg: 'rgba(59,130,246,0.08)',
+    border: 'rgba(59,130,246,0.25)',
+  },
+  {
+    emoji: '🏛️',
+    title: 'Octroi de mer',
+    badge: '0 % – 30 %',
+    detail:
+      'Taxe sur les marchandises importées dans les DROM. Elle finance 35–40 % des budgets des collectivités. Varie de 0 % (riz, pâtes) à 30 % (électronique, vêtements).',
+    accentColor: '#c084fc',
+    bg: 'rgba(168,85,247,0.08)',
+    border: 'rgba(168,85,247,0.25)',
+  },
+  {
+    emoji: '🏪',
+    title: 'Faible concurrence',
+    badge: '+10 % à +25 %',
+    detail:
+      'Les petites populations limitent le nombre de grandes surfaces. Moins de concurrence = moins de pression sur les prix. La Guadeloupe compte ~42 grandes surfaces pour 377 000 habitants.',
+    accentColor: '#fbbf24',
+    bg: 'rgba(245,158,11,0.08)',
+    border: 'rgba(245,158,11,0.25)',
+  },
+  {
+    emoji: '💸',
+    title: 'Revenus plus faibles',
+    badge: 'Double impact',
+    detail:
+      'Le revenu médian disponible en Martinique est de 15 000 €/an contre 23 300 €/an en métropole (INSEE 2023). Des prix plus élevés avec des revenus inférieurs amplifient le décrochage du pouvoir d'achat.',
+    accentColor: '#f87171',
+    bg: 'rgba(239,68,68,0.08)',
+    border: 'rgba(239,68,68,0.25)',
+  },
+];
+
+// Surcoût alimentaire vs métropole — source INSEE / IEDOM rapports annuels 2023
+const OVERCOSTS = [
+  { territory: 'France métro.', flag: '🇫🇷', pct: 0,  color: '#22c55e' },
+  { territory: 'Martinique',    flag: '🇲🇶', pct: 11, color: '#fbbf24' },
+  { territory: 'Guadeloupe',    flag: '🇬🇵', pct: 13, color: '#fbbf24' },
+  { territory: 'La Réunion',    flag: '🇷🇪', pct: 12, color: '#fbbf24' },
+  { territory: 'Mayotte',       flag: '🇾🇹', pct: 14, color: '#f97316' },
+  { territory: 'Guyane',        flag: '🇬🇫', pct: 17, color: '#ef4444' },
+];
+
+// ─── Images ────────────────────────────────────────────────────────────────────
+// All images are from Wikimedia Commons under free licenses.
+
+const IMAGES = {
+  ship: {
+    src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/CMA_CGM_Benjamin_Franklin%2C_Port_2000%2C_Le_Havre%2C_22_November_2015_%2823042047853%29.jpg/640px-CMA_CGM_Benjamin_Franklin%2C_Port_2000%2C_Le_Havre%2C_22_November_2015_%2823042047853%29.jpg',
+    alt: 'Porte-conteneurs CMA CGM Benjamin Franklin au port du Havre — les marchandises destinées aux DOM partent depuis les ports métropolitains',
+    caption: 'Porte-conteneurs CMA CGM au Havre — principal armateur desservant les Antilles.',
+    credit: 'Wikimedia Commons — CC BY 2.0',
+    creditUrl:
+      'https://commons.wikimedia.org/wiki/File:CMA_CGM_Benjamin_Franklin,_Port_2000,_Le_Havre,_22_November_2015_(23042047853).jpg',
+  },
+  port: {
+    src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Fort-de-France_panorama.jpg/640px-Fort-de-France_panorama.jpg',
+    alt: 'Vue panoramique de Fort-de-France, Martinique — chef-lieu et principale zone commerciale',
+    caption: 'Fort-de-France, Martinique — centre commercial et portuaire de l'île.',
+    credit: 'Wikimedia Commons — CC BY-SA 3.0',
+    creditUrl: 'https://commons.wikimedia.org/wiki/File:Fort-de-France_panorama.jpg',
+  },
+};
+
+// ─── Component ─────────────────────────────────────────────────────────────────
+
+function ImageCard({
+  src,
+  alt,
+  caption,
+  credit,
+  creditUrl,
+  height = 200,
+}: {
+  src: string;
+  alt: string;
+  caption: string;
+  credit: string;
+  creditUrl: string;
+  height?: number;
+}) {
+  const [error, setError] = useState(false);
+  if (error) return null;
+  return (
+    <figure
+      style={{
+        margin: 0,
+        borderRadius: 12,
+        overflow: 'hidden',
+        border: '1px solid rgba(148,163,184,0.12)',
+        flexShrink: 0,
+      }}
+    >
+      <img
+        src={src}
+        alt={alt}
+        loading="lazy"
+        onError={() => setError(true)}
+        style={{ width: '100%', height, objectFit: 'cover', display: 'block' }}
+      />
+      <figcaption
+        style={{
+          fontSize: '0.65rem',
+          color: '#64748b',
+          padding: '0.35rem 0.6rem',
+          background: 'rgba(0,0,0,0.4)',
+          lineHeight: 1.4,
+        }}
+      >
+        {caption}{' '}
+        <a
+          href={creditUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: '#60a5fa' }}
+        >
+          {credit}
+        </a>
+      </figcaption>
+    </figure>
+  );
+}
+
+export default function PriceExplainerBanner() {
+  return (
+    <section
+      className="price-chart-section section-reveal"
+      aria-labelledby="explainer-heading"
+      style={{ paddingTop: '2rem' }}
+    >
+      <div className="price-chart-header">
+        <h2 className="section-title slide-up" id="explainer-heading">
+          🤔 Pourquoi ces écarts de prix ?
+        </h2>
+        <p className="price-chart-sub">
+          Comprendre les mécanismes structurels qui expliquent la vie chère dans les DOM / COM
+        </p>
+      </div>
+
+      <div className="price-chart-wrap" style={{ maxWidth: 680 }}>
+        {/* Intro */}
+        <p
+          style={{
+            fontSize: '0.9rem',
+            color: '#cbd5e1',
+            lineHeight: 1.7,
+            margin: '0 0 1.4rem',
+          }}
+        >
+          En Guadeloupe, Martinique, Guyane, La Réunion et Mayotte, les prix alimentaires sont en
+          moyenne{' '}
+          <strong style={{ color: '#fbbf24' }}>11 à 17 % plus élevés</strong> qu'en France
+          métropolitaine — et jusqu'à <strong style={{ color: '#ef4444' }}>40 % de plus</strong>{' '}
+          sur certains produits transformés. Quatre mécanismes cumulatifs expliquent ces écarts.
+        </p>
+
+        {/* Hero image — container ship */}
+        <div style={{ marginBottom: '1.4rem' }}>
+          <ImageCard {...IMAGES.ship} height={190} />
+        </div>
+
+        {/* Factor cards */}
+        <div
+          className="explainer-grid"
+          style={{ marginBottom: '1.5rem' }}
+        >
+          {FACTORS.map((f) => (
+            <div
+              key={f.title}
+              style={{
+                padding: '0.9rem 1rem',
+                borderRadius: 12,
+                background: f.bg,
+                border: `1px solid ${f.border}`,
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.45rem',
+                  marginBottom: '0.4rem',
+                  flexWrap: 'wrap',
+                }}
+              >
+                <span style={{ fontSize: '1.15rem' }}>{f.emoji}</span>
+                <span
+                  style={{ fontWeight: 700, color: '#e2e8f0', fontSize: '0.88rem', flex: 1 }}
+                >
+                  {f.title}
+                </span>
+                <span
+                  style={{
+                    fontSize: '0.68rem',
+                    color: f.accentColor,
+                    fontWeight: 700,
+                    background: f.bg,
+                    border: `1px solid ${f.border}`,
+                    borderRadius: 20,
+                    padding: '1px 7px',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {f.badge}
+                </span>
+              </div>
+              <p
+                style={{
+                  fontSize: '0.78rem',
+                  color: '#94a3b8',
+                  margin: 0,
+                  lineHeight: 1.6,
+                }}
+              >
+                {f.detail}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {/* Second image — port city */}
+        <div style={{ marginBottom: '1.4rem' }}>
+          <ImageCard {...IMAGES.port} height={160} />
+        </div>
+
+        {/* Overcost bar chart */}
+        <div
+          style={{
+            padding: '1rem 1.1rem',
+            borderRadius: 12,
+            background: 'rgba(15,23,42,0.5)',
+            border: '1px solid rgba(148,163,184,0.1)',
+            marginBottom: '1.25rem',
+          }}
+        >
+          <p
+            style={{
+              fontSize: '0.8rem',
+              color: '#94a3b8',
+              fontWeight: 600,
+              margin: '0 0 0.8rem',
+            }}
+          >
+            Surcoût alimentaire moyen vs France métropolitaine
+          </p>
+          {OVERCOSTS.map((t) => (
+            <div
+              key={t.territory}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.6rem',
+                marginBottom: '0.55rem',
+              }}
+            >
+              <span style={{ fontSize: '0.9rem', minWidth: 20 }}>{t.flag}</span>
+              <span
+                style={{
+                  fontSize: '0.78rem',
+                  color: '#e2e8f0',
+                  minWidth: 112,
+                }}
+              >
+                {t.territory}
+              </span>
+              <div
+                style={{
+                  flex: 1,
+                  height: 5,
+                  background: 'rgba(255,255,255,0.07)',
+                  borderRadius: 4,
+                  overflow: 'hidden',
+                }}
+              >
+                <div
+                  style={{
+                    height: '100%',
+                    width: `${t.pct === 0 ? 3 : (t.pct / 20) * 100}%`,
+                    background: t.color,
+                    borderRadius: 4,
+                    transition: 'width 0.5s ease',
+                  }}
+                />
+              </div>
+              <span
+                style={{
+                  minWidth: 38,
+                  textAlign: 'right',
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  color: t.color,
+                }}
+              >
+                {t.pct === 0 ? 'réf.' : `+${t.pct} %`}
+              </span>
+            </div>
+          ))}
+          <p style={{ fontSize: '0.65rem', color: '#475569', margin: '0.6rem 0 0' }}>
+            Source : INSEE — Enquête Budget de Famille DOM 2017/2018 ; IEDOM Rapports annuels 2023.
+          </p>
+        </div>
+
+        {/* CTA */}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: '0.75rem',
+            flexWrap: 'wrap',
+          }}
+        >
+          <Link
+            to="/comprendre-prix"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              padding: '0.55rem 1.25rem',
+              borderRadius: 8,
+              background: 'rgba(99,102,241,0.14)',
+              border: '1px solid rgba(99,102,241,0.4)',
+              color: '#a5b4fc',
+              fontSize: '0.83rem',
+              fontWeight: 600,
+              textDecoration: 'none',
+            }}
+          >
+            📖 Analyse complète →
+          </Link>
+          <Link
+            to="/comparaison-territoires"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              padding: '0.55rem 1.25rem',
+              borderRadius: 8,
+              background: 'rgba(30,41,59,0.6)',
+              border: '1px solid rgba(148,163,184,0.2)',
+              color: '#94a3b8',
+              fontSize: '0.83rem',
+              fontWeight: 600,
+              textDecoration: 'none',
+            }}
+          >
+            📊 Tableau économique →
+          </Link>
+        </div>
+
+        <p
+          style={{
+            textAlign: 'center',
+            fontSize: '0.68rem',
+            color: '#475569',
+            marginTop: '0.85rem',
+          }}
+        >
+          Sources : INSEE, IEDOM, CEROM, Autorité de la concurrence, Armateurs de France
+        </p>
+      </div>
+    </section>
+  );
+}
