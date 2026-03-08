@@ -180,3 +180,23 @@ push-rebased-branch.sh
 frontend/dist/
 *.orig
 frontend/.eslintcache
+
+# Artefacts de build
+/output/
+
+# Scripts locaux temporaires
+fix-useeffect-report.sh
+fix_typecheck.sh
+push-merge-resolution.sh
+audit-termux.sh
+
+# Fichiers git internes
+FETCH_HEAD
+ORIG_HEAD
+
+# Fichiers parasites racine
+/0
+/App
+FINAL_VERIFICATION_*.txt
+useeffect-risk.txt
+audit-report.txt
