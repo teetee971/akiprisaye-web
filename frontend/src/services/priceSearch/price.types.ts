@@ -44,6 +44,7 @@ export type PriceSourceId =
   | 'huit_a_huit_guadeloupe'
   | 'supeco_guyane'
   | 'carrefour_milenis_guadeloupe'
+  | 'connexion_guadeloupe'
   | 'calameo_catalog';
 
 export type PriceSearchStatus =

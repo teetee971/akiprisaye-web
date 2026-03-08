@@ -6,6 +6,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { createCalameoCatalogProvider } from '../createCalameoCatalogProvider';
 import { carrefourMilenisGuadeloupeProvider } from '../carrefourMilenisGuadeloupeProvider';
+import { connexionGuadeloupeProvider } from '../connexionGuadeloupeProvider';
 import { ecologiteGuadeloupeProvider } from '../ecologiteGuadeloupeProvider';
 import { huitAHuitGuadeloupeProvider } from '../huitAHuitGuadeloupeProvider';
 import { supecoGuyaneProvider } from '../supecoGuyaneProvider';
@@ -16,6 +17,7 @@ const ECOLOGITE_FLAG    = 'VITE_PRICE_PROVIDER_ECOLOGITE_GUADELOUPE';
 const HUITAHUIT_FLAG    = 'VITE_PRICE_PROVIDER_HUIT_A_HUIT_GUADELOUPE';
 const SUPECO_FLAG       = 'VITE_PRICE_PROVIDER_SUPECO_GUYANE';
 const CARREFOUR_FLAG    = 'VITE_PRICE_PROVIDER_CARREFOUR_MILENIS_GUADELOUPE';
+const CONNEXION_FLAG    = 'VITE_PRICE_PROVIDER_CONNEXION_GUADELOUPE';
 
 beforeEach(() => {
   vi.restoreAllMocks();
@@ -23,6 +25,7 @@ beforeEach(() => {
   vi.stubEnv(HUITAHUIT_FLAG, 'false');
   vi.stubEnv(SUPECO_FLAG, 'false');
   vi.stubEnv(CARREFOUR_FLAG, 'false');
+  vi.stubEnv(CONNEXION_FLAG, 'false');
   vi.stubEnv('VITE_PRICE_API_BASE', '');
 });
 
@@ -337,6 +340,85 @@ describe('carrefourMilenisGuadeloupeProvider', () => {
     expect(result.observations).toHaveLength(0);
     expect(
       result.warnings.some((w) => w.toLowerCase().includes('milenis') || w.toLowerCase().includes('beauté') || w.includes('calameo')),
+    ).toBe(true);
+  });
+});
+
+// ─── connexionGuadeloupeProvider ─────────────────────────────────────────────
+
+describe('connexionGuadeloupeProvider', () => {
+  it('has correct source ID and book code in request', async () => {
+    expect(connexionGuadeloupeProvider.source).toBe('connexion_guadeloupe');
+
+    vi.stubEnv(CONNEXION_FLAG, 'true');
+    vi.stubEnv('VITE_PRICE_API_BASE', 'https://example.com');
+
+    let capturedUrl = '';
+    vi.stubGlobal('fetch', vi.fn().mockImplementation((url: string) => {
+      capturedUrl = url;
+      return Promise.resolve({ ok: true, json: async () => ({ status: 'PARTIAL', observations: [], warnings: [] }) });
+    }));
+
+    await connexionGuadeloupeProvider.search({ query: 'lave-linge' }, makeController().signal);
+    expect(capturedUrl).toContain('bkcode=0077620289340a0cc1cc8');
+    expect(capturedUrl).toContain('source=connexion_guadeloupe');
+  });
+
+  it('is disabled by default', () => {
+    expect(connexionGuadeloupeProvider.isEnabled()).toBe(false);
+  });
+
+  it('is enabled when env flag is set', () => {
+    vi.stubEnv(CONNEXION_FLAG, 'true');
+    expect(connexionGuadeloupeProvider.isEnabled()).toBe(true);
+  });
+
+  it('returns UNAVAILABLE when fetch throws', async () => {
+    vi.stubEnv(CONNEXION_FLAG, 'true');
+    vi.stubEnv('VITE_PRICE_API_BASE', 'https://example.com');
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('timeout')));
+
+    const result = await connexionGuadeloupeProvider.search(
+      { query: 'réfrigérateur' },
+      makeController().signal,
+    );
+    expect(result.status).toBe('UNAVAILABLE');
+    expect(result.observations).toHaveLength(0);
+  });
+
+  it('returns NO_DATA with catalog link warning on success', async () => {
+    vi.stubEnv(CONNEXION_FLAG, 'true');
+    vi.stubEnv('VITE_PRICE_API_BASE', 'https://example.com');
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          status: 'PARTIAL',
+          observations: [],
+          warnings: [
+            'Catalogue visuel (Connexion Guadeloupe — Catalogue Mars 2026) : ' +
+              'extraction automatique des prix non disponible. ' +
+              'Consulter le catalogue : https://www.calameo.com/books/0077620289340a0cc1cc8',
+          ],
+        }),
+      }),
+    );
+
+    const result = await connexionGuadeloupeProvider.search(
+      { query: 'four micro-ondes' },
+      makeController().signal,
+    );
+
+    expect(result.source).toBe('connexion_guadeloupe');
+    expect(result.status).toBe('NO_DATA');
+    expect(result.observations).toHaveLength(0);
+    expect(
+      result.warnings.some(
+        (w) =>
+          w.toLowerCase().includes('connexion') ||
+          w.includes('0077620289340a0cc1cc8'),
+      ),
     ).toBe(true);
   });
 });

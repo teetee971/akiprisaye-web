@@ -37,8 +37,9 @@ const CACHE_MAX_AGE_SECONDS = 6 * 3600; // 6h
  * Format : "accountId:label"
  */
 const KNOWN_ACCOUNTS: { id: string; label: string }[] = [
-  { id: '006722065', label: '8 à Huit / SUP ECO DOM-TOM' },
+  { id: '006722065', label: '8 à Huit / SUP ECO / Carrefour Milénis DOM-TOM' },
   { id: '005456123', label: 'Ecologite Guadeloupe' },
+  { id: '7762028',   label: 'Connexion Guadeloupe (high-tech / électroménager)' },
 ];
 
 const CORS_HEADERS = {

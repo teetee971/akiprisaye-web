@@ -1,6 +1,7 @@
 import type { PriceSearchInput } from '../services/priceSearch/price.types';
 import { calameoDynamicProvider } from './calameoDynamicProvider';
 import { carrefourMilenisGuadeloupeProvider } from './carrefourMilenisGuadeloupeProvider';
+import { connexionGuadeloupeProvider } from './connexionGuadeloupeProvider';
 import { ecologiteGuadeloupeProvider } from './ecologiteGuadeloupeProvider';
 import { huitAHuitGuadeloupeProvider } from './huitAHuitGuadeloupeProvider';
 import { leclercCatalogProvider } from './leclercCatalogProvider';
@@ -107,6 +108,7 @@ const PROVIDERS: PriceProvider[] = [
   huitAHuitGuadeloupeProvider,
   supecoGuyaneProvider,
   carrefourMilenisGuadeloupeProvider,
+  connexionGuadeloupeProvider,
   calameoDynamicProvider,
 ];
 
