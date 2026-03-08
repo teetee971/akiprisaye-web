@@ -7,6 +7,8 @@ import { db, auth } from "@/lib/firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { Camera, MapPin, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { HeroImage } from "@/components/ui/HeroImage";
+import { PAGE_HERO_IMAGES } from "@/config/imageAssets";
 
 export default function ContribuerPrix() {
   const { user, isGuest } = useAuth();
@@ -114,15 +116,15 @@ export default function ContribuerPrix() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 py-12 px-4">
       <div className="max-w-3xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-4">
-            🤝 Contribuer aux données de prix
-          </h1>
-          <p className="text-xl text-gray-300">
-            Aidez la communauté en partageant les prix que vous observez
-          </p>
-        </div>
+        <HeroImage
+          src={PAGE_HERO_IMAGES.contribuer}
+          alt="Contribuer aux données de prix"
+          gradient="from-slate-950 to-emerald-900"
+          height="h-40 sm:h-52"
+        >
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>🤝 Contribuer</h1>
+          <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Aidez à construire la base de données de prix la plus complète des DOM</p>
+        </HeroImage>
 
         {/* Info Banner */}
         <div className="bg-blue-900/30 border border-blue-700 rounded-xl p-6 mb-8">

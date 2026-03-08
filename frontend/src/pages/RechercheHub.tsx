@@ -2,6 +2,8 @@ import { useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useProductSearch } from '../hooks/useProductSearch';
 import styles from './RechercheHub.module.css';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 const suggestedQueries = [
   'Produit du quotidien',
@@ -83,13 +85,15 @@ export default function RechercheHub() {
     // Choix sémantiques natifs (label/input, nav/ul/li, button/link) pour des noms accessibles sans ARIA superflu.
     // TODO(a11y): ajouter un test automatisé Lighthouse/axe en CI.
     <main className={styles.page}>
-      <header className={styles.header}>
-        <p className={styles.kicker}>Recherche & comparaison</p>
-        <h1 className={styles.title}>Point d’entrée unique pour vos recherches</h1>
-        <p className={styles.subtitle}>
-          Un accès central, sobre et clair pour orienter vos recherches sans surcharge visuelle.
-        </p>
-      </header>
+      <HeroImage
+        src={PAGE_HERO_IMAGES.rechercheHub}
+        alt="Recherche"
+        gradient="from-slate-950 to-blue-900"
+        height="h-40 sm:h-52"
+      >
+        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>🔍 Recherche</h1>
+        <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Cherchez un produit, un prix ou un magasin</p>
+      </HeroImage>
 
       <section className={styles.searchSection} aria-label="Recherche">
         <label className={styles.label} htmlFor="recherche-hub-input">

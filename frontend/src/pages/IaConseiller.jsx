@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { getUserBudgetContext, generateBudgetAdvice } from '../services/aiAdvisorService';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 export default function IaConseiller() {
   const { user } = useAuth();
@@ -29,14 +31,15 @@ export default function IaConseiller() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
       <div className="max-w-4xl mx-auto py-16 px-4">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4 text-blue-400">
-            🧠 Conseiller IA Budget Intelligent
-          </h1>
-          <p className="text-slate-300 text-lg">
-            Obtenez des recommandations personnalisées pour optimiser votre budget
-          </p>
-        </div>
+        <HeroImage
+          src={PAGE_HERO_IMAGES.iaConseiller}
+          alt="Conseiller IA"
+          gradient="from-slate-950 to-violet-900"
+          height="h-40 sm:h-52"
+        >
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>🤖 Conseiller IA</h1>
+          <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Votre assistant IA pour optimiser votre budget</p>
+        </HeroImage>
 
         {/* Analyze Button */}
         <div className="text-center mb-8">

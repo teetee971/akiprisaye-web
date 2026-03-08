@@ -14,6 +14,8 @@ import { useEntitlements } from '../billing/useEntitlements';
 import type { PlanId } from '../billing/plans';
 import { PLAN_DEFINITIONS } from '../billing/plans';
 import { Helmet } from 'react-helmet-async';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 /* ------------------------------------------------------------------ */
 /* Métadonnées des plans pour l'UI                                     */
@@ -173,6 +175,16 @@ export default function UpgradePage() {
           content="Débloquez l'historique avancé, les alertes prix, le multi-territoires et plus encore."
         />
       </Helmet>
+
+      <HeroImage
+        src={PAGE_HERO_IMAGES.upgradePage}
+        alt="Passer à Premium"
+        gradient="from-slate-950 to-amber-900"
+        height="h-40 sm:h-52"
+      >
+        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>⭐ Passer à Premium</h1>
+        <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Débloquez toutes les fonctionnalités avancées</p>
+      </HeroImage>
 
       <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12">
         <div className="max-w-3xl mx-auto px-4 space-y-10">

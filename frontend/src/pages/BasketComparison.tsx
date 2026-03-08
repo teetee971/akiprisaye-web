@@ -22,6 +22,8 @@ import { BasketComparisonTable } from '../components/comparison/basket-compariso
 import { SavingsSummary } from '../components/comparison/savings-summary';
 import { StoreSelector, type StoreFilterOptions } from '../components/comparison/store-selector';
 import { OptimizedBasketSuggestion } from '../components/comparison/optimized-basket-suggestion';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 export default function BasketComparisonPage() {
   const navigate = useNavigate();
@@ -183,6 +185,15 @@ export default function BasketComparisonPage() {
   return (
     <div className="min-h-screen bg-slate-950 py-8 px-4">
       <div className="max-w-7xl mx-auto">
+        <HeroImage
+          src={PAGE_HERO_IMAGES.basketComparison}
+          alt="Comparaison de paniers"
+          gradient="from-slate-950 to-green-900"
+          height="h-40 sm:h-52"
+        >
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>🛒 Comparaison de paniers</h1>
+          <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Comparez votre panier entre territoires et enseignes</p>
+        </HeroImage>
         {/* PROMPT 8: Citizen Message */}
         <div className="bg-blue-900/20 border border-blue-700/50 rounded-xl p-5 mb-6">
           <div className="flex items-start gap-4">
@@ -210,9 +221,6 @@ export default function BasketComparisonPage() {
           <div className="bg-slate-900 rounded-xl p-6 border border-slate-800">
             <div className="flex items-start justify-between flex-wrap gap-4">
               <div>
-                <h1 className="text-2xl font-bold text-white mb-2">
-                  🛒 Comparer mon panier
-                </h1>
                 <p className="text-gray-400">
                   {count} article{count > 1 ? 's' : ''} • {comparisons.length} magasin{comparisons.length > 1 ? 's' : ''} trouvé{comparisons.length > 1 ? 's' : ''}
                 </p>

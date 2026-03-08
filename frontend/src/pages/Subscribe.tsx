@@ -1,4 +1,3 @@
- 
 // src/pages/Subscribe.tsx
 /**
  * Ethical Subscription Tunnel - 3 Steps Max
@@ -13,6 +12,8 @@ import { CivicButton } from '@/components/ui/CivicButton';
 import { DataBadge } from '@/components/ui/DataBadge';
 import { LimitNote } from '@/components/ui/LimitNote';
 import TerritorySelector from '@/components/TerritorySelector';
+import { HeroImage } from '@/components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '@/config/imageAssets';
 
 type Step = 1 | 2 | 3;
 
@@ -103,6 +104,15 @@ export default function Subscribe() {
 
   return (
     <div className="min-h-screen bg-slate-950 p-4 md:p-8">
+      <HeroImage
+        src={PAGE_HERO_IMAGES.subscribe}
+        alt="Choisir un abonnement"
+        gradient="from-slate-950 to-indigo-900"
+        height="h-40 sm:h-52"
+      >
+        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>🚀 Choisir un abonnement</h1>
+        <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Accédez à toutes les fonctionnalités de la plateforme</p>
+      </HeroImage>
       <GlassContainer className="max-w-4xl mx-auto p-8">
         {/* Progress Indicator */}
         <div className="mb-8">

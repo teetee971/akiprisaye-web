@@ -11,20 +11,22 @@ import { CivicButton } from '@/components/ui/CivicButton';
 import { DataBadge } from '@/components/ui/DataBadge';
 import { LimitNote } from '@/components/ui/LimitNote';
 import { Download, FileText, Shield, CheckCircle } from 'lucide-react';
+import { HeroImage } from '@/components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '@/config/imageAssets';
 
 export default function LicenceInstitution() {
   return (
     <div className="min-h-screen bg-slate-950 p-4 md:p-8">
       <GlassContainer className="max-w-6xl mx-auto p-8">
-        {/* Hero Section */}
-        <div className="mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            Licence Institutionnelle
-          </h1>
-          <p className="text-xl text-gray-300 max-w-3xl">
-            Service public numérique transparent, auditable et conforme pour les collectivités territoriales et organismes publics.
-          </p>
-        </div>
+        <HeroImage
+          src={PAGE_HERO_IMAGES.licenceInstitution}
+          alt="Licence Institutionnelle"
+          gradient="from-slate-950 to-slate-800"
+          height="h-40 sm:h-52"
+        >
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>🏛️ Licence Institutionnelle</h1>
+          <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Licence d'accès pour institutions et collectivités territoriales</p>
+        </HeroImage>
 
         {/* Main Content Grid */}
         <div className="grid gap-8 md:grid-cols-2 mb-12">

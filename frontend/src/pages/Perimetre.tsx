@@ -1,4 +1,6 @@
-const territoiresCouverts = [
+import { Link } from 'react-router-dom';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
   'Guadeloupe — périmètre pilote construit avec des relevés citoyens et des données publiques.',
   'Martinique — relevés ponctuels vérifiés manuellement avant publication.',
 ];
@@ -20,14 +22,15 @@ export default function Perimetre() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-        <header className="space-y-2">
-          <p className="text-sm text-blue-200 uppercase tracking-wide">Observatoire citoyen</p>
-          <h1 className="text-3xl sm:text-4xl font-bold text-white">Périmètre &amp; limites</h1>
-          <p className="text-slate-300 max-w-3xl">
-            Cadre public et limité pour éviter toute sur-promesse : seules les zones décrites ci-dessous sont publiées
-            aujourd&apos;hui. Les données sont statiques et sourcées, sans collecte automatisée.
-          </p>
-        </header>
+        <HeroImage
+          src={PAGE_HERO_IMAGES.perimetre}
+          alt="Périmètre géographique"
+          gradient="from-slate-950 to-blue-900"
+          height="h-40 sm:h-52"
+        >
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>🗺️ Périmètre géographique</h1>
+          <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Territoires et zones couverts par la plateforme</p>
+        </HeroImage>
 
         <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
           <div className="flex items-center gap-2">

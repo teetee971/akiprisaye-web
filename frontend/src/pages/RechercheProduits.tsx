@@ -14,6 +14,8 @@ import { TipsPanel } from '../features/tips/ui/TipsPanel';
 import type { TipContext } from '../features/tips';
 import { getProductImageFallback } from '../utils/productImageFallback';
 import { safeLocalStorage } from '../utils/safeLocalStorage';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 const TERRITORIES: { code: TerritoryCode; label: string }[] = [
   { code: 'fr', label: 'France (métropole)' },
@@ -958,18 +960,17 @@ export default function RechercheProduits() {
         />
       </Helmet>
 
-      <div className="max-w-4xl mx-auto space-y-8">
-        <header className="space-y-3">
-          <p className="text-blue-300 text-sm font-semibold">Module ScanHub • Prix observés</p>
-          <h1 className="text-3xl md:text-4xl font-bold">
-            Recherche produits & prix réels
-          </h1>
-          <p className="text-slate-300 max-w-2xl">
-            Les prix affichés sont des observations anonymisées issues de sources ouvertes.
-            Ils sont présentés sous forme de fourchette pour éviter toute confusion.
-          </p>
-        </header>
+      <HeroImage
+        src={PAGE_HERO_IMAGES.rechercheProduits}
+        alt="Recherche de produits"
+        gradient="from-slate-950 to-blue-900"
+        height="h-40 sm:h-52"
+      >
+        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>🔍 Recherche de produits</h1>
+        <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Trouvez et comparez les prix de vos produits</p>
+      </HeroImage>
 
+      <div className="max-w-4xl mx-auto space-y-8">
         <section className="bg-slate-900/70 border border-slate-700 rounded-2xl p-6 space-y-4">
           <form
             className="space-y-4"

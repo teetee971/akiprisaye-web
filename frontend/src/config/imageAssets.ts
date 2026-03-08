@@ -266,6 +266,63 @@ export const PAGE_HERO_IMAGES = {
   badges: 'https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?auto=format&fit=crop&w=1600&q=80',
   /** Leaderboard */
   leaderboard: 'https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?auto=format&fit=crop&w=1600&q=80',
+  // ── Remaining pages ──────────────────────────────────────────────────────
+  /** Alertes — alert bell, notifications */
+  alertes: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=1600&q=80',
+  /** Panier comparé / BasketComparison */
+  basketComparison: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1600&q=80',
+  /** Modules civiques */
+  civicModules: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1600&q=80',
+  /** Contact collectivités */
+  contactCollectivites: 'https://images.unsplash.com/photo-1521791055366-0d553872952f?auto=format&fit=crop&w=1600&q=80',
+  /** Devis tracking */
+  devisTracking: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1600&q=80',
+  /** Inscription */
+  inscription: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1600&q=80',
+  /** Inscription Pro */
+  inscriptionPro: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=1600&q=80',
+  /** Licence institution */
+  licenceInstitution: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=1600&q=80',
+  /** Mentions légales */
+  mentionsLegales: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=1600&q=80',
+  /** Mes demandes */
+  mesDemandes: 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?auto=format&fit=crop&w=1600&q=80',
+  /** Mes listes */
+  mesListes: 'https://images.unsplash.com/photo-1534723452862-4c874018d66d?auto=format&fit=crop&w=1600&q=80',
+  /** Module audit */
+  moduleAudit: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1600&q=80',
+  /** Périmètre */
+  perimetre: 'https://images.unsplash.com/photo-1526628953301-3cd8e16b67b1?auto=format&fit=crop&w=1600&q=80',
+  /** Produit */
+  produit: 'https://images.unsplash.com/photo-1542838132-2b1a08e4b1a0?auto=format&fit=crop&w=1600&q=80',
+  /** Recherche hub */
+  rechercheHub: 'https://images.unsplash.com/photo-1506617564039-2f3b650b7010?auto=format&fit=crop&w=1600&q=80',
+  /** Recherche produits */
+  rechercheProduits: 'https://images.unsplash.com/photo-1542838132-2b1a08e4b1a0?auto=format&fit=crop&w=1600&q=80',
+  /** Paramètres */
+  settings: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1600&q=80',
+  /** S'abonner */
+  subscribe: 'https://images.unsplash.com/photo-1620714223084-8fcacc2523dc?auto=format&fit=crop&w=1600&q=80',
+  /** Territory hub */
+  territoryHub: 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&w=1600&q=80',
+  /** Upgrade */
+  upgradePage: 'https://images.unsplash.com/photo-1620714223084-8fcacc2523dc?auto=format&fit=crop&w=1600&q=80',
+  /** Budget réel mensuel */
+  budgetReel: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1600&q=80',
+  /** Budget vital */
+  budgetVital: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1600&q=80',
+  /** Dossier médias */
+  dossierMedia: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1600&q=80',
+  /** Évaluation cosmétique */
+  evaluationCosmetique: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=1600&q=80',
+  /** Historique prix */
+  historiquePrix: 'https://images.unsplash.com/photo-1607082348351-cef5cd02c7b0?auto=format&fit=crop&w=1600&q=80',
+  /** IA Conseiller */
+  iaConseiller: 'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?auto=format&fit=crop&w=1600&q=80',
+  /** Ti Panie — Caribbean market basket */
+  tiPanie: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1600&q=80',
+  /** Assistant IA */
+  assistantIA: 'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?auto=format&fit=crop&w=1600&q=80',
 };
 
 /**

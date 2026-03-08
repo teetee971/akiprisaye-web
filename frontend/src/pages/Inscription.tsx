@@ -1,4 +1,3 @@
- 
 // src/pages/Inscription.tsx
 import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
@@ -8,6 +7,8 @@ import { doc, setDoc } from "firebase/firestore";
 import { db, firebaseError } from "@/lib/firebase";
 import { PasswordInput } from "@/components/PasswordInput";
 import { FIREBASE_UNAVAILABLE_MESSAGE } from "@/lib/authMessages";
+import { HeroImage } from "@/components/ui/HeroImage";
+import { PAGE_HERO_IMAGES } from "@/config/imageAssets";
 
 const DEFAULT_USER_PLAN = "free";
 const PLAN_LABELS: Record<string, { title: string; description: string }> = {
@@ -102,7 +103,15 @@ export default function Inscription() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
       <div className="bg-slate-900 rounded-2xl p-6 shadow-lg w-full max-w-md">
-        <h1 className="text-2xl font-semibold mb-6 text-white text-center">Créer un compte</h1>
+        <HeroImage
+          src={PAGE_HERO_IMAGES.inscription}
+          alt="Créer un compte"
+          gradient="from-slate-950 to-blue-900"
+          height="h-40 sm:h-52"
+        >
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>✨ Créer un compte</h1>
+          <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Rejoignez la communauté et accédez à tous les outils</p>
+        </HeroImage>
 
         <div className="mb-4 p-3 bg-blue-900/20 border border-blue-700/40 rounded-lg text-blue-100 text-sm">
           <p className="font-semibold">

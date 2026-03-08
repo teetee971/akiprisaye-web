@@ -4,6 +4,8 @@ import { Ticket as TicketIcon, Search, Filter, Clock, CheckCircle2, XCircle, Ale
 import type { Ticket, TicketStatus } from '../types/ticket';
 import { TICKET_STATUS_LABELS, TICKET_TYPE_LABELS } from '../types/ticket';
 import ticketService from '../services/ticketService';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 /**
  * Page de suivi des demandes utilisateur
@@ -119,20 +121,15 @@ export default function MesDemandes() {
 
   return (
     <div className="min-h-screen bg-slate-950">
-      {/* Header */}
-      <header className="bg-gradient-to-r from-slate-900 to-slate-800 border-b border-slate-700">
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          <div className="flex items-center gap-3 mb-2">
-            <TicketIcon className="w-6 h-6 text-blue-400" />
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-100">
-              Mes Demandes
-            </h1>
-          </div>
-          <p className="text-sm text-gray-400">
-            Suivez l'avancement de vos suggestions et demandes
-          </p>
-        </div>
-      </header>
+      <HeroImage
+        src={PAGE_HERO_IMAGES.mesDemandes}
+        alt="Mes demandes"
+        gradient="from-slate-950 to-slate-800"
+        height="h-40 sm:h-52"
+      >
+        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>📬 Mes demandes</h1>
+        <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Vos demandes en cours et leur statut</p>
+      </HeroImage>
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 py-6">

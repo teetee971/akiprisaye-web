@@ -6,6 +6,8 @@ import NewsWidgetCivic from '../components/NewsWidgetCivic';
 import AIPricePrediction from '../components/AIPricePrediction';
 import GPSShoppingList from '../components/GPSShoppingList';
 import GlobalDisclaimer from '../components/GlobalDisclaimer';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 // Compute current time once at module load for demo purposes
 // In production, this would come from API or be computed per-component instance
@@ -44,18 +46,15 @@ export default function CivicModules() {
 
   return (
     <div className="min-h-screen bg-slate-950">
-      {/* Header */}
-      <header className="bg-gradient-to-r from-slate-900 to-slate-800 border-b border-slate-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-100 mb-2">
-            A KI PRI SA YÉ
-          </h1>
-          <p className="text-sm sm:text-base text-gray-300 leading-relaxed">
-            Observatoire public des prix — Données publiques vérifiées
-          </p>
-        </div>
-      </header>
-
+      <HeroImage
+        src={PAGE_HERO_IMAGES.civicModules}
+        alt="Modules civiques"
+        gradient="from-slate-950 to-teal-900"
+        height="h-40 sm:h-52"
+      >
+        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>🏛️ Modules civiques</h1>
+        <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Outils citoyens pour surveiller et signaler les abus de prix</p>
+      </HeroImage>
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="space-y-6">

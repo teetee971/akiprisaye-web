@@ -1,4 +1,6 @@
 import { Link, useParams } from 'react-router-dom';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 const territoryLabels: Record<string, string> = {
   guadeloupe: 'Guadeloupe',
@@ -15,10 +17,15 @@ export default function TerritoryHub() {
   return (
     <div className="min-h-screen bg-slate-950 text-white">
       <div className="max-w-5xl mx-auto px-6 py-16">
-        <h1 className="text-3xl font-bold mb-6">{territoryLabel}</h1>
-        <p className="text-white/70 mb-10">
-          Accédez rapidement aux outils clés pour votre territoire.
-        </p>
+        <HeroImage
+          src={PAGE_HERO_IMAGES.territoryHub}
+          alt="Hub territoires"
+          gradient="from-slate-950 to-teal-900"
+          height="h-40 sm:h-52"
+        >
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>🗺️ Hub territoires</h1>
+          <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Explorez les données par territoire d'outre-mer</p>
+        </HeroImage>
         <div className="flex flex-wrap gap-4">
           <Link
             to={`/${territory}/scanner`}

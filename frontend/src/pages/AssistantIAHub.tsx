@@ -4,6 +4,8 @@ import { MessageCircle, TrendingUp, ShoppingCart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { GlassCard } from '../components/ui/glass-card';
 import IaConseiller from './IaConseiller';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 type IASection = 'conseiller' | 'suivi' | 'rayon';
 
@@ -19,14 +21,15 @@ export default function AssistantIAHub() {
       
       <div className="min-h-screen bg-slate-950 p-4 pt-24">
         <div className="max-w-6xl mx-auto">
-          <div className="mb-8">
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
-              🤖 Assistant IA
-            </h1>
-            <p className="text-gray-400 text-lg">
-              Votre conseiller intelligent pour économiser sur vos courses
-            </p>
-          </div>
+          <HeroImage
+            src={PAGE_HERO_IMAGES.assistantIA}
+            alt="Assistant IA"
+            gradient="from-slate-950 to-violet-900"
+            height="h-40 sm:h-52"
+          >
+            <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>🤖 Assistant IA</h1>
+            <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Votre conseiller personnel pour comprendre et optimiser vos dépenses</p>
+          </HeroImage>
           
           {/* Section Selector */}
           <GlassCard className="mb-6 p-3">

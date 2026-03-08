@@ -1,17 +1,20 @@
 import { Link } from 'react-router-dom';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 export default function MentionsLegales() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
       <div className="max-w-4xl mx-auto px-4 py-12 space-y-8">
-        <header className="space-y-2">
-          <p className="text-xs uppercase tracking-wide text-blue-200">Cadre institutionnel</p>
-          <h1 className="text-3xl font-bold text-white">Mentions légales</h1>
-          <p className="text-slate-300 max-w-3xl">
-            A KI PRI SA YÉ est un observatoire citoyen indépendant. Le service est fourni sans authentification,
-            sans backend et sans collecte de données utilisateurs.
-          </p>
-        </header>
+        <HeroImage
+          src={PAGE_HERO_IMAGES.mentionsLegales}
+          alt="Mentions légales"
+          gradient="from-slate-950 to-slate-800"
+          height="h-40 sm:h-52"
+        >
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>⚖️ Mentions légales</h1>
+          <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Informations légales et conditions d'utilisation</p>
+        </HeroImage>
 
         <section className="bg-slate-900/80 border border-slate-800 rounded-xl p-6 space-y-4">
           <div>

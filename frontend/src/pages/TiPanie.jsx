@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { getBaskets } from '../services/tiPanieService';
 import BasketCard from '../ui/BasketCard';
 import BasketFilters from '../ui/BasketFilters';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 export default function TiPanie() {
   const [baskets, setBaskets] = useState([]);
@@ -53,16 +55,15 @@ export default function TiPanie() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
       <div className="max-w-7xl mx-auto py-8 px-4">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-4 text-blue-400">
-            🧺 Ti-Panié Solidaire
-          </h1>
-          <p className="text-slate-300 text-lg max-w-3xl mx-auto">
-            Luttez contre le gaspillage et économisez ! 
-            Découvrez les paniers anti-gaspi des enseignes locales DOM-COM.
-          </p>
-        </div>
+        <HeroImage
+          src={PAGE_HERO_IMAGES.tiPanie}
+          alt="Ti Panie"
+          gradient="from-slate-950 to-green-900"
+          height="h-40 sm:h-52"
+        >
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>🛒 Ti Panie</h1>
+          <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Gérez votre panier avec les prix locaux</p>
+        </HeroImage>
 
         {/* Stats Banner */}
         <div className="grid md:grid-cols-3 gap-4 mb-8">

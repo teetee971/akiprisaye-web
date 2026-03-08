@@ -16,6 +16,8 @@ import { useState, useEffect } from 'react';
 import { auth } from '../lib/firebase';
 import { User } from 'firebase/auth';
 import { safeLocalStorage } from '../utils/safeLocalStorage';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 export default function Settings() {
   const [user, setUser] = useState<User | null>(null);
@@ -134,19 +136,16 @@ export default function Settings() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 p-4">
       <div className="max-w-4xl mx-auto">
+        <HeroImage
+          src={PAGE_HERO_IMAGES.settings}
+          alt="Paramètres"
+          gradient="from-slate-950 to-slate-800"
+          height="h-40 sm:h-52"
+        >
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>⚙️ Paramètres</h1>
+          <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Gérez vos préférences et votre compte</p>
+        </HeroImage>
         <div className="bg-slate-900/80 backdrop-blur-sm rounded-2xl shadow-2xl p-6">
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
-              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              Paramètres
-            </h1>
-            <p className="text-gray-400">Gérez vos autorisations et vos données</p>
-          </div>
-
           {/* User Info Section */}
           <section className="mb-8">
             <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">

@@ -26,6 +26,8 @@ import {
   saveProProfile,
 } from '../services/proAccountService';
 import type { ProRegistrationForm, FormeJuridique, SecteurActivite, ProPlan } from '../types/proAccount';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 // ─── Données de référence ────────────────────────────────────────────────────
 
@@ -604,20 +606,18 @@ export default function InscriptionPro() {
         <meta name="description" content="Ouvrez un compte professionnel et publiez vos prix sur A KI PRI SA YÉ" />
       </Helmet>
 
+      <HeroImage
+        src={PAGE_HERO_IMAGES.inscriptionPro}
+        alt="Inscription Professionnelle"
+        gradient="from-slate-950 to-indigo-900"
+        height="h-40 sm:h-52"
+      >
+        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>💼 Inscription Professionnelle</h1>
+        <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Accès pro pour enseignes, institutions et collectivités</p>
+      </HeroImage>
+
       <div className="min-h-screen bg-slate-950 py-12 px-4">
         <div className="max-w-2xl mx-auto">
-          {/* En-tête */}
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-2 bg-blue-600/20 border border-blue-600/30 rounded-full px-4 py-1.5 mb-4">
-              <BadgeCheck className="w-4 h-4 text-blue-400" />
-              <span className="text-sm font-medium text-blue-300">Espace Professionnel</span>
-            </div>
-            <h1 className="text-3xl font-bold text-white mb-2">Créer un compte professionnel</h1>
-            <p className="text-gray-400">
-              Publiez vos prix, présentez votre entreprise et soyez visible sur l'observatoire citoyen
-            </p>
-          </div>
-
           {/* Stepper */}
           <div className="flex items-center justify-between mb-8 px-2">
             {STEPS.map((s, i) => {

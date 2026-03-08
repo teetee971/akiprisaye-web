@@ -13,6 +13,8 @@ import { DataBadge } from '@/components/ui/DataBadge';
 import { LimitNote } from '@/components/ui/LimitNote';
 import TerritorySelector from '@/components/TerritorySelector';
 import { Mail, Phone, MapPin, Building2, Users, FileText } from 'lucide-react';
+import { HeroImage } from '@/components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '@/config/imageAssets';
 
 export default function ContactCollectivites() {
   const [formData, setFormData] = useState({
@@ -149,16 +151,15 @@ export default function ContactCollectivites() {
   return (
     <div className="min-h-screen bg-slate-950 p-4 md:p-8">
       <GlassContainer className="max-w-6xl mx-auto p-8">
-        {/* Hero Section */}
-        <div className="mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            Contact Collectivités
-          </h1>
-          <p className="text-xl text-gray-300 max-w-3xl mb-6">
-            Équipe dédiée aux organismes publics, collectivités territoriales et institutions.
-          </p>
-          <DataBadge source="Service public numérique" date="Réponse sous 48h ouvrées" />
-        </div>
+        <HeroImage
+          src={PAGE_HERO_IMAGES.contactCollectivites}
+          alt="Contact Collectivités"
+          gradient="from-slate-950 to-blue-900"
+          height="h-40 sm:h-52"
+        >
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>🏢 Contact Collectivités</h1>
+          <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Solutions institutionnelles pour les collectivités et administrations</p>
+        </HeroImage>
 
         <div className="grid md:grid-cols-3 gap-8">
           {/* Contact Form */}

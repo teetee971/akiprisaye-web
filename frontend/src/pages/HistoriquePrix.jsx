@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getGuestHistory, getUserHistory } from '../services/freemium';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 export default function HistoriquePrixPage() {
   const { user } = useAuth();
@@ -26,7 +28,15 @@ export default function HistoriquePrixPage() {
 
   return (
     <div className="max-w-4xl mx-auto p-4 space-y-4">
-      <h1 className="text-2xl font-bold">Historique des recherches</h1>
+      <HeroImage
+        src={PAGE_HERO_IMAGES.historiquePrix}
+        alt="Historique des prix"
+        gradient="from-slate-950 to-blue-900"
+        height="h-40 sm:h-52"
+      >
+        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>📈 Historique des prix</h1>
+        <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Évolution des prix dans le temps par territoire</p>
+      </HeroImage>
       {loading && <p>Chargement...</p>}
       {!loading && items.length === 0 && <p className="text-slate-500">Aucune recherche enregistrée.</p>}
       <ul className="space-y-2">

@@ -37,6 +37,8 @@ import {
   DELAI_LABELS,
   PROFONDEUR_LABELS,
 } from '@/services/devisEstimationEngine';
+import { HeroImage } from '@/components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '@/config/imageAssets';
 
 // ── Status pipeline config ────────────────────────────────────────────────────
 
@@ -121,27 +123,17 @@ export default function DevisTracking() {
         <title>Mes Devis — A KI PRI SA YÉ</title>
       </Helmet>
 
-      <div className="min-h-screen bg-gray-50">
-        <div className="bg-indigo-700 text-white py-8 px-4">
-          <div className="max-w-5xl mx-auto flex items-center gap-3">
-            <FileText className="w-7 h-7" />
-            <div>
-              <h1 className="text-xl font-bold">Mes Devis</h1>
-              <p className="text-indigo-200 text-sm">
-                Suivi de vos demandes de prestations institutionnelles
-              </p>
-            </div>
-            <div className="ml-auto">
-              <Link
-                to="/devis-ia"
-                className="bg-white text-indigo-700 text-sm font-semibold px-4 py-2 rounded-xl hover:bg-indigo-50 transition"
-              >
-                Nouvelle demande
-              </Link>
-            </div>
-          </div>
-        </div>
+      <HeroImage
+        src={PAGE_HERO_IMAGES.devisTracking}
+        alt="Suivi de devis"
+        gradient="from-slate-950 to-violet-900"
+        height="h-40 sm:h-52"
+      >
+        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>📋 Suivi de devis</h1>
+        <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Suivez l'avancement de vos devis</p>
+      </HeroImage>
 
+      <div className="min-h-screen bg-gray-50">
         <div className="max-w-5xl mx-auto px-4 py-6 flex gap-6">
           {/* Left: list */}
           <div className="w-64 flex-shrink-0 space-y-2">

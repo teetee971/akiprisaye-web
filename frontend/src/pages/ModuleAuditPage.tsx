@@ -30,6 +30,8 @@ import {
   ChevronUp,
   Search,
 } from 'lucide-react';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -1090,41 +1092,17 @@ export default function ModuleAuditPage() {
         />
       </Helmet>
 
+      <HeroImage
+        src={PAGE_HERO_IMAGES.moduleAudit}
+        alt="Audit des modules"
+        gradient="from-slate-950 to-slate-800"
+        height="h-40 sm:h-52"
+      >
+        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>🔍 Audit des modules</h1>
+        <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>État et disponibilité de tous les modules de la plateforme</p>
+      </HeroImage>
+
       <div className="min-h-screen bg-gray-50">
-        {/* Header */}
-        <div className="bg-slate-900 text-white py-10 px-4">
-          <div className="max-w-5xl mx-auto">
-            <p className="text-slate-400 text-xs font-semibold uppercase tracking-widest mb-2">
-              Documentation publique
-            </p>
-            <h1 className="text-3xl font-bold mb-2">Audit des modules</h1>
-            <p className="text-slate-300 text-sm max-w-2xl mb-6">
-              Inventaire complet de tous les modules fonctionnels de la plateforme,
-              avec leur statut d'implémentation réel vérifié dans la base de code.
-            </p>
-
-            {/* Summary stats */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <div className="bg-white/10 rounded-xl px-4 py-3">
-                <p className="text-2xl font-bold text-green-400">{stats.done}</p>
-                <p className="text-xs text-slate-300">Opérationnels</p>
-              </div>
-              <div className="bg-white/10 rounded-xl px-4 py-3">
-                <p className="text-2xl font-bold text-yellow-400">{stats.partial}</p>
-                <p className="text-xs text-slate-300">Partiels</p>
-              </div>
-              <div className="bg-white/10 rounded-xl px-4 py-3">
-                <p className="text-2xl font-bold text-slate-400">{stats.planned}</p>
-                <p className="text-xs text-slate-300">Planifiés</p>
-              </div>
-              <div className="bg-white/10 rounded-xl px-4 py-3">
-                <p className="text-2xl font-bold text-indigo-300">{stats.total}</p>
-                <p className="text-xs text-slate-300">Modules total</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* Progress bars */}
         <div className="bg-white border-b border-gray-200 px-4 py-4">
           <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-4">

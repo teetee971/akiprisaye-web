@@ -8,6 +8,8 @@ import {
   removeHistoryItem,
 } from '../services/localStore';
 import type { LocalProductItem } from '../types/localProduct';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 export default function MesListes() {
   const [tab, setTab] = useState<'favoris' | 'historique'>('favoris');
@@ -19,7 +21,15 @@ export default function MesListes() {
   return (
     <div className="min-h-screen bg-slate-950 text-white px-4 py-8">
       <div className="max-w-3xl mx-auto space-y-4">
-        <h1 className="text-3xl font-bold">Mes listes</h1>
+        <HeroImage
+          src={PAGE_HERO_IMAGES.mesListes}
+          alt="Mes listes"
+          gradient="from-slate-950 to-green-900"
+          height="h-40 sm:h-52"
+        >
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>📝 Mes listes</h1>
+          <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Vos listes de courses sauvegardées</p>
+        </HeroImage>
 
         <div className="flex gap-2">
           <button type="button" onClick={() => setTab('favoris')} className={`px-4 py-2 rounded-lg ${tab === 'favoris' ? 'bg-blue-600' : 'bg-slate-800'}`}>Favoris</button>

@@ -140,6 +140,9 @@ const BuildingMaterialsComparator = lazyPage(() => import('./pages/BuildingMater
 // Cosmetic evaluation
 const EvaluationCosmetique = lazyPage(() => import('./pages/EvaluationCosmetique'));
 
+// 404 Not Found
+const NotFound = lazyPage(() => import('./pages/NotFound'));
+
 // OCR history
 const OCRHistory = lazyPage(() => import('./pages/ocr/OCRHistory'));
 
@@ -601,8 +604,8 @@ export default function App() {
                           <Route path="ia-conseiller" element={<IaConseiller />} />
                           <Route path="ai-insights" element={<AiMarketInsights />} />
 
-                          {/* Catch-all route - redirect to home */}
-                          <Route path="*" element={<Navigate to="/" replace />} />
+                          {/* Catch-all route - 404 page */}
+                          <Route path="*" element={<NotFound />} />
                         </Route>
                       </Routes>
 
