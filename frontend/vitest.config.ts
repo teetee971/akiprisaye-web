@@ -65,6 +65,8 @@ export default defineConfig({
       abs('./src/test/eanValidator.test.ts'),
       // Structured receipt parser — French ticket OCR
       abs('./src/test/receiptParser.test.ts'),
+      // Super U Petit Canal fixture — parser + normalizer end-to-end
+      abs('./src/test/superUPetitCanalReceipt.test.ts'),
       // ScanHub classifier — text classification and extraction
       abs('./src/test/scanHubClassifier.test.ts'),
       // Store hours — open/closed status logic and utilities
@@ -75,6 +77,14 @@ export default defineConfig({
       abs('./src/test/merchantService.test.ts'),
       // Devis IA — moteur d'estimation explicable + constantes (Issues #501, #492)
       abs('./src/test/devisService.test.ts'),
+      // Catalogue E.Leclerc — fournisseur de prix catalogue DOM-TOM
+      abs('./src/providers/__tests__/leclercCatalogProvider.test.ts'),
+      // Catalogues E.Leclerc catégories (MaCave, Jardin, High-Tech, Électroménager, Parapharmacie, Seconde Vie)
+      abs('./src/providers/__tests__/leclercCategoryProviders.test.ts'),
+      // Catalogues visuels Calameo (Ecologite Guadeloupe 2026)
+      abs('./src/providers/__tests__/calameoCatalogProvider.test.ts'),
+      // Découverte automatique Calameo + fournisseur dynamique
+      abs('./src/providers/__tests__/calameoDiscovery.test.ts'),
     ],
 
     exclude: ['**/node_modules/**', '**/.git/**', '**/dist/**', '**/coverage/**'],

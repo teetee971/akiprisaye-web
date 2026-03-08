@@ -285,3 +285,250 @@ model ApiKey {
   @@index([keyHash])
   @@index([isActive])
 }
+
+/// ===============================
+/// RECEIPT OCR IMPORT MODULE
+/// Added: receipt ingestion pipeline
+/// ===============================
+
+model Store {
+  id             String   @id @default(cuid())
+  normalizedName String
+  rawName        String?
+  brand          String?
+  company        String?
+  siret          String?
+  phone          String?
+  address        String?
+  postalCode     String?
+  city           String?
+  territory      String   /// TerritoryCode lowercase (gp, mq, ...)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  receipts     Receipt[]
+  observations PriceObservation[]
+
+  @@unique([normalizedName, territory])
+  @@index([territory])
+  @@index([normalizedName])
+}
+
+model Receipt {
+  id              String   @id @default(cuid())
+  source          String   @default("ocr_ticket")
+  storeId         String
+  territory       String
+  receiptDate     DateTime
+  receiptTime     String?
+  currency        String   @default("EUR")
+  itemsCount      Int?
+  linesCount      Int?
+  subtotalHt      Float?
+  totalTtc        Float
+  rawOcrText      String?  @db.Text
+  confidenceScore Int      @default(0)
+  needsReview     Boolean  @default(false)
+  checksum        String?  @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  store        Store              @relation(fields: [storeId], references: [id])
+  items        ReceiptItem[]
+  observations PriceObservation[]
+
+  @@index([storeId])
+  @@index([territory])
+  @@index([receiptDate])
+}
+
+model ReceiptItem {
+  id               String  @id @default(cuid())
+  receiptId        String
+  lineIndex        Int
+  rawLabel         String
+  normalizedLabel  String?
+  brand            String?
+  category         String?
+  subcategory      String?
+  quantity         Float?
+  unit             String?
+  packageSizeValue Float?
+  packageSizeUnit  String?
+  unitPrice        Float?
+  totalPrice       Float
+  vatRate          Float?
+  barcode          String?
+  productId        String?
+  confidenceScore  Int     @default(0)
+  needsReview      Boolean @default(false)
+  notes            String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  receipt      Receipt           @relation(fields: [receiptId], references: [id], onDelete: Cascade)
+  product      Product?          @relation(fields: [productId], references: [id])
+  observations PriceObservation[]
+
+  @@index([receiptId])
+  @@index([productId])
+}
+
+model Product {
+  id                   String  @id @default(cuid())
+  productKey           String  @unique
+  displayName          String
+  rawLabel             String
+  normalizedLabel      String
+  brand                String?
+  category             String?
+  subcategory          String?
+  barcode              String? @unique
+  packageSizeValue     Float?
+  packageSizeUnit      String?
+  primaryImageUrl      String?
+  imageSource          String?
+  imageSourceType      String?
+  imageConfidenceScore Int?
+  imageNeedsReview     Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  receiptItems   ReceiptItem[]
+  images         ProductImage[]
+  observations   PriceObservation[]
+  historyMonthly PriceHistoryMonthly[]
+  historyYearly  PriceHistoryYearly[]
+
+  @@index([productKey])
+  @@index([category])
+  @@index([barcode])
+}
+
+model ProductImage {
+  id              String  @id @default(cuid())
+  productId       String
+  imageUrl        String
+  thumbnailUrl    String?
+  pageUrl         String?
+  source          String
+  sourceType      String
+  confidenceScore Int     @default(0)
+  isPrimary       Boolean @default(false)
+  needsReview     Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([isPrimary])
+}
+
+model PriceObservation {
+  id               String   @id @default(cuid())
+  source           String   @default("receipt_ocr")
+  receiptId        String?
+  receiptItemId    String?
+  productId        String?
+  territory        String
+  storeId          String?
+  storeLabel       String
+  observedAt       DateTime
+  productLabel     String
+  normalizedLabel  String
+  category         String?
+  brand            String?
+  barcode          String?
+  quantity         Float?
+  unit             String?
+  packageSizeValue Float?
+  packageSizeUnit  String?
+  price            Float
+  currency         String   @default("EUR")
+  confidenceScore  Int      @default(0)
+  needsReview      Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+
+  receipt     Receipt?     @relation(fields: [receiptId], references: [id])
+  receiptItem ReceiptItem? @relation(fields: [receiptItemId], references: [id])
+  product     Product?     @relation(fields: [productId], references: [id])
+  store       Store?       @relation(fields: [storeId], references: [id])
+
+  @@index([productId, territory, observedAt])
+  @@index([territory, observedAt])
+  @@index([storeId])
+  @@index([needsReview])
+}
+
+model PriceHistoryMonthly {
+  id                String   @id @default(cuid())
+  productId         String
+  territory         String
+  year              Int
+  month             Int
+  avgPrice          Float
+  minPrice          Float
+  maxPrice          Float
+  observationsCount Int      @default(0)
+  updatedAt         DateTime @updatedAt
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, territory, year, month])
+  @@index([productId, territory, year, month])
+}
+
+model PriceHistoryYearly {
+  id                String   @id @default(cuid())
+  productId         String
+  territory         String
+  year              Int
+  avgPrice          Float
+  minPrice          Float
+  maxPrice          Float
+  observationsCount Int      @default(0)
+  updatedAt         DateTime @updatedAt
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, territory, year])
+  @@index([productId, territory, year])
+}
+
+model ReviewQueueEntry {
+  id          String   @id @default(cuid())
+  entityType  String   /// "receipt" | "receipt_item" | "product" | "product_image"
+  entityId    String
+  reason      String
+  payloadJson Json?
+  status      String   @default("pending") /// pending | in_review | approved | rejected
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([status, entityType])
+  @@index([entityId])
+}
+
+model PriceAlertEvent {
+  id          String   @id @default(cuid())
+  productId   String
+  territory   String
+  eventType   String   /// "new_low" | "significant_drop" | "significant_rise"
+  oldPrice    Float?
+  newPrice    Float
+  dropPercent Float?
+  storeLabel  String?
+  observedAt  DateTime
+  processed   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  @@index([productId, territory])
+  @@index([processed])
+}

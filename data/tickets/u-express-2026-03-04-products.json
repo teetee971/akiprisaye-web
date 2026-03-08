@@ -1,0 +1,138 @@
+{
+  "ticket": {
+    "storeName": "U Express",
+    "storeId": "37966",
+    "ticketId": "13942-1",
+    "ticketDate": "2026-03-04T17:30:05",
+    "territory": "gp",
+    "currency": "EUR"
+  },
+  "products": [
+    {
+      "rawLabel": "TORTILLAS CHIPS NATURE U 300G",
+      "normalizedLabel": "Tortillas chips nature U 300g",
+      "brand": "U",
+      "category": "chips_apero",
+      "sizeText": "300g"
+    },
+    {
+      "rawLabel": "SAUCE PESTO VERDE U 190G",
+      "normalizedLabel": "Sauce pesto verde U 190g",
+      "brand": "U",
+      "category": "epicerie_salee",
+      "sizeText": "190g"
+    },
+    {
+      "rawLabel": "SAUCISSON SEC CHORIZO PUR PORC 225G",
+      "normalizedLabel": "Saucisson sec chorizo pur porc 225g",
+      "brand": null,
+      "category": "charcuterie",
+      "sizeText": "225g"
+    },
+    {
+      "rawLabel": "SIROP CITRON VERT U 75CL",
+      "normalizedLabel": "Sirop citron vert U 75cl",
+      "brand": "U",
+      "category": "boissons_sirops",
+      "sizeText": "75cl"
+    },
+    {
+      "rawLabel": "SUCRE BATONNETS VAN/PISTAC UX10 370G",
+      "normalizedLabel": "Sucre bâtonnets vanille pistache 370g",
+      "brand": null,
+      "category": "epicerie_sucree",
+      "sizeText": "370g"
+    },
+    {
+      "rawLabel": "TRAITEUR LS UC1 MUSEAU BOEUF LYONNAISE 300G",
+      "normalizedLabel": "Museau de bœuf à la lyonnaise 300g",
+      "brand": "U",
+      "category": "traiteur_frais",
+      "sizeText": "300g"
+    },
+    {
+      "rawLabel": "PATE FEUILLETEE EPAISSE U 280G",
+      "normalizedLabel": "Pâte feuilletée épaisse U 280g",
+      "brand": "U",
+      "category": "ultra_frais_pate",
+      "sizeText": "280g"
+    },
+    {
+      "rawLabel": "CHIPS EXTRA CRAQUANTES U 150G",
+      "normalizedLabel": "Chips extra craquantes U 150g",
+      "brand": "U",
+      "category": "chips_apero",
+      "sizeText": "150g"
+    },
+    {
+      "rawLabel": "SAUCISSON AIL FUME PXM 400G",
+      "normalizedLabel": "Saucisson ail fumé 400g",
+      "brand": null,
+      "category": "charcuterie",
+      "sizeText": "400g"
+    },
+    {
+      "rawLabel": "CONSERVES POISSON SARDINES SCE CITRONNEE U",
+      "normalizedLabel": "Sardines sauce citronnée U",
+      "brand": "U",
+      "category": "conserve_poisson",
+      "sizeText": null
+    },
+    {
+      "rawLabel": "FILET MAQUEREAUX NATUREL U",
+      "normalizedLabel": "Filet de maquereaux nature U",
+      "brand": "U",
+      "category": "conserve_poisson",
+      "sizeText": null
+    },
+    {
+      "rawLabel": "FROMAGE LS FROMAGE PAST NOIX 258G U 50G",
+      "normalizedLabel": "Fromage pasteurisé noix",
+      "brand": "U",
+      "category": "fromage",
+      "sizeText": null
+    },
+    {
+      "rawLabel": "PARMIG. RAPP. AOP LC 30% USAU 60G",
+      "normalizedLabel": "Parmigiano râpé AOP 30%",
+      "brand": null,
+      "category": "fromage_rape",
+      "sizeText": null
+    },
+    {
+      "rawLabel": "EMMENT. RAPE PAST. 30% 200G PXM",
+      "normalizedLabel": "Emmental râpé pasteurisé 200g",
+      "brand": null,
+      "category": "fromage_rape",
+      "sizeText": "200g"
+    },
+    {
+      "rawLabel": "LAITS U1/2 ECREMES LAIT UHT U BIO 1L",
+      "normalizedLabel": "Lait UHT demi-écrémé U Bio 1L",
+      "brand": "U Bio",
+      "category": "lait",
+      "sizeText": "1l"
+    },
+    {
+      "rawLabel": "BOISSONS SANS ALCOOL COCA COLA PET 2L",
+      "normalizedLabel": "Coca-Cola PET 2L",
+      "brand": "Coca-Cola",
+      "category": "soda",
+      "sizeText": "2l"
+    },
+    {
+      "rawLabel": "ALCOOLS RHUM DAMOISEAU BLANC 1L 50°",
+      "normalizedLabel": "Rhum Damoiseau blanc 1L",
+      "brand": "Damoiseau",
+      "category": "rhum",
+      "sizeText": "1l"
+    },
+    {
+      "rawLabel": "CONFISERIE HITCOKO NOIR PQC SACHET 260G",
+      "normalizedLabel": "Hitcoko noir sachet 260g",
+      "brand": null,
+      "category": "confiserie_chocolat",
+      "sizeText": "260g"
+    }
+  ]
+}

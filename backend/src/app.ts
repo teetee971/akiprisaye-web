@@ -36,6 +36,8 @@ import basketRoutes from './routes/basket.js';
 import subscriptionRoutes from './api/routes/subscription.routes.js';
 // Verified Pricing routes
 import pricesRoutes from './api/routes/prices.routes.js';
+// Receipt OCR Import routes
+import receiptsRoutes from './routes/receipts.js';
 
 // Import middlewares
 import { apiLimiter } from './api/middlewares/rateLimit.middleware.js';
@@ -208,6 +210,9 @@ app.use('/api/subscriptions', subscriptionRoutes);
 
 // Verified Pricing API routes (public with rate limiting)
 app.use('/api/prices', pricesRoutes);
+
+// Receipt OCR Import routes
+app.use('/api/receipts', receiptsRoutes);
 
 // ========================================
 // Gestion des erreurs

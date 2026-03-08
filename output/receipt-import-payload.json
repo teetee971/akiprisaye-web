@@ -1,0 +1,75 @@
+{
+  "store": {
+    "normalizedName": "Colprix Morne-à-l'Eau",
+    "rawName": "Colprix",
+    "brand": "Colprix",
+    "siret": "88412538600018",
+    "address": "LD Richeval",
+    "postalCode": "97111",
+    "city": "Morne-à-l'Eau",
+    "territory": "gp"
+  },
+  "receipt": {
+    "receiptDate": "2026-03-07",
+    "receiptTime": "10:52:00",
+    "currency": "EUR",
+    "itemsCount": 5,
+    "linesCount": 4,
+    "totalTtc": 15.33,
+    "paymentMethod": "card",
+    "needsReview": true
+  },
+  "items": [
+    {
+      "lineIndex": 1,
+      "rawLabel": "ESSUIE TOUT 2RLX PAPECO",
+      "normalizedLabel": "Essuie-tout Papeco 2 rouleaux",
+      "brand": "Papeco",
+      "category": "entretien",
+      "quantity": null,
+      "unitPrice": null,
+      "totalPrice": 1.99,
+      "confidenceScore": 0.92,
+      "needsReview": false
+    },
+    {
+      "lineIndex": 2,
+      "rawLabel": "PDN CANARD COMPLET ECO 675G",
+      "normalizedLabel": "Canard complet ECO 675g",
+      "brand": null,
+      "category": "volaille",
+      "sizeText": "675g",
+      "quantity": null,
+      "unitPrice": null,
+      "totalPrice": 3.59,
+      "confidenceScore": 0.78,
+      "needsReview": true
+    },
+    {
+      "lineIndex": 3,
+      "rawLabel": "SAUCISSES DE STRASBOURG 350G",
+      "normalizedLabel": "Saucisses de Strasbourg 350g",
+      "brand": null,
+      "category": "charcuterie",
+      "sizeText": "350g",
+      "quantity": 2,
+      "unitPrice": 2.65,
+      "totalPrice": 5.30,
+      "confidenceScore": 0.90,
+      "needsReview": false
+    },
+    {
+      "lineIndex": 4,
+      "rawLabel": "PAPIER TOILETTES DOUDOU 10+2",
+      "normalizedLabel": "Papier toilette Doudou 10+2 rouleaux",
+      "brand": "Doudou",
+      "category": "hygiene",
+      "quantity": null,
+      "unitPrice": null,
+      "totalPrice": 4.45,
+      "confidenceScore": 0.88,
+      "needsReview": false
+    }
+  ],
+  "rawOcrText": "Colprix\nSIRET 88412538600018\nLD Richeval 97111 Morne-à-l'Eau\n2026-03-07 10:52 - Ticket #189918\n---\nESSUIE TOUT 2RLX PAPECO  1.99\nPDN CANARD COMPLET ECO 675G  3.59\nSAUCISSES DE STRASBOURG 350G x2  5.30\nPAPIER TOILETTES DOUDOU 10+2  4.45\nTOTAL TTC  15.33\nPAIEMENT CB"
+}
