@@ -199,6 +199,10 @@ const Messagerie = lazyPage(() => import('./pages/Messagerie'));
 
 // Groupes de Parole Citoyens
 const GroupesParole = lazyPage(() => import('./pages/GroupesParole'));
+// Marketplace Enseignes
+const MerchantOnboarding = lazyPage(() => import('./pages/marketplace/MerchantOnboarding'));
+const MerchantDashboard = lazyPage(() => import('./pages/marketplace/MerchantDashboard'));
+const AdminMarketplace = lazyPage(() => import('./pages/admin/marketplace/AdminMarketplace'));
 
 /**
  * IMPORTANT — NE PAS SUPPRIMER
@@ -333,6 +337,7 @@ export default function App() {
                           <Route path="import" element={<ImportPage />} />
                           <Route path="sync" element={<SyncDashboard />} />
                           <Route path="moderation" element={<SignalementModeration />} />
+                          <Route path="marketplace" element={<AdminMarketplace />} />
                         </Route>
 
                         {/* Main site routes with Layout */}
@@ -528,6 +533,9 @@ export default function App() {
                           {/* Groupes de Parole Citoyens */}
                           <Route path="groupes-parole" element={<GroupesParole />} />
                           <Route path="groupes-parole/:groupId" element={<GroupesParole />} />
+                          {/* Marketplace Enseignes */}
+                          <Route path="marketplace/inscription" element={<MerchantOnboarding />} />
+                          <Route path="marketplace/dashboard" element={<MerchantDashboard />} />
 
                           {/* Catch-all route - redirect to home */}
                           <Route path="*" element={<Navigate to="/" replace />} />

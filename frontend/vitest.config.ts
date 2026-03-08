@@ -71,6 +71,8 @@ export default defineConfig({
       abs('./src/test/storeHours.test.ts'),
       // Groupes de Parole — AI moderation text filter
       abs('./src/test/groupesParoleService.test.ts'),
+      // Marketplace Enseignes — merchant service (onboarding, stores, products, billing)
+      abs('./src/test/merchantService.test.ts'),
     ],
 
     exclude: ['**/node_modules/**', '**/.git/**', '**/dist/**', '**/coverage/**'],
