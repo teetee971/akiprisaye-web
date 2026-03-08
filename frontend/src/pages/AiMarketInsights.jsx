@@ -4,13 +4,16 @@ import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
+  BarController,
   BarElement,
+  LineController,
   PointElement,
   LineElement,
   Title,
   Tooltip,
   Legend,
 } from 'chart.js';
+import { Bar, Line } from 'react-chartjs-2';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { checkIsAdmin } from '../services/adminPanieService';
@@ -22,8 +25,8 @@ import {
   getCategoryColor,
 } from '../services/marketInsightsService';
 
-// Register Chart.js components
-ChartJS.register(CategoryScale, LinearScale, BarElement, PointElement, LineElement, Title, Tooltip, Legend);
+// Register Chart.js components (controllers required for bar/line charts)
+ChartJS.register(CategoryScale, LinearScale, BarController, BarElement, LineController, PointElement, LineElement, Title, Tooltip, Legend);
 
 export default function AiMarketInsights() {
   const { user } = useAuth();

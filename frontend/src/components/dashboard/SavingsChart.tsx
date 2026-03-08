@@ -4,6 +4,7 @@ import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
+  LineController,
   PointElement,
   LineElement,
   Title,
@@ -17,6 +18,7 @@ import { MonthlySavings } from '../../services/savingsService';
 ChartJS.register(
   CategoryScale,
   LinearScale,
+  LineController,
   PointElement,
   LineElement,
   Title,

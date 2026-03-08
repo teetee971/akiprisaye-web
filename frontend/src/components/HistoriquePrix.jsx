@@ -14,6 +14,7 @@ import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
+  LineController,
   PointElement,
   LineElement,
   Title,
@@ -28,6 +29,7 @@ import DataSourceWarning from './DataSourceWarning';
 ChartJS.register(
   CategoryScale,
   LinearScale,
+  LineController,
   PointElement,
   LineElement,
   Title,
