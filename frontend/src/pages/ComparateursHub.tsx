@@ -397,7 +397,15 @@ export default function ComparateursHub() {
                           </div>
                           {/* Row 2: progress bar */}
                           <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden mb-1.5">
-                            <div style={{ width: `${barPct}%`, background: barColor }} className="h-full rounded-full transition-all" />
+                            <div
+                              style={{ width: `${barPct}%`, background: barColor }}
+                              className="h-full rounded-full transition-all"
+                              role="progressbar"
+                              aria-valuenow={barPct}
+                              aria-valuemin={0}
+                              aria-valuemax={100}
+                              aria-label={`Écart de prix avec la métropole : ${pct > 0 ? '+' : ''}${pct}%`}
+                            />
                           </div>
                           {/* Row 3: inline prices */}
                           <div className="flex items-center justify-between text-xs text-slate-400">
