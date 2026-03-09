@@ -3,6 +3,11 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+  # Catches merges done by github-actions[bot] (auto-merge via GITHUB_TOKEN),
+  # which do NOT fire the push event. Only deploys on actual merges (merged==true).
+  pull_request:
+    types: [closed]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -16,6 +21,8 @@ concurrency:
 
 jobs:
   build:
+    # Run on push/workflow_dispatch, or when a PR is actually merged (not just closed)
+    if: github.event_name != 'pull_request' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     defaults:
       run:
