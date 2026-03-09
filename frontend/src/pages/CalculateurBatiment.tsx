@@ -31,6 +31,7 @@ import {
   consumeBatimentCalc,
   type BatimentTrialState,
 } from '../services/batimentTrialService';
+import { saveBatimentCalculation, type BatimentSaveData } from '../services/batimentCalculService';
 import {
   buildStoreQuotes,
   type TerritoryCode,
@@ -46,6 +47,13 @@ type CalculatorId =
   | 'carrelage' | 'peinture' | 'enduit'
   | 'toles' | 'terrassement' | 'cloture'
   | 'beton-courant' | 'escalier';
+
+/** Shared props for all calculator sub-components. */
+type CalcProps = {
+  onCalc: () => boolean;
+  territory: TerritoryCode | null;
+  onSave: (d: BatimentSaveData) => void;
+};
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -416,7 +424,7 @@ function StoreCard({ quote, isBest, isExpanded, onToggle }: {
 
 // ─── Calculators ──────────────────────────────────────────────────────────────
 
-function ParpaingCalc({ onCalc, territory }: { onCalc: () => boolean; territory: TerritoryCode | null }) {
+function ParpaingCalc({ onCalc, territory, onSave }: CalcProps) {
   const [longueur, setLongueur] = useState('');
   const [hauteur, setHauteur]   = useState('');
   const [typeIdx, setTypeIdx]   = useState(2);
@@ -441,16 +449,19 @@ function ParpaingCalc({ onCalc, territory }: { onCalc: () => boolean; territory:
     const nbSacsCiment = Math.ceil(cimentKg / ciment.kg);
     const sableKg  = Math.round(cimentKg * 4.5);
 
-    setResult({ surface: Math.round(surface * 100) / 100, nbBlocs, mortierM3, nbSacsCiment, sableKg });
+    const res = { surface: Math.round(surface * 100) / 100, nbBlocs, mortierM3, nbSacsCiment, sableKg };
+    setResult(res);
     setBlocked(false);
 
     // Build material needs for store locator
     const sacsSable = Math.ceil(sableKg / 25);
-    setMaterials([
+    const mats: MaterialNeed[] = [
       { productId: parpaing.productId, qty: nbBlocs },
       { productId: ciment.productId, qty: nbSacsCiment },
       { productId: 'sable_25kg', qty: sacsSable },
-    ]);
+    ];
+    setMaterials(mats);
+    onSave({ calcType: 'parpaing', inputs: { longueur, hauteur, typeBloc: PARPAING_TYPES[typeIdx].label, formatCiment: CIMENT_TYPES[cimentIdx].label }, results: res, materials: mats });
   };
 
   const reset = () => { setLongueur(''); setHauteur(''); setResult(null); setBlocked(false); setMaterials([]); };
@@ -505,7 +516,7 @@ function ParpaingCalc({ onCalc, territory }: { onCalc: () => boolean; territory:
   );
 }
 
-function DalleBetonCalc({ onCalc, territory }: { onCalc: () => boolean; territory: TerritoryCode | null }) {
+function DalleBetonCalc({ onCalc, territory, onSave }: CalcProps) {
   const [longueur, setLongueur] = useState('');
   const [largeur, setLargeur]   = useState('');
   const [epaisseur, setEpaisseur] = useState(10);
@@ -531,15 +542,18 @@ function DalleBetonCalc({ onCalc, territory }: { onCalc: () => boolean; territor
     const gravierKg = Math.round(cimentKg * 4);
     const treillis = Math.ceil((l * w) / 2.88 * 1.15);
 
-    setResult({ surface, volume, nbSacsCiment, sableKg, gravierKg, treillis });
+    const res = { surface, volume, nbSacsCiment, sableKg, gravierKg, treillis };
+    setResult(res);
     setBlocked(false);
 
-    setMaterials([
+    const mats: MaterialNeed[] = [
       { productId: ciment.productId, qty: nbSacsCiment },
       { productId: 'sable_25kg',     qty: Math.ceil(sableKg / 25) },
       { productId: 'gravier_25kg',   qty: Math.ceil(gravierKg / 25) },
       { productId: 'treillis_1224',  qty: treillis },
-    ]);
+    ];
+    setMaterials(mats);
+    onSave({ calcType: 'dalle-beton', inputs: { longueur, largeur, epaisseurCm: epaisseur, formatCiment: CIMENT_TYPES[cimentIdx].label }, results: res, materials: mats });
   };
 
   const reset = () => { setLongueur(''); setLargeur(''); setResult(null); setBlocked(false); setMaterials([]); };
@@ -613,7 +627,7 @@ function DalleBetonCalc({ onCalc, territory }: { onCalc: () => boolean; territor
   );
 }
 
-function PeintureCalc({ onCalc, territory }: { onCalc: () => boolean; territory: TerritoryCode | null }) {
+function PeintureCalc({ onCalc, territory, onSave }: CalcProps) {
   const [mode, setMode]                   = useState<'mur' | 'plafond'>('mur');
   const [largeur, setLargeur]             = useState('');
   const [hauteur, setHauteur]             = useState('');
@@ -640,15 +654,17 @@ function PeintureCalc({ onCalc, territory }: { onCalc: () => boolean; territory:
     const surfaceNette = Math.max(0, surfaceBrute - nb * 1.75);
     const litres = Math.ceil((surfaceNette * nc) / rd);
 
-    setResult({ surface: Math.round(surfaceBrute * 100) / 100, surfaceNette: Math.round(surfaceNette * 100) / 100, litres });
+    // Suggest bidon 10L
+    const bidons10 = Math.ceil(litres / 10);
+    const res = { surface: Math.round(surfaceBrute * 100) / 100, surfaceNette: Math.round(surfaceNette * 100) / 100, litres };
+    setResult(res);
     setBlocked(false);
 
-    // Suggest bidon 10L or 15L
-    const bidons10 = Math.ceil(litres / 10);
-    const bidons15 = Math.ceil(litres / 15);
-    setMaterials([
+    const mats: MaterialNeed[] = [
       { productId: 'peinture_10L', qty: bidons10 },
-    ]);
+    ];
+    setMaterials(mats);
+    onSave({ calcType: 'peinture', inputs: { mode, largeur, hauteur, nbrOuvertures, nbrCouches, rendementM2L: rendement }, results: res, materials: mats });
   };
 
   const reset = () => { setLargeur(''); setHauteur(''); setNbrOuvertures('0'); setResult(null); setBlocked(false); setMaterials([]); };
@@ -761,7 +777,7 @@ function PeintureCalc({ onCalc, territory }: { onCalc: () => boolean; territory:
   );
 }
 
-function CarrelageCalc({ onCalc, territory }: { onCalc: () => boolean; territory: TerritoryCode | null }) {
+function CarrelageCalc({ onCalc, territory, onSave }: CalcProps) {
   const [longueur, setLongueur] = useState('');
   const [largeur, setLargeur]   = useState('');
   const [tileL, setTileL]       = useState('60');
@@ -783,14 +799,17 @@ function CarrelageCalc({ onCalc, territory }: { onCalc: () => boolean; territory
     const colleKg    = Math.ceil(surface * 3.5);
     const jointKg    = Math.ceil(surface * 0.4);
 
-    setResult({ surface: Math.round(surface * 100) / 100, nbCarreaux, colle: colleKg, joint: jointKg });
+    const res = { surface: Math.round(surface * 100) / 100, nbCarreaux, colle: colleKg, joint: jointKg };
+    setResult(res);
     setBlocked(false);
 
-    setMaterials([
+    const mats: MaterialNeed[] = [
       { productId: 'carrelage_60',  qty: Math.ceil(surface) },
       { productId: 'colle_25kg',    qty: Math.ceil(colleKg / 25) },
       { productId: 'joint_5kg',     qty: Math.ceil(jointKg / 5) },
-    ]);
+    ];
+    setMaterials(mats);
+    onSave({ calcType: 'carrelage', inputs: { longueur, largeur, formatCarreauLcm: tileL, formatCarreauWcm: tileW }, results: res, materials: mats });
   };
 
   const reset = () => { setLongueur(''); setLargeur(''); setResult(null); setBlocked(false); setMaterials([]); };
@@ -828,7 +847,7 @@ function CarrelageCalc({ onCalc, territory }: { onCalc: () => boolean; territory
   );
 }
 
-function BetonCourantCalc({ onCalc, territory }: { onCalc: () => boolean; territory: TerritoryCode | null }) {
+function BetonCourantCalc({ onCalc, territory, onSave }: CalcProps) {
   const [volume, setVolume]     = useState('');
   const [cimentIdx, setCimentIdx] = useState(0);
   const [dosage, setDosage]     = useState('300');
@@ -849,14 +868,17 @@ function BetonCourantCalc({ onCalc, territory }: { onCalc: () => boolean; territ
     const gravierKg = Math.round(cimentKg * 4);
     const eau      = Math.round(v * 180);
 
-    setResult({ nbSacsCiment, sableKg, gravierKg, eau });
+    const res = { nbSacsCiment, sableKg, gravierKg, eau };
+    setResult(res);
     setBlocked(false);
 
-    setMaterials([
+    const mats: MaterialNeed[] = [
       { productId: ciment.productId,  qty: nbSacsCiment },
       { productId: 'sable_25kg',      qty: Math.ceil(sableKg / 25) },
       { productId: 'gravier_25kg',    qty: Math.ceil(gravierKg / 25) },
-    ]);
+    ];
+    setMaterials(mats);
+    onSave({ calcType: 'beton-courant', inputs: { volumeM3: volume, dosageKgM3: dosage, formatCiment: CIMENT_TYPES[cimentIdx].label }, results: res, materials: mats });
   };
 
   const reset = () => { setVolume(''); setResult(null); setBlocked(false); setMaterials([]); };
@@ -910,7 +932,7 @@ function BetonCourantCalc({ onCalc, territory }: { onCalc: () => boolean; territ
 
 // ─── Enduit / Crépissage Calculator ──────────────────────────────────────────
 
-function EnduitCalc({ onCalc, territory }: { onCalc: () => boolean; territory: TerritoryCode | null }) {
+function EnduitCalc({ onCalc, territory, onSave }: CalcProps) {
   const [surface, setSurface]   = useState('');
   const [epaisseur, setEpaisseur] = useState('15'); // mm
   const [cimentIdx, setCimentIdx] = useState(0);
@@ -936,14 +958,17 @@ function EnduitCalc({ onCalc, territory }: { onCalc: () => boolean; territory: T
     const nbSacsCiment = Math.ceil(cimentKg / ciment.kg);
     const sableKg      = Math.round(cimentKg * 5);
 
-    setResult({ enduitKg, nbSacsEnduit, nbSacsCiment, sableKg });
+    const res = { enduitKg, nbSacsEnduit, nbSacsCiment, sableKg };
+    setResult(res);
     setBlocked(false);
 
-    setMaterials([
+    const mats: MaterialNeed[] = [
       { productId: 'enduit_25kg',  qty: nbSacsEnduit },
       { productId: 'ciment_25kg',  qty: Math.ceil(cimentKg / 25) },
       { productId: 'sable_25kg',   qty: Math.ceil(sableKg / 25) },
-    ]);
+    ];
+    setMaterials(mats);
+    onSave({ calcType: 'enduit', inputs: { surfaceM2: surface, epaisseurMm: epaisseur, formatCiment: CIMENT_TYPES[cimentIdx].label }, results: res, materials: mats });
   };
 
   const reset = () => { setSurface(''); setResult(null); setBlocked(false); setMaterials([]); };
@@ -997,7 +1022,7 @@ function EnduitCalc({ onCalc, territory }: { onCalc: () => boolean; territory: T
 
 // ─── Fondations Calculator ────────────────────────────────────────────────────
 
-function FondationsCalc({ onCalc, territory }: { onCalc: () => boolean; territory: TerritoryCode | null }) {
+function FondationsCalc({ onCalc, territory, onSave }: CalcProps) {
   const [longueur, setLongueur] = useState('');
   const [largeur, setLargeur]   = useState('30'); // cm
   const [profondeur, setProfondeur] = useState('50'); // cm
@@ -1023,15 +1048,18 @@ function FondationsCalc({ onCalc, territory }: { onCalc: () => boolean; territor
     // Acier HA12 : environ 80 kg/m³ béton de fondation
     const acierKg = Math.round(volume * 80);
 
-    setResult({ volume: Math.round(volume * 1000) / 1000, nbSacsCiment, sableKg, gravierKg, acierKg });
+    const res = { volume: Math.round(volume * 1000) / 1000, nbSacsCiment, sableKg, gravierKg, acierKg };
+    setResult(res);
     setBlocked(false);
 
-    setMaterials([
+    const mats: MaterialNeed[] = [
       { productId: ciment.productId, qty: nbSacsCiment },
       { productId: 'sable_25kg',     qty: Math.ceil(sableKg / 25) },
       { productId: 'gravier_25kg',   qty: Math.ceil(gravierKg / 25) },
       { productId: 'acier_ha12_6m',  qty: Math.ceil(acierKg / 5.3) }, // barre 6m ≈ 5.3 kg
-    ]);
+    ];
+    setMaterials(mats);
+    onSave({ calcType: 'fondations', inputs: { longueurM: longueur, largeurCm: largeur, profondeurCm: profondeur, formatCiment: CIMENT_TYPES[cimentIdx].label }, results: res, materials: mats });
   };
 
   const reset = () => { setLongueur(''); setResult(null); setBlocked(false); setMaterials([]); };
@@ -1098,7 +1126,7 @@ function FondationsCalc({ onCalc, territory }: { onCalc: () => boolean; territor
 
 // ─── Chape Calculator ─────────────────────────────────────────────────────────
 
-function ChapeCalc({ onCalc, territory }: { onCalc: () => boolean; territory: TerritoryCode | null }) {
+function ChapeCalc({ onCalc, territory, onSave }: CalcProps) {
   const [longueur, setLongueur] = useState('');
   const [largeur, setLargeur]   = useState('');
   const [epaisseur, setEpaisseur] = useState('5'); // cm
@@ -1122,13 +1150,16 @@ function ChapeCalc({ onCalc, territory }: { onCalc: () => boolean; territory: Te
     const nbSacsCiment = Math.ceil(cimentKg / ciment.kg);
     const sableKg = Math.round(cimentKg * 3);
 
-    setResult({ surface: Math.round(surface * 100) / 100, volume, nbSacsCiment, sableKg });
+    const res = { surface: Math.round(surface * 100) / 100, volume, nbSacsCiment, sableKg };
+    setResult(res);
     setBlocked(false);
 
-    setMaterials([
+    const mats: MaterialNeed[] = [
       { productId: ciment.productId, qty: nbSacsCiment },
       { productId: 'sable_25kg',     qty: Math.ceil(sableKg / 25) },
-    ]);
+    ];
+    setMaterials(mats);
+    onSave({ calcType: 'chape', inputs: { longueur, largeur, epaisseurCm: epaisseur, formatCiment: CIMENT_TYPES[cimentIdx].label }, results: res, materials: mats });
   };
 
   const reset = () => { setLongueur(''); setLargeur(''); setResult(null); setBlocked(false); setMaterials([]); };
@@ -1184,7 +1215,7 @@ function ChapeCalc({ onCalc, territory }: { onCalc: () => boolean; territory: Te
 
 // ─── Tôles de couverture Calculator ──────────────────────────────────────────
 
-function TolesCalc({ onCalc, territory }: { onCalc: () => boolean; territory: TerritoryCode | null }) {
+function TolesCalc({ onCalc, territory, onSave }: CalcProps) {
   const [longueur, setLongueur] = useState('');
   const [largeur, setLargeur]   = useState('');
   const [longTole, setLongTole] = useState('3'); // m
@@ -1209,13 +1240,16 @@ function TolesCalc({ onCalc, territory }: { onCalc: () => boolean; territory: Te
     // Faîtière : longueur de faîte ≈ largeur de la toiture
     const lFaitage = Math.ceil(w * 1.1);
 
-    setResult({ surface: Math.round(surface * 100) / 100, nbToles, nbVis, lFaitage });
+    const res = { surface: Math.round(surface * 100) / 100, nbToles, nbVis, lFaitage };
+    setResult(res);
     setBlocked(false);
 
-    setMaterials([
+    const mats: MaterialNeed[] = [
       { productId: longTole === '3' ? 'tole_3m' : 'tole_4m', qty: nbToles },
       { productId: 'vis_autoperceuse_100', qty: Math.ceil(nbVis / 100) },
-    ]);
+    ];
+    setMaterials(mats);
+    onSave({ calcType: 'toles', inputs: { longueurRampant: longueur, largeurRampant: largeur, longueurToleM: longTole }, results: res, materials: mats });
   };
 
   const reset = () => { setLongueur(''); setLargeur(''); setResult(null); setBlocked(false); setMaterials([]); };
@@ -1264,7 +1298,7 @@ function TolesCalc({ onCalc, territory }: { onCalc: () => boolean; territory: Te
 
 // ─── Terrassement Calculator ──────────────────────────────────────────────────
 
-function TerrassementCalc({ onCalc, territory: _territory }: { onCalc: () => boolean; territory: TerritoryCode | null }) {
+function TerrassementCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
   const [longueur, setLongueur] = useState('');
   const [largeur, setLargeur]   = useState('');
   const [profondeur, setProfondeur] = useState('');
@@ -1285,8 +1319,10 @@ function TerrassementCalc({ onCalc, territory: _territory }: { onCalc: () => boo
     // Camion 8×4 = 12 m³ environ
     const nbCamions = Math.ceil(volumeFoisonne / 12);
 
-    setResult({ volume, volumeFoisonne, nbCamions });
+    const res = { volume, volumeFoisonne, nbCamions };
+    setResult(res);
     setBlocked(false);
+    onSave({ calcType: 'terrassement', inputs: { longueur, largeur, profondeur, typeSol: compactage }, results: res, materials: [] });
   };
 
   const reset = () => { setLongueur(''); setLargeur(''); setProfondeur(''); setResult(null); setBlocked(false); };
@@ -1332,7 +1368,7 @@ function TerrassementCalc({ onCalc, territory: _territory }: { onCalc: () => boo
 
 // ─── Clôture Calculator ───────────────────────────────────────────────────────
 
-function ClotureCalc({ onCalc, territory }: { onCalc: () => boolean; territory: TerritoryCode | null }) {
+function ClotureCalc({ onCalc, territory, onSave }: CalcProps) {
   const [longueur, setLongueur] = useState('');
   const [hauteur, setHauteur]   = useState('1.5');
   const [type, setType]         = useState<'grillage' | 'beton' | 'bois'>('grillage');
@@ -1356,13 +1392,16 @@ function ClotureCalc({ onCalc, territory }: { onCalc: () => boolean; territory: 
     const nbSacsCiment = Math.ceil(cimentKg / 25);
     const betonL      = Math.round(betonM3 * 1000); // litres
 
-    setResult({ nbPoteaux, grillageM, betonL, nbSacsCiment });
+    const res = { nbPoteaux, grillageM, betonL, nbSacsCiment };
+    setResult(res);
     setBlocked(false);
 
-    setMaterials([
+    const mats: MaterialNeed[] = [
       { productId: 'ciment_25kg',  qty: nbSacsCiment },
       { productId: 'sable_25kg',   qty: Math.ceil((cimentKg * 3) / 25) },
-    ]);
+    ];
+    setMaterials(mats);
+    onSave({ calcType: 'cloture', inputs: { longueurM: longueur, hauteurM: hauteur, typeCloture: type }, results: res, materials: mats });
   };
 
   const reset = () => { setLongueur(''); setResult(null); setBlocked(false); setMaterials([]); };
@@ -1421,7 +1460,7 @@ function ClotureCalc({ onCalc, territory }: { onCalc: () => boolean; territory: 
 
 // ─── Escalier Calculator ──────────────────────────────────────────────────────
 
-function EscalierCalc({ onCalc, territory: _territory }: { onCalc: () => boolean; territory: TerritoryCode | null }) {
+function EscalierCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
   const [hauteurTotale, setHauteurTotale] = useState('');
   const [nbMarches, setNbMarches]         = useState('');
   const [result, setResult] = useState<{
@@ -1446,8 +1485,10 @@ function EscalierCalc({ onCalc, territory: _territory }: { onCalc: () => boolean
     const conformeNormes = hauteurMarche >= 0.17 && hauteurMarche <= 0.20
       && giron >= 24 && giron <= 32;
 
-    setResult({ hauteurMarche, giron, longueurTotale, angleDeg, conformeNormes });
+    const res = { hauteurMarche, giron, longueurTotale, angleDeg, conformeNormes };
+    setResult(res);
     setBlocked(false);
+    onSave({ calcType: 'escalier', inputs: { hauteurTotaleM: hauteurTotale, nbMarches }, results: res, materials: [] });
   };
 
   const reset = () => { setHauteurTotale(''); setNbMarches(''); setResult(null); setBlocked(false); };
@@ -2089,6 +2130,15 @@ export default function CalculateurBatiment() {
     return allowed;
   }, []);
 
+  const handleSave = useCallback((data: BatimentSaveData): void => {
+    const state = getBatimentTrialState();
+    void saveBatimentCalculation({
+      ...data,
+      territory: territory ?? null,
+      trialDay: state.trialDay ?? null,
+    });
+  }, [territory]);
+
   const goBack = () => {
     if (selectedCalc) setSelectedCalc(null);
     else setSelectedCategory(null);
@@ -2253,18 +2303,18 @@ export default function CalculateurBatiment() {
           {selectedCalc && (
             <>
               <div className="bg-slate-900 rounded-2xl border border-slate-700 p-4">
-                {selectedCalc === 'parpaing'        && <ParpaingCalc      onCalc={handleCalc} territory={territory} />}
-                {selectedCalc === 'dalle-beton'     && <DalleBetonCalc    onCalc={handleCalc} territory={territory} />}
-                {selectedCalc === 'fondations'      && <FondationsCalc    onCalc={handleCalc} territory={territory} />}
-                {selectedCalc === 'chape'           && <ChapeCalc         onCalc={handleCalc} territory={territory} />}
-                {selectedCalc === 'carrelage'       && <CarrelageCalc     onCalc={handleCalc} territory={territory} />}
-                {selectedCalc === 'peinture'        && <PeintureCalc      onCalc={handleCalc} territory={territory} />}
-                {selectedCalc === 'enduit'          && <EnduitCalc        onCalc={handleCalc} territory={territory} />}
-                {selectedCalc === 'toles'           && <TolesCalc         onCalc={handleCalc} territory={territory} />}
-                {selectedCalc === 'terrassement'    && <TerrassementCalc  onCalc={handleCalc} territory={territory} />}
-                {selectedCalc === 'cloture'         && <ClotureCalc       onCalc={handleCalc} territory={territory} />}
-                {selectedCalc === 'beton-courant'   && <BetonCourantCalc  onCalc={handleCalc} territory={territory} />}
-                {selectedCalc === 'escalier'        && <EscalierCalc      onCalc={handleCalc} territory={territory} />}
+                {selectedCalc === 'parpaing'        && <ParpaingCalc      onCalc={handleCalc} territory={territory} onSave={handleSave} />}
+                {selectedCalc === 'dalle-beton'     && <DalleBetonCalc    onCalc={handleCalc} territory={territory} onSave={handleSave} />}
+                {selectedCalc === 'fondations'      && <FondationsCalc    onCalc={handleCalc} territory={territory} onSave={handleSave} />}
+                {selectedCalc === 'chape'           && <ChapeCalc         onCalc={handleCalc} territory={territory} onSave={handleSave} />}
+                {selectedCalc === 'carrelage'       && <CarrelageCalc     onCalc={handleCalc} territory={territory} onSave={handleSave} />}
+                {selectedCalc === 'peinture'        && <PeintureCalc      onCalc={handleCalc} territory={territory} onSave={handleSave} />}
+                {selectedCalc === 'enduit'          && <EnduitCalc        onCalc={handleCalc} territory={territory} onSave={handleSave} />}
+                {selectedCalc === 'toles'           && <TolesCalc         onCalc={handleCalc} territory={territory} onSave={handleSave} />}
+                {selectedCalc === 'terrassement'    && <TerrassementCalc  onCalc={handleCalc} territory={territory} onSave={handleSave} />}
+                {selectedCalc === 'cloture'         && <ClotureCalc       onCalc={handleCalc} territory={territory} onSave={handleSave} />}
+                {selectedCalc === 'beton-courant'   && <BetonCourantCalc  onCalc={handleCalc} territory={territory} onSave={handleSave} />}
+                {selectedCalc === 'escalier'        && <EscalierCalc      onCalc={handleCalc} territory={territory} onSave={handleSave} />}
               </div>
               {/* Disclaimer */}
               <p className="mt-3 text-center text-xs text-slate-600 bg-orange-900/15 border border-orange-900/30 rounded-xl px-4 py-2">
