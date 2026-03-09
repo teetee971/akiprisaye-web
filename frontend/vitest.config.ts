@@ -85,6 +85,15 @@ export default defineConfig({
       abs('./src/providers/__tests__/calameoCatalogProvider.test.ts'),
       // Découverte automatique Calameo + fournisseur dynamique
       abs('./src/providers/__tests__/calameoDiscovery.test.ts'),
+      // Comparateurs spécialisés — services de comparaison
+      abs('./src/services/__tests__/carRentalService.test.ts'),
+      abs('./src/services/__tests__/freightComparisonService.test.ts'),
+      abs('./src/services/__tests__/fuelComparisonService.test.ts'),
+      abs('./src/services/__tests__/insuranceComparisonService.test.ts'),
+      abs('./src/services/__tests__/flightComparisonService.test.ts'),
+      abs('./src/services/__tests__/boatComparisonService.test.ts'),
+      // Couverture des routes des comparateurs dans App.tsx
+      abs('./src/test/comparateurRoutes.test.ts'),
     ],
 
     exclude: ['**/node_modules/**', '**/.git/**', '**/dist/**', '**/coverage/**'],
