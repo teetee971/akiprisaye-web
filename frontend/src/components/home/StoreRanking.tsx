@@ -82,6 +82,7 @@ export function StoreRanking() {
                 <button
                   key={store.rank}
                   onClick={() => handleStoreClick(store.storeId)}
+                  aria-label={`${store.chain} — classé #${store.rank}, ${store.productsCount} produits les moins chers`}
                   className="w-full flex items-center gap-4 p-4 bg-slate-800/50 rounded-lg hover:bg-slate-800/70 transition-all transform hover:scale-102"
                 >
                   <div className="text-4xl">{store.medal}</div>

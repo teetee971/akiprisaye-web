@@ -55,8 +55,8 @@ export const ShareVictory: React.FC = () => {
           text: shareText,
           url: 'https://akiprisaye.fr'
         });
-      } catch (error) {
-        console.log('Share cancelled');
+      } catch {
+        // Share was cancelled by user — no action needed
       }
     } else {
       // Fallback: copy to clipboard

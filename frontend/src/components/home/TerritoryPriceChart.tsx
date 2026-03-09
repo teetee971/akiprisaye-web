@@ -110,6 +110,7 @@ export default function TerritoryPriceChart() {
               key={p.id}
               role="tab"
               aria-selected={i === activeProduct}
+              aria-label={p.label}
               className={`price-chart-tab${i === activeProduct ? ' price-chart-tab--active' : ''}`}
               onClick={() => setActiveProduct(i)}
             >

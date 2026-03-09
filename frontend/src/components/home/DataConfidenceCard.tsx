@@ -48,6 +48,7 @@ export function DataConfidenceCard({
             onClick={() => setShowExplanation(!showExplanation)}
             className="text-xs text-gray-400 hover:text-gray-300 underline"
             aria-expanded={showExplanation}
+            aria-label={showExplanation ? "Masquer l'explication du score de confiance" : "Afficher l'explication du score de confiance"}
           >
             Pourquoi ce score ?
           </button>

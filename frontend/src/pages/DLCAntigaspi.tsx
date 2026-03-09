@@ -128,7 +128,7 @@ export default function DLCAntigaspi() {
 
   // Filter + sort
   const displayed = useMemo(() => {
-    let list = filterLieu === 'tous' ? [...items] : items.filter(i => i.lieu === filterLieu);
+    const list = filterLieu === 'tous' ? [...items] : items.filter(i => i.lieu === filterLieu);
     if (sortBy === 'dlc') list.sort((a, b) => a.dlc.localeCompare(b.dlc));
     else list.sort((a, b) => a.nom.localeCompare(b.nom));
     return list;

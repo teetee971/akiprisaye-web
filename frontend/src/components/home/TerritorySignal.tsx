@@ -181,6 +181,8 @@ export function TerritorySignal() {
             <button
               key={territory.code}
               onClick={() => setSelectedTerritory(territory.code)}
+              aria-label={`Sélectionner ${territory.name}`}
+              aria-pressed={selectedTerritory === territory.code}
               className={`p-3 rounded-lg border transition-all ${
                 selectedTerritory === territory.code
                   ? 'bg-blue-500/20 border-blue-500/50 text-white'
@@ -284,7 +286,7 @@ export function TerritorySignal() {
             <p className="text-sm text-gray-300 mb-3">
               Chaque observation compte ! Scannez vos tickets pour améliorer les alertes de votre territoire.
             </p>
-            <button className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-all">
+            <button aria-label="Scanner un ticket de caisse" className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-all">
               📸 Scanner un ticket
             </button>
           </div>

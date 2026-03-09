@@ -50,8 +50,8 @@ export function CustomCenterExample() {
 
 // Example 4: Full-featured map with callbacks
 export function FullFeaturedMapExample() {
-  const handleStoreSelect = (store: StoreMarker) => {
-    console.log('Store selected:', store);
+  const handleStoreSelect = (_store: StoreMarker) => {
+    // Store selection handled by parent component
   };
 
   const handleGetDirections = (store: StoreMarker) => {

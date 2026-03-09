@@ -128,7 +128,7 @@
   pointer-events: none;
   z-index: 0;
   animation: blob-morph 12s ease-in-out infinite;
-  will-change: border-radius;
+  will-change: transform;
 }
 
 .blob-decoration--hero {
@@ -391,7 +391,8 @@
 }
 
 .flip-card:hover .flip-card-inner,
-.flip-card:focus-within .flip-card-inner {
+.flip-card:focus-within .flip-card-inner,
+.flip-card-inner--flipped {
   transform: rotateY(180deg);
 }
 

@@ -2,9 +2,10 @@
  * FlipStatCard
  *
  * A 3D flip card that shows a stat on the front and context on the back.
- * Flips on hover/focus. Pure CSS 3D — no JS required.
+ * Flips on hover/focus (CSS) or on Enter/Space keypress (JS).
+ * Pure CSS 3D — no JS required for the mouse interaction.
  */
-import type { ReactNode } from 'react';
+import { useCallback, type ReactNode } from 'react';
 
 interface FlipStatCardProps {
   value: string;
@@ -21,8 +22,25 @@ export default function FlipStatCard({
   icon,
   className = '',
 }: FlipStatCardProps) {
+  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      // Toggle a CSS class that forces the flip (same as :focus-within)
+      const inner = (e.currentTarget as HTMLElement).querySelector<HTMLElement>('.flip-card-inner');
+      if (inner) {
+        inner.classList.toggle('flip-card-inner--flipped');
+      }
+    }
+  }, []);
+
   return (
-    <div className={`flip-card ${className}`} tabIndex={0} aria-label={`${label} : ${value}`}>
+    <div
+      className={`flip-card ${className}`}
+      tabIndex={0}
+      role="button"
+      aria-label={`${label} : ${value}. Appuyez pour voir les détails.`}
+      onKeyDown={handleKeyDown}
+    >
       <div className="flip-card-inner">
         {/* Front */}
         <div className="flip-card-front">

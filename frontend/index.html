@@ -76,7 +76,7 @@
     <link
       rel="preload"
       as="image"
-      href="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=1600&q=80"
+      href="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fm=webp&fit=crop&w=1600&q=80"
       fetchpriority="high"
       crossorigin="anonymous"
     />
@@ -85,23 +85,63 @@
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "A KI PRI SA YÉ",
-      "url": "https://teetee971.github.io/akiprisaye-web/",
-      "description": "Application citoyenne de transparence des prix dans les territoires ultramarins français. Comparez, scannez, contribuez.",
-      "applicationCategory": "FinanceApplication",
-      "operatingSystem": "Web",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "EUR"
-      },
-      "inLanguage": "fr",
-      "publisher": {
-        "@type": "Organization",
-        "name": "A KI PRI SA YÉ",
-        "url": "https://teetee971.github.io/akiprisaye-web/"
-      }
+      "@graph": [
+        {
+          "@type": "WebApplication",
+          "@id": "https://teetee971.github.io/akiprisaye-web/#webapp",
+          "name": "A KI PRI SA YÉ",
+          "url": "https://teetee971.github.io/akiprisaye-web/",
+          "description": "Application citoyenne de transparence des prix dans les territoires ultramarins français. Comparez, scannez, contribuez.",
+          "applicationCategory": "FinanceApplication",
+          "operatingSystem": "Web",
+          "browserRequirements": "Requires JavaScript. Requires HTML5.",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "EUR",
+            "availability": "https://schema.org/InStock"
+          },
+          "inLanguage": "fr",
+          "publisher": { "@id": "https://teetee971.github.io/akiprisaye-web/#organization" }
+        },
+        {
+          "@type": "Organization",
+          "@id": "https://teetee971.github.io/akiprisaye-web/#organization",
+          "name": "A KI PRI SA YÉ",
+          "url": "https://teetee971.github.io/akiprisaye-web/",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://teetee971.github.io/akiprisaye-web/icon-512.png",
+            "width": 512,
+            "height": 512
+          },
+          "description": "Observatoire citoyen de transparence des prix dans les territoires ultramarins français.",
+          "areaServed": [
+            { "@type": "State", "name": "Guadeloupe" },
+            { "@type": "State", "name": "Martinique" },
+            { "@type": "State", "name": "Guyane" },
+            { "@type": "State", "name": "La Réunion" },
+            { "@type": "State", "name": "Mayotte" }
+          ],
+          "knowsAbout": ["prix alimentaires", "vie chère", "DOM-TOM", "comparateur de prix"]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://teetee971.github.io/akiprisaye-web/#website",
+          "url": "https://teetee971.github.io/akiprisaye-web/",
+          "name": "A KI PRI SA YÉ",
+          "inLanguage": "fr",
+          "publisher": { "@id": "https://teetee971.github.io/akiprisaye-web/#organization" },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "https://teetee971.github.io/akiprisaye-web/comparateur?q={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+          }
+        }
+      ]
     }
     </script>
 

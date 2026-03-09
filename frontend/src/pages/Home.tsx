@@ -277,7 +277,7 @@ export default function HomeV5() {
             </form>
             <p className="hero-explain fade-in delay-300">EAN, nom de produit ou scan → comparaison instantanée.</p>
             <p className="hero-trust fade-in delay-300">
-              <span className="badge-live" aria-label="Données en direct">
+              <span className="badge-live">
                 <span className="badge-live-dot" aria-hidden="true" />
                 <span>Données en direct</span>
               </span>

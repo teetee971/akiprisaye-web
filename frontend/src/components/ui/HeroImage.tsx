@@ -1,8 +1,9 @@
 /**
  * HeroImage
  * Full-width hero banner with a real Unsplash photo and a dark gradient overlay.
- * Falls back gracefully to a CSS gradient if the image fails to load.
- * Shows a shimmer skeleton while the image is loading.
+ * Uses <picture> with a WebP source for optimal compression, falling back to the
+ * original format. Degrades gracefully to a CSS gradient if the image fails.
+ * Shows a shimmer skeleton while loading.
  */
 
 import { useState } from 'react';
@@ -16,6 +17,13 @@ interface HeroImageProps {
   className?: string;
 }
 
+/** Converts an Unsplash URL to its WebP variant (adds &fm=webp if missing). */
+function toWebP(url: string): string {
+  if (!url.includes('images.unsplash.com')) return url;
+  if (url.includes('fm=webp')) return url;
+  return url.includes('?') ? `${url}&fm=webp` : `${url}?fm=webp`;
+}
+
 export function HeroImage({
   src,
   alt,
@@ -27,6 +35,8 @@ export function HeroImage({
   const [imgFailed, setImgFailed] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
 
+  const webpSrc = toWebP(src);
+
   return (
     <div className={`relative w-full overflow-hidden rounded-2xl ${height} ${className}`}>
       {/* Shimmer skeleton while image loads */}
@@ -34,17 +44,20 @@ export function HeroImage({
         <div className={`absolute inset-0 bg-gradient-to-br ${gradient} shimmer-bg`} />
       )}
 
-      {/* Background image */}
+      {/* Background image — WebP first, original as fallback */}
       {!imgFailed && (
-        <img
-          src={src}
-          alt={alt}
-          loading="lazy"
-          decoding="async"
-          onLoad={() => setImgLoaded(true)}
-          onError={() => setImgFailed(true)}
-          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
-        />
+        <picture>
+          <source type="image/webp" srcSet={webpSrc} />
+          <img
+            src={src}
+            alt={alt}
+            loading="lazy"
+            decoding="async"
+            onLoad={() => setImgLoaded(true)}
+            onError={() => setImgFailed(true)}
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
+          />
+        </picture>
       )}
 
       {/* Gradient overlay — always shown, darker when image fails */}
