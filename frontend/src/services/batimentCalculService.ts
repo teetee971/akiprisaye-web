@@ -59,12 +59,34 @@ export interface BatimentCalcRecord extends BatimentCalcPayload {
 // ── Session ID (per browser tab, not persisted) ───────────────────────────────
 
 let _sessionId: string | null = null;
+let _sessionCounter = 0;
 function getSessionId(): string {
   if (!_sessionId) {
-    _sessionId =
-      (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function')
-        ? crypto.randomUUID()
-        : `sess-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    // Prefer native crypto.randomUUID when available
+    if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+      _sessionId = crypto.randomUUID();
+    } else if (
+      typeof crypto !== 'undefined' &&
+      typeof crypto.getRandomValues === 'function'
+    ) {
+      // Fallback: generate a UUID-like value from cryptographically secure random bytes
+      const bytes = new Uint8Array(16);
+      crypto.getRandomValues(bytes);
+      // Per RFC 4122 v4 layout
+      bytes[6] = (bytes[6] & 0x0f) | 0x40;
+      bytes[8] = (bytes[8] & 0x3f) | 0x80;
+      const hex = Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
+      _sessionId = [
+        hex.slice(0, 8),
+        hex.slice(8, 12),
+        hex.slice(12, 16),
+        hex.slice(16, 20),
+        hex.slice(20),
+      ].join('-');
+    } else {
+      // Last-resort, non-cryptographic fallback (no Math.random to avoid insecure randomness)
+      _sessionId = `sess-${Date.now()}-${_sessionCounter++}`;
+    }
   }
   return _sessionId;
 }
