@@ -3,8 +3,8 @@
  *
  * Affiche 2 vidéos emblématiques sur la problématique de la vie chère
  * dans les territoires ultramarins français :
- *   1. Analyse — L'ingénieur Iconoclaste : Vie Chère en Martinique (octroi de mer, héritage colonial)
- *   2. Décryptage — Séphora Dreams : Antilles françaises, comprendre la vie chère
+ *   1. Reportage — Martinique la 1ère : Édition spéciale (vie chère en Martinique)
+ *   2. Analyse — Le Point : Martinique, les révoltés de la vie chère (2025)
  *
  * Implémentation "lite embed" :
  *   - Aucun script YouTube chargé tant que l'utilisateur ne clique pas
@@ -12,7 +12,7 @@
  *   - Intersection Observer : préchargement du composant uniquement
  *     quand la section est visible (pas de fetch au chargement initial)
  *
- * Crédits vidéo : YouTube — L'ingénieur Iconoclaste / Séphora Dreams
+ * Crédits vidéo : YouTube — Martinique la 1ère / Le Point
  * Crédits photos : Unsplash License
  */
 
@@ -31,26 +31,26 @@ interface VideoCard {
 
 const VIDEO_CARDS: VideoCard[] = [
   {
-    id: '6lL4FwZrmgQ',
-    title: 'Vie Chère en Martinique : Octroi de Mer, Chlordécone et Héritage Colonial',
+    id: 'xSdh47r2W9k',
+    title: 'Vie chère en Martinique — Édition spéciale',
     description:
-      "Analyse des causes structurelles de la vie chère en Martinique : octroi de mer, " +
-      "héritage colonial, monopoles de distribution et dépendance aux importations.",
-    source: "L'ingénieur Iconoclaste",
-    duration: '21 min',
+      "Reportage de Martinique la 1ère : témoignages de consommateurs, analyse des mécanismes " +
+      "de la vie chère et impact sur le quotidien des habitants.",
+    source: 'Martinique la 1ère',
+    duration: '14 min',
     posterUrl:
       'https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=700&q=80',
     posterAlt: 'Rayon supermarché avec étiquettes de prix',
     tag: '🎙️ Reportage',
   },
   {
-    id: 'MoLHPFC6VGY',
-    title: 'Antilles françaises : comprendre la vie chère — Békés, marges et octroi de mer',
+    id: 's-X4KEZ97jA',
+    title: 'Martinique, les révoltés de la vie chère — Outre-mer aux avant-postes 2025',
     description:
-      "Décryptage des mécanismes qui renchérissent les prix aux Antilles : Békés, marges " +
-      "de distribution, octroi de mer et coûts de transport expliqués.",
-    source: 'Séphora Dreams',
-    duration: '18 min',
+      "Analyse approfondie des causes de la vie chère en Martinique : monopoles de distribution, " +
+      "octroi de mer, coûts de transport et mobilisations citoyennes de 2025.",
+    source: 'Le Point',
+    duration: '24 min',
     posterUrl:
       'https://images.unsplash.com/photo-1607082348351-cef5cd02c7b0?auto=format&fit=crop&w=700&q=80',
     posterAlt: "Graphiques d'analyse de prix et données statistiques",
