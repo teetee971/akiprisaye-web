@@ -333,7 +333,7 @@ export default function ComparateursHub() {
                         </div>
                         <div className="mt-2 flex items-center justify-between">
                           <span className="text-blue-300 font-bold text-sm">
-                            {fmtPrice(item.avgPrice)} <span className="text-xs font-normal text-blue-400">/ {item.product.match(/(\d+[gLkg]+)/)?.[1] ?? item.unit}</span>
+                            {fmtPrice(item.avgPrice)} <span className="text-xs font-normal text-blue-400">/ {item.product.match(/((?:\d+\s*x\s*\d+\s*(?:g|kg|L))|(?:\d+(?:[.,]\d+)?\s*(?:g|kg|L)))/i)?.[1] ?? item.unit}</span>
                           </span>
                           <span className="text-xs text-slate-400">{fmtPrice(item.pricePerUnit)} / {item.unit}</span>
                         </div>
