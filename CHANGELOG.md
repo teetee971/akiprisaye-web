@@ -32,6 +32,10 @@ Le format s'inspire de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) 
   (sélecteur territoire, sélecteur carburant × 2, filtre ville). Corrige 3 avertissements
   « A form field element should have an id or name attribute » dans le panneau Problèmes DevTools.
 
+- **`pages/Comparateur.jsx`** — Ajout de `id`/`name` sur l'`<input>` recherche (`comp-query`) et
+  le `<select>` de tri (`comp-sort`) + conversion de la `<label>` inline en `htmlFor` pour la
+  liaison label/contrôle. Supprime les 2 avertissements d'accessibilité restants de la page comparateur.
+
 ---
 
 ## [3.1.8] - 2026-03-09

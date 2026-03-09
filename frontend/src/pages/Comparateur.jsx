@@ -144,6 +144,8 @@ export default function Comparateur() {
 
       <form onSubmit={onSearch} className="flex gap-2">
         <input
+          id="comp-query"
+          name="query"
           className="flex-1 border rounded px-3 py-2"
           value={query}
           placeholder="Nom, marque ou code-barres"
@@ -156,8 +158,8 @@ export default function Comparateur() {
       </form>
 
       <div className="flex justify-between items-center">
-        <label className="text-sm">Tri: 
-          <select className="ml-2 border rounded px-2 py-1" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+        <label htmlFor="comp-sort" className="text-sm">Tri:&nbsp;
+          <select id="comp-sort" name="sort" className="ml-2 border rounded px-2 py-1" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
             <option value="price_asc">Prix croissant</option>
             <option value="price_desc">Prix décroissant</option>
             <option value="merchant">Source</option>
