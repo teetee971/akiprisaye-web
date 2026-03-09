@@ -24,6 +24,7 @@ import {
   ChevronDown, ChevronUp, Copy, Check, Navigation,
   Package, Tag, Clock3, CheckCircle2, XCircle,
   BookOpen, ChevronRight, Shield, Hammer, Layers, Zap,
+  MessageSquarePlus, Send, Lightbulb,
 } from 'lucide-react';
 import {
   getBatimentTrialState,
@@ -32,6 +33,11 @@ import {
   type BatimentTrialState,
 } from '../services/batimentTrialService';
 import { saveBatimentCalculation, type BatimentSaveData } from '../services/batimentCalculService';
+import {
+  submitBatimentSuggestion,
+  SUGGESTION_CATEGORY_LABELS,
+  type SuggestionCategory,
+} from '../services/batimentSuggestionsService';
 import {
   buildStoreQuotes,
   type TerritoryCode,
@@ -2090,6 +2096,148 @@ function SuggestionsPanel() {
   );
 }
 
+// ─── User Suggestion Form ─────────────────────────────────────────────────────
+
+function UserSuggestionForm({ territory, currentCalc }: { territory: TerritoryCode | null; currentCalc: CalculatorId | null }) {
+  const [open, setOpen]         = useState(false);
+  const [category, setCategory] = useState<SuggestionCategory>('nouveau_calculateur');
+  const [message, setMessage]   = useState('');
+  const [status, setStatus]     = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [errorMsg, setErrorMsg] = useState('');
+
+  // session id (stable per tab)
+  const sessionId = typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+    ? crypto.randomUUID()
+    : `sess-${Date.now()}`;
+
+  const canSubmit = message.trim().length >= 10 && status !== 'sending';
+
+  const handleSubmit = async () => {
+    if (!canSubmit) return;
+    setStatus('sending');
+    const result = await submitBatimentSuggestion({
+      message: message.trim(),
+      category,
+      calcType: currentCalc ?? null,
+      territory: territory ?? null,
+      sessionId,
+    });
+    if (result.success) {
+      setStatus('success');
+      setMessage('');
+      setTimeout(() => { setStatus('idle'); setOpen(false); }, 3000);
+    } else {
+      setStatus('error');
+      setErrorMsg(result.error ?? 'Erreur inconnue');
+    }
+  };
+
+  return (
+    <div className="mt-4 rounded-2xl border border-dashed border-indigo-500/40 bg-indigo-900/10 overflow-hidden">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-indigo-900/20 transition-colors text-left"
+      >
+        <MessageSquarePlus className="w-5 h-5 text-indigo-400 shrink-0" />
+        <div className="flex-1 min-w-0">
+          <p className="font-semibold text-white text-sm">💡 Proposer une suggestion</p>
+          <p className="text-xs text-slate-400 mt-0.5">Nouveau calculateur, matériau, magasin, amélioration…</p>
+        </div>
+        {open ? <ChevronUp className="w-4 h-4 text-slate-400 shrink-0" /> : <ChevronDown className="w-4 h-4 text-slate-400 shrink-0" />}
+      </button>
+
+      {open && (
+        <div className="px-4 pb-4 space-y-3 border-t border-indigo-500/20 pt-3">
+
+          {/* Category selector */}
+          <div>
+            <p className="text-xs text-slate-400 mb-2">Catégorie de suggestion</p>
+            <div className="grid grid-cols-1 gap-1.5">
+              {(Object.entries(SUGGESTION_CATEGORY_LABELS) as [SuggestionCategory, string][]).map(([key, label]) => (
+                <button
+                  key={key}
+                  onClick={() => setCategory(key)}
+                  className={`text-left px-3 py-2 rounded-xl text-xs font-medium transition-colors border ${
+                    category === key
+                      ? 'bg-indigo-700/40 border-indigo-500/60 text-white'
+                      : 'bg-slate-800/60 border-slate-700 text-slate-400 hover:border-slate-600'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Message textarea */}
+          <div>
+            <label className="block text-xs text-slate-400 mb-1.5">
+              Votre suggestion <span className="text-slate-500">({message.trim().length}/500 caractères, min 10)</span>
+            </label>
+            <textarea
+              value={message}
+              onChange={(e) => setMessage(e.target.value.slice(0, 500))}
+              rows={4}
+              placeholder={
+                category === 'nouveau_calculateur'
+                  ? 'Ex : Calculateur de toiture en bardeau, ou calculateur pour piscine…'
+                  : category === 'materiau'
+                  ? 'Ex : Ajouter le parpaing 25×20×50 avec prix chez Point P Martinique…'
+                  : category === 'magasin'
+                  ? 'Ex : Ajouter Brico Maho à Guadeloupe, tél. 0590 XX XX XX…'
+                  : 'Décrivez votre suggestion en détail (minimum 10 caractères)…'
+              }
+              className="w-full rounded-xl border border-slate-600 bg-slate-800 px-3 py-2 text-sm text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none resize-none"
+            />
+          </div>
+
+          {/* Context info (readonly) */}
+          {(territory || currentCalc) && (
+            <div className="rounded-xl bg-slate-800/60 border border-slate-700 px-3 py-2 text-xs text-slate-400 flex items-center gap-2">
+              <Lightbulb className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
+              <span>
+                Contexte envoyé automatiquement :
+                {territory && <span className="text-slate-300 ml-1">territoire {territory}</span>}
+                {currentCalc && <span className="text-slate-300 ml-1">· calculateur {currentCalc}</span>}
+              </span>
+            </div>
+          )}
+
+          {/* Status messages */}
+          {status === 'success' && (
+            <div className="rounded-xl bg-green-900/30 border border-green-500/40 px-3 py-2 text-sm text-green-300 flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 shrink-0" />
+              Merci ! Votre suggestion a été envoyée. L'équipe l'examinera prochainement.
+            </div>
+          )}
+          {status === 'error' && (
+            <div className="rounded-xl bg-red-900/30 border border-red-500/40 px-3 py-2 text-sm text-red-300 flex items-center gap-2">
+              <XCircle className="w-4 h-4 shrink-0" />
+              Erreur : {errorMsg}
+            </div>
+          )}
+
+          {/* Submit button */}
+          {status !== 'success' && (
+            <button
+              onClick={() => void handleSubmit()}
+              disabled={!canSubmit}
+              className="w-full flex items-center justify-center gap-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed py-3 font-semibold text-white text-sm transition-colors"
+            >
+              <Send className="w-4 h-4" />
+              {status === 'sending' ? 'Envoi en cours…' : 'Envoyer ma suggestion'}
+            </button>
+          )}
+
+          <p className="text-xs text-center text-slate-600">
+            Vos suggestions nous aident à améliorer l'outil. Merci de votre participation !
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 const TERRITORY_STORAGE_KEY = 'akp:batiment:territory';
@@ -2247,6 +2395,7 @@ export default function CalculateurBatiment() {
                 );
               })}
               <SuggestionsPanel />
+              <UserSuggestionForm territory={territory} currentCalc={selectedCalc} />
 
               {/* ── Tutoriels toggle button ── */}
               <button
@@ -2331,6 +2480,8 @@ export default function CalculateurBatiment() {
                   <ChevronRight className="w-4 h-4 ml-auto" />
                 </button>
               )}
+              {/* User suggestion form (contextual to current calculator) */}
+              <UserSuggestionForm territory={territory} currentCalc={selectedCalc} />
             </>
           )}
         </div>

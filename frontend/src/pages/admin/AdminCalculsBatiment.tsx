@@ -2,13 +2,9 @@
  * AdminCalculsBatiment — Interface admin pour les calculs du bâtiment
  *
  * Accès restreint aux administrateurs authentifiés.
- * Affiche tous les calculs enregistrés dans Firestore (collection calculs_batiment).
- *
- * Données disponibles :
- *  - Type de calculateur, territoire, jour d'essai
- *  - Inputs (dimensions), résultats (quantités), matériaux
- *  - Estimation coût magasin si disponible
- *  - Utilisateur (uid ou anonymous), date/heure
+ * Onglets :
+ *  1. Calculs — tous les calculs enregistrés dans Firestore (collection calculs_batiment)
+ *  2. Suggestions — toutes les suggestions utilisateurs (collection suggestions_batiment)
  */
 
 import { useState, useEffect } from 'react';
@@ -25,6 +21,11 @@ import {
   RefreshCw,
   Search,
   Package,
+  MessageSquarePlus,
+  CheckCircle2,
+  XCircle,
+  Clock,
+  Zap,
 } from 'lucide-react';
 import { auth } from '@/lib/firebase';
 import { onAuthStateChanged, type User as FbUser } from 'firebase/auth';
@@ -34,10 +35,19 @@ import {
   TERRITORY_LABELS,
   type BatimentCalcRecord,
 } from '@/services/batimentCalculService';
+import {
+  getAllBatimentSuggestions,
+  updateSuggestionStatus,
+  SUGGESTION_CATEGORY_LABELS,
+  SUGGESTION_STATUS_LABELS,
+  SUGGESTION_STATUS_COLORS,
+  type BatimentSuggestion,
+  type SuggestionStatus,
+} from '@/services/batimentSuggestionsService';
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
-function formatDate(rec: BatimentCalcRecord): string {
+function formatDate(rec: BatimentCalcRecord | BatimentSuggestion): string {
   if (!rec.createdAt) return '—';
   try {
     const ms = rec.createdAt.seconds * 1000;
