@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * Utility functions for exporting comparison data to various formats
  */
@@ -65,7 +64,7 @@ export const exportFlightComparisonToCSV = (result: FlightComparisonResult): voi
     escapeCSV(ranking.flightPrice.price.toFixed(2)),
     escapeCSV(ranking.flightPrice.additionalFees?.total.toFixed(2) || '0.00'),
     escapeCSV((ranking.flightPrice.price + (ranking.flightPrice.additionalFees?.total || 0)).toFixed(2)),
-    escapeCSV(ranking.flightPrice.duration),
+    escapeCSV(ranking.flightPrice.duration ?? ''),
     escapeCSV(ranking.flightPrice.stops),
     escapeCSV(ranking.flightPrice.fareConditions.baggageIncluded ? 'Oui' : 'Non'),
     escapeCSV(ranking.flightPrice.fareConditions.refundable ? 'Oui' : 'Non'),

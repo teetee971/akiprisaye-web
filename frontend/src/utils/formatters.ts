@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * formatters.ts — Formatting utilities for display
  * 
@@ -120,11 +119,12 @@ export function truncateText(text: string, maxLength: number): string {
 export function formatDate(date: Date | string, style: 'short' | 'medium' | 'long' = 'medium'): string {
   const dateObj = typeof date === 'string' ? new Date(date) : date;
   
-  const options: Intl.DateTimeFormatOptions = {
+  const optionsMap: Record<string, Intl.DateTimeFormatOptions> = {
     short: { day: 'numeric', month: 'numeric', year: '2-digit' },
     medium: { day: 'numeric', month: 'short', year: 'numeric' },
     long: { day: 'numeric', month: 'long', year: 'numeric' },
-  }[style];
+  };
+  const options: Intl.DateTimeFormatOptions = optionsMap[style];
   
   return dateObj.toLocaleDateString('fr-FR', options);
 }

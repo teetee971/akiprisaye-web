@@ -1,4 +1,3 @@
-// @ts-nocheck
  
 /**
  * Enhanced Geolocation Utility
@@ -195,7 +194,7 @@ export async function requestGeolocation(
     };
     
     if (showMessage) {
-      showMessage(result.error.userMessage, 'error');
+      showMessage(result.error!.userMessage, 'error');
     }
     
     return result;
@@ -222,7 +221,7 @@ export async function requestGeolocation(
     };
     
     if (showMessage) {
-      showMessage(result.error.userMessage, 'error');
+      showMessage(result.error!.userMessage, 'error');
     }
     
     // PROMPT 4: Monitor geolocation denied

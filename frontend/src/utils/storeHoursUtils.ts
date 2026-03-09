@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * Store Hours Utilities
  * 
@@ -196,6 +195,7 @@ export function isStoreOpen(
   // Check each period (morning, afternoon, etc.)
   for (const period of todayHours) {
     if (period.closed) continue;
+    if (!period.open || !period.close) continue;
     
     const openMinutes = parseTimeToMinutes(period.open);
     const closeMinutes = parseTimeToMinutes(period.close);

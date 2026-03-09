@@ -202,6 +202,7 @@ export const DataUploadZone: React.FC<DataUploadZoneProps> = ({
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         onClick={handleClick}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleClick(); } }}
         className={`
           relative border-2 border-dashed rounded-xl p-8 transition-all cursor-pointer
           ${isDragOver

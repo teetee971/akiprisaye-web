@@ -194,6 +194,7 @@ function TerritoryBarometerCard({ entry }: { entry: BarometerEntry }) {
           <img
             src={asset.url}
             alt=""
+            aria-hidden="true"
             loading="lazy"
             decoding="async"
             onError={() => setImgFailed(true)}

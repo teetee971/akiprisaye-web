@@ -129,6 +129,7 @@ function EquiteCard({ entry }: { entry: EquiteEntry }) {
           <img
             src={asset.url}
             alt=""
+            aria-hidden="true"
             loading="lazy"
             decoding="async"
             onError={() => setImgFailed(true)}

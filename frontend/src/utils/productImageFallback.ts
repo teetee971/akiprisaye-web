@@ -1,4 +1,3 @@
-// @ts-nocheck
  
 /**
  * Product Image Fallback Utility
@@ -63,7 +62,7 @@ export async function validateImageUrl(url: string): Promise<boolean> {
       method: 'HEAD',
       cache: 'no-cache'
     });
-    return response.ok && response.headers.get('content-type')?.startsWith('image/');
+    return response.ok && (response.headers.get('content-type')?.startsWith('image/') ?? false);
   } catch {
     return false;
   }

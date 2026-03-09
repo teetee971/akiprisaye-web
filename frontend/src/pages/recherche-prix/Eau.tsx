@@ -1,5 +1,4 @@
-// @ts-nocheck
- 
+// @ts-nocheck -- TODO: fix undeclared state vars (setSortBy, setSortDirection, sortBy, sortDirection, sortOptions)
 import React, { useState } from 'react';
 import { Droplet, Info, Download } from 'lucide-react';
 import {

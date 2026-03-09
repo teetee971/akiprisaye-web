@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * Price Observatory Types - v1.3.0
  * 
@@ -7,7 +6,8 @@
  * @module observatoryTypes
  */
 
-import type { TerritoryCode, ProductCategory } from './product';
+import type { TerritoryCode } from './extensions';
+import type { ProductCategory } from './product';
 
 /**
  * Inflation detection result

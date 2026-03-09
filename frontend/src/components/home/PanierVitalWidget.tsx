@@ -125,6 +125,7 @@ function PanierVitalCard({ entry, isHex, barWidth }: {
           <img
             src={asset.url}
             alt=""
+            aria-hidden="true"
             loading="lazy"
             decoding="async"
             onError={() => setImgFailed(true)}

@@ -1,4 +1,3 @@
-// @ts-nocheck
  
 /**
  * Fuel Price API Client
