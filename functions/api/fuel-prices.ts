@@ -112,7 +112,14 @@ async function fetchPage(dept: string, offset: number, limit: number, signal: Ab
     headers: { Accept: 'application/json' },
   });
   if (!res.ok) throw new Error(`Gov API error ${res.status}`);
-  return res.json() as Promise<{ results: GovStation[]; total_count: number }>;
+  const json = await res.json() as unknown;
+  if (
+    typeof json !== 'object' || json === null ||
+    !Array.isArray((json as Record<string, unknown>).results)
+  ) {
+    throw new Error('Unexpected response shape from government API');
+  }
+  return json as { results: GovStation[]; total_count: number };
 }
 
 /** Fetch all stations for a department (paginated) */
@@ -135,7 +142,10 @@ async function fetchAllStations(dept: string, signal: AbortSignal): Promise<GovS
 
 /** Convert raw gov station into FuelPricePoint[] */
 function transformStation(raw: GovStation, territory: string): FuelPricePoint[] {
-  const stationId = `gov-${territory.toLowerCase()}-${raw.id ?? Math.random().toString(36).slice(2)}`;
+  // Build a deterministic ID from station attributes so caching is stable
+  const idSource = raw.id
+    ?? `${raw.adresse ?? ''}-${raw.cp ?? ''}-${raw.ville ?? ''}`.replace(/\s+/g, '-').toLowerCase();
+  const stationId = `gov-${territory.toLowerCase()}-${idSource}`;
   const brand = raw.enseignes ?? raw.brand ?? 'Station-service';
   const station = {
     id: stationId,
@@ -172,6 +182,9 @@ function transformStation(raw: GovStation, territory: string): FuelPricePoint[] 
       currency: 'EUR',
       observationDate: observedAt,
       source: { type: 'official_api', url: SOURCE_URL, observedAt, reliability: 'high' },
+      // Price caps (prix plafonnés) apply in GP/MQ/GF/RE/YT but can only be determined
+      // by comparing against the monthly prefectoral decree. Left false here; the frontend
+      // EnqueteCarburants page explains the cap mechanism in detail.
       isPriceCapPlafonne: false,
       territory,
       lastUpdate: observedAt,
@@ -199,7 +212,12 @@ export const onRequestGet: PagesFunction = async ({ request }) => {
   const cache = caches.default;
   const cacheKey = new Request(`${url.origin}/api/fuel-prices?territory=${territory}`);
   const cached = await cache.match(cacheKey);
-  if (cached) return new Response(cached.body, cached);
+  if (cached) {
+    // Re-add CORS headers in case the cached response was stored without them
+    const headers = new Headers(cached.headers);
+    Object.entries(CORS_HEADERS).forEach(([k, v]) => headers.set(k, v));
+    return new Response(cached.body, { status: cached.status, headers });
+  }
 
   const ctrl = withTimeout(REQUEST_TIMEOUT_MS);
   try {
