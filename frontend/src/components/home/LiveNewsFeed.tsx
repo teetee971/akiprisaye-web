@@ -89,6 +89,8 @@ export default function LiveNewsFeed() {
                   src={article.imageUrl}
                   alt={article.title}
                   loading="lazy"
+                  width="400"
+                  height="140"
                   className="news-card-image"
                   onError={(e) => { e.currentTarget.style.display = 'none'; }}
                 />

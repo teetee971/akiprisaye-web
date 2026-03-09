@@ -4,6 +4,15 @@
    ═══════════════════════════════════════════════════════════════ */
 
 /* ───────────────────────────────────────────────────────────────
+   CSS @property registrations — required for animated custom props
+   ─────────────────────────────────────────────────────────────── */
+@property --angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+/* ───────────────────────────────────────────────────────────────
    1. AURORA / ANIMATED GRADIENT MESH BACKGROUND
    Animated color orbs behind the hero create depth and life.
    ─────────────────────────────────────────────────────────────── */
@@ -14,15 +23,19 @@
   pointer-events: none;
   overflow: hidden;
   z-index: 0;
+  /* Isolate paint area so blur doesn't overflow into layout */
+  contain: strict;
 }
 
 .aurora-orb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(80px);
+  /* Reduced from 80px — 60px is visually equivalent at lower GPU cost */
+  filter: blur(60px);
   opacity: 0.18;
   animation: aurora-drift var(--duration, 18s) ease-in-out infinite alternate;
-  will-change: transform, opacity;
+  /* Only transform compositing — avoids opacity repaints */
+  will-change: transform;
 }
 
 .aurora-orb--1 {
@@ -71,6 +84,8 @@
   overflow: hidden;
   pointer-events: none;
   z-index: 0;
+  /* Isolate compositing layer from rest of page */
+  contain: strict;
 }
 
 .particle {

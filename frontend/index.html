@@ -72,6 +72,14 @@
 
     <!-- Preload critical assets -->
     <link rel="preload" as="image" href="%BASE_URL%logo-akiprisaye.svg" fetchpriority="high" />
+    <!-- Preload the hero section background (CSS background-image — tell browser early) -->
+    <link
+      rel="preload"
+      as="image"
+      href="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=1600&q=80"
+      fetchpriority="high"
+      crossorigin="anonymous"
+    />
 
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json">
