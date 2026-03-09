@@ -255,7 +255,7 @@ const FuelComparator: React.FC = () => {
         </div>
 
         {/* View mode */}
-        <div className="flex gap-2 mb-6">
+        <div className="flex flex-wrap gap-2 mb-6">
           <button
             onClick={() => setViewMode('single')}
             className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-colors ${viewMode === 'single' ? 'bg-yellow-500/20 border border-yellow-500/50 text-yellow-300' : 'bg-slate-800 border border-slate-700 text-gray-400 hover:bg-slate-700'}`}
@@ -270,7 +270,7 @@ const FuelComparator: React.FC = () => {
           </button>
           <Link
             to="/enquete-carburants"
-            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium bg-orange-500/10 border border-orange-500/30 text-orange-300 hover:bg-orange-500/20 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium bg-orange-500/10 border border-orange-500/30 text-orange-300 hover:bg-orange-500/20 transition-colors sm:ml-auto"
           >
             <BookOpen className="w-4 h-4" /> Enquête : d&apos;où vient le prix ?
           </Link>
@@ -501,6 +501,19 @@ const FuelComparator: React.FC = () => {
                   {' \u00b7 '}Comparaison du {formatDate(new Date(comparisonResult.comparisonDate))}
                 </div>
                 <div className="mt-2"><BookingLinkBadge /></div>
+
+                {/* Investigation CTA */}
+                <Link
+                  to="/enquete-carburants"
+                  className="mt-4 flex items-center gap-3 p-4 bg-orange-500/10 border border-orange-500/30 rounded-xl hover:bg-orange-500/20 transition-colors group"
+                >
+                  <BookOpen className="w-5 h-5 text-orange-400 flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-orange-300">Enquête complète : d&apos;où vient le prix ?</p>
+                    <p className="text-xs text-gray-400 mt-0.5">Taxes, marges, prix plafonn&eacute;s, comparatif international&hellip;</p>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-orange-400 flex-shrink-0 group-hover:translate-x-0.5 transition-transform" />
+                </Link>
               </>
             )}
           </>

@@ -192,11 +192,11 @@ export const PAGE_HERO_IMAGES = {
   /** Gamification profile — trophy/achievement */
   gamification: 'https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Comparaison enseignes — supermarket aisle */
-  comparaisonEnseignes: 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  comparaisonEnseignes: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** App demo — person scanning barcode in tropical supermarket */
   appDemo: 'https://images.unsplash.com/photo-1607082348351-cef5cd02c7b0?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Vie chère poster — supermarket shelves with price tags */
-  videoPoster: 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fm=webp&fit=crop&w=1200&q=80',
+  videoPoster: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fm=webp&fit=crop&w=1200&q=80',
   // ── Innovation Lab ───────────────────────────────────────────────────────
   /** Innovation Lab — futuristic tech lab / AI concept */
   innovationLab: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fm=webp&fit=crop&w=1600&q=80',

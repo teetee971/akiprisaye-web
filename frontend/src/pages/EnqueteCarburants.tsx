@@ -21,7 +21,7 @@ import {
   Droplet, TrendingUp, Globe, Ship, DollarSign, Landmark,
   BarChart2, AlertTriangle, Info, ChevronRight, ChevronDown,
   FileText, Search, Truck, Factory, MapPin, Flame, Scale,
-  BookOpen, ExternalLink, Shield, PieChart,
+  BookOpen, ExternalLink, Shield, PieChart, ArrowLeft,
 } from 'lucide-react';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
@@ -205,6 +205,16 @@ const EnqueteCarburants: React.FC = () => {
       </Helmet>
 
       <div className="max-w-5xl mx-auto px-4 pb-16 pt-6">
+        {/* Back navigation */}
+        <div className="mb-4">
+          <Link
+            to="/comparateur-carburants"
+            className="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-orange-300 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" /> Retour au comparateur carburants
+          </Link>
+        </div>
+
         {/* Hero */}
         <div className="mb-6">
           <HeroImage
