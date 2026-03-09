@@ -10,6 +10,7 @@ import { FIREBASE_UNAVAILABLE_MESSAGE } from "@/lib/authMessages";
 import { HeroImage } from "@/components/ui/HeroImage";
 import { PAGE_HERO_IMAGES } from "@/config/imageAssets";
 
+import { SEOHead } from '../components/ui/SEOHead';
 const DEFAULT_USER_PLAN = "free";
 const PLAN_LABELS: Record<string, { title: string; description: string }> = {
   free: {
@@ -101,6 +102,12 @@ export default function Inscription() {
   };
 
   return (
+    <>
+      <SEOHead
+        title="Inscription — Rejoindre A KI PRI SA YÉ"
+        description="Créez votre compte pour contribuer à l'observatoire citoyen des prix Outre-mer et accéder à toutes les fonctionnalités."
+        canonical="https://teetee971.github.io/akiprisaye-web/inscription"
+      />
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
       <div className="bg-slate-900 rounded-2xl p-6 shadow-lg w-full max-w-md">
         <HeroImage
@@ -199,5 +206,6 @@ export default function Inscription() {
         </div>
       </div>
     </div>
+    </>
   );
 }

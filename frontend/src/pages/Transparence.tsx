@@ -1,8 +1,15 @@
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
+import { SEOHead } from '../components/ui/SEOHead';
 export default function Transparence() {
   return (
+    <>
+      <SEOHead
+        title="Transparence — Notre engagement pour des données fiables"
+        description="Découvrez notre approche de la transparence des données, notre méthodologie et nos engagements envers les citoyens ultramarins."
+        canonical="https://teetee971.github.io/akiprisaye-web/transparence"
+      />
     <div className="min-h-screen bg-slate-950 text-slate-100">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
         <HeroImage
@@ -63,5 +70,6 @@ export default function Transparence() {
         </section>
       </div>
     </div>
+    </>
   );
 }

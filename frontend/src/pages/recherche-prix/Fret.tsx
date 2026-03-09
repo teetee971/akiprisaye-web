@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Package, Info, TrendingUp } from 'lucide-react';
+import { SEOHead } from '../../components/ui/SEOHead';
 import {
   searchFreightPrices,
   getPorts,
@@ -58,6 +59,12 @@ export default function Fret() {
   const interDOM = portDepart && portArrivee && isInterDOM(portDepart, portArrivee);
 
   return (
+    <>
+      <SEOHead
+        title="Prix du fret Outre-mer — Coûts de transport maritime"
+        description="Suivez l'évolution des coûts de fret maritime vers les DOM-TOM. Impact sur les prix alimentaires et biens de consommation."
+        canonical="https://teetee971.github.io/akiprisaye-web/recherche-prix/fret"
+      />
     <div className="min-h-screen bg-slate-950">
       {/* Header */}
       <header className="bg-gradient-to-r from-slate-900 to-slate-800 border-b border-slate-700">
@@ -373,5 +380,6 @@ export default function Fret() {
         </div>
       </main>
     </div>
+    </>
   );
 }

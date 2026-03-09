@@ -5,6 +5,7 @@ import type { SanitaryAlert } from '../types/alerts'
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
+import { SEOHead } from '../components/ui/SEOHead';
 type Alert = SanitaryAlert;
 
 export default function AlertsPage() {
@@ -19,6 +20,12 @@ export default function AlertsPage() {
   }, [])
 
   return (
+    <>
+      <SEOHead
+        title="Mes alertes prix — Surveillance automatique des variations de prix"
+        description="Configurez des alertes pour être notifié des baisses ou hausses de prix sur vos produits préférés dans les territoires ultramarins."
+        canonical="https://teetee971.github.io/akiprisaye-web/alertes-prix"
+      />
     <main>
       <HeroImage
         src={PAGE_HERO_IMAGES.alerts}
@@ -43,5 +50,6 @@ export default function AlertsPage() {
         </ul>
       )}
     </main>
+    </>
   )
 }

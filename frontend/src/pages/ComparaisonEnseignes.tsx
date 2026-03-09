@@ -27,6 +27,7 @@ import {
 import { initAutoUpdate, getLastUpdateDate } from '../services/priceUpdateScheduler'
 import type { PriceObservation } from '../types/PriceObservation'
 
+import { SEOHead } from '../components/ui/SEOHead';
 type ProductOption = {
   id: string
   label: string
@@ -191,6 +192,12 @@ export default function ComparaisonEnseignes() {
   }
 
   return (
+    <>
+      <SEOHead
+        title="Comparaison inter-enseignes — Prix Carrefour, E.Leclerc, Casino Outre-mer"
+        description="Comparez les prix entre enseignes en Guadeloupe, Martinique, Guyane et La Réunion. Données observatoire citoyen."
+        canonical="https://teetee971.github.io/akiprisaye-web/comparaison-enseignes"
+      />
     <div className="container mx-auto px-4 py-8 max-w-7xl">
       <div className="mb-6 animate-fade-in">
         <HeroImage
@@ -387,5 +394,6 @@ export default function ComparaisonEnseignes() {
         }
       />
     </div>
+    </>
   )
 }

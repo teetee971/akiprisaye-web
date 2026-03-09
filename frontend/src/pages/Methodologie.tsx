@@ -1,8 +1,15 @@
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
+import { SEOHead } from '../components/ui/SEOHead';
 export default function Methodologie() {
   return (
+    <>
+      <SEOHead
+        title="Méthodologie — Comment nous collectons et validons les prix"
+        description="Découvrez la méthodologie de collecte, validation et publication des données de prix de l'observatoire citoyen ultramarinois."
+        canonical="https://teetee971.github.io/akiprisaye-web/methodologie"
+      />
     <div className="min-h-screen bg-slate-950 text-slate-100">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
         <HeroImage
@@ -49,5 +56,6 @@ export default function Methodologie() {
         </section>
       </div>
     </div>
+    </>
   );
 }

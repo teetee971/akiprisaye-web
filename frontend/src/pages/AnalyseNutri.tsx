@@ -20,6 +20,7 @@ import { Link } from 'react-router-dom';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
+import { SEOHead } from '../components/ui/SEOHead';
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
 interface OFFProduct {
@@ -127,6 +128,12 @@ export default function AnalyseNutri() {
   const name = p?.product_name_fr || p?.product_name || 'Produit inconnu';
 
   return (
+    <>
+      <SEOHead
+        title="Analyse nutritionnelle — Comparez la qualité des aliments"
+        description="Analysez la qualité nutritionnelle des produits alimentaires dans les supermarchés des territoires ultramarins."
+        canonical="https://teetee971.github.io/akiprisaye-web/analyse-nutri"
+      />
     <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', padding: '1.5rem 1rem 3rem' }}>
       <div style={{ maxWidth: 760, margin: '0 auto' }}>
 
@@ -326,5 +333,6 @@ export default function AnalyseNutri() {
 
       </div>
     </div>
+    </>
   );
 }

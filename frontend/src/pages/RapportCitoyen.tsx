@@ -11,6 +11,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
+import { SEOHead } from '../components/ui/SEOHead';
 
 // ─── Data ──────────────────────────────────────────────────────────────────────
 
@@ -66,6 +67,11 @@ export default function RapportCitoyen() {
 
   return (
     <>
+      <SEOHead
+        title="Rapport citoyen — Signalez une anomalie de prix"
+        description="Signalez une anomalie de prix, une pratique commerciale abusive ou une erreur dans nos données. Votre signalement compte pour la transparence des prix en Outre-mer."
+        canonical="https://teetee971.github.io/akiprisaye-web/rapport-citoyen"
+      />
       <style>{PRINT_STYLES}</style>
       <div className="report-container" style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', padding: '1.5rem 1rem 3rem' }}>
         <div style={{ maxWidth: 820, margin: '0 auto' }}>

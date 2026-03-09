@@ -2,8 +2,15 @@ import { Link } from 'react-router-dom';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
+import { SEOHead } from '../components/ui/SEOHead';
 export default function MentionsLegales() {
   return (
+    <>
+      <SEOHead
+        title="Mentions légales — A KI PRI SA YÉ"
+        description="Mentions légales, politique de confidentialité et conditions d'utilisation de l'application A KI PRI SA YÉ."
+        canonical="https://teetee971.github.io/akiprisaye-web/mentions-legales"
+      />
     <div className="min-h-screen bg-slate-950 text-slate-100">
       <div className="max-w-4xl mx-auto px-4 py-12 space-y-8">
         <HeroImage
@@ -60,5 +67,6 @@ export default function MentionsLegales() {
         </footer>
       </div>
     </div>
+    </>
   );
 }

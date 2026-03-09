@@ -1,4 +1,5 @@
 import React from 'react';
+import { SEOHead } from '../../components/ui/SEOHead';
 import {
   promotionExamples,
   comparableCases,
@@ -28,6 +29,12 @@ import {
 
 const ComprendrePromotionsPrixBarres: React.FC = () => {
   return (
+    <>
+      <SEOHead
+        title="Comprendre les promotions et prix barrés — Guide citoyen"
+        description="Guide pratique pour comprendre les promotions, prix barrés et soldes dans les supermarchés des DOM-TOM."
+        canonical="https://teetee971.github.io/akiprisaye-web/ressources/comprendre-promotions-prix-barres"
+      />
     <div className="min-h-screen bg-slate-950 py-8 px-4">
       <div className="max-w-4xl mx-auto">
         
@@ -419,6 +426,7 @@ const ComprendrePromotionsPrixBarres: React.FC = () => {
 
       </div>
     </div>
+    </>
   );
 };
 

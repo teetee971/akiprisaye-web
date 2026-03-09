@@ -15,6 +15,7 @@
 
 import React, { useState } from 'react';
 import { BookOpen, ChevronDown, ChevronUp, Search } from 'lucide-react';
+import { SEOHead } from '../../components/ui/SEOHead';
 import {
   getAllTerms,
   getTermsByCategory,
@@ -39,6 +40,12 @@ const GlossaireLogistiqueDOM: React.FC = () => {
   };
 
   return (
+    <>
+      <SEOHead
+        title="Glossaire logistique DOM — Termes et définitions"
+        description="Dictionnaire des termes logistiques spécifiques aux territoires ultramarins : octroi de mer, AWB, BL, Incoterms..."
+        canonical="https://teetee971.github.io/akiprisaye-web/ressources/glossaire-logistique-dom"
+      />
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 py-8 px-4">
       <div className="max-w-4xl mx-auto">
         {/* En-tête */}
@@ -178,6 +185,7 @@ const GlossaireLogistiqueDOM: React.FC = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

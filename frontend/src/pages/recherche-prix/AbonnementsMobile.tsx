@@ -12,6 +12,7 @@ import PriceChart from '../../components/comparateur/LazyPriceChart';
 import SortControl from '../../components/comparateur/SortControl';
 import ShareButton from '../../components/comparateur/ShareButton';
 
+import { SEOHead } from '../../components/ui/SEOHead';
 /**
  * Module de comparaison des prix des abonnements mobiles
  * 
@@ -125,6 +126,12 @@ export default function AbonnementsMobile() {
   };
 
   return (
+    <>
+      <SEOHead
+        title="Abonnements mobiles Outre-mer — Comparatif opérateurs"
+        description="Comparez les forfaits mobiles en Guadeloupe, Martinique, Guyane et La Réunion. Prix, données et couverture réseau."
+        canonical="https://teetee971.github.io/akiprisaye-web/recherche-prix/abonnements-mobile"
+      />
     <div className="min-h-screen bg-slate-950">
       {/* Header */}
       <header className="bg-gradient-to-r from-slate-900 to-slate-800 border-b border-slate-700">
@@ -410,5 +417,6 @@ export default function AbonnementsMobile() {
         </div>
       </main>
     </div>
+    </>
   );
 }

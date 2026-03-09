@@ -5,6 +5,7 @@ import PredictionBadge from '../components/PredictionBadge'
 import Sparkline from '../components/Sparkline'
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
+import { SEOHead } from '../components/ui/SEOHead';
 import {
   analyzeCatalogue,
   filterByStatus,
@@ -79,6 +80,12 @@ export default function Predictions() {
   }
 
   return (
+    <>
+      <SEOHead
+        title="Prédictions IA — Anticipez les hausses de prix Outre-mer"
+        description="L'intelligence artificielle analyse les tendances pour prédire les variations de prix dans les DOM-TOM. Anticipez et économisez."
+        canonical="https://teetee971.github.io/akiprisaye-web/predictions"
+      />
     <main className="container mx-auto px-4 py-8" role="main">
       <div className="mb-8">
         <HeroImage
@@ -262,5 +269,6 @@ export default function Predictions() {
         </div>
       )}
     </main>
+    </>
   )
 }

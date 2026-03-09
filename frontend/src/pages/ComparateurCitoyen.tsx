@@ -4,6 +4,7 @@ import ComparateurFilters from '../components/comparateur/ComparateurFilters';
 import ErrorState from '../components/comparateur/ErrorState';
 import DataInfo from '../components/comparateur/DataInfo';
 
+import { SEOHead } from '../components/ui/SEOHead';
 // Type pour les données de l'observatoire
 type ObservatoireData = {
   commune: string;
@@ -168,6 +169,12 @@ export default function ComparateurCitoyen() {
   const filteredData = getFilteredData();
 
   return (
+    <>
+      <SEOHead
+        title="Comparateur citoyen — Comparez les prix dans vos magasins"
+        description="Utilisez les données citoyennes pour comparer les prix réels dans les grandes surfaces des DOM-TOM."
+        canonical="https://teetee971.github.io/akiprisaye-web/comparateur-citoyen"
+      />
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
       {/* Header */}
       <div className="bg-white dark:bg-slate-900 shadow-md border-b border-blue-100 dark:border-slate-700">
@@ -317,5 +324,6 @@ export default function ComparateurCitoyen() {
         </div>
       </div>
     </div>
+    </>
   );
 }

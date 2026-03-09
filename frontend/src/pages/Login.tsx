@@ -5,6 +5,7 @@ import { firebaseError, missingCriticalEnvKeys } from "@/lib/firebase";
 import { FIREBASE_UNAVAILABLE_MESSAGE } from "@/lib/authMessages";
 import { useAuth } from "@/context/AuthContext";
 
+import { SEOHead } from '../components/ui/SEOHead';
 type AuthMode = "login" | "signup";
 
 export default function Login() {
@@ -115,6 +116,12 @@ export default function Login() {
   const loading = busyAction !== null;
 
   return (
+    <>
+      <SEOHead
+        title="Connexion — A KI PRI SA YÉ"
+        description="Connectez-vous à votre compte A KI PRI SA YÉ pour accéder à vos alertes prix et votre historique de contributions."
+        canonical="https://teetee971.github.io/akiprisaye-web/connexion"
+      />
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
       <div className="bg-slate-900 rounded-2xl p-6 shadow-lg w-full max-w-md">
         <h1 className="text-2xl font-semibold mb-6 text-white text-center">Connexion</h1>
@@ -221,5 +228,6 @@ export default function Login() {
         )}
       </div>
     </div>
+    </>
   );
 }

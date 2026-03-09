@@ -17,6 +17,7 @@ import { getRealtimePrices, type RealtimePriceState } from '../services/realtime
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
+import { SEOHead } from '../components/ui/SEOHead';
 type Period = 'hour' | 'day' | 'week' | 'month';
 
 type PricePoint = {
@@ -285,6 +286,12 @@ export default function ObservatoireVivant() {
   const lineDot = isInstitutionalSource ? false : { r: 3, strokeWidth: 1, stroke: '#34d399', fill: '#34d399' };
 
   return (
+    <>
+      <SEOHead
+        title="Observatoire des prix en temps réel — Flux live Outre-mer"
+        description="Suivez les prix en temps réel dans les supermarchés et marchés des territoires d'Outre-mer. Flux de données citoyennes actualisé."
+        canonical="https://teetee971.github.io/akiprisaye-web/observatoire-vivant"
+      />
     <div className="min-h-screen bg-slate-950 text-slate-100">
       <div className="max-w-6xl mx-auto px-4 md:px-6 lg:px-8 py-8 space-y-6">
         {/* Hero banner */}
@@ -536,5 +543,6 @@ export default function ObservatoireVivant() {
         </section>
       </div>
     </div>
+    </>
   );
 }

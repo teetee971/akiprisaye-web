@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { AlertCircle, RefreshCw } from "lucide-react";
 import safeLocalStorage from "../utils/safeLocalStorage";
 
+import { SEOHead } from '../components/ui/SEOHead';
 type PanierItem = {
   produit: string;
   prix_moyen: number;
@@ -106,6 +107,12 @@ export default function Observatoire() {
   }, [data]);
 
   return (
+    <>
+      <SEOHead
+        title="Observatoire des prix — Données citoyennes Outre-mer"
+        description="Consultez les données de l'observatoire citoyen des prix dans les territoires ultramarins français. Statistiques, tendances et analyses."
+        canonical="https://teetee971.github.io/akiprisaye-web/observatoire"
+      />
     <div className="min-h-screen bg-slate-950 text-slate-100">
       <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
         {/* Header */}
@@ -246,5 +253,6 @@ export default function Observatoire() {
         )}
       </div>
     </div>
+    </>
   );
 }

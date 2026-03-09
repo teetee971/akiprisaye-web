@@ -11,6 +11,7 @@ import { Card } from '../components/card.jsx';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
+import { SEOHead } from '../components/ui/SEOHead';
 export default function Presse() {
   const currentDate = new Date().toLocaleDateString('fr-FR', {
     day: 'numeric',
@@ -23,6 +24,12 @@ export default function Presse() {
   };
 
   return (
+    <>
+      <SEOHead
+        title="Presse — Dossiers et contacts médias A KI PRI SA YÉ"
+        description="Ressources presse, dossiers de presse, visuels et contacts pour les journalistes et médias s'intéressant à la vie chère Outre-mer."
+        canonical="https://teetee971.github.io/akiprisaye-web/presse"
+      />
     <div className="min-h-screen bg-slate-50 py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         {/* Header */}
@@ -350,5 +357,6 @@ export default function Presse() {
         </div>
       </div>
     </div>
+    </>
   );
 }

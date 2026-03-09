@@ -22,6 +22,7 @@ import { Link } from 'react-router-dom';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 import { db } from '../lib/firebase';
+import { SEOHead } from '../components/ui/SEOHead';
 import {
   collection,
   addDoc,
@@ -159,6 +160,12 @@ export default function AlertesRupture() {
   const resolu  = ruptures.filter(r => r.statut === 'resolu').length;
 
   return (
+    <>
+      <SEOHead
+        title="Alertes rupture de stock — Soyez informé des pénuries"
+        description="Suivez les ruptures de stock et tensions d'approvisionnement dans les DOM-TOM. Alertes citoyennes en temps réel."
+        canonical="https://teetee971.github.io/akiprisaye-web/alertes-rupture"
+      />
     <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', padding: '1.5rem 1rem 3rem' }}>
       <div style={{ maxWidth: 760, margin: '0 auto' }}>
 
@@ -293,5 +300,6 @@ export default function AlertesRupture() {
 
       </div>
     </div>
+    </>
   );
 }

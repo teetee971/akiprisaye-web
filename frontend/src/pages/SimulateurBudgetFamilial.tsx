@@ -16,6 +16,7 @@ import { Link } from 'react-router-dom';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
+import { SEOHead } from '../components/ui/SEOHead';
 // ─── Territory data ─────────────────────────────────────────────────────────────
 
 interface TerritoryData {
@@ -118,6 +119,12 @@ export default function SimulateurBudgetFamilial() {
   ];
 
   return (
+    <>
+      <SEOHead
+        title="Simulateur de budget familial — Estimez votre budget DOM-TOM"
+        description="Simulez votre budget familial dans les territoires ultramarins. Comparez le coût de la vie selon votre composition familiale."
+        canonical="https://teetee971.github.io/akiprisaye-web/simulateur-budget"
+      />
     <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', padding: '1.5rem 1rem 3rem' }}>
       <div style={{ maxWidth: 800, margin: '0 auto' }}>
 
@@ -253,5 +260,6 @@ export default function SimulateurBudgetFamilial() {
 
       </div>
     </div>
+    </>
   );
 }

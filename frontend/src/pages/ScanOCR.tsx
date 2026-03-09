@@ -21,6 +21,7 @@ import type { ScanState, OcrOptions } from '../types/scan';
 import { useNavigate } from 'react-router-dom';
 import { useSearchHistory } from '../hooks/useSearchHistory';
 
+import { SEOHead } from '../components/ui/SEOHead';
 const SAMPLE_IMAGE = '/images/ocr-example.png';
 const COPY_FEEDBACK_DURATION = 2000;
 
@@ -264,6 +265,12 @@ export default function ScanOCR() {
   };
 
   return (
+    <>
+      <SEOHead
+        title="Scanner ticket de caisse OCR — Analysez vos dépenses"
+        description="Photographiez votre ticket de caisse pour analyser vos achats, détecter les hausses de prix et contribuer à l'observatoire citoyen."
+        canonical="https://teetee971.github.io/akiprisaye-web/scan-ocr"
+      />
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 p-4">
       <div className="max-w-4xl mx-auto">
         <div className="bg-slate-900 rounded-2xl p-6 shadow-lg">
@@ -650,5 +657,6 @@ export default function ScanOCR() {
         </div>
       </div>
     </div>
+    </>
   );
 }

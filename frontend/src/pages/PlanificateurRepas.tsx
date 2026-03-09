@@ -14,6 +14,7 @@ import { Link } from 'react-router-dom';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES, RECIPE_IMAGES } from '../config/imageAssets';
 
+import { SEOHead } from '../components/ui/SEOHead';
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
 type Meal = 'petit-dejeuner' | 'dejeuner' | 'diner';
@@ -340,6 +341,12 @@ export default function PlanificateurRepas() {
   const plannedCount = DAYS.flatMap(d => MEALS.map(m => plan[d][m.id].recipeId)).filter(Boolean).length;
 
   return (
+    <>
+      <SEOHead
+        title="Planificateur de repas — Optimisez votre budget alimentaire"
+        description="Planifiez vos repas de la semaine, optimisez votre budget alimentaire et réduisez le gaspillage dans les DOM-TOM."
+        canonical="https://teetee971.github.io/akiprisaye-web/planificateur-repas"
+      />
     <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', padding: '1.5rem 1rem 3rem' }}>
       <div style={{ maxWidth: 900, margin: '0 auto' }}>
 
@@ -516,5 +523,6 @@ export default function PlanificateurRepas() {
 
       </div>
     </div>
+    </>
   );
 }

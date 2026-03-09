@@ -10,6 +10,7 @@ import PriceChart from '../../components/comparateur/LazyPriceChart';
 import SortControl from '../../components/comparateur/SortControl';
 import ShareButton from '../../components/comparateur/ShareButton';
 
+import { SEOHead } from '../../components/ui/SEOHead';
 /**
  * Module de comparaison des prix des abonnements Internet
  * 
@@ -131,6 +132,12 @@ export default function AbonnementsInternet() {
   };
 
   return (
+    <>
+      <SEOHead
+        title="Abonnements internet Outre-mer — Comparatif opérateurs"
+        description="Comparez les offres internet dans les DOM-TOM : fibre, ADSL, 4G. Prix et disponibilité par territoire ultramarin."
+        canonical="https://teetee971.github.io/akiprisaye-web/recherche-prix/abonnements-internet"
+      />
     <div className="min-h-screen bg-slate-950">
       {/* Header */}
       <header className="bg-gradient-to-r from-slate-900 to-slate-800 border-b border-slate-700">
@@ -423,5 +430,6 @@ export default function AbonnementsInternet() {
         </div>
       </main>
     </div>
+    </>
   );
 }

@@ -17,6 +17,7 @@
 import React, { useState } from 'react';
 import { HelpCircle, ChevronDown, ChevronUp, Search, Info, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { SEOHead } from '../../components/ui/SEOHead';
 import {
   getAllFaqItems,
   getFaqItemsByCategory,
@@ -47,6 +48,12 @@ const QuestionsLogistiqueDOM: React.FC = () => {
   };
 
   return (
+    <>
+      <SEOHead
+        title="Questions sur la logistique DOM — Guide pratique"
+        description="Réponses aux questions sur la logistique des DOM-TOM : import, export, douane, octroi de mer, délais de livraison."
+        canonical="https://teetee971.github.io/akiprisaye-web/ressources/questions-logistique-dom"
+      />
     <div className="min-h-screen bg-slate-950 pb-20">
       {/* En-tête */}
       <div className="bg-gradient-to-r from-purple-600 to-purple-800 text-white px-4 py-6">
@@ -293,6 +300,7 @@ const QuestionsLogistiqueDOM: React.FC = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

@@ -13,6 +13,7 @@ import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 import { ALERTS_STORAGE_KEY } from "@/services/priceAlertsStorage";
 import { Heart, Bell, Globe, CreditCard, User as UserIcon, Trash2, MessageCircle } from "lucide-react";
 
+import { SEOHead } from '../components/ui/SEOHead';
 const TERRITORY_STORAGE_KEY = 'akiprisaye:main_territory:v1';
 
 const TERRITORY_OPTIONS = [
@@ -102,6 +103,12 @@ export default function MonCompte() {
   ];
 
   return (
+    <>
+      <SEOHead
+        title="Mon compte — Gérez votre profil et vos alertes de prix"
+        description="Accédez à votre espace personnel : historique de contributions, alertes de prix, préférences et données de profil."
+        canonical="https://teetee971.github.io/akiprisaye-web/mon-compte"
+      />
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 p-4">
       <div className="max-w-4xl mx-auto">
         <div className="mb-4">
@@ -372,6 +379,7 @@ export default function MonCompte() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 

@@ -11,6 +11,7 @@ import PriceChart from '../../components/comparateur/LazyPriceChart';
 import SortControl from '../../components/comparateur/SortControl';
 import ShareButton from '../../components/comparateur/ShareButton';
 
+import { SEOHead } from '../../components/ui/SEOHead';
 /**
  * Module de comparaison des prix de l'électricité
  * 
@@ -141,6 +142,12 @@ export default function Electricite() {
   const gap = territoire ? calculateDOMMetropoleGap(territoire) : null;
 
   return (
+    <>
+      <SEOHead
+        title="Prix de l'électricité Outre-mer — Tarifs et comparaison"
+        description="Comparez les tarifs de l'électricité en Guadeloupe, Martinique, Guyane, La Réunion et Mayotte. Données officielles actualisées."
+        canonical="https://teetee971.github.io/akiprisaye-web/recherche-prix/electricite"
+      />
     <div className="min-h-screen bg-slate-950">
       {/* Header */}
       <header className="bg-gradient-to-r from-slate-900 to-slate-800 border-b border-slate-700">
@@ -441,5 +448,6 @@ export default function Electricite() {
         </div>
       </main>
     </div>
+    </>
   );
 }

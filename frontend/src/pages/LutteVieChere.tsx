@@ -19,10 +19,17 @@ import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 import { LUTTE_VIE_CHERE_STATS } from '../data/lutteVieChereStats';
 
+import { SEOHead } from '../components/ui/SEOHead';
 export function LutteVieChere() {
   const stats = LUTTE_VIE_CHERE_STATS;
 
   return (
+    <>
+      <SEOHead
+        title="Lutte contre la vie chère — Actions et ressources Outre-mer"
+        description="Ressources, associations et actions citoyennes pour lutter contre la vie chère dans les territoires d'Outre-mer."
+        canonical="https://teetee971.github.io/akiprisaye-web/vie-chere"
+      />
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
       {/* Hero Section — real Unsplash photo with gradient fallback */}
       <div className="container mx-auto px-4 pt-6 pb-2">
@@ -308,5 +315,6 @@ export function LutteVieChere() {
         </div>
       </div>
     </div>
+    </>
   );
 }

@@ -15,6 +15,7 @@
 
 import React, { useState } from 'react';
 import { Clock, AlertCircle, Ship, Plane, Info, Calendar, FileText } from 'lucide-react';
+import { SEOHead } from '../../components/ui/SEOHead';
 import {
   getAllObservations,
   getObservationsByTerritory,
@@ -71,6 +72,12 @@ const DelaisTensionsLogistiques: React.FC = () => {
   };
 
   return (
+    <>
+      <SEOHead
+        title="Délais logistiques Outre-mer — Tensions d'approvisionnement"
+        description="Suivez les délais de livraison et les tensions logistiques affectant l'approvisionnement des territoires ultramarins."
+        canonical="https://teetee971.github.io/akiprisaye-web/recherche-prix/delais-logistiques"
+      />
     <div className="min-h-screen bg-slate-950 pb-20">
       {/* En-tête */}
       <div className="bg-gradient-to-r from-orange-600 to-orange-800 text-white px-4 py-6">
@@ -352,6 +359,7 @@ const DelaisTensionsLogistiques: React.FC = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

@@ -5,6 +5,7 @@ import { TrendingUp, Globe, Package, Ship, DollarSign, AlertTriangle, BarChart2,
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
+import { SEOHead } from '../components/ui/SEOHead';
 // ─── Real statistics sourced from INSEE / IEDOM / CEROM publications ─────────
 // INSEE — "Les niveaux de vie dans les DOM" (2017, updated 2023)
 // IEDOM — Rapports annuels 2023 (Guadeloupe, Martinique, Guyane, Réunion, Mayotte)
@@ -29,6 +30,12 @@ const TRANSPORT_COSTS = [
 
 export default function ComprendrePrix() {
   return (
+    <>
+      <SEOHead
+        title="Comprendre les prix Outre-mer — La vie chère expliquée"
+        description="Découvrez les causes de la vie chère dans les DOM-TOM : octroi de mer, transport, oligopoles. Analyses et données accessibles à tous."
+        canonical="https://teetee971.github.io/akiprisaye-web/comprendre-prix"
+      />
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 py-12 px-4">
       <div className="max-w-4xl mx-auto">
       <HeroImage
@@ -325,5 +332,6 @@ export default function ComprendrePrix() {
         </div>
       </div>
     </div>
+    </>
   );
 }

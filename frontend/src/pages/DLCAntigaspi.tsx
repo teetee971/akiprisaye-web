@@ -14,6 +14,7 @@ import { Link } from 'react-router-dom';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
+import { SEOHead } from '../components/ui/SEOHead';
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
 interface FridgeItem {
@@ -141,6 +142,12 @@ export default function DLCAntigaspi() {
   );
 
   return (
+    <>
+      <SEOHead
+        title="Anti-gaspillage DLC — Gérez vos dates de péremption"
+        description="Suivez vos dates de péremption, recevez des alertes avant expiration et trouvez des recettes anti-gaspillage avec vos produits urgents."
+        canonical="https://teetee971.github.io/akiprisaye-web/dlc-antigaspi"
+      />
     <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', padding: '1.5rem 1rem 3rem' }}>
       <div style={{ maxWidth: 780, margin: '0 auto' }}>
 
@@ -313,5 +320,6 @@ export default function DLCAntigaspi() {
 
       </div>
     </div>
+    </>
   );
 }

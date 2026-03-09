@@ -13,6 +13,7 @@ import PriceChart from '../../components/comparateur/LazyPriceChart';
 import SortControl from '../../components/comparateur/SortControl';
 import ShareButton from '../../components/comparateur/ShareButton';
 
+import { SEOHead } from '../../components/ui/SEOHead';
 /**
  * Module de comparaison des prix de l'eau
  * 
@@ -126,6 +127,12 @@ export default function Eau() {
   const gap = territoire ? calculateDOMMetropoleGap(territoire) : null;
 
   return (
+    <>
+      <SEOHead
+        title="Prix de l'eau Outre-mer — Tarifs et distribution"
+        description="Informations sur les tarifs de l'eau dans les territoires ultramarins. Comparaison intercommunale et tendances."
+        canonical="https://teetee971.github.io/akiprisaye-web/recherche-prix/eau"
+      />
     <div className="min-h-screen bg-slate-950">
       {/* Header */}
       <header className="bg-gradient-to-r from-slate-900 to-slate-800 border-b border-slate-700">
@@ -425,5 +432,6 @@ export default function Eau() {
         </div>
       </main>
     </div>
+    </>
   );
 }

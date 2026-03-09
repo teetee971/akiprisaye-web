@@ -16,6 +16,7 @@ import { Link } from 'react-router-dom';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
+import { SEOHead } from '../components/ui/SEOHead';
 // ─── Data ──────────────────────────────────────────────────────────────────────
 
 interface Category {
@@ -137,6 +138,12 @@ export default function CalculateurOctroi() {
   const maxValue = prixFinal * 1.05;
 
   return (
+    <>
+      <SEOHead
+        title="Calculateur d'octroi de mer — Estimez les taxes à l'import"
+        description="Calculez les taxes d'octroi de mer applicables aux produits importés dans les DOM-TOM. Outil de simulation en ligne."
+        canonical="https://teetee971.github.io/akiprisaye-web/calculateur-octroi"
+      />
     <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', padding: '1.5rem 1rem 3rem' }}>
       <div style={{ maxWidth: 780, margin: '0 auto' }}>
 
@@ -297,5 +304,6 @@ export default function CalculateurOctroi() {
 
       </div>
     </div>
+    </>
   );
 }

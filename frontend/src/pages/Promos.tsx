@@ -5,6 +5,7 @@ import { getEffectiveSelection } from '../modules/store/storeSelection';
 import { getPromos, sortPromos, type PromoSort } from '../services/promosService';
 import type { PromoCategory, TerritoryCode } from '../types/market';
 
+import { SEOHead } from '../components/ui/SEOHead';
 const categoryLabels: Record<PromoCategory, string> = {
   bebe: 'Bébé',
   hygiene: 'Hygiène',
@@ -56,6 +57,12 @@ export default function PromosPage() {
   }, [basePromos, brand, category, sortBy]);
 
   return (
+    <>
+      <SEOHead
+        title="Promotions Outre-mer — Meilleures offres du moment"
+        description="Retrouvez toutes les promotions et bons plans du moment dans les supermarchés des DOM-TOM."
+        canonical="https://teetee971.github.io/akiprisaye-web/promos"
+      />
     <div className="max-w-6xl mx-auto px-4 py-8 text-slate-100">
       <h1 className="text-2xl font-bold mb-2">Promos & catalogues</h1>
       <p className="text-sm text-slate-400 mb-6">
@@ -137,5 +144,6 @@ export default function PromosPage() {
         Retour au comparateur
       </Link>
     </div>
+    </>
   );
 }

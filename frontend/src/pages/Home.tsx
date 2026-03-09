@@ -1,6 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
-import { Helmet } from 'react-helmet-async';
 import { BarChart2, ShoppingCart, Receipt, Landmark, Search } from 'lucide-react';
 import { getComparisonOfDay, type PriceComparison } from '../data/exampleComparisons';
 import '../styles/home-v5.css';
@@ -8,6 +7,7 @@ import '../styles/animations.css';
 import { safeLocalStorage } from '../utils/safeLocalStorage';
 import { getTerritoryAsset, getProductImage } from '../config/imageAssets';
 import PriceLiveTicker from '../components/home/PriceLiveTicker';
+import { SEOHead } from '../components/ui/SEOHead';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import FlipStatCard from '../components/ui/FlipStatCard';
 
@@ -213,17 +213,11 @@ export default function HomeV5() {
 
   return (
     <>
-      <Helmet>
-        <title>A KI PRI SA YÉ – Transparence des prix Outre-mer</title>
-        <meta name="description" content="Comparez les prix en Guadeloupe, Martinique, Guyane, La Réunion et dans tous les territoires ultramarins. Données citoyennes réelles, scanneur de produits, observatoire des prix." />
-        <meta property="og:title" content="A KI PRI SA YÉ – Transparence des prix Outre-mer" />
-        <meta property="og:description" content="Comparez les prix en Guadeloupe, Martinique, Guyane, La Réunion et dans tous les territoires ultramarins. Données citoyennes réelles, scanneur de produits, observatoire des prix." />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://teetee971.github.io/akiprisaye-web/" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="A KI PRI SA YÉ – Transparence des prix Outre-mer" />
-        <meta name="twitter:description" content="Comparez les prix en Guadeloupe, Martinique, Guyane, La Réunion et dans tous les territoires ultramarins." />
-      </Helmet>
+      <SEOHead
+        title="A KI PRI SA YÉ – Transparence des prix Outre-mer"
+        description="Comparez les prix en Guadeloupe, Martinique, Guyane, La Réunion et dans tous les territoires ultramarins. Données citoyennes réelles, scanneur de produits, observatoire des prix."
+        canonical="https://teetee971.github.io/akiprisaye-web/"
+      />
     <div className="home-v5">
       <a href="#main-content" className="skip-link">
         Aller au contenu principal

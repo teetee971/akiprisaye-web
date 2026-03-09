@@ -1,8 +1,15 @@
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
+import { SEOHead } from '../components/ui/SEOHead';
 export default function Gouvernance() {
   return (
+    <>
+      <SEOHead
+        title="Gouvernance — A KI PRI SA YÉ"
+        description="Structure de gouvernance, membres fondateurs et principes de fonctionnement de l'observatoire citoyen des prix ultramarins."
+        canonical="https://teetee971.github.io/akiprisaye-web/gouvernance"
+      />
     <div className="min-h-screen bg-slate-950 text-slate-100">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
         <HeroImage
@@ -66,5 +73,6 @@ export default function Gouvernance() {
         </section>
       </div>
     </div>
+    </>
   );
 }

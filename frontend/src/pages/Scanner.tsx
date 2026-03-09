@@ -10,6 +10,7 @@ import type { ScanState, ScannerOptions } from '../types/scan';
 import type { ProductViewModel } from '../types/productViewModel';
 import { safeLocalStorage } from '../utils/safeLocalStorage';
 
+import { SEOHead } from '../components/ui/SEOHead';
 export default function Scanner() {
   const navigate = useNavigate();
   const [showScanner, setShowScanner] = useState(false);
@@ -140,6 +141,12 @@ export default function Scanner() {
   };
 
   return (
+    <>
+      <SEOHead
+        title="Scanner code-barres — Identifiez les produits instantanément"
+        description="Scannez un code-barres EAN pour retrouver le prix, la composition et les comparaisons de prix d'un produit dans les DOM-TOM."
+        canonical="https://teetee971.github.io/akiprisaye-web/scanner"
+      />
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 p-4">
       <div className="max-w-4xl mx-auto">
         <div className="bg-slate-900 rounded-2xl p-6 shadow-lg">
@@ -376,5 +383,6 @@ export default function Scanner() {
         />
       )}
     </div>
+    </>
   );
 }

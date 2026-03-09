@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
+import { SEOHead } from '../components/ui/SEOHead';
 type StorePrice = {
   store: string;
   price: number;
@@ -73,6 +74,12 @@ export default function Comparateurs() {
   const totalMax = comparisons.reduce((sum, p) => sum + Math.max(...p.prices.map((s) => s.price)), 0);
 
   return (
+    <>
+      <SEOHead
+        title="Comparateurs de prix — Épicerie, vols, fret, assurances Outre-mer"
+        description="Comparez les prix dans tous les domaines en Guadeloupe, Martinique, Guyane, La Réunion et dans tous les territoires ultramarins."
+        canonical="https://teetee971.github.io/akiprisaye-web/comparateurs"
+      />
     <div className="min-h-screen bg-slate-950 text-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="mb-6 animate-fade-in">
@@ -180,5 +187,6 @@ export default function Comparateurs() {
         </div>
       </div>
     </div>
+    </>
   );
 }
