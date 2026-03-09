@@ -3,8 +3,8 @@
  *
  * Affiche 2 vidéos emblématiques sur la problématique de la vie chère
  * dans les territoires ultramarins français :
- *   1. Reportage France Outre-mer — Martinique : la crise de la vie chère (2024)
- *   2. Documentaire INSEE/IEDOM — Comparaison des prix DOM vs Hexagone
+ *   1. Analyse — L'ingénieur Iconoclaste : Vie Chère en Martinique (octroi de mer, héritage colonial)
+ *   2. Décryptage — Séphora Dreams : Antilles françaises, comprendre la vie chère
  *
  * Implémentation "lite embed" :
  *   - Aucun script YouTube chargé tant que l'utilisateur ne clique pas
@@ -12,7 +12,7 @@
  *   - Intersection Observer : préchargement du composant uniquement
  *     quand la section est visible (pas de fetch au chargement initial)
  *
- * Crédits vidéo : YouTube — France Outre-mer La 1ère / INSEE
+ * Crédits vidéo : YouTube — L'ingénieur Iconoclaste / Séphora Dreams
  * Crédits photos : Unsplash License
  */
 
@@ -31,29 +31,29 @@ interface VideoCard {
 
 const VIDEO_CARDS: VideoCard[] = [
   {
-    id: 'wTbAkY9LFSA',
-    title: 'La vie chère en Martinique — Témoignages de consommateurs',
+    id: '6lL4FwZrmgQ',
+    title: 'Vie Chère en Martinique : Octroi de Mer, Chlordécone et Héritage Colonial',
     description:
-      "Des habitants de Martinique témoignent de l\u2019impact de la vie chère sur leur quotidien. " +
-      "Comparaisons de prix, stratégies d\u2019économies, et revendications citoyennes.",
-    source: 'France Outre-mer La 1ère',
-    duration: '4 min',
+      "Analyse des causes structurelles de la vie chère en Martinique : octroi de mer, " +
+      "héritage colonial, monopoles de distribution et dépendance aux importations.",
+    source: "L'ingénieur Iconoclaste",
+    duration: '21 min',
     posterUrl:
       'https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=700&q=80',
     posterAlt: 'Rayon supermarché avec étiquettes de prix',
     tag: '🎙️ Reportage',
   },
   {
-    id: 'N1rOPGLgXNI',
-    title: 'Prix dans les DOM : +40 % vs la métropole — INSEE Analyse',
+    id: 'MoLHPFC6VGY',
+    title: 'Antilles françaises : comprendre la vie chère — Békés, marges et octroi de mer',
     description:
-      "L\u2019INSEE et l\u2019IEDOM analysent l\u2019écart de prix entre les départements d\u2019outre-mer " +
-      "et la France métropolitaine, produit par produit, enseigne par enseigne.",
-    source: 'INSEE / IEDOM',
-    duration: '6 min',
+      "Décryptage des mécanismes qui renchérissent les prix aux Antilles : Békés, marges " +
+      "de distribution, octroi de mer et coûts de transport expliqués.",
+    source: 'Séphora Dreams',
+    duration: '18 min',
     posterUrl:
       'https://images.unsplash.com/photo-1607082348351-cef5cd02c7b0?auto=format&fit=crop&w=700&q=80',
-    posterAlt: 'Graphiques d\'analyse de prix et données statistiques',
+    posterAlt: "Graphiques d'analyse de prix et données statistiques",
     tag: '📈 Analyse',
   },
 ];
