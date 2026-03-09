@@ -3,7 +3,54 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 
 Le format s'inspire de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et ce projet adhère à la [sémantique de versionnage](https://semver.org/lang/fr/).
 
-## [3.1.5] - 2026-03-09
+## [3.1.6] - 2026-03-09
+
+### Added — Transparence commissions & suivi analytique des comparateurs
+
+- **`utils/bookingLinks.ts`** — utilitaire `buildBookingUrl(url, campaign)` qui :
+  - Injecte des paramètres UTM standards sur tous les liens externes des comparateurs
+    (`utm_source=akiprisaye`, `utm_medium=comparateur`, `utm_campaign=<nom-du-comparateur>`).
+  - Centralise la gestion des commissions d'affiliation via `BOOKING_CONFIG`.
+    Par défaut, `affiliateEnabled: false` → **aucune commission active**.
+  - Expose `getCommissionStatus()` pour récupérer le libellé et la couleur à afficher.
+- **`components/comparateur/BookingLinkBadge.tsx`** — badge React dynamique :
+  - 🟢 « Lien direct · Aucune commission » quand `affiliateEnabled = false`.
+  - 🟡 « Lien partenaire » quand l'affiliation est activée.
+  - Tooltip explicatif au clic (détail du mode de rémunération).
+  - Remplace les anciens disclaimers texte éparpillés dans chaque comparateur.
+- **Tests unitaires** `src/test/bookingLinks.test.ts` — 12 cas couvrant :
+  - Injection UTM (source, medium, campaign), préservation des params existants.
+  - Traitement des URLs non-parseable (relatives, `#`, vides).
+  - Absence du paramètre `ref` quand `affiliateEnabled = false`.
+  - Valeurs par défaut de `BOOKING_CONFIG`.
+  - Labels, couleur et libellé de `getCommissionStatus()`.
+
+### Changed — Tous les comparateurs spécialisés
+
+Chaque comparateur enroule ses fonctions de construction d'URL avec `buildBookingUrl()`
+et remplace les disclaimers texte par `<BookingLinkBadge />` :
+
+| Comparateur | Campagne UTM |
+|---|---|
+| `FlightComparator` | `comparateur-vols` |
+| `BoatComparator` | `comparateur-bateaux` |
+| `CarRentalComparator` | `comparateur-voiture` |
+| `FuelComparator` | *(liens Google Maps exclus)* |
+| `InsuranceComparator` | `comparateur-assurances` |
+| `AbonnementsInternet` | `comparateur-internet` |
+| `AbonnementsMobile` | `comparateur-mobile` |
+
+### Fixed
+
+- **`InsuranceComparator`** — `ComparisonSummary` recevait des props inexistantes
+  (`minPrice`, `maxPrice`, `priceRange`, `priceRangePercentage`) au lieu de l'interface
+  réelle (`bestPrice`, `worstPrice`, `savingsPercentage`, `bestProvider`, `totalObservations`).
+- **`InsuranceComparator`** — `ShareButton` était appelé sans le prop obligatoire
+  `description`, provoquant un avertissement React en mode développement.
+- **`AbonnementsMobile`** — suppression du commentaire `// @ts-nocheck` qui masquait
+  les erreurs TypeScript potentielles.
+
+
 
 ### Added — Itinéraires manquants & ComparateursHub complet
 

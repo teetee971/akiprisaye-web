@@ -85,6 +85,8 @@ export default defineConfig({
       abs('./src/providers/__tests__/calameoCatalogProvider.test.ts'),
       // Découverte automatique Calameo + fournisseur dynamique
       abs('./src/providers/__tests__/calameoDiscovery.test.ts'),
+      // Booking links — UTM params et statut commissions
+      abs('./src/test/bookingLinks.test.ts'),
       // Comparateurs spécialisés — services de comparaison
       abs('./src/services/__tests__/carRentalService.test.ts'),
       abs('./src/services/__tests__/freightComparisonService.test.ts'),
