@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Car, AlertCircle, Download, FileText, MapPin, BarChart3, Info } from 'lucide-react';
+import { Car, AlertCircle, Download, FileText, MapPin, BarChart3, Info, ExternalLink, Award, TrendingDown, CheckCircle2, XCircle } from 'lucide-react';
 import type { CarRentalPricePoint, CarRentalComparisonResult, CarCategory } from '../types/carRental';
 import type { Territory } from '../types/priceAlerts';
 import { compareCarRentals, filterCarRentals, CAR_CATEGORY_LABELS } from '../services/carRentalService';
@@ -20,6 +20,26 @@ const TERRITORIES: { code: Territory; name: string }[] = [
 ];
 
 const CATEGORIES: CarCategory[] = ['economy', 'compact', 'intermediate', 'standard', 'suv', 'minivan'];
+
+const AGENCY_BOOKING_URLS: Record<string, string> = {
+  'Hertz': 'https://www.hertz.fr/',
+  'Avis': 'https://www.avis.fr/',
+  'Europcar': 'https://www.europcar.fr/',
+  'Budget': 'https://www.budget.fr/',
+  'Sixt': 'https://www.sixt.fr/',
+  'Enterprise': 'https://www.enterprise.fr/',
+  'Ada': 'https://www.ada.fr/',
+  'Alamo': 'https://www.alamo.fr/',
+  'Jumbo Car': 'https://www.jumbocar.com/',
+};
+
+function getAgencyBookingUrl(agencyName: string, bookingUrl?: string): string {
+  if (bookingUrl) return bookingUrl;
+  for (const [key, url] of Object.entries(AGENCY_BOOKING_URLS)) {
+    if (agencyName.toLowerCase().includes(key.toLowerCase())) return url;
+  }
+  return '#';
+}
 
 const CarRentalComparator: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -150,6 +170,9 @@ const CarRentalComparator: React.FC = () => {
               <h1 className="text-2xl sm:text-3xl font-bold text-white drop-shadow">🚗 Comparateur Location Voiture</h1>
             </div>
             <p className="text-emerald-100 text-sm drop-shadow">Agences internationales &amp; locales · Données observatoire citoyens</p>
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-green-500/20 border border-green-500/40 rounded-full text-xs text-green-300 mt-2">
+              🔄 Données du {new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+            </span>
           </HeroImage>
         </div>
 
@@ -247,6 +270,7 @@ const CarRentalComparator: React.FC = () => {
                     <th className="px-4 py-3 text-center">Km</th>
                     <th className="px-4 py-3 text-center">Type</th>
                     <th className="px-4 py-3 text-center">Position</th>
+                    <th className="px-4 py-3 text-center">Réserver</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -275,6 +299,16 @@ const CarRentalComparator: React.FC = () => {
                           {getCategoryLabel(item.priceCategory)}
                         </span>
                       </td>
+                      <td className="px-4 py-3 text-center">
+                        <a
+                          href={getAgencyBookingUrl(item.rentalPrice.agency, (item.rentalPrice as any).bookingUrl)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-medium rounded-lg transition-colors"
+                        >
+                          <ExternalLink className="w-3 h-3" /> Réserver
+                        </a>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -284,6 +318,91 @@ const CarRentalComparator: React.FC = () => {
             <div className="mt-4 text-xs text-gray-500">
               Source : {comparisonResult.metadata.disclaimer}
               {' · '}Dernière observation : {formatDate(comparisonResult.aggregation.observationPeriod.to)}
+            </div>
+
+            {/* Profile Recommendation */}
+            <div className="mt-6 bg-slate-900 rounded-xl border border-slate-800 p-5">
+              <h2 className="text-base font-semibold text-gray-200 mb-4 flex items-center gap-2">
+                <Award className="w-5 h-5 text-yellow-400" />
+                Quelle agence choisir ?
+              </h2>
+              <div className="grid sm:grid-cols-3 gap-4">
+                {/* Meilleur prix/jour */}
+                {(() => {
+                  if (!sortedAgencies.length) return null;
+                  const best = sortedAgencies[0];
+                  return (
+                    <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <TrendingDown className="w-4 h-4 text-green-400" />
+                        <span className="text-sm font-semibold text-green-300">Meilleur prix/jour</span>
+                      </div>
+                      <p className="text-white font-bold text-lg">{best.rentalPrice.agency}</p>
+                      <p className="text-2xl font-bold text-green-400">{formatPrice(best.rentalPrice.pricing.dailyRate)}<span className="text-sm font-normal text-gray-400">/jour</span></p>
+                      <p className="text-xs text-gray-400 mt-1">{best.rentalPrice.vehicleExample}</p>
+                      <a
+                        href={getAgencyBookingUrl(best.rentalPrice.agency, (best.rentalPrice as any).bookingUrl)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 mt-3 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-medium rounded-lg transition-colors"
+                      >
+                        <ExternalLink className="w-3 h-3" /> Réserver
+                      </a>
+                    </div>
+                  );
+                })()}
+                {/* Meilleure couverture */}
+                {(() => {
+                  const withCDW = sortedAgencies.filter(a => a.rentalPrice.inclusions.cdwIncluded);
+                  if (!withCDW.length) return null;
+                  const best = withCDW[0];
+                  return (
+                    <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Award className="w-4 h-4 text-blue-400" />
+                        <span className="text-sm font-semibold text-blue-300">Meilleure couverture</span>
+                      </div>
+                      <p className="text-white font-bold text-lg">{best.rentalPrice.agency}</p>
+                      <p className="text-2xl font-bold text-blue-400">{formatPrice(best.rentalPrice.pricing.dailyRate)}<span className="text-sm font-normal text-gray-400">/jour</span></p>
+                      <p className="text-xs text-gray-400 mt-1">CDW inclus · {best.rentalPrice.inclusions.unlimitedMileage ? 'Km illimités' : 'Km limités'}</p>
+                      <a
+                        href={getAgencyBookingUrl(best.rentalPrice.agency, (best.rentalPrice as any).bookingUrl)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 mt-3 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-medium rounded-lg transition-colors"
+                      >
+                        <ExternalLink className="w-3 h-3" /> Réserver
+                      </a>
+                    </div>
+                  );
+                })()}
+                {/* Agence locale recommandée */}
+                {(() => {
+                  const local = sortedAgencies.filter(a => a.rentalPrice.isLocalAgency);
+                  if (!local.length) return null;
+                  const best = local[0];
+                  return (
+                    <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Award className="w-4 h-4 text-emerald-400" />
+                        <span className="text-sm font-semibold text-emerald-300">Agence locale</span>
+                      </div>
+                      <p className="text-white font-bold text-lg">{best.rentalPrice.agency}</p>
+                      <p className="text-2xl font-bold text-emerald-400">{formatPrice(best.rentalPrice.pricing.dailyRate)}<span className="text-sm font-normal text-gray-400">/jour</span></p>
+                      <p className="text-xs text-gray-400 mt-1">Agence locale · connaissance du terrain</p>
+                      <a
+                        href={getAgencyBookingUrl(best.rentalPrice.agency, (best.rentalPrice as any).bookingUrl)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 mt-3 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-medium rounded-lg transition-colors"
+                      >
+                        <ExternalLink className="w-3 h-3" /> Réserver
+                      </a>
+                    </div>
+                  );
+                })()}
+              </div>
+              <p className="mt-3 text-xs text-gray-500">A KI PRI SA YÉ ne perçoit aucune commission. Vérifiez les tarifs actuels sur le site de l'agence.</p>
             </div>
           </>
         )}
