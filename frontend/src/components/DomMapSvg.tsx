@@ -1,5 +1,6 @@
 type Props = {
   values: Record<string, number>;
+  mode?: 'default' | 'delta' | string;
 };
 
 export default function DomMapSvg({ values }: Props) {

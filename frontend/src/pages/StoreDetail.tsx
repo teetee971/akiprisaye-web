@@ -1,4 +1,4 @@
-// @ts-nocheck -- Multiple Company type union issues; TODO: fix storeCompanyService types
+
  
 /**
  * Store Detail Page
@@ -20,7 +20,7 @@ import { getStoreWithCompany } from '../services/storeCompanyService';
 import { getCompanyById } from '../services/companyRegistryService';
 import type { StoreWithCompany } from '../services/storeCompanyService';
 import type { Company } from '../types/company';
-import { getCheapestProductsAtStore, calculateDataReliability } from '../services/storeCheapestProductsService';
+import { getCheapestProductsAtStore, calculateDataReliability, type CheapestProduct } from '../services/storeCheapestProductsService';
 import CheapestProductsSection from '../components/store/CheapestProductsSection';
 import { StoreOpenStatus } from '../components/store/StoreOpenStatus';
 import { StoreHoursDisplay } from '../components/store/StoreHoursDisplay';
@@ -55,6 +55,7 @@ export default function StoreDetail() {
   useEffect(() => {
     if (!store?.coordinates) return;
 
+    const coords = store.coordinates;
     requestGeolocation().then(result => {
       if (result.success && result.position) {
         setUserPosition({
@@ -65,8 +66,8 @@ export default function StoreDetail() {
         const dist = calculateDistance(
           result.position.latitude,
           result.position.longitude,
-          store.coordinates.lat,
-          store.coordinates.lon
+          coords.lat,
+          coords.lon
         );
         setDistance(dist);
       }
@@ -275,9 +276,9 @@ export default function StoreDetail() {
                   <h3 className="text-lg font-semibold text-white mb-4">Informations générales</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <InfoCard label="Nom complet" value={store.name} />
-                    <InfoCard label="Enseigne" value={store.chain} />
-                    <InfoCard label="Ville" value={store.city} />
-                    <InfoCard label="Code postal" value={store.postalCode} />
+                    {store.chain && <InfoCard label="Enseigne" value={store.chain} />}
+                    {store.city && <InfoCard label="Ville" value={store.city} />}
+                    {store.postalCode && <InfoCard label="Code postal" value={store.postalCode} />}
                     <InfoCard label="Territoire" value={store.territory} />
                     {store.phone && <InfoCard label="Téléphone" value={store.phone} />}
                   </div>
@@ -319,7 +320,12 @@ export default function StoreDetail() {
             {activeTab === 'prices' && (
               <div className="space-y-6">
                 <CheapestProductsSection 
-                  products={getCheapestProductsAtStore(store.id, 10)}
+                  products={getCheapestProductsAtStore(store.id, 10).map((r): CheapestProduct => ({
+                    id: r.productId,
+                    name: r.productName,
+                    price: r.price,
+                    observationDate: new Date().toISOString().slice(0, 10),
+                  }))}
                   storeName={store.name}
                 />
               </div>
@@ -328,34 +334,34 @@ export default function StoreDetail() {
             {/* Company Tab */}
             {activeTab === 'company' && (
               <div className="space-y-6">
-                {store.company ? (
+                {store.companyData ? (
                   <>
                     <div>
                       <h3 className="text-lg font-semibold text-white mb-4">Informations entreprise</h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <InfoCard label="Raison sociale" value={store.company.legalName} />
-                        {store.company.tradeName && (
-                          <InfoCard label="Nom commercial" value={store.company.tradeName} />
+                        <InfoCard label="Raison sociale" value={store.companyData.legalName} />
+                        {store.companyData.tradeName && (
+                          <InfoCard label="Nom commercial" value={store.companyData.tradeName} />
                         )}
-                        {store.company.siretCode && (
-                          <InfoCard label="SIRET" value={store.company.siretCode} />
+                        {store.companyData.siretCode && (
+                          <InfoCard label="SIRET" value={store.companyData.siretCode} />
                         )}
-                        {store.company.sirenCode && (
-                          <InfoCard label="SIREN" value={store.company.sirenCode} />
+                        {store.companyData.sirenCode && (
+                          <InfoCard label="SIREN" value={store.companyData.sirenCode} />
                         )}
-                        {store.company.vatCode && (
-                          <InfoCard label="N° TVA" value={store.company.vatCode} />
+                        {store.companyData.vatCode && (
+                          <InfoCard label="N° TVA" value={store.companyData.vatCode} />
                         )}
                         <InfoCard 
                           label="Statut" 
-                          value={store.company.activityStatus === 'ACTIVE' ? 'Active' : 'Cessée'}
-                          valueClassName={store.company.activityStatus === 'ACTIVE' ? 'text-green-400' : 'text-red-400'}
+                          value={store.companyData.activityStatus === 'ACTIVE' ? 'Active' : 'Cessée'}
+                          valueClassName={store.companyData.activityStatus === 'ACTIVE' ? 'text-green-400' : 'text-red-400'}
                         />
-                        <InfoCard label="Date de création" value={new Date(store.company.creationDate).toLocaleDateString('fr-FR')} />
-                        {store.company.cessationDate && (
+                        <InfoCard label="Date de création" value={new Date(store.companyData.creationDate).toLocaleDateString('fr-FR')} />
+                        {store.companyData.cessationDate && (
                           <InfoCard 
                             label="Date de cessation" 
-                            value={new Date(store.company.cessationDate).toLocaleDateString('fr-FR')}
+                            value={new Date(store.companyData.cessationDate).toLocaleDateString('fr-FR')}
                             valueClassName="text-red-400"
                           />
                         )}
@@ -366,10 +372,10 @@ export default function StoreDetail() {
                       <h3 className="text-lg font-semibold text-white mb-4">Siège social</h3>
                       <div className="bg-slate-800 rounded-lg p-4">
                         <p className="text-gray-300">
-                          {store.company.headOffice.streetNumber && `${store.company.headOffice.streetNumber} `}
-                          {store.company.headOffice.streetName}<br />
-                          {store.company.headOffice.postalCode} {store.company.headOffice.city}<br />
-                          {store.company.headOffice.department}, {store.company.headOffice.country}
+                          {store.companyData.headOffice.streetNumber && `${store.companyData.headOffice.streetNumber} `}
+                          {store.companyData.headOffice.streetName}<br />
+                          {store.companyData.headOffice.postalCode} {store.companyData.headOffice.city}<br />
+                          {store.companyData.headOffice.department}, {store.companyData.headOffice.country}
                         </p>
                       </div>
                     </div>
@@ -380,13 +386,13 @@ export default function StoreDetail() {
                         <div className="flex items-center gap-2 mb-2">
                           <span className="text-2xl">🔍</span>
                           <p className="text-gray-300 font-medium">
-                            {store.company.source === 'REGISTRE_ENTREPRISES' && 'Registre des entreprises'}
-                            {store.company.source === 'API_PUBLIQUE' && 'API publique'}
-                            {store.company.source === 'VALIDATION_INTERNE' && 'Validation interne'}
+                            {store.companyData.source === 'REGISTRE_ENTREPRISES' && 'Registre des entreprises'}
+                            {store.companyData.source === 'API_PUBLIQUE' && 'API publique'}
+                            {store.companyData.source === 'VALIDATION_INTERNE' && 'Validation interne'}
                           </p>
                         </div>
                         <p className="text-gray-400 text-sm">
-                          Dernière mise à jour : {new Date(store.company.lastUpdate).toLocaleDateString('fr-FR')}
+                          Dernière mise à jour : {new Date(store.companyData.lastUpdate).toLocaleDateString('fr-FR')}
                         </p>
                       </div>
                     </div>

@@ -1,4 +1,3 @@
-// @ts-nocheck -- TODO: fix undeclared state vars (setSortBy, setSortDirection, sortBy, sortDirection, sortOptions)
 import React, { useState } from 'react';
 import { Droplet, Info, Download } from 'lucide-react';
 import {
@@ -25,6 +24,13 @@ export default function Eau() {
   const [typeService, setTypeService] = useState('');
   const [results, setResults] = useState<WaterPrice[]>([]);
   const [showResults, setShowResults] = useState(false);
+  const [sortBy, setSortBy] = useState<string>('prixM3');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  const sortOptions = [
+    { value: 'prixM3', label: 'Prix m³' },
+    { value: 'organismeGestionnaire', label: 'Organisme' },
+    { value: 'typeService', label: 'Type' },
+  ];
 
   const territories = getTerritories();
   const serviceTypes = getServiceTypes();

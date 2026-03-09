@@ -1,4 +1,3 @@
-// @ts-nocheck -- Uses untyped seedProducts data; TODO: add proper types
 /**
  * Enhanced Basket Pricing Service
  *
@@ -204,7 +203,7 @@ export function calculateBasketPrices(
           }
 
           const priceEntry = product.prices.find(
-            (price) => price.storeId === store.id
+            (price: { storeId: string; price: number }) => price.storeId === store.id
           );
 
           if (!priceEntry) {
@@ -260,7 +259,7 @@ export function analyzeBasketPricing(
     .map((store) => {
       const prices = validBasketItems.map((item) => {
         const product = findProductByBasketId(item.id);
-        const price = product?.prices.find((entry) => entry.storeId === store.id);
+        const price = product?.prices.find((entry: { storeId: string; price: number }) => entry.storeId === store.id);
         return price ? price.price * item.quantity : null;
       });
 
@@ -308,7 +307,7 @@ export function analyzeBasketPricing(
 
       const cheapest = product.prices
         .slice()
-        .sort((a, b) => a.price - b.price)[0];
+        .sort((a: { price: number }, b: { price: number }) => a.price - b.price)[0];
 
       return {
         storeId: cheapest.storeId,
