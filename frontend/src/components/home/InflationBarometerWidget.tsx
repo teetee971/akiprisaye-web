@@ -16,6 +16,7 @@
  */
 
 import { useEffect, useState } from 'react';
+import { getTerritoryAsset } from '../../config/imageAssets';
 
 interface SparkPoint {
   month: string;       // e.g. "Jan 26"
@@ -84,8 +85,10 @@ function computeBasket(donnees: ObsEntry[]): number | null {
   return total;
 }
 
-/** SVG mini-sparkline — 3 points, 60×24 px */
-function Sparkline({ points, color }: { points: (number | null)[]; color: string }) {
+const SPARK_MONTH_LABELS = ['Jan', 'Fév', 'Mar'];
+
+/** SVG mini-sparkline — 3 points, 64×28 px with optional month labels */
+function Sparkline({ points, color, showLabels }: { points: (number | null)[]; color: string; showLabels?: boolean }) {
   const valid = points.filter((p): p is number => p !== null);
   if (valid.length < 2) return null;
 
@@ -93,8 +96,8 @@ function Sparkline({ points, color }: { points: (number | null)[]; color: string
   const maxVal = Math.max(...valid);
   const range = maxVal - minVal || 0.01;
 
-  const W = 60;
-  const H = 24;
+  const W = 64;
+  const H = 28;
   const PAD = 3;
 
   const coords: Array<[number, number] | null> = points.map((v, i) => {
@@ -116,18 +119,25 @@ function Sparkline({ points, color }: { points: (number | null)[]; color: string
   const lastCoord = coords.filter(Boolean).pop();
 
   return (
-    <svg
-      width={W}
-      height={H}
-      viewBox={`0 0 ${W} ${H}`}
-      aria-hidden="true"
-      className="ibw-sparkline"
-    >
-      <path d={d} fill="none" stroke={color} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
-      {lastCoord && (
-        <circle cx={lastCoord[0]} cy={lastCoord[1]} r="2.5" fill={color} />
+    <div className="ibw-sparkline-wrap">
+      <svg
+        width={W}
+        height={H}
+        viewBox={`0 0 ${W} ${H}`}
+        aria-hidden="true"
+        className="ibw-sparkline"
+      >
+        <path d={d} fill="none" stroke={color} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+        {lastCoord && (
+          <circle cx={lastCoord[0]} cy={lastCoord[1]} r="2.5" fill={color} />
+        )}
+      </svg>
+      {showLabels && (
+        <div className="ibw-spark-labels" aria-hidden="true">
+          {SPARK_MONTH_LABELS.map((l) => <span key={l} className="ibw-spark-label">{l}</span>)}
+        </div>
       )}
-    </svg>
+    </div>
   );
 }
 
@@ -144,6 +154,96 @@ function trendArrow(pct: number | null): string {
   if (pct > 0.5) return '↑';
   if (pct < -0.5) return '↓';
   return '→';
+}
+
+/** Editorial qualitative interpretation of the price trend */
+function editorialContext(pct: number | null): string {
+  if (pct === null) return 'Données insuffisantes';
+  if (pct > 4)    return 'Forte pression tarifaire';
+  if (pct > 2)    return 'Hausse significative';
+  if (pct > 0.5)  return 'Légère hausse des prix';
+  if (pct > -0.5) return 'Stabilité tarifaire';
+  if (pct > -2)   return 'Légère détente tarifaire';
+  return 'Baisse notable des prix';
+}
+
+/** Single territory card with realistic photo header */
+function TerritoryBarometerCard({ entry }: { entry: BarometerEntry }) {
+  const isHex = entry.code === 'fr';
+  const color = trendColor(entry.trendPct);
+  const arrow = trendArrow(entry.trendPct);
+  const sparkValues = entry.spark.map((s) => s.basket);
+  const asset = getTerritoryAsset(entry.code);
+  const [imgFailed, setImgFailed] = useState(false);
+
+  return (
+    <article
+      className={`ibw-card${isHex ? ' ibw-card--reference' : ''}${
+        entry.trendPct !== null && entry.trendPct > 3 ? ' ibw-card--alert' : ''
+      }`}
+      role="listitem"
+      aria-label={`${entry.territory} : ${
+        entry.trendPct !== null
+          ? (entry.trendPct > 0 ? '+' : '') + entry.trendPct.toFixed(1) + '%'
+          : 'données insuffisantes'
+      }`}
+    >
+      {/* Photo header — realistic territory image */}
+      <div className="ibw-card-photo">
+        {!imgFailed && (
+          <img
+            src={asset.url}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            onError={() => setImgFailed(true)}
+            className="ibw-card-photo-img"
+          />
+        )}
+        <div className="ibw-card-photo-overlay" aria-hidden="true" />
+        <div className="ibw-card-header">
+          <span className="ibw-flag" aria-hidden="true">{entry.flag}</span>
+          <span className="ibw-territory">{entry.territory}</span>
+          {isHex && <span className="ibw-badge ibw-badge--ref">Référence</span>}
+        </div>
+      </div>
+
+      {/* Card body */}
+      <div className="ibw-card-body">
+        <p className="ibw-editorial" style={{ color }}>{editorialContext(entry.trendPct)}</p>
+
+        <div className="ibw-spark-row">
+          <Sparkline points={sparkValues} color={color} showLabels />
+          <div className="ibw-trend" style={{ color }}>
+            <span className="ibw-arrow" aria-hidden="true">{arrow}</span>
+            <span className="ibw-pct">
+              {entry.trendPct !== null
+                ? `${entry.trendPct > 0 ? '+' : ''}${entry.trendPct.toFixed(1)}\u00a0%`
+                : '—'}
+            </span>
+          </div>
+        </div>
+
+        {entry.basketJan !== null && entry.basketMar !== null && (
+          <div className="ibw-prices">
+            <span className="ibw-price-old">{entry.basketJan.toFixed(2)}&nbsp;€</span>
+            <span className="ibw-price-arrow" aria-hidden="true">→</span>
+            <span className="ibw-price-new" style={{ color }}>{entry.basketMar.toFixed(2)}&nbsp;€</span>
+          </div>
+        )}
+
+        {!isHex && entry.vsHexTrendDiff !== null && (
+          <div
+            className="ibw-vs-hex"
+            style={{ color: entry.vsHexTrendDiff > 0 ? '#f97316' : '#22c55e' }}
+          >
+            {entry.vsHexTrendDiff > 0 ? '+' : ''}
+            {entry.vsHexTrendDiff.toFixed(1)}&nbsp;pt vs Hexagone
+          </div>
+        )}
+      </div>
+    </article>
+  );
 }
 
 export default function InflationBarometerWidget() {
@@ -266,7 +366,11 @@ export default function InflationBarometerWidget() {
 
       <div className="ibw-header">
         <p className="ibw-subtitle slide-up">
-          Évolution du panier de 6 produits essentiels — <strong>janvier à mars 2026</strong>
+          Suivi mensuel du panier de 6 produits essentiels dans les DROM —{' '}
+          <strong>janvier à mars 2026</strong>
+        </p>
+        <p className="ibw-subtitle-detail fade-in">
+          Comparaison de l'évolution tarifaire entre les territoires d'Outre-mer et l'Hexagone
         </p>
         {hexEntry?.trendPct !== null && hexEntry?.trendPct !== undefined && (
           <p className="ibw-hex-ref fade-in">
@@ -298,56 +402,9 @@ export default function InflationBarometerWidget() {
       )}
 
       <div className="ibw-grid" role="list">
-        {entries.map((entry) => {
-          const isHex = entry.code === 'fr';
-          const color = trendColor(entry.trendPct);
-          const arrow = trendArrow(entry.trendPct);
-          const sparkValues = entry.spark.map((s) => s.basket);
-
-          return (
-            <article
-              key={entry.code}
-              className={`ibw-card${isHex ? ' ibw-card--reference' : ''}${
-                entry.trendPct !== null && entry.trendPct > 3 ? ' ibw-card--alert' : ''
-              }`}
-              role="listitem"
-              aria-label={`${entry.territory} : ${entry.trendPct !== null ? (entry.trendPct > 0 ? '+' : '') + entry.trendPct.toFixed(1) + '%' : 'données insuffisantes'}`}
-            >
-              <div className="ibw-card-header">
-                <span className="ibw-flag" aria-hidden="true">{entry.flag}</span>
-                <span className="ibw-territory">{entry.territory}</span>
-                {isHex && <span className="ibw-badge ibw-badge--ref">Référence</span>}
-              </div>
-
-              <div className="ibw-spark-row">
-                <Sparkline points={sparkValues} color={color} />
-                <div className="ibw-trend" style={{ color }}>
-                  <span className="ibw-arrow" aria-hidden="true">{arrow}</span>
-                  <span className="ibw-pct">
-                    {entry.trendPct !== null
-                      ? `${entry.trendPct > 0 ? '+' : ''}${entry.trendPct.toFixed(1)}\u00a0%`
-                      : '—'}
-                  </span>
-                </div>
-              </div>
-
-              {entry.basketJan !== null && entry.basketMar !== null && (
-                <div className="ibw-prices">
-                  <span className="ibw-price-old">{entry.basketJan.toFixed(2)}&nbsp;€</span>
-                  <span className="ibw-price-arrow" aria-hidden="true">→</span>
-                  <span className="ibw-price-new" style={{ color }}>{entry.basketMar.toFixed(2)}&nbsp;€</span>
-                </div>
-              )}
-
-              {!isHex && entry.vsHexTrendDiff !== null && (
-                <div className="ibw-vs-hex">
-                  {entry.vsHexTrendDiff > 0 ? '+' : ''}
-                  {entry.vsHexTrendDiff.toFixed(1)}&nbsp;pt vs Hexagone
-                </div>
-              )}
-            </article>
-          );
-        })}
+        {entries.map((entry) => (
+          <TerritoryBarometerCard key={entry.code} entry={entry} />
+        ))}
       </div>
 
       <p className="ibw-source">
