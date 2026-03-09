@@ -23,6 +23,7 @@ import {
   RotateCcw, Info, ShoppingCart, MapPin, Phone, ExternalLink,
   ChevronDown, ChevronUp, Copy, Check, Navigation,
   Package, Tag, Clock3, CheckCircle2, XCircle,
+  BookOpen, ChevronRight, Shield, Hammer, Layers, Zap,
 } from 'lucide-react';
 import {
   getBatimentTrialState,
@@ -1569,6 +1570,455 @@ function TrialBanner({ state }: { state: BatimentTrialState }) {
   );
 }
 
+// ─── Tutorial Data ────────────────────────────────────────────────────────────
+
+interface TutoStep {
+  num: number;
+  icons: string;
+  title: string;
+  desc: string;
+  tip?: string;
+  warning?: string;
+}
+
+interface Tutorial {
+  id: string;
+  calcId: CalculatorId;
+  title: string;
+  subtitle: string;
+  emoji: string;
+  difficulty: 'Débutant' | 'Intermédiaire' | 'Expert';
+  duree: string;
+  materiel: string[];
+  epi: string[];   // équipements de protection
+  steps: TutoStep[];
+  bgFrom: string;
+  bgTo: string;
+  coverArt: string; // emoji art for the cover illustration
+}
+
+const TUTORIALS: Tutorial[] = [
+  {
+    id: 'tuto-parpaing',
+    calcId: 'parpaing',
+    title: 'Monter un mur en parpaings',
+    subtitle: 'Technique de pose et dosage du mortier',
+    emoji: '🧱',
+    difficulty: 'Débutant',
+    duree: '2–4 h pour 10 m²',
+    coverArt: '🧱🧱🧱\n🪣🏗️🧤\n👷‍♂️🛠️📐',
+    bgFrom: 'from-stone-700',
+    bgTo: 'to-amber-600',
+    materiel: ['Parpaings', 'Ciment CPJ 32.5', 'Sable 0/5', 'Eau', 'Bétonnière ou auge', 'Truelle', 'Fil à plomb', 'Niveau à bulle', 'Règle de maçon', 'Maillet en caoutchouc'],
+    epi: ['🦺 Gilet de sécurité', '🥽 Lunettes de protection', '🧤 Gants anti-coupure', '👷 Casque (si hauteur > 1 m)', '👟 Chaussures de sécurité'],
+    steps: [
+      { num: 1, icons: '📐🧵', title: 'Tracer et préparer la fondation', desc: 'Vérifiez que la fondation est propre, plane et sèche. Tracez le tracé du mur au cordeau. La surface doit être débarrassée de toute poussière ou gravats.', tip: 'Utilisez un niveau laser ou un niveau à eau pour garantir une surface de pose parfaitement horizontale.' },
+      { num: 2, icons: '🪣🧱', title: 'Préparer le mortier de pose', desc: 'Mélangez 1 volume de ciment pour 4 volumes de sable sec (mortier standard). Ajoutez progressivement l\'eau jusqu\'à obtenir une consistance crémeuse qui tient sur la truelle sans couler.', tip: 'Un mortier trop liquide fera couler les blocs. Un mortier trop sec sera difficile à étaler. Visez la texture d\'une purée ferme.', warning: 'Ne préparez pas plus de mortier que vous ne pouvez utiliser en 1h30. Le mortier "prend" et durcit rapidement.' },
+      { num: 3, icons: '🔤🧱', title: 'Poser le premier rang (chaîne)', desc: 'Le premier rang est le plus important. Étalez une couche de mortier d\'environ 2 cm. Posez les parpaings en commençant par les angles. Vérifiez l\'horizontalité à chaque bloc avec le niveau.', tip: 'Le premier rang doit être rigoureusement horizontal. Une erreur ici se répercutera sur tout le mur.' },
+      { num: 4, icons: '⬆️🧱🔄', title: 'Monter les rangs supérieurs', desc: 'Les joints verticaux doivent être décalés d\'une demi-longueur de bloc (technique du quinconce). Étalez le mortier sur le rang précédent et sur les faces verticales des blocs. L\'épaisseur de joint doit être de 1 à 1,5 cm.', tip: 'Vérifiez l\'aplomb (verticalité) régulièrement avec le fil à plomb ou le niveau.' },
+      { num: 5, icons: '📏✅', title: 'Contrôler l\'aplomb et le niveau', desc: 'Tous les 3 rangs, vérifiez l\'aplomb (verticalité) et le niveau (horizontalité). Corrigez immédiatement : le mortier est encore frais pendant 30–45 minutes.', warning: 'Un mur non aplombé est dangereux. Au-delà de 3 mm de dévers par mètre, c\'est à reprendre.' },
+      { num: 6, icons: '🌊🧹', title: 'Finitions et nettoyage des joints', desc: 'Avant que le mortier soit complètement sec (environ 30 min après pose), ragréez les joints avec la truelle. Nettoyez les excès de mortier sur les parpaings avec une éponge humide.', tip: 'Pour un aspect propre, creusez légèrement les joints (jointoiement en creux) avec une tige métallique arrondie.' },
+      { num: 7, icons: '🌡️⏳', title: 'Cure et séchage', desc: 'Protégez le mur du soleil direct et du vent pendant 24h. En climat chaud (>30°C), humidifiez légèrement le mur 2 fois par jour pendant 3 jours pour éviter les fissures de retrait.', warning: 'Ne construisez pas par temps de pluie battante ou temperature < 5°C. Le gel détruit le mortier frais.' },
+    ],
+  },
+  {
+    id: 'tuto-dalle',
+    calcId: 'dalle-beton',
+    title: 'Couler une dalle béton',
+    subtitle: 'De la préparation au décoffrage',
+    emoji: '🏗️',
+    difficulty: 'Intermédiaire',
+    duree: '1 journée + 28 jours de séchage',
+    coverArt: '🏗️🪣🧱\n⛏️📐🔩\n👷‍♀️🌊✅',
+    bgFrom: 'from-slate-700',
+    bgTo: 'to-slate-500',
+    materiel: ['Ciment CPJ 32.5', 'Sable 0/5', 'Gravier 0/20', 'Treillis soudé', 'Coffrage bois', 'Règle de tirage', 'Lisseuse ou platoir', 'Bétonnière', 'Brouettes', 'Cales plastiques (3–4 cm)'],
+    epi: ['🥽 Lunettes', '🧤 Gants', '👟 Bottes de chantier', '💪 Protège-genoux pour finitions'],
+    steps: [
+      { num: 1, icons: '⛏️🏜️', title: 'Préparer le sol (terrassement)', desc: 'Décaissez sur la profondeur totale souhaitée (dalle + forme). Compactez le fond avec un dame ou plaque vibrante. Le sol doit être stable, sans matières organiques.', tip: 'Pour une dalle extérieure, prévoyez une pente de 1–2% pour l\'écoulement des eaux.' },
+      { num: 2, icons: '🪨📦', title: 'Poser la forme granulaire', desc: 'Étalez une couche de grave 0/20 ou de cailloux propres sur 10–15 cm. Compactez en passes de 10 cm. Cette couche assure le drainage et réduit les remontées d\'humidité.', warning: 'Ne jamais couler du béton directement sur de la terre végétale.' },
+      { num: 3, icons: '🪵📐', title: 'Installer le coffrage', desc: 'Montez des planches de coffrage clouées sur des piquets ou des étais. Vérifiez l\'horizontalité et les dimensions. Huilez légèrement les planches pour faciliter le décoffrage.', tip: 'Prévoyez des joints de dilatation tous les 4–5 m pour les grandes surfaces.' },
+      { num: 4, icons: '🔩🦿', title: 'Placer le treillis soudé', desc: 'Posez les panneaux de treillis sur des cales plastiques (3–4 cm de dessous). Les panneaux se chevauchent d\'au moins 2 mailles. Le treillis doit être dans le tiers inférieur de la dalle.', warning: 'Ne jamais poser le treillis à plat sur le sol. Il doit être surélevé pour être noyé dans le béton.' },
+      { num: 5, icons: '🪣🌊', title: 'Couler le béton', desc: 'Dosage standard : 1 ciment / 2 sable / 3 gravier (350 kg ciment/m³). Remplissez par parties en damant avec une barre ou vibreur pour chasser les bulles d\'air. Étalez avec une règle de tirage.', tip: 'Par temps chaud, coulez tôt le matin. Le béton prend en 30–60 min par 30°C.' },
+      { num: 6, icons: '📏✨', title: 'Tirer et lisser la surface', desc: 'Tirez le béton avec la règle en va-et-vient horizontal. Une fois semi-pris (environ 2h), lissez avec un platoir ou une lisseuse pour obtenir une surface plane.', tip: 'Pour un sol poli, lisser plusieurs fois à intervalles réguliers de 30 min.' },
+      { num: 7, icons: '💧⏳', title: 'Cure humide pendant 7 jours', desc: 'Recouvrez d\'une bâche plastique ou arrosez légèrement 2x/jour pendant 7 jours. Résistance complète à 28 jours. Mettez en charge (meubles lourds) après 7 jours minimum.', warning: 'Ne jamais marcher sur une dalle avant 24h. Ne pas mettre en charge complète avant 7 jours.' },
+    ],
+  },
+  {
+    id: 'tuto-fondations',
+    calcId: 'fondations',
+    title: 'Réaliser une semelle filante',
+    subtitle: 'Fondation de mur ou extension',
+    emoji: '⚓',
+    difficulty: 'Expert',
+    duree: '2–3 jours (fouille + coffrage + coulage)',
+    coverArt: '⚓🏗️📐\n⛏️🔩🪣\n👷‍♂️📏🌱',
+    bgFrom: 'from-yellow-800',
+    bgTo: 'to-yellow-600',
+    materiel: ['Ciment CPJ 32.5 ou 42.5', 'Sable 0/5', 'Gravier 0/20', 'Aciers HA12 ou HA14', 'Fil de ligature', 'Coffrages bois', 'Étriers HA8', 'Béton de propreté', 'Règle de maçon'],
+    epi: ['👷 Casque obligatoire', '🥽 Lunettes', '🧤 Gants', '👟 Bottes de sécurité', '🦺 Gilet fluo'],
+    steps: [
+      { num: 1, icons: '📐⛏️', title: 'Implantation et traçage', desc: 'Implantez les axes du mur au cordeau. Vérifiez les angles à 90° avec le théorème de Pythagore (3-4-5). Matérialisez les limites de fouille au spray ou à la chaux.', tip: 'Avant tout terrassement, contactez les services de détection de réseaux (gaz, eau, électricité). C\'est obligatoire.' },
+      { num: 2, icons: '⛏️🏜️', title: 'Fouille et terrassement', desc: 'Creusez à la profondeur hors-gel locale (60–80 cm en DOM-TOM tropical, variable selon le sol). Largeur minimum = largeur du mur + 10 cm de chaque côté. Fond de fouille bien nivelé.', warning: 'En terrain en pente, réalisez des fouilles en gradins. Ne jamais laisser une fouille ouverte sans sécurisation.' },
+      { num: 3, icons: '🪨🌊', title: 'Béton de propreté', desc: 'Coulez 5–10 cm de béton maigre (dosé à 150 kg/m³) sur le fond de fouille. Laissez sécher 24h. Ce béton évite la contamination du béton d\'armature par la terre.', tip: 'Ne jamais armer directement sur la terre.' },
+      { num: 4, icons: '🔩🦿', title: 'Ferraillage de la semelle', desc: 'Posez les barres longitudinales HA12 sur des cales de 3–4 cm. Liez avec les étriers HA8 espacés de 25–30 cm. Minimum 3 barres longitudinales. Couvrez les fers à 4 cm minimum.', warning: 'Le ferraillage doit être validé par un BE structure pour les fondations portantes d\'un bâtiment habitable.' },
+      { num: 5, icons: '🪵📐', title: 'Coffrage si sol instable', desc: 'Si les parois de fouille s\'éboulent, installez des coffrages bois. Sinon, le sol stable peut servir de coffrage naturel (coffrage perdu).', tip: 'En terrain stable et cohérent, pas besoin de coffrage. Gagnez du temps et de l\'argent.' },
+      { num: 6, icons: '🪣🏗️', title: 'Coulage du béton armé', desc: 'Béton dosé à 350 kg/m³ (C25/30). Coulez en une seule fois si possible. Vibrez soigneusement pour éliminer les vides. La surface doit être plane ± 5 mm/2 m.', warning: 'Ne jamais interrompre le coulage. Si vous manquez de béton, reprenez immédiatement avant la prise.' },
+      { num: 7, icons: '🌊⏳', title: 'Décoffrage et cure', desc: 'Décoffrez après 3–5 jours. Cure humide 7 jours. Attendez 28 jours pour charger la fondation. Remblayez latéralement prudemment, par couches compactées.', tip: 'Notez les positions des attentes de ferraillage (barres dépassant la fondation) pour l\'ancrage du mur.' },
+    ],
+  },
+  {
+    id: 'tuto-carrelage',
+    calcId: 'carrelage',
+    title: 'Poser du carrelage sol',
+    subtitle: 'Préparation, collage et jointoiement',
+    emoji: '🟫',
+    difficulty: 'Intermédiaire',
+    duree: '4–8 h pour 20 m²',
+    coverArt: '🟫🟫🟫\n🪣📐✂️\n🧹✨🏠',
+    bgFrom: 'from-amber-700',
+    bgTo: 'to-amber-500',
+    materiel: ['Carrelage', 'Colle à carrelage C1 (25 kg)', 'Jointement sac 5 kg', 'Croisillons 3 mm', 'Spatule crantée', 'Carrelette ou meuleuse', 'Niveau laser', 'Rouleau de bâche', 'Seau + éponge'],
+    epi: ['💪 Protège-genoux', '🥽 Lunettes (découpe)', '🧤 Gants', '🎭 Masque poussière (découpe)'],
+    steps: [
+      { num: 1, icons: '📐🔍', title: 'Vérifier et préparer le support', desc: 'Le support doit être plan (± 3 mm/2 m), sec, propre et résistant. Combler les trous avec du mortier de ragréage. Poncez les aspérités. Appliquez un primaire d\'accrochage si nécessaire.', warning: 'Ne jamais coller sur un support humide, friable, ou sur de l\'ancienne peinture non fixée.' },
+      { num: 2, icons: '📐🎯', title: 'Tracer le plan de pose', desc: 'Trouvez le centre de la pièce en traçant les diagonales. Simulez la pose à sec pour équilibrer les coupes sur les 4 bords. Commencez toujours par le fond de la pièce et avancez vers la porte.', tip: 'Des carreaux coupés de moins de 5 cm sont inesthétiques. Décalez le départ si nécessaire.' },
+      { num: 3, icons: '🪣📏', title: 'Préparer et étaler la colle', desc: 'Mélangez la colle (rapport eau/poudre sur l\'emballage). Étalez avec la spatule crantée à 45° en lignes parallèles. Couvrez 1 m² à la fois. Passez la spatule lisse sur le carrelage également (double encollage pour grand format).', tip: 'Attention au "sens de peignage" : toujours dans la même direction pour éviter les poches d\'air.' },
+      { num: 4, icons: '🟫📐✅', title: 'Poser les carreaux', desc: 'Posez en tournant légèrement, appuyez ferme. Insérez les croisillons (3 mm standard). Vérifiez le niveau à chaque rang. Tapotez avec un maillet et une cale pour ajuster.', warning: 'Vérifiez la planéité en permanence. Une fois la colle prise, une correction est impossible sans tout casser.' },
+      { num: 5, icons: '✂️🔧', title: 'Découper les carreaux de rive', desc: 'Utilisez une carrelette à roulette pour les coupes droites. Pour les formes complexes (contournement de tuyau), utilisez une meuleuse avec disque diamant ou une pince coupante.', warning: 'Portez IMPÉRATIVEMENT lunettes et masque lors des découpes. La poussière de carrelage est nocive.' },
+      { num: 6, icons: '⏳🌊', title: 'Séchage et jointoiement', desc: 'Laissez sécher 24h à 48h avant de marcher dessus. Enlevez les croisillons. Préparez le joint (consistance ferme). Appliquez en diagonale avec la raclette caoutchouc. Nettoyez immédiatement avec éponge humide.', tip: 'Le joint sec en surface mais pas nettoyé = traces blanches difficiles à enlever. Nettoyez en passant.' },
+      { num: 7, icons: '✨🏠', title: 'Protection et entretien', desc: 'Les carreaux poreux (pierre naturelle, grès) nécessitent un hydrofuge. Attendez 7 jours avant la mise en service complète (douche, cuisine).', tip: 'Pour les salles de bain, utilisez un joint souple (mastic silicone) dans les angles mur/sol.' },
+    ],
+  },
+  {
+    id: 'tuto-peinture',
+    calcId: 'peinture',
+    title: 'Peindre un mur intérieur',
+    subtitle: 'Préparation, impression, peinture finition',
+    emoji: '🎨',
+    difficulty: 'Débutant',
+    duree: '2–4 h par pièce (hors séchage)',
+    coverArt: '🎨🖌️🪣\n🧹📝✅\n🛋️✨🏠',
+    bgFrom: 'from-sky-700',
+    bgTo: 'to-sky-500',
+    materiel: ['Peinture intérieure', 'Peinture impression (si mur poreux)', 'Rouleau 22 cm (poil 10 mm)', 'Pinceau queue de morue', 'Bâche de protection', 'Ruban de masquage', 'Enduit de rebouchage', 'Toile abrasive (grain 120)', 'Seau + grille d\'essorage'],
+    epi: ['🎭 Masque si ancienne peinture (plomb possible)', '🥽 Lunettes lors du ponçage', '🧤 Gants'],
+    steps: [
+      { num: 1, icons: '🧹🔍', title: 'Préparer la pièce', desc: 'Videz la pièce ou repoussez les meubles au centre. Couvrez le sol et les meubles avec des bâches. Masquez les plinthes, vitres, interrupteurs et prises avec du ruban de masquage.', tip: 'Investissez dans du bon ruban de masquage (3M ou Tesa). Il se retire proprement sans arracher la peinture.' },
+      { num: 2, icons: '🔨🧱', title: 'Préparer les surfaces', desc: 'Rebouchez les trous et fissures avec de l\'enduit de rebouchage. Attendez le séchage (1–2h), poncez avec grain 120. Dépoussiérez avec un chiffon humide. Les murs doivent être propres, secs et dépoussiérés.', warning: 'Ne jamais peindre sur une fissure non traitée. Elle réapparaîtra dans les 6 mois.' },
+      { num: 3, icons: '🟫🪣', title: 'Appliquer l\'impression', desc: 'Sur un mur neuf, poreux ou coloré foncé : appliquez une couche de sous-couche/impression. Diluez à 10% pour une pénétration maximale. Séchage 2–4h. L\'impression fixe la surface et améliore l\'adhérence.', tip: 'Sur un mur blanc propre récemment repeint, l\'impression n\'est pas nécessaire.' },
+      { num: 4, icons: '🖌️📐', title: 'Peindre les angles et bords (pinceau)', desc: 'Commencez par les angles, bords de plafond, plinthes et contours des ouvertures avec un pinceau. Travaillez en bandes de 5–8 cm. Cette étape s\'appelle "couper au pinceau".', tip: 'Travaillez vite au pinceau : la peinture séchant, un raccord avec le rouleau sur peinture sèche laisse une trace.' },
+      { num: 5, icons: '🪣🔄', title: 'Peindre au rouleau (1ère couche)', desc: 'Chargez le rouleau uniformément (sans excès). Appliquez en "W" ou en "M" sur 50×50 cm, puis croisez sans appuyer pour égaliser. Travaillez du haut vers le bas. Première couche diluée à 5–10%.', tip: 'Ne surchargez pas le rouleau : les projections tachent et créent des coulures.' },
+      { num: 6, icons: '⏳🌬️', title: 'Séchage inter-couche', desc: 'Attendez le séchage "toucher" (1–2h selon la marque et le climat) avant la 2ème couche. En Guadeloupe/Martinique (humidité élevée), allongez à 3–4h. Aérez la pièce.', warning: 'Dans les DOM-TOM, l\'humidité tropicale allonge les temps de séchage de 50%. Prévoyez en conséquence.' },
+      { num: 7, icons: '✨🏠', title: '2ème couche et finitions', desc: 'Appliquez la 2ème couche non diluée dans le sens inverse de la 1ère. Retirez le ruban de masquage quand la peinture est encore légèrement humide (non sèche). Finitions des angles à la touche finale.', tip: 'Pour un blanc parfait sur un fond coloré foncé, 3 couches peuvent être nécessaires.' },
+    ],
+  },
+  {
+    id: 'tuto-enduit',
+    calcId: 'enduit',
+    title: 'Réaliser un enduit façade',
+    subtitle: 'Crépissage et finition extérieure',
+    emoji: '🪣',
+    difficulty: 'Intermédiaire',
+    duree: '1 journée pour 20 m²',
+    coverArt: '🏠🪣🧱\n⚒️📐🌧️\n👷‍♀️✨🎨',
+    bgFrom: 'from-orange-700',
+    bgTo: 'to-orange-500',
+    materiel: ['Enduit façade (sac 25 kg)', 'Ciment CPJ 32.5', 'Sable fin 0/2', 'Taloche', 'Règle de 2 m', 'Filet de renfort (façade neuve)', 'Primaire d\'accrochage', 'Bétonnière ou perceuse-malaxeur'],
+    epi: ['🥽 Lunettes (projections)', '🧤 Gants résistants', '👷 Casque si hauteur', '🦺 Harnais si échafaudage > 3 m'],
+    steps: [
+      { num: 1, icons: '🔍🧹', title: 'Préparer le support', desc: 'Dépoussiérez et brossez la façade. Humidifiez légèrement (support absorbant). Traitez les fissures et les joints creux. Dépoussiérez les fenêtres et portes avec le ruban de masquage.', warning: 'Ne jamais enduire par temps de pluie, vent fort, gel ou chaleur extrême (>35°C).' },
+      { num: 2, icons: '🟡🔥', title: 'Appliquer le primaire gobetis', desc: 'Première couche très fine (5 mm) projetée ou talochée grossièrement. Cette couche "accroche" la façade. Laissez sécher 24h avant la couche de corps.', tip: 'Pour les façades très lisses (béton banché), appliquez un primaire d\'accrochage avant le gobetis.' },
+      { num: 3, icons: '📏🏠', title: 'Pose des repères (phares)', desc: 'Utilisez des règles aluminium ou des butées en enduit dur pour créer des repères de planéité. Vérifiez à la règle de 2 m. Espacés de 1,5 m maximum.', tip: 'Des repères bien posés garantissent un résultat plan. Ne sautez pas cette étape.' },
+      { num: 4, icons: '🪣⚒️', title: 'Corps d\'enduit (couche principale)', desc: 'Épaisseur 1–1,5 cm. Appliquez de bas en haut avec la taloche. Serrez contre les phares. Tirez la règle en mouvement de sciage horizontal. L\'enduit doit combler tous les creux.', warning: 'N\'appliquez jamais plus de 15 mm en une seule passe. Deux passes fines valent mieux qu\'une épaisse.' },
+      { num: 5, icons: '🕸️🔩', title: 'Incorporer la fibre de renfort (si neuf)', title: 'Filet de renfort (façade neuve)', desc: 'Sur les façades neuves ou les jonctions de matériaux différents, intégrez un filet de renfort dans la couche fraîche. Noyez-le dans l\'enduit et ragréez.', tip: 'Le filet de renfort évite les fissures de retrait aux angles de fenêtres et jonctions maçonnerie/béton.' },
+      { num: 6, icons: '✨🔄', title: 'Finition taloché ou grattée', desc: 'Après prise partielle (1–2h selon la chaleur), lissez avec la taloche humide en mouvements circulaires (finition taloché lisse) ou avec la taloche garnie de mousse (taloché fin). Pour un effet grené : gratter avec une brosse métallique.', tip: 'L\'humidité tropicale de la Guadeloupe et Martinique accélère la prise. Travaillez tôt le matin.' },
+      { num: 7, icons: '💧☀️', title: 'Protection et cure', desc: 'Protégez du soleil direct 48h (bâche non adhérente). Humidifiez légèrement le lendemain matin. Attendez 7 jours avant de peindre. Le séchage complet prend 28 jours.', tip: 'Vous pouvez appliquer une peinture hydrofuge ou anti-moisissure pour protéger la façade en milieu tropical humide.' },
+    ],
+  },
+  {
+    id: 'tuto-toles',
+    calcId: 'toles',
+    title: 'Poser des tôles ondulées',
+    subtitle: 'Couverture légère maison ou appentis',
+    emoji: '🏠',
+    difficulty: 'Intermédiaire',
+    duree: '1–2 jours pour 50 m²',
+    coverArt: '🏠⛅🌴\n🔩🪜🛠️\n👷‍♂️🏗️✅',
+    bgFrom: 'from-zinc-700',
+    bgTo: 'to-zinc-500',
+    materiel: ['Tôles ondulées acier galvanisé', 'Vis auto-perceuses 5,5×38 avec rondelle EPDM', 'Faîtières', 'Closoir (mousse ondulée)', 'Liteaux 40×60 mm', 'Bande de butée d\'égout', 'Perceuse-visseuse', 'Cisaille à tôle', 'Corde de sécurité'],
+    epi: ['👷 Casque OBLIGATOIRE en hauteur', '🦺 Harnais de sécurité si pente > 30°', '🧤 Gants anti-coupure (bords de tôles = danger)', '👟 Chaussures antidérapantes', '🥽 Lunettes'],
+    steps: [
+      { num: 1, icons: '📐🪵', title: 'Préparer la charpente et les liteaux', desc: 'Vérifiez l\'état de la charpente. Posez les liteaux (40×60 mm) perpendiculairement aux chevrons, espacés selon la longueur des tôles : pour tôle 3m → liteux tous les 85 cm. Les liteaux doivent être sains et bien fixés.', warning: 'Ne montez jamais sur une charpente sans avoir vérifié sa solidité. Minimum 2 fixations par croisement.' },
+      { num: 2, icons: '🔢📏', title: 'Calculer le recouvrement', desc: 'Recouvrement latéral : 1,5 à 2 ondulations (selon l\'exposition au vent). Recouvrement longitudinal : 20 cm minimum (30 cm si pente < 15°). Commencez par le bas et le côté opposé au vent dominant.', tip: 'En DOM-TOM avec vents cycloniques, privilégiez un recouvrement de 2 ondulations et vissez tous les liteaux.' },
+      { num: 3, icons: '📏🔩', title: 'Poser la première tôle (bas-côté)', desc: 'Commencez par le bas (égout). Placez la tôle en alignant son bord inférieur avec la rive d\'égout. Vissez provisoirement pour ajuster. La première tôle donne le fil directeur de tout le rang.', warning: 'La première tôle mal posée faussera tout. Prenez le temps de la caler et vérifier perpendiculaire.' },
+      { num: 4, icons: '🔩✅', title: 'Fixer les tôles (vissage)', desc: 'Vis toutes les 2 ondulations sur chaque liteau (4 vis min par tôle par liteau). Vissez DANS le creux des ondulations (pas sur la crête). Serrez sans écraser la rondelle EPDM (1 mm d\'écrasement max).', warning: 'Trop serrer les vis : la rondelle EPDM écrasée ne sera plus étanche. Trop peu : infiltrations garanties.' },
+      { num: 5, icons: '🏠🔁', title: 'Progresser rang par rang', desc: 'Remontez vers le faîtage. Chaque rang recouvre le précédent d\'au moins 20 cm. Posez les tôles de recouvrement côté vent dominant par-dessus.', tip: 'Avant de monter avec une tôle, prépercez les trous de vis sur le sol. Plus sécurisé en hauteur.' },
+      { num: 6, icons: '🏔️🔩', title: 'Poser la faîtière', desc: 'Posez le closoir (mousse) contre les ondulations avant la faîtière. La faîtière chevauche au moins 20 cm de chaque côté du faîte. Vissez tous les 30 cm. La faîtière est étanche au vent.', tip: 'Le closoir (mousse) est essentiel pour éviter les entrées d\'insectes et de poussière sous la faîtière.' },
+      { num: 7, icons: '🌧️✅', title: 'Contrôle d\'étanchéité', desc: 'Testez avec un tuyau d\'arrosage simulant la pluie. Vérifiez l\'absence de fuites aux raccords, vis, faîtière et rives. En cas de doute sur une vis, ajoutez une rondelle EPDM supplémentaire.', warning: 'En zone cyclonique (DOM-TOM), faites valider l\'installation par un professionnel. Des normes de résistance aux vents s\'appliquent.' },
+    ],
+  },
+  {
+    id: 'tuto-cloture',
+    calcId: 'cloture',
+    title: 'Poser une clôture grillage',
+    subtitle: 'Poteaux, grillage et portail',
+    emoji: '🚧',
+    difficulty: 'Débutant',
+    duree: '1 journée pour 30 ml',
+    coverArt: '🚧🌳🏡\n⛏️🔩🪣\n👷‍♀️📐✅',
+    bgFrom: 'from-green-800',
+    bgTo: 'to-green-600',
+    materiel: ['Poteaux acier galvanisé (Ø 60 mm)', 'Grillage soudé galvanisé', 'Béton de scellement', 'Fil de ligature', 'Tendeur/câble de tension', 'Masse de terrassement', 'Foreuse ou tarière', 'Fil à plomb', 'Niveau'],
+    epi: ['🧤 Gants anti-coupure', '🥽 Lunettes', '👟 Chaussures de sécurité'],
+    steps: [
+      { num: 1, icons: '📐🧵', title: 'Tracer et marquer les poteaux', desc: 'Tendez un cordeau pour aligner les poteaux. Marquez les emplacements au sol à l\'espacement choisi (2–2,5 m). Commencez par les angles et points extrêmes.', tip: 'L\'espacement standard de 2,5 m est un bon compromis solidité/économie. Réduisez à 2 m en terrain en pente.' },
+      { num: 2, icons: '⛏️🕳️', title: 'Forer les trous de scellement', desc: 'Profondeur minimum : 1/3 de la hauteur du poteau (ex: 50 cm de profondeur pour poteau 1,5 m). Diamètre : 2× le diamètre du poteau. Utilisez une tarière manuelle ou motorisée.', warning: 'En sol rocheux ou très dur, louez une tarière thermique. Ne risquez pas une blessure au dos.' },
+      { num: 3, icons: '📏✅', title: 'Sceller et aligner les poteaux', desc: 'Versez 5 cm de béton dans le trou. Introduisez le poteau. Vérifiez l\'aplomb à 90° avec le niveau et le fil à plomb dans 2 directions. Coulez le béton de scellement autour. Maintenez en place 48h.', tip: 'Formez une légère calotte en dôme au sommet du béton pour évacuer l\'eau de pluie autour du poteau.' },
+      { num: 4, icons: '🕸️📏', title: 'Fixer le grillage', desc: 'Déroulez le grillage en maintenant la tension. Agrafez ou ligaturez au premier poteau. Tendez manuellement en progressant et ligaturez tous les 30 cm. Utilisez un tendeur sur le fil terminal.', tip: 'Travaillez à 2 : l\'un tient le grillage tendu, l\'autre fixe. Seul, la tâche est presque impossible.' },
+      { num: 5, icons: '✂️🔧', title: 'Couper et ajuster', desc: 'Coupez le grillage avec une pince coupante ou cisaille. Pour les angles, faisez un coude progressif et fixez des deux côtés de l\'angle.', warning: 'Les bords de grillage coupé sont tranchants. Ne jamais toucher sans gants. Retourner les fils coupés vers l\'intérieur.' },
+      { num: 6, icons: '🚪🔩', title: 'Installer le portail (si prévu)', desc: 'Scellement des poteaux de portail à 70 cm de profondeur minimum. Respectez le jeu de 5 mm entre la porte et le poteau. Réglez les gonds pour une ouverture sans forcer.', tip: 'Un portail bien réglé au départ vous évitera des années de bricolage. Prenez le temps d\'ajuster.' },
+      { num: 7, icons: '🌿✅', title: 'Finitions et végétalisation', desc: 'Plantez une haie végétale (laurier, bougainvillier, hibiscus) en bas de clôture pour un aspect naturel. Vérifiez chaque poteau à 6 mois pour resserrer si nécessaire.', tip: 'Dans les zones tropicales, préférez des poteaux en acier galvanisé à chaud plutôt que simple galvanisé pour une durabilité accrue face à l\'humidité.' },
+    ],
+  },
+  {
+    id: 'tuto-chape',
+    calcId: 'chape',
+    title: 'Réaliser une chape de sol',
+    subtitle: 'Mortier de chape pour parquet ou carrelage',
+    emoji: '🪵',
+    difficulty: 'Intermédiaire',
+    duree: '1 journée pour 40 m² + 7 jours séchage',
+    coverArt: '🪵📐🏠\n🪣⚒️📏\n👷‍♀️✨🏠',
+    bgFrom: 'from-amber-800',
+    bgTo: 'to-yellow-600',
+    materiel: ['Ciment CPJ 32.5', 'Sable de chape 0/5', 'Eau', 'Bétonnière ou malaxeur', 'Règle de tirage (alu 3 m)', 'Phares métalliques ou bois', 'Lisseuse', 'Bande acoustique (mur/sol)', 'Film polyane'],
+    epi: ['💪 Protège-genoux', '🧤 Gants', '🥽 Lunettes', '👟 Bottes de chantier'],
+    steps: [
+      { num: 1, icons: '🔍📐', title: 'Préparer le support', desc: 'Nettoyez le support (dalle béton ou plancher). Aspirez ou brossez toute poussière. Le support doit être plan ± 5 mm/2 m. Humidifiez légèrement (dalle trop sèche = décollement).', warning: 'Toute fissure dans le support doit être traitée avant la chape. Sinon, les fissures remontent dans la chape.' },
+      { num: 2, icons: '🎵🧱', title: 'Poser la bande acoustique', desc: 'Fixez la bande résiliente tout autour du pourtour de la pièce (10 cm de hauteur). Elle isole du bruit et absorbe la dilatation thermique de la chape.', tip: 'La bande acoustique est OBLIGATOIRE pour les chapes flottantes (sur isolant) et recommandée pour toutes les chapes.' },
+      { num: 3, icons: '📏🎯', title: 'Réglage des phares (niveaux)', desc: 'Utilisez un niveau laser ou un niveau à eau pour poser des phares en bois ou profilé alu à l\'épaisseur souhaitée (4–6 cm). Espacés de 1,5 m max. Ces repères guident le tirage de la règle.', tip: 'Prenez le temps de bien régler les phares. Une chape plane à ± 2 mm/2 m est un gage de qualité.' },
+      { num: 4, icons: '🪣🔄', title: 'Préparer le mortier de chape', desc: 'Dosage : 300–350 kg de ciment/m³. Rapport C:S = 1:3. Le mortier doit être semi-sec (on peut l\'agglomérer dans la main sans qu\'il coule). Préparez par petites quantités (30–40 kg).', tip: 'Test de la prise en main : serrez une poignée de mortier. Elle doit tenir sa forme sans égoutter. Si ça coule, trop d\'eau.' },
+      { num: 5, icons: '⚒️📏', title: 'Couler et tirer la chape', desc: 'Commencez par le fond de la pièce. Étalez le mortier en le tassant légèrement. Tirez la règle de 2 m en mouvement de sciage, en vous appuyant sur les phares. Remplissez les creux, repassez la règle.', warning: 'Progressez toujours depuis le fond vers la sortie. Si vous marchez dans la chape fraîche, vous la déformez.' },
+      { num: 6, icons: '✨🔄', title: 'Lisser la surface', desc: '30–60 min après le tirage, quand la chape a pris partiellement, lissez avec la lisseuse en mouvements circulaires. Surface finale lisse pour carrelage, légèrement rugueuse pour parquet flottant.', tip: 'Ne pas lisser trop tôt (eau encore en surface) ni trop tard (trop dur). Testez par pression : ça s\'imprime légèrement = bon moment.' },
+      { num: 7, icons: '💧⏳', title: 'Cure et séchage (28 jours)', desc: 'Recouvrez d\'une bâche 48h. Humidifiez légèrement le lendemain. Attendez 7 jours pour circulation piétonne légère. Carrelage possible à 28 jours. Parquet massif : 28 jours + test d\'humidité < 2,5%.', warning: 'En DOM-TOM, l\'humidité tropicale ralentit le séchage. Prévoyez toujours un test d\'humidité avant le revêtement de sol.' },
+    ],
+  },
+  {
+    id: 'tuto-escalier',
+    calcId: 'escalier',
+    title: 'Concevoir et tracer un escalier',
+    subtitle: 'Formule de Blondel et normes NF',
+    emoji: '🪜',
+    difficulty: 'Expert',
+    duree: 'Conception : 2–3 h | Construction : 3–5 jours',
+    coverArt: '🪜📐🏗️\n📏✏️🔢\n👷‍♂️✅🏠',
+    bgFrom: 'from-indigo-800',
+    bgTo: 'to-indigo-600',
+    materiel: ['Béton C25 ou bois massif', 'Ferraillage HA10 treillis', 'Coffrages bois', 'Équerre de menuisier', 'Règle de 2 m', 'Crayon charpentier', 'Fil à plomb', 'Niveau de précision'],
+    epi: ['👷 Casque', '🥽 Lunettes', '🧤 Gants', '👟 Chaussures de sécurité'],
+    steps: [
+      { num: 1, icons: '📏🔢', title: 'Mesurer la hauteur totale (H)', desc: 'Mesurez la hauteur exacte entre les deux niveaux finis (sol du bas au sol du haut, revêtements inclus). Cette mesure doit être précise au millimètre. C\'est la base de tout le calcul.', warning: 'Intégrez l\'épaisseur des revêtements de sol (carrelage, parquet) aux deux niveaux dans votre mesure.' },
+      { num: 2, icons: '🔢✏️', title: 'Déterminer le nombre de marches', desc: 'Divisez H par 17–20 cm (hauteur idéale de marche). Arrondissez pour obtenir un nombre entier n. Recalculez : h = H/n. Exemple : H=270 cm ÷ 15 marches = h=18 cm (conforme NF).', tip: 'Essayez différents nombres de marches pour trouver le meilleur compromis entre h (17–20 cm) et g (24–32 cm).' },
+      { num: 3, icons: '📐📏', title: 'Calculer le giron (formule de Blondel)', desc: 'Formule : 2h + g = 63 cm (±1 cm). g = 63 – (2 × h). Exemple : h=18 cm → g = 63 – 36 = 27 cm. Vérifiez : 2×18 + 27 = 63 ✅. Le giron doit être entre 24 et 32 cm (NF P01-013).', tip: 'La formule de Blondel assure un escalier confortable qui respecte la "foulée" humaine naturelle de 63 cm.' },
+      { num: 4, icons: '📏🏗️', title: 'Calculer la longueur et l\'angle', desc: 'Longueur horizontale = n × g. Angle = arctan(h/g). Exemple : 15 marches × 27 cm = 405 cm. Angle = arctan(18/27) = 33,7° (idéal : 25–35°). Vérifiez que vous avez la place !', warning: 'Un angle > 45° est un escalier "d\'échelle", dangereux et hors normes. Réduisez le nombre de marches.' },
+      { num: 5, icons: '🪵📐', title: 'Tracer le limon sur le coffrage', desc: 'Tracez les marches sur le limon avec l\'équerre. Vérifiez que toutes les contremarches sont identiques (tolérance ± 5 mm max entre deux marches consécutives selon NF). Incision au cutter avant découpe.', warning: 'La moindre irrégularité entre 2 marches provoque des trébuchements. La régularité est une exigence de sécurité.' },
+      { num: 6, icons: '🔩🏗️', title: 'Construction et coffrage béton', desc: 'Coffrez le dessous (paillasse). Ferraillez avec un treillis HA10 + barres longitudinales. Coulez le béton C25 par l\'arrière en le vibrochantant. Coffrages des contremarches par planches de 2 cm.', tip: 'Un escalier béton bien fait dure 80 ans. Soignez le ferraillage et le vibrage pour éviter les bulles d\'air.' },
+      { num: 7, icons: '⏳✅', title: 'Décoffrage et finitions', desc: 'Décoffrez après 5–7 jours. Rhabillage au mortier si nécessaire. Cure 14 jours. Pose du revêtement de marche (carrelage antidérapant R11 minimum) à 28 jours. Garde-corps obligatoire > 4 marches.', warning: 'Le garde-corps est OBLIGATOIRE dès 4 marches selon NF P01-012. Hauteur min 90 cm, espacements < 11 cm.' },
+    ],
+  },
+];
+
+// ─── Tutorial Components ───────────────────────────────────────────────────────
+
+const DIFFICULTY_COLORS = {
+  'Débutant':     { bg: 'bg-green-500/20',  text: 'text-green-300',  border: 'border-green-500/30' },
+  'Intermédiaire':{ bg: 'bg-orange-500/20', text: 'text-orange-300', border: 'border-orange-500/30' },
+  'Expert':       { bg: 'bg-red-500/20',    text: 'text-red-300',    border: 'border-red-500/30' },
+};
+
+function TutoCard({ tuto, onOpen }: { tuto: Tutorial; onOpen: (id: string) => void }) {
+  const diff = DIFFICULTY_COLORS[tuto.difficulty];
+  return (
+    <button
+      onClick={() => onOpen(tuto.id)}
+      className="w-full text-left rounded-2xl overflow-hidden bg-slate-800 border border-slate-700 hover:border-orange-500/40 hover:scale-[1.02] transition-all active:scale-[0.99] shadow-lg"
+    >
+      {/* Cover Art */}
+      <div className={`bg-gradient-to-br ${tuto.bgFrom} ${tuto.bgTo} p-4 flex flex-col items-center justify-center min-h-[90px] relative`}>
+        <div className="text-3xl leading-tight text-center whitespace-pre font-mono tracking-wide opacity-90">
+          {tuto.coverArt}
+        </div>
+      </div>
+      {/* Info */}
+      <div className="p-4">
+        <div className="flex items-start justify-between gap-2 mb-2">
+          <p className="font-bold text-white text-sm leading-tight">{tuto.title}</p>
+          <ChevronRight className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
+        </div>
+        <p className="text-xs text-slate-400 mb-3 leading-relaxed">{tuto.subtitle}</p>
+        <div className="flex flex-wrap gap-1.5">
+          <span className={`text-xs px-2 py-0.5 rounded-full border font-semibold ${diff.bg} ${diff.text} ${diff.border}`}>
+            {tuto.difficulty}
+          </span>
+          <span className="text-xs px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 border border-slate-600 flex items-center gap-1">
+            <Clock className="w-3 h-3" />{tuto.duree}
+          </span>
+        </div>
+      </div>
+    </button>
+  );
+}
+
+function TutoDetail({ tuto, onBack, onCalc }: { tuto: Tutorial; onBack: () => void; onCalc: (id: CalculatorId) => void }) {
+  const [openStep, setOpenStep] = useState<number | null>(null);
+  const diff = DIFFICULTY_COLORS[tuto.difficulty];
+
+  return (
+    <div className="space-y-4">
+      {/* Header */}
+      <div className={`rounded-2xl overflow-hidden bg-gradient-to-br ${tuto.bgFrom} ${tuto.bgTo}`}>
+        <div className="p-4 flex flex-col items-center text-center">
+          <p className="text-4xl mb-2 font-mono leading-tight whitespace-pre">{tuto.coverArt}</p>
+          <h2 className="text-xl font-black text-white drop-shadow-md">{tuto.title}</h2>
+          <p className="text-sm text-white/80 mt-1">{tuto.subtitle}</p>
+          <div className="flex flex-wrap justify-center gap-2 mt-3">
+            <span className={`text-xs px-3 py-1 rounded-full border font-semibold ${diff.bg} ${diff.text} ${diff.border} bg-opacity-80 backdrop-blur`}>
+              {tuto.difficulty}
+            </span>
+            <span className="text-xs px-3 py-1 rounded-full bg-black/30 text-white/90 flex items-center gap-1">
+              <Clock className="w-3 h-3" />{tuto.duree}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Matériel */}
+      <div className="rounded-2xl bg-slate-800 border border-slate-700 p-4">
+        <h3 className="font-bold text-white flex items-center gap-2 mb-3">
+          <Hammer className="w-4 h-4 text-orange-400" /> Matériel & fournitures
+        </h3>
+        <div className="flex flex-wrap gap-2">
+          {tuto.materiel.map((m) => (
+            <span key={m} className="text-xs bg-slate-700 text-slate-300 px-3 py-1.5 rounded-xl border border-slate-600">{m}</span>
+          ))}
+        </div>
+      </div>
+
+      {/* EPI */}
+      <div className="rounded-2xl bg-red-900/20 border border-red-500/30 p-4">
+        <h3 className="font-bold text-red-300 flex items-center gap-2 mb-3">
+          <Shield className="w-4 h-4 text-red-400" /> Équipements de protection individuelle (EPI)
+        </h3>
+        <div className="flex flex-wrap gap-2">
+          {tuto.epi.map((e) => (
+            <span key={e} className="text-xs bg-red-900/30 text-red-200 px-3 py-1.5 rounded-xl border border-red-500/20">{e}</span>
+          ))}
+        </div>
+      </div>
+
+      {/* Steps */}
+      <div className="rounded-2xl bg-slate-800 border border-slate-700 overflow-hidden">
+        <div className="p-4 border-b border-slate-700 flex items-center gap-2">
+          <Layers className="w-4 h-4 text-indigo-400" />
+          <h3 className="font-bold text-white">Étapes pas à pas ({tuto.steps.length} étapes)</h3>
+        </div>
+        <div className="divide-y divide-slate-700/50">
+          {tuto.steps.map((step) => (
+            <div key={step.num}>
+              <button
+                onClick={() => setOpenStep(openStep === step.num ? null : step.num)}
+                className="w-full p-4 text-left flex items-start gap-3 hover:bg-slate-700/30 transition-colors"
+              >
+                <span className="w-8 h-8 rounded-full bg-orange-600 flex items-center justify-center text-sm font-black text-white shrink-0 mt-0.5">
+                  {step.num}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg leading-none">{step.icons}</span>
+                    <p className="font-semibold text-white text-sm">{step.title}</p>
+                  </div>
+                </div>
+                <span className="text-slate-400 shrink-0">
+                  {openStep === step.num ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                </span>
+              </button>
+              {openStep === step.num && (
+                <div className="px-4 pb-4 ml-11 space-y-2">
+                  <p className="text-sm text-slate-300 leading-relaxed">{step.desc}</p>
+                  {step.tip && (
+                    <div className="flex gap-2 bg-indigo-900/30 border border-indigo-500/30 rounded-xl p-3">
+                      <Zap className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />
+                      <p className="text-xs text-indigo-200 leading-relaxed"><span className="font-semibold">Astuce : </span>{step.tip}</p>
+                    </div>
+                  )}
+                  {step.warning && (
+                    <div className="flex gap-2 bg-red-900/30 border border-red-500/30 rounded-xl p-3">
+                      <AlertTriangle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                      <p className="text-xs text-red-200 leading-relaxed"><span className="font-semibold">Attention : </span>{step.warning}</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* CTA → Calculer */}
+      <button
+        onClick={() => onCalc(tuto.calcId)}
+        className="w-full rounded-2xl bg-orange-600 hover:bg-orange-500 py-4 font-bold text-white flex items-center justify-center gap-3 transition-colors text-sm shadow-lg"
+      >
+        <Calculator className="w-5 h-5" />
+        Calculer les matériaux pour ce tuto
+        <ChevronRight className="w-5 h-5" />
+      </button>
+
+      {/* Disclaimer */}
+      <p className="text-center text-xs text-slate-500">Tutoriel à titre informatif. Consultez un professionnel pour tous travaux structurels ou réglementés.</p>
+    </div>
+  );
+}
+
+function TutorielsSection({ onGoCalc }: { onGoCalc: (calcId: CalculatorId) => void }) {
+  const [openTutoId, setOpenTutoId] = useState<string | null>(null);
+
+  const openTuto = TUTORIALS.find((t) => t.id === openTutoId);
+
+  if (openTuto) {
+    return (
+      <div className="mt-6 space-y-4">
+        <button onClick={() => setOpenTutoId(null)} className="flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors">
+          <ChevronLeft className="w-4 h-4" /> Retour aux tutoriels
+        </button>
+        <TutoDetail
+          tuto={openTuto}
+          onBack={() => setOpenTutoId(null)}
+          onCalc={(calcId) => { setOpenTutoId(null); onGoCalc(calcId); }}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-6">
+      <div className="flex items-center gap-2 mb-4">
+        <BookOpen className="w-5 h-5 text-indigo-400" />
+        <h2 className="text-lg font-black text-white">Tutoriels illustrés</h2>
+        <span className="text-xs bg-indigo-900/50 text-indigo-300 px-2 py-0.5 rounded-full border border-indigo-500/30">{TUTORIALS.length} guides</span>
+      </div>
+      <p className="text-xs text-slate-400 mb-4">Guides pas à pas, illustrés, avec matériaux et conseils de sécurité.</p>
+      <div className="grid grid-cols-2 gap-3">
+        {TUTORIALS.map((tuto) => (
+          <TutoCard key={tuto.id} tuto={tuto} onOpen={setOpenTutoId} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ─── Suggestions Panel ────────────────────────────────────────────────────────
 
 function SuggestionsPanel() {
@@ -1611,6 +2061,7 @@ export default function CalculateurBatiment() {
   });
   const [selectedCategory, setSelectedCategory] = useState<CategoryId | null>(null);
   const [selectedCalc, setSelectedCalc]     = useState<CalculatorId | null>(null);
+  const [showTutos, setShowTutos]           = useState(false);
 
   useEffect(() => {
     const state = getBatimentTrialState();
@@ -1746,6 +2197,31 @@ export default function CalculateurBatiment() {
                 );
               })}
               <SuggestionsPanel />
+
+              {/* ── Tutoriels toggle button ── */}
+              <button
+                onClick={() => setShowTutos((v) => !v)}
+                className="w-full mt-2 rounded-2xl border border-indigo-500/40 bg-indigo-900/20 hover:bg-indigo-900/40 p-4 flex items-center gap-3 transition-all"
+              >
+                <BookOpen className="w-6 h-6 text-indigo-400 shrink-0" />
+                <div className="flex-1 text-left">
+                  <p className="font-bold text-white text-sm">📚 Tutoriels illustrés</p>
+                  <p className="text-xs text-slate-400 mt-0.5">{TUTORIALS.length} guides pas à pas — matériaux, EPI, astuces</p>
+                </div>
+                {showTutos ? <ChevronUp className="w-5 h-5 text-slate-400 shrink-0" /> : <ChevronDown className="w-5 h-5 text-slate-400 shrink-0" />}
+              </button>
+
+              {/* ── Tutoriels section ── */}
+              {showTutos && (
+                <TutorielsSection
+                  onGoCalc={(calcId) => {
+                    // Find which category contains this calcId
+                    const cat = CATEGORIES.find((c) => c.calcs.includes(calcId));
+                    if (cat) { setSelectedCategory(cat.id); setSelectedCalc(calcId); }
+                    setShowTutos(false);
+                  }}
+                />
+              )}
             </div>
           )}
 
@@ -1758,10 +2234,15 @@ export default function CalculateurBatiment() {
                   <button key={calcId} onClick={() => setSelectedCalc(calcId)}
                     className="w-full rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-orange-500/40 p-4 text-left transition-all flex items-center gap-4">
                     <div className="w-14 h-14 rounded-xl bg-slate-700 flex items-center justify-center text-3xl shrink-0">{meta.emoji}</div>
-                    <div>
+                    <div className="flex-1 min-w-0">
                       <p className="font-bold text-white">{meta.label}</p>
                       <p className="text-xs text-slate-400 mt-0.5">{meta.description}</p>
                     </div>
+                    {TUTORIALS.some((t) => t.calcId === calcId) && (
+                      <span className="shrink-0 text-xs bg-indigo-900/50 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-full flex items-center gap-1">
+                        <BookOpen className="w-3 h-3" />tuto
+                      </span>
+                    )}
                   </button>
                 );
               })}
@@ -1789,8 +2270,17 @@ export default function CalculateurBatiment() {
               <p className="mt-3 text-center text-xs text-slate-600 bg-orange-900/15 border border-orange-900/30 rounded-xl px-4 py-2">
                 Tous les calculs sont à titre indicatif
               </p>
-              {/* Suggestions at bottom of calc */}
-              {!selectedCategory && <SuggestionsPanel />}
+              {/* Tuto shortcut for current calc */}
+              {selectedCalc && TUTORIALS.find((t) => t.calcId === selectedCalc) && (
+                <button
+                  onClick={() => { setSelectedCalc(null); setSelectedCategory(null); setShowTutos(true); }}
+                  className="mt-2 w-full rounded-xl border border-indigo-500/30 bg-indigo-900/10 hover:bg-indigo-900/20 px-4 py-3 flex items-center gap-2 text-sm text-indigo-300 transition-colors"
+                >
+                  <BookOpen className="w-4 h-4 shrink-0" />
+                  Voir le tutoriel illustré pour {CALC_META[selectedCalc].label}
+                  <ChevronRight className="w-4 h-4 ml-auto" />
+                </button>
+              )}
             </>
           )}
         </div>
