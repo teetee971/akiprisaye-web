@@ -302,8 +302,10 @@ const FuelComparator: React.FC = () => {
           <>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Territoire</label>
+                <label htmlFor="fc-territoire" className="block text-sm text-gray-400 mb-1">Territoire</label>
                 <select
+                  id="fc-territoire"
+                  name="territoire"
                   value={selectedTerritory}
                   onChange={(e) => { setSelectedTerritory(e.target.value as Territory); setFilterCity(''); }}
                   className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg px-3 py-2"
@@ -314,8 +316,10 @@ const FuelComparator: React.FC = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Type de carburant</label>
+                <label htmlFor="fc-carburant" className="block text-sm text-gray-400 mb-1">Type de carburant</label>
                 <select
+                  id="fc-carburant"
+                  name="carburant"
                   value={selectedFuelType}
                   onChange={(e) => setSelectedFuelType(e.target.value as FuelType)}
                   className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg px-3 py-2"
@@ -324,8 +328,10 @@ const FuelComparator: React.FC = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Filtrer par ville</label>
+                <label htmlFor="fc-ville" className="block text-sm text-gray-400 mb-1">Filtrer par ville</label>
                 <input
+                  id="fc-ville"
+                  name="ville"
                   type="text"
                   value={filterCity}
                   onChange={(e) => setFilterCity(e.target.value)}
@@ -558,8 +564,10 @@ const FuelComparator: React.FC = () => {
           <>
             <div className="flex flex-wrap items-end gap-4 mb-6">
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Type de carburant</label>
+                <label htmlFor="fc-carburant-compare" className="block text-sm text-gray-400 mb-1">Type de carburant</label>
                 <select
+                  id="fc-carburant-compare"
+                  name="carburant-compare"
                   value={selectedFuelType}
                   onChange={(e) => setSelectedFuelType(e.target.value as FuelType)}
                   className="bg-slate-800 border border-slate-700 text-white rounded-lg px-3 py-2"

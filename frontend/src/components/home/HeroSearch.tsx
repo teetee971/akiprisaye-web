@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { HeroImage } from '../ui/HeroImage';
 
 // Real Unsplash photo: supermarket grocery scene (free to use)
-const HERO_IMG = 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=1600&q=80';
+const HERO_IMG = 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fm=webp&fit=crop&w=1600&q=80';
 
 export default function HeroSearch() {
   const navigate = useNavigate();

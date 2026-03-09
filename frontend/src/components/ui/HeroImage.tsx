@@ -53,6 +53,7 @@ export function HeroImage({
             alt={alt}
             loading="lazy"
             decoding="async"
+            crossOrigin={src.includes('images.unsplash.com') ? 'anonymous' : undefined}
             onLoad={() => setImgLoaded(true)}
             onError={() => setImgFailed(true)}
             className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}

@@ -340,6 +340,7 @@ export default function StoreRankingWidget() {
           loading="lazy"
           width="900"
           height="160"
+          crossOrigin="anonymous"
         />
         <div className="section-context-banner-overlay" aria-hidden="true" />
         <div className="section-context-banner-caption">
