@@ -199,4 +199,6 @@ export interface ImageSearchInput {
   productKey: string;
   /** Ticket d'origine */
   receiptId?: string;
+  /** Territoire (ex: "GP", "MQ") */
+  territory?: string;
 }

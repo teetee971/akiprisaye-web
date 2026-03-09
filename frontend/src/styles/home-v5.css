@@ -50,13 +50,41 @@
   justify-content: center;
   min-height: 70vh;
   padding: 4rem 2rem 2rem;
-  text-align: center;
   position: relative;
   overflow: hidden;
-  /* Vibrant Caribbean market — more representative of DOM-TOM daily life */
-  background-image: url('https://images.unsplash.com/photo-1605217613423-0edd1894f97e?auto=format&fit=crop&w=1600&q=80');
+  /* Supermarket aisle / grocery scene — DOM-TOM daily life */
+  background-image: url('https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=1600&q=80');
   background-size: cover;
   background-position: center 40%;
+}
+
+/* Two-column hero: text left, phone mockup right */
+.hero-inner {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 3rem;
+  max-width: 1200px;
+  width: 100%;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-phone-side {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* Scaled-down phone wrap for hero */
+.hero-phone-wrap {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: scale(0.82);
+  transform-origin: center top;
 }
 
 .hero-v5::before {
@@ -76,10 +104,15 @@
 }
 
 .hero-content {
-  max-width: 800px;
+  max-width: 600px;
   position: relative;
   z-index: 1;
   width: 100%;
+  text-align: left;
+}
+
+.hero-search-xxl {
+  text-align: left;
 }
 
 .hero-title {
@@ -1191,8 +1224,29 @@
 /* Mobile: <640px */
 @media (max-width: 640px) {
   .hero-v5 {
-    min-height: 70vh;
+    min-height: auto;
     padding: 3rem 1.5rem 2rem;
+  }
+
+  /* Stack phone below text on mobile */
+  .hero-inner {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    text-align: center;
+  }
+
+  .hero-content {
+    max-width: 100%;
+    text-align: center;
+  }
+
+  .hero-search-xxl {
+    text-align: center;
+  }
+
+  /* Hide phone mockup on very small screens to avoid layout issues */
+  .hero-phone-side {
+    display: none;
   }
 
   .hero-title {
@@ -1357,6 +1411,24 @@
 
 /* Tablet: 640px - 768px */
 @media (min-width: 640px) and (max-width: 768px) {
+  .hero-inner {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .hero-content {
+    max-width: 100%;
+    text-align: center;
+  }
+
+  .hero-search-xxl {
+    text-align: center;
+  }
+
+  .hero-phone-side {
+    display: none;
+  }
+
   .hero-title {
     font-size: 2.5rem;
   }
@@ -1379,6 +1451,11 @@
 @media (min-width: 1024px) {
   .hero-v5 {
     min-height: 70vh;
+  }
+
+  /* Show phone mockup on desktop only */
+  .hero-phone-side {
+    display: flex;
   }
 
   .benefits-grid {

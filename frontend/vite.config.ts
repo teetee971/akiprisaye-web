@@ -44,19 +44,50 @@ export default defineConfig({
     ),
   },
   build: {
+    // Warn only for truly huge chunks (> 1 MB)
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
-        manualChunks: {
-          // Core React runtime (tiny, always needed)
-          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          // Charting libraries (large, only loaded on chart pages)
-          'vendor-charts': ['recharts'],
-          // Mapping libraries (large, only loaded on map pages)
-          'vendor-leaflet': ['leaflet', 'react-leaflet'],
-          // i18n (only loaded after initial render)
-          'vendor-i18n': ['i18next', 'react-i18next'],
-          // Validation
-          'vendor-zod': ['zod'],
+        // Function-based manualChunks for fine-grained splitting
+        manualChunks(id) {
+          // ── Core React runtime ─────────────────────────────────────────────
+          if (id.includes('/react-dom/') || id.includes('/react/index.') || id.includes('/react/cjs/')) {
+            return 'vendor-react-dom';
+          }
+          if (id.includes('react-router-dom') || id.includes('react-router/')) {
+            return 'vendor-react-router';
+          }
+          // ── Charts (recharts + d3 ecosystem) ──────────────────────────────
+          if (id.includes('recharts') || id.includes('/d3-') || id.includes('/victory-')) {
+            return 'vendor-charts';
+          }
+          // ── Maps ──────────────────────────────────────────────────────────
+          if (id.includes('leaflet') || id.includes('react-leaflet')) {
+            return 'vendor-leaflet';
+          }
+          // ── Firebase (large SDK — load after app shell) ───────────────────
+          if (id.includes('@firebase/') || id.includes('firebase/')) {
+            return 'vendor-firebase';
+          }
+          // ── Icons (lucide-react — large, split to own chunk) ──────────────
+          if (id.includes('lucide-react')) {
+            return 'vendor-icons';
+          }
+          // ── i18n ──────────────────────────────────────────────────────────
+          if (id.includes('i18next') || id.includes('react-i18next')) {
+            return 'vendor-i18n';
+          }
+          // ── Validation ────────────────────────────────────────────────────
+          if (id.includes('zod')) {
+            return 'vendor-zod';
+          }
+          // ── Helmet (SEO) ──────────────────────────────────────────────────
+          if (id.includes('react-helmet')) {
+            return 'vendor-helmet';
+          }
+          // Other node_modules: let Rollup auto-split to avoid a single
+          // massive catch-all chunk that would block initial render.
+          return undefined;
         },
       },
     },

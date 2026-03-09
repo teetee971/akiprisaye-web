@@ -6,7 +6,9 @@ import {
   Plane, Ship, Package, Droplet, Shield, GraduationCap,
   Car, HardHat, Wifi, ArrowRight, Users, ShoppingCart, Globe, Search,
   TrendingUp, Activity, Sparkles, Zap, Bell, Clock, BookOpen, FileText,
-  Scale, SlidersHorizontal,
+  Scale, SlidersHorizontal, Camera, Calculator, Heart, Trash2, Bot,
+  Eye, Tag, HandHeart, BarChart2, Newspaper, MessageSquare, Star, Wallet,
+  FlaskConical, Leaf,
 } from 'lucide-react';
 import { GlassCard } from '../components/ui/glass-card';
 import Comparateur from './Comparateur';
@@ -81,6 +83,65 @@ const RESSOURCES = [
   { path: '/ressources/glossaire-logistique-dom',          icon: FileText,     label: 'Glossaire Logistique',             color: 'text-cyan-400',    bg: 'bg-cyan-500/10 border-cyan-500/30',     desc: 'Définitions clés : fret, octroi de mer, COTRAM…' },
   { path: '/ressources/comprendre-promotions-prix-barres', icon: TrendingDown, label: 'Promotions & Prix Barrés',         color: 'text-orange-400',  bg: 'bg-orange-500/10 border-orange-500/30', desc: 'Décoder les promotions et les prix barrés en grande surface' },
   { path: '/ressources/pourquoi-prix-varie-sans-changement', icon: TrendingUp, label: 'Variations de Prix Silencieuses', color: 'text-yellow-400',  bg: 'bg-yellow-500/10 border-yellow-500/30', desc: 'Pourquoi un prix change sans que le produit évolue' },
+];
+
+// ── Scanner & OCR tools ────────────────────────────────────────────────────────
+const SCANNERS = [
+  { path: '/scanner',                icon: Camera,   label: 'Scanner Hub',             color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/30', desc: 'Hub de tous les outils de scan et reconnaissance' },
+  { path: '/scan-ean',               icon: Camera,   label: 'Scan Code-barres EAN',    color: 'text-green-400',   bg: 'bg-green-500/10 border-green-500/30',     desc: 'Scanner un code-barres produit instantanément' },
+  { path: '/scan-ocr',               icon: FileText, label: 'OCR Ticket de caisse',    color: 'text-blue-400',    bg: 'bg-blue-500/10 border-blue-500/30',       desc: 'Analyser un ticket de caisse par reconnaissance optique' },
+  { path: '/scan-photo',             icon: Camera,   label: 'Photo Produit',           color: 'text-violet-400',  bg: 'bg-violet-500/10 border-violet-500/30',   desc: 'Identifier un produit par photo' },
+  { path: '/analyse-photo-produit',  icon: FlaskConical, label: 'Analyse Photo Avancée', color: 'text-pink-400', bg: 'bg-pink-500/10 border-pink-500/30',       desc: 'Analyse approfondie des photos produit (IA)' },
+  { path: '/ocr',                    icon: Eye,      label: 'OCR Hub',                 color: 'text-slate-400',   bg: 'bg-slate-500/10 border-slate-500/30',     desc: 'Accès à tous les outils OCR de l\'application' },
+];
+
+// ── Calculators & simulators ────────────────────────────────────────────────────
+const CALCULATEURS = [
+  { path: '/calculateur-octroi',   icon: Calculator, label: 'Calculateur Octroi de Mer', color: 'text-amber-400',  bg: 'bg-amber-500/10 border-amber-500/30',   desc: 'Calculer l\'octroi de mer sur vos achats en DOM' },
+  { path: '/simulateur-budget',    icon: Wallet,     label: 'Simulateur Budget Familial', color: 'text-green-400', bg: 'bg-green-500/10 border-green-500/30',   desc: 'Simuler votre budget courses mensuel' },
+  { path: '/budget-vital',         icon: Wallet,     label: 'Budget Vital',               color: 'text-lime-400',  bg: 'bg-lime-500/10 border-lime-500/30',     desc: 'Calcul du panier vital minimum par territoire' },
+  { path: '/budget-reel-mensuel',  icon: BarChart2,  label: 'Budget Réel Mensuel',        color: 'text-teal-400',  bg: 'bg-teal-500/10 border-teal-500/30',     desc: 'Votre vrai budget mensuel selon les prix locaux' },
+  { path: '/planificateur-repas',  icon: Leaf,       label: 'Planificateur Repas',        color: 'text-emerald-400',bg: 'bg-emerald-500/10 border-emerald-500/30',desc: 'Planifier vos repas selon vos contraintes de budget' },
+  { path: '/dlc-antigaspi',        icon: Trash2,     label: 'Anti-gaspillage DLC',        color: 'text-orange-400',bg: 'bg-orange-500/10 border-orange-500/30', desc: 'Gérer les dates limites pour zéro gaspillage' },
+  { path: '/analyse-nutri',        icon: Heart,      label: 'Analyse Nutritionnelle',     color: 'text-red-400',   bg: 'bg-red-500/10 border-red-500/30',       desc: 'Évaluer la qualité nutritionnelle de vos achats' },
+  { path: '/promos',               icon: Tag,        label: 'Promotions',                 color: 'text-pink-400',  bg: 'bg-pink-500/10 border-pink-500/30',     desc: 'Toutes les promos en cours dans votre territoire' },
+  { path: '/alertes-rupture',      icon: Bell,       label: 'Alertes Rupture de Stock',   color: 'text-rose-400',  bg: 'bg-rose-500/10 border-rose-500/30',     desc: 'Être alerté des ruptures de stock locales' },
+];
+
+// ── Observatoire & Données ──────────────────────────────────────────────────────
+const OBSERVATOIRE = [
+  { path: '/observatoire',               icon: Eye,       label: 'Observatoire des Prix',      color: 'text-blue-400',    bg: 'bg-blue-500/10 border-blue-500/30',       desc: 'Hub de l\'observatoire citoyen des prix DOM–COM' },
+  { path: '/observatoire-temps-reel',    icon: Activity,  label: 'Observatoire Temps Réel',    color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/30', desc: 'Données de prix actualisées en temps réel' },
+  { path: '/observatoire-vivant',        icon: Sparkles,  label: 'Observatoire Vivant',        color: 'text-violet-400',  bg: 'bg-violet-500/10 border-violet-500/30',   desc: 'Visualisation dynamique de l\'évolution des prix' },
+  { path: '/observatoire/methodologie',  icon: BookOpen,  label: 'Méthodologie Observatoire',  color: 'text-sky-400',     bg: 'bg-sky-500/10 border-sky-500/30',         desc: 'Comment les données sont collectées et validées' },
+  { path: '/vie-chere',                  icon: TrendingUp,label: 'Lutte Vie Chère',             color: 'text-red-400',     bg: 'bg-red-500/10 border-red-500/30',         desc: 'Analyse de la vie chère en outre-mer' },
+  { path: '/ievr',                       icon: BarChart3, label: 'Indice IEVR',                 color: 'text-amber-400',   bg: 'bg-amber-500/10 border-amber-500/30',     desc: 'Indice d\'équité de vie réelle par territoire' },
+  { path: '/donnees-publiques',          icon: Globe,     label: 'Données Publiques',           color: 'text-cyan-400',    bg: 'bg-cyan-500/10 border-cyan-500/30',       desc: 'Accès aux données publiques en open data' },
+  { path: '/rapport-citoyen',            icon: FileText,  label: 'Rapport Citoyen',             color: 'text-teal-400',    bg: 'bg-teal-500/10 border-teal-500/30',       desc: 'Générer un rapport citoyen sur les prix locaux' },
+];
+
+// ── IA & Analyses ───────────────────────────────────────────────────────────────
+const IA_OUTILS = [
+  { path: '/assistant-ia',        icon: Bot,       label: 'Assistant IA',            color: 'text-violet-400',  bg: 'bg-violet-500/10 border-violet-500/30',   desc: 'Posez vos questions à notre assistant intelligent' },
+  { path: '/ia-reclamation',      icon: FileText,  label: 'IA Réclamation',          color: 'text-red-400',     bg: 'bg-red-500/10 border-red-500/30',         desc: 'Rédiger une réclamation officielle assistée par IA' },
+  { path: '/devis-ia',            icon: Calculator,label: 'Devis IA',                color: 'text-blue-400',    bg: 'bg-blue-500/10 border-blue-500/30',       desc: 'Obtenir un devis de travaux assisté par l\'IA' },
+  { path: '/ai-insights',         icon: Sparkles,  label: 'IA Insights Marché',      color: 'text-amber-400',   bg: 'bg-amber-500/10 border-amber-500/30',     desc: 'Analyses IA du marché et tendances des prix' },
+  { path: '/ia-conseiller',       icon: Star,      label: 'Conseiller IA',           color: 'text-yellow-400',  bg: 'bg-yellow-500/10 border-yellow-500/30',   desc: 'Conseils personnalisés basés sur vos habitudes' },
+  { path: '/predictions',         icon: TrendingUp,label: 'Prédictions Prix',        color: 'text-pink-400',    bg: 'bg-pink-500/10 border-pink-500/30',       desc: 'Prévisions d\'évolution des prix à court terme' },
+  { path: '/analyse-concurrence', icon: BarChart2, label: 'Analyse Concurrence',     color: 'text-cyan-400',    bg: 'bg-cyan-500/10 border-cyan-500/30',       desc: 'Analyse comparative des enseignes concurrentes' },
+  { path: '/evaluation-cosmetique',icon: FlaskConical,label: 'Évaluation Cosmétiques',color:'text-fuchsia-400', bg: 'bg-fuchsia-500/10 border-fuchsia-500/30', desc: 'Analyse IA des ingrédients cosmétiques' },
+];
+
+// ── Citoyenneté & Communauté ────────────────────────────────────────────────────
+const CITOYEN = [
+  { path: '/groupes-parole',      icon: MessageSquare,label: 'Groupes de Parole',     color: 'text-green-400',   bg: 'bg-green-500/10 border-green-500/30',     desc: 'Rejoindre un groupe citoyen sur les prix locaux' },
+  { path: '/solidarite',          icon: HandHeart,    label: 'Solidarité',            color: 'text-rose-400',    bg: 'bg-rose-500/10 border-rose-500/30',       desc: 'Actions solidaires et entraide citoyenne' },
+  { path: '/civic-modules',       icon: Users,        label: 'Modules Civiques',      color: 'text-blue-400',    bg: 'bg-blue-500/10 border-blue-500/30',       desc: 'Outils citoyens de participation et de signalement' },
+  { path: '/contribuer-prix',     icon: Eye,          label: 'Contribuer aux Prix',   color: 'text-lime-400',    bg: 'bg-lime-500/10 border-lime-500/30',       desc: 'Soumettre des prix observés dans votre enseigne' },
+  { path: '/signalement',         icon: Bell,         label: 'Signaler un Abus',      color: 'text-orange-400',  bg: 'bg-orange-500/10 border-orange-500/30',   desc: 'Signaler une anomalie tarifaire ou un abus' },
+  { path: '/lettre-hebdo',        icon: Newspaper,    label: 'Lettre Hebdo IA',       color: 'text-sky-400',     bg: 'bg-sky-500/10 border-sky-500/30',         desc: 'La newsletter hebdomadaire sur les prix DOM–COM' },
+  { path: '/conference-prix',     icon: Users,        label: 'Conférence Prix',       color: 'text-violet-400',  bg: 'bg-violet-500/10 border-violet-500/30',   desc: 'Programme des conférences citoyennes sur les prix' },
+  { path: '/ti-panie',            icon: ShoppingCart, label: 'Ti Panie Solidaire',    color: 'text-teal-400',    bg: 'bg-teal-500/10 border-teal-500/30',       desc: 'Panier solidaire pour les familles en difficulté' },
 ];
 
 export default function ComparateursHub() {
@@ -439,6 +500,141 @@ export default function ComparateursHub() {
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {RESSOURCES.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={`group flex items-start gap-3 rounded-xl border p-4 transition-all hover:scale-[1.02] hover:shadow-lg ${item.bg}`}
+                  >
+                    <Icon className={`w-6 h-6 mt-0.5 flex-shrink-0 ${item.color}`} />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-white">{item.label}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">{item.desc}</p>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-gray-600 group-hover:text-white transition-colors mt-1 flex-shrink-0" />
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* ── Scanners & OCR ── */}
+          <div className="mt-10">
+            <h2 className="text-2xl font-bold text-white mb-2">📷 Scanners &amp; OCR</h2>
+            <p className="text-gray-400 text-sm mb-6">
+              Scanner des produits, tickets de caisse et photos — identification instantanée.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {SCANNERS.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={`group flex items-start gap-3 rounded-xl border p-4 transition-all hover:scale-[1.02] hover:shadow-lg ${item.bg}`}
+                  >
+                    <Icon className={`w-6 h-6 mt-0.5 flex-shrink-0 ${item.color}`} />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-white">{item.label}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">{item.desc}</p>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-gray-600 group-hover:text-white transition-colors mt-1 flex-shrink-0" />
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* ── Calculateurs & Simulateurs ── */}
+          <div className="mt-10">
+            <h2 className="text-2xl font-bold text-white mb-2">🧮 Calculateurs &amp; Simulateurs</h2>
+            <p className="text-gray-400 text-sm mb-6">
+              Octroi de mer, budget familial, panier vital, repas — tous vos outils de calcul.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {CALCULATEURS.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={`group flex items-start gap-3 rounded-xl border p-4 transition-all hover:scale-[1.02] hover:shadow-lg ${item.bg}`}
+                  >
+                    <Icon className={`w-6 h-6 mt-0.5 flex-shrink-0 ${item.color}`} />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-white">{item.label}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">{item.desc}</p>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-gray-600 group-hover:text-white transition-colors mt-1 flex-shrink-0" />
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* ── Observatoire & Données ── */}
+          <div className="mt-10">
+            <h2 className="text-2xl font-bold text-white mb-2">🔭 Observatoire &amp; Données</h2>
+            <p className="text-gray-400 text-sm mb-6">
+              Données réelles, observatoire citoyen, vie chère et accès open data.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {OBSERVATOIRE.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={`group flex items-start gap-3 rounded-xl border p-4 transition-all hover:scale-[1.02] hover:shadow-lg ${item.bg}`}
+                  >
+                    <Icon className={`w-6 h-6 mt-0.5 flex-shrink-0 ${item.color}`} />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-white">{item.label}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">{item.desc}</p>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-gray-600 group-hover:text-white transition-colors mt-1 flex-shrink-0" />
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* ── IA & Analyses ── */}
+          <div className="mt-10">
+            <h2 className="text-2xl font-bold text-white mb-2">🤖 IA &amp; Analyses</h2>
+            <p className="text-gray-400 text-sm mb-6">
+              Assistant IA, réclamations, devis, prédictions et analyses de marché.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {IA_OUTILS.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={`group flex items-start gap-3 rounded-xl border p-4 transition-all hover:scale-[1.02] hover:shadow-lg ${item.bg}`}
+                  >
+                    <Icon className={`w-6 h-6 mt-0.5 flex-shrink-0 ${item.color}`} />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-white">{item.label}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">{item.desc}</p>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-gray-600 group-hover:text-white transition-colors mt-1 flex-shrink-0" />
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* ── Citoyenneté & Communauté ── */}
+          <div className="mt-10 mb-10">
+            <h2 className="text-2xl font-bold text-white mb-2">🤝 Citoyenneté &amp; Communauté</h2>
+            <p className="text-gray-400 text-sm mb-6">
+              Groupes citoyens, solidarité, signalements et newsletter communautaire.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {CITOYEN.map((item) => {
                 const Icon = item.icon;
                 return (
                   <Link

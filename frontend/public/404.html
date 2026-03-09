@@ -3,11 +3,23 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Redirect</title>
+    <title>A KI PRI SA YÉ</title>
     <script>
-      // SPA redirect for GitHub Pages / Cloudflare Pages
-      var l = window.location;
-      l.replace(l.protocol + '//' + l.host + l.pathname.split('/').slice(0, 1).join('/') + '/?p=' + encodeURIComponent(l.pathname + l.search) + l.hash);
+      // SPA redirect for GitHub Pages — keeps the /akiprisaye-web/ base path
+      // Converts /akiprisaye-web/some/deep/path → /akiprisaye-web/?p=%2Fsome%2Fdeep%2Fpath
+      (function() {
+        var l = window.location;
+        var pathSegs = l.pathname.split('/');
+        // Segment [0] = '', [1] = 'akiprisaye-web', [2+] = actual route
+        var basePath = pathSegs.slice(0, 2).join('/');   // '/akiprisaye-web'
+        var routePath = '/' + pathSegs.slice(2).join('/'); // '/comparateurs' etc.
+        l.replace(
+          l.protocol + '//' + l.host +
+          basePath + '/?p=' +
+          encodeURIComponent(routePath + l.search) +
+          l.hash
+        );
+      })();
     </script>
   </head>
   <body></body>

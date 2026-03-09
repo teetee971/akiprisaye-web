@@ -1,13 +1,13 @@
 User-agent: *
-Allow: /
+Allow: /akiprisaye-web/
 
-Disallow: /admin
-Disallow: /admin/
-Disallow: /test-i18n
-Disallow: /mes-economies
-Disallow: /tableau-de-bord
-Disallow: /mes-listes
-Disallow: /mon-compte
-Disallow: /parametres
+Disallow: /akiprisaye-web/admin
+Disallow: /akiprisaye-web/admin/
+Disallow: /akiprisaye-web/test-i18n
+Disallow: /akiprisaye-web/mes-economies
+Disallow: /akiprisaye-web/tableau-de-bord
+Disallow: /akiprisaye-web/mes-listes
+Disallow: /akiprisaye-web/mon-compte
+Disallow: /akiprisaye-web/parametres
 
 Sitemap: https://teetee971.github.io/akiprisaye-web/sitemap.xml

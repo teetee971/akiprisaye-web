@@ -142,7 +142,7 @@ export const CATEGORY_IMAGES: Record<string, { url: string; alt: string; gradien
 
 export function getCategoryAsset(category: string) {
   return CATEGORY_IMAGES[category] ?? {
-    url: 'https://images.unsplash.com/photo-1542838132-2b1a08e4b1a0?auto=format&fit=crop&w=400&q=80',
+    url: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=400&q=80',
     alt: 'Produit',
     gradient: 'from-slate-500 to-slate-700',
   };
@@ -196,7 +196,7 @@ export const PAGE_HERO_IMAGES = {
   /** App demo — person scanning barcode in tropical supermarket */
   appDemo: 'https://images.unsplash.com/photo-1607082348351-cef5cd02c7b0?auto=format&fit=crop&w=1600&q=80',
   /** Vie chère poster — supermarket shelves with price tags */
-  videoPoster: 'https://images.unsplash.com/photo-1542838132-2b1a08e4b1a0?auto=format&fit=crop&w=1200&q=80',
+  videoPoster: 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=1200&q=80',
   // ── Innovation Lab ───────────────────────────────────────────────────────
   /** Innovation Lab — futuristic tech lab / AI concept */
   innovationLab: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=1600&q=80',
@@ -296,11 +296,11 @@ export const PAGE_HERO_IMAGES = {
   /** Périmètre */
   perimetre: 'https://images.unsplash.com/photo-1526628953301-3cd8e16b67b1?auto=format&fit=crop&w=1600&q=80',
   /** Produit */
-  produit: 'https://images.unsplash.com/photo-1542838132-2b1a08e4b1a0?auto=format&fit=crop&w=1600&q=80',
+  produit: 'https://images.unsplash.com/photo-1607082348351-cef5cd02c7b0?auto=format&fit=crop&w=1600&q=80',
   /** Recherche hub */
   rechercheHub: 'https://images.unsplash.com/photo-1506617564039-2f3b650b7010?auto=format&fit=crop&w=1600&q=80',
   /** Recherche produits */
-  rechercheProduits: 'https://images.unsplash.com/photo-1542838132-2b1a08e4b1a0?auto=format&fit=crop&w=1600&q=80',
+  rechercheProduits: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=1600&q=80',
   /** Paramètres */
   settings: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1600&q=80',
   /** S'abonner */
@@ -397,7 +397,7 @@ export const PRODUCT_IMAGES: Record<string, { url: string; alt: string }> = {
 export function getProductImage(productName: string): { url: string; alt: string } {
   return (
     PRODUCT_IMAGES[productName] ?? {
-      url: 'https://images.unsplash.com/photo-1542838132-2b1a08e4b1a0?auto=format&fit=crop&w=300&q=80',
+      url: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=300&q=80',
       alt: productName,
     }
   );

@@ -59,6 +59,52 @@ const TESTIMONIALS = [
   },
 ];
 
+/** Static phone mockup for the hero — shows a price comparison screen */
+const HERO_PRICES = [
+  { store: 'E.Leclerc',    price: 1.11, color: '#22c55e' },
+  { store: 'Carrefour GP', price: 1.45, color: '#f59e0b' },
+  { store: 'Hyper U MQ',   price: 1.58, color: '#f97316' },
+  { store: 'Score YT',     price: 2.03, color: '#ef4444' },
+];
+
+function HeroPhoneMockup() {
+  const maxPrice = Math.max(...HERO_PRICES.map((d) => d.price));
+  return (
+    <div className="hero-phone-wrap">
+      <div className="app-demo-phone">
+        <div className="app-demo-phone-notch" />
+        <div className="app-demo-phone-screen">
+          <div className="demo-screen demo-screen--compare">
+            <div className="demo-compare-header">
+              <span className="demo-screen-title">🥛 Lait UHT 1L</span>
+              <span className="demo-compare-date">Mars 2026</span>
+            </div>
+            <div className="demo-compare-bars">
+              {HERO_PRICES.map((d, i) => (
+                <div key={i} className="demo-compare-row">
+                  <span className="demo-compare-store">{d.store}</span>
+                  <div className="demo-compare-bar-wrap">
+                    <div
+                      className="demo-compare-bar"
+                      style={{ width: `${Math.round((d.price / maxPrice) * 100)}%`, background: d.color }}
+                    />
+                  </div>
+                  <span className="demo-compare-price" style={{ color: d.color }}>{d.price.toFixed(2)}€</span>
+                </div>
+              ))}
+            </div>
+            <div className="demo-compare-saving">
+              💡 Économie : <strong>+0,92 €/L</strong> vs le moins cher
+            </div>
+          </div>
+        </div>
+        <div className="app-demo-phone-home" />
+      </div>
+      <div className="app-demo-glow" />
+    </div>
+  );
+}
+
 export default function HomeV5() {
   const navigate = useNavigate();
   const [stats, setStats] = useState({ scans: 1200, products: 5000, territories: 12 });
@@ -179,33 +225,41 @@ export default function HomeV5() {
       </a>
 
       <section className="hero-v5">
-        <div className="hero-content fade-in">
-          <h1 className="hero-title slide-up">{getTerritoryTitle()}.</h1>
+        <div className="hero-inner">
+          {/* Left column: headline + search */}
+          <div className="hero-content fade-in">
+            <h1 className="hero-title slide-up">{getTerritoryTitle()}.</h1>
 
-          <p className="hero-subtitle slide-up delay-100">
-            Des prix observés localement, comparés entre enseignes,
-            <br />
-            pensés pour les DOM-TOM.
-          </p>
-          <p className="hero-reassurance fade-in delay-150">
-            Sans compte. Données locales. Historique conservé sur votre appareil.
-          </p>
+            <p className="hero-subtitle slide-up delay-100">
+              Des prix observés localement, comparés entre enseignes,
+              <br />
+              pensés pour les DOM-TOM.
+            </p>
+            <p className="hero-reassurance fade-in delay-150">
+              Sans compte. Données locales. Historique conservé sur votre appareil.
+            </p>
 
-          <form onSubmit={handleSearch} className="hero-search-xxl fade-in delay-200">
-            <input
-              type="text"
-              placeholder="Ex : riz 5kg, lait, eau…"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="hero-search-input-xxl"
-              aria-label="Rechercher un produit"
-            />
-            <button type="submit" className="hero-search-btn-xxl" aria-label="Rechercher un produit">
-              Rechercher un produit
-            </button>
-          </form>
-          <p className="hero-explain fade-in delay-300">EAN, nom de produit ou scan → comparaison instantanée.</p>
-          <p className="hero-trust fade-in delay-300">🔒 Vos recherches restent sur votre appareil.</p>
+            <form onSubmit={handleSearch} className="hero-search-xxl fade-in delay-200">
+              <input
+                type="text"
+                placeholder="Ex : riz 5kg, lait, eau…"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="hero-search-input-xxl"
+                aria-label="Rechercher un produit"
+              />
+              <button type="submit" className="hero-search-btn-xxl" aria-label="Rechercher un produit">
+                Rechercher un produit
+              </button>
+            </form>
+            <p className="hero-explain fade-in delay-300">EAN, nom de produit ou scan → comparaison instantanée.</p>
+            <p className="hero-trust fade-in delay-300">🔒 Vos recherches restent sur votre appareil.</p>
+          </div>
+
+          {/* Right column: phone mockup illustration */}
+          <div className="hero-phone-side fade-in delay-200" aria-hidden="true">
+            <HeroPhoneMockup />
+          </div>
         </div>
 
         {showScrollIndicator && (
