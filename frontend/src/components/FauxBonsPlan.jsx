@@ -14,6 +14,8 @@
 
 import { useState } from 'react';
 import productsData from '../data/faux-bons-plans.json';
+import { Card } from './ui/card.jsx';
+import DataSourceWarning from './DataSourceWarning.jsx';
 
 export function FauxBonsPlan() {
   const [selectedProduct, setSelectedProduct] = useState(productsData.products[0].id);

@@ -14,6 +14,8 @@
 
 import { useState } from 'react';
 import produitsData from '../data/produits_formats.json';
+import { Card } from '../components/ui/card.jsx';
+import DataSourceWarning from '../components/DataSourceWarning.jsx';
 
 export function ComparateurFormats() {
   const [selectedProduct, setSelectedProduct] = useState(produitsData.produits[0].id);

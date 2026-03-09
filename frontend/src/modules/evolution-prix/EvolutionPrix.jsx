@@ -1,5 +1,9 @@
  
 import { useState, useEffect } from 'react';
+import ToggleAnalyseCiblee from './ToggleAnalyseCiblee.jsx';
+import { SelectMagasin } from './SelectMagasin.jsx';
+import { SelectProduit } from './SelectProduit.jsx';
+import ObservationContextuelle from './ObservationContextuelle.jsx';
 
 /**
  * Evolution Prix Component

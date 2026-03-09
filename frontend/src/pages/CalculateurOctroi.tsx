@@ -107,7 +107,7 @@ export default function CalculateurOctroi() {
       add: prixAvecFret - prixUsine,
       color: '#0ea5e9',
       source: { label: 'Armateurs de France 2023', url: 'https://www.armateursdefrance.org/' },
-      note: terr.code === 'fr' ? 'Pas de fret longue distance en métropole.' : `Transport maritime depuis le Havre jusqu\'en ${terr.label}. Durée : 10–22 jours selon la destination.`,
+      note: terr.code === 'fr' ? 'Pas de fret longue distance en métropole.' : `Transport maritime depuis le Havre jusqu'en ${terr.label}. Durée : 10–22 jours selon la destination.`,
     },
     {
       label: `Octroi de mer (${terr.code === 'fr' ? '–' : pct(cat.octroi)})`,
@@ -115,7 +115,7 @@ export default function CalculateurOctroi() {
       add: montantOctroi,
       color: '#a855f7',
       source: { label: 'EUR-Lex — Règlement UE 2022/2', url: 'https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX:32022R0002' },
-      note: terr.code === 'fr' ? 'L\'octroi de mer ne s\'applique qu\'aux DROM.' : `Taxe douanière perçue à l\'entrée des marchandises dans les DROM. Catégorie : ${cat.label}.`,
+      note: terr.code === 'fr' ? "L'octroi de mer ne s'applique qu'aux DROM." : `Taxe douanière perçue à l'entrée des marchandises dans les DROM. Catégorie : ${cat.label}.`,
     },
     {
       label: `Marge distributeur (${pct(margeUsed)})`,

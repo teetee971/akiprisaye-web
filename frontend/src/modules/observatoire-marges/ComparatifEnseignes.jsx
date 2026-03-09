@@ -1,5 +1,6 @@
  
 import { useMemo } from 'react';
+import { IndiceMarge } from './IndiceMarge.jsx';
 
 /**
  * Comparatif Enseignes Component

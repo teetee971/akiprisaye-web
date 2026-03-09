@@ -1,5 +1,7 @@
  
 import { useState, useEffect } from 'react';
+import { ScoreAntiCrise } from './ScoreAntiCrise.jsx';
+import { PanierTimeline } from './PanierTimeline.jsx';
 
 /**
  * Panier Anti-Crise Component

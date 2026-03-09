@@ -25,6 +25,8 @@ import {
   validateIEVRData,
   getTerritoryStatus,
 } from '../utils/ievrCalculations.js';
+import { Card } from './ui/card.jsx';
+import DataSourceWarning from './DataSourceWarning.jsx';
 
 export function IEVR({ selectedTerritory = null }) {
   const [territory, setTerritory] = useState(selectedTerritory || 'GP');

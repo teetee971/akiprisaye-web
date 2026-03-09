@@ -188,12 +188,12 @@ export function estimateNutriScore(text: string): string {
 
 const STORE_HEADER_LINES = 3;
 
-const DATE_REGEX = /\b(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})\b/;
+const DATE_REGEX = /\b(\d{1,2})[/\-.](\d{1,2})[/\-.](\d{2,4})\b/;
 const TIME_REGEX = /\b(\d{1,2})[h:](\d{2})(?::(\d{2}))?\b/i;
 const TOTAL_REGEX =
-  /(?:total\s*(?:ttc)?|montant\s*(?:ttc|à\s*payer|dû)?|à\s*payer)\s*[:\-]?\s*(\d{1,4}[.,]\d{2})/i;
+  /(?:total\s*(?:ttc)?|montant\s*(?:ttc|à\s*payer|dû)?|à\s*payer)\s*[:-]?\s*(\d{1,4}[.,]\d{2})/i;
 const TVA_LINE_REGEX =
-  /t\.?v\.?a\.?\s*(?:\d{1,2}[.,]\d*\s*%\s*)?[:\-]?\s*(\d{1,4}[.,]\d{2})/i;
+  /t\.?v\.?a\.?\s*(?:\d{1,2}[.,]\d*\s*%\s*)?[:-]?\s*(\d{1,4}[.,]\d{2})/i;
 const TVA_RATE_REGEX = /(\d{1,2}[.,]\d*)\s*%/;
 const PAYMENT_REGEX = /\b(cb|carte\s*(bancaire|bleue)?|esp[eè]ces?|ch[eè]que|sans\s*contact|paylib|apple\s*pay|google\s*pay)\b/i;
 const ITEM_LINE_REGEX = /^(.{3,40}?)\s{2,}(\d{1,4}[.,]\d{2})\s*€?\s*$/;

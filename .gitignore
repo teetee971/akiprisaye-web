@@ -169,7 +169,8 @@ t
 
 audit.json
 package-lock.json
-# CI fix – allow frontend lockfile for npm ci
+# CI fix – allow root and frontend lockfiles for npm ci
+!package-lock.json
 !frontend/package-lock.json
  frontend/
 REBASE_*.md

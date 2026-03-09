@@ -7,6 +7,7 @@
  */
 
 import { useState, useEffect } from 'react';
+import { Card } from './ui/card.jsx';
 
 /** Territories that have real observatoire snapshots */
 const TERRITORY_STEMS = [

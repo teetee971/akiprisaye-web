@@ -190,7 +190,7 @@ function detectStoreName(ocrText: string): string | undefined {
  */
 function detectReceiptDate(ocrText: string): string | undefined {
   // Chercher DD/MM/YYYY ou DD-MM-YYYY
-  const dateMatch = ocrText.match(/(\d{2})[/\-](\d{2})[/\-](\d{4})/);
+  const dateMatch = ocrText.match(/(\d{2})[/-](\d{2})[/-](\d{4})/);
   if (dateMatch) {
     const day = parseInt(dateMatch[1], 10);
     const month = parseInt(dateMatch[2], 10);

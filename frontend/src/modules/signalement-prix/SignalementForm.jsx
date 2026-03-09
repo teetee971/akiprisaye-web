@@ -1,6 +1,8 @@
  
 import { useState } from 'react';
 import { safeLocalStorage } from '../../utils/safeLocalStorage';
+import { SignalementConfirmation } from './SignalementConfirmation.jsx';
+import { UploadPreuve } from './UploadPreuve.jsx';
 
 /**
  * Signalement Form Component

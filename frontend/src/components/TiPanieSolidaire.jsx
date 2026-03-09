@@ -15,6 +15,7 @@ import {
   getDocs 
 } from 'firebase/firestore';
 import { app } from '../firebase_config'; // Assurez-vous que le chemin est correct
+import { Card } from './ui/card.jsx';
 
 const db = getFirestore(app);
 

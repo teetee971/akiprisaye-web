@@ -1,5 +1,6 @@
  
 import { cn } from '../../lib/utils';
+import BackgroundMapBlur from '../BackgroundMapBlur.jsx';
 
 /**
  * AppLayout - Main application layout

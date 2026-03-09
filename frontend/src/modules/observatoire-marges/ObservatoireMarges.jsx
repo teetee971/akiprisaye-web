@@ -1,5 +1,6 @@
  
 import { useState, useEffect } from 'react';
+import { ComparatifEnseignes } from './ComparatifEnseignes.jsx';
 
 /**
  * Observatoire des Marges Component

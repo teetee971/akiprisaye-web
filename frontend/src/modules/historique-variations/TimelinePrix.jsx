@@ -1,4 +1,6 @@
  
+import { BadgeVariation } from './BadgeVariation.jsx';
+
 /**
  * Timeline Prix Component
  * Displays chronological price history with variation calculations

@@ -9,6 +9,8 @@
 import { useState } from 'react';
 import budgetRef from '../data/budget_reference.json';
 import ievrRef from '../data/iev_r_reference.json';
+import { Card } from '../components/ui/card.jsx';
+import DataSourceWarning from '../components/DataSourceWarning.jsx';
 
 export function BudgetReelMensuel() {
   const [selectedProfile, setSelectedProfile] = useState('adulte_seul');

@@ -72,17 +72,17 @@ export interface ParsedReceipt {
 // Regex patterns
 // ---------------------------------------------------------------------------
 
-const RE_DATE = /\b(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})\b/;
+const RE_DATE = /\b(\d{1,2})[/\-.](\d{1,2})[/\-.](\d{2,4})\b/;
 const RE_TIME = /\b(\d{1,2})[h:](\d{2})(?::(\d{2}))?\b/i;
 const RE_RECEIPT_NUM = /(?:ticket|reçu|n°|numéro)[^\d]*(\d{4,12})/i;
 
 // French total patterns — most permissive first
-const RE_TOTAL = /(?:total\s*(?:ttc)?|montant\s*(?:ttc|à\s*payer|dû)?|à\s*payer)\s*[:\-]?\s*(\d{1,5}[.,]\d{2})\s*€?/i;
+const RE_TOTAL = /(?:total\s*(?:ttc)?|montant\s*(?:ttc|à\s*payer|dû)?|à\s*payer)\s*[:-]?\s*(\d{1,5}[.,]\d{2})\s*€?/i;
 // Subtotal (HT or partial)
-const RE_SUBTOTAL = /(?:sous[\s-]total|total\s*ht)\s*[:\-]?\s*(\d{1,5}[.,]\d{2})\s*€?/i;
+const RE_SUBTOTAL = /(?:sous[\s-]total|total\s*ht)\s*[:-]?\s*(\d{1,5}[.,]\d{2})\s*€?/i;
 
 // TVA: "TVA 20% : 2,15" or "T.V.A. : 2,15" etc.
-const RE_TVA_FULL = /t\.?v\.?a\.?\s*(\d{1,2}[.,]\d+)?\s*%?\s*[:\-]?\s*(\d{1,5}[.,]\d{2})\s*€?/i;
+const RE_TVA_FULL = /t\.?v\.?a\.?\s*(\d{1,2}[.,]\d+)?\s*%?\s*[:-]?\s*(\d{1,5}[.,]\d{2})\s*€?/i;
 const RE_TVA_RATE = /(\d{1,2}(?:[.,]\d+)?)\s*%/;
 
 // Payment methods
