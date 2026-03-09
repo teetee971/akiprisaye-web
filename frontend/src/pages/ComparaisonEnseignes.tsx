@@ -132,9 +132,15 @@ export default function ComparaisonEnseignes() {
       obs = obs.filter((o) => o.territory === effectiveTerritory)
     }
 
-    // TODO: Apply zone and category filters when metadata available
-    // if (territoryFilters.zone !== 'all') { ... }
-    // if (territoryFilters.category !== 'all') { ... }
+    // Apply zone filter via metadata (observations may carry zone in metadata.zone)
+    if (territoryFilters.zone !== 'all') {
+      obs = obs.filter((o) => !o.metadata?.zone || o.metadata.zone === territoryFilters.zone)
+    }
+
+    // Apply category filter via metadata (observations may carry category in metadata.category)
+    if (territoryFilters.category !== 'all') {
+      obs = obs.filter((o) => !o.metadata?.category || o.metadata.category === territoryFilters.category)
+    }
 
     setObservations(obs)
 

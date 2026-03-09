@@ -57,10 +57,10 @@ const filterCatalogs = (
 
 const buildWarnings = (catalogs: DiscoveredCatalog[]): string[] => {
   if (catalogs.length === 0) return ['Aucun catalogue Calameo correspondant trouvé.'];
-  return catalogs.map(
-    (c) =>
-      `${c.title}${c.date ? ` (${c.date.slice(0, 10)})` : ''} — Consulter : ${c.publicUrl}`,
-  );
+  // Each catalogue maps to exactly one warning: the raw publicUrl.
+  // This allows callers to detect calameo.com links via new URL(w) and
+  // display a clickable "Consulter le catalogue" link in the UI.
+  return catalogs.map((c) => c.publicUrl);
 };
 
 export const calameoDynamicProvider: PriceProvider = {

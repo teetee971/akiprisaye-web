@@ -1,4 +1,3 @@
-// @ts-nocheck -- Territory type not exported from insuranceComparison; TODO: export type
  
 import React, { useState, useEffect, useMemo } from 'react';
 import { Shield, AlertCircle, Info, BarChart3, Download, FileText, CheckCircle } from 'lucide-react';

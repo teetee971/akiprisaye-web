@@ -1,4 +1,3 @@
-// @ts-nocheck -- Territory type not exported from insuranceComparison types; TODO: export type
 /**
  * Insurance Comparison Service v1.0.0
  * 

@@ -1,4 +1,3 @@
-// @ts-nocheck -- Territory type not exported from fuelComparison types; TODO: export type
  
 /**
  * Fuel Comparison Service v1.0.0
