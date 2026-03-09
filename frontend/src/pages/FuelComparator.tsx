@@ -16,6 +16,7 @@ import {
   loadFuelData,
   fetchLiveFuelPrices,
 } from '../services/fuelComparisonService';
+import type { LiveFuelPricesResult } from '../services/fuelComparisonService';
 import PriceChart from '../components/comparateur/LazyPriceChart';
 import ComparisonSummary from '../components/comparateur/ComparisonSummary';
 import LoadingSkeleton from '../components/comparateur/LoadingSkeleton';
@@ -55,6 +56,7 @@ const FuelComparator: React.FC = () => {
   const [error, setError]                         = useState<string | null>(null);
   const [fuelPrices, setFuelPrices]               = useState<FuelPricePoint[]>([]);
   const [liveSource, setLiveSource]               = useState(false);
+  const [liveFetchedAt, setLiveFetchedAt]         = useState<string | null>(null);
   const [comparisonResult, setComparisonResult]   = useState<FuelComparisonResult | null>(null);
   const [selectedTerritory, setSelectedTerritory] = useState<Territory>('GP');
   const [selectedFuelType, setSelectedFuelType]   = useState<FuelType>('SP95');
@@ -81,13 +83,14 @@ const FuelComparator: React.FC = () => {
     setLiveLoading(true);
     setLiveSource(false);
     fetchLiveFuelPrices(selectedTerritory)
-      .then((livePrices) => {
+      .then(({ prices: livePrices, fetchedAt }: LiveFuelPricesResult) => {
         if (livePrices.length > 0) {
           setFuelPrices((prev) => {
             const other = prev.filter((p) => p.territory !== selectedTerritory);
             return [...other, ...livePrices];
           });
           setLiveSource(true);
+          setLiveFetchedAt(fetchedAt);
         }
       })
       .finally(() => setLiveLoading(false));
@@ -163,6 +166,16 @@ const FuelComparator: React.FC = () => {
 
   const formatDate = (date: Date) =>
     date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
+
+  const formatDateTime = (iso: string | null) => {
+    if (!iso) return null;
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return null;
+    return d.toLocaleString('fr-FR', {
+      day: 'numeric', month: 'long', year: 'numeric',
+      hour: '2-digit', minute: '2-digit',
+    });
+  };
 
   const getCategoryColor = (category: string) => {
     switch (category) {
@@ -243,7 +256,9 @@ const FuelComparator: React.FC = () => {
             </p>
             <div className="flex flex-wrap items-center gap-2 mt-2">
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-green-500/20 border border-green-500/40 rounded-full text-xs text-green-300">
-                🔄 {new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                🔄 {liveFetchedAt
+                  ? `Mis à jour le ${formatDateTime(liveFetchedAt)}`
+                  : new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
               </span>
               {liveSource && (
                 <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-500/20 border border-blue-500/40 rounded-full text-xs text-blue-300">
@@ -597,7 +612,10 @@ const FuelComparator: React.FC = () => {
             )}
 
             <p className="mt-6 text-xs text-gray-600">
-              Source&nbsp;: prix-carburants.gouv.fr + contributions citoyennes &mdash; donn&eacute;es du {new Date().toLocaleDateString('fr-FR')}.
+              Source&nbsp;: prix-carburants.gouv.fr + contributions citoyennes &mdash;{' '}
+              {liveFetchedAt
+                ? <>donn&eacute;es du {formatDateTime(liveFetchedAt)}.</>
+                : <>donn&eacute;es du {new Date().toLocaleDateString('fr-FR')}.</>}
             </p>
           </>
         )}
