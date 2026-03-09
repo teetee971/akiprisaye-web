@@ -134,6 +134,8 @@ const FreightComparator = lazyPage(() => import('./pages/FreightComparator'));
 const FuelComparator = lazyPage(() => import('./pages/FuelComparator'));
 const EnqueteCarburants = lazyPage(() => import('./pages/EnqueteCarburants'));
 const ConferenceCarburants = lazyPage(() => import('./pages/ConferenceCarburants'));
+const EnqueteOctroiMer = lazyPage(() => import('./pages/EnqueteOctroiMer'));
+const ConferenceOctroiMer = lazyPage(() => import('./pages/ConferenceOctroiMer'));
 const InsuranceComparator = lazyPage(() => import('./pages/InsuranceComparator'));
 const TrainingComparator = lazyPage(() => import('./pages/TrainingComparator'));
 const ServiceComparator = lazyPage(() => import('./pages/ServiceComparator'));
@@ -580,6 +582,8 @@ export default function App() {
                           <Route path="lettre-hebdo" element={<LettreHebdoIA />} />
                           <Route path="innovation-lab" element={<InnovationLab />} />
                           <Route path="calculateur-octroi" element={<CalculateurOctroi />} />
+                          <Route path="enquete-octroi-mer" element={<EnqueteOctroiMer />} />
+                          <Route path="conference-octroi-mer" element={<ConferenceOctroiMer />} />
                           <Route path="calculateur-batiment" element={<CalculateurBatiment />} />
                           <Route path="simulateur-budget" element={<SimulateurBudgetFamilial />} />
                           <Route path="alertes-rupture" element={<AlertesRupture />} />

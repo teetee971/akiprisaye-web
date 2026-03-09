@@ -297,8 +297,11 @@ export default function CalculateurOctroi() {
           <Link to="/conference-prix" style={{ padding: '0.55rem 1.2rem', borderRadius: 8, background: 'rgba(99,102,241,0.75)', color: '#fff', fontSize: '0.82rem', fontWeight: 700, textDecoration: 'none' }}>
             🎙️ Voir la conférence →
           </Link>
-          <Link to="/comprendre-prix" style={{ padding: '0.55rem 1.2rem', borderRadius: 8, background: 'rgba(30,41,59,0.8)', border: '1px solid rgba(148,163,184,0.2)', color: '#94a3b8', fontSize: '0.82rem', fontWeight: 600, textDecoration: 'none' }}>
-            📖 Guide complet
+          <Link to="/enquete-octroi-mer" style={{ padding: '0.55rem 1.2rem', borderRadius: 8, background: 'rgba(124,58,237,0.25)', border: '1px solid rgba(124,58,237,0.45)', color: '#c4b5fd', fontSize: '0.82rem', fontWeight: 700, textDecoration: 'none' }}>
+            📄 Enquête Octroi de Mer
+          </Link>
+          <Link to="/conference-octroi-mer" style={{ padding: '0.55rem 1.2rem', borderRadius: 8, background: 'rgba(30,41,59,0.8)', border: '1px solid rgba(148,163,184,0.2)', color: '#94a3b8', fontSize: '0.82rem', fontWeight: 600, textDecoration: 'none' }}>
+            🎓 Conférence institutionnelle
           </Link>
         </div>
 

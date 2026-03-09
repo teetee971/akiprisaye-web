@@ -3,7 +3,44 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 
 Le format s'inspire de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et ce projet adhère à la [sémantique de versionnage](https://semver.org/lang/fr/).
 
-## [3.1.7] - 2026-03-09
+## [3.1.8] - 2026-03-09
+
+### Added — Octroi de Mer : enquête + conférence institutionnelle
+
+- **`pages/EnqueteOctroiMer.tsx`** — Dossier d'investigation `/enquete-octroi-mer`, 7 onglets :
+
+  | Onglet | Contenu | Sources |
+  |---|---|---|
+  | Histoire & origines | Frise 1670→2027 (Colbert, CJCE Legros, Loi 2004, Décision UE 2021) | Légifrance, EUR-Lex |
+  | Mécanisme juridique | Architecture légale, assiette OM-R/OM-C, différentiel, collecte DGDDI | Loi 2004-639, DGDDI |
+  | Taux par territoire | Tables GP/RE/MQ avec taux importé vs production locale | Délibérations Régionales 2022 |
+  | Impact consommateur | Impact par catégorie + diagramme décomposition du surcoût | INSEE 2022, Autorité concurrence |
+  | Financement collectivités | 1,2 Md€/an, table par DROM, risques budgétaires | DGDDI 2023, Cour des Comptes 2023 |
+  | Acteurs | 6 acteurs clés (Commission UE, Régions, DGDDI, Autorité conc., Cour Comptes, associations) | Sources officielles |
+  | Sources & réforme | Textes législatifs, données économiques, 4 scénarios réforme 2027 | Rapport Lurel-Hoibian 2019 |
+
+- **`pages/ConferenceOctroiMer.tsx`** — Conférence institutionnelle ultra-expert `/conference-octroi-mer`, 9 diapositives :
+
+  | Diapositive | Contenu | Sources |
+  |---|---|---|
+  | 1 — Panorama | 1,2 Md€/an, barres recettes 5 DROM | DGDDI 2023 |
+  | 2 — Histoire 350 ans | Frise chronologique SVG 1670→2027, arrêt CJCE Legros 1992 | EUR-Lex, Légifrance |
+  | 3 — Architecture juridique | Pyramide TFUE Art.349 → UE 2021/1657 → UE 2022/2 → Loi 2004 → délibérations | EUR-Lex |
+  | 4 — Mécanisme | Formule OM-R + OM-C, circuit A→E collecte/redistribution | Loi 2004-639, DGDDI |
+  | 5 — Analyse des taux | Double barres importé vs local, 8 secteurs, Guadeloupe 2026 | Délibérations CR GP 2022 |
+  | 6 — Impact macroéconomique | Chaîne OM→prix rayon (effet multiplicateur ×2,4), décomposition surcoût | INSEE 2022, Autorité conc. |
+  | 7 — Budget collectivités | Table 5 DROM recettes/budget/pct/communes, risque systémique | Cour des Comptes 2023 |
+  | 8 — Horizon 2027 | 4 scénarios réforme avec probabilités et analyse pros/cons | Rapport Lurel-Hoibian, Commission UE 2024 |
+  | 9 — Conclusion | 4 idées reçues déconstruites + 4 recommandations institutionnelles | — |
+
+- **`config/imageAssets.ts`** — Nouvelles clés `enqueteOctroiMer` et `conferenceOctroiMer`
+
+### Changed
+
+- **`App.tsx`** — +2 lazy-imports + routes `/enquete-octroi-mer` et `/conference-octroi-mer`
+- **`CalculateurOctroi.tsx`** — CTAs enrichis : « Enquête Octroi de Mer » + « Conférence institutionnelle »
+
+
 
 ### Added — Conférence expert carburants DOM-TOM (niveau contre-expert)
 

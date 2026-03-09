@@ -210,6 +210,10 @@ export const PAGE_HERO_IMAGES = {
   // ── New modules (this session) ───────────────────────────────────────────
   /** Calculateur octroi de mer — cargo ship at port */
   calculateurOctroi: 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  /** Enquête Octroi de Mer — customs / cargo containers at port */
+  enqueteOctroiMer: 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  /** Conférence Octroi de Mer — parliament / institutional building */
+  conferenceOctroiMer: 'https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Simulateur budget familial — family grocery shopping */
   simulateurBudget: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Alertes rupture de stock — empty supermarket shelf */
