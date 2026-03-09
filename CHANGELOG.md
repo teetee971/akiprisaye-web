@@ -3,7 +3,46 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 
 Le format s'inspire de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et ce projet adhère à la [sémantique de versionnage](https://semver.org/lang/fr/).
 
-## [3.1.6] - 2026-03-09
+## [3.1.7] - 2026-03-09
+
+### Added — Conférence expert carburants DOM-TOM (niveau contre-expert)
+
+- **`pages/ConferenceCarburants.tsx`** — Nouvelle page `/conference-carburants` :
+  présentation interactive en **9 diapositives** sur l'anatomie complète du prix des carburants
+  dans les DOM-TOM. Niveau expert — données officielles vérifiables uniquement.
+
+  | Diapositive | Thème | Données clés |
+  |---|---|---|
+  | 1 — Panorama | Prix SP95/Diesel par territoire | Arrêtés préfectoraux jan. 2026 |
+  | 2 — Du puits à la pompe | 6 étapes d'approvisionnement | IEDOM / OPMR 2024 |
+  | 3 — Marché du brut | Courbe Brent 2020-2026 (SVG) | EIA, OPEC, IEA |
+  | 4 — SARA & raffinage | Capacité, brut traité, réseaux | IEDOM Martinique 2023 |
+  | 5 — Fret maritime | Surcoût par île (+3 % à +17 %) | Armateurs de France 2023 |
+  | 6 — Fiscalité comparée | DOM vs métro décomposition (SVG) | DGDDI / DGEC 2024-2025 |
+  | 7 — Prix plafonnés | Mécanisme préfectoral mensuel | Code de l'énergie / DGEC |
+  | 8 — Comparaison mondiale | 11 pays (barres SVG) | IEA / EIA jan. 2026 |
+  | 9 — Conclusion | 4 idées reçues déconstruites | — |
+
+  **Caractéristiques techniques :**
+  - Graphique SVG inline du cours du Brent (14 points, 2020-2026, inflexions annotées)
+  - Barres de décomposition du prix pump DOM vs métro
+  - Photos Wikimedia Commons avec chargement différé et fallback sur erreur
+  - Navigation clavier ← → + boutons + sélecteur de slide
+  - `SourcePill` vers toutes les sources officielles (DGEC, IEDOM, EIA, OPEC, IEA, Légifrance)
+  - SEO : `<Helmet>` avec titre et description optimisés
+
+- **`config/imageAssets.ts`** — Nouvelle clé `PAGE_HERO_IMAGES.conferenceCarburants`
+  (photo pétrole industriel, Unsplash)
+
+### Changed — Liens inter-pages carburants
+
+- **`FuelComparator.tsx`** — Barre de navigation enrichie :
+  - « Enquête » (raccourci) + nouveau bouton **« Conférence expert »** (→ `/conference-carburants`)
+  - Deux CTAs distincts en bas de résultats : enquête (orange) + conférence (amber)
+- **`EnqueteCarburants.tsx`** — CTA bas de page enrichi :
+  - Bouton secondaire **« Conférence expert »** en plus du comparateur
+
+
 
 ### Added — Transparence commissions & suivi analytique des comparateurs
 

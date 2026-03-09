@@ -336,6 +336,8 @@ export const PAGE_HERO_IMAGES = {
   comparateurCarburants: 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Enquête Carburants — oil refinery at sunset (investigation dossier) */
   enqueteCarburants: 'https://images.unsplash.com/photo-1526243741027-444d633d7365?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  /** Conférence Carburants — petroleum industry / oil tanks aerial view */
+  conferenceCarburants: 'https://images.unsplash.com/photo-1516937941344-00b4e0337589?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Comparateur Assurances — insurance shield / contract */
   comparateurAssurances: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Comparateur Formations — classroom / training session */
