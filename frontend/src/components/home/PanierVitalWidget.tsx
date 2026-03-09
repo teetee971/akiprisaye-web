@@ -21,6 +21,7 @@ import { useEffect, useState } from 'react';
 import { TERRITORIES as TERRITORY_META } from '../../services/territoryNormalizationService';
 import { TERRITORIES as TERRITORY_DEFS } from '../../constants/territories';
 import type { TerritoryCode } from '../../constants/territories';
+import { getTerritoryAsset } from '../../config/imageAssets';
 
 interface BasketEntry {
   territory: string;
@@ -102,6 +103,75 @@ function computeBasket(donnees: ObsEntry[]): number | null {
     total = (total / found) * 6;
   }
   return Math.round(total * 100) / 100;
+}
+
+function PanierVitalCard({ entry, isHex, barWidth }: {
+  entry: BasketEntry;
+  isHex: boolean;
+  barWidth: number;
+}) {
+  const asset = getTerritoryAsset(entry.code);
+  const [imgFailed, setImgFailed] = useState(false);
+
+  return (
+    <article
+      className={`panier-vital-card${isHex ? ' panier-vital-card--reference' : ''}${entry.highlight ? ' panier-vital-card--alert' : ''}`}
+      role="listitem"
+      aria-label={`${entry.territory} : ${entry.minutesOfWork} minutes`}
+    >
+      {/* Photo header */}
+      <div className="pvc-photo">
+        {!imgFailed && (
+          <img
+            src={asset.url}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            onError={() => setImgFailed(true)}
+            className="pvc-photo-img"
+          />
+        )}
+        <div className="pvc-photo-overlay" aria-hidden="true" />
+        <div className="pvc-header">
+          <span className="pvc-flag" aria-hidden="true">{entry.flag}</span>
+          <span className="pvc-territory">{entry.territory}</span>
+          {isHex && <span className="pvc-badge pvc-badge--ref">Référence</span>}
+          {entry.highlight && <span className="pvc-badge pvc-badge--alert">Le + cher</span>}
+        </div>
+      </div>
+
+      {/* Card body */}
+      <div className="pvc-body">
+        <div className="pvc-price">
+          <span className="pvc-price-value">{entry.basketPrice.toFixed(2)}&nbsp;€</span>
+          <span className="pvc-price-label">le panier</span>
+        </div>
+
+        <div className="pvc-bar-wrapper" aria-hidden="true">
+          <div
+            className={`pvc-bar${isHex ? ' pvc-bar--reference' : ''}${entry.highlight ? ' pvc-bar--alert' : ''}`}
+            style={{ width: `${barWidth}%` }}
+          />
+        </div>
+
+        <div className="pvc-minutes">
+          <span className="pvc-minutes-value">{entry.minutesOfWork}</span>
+          <span className="pvc-minutes-label">min de SMIC</span>
+        </div>
+
+        {!isHex && entry.vsHexagone > 0 && (
+          <div className="pvc-extra">
+            +{entry.vsHexagone}&nbsp;min de travail supplémentaires
+            {entry.deltaPercent > 30 && (
+              <span className="pvc-bqp-alert" title="Dépasse le plafond BQP +30%">
+                ⚠️ dépasse BQP
+              </span>
+            )}
+          </div>
+        )}
+      </div>
+    </article>
+  );
 }
 
 export default function PanierVitalWidget() {
@@ -201,7 +271,10 @@ export default function PanierVitalWidget() {
           ⏱️ Indice panier vital
         </h2>
         <p className="panier-vital-subtitle slide-up">
-          Combien de <strong>minutes de SMIC</strong> pour remplir un panier de 6 produits essentiels&nbsp;?
+          Combien de <strong>minutes de SMIC net</strong> pour remplir un panier de 6 produits essentiels (lait, riz, eau, pâtes, sucre, huile)&nbsp;?
+        </p>
+        <p className="panier-vital-detail fade-in">
+          Un indicateur citoyen d'accès à l'alimentation — plus il est élevé, plus la vie est chère vs les revenus locaux
         </p>
         {hexEntry && (
           <p className="panier-vital-ref fade-in">
@@ -217,49 +290,8 @@ export default function PanierVitalWidget() {
           const barWidth = hexEntry
             ? Math.min(100, Math.round((entry.minutesOfWork / (hexEntry.minutesOfWork * 1.8)) * 100))
             : 50;
-
           return (
-            <article
-              key={entry.code}
-              className={`panier-vital-card${isHex ? ' panier-vital-card--reference' : ''}${entry.highlight ? ' panier-vital-card--alert' : ''}`}
-              role="listitem"
-              aria-label={`${entry.territory} : ${entry.minutesOfWork} minutes`}
-            >
-              <div className="pvc-header">
-                <span className="pvc-flag" aria-hidden="true">{entry.flag}</span>
-                <span className="pvc-territory">{entry.territory}</span>
-                {isHex && <span className="pvc-badge pvc-badge--ref">Référence</span>}
-                {entry.highlight && <span className="pvc-badge pvc-badge--alert">Le + cher</span>}
-              </div>
-
-              <div className="pvc-price">
-                <span className="pvc-price-value">{entry.basketPrice.toFixed(2)}&nbsp;€</span>
-                <span className="pvc-price-label">le panier</span>
-              </div>
-
-              <div className="pvc-bar-wrapper" aria-hidden="true">
-                <div
-                  className={`pvc-bar${isHex ? ' pvc-bar--reference' : ''}${entry.highlight ? ' pvc-bar--alert' : ''}`}
-                  style={{ width: `${barWidth}%` }}
-                />
-              </div>
-
-              <div className="pvc-minutes">
-                <span className="pvc-minutes-value">{entry.minutesOfWork}</span>
-                <span className="pvc-minutes-label">min</span>
-              </div>
-
-              {!isHex && entry.vsHexagone > 0 && (
-                <div className="pvc-extra">
-                  +{entry.vsHexagone}&nbsp;min de travail supplémentaires
-                  {entry.deltaPercent > 30 && (
-                    <span className="pvc-bqp-alert" title="Dépasse le plafond BQP +30%">
-                      ⚠️ dépasse BQP
-                    </span>
-                  )}
-                </div>
-              )}
-            </article>
+            <PanierVitalCard key={entry.code} entry={entry} isHex={isHex} barWidth={barWidth} />
           );
         })}
       </div>

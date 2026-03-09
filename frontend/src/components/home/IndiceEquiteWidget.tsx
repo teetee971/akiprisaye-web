@@ -24,6 +24,7 @@
  */
 
 import { useEffect, useState } from 'react';
+import { getTerritoryAsset } from '../../config/imageAssets';
 
 interface EquiteEntry {
   stem: string;
@@ -97,6 +98,91 @@ function buildProductAvg(donnees: ObsEntry[]): Record<string, number> {
     result[p] = total / count;
   }
   return result;
+}
+
+function stemToCode(stem: string): string {
+  const map: Record<string, string> = {
+    guadeloupe: 'gp', martinique: 'mq', guyane: 'gf',
+    'la_réunion': 're', mayotte: 'yt', saint_barthelemy: 'bl',
+    saint_martin: 'mf', saint_pierre_et_miquelon: 'pm',
+  };
+  return map[stem] ?? stem;
+}
+
+function EquiteCard({ entry }: { entry: EquiteEntry }) {
+  const color = statusColor(entry.status);
+  const label = statusLabel(entry.status);
+  const barWidth = Math.min(100, Math.round((entry.equiteScore / 120) * 100));
+  const bqpMarkerLeft = Math.round((BQP_THRESHOLD / 120) * 100);
+  const asset = getTerritoryAsset(stemToCode(entry.stem));
+  const [imgFailed, setImgFailed] = useState(false);
+
+  return (
+    <article
+      className={`equite-card${entry.bqpBreach ? ' equite-card--breach' : ''}`}
+      role="listitem"
+      aria-label={`${entry.label} : surcoût moyen ${entry.overcostPct > 0 ? '+' : ''}${entry.overcostPct.toFixed(1)}%`}
+    >
+      {/* Photo header */}
+      <div className="equite-card-photo">
+        {!imgFailed && (
+          <img
+            src={asset.url}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            onError={() => setImgFailed(true)}
+            className="equite-card-photo-img"
+          />
+        )}
+        <div className="equite-card-photo-overlay" aria-hidden="true" />
+        <div className="equite-card-header">
+          <span className="equite-flag" aria-hidden="true">{entry.flag}</span>
+          <span className="equite-territory">{entry.label}</span>
+          <span
+            className="equite-status-badge"
+            style={{ color, borderColor: `${color}60`, background: `${color}12` }}
+          >
+            {label}
+          </span>
+        </div>
+      </div>
+
+      {/* Card body */}
+      <div className="equite-card-body">
+        <div className="equite-bar-container" aria-hidden="true">
+          <div
+            className="equite-bqp-line"
+            style={{ left: `${bqpMarkerLeft}%` }}
+            title={`Seuil BQP +${BQP_THRESHOLD}%`}
+          />
+          <div
+            className="equite-bar"
+            style={{ width: `${barWidth}%`, background: color }}
+            role="progressbar"
+            aria-valuenow={entry.equiteScore}
+            aria-valuemin={0}
+            aria-valuemax={120}
+          />
+        </div>
+
+        <div className="equite-score-row">
+          <span className="equite-score" style={{ color }}>
+            {entry.overcostPct > 0 ? '+' : ''}{entry.overcostPct.toFixed(1)}&nbsp;%
+          </span>
+          <span className="equite-products">
+            {entry.productCount} produits
+          </span>
+        </div>
+
+        {entry.bqpBreach && (
+          <div className="equite-breach-note">
+            +{(entry.overcostPct - BQP_THRESHOLD).toFixed(0)}&nbsp;pts au-dessus du plafond BQP
+          </div>
+        )}
+      </div>
+    </article>
+  );
 }
 
 export default function IndiceEquiteWidget() {
@@ -232,67 +318,9 @@ export default function IndiceEquiteWidget() {
       )}
 
       <div className="equite-grid" role="list">
-        {entries.map((entry) => {
-          const color = statusColor(entry.status);
-          const label = statusLabel(entry.status);
-          // Bar width: 0% = 0% overcost, 100% = 120% overcost
-          const barWidth = Math.min(100, Math.round((entry.equiteScore / 120) * 100));
-          // BQP marker position (30/120 * 100 = 25%)
-          const bqpMarkerLeft = Math.round((BQP_THRESHOLD / 120) * 100);
-
-          return (
-            <article
-              key={entry.stem}
-              className={`equite-card${entry.bqpBreach ? ' equite-card--breach' : ''}`}
-              role="listitem"
-              aria-label={`${entry.label} : surcoût moyen ${entry.overcostPct > 0 ? '+' : ''}${entry.overcostPct.toFixed(1)}%`}
-            >
-              <div className="equite-card-header">
-                <span className="equite-flag" aria-hidden="true">{entry.flag}</span>
-                <span className="equite-territory">{entry.label}</span>
-                <span
-                  className="equite-status-badge"
-                  style={{ color, borderColor: `${color}60`, background: `${color}12` }}
-                >
-                  {label}
-                </span>
-              </div>
-
-              <div className="equite-bar-container" aria-hidden="true">
-                {/* BQP threshold marker */}
-                <div
-                  className="equite-bqp-line"
-                  style={{ left: `${bqpMarkerLeft}%` }}
-                  title={`Seuil BQP +${BQP_THRESHOLD}%`}
-                />
-                {/* Score bar */}
-                <div
-                  className="equite-bar"
-                  style={{ width: `${barWidth}%`, background: color }}
-                  role="progressbar"
-                  aria-valuenow={entry.equiteScore}
-                  aria-valuemin={0}
-                  aria-valuemax={120}
-                />
-              </div>
-
-              <div className="equite-score-row">
-                <span className="equite-score" style={{ color }}>
-                  {entry.overcostPct > 0 ? '+' : ''}{entry.overcostPct.toFixed(1)}&nbsp;%
-                </span>
-                <span className="equite-products">
-                  {entry.productCount} produits
-                </span>
-              </div>
-
-              {entry.bqpBreach && (
-                <div className="equite-breach-note">
-                  +{(entry.overcostPct - BQP_THRESHOLD).toFixed(0)}&nbsp;pts au-dessus du plafond BQP
-                </div>
-              )}
-            </article>
-          );
-        })}
+        {entries.map((entry) => (
+          <EquiteCard key={entry.stem} entry={entry} />
+        ))}
       </div>
 
       <p className="equite-source">
