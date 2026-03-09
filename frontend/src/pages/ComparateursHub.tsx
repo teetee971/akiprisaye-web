@@ -267,24 +267,24 @@ export default function ComparateursHub() {
         <meta name="description" content="Comparez les prix entre enseignes, au kilo, avec la métropole. Accédez à tous les comparateurs spécialisés." />
       </Helmet>
 
-      <div className="min-h-screen bg-slate-950 p-4 pt-24">
+      <div className="min-h-screen bg-slate-950 p-3 sm:p-4 pt-20 sm:pt-24">
         <div className="max-w-7xl mx-auto">
 
-          <div className="mb-8">
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">📊 Comparateurs de prix</h1>
-            <p className="text-gray-400 text-lg">Tous vos outils de comparaison — données réelles observatoire</p>
+          <div className="mb-5 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2">📊 Comparateurs de prix</h1>
+            <p className="text-gray-400 text-sm sm:text-lg">Tous vos outils de comparaison — données réelles observatoire</p>
           </div>
 
           {/* ── Tabs ── */}
-          <GlassCard className="mb-6 p-3">
-            <div className="grid grid-cols-2 md:flex md:flex-wrap gap-2">
+          <GlassCard className="mb-4 p-2 sm:p-3">
+            <div className="flex flex-wrap gap-1.5 sm:gap-2">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 return (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id as ComparateurTab)}
-                    className={`flex items-center gap-2 px-4 py-3 rounded-xl font-semibold transition-all ${
+                    className={`flex items-center gap-1.5 px-3 py-2 rounded-xl font-semibold transition-all flex-1 min-w-[calc(50%-0.375rem)] sm:flex-none sm:min-w-0 ${
                       activeTab === tab.id
                         ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
                         : 'bg-slate-800/50 text-gray-400 hover:bg-slate-700 hover:text-gray-300'
@@ -292,8 +292,8 @@ export default function ComparateursHub() {
                     aria-label={`Sélectionner le mode ${tab.label}`}
                     aria-pressed={activeTab === tab.id}
                   >
-                    <Icon className="w-5 h-5 flex-shrink-0" />
-                    <span className="text-sm whitespace-nowrap">{tab.label}</span>
+                    <Icon className="w-4 h-4 flex-shrink-0" />
+                    <span className="text-xs sm:text-sm whitespace-nowrap">{tab.label}</span>
                   </button>
                 );
               })}
@@ -301,8 +301,8 @@ export default function ComparateursHub() {
           </GlassCard>
 
           {/* Tab description */}
-          <GlassCard className="mb-6 p-4">
-            <p className="text-gray-300 text-sm">{tabs.find((t) => t.id === activeTab)?.description}</p>
+          <GlassCard className="mb-4 p-3 sm:p-4">
+            <p className="text-gray-300 text-xs sm:text-sm">{tabs.find((t) => t.id === activeTab)?.description}</p>
           </GlassCard>
 
           {/* ── Tab Content ── */}
@@ -311,33 +311,31 @@ export default function ComparateursHub() {
 
             {activeTab === 'kilo' && (
               <GlassCard className="space-y-4">
-                <h2 className="text-xl font-semibold text-white mb-4">⚖️ Comparateur Prix au Kilo / Litre</h2>
-                <p className="text-gray-400 mb-2">
+                <h2 className="text-lg font-semibold text-white">⚖️ Prix au Kilo / Litre</h2>
+                <p className="text-gray-400 text-sm">
                   Prix ramenés au kg ou au litre pour comparer les offres. Source : relevés citoyens observatoire (mars 2026).
                 </p>
-                <p className="text-xs text-slate-500 mb-4">Source : {obsSource}</p>
+                <p className="text-xs text-slate-500">Source : {obsSource}</p>
                 {obsLoading && <div className="h-8 bg-slate-700 rounded animate-pulse" />}
                 {!obsLoading && kiloItems.length === 0 && (
                   <p className="text-gray-400 text-sm">Chargement des données…</p>
                 )}
                 {!obsLoading && kiloItems.length > 0 && (
-                  <div className="grid gap-3 md:grid-cols-2">
+                  <div className="grid gap-2 sm:grid-cols-2">
                     {kiloItems.map((item) => (
-                      <div key={item.id} className="rounded-xl border border-slate-800 p-4">
-                        <div className="flex items-start justify-between gap-3">
-                          <div>
-                            <p className="text-white font-semibold text-sm">{item.product}</p>
+                      <div key={item.id} className="rounded-xl border border-slate-800 bg-slate-900/40 px-3 py-2.5">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <p className="text-white font-semibold text-sm leading-tight truncate">{item.product}</p>
                             <p className="text-xs text-slate-400">{item.territory}</p>
                           </div>
-                          <span className="text-xs text-slate-500">{item.observations} relevé(s)</span>
+                          <span className="text-xs text-slate-500 shrink-0">{item.observations} relevé{item.observations > 1 ? 's' : ''}</span>
                         </div>
-                        <div className="mt-2 flex items-end justify-between">
-                          <p className="text-blue-300 font-semibold">
-                            {fmtPrice(item.avgPrice)} / {item.product.match(/(\d+[gLkg]+)/)?.[1] ?? item.unit}
-                          </p>
-                          <p className="text-xs text-slate-400">
-                            {fmtPrice(item.pricePerUnit)} / {item.unit}
-                          </p>
+                        <div className="mt-2 flex items-center justify-between">
+                          <span className="text-blue-300 font-bold text-sm">
+                            {fmtPrice(item.avgPrice)} <span className="text-xs font-normal text-blue-400">/ {item.product.match(/(\d+[gLkg]+)/)?.[1] ?? item.unit}</span>
+                          </span>
+                          <span className="text-xs text-slate-400">{fmtPrice(item.pricePerUnit)} / {item.unit}</span>
                         </div>
                       </div>
                     ))}
@@ -368,41 +366,46 @@ export default function ComparateursHub() {
 
             {activeTab === 'metropole' && (
               <GlassCard className="space-y-4">
-                <h2 className="text-xl font-semibold text-white mb-4">🗺️ Équivalence vs Métropole</h2>
-                <p className="text-gray-400 mb-2">
-                  Écarts de prix entre chaque territoire DOM–COM et l'Hexagone. Source : observatoire citoyens (mars 2026).
+                <h2 className="text-lg font-semibold text-white">🗺️ Équivalence vs Métropole</h2>
+                <p className="text-gray-400 text-sm">
+                  Écarts de prix entre chaque territoire DOM–COM et l'Hexagone.
                 </p>
-                <p className="text-xs text-slate-500 mb-4">Source : {obsSource}</p>
+                <p className="text-xs text-slate-500">Source : {obsSource}</p>
                 {obsLoading && <div className="h-8 bg-slate-700 rounded animate-pulse" />}
                 {!obsLoading && metropoleItems.length === 0 && (
                   <p className="text-gray-400 text-sm">Chargement des données…</p>
                 )}
                 {!obsLoading && metropoleItems.length > 0 && (
-                  <div className="bg-slate-900/50 rounded-xl p-4 space-y-3">
+                  <div className="space-y-2">
                     {metropoleItems.map((item) => {
                       const delta = item.domPrice - item.metropolePrice;
                       const pct   = item.metropolePrice > 0 ? Math.round((delta / item.metropolePrice) * 100) : 0;
-                      const color = pct > 30 ? 'text-red-400' : pct > 10 ? 'text-orange-400' : pct > 0 ? 'text-yellow-400' : 'text-green-400';
+                      const barPct = Math.min(100, Math.abs(pct));
+                      const colorCls = pct > 30 ? 'text-red-400' : pct > 10 ? 'text-orange-400' : pct > 0 ? 'text-yellow-400' : 'text-green-400';
+                      const barColor = pct > 30 ? '#f87171' : pct > 10 ? '#fb923c' : pct > 0 ? '#fbbf24' : '#4ade80';
                       return (
-                        <div key={item.id} className="rounded-xl border border-slate-800 p-4">
-                          <div className="flex flex-wrap items-center justify-between gap-3">
-                            <div>
-                              <p className="text-white font-semibold text-sm">{item.product}</p>
+                        <div key={item.id} className="rounded-xl border border-slate-800 bg-slate-900/40 px-3 py-2.5">
+                          {/* Row 1: product + pct badge */}
+                          <div className="flex items-center justify-between gap-2 mb-1.5">
+                            <div className="min-w-0">
+                              <p className="text-white font-semibold text-sm leading-tight truncate">{item.product}</p>
                               <p className="text-xs text-slate-400">{item.territory}</p>
                             </div>
-                            <span className={`font-bold text-sm ${color}`}>
-                              {delta > 0 ? '+' : ''}{delta.toFixed(2)} € ({pct > 0 ? '+' : ''}{pct}%)
+                            <span className={`shrink-0 font-bold text-sm tabular-nums ${colorCls}`}>
+                              {pct > 0 ? '+' : ''}{pct}%
                             </span>
                           </div>
-                          <div className="mt-3 grid gap-2 text-sm text-slate-200 md:grid-cols-2">
-                            <div>
-                              <p className="text-xs text-slate-400">Territoire</p>
-                              <p>{fmtPrice(item.domPrice)}</p>
-                            </div>
-                            <div>
-                              <p className="text-xs text-slate-400">Hexagone</p>
-                              <p>{fmtPrice(item.metropolePrice)}</p>
-                            </div>
+                          {/* Row 2: progress bar */}
+                          <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden mb-1.5">
+                            <div style={{ width: `${barPct}%`, background: barColor }} className="h-full rounded-full transition-all" />
+                          </div>
+                          {/* Row 3: inline prices */}
+                          <div className="flex items-center justify-between text-xs text-slate-400">
+                            <span>🇫🇷 {fmtPrice(item.metropolePrice)}</span>
+                            <span className={`font-semibold ${colorCls}`}>
+                              {delta > 0 ? '+' : ''}{delta.toFixed(2)} €
+                            </span>
+                            <span className="text-slate-300">{item.territory.slice(0, 3).toUpperCase()} {fmtPrice(item.domPrice)}</span>
                           </div>
                         </div>
                       );
@@ -416,26 +419,25 @@ export default function ComparateursHub() {
           </div>
 
           {/* ── General comparators navigation ── */}
-          <div className="mt-10">
-            <h2 className="text-2xl font-bold text-white mb-2">⚖️ Comparateurs généraux</h2>
-            <p className="text-gray-400 text-sm mb-6">
+          <div className="mt-8">
+            <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">⚖️ Comparateurs généraux</h2>
+            <p className="text-gray-400 text-xs sm:text-sm mb-4">
               Prix citoyens, enseignes, panier et comparaisons inter-territoires.
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
               {GENERAL_COMPARATEURS.map((item) => {
                 const Icon = item.icon;
                 return (
                   <Link
                     key={item.path}
                     to={item.path}
-                    className={`group flex items-start gap-3 rounded-xl border p-4 transition-all hover:scale-[1.02] hover:shadow-lg ${item.bg}`}
+                    className={`group flex items-center sm:items-start gap-2 sm:gap-3 rounded-xl border p-3 sm:p-4 transition-all hover:scale-[1.02] hover:shadow-lg ${item.bg}`}
                   >
-                    <Icon className={`w-6 h-6 mt-0.5 flex-shrink-0 ${item.color}`} />
+                    <Icon className={`w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 ${item.color}`} />
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-white">{item.label}</p>
-                      <p className="text-xs text-gray-400 mt-0.5">{item.desc}</p>
+                      <p className="font-semibold text-white text-xs sm:text-sm leading-tight">{item.label}</p>
+                      <p className="hidden sm:block text-xs text-gray-400 mt-0.5">{item.desc}</p>
                     </div>
-                    <ArrowRight className="w-4 h-4 text-gray-600 group-hover:text-white transition-colors mt-1 flex-shrink-0" />
                   </Link>
                 );
               })}
@@ -443,26 +445,25 @@ export default function ComparateursHub() {
           </div>
 
           {/* ── Specialized comparators navigation ── */}
-          <div className="mt-10">
-            <h2 className="text-2xl font-bold text-white mb-2">🔍 Comparateurs spécialisés</h2>
-            <p className="text-gray-400 text-sm mb-6">
+          <div className="mt-8">
+            <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">🔍 Comparateurs spécialisés</h2>
+            <p className="text-gray-400 text-xs sm:text-sm mb-4">
               Transports, énergie, assurances, formations, BTP — accédez directement à chaque outil.
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
               {SPECIALIZED.map((item) => {
                 const Icon = item.icon;
                 return (
                   <Link
                     key={item.path}
                     to={item.path}
-                    className={`group flex items-start gap-3 rounded-xl border p-4 transition-all hover:scale-[1.02] hover:shadow-lg ${item.bg}`}
+                    className={`group flex items-center sm:items-start gap-2 sm:gap-3 rounded-xl border p-3 sm:p-4 transition-all hover:scale-[1.02] hover:shadow-lg ${item.bg}`}
                   >
-                    <Icon className={`w-6 h-6 mt-0.5 flex-shrink-0 ${item.color}`} />
+                    <Icon className={`w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 ${item.color}`} />
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-white">{item.label}</p>
-                      <p className="text-xs text-gray-400 mt-0.5">{item.desc}</p>
+                      <p className="font-semibold text-white text-xs sm:text-sm leading-tight">{item.label}</p>
+                      <p className="hidden sm:block text-xs text-gray-400 mt-0.5">{item.desc}</p>
                     </div>
-                    <ArrowRight className="w-4 h-4 text-gray-600 group-hover:text-white transition-colors mt-1 flex-shrink-0" />
                   </Link>
                 );
               })}
@@ -470,26 +471,25 @@ export default function ComparateursHub() {
           </div>
 
           {/* ── Recherche Prix sub-comparators ── */}
-          <div className="mt-10">
-            <h2 className="text-2xl font-bold text-white mb-2">🔎 Recherche &amp; Tarifs</h2>
-            <p className="text-gray-400 text-sm mb-6">
+          <div className="mt-8">
+            <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">🔎 Recherche &amp; Tarifs</h2>
+            <p className="text-gray-400 text-xs sm:text-sm mb-4">
               Transports, énergie, eau, télécoms — tarifs détaillés par territoire et par période.
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
               {RECHERCHE_PRIX.map((item) => {
                 const Icon = item.icon;
                 return (
                   <Link
                     key={item.path}
                     to={item.path}
-                    className={`group flex items-start gap-3 rounded-xl border p-4 transition-all hover:scale-[1.02] hover:shadow-lg ${item.bg}`}
+                    className={`group flex items-center sm:items-start gap-2 sm:gap-3 rounded-xl border p-3 sm:p-4 transition-all hover:scale-[1.02] hover:shadow-lg ${item.bg}`}
                   >
-                    <Icon className={`w-6 h-6 mt-0.5 flex-shrink-0 ${item.color}`} />
+                    <Icon className={`w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 ${item.color}`} />
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-white">{item.label}</p>
-                      <p className="text-xs text-gray-400 mt-0.5">{item.desc}</p>
+                      <p className="font-semibold text-white text-xs sm:text-sm leading-tight">{item.label}</p>
+                      <p className="hidden sm:block text-xs text-gray-400 mt-0.5">{item.desc}</p>
                     </div>
-                    <ArrowRight className="w-4 h-4 text-gray-600 group-hover:text-white transition-colors mt-1 flex-shrink-0" />
                   </Link>
                 );
               })}
@@ -497,26 +497,25 @@ export default function ComparateursHub() {
           </div>
 
           {/* ── Ressources & documentation ── */}
-          <div className="mt-10">
-            <h2 className="text-2xl font-bold text-white mb-2">📚 Ressources &amp; Comprendre</h2>
-            <p className="text-gray-400 text-sm mb-6">
+          <div className="mt-8">
+            <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">📚 Ressources &amp; Comprendre</h2>
+            <p className="text-gray-400 text-xs sm:text-sm mb-4">
               Guides pédagogiques, glossaire et analyses pour comprendre la formation des prix en DOM–COM.
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
               {RESSOURCES.map((item) => {
                 const Icon = item.icon;
                 return (
                   <Link
                     key={item.path}
                     to={item.path}
-                    className={`group flex items-start gap-3 rounded-xl border p-4 transition-all hover:scale-[1.02] hover:shadow-lg ${item.bg}`}
+                    className={`group flex items-center sm:items-start gap-2 sm:gap-3 rounded-xl border p-3 sm:p-4 transition-all hover:scale-[1.02] hover:shadow-lg ${item.bg}`}
                   >
-                    <Icon className={`w-6 h-6 mt-0.5 flex-shrink-0 ${item.color}`} />
+                    <Icon className={`w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 ${item.color}`} />
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-white">{item.label}</p>
-                      <p className="text-xs text-gray-400 mt-0.5">{item.desc}</p>
+                      <p className="font-semibold text-white text-xs sm:text-sm leading-tight">{item.label}</p>
+                      <p className="hidden sm:block text-xs text-gray-400 mt-0.5">{item.desc}</p>
                     </div>
-                    <ArrowRight className="w-4 h-4 text-gray-600 group-hover:text-white transition-colors mt-1 flex-shrink-0" />
                   </Link>
                 );
               })}
@@ -524,26 +523,25 @@ export default function ComparateursHub() {
           </div>
 
           {/* ── Scanners & OCR ── */}
-          <div className="mt-10">
-            <h2 className="text-2xl font-bold text-white mb-2">📷 Scanners &amp; OCR</h2>
-            <p className="text-gray-400 text-sm mb-6">
+          <div className="mt-8">
+            <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">📷 Scanners &amp; OCR</h2>
+            <p className="text-gray-400 text-xs sm:text-sm mb-4">
               Scanner des produits, tickets de caisse et photos — identification instantanée.
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
               {SCANNERS.map((item) => {
                 const Icon = item.icon;
                 return (
                   <Link
                     key={item.path}
                     to={item.path}
-                    className={`group flex items-start gap-3 rounded-xl border p-4 transition-all hover:scale-[1.02] hover:shadow-lg ${item.bg}`}
+                    className={`group flex items-center sm:items-start gap-2 sm:gap-3 rounded-xl border p-3 sm:p-4 transition-all hover:scale-[1.02] hover:shadow-lg ${item.bg}`}
                   >
-                    <Icon className={`w-6 h-6 mt-0.5 flex-shrink-0 ${item.color}`} />
+                    <Icon className={`w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 ${item.color}`} />
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-white">{item.label}</p>
-                      <p className="text-xs text-gray-400 mt-0.5">{item.desc}</p>
+                      <p className="font-semibold text-white text-xs sm:text-sm leading-tight">{item.label}</p>
+                      <p className="hidden sm:block text-xs text-gray-400 mt-0.5">{item.desc}</p>
                     </div>
-                    <ArrowRight className="w-4 h-4 text-gray-600 group-hover:text-white transition-colors mt-1 flex-shrink-0" />
                   </Link>
                 );
               })}
@@ -551,26 +549,25 @@ export default function ComparateursHub() {
           </div>
 
           {/* ── Calculateurs & Simulateurs ── */}
-          <div className="mt-10">
-            <h2 className="text-2xl font-bold text-white mb-2">🧮 Calculateurs &amp; Simulateurs</h2>
-            <p className="text-gray-400 text-sm mb-6">
+          <div className="mt-8">
+            <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">🧮 Calculateurs &amp; Simulateurs</h2>
+            <p className="text-gray-400 text-xs sm:text-sm mb-4">
               Octroi de mer, budget familial, panier vital, repas — tous vos outils de calcul.
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
               {CALCULATEURS.map((item) => {
                 const Icon = item.icon;
                 return (
                   <Link
                     key={item.path}
                     to={item.path}
-                    className={`group flex items-start gap-3 rounded-xl border p-4 transition-all hover:scale-[1.02] hover:shadow-lg ${item.bg}`}
+                    className={`group flex items-center sm:items-start gap-2 sm:gap-3 rounded-xl border p-3 sm:p-4 transition-all hover:scale-[1.02] hover:shadow-lg ${item.bg}`}
                   >
-                    <Icon className={`w-6 h-6 mt-0.5 flex-shrink-0 ${item.color}`} />
+                    <Icon className={`w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 ${item.color}`} />
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-white">{item.label}</p>
-                      <p className="text-xs text-gray-400 mt-0.5">{item.desc}</p>
+                      <p className="font-semibold text-white text-xs sm:text-sm leading-tight">{item.label}</p>
+                      <p className="hidden sm:block text-xs text-gray-400 mt-0.5">{item.desc}</p>
                     </div>
-                    <ArrowRight className="w-4 h-4 text-gray-600 group-hover:text-white transition-colors mt-1 flex-shrink-0" />
                   </Link>
                 );
               })}
@@ -578,26 +575,25 @@ export default function ComparateursHub() {
           </div>
 
           {/* ── Observatoire & Données ── */}
-          <div className="mt-10">
-            <h2 className="text-2xl font-bold text-white mb-2">🔭 Observatoire &amp; Données</h2>
-            <p className="text-gray-400 text-sm mb-6">
+          <div className="mt-8">
+            <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">🔭 Observatoire &amp; Données</h2>
+            <p className="text-gray-400 text-xs sm:text-sm mb-4">
               Données réelles, observatoire citoyen, vie chère et accès open data.
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
               {OBSERVATOIRE.map((item) => {
                 const Icon = item.icon;
                 return (
                   <Link
                     key={item.path}
                     to={item.path}
-                    className={`group flex items-start gap-3 rounded-xl border p-4 transition-all hover:scale-[1.02] hover:shadow-lg ${item.bg}`}
+                    className={`group flex items-center sm:items-start gap-2 sm:gap-3 rounded-xl border p-3 sm:p-4 transition-all hover:scale-[1.02] hover:shadow-lg ${item.bg}`}
                   >
-                    <Icon className={`w-6 h-6 mt-0.5 flex-shrink-0 ${item.color}`} />
+                    <Icon className={`w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 ${item.color}`} />
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-white">{item.label}</p>
-                      <p className="text-xs text-gray-400 mt-0.5">{item.desc}</p>
+                      <p className="font-semibold text-white text-xs sm:text-sm leading-tight">{item.label}</p>
+                      <p className="hidden sm:block text-xs text-gray-400 mt-0.5">{item.desc}</p>
                     </div>
-                    <ArrowRight className="w-4 h-4 text-gray-600 group-hover:text-white transition-colors mt-1 flex-shrink-0" />
                   </Link>
                 );
               })}
@@ -605,26 +601,25 @@ export default function ComparateursHub() {
           </div>
 
           {/* ── IA & Analyses ── */}
-          <div className="mt-10">
-            <h2 className="text-2xl font-bold text-white mb-2">🤖 IA &amp; Analyses</h2>
-            <p className="text-gray-400 text-sm mb-6">
+          <div className="mt-8">
+            <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">🤖 IA &amp; Analyses</h2>
+            <p className="text-gray-400 text-xs sm:text-sm mb-4">
               Assistant IA, réclamations, devis, prédictions et analyses de marché.
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
               {IA_OUTILS.map((item) => {
                 const Icon = item.icon;
                 return (
                   <Link
                     key={item.path}
                     to={item.path}
-                    className={`group flex items-start gap-3 rounded-xl border p-4 transition-all hover:scale-[1.02] hover:shadow-lg ${item.bg}`}
+                    className={`group flex items-center sm:items-start gap-2 sm:gap-3 rounded-xl border p-3 sm:p-4 transition-all hover:scale-[1.02] hover:shadow-lg ${item.bg}`}
                   >
-                    <Icon className={`w-6 h-6 mt-0.5 flex-shrink-0 ${item.color}`} />
+                    <Icon className={`w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 ${item.color}`} />
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-white">{item.label}</p>
-                      <p className="text-xs text-gray-400 mt-0.5">{item.desc}</p>
+                      <p className="font-semibold text-white text-xs sm:text-sm leading-tight">{item.label}</p>
+                      <p className="hidden sm:block text-xs text-gray-400 mt-0.5">{item.desc}</p>
                     </div>
-                    <ArrowRight className="w-4 h-4 text-gray-600 group-hover:text-white transition-colors mt-1 flex-shrink-0" />
                   </Link>
                 );
               })}
@@ -632,26 +627,25 @@ export default function ComparateursHub() {
           </div>
 
           {/* ── Citoyenneté & Communauté ── */}
-          <div className="mt-10 mb-10">
-            <h2 className="text-2xl font-bold text-white mb-2">🤝 Citoyenneté &amp; Communauté</h2>
-            <p className="text-gray-400 text-sm mb-6">
+          <div className="mt-8 mb-10">
+            <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">🤝 Citoyenneté &amp; Communauté</h2>
+            <p className="text-gray-400 text-xs sm:text-sm mb-4">
               Groupes citoyens, solidarité, signalements et newsletter communautaire.
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
               {CITOYEN.map((item) => {
                 const Icon = item.icon;
                 return (
                   <Link
                     key={item.path}
                     to={item.path}
-                    className={`group flex items-start gap-3 rounded-xl border p-4 transition-all hover:scale-[1.02] hover:shadow-lg ${item.bg}`}
+                    className={`group flex items-center sm:items-start gap-2 sm:gap-3 rounded-xl border p-3 sm:p-4 transition-all hover:scale-[1.02] hover:shadow-lg ${item.bg}`}
                   >
-                    <Icon className={`w-6 h-6 mt-0.5 flex-shrink-0 ${item.color}`} />
+                    <Icon className={`w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 ${item.color}`} />
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-white">{item.label}</p>
-                      <p className="text-xs text-gray-400 mt-0.5">{item.desc}</p>
+                      <p className="font-semibold text-white text-xs sm:text-sm leading-tight">{item.label}</p>
+                      <p className="hidden sm:block text-xs text-gray-400 mt-0.5">{item.desc}</p>
                     </div>
-                    <ArrowRight className="w-4 h-4 text-gray-600 group-hover:text-white transition-colors mt-1 flex-shrink-0" />
                   </Link>
                 );
               })}
