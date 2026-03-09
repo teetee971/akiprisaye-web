@@ -493,6 +493,7 @@ export default function AbonnementsMobile() {
                     <p className="mt-3 text-xs text-gray-500">A KI PRI SA YÉ ne perçoit aucune commission. Vérifiez les tarifs actuels sur le site de l'opérateur.</p>
                   </section>
                 </>
+              ) : (
                 <div className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-8 text-center">
                   <p className="text-gray-400">
                     Aucun résultat pour cette recherche. Essayez un autre territoire.

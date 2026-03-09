@@ -7,8 +7,8 @@ import type {
   InsuranceComparisonResult,
   InsuranceType,
   CoverageLevel,
-  Territory,
 } from '../types/insuranceComparison';
+import type { Territory } from '../types/priceAlerts';
 import {
   compareInsuranceByType,
   loadInsuranceData,
