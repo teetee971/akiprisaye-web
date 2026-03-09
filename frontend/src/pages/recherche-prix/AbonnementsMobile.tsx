@@ -1,7 +1,7 @@
 // @ts-nocheck
  
 import React, { useState } from 'react';
-import { Smartphone, Info, Download } from 'lucide-react';
+import { Smartphone, Info, Download, ExternalLink, Award, TrendingDown } from 'lucide-react';
 import {
   searchMobilePlanPrices,
   getTerritories,
@@ -13,6 +13,26 @@ import SortControl from '../../components/comparateur/SortControl';
 import ShareButton from '../../components/comparateur/ShareButton';
 
 import { SEOHead } from '../../components/ui/SEOHead';
+
+const OPERATOR_URLS: Record<string, string> = {
+  'Orange': 'https://boutique.orange.fr/',
+  'SFR': 'https://www.sfr.fr/',
+  'Free': 'https://www.free.fr/',
+  'Bouygues': 'https://www.bouyguestelecom.fr/',
+  'Canal+': 'https://www.canalplus.com/',
+  'Only': 'https://www.only-telecom.fr/',
+  'Outremer': 'https://www.outremercom.com/',
+  'Digicel': 'https://www.digicelgroup.com/',
+};
+
+function getOperatorUrl(operatorName: string, url?: string): string {
+  if (url) return url;
+  for (const [key, u] of Object.entries(OPERATOR_URLS)) {
+    if (operatorName.toLowerCase().includes(key.toLowerCase())) return u;
+  }
+  return '#';
+}
+
 /**
  * Module de comparaison des prix des abonnements mobiles
  * 
@@ -145,6 +165,9 @@ export default function AbonnementsMobile() {
           <p className="text-sm text-gray-400">
             Module en préparation - Données simulées
           </p>
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-green-500/20 border border-green-500/40 rounded-full text-xs text-green-300 mt-2">
+            🔄 Données du {new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+          </span>
         </div>
       </header>
 
@@ -322,6 +345,9 @@ export default function AbonnementsMobile() {
                             <th className="text-left py-3 px-2 text-gray-400 font-medium">
                               Relevé le
                             </th>
+                            <th className="text-left py-3 px-2 text-gray-400 font-medium">
+                              Action
+                            </th>
                           </tr>
                         </thead>
                         <tbody>
@@ -353,6 +379,16 @@ export default function AbonnementsMobile() {
                               <td className="py-3 px-2 text-gray-400 text-xs">
                                 {formatDate(plan.dateReleve)}
                               </td>
+                              <td className="py-3 px-2">
+                                <a
+                                  href={getOperatorUrl(plan.operateur)}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium rounded-lg transition-colors"
+                                >
+                                  <ExternalLink className="w-3 h-3" /> Souscrire
+                                </a>
+                              </td>
                             </tr>
                           ))}
                         </tbody>
@@ -366,8 +402,97 @@ export default function AbonnementsMobile() {
                       </p>
                     </div>
                   </section>
+
+                  {/* Quel forfait choisir? */}
+                  <section className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5">
+                    <h2 className="text-lg font-semibold text-gray-100 mb-4 flex items-center gap-2">
+                      <Award className="w-5 h-5 text-yellow-400" />
+                      Quel forfait choisir ?
+                    </h2>
+                    <div className="grid sm:grid-cols-3 gap-4">
+                      {/* Moins cher */}
+                      {(() => {
+                        if (!sortedResults.length) return null;
+                        const best = sortedResults[0];
+                        return (
+                          <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-4">
+                            <div className="flex items-center gap-2 mb-2">
+                              <TrendingDown className="w-4 h-4 text-green-400" />
+                              <span className="text-sm font-semibold text-green-300">Moins cher</span>
+                            </div>
+                            <p className="text-white font-bold text-lg">{best.operateur}</p>
+                            <p className="text-xs text-gray-400">{best.typeOffre}</p>
+                            <p className="text-2xl font-bold text-green-400 mt-1">{formatPrice(best.prixMensuel)}<span className="text-sm font-normal text-gray-400">/mois</span></p>
+                            <a
+                              href={getOperatorUrl(best.operateur)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 mt-3 px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium rounded-lg transition-colors"
+                            >
+                              <ExternalLink className="w-3 h-3" /> Souscrire
+                            </a>
+                          </div>
+                        );
+                      })()}
+                      {/* Plus de data */}
+                      {(() => {
+                        const withData = [...sortedResults].sort((a, b) => {
+                          const numA = parseFloat(String(a.donnees).replace(/[^0-9.]/g, '') || '0');
+                          const numB = parseFloat(String(b.donnees).replace(/[^0-9.]/g, '') || '0');
+                          return numB - numA;
+                        });
+                        if (!withData.length) return null;
+                        const best = withData[0];
+                        return (
+                          <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4">
+                            <div className="flex items-center gap-2 mb-2">
+                              <Award className="w-4 h-4 text-blue-400" />
+                              <span className="text-sm font-semibold text-blue-300">Plus de data</span>
+                            </div>
+                            <p className="text-white font-bold text-lg">{best.operateur}</p>
+                            <p className="text-xs text-gray-400">{best.typeOffre}</p>
+                            <p className="text-2xl font-bold text-blue-400 mt-1">{best.donnees}</p>
+                            <p className="text-xs text-gray-400">{formatPrice(best.prixMensuel)}/mois</p>
+                            <a
+                              href={getOperatorUrl(best.operateur)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 mt-3 px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium rounded-lg transition-colors"
+                            >
+                              <ExternalLink className="w-3 h-3" /> Souscrire
+                            </a>
+                          </div>
+                        );
+                      })()}
+                      {/* Idéal DOM-voyage */}
+                      {(() => {
+                        if (!sortedResults.length) return null;
+                        const best = sortedResults[Math.floor(sortedResults.length / 2)] || sortedResults[0];
+                        return (
+                          <div className="bg-purple-500/10 border border-purple-500/30 rounded-xl p-4">
+                            <div className="flex items-center gap-2 mb-2">
+                              <Award className="w-4 h-4 text-purple-400" />
+                              <span className="text-sm font-semibold text-purple-300">Idéal DOM-voyage</span>
+                            </div>
+                            <p className="text-white font-bold text-lg">{best.operateur}</p>
+                            <p className="text-xs text-gray-400">{best.typeOffre}</p>
+                            <p className="text-2xl font-bold text-purple-400 mt-1">{formatPrice(best.prixMensuel)}<span className="text-sm font-normal text-gray-400">/mois</span></p>
+                            <p className="text-xs text-gray-400 mt-1">Recommandé pour les voyages entre DOM</p>
+                            <a
+                              href={getOperatorUrl(best.operateur)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 mt-3 px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium rounded-lg transition-colors"
+                            >
+                              <ExternalLink className="w-3 h-3" /> Souscrire
+                            </a>
+                          </div>
+                        );
+                      })()}
+                    </div>
+                    <p className="mt-3 text-xs text-gray-500">A KI PRI SA YÉ ne perçoit aucune commission. Vérifiez les tarifs actuels sur le site de l'opérateur.</p>
+                  </section>
                 </>
-              ) : (
                 <div className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-8 text-center">
                   <p className="text-gray-400">
                     Aucun résultat pour cette recherche. Essayez un autre territoire.
