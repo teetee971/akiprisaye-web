@@ -1,8 +1,8 @@
 {
   "metadata": {
     "version": "1.0.0",
-    "lastUpdated": "2026-03-09T10:00:00.000Z",
-    "description": "Comparateur de prix des carburants - DOM-TOM",
+    "lastUpdated": "2026-03-09T12:00:00.000Z",
+    "description": "Comparateur de prix des carburants — tous les territoires d'outre-mer",
     "disclaimer": "A KI PRI SA YÉ observe les prix, ne vend pas. Transparence sur les écarts de prix.",
     "methodology": "v1.0.0",
     "updateFrequency": "daily",
@@ -104,7 +104,7 @@
       "name": "Esso - Cayenne",
       "address": "Route de Montabo",
       "city": "Cayenne",
-      "territory": "GY",
+      "territory": "GF",
       "location": {
         "lat": 4.9228,
         "lng": -52.313
@@ -113,6 +113,132 @@
       "services": [
         "CB",
         "Shop"
+      ]
+    },
+    {
+      "id": "station-yt-001",
+      "name": "Station Total - Mamoudzou",
+      "address": "Route Nationale 1",
+      "city": "Mamoudzou",
+      "territory": "YT",
+      "location": {
+        "lat": -12.7806,
+        "lng": 45.2278
+      },
+      "brand": "Total",
+      "services": [
+        "CB",
+        "Shop"
+      ]
+    },
+    {
+      "id": "station-yt-002",
+      "name": "Esso - Koungou",
+      "address": "RN 1 Koungou",
+      "city": "Koungou",
+      "territory": "YT",
+      "location": {
+        "lat": -12.731,
+        "lng": 45.2085
+      },
+      "brand": "Esso",
+      "services": [
+        "CB"
+      ]
+    },
+    {
+      "id": "station-pm-001",
+      "name": "Station Total - Saint-Pierre",
+      "address": "Rue du 11 Novembre",
+      "city": "Saint-Pierre",
+      "territory": "PM",
+      "location": {
+        "lat": 46.7833,
+        "lng": -56.1833
+      },
+      "brand": "Total",
+      "services": [
+        "CB",
+        "Shop"
+      ]
+    },
+    {
+      "id": "station-pm-002",
+      "name": "Station Miquelon",
+      "address": "Route des bateaux",
+      "city": "Miquelon",
+      "territory": "PM",
+      "location": {
+        "lat": 47.0999,
+        "lng": -56.3833
+      },
+      "brand": "Indépendant",
+      "services": [
+        "CB"
+      ]
+    },
+    {
+      "id": "station-bl-001",
+      "name": "Station Total - Gustavia",
+      "address": "Rue du Roi Oscar II",
+      "city": "Gustavia",
+      "territory": "BL",
+      "location": {
+        "lat": 17.8958,
+        "lng": -62.8508
+      },
+      "brand": "Total",
+      "services": [
+        "CB",
+        "Shop",
+        "24h/24"
+      ]
+    },
+    {
+      "id": "station-bl-002",
+      "name": "Station Shell - Saint-Jean",
+      "address": "Route de Saint-Jean",
+      "city": "Saint-Jean",
+      "territory": "BL",
+      "location": {
+        "lat": 17.9099,
+        "lng": -62.8399
+      },
+      "brand": "Shell",
+      "services": [
+        "CB"
+      ]
+    },
+    {
+      "id": "station-mf-001",
+      "name": "Station Total - Marigot",
+      "address": "Boulevard de France",
+      "city": "Marigot",
+      "territory": "MF",
+      "location": {
+        "lat": 18.0733,
+        "lng": -63.0822
+      },
+      "brand": "Total",
+      "services": [
+        "CB",
+        "Shop",
+        "24h/24"
+      ]
+    },
+    {
+      "id": "station-mf-002",
+      "name": "Esso - Sandy Ground",
+      "address": "Route de Sandy Ground",
+      "city": "Sandy Ground",
+      "territory": "MF",
+      "location": {
+        "lat": 18.047,
+        "lng": -63.0951
+      },
+      "brand": "Esso",
+      "services": [
+        "CB"
       ]
     }
   ],
@@ -404,7 +530,7 @@
         "name": "Esso - Cayenne",
         "address": "Route de Montabo",
         "city": "Cayenne",
-        "territory": "GY",
+        "territory": "GF",
         "location": {
           "lat": 4.9228,
           "lng": -52.313
@@ -422,7 +548,7 @@
         "reliability": "high"
       },
       "isPriceCapPlafonne": false,
-      "territory": "GY",
+      "territory": "GF",
       "lastUpdate": "2026-03-02T06:00:00.000Z"
     },
     {
@@ -432,7 +558,7 @@
         "name": "Esso - Cayenne",
         "address": "Route de Montabo",
         "city": "Cayenne",
-        "territory": "GY",
+        "territory": "GF",
         "location": {
           "lat": 4.9228,
           "lng": -52.313
@@ -450,8 +576,516 @@
         "reliability": "high"
       },
       "isPriceCapPlafonne": false,
-      "territory": "GY",
+      "territory": "GF",
       "lastUpdate": "2026-03-03T06:00:00.000Z"
+    },
+    {
+      "id": "price-yt-001-sp95",
+      "station": {
+        "id": "station-yt-001",
+        "name": "Station Total - Mamoudzou",
+        "address": "Route Nationale 1",
+        "city": "Mamoudzou",
+        "territory": "YT",
+        "location": {
+          "lat": -12.7806,
+          "lng": 45.2278
+        },
+        "brand": "Total",
+        "services": [
+          "CB",
+          "Shop"
+        ]
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.619,
+      "currency": "EUR",
+      "observationDate": "2026-03-01T06:00:00.000Z",
+      "source": {
+        "type": "official_api",
+        "url": "https://www.prix-carburants.gouv.fr",
+        "observedAt": "2026-03-01T06:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": false,
+      "territory": "YT",
+      "lastUpdate": "2026-03-01T06:00:00.000Z"
+    },
+    {
+      "id": "price-yt-001-diesel",
+      "station": {
+        "id": "station-yt-001",
+        "name": "Station Total - Mamoudzou",
+        "address": "Route Nationale 1",
+        "city": "Mamoudzou",
+        "territory": "YT",
+        "location": {
+          "lat": -12.7806,
+          "lng": 45.2278
+        },
+        "brand": "Total",
+        "services": [
+          "CB",
+          "Shop"
+        ]
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.489,
+      "currency": "EUR",
+      "observationDate": "2026-03-01T06:00:00.000Z",
+      "source": {
+        "type": "official_api",
+        "url": "https://www.prix-carburants.gouv.fr",
+        "observedAt": "2026-03-01T06:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": false,
+      "territory": "YT",
+      "lastUpdate": "2026-03-01T06:00:00.000Z"
+    },
+    {
+      "id": "price-yt-002-sp95",
+      "station": {
+        "id": "station-yt-002",
+        "name": "Esso - Koungou",
+        "address": "RN 1 Koungou",
+        "city": "Koungou",
+        "territory": "YT",
+        "location": {
+          "lat": -12.731,
+          "lng": 45.2085
+        },
+        "brand": "Esso",
+        "services": [
+          "CB"
+        ]
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.625,
+      "currency": "EUR",
+      "observationDate": "2026-03-02T06:00:00.000Z",
+      "source": {
+        "type": "official_api",
+        "url": "https://www.prix-carburants.gouv.fr",
+        "observedAt": "2026-03-02T06:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": false,
+      "territory": "YT",
+      "lastUpdate": "2026-03-02T06:00:00.000Z"
+    },
+    {
+      "id": "price-yt-002-diesel",
+      "station": {
+        "id": "station-yt-002",
+        "name": "Esso - Koungou",
+        "address": "RN 1 Koungou",
+        "city": "Koungou",
+        "territory": "YT",
+        "location": {
+          "lat": -12.731,
+          "lng": 45.2085
+        },
+        "brand": "Esso",
+        "services": [
+          "CB"
+        ]
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.495,
+      "currency": "EUR",
+      "observationDate": "2026-03-02T06:00:00.000Z",
+      "source": {
+        "type": "official_api",
+        "url": "https://www.prix-carburants.gouv.fr",
+        "observedAt": "2026-03-02T06:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": false,
+      "territory": "YT",
+      "lastUpdate": "2026-03-02T06:00:00.000Z"
+    },
+    {
+      "id": "price-pm-001-sp95",
+      "station": {
+        "id": "station-pm-001",
+        "name": "Station Total - Saint-Pierre",
+        "address": "Rue du 11 Novembre",
+        "city": "Saint-Pierre",
+        "territory": "PM",
+        "location": {
+          "lat": 46.7833,
+          "lng": -56.1833
+        },
+        "brand": "Total",
+        "services": [
+          "CB",
+          "Shop"
+        ]
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.748,
+      "currency": "EUR",
+      "observationDate": "2026-03-01T06:00:00.000Z",
+      "source": {
+        "type": "official_api",
+        "url": "https://www.prix-carburants.gouv.fr",
+        "observedAt": "2026-03-01T06:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": false,
+      "territory": "PM",
+      "lastUpdate": "2026-03-01T06:00:00.000Z"
+    },
+    {
+      "id": "price-pm-001-diesel",
+      "station": {
+        "id": "station-pm-001",
+        "name": "Station Total - Saint-Pierre",
+        "address": "Rue du 11 Novembre",
+        "city": "Saint-Pierre",
+        "territory": "PM",
+        "location": {
+          "lat": 46.7833,
+          "lng": -56.1833
+        },
+        "brand": "Total",
+        "services": [
+          "CB",
+          "Shop"
+        ]
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.648,
+      "currency": "EUR",
+      "observationDate": "2026-03-01T06:00:00.000Z",
+      "source": {
+        "type": "official_api",
+        "url": "https://www.prix-carburants.gouv.fr",
+        "observedAt": "2026-03-01T06:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": false,
+      "territory": "PM",
+      "lastUpdate": "2026-03-01T06:00:00.000Z"
+    },
+    {
+      "id": "price-pm-002-sp95",
+      "station": {
+        "id": "station-pm-002",
+        "name": "Station Miquelon",
+        "address": "Route des bateaux",
+        "city": "Miquelon",
+        "territory": "PM",
+        "location": {
+          "lat": 47.0999,
+          "lng": -56.3833
+        },
+        "brand": "Indépendant",
+        "services": [
+          "CB"
+        ]
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.759,
+      "currency": "EUR",
+      "observationDate": "2026-03-02T06:00:00.000Z",
+      "source": {
+        "type": "official_api",
+        "url": "https://www.prix-carburants.gouv.fr",
+        "observedAt": "2026-03-02T06:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": false,
+      "territory": "PM",
+      "lastUpdate": "2026-03-02T06:00:00.000Z"
+    },
+    {
+      "id": "price-pm-002-diesel",
+      "station": {
+        "id": "station-pm-002",
+        "name": "Station Miquelon",
+        "address": "Route des bateaux",
+        "city": "Miquelon",
+        "territory": "PM",
+        "location": {
+          "lat": 47.0999,
+          "lng": -56.3833
+        },
+        "brand": "Indépendant",
+        "services": [
+          "CB"
+        ]
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.658,
+      "currency": "EUR",
+      "observationDate": "2026-03-02T06:00:00.000Z",
+      "source": {
+        "type": "official_api",
+        "url": "https://www.prix-carburants.gouv.fr",
+        "observedAt": "2026-03-02T06:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": false,
+      "territory": "PM",
+      "lastUpdate": "2026-03-02T06:00:00.000Z"
+    },
+    {
+      "id": "price-bl-001-sp95",
+      "station": {
+        "id": "station-bl-001",
+        "name": "Station Total - Gustavia",
+        "address": "Rue du Roi Oscar II",
+        "city": "Gustavia",
+        "territory": "BL",
+        "location": {
+          "lat": 17.8958,
+          "lng": -62.8508
+        },
+        "brand": "Total",
+        "services": [
+          "CB",
+          "Shop",
+          "24h/24"
+        ]
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.989,
+      "currency": "EUR",
+      "observationDate": "2026-03-01T06:00:00.000Z",
+      "source": {
+        "type": "official_api",
+        "url": "https://www.prix-carburants.gouv.fr",
+        "observedAt": "2026-03-01T06:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": false,
+      "territory": "BL",
+      "lastUpdate": "2026-03-01T06:00:00.000Z"
+    },
+    {
+      "id": "price-bl-001-diesel",
+      "station": {
+        "id": "station-bl-001",
+        "name": "Station Total - Gustavia",
+        "address": "Rue du Roi Oscar II",
+        "city": "Gustavia",
+        "territory": "BL",
+        "location": {
+          "lat": 17.8958,
+          "lng": -62.8508
+        },
+        "brand": "Total",
+        "services": [
+          "CB",
+          "Shop",
+          "24h/24"
+        ]
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.879,
+      "currency": "EUR",
+      "observationDate": "2026-03-01T06:00:00.000Z",
+      "source": {
+        "type": "official_api",
+        "url": "https://www.prix-carburants.gouv.fr",
+        "observedAt": "2026-03-01T06:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": false,
+      "territory": "BL",
+      "lastUpdate": "2026-03-01T06:00:00.000Z"
+    },
+    {
+      "id": "price-bl-002-sp95",
+      "station": {
+        "id": "station-bl-002",
+        "name": "Station Shell - Saint-Jean",
+        "address": "Route de Saint-Jean",
+        "city": "Saint-Jean",
+        "territory": "BL",
+        "location": {
+          "lat": 17.9099,
+          "lng": -62.8399
+        },
+        "brand": "Shell",
+        "services": [
+          "CB"
+        ]
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.995,
+      "currency": "EUR",
+      "observationDate": "2026-03-02T06:00:00.000Z",
+      "source": {
+        "type": "official_api",
+        "url": "https://www.prix-carburants.gouv.fr",
+        "observedAt": "2026-03-02T06:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": false,
+      "territory": "BL",
+      "lastUpdate": "2026-03-02T06:00:00.000Z"
+    },
+    {
+      "id": "price-bl-002-diesel",
+      "station": {
+        "id": "station-bl-002",
+        "name": "Station Shell - Saint-Jean",
+        "address": "Route de Saint-Jean",
+        "city": "Saint-Jean",
+        "territory": "BL",
+        "location": {
+          "lat": 17.9099,
+          "lng": -62.8399
+        },
+        "brand": "Shell",
+        "services": [
+          "CB"
+        ]
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.885,
+      "currency": "EUR",
+      "observationDate": "2026-03-02T06:00:00.000Z",
+      "source": {
+        "type": "official_api",
+        "url": "https://www.prix-carburants.gouv.fr",
+        "observedAt": "2026-03-02T06:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": false,
+      "territory": "BL",
+      "lastUpdate": "2026-03-02T06:00:00.000Z"
+    },
+    {
+      "id": "price-mf-001-sp95",
+      "station": {
+        "id": "station-mf-001",
+        "name": "Station Total - Marigot",
+        "address": "Boulevard de France",
+        "city": "Marigot",
+        "territory": "MF",
+        "location": {
+          "lat": 18.0733,
+          "lng": -63.0822
+        },
+        "brand": "Total",
+        "services": [
+          "CB",
+          "Shop",
+          "24h/24"
+        ]
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.749,
+      "currency": "EUR",
+      "observationDate": "2026-03-01T06:00:00.000Z",
+      "source": {
+        "type": "official_api",
+        "url": "https://www.prix-carburants.gouv.fr",
+        "observedAt": "2026-03-01T06:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": false,
+      "territory": "MF",
+      "lastUpdate": "2026-03-01T06:00:00.000Z"
+    },
+    {
+      "id": "price-mf-001-diesel",
+      "station": {
+        "id": "station-mf-001",
+        "name": "Station Total - Marigot",
+        "address": "Boulevard de France",
+        "city": "Marigot",
+        "territory": "MF",
+        "location": {
+          "lat": 18.0733,
+          "lng": -63.0822
+        },
+        "brand": "Total",
+        "services": [
+          "CB",
+          "Shop",
+          "24h/24"
+        ]
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.649,
+      "currency": "EUR",
+      "observationDate": "2026-03-01T06:00:00.000Z",
+      "source": {
+        "type": "official_api",
+        "url": "https://www.prix-carburants.gouv.fr",
+        "observedAt": "2026-03-01T06:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": false,
+      "territory": "MF",
+      "lastUpdate": "2026-03-01T06:00:00.000Z"
+    },
+    {
+      "id": "price-mf-002-sp95",
+      "station": {
+        "id": "station-mf-002",
+        "name": "Esso - Sandy Ground",
+        "address": "Route de Sandy Ground",
+        "city": "Sandy Ground",
+        "territory": "MF",
+        "location": {
+          "lat": 18.047,
+          "lng": -63.0951
+        },
+        "brand": "Esso",
+        "services": [
+          "CB"
+        ]
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.755,
+      "currency": "EUR",
+      "observationDate": "2026-03-02T06:00:00.000Z",
+      "source": {
+        "type": "official_api",
+        "url": "https://www.prix-carburants.gouv.fr",
+        "observedAt": "2026-03-02T06:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": false,
+      "territory": "MF",
+      "lastUpdate": "2026-03-02T06:00:00.000Z"
+    },
+    {
+      "id": "price-mf-002-diesel",
+      "station": {
+        "id": "station-mf-002",
+        "name": "Esso - Sandy Ground",
+        "address": "Route de Sandy Ground",
+        "city": "Sandy Ground",
+        "territory": "MF",
+        "location": {
+          "lat": 18.047,
+          "lng": -63.0951
+        },
+        "brand": "Esso",
+        "services": [
+          "CB"
+        ]
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.655,
+      "currency": "EUR",
+      "observationDate": "2026-03-02T06:00:00.000Z",
+      "source": {
+        "type": "official_api",
+        "url": "https://www.prix-carburants.gouv.fr",
+        "observedAt": "2026-03-02T06:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": false,
+      "territory": "MF",
+      "lastUpdate": "2026-03-02T06:00:00.000Z"
     }
   ]
 }

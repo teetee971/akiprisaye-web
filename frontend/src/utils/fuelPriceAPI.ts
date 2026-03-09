@@ -19,14 +19,17 @@ import type { FuelType, FuelPricePoint, FuelStation, Territory } from '../types/
 const API_BASE_URL = 'https://www.prix-carburants.gouv.fr';
 
 /**
- * Mapping DOM-TOM departments
+ * Mapping DOM-TOM departments (tous les territoires d'outre-mer)
  */
 const TERRITORY_TO_DEPARTMENT: Record<string, string> = {
   GP: '971', // Guadeloupe
   MQ: '972', // Martinique
-  GF: '973', // Guyane
-  RE: '974', // Réunion
+  GF: '973', // Guyane française
+  RE: '974', // La Réunion
+  PM: '975', // Saint-Pierre-et-Miquelon
   YT: '976', // Mayotte
+  BL: '977', // Saint-Barthélemy
+  MF: '978', // Saint-Martin
 };
 
 /**

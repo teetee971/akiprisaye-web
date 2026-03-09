@@ -43,7 +43,27 @@ const FUEL_COMPARISON_CONFIG = {
 } as const;
 
 /**
- * Load fuel prices from JSON data file
+ * Fetch live fuel prices from the Cloudflare Function proxy
+ * (which calls the official French government API).
+ * Falls back to the local JSON bundle if unavailable.
+ */
+export async function fetchLiveFuelPrices(territory: Territory): Promise<FuelPricePoint[]> {
+  try {
+    const url = `${import.meta.env.BASE_URL}api/fuel-prices?territory=${territory}`;
+    const res = await fetch(url, { headers: { Accept: 'application/json' } });
+    if (!res.ok) throw new Error(`API error ${res.status}`);
+    const data = await res.json();
+    const prices: FuelPricePoint[] = data.fuelPrices ?? [];
+    if (prices.length > 0) return prices;
+    throw new Error('Empty response from live API');
+  } catch (err) {
+    console.warn(`Live API unavailable for ${territory}, falling back to JSON bundle:`, err);
+    return [];
+  }
+}
+
+/**
+ * Load fuel prices — tries live API first, then local JSON fallback.
  */
 export async function loadFuelData(): Promise<{
   fuelPrices: FuelPricePoint[];
