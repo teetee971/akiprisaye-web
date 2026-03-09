@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { HelmetProvider } from 'react-helmet-async';
 
 import './styles/glass.css';
+import './styles/innovations-3d.css';
 import './styles/mobile-fixes.css';
 import './styles/leaflet-overrides.css';
 import './styles/a11y.css';

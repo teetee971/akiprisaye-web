@@ -8,6 +8,8 @@ import '../styles/animations.css';
 import { safeLocalStorage } from '../utils/safeLocalStorage';
 import { getTerritoryAsset, getProductImage } from '../config/imageAssets';
 import PriceLiveTicker from '../components/home/PriceLiveTicker';
+import { useScrollReveal } from '../hooks/useScrollReveal';
+import FlipStatCard from '../components/ui/FlipStatCard';
 
 const HowItWorksSection = lazy(() => import('./home-v5/HowItWorksSection'));
 const ObservatorySection = lazy(() => import('./home-v5/ObservatorySection'));
@@ -117,6 +119,9 @@ export default function HomeV5() {
   const [exampleComparison] = useState<PriceComparison>(getComparisonOfDay());
   const statsRef = useRef<HTMLElement | null>(null);
 
+  // Scroll reveal — triggers `.revealed` on `.reveal` elements as they enter viewport
+  useScrollReveal();
+
   // Animated counter: count up to target when section comes into view
   useEffect(() => {
     if (statsAnimated) return;
@@ -225,6 +230,24 @@ export default function HomeV5() {
       </a>
 
       <section className="hero-v5">
+        {/* ── Aurora gradient orbs ── */}
+        <div className="aurora-bg" aria-hidden="true">
+          <div className="aurora-orb aurora-orb--1" />
+          <div className="aurora-orb aurora-orb--2" />
+          <div className="aurora-orb aurora-orb--3" />
+          <div className="aurora-orb aurora-orb--4" />
+        </div>
+
+        {/* ── Floating particles ── */}
+        <div className="particles-container" aria-hidden="true">
+          {Array.from({ length: 12 }, (_, i) => (
+            <div key={i} className={`particle particle--${i + 1}`} />
+          ))}
+        </div>
+
+        {/* ── Morphing blob ── */}
+        <div className="blob-decoration blob-decoration--hero" aria-hidden="true" />
+
         <div className="hero-inner">
           {/* Left column: headline + search */}
           <div className="hero-content fade-in">
@@ -239,7 +262,7 @@ export default function HomeV5() {
               Sans compte. Données locales. Historique conservé sur votre appareil.
             </p>
 
-            <form onSubmit={handleSearch} className="hero-search-xxl fade-in delay-200">
+            <form onSubmit={handleSearch} className="hero-search-xxl fade-in delay-200 border-scan">
               <input
                 type="text"
                 placeholder="Ex : riz 5kg, lait, eau…"
@@ -248,12 +271,18 @@ export default function HomeV5() {
                 className="hero-search-input-xxl"
                 aria-label="Rechercher un produit"
               />
-              <button type="submit" className="hero-search-btn-xxl" aria-label="Rechercher un produit">
+              <button type="submit" className="hero-search-btn-xxl btn-neon" aria-label="Rechercher un produit">
                 Rechercher un produit
               </button>
             </form>
             <p className="hero-explain fade-in delay-300">EAN, nom de produit ou scan → comparaison instantanée.</p>
-            <p className="hero-trust fade-in delay-300">🔒 Vos recherches restent sur votre appareil.</p>
+            <p className="hero-trust fade-in delay-300">
+              <span className="badge-live" aria-label="Données en direct">
+                <span className="badge-live-dot" aria-hidden="true" />
+                <span>Données en direct</span>
+              </span>
+              {' · '}🔒 Vos recherches restent sur votre appareil.
+            </p>
           </div>
 
           {/* Right column: phone mockup illustration */}
@@ -338,16 +367,46 @@ export default function HomeV5() {
           </div>
         </section>
 
-        <section className="benefits section-reveal">
+        {/* ── 3D Flip Stat Cards ── */}
+        <section className="reveal px-4 pb-4 pt-2 max-w-5xl mx-auto w-full" aria-label="Statistiques clés">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <FlipStatCard
+              value={`${stats.territories}`}
+              label="Territoires"
+              icon="🗺️"
+              backContent="Guadeloupe, Martinique, Guyane, La Réunion, Mayotte et plus encore."
+            />
+            <FlipStatCard
+              value={`${stats.products.toLocaleString()}+`}
+              label="Produits comparés"
+              icon="🛒"
+              backContent="Alimentaire, hygiène, entretien — relevés citoyens vérifiés."
+            />
+            <FlipStatCard
+              value={`${stats.scans.toLocaleString()}+`}
+              label="Scans effectués"
+              icon="📷"
+              backContent="Codes-barres et tickets OCR analysés par la communauté."
+            />
+            <FlipStatCard
+              value="~35%"
+              label="Surcoût moyen DOM"
+              icon="📊"
+              backContent="Par rapport à l'Hexagone — source observatoire citoyen mars 2026."
+            />
+          </div>
+        </section>
+
+        <section className="benefits section-reveal reveal">
           <h2 className="section-title slide-up">Ce que vous gagnez</h2>
-          <div className="benefits-grid">
+          <div className="benefits-grid reveal-stagger">
             {[
               "Comparez les prix AVANT d'acheter",
               "Économisez jusqu'à 30% sur vos courses",
               'Détectez les hausses anormales de prix',
               'Exportez les données pour vos analyses'
             ].map((benefit) => (
-              <div key={benefit} className="benefit-item slide-up">
+              <div key={benefit} className="benefit-item reveal slide-up">
                 <span className="benefit-check">✓</span>
                 <span className="benefit-text">{benefit}</span>
               </div>
