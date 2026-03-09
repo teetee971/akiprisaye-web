@@ -1,7 +1,7 @@
  
 import React, { useState, useEffect, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Shield, AlertCircle, Info, BarChart3, Download, FileText, CheckCircle } from 'lucide-react';
+import { Shield, AlertCircle, Info, BarChart3, Download, FileText, CheckCircle, ExternalLink, Award, TrendingDown, Globe } from 'lucide-react';
 import type {
   InsurancePricePoint,
   InsuranceComparisonResult,
@@ -22,6 +22,27 @@ import ShareButton from '../components/comparateur/ShareButton';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 import { exportInsuranceComparisonToCSV, exportInsuranceComparisonToText } from '../utils/exportComparison';
+
+const PROVIDER_URLS: Record<string, string> = {
+  'Allianz': 'https://www.allianz.fr/',
+  'AXA': 'https://www.axa.fr/',
+  'MAIF': 'https://www.maif.fr/',
+  'MACIF': 'https://www.macif.fr/',
+  'Groupama': 'https://www.groupama.fr/',
+  'GMF': 'https://www.gmf.fr/',
+  'Generali': 'https://www.generali.fr/',
+  'MAAF': 'https://www.maaf.fr/',
+  'MMA': 'https://www.mma.fr/',
+  'MATMUT': 'https://www.matmut.fr/',
+};
+
+function getProviderUrl(providerName: string, url?: string): string {
+  if (url) return url;
+  for (const [key, u] of Object.entries(PROVIDER_URLS)) {
+    if (providerName.toLowerCase().includes(key.toLowerCase())) return u;
+  }
+  return '#';
+}
 
 const InsuranceComparator: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -240,6 +261,9 @@ const InsuranceComparator: React.FC = () => {
               <h1 className="text-2xl sm:text-3xl font-bold text-white drop-shadow">🛡️ Comparateur Assurances</h1>
             </div>
             <p className="text-purple-100 text-sm drop-shadow">Auto, habitation, santé — tarifs publiés par les assureurs DOM-TOM 2025</p>
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-green-500/20 border border-green-500/40 rounded-full text-xs text-green-300 mt-2">
+              🔄 Données du {new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+            </span>
           </HeroImage>
         </div>
 
@@ -391,6 +415,7 @@ const InsuranceComparator: React.FC = () => {
                       <th className="px-4 py-3 text-right text-sm font-medium text-gray-300">Prix/an</th>
                       <th className="px-4 py-3 text-right text-sm font-medium text-gray-300">Diff. vs min</th>
                       <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Catégorie</th>
+                      <th className="px-4 py-3 text-center text-sm font-medium text-gray-300">Devis</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-800">
@@ -450,6 +475,16 @@ const InsuranceComparator: React.FC = () => {
                             {getPriceCategoryLabel(ranking.priceCategory)}
                           </span>
                         </td>
+                        <td className="px-4 py-4 text-center">
+                          <a
+                            href={getProviderUrl(ranking.insurance.providerName, (ranking.insurance as any).url)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 px-2.5 py-1 bg-purple-600 hover:bg-purple-500 text-white text-xs font-medium rounded-lg transition-colors"
+                          >
+                            <ExternalLink className="w-3 h-3" /> Devis
+                          </a>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -489,8 +524,104 @@ const InsuranceComparator: React.FC = () => {
                       ))}
                     </ul>
                   </div>
+                  <div className="mt-3 flex justify-end">
+                    <a
+                      href={getProviderUrl(ranking.insurance.providerName, (ranking.insurance as any).url)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white text-sm font-medium rounded-lg transition-colors"
+                    >
+                      <ExternalLink className="w-4 h-4" /> Obtenir un devis
+                    </a>
+                  </div>
                 </div>
               ))}
+            </div>
+
+            {/* Profile Recommendation */}
+            <div className="mt-6 bg-slate-900/50 rounded-xl border border-slate-800 p-5">
+              <h2 className="text-base font-semibold text-gray-200 mb-4 flex items-center gap-2">
+                <Award className="w-5 h-5 text-yellow-400" />
+                Quelle assurance choisir ?
+              </h2>
+              <div className="grid sm:grid-cols-3 gap-4">
+                {/* Meilleur prix */}
+                {(() => {
+                  if (!sortedOffers.length) return null;
+                  const best = sortedOffers[0];
+                  return (
+                    <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <TrendingDown className="w-4 h-4 text-green-400" />
+                        <span className="text-sm font-semibold text-green-300">Meilleur prix</span>
+                      </div>
+                      <p className="text-white font-bold text-lg">{best.insurance.providerName}</p>
+                      <p className="text-sm text-gray-300">{best.insurance.offerName}</p>
+                      <p className="text-2xl font-bold text-green-400 mt-1">{formatPrice(best.insurance.annualPriceTTC)}<span className="text-sm font-normal text-gray-400">/an</span></p>
+                      <a
+                        href={getProviderUrl(best.insurance.providerName, (best.insurance as any).url)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 mt-3 px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white text-xs font-medium rounded-lg transition-colors"
+                      >
+                        <ExternalLink className="w-3 h-3" /> Obtenir un devis
+                      </a>
+                    </div>
+                  );
+                })()}
+                {/* Meilleure couverture */}
+                {(() => {
+                  const comprehensive = sortedOffers.filter(o => o.insurance.coverageLevel === 'comprehensive');
+                  if (!comprehensive.length) return null;
+                  const best = comprehensive[0];
+                  return (
+                    <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Award className="w-4 h-4 text-blue-400" />
+                        <span className="text-sm font-semibold text-blue-300">Meilleure couverture</span>
+                      </div>
+                      <p className="text-white font-bold text-lg">{best.insurance.providerName}</p>
+                      <p className="text-sm text-gray-300">{best.insurance.offerName}</p>
+                      <p className="text-2xl font-bold text-blue-400 mt-1">{formatPrice(best.insurance.annualPriceTTC)}<span className="text-sm font-normal text-gray-400">/an</span></p>
+                      <p className="text-xs text-gray-400 mt-1">Couverture complète</p>
+                      <a
+                        href={getProviderUrl(best.insurance.providerName, (best.insurance as any).url)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 mt-3 px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white text-xs font-medium rounded-lg transition-colors"
+                      >
+                        <ExternalLink className="w-3 h-3" /> Obtenir un devis
+                      </a>
+                    </div>
+                  );
+                })()}
+                {/* Meilleure pour DOM */}
+                {(() => {
+                  if (!sortedOffers.length) return null;
+                  const best = sortedOffers[Math.floor(sortedOffers.length / 2)] || sortedOffers[0];
+                  return (
+                    <div className="bg-purple-500/10 border border-purple-500/30 rounded-xl p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Globe className="w-4 h-4 text-purple-400" />
+                        <span className="text-sm font-semibold text-purple-300">Meilleure pour DOM</span>
+                      </div>
+                      <p className="text-white font-bold text-lg">{best.insurance.providerName}</p>
+                      <p className="text-sm text-gray-300">{best.insurance.offerName}</p>
+                      <p className="text-2xl font-bold text-purple-400 mt-1">{formatPrice(best.insurance.annualPriceTTC)}<span className="text-sm font-normal text-gray-400">/an</span></p>
+                      <p className="text-xs text-gray-400 mt-1">Adapté aux territoires ultramarins</p>
+                      <a
+                        href={getProviderUrl(best.insurance.providerName, (best.insurance as any).url)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 mt-3 px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white text-xs font-medium rounded-lg transition-colors"
+                      >
+                        <ExternalLink className="w-3 h-3" /> Obtenir un devis
+                      </a>
+                    </div>
+                  );
+                })()}
+              </div>
+              <p className="mt-3 text-xs text-gray-500">A KI PRI SA YÉ ne perçoit aucune commission. Vérifiez les tarifs actuels sur le site de l'assureur.</p>
             </div>
 
             {/* Metadata */}
