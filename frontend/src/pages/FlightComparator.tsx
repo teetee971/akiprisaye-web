@@ -37,6 +37,8 @@ import ShareButton from '../components/comparateur/ShareButton';
 import { exportFlightComparisonToCSV, exportFlightComparisonToText } from '../utils/exportComparison';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
+import { buildBookingUrl } from '../utils/bookingLinks';
+import BookingLinkBadge from '../components/comparateur/BookingLinkBadge';
 
 /**
  * Fallback booking URLs per airline IATA code.
@@ -58,13 +60,17 @@ const getAirlineBookingUrl = (
   destCode: string,
   bookingUrlOverride?: string
 ): string => {
-  if (bookingUrlOverride) return bookingUrlOverride;
-  const base = AIRLINE_BOOKING_URLS[airlineCode];
-  if (!base) return '#';
-  if (airlineCode === 'AF') {
-    return `${base}?origin=${originCode}&destination=${destCode}&cabin=ECONOMY&adults=1`;
+  let base: string;
+  if (bookingUrlOverride) {
+    base = bookingUrlOverride;
+  } else {
+    const fallback = AIRLINE_BOOKING_URLS[airlineCode];
+    if (!fallback) return '#';
+    base = airlineCode === 'AF'
+      ? `${fallback}?origin=${originCode}&destination=${destCode}&cabin=ECONOMY&adults=1`
+      : fallback;
   }
-  return base;
+  return buildBookingUrl(base, 'comparateur-vols');
 };
 
 /** Value score: 0–100. Accounts for price position, included services, fees. */
@@ -388,10 +394,7 @@ const FlightComparator: React.FC = () => {
             <RefreshCw className="w-3 h-3" />
             Données du {lastRefreshed.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
           </span>
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-500/20 border border-blue-500/40 rounded-full text-xs text-blue-300 drop-shadow">
-            <ShieldCheck className="w-3 h-3" />
-            Observer, pas vendre · Aucune affiliation
-          </span>
+          <BookingLinkBadge />
         </div>
       </HeroImage>
     </div>
@@ -842,11 +845,13 @@ const FlightComparator: React.FC = () => {
                     </tbody>
                   </table>
                 </div>
-                <p className="text-xs text-gray-500 mt-3 flex items-center gap-1.5">
-                  <Info className="w-3.5 h-3.5 flex-shrink-0" />
-                  Prix observés à titre indicatif. Vérifiez le tarif exact en cliquant sur « Voir l'offre ».
-                  A KI PRI SA YÉ ne perçoit aucune commission.
-                </p>
+                <div className="mt-3 flex flex-wrap items-center gap-3">
+                  <p className="text-xs text-gray-500 flex items-center gap-1.5">
+                    <Info className="w-3.5 h-3.5 flex-shrink-0" />
+                    Prix observés à titre indicatif. Vérifiez le tarif exact en cliquant sur « Voir l'offre ».
+                  </p>
+                  <BookingLinkBadge showTooltip={true} size="sm" />
+                </div>
               </section>
 
               {/* ── Quelle compagnie choisir ? ────────────────────────────── */}
