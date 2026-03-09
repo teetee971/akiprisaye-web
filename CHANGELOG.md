@@ -3,6 +3,33 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 
 Le format s'inspire de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et ce projet adhère à la [sémantique de versionnage](https://semver.org/lang/fr/).
 
+## [3.1.5] - 2026-03-09
+
+### Added — Itinéraires manquants & ComparateursHub complet
+
+- **Itinéraires manquants ajoutés dans `App.tsx`** pour quatre pages qui n'avaient aucun
+  itinéraire React Router :
+  - `EnhancedComparator` → route `/comparateur-avance`
+  - `Compare` → route `/compare`
+  - `Comparateurs` → route `/comparateurs-prix`
+  - `AIDashboard` → route `/ai-dashboard`
+- **`ComparateursHub.tsx` enrichi** : ajout de liens vers TOUS les comparateurs,
+  y compris les comparateurs généraux précédemment absents :
+  - **Comparateur Avancé** (`/comparateur-avance`) — comparateur enrichi avec
+    géolocalisation et scores de fiabilité.
+  - **Comparaison Rapide** (`/compare`) — comparaison express par enseigne et distance.
+  - **Comparateurs par Territoire** (`/comparateurs-prix`) — vue comparative
+    multi-territoire par catégorie de produit.
+  - **Tableau de Bord IA** (`/ai-dashboard`) ajouté à la section IA & Analyses.
+- **Versions alignées** : tous les `package.json` (racine, frontend, backend, functions,
+  price-api) passent à `3.1.5` (3.1.3 → 3.1.4 → 3.1.5).
+
+### Fixed
+
+- Alignement des versions `package.json` : la version `3.1.4` publiée dans le CHANGELOG
+  n'était pas reflétée dans les manifestes npm — tous les paquets sont maintenant à
+  `3.1.5`.
+
 ## [3.1.4] - 2026-03-08
 
 ### Added — Checklist Production

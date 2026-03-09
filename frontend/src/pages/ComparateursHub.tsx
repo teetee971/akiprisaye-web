@@ -33,6 +33,9 @@ async function loadObsSnapshot(stem: string, month: string): Promise<ObsSnapshot
 const GENERAL_COMPARATEURS = [
   { path: '/comparateur',            icon: DollarSign,        label: 'Comparateur Prix',          color: 'text-lime-400',    bg: 'bg-lime-500/10 border-lime-500/30',     desc: 'Comparer les prix produits en temps réel' },
   { path: '/comparateur-citoyen',    icon: Users,             label: 'Comparateur Citoyen',       color: 'text-green-400',   bg: 'bg-green-500/10 border-green-500/30',   desc: 'Comparaison participative, données citoyennes' },
+  { path: '/comparateur-avance',     icon: SlidersHorizontal, label: 'Comparateur Avancé',        color: 'text-fuchsia-400', bg: 'bg-fuchsia-500/10 border-fuchsia-500/30', desc: 'Comparateur enrichi avec géolocalisation et fiabilité' },
+  { path: '/compare',                icon: Scale,             label: 'Comparaison Rapide',        color: 'text-sky-400',     bg: 'bg-sky-500/10 border-sky-500/30',       desc: 'Comparaison rapide par enseigne et distance' },
+  { path: '/comparateurs-prix',      icon: BarChart2,         label: 'Comparateurs par Territoire', color: 'text-teal-400', bg: 'bg-teal-500/10 border-teal-500/30',     desc: 'Vue comparative multi-territoire par catégorie' },
   { path: '/comparaison-enseignes',  icon: Search,            label: 'Comparaison Enseignes',     color: 'text-blue-400',    bg: 'bg-blue-500/10 border-blue-500/30',     desc: 'Comparer les prix entre supermarchés' },
   { path: '/comparaison-panier',     icon: ShoppingCart,      label: 'Comparaison Panier',        color: 'text-teal-400',    bg: 'bg-teal-500/10 border-teal-500/30',     desc: 'Simuler votre panier dans différentes enseignes' },
   { path: '/comparateur-territoires',icon: Globe,             label: 'Comparateur Territoires',   color: 'text-violet-400',  bg: 'bg-violet-500/10 border-violet-500/30', desc: 'Comparer les prix entre territoires DOM–COM' },
@@ -130,6 +133,7 @@ const IA_OUTILS = [
   { path: '/predictions',         icon: TrendingUp,label: 'Prédictions Prix',        color: 'text-pink-400',    bg: 'bg-pink-500/10 border-pink-500/30',       desc: 'Prévisions d\'évolution des prix à court terme' },
   { path: '/analyse-concurrence', icon: BarChart2, label: 'Analyse Concurrence',     color: 'text-cyan-400',    bg: 'bg-cyan-500/10 border-cyan-500/30',       desc: 'Analyse comparative des enseignes concurrentes' },
   { path: '/evaluation-cosmetique',icon: FlaskConical,label: 'Évaluation Cosmétiques',color:'text-fuchsia-400', bg: 'bg-fuchsia-500/10 border-fuchsia-500/30', desc: 'Analyse IA des ingrédients cosmétiques' },
+  { path: '/ai-dashboard',        icon: BarChart3, label: 'Tableau de Bord IA',      color: 'text-lime-400',    bg: 'bg-lime-500/10 border-lime-500/30',       desc: 'Tableau de bord IA avec prévisions et recommandations' },
 ];
 
 // ── Citoyenneté & Communauté ────────────────────────────────────────────────────

@@ -141,6 +141,12 @@ const BuildingMaterialsComparator = lazyPage(() => import('./pages/BuildingMater
 // Cosmetic evaluation
 const EvaluationCosmetique = lazyPage(() => import('./pages/EvaluationCosmetique'));
 
+// Additional comparators (previously unrouted)
+const EnhancedComparator = lazyPage(() => import('./pages/EnhancedComparator'));
+const Compare = lazyPage(() => import('./pages/Compare'));
+const ComparateursPage = lazyPage(() => import('./pages/Comparateurs'));
+const AIDashboard = lazyPage(() => import('./pages/AIDashboard'));
+
 // 404 Not Found
 const NotFound = lazyPage(() => import('./pages/NotFound'));
 
@@ -506,6 +512,12 @@ export default function App() {
 
                           {/* Évaluation cosmétique */}
                           <Route path="evaluation-cosmetique" element={<EvaluationCosmetique />} />
+
+                          {/* Comparateurs supplémentaires — pages précédemment sans itinéraire */}
+                          <Route path="comparateur-avance" element={<EnhancedComparator />} />
+                          <Route path="compare" element={<Compare />} />
+                          <Route path="comparateurs-prix" element={<ComparateursPage />} />
+                          <Route path="ai-dashboard" element={<AIDashboard />} />
 
                           {/* OCR history */}
                           <Route path="ocr/history" element={<OCRHistory />} />
