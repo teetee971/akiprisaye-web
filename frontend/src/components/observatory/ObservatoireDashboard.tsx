@@ -238,8 +238,9 @@ export default function ObservatoireDashboard() {
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Catégorie</label>
+            <label htmlFor="obs-category" className="block text-sm font-medium text-gray-300 mb-2">Catégorie</label>
             <select
+              id="obs-category"
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
               className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500"
@@ -252,8 +253,9 @@ export default function ObservatoireDashboard() {
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Territoire</label>
+            <label htmlFor="obs-territory" className="block text-sm font-medium text-gray-300 mb-2">Territoire</label>
             <select
+              id="obs-territory"
               value={selectedTerritory}
               onChange={(e) => setSelectedTerritory(e.target.value as any)}
               className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500"
@@ -268,8 +270,9 @@ export default function ObservatoireDashboard() {
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Période</label>
+            <label htmlFor="obs-period" className="block text-sm font-medium text-gray-300 mb-2">Période</label>
             <select
+              id="obs-period"
               onChange={(e) => {
                 const days = parseInt(e.target.value);
                 if (days > 0) {

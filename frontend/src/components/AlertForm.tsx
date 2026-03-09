@@ -51,10 +51,11 @@ export function AlertForm({ productEAN = '', productName = '', onSave, onCancel 
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* Product Selection */}
         <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+          <label htmlFor="alert-product-name" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
             Nom du produit <span className="text-red-500">*</span>
           </label>
           <input
+            id="alert-product-name"
             type="text"
             value={formData.productName}
             onChange={(e) => setFormData({ ...formData, productName: e.target.value })}
@@ -68,10 +69,11 @@ export function AlertForm({ productEAN = '', productName = '', onSave, onCancel 
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+          <label htmlFor="alert-product-ean" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
             Code-barres EAN (facultatif)
           </label>
           <input
+            id="alert-product-ean"
             type="text"
             value={formData.productEAN}
             onChange={(e) => setFormData({ ...formData, productEAN: e.target.value })}
@@ -85,10 +87,11 @@ export function AlertForm({ productEAN = '', productName = '', onSave, onCancel 
 
         {/* Alert Type */}
         <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+          <label htmlFor="alert-type" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
             Type d'alerte <span className="text-red-500">*</span>
           </label>
           <select
+            id="alert-type"
             value={formData.alertType}
             onChange={(e) => setFormData({ ...formData, alertType: e.target.value as AlertType, thresholdMode: 'percentage' })}
             required

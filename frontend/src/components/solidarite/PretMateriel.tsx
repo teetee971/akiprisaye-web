@@ -262,8 +262,8 @@ function DepotForm({ onDeposer, onCancel }: { onDeposer: (o: ObjetPret) => void;
     <form onSubmit={handleSubmit} className="space-y-4" noValidate>
       {/* Catégorie */}
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-1">Catégorie *</label>
-        <select value={category} onChange={(e) => setCategory(e.target.value as PretCategory)}
+        <label htmlFor="pret-category" className="block text-sm font-medium text-gray-300 mb-1">Catégorie *</label>
+        <select id="pret-category" value={category} onChange={(e) => setCategory(e.target.value as PretCategory)}
           className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500">
           {CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.emoji} {c.label}</option>)}
         </select>
@@ -272,8 +272,8 @@ function DepotForm({ onDeposer, onCancel }: { onDeposer: (o: ObjetPret) => void;
 
       {/* Nom */}
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-1">Nom de l'objet *</label>
-        <input type="text" value={nom} onChange={(e) => setNom(e.target.value)} maxLength={80}
+        <label htmlFor="pret-nom" className="block text-sm font-medium text-gray-300 mb-1">Nom de l'objet *</label>
+        <input id="pret-nom" type="text" value={nom} onChange={(e) => setNom(e.target.value)} maxLength={80}
           placeholder="Ex: Tondeuse électrique, Robot pâtissier, Vélo enfant…"
           className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500" />
       </div>
@@ -290,15 +290,15 @@ function DepotForm({ onDeposer, onCancel }: { onDeposer: (o: ObjetPret) => void;
       {/* État + Durée */}
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1">État de l'objet *</label>
-          <select value={etat} onChange={(e) => setEtat(e.target.value as EtatObjet)}
+          <label htmlFor="pret-etat" className="block text-sm font-medium text-gray-300 mb-1">État de l'objet *</label>
+          <select id="pret-etat" value={etat} onChange={(e) => setEtat(e.target.value as EtatObjet)}
             className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500">
             {ETATS.map((e) => <option key={e.id} value={e.id}>{e.label}</option>)}
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1">Durée de prêt *</label>
-          <select value={dureePret} onChange={(e) => setDureePret(e.target.value as DureePret)}
+          <label htmlFor="pret-duree" className="block text-sm font-medium text-gray-300 mb-1">Durée de prêt *</label>
+          <select id="pret-duree" value={dureePret} onChange={(e) => setDureePret(e.target.value as DureePret)}
             className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500">
             {DUREES.map((d) => <option key={d.id} value={d.id}>{d.label}</option>)}
           </select>
@@ -307,8 +307,8 @@ function DepotForm({ onDeposer, onCancel }: { onDeposer: (o: ObjetPret) => void;
 
       {/* Conditions */}
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-1">Conditions de prêt</label>
-        <input type="text" value={conditions} onChange={(e) => setConditions(e.target.value)} maxLength={120}
+        <label htmlFor="pret-conditions" className="block text-sm font-medium text-gray-300 mb-1">Conditions de prêt</label>
+        <input id="pret-conditions" type="text" value={conditions} onChange={(e) => setConditions(e.target.value)} maxLength={120}
           placeholder="Ex: Restituer nettoyé, Caution 20€, Utilisation sur place…"
           className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500" />
       </div>
@@ -316,15 +316,15 @@ function DepotForm({ onDeposer, onCancel }: { onDeposer: (o: ObjetPret) => void;
       {/* Territoire + Quartier */}
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1">Territoire *</label>
-          <select value={territoire} onChange={(e) => setTerritoire(e.target.value)}
+          <label htmlFor="pret-territoire" className="block text-sm font-medium text-gray-300 mb-1">Territoire *</label>
+          <select id="pret-territoire" value={territoire} onChange={(e) => setTerritoire(e.target.value)}
             className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500">
             {TERRITOIRES.map((t) => <option key={t} value={t}>{t}</option>)}
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1">Quartier / Ville</label>
-          <input type="text" value={quartier} onChange={(e) => setQuartier(e.target.value)} maxLength={60}
+          <label htmlFor="pret-quartier" className="block text-sm font-medium text-gray-300 mb-1">Quartier / Ville</label>
+          <input id="pret-quartier" type="text" value={quartier} onChange={(e) => setQuartier(e.target.value)} maxLength={60}
             placeholder="Ex: Jarry, Lamentin…"
             className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500" />
         </div>

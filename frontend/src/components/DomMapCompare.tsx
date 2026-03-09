@@ -62,6 +62,7 @@ export default function DomMapCompare() {
       {/* Sélecteurs */}
       <div className="grid grid-cols-2 gap-2 text-sm">
         <select
+          aria-label="Période avant"
           value={before}
           onChange={(e) => setBefore(e.target.value)}
           className="bg-black/40 border border-white/10 rounded px-2 py-1"
@@ -74,6 +75,7 @@ export default function DomMapCompare() {
         </select>
 
         <select
+          aria-label="Période après"
           value={after}
           onChange={(e) => setAfter(e.target.value)}
           className="bg-black/40 border border-white/10 rounded px-2 py-1"

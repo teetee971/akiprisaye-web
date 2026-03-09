@@ -234,8 +234,8 @@ function PublishForm({ onPublish, onCancel }: { onPublish: (a: AideAnnonce) => v
 
       {/* Catégorie */}
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-1">Catégorie *</label>
-        <select value={category} onChange={(e) => setCategory(e.target.value as AideCategory)}
+        <label htmlFor="aide-category" className="block text-sm font-medium text-gray-300 mb-1">Catégorie *</label>
+        <select id="aide-category" value={category} onChange={(e) => setCategory(e.target.value as AideCategory)}
           className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-orange-500">
           {CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.emoji} {c.label}</option>)}
         </select>
@@ -243,8 +243,8 @@ function PublishForm({ onPublish, onCancel }: { onPublish: (a: AideAnnonce) => v
 
       {/* Titre */}
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-1">Titre *</label>
-        <input type="text" value={titre} onChange={(e) => setTitre(e.target.value)} maxLength={100}
+        <label htmlFor="aide-titre" className="block text-sm font-medium text-gray-300 mb-1">Titre *</label>
+        <input id="aide-titre" type="text" value={titre} onChange={(e) => setTitre(e.target.value)} maxLength={100}
           placeholder={type === 'offre' ? "Ex: Je propose mon aide pour le jardinage" : "Ex: Besoin d'aide pour peindre mon salon"}
           className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500" />
       </div>
@@ -260,8 +260,8 @@ function PublishForm({ onPublish, onCancel }: { onPublish: (a: AideAnnonce) => v
 
       {/* Disponibilité */}
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-1">Disponibilité *</label>
-        <input type="text" value={disponibilite} onChange={(e) => setDisponibilite(e.target.value)} maxLength={60}
+        <label htmlFor="aide-disponibilite" className="block text-sm font-medium text-gray-300 mb-1">Disponibilité *</label>
+        <input id="aide-disponibilite" type="text" value={disponibilite} onChange={(e) => setDisponibilite(e.target.value)} maxLength={60}
           placeholder="Ex: week-ends, lundi après-midi, cette semaine…"
           className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500" />
       </div>
@@ -269,15 +269,15 @@ function PublishForm({ onPublish, onCancel }: { onPublish: (a: AideAnnonce) => v
       {/* Territoire + Quartier */}
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1">Territoire *</label>
-          <select value={territoire} onChange={(e) => setTerritoire(e.target.value)}
+          <label htmlFor="aide-territoire" className="block text-sm font-medium text-gray-300 mb-1">Territoire *</label>
+          <select id="aide-territoire" value={territoire} onChange={(e) => setTerritoire(e.target.value)}
             className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-orange-500">
             {TERRITOIRES.map((t) => <option key={t} value={t}>{t}</option>)}
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1">Quartier / Ville</label>
-          <input type="text" value={quartier} onChange={(e) => setQuartier(e.target.value)} maxLength={60}
+          <label htmlFor="aide-quartier" className="block text-sm font-medium text-gray-300 mb-1">Quartier / Ville</label>
+          <input id="aide-quartier" type="text" value={quartier} onChange={(e) => setQuartier(e.target.value)} maxLength={60}
             placeholder="Ex: Jarry, Lamentin…"
             className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500" />
         </div>
