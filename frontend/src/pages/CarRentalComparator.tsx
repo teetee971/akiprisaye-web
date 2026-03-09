@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { Car, AlertCircle, Download, FileText, MapPin, BarChart3, Info } from 'lucide-react';
 import type { CarRentalPricePoint, CarRentalComparisonResult, CarCategory } from '../types/carRental';
 import type { Territory } from '../types/priceAlerts';
@@ -7,6 +8,8 @@ import PriceChart from '../components/comparateur/LazyPriceChart';
 import ComparisonSummary from '../components/comparateur/ComparisonSummary';
 import LoadingSkeleton from '../components/comparateur/LoadingSkeleton';
 import ShareButton from '../components/comparateur/ShareButton';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 const TERRITORIES: { code: Territory; name: string }[] = [
   { code: 'GP', name: 'Guadeloupe' },
@@ -129,16 +132,25 @@ const CarRentalComparator: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
+      <Helmet>
+        <title>Comparateur Location Voiture DOM-TOM — A KI PRI SA YÉ</title>
+        <meta name="description" content="Comparez les prix de location de voiture dans les DOM-TOM : agences internationales et locales. Données observatoire citoyens." />
+      </Helmet>
       <div className="max-w-7xl mx-auto px-4 pb-12 pt-6">
-        {/* Header */}
-        <div className="flex items-center gap-3 mb-6">
-          <Car className="w-6 h-6 text-emerald-400" />
-          <div>
-            <h1 className="text-2xl font-bold">Comparateur Location Voiture</h1>
-            <p className="text-sm text-gray-400">
-              Agences internationales &amp; locales · Données observatoire citoyens
-            </p>
-          </div>
+        {/* Hero Banner */}
+        <div className="mb-6">
+          <HeroImage
+            src={PAGE_HERO_IMAGES.comparateurLocationVoiture}
+            alt="Comparateur location voiture DOM-TOM — agences locales et internationales"
+            gradient="from-emerald-900 to-slate-900"
+            height="h-36 sm:h-48"
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <Car className="w-7 h-7 text-emerald-300 drop-shadow" />
+              <h1 className="text-2xl sm:text-3xl font-bold text-white drop-shadow">🚗 Comparateur Location Voiture</h1>
+            </div>
+            <p className="text-emerald-100 text-sm drop-shadow">Agences internationales &amp; locales · Données observatoire citoyens</p>
+          </HeroImage>
         </div>
 
         {/* Disclaimer */}

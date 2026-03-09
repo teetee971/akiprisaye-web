@@ -1,5 +1,6 @@
  
 import React, { useState, useEffect, useMemo } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { Shield, AlertCircle, Info, BarChart3, Download, FileText, CheckCircle } from 'lucide-react';
 import type {
   InsurancePricePoint,
@@ -18,6 +19,8 @@ import ComparisonSummary from '../components/comparateur/ComparisonSummary';
 import LoadingSkeleton from '../components/comparateur/LoadingSkeleton';
 import SortControl from '../components/comparateur/SortControl';
 import ShareButton from '../components/comparateur/ShareButton';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 import { exportInsuranceComparisonToCSV, exportInsuranceComparisonToText } from '../utils/exportComparison';
 
 const InsuranceComparator: React.FC = () => {
@@ -219,38 +222,35 @@ const InsuranceComparator: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-950 text-white p-4 md:p-8">
+      <Helmet>
+        <title>Comparateur Assurances DOM-TOM — A KI PRI SA YÉ</title>
+        <meta name="description" content="Comparez les assurances auto, habitation et santé dans les DOM-TOM. Données des assureurs officiels." />
+      </Helmet>
       {/* Header */}
       <div className="max-w-7xl mx-auto">
-        <div className="flex items-center gap-4 mb-6">
-          <div className="p-3 bg-purple-500/20 rounded-xl">
-            <Shield className="w-8 h-8 text-purple-400" />
-          </div>
-          <div>
-            <h1 className="text-3xl md:text-4xl font-bold">Comparateur Assurances</h1>
-            <p className="text-gray-400 mt-1">Comparaison d'assurances dans les DOM-TOM</p>
-          </div>
+        <div className="mb-6">
+          <HeroImage
+            src={PAGE_HERO_IMAGES.comparateurAssurances}
+            alt="Comparateur assurances DOM-TOM — protection et contrats"
+            gradient="from-purple-900 to-slate-900"
+            height="h-36 sm:h-48"
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <Shield className="w-8 h-8 text-purple-300 drop-shadow" />
+              <h1 className="text-2xl sm:text-3xl font-bold text-white drop-shadow">🛡️ Comparateur Assurances</h1>
+            </div>
+            <p className="text-purple-100 text-sm drop-shadow">Auto, habitation, santé — tarifs publiés par les assureurs DOM-TOM 2025</p>
+          </HeroImage>
         </div>
 
         {/* Info Banner */}
         <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4 mb-6 flex items-start gap-3">
           <Info className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
           <div className="text-sm">
-            <p className="text-blue-300 font-medium mb-1">Observer, pas vendre - Aucun conseil personnalisé</p>
+            <p className="text-blue-300 font-medium mb-1">Observer, pas vendre — Aucun conseil personnalisé</p>
             <p className="text-gray-300">
-              Architecture prête pour collecte de données réelles. Aucune affiliation commerciale. 
-              Comparaison informative uniquement.
-            </p>
-          </div>
-        </div>
-
-        {/* Warning Banner */}
-        <div className="bg-orange-500/10 border border-orange-500/30 rounded-xl p-4 mb-6 flex items-start gap-3">
-          <AlertCircle className="w-5 h-5 text-orange-400 flex-shrink-0 mt-0.5" />
-          <div className="text-sm">
-            <p className="text-orange-300 font-medium mb-1">Données en cours de collecte</p>
-            <p className="text-gray-300">
-              Les données affichées sont des exemples. Le système est prêt à recevoir des contributions 
-              citoyennes et données officielles des assureurs.
+              Fourchettes tarifaires indicatives basées sur les tarifs officiels publiés par les assureurs.
+              Les prix réels varient selon votre profil. Toujours vérifier directement auprès de l'assureur.
             </p>
           </div>
         </div>

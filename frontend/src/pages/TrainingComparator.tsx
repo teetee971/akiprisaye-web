@@ -1,5 +1,6 @@
  
 import React, { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { 
   GraduationCap, 
   Briefcase, 
@@ -40,6 +41,8 @@ import {
 import {
   simulateFunding
 } from '../services/fundingService';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 const TrainingComparator: React.FC = () => {
   const [territory, setTerritory] = useState<Territory>('MQ');
@@ -137,47 +140,58 @@ const TrainingComparator: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900">
+      <Helmet>
+        <title>Comparateur Formations DOM-TOM — A KI PRI SA YÉ</title>
+        <meta name="description" content="Comparez les formations professionnelles et certifiantes dans les DOM-TOM. Trouvez la formation qui mène à l'emploi." />
+      </Helmet>
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-indigo-900 via-purple-800 to-indigo-900 text-white py-16">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center gap-4 mb-6">
-            <GraduationCap className="w-16 h-16" />
-            <div>
-              <h1 className="text-5xl font-bold mb-2">
-                🎓 Formations Professionnelles DOM-TOM
-              </h1>
-              <p className="text-xl text-indigo-100">
-                Trouvez la formation qui mène à l'emploi
-              </p>
-            </div>
+      <div className="max-w-7xl mx-auto px-4 pt-6 pb-2">
+        <HeroImage
+          src={PAGE_HERO_IMAGES.comparateurFormations}
+          alt="Comparateur formations professionnelles DOM-TOM"
+          gradient="from-indigo-900 to-purple-900"
+          height="h-40 sm:h-56"
+        >
+          <div className="flex items-center gap-3 mb-2">
+            <GraduationCap className="w-8 h-8 text-indigo-200 drop-shadow" />
+            <h1 className="text-2xl sm:text-4xl font-bold text-white drop-shadow">
+              🎓 Formations Professionnelles DOM-TOM
+            </h1>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-8">
+          <p className="text-indigo-100 text-sm sm:text-base drop-shadow">
+            Trouvez la formation qui mène à l'emploi — catalogue certifié
+          </p>
+        </HeroImage>
+      </div>
+      {/* Stats */}
+      <div className="bg-indigo-900/60 border-b border-indigo-700/50">
+        <div className="container mx-auto px-4 py-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="bg-white/10 backdrop-blur rounded-lg p-4">
-              <div className="text-3xl font-bold">{trainings.length}</div>
+              <div className="text-3xl font-bold text-white">{trainings.length}</div>
               <div className="text-sm text-indigo-200">Formations disponibles</div>
             </div>
             <div className="bg-white/10 backdrop-blur rounded-lg p-4">
-              <div className="text-3xl font-bold">{jobsInDemand.length}</div>
+              <div className="text-3xl font-bold text-white">{jobsInDemand.length}</div>
               <div className="text-sm text-indigo-200">Métiers qui recrutent</div>
             </div>
             <div className="bg-white/10 backdrop-blur rounded-lg p-4">
-              <div className="text-3xl font-bold">
+              <div className="text-3xl font-bold text-white">
                 {trainings.filter(t => t.pricing.cpfEligible).length}
               </div>
               <div className="text-sm text-indigo-200">Éligibles CPF</div>
             </div>
             <div className="bg-white/10 backdrop-blur rounded-lg p-4">
-              <div className="text-3xl font-bold">
-                {Math.round(trainings.reduce((sum, t) => sum + (t.outcomes.insertionRate6M || 0), 0) / trainings.length)}%
+              <div className="text-3xl font-bold text-white">
+                {trainings.length > 0 ? Math.round(trainings.reduce((sum, t) => sum + (t.outcomes.insertionRate6M || 0), 0) / trainings.length) : 0}%
               </div>
               <div className="text-sm text-indigo-200">Taux insertion moyen</div>
             </div>
           </div>
 
           {/* Territory Selector */}
-          <div className="mt-8">
-            <label className="block text-sm font-medium mb-2">Territoire</label>
+          <div className="mt-4">
+            <label className="block text-sm font-medium text-white mb-2">Territoire</label>
             <select
               value={territory}
               onChange={(e) => setTerritory(e.target.value as Territory)}

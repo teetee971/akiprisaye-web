@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { Ship, AlertCircle, Info, Car, BarChart3, Download, FileText } from 'lucide-react';
 import type {
   BoatPricePoint,
@@ -15,6 +16,8 @@ import LoadingSkeleton from '../components/comparateur/LoadingSkeleton';
 import SortControl from '../components/comparateur/SortControl';
 import ShareButton from '../components/comparateur/ShareButton';
 import { exportBoatComparisonToCSV, exportBoatComparisonToText } from '../utils/exportComparison';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 const BoatComparator: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -224,19 +227,38 @@ const BoatComparator: React.FC = () => {
     setSortDirection(direction);
   };
 
+  const heroSection = (
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
+      <HeroImage
+        src={PAGE_HERO_IMAGES.comparateurBateaux}
+        alt="Comparateur bateaux ferries inter-îles Antilles"
+        gradient="from-cyan-900 to-slate-900"
+        height="h-40 sm:h-56"
+      >
+        <div className="flex items-center gap-3 mb-2">
+          <Ship className="w-8 h-8 text-cyan-300 drop-shadow" />
+          <h1 className="text-2xl sm:text-3xl font-bold text-white drop-shadow">
+            ⛵ Comparateur Bateaux & Ferries
+          </h1>
+        </div>
+        <p className="text-cyan-100 text-sm sm:text-base drop-shadow">
+          Traversées inter-îles · Transport véhicules · Passagers réguliers
+        </p>
+        <p className="text-cyan-200/80 text-xs mt-1 drop-shadow">
+          Observer, pas vendre · Données observatoire citoyennes
+        </p>
+      </HeroImage>
+    </div>
+  );
+
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-950">
-        <header className="bg-gradient-to-r from-slate-900 to-slate-800 border-b border-slate-700">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <div className="flex items-center gap-3 mb-3">
-              <Ship className="w-8 h-8 text-blue-400" />
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-100">
-                Comparateur de prix des bateaux/ferries
-              </h1>
-            </div>
-          </div>
-        </header>
+        <Helmet>
+          <title>Comparateur Bateaux / Ferries — A KI PRI SA YÉ</title>
+          <meta name="description" content="Comparez les prix des traversées inter-îles en Antilles, transport de véhicules et passagers." />
+        </Helmet>
+        {heroSection}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="space-y-6">
             <div className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5">
@@ -268,24 +290,11 @@ const BoatComparator: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-950">
-      {/* Header */}
-      <header className="bg-gradient-to-r from-slate-900 to-slate-800 border-b border-slate-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center gap-3 mb-3">
-            <Ship className="w-8 h-8 text-blue-400" />
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-100">
-              Comparateur de prix des bateaux/ferries
-            </h1>
-          </div>
-          <p className="text-sm sm:text-base text-gray-300 leading-relaxed">
-            🥇 PRIORITÉ 1 — Inter-îles • Transport véhicules • Passagers réguliers
-          </p>
-          <p className="text-xs text-gray-400 mt-2">
-            Observer, pas vendre : Transparence sur les écarts, pas d'affiliation opaque
-          </p>
-        </div>
-      </header>
-
+      <Helmet>
+        <title>Comparateur Bateaux / Ferries — A KI PRI SA YÉ</title>
+        <meta name="description" content="Comparez les prix des traversées inter-îles en Antilles, transport de véhicules et passagers. Données observatoire." />
+      </Helmet>
+      {heroSection}
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="space-y-6">

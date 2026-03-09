@@ -49,6 +49,8 @@ import {
   exportFreightComparisonToCSV,
   exportFreightComparisonToText,
 } from '../utils/exportComparison';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 const FreightComparator: React.FC = () => {
   // State
@@ -203,27 +205,28 @@ const FreightComparator: React.FC = () => {
       </Helmet>
 
       <div className="min-h-screen bg-slate-950">
-        {/* Header */}
-        <header className="bg-gradient-to-r from-blue-900 to-indigo-800 border-b border-blue-700">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <div className="flex items-center gap-3 mb-3">
-              <Package className="w-8 h-8 text-blue-200" />
-              <h1 className="text-2xl sm:text-3xl font-bold text-white">
+        {/* Hero Banner */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
+          <HeroImage
+            src={PAGE_HERO_IMAGES.comparateurFret}
+            alt="Comparateur fret maritime colis — port et conteneurs"
+            gradient="from-amber-900 to-slate-900"
+            height="h-40 sm:h-56"
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <Package className="w-8 h-8 text-amber-300 drop-shadow" />
+              <h1 className="text-2xl sm:text-3xl font-bold text-white drop-shadow">
                 📦 Comparateur Fret Maritime & Colis
               </h1>
             </div>
-            <p className="text-sm sm:text-base text-blue-100 leading-relaxed">
+            <p className="text-amber-100 text-sm sm:text-base drop-shadow">
               Transparence totale sur les coûts d'envoi vers les Outre-mer
             </p>
-            <p className="text-xs text-blue-200 mt-2 flex items-center gap-2">
-              <Info className="w-4 h-4" />
-              <span>
-                Problématique #1 vie chère • Fret maritime = 80% des importations DOM-TOM • Sources:
-                Rapports Sénat 2024-2025
-              </span>
+            <p className="text-amber-200/80 text-xs mt-1 drop-shadow">
+              Fret maritime = 80% des importations DOM-TOM · Sources : Rapports Sénat 2024-2025
             </p>
-          </div>
-        </header>
+          </HeroImage>
+        </div>
 
         {/* Main Content */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">

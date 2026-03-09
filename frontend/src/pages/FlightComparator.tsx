@@ -1,5 +1,5 @@
- 
 import React, { useState, useEffect, useMemo } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { Plane, AlertCircle, Info, Clock, BarChart3, Download, FileText } from 'lucide-react';
 import type {
   FlightPricePoint,
@@ -17,6 +17,8 @@ import LoadingSkeleton from '../components/comparateur/LoadingSkeleton';
 import SortControl from '../components/comparateur/SortControl';
 import ShareButton from '../components/comparateur/ShareButton';
 import { exportFlightComparisonToCSV, exportFlightComparisonToText } from '../utils/exportComparison';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 const FlightComparator: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -250,19 +252,38 @@ const FlightComparator: React.FC = () => {
     setSortDirection(direction);
   };
 
+  const heroSection = (
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
+      <HeroImage
+        src={PAGE_HERO_IMAGES.comparateurVols}
+        alt="Comparateur vols DOM-Métropole — avion en vol"
+        gradient="from-sky-900 to-slate-900"
+        height="h-40 sm:h-56"
+      >
+        <div className="flex items-center gap-3 mb-2">
+          <Plane className="w-8 h-8 text-sky-300 drop-shadow" />
+          <h1 className="text-2xl sm:text-3xl font-bold text-white drop-shadow">
+            ✈️ Comparateur de prix des vols
+          </h1>
+        </div>
+        <p className="text-sky-100 text-sm sm:text-base drop-shadow">
+          DOM ↔ Métropole ↔ Inter-îles — données observatoire
+        </p>
+        <p className="text-sky-200/80 text-xs mt-1 drop-shadow">
+          Observer, pas vendre · Transparence sur les écarts, sans affiliation opaque
+        </p>
+      </HeroImage>
+    </div>
+  );
+
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-950">
-        <header className="bg-gradient-to-r from-slate-900 to-slate-800 border-b border-slate-700">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <div className="flex items-center gap-3 mb-3">
-              <Plane className="w-8 h-8 text-blue-400" />
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-100">
-                Comparateur de prix des vols
-              </h1>
-            </div>
-          </div>
-        </header>
+        <Helmet>
+          <title>Comparateur Vols DOM-Métropole — A KI PRI SA YÉ</title>
+          <meta name="description" content="Comparez les prix des billets d'avion entre les DOM, la Métropole et les liaisons inter-îles." />
+        </Helmet>
+        {heroSection}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="space-y-6">
             <div className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5">
@@ -293,24 +314,11 @@ const FlightComparator: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-950">
-      {/* Header */}
-      <header className="bg-gradient-to-r from-slate-900 to-slate-800 border-b border-slate-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center gap-3 mb-3">
-            <Plane className="w-8 h-8 text-blue-400" />
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-100">
-              Comparateur de prix des vols
-            </h1>
-          </div>
-          <p className="text-sm sm:text-base text-gray-300 leading-relaxed">
-            🥇 PRIORITÉ 1 — DOM ↔ Métropole ↔ Régional
-          </p>
-          <p className="text-xs text-gray-400 mt-2">
-            Observer, pas vendre : Transparence sur les écarts, pas d'affiliation opaque
-          </p>
-        </div>
-      </header>
-
+      <Helmet>
+        <title>Comparateur Vols DOM-Métropole — A KI PRI SA YÉ</title>
+        <meta name="description" content="Comparez les prix des billets d'avion entre les DOM, la Métropole et les liaisons inter-îles. Données observatoire citoyennes." />
+      </Helmet>
+      {heroSection}
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="space-y-6">

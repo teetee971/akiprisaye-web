@@ -1,5 +1,6 @@
  
 import React, { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { Shield, Plane, Ship, Wifi, Smartphone, Droplet, Zap, TrendingUp } from 'lucide-react';
 import type { TerritoryCode, ServiceCategory } from '../types/service';
 import {
@@ -11,6 +12,8 @@ import {
   searchElectricity,
   getServiceStatistics,
 } from '../services/serviceComparisonService';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 type ServiceType =
   | 'flights'
@@ -348,16 +351,29 @@ const ServiceComparator: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-8">
+      <Helmet>
+        <title>Comparateur Télécoms & Services — A KI PRI SA YÉ</title>
+        <meta name="description" content="Comparez les abonnements internet, mobile, eau, électricité et tarifs transport dans les DOM-TOM." />
+      </Helmet>
       <div className="max-w-7xl mx-auto px-4">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Comparateur de Services
-          </h1>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            Comparez les prix des vols, bateaux, abonnements internet, mobile, eau et électricité
-            à travers les territoires d'outre-mer
-          </p>
+        {/* Hero Banner */}
+        <div className="mb-8">
+          <HeroImage
+            src={PAGE_HERO_IMAGES.comparateurServices}
+            alt="Comparateur télécoms et services DOM-TOM — internet, mobile, eau, électricité"
+            gradient="from-indigo-900 to-blue-900"
+            height="h-36 sm:h-48"
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <Wifi className="w-8 h-8 text-indigo-200 drop-shadow" />
+              <h1 className="text-2xl sm:text-4xl font-bold text-white drop-shadow">
+                📡 Comparateur Télécoms & Services
+              </h1>
+            </div>
+            <p className="text-indigo-100 text-sm sm:text-base drop-shadow">
+              Internet, mobile, eau, électricité — tarifs observés dans les DOM-TOM
+            </p>
+          </HeroImage>
         </div>
 
         {/* Statistics */}

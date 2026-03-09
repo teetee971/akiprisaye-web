@@ -325,6 +325,25 @@ export const PAGE_HERO_IMAGES = {
   tiPanie: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Assistant IA */
   assistantIA: 'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  // ── Specialized comparators ──────────────────────────────────────────────
+  /** Comparateur Vols — airplane taking off over Caribbean sky */
+  comparateurVols: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  /** Comparateur Bateaux — ferry crossing between islands */
+  comparateurBateaux: 'https://images.unsplash.com/photo-1570710891163-6d3b5c47248b?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  /** Comparateur Fret — shipping containers at port */
+  comparateurFret: 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  /** Comparateur Carburants — fuel station, pumps */
+  comparateurCarburants: 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  /** Comparateur Assurances — insurance shield / contract */
+  comparateurAssurances: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  /** Comparateur Formations — classroom / training session */
+  comparateurFormations: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  /** Comparateur Services — telecom / wifi / internet */
+  comparateurServices: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  /** Comparateur Location Voiture — rental car keys */
+  comparateurLocationVoiture: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  /** Comparateur Matériaux BTP — construction site */
+  comparateurMateriauxBTP: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fm=webp&fit=crop&w=1600&q=80',
 };
 
 /**

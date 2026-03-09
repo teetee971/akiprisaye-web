@@ -2,6 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { HardHat, AlertCircle, Info, TrendingUp, Download, Filter, BarChart3, Search } from 'lucide-react';
 import PriceChart from '../components/comparateur/LazyPriceChart';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 interface MaterialPrice {
   territory: string;
@@ -141,15 +143,22 @@ const BuildingMaterialsComparator: React.FC = () => {
       <div className="min-h-screen bg-slate-950 text-white">
         <div className="max-w-7xl mx-auto px-4 pb-12 pt-6">
 
-          {/* Header */}
-          <div className="flex items-start gap-3 mb-6">
-            <HardHat className="w-7 h-7 text-orange-400 mt-1 flex-shrink-0" />
-            <div>
-              <h1 className="text-2xl md:text-3xl font-bold">Comparateur Matériaux de Construction</h1>
-              <p className="text-sm text-gray-400 mt-1">
-                Ciment, fer à béton, tôles, PVC, câbles… — Prix professionnels en Outre-mer vs Hexagone
+          {/* Hero Banner */}
+          <div className="mb-6">
+            <HeroImage
+              src={PAGE_HERO_IMAGES.comparateurMateriauxBTP}
+              alt="Comparateur matériaux construction DOM-TOM — chantier et béton"
+              gradient="from-orange-900 to-slate-900"
+              height="h-36 sm:h-48"
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <HardHat className="w-7 h-7 text-orange-300 drop-shadow" />
+                <h1 className="text-2xl sm:text-3xl font-bold text-white drop-shadow">🏗️ Comparateur Matériaux BTP</h1>
+              </div>
+              <p className="text-orange-100 text-sm drop-shadow">
+                Ciment, fer à béton, tôles, PVC — Prix en Outre-mer vs Hexagone
               </p>
-            </div>
+            </HeroImage>
           </div>
 
           {/* Source notice */}

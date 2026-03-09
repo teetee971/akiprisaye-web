@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { BarChart3, FileText, MapPin, AlertCircle } from 'lucide-react';
+import { Helmet } from 'react-helmet-async';
+import { BarChart3, FileText, MapPin, AlertCircle, Droplet } from 'lucide-react';
 import type {
   FuelPricePoint,
   FuelType,
@@ -16,6 +17,8 @@ import LoadingSkeleton from '../components/comparateur/LoadingSkeleton';
 import SortControl from '../components/comparateur/SortControl';
 import ShareButton from '../components/comparateur/ShareButton';
 import { exportFuelComparisonToText } from '../utils/exportComparison';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 const TERRITORIES: { code: Territory; name: string }[] = [
   { code: 'GP', name: 'Guadeloupe' },
@@ -119,13 +122,25 @@ const FuelComparator: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
+      <Helmet>
+        <title>Comparateur Carburants DOM-TOM — A KI PRI SA YÉ</title>
+        <meta name="description" content="Prix des carburants observés aux stations DOM-TOM : SP95, SP98, Diesel, GPL. Données officielles prix-carburants.gouv.fr." />
+      </Helmet>
       <div className="max-w-7xl mx-auto px-4 pb-12 pt-6">
-        <div className="flex items-center gap-3 mb-6">
-          <MapPin className="w-6 h-6 text-yellow-400" />
-          <div>
-            <h1 className="text-2xl font-bold">Comparateur Carburants</h1>
-            <p className="text-sm text-gray-400">Prix observés aux stations — données officielles (prix-carburants.gouv.fr)</p>
-          </div>
+        {/* Hero Banner */}
+        <div className="mb-6">
+          <HeroImage
+            src={PAGE_HERO_IMAGES.comparateurCarburants}
+            alt="Comparateur carburants DOM-TOM — station service"
+            gradient="from-yellow-900 to-slate-900"
+            height="h-36 sm:h-48"
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <Droplet className="w-7 h-7 text-yellow-300 drop-shadow" />
+              <h1 className="text-2xl sm:text-3xl font-bold text-white drop-shadow">⛽ Comparateur Carburants</h1>
+            </div>
+            <p className="text-yellow-100 text-sm drop-shadow">Prix observés aux stations — données officielles prix-carburants.gouv.fr</p>
+          </HeroImage>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
