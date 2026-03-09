@@ -19,6 +19,7 @@ import ShareButton from '../components/comparateur/ShareButton';
 import { exportFuelComparisonToText } from '../utils/exportComparison';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
+import BookingLinkBadge from '../components/comparateur/BookingLinkBadge';
 
 const TERRITORIES: { code: Territory; name: string }[] = [
   { code: 'GP', name: 'Guadeloupe' },
@@ -289,7 +290,7 @@ const FuelComparator: React.FC = () => {
               Source : {comparisonResult.metadata?.dataSource || 'Observatoire A KI PRI SA YÉ'}
               {' · '}Comparaison du {formatDate(new Date(comparisonResult.comparisonDate))}
             </div>
-            <p className="mt-2 text-xs text-gray-500">A KI PRI SA YÉ ne perçoit aucune commission. Vérifiez les tarifs actuels sur le site de la station.</p>
+            <div className="mt-2"><BookingLinkBadge /></div>
           </>
         )}
       </div>

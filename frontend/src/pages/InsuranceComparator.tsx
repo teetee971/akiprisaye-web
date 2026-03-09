@@ -22,6 +22,8 @@ import ShareButton from '../components/comparateur/ShareButton';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 import { exportInsuranceComparisonToCSV, exportInsuranceComparisonToText } from '../utils/exportComparison';
+import { buildBookingUrl } from '../utils/bookingLinks';
+import BookingLinkBadge from '../components/comparateur/BookingLinkBadge';
 
 const PROVIDER_URLS: Record<string, string> = {
   'Allianz': 'https://www.allianz.fr/',
@@ -37,11 +39,13 @@ const PROVIDER_URLS: Record<string, string> = {
 };
 
 function getProviderUrl(providerName: string, url?: string): string {
-  if (url) return url;
-  for (const [key, u] of Object.entries(PROVIDER_URLS)) {
-    if (providerName.toLowerCase().includes(key.toLowerCase())) return u;
-  }
-  return '#';
+  const base = url || (() => {
+    for (const [key, u] of Object.entries(PROVIDER_URLS)) {
+      if (providerName.toLowerCase().includes(key.toLowerCase())) return u;
+    }
+    return '#';
+  })();
+  return buildBookingUrl(base, 'comparateur-assurances');
 }
 
 const InsuranceComparator: React.FC = () => {
@@ -348,13 +352,13 @@ const InsuranceComparator: React.FC = () => {
           <>
             {/* Summary Cards */}
             <ComparisonSummary
-              minPrice={comparisonResult.aggregation.minPrice}
-              maxPrice={comparisonResult.aggregation.maxPrice}
+              bestPrice={comparisonResult.aggregation.minPrice}
+              worstPrice={comparisonResult.aggregation.maxPrice}
               averagePrice={comparisonResult.aggregation.averagePrice}
-              priceRange={comparisonResult.aggregation.priceRange}
-              priceRangePercentage={comparisonResult.aggregation.priceRangePercentage}
+              savingsPercentage={comparisonResult.aggregation.priceRangePercentage}
+              bestProvider={sortedOffers[0]?.insurance.providerName ?? '—'}
+              totalObservations={comparisonResult.aggregation.totalOffers}
               currency="EUR"
-              unit="/an"
             />
 
             {/* Chart */}
@@ -398,7 +402,7 @@ const InsuranceComparator: React.FC = () => {
                   <FileText className="w-4 h-4" />
                   <span className="hidden sm:inline">Export TXT</span>
                 </button>
-                <ShareButton title="Comparateur Assurances - A KI PRI SA YÉ" />
+                <ShareButton title="Comparateur Assurances - A KI PRI SA YÉ" description="Comparez les prix des assurances auto, habitation et santé dans les DOM-TOM." />
               </div>
             </div>
 
@@ -621,7 +625,7 @@ const InsuranceComparator: React.FC = () => {
                   );
                 })()}
               </div>
-              <p className="mt-3 text-xs text-gray-500">A KI PRI SA YÉ ne perçoit aucune commission. Vérifiez les tarifs actuels sur le site de l'assureur.</p>
+              <div className="mt-3"><BookingLinkBadge /></div>
             </div>
 
             {/* Metadata */}

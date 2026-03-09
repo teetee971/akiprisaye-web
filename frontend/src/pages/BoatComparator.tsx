@@ -18,6 +18,8 @@ import ShareButton from '../components/comparateur/ShareButton';
 import { exportBoatComparisonToCSV, exportBoatComparisonToText } from '../utils/exportComparison';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
+import { buildBookingUrl } from '../utils/bookingLinks';
+import BookingLinkBadge from '../components/comparateur/BookingLinkBadge';
 
 const BoatComparator: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -231,8 +233,8 @@ const BoatComparator: React.FC = () => {
   };
 
   const getOperatorBookingUrl = (operatorCode: string, bookingUrl?: string): string => {
-    if (bookingUrl) return bookingUrl;
-    return OPERATOR_BOOKING_URLS[operatorCode] || OPERATOR_BOOKING_URLS['DEFAULT'];
+    const base = bookingUrl || OPERATOR_BOOKING_URLS[operatorCode] || OPERATOR_BOOKING_URLS['DEFAULT'];
+    return buildBookingUrl(base, 'comparateur-bateaux');
   };
 
   const handleSortChange = (sort: string, direction: 'asc' | 'desc') => {
@@ -580,7 +582,7 @@ const BoatComparator: React.FC = () => {
                     </tbody>
                   </table>
                 </div>
-                <p className="mt-3 text-xs text-gray-500">A KI PRI SA YÉ ne perçoit aucune commission. Vérifiez les tarifs actuels sur le site de l'opérateur.</p>
+                <div className="mt-3"><BookingLinkBadge /></div>
               </section>
 
               {/* Profile Recommendation */}

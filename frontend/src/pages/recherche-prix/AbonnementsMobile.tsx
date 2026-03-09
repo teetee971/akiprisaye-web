@@ -1,5 +1,3 @@
-// @ts-nocheck
- 
 import React, { useState } from 'react';
 import { Smartphone, Info, Download, ExternalLink, Award, TrendingDown } from 'lucide-react';
 import {
@@ -11,6 +9,8 @@ import {
 import PriceChart from '../../components/comparateur/LazyPriceChart';
 import SortControl from '../../components/comparateur/SortControl';
 import ShareButton from '../../components/comparateur/ShareButton';
+import BookingLinkBadge from '../../components/comparateur/BookingLinkBadge';
+import { buildBookingUrl } from '../../utils/bookingLinks';
 
 import { SEOHead } from '../../components/ui/SEOHead';
 
@@ -26,11 +26,13 @@ const OPERATOR_URLS: Record<string, string> = {
 };
 
 function getOperatorUrl(operatorName: string, url?: string): string {
-  if (url) return url;
-  for (const [key, u] of Object.entries(OPERATOR_URLS)) {
-    if (operatorName.toLowerCase().includes(key.toLowerCase())) return u;
-  }
-  return '#';
+  const base = url || (() => {
+    for (const [key, u] of Object.entries(OPERATOR_URLS)) {
+      if (operatorName.toLowerCase().includes(key.toLowerCase())) return u;
+    }
+    return '#';
+  })();
+  return buildBookingUrl(base, 'comparateur-mobile');
 }
 
 /**
@@ -490,7 +492,7 @@ export default function AbonnementsMobile() {
                         );
                       })()}
                     </div>
-                    <p className="mt-3 text-xs text-gray-500">A KI PRI SA YÉ ne perçoit aucune commission. Vérifiez les tarifs actuels sur le site de l'opérateur.</p>
+                    <div className="mt-3"><BookingLinkBadge /></div>
                   </section>
                 </>
               ) : (

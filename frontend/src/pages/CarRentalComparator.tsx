@@ -10,6 +10,8 @@ import LoadingSkeleton from '../components/comparateur/LoadingSkeleton';
 import ShareButton from '../components/comparateur/ShareButton';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
+import { buildBookingUrl } from '../utils/bookingLinks';
+import BookingLinkBadge from '../components/comparateur/BookingLinkBadge';
 
 const TERRITORIES: { code: Territory; name: string }[] = [
   { code: 'GP', name: 'Guadeloupe' },
@@ -34,11 +36,13 @@ const AGENCY_BOOKING_URLS: Record<string, string> = {
 };
 
 function getAgencyBookingUrl(agencyName: string, bookingUrl?: string): string {
-  if (bookingUrl) return bookingUrl;
-  for (const [key, url] of Object.entries(AGENCY_BOOKING_URLS)) {
-    if (agencyName.toLowerCase().includes(key.toLowerCase())) return url;
-  }
-  return '#';
+  const base = bookingUrl || (() => {
+    for (const [key, url] of Object.entries(AGENCY_BOOKING_URLS)) {
+      if (agencyName.toLowerCase().includes(key.toLowerCase())) return url;
+    }
+    return '#';
+  })();
+  return buildBookingUrl(base, 'comparateur-voiture');
 }
 
 const CarRentalComparator: React.FC = () => {
@@ -402,7 +406,7 @@ const CarRentalComparator: React.FC = () => {
                   );
                 })()}
               </div>
-              <p className="mt-3 text-xs text-gray-500">A KI PRI SA YÉ ne perçoit aucune commission. Vérifiez les tarifs actuels sur le site de l'agence.</p>
+              <div className="mt-3"><BookingLinkBadge /></div>
             </div>
           </>
         )}
