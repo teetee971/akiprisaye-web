@@ -197,6 +197,7 @@ const ConferencePrix = lazyPage(() => import('./pages/ConferencePrix'));
 const LettreHebdoIA = lazyPage(() => import('./pages/LettreHebdoIA'));
 const InnovationLab = lazyPage(() => import('./pages/InnovationLab'));
 const CalculateurOctroi = lazyPage(() => import('./pages/CalculateurOctroi'));
+const CalculateurBatiment = lazyPage(() => import('./pages/CalculateurBatiment'));
 const SimulateurBudgetFamilial = lazyPage(() => import('./pages/SimulateurBudgetFamilial'));
 const AlertesRupture = lazyPage(() => import('./pages/AlertesRupture'));
 const ReclamationIA = lazyPage(() => import('./pages/ReclamationIA'));
@@ -567,6 +568,7 @@ export default function App() {
                           <Route path="lettre-hebdo" element={<LettreHebdoIA />} />
                           <Route path="innovation-lab" element={<InnovationLab />} />
                           <Route path="calculateur-octroi" element={<CalculateurOctroi />} />
+                          <Route path="calculateur-batiment" element={<CalculateurBatiment />} />
                           <Route path="simulateur-budget" element={<SimulateurBudgetFamilial />} />
                           <Route path="alertes-rupture" element={<AlertesRupture />} />
                           <Route path="ia-reclamation" element={<ReclamationIA />} />
