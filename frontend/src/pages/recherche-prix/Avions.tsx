@@ -1,6 +1,6 @@
- 
+
 import React, { useState, useEffect } from 'react';
-import { Plane, Info, TrendingUp } from 'lucide-react';
+import { Plane, Info, TrendingUp, ExternalLink } from 'lucide-react';
 import {
   searchFlightPrices,
   getDepartureLocations,
@@ -75,9 +75,14 @@ export default function Avions() {
               Prix des billets d'avion
             </h1>
           </div>
-          <p className="text-sm text-gray-400">
-            Module en préparation - Données simulées
-          </p>
+          <div className="flex flex-wrap gap-2 mt-1">
+            <span className="text-xs text-green-400 bg-green-500/10 border border-green-500/30 px-2 py-1 rounded-full">
+              🔄 Données observées le {new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+            </span>
+            <span className="text-xs text-blue-400 bg-blue-500/10 border border-blue-500/30 px-2 py-1 rounded-full">
+              ✈️ Cliquez « Voir l'offre » pour vérifier le prix en temps réel
+            </span>
+          </div>
         </div>
       </header>
 
@@ -175,61 +180,108 @@ export default function Avions() {
                   {/* Results Table */}
                   <section className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5">
                     <h2 className="text-lg font-semibold text-gray-100 mb-4">
-                      Résultats ({results.length})
+                      Résultats — {results.length} compagnie{results.length > 1 ? 's' : ''} observée{results.length > 1 ? 's' : ''}
                     </h2>
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-sm">
+                    <div className="overflow-x-auto -mx-5 px-5">
+                      <table className="w-full text-sm min-w-[560px]">
                         <thead>
                           <tr className="border-b border-slate-700">
-                            <th className="text-left py-3 px-2 text-gray-400 font-medium">
-                              Compagnie
-                            </th>
-                            <th className="text-left py-3 px-2 text-gray-400 font-medium">
-                              Prix
-                            </th>
-                            <th className="text-left py-3 px-2 text-gray-400 font-medium">
-                              Mois
-                            </th>
-                            <th className="text-left py-3 px-2 text-gray-400 font-medium">
-                              Relevé le
-                            </th>
+                            <th className="text-left py-3 px-2 text-gray-400 font-medium">#</th>
+                            <th className="text-left py-3 px-2 text-gray-400 font-medium">Compagnie</th>
+                            <th className="text-right py-3 px-2 text-gray-400 font-medium">Prix</th>
+                            <th className="text-center py-3 px-2 text-gray-400 font-medium">🧳</th>
+                            <th className="text-center py-3 px-2 text-gray-400 font-medium">🔄</th>
+                            <th className="text-right py-3 px-2 text-gray-400 font-medium">Durée</th>
+                            <th className="text-right py-3 px-2 text-gray-400 font-medium">Mois</th>
+                            <th className="text-right py-3 px-2 text-gray-400 font-medium">Observé</th>
+                            <th className="text-center py-3 px-2 text-gray-400 font-medium">Action</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {results.map((flight, index) => (
-                            <tr key={index} className="border-b border-slate-800 hover:bg-slate-800/30">
-                              <td className="py-3 px-2">
-                                <div className="text-gray-200 font-medium">{flight.compagnie}</div>
-                                <div className="text-xs text-gray-500">{flight.source}</div>
-                              </td>
-                              <td className="py-3 px-2">
-                                <div className="flex items-center gap-2">
-                                  <span className="text-lg font-bold text-blue-400">
+                          {results.map((flight, index) => {
+                            const minPrix = Math.min(...results.map((f) => f.prix));
+                            const diffAbs = flight.prix - minPrix;
+                            return (
+                              <tr
+                                key={index}
+                                className={`border-b border-slate-800 hover:bg-slate-800/30 transition-colors ${index === 0 ? 'bg-green-500/5' : ''}`}
+                              >
+                                <td className="py-3 px-2 font-bold text-gray-300">
+                                  {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`}
+                                </td>
+                                <td className="py-3 px-2">
+                                  <div className={`font-semibold ${index === 0 ? 'text-green-300' : 'text-gray-200'}`}>
+                                    {flight.compagnie}
+                                  </div>
+                                  <div className="text-xs text-gray-500">{flight.source}</div>
+                                </td>
+                                <td className="py-3 px-2 text-right">
+                                  <div className={`text-lg font-bold ${index === 0 ? 'text-green-400' : 'text-blue-400'}`}>
                                     {formatPrice(flight.prix)}
-                                  </span>
-                                  {index === 0 && (
-                                    <span className="text-xs px-2 py-0.5 bg-green-500/20 text-green-300 rounded-full">
-                                      Le moins cher
-                                    </span>
+                                  </div>
+                                  {diffAbs > 0 && (
+                                    <div className="text-xs text-orange-400">+{formatPrice(diffAbs)}</div>
                                   )}
-                                </div>
-                              </td>
-                              <td className="py-3 px-2 text-gray-300">
-                                {formatMonth(flight.mois)}
-                              </td>
-                              <td className="py-3 px-2 text-gray-400 text-xs">
-                                {formatDate(flight.dateReleve)}
-                              </td>
-                            </tr>
-                          ))}
+                                  {index === 0 && (
+                                    <div className="text-xs text-green-400">Le moins cher</div>
+                                  )}
+                                </td>
+                                <td className="py-3 px-2 text-center">
+                                  {flight.bagagesInclus ? (
+                                    <span className="text-green-400 text-base">✓</span>
+                                  ) : (
+                                    <span className="text-red-400/60 text-base">✗</span>
+                                  )}
+                                </td>
+                                <td className="py-3 px-2 text-center">
+                                  {flight.modifiable ? (
+                                    <span className="text-green-400 text-base">✓</span>
+                                  ) : (
+                                    <span className="text-red-400/60 text-base">✗</span>
+                                  )}
+                                </td>
+                                <td className="py-3 px-2 text-right text-gray-300">
+                                  {flight.duree ?? '—'}
+                                </td>
+                                <td className="py-3 px-2 text-right text-gray-300">
+                                  {formatMonth(flight.mois)}
+                                </td>
+                                <td className="py-3 px-2 text-right text-gray-400 text-xs">
+                                  {formatDate(flight.dateReleve)}
+                                </td>
+                                <td className="py-3 px-2 text-center">
+                                  {flight.bookingUrl ? (
+                                    <a
+                                      href={flight.bookingUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="inline-flex items-center gap-1 px-3 py-1.5 bg-sky-600 hover:bg-sky-500 text-white text-xs font-medium rounded-lg transition-colors"
+                                      aria-label={`Voir l'offre ${flight.compagnie}`}
+                                    >
+                                      <ExternalLink className="w-3 h-3" />
+                                      Voir
+                                    </a>
+                                  ) : (
+                                    <span className="text-xs text-gray-600">—</span>
+                                  )}
+                                </td>
+                              </tr>
+                            );
+                          })}
                         </tbody>
                       </table>
+                    </div>
+
+                    {/* Legend */}
+                    <div className="mt-3 flex flex-wrap gap-3 text-xs text-gray-500">
+                      <span>🧳 = Bagages inclus</span>
+                      <span>🔄 = Billet modifiable</span>
                     </div>
 
                     {/* Badge "Prix observé" */}
                     <div className="mt-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg">
                       <p className="text-xs text-blue-200">
-                        <strong>Prix observé</strong> — Ce ne sont PAS des prix garantis. Les tarifs peuvent varier.
+                        <strong>Prix observé</strong> — Ce ne sont PAS des prix garantis. Cliquez sur « Voir » pour vérifier le tarif actuel sur le site de la compagnie. A KI PRI SA YÉ ne perçoit aucune commission.
                       </p>
                     </div>
                   </section>

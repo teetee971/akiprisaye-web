@@ -1,6 +1,24 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Plane, AlertCircle, Info, Clock, BarChart3, Download, FileText } from 'lucide-react';
+import {
+  Plane,
+  AlertCircle,
+  Info,
+  Clock,
+  BarChart3,
+  Download,
+  FileText,
+  ExternalLink,
+  Star,
+  Award,
+  TrendingDown,
+  RefreshCw,
+  CheckCircle2,
+  XCircle,
+  ShieldCheck,
+  Luggage,
+  Tag,
+} from 'lucide-react';
 import type {
   FlightPricePoint,
   FlightComparisonResult,
@@ -20,6 +38,54 @@ import { exportFlightComparisonToCSV, exportFlightComparisonToText } from '../ut
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
+/**
+ * Fallback booking URLs per airline IATA code.
+ * The JSON data's bookingUrl field takes priority; these are used as a fallback.
+ */
+const AIRLINE_BOOKING_URLS: Record<string, string> = {
+  AF: 'https://www.airfrance.fr/search/offer',
+  TX: 'https://www.aircaraibes.com/',
+  SS: 'https://www.corsair.fr/vols/',
+  TO: 'https://www.transavia.com/fr-FR/fly/',
+  '3S': 'https://www.air-antilles.com/',
+  FR: 'https://www.frenchbee.com/',
+  UU: 'https://www.air-austral.com/',
+};
+
+const getAirlineBookingUrl = (
+  airlineCode: string,
+  originCode: string,
+  destCode: string,
+  bookingUrlOverride?: string
+): string => {
+  if (bookingUrlOverride) return bookingUrlOverride;
+  const base = AIRLINE_BOOKING_URLS[airlineCode];
+  if (!base) return '#';
+  if (airlineCode === 'AF') {
+    return `${base}?origin=${originCode}&destination=${destCode}&cabin=ECONOMY&adults=1`;
+  }
+  return base;
+};
+
+/** Value score: 0–100. Accounts for price position, included services, fees. */
+const computeValueScore = (
+  price: number,
+  fareConditions: FlightPricePoint['fareConditions'],
+  additionalFees: FlightPricePoint['additionalFees'],
+  minPrice: number,
+  maxPrice: number
+): number => {
+  const priceRange = maxPrice - minPrice;
+  const priceIndex = priceRange > 0 ? (price - minPrice) / priceRange : 0;
+  let score = 100 - Math.round(priceIndex * 60);
+  if (fareConditions.baggageIncluded) score += 15;
+  if (fareConditions.changeable) score += 10;
+  if (fareConditions.refundable) score += 10;
+  if (fareConditions.seatSelection) score += 5;
+  if (additionalFees && additionalFees.total > 50) score -= 10;
+  return Math.max(0, Math.min(100, score));
+};
+
 const FlightComparator: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -32,6 +98,7 @@ const FlightComparator: React.FC = () => {
   const [filterPriceType, setFilterPriceType] = useState<'all' | 'economy'>('economy');
   const [sortBy, setSortBy] = useState<'price' | 'duration' | 'airline'>('price');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [lastRefreshed] = useState<Date>(new Date());
 
   useEffect(() => {
     loadFlightData();
@@ -239,6 +306,53 @@ const FlightComparator: React.FC = () => {
     return sorted;
   }, [comparisonResult, sortBy, sortDirection]);
 
+  // ── Profile-based recommendations ──────────────────────────────────────────
+  const cheapestAirline = useMemo(() => {
+    if (!comparisonResult || comparisonResult.airlines.length === 0) return null;
+    return [...comparisonResult.airlines].sort((a, b) => a.flightPrice.price - b.flightPrice.price)[0];
+  }, [comparisonResult]);
+
+  const bestWithBaggage = useMemo(() => {
+    if (!comparisonResult) return null;
+    const withBaggage = comparisonResult.airlines.filter(
+      (r) => r.flightPrice.fareConditions.baggageIncluded
+    );
+    if (withBaggage.length === 0) return null;
+    return withBaggage.reduce((min, r) => (r.flightPrice.price < min.flightPrice.price ? r : min));
+  }, [comparisonResult]);
+
+  const mostFlexible = useMemo(() => {
+    if (!comparisonResult) return null;
+    const flexible = comparisonResult.airlines.filter(
+      (r) => r.flightPrice.fareConditions.changeable || r.flightPrice.fareConditions.refundable
+    );
+    if (flexible.length === 0) return null;
+    return flexible.reduce((min, r) => (r.flightPrice.price < min.flightPrice.price ? r : min));
+  }, [comparisonResult]);
+
+  const bestOverall = useMemo(() => {
+    if (!comparisonResult || comparisonResult.airlines.length === 0) return null;
+    const minP = comparisonResult.aggregation.minPrice;
+    const maxP = comparisonResult.aggregation.maxPrice;
+    return comparisonResult.airlines.reduce((best, r) => {
+      const rScore = computeValueScore(
+        r.flightPrice.price,
+        r.flightPrice.fareConditions,
+        r.flightPrice.additionalFees,
+        minP,
+        maxP
+      );
+      const bestScore = computeValueScore(
+        best.flightPrice.price,
+        best.flightPrice.fareConditions,
+        best.flightPrice.additionalFees,
+        minP,
+        maxP
+      );
+      return rScore > bestScore ? r : best;
+    });
+  }, [comparisonResult]);
+
   const parseDuration = (duration: string): number => {
     const match = duration.match(/(\d+)h(\d+)?/);
     if (!match) return 0;
@@ -267,11 +381,18 @@ const FlightComparator: React.FC = () => {
           </h1>
         </div>
         <p className="text-sky-100 text-sm sm:text-base drop-shadow">
-          DOM ↔ Métropole ↔ Inter-îles — données observatoire
+          🏝 DOM ↔ Métropole ↔ Inter-îles — données observatoire citoyennes
         </p>
-        <p className="text-sky-200/80 text-xs mt-1 drop-shadow">
-          Observer, pas vendre · Transparence sur les écarts, sans affiliation opaque
-        </p>
+        <div className="flex flex-wrap items-center gap-3 mt-2">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-green-500/20 border border-green-500/40 rounded-full text-xs text-green-300 drop-shadow">
+            <RefreshCw className="w-3 h-3" />
+            Données du {lastRefreshed.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+          </span>
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-500/20 border border-blue-500/40 rounded-full text-xs text-blue-300 drop-shadow">
+            <ShieldCheck className="w-3 h-3" />
+            Observer, pas vendre · Aucune affiliation
+          </span>
+        </div>
       </HeroImage>
     </div>
   );
@@ -463,35 +584,57 @@ const FlightComparator: React.FC = () => {
                       {comparisonResult.aggregation.priceRangePercentage.toFixed(1)}%
                     </p>
                   </div>
+                  <div className="bg-slate-800/50 rounded-lg p-4">
+                    <p className="text-sm text-gray-400 mb-1">Prix médian</p>
+                    <p className="text-2xl font-bold text-purple-400">
+                      {formatPrice(comparisonResult.aggregation.medianPrice)}
+                    </p>
+                  </div>
+                  <div className="bg-slate-800/50 rounded-lg p-4">
+                    <p className="text-sm text-gray-400 mb-1">Écart-type</p>
+                    <p className="text-2xl font-bold text-yellow-400">
+                      {formatPrice(comparisonResult.aggregation.standardDeviation)}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">Volatilité des prix</p>
+                  </div>
+                  <div className="bg-slate-800/50 rounded-lg p-4">
+                    <p className="text-sm text-gray-400 mb-1">Compagnies</p>
+                    <p className="text-2xl font-bold text-sky-400">
+                      {comparisonResult.aggregation.airlineCount}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">{comparisonResult.aggregation.totalObservations} observations</p>
+                  </div>
                 </div>
 
                 {/* Seasonal Variation */}
                 {comparisonResult.aggregation.seasonalVariation && (
                   <div className="mt-4 bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
                     <h3 className="text-sm font-semibold text-blue-300 mb-2">
-                      Variation saisonnière
+                      🗓 Variation saisonnière
                     </h3>
-                    <div className="grid sm:grid-cols-2 gap-3">
+                    <div className="grid sm:grid-cols-3 gap-3">
                       <div>
                         <p className="text-xs text-gray-400">Haute saison</p>
-                        <p className="text-lg font-semibold text-gray-200">
+                        <p className="text-lg font-semibold text-red-300">
                           {formatPrice(comparisonResult.aggregation.seasonalVariation.highSeasonAverage)}
                         </p>
                       </div>
                       <div>
                         <p className="text-xs text-gray-400">Basse saison</p>
-                        <p className="text-lg font-semibold text-gray-200">
+                        <p className="text-lg font-semibold text-green-300">
                           {formatPrice(comparisonResult.aggregation.seasonalVariation.lowSeasonAverage)}
                         </p>
                       </div>
+                      <div>
+                        <p className="text-xs text-gray-400">Surcoût été</p>
+                        <p className="text-lg font-semibold text-orange-300">
+                          +{comparisonResult.aggregation.seasonalVariation.seasonalDifferencePercentage.toFixed(1)}%
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          +{formatPrice(comparisonResult.aggregation.seasonalVariation.seasonalDifference)}
+                        </p>
+                      </div>
                     </div>
-                    <p className="text-xs text-gray-400 mt-2">
-                      Différence :{' '}
-                      <span className="font-semibold text-orange-300">
-                        +{comparisonResult.aggregation.seasonalVariation.seasonalDifferencePercentage.toFixed(1)}%
-                      </span>{' '}
-                      en haute saison
-                    </p>
                   </div>
                 )}
               </section>
@@ -528,11 +671,344 @@ const FlightComparator: React.FC = () => {
                 </p>
               </section>
 
+              {/* ── Tableau comparatif complet ────────────────────────────── */}
+              <section className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5">
+                <h2 className="text-lg font-semibold text-gray-100 mb-1 flex items-center gap-2">
+                  <BarChart3 className="w-5 h-5 text-sky-400" />
+                  Tableau comparatif complet
+                </h2>
+                <p className="text-xs text-gray-400 mb-4">
+                  Comparaison détaillée de toutes les compagnies — cliquez sur « Voir l'offre » pour vérifier le prix actuel sur le site de la compagnie.
+                </p>
+                <div className="overflow-x-auto -mx-5 px-5">
+                  <table className="w-full text-sm min-w-[760px]">
+                    <thead>
+                      <tr className="border-b border-slate-700 text-left">
+                        <th className="py-3 px-3 text-gray-400 font-medium">#</th>
+                        <th className="py-3 px-3 text-gray-400 font-medium">Compagnie</th>
+                        <th className="py-3 px-3 text-gray-400 font-medium text-right">Prix obs.</th>
+                        <th className="py-3 px-3 text-gray-400 font-medium text-center">
+                          <span title="Bagages inclus"><Luggage className="w-4 h-4 inline" /></span>
+                        </th>
+                        <th className="py-3 px-3 text-gray-400 font-medium text-center">Modif.</th>
+                        <th className="py-3 px-3 text-gray-400 font-medium text-center">Remb.</th>
+                        <th className="py-3 px-3 text-gray-400 font-medium text-right">Durée</th>
+                        <th className="py-3 px-3 text-gray-400 font-medium text-center">Escales</th>
+                        <th className="py-3 px-3 text-gray-400 font-medium text-right">Frais sup.</th>
+                        <th className="py-3 px-3 text-gray-400 font-medium text-right">Total</th>
+                        <th className="py-3 px-3 text-gray-400 font-medium text-center">Score</th>
+                        <th className="py-3 px-3 text-gray-400 font-medium text-center">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {sortedAirlines.map((ranking) => {
+                        const totalWithFees =
+                          ranking.flightPrice.price +
+                          (ranking.flightPrice.additionalFees?.total || 0);
+                        const bookingUrl = getAirlineBookingUrl(
+                          ranking.flightPrice.airlineCode,
+                          ranking.flightPrice.route.origin.code,
+                          ranking.flightPrice.route.destination.code,
+                          ranking.flightPrice.bookingUrl
+                        );
+                        const score = computeValueScore(
+                          ranking.flightPrice.price,
+                          ranking.flightPrice.fareConditions,
+                          ranking.flightPrice.additionalFees,
+                          comparisonResult.aggregation.minPrice,
+                          comparisonResult.aggregation.maxPrice
+                        );
+                        const rankEmoji =
+                          ranking.rank === 1 ? '🥇' : ranking.rank === 2 ? '🥈' : ranking.rank === 3 ? '🥉' : `#${ranking.rank}`;
+                        return (
+                          <tr
+                            key={ranking.flightPrice.id}
+                            className={`border-b border-slate-800 transition-colors hover:bg-slate-800/30 ${
+                              ranking.rank === 1 ? 'bg-green-500/5' : ''
+                            }`}
+                          >
+                            <td className="py-3 px-3 font-bold text-gray-300">{rankEmoji}</td>
+                            <td className="py-3 px-3">
+                              <span
+                                className={`font-semibold ${
+                                  ranking.rank === 1
+                                    ? 'text-green-300'
+                                    : ranking.priceCategory === 'most_expensive'
+                                    ? 'text-red-300'
+                                    : 'text-gray-200'
+                                }`}
+                              >
+                                {ranking.flightPrice.airline}
+                              </span>
+                              {!ranking.flightPrice.verified && (
+                                <span className="ml-1 text-xs text-yellow-500/80">(non vérifié)</span>
+                              )}
+                            </td>
+                            <td className="py-3 px-3 text-right">
+                              <span
+                                className={`font-bold text-base ${
+                                  ranking.rank === 1
+                                    ? 'text-green-400'
+                                    : ranking.priceCategory === 'most_expensive'
+                                    ? 'text-red-400'
+                                    : 'text-gray-100'
+                                }`}
+                              >
+                                {formatPrice(ranking.flightPrice.price)}
+                              </span>
+                              {ranking.absoluteDifferenceFromCheapest > 0 && (
+                                <div className="text-xs text-orange-400 text-right">
+                                  +{formatPrice(ranking.absoluteDifferenceFromCheapest)}
+                                </div>
+                              )}
+                            </td>
+                            <td className="py-3 px-3 text-center">
+                              {ranking.flightPrice.fareConditions.baggageIncluded ? (
+                                <CheckCircle2 className="w-4 h-4 text-green-400 mx-auto" />
+                              ) : (
+                                <XCircle className="w-4 h-4 text-red-400/70 mx-auto" />
+                              )}
+                            </td>
+                            <td className="py-3 px-3 text-center">
+                              {ranking.flightPrice.fareConditions.changeable ? (
+                                <CheckCircle2 className="w-4 h-4 text-green-400 mx-auto" />
+                              ) : (
+                                <XCircle className="w-4 h-4 text-red-400/70 mx-auto" />
+                              )}
+                            </td>
+                            <td className="py-3 px-3 text-center">
+                              {ranking.flightPrice.fareConditions.refundable ? (
+                                <CheckCircle2 className="w-4 h-4 text-green-400 mx-auto" />
+                              ) : (
+                                <XCircle className="w-4 h-4 text-red-400/70 mx-auto" />
+                              )}
+                            </td>
+                            <td className="py-3 px-3 text-right text-gray-300">
+                              {ranking.flightPrice.duration ?? '—'}
+                            </td>
+                            <td className="py-3 px-3 text-center">
+                              <span
+                                className={
+                                  ranking.flightPrice.stops === 0
+                                    ? 'text-green-400'
+                                    : 'text-orange-400'
+                                }
+                              >
+                                {ranking.flightPrice.stops === 0
+                                  ? 'Direct'
+                                  : `${ranking.flightPrice.stops} esc.`}
+                              </span>
+                            </td>
+                            <td className="py-3 px-3 text-right text-orange-400 text-xs">
+                              {ranking.flightPrice.additionalFees
+                                ? `+${formatPrice(ranking.flightPrice.additionalFees.total)}`
+                                : '—'}
+                            </td>
+                            <td className="py-3 px-3 text-right font-semibold text-gray-200">
+                              {formatPrice(totalWithFees)}
+                            </td>
+                            <td className="py-3 px-3 text-center">
+                              <div className="flex items-center justify-center gap-1">
+                                <div
+                                  className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                                    score >= 80
+                                      ? 'bg-green-500/20 text-green-300'
+                                      : score >= 60
+                                      ? 'bg-blue-500/20 text-blue-300'
+                                      : score >= 40
+                                      ? 'bg-yellow-500/20 text-yellow-300'
+                                      : 'bg-red-500/20 text-red-300'
+                                  }`}
+                                >
+                                  {score}/100
+                                </div>
+                              </div>
+                            </td>
+                            <td className="py-3 px-3 text-center">
+                              <a
+                                href={bookingUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 px-3 py-1.5 bg-sky-600 hover:bg-sky-500 text-white text-xs font-medium rounded-lg transition-colors whitespace-nowrap"
+                                aria-label={`Voir l'offre ${ranking.flightPrice.airline}`}
+                              >
+                                <ExternalLink className="w-3 h-3" />
+                                Voir l'offre
+                              </a>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+                <p className="text-xs text-gray-500 mt-3 flex items-center gap-1.5">
+                  <Info className="w-3.5 h-3.5 flex-shrink-0" />
+                  Prix observés à titre indicatif. Vérifiez le tarif exact en cliquant sur « Voir l'offre ».
+                  A KI PRI SA YÉ ne perçoit aucune commission.
+                </p>
+              </section>
+
+              {/* ── Quelle compagnie choisir ? ────────────────────────────── */}
+              <section className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5">
+                <h2 className="text-lg font-semibold text-gray-100 mb-1 flex items-center gap-2">
+                  <Award className="w-5 h-5 text-yellow-400" />
+                  Quelle compagnie choisir ?
+                </h2>
+                <p className="text-xs text-gray-400 mb-4">
+                  Recommandations basées sur les observations — selon votre profil de voyage.
+                </p>
+                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                  {cheapestAirline && (
+                    <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-4">
+                      <div className="text-xs font-semibold text-green-400 mb-2 flex items-center gap-1">
+                        <TrendingDown className="w-3.5 h-3.5" /> Meilleur prix brut
+                      </div>
+                      <div className="text-base font-bold text-green-200 mb-1">
+                        {cheapestAirline.flightPrice.airline}
+                      </div>
+                      <div className="text-2xl font-bold text-white mb-2">
+                        {formatPrice(cheapestAirline.flightPrice.price)}
+                      </div>
+                      <p className="text-xs text-gray-400 mb-3">
+                        {cheapestAirline.flightPrice.fareConditions.baggageIncluded
+                          ? '✅ Bagages inclus'
+                          : '⚠️ Bagages en option'}
+                      </p>
+                      <a
+                        href={getAirlineBookingUrl(
+                          cheapestAirline.flightPrice.airlineCode,
+                          cheapestAirline.flightPrice.route.origin.code,
+                          cheapestAirline.flightPrice.route.destination.code,
+                          cheapestAirline.flightPrice.bookingUrl
+                        )}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-green-600 hover:bg-green-500 text-white text-xs font-medium rounded-lg transition-colors"
+                      >
+                        <ExternalLink className="w-3 h-3" />
+                        Voir l'offre
+                      </a>
+                    </div>
+                  )}
+
+                  {bestWithBaggage && (
+                    <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4">
+                      <div className="text-xs font-semibold text-blue-400 mb-2 flex items-center gap-1">
+                        <Luggage className="w-3.5 h-3.5" /> Bagages inclus
+                      </div>
+                      <div className="text-base font-bold text-blue-200 mb-1">
+                        {bestWithBaggage.flightPrice.airline}
+                      </div>
+                      <div className="text-2xl font-bold text-white mb-2">
+                        {formatPrice(bestWithBaggage.flightPrice.price)}
+                      </div>
+                      <p className="text-xs text-gray-400 mb-3">
+                        ✅ Bagage inclus
+                        {bestWithBaggage.flightPrice.fareConditions.changeable ? ' · ✅ Modifiable' : ''}
+                      </p>
+                      <a
+                        href={getAirlineBookingUrl(
+                          bestWithBaggage.flightPrice.airlineCode,
+                          bestWithBaggage.flightPrice.route.origin.code,
+                          bestWithBaggage.flightPrice.route.destination.code,
+                          bestWithBaggage.flightPrice.bookingUrl
+                        )}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium rounded-lg transition-colors"
+                      >
+                        <ExternalLink className="w-3 h-3" />
+                        Voir l'offre
+                      </a>
+                    </div>
+                  )}
+
+                  {mostFlexible && (
+                    <div className="bg-purple-500/10 border border-purple-500/30 rounded-xl p-4">
+                      <div className="text-xs font-semibold text-purple-400 mb-2 flex items-center gap-1">
+                        <RefreshCw className="w-3.5 h-3.5" /> Plus flexible
+                      </div>
+                      <div className="text-base font-bold text-purple-200 mb-1">
+                        {mostFlexible.flightPrice.airline}
+                      </div>
+                      <div className="text-2xl font-bold text-white mb-2">
+                        {formatPrice(mostFlexible.flightPrice.price)}
+                      </div>
+                      <p className="text-xs text-gray-400 mb-3">
+                        {mostFlexible.flightPrice.fareConditions.changeable ? '✅ Modifiable' : ''}
+                        {mostFlexible.flightPrice.fareConditions.refundable ? ' · ✅ Remboursable' : ''}
+                        {mostFlexible.flightPrice.fareConditions.baggageIncluded ? ' · ✅ Bagages' : ''}
+                      </p>
+                      <a
+                        href={getAirlineBookingUrl(
+                          mostFlexible.flightPrice.airlineCode,
+                          mostFlexible.flightPrice.route.origin.code,
+                          mostFlexible.flightPrice.route.destination.code,
+                          mostFlexible.flightPrice.bookingUrl
+                        )}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-purple-600 hover:bg-purple-500 text-white text-xs font-medium rounded-lg transition-colors"
+                      >
+                        <ExternalLink className="w-3 h-3" />
+                        Voir l'offre
+                      </a>
+                    </div>
+                  )}
+
+                  {bestOverall && (
+                    <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4">
+                      <div className="text-xs font-semibold text-yellow-400 mb-2 flex items-center gap-1">
+                        <Star className="w-3.5 h-3.5" /> Meilleur rapport Q/P
+                      </div>
+                      <div className="text-base font-bold text-yellow-200 mb-1">
+                        {bestOverall.flightPrice.airline}
+                      </div>
+                      <div className="text-2xl font-bold text-white mb-2">
+                        {formatPrice(
+                          bestOverall.flightPrice.price +
+                            (bestOverall.flightPrice.additionalFees?.total || 0)
+                        )}
+                        <span className="text-xs text-gray-400 font-normal ml-1">tout compris</span>
+                      </div>
+                      <p className="text-xs text-gray-400 mb-3">
+                        Score{' '}
+                        {computeValueScore(
+                          bestOverall.flightPrice.price,
+                          bestOverall.flightPrice.fareConditions,
+                          bestOverall.flightPrice.additionalFees,
+                          comparisonResult.aggregation.minPrice,
+                          comparisonResult.aggregation.maxPrice
+                        )}
+                        /100 — meilleur équilibre prix/services
+                      </p>
+                      <a
+                        href={getAirlineBookingUrl(
+                          bestOverall.flightPrice.airlineCode,
+                          bestOverall.flightPrice.route.origin.code,
+                          bestOverall.flightPrice.route.destination.code,
+                          bestOverall.flightPrice.bookingUrl
+                        )}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-yellow-600 hover:bg-yellow-500 text-white text-xs font-medium rounded-lg transition-colors"
+                      >
+                        <ExternalLink className="w-3 h-3" />
+                        Voir l'offre
+                      </a>
+                    </div>
+                  )}
+                </div>
+              </section>
+
+
+
               {/* Airlines Comparison */}
               <section className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
                   <h2 className="text-lg font-semibold text-gray-100">
-                    Comparaison par compagnie ({comparisonResult.airlines.length})
+                    Fiches détaillées par compagnie ({comparisonResult.airlines.length})
                   </h2>
                   <SortControl
                     options={[
@@ -546,91 +1022,180 @@ const FlightComparator: React.FC = () => {
                   />
                 </div>
                 <div className="space-y-3">
-                  {sortedAirlines.map((ranking) => (
-                    <div
-                      key={ranking.flightPrice.id}
-                      className={`border rounded-lg p-4 ${getPriceCategoryColor(ranking.priceCategory)}`}
-                      role="article"
-                      aria-label={`Vol ${ranking.flightPrice.airline} à ${formatPrice(ranking.flightPrice.price)}`}
-                    >
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-2">
-                            <span className="text-sm font-semibold text-gray-300">
-                              #{ranking.rank}
-                            </span>
+                  {sortedAirlines.map((ranking) => {
+                    const totalWithFees =
+                      ranking.flightPrice.price +
+                      (ranking.flightPrice.additionalFees?.total || 0);
+                    const bookingUrl = getAirlineBookingUrl(
+                      ranking.flightPrice.airlineCode,
+                      ranking.flightPrice.route.origin.code,
+                      ranking.flightPrice.route.destination.code,
+                      ranking.flightPrice.bookingUrl
+                    );
+                    const score = computeValueScore(
+                      ranking.flightPrice.price,
+                      ranking.flightPrice.fareConditions,
+                      ranking.flightPrice.additionalFees,
+                      comparisonResult.aggregation.minPrice,
+                      comparisonResult.aggregation.maxPrice
+                    );
+                    const rankEmoji =
+                      ranking.rank === 1 ? '🥇' : ranking.rank === 2 ? '🥈' : ranking.rank === 3 ? '🥉' : `#${ranking.rank}`;
+                    return (
+                      <div
+                        key={ranking.flightPrice.id}
+                        className={`border rounded-xl p-4 ${getPriceCategoryColor(ranking.priceCategory)}`}
+                        role="article"
+                        aria-label={`Vol ${ranking.flightPrice.airline} à ${formatPrice(ranking.flightPrice.price)}`}
+                      >
+                        {/* Header row */}
+                        <div className="flex items-start justify-between gap-3 mb-3">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-base font-bold text-gray-200">{rankEmoji}</span>
                             <h3 className="text-lg font-bold">{ranking.flightPrice.airline}</h3>
                             <span className="text-xs px-2 py-1 rounded-full bg-slate-800/50">
                               {getPriceCategoryLabel(ranking.priceCategory)}
                             </span>
+                            <span
+                              className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                                score >= 80
+                                  ? 'bg-green-500/20 text-green-300'
+                                  : score >= 60
+                                  ? 'bg-blue-500/20 text-blue-300'
+                                  : score >= 40
+                                  ? 'bg-yellow-500/20 text-yellow-300'
+                                  : 'bg-red-500/20 text-red-300'
+                              }`}
+                            >
+                              Score {score}/100
+                            </span>
                           </div>
+                          {/* Booking CTA */}
+                          <a
+                            href={bookingUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex-shrink-0 flex items-center gap-1.5 px-4 py-2 bg-sky-600 hover:bg-sky-500 text-white text-sm font-semibold rounded-lg transition-colors shadow-md"
+                            aria-label={`Voir l'offre ${ranking.flightPrice.airline}`}
+                          >
+                            <ExternalLink className="w-4 h-4" />
+                            Voir l'offre
+                          </a>
+                        </div>
 
-                          <div className="grid sm:grid-cols-2 gap-3 text-sm">
-                            <div>
-                              <p className="text-gray-400">Prix</p>
-                              <p className="text-xl font-bold">
-                                {formatPrice(ranking.flightPrice.price)}
-                              </p>
-                            </div>
-                            <div>
-                              <p className="text-gray-400">Différence vs moins cher</p>
-                              <p className="font-semibold">
-                                {ranking.percentageDifferenceFromCheapest > 0 && '+'}
-                                {ranking.percentageDifferenceFromCheapest.toFixed(1)}%
-                              </p>
-                            </div>
-                            <div>
-                              <p className="text-gray-400">Durée</p>
-                              <p className="font-semibold">{ranking.flightPrice.duration}</p>
-                            </div>
-                            <div>
-                              <p className="text-gray-400">Escales</p>
-                              <p className="font-semibold">
-                                {ranking.flightPrice.stops === 0 ? 'Direct' : `${ranking.flightPrice.stops} escale(s)`}
-                              </p>
-                            </div>
-                          </div>
-
-                          {/* Fare Conditions */}
-                          <div className="mt-3 flex flex-wrap gap-2">
-                            {ranking.flightPrice.fareConditions.baggageIncluded && (
-                              <span className="text-xs px-2 py-1 rounded-full bg-green-500/20 text-green-300">
-                                Bagages inclus
-                              </span>
-                            )}
-                            {ranking.flightPrice.fareConditions.refundable && (
-                              <span className="text-xs px-2 py-1 rounded-full bg-blue-500/20 text-blue-300">
-                                Remboursable
-                              </span>
-                            )}
-                            {ranking.flightPrice.fareConditions.changeable && (
-                              <span className="text-xs px-2 py-1 rounded-full bg-purple-500/20 text-purple-300">
-                                Modifiable
-                              </span>
-                            )}
-                          </div>
-
-                          {/* Additional Fees */}
-                          {ranking.flightPrice.additionalFees && (
-                            <div className="mt-3 bg-orange-500/10 border border-orange-500/30 rounded p-2">
-                              <p className="text-xs text-orange-300">
-                                ⚠️ Frais supplémentaires : {formatPrice(ranking.flightPrice.additionalFees.total)}
-                              </p>
-                            </div>
-                          )}
-
-                          {/* Timing Info */}
-                          <div className="mt-3 text-xs text-gray-400">
-                            <p>
-                              Observation : {formatDate(ranking.flightPrice.timing.purchaseDate)} —{' '}
-                              {ranking.flightPrice.timing.daysBeforeDeparture} jours avant départ
+                        {/* Price grid */}
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm mb-3">
+                          <div>
+                            <p className="text-gray-400 text-xs mb-0.5">Prix observé</p>
+                            <p className="text-xl font-bold">
+                              {formatPrice(ranking.flightPrice.price)}
                             </p>
-                            <p>Saison : {ranking.flightPrice.timing.season === 'high' ? 'Haute' : ranking.flightPrice.timing.season === 'low' ? 'Basse' : 'Intermédiaire'}</p>
+                            {ranking.absoluteDifferenceFromCheapest > 0 && (
+                              <p className="text-xs text-orange-400">
+                                +{formatPrice(ranking.absoluteDifferenceFromCheapest)} vs moins cher
+                              </p>
+                            )}
+                          </div>
+                          <div>
+                            <p className="text-gray-400 text-xs mb-0.5">Total avec frais</p>
+                            <p className="text-lg font-bold text-gray-200">
+                              {formatPrice(totalWithFees)}
+                            </p>
+                            {ranking.flightPrice.additionalFees && (
+                              <p className="text-xs text-orange-400">
+                                +{formatPrice(ranking.flightPrice.additionalFees.total)} frais
+                              </p>
+                            )}
+                          </div>
+                          <div>
+                            <p className="text-gray-400 text-xs mb-0.5">Durée</p>
+                            <p className="font-semibold">{ranking.flightPrice.duration ?? '—'}</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-400 text-xs mb-0.5">Escales</p>
+                            <p className={`font-semibold ${ranking.flightPrice.stops === 0 ? 'text-green-400' : 'text-orange-400'}`}>
+                              {ranking.flightPrice.stops === 0 ? 'Direct' : `${ranking.flightPrice.stops} escale(s)`}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-gray-400 text-xs mb-0.5">Vs. moyenne</p>
+                            <p className={`font-semibold text-sm ${ranking.absoluteDifferenceFromAverage < 0 ? 'text-green-400' : 'text-orange-400'}`}>
+                              {ranking.absoluteDifferenceFromAverage > 0 ? '+' : ''}
+                              {ranking.percentageDifferenceFromAverage.toFixed(1)}%
+                              <span className="text-xs ml-1 text-gray-400">
+                                ({ranking.absoluteDifferenceFromAverage > 0 ? '+' : ''}{formatPrice(ranking.absoluteDifferenceFromAverage)})
+                              </span>
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-gray-400 text-xs mb-0.5">Confiance</p>
+                            <p className={`font-semibold text-xs ${ranking.flightPrice.confidence === 'high' ? 'text-green-400' : ranking.flightPrice.confidence === 'medium' ? 'text-yellow-400' : 'text-red-400'}`}>
+                              {ranking.flightPrice.confidence === 'high' ? '✅ Élevée' : ranking.flightPrice.confidence === 'medium' ? '⚠️ Moyenne' : '❌ Faible'}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-gray-400 text-xs mb-0.5">Observations</p>
+                            <p className="font-semibold text-xs text-gray-300">{ranking.flightPrice.volume} obs.</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-400 text-xs mb-0.5">Saison</p>
+                            <p className="font-semibold text-xs text-gray-300">
+                              {ranking.flightPrice.timing.season === 'high' ? '🔴 Haute' : ranking.flightPrice.timing.season === 'low' ? '🟢 Basse' : '🟡 Interméd.'}
+                            </p>
                           </div>
                         </div>
+
+                        {/* Fare Conditions */}
+                        <div className="flex flex-wrap gap-2 mb-3">
+                          <span className={`text-xs px-2 py-1 rounded-full flex items-center gap-1 ${ranking.flightPrice.fareConditions.baggageIncluded ? 'bg-green-500/20 text-green-300' : 'bg-slate-800 text-gray-500'}`}>
+                            <Luggage className="w-3 h-3" />
+                            {ranking.flightPrice.fareConditions.baggageIncluded ? 'Bagages inclus' : 'Bagages payants'}
+                          </span>
+                          <span className={`text-xs px-2 py-1 rounded-full flex items-center gap-1 ${ranking.flightPrice.fareConditions.changeable ? 'bg-purple-500/20 text-purple-300' : 'bg-slate-800 text-gray-500'}`}>
+                            <RefreshCw className="w-3 h-3" />
+                            {ranking.flightPrice.fareConditions.changeable ? 'Modifiable' : 'Non modifiable'}
+                          </span>
+                          <span className={`text-xs px-2 py-1 rounded-full flex items-center gap-1 ${ranking.flightPrice.fareConditions.refundable ? 'bg-blue-500/20 text-blue-300' : 'bg-slate-800 text-gray-500'}`}>
+                            <ShieldCheck className="w-3 h-3" />
+                            {ranking.flightPrice.fareConditions.refundable ? 'Remboursable' : 'Non remboursable'}
+                          </span>
+                          <span className={`text-xs px-2 py-1 rounded-full flex items-center gap-1 ${ranking.flightPrice.fareConditions.seatSelection ? 'bg-sky-500/20 text-sky-300' : 'bg-slate-800 text-gray-500'}`}>
+                            <Tag className="w-3 h-3" />
+                            {ranking.flightPrice.fareConditions.seatSelection ? 'Siège choisi' : 'Siège aléatoire'}
+                          </span>
+                        </div>
+
+                        {/* Additional Fees detail */}
+                        {ranking.flightPrice.additionalFees && (
+                          <div className="bg-orange-500/10 border border-orange-500/30 rounded-lg p-2 mb-3 text-xs text-orange-300 flex flex-wrap gap-3">
+                            <span>⚠️ Frais supplémentaires :</span>
+                            {ranking.flightPrice.additionalFees.baggage != null && (
+                              <span>Bagage : {formatPrice(ranking.flightPrice.additionalFees.baggage)}</span>
+                            )}
+                            {ranking.flightPrice.additionalFees.seat != null && (
+                              <span>Siège : {formatPrice(ranking.flightPrice.additionalFees.seat)}</span>
+                            )}
+                            {ranking.flightPrice.additionalFees.booking != null && ranking.flightPrice.additionalFees.booking > 0 && (
+                              <span>Réservation : {formatPrice(ranking.flightPrice.additionalFees.booking)}</span>
+                            )}
+                            <span className="font-bold">Total : {formatPrice(ranking.flightPrice.additionalFees.total)}</span>
+                          </div>
+                        )}
+
+                        {/* Timing Info */}
+                        <div className="text-xs text-gray-500 flex flex-wrap gap-x-4 gap-y-1">
+                          <span>📅 Observé le {formatDate(ranking.flightPrice.timing.purchaseDate)}</span>
+                          <span>✈️ {ranking.flightPrice.timing.daysBeforeDeparture} j avant départ</span>
+                          {ranking.flightPrice.timing.isHoliday && ranking.flightPrice.timing.holidayName && (
+                            <span>🗓 {ranking.flightPrice.timing.holidayName}</span>
+                          )}
+                          {!ranking.flightPrice.verified && (
+                            <span className="text-yellow-600">⚠️ Non vérifié</span>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </section>
 

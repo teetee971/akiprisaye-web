@@ -69,6 +69,7 @@ export interface FlightPricePoint {
   id: string;
   airline: string;             // Airline name
   airlineCode: string;         // IATA airline code
+  bookingUrl?: string;         // Direct link to airline booking page
   route: FlightRoute;
   price: number;               // Price in euros
   currency: string;            // Currency code (default: EUR)
