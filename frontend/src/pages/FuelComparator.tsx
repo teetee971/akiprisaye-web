@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { BarChart3, FileText, MapPin, AlertCircle, Droplet } from 'lucide-react';
+import { BarChart3, FileText, MapPin, AlertCircle, Droplet, ExternalLink, Navigation, Award, TrendingDown } from 'lucide-react';
 import type {
   FuelPricePoint,
   FuelType,
@@ -109,6 +109,11 @@ const FuelComparator: React.FC = () => {
     };
   }, [comparisonResult]);
 
+  const getStationMapsUrl = (stationName: string, city: string, lat?: number, lng?: number): string => {
+    if (lat && lng) return `https://www.google.com/maps?q=${lat},${lng}`;
+    return `https://www.google.com/maps/search/${encodeURIComponent(stationName + ' ' + city)}`;
+  };
+
   const sortedPrices = useMemo(() => {
     if (!comparisonResult) return [];
     const list = [...comparisonResult.rankedPrices];
@@ -140,6 +145,9 @@ const FuelComparator: React.FC = () => {
               <h1 className="text-2xl sm:text-3xl font-bold text-white drop-shadow">⛽ Comparateur Carburants</h1>
             </div>
             <p className="text-yellow-100 text-sm drop-shadow">Prix observés aux stations — données officielles prix-carburants.gouv.fr</p>
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-green-500/20 border border-green-500/40 rounded-full text-xs text-green-300 mt-2">
+              🔄 Données du {new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+            </span>
           </HeroImage>
         </div>
 
@@ -183,6 +191,39 @@ const FuelComparator: React.FC = () => {
               totalObservations={comparisonResult.aggregation.totalStations}
               currency="EUR"
             />
+            {/* Cheapest station summary */}
+            {comparisonResult.rankedPrices.length > 0 && (() => {
+              const cheapest = comparisonResult.rankedPrices[0];
+              const lat = cheapest.fuelPrice.station.location?.lat;
+              const lng = cheapest.fuelPrice.station.location?.lng;
+              const mapsUrl = getStationMapsUrl(cheapest.fuelPrice.station.name, cheapest.fuelPrice.station.city, lat, lng);
+              return (
+                <div className="my-4 bg-green-500/10 border border-green-500/30 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <TrendingDown className="w-4 h-4 text-green-400" />
+                      <span className="text-sm font-semibold text-green-300">Station la moins chère</span>
+                    </div>
+                    <p className="text-white font-bold text-lg">{cheapest.fuelPrice.station.name}</p>
+                    <p className="text-xs text-gray-400">{cheapest.fuelPrice.station.city} · {cheapest.fuelPrice.station.brand}</p>
+                    {cheapest.fuelPrice.station.address && (
+                      <p className="text-xs text-gray-500 mt-0.5">{cheapest.fuelPrice.station.address}</p>
+                    )}
+                  </div>
+                  <div className="flex flex-col sm:items-end gap-2">
+                    <p className="text-3xl font-bold text-green-400">{formatPrice(cheapest.fuelPrice.pricePerLiter)}<span className="text-sm font-normal text-gray-400">/L</span></p>
+                    <a
+                      href={mapsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-sky-600 hover:bg-sky-500 text-white text-xs font-medium rounded-lg transition-colors"
+                    >
+                      <Navigation className="w-3 h-3" /> Itinéraire Google Maps
+                    </a>
+                  </div>
+                </div>
+              );
+            })()}
             <div className="flex flex-wrap items-center justify-between gap-3 my-4">
               <SortControl
                 options={[{ value: 'price', label: 'Prix' }, { value: 'station', label: 'Station' }, { value: 'city', label: 'Ville' }]}
@@ -209,6 +250,7 @@ const FuelComparator: React.FC = () => {
                     <th className="px-4 py-3 text-left">Ville</th>
                     <th className="px-4 py-3 text-right">Prix / L</th>
                     <th className="px-4 py-3 text-center">Positionnement</th>
+                    <th className="px-4 py-3 text-center">Maps</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -222,6 +264,22 @@ const FuelComparator: React.FC = () => {
                           {getCategoryLabel(item.priceCategory)}
                         </span>
                       </td>
+                      <td className="px-4 py-3 text-center">
+                        <a
+                          href={getStationMapsUrl(
+                            item.fuelPrice.station.name,
+                            item.fuelPrice.station.city,
+                            item.fuelPrice.station.location?.lat,
+                            item.fuelPrice.station.location?.lng
+                          )}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 px-2 py-1 bg-sky-600/80 hover:bg-sky-500 text-white text-xs rounded-lg transition-colors"
+                          title="Voir sur Google Maps"
+                        >
+                          <Navigation className="w-3 h-3" />
+                        </a>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -231,6 +289,7 @@ const FuelComparator: React.FC = () => {
               Source : {comparisonResult.metadata?.dataSource || 'Observatoire A KI PRI SA YÉ'}
               {' · '}Comparaison du {formatDate(new Date(comparisonResult.comparisonDate))}
             </div>
+            <p className="mt-2 text-xs text-gray-500">A KI PRI SA YÉ ne perçoit aucune commission. Vérifiez les tarifs actuels sur le site de la station.</p>
           </>
         )}
       </div>
