@@ -232,6 +232,9 @@ const DevisIA = lazyPage(() => import('./pages/DevisIA'));
 const DevisTracking = lazyPage(() => import('./pages/DevisTracking'));
 const AdminDevis = lazyPage(() => import('./pages/admin/AdminDevis'));
 const AdminCalculsBatiment = lazyPage(() => import('./pages/admin/AdminCalculsBatiment'));
+// Marketplace Pros Bâtiment
+const InscriptionProBatiment = lazyPage(() => import('./pages/InscriptionProBatiment'));
+const AdminInseeImport = lazyPage(() => import('./pages/admin/AdminInseeImport'));
 const RoadmapPage = lazyPage(() => import('./pages/RoadmapPage'));
 const DossierInvestisseurs = lazyPage(() => import('./pages/DossierInvestisseurs'));
 const ChecklistProduction = lazyPage(() => import('./pages/ChecklistProduction'));
@@ -381,6 +384,8 @@ export default function App() {
                           <Route path="devis" element={<AdminDevis />} />
                           {/* Calculs bâtiment admin */}
                           <Route path="calculs-batiment" element={<AdminCalculsBatiment />} />
+                          {/* Pros bâtiment — import INSEE */}
+                          <Route path="insee-import" element={<AdminInseeImport />} />
                         </Route>
 
                         {/* Main site routes with Layout */}

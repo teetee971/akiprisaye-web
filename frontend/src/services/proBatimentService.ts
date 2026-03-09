@@ -411,6 +411,42 @@ export const METIER_LABELS: Record<MetierBatiment, string> = {
   fondations_anticycloniques:    '⚓ Fondations & constructions anticycloniques',
 };
 
+/**
+ * Correspondance code NAF INSEE → corps de métier(s) MetierBatiment.
+ * Utilisé lors de l'import automatique depuis l'API Sirene.
+ */
+export const NAF_TO_METIERS: Record<string, MetierBatiment[]> = {
+  '41.10A': ['maconnerie_generale', 'beton_arme'],
+  '41.20A': ['maconnerie_generale', 'beton_arme', 'fondations_semelles'],
+  '41.20B': ['maconnerie_generale', 'beton_arme'],
+  '43.11Z': ['demolition_deconstruction'],
+  '43.12A': ['terrassement_gros_oeuvre', 'nivellement_remblai'],
+  '43.12B': ['terrassement_gros_oeuvre', 'voirie_reseaux_divers'],
+  '43.13Z': ['fondations_semelles', 'terrassement_gros_oeuvre'],
+  '43.21A': ['electricite_courant_fort', 'tableau_electrique_mise_normes'],
+  '43.21B': ['electricite_courant_fort', 'courant_faible_alarme_reseau'],
+  '43.22A': ['plomberie_installation_sanitaire', 'reseau_eau_potable_eu_ep'],
+  '43.22B': ['climatisation_split_multisplit', 'ventilation_vmc_vmi', 'pompe_a_chaleur'],
+  '43.29A': ['isolation_toiture', 'isolation_thermique_interieure', 'isolation_thermique_exterieure'],
+  '43.29B': ['isolation_phonique', 'isolation_thermique_interieure'],
+  '43.31Z': ['cloison_seche_ba13', 'faux_plafond', 'platrerie_enduit_interieur'],
+  '43.32A': ['menuiserie_interieure_portes', 'fenetres_double_vitrage', 'volets_roulants_battants'],
+  '43.32B': ['serrurerie_blindage', 'grilles_garde_corps', 'portail_automatique'],
+  '43.32C': ['amenagement_interieur_sur_mesure', 'cuisine_amenagee'],
+  '43.33Z': ['carrelage_sol', 'carrelage_mural_faience', 'parquet_plancher_bois'],
+  '43.34Z': ['peinture_interieure', 'peinture_exterieure', 'vitrerie_remplacement_vitrage'],
+  '43.39Z': ['enduit_decoratif', 'revetement_mural_papier_peint', 'beton_cire_microcement'],
+  '43.91A': ['charpente_bois', 'ossature_bois'],
+  '43.91B': ['couverture_toles', 'couverture_tuiles', 'couverture_bac_acier'],
+  '43.99A': ['etancheite_toiture_terrasse'],
+  '43.99B': ['structure_metallique', 'charpente_metallique', 'escalier_metallique'],
+  '43.99C': ['maconnerie_generale', 'beton_arme', 'dalle_beton', 'fondations_semelles'],
+  '43.99D': ['terrassement_gros_oeuvre', 'drainage_assainissement_ext'],
+  '43.99E': ['maconnerie_generale'],
+  '81.30Z': ['paysagiste_amenagement', 'jardinage_entretien_espaces_verts'],
+  '81.10Z': ['dallage_terrasse_exterieure', 'cloture_grillage_gabion'],
+};
+
 export const STATUT_LABELS: Record<ProBatStatus, string> = {
   pending:   '⏳ En attente de vérification',
   verified:  '✅ Professionnel vérifié',
@@ -461,6 +497,22 @@ export const COMMISSION_RATES: Record<ProBatPlan, number> = {
   free:      0,    // pas de commission → pas de contacts tracés
   essentiel: 5,    // 5% sur devis accepté
   premium:   3,    // 3% sur devis accepté
+};
+
+/** Correspondance type calculateur → corps de métier(s) pertinents (pour "Trouver un Pro"). */
+export const CALC_TO_METIERS: Record<string, MetierBatiment[]> = {
+  'parpaing':       ['maconnerie_generale', 'beton_arme', 'fondations_semelles'],
+  'dalle-beton':    ['dalle_beton', 'beton_arme', 'chape_ragreage'],
+  'fondations':     ['fondations_semelles', 'beton_arme', 'terrassement_gros_oeuvre'],
+  'chape':          ['chape_ragreage', 'carrelage_sol', 'platrerie_enduit_interieur'],
+  'carrelage':      ['carrelage_sol', 'carrelage_mural_faience', 'beton_cire_microcement'],
+  'peinture':       ['peinture_interieure', 'peinture_exterieure', 'enduit_decoratif'],
+  'enduit':         ['enduit_crepi_facade', 'ravalement_facade', 'platrerie_enduit_interieur'],
+  'toles':          ['couverture_toles', 'couverture_bac_acier', 'zinguerie_gouttiere'],
+  'terrassement':   ['terrassement_gros_oeuvre', 'voirie_reseaux_divers', 'nivellement_remblai'],
+  'cloture':        ['cloture_grillage_gabion', 'portail_automatique', 'serrurerie_blindage'],
+  'beton-courant':  ['beton_arme', 'dalle_beton', 'maconnerie_generale'],
+  'escalier':       ['escalier_interieur', 'escalier_metallique', 'charpente_bois'],
 };
 
 // ── Types ─────────────────────────────────────────────────────────────────────
