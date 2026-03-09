@@ -3,6 +3,20 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 
 Le format s'inspire de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et ce projet adhère à la [sémantique de versionnage](https://semver.org/lang/fr/).
 
+## [3.1.9] - 2026-03-09
+
+### Fixed — FuelComparator : horodatage réel de la donnée
+
+- **`services/fuelComparisonService.ts`** — Nouveau type exporté `LiveFuelPricesResult { prices, fetchedAt }`.
+  `fetchLiveFuelPrices()` retourne désormais `fetchedAt` (ISO 8601) issu de la réponse du proxy Cloudflare
+  (champ `fetchedAt` déjà présent dans le payload de `functions/api/fuel-prices.ts`).
+
+- **`pages/FuelComparator.tsx`** — Supprime l'affichage de `new Date()` (date du navigateur, jamais fraîche)
+  dans le badge hero et la citation source. Affiche à la place la date+heure réelle de l'appel API gouvernemental :
+  `🔄 Mis à jour le 9 mars 2026 à 17:30`. Fallback sur la date locale si la donnée live n'est pas encore chargée.
+
+---
+
 ## [3.1.8] - 2026-03-09
 
 ### Added — Octroi de Mer : enquête + conférence institutionnelle
