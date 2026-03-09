@@ -47,9 +47,17 @@ export default function AbonnementsMobile() {
   const [typeOffre, setTypeOffre] = useState('');
   const [results, setResults] = useState<MobilePlanPrice[]>([]);
   const [showResults, setShowResults] = useState(false);
+  const [sortBy, setSortBy] = useState<string>('prixMensuel');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
   const territories = getTerritories();
   const offerTypes = getOfferTypes();
+
+  const sortOptions = [
+    { value: 'prixMensuel', label: 'Prix' },
+    { value: 'operateur', label: 'Opérateur' },
+    { value: 'donnees', label: 'Données' },
+  ];
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

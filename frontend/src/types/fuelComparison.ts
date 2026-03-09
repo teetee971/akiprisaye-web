@@ -12,6 +12,7 @@
  */
 
 import type { Territory, DataSource } from './priceAlerts';
+export type { Territory };
 
 /**
  * Fuel types available

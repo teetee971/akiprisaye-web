@@ -9,7 +9,7 @@ import { auth } from '@/lib/firebase';
 import { onAuthStateChanged, type User as FbUser } from 'firebase/auth';
 import {
   searchInseeProsBatiment, importInseeEtablissements, getExistingSirets,
-  type InseeEtablissement, type ImportResult,
+  type InseeEtablissement, type InseeSearchResult, type ImportResult,
 } from '@/services/inseeProService';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -40,15 +40,6 @@ const NAF_OPTIONS = [
   { code: '81.30Z', label: '81.30Z — Paysagisme' },
 ];
 
-// ── Types ─────────────────────────────────────────────────────────────────────
-
-interface InseeSearchResult {
-  etablissements: InseeEtablissement[];
-  total: number;
-  page: number;
-  perPage: number;
-}
-
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export default function AdminInseeImport() {
@@ -66,6 +57,7 @@ export default function AdminInseeImport() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!auth) return;
     const unsub = onAuthStateChanged(auth, setUser);
     return unsub;
   }, []);
@@ -76,9 +68,9 @@ export default function AdminInseeImport() {
     setImportResults(null);
     setSelected(new Set());
     try {
-      const result = await searchInseeProsBatiment({ territory, nafFilter, page: newPage, perPage });
-      const sirets = result.etablissements.map((e: InseeEtablissement) => e.siret);
-      const existing = await getExistingSirets(sirets);
+      const result = await searchInseeProsBatiment({ territory, naf: nafFilter, page: newPage, perPage });
+      const sirets = result.results.map((e: InseeEtablissement) => e.siret);
+      const existing = await getExistingSirets();
       setExistingSirets(existing);
       setSearchResult(result);
       setPage(newPage);
@@ -94,7 +86,7 @@ export default function AdminInseeImport() {
     setImporting(true);
     setError(null);
     try {
-      const toImport = searchResult.etablissements.filter(
+      const toImport = searchResult.results.filter(
         (e: InseeEtablissement) => selected.has(e.siret),
       );
       const results = await importInseeEtablissements(toImport);
@@ -108,10 +100,10 @@ export default function AdminInseeImport() {
 
   function toggleAll() {
     if (!searchResult) return;
-    const selectable = searchResult.etablissements
+    const selectable = searchResult.results
       .filter((e: InseeEtablissement) => !existingSirets.has(e.siret))
       .map((e: InseeEtablissement) => e.siret);
-    if (selectable.every((s) => selected.has(s))) {
+    if (selectable.every((s: string) => selected.has(s))) {
       setSelected(new Set());
     } else {
       setSelected(new Set(selectable));
@@ -141,7 +133,7 @@ export default function AdminInseeImport() {
     ? Math.ceil(searchResult.total / perPage)
     : 0;
   const newCount = searchResult
-    ? searchResult.etablissements.filter((e: InseeEtablissement) => !existingSirets.has(e.siret)).length
+    ? searchResult.results.filter((e: InseeEtablissement) => !existingSirets.has(e.siret)).length
     : 0;
 
   const importedCount = importResults?.filter((r) => r.status === 'imported').length ?? 0;
@@ -225,7 +217,7 @@ export default function AdminInseeImport() {
                     {r.status === 'error' && <XCircle className="w-4 h-4 text-red-400 shrink-0" />}
                     <span className="font-mono text-xs text-slate-400">{r.siret}</span>
                     <span className="text-slate-300 truncate">{r.raisonSociale}</span>
-                    {r.error && <span className="text-red-400 text-xs ml-auto shrink-0">{r.error}</span>}
+                    {r.errorMsg && <span className="text-red-400 text-xs ml-auto shrink-0">{r.errorMsg}</span>}
                   </div>
                 ))}
               </div>
@@ -348,7 +340,7 @@ export default function AdminInseeImport() {
               {/* Select all */}
               <div className="px-4 py-3 border-b border-slate-700 flex items-center gap-3">
                 <button onClick={toggleAll} className="flex items-center gap-2 text-sm text-slate-300 hover:text-white transition-colors">
-                  {searchResult.etablissements
+                  {searchResult.results
                     .filter((e: InseeEtablissement) => !existingSirets.has(e.siret))
                     .every((e: InseeEtablissement) => selected.has(e.siret)) && newCount > 0
                     ? <CheckSquare className="w-4 h-4 text-orange-400" />
@@ -358,7 +350,7 @@ export default function AdminInseeImport() {
               </div>
 
               <div className="divide-y divide-slate-700/50">
-                {searchResult.etablissements.map((e: InseeEtablissement) => {
+                {searchResult.results.map((e: InseeEtablissement) => {
                   const exists = existingSirets.has(e.siret);
                   const isSelected = selected.has(e.siret);
                   return (
@@ -385,8 +377,8 @@ export default function AdminInseeImport() {
                       </div>
 
                       <div className="hidden sm:block text-xs text-slate-400 w-32 shrink-0">
-                        <p className="font-mono text-orange-300">{e.codeNaf}</p>
-                        <p className="truncate">{e.libelleNaf}</p>
+                        <p className="font-mono text-orange-300">{e.nafCode}</p>
+                        <p className="truncate">{e.nafLibelle}</p>
                       </div>
 
                       <div className="hidden md:flex items-center gap-1 text-xs text-slate-400 w-28 shrink-0">

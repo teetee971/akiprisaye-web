@@ -11,6 +11,7 @@
  */
 
 import type { Territory, DataSource } from './priceAlerts';
+export type { Territory };
 
 /**
  * Insurance types

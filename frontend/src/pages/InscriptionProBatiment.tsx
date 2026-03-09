@@ -719,6 +719,7 @@ export default function InscriptionProBatiment() {
 
       let uid = 'anonymous';
       await new Promise<void>((resolve) => {
+        if (!auth) { resolve(); return; }
         const unsub = onAuthStateChanged(auth, (user) => {
           if (user) uid = user.uid;
           unsub();
