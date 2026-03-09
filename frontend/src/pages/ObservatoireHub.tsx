@@ -37,31 +37,31 @@ export default function ObservatoireHub() {
         <meta name="description" content="Observatoire citoyen des prix dans les DOM-COM" />
       </Helmet>
       
-      <div className="min-h-screen bg-slate-950 p-4 pt-24">
+      <div className="min-h-screen bg-slate-950 p-3 sm:p-4 pt-20 sm:pt-24">
         <div className="max-w-7xl mx-auto">
           {/* Hero banner */}
-          <div className="mb-8">
+          <div className="mb-5 sm:mb-8">
             <HeroImage
               src={HERO_IMG}
               alt="Rayons de supermarché — comparaison des prix"
               gradient="from-slate-900 to-emerald-950"
-              height="h-44 sm:h-60"
+              height="h-32 sm:h-60"
             >
-              <h1 className="text-3xl md:text-4xl font-bold text-white drop-shadow flex items-center gap-3">
-                <TrendingUp className="w-9 h-9 text-emerald-300" aria-hidden="true" /> Observatoire des Prix
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white drop-shadow flex items-center gap-2 sm:gap-3">
+                <TrendingUp className="w-7 h-7 sm:w-9 sm:h-9 text-emerald-300" aria-hidden="true" /> Observatoire des Prix
               </h1>
-              <p className="text-slate-200 drop-shadow">
+              <p className="text-slate-200 drop-shadow text-sm sm:text-base">
                 Données transparentes et analyses approfondies des prix DOM-COM &amp; France
               </p>
             </HeroImage>
           </div>
           
           {/* Tabs */}
-          <GlassCard className="mb-6 p-3">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+          <GlassCard className="mb-4 sm:mb-6 p-2 sm:p-3">
+            <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
               <button
                 onClick={() => setActiveTab('dashboard')}
-                className={`flex flex-col items-center gap-2 px-4 py-3 rounded-xl font-semibold transition-all ${
+                className={`flex flex-col items-center gap-1 sm:gap-2 px-2 py-2 sm:px-4 sm:py-3 rounded-xl font-semibold transition-all ${
                   activeTab === 'dashboard' 
                     ? 'bg-red-600 text-white shadow-lg shadow-red-600/30' 
                     : 'bg-slate-800/50 text-gray-400 hover:bg-slate-700 hover:text-gray-300'
@@ -69,12 +69,12 @@ export default function ObservatoireHub() {
                 aria-label="Sélectionner l'onglet dashboard"
                 aria-pressed={activeTab === 'dashboard'}
               >
-                <BarChart3 className="w-5 h-5" />
-                <span className="text-sm">Dashboard</span>
+                <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="text-xs sm:text-sm">Dashboard</span>
               </button>
               <button
                 onClick={() => setActiveTab('diagnostic')}
-                className={`flex flex-col items-center gap-2 px-4 py-3 rounded-xl font-semibold transition-all ${
+                className={`flex flex-col items-center gap-1 sm:gap-2 px-2 py-2 sm:px-4 sm:py-3 rounded-xl font-semibold transition-all ${
                   activeTab === 'diagnostic' 
                     ? 'bg-red-600 text-white shadow-lg shadow-red-600/30' 
                     : 'bg-slate-800/50 text-gray-400 hover:bg-slate-700 hover:text-gray-300'
@@ -82,12 +82,12 @@ export default function ObservatoireHub() {
                 aria-label="Sélectionner l'onglet diagnostic"
                 aria-pressed={activeTab === 'diagnostic'}
               >
-                <Search className="w-5 h-5" />
-                <span className="text-sm">Diagnostic</span>
+                <Search className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="text-xs sm:text-sm">Diagnostic</span>
               </button>
               <button
                 onClick={() => setActiveTab('palmares')}
-                className={`flex flex-col items-center gap-2 px-4 py-3 rounded-xl font-semibold transition-all ${
+                className={`flex flex-col items-center gap-1 sm:gap-2 px-2 py-2 sm:px-4 sm:py-3 rounded-xl font-semibold transition-all ${
                   activeTab === 'palmares' 
                     ? 'bg-red-600 text-white shadow-lg shadow-red-600/30' 
                     : 'bg-slate-800/50 text-gray-400 hover:bg-slate-700 hover:text-gray-300'
@@ -95,12 +95,12 @@ export default function ObservatoireHub() {
                 aria-label="Sélectionner l'onglet palmarès"
                 aria-pressed={activeTab === 'palmares'}
               >
-                <Award className="w-5 h-5" />
-                <span className="text-sm">Palmarès</span>
+                <Award className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="text-xs sm:text-sm">Palmarès</span>
               </button>
               <button
                 onClick={() => setActiveTab('donnees')}
-                className={`flex flex-col items-center gap-2 px-4 py-3 rounded-xl font-semibold transition-all ${
+                className={`flex flex-col items-center gap-1 sm:gap-2 px-2 py-2 sm:px-4 sm:py-3 rounded-xl font-semibold transition-all ${
                   activeTab === 'donnees' 
                     ? 'bg-red-600 text-white shadow-lg shadow-red-600/30' 
                     : 'bg-slate-800/50 text-gray-400 hover:bg-slate-700 hover:text-gray-300'
@@ -108,8 +108,8 @@ export default function ObservatoireHub() {
                 aria-label="Sélectionner l'onglet données"
                 aria-pressed={activeTab === 'donnees'}
               >
-                <Database className="w-5 h-5" />
-                <span className="text-sm">Données</span>
+                <Database className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="text-xs sm:text-sm">Données</span>
               </button>
             </div>
           </GlassCard>
@@ -128,45 +128,26 @@ export default function ObservatoireHub() {
                   Analysez en profondeur les écarts de prix dans votre territoire
                 </p>
                 
-                <div className="grid md:grid-cols-2 gap-4 mb-6">
-                  <div className="bg-slate-900/50 rounded-xl p-6 border border-slate-800">
-                    <BarChart2 className="w-8 h-8 text-blue-400 mb-3" aria-hidden="true" />
-                    <h3 className="font-semibold text-lg mb-2 text-white">
-                      Analyse par catégorie
-                    </h3>
-                    <p className="text-gray-400 text-sm">
-                      Comparez les prix par rayon et type de produit
-                    </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-6">
+                  <div className="bg-slate-900/50 rounded-xl p-4 border border-slate-800">
+                    <BarChart2 className="w-7 h-7 text-blue-400 mb-2" aria-hidden="true" />
+                    <h3 className="font-semibold text-base mb-1 text-white">Analyse par catégorie</h3>
+                    <p className="text-gray-400 text-sm">Comparez les prix par rayon et type de produit</p>
                   </div>
-                  
-                  <div className="bg-slate-900/50 rounded-xl p-6 border border-slate-800">
-                    <Store className="w-8 h-8 text-green-400 mb-3" aria-hidden="true" />
-                    <h3 className="font-semibold text-lg mb-2 text-white">
-                      Analyse par enseigne
-                    </h3>
-                    <p className="text-gray-400 text-sm">
-                      Identifiez les enseignes les plus compétitives
-                    </p>
+                  <div className="bg-slate-900/50 rounded-xl p-4 border border-slate-800">
+                    <Store className="w-7 h-7 text-green-400 mb-2" aria-hidden="true" />
+                    <h3 className="font-semibold text-base mb-1 text-white">Analyse par enseigne</h3>
+                    <p className="text-gray-400 text-sm">Identifiez les enseignes les plus compétitives</p>
                   </div>
-                  
-                  <div className="bg-slate-900/50 rounded-xl p-6 border border-slate-800">
-                    <TrendingUp className="w-8 h-8 text-orange-400 mb-3" aria-hidden="true" />
-                    <h3 className="font-semibold text-lg mb-2 text-white">
-                      Évolution temporelle
-                    </h3>
-                    <p className="text-gray-400 text-sm">
-                      Suivez les tendances sur plusieurs mois
-                    </p>
+                  <div className="bg-slate-900/50 rounded-xl p-4 border border-slate-800">
+                    <TrendingUp className="w-7 h-7 text-orange-400 mb-2" aria-hidden="true" />
+                    <h3 className="font-semibold text-base mb-1 text-white">Évolution temporelle</h3>
+                    <p className="text-gray-400 text-sm">Suivez les tendances sur plusieurs mois</p>
                   </div>
-                  
-                  <div className="bg-slate-900/50 rounded-xl p-6 border border-slate-800">
-                    <Globe className="w-8 h-8 text-purple-400 mb-3" aria-hidden="true" />
-                    <h3 className="font-semibold text-lg mb-2 text-white">
-                      Comparaison territoriale
-                    </h3>
-                    <p className="text-gray-400 text-sm">
-                      Comparez avec d'autres territoires DOM-COM
-                    </p>
+                  <div className="bg-slate-900/50 rounded-xl p-4 border border-slate-800">
+                    <Globe className="w-7 h-7 text-purple-400 mb-2" aria-hidden="true" />
+                    <h3 className="font-semibold text-base mb-1 text-white">Comparaison territoriale</h3>
+                    <p className="text-gray-400 text-sm">Comparez avec d'autres territoires DOM-COM</p>
                   </div>
                 </div>
                 
@@ -305,29 +286,20 @@ export default function ObservatoireHub() {
                   Accédez aux données brutes et transparentes de l'observatoire
                 </p>
                 
-                <div className="grid md:grid-cols-2 gap-4 mb-6">
-                  <div className="bg-slate-900/50 rounded-xl p-6 border border-slate-800">
-                    <Download className="w-8 h-8 text-blue-400 mb-3" aria-hidden="true" />
-                    <h3 className="font-semibold text-lg mb-2 text-white">
-                      Export de données
-                    </h3>
-                    <p className="text-gray-400 text-sm mb-4">
-                      Téléchargez les données au format CSV, JSON ou Excel
-                    </p>
-                    <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-6">
+                  <div className="bg-slate-900/50 rounded-xl p-4 border border-slate-800">
+                    <Download className="w-7 h-7 text-blue-400 mb-2" aria-hidden="true" />
+                    <h3 className="font-semibold text-base mb-1 text-white">Export de données</h3>
+                    <p className="text-gray-400 text-sm mb-3">Téléchargez les données au format CSV, JSON ou Excel</p>
+                    <button className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors">
                       Télécharger
                     </button>
                   </div>
-                  
-                  <div className="bg-slate-900/50 rounded-xl p-6 border border-slate-800">
-                    <BarChart2 className="w-8 h-8 text-emerald-400 mb-3" aria-hidden="true" />
-                    <h3 className="font-semibold text-lg mb-2 text-white">
-                      API ouverte
-                    </h3>
-                    <p className="text-gray-400 text-sm mb-4">
-                      Intégrez nos données dans vos applications
-                    </p>
-                    <button className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm font-medium transition-colors">
+                  <div className="bg-slate-900/50 rounded-xl p-4 border border-slate-800">
+                    <BarChart2 className="w-7 h-7 text-emerald-400 mb-2" aria-hidden="true" />
+                    <h3 className="font-semibold text-base mb-1 text-white">API ouverte</h3>
+                    <p className="text-gray-400 text-sm mb-3">Intégrez nos données dans vos applications</p>
+                    <button className="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm font-medium transition-colors">
                       Documentation
                     </button>
                   </div>
@@ -361,26 +333,26 @@ export default function ObservatoireHub() {
           </div>
           
           {/* Key Metrics */}
-          <div className="mt-8">
-            <h2 className="text-xl font-semibold text-white mb-4">
+          <div className="mt-6 sm:mt-8">
+            <h2 className="text-lg sm:text-xl font-semibold text-white mb-3">
               Indicateurs clés
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <GlassCard className="text-center">
-                <div className="text-3xl font-bold text-red-400 mb-2">45k+</div>
-                <div className="text-gray-400 text-sm">Prix relevés</div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4">
+              <GlassCard className="text-center py-3 sm:py-4">
+                <div className="text-2xl sm:text-3xl font-bold text-red-400 mb-1">45k+</div>
+                <div className="text-gray-400 text-xs sm:text-sm">Prix relevés</div>
               </GlassCard>
-              <GlassCard className="text-center">
-                <div className="text-3xl font-bold text-orange-400 mb-2">1.2k</div>
-                <div className="text-gray-400 text-sm">Produits suivis</div>
+              <GlassCard className="text-center py-3 sm:py-4">
+                <div className="text-2xl sm:text-3xl font-bold text-orange-400 mb-1">1.2k</div>
+                <div className="text-gray-400 text-xs sm:text-sm">Produits suivis</div>
               </GlassCard>
-              <GlassCard className="text-center">
-                <div className="text-3xl font-bold text-green-400 mb-2">150</div>
-                <div className="text-gray-400 text-sm">Magasins analysés</div>
+              <GlassCard className="text-center py-3 sm:py-4">
+                <div className="text-2xl sm:text-3xl font-bold text-green-400 mb-1">150</div>
+                <div className="text-gray-400 text-xs sm:text-sm">Magasins analysés</div>
               </GlassCard>
-              <GlassCard className="text-center">
-                <div className="text-3xl font-bold text-blue-400 mb-2">5</div>
-                <div className="text-gray-400 text-sm">Territoires DOM-COM</div>
+              <GlassCard className="text-center py-3 sm:py-4">
+                <div className="text-2xl sm:text-3xl font-bold text-blue-400 mb-1">5</div>
+                <div className="text-gray-400 text-xs sm:text-sm">Territoires DOM-COM</div>
               </GlassCard>
             </div>
           </div>

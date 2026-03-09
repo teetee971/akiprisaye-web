@@ -76,114 +76,118 @@ export default function Actualites() {
   }, [state.items, verifiedOnly]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <Helmet>
         <title>Actualités & Bons plans consommateurs | A KI PRI SA YÉ</title>
         <meta name="description" content="Rappels sanitaires, bons plans vérifiés, réglementaire et signaux conso avec source obligatoire." />
       </Helmet>
 
-      <section className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur animate-fade-in">
+      <section className="rounded-2xl border border-white/10 bg-white/5 p-3 sm:p-6 backdrop-blur animate-fade-in">
         <HeroImage
           src={PAGE_HERO_IMAGES.contact}
           alt="Actualités consommateurs"
           gradient="from-slate-900 to-teal-950"
-          height="h-32 sm:h-44"
+          height="h-24 sm:h-44"
         >
-          <h1 className="text-2xl font-bold text-white drop-shadow">📰 Actualités &amp; Bons plans</h1>
-          <p className="text-slate-200 text-sm drop-shadow">Rappels sanitaires, bons plans vérifiés et signaux conso</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-white drop-shadow">📰 Actualités &amp; Bons plans</h1>
+          <p className="text-slate-200 text-xs sm:text-sm drop-shadow">Rappels sanitaires, bons plans vérifiés et signaux conso</p>
         </HeroImage>
       </section>
 
-      <section className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur space-y-4">
+      <section className="rounded-2xl border border-white/10 bg-white/5 p-3 sm:p-4 backdrop-blur space-y-3">
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="Rechercher un mot-clé"
+          placeholder="🔍 Rechercher un mot-clé"
           className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm"
         />
 
-        <div className="grid gap-3 md:grid-cols-2">
-          <select value={territory} onChange={(e) => setTerritory(e.target.value)} className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm">
+        <div className="grid gap-2 grid-cols-2">
+          <select value={territory} onChange={(e) => setTerritory(e.target.value)} className="rounded-lg border border-slate-700 bg-slate-900 px-2 py-2 text-xs sm:text-sm">
             {Object.entries(TERRITORY_LABELS).map(([code, label]) => <option key={code} value={code}>{label}</option>)}
           </select>
-          <label className="flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm">
+          <label className="flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-900 px-2 py-2 text-xs sm:text-sm cursor-pointer">
             <input type="checkbox" checked={verifiedOnly} onChange={(e) => setVerifiedOnly(e.target.checked)} />
             Vérifiés seulement
           </label>
         </div>
 
-        <div className="flex flex-wrap gap-2">
-          <button onClick={() => setType('')} className={`rounded-full px-3 py-1 text-xs ${!type ? 'bg-blue-600 text-white' : 'bg-slate-800'}`}>Tous modules</button>
+        <div className="flex flex-wrap gap-1.5">
+          <button onClick={() => setType('')} className={`rounded-full px-2.5 py-1 text-xs font-medium ${!type ? 'bg-blue-600 text-white' : 'bg-slate-800 text-slate-300'}`}>Tous</button>
           {TYPE_OPTIONS.map((value) => (
-            <button key={value} onClick={() => setType(value)} className={`rounded-full px-3 py-1 text-xs ${type === value ? 'bg-blue-600 text-white' : 'bg-slate-800'}`}>
+            <button key={value} onClick={() => setType(value)} className={`rounded-full px-2.5 py-1 text-xs font-medium ${type === value ? 'bg-blue-600 text-white' : 'bg-slate-800 text-slate-300'}`}>
               {TYPE_LABELS[value]}
             </button>
           ))}
         </div>
 
-        <div className="flex flex-wrap gap-2">
-          <button onClick={() => setImpact('')} className={`rounded-full px-3 py-1 text-xs ${!impact ? 'bg-emerald-600 text-white' : 'bg-slate-800'}`}>Tous impacts</button>
+        <div className="flex flex-wrap gap-1.5">
+          <button onClick={() => setImpact('')} className={`rounded-full px-2.5 py-1 text-xs font-medium ${!impact ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-300'}`}>Tous impacts</button>
           {IMPACT_OPTIONS.map((value) => (
-            <button key={value} onClick={() => setImpact(value)} className={`rounded-full px-3 py-1 text-xs ${impact === value ? 'bg-emerald-600 text-white' : 'bg-slate-800'}`}>
+            <button key={value} onClick={() => setImpact(value)} className={`rounded-full px-2.5 py-1 text-xs font-medium ${impact === value ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-300'}`}>
               {IMPACT_LABELS[value]}
             </button>
           ))}
         </div>
       </section>
 
-      {state.status === 'loading' && <p className="text-sm text-slate-400">Chargement des actualités...</p>}
-      {state.status === 'error' && <p className="text-sm text-amber-300">API indisponible: fallback embarqué affiché.</p>}
-      {displayedItems.length === 0 && state.status !== 'loading' && <p className="text-sm text-slate-400">Aucun résultat pour ces filtres.</p>}
+      {state.status === 'loading' && <p className="text-sm text-slate-400 px-1">Chargement des actualités...</p>}
+      {state.status === 'error' && <p className="text-sm text-amber-300 px-1">API indisponible : fallback embarqué affiché.</p>}
+      {displayedItems.length === 0 && state.status !== 'loading' && <p className="text-sm text-slate-400 px-1">Aucun résultat pour ces filtres.</p>}
 
-      <section className="grid gap-4">
+      <section className="grid gap-3">
         {displayedItems.map((item) => {
           const evidenceOpen = Boolean(openEvidence[item.id]);
+          const impactColor = item.impact === 'fort' ? 'border-l-red-500' : item.impact === 'moyen' ? 'border-l-amber-500' : 'border-l-blue-500';
           return (
-            <article key={item.id} className="rounded-2xl border border-white/10 bg-slate-900/70 overflow-hidden">
+            <article key={item.id} className={`rounded-2xl border border-white/10 bg-slate-900/70 overflow-hidden border-l-4 ${impactColor}`}>
               {item.imageUrl && (
                 <img
                   src={item.imageUrl}
                   alt={item.title}
                   loading="lazy"
-                  className="w-full h-36 object-cover"
+                  className="w-full h-28 sm:h-40 object-cover"
                   onError={(e) => { e.currentTarget.style.display = 'none'; }}
                 />
               )}
-              <div className="p-4">
-              <div className="mb-2 flex flex-wrap gap-2 text-xs">
-                <span className="rounded bg-slate-800 px-2 py-1">{TERRITORY_LABELS[item.territory] ?? item.territory}</span>
-                <span className="rounded bg-slate-800 px-2 py-1">{IMPACT_LABELS[item.impact] ?? item.impact}</span>
-                {item.verified && <span className="rounded bg-emerald-700/70 px-2 py-1">Vérifié</span>}
-                {item.isSponsored && <span className="rounded bg-amber-700/70 px-2 py-1">Sponsorisé</span>}
-              </div>
-              <h2 className="text-lg font-semibold">{item.title}</h2>
-              <p className="mt-1 text-sm text-slate-300">{item.summary}</p>
-              <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-slate-400">
-                <a href={item.source_url} target="_blank" rel="noreferrer" className="underline">Source: {item.source_name}</a>
-                <span>{new Date(item.published_at).toLocaleString('fr-FR')}</span>
-                {item.canonical_url && <a href={item.canonical_url} target="_blank" rel="noreferrer" className="underline">Voir détail</a>}
-              </div>
-
-              {item.evidence && (
-                <div className="mt-3">
-                  <button className="text-xs underline" onClick={() => setOpenEvidence((prev) => ({ ...prev, [item.id]: !prev[item.id] }))}>
-                    {evidenceOpen ? 'Masquer' : 'Afficher'} les preuves
-                  </button>
-                  {evidenceOpen && (
-                    <ul className="mt-2 list-disc pl-5 text-xs text-slate-300">
-                      {Object.entries(item.evidence).map(([key, value]) => <li key={key}><strong>{key}</strong>: {String(value)}</li>)}
-                    </ul>
-                  )}
+              <div className="p-3 sm:p-4">
+                <div className="mb-2 flex flex-wrap gap-1.5 text-xs">
+                  <span className="rounded bg-slate-800 px-2 py-0.5">{TERRITORY_LABELS[item.territory] ?? item.territory}</span>
+                  <span className={`rounded px-2 py-0.5 font-medium ${item.impact === 'fort' ? 'bg-red-900/60 text-red-300' : item.impact === 'moyen' ? 'bg-amber-900/60 text-amber-300' : 'bg-blue-900/60 text-blue-300'}`}>
+                    {IMPACT_LABELS[item.impact] ?? item.impact}
+                  </span>
+                  {item.verified && <span className="rounded bg-emerald-700/70 px-2 py-0.5 text-emerald-200">✓ Vérifié</span>}
+                  {item.isSponsored && <span className="rounded bg-amber-700/70 px-2 py-0.5">Sponsorisé</span>}
                 </div>
-              )}
+                <h2 className="text-sm sm:text-base font-semibold leading-snug">{item.title}</h2>
+                <p className="mt-1 text-xs sm:text-sm text-slate-300 line-clamp-3">{item.summary}</p>
+                <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+                  <a href={item.source_url} target="_blank" rel="noreferrer" className="underline hover:text-slate-200 truncate max-w-[140px]">{item.source_name}</a>
+                  <span>·</span>
+                  <span>{new Date(item.published_at).toLocaleDateString('fr-FR')}</span>
+                  {item.canonical_url && <a href={item.canonical_url} target="_blank" rel="noreferrer" className="underline hover:text-slate-200">Détail →</a>}
+                </div>
+
+                {item.evidence && (
+                  <div className="mt-2">
+                    <button className="text-xs text-blue-400 underline" onClick={() => setOpenEvidence((prev) => ({ ...prev, [item.id]: !prev[item.id] }))}>
+                      {evidenceOpen ? '▲ Masquer' : '▼ Preuves'}
+                    </button>
+                    {evidenceOpen && (
+                      <ul className="mt-2 list-disc pl-4 text-xs text-slate-300 space-y-0.5">
+                        {Object.entries(item.evidence).map(([key, value]) => <li key={key}><strong>{key}</strong> : {String(value)}</li>)}
+                      </ul>
+                    )}
+                  </div>
+                )}
               </div>
             </article>
           );
         })}
       </section>
 
-      <button onClick={() => setLimit((prev) => prev + 30)} className="rounded-lg border border-slate-700 bg-slate-900 px-4 py-2 text-sm">
-        Charger plus
+      <button onClick={() => setLimit((prev) => prev + 30)} className="w-full rounded-xl border border-slate-700 bg-slate-900 hover:bg-slate-800 px-4 py-3 text-sm font-medium transition-colors">
+        Charger plus d'actualités
       </button>
     </div>
   );

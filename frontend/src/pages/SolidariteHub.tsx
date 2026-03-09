@@ -20,31 +20,31 @@ export default function SolidariteHub() {
         <meta name="description" content="Initiatives solidaires pour un accès équitable à l'alimentation" />
       </Helmet>
       
-      <div className="min-h-screen bg-slate-950 p-4 pt-24">
+      <div className="min-h-screen bg-slate-950 p-3 sm:p-4 pt-20 sm:pt-24">
         <div className="max-w-6xl mx-auto">
           {/* Hero banner */}
-          <div className="mb-8 animate-fade-in">
+          <div className="mb-5 sm:mb-8 animate-fade-in">
             <HeroImage
               src={PAGE_HERO_IMAGES.solidarite}
               alt="Solidarité — mains tendues, entraide citoyenne"
               gradient="from-orange-950 to-slate-900"
-              height="h-44 sm:h-60"
+              height="h-32 sm:h-60"
             >
-              <h1 className="text-3xl md:text-4xl font-bold text-white drop-shadow">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white drop-shadow">
                 🤝 Solidarité &amp; Entraide
               </h1>
-              <p className="text-slate-200 drop-shadow">
+              <p className="text-slate-200 drop-shadow text-sm sm:text-base">
                 Ensemble pour un accès équitable à l'alimentation
               </p>
             </HeroImage>
           </div>
           
           {/* Section Selector */}
-          <GlassCard className="mb-6 p-3">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <GlassCard className="mb-4 sm:mb-6 p-2 sm:p-3">
+            <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
               <button
                 onClick={() => setActiveSection('panier')}
-                className={`flex flex-col items-center gap-2 px-3 py-4 rounded-xl font-semibold transition-all ${
+                className={`flex flex-col items-center gap-1 sm:gap-2 px-2 py-2 sm:px-3 sm:py-4 rounded-xl font-semibold transition-all ${
                   activeSection === 'panier'
                     ? 'bg-orange-600 text-white shadow-lg shadow-orange-600/30'
                     : 'bg-slate-800/50 text-gray-400 hover:bg-slate-700 hover:text-gray-300'
@@ -52,12 +52,12 @@ export default function SolidariteHub() {
                 aria-label="Sélectionner la section Ti Panier"
                 aria-pressed={activeSection === 'panier'}
               >
-                <ShoppingBasket className="w-6 h-6" />
-                <span className="text-sm">Ti Panier</span>
+                <ShoppingBasket className="w-5 h-5 sm:w-6 sm:h-6" />
+                <span className="text-xs sm:text-sm">Ti Panier</span>
               </button>
               <button
                 onClick={() => setActiveSection('entraide')}
-                className={`flex flex-col items-center gap-2 px-3 py-4 rounded-xl font-semibold transition-all ${
+                className={`flex flex-col items-center gap-1 sm:gap-2 px-2 py-2 sm:px-3 sm:py-4 rounded-xl font-semibold transition-all ${
                   activeSection === 'entraide'
                     ? 'bg-orange-600 text-white shadow-lg shadow-orange-600/30'
                     : 'bg-slate-800/50 text-gray-400 hover:bg-slate-700 hover:text-gray-300'
@@ -65,12 +65,12 @@ export default function SolidariteHub() {
                 aria-label="Sélectionner la section Entraide & Coup de Main"
                 aria-pressed={activeSection === 'entraide'}
               >
-                <HandHeart className="w-6 h-6" />
-                <span className="text-sm text-center leading-tight">Coup de Main</span>
+                <HandHeart className="w-5 h-5 sm:w-6 sm:h-6" />
+                <span className="text-xs sm:text-sm text-center leading-tight">Entraide</span>
               </button>
               <button
                 onClick={() => setActiveSection('pret')}
-                className={`flex flex-col items-center gap-2 px-3 py-4 rounded-xl font-semibold transition-all ${
+                className={`flex flex-col items-center gap-1 sm:gap-2 px-2 py-2 sm:px-3 sm:py-4 rounded-xl font-semibold transition-all ${
                   activeSection === 'pret'
                     ? 'bg-green-600 text-white shadow-lg shadow-green-600/30'
                     : 'bg-slate-800/50 text-gray-400 hover:bg-slate-700 hover:text-gray-300'
@@ -78,12 +78,12 @@ export default function SolidariteHub() {
                 aria-label="Sélectionner la section Prêt de Matériel"
                 aria-pressed={activeSection === 'pret'}
               >
-                <RefreshCw className="w-6 h-6" />
-                <span className="text-sm text-center leading-tight">Prêt Matériel</span>
+                <RefreshCw className="w-5 h-5 sm:w-6 sm:h-6" />
+                <span className="text-xs sm:text-sm text-center leading-tight">Prêt</span>
               </button>
               <button
                 onClick={() => setActiveSection('economie')}
-                className={`flex flex-col items-center gap-2 px-3 py-4 rounded-xl font-semibold transition-all ${
+                className={`flex flex-col items-center gap-1 sm:gap-2 px-2 py-2 sm:px-3 sm:py-4 rounded-xl font-semibold transition-all ${
                   activeSection === 'economie'
                     ? 'bg-orange-600 text-white shadow-lg shadow-orange-600/30'
                     : 'bg-slate-800/50 text-gray-400 hover:bg-slate-700 hover:text-gray-300'
@@ -91,8 +91,8 @@ export default function SolidariteHub() {
                 aria-label="Sélectionner la section Économie Locale"
                 aria-pressed={activeSection === 'economie'}
               >
-                <Store className="w-6 h-6" />
-                <span className="text-sm">Économie</span>
+                <Store className="w-5 h-5 sm:w-6 sm:h-6" />
+                <span className="text-xs sm:text-sm">Économie</span>
               </button>
             </div>
           </GlassCard>
@@ -115,7 +115,7 @@ export default function SolidariteHub() {
                   Soutenez les producteurs locaux et l'économie de proximité
                 </p>
                 
-                <div className="grid md:grid-cols-3 gap-4 mb-6">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
                   <div className="bg-slate-900/50 rounded-xl p-6 border border-slate-800">
                     <div className="text-3xl mb-3">🏪</div>
                     <h3 className="font-semibold text-lg mb-2 text-white">
@@ -182,22 +182,22 @@ export default function SolidariteHub() {
           </div>
           
           {/* Impact Section */}
-          <div className="mt-8">
-            <h2 className="text-xl font-semibold text-white mb-4">
+          <div className="mt-6 sm:mt-8">
+            <h2 className="text-lg sm:text-xl font-semibold text-white mb-3">
               Notre impact solidaire
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <GlassCard className="text-center">
-                <div className="text-3xl font-bold text-orange-400 mb-2">500+</div>
-                <div className="text-gray-400 text-sm">Familles aidées</div>
+            <div className="grid grid-cols-3 gap-2 sm:gap-4">
+              <GlassCard className="text-center py-3 sm:py-4">
+                <div className="text-2xl sm:text-3xl font-bold text-orange-400 mb-1">500+</div>
+                <div className="text-gray-400 text-xs sm:text-sm">Familles aidées</div>
               </GlassCard>
-              <GlassCard className="text-center">
-                <div className="text-3xl font-bold text-green-400 mb-2">15t</div>
-                <div className="text-gray-400 text-sm">Denrées partagées</div>
+              <GlassCard className="text-center py-3 sm:py-4">
+                <div className="text-2xl sm:text-3xl font-bold text-green-400 mb-1">15t</div>
+                <div className="text-gray-400 text-xs sm:text-sm">Denrées partagées</div>
               </GlassCard>
-              <GlassCard className="text-center">
-                <div className="text-3xl font-bold text-blue-400 mb-2">30</div>
-                <div className="text-gray-400 text-sm">Points de collecte</div>
+              <GlassCard className="text-center py-3 sm:py-4">
+                <div className="text-2xl sm:text-3xl font-bold text-blue-400 mb-1">30</div>
+                <div className="text-gray-400 text-xs sm:text-sm">Points de collecte</div>
               </GlassCard>
             </div>
           </div>
