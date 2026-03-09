@@ -66,38 +66,349 @@ const COL_CONTACTS = 'contacts_pros_batiment';
 export type ProBatStatus = 'pending' | 'verified' | 'rejected' | 'suspended';
 export type ProBatPlan   = 'free' | 'essentiel' | 'premium';
 
+// ── Corps de métiers — liste exhaustive intérieur + extérieur ─────────────────
+
+/**
+ * Catégories de corps de métiers pour l'organisation de l'annuaire.
+ */
+export type MetierCategorie =
+  | 'gros_oeuvre'
+  | 'couverture_etancheite'
+  | 'facade_exterieur'
+  | 'terrassement_vrd'
+  | 'cloisons_isolation'
+  | 'revetements_sols_murs'
+  | 'peinture_decoration'
+  | 'menuiserie_interieure'
+  | 'menuiserie_exterieure'
+  | 'serrurerie_metallerie'
+  | 'plomberie_sanitaire'
+  | 'electricite_domotique'
+  | 'cvc'
+  | 'vitrerie_verriere'
+  | 'amenagement_exterieur'
+  | 'piscine_spa'
+  | 'dom_tom_specifique';
+
+export const METIER_CATEGORIE_LABELS: Record<MetierCategorie, string> = {
+  gros_oeuvre:             '🧱 Gros Œuvre & Structure',
+  couverture_etancheite:   '🏠 Couverture & Étanchéité',
+  facade_exterieur:        '🏗️ Façade & Murs Extérieurs',
+  terrassement_vrd:        '⛏️ Terrassement & VRD',
+  cloisons_isolation:      '🪟 Cloisons & Isolation',
+  revetements_sols_murs:   '🟫 Revêtements Sols & Murs',
+  peinture_decoration:     '🎨 Peinture & Décoration',
+  menuiserie_interieure:   '🚪 Menuiserie Intérieure',
+  menuiserie_exterieure:   '🪟 Menuiserie Extérieure',
+  serrurerie_metallerie:   '🔩 Serrurerie & Métallerie',
+  plomberie_sanitaire:     '🔧 Plomberie & Sanitaire',
+  electricite_domotique:   '⚡ Électricité & Domotique',
+  cvc:                     '🌀 Climatisation & Ventilation',
+  vitrerie_verriere:       '🔆 Vitrerie & Verrière',
+  amenagement_exterieur:   '🌿 Aménagement Extérieur',
+  piscine_spa:             '🏊 Piscine & Spa',
+  dom_tom_specifique:      '🌴 Spécialités DOM-TOM',
+};
+
 export type MetierBatiment =
-  | 'maconnerie'          | 'beton_dalle'       | 'fondations'
-  | 'couverture_toiture'  | 'charpente'         | 'isolation'
-  | 'plomberie'           | 'electricite'       | 'climatisation_vmc'
-  | 'carrelage_faience'   | 'peinture_enduit'   | 'menuiserie'
-  | 'serrurerie_metal'    | 'vitrerie'          | 'terrassement'
-  | 'cloture_portail'     | 'jardinage_espaces_verts' | 'piscine'
-  | 'demolition'          | 'autre';
+  // ── Gros Œuvre & Structure ──────────────────────────────────────────────────
+  | 'maconnerie_generale'
+  | 'beton_arme'
+  | 'dalle_beton'
+  | 'fondations_semelles'
+  | 'charpente_bois'
+  | 'charpente_metallique'
+  | 'ossature_bois'
+  | 'demolition_deconstruction'
+  // ── Couverture & Étanchéité ─────────────────────────────────────────────────
+  | 'couverture_toles'
+  | 'couverture_tuiles'
+  | 'couverture_bac_acier'
+  | 'etancheite_toiture_terrasse'
+  | 'zinguerie_gouttiere'
+  | 'isolation_toiture'
+  // ── Façade & Murs extérieurs ────────────────────────────────────────────────
+  | 'ravalement_facade'
+  | 'enduit_crepi_facade'
+  | 'peinture_facade'
+  | 'bardage_exterieur'
+  | 'isolation_thermique_exterieure'
+  | 'pierre_naturelle_exterieure'
+  // ── Terrassement & VRD ──────────────────────────────────────────────────────
+  | 'terrassement_gros_oeuvre'
+  | 'voirie_reseaux_divers'
+  | 'drainage_assainissement_ext'
+  | 'nivellement_remblai'
+  // ── Cloisons & Isolation ────────────────────────────────────────────────────
+  | 'cloison_seche_ba13'
+  | 'faux_plafond'
+  | 'platrerie_enduit_interieur'
+  | 'chape_ragreage'
+  | 'isolation_phonique'
+  | 'isolation_thermique_interieure'
+  // ── Revêtements Sols & Murs ─────────────────────────────────────────────────
+  | 'carrelage_sol'
+  | 'carrelage_mural_faience'
+  | 'parquet_plancher_bois'
+  | 'sol_stratifie_pvc_vinyle'
+  | 'moquette_revetement_souple'
+  | 'pierre_marbre_interieur'
+  | 'beton_cire_microcement'
+  // ── Peinture & Décoration ───────────────────────────────────────────────────
+  | 'peinture_interieure'
+  | 'peinture_exterieure'
+  | 'revetement_mural_papier_peint'
+  | 'enduit_decoratif'
+  | 'lasure_vernis_teinture'
+  // ── Menuiserie Intérieure ───────────────────────────────────────────────────
+  | 'menuiserie_interieure_portes'
+  | 'cuisine_amenagee'
+  | 'placard_dressing_sur_mesure'
+  | 'escalier_interieur'
+  | 'amenagement_interieur_sur_mesure'
+  // ── Menuiserie Extérieure ───────────────────────────────────────────────────
+  | 'fenetres_double_vitrage'
+  | 'porte_entree_blindee'
+  | 'volets_roulants_battants'
+  | 'pergola_veranda'
+  | 'brise_soleil_casquette'
+  | 'portail_garage'
+  // ── Serrurerie & Métallerie ─────────────────────────────────────────────────
+  | 'serrurerie_blindage'
+  | 'grilles_garde_corps'
+  | 'portail_automatique'
+  | 'escalier_metallique'
+  | 'structure_metallique'
+  // ── Plomberie & Sanitaire ───────────────────────────────────────────────────
+  | 'plomberie_installation_sanitaire'
+  | 'salle_de_bain_renovation'
+  | 'chauffe_eau_solaire'
+  | 'reseau_eau_potable_eu_ep'
+  | 'recuperation_eau_de_pluie'
+  | 'assainissement_fosse_microstation'
+  // ── Électricité & Domotique ─────────────────────────────────────────────────
+  | 'electricite_courant_fort'
+  | 'courant_faible_alarme_reseau'
+  | 'domotique_maison_connectee'
+  | 'tableau_electrique_mise_normes'
+  | 'eclairage_led_exterieur'
+  | 'photovoltaique_solaire'
+  | 'borne_recharge_irve'
+  // ── CVC ─────────────────────────────────────────────────────────────────────
+  | 'climatisation_split_multisplit'
+  | 'ventilation_vmc_vmi'
+  | 'pompe_a_chaleur'
+  | 'chauffage_installation'
+  // ── Vitrerie & Verrière ─────────────────────────────────────────────────────
+  | 'vitrerie_remplacement_vitrage'
+  | 'verriere_verre_feuillete'
+  | 'film_solaire_teinte'
+  // ── Aménagement Extérieur ───────────────────────────────────────────────────
+  | 'cloture_grillage_gabion'
+  | 'dallage_terrasse_exterieure'
+  | 'jardinage_entretien_espaces_verts'
+  | 'arrosage_automatique'
+  | 'paysagiste_amenagement'
+  | 'abattage_elagage'
+  // ── Piscine & Spa ───────────────────────────────────────────────────────────
+  | 'piscine_construction'
+  | 'piscine_renovation_entretien'
+  | 'spa_jacuzzi_balneo'
+  // ── Spécialités DOM-TOM ─────────────────────────────────────────────────────
+  | 'protection_cyclonique'
+  | 'traitement_humidite_tropicale'
+  | 'toiture_parasol_debord'
+  | 'ventilation_naturelle_tropicale'
+  | 'fondations_anticycloniques';
+
+/** Groupe chaque métier dans sa catégorie pour l'affichage en sections. */
+export const METIER_PAR_CATEGORIE: Record<MetierCategorie, MetierBatiment[]> = {
+  gros_oeuvre: [
+    'maconnerie_generale', 'beton_arme', 'dalle_beton', 'fondations_semelles',
+    'charpente_bois', 'charpente_metallique', 'ossature_bois', 'demolition_deconstruction',
+  ],
+  couverture_etancheite: [
+    'couverture_toles', 'couverture_tuiles', 'couverture_bac_acier',
+    'etancheite_toiture_terrasse', 'zinguerie_gouttiere', 'isolation_toiture',
+  ],
+  facade_exterieur: [
+    'ravalement_facade', 'enduit_crepi_facade', 'peinture_facade',
+    'bardage_exterieur', 'isolation_thermique_exterieure', 'pierre_naturelle_exterieure',
+  ],
+  terrassement_vrd: [
+    'terrassement_gros_oeuvre', 'voirie_reseaux_divers',
+    'drainage_assainissement_ext', 'nivellement_remblai',
+  ],
+  cloisons_isolation: [
+    'cloison_seche_ba13', 'faux_plafond', 'platrerie_enduit_interieur',
+    'chape_ragreage', 'isolation_phonique', 'isolation_thermique_interieure',
+  ],
+  revetements_sols_murs: [
+    'carrelage_sol', 'carrelage_mural_faience', 'parquet_plancher_bois',
+    'sol_stratifie_pvc_vinyle', 'moquette_revetement_souple',
+    'pierre_marbre_interieur', 'beton_cire_microcement',
+  ],
+  peinture_decoration: [
+    'peinture_interieure', 'peinture_exterieure', 'revetement_mural_papier_peint',
+    'enduit_decoratif', 'lasure_vernis_teinture',
+  ],
+  menuiserie_interieure: [
+    'menuiserie_interieure_portes', 'cuisine_amenagee',
+    'placard_dressing_sur_mesure', 'escalier_interieur',
+    'amenagement_interieur_sur_mesure',
+  ],
+  menuiserie_exterieure: [
+    'fenetres_double_vitrage', 'porte_entree_blindee', 'volets_roulants_battants',
+    'pergola_veranda', 'brise_soleil_casquette', 'portail_garage',
+  ],
+  serrurerie_metallerie: [
+    'serrurerie_blindage', 'grilles_garde_corps', 'portail_automatique',
+    'escalier_metallique', 'structure_metallique',
+  ],
+  plomberie_sanitaire: [
+    'plomberie_installation_sanitaire', 'salle_de_bain_renovation',
+    'chauffe_eau_solaire', 'reseau_eau_potable_eu_ep',
+    'recuperation_eau_de_pluie', 'assainissement_fosse_microstation',
+  ],
+  electricite_domotique: [
+    'electricite_courant_fort', 'courant_faible_alarme_reseau',
+    'domotique_maison_connectee', 'tableau_electrique_mise_normes',
+    'eclairage_led_exterieur', 'photovoltaique_solaire', 'borne_recharge_irve',
+  ],
+  cvc: [
+    'climatisation_split_multisplit', 'ventilation_vmc_vmi',
+    'pompe_a_chaleur', 'chauffage_installation',
+  ],
+  vitrerie_verriere: [
+    'vitrerie_remplacement_vitrage', 'verriere_verre_feuillete', 'film_solaire_teinte',
+  ],
+  amenagement_exterieur: [
+    'cloture_grillage_gabion', 'dallage_terrasse_exterieure',
+    'jardinage_entretien_espaces_verts', 'arrosage_automatique',
+    'paysagiste_amenagement', 'abattage_elagage',
+  ],
+  piscine_spa: [
+    'piscine_construction', 'piscine_renovation_entretien', 'spa_jacuzzi_balneo',
+  ],
+  dom_tom_specifique: [
+    'protection_cyclonique', 'traitement_humidite_tropicale',
+    'toiture_parasol_debord', 'ventilation_naturelle_tropicale',
+    'fondations_anticycloniques',
+  ],
+};
 
 // ── Labels ────────────────────────────────────────────────────────────────────
 
 export const METIER_LABELS: Record<MetierBatiment, string> = {
-  maconnerie:              '🧱 Maçonnerie',
-  beton_dalle:             '🏗️ Béton & Dalle',
-  fondations:              '⚓ Fondations & Terrassement',
-  couverture_toiture:      '🏠 Couverture & Toiture',
-  charpente:               '🪵 Charpente',
-  isolation:               '🌡️ Isolation',
-  plomberie:               '🔧 Plomberie & Sanitaire',
-  electricite:             '⚡ Électricité',
-  climatisation_vmc:       '🌀 Climatisation & VMC',
-  carrelage_faience:       '🟫 Carrelage & Faïence',
-  peinture_enduit:         '🎨 Peinture & Enduit',
-  menuiserie:              '🚪 Menuiserie (portes, fenêtres)',
-  serrurerie_metal:        '🔩 Serrurerie & Métallerie',
-  vitrerie:                '🪟 Vitrerie & Miroiterie',
-  terrassement:            '⛏️ Terrassement & VRD',
-  cloture_portail:         '🚧 Clôture & Portail',
-  jardinage_espaces_verts: '🌿 Jardinage & Espaces verts',
-  piscine:                 '🏊 Piscine & Spa',
-  demolition:              '💥 Démolition & Débarras',
-  autre:                   '🔨 Autre corps de métier',
+  // Gros Œuvre
+  maconnerie_generale:           '🧱 Maçonnerie générale',
+  beton_arme:                    '🏗️ Béton armé & coffrage',
+  dalle_beton:                   '🏗️ Dalle béton',
+  fondations_semelles:           '⚓ Fondations & semelles filantes',
+  charpente_bois:                '🪵 Charpente bois',
+  charpente_metallique:          '🔩 Charpente métallique',
+  ossature_bois:                 '🌲 Construction ossature bois',
+  demolition_deconstruction:     '💥 Démolition & déconstruction',
+  // Couverture
+  couverture_toles:              '🏠 Couverture tôles ondulées',
+  couverture_tuiles:             '🏠 Couverture tuiles',
+  couverture_bac_acier:          '🏠 Couverture bac acier / zinc',
+  etancheite_toiture_terrasse:   '💧 Étanchéité toiture-terrasse',
+  zinguerie_gouttiere:           '🌧️ Zinguerie & gouttières',
+  isolation_toiture:             '🌡️ Isolation combles & toiture',
+  // Façade
+  ravalement_facade:             '🏢 Ravalement de façade',
+  enduit_crepi_facade:           '🪣 Enduit & crépissage façade',
+  peinture_facade:               '🎨 Peinture façade extérieure',
+  bardage_exterieur:             '🪵 Bardage bois / PVC / composite',
+  isolation_thermique_exterieure:'🌡️ ITE — Isolation thermique extérieure',
+  pierre_naturelle_exterieure:   '🪨 Pierre naturelle & moellons',
+  // Terrassement
+  terrassement_gros_oeuvre:      '⛏️ Terrassement gros œuvre',
+  voirie_reseaux_divers:         '🛣️ VRD — Voirie & réseaux divers',
+  drainage_assainissement_ext:   '💧 Drainage & assainissement',
+  nivellement_remblai:           '🚜 Nivellement & remblai',
+  // Cloisons
+  cloison_seche_ba13:            '🪟 Cloison sèche BA13 / Placoplâtre',
+  faux_plafond:                  '⬜ Faux-plafond & staff',
+  platrerie_enduit_interieur:    '🪣 Plâtrerie & enduit intérieur',
+  chape_ragreage:                '🪵 Chape & ragréage sol',
+  isolation_phonique:            '🔇 Isolation phonique',
+  isolation_thermique_interieure:'🌡️ Isolation thermique intérieure',
+  // Revêtements
+  carrelage_sol:                 '🟫 Carrelage sol',
+  carrelage_mural_faience:       '🟦 Carrelage mural & faïence',
+  parquet_plancher_bois:         '🟤 Parquet & plancher bois',
+  sol_stratifie_pvc_vinyle:      '🟨 Sol stratifié, PVC, vinyle',
+  moquette_revetement_souple:    '🟧 Moquette & revêtement souple',
+  pierre_marbre_interieur:       '🪨 Marbre, granit, pierre intérieure',
+  beton_cire_microcement:        '⚫ Béton ciré & micro-ciment',
+  // Peinture
+  peinture_interieure:           '🎨 Peinture intérieure',
+  peinture_exterieure:           '🖌️ Peinture extérieure & façade',
+  revetement_mural_papier_peint: '🗞️ Revêtement mural & papier peint',
+  enduit_decoratif:              '✨ Enduit décoratif & tadelakt',
+  lasure_vernis_teinture:        '🪵 Lasure, vernis & teinture',
+  // Menuiserie intérieure
+  menuiserie_interieure_portes:  '🚪 Menuiserie intérieure & portes',
+  cuisine_amenagee:              '🍳 Cuisine équipée & aménagée',
+  placard_dressing_sur_mesure:   '👔 Placards & dressing sur mesure',
+  escalier_interieur:            '🪜 Escalier intérieur bois / métal',
+  amenagement_interieur_sur_mesure:'🏠 Aménagement intérieur sur mesure',
+  // Menuiserie extérieure
+  fenetres_double_vitrage:       '🪟 Fenêtres double vitrage ALU/PVC',
+  porte_entree_blindee:          '🚪 Porte d\'entrée & blindage',
+  volets_roulants_battants:      '🔄 Volets roulants & battants',
+  pergola_veranda:               '🌿 Pergola, véranda & abri jardin',
+  brise_soleil_casquette:        '☀️ Brise-soleil & casquette',
+  portail_garage:                '🚗 Portail & porte de garage',
+  // Serrurerie
+  serrurerie_blindage:           '🔐 Serrurerie & blindage',
+  grilles_garde_corps:           '🛡️ Grilles & garde-corps',
+  portail_automatique:           '🤖 Portail automatique',
+  escalier_metallique:           '🔩 Escalier métallique',
+  structure_metallique:          '⚙️ Structure métallique',
+  // Plomberie
+  plomberie_installation_sanitaire:'🔧 Plomberie & installation sanitaire',
+  salle_de_bain_renovation:      '🛁 Rénovation salle de bain',
+  chauffe_eau_solaire:           '☀️ Chauffe-eau & thermique solaire',
+  reseau_eau_potable_eu_ep:      '💧 Réseaux eau potable / EU / EP',
+  recuperation_eau_de_pluie:     '🌧️ Récupération eau de pluie',
+  assainissement_fosse_microstation:'🚽 Assainissement autonome',
+  // Électricité
+  electricite_courant_fort:      '⚡ Électricité courant fort',
+  courant_faible_alarme_reseau:  '📡 Courant faible, alarme, réseau',
+  domotique_maison_connectee:    '🏠 Domotique & maison connectée',
+  tableau_electrique_mise_normes:'⚡ Tableau électrique & mise aux normes',
+  eclairage_led_exterieur:       '💡 Éclairage LED & extérieur',
+  photovoltaique_solaire:        '☀️ Panneaux photovoltaïques (RGE)',
+  borne_recharge_irve:           '🔌 Borne recharge IRVE',
+  // CVC
+  climatisation_split_multisplit:'❄️ Climatisation split & multi-split',
+  ventilation_vmc_vmi:           '🌀 Ventilation VMC / VMI',
+  pompe_a_chaleur:               '♨️ Pompe à chaleur',
+  chauffage_installation:        '🔥 Chauffage & installation',
+  // Vitrerie
+  vitrerie_remplacement_vitrage: '🔆 Vitrerie & remplacement vitrage',
+  verriere_verre_feuillete:      '🪟 Verrière & verre feuilleté',
+  film_solaire_teinte:           '🕶️ Film solaire & teinte',
+  // Extérieur
+  cloture_grillage_gabion:       '🚧 Clôture grillage & gabion',
+  dallage_terrasse_exterieure:   '🟫 Dallage & terrasse extérieure',
+  jardinage_entretien_espaces_verts:'🌿 Jardinage & entretien espaces verts',
+  arrosage_automatique:          '💦 Arrosage automatique',
+  paysagiste_amenagement:        '🌳 Paysagiste & aménagement paysager',
+  abattage_elagage:              '🪓 Abattage & élagage',
+  // Piscine
+  piscine_construction:          '🏊 Construction piscine',
+  piscine_renovation_entretien:  '🏊 Rénovation & entretien piscine',
+  spa_jacuzzi_balneo:            '💆 Spa, jacuzzi & balnéo',
+  // DOM-TOM
+  protection_cyclonique:         '🌀 Protection cyclonique (volets, persiennes)',
+  traitement_humidite_tropicale: '💧 Traitement humidité & moisissures tropicales',
+  toiture_parasol_debord:        '🏠 Toiture parasol & débord tropical',
+  ventilation_naturelle_tropicale:'🌬️ Ventilation naturelle tropicale',
+  fondations_anticycloniques:    '⚓ Fondations & constructions anticycloniques',
 };
 
 export const STATUT_LABELS: Record<ProBatStatus, string> = {
