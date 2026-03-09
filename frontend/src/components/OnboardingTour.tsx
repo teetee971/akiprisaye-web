@@ -151,7 +151,7 @@ export default function OnboardingTour() {
       callback={handleJoyrideCallback}
       styles={{
         options: {
-          primaryColor: '#3b82f6', // blue-500
+          primaryColor: '#1d4ed8', // blue-700 — WCAG AA contrast ≥4.5:1 with white
           textColor: '#1e293b', // slate-800
           backgroundColor: '#ffffff',
           arrowColor: '#ffffff',
@@ -166,7 +166,7 @@ export default function OnboardingTour() {
           textAlign: 'left',
         },
         buttonNext: {
-          backgroundColor: '#3b82f6',
+          backgroundColor: '#1d4ed8', // blue-700 — WCAG AA contrast ≥4.5:1 with white
           fontSize: 14,
           fontWeight: 600,
           padding: '8px 16px',

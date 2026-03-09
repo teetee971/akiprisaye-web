@@ -92,19 +92,18 @@ const OVERCOSTS = [
 
 const IMAGES = {
   ship: {
-    src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/CMA_CGM_Benjamin_Franklin%2C_Port_2000%2C_Le_Havre%2C_22_November_2015_%2823042047853%29.jpg/640px-CMA_CGM_Benjamin_Franklin%2C_Port_2000%2C_Le_Havre%2C_22_November_2015_%2823042047853%29.jpg',
-    alt: 'Porte-conteneurs CMA CGM Benjamin Franklin au port du Havre — les marchandises destinées aux DOM partent depuis les ports métropolitains',
-    caption: 'Porte-conteneurs CMA CGM au Havre — principal armateur desservant les Antilles.',
-    credit: 'Wikimedia Commons — CC BY 2.0',
-    creditUrl:
-      'https://commons.wikimedia.org/wiki/File:CMA_CGM_Benjamin_Franklin,_Port_2000,_Le_Havre,_22_November_2015_(23042047853).jpg',
+    src: 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fm=webp&fit=crop&w=640&q=75',
+    alt: 'Porte-conteneurs au port du Havre — les marchandises destinées aux DOM partent depuis les ports métropolitains',
+    caption: 'Porte-conteneurs au Havre — principal armateur desservant les Antilles.',
+    credit: 'Unsplash',
+    creditUrl: 'https://unsplash.com/',
   },
   port: {
-    src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Fort-de-France_panorama.jpg/640px-Fort-de-France_panorama.jpg',
-    alt: 'Vue panoramique de Fort-de-France, Martinique — chef-lieu et principale zone commerciale',
-    caption: 'Fort-de-France, Martinique — centre commercial et portuaire de l\'île.',
-    credit: 'Wikimedia Commons — CC BY-SA 3.0',
-    creditUrl: 'https://commons.wikimedia.org/wiki/File:Fort-de-France_panorama.jpg',
+    src: 'https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fm=webp&fit=crop&w=640&q=75',
+    alt: 'Vue panoramique d\'un port tropical — chef-lieu et principale zone commerciale',
+    caption: 'Port tropical — centre commercial et portuaire des îles d\'Outre-mer.',
+    credit: 'Unsplash',
+    creditUrl: 'https://unsplash.com/',
   },
 };
 

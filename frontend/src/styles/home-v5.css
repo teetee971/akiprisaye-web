@@ -17,7 +17,7 @@
   position: absolute;
   top: -40px;
   left: 0;
-  background: #3b82f6;
+  background: #1d4ed8;
   color: white;
   padding: 8px 16px;
   text-decoration: none;
@@ -52,10 +52,18 @@
   padding: 4rem 2rem 2rem;
   position: relative;
   overflow: hidden;
-  /* Supermarket aisle / grocery scene — DOM-TOM daily life */
-  background-image: url('https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fm=webp&fit=crop&w=1600&q=80');
-  background-size: cover;
-  background-position: center 40%;
+  background-color: #0f172a;
+}
+
+/* Hero background image — positioned absolutely so <img> is the LCP element */
+.hero-bg-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 40%;
+  z-index: 0;
 }
 
 /* Two-column hero: text left, phone mockup right */

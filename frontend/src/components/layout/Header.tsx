@@ -65,7 +65,7 @@ export default function Header() {
     <header className="sticky top-0 z-40 border-b border-slate-800 bg-slate-950/95 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
         <Link to="/" className="flex items-center" aria-label="Accueil">
-          <img src={`${import.meta.env.BASE_URL}logo-akiprisaye.svg`} alt="A KI PRI SA YÉ" className="h-8 w-auto" />
+          <img src={`${import.meta.env.BASE_URL}logo-akiprisaye.svg`} alt="A KI PRI SA YÉ" className="h-8 w-auto" width="32" height="32" />
         </Link>
         <Link
           to="/liste"

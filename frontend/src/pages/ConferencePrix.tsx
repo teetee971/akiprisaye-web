@@ -334,7 +334,7 @@ function FretSlide() {
 
       {/* Image */}
       <WikiImg
-        src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/CMA_CGM_Benjamin_Franklin%2C_Port_2000%2C_Le_Havre%2C_22_November_2015_%2823042047853%29.jpg/800px-CMA_CGM_Benjamin_Franklin%2C_Port_2000%2C_Le_Havre%2C_22_November_2015_%2823042047853%29.jpg"
+        src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fm=webp&fit=crop&w=800&q=75"
         alt="Porte-conteneurs CMA CGM Benjamin Franklin au port du Havre — les marchandises pour les DOM partent des ports métropolitains"
         caption="Porte-conteneurs CMA CGM Benjamin Franklin au port du Havre. CMA CGM est le principal armateur français assurant les lignes vers les Antilles."
         credit="Wikimedia Commons — CC BY 2.0"
@@ -492,7 +492,7 @@ function MarcheSlide() {
 
       {/* Image */}
       <WikiImg
-        src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Fort-de-France_panorama.jpg/800px-Fort-de-France_panorama.jpg"
+        src="https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fm=webp&fit=crop&w=800&q=75"
         alt="Vue panoramique de Fort-de-France, Martinique — zone urbaine commerciale"
         caption="Fort-de-France, Martinique — centre commercial et portuaire. Les grandes enseignes de distribution dominent le tissu commercial."
         credit="Wikimedia Commons — CC BY-SA 3.0"

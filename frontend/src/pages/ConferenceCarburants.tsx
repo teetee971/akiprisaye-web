@@ -233,7 +233,7 @@ function ChaineSlide() {
       </div>
 
       <WikiImg
-        src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Supertanker_AbQaiq.jpg/1280px-Supertanker_AbQaiq.jpg"
+        src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fm=webp&fit=crop&w=1280&q=75"
         alt="Supertanker pétrolier VLCC"
         caption="Pétrolier VLCC transportant du brut — ce type de navire approvisionne la raffinerie SARA en Martinique."
         credit="U.S. Navy / domaine public"
@@ -371,7 +371,7 @@ function RaffinageSlide() {
       </p>
 
       <WikiImg
-        src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Raffinerie_de_Frontignan.jpg/1280px-Raffinerie_de_Frontignan.jpg"
+        src="https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?auto=format&fm=webp&fit=crop&w=1280&q=75"
         alt="Raffinerie pétrolière"
         caption="Illustration d'une raffinerie — la SARA au Lamentin (Martinique) est la seule raffinerie des DOM-TOM français."
         credit="Wikimedia Commons"

@@ -72,7 +72,7 @@
 
     <!-- Preload critical assets -->
     <link rel="preload" as="image" href="%BASE_URL%logo-akiprisaye.svg" fetchpriority="high" />
-    <!-- Preload the hero section background (CSS background-image — tell browser early) -->
+    <!-- Preload the hero section image (rendered as <img fetchpriority=high> in Home.tsx — crossorigin must match) -->
     <link
       rel="preload"
       as="image"

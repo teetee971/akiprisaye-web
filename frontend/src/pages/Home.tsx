@@ -224,6 +224,18 @@ export default function HomeV5() {
       </a>
 
       <section className="hero-v5">
+        {/* ── Hero background image — explicit <img> for LCP optimisation ── */}
+        <img
+          src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fm=webp&fit=crop&w=1600&q=80"
+          alt=""
+          aria-hidden="true"
+          width={1600}
+          height={900}
+          fetchPriority="high"
+          decoding="async"
+          crossOrigin="anonymous"
+          className="hero-bg-img"
+        />
         {/* ── Aurora gradient orbs ── */}
         <div className="aurora-bg" aria-hidden="true">
           <div className="aurora-orb aurora-orb--1" />
