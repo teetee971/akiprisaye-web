@@ -1,7 +1,7 @@
 {
   "metadata": {
     "version": "1.1.0",
-    "lastUpdated": "2026-01-13T23:28:00.816Z",
+    "lastUpdated": "2026-03-09T10:00:00.000Z",
     "description": "Comparateur de prix des bateaux/ferries - Inter-îles, Transport véhicules",
     "disclaimer": "A KI PRI SA YÉ observe les prix, ne vend pas. Transparence sur les écarts, pas d'affiliation opaque.",
     "methodology": "v1.0.0",
@@ -127,10 +127,10 @@
         "deckAccess": true,
         "cabinAvailable": false
       },
-      "observationDate": "2026-01-06T10:00:00Z",
+      "observationDate": "2026-03-01T10:00:00Z",
       "source": {
         "type": "user_report",
-        "observedAt": "2026-01-06T10:00:00Z",
+        "observedAt": "2026-03-01T10:00:00Z",
         "verificationMethod": "manual",
         "reliability": "high"
       },
@@ -148,7 +148,8 @@
       "capacity": {
         "passengers": 450,
         "vehicles": 60
-      }
+      },
+      "bookingUrl": "https://www.express-des-iles.com/"
     },
     {
       "id": "boat-002",
@@ -189,10 +190,10 @@
         "deckAccess": true,
         "cabinAvailable": false
       },
-      "observationDate": "2026-01-05T14:00:00Z",
+      "observationDate": "2026-03-02T10:00:00Z",
       "source": {
         "type": "user_report",
-        "observedAt": "2026-01-05T14:00:00Z",
+        "observedAt": "2026-03-02T10:00:00Z",
         "verificationMethod": "manual",
         "reliability": "high"
       },
@@ -210,7 +211,8 @@
       "capacity": {
         "passengers": 380,
         "vehicles": 50
-      }
+      },
+      "bookingUrl": "https://www.jeansforfreedom.com/"
     },
     {
       "id": "boat-003",
@@ -247,10 +249,10 @@
         "deckAccess": true,
         "cabinAvailable": false
       },
-      "observationDate": "2026-01-07T09:00:00Z",
+      "observationDate": "2026-03-03T10:00:00Z",
       "source": {
         "type": "user_report",
-        "observedAt": "2026-01-07T09:00:00Z",
+        "observedAt": "2026-03-03T10:00:00Z",
         "verificationMethod": "manual",
         "reliability": "high"
       },
@@ -268,7 +270,8 @@
       "capacity": {
         "passengers": 300,
         "vehicles": 0
-      }
+      },
+      "bookingUrl": "https://www.express-des-iles.com/"
     },
     {
       "id": "boat-004",
@@ -305,10 +308,10 @@
         "deckAccess": true,
         "cabinAvailable": false
       },
-      "observationDate": "2026-01-06T11:00:00Z",
+      "observationDate": "2026-03-04T10:00:00Z",
       "source": {
         "type": "user_report",
-        "observedAt": "2026-01-06T11:00:00Z",
+        "observedAt": "2026-03-04T10:00:00Z",
         "verificationMethod": "manual",
         "reliability": "high"
       },
@@ -328,7 +331,8 @@
       "capacity": {
         "passengers": 200,
         "vehicles": 0
-      }
+      },
+      "bookingUrl": "#"
     },
     {
       "id": "boat-005",
@@ -365,10 +369,10 @@
         "deckAccess": true,
         "cabinAvailable": false
       },
-      "observationDate": "2026-01-05T13:00:00Z",
+      "observationDate": "2026-03-05T10:00:00Z",
       "source": {
         "type": "user_report",
-        "observedAt": "2026-01-05T13:00:00Z",
+        "observedAt": "2026-03-05T10:00:00Z",
         "verificationMethod": "manual",
         "reliability": "high"
       },
@@ -385,7 +389,8 @@
       "capacity": {
         "passengers": 150,
         "vehicles": 0
-      }
+      },
+      "bookingUrl": "#"
     },
     {
       "id": "boat-006",
@@ -422,10 +427,10 @@
         "deckAccess": true,
         "cabinAvailable": false
       },
-      "observationDate": "2026-01-07T15:00:00Z",
+      "observationDate": "2026-03-06T10:00:00Z",
       "source": {
         "type": "user_report",
-        "observedAt": "2026-01-07T15:00:00Z",
+        "observedAt": "2026-03-06T10:00:00Z",
         "verificationMethod": "manual",
         "reliability": "high"
       },
@@ -443,7 +448,8 @@
       "capacity": {
         "passengers": 180,
         "vehicles": 0
-      }
+      },
+      "bookingUrl": "https://www.jeansforfreedom.com/"
     },
     {
       "id": "boat-007",
@@ -480,10 +486,10 @@
         "deckAccess": true,
         "cabinAvailable": false
       },
-      "observationDate": "2026-01-08T10:00:00Z",
+      "observationDate": "2026-03-07T10:00:00Z",
       "source": {
         "type": "user_report",
-        "observedAt": "2026-01-08T10:00:00Z",
+        "observedAt": "2026-03-07T10:00:00Z",
         "verificationMethod": "manual",
         "reliability": "high"
       },
@@ -502,7 +508,8 @@
       "capacity": {
         "passengers": 250,
         "vehicles": 0
-      }
+      },
+      "bookingUrl": "#"
     },
     {
       "id": "boat-008",
@@ -543,10 +550,10 @@
         "deckAccess": true,
         "cabinAvailable": false
       },
-      "observationDate": "2026-01-09T14:00:00Z",
+      "observationDate": "2026-03-08T10:00:00Z",
       "source": {
         "type": "user_report",
-        "observedAt": "2026-01-09T14:00:00Z",
+        "observedAt": "2026-03-08T10:00:00Z",
         "verificationMethod": "manual",
         "reliability": "high"
       },
@@ -564,7 +571,8 @@
       "capacity": {
         "passengers": 400,
         "vehicles": 55
-      }
+      },
+      "bookingUrl": "#"
     }
   ]
 }
