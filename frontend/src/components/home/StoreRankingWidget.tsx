@@ -331,8 +331,25 @@ export default function StoreRankingWidget() {
       className="price-chart-section section-reveal"
       aria-label="Classement des enseignes par territoire"
     >
+      {/* Section banner image */}
+      <div className="section-context-banner">
+        <img
+          src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fm=webp&fit=crop&w=900&q=75"
+          alt="Rayon supermarché outre-mer — comparaison des prix entre enseignes"
+          className="section-context-banner-img"
+          loading="lazy"
+          width="900"
+          height="160"
+        />
+        <div className="section-context-banner-overlay" aria-hidden="true" />
+        <div className="section-context-banner-caption">
+          <span className="section-context-banner-title" aria-hidden="true">🏪 Quelle enseigne est la moins chère ?</span>
+          <span className="section-context-banner-badge">Relevés citoyens 2026</span>
+        </div>
+      </div>
+      <h2 className="section-title slide-up" style={{ textAlign: 'center', marginBottom: '0.5rem' }}>🏪 Quelle enseigne est la moins chère ?</h2>
+
       <div className="price-chart-header">
-        <h2 className="section-title slide-up">🏪 Quelle enseigne est la moins chère ?</h2>
         <p className="price-chart-sub">
           Classement réel des enseignes par prix moyen du panier de base —{' '}
           <span className="price-chart-source">observatoire mars 2026</span>

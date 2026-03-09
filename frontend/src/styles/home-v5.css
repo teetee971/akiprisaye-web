@@ -3566,3 +3566,248 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ============================================
+   SECTION CONTEXT BANNER IMAGES
+   ============================================ */
+
+.section-context-banner {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto 2rem;
+  border-radius: 16px;
+  overflow: hidden;
+  height: 160px;
+}
+
+.section-context-banner-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 60%;
+  display: block;
+}
+
+.section-context-banner-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(15, 23, 42, 0.72) 0%,
+    rgba(15, 23, 42, 0.4) 60%,
+    rgba(15, 23, 42, 0.72) 100%
+  );
+}
+
+.section-context-banner-caption {
+  position: absolute;
+  bottom: 0.75rem;
+  left: 1rem;
+  right: 1rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.section-context-banner-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+
+.section-context-banner-badge {
+  font-size: 0.68rem;
+  color: #94a3b8;
+  background: rgba(15,23,42,0.65);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 6px;
+  padding: 0.2rem 0.45rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+@media (max-width: 600px) {
+  .section-context-banner {
+    height: 110px;
+  }
+  .section-context-banner-title {
+    font-size: 1rem;
+  }
+}
+
+/* ============================================
+   WHY PRICES ARE HIGHER — REASON CARDS
+   ============================================ */
+
+.why-reasons-section {
+  max-width: 900px;
+  margin: 2.5rem auto 0;
+  padding: 0 0.5rem;
+}
+
+.why-reasons-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #cbd5e1;
+  margin-bottom: 1.25rem;
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+.why-reasons-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 580px) {
+  .why-reasons-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.why-reason-card {
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px;
+  padding: 1.1rem 1.15rem;
+  display: flex;
+  gap: 0.85rem;
+  align-items: flex-start;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.why-reason-card:hover {
+  background: rgba(30, 41, 59, 0.85);
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+.why-reason-icon {
+  font-size: 1.6rem;
+  flex-shrink: 0;
+  line-height: 1;
+  margin-top: 0.1rem;
+}
+
+.why-reason-body {}
+
+.why-reason-heading {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #e2e8f0;
+  margin: 0 0 0.3rem;
+}
+
+.why-reason-text {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  margin: 0;
+  line-height: 1.55;
+}
+
+.why-reason-stat {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #fbbf24;
+  background: rgba(251, 191, 36, 0.1);
+  border-radius: 4px;
+  padding: 0.1rem 0.4rem;
+  display: inline-block;
+  margin-top: 0.4rem;
+}
+
+/* ============================================
+   EQUITE — BQP LEGAL CONTEXT BLOCK
+   ============================================ */
+
+.equite-legal-context {
+  max-width: 700px;
+  margin: 1.5rem auto 0;
+  background: rgba(99, 102, 241, 0.06);
+  border: 1px solid rgba(99, 102, 241, 0.18);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.equite-legal-icon {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+  margin-top: 0.05rem;
+}
+
+.equite-legal-text {
+  font-size: 0.82rem;
+  color: #94a3b8;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.equite-legal-text strong {
+  color: #c7d2fe;
+}
+
+.equite-legal-text a {
+  color: #818cf8;
+  text-decoration: none;
+}
+
+.equite-legal-text a:hover {
+  text-decoration: underline;
+}
+
+/* ============================================
+   CHOC WIDGET — ENRICHED PRODUCT DETAILS
+   ============================================ */
+
+.choc-product-context {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-top: 0.35rem;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+/* ============================================
+   IBW — BASKET PRODUCTS DETAIL
+   ============================================ */
+
+.ibw-basket-detail {
+  max-width: 700px;
+  margin: 0 auto 1.5rem;
+  padding: 0.75rem 1rem;
+  background: rgba(15, 23, 42, 0.4);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.ibw-basket-detail-label {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  flex: 0 0 100%;
+  text-align: center;
+  margin-bottom: 0.15rem;
+}
+
+.ibw-basket-item {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  background: rgba(30,41,59,0.5);
+  border-radius: 6px;
+  padding: 0.2rem 0.55rem;
+  border: 1px solid rgba(255,255,255,0.06);
+  white-space: nowrap;
+}

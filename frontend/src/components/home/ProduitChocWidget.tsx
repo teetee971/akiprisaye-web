@@ -73,6 +73,19 @@ const PRODUCT_ICONS: Record<string, string> = {
   'Café moulu 250g': '☕',
 };
 
+const PRODUCT_CONTEXT: Record<string, string> = {
+  'Eau minérale 1.5L': 'Produit 100 % importé. Transport et stockage réfrigéré pèsent fortement sur le coût final. À Saint-Barthélemy, l\'eau provient quasi exclusivement de conteneurs maritimes.',
+  'Pâtes spaghetti 500g': 'Malgré un prix d\'achat identique en entrepôt, les marges de distribution et l\'octroi de mer (≈15 %) expliquent l\'écart. Produit classique du panier de base.',
+  'Tomates rondes 1kg': 'Fruits et légumes frais soumis aux aléas du fret et aux ruptures de chaîne du froid. Absence de production locale suffisante dans plusieurs territoires.',
+  'Huile de tournesol 1L': 'Produit de grande consommation importé d\'Europe. L\'octroi de mer et les marges intermédiaires doublent quasi le prix dans les territoires les plus éloignés.',
+  'Liquide vaisselle 500ml': 'Produit d\'entretien dont le coût de transport (volume/poids) est amplifié. Les monopoles d\'import de produits ménagers maintiennent des marges élevées.',
+  'Lait demi-écrémé UHT 1L': 'Produit laitier quasi exclusivement importé. Les BQP négociés couvrent le lait mais n\'empêchent pas des surcoûts significatifs hors liste négociée.',
+  'Riz long blanc 1kg': 'Aliment de base dont le prix suit les cours mondiaux, mais auquel s\'ajoutent fret, manutention portuaire et marge de distribution locale.',
+  'Sucre blanc 1kg': 'Paradoxalement cher malgré la production locale de canne à sucre (Martinique, Réunion). La transformation et l\'export-reimport valorisent le produit loin du consommateur.',
+  'Café moulu 250g': 'Importé majoritairement de métropole ou d\'Amérique du Sud. Double traversée maritime pour certains territoires = coûts cumulés.',
+  'Paracétamol 500mg x16': 'Médicament de base soumis aux circuits de distribution pharmaceutique insulaires. Prix réglementé en métropole mais plus variable outre-mer.',
+};
+
 function chocColor(ratio: number): string {
   if (ratio >= 150) return '#ef4444';
   if (ratio >= 100) return '#f97316';
@@ -207,8 +220,25 @@ export default function ProduitChocWidget() {
 
   return (
     <section className="choc-section section-reveal" aria-labelledby="choc-heading">
+      {/* Section banner image */}
+      <div className="section-context-banner">
+        <img
+          src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fm=webp&fit=crop&w=900&q=75"
+          alt="Étiquettes de prix dans un supermarché — écarts de prix DOM vs métropole"
+          className="section-context-banner-img"
+          loading="lazy"
+          width="900"
+          height="160"
+        />
+        <div className="section-context-banner-overlay" aria-hidden="true" />
+        <div className="section-context-banner-caption">
+          <span className="section-context-banner-title" aria-hidden="true">🔥 Chocs de Prix DOM</span>
+          <span className="section-context-banner-badge">Temps réel — mars 2026</span>
+        </div>
+      </div>
+      <h2 id="choc-heading" className="section-title slide-up" style={{ textAlign: 'center', marginBottom: '0.5rem' }}>🔥 Chocs de Prix DOM</h2>
+
       <div className="choc-header">
-        <h2 id="choc-heading" className="section-title slide-up">🔥 Chocs de Prix DOM</h2>
         <p className="choc-subtitle slide-up">
           Les <strong>5 produits</strong> avec les plus grands écarts de prix entre territoires
           — calculés en temps réel depuis les relevés citoyens
@@ -269,6 +299,12 @@ export default function ProduitChocWidget() {
                   <div className="choc-vs-hex">
                     +{entry.vsHex.toFixed(0)}&nbsp;% vs Hexagone dans le territoire le + cher
                   </div>
+                )}
+
+                {PRODUCT_CONTEXT[entry.product] && (
+                  <p className="choc-product-context">
+                    💬 {PRODUCT_CONTEXT[entry.product]}
+                  </p>
                 )}
               </div>
             </li>

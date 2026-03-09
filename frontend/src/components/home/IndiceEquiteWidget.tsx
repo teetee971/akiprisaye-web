@@ -190,8 +190,25 @@ export default function IndiceEquiteWidget() {
 
   return (
     <section className="equite-section section-reveal" aria-labelledby="equite-heading">
+      {/* Section banner image */}
+      <div className="section-context-banner">
+        <img
+          src="https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fm=webp&fit=crop&w=900&q=75"
+          alt="Balance symbolisant l'équité tarifaire — droit des consommateurs outre-mer"
+          className="section-context-banner-img"
+          loading="lazy"
+          width="900"
+          height="160"
+        />
+        <div className="section-context-banner-overlay" aria-hidden="true" />
+        <div className="section-context-banner-caption">
+          <span className="section-context-banner-title" aria-hidden="true">⚖️ Indice d'Équité Tarifaire</span>
+          <span className="section-context-banner-badge">Décret BQP n°2012-848</span>
+        </div>
+      </div>
+      <h2 id="equite-heading" className="section-title slide-up">⚖️ Indice d'Équité Tarifaire</h2>
+
       <div className="equite-header">
-        <h2 id="equite-heading" className="section-title slide-up">⚖️ Indice d'Équité Tarifaire</h2>
         <p className="equite-subtitle slide-up">
           Surcoût moyen de la vie vs l'Hexagone — <strong>{hexProductCount} produits</strong> comparés par territoire
         </p>
@@ -282,6 +299,20 @@ export default function IndiceEquiteWidget() {
         Sources : Observatoire citoyen A KI PRI SA YÉ (mars 2026) —
         BQP : décret n°2012-848 — Calcul : surcoût moyen multi-produits vs Hexagone
       </p>
+
+      {/* BQP legal context */}
+      <div className="equite-legal-context fade-in">
+        <span className="equite-legal-icon" aria-hidden="true">📋</span>
+        <p className="equite-legal-text">
+          Le <strong>Bouclier Qualité Prix (BQP)</strong> est un dispositif légal instauré par le{' '}
+          <strong>décret n°2012-848</strong> dans le cadre de la loi de lutte contre la vie chère en
+          outre-mer. Il impose un plafond de <strong>+30 %</strong> de surcoût vs métropole sur une liste
+          de produits de première nécessité négociée annuellement avec la grande distribution.
+          Tout dépassement constitue une inégalité tarifaire documentée sur laquelle les préfets
+          peuvent intervenir. À ce jour, plusieurs territoires dépassent ce seuil pour la majorité
+          des produits du panier de base.
+        </p>
+      </div>
     </section>
   );
 }

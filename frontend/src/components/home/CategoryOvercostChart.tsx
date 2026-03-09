@@ -32,6 +32,34 @@ const OVERCOST_DATA = [
   { category: 'Cosmétiques',           pct: 22.7,  icon: '💄', hexAvg: 4.76, domAvg: 5.84 },
 ];
 
+// Four structural reasons why prices are systematically higher in DOM-TOM
+const WHY_REASONS = [
+  {
+    icon: '⚓',
+    heading: 'Fret maritime & aérien',
+    text: 'Tous les produits importés subissent des coûts de transport élevés. Un conteneur standard vers la Guadeloupe coûte 2× plus cher qu\'un envoi métropolitain.',
+    stat: '+12 à +18 % sur le prix final',
+  },
+  {
+    icon: '🏦',
+    heading: 'Octroi de mer',
+    text: 'Taxe d\'importation spécifique aux DOM, variable selon le produit (5 à 30 %). Destinée à protéger la production locale, elle s\'applique à la quasi-totalité des produits de grande consommation importés.',
+    stat: '+5 à +30 % par produit',
+  },
+  {
+    icon: '🏢',
+    heading: 'Oligopoles de distribution',
+    text: 'Quelques groupes (Boulogne, GBH, Hayot…) contrôlent l\'import, la distribution et le détail. Cette concentration verticale limite la concurrence et maintient les marges élevées.',
+    stat: 'Taux de marge ×1.8 vs métropole',
+  },
+  {
+    icon: '🏝️',
+    heading: 'Éloignement & insularité',
+    text: 'Les coûts de stockage, de rupture, et de logistique de dernier kilomètre sont amplifiés par l\'insularité. Les îles dépendent à 80–90 % de produits importés.',
+    stat: '80–90 % de dépendance import',
+  },
+];
+
 // Colour ramp: red for very high, amber for medium, green for low
 function barColor(pct: number): string {
   if (pct >= 80) return '#ef4444';
@@ -87,10 +115,24 @@ export default function CategoryOvercostChart() {
 
   return (
     <section className="price-chart-section section-reveal" aria-label="Surcoût par catégorie DOM vs Hexagone">
+      {/* Section banner image */}
+      <div className="section-context-banner">
+        <img
+          src="https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fm=webp&fit=crop&w=900&q=75"
+          alt="Marché tropical — étals de produits frais outre-mer"
+          className="section-context-banner-img"
+          loading="lazy"
+          width="900"
+          height="160"
+        />
+        <div className="section-context-banner-overlay" aria-hidden="true" />
+        <div className="section-context-banner-caption">
+          <span className="section-context-banner-title">💰 Pourquoi tout coûte plus cher ?</span>
+          <span className="section-context-banner-badge">Observatoire mars 2026</span>
+        </div>
+      </div>
+
       <div className="price-chart-header">
-        <h2 className="section-title slide-up">
-          💰 Pourquoi tout coûte plus cher ?
-        </h2>
         <p className="price-chart-sub">
           Surcoût moyen des DOM (Guadeloupe, Martinique, Guyane, La Réunion, Mayotte)
           par rapport à l'Hexagone —{' '}
@@ -153,6 +195,23 @@ export default function CategoryOvercostChart() {
         >
           Source : Observatoire citoyen A KI PRI SA YÉ — relevés vérifiés, mars 2026
         </p>
+      </div>
+
+      {/* 4-reason explainer block */}
+      <div className="why-reasons-section">
+        <p className="why-reasons-title">🔍 Les 4 causes structurelles de la vie chère</p>
+        <div className="why-reasons-grid">
+          {WHY_REASONS.map((r) => (
+            <div key={r.heading} className="why-reason-card">
+              <span className="why-reason-icon" aria-hidden="true">{r.icon}</span>
+              <div className="why-reason-body">
+                <p className="why-reason-heading">{r.heading}</p>
+                <p className="why-reason-text">{r.text}</p>
+                <span className="why-reason-stat">{r.stat}</span>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

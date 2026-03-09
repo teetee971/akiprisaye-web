@@ -246,8 +246,25 @@ export default function InflationBarometerWidget() {
 
   return (
     <section className="ibw-section section-reveal" aria-labelledby="ibw-heading">
+      {/* Section banner image */}
+      <div className="section-context-banner">
+        <img
+          src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fm=webp&fit=crop&w=900&q=75"
+          alt="Graphique d'inflation — évolution des prix alimentaires"
+          className="section-context-banner-img"
+          loading="lazy"
+          width="900"
+          height="160"
+        />
+        <div className="section-context-banner-overlay" aria-hidden="true" />
+        <div className="section-context-banner-caption">
+          <span className="section-context-banner-title" aria-hidden="true">🌡️ Baromètre des prix</span>
+          <span className="section-context-banner-badge">Janv. → Mars 2026</span>
+        </div>
+      </div>
+      <h2 id="ibw-heading" className="section-title slide-up">🌡️ Baromètre des prix</h2>
+
       <div className="ibw-header">
-        <h2 id="ibw-heading" className="section-title slide-up">🌡️ Baromètre des prix</h2>
         <p className="ibw-subtitle slide-up">
           Évolution du panier de 6 produits essentiels — <strong>janvier à mars 2026</strong>
         </p>
@@ -260,6 +277,14 @@ export default function InflationBarometerWidget() {
             sur 3 mois
           </p>
         )}
+      </div>
+
+      {/* Basket composition detail */}
+      <div className="ibw-basket-detail fade-in">
+        <span className="ibw-basket-detail-label">🛒 Composition du panier observé</span>
+        {['🥛 Lait UHT 1L', '🍚 Riz 1 kg', '💧 Eau 1,5 L', '🍝 Pâtes 500 g', '🍬 Sucre 1 kg', '🫙 Huile tournesol 1 L'].map((item) => (
+          <span key={item} className="ibw-basket-item">{item}</span>
+        ))}
       </div>
 
       {worstEntry?.trendPct !== null && worstEntry?.trendPct !== undefined && worstEntry.trendPct > 2 && (

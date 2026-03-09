@@ -70,6 +70,23 @@ export default function LiveNewsFeed() {
 
   return (
     <section className="news-feed-section section-reveal" aria-labelledby="news-feed-heading">
+      {/* Section banner image */}
+      <div className="section-context-banner">
+        <img
+          src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fm=webp&fit=crop&w=900&q=75"
+          alt="Journaux et presse économique — actualités outre-mer"
+          className="section-context-banner-img"
+          loading="lazy"
+          width="900"
+          height="160"
+        />
+        <div className="section-context-banner-overlay" aria-hidden="true" />
+        <div className="section-context-banner-caption">
+          <span className="section-context-banner-title" aria-hidden="true">📰 Actualités économiques</span>
+          <span className="section-context-banner-badge">INSEE · Gouvernement · Associations</span>
+        </div>
+      </div>
+
       <div className="news-feed-header">
         <h2 id="news-feed-heading" className="section-title slide-up">
           📰 Actualités économiques
