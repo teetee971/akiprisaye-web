@@ -163,7 +163,7 @@ export function getTerritoryGradient(code: string): string {
 // Hero images for specific pages
 export const PAGE_HERO_IMAGES = {
   // ── Pages already enriched ───────────────────────────────────────────────
-  priceHistory: 'https://images.unsplash.com/photo-1607082348351-cef5cd02c7b0?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  priceHistory: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fm=webp&fit=crop&w=1600&q=80',
   crossTerritory: 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fm=webp&fit=crop&w=1600&q=80',
   inflation: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fm=webp&fit=crop&w=1600&q=80',
   coverage: 'https://images.unsplash.com/photo-1526628953301-3cd8e16b67b1?auto=format&fm=webp&fit=crop&w=1600&q=80',
@@ -194,7 +194,7 @@ export const PAGE_HERO_IMAGES = {
   /** Comparaison enseignes — supermarket aisle */
   comparaisonEnseignes: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** App demo — person scanning barcode in tropical supermarket */
-  appDemo: 'https://images.unsplash.com/photo-1607082348351-cef5cd02c7b0?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  appDemo: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Vie chère poster — supermarket shelves with price tags */
   videoPoster: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fm=webp&fit=crop&w=1200&q=80',
   // ── Innovation Lab ───────────────────────────────────────────────────────
@@ -300,7 +300,7 @@ export const PAGE_HERO_IMAGES = {
   /** Périmètre */
   perimetre: 'https://images.unsplash.com/photo-1526628953301-3cd8e16b67b1?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Produit */
-  produit: 'https://images.unsplash.com/photo-1607082348351-cef5cd02c7b0?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  produit: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Recherche hub */
   rechercheHub: 'https://images.unsplash.com/photo-1506617564039-2f3b650b7010?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Recherche produits */
@@ -322,7 +322,7 @@ export const PAGE_HERO_IMAGES = {
   /** Évaluation cosmétique */
   evaluationCosmetique: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Historique prix */
-  historiquePrix: 'https://images.unsplash.com/photo-1607082348351-cef5cd02c7b0?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  historiquePrix: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** IA Conseiller */
   iaConseiller: 'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Ti Panie — Caribbean market basket */
@@ -458,7 +458,7 @@ export const INNOVATION_IMAGES: Record<string, string> = {
   heatmap:           'https://images.unsplash.com/photo-1526628953301-3cd8e16b67b1?auto=format&fm=webp&fit=crop&w=300&q=80',
   'api-ouverte':     'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fm=webp&fit=crop&w=300&q=80',
   extension:         'https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fm=webp&fit=crop&w=300&q=80',
-  'rapport-pdf':     'https://images.unsplash.com/photo-1607082348351-cef5cd02c7b0?auto=format&fm=webp&fit=crop&w=300&q=80',
+  'rapport-pdf':     'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fm=webp&fit=crop&w=300&q=80',
   'programme-fidelite': 'https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?auto=format&fm=webp&fit=crop&w=300&q=80',
   'podcast-ia':      'https://images.unsplash.com/photo-1478737270239-2591ef84b836?auto=format&fm=webp&fit=crop&w=300&q=80',
   gamification:      'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fm=webp&fit=crop&w=300&q=80',
@@ -477,6 +477,6 @@ export const INNOVATION_IMAGES: Record<string, string> = {
   'planificateur-repas': 'https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fm=webp&fit=crop&w=300&q=80',
   'analyse-nutri':   'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fm=webp&fit=crop&w=300&q=80',
   'analyse-concurrence': 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fm=webp&fit=crop&w=300&q=80',
-  'rapport-citoyen': 'https://images.unsplash.com/photo-1607082348351-cef5cd02c7b0?auto=format&fm=webp&fit=crop&w=300&q=80',
+  'rapport-citoyen': 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fm=webp&fit=crop&w=300&q=80',
   'lettre-hebdo':    'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fm=webp&fit=crop&w=300&q=80',
 };

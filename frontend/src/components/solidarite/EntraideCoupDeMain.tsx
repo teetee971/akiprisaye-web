@@ -251,8 +251,8 @@ function PublishForm({ onPublish, onCancel }: { onPublish: (a: AideAnnonce) => v
 
       {/* Description */}
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-1">Description *</label>
-        <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} maxLength={500}
+        <label htmlFor="entraide-description" className="block text-sm font-medium text-gray-300 mb-1">Description *</label>
+        <textarea id="entraide-description" name="description" value={description} onChange={(e) => setDescription(e.target.value)} rows={3} maxLength={500}
           placeholder="Décrivez votre offre ou besoin en quelques lignes..."
           className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none" />
         <p className="text-xs text-gray-500 mt-0.5">{description.length}/500</p>
@@ -454,16 +454,16 @@ export default function EntraideCoupDeMain() {
       <div className="grid sm:grid-cols-3 gap-3">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-          <input type="search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Rechercher…"
+          <input id="entraide-search" name="q" type="search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Rechercher…"
             className="w-full bg-slate-800 border border-slate-600 rounded-lg pl-9 pr-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500" />
         </div>
-        <select value={filterType} onChange={(e) => setFilterType(e.target.value as AideType | 'all')}
+        <select id="entraide-filter-type" name="filterType" value={filterType} onChange={(e) => setFilterType(e.target.value as AideType | 'all')}
           className="bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-orange-500">
           <option value="all">Offres &amp; Demandes</option>
           <option value="offre">Offres d'aide</option>
           <option value="demande">Demandes d'aide</option>
         </select>
-        <select value={filterTerritoire} onChange={(e) => setFilterTerritoire(e.target.value)}
+        <select id="entraide-filter-territoire" name="filterTerritoire" value={filterTerritoire} onChange={(e) => setFilterTerritoire(e.target.value)}
           className="bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-orange-500">
           <option value="all">Tous les territoires</option>
           {TERRITOIRES.map((t) => <option key={t} value={t}>{t}</option>)}

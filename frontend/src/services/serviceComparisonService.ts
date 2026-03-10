@@ -161,7 +161,7 @@ export async function searchInternet(params: {
   }
 
   if (params.minSpeed !== undefined) {
-    results = results.filter((i) => i.speed.download >= params.minSpeed!);
+    results = results.filter((i) => (i.speed?.download ?? 0) >= params.minSpeed!);
   }
 
   if (params.maxPrice !== undefined) {

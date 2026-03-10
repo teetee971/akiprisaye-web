@@ -52,7 +52,7 @@ const VIDEO_CARDS: VideoCard[] = [
     source: 'Le Point',
     duration: '24 min',
     posterUrl:
-      'https://images.unsplash.com/photo-1607082348351-cef5cd02c7b0?auto=format&fit=crop&w=700&q=80',
+      'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fm=webp&fit=crop&w=700&q=80',
     posterAlt: "Graphiques d'analyse de prix et données statistiques",
     tag: '📈 Analyse',
   },

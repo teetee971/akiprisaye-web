@@ -150,8 +150,9 @@ export function StoreSelector({
         <label className="flex items-center gap-3 cursor-pointer group">
           <div className="relative">
             <input
+              id="store-selector-promos"
+              name="includePromos"
               type="checkbox"
-              checked={filters.includePromos}
               onChange={handlePromosToggle}
               className="sr-only peer"
             />

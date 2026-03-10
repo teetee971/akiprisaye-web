@@ -280,8 +280,8 @@ function DepotForm({ onDeposer, onCancel }: { onDeposer: (o: ObjetPret) => void;
 
       {/* Description */}
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-1">Description *</label>
-        <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} maxLength={400}
+        <label htmlFor="pret-description" className="block text-sm font-medium text-gray-300 mb-1">Description *</label>
+        <textarea id="pret-description" name="description" value={description} onChange={(e) => setDescription(e.target.value)} rows={3} maxLength={400}
           placeholder="Décrivez l'objet : marque, caractéristiques, accessoires inclus…"
           className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 resize-none" />
         <p className="text-xs text-gray-500 mt-0.5">{description.length}/400</p>
@@ -558,16 +558,16 @@ export default function PretMateriel() {
       <div className="grid sm:grid-cols-3 gap-3">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-          <input type="search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Rechercher un objet…"
+          <input id="pret-search" name="q" type="search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Rechercher un objet…"
             className="w-full bg-slate-800 border border-slate-600 rounded-lg pl-9 pr-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500" />
         </div>
-        <select value={filterTerritoire} onChange={(e) => setFilterTerritoire(e.target.value)}
+        <select id="pret-filter-territoire" name="filterTerritoire" value={filterTerritoire} onChange={(e) => setFilterTerritoire(e.target.value)}
           className="bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-green-500">
           <option value="all">Tous les territoires</option>
           {TERRITOIRES.map((t) => <option key={t} value={t}>{t}</option>)}
         </select>
         <label className="flex items-center gap-2 bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 cursor-pointer">
-          <input type="checkbox" checked={filterDispo} onChange={(e) => setFilterDispo(e.target.checked)}
+          <input id="pret-filter-dispo" name="filterDispo" type="checkbox" checked={filterDispo} onChange={(e) => setFilterDispo(e.target.checked)}
             className="w-4 h-4 rounded accent-green-500" />
           <span className="text-sm text-gray-300">Disponibles uniquement</span>
         </label>

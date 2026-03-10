@@ -9,8 +9,8 @@ import { TERRITORIES, type TerritoryCode } from '../constants/territories';
 import { getPalmaresForTerritory, OBSERVATOIRE_PALMARES } from '../data/observatoirePalmares';
 
 
-// Real Unsplash photo: supermarket shelves
-const HERO_IMG = 'https://images.unsplash.com/photo-1607082348351-cef5cd02c7b0?auto=format&fit=crop&w=1600&q=80';
+// Real Unsplash photo: data analytics dashboard
+const HERO_IMG = 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fm=webp&fit=crop&w=1600&q=80';
 
 type ObservatoireTab = 'dashboard' | 'diagnostic' | 'palmares' | 'donnees';
 

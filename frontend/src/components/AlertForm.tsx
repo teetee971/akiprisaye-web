@@ -154,7 +154,7 @@ export function AlertForm({ productEAN = '', productName = '', onSave, onCancel 
 
         {/* Threshold */}
         <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
+          <label htmlFor="alert-threshold-label" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
             Seuil de déclenchement ({isShrinkflation ? 'g/ml' : isAbsolute ? '€' : '%'}) <span className="text-red-500">*</span>
             <div className="relative group">
               <HelpCircle className="w-4 h-4 text-slate-400 cursor-help" />
@@ -170,8 +170,9 @@ export function AlertForm({ productEAN = '', productName = '', onSave, onCancel 
           {isAbsolute ? (
             <div className="relative">
               <input
+                id="alert-threshold-label"
+                name="absolutePrice"
                 type="number"
-                value={formData.absolutePrice}
                 onChange={(e) => setFormData({ ...formData, absolutePrice: e.target.value })}
                 placeholder="Ex: 1.89"
                 min="0"
@@ -183,8 +184,9 @@ export function AlertForm({ productEAN = '', productName = '', onSave, onCancel 
             </div>
           ) : (
             <input
+              id="alert-threshold-label"
+              name="threshold"
               type="number"
-              value={formData.threshold}
               onChange={(e) => setFormData({ ...formData, threshold: Number(e.target.value) })}
               min="1"
               max="100"
@@ -203,11 +205,12 @@ export function AlertForm({ productEAN = '', productName = '', onSave, onCancel 
 
         {/* Territory */}
         <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+          <label htmlFor="alert-territory" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
             Votre territoire <span className="text-red-500">*</span>
           </label>
           <select
-            value={formData.territory}
+            id="alert-territory"
+            name="territory"
             onChange={(e) => setFormData({ ...formData, territory: e.target.value })}
             required
             className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"

@@ -36,6 +36,8 @@ export default function HeroSearch() {
 
       <form onSubmit={onSubmit} className="flex flex-col sm:flex-row gap-2">
         <input
+          id="hero-search"
+          name="q"
           type="search"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
