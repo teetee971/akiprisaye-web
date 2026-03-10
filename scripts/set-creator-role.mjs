@@ -53,7 +53,7 @@
  *    node --version 2>/dev/null || pkg install nodejs
  *    # 2. Télécharger uniquement le script (pas besoin de cloner tout le dépôt)
  *    cd ~/downloads
- *    curl -fsSL https://raw.githubusercontent.com/teetee971/akiprisaye-web/copilot/add-expert-conference-on-water/scripts/set-creator-role.mjs -o set-creator-role.mjs
+ *    curl -fsSL https://raw.githubusercontent.com/teetee971/akiprisaye-web/main/scripts/set-creator-role.mjs -o set-creator-role.mjs
  *    # 3. Installer firebase-admin et activer le rôle
  *    npm install firebase-admin
  *    node set-creator-role.mjs teetee971@gmail.com
@@ -138,7 +138,7 @@ ${SERVICE_ACCOUNT_PATHS.map(p => '      • ' + p).join('\n')}
 
    ── Option B — Termux (Android) ─────────────────────────────────────────
    Le script et serviceAccountKey.json doivent être dans le même dossier :
-   curl -fsSL https://raw.githubusercontent.com/teetee971/akiprisaye-web/copilot/add-expert-conference-on-water/scripts/set-creator-role.mjs -o set-creator-role.mjs
+   curl -fsSL https://raw.githubusercontent.com/teetee971/akiprisaye-web/main/scripts/set-creator-role.mjs -o set-creator-role.mjs
    node set-creator-role.mjs ${email}
 
    ── Option C — Variable d'environnement (GitHub Actions / CI) ───────────
