@@ -2,18 +2,19 @@
  * Cloudflare Pages Function — /api/news
  *
  * Agrège les actualités depuis :
- *  1. RappelConso — API officielle DGCCRF (data.economie.gouv.fr)
- *     Rappels de produits alimentaires, cosmétiques, électroniques, etc.
- *     Source : https://data.economie.gouv.fr (jeu de données rappelconso)
- *  2. Fallback intégré — items curatés si l'API externe est indisponible
+ *  1. RappelConso V2 — API officielle DGCCRF (data.economie.gouv.fr)
+ *     Jeu de données : rappelconso-v2-gtin-espaces
+ *     Source : https://www.data.gouv.fr/organizations/ministeres-economiques-et-financiers/datasets
+ *     Améliorations V2 : vraies images produit, GUID stable, champs détaillés
+ *  2. Fallback curé — items DOM si l'API est indisponible
  *
  * GET /api/news?territory={all|gp|mq|gf|re|yt|fr}
- *              &type={rappels|bons_plans|reglementaire|indice|dossiers|press|partner|user}
+ *              &type={rappels|bons_plans|reglementaire|indice|dossiers}
  *              &impact={fort|moyen|info}
  *              &q={search_query}
  *              &limit={number}
  *
- * Réponse : { items: NewsItem[], mode: 'live' | 'curated', fetchedAt: string }
+ * Réponse : { items: NewsItem[], mode: 'live'|'curated', fetchedAt: string, count: number }
  */
 
 export interface Env {}
@@ -27,51 +28,264 @@ const CORS_HEADERS = {
 const CACHE_TTL_SECONDS = 900; // 15 min
 const REQUEST_TIMEOUT_MS = 10_000;
 
-// ─── Mapping territoire → code département ────────────────────────────────────
-const TERRITORY_DEPT: Record<string, string[]> = {
-  gp: ['971'],
-  mq: ['972'],
-  gf: ['973'],
-  re: ['974'],
-  pm: ['975'],
-  yt: ['976'],
-  bl: ['977'],
-  mf: ['978'],
-  nc: ['988'],
-  pf: ['987'],
-  wf: ['986'],
+// ─── RappelConso V2 dataset ───────────────────────────────────────────────────
+const RC_V2_BASE =
+  'https://data.economie.gouv.fr/api/explore/v2.1/catalog/datasets/rappelconso-v2-gtin-espaces/records';
+
+// Champs à sélectionner dans le dataset V2
+const RC_V2_SELECT = [
+  'rappel_guid',
+  'id',
+  'date_publication',
+  'marque_produit',
+  'libelle',
+  'modeles_ou_references',
+  'categorie_produit',
+  'sous_categorie_produit',
+  'motif_rappel',
+  'risques_encourus',
+  'conduites_a_tenir_par_le_consommateur',
+  'zone_geographique_de_vente',
+  'distributeurs',
+  'liens_vers_les_images',
+  'lien_vers_la_fiche_rappel',
+].join(',');
+
+// ─── Mapping territoire → mots-clés dans distributeurs / zone ────────────────
+const TERRITORY_KEYWORDS: Record<string, string[]> = {
+  gp: ['971', 'guadeloupe', 'pointe-à-pitre', 'basse-terre', 'runmarket'],
+  mq: ['972', 'martinique', 'fort-de-france'],
+  gf: ['973', 'guyane', 'cayenne'],
+  re: ['974', 'réunion', 'reunion', 'saint-denis de la réunion', 'runmarket'],
+  pm: ['975', 'saint-pierre'],
+  yt: ['976', 'mayotte', 'mamoudzou'],
+  bl: ['977', 'saint-barthélemy'],
+  mf: ['978', 'saint-martin'],
 };
 
-// Tous les DOM-COM pour le filtre "all"
-const ALL_DOM_DEPTS = Object.values(TERRITORY_DEPT).flat();
-
-// ─── Catégories RappelConso → type article ────────────────────────────────────
+// ─── Catégorie produit → type article ────────────────────────────────────────
 function categoryToType(cat: string): string {
-  const c = cat.toLowerCase();
-  if (c.includes('alimentaire') || c.includes('aliment')) return 'rappels';
-  if (c.includes('cosmétique') || c.includes('hygiène')) return 'rappels';
-  if (c.includes('électr')) return 'rappels';
-  if (c.includes('vêtement') || c.includes('textile')) return 'rappels';
-  if (c.includes('jouet')) return 'rappels';
+  const c = (cat ?? '').toLowerCase();
+  if (
+    c.includes('alimentaire') || c.includes('aliment') ||
+    c.includes('bébé') || c.includes('infant') ||
+    c.includes('cosmétique') || c.includes('hygiène') ||
+    c.includes('jouet') || c.includes('électr') ||
+    c.includes('vêtement') || c.includes('textile') ||
+    c.includes('auto') || c.includes('sport') ||
+    c.includes('outil') || c.includes('jardin')
+  ) return 'rappels';
   return 'rappels';
 }
 
-// Niveau de risque → impact
-function riskToImpact(risk: string): string {
-  const r = risk.toLowerCase();
-  if (r.includes('grave') || r.includes('mort') || r.includes('sérieux') || r.includes('séri')) return 'fort';
-  if (r.includes('risque')) return 'moyen';
+// ─── Risque → impact ─────────────────────────────────────────────────────────
+function motifToImpact(motif: string, risques: string): string {
+  const text = `${motif} ${risques}`.toLowerCase();
+  if (
+    text.includes('listeria') || text.includes('salmonell') ||
+    text.includes('botulisme') || text.includes('mort') ||
+    text.includes('grave') || text.includes('urgent') ||
+    text.includes('danger') || text.includes('toxine') ||
+    text.includes('allergen') || text.includes('corps étranger')
+  ) return 'fort';
+  if (
+    text.includes('risque') || text.includes('contamination') ||
+    text.includes('defaut') || text.includes('non conforme') ||
+    text.includes('physico') || text.includes('présence')
+  ) return 'moyen';
   return 'info';
 }
 
-// ─── Données curatoriales de secours (DOM-COM focalisés) ─────────────────────
+// ─── Détecter le territoire depuis distributeurs + zone ──────────────────────
+function detectTerritory(zone: string, distributeurs: string): string {
+  const text = `${zone} ${distributeurs}`.toLowerCase();
+  // "france entière" = national = covers all DOM
+  if (text.includes('france enti') || text.includes('national')) return 'all';
+  for (const [territory, keywords] of Object.entries(TERRITORY_KEYWORDS)) {
+    for (const kw of keywords) {
+      if (text.includes(kw)) return territory;
+    }
+  }
+  // Scope local (adresse précise) → France métro only, skip for DOM view
+  return 'fr';
+}
+
+// ─── Construire le titre depuis les champs V2 ─────────────────────────────────
+function buildTitle(r: RcV2Record): string {
+  const libelle = (r.libelle ?? '').trim();
+  const marque = (r.marque_produit ?? '').trim();
+  const ref = (r.modeles_ou_references ?? '').trim();
+  const cat = (r.categorie_produit ?? '').trim();
+
+  // Normalize both to lowercase for duplicate detection
+  const libelleNorm = libelle.toLowerCase();
+  const marqueNorm = marque.toLowerCase();
+
+  if (libelle && marque && libelleNorm !== marqueNorm) {
+    return `Rappel : ${capitalize(libelle)} — ${marque}`.slice(0, 120);
+  }
+  if (libelle) return `Rappel : ${capitalize(libelle)}`.slice(0, 120);
+  if (marque && ref) return `Rappel : ${marque} ${ref}`.slice(0, 120);
+  if (marque) return `Rappel ${cat ? `(${cat})` : ''} : ${marque}`.slice(0, 120);
+  return `Rappel produit${cat ? ` — ${cat}` : ''}`.slice(0, 120);
+}
+
+function capitalize(s: string): string {
+  if (!s) return s;
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+// ─── Extraire la première image (pipe-séparé en V2) ──────────────────────────
+function extractFirstImage(liens: string | null | undefined): string | null {
+  if (!liens) return null;
+  const first = liens.split('|')[0].trim();
+  // Valider que c'est bien une URL rappel.conso.gouv.fr
+  if (first.startsWith('https://rappel.conso.gouv.fr/image/')) return first;
+  return null;
+}
+
+// ─── Image générique par catégorie (si pas d'image produit) ──────────────────
+function fallbackImage(cat: string): string {
+  const c = (cat ?? '').toLowerCase();
+  if (c.includes('alimentaire') || c.includes('aliment')) {
+    return 'https://images.unsplash.com/photo-1534483509719-3feaee7c30da?auto=format&fit=crop&w=600&q=75';
+  }
+  if (c.includes('cosmétique') || c.includes('hygiène')) {
+    return 'https://images.unsplash.com/photo-1556228578-dd539282b964?auto=format&fit=crop&w=600&q=75';
+  }
+  if (c.includes('jouet') || c.includes('bébé')) {
+    return 'https://images.unsplash.com/photo-1502539135010-e05c5ee9b0f5?auto=format&fit=crop&w=600&q=75';
+  }
+  if (c.includes('électr')) {
+    return 'https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&w=600&q=75';
+  }
+  if (c.includes('vêtement') || c.includes('textile')) {
+    return 'https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?auto=format&fit=crop&w=600&q=75';
+  }
+  return 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=600&q=75';
+}
+
+// ─── Types RappelConso V2 ────────────────────────────────────────────────────
+interface RcV2Record {
+  rappel_guid?: string;
+  id?: number;
+  date_publication?: string;
+  marque_produit?: string;
+  libelle?: string;
+  modeles_ou_references?: string;
+  categorie_produit?: string;
+  sous_categorie_produit?: string;
+  motif_rappel?: string;
+  risques_encourus?: string;
+  conduites_a_tenir_par_le_consommateur?: string;
+  zone_geographique_de_vente?: string;
+  distributeurs?: string;
+  liens_vers_les_images?: string;
+  lien_vers_la_fiche_rappel?: string;
+}
+
+interface RcV2Response {
+  total_count?: number;
+  results?: RcV2Record[];
+}
+
+// ─── Fetch RappelConso V2 ────────────────────────────────────────────────────
+async function fetchRcV2(limit: number, signal: AbortSignal): Promise<RcV2Record[]> {
+  // Filtre : rappels nationaux (france entière) = couvre tous les DOM-COM
+  // + éventuels rappels DOM-spécifiques
+  const where =
+    'zone_geographique_de_vente="france entière" OR ' +
+    'zone_geographique_de_vente LIKE "%971%" OR ' +
+    'zone_geographique_de_vente LIKE "%972%" OR ' +
+    'zone_geographique_de_vente LIKE "%974%" OR ' +
+    'zone_geographique_de_vente LIKE "%973%" OR ' +
+    'zone_geographique_de_vente LIKE "%976%" OR ' +
+    'distributeurs LIKE "%runmarket%"';
+
+  const params = new URLSearchParams({
+    limit: String(Math.min(limit + 10, 100)), // fetch a few extra for post-filtering
+    order_by: 'date_publication DESC',
+    select: RC_V2_SELECT,
+    where,
+  });
+
+  const url = `${RC_V2_BASE}?${params.toString()}`;
+  const res = await fetch(url, { signal, headers: { Accept: 'application/json' } });
+  if (!res.ok) throw new Error(`RappelConso V2 error ${res.status}`);
+  const json = (await res.json()) as RcV2Response;
+  return json.results ?? [];
+}
+
+// ─── Mapper un enregistrement V2 → NewsItem ───────────────────────────────────
+function rcV2ToNewsItem(r: RcV2Record): Record<string, unknown> {
+  const guid = r.rappel_guid ?? `rc-${r.id ?? Math.random().toString(36).slice(2)}`;
+  const id = `rcv2-${guid}`;
+
+  const cat = r.categorie_produit ?? '';
+  const motif = r.motif_rappel ?? '';
+  const risques = r.risques_encourus ?? '';
+  const zone = r.zone_geographique_de_vente ?? '';
+  const distrib = r.distributeurs ?? '';
+  const territory = detectTerritory(zone, distrib);
+
+  // Résumé depuis motif + risques + conduite
+  const conduites = (r.conduites_a_tenir_par_le_consommateur ?? '')
+    .split('|')
+    .map((s) => {
+      const trimmed = s.trim().replace(/[.]+$/, ''); // strip trailing periods to avoid doubling
+      return capitalize(trimmed);
+    })
+    .filter(Boolean)
+    .join('. ');
+  const summary = [motif, risques, conduites]
+    .filter(Boolean)
+    .join(' — ')
+    .slice(0, 280) ||
+    `Rappel produit${cat ? ` (${cat})` : ''}. Vérifiez et ne consommez pas.`;
+
+  // Image : vraie photo du produit en priorité, sinon générique
+  const imageUrl =
+    extractFirstImage(r.liens_vers_les_images) ?? fallbackImage(cat);
+
+  // Tags
+  const tags = [
+    r.sous_categorie_produit ?? cat,
+    'rappel',
+    'sécurité',
+  ].filter(Boolean).map((t) => t.toLowerCase());
+
+  return {
+    id,
+    type: categoryToType(cat),
+    territory,
+    title: buildTitle(r),
+    summary: capitalize(summary),
+    source_name: 'RappelConso V2 (DGCCRF)',
+    source_url: 'https://rappel.conso.gouv.fr',
+    canonical_url:
+      r.lien_vers_la_fiche_rappel ??
+      (r.id ? `https://rappel.conso.gouv.fr/fiche-rappel/${r.id}/interne` : 'https://rappel.conso.gouv.fr'),
+    published_at: r.date_publication
+      ? new Date(r.date_publication).toISOString()
+      : new Date().toISOString(),
+    impact: motifToImpact(motif, risques),
+    isSponsored: false,
+    confidence: 'official',
+    verified: true,
+    tags,
+    evidence: { source: 'dgccrf-v2', guid, confidence: 'official' },
+    imageUrl,
+  };
+}
+
+// ─── Données curatoriales de secours ─────────────────────────────────────────
 const CURATED_ITEMS = [
   {
     id: 'curated-rappel-gp-001',
     type: 'rappels',
     territory: 'gp',
-    title: 'Rappel produit : conserves de poisson — lot LC2501',
-    summary: 'Présence possible d'histamine au-delà du seuil réglementaire dans certains lots. Vérifiez l'étiquette avant consommation.',
+    title: 'Rappel : conserves de poisson — lot LC2501',
+    summary: 'Présence possible d\'histamine au-delà du seuil réglementaire dans certains lots de conserves de poisson. Vérifiez l\'étiquette avant consommation.',
     source_name: 'RappelConso',
     source_url: 'https://rappel.conso.gouv.fr',
     canonical_url: 'https://rappel.conso.gouv.fr',
@@ -125,7 +339,7 @@ const CURATED_ITEMS = [
     type: 'bons_plans',
     territory: 'gp',
     title: 'Pack eau minérale 6×1,5L : prix observé en baisse ce mois',
-    summary: 'Plusieurs relevés citoyens signalent une baisse de 12% sur l'eau minérale en grande distribution en Guadeloupe.',
+    summary: 'Plusieurs relevés citoyens signalent une baisse de 12% sur l\'eau minérale en grande distribution en Guadeloupe.',
     source_name: 'Observatoire AKPSY',
     source_url: 'https://akiprisaye.fr/methodologie',
     canonical_url: 'https://akiprisaye.fr/observatoire',
@@ -143,7 +357,7 @@ const CURATED_ITEMS = [
     type: 'indice',
     territory: 'all',
     title: 'Indice IEVR T1 2026 : +3,2% sur le panier vital en DOM',
-    summary: 'L'Indice d'Écart de Vie Réel du premier trimestre 2026 enregistre une hausse de 3,2% sur les produits essentiels dans l'ensemble des DOM, contre +1,8% en métropole.',
+    summary: 'L\'Indice d\'Écart de Vie Réel du premier trimestre 2026 enregistre une hausse de 3,2% sur les produits essentiels dans l\'ensemble des DOM, contre +1,8% en métropole.',
     source_name: 'A KI PRI SA YÉ — IEVR',
     source_url: 'https://akiprisaye.fr/ievr',
     canonical_url: 'https://akiprisaye.fr/ievr',
@@ -160,7 +374,7 @@ const CURATED_ITEMS = [
     id: 'curated-rappel-re-001',
     type: 'rappels',
     territory: 're',
-    title: 'Rappel : jouet magnétique — risque d'ingestion',
+    title: 'Rappel : jouet magnétique — risque d\'ingestion',
     summary: 'Petit aimant détachable pouvant être ingéré par les enfants en bas âge. Retrait des rayons en cours à La Réunion.',
     source_name: 'RappelConso',
     source_url: 'https://rappel.conso.gouv.fr',
@@ -179,7 +393,7 @@ const CURATED_ITEMS = [
     type: 'bons_plans',
     territory: 'mq',
     title: 'Opération Ti Panié : -15% sur 30 produits du panier vital',
-    summary: 'En partenariat avec plusieurs enseignes de Martinique, 30 produits du panier vital font l'objet d'une remise de 15% pour le mois de mars.',
+    summary: 'En partenariat avec plusieurs enseignes de Martinique, 30 produits du panier vital font l\'objet d\'une remise de 15% pour le mois de mars.',
     source_name: 'OPMR Martinique',
     source_url: 'https://www.opmr.fr',
     canonical_url: 'https://www.opmr.fr',
@@ -216,7 +430,7 @@ const CURATED_ITEMS = [
     type: 'reglementaire',
     territory: 'gp',
     title: 'Octroi de mer 2026 : taux actualisés publiés au JORF',
-    summary: 'Le conseil régional de Guadeloupe a publié les nouveaux taux d'octroi de mer. Consultez la liste des produits et taux applicables au 1er janvier 2026.',
+    summary: 'Le conseil régional de Guadeloupe a publié les nouveaux taux d\'octroi de mer. Consultez la liste des produits et taux applicables au 1er janvier 2026.',
     source_name: 'Région Guadeloupe',
     source_url: 'https://www.regionguadeloupe.fr',
     canonical_url: 'https://www.regionguadeloupe.fr',
@@ -249,8 +463,7 @@ const CURATED_ITEMS = [
   },
 ];
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
+// ─── JSON helper ─────────────────────────────────────────────────────────────
 function jsonResponse(payload: unknown, status = 200): Response {
   return new Response(JSON.stringify(payload), {
     status,
@@ -262,161 +475,9 @@ function jsonResponse(payload: unknown, status = 200): Response {
   });
 }
 
-// ─── RappelConso API fetch ────────────────────────────────────────────────────
-
-interface RappelConsoRecord {
-  reference_fiche?: string;
-  titre_rappel?: string;
-  nom_de_la_marque_du_produit?: string;
-  noms_des_modeles_ou_references?: string;
-  categorie_de_produit?: string;
-  sous_categorie_de_produit?: string;
-  risques_encourus_par_le_consommateur?: string;
-  description_complementaire_du_risque?: string;
-  zones_geographiques_de_vente?: string;
-  date_de_publication?: string;
-  lien_vers_la_fiche_rappel?: string;
-  distributeurs?: string;
-  conduite_a_tenir_par_le_consommateur?: string;
-}
-
-interface RappelConsoResponse {
-  results?: RappelConsoRecord[];
-  total_count?: number;
-}
-
-const RAPPELCONSO_DATASET = 'rappelconso';
-const RAPPELCONSO_BASE = `https://data.economie.gouv.fr/api/explore/v2.1/catalog/datasets/${RAPPELCONSO_DATASET}/records`;
-
-async function fetchRappelConso(
-  depts: string[],
-  limit: number,
-  signal: AbortSignal,
-): Promise<RappelConsoRecord[]> {
-  // Validate department codes — only allow numeric strings from our controlled map
-  const safeDepts = depts.filter((d) => /^\d{3}$/.test(d));
-  if (safeDepts.length === 0) return [];
-
-  const deptFilter = safeDepts
-    .map((d) => `zones_geographiques_de_vente LIKE "%${d}%"`)
-    .join(' OR ');
-
-  const params = new URLSearchParams({
-    limit: String(Math.min(limit, 100)),
-    order_by: 'date_de_publication DESC',
-    timezone: 'UTC',
-    select: [
-      'reference_fiche',
-      'titre_rappel',
-      'nom_de_la_marque_du_produit',
-      'noms_des_modeles_ou_references',
-      'categorie_de_produit',
-      'sous_categorie_de_produit',
-      'risques_encourus_par_le_consommateur',
-      'description_complementaire_du_risque',
-      'zones_geographiques_de_vente',
-      'date_de_publication',
-      'lien_vers_la_fiche_rappel',
-      'distributeurs',
-      'conduite_a_tenir_par_le_consommateur',
-    ].join(','),
-  });
-
-  if (deptFilter) params.set('where', deptFilter);
-
-  const url = `${RAPPELCONSO_BASE}?${params.toString()}`;
-  const res = await fetch(url, {
-    signal,
-    headers: { Accept: 'application/json' },
-  });
-
-  if (!res.ok) throw new Error(`RappelConso API error ${res.status}`);
-
-  const json = (await res.json()) as RappelConsoResponse;
-  return json.results ?? [];
-}
-
-function deterministicId(input: string): string {
-  // FNV-1a 32-bit hash — simple deterministic hash for stable IDs
-  let hash = 2166136261;
-  for (let i = 0; i < input.length; i++) {
-    hash ^= input.charCodeAt(i);
-    hash = (hash * 16777619) >>> 0;
-  }
-  return hash.toString(16).padStart(8, '0');
-}
-
-function rappelToNewsItem(r: RappelConsoRecord): Record<string, unknown> {
-  const ref = r.reference_fiche ?? deterministicId(`${r.titre_rappel ?? ''}${r.date_de_publication ?? ''}`);
-  const id = `rc-${ref}`;
-  const title = r.titre_rappel ?? `Rappel : ${r.nom_de_la_marque_du_produit ?? 'produit'}`;
-  const cat = r.categorie_de_produit ?? '';
-  const risk = r.risques_encourus_par_le_consommateur ?? '';
-  const zones = (r.zones_geographiques_de_vente ?? '').toLowerCase();
-
-  // Détecter le territoire depuis zones_geographiques_de_vente
-  let territory = 'fr';
-  if (zones.includes('971') || zones.includes('guadeloupe')) territory = 'gp';
-  else if (zones.includes('972') || zones.includes('martinique')) territory = 'mq';
-  else if (zones.includes('973') || zones.includes('guyane')) territory = 'gf';
-  else if (zones.includes('974') || zones.includes('réunion') || zones.includes('reunion')) territory = 're';
-  else if (zones.includes('976') || zones.includes('mayotte')) territory = 'yt';
-  else if (zones.includes('nationale') || zones.includes('france entière')) territory = 'all';
-
-  const summary = [
-    r.risques_encourus_par_le_consommateur,
-    r.description_complementaire_du_risque,
-    r.conduite_a_tenir_par_le_consommateur,
-  ]
-    .filter(Boolean)
-    .join(' — ')
-    .slice(0, 250)
-    || `Rappel produit ${cat ? `(${cat})` : ''}. Vérifiez et ne consommez pas.`;
-
-  return {
-    id,
-    type: categoryToType(cat),
-    territory,
-    title: title.slice(0, 120),
-    summary,
-    source_name: 'RappelConso (DGCCRF)',
-    source_url: 'https://rappel.conso.gouv.fr',
-    canonical_url: r.lien_vers_la_fiche_rappel ?? 'https://rappel.conso.gouv.fr',
-    published_at: r.date_de_publication
-      ? new Date(r.date_de_publication).toISOString()
-      : new Date().toISOString(),
-    impact: riskToImpact(risk),
-    isSponsored: false,
-    confidence: 'official',
-    verified: true,
-    tags: [cat.toLowerCase(), 'rappel', 'sécurité'].filter(Boolean),
-    evidence: { source: 'dgccrf', confidence: 'official' },
-    imageUrl: pickRappelImage(cat),
-  };
-}
-
-function pickRappelImage(cat: string): string {
-  const c = cat.toLowerCase();
-  if (c.includes('alimentaire') || c.includes('aliment')) {
-    return 'https://images.unsplash.com/photo-1534483509719-3feaee7c30da?auto=format&fit=crop&w=600&q=75';
-  }
-  if (c.includes('cosmétique') || c.includes('hygiène')) {
-    return 'https://images.unsplash.com/photo-1556228578-dd539282b964?auto=format&fit=crop&w=600&q=75';
-  }
-  if (c.includes('jouet')) {
-    return 'https://images.unsplash.com/photo-1502539135010-e05c5ee9b0f5?auto=format&fit=crop&w=600&q=75';
-  }
-  if (c.includes('électr')) {
-    return 'https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&w=600&q=75';
-  }
-  return 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=600&q=75';
-}
-
 // ─── Main handler ─────────────────────────────────────────────────────────────
-
 export default {
   async fetch(request: Request, _env: Env): Promise<Response> {
-    // CORS preflight
     if (request.method === 'OPTIONS') {
       return new Response(null, { status: 204, headers: CORS_HEADERS });
     }
@@ -431,57 +492,41 @@ export default {
     const q = (url.searchParams.get('q') ?? '').toLowerCase().trim();
     const limit = Math.min(parseInt(url.searchParams.get('limit') ?? '30', 10), 100);
 
-    // Determine department codes to query
-    const depts = territory === 'all' || territory === 'fr'
-      ? ALL_DOM_DEPTS
-      : (TERRITORY_DEPT[territory] ?? []);
-
-    // Try to fetch real data from RappelConso
     let items: Record<string, unknown>[] = [];
     let mode: 'live' | 'curated' = 'curated';
 
+    // ── Fetch RappelConso V2 ──────────────────────────────────────────────────
     try {
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
-
       try {
-        const records = await fetchRappelConso(depts, limit, controller.signal);
-        clearTimeout(timeout);
-
+        const records = await fetchRcV2(limit, controller.signal);
         if (records.length > 0) {
-          items = records.map(rappelToNewsItem);
+          items = records.map(rcV2ToNewsItem);
           mode = 'live';
         }
       } finally {
         clearTimeout(timeout);
       }
     } catch {
-      // API unavailable — fall through to curated data
       items = [];
       mode = 'curated';
     }
 
-    // If API returned nothing or failed, use curated items
+    // ── Fallback + enrichissement curé ───────────────────────────────────────
     if (items.length === 0) {
       items = CURATED_ITEMS as Record<string, unknown>[];
       mode = 'curated';
-    }
-
-    // Merge curated items into live results (live first, curated appended for variety)
-    if (mode === 'live') {
-      const curatedFiltered = (CURATED_ITEMS as Record<string, unknown>[]).filter(
-        (c) => {
-          const t = c.territory as string;
-          return territory === 'all' || t === territory || t === 'all' || t === 'fr';
-        },
+    } else {
+      // Ajouter les items curatés non-rappels (bons_plans, indice, dossiers…)
+      const liveTypes = new Set(items.map((i) => i.type as string));
+      const extras = (CURATED_ITEMS as Record<string, unknown>[]).filter(
+        (c) => !liveTypes.has(c.type as string),
       );
-      // Add curated items not already covered by live type
-      const liveTypes = new Set(items.map((i) => i.type));
-      const extra = curatedFiltered.filter((c) => !liveTypes.has(c.type));
-      items = [...items, ...extra];
+      items = [...items, ...extras];
     }
 
-    // Apply territory filter (post-fetch)
+    // ── Filtre territoire ─────────────────────────────────────────────────────
     if (territory !== 'all') {
       items = items.filter((item) => {
         const t = item.territory as string;
@@ -489,17 +534,17 @@ export default {
       });
     }
 
-    // Apply type filter
+    // ── Filtre type ───────────────────────────────────────────────────────────
     if (typeFilter) {
       items = items.filter((item) => item.type === typeFilter);
     }
 
-    // Apply impact filter
+    // ── Filtre impact ─────────────────────────────────────────────────────────
     if (impactFilter) {
       items = items.filter((item) => item.impact === impactFilter);
     }
 
-    // Apply text search
+    // ── Recherche texte ───────────────────────────────────────────────────────
     if (q) {
       items = items.filter((item) => {
         const title = ((item.title as string) ?? '').toLowerCase();
@@ -509,7 +554,6 @@ export default {
       });
     }
 
-    // Respect limit
     items = items.slice(0, limit);
 
     return jsonResponse({

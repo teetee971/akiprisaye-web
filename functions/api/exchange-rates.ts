@@ -116,11 +116,12 @@ export default {
       });
     } catch {
       clearTimeout(timeout);
-      // Fallback: return last-known approximate rates (ECB reference, updated manually)
+      // Fallback: last-known approximate rates — ECB reference as of 2026-03-10.
+      // Update these values when open.er-api.com rates drift significantly (>5%).
       const fallbackRates: Record<string, Record<string, number>> = {
-        EUR: { EUR: 1, USD: 1.08, GBP: 0.86, JPY: 162, CHF: 0.96, CAD: 1.47, AUD: 1.65, XOF: 655.957, XAF: 655.957, MUR: 50, HTG: 145 },
-        USD: { USD: 1, EUR: 0.93, GBP: 0.80, JPY: 150, CHF: 0.89, CAD: 1.36, AUD: 1.52, XOF: 607, XAF: 607, MUR: 46, HTG: 134 },
-        GBP: { GBP: 1, EUR: 1.16, USD: 1.25, JPY: 188, CHF: 1.12, CAD: 1.70, AUD: 1.90, XOF: 762, XAF: 762, MUR: 58, HTG: 168 },
+        EUR: { EUR: 1, USD: 1.158, GBP: 0.866, JPY: 183, CHF: 0.903, CAD: 1.572, AUD: 1.646, XOF: 655.957, XAF: 655.957, MUR: 53.75, HTG: 151 },
+        USD: { USD: 1, EUR: 0.864, GBP: 0.748, JPY: 158, CHF: 0.780, CAD: 1.358, AUD: 1.422, XOF: 567, XAF: 567, MUR: 46, HTG: 130 },
+        GBP: { GBP: 1, EUR: 1.155, USD: 1.338, JPY: 212, CHF: 1.043, CAD: 1.815, AUD: 1.901, XOF: 758, XAF: 758, MUR: 62, HTG: 175 },
       };
       const fb = fallbackRates[base] ?? fallbackRates['EUR'];
       const filteredFb: Record<string, number> = {};
