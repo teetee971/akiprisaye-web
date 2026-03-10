@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ShoppingBasket, HandHeart, Store, RefreshCw } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { GlassCard } from '../components/ui/glass-card';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
@@ -119,38 +120,56 @@ export default function SolidariteHub() {
                 </p>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
-                  <div className="bg-slate-900/50 rounded-xl p-6 border border-slate-800">
+                  <Link
+                    to="/petits-commerces"
+                    className="bg-slate-900/50 rounded-xl p-6 border border-orange-700/40 hover:border-orange-500/70 hover:bg-orange-900/20 transition-all group cursor-pointer"
+                  >
                     <div className="text-3xl mb-3">🏪</div>
-                    <h3 className="font-semibold text-lg mb-2 text-white">
+                    <h3 className="font-semibold text-lg mb-2 text-white group-hover:text-orange-300 transition-colors">
                       Petits commerces
                     </h3>
                     <p className="text-gray-400 text-sm">
                       Trouvez les commerces de proximité
                     </p>
-                  </div>
-                  
-                  <div className="bg-slate-900/50 rounded-xl p-6 border border-slate-800">
+                    <span className="mt-3 inline-block text-xs text-orange-400 font-semibold">
+                      Accéder →
+                    </span>
+                  </Link>
+
+                  <Link
+                    to="/producteurs-locaux"
+                    className="bg-slate-900/50 rounded-xl p-6 border border-green-700/40 hover:border-green-500/70 hover:bg-green-900/20 transition-all group cursor-pointer"
+                  >
                     <div className="text-3xl mb-3">🌾</div>
-                    <h3 className="font-semibold text-lg mb-2 text-white">
+                    <h3 className="font-semibold text-lg mb-2 text-white group-hover:text-green-300 transition-colors">
                       Producteurs locaux
                     </h3>
                     <p className="text-gray-400 text-sm">
                       Achetez directement aux producteurs
                     </p>
-                  </div>
-                  
-                  <div className="bg-slate-900/50 rounded-xl p-6 border border-slate-800">
+                    <span className="mt-3 inline-block text-xs text-green-400 font-semibold">
+                      Accéder →
+                    </span>
+                  </Link>
+
+                  <Link
+                    to="/marches-locaux"
+                    className="bg-slate-900/50 rounded-xl p-6 border border-blue-700/40 hover:border-blue-500/70 hover:bg-blue-900/20 transition-all group cursor-pointer"
+                  >
                     <div className="text-3xl mb-3">📍</div>
-                    <h3 className="font-semibold text-lg mb-2 text-white">
+                    <h3 className="font-semibold text-lg mb-2 text-white group-hover:text-blue-300 transition-colors">
                       Marchés locaux
                     </h3>
                     <p className="text-gray-400 text-sm">
                       Découvrez les marchés près de chez vous
                     </p>
-                  </div>
+                    <span className="mt-3 inline-block text-xs text-blue-400 font-semibold">
+                      Accéder →
+                    </span>
+                  </Link>
                 </div>
                 
-                <div className="bg-orange-900/20 border border-orange-700/30 rounded-xl p-6 mb-6">
+                <div className="bg-orange-900/20 border border-orange-700/30 rounded-xl p-6">
                   <h3 className="font-semibold text-orange-300 mb-3 flex items-center gap-2">
                     <span>💡</span>
                     <span>Pourquoi privilégier le local ?</span>
@@ -173,12 +192,6 @@ export default function SolidariteHub() {
                       <span>Préservation du savoir-faire local</span>
                     </li>
                   </ul>
-                </div>
-                
-                <div className="bg-slate-900/50 rounded-xl p-8 text-center">
-                  <p className="text-gray-500">
-                    Module en cours d'intégration
-                  </p>
                 </div>
               </GlassCard>
             )}

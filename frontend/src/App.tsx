@@ -259,6 +259,9 @@ const GuideIntelligentTerritoires = lazyPage(() => import('./pages/GuideIntellig
 const ARScannerPage = lazyPage(() => import('./pages/ARScannerPage'));
 const ChaineFourniture = lazyPage(() => import('./pages/ChaineFourniture'));
 const CommerceSocial = lazyPage(() => import('./pages/CommerceSocial'));
+const PetitsCommerces = lazyPage(() => import('./pages/PetitsCommerces'));
+const ProducteursLocaux = lazyPage(() => import('./pages/ProducteursLocaux'));
+const MarchesLocaux = lazyPage(() => import('./pages/MarchesLocaux'));
 const AnalyseFactures = lazyPage(() => import('./pages/AnalyseFactures'));
 const DetectionFraude = lazyPage(() => import('./pages/DetectionFraude'));
 const EvaluationMagasins = lazyPage(() => import('./pages/EvaluationMagasins'));
@@ -659,6 +662,9 @@ export default function App() {
                           <Route path="ar-scanner" element={<ARScannerPage />} />
                           <Route path="chaine-fourniture" element={<ChaineFourniture />} />
                           <Route path="commerce-social" element={<CommerceSocial />} />
+                          <Route path="petits-commerces" element={<PetitsCommerces />} />
+                          <Route path="producteurs-locaux" element={<ProducteursLocaux />} />
+                          <Route path="marches-locaux" element={<MarchesLocaux />} />
                           <Route path="analyse-factures" element={<AnalyseFactures />} />
                           <Route path="detection-fraude" element={<DetectionFraude />} />
                           <Route path="evaluation-magasins" element={<EvaluationMagasins />} />
