@@ -3,12 +3,18 @@
  * Route : /evaluation-magasins
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Star, MapPin, ThumbsUp, ShoppingBag, Search, Info, SlidersHorizontal } from 'lucide-react';
+import { Star, MapPin, ThumbsUp, ShoppingBag, Search, SlidersHorizontal, X, Filter } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
+import {
+  getUserRatings,
+  saveUserRating,
+  avgRatingFrom,
+  type UserStoreRating,
+} from '../services/storeRatingsService';
 
 // ── Données exemple ───────────────────────────────────────────────────────────
 
@@ -631,7 +637,39 @@ const EXAMPLE_RATINGS: StoreRating[] = [
   },
 ];
 
-const ALL_SECTORS = ['Tous', ...Array.from(new Set(EXAMPLE_RATINGS.map((s) => s.sector)))];
+const ALL_SECTORS = ['Tous', ...Array.from(new Set(EXAMPLE_RATINGS.map((s) => s.sector))).sort()];
+const ALL_TERRITORIES = ['Tous', ...Array.from(new Set(EXAMPLE_RATINGS.map((s) => s.territory))).sort()];
+
+// Mapping sector → emoji + color (used by the form)
+const SECTOR_META: Record<string, { emoji: string; color: string }> = {
+  Alimentaire: { emoji: '🛒', color: 'bg-amber-100 text-amber-800' },
+  Banque: { emoji: '🏦', color: 'bg-slate-100 text-slate-700' },
+  Beauté: { emoji: '💄', color: 'bg-pink-100 text-pink-800' },
+  Bijouterie: { emoji: '💍', color: 'bg-amber-100 text-yellow-800' },
+  Boucherie: { emoji: '🥩', color: 'bg-rose-100 text-rose-800' },
+  Boulangerie: { emoji: '🥖', color: 'bg-orange-100 text-orange-800' },
+  Bricolage: { emoji: '🔨', color: 'bg-gray-100 text-gray-700' },
+  Coiffure: { emoji: '✂️', color: 'bg-fuchsia-100 text-fuchsia-800' },
+  Fleuriste: { emoji: '🌸', color: 'bg-pink-100 text-pink-700' },
+  Glacier: { emoji: '🍦', color: 'bg-sky-100 text-sky-700' },
+  'Garage/Auto': { emoji: '🔧', color: 'bg-zinc-100 text-zinc-800' },
+  Hôtel: { emoji: '🏨', color: 'bg-blue-100 text-blue-700' },
+  Informatique: { emoji: '🖥️', color: 'bg-sky-100 text-sky-800' },
+  Librairie: { emoji: '📚', color: 'bg-emerald-100 text-emerald-800' },
+  Marché: { emoji: '🌿', color: 'bg-lime-100 text-lime-800' },
+  Mode: { emoji: '👗', color: 'bg-purple-100 text-purple-800' },
+  Optique: { emoji: '👓', color: 'bg-teal-100 text-teal-800' },
+  Pharmacie: { emoji: '💊', color: 'bg-green-100 text-green-800' },
+  Poissonnerie: { emoji: '🐟', color: 'bg-cyan-100 text-cyan-800' },
+  Pressing: { emoji: '👔', color: 'bg-violet-100 text-violet-800' },
+  Quincaillerie: { emoji: '🪛', color: 'bg-stone-100 text-stone-700' },
+  Restaurant: { emoji: '🍽️', color: 'bg-red-100 text-red-800' },
+  Sport: { emoji: '🏋️', color: 'bg-indigo-100 text-indigo-800' },
+  'Station-service': { emoji: '⛽', color: 'bg-yellow-100 text-yellow-800' },
+  Téléphonie: { emoji: '📱', color: 'bg-blue-100 text-blue-800' },
+  Vétérinaire: { emoji: '🐾', color: 'bg-green-100 text-green-700' },
+  'Épicerie bio': { emoji: '🌱', color: 'bg-lime-100 text-lime-700' },
+};
 
 function StarRating({ value }: { value: number }) {
   return (
@@ -647,28 +685,64 @@ function StarRating({ value }: { value: number }) {
   );
 }
 
-function avgRating(r: StoreRating['ratings']): number {
-  return Math.round(((r.service + r.proprete + r.disponibilite) / 3) * 10) / 10;
-}
-
 // ── Composant ─────────────────────────────────────────────────────────────────
 
 export default function EvaluationMagasins() {
   const [showForm, setShowForm] = useState(false);
   const [ratingSubmitted, setRatingSubmitted] = useState(false);
   const [selectedSector, setSelectedSector] = useState('Tous');
-  const [form, setForm] = useState({ storeName: '', service: 0, proprete: 0, disponibilite: 0, comment: '' });
+  const [selectedTerritory, setSelectedTerritory] = useState('Tous');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [userRatings, setUserRatings] = useState<UserStoreRating[]>([]);
+  const [form, setForm] = useState({
+    storeName: '',
+    territory: 'Guadeloupe',
+    sector: 'Alimentaire',
+    service: 0,
+    proprete: 0,
+    disponibilite: 0,
+    comment: '',
+  });
+
+  // Load user ratings from localStorage on mount
+  useEffect(() => {
+    setUserRatings(getUserRatings());
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const meta = SECTOR_META[form.sector] ?? { emoji: '🏪', color: 'bg-gray-100 text-gray-700' };
+    saveUserRating({
+      storeName: form.storeName,
+      territory: form.territory,
+      sector: form.sector,
+      sectorEmoji: meta.emoji,
+      sectorColor: meta.color,
+      ratings: { service: form.service, proprete: form.proprete, disponibilite: form.disponibilite },
+      comment: form.comment,
+    });
+    setUserRatings(getUserRatings());
     setRatingSubmitted(true);
     setShowForm(false);
+    setForm({ storeName: '', territory: 'Guadeloupe', sector: 'Alimentaire', service: 0, proprete: 0, disponibilite: 0, comment: '' });
   };
 
-  const filteredRatings =
-    selectedSector === 'Tous'
-      ? EXAMPLE_RATINGS
-      : EXAMPLE_RATINGS.filter((s) => s.sector === selectedSector);
+  const filteredBase = EXAMPLE_RATINGS.filter((s) => {
+    if (selectedSector !== 'Tous' && s.sector !== selectedSector) return false;
+    if (selectedTerritory !== 'Tous' && s.territory !== selectedTerritory) return false;
+    if (searchQuery && !s.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+        !s.address.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+    return true;
+  });
+
+  const filteredUser = userRatings.filter((s) => {
+    if (selectedSector !== 'Tous' && s.sector !== selectedSector) return false;
+    if (selectedTerritory !== 'Tous' && s.territory !== selectedTerritory) return false;
+    if (searchQuery && !s.storeName.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+    return true;
+  });
+
+  const totalVisible = filteredUser.length + filteredBase.length;
 
   return (
     <>
@@ -706,19 +780,10 @@ export default function EvaluationMagasins() {
 
         <div className="max-w-3xl mx-auto px-4 py-6 pb-20 space-y-6">
 
-          {/* Avertissement bêta */}
-          <div className="flex gap-3 bg-amber-50 border border-amber-200 rounded-xl p-4">
-            <Info className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-            <p className="text-sm text-amber-800">
-              Fonctionnalité en développement (V3). Les avis présentés sont des exemples.
-              La persistance et la modération des avis réels seront disponibles prochainement.
-            </p>
-          </div>
-
           {/* Actions */}
           <div className="flex flex-col sm:flex-row gap-3">
             <button
-              onClick={() => setShowForm(!showForm)}
+              onClick={() => { setShowForm(!showForm); setRatingSubmitted(false); }}
               className="flex items-center justify-center gap-2 px-5 py-3 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-xl transition-colors text-sm"
             >
               <Star className="w-4 h-4" />
@@ -780,6 +845,37 @@ export default function EvaluationMagasins() {
                   />
                 </div>
 
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-sm font-medium text-amber-900 mb-1">
+                      Territoire
+                    </label>
+                    <select
+                      value={form.territory}
+                      onChange={(e) => setForm({ ...form, territory: e.target.value })}
+                      className="w-full border border-amber-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white/80"
+                    >
+                      {ALL_TERRITORIES.filter((t) => t !== 'Tous').map((t) => (
+                        <option key={t} value={t}>{t}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-amber-900 mb-1">
+                      Secteur
+                    </label>
+                    <select
+                      value={form.sector}
+                      onChange={(e) => setForm({ ...form, sector: e.target.value })}
+                      className="w-full border border-amber-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white/80"
+                    >
+                      {ALL_SECTORS.filter((s) => s !== 'Tous').sort().map((s) => (
+                        <option key={s} value={s}>{s}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
                 {(['service', 'proprete', 'disponibilite'] as const).map((criterion) => (
                   <div key={criterion}>
                     <label className="block text-sm font-medium text-amber-900 mb-1">
@@ -818,7 +914,8 @@ export default function EvaluationMagasins() {
                 <div className="flex gap-3">
                   <button
                     type="submit"
-                    className="px-5 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-xl text-sm transition-colors"
+                    disabled={!form.storeName || form.service === 0}
+                    className="px-5 py-2.5 bg-amber-600 hover:bg-amber-700 disabled:opacity-50 text-white font-semibold rounded-xl text-sm transition-colors"
                   >
                     Envoyer l'évaluation
                   </button>
@@ -834,84 +931,195 @@ export default function EvaluationMagasins() {
             </form>
           )}
 
-          {/* Exemples d'évaluations */}
+          {/* Annuaire des évaluations */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <SlidersHorizontal className="w-4 h-4 text-gray-500" />
-              <h2 className="font-bold text-gray-900">
-                Évaluations récentes{' '}
-                <span className="text-gray-400 font-normal text-sm">(exemples)</span>
-              </h2>
-            </div>
-
-            {/* Filtre par secteur */}
-            <div className="flex gap-2 overflow-x-auto pb-1">
-              {ALL_SECTORS.map((sector) => (
-                <button
-                  key={sector}
-                  onClick={() => setSelectedSector(sector)}
-                  className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                    selectedSector === sector
-                      ? 'bg-amber-600 text-white shadow-sm'
-                      : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
-                  }`}
-                >
-                  {sector}
-                </button>
-              ))}
-            </div>
-
-            {/* Cartes magasins */}
-            {filteredRatings.map((store) => (
-              <div key={store.id} className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm">
-                {/* Banner image */}
-                <div className="relative h-32">
-                  <img
-                    src={store.storeImage}
-                    alt={store.name}
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/20 to-transparent" />
-                  {/* Sector badge */}
-                  <span className={`absolute top-2.5 right-3 text-xs font-semibold px-2 py-0.5 rounded-full ${store.sectorColor}`}>
-                    {store.sectorEmoji} {store.sector}
-                  </span>
-                  {/* Store name overlaid */}
-                  <p className="absolute bottom-2.5 left-3 font-bold text-white text-sm drop-shadow-md">
-                    {store.name}
-                  </p>
-                  {/* Rating badge */}
-                  <div className="absolute bottom-2.5 right-3 flex items-center gap-1 bg-black/50 backdrop-blur-sm rounded-lg px-2 py-1">
-                    <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
-                    <span className="text-white font-bold text-sm">{avgRating(store.ratings).toFixed(1)}</span>
-                    <span className="text-white/70 text-xs">({store.totalReviews})</span>
-                  </div>
-                </div>
-
-                {/* Card body */}
-                <div className="px-4 py-3">
-                  <div className="flex items-center gap-1 text-xs text-gray-500 mb-3">
-                    <MapPin className="w-3 h-3 flex-shrink-0" />
-                    <span>{store.address} · {store.territory}</span>
-                  </div>
-                  <div className="space-y-1.5">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">Service</span>
-                      <StarRating value={store.ratings.service} />
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">Propreté</span>
-                      <StarRating value={store.ratings.proprete} />
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">Disponibilité</span>
-                      <StarRating value={store.ratings.disponibilite} />
-                    </div>
-                  </div>
-                </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <SlidersHorizontal className="w-4 h-4 text-gray-500" />
+                <h2 className="font-bold text-gray-900">
+                  Évaluations citoyennes{' '}
+                  <span className="text-gray-400 font-normal text-sm">({totalVisible})</span>
+                </h2>
               </div>
-            ))}
+              {(selectedSector !== 'Tous' || selectedTerritory !== 'Tous' || searchQuery) && (
+                <button
+                  onClick={() => { setSelectedSector('Tous'); setSelectedTerritory('Tous'); setSearchQuery(''); }}
+                  className="flex items-center gap-1 text-xs text-amber-700 hover:text-amber-900"
+                >
+                  <X className="w-3.5 h-3.5" /> Réinitialiser
+                </button>
+              )}
+            </div>
+
+            {/* Barre de recherche */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <input
+                type="search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Rechercher un magasin, une adresse…"
+                className="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white"
+              />
+            </div>
+
+            {/* Filtre territoire */}
+            <div>
+              <div className="flex items-center gap-1.5 mb-1.5">
+                <Filter className="w-3.5 h-3.5 text-gray-400" />
+                <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Territoire</span>
+              </div>
+              <div className="flex gap-2 overflow-x-auto pb-1">
+                {ALL_TERRITORIES.map((terr) => (
+                  <button
+                    key={terr}
+                    onClick={() => setSelectedTerritory(terr)}
+                    className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                      selectedTerritory === terr
+                        ? 'bg-slate-700 text-white shadow-sm'
+                        : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+                    }`}
+                  >
+                    {terr}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Filtre secteur */}
+            <div>
+              <div className="flex items-center gap-1.5 mb-1.5">
+                <ShoppingBag className="w-3.5 h-3.5 text-gray-400" />
+                <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Secteur</span>
+              </div>
+              <div className="flex gap-2 overflow-x-auto pb-1">
+                {ALL_SECTORS.map((sector) => (
+                  <button
+                    key={sector}
+                    onClick={() => setSelectedSector(sector)}
+                    className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                      selectedSector === sector
+                        ? 'bg-amber-600 text-white shadow-sm'
+                        : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+                    }`}
+                  >
+                    {sector}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Avis utilisateur (localStorage) */}
+            {filteredUser.length > 0 && (
+              <div className="space-y-3">
+                <p className="text-xs font-semibold text-amber-700 uppercase tracking-wide">
+                  📝 Vos avis ({filteredUser.length})
+                </p>
+                {filteredUser.map((u) => (
+                  <div key={u.id} className="bg-amber-50 border border-amber-200 rounded-2xl overflow-hidden shadow-sm">
+                    <div className="px-4 py-3">
+                      <div className="flex items-center justify-between mb-1">
+                        <p className="font-bold text-gray-900 text-sm">{u.storeName}</p>
+                        <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${u.sectorColor}`}>
+                          {u.sectorEmoji} {u.sector}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1 text-xs text-gray-500 mb-3">
+                        <MapPin className="w-3 h-3 flex-shrink-0" />
+                        <span>{u.territory} · {new Date(u.submittedAt).toLocaleDateString('fr-FR')}</span>
+                      </div>
+                      <div className="space-y-1.5">
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-gray-600">Service</span>
+                          <StarRating value={u.ratings.service} />
+                        </div>
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-gray-600">Propreté</span>
+                          <StarRating value={u.ratings.proprete} />
+                        </div>
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-gray-600">Disponibilité</span>
+                          <StarRating value={u.ratings.disponibilite} />
+                        </div>
+                      </div>
+                      {u.comment && (
+                        <p className="mt-2 text-xs text-gray-600 italic">"{u.comment}"</p>
+                      )}
+                      <div className="flex items-center justify-between mt-2">
+                        <div className="flex items-center gap-1">
+                          <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+                          <span className="text-xs font-bold text-gray-700">{avgRatingFrom(u.ratings).toFixed(1)} / 5</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Cartes annuaire de base */}
+            {filteredBase.length > 0 && (
+              <div className="space-y-3">
+                {filteredUser.length > 0 && (
+                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                    🏪 Annuaire ({filteredBase.length})
+                  </p>
+                )}
+                {filteredBase.map((store) => (
+                  <div key={store.id} className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm">
+                    {/* Banner image */}
+                    <div className="relative h-32">
+                      <img
+                        src={store.storeImage}
+                        alt={store.name}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/20 to-transparent" />
+                      <span className={`absolute top-2.5 right-3 text-xs font-semibold px-2 py-0.5 rounded-full ${store.sectorColor}`}>
+                        {store.sectorEmoji} {store.sector}
+                      </span>
+                      <p className="absolute bottom-2.5 left-3 font-bold text-white text-sm drop-shadow-md">
+                        {store.name}
+                      </p>
+                      <div className="absolute bottom-2.5 right-3 flex items-center gap-1 bg-black/50 backdrop-blur-sm rounded-lg px-2 py-1">
+                        <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
+                        <span className="text-white font-bold text-sm">{avgRatingFrom(store.ratings).toFixed(1)}</span>
+                        <span className="text-white/70 text-xs">({store.totalReviews})</span>
+                      </div>
+                    </div>
+                    {/* Card body */}
+                    <div className="px-4 py-3">
+                      <div className="flex items-center gap-1 text-xs text-gray-500 mb-3">
+                        <MapPin className="w-3 h-3 flex-shrink-0" />
+                        <span>{store.address} · {store.territory}</span>
+                      </div>
+                      <div className="space-y-1.5">
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-gray-600">Service</span>
+                          <StarRating value={store.ratings.service} />
+                        </div>
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-gray-600">Propreté</span>
+                          <StarRating value={store.ratings.proprete} />
+                        </div>
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-gray-600">Disponibilité</span>
+                          <StarRating value={store.ratings.disponibilite} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {totalVisible === 0 && (
+              <div className="text-center py-10 text-gray-400">
+                <Search className="w-8 h-8 mx-auto mb-2 opacity-40" />
+                <p className="text-sm">Aucun magasin trouvé pour ces filtres.</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

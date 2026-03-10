@@ -56,6 +56,7 @@ export default function Footer() {
               <li><Link to="/liste" className="text-slate-400 hover:text-white transition-colors">Liste de courses</Link></li>
               <li><Link to="/alertes-prix" className="text-slate-400 hover:text-white transition-colors">Alertes prix</Link></li>
               <li><Link to="/contribuer-prix" className="text-slate-400 hover:text-white transition-colors">Contribuer</Link></li>
+              <li><Link to="/evaluation-magasins" className="text-slate-400 hover:text-amber-300 transition-colors">⭐ Évaluer les magasins</Link></li>
               <li><Link to="/messagerie" className="text-slate-400 hover:text-indigo-300 transition-colors"><MessageCircle className="inline-block w-3.5 h-3.5 mr-1" /> Messagerie</Link></li>
               <li><Link to="/groupes-parole" className="text-slate-400 hover:text-purple-300 transition-colors"><Users className="inline-block w-3.5 h-3.5 mr-1" /> Groupes de Parole</Link></li>
             </ul>
