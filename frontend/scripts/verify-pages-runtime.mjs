@@ -81,6 +81,24 @@ async function assertOk(pathname, requiredText) {
   }
 }
 
+async function assertImage(pathname) {
+  const res = await fetch(`http://${HOST}:${PORT}${pathname}`, { cache: 'no-store' });
+  if (!res.ok) {
+    throw new Error(`${pathname} returned HTTP ${res.status} — icon missing from dist`);
+  }
+  const contentType = res.headers.get('content-type') || '';
+  if (!contentType.startsWith('image/')) {
+    throw new Error(`${pathname} has unexpected Content-Type "${contentType}" — expected image/*`);
+  }
+  const buf = await res.arrayBuffer();
+  const bytes = new Uint8Array(buf);
+  // Verify PNG magic bytes: 89 50 4E 47 0D 0A 1A 0A
+  const isPng = bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47;
+  if (!isPng) {
+    throw new Error(`${pathname} does not start with PNG magic bytes — the file may be corrupt or replaced by HTML`);
+  }
+}
+
 async function run() {
   const preview = startPreview();
 
@@ -95,7 +113,8 @@ async function run() {
     await readyPromise;
     await assertOk(BASE_PATH, 'id="root"');
     await assertOk(`${BASE_PATH}manifest.webmanifest`);
-    await assertOk(`${BASE_PATH}icon-192.png`);
+    await assertImage(`${BASE_PATH}icon-192.png`);
+    await assertImage(`${BASE_PATH}icon-512.png`);
     await assertOk(`${BASE_PATH}service-worker.js`);
 
     const notFoundCheck = await fetch(`http://${HOST}:${PORT}/assets/does-not-exist.js`, { cache: 'no-store' });
