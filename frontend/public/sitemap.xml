@@ -426,11 +426,6 @@
 
   <!-- ── OCR & Scanner avancé ── -->
   <url>
-    <loc>https://teetee971.github.io/akiprisaye-web/scan-ean</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://teetee971.github.io/akiprisaye-web/scan-ocr</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -475,11 +470,6 @@
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://teetee971.github.io/akiprisaye-web/ievr</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.65</priority>
-  </url>
-  <url>
     <loc>https://teetee971.github.io/akiprisaye-web/rapport-citoyen</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -500,6 +490,26 @@
     <loc>https://teetee971.github.io/akiprisaye-web/conference-prix</loc>
     <changefreq>monthly</changefreq>
     <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/conference-carburants</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/conference-octroi-mer</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/enquete-carburants</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/enquete-octroi-mer</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
   </url>
   <url>
     <loc>https://teetee971.github.io/akiprisaye-web/signalement</loc>
