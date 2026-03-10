@@ -13,6 +13,7 @@
  */
 
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { auth } from '../lib/firebase';
 import { User } from 'firebase/auth';
 import { safeLocalStorage } from '../utils/safeLocalStorage';
@@ -322,45 +323,45 @@ export default function Settings() {
               Informations légales
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <a
-                href="/mentions-legales"
+              <Link
+                to="/mentions-legales"
                 className="bg-slate-800/50 hover:bg-slate-700/50 rounded-lg p-4 transition-colors flex items-center justify-between"
               >
                 <span className="text-white font-semibold">Mentions légales</span>
                 <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
-              </a>
+              </Link>
               
-              <a
-                href="/methodologie"
+              <Link
+                to="/methodologie"
                 className="bg-slate-800/50 hover:bg-slate-700/50 rounded-lg p-4 transition-colors flex items-center justify-between"
               >
                 <span className="text-white font-semibold">Méthodologie</span>
                 <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
-              </a>
+              </Link>
               
-              <a
-                href="/a-propos"
+              <Link
+                to="/a-propos"
                 className="bg-slate-800/50 hover:bg-slate-700/50 rounded-lg p-4 transition-colors flex items-center justify-between"
               >
                 <span className="text-white font-semibold">À propos</span>
                 <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
-              </a>
+              </Link>
               
-              <a
-                href="/contact"
+              <Link
+                to="/contact"
                 className="bg-slate-800/50 hover:bg-slate-700/50 rounded-lg p-4 transition-colors flex items-center justify-between"
               >
                 <span className="text-white font-semibold">Contact</span>
                 <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
-              </a>
+              </Link>
             </div>
           </section>
 

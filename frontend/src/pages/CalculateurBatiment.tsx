@@ -17,6 +17,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { Link } from 'react-router-dom';
 import {
   HardHat, Home, TreePine, Wrench, Lock, Unlock,
   ChevronLeft, AlertTriangle, Star, Clock, Calculator,
@@ -182,7 +183,7 @@ function BlockedBanner() {
     <div className="rounded-xl bg-red-900/30 border border-red-500/40 p-4 text-center">
       <Lock className="w-5 h-5 mx-auto mb-1 text-red-400" />
       <p className="text-sm text-red-300 font-medium">Quota journalier atteint</p>
-      <a href="/pricing" className="text-xs text-indigo-400 underline hover:text-indigo-300">Passer en Premium pour continuer →</a>
+      <Link to="/pricing" className="text-xs text-indigo-400 underline hover:text-indigo-300">Passer en Premium pour continuer →</Link>
     </div>
   );
 }
@@ -1610,7 +1611,7 @@ function TrialBanner({ state }: { state: BatimentTrialState }) {
       {state.daysLeft <= 2 && (
         <p className="text-xs text-orange-400 mt-1.5 flex items-center gap-1">
           <Info className="w-3 h-3" />Plus que {state.daysLeft} jour{state.daysLeft !== 1 ? 's' : ''} d'essai —{' '}
-          <a href="/pricing" className="underline hover:text-orange-300">S'abonner</a>
+          <Link to="/pricing" className="underline hover:text-orange-300">S'abonner</Link>
         </p>
       )}
     </div>
@@ -2367,7 +2368,7 @@ export default function CalculateurBatiment() {
             <div className="rounded-xl bg-red-900/20 border border-red-500/40 p-4 mb-4 text-center">
               <Lock className="w-5 h-5 mx-auto mb-1 text-red-400" />
               <p className="text-sm text-red-300 font-semibold">Période d'essai terminée</p>
-              <a href="/pricing" className="text-xs text-indigo-400 underline hover:text-indigo-300">S'abonner pour continuer →</a>
+              <Link to="/pricing" className="text-xs text-indigo-400 underline hover:text-indigo-300">S'abonner pour continuer →</Link>
             </div>
           )}
 

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { Link } from 'react-router-dom';
 import {
   Building2, Download, RefreshCw, Search, CheckSquare, Square,
   AlertTriangle, CheckCircle2, XCircle, MapPin, Database, Filter,
@@ -231,13 +232,13 @@ export default function AdminInseeImport() {
                 <RefreshCw className="w-4 h-4" />
                 Nouvelle recherche
               </button>
-              <a
-                href="/admin/pros-batiment"
+              <Link
+                to="/admin/pros-batiment"
                 className="flex items-center gap-2 px-4 py-2 rounded-lg bg-orange-600 hover:bg-orange-500 text-sm font-semibold transition-colors"
               >
                 <ExternalLink className="w-4 h-4" />
                 Voir dans AdminProsBatiment
-              </a>
+              </Link>
             </div>
           </div>
         )}

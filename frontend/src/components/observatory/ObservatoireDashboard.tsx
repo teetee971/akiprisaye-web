@@ -9,6 +9,7 @@
  */
 
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { GlassCard } from '../ui/glass-card';
 import { exportOpenData, getExportStatistics } from '../../services/openDataExportService';
 import type { OpenDataExportRequest } from '../../types/openData';
@@ -188,12 +189,12 @@ export default function ObservatoireDashboard() {
             Les prix affichés sont des moyennes calculées sur l'ensemble des observations collectées.
             Toutes les données sont horodatées et sourcées. Aucune extrapolation ou estimation n'est effectuée.
           </p>
-          <a 
-            href="/methodologie" 
+          <Link 
+            to="/methodologie" 
             className="text-blue-400 hover:text-blue-300 text-sm underline mt-2 inline-block"
           >
             Consulter la méthodologie complète →
-          </a>
+          </Link>
         </div>
       </GlassCard>
 

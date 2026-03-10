@@ -10,7 +10,7 @@
 
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import {
   Building2, FileText, User, MapPin, Globe,
   CheckCircle, AlertCircle, ChevronRight, ChevronLeft,
@@ -506,7 +506,7 @@ function Step4Plan({ form, onChange, onSubmit, onPrev, submitting }: Step4Props)
             className="mt-0.5 w-4 h-4 rounded accent-blue-500 shrink-0" />
           <span className="text-sm text-gray-300">
             J'accepte les{' '}
-            <a href="/mentions-legales" target="_blank" className="text-blue-400 underline">Conditions Générales d'Utilisation</a>
+            <Link to="/mentions-legales" target="_blank" rel="noopener noreferrer" className="text-blue-400 underline">Conditions Générales d'Utilisation</Link>
             {' '}et je certifie que les informations fournies sont exactes. *
           </span>
         </label>
@@ -515,7 +515,7 @@ function Step4Plan({ form, onChange, onSubmit, onPrev, submitting }: Step4Props)
             className="mt-0.5 w-4 h-4 rounded accent-blue-500 shrink-0" />
           <span className="text-sm text-gray-300">
             J'accepte la{' '}
-            <a href="/transparence" target="_blank" className="text-blue-400 underline">Politique de confidentialité</a>
+            <Link to="/transparence" target="_blank" rel="noopener noreferrer" className="text-blue-400 underline">Politique de confidentialité</Link>
             . *
           </span>
         </label>
@@ -659,7 +659,7 @@ export default function InscriptionPro() {
 
           <p className="text-xs text-gray-500 text-center mt-4">
             Déjà un compte pro ?{' '}
-            <a href="/espace-pro" className="text-blue-400 underline">Accéder à mon espace</a>
+            <Link to="/espace-pro" className="text-blue-400 underline">Accéder à mon espace</Link>
           </p>
         </div>
       </div>

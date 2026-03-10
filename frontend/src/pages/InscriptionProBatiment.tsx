@@ -11,7 +11,7 @@
 
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import {
   HardHat, Building2, FileText, CheckCircle, ChevronRight, ChevronLeft,
   Shield, Star, Phone, Mail, MapPin, Briefcase, AlertTriangle, Upload,
@@ -578,9 +578,9 @@ function Step4Documents({ form, onChange, onNext, onPrev }: {
             className="mt-0.5 w-4 h-4 rounded accent-orange-500 shrink-0" />
           <span className="text-sm text-slate-300">
             J'accepte les{' '}
-            <a href="/mentions-legales" target="_blank" rel="noopener noreferrer" className="text-orange-400 underline">
+            <Link to="/mentions-legales" target="_blank" rel="noopener noreferrer" className="text-orange-400 underline">
               Conditions Générales d'Utilisation
-            </a>
+            </Link>
             {' '}de la plateforme A KI PRI SA YÉ. *
           </span>
         </label>
@@ -866,7 +866,7 @@ export default function InscriptionProBatiment() {
 
           <p className="text-xs text-slate-500 text-center mt-4">
             Déjà inscrit ?{' '}
-            <a href="/espace-pro-batiment" className="text-orange-400 underline">Accéder à mon espace</a>
+            <Link to="/espace-pro-batiment" className="text-orange-400 underline">Accéder à mon espace</Link>
           </p>
         </div>
       </div>

@@ -18,7 +18,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { Navigation, MapPin, Camera, Image as ImageIcon, Receipt } from 'lucide-react';
 import EnhancedSearch from '../components/search/EnhancedSearch';
 import EnhancedComparisonDisplay from '../components/comparison/EnhancedComparisonDisplay';
@@ -408,12 +408,12 @@ export default function EnhancedComparator() {
                     <li>Essayer un autre produit</li>
                     <li>Changer de territoire</li>
                     <li>
-                      <a
-                        href="/contribuer"
+                      <Link
+                        to="/contribuer"
                         className="text-blue-600 hover:text-blue-700 underline font-medium"
                       >
                         Contribuer en ajoutant ce prix
-                      </a>
+                      </Link>
                     </li>
                   </ul>
                 </div>

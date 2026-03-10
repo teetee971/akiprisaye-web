@@ -1,7 +1,7 @@
  
 // src/pages/ScanEAN.tsx
 import React, { useState, useCallback, useEffect } from 'react'
-import { useSearchParams, useNavigate } from 'react-router-dom'
+import { useSearchParams, useNavigate, Link } from 'react-router-dom'
 import { useEANScanner } from '../hooks/useEANScanner'
 import { useEANResolver } from '../hooks/useEANResolver'
 import { useScanHistory } from '../hooks/useScanHistory'
@@ -604,7 +604,7 @@ export default function ScanEAN() {
           <h2 className="text-2xl font-bold text-white mb-4">Résultat</h2>
           <ScanErrorState message={resolver.error} />
           <div className="mt-3 rounded-lg border border-blue-500/40 bg-blue-500/10 p-3 text-sm text-blue-200">
-            Données indisponibles pour ce code (statut NO_DATA). <a href="/transparence" className="underline font-semibold">Pourquoi ?</a>
+            Données indisponibles pour ce code (statut NO_DATA). <Link to="/transparence" className="underline font-semibold">Pourquoi ?</Link>
           </div>
         </div>
       )}

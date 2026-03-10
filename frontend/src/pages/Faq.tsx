@@ -5,6 +5,7 @@ import { GlassCard } from '@/components/ui/glass-card';
 import { HeroImage } from '@/components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '@/config/imageAssets';
 import { FAQ_DATA, getFAQByCategory, searchFAQ, type FAQItem } from '@/data/faq';
+import { Link } from 'react-router-dom';
 
 const FAQ_CATEGORIES = [
   { id: 'all', label: 'Toutes', icon: '📋' },
@@ -185,12 +186,12 @@ export default function Faq() {
               >
                 💬 Poser une question à l'assistant
               </a>
-              <a
-                href="/contact"
+              <Link
+                to="/contact"
                 className="px-6 py-3 bg-slate-700 hover:bg-slate-600 rounded-lg text-white font-medium transition-colors"
               >
                 📧 Nous contacter
-              </a>
+              </Link>
             </div>
           </GlassCard>
         </div>

@@ -1,5 +1,6 @@
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
+import { Link } from 'react-router-dom';
 
 export default function APropos() {
   return (
@@ -14,12 +15,12 @@ export default function APropos() {
         >
           <div className="flex items-center justify-between w-full">
             <h1 className="text-3xl font-bold text-white drop-shadow">À Propos</h1>
-            <a
-              href="/"
+            <Link
+              to="/"
               className="text-white/80 hover:text-white transition-colors text-sm"
             >
               ← Accueil
-            </a>
+            </Link>
           </div>
         </HeroImage>
       </div>
@@ -169,12 +170,12 @@ export default function APropos() {
                 comparateurs de prix disponibles ? Consultez notre tableau comparatif
                 des fonctionnalités.
               </p>
-              <a
-                href="/comparatif-concurrence"
+              <Link
+                to="/comparatif-concurrence"
                 className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-lg transition-all"
               >
                 Voir le comparatif →
-              </a>
+              </Link>
             </div>
           </section>
 
@@ -185,12 +186,12 @@ export default function APropos() {
               <p>
                 Pour toute question, suggestion ou partenariat :
               </p>
-              <a 
-                href="/contact" 
+              <Link 
+                to="/contact" 
                 className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition-all"
               >
                 Nous contacter
-              </a>
+              </Link>
             </div>
           </section>
 

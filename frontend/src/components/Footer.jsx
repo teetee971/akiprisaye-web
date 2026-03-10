@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 export default function Footer() {
   const [version, setVersion] = useState(null);
@@ -35,36 +36,36 @@ export default function Footer() {
           className="flex flex-wrap justify-center gap-6 mb-6 text-sm"
           aria-label="Navigation du pied de page"
         >
-          <a
-            href="/a-propos"
+          <Link
+            to="/a-propos"
             className="text-slate-300 hover:text-blue-400 transition-colors"
           >
             À propos
-          </a>
-          <a
-            href="/methodologie"
+          </Link>
+          <Link
+            to="/methodologie"
             className="text-slate-300 hover:text-blue-400 transition-colors"
           >
             Méthodologie
-          </a>
-          <a
-            href="/actualites"
+          </Link>
+          <Link
+            to="/actualites"
             className="text-slate-300 hover:text-blue-400 transition-colors"
           >
             Actualités
-          </a>
-          <a
-            href="/contact"
+          </Link>
+          <Link
+            to="/contact"
             className="text-slate-300 hover:text-blue-400 transition-colors"
           >
             Contact
-          </a>
-          <a
-            href="/mentions-legales"
+          </Link>
+          <Link
+            to="/mentions-legales"
             className="text-slate-300 hover:text-blue-400 transition-colors"
           >
             Mentions légales
-          </a>
+          </Link>
         </nav>
 
         {/* Copyright */}

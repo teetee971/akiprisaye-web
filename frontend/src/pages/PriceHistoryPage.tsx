@@ -5,6 +5,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { Link } from 'react-router-dom';
 import { Info, TrendingUp, TrendingDown, Minus, AlertCircle, BarChart2, Filter } from 'lucide-react';
 import { PriceHistoryChart } from '../components/PriceHistoryChart';
 import { UpgradeGate } from '../components/billing/UpgradeGate';
@@ -497,12 +498,12 @@ export default function PriceHistoryPage() {
                     Découvrez comment ces variations affectent le pouvoir d'achat local
                   </p>
                 </div>
-                <a
-                  href="/inflation"
+                <Link
+                  to="/inflation"
                   className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold whitespace-nowrap"
                 >
                   Voir l'inflation
-                </a>
+                </Link>
               </div>
             </div>
           )}

@@ -1,4 +1,5 @@
 import { Helmet } from 'react-helmet-async';
+import { Link } from 'react-router-dom';
 
 export default function MentionsLegales() {
   return (
@@ -14,12 +15,12 @@ export default function MentionsLegales() {
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-between mb-2">
             <h1 className="text-3xl font-bold">Mentions Légales & Conformité RGPD</h1>
-            <a 
-              href="/" 
+            <Link 
+              to="/" 
               className="text-white hover:text-gray-200 transition-colors"
             >
               ← Accueil
-            </a>
+            </Link>
           </div>
         </div>
       </div>
@@ -172,7 +173,7 @@ export default function MentionsLegales() {
                   <strong>Comment exercer vos droits :</strong> Un simple email à{' '}
                   <a href="mailto:dpo@akiprisaye.com" className="text-blue-400 hover:text-blue-300">dpo@akiprisaye.com</a>
                   {' '}ou via notre{' '}
-                  <a href="/contact" className="text-blue-400 hover:text-blue-300">formulaire de contact</a>
+                  <Link to="/contact" className="text-blue-400 hover:text-blue-300">formulaire de contact</Link>
                   {' '}suffit. Aucune procédure complexe n'est requise.
                 </p>
               </div>
@@ -315,7 +316,7 @@ export default function MentionsLegales() {
               <ul className="list-disc list-inside space-y-1">
                 <li>📧 Email : <a href="mailto:contact@akiprisaye.com" className="text-blue-400 hover:text-blue-300">contact@akiprisaye.com</a></li>
                 <li>📧 DPO : <a href="mailto:dpo@akiprisaye.com" className="text-blue-400 hover:text-blue-300">dpo@akiprisaye.com</a></li>
-                <li>📝 Formulaire : <a href="/contact" className="text-blue-400 hover:text-blue-300">page Contact</a></li>
+                <li>📝 Formulaire : <Link to="/contact" className="text-blue-400 hover:text-blue-300">page Contact</Link></li>
               </ul>
             </div>
           </section>
@@ -336,15 +337,15 @@ export default function MentionsLegales() {
       <div className="bg-[#1e1e1e] border-t border-gray-700 mt-12 p-6 text-center text-gray-400">
         <p>© 2026 A KI PRI SA YÉ - Tous droits réservés</p>
         <div className="flex justify-center gap-4 mt-4 text-sm">
-          <a href="/" className="hover:text-white transition-colors">
+          <Link to="/" className="hover:text-white transition-colors">
             Accueil
-          </a>
-          <a href="/contact" className="hover:text-white transition-colors">
+          </Link>
+          <Link to="/contact" className="hover:text-white transition-colors">
             Contact
-          </a>
-          <a href="/faq" className="hover:text-white transition-colors">
+          </Link>
+          <Link to="/faq" className="hover:text-white transition-colors">
             FAQ
-          </a>
+          </Link>
         </div>
       </div>
     </div>

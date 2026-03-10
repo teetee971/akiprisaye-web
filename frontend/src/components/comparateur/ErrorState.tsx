@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 type ErrorStateProps = {
   error: string;
   onRetry: () => void;
@@ -36,13 +38,13 @@ export default function ErrorState({ error, onRetry, debugInfo }: ErrorStateProp
             <span>Réessayer</span>
           </button>
           
-          <a
-            href="/"
+          <Link
+            to="/"
             className="flex items-center gap-2 px-6 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold rounded-xl transition-colors"
           >
             <span>←</span>
             <span>Retour à l'accueil</span>
-          </a>
+          </Link>
         </div>
 
         {/* Contact Support */}
@@ -59,12 +61,12 @@ export default function ErrorState({ error, onRetry, debugInfo }: ErrorStateProp
               {SUPPORT_EMAIL}
             </a>
             {' '}ou consultez notre{' '}
-            <a 
-              href="/faq" 
+            <Link 
+              to="/faq" 
               className="font-semibold underline hover:text-blue-900 dark:hover:text-blue-200"
             >
               FAQ
-            </a>.
+            </Link>.
           </p>
         </div>
 

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import ComparateurTable from '../components/comparateur/ComparateurTable';
 import ComparateurFilters from '../components/comparateur/ComparateurFilters';
 import ErrorState from '../components/comparateur/ErrorState';
@@ -193,18 +194,16 @@ export default function ComparateurCitoyen() {
                 </p>
               </div>
             </div>
-            <a
-              href="/"
+            <Link
+              to="/"
               className="hidden sm:flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg transition-colors"
             >
               <span>←</span>
               <span>Accueil</span>
-            </a>
+            </Link>
           </div>
         </div>
       </div>
-
-      {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Data Info Banner */}
         {snapshot && !loading && !error && (
@@ -303,9 +302,9 @@ export default function ComparateurCitoyen() {
               </p>
               <p className="text-sm text-yellow-800 dark:text-yellow-400">
                 Pour en savoir plus sur notre méthodologie, consultez notre{' '}
-                <a href="/methodologie" className="font-semibold underline hover:text-yellow-600 dark:hover:text-yellow-300">
+                <Link to="/methodologie" className="font-semibold underline hover:text-yellow-600 dark:hover:text-yellow-300">
                   page méthodologie
-                </a>.
+                </Link>.
               </p>
             </div>
           </div>
@@ -319,7 +318,7 @@ export default function ComparateurCitoyen() {
             © 2025 A KI PRI SA YÉ - Service public de transparence des prix
           </p>
           <p className="text-slate-500 dark:text-slate-500 text-xs mt-2">
-            Tous droits réservés • <a href="/mentions-legales" className="hover:text-blue-600 dark:hover:text-blue-400">Mentions légales</a>
+            Tous droits réservés • <Link to="/mentions-legales" className="hover:text-blue-600 dark:hover:text-blue-400">Mentions légales</Link>
           </p>
         </div>
       </div>

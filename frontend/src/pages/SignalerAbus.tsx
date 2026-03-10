@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from 'react-router-dom';
 import { useAuth } from "@/context/AuthContext";
 import { db, auth } from "@/lib/firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
@@ -176,12 +177,12 @@ export default function SignalerAbus() {
             <p className="text-gray-300 mb-4">
               Vous devez être connecté pour effectuer un signalement.
             </p>
-            <a
-              href="/login"
+            <Link
+              to="/login"
               className="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
             >
               Se connecter / Créer un compte
-            </a>
+            </Link>
           </div>
         ) : (
           <div className="bg-slate-900 rounded-2xl p-6 shadow-lg">

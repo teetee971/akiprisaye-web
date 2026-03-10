@@ -13,7 +13,7 @@
 
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import {
   Building2, FileText, MapPin, CreditCard,
   CheckCircle, AlertCircle, ChevronRight, ChevronLeft,
@@ -663,7 +663,7 @@ export default function MerchantOnboarding() {
                       className="mt-0.5 w-4 h-4 accent-blue-500"
                     />
                     <span className="text-sm text-gray-300">
-                      J'accepte les <a href="/mentions-legales" className="text-blue-400 underline" target="_blank" rel="noreferrer">Conditions Générales d'Utilisation</a> de la Marketplace.
+                      J'accepte les <Link to="/mentions-legales" className="text-blue-400 underline" target="_blank" rel="noreferrer">Conditions Générales d'Utilisation</Link> de la Marketplace.
                     </span>
                   </label>
                   {errors.acceptesCGU && <FieldError msg={errors.acceptesCGU as any} />}
@@ -676,7 +676,7 @@ export default function MerchantOnboarding() {
                       className="mt-0.5 w-4 h-4 accent-blue-500"
                     />
                     <span className="text-sm text-gray-300">
-                      J'accepte la <a href="/privacy" className="text-blue-400 underline" target="_blank" rel="noreferrer">Politique de confidentialité</a> et la collecte des données de facturation.
+                      J'accepte la <Link to="/privacy" className="text-blue-400 underline" target="_blank" rel="noreferrer">Politique de confidentialité</Link> et la collecte des données de facturation.
                     </span>
                   </label>
                   {errors.acceptesConfidentialite && <FieldError msg={errors.acceptesConfidentialite as any} />}

@@ -2,6 +2,7 @@
  * ⑫ 🧭 PLAN D'ACTION : OÙ ALLER POUR ÉCONOMISER MAINTENANT
  * Transforme l'analyse en action concrète
  */
+import { Link } from 'react-router-dom';
 
 import { GlassCard } from "../ui/glass-card";
 
@@ -121,13 +122,13 @@ export function SavingsActionPlan({ products, className = "" }: SavingsActionPla
             <span>📋</span>
             <span>Copier la liste</span>
           </button>
-          <a
-            href="/carte"
+          <Link
+            to="/carte"
             className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-500 rounded-lg font-semibold transition-all transform hover:scale-105"
           >
             <span>🗺️</span>
             <span>Voir l'itinéraire</span>
-          </a>
+          </Link>
         </div>
 
         {/* Info */}

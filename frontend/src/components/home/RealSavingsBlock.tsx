@@ -2,6 +2,7 @@
  * ① BLOC "ÉCONOMIES RÉELLES" - IMPACT MAX
  * Affiche les économies réelles observées sur le territoire
  */
+import { Link } from 'react-router-dom';
 
 import { GlassCard } from "../ui/glass-card";
 import { useEffect, useState } from "react";
@@ -74,12 +75,12 @@ export function RealSavingsBlock() {
 
         {/* CTA */}
         <div className="mt-6">
-          <a 
-            href="/scanner"
+          <Link 
+            to="/scanner"
             className="inline-block px-6 py-3 bg-green-600 hover:bg-green-500 rounded-xl font-semibold transition-all transform hover:scale-105 shadow-lg"
           >
             🔍 Trouver mes économies
-          </a>
+          </Link>
         </div>
       </div>
     </GlassCard>

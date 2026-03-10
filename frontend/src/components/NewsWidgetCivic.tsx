@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { Calendar } from 'lucide-react';
 import SourceFooter from './ui/SourceFooter';
 
@@ -132,12 +133,12 @@ export default function NewsWidgetCivic({
         </h2>
 
         {showFullButton && (
-          <a
-            href="/actualites"
+          <Link
+            to="/actualites"
             className="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors"
           >
             Voir tout →
-          </a>
+          </Link>
         )}
       </div>
 

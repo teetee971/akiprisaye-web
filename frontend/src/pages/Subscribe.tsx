@@ -5,7 +5,7 @@
  * WCAG AA compliant
  */
 import React, { useState, useEffect } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { GlassContainer } from '@/components/ui/GlassContainer';
 import { GlassCard } from '@/components/ui/glass-card';
 import { CivicButton } from '@/components/ui/CivicButton';
@@ -226,9 +226,9 @@ export default function Subscribe() {
               <p className="text-gray-300 mb-2">
                 <strong className="text-white">Vous pouvez annuler à tout moment.</strong>
               </p>
-              <a href="/pricing" className="text-blue-400 hover:underline text-sm">
+              <Link to="/pricing" className="text-blue-400 hover:underline text-sm">
                 Comparer les plans
-              </a>
+              </Link>
             </div>
 
             <div className="flex gap-4">

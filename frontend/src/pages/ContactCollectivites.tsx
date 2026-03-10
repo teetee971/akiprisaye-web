@@ -1,4 +1,3 @@
- 
 // src/pages/ContactCollectivites.tsx
 /**
  * Page Contact Collectivités
@@ -6,6 +5,7 @@
  * Civic Glass design - Professional, accessible, institutional
  */
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { GlassContainer } from '@/components/ui/GlassContainer';
 import { GlassCard } from '@/components/ui/glass-card';
 import { CivicButton } from '@/components/ui/CivicButton';
@@ -406,26 +406,23 @@ export default function ContactCollectivites() {
             <GlassCard>
               <h3 className="text-xl font-bold text-white mb-4">Documentation</h3>
               <div className="space-y-3">
-                <a 
-                  href="/licence-institution" 
+                <Link 
+                  to="/licence-institution" 
                   className="flex items-center gap-3 p-3 bg-white/[0.05] hover:bg-white/[0.08] rounded-lg transition-colors"
                 >
                   <FileText className="w-5 h-5 text-blue-400" />
                   <span className="text-sm text-gray-300">Licence Institutionnelle</span>
-                </a>
+                </Link>
                 
-                <a 
-                  href="/pricing" 
+                <Link 
+                  to="/pricing" 
                   className="flex items-center gap-3 p-3 bg-white/[0.05] hover:bg-white/[0.08] rounded-lg transition-colors"
                 >
                   <FileText className="w-5 h-5 text-green-400" />
                   <span className="text-sm text-gray-300">Grille tarifaire</span>
-                </a>
+                </Link>
               </div>
             </GlassCard>
           </div>
         </div>
       </GlassContainer>
-    </div>
-  );
-}

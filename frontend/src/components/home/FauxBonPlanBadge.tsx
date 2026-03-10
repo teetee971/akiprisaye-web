@@ -4,6 +4,7 @@
  */
 
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { detectFakeDeal, type PriceHistory, type FakeDealResult } from '../../services/detectFakeDeal';
 
 interface FauxBonPlanBadgeProps {
@@ -115,12 +116,12 @@ export function FauxBonPlanBadge({
             </div>
 
             {/* CTA */}
-            <a 
-              href="/historique-prix"
+            <Link 
+              to="/historique-prix"
               className="block w-full text-center px-3 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-sm font-medium transition-colors"
             >
               Voir l'historique complet
-            </a>
+            </Link>
           </div>
 
           {/* Arrow pointer */}
