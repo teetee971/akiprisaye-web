@@ -25,6 +25,7 @@ type SeedPriceItem = {
   price: number;
   currency?: string;
   ts?: string;
+  city?: string;
 };
 
 type SeedProduct = {

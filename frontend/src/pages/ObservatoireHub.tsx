@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { BarChart3, Search, Award, Database, TrendingUp, BarChart2, Store, Globe, Download, FileText, ShoppingCart, ChevronUp, ChevronDown, Minus } from 'lucide-react';
+import { BarChart3, Search, Award, Database, TrendingUp, BarChart2, Store, Globe, Download, FileText, ShoppingCart, ChevronUp, ChevronDown, Minus, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { GlassCard } from '../components/ui/glass-card';
 import { HeroImage } from '../components/ui/HeroImage';
@@ -235,6 +235,7 @@ export default function ObservatoireHub() {
                     { Icon: BarChart2,   label: 'Comparaison enseignes', to: '/comparaison-enseignes' },
                     { Icon: ShoppingCart, label: 'Comparaison panier',   to: '/comparaison-panier' },
                     { Icon: Globe,        label: 'Comparateur citoyen',  to: '/comparateur-citoyen' },
+                    { Icon: Star,         label: 'Évaluation magasins',  to: '/evaluation-magasins' },
                   ].map((item) => (
                     <Link
                       key={item.to}

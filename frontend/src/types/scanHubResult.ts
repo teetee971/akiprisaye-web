@@ -1,3 +1,5 @@
+import type { PriceSourceId } from '../services/priceSearch/price.types';
+
 export type ScanHubResult =
   | { status: 'LOADING' }
   | { status: 'NO_DATA'; reason?: string }
@@ -18,7 +20,7 @@ export interface ScanData {
   warnings?: string[];
   territoryMessage?: string;
   observations?: Array<{
-    source: string;
+    source: PriceSourceId;
     price: number;
     observedAt?: string;
     normalizedLabel?: string;
