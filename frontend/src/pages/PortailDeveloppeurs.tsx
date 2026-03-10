@@ -3,9 +3,10 @@
  * Route : /portail-developpeurs
  */
 
+import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
-import { Code2, Key, FileText, Zap, Shield, Globe, ChevronRight, Copy } from 'lucide-react';
+import { Code2, Key, FileText, Zap, Shield, Globe, ChevronRight, Copy, UserPlus, CheckCircle } from 'lucide-react';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
@@ -44,6 +45,88 @@ const EXAMPLE_RESPONSE = `{
 // ── Composant ─────────────────────────────────────────────────────────────────
 
 export default function PortailDeveloppeurs() {
+  const [form, setForm] = useState({
+    nom: '',
+    email: '',
+    projet: '',
+    useCase: '',
+    plan: 'Gratuit',
+  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  const validateForm = () => {
+    const next: Record<string, string> = {};
+    if (!form.nom.trim()) next.nom = 'Nom requis';
+    if (!form.email.trim()) next.email = 'Email requis';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) next.email = 'Email invalide';
+    if (!form.useCase.trim()) next.useCase = 'Description du projet requise';
+    setErrors(next);
+    return Object.keys(next).length === 0;
+  };
+
+  const handleChange = (field: string, value: string) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+    if (errors[field]) setErrors((prev) => ({ ...prev, [field]: '' }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+    setSubmitting(true);
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          ...form,
+          subject: `Demande d'accès développeur — ${form.plan}`,
+          message: `Projet : ${form.projet || '(non renseigné)'}\n\nCas d'usage :\n${form.useCase}`,
+          type: 'developer_access',
+          submittedAt: new Date().toISOString(),
+        }),
+      });
+      if (!res.ok && res.status !== 404 && res.status !== 405) {
+        throw new Error(`api_${res.status}`);
+      }
+    } catch {
+      const subject = encodeURIComponent(`Demande d'accès développeur — ${form.plan}`);
+      const body = encodeURIComponent(
+        `Nom : ${form.nom}\nEmail : ${form.email}\nPlan souhaité : ${form.plan}\nProjet : ${form.projet || '(non renseigné)'}\n\nCas d'usage :\n${form.useCase}`,
+      );
+      window.location.href = `mailto:contact@akiprisaye.fr?subject=${subject}&body=${body}`;
+    }
+    setSubmitting(false);
+    setSubmitted(true);
+  };
+
+  if (submitted) {
+    return (
+      <>
+        <Helmet>
+          <title>Portail API développeurs — A KI PRI SA YÉ</title>
+        </Helmet>
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+          <div className="bg-white border border-gray-200 rounded-2xl p-8 max-w-md w-full text-center shadow-sm">
+            <CheckCircle className="w-14 h-14 text-green-500 mx-auto mb-4" />
+            <h2 className="text-xl font-bold text-gray-900 mb-2">Demande envoyée !</h2>
+            <p className="text-gray-600 text-sm mb-6">
+              Votre demande d'accès développeur <strong>{form.plan}</strong> a bien été reçue. Notre équipe vous
+              répondra à <strong>{form.email}</strong> dans les 48 heures ouvrées.
+            </p>
+            <button
+              onClick={() => setSubmitted(false)}
+              className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-xl transition-colors"
+            >
+              Retour au portail
+            </button>
+          </div>
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       <Helmet>
@@ -193,6 +276,103 @@ export default function PortailDeveloppeurs() {
                 <p className="text-xs text-gray-500 mt-1">{desc}</p>
               </div>
             ))}
+          </div>
+
+          {/* Formulaire demande d'accès développeur */}
+          <div className="bg-white border border-gray-200 rounded-2xl p-6">
+            <div className="flex items-center gap-2 mb-5">
+              <UserPlus className="w-5 h-5 text-indigo-600" />
+              <h2 className="font-bold text-gray-900">🔑 Demander un accès développeur</h2>
+            </div>
+            <form onSubmit={handleSubmit} noValidate className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Nom complet *
+                  </label>
+                  <input
+                    type="text"
+                    value={form.nom}
+                    onChange={(e) => handleChange('nom', e.target.value)}
+                    placeholder="Prénom Nom"
+                    className={`w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none ${
+                      errors.nom ? 'border-red-400' : 'border-gray-300'
+                    }`}
+                  />
+                  {errors.nom && <p className="text-xs text-red-600 mt-1">{errors.nom}</p>}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Adresse e-mail *
+                  </label>
+                  <input
+                    type="email"
+                    value={form.email}
+                    onChange={(e) => handleChange('email', e.target.value)}
+                    placeholder="vous@exemple.com"
+                    className={`w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none ${
+                      errors.email ? 'border-red-400' : 'border-gray-300'
+                    }`}
+                  />
+                  {errors.email && <p className="text-xs text-red-600 mt-1">{errors.email}</p>}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Nom du projet / application
+                  </label>
+                  <input
+                    type="text"
+                    value={form.projet}
+                    onChange={(e) => handleChange('projet', e.target.value)}
+                    placeholder="Ex : MonApp Prix DOM"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Plan souhaité
+                  </label>
+                  <select
+                    value={form.plan}
+                    onChange={(e) => handleChange('plan', e.target.value)}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none bg-white"
+                  >
+                    {PLANS_API.map((p) => (
+                      <option key={p.name} value={p.name}>
+                        {p.name} — {p.calls} requêtes/jour
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Description du cas d'usage *
+                </label>
+                <textarea
+                  rows={4}
+                  value={form.useCase}
+                  onChange={(e) => handleChange('useCase', e.target.value)}
+                  placeholder="Décrivez brièvement comment vous souhaitez utiliser l'API (ex : application mobile de comparaison de prix, outil d'analyse, tableau de bord institutionnel…)"
+                  className={`w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none resize-none ${
+                    errors.useCase ? 'border-red-400' : 'border-gray-300'
+                  }`}
+                />
+                {errors.useCase && <p className="text-xs text-red-600 mt-1">{errors.useCase}</p>}
+              </div>
+
+              <button
+                type="submit"
+                disabled={submitting}
+                className="w-full sm:w-auto px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-xl transition-colors"
+              >
+                {submitting ? 'Envoi…' : 'Envoyer ma demande'}
+              </button>
+            </form>
           </div>
 
           {/* CTA contact */}
