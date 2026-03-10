@@ -38,11 +38,29 @@
  *
  *     ⚠️  Ne commitez JAMAIS ce fichier JSON — il est dans .gitignore
  *
- * ── UTILISATION ────────────────────────────────────────────────────────────
- *  node scripts/set-creator-role.mjs <votre-email@domaine.com>
+ *     💡 ALTERNATIVE — variable d'environnement (GitHub Actions / CI) :
+ *        Exportez le contenu JSON brut dans la variable FIREBASE_SERVICE_ACCOUNT_KEY.
+ *        Le script lira d'abord cette variable avant de chercher un fichier.
  *
- *  Exemple :
- *  node scripts/set-creator-role.mjs teetee971@gmail.com
+ * ── UTILISATION ────────────────────────────────────────────────────────────
+ *  Depuis un terminal (PC ou Termux Android) :
+ *    node scripts/set-creator-role.mjs <votre-email@domaine.com>
+ *
+ *  Depuis Termux (Android) — guide rapide :
+ *    pkg install nodejs git
+ *    termux-setup-storage
+ *    git clone https://github.com/teetee971/akiprisaye-web.git
+ *    cd akiprisaye-web
+ *    cp ~/storage/downloads/serviceAccountKey.json .
+ *    npm install
+ *    node scripts/set-creator-role.mjs teetee971@gmail.com
+ *
+ *  Depuis GitHub Actions (sans PC ni terminal) :
+ *    1. Ajoutez le contenu JSON comme secret GitHub : FIREBASE_SERVICE_ACCOUNT_KEY
+ *    2. Déclenchez le workflow "✨ Attribuer le rôle Créateur" depuis l'onglet Actions
+ *
+ *  Exemple local :
+ *    node scripts/set-creator-role.mjs teetee971@gmail.com
  *
  * ── APRÈS EXÉCUTION ────────────────────────────────────────────────────────
  *  1. Ouvrez l'application dans votre navigateur
@@ -69,48 +87,63 @@ if (!email || !email.includes('@')) {
   process.exit(1);
 }
 
-/* ── 2. Localiser la clé de service Firebase Admin ───────────────────── */
+/* ── 2. Localiser / lire la clé de service Firebase Admin ────────────── */
 
-const SERVICE_ACCOUNT_PATHS = [
-  resolve(ROOT, 'service-account-file.json'),
-  resolve(ROOT, 'service-account.json'),
-  resolve(ROOT, 'firebase-admin-key.json'),
-  resolve(ROOT, 'serviceAccountKey.json'),
-];
+// Priorité 1 : variable d'environnement (GitHub Actions, CI, Termux inline)
+const envKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
 
-const serviceAccountPath = SERVICE_ACCOUNT_PATHS.find(existsSync);
-if (!serviceAccountPath) {
-  console.error(`
+let serviceAccount;
+
+if (envKey) {
+  try {
+    serviceAccount = JSON.parse(envKey);
+    console.log('\n✅ Clé de service chargée depuis FIREBASE_SERVICE_ACCOUNT_KEY (variable d\'environnement)');
+  } catch (err) {
+    console.error(`\n❌ FIREBASE_SERVICE_ACCOUNT_KEY contient un JSON invalide : ${err.message}\n`);
+    process.exit(1);
+  }
+} else {
+  // Priorité 2 : fichier sur disque (utilisation locale / Termux)
+  const SERVICE_ACCOUNT_PATHS = [
+    resolve(ROOT, 'serviceAccountKey.json'),
+    resolve(ROOT, 'service-account-file.json'),
+    resolve(ROOT, 'service-account.json'),
+    resolve(ROOT, 'firebase-admin-key.json'),
+  ];
+
+  const serviceAccountPath = SERVICE_ACCOUNT_PATHS.find(existsSync);
+  if (!serviceAccountPath) {
+    console.error(`
 ❌ Clé de service Firebase Admin introuvable.
 
    Compte de service : firebase-adminsdk-fbsvc@a-ki-pri-sa-ye.iam.gserviceaccount.com
    Projet Firebase   : a-ki-pri-sa-ye
 
-   ── Étapes pour télécharger la clé ──────────────────────────────────────
-   1. Ouvrez ce lien dans votre navigateur :
-      https://console.firebase.google.com/project/a-ki-pri-sa-ye/settings/serviceaccounts/adminsdk
-
-   2. Cliquez sur "Générer une nouvelle clé privée"
-
-   3. Confirmez dans la boîte de dialogue
-
-   4. Un fichier JSON est téléchargé (ex: a-ki-pri-sa-ye-firebase-adminsdk-xxxx.json)
-
-   5. Renommez-le et placez-le à la racine du projet sous l'un de ces noms :
+   ── Option A — Fichier local (PC ou Termux) ─────────────────────────────
+   1. Ouvrez : https://console.firebase.google.com/project/a-ki-pri-sa-ye/settings/serviceaccounts/adminsdk
+   2. Cliquez "Générer une nouvelle clé privée" → téléchargez le JSON
+   3. Renommez-le serviceAccountKey.json et placez-le à la racine du dépôt :
 ${SERVICE_ACCOUNT_PATHS.map(p => '      • ' + p).join('\n')}
+
+   ── Option B — Termux (Android) ─────────────────────────────────────────
+   cp ~/storage/downloads/serviceAccountKey.json ${ROOT}/
+
+   ── Option C — Variable d'environnement (GitHub Actions / CI) ───────────
+   export FIREBASE_SERVICE_ACCOUNT_KEY='<contenu JSON brut>'
+   node scripts/set-creator-role.mjs ${email}
 
    ⚠️  Ne commitez JAMAIS ce fichier dans Git (il est dans .gitignore).
 `);
-  process.exit(1);
-}
+    process.exit(1);
+  }
 
-let serviceAccount;
-try {
-  serviceAccount = JSON.parse(readFileSync(serviceAccountPath, 'utf8'));
-  console.log(`\n✅ Clé de service chargée : ${serviceAccountPath}`);
-} catch (err) {
-  console.error(`\n❌ Impossible de lire la clé de service : ${err.message}\n`);
-  process.exit(1);
+  try {
+    serviceAccount = JSON.parse(readFileSync(serviceAccountPath, 'utf8'));
+    console.log(`\n✅ Clé de service chargée : ${serviceAccountPath}`);
+  } catch (err) {
+    console.error(`\n❌ Impossible de lire la clé de service : ${err.message}\n`);
+    process.exit(1);
+  }
 }
 
 /* ── 3. Initialiser Firebase Admin ────────────────────────────────────── */
@@ -170,8 +203,8 @@ try {
 ╔══════════════════════════════════════════════════════════════╗
 ║  ✨ RÔLE CRÉATEUR ACTIVÉ AVEC SUCCÈS                         ║
 ╠══════════════════════════════════════════════════════════════╣
-║  Email   : ${email.padEnd(50)}  ║
-║  UID     : ${uid.padEnd(50)}  ║
+║  Email   : ${email.length > 48 ? email.slice(0, 45) + '...' : email.padEnd(48)}  ║
+║  UID     : ${uid.length > 48 ? uid.slice(0, 45) + '...' : uid.padEnd(48)}  ║
 ║  Rôle    : creator (plan CREATOR — accès illimité)           ║
 ╠══════════════════════════════════════════════════════════════╣
 ║  PROCHAINES ÉTAPES :                                         ║

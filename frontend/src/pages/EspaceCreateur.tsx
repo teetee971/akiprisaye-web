@@ -15,7 +15,7 @@ import {
   Settings, Lock, CheckCircle, AlertCircle, Copy, ExternalLink,
   Terminal, BookOpen, Sparkles, Globe, Key, ChevronDown, ChevronUp,
   TrendingUp, Bell, Download, FileText, Wrench, RefreshCw,
-  LogOut, Star, Building2,
+  LogOut, Star, Building2, Smartphone,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { PLAN_DEFINITIONS } from '../billing/plans';
@@ -109,7 +109,76 @@ const SETUP_STEPS: Step[] = [
   },
 ];
 
-/* ─── Dev tip ────────────────────────────────────────────────────────── */
+/* ─── Termux / GitHub Actions guide ─────────────────────────────────── */
+
+interface MobileStep {
+  num: number;
+  title: string;
+  detail: string;
+  code?: string;
+  link?: { label: string; href: string };
+}
+
+const TERMUX_STEPS: MobileStep[] = [
+  {
+    num: 1,
+    title: 'Installer Node.js et Git dans Termux',
+    detail: 'Ouvrez Termux et lancez ces deux commandes :',
+    code: 'pkg install nodejs git',
+  },
+  {
+    num: 2,
+    title: 'Autoriser l\'accès au stockage du téléphone',
+    detail: 'Cette commande donne à Termux l\'accès à vos fichiers téléchargés (acceptez la permission) :',
+    code: 'termux-setup-storage',
+  },
+  {
+    num: 3,
+    title: 'Cloner le dépôt',
+    detail: 'Clonez le projet dans Termux :',
+    code: 'git clone https://github.com/teetee971/akiprisaye-web.git && cd akiprisaye-web',
+  },
+  {
+    num: 4,
+    title: 'Copier la clé depuis vos téléchargements',
+    detail: 'Le fichier serviceAccountKey.json téléchargé depuis Firebase Console est dans votre dossier Téléchargements. Copiez-le à la racine du dépôt :',
+    code: 'cp ~/storage/downloads/serviceAccountKey.json .',
+  },
+  {
+    num: 5,
+    title: 'Installer les dépendances et lancer le script',
+    detail: 'Installez firebase-admin puis exécutez le script avec votre email :',
+    code: 'npm install && node scripts/set-creator-role.mjs teetee971@gmail.com',
+  },
+];
+
+const ACTIONS_STEPS: MobileStep[] = [
+  {
+    num: 1,
+    title: 'Copiez le contenu de serviceAccountKey.json',
+    detail: 'Ouvrez le fichier JSON sur votre téléphone avec un éditeur de texte, puis sélectionnez et copiez tout le contenu (le JSON brut entre { et }).',
+  },
+  {
+    num: 2,
+    title: 'Ajoutez le secret GitHub',
+    detail: 'Dans votre dépôt GitHub → Settings → Secrets and variables → Actions → "New repository secret". Nom : FIREBASE_SERVICE_ACCOUNT_KEY. Valeur : collez le contenu JSON copié.',
+    link: { label: 'GitHub → Secrets → Nouveau secret →', href: 'https://github.com/teetee971/akiprisaye-web/settings/secrets/actions/new' },
+  },
+  {
+    num: 3,
+    title: 'Déclenchez le workflow depuis l\'onglet Actions',
+    detail: 'Dans votre dépôt → onglet "Actions" → workflow "✨ Attribuer le rôle Créateur" → "Run workflow" → entrez votre email → "Run workflow".',
+    link: { label: 'GitHub → Actions → ✨ Attribuer le rôle Créateur →', href: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
+  },
+  {
+    num: 4,
+    title: 'Reconnectez-vous à l\'application',
+    detail: 'Une fois le workflow terminé (icône ✅ verte), fermez votre session et reconnectez-vous. Votre rôle Créateur est immédiatement actif.',
+    link: { label: 'Se connecter →', href: '/mon-compte' },
+  },
+];
+
+
 
 const ENV_OVERRIDE_TIP = `# frontend/.env.local
 # Simule n'importe quel plan sans Firestore (pour les tests)
@@ -145,6 +214,7 @@ function CopyButton({ text }: { text: string }) {
 const EspaceCreateur: React.FC = () => {
   const { user, userRole, isCreator, isAdmin, signOutUser } = useAuth();
   const [guideOpen, setGuideOpen] = useState(!isCreator);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [envOpen, setEnvOpen] = useState(false);
 
   // Redirect non-admins (admins = admin OR creator role)
@@ -341,6 +411,115 @@ const EspaceCreateur: React.FC = () => {
                   </div>
                 </div>
               ))}
+            </div>
+          )}
+        </section>
+
+        {/* ── Mobile guide: Termux + GitHub Actions (collapsible) ──── */}
+        <section className="mb-6">
+          <button
+            onClick={() => setMobileOpen(o => !o)}
+            className="w-full flex items-center justify-between bg-slate-800/60 border border-slate-700/50 rounded-2xl px-5 py-4 text-left"
+          >
+            <div className="flex items-center gap-3">
+              <Smartphone className="w-5 h-5 text-green-400" />
+              <span className="font-bold text-white">📱 Depuis Android — Termux ou GitHub Actions</span>
+              <span className="text-xs bg-green-500/20 border border-green-500/40 text-green-300 px-2 py-0.5 rounded-full font-semibold hidden sm:inline">
+                Sans PC
+              </span>
+            </div>
+            {mobileOpen ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
+          </button>
+
+          {mobileOpen && (
+            <div className="mt-2 bg-slate-900/60 border border-slate-700/40 rounded-2xl p-5 space-y-6">
+
+              {/* Termux */}
+              <div>
+                <h3 className="text-sm font-bold text-green-300 mb-3 flex items-center gap-2">
+                  <Terminal className="w-4 h-4" />
+                  Option A — Termux (terminal Android)
+                </h3>
+                <p className="text-xs text-slate-400 mb-4 leading-relaxed">
+                  Vous avez Termux ? C'est la méthode la plus directe. Le fichier{' '}
+                  <code className="bg-slate-700/60 px-1 py-0.5 rounded text-green-300">serviceAccountKey.json</code>{' '}
+                  téléchargé dans vos fichiers récents sera copié directement dans le dépôt cloné.
+                </p>
+                <div className="space-y-4">
+                  {TERMUX_STEPS.map(step => (
+                    <div key={step.num} className="flex gap-4">
+                      <div className="flex-shrink-0 w-7 h-7 rounded-full bg-green-500/20 border border-green-500/40 flex items-center justify-center text-green-400 font-bold text-sm">
+                        {step.num}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-white text-sm mb-1">{step.title}</p>
+                        <p className="text-xs text-slate-400 leading-relaxed mb-2">{step.detail}</p>
+                        {step.code && (
+                          <div className="flex items-center justify-between bg-slate-950/80 border border-slate-700/50 rounded-lg px-3 py-2">
+                            <code className="text-xs text-green-300 font-mono break-all">{step.code}</code>
+                            <CopyButton text={step.code} />
+                          </div>
+                        )}
+                        {step.link && (
+                          step.link.href.startsWith('http')
+                            ? <a href={step.link.href} target="_blank" rel="noopener noreferrer"
+                                className="text-xs text-cyan-400 hover:text-cyan-300 underline underline-offset-2">
+                                {step.link.label} <ExternalLink className="inline w-3 h-3" />
+                              </a>
+                            : <Link to={step.link.href} className="text-xs text-cyan-400 hover:text-cyan-300 underline underline-offset-2">
+                                {step.link.label}
+                              </Link>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <hr className="border-slate-700/40" />
+
+              {/* GitHub Actions */}
+              <div>
+                <h3 className="text-sm font-bold text-blue-300 mb-3 flex items-center gap-2">
+                  <Sparkles className="w-4 h-4" />
+                  Option B — GitHub Actions (sans aucun terminal)
+                </h3>
+                <p className="text-xs text-slate-400 mb-4 leading-relaxed">
+                  Pas de Termux ? Stockez le contenu de la clé comme{' '}
+                  <strong className="text-white">secret GitHub</strong>, puis déclenchez le
+                  workflow depuis l'onglet Actions — 100 % depuis votre navigateur mobile.
+                </p>
+                <div className="space-y-4">
+                  {ACTIONS_STEPS.map(step => (
+                    <div key={step.num} className="flex gap-4">
+                      <div className="flex-shrink-0 w-7 h-7 rounded-full bg-blue-500/20 border border-blue-500/40 flex items-center justify-center text-blue-400 font-bold text-sm">
+                        {step.num}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-white text-sm mb-1">{step.title}</p>
+                        <p className="text-xs text-slate-400 leading-relaxed mb-2">{step.detail}</p>
+                        {step.code && (
+                          <div className="flex items-center justify-between bg-slate-950/80 border border-slate-700/50 rounded-lg px-3 py-2">
+                            <code className="text-xs text-green-300 font-mono break-all">{step.code}</code>
+                            <CopyButton text={step.code} />
+                          </div>
+                        )}
+                        {step.link && (
+                          step.link.href.startsWith('http')
+                            ? <a href={step.link.href} target="_blank" rel="noopener noreferrer"
+                                className="text-xs text-cyan-400 hover:text-cyan-300 underline underline-offset-2">
+                                {step.link.label} <ExternalLink className="inline w-3 h-3" />
+                              </a>
+                            : <Link to={step.link.href} className="text-xs text-cyan-400 hover:text-cyan-300 underline underline-offset-2">
+                                {step.link.label}
+                              </Link>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
             </div>
           )}
         </section>

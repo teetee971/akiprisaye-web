@@ -1,0 +1,42 @@
+name: "✨ Attribuer le rôle Créateur"
+
+# Déclenchement manuel depuis l'onglet Actions de GitHub (fonctionne sur mobile).
+#
+# PRÉREQUIS — ajouter un secret GitHub avant de lancer ce workflow :
+#   Dépôt → Settings → Secrets and variables → Actions → New repository secret
+#   Nom   : FIREBASE_SERVICE_ACCOUNT_KEY
+#   Valeur: contenu JSON brut du fichier serviceAccountKey.json téléchargé depuis
+#           https://console.firebase.google.com/project/a-ki-pri-sa-ye/settings/serviceaccounts/adminsdk
+#
+on:
+  workflow_dispatch:
+    inputs:
+      email:
+        description: "Email du compte Firebase à activer (ex: teetee971@gmail.com)"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  set-creator-role:
+    name: Attribuer le rôle creator
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Configurer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Installer firebase-admin
+        run: npm install
+
+      - name: Attribuer le rôle Créateur dans Firestore
+        env:
+          FIREBASE_SERVICE_ACCOUNT_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
+        run: node scripts/set-creator-role.mjs "${{ github.event.inputs.email }}"
