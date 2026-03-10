@@ -35,6 +35,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Validate package-lock.json (must be valid JSON)
         run: node -e "JSON.parse(require('fs').readFileSync('package-lock.json','utf8')); console.log('package-lock.json OK')"
@@ -46,6 +48,7 @@ jobs:
         run: npm run build
         env:
           GITHUB_PAGES: 'true'
+          NODE_OPTIONS: --max-old-space-size=4096
           VITE_APP_BUILD_ID: ${{ github.sha }}
           VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
           VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
