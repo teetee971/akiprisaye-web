@@ -41,6 +41,9 @@ interface OpenPricesResultRow {
 }
 
 interface OpenPricesResponse {
+  /** OpenPrices API v1 paginated response uses `items` */
+  items?: OpenPricesResultRow[];
+  /** Kept as fallback in case upstream ever changes field name */
   results?: OpenPricesResultRow[];
 }
 
@@ -129,9 +132,11 @@ export const onRequestGet: PagesFunction = async ({ request }) => {
   const data = (await response.json()) as OpenPricesResponse | OpenPricesResultRow[];
   const rows = Array.isArray(data)
     ? data
-    : Array.isArray(data.results)
-      ? data.results
-      : [];
+    : Array.isArray(data.items)
+      ? data.items
+      : Array.isArray(data.results)
+        ? data.results
+        : [];
 
   const observations: PriceObservation[] = rows
     .map((row) => {
