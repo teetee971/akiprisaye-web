@@ -18,16 +18,28 @@ import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 import { getPreferredTerritory } from '../utils/userPreferences';
 
-const TERRITORIES: { code: TerritoryCode; label: string }[] = [
-  { code: 'fr', label: 'France (métropole)' },
-  { code: 'gp', label: 'Guadeloupe' },
-  { code: 'mq', label: 'Martinique' },
-  { code: 'gf', label: 'Guyane' },
-  { code: 're', label: 'La Réunion' },
-  { code: 'yt', label: 'Mayotte' },
-  { code: 'pm', label: 'Saint-Pierre-et-Miquelon' },
-  { code: 'bl', label: 'Saint-Barthélemy' },
-  { code: 'mf', label: 'Saint-Martin' },
+const TERRITORIES: { code: TerritoryCode; label: string; flag: string }[] = [
+  { code: 'fr', label: 'Métropole', flag: '🇫🇷' },
+  { code: 'gp', label: 'Guadeloupe', flag: '🏝️' },
+  { code: 'mq', label: 'Martinique', flag: '🌴' },
+  { code: 'gf', label: 'Guyane', flag: '🌿' },
+  { code: 're', label: 'Réunion', flag: '🌋' },
+  { code: 'yt', label: 'Mayotte', flag: '🏖️' },
+  { code: 'pm', label: 'St-Pierre', flag: '🐟' },
+  { code: 'bl', label: 'St-Barth', flag: '⛵' },
+  { code: 'mf', label: 'St-Martin', flag: '🌺' },
+];
+
+const POPULAR_SEARCHES: { label: string; query?: string; ean?: string; emoji: string }[] = [
+  { label: 'Coca-Cola', query: 'Coca-Cola', emoji: '🥤' },
+  { label: 'Coca Zero', query: 'Coca-Cola Zero', emoji: '🫙' },
+  { label: 'Riz', query: "Riz Uncle Ben's", emoji: '🍚' },
+  { label: 'Lait', query: 'Lait Candia', emoji: '🥛' },
+  { label: 'Pâtes', query: 'Pâtes Panzani', emoji: '🍝' },
+  { label: 'Nutella', query: 'Nutella', emoji: '🍫' },
+  { label: 'Huile', query: 'Huile Lesieur', emoji: '🫒' },
+  { label: 'Café', query: 'Café Grand Mère', emoji: '☕' },
+  { label: 'Eau', query: 'Eau Cristaline', emoji: '💧' },
 ];
 
 const getTerritoryLabel = (code?: string) =>
@@ -784,7 +796,13 @@ export default function RechercheProduits() {
   const { favorites, removeFavorite } = useFavorites();
   const [query, setQuery] = useState(params.get('q') ?? '');
   const [barcode, setBarcode] = useState(params.get('ean') ?? '');
-  const [territory, setTerritory] = useState<TerritoryCode>('fr');
+  const [territory, setTerritory] = useState<TerritoryCode>(
+    () => (getPreferredTerritory() as TerritoryCode) ?? 'gp'
+  );
+  const handleTerritoryChange = (code: TerritoryCode) => {
+    setTerritory(code);
+    try { localStorage.setItem('akiprisaye-territory', code); } catch { /* */ }
+  };
   const [result, setResult] = useState<ScanHubResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -861,6 +879,7 @@ export default function RechercheProduits() {
     setQuery(nextQuery);
     setBarcode(nextBarcode);
     setTerritory(nextTerritory);
+    try { localStorage.setItem('akiprisaye-territory', nextTerritory); } catch { /* */ }
 
     setLoading(true);
     setError(null);
@@ -974,84 +993,115 @@ export default function RechercheProduits() {
         <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Trouvez et comparez les prix de vos produits</p>
       </HeroImage>
 
-      <div className="max-w-4xl mx-auto space-y-8">
-        <section className="bg-slate-900/70 border border-slate-700 rounded-2xl p-6 space-y-4">
+      <div className="max-w-4xl mx-auto space-y-6">
+        {/* ── Search card ─────────────────────────────────────────────── */}
+        <section className="bg-slate-900/80 border border-slate-700 rounded-2xl p-5 space-y-5 shadow-xl">
           <form
             className="space-y-4"
             onSubmit={(event) => {
               event.preventDefault();
-              if (canSearch) {
-                void handleSearch();
-              }
+              if (canSearch) void handleSearch();
             }}
           >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <label className="space-y-2 text-sm">
-              <span className="text-slate-300">Code-barres (EAN)</span>
+            {/* Unified search bar */}
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg pointer-events-none" aria-hidden="true">🔍</span>
               <input
-                value={barcode}
-                onChange={(event) => setBarcode(event.target.value)}
-                placeholder="Scannez ou collez un EAN"
-                className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-white"
-                aria-label="Code-barres"
-                inputMode="numeric"
-                pattern="[0-9]*"
+                value={query || barcode}
+                onChange={(event) => {
+                  const v = event.target.value;
+                  if (/^\d+$/.test(v.trim())) { setBarcode(v); setQuery(''); }
+                  else { setQuery(v); setBarcode(''); }
+                }}
+                placeholder="Nom produit ou code-barres (EAN)…"
+                className="w-full rounded-xl bg-slate-950 border border-slate-600 focus:border-blue-500 outline-none pl-10 pr-4 py-3 text-white text-base"
+                aria-label="Rechercher un produit par nom ou code-barres"
+                autoComplete="off"
+                inputMode="search"
               />
-            </label>
-            <label className="space-y-2 text-sm">
-              <span className="text-slate-300">Nom produit</span>
-              <input
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder="Ex : riz 5kg, lait, eau…"
-                className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-white"
-                aria-label="Nom produit"
-              />
-            </label>
-          </div>
-          <label className="space-y-2 text-sm">
-            <span className="text-slate-300">Territoire</span>
-            <select
-              value={territory}
-              onChange={(event) => setTerritory(event.target.value as TerritoryCode)}
-              className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-white"
-              aria-label="Territoire"
-            >
-              {TERRITORIES.map((item) => (
-                <option key={item.code} value={item.code}>
-                  {item.label}
-                </option>
-              ))}
-            </select>
-          </label>
-          <div className="flex flex-col md:flex-row gap-3">
-            <button
-              type="submit"
-              disabled={!canSearch}
-              className="w-full md:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-700 disabled:text-slate-400 rounded-lg font-semibold"
-            >
-              {loading ? 'Recherche en cours...' : 'Lancer la recherche'}
-            </button>
-            {shouldShowReset && (
+              {(query || barcode) && (
+                <button
+                  type="button"
+                  onClick={() => { setQuery(''); setBarcode(''); }}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-lg leading-none"
+                  aria-label="Effacer la recherche"
+                >✕</button>
+              )}
+            </div>
+
+            {/* Popular product chips */}
+            <div>
+              <p className="text-xs text-slate-500 mb-2">Recherches populaires</p>
+              <div className="flex flex-wrap gap-2">
+                {POPULAR_SEARCHES.map((item) => (
+                  <button
+                    key={item.label}
+                    type="button"
+                    onClick={() => {
+                      if (item.ean) { setBarcode(item.ean); setQuery(''); }
+                      else { setQuery(item.query ?? item.label); setBarcode(''); }
+                    }}
+                    className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors
+                      ${(query === item.query || barcode === item.ean)
+                        ? 'bg-blue-600 border-blue-500 text-white'
+                        : 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700 hover:text-white'}`}
+                  >
+                    <span aria-hidden="true">{item.emoji}</span> {item.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Territory flag chips */}
+            <div>
+              <p className="text-xs text-slate-500 mb-2">Territoire</p>
+              <div className="flex flex-wrap gap-2" role="group" aria-label="Sélectionner un territoire">
+                {TERRITORIES.map((t) => (
+                  <button
+                    key={t.code}
+                    type="button"
+                    onClick={() => handleTerritoryChange(t.code)}
+                    aria-pressed={territory === t.code}
+                    className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors
+                      ${territory === t.code
+                        ? 'bg-emerald-700 border-emerald-500 text-white'
+                        : 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700 hover:text-white'}`}
+                  >
+                    <span aria-hidden="true">{t.flag}</span> {t.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Submit row */}
+            <div className="flex gap-3">
               <button
-                type="button"
-                onClick={handleReset}
-                className="w-full md:w-auto px-6 py-3 bg-slate-800 hover:bg-slate-700 rounded-lg font-semibold"
+                type="submit"
+                disabled={!canSearch}
+                className="flex-1 sm:flex-none sm:px-8 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-700 disabled:text-slate-500 rounded-xl font-semibold text-sm transition-colors"
               >
-                Effacer
+                {loading ? '⏳ Recherche…' : '🔍 Comparer les prix'}
               </button>
+              {shouldShowReset && !loading && (
+                <button
+                  type="button"
+                  onClick={handleReset}
+                  className="px-4 py-3 bg-slate-800 hover:bg-slate-700 rounded-xl font-semibold text-sm transition-colors"
+                  aria-label="Effacer tout"
+                >✕</button>
+              )}
+            </div>
+
+            {!hasSearchInput && (
+              <p className="text-xs text-slate-500">
+                💡 Tapez un nom de produit ou scannez un code-barres. Choisissez votre île pour des prix locaux.
+              </p>
             )}
-          </div>
-          {!hasSearchInput && (
-            <p className="text-xs text-slate-400">
-              Renseignez un code-barres ou un nom de produit pour lancer la comparaison.
-            </p>
-          )}
           </form>
         </section>
 
         {loading && (
-          <div className="space-y-2 animate-pulse">
+          <div className="space-y-2 animate-pulse px-1">
             <div className="h-4 rounded-full bg-slate-800/80" />
             <div className="h-4 rounded-full bg-slate-800/60 w-5/6" />
           </div>
@@ -1071,11 +1121,11 @@ export default function RechercheProduits() {
         </p>
 
         <section className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 text-sm text-slate-300 space-y-2">
-          <h2 className="font-semibold text-white">Conseils ScanHub</h2>
-          <ul className="list-disc list-inside space-y-1 text-slate-300">
-            <li>Combinez EAN et nom produit pour améliorer la précision.</li>
-            <li>Vérifiez le territoire pour comparer des prix réellement observés localement.</li>
-            <li>Un indice de confiance élevé signifie des données plus fiables.</li>
+          <h2 className="font-semibold text-white">💡 Conseils</h2>
+          <ul className="list-disc list-inside space-y-1 text-slate-400">
+            <li>Tapez juste <strong className="text-slate-300">« coca »</strong> pour trouver le Coca-Cola — la recherche comprend les variantes.</li>
+            <li>Sélectionnez <strong className="text-slate-300">votre île</strong> pour voir les prix locaux réellement relevés.</li>
+            <li>Scannez le code-barres depuis la page <strong className="text-slate-300">Scan</strong> pour identifier instantanément un produit.</li>
           </ul>
         </section>
 
