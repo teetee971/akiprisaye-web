@@ -14,13 +14,15 @@ import { LimitNote } from '@/components/ui/LimitNote';
 import TerritorySelector from '@/components/TerritorySelector';
 import { HeroImage } from '@/components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '@/config/imageAssets';
+import { canStartTrial, startTrial } from '@/services/trialService';
+import type { PlanId } from '@/billing/plans';
 
 type Step = 1 | 2 | 3;
 
 const plans: Record<string, { name: string; monthly?: number; yearly?: number; yearlyRange?: string }> = {
   CITIZEN_PREMIUM: { name: 'Citoyen Premium', monthly: 3.99, yearly: 39 },
-  PRO: { name: 'Professionnel', monthly: 19, yearly: 190 },
-  BUSINESS: { name: 'Business', monthly: 99, yearly: 990 },
+  PRO: { name: 'Professionnel', monthly: 9.99, yearly: 95.88 },
+  BUSINESS: { name: 'Business', monthly: 49, yearly: 468 },
   ENTERPRISE: { name: 'Enterprise', yearlyRange: '2 500 € - 25 000 €' },
   INSTITUTION: { name: 'Institution', yearlyRange: '500 € - 50 000 €' },
 };
@@ -34,6 +36,10 @@ export default function Subscribe() {
   const [cycle, setCycle] = useState(searchParams.get('cycle') || 'yearly');
   const [isDOMTerritory] = useState(searchParams.get('dom') === 'true');
   
+  // 7-day trial detection
+  const isTrial = searchParams.get('trial') === 'true';
+  const trialAvailable = canStartTrial();
+
   // Step 2 - User info
   const [email, setEmail] = useState('');
   const [territory, setTerritory] = useState('GP');
@@ -54,6 +60,13 @@ export default function Subscribe() {
     : (isDOMTerritory && (planId === 'PRO' || planId === 'BUSINESS') 
       ? (price ?? 0) * 0.7 
       : price);
+
+  // Activate trial when proceeding to success step
+  const activateTrialIfNeeded = () => {
+    if (isTrial && trialAvailable && planId !== 'ENTERPRISE' && planId !== 'INSTITUTION') {
+      startTrial(planId as PlanId);
+    }
+  };
 
   const validateEmail = (value: string) => {
     if (!value) {
@@ -82,8 +95,14 @@ export default function Subscribe() {
   };
 
   const handleConfirmPayment = () => {
+    // Activate 7-day trial if requested
+    activateTrialIfNeeded();
     // In production, this would integrate with a payment processor (Stripe, etc.)
-    alert(`Paiement simulé pour ${email}\nPlan: ${currentPlan.name}\nMontant: ${(domPrice ?? 0).toFixed(2)} €`);
+    if (isTrial && trialAvailable) {
+      alert(`Essai 7 jours activé pour ${email}\nPlan: ${currentPlan.name}\nAucun prélèvement pendant 7 jours.`);
+    } else {
+      alert(`Paiement simulé pour ${email}\nPlan: ${currentPlan.name}\nMontant: ${(domPrice ?? 0).toFixed(2)} €`);
+    }
     // Redirect to success page
     navigate('/subscribe/success');
   };
@@ -143,6 +162,30 @@ export default function Subscribe() {
             <h1 className="text-3xl font-bold text-white mb-6 text-center">
               Récapitulatif du plan
             </h1>
+
+            {/* Trial banner */}
+            {isTrial && trialAvailable && (
+              <div className="mb-4 p-4 bg-indigo-900/40 border border-indigo-500/40 rounded-xl flex items-start gap-3">
+                <span className="text-2xl flex-shrink-0">✨</span>
+                <div>
+                  <p className="font-bold text-indigo-200 text-sm">Essai gratuit 7 jours activé</p>
+                  <p className="text-indigo-300 text-xs mt-0.5">
+                    Aucun prélèvement pendant 7 jours. Annulation en 1 clic, sans engagement.
+                  </p>
+                </div>
+              </div>
+            )}
+            {isTrial && !trialAvailable && (
+              <div className="mb-4 p-4 bg-amber-900/40 border border-amber-500/40 rounded-xl flex items-start gap-3">
+                <span className="text-2xl flex-shrink-0">⚠️</span>
+                <div>
+                  <p className="font-bold text-amber-200 text-sm">Essai déjà utilisé</p>
+                  <p className="text-amber-300 text-xs mt-0.5">
+                    Vous avez déjà bénéficié d'un essai gratuit. Abonnement classique ci-dessous.
+                  </p>
+                </div>
+              </div>
+            )}
 
             <GlassCard className="mb-6">
               <div className="mb-4">
