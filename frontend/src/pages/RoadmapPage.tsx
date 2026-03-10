@@ -40,6 +40,7 @@ type PhaseKey = 'mvp' | 'v1' | 'v2';
 
 interface RoadmapModule {
   name: string;
+  description: string;
   status: ModuleStatus;
   features: { label: string; done: boolean }[];
 }
@@ -49,6 +50,7 @@ interface RoadmapModule {
 const MODULES: RoadmapModule[] = [
   {
     name: '1. Comparateur de prix avancé',
+    description: 'Recherche et comparaison de produits entre enseignes et territoires DOM-COM.',
     status: 'partial',
     features: [
       { label: 'Comparaison multi-enseignes, multi-produits', done: true },
@@ -61,6 +63,7 @@ const MODULES: RoadmapModule[] = [
   },
   {
     name: '2. Liste de courses intelligente GPS',
+    description: 'Gestion de listes de courses avec géolocalisation et optimisation de trajet.',
     status: 'partial',
     features: [
       { label: 'Création et gestion de listes', done: true },
@@ -73,6 +76,7 @@ const MODULES: RoadmapModule[] = [
   },
   {
     name: '3. Scanner universel',
+    description: 'Reconnaissance de produits par code-barres EAN, OCR tickets ou photo.',
     status: 'done',
     features: [
       { label: 'Scan codes-barres EAN', done: true },
@@ -84,6 +88,7 @@ const MODULES: RoadmapModule[] = [
   },
   {
     name: '4. Fiche produit complète',
+    description: 'Données nutritionnelles, traçabilité, historique des prix et alertes sanitaires.',
     status: 'done',
     features: [
       { label: 'Nom, fabricant, origine, composition', done: true },
@@ -96,6 +101,7 @@ const MODULES: RoadmapModule[] = [
   },
   {
     name: '5. Alertes consommateurs',
+    description: 'Notifications personnalisées sur les variations de prix et rappels de produits.',
     status: 'partial',
     features: [
       { label: 'Alertes prix personnalisées', done: true },
@@ -107,6 +113,7 @@ const MODULES: RoadmapModule[] = [
   },
   {
     name: '6. Fiches entreprises (SIRET / SIREN)',
+    description: "Informations légales et publiques des enseignes référencées sur la plateforme.",
     status: 'partial',
     features: [
       { label: 'Nom légal, statut, adresse, GPS', done: true },
@@ -117,6 +124,7 @@ const MODULES: RoadmapModule[] = [
   },
   {
     name: '7. Marketplace enseignes (payante)',
+    description: 'Espace dédié aux enseignes pour publier leurs magasins, prix et statistiques.',
     status: 'done',
     features: [
       { label: 'Inscription payante', done: true },
@@ -128,6 +136,7 @@ const MODULES: RoadmapModule[] = [
   },
   {
     name: '8. IA de prédiction des prix (responsable)',
+    description: 'Prévisions basées sur historiques réels avec transparence des hypothèses.',
     status: 'partial',
     features: [
       { label: 'Prédictions basées sur historiques réels', done: true },
@@ -138,6 +147,7 @@ const MODULES: RoadmapModule[] = [
   },
   {
     name: '9. Devis IA (B2G / B2B)',
+    description: 'Module de devis structuré avec pipeline de validation humaine pour institutions.',
     status: 'done',
     features: [
       { label: 'Formulaire structuré avec identité légale', done: true },
@@ -147,6 +157,83 @@ const MODULES: RoadmapModule[] = [
       { label: "Piste d'audit complète (Firestore)", done: true },
       { label: 'Dashboard client de suivi', done: true },
       { label: 'Interface admin devis', done: true },
+    ],
+  },
+  {
+    name: '10. Observatoire des prix',
+    description: 'Tableau de bord public des tendances de prix par territoire et catégorie.',
+    status: 'done',
+    features: [
+      { label: 'Indice de pression inflationniste', done: true },
+      { label: 'Statistiques produits les plus chers', done: true },
+      { label: 'Tendances de prix IA', done: true },
+      { label: 'Cartographie des prix par territoire', done: true },
+      { label: 'Export rapport (PDF / CSV)', done: false },
+      { label: 'Alertes marchés automatiques', done: false },
+    ],
+  },
+  {
+    name: '11. Comparateurs spécialisés',
+    description: 'Suite de comparateurs sectoriels : carburants, vols, fret, assurances, télécoms…',
+    status: 'done',
+    features: [
+      { label: 'Comparateur carburants DOM-COM (temps réel)', done: true },
+      { label: 'Comparateur vols DOM ↔ Métropole', done: true },
+      { label: 'Comparateur fret maritime', done: true },
+      { label: 'Comparateur assurances habitation & auto', done: true },
+      { label: 'Comparateur télécoms & services', done: true },
+      { label: 'Comparateur location voiture', done: true },
+      { label: 'Comparateur matériaux de construction', done: true },
+      { label: 'API temps réel billets avion', done: false },
+    ],
+  },
+  {
+    name: '12. Messagerie & communauté citoyenne',
+    description: 'Espaces de dialogue entre citoyens : groupes de parole, messagerie privée.',
+    status: 'done',
+    features: [
+      { label: 'Messagerie privée inter-citoyens', done: true },
+      { label: 'Groupes de parole thématiques', done: true },
+      { label: 'Modération et signalements', done: true },
+      { label: 'Notifications en temps réel', done: true },
+      { label: 'Archivage et export conversations', done: false },
+    ],
+  },
+  {
+    name: '13. Administration & back-office',
+    description: 'Panneau de gestion pour administrateurs : utilisateurs, produits, devis, contenus.',
+    status: 'done',
+    features: [
+      { label: 'Gestion des utilisateurs & rôles', done: true },
+      { label: 'Gestion des produits & prix', done: true },
+      { label: 'Validation et suivi des devis B2G', done: true },
+      { label: 'Tableau de bord analytics', done: true },
+      { label: 'Checklist de conformité production', done: true },
+      { label: 'Logs et audit sécurité', done: false },
+    ],
+  },
+  {
+    name: '14. API institutionnelle & accès données',
+    description: "Accès programmatique aux données de la plateforme pour partenaires et institutions.",
+    status: 'planned',
+    features: [
+      { label: 'Documentation API publique (OpenAPI)', done: false },
+      { label: 'Authentification par clé API', done: false },
+      { label: 'Endpoints prix, produits, territoires', done: false },
+      { label: 'Rate limiting & quotas par offre', done: false },
+      { label: 'Tableau de bord usage API', done: false },
+    ],
+  },
+  {
+    name: '15. Mode hors-ligne étendu (PWA)',
+    description: 'Application progressive avec cache local pour zones à faible connectivité.',
+    status: 'planned',
+    features: [
+      { label: 'Cache produits consultés récemment', done: false },
+      { label: 'Scan EAN hors-ligne', done: false },
+      { label: 'Synchronisation différée des listes', done: false },
+      { label: 'Manifest PWA & icônes installables', done: false },
+      { label: 'Notification push (alertes prix)', done: false },
     ],
   },
 ];
@@ -392,19 +479,58 @@ export default function RoadmapPage() {
                   → Audit complet de tous les modules
                 </Link>
               </div>
+              {/* Completion summary */}
+              {(() => {
+                const total = MODULES.reduce((n, m) => n + m.features.length, 0);
+                const done = MODULES.reduce((n, m) => n + m.features.filter(f => f.done).length, 0);
+                const pct = Math.round((done / total) * 100);
+                const opCount = MODULES.filter(m => m.status === 'done').length;
+                const partialCount = MODULES.filter(m => m.status === 'partial').length;
+                const plannedCount = MODULES.filter(m => m.status === 'planned').length;
+                return (
+                  <div className="bg-white border border-gray-200 rounded-xl p-4 mb-2">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-semibold text-gray-900">Avancement global</span>
+                      <span className="text-sm font-bold text-indigo-700">{done} / {total} fonctionnalités ({pct} %)</span>
+                    </div>
+                    <div
+                      role="progressbar"
+                      aria-valuenow={pct}
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                      aria-label={`Avancement global : ${pct}%`}
+                      className="w-full h-2 bg-gray-100 rounded-full overflow-hidden mb-3"
+                    >
+                      <div className="h-full bg-indigo-600 rounded-full transition-all" style={{ width: `${pct}%` }} />
+                    </div>
+                    <div className="flex gap-4 text-xs text-gray-600">
+                      <span className="flex items-center gap-1"><CheckCircle className="w-3.5 h-3.5 text-green-500" /> {opCount} opérationnel{opCount > 1 ? 's' : ''}</span>
+                      <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5 text-yellow-500" /> {partialCount} partiel{partialCount > 1 ? 's' : ''}</span>
+                      <span className="flex items-center gap-1"><Circle className="w-3.5 h-3.5 text-gray-300" /> {plannedCount} planifié{plannedCount > 1 ? 's' : ''}</span>
+                    </div>
+                  </div>
+                );
+              })()}
               {MODULES.map((mod) => (
                 <div key={mod.name} className="bg-white border border-gray-200 rounded-xl p-5">
-                  <div className="flex items-center gap-3 mb-3">
-                    {mod.status === 'done' && <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />}
-                    {mod.status === 'partial' && <Clock className="w-5 h-5 text-yellow-500 flex-shrink-0" />}
-                    {mod.status === 'planned' && <Circle className="w-5 h-5 text-gray-300 flex-shrink-0" />}
-                    <h3 className="font-semibold text-gray-900">{mod.name}</h3>
-                    <span className={`ml-auto text-xs px-2 py-0.5 rounded-full font-medium
-                      ${mod.status === 'done' ? 'bg-green-100 text-green-700' : mod.status === 'partial' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-500'}`}>
-                      {mod.status === 'done' ? 'Opérationnel' : mod.status === 'partial' ? 'Partiel' : 'Planifié'}
-                    </span>
+                  <div className="flex items-start gap-3 mb-1">
+                    <div className="mt-0.5 flex-shrink-0">
+                      {mod.status === 'done' && <CheckCircle className="w-5 h-5 text-green-500" />}
+                      {mod.status === 'partial' && <Clock className="w-5 h-5 text-yellow-500" />}
+                      {mod.status === 'planned' && <Circle className="w-5 h-5 text-gray-300" />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h3 className="font-semibold text-gray-900">{mod.name}</h3>
+                        <span className={`text-xs px-2 py-0.5 rounded-full font-medium
+                          ${mod.status === 'done' ? 'bg-green-100 text-green-700' : mod.status === 'partial' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-500'}`}>
+                          {mod.status === 'done' ? 'Opérationnel' : mod.status === 'partial' ? 'Partiel' : 'Planifié'}
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-0.5">{mod.description}</p>
+                    </div>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 mt-3">
                     {mod.features.map((f) => (
                       <div key={f.label} className={`flex items-start gap-2 text-sm ${f.done ? 'text-gray-700' : 'text-gray-400'}`}>
                         {f.done
