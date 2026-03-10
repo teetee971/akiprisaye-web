@@ -23,7 +23,7 @@
  *   - Pas de promesses irréalistes
  */
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
 import {
   FileText,
@@ -40,6 +40,7 @@ import {
   ChevronRight,
   Printer,
   ExternalLink,
+  ArrowUp,
 } from 'lucide-react';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
@@ -66,10 +67,49 @@ const SECTIONS = [
 
 export default function DossierInvestisseurs() {
   const [activeSection, setActiveSection] = useState('executive-summary');
+  const [showBackToTop, setShowBackToTop] = useState(false);
+  const mobileNavRef = useRef<HTMLDivElement>(null);
+
+  // Track active section with IntersectionObserver (works on mobile touch)
+  useEffect(() => {
+    const observers: IntersectionObserver[] = [];
+    SECTIONS.forEach(({ id }) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const obs = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) setActiveSection(id);
+        },
+        { rootMargin: '-20% 0px -70% 0px', threshold: 0 }
+      );
+      obs.observe(el);
+      observers.push(obs);
+    });
+    return () => observers.forEach((o) => o.disconnect());
+  }, []);
+
+  // Show/hide the back-to-top button
+  useEffect(() => {
+    const onScroll = () => setShowBackToTop(window.scrollY > 300);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  // Scroll mobile nav tab into view when active section changes
+  useEffect(() => {
+    const nav = mobileNavRef.current;
+    if (!nav) return;
+    const btn = nav.querySelector<HTMLElement>(`[data-id="${activeSection}"]`);
+    if (btn) btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  }, [activeSection]);
 
   function scrollTo(id: string) {
     setActiveSection(id);
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   return (
@@ -80,7 +120,7 @@ export default function DossierInvestisseurs() {
           name="description"
           content="Dossier investisseurs complet A KI PRI SA YÉ : observatoire des prix ultramarins, modèle économique, technologie, stratégie de déploiement."
         />
-              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/dossier-investisseurs" />
+        <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/dossier-investisseurs" />
         <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/dossier-investisseurs" />
         <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/dossier-investisseurs" />
       </Helmet>
@@ -93,7 +133,7 @@ export default function DossierInvestisseurs() {
           gradient="from-slate-950 to-indigo-900"
           height="h-40 sm:h-52"
         >
-          <div className="flex items-start justify-between w-full flex-wrap gap-4">
+          <div className="flex items-start justify-between w-full flex-wrap gap-3">
             <div>
               <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
                 📊 Dossier Investisseurs
@@ -104,25 +144,46 @@ export default function DossierInvestisseurs() {
             </div>
             <button
               onClick={() => window.print()}
-              className="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-4 py-2 rounded-xl text-sm font-medium transition print:hidden"
+              className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-medium transition print:hidden whitespace-nowrap"
             >
-              <Printer className="w-4 h-4" />
-              Imprimer / PDF
+              <Printer className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <span className="hidden xs:inline">Imprimer /</span> PDF
             </button>
           </div>
         </HeroImage>
       </div>
-      <div className="max-w-6xl mx-auto px-4 py-6">
-        <div>
 
-          {/* Disclaimer */}
-          <div className="mt-6 bg-amber-900/40 border border-amber-700/50 rounded-xl px-5 py-4 text-sm text-amber-200 print:border-amber-400 print:text-amber-900 print:bg-amber-50">
-            <strong>Avertissement :</strong> Ce document présente le projet A KI PRI SA YÉ à
-            destination d'investisseurs potentiels. Il ne contient aucun chiffre inventé. Les
-            éléments prévisionnels sont présentés comme des hypothèses de travail et clairement
-            identifiés comme tels. Ce document ne constitue pas une sollicitation d'investissement
-            au sens réglementaire.
-          </div>
+      {/* Disclaimer */}
+      <div className="max-w-6xl mx-auto px-4 pt-4 pb-2">
+        <div className="bg-amber-900/40 border border-amber-700/50 rounded-xl px-5 py-4 text-sm text-amber-200 print:border-amber-400 print:text-amber-900 print:bg-amber-50">
+          <strong>Avertissement :</strong> Ce document présente le projet A KI PRI SA YÉ à
+          destination d'investisseurs potentiels. Il ne contient aucun chiffre inventé. Les
+          éléments prévisionnels sont présentés comme des hypothèses de travail et clairement
+          identifiés comme tels. Ce document ne constitue pas une sollicitation d'investissement
+          au sens réglementaire.
+        </div>
+      </div>
+
+      {/* Mobile section navigation — horizontal scroll tabs (hidden on lg+) */}
+      <div
+        ref={mobileNavRef}
+        className="lg:hidden sticky top-0 z-20 bg-white/95 backdrop-blur border-b border-gray-200 print:hidden"
+      >
+        <div className="flex overflow-x-auto gap-1 px-3 py-2 scrollbar-hide">
+          {SECTIONS.map((s) => (
+            <button
+              key={s.id}
+              data-id={s.id}
+              onClick={() => scrollTo(s.id)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition flex-shrink-0
+                ${activeSection === s.id
+                  ? 'bg-indigo-600 text-white'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+            >
+              <s.icon className="w-3 h-3" />
+              {s.label}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -158,7 +219,6 @@ export default function DossierInvestisseurs() {
             number="01"
             title="Executive Summary"
             icon={FileText}
-            onVisible={setActiveSection}
           >
             <p className="text-gray-700 leading-relaxed mb-4">
               <strong>A KI PRI SA YÉ</strong> est une plateforme numérique d'observation et de
@@ -190,7 +250,6 @@ export default function DossierInvestisseurs() {
             number="02"
             title="Problématique réelle & contexte"
             icon={AlertTriangle}
-            onVisible={setActiveSection}
           >
             <h3 className="text-base font-semibold text-gray-900 mb-3">
               Spécificités des territoires d'Outre-mer
@@ -245,7 +304,6 @@ export default function DossierInvestisseurs() {
             number="03"
             title="Solution A KI PRI SA YÉ"
             icon={Eye}
-            onVisible={setActiveSection}
           >
             <p className="text-gray-700 leading-relaxed mb-5">
               La plateforme est conçue comme un observatoire modulaire. Chaque module répond à un
@@ -283,7 +341,6 @@ export default function DossierInvestisseurs() {
             number="04"
             title="Marché & opportunité"
             icon={Globe}
-            onVisible={setActiveSection}
           >
             <h3 className="text-base font-semibold text-gray-900 mb-3">Segments cibles</h3>
 
@@ -345,7 +402,6 @@ export default function DossierInvestisseurs() {
             number="05"
             title="Modèle économique"
             icon={Wallet}
-            onVisible={setActiveSection}
           >
             <p className="text-gray-700 mb-4">
               Le modèle est sans freemium au sens classique : l'accès aux données publiques et
@@ -402,7 +458,6 @@ export default function DossierInvestisseurs() {
             number="06"
             title="Traction & indicateurs"
             icon={TrendingUp}
-            onVisible={setActiveSection}
           >
             <Callout type="warn" className="mb-5">
               <strong>Transparence :</strong> le projet est en phase pilote. Les indicateurs
@@ -447,7 +502,6 @@ export default function DossierInvestisseurs() {
             number="07"
             title="Avantage concurrentiel"
             icon={Shield}
-            onVisible={setActiveSection}
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {[
@@ -501,7 +555,6 @@ export default function DossierInvestisseurs() {
             number="08"
             title="Technologie & architecture"
             icon={Cpu}
-            onVisible={setActiveSection}
           >
             <p className="text-gray-700 mb-5">
               La stack technique est moderne, éprouvée et entièrement auditée. Aucune dépendance
@@ -554,7 +607,6 @@ export default function DossierInvestisseurs() {
             number="09"
             title="Stratégie de déploiement"
             icon={Map}
-            onVisible={setActiveSection}
           >
             <p className="text-gray-700 mb-5">
               La stratégie de déploiement est progressive et conditionnée à la validation de chaque
@@ -634,7 +686,6 @@ export default function DossierInvestisseurs() {
             number="10"
             title="Équipe & gouvernance"
             icon={Users}
-            onVisible={setActiveSection}
           >
             <Callout type="info" className="mb-5">
               L'équipe est présentée par rôle et compétences. Les détails personnels sont
@@ -682,7 +733,6 @@ export default function DossierInvestisseurs() {
             number="11"
             title="Besoins de financement"
             icon={BarChart3}
-            onVisible={setActiveSection}
           >
             <Callout type="warn" className="mb-5">
               <strong>Avertissement :</strong> Cette section décrit les catégories de besoins et
@@ -750,7 +800,6 @@ export default function DossierInvestisseurs() {
             number="12"
             title="Risques & maîtrise"
             icon={AlertTriangle}
-            onVisible={setActiveSection}
           >
             <div className="space-y-3">
               {[
@@ -816,7 +865,6 @@ export default function DossierInvestisseurs() {
             number="13"
             title="Vision à 3–5 ans"
             icon={TrendingUp}
-            onVisible={setActiveSection}
           >
             <Callout type="info" className="mb-5">
               Cette vision est présentée comme une ambition structurée, non comme un
@@ -907,6 +955,17 @@ export default function DossierInvestisseurs() {
 
         </main>
       </div>
+
+      {/* Back-to-top floating button — mobile only (fixed, outside flex container) */}
+      {showBackToTop && (
+        <button
+          onClick={scrollToTop}
+          aria-label="Retour en haut"
+          className="lg:hidden fixed bottom-20 right-4 z-30 bg-indigo-600 text-white w-10 h-10 rounded-full shadow-lg flex items-center justify-center transition hover:bg-indigo-700 print:hidden"
+        >
+          <ArrowUp className="w-5 h-5" />
+        </button>
+      )}
     </>
   );
 }
@@ -919,20 +978,17 @@ function Section({
   title,
   icon: Icon,
   children,
-  onVisible,
 }: {
   id: string;
   number: string;
   title: string;
   icon: React.ElementType;
   children: React.ReactNode;
-  onVisible: (id: string) => void;
 }) {
   return (
     <section
       id={id}
-      className="scroll-mt-6"
-      onMouseEnter={() => onVisible(id)}
+      className="scroll-mt-16"
     >
       <div className="flex items-center gap-3 mb-5">
         <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center flex-shrink-0">
