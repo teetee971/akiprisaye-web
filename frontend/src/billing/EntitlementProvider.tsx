@@ -19,6 +19,7 @@ const EntitlementsContext = createContext<EntitlementsContextValue | null>(null)
  * Registered plan values (from Inscription.tsx) are mapped to PlanId.
  */
 function resolvePlanId(firestorePlan: string | undefined, role: string): PlanId {
+  if (role === 'creator') return 'CREATOR';
   if (role === 'admin') return 'INSTITUTION';
   if (role === 'observateur') return 'PRO';
   const map: Record<string, PlanId> = {

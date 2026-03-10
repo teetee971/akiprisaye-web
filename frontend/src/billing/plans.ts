@@ -1,4 +1,4 @@
-export type PlanId = 'FREE' | 'FREEMIUM' | 'CITIZEN_PREMIUM' | 'PRO' | 'BUSINESS' | 'INSTITUTION';
+export type PlanId = 'FREE' | 'FREEMIUM' | 'CITIZEN_PREMIUM' | 'PRO' | 'BUSINESS' | 'INSTITUTION' | 'CREATOR';
 
 export type FeatureId =
   | 'WATCHLIST_BASE'
@@ -132,5 +132,24 @@ export const PLAN_DEFINITIONS: Record<PlanId, PlanDefinition> = {
       API_ACCESS: true,
     },
     quotas: { maxItems: 20000, refreshPerDay: 100000, maxTerritories: 20 },
+  },
+  CREATOR: {
+    id: 'CREATOR',
+    label: 'Créateur',
+    features: {
+      WATCHLIST_BASE: true,
+      PRICE_REFRESH: true,
+      PRICE_HISTORY_BASIC: true,
+      PRICE_HISTORY_ADVANCED: true,
+      PRICE_ALERTS: true,
+      EXPORT_CSV_BASIC: true,
+      EXPORT_ADVANCED: true,
+      MULTI_TERRITORY: true,
+      SHARED_LISTS: true,
+      DASHBOARD_BUDGET: true,
+      REPORTS_AUTO: true,
+      API_ACCESS: true,
+    },
+    quotas: { maxItems: 999999999, refreshPerDay: 999999999, maxTerritories: 999999999 },
   },
 };

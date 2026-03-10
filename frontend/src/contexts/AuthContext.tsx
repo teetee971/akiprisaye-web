@@ -19,7 +19,7 @@ import {
 } from "@/services/auth";
 import { FIREBASE_UNAVAILABLE_MESSAGE } from "@/lib/authMessages";
 
-type UserRole = "guest" | "citoyen" | "observateur" | "admin";
+type UserRole = "guest" | "citoyen" | "observateur" | "admin" | "creator";
 
 type AuthContextValue = {
   user: User | null;
@@ -30,6 +30,7 @@ type AuthContextValue = {
   isCitoyen: boolean;
   isObservateur: boolean;
   isAdmin: boolean;
+  isCreator: boolean;
   clearError: () => void;
   signUpEmailPassword: (email: string, password: string) => Promise<void>;
   signInEmailPassword: (email: string, password: string) => Promise<void>;
@@ -55,7 +56,7 @@ async function resolveUserRole(user: User | null): Promise<UserRole> {
     }
 
     const role = userDoc.data()?.role;
-    if (role === "admin" || role === "observateur" || role === "citoyen") {
+    if (role === "creator" || role === "admin" || role === "observateur" || role === "citoyen") {
       return role;
     }
 
@@ -108,7 +109,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isGuest: !user,
     isCitoyen: userRole === "citoyen",
     isObservateur: userRole === "observateur",
-    isAdmin: userRole === "admin",
+    isAdmin: userRole === "admin" || userRole === "creator",
+    isCreator: userRole === "creator",
     clearError: () => setError(null),
     signUpEmailPassword: async (email, password) => {
       setError(null);
