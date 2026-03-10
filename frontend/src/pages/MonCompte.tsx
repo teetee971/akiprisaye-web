@@ -85,12 +85,13 @@ export default function MonCompte() {
 
   const roleColors: Record<string, string> = {
     admin: "bg-purple-900/30 border-purple-700 text-purple-200",
+    creator: "bg-amber-900/30 border-amber-700 text-amber-200",
     observateur: "bg-blue-900/30 border-blue-700 text-blue-200",
     citoyen: "bg-green-900/30 border-green-700 text-green-200",
     guest: "bg-gray-900/30 border-gray-700 text-gray-200",
   };
   const roleLabels: Record<string, string> = {
-    admin: "Administrateur", observateur: "Observateur",
+    admin: "Administrateur", creator: "Créateur", observateur: "Observateur",
     citoyen: "Citoyen", guest: "Invité",
   };
 

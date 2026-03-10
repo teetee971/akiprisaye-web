@@ -13,11 +13,13 @@ import {
   Menu, 
   X,
   BarChart3,
-  Flag
+  Flag,
+  Users
 } from 'lucide-react';
 
 const navigation = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+  { name: 'Utilisateurs', href: '/admin/users', icon: Users },
   { name: 'Enseignes', href: '/admin/stores', icon: Store },
   { name: 'Articles', href: '/admin/products', icon: Package },
   { name: 'Import', href: '/admin/import', icon: Upload },
