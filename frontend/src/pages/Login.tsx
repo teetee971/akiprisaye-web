@@ -14,6 +14,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busyAction, setBusyAction] = useState<"email" | "google" | null>(null);
+  const [verificationSent, setVerificationSent] = useState(false);
 
   const { signInEmailPassword, signUpEmailPassword, signInGooglePopup } = useAuth();
 
@@ -81,6 +82,8 @@ export default function Login() {
     try {
       if (mode === "signup") {
         await signUpEmailPassword(email, password);
+        setVerificationSent(true);
+        return;
       } else {
         await signInEmailPassword(email, password);
       }
@@ -126,6 +129,30 @@ export default function Login() {
       <div className="bg-slate-900 rounded-2xl p-6 shadow-lg w-full max-w-md">
         <h1 className="text-2xl font-semibold mb-6 text-white text-center">Connexion</h1>
 
+        {verificationSent ? (
+          <div className="space-y-4">
+            <div className="p-4 bg-green-900/30 border border-green-700 rounded-lg text-green-200">
+              <div className="flex items-start gap-2">
+                <span className="text-xl flex-shrink-0">✅</span>
+                <div>
+                  <p className="font-medium mb-1">Compte créé !</p>
+                  <p className="text-sm">
+                    Un email de vérification a été envoyé à <strong>{email}</strong>.
+                    Vérifiez votre boîte de réception et cliquez sur le lien pour activer votre compte.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => { setVerificationSent(false); setMode("login"); }}
+              className="block w-full p-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium text-center transition-colors text-white"
+            >
+              Se connecter
+            </button>
+          </div>
+        ) : (
+          <>
         {error && (
           <div className="mb-4 p-3 bg-red-900/30 border border-red-700 rounded-lg text-red-200 text-sm">
             <span>{error}</span>
@@ -225,6 +252,8 @@ export default function Login() {
               </div>
             )}
           </div>
+        )}
+          </>
         )}
       </div>
     </div>

@@ -3,10 +3,12 @@ import {
   browserLocalPersistence,
   createUserWithEmailAndPassword,
   onAuthStateChanged,
+  sendEmailVerification,
   setPersistence,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
+  type ActionCodeSettings,
   type User,
   type UserCredential,
 } from "firebase/auth";
@@ -30,7 +32,15 @@ export async function ensureSessionPersistence(): Promise<void> {
 export async function signUpEmailPassword(email: string, password: string): Promise<UserCredential> {
   const authInstance = ensureAuth();
   await ensureSessionPersistence();
-  return createUserWithEmailAndPassword(authInstance, email, password);
+  const credential = await createUserWithEmailAndPassword(authInstance, email, password);
+  try {
+    const continueUrl = `${window.location.origin}${import.meta.env.BASE_URL}mon-compte`;
+    const actionCodeSettings: ActionCodeSettings = { url: continueUrl };
+    await sendEmailVerification(credential.user, actionCodeSettings);
+  } catch {
+    console.warn("sendEmailVerification failed — account created but verification email not sent.");
+  }
+  return credential;
 }
 
 export async function signInEmailPassword(email: string, password: string): Promise<UserCredential> {
