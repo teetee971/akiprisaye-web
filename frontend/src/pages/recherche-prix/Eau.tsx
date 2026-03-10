@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Droplet, Info, Download } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Droplet, Info, Download, FileText, GraduationCap } from 'lucide-react';
 import {
   searchWaterPrices,
   getTerritories,
@@ -142,6 +143,21 @@ export default function Eau() {
       {/* Header */}
       <header className="bg-gradient-to-r from-slate-900 to-slate-800 border-b border-slate-700">
         <div className="max-w-7xl mx-auto px-4 py-6">
+          {/* Back navigation */}
+          <div className="mb-3 flex flex-wrap gap-3">
+            <Link
+              to="/enquete-eau"
+              className="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-cyan-300 transition-colors"
+            >
+              <FileText className="w-4 h-4" /> Enquête sur l'eau
+            </Link>
+            <Link
+              to="/conference-eau"
+              className="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-cyan-300 transition-colors"
+            >
+              <GraduationCap className="w-4 h-4" /> Conférence expert
+            </Link>
+          </div>
           <div className="flex items-center gap-3 mb-2">
             <Droplet className="w-6 h-6 text-cyan-400" />
             <h1 className="text-xl sm:text-2xl font-bold text-gray-100">

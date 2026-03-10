@@ -44,6 +44,7 @@ export default function Footer() {
               <li><Link to="/comprendre-prix" className="text-slate-400 hover:text-white transition-colors">Comprendre les prix</Link></li>
               <li><Link to="/ievr" className="text-slate-400 hover:text-white transition-colors">Indice IEVR</Link></li>
               <li><Link to="/ti-panie" className="text-slate-400 hover:text-white transition-colors">Ti Panié vital</Link></li>
+              <li><Link to="/enquete-eau" className="text-slate-400 hover:text-cyan-300 transition-colors">💧 Enquête eau</Link></li>
             </ul>
           </div>
 
