@@ -13,6 +13,8 @@ import { db, firebaseError } from "@/lib/firebase";
 import {
   signInEmailPassword,
   signInGooglePopup,
+  signInFacebookPopup,
+  signInApplePopup,
   signOutUser,
   signUpEmailPassword,
   subscribeToAuthState,
@@ -35,6 +37,8 @@ type AuthContextValue = {
   signUpEmailPassword: (email: string, password: string) => Promise<void>;
   signInEmailPassword: (email: string, password: string) => Promise<void>;
   signInGooglePopup: () => Promise<void>;
+  signInFacebookPopup: () => Promise<void>;
+  signInApplePopup: () => Promise<void>;
   signOutUser: () => Promise<void>;
 };
 
@@ -123,6 +127,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     signInGooglePopup: async () => {
       setError(null);
       await signInGooglePopup();
+    },
+    signInFacebookPopup: async () => {
+      setError(null);
+      await signInFacebookPopup();
+    },
+    signInApplePopup: async () => {
+      setError(null);
+      await signInApplePopup();
     },
     signOutUser: async () => {
       setError(null);

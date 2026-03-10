@@ -10,6 +10,7 @@ import { auth, db, firebaseError } from "@/lib/firebase";
 import { doc, setDoc } from "firebase/firestore";
 import { Button } from "@/components/ui/button";
 import { safeToText } from "../utils/safeToText";
+import SocialLoginButtons from "./SocialLoginButtons";
 
 export default function AuthForm() {
   const [email, setEmail] = useState("");
@@ -152,6 +153,20 @@ export default function AuthForm() {
             <span className="flex-shrink-0">✅</span>
             <span>{safeToText(success)}</span>
           </div>
+        </div>
+      )}
+
+      {/* Social login buttons */}
+      {mode !== "reset" && (
+        <SocialLoginButtons onError={setError} showDivider={false} />
+      )}
+
+      {/* Divider */}
+      {mode !== "reset" && (
+        <div className="flex items-center gap-3 my-4">
+          <div className="flex-1 h-px bg-slate-700" />
+          <span className="text-xs text-slate-500 uppercase tracking-wide">ou par email</span>
+          <div className="flex-1 h-px bg-slate-700" />
         </div>
       )}
 

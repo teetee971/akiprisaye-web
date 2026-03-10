@@ -1,5 +1,7 @@
 import {
+  FacebookAuthProvider,
   GoogleAuthProvider,
+  OAuthProvider,
   browserLocalPersistence,
   createUserWithEmailAndPassword,
   onAuthStateChanged,
@@ -15,7 +17,17 @@ import {
 
 import { auth } from "@/lib/firebase";
 
-const googleProvider = new GoogleAuthProvider();
+const googleProvider   = new GoogleAuthProvider();
+const facebookProvider = new FacebookAuthProvider();
+const appleProvider    = new OAuthProvider('apple.com');
+
+// Request extra scopes for better profile info
+googleProvider.addScope('profile');
+googleProvider.addScope('email');
+facebookProvider.addScope('email');
+facebookProvider.addScope('public_profile');
+appleProvider.addScope('email');
+appleProvider.addScope('name');
 
 function ensureAuth() {
   if (!auth) {
@@ -53,6 +65,29 @@ export async function signInGooglePopup(): Promise<UserCredential> {
   const authInstance = ensureAuth();
   await ensureSessionPersistence();
   return signInWithPopup(authInstance, googleProvider);
+}
+
+/**
+ * Facebook sign-in.
+ * Requires Facebook to be enabled in Firebase Console:
+ * Authentication → Sign-in method → Facebook → enable + add App ID & Secret.
+ */
+export async function signInFacebookPopup(): Promise<UserCredential> {
+  const authInstance = ensureAuth();
+  await ensureSessionPersistence();
+  return signInWithPopup(authInstance, facebookProvider);
+}
+
+/**
+ * Apple sign-in.
+ * Requires Apple to be enabled in Firebase Console:
+ * Authentication → Sign-in method → Apple → enable.
+ * Also requires an Apple Developer account + Services ID configured.
+ */
+export async function signInApplePopup(): Promise<UserCredential> {
+  const authInstance = ensureAuth();
+  await ensureSessionPersistence();
+  return signInWithPopup(authInstance, appleProvider);
 }
 
 export async function signOutUser(): Promise<void> {

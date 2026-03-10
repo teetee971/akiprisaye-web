@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
 import { firebaseError, missingCriticalEnvKeys } from "@/lib/firebase";
 import { FIREBASE_UNAVAILABLE_MESSAGE } from "@/lib/authMessages";
+import SocialLoginButtons from "@/components/SocialLoginButtons";
 import { useAuth } from "@/context/AuthContext";
 
 import { SEOHead } from '../components/ui/SEOHead';
@@ -159,16 +160,17 @@ export default function Login() {
           </div>
         )}
 
-        <button
-          type="button"
-          onClick={handleGoogle}
-          disabled={loading}
-          className="w-full p-3 mb-4 bg-slate-800 hover:bg-slate-700 rounded-lg font-medium transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed text-white border border-gray-700"
-        >
-          {busyAction === "google" ? "Connexion Google en cours…" : "Continuer avec Google"}
-        </button>
+        <SocialLoginButtons
+          redirectTo={getSafeNext()}
+          onError={setError}
+          showDivider={false}
+        />
 
-        <div className="text-center text-gray-400 text-sm mb-4">ou</div>
+        <div className="flex items-center gap-3 my-4">
+          <div className="flex-1 h-px bg-slate-700" />
+          <span className="text-xs text-slate-500 uppercase tracking-wide">ou par email</span>
+          <div className="flex-1 h-px bg-slate-700" />
+        </div>
 
         <form onSubmit={handleEmailSubmit} className="space-y-4">
           <div>

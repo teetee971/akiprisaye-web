@@ -9,6 +9,7 @@ import { PasswordInput } from "@/components/PasswordInput";
 import { FIREBASE_UNAVAILABLE_MESSAGE } from "@/lib/authMessages";
 import { HeroImage } from "@/components/ui/HeroImage";
 import { PAGE_HERO_IMAGES } from "@/config/imageAssets";
+import SocialLoginButtons from "@/components/SocialLoginButtons";
 
 import { SEOHead } from '../components/ui/SEOHead';
 const DEFAULT_USER_PLAN = "free";
@@ -149,6 +150,18 @@ export default function Inscription() {
             </div>
           </div>
         )}
+
+        <SocialLoginButtons
+          redirectTo={`/mon-compte?plan=${selectedPlan}`}
+          onError={setError}
+          showDivider={false}
+        />
+
+        <div className="flex items-center gap-3 my-4">
+          <div className="flex-1 h-px bg-slate-700" />
+          <span className="text-xs text-slate-500 uppercase tracking-wide">ou par email</span>
+          <div className="flex-1 h-px bg-slate-700" />
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
