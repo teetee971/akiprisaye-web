@@ -64,6 +64,7 @@ function buildSeedObservations(product: SeedProduct, input: PriceSearchInput): P
         metadata: {
           fallback: 'seedProducts',
           store: item.storeName ?? 'N/A',
+          city: item.city ?? '',
         },
       })
     );

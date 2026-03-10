@@ -18,10 +18,13 @@ export interface ScanData {
   warnings?: string[];
   territoryMessage?: string;
   observations?: Array<{
-    source: 'open_food_facts' | 'open_prices' | 'user_report';
+    source: string;
     price: number;
     observedAt?: string;
     normalizedLabel?: string;
+    store?: string;
+    city?: string;
+    territory?: string;
   }>;
 }
 

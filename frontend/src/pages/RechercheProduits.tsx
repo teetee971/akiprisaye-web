@@ -76,6 +76,9 @@ interface ApiPriceObservation {
   source?: string;
   price?: number;
   observedAt?: string;
+  store?: string;
+  city?: string;
+  territory?: string;
 }
 
 interface ApiPricesResponse {
@@ -328,18 +331,26 @@ export function PriceResults({
     : result.productName || 'Produit favori';
   const favoriteActive = isFavorite(favoriteId);
   const [productCard, setProductCard] = useState<ProductCard | null>(null);
-  const [apiPrices, setApiPrices] = useState<ApiPriceObservation[]>([]);
+
+  // Seed from pre-loaded observations (from seedProvider / priceSearch); API call supplements
+  const [apiPrices, setApiPrices] = useState<ApiPriceObservation[]>(
+    () => (result.observations ?? []) as ApiPriceObservation[]
+  );
 
   useEffect(() => {
+    // Always re-seed from the result observations when result changes
+    if (result.observations && result.observations.length > 0) {
+      setApiPrices(result.observations as ApiPriceObservation[]);
+    }
+
     const barcode = searchBarcode?.trim();
     if (!barcode) {
       setProductCard(null);
-      setApiPrices([]);
       return;
     }
 
     const controller = new AbortController();
-    const territory = (result.territory ?? 'fr').trim();
+    const territory = (result.territory ?? 'gp').trim();
 
     const loadProductCard = async () => {
       try {
@@ -363,20 +374,20 @@ export function PriceResults({
           `/api/prices?barcode=${encodeURIComponent(barcode)}&territory=${encodeURIComponent(territory)}`,
           { signal: controller.signal },
         );
-        if (!response.ok) {
-          setApiPrices([]);
-          return;
-        }
+        if (!response.ok) return;
         const payload = (await response.json()) as ApiPricesResponse;
-        setApiPrices(Array.isArray(payload.observations) ? payload.observations : []);
+        if (Array.isArray(payload.observations) && payload.observations.length > 0) {
+          // Merge API results on top of seed data (API takes priority)
+          setApiPrices(payload.observations);
+        }
       } catch {
-        setApiPrices([]);
+        // API unavailable – keep seed observations already set above
       }
     };
 
     void Promise.all([loadProductCard(), loadPrices()]);
     return () => controller.abort();
-  }, [result.territory, searchBarcode]);
+  }, [result.observations, result.territory, searchBarcode]);
 
   const productTitle = productCard?.title || result.productName || 'Produit analysé';
   const productImages = productCard?.images ?? [];
@@ -694,22 +705,43 @@ export function PriceResults({
         {filteredObservations.length > 0 ? (
           <div className="space-y-2">
             {filteredObservations.map((price, index) => {
-              const label = price.observedAt
+              const dateLabel = price.observedAt
                 ? new Date(price.observedAt).toLocaleDateString('fr-FR')
-                : 'Date non fournie';
-
+                : null;
               const freshness = getFreshnessLabel(price.observedAt);
+              const freshnessColor =
+                freshness === 'Récent' ? 'text-emerald-400' :
+                freshness === 'À vérifier' ? 'text-amber-400' : 'text-slate-500';
+              const storeName = (price as ApiPriceObservation & { store?: string; city?: string }).store;
+              const cityName = (price as ApiPriceObservation & { store?: string; city?: string }).city;
 
               return (
-                <div key={`${price.source ?? 'source'}-${index}`} className="flex items-center justify-between bg-slate-950 p-3 rounded-lg text-sm">
-                  <span className="text-slate-300">{price.source ?? 'source inconnue'} • {label} • {freshness}</span>
-                  <span className="font-semibold text-white">{typeof price.price === 'number' ? `${price.price.toFixed(2)} €` : '—'}</span>
+                <div
+                  key={`${price.source ?? 'src'}-${index}`}
+                  className="flex items-start justify-between bg-slate-950 border border-slate-800 p-3 rounded-xl gap-3"
+                >
+                  <div className="flex flex-col gap-0.5 min-w-0">
+                    <span className="font-medium text-slate-200 text-sm truncate">
+                      {storeName ?? price.source ?? 'Enseigne inconnue'}
+                    </span>
+                    <span className="text-xs text-slate-500">
+                      {[cityName, dateLabel].filter(Boolean).join(' · ')}
+                      {dateLabel && (
+                        <span className={`ml-1.5 font-medium ${freshnessColor}`}>
+                          {freshness}
+                        </span>
+                      )}
+                    </span>
+                  </div>
+                  <span className="font-bold text-white text-base whitespace-nowrap">
+                    {typeof price.price === 'number' ? `${price.price.toFixed(2)} €` : '—'}
+                  </span>
                 </div>
               );
             })}
           </div>
         ) : (
-          <p className="text-sm text-slate-400">Aucun prix récent disponible.</p>
+          <p className="text-sm text-slate-500 italic">Aucun prix encore relevé ici. Contribuez en ajoutant un relevé !</p>
         )}
       </div>
 
@@ -1192,6 +1224,17 @@ function mapPriceSearchResult(input: PriceSearchResult): ScanHubResult {
     sourcesUsed: input.sourcesUsed,
     warnings: input.warnings,
     territoryMessage: input.metadata.territoryMessage,
+    observations: input.observations
+      .filter((obs) => typeof obs.price === 'number' && obs.price > 0)
+      .map((obs) => ({
+        source: obs.source,
+        price: obs.price,
+        observedAt: obs.observedAt,
+        normalizedLabel: obs.normalizedLabel,
+        store: obs.metadata?.store,
+        city: obs.metadata?.city,
+        territory: obs.territory,
+      })),
   };
   if (input.status === 'PARTIAL') {
     return { status: 'PARTIAL', data };
