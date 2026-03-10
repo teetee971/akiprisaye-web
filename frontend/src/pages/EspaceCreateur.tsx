@@ -122,33 +122,33 @@ interface MobileStep {
 const TERMUX_STEPS: MobileStep[] = [
   {
     num: 1,
-    title: 'Installer Node.js et Git dans Termux',
-    detail: 'Ouvrez Termux et lancez ces deux commandes :',
-    code: 'pkg install nodejs git',
-  },
-  {
-    num: 2,
-    title: 'Autoriser l\'accès au stockage du téléphone',
-    detail: 'Cette commande donne à Termux l\'accès à vos fichiers téléchargés (acceptez la permission) :',
+    title: 'Autoriser l\'accès au stockage (si pas encore fait)',
+    detail: 'Cette commande donne à Termux l\'accès à vos fichiers. Si vous voyez une demande de permission, acceptez. Si vous avez déjà accès à ~/downloads, passez à l\'étape suivante.',
     code: 'termux-setup-storage',
   },
   {
+    num: 2,
+    title: 'Installer / vérifier Node.js',
+    detail: 'Vérifiez d\'abord si Node.js est déjà installé. Si la commande retourne un numéro de version (ex: v22.x.x), passez à l\'étape 3. Sinon, lancez l\'installation. Si vous voyez "Abort.", relancez pkg install nodejs une seconde fois — c\'est un bug connu de Termux lors des upgrades.',
+    code: 'node --version 2>/dev/null || pkg install nodejs',
+  },
+  {
     num: 3,
-    title: 'Cloner le dépôt',
-    detail: 'Clonez le projet dans Termux :',
-    code: 'git clone https://github.com/teetee971/akiprisaye-web.git && cd akiprisaye-web',
+    title: 'Aller dans les téléchargements et cloner le dépôt',
+    detail: 'Allez dans ~/downloads (où se trouve déjà serviceAccountKey.json) puis clonez le dépôt. L\'option --depth 1 rend le clonage beaucoup plus rapide.',
+    code: 'cd ~/downloads && git clone --depth 1 https://github.com/teetee971/akiprisaye-web.git',
   },
   {
     num: 4,
-    title: 'Copier la clé depuis vos téléchargements',
-    detail: 'Le fichier serviceAccountKey.json téléchargé depuis Firebase Console est dans votre dossier Téléchargements. Copiez-le à la racine du dépôt :',
-    code: 'cp ~/storage/downloads/serviceAccountKey.json .',
+    title: 'Copier la clé dans le dépôt cloné',
+    detail: 'Vous êtes dans ~/downloads où se trouve serviceAccountKey.json. Copiez-le directement dans le dossier du dépôt :',
+    code: 'cp serviceAccountKey.json akiprisaye-web/',
   },
   {
     num: 5,
     title: 'Installer les dépendances et lancer le script',
-    detail: 'Installez firebase-admin puis exécutez le script avec votre email :',
-    code: 'npm install && node scripts/set-creator-role.mjs teetee971@gmail.com',
+    detail: 'Entrez dans le dossier, installez firebase-admin, puis exécutez le script avec votre email :',
+    code: 'cd akiprisaye-web && npm install && node scripts/set-creator-role.mjs teetee971@gmail.com',
   },
 ];
 
@@ -440,11 +440,35 @@ const EspaceCreateur: React.FC = () => {
                   <Terminal className="w-4 h-4" />
                   Option A — Termux (terminal Android)
                 </h3>
-                <p className="text-xs text-slate-400 mb-4 leading-relaxed">
+                <p className="text-xs text-slate-400 mb-3 leading-relaxed">
                   Vous avez Termux ? C'est la méthode la plus directe. Le fichier{' '}
                   <code className="bg-slate-700/60 px-1 py-0.5 rounded text-green-300">serviceAccountKey.json</code>{' '}
-                  téléchargé dans vos fichiers récents sera copié directement dans le dépôt cloné.
+                  téléchargé depuis Firebase Console est déjà dans <code className="bg-slate-700/60 px-1 py-0.5 rounded text-green-300">~/downloads</code>.
                 </p>
+
+                {/* Fast-path box for users already in ~/downloads */}
+                <div className="mb-4 bg-green-950/40 border border-green-600/40 rounded-xl p-3">
+                  <p className="text-xs font-bold text-green-300 mb-2">
+                    ⚡ Déjà dans ~/downloads ? Voici les 4 commandes directes :
+                  </p>
+                  {[
+                    { cmd: 'node --version 2>/dev/null || pkg install nodejs', note: '— vérifie ou installe Node' },
+                    { cmd: 'git clone --depth 1 https://github.com/teetee971/akiprisaye-web.git', note: '— clone le dépôt' },
+                    { cmd: 'cp serviceAccountKey.json akiprisaye-web/', note: '— copie la clé' },
+                    { cmd: 'cd akiprisaye-web && npm install && node scripts/set-creator-role.mjs teetee971@gmail.com', note: '— active le rôle' },
+                  ].map(({ cmd, note }) => (
+                    <div key={cmd} className="flex items-center justify-between bg-slate-950/60 border border-slate-700/40 rounded-lg px-2.5 py-1.5 mb-1.5 last:mb-0">
+                      <div className="min-w-0 flex-1">
+                        <code className="text-xs text-green-300 font-mono break-all">{cmd}</code>
+                        <span className="text-xs text-slate-500 ml-1">{note}</span>
+                      </div>
+                      <CopyButton text={cmd} />
+                    </div>
+                  ))}
+                  <p className="text-xs text-amber-400/80 mt-2">
+                    ⚠️ Si vous voyez <code className="bg-slate-700/60 px-1 rounded">Abort.</code> lors de l'installation de nodejs, relancez simplement <code className="bg-slate-700/60 px-1 rounded">pkg install nodejs</code> une seconde fois.
+                  </p>
+                </div>
                 <div className="space-y-4">
                   {TERMUX_STEPS.map(step => (
                     <div key={step.num} className="flex gap-4">

@@ -46,13 +46,17 @@
  *  Depuis un terminal (PC ou Termux Android) :
  *    node scripts/set-creator-role.mjs <votre-email@domaine.com>
  *
- *  Depuis Termux (Android) — guide rapide :
- *    pkg install nodejs git
- *    termux-setup-storage
- *    git clone https://github.com/teetee971/akiprisaye-web.git
- *    cd akiprisaye-web
- *    cp ~/storage/downloads/serviceAccountKey.json .
- *    npm install
+ *  Depuis Termux (Android) — guide rapide depuis ~/downloads :
+ *    # 1. Vérifier/installer nodejs
+ *    #    Note : "Abort." peut apparaître lors d'un premier "pkg upgrade" en raison
+ *    #    de l'initialisation du gestionnaire de paquets — relancer suffit à corriger.
+ *    node --version 2>/dev/null || pkg install nodejs
+ *    # 2. Cloner le dépôt (--depth 1 = rapide)
+ *    git clone --depth 1 https://github.com/teetee971/akiprisaye-web.git
+ *    # 3. Copier la clé (depuis ~/downloads où elle se trouve déjà)
+ *    cp serviceAccountKey.json akiprisaye-web/
+ *    # 4. Activer le rôle
+ *    cd akiprisaye-web && npm install
  *    node scripts/set-creator-role.mjs teetee971@gmail.com
  *
  *  Depuis GitHub Actions (sans PC ni terminal) :
@@ -199,12 +203,19 @@ try {
     updatedAt: new Date().toISOString(),
   }, { merge: true });
 
+  /* Largeur d'affichage de la boîte de succès (en caractères) */
+  const BOX_DISPLAY_WIDTH = 48;
+  const BOX_TRUNCATE_AT   = BOX_DISPLAY_WIDTH - 3; // laisser 3 chars pour "..."
+
+  const fmt = (s) =>
+    s.length > BOX_DISPLAY_WIDTH ? s.slice(0, BOX_TRUNCATE_AT) + '...' : s.padEnd(BOX_DISPLAY_WIDTH);
+
   console.log(`
 ╔══════════════════════════════════════════════════════════════╗
 ║  ✨ RÔLE CRÉATEUR ACTIVÉ AVEC SUCCÈS                         ║
 ╠══════════════════════════════════════════════════════════════╣
-║  Email   : ${email.length > 48 ? email.slice(0, 45) + '...' : email.padEnd(48)}  ║
-║  UID     : ${uid.length > 48 ? uid.slice(0, 45) + '...' : uid.padEnd(48)}  ║
+║  Email   : ${fmt(email)}  ║
+║  UID     : ${fmt(uid)}  ║
 ║  Rôle    : creator (plan CREATOR — accès illimité)           ║
 ╠══════════════════════════════════════════════════════════════╣
 ║  PROCHAINES ÉTAPES :                                         ║
