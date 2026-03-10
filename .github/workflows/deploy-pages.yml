@@ -74,6 +74,9 @@ jobs:
 
   deploy:
     needs: build
+    # Only run when build actually succeeded — prevents failures when build was
+    # skipped or when "re-run failed jobs only" is used without a fresh artifact.
+    if: needs.build.result == 'success'
     runs-on: ubuntu-latest
     permissions:
       pages: write
