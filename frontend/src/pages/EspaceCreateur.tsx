@@ -134,21 +134,15 @@ const TERMUX_STEPS: MobileStep[] = [
   },
   {
     num: 3,
-    title: 'Aller dans les téléchargements et cloner le dépôt',
-    detail: 'Allez dans ~/downloads (où se trouve déjà serviceAccountKey.json) puis clonez le dépôt. L\'option --depth 1 rend le clonage beaucoup plus rapide.',
-    code: 'cd ~/downloads && git clone --depth 1 https://github.com/teetee971/akiprisaye-web.git',
+    title: 'Aller dans les téléchargements et télécharger le script',
+    detail: 'Allez dans ~/downloads (où se trouve déjà serviceAccountKey.json) puis téléchargez UNIQUEMENT le script — pas besoin de cloner tout le dépôt (22 Mo) :',
+    code: 'cd ~/downloads && curl -fsSL https://raw.githubusercontent.com/teetee971/akiprisaye-web/copilot/add-expert-conference-on-water/scripts/set-creator-role.mjs -o set-creator-role.mjs',
   },
   {
     num: 4,
-    title: 'Copier la clé dans le dépôt cloné',
-    detail: 'Vous êtes dans ~/downloads où se trouve serviceAccountKey.json. Copiez-le directement dans le dossier du dépôt :',
-    code: 'cp serviceAccountKey.json akiprisaye-web/',
-  },
-  {
-    num: 5,
-    title: 'Installer les dépendances et lancer le script',
-    detail: 'Entrez dans le dossier, installez firebase-admin, puis exécutez le script avec votre email :',
-    code: 'cd akiprisaye-web && npm install && node scripts/set-creator-role.mjs teetee971@gmail.com',
+    title: 'Installer firebase-admin et lancer le script',
+    detail: 'Installez uniquement la dépendance nécessaire, puis exécutez le script. Le fichier serviceAccountKey.json est déjà dans le même dossier :',
+    code: 'npm install firebase-admin && node set-creator-role.mjs teetee971@gmail.com',
   },
 ];
 
@@ -449,13 +443,12 @@ const EspaceCreateur: React.FC = () => {
                 {/* Fast-path box for users already in ~/downloads */}
                 <div className="mb-4 bg-green-950/40 border border-green-600/40 rounded-xl p-3">
                   <p className="text-xs font-bold text-green-300 mb-2">
-                    ⚡ Déjà dans ~/downloads ? Voici les 4 commandes directes :
+                    ⚡ Déjà dans ~/downloads ? Seulement 3 commandes :
                   </p>
                   {[
                     { cmd: 'node --version 2>/dev/null || pkg install nodejs', note: '— vérifie ou installe Node' },
-                    { cmd: 'git clone --depth 1 https://github.com/teetee971/akiprisaye-web.git', note: '— clone le dépôt' },
-                    { cmd: 'cp serviceAccountKey.json akiprisaye-web/', note: '— copie la clé' },
-                    { cmd: 'cd akiprisaye-web && npm install && node scripts/set-creator-role.mjs teetee971@gmail.com', note: '— active le rôle' },
+                    { cmd: 'curl -fsSL https://raw.githubusercontent.com/teetee971/akiprisaye-web/copilot/add-expert-conference-on-water/scripts/set-creator-role.mjs -o set-creator-role.mjs', note: '— télécharge le script' },
+                    { cmd: 'npm install firebase-admin && node set-creator-role.mjs teetee971@gmail.com', note: '— installe et active' },
                   ].map(({ cmd, note }) => (
                     <div key={cmd} className="flex items-center justify-between bg-slate-950/60 border border-slate-700/40 rounded-lg px-2.5 py-1.5 mb-1.5 last:mb-0">
                       <div className="min-w-0 flex-1">

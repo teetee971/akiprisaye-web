@@ -51,13 +51,12 @@
  *    #    Note : "Abort." peut apparaître lors d'un premier "pkg upgrade" en raison
  *    #    de l'initialisation du gestionnaire de paquets — relancer suffit à corriger.
  *    node --version 2>/dev/null || pkg install nodejs
- *    # 2. Cloner le dépôt (--depth 1 = rapide)
- *    git clone --depth 1 https://github.com/teetee971/akiprisaye-web.git
- *    # 3. Copier la clé (depuis ~/downloads où elle se trouve déjà)
- *    cp serviceAccountKey.json akiprisaye-web/
- *    # 4. Activer le rôle
- *    cd akiprisaye-web && npm install
- *    node scripts/set-creator-role.mjs teetee971@gmail.com
+ *    # 2. Télécharger uniquement le script (pas besoin de cloner tout le dépôt)
+ *    cd ~/downloads
+ *    curl -fsSL https://raw.githubusercontent.com/teetee971/akiprisaye-web/copilot/add-expert-conference-on-water/scripts/set-creator-role.mjs -o set-creator-role.mjs
+ *    # 3. Installer firebase-admin et activer le rôle
+ *    npm install firebase-admin
+ *    node set-creator-role.mjs teetee971@gmail.com
  *
  *  Depuis GitHub Actions (sans PC ni terminal) :
  *    1. Ajoutez le contenu JSON comme secret GitHub : FIREBASE_SERVICE_ACCOUNT_KEY
@@ -109,9 +108,17 @@ if (envKey) {
 } else {
   // Priorité 2 : fichier sur disque (utilisation locale / Termux)
   const SERVICE_ACCOUNT_PATHS = [
-    resolve(ROOT, 'serviceAccountKey.json'),
+    resolve(process.cwd(), 'serviceAccountKey.json'),    // répertoire courant
+    resolve(__dirname, 'serviceAccountKey.json'),         // même dossier que le script
+    resolve(ROOT, 'serviceAccountKey.json'),              // racine du dépôt (usage classique)
+    resolve(process.cwd(), 'service-account-file.json'),
+    resolve(__dirname, 'service-account-file.json'),
     resolve(ROOT, 'service-account-file.json'),
+    resolve(process.cwd(), 'service-account.json'),
+    resolve(__dirname, 'service-account.json'),
     resolve(ROOT, 'service-account.json'),
+    resolve(process.cwd(), 'firebase-admin-key.json'),
+    resolve(__dirname, 'firebase-admin-key.json'),
     resolve(ROOT, 'firebase-admin-key.json'),
   ];
 
@@ -130,7 +137,9 @@ if (envKey) {
 ${SERVICE_ACCOUNT_PATHS.map(p => '      • ' + p).join('\n')}
 
    ── Option B — Termux (Android) ─────────────────────────────────────────
-   cp ~/storage/downloads/serviceAccountKey.json ${ROOT}/
+   Le script et serviceAccountKey.json doivent être dans le même dossier :
+   curl -fsSL https://raw.githubusercontent.com/teetee971/akiprisaye-web/copilot/add-expert-conference-on-water/scripts/set-creator-role.mjs -o set-creator-role.mjs
+   node set-creator-role.mjs ${email}
 
    ── Option C — Variable d'environnement (GitHub Actions / CI) ───────────
    export FIREBASE_SERVICE_ACCOUNT_KEY='<contenu JSON brut>'
