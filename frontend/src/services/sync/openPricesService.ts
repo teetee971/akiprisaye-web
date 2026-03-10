@@ -1,6 +1,10 @@
  
 /**
  * Service OpenPrices - Synchronisation des prix crowdsourcés
+ *
+ * Uses the OpenPrices API (prices.openfoodfacts.org) with server-side
+ * territory filtering via the `country_code` ISO 3166-1 parameter.
+ * This replaces the previous placeholder geocoding approach.
  */
 
 import type {
@@ -19,6 +23,21 @@ const RATE_LIMIT_DELAY = 500; // ms between requests
 let lastRequestTime = 0;
 
 /**
+ * Maps DOM_TOM_TERRITORIES keys to ISO 3166-1 country codes used by OpenPrices API.
+ */
+const TERRITORY_KEY_TO_COUNTRY_CODE: Record<string, string> = {
+  guadeloupe: 'gp',
+  martinique: 'mq',
+  guyane: 'gf',
+  reunion: 're',
+  mayotte: 'yt',
+  saint_pierre_miquelon: 'pm',
+  saint_barthelemy: 'bl',
+  saint_martin: 'mf',
+  france: 'fr',
+};
+
+/**
  * Applique un rate limiting simple
  */
 async function rateLimit(): Promise<void> {
@@ -33,7 +52,8 @@ async function rateLimit(): Promise<void> {
 }
 
 /**
- * Vérifie si une localisation est dans un territoire DOM-TOM
+ * Vérifie si une localisation est dans un territoire DOM-TOM (bounding box).
+ * Utilisé comme filtre secondaire si les données lat/lon sont disponibles.
  */
 export function isInTerritory(lat: number, lon: number, territory: Territory): boolean {
   const latInRange = lat >= territory.bounds.lat[0] && lat <= territory.bounds.lat[1];
@@ -43,20 +63,26 @@ export function isInTerritory(lat: number, lon: number, territory: Territory): b
 }
 
 /**
- * Récupère les prix pour un produit par EAN
+ * Récupère les prix pour un produit par EAN.
+ * Optionnellement filtré par territoire (country_code ISO 3166-1).
  */
-export async function getPricesByProduct(ean: string): Promise<OPPrice[]> {
+export async function getPricesByProduct(ean: string, countryCode?: string): Promise<OPPrice[]> {
   try {
     await rateLimit();
 
     const params = new URLSearchParams({
       product_code: ean,
+      ordering: '-date',
+      page_size: '100',
     });
+    if (countryCode) {
+      params.set('country_code', countryCode);
+    }
 
     const response = await fetch(`${OP_API_V1_BASE}/prices?${params}`);
     
     if (!response.ok) {
-      console.warn(`OpenPrices: Failed to get prices for product ${ean}`);
+      console.warn(`OpenPrices: Failed to get prices for product ${ean} (HTTP ${response.status})`);
       return [];
     }
 
@@ -70,7 +96,7 @@ export async function getPricesByProduct(ean: string): Promise<OPPrice[]> {
 }
 
 /**
- * Récupère les prix par localisation
+ * Récupère les prix par localisation OSM
  */
 export async function getPricesByLocation(locationId: string): Promise<OPPrice[]> {
   try {
@@ -78,6 +104,7 @@ export async function getPricesByLocation(locationId: string): Promise<OPPrice[]
 
     const params = new URLSearchParams({
       location_osm_id: locationId,
+      ordering: '-date',
     });
 
     const response = await fetch(`${OP_API_V1_BASE}/prices?${params}`);
@@ -97,17 +124,20 @@ export async function getPricesByLocation(locationId: string): Promise<OPPrice[]
 }
 
 /**
- * Récupère les prix récents (depuis une date)
+ * Récupère les prix récents (depuis une date donnée).
+ * Optionnellement filtré par territoire (country_code).
  */
 export async function getRecentPrices(
   since: Date,
-  options: PriceOptions = {}
+  options: PriceOptions = {},
+  countryCode?: string,
 ): Promise<OPPrice[]> {
   try {
     await rateLimit();
 
     const params = new URLSearchParams({
       date__gte: since.toISOString().split('T')[0], // Format YYYY-MM-DD
+      ordering: '-date',
     });
 
     if (options.limit) {
@@ -118,10 +148,14 @@ export async function getRecentPrices(
       params.append('page', String(Math.floor(options.offset / (options.limit || 100)) + 1));
     }
 
+    if (countryCode) {
+      params.append('country_code', countryCode);
+    }
+
     const response = await fetch(`${OP_API_V1_BASE}/prices?${params}`);
     
     if (!response.ok) {
-      throw new Error('Failed to fetch recent prices');
+      throw new Error(`Failed to fetch recent prices (HTTP ${response.status})`);
     }
 
     const data = await response.json();
@@ -134,22 +168,33 @@ export async function getRecentPrices(
 }
 
 /**
- * Filtre les prix pour un territoire DOM-TOM spécifique
- * Note: OpenPrices ne fournit pas directement lat/lon dans l'API
- * Cette fonction est un placeholder pour une implémentation future avec geocoding
+ * Filtre les prix pour un territoire DOM-TOM spécifique.
+ * Utilise le country_code si disponible dans les données OpenPrices,
+ * sinon tombe en arrière sur le filtre bounding-box lat/lon.
  */
-export async function filterPricesByTerritory(
+export function filterPricesByTerritory(
   prices: OPPrice[],
-  _territoryName: keyof typeof import('./types').DOM_TOM_TERRITORIES
-): Promise<OPPrice[]> {
-  // TODO: Implémenter le geocoding des location_osm_id pour obtenir lat/lon
-  // Pour l'instant, on retourne tous les prix
-  console.warn('filterPricesByTerritory needs geocoding implementation');
-  return prices;
+  territory: Territory,
+  countryCode?: string,
+): OPPrice[] {
+  if (countryCode) {
+    // If country_code was used server-side, all returned prices already belong
+    // to the territory — no additional filtering needed.
+    return prices;
+  }
+
+  // Fallback: bounding box filter (requires lat/lon on OPPrice items)
+  return prices.filter((price) => {
+    const lat = (price as OPPrice & { lat?: number }).lat;
+    const lon = (price as OPPrice & { lon?: number }).lon;
+    if (lat === undefined || lon === undefined) return true; // cannot filter, keep all
+    return isInTerritory(lat, lon, territory);
+  });
 }
 
 /**
- * Synchronise les prix pour un territoire
+ * Synchronise les prix pour un territoire DOM-TOM spécifique.
+ * Utilise le country_code ISO 3166-1 pour filtrer à la source.
  */
 export async function syncPricesForTerritory(
   territory: Territory
@@ -168,22 +213,53 @@ export async function syncPricesForTerritory(
   };
 
   try {
-    // Récupérer les prix récents (derniers 7 jours)
+    // Resolve country code for this territory
+    const normalizedKey = territory.name.toLowerCase()
+      .replace('é', 'e').replace('è', 'e').replace('î', 'i')
+      .replace(/[\s-]/g, '_');
+    const countryCode = TERRITORY_KEY_TO_COUNTRY_CODE[normalizedKey]
+      ?? TERRITORY_KEY_TO_COUNTRY_CODE[territory.name.toLowerCase()]
+      ?? undefined;
+
+    // Récupérer les prix récents (derniers 7 jours) filtrés par territory
     const since = new Date();
     since.setDate(since.getDate() - 7);
     
-    const recentPrices = await getRecentPrices(since, { limit: 1000 });
+    const recentPrices = await getRecentPrices(
+      since,
+      { limit: 1000 },
+      countryCode,
+    );
     
     result.itemsProcessed = recentPrices.length;
 
-    // TODO: Implémenter le filtrage par territoire et la sauvegarde en base
-    // Pour l'instant, on log juste
-    console.log(`Synced ${recentPrices.length} prices for territory ${territory.name}`);
+    if (recentPrices.length > 0) {
+      // Apply bounding-box secondary filter for accuracy
+      const filtered = filterPricesByTerritory(recentPrices, territory, countryCode);
+      result.itemsAdded = filtered.length;
+      result.itemsSkipped = recentPrices.length - filtered.length;
+
+      // Emit a custom event so any price listener / IndexedDB writer can pick up
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('akiprisaye:price-feed', {
+          detail: {
+            territory: territory.name,
+            countryCode,
+            prices: filtered,
+            syncedAt: new Date().toISOString(),
+          },
+        }));
+      }
+    }
 
     result.success = true;
-    result.itemsAdded = recentPrices.length;
+    console.info(
+      `[OpenPrices] Synced territory "${territory.name}" (${countryCode ?? 'no country code'}): ` +
+      `${result.itemsAdded} prices added, ${result.itemsSkipped} skipped out of ${result.itemsProcessed} fetched`
+    );
   } catch (error) {
     result.errors.push(error instanceof Error ? error.message : 'Unknown error');
+    console.error(`[OpenPrices] Sync failed for territory "${territory.name}":`, error);
   }
 
   result.endTime = new Date();
@@ -268,9 +344,10 @@ export async function getLocations(): Promise<any[]> {
 }
 
 /**
- * Synchronise un produit spécifique avec ses prix récents
+ * Synchronise un produit spécifique avec ses prix récents.
+ * Optionnellement filtré par territoire (country_code ISO 3166-1).
  */
-export async function syncProductPrices(ean: string): Promise<SyncResult> {
+export async function syncProductPrices(ean: string, countryCode?: string): Promise<SyncResult> {
   const startTime = new Date();
   const result: SyncResult = {
     success: false,
@@ -285,17 +362,31 @@ export async function syncProductPrices(ean: string): Promise<SyncResult> {
   };
 
   try {
-    const prices = await getPricesByProduct(ean);
+    const prices = await getPricesByProduct(ean, countryCode);
     
     result.itemsProcessed = prices.length;
-
-    // TODO: Implémenter la sauvegarde des prix en base
-    console.log(`Found ${prices.length} prices for product ${ean}`);
-
-    result.success = true;
     result.itemsAdded = prices.length;
+    result.success = true;
+
+    // Emit feed event so price listeners / IndexedDB writers can react
+    if (typeof window !== 'undefined' && prices.length > 0) {
+      window.dispatchEvent(new CustomEvent('akiprisaye:price-feed', {
+        detail: {
+          ean,
+          countryCode,
+          prices,
+          syncedAt: new Date().toISOString(),
+        },
+      }));
+    }
+
+    console.info(
+      `[OpenPrices] Product "${ean}" sync: ${prices.length} prices ` +
+      `(territory: ${countryCode ?? 'all'})`
+    );
   } catch (error) {
     result.errors.push(error instanceof Error ? error.message : 'Unknown error');
+    console.error(`[OpenPrices] syncProductPrices failed for "${ean}":`, error);
   }
 
   result.endTime = new Date();
@@ -312,6 +403,7 @@ export const openPricesService = {
   getPricesByLocation,
   getRecentPrices,
   syncPricesForTerritory,
+  filterPricesByTerritory,
   fullSync,
   getLocations,
   syncProductPrices,

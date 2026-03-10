@@ -78,29 +78,85 @@ const openPricesProvider: PriceProvider = {
     }
 
     try {
-      const params = new URLSearchParams();
-      if (input.barcode) params.set('code', input.barcode);
-      if (input.query) params.set('q', input.query);
-      const url = `${OPEN_PRICES_ENDPOINT}/prices?${params.toString()}`;
-      const data = await fetchJson<{
+      let data: {
         items?: Array<{
           price: number;
           currency?: string;
           unit?: string;
           product_name?: string;
           observed_at?: string;
+          observedAt?: string;
+          price_per?: string;
         }>;
-      }>(url, signal);
+        observations?: Array<{
+          price: number;
+          currency?: string;
+          unit?: string;
+          observedAt?: string;
+        }>;
+      };
 
+      if (input.barcode) {
+        // Route through Cloudflare proxy (/api/open-prices/by-barcode) when we have a barcode.
+        // This provides: Cloudflare edge caching + territory (country_code) server-side filtering.
+        const proxyParams = new URLSearchParams({
+          barcode: input.barcode,
+          pageSize: '50',
+        });
+        if (input.territory) {
+          proxyParams.set('territory', input.territory.toLowerCase());
+        }
+        const proxyUrl = `/api/open-prices/by-barcode?${proxyParams.toString()}`;
+        const proxyResp = await fetch(proxyUrl, { signal });
+        if (proxyResp.ok) {
+          const proxyData = await proxyResp.json() as {
+            status?: string;
+            observations?: Array<{ price: number; currency?: string; unit?: string; observedAt?: string }>;
+          };
+          if (proxyData.status === 'OK' && Array.isArray(proxyData.observations)) {
+            const observations: PriceObservation[] = proxyData.observations
+              .filter((obs) => typeof obs.price === 'number' && obs.price > 0)
+              .map((obs) => ({
+                source: 'open_prices',
+                price: obs.price,
+                currency: 'EUR',
+                unit: (obs.unit === 'kg' || obs.unit === 'l') ? obs.unit : 'unit',
+                observedAt: obs.observedAt,
+              }));
+            if (observations.length === 0) {
+              warnings.push('Aucun prix Open Prices trouvé pour cette requête.');
+            }
+            return { observations, warnings, provider: 'open_prices' };
+          }
+        }
+        // Fallback: direct API call if proxy fails
+        const params = new URLSearchParams({ product_code: input.barcode });
+        if (input.territory) params.set('country_code', input.territory.toLowerCase());
+        const url = `${OPEN_PRICES_ENDPOINT}/prices?${params.toString()}`;
+        data = await fetchJson<typeof data>(url, signal);
+      } else {
+        // Text search — direct API call with optional territory
+        const params = new URLSearchParams();
+        if (input.query) params.set('q', input.query);
+        if (input.territory) params.set('country_code', input.territory.toLowerCase());
+        const url = `${OPEN_PRICES_ENDPOINT}/prices?${params.toString()}`;
+        data = await fetchJson<typeof data>(url, signal);
+      }
+
+      const rawItems = data.items ?? [];
       const observations: PriceObservation[] =
-        data.items?.map((item) => ({
-          source: 'open_prices',
-          productName: item.product_name,
-          price: item.price,
-          currency: 'EUR',
-          unit: item.unit === 'kg' || item.unit === 'l' ? item.unit : 'unit',
-          observedAt: item.observed_at,
-        })) ?? [];
+        rawItems
+          .filter((item) => typeof item.price === 'number' && item.price > 0)
+          .map((item) => ({
+            source: 'open_prices',
+            productName: item.product_name,
+            price: item.price,
+            currency: 'EUR',
+            unit: (item.price_per === 'KILOGRAM' || item.unit === 'kg') ? 'kg'
+              : (item.price_per === 'LITER' || item.unit === 'l') ? 'l'
+              : 'unit',
+            observedAt: item.observed_at ?? item.observedAt,
+          }));
 
       if (observations.length === 0) {
         warnings.push('Aucun prix Open Prices trouvé pour cette requête.');

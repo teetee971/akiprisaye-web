@@ -223,7 +223,9 @@ async function fetchRealtimePrices(
   signal?: AbortSignal,
 ): Promise<AggregatedPrice[]> {
   try {
-    const res = await fetchWithTimeout('/api/prices/realtime', signal);
+    // Pass ean + territory so the endpoint filters server-side on OpenPrices
+    const params = new URLSearchParams({ ean, territory });
+    const res = await fetchWithTimeout(`/api/prices/realtime?${params.toString()}`, signal);
     if (!res.ok) return [];
     const payload = await res.json() as {
       items?: Array<{
@@ -233,21 +235,23 @@ async function fetchRealtimePrices(
         price?: number;
         source?: string;
         observedAt?: string | null;
+        isDiscounted?: boolean;
+        locationId?: string;
       }>;
     };
     if (!Array.isArray(payload.items)) return [];
     return payload.items
       .filter((item) => {
-        const matchesEan = item.productId === ean;
-        const matchesTerritory = !territory || item.territory?.toLowerCase() === territory.toLowerCase();
+        const matchesEan = !item.productId || item.productId === ean;
+        const matchesTerritory = !territory || !item.territory || item.territory.toLowerCase() === territory.toLowerCase();
         return matchesEan && matchesTerritory && typeof item.price === 'number' && item.price > 0;
       })
       .map((item, i) => ({
         id: `rt-${i}`,
-        merchant: item.source ?? 'Prix temps réel',
+        merchant: item.locationId ? `Magasin #${item.locationId}` : (item.source ?? 'Prix temps réel'),
         price: item.price as number,
         currency: 'EUR',
-        isPromo: false,
+        isPromo: item.isDiscounted === true,
         observedAt: item.observedAt ?? new Date().toISOString(),
         source: 'realtime' as PriceSource,
         reliability: 0.85,

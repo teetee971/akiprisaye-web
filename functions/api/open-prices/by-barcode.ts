@@ -66,7 +66,7 @@ export const onRequestGet: PagesFunction = async ({ request }) => {
   const url = new URL(request.url);
 
   const barcode = (url.searchParams.get('barcode') ?? '').trim();
-  const territory = (url.searchParams.get('territory') ?? '').trim() as TerritoryCode | '';
+  const territory = (url.searchParams.get('territory') ?? '').trim().toLowerCase() as TerritoryCode | '';
   const pageSize = Math.min(100, Math.max(1, Number(url.searchParams.get('pageSize') ?? '30')));
 
   if (!barcode) {
@@ -77,13 +77,19 @@ export const onRequestGet: PagesFunction = async ({ request }) => {
   }
 
   const upstreamBase = 'https://prices.openfoodfacts.org';
-  const upstreamUrl =
-    `${upstreamBase}/api/v1/prices?` +
-    new URLSearchParams({
-      product_code: barcode,
-      page_size: String(pageSize),
-      ordering: '-date',
-    }).toString();
+
+  // Build upstream params — include country_code when territory is specified
+  // so OpenPrices filters server-side instead of returning global results
+  const upstreamParams = new URLSearchParams({
+    product_code: barcode,
+    page_size: String(pageSize),
+    ordering: '-date',
+  });
+  if (territory) {
+    upstreamParams.set('country_code', territory);
+  }
+
+  const upstreamUrl = `${upstreamBase}/api/v1/prices?${upstreamParams.toString()}`;
 
   const cache = caches.default;
   const cacheKey = new Request(upstreamUrl, { method: 'GET' });
@@ -92,7 +98,7 @@ export const onRequestGet: PagesFunction = async ({ request }) => {
   if (!response) {
     response = await fetch(upstreamUrl, {
       headers: {
-        'User-Agent': 'A-KI-PRI-SA-YE (contact: support@yourdomain.tld)',
+        'User-Agent': 'AkiPriSaYe/1.0 (contact: contact@akiprisaye.fr)',
         Accept: 'application/json',
       },
     });
