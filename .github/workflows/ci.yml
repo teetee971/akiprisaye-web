@@ -21,7 +21,9 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version-file: .nvmrc
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Validate frontend package-lock.json (must be valid JSON)
         working-directory: frontend
@@ -37,12 +39,6 @@ jobs:
           test -f frontend/package-lock.json && echo OK_LOCK || (echo MISSING_LOCK && exit 1)
           node -e "const p=require('./frontend/package-lock.json'); console.log('lockfileVersion', p.lockfileVersion);"
           sha256sum frontend/package-lock.json || shasum -a 256 frontend/package-lock.json
-
-      - name: Clean npm cache
-        working-directory: ${{ github.workspace }}
-        run: |
-          npm cache verify || true
-          npm cache clean --force || true
 
       - name: Install dependencies
         working-directory: frontend
@@ -61,3 +57,7 @@ jobs:
       - name: Typecheck
         working-directory: frontend
         run: npx tsc -p tsconfig.ci.json --noEmit
+
+      - name: Test
+        working-directory: frontend
+        run: npm run test:ci
