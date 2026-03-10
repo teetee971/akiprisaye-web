@@ -38,6 +38,7 @@ const INNOVATIONS: Innovation[] = [
     impact: 'high',
     tags: ['IA', 'Chat', 'Prix', 'Accessibilité'],
     accentColor: '#6366f1',
+    route: '/assistant-ia',
   },
   {
     id: 'alertes',
@@ -49,6 +50,7 @@ const INNOVATIONS: Innovation[] = [
     impact: 'high',
     tags: ['Notifications', 'IA', 'Panier'],
     accentColor: '#f59e0b',
+    route: '/alertes-prix',
   },
   {
     id: 'scan-ia',
@@ -72,6 +74,7 @@ const INNOVATIONS: Innovation[] = [
     impact: 'high',
     tags: ['Prédiction', 'ML', 'Time-series'],
     accentColor: '#3b82f6',
+    route: '/predictions',
   },
   {
     id: 'bot-whatsapp',
@@ -83,6 +86,7 @@ const INNOVATIONS: Innovation[] = [
     impact: 'high',
     tags: ['WhatsApp', 'Telegram', 'Accessibilité', 'Bot'],
     accentColor: '#10b981',
+    route: '/assistant-ia',
   },
   {
     id: 'heatmap',
@@ -94,6 +98,7 @@ const INNOVATIONS: Innovation[] = [
     impact: 'medium',
     tags: ['Carte', 'Visualisation', 'Géolocalisation'],
     accentColor: '#0ea5e9',
+    route: '/carte-interactive',
   },
   {
     id: 'achats-groupes',
@@ -105,6 +110,7 @@ const INNOVATIONS: Innovation[] = [
     impact: 'high',
     tags: ['Communauté', 'Négociation', 'Marketplace'],
     accentColor: '#f97316',
+    route: '/commerce-social',
   },
   {
     id: 'api-ouverte',
@@ -116,6 +122,7 @@ const INNOVATIONS: Innovation[] = [
     impact: 'medium',
     tags: ['API', 'Open Data', 'Recherche', 'Transparence'],
     accentColor: '#8b5cf6',
+    route: '/portail-developpeurs',
   },
   {
     id: 'extension',
@@ -127,6 +134,7 @@ const INNOVATIONS: Innovation[] = [
     impact: 'high',
     tags: ['Extension', 'E-commerce', 'Navigateur'],
     accentColor: '#ec4899',
+    route: '/portail-developpeurs',
   },
   {
     id: 'score-enseigne',
@@ -138,6 +146,7 @@ const INNOVATIONS: Innovation[] = [
     impact: 'medium',
     tags: ['Avis', 'Score', 'Enseignes', 'Communauté'],
     accentColor: '#fbbf24',
+    route: '/evaluation-magasins',
   },
   {
     id: 'dashboard-mairie',
@@ -149,6 +158,7 @@ const INNOVATIONS: Innovation[] = [
     impact: 'medium',
     tags: ['B2G', 'Mairie', 'Affichage public', 'Kiosque'],
     accentColor: '#64748b',
+    route: '/observatoire',
   },
   {
     id: 'calculateur-octroi',
@@ -184,6 +194,7 @@ const INNOVATIONS: Innovation[] = [
     impact: 'medium',
     tags: ['Gamification', 'Communauté', 'Engagement', 'Badges'],
     accentColor: '#f59e0b',
+    route: '/gamification',
   },
   {
     id: 'mode-offline',
@@ -207,6 +218,7 @@ const INNOVATIONS: Innovation[] = [
     impact: 'high',
     tags: ['OPMR', 'Institutionnel', 'API', 'Officiel'],
     accentColor: '#64748b',
+    route: '/donnees-publiques',
   },
   {
     id: 'analyse-ticket',
@@ -230,6 +242,7 @@ const INNOVATIONS: Innovation[] = [
     impact: 'high',
     tags: ['Audio', 'Podcast', 'Créole', 'Accessibilité', 'TTS'],
     accentColor: '#f43f5e',
+    route: '/lettre-hebdo',
   },
   {
     id: 'medicaments',
@@ -265,6 +278,7 @@ const INNOVATIONS: Innovation[] = [
     impact: 'high',
     tags: ['i18n', 'Créole', 'Tahitien', 'Inclusion', 'Langues'],
     accentColor: '#8b5cf6',
+    route: '/guide-territoire',
   },
   {
     id: 'impact-carbone',
@@ -276,6 +290,7 @@ const INNOVATIONS: Innovation[] = [
     impact: 'medium',
     tags: ['Écologie', 'Carbone', 'ADEME', 'Local', 'Durabilité'],
     accentColor: '#22c55e',
+    route: '/comparateur-citoyen',
   },
   {
     id: 'loyers-immobilier',
@@ -287,6 +302,7 @@ const INNOVATIONS: Innovation[] = [
     impact: 'high',
     tags: ['Logement', 'Loyers', 'ADIL', 'Budget', 'Pouvoir d\'achat'],
     accentColor: '#0ea5e9',
+    route: '/vie-chere',
   },
   {
     id: 'widget-embarquable',
@@ -298,6 +314,7 @@ const INNOVATIONS: Innovation[] = [
     impact: 'medium',
     tags: ['Widget', 'Embed', 'API', 'Médias', 'Associations'],
     accentColor: '#6366f1',
+    route: '/portail-developpeurs',
   },
   {
     id: 'budget-simulateur',
