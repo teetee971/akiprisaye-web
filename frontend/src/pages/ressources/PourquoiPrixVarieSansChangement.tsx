@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 /**
  * Module pédagogique: Pourquoi un prix varie sans que le produit change
@@ -342,18 +343,18 @@ const PourquoiPrixVarieSansChangement: React.FC = () => {
         <div className="bg-slate-900/50 rounded-xl border border-slate-700/50 p-6 mt-6">
           <h3 className="text-lg font-bold text-gray-100 mb-3">📚 Autres ressources pédagogiques</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <a href="/ressources/glossaire-logistique-dom" className="block p-3 bg-blue-950/30 hover:bg-blue-900/40 rounded transition-colors">
+            <Link to="/ressources/glossaire-logistique-dom" className="block p-3 bg-blue-950/30 hover:bg-blue-900/40 rounded transition-colors">
               <span className="font-semibold text-blue-300">Glossaire logistique DOM</span>
-            </a>
-            <a href="/ressources/questions-logistique-dom" className="block p-3 bg-blue-950/30 hover:bg-blue-900/40 rounded transition-colors">
+            </Link>
+            <Link to="/ressources/questions-logistique-dom" className="block p-3 bg-blue-950/30 hover:bg-blue-900/40 rounded transition-colors">
               <span className="font-semibold text-blue-300">Questions fréquentes</span>
-            </a>
-            <a href="/recherche-prix/indice-logistique" className="block p-3 bg-blue-950/30 hover:bg-blue-900/40 rounded transition-colors">
+            </Link>
+            <Link to="/recherche-prix/indice-logistique" className="block p-3 bg-blue-950/30 hover:bg-blue-900/40 rounded transition-colors">
               <span className="font-semibold text-blue-300">Indice Logistique DOM</span>
-            </a>
-            <a href="/recherche-prix/delais-logistiques" className="block p-3 bg-blue-950/30 hover:bg-blue-900/40 rounded transition-colors">
+            </Link>
+            <Link to="/recherche-prix/delais-logistiques" className="block p-3 bg-blue-950/30 hover:bg-blue-900/40 rounded transition-colors">
               <span className="font-semibold text-blue-300">Délais & tensions logistiques</span>
-            </a>
+            </Link>
           </div>
         </div>
 
