@@ -426,3 +426,6 @@ export default function ContactCollectivites() {
           </div>
         </div>
       </GlassContainer>
+    </div>
+  );
+}
