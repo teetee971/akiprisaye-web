@@ -24,6 +24,7 @@ import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
+import { UpgradeGate } from '../components/billing/UpgradeGate';
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 interface Source {
@@ -745,6 +746,8 @@ const ConferenceEau: React.FC = () => {
       {/* Main presentation */}
       <div style={{ maxWidth: 760, margin: '0 auto', padding: '1.5rem 1rem 4rem' }}>
 
+        <UpgradeGate feature="PRICE_HISTORY_ADVANCED">
+
         {/* Progress bar */}
         <div style={{ display: 'flex', gap: '0.3rem', marginBottom: '1.25rem', alignItems: 'center' }}>
           {SLIDES.map((s, i) => (
@@ -872,6 +875,7 @@ const ConferenceEau: React.FC = () => {
             </Link>
           ))}
         </div>
+        </UpgradeGate>
       </div>
     </div>
   );

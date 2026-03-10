@@ -94,6 +94,7 @@ const PLAN_LABEL: Record<PlanId, string> = {
   PRO: 'Pro',
   BUSINESS: 'Business',
   INSTITUTION: 'Institution',
+  CREATOR: 'Créateur',
 };
 
 const PLAN_PRICE: Partial<Record<PlanId, string>> = {

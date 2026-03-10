@@ -19,6 +19,8 @@ import {
 } from 'lucide-react';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
+import { UpgradeGate } from '../components/billing/UpgradeGate';
+import { UpgradeBanner } from '../components/billing/UpgradeBanner';
 
 /* ─── Types ─────────────────────────────────────────────────────────────── */
 
