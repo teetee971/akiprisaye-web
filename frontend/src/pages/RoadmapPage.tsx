@@ -352,7 +352,7 @@ const MODULES: RoadmapModule[] = [
   {
     name: '26. Commerce social',
     description: 'Partagez vos listes de courses et vos recommandations avec vos amis.',
-    status: 'planned',
+    status: 'partial',
     features: [
       { label: 'Partage de liste de courses entre utilisateurs', done: false },
       { label: 'Recommandations produits entre citoyens', done: false },
@@ -375,7 +375,7 @@ const MODULES: RoadmapModule[] = [
   {
     name: '28. Détection de fraude',
     description: "Signalement des hausses de prix inhabituelles ou des anomalies via ML.",
-    status: 'planned',
+    status: 'partial',
     features: [
       { label: 'Signalement manuel abus déjà opérationnel', done: true },
       { label: 'Détection automatique d\'anomalies de prix', done: false },
