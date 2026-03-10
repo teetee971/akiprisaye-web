@@ -14,7 +14,7 @@ const links = [
   { to: '/actualites', label: 'Actualités' },
   { to: '/faq', label: 'FAQ' },
   { to: '/methodologie', label: 'Méthodologie' },
-  { to: '/privacy', label: 'Privacy' },
+  { to: '/privacy', label: 'Transparence' },
   { to: '/contact', label: 'Contact' },
 ];
 

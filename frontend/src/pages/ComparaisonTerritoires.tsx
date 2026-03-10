@@ -293,16 +293,16 @@ export default function ComparaisonTerritoires() {
                 </div>
 
                 <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
+                  <table className="w-full text-sm" style={{ minWidth: '520px' }}>
                     <thead>
                       <tr className="bg-slate-50 dark:bg-slate-700/50 text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">
-                        <th className="text-left px-4 py-3">Territoire</th>
-                        <th className="text-right px-4 py-3">Population</th>
-                        <th className="text-right px-4 py-3">PIB/hab.</th>
-                        <th className="text-right px-4 py-3">Chômage</th>
-                        <th className="text-right px-4 py-3">Pauvreté</th>
-                        <th className="text-right px-4 py-3">Surcoût alim.</th>
-                        <th className="text-right px-4 py-3 pr-5">Accessibilité</th>
+                        <th className="text-left px-3 py-3 sticky left-0 bg-slate-50 dark:bg-slate-800 z-10 min-w-[120px]">Territoire</th>
+                        <th className="text-right px-3 py-3 hidden sm:table-cell">Population</th>
+                        <th className="text-right px-3 py-3 hidden sm:table-cell">PIB/hab.</th>
+                        <th className="text-right px-3 py-3">Chômage</th>
+                        <th className="text-right px-3 py-3 hidden xs:table-cell">Pauvreté</th>
+                        <th className="text-right px-3 py-3">Surcoût alim.</th>
+                        <th className="text-right px-3 py-3 pr-4">Accessibilité</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
@@ -316,41 +316,41 @@ export default function ComparaisonTerritoires() {
                             setExpandedTerritory(expandedTerritory === row.code ? null : row.code)
                           }
                         >
-                          <td className="px-4 py-3">
-                            <div className="flex items-center gap-2">
-                              <span className="text-lg">{row.flag}</span>
-                              <span className="font-medium text-slate-900 dark:text-white">
+                          <td className="px-3 py-3 sticky left-0 bg-white dark:bg-slate-800 z-10">
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-base leading-none">{row.flag}</span>
+                              <span className="font-medium text-slate-900 dark:text-white text-xs sm:text-sm whitespace-nowrap">
                                 {row.label}
                               </span>
                               {expandedTerritory === row.code ? (
-                                <ChevronUp className="w-4 h-4 text-slate-400" />
+                                <ChevronUp className="w-3 h-3 text-slate-400 shrink-0" />
                               ) : (
-                                <ChevronDown className="w-4 h-4 text-slate-400 opacity-50" />
+                                <ChevronDown className="w-3 h-3 text-slate-400 opacity-50 shrink-0" />
                               )}
                             </div>
                           </td>
-                          <td className="px-4 py-3 text-right text-slate-700 dark:text-slate-300">
+                          <td className="px-3 py-3 text-right text-slate-700 dark:text-slate-300 hidden sm:table-cell">
                             {row.eco ? fmt(row.eco.population) : '—'}
                           </td>
-                          <td className="px-4 py-3 text-right font-semibold text-slate-900 dark:text-white">
+                          <td className="px-3 py-3 text-right font-semibold text-slate-900 dark:text-white hidden sm:table-cell">
                             {row.eco ? `${fmt(row.eco.pib_par_habitant_eur)} €` : '—'}
                           </td>
-                          <td className={`px-4 py-3 text-right font-semibold ${row.eco ? colorForChomage(row.eco.taux_chomage_pct) : 'text-slate-400'}`}>
+                          <td className={`px-3 py-3 text-right font-semibold ${row.eco ? colorForChomage(row.eco.taux_chomage_pct) : 'text-slate-400'}`}>
                             {row.eco ? `${row.eco.taux_chomage_pct} %` : '—'}
                           </td>
-                          <td className="px-4 py-3 text-right text-slate-600 dark:text-slate-400">
+                          <td className="px-3 py-3 text-right text-slate-600 dark:text-slate-400 hidden xs:table-cell">
                             {row.eco ? `${row.eco.taux_pauvrete_pct} %` : '—'}
                           </td>
-                          <td className={`px-4 py-3 text-right font-semibold ${row.eco ? colorForSurplus(row.eco.surcout_alimentaire_pct) : 'text-slate-400'}`}>
+                          <td className={`px-3 py-3 text-right font-semibold ${row.eco ? colorForSurplus(row.eco.surcout_alimentaire_pct) : 'text-slate-400'}`}>
                             {row.eco != null
                               ? row.eco.surcout_alimentaire_pct === 0
                                 ? 'réf.'
                                 : pct(row.eco.surcout_alimentaire_pct)
                               : '—'}
                           </td>
-                          <td className={`px-4 py-3 text-right pr-5 font-semibold ${row.affordabilityIndex != null ? colorForSurplus((row.affordabilityIndex - 1) * 100) : 'text-slate-400'}`}>
+                          <td className={`px-3 py-3 text-right pr-4 font-semibold ${row.affordabilityIndex != null ? colorForSurplus((row.affordabilityIndex - 1) * 100) : 'text-slate-400'}`}>
                             {row.affordabilityIndex != null
-                              ? `× ${row.affordabilityIndex.toFixed(2)}`
+                              ? `×\u202f${row.affordabilityIndex.toFixed(2)}`
                               : '—'}
                           </td>
                         </tr>

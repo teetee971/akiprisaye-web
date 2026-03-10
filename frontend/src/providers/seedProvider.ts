@@ -80,21 +80,36 @@ function buildResultFromSeedProduct(product: SeedProduct | null, input: PriceSea
   }
 
   const observations = buildSeedObservations(product, input);
-  if (observations.length === 0) {
+  if (observations.length > 0) {
     return {
       source: 'open_prices',
-      status: 'NO_DATA',
-      observations: [],
-      warnings: ['Aucune observation seed pour ce territoire.'],
+      status: 'OK',
+      observations,
+      warnings: [],
+      productName: product.name,
+    };
+  }
+
+  // Territory-specific search returned nothing: fall back to all territories
+  // so the user still sees indicative prices instead of a blank page.
+  const allObservations = buildSeedObservations({ ...product }, { ...input, territory: undefined });
+  if (allObservations.length > 0) {
+    return {
+      source: 'open_prices',
+      status: 'OK',
+      observations: allObservations,
+      warnings: [
+        `Prix non encore relevés pour ce territoire. Données indicatives d'autres territoires affichées.`,
+      ],
       productName: product.name,
     };
   }
 
   return {
     source: 'open_prices',
-    status: 'OK',
-    observations,
-    warnings: [],
+    status: 'NO_DATA',
+    observations: [],
+    warnings: ['Aucune observation seed pour ce territoire.'],
     productName: product.name,
   };
 }

@@ -16,6 +16,7 @@ import { getProductImageFallback } from '../utils/productImageFallback';
 import { safeLocalStorage } from '../utils/safeLocalStorage';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
+import { getPreferredTerritory } from '../utils/userPreferences';
 
 const TERRITORIES: { code: TerritoryCode; label: string }[] = [
   { code: 'fr', label: 'France (métropole)' },
