@@ -678,24 +678,62 @@ function getCurrency(code: CountryCode): CurrencyCode {
   return currencies[code] || 'EUR';
 }
 
+// ─── Live exchange rates cache ─────────────────────────────────────────────────
+// Populated by fetchLiveRates() on first use; falls back to static values.
+let _liveRatesCache: { rates: Record<string, number>; fetchedAt: number } | null = null;
+const LIVE_RATES_TTL_MS = 3_600_000; // 1h
+
+/**
+ * Kick off a background fetch of live exchange rates from /api/exchange-rates.
+ * Results are stored in the module-level cache and used by getExchangeRate().
+ */
+export async function prefetchExchangeRates(): Promise<void> {
+  try {
+    const res = await fetch('/api/exchange-rates?base=EUR&symbols=USD,GBP,JPY,CHF,CAD,AUD,XOF,XAF', {
+      signal: AbortSignal.timeout(8_000),
+    });
+    if (!res.ok) return;
+    const data = await res.json() as { base: string; rates: Record<string, number> };
+    if (data?.rates) {
+      _liveRatesCache = { rates: data.rates, fetchedAt: Date.now() };
+    }
+  } catch {
+    // Silently fall through — getExchangeRate will use static fallback
+  }
+}
+
 function getExchangeRate(from: CurrencyCode, to: CurrencyCode): number {
   if (from === to) return 1;
-  
-  // Mock exchange rates to EUR
-  const toEUR: Record<string, number> = {
-    'EUR': 1,
-    'USD': 0.92,
-    'GBP': 1.16,
-    'JPY': 0.0062,
-    'CHF': 1.05,
-    'CAD': 0.68,
-    'AUD': 0.61
-  };
-  
+
+  // Use live rates if available and fresh
+  const useLive =
+    _liveRatesCache !== null &&
+    Date.now() - _liveRatesCache.fetchedAt < LIVE_RATES_TTL_MS;
+
+  // Rates vs EUR from live cache or static fallback
+  const toEUR: Record<string, number> = useLive
+    ? Object.fromEntries(
+        Object.entries(_liveRatesCache!.rates).map(([k, v]) => [k, v === 0 ? 1 : 1 / v]),
+      )
+    : {
+        EUR: 1,
+        USD: 0.92,
+        GBP: 1.16,
+        JPY: 0.0062,
+        CHF: 1.05,
+        CAD: 0.68,
+        AUD: 0.61,
+        XOF: 0.00152,
+        XAF: 0.00152,
+      };
+  // The live cache stores rates in terms of "how many X per 1 EUR", so X→EUR = 1/rate.
+  // Add EUR itself
+  toEUR['EUR'] = 1;
+
   if (to === 'EUR' && from in toEUR) {
     return toEUR[from];
   }
-  
+
   // For other conversions, go through EUR
   const fromToEUR = toEUR[from] || 1;
   const toToEUR = toEUR[to] || 1;

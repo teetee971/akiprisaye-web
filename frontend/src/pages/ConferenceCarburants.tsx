@@ -251,6 +251,17 @@ function ChaineSlide() {
 
 // ─── Slide 3 — Marché mondial du brut ───────────────────────────────────────────
 function BrutSlide() {
+  const [eurusd, setEurusd] = useState<number | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    fetch('/api/exchange-rates?base=EUR&symbols=USD', { signal: AbortSignal.timeout(6_000) })
+      .then((r) => r.ok ? r.json() : null)
+      .then((d) => { if (mounted && d?.rates?.USD) setEurusd(d.rates.USD); })
+      .catch(() => {});
+    return () => { mounted = false; };
+  }, []);
+
   // Brent spot monthly data — source: EIA (US Energy Information Administration)
   // https://www.eia.gov/dnav/pet/hist/RBRTEd.htm
   // Key inflection points (month index from Jan 2020, $/bbl):
@@ -342,10 +353,17 @@ function BrutSlide() {
           </p>
         </div>
         <div style={card({ borderLeft: '3px solid #60a5fa', padding: '0.75rem 0.9rem' })}>
-          <p style={{ margin: '0 0 0.3rem', fontSize: '0.8rem', color: '#60a5fa', fontWeight: 700 }}>💱 Effet Dollar/Euro</p>
+          <p style={{ margin: '0 0 0.3rem', fontSize: '0.8rem', color: '#60a5fa', fontWeight: 700 }}>
+            💱 Effet Dollar/Euro
+            {eurusd != null && (
+              <span style={{ marginLeft: '0.5rem', fontSize: '0.72rem', background: 'rgba(96,165,250,0.12)', border: '1px solid rgba(96,165,250,0.35)', borderRadius: 6, padding: '1px 6px', color: '#93c5fd' }}>
+                1 € = {eurusd.toFixed(4)} $
+              </span>
+            )}
+          </p>
           <p style={{ margin: 0, fontSize: '0.72rem', color: '#94a3b8', lineHeight: 1.55 }}>
             Le brut est coté en USD. Une appréciation du dollar de 10 % ajoute environ +4 à +6 % au coût CIF
-            pour les acheteurs européens. En 2022 (parité EUR/USD = 1), l'impact était majeur.
+            pour les acheteurs européens.{eurusd != null ? ` Taux actuel : 1 EUR = ${eurusd.toFixed(4)} USD.` : ' En 2022 (parité EUR/USD = 1), l\'impact était majeur.'}
           </p>
         </div>
       </div>
