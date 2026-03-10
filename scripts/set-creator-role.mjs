@@ -19,10 +19,22 @@
  *        Console Firebase → Paramètres du projet ⚙️ → Comptes de service
  *        → Compte : firebase-adminsdk-fbsvc@a-ki-pri-sa-ye.iam.gserviceaccount.com
  *        → Bouton "Générer une nouvelle clé privée" → confirmer → télécharger le JSON
- *        → placer le fichier à la racine du projet sous l'un des noms ci-dessous
+ *        → renommer le fichier en serviceAccountKey.json
+ *        → le placer dans la RACINE du dépôt (voir arbre ci-dessous)
  *
  *     🔗 Lien direct :
  *        https://console.firebase.google.com/project/a-ki-pri-sa-ye/settings/serviceaccounts/adminsdk
+ *
+ *     📁 OÙ PLACER LE FICHIER — arborescence du dépôt :
+ *
+ *        akiprisaye-web/                  ← dossier cloné (racine du projet)
+ *        ├── firebase.json
+ *        ├── firestore.rules
+ *        ├── package.json
+ *        ├── serviceAccountKey.json       ← 👈 PLACER LE FICHIER ICI
+ *        ├── frontend/
+ *        └── scripts/
+ *            └── set-creator-role.mjs    ← ce script
  *
  *     ⚠️  Ne commitez JAMAIS ce fichier JSON — il est dans .gitignore
  *

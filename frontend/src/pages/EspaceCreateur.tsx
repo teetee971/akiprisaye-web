@@ -86,7 +86,8 @@ const SETUP_STEPS: Step[] = [
   {
     num: 3,
     title: 'Téléchargez la clé Admin Firebase',
-    detail: 'Compte de service : firebase-adminsdk-fbsvc@a-ki-pri-sa-ye.iam.gserviceaccount.com → Cliquez "Générer une nouvelle clé privée" → renommez le fichier JSON en serviceAccountKey.json et placez-le à la racine du projet. ⚠️ Ne commitez jamais ce fichier.',
+    detail: 'Compte de service : firebase-adminsdk-fbsvc@a-ki-pri-sa-ye.iam.gserviceaccount.com → Cliquez "Générer une nouvelle clé privée" → renommez le fichier JSON en serviceAccountKey.json → placez-le à la RACINE du dépôt (même dossier que firebase.json et package.json) ⚠️ Ne commitez jamais ce fichier.',
+    code: 'akiprisaye-web/\n├── firebase.json\n├── package.json\n├── serviceAccountKey.json   ← 👈 ICI\n├── frontend/\n└── scripts/',
     link: { label: 'Firebase Console → Comptes de service →', href: 'https://console.firebase.google.com/project/a-ki-pri-sa-ye/settings/serviceaccounts/adminsdk' },
   },
   {
