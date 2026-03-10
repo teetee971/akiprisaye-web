@@ -282,6 +282,9 @@ export default function RoadmapPage() {
           name="description"
           content="Feuille de route, architecture technique, modules, stratégie IA et conformité — A KI PRI SA YÉ"
         />
+              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/roadmap" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/roadmap" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/roadmap" />
       </Helmet>
 
       <div className="min-h-screen bg-gray-50">

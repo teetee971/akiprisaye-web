@@ -35,6 +35,9 @@ export default function ObservatoireHub() {
       <Helmet>
         <title>Observatoire des Prix — DOM-TOM · A KI PRI SA YÉ</title>
         <meta name="description" content="Données citoyennes transparentes, relevés terrain vérifiés et comparaisons territoriales en temps réel dans les DOM-TOM." />
+        <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/observatoire" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/observatoire" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/observatoire" />
       </Helmet>
       
       <div className="min-h-screen bg-slate-950 p-3 sm:p-4 pt-20 sm:pt-24">

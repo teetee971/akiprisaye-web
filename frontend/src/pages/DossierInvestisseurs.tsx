@@ -80,6 +80,9 @@ export default function DossierInvestisseurs() {
           name="description"
           content="Dossier investisseurs complet A KI PRI SA YÉ : observatoire des prix ultramarins, modèle économique, technologie, stratégie de déploiement."
         />
+              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/dossier-investisseurs" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/dossier-investisseurs" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/dossier-investisseurs" />
       </Helmet>
 
       {/* Header */}

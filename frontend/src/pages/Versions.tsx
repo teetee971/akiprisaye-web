@@ -94,6 +94,9 @@ export default function Versions() {
       <Helmet>
         <title>Versions — A KI PRI SA YÉ</title>
         <meta name="description" content="Historique complet des versions de l'application A KI PRI SA YÉ. Traçabilité des données et des fonctionnalités publiées." />
+              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/versions" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/versions" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/versions" />
       </Helmet>
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       <HeroImage

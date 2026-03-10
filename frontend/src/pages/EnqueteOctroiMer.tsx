@@ -127,6 +127,9 @@ const EnqueteOctroiMer: React.FC = () => {
           name="description"
           content="Dossier d'investigation complet sur l'octroi de mer : 350 ans d'histoire, mécanisme juridique européen, taux par territoire et catégorie, impact sur les prix, financement des collectivités DOM-TOM."
         />
+              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/enquete-octroi-mer" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/enquete-octroi-mer" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/enquete-octroi-mer" />
       </Helmet>
 
       <div className="max-w-5xl mx-auto px-4 pb-16 pt-6">

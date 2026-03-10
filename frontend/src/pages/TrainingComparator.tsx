@@ -143,6 +143,9 @@ const TrainingComparator: React.FC = () => {
       <Helmet>
         <title>Comparateur Formations DOM-TOM — A KI PRI SA YÉ</title>
         <meta name="description" content="Comparez les formations professionnelles et certifiantes dans les DOM-TOM. Trouvez la formation qui mène à l'emploi." />
+              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/comparateur-formations" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/comparateur-formations" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/comparateur-formations" />
       </Helmet>
       {/* Hero Section */}
       <div className="max-w-7xl mx-auto px-4 pt-6 pb-2">

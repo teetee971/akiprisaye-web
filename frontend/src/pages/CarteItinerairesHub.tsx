@@ -13,6 +13,9 @@ export default function CarteItinerairesHub() {
       <Helmet>
         <title>Carte & Itinéraires - A KI PRI SA YÉ</title>
         <meta name="description" content="Trouvez les magasins près de chez vous et optimisez vos trajets" />
+              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/carte-itineraires" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/carte-itineraires" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/carte-itineraires" />
       </Helmet>
       
       <div className="min-h-screen bg-slate-950 p-4 pt-24">

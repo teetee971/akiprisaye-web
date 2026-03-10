@@ -91,6 +91,9 @@ export default function TerritoryCoverageReport() {
           name="description"
           content="État de couverture des données de prix par territoire, catégorie et enseigne."
         />
+              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/couverture-territoires" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/couverture-territoires" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/couverture-territoires" />
       </Helmet>
 
       <div className="min-h-screen bg-slate-50 dark:bg-slate-900 py-8">

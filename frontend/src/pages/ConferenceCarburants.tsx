@@ -843,6 +843,9 @@ export default function ConferenceCarburants() {
           name="description"
           content="Conférence expert-niveau : anatomie complète du prix des carburants dans les DOM-TOM. 9 diapositives avec données officielles DGEC, IEDOM, INSEE, EIA, OPEC. Brent, SARA, fiscalité, prix plafonnés, comparaison mondiale."
         />
+              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/conference-carburants" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/conference-carburants" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/conference-carburants" />
       </Helmet>
 
       <div style={{ maxWidth: 760, margin: '0 auto' }}>

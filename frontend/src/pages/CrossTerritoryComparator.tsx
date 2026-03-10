@@ -100,6 +100,9 @@ export default function CrossTerritoryComparator() {
       <Helmet>
         <title>Comparateur inter-territoires — A KI PRI SA YÉ</title>
         <meta name="description" content="Comparez les prix du même produit dans tous les DROM-COM et en France métropolitaine." />
+              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/comparateur-territoires" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/comparateur-territoires" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/comparateur-territoires" />
       </Helmet>
 
       <div className="min-h-screen bg-slate-50 dark:bg-slate-900 py-8">

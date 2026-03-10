@@ -958,6 +958,9 @@ export default function RechercheProduits() {
           name="description"
           content="Recherche multi-sources de prix observés, normalisés et contextualisés pour la France et les DOM."
         />
+              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/recherche-produits" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/recherche-produits" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/recherche-produits" />
       </Helmet>
 
       <HeroImage

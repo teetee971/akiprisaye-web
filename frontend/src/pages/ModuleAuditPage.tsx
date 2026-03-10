@@ -1296,6 +1296,9 @@ export default function ModuleAuditPage() {
           name="description"
           content="Audit complet de l'implémentation de tous les modules de la plateforme A KI PRI SA YÉ — statuts, fonctionnalités, couverture."
         />
+              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/module-audit" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/module-audit" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/module-audit" />
       </Helmet>
 
       <HeroImage

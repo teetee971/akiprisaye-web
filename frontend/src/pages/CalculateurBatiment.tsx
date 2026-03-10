@@ -2300,6 +2300,9 @@ export default function CalculateurBatiment() {
       <Helmet>
         <title>Calculateur du Bâtiment — A KI PRI SA YÉ</title>
         <meta name="description" content="Calculez parpaings, dalle béton, peinture, carrelage. Trouvez où acheter vos matériaux en DOM-TOM avec comparatif de prix par magasin." />
+              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/calculateur-batiment" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/calculateur-batiment" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/calculateur-batiment" />
       </Helmet>
 
       <div className="min-h-screen bg-slate-950 text-white">

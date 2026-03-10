@@ -229,6 +229,9 @@ export default function ChecklistProduction() {
           name="description"
           content="Liste de vérification des tâches avant mise en production — sécurité, performance, conformité, accessibilité et déploiement."
         />
+              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/checklist-prod" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/checklist-prod" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/checklist-prod" />
       </Helmet>
 
       <div className="min-h-screen bg-gray-50">

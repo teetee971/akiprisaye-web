@@ -275,7 +275,10 @@ const BoatComparator: React.FC = () => {
         <Helmet>
           <title>Comparateur Bateaux / Ferries — A KI PRI SA YÉ</title>
           <meta name="description" content="Comparez les prix des traversées inter-îles en Antilles, transport de véhicules et passagers." />
-        </Helmet>
+                <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/comparateur-bateaux" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/comparateur-bateaux" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/comparateur-bateaux" />
+      </Helmet>
         {heroSection}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="space-y-6">

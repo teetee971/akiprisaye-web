@@ -265,6 +265,9 @@ export default function ComparateursHub() {
       <Helmet>
         <title>Comparateurs de prix – A KI PRI SA YÉ</title>
         <meta name="description" content="Comparez les prix entre enseignes, au kilo, avec la métropole. Accédez à tous les comparateurs spécialisés." />
+              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/comparateurs" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/comparateurs" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/comparateurs" />
       </Helmet>
 
       <div className="min-h-screen bg-slate-950 p-3 sm:p-4 pt-20 sm:pt-24">

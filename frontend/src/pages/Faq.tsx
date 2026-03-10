@@ -56,6 +56,9 @@ export default function Faq() {
         <meta name="description" content="Questions fréquentes sur A KI PRI SA YÉ : transparence des prix, données, abonnements, technique et conformité institutionnelle." />
         <meta property="og:title" content="FAQ – A KI PRI SA YÉ" />
         <meta property="og:description" content="Tout ce que vous devez savoir sur A KI PRI SA YÉ, l'application citoyenne de transparence des prix Outre-mer." />
+              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/faq" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/faq" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/faq" />
       </Helmet>
       <div className="max-w-6xl mx-auto px-4 pb-4 animate-fade-in">
         <HeroImage

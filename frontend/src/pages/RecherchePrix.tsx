@@ -111,6 +111,9 @@ export default function RecherchePrix() {
           name="description" 
           content="Point d'entrée unique pour rechercher, scanner et comparer les prix. Recherche par nom, code-barres, photo produit ou ticket de caisse." 
         />
+              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/recherche-prix" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/recherche-prix" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/recherche-prix" />
       </Helmet>
 
       <div className="min-h-screen bg-slate-950 dark:bg-slate-900 pt-20 pb-12 px-4">

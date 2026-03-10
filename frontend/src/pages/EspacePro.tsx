@@ -342,6 +342,9 @@ export default function EspacePro() {
       <Helmet>
         <title>Espace Pro – {profile.raisonSociale} – A KI PRI SA YÉ</title>
         <meta name="description" content="Tableau de bord professionnel A KI PRI SA YÉ" />
+              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/espace-pro" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/espace-pro" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/espace-pro" />
       </Helmet>
 
       <div className="min-h-screen bg-slate-950">

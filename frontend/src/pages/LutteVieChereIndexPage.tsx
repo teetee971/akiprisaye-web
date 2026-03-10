@@ -17,6 +17,9 @@ export default function LutteVieChereIndexPage() {
           name="description" 
           content="Ensemble, agissons pour des prix justes dans les territoires d'Outre-mer" 
         />
+              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/vie-chere" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/vie-chere" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/vie-chere" />
       </Helmet>
       <HeroImage
         src={PAGE_HERO_IMAGES.lutteVieChere}

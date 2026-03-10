@@ -159,6 +159,9 @@ const CarRentalComparator: React.FC = () => {
       <Helmet>
         <title>Comparateur Location Voiture DOM-TOM — A KI PRI SA YÉ</title>
         <meta name="description" content="Comparez les prix de location de voiture dans les DOM-TOM : agences internationales et locales. Données observatoire citoyens." />
+              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/comparateur-location-voiture" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/comparateur-location-voiture" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/comparateur-location-voiture" />
       </Helmet>
       <div className="max-w-7xl mx-auto px-4 pb-12 pt-6">
         {/* Hero Banner */}

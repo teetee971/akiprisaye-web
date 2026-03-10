@@ -202,6 +202,9 @@ const EnqueteCarburants: React.FC = () => {
           name="description"
           content="Dossier d'investigation complet : d'où vient le prix du carburant dans les Outre-mer ? Pétrole brut, raffinage, taxes, marges, prix plafonnés. Tout expliqué de A à Z."
         />
+              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/enquete-carburants" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/enquete-carburants" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/enquete-carburants" />
       </Helmet>
 
       <div className="max-w-5xl mx-auto px-4 pb-16 pt-6">

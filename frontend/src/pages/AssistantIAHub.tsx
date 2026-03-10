@@ -17,6 +17,9 @@ export default function AssistantIAHub() {
       <Helmet>
         <title>Assistant IA - A KI PRI SA YÉ</title>
         <meta name="description" content="Assistant intelligent pour optimiser vos achats et votre budget" />
+              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/assistant-ia" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/assistant-ia" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/assistant-ia" />
       </Helmet>
       
       <div className="min-h-screen bg-slate-950 p-4 pt-24">

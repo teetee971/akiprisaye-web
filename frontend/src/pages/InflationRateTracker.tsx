@@ -209,6 +209,9 @@ export default function InflationRateTracker() {
           name="description"
           content="Taux d'inflation mensuel et annuel par catégorie de produit et par territoire DROM-COM, calculé sur les relevés de prix réels."
         />
+              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/inflation-categories" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/inflation-categories" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/inflation-categories" />
       </Helmet>
 
       <div className="min-h-screen bg-slate-50 dark:bg-slate-900 py-8">

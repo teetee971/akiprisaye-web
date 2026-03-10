@@ -202,6 +202,9 @@ const FreightComparator: React.FC = () => {
           name="description"
           content="Comparez les prix des transporteurs pour vos envois vers l'Outre-mer. Transparence totale sur l'octroi de mer et les frais cachés."
         />
+              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/comparateur-fret" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/comparateur-fret" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/comparateur-fret" />
       </Helmet>
 
       <div className="min-h-screen bg-slate-950">

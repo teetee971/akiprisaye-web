@@ -406,7 +406,10 @@ const FlightComparator: React.FC = () => {
         <Helmet>
           <title>Comparateur Vols DOM-Métropole — A KI PRI SA YÉ</title>
           <meta name="description" content="Comparez les prix des billets d'avion entre les DOM, la Métropole et les liaisons inter-îles." />
-        </Helmet>
+                <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/comparateur-vols" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/comparateur-vols" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/comparateur-vols" />
+      </Helmet>
         {heroSection}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="space-y-6">

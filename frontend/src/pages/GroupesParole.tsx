@@ -269,7 +269,10 @@ export default function GroupesParole() {
       <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex flex-col items-center justify-center p-4 gap-6">
         <Helmet>
           <title>Groupes de Parole — A KI PRI SA YÉ</title>
-        </Helmet>
+                <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/groupes-parole" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/groupes-parole" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/groupes-parole" />
+      </Helmet>
         <div className="text-center mb-2">
           <MessageCircle className="w-14 h-14 text-purple-400 mx-auto mb-3" />
           <h1 className="text-2xl font-bold text-white mb-1">Groupes de Parole Citoyens</h1>

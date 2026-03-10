@@ -604,6 +604,9 @@ export default function InscriptionPro() {
       <Helmet>
         <title>Inscription Professionnel – A KI PRI SA YÉ</title>
         <meta name="description" content="Ouvrez un compte professionnel et publiez vos prix sur A KI PRI SA YÉ" />
+              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/inscription-pro" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/inscription-pro" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/inscription-pro" />
       </Helmet>
 
       <HeroImage

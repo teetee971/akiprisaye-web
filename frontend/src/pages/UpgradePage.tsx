@@ -174,6 +174,9 @@ export default function UpgradePage() {
           name="description"
           content="Débloquez l'historique avancé, les alertes prix, le multi-territoires et plus encore."
         />
+              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/upgrade" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/upgrade" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/upgrade" />
       </Helmet>
 
       <HeroImage

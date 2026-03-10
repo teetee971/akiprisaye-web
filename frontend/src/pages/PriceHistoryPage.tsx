@@ -163,6 +163,9 @@ export default function PriceHistoryPage() {
           name="description"
           content="Évolution multi-mois et multi-années des prix dans les DROM-COM, avec filtres par territoire, catégorie et enseigne"
         />
+              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/prix-historique" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/prix-historique" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/prix-historique" />
       </Helmet>
 
       <div className="min-h-screen bg-slate-50 dark:bg-slate-900 py-8">

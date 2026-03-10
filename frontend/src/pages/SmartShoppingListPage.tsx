@@ -17,6 +17,9 @@ export default function SmartShoppingListPage() {
           name="description" 
           content="Créez et optimisez vos listes de courses pour économiser sur vos achats" 
         />
+              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/liste-intelligente" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/liste-intelligente" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/liste-intelligente" />
       </Helmet>
       <div className="space-y-4 pb-24 px-4 pt-4">
         <div className="animate-fade-in">

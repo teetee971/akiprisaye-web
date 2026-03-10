@@ -139,6 +139,9 @@ const BuildingMaterialsComparator: React.FC = () => {
       <Helmet>
         <title>Comparateur Matériaux de Construction – A KI PRI SA YÉ</title>
         <meta name="description" content="Comparez les prix des matériaux de construction (ciment, fer, tôles, bois…) entre les territoires ultramarins et la métropole." />
+              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/comparateur-materiaux-batiment" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/comparateur-materiaux-batiment" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/comparateur-materiaux-batiment" />
       </Helmet>
       <div className="min-h-screen bg-slate-950 text-white">
         <div className="max-w-7xl mx-auto px-4 pb-12 pt-6">

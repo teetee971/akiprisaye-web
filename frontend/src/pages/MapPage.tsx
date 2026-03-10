@@ -44,6 +44,9 @@ export default function MapPage() {
           name="keywords"
           content="carte magasins, DOM-TOM, prix, proximité, heatmap, Guadeloupe, Martinique, Guyane, Réunion, Mayotte"
         />
+              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/carte-interactive" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/carte-interactive" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/carte-interactive" />
       </Helmet>
 
       <div className="h-screen flex flex-col">

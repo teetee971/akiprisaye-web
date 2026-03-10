@@ -362,6 +362,9 @@ const ServiceComparator: React.FC = () => {
       <Helmet>
         <title>Comparateur Télécoms & Services — A KI PRI SA YÉ</title>
         <meta name="description" content="Comparez les abonnements internet, mobile, eau, électricité et tarifs transport dans les DOM-TOM." />
+              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/comparateur-services" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/comparateur-services" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/comparateur-services" />
       </Helmet>
       <div className="max-w-7xl mx-auto px-4">
         {/* Hero Banner */}

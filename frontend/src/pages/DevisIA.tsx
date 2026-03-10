@@ -265,6 +265,9 @@ export default function DevisIA() {
           name="description"
           content="Obtenez une estimation tarifaire pour nos services institutionnels : analyse des prix, études territoriales, audits vie chère."
         />
+              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/devis-ia" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/devis-ia" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/devis-ia" />
       </Helmet>
 
       <div className="min-h-screen bg-gray-50">

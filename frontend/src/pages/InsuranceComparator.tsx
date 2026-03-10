@@ -250,6 +250,9 @@ const InsuranceComparator: React.FC = () => {
       <Helmet>
         <title>Comparateur Assurances DOM-TOM — A KI PRI SA YÉ</title>
         <meta name="description" content="Comparez les assurances auto, habitation et santé dans les DOM-TOM. Données des assureurs officiels." />
+              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/comparateur-assurances" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/comparateur-assurances" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/comparateur-assurances" />
       </Helmet>
       {/* Header */}
       <div className="max-w-7xl mx-auto">

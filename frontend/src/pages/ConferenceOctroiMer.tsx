@@ -803,6 +803,9 @@ export default function ConferenceOctroiMer() {
           name="description"
           content="Conférence institutionnelle ultra-expert : anatomie complète de l'octroi de mer DOM-TOM. 9 diapositives — histoire 1670→2027, architecture juridique UE/TFUE, mécanisme, taux, impact macroéconomique, financement collectivités, scénarios réforme. Sources : DGDDI, EUR-Lex, Cour des Comptes, Autorité de la concurrence."
         />
+              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/conference-octroi-mer" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/conference-octroi-mer" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/conference-octroi-mer" />
       </Helmet>
 
       <div style={{ maxWidth: 760, margin: '0 auto' }}>

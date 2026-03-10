@@ -237,6 +237,9 @@ const FuelComparator: React.FC = () => {
       <Helmet>
         <title>Comparateur Carburants DOM-TOM &mdash; A KI PRI SA Y&Eacute;</title>
         <meta name="description" content="Prix des carburants en direct dans tous les territoires et d\u00e9partements d'outre-mer : SP95, SP98, E10, Diesel, GPL. Donn\u00e9es officielles prix-carburants.gouv.fr." />
+              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/comparateur-carburants" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/comparateur-carburants" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/comparateur-carburants" />
       </Helmet>
 
       <div className="max-w-7xl mx-auto px-4 pb-12 pt-6">

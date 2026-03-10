@@ -230,6 +230,9 @@ export default function ComparaisonTerritoires() {
           name="description"
           content="Tableau de bord macro : indicateurs économiques réels (IEDOM/INSEE) croisés avec les prix alimentaires constatés dans les DROM-COM."
         />
+              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/comparaison-territoires" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/comparaison-territoires" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/comparaison-territoires" />
       </Helmet>
 
       <div className="min-h-screen bg-slate-50 dark:bg-slate-900 py-8">

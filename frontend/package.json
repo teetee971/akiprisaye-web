@@ -18,7 +18,7 @@
     "test:ci": "vitest run --config vitest.config.ts",
     "audit": "npm audit --omit=dev --audit-level=high",
     "audit:ci": "npm audit --omit=dev --audit-level=high",
-    "postbuild": "node -e \"const fs=require('fs');fs.mkdirSync('dist',{recursive:true});fs.copyFileSync('public/_redirects','dist/_redirects');\"",
+    "postbuild": "node -e \"const fs=require('fs');fs.mkdirSync('dist',{recursive:true});fs.copyFileSync('public/_redirects','dist/_redirects');\" && node scripts/prerender-routes.mjs",
     "lint:ci": "cd .. && npm run lint:ci",
     "build:ci": "npm run build"
   },

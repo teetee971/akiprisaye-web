@@ -197,6 +197,9 @@ export default function PriceAlertsPage() {
           name="description"
           content="Recevez une alerte lorsqu'un prix évolue significativement dans votre territoire"
         />
+              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/alertes-prix" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/alertes-prix" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/alertes-prix" />
       </Helmet>
       <div className="min-h-screen bg-slate-50 dark:bg-slate-900 py-8">
         <div className="container mx-auto px-4 max-w-2xl">

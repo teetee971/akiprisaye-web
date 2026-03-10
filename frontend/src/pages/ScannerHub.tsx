@@ -87,7 +87,10 @@ export default function ScannerHub() {
 
   return (
     <>
-      <Helmet><title>Scanner - A KI PRI SA YÉ</title><meta name="description" content="Scanner continu: code-barres avec historique et ajout rapide au panier" /></Helmet>
+      <Helmet><title>Scanner - A KI PRI SA YÉ</title><meta name="description" content="Scanner continu: code-barres avec historique et ajout rapide au panier" />        <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/scanner" />
+        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/scanner" />
+        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/scanner" />
+      </Helmet>
       <div className="min-h-screen bg-slate-950 p-4 pt-24 text-white">
         <section className="mx-auto w-full max-w-4xl rounded-2xl border border-slate-800 bg-slate-900 p-4">
           <p className="mb-4 text-sm text-slate-300">Scan continu actif: caméra en boucle, anti-doublon et ajout rapide au panier.</p>
