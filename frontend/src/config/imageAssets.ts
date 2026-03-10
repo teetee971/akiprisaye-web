@@ -352,6 +352,23 @@ export const PAGE_HERO_IMAGES = {
   comparateurLocationVoiture: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Comparateur Matériaux BTP — construction site */
   comparateurMateriauxBTP: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  // ── Nouvelles pages V3 ───────────────────────────────────────────────────
+  /** Guide intelligent des territoires — tropical map / DOM-COM islands */
+  guideTerritoire: 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  /** Scanner AR de rayon — augmented reality / camera overlay */
+  arScanner: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  /** Chaîne d'approvisionnement — cargo ship at sea */
+  chaineFourniture: 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  /** Commerce social — friends sharing phone / social shopping */
+  commerceSocial: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  /** Analyse des factures — person checking receipts / bills */
+  analyseFactures: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  /** Détection de fraude — lock / security / shield */
+  detectionFraude: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  /** Évaluation des magasins — supermarket interior / customer service */
+  evaluationMagasins: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  /** Portail développeurs — code / terminal / API */
+  portailDeveloppeurs: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fm=webp&fit=crop&w=1600&q=80',
 };
 
 /**

@@ -36,7 +36,7 @@ import {
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 type ModuleStatus = 'done' | 'partial' | 'planned';
-type PhaseKey = 'mvp' | 'v1' | 'v2';
+type PhaseKey = 'mvp' | 'v1' | 'v2' | 'v3';
 
 interface RoadmapModule {
   name: string;
@@ -236,6 +236,176 @@ const MODULES: RoadmapModule[] = [
       { label: 'Notification push (alertes prix)', done: false },
     ],
   },
+
+  // ── Nouvelles fonctionnalités suggérées ───────────────────────────────────
+  {
+    name: '16. Guide intelligent des territoires',
+    description: "Guide par territoire (Guadeloupe, Martinique, etc.) alimenté par l'IA avec conseils locaux.",
+    status: 'planned',
+    features: [
+      { label: 'Fiche territoire : économie, prix, spécificités locales', done: false },
+      { label: "Conseils d'achat contextuels par territoire", done: false },
+      { label: 'Comparaison inter-territoires assistée par IA', done: false },
+      { label: 'Mise à jour dynamique via données observatoire', done: false },
+    ],
+  },
+  {
+    name: '17. Graphiques d\'historique des prix interactifs',
+    description: 'Visualisation interactive des séries chronologiques pour chaque produit.',
+    status: 'partial',
+    features: [
+      { label: 'Graphique temporel par produit (recharts)', done: true },
+      { label: 'Filtres par territoire, enseigne, catégorie', done: true },
+      { label: 'Vue mensuelle / annuelle / par produit', done: true },
+      { label: 'Export CSV / PDF des séries historiques', done: false },
+      { label: 'Comparaison multi-produits sur le même graphique', done: false },
+    ],
+  },
+  {
+    name: '18. Outil de création de budgets comparatifs',
+    description: 'Élaborez des budgets familiaux dans différents territoires DOM-COM.',
+    status: 'partial',
+    features: [
+      { label: 'Simulateur budget familial mensuel', done: true },
+      { label: 'Comparaison par territoire', done: true },
+      { label: 'Export PDF du budget comparatif', done: false },
+      { label: 'Panier type DOM vs Métropole', done: false },
+    ],
+  },
+  {
+    name: '19. Transparence de la chaîne d\'approvisionnement',
+    description: "Représentation visuelle du parcours d'un produit de son origine à la mise en rayon.",
+    status: 'planned',
+    features: [
+      { label: 'Timeline du parcours produit (origine → rayon)', done: false },
+      { label: "Affichage des intermédiaires (importateurs, distributeurs)", done: false },
+      { label: 'Coûts de transport et taxes visibles', done: false },
+      { label: 'Sources publiques (douanes, fret) intégrées', done: false },
+    ],
+  },
+  {
+    name: '20. Tableau de bord des partenaires commerciaux',
+    description: 'Synchronisation en temps réel pour les réseaux de commerçants.',
+    status: 'partial',
+    features: [
+      { label: 'Dashboard enseigne avec stats et analytics', done: true },
+      { label: 'Gestion multi-magasins et mise à jour des prix', done: true },
+      { label: 'Synchronisation temps réel avec API partenaire', done: false },
+      { label: 'Intégration Carrefour, E.Leclerc, Coursesu.com', done: false },
+    ],
+  },
+  {
+    name: '21. Classement des contributions communautaires',
+    description: 'Mise en avant des meilleurs contributeurs par territoire.',
+    status: 'partial',
+    features: [
+      { label: 'Leaderboard global et par territoire', done: true },
+      { label: 'Badges et récompenses de contribution', done: true },
+      { label: 'Vérification des parrainages', done: false },
+      { label: 'Métadonnées territoriales complètes', done: false },
+    ],
+  },
+  {
+    name: '22. Synchronisation avec l\'application mobile',
+    description: 'Meilleure fonctionnalité hors ligne et synchronisation mobile.',
+    status: 'planned',
+    features: [
+      { label: 'Wrapper Capacitor (iOS / Android)', done: false },
+      { label: 'Cache local synchronisé (listes, alertes)', done: false },
+      { label: 'Push notifications mobiles', done: false },
+      { label: 'Facturation Google Play / App Store', done: false },
+    ],
+  },
+  {
+    name: '23. Scanner de magasin AR',
+    description: 'Numérisation des rayons en réalité augmentée avec comparaison de prix instantanée.',
+    status: 'partial',
+    features: [
+      { label: 'Accès caméra et flux vidéo en direct', done: true },
+      { label: 'Bounding boxes et overlay produits détectés', done: true },
+      { label: 'Intégration TensorFlow.js ou Google Vision API', done: false },
+      { label: 'Comparaison de prix en temps réel dans le rayon', done: false },
+    ],
+  },
+  {
+    name: '24. Changement de territoire dynamique',
+    description: "Comparaison fluide lors des déplacements d'utilisateurs entre territoires.",
+    status: 'partial',
+    features: [
+      { label: 'Comparateur inter-territoires opérationnel', done: true },
+      { label: 'Détection géolocation du territoire actuel', done: true },
+      { label: 'Bascule dynamique sans rechargement de page', done: false },
+      { label: 'Mémorisation du territoire préféré (localStorage)', done: true },
+    ],
+  },
+  {
+    name: '25. Alertes de prix prédictives',
+    description: "Alertes basées sur l'apprentissage automatique pour des moments d'achat optimaux.",
+    status: 'partial',
+    features: [
+      { label: 'Alertes prix personnalisées opérationnelles', done: true },
+      { label: 'Prédictions basées sur historiques réels', done: true },
+      { label: 'Modèle ML pour fenêtres d\'achat optimal', done: false },
+      { label: 'Canaux alerte (push / e-mail / in-app) connectés', done: false },
+    ],
+  },
+  {
+    name: '26. Commerce social',
+    description: 'Partagez vos listes de courses et vos recommandations avec vos amis.',
+    status: 'planned',
+    features: [
+      { label: 'Partage de liste de courses entre utilisateurs', done: false },
+      { label: 'Recommandations produits entre citoyens', done: false },
+      { label: 'Messagerie inter-citoyens existante', done: true },
+      { label: 'Profil public de contributeur', done: false },
+    ],
+  },
+  {
+    name: '27. Analyse des factures',
+    description: 'Historique des dépenses et analyse des tendances par extraction OCR.',
+    status: 'planned',
+    features: [
+      { label: 'Upload de factures PDF / photo', done: false },
+      { label: 'Extraction OCR des montants et produits', done: false },
+      { label: 'Catégorisation automatique des dépenses', done: false },
+      { label: 'Tableau de bord tendances de dépenses', done: false },
+      { label: 'Export CSV / PDF du rapport', done: false },
+    ],
+  },
+  {
+    name: '28. Détection de fraude',
+    description: "Signalement des hausses de prix inhabituelles ou des anomalies via ML.",
+    status: 'planned',
+    features: [
+      { label: 'Signalement manuel abus déjà opérationnel', done: true },
+      { label: 'Détection automatique d\'anomalies de prix', done: false },
+      { label: 'Algorithme de scoring des variations suspectes', done: false },
+      { label: 'Tableau de bord admin alertes fraude', done: false },
+    ],
+  },
+  {
+    name: '29. Évaluation des magasins par les utilisateurs',
+    description: 'Notation : qualité du service, propreté, disponibilité des produits.',
+    status: 'planned',
+    features: [
+      { label: 'Formulaire de notation (service, propreté, disponibilité)', done: false },
+      { label: 'Affichage des notes agrégées sur la fiche magasin', done: false },
+      { label: 'Modération des avis citoyens', done: false },
+      { label: 'Classement des magasins par territoire', done: false },
+    ],
+  },
+  {
+    name: '30. Portail API pour développeurs',
+    description: "API publique documentée pour les intégrations tierces et partenaires institutionnels.",
+    status: 'planned',
+    features: [
+      { label: 'Documentation OpenAPI interactive (Swagger)', done: false },
+      { label: 'Génération et gestion de clés API', done: false },
+      { label: 'Sandbox de test avec données anonymisées', done: false },
+      { label: 'Rate limiting et quotas par plan', done: false },
+      { label: 'SDK JavaScript / Python open-source', done: false },
+    ],
+  },
 ];
 
 const PHASES: { key: PhaseKey; label: string; subtitle: string; items: string[] }[] = [
@@ -284,6 +454,23 @@ const PHASES: { key: PhaseKey; label: string; subtitle: string; items: string[] 
       'Intervalles de confiance sur les prédictions IA',
       'Mode hors-ligne étendu (PWA)',
       'Extension comparative nationale (conditionnel)',
+    ],
+  },
+  {
+    key: 'v3' as PhaseKey,
+    label: 'V3',
+    subtitle: 'Nouvelles fonctionnalités & intelligence augmentée — Vision',
+    items: [
+      'Guide intelligent des territoires alimenté par IA',
+      'Scanner AR de rayons (TensorFlow.js / Google Vision)',
+      'Transparence de la chaîne d\'approvisionnement',
+      'Commerce social (partage de listes et recommandations)',
+      'Analyse des factures par OCR + IA',
+      'Détection de fraude par apprentissage automatique',
+      'Évaluation des magasins par les utilisateurs',
+      'Portail API développeurs avec SDK open-source',
+      'Alertes de prix prédictives (ML)',
+      'Synchronisation application mobile (Capacitor)',
     ],
   },
 ];
@@ -426,12 +613,12 @@ export default function RoadmapPage() {
                 <div
                   key={phase.key}
                   className={`border rounded-2xl p-6
-                    ${phase.key === 'mvp' ? 'border-green-200 bg-green-50/30' : phase.key === 'v1' ? 'border-indigo-200 bg-indigo-50/20' : 'border-gray-200 bg-white'}`}
+                    ${phase.key === 'mvp' ? 'border-green-200 bg-green-50/30' : phase.key === 'v1' ? 'border-indigo-200 bg-indigo-50/20' : phase.key === 'v3' ? 'border-purple-200 bg-purple-50/20' : 'border-gray-200 bg-white'}`}
                 >
                   <div className="flex items-start gap-3 mb-4">
                     <span
                       className={`text-sm font-bold px-3 py-1 rounded-full flex-shrink-0
-                        ${phase.key === 'mvp' ? 'bg-green-100 text-green-800' : phase.key === 'v1' ? 'bg-indigo-100 text-indigo-800' : 'bg-gray-100 text-gray-600'}`}
+                        ${phase.key === 'mvp' ? 'bg-green-100 text-green-800' : phase.key === 'v1' ? 'bg-indigo-100 text-indigo-800' : phase.key === 'v3' ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-600'}`}
                     >
                       {phase.label}
                     </span>
@@ -451,6 +638,11 @@ export default function RoadmapPage() {
                     {phase.key === 'v2' && (
                       <span className="flex-shrink-0 text-xs bg-gray-500 text-white px-2 py-0.5 rounded-full">
                         Planifié
+                      </span>
+                    )}
+                    {phase.key === 'v3' && (
+                      <span className="flex-shrink-0 text-xs bg-purple-600 text-white px-2 py-0.5 rounded-full">
+                        Vision
                       </span>
                     )}
                   </div>

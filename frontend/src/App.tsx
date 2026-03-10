@@ -250,6 +250,16 @@ const AiMarketInsights = lazyPage(() => import('./pages/AiMarketInsights'));
 const TerritoryHub = lazyPage(() => import('./pages/TerritoryHub'));
 const TerritoryScanner = lazyPage(() => import('./pages/TerritoryScanner'));
 
+// ── Nouvelles pages V3 ─────────────────────────────────────────────────────
+const GuideIntelligentTerritoires = lazyPage(() => import('./pages/GuideIntelligentTerritoires'));
+const ARScannerPage = lazyPage(() => import('./pages/ARScannerPage'));
+const ChaineFourniture = lazyPage(() => import('./pages/ChaineFourniture'));
+const CommerceSocial = lazyPage(() => import('./pages/CommerceSocial'));
+const AnalyseFactures = lazyPage(() => import('./pages/AnalyseFactures'));
+const DetectionFraude = lazyPage(() => import('./pages/DetectionFraude'));
+const EvaluationMagasins = lazyPage(() => import('./pages/EvaluationMagasins'));
+const PortailDeveloppeurs = lazyPage(() => import('./pages/PortailDeveloppeurs'));
+
 /**
  * IMPORTANT — NE PAS SUPPRIMER
  * Les tests CI vérifient la présence LITTÉRALE de certaines routes alias
@@ -633,6 +643,16 @@ export default function App() {
                           {/* Pages territoire — hub par territoire et scanner territorial */}
                           <Route path="territoire/:territory" element={<TerritoryHub />} />
                           <Route path="territoire/:territory/scanner" element={<TerritoryScanner />} />
+
+                          {/* ── Nouvelles pages V3 ── */}
+                          <Route path="guide-territoire" element={<GuideIntelligentTerritoires />} />
+                          <Route path="ar-scanner" element={<ARScannerPage />} />
+                          <Route path="chaine-fourniture" element={<ChaineFourniture />} />
+                          <Route path="commerce-social" element={<CommerceSocial />} />
+                          <Route path="analyse-factures" element={<AnalyseFactures />} />
+                          <Route path="detection-fraude" element={<DetectionFraude />} />
+                          <Route path="evaluation-magasins" element={<EvaluationMagasins />} />
+                          <Route path="portail-developpeurs" element={<PortailDeveloppeurs />} />
 
                           {/* Pages fonctionnelles sans itinéraire précédent */}
                           <Route path="perimetre" element={<Perimetre />} />

@@ -517,4 +517,46 @@
     <priority>0.7</priority>
   </url>
 
+  <!-- ── Nouvelles pages V3 ── -->
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/guide-territoire</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/ar-scanner</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/chaine-fourniture</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/commerce-social</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/analyse-factures</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/detection-fraude</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/evaluation-magasins</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://teetee971.github.io/akiprisaye-web/portail-developpeurs</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
 </urlset>

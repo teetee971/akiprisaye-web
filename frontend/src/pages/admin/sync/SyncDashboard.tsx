@@ -17,7 +17,7 @@ import ManualSync from '../../../components/admin/sync/ManualSync';
 import SyncStats from '../../../components/admin/sync/SyncStats';
 
 export default function SyncDashboard() {
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const navigate = useNavigate();
   const [jobs, setJobs] = useState<ScheduledJob[]>([]);
   const [logs, setLogs] = useState<SyncLog[]>([]);
@@ -30,22 +30,19 @@ export default function SyncDashboard() {
     averageDuration: number;
   } | null>(null);
   const [activeTab, setActiveTab] = useState<'overview' | 'history' | 'config'>('overview');
-  const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Vérifier que l'utilisateur est admin
-    // TODO: Implémenter une vraie vérification admin
     if (!user) {
       navigate('/mon-compte');
       return;
     }
-
-    // Pour l'instant, on considère que tous les utilisateurs connectés peuvent voir cette page
-    // En production, ajouter une vraie vérification de rôle admin
-    setIsAdmin(true);
+    if (!isAdmin) {
+      navigate('/');
+      return;
+    }
     loadData();
-  }, [user, navigate]);
+  }, [user, isAdmin, navigate]);
 
   const loadData = () => {
     setLoading(true);
