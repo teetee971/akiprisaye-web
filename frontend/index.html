@@ -72,7 +72,14 @@
 
     <!-- Preload critical assets -->
     <link rel="preload" as="image" href="%BASE_URL%logo-akiprisaye.svg" fetchpriority="high" />
-    <!-- Hero image is loaded with fetchpriority="high" directly on the <img> in Home.tsx -->
+    <!-- Preload the hero section image (rendered as <img fetchpriority=high> in Home.tsx — crossorigin must match) -->
+    <link
+      rel="preload"
+      as="image"
+      href="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fm=webp&fit=crop&w=1600&q=80"
+      fetchpriority="high"
+      crossorigin="anonymous"
+    />
 
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json">
