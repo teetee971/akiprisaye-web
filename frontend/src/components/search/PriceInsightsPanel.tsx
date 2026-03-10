@@ -63,9 +63,19 @@ export default function PriceInsightsPanel({ result }: PriceInsightsPanelProps) 
   );
 
   const chartValues = sortedObservations.map((observation) => observation.price).slice(-18);
+
+  // Map PriceSourceId → PriceObservationSource (for reliability computation)
+  const reliabilityObs = sortedObservations.map((o) => ({
+    ...o,
+    source: ((['open_food_facts', 'open_prices', 'user_report'] as const).includes(
+      o.source as 'open_food_facts' | 'open_prices' | 'user_report',
+    )
+      ? o.source
+      : 'open_prices') as PriceObservationSource,
+  }));
   const reliability = useMemo(
-    () => computeReliability(sortedObservations),
-    [sortedObservations]
+    () => computeReliability(reliabilityObs),
+    [reliabilityObs]
   );
   const reliabilityBadge = RELIABILITY_LABELS[reliability.level];
 
@@ -124,7 +134,11 @@ export default function PriceInsightsPanel({ result }: PriceInsightsPanelProps) 
             <li className="text-slate-400">Aucune observation détaillée disponible.</li>
           ) : (
             sortedObservations.map((observation, index) => {
-              const sourceBadge = SOURCE_BADGES[observation.source];
+              const safeSource: PriceObservationSource =
+                observation.source in SOURCE_BADGES
+                  ? (observation.source as PriceObservationSource)
+                  : 'open_prices';
+              const sourceBadge = SOURCE_BADGES[safeSource];
               return (
                 <li key={`${observation.source}-${observation.observedAt ?? index}`} className="bg-slate-950 rounded-lg p-3">
                   <p className="text-slate-200">{observation.price.toFixed(2)}€</p>

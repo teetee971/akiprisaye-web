@@ -12,11 +12,17 @@ import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 // ── Endpoints planifiés ───────────────────────────────────────────────────────
 
 const API_ENDPOINTS = [
-  { method: 'GET', path: '/api/v1/prices', desc: 'Prix des produits par territoire et enseigne', status: 'planned' },
+  { method: 'GET', path: '/api/fuel-prices', desc: 'Prix carburants DOM-COM en temps réel', status: 'live' },
+  { method: 'GET', path: '/api/news', desc: 'Rappels produits RappelConso V2 + actualités curatées par territoire', status: 'live' },
+  { method: 'GET', path: '/api/exchange-rates', desc: 'Taux de change EUR/USD/XOF live (open.er-api.com)', status: 'live' },
+  { method: 'GET', path: '/api/signalconso', desc: 'Signalements consommateurs DOM par catégorie (DGCCRF)', status: 'live' },
+  { method: 'GET', path: '/api/indice', desc: 'Indice IEVR — panier essentiel Guadeloupe', status: 'live' },
+  { method: 'GET', path: '/api/prices/realtime', desc: 'Prix temps réel par EAN et territoire (OpenPrices)', status: 'live' },
+  { method: 'GET', path: '/api/prices/feed', desc: 'Flux de prix par territoire, date et page', status: 'live' },
+  { method: 'GET', path: '/api/health', desc: 'Statut de santé de l\'API', status: 'live' },
+  { method: 'GET', path: '/api/v1/prices', desc: 'Prix des produits par territoire et enseigne (V1)', status: 'planned' },
   { method: 'GET', path: '/api/v1/products/:ean', desc: 'Fiche produit complète par code EAN', status: 'planned' },
   { method: 'GET', path: '/api/v1/territories', desc: 'Liste des territoires DOM-COM couverts', status: 'planned' },
-  { method: 'GET', path: '/api/v1/inflation', desc: 'Indice de pression inflationniste par territoire', status: 'planned' },
-  { method: 'GET', path: '/api/fuel-prices', desc: 'Prix carburants DOM-COM (temps réel)', status: 'live' },
   { method: 'POST', path: '/api/v1/observations', desc: 'Soumettre une observation de prix citoyenne', status: 'planned' },
 ];
 
@@ -27,18 +33,23 @@ const PLANS_API = [
 ];
 
 const EXAMPLE_RESPONSE = `{
-  "territory": "GP",
-  "products": [
+  "items": [
     {
-      "ean": "3017620422003",
-      "name": "Nutella 400g",
-      "store": "Carrefour Jarry",
-      "price": 5.49,
-      "currency": "EUR",
-      "updatedAt": "2024-12-10T08:30:00Z"
+      "id": "rcv2-8ae1374f-47b8-4ffd-8346-4d999777e68b",
+      "type": "rappels",
+      "territory": "all",
+      "title": "Rappel : Salade batavia — crudi pei",
+      "summary": "Détection listeria monocytogenes — Ne plus consommer. Rapporter au point de vente.",
+      "source_name": "RappelConso V2 (DGCCRF)",
+      "impact": "fort",
+      "imageUrl": "https://rappel.conso.gouv.fr/image/234d617c-0b82-48d2-8d81-612fee647457.jpg",
+      "published_at": "2026-03-10T13:18:15.000Z",
+      "verified": true
     }
   ],
-  "fetchedAt": "2024-12-10T09:00:00Z"
+  "mode": "live",
+  "count": 30,
+  "fetchedAt": "2026-03-10T14:00:00.000Z"
 }`;
 
 // ── Composant ─────────────────────────────────────────────────────────────────
@@ -81,13 +92,14 @@ export default function PortailDeveloppeurs() {
         <div className="max-w-4xl mx-auto px-4 py-6 pb-20 space-y-8">
 
           {/* Statut */}
-          <div className="flex gap-3 bg-indigo-50 border border-indigo-200 rounded-xl p-4">
-            <Zap className="w-5 h-5 text-indigo-600 flex-shrink-0 mt-0.5" />
+          <div className="flex gap-3 bg-green-50 border border-green-200 rounded-xl p-4">
+            <Zap className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm font-semibold text-indigo-800">API en développement — V3</p>
-              <p className="text-sm text-indigo-700 mt-0.5">
-                L'endpoint carburants est déjà en production. La documentation complète OpenAPI
-                et les clés d'accès sont prévues en V3. Contactez-nous pour un accès anticipé.
+              <p className="text-sm font-semibold text-green-800">8 endpoints en production — données.gouv.fr &amp; partenaires</p>
+              <p className="text-sm text-green-700 mt-0.5">
+                Prix carburants, rappels produits (RappelConso V2), signalements consommateurs DOM (SignalConso DGCCRF),
+                taux de change live et indice IEVR sont disponibles sans clé API.
+                Documentation OpenAPI complète et SDK prévus en V3.
               </p>
             </div>
           </div>
@@ -138,7 +150,7 @@ export default function PortailDeveloppeurs() {
             <h2 className="font-bold text-gray-900 mb-3">💻 Exemple de réponse</h2>
             <div className="bg-slate-900 rounded-xl p-5 relative">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs text-slate-400 font-mono">GET /api/v1/prices?territory=GP&ean=3017620422003</span>
+                <span className="text-xs text-slate-400 font-mono">GET /api/news?territory=gp&amp;type=rappels&amp;limit=10</span>
                 <button
                   onClick={() => navigator.clipboard.writeText(EXAMPLE_RESPONSE).catch(() => {})}
                   className="flex items-center gap-1 text-xs text-slate-400 hover:text-white transition-colors"
