@@ -34,6 +34,7 @@ const Comparateur = lazyPage(() => import('./pages/Comparateur'));
 // New Admin pages
 const AdminLayout = lazyPage(() => import('./pages/admin/AdminLayout'));
 const AdminDashboardNew = lazyPage(() => import('./pages/admin/AdminDashboard'));
+const AdminUsers = lazyPage(() => import('./pages/admin/AdminUsers'));
 const StoreList = lazyPage(() => import('./pages/admin/stores/StoreList'));
 const StoreForm = lazyPage(() => import('./pages/admin/stores/StoreForm'));
 const StoreDetail = lazyPage(() => import('./pages/admin/stores/StoreDetail'));
@@ -384,6 +385,7 @@ export default function App() {
                         {/* Admin routes with dedicated layout */}
                         <Route path="/admin" element={<AdminLayout />}>
                           <Route index element={<AdminDashboardNew />} />
+                          <Route path="users" element={<AdminUsers />} />
                           <Route path="stores" element={<StoreList />} />
                           <Route path="stores/new" element={<StoreForm />} />
                           <Route path="stores/:id" element={<StoreDetail />} />
