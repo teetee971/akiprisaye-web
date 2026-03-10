@@ -11,7 +11,7 @@ import { safeLocalStorage } from "@/utils/safeLocalStorage";
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 import { ALERTS_STORAGE_KEY } from "@/services/priceAlertsStorage";
-import { Heart, Bell, Globe, CreditCard, User as UserIcon, Trash2, MessageCircle } from "lucide-react";
+import { Heart, Bell, Globe, CreditCard, User as UserIcon, Trash2, MessageCircle, Crown, Shield } from "lucide-react";
 
 import { SEOHead } from '../components/ui/SEOHead';
 const TERRITORY_STORAGE_KEY = 'akiprisaye:main_territory:v1';
@@ -193,6 +193,35 @@ export default function MonCompte() {
                     </div>
                   </div>
                 </div>
+
+                {/* Creator shortcut — visible only for creator role */}
+                {(userRole === 'creator') && (
+                  <Link
+                    to="/espace-createur"
+                    className="flex items-center gap-3 mb-4 p-4 bg-amber-900/30 border border-amber-600/60 rounded-lg hover:bg-amber-900/50 transition-colors group"
+                  >
+                    <Crown className="w-6 h-6 text-amber-400 group-hover:scale-110 transition-transform" />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-amber-200">✨ Espace Créateur — Accès illimité</p>
+                      <p className="text-amber-300/70 text-sm">Tableau de bord développeur · Admin · Plan CREATOR</p>
+                    </div>
+                    <span className="text-xs bg-amber-500/20 border border-amber-500/40 text-amber-300 px-2 py-0.5 rounded-full font-bold">CREATOR</span>
+                  </Link>
+                )}
+
+                {/* Admin shortcut — visible for admin role (not creator, already shown above) */}
+                {(userRole === 'admin') && (
+                  <Link
+                    to="/admin"
+                    className="flex items-center gap-3 mb-4 p-4 bg-blue-900/30 border border-blue-700/60 rounded-lg hover:bg-blue-900/50 transition-colors group"
+                  >
+                    <Shield className="w-6 h-6 text-blue-400 group-hover:scale-110 transition-transform" />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-blue-200">🛡️ Espace Admin</p>
+                      <p className="text-blue-300/70 text-sm">Tableau de bord administrateur</p>
+                    </div>
+                  </Link>
+                )}
 
                 {/* Messagerie shortcut */}
                 <Link

@@ -60,6 +60,7 @@ const LutteVieChere = lazyPage(() => import('./pages/LutteVieChereIndexPage'));
 const SolidariteHub = lazyPage(() => import('./pages/SolidariteHub'));
 const InscriptionPro = lazyPage(() => import('./pages/InscriptionPro'));
 const EspacePro = lazyPage(() => import('./pages/EspacePro'));
+const EspaceCreateur = lazyPage(() => import('./pages/EspaceCreateur'));
 
 // Scanner & OCR pages
 const ScannerHub = lazyPage(() => import('./pages/ScannerHub'));
@@ -437,6 +438,7 @@ export default function App() {
                           {/* Espace Professionnel */}
                           <Route path="inscription-pro" element={<InscriptionPro />} />
                           <Route path="espace-pro" element={<EspacePro />} />
+                          <Route path="espace-createur" element={<EspaceCreateur />} />
 
                           {/* Additional feature routes */}
                           <Route path="donnees-publiques" element={<DonneesPubliques />} />
