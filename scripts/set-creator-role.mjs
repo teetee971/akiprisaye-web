@@ -6,14 +6,25 @@
  * dans Firestore, ce qui active le plan CREATOR (accès illimité à toutes les
  * fonctionnalités) dès votre prochaine connexion.
  *
+ * ── PROJET FIREBASE ────────────────────────────────────────────────────────
+ *  Projet    : a-ki-pri-sa-ye
+ *  Compte de service : firebase-adminsdk-fbsvc@a-ki-pri-sa-ye.iam.gserviceaccount.com
+ *
  * ── PRÉREQUIS ──────────────────────────────────────────────────────────────
  *  1. Node.js ≥ 18
- *  2. firebase-admin installé :  npm install -g firebase-admin
- *     ou localement :            npm install firebase-admin
- *  3. Clé de service Firebase Admin SDK (fichier JSON) :
- *     Console Firebase → Paramètres du projet → Comptes de service
- *     → "Générer une nouvelle clé privée" → télécharger le fichier JSON
- *     → placer le fichier à la racine du projet (ne pas le committer !)
+ *  2. firebase-admin installé localement dans ce dépôt :
+ *        cd <racine-du-projet> && npm install firebase-admin
+ *     (firebase-admin est déjà une devDependency — lancez juste npm install)
+ *  3. Clé privée JSON du compte de service Firebase Admin SDK :
+ *        Console Firebase → Paramètres du projet ⚙️ → Comptes de service
+ *        → Compte : firebase-adminsdk-fbsvc@a-ki-pri-sa-ye.iam.gserviceaccount.com
+ *        → Bouton "Générer une nouvelle clé privée" → confirmer → télécharger le JSON
+ *        → placer le fichier à la racine du projet sous l'un des noms ci-dessous
+ *
+ *     🔗 Lien direct :
+ *        https://console.firebase.google.com/project/a-ki-pri-sa-ye/settings/serviceaccounts/adminsdk
+ *
+ *     ⚠️  Ne commitez JAMAIS ce fichier JSON — il est dans .gitignore
  *
  * ── UTILISATION ────────────────────────────────────────────────────────────
  *  node scripts/set-creator-role.mjs <votre-email@domaine.com>
@@ -22,9 +33,10 @@
  *  node scripts/set-creator-role.mjs teetee971@gmail.com
  *
  * ── APRÈS EXÉCUTION ────────────────────────────────────────────────────────
- *  1. Connectez-vous à l'application avec cet email
- *  2. Votre rôle "Créateur" est automatiquement reconnu
- *  3. Accès illimité à toutes les fonctionnalités activé
+ *  1. Ouvrez l'application dans votre navigateur
+ *  2. Connectez-vous avec cet email
+ *  3. Votre avatar s'affiche en ✨ doré (rôle Créateur)
+ *  4. Accédez à /espace-createur pour votre tableau de bord illimité
  */
 
 import { initializeApp, cert, getApps } from 'firebase-admin/app';
@@ -59,13 +71,23 @@ if (!serviceAccountPath) {
   console.error(`
 ❌ Clé de service Firebase Admin introuvable.
 
-   Téléchargez-la depuis :
-   https://console.firebase.google.com/project/a-ki-pri-sa-ye/settings/serviceaccounts/adminsdk
+   Compte de service : firebase-adminsdk-fbsvc@a-ki-pri-sa-ye.iam.gserviceaccount.com
+   Projet Firebase   : a-ki-pri-sa-ye
 
-   Puis placez-la à l'un de ces emplacements :
-${SERVICE_ACCOUNT_PATHS.map(p => '   • ' + p).join('\n')}
+   ── Étapes pour télécharger la clé ──────────────────────────────────────
+   1. Ouvrez ce lien dans votre navigateur :
+      https://console.firebase.google.com/project/a-ki-pri-sa-ye/settings/serviceaccounts/adminsdk
 
-   ⚠️  Ne commitez jamais ce fichier dans Git (.gitignore inclus).
+   2. Cliquez sur "Générer une nouvelle clé privée"
+
+   3. Confirmez dans la boîte de dialogue
+
+   4. Un fichier JSON est téléchargé (ex: a-ki-pri-sa-ye-firebase-adminsdk-xxxx.json)
+
+   5. Renommez-le et placez-le à la racine du projet sous l'un de ces noms :
+${SERVICE_ACCOUNT_PATHS.map(p => '      • ' + p).join('\n')}
+
+   ⚠️  Ne commitez JAMAIS ce fichier dans Git (il est dans .gitignore).
 `);
   process.exit(1);
 }

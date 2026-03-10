@@ -12,6 +12,10 @@
 .env.test.local
 .env.production.local
 serviceAccount*.json
+serviceAccountKey.json
+firebase-admin-key.json
+service-account.json
+service-account-file.json
 firebase-adminsdk-*.json
 google-credentials.json
 secrets.json
