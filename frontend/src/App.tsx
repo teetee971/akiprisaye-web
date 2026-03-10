@@ -200,6 +200,7 @@ const Presse = lazyPage(() => import('./pages/Presse'));
 const ComprendrePrix = lazyPage(() => import('./pages/ComprendrePrix'));
 const ConferencePrix = lazyPage(() => import('./pages/ConferencePrix'));
 const LettreHebdoIA = lazyPage(() => import('./pages/LettreHebdoIA'));
+const LettreJourIA = lazyPage(() => import('./pages/LettreJourIA'));
 const InnovationLab = lazyPage(() => import('./pages/InnovationLab'));
 const CalculateurOctroi = lazyPage(() => import('./pages/CalculateurOctroi'));
 const CalculateurBatiment = lazyPage(() => import('./pages/CalculateurBatiment'));
@@ -594,6 +595,7 @@ export default function App() {
                           <Route path="comprendre-prix" element={<ComprendrePrix />} />
                           <Route path="conference-prix" element={<ConferencePrix />} />
                           <Route path="lettre-hebdo" element={<LettreHebdoIA />} />
+                          <Route path="lettre-jour" element={<LettreJourIA />} />
                           <Route path="innovation-lab" element={<InnovationLab />} />
                           <Route path="calculateur-octroi" element={<CalculateurOctroi />} />
                           <Route path="enquete-octroi-mer" element={<EnqueteOctroiMer />} />

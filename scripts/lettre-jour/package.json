@@ -1,0 +1,19 @@
+{
+  "name": "lettre-jour-generator",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Générateur automatique du Briefing Journalier IA sur l'actualité des DOM/COM",
+  "scripts": {
+    "generate": "node generate.js",
+    "dry-run": "node generate.js --dry-run"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "fast-xml-parser": "^4.5.4",
+    "firebase-admin": "^12.1.0",
+    "openai": "^4.47.1",
+    "sanitize-html": "^2.17.1"
+  }
+}

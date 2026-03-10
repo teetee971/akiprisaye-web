@@ -27,6 +27,7 @@ const AppDemoShowcase = lazy(() => import('../components/home/AppDemoShowcase'))
 const VideoVieChere = lazy(() => import('../components/home/VideoVieChere'));
 const PriceExplainerBanner = lazy(() => import('../components/home/PriceExplainerBanner'));
 const LettreHebdoWidget = lazy(() => import('../components/home/LettreHebdoWidget'));
+const LettreJourWidget = lazy(() => import('../components/home/LettreJourWidget'));
 
 const TESTIMONIALS = [
   {
@@ -576,6 +577,11 @@ export default function HomeV5() {
         {/* Why such price gaps? Explainer fiche with source links + conference CTA */}
         <Suspense fallback={null}>
           <PriceExplainerBanner />
+        </Suspense>
+
+        {/* AI daily briefing — latest editorial about DOM/COM news of the day */}
+        <Suspense fallback={null}>
+          <LettreJourWidget />
         </Suspense>
 
         {/* AI weekly letter — latest editorial about DOM/COM news */}

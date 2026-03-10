@@ -205,6 +205,8 @@ export const PAGE_HERO_IMAGES = {
   conferencePrix: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Lettre hebdo IA — newspaper / newsletter */
   lettreHebdo: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  /** Lettre journalière IA — morning coffee & editorial / tropical sunrise briefing */
+  lettreJour: 'https://images.unsplash.com/photo-1495020689067-958852a7765e?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Comprendre prix — magnifying glass / price tag */
   comprendrePrix: 'https://images.unsplash.com/photo-1580519542036-c47de6196ba5?auto=format&fm=webp&fit=crop&w=1600&q=80',
   // ── New modules (this session) ───────────────────────────────────────────
