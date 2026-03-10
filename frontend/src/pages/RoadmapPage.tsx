@@ -375,45 +375,49 @@ export default function RoadmapPage() {
       </Helmet>
 
       <div className="min-h-screen bg-gray-50">
-        {/* Header */}
-        <div className="bg-slate-900 text-white py-6 px-4">
-          <div className="max-w-5xl mx-auto">
-            <HeroImage
-              src={PAGE_HERO_IMAGES.roadmap}
-              alt="Roadmap"
-              gradient="from-slate-950 to-purple-900"
-              height="h-40 sm:h-52"
-            >
-              <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
-                🗺️ Roadmap
-              </h1>
-              <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
-                Les évolutions prévues de la plateforme
-              </p>
-            </HeroImage>
-          </div>
+        {/* Hero */}
+        <div className="px-4 pt-4 max-w-5xl mx-auto">
+          <HeroImage
+            src={PAGE_HERO_IMAGES.roadmap}
+            alt="Roadmap — évolutions prévues de la plateforme"
+            gradient="from-slate-950 to-purple-900"
+            height="h-48 sm:h-64"
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <BarChart3 className="w-5 h-5 text-purple-300 drop-shadow" />
+              <span className="text-xs font-semibold uppercase tracking-widest text-purple-300">
+                Feuille de route
+              </span>
+            </div>
+            <h1 className="text-2xl sm:text-4xl font-black text-white drop-shadow leading-tight">
+              🗺️ Roadmap
+            </h1>
+            <p className="text-purple-100 text-sm mt-2 drop-shadow max-w-2xl">
+              Les évolutions prévues de la plateforme
+            </p>
+          </HeroImage>
         </div>
 
         {/* Tabs */}
-        <div className="border-b border-gray-200 bg-white sticky top-0 z-10">
-          <div className="max-w-5xl mx-auto px-4 flex gap-0 overflow-x-auto">
+        <div className="max-w-5xl mx-auto px-4 pt-4 pb-2">
+          <div className="flex flex-wrap gap-2 border-b border-gray-200 pb-3">
             {TABS.map((tab) => (
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`flex items-center gap-1.5 px-4 py-3.5 text-sm font-medium border-b-2 transition whitespace-nowrap
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-colors
                   ${activeTab === tab.key
-                    ? 'border-indigo-600 text-indigo-700'
-                    : 'border-transparent text-gray-500 hover:text-gray-900'}`}
+                    ? 'bg-indigo-100 border border-indigo-300 text-indigo-700'
+                    : 'bg-white border border-gray-200 text-gray-500 hover:bg-gray-50 hover:text-gray-800'}`}
               >
-                <tab.icon className="w-3.5 h-3.5" />
+                <tab.icon className="w-3.5 h-3.5 flex-shrink-0" />
                 {tab.label}
               </button>
             ))}
           </div>
         </div>
 
-        <div className="max-w-5xl mx-auto px-4 py-8 pb-20">
+        <div className="max-w-5xl mx-auto px-4 py-6 pb-20">
 
           {/* ── ROADMAP ────────────────────────────────────────────────── */}
           {activeTab === 'roadmap' && (
@@ -424,28 +428,28 @@ export default function RoadmapPage() {
                   className={`border rounded-2xl p-6
                     ${phase.key === 'mvp' ? 'border-green-200 bg-green-50/30' : phase.key === 'v1' ? 'border-indigo-200 bg-indigo-50/20' : 'border-gray-200 bg-white'}`}
                 >
-                  <div className="flex items-center gap-3 mb-4">
+                  <div className="flex items-start gap-3 mb-4">
                     <span
-                      className={`text-sm font-bold px-3 py-1 rounded-full
+                      className={`text-sm font-bold px-3 py-1 rounded-full flex-shrink-0
                         ${phase.key === 'mvp' ? 'bg-green-100 text-green-800' : phase.key === 'v1' ? 'bg-indigo-100 text-indigo-800' : 'bg-gray-100 text-gray-600'}`}
                     >
                       {phase.label}
                     </span>
-                    <div>
-                      <p className="font-semibold text-gray-900">{phase.subtitle}</p>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-gray-900 leading-snug">{phase.subtitle}</p>
                     </div>
                     {phase.key === 'mvp' && (
-                      <span className="ml-auto text-xs bg-green-600 text-white px-2 py-0.5 rounded-full">
+                      <span className="flex-shrink-0 text-xs bg-green-600 text-white px-2 py-0.5 rounded-full">
                         ✓ Déployé
                       </span>
                     )}
                     {phase.key === 'v1' && (
-                      <span className="ml-auto text-xs bg-indigo-600 text-white px-2 py-0.5 rounded-full">
+                      <span className="flex-shrink-0 text-xs bg-indigo-600 text-white px-2 py-0.5 rounded-full">
                         En cours
                       </span>
                     )}
                     {phase.key === 'v2' && (
-                      <span className="ml-auto text-xs bg-gray-500 text-white px-2 py-0.5 rounded-full">
+                      <span className="flex-shrink-0 text-xs bg-gray-500 text-white px-2 py-0.5 rounded-full">
                         Planifié
                       </span>
                     )}
