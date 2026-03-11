@@ -6,6 +6,7 @@
  *   ✅ Liste complète des modules & sous-modules
  *   ✅ Modèles de données (schémas)
  *   ✅ Roadmap MVP → V1 → V2
+ *   ✅ UX wireframes (description structurée)
  *   ✅ Design system (règles claires)
  *   ✅ Stratégie IA responsable
  *   ✅ Modèle économique (tarification réelle)
@@ -32,6 +33,8 @@ import {
   Wallet,
   List,
   Search,
+  Server,
+  ExternalLink,
 } from 'lucide-react';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -44,6 +47,7 @@ interface RoadmapModule {
   description: string;
   status: ModuleStatus;
   features: { label: string; done: boolean }[];
+  link?: string;
 }
 
 // ── Data ──────────────────────────────────────────────────────────────────────
@@ -243,6 +247,7 @@ const MODULES: RoadmapModule[] = [
     name: '16. Guide intelligent des territoires',
     description: "Guide par territoire (Guadeloupe, Martinique, etc.) alimenté par l'IA avec conseils locaux.",
     status: 'partial',
+    link: '/guide-territoire',
     features: [
       { label: 'Fiche territoire : économie, prix, spécificités locales', done: true },
       { label: "Conseils d'achat contextuels par territoire", done: true },
@@ -277,6 +282,7 @@ const MODULES: RoadmapModule[] = [
     name: '19. Transparence de la chaîne d\'approvisionnement',
     description: "Représentation visuelle du parcours d'un produit de son origine à la mise en rayon.",
     status: 'partial',
+    link: '/chaine-fourniture',
     features: [
       { label: 'Timeline du parcours produit (origine → rayon)', done: true },
       { label: "Affichage des intermédiaires (importateurs, distributeurs)", done: true },
@@ -321,6 +327,7 @@ const MODULES: RoadmapModule[] = [
     name: '23. Scanner de magasin AR',
     description: 'Numérisation des rayons en réalité augmentée avec comparaison de prix instantanée.',
     status: 'partial',
+    link: '/ar-scanner',
     features: [
       { label: 'Accès caméra et flux vidéo en direct', done: true },
       { label: 'Bounding boxes et overlay produits détectés', done: true },
@@ -354,6 +361,7 @@ const MODULES: RoadmapModule[] = [
     name: '26. Commerce social',
     description: 'Partagez vos listes de courses et vos recommandations avec vos amis.',
     status: 'partial',
+    link: '/commerce-social',
     features: [
       { label: 'Partage de liste de courses entre utilisateurs', done: false },
       { label: 'Recommandations produits entre citoyens', done: false },
@@ -365,6 +373,7 @@ const MODULES: RoadmapModule[] = [
     name: '27. Analyse des factures',
     description: 'Historique des dépenses et analyse des tendances par extraction OCR.',
     status: 'partial',
+    link: '/analyse-factures',
     features: [
       { label: 'Upload de factures PDF / photo', done: false },
       { label: 'Extraction OCR des montants et produits', done: true },
@@ -377,6 +386,7 @@ const MODULES: RoadmapModule[] = [
     name: '28. Détection de fraude',
     description: "Signalement des hausses de prix inhabituelles ou des anomalies via ML.",
     status: 'partial',
+    link: '/detection-fraude',
     features: [
       { label: 'Signalement manuel abus déjà opérationnel', done: true },
       { label: 'Détection automatique d\'anomalies de prix', done: false },
@@ -388,6 +398,7 @@ const MODULES: RoadmapModule[] = [
     name: '29. Évaluation des magasins par les utilisateurs',
     description: 'Notation : qualité du service, propreté, disponibilité des produits.',
     status: 'partial',
+    link: '/evaluation-magasins',
     features: [
       { label: 'Formulaire de notation (service, propreté, disponibilité)', done: true },
       { label: 'Affichage des notes agrégées sur la fiche magasin', done: true },
@@ -399,6 +410,7 @@ const MODULES: RoadmapModule[] = [
     name: '30. Portail API pour développeurs',
     description: "API publique documentée pour les intégrations tierces et partenaires institutionnels.",
     status: 'partial',
+    link: '/portail-developpeurs',
     features: [
       { label: 'Documentation OpenAPI interactive (Swagger)', done: true },
       { label: 'Endpoints publics live (carburants, actualités, taux change, signalconso, IEVR, prix)', done: true },
@@ -535,9 +547,147 @@ const DATA_SCHEMAS = [
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
+const ARCHITECTURE = [
+  {
+    couche: 'Frontend',
+    icone: '🖥️',
+    stack: [
+      'React 18 + TypeScript 5 — UI déclarative, typage strict',
+      'Vite 5 — build ultra-rapide, HMR instantané',
+      'Tailwind CSS 4 — design system utilitaire',
+      'React Router 6 — navigation SPA côté client',
+      'Firebase SDK v10 — Auth, Firestore, Storage',
+      'Recharts — graphiques de prix interactifs',
+      'Lucide React — icônes cohérentes',
+      'Framer Motion — animations fonctionnelles',
+    ],
+  },
+  {
+    couche: 'Backend / Serverless',
+    icone: '⚙️',
+    stack: [
+      'Cloudflare Pages Functions (TypeScript) — API serverless à la périphérie',
+      'Firebase Auth — authentification citoyens / pro / admin',
+      'Firestore (NoSQL) — base de données temps réel, règles de sécurité granulaires',
+      'Firebase Storage — stockage photos produits et tickets OCR',
+    ],
+  },
+  {
+    couche: 'Hébergement & Déploiement',
+    icone: '🚀',
+    stack: [
+      'Cloudflare Pages — hébergement principal (CDN mondial, latence < 50 ms)',
+      'GitHub Pages — miroir de déploiement (backup / tests)',
+      'GitHub Actions — CI/CD : lint → typecheck → tests → build → deploy',
+      'Rollback instantané via Cloudflare Pages (version précédente en 1 clic)',
+      'Prerender statique de 91+ routes pour SEO et deep-links',
+    ],
+  },
+  {
+    couche: 'APIs exposées',
+    icone: '🔌',
+    stack: [
+      'GET /api/fuel-prices — carburants DOM-COM temps réel',
+      'GET /api/news — actualités territoriales',
+      'GET /api/exchange-rates — taux de change',
+      'GET /api/signalconso — alertes SignalConso',
+      'GET /api/indice — indice IEVR',
+      'GET /api/health — statut de la plateforme',
+      'GET /api/prices/realtime?ean&territory — prix temps réel (OpenPrices)',
+      'GET /api/prices/feed?territory&since&limit — flux de prix historiques',
+    ],
+  },
+  {
+    couche: 'Sécurité',
+    icone: '🔐',
+    stack: [
+      'Règles Firestore : séparation stricte citoyen / pro / admin',
+      'Aucune clé API exposée côté client (variables Cloudflare uniquement)',
+      'CSP (Content Security Policy) configurée via Cloudflare',
+      'Audit automatique NPM (CI bloquant si vulnérabilité critique)',
+      'Merge Conflict Marker detection en CI',
+    ],
+  },
+  {
+    couche: 'Observabilité',
+    icone: '📊',
+    stack: [
+      'Cloudflare Analytics — trafic et performances',
+      'Cache HTTP adaptatif : 5 min (prix temps réel), 10 min (flux), 30 min (carburants)',
+      'Logs Firestore pour les pistes d\'audit devis',
+      'Checklist de conformité production accessible depuis /admin',
+    ],
+  },
+];
+
+const UX_WIREFRAMES = [
+  {
+    page: 'Comparateur de prix',
+    route: '/comparateur',
+    layout: [
+      'En-tête : barre de recherche produit + sélecteur de territoire',
+      'Résultats : liste de cartes produit (photo, nom, prix min/max, écart métropole)',
+      'Détail produit : historique graphique, enseignes, Nutri-Score, traçabilité',
+      'Filtres latéraux : catégorie, enseigne, territoire, fourchette de prix',
+    ],
+  },
+  {
+    page: 'Liste de courses',
+    route: '/liste',
+    layout: [
+      'Formulaire d\'ajout rapide (EAN ou nom) + bouton "Scanner"',
+      'Liste de courses avec quantités, prix unitaires et total',
+      'Carte GPS : enseignes proches avec prix comparés',
+      'Résumé : enseigne optimale (prix + distance), économies potentielles',
+    ],
+  },
+  {
+    page: 'Scanner universel',
+    route: '/scanner',
+    layout: [
+      'Flux caméra plein écran avec viseur EAN animé',
+      'Affichage immédiat du produit reconnu (nom, prix local, Nutri-Score)',
+      'Bouton "OCR ticket" : photo de ticket → liste de produits extraits',
+      'Historique des scans récents en bas de page',
+    ],
+  },
+  {
+    page: 'Observatoire des prix',
+    route: '/observatoire',
+    layout: [
+      'Tableau de bord : indice d\'inflation, top produits en hausse, carte territoriale',
+      'Graphiques de tendances (mensuel / annuel) par catégorie',
+      'Comparaison inter-territoires : Guadeloupe vs Métropole vs Martinique…',
+      'Export rapport PDF / CSV (planifié V1)',
+    ],
+  },
+  {
+    page: 'Administration',
+    route: '/admin',
+    layout: [
+      'Tableau de bord : KPIs globaux, utilisateurs actifs, devis en cours',
+      'Gestion utilisateurs : rôles, suspension, historique connexions',
+      'Gestion produits & prix : ajout, correction, validation crowdsource',
+      'Suivi devis B2G : pipeline DRAFT → VALIDATED → SENT → PAID',
+      'Checklist conformité production : 20+ critères vérifiables',
+    ],
+  },
+  {
+    page: 'Profil & Abonnement',
+    route: '/profil',
+    layout: [
+      'Informations personnelles + territoire préféré',
+      'Offre active avec limites d\'utilisation (quotas)',
+      'Historique des alertes prix reçues',
+      'Accès aux fonctionnalités premium selon le plan',
+    ],
+  },
+];
+
 const TABS = [
   { key: 'roadmap', label: 'Roadmap', icon: BarChart3 },
   { key: 'modules', label: 'Modules', icon: List },
+  { key: 'architecture', label: 'Architecture', icon: Server },
   { key: 'schemas', label: 'Schémas données', icon: Cpu },
   { key: 'design', label: 'Design system', icon: Palette },
   { key: 'ia', label: 'Stratégie IA', icon: Brain },
@@ -559,7 +709,7 @@ export default function RoadmapPage() {
           name="description"
           content="Feuille de route, architecture technique, modules, stratégie IA et conformité — A KI PRI SA YÉ"
         />
-              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/roadmap" />
+        <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/roadmap" />
         <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/roadmap" />
         <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/roadmap" />
       </Helmet>
@@ -741,6 +891,15 @@ export default function RoadmapPage() {
                           ${mod.status === 'done' ? 'bg-green-100 text-green-700' : mod.status === 'partial' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-500'}`}>
                           {mod.status === 'done' ? 'Opérationnel' : mod.status === 'partial' ? 'Partiel' : 'Planifié'}
                         </span>
+                        {mod.link && (
+                          <Link
+                            to={mod.link}
+                            className="flex items-center gap-1 text-xs text-indigo-600 hover:underline font-medium"
+                          >
+                            <ExternalLink className="w-3 h-3" />
+                            Voir la page
+                          </Link>
+                        )}
                       </div>
                       <p className="text-xs text-gray-500 mt-0.5">{mod.description}</p>
                     </div>
@@ -764,6 +923,58 @@ export default function RoadmapPage() {
               }) && (
                 <p className="text-sm text-gray-500 text-center py-6">Aucun module ne correspond à « {moduleSearch} ».</p>
               )}
+            </div>
+          )}
+
+          {/* ── ARCHITECTURE ───────────────────────────────────────────── */}
+          {activeTab === 'architecture' && (
+            <div className="space-y-5">
+              <p className="text-sm text-gray-600 mb-4">
+                Architecture technique telle que déployée en production.
+                Toutes les technologies listées sont actives dans la base de code.
+              </p>
+              {ARCHITECTURE.map((layer) => (
+                <div key={layer.couche} className="bg-white border border-gray-200 rounded-xl p-5">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-lg">{layer.icone}</span>
+                    <h3 className="font-semibold text-gray-900">{layer.couche}</h3>
+                  </div>
+                  <ul className="space-y-1.5">
+                    {layer.stack.map((item) => (
+                      <li key={item} className="flex items-start gap-2 text-sm text-gray-700">
+                        <ChevronRight className="w-3.5 h-3.5 text-indigo-400 flex-shrink-0 mt-0.5" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+
+              {/* UX Wireframes */}
+              <div className="border-t border-gray-200 pt-5">
+                <h2 className="text-base font-semibold text-gray-900 mb-1">🖼️ UX — Structure des écrans principaux</h2>
+                <p className="text-sm text-gray-500 mb-4">
+                  Description structurée des layouts de chaque page clé de la plateforme.
+                </p>
+                <div className="space-y-4">
+                  {UX_WIREFRAMES.map((wf) => (
+                    <div key={wf.page} className="bg-white border border-gray-200 rounded-xl p-5">
+                      <div className="flex items-center gap-2 mb-3">
+                        <h3 className="font-semibold text-gray-900">{wf.page}</h3>
+                        <span className="font-mono text-xs text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">{wf.route}</span>
+                      </div>
+                      <ul className="space-y-1.5">
+                        {wf.layout.map((item) => (
+                          <li key={item} className="flex items-start gap-2 text-sm text-gray-700">
+                            <ChevronRight className="w-3.5 h-3.5 text-gray-400 flex-shrink-0 mt-0.5" />
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           )}
 
