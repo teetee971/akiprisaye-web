@@ -200,12 +200,28 @@ const intermarcheConnector: RetailerConnector = {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Connector: Leader Price
+// ─────────────────────────────────────────────────────────────────────────────
+
+const leaderPriceConnector: RetailerConnector = {
+  name: 'Leader Price',
+  domain: 'leaderprice.fr',
+  covers: [/\bleader\s*price\b/i],
+  active: true,
+
+  async fetch(product: ProductDescriptor): Promise<ImageCandidate[]> {
+    return fetchFromProxy('leaderprice', product);
+  },
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Registered connectors (in priority order)
 // ─────────────────────────────────────────────────────────────────────────────
 
 const RETAILER_CONNECTORS: RetailerConnector[] = [
   coursesUConnector,
   intermarcheConnector,
+  leaderPriceConnector,
   carrefourConnector,
   leclercConnector,
   casinoConnector,

@@ -8,13 +8,16 @@
  * de partage des données de chaque enseigne.
  *
  * Paramètres GET :
- *   - retailer  : identifiant de l'enseigne (coursesu|leclerc|carrefour|casino|intermarche|all)
+ *   - retailer  : identifiant de l'enseigne
+ *                 (coursesu|leclerc|carrefour|casino|intermarche|leaderprice|all)
  *                 Utiliser "all" pour interroger toutes les enseignes en parallèle.
  *   - retailers : alias de retailer, accepte une liste séparée par des virgules
  *                 (ex: "coursesu,leclerc,carrefour")
  *   - q         : libellé produit (ex: "lait uht 1l")
  *   - barcode   : code EAN optionnel (ex: "3560070123456")
+ *   - territory : code territoire DOM-TOM optionnel (ex: "gp", "mq", "re")
  *   - pageSize  : nombre de résultats par enseigne (défaut: 6, max: 12)
+ *   - sort      : ordre de tri des résultats (price_asc|price_desc, défaut: relevance)
  *
  * Réponse (retailer unique) :
  *   { status, retailer, results, fetchedAt }
@@ -65,8 +68,10 @@ type MultiRetailerSearchResult = {
   fetchedAt: string;
 };
 
-const SUPPORTED_RETAILERS = ['coursesu', 'leclerc', 'carrefour', 'casino', 'intermarche'] as const;
+const SUPPORTED_RETAILERS = ['coursesu', 'leclerc', 'carrefour', 'casino', 'intermarche', 'leaderprice'] as const;
 type SupportedRetailer = (typeof SUPPORTED_RETAILERS)[number];
+
+type SortOrder = 'price_asc' | 'price_desc' | 'relevance';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -85,6 +90,36 @@ const safeNum = (v: unknown): number | undefined => {
 const safeHttpUrl = (v: unknown): string | undefined => {
   const s = safeStr(v);
   return s && /^https?:\/\//i.test(s) ? s : undefined;
+};
+
+/**
+ * Normalise un titre produit pour la déduplication cross-enseignes.
+ * Stratégie : NFD (décomposition de diacritiques), suppression des accents
+ * (U+0300–U+036F), passage en minuscules, suppression des caractères non
+ * alphanumériques, collapsage des espaces multiples.
+ * Exemple : "Lait UHT entier 1L" → "lait uht entier 1l"
+ */
+const normalizeTitle = (title: string): string =>
+  title
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9 ]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+/**
+ * Codes PDV (points de vente) Courses U pour les territoires DOM-TOM.
+ * Ces identifiants sont utilisés par l'API coursesu.com pour filtrer
+ * les résultats sur les magasins locaux.
+ * Source : API coursesu.com — paramètre `pdvCode`.
+ */
+const PDV_CODES_BY_TERRITORY: Partial<Record<string, string>> = {
+  gp: '076170',  // Guadeloupe
+  mq: '097200',  // Martinique
+  re: '097410',  // La Réunion
+  gf: '097300',  // Guyane
+  yt: '097600',  // Mayotte
 };
 
 async function fetchWithTimeout(url: string, options: RequestInit): Promise<Response> {
@@ -163,8 +198,10 @@ function parseCoursesUProducts(payload: CoursesUPayload): RetailerProduct[] {
     .filter((p): p is RetailerProduct => p !== null);
 }
 
-async function searchCoursesU(query: string, pageSize: number): Promise<RetailerProduct[]> {
+async function searchCoursesU(query: string, pageSize: number, territory?: string): Promise<RetailerProduct[]> {
   const params = new URLSearchParams({ query, page: '1', pageSize: String(pageSize) });
+  const pdvCode = territory ? PDV_CODES_BY_TERRITORY[territory] : undefined;
+  if (pdvCode) params.set('pdvCode', pdvCode);
   const url = `https://www.coursesu.com/api/2.0/catalog/search?${params.toString()}`;
   try {
     const res = await fetchWithTimeout(url, { headers: { ...COMMON_FETCH_HEADERS, Referer: 'https://www.coursesu.com' } });
@@ -460,21 +497,121 @@ async function searchIntermarche(query: string, pageSize: number): Promise<Retai
   } catch { return []; }
 }
 
+// ─── Leader Price ─────────────────────────────────────────────────────────────
+
+type LeaderPriceItem = {
+  name?: unknown; label?: unknown; title?: unknown; libelle?: unknown;
+  brand?: unknown; marque?: unknown;
+  imageUrl?: unknown; image?: unknown; photo?: unknown; thumbnail?: unknown;
+  code?: unknown; ean?: unknown;
+  price?: unknown; sellingPrice?: unknown; promotionPrice?: unknown;
+  offers?: Array<{ price?: unknown; promotionPrice?: unknown }>;
+  offer?: { price?: unknown; promotionPrice?: unknown };
+  quantity?: unknown; unit?: unknown; unitLabel?: unknown;
+};
+
+type LeaderPricePayload = {
+  products?: unknown; items?: unknown; results?: unknown; data?: unknown; hits?: unknown;
+};
+
+function parseLeaderPriceProducts(payload: LeaderPricePayload): RetailerProduct[] {
+  let items: LeaderPriceItem[] = [];
+  for (const key of ['products', 'items', 'results', 'data', 'hits'] as const) {
+    const val = payload[key];
+    if (Array.isArray(val)) { items = val as LeaderPriceItem[]; break; }
+  }
+  if (items.length === 0 && Array.isArray(payload)) items = payload as LeaderPriceItem[];
+
+  return items
+    .map((item): RetailerProduct | null => {
+      const title =
+        safeStr(item.name) ?? safeStr(item.label) ?? safeStr(item.title) ?? safeStr(item.libelle);
+      if (!title) return null;
+
+      const imageUrl =
+        safeHttpUrl(item.imageUrl) ?? safeHttpUrl(item.image) ??
+        safeHttpUrl(item.photo) ?? safeHttpUrl(item.thumbnail);
+
+      const ean = safeStr(item.code) ?? safeStr(item.ean);
+      const pageUrl = ean
+        ? `https://www.leaderprice.fr/catalogsearch/result/?q=${encodeURIComponent(ean)}`
+        : undefined;
+
+      const offer = Array.isArray(item.offers) ? item.offers[0] : item.offer;
+      const price =
+        safeNum(offer?.promotionPrice) ?? safeNum(offer?.price) ??
+        safeNum(item.promotionPrice) ?? safeNum(item.price) ?? safeNum(item.sellingPrice);
+
+      return {
+        title,
+        imageUrl,
+        pageUrl,
+        brand: safeStr(item.brand) ?? safeStr(item.marque),
+        price,
+        currency: 'EUR',
+        sizeText: safeStr(item.quantity) ?? safeStr(item.unitLabel) ?? safeStr(item.unit),
+      };
+    })
+    .filter((p): p is RetailerProduct => p !== null);
+}
+
+async function searchLeaderPrice(query: string, pageSize: number): Promise<RetailerProduct[]> {
+  const params = new URLSearchParams({ query, pageSize: String(pageSize) });
+  const url = `https://www.leaderprice.fr/api/catalog/search?${params.toString()}`;
+  try {
+    const res = await fetchWithTimeout(url, {
+      headers: {
+        ...COMMON_FETCH_HEADERS,
+        Referer: 'https://www.leaderprice.fr',
+      },
+    });
+    if (!res.ok) return [];
+    const payload = (await res.json()) as LeaderPricePayload;
+    return parseLeaderPriceProducts(payload);
+  } catch { return []; }
+}
+
 // ─── Dispatch ─────────────────────────────────────────────────────────────────
 
 async function searchRetailer(
   retailer: SupportedRetailer,
   query: string,
   pageSize: number,
+  territory?: string,
 ): Promise<RetailerProduct[]> {
   switch (retailer) {
-    case 'coursesu':    return searchCoursesU(query, pageSize);
+    case 'coursesu':    return searchCoursesU(query, pageSize, territory);
     case 'leclerc':     return searchLeclerc(query, pageSize);
     case 'carrefour':   return searchCarrefour(query, pageSize);
     case 'casino':      return searchCasino(query, pageSize);
     case 'intermarche': return searchIntermarche(query, pageSize);
+    case 'leaderprice': return searchLeaderPrice(query, pageSize);
     default:            return [];
   }
+}
+
+/**
+ * Applique le tri demandé sur une liste de produits.
+ * Les produits sans prix sont repoussés en fin de liste pour price_asc/price_desc.
+ */
+function applySortOrder(results: RetailerProduct[], sort: SortOrder): RetailerProduct[] {
+  if (sort === 'price_asc') {
+    return [...results].sort((a, b) => {
+      if (a.price == null && b.price == null) return 0;
+      if (a.price == null) return 1;
+      if (b.price == null) return -1;
+      return a.price - b.price;
+    });
+  }
+  if (sort === 'price_desc') {
+    return [...results].sort((a, b) => {
+      if (a.price == null && b.price == null) return 0;
+      if (a.price == null) return 1;
+      if (b.price == null) return -1;
+      return b.price - a.price;
+    });
+  }
+  return results; // 'relevance' — preserve original order
 }
 
 /**
@@ -485,14 +622,16 @@ async function searchAllRetailers(
   retailers: SupportedRetailer[],
   query: string,
   pageSize: number,
+  territory?: string,
+  sort: SortOrder = 'relevance',
 ): Promise<MultiRetailerSearchResult> {
   const settled = await Promise.allSettled(
-    retailers.map((r) => searchRetailer(r, query, Math.ceil(pageSize / retailers.length) + DEDUPLICATION_BUFFER)),
+    retailers.map((r) => searchRetailer(r, query, Math.ceil(pageSize / retailers.length) + DEDUPLICATION_BUFFER, territory)),
   );
 
   const retailerMap: MultiRetailerSearchResult['retailers'] = {};
   const allResults: RetailerProduct[] = [];
-  const seenTitles = new Set<string>();
+  const seenKeys = new Set<string>();
 
   for (let i = 0; i < retailers.length; i++) {
     const key = retailers[i];
@@ -504,9 +643,15 @@ async function searchAllRetailers(
         results,
       };
       for (const r of results) {
-        const titleKey = r.title.toLowerCase().trim();
-        if (!seenTitles.has(titleKey)) {
-          seenTitles.add(titleKey);
+        // Deduplicate by normalised title + brand + size to avoid merging distinct
+        // products with similar names (e.g. different capacities or brands).
+        const dedupeKey = [
+          normalizeTitle(r.title),
+          normalizeTitle(r.brand ?? ''),
+          normalizeTitle(r.sizeText ?? ''),
+        ].join('|');
+        if (!seenKeys.has(dedupeKey)) {
+          seenKeys.add(dedupeKey);
           allResults.push(r);
         }
       }
@@ -520,10 +665,12 @@ async function searchAllRetailers(
     Object.values(retailerMap).every((r) => r.status === 'UNAVAILABLE') ? 'UNAVAILABLE' :
     'NO_DATA';
 
+  const sortedResults = applySortOrder(allResults.slice(0, pageSize), sort);
+
   return {
     status: overallStatus,
     retailers: retailerMap,
-    results: allResults.slice(0, pageSize),
+    results: sortedResults,
     fetchedAt: new Date().toISOString(),
   };
 }
@@ -549,7 +696,11 @@ export const onRequestGet: PagesFunction = async ({ request }) => {
     url.searchParams.get('barcode') ??
     ''
   ).trim();
+  const territory = (url.searchParams.get('territory') ?? '').trim().toLowerCase() || undefined;
   const pageSize = Math.min(12, Math.max(1, Number(url.searchParams.get('pageSize') ?? '6')));
+  const rawSort = (url.searchParams.get('sort') ?? '').trim().toLowerCase();
+  const sort: SortOrder =
+    rawSort === 'price_asc' || rawSort === 'price_desc' ? rawSort : 'relevance';
 
   if (!query) {
     return new Response(
@@ -590,9 +741,11 @@ export const onRequestGet: PagesFunction = async ({ request }) => {
   }
 
   if (!isMulti) {
-    // Single retailer — use cache
+    // Single retailer — use cache (territory + sort included in cache key)
     const retailer = requestedRetailers[0];
     const cacheParams = new URLSearchParams({ retailer, q: query, pageSize: String(pageSize) });
+    if (territory) cacheParams.set('territory', territory);
+    if (sort !== 'relevance') cacheParams.set('sort', sort);
     const cacheKeyUrl = `https://retailer-search.internal/?${cacheParams.toString()}`;
     const cacheKey = new Request(cacheKeyUrl, { method: 'GET' });
     const cache = caches.default;
@@ -600,7 +753,8 @@ export const onRequestGet: PagesFunction = async ({ request }) => {
     const cached = await cache.match(cacheKey);
     if (cached) return cached;
 
-    const results = await searchRetailer(retailer, query, pageSize);
+    const rawResults = await searchRetailer(retailer, query, pageSize, territory);
+    const results = applySortOrder(rawResults, sort);
     const status: RetailerSearchResult['status'] = results.length > 0 ? 'OK' : 'NO_DATA';
 
     const payload: RetailerSearchResult = {
@@ -618,8 +772,8 @@ export const onRequestGet: PagesFunction = async ({ request }) => {
     return response;
   }
 
-  // Multi-retailer parallel search — no caching (too many combinations)
-  const multiPayload = await searchAllRetailers(requestedRetailers, query, pageSize);
+  // Multi-retailer parallel search
+  const multiPayload = await searchAllRetailers(requestedRetailers, query, pageSize, territory, sort);
   return new Response(JSON.stringify(multiPayload), {
     status: 200,
     headers: { ...CORS_HEADERS, 'Cache-Control': `public, max-age=${CACHE_MAX_AGE_SECONDS}` },
