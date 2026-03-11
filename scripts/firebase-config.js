@@ -1,4 +1,7 @@
 // firebase-config.js
+// NOTE: Firebase web API keys are public by design — security is enforced via
+// Firebase Security Rules, not by keeping this value secret.
+// See: https://firebase.google.com/docs/projects/api-keys
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import {
   getFirestore,
@@ -10,7 +13,7 @@ import {
 } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDf_m8BzMVHFWoFhVLyThuKwWTMhB7u5ZY",
+  apiKey: "AIzaSyAs0uisnGSK7OlrFqQPFYF6E-ctNOPY0Sw",
   authDomain: "a-ki-pri-sa-ye.firebaseapp.com",
   projectId: "a-ki-pri-sa-ye",
   storageBucket: "a-ki-pri-sa-ye.firebasestorage.app",

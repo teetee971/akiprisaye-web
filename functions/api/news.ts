@@ -405,7 +405,7 @@ const CURATED_ITEMS = [
     expires_at: '2026-03-31T23:59:59.000Z',
     tags: ['promotion', 'panier', 'martinique'],
     evidence: { deltaPct: -15, confidence: 'partner' },
-    imageUrl: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=75',
+    imageUrl: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=600&q=75',
   },
   {
     id: 'curated-dossier-gf-001',

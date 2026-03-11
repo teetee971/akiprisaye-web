@@ -29,7 +29,7 @@ import { fileURLToPath } from "url";
 // FIREBASE CONFIG
 // -----------------------------
 const firebaseConfig = {
-  apiKey: "AIzaSyDf_m8BzMVHFWoFhVLyThuKwWTMhB7u5ZY",
+  apiKey: process.env.FIREBASE_API_KEY || "AIzaSyAs0uisnGSK7OlrFqQPFYF6E-ctNOPY0Sw",
   authDomain: "a-ki-pri-sa-ye.firebaseapp.com",
   projectId: "a-ki-pri-sa-ye",
   storageBucket: "a-ki-pri-sa-ye.firebasestorage.app",

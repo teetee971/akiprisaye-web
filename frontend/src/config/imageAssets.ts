@@ -142,7 +142,7 @@ export const CATEGORY_IMAGES: Record<string, { url: string; alt: string; gradien
 
 export function getCategoryAsset(category: string) {
   return CATEGORY_IMAGES[category] ?? {
-    url: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fm=webp&fit=crop&w=400&q=80',
+    url: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fm=webp&fit=crop&w=400&q=80',
     alt: 'Produit',
     gradient: 'from-slate-500 to-slate-700',
   };
@@ -191,12 +191,12 @@ export const PAGE_HERO_IMAGES = {
   contact: 'https://images.unsplash.com/photo-1521791055366-0d553872952f?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Gamification profile — trophy/achievement */
   gamification: 'https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?auto=format&fm=webp&fit=crop&w=1600&q=80',
-  /** Comparaison enseignes — supermarket aisle */
-  comparaisonEnseignes: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  /** Comparaison enseignes — supermarket checkout aisle */
+  comparaisonEnseignes: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** App demo — person scanning barcode in tropical supermarket */
   appDemo: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fm=webp&fit=crop&w=1600&q=80',
-  /** Vie chère poster — supermarket shelves with price tags */
-  videoPoster: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fm=webp&fit=crop&w=1200&q=80',
+  /** Vie chère poster — grocery / food economy */
+  videoPoster: 'https://images.unsplash.com/photo-1534483509719-3feaee7c30da?auto=format&fm=webp&fit=crop&w=1200&q=80',
   // ── Innovation Lab ───────────────────────────────────────────────────────
   /** Innovation Lab — futuristic tech lab / AI concept */
   innovationLab: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fm=webp&fit=crop&w=1600&q=80',
@@ -220,8 +220,8 @@ export const PAGE_HERO_IMAGES = {
   enqueteEau: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Conférence Eau — institutional meeting / water management conference */
   conferenceEau: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fm=webp&fit=crop&w=1600&q=80',
-  /** Simulateur budget familial — family grocery shopping */
-  simulateurBudget: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  /** Simulateur budget familial — food & agricultural produce budget */
+  simulateurBudget: 'https://images.unsplash.com/photo-1452195100486-9cc805987862?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Alertes rupture de stock — empty supermarket shelf */
   alertesRupture: 'https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Réclamation IA — person writing legal letter */
@@ -281,8 +281,8 @@ export const PAGE_HERO_IMAGES = {
   // ── Remaining pages ──────────────────────────────────────────────────────
   /** Alertes — alert bell, notifications */
   alertes: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fm=webp&fit=crop&w=1600&q=80',
-  /** Panier comparé / BasketComparison */
-  basketComparison: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  /** Panier comparé / BasketComparison — Caribbean / DOM food market */
+  basketComparison: 'https://images.unsplash.com/photo-1548839140-29a749e1cf4d?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Modules civiques */
   civicModules: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Contact collectivités */
@@ -305,8 +305,8 @@ export const PAGE_HERO_IMAGES = {
   moduleAudit: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Périmètre */
   perimetre: 'https://images.unsplash.com/photo-1526628953301-3cd8e16b67b1?auto=format&fm=webp&fit=crop&w=1600&q=80',
-  /** Produit */
-  produit: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  /** Produit — food market / product scene */
+  produit: 'https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Recherche hub */
   rechercheHub: 'https://images.unsplash.com/photo-1506617564039-2f3b650b7010?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Recherche produits */
@@ -321,8 +321,8 @@ export const PAGE_HERO_IMAGES = {
   upgradePage: 'https://images.unsplash.com/photo-1620714223084-8fcacc2523dc?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Budget réel mensuel */
   budgetReel: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fm=webp&fit=crop&w=1600&q=80',
-  /** Budget vital */
-  budgetVital: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  /** Budget vital — supermarket / grocery promotion */
+  budgetVital: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Dossier médias */
   dossierMedia: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Évaluation cosmétique */
@@ -331,8 +331,8 @@ export const PAGE_HERO_IMAGES = {
   historiquePrix: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** IA Conseiller */
   iaConseiller: 'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?auto=format&fm=webp&fit=crop&w=1600&q=80',
-  /** Ti Panie — Caribbean market basket */
-  tiPanie: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  /** Ti Panie — colourful fresh-produce market */
+  tiPanie: 'https://images.unsplash.com/photo-1540189549336-e6e99d931b8a?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Assistant IA */
   assistantIA: 'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?auto=format&fm=webp&fit=crop&w=1600&q=80',
   // ── Specialized comparators ──────────────────────────────────────────────
@@ -372,7 +372,7 @@ export const PAGE_HERO_IMAGES = {
   /** Détection de fraude — lock / security / shield */
   detectionFraude: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Évaluation des magasins — supermarket interior / customer service */
-  evaluationMagasins: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  evaluationMagasins: 'https://images.unsplash.com/photo-1571902943202-507ec2618e8f?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Portail développeurs — code / terminal / API */
   portailDeveloppeurs: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Petits commerces — small local shop / boutique in Caribbean */
@@ -453,7 +453,7 @@ export const PRODUCT_IMAGES: Record<string, { url: string; alt: string }> = {
 export function getProductImage(productName: string): { url: string; alt: string } {
   return (
     PRODUCT_IMAGES[productName] ?? {
-      url: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fm=webp&fit=crop&w=300&q=80',
+      url: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fm=webp&fit=crop&w=300&q=80',
       alt: productName,
     }
   );

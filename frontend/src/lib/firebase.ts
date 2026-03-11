@@ -5,7 +5,7 @@ import { getFirestore, type Firestore } from "firebase/firestore";
 // Firebase web API keys are public by design — security is enforced via
 // Firebase Security Rules, not by keeping these values secret.
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyDf_m8BzMVHFWoFhVLyThuKwWTMhB7u5ZY",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyAs0uisnGSK7OlrFqQPFYF6E-ctNOPY0Sw",
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "a-ki-pri-sa-ye.firebaseapp.com",
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "a-ki-pri-sa-ye",
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "a-ki-pri-sa-ye.firebasestorage.app",

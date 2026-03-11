@@ -41,8 +41,7 @@ const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Alimentaire',
     sectorEmoji: '🛒',
     sectorColor: 'bg-amber-100 text-amber-800',
-    storeImage: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 3.8, proprete: 4.1, disponibilite: 4.3 },
+    storeImage: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fm=webp&fit=crop&w=800&q=80',
     totalReviews: 142,
     lastReview: '2024-12-10',
   },
@@ -590,7 +589,7 @@ const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Épicerie bio',
     sectorEmoji: '🌱',
     sectorColor: 'bg-lime-100 text-lime-700',
-    storeImage: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 4.6, proprete: 4.7, disponibilite: 3.9 },
     totalReviews: 69,
     lastReview: '2024-12-08',
@@ -817,7 +816,7 @@ export default function EvaluationMagasins() {
               {/* Form header image */}
               <div className="relative h-24 overflow-hidden">
                 <img
-                  src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fm=webp&fit=crop&w=800&q=80"
+                  src="https://images.unsplash.com/photo-1534483509719-3feaee7c30da?auto=format&fm=webp&fit=crop&w=800&q=80"
                   alt="Évaluer un magasin"
                   className="w-full h-full object-cover"
                   loading="lazy"

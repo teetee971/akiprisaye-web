@@ -1,3 +1,6 @@
+// NOTE: Firebase web API keys are public by design — security is enforced via
+// Firebase Security Rules, not by keeping this value secret.
+// See: https://firebase.google.com/docs/projects/api-keys
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
 import {
   getFirestore,
@@ -9,7 +12,7 @@ import { planOptimizedRoute } from './gps-promo-planner.js';
 
 // FIREBASE CONFIG - centralized configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDf_m8BzMVHFWoFhVLyThuKwWTMhB7u5ZY",
+  apiKey: "AIzaSyAs0uisnGSK7OlrFqQPFYF6E-ctNOPY0Sw",
   authDomain: "a-ki-pri-sa-ye.firebaseapp.com",
   projectId: "a-ki-pri-sa-ye",
   storageBucket: "a-ki-pri-sa-ye.firebasestorage.app",
