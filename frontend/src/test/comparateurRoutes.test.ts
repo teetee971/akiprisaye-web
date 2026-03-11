@@ -1,8 +1,9 @@
 /**
- * Route coverage test — specialized comparators
+ * Comparator hub route coverage test
  *
- * Ensures that every specialized comparator page listed in ComparateursHub
- * has a corresponding Route entry wired in App.tsx.
+ * Ensures that every comparator exposed in ComparateursHub has a corresponding
+ * Route entry in App.tsx, and that every comparator route wired in App.tsx is
+ * surfaced back from the hub for internal navigation.
  */
 
 import { readFileSync } from 'node:fs';
@@ -12,52 +13,77 @@ import { describe, it, expect } from 'vitest';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const appSource = readFileSync(resolve(here, '../App.tsx'), 'utf-8');
+const hubSource = readFileSync(resolve(here, '../pages/ComparateursHub.tsx'), 'utf-8');
 
-const SPECIALIZED_ROUTES = [
-  'comparateur-vols',
-  'comparateur-bateaux',
-  'comparateur-fret',
-  'comparateur-carburants',
-  'comparateur-assurances',
-  'comparateur-formations',
-  'comparateur-services',
-  'comparateur-location-voiture',
-  'comparateur-materiaux-batiment',
-  'evaluation-cosmetique',
-];
+const isComparatorPath = (path: string) => (
+  path.startsWith('/comparateur')
+  || path.startsWith('/comparaison')
+  || path === '/compare'
+  || path === '/comparatif-concurrence'
+  || path === '/recherche-prix'
+  || path.startsWith('/recherche-prix/')
+);
 
-const GENERAL_ROUTES = [
-  'comparateur',
-  'comparateur-citoyen',
-  'comparateur-avance',
-  'compare',
-  'comparateurs-prix',
-  'comparaison-enseignes',
-  'comparaison-panier',
-  'comparateur-territoires',
-  'comparaison-territoires',
-  'comparateurs',
-  'recherche-avancee',
-];
+const hubComparatorPaths = Array.from(
+  new Set(
+    [...hubSource.matchAll(/path:\s*'([^']+)'/g)]
+      .map(([, path]) => path)
+      .filter(isComparatorPath),
+  ),
+).sort();
 
-describe('Specialized comparator routes in App.tsx', () => {
-  SPECIALIZED_ROUTES.forEach((route) => {
-    it(`route "${route}" is defined`, () => {
-      expect(appSource).toContain(`path="${route}"`);
-    });
+const appComparatorRoutes = Array.from(
+  new Set(
+    [...appSource.matchAll(/<Route path="([^"]+)"/g)]
+      .map(([, path]) => `/${path}`)
+      .filter(isComparatorPath)
+      .filter((path) => !['/comparateurs', '/comparateurs-hub'].includes(path)),
+  ),
+).sort();
+
+describe('ComparateursHub comparator links', () => {
+  it('exposes every comparator route wired in App.tsx', () => {
+    expect(hubComparatorPaths).toEqual(appComparatorRoutes);
   });
-});
 
-describe('General comparator routes in App.tsx', () => {
-  GENERAL_ROUTES.forEach((route) => {
-    it(`route "${route}" is defined`, () => {
-      expect(appSource).toContain(`path="${route}"`);
-    });
+  it('still includes the main comparator entry points users expect', () => {
+    expect(hubComparatorPaths).toEqual(
+      expect.arrayContaining([
+        '/comparateur',
+        '/comparateur-citoyen',
+        '/comparateur-avance',
+        '/compare',
+        '/comparateurs-prix',
+        '/comparateur-vols',
+        '/comparateur-bateaux',
+        '/comparateur-fret',
+        '/comparateur-carburants',
+        '/comparateur-assurances',
+        '/comparateur-formations',
+        '/comparateur-services',
+        '/comparateur-location-voiture',
+        '/comparateur-materiaux-batiment',
+        '/comparateur-territoires',
+        '/comparaison-territoires',
+        '/recherche-prix',
+        '/recherche-prix/avions',
+        '/recherche-prix/bateaux',
+        '/recherche-prix/fret',
+        '/recherche-prix/fret-aerien',
+        '/recherche-prix/electricite',
+        '/recherche-prix/eau',
+        '/recherche-prix/abonnements-internet',
+        '/recherche-prix/abonnements-mobile',
+        '/recherche-prix/delais-logistiques',
+        '/recherche-prix/indice-logistique',
+        '/recherche-prix/pourquoi-delais-produit',
+      ]),
+    );
   });
 });
 
 describe('Specialized comparator page imports in App.tsx', () => {
-  const PAGES = [
+  const pages = [
     'FlightComparator',
     'BoatComparator',
     'FreightComparator',
@@ -70,7 +96,7 @@ describe('Specialized comparator page imports in App.tsx', () => {
     'EvaluationCosmetique',
   ];
 
-  PAGES.forEach((page) => {
+  pages.forEach((page) => {
     it(`page "${page}" is imported`, () => {
       expect(appSource).toContain(page);
     });

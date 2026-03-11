@@ -80,6 +80,8 @@ const RECHERCHE_PRIX = [
   { path: '/recherche-prix/pourquoi-delais-produit', icon: Activity, label: 'Pourquoi ces délais ?', color: 'text-lime-400',    bg: 'bg-lime-500/10 border-lime-500/30',   desc: 'Comprendre les causes des délais produits en DOM–COM' },
 ];
 
+const ALL_COMPARATEURS = [...GENERAL_COMPARATEURS, ...SPECIALIZED, ...RECHERCHE_PRIX];
+
 // ── Ressources & documentation ─────────────────────────────────────────────────
 const RESSOURCES = [
   { path: '/comprendre-prix',                              icon: DollarSign,   label: 'Comprendre les Prix',              color: 'text-lime-400',    bg: 'bg-lime-500/10 border-lime-500/30',     desc: 'Décrypter la formation des prix en DOM–COM' },
@@ -306,6 +308,31 @@ export default function ComparateursHub() {
           <div className="mb-5 sm:mb-8">
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2">📊 Comparateurs de prix</h1>
             <p className="text-gray-400 text-sm sm:text-lg">Tous vos outils de comparaison — données réelles observatoire</p>
+          </div>
+
+          <div className="mb-8">
+            <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">🚀 Tous les comparateurs</h2>
+            <p className="text-gray-400 text-xs sm:text-sm mb-4">
+              Accès rapide à tous les comparateurs généraux, spécialisés et aux tarifs détaillés par territoire.
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
+              {ALL_COMPARATEURS.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={`all-${item.path}`}
+                    to={item.path}
+                    className={`group flex items-center sm:items-start gap-2 sm:gap-3 rounded-xl border p-3 sm:p-4 transition-all hover:scale-[1.02] hover:shadow-lg ${item.bg}`}
+                  >
+                    <Icon className={`w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 ${item.color}`} />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-white text-xs sm:text-sm leading-tight">{item.label}</p>
+                      <p className="hidden sm:block text-xs text-gray-400 mt-0.5">{item.desc}</p>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
           </div>
 
           {/* ── Tabs ── */}
