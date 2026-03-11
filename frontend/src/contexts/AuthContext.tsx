@@ -13,13 +13,17 @@ import { db, firebaseError } from "@/lib/firebase";
 import {
   signInEmailPassword,
   signInGooglePopup,
+  signInGoogleRedirect,
   signInFacebookPopup,
+  signInFacebookRedirect,
   signInApplePopup,
+  signInAppleRedirect,
   signOutUser,
   signUpEmailPassword,
   subscribeToAuthState,
+  getAuthRedirectResult,
 } from "@/services/auth";
-import { FIREBASE_UNAVAILABLE_MESSAGE } from "@/lib/authMessages";
+import { FIREBASE_UNAVAILABLE_MESSAGE, getAuthErrorMessage } from "@/lib/authMessages";
 
 type UserRole = "guest" | "citoyen" | "observateur" | "admin" | "creator";
 
@@ -37,8 +41,11 @@ type AuthContextValue = {
   signUpEmailPassword: (email: string, password: string) => Promise<void>;
   signInEmailPassword: (email: string, password: string) => Promise<void>;
   signInGooglePopup: () => Promise<void>;
+  signInGoogleRedirect: () => Promise<void>;
   signInFacebookPopup: () => Promise<void>;
+  signInFacebookRedirect: () => Promise<void>;
   signInApplePopup: () => Promise<void>;
+  signInAppleRedirect: () => Promise<void>;
   signOutUser: () => Promise<void>;
 };
 
@@ -84,6 +91,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     let active = true;
 
+    // Settle any pending redirect sign-in (e.g. from mobile redirect flow).
+    // onAuthStateChanged handles the success case; we only need this to
+    // surface redirect errors (e.g. unauthorized-domain, operation-not-allowed).
+    getAuthRedirectResult().catch((err: unknown) => {
+      if (!active) return;
+      const code =
+        typeof err === "object" && err && "code" in err
+          ? String((err as { code: string }).code)
+          : "";
+      // Ignore the "no pending redirect" case and user-cancelled popup/redirect
+      if (!code || code === "auth/no-redirect-pending" || code === "auth/popup-closed-by-user") {
+        return;
+      }
+      setError(getAuthErrorMessage(err));
+    });
+
     const unsubscribe = subscribeToAuthState(async (currentUser) => {
       if (!active) {
         return;
@@ -128,13 +151,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setError(null);
       await signInGooglePopup();
     },
+    signInGoogleRedirect: async () => {
+      setError(null);
+      await signInGoogleRedirect();
+    },
     signInFacebookPopup: async () => {
       setError(null);
       await signInFacebookPopup();
     },
+    signInFacebookRedirect: async () => {
+      setError(null);
+      await signInFacebookRedirect();
+    },
     signInApplePopup: async () => {
       setError(null);
       await signInApplePopup();
+    },
+    signInAppleRedirect: async () => {
+      setError(null);
+      await signInAppleRedirect();
     },
     signOutUser: async () => {
       setError(null);

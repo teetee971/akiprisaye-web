@@ -4,11 +4,13 @@ import {
   OAuthProvider,
   browserLocalPersistence,
   createUserWithEmailAndPassword,
+  getRedirectResult,
   onAuthStateChanged,
   sendEmailVerification,
   setPersistence,
   signInWithEmailAndPassword,
   signInWithPopup,
+  signInWithRedirect,
   signOut,
   type ActionCodeSettings,
   type User,
@@ -98,4 +100,39 @@ export async function signOutUser(): Promise<void> {
 export function subscribeToAuthState(handler: (user: User | null) => void): () => void {
   const authInstance = ensureAuth();
   return onAuthStateChanged(authInstance, handler);
+}
+
+/**
+ * Redirect-based sign-in helpers.
+ * Preferred on mobile (Chrome blocks popups by default).
+ * The browser navigates to the provider and back; the result is
+ * resolved via getAuthRedirectResult() called on the next page load.
+ */
+export async function signInGoogleRedirect(): Promise<void> {
+  const authInstance = ensureAuth();
+  await ensureSessionPersistence();
+  await signInWithRedirect(authInstance, googleProvider);
+}
+
+export async function signInFacebookRedirect(): Promise<void> {
+  const authInstance = ensureAuth();
+  await ensureSessionPersistence();
+  await signInWithRedirect(authInstance, facebookProvider);
+}
+
+export async function signInAppleRedirect(): Promise<void> {
+  const authInstance = ensureAuth();
+  await ensureSessionPersistence();
+  await signInWithRedirect(authInstance, appleProvider);
+}
+
+/**
+ * Must be called once on page load to settle any pending redirect sign-in.
+ * Returns the UserCredential when a redirect just completed, null otherwise.
+ * onAuthStateChanged already fires on success, so this is mainly used to
+ * surface redirect errors (e.g. auth/popup-blocked → redirect → error).
+ */
+export async function getAuthRedirectResult(): Promise<UserCredential | null> {
+  const authInstance = ensureAuth();
+  return getRedirectResult(authInstance);
 }

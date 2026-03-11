@@ -61,18 +61,44 @@ function getSocialErrorMessage(err: unknown): string {
 
 /* ── Main component ──────────────────────────────────────────────────── */
 
+/** True when running on a mobile browser that typically blocks popups. */
+function isMobileBrowser(): boolean {
+  return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
+
 export default function SocialLoginButtons({
   redirectTo = '/mon-compte',
   onSuccess,
   onError,
   showDivider = true,
 }: SocialLoginButtonsProps) {
-  const { signInGooglePopup, signInFacebookPopup, signInApplePopup } = useAuth();
+  const {
+    signInGooglePopup,    signInGoogleRedirect,
+    signInFacebookPopup, signInFacebookRedirect,
+    signInApplePopup,    signInAppleRedirect,
+  } = useAuth();
   const navigate = useNavigate();
   const [busy, setBusy] = useState<Provider | null>(null);
 
   const handleSocial = async (provider: Provider) => {
     setBusy(provider);
+
+    // On mobile, skip the popup attempt entirely — Chrome blocks popups by default.
+    // The redirect flow navigates the whole page, so we just kick it off and return.
+    if (isMobileBrowser()) {
+      try {
+        if (provider === 'google')   await signInGoogleRedirect();
+        if (provider === 'facebook') await signInFacebookRedirect();
+        if (provider === 'apple')    await signInAppleRedirect();
+      } catch (err: unknown) {
+        onError?.(getSocialErrorMessage(err));
+        setBusy(null);
+      }
+      // Page will navigate away — no need to clear busy state.
+      return;
+    }
+
+    // Desktop: try popup first, fall back to redirect if blocked.
     try {
       if (provider === 'google')   await signInGooglePopup();
       if (provider === 'facebook') await signInFacebookPopup();
@@ -80,8 +106,23 @@ export default function SocialLoginButtons({
       onSuccess?.();
       navigate(redirectTo);
     } catch (err: unknown) {
-      const msg = getSocialErrorMessage(err);
-      onError?.(msg);
+      const code =
+        typeof err === 'object' && err && 'code' in err
+          ? String((err as { code: string }).code)
+          : '';
+      if (code === 'auth/popup-blocked') {
+        // Silently fall back to redirect — page will navigate away.
+        try {
+          if (provider === 'google')   await signInGoogleRedirect();
+          if (provider === 'facebook') await signInFacebookRedirect();
+          if (provider === 'apple')    await signInAppleRedirect();
+        } catch (redirectErr: unknown) {
+          onError?.(getSocialErrorMessage(redirectErr));
+          setBusy(null);
+        }
+        return;
+      }
+      onError?.(getSocialErrorMessage(err));
     } finally {
       setBusy(null);
     }

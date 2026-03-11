@@ -17,19 +17,13 @@ export default function Login() {
   const [busyAction, setBusyAction] = useState<"email" | "google" | null>(null);
   const [verificationSent, setVerificationSent] = useState(false);
 
-  const { signInEmailPassword, signUpEmailPassword, signInGooglePopup } = useAuth();
+  const { signInEmailPassword, signUpEmailPassword, user } = useAuth();
 
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
   const firebaseHealthy = !firebaseError && missingCriticalEnvKeys.length === 0;
   const showFirebaseStatus = import.meta.env.DEV || Boolean(firebaseError);
-
-  useEffect(() => {
-    if (firebaseError) {
-      setError(FIREBASE_UNAVAILABLE_MESSAGE);
-    }
-  }, []);
 
   const getSafeNext = () => {
     const nextParam = searchParams.get("next");
@@ -38,9 +32,20 @@ export default function Login() {
       : "/mon-compte";
   };
 
-  const getErrorMessage = (err: unknown): string => {
-    return getAuthErrorMessage(err);
-  };
+  // If the user is already signed in (e.g. after a redirect sign-in flow
+  // where Firebase navigates back to this page), redirect immediately.
+  useEffect(() => {
+    if (user) {
+      navigate(getSafeNext(), { replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
+
+  useEffect(() => {
+    if (firebaseError) {
+      setError(FIREBASE_UNAVAILABLE_MESSAGE);
+    }
+  }, []);
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,27 +74,7 @@ export default function Login() {
 
       navigate(getSafeNext());
     } catch (err: unknown) {
-      setError(getErrorMessage(err));
-    } finally {
-      setBusyAction(null);
-    }
-  };
-
-  const handleGoogle = async () => {
-    setError(null);
-
-    if (firebaseError) {
-      setError(FIREBASE_UNAVAILABLE_MESSAGE);
-      return;
-    }
-
-    setBusyAction("google");
-
-    try {
-      await signInGooglePopup();
-      navigate(getSafeNext());
-    } catch (err: unknown) {
-      setError(getErrorMessage(err));
+      setError(getAuthErrorMessage(err));
     } finally {
       setBusyAction(null);
     }
