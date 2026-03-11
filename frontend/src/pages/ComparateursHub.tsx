@@ -8,7 +8,7 @@ import {
   TrendingUp, Activity, Sparkles, Zap, Bell, Clock, BookOpen, FileText,
   Scale, SlidersHorizontal, Camera, Calculator, Heart, Trash2, Bot,
   Eye, Tag, HandHeart, BarChart2, Newspaper, MessageSquare, Star, Wallet,
-  FlaskConical, Leaf, Code2,
+  FlaskConical, Leaf, Code2, Navigation,
 } from 'lucide-react';
 import { GlassCard } from '../components/ui/glass-card';
 import Comparateur from './Comparateur';
@@ -48,6 +48,7 @@ const GENERAL_COMPARATEURS = [
   { path: '/historique-prix',        icon: BarChart3,         label: 'Évolution des Prix',        color: 'text-purple-400',  bg: 'bg-purple-500/10 border-purple-500/30', desc: 'Graphes d\'évolution des prix par produit' },
   { path: '/comparatif-concurrence', icon: Scale,             label: 'Comparatif Concurrence',    color: 'text-amber-400',   bg: 'bg-amber-500/10 border-amber-500/30',   desc: 'Positionnement d\'A KI PRI SA YÉ face aux alternatives' },
   { path: '/recherche-avancee',      icon: SlidersHorizontal, label: 'Recherche Avancée',         color: 'text-indigo-400',  bg: 'bg-indigo-500/10 border-indigo-500/30', desc: 'Moteur de recherche multi-critères et comparaison' },
+  { path: '/recherche-prix',          icon: Search,            label: 'Recherche Prix',              color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/30', desc: 'Recherche de prix multicritères par produit et territoire' },
 ];
 
 // ── Specialized comparators navigation cards ──────────────────────────────────
@@ -111,6 +112,8 @@ const CALCULATEURS = [
   { path: '/analyse-nutri',        icon: Heart,      label: 'Analyse Nutritionnelle',     color: 'text-red-400',   bg: 'bg-red-500/10 border-red-500/30',       desc: 'Évaluer la qualité nutritionnelle de vos achats' },
   { path: '/promos',               icon: Tag,        label: 'Promotions',                 color: 'text-pink-400',  bg: 'bg-pink-500/10 border-pink-500/30',     desc: 'Toutes les promos en cours dans votre territoire' },
   { path: '/alertes-rupture',      icon: Bell,       label: 'Alertes Rupture de Stock',   color: 'text-rose-400',  bg: 'bg-rose-500/10 border-rose-500/30',     desc: 'Être alerté des ruptures de stock locales' },
+  { path: '/promotions',          icon: Tag,        label: 'Promotions en cours',        color: 'text-pink-400',  bg: 'bg-pink-500/10 border-pink-500/30',     desc: 'Toutes les promotions actives dans votre territoire' },
+  { path: '/alertes',             icon: Bell,       label: 'Alertes & Notifications',    color: 'text-red-400',   bg: 'bg-red-500/10 border-red-500/30',       desc: 'Gérer vos alertes prix, ruptures et actualités' },
 ];
 
 // ── Observatoire & Données ──────────────────────────────────────────────────────
@@ -124,6 +127,9 @@ const OBSERVATOIRE = [
   { path: '/chaine-fourniture',          icon: Package,   label: 'Chaîne d\'Approvisionnement', color: 'text-cyan-400',   bg: 'bg-cyan-500/10 border-cyan-500/30',       desc: 'Transparence du parcours produit de l\'origine à la rayon' },
   { path: '/donnees-publiques',          icon: Globe,     label: 'Données Publiques',           color: 'text-cyan-400',    bg: 'bg-cyan-500/10 border-cyan-500/30',       desc: 'Accès aux données publiques en open data' },
   { path: '/rapport-citoyen',            icon: FileText,  label: 'Rapport Citoyen',             color: 'text-teal-400',    bg: 'bg-teal-500/10 border-teal-500/30',       desc: 'Générer un rapport citoyen sur les prix locaux' },
+  { path: '/enquete-carburants',         icon: FlaskConical, label: 'Enquête Carburants',        color: 'text-yellow-400',  bg: 'bg-yellow-500/10 border-yellow-500/30',   desc: 'Participez à l\'enquête citoyenne sur les carburants' },
+  { path: '/enquete-eau',                icon: Droplet,   label: 'Enquête Eau',                 color: 'text-blue-400',    bg: 'bg-blue-500/10 border-blue-500/30',       desc: 'Enquête sur les prix et la qualité de l\'eau en DOM' },
+  { path: '/enquete-octroi-mer',         icon: Calculator,label: 'Enquête Octroi de Mer',       color: 'text-rose-400',    bg: 'bg-rose-500/10 border-rose-500/30',       desc: 'Enquête citoyenne sur l\'octroi de mer et son impact' },
 ];
 
 // ── IA & Analyses ───────────────────────────────────────────────────────────────
@@ -160,6 +166,16 @@ const CITOYEN = [
   { path: '/marches-locaux',      icon: ShoppingCart, label: 'Marchés Locaux',        color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/30', desc: 'Calendrier et annuaire des marchés locaux DOM' },
   { path: '/petits-commerces',    icon: Tag,          label: 'Petits Commerces',      color: 'text-amber-400',   bg: 'bg-amber-500/10 border-amber-500/30',     desc: 'Annuaire des commerces de proximité DOM' },
   { path: '/producteurs-locaux',  icon: Leaf,         label: 'Producteurs Locaux',    color: 'text-cyan-400',    bg: 'bg-cyan-500/10 border-cyan-500/30',       desc: 'Circuit court – producteurs locaux des DOM' },
+  { path: '/contribuer',          icon: HandHeart,    label: 'Contribuer',            color: 'text-lime-400',    bg: 'bg-lime-500/10 border-lime-500/30',       desc: 'Participer au mouvement citoyen pour la transparence des prix' },
+  { path: '/conference-carburants', icon: Users,      label: 'Conférence Carburants', color: 'text-yellow-400',  bg: 'bg-yellow-500/10 border-yellow-500/30',   desc: 'Conférences citoyennes sur les prix des carburants' },
+  { path: '/conference-eau',        icon: Users,      label: 'Conférence Eau',        color: 'text-blue-400',    bg: 'bg-blue-500/10 border-blue-500/30',       desc: 'Conférences et débats sur la tarification de l\'eau' },
+  { path: '/conference-octroi-mer', icon: Users,      label: 'Conférence Octroi de Mer', color: 'text-purple-400', bg: 'bg-purple-500/10 border-purple-500/30', desc: 'Conférences sur la fiscalité octroi de mer DOM–COM' },
+];
+
+// ── Navigation & Cartes ─────────────────────────────────────────────────────────
+const NAVIGATION_OUTILS = [
+  { path: '/carte-itineraires', icon: Navigation, label: 'Carte & Itinéraires',   color: 'text-green-400',  bg: 'bg-green-500/10 border-green-500/30',  desc: 'Carte interactive et planification d\'itinéraires vers les enseignes' },
+  { path: '/recherche-hub',     icon: Search,     label: 'Hub de Recherche',       color: 'text-blue-400',   bg: 'bg-blue-500/10 border-blue-500/30',    desc: 'Moteur de recherche multi-sources et multi-critères' },
 ];
 
 export default function ComparateursHub() {
@@ -652,13 +668,39 @@ export default function ComparateursHub() {
           </div>
 
           {/* ── Citoyenneté & Communauté ── */}
-          <div className="mt-8 mb-10">
+          <div className="mt-8">
             <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">🤝 Citoyenneté &amp; Communauté</h2>
             <p className="text-gray-400 text-xs sm:text-sm mb-4">
               Groupes citoyens, solidarité, signalements et newsletter communautaire.
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
               {CITOYEN.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={`group flex items-center sm:items-start gap-2 sm:gap-3 rounded-xl border p-3 sm:p-4 transition-all hover:scale-[1.02] hover:shadow-lg ${item.bg}`}
+                  >
+                    <Icon className={`w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 ${item.color}`} />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-white text-xs sm:text-sm leading-tight">{item.label}</p>
+                      <p className="hidden sm:block text-xs text-gray-400 mt-0.5">{item.desc}</p>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* ── Navigation & Cartes ── */}
+          <div className="mt-8 mb-10">
+            <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">🗺️ Navigation &amp; Cartes</h2>
+            <p className="text-gray-400 text-xs sm:text-sm mb-4">
+              Carte interactive, itinéraires et moteur de recherche multi-sources.
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
+              {NAVIGATION_OUTILS.map((item) => {
                 const Icon = item.icon;
                 return (
                   <Link

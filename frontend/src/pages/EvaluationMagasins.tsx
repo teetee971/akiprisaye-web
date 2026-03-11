@@ -42,6 +42,7 @@ const EXAMPLE_RATINGS: StoreRating[] = [
     sectorEmoji: '🛒',
     sectorColor: 'bg-amber-100 text-amber-800',
     storeImage: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fm=webp&fit=crop&w=800&q=80',
+    ratings: { service: 4.3, proprete: 4.1, disponibilite: 4.2 },
     totalReviews: 142,
     lastReview: '2024-12-10',
   },
