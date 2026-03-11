@@ -2,33 +2,23 @@
  * Retailer Search Source Adapter
  *
  * Recherche d'images produit sur les sites d'enseignes de grande distribution.
+ * Le web scraping est désormais autorisé — les connecteurs sont actifs et
+ * utilisent le proxy Cloudflare /api/retailer-search pour contourner les
+ * restrictions CORS côté navigateur.
  *
- * ─── POINTS À BRANCHER ────────────────────────────────────────────────────
- *
- * Ce module définit l'interface et la structure.
- * Les connecteurs réels sont marqués TODO(connect) avec les instructions
- * précises pour brancher chaque enseigne.
- *
- * Enseignes prévues:
- *  1. U / Courses U (magasins-u.com)
+ * Enseignes supportées:
+ *  1. U / Courses U (coursesu.com)
  *  2. Carrefour (carrefour.fr)
- *  3. E.Leclerc (leclerc.fr / drive.leclerc.fr)
+ *  3. E.Leclerc (e.leclerc)
  *  4. Casino (casino.fr)
  *
- * Pour activer un connecteur:
- *  1. Implémenter la fonction fetchRetailer{Name}(product)
- *  2. L'ajouter à RETAILER_ADAPTERS
- *  3. Vérifier les conditions légales (CGU / robots.txt du site)
- *
- * En attendant: retourne [] (aucune URL inventée, aucun crash).
- *
- * ─── FORMAT CANDIDAT ATTENDU ──────────────────────────────────────────────
+ * ─── FORMAT CANDIDAT ──────────────────────────────────────────────────────
  *
  * {
  *   imageUrl: "https://...",        ← URL image produit (https)
  *   pageUrl: "https://...",         ← URL fiche produit
  *   title: "...",                   ← libellé produit sur le site
- *   source: "drive.leclerc.fr",
+ *   source: "coursesu.com",
  *   sourceType: "retailer",
  *   brand: "U",
  *   sizeText: "300g",
@@ -42,6 +32,13 @@
 import type { ImageCandidate, ImageSourceAdapter, ProductDescriptor } from '../../types/product-image';
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Proxy base URL — same origin in production, empty string uses relative URL
+// ─────────────────────────────────────────────────────────────────────────────
+
+const PROXY_BASE = (import.meta.env.VITE_PRICE_API_BASE ?? '').replace(/\/$/, '');
+const PROXY_TIMEOUT_MS = 6000;
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Retailer connector type
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -53,96 +50,137 @@ interface RetailerConnector {
   /** True si le connecteur est implémenté et actif */
   active: boolean;
   /**
-   * Recherche un produit sur le site de l'enseigne.
+   * Recherche un produit sur le site de l'enseigne via le proxy Cloudflare.
    * Retourner [] si indisponible ou hors périmètre.
    */
   fetch(product: ProductDescriptor): Promise<ImageCandidate[]>;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Connector: Courses U / magasins-u.com
-//
-// TODO(connect):
-//   API: https://www.coursesu.com/recherche?q={QUERY}
-//   Images: extraire img[data-src] ou og:image depuis la fiche
-//   Format image URL: https://medias.coursesu.com/media/...
-//   Nécessite: user-agent mobile, gestion cookies, éventuellement proxy
-//   Vérifier: CGU Courses U / robots.txt
+// Shared proxy fetch helper
+// ─────────────────────────────────────────────────────────────────────────────
+
+type RetailerSearchResult = {
+  status: 'OK' | 'NO_DATA' | 'UNAVAILABLE';
+  retailer: string;
+  results: Array<{
+    title: string;
+    imageUrl?: string;
+    pageUrl?: string;
+    brand?: string;
+    price?: number;
+    sizeText?: string;
+  }>;
+};
+
+async function fetchFromProxy(
+  retailer: string,
+  product: ProductDescriptor,
+): Promise<ImageCandidate[]> {
+  const query = product.barcode ?? product.normalizedLabel ?? product.label ?? '';
+  if (!query) return [];
+
+  const params = new URLSearchParams({
+    retailer,
+    q: query,
+    pageSize: '6',
+  });
+
+  const url = `${PROXY_BASE}/api/retailer-search?${params.toString()}`;
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), PROXY_TIMEOUT_MS);
+
+  try {
+    const response = await fetch(url, { signal: controller.signal });
+    if (!response.ok) return [];
+
+    const payload = (await response.json()) as RetailerSearchResult;
+    if (payload.status !== 'OK' || !Array.isArray(payload.results)) return [];
+
+    return payload.results
+      .filter((r) => r.title)
+      .map((r): ImageCandidate => ({
+        imageUrl: r.imageUrl ?? '',
+        pageUrl: r.pageUrl,
+        title: r.title,
+        source: retailer,
+        sourceType: 'retailer',
+        brand: r.brand,
+        sizeText: r.sizeText,
+        matchedQuery: query,
+        confidenceScore: r.imageUrl ? 60 : 30,
+        confidenceHints: [
+          ...(r.imageUrl ? ['packshot'] : []),
+          ...(r.brand ? ['brand_match'] : []),
+        ],
+        notes: r.imageUrl ? 'packshot' : undefined,
+      }))
+      .filter((c) => c.imageUrl && /^https?:\/\//i.test(c.imageUrl));
+  } catch {
+    return [];
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Connector: Courses U / coursesu.com
 // ─────────────────────────────────────────────────────────────────────────────
 
 const coursesUConnector: RetailerConnector = {
   name: 'Courses U',
   domain: 'coursesu.com',
-  covers: [/\bU\b/i, /\bU\s+bio\b/i, /\bU\s+Express\b/i],
-  active: false,  // TODO(connect): passer à true après implémentation
+  covers: [/\bU\b/i, /\bU\s+bio\b/i, /\bU\s+Express\b/i, /\bSuper\s*U\b/i, /\bHyper\s*U\b/i],
+  active: true,
 
-  async fetch(_product: ProductDescriptor): Promise<ImageCandidate[]> {
-    // TODO(connect): Implémenter la recherche sur coursesu.com
-    // Étapes:
-    //   1. GET https://www.coursesu.com/recherche?q={encodeURIComponent(product.normalizedLabel)}
-    //   2. Parser le HTML pour extraire les produits (class .product-card ou similaire)
-    //   3. Pour chaque produit: extraire titre, imageUrl, pageUrl
-    //   4. Mapper vers ImageCandidate[]
-    return [];
+  async fetch(product: ProductDescriptor): Promise<ImageCandidate[]> {
+    return fetchFromProxy('coursesu', product);
   },
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Connector: Carrefour Drive
-//
-// TODO(connect):
-//   API partenaire: https://www.carrefour.fr/s?q={QUERY}
-//   Format image: https://img.carrefour.fr/...
-//   Note: Carrefour dispose d'une API partenaire (accès négocié)
+// Connector: Carrefour
 // ─────────────────────────────────────────────────────────────────────────────
 
 const carrefourConnector: RetailerConnector = {
   name: 'Carrefour',
   domain: 'carrefour.fr',
   covers: [/\bcarrefour\b/i],
-  active: false,
+  active: true,
 
-  async fetch(_product: ProductDescriptor): Promise<ImageCandidate[]> {
-    // TODO(connect): API partenaire Carrefour
-    return [];
+  async fetch(product: ProductDescriptor): Promise<ImageCandidate[]> {
+    return fetchFromProxy('carrefour', product);
   },
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Connector: E.Leclerc Drive
-//
-// TODO(connect):
-//   URL: https://www.e.leclerc/recherche/{QUERY}
-//   Images: extraire depuis balises JSON-LD ou Open Graph
+// Connector: E.Leclerc
 // ─────────────────────────────────────────────────────────────────────────────
 
 const leclercConnector: RetailerConnector = {
   name: 'E.Leclerc',
   domain: 'e.leclerc',
   covers: [/\bleclerc\b/i],
-  active: false,
+  active: true,
 
-  async fetch(_product: ProductDescriptor): Promise<ImageCandidate[]> {
-    // TODO(connect): scraping E.Leclerc Drive
-    return [];
+  async fetch(product: ProductDescriptor): Promise<ImageCandidate[]> {
+    return fetchFromProxy('leclerc', product);
   },
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Connector: Casino / Monoprix
-//
-// TODO(connect):
-//   URL: https://www.casino.fr/recherche?q={QUERY}
 // ─────────────────────────────────────────────────────────────────────────────
 
 const casinoConnector: RetailerConnector = {
   name: 'Casino',
   domain: 'casino.fr',
   covers: [/\bcasino\b/i, /\bmonoprix\b/i],
-  active: false,
+  active: true,
 
-  async fetch(_product: ProductDescriptor): Promise<ImageCandidate[]> {
-    return [];
+  async fetch(product: ProductDescriptor): Promise<ImageCandidate[]> {
+    return fetchFromProxy('casino', product);
   },
 };
 
@@ -204,3 +242,4 @@ export function getRetailerConnectorStatus(): Array<{
 }> {
   return RETAILER_CONNECTORS.map(({ name, domain, active }) => ({ name, domain, active }));
 }
+
