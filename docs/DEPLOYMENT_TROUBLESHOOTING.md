@@ -96,49 +96,35 @@ Garantit que toutes les routes React fonctionnent (pas de 404 sur refresh).
 
 ## ✅ Tests de validation
 
-### Test 1 : Contenu servi (curl)
+### Validation recommandée
+
+Depuis la racine du dépôt :
 
 ```bash
-# Test 1: Vérifier que React est servi
-curl -s https://akiprisaye-web.pages.dev/ | grep -E 'id="root"|/assets/'
-
-# ✅ Attendu: <div id="root"></div> et <script ... src="/assets/index-*.js">
+bash scripts/validate-deployment.sh
 ```
 
-### Test 2 : Absence du fallback
+Ce validateur contrôle automatiquement :
+
+- la présence du shell React (`#root`) dans le HTML réellement servi ;
+- l’absence du fallback legacy `"Le site est en ligne"` ;
+- l’accessibilité des assets réellement référencés par le HTML déployé ;
+- le Service Worker servi au même préfixe que les assets ;
+- plusieurs routes critiques de l’application ;
+- l’endpoint `/api/health` ;
+- les headers HTML principaux (`Cache-Control`, headers de sécurité optionnels).
+
+### Vérifications ponctuelles (curl)
 
 ```bash
-# Test 2: Vérifier qu'aucun fallback n'est servi
+# HTML servi
+curl -s https://akiprisaye-web.pages.dev/ | grep -E 'id="root"|manifest\.webmanifest|service-worker'
+
+# Aucun fallback legacy
 curl -s https://akiprisaye-web.pages.dev/ | grep -i "Le site est en ligne"
 
-# ✅ Attendu: Aucun résultat (exit code 1)
-```
-
-### Test 3 : Service Worker v4
-
-```bash
-# Test 3: Vérifier le SW est bien v4
-curl -s https://akiprisaye-web.pages.dev/service-worker.js | head -20
-
-# ✅ Attendu: CACHE_NAME = 'akiprisaye-smart-cache-v4'
-```
-
-### Test 4 : Headers Cache-Control
-
-```bash
-# Test 4: Vérifier les headers HTML
+# Headers HTML
 curl -I https://akiprisaye-web.pages.dev/
-
-# ✅ Attendu: Cache-Control: no-store, no-cache, must-revalidate
-```
-
-### Test 5 : Headers assets
-
-```bash
-# Test 5: Vérifier les headers assets
-curl -I https://akiprisaye-web.pages.dev/assets/index-*.js
-
-# ✅ Attendu: Cache-Control: public, max-age=31536000, immutable
 ```
 
 ---

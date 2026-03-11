@@ -565,6 +565,7 @@ Rollback possible
 Validation rapide en production (ne pas tester `/_redirects`, ce fichier est parsé par Pages et non servi tel quel) :
 
 ```bash
+bash scripts/validate-deployment.sh
 curl -I https://akiprisaye-web.pages.dev/
 curl -I https://akiprisaye-web.pages.dev/login
 curl -I https://akiprisaye-web.pages.dev/mon-compte
@@ -572,6 +573,7 @@ curl -I https://akiprisaye-web.pages.dev/reset-password
 curl -I https://akiprisaye-web.pages.dev/inscription
 ```
 
+Le script `scripts/validate-deployment.sh` vérifie aussi que les assets réellement référencés par le HTML public existent bien sur le site déployé.
 Toutes ces routes doivent répondre `HTTP 200` et charger l'application SPA.
 
 ---
