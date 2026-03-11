@@ -185,11 +185,27 @@ const casinoConnector: RetailerConnector = {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Connector: Intermarché
+// ─────────────────────────────────────────────────────────────────────────────
+
+const intermarcheConnector: RetailerConnector = {
+  name: 'Intermarché',
+  domain: 'intermarche.com',
+  covers: [/\bintermarch[eé]\b/i, /\bintermarch\b/i],
+  active: true,
+
+  async fetch(product: ProductDescriptor): Promise<ImageCandidate[]> {
+    return fetchFromProxy('intermarche', product);
+  },
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Registered connectors (in priority order)
 // ─────────────────────────────────────────────────────────────────────────────
 
 const RETAILER_CONNECTORS: RetailerConnector[] = [
   coursesUConnector,
+  intermarcheConnector,
   carrefourConnector,
   leclercConnector,
   casinoConnector,

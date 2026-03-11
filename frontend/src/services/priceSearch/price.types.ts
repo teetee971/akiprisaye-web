@@ -46,7 +46,9 @@ export type PriceSourceId =
   | 'carrefour_milenis_guadeloupe'
   | 'connexion_guadeloupe'
   | 'calameo_catalog'
-  | 'courses_u';
+  | 'courses_u'
+  | 'intermarche'
+  | 'leader_price';
 
 export type PriceSearchStatus =
   | 'OK'

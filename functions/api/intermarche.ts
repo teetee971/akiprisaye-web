@@ -1,7 +1,7 @@
 /**
- * Cloudflare Pages Function — Proxy vers le catalogue Courses U (Super U)
+ * Cloudflare Pages Function — Proxy vers le catalogue Intermarché
  *
- * Recherche les produits dans le catalogue Super U / Hyper U / Marché U.
+ * Recherche les produits dans le catalogue Intermarché.
  * DOM-TOM : Guadeloupe, Martinique, La Réunion, Guyane.
  *
  * Paramètres GET :
@@ -9,24 +9,11 @@
  *   - barcode   : code EAN (ex: "3560070123456")
  *   - territory : code territoire optionnel (ex: "gp", "mq", "re")
  *   - pageSize  : nombre de résultats (défaut: 20, max: 40)
- *
- * Le web scraping est autorisé conformément aux CGU et à la politique
- * de partage des données de Super U / Groupe U.
  */
 
-const COURSES_U_BASE_URL = 'https://www.coursesu.com';
+const INTERMARCHE_BASE_URL = 'https://www.intermarche.com';
 const CACHE_MAX_AGE_SECONDS = 1800; // 30 minutes
 const FETCH_TIMEOUT_MS = 8000;
-const MAX_RETRY_ATTEMPTS = 2;
-
-/** Mappage territoire → code PDV (point de vente) Super U DOM-TOM */
-const PDV_CODES_BY_TERRITORY: Partial<Record<string, string[]>> = {
-  gp: ['076170', '076180', '076190'],  // Guadeloupe
-  mq: ['097200', '097210'],            // Martinique
-  re: ['097410', '097420'],            // La Réunion
-  gf: ['097300'],                      // Guyane
-  yt: ['097600'],                      // Mayotte
-};
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -36,22 +23,11 @@ const CORS_HEADERS = {
 };
 
 type TerritoryCode =
-  | 'fr'
-  | 'gp'
-  | 'mq'
-  | 'gf'
-  | 're'
-  | 'yt'
-  | 'pm'
-  | 'bl'
-  | 'mf'
-  | 'wf'
-  | 'pf'
-  | 'nc'
-  | 'tf';
+  | 'fr' | 'gp' | 'mq' | 'gf' | 're' | 'yt'
+  | 'pm' | 'bl' | 'mf' | 'wf' | 'pf' | 'nc' | 'tf';
 
 type PriceObservation = {
-  source: 'courses_u';
+  source: 'intermarche';
   productName?: string;
   brand?: string;
   barcode?: string;
@@ -63,52 +39,57 @@ type PriceObservation = {
   metadata?: Record<string, string>;
 };
 
-type CoursesUOffer = {
+/** Mappage territoire → code magasin Intermarché DOM-TOM */
+const STORE_CODES_BY_TERRITORY: Partial<Record<string, string>> = {
+  gp: '097100',   // Guadeloupe
+  mq: '097200',   // Martinique
+  re: '097400',   // La Réunion
+  gf: '097300',   // Guyane
+  yt: '097600',   // Mayotte
+};
+
+type IntermarcheOffer = {
   price?: unknown;
-  normalPrice?: unknown;
-  crossedPrice?: unknown;
+  sellingPrice?: unknown;
   promotionPrice?: unknown;
+  crossedOutPrice?: unknown;
   discountedPrice?: unknown;
-  pricePerUnit?: unknown;
-  unitOfMeasure?: unknown;
   unit?: unknown;
+  unitLabel?: unknown;
   currency?: unknown;
 };
 
-type CoursesUProduct = {
-  code?: unknown;
+type IntermarcheProduct = {
   ean?: unknown;
-  gtin?: unknown;
-  gtinNumber?: unknown;
-  name?: unknown;
+  code?: unknown;
+  gtinCode?: unknown;
   label?: unknown;
-  libelle?: unknown;
-  productName?: unknown;
+  name?: unknown;
   title?: unknown;
+  productName?: unknown;
   brand?: unknown;
   marque?: unknown;
-  brandName?: unknown;
-  images?: unknown[];
+  brandLabel?: unknown;
+  image?: unknown;
   imageUrl?: unknown;
   photo?: unknown;
   thumbnail?: unknown;
-  offers?: CoursesUOffer[];
-  offer?: CoursesUOffer;
   price?: unknown;
-  normalPrice?: unknown;
-  priceValue?: unknown;
   sellingPrice?: unknown;
+  promotionPrice?: unknown;
   unit?: unknown;
-  unitOfMeasure?: unknown;
+  unitLabel?: unknown;
+  offers?: IntermarcheOffer[];
+  offer?: IntermarcheOffer;
 };
 
-type CoursesUSearchPayload = {
+type IntermarcheSearchPayload = {
   products?: unknown;
   items?: unknown;
   results?: unknown;
   data?: unknown;
   hits?: unknown;
-  response?: unknown;
+  content?: unknown;
 };
 
 const safeString = (value: unknown): string | undefined =>
@@ -123,29 +104,28 @@ const safeNumber = (value: unknown): number | null => {
   return null;
 };
 
-const extractPrice = (product: CoursesUProduct): number | null => {
+const extractPrice = (product: IntermarcheProduct): number | null => {
   const offer = Array.isArray(product.offers) ? product.offers[0] : product.offer;
   if (offer) {
     return (
       safeNumber(offer.promotionPrice) ??
       safeNumber(offer.discountedPrice) ??
       safeNumber(offer.price) ??
-      safeNumber(offer.normalPrice) ??
-      safeNumber(offer.crossedPrice)
+      safeNumber(offer.sellingPrice) ??
+      safeNumber(offer.crossedOutPrice)
     );
   }
   return (
+    safeNumber(product.promotionPrice) ??
     safeNumber(product.price) ??
-    safeNumber(product.normalPrice) ??
-    safeNumber(product.priceValue) ??
     safeNumber(product.sellingPrice)
   );
 };
 
-const extractUnit = (product: CoursesUProduct): PriceObservation['unit'] => {
+const extractUnit = (product: IntermarcheProduct): PriceObservation['unit'] => {
   const offer = Array.isArray(product.offers) ? product.offers[0] : product.offer;
   const raw = safeString(
-    offer?.unitOfMeasure ?? offer?.unit ?? product.unitOfMeasure ?? product.unit,
+    offer?.unitLabel ?? offer?.unit ?? product.unitLabel ?? product.unit,
   )?.toLowerCase();
   if (!raw) return 'unit';
   if (raw.includes('kg') || raw.includes('kilo')) return 'kg';
@@ -153,21 +133,18 @@ const extractUnit = (product: CoursesUProduct): PriceObservation['unit'] => {
   return 'unit';
 };
 
-const toProductsArray = (payload: CoursesUSearchPayload): CoursesUProduct[] => {
-  // Handle nested response structure
-  const unwrapped =
-    (payload.response as CoursesUSearchPayload | undefined) ?? payload;
-
+const toProductsArray = (payload: IntermarcheSearchPayload): IntermarcheProduct[] => {
+  const unwrapped = (payload.content as IntermarcheSearchPayload | undefined) ?? payload;
   for (const key of ['products', 'items', 'results', 'data', 'hits'] as const) {
-    const val = (unwrapped as CoursesUSearchPayload)[key];
-    if (Array.isArray(val)) return val as CoursesUProduct[];
+    const val = (unwrapped as IntermarcheSearchPayload)[key];
+    if (Array.isArray(val)) return val as IntermarcheProduct[];
   }
-  if (Array.isArray(unwrapped)) return unwrapped as CoursesUProduct[];
+  if (Array.isArray(unwrapped)) return unwrapped as IntermarcheProduct[];
   return [];
 };
 
 const mapProduct = (
-  product: CoursesUProduct,
+  product: IntermarcheProduct,
   territory: string | undefined,
   today: string,
 ): PriceObservation | null => {
@@ -175,27 +152,23 @@ const mapProduct = (
   if (price === null) return null;
 
   const barcode =
-    safeString(product.code) ??
     safeString(product.ean) ??
-    safeString(product.gtin) ??
-    safeString(product.gtinNumber);
+    safeString(product.code) ??
+    safeString(product.gtinCode);
 
   const productName =
-    safeString(product.name) ??
     safeString(product.label) ??
-    safeString(product.libelle) ??
-    safeString(product.productName) ??
-    safeString(product.title);
+    safeString(product.name) ??
+    safeString(product.title) ??
+    safeString(product.productName);
 
   const brand =
     safeString(product.brand) ??
     safeString(product.marque) ??
-    safeString(product.brandName);
+    safeString(product.brandLabel);
 
-  const images = Array.isArray(product.images) ? product.images : [];
-  const firstImage = images[0];
   const imageUrl =
-    safeString(typeof firstImage === 'string' ? firstImage : (firstImage as Record<string, unknown>)?.url) ??
+    safeString(product.image) ??
     safeString(product.imageUrl) ??
     safeString(product.photo) ??
     safeString(product.thumbnail);
@@ -211,7 +184,7 @@ const mapProduct = (
       : undefined;
 
   return {
-    source: 'courses_u',
+    source: 'intermarche',
     productName,
     brand,
     barcode,
@@ -227,7 +200,7 @@ const mapProduct = (
 async function fetchWithRetry(
   url: string,
   options: RequestInit,
-  maxAttempts = MAX_RETRY_ATTEMPTS,
+  maxAttempts = 2,
 ): Promise<Response> {
   let lastError: unknown;
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
@@ -246,7 +219,8 @@ async function fetchWithRetry(
       }
     } catch (error) {
       lastError = error;
-      const isAbort = error instanceof Error && error.name === 'AbortError';
+      const isAbort =
+        error instanceof Error && error.name === 'AbortError';
       if (isAbort || attempt >= maxAttempts) throw error;
       await new Promise((resolve) => setTimeout(resolve, 300 * attempt));
     }
@@ -273,21 +247,16 @@ export const onRequestGet: PagesFunction = async ({ request }) => {
   }
 
   const searchTerm = barcode || query;
-  const pdvCodes =
-    territory && PDV_CODES_BY_TERRITORY[territory]
-      ? PDV_CODES_BY_TERRITORY[territory]!
-      : [];
+  const storeCode = territory ? STORE_CODES_BY_TERRITORY[territory] : undefined;
 
   const params = new URLSearchParams({
-    query: searchTerm,
-    page: '1',
-    pageSize: String(pageSize),
+    q: searchTerm,
+    limit: String(pageSize),
+    lang: 'fr',
   });
-  if (pdvCodes.length > 0) {
-    params.set('pdvCode', pdvCodes[0]);
-  }
+  if (storeCode) params.set('storeId', storeCode);
 
-  const upstreamUrl = `${COURSES_U_BASE_URL}/api/2.0/catalog/search?${params.toString()}`;
+  const upstreamUrl = `${INTERMARCHE_BASE_URL}/api/v2/products/search?${params.toString()}`;
 
   const cache = caches.default;
   const cacheKey = new Request(upstreamUrl, { method: 'GET' });
@@ -301,7 +270,7 @@ export const onRequestGet: PagesFunction = async ({ request }) => {
             'A-KI-PRI-SA-YE/1.0 (observatoire prix DOM-TOM; contact: support@akiprisaye.fr)',
           Accept: 'application/json',
           'Accept-Language': 'fr-FR,fr;q=0.9',
-          Referer: COURSES_U_BASE_URL,
+          Referer: INTERMARCHE_BASE_URL,
         },
       });
     } catch {
@@ -334,7 +303,7 @@ export const onRequestGet: PagesFunction = async ({ request }) => {
   let observations: PriceObservation[] = [];
 
   try {
-    const payload = (await upstream.json()) as CoursesUSearchPayload;
+    const payload = (await upstream.json()) as IntermarcheSearchPayload;
     observations = toProductsArray(payload)
       .map((p) => mapProduct(p, territory, today))
       .filter((o): o is PriceObservation => o !== null);

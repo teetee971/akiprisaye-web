@@ -5,12 +5,14 @@ import { connexionGuadeloupeProvider } from './connexionGuadeloupeProvider';
 import { coursesUProvider } from './coursesUProvider';
 import { ecologiteGuadeloupeProvider } from './ecologiteGuadeloupeProvider';
 import { huitAHuitGuadeloupeProvider } from './huitAHuitGuadeloupeProvider';
+import { intermarcheProvider } from './intermarcheProvider';
 import { leclercCatalogProvider } from './leclercCatalogProvider';
 import { leclercElectromenagerProvider } from './leclercElectromenagerProvider';
 import { leclercHighTechProvider } from './leclercHighTechProvider';
 import { leclercJardinProvider } from './leclercJardinProvider';
 import { leclercParapharmacieProvider } from './leclercParapharmacieProvider';
 import { leclercSecondeVieProvider } from './leclercSecondeVieProvider';
+import { leaderPriceProvider } from './leaderPriceProvider';
 import { macaveLeclercProvider } from './macaveLeclercProvider';
 import { normalizeText } from './normalize';
 import { openPricesProvider } from './openPricesProvider';
@@ -111,6 +113,8 @@ const PROVIDERS: PriceProvider[] = [
   carrefourMilenisGuadeloupeProvider,
   connexionGuadeloupeProvider,
   coursesUProvider,
+  intermarcheProvider,
+  leaderPriceProvider,
   calameoDynamicProvider,
 ];
 
