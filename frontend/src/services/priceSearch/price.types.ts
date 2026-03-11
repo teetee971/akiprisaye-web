@@ -45,7 +45,10 @@ export type PriceSourceId =
   | 'supeco_guyane'
   | 'carrefour_milenis_guadeloupe'
   | 'connexion_guadeloupe'
-  | 'calameo_catalog';
+  | 'calameo_catalog'
+  | 'courses_u'
+  | 'intermarche'
+  | 'leader_price';
 
 export type PriceSearchStatus =
   | 'OK'

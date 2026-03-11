@@ -85,6 +85,12 @@ export default defineConfig({
       abs('./src/providers/__tests__/calameoCatalogProvider.test.ts'),
       // Découverte automatique Calameo + fournisseur dynamique
       abs('./src/providers/__tests__/calameoDiscovery.test.ts'),
+      // Courses U / Super U — fournisseur de prix catalogue DOM-TOM
+      abs('./src/providers/__tests__/coursesUProvider.test.ts'),
+      // Intermarché — fournisseur de prix catalogue DOM-TOM
+      abs('./src/providers/__tests__/intermarcheProvider.test.ts'),
+      // Leader Price — fournisseur de prix catalogue DOM-TOM (Guadeloupe, Martinique)
+      abs('./src/providers/__tests__/leaderPriceProvider.test.ts'),
       // Booking links — UTM params et statut commissions
       abs('./src/test/bookingLinks.test.ts'),
       // Comparateurs spécialisés — services de comparaison
