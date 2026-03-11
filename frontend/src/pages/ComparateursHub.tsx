@@ -100,6 +100,7 @@ const SCANNERS = [
 
 // ── Calculators & simulators ────────────────────────────────────────────────────
 const CALCULATEURS = [
+  { path: '/calculateur-batiment', icon: HardHat,    label: 'Calculateur Bâtiment',      color: 'text-orange-400', bg: 'bg-orange-500/10 border-orange-500/30', desc: 'Parpaing, dalle béton, carrelage, peinture, tôles…' },
   { path: '/calculateur-octroi',   icon: Calculator, label: 'Calculateur Octroi de Mer', color: 'text-amber-400',  bg: 'bg-amber-500/10 border-amber-500/30',   desc: 'Calculer l\'octroi de mer sur vos achats en DOM' },
   { path: '/simulateur-budget',    icon: Wallet,     label: 'Simulateur Budget Familial', color: 'text-green-400', bg: 'bg-green-500/10 border-green-500/30',   desc: 'Simuler votre budget courses mensuel' },
   { path: '/budget-vital',         icon: Wallet,     label: 'Budget Vital',               color: 'text-lime-400',  bg: 'bg-lime-500/10 border-lime-500/30',     desc: 'Calcul du panier vital minimum par territoire' },
