@@ -1,6 +1,6 @@
  
 /**
- * Receipt Scanner Component - v1.0.0
+ * Receipt Scanner Component - v2.0.0
  * 
  * Composant de scan et d'analyse de tickets de caisse
  * pour l'observatoire citoyen A KI PRI SA YÉ
@@ -11,16 +11,22 @@
  * - Aucune recommandation d'achat
  * - Transparence totale sur méthodologie
  * - Données non exhaustives (disclaimer visible)
+ * 
+ * MULTI-PHOTO:
+ * - Support de plusieurs photos pour les longs tickets
+ * - Import multiple depuis la galerie
+ * - Fusion intelligente des résultats OCR
  */
 
 import React, { useState, useRef } from 'react';
-import { Camera, Upload, X, AlertCircle, CheckCircle, Info, TrendingUp, TrendingDown, Minus, Store, MapPin } from 'lucide-react';
+import { Camera, Upload, X, AlertCircle, CheckCircle, Info, TrendingUp, TrendingDown, Minus, Store, MapPin, Plus, Images } from 'lucide-react';
 import { scanReceipt, type ReceiptAnalysisResult, type ReceiptLine } from '../services/receiptScanService';
 
 /**
  * Constants
  */
 const MAX_DISPLAYED_UNRECOGNIZED_LINES = 5;
+const MAX_PHOTOS = 10;
 
 interface ReceiptScannerProps {
   /**
@@ -50,77 +56,167 @@ function toSafeImageSrc(src?: string | null): string | null {
   return null;
 }
 
+/**
+ * Merge multiple ReceiptAnalysisResult into a single result
+ */
+function mergeAnalysisResults(results: ReceiptAnalysisResult[]): ReceiptAnalysisResult {
+  if (results.length === 0) {
+    return {
+      productLines: [],
+      unrecognizedLines: [],
+      totalProductsRecognized: 0,
+      recognitionRate: 0,
+      totalAmount: 0,
+      rawOcrText: '',
+      overallConfidence: 0,
+    };
+  }
+  if (results.length === 1) return results[0];
+
+  const merged: ReceiptAnalysisResult = {
+    storeName: results.find(r => r.storeName)?.storeName,
+    date: results.find(r => r.date)?.date,
+    territory: results.find(r => r.territory)?.territory,
+    productLines: results.flatMap(r => r.productLines),
+    unrecognizedLines: results.flatMap(r => r.unrecognizedLines),
+    totalProductsRecognized: results.reduce((sum, r) => sum + r.totalProductsRecognized, 0),
+    totalAmount: results.reduce((sum, r) => sum + r.totalAmount, 0),
+    rawOcrText: results.map(r => r.rawOcrText).join('\n\n--- PAGE SUIVANTE ---\n\n'),
+    overallConfidence: Math.round(
+      results.reduce((sum, r) => sum + r.overallConfidence, 0) / results.length
+    ),
+    recognitionRate: 0,
+  };
+
+  const totalLines = merged.productLines.length + merged.unrecognizedLines.length;
+  merged.recognitionRate = totalLines > 0
+    ? Math.round((merged.productLines.length / totalLines) * 100)
+    : 0;
+
+  return merged;
+}
+
 export default function ReceiptScanner({ onAnalysisComplete, onClose }: ReceiptScannerProps) {
   const [step, setStep] = useState<ScanStep>('capture');
-  const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  // Multi-photo: array of blob URLs
+  const [capturedImages, setCapturedImages] = useState<string[]>([]);
   const [analysisResult, setAnalysisResult] = useState<ReceiptAnalysisResult | null>(null);
   const [processing, setProcessing] = useState(false);
   const [processingPhase, setProcessingPhase] = useState<ProcessingPhase>('photo');
+  const [processingImageIndex, setProcessingImageIndex] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [userConsent, setUserConsent] = useState(false);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
 
+  // Add images from file input (supports multiple selection)
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
     
     if (!userConsent) {
       setError('Veuillez accepter les conditions de traitement des données');
       return;
     }
-    
-    // Valider type fichier
+
+    const validFiles: File[] = [];
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (!file.type.startsWith('image/')) {
+        setError('Veuillez sélectionner uniquement des images valides (JPG, PNG, etc.)');
+        return;
+      }
+      validFiles.push(file);
+    }
+
+    const newUrls = validFiles.map(f => URL.createObjectURL(f));
+    setCapturedImages(prev => {
+      const combined = [...prev, ...newUrls];
+      return combined.slice(0, MAX_PHOTOS);
+    });
+    setError(null);
+
+    // Reset the input so the same file(s) can be re-selected if needed
+    e.target.value = '';
+  };
+
+  // Add one photo from camera (camera capture is always single)
+  const handleCameraCapture = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!userConsent) {
+      setError('Veuillez accepter les conditions de traitement des données');
+      return;
+    }
+
     if (!file.type.startsWith('image/')) {
       setError('Veuillez sélectionner une image valide (JPG, PNG, etc.)');
       return;
     }
-    
-    // Créer URL blob pour affichage
+
     const imageUrl = URL.createObjectURL(file);
-    setCapturedImage(imageUrl);
-    
-    // Lancer analyse OCR
-    await processReceipt(imageUrl);
-    
-    // Nettoyer le blob URL après traitement pour éviter les fuites mémoire
-    URL.revokeObjectURL(imageUrl);
+    setCapturedImages(prev => [...prev, imageUrl].slice(0, MAX_PHOTOS));
+    setError(null);
+
+    // Reset input
+    e.target.value = '';
   };
 
-  const processReceipt = async (imageUrl: string) => {
+  const removeImage = (index: number) => {
+    setCapturedImages(prev => {
+      const updated = [...prev];
+      URL.revokeObjectURL(updated[index]);
+      updated.splice(index, 1);
+      return updated;
+    });
+  };
+
+  const processAllReceipts = async () => {
+    if (capturedImages.length === 0) return;
     setProcessing(true);
     setError(null);
     setStep('processing');
     
     try {
-      // Phase 1: Photo prise
-      setProcessingPhase('photo');
-      await new Promise(resolve => setTimeout(resolve, 500)); // Visual pause for UX
-      
-      // Phase 2: Lecture des lignes (OCR)
-      setProcessingPhase('ocr');
-      const result = await scanReceipt(imageUrl, {
-        timeout: 30000,
-        language: 'fra',
-      });
-      
-      if (!result.success || !result.analysis) {
-        setError(result.error || 'Échec de l\'analyse du ticket. Veuillez réessayer avec une image plus nette.');
-        setStep('capture');
-        return;
+      const allResults: ReceiptAnalysisResult[] = [];
+
+      for (let i = 0; i < capturedImages.length; i++) {
+        setProcessingImageIndex(i);
+        const imageUrl = capturedImages[i];
+
+        // Phase 1: Photo prise
+        setProcessingPhase('photo');
+        await new Promise(resolve => setTimeout(resolve, 300));
+
+        // Phase 2: OCR
+        setProcessingPhase('ocr');
+        const result = await scanReceipt(imageUrl, {
+          timeout: 30000,
+          language: 'fra',
+        });
+
+        if (!result.success || !result.analysis) {
+          setError(result.error || `Échec de l'analyse de la photo ${i + 1}. Veuillez réessayer avec une image plus nette.`);
+          setStep('capture');
+          return;
+        }
+
+        allResults.push(result.analysis);
       }
-      
-      // Phase 3: Comparaison des prix
+
+      // Phase 3: Comparaison
       setProcessingPhase('comparison');
-      await new Promise(resolve => setTimeout(resolve, 800)); // Simulate comparison time for UX
-      
+      await new Promise(resolve => setTimeout(resolve, 600));
+
       // Phase 4: Terminé
       setProcessingPhase('complete');
-      
-      setAnalysisResult(result.analysis);
+
+      const merged = mergeAnalysisResults(allResults);
+      setAnalysisResult(merged);
       setStep('validation');
-      
+
     } catch (err) {
       console.error('Receipt processing failed:', err);
       setError('Une erreur est survenue lors de l\'analyse. Veuillez réessayer.');
@@ -138,7 +234,8 @@ export default function ReceiptScanner({ onAnalysisComplete, onClose }: ReceiptS
   };
 
   const handleReset = () => {
-    setCapturedImage(null);
+    capturedImages.forEach(url => URL.revokeObjectURL(url));
+    setCapturedImages([]);
     setAnalysisResult(null);
     setError(null);
     setStep('capture');
@@ -206,20 +303,84 @@ export default function ReceiptScanner({ onAnalysisComplete, onClose }: ReceiptS
       {/* Step 1: Capture */}
       {step === 'capture' && (
         <div className="space-y-4">
-          
+
+          {/* Thumbnails grid for collected images */}
+          {capturedImages.length > 0 && (
+            <div className="glass-card p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <Images className="w-5 h-5 text-blue-400" />
+                <h3 className="text-white font-semibold">
+                  {capturedImages.length} photo{capturedImages.length > 1 ? 's' : ''} sélectionnée{capturedImages.length > 1 ? 's' : ''}
+                </h3>
+                {capturedImages.length >= MAX_PHOTOS && (
+                  <span className="text-xs text-yellow-400 ml-auto">Limite atteinte ({MAX_PHOTOS} max)</span>
+                )}
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                {capturedImages.map((url, idx) => {
+                  const safeSrc = toSafeImageSrc(url);
+                  return (
+                    <div key={idx} className="relative aspect-square">
+                      {safeSrc ? (
+                        <div
+                          role="img"
+                          aria-label={`Photo ${idx + 1}`}
+                          className="w-full h-full rounded-lg border border-slate-600 bg-contain bg-no-repeat bg-center bg-slate-800"
+                          style={{ backgroundImage: `url(${safeSrc})` }}
+                        />
+                      ) : (
+                        <div className="w-full h-full rounded-lg border border-slate-600 bg-slate-800 flex items-center justify-center">
+                          <Camera className="w-6 h-6 text-gray-500" />
+                        </div>
+                      )}
+                      <button
+                        onClick={() => removeImage(idx)}
+                        className="absolute -top-1.5 -right-1.5 w-6 h-6 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center transition-colors"
+                        aria-label={`Supprimer photo ${idx + 1}`}
+                      >
+                        <X className="w-3 h-3 text-white" />
+                      </button>
+                      <span className="absolute bottom-1 left-1 text-xs text-white bg-black/50 rounded px-1">
+                        {idx + 1}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Analyse button (shown when at least 1 image collected) */}
+          {capturedImages.length > 0 && (
+            <button
+              onClick={processAllReceipts}
+              disabled={processing}
+              className="w-full px-6 py-4 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-semibold text-lg transition-colors flex items-center justify-center gap-3"
+            >
+              <CheckCircle className="w-6 h-6" />
+              Analyser {capturedImages.length} photo{capturedImages.length > 1 ? 's' : ''}
+            </button>
+          )}
+
           {/* Camera Capture */}
           <button
             onClick={() => cameraInputRef.current?.click()}
-            disabled={!userConsent}
+            disabled={!userConsent || capturedImages.length >= MAX_PHOTOS}
             className="w-full glass-card p-8 hover:bg-slate-800/60 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
           >
             <Camera className="w-12 h-12 text-blue-400 mx-auto mb-4 group-hover:scale-110 transition-transform" />
             <h3 className="text-white font-semibold text-lg mb-2">
-              Prendre une photo
+              {capturedImages.length === 0 ? 'Prendre une photo' : 'Ajouter une autre photo'}
             </h3>
             <p className="text-sm text-gray-400">
               Utiliser l'appareil photo
             </p>
+            {capturedImages.length > 0 && (
+              <p className="text-xs text-blue-400 mt-2 flex items-center justify-center gap-1">
+                <Plus className="w-3 h-3" />
+                Pour les longs tickets, photographiez chaque section
+              </p>
+            )}
           </button>
           
           <input
@@ -227,23 +388,23 @@ export default function ReceiptScanner({ onAnalysisComplete, onClose }: ReceiptS
             type="file"
             accept="image/*"
             capture="environment"
-            onChange={handleFileSelect}
+            onChange={handleCameraCapture}
             className="hidden"
             aria-label="Capture photo avec caméra"
           />
 
-          {/* File Upload */}
+          {/* File Upload - multiple */}
           <button
             onClick={() => fileInputRef.current?.click()}
-            disabled={!userConsent}
+            disabled={!userConsent || capturedImages.length >= MAX_PHOTOS}
             className="w-full glass-card p-8 hover:bg-slate-800/60 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
           >
             <Upload className="w-12 h-12 text-green-400 mx-auto mb-4 group-hover:scale-110 transition-transform" />
             <h3 className="text-white font-semibold text-lg mb-2">
-              Importer une image
+              Importer des images
             </h3>
             <p className="text-sm text-gray-400">
-              Sélectionner depuis la galerie
+              Sélectionner une ou plusieurs photos depuis la galerie
             </p>
           </button>
           
@@ -251,9 +412,10 @@ export default function ReceiptScanner({ onAnalysisComplete, onClose }: ReceiptS
             ref={fileInputRef}
             type="file"
             accept="image/*"
+            multiple
             onChange={handleFileSelect}
             className="hidden"
-            aria-label="Import image depuis galerie"
+            aria-label="Import images depuis galerie"
           />
 
         </div>
@@ -262,6 +424,38 @@ export default function ReceiptScanner({ onAnalysisComplete, onClose }: ReceiptS
       {/* Step 2: Processing with micro-timeline */}
       {step === 'processing' && (
         <div className="glass-card p-8">
+
+          {/* Multi-photo progress indicator */}
+          {capturedImages.length > 1 && (
+            <div className="mb-6 p-4 bg-slate-800/50 rounded-lg">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm text-gray-300">
+                  Analyse de la photo {processingImageIndex + 1} sur {capturedImages.length}
+                </span>
+                <span className="text-sm font-semibold text-blue-400">
+                  {Math.round(((processingImageIndex) / capturedImages.length) * 100)}%
+                </span>
+              </div>
+              <div className="w-full bg-slate-700 rounded-full h-2">
+                <div
+                  className="bg-blue-500 h-2 rounded-full transition-all"
+                  style={{ width: `${((processingImageIndex) / capturedImages.length) * 100}%` }}
+                />
+              </div>
+              <div className="flex gap-1 mt-2">
+                {capturedImages.map((_, idx) => (
+                  <div
+                    key={idx}
+                    className={`flex-1 h-1 rounded-full transition-colors ${
+                      idx < processingImageIndex ? 'bg-green-500' :
+                      idx === processingImageIndex ? 'bg-blue-500 animate-pulse' :
+                      'bg-slate-600'
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
           
           {/* Micro-chronologie visuelle */}
           <div className="max-w-2xl mx-auto space-y-4 mb-8">
@@ -328,7 +522,8 @@ export default function ReceiptScanner({ onAnalysisComplete, onClose }: ReceiptS
 
           {/* SECURITY: Use background-image instead of img src to satisfy CodeQL (no XSS sink) */}
           {(() => {
-            const safeSrc = toSafeImageSrc(capturedImage);
+            const currentImg = capturedImages[processingImageIndex] ?? capturedImages[0];
+            const safeSrc = toSafeImageSrc(currentImg);
             return safeSrc && (
               <div className="mt-6">
                 <div 
@@ -354,6 +549,11 @@ export default function ReceiptScanner({ onAnalysisComplete, onClose }: ReceiptS
               <div>
                 <h3 className="text-xl font-semibold text-white">
                   Analyse terminée
+                  {capturedImages.length > 1 && (
+                    <span className="ml-2 text-sm font-normal text-blue-300">
+                      ({capturedImages.length} photos fusionnées)
+                    </span>
+                  )}
                 </h3>
                 <p className="text-sm text-gray-400">
                   Comparaison avec les observations de votre territoire
