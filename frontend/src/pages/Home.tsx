@@ -70,6 +70,32 @@ const HERO_PRICES = [
   { store: 'Score YT',     price: 2.03, color: '#ef4444' },
 ];
 
+const PRIORITY_ACTIONS = [
+  {
+    title: 'Comparer un produit',
+    description: 'Tapez un EAN, un nom ou utilisez le scan pour aller droit au comparateur.',
+    to: '/comparateur',
+  },
+  {
+    title: 'Choisir mon territoire',
+    description: 'Accédez directement aux prix et magasins de votre zone.',
+    to: '/comparateur?territoire=GP',
+  },
+  {
+    title: 'Comprendre les écarts',
+    description: 'Consultez ensuite l’observatoire complet seulement si vous en avez besoin.',
+    to: '/comprendre-prix',
+  },
+];
+
+const PRIMARY_TERRITORIES = [
+  { code: 'GP', name: 'Guadeloupe' },
+  { code: 'MQ', name: 'Martinique' },
+  { code: 'GF', name: 'Guyane' },
+  { code: 'RE', name: 'La Réunion' },
+  { code: 'YT', name: 'Mayotte' },
+];
+
 function HeroPhoneMockup() {
   const maxPrice = Math.max(...HERO_PRICES.map((d) => d.price));
   return (
@@ -116,6 +142,7 @@ export default function HomeV5() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showScrollIndicator, setShowScrollIndicator] = useState(true);
   const [showMobileCTA, setShowMobileCTA] = useState(false);
+  const [showExtendedContent, setShowExtendedContent] = useState(false);
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
   const [exampleComparison] = useState<PriceComparison>(getComparisonOfDay());
   const statsRef = useRef<HTMLElement | null>(null);
@@ -171,9 +198,12 @@ export default function HomeV5() {
     let windowWidth = window.innerWidth;
     let ticking = false;
 
+    setShowScrollIndicator(windowWidth > 768);
+
     const handleResize = () => {
       windowHeight = window.innerHeight;
       windowWidth = window.innerWidth;
+      setShowScrollIndicator(windowWidth > 768 && window.scrollY <= 100);
     };
 
     const handleScroll = () => {
@@ -232,7 +262,7 @@ export default function HomeV5() {
           aria-hidden="true"
           width={1600}
           height={900}
-          fetchPriority="high"
+          fetchpriority="high"
           decoding="async"
           crossOrigin="anonymous"
           className="hero-bg-img"
@@ -261,12 +291,10 @@ export default function HomeV5() {
             <h1 className="hero-title slide-up">{getTerritoryTitle()}.</h1>
 
             <p className="hero-subtitle slide-up delay-100">
-              Des prix observés localement, comparés entre enseignes,
-              <br />
-              pensés pour les DOM-TOM.
+              Comparez vite, sans surcharge, avec des données locales pensées pour les DOM-TOM.
             </p>
             <p className="hero-reassurance fade-in delay-150">
-              Sans compte. Données locales. Historique conservé sur votre appareil.
+              Sans compte. Données locales. Vos recherches restent sur votre appareil.
             </p>
 
             <form onSubmit={handleSearch} className="hero-search-xxl fade-in delay-200 border-scan">
@@ -288,7 +316,7 @@ export default function HomeV5() {
                 <span className="badge-live-dot" aria-hidden="true" />
                 <span>Données en direct</span>
               </span>
-              {' · '}🔒 Vos recherches restent sur votre appareil.
+              {' · '}Comparateur prioritaire, observatoire complet à la demande.
             </p>
           </div>
 
@@ -308,9 +336,6 @@ export default function HomeV5() {
           </div>
         )}
       </section>
-
-      {/* Live price ticker — real observatoire data */}
-      <PriceLiveTicker />
 
       <main id="main-content">
         <section className="hero-why section-reveal">
@@ -336,17 +361,34 @@ export default function HomeV5() {
           </div>
         </section>
 
+        <section className="home-priority section-reveal">
+          <div className="home-priority-header">
+            <h2 className="section-title">Le plus utile, sans surcharge</h2>
+            <p className="home-priority-text">
+              Nous avons réduit la page d’accueil à l’essentiel : chercher, choisir son territoire et comparer rapidement.
+            </p>
+          </div>
+          <div className="home-priority-grid">
+            {PRIORITY_ACTIONS.map((action) => (
+              <Link key={action.title} to={action.to} className="home-priority-card">
+                <span className="home-priority-card-title">{action.title}</span>
+                <span className="home-priority-card-text">{action.description}</span>
+              </Link>
+            ))}
+          </div>
+        </section>
+
         <section className="territories-section section-reveal">
           <div className="territories-header">
-            <h2>Territoires</h2>
-            <p>Choisissez votre territoire pour accéder au hub local.</p>
+            <h2>Accès rapide par territoire</h2>
+            <p>Choisissez votre zone principale pour lancer une comparaison sans passer par des blocs secondaires.</p>
           </div>
           <div className="territories-grid">
-            <Link className="territory-card" to="/comparateur?territoire=GP">Guadeloupe</Link>
-            <Link className="territory-card" to="/comparateur?territoire=MQ">Martinique</Link>
-            <Link className="territory-card" to="/comparateur?territoire=GF">Guyane</Link>
-            <Link className="territory-card" to="/comparateur?territoire=RE">La Réunion</Link>
-            <Link className="territory-card" to="/comparateur?territoire=YT">Mayotte</Link>
+            {PRIMARY_TERRITORIES.map((territory) => (
+              <Link key={territory.code} className="territory-card" to={`/comparateur?territoire=${territory.code}`}>
+                {territory.name}
+              </Link>
+            ))}
           </div>
         </section>
 
@@ -371,53 +413,6 @@ export default function HomeV5() {
               <span className="proof-icon"><Landmark className="w-5 h-5 text-blue-400" aria-hidden="true" /></span>
               <span className="proof-text">Observatoire indépendant</span>
             </div>
-          </div>
-        </section>
-
-        {/* ── 3D Flip Stat Cards ── */}
-        <section className="reveal px-4 pb-4 pt-2 max-w-5xl mx-auto w-full" aria-label="Statistiques clés">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <FlipStatCard
-              value={`${stats.territories}`}
-              label="Territoires"
-              icon="🗺️"
-              backContent="Guadeloupe, Martinique, Guyane, La Réunion, Mayotte et plus encore."
-            />
-            <FlipStatCard
-              value={`${stats.products.toLocaleString()}+`}
-              label="Produits comparés"
-              icon="🛒"
-              backContent="Alimentaire, hygiène, entretien — relevés citoyens vérifiés."
-            />
-            <FlipStatCard
-              value={`${stats.scans.toLocaleString()}+`}
-              label="Scans effectués"
-              icon="📷"
-              backContent="Codes-barres et tickets OCR analysés par la communauté."
-            />
-            <FlipStatCard
-              value="~35%"
-              label="Surcoût moyen DOM"
-              icon="📊"
-              backContent="Par rapport à l'Hexagone — source observatoire citoyen mars 2026."
-            />
-          </div>
-        </section>
-
-        <section className="benefits section-reveal reveal">
-          <h2 className="section-title slide-up">Ce que vous gagnez</h2>
-          <div className="benefits-grid reveal-stagger">
-            {[
-              "Comparez les prix AVANT d'acheter",
-              "Économisez jusqu'à 30% sur vos courses",
-              'Détectez les hausses anormales de prix',
-              'Exportez les données pour vos analyses'
-            ].map((benefit) => (
-              <div key={benefit} className="benefit-item reveal slide-up">
-                <span className="benefit-check">✓</span>
-                <span className="benefit-text">{benefit}</span>
-              </div>
-            ))}
           </div>
         </section>
 
@@ -472,160 +467,232 @@ export default function HomeV5() {
           </div>
         </section>
 
-        <section className="territories-v5 section-reveal">
-          <h2 className="section-title slide-up">12 territoires couverts</h2>
-          <div className="territories-grid-v5">
-            {[
-              { code: 'GP', name: 'Guadeloupe', flag: '🇬🇵' },
-              { code: 'MQ', name: 'Martinique', flag: '🇲🇶' },
-              { code: 'GF', name: 'Guyane', flag: '🇬🇫' },
-              { code: 'RE', name: 'Réunion', flag: '🇷🇪' },
-              { code: 'YT', name: 'Mayotte', flag: '🇾🇹' },
-              { code: 'NC', name: 'Nouvelle-Calédonie', flag: '🇳🇨' },
-              { code: 'PF', name: 'Polynésie française', flag: '🇵🇫' },
-              { code: 'WF', name: 'Wallis-et-Futuna', flag: '🇼🇫' },
-              { code: 'PM', name: 'Saint-Pierre-et-Miquelon', flag: '🇵🇲' },
-              { code: 'BL', name: 'Saint-Barthélemy', flag: '🇧🇱' },
-              { code: 'MF', name: 'Saint-Martin', flag: '🇲🇫' },
-              { code: 'TF', name: 'TAAF', flag: '🇹🇫' }
-            ].map((territory) => {
-              const asset = getTerritoryAsset(territory.code);
-              return (
-                <div
-                  key={territory.code}
-                  className="territory-photo-card fade-in"
-                  title={territory.name}
-                  aria-label={territory.name}
-                  role="button"
-                  tabIndex={0}
-                  onClick={() => navigate(`/comparateur?territoire=${territory.code}`)}
-                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') navigate(`/comparateur?territoire=${territory.code}`); }}
-                >
-                  <img
-                    src={asset.url}
-                    alt={asset.alt}
-                    className="territory-photo-img"
-                    loading="lazy"
-                    width="200"
-                    height="150"
-                    onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
-                  />
-                  <div className="territory-photo-overlay">
-                    <span className="territory-photo-flag">{territory.flag}</span>
-                    <span className="territory-photo-name">{territory.name}</span>
-                  </div>
-                </div>
-              );
-            })}
+        <section className="home-extended-toggle section-reveal">
+          <div className="home-extended-card">
+            <p className="home-extended-eyebrow">Page d’accueil simplifiée</p>
+            <h2 className="home-extended-title">Le reste du contenu est disponible uniquement si vous le souhaitez</h2>
+            <p className="home-extended-text">
+              L’observatoire détaillé, les graphiques, les témoignages et la FAQ restent accessibles sans surcharger l’arrivée sur la page.
+            </p>
+            <button
+              type="button"
+              className="home-extended-button"
+              onClick={() => setShowExtendedContent((current) => !current)}
+              aria-expanded={showExtendedContent}
+              aria-controls="home-extended-content"
+            >
+              {showExtendedContent ? 'Masquer la vue complète' : 'Voir toute la page d’accueil'}
+            </button>
           </div>
         </section>
 
-        <section className="testimonials-v5 section-reveal">
-          <h2 className="section-title slide-up">Ce que disent nos utilisateurs</h2>
-          <div className="testimonials-grid">
-            {TESTIMONIALS.map((t) => (
-              <div key={t.name} className="testimonial-card slide-up">
-                <div className="testimonial-header">
-                  <div className="testimonial-initials">{t.initials}</div>
-                  <div className="testimonial-meta">
-                    <p className="testimonial-name">{t.name}</p>
-                    <p className="testimonial-location">
-                      <span>{t.flag}</span>
-                      <span>{t.territory}</span>
-                    </p>
-                  </div>
-                  <div className="testimonial-savings-badge">
-                    <span className="testimonial-savings">{t.savings}</span>
-                    <span className="testimonial-savings-label">{t.savingsLabel}</span>
-                  </div>
-                </div>
-                <p className="testimonial-quote">{t.quote}</p>
-                <span className="testimonial-product-tag">🛒 {t.product}</span>
+        {showExtendedContent && (
+          <div id="home-extended-content">
+            <PriceLiveTicker />
+
+            {/* ── 3D Flip Stat Cards ── */}
+            <section className="reveal px-4 pb-4 pt-2 max-w-5xl mx-auto w-full" aria-label="Statistiques clés">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <FlipStatCard
+                  value={`${stats.territories}`}
+                  label="Territoires"
+                  icon="🗺️"
+                  backContent="Guadeloupe, Martinique, Guyane, La Réunion, Mayotte et plus encore."
+                />
+                <FlipStatCard
+                  value={`${stats.products.toLocaleString()}+`}
+                  label="Produits comparés"
+                  icon="🛒"
+                  backContent="Alimentaire, hygiène, entretien — relevés citoyens vérifiés."
+                />
+                <FlipStatCard
+                  value={`${stats.scans.toLocaleString()}+`}
+                  label="Scans effectués"
+                  icon="📷"
+                  backContent="Codes-barres et tickets OCR analysés par la communauté."
+                />
+                <FlipStatCard
+                  value="~35%"
+                  label="Surcoût moyen DOM"
+                  icon="📊"
+                  backContent="Par rapport à l'Hexagone — source observatoire citoyen mars 2026."
+                />
               </div>
-            ))}
+            </section>
+
+            <section className="benefits section-reveal reveal">
+              <h2 className="section-title slide-up">Ce que vous gagnez</h2>
+              <div className="benefits-grid reveal-stagger">
+                {[
+                  "Comparez les prix AVANT d'acheter",
+                  "Économisez jusqu'à 30% sur vos courses",
+                  'Détectez les hausses anormales de prix',
+                  'Exportez les données pour vos analyses'
+                ].map((benefit) => (
+                  <div key={benefit} className="benefit-item reveal slide-up">
+                    <span className="benefit-check">✓</span>
+                    <span className="benefit-text">{benefit}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <section className="territories-v5 section-reveal">
+              <h2 className="section-title slide-up">12 territoires couverts</h2>
+              <div className="territories-grid-v5">
+                {[
+                  { code: 'GP', name: 'Guadeloupe', flag: '🇬🇵' },
+                  { code: 'MQ', name: 'Martinique', flag: '🇲🇶' },
+                  { code: 'GF', name: 'Guyane', flag: '🇬🇫' },
+                  { code: 'RE', name: 'Réunion', flag: '🇷🇪' },
+                  { code: 'YT', name: 'Mayotte', flag: '🇾🇹' },
+                  { code: 'NC', name: 'Nouvelle-Calédonie', flag: '🇳🇨' },
+                  { code: 'PF', name: 'Polynésie française', flag: '🇵🇫' },
+                  { code: 'WF', name: 'Wallis-et-Futuna', flag: '🇼🇫' },
+                  { code: 'PM', name: 'Saint-Pierre-et-Miquelon', flag: '🇵🇲' },
+                  { code: 'BL', name: 'Saint-Barthélemy', flag: '🇧🇱' },
+                  { code: 'MF', name: 'Saint-Martin', flag: '🇲🇫' },
+                  { code: 'TF', name: 'TAAF', flag: '🇹🇫' }
+                ].map((territory) => {
+                  const asset = getTerritoryAsset(territory.code);
+                  return (
+                    <div
+                      key={territory.code}
+                      className="territory-photo-card fade-in"
+                      title={territory.name}
+                      aria-label={territory.name}
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => navigate(`/comparateur?territoire=${territory.code}`)}
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') navigate(`/comparateur?territoire=${territory.code}`); }}
+                    >
+                      <img
+                        src={asset.url}
+                        alt={asset.alt}
+                        className="territory-photo-img"
+                        loading="lazy"
+                        width="200"
+                        height="150"
+                        onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                      />
+                      <div className="territory-photo-overlay">
+                        <span className="territory-photo-flag">{territory.flag}</span>
+                        <span className="territory-photo-name">{territory.name}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+
+            <section className="testimonials-v5 section-reveal">
+              <h2 className="section-title slide-up">Ce que disent nos utilisateurs</h2>
+              <div className="testimonials-grid">
+                {TESTIMONIALS.map((t) => (
+                  <div key={t.name} className="testimonial-card slide-up">
+                    <div className="testimonial-header">
+                      <div className="testimonial-initials">{t.initials}</div>
+                      <div className="testimonial-meta">
+                        <p className="testimonial-name">{t.name}</p>
+                        <p className="testimonial-location">
+                          <span>{t.flag}</span>
+                          <span>{t.territory}</span>
+                        </p>
+                      </div>
+                      <div className="testimonial-savings-badge">
+                        <span className="testimonial-savings">{t.savings}</span>
+                        <span className="testimonial-savings-label">{t.savingsLabel}</span>
+                      </div>
+                    </div>
+                    <p className="testimonial-quote">{t.quote}</p>
+                    <span className="testimonial-product-tag">🛒 {t.product}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <Suspense fallback={null}>
+              <HowItWorksSection />
+            </Suspense>
+
+            {/* App demo showcase — CSS phone mockup with real data screens */}
+            <Suspense fallback={null}>
+              <AppDemoShowcase />
+            </Suspense>
+
+            {/* Real price chart — territory comparison with real observatoire data */}
+            <Suspense fallback={null}>
+              <TerritoryPriceChart />
+            </Suspense>
+
+            {/* Price evolution line chart — 5-month trend from real observatoire snapshots */}
+            <Suspense fallback={null}>
+              <PriceEvolutionChart />
+            </Suspense>
+
+            {/* Panier vital — purchasing power index: minutes of SMIC per basket */}
+            <Suspense fallback={null}>
+              <PanierVitalWidget />
+            </Suspense>
+            {/* Store ranking widget — cheapest vs most expensive stores per territory */}
+            <Suspense fallback={null}>
+              <StoreRankingWidget />
+            </Suspense>
+
+            {/* Why such price gaps? Explainer fiche with source links + conference CTA */}
+            <Suspense fallback={null}>
+              <PriceExplainerBanner />
+            </Suspense>
+
+            {/* AI daily briefing — latest editorial about DOM/COM news of the day */}
+            <Suspense fallback={null}>
+              <LettreJourWidget />
+            </Suspense>
+
+            {/* AI weekly letter — latest editorial about DOM/COM news */}
+            <Suspense fallback={null}>
+              <LettreHebdoWidget />
+            </Suspense>
+
+            {/* Inflation barometer — dynamic month-over-month basket trend from real snapshots */}
+            <Suspense fallback={null}>
+              <InflationBarometerWidget />
+            </Suspense>
+
+            {/* Price shock ranking — top 5 products with biggest inter-territory price gap */}
+            <Suspense fallback={null}>
+              <ProduitChocWidget />
+            </Suspense>
+
+            {/* Equity index — composite multi-product price equity score per territory vs hexagone */}
+            <Suspense fallback={null}>
+              <IndiceEquiteWidget />
+            </Suspense>
+
+            {/* Category overcost chart — DOM surcoût vs Hexagone by category */}
+            <Suspense fallback={null}>
+              <CategoryOvercostChart />
+            </Suspense>
+
+            {/* Video section — vie chère outre-mer explained with lazy YouTube embeds */}
+            <Suspense fallback={null}>
+              <VideoVieChere />
+            </Suspense>
+
+            {/* Live news feed from actualites.json — real data only */}
+            <Suspense fallback={null}>
+              <LiveNewsFeed />
+            </Suspense>
+
+            <Suspense fallback={null}>
+              <ObservatorySection />
+            </Suspense>
+
+            <Suspense fallback={null}>
+              <MiniFaqSection expandedFaq={expandedFaq} onToggleFaq={setExpandedFaq} />
+            </Suspense>
           </div>
-        </section>
-
-        <Suspense fallback={null}>
-          <HowItWorksSection />
-        </Suspense>
-
-        {/* App demo showcase — CSS phone mockup with real data screens */}
-        <Suspense fallback={null}>
-          <AppDemoShowcase />
-        </Suspense>
-
-        {/* Real price chart — territory comparison with real observatoire data */}
-        <Suspense fallback={null}>
-          <TerritoryPriceChart />
-        </Suspense>
-
-        {/* Price evolution line chart — 5-month trend from real observatoire snapshots */}
-        <Suspense fallback={null}>
-          <PriceEvolutionChart />
-        </Suspense>
-
-        {/* Panier vital — purchasing power index: minutes of SMIC per basket */}
-        <Suspense fallback={null}>
-          <PanierVitalWidget />
-        </Suspense>
-        {/* Store ranking widget — cheapest vs most expensive stores per territory */}
-        <Suspense fallback={null}>
-          <StoreRankingWidget />
-        </Suspense>
-
-        {/* Why such price gaps? Explainer fiche with source links + conference CTA */}
-        <Suspense fallback={null}>
-          <PriceExplainerBanner />
-        </Suspense>
-
-        {/* AI daily briefing — latest editorial about DOM/COM news of the day */}
-        <Suspense fallback={null}>
-          <LettreJourWidget />
-        </Suspense>
-
-        {/* AI weekly letter — latest editorial about DOM/COM news */}
-        <Suspense fallback={null}>
-          <LettreHebdoWidget />
-        </Suspense>
-
-        {/* Inflation barometer — dynamic month-over-month basket trend from real snapshots */}
-        <Suspense fallback={null}>
-          <InflationBarometerWidget />
-        </Suspense>
-
-        {/* Price shock ranking — top 5 products with biggest inter-territory price gap */}
-        <Suspense fallback={null}>
-          <ProduitChocWidget />
-        </Suspense>
-
-        {/* Equity index — composite multi-product price equity score per territory vs hexagone */}
-        <Suspense fallback={null}>
-          <IndiceEquiteWidget />
-        </Suspense>
-
-        {/* Category overcost chart — DOM surcoût vs Hexagone by category */}
-        <Suspense fallback={null}>
-          <CategoryOvercostChart />
-        </Suspense>
-
-        {/* Video section — vie chère outre-mer explained with lazy YouTube embeds */}
-        <Suspense fallback={null}>
-          <VideoVieChere />
-        </Suspense>
-
-        {/* Live news feed from actualites.json — real data only */}
-        <Suspense fallback={null}>
-          <LiveNewsFeed />
-        </Suspense>
-
-        <Suspense fallback={null}>
-          <ObservatorySection />
-        </Suspense>
-
-        <Suspense fallback={null}>
-          <MiniFaqSection expandedFaq={expandedFaq} onToggleFaq={setExpandedFaq} />
-        </Suspense>
+        )}
 
         <footer className="footer-minimal fade-in section-reveal">
           <Link to="/faq">FAQ</Link>

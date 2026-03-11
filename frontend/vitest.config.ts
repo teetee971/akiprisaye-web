@@ -93,6 +93,7 @@ export default defineConfig({
       abs('./src/providers/__tests__/leaderPriceProvider.test.ts'),
       // Booking links — UTM params et statut commissions
       abs('./src/test/bookingLinks.test.ts'),
+      abs('./src/test/home.page.test.tsx'),
       // Comparateurs spécialisés — services de comparaison
       abs('./src/services/__tests__/carRentalService.test.ts'),
       abs('./src/services/__tests__/freightComparisonService.test.ts'),
