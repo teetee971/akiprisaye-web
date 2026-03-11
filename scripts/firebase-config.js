@@ -13,12 +13,12 @@ import {
 } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAs0uisnGSK7OlrFqQPFYF6E-ctNOPY0Sw",
+  apiKey: "AIzaSyDf_mB8zMWHFwoFhVLyThuKWMTmhB7uSZY",
   authDomain: "a-ki-pri-sa-ye.firebaseapp.com",
   projectId: "a-ki-pri-sa-ye",
   storageBucket: "a-ki-pri-sa-ye.firebasestorage.app",
   messagingSenderId: "187272078809",
-  appId: "1:187272078809:web:110a92e34493ef4506e5c8",
+  appId: "1:187272078809:web:110a9e34493ef4506e5c8",
   measurementId: "G-NFHCZTLPDM"
 };
 
