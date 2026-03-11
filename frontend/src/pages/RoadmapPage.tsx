@@ -31,6 +31,7 @@ import {
   Brain,
   Wallet,
   List,
+  Search,
 } from 'lucide-react';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -162,7 +163,7 @@ const MODULES: RoadmapModule[] = [
   {
     name: '10. Observatoire des prix',
     description: 'Tableau de bord public des tendances de prix par territoire et catégorie.',
-    status: 'done',
+    status: 'partial',
     features: [
       { label: 'Indice de pression inflationniste', done: true },
       { label: 'Statistiques produits les plus chers', done: true },
@@ -175,7 +176,7 @@ const MODULES: RoadmapModule[] = [
   {
     name: '11. Comparateurs spécialisés',
     description: 'Suite de comparateurs sectoriels : carburants, vols, fret, assurances, télécoms…',
-    status: 'done',
+    status: 'partial',
     features: [
       { label: 'Comparateur carburants DOM-COM (temps réel)', done: true },
       { label: 'Comparateur vols DOM ↔ Métropole', done: true },
@@ -190,7 +191,7 @@ const MODULES: RoadmapModule[] = [
   {
     name: '12. Messagerie & communauté citoyenne',
     description: 'Espaces de dialogue entre citoyens : groupes de parole, messagerie privée.',
-    status: 'done',
+    status: 'partial',
     features: [
       { label: 'Messagerie privée inter-citoyens', done: true },
       { label: 'Groupes de parole thématiques', done: true },
@@ -202,7 +203,7 @@ const MODULES: RoadmapModule[] = [
   {
     name: '13. Administration & back-office',
     description: 'Panneau de gestion pour administrateurs : utilisateurs, produits, devis, contenus.',
-    status: 'done',
+    status: 'partial',
     features: [
       { label: 'Gestion des utilisateurs & rôles', done: true },
       { label: 'Gestion des produits & prix', done: true },
@@ -548,6 +549,7 @@ type TabKey = typeof TABS[number]['key'];
 
 export default function RoadmapPage() {
   const [activeTab, setActiveTab] = useState<TabKey>('roadmap');
+  const [moduleSearch, setModuleSearch] = useState('');
 
   return (
     <>
@@ -676,6 +678,18 @@ export default function RoadmapPage() {
                   → Audit complet de tous les modules
                 </Link>
               </div>
+              {/* Search bar */}
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                <input
+                  type="search"
+                  value={moduleSearch}
+                  onChange={(e) => setModuleSearch(e.target.value)}
+                  placeholder="Rechercher un module…"
+                  aria-label="Rechercher un module"
+                  className="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400"
+                />
+              </div>
               {/* Completion summary */}
               {(() => {
                 const total = MODULES.reduce((n, m) => n + m.features.length, 0);
@@ -708,7 +722,11 @@ export default function RoadmapPage() {
                   </div>
                 );
               })()}
-              {MODULES.map((mod) => (
+              {MODULES.filter((mod) => {
+                if (!moduleSearch.trim()) return true;
+                const q = moduleSearch.toLowerCase();
+                return mod.name.toLowerCase().includes(q) || mod.description.toLowerCase().includes(q) || mod.features.some(f => f.label.toLowerCase().includes(q));
+              }).map((mod) => (
                 <div key={mod.name} className="bg-white border border-gray-200 rounded-xl p-5">
                   <div className="flex items-start gap-3 mb-1">
                     <div className="mt-0.5 flex-shrink-0">
@@ -740,6 +758,12 @@ export default function RoadmapPage() {
                   </div>
                 </div>
               ))}
+              {moduleSearch.trim() && !MODULES.some((mod) => {
+                const q = moduleSearch.toLowerCase();
+                return mod.name.toLowerCase().includes(q) || mod.description.toLowerCase().includes(q) || mod.features.some(f => f.label.toLowerCase().includes(q));
+              }) && (
+                <p className="text-sm text-gray-500 text-center py-6">Aucun module ne correspond à « {moduleSearch} ».</p>
+              )}
             </div>
           )}
 
