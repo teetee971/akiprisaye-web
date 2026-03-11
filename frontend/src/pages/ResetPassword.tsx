@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { auth, firebaseError } from "@/lib/firebase";
 import { Link } from "react-router-dom";
-import { FIREBASE_UNAVAILABLE_MESSAGE } from "@/lib/authMessages";
+import { FIREBASE_UNAVAILABLE_MESSAGE, getAuthErrorMessage } from "@/lib/authMessages";
 
 export default function ResetPassword() {
   const [email, setEmail] = useState("");
@@ -38,25 +38,10 @@ export default function ResetPassword() {
     try {
       await sendPasswordResetEmail(auth, email);
       setSuccess(true);
-    } catch (err: any) {
-      setError(getErrorMessage(err));
+    } catch (err: unknown) {
+      setError(getAuthErrorMessage(err));
     } finally {
       setLoading(false);
-    }
-  };
-
-  const getErrorMessage = (err: any): string => {
-    const code = err?.code || "";
-
-    switch (code) {
-      case "auth/user-not-found":
-        return "Aucun compte trouvé avec cet email.";
-      case "auth/invalid-email":
-        return "Email invalide.";
-      case "auth/too-many-requests":
-        return "Trop de tentatives. Réessayez plus tard.";
-      default:
-        return err?.message || "Une erreur est survenue. Réessayez.";
     }
   };
 

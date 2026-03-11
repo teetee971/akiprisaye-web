@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
 import { firebaseError, missingCriticalEnvKeys } from "@/lib/firebase";
-import { FIREBASE_UNAVAILABLE_MESSAGE } from "@/lib/authMessages";
+import { FIREBASE_UNAVAILABLE_MESSAGE, getAuthErrorMessage } from "@/lib/authMessages";
 import SocialLoginButtons from "@/components/SocialLoginButtons";
 import { useAuth } from "@/context/AuthContext";
 
@@ -39,29 +39,7 @@ export default function Login() {
   };
 
   const getErrorMessage = (err: unknown): string => {
-    const code = typeof err === "object" && err && "code" in err ? String(err.code) : "";
-    const message = typeof err === "object" && err && "message" in err ? String(err.message) : null;
-
-    switch (code) {
-      case "auth/user-not-found":
-        return "Aucun compte trouvé avec cet email.";
-      case "auth/wrong-password":
-        return "Mot de passe incorrect.";
-      case "auth/email-already-in-use":
-        return "Cet email est déjà utilisé.";
-      case "auth/invalid-email":
-        return "Email invalide.";
-      case "auth/popup-closed-by-user":
-        return "Connexion Google annulée.";
-      case "auth/unauthorized-domain":
-        return "Domaine non autorisé. Ajoutez ce domaine dans Firebase Authentication > Authorized domains.";
-      case "auth/too-many-requests":
-        return "Trop de tentatives. Réessayez plus tard.";
-      case "auth/invalid-credential":
-        return "Email ou mot de passe incorrect.";
-      default:
-        return message || "Une erreur est survenue. Réessayez.";
-    }
+    return getAuthErrorMessage(err);
   };
 
   const handleEmailSubmit = async (e: React.FormEvent) => {

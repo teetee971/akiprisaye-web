@@ -11,6 +11,7 @@ import { doc, setDoc } from "firebase/firestore";
 import { Button } from "@/components/ui/button";
 import { safeToText } from "../utils/safeToText";
 import SocialLoginButtons from "./SocialLoginButtons";
+import { FIREBASE_UNAVAILABLE_MESSAGE, getAuthErrorMessage } from "@/lib/authMessages";
 
 export default function AuthForm() {
   const [email, setEmail] = useState("");
@@ -23,14 +24,14 @@ export default function AuthForm() {
   // Check if Firebase is available
   React.useEffect(() => {
     if (firebaseError) {
-      setError(safeToText(firebaseError));
+      setError(FIREBASE_UNAVAILABLE_MESSAGE);
     }
   }, []);
 
   // --- Email Sign In / Sign Up ---
   const handleEmailAuth = async () => {
     if (firebaseError || !auth) {
-      setError("Service d'authentification non disponible. Veuillez contacter l'administrateur.");
+      setError(FIREBASE_UNAVAILABLE_MESSAGE);
       console.error('Firebase Auth Error:', firebaseError);
       return;
     }
@@ -76,7 +77,7 @@ export default function AuthForm() {
   // --- Password Reset ---
   const handlePasswordReset = async () => {
     if (firebaseError || !auth) {
-      setError("Service d'authentification non disponible. Veuillez contacter l'administrateur.");
+      setError(FIREBASE_UNAVAILABLE_MESSAGE);
       console.error('Firebase Auth Error:', firebaseError);
       return;
     }
@@ -103,31 +104,8 @@ export default function AuthForm() {
   };
   
   // Helper pour traduire les erreurs Firebase
-  const getErrorMessage = (err: any): string => {
-    const code = err?.code || '';
-    
-    switch (code) {
-      case 'auth/user-not-found':
-        return "Aucun compte trouvé avec cet email.";
-      case 'auth/wrong-password':
-        return "Mot de passe incorrect.";
-      case 'auth/email-already-in-use':
-        return "Cet email est déjà utilisé.";
-      case 'auth/invalid-email':
-        return "Email invalide.";
-      case 'auth/weak-password':
-        return "Mot de passe trop faible. Minimum 6 caractères.";
-      case 'auth/too-many-requests':
-        return "Trop de tentatives. Réessayez plus tard.";
-      case 'auth/popup-closed-by-user':
-        return "Connexion annulée.";
-      case 'auth/invalid-verification-code':
-        return "Code de vérification invalide.";
-      case 'auth/invalid-phone-number':
-        return "Numéro de téléphone invalide.";
-      default:
-        return err?.message || "Une erreur est survenue. Réessayez.";
-    }
+  const getErrorMessage = (err: unknown): string => {
+    return getAuthErrorMessage(err);
   };
 
   return (

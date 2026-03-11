@@ -13,6 +13,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
+import { getAuthErrorMessage } from '@/lib/authMessages';
 
 /* ── SVG Logos ───────────────────────────────────────────────────────── */
 
@@ -55,24 +56,7 @@ interface SocialLoginButtonsProps {
 /* ── Error message helper ────────────────────────────────────────────── */
 
 function getSocialErrorMessage(err: unknown): string {
-  const code = typeof err === 'object' && err && 'code' in err ? String((err as { code: string }).code) : '';
-  switch (code) {
-    case 'auth/popup-closed-by-user':
-    case 'auth/cancelled-popup-request':
-      return 'Connexion annulée.';
-    case 'auth/popup-blocked':
-      return 'Pop-up bloquée par le navigateur. Autorisez les pop-ups pour ce site.';
-    case 'auth/account-exists-with-different-credential':
-      return 'Un compte existe déjà avec cet email. Connectez-vous par email ou avec le même fournisseur.';
-    case 'auth/unauthorized-domain':
-      return 'Domaine non autorisé. Ajoutez ce domaine dans Firebase Console → Authentication → Authorized domains.';
-    case 'auth/operation-not-allowed':
-      return 'Ce fournisseur de connexion n\'est pas activé. Activez-le dans Firebase Console → Authentication → Sign-in method.';
-    case 'auth/user-disabled':
-      return 'Ce compte a été désactivé.';
-    default:
-      return 'Erreur de connexion. Réessayez.';
-  }
+  return getAuthErrorMessage(err);
 }
 
 /* ── Main component ──────────────────────────────────────────────────── */
