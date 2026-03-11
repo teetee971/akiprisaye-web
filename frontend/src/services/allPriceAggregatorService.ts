@@ -17,6 +17,7 @@ export type PriceSource =
   | 'firestore'      // Base Firestore interne
   | 'observation'    // Contribution citoyenne
   | 'realtime'       // Prix temps-réel API interne
+  | 'retailer'       // Prix directs enseignes (Courses U, Leclerc, Carrefour, etc.)
   | 'fallback';      // Données de secours locales
 
 export interface AggregatedPrice {
@@ -263,7 +264,56 @@ async function fetchRealtimePrices(
 }
 
 // ---------------------------------------------------------------------------
-// Source 5 — Open Food Facts (infos produit)
+// Source 5 — Retailer Search (direct enseigne prices)
+// ---------------------------------------------------------------------------
+async function fetchRetailerSearchPrices(
+  query: string,
+  territory: string,
+  signal?: AbortSignal,
+): Promise<AggregatedPrice[]> {
+  try {
+    const params = new URLSearchParams({
+      retailer: 'all',
+      q: query,
+      territory,
+      pageSize: '8',
+      sort: 'price_asc',
+    });
+    const res = await fetchWithTimeout(`/api/retailer-search?${params.toString()}`, signal);
+    if (!res.ok) return [];
+    const payload = await res.json() as {
+      status?: string;
+      results?: Array<{
+        title?: string;
+        brand?: string;
+        price?: number;
+        currency?: string;
+        pageUrl?: string;
+        imageUrl?: string;
+      }>;
+    };
+    if (!Array.isArray(payload.results)) return [];
+    return payload.results
+      .filter((r) => typeof r.price === 'number' && r.price > 0)
+      .map((r, i) => ({
+        id: `retailer-${i}`,
+        merchant: r.brand ? `${r.brand} (enseigne)` : (r.title ?? 'Enseigne'),
+        price: r.price as number,
+        currency: 'EUR' as const,
+        isPromo: false,
+        url: r.pageUrl,
+        observedAt: new Date().toISOString(),
+        source: 'retailer' as PriceSource,
+        reliability: 0.85,
+        territory,
+      }));
+  } catch {
+    return [];
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Source 6 — Open Food Facts (infos produit)
 // ---------------------------------------------------------------------------
 async function fetchProductInfo(barcode: string): Promise<ProductInfo | null> {
   try {
@@ -319,12 +369,13 @@ export async function aggregateAllPrices(
   const warnings: string[] = [];
 
   // Fire all sources in parallel
-  const [webPrices, { prices: firestorePrices, productName: firestoreProductName }, observationPrices, realtimePrices, productInfo] =
+  const [webPrices, { prices: firestorePrices, productName: firestoreProductName }, observationPrices, realtimePrices, retailerPrices, productInfo] =
     await Promise.all([
       fetchWebMerchantPrices(query || ean, territory, signal),
       fetchFirestorePrices(ean, territory, signal),
       fetchObservationPrices(ean, territory, signal),
       fetchRealtimePrices(ean, territory, signal),
+      fetchRetailerSearchPrices(query || ean, territory, signal),
       fetchProductInfo(ean),
     ]);
 
@@ -333,7 +384,7 @@ export async function aggregateAllPrices(
   if (observationPrices.length === 0) warnings.push('Aucune observation citoyenne enregistrée pour ce produit');
 
   // Merge all prices
-  const allPrices = [...webPrices, ...firestorePrices, ...observationPrices, ...realtimePrices];
+  const allPrices = [...webPrices, ...firestorePrices, ...observationPrices, ...realtimePrices, ...retailerPrices];
 
   // Deduplicate: if same merchant + same price (rounded to cent), keep most reliable
   const deduped = new Map<string, AggregatedPrice>();
