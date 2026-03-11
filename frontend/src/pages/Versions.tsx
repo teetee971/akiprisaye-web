@@ -10,9 +10,16 @@ const BUILD_ENV: string = import.meta.env.VITE_BUILD_ENV ?? 'development';
 
 const APP_VERSIONS = [
   {
-    version: 'v3.2.0',
+    version: 'v3.3.0',
     date: 'mars 2026',
     label: 'latest',
+    description: 'Calculateur Bâtiment BTP complet — 6 catégories, 20 calculateurs couvrant tous les corps de métier (FFB/ONISEP) : maçonnerie, dalle, fondations, chape, carrelage, peinture, enduit, tôles, terrassement, clôture, électricité (NF C 15-100), plomberie, isolation thermique (RT2020), charpente bois, plâtrerie BA13, parquet, gouttières/zinguerie, menuiserie extérieure. Images Unsplash réalistes sur toutes les tuiles catégories et calculateurs.',
+    changelog: null,
+  },
+  {
+    version: 'v3.2.0',
+    date: 'mars 2026',
+    label: null,
     description: 'Groupes de Parole Citoyens (Issue #7) : groupes de discussion par territoire, messagerie temps réel Firestore, partage de photos, modération IA automatique par filtre de mots-clés, signalement manuel. Affichage de la version, de l\'environnement et du hash Git dans le pied de page (Issue #0.2).',
     changelog: null,
   },

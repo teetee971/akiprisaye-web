@@ -158,18 +158,32 @@ export async function getAllBatimentCalculations(): Promise<BatimentCalcRecord[]
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 export const CALC_TYPE_LABELS: Record<string, string> = {
+  // ── Gros œuvre ──
   'parpaing':        'Parpaing / Bloc US',
   'dalle-beton':     'Dalle béton',
   'fondations':      'Fondations',
   'chape':           'Chape de sol',
+  // ── Finitions ──
   'carrelage':       'Carrelage',
   'peinture':        'Peinture',
   'enduit':          'Enduit / Crépissage',
+  // ── Extérieur ──
   'toles':           'Tôles de couverture',
   'terrassement':    'Terrassement',
   'cloture':         'Clôture',
+  // ── Outils ──
   'beton-courant':   'Béton courant',
   'escalier':        'Escalier',
+  // ── Électricité & Plomberie ──
+  'electricite':     'Section câble électrique',
+  'plomberie':       'Tuyauterie / Plomberie',
+  'isolation':       'Isolation thermique',
+  'charpente':       'Charpente bois',
+  // ── Second œuvre & Aménagement ──
+  'platrerie':       'Plâtrerie / Plaques BA13',
+  'parquet':         'Parquet & Sols stratifiés',
+  'gouttiere':       'Gouttières & Descentes EP',
+  'menuiserie':      'Menuiserie extérieure',
 };
 
 export const TERRITORY_LABELS: Record<string, string> = {
