@@ -12,7 +12,7 @@ function wait(ms) {
 function startPreview() {
   return spawn(process.platform === 'win32' ? 'npm.cmd' : 'npm', ['run', 'preview', '--', '--host', HOST, '--port', PORT, '--strictPort'], {
     stdio: ['ignore', 'pipe', 'pipe'],
-    env: { ...process.env, GITHUB_PAGES: 'true' },
+    env: { ...process.env, BASE_PATH },
     detached: process.platform !== 'win32',
   });
 }

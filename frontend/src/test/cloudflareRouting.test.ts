@@ -2,6 +2,7 @@ import { describe, expect, test } from 'vitest';
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { resolveBasePath } from '../../scripts/basePath';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 // HERE = frontend/src/test
@@ -21,6 +22,13 @@ describe('Cloudflare SPA routing config', () => {
     };
 
     expect(packageJson.scripts?.build).toBe('vite build');
+  });
+
+  test('frontend build uses explicit BASE_PATH override and otherwise defaults to root', () => {
+    expect(resolveBasePath({} as NodeJS.ProcessEnv)).toBe('/');
+    expect(resolveBasePath({ BASE_PATH: '/akiprisaye-web/' } as NodeJS.ProcessEnv)).toBe('/akiprisaye-web/');
+    expect(resolveBasePath({ BASE_PATH: 'akiprisaye-web' } as NodeJS.ProcessEnv)).toBe('/akiprisaye-web/');
+    expect(resolveBasePath({ GITHUB_PAGES: 'true' } as NodeJS.ProcessEnv)).toBe('/');
   });
 
   test('redirects keep API/assets passthrough before SPA fallback', () => {
