@@ -241,10 +241,10 @@ const MODULES: RoadmapModule[] = [
   {
     name: '16. Guide intelligent des territoires',
     description: "Guide par territoire (Guadeloupe, Martinique, etc.) alimenté par l'IA avec conseils locaux.",
-    status: 'planned',
+    status: 'partial',
     features: [
-      { label: 'Fiche territoire : économie, prix, spécificités locales', done: false },
-      { label: "Conseils d'achat contextuels par territoire", done: false },
+      { label: 'Fiche territoire : économie, prix, spécificités locales', done: true },
+      { label: "Conseils d'achat contextuels par territoire", done: true },
       { label: 'Comparaison inter-territoires assistée par IA', done: false },
       { label: 'Mise à jour dynamique via données observatoire', done: false },
     ],
@@ -275,11 +275,11 @@ const MODULES: RoadmapModule[] = [
   {
     name: '19. Transparence de la chaîne d\'approvisionnement',
     description: "Représentation visuelle du parcours d'un produit de son origine à la mise en rayon.",
-    status: 'planned',
+    status: 'partial',
     features: [
-      { label: 'Timeline du parcours produit (origine → rayon)', done: false },
-      { label: "Affichage des intermédiaires (importateurs, distributeurs)", done: false },
-      { label: 'Coûts de transport et taxes visibles', done: false },
+      { label: 'Timeline du parcours produit (origine → rayon)', done: true },
+      { label: "Affichage des intermédiaires (importateurs, distributeurs)", done: true },
+      { label: 'Coûts de transport et taxes visibles', done: true },
       { label: 'Sources publiques (douanes, fret) intégrées', done: false },
     ],
   },
@@ -363,10 +363,10 @@ const MODULES: RoadmapModule[] = [
   {
     name: '27. Analyse des factures',
     description: 'Historique des dépenses et analyse des tendances par extraction OCR.',
-    status: 'planned',
+    status: 'partial',
     features: [
       { label: 'Upload de factures PDF / photo', done: false },
-      { label: 'Extraction OCR des montants et produits', done: false },
+      { label: 'Extraction OCR des montants et produits', done: true },
       { label: 'Catégorisation automatique des dépenses', done: false },
       { label: 'Tableau de bord tendances de dépenses', done: false },
       { label: 'Export CSV / PDF du rapport', done: false },
@@ -386,20 +386,21 @@ const MODULES: RoadmapModule[] = [
   {
     name: '29. Évaluation des magasins par les utilisateurs',
     description: 'Notation : qualité du service, propreté, disponibilité des produits.',
-    status: 'planned',
+    status: 'partial',
     features: [
-      { label: 'Formulaire de notation (service, propreté, disponibilité)', done: false },
-      { label: 'Affichage des notes agrégées sur la fiche magasin', done: false },
+      { label: 'Formulaire de notation (service, propreté, disponibilité)', done: true },
+      { label: 'Affichage des notes agrégées sur la fiche magasin', done: true },
+      { label: 'Classement des magasins par territoire', done: true },
       { label: 'Modération des avis citoyens', done: false },
-      { label: 'Classement des magasins par territoire', done: false },
     ],
   },
   {
     name: '30. Portail API pour développeurs',
     description: "API publique documentée pour les intégrations tierces et partenaires institutionnels.",
-    status: 'planned',
+    status: 'partial',
     features: [
-      { label: 'Documentation OpenAPI interactive (Swagger)', done: false },
+      { label: 'Documentation OpenAPI interactive (Swagger)', done: true },
+      { label: 'Endpoints publics live (carburants, actualités, taux change, signalconso, IEVR, prix)', done: true },
       { label: 'Génération et gestion de clés API', done: false },
       { label: 'Sandbox de test avec données anonymisées', done: false },
       { label: 'Rate limiting et quotas par plan', done: false },
@@ -459,16 +460,16 @@ const PHASES: { key: PhaseKey; label: string; subtitle: string; items: string[] 
   {
     key: 'v3' as PhaseKey,
     label: 'V3',
-    subtitle: 'Nouvelles fonctionnalités & intelligence augmentée — Vision',
+    subtitle: 'Nouvelles fonctionnalités & intelligence augmentée — Partiellement déployé',
     items: [
-      'Guide intelligent des territoires alimenté par IA',
-      'Scanner AR de rayons (TensorFlow.js / Google Vision)',
-      'Transparence de la chaîne d\'approvisionnement',
-      'Commerce social (partage de listes et recommandations)',
-      'Analyse des factures par OCR + IA',
-      'Détection de fraude par apprentissage automatique',
-      'Évaluation des magasins par les utilisateurs',
-      'Portail API développeurs avec SDK open-source',
+      'Guide intelligent des territoires alimenté par IA ✅',
+      'Scanner AR de rayons (TensorFlow.js / Google Vision) ⚙️',
+      'Transparence de la chaîne d\'approvisionnement ✅',
+      'Commerce social (partage de listes et recommandations) ⚙️',
+      'Analyse des factures par OCR + IA ⚙️',
+      'Détection de fraude par apprentissage automatique ⚙️',
+      'Évaluation des magasins par les utilisateurs ✅',
+      'Portail API développeurs avec SDK open-source ⚙️',
       'Alertes de prix prédictives (ML)',
       'Synchronisation application mobile (Capacitor)',
     ],
@@ -642,7 +643,7 @@ export default function RoadmapPage() {
                     )}
                     {phase.key === 'v3' && (
                       <span className="flex-shrink-0 text-xs bg-purple-600 text-white px-2 py-0.5 rounded-full">
-                        Vision
+                        En déploiement
                       </span>
                     )}
                   </div>

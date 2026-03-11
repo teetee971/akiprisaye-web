@@ -252,6 +252,19 @@ export default function Header() {
           </div>
         </div>
 
+      {/* Mobile full-width search bar */}
+      <div className="sm:hidden border-t border-slate-800 px-4 py-2 bg-slate-950/95">
+        <button
+          type="button"
+          onClick={() => setSearchOpen(true)}
+          className="flex items-center gap-2 w-full px-3 py-2 rounded-lg border border-slate-700 bg-slate-900/60 hover:bg-slate-800 text-slate-400 text-sm transition-colors"
+          aria-label="Ouvrir la recherche globale"
+        >
+          <Search size={14} className="shrink-0" aria-hidden="true" />
+          <span className="flex-1 text-left truncate">Rechercher un produit, un magasin…</span>
+        </button>
+      </div>
+
       {open && (
         <nav
           id="main-nav"
