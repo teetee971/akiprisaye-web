@@ -15,7 +15,7 @@
  * Principe : aucune donnée inventée — uniquement ce qui est constaté dans la base de code.
  */
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { HeroImage } from '../components/ui/HeroImage';
@@ -57,6 +57,7 @@ const MODULES: RoadmapModule[] = [
     name: '1. Comparateur de prix avancé',
     description: 'Recherche et comparaison de produits entre enseignes et territoires DOM-COM.',
     status: 'partial',
+    link: '/comparateur',
     features: [
       { label: 'Comparaison multi-enseignes, multi-produits', done: true },
       { label: 'Comparaison multi-territoires', done: true },
@@ -70,6 +71,7 @@ const MODULES: RoadmapModule[] = [
     name: '2. Liste de courses intelligente GPS',
     description: 'Gestion de listes de courses avec géolocalisation et optimisation de trajet.',
     status: 'partial',
+    link: '/liste',
     features: [
       { label: 'Création et gestion de listes', done: true },
       { label: 'Recherche des produits exacts', done: true },
@@ -83,6 +85,7 @@ const MODULES: RoadmapModule[] = [
     name: '3. Scanner universel',
     description: 'Reconnaissance de produits par code-barres EAN, OCR tickets ou photo.',
     status: 'done',
+    link: '/scanner',
     features: [
       { label: 'Scan codes-barres EAN', done: true },
       { label: 'OCR tickets de caisse', done: true },
@@ -108,6 +111,7 @@ const MODULES: RoadmapModule[] = [
     name: '5. Alertes consommateurs',
     description: 'Notifications personnalisées sur les variations de prix et rappels de produits.',
     status: 'partial',
+    link: '/alertes',
     features: [
       { label: 'Alertes prix personnalisées', done: true },
       { label: 'Alertes sanitaires & rappels produits', done: true },
@@ -131,6 +135,7 @@ const MODULES: RoadmapModule[] = [
     name: '7. Marketplace enseignes (payante)',
     description: 'Espace dédié aux enseignes pour publier leurs magasins, prix et statistiques.',
     status: 'done',
+    link: '/inscription-pro',
     features: [
       { label: 'Inscription payante', done: true },
       { label: 'Ajout de magasins & mise à jour prix', done: true },
@@ -154,6 +159,7 @@ const MODULES: RoadmapModule[] = [
     name: '9. Devis IA (B2G / B2B)',
     description: 'Module de devis structuré avec pipeline de validation humaine pour institutions.',
     status: 'done',
+    link: '/devis-ia',
     features: [
       { label: 'Formulaire structuré avec identité légale', done: true },
       { label: "Moteur d'estimation IA explicable", done: true },
@@ -168,6 +174,7 @@ const MODULES: RoadmapModule[] = [
     name: '10. Observatoire des prix',
     description: 'Tableau de bord public des tendances de prix par territoire et catégorie.',
     status: 'partial',
+    link: '/observatoire',
     features: [
       { label: 'Indice de pression inflationniste', done: true },
       { label: 'Statistiques produits les plus chers', done: true },
@@ -181,6 +188,7 @@ const MODULES: RoadmapModule[] = [
     name: '11. Comparateurs spécialisés',
     description: 'Suite de comparateurs sectoriels : carburants, vols, fret, assurances, télécoms…',
     status: 'partial',
+    link: '/comparateurs',
     features: [
       { label: 'Comparateur carburants DOM-COM (temps réel)', done: true },
       { label: 'Comparateur vols DOM ↔ Métropole', done: true },
@@ -196,6 +204,7 @@ const MODULES: RoadmapModule[] = [
     name: '12. Messagerie & communauté citoyenne',
     description: 'Espaces de dialogue entre citoyens : groupes de parole, messagerie privée.',
     status: 'partial',
+    link: '/messagerie',
     features: [
       { label: 'Messagerie privée inter-citoyens', done: true },
       { label: 'Groupes de parole thématiques', done: true },
@@ -471,7 +480,7 @@ const PHASES: { key: PhaseKey; label: string; subtitle: string; items: string[] 
     ],
   },
   {
-    key: 'v3' as PhaseKey,
+    key: 'v3',
     label: 'V3',
     subtitle: 'Nouvelles fonctionnalités & intelligence augmentée — Partiellement déployé',
     items: [
@@ -701,6 +710,27 @@ export default function RoadmapPage() {
   const [activeTab, setActiveTab] = useState<TabKey>('roadmap');
   const [moduleSearch, setModuleSearch] = useState('');
 
+  const filteredModules = useMemo(() => {
+    if (!moduleSearch.trim()) return MODULES;
+    const q = moduleSearch.toLowerCase();
+    return MODULES.filter(
+      (mod) =>
+        mod.name.toLowerCase().includes(q) ||
+        mod.description.toLowerCase().includes(q) ||
+        mod.features.some((f) => f.label.toLowerCase().includes(q)),
+    );
+  }, [moduleSearch]);
+
+  const completionStats = useMemo(() => {
+    const total = MODULES.reduce((n, m) => n + m.features.length, 0);
+    const done = MODULES.reduce((n, m) => n + m.features.filter((f) => f.done).length, 0);
+    const pct = Math.round((done / total) * 100);
+    const opCount = MODULES.filter((m) => m.status === 'done').length;
+    const partialCount = MODULES.filter((m) => m.status === 'partial').length;
+    const plannedCount = MODULES.filter((m) => m.status === 'planned').length;
+    return { total, done, pct, opCount, partialCount, plannedCount };
+  }, []);
+
   return (
     <>
       <Helmet>
@@ -712,6 +742,11 @@ export default function RoadmapPage() {
         <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/roadmap" />
         <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/roadmap" />
         <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/roadmap" />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="A KI PRI SA YÉ" />
+        <meta property="og:title" content="Roadmap & Architecture — A KI PRI SA YÉ" />
+        <meta property="og:description" content="Feuille de route publique, architecture technique, modules déployés, stratégie IA responsable et conformité RGPD de la plateforme A KI PRI SA YÉ." />
+        <meta property="og:url" content="https://teetee971.github.io/akiprisaye-web/roadmap" />
       </Helmet>
 
       <div className="min-h-screen bg-gray-50">
@@ -740,10 +775,14 @@ export default function RoadmapPage() {
 
         {/* Tabs */}
         <div className="max-w-5xl mx-auto px-4 pt-4 pb-2">
-          <div className="flex flex-wrap gap-2 border-b border-gray-200 pb-3">
+          <div role="tablist" aria-label="Sections de la feuille de route" className="flex flex-wrap gap-2 border-b border-gray-200 pb-3">
             {TABS.map((tab) => (
               <button
                 key={tab.key}
+                id={`tab-${tab.key}`}
+                role="tab"
+                aria-selected={activeTab === tab.key}
+                aria-controls={`panel-${tab.key}`}
                 onClick={() => setActiveTab(tab.key)}
                 className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-colors
                   ${activeTab === tab.key
@@ -761,7 +800,7 @@ export default function RoadmapPage() {
 
           {/* ── ROADMAP ────────────────────────────────────────────────── */}
           {activeTab === 'roadmap' && (
-            <div className="space-y-6">
+            <div id="panel-roadmap" role="tabpanel" aria-labelledby="tab-roadmap" className="space-y-6">
               {PHASES.map((phase) => (
                 <div
                   key={phase.key}
@@ -814,7 +853,7 @@ export default function RoadmapPage() {
 
           {/* ── MODULES ────────────────────────────────────────────────── */}
           {activeTab === 'modules' && (
-            <div className="space-y-4">
+            <div id="panel-modules" role="tabpanel" aria-labelledby="tab-modules" className="space-y-4">
               <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                 <div className="flex gap-4 text-xs text-gray-500">
                   <span className="flex items-center gap-1"><CheckCircle className="w-3.5 h-3.5 text-green-500" /> Opérationnel</span>
@@ -841,42 +880,28 @@ export default function RoadmapPage() {
                 />
               </div>
               {/* Completion summary */}
-              {(() => {
-                const total = MODULES.reduce((n, m) => n + m.features.length, 0);
-                const done = MODULES.reduce((n, m) => n + m.features.filter(f => f.done).length, 0);
-                const pct = Math.round((done / total) * 100);
-                const opCount = MODULES.filter(m => m.status === 'done').length;
-                const partialCount = MODULES.filter(m => m.status === 'partial').length;
-                const plannedCount = MODULES.filter(m => m.status === 'planned').length;
-                return (
-                  <div className="bg-white border border-gray-200 rounded-xl p-4 mb-2">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-semibold text-gray-900">Avancement global</span>
-                      <span className="text-sm font-bold text-indigo-700">{done} / {total} fonctionnalités ({pct} %)</span>
-                    </div>
-                    <div
-                      role="progressbar"
-                      aria-valuenow={pct}
-                      aria-valuemin={0}
-                      aria-valuemax={100}
-                      aria-label={`Avancement global : ${pct}%`}
-                      className="w-full h-2 bg-gray-100 rounded-full overflow-hidden mb-3"
-                    >
-                      <div className="h-full bg-indigo-600 rounded-full transition-all" style={{ width: `${pct}%` }} />
-                    </div>
-                    <div className="flex gap-4 text-xs text-gray-600">
-                      <span className="flex items-center gap-1"><CheckCircle className="w-3.5 h-3.5 text-green-500" /> {opCount} opérationnel{opCount > 1 ? 's' : ''}</span>
-                      <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5 text-yellow-500" /> {partialCount} partiel{partialCount > 1 ? 's' : ''}</span>
-                      <span className="flex items-center gap-1"><Circle className="w-3.5 h-3.5 text-gray-300" /> {plannedCount} planifié{plannedCount > 1 ? 's' : ''}</span>
-                    </div>
-                  </div>
-                );
-              })()}
-              {MODULES.filter((mod) => {
-                if (!moduleSearch.trim()) return true;
-                const q = moduleSearch.toLowerCase();
-                return mod.name.toLowerCase().includes(q) || mod.description.toLowerCase().includes(q) || mod.features.some(f => f.label.toLowerCase().includes(q));
-              }).map((mod) => (
+              <div className="bg-white border border-gray-200 rounded-xl p-4 mb-2">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-semibold text-gray-900">Avancement global</span>
+                  <span className="text-sm font-bold text-indigo-700">{completionStats.done} / {completionStats.total} fonctionnalités ({completionStats.pct} %)</span>
+                </div>
+                <div
+                  role="progressbar"
+                  aria-valuenow={completionStats.pct}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-label={`Avancement global : ${completionStats.pct}%`}
+                  className="w-full h-2 bg-gray-100 rounded-full overflow-hidden mb-3"
+                >
+                  <div className="h-full bg-indigo-600 rounded-full transition-all" style={{ width: `${completionStats.pct}%` }} />
+                </div>
+                <div className="flex gap-4 text-xs text-gray-600">
+                  <span className="flex items-center gap-1"><CheckCircle className="w-3.5 h-3.5 text-green-500" /> {completionStats.opCount} opérationnel{completionStats.opCount > 1 ? 's' : ''}</span>
+                  <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5 text-yellow-500" /> {completionStats.partialCount} partiel{completionStats.partialCount > 1 ? 's' : ''}</span>
+                  <span className="flex items-center gap-1"><Circle className="w-3.5 h-3.5 text-gray-300" /> {completionStats.plannedCount} planifié{completionStats.plannedCount > 1 ? 's' : ''}</span>
+                </div>
+              </div>
+              {filteredModules.map((mod) => (
                 <div key={mod.name} className="bg-white border border-gray-200 rounded-xl p-5">
                   <div className="flex items-start gap-3 mb-1">
                     <div className="mt-0.5 flex-shrink-0">
@@ -917,10 +942,7 @@ export default function RoadmapPage() {
                   </div>
                 </div>
               ))}
-              {moduleSearch.trim() && !MODULES.some((mod) => {
-                const q = moduleSearch.toLowerCase();
-                return mod.name.toLowerCase().includes(q) || mod.description.toLowerCase().includes(q) || mod.features.some(f => f.label.toLowerCase().includes(q));
-              }) && (
+              {moduleSearch.trim() && filteredModules.length === 0 && (
                 <p className="text-sm text-gray-500 text-center py-6">Aucun module ne correspond à « {moduleSearch} ».</p>
               )}
             </div>
@@ -928,7 +950,7 @@ export default function RoadmapPage() {
 
           {/* ── ARCHITECTURE ───────────────────────────────────────────── */}
           {activeTab === 'architecture' && (
-            <div className="space-y-5">
+            <div id="panel-architecture" role="tabpanel" aria-labelledby="tab-architecture" className="space-y-5">
               <p className="text-sm text-gray-600 mb-4">
                 Architecture technique telle que déployée en production.
                 Toutes les technologies listées sont actives dans la base de code.
@@ -980,7 +1002,7 @@ export default function RoadmapPage() {
 
           {/* ── SCHEMAS ────────────────────────────────────────────────── */}
           {activeTab === 'schemas' && (
-            <div className="space-y-4">
+            <div id="panel-schemas" role="tabpanel" aria-labelledby="tab-schemas" className="space-y-4">
               <p className="text-sm text-gray-600 mb-4">
                 Collections Firestore principales. Les champs listés sont ceux utilisés
                 en production. L'architecture est schéma-flexible (NoSQL) — les champs
@@ -1005,7 +1027,7 @@ export default function RoadmapPage() {
 
           {/* ── DESIGN SYSTEM ──────────────────────────────────────────── */}
           {activeTab === 'design' && (
-            <div className="space-y-2">
+            <div id="panel-design" role="tabpanel" aria-labelledby="tab-design" className="space-y-2">
               <p className="text-sm text-gray-600 mb-4">
                 Règles de design appliquées sur l'ensemble de la plateforme.
                 Fondées sur Tailwind CSS 4 + Lucide React.
@@ -1021,7 +1043,7 @@ export default function RoadmapPage() {
 
           {/* ── IA ─────────────────────────────────────────────────────── */}
           {activeTab === 'ia' && (
-            <div className="space-y-3">
+            <div id="panel-ia" role="tabpanel" aria-labelledby="tab-ia" className="space-y-3">
               <p className="text-sm text-gray-600 mb-4">
                 Principes de l'IA responsable appliqués sur la plateforme.
                 Aucun modèle opaque n'est utilisé — les règles métier sont explicites
@@ -1038,7 +1060,7 @@ export default function RoadmapPage() {
 
           {/* ── CONFORMITÉ ─────────────────────────────────────────────── */}
           {activeTab === 'conformite' && (
-            <div className="space-y-5">
+            <div id="panel-conformite" role="tabpanel" aria-labelledby="tab-conformite" className="space-y-5">
               {CONFORMITE.map((cat) => (
                 <div key={cat.categorie} className="bg-white border border-gray-200 rounded-xl p-5">
                   <div className="flex items-center gap-2 mb-3">
@@ -1060,7 +1082,7 @@ export default function RoadmapPage() {
 
           {/* ── MODÈLE ÉCONOMIQUE ──────────────────────────────────────── */}
           {activeTab === 'economique' && (
-            <div className="space-y-5">
+            <div id="panel-economique" role="tabpanel" aria-labelledby="tab-economique" className="space-y-5">
               <p className="text-sm text-gray-600">
                 Tarification réelle telle que configurée dans la plateforme.
                 Aucune projection de revenus n'est présentée — les métriques d'adoption
