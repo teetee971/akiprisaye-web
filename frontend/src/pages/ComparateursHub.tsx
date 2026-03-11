@@ -8,7 +8,7 @@ import {
   TrendingUp, Activity, Sparkles, Zap, Bell, Clock, BookOpen, FileText,
   Scale, SlidersHorizontal, Camera, Calculator, Heart, Trash2, Bot,
   Eye, Tag, HandHeart, BarChart2, Newspaper, MessageSquare, Star, Wallet,
-  FlaskConical, Leaf,
+  FlaskConical, Leaf, Code2,
 } from 'lucide-react';
 import { GlassCard } from '../components/ui/glass-card';
 import Comparateur from './Comparateur';
@@ -95,6 +95,7 @@ const SCANNERS = [
   { path: '/scan-ocr',               icon: FileText, label: 'OCR Ticket de caisse',    color: 'text-blue-400',    bg: 'bg-blue-500/10 border-blue-500/30',       desc: 'Analyser un ticket de caisse par reconnaissance optique' },
   { path: '/scan-photo',             icon: Camera,   label: 'Photo Produit',           color: 'text-violet-400',  bg: 'bg-violet-500/10 border-violet-500/30',   desc: 'Identifier un produit par photo' },
   { path: '/analyse-photo-produit',  icon: FlaskConical, label: 'Analyse Photo Avancée', color: 'text-pink-400', bg: 'bg-pink-500/10 border-pink-500/30',       desc: 'Analyse approfondie des photos produit (IA)' },
+  { path: '/ar-scanner',             icon: Zap,      label: 'Scanner RA',              color: 'text-yellow-400',  bg: 'bg-yellow-500/10 border-yellow-500/30',   desc: 'Scanner les rayons en réalité augmentée' },
   { path: '/ocr',                    icon: Eye,      label: 'OCR Hub',                 color: 'text-slate-400',   bg: 'bg-slate-500/10 border-slate-500/30',     desc: 'Accès à tous les outils OCR de l\'application' },
 ];
 
@@ -120,6 +121,7 @@ const OBSERVATOIRE = [
   { path: '/observatoire/methodologie',  icon: BookOpen,  label: 'Méthodologie Observatoire',  color: 'text-sky-400',     bg: 'bg-sky-500/10 border-sky-500/30',         desc: 'Comment les données sont collectées et validées' },
   { path: '/vie-chere',                  icon: TrendingUp,label: 'Lutte Vie Chère',             color: 'text-red-400',     bg: 'bg-red-500/10 border-red-500/30',         desc: 'Analyse de la vie chère en outre-mer' },
   { path: '/ievr',                       icon: BarChart3, label: 'Indice IEVR',                 color: 'text-amber-400',   bg: 'bg-amber-500/10 border-amber-500/30',     desc: 'Indice d\'équité de vie réelle par territoire' },
+  { path: '/chaine-fourniture',          icon: Package,   label: 'Chaîne d\'Approvisionnement', color: 'text-cyan-400',   bg: 'bg-cyan-500/10 border-cyan-500/30',       desc: 'Transparence du parcours produit de l\'origine à la rayon' },
   { path: '/donnees-publiques',          icon: Globe,     label: 'Données Publiques',           color: 'text-cyan-400',    bg: 'bg-cyan-500/10 border-cyan-500/30',       desc: 'Accès aux données publiques en open data' },
   { path: '/rapport-citoyen',            icon: FileText,  label: 'Rapport Citoyen',             color: 'text-teal-400',    bg: 'bg-teal-500/10 border-teal-500/30',       desc: 'Générer un rapport citoyen sur les prix locaux' },
 ];
@@ -135,6 +137,11 @@ const IA_OUTILS = [
   { path: '/analyse-concurrence', icon: BarChart2, label: 'Analyse Concurrence',     color: 'text-cyan-400',    bg: 'bg-cyan-500/10 border-cyan-500/30',       desc: 'Analyse comparative des enseignes concurrentes' },
   { path: '/evaluation-cosmetique',icon: FlaskConical,label: 'Évaluation Cosmétiques',color:'text-fuchsia-400', bg: 'bg-fuchsia-500/10 border-fuchsia-500/30', desc: 'Analyse IA des ingrédients cosmétiques' },
   { path: '/ai-dashboard',        icon: BarChart3, label: 'Tableau de Bord IA',      color: 'text-lime-400',    bg: 'bg-lime-500/10 border-lime-500/30',       desc: 'Tableau de bord IA avec prévisions et recommandations' },
+  { path: '/guide-territoire',    icon: Map,       label: 'Guide Territoire IA',     color: 'text-green-400',   bg: 'bg-green-500/10 border-green-500/30',     desc: 'Conseils intelligents par territoire DOM-COM' },
+  { path: '/analyse-factures',    icon: FileText,  label: 'Analyse Factures IA',     color: 'text-orange-400',  bg: 'bg-orange-500/10 border-orange-500/30',   desc: 'Analyser vos factures et tickets de caisse par IA' },
+  { path: '/detection-fraude',    icon: Shield,    label: 'Détection Fraude',        color: 'text-rose-400',    bg: 'bg-rose-500/10 border-rose-500/30',       desc: 'Détecter les hausses suspectes et anomalies tarifaires' },
+  { path: '/portail-developpeurs',icon: Code2,     label: 'Portail Développeurs',    color: 'text-slate-400',   bg: 'bg-slate-500/10 border-slate-500/30',     desc: 'API publique pour intégrations tierces' },
+  { path: '/innovation-lab',      icon: Zap,       label: 'Lab Innovation',          color: 'text-indigo-400',  bg: 'bg-indigo-500/10 border-indigo-500/30',   desc: 'Innovations suggérées et vote citoyen' },
 ];
 
 // ── Citoyenneté & Communauté ────────────────────────────────────────────────────
@@ -145,8 +152,14 @@ const CITOYEN = [
   { path: '/contribuer-prix',     icon: Eye,          label: 'Contribuer aux Prix',   color: 'text-lime-400',    bg: 'bg-lime-500/10 border-lime-500/30',       desc: 'Soumettre des prix observés dans votre enseigne' },
   { path: '/signalement',         icon: Bell,         label: 'Signaler un Abus',      color: 'text-orange-400',  bg: 'bg-orange-500/10 border-orange-500/30',   desc: 'Signaler une anomalie tarifaire ou un abus' },
   { path: '/lettre-hebdo',        icon: Newspaper,    label: 'Lettre Hebdo IA',       color: 'text-sky-400',     bg: 'bg-sky-500/10 border-sky-500/30',         desc: 'La newsletter hebdomadaire sur les prix DOM–COM' },
+  { path: '/lettre-jour',         icon: Newspaper,    label: 'Lettre du Jour IA',     color: 'text-indigo-400',  bg: 'bg-indigo-500/10 border-indigo-500/30',   desc: 'La veille quotidienne des prix DOM-COM par IA' },
   { path: '/conference-prix',     icon: Users,        label: 'Conférence Prix',       color: 'text-violet-400',  bg: 'bg-violet-500/10 border-violet-500/30',   desc: 'Programme des conférences citoyennes sur les prix' },
   { path: '/ti-panie',            icon: ShoppingCart, label: 'Ti Panie Solidaire',    color: 'text-teal-400',    bg: 'bg-teal-500/10 border-teal-500/30',       desc: 'Panier solidaire pour les familles en difficulté' },
+  { path: '/evaluation-magasins', icon: Star,         label: 'Évaluation Magasins',   color: 'text-yellow-400',  bg: 'bg-yellow-500/10 border-yellow-500/30',   desc: 'Notez les magasins de votre territoire' },
+  { path: '/commerce-social',     icon: Users,        label: 'Commerce Social',       color: 'text-purple-400',  bg: 'bg-purple-500/10 border-purple-500/30',   desc: 'Partagez vos listes et recommandations' },
+  { path: '/marches-locaux',      icon: ShoppingCart, label: 'Marchés Locaux',        color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/30', desc: 'Calendrier et annuaire des marchés locaux DOM' },
+  { path: '/petits-commerces',    icon: Tag,          label: 'Petits Commerces',      color: 'text-amber-400',   bg: 'bg-amber-500/10 border-amber-500/30',     desc: 'Annuaire des commerces de proximité DOM' },
+  { path: '/producteurs-locaux',  icon: Leaf,         label: 'Producteurs Locaux',    color: 'text-cyan-400',    bg: 'bg-cyan-500/10 border-cyan-500/30',       desc: 'Circuit court – producteurs locaux des DOM' },
 ];
 
 export default function ComparateursHub() {
