@@ -8,7 +8,13 @@ const OPTIONAL_SECURITY_HEADERS = [
   'strict-transport-security',
   'content-security-policy',
 ];
-const INTERNAL_ASSET_PATTERN = /(?:\/assets\/|\/)(?:[^"'?#]+\.)?(?:js|css|png|svg|webmanifest)(?:[?#].*)?$/i;
+const SERVICE_WORKER_FILENAME = 'service-worker.js';
+const INTERNAL_ASSET_EXTENSIONS = ['js', 'css', 'png', 'svg', 'webmanifest'];
+const MAX_ERROR_BODY_LENGTH = 180;
+const INTERNAL_ASSET_PATTERN = new RegExp(
+  `(?:/assets/[^"'?#]+|/[^"'?#]+\\.(?:${INTERNAL_ASSET_EXTENSIONS.join('|')}))(?:[?#].*)?$`,
+  'i',
+);
 
 function logOk(message) {
   console.log(`✅ ${message}`);
@@ -50,8 +56,8 @@ function normalizeInternalPath(resourceUrl, siteUrl) {
     return null;
   }
 
-  const path = `${parsed.pathname}${parsed.search}`;
-  return INTERNAL_ASSET_PATTERN.test(path) ? path : null;
+  const pathWithQuery = `${parsed.pathname}${parsed.search}`;
+  return INTERNAL_ASSET_PATTERN.test(pathWithQuery) ? pathWithQuery : null;
 }
 
 export function extractInternalAssetPaths(html, siteUrl) {
@@ -69,7 +75,7 @@ export function extractInternalAssetPaths(html, siteUrl) {
   return [...resources];
 }
 
-export function inferBasePath(assetPaths) {
+export function inferAssetBasePath(assetPaths) {
   for (const assetPath of assetPaths) {
     const assetsIndex = assetPath.indexOf('/assets/');
     if (assetsIndex >= 0) {
@@ -82,7 +88,7 @@ export function inferBasePath(assetPaths) {
       return manifestMatch[1] || '/';
     }
 
-    const iconMatch = assetPath.match(/^(.*\/)icon-(?:192|512)\.png(?:[?#].*)?$/i);
+    const iconMatch = assetPath.match(/^(.*\/)icon-\d+\.png(?:[?#].*)?$/i);
     if (iconMatch) {
       return iconMatch[1] || '/';
     }
@@ -145,8 +151,8 @@ async function verifyAssets(siteUrl, html) {
 }
 
 async function verifyServiceWorker(siteUrl, assetPaths) {
-  const basePath = inferBasePath(assetPaths);
-  const swPath = `${basePath}service-worker.js`.replace('//', '/');
+  const basePath = inferAssetBasePath(assetPaths);
+  const swPath = `${basePath}${SERVICE_WORKER_FILENAME}`.replace(/\/+/g, '/');
   const url = joinSiteUrl(siteUrl, swPath);
   const { response, body } = await fetchText(url);
 
@@ -180,7 +186,7 @@ async function verifyRoutes(siteUrl) {
 async function verifyApi(siteUrl) {
   const { response, body } = await fetchText(joinSiteUrl(siteUrl, '/api/health'));
   if (!response.ok) {
-    fail(`/api/health a répondu ${response.status}: ${body.slice(0, 180)}`);
+    fail(`/api/health a répondu ${response.status}: ${body.slice(0, MAX_ERROR_BODY_LENGTH)}`);
   }
 
   logOk('/api/health répond 200.');
@@ -223,7 +229,7 @@ async function main() {
   logOk('Validation complète réussie.');
 }
 
-if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+if (fileURLToPath(import.meta.url) === process.argv[1]) {
   main().catch((error) => {
     console.error('');
     console.error(`❌ VALIDATION ÉCHOUÉE: ${error instanceof Error ? error.message : String(error)}`);

@@ -3,4 +3,4 @@ set -euo pipefail
 
 ROOT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 
-bash "$ROOT_DIR/scripts/validate-deployment.sh" "${1:-https://akiprisaye-web.pages.dev}"
+bash "$ROOT_DIR/scripts/validate-deployment.sh" "${1:-}"

@@ -4,7 +4,7 @@ import {
   extractInternalAssetPaths,
   extractServiceWorkerVersion,
   hasReactShell,
-  inferBasePath,
+  inferAssetBasePath,
   normalizeBaseUrl,
 } from '../../scripts/validate-deployment.mjs';
 
@@ -42,8 +42,8 @@ describe('validate-deployment helpers', () => {
   });
 
   it('infers the app base path from current asset references', () => {
-    expect(inferBasePath(['/akiprisaye-web/assets/index-abc123.js'])).toBe('/akiprisaye-web/');
-    expect(inferBasePath(['/manifest.webmanifest', '/assets/index-abc123.js'])).toBe('/');
+    expect(inferAssetBasePath(['/akiprisaye-web/assets/index-abc123.js'])).toBe('/akiprisaye-web/');
+    expect(inferAssetBasePath(['/manifest.webmanifest', '/assets/index-abc123.js'])).toBe('/');
   });
 
   it('extracts the service worker cache version when present', () => {
