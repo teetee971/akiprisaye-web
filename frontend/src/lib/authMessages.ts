@@ -31,11 +31,11 @@ export function getAuthErrorMessage(err: unknown): string {
     case "auth/cancelled-popup-request":
       return "Connexion annulée.";
     case "auth/popup-blocked":
-      return "Pop-up bloquée par le navigateur. Autorisez les pop-ups pour ce site.";
+      return "Pop-up bloquée par le navigateur. Autorisez les pop-ups pour ce site ou utilisez la connexion par email.";
     case "auth/account-exists-with-different-credential":
       return "Un compte existe déjà avec cet email. Connectez-vous par email ou avec le même fournisseur.";
     case "auth/unauthorized-domain":
-      return "Domaine non autorisé. Ajoutez ce domaine dans Firebase Authentication > Authorized domains.";
+      return "Domaine non autorisé. Contactez l'administrateur pour ajouter ce domaine dans Firebase Authentication.";
     case "auth/operation-not-allowed":
       return "Ce fournisseur de connexion n'est pas activé.";
     case "auth/user-disabled":
@@ -44,7 +44,15 @@ export function getAuthErrorMessage(err: unknown): string {
       return "Code de vérification invalide.";
     case "auth/invalid-phone-number":
       return "Numéro de téléphone invalide.";
+    case "auth/network-request-failed":
+      return "Erreur réseau. Vérifiez votre connexion internet et réessayez.";
+    case "auth/internal-error":
+      return "Erreur interne du service d'authentification. Réessayez.";
+    case "auth/requires-recent-login":
+      return "Cette action nécessite une reconnexion récente. Déconnectez-vous et reconnectez-vous.";
+    case "auth/user-token-expired":
+      return "Votre session a expiré. Veuillez vous reconnecter.";
     default:
-      return "Une erreur est survenue. Réessayez.";
+      return "Erreur de connexion. Réessayez.";
   }
 }

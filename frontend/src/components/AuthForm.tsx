@@ -150,11 +150,11 @@ export default function AuthForm() {
 
       {/* Email Input */}
       <div className="mb-3">
-        <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+        <label htmlFor="auth-form-email" className="block text-sm font-medium text-gray-300 mb-2">
           Adresse e-mail
         </label>
         <input
-          id="email"
+          id="auth-form-email"
           type="email"
           value={email}
           placeholder="votre@email.com"
@@ -177,11 +177,11 @@ export default function AuthForm() {
       {/* Password Input (not shown in reset mode) */}
       {mode !== "reset" && (
         <div className="mb-4">
-          <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
+          <label htmlFor="auth-form-password" className="block text-sm font-medium text-gray-300 mb-2">
             Mot de passe
           </label>
           <input
-            id="password"
+            id="auth-form-password"
             type="password"
             value={password}
             placeholder="Minimum 6 caractères"

@@ -4,14 +4,18 @@ import { getFirestore, type Firestore } from "firebase/firestore";
 
 // Firebase web API keys are public by design — security is enforced via
 // Firebase Security Rules, not by keeping these values secret.
+// See: https://firebase.google.com/docs/projects/api-keys
+//
+// Values are hardcoded here to prevent deployment issues where incorrect
+// environment variable secrets could override the correct fallback values.
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyDf_mB8zMWHFwoFhVLyThuKWMTmhB7uSZY",
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "a-ki-pri-sa-ye.firebaseapp.com",
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "a-ki-pri-sa-ye",
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "a-ki-pri-sa-ye.firebasestorage.app",
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "187272078809",
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:187272078809:web:110a9e34493ef4506e5c8",
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "G-NFHCZTLPDM",
+  apiKey: "AIzaSyDf_mB8zMWHFwoFhVLyThuKWMTmhB7uSZY",
+  authDomain: "a-ki-pri-sa-ye.firebaseapp.com",
+  projectId: "a-ki-pri-sa-ye",
+  storageBucket: "a-ki-pri-sa-ye.firebasestorage.app",
+  messagingSenderId: "187272078809",
+  appId: "1:187272078809:web:110a9e34493ef4506e5c8",
+  measurementId: "G-NFHCZTLPDM",
 };
 
 // Kept for backward compatibility — always empty since fallback defaults are always present.

@@ -228,30 +228,30 @@ export function AlertForm({ productEAN = '', productName = '', onSave, onCancel 
 
         {/* Notification Preferences */}
         <div className="space-y-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4">
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+          <p className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
             Mode de notification
-          </label>
+          </p>
           <div className="flex items-center gap-3">
             <input
               type="checkbox"
-              id="email"
+              id="alert-notif-email"
               checked={formData.emailEnabled}
               onChange={(e) => setFormData({ ...formData, emailEnabled: e.target.checked })}
               className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
             />
-            <label htmlFor="email" className="text-sm text-slate-700 dark:text-slate-300 flex-1">
+            <label htmlFor="alert-notif-email" className="text-sm text-slate-700 dark:text-slate-300 flex-1">
               📧 Recevoir par email
             </label>
           </div>
           <div className="flex items-center gap-3">
             <input
               type="checkbox"
-              id="push"
+              id="alert-notif-push"
               checked={formData.pushEnabled}
               onChange={(e) => setFormData({ ...formData, pushEnabled: e.target.checked })}
               className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
             />
-            <label htmlFor="push" className="text-sm text-slate-700 dark:text-slate-300 flex-1">
+            <label htmlFor="alert-notif-push" className="text-sm text-slate-700 dark:text-slate-300 flex-1">
               📱 Notifications push (sur mobile)
             </label>
           </div>
