@@ -281,11 +281,11 @@ export default function ComparateursHub() {
   }, [activeTab]);
 
   const tabs = [
-    { id: 'prix',         label: 'Prix standards',   icon: DollarSign,  description: 'Comparer les prix entre enseignes sur votre territoire' },
-    { id: 'kilo',         label: 'Prix au kilo',      icon: Weight,      description: 'Comparer les prix ramenés au kilo ou au litre — données observatoire' },
-    { id: 'shrinkflation',label: 'Shrinkflation',     icon: TrendingDown,description: 'Signalements citoyens de réductions de contenant sans baisse de prix' },
-    { id: 'metropole',    label: 'vs Métropole',      icon: Map,         description: 'Écart de prix DOM–COM vs Hexagone — données observatoire mars 2026' },
-    { id: 'historique',   label: 'Historique',        icon: BarChart3,   description: 'Évolution des prix dans le temps' },
+    { id: 'prix',         label: 'Prix standards',   shortLabel: 'Prix',        icon: DollarSign,  description: 'Comparer les prix entre enseignes sur votre territoire' },
+    { id: 'kilo',         label: 'Prix au kilo',      shortLabel: 'Au kilo',     icon: Weight,      description: 'Comparer les prix ramenés au kilo ou au litre — données observatoire' },
+    { id: 'shrinkflation',label: 'Shrinkflation',     shortLabel: 'Shrink.',     icon: TrendingDown,description: 'Signalements citoyens de réductions de contenant sans baisse de prix' },
+    { id: 'metropole',    label: 'vs Métropole',      shortLabel: 'Métropole',   icon: Map,         description: 'Écart de prix DOM–COM vs Hexagone — données observatoire mars 2026' },
+    { id: 'historique',   label: 'Historique',        shortLabel: 'Historique',  icon: BarChart3,   description: 'Évolution des prix dans le temps' },
   ] as const;
 
   const fmtPrice = (n: number) => n.toFixed(2) + ' €';
@@ -310,26 +310,29 @@ export default function ComparateursHub() {
 
           {/* ── Tabs ── */}
           <GlassCard className="mb-4 p-2 sm:p-3">
-            <div className="flex flex-wrap gap-1.5 sm:gap-2">
-              {tabs.map((tab) => {
-                const Icon = tab.icon;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id as ComparateurTab)}
-                    className={`flex items-center gap-1.5 px-3 py-2 rounded-xl font-semibold transition-all flex-1 min-w-[calc(50%-0.375rem)] sm:flex-none sm:min-w-0 ${
-                      activeTab === tab.id
-                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
-                        : 'bg-slate-800/50 text-gray-400 hover:bg-slate-700 hover:text-gray-300'
-                    }`}
-                    aria-label={`Sélectionner le mode ${tab.label}`}
-                    aria-pressed={activeTab === tab.id}
-                  >
-                    <Icon className="w-4 h-4 flex-shrink-0" />
-                    <span className="text-xs sm:text-sm whitespace-nowrap">{tab.label}</span>
-                  </button>
-                );
-              })}
+            <div className="overflow-x-auto pb-0.5 -mb-0.5">
+              <div className="flex gap-1.5 sm:gap-2 sm:flex-wrap min-w-max sm:min-w-0">
+                {tabs.map((tab) => {
+                  const Icon = tab.icon;
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id as ComparateurTab)}
+                      className={`flex items-center gap-1.5 px-3 py-2 rounded-xl font-semibold transition-all flex-none sm:flex-1 ${
+                        activeTab === tab.id
+                          ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
+                          : 'bg-slate-800/50 text-gray-400 hover:bg-slate-700 hover:text-gray-300'
+                      }`}
+                      aria-label={`Sélectionner le mode ${tab.label}`}
+                      aria-pressed={activeTab === tab.id}
+                    >
+                      <Icon className="w-4 h-4 flex-shrink-0" />
+                      <span className="sm:hidden text-xs whitespace-nowrap">{tab.shortLabel}</span>
+                      <span className="hidden sm:inline text-sm whitespace-nowrap">{tab.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </GlassCard>
 
