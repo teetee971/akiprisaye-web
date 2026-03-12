@@ -243,6 +243,13 @@ setTimeout(() => location.reload(), 2000);
 - Vérifier que `build_output_directory` = `dist` dans `.cloudflare-pages.json`
 - Redéployer depuis Cloudflare Pages dashboard
 
+**Mini runbook (5 lignes) :**
+1. Cloudflare Dashboard → Workers & Pages → `akiprisaye-web` → `Deployments`
+2. Sur le dernier déploiement de `main`, cliquer `Retry deployment` (ou `Redeploy`)
+3. Ouvrir `https://akiprisaye-web.pages.dev/` et vérifier que l'app React charge sans page blanche
+4. Vérifier dans Network/HTML que les assets sont servis en `/assets/...` et non en `/akiprisaye-web/assets/...`
+5. Vérifier que `/login`, `service-worker.js` et `manifest.webmanifest` répondent sans 404
+
 ### Problème : Routes React donnent 404
 
 **Cause probable :** `_redirects` manquant ou mal configuré
