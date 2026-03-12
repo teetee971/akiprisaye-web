@@ -3,6 +3,12 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import '@testing-library/jest-dom/vitest';
 
+const mockNavigate = vi.fn();
+vi.mock('react-router-dom', async (importOriginal) => {
+  const original = await importOriginal<typeof import('react-router-dom')>();
+  return { ...original, useNavigate: () => mockNavigate };
+});
+
 vi.mock('../hooks/useScrollReveal', () => ({
   useScrollReveal: () => undefined,
 }));
@@ -91,6 +97,7 @@ import Home from '../pages/Home';
 
 describe('Home page', () => {
   beforeEach(() => {
+    mockNavigate.mockReset();
     vi.stubGlobal(
       'IntersectionObserver',
       class {
@@ -126,5 +133,20 @@ describe('Home page', () => {
     expect(await screen.findByText(/ce que disent nos utilisateurs/i)).toBeInTheDocument();
     expect(await screen.findByText(/mock observatory section/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /masquer la vue complète/i })).toBeInTheDocument();
+  });
+
+  it('submits hero search to /recherche-produits, not /comparateur', () => {
+    render(
+      <MemoryRouter>
+        <Home />
+      </MemoryRouter>,
+    );
+
+    const searchInput = screen.getByRole('textbox', { name: /rechercher un produit/i });
+    fireEvent.change(searchInput, { target: { value: 'riz 5kg' } });
+    fireEvent.submit(searchInput.closest('form')!);
+
+    expect(mockNavigate).toHaveBeenCalledWith('/recherche-produits?q=riz%205kg');
+    expect(mockNavigate).not.toHaveBeenCalledWith(expect.stringContaining('/comparateur'));
   });
 });

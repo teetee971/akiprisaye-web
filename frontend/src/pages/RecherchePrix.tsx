@@ -86,7 +86,7 @@ export default function RecherchePrix() {
   
   const handleReceiptAnalysisComplete = (result: ReceiptAnalysisResult) => {
     setReceiptAnalysis(result);
-    // Extraire le premier produit du ticket et naviguer vers le comparateur
+    // Extraire le premier produit du ticket et naviguer vers la recherche de produits
     const firstProduct = result.productLines?.[0];
     if (firstProduct?.normalizedLabel) {
       navigate(`/recherche-produits?q=${encodeURIComponent(firstProduct.normalizedLabel)}`);
