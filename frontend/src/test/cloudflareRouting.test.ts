@@ -9,19 +9,19 @@ const HERE = path.dirname(fileURLToPath(import.meta.url));
 const FRONTEND_ROOT = path.resolve(HERE, '..', '..'); // => frontend
 const P = (...p: string[]) => path.resolve(FRONTEND_ROOT, ...p);
 
-describe('Cloudflare SPA routing config', () => {
-  test('Cloudflare routing files are present in public/', () => {
+describe('static hosting SPA routing config', () => {
+  test('static hosting routing files are present in public/', () => {
     expect(existsSync(P('public/_redirects'))).toBe(true);
     expect(existsSync(P('public/_headers'))).toBe(true);
+    expect(existsSync(P('public/404.html'))).toBe(true);
   });
 
-  test('build script relies on native Cloudflare Pages SPA fallback', () => {
-    const packageJsonPath = P('package.json');
-    const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8')) as {
-      scripts?: Record<string, string>;
-    };
+  test('GitHub Pages fallback redirects deep links back to the SPA shell', () => {
+    const githubPages404 = readFileSync(P('public/404.html'), 'utf8');
 
-    expect(packageJson.scripts?.build).toBe('vite build');
+    expect(githubPages404).toContain('/?p=');
+    expect(githubPages404).toContain('Redirection en cours');
+    expect(githubPages404).toContain('https://teetee971.github.io/akiprisaye-web/');
   });
 
   test('frontend build uses explicit BASE_PATH override and otherwise defaults to root', () => {

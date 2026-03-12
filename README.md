@@ -1,7 +1,7 @@
 # 🧾 A KI PRI SA YÉ
 
 [![Version](https://img.shields.io/badge/version-3.3.0-blue)](#-état-du-projet)
-[![Cloudflare Pages](https://img.shields.io/badge/Cloudflare%20Pages-deployed-success?logo=cloudflare&logoColor=white)](https://akiprisaye-web.pages.dev)
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-deployed-success?logo=github&logoColor=white)](https://teetee971.github.io/akiprisaye-web/)
 [![CI/CD Pipeline](https://img.shields.io/github/actions/workflow/status/teetee971/akiprisaye-web/ci-cd-industrial.yml?branch=main&label=CI%2FCD&logo=github-actions)](https://github.com/teetee971/akiprisaye-web/actions/workflows/ci-cd-industrial.yml)
 [![CI Schema Validation](https://img.shields.io/badge/CI-JSON%20Schema%20Validation-blue)](#)
 [![Browser Only](https://img.shields.io/badge/Runtime-Browser--Only-important)](#)
@@ -64,7 +64,7 @@ L'application ne vend aucun produit et ne réalise aucune transaction commercial
 - 🖼️ **Optimized images** (WebP/AVIF with fallbacks)
 - 📦 **Lazy loading** for non-critical components
 - 🔄 **Service Worker** with smart caching strategies
-- 🌐 **CDN delivery** via Cloudflare Pages
+- 🌐 **Static hosting** via GitHub Pages
 
 ### 📖 Documentation
 
@@ -535,7 +535,7 @@ Tests automatiques via **axe-core** (référence industrie) :
 
 ## 🚀 Déploiement & CI/CD
 
-**Hébergement :** Cloudflare Pages  
+**Hébergement actuel :** GitHub Pages  
 **CI/CD :** GitHub Actions  
 
 ### Build automatique
@@ -550,14 +550,14 @@ npm run build
 Zéro 404, assets cohérents (`/assets`)  
 Rollback possible
 
-**URL officielle :**  
-👉 [https://akiprisaye-web.pages.dev](https://akiprisaye-web.pages.dev)
+**URL officielle (temporaire) :**  
+👉 [https://teetee971.github.io/akiprisaye-web/](https://teetee971.github.io/akiprisaye-web/)
 
-### Routing SPA (Cloudflare Pages)
+### Routing SPA (GitHub Pages)
 
-- Cloudflare Pages applique son fallback SPA natif **uniquement s'il n'existe pas de `404.html` top-level** dans le répertoire publié (`frontend/dist`).
-- Le build frontend ne doit donc pas générer `dist/404.html` (ne pas copier `index.html` vers `404.html`).
-- Le fallback explicite est défini via `frontend/public/_redirects` :
+- Les routes principales sont pré-rendues dans `frontend/dist/**/index.html` pour que GitHub Pages réponde `200` sur les URLs publiques les plus importantes.
+- Les autres deep links SPA reposent sur `frontend/public/404.html`, qui redirige vers `/?p=...` avant le boot React.
+- Le fallback Cloudflare historique reste défini via `frontend/public/_redirects` :
 
 ```txt
 # SPA fallback
@@ -568,15 +568,14 @@ Validation rapide en production (ne pas tester `/_redirects`, ce fichier est par
 
 ```bash
 bash scripts/validate-deployment.sh
-curl -I https://akiprisaye-web.pages.dev/
-curl -I https://akiprisaye-web.pages.dev/login
-curl -I https://akiprisaye-web.pages.dev/mon-compte
-curl -I https://akiprisaye-web.pages.dev/reset-password
-curl -I https://akiprisaye-web.pages.dev/inscription
+curl -I https://teetee971.github.io/akiprisaye-web/
+curl -I https://teetee971.github.io/akiprisaye-web/comparateur
+curl -I https://teetee971.github.io/akiprisaye-web/scanner
+curl -I https://teetee971.github.io/akiprisaye-web/observatoire
 ```
 
 Le script `scripts/validate-deployment.sh` vérifie aussi que les assets réellement référencés par le HTML public existent bien sur le site déployé.
-Toutes ces routes doivent répondre `HTTP 200` et charger l'application SPA.
+Sur GitHub Pages, certains deep links SPA peuvent répondre `404` tout en chargeant correctement l’application via `404.html`; le validateur les accepte explicitement.
 
 ---
 
@@ -693,7 +692,7 @@ reposent sur des **API Web natives** (`window`, `navigator.mediaDevices`, `Image
 
 ### Conséquence en CI
 - Les tests frontend sont **désactivés volontairement** en CI Node.
-- **Cloudflare Pages** est la **source de vérité** pour le build et la validation runtime.
+- **GitHub Pages** est la **source de vérité actuelle** pour le build statique et la validation runtime.
 - Aucun code produit n'est exécuté côté serveur Node.
 
 ### Ce qui est validé en production
@@ -724,7 +723,7 @@ pour les applications web exploitant des API navigateur.
 | Version | **3.1.1** |
 | CI/CD | ✅ Opérationnel |
 | Architecture | ✅ Validée |
-| Déploiement | ✅ Cloudflare Pages |
+| Déploiement | ✅ GitHub Pages |
 | Snapshots Observatoire | ✅ 32 fichiers (nov. 2025 – mars 2026) |
 | Messagerie | ✅ Opérationnelle |
 | Gamification | ✅ Opérationnelle |

@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'node:url';
 
-const DEFAULT_URL = 'https://akiprisaye-web.pages.dev';
+const DEFAULT_URL = 'https://teetee971.github.io/akiprisaye-web';
 const CRITICAL_ROUTES = ['/', '/comparateur', '/scanner', '/observatoire', '/alertes'];
 const OPTIONAL_SECURITY_HEADERS = [
   'x-frame-options',
@@ -32,12 +32,20 @@ export function normalizeBaseUrl(url = DEFAULT_URL) {
   return String(url).replace(/\/+$/, '');
 }
 
+export function isGitHubPagesSite(siteUrl) {
+  return new URL(siteUrl).hostname.endsWith('github.io');
+}
+
 export function hasReactShell(html) {
   return /<div[^>]+id=["']root["']/i.test(html);
 }
 
 export function containsLegacyFallback(html) {
   return /Le site est en ligne/i.test(html);
+}
+
+export function hasGitHubPagesSpaFallback(html) {
+  return /\?p=%2F/i.test(html) || /Redirection en cours/i.test(html);
 }
 
 export function extractServiceWorkerVersion(source) {
@@ -97,8 +105,21 @@ export function inferAssetBasePath(assetPaths) {
   return '/';
 }
 
-function joinSiteUrl(baseUrl, path) {
-  return new URL(path, `${normalizeBaseUrl(baseUrl)}/`).toString();
+export function joinSiteUrl(baseUrl, path) {
+  const siteUrl = new URL(`${normalizeBaseUrl(baseUrl)}/`);
+  const siteBasePath = siteUrl.pathname.replace(/\/$/, '');
+  const normalizedPath = String(path || '/');
+
+  if (normalizedPath.startsWith(siteUrl.pathname)) {
+    return new URL(normalizedPath, siteUrl.origin).toString();
+  }
+
+  if (normalizedPath.startsWith('/')) {
+    const resolvedPath = normalizedPath === '/' ? `${siteBasePath}/` : `${siteBasePath}${normalizedPath}`;
+    return new URL(resolvedPath, siteUrl.origin).toString();
+  }
+
+  return new URL(normalizedPath, siteUrl).toString();
 }
 
 async function fetchText(url) {
@@ -173,17 +194,41 @@ async function verifyServiceWorker(siteUrl, assetPaths) {
 }
 
 async function verifyRoutes(siteUrl) {
+  const githubPages = isGitHubPagesSite(siteUrl);
+  let fallbackRoutes = 0;
+
   for (const route of CRITICAL_ROUTES) {
-    const response = await fetchStatus(joinSiteUrl(siteUrl, route));
-    if (!response.ok) {
-      fail(`La route critique ${route} a répondu ${response.status}.`);
+    const { response, body } = await fetchText(joinSiteUrl(siteUrl, route));
+    if (response.ok) {
+      continue;
     }
+
+    if (
+      githubPages &&
+      response.status === 404 &&
+      (hasReactShell(body) || hasGitHubPagesSpaFallback(body)) &&
+      !containsLegacyFallback(body)
+    ) {
+      fallbackRoutes += 1;
+      continue;
+    }
+
+    fail(`La route critique ${route} a répondu ${response.status}.`);
+  }
+
+  if (fallbackRoutes > 0) {
+    logWarn(`${fallbackRoutes} route(s) critique(s) utilisent le fallback GitHub Pages (HTTP 404 attendu sur deep links).`);
   }
 
   logOk(`${CRITICAL_ROUTES.length} routes critiques répondent correctement.`);
 }
 
 async function verifyApi(siteUrl) {
+  if (isGitHubPagesSite(siteUrl)) {
+    logWarn('/api/health ignoré sur GitHub Pages : l’hébergement statique ne sert pas les endpoints /api.');
+    return;
+  }
+
   const { response, body } = await fetchText(joinSiteUrl(siteUrl, '/api/health'));
   if (!response.ok) {
     fail(`/api/health a répondu ${response.status}: ${body.slice(0, MAX_ERROR_BODY_LENGTH)}`);
@@ -192,9 +237,17 @@ async function verifyApi(siteUrl) {
   logOk('/api/health répond 200.');
 }
 
-function verifyHeaders(headers) {
+export function hasAcceptableHtmlCacheControl(cacheControl, siteUrl) {
+  if (isGitHubPagesSite(siteUrl)) {
+    return /(?:max-age=\d+|no-store|max-age=0)/i.test(cacheControl);
+  }
+
+  return /(?:no-store|max-age=0)/i.test(cacheControl);
+}
+
+function verifyHeaders(headers, siteUrl) {
   const cacheControl = headers.get('cache-control') || '';
-  if (!/(?:no-store|max-age=0)/i.test(cacheControl)) {
+  if (!hasAcceptableHtmlCacheControl(cacheControl, siteUrl)) {
     fail(`Cache-Control HTML inattendu: "${cacheControl || 'absent'}".`);
   }
 
@@ -222,7 +275,7 @@ async function main() {
   await verifyServiceWorker(siteUrl, assetPaths);
   await verifyRoutes(siteUrl);
   await verifyApi(siteUrl);
-  verifyHeaders(headers);
+  verifyHeaders(headers, siteUrl);
 
   console.log('');
   console.log('============================');

@@ -1,4 +1,7 @@
-# Troubleshooting Cloudflare Pages Deployment
+# Troubleshooting du déploiement public
+
+> Déploiement public actuel : **GitHub Pages** via `https://teetee971.github.io/akiprisaye-web/`  
+> Les notes Cloudflare ci-dessous restent utiles pour l’infrastructure historique, mais la validation publique doit désormais viser GitHub Pages.
 
 ## 🎯 Problème résolu : "Le site est en ligne..." au lieu de l'app React
 
@@ -118,13 +121,13 @@ Ce validateur contrôle automatiquement :
 
 ```bash
 # HTML servi
-curl -s https://akiprisaye-web.pages.dev/ | grep -E 'id="root"|manifest\.webmanifest|service-worker'
+curl -s https://teetee971.github.io/akiprisaye-web/ | grep -E 'id="root"|manifest\.webmanifest|service-worker'
 
 # Aucun fallback legacy
-curl -s https://akiprisaye-web.pages.dev/ | grep -i "Le site est en ligne"
+curl -s https://teetee971.github.io/akiprisaye-web/ | grep -i "Le site est en ligne"
 
 # Headers HTML
-curl -I https://akiprisaye-web.pages.dev/
+curl -I https://teetee971.github.io/akiprisaye-web/
 ```
 
 ---
@@ -135,7 +138,7 @@ curl -I https://akiprisaye-web.pages.dev/
 
 Si vous voyez encore "Le site est en ligne..." :
 
-1. **Ouvrir le site** : https://akiprisaye-web.pages.dev/
+1. **Ouvrir le site** : https://teetee971.github.io/akiprisaye-web/
 2. **Menu ⋮** → Paramètres du site
 3. **Stockage** → Effacer les données
 4. **Si PWA installée** : 
@@ -147,7 +150,7 @@ Si vous voyez encore "Le site est en ligne..." :
 
 1. **Réglages** → Safari
 2. **Avancé** → Données de sites web
-3. **Supprimer** : akiprisaye-web.pages.dev
+3. **Supprimer** : teetee971.github.io
 4. **Ou** : Effacer historique et données
 5. **Revenir sur Safari** et ouvrir le site
 
@@ -240,15 +243,15 @@ setTimeout(() => location.reload(), 2000);
 3. Chercher lignes rouges (404)
 
 **Solution :**
-- Vérifier que `build_output_directory` = `dist` dans `.cloudflare-pages.json`
-- Redéployer depuis Cloudflare Pages dashboard
+- Vérifier que le workflow `.github/workflows/deploy-pages.yml` a bien publié `frontend/dist`
+- Relancer le workflow GitHub Pages ou pousser un nouveau commit sur `main`
 
 **Mini runbook (5 lignes) :**
-1. Cloudflare Dashboard → Workers & Pages → `akiprisaye-web` → `Deployments`
-2. Sur le dernier déploiement de `main`, cliquer `Retry deployment` (ou `Redeploy`)
-3. Ouvrir `https://akiprisaye-web.pages.dev/` et vérifier que l'application React charge sans page blanche
-4. Vérifier dans Network/HTML que les assets sont servis en `/assets/...` et non en `/akiprisaye-web/assets/...`
-5. Vérifier que `/login`, `service-worker.js` et `manifest.webmanifest` répondent sans 404
+1. GitHub → Actions → `Deploy to GitHub Pages`
+2. Relancer le dernier run `main` si besoin (`Re-run jobs`)
+3. Ouvrir `https://teetee971.github.io/akiprisaye-web/` et vérifier que l'application React charge sans page blanche
+4. Vérifier dans Network/HTML que les assets sont servis en `/akiprisaye-web/assets/...`
+5. Vérifier que `service-worker.js` et `manifest.webmanifest` répondent ; sur GitHub Pages, certains deep links SPA peuvent passer par `404.html`
 
 ### Problème : Routes React donnent 404
 

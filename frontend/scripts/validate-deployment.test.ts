@@ -6,8 +6,12 @@ import {
   containsLegacyFallback,
   extractInternalAssetPaths,
   extractServiceWorkerVersion,
+  hasAcceptableHtmlCacheControl,
+  hasGitHubPagesSpaFallback,
   hasReactShell,
   inferAssetBasePath,
+  isGitHubPagesSite,
+  joinSiteUrl,
   normalizeBaseUrl,
 } from '../../scripts/validate-deployment.mjs';
 
@@ -16,7 +20,7 @@ const REPO_ROOT = path.resolve(HERE, '..', '..');
 
 describe('validate-deployment helpers', () => {
   it('normalizes base urls without trailing slashes', () => {
-    expect(normalizeBaseUrl('https://akiprisaye-web.pages.dev///')).toBe('https://akiprisaye-web.pages.dev');
+    expect(normalizeBaseUrl('https://teetee971.github.io/akiprisaye-web///')).toBe('https://teetee971.github.io/akiprisaye-web');
   });
 
   it('detects the React shell even when #root is populated', () => {
@@ -33,13 +37,13 @@ describe('validate-deployment helpers', () => {
   it('extracts internal asset paths from deployed html only', () => {
     const html = `
       <link rel="manifest" href="/akiprisaye-web/manifest.webmanifest">
-      <link rel="icon" href="https://akiprisaye-web.pages.dev/akiprisaye-web/icon-192.png">
+      <link rel="icon" href="https://teetee971.github.io/akiprisaye-web/icon-192.png">
       <link rel="preconnect" href="https://fonts.googleapis.com">
       <script type="module" src="/akiprisaye-web/assets/index-abc123.js"></script>
       <img src="/akiprisaye-web/logo-akiprisaye.svg">
     `;
 
-    expect(extractInternalAssetPaths(html, 'https://akiprisaye-web.pages.dev')).toEqual([
+    expect(extractInternalAssetPaths(html, 'https://teetee971.github.io/akiprisaye-web')).toEqual([
       '/akiprisaye-web/manifest.webmanifest',
       '/akiprisaye-web/icon-192.png',
       '/akiprisaye-web/assets/index-abc123.js',
@@ -55,6 +59,25 @@ describe('validate-deployment helpers', () => {
   it('extracts the service worker cache version when present', () => {
     expect(extractServiceWorkerVersion("const CACHE_NAME = 'akiprisaye-smart-cache-v5';")).toBe(5);
     expect(extractServiceWorkerVersion('const CACHE_NAME = "other-cache";')).toBeNull();
+  });
+
+  it('detects GitHub Pages URLs and fallback HTML', () => {
+    expect(isGitHubPagesSite('https://teetee971.github.io/akiprisaye-web')).toBe(true);
+    expect(isGitHubPagesSite('https://akiprisaye-web.pages.dev')).toBe(false);
+    expect(hasGitHubPagesSpaFallback('<script>location.replace("/akiprisaye-web/?p=%2Flogin")</script>')).toBe(true);
+    expect(hasGitHubPagesSpaFallback('<div id="root"></div>')).toBe(false);
+  });
+
+  it('accepts GitHub Pages cache headers while keeping stricter checks elsewhere', () => {
+    expect(hasAcceptableHtmlCacheControl('max-age=600', 'https://teetee971.github.io/akiprisaye-web')).toBe(true);
+    expect(hasAcceptableHtmlCacheControl('no-store, no-cache, must-revalidate', 'https://akiprisaye-web.pages.dev')).toBe(true);
+    expect(hasAcceptableHtmlCacheControl('max-age=600', 'https://akiprisaye-web.pages.dev')).toBe(false);
+  });
+
+  it('joins critical routes against the repository base path on GitHub Pages', () => {
+    expect(joinSiteUrl('https://teetee971.github.io/akiprisaye-web', '/')).toBe('https://teetee971.github.io/akiprisaye-web/');
+    expect(joinSiteUrl('https://teetee971.github.io/akiprisaye-web', '/comparateur')).toBe('https://teetee971.github.io/akiprisaye-web/comparateur');
+    expect(joinSiteUrl('https://teetee971.github.io/akiprisaye-web', '/akiprisaye-web/assets/index.js')).toBe('https://teetee971.github.io/akiprisaye-web/assets/index.js');
   });
 
   it('keeps root, backend, frontend, and README version references aligned', () => {

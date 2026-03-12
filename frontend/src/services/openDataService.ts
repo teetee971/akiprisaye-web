@@ -58,7 +58,7 @@ export function generateMetadata(
     generatedAt: new Date().toISOString(),
     licence: 'Licence Ouverte / Open Licence Version 2.0 (Etalab)',
     source: 'A KI PRI SA YÉ - Observatoire Citoyen des Prix',
-    methodology: 'https://akiprisaye.pages.dev/methodologie',
+    methodology: 'https://teetee971.github.io/akiprisaye-web/methodologie',
     updateFrequency: type === 'prices' ? 'Temps réel (agrégation quotidienne)' : 'Quotidienne',
     territories,
     recordCount,
