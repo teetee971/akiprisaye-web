@@ -71,9 +71,11 @@ jobs:
 
   deploy:
     needs: build
-    # Only run when build actually succeeded — prevents failures when build was
-    # skipped or when "re-run failed jobs only" is used without a fresh artifact.
-    if: needs.build.result == 'success'
+    # Only run when build actually succeeded AND the event is not a pull_request.
+    # pull_request events run in refs/pull/*/merge context which GitHub Pages
+    # environment protection rules do not allow; deployment happens instead via
+    # the push event that fires when a PR is merged into main.
+    if: needs.build.result == 'success' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       pages: write
