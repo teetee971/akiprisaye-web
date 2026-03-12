@@ -38,6 +38,7 @@ export default defineConfig({
       abs('./src/test/freemium.test.ts'),
       abs('./src/test/cloudflareRouting.test.ts'),
       abs('./src/test/portailDeveloppeurs.browserRenderingDocs.test.ts'),
+      abs('./src/test/internalNavigationRoutes.test.ts'),
       abs('./src/test/actualites.page.test.jsx'),
       abs('./src/test/serviceWorkerCacheStrategy.test.ts'),
       abs('./src/test/app.aliases.test.ts'),
