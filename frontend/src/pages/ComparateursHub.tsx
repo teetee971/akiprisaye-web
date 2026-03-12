@@ -86,7 +86,6 @@ const COMPARATEURS_COMPLETS = [
   { path: '/comparateurs', label: 'Hub Comparateurs' },
   ...Array.from(
     ALL_COMPARATEURS
-      .filter((item) => item.path.startsWith('/compar'))
       .reduce((map, item) => {
         if (!map.has(item.path)) {
           map.set(item.path, { path: item.path, label: item.label });
