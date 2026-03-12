@@ -3,6 +3,20 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 
 Le format s'inspire de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et ce projet adhère à la [sémantique de versionnage](https://semver.org/lang/fr/).
 
+## [3.3.0] - 2026-03-12
+
+### Fixed — ComparateursHub : index complet et liens comparateurs
+
+- **`frontend/src/pages/ComparateursHub.tsx`** — Ajout d'un **index complet** vers tous les comparateurs (généraux + spécialisés + thématiques) afin d'éviter les routes manquantes côté navigation.
+- **`frontend/src/pages/ComparateursHub.tsx`** — Ajout de la constante `COMPARATEURS_COMPLETS` et rendu d'un bloc « Index complet des comparateurs » avec liens internes unifiés.
+
+### Changed — Alignement des versions projet
+
+- **`package.json`** — version racine alignée en `3.3.0`.
+- **`backend/package.json`** — version backend alignée en `3.3.0`.
+
+---
+
 ## [3.1.9] - 2026-03-09
 
 ### Fixed — FuelComparator : horodatage réel de la donnée

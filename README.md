@@ -126,6 +126,8 @@ Hub unifié regroupant tous les outils de comparaison :
 
 **Route:** `/comparateurs`
 
+✅ **Mise à jour navigation (mars 2026)** : `ComparateursHub` inclut désormais un index explicite de **tous** les comparateurs (`/comparateur`, `/comparateur-avance`, `/comparateur-vols`, `/comparateur-fret`, etc.) pour éviter les incohérences de routage interne.
+
 ### 🗺️ Carte & Itinéraires
 Fonctionnalités cartographiques et optimisation de trajets :
 - Carte interactive des magasins
