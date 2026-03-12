@@ -21,6 +21,8 @@ const API_ENDPOINTS = [
   { method: 'GET', path: '/api/prices/realtime', desc: 'Prix temps réel par EAN et territoire (OpenPrices)', status: 'live' },
   { method: 'GET', path: '/api/prices/feed', desc: 'Flux de prix par territoire, date et page', status: 'live' },
   { method: 'GET', path: '/api/health', desc: 'Statut de santé de l\'API', status: 'live' },
+  { method: 'POST', path: '/api/browser-rendering/crawl', desc: 'Beta Cloudflare Browser Rendering : crawl asynchrone HTML / Markdown / JSON structuré (max 50 pages, bearer token serveur)', status: 'live' },
+  { method: 'GET', path: '/api/browser-rendering/crawl?id=:jobId', desc: 'Suivi paginé d\'un job de crawl (>10 Mo) et statuts running/completed/errored', status: 'live' },
   { method: 'GET', path: '/api/v1/prices', desc: 'Prix des produits par territoire et enseigne (V1)', status: 'planned' },
   { method: 'GET', path: '/api/v1/products/:ean', desc: 'Fiche produit complète par code EAN', status: 'planned' },
   { method: 'GET', path: '/api/v1/territories', desc: 'Liste des territoires DOM-COM couverts', status: 'planned' },
@@ -178,10 +180,10 @@ export default function PortailDeveloppeurs() {
           <div className="flex gap-3 bg-green-50 border border-green-200 rounded-xl p-4">
             <Zap className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm font-semibold text-green-800">8 endpoints en production — données.gouv.fr &amp; partenaires</p>
+              <p className="text-sm font-semibold text-green-800">10 endpoints en production — données.gouv.fr, Cloudflare &amp; partenaires</p>
               <p className="text-sm text-green-700 mt-0.5">
                 Prix carburants, rappels produits (RappelConso V2), signalements consommateurs DOM (SignalConso DGCCRF),
-                taux de change live et indice IEVR sont disponibles sans clé API.
+                taux de change live, indice IEVR et crawl Browser Rendering sécurisé sont disponibles.
                 Documentation OpenAPI complète et SDK prévus en V3.
               </p>
             </div>
@@ -225,6 +227,25 @@ export default function PortailDeveloppeurs() {
                   ))}
                 </tbody>
               </table>
+            </div>
+            <div className="mt-4 bg-slate-50 border border-slate-200 rounded-xl p-4 text-sm text-slate-700 space-y-2">
+              <p className="font-semibold text-slate-900">🕷️ Browser Rendering Crawl (beta Cloudflare)</p>
+              <p>
+                Proxy serveur sécurisé vers <code className="text-xs bg-white px-1 py-0.5 rounded">/crawl</code> :
+                HTML, Markdown ou JSON structuré via Workers AI, avec limite locale de <strong>50 pages</strong> par requête.
+              </p>
+              <p>
+                Paramètres avancés supportés : <code className="text-xs bg-white px-1 py-0.5 rounded">options.includePatterns</code>,
+                <code className="text-xs bg-white px-1 py-0.5 rounded ml-1">options.excludePatterns</code>,
+                <code className="text-xs bg-white px-1 py-0.5 rounded ml-1">modifiedSince</code>,
+                <code className="text-xs bg-white px-1 py-0.5 rounded ml-1">jsonOptions</code>,
+                <code className="text-xs bg-white px-1 py-0.5 rounded ml-1">rejectResourceTypes</code> et
+                <code className="text-xs bg-white px-1 py-0.5 rounded ml-1">authenticate</code>.
+              </p>
+              <p>
+                Cloudflare gère l&apos;asynchronisme, la pagination automatique au-delà de 10 Mo et le respect de
+                <code className="text-xs bg-white px-1 py-0.5 rounded ml-1">robots.txt</code> / <code className="text-xs bg-white px-1 py-0.5 rounded">crawl-delay</code>.
+              </p>
             </div>
           </div>
 
