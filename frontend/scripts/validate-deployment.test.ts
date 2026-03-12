@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import {
   containsLegacyFallback,
   extractInternalAssetPaths,
@@ -7,6 +10,9 @@ import {
   inferAssetBasePath,
   normalizeBaseUrl,
 } from '../../scripts/validate-deployment.mjs';
+
+const HERE = path.dirname(fileURLToPath(import.meta.url));
+const REPO_ROOT = path.resolve(HERE, '..', '..');
 
 describe('validate-deployment helpers', () => {
   it('normalizes base urls without trailing slashes', () => {
@@ -49,5 +55,16 @@ describe('validate-deployment helpers', () => {
   it('extracts the service worker cache version when present', () => {
     expect(extractServiceWorkerVersion("const CACHE_NAME = 'akiprisaye-smart-cache-v5';")).toBe(5);
     expect(extractServiceWorkerVersion('const CACHE_NAME = "other-cache";')).toBeNull();
+  });
+
+  it('keeps root, backend, frontend, and README version references aligned', () => {
+    const rootPackage = JSON.parse(readFileSync(path.join(REPO_ROOT, 'package.json'), 'utf8')) as { version: string };
+    const backendPackage = JSON.parse(readFileSync(path.join(REPO_ROOT, 'backend/package.json'), 'utf8')) as { version: string };
+    const frontendPackage = JSON.parse(readFileSync(path.join(REPO_ROOT, 'frontend/package.json'), 'utf8')) as { version: string };
+    const readme = readFileSync(path.join(REPO_ROOT, 'README.md'), 'utf8');
+
+    expect(rootPackage.version).toBe(frontendPackage.version);
+    expect(backendPackage.version).toBe(frontendPackage.version);
+    expect(readme).toContain(`badge/version-${frontendPackage.version}-blue`);
   });
 });

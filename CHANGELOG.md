@@ -16,6 +16,13 @@ Le format s'inspire de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) 
 - **`backend/package.json`** — version backend alignée en `3.3.0`.
 
 ---
+### Fixed — Navigation comparateurs et cohérence de version
+
+- **`frontend/src/App.tsx`** — Les itinéraires comparateurs et alias de navigation attendus sont bien branchés, y compris l'alias `/espace-pro-batiment` vers `/espace-pro` pour supprimer un lien interne mort.
+- **`frontend/src/pages/ComparateursHub.tsx`** — Le hub expose l'ensemble des comparateurs généraux, spécialisés et des sous-pages `recherche-prix`, de façon cohérente avec les routes réellement déclarées dans `App.tsx`.
+- **`frontend/src/test/comparateurRoutes.test.ts`** et **`frontend/src/test/cloudflareRouting.test.ts`** — Les tests de couverture garantissent désormais la cohérence entre les liens internes du hub, les routes React Router et l'alias de l'espace pro bâtiment.
+- **Versioning dépôt** — Alignement des versions visibles du monorepo sur `3.3.0` (`package.json` racine, `backend/package.json`, badge README).
+- **`README.md`** — La documentation de navigation précise explicitement que `ComparateursHub` recense tous les comparateurs clés pour éviter les incohérences de maillage interne.
 
 ## [3.1.9] - 2026-03-09
 

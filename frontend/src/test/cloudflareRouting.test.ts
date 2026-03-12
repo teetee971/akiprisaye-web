@@ -70,4 +70,14 @@ describe('Cloudflare SPA routing config', () => {
       );
     }
   });
+
+  test('building pro signup account link resolves to a live route', () => {
+    const appSource = readFileSync(P('src/App.tsx'), 'utf8');
+    const inscriptionProBatimentSource = readFileSync(P('src/pages/InscriptionProBatiment.tsx'), 'utf8');
+
+    expect(inscriptionProBatimentSource).toContain('<Link to="/espace-pro-batiment"');
+    expect(appSource).toContain(
+      '<Route path="espace-pro-batiment" element={<Navigate to="/espace-pro" replace />} />',
+    );
+  });
 });

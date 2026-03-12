@@ -438,6 +438,7 @@ export default function App() {
                           {/* Espace Professionnel */}
                           <Route path="inscription-pro" element={<InscriptionPro />} />
                           <Route path="espace-pro" element={<EspacePro />} />
+                          <Route path="espace-pro-batiment" element={<Navigate to="/espace-pro" replace />} />
                           <Route path="espace-createur" element={<EspaceCreateur />} />
 
                           {/* Additional feature routes */}
