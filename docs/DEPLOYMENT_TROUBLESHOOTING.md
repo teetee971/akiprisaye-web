@@ -251,7 +251,8 @@ setTimeout(() => location.reload(), 2000);
 2. Relancer le dernier run `main` si besoin (`Re-run jobs`)
 3. Ouvrir `https://teetee971.github.io/akiprisaye-web/` et vérifier que l'application React charge sans page blanche
 4. Vérifier dans Network/HTML que les assets sont servis en `/akiprisaye-web/assets/...`
-5. Vérifier que `service-worker.js` et `manifest.webmanifest` répondent ; sur GitHub Pages, certains deep links SPA peuvent passer par `404.html`
+5. Vérifier que `service-worker.js` et `manifest.webmanifest` répondent
+6. Garder en tête que, sur GitHub Pages, certains deep links SPA peuvent passer par `404.html`
 
 ### Problème : Routes React donnent 404
 

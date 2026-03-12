@@ -115,6 +115,8 @@ export function joinSiteUrl(baseUrl, path) {
   }
 
   if (normalizedPath.startsWith('/')) {
+    // Preserve the repository subpath on GitHub Pages (e.g. /akiprisaye-web).
+    // When siteBasePath is empty, the root route intentionally becomes "/" .
     const resolvedPath = normalizedPath === '/' ? `${siteBasePath}/` : `${siteBasePath}${normalizedPath}`;
     return new URL(resolvedPath, siteUrl.origin).toString();
   }
@@ -206,7 +208,7 @@ async function verifyRoutes(siteUrl) {
     if (
       githubPages &&
       response.status === 404 &&
-      (hasReactShell(body) || hasGitHubPagesSpaFallback(body)) &&
+      hasGitHubPagesSpaFallback(body) &&
       !containsLegacyFallback(body)
     ) {
       fallbackRoutes += 1;
@@ -239,7 +241,9 @@ async function verifyApi(siteUrl) {
 
 export function hasAcceptableHtmlCacheControl(cacheControl, siteUrl) {
   if (isGitHubPagesSite(siteUrl)) {
-    return /(?:max-age=\d+|no-store|max-age=0)/i.test(cacheControl);
+    // GitHub Pages serves HTML with a short shared cache (currently max-age=600),
+    // so validation must accept that platform-managed policy in addition to no-store.
+    return /(?:max-age=\d+|no-store)/i.test(cacheControl);
   }
 
   return /(?:no-store|max-age=0)/i.test(cacheControl);
