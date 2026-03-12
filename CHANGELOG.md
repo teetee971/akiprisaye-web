@@ -7,8 +7,8 @@ Le format s'inspire de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) 
 
 ### Fixed — ComparateursHub : index complet et liens comparateurs
 
-- **`frontend/src/pages/ComparateursHub.tsx`** — Ajout d'un **index complet** vers tous les comparateurs (généraux + spécialisés + thématiques) afin d'éviter les routes manquantes côté navigation.
-- **`frontend/src/pages/ComparateursHub.tsx`** — Ajout de la constante `COMPARATEURS_COMPLETS` et rendu d'un bloc « Index complet des comparateurs » avec liens internes unifiés.
+- **`frontend/src/pages/ComparateursHub.tsx`** — Ajout d'un **index complet** vers tous les comparateurs (généraux + spécialisés + thématiques + sous-pages `recherche-prix`) afin d'éviter les routes manquantes côté navigation.
+- **`frontend/src/pages/ComparateursHub.tsx`** — La constante `COMPARATEURS_COMPLETS` ne filtre plus sur `/compar` : elle déduplique directement l'ensemble de `ALL_COMPARATEURS` pour inclure aussi `/recherche-prix`, `/recherche-avancee` et les routes non-`/compar`.
 
 ### Changed — Alignement des versions projet
 
