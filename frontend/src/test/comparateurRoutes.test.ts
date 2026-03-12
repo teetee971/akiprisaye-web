@@ -28,7 +28,8 @@ const hubComparatorPaths = Array.from(
   new Set(
     [...hubSource.matchAll(/path:\s*'([^']+)'/g)]
       .map(([, path]) => path)
-      .filter(isComparatorPath),
+      .filter(isComparatorPath)
+      .filter((path) => !['/comparateurs', '/comparateurs-hub'].includes(path)),
   ),
 ).sort();
 
