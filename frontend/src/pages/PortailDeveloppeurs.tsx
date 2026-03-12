@@ -55,6 +55,10 @@ const EXAMPLE_RESPONSE = `{
   "fetchedAt": "2026-03-10T14:00:00.000Z"
 }`;
 
+const BROWSER_RENDERING_ENV_SNIPPET = `CLOUDFLARE_BROWSER_RENDERING_API_TOKEN=<token Cloudflare>
+CLOUDFLARE_ACCOUNT_ID=<account id>
+BROWSER_RENDERING_SHARED_SECRET=<secret applicatif>`;
+
 // ── Composant ─────────────────────────────────────────────────────────────────
 
 export default function PortailDeveloppeurs() {
@@ -246,6 +250,29 @@ export default function PortailDeveloppeurs() {
                 Cloudflare gère l&apos;asynchronisme, la pagination automatique au-delà de 10 Mo et le respect de
                 <code className="text-xs bg-white px-1 py-0.5 rounded ml-1">robots.txt</code> / <code className="text-xs bg-white px-1 py-0.5 rounded">crawl-delay</code>.
               </p>
+            </div>
+            <div className="mt-4 bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-950 space-y-3">
+              <p className="font-semibold">🔐 Autorisation Cloudflare à sélectionner</p>
+              <p>
+                Dans l&apos;écran <strong>Create Custom Token</strong> de Cloudflare, choisir exactement :
+                <strong className="ml-1">Compte → Browser Rendering → Modifier / Edit</strong>.
+              </p>
+              <p>
+                Restreignez ensuite le jeton au <strong>compte Cloudflare concerné</strong>. Il n&apos;est pas nécessaire
+                d&apos;ajouter des permissions <code className="text-xs bg-white px-1 py-0.5 rounded">Zone</code>,
+                <code className="text-xs bg-white px-1 py-0.5 rounded ml-1">DNS</code>,
+                <code className="text-xs bg-white px-1 py-0.5 rounded ml-1">Workers</code> ou
+                <code className="text-xs bg-white px-1 py-0.5 rounded ml-1">Pages</code> pour ce proxy.
+              </p>
+              <p>
+                Le <code className="text-xs bg-white px-1 py-0.5 rounded">CLOUDFLARE_BROWSER_RENDERING_API_TOKEN</code>
+                est le jeton Cloudflare. Le
+                <code className="text-xs bg-white px-1 py-0.5 rounded ml-1">BROWSER_RENDERING_SHARED_SECRET</code> est
+                un secret applicatif à créer manuellement pour protéger l&apos;endpoint serveur.
+              </p>
+              <pre className="bg-white border border-amber-200 rounded-lg p-3 text-xs text-slate-800 overflow-x-auto whitespace-pre-wrap">
+                {BROWSER_RENDERING_ENV_SNIPPET}
+              </pre>
             </div>
           </div>
 
