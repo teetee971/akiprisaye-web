@@ -9,6 +9,7 @@ const OPTIONAL_SECURITY_HEADERS = [
   'content-security-policy',
 ];
 const SERVICE_WORKER_FILENAME = 'service-worker.js';
+const SITEMAP_FILENAME = 'sitemap.xml';
 const INTERNAL_ASSET_EXTENSIONS = ['js', 'css', 'png', 'svg', 'webmanifest'];
 const MAX_ERROR_BODY_LENGTH = 180;
 const INTERNAL_ASSET_PATTERN = new RegExp(
@@ -124,6 +125,49 @@ export function joinSiteUrl(baseUrl, path) {
   return new URL(normalizedPath, siteUrl).toString();
 }
 
+export function extractSitemapPaths(xml, siteUrl) {
+  const site = new URL(`${normalizeBaseUrl(siteUrl)}/`);
+  const siteBasePath = site.pathname.replace(/\/$/, '');
+  const paths = new Set();
+
+  for (const match of xml.matchAll(/<loc>([^<]+)<\/loc>/gi)) {
+    const rawUrl = match[1]?.trim();
+    if (!rawUrl) {
+      continue;
+    }
+
+    let parsed;
+    try {
+      parsed = new URL(rawUrl);
+    } catch {
+      continue;
+    }
+
+    if (parsed.origin !== site.origin) {
+      continue;
+    }
+
+    const normalizedPathname = parsed.pathname.replace(/\/+$/, '') || '/';
+    if (normalizedPathname === siteBasePath || normalizedPathname === `${siteBasePath}/`) {
+      paths.add('/');
+      continue;
+    }
+
+    if (siteBasePath) {
+      if (!normalizedPathname.startsWith(`${siteBasePath}/`)) {
+        continue;
+      }
+
+      paths.add(normalizedPathname.slice(siteBasePath.length) || '/');
+      continue;
+    }
+
+    paths.add(normalizedPathname);
+  }
+
+  return [...paths];
+}
+
 async function fetchText(url) {
   const response = await fetch(url, { cache: 'no-store' });
   const body = await response.text();
@@ -133,6 +177,15 @@ async function fetchText(url) {
 async function fetchStatus(url) {
   const response = await fetch(url, { cache: 'no-store' });
   return response;
+}
+
+function hasAcceptableRouteResponse(response, body, githubPages) {
+  return response.ok || (
+    githubPages &&
+    response.status === 404 &&
+    hasGitHubPagesSpaFallback(body) &&
+    !containsLegacyFallback(body)
+  );
 }
 
 async function verifyHomepage(siteUrl) {
@@ -201,17 +254,10 @@ async function verifyRoutes(siteUrl) {
 
   for (const route of CRITICAL_ROUTES) {
     const { response, body } = await fetchText(joinSiteUrl(siteUrl, route));
-    if (response.ok) {
-      continue;
-    }
-
-    if (
-      githubPages &&
-      response.status === 404 &&
-      hasGitHubPagesSpaFallback(body) &&
-      !containsLegacyFallback(body)
-    ) {
-      fallbackRoutes += 1;
+    if (hasAcceptableRouteResponse(response, body, githubPages)) {
+      if (!response.ok) {
+        fallbackRoutes += 1;
+      }
       continue;
     }
 
@@ -223,6 +269,39 @@ async function verifyRoutes(siteUrl) {
   }
 
   logOk(`${CRITICAL_ROUTES.length} routes critiques répondent correctement.`);
+}
+
+async function verifySitemap(siteUrl) {
+  const githubPages = isGitHubPagesSite(siteUrl);
+  const { response, body } = await fetchText(joinSiteUrl(siteUrl, `/${SITEMAP_FILENAME}`));
+
+  if (!response.ok) {
+    fail(`Sitemap introuvable (/${SITEMAP_FILENAME}, HTTP ${response.status}).`);
+  }
+
+  const indexedPaths = extractSitemapPaths(body, siteUrl);
+  if (indexedPaths.length === 0) {
+    fail('Le sitemap public ne contient aucune route indexable exploitable.');
+  }
+
+  let fallbackRoutes = 0;
+  for (const route of indexedPaths) {
+    const result = await fetchText(joinSiteUrl(siteUrl, route));
+    if (hasAcceptableRouteResponse(result.response, result.body, githubPages)) {
+      if (!result.response.ok) {
+        fallbackRoutes += 1;
+      }
+      continue;
+    }
+
+    fail(`La route indexée ${route} du sitemap a répondu ${result.response.status}.`);
+  }
+
+  if (fallbackRoutes > 0) {
+    logWarn(`${fallbackRoutes} route(s) indexée(s) du sitemap utilisent le fallback GitHub Pages (HTTP 404 attendu sur deep links).`);
+  }
+
+  logOk(`Sitemap public valide (${indexedPaths.length} route(s) indexée(s) vérifiées).`);
 }
 
 async function verifyApi(siteUrl) {
@@ -277,6 +356,7 @@ async function main() {
   const { html, headers } = await verifyHomepage(siteUrl);
   const assetPaths = await verifyAssets(siteUrl, html);
   await verifyServiceWorker(siteUrl, assetPaths);
+  await verifySitemap(siteUrl);
   await verifyRoutes(siteUrl);
   await verifyApi(siteUrl);
   verifyHeaders(headers, siteUrl);

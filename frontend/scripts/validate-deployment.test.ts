@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import {
   containsLegacyFallback,
   extractInternalAssetPaths,
+  extractSitemapPaths,
   extractServiceWorkerVersion,
   hasAcceptableHtmlCacheControl,
   hasGitHubPagesSpaFallback,
@@ -59,6 +60,23 @@ describe('validate-deployment helpers', () => {
   it('extracts the service worker cache version when present', () => {
     expect(extractServiceWorkerVersion("const CACHE_NAME = 'akiprisaye-smart-cache-v5';")).toBe(5);
     expect(extractServiceWorkerVersion('const CACHE_NAME = "other-cache";')).toBeNull();
+  });
+
+  it('extracts repository-relative paths from the public sitemap', () => {
+    const sitemap = `
+      <urlset>
+        <url><loc>https://teetee971.github.io/akiprisaye-web/</loc></url>
+        <url><loc>https://teetee971.github.io/akiprisaye-web/comparateurs</loc></url>
+        <url><loc>https://teetee971.github.io/akiprisaye-web/observatoire/methodologie</loc></url>
+        <url><loc>https://example.com/ignored</loc></url>
+      </urlset>
+    `;
+
+    expect(extractSitemapPaths(sitemap, 'https://teetee971.github.io/akiprisaye-web')).toEqual([
+      '/',
+      '/comparateurs',
+      '/observatoire/methodologie',
+    ]);
   });
 
   it('detects GitHub Pages URLs and fallback HTML', () => {

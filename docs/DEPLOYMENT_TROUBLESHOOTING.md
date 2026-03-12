@@ -113,6 +113,7 @@ Ce validateur contrôle automatiquement :
 - l’absence du fallback legacy `"Le site est en ligne"` ;
 - l’accessibilité des assets réellement référencés par le HTML déployé ;
 - le Service Worker servi au même préfixe que les assets ;
+- les URLs publiques déclarées dans `sitemap.xml` ;
 - plusieurs routes critiques de l’application ;
 - l’endpoint `/api/health` ;
 - les headers HTML principaux (`Cache-Control`, headers de sécurité optionnels).

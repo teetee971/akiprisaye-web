@@ -574,7 +574,7 @@ curl -I https://teetee971.github.io/akiprisaye-web/scanner
 curl -I https://teetee971.github.io/akiprisaye-web/observatoire
 ```
 
-Le script `scripts/validate-deployment.sh` vérifie aussi que les assets réellement référencés par le HTML public existent bien sur le site déployé.
+Le script `scripts/validate-deployment.sh` vérifie aussi que les assets réellement référencés par le HTML public existent bien sur le site déployé, et que les URLs indexées dans `sitemap.xml` correspondent toujours à des pages publiques réellement servables.
 Sur GitHub Pages, certains deep links SPA peuvent répondre `404` tout en chargeant correctement l’application via `404.html`; le validateur les accepte explicitement.
 
 ---

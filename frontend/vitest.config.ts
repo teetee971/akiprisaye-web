@@ -107,6 +107,7 @@ export default defineConfig({
       // Couverture des routes des comparateurs dans App.tsx
       abs('./src/test/comparateurRoutes.test.ts'),
       abs('./src/test/comparateursHubRoutes.test.ts'),
+      abs('./src/test/sitemapRoutes.test.ts'),
     ],
 
     exclude: ['**/node_modules/**', '**/.git/**', '**/dist/**', '**/coverage/**'],
