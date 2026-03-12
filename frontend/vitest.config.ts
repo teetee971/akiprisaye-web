@@ -106,6 +106,7 @@ export default defineConfig({
       abs('./src/services/__tests__/boatComparisonService.test.ts'),
       // Couverture des routes des comparateurs dans App.tsx
       abs('./src/test/comparateurRoutes.test.ts'),
+      abs('./src/test/comparateursHubRoutes.test.ts'),
     ],
 
     exclude: ['**/node_modules/**', '**/.git/**', '**/dist/**', '**/coverage/**'],
