@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'node:url';
 
-const DEFAULT_URL = 'https://akiprisaye-web.pages.dev';
+const DEFAULT_URL = 'https://teetee971.github.io/akiprisaye-web';
 const CRITICAL_ROUTES = ['/', '/comparateur', '/scanner', '/observatoire', '/alertes'];
 const OPTIONAL_SECURITY_HEADERS = [
   'x-frame-options',
@@ -9,6 +9,7 @@ const OPTIONAL_SECURITY_HEADERS = [
   'content-security-policy',
 ];
 const SERVICE_WORKER_FILENAME = 'service-worker.js';
+const SITEMAP_FILENAME = 'sitemap.xml';
 const INTERNAL_ASSET_EXTENSIONS = ['js', 'css', 'png', 'svg', 'webmanifest'];
 const MAX_ERROR_BODY_LENGTH = 180;
 const INTERNAL_ASSET_PATTERN = new RegExp(
@@ -32,12 +33,20 @@ export function normalizeBaseUrl(url = DEFAULT_URL) {
   return String(url).replace(/\/+$/, '');
 }
 
+export function isGitHubPagesSite(siteUrl) {
+  return new URL(siteUrl).hostname.endsWith('github.io');
+}
+
 export function hasReactShell(html) {
   return /<div[^>]+id=["']root["']/i.test(html);
 }
 
 export function containsLegacyFallback(html) {
   return /Le site est en ligne/i.test(html);
+}
+
+export function hasGitHubPagesSpaFallback(html) {
+  return /\?p=%2F/i.test(html) || /Redirection en cours/i.test(html);
 }
 
 export function extractServiceWorkerVersion(source) {
@@ -97,8 +106,66 @@ export function inferAssetBasePath(assetPaths) {
   return '/';
 }
 
-function joinSiteUrl(baseUrl, path) {
-  return new URL(path, `${normalizeBaseUrl(baseUrl)}/`).toString();
+export function joinSiteUrl(baseUrl, path) {
+  const siteUrl = new URL(`${normalizeBaseUrl(baseUrl)}/`);
+  const siteBasePath = siteUrl.pathname.replace(/\/$/, '');
+  const normalizedPath = String(path || '/');
+
+  if (normalizedPath.startsWith(siteUrl.pathname)) {
+    return new URL(normalizedPath, siteUrl.origin).toString();
+  }
+
+  if (normalizedPath.startsWith('/')) {
+    // Preserve the repository subpath on GitHub Pages (e.g. /akiprisaye-web).
+    // When siteBasePath is empty, the root route intentionally becomes "/" .
+    const resolvedPath = normalizedPath === '/' ? `${siteBasePath}/` : `${siteBasePath}${normalizedPath}`;
+    return new URL(resolvedPath, siteUrl.origin).toString();
+  }
+
+  return new URL(normalizedPath, siteUrl).toString();
+}
+
+export function extractSitemapPaths(xml, siteUrl) {
+  const site = new URL(`${normalizeBaseUrl(siteUrl)}/`);
+  const siteBasePath = site.pathname.replace(/\/$/, '');
+  const paths = new Set();
+
+  for (const match of xml.matchAll(/<loc>([^<]+)<\/loc>/gi)) {
+    const rawUrl = match[1]?.trim();
+    if (!rawUrl) {
+      continue;
+    }
+
+    let parsed;
+    try {
+      parsed = new URL(rawUrl);
+    } catch {
+      continue;
+    }
+
+    if (parsed.origin !== site.origin) {
+      continue;
+    }
+
+    const normalizedPathname = parsed.pathname.replace(/\/+$/, '') || '/';
+    if (normalizedPathname === siteBasePath || normalizedPathname === `${siteBasePath}/`) {
+      paths.add('/');
+      continue;
+    }
+
+    if (siteBasePath) {
+      if (!normalizedPathname.startsWith(`${siteBasePath}/`)) {
+        continue;
+      }
+
+      paths.add(normalizedPathname.slice(siteBasePath.length) || '/');
+      continue;
+    }
+
+    paths.add(normalizedPathname);
+  }
+
+  return [...paths];
 }
 
 async function fetchText(url) {
@@ -110,6 +177,15 @@ async function fetchText(url) {
 async function fetchStatus(url) {
   const response = await fetch(url, { cache: 'no-store' });
   return response;
+}
+
+function hasAcceptableRouteResponse(response, body, githubPages) {
+  return response.ok || (
+    githubPages &&
+    response.status === 404 &&
+    hasGitHubPagesSpaFallback(body) &&
+    !containsLegacyFallback(body)
+  );
 }
 
 async function verifyHomepage(siteUrl) {
@@ -173,17 +249,67 @@ async function verifyServiceWorker(siteUrl, assetPaths) {
 }
 
 async function verifyRoutes(siteUrl) {
+  const githubPages = isGitHubPagesSite(siteUrl);
+  let fallbackRoutes = 0;
+
   for (const route of CRITICAL_ROUTES) {
-    const response = await fetchStatus(joinSiteUrl(siteUrl, route));
-    if (!response.ok) {
-      fail(`La route critique ${route} a répondu ${response.status}.`);
+    const { response, body } = await fetchText(joinSiteUrl(siteUrl, route));
+    if (hasAcceptableRouteResponse(response, body, githubPages)) {
+      if (!response.ok) {
+        fallbackRoutes += 1;
+      }
+      continue;
     }
+
+    fail(`La route critique ${route} a répondu ${response.status}.`);
+  }
+
+  if (fallbackRoutes > 0) {
+    logWarn(`${fallbackRoutes} route(s) critique(s) utilisent le fallback GitHub Pages (HTTP 404 attendu sur deep links).`);
   }
 
   logOk(`${CRITICAL_ROUTES.length} routes critiques répondent correctement.`);
 }
 
+async function verifySitemap(siteUrl) {
+  const githubPages = isGitHubPagesSite(siteUrl);
+  const { response, body } = await fetchText(joinSiteUrl(siteUrl, `/${SITEMAP_FILENAME}`));
+
+  if (!response.ok) {
+    fail(`Sitemap introuvable (/${SITEMAP_FILENAME}, HTTP ${response.status}).`);
+  }
+
+  const indexedPaths = extractSitemapPaths(body, siteUrl);
+  if (indexedPaths.length === 0) {
+    fail('Le sitemap public ne contient aucune route indexable exploitable.');
+  }
+
+  let fallbackRoutes = 0;
+  for (const route of indexedPaths) {
+    const result = await fetchText(joinSiteUrl(siteUrl, route));
+    if (hasAcceptableRouteResponse(result.response, result.body, githubPages)) {
+      if (!result.response.ok) {
+        fallbackRoutes += 1;
+      }
+      continue;
+    }
+
+    fail(`La route indexée ${route} du sitemap a répondu ${result.response.status}.`);
+  }
+
+  if (fallbackRoutes > 0) {
+    logWarn(`${fallbackRoutes} route(s) indexée(s) du sitemap utilisent le fallback GitHub Pages (HTTP 404 attendu sur deep links).`);
+  }
+
+  logOk(`Sitemap public valide (${indexedPaths.length} route(s) indexée(s) vérifiées).`);
+}
+
 async function verifyApi(siteUrl) {
+  if (isGitHubPagesSite(siteUrl)) {
+    logWarn('/api/health ignoré sur GitHub Pages : l’hébergement statique ne sert pas les endpoints /api.');
+    return;
+  }
+
   const { response, body } = await fetchText(joinSiteUrl(siteUrl, '/api/health'));
   if (!response.ok) {
     fail(`/api/health a répondu ${response.status}: ${body.slice(0, MAX_ERROR_BODY_LENGTH)}`);
@@ -192,9 +318,19 @@ async function verifyApi(siteUrl) {
   logOk('/api/health répond 200.');
 }
 
-function verifyHeaders(headers) {
+export function hasAcceptableHtmlCacheControl(cacheControl, siteUrl) {
+  if (isGitHubPagesSite(siteUrl)) {
+    // GitHub Pages serves HTML with a short shared cache (currently max-age=600),
+    // so validation must accept that platform-managed policy in addition to no-store.
+    return /(?:max-age=\d+|no-store)/i.test(cacheControl);
+  }
+
+  return /(?:no-store|max-age=0)/i.test(cacheControl);
+}
+
+function verifyHeaders(headers, siteUrl) {
   const cacheControl = headers.get('cache-control') || '';
-  if (!/(?:no-store|max-age=0)/i.test(cacheControl)) {
+  if (!hasAcceptableHtmlCacheControl(cacheControl, siteUrl)) {
     fail(`Cache-Control HTML inattendu: "${cacheControl || 'absent'}".`);
   }
 
@@ -220,9 +356,10 @@ async function main() {
   const { html, headers } = await verifyHomepage(siteUrl);
   const assetPaths = await verifyAssets(siteUrl, html);
   await verifyServiceWorker(siteUrl, assetPaths);
+  await verifySitemap(siteUrl);
   await verifyRoutes(siteUrl);
   await verifyApi(siteUrl);
-  verifyHeaders(headers);
+  verifyHeaders(headers, siteUrl);
 
   console.log('');
   console.log('============================');

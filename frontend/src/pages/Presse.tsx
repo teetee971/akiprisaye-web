@@ -273,12 +273,12 @@ export default function Presse() {
             <div>
               <h3 className="font-bold text-gray-900 mb-3">Site principal</h3>
               <a 
-                href="https://akiprisaye-web.pages.dev/" 
+                href="https://teetee971.github.io/akiprisaye-web/" 
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-600 hover:text-blue-800 underline text-lg print:text-black"
               >
-                https://akiprisaye-web.pages.dev/
+                https://teetee971.github.io/akiprisaye-web/
               </a>
             </div>
 
@@ -288,7 +288,7 @@ export default function Presse() {
                 <li>
                   <span className="font-medium text-gray-900">Page Observatoire :</span>{' '}
                   <a 
-                    href="https://akiprisaye-web.pages.dev/observatoire" 
+                    href="https://teetee971.github.io/akiprisaye-web/observatoire" 
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-600 hover:text-blue-800 underline print:text-black"
@@ -299,7 +299,7 @@ export default function Presse() {
                 <li>
                   <span className="font-medium text-gray-900">Page Observatoire Vivant :</span>{' '}
                   <a 
-                    href="https://akiprisaye-web.pages.dev/observatoire-vivant" 
+                    href="https://teetee971.github.io/akiprisaye-web/observatoire-vivant" 
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-600 hover:text-blue-800 underline print:text-black"
@@ -310,7 +310,7 @@ export default function Presse() {
                 <li>
                   <span className="font-medium text-gray-900">Page Données publiques :</span>{' '}
                   <a 
-                    href="https://akiprisaye-web.pages.dev/donnees-publiques" 
+                    href="https://teetee971.github.io/akiprisaye-web/donnees-publiques" 
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-600 hover:text-blue-800 underline print:text-black"
@@ -321,7 +321,7 @@ export default function Presse() {
                 <li>
                   <span className="font-medium text-gray-900">Page Méthodologie :</span>{' '}
                   <a 
-                    href="https://akiprisaye-web.pages.dev/methodologie" 
+                    href="https://teetee971.github.io/akiprisaye-web/methodologie" 
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-600 hover:text-blue-800 underline print:text-black"
@@ -332,7 +332,7 @@ export default function Presse() {
                 <li>
                   <span className="font-medium text-gray-900">Page Dossier collectivités :</span>{' '}
                   <a 
-                    href="https://akiprisaye-web.pages.dev/contact-collectivites" 
+                    href="https://teetee971.github.io/akiprisaye-web/contact-collectivites" 
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-600 hover:text-blue-800 underline print:text-black"
@@ -352,7 +352,7 @@ export default function Presse() {
             <br />
             Document généré le {currentDate}
             <br />
-            https://akiprisaye-web.pages.dev/
+            https://teetee971.github.io/akiprisaye-web/
           </p>
         </div>
       </div>

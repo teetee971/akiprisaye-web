@@ -38,6 +38,7 @@ export default defineConfig({
       abs('./src/test/freemium.test.ts'),
       abs('./src/test/cloudflareRouting.test.ts'),
       abs('./src/test/portailDeveloppeurs.browserRenderingDocs.test.ts'),
+      abs('./src/test/internalNavigationRoutes.test.ts'),
       abs('./src/test/actualites.page.test.jsx'),
       abs('./src/test/serviceWorkerCacheStrategy.test.ts'),
       abs('./src/test/app.aliases.test.ts'),
@@ -105,6 +106,8 @@ export default defineConfig({
       abs('./src/services/__tests__/boatComparisonService.test.ts'),
       // Couverture des routes des comparateurs dans App.tsx
       abs('./src/test/comparateurRoutes.test.ts'),
+      abs('./src/test/comparateursHubRoutes.test.ts'),
+      abs('./src/test/sitemapRoutes.test.ts'),
     ],
 
     exclude: ['**/node_modules/**', '**/.git/**', '**/dist/**', '**/coverage/**'],

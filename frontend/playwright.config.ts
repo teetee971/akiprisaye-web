@@ -11,7 +11,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: [['html', { open: 'never' }], ['list']],
   use: {
-    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'https://akiprisaye-web.pages.dev',
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'https://teetee971.github.io/akiprisaye-web/',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
