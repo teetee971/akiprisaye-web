@@ -306,7 +306,7 @@ async function verifySitemap(siteUrl) {
 
 async function verifyApi(siteUrl) {
   if (isGitHubPagesSite(siteUrl)) {
-    logWarn('/api/health ignoré sur GitHub Pages : l’hébergement statique ne sert pas les endpoints /api.');
+    logOk('/api ignoré sur GitHub Pages (hébergement statique – pas d’endpoints /api servis).');
     return;
   }
 

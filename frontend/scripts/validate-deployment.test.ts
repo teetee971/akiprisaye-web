@@ -86,6 +86,14 @@ describe('validate-deployment helpers', () => {
     expect(hasGitHubPagesSpaFallback('<div id="root"></div>')).toBe(false);
   });
 
+  it('skips /api checks on GitHub Pages static hosting to prevent false validation failures', () => {
+    // verifyApi relies on isGitHubPagesSite to skip the /api check; GitHub Pages is a static host
+    // that cannot serve backend /api endpoints, so validating them would always fail.
+    expect(isGitHubPagesSite('https://teetee971.github.io/akiprisaye-web')).toBe(true);
+    // Cloudflare Pages does serve /api endpoints, so validation must run there.
+    expect(isGitHubPagesSite('https://akiprisaye-web.pages.dev')).toBe(false);
+  });
+
   it('accepts GitHub Pages cache headers while keeping stricter checks elsewhere', () => {
     expect(hasAcceptableHtmlCacheControl('max-age=600', 'https://teetee971.github.io/akiprisaye-web')).toBe(true);
     expect(hasAcceptableHtmlCacheControl('no-store, no-cache, must-revalidate', 'https://akiprisaye-web.pages.dev')).toBe(true);
