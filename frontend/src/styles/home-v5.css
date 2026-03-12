@@ -104,9 +104,9 @@
   bottom: 0;
   background: linear-gradient(
     135deg,
-    rgba(15, 23, 42, 0.93) 0%,
-    rgba(30, 41, 59, 0.88) 60%,
-    rgba(15, 23, 42, 0.82) 100%
+    rgba(15, 23, 42, 0.95) 0%,
+    rgba(30, 41, 59, 0.90) 60%,
+    rgba(15, 23, 42, 0.88) 100%
   );
   pointer-events: none;
 }
@@ -136,29 +136,33 @@
 
 .hero-subtitle {
   font-size: 1.125rem;
-  color: #cbd5e1;
+  color: #e2e8f0;
   margin-bottom: 0.75rem;
-  font-weight: 400;
+  font-weight: 500;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
 }
 
 /* Hero reassurance + help */
 .hero-reassurance {
   margin-bottom: 1.5rem;
-  color: #e2e8f0;
+  color: #f1f5f9;
   font-size: 0.95rem;
-  font-weight: 500;
+  font-weight: 600;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
 }
 
 .hero-explain {
   margin-top: 0.75rem;
-  color: #cbd5e1;
+  color: #e2e8f0;
   font-size: 0.9rem;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
 }
 
 .hero-trust {
   margin-top: 0.35rem;
-  color: #94a3b8;
+  color: #cbd5e1;
   font-size: 0.85rem;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
 }
 
 /* Search XXL - Dominant CTA */
@@ -191,7 +195,7 @@
 }
 
 .hero-search-input-xxl::placeholder {
-  color: #64748b;
+  color: #94a3b8;
 }
 
 .hero-search-btn-xxl {

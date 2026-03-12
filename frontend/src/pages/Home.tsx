@@ -236,7 +236,7 @@ export default function HomeV5() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/comparateur?q=${encodeURIComponent(searchQuery)}`);
+      navigate(`/recherche-produits?q=${encodeURIComponent(searchQuery)}`);
     }
   };
 

@@ -89,17 +89,17 @@ export default function RecherchePrix() {
     // Extraire le premier produit du ticket et naviguer vers le comparateur
     const firstProduct = result.productLines?.[0];
     if (firstProduct?.normalizedLabel) {
-      navigate(`/comparateur?q=${encodeURIComponent(firstProduct.normalizedLabel)}`);
+      navigate(`/recherche-produits?q=${encodeURIComponent(firstProduct.normalizedLabel)}`);
     } else {
-      navigate('/comparateur');
+      navigate('/recherche-produits');
     }
   };
 
   const handleTextSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      // Navigate to comparator with search query
-      navigate(`/comparateur?q=${encodeURIComponent(searchQuery)}`);
+      // Navigate to search results with search query
+      navigate(`/recherche-produits?q=${encodeURIComponent(searchQuery)}`);
     }
   };
 
