@@ -2,11 +2,12 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { fileURLToPath, URL } from 'node:url'
 import { execSync } from 'node:child_process'
+import { resolveBasePath } from './scripts/basePath'
 
 const srcPath = fileURLToPath(new URL('./src', import.meta.url))
 
-// GitHub Pages serves from /akiprisaye-web/ subpath; all other hosts use "/"
-const base = process.env.GITHUB_PAGES === 'true' ? '/akiprisaye-web/' : '/'
+// GitHub Pages passes BASE_PATH=/akiprisaye-web/ explicitly; Cloudflare Pages keeps "/".
+const base = resolveBasePath()
 
 // Build-time metadata (Issue #0.2 — version/environment display)
 const gitSha = (() => {

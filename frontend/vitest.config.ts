@@ -37,6 +37,7 @@ export default defineConfig({
       abs('./src/test/promosService.test.ts'),
       abs('./src/test/freemium.test.ts'),
       abs('./src/test/cloudflareRouting.test.ts'),
+      abs('./src/test/portailDeveloppeurs.browserRenderingDocs.test.ts'),
       abs('./src/test/actualites.page.test.jsx'),
       abs('./src/test/serviceWorkerCacheStrategy.test.ts'),
       abs('./src/test/app.aliases.test.ts'),
@@ -61,6 +62,7 @@ export default defineConfig({
       abs('./src/test/inflationBarometer.test.ts'),
       // NOTE: si scripts/ est à la racine du repo, remplace par ../scripts/...
       abs('./scripts/verify-pages-api.test.ts'),
+      abs('./scripts/validate-deployment.test.ts'),
       // EAN / GTIN validation — GS1 checksum and country label
       abs('./src/test/eanValidator.test.ts'),
       // Structured receipt parser — French ticket OCR

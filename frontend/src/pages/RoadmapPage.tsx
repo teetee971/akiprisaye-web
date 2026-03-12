@@ -604,6 +604,8 @@ const ARCHITECTURE = [
       'GET /api/health — statut de la plateforme',
       'GET /api/prices/realtime?ean&territory — prix temps réel (OpenPrices)',
       'GET /api/prices/feed?territory&since&limit — flux de prix historiques',
+      'POST /api/browser-rendering/crawl — crawl Cloudflare Browser Rendering sécurisé',
+      'GET /api/browser-rendering/crawl?id=jobId — statut et résultats d’un crawl',
     ],
   },
   {

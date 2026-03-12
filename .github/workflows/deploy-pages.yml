@@ -47,7 +47,8 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          GITHUB_PAGES: 'true'
+          # GitHub Pages project URL is https://teetee971.github.io/akiprisaye-web/
+          BASE_PATH: /akiprisaye-web/
           NODE_OPTIONS: --max-old-space-size=4096
           VITE_APP_BUILD_ID: ${{ github.sha }}
 
