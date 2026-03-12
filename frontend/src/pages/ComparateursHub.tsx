@@ -84,14 +84,16 @@ const ALL_COMPARATEURS = [...GENERAL_COMPARATEURS, ...SPECIALIZED, ...RECHERCHE_
 
 const COMPARATEURS_COMPLETS = [
   { path: '/comparateurs', label: 'Hub Comparateurs' },
-  ...ALL_COMPARATEURS
-    .filter((item) => item.path.startsWith('/compar') || item.path === '/compare')
-    .reduce<{ path: string; label: string }[]>((acc, item) => {
-      if (!acc.some((entry) => entry.path === item.path)) {
-        acc.push({ path: item.path, label: item.label });
-      }
-      return acc;
-    }, []),
+  ...Array.from(
+    ALL_COMPARATEURS
+      .filter((item) => item.path.startsWith('/compar'))
+      .reduce((map, item) => {
+        if (!map.has(item.path)) {
+          map.set(item.path, { path: item.path, label: item.label });
+        }
+        return map;
+      }, new Map<string, { path: string; label: string }>()).values()
+  ),
 ] as const;
 
 // ── Ressources & documentation ─────────────────────────────────────────────────
