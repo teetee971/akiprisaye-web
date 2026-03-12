@@ -82,6 +82,19 @@ const RECHERCHE_PRIX = [
 
 const ALL_COMPARATEURS = [...GENERAL_COMPARATEURS, ...SPECIALIZED, ...RECHERCHE_PRIX];
 
+const COMPARATEURS_COMPLETS = [
+  { path: '/comparateurs', label: 'Hub Comparateurs' },
+  ...Array.from(
+    ALL_COMPARATEURS
+      .reduce((map, item) => {
+        if (!map.has(item.path)) {
+          map.set(item.path, { path: item.path, label: item.label });
+        }
+        return map;
+      }, new Map<string, { path: string; label: string }>()).values()
+  ),
+] as const;
+
 // ── Ressources & documentation ─────────────────────────────────────────────────
 const RESSOURCES = [
   { path: '/comprendre-prix',                              icon: DollarSign,   label: 'Comprendre les Prix',              color: 'text-lime-400',    bg: 'bg-lime-500/10 border-lime-500/30',     desc: 'Décrypter la formation des prix en DOM–COM' },
@@ -308,6 +321,24 @@ export default function ComparateursHub() {
           <div className="mb-5 sm:mb-8">
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2">📊 Comparateurs de prix</h1>
             <p className="text-gray-400 text-sm sm:text-lg">Tous vos outils de comparaison — données réelles observatoire</p>
+          </div>
+
+          <div className="mb-8">
+            <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">🧭 Index complet des comparateurs</h2>
+            <p className="text-gray-400 text-xs sm:text-sm mb-4">
+              Liens directs vers tous les comparateurs du site (généraux, thématiques et spécialisés).
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {COMPARATEURS_COMPLETS.map((item) => (
+                <Link
+                  key={`index-${item.path}`}
+                  to={item.path}
+                  className="rounded-full border border-slate-700 bg-slate-900/60 px-3 py-1.5 text-xs sm:text-sm text-slate-200 hover:border-blue-400 hover:text-white transition-colors"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
           </div>
 
           <div className="mb-8">

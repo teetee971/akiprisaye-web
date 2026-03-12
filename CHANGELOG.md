@@ -5,6 +5,17 @@ Le format s'inspire de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) 
 
 ## [3.3.0] - 2026-03-12
 
+### Fixed — ComparateursHub : index complet et liens comparateurs
+
+- **`frontend/src/pages/ComparateursHub.tsx`** — Ajout d'un **index complet** vers tous les comparateurs (généraux + spécialisés + thématiques + sous-pages `/recherche-prix`) afin d'éviter les routes manquantes côté navigation.
+- **`frontend/src/pages/ComparateursHub.tsx`** — Ajout de la constante `COMPARATEURS_COMPLETS` (couvrant l'intégralité des routes : `/compar…`, `/recherche-prix/…` et autres routes comparateurs) et rendu d'un bloc « Index complet des comparateurs » avec liens internes unifiés.
+
+### Changed — Alignement des versions projet
+
+- **`package.json`** — version racine alignée en `3.3.0`.
+- **`backend/package.json`** — version backend alignée en `3.3.0`.
+
+---
 ### Fixed — Navigation comparateurs et cohérence de version
 
 - **`frontend/src/App.tsx`** — Les itinéraires comparateurs et alias de navigation attendus sont bien branchés, y compris l'alias `/espace-pro-batiment` vers `/espace-pro` pour supprimer un lien interne mort.

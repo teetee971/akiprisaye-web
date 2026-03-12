@@ -126,7 +126,8 @@ Hub unifié regroupant tous les outils de comparaison :
 
 **Route:** `/comparateurs`
 
-> Le hub `ComparateursHub` référence désormais l'ensemble des comparateurs généraux, spécialisés et sous-pages `recherche-prix`, afin d'éviter tout lien interne orphelin vers les outils de comparaison.
+✅ **Mise à jour navigation (mars 2026)** : `ComparateursHub` inclut désormais un index explicite de tous les comparateurs dont la route commence par `/compar` (`/comparateur`, `/comparateur-avance`, `/comparateur-vols`, `/comparateur-fret`, etc.) pour éviter les incohérences de routage interne.
+> Le hub `ComparateursHub` référence désormais l'ensemble des comparateurs généraux et spécialisés basés sur les routes `/compar...`, afin d'éviter tout lien interne orphelin vers les outils de comparaison.
 
 ### 🗺️ Carte & Itinéraires
 Fonctionnalités cartographiques et optimisation de trajets :
