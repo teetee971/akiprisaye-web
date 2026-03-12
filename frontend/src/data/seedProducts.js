@@ -291,6 +291,29 @@ export const SEED_PRODUCTS = [
       { storeId: 'jumbo_mamoudzou',        storeName: 'Jumbo Score Mamoudzou',       territory: 'Mayotte',    city: 'Mamoudzou',      price: 1.65, currency: 'EUR', ts: _ts(5) },
     ],
   },
+
+  // ── Beurre doux Président 250g ────────────────────────────────────────────
+  {
+    ean: '3228021090014',
+    name: 'Beurre doux Président',
+    brand: 'Président',
+    size: '250g',
+    category: 'laitages',
+    prices: [
+      { storeId: 'superu_petit_canal',      storeName: 'Super U Petit-Canal',         territory: 'Guadeloupe',  city: 'Le Gosier',              price: 3.65, currency: 'EUR', ts: _ts(3) },
+      { storeId: 'carrefour_baie_mahault',  storeName: 'Carrefour Baie-Mahault',       territory: 'Guadeloupe',  city: 'Baie-Mahault',            price: 3.79, currency: 'EUR', ts: _ts(2) },
+      { storeId: 'leader_price_pp',         storeName: 'Leader Price Pointe-à-Pitre',  territory: 'Guadeloupe',  city: 'Pointe-à-Pitre',          price: 3.55, currency: 'EUR', ts: _ts(4) },
+      { storeId: 'super_score_fdf',         storeName: 'Super Score Fort-de-France',   territory: 'Martinique',  city: 'Fort-de-France',          price: 3.85, currency: 'EUR', ts: _ts(3) },
+      { storeId: 'carrefour_lamentin',      storeName: 'Carrefour Le Lamentin',        territory: 'Martinique',  city: 'Le Lamentin',             price: 3.90, currency: 'EUR', ts: _ts(2) },
+      { storeId: 'leclerc_riv_pilote',      storeName: 'E.Leclerc Rivière-Pilote',     territory: 'Martinique',  city: 'Rivière-Pilote',          price: 3.70, currency: 'EUR', ts: _ts(1) },
+      { storeId: 'hyper_u_cayenne',         storeName: 'Hyper U Cayenne',              territory: 'Guyane',      city: 'Cayenne',                 price: 3.95, currency: 'EUR', ts: _ts(4) },
+      { storeId: 'cora_saint_laurent',      storeName: 'Cora Saint-Laurent',           territory: 'Guyane',      city: 'Saint-Laurent-du-Maroni', price: 4.10, currency: 'EUR', ts: _ts(3) },
+      { storeId: 'hyper_u_saint_denis',     storeName: 'Hyper U Saint-Denis',          territory: 'La Réunion',  city: 'Saint-Denis',             price: 3.60, currency: 'EUR', ts: _ts(3) },
+      { storeId: 'leclerc_saint_pierre',    storeName: 'E.Leclerc Saint-Pierre',       territory: 'La Réunion',  city: 'Saint-Pierre',            price: 3.50, currency: 'EUR', ts: _ts(2) },
+      { storeId: 'jumbo_mamoudzou',         storeName: 'Jumbo Score Mamoudzou',        territory: 'Mayotte',     city: 'Mamoudzou',               price: 4.30, currency: 'EUR', ts: _ts(5) },
+      { storeId: 'sodifram_mamoudzou',      storeName: 'Sodifram Mamoudzou',           territory: 'Mayotte',     city: 'Mamoudzou',               price: 4.45, currency: 'EUR', ts: _ts(3) },
+    ],
+  },
 ];
 
 /**
@@ -340,6 +363,8 @@ export function searchProductsByName(query) {
     water: 'eau',
     pates: 'pates',
     pasta: 'pates',
+    beurre: 'beurre president',
+    butter: 'beurre',
   };
 
   const expandedTerms = [...terms];
