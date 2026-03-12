@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
 import { firebaseError, missingCriticalEnvKeys } from "@/lib/firebase";
@@ -25,12 +25,12 @@ export default function Login() {
   const firebaseHealthy = !firebaseError && missingCriticalEnvKeys.length === 0;
   const showFirebaseStatus = import.meta.env.DEV || Boolean(firebaseError);
 
-  const getSafeNext = () => {
+  const getSafeNext = useCallback(() => {
     const nextParam = searchParams.get("next");
     return nextParam && nextParam.startsWith("/") && !nextParam.startsWith("//")
       ? nextParam
       : "/mon-compte";
-  };
+  }, [searchParams]);
 
   // If the user is already signed in (e.g. after a redirect sign-in flow
   // where Firebase navigates back to this page), redirect immediately.
@@ -38,14 +38,13 @@ export default function Login() {
     if (user) {
       navigate(getSafeNext(), { replace: true });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+  }, [getSafeNext, navigate, user]);
 
   useEffect(() => {
     if (firebaseError) {
       setError(FIREBASE_UNAVAILABLE_MESSAGE);
     }
-  }, []);
+  }, [firebaseError]);
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
