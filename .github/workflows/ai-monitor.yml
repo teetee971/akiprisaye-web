@@ -1,0 +1,95 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# 🤖 IA de Surveillance Globale — Monitoring Autonome
+# ──────────────────────────────────────────────────────────────────────────────
+#
+# Intelligence artificielle autonome qui surveille l'INTÉGRALITÉ du logiciel
+# sans intervention humaine :
+#
+#   🌐 Disponibilité site live (GitHub Pages + Cloudflare Pages)
+#   🚀 Santé CI/CD (derniers workflow runs)
+#   🔥 Fraîcheur Firestore (lettres IA, prix, snapshots)
+#   📰 Santé flux RSS (12 feeds DOM-TOM)
+#   📦 Fraîcheur données prix statiques (JSON)
+#   🔒 Alertes sécurité CodeQL
+#   🤖 Analyse IA globale (GPT-4o-mini) → rapport Firestore
+#   🚨 Création automatique GitHub Issue si score < 70/100
+#
+# Fréquence : toutes les heures
+# Aussi déclenché : après chaque déploiement
+#
+# Score global :
+#   90-100 → 🟢 Opérationnel
+#   70-89  → 🟡 Dégradé (avertissements)
+#   0-69   → 🔴 Critique → GitHub Issue créée automatiquement
+# ──────────────────────────────────────────────────────────────────────────────
+
+name: 🤖 IA Surveillance Globale
+
+on:
+  schedule:
+    - cron: '0 * * * *'   # Toutes les heures
+  workflow_run:
+    workflows:
+      - 'Deploy to GitHub Pages'
+      - 'Deploy to Cloudflare Pages'
+      - '🤖 Scraping Automatique — Prix DOM-TOM'
+      - '☀️ Briefing Journalier IA — DOM/COM'
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Simulation (pas d''écriture Firestore)'
+        required: false
+        default: 'false'
+        type: boolean
+
+permissions:
+  contents: read
+  issues: write
+  actions: read
+  security-events: read
+
+concurrency:
+  group: ai-monitor
+  cancel-in-progress: true   # OK d'annuler le monitoring précédent
+
+jobs:
+  monitor:
+    name: 🤖 Surveillance IA globale
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: scripts/ai-monitor/package.json
+
+      - name: 📦 Installer dépendances
+        working-directory: scripts/ai-monitor
+        run: npm install
+
+      - name: 🤖 Surveillance IA globale
+        working-directory: scripts/ai-monitor
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          SITE_URL_GHPAGES: 'https://teetee971.github.io/akiprisaye-web/'
+          SITE_URL_CF: 'https://akiprisaye.pages.dev/'
+        run: |
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            node monitor.mjs --dry-run
+          else
+            node monitor.mjs
+          fi
+
+      - name: 📢 Résumé du monitoring
+        if: always()
+        run: echo "✅ Cycle de surveillance IA terminé — $(date -u '+%Y-%m-%d %H:%M UTC')"

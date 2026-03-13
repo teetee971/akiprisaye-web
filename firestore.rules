@@ -74,5 +74,94 @@ service cloud.firestore {
       allow read: if true;
       allow write: if false;
     }
+
+    // ── Visitor presence (temps réel) ──────────────────────────────────────
+    // Each browser session writes/updates its own presence document.
+    // Used to count online visitors per territory.
+    // Documents are auto-cleaned on tab close (client deleteDoc).
+    match /presence/{sessionId} {
+      allow read: if true;
+      // Any client may create/update its own session document
+      // territory must be a known DOM-TOM code; page must be a short string
+      allow create, update: if request.resource.data.keys().hasOnly(['territory', 'page', 'lastSeen'])
+                            && request.resource.data.territory is string
+                            && request.resource.data.territory in ['GP','MQ','GF','RE','YT','PM','NC','PF','WF','FR','BL','MF','PM']
+                            && request.resource.data.page is string
+                            && request.resource.data.page.size() <= 120
+                            && request.resource.data.lastSeen is timestamp;
+      allow delete: if true; // Client cleans up on tab close
+    }
+
+    // ── Visit stats per territory ───────────────────────────────────────────
+    // Atomic increment counter per territory code document.
+    // Public read — visitors can see total counts.
+    match /visit_stats/{territory} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasOnly(['totalVisits', 'lastVisit'])
+                   && request.resource.data.totalVisits == 1;
+      // Only allow incrementing by 1 — prevents tampering with the counter
+      // lastVisit must be a recent server timestamp (within 5 minutes)
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['totalVisits', 'lastVisit'])
+                   && request.resource.data.totalVisits == resource.data.totalVisits + 1
+                   && request.resource.data.lastVisit is timestamp
+                   && request.resource.data.lastVisit <= request.time
+                   && request.resource.data.lastVisit >= request.time - duration.value(300, 's');
+    }
+
+    // ── Page / interest stats ───────────────────────────────────────────────
+    // Atomic increment counter per page-category document.
+    // Used for the "centres d'intérêt" podium.
+    match /page_stats/{categoryKey} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasOnly(['totalViews', 'name', 'emoji', 'lastView'])
+                   && request.resource.data.totalViews == 1;
+      // Only allow incrementing by 1 — prevents tampering with the counter
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['totalViews', 'name', 'emoji', 'lastView'])
+                   && request.resource.data.totalViews == resource.data.totalViews + 1;
+    }
+
+    // ── Automatisation IA — Lecture publique, écriture Admin SDK uniquement ──
+    // Les collections suivantes sont écrites exclusivement par les scripts
+    // GitHub Actions via le Firebase Admin SDK (pas de règles client).
+
+    match /monitoring/{docId} {
+      allow read: if true;
+      allow write: if false; // Admin SDK uniquement
+    }
+
+    match /scraping_sessions/{docId} {
+      allow read: if true;
+      allow write: if false; // Admin SDK uniquement
+    }
+
+    match /price_shocks/{docId} {
+      allow read: if true;
+      allow write: if false; // Admin SDK uniquement
+    }
+
+    match /price_shocks_analysis/{docId} {
+      allow read: if true;
+      allow write: if false; // Admin SDK uniquement
+    }
+
+    match /fuel_prices_snapshots/{docId} {
+      allow read: if true;
+      allow write: if false; // Admin SDK uniquement
+    }
+
+    match /fuel_prices_monthly/{docId} {
+      allow read: if true;
+      allow write: if false; // Admin SDK uniquement
+    }
+
+    match /observatory_snapshots/{docId} {
+      allow read: if true;
+      allow write: if false; // Admin SDK uniquement
+    }
+
+    match /food_price_observations/{docId} {
+      allow read: if true;
+      allow write: if false; // Admin SDK uniquement
+    }
   }
 }

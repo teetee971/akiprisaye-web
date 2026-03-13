@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import { Scale, BarChart2, Wrench, Info, Heart, MessageCircle, Users, Briefcase, Search } from 'lucide-react';
+import { Scale, BarChart2, Wrench, Info, Heart, MessageCircle, Users, Briefcase, Search, Clock } from 'lucide-react';
+import LiveOnlineBadge from '../analytics/LiveOnlineBadge';
 
 const VERSION = '3.2.0';
 
@@ -74,6 +75,8 @@ export default function Footer() {
               <li><Link to="/presse" className="text-slate-400 hover:text-slate-200 transition-colors">Presse</Link></li>
               <li><Link to="/inscription-pro" className="text-slate-400 hover:text-blue-300 transition-colors"><Briefcase className="inline-block w-3.5 h-3.5 mr-1" /> Espace Pro</Link></li>
               <li><Link to="/module-audit" className="text-slate-400 hover:text-indigo-300 transition-colors"><Search className="inline-block w-3.5 h-3.5 mr-1" /> Audit modules</Link></li>
+              <li><Link to="/audience" className="text-slate-400 hover:text-emerald-300 transition-colors"><Users className="inline-block w-3.5 h-3.5 mr-1" /> Audience en direct</Link></li>
+              <li><Link to="/statut" className="text-slate-400 hover:text-cyan-300 transition-colors"><Clock className="inline-block w-3.5 h-3.5 mr-1" /> Horloges & Statut</Link></li>
             </ul>
           </div>
 
@@ -85,6 +88,7 @@ export default function Footer() {
         <div className="mx-auto max-w-6xl px-4 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-600">
           <p>© {new Date().getFullYear()} A KI PRI SA YÉ — Observer, pas vendre. Données citoyennes pour les territoires ultramarins.</p>
           <div className="flex gap-3 items-center">
+            <LiveOnlineBadge />
             <Link to="/mentions-legales" className="hover:text-slate-400 transition-colors">Mentions légales</Link>
             <Link to="/transparence" className="hover:text-slate-400 transition-colors">Confidentialité</Link>
             <Link

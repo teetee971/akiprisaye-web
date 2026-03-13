@@ -1,0 +1,22 @@
+{
+  "name": "auto-scraper",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Scraping automatique multi-sources des prix DOM-TOM — Open Data gov + OpenFoodFacts + OpenPrices",
+  "scripts": {
+    "scrape": "node scrape.mjs",
+    "scrape:fuel": "node scrape.mjs --source fuel",
+    "scrape:food": "node scrape.mjs --source food",
+    "scrape:bqp": "node scrape.mjs --source bqp",
+    "scrape:services": "node scrape.mjs --source services",
+    "dry-run": "node scrape.mjs --dry-run"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "fast-xml-parser": "^4.5.4",
+    "firebase-admin": "^12.1.0",
+    "openai": "^4.47.1"
+  }
+}

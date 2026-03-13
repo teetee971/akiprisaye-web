@@ -1,0 +1,374 @@
+/**
+ * useVisitorStats — Statistiques visiteurs temps réel par territoire et centres d'intérêt
+ *
+ * Utilise Firestore pour :
+ *   - Enregistrer la présence (collection `presence/{sessionId}`)
+ *   - Compter les visites par territoire (collection `visit_stats/{territory}`)
+ *   - Compter les visites par section/intérêt (collection `page_stats/{categoryKey}`)
+ *
+ * Détection territoire : fuseau horaire IANA → code territoire
+ * Détection intérêt   : pathname → catégorie sémantique
+ */
+
+import { useEffect, useRef, useState } from 'react';
+import {
+  collection,
+  deleteDoc,
+  doc,
+  increment,
+  onSnapshot,
+  serverTimestamp,
+  setDoc,
+  type Timestamp,
+} from 'firebase/firestore';
+
+import { db } from '../lib/firebase';
+import { TERRITORIES } from '../constants/territories';
+
+// ── Territory detection ───────────────────────────────────────────────────────
+
+/** Map IANA timezone → territory code */
+const TIMEZONE_TO_TERRITORY: Record<string, string> = Object.values(TERRITORIES).reduce(
+  (acc, t) => {
+    if (t.timezone) acc[t.timezone] = t.code;
+    return acc;
+  },
+  {} as Record<string, string>,
+);
+
+function detectTerritory(): string {
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    return TIMEZONE_TO_TERRITORY[tz] ?? 'other';
+  } catch {
+    return 'other';
+  }
+}
+
+// ── Interest / page category detection ───────────────────────────────────────
+
+export interface PageCategory {
+  key: string;
+  name: string;
+  emoji: string;
+  description: string;
+}
+
+/**
+ * Ordered list of page categories. The first matching prefix wins.
+ * Keep more specific prefixes before generic ones.
+ */
+export const PAGE_CATEGORIES: PageCategory[] = [
+  { key: 'comparateur',    name: 'Comparateur de prix',      emoji: '🛒', description: 'Comparer les prix entre enseignes' },
+  { key: 'scanner',        name: 'Scanner / Codes-barres',   emoji: '📷', description: 'Scan EAN & OCR tickets' },
+  { key: 'scan',           name: 'Scanner / Codes-barres',   emoji: '📷', description: 'Scan EAN & OCR tickets' },
+  { key: 'observatoire',   name: 'Observatoire des prix',    emoji: '📊', description: 'Données & tendances prix' },
+  { key: 'actualites',     name: 'Actualités',               emoji: '📰', description: 'Info vie chère & territoires' },
+  { key: 'carte',          name: 'Carte & Magasins',         emoji: '🗺️', description: 'Trouver un magasin' },
+  { key: 'liste',          name: 'Liste de courses',         emoji: '📝', description: 'Gérer sa liste GPS' },
+  { key: 'alertes',        name: 'Alertes prix',             emoji: '🔔', description: 'Notifications baisse de prix' },
+  { key: 'assistant',      name: 'Assistant IA',             emoji: '🤖', description: 'Conseils IA personnalisés' },
+  { key: 'contribuer',     name: 'Contribuer',               emoji: '✍️', description: 'Partager des prix citoyens' },
+  { key: 'groupes-parole', name: 'Groupes de Parole',        emoji: '💬', description: 'Échanges citoyens' },
+  { key: 'messagerie',     name: 'Messagerie',               emoji: '✉️', description: 'Messages entre citoyens' },
+  { key: 'solidarite',     name: 'Solidarité & Entraide',   emoji: '🤝', description: 'Ti Panié & entraide' },
+  { key: 'ti-panie',       name: 'Ti Panié Solidaire',       emoji: '🧺', description: 'Paniers anti-gaspi' },
+  { key: 'vie-chere',      name: 'Lutte Vie Chère',          emoji: '✊', description: 'Mobilisation & actions' },
+  { key: 'devis',          name: 'Devis IA',                 emoji: '📋', description: 'Estimations travaux & services' },
+  { key: 'comparateurs',   name: 'Hub Comparateurs',         emoji: '🔍', description: 'Vols, carburants, télécoms…' },
+  { key: 'territoire',     name: 'Hub Territorial',          emoji: '🏝️', description: 'Pages par territoire' },
+  { key: 'espace-pro',     name: 'Espace Pro',               emoji: '🏪', description: 'Outils professionnels' },
+  { key: 'marketplace',    name: 'Marketplace Enseignes',    emoji: '🏬', description: 'Partenaires & enseignes' },
+  { key: 'budget',         name: 'Budget & Finances',        emoji: '💰', description: 'Budget familial & vital' },
+  { key: 'inscription',    name: 'Inscription',              emoji: '👤', description: 'Créer un compte' },
+  { key: 'connexion',      name: 'Connexion',                emoji: '🔑', description: 'Se connecter' },
+  { key: 'faq',            name: 'FAQ & Aide',               emoji: '❓', description: 'Questions fréquentes' },
+  { key: 'contact',        name: 'Contact',                  emoji: '📨', description: 'Nous contacter' },
+  { key: 'methodologie',   name: 'Méthodologie',             emoji: '📐', description: 'Comment on travaille' },
+];
+
+/** Returns the PageCategory for the given pathname, or null for home/unknown */
+export function getPageCategory(pathname: string): PageCategory | null {
+  // Strip leading slash and base URL segment, lowercase
+  const cleaned = pathname.replace(/^\/akiprisaye-web\//, '/').replace(/^\/+/, '').toLowerCase();
+  if (!cleaned || cleaned === '' || cleaned === 'home') return null; // home is not an "interest"
+
+  for (const cat of PAGE_CATEGORIES) {
+    if (cleaned === cat.key || cleaned.startsWith(`${cat.key}/`) || cleaned.startsWith(`${cat.key}-`)) {
+      return cat;
+    }
+  }
+  return null;
+}
+
+// ── Session ID (stable per browser tab) ──────────────────────────────────────
+
+function getSessionId(): string {
+  const KEY = 'akp_sid';
+  try {
+    let id = sessionStorage.getItem(KEY);
+    if (!id) {
+      id = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 9)}`;
+      sessionStorage.setItem(KEY, id);
+    }
+    return id;
+  } catch {
+    return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 9)}`;
+  }
+}
+
+// ── Types ─────────────────────────────────────────────────────────────────────
+
+export interface TerritoryStats {
+  code: string;
+  name: string;
+  flag: string;
+  online: number;
+  totalVisits: number;
+}
+
+export interface InterestStats {
+  key: string;
+  name: string;
+  emoji: string;
+  description: string;
+  /** Users on this section right now */
+  online: number;
+  /** All-time page view count */
+  totalViews: number;
+}
+
+export interface VisitorStats {
+  /** Total users seen in the last 5 minutes */
+  totalOnline: number;
+  /** Ranked list of territories with online + total visit counts */
+  byTerritory: TerritoryStats[];
+  /** Ranked list of page/interest categories */
+  byInterest: InterestStats[];
+  loading: boolean;
+  /** Territory detected for the current browser session */
+  myTerritory: string;
+  /** Current page category detected for this session */
+  myInterest: PageCategory | null;
+}
+
+// ── Hook ──────────────────────────────────────────────────────────────────────
+
+export function useVisitorStats(): VisitorStats {
+  const [totalOnline, setTotalOnline] = useState(0);
+  const [onlineByTerritory, setOnlineByTerritory] = useState<Record<string, number>>({});
+  const [visitsByTerritory, setVisitsByTerritory] = useState<Record<string, number>>({});
+  const [onlineByInterest, setOnlineByInterest] = useState<Record<string, number>>({});
+  const [viewsByInterest, setViewsByInterest] = useState<Record<string, number>>({});
+  const [loading, setLoading] = useState(true);
+
+  const myTerritory = useRef(detectTerritory());
+  const myInterest = useRef<PageCategory | null>(
+    typeof window !== 'undefined' ? getPageCategory(window.location.pathname) : null,
+  );
+  const sessionId = useRef(getSessionId());
+  const refreshRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    if (!db) {
+      setLoading(false);
+      return;
+    }
+
+    const territory = myTerritory.current;
+    const interest = myInterest.current;
+    const sid = sessionId.current;
+    const presenceRef = doc(db, 'presence', sid);
+    const visitStatsRef = doc(db, 'visit_stats', territory === 'other' ? '_other' : territory);
+
+    // ── 1. Register/refresh presence ──────────────────────────────────────────
+    const updatePresence = () => {
+      const page = typeof window !== 'undefined' ? window.location.pathname : '/';
+      // Re-detect interest on each refresh (user may have navigated)
+      const currentInterest = getPageCategory(page);
+      setDoc(
+        presenceRef,
+        {
+          territory,
+          page,
+          interest: currentInterest?.key ?? '_home',
+          lastSeen: serverTimestamp(),
+        },
+        { merge: true },
+      ).catch(() => {});
+    };
+
+    // ── 2. Count visit (once per session per territory) ───────────────────────
+    const countVisit = () => {
+      const visitKey = `akp_v_${territory}_${new Date().toDateString()}`;
+      try {
+        if (!sessionStorage.getItem(visitKey)) {
+          sessionStorage.setItem(visitKey, '1');
+          setDoc(
+            visitStatsRef,
+            { totalVisits: increment(1), lastVisit: serverTimestamp() },
+            { merge: true },
+          ).catch(() => {});
+        }
+      } catch {
+        // localStorage unavailable — silently skip
+      }
+    };
+
+    // ── 3. Count page view per interest (once per session per category) ───────
+    const countPageView = () => {
+      if (!interest) return;
+      const viewKey = `akp_pv_${interest.key}_${new Date().toDateString()}`;
+      try {
+        if (!sessionStorage.getItem(viewKey)) {
+          sessionStorage.setItem(viewKey, '1');
+          setDoc(
+            doc(db!, 'page_stats', interest.key),
+            { totalViews: increment(1), name: interest.name, emoji: interest.emoji, lastView: serverTimestamp() },
+            { merge: true },
+          ).catch(() => {});
+        }
+      } catch {
+        // silently skip
+      }
+    };
+
+    updatePresence();
+    countVisit();
+    countPageView();
+
+    // Refresh presence every 30 s so the session stays "online"
+    refreshRef.current = setInterval(updatePresence, 30_000);
+
+    // ── 4. Subscribe to presence collection ───────────────────────────────────
+    const unsubPresence = onSnapshot(
+      collection(db, 'presence'),
+      (snap) => {
+        const now = Date.now();
+        const fiveMinAgo = now - 5 * 60 * 1000;
+        const territCounts: Record<string, number> = {};
+        const intCounts: Record<string, number> = {};
+        let total = 0;
+
+        snap.forEach((d) => {
+          const data = d.data();
+          const lastSeen = data.lastSeen as Timestamp | null;
+          if (lastSeen && lastSeen.toMillis() > fiveMinAgo) {
+            const t = (data.territory as string) || '_other';
+            territCounts[t] = (territCounts[t] ?? 0) + 1;
+
+            const iKey = (data.interest as string) || '_home';
+            if (iKey !== '_home') {
+              intCounts[iKey] = (intCounts[iKey] ?? 0) + 1;
+            }
+            total++;
+          }
+        });
+
+        setOnlineByTerritory(territCounts);
+        setOnlineByInterest(intCounts);
+        setTotalOnline(total);
+        setLoading(false);
+      },
+      () => setLoading(false),
+    );
+
+    // ── 5. Subscribe to visit_stats collection ────────────────────────────────
+    const unsubVisits = onSnapshot(
+      collection(db, 'visit_stats'),
+      (snap) => {
+        const visits: Record<string, number> = {};
+        snap.forEach((d) => {
+          visits[d.id] = (d.data().totalVisits as number) ?? 0;
+        });
+        setVisitsByTerritory(visits);
+      },
+      () => {},
+    );
+
+    // ── 6. Subscribe to page_stats collection ─────────────────────────────────
+    const unsubPageStats = onSnapshot(
+      collection(db, 'page_stats'),
+      (snap) => {
+        const views: Record<string, number> = {};
+        snap.forEach((d) => {
+          views[d.id] = (d.data().totalViews as number) ?? 0;
+        });
+        setViewsByInterest(views);
+      },
+      () => {},
+    );
+
+    // ── Cleanup ───────────────────────────────────────────────────────────────
+    const cleanup = () => {
+      if (refreshRef.current) clearInterval(refreshRef.current);
+      unsubPresence();
+      unsubVisits();
+      unsubPageStats();
+      deleteDoc(presenceRef).catch(() => {});
+    };
+
+    window.addEventListener('beforeunload', cleanup);
+    return () => {
+      window.removeEventListener('beforeunload', cleanup);
+      cleanup();
+    };
+  }, []);
+
+  // ── Build sorted territory list ───────────────────────────────────────────
+  const knownTerritories: TerritoryStats[] = Object.values(TERRITORIES).map((t) => ({
+    code: t.code,
+    name: t.name,
+    flag: t.flag,
+    online: onlineByTerritory[t.code] ?? 0,
+    totalVisits: visitsByTerritory[t.code] ?? 0,
+  }));
+
+  const otherOnline = onlineByTerritory['_other'] ?? 0;
+  const otherVisits = visitsByTerritory['_other'] ?? 0;
+  const otherEntry: TerritoryStats[] =
+    otherOnline > 0 || otherVisits > 0
+      ? [{ code: '_other', name: 'Autre', flag: '🌍', online: otherOnline, totalVisits: otherVisits }]
+      : [];
+
+  const byTerritory: TerritoryStats[] = [...knownTerritories, ...otherEntry]
+    .filter((t) => t.online > 0 || t.totalVisits > 0)
+    .sort((a, b) => b.online - a.online || b.totalVisits - a.totalVisits);
+
+  // ── Build sorted interest list ────────────────────────────────────────────
+  // Merge known categories with any data from Firestore
+  const allInterestKeys = new Set([
+    ...PAGE_CATEGORIES.map((c) => c.key),
+    ...Object.keys(onlineByInterest),
+    ...Object.keys(viewsByInterest),
+  ]);
+
+  const byInterest: InterestStats[] = Array.from(allInterestKeys)
+    .map((key) => {
+      const cat = PAGE_CATEGORIES.find((c) => c.key === key) ?? {
+        key,
+        name: key,
+        emoji: '📄',
+        description: '',
+      };
+      return {
+        key,
+        name: cat.name,
+        emoji: cat.emoji,
+        description: cat.description,
+        online: onlineByInterest[key] ?? 0,
+        totalViews: viewsByInterest[key] ?? 0,
+      };
+    })
+    .filter((i) => i.online > 0 || i.totalViews > 0)
+    .sort((a, b) => b.online - a.online || b.totalViews - a.totalViews);
+
+  return {
+    totalOnline,
+    byTerritory,
+    byInterest,
+    loading,
+    myTerritory: myTerritory.current,
+    myInterest: myInterest.current,
+  };
+}

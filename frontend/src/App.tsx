@@ -248,6 +248,8 @@ const RoadmapPage = lazyPage(() => import('./pages/RoadmapPage'));
 const DossierInvestisseurs = lazyPage(() => import('./pages/DossierInvestisseurs'));
 const ChecklistProduction = lazyPage(() => import('./pages/ChecklistProduction'));
 const ModuleAuditPage = lazyPage(() => import('./pages/ModuleAuditPage'));
+const AudiencePage = lazyPage(() => import('./pages/AudiencePage'));
+const StatutPage   = lazyPage(() => import('./pages/StatutPage'));
 const Perimetre = lazyPage(() => import('./pages/Perimetre'));
 const Predictions = lazyPage(() => import('./pages/Predictions'));
 const IaConseiller = lazyPage(() => import('./pages/IaConseiller'));
@@ -267,6 +269,9 @@ const AnalyseFactures = lazyPage(() => import('./pages/AnalyseFactures'));
 const DetectionFraude = lazyPage(() => import('./pages/DetectionFraude'));
 const EvaluationMagasins = lazyPage(() => import('./pages/EvaluationMagasins'));
 const PortailDeveloppeurs = lazyPage(() => import('./pages/PortailDeveloppeurs'));
+const ChocsPrixPage = lazyPage(() => import('./pages/ChocsPrixPage'));
+const NewsletterHubPage = lazyPage(() => import('./pages/NewsletterHubPage'));
+const MonitoringIAPage = lazyPage(() => import('./pages/MonitoringIAPage'));
 
 /**
  * IMPORTANT — NE PAS SUPPRIMER
@@ -656,6 +661,12 @@ export default function App() {
                           {/* Audit des modules — comprehensive module audit */}
                           <Route path="module-audit" element={<ModuleAuditPage />} />
 
+                          {/* Audience temps réel — podium territoires */}
+                          <Route path="audience" element={<AudiencePage />} />
+
+                          {/* Statut plateforme — horloges + déploiement */}
+                          <Route path="statut" element={<StatutPage />} />
+
                           {/* Pages territoire — hub par territoire et scanner territorial */}
                           <Route path="territoire/:territory" element={<TerritoryHub />} />
                           <Route path="territoire/:territory/scanner" element={<TerritoryScanner />} />
@@ -672,6 +683,9 @@ export default function App() {
                           <Route path="detection-fraude" element={<DetectionFraude />} />
                           <Route path="evaluation-magasins" element={<EvaluationMagasins />} />
                           <Route path="portail-developpeurs" element={<PortailDeveloppeurs />} />
+                          <Route path="chocs-prix" element={<ChocsPrixPage />} />
+                          <Route path="newsletter" element={<NewsletterHubPage />} />
+                          <Route path="monitoring-ia" element={<MonitoringIAPage />} />
 
                           {/* Pages fonctionnelles sans itinéraire précédent */}
                           <Route path="perimetre" element={<Perimetre />} />

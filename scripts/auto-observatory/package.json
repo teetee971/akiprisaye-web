@@ -1,0 +1,17 @@
+{
+  "name": "auto-observatory-snapshot",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Snapshot hebdomadaire de l'observatoire des prix — analyse IA + Firestore",
+  "scripts": {
+    "snapshot": "node snapshot.mjs",
+    "dry-run": "node snapshot.mjs --dry-run"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.1.0",
+    "openai": "^4.47.1"
+  }
+}
