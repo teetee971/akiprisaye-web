@@ -18,7 +18,7 @@ export default function CarteItinerairesHub() {
         <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/carte-itineraires" />
       </Helmet>
       
-      <div className="min-h-screen bg-slate-950 p-4 pt-24">
+      <div className="min-h-screen bg-slate-950 p-4 pt-14">
         <div className="max-w-7xl mx-auto">
           <div className="mb-8">
             <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">

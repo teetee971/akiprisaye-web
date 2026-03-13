@@ -40,7 +40,7 @@ export default function ObservatoireHub() {
         <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/observatoire" />
       </Helmet>
       
-      <div className="min-h-screen bg-slate-950 p-3 sm:p-4 pt-20 sm:pt-24">
+      <div className="min-h-screen bg-slate-950 p-3 sm:p-4 pt-14 sm:pt-16">
         <div className="max-w-7xl mx-auto">
 
           {/* Hero banner */}

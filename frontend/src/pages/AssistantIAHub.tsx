@@ -22,7 +22,7 @@ export default function AssistantIAHub() {
         <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/assistant-ia" />
       </Helmet>
       
-      <div className="min-h-screen bg-slate-950 p-4 pt-24">
+      <div className="min-h-screen bg-slate-950 p-4 pt-14">
         <div className="max-w-6xl mx-auto">
           <HeroImage
             src={PAGE_HERO_IMAGES.assistantIA}

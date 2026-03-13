@@ -330,12 +330,26 @@ export default function ComparateursHub() {
         <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/comparateurs" />
       </Helmet>
 
-      <div className="min-h-screen bg-slate-950 p-3 sm:p-4 pt-20 sm:pt-24">
+      <div className="min-h-screen bg-slate-950 p-3 sm:p-4 pt-14 sm:pt-16">
         <div className="max-w-7xl mx-auto">
 
-          <div className="mb-5 sm:mb-8">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2">📊 Comparateurs de prix</h1>
-            <p className="text-gray-400 text-sm sm:text-lg">Tous vos outils de comparaison — données réelles observatoire</p>
+          {/* ── Hero Banner ── */}
+          <div className="relative rounded-2xl overflow-hidden mb-5 sm:mb-6" style={{ minHeight: '140px' }}>
+            <img
+              src="https://images.unsplash.com/photo-1604719312566-8912e9227c6a?auto=format&fm=webp&fit=crop&w=1200&q=80"
+              alt="Marché tropical — comparaison de prix"
+              className="absolute inset-0 w-full h-full object-cover"
+              loading="eager"
+              width={1200}
+              height={300}
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-950/80 to-slate-950/40" />
+            <div className="relative z-10 p-5 sm:p-7 flex items-center gap-4">
+              <div>
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-1">📊 Comparateurs de prix</h1>
+                <p className="text-slate-300 text-sm sm:text-base">Tous vos outils de comparaison — données réelles observatoire</p>
+              </div>
+            </div>
           </div>
 
 
@@ -565,7 +579,7 @@ export default function ComparateursHub() {
               }
 
               return (
-                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-2.5">
                   {items.map((item) => {
                     const Icon = item.icon;
                     return (

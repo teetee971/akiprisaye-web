@@ -116,7 +116,7 @@ export default function RecherchePrix() {
         <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/recherche-prix" />
       </Helmet>
 
-      <div className="min-h-screen bg-slate-950 dark:bg-slate-900 pt-20 pb-12 px-4">
+      <div className="min-h-screen bg-slate-950 dark:bg-slate-900 pt-14 pb-8 px-4">
         <div className="max-w-5xl mx-auto">
           
           {/* Receipt Scanner Mode */}

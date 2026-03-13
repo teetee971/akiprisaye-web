@@ -48,8 +48,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 70vh;
-  padding: 4rem 2rem 2rem;
+  min-height: 60vh;
+  padding: 3rem 2rem 1.5rem;
   position: relative;
   overflow: hidden;
   background-color: #0f172a;
@@ -219,7 +219,7 @@
 
 /* Hero why section */
 .hero-why {
-  padding: 48px 24px;
+  padding: 28px 24px;
   background: rgba(15, 23, 42, 0.6);
   border-top: 1px solid rgba(148, 163, 184, 0.2);
   border-bottom: 1px solid rgba(148, 163, 184, 0.2);
@@ -273,7 +273,7 @@
 
 /* Priority flow after hero */
 .home-priority {
-  padding: 56px 24px 24px;
+  padding: 32px 24px 16px;
   max-width: 1080px;
   margin: 0 auto;
 }
@@ -328,7 +328,7 @@
 
 /* Compact territory entry */
 .territories-section {
-  padding: 24px 24px 56px;
+  padding: 16px 24px 28px;
   max-width: 1000px;
   margin: 0 auto;
 }
@@ -478,16 +478,16 @@
    ============================================ */
 
 .benefits {
-  padding: 80px 2rem;
+  padding: 44px 2rem;
   max-width: 1000px;
   margin: 0 auto;
   text-align: center;
 }
 
 .section-title {
-  font-size: 2rem;
+  font-size: 1.75rem;
   font-weight: 600;
-  margin-bottom: 3rem;
+  margin-bottom: 1.25rem;
   color: #f1f5f9;
 }
 
@@ -532,7 +532,7 @@
    ============================================ */
 
 .example-comparison {
-  padding: 80px 2rem;
+  padding: 44px 2rem;
   max-width: 900px;
   margin: 0 auto;
   text-align: center;
@@ -584,8 +584,8 @@
 .comparison-cols {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
-  gap: 2rem;
-  padding: 2rem 2.5rem 2.5rem;
+  gap: 1.5rem;
+  padding: 1.25rem 1.5rem 1.5rem;
 }
 
 .comparison-col {
@@ -734,7 +734,7 @@
    ============================================ */
 
 .territories-v5 {
-  padding: 80px 2rem;
+  padding: 44px 2rem;
   max-width: 900px;
   margin: 0 auto;
   text-align: center;
@@ -781,7 +781,7 @@
    ============================================ */
 
 .how-it-works-v5 {
-  padding: 60px 2rem;
+  padding: 36px 2rem;
   max-width: 700px;
   margin: 0 auto;
   text-align: center;
@@ -820,7 +820,7 @@
    ============================================ */
 
 .observatory-v5 {
-  padding: 80px 2rem;
+  padding: 44px 2rem;
   max-width: 800px;
   margin: 0 auto;
   text-align: center;
@@ -913,7 +913,7 @@
    ============================================ */
 
 .mini-faq {
-  padding: 60px 2rem;
+  padding: 36px 2rem;
   max-width: 700px;
   margin: 0 auto;
 }
@@ -1024,7 +1024,7 @@
    ============================================ */
 
 .footer-minimal {
-  padding: 3rem 2rem;
+  padding: 1.5rem 2rem;
   text-align: center;
   font-size: 0.875rem;
   color: #64748b;
@@ -1475,11 +1475,11 @@
   }
 
   .hero-why {
-    padding: 36px 16px;
+    padding: 24px 16px;
   }
 
   .home-priority {
-    padding: 40px 16px 16px;
+    padding: 28px 16px 12px;
   }
 
   .home-priority-grid {
@@ -1487,7 +1487,7 @@
   }
 
   .territories-section {
-    padding: 16px 16px 48px;
+    padding: 12px 16px 28px;
   }
 
   .territories-grid {
@@ -1511,7 +1511,7 @@
 
   /* Benefits: Single column */
   .benefits {
-    padding: 60px 1.5rem;
+    padding: 36px 1.5rem;
   }
 
   .benefits-grid {
@@ -1521,7 +1521,7 @@
 
   /* Comparison: Stack vertically */
   .example-comparison {
-    padding: 60px 1.5rem;
+    padding: 36px 1.5rem;
   }
 
   .comparison-card {

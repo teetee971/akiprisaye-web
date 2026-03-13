@@ -61,7 +61,7 @@ export default function ProductScanResult() {
   const latestPrice = prices[0]?.price ?? null;
 
   return (
-    <div className="min-h-screen bg-slate-950 p-4 pt-24 text-white">
+    <div className="min-h-screen bg-slate-950 p-4 pt-14 text-white">
       <div className="mx-auto w-full max-w-3xl rounded-2xl border border-slate-800 bg-slate-900/70 p-6">
         <div className="mb-6 flex items-center justify-between">
           <h1 className="text-2xl font-bold">Fiche produit</h1>
