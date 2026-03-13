@@ -4,6 +4,7 @@ import { AlertCircle, RefreshCw } from "lucide-react";
 import safeLocalStorage from "../utils/safeLocalStorage";
 
 import { SEOHead } from '../components/ui/SEOHead';
+import { HeroImage } from '../components/ui/HeroImage';
 type PanierItem = {
   produit: string;
   prix_moyen: number;
@@ -114,36 +115,26 @@ export default function Observatoire() {
         canonical="https://teetee971.github.io/akiprisaye-web/observatoire"
       />
     <div className="min-h-screen bg-slate-950 text-slate-100">
-      <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
-        {/* Header */}
-        <header className="space-y-4">
-          <p className="text-slate-400 uppercase tracking-wide text-sm">
-            Observatoire public
-          </p>
-          <h1 className="text-3xl md:text-4xl font-bold">
-            Observatoire des prix
+      <div className="max-w-5xl mx-auto px-4 py-6 space-y-6">
+        {/* Hero banner */}
+        <HeroImage
+          src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fm=webp&fit=crop&w=1200&q=80"
+          alt="Observatoire des prix — tableau de données citoyennes"
+          gradient="from-slate-900 to-emerald-950"
+          height="h-36 sm:h-48"
+        >
+          <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow">
+            🔬 Observatoire des prix
           </h1>
-          <p className="text-slate-300 max-w-3xl">
-            Série officielle de prix réels, mise à jour régulièrement, destinée
-            à l’information des citoyens.
+          <p className="text-slate-200 text-sm sm:text-base mt-1 max-w-xl drop-shadow">
+            Données citoyennes · Prix réels · Mis à jour régulièrement
           </p>
-
-          <div className="flex flex-wrap gap-3 pt-2">
-            <Link
-              to="/methodologie"
-              className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 transition text-sm font-semibold"
-            >
-              Méthodologie
-            </Link>
-            <Link
-              to="/transparence"
-              className="px-4 py-2 rounded-lg border border-slate-700 hover:border-slate-500 transition text-sm"
-            >
-              Transparence
-            </Link>
-          </div>
-        </header>
-
+        </HeroImage>
+        {/* Header compact — title shown in hero above */}
+        <div className="flex flex-wrap gap-3">
+          <a href="/methodologie" className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 transition text-sm font-semibold">Méthodologie</a>
+          <a href="/transparence" className="px-4 py-2 rounded-lg border border-slate-700 hover:border-slate-500 transition text-sm">Transparence</a>
+        </div>
         {/* Meta */}
         <section className="rounded-xl border border-slate-800 bg-slate-900/70 p-6 grid gap-4 md:grid-cols-2">
           <div>

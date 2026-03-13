@@ -60,13 +60,25 @@ export default function Alertes() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8 text-slate-100">
-      <h1 className="text-2xl font-bold mb-2">Alertes sanitaires</h1>
-      <p className="text-sm text-slate-400 mb-6">Territoire: <strong className="uppercase">{territory}</strong></p>
-      <p className="text-xs text-slate-500 mb-6">
-        Source: {metadata?.source === 'fallback' ? 'fallback local' : 'RappelConso'}
-        {metadata?.fetchedAt ? ` • fraîcheur ${new Date(metadata.fetchedAt).toLocaleString('fr-FR')}` : ''}
-      </p>
+    <div className="max-w-6xl mx-auto px-4 py-6 text-slate-100">
+      {/* Hero banner */}
+      <div className="relative rounded-2xl overflow-hidden mb-5" style={{ minHeight: '120px' }}>
+        <img
+          src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fm=webp&fit=crop&w=1200&q=80"
+          alt="Alertes sanitaires — surveillance des produits"
+          className="absolute inset-0 w-full h-full object-cover"
+          loading="eager"
+          width={1200}
+          height={260}
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-950/80 to-slate-950/40" />
+        <div className="relative z-10 p-5 sm:p-6">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-1">🔔 Alertes sanitaires</h1>
+          <p className="text-slate-300 text-sm">Territoire: <strong className="uppercase">{territory}</strong>
+          {metadata?.source === 'fallback' ? ' · fallback local' : ' · RappelConso'}
+          {metadata?.fetchedAt ? ` · ${new Date(metadata.fetchedAt).toLocaleString('fr-FR')}` : ''}</p>
+        </div>
+      </div>
 
       <section className="grid md:grid-cols-4 gap-3 mb-6">
         <label className="flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-900 px-3 py-2">
