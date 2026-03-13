@@ -12,6 +12,7 @@ const SERVICE_WORKER_FILENAME = 'service-worker.js';
 const SITEMAP_FILENAME = 'sitemap.xml';
 const INTERNAL_ASSET_EXTENSIONS = ['js', 'css', 'png', 'svg', 'webmanifest'];
 const MAX_ERROR_BODY_LENGTH = 180;
+const FETCH_TIMEOUT_MS = 30_000;
 const INTERNAL_ASSET_PATTERN = new RegExp(
   `(?:/assets/[^"'?#]+|/[^"'?#]+\\.(?:${INTERNAL_ASSET_EXTENSIONS.join('|')}))(?:[?#].*)?$`,
   'i',
@@ -169,13 +170,13 @@ export function extractSitemapPaths(xml, siteUrl) {
 }
 
 async function fetchText(url) {
-  const response = await fetch(url, { cache: 'no-store' });
+  const response = await fetch(url, { cache: 'no-store', signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
   const body = await response.text();
   return { response, body };
 }
 
 async function fetchStatus(url) {
-  const response = await fetch(url, { cache: 'no-store' });
+  const response = await fetch(url, { cache: 'no-store', signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
   return response;
 }
 
