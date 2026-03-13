@@ -282,7 +282,7 @@ Engagement et fidélisation des contributeurs :
   - Analyse de stabilité des prix (exclusion des promotions ponctuelles)
   - Calculs transparents et auditables
   - Analyse indépendante par territoire (971, 972, 973, 974)
-  - Méthodologie disponible dans le code source (`backend/src/`)
+  - [Méthodologie Anti-Crise](docs/ANTICRISIS_METHODOLOGY.md)
 
 ### 📷 Scanner intelligent
 
@@ -1034,6 +1034,9 @@ Pour en savoir plus sur l'architecture et les fonctionnalités :
 
 ### 🏗️ Architecture
 - **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** - Architecture technique de l'application
+
+### 🔒 Sécurité
+- **[docs/security/SECURITY_AUDIT.md](docs/security/SECURITY_AUDIT.md)** - Audit de sécurité des dépendances (0 vulnérabilités, mis à jour 2026-02-07)
 
 ### ⚡ Performance
 - **[MISSION_H_PRELOAD_HINTS.md](docs/performance/MISSION_H_PRELOAD_HINTS.md)** - Documentation complète sur l'optimisation des preload hints
