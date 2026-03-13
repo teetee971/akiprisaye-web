@@ -1,0 +1,17 @@
+{
+  "name": "auto-prices-collector",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Collecte automatique des prix carburants DOM-TOM depuis prix-carburants.gouv.fr",
+  "scripts": {
+    "collect": "node collect.mjs",
+    "dry-run": "node collect.mjs --dry-run"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "fast-xml-parser": "^4.5.4",
+    "firebase-admin": "^12.1.0"
+  }
+}

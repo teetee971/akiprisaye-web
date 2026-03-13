@@ -269,6 +269,8 @@ const AnalyseFactures = lazyPage(() => import('./pages/AnalyseFactures'));
 const DetectionFraude = lazyPage(() => import('./pages/DetectionFraude'));
 const EvaluationMagasins = lazyPage(() => import('./pages/EvaluationMagasins'));
 const PortailDeveloppeurs = lazyPage(() => import('./pages/PortailDeveloppeurs'));
+const ChocsPrixPage = lazyPage(() => import('./pages/ChocsPrixPage'));
+const NewsletterHubPage = lazyPage(() => import('./pages/NewsletterHubPage'));
 
 /**
  * IMPORTANT — NE PAS SUPPRIMER
@@ -680,6 +682,8 @@ export default function App() {
                           <Route path="detection-fraude" element={<DetectionFraude />} />
                           <Route path="evaluation-magasins" element={<EvaluationMagasins />} />
                           <Route path="portail-developpeurs" element={<PortailDeveloppeurs />} />
+                          <Route path="chocs-prix" element={<ChocsPrixPage />} />
+                          <Route path="newsletter" element={<NewsletterHubPage />} />
 
                           {/* Pages fonctionnelles sans itinéraire précédent */}
                           <Route path="perimetre" element={<Perimetre />} />

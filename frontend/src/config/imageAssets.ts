@@ -385,6 +385,10 @@ export const PAGE_HERO_IMAGES = {
   producteursLocaux: 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Marchés locaux — outdoor Caribbean market / colorful stalls */
   marchesLocaux: 'https://images.unsplash.com/photo-1533900298318-6b8da08a523e?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  /** Chocs de prix — price spike / alarm / red alert */
+  chocsPrix: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  /** Newsletter hub — mailbox / newspaper / subscription */
+  newsletter: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fm=webp&fit=crop&w=1600&q=80',
 };
 
 /**

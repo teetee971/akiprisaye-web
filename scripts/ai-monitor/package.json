@@ -1,0 +1,17 @@
+{
+  "name": "ai-monitor",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "IA de surveillance globale — monitoring autonome de l'ensemble du logiciel",
+  "scripts": {
+    "monitor": "node monitor.mjs",
+    "dry-run": "node monitor.mjs --dry-run"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.1.0",
+    "openai": "^4.47.1"
+  }
+}

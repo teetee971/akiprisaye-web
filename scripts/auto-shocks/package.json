@@ -1,0 +1,17 @@
+{
+  "name": "auto-shocks-detector",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Détecteur automatique de chocs de prix — analyse Firestore + alerte GitHub Issues",
+  "scripts": {
+    "detect": "node detect.mjs",
+    "dry-run": "node detect.mjs --dry-run"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.1.0",
+    "openai": "^4.47.1"
+  }
+}
