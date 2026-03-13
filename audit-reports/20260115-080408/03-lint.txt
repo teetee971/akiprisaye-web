@@ -1,6 +1,0 @@
-# 📝 LINTING (ESLint)
-
-
-> aki-chat-ia-local@2.1.0 lint
-> eslint .
-

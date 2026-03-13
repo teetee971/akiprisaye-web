@@ -1,7 +1,0 @@
-# ♿ ACCESSIBILITÉ
-
-## Attributs ARIA
-364
-
-## Attributs alt sur images
-2
