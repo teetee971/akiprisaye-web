@@ -257,7 +257,7 @@ export default function HomeV5() {
       <section className="hero-v5">
         {/* ── Hero background image — explicit <img> for LCP optimisation ── */}
         <img
-          src="https://images.unsplash.com/photo-1533900298318-6b8da08a523e?auto=format&fm=webp&fit=crop&w=1600&q=80"
+          src="https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fm=webp&fit=crop&w=1600&q=80"
           alt=""
           aria-hidden="true"
           width={1600}
