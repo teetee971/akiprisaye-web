@@ -109,6 +109,8 @@ export default defineConfig({
       abs('./src/test/comparateurRoutes.test.ts'),
       abs('./src/test/comparateursHubRoutes.test.ts'),
       abs('./src/test/sitemapRoutes.test.ts'),
+      // Image upload — validatePhotoFile, validateImageFile, formatFileSize, compression presets, localStorage helpers
+      abs('./src/test/photoUpload.test.ts'),
     ],
 
     exclude: ['**/node_modules/**', '**/.git/**', '**/dist/**', '**/coverage/**'],
