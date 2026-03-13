@@ -37,14 +37,35 @@ function stripHtmlToText(input) {
 
 // ─── Sources RSS ────────────────────────────────────────────────────────────────
 // Médias publics et indépendants couvrant les territoires ultramarins français.
+// URLs vérifiées le 2026-03-13 via atlasflux.saynete.net (la1ere.franceinfo.fr)
+// et https://www.franceinfo.fr/rss/ pour les flux thématiques nationaux.
+// Ancien domaine la1ere.francetvinfo.fr → redirige vers la1ere.franceinfo.fr/rss.xml
+// qui renvoie 404 : tous les flux sont désormais sur la1ere.franceinfo.fr avec
+// les chemins /actu/rss, /economie/rss?r=<territoire>, /societe/rss, etc.
 const RSS_FEEDS = [
-  { url: 'https://la1ere.francetvinfo.fr/rss.xml',            source: 'La1ère (DOM)',       territory: 'Outre-Mer' },
-  { url: 'https://la1ere.francetvinfo.fr/guadeloupe/rss.xml', source: 'La1ère Guadeloupe',  territory: 'Guadeloupe' },
-  { url: 'https://la1ere.francetvinfo.fr/martinique/rss.xml', source: 'La1ère Martinique',  territory: 'Martinique' },
-  { url: 'https://la1ere.francetvinfo.fr/guyane/rss.xml',     source: 'La1ère Guyane',      territory: 'Guyane' },
-  { url: 'https://la1ere.francetvinfo.fr/reunion/rss.xml',    source: 'La1ère Réunion',     territory: 'La Réunion' },
-  { url: 'https://la1ere.francetvinfo.fr/mayotte/rss.xml',    source: 'La1ère Mayotte',     territory: 'Mayotte' },
-  { url: 'https://outremers360.com/feed/',                    source: 'Outremers360°',       territory: 'Outre-Mer' },
+  // ── France Info — Outre-Mer & thématiques nationales ──────────────────────
+  // Spécifiquement Outre-Mer (sélection éditoriale France Télévisions)
+  { url: 'https://www.franceinfo.fr/france/outre-mer.rss',           source: 'France Info Outre-Mer',  territory: 'Outre-Mer'  },
+  // Économie nationale (prix, pouvoir d'achat, inflation, consommation)
+  { url: 'https://www.franceinfo.fr/economie.rss',                   source: 'France Info Économie',   territory: 'Outre-Mer'  },
+  // Société (conditions de vie, emploi, social)
+  { url: 'https://www.franceinfo.fr/societe.rss',                    source: 'France Info Société',    territory: 'Outre-Mer'  },
+  // ── La1ère — Actu générale & économie par territoire ──────────────────────
+  // Actu générale DOM/COM (30 articles)
+  { url: 'https://la1ere.franceinfo.fr/actu/rss',                    source: 'La1ère — Actu DOM',      territory: 'Outre-Mer'  },
+  // Économie par territoire (prix, pouvoir d'achat, emploi)
+  { url: 'https://la1ere.franceinfo.fr/economie/rss?r=guadeloupe',   source: 'La1ère Guadeloupe Éco',  territory: 'Guadeloupe' },
+  { url: 'https://la1ere.franceinfo.fr/economie/rss?r=martinique',   source: 'La1ère Martinique Éco',  territory: 'Martinique' },
+  { url: 'https://la1ere.franceinfo.fr/economie/rss?r=reunion',      source: 'La1ère Réunion Éco',     territory: 'La Réunion' },
+  { url: 'https://la1ere.franceinfo.fr/economie/rss?r=guyane',       source: 'La1ère Guyane Éco',      territory: 'Guyane'     },
+  { url: 'https://la1ere.franceinfo.fr/economie/rss?r=mayotte',      source: 'La1ère Mayotte Éco',     territory: 'Mayotte'    },
+  // Société (conditions de vie, social, éducation)
+  { url: 'https://la1ere.franceinfo.fr/societe/rss',                 source: 'La1ère — Société DOM',   territory: 'Outre-Mer'  },
+  // Martinique actualités complètes
+  { url: 'https://la1ere.franceinfo.fr/martinique/actu/rss',         source: 'La1ère Martinique',      territory: 'Martinique' },
+  // ── Presse indépendante ───────────────────────────────────────────────────
+  // ImazPress — presse indépendante La Réunion
+  { url: 'https://imazpress.com/feed',                               source: 'ImazPress Réunion',      territory: 'La Réunion' },
 ];
 
 // ─── Utilitaires temporels ──────────────────────────────────────────────────────
