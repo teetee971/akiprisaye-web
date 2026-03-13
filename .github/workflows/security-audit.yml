@@ -19,8 +19,8 @@ jobs:
 
       - name: Ensure SECURITY_AUDIT.md exists
         run: |
-          if [ ! -f SECURITY_AUDIT.md ]; then
-            echo "❌ SECURITY_AUDIT.md is missing"
+          if [ ! -f docs/security/SECURITY_AUDIT.md ]; then
+            echo "❌ docs/security/SECURITY_AUDIT.md is missing"
             exit 1
           fi
 
@@ -73,7 +73,7 @@ jobs:
 
           if [ "$HIGH_COUNT" -gt "$BASELINE" ]; then
             echo "❌ New HIGH vulnerabilities detected (baseline: $BASELINE)"
-            echo "Update SECURITY_AUDIT.md to justify them."
+            echo "Update docs/security/SECURITY_AUDIT.md to justify them."
             exit 1
           fi
 
