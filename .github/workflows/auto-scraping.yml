@@ -1,0 +1,140 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# 🤖 Scraping Automatique Multi-Sources — Prix DOM-TOM
+# ──────────────────────────────────────────────────────────────────────────────
+#
+# Ce workflow orchestre le scraping automatique de TOUTES les sources de prix :
+#
+#   ⛽ Carburants  → prix-carburants.gouv.fr (XML officiel gouvernemental)
+#   🥦 Alimentaire → Open Prices / Open Food Facts (ODbL + CC-BY-SA)
+#   📋 BQP         → data.gouv.fr (DGCCRF / Préfectures DOM)
+#   📡 Services    → ARCEP, CRE, INSEE BDM (Licence Ouverte v2.0)
+#
+# Déclenchement :
+#   - Automatique : chaque jour à 6h00 UTC (7h Paris hiver, 8h Paris été)
+#   - Manuel      : "Run workflow" depuis l'onglet Actions
+#   - Post-deploy : après chaque déploiement réussi (workflow_run)
+#
+# Secrets GitHub requis :
+#   FIREBASE_SERVICE_ACCOUNT — Credentials Admin SDK Firebase (base64 ou JSON)
+#   OPENAI_API_KEY           — Pour le rapport IA post-scraping (optionnel)
+#
+# Résultat :
+#   - Fichiers JSON mis à jour et commités dans main
+#   - Firestore : scraping_sessions/{date} + price_shocks/{date}
+#   - Step Summary GitHub Actions avec rapport IA
+# ──────────────────────────────────────────────────────────────────────────────
+
+name: 🤖 Scraping Automatique — Prix DOM-TOM
+
+on:
+  schedule:
+    - cron: '0 6 * * *'   # Chaque jour à 6h UTC
+  workflow_dispatch:
+    inputs:
+      source:
+        description: 'Source à scraper (all / fuel / food / bqp / services)'
+        required: false
+        default: 'all'
+        type: choice
+        options: ['all', 'fuel', 'food', 'bqp', 'services']
+      dry_run:
+        description: 'Simulation (pas d''écriture)'
+        required: false
+        default: 'false'
+        type: boolean
+  workflow_run:
+    workflows: ['Deploy to GitHub Pages', 'Deploy to Cloudflare Pages']
+    types: [completed]
+
+permissions:
+  contents: write   # Pour commiter les JSON mis à jour
+  issues: write     # Pour créer des alertes si choc grave
+  actions: read
+
+concurrency:
+  group: scraping-auto
+  cancel-in-progress: false   # Ne jamais annuler un scraping en cours
+
+jobs:
+  scrape:
+    name: 🔄 Scraping multi-sources
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    # Ne pas exécuter si c'est un déploiement qui a échoué
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 1
+
+      - name: ⚙️ Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: scripts/auto-scraper/package.json
+
+      - name: 📦 Installer dépendances scraper
+        working-directory: scripts/auto-scraper
+        run: npm install
+
+      - name: 🤖 Scraping automatique
+        working-directory: scripts/auto-scraper
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GITHUB_WORKSPACE: ${{ github.workspace }}
+        run: |
+          SOURCE="${{ inputs.source || 'all' }}"
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            node scrape.mjs --source "$SOURCE" --dry-run
+          else
+            node scrape.mjs --source "$SOURCE"
+          fi
+
+      - name: 💾 Commit des données mises à jour
+        if: ${{ inputs.dry_run != 'true' }}
+        run: |
+          git config user.name  "akiprisaye-bot[scraper]"
+          git config user.email "bot-scraper@akiprisaye.fr"
+
+          # Vérifier s'il y a des changements dans les fichiers de données
+          if git diff --quiet frontend/public/data/; then
+            echo "ℹ️  Aucune modification de données — pas de commit"
+          else
+            CHANGED=$(git diff --name-only frontend/public/data/ | tr '\n' ' ')
+            echo "📝 Fichiers modifiés : $CHANGED"
+
+            git add frontend/public/data/fuel-prices.json \
+                    frontend/public/data/services-prices.json \
+                    frontend/public/data/bqp-prices.json \
+                    frontend/public/data/open-prices-dom.json 2>/dev/null || true
+
+            git commit -m "🤖 [auto] Mise à jour données prix — $(date -u '+%Y-%m-%d %H:%M UTC')
+
+Sources scrapées : prix-carburants.gouv.fr, Open Prices, data.gouv.fr BQP, ARCEP/CRE/INSEE
+Déclencheur : ${{ github.event_name }}
+
+[skip ci]"
+            git push
+            echo "✅ Données committées et poussées"
+          fi
+
+      - name: 📢 Notification en cas d'échec
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const date = new Date().toLocaleString('fr-FR', { timeZone: 'America/Guadeloupe' });
+            core.warning(`⚠️ Échec du scraping automatique — ${date}`);
+            // Créer une issue si scraping critique échoue
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🚨 [AUTO] Échec scraping données prix — ${new Date().toISOString().slice(0,10)}`,
+              body: `Le scraping automatique a échoué.\n\n**Run:** ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}\n\n**Actions à mener :**\n- Vérifier les sources de données\n- Contrôler les secrets GitHub\n- Relancer manuellement si nécessaire`,
+              labels: ['scraping', 'automatique', 'alerte']
+            });

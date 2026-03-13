@@ -389,6 +389,8 @@ export const PAGE_HERO_IMAGES = {
   chocsPrix: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Newsletter hub — mailbox / newspaper / subscription */
   newsletter: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  /** Monitoring IA — server room / AI dashboard / futuristic tech */
+  monitoringIA: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fm=webp&fit=crop&w=1600&q=80',
 };
 
 /**

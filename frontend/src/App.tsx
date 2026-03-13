@@ -271,6 +271,7 @@ const EvaluationMagasins = lazyPage(() => import('./pages/EvaluationMagasins'));
 const PortailDeveloppeurs = lazyPage(() => import('./pages/PortailDeveloppeurs'));
 const ChocsPrixPage = lazyPage(() => import('./pages/ChocsPrixPage'));
 const NewsletterHubPage = lazyPage(() => import('./pages/NewsletterHubPage'));
+const MonitoringIAPage = lazyPage(() => import('./pages/MonitoringIAPage'));
 
 /**
  * IMPORTANT — NE PAS SUPPRIMER
@@ -684,6 +685,7 @@ export default function App() {
                           <Route path="portail-developpeurs" element={<PortailDeveloppeurs />} />
                           <Route path="chocs-prix" element={<ChocsPrixPage />} />
                           <Route path="newsletter" element={<NewsletterHubPage />} />
+                          <Route path="monitoring-ia" element={<MonitoringIAPage />} />
 
                           {/* Pages fonctionnelles sans itinéraire précédent */}
                           <Route path="perimetre" element={<Perimetre />} />
