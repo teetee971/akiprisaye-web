@@ -3,18 +3,14 @@ name: CI
 on:
   push:
     branches: [main]
-  # `closed` catches merges done by github-actions[bot] (auto-merge via GITHUB_TOKEN)
-  # that don't fire the push event. Job-level `if` skips unmerged close events.
   pull_request:
-    types: [opened, synchronize, reopened, closed]
+    types: [opened, synchronize, reopened]
 
 permissions:
   contents: read
 
 jobs:
   build-test:
-    # Run on push, on PR activity (opened/sync/reopened), or when a PR is merged
-    if: github.event.action != 'closed' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -63,8 +59,6 @@ jobs:
         run: npm run test:ci
 
   verify-pages:
-    # Mirror the same condition as build-test: skip unmerged close events
-    if: github.event.action != 'closed' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     defaults:
       run:
