@@ -977,6 +977,7 @@ Le pipeline CI/CD garantit des déploiements robustes et sans régression:
 
 ### Documentation
 
+- 📘 [Runbook de déploiement & rollback](docs/deployment.md)
 - 📖 [CI/CD Logs](https://github.com/teetee971/akiprisaye-web/actions)
 
 ### Monitoring
