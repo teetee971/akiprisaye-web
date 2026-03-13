@@ -74,5 +74,38 @@ service cloud.firestore {
       allow read: if true;
       allow write: if false;
     }
+
+    // ── Visitor presence (temps réel) ──────────────────────────────────────
+    // Each browser session writes/updates its own presence document.
+    // Used to count online visitors per territory.
+    // Documents are auto-cleaned on tab close (client deleteDoc).
+    match /presence/{sessionId} {
+      allow read: if true;
+      // Any client may create/update its own session document
+      allow create, update: if request.resource.data.keys().hasOnly(['territory', 'page', 'lastSeen'])
+                            && request.resource.data.territory is string
+                            && request.resource.data.page is string;
+      allow delete: if true; // Client cleans up on tab close
+    }
+
+    // ── Visit stats per territory ───────────────────────────────────────────
+    // Atomic increment counter per territory code document.
+    // Public read — visitors can see total counts.
+    match /visit_stats/{territory} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasOnly(['totalVisits', 'lastVisit'])
+                   && request.resource.data.totalVisits == 1;
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['totalVisits', 'lastVisit']);
+    }
+
+    // ── Page / interest stats ───────────────────────────────────────────────
+    // Atomic increment counter per page-category document.
+    // Used for the "centres d'intérêt" podium.
+    match /page_stats/{categoryKey} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasOnly(['totalViews', 'name', 'emoji', 'lastView'])
+                   && request.resource.data.totalViews == 1;
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['totalViews', 'name', 'emoji', 'lastView']);
+    }
   }
 }
