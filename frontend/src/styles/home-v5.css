@@ -104,9 +104,9 @@
   bottom: 0;
   background: linear-gradient(
     135deg,
-    rgba(15, 23, 42, 0.95) 0%,
-    rgba(30, 41, 59, 0.90) 60%,
-    rgba(15, 23, 42, 0.88) 100%
+    rgba(15, 23, 42, 0.97) 0%,
+    rgba(15, 23, 42, 0.93) 60%,
+    rgba(15, 23, 42, 0.90) 100%
   );
   pointer-events: none;
 }
@@ -1676,22 +1676,33 @@
   }
 }
 
-/* Large mobile / small tablet landscape: 769px–900px */
-@media (min-width: 769px) and (max-width: 900px) {
+/* Mobile landscape + tablets: 769px–1023px
+   Covers all landscape phones (Galaxy S, Pixel, iPhone) and portrait tablets.
+   The phone mockup is 280×560px in CSS (visually 229×459px after scale(0.82)).
+   At these widths it breaks the hero layout — hide it and stack the form. */
+@media (min-width: 769px) and (max-width: 1023px) {
+  .hero-v5 {
+    min-height: auto;
+    padding: 2.5rem 1.5rem 2rem;
+  }
+
   .hero-inner {
     grid-template-columns: 1fr;
     text-align: center;
   }
 
   .hero-content {
-    max-width: 100%;
+    max-width: 640px;
+    margin: 0 auto;
     text-align: center;
   }
 
   .hero-search-xxl {
     text-align: center;
     flex-direction: column;
-    max-width: 560px;
+    max-width: 520px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .hero-search-btn-xxl {
@@ -1701,6 +1712,14 @@
 
   .hero-phone-side {
     display: none;
+  }
+
+  .hero-title {
+    font-size: 2.25rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
   }
 }
 
