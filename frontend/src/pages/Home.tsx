@@ -89,11 +89,11 @@ const PRIORITY_ACTIONS = [
 ];
 
 const PRIMARY_TERRITORIES = [
-  { code: 'GP', name: 'Guadeloupe' },
-  { code: 'MQ', name: 'Martinique' },
-  { code: 'GF', name: 'Guyane' },
-  { code: 'RE', name: 'La Réunion' },
-  { code: 'YT', name: 'Mayotte' },
+  { code: 'GP', name: 'Guadeloupe', flag: '🇬🇵' },
+  { code: 'MQ', name: 'Martinique', flag: '🇲🇶' },
+  { code: 'GF', name: 'Guyane',     flag: '🇬🇫' },
+  { code: 'RE', name: 'La Réunion', flag: '🇷🇪' },
+  { code: 'YT', name: 'Mayotte',    flag: '🇾🇹' },
 ];
 
 function HeroPhoneMockup() {
@@ -380,15 +380,35 @@ export default function HomeV5() {
 
         <section className="territories-section section-reveal">
           <div className="territories-header">
-            <h2>Accès rapide par territoire</h2>
-            <p>Choisissez votre zone principale pour lancer une comparaison sans passer par des blocs secondaires.</p>
+            <h2>Mon territoire</h2>
+            <p>Comparez les prix directement dans votre zone.</p>
           </div>
-          <div className="territories-grid">
-            {PRIMARY_TERRITORIES.map((territory) => (
-              <Link key={territory.code} className="territory-card" to={`/comparateur?territoire=${territory.code}`}>
-                {territory.name}
-              </Link>
-            ))}
+          <div className="territories-photo-grid">
+            {PRIMARY_TERRITORIES.map((territory) => {
+              const asset = getTerritoryAsset(territory.code);
+              return (
+                <Link
+                  key={territory.code}
+                  className="territory-photo-card"
+                  to={`/comparateur?territoire=${territory.code}`}
+                  aria-label={`Comparer les prix en ${territory.name}`}
+                >
+                  <img
+                    src={asset.url}
+                    alt={asset.alt}
+                    className="territory-photo-img"
+                    loading="lazy"
+                    width="200"
+                    height="120"
+                    onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                  />
+                  <div className="territory-photo-overlay">
+                    <span className="territory-photo-flag">{territory.flag}</span>
+                    <span className="territory-photo-name">{territory.name}</span>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </section>
 

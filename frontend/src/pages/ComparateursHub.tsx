@@ -195,6 +195,8 @@ const NAVIGATION_OUTILS = [
 
 export default function ComparateursHub() {
   const [activeTab, setActiveTab] = useState<ComparateurTab>('prix');
+  const [activeNavCat, setActiveNavCat] = useState<string>('general');
+  const [toolSearch, setToolSearch] = useState('');
 
   // ── Real observatoire data ────────────────────────────────────────────────────
   const [kiloItems, setKiloItems]         = useState<{ id: string; product: string; territory: string; avgPrice: number; unit: string; pricePerUnit: number; observations: number }[]>([]);
@@ -305,6 +307,19 @@ export default function ComparateursHub() {
 
   const fmtPrice = (n: number) => n.toFixed(2) + ' €';
 
+  const NAV_CATEGORIES = [
+    { id: 'general',      emoji: '⚖️', label: 'Général',      items: GENERAL_COMPARATEURS },
+    { id: 'specialise',   emoji: '✈️', label: 'Transport',     items: SPECIALIZED },
+    { id: 'tarifs',       emoji: '💡', label: 'Tarifs',        items: RECHERCHE_PRIX },
+    { id: 'scanners',     emoji: '📷', label: 'Scan',          items: SCANNERS },
+    { id: 'calcul',       emoji: '🧮', label: 'Calcul',        items: CALCULATEURS },
+    { id: 'observatoire', emoji: '🔭', label: 'Données',       items: OBSERVATOIRE },
+    { id: 'ia',           emoji: '🤖', label: 'IA',            items: IA_OUTILS },
+    { id: 'citoyen',      emoji: '🤝', label: 'Citoyen',       items: CITOYEN },
+    { id: 'ressources',   emoji: '📚', label: 'Guides',        items: RESSOURCES },
+    { id: 'cartes',       emoji: '🗺️', label: 'Cartes',        items: NAVIGATION_OUTILS },
+  ] as const;
+
   return (
     <>
       <Helmet>
@@ -323,48 +338,6 @@ export default function ComparateursHub() {
             <p className="text-gray-400 text-sm sm:text-lg">Tous vos outils de comparaison — données réelles observatoire</p>
           </div>
 
-          <div className="mb-8">
-            <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">🧭 Index complet des comparateurs</h2>
-            <p className="text-gray-400 text-xs sm:text-sm mb-4">
-              Liens directs vers tous les comparateurs du site (généraux, thématiques et spécialisés).
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {COMPARATEURS_COMPLETS.map((item) => (
-                <Link
-                  key={`index-${item.path}`}
-                  to={item.path}
-                  className="rounded-full border border-slate-700 bg-slate-900/60 px-3 py-1.5 text-xs sm:text-sm text-slate-200 hover:border-blue-400 hover:text-white transition-colors"
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          <div className="mb-8">
-            <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">🚀 Tous les comparateurs</h2>
-            <p className="text-gray-400 text-xs sm:text-sm mb-4">
-              Accès rapide à tous les comparateurs généraux, spécialisés et aux tarifs détaillés par territoire.
-            </p>
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
-              {ALL_COMPARATEURS.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <Link
-                    key={`all-${item.path}`}
-                    to={item.path}
-                    className={`group flex items-center sm:items-start gap-2 sm:gap-3 rounded-xl border p-3 sm:p-4 transition-all hover:scale-[1.02] hover:shadow-lg ${item.bg}`}
-                  >
-                    <Icon className={`w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 ${item.color}`} />
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-white text-xs sm:text-sm leading-tight">{item.label}</p>
-                      <p className="hidden sm:block text-xs text-gray-400 mt-0.5">{item.desc}</p>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
 
           {/* ── Tabs ── */}
           <GlassCard className="mb-4 p-2 sm:p-3">
@@ -520,264 +493,98 @@ export default function ComparateursHub() {
             {activeTab === 'historique' && <HistoriquePrix />}
           </div>
 
-          {/* ── General comparators navigation ── */}
-          <div className="mt-8">
-            <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">⚖️ Comparateurs généraux</h2>
-            <p className="text-gray-400 text-xs sm:text-sm mb-4">
-              Prix citoyens, enseignes, panier et comparaisons inter-territoires.
-            </p>
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
-              {GENERAL_COMPARATEURS.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    className={`group flex items-center sm:items-start gap-2 sm:gap-3 rounded-xl border p-3 sm:p-4 transition-all hover:scale-[1.02] hover:shadow-lg ${item.bg}`}
-                  >
-                    <Icon className={`w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 ${item.color}`} />
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-white text-xs sm:text-sm leading-tight">{item.label}</p>
-                      <p className="hidden sm:block text-xs text-gray-400 mt-0.5">{item.desc}</p>
-                    </div>
-                  </Link>
-                );
-              })}
+          {/* ── Category navigation tools ── */}
+          <div className="mt-6">
+            <div className="flex items-center gap-2 mb-3">
+              <h2 className="text-lg sm:text-xl font-bold text-white">🧭 Explorer les outils</h2>
+              <span className="text-xs text-slate-500 ml-auto hidden sm:block">Sélectionnez une catégorie</span>
             </div>
-          </div>
 
-          {/* ── Specialized comparators navigation ── */}
-          <div className="mt-8">
-            <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">🔍 Comparateurs spécialisés</h2>
-            <p className="text-gray-400 text-xs sm:text-sm mb-4">
-              Transports, énergie, assurances, formations, BTP — accédez directement à chaque outil.
-            </p>
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
-              {SPECIALIZED.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    className={`group flex items-center sm:items-start gap-2 sm:gap-3 rounded-xl border p-3 sm:p-4 transition-all hover:scale-[1.02] hover:shadow-lg ${item.bg}`}
-                  >
-                    <Icon className={`w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 ${item.color}`} />
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-white text-xs sm:text-sm leading-tight">{item.label}</p>
-                      <p className="hidden sm:block text-xs text-gray-400 mt-0.5">{item.desc}</p>
-                    </div>
-                  </Link>
-                );
-              })}
+            {/* Search bar */}
+            <div className="relative mb-3">
+              <input
+                type="text"
+                placeholder="Chercher un outil…"
+                value={toolSearch}
+                onChange={(e) => setToolSearch(e.target.value)}
+                className="w-full rounded-xl border border-slate-700 bg-slate-900/60 px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none"
+                aria-label="Rechercher un outil"
+              />
+              {toolSearch && (
+                <button
+                  type="button"
+                  onClick={() => setToolSearch('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs"
+                  aria-label="Effacer la recherche"
+                >✕</button>
+              )}
             </div>
-          </div>
 
-          {/* ── Recherche Prix sub-comparators ── */}
-          <div className="mt-8">
-            <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">🔎 Recherche &amp; Tarifs</h2>
-            <p className="text-gray-400 text-xs sm:text-sm mb-4">
-              Transports, énergie, eau, télécoms — tarifs détaillés par territoire et par période.
-            </p>
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
-              {RECHERCHE_PRIX.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    className={`group flex items-center sm:items-start gap-2 sm:gap-3 rounded-xl border p-3 sm:p-4 transition-all hover:scale-[1.02] hover:shadow-lg ${item.bg}`}
-                  >
-                    <Icon className={`w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 ${item.color}`} />
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-white text-xs sm:text-sm leading-tight">{item.label}</p>
-                      <p className="hidden sm:block text-xs text-gray-400 mt-0.5">{item.desc}</p>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
+            {/* Category chips — horizontal scrollable on mobile */}
+            {!toolSearch && (
+              <div className="overflow-x-auto pb-2 -mx-3 px-3 mb-4">
+                <div className="flex gap-2 min-w-max">
+                  {NAV_CATEGORIES.map((cat) => (
+                    <button
+                      key={cat.id}
+                      type="button"
+                      onClick={() => setActiveNavCat(cat.id)}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all border ${
+                        activeNavCat === cat.id
+                          ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-600/20'
+                          : 'bg-slate-900/60 border-slate-700 text-slate-300 hover:border-blue-500 hover:text-white'
+                      }`}
+                      aria-pressed={activeNavCat === cat.id}
+                    >
+                      <span role="img" aria-hidden="true">{cat.emoji}</span>
+                      {cat.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
-          {/* ── Ressources & documentation ── */}
-          <div className="mt-8">
-            <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">📚 Ressources &amp; Comprendre</h2>
-            <p className="text-gray-400 text-xs sm:text-sm mb-4">
-              Guides pédagogiques, glossaire et analyses pour comprendre la formation des prix en DOM–COM.
-            </p>
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
-              {RESSOURCES.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    className={`group flex items-center sm:items-start gap-2 sm:gap-3 rounded-xl border p-3 sm:p-4 transition-all hover:scale-[1.02] hover:shadow-lg ${item.bg}`}
-                  >
-                    <Icon className={`w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 ${item.color}`} />
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-white text-xs sm:text-sm leading-tight">{item.label}</p>
-                      <p className="hidden sm:block text-xs text-gray-400 mt-0.5">{item.desc}</p>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
+            {/* Cards — only selected category OR search results */}
+            {(() => {
+              const cat = NAV_CATEGORIES.find((c) => c.id === activeNavCat);
+              const items = toolSearch.trim()
+                ? NAV_CATEGORIES.flatMap((c) => c.items).filter(
+                    (item, idx, arr) =>
+                      arr.findIndex((x) => x.path === item.path) === idx &&
+                      (item.label.toLowerCase().includes(toolSearch.toLowerCase()) ||
+                       item.desc.toLowerCase().includes(toolSearch.toLowerCase()))
+                  )
+                : (cat?.items ?? []);
 
-          {/* ── Scanners & OCR ── */}
-          <div className="mt-8">
-            <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">📷 Scanners &amp; OCR</h2>
-            <p className="text-gray-400 text-xs sm:text-sm mb-4">
-              Scanner des produits, tickets de caisse et photos — identification instantanée.
-            </p>
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
-              {SCANNERS.map((item) => {
-                const Icon = item.icon;
+              if (items.length === 0) {
                 return (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    className={`group flex items-center sm:items-start gap-2 sm:gap-3 rounded-xl border p-3 sm:p-4 transition-all hover:scale-[1.02] hover:shadow-lg ${item.bg}`}
-                  >
-                    <Icon className={`w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 ${item.color}`} />
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-white text-xs sm:text-sm leading-tight">{item.label}</p>
-                      <p className="hidden sm:block text-xs text-gray-400 mt-0.5">{item.desc}</p>
-                    </div>
-                  </Link>
+                  <p className="text-slate-400 text-sm text-center py-8">
+                    Aucun outil trouvé pour « {toolSearch} »
+                  </p>
                 );
-              })}
-            </div>
-          </div>
+              }
 
-          {/* ── Calculateurs & Simulateurs ── */}
-          <div className="mt-8">
-            <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">🧮 Calculateurs &amp; Simulateurs</h2>
-            <p className="text-gray-400 text-xs sm:text-sm mb-4">
-              Octroi de mer, budget familial, panier vital, repas — tous vos outils de calcul.
-            </p>
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
-              {CALCULATEURS.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    className={`group flex items-center sm:items-start gap-2 sm:gap-3 rounded-xl border p-3 sm:p-4 transition-all hover:scale-[1.02] hover:shadow-lg ${item.bg}`}
-                  >
-                    <Icon className={`w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 ${item.color}`} />
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-white text-xs sm:text-sm leading-tight">{item.label}</p>
-                      <p className="hidden sm:block text-xs text-gray-400 mt-0.5">{item.desc}</p>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* ── Observatoire & Données ── */}
-          <div className="mt-8">
-            <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">🔭 Observatoire &amp; Données</h2>
-            <p className="text-gray-400 text-xs sm:text-sm mb-4">
-              Données réelles, observatoire citoyen, vie chère et accès open data.
-            </p>
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
-              {OBSERVATOIRE.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    className={`group flex items-center sm:items-start gap-2 sm:gap-3 rounded-xl border p-3 sm:p-4 transition-all hover:scale-[1.02] hover:shadow-lg ${item.bg}`}
-                  >
-                    <Icon className={`w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 ${item.color}`} />
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-white text-xs sm:text-sm leading-tight">{item.label}</p>
-                      <p className="hidden sm:block text-xs text-gray-400 mt-0.5">{item.desc}</p>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* ── IA & Analyses ── */}
-          <div className="mt-8">
-            <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">🤖 IA &amp; Analyses</h2>
-            <p className="text-gray-400 text-xs sm:text-sm mb-4">
-              Assistant IA, réclamations, devis, prédictions et analyses de marché.
-            </p>
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
-              {IA_OUTILS.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    className={`group flex items-center sm:items-start gap-2 sm:gap-3 rounded-xl border p-3 sm:p-4 transition-all hover:scale-[1.02] hover:shadow-lg ${item.bg}`}
-                  >
-                    <Icon className={`w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 ${item.color}`} />
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-white text-xs sm:text-sm leading-tight">{item.label}</p>
-                      <p className="hidden sm:block text-xs text-gray-400 mt-0.5">{item.desc}</p>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* ── Citoyenneté & Communauté ── */}
-          <div className="mt-8">
-            <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">🤝 Citoyenneté &amp; Communauté</h2>
-            <p className="text-gray-400 text-xs sm:text-sm mb-4">
-              Groupes citoyens, solidarité, signalements et newsletter communautaire.
-            </p>
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
-              {CITOYEN.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    className={`group flex items-center sm:items-start gap-2 sm:gap-3 rounded-xl border p-3 sm:p-4 transition-all hover:scale-[1.02] hover:shadow-lg ${item.bg}`}
-                  >
-                    <Icon className={`w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 ${item.color}`} />
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-white text-xs sm:text-sm leading-tight">{item.label}</p>
-                      <p className="hidden sm:block text-xs text-gray-400 mt-0.5">{item.desc}</p>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* ── Navigation & Cartes ── */}
-          <div className="mt-8 mb-10">
-            <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">🗺️ Navigation &amp; Cartes</h2>
-            <p className="text-gray-400 text-xs sm:text-sm mb-4">
-              Carte interactive, itinéraires et moteur de recherche multi-sources.
-            </p>
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
-              {NAVIGATION_OUTILS.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    className={`group flex items-center sm:items-start gap-2 sm:gap-3 rounded-xl border p-3 sm:p-4 transition-all hover:scale-[1.02] hover:shadow-lg ${item.bg}`}
-                  >
-                    <Icon className={`w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 ${item.color}`} />
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-white text-xs sm:text-sm leading-tight">{item.label}</p>
-                      <p className="hidden sm:block text-xs text-gray-400 mt-0.5">{item.desc}</p>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
+              return (
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3">
+                  {items.map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <Link
+                        key={item.path}
+                        to={item.path}
+                        className={`group flex items-center gap-2 rounded-xl border p-3 transition-all hover:scale-[1.02] hover:shadow-lg active:scale-[0.98] ${item.bg}`}
+                      >
+                        <Icon className={`w-5 h-5 flex-shrink-0 ${item.color}`} aria-hidden="true" />
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-white text-xs leading-tight">{item.label}</p>
+                          <p className="hidden sm:block text-xs text-gray-400 mt-0.5 truncate">{item.desc}</p>
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+              );
+            })()}
           </div>
 
         </div>

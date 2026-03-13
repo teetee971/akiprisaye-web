@@ -379,6 +379,26 @@
   background: rgba(30, 41, 59, 0.75);
 }
 
+/* Territory photo grid for home page basic view */
+.territories-photo-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.5rem;
+  padding: 0 1rem;
+}
+@media (max-width: 640px) {
+  .territories-photo-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.375rem;
+  }
+  .territories-photo-grid .territory-photo-card {
+    border-radius: 0.75rem;
+  }
+  .territories-photo-grid .territory-photo-name {
+    font-size: 0.6rem;
+  }
+}
+
 /* Scroll Indicator */
 .scroll-indicator {
   position: absolute;
@@ -4281,4 +4301,51 @@
   padding: 0.2rem 0.55rem;
   border: 1px solid rgba(255,255,255,0.06);
   white-space: nowrap;
+}
+
+/* ── Compact mobile sections ──────────────────────────────────────── */
+@media (max-width: 768px) {
+  /* Reduce section vertical padding */
+  .hero-why,
+  .home-priority,
+  .territories-section,
+  .example-comparison,
+  .home-extended-toggle {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+  
+  /* Compact why section */
+  .hero-why-inner {
+    padding: 1rem;
+  }
+  .hero-why-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  .hero-why-card {
+    padding: 0.75rem;
+  }
+  
+  /* Compact priority grid */
+  .home-priority-grid {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+  .home-priority-card {
+    padding: 0.75rem 1rem;
+  }
+  
+  /* Compact proof bar */
+  .proof-bar {
+    padding: 0.75rem 1rem;
+  }
+  .proof-content {
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    justify-content: center;
+  }
+  .proof-divider {
+    display: none;
+  }
 }
