@@ -38,7 +38,7 @@ async function fetchJSON(url, label) {
     const res = await fetch(url, {
       signal: controller.signal,
       headers: {
-        'User-Agent': 'akiprisaye-opendata-bot/2.0 (https://github.com/teetee971/akiprisaye-web; contact: akiprisaye@example.com)',
+        'User-Agent': 'akiprisaye-opendata-bot/2.0 (https://github.com/teetee971/akiprisaye-web; contact: contact@akiprisaye.fr)',
         'Accept': 'application/json',
       },
     });

@@ -8,7 +8,7 @@
     "scrape:fuel": "node scrape.mjs --source fuel",
     "scrape:food": "node scrape.mjs --source food",
     "scrape:bqp": "node scrape.mjs --source bqp",
-    "scrape:openprices": "node scrape.mjs --source openprices",
+    "scrape:services": "node scrape.mjs --source services",
     "dry-run": "node scrape.mjs --dry-run"
   },
   "engines": {
