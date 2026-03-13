@@ -14,7 +14,7 @@
 
 ## 📱 Aperçu de l'application
 
-[![Aperçu de l'application A KI PRI SA YÉ](https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fm=webp&fit=crop&w=1200&h=400&q=80)](https://teetee971.github.io/akiprisaye-web/)
+[![Aperçu de l'application A KI PRI SA YÉ](https://github.com/user-attachments/assets/1a9be053-bb11-4596-9676-6dea93e0c399)](https://teetee971.github.io/akiprisaye-web/)
 
 > 🔗 **[Accéder à l'application → teetee971.github.io/akiprisaye-web](https://teetee971.github.io/akiprisaye-web/)**
 

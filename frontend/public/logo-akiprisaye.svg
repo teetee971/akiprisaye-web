@@ -1,5 +1,36 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="80" fill="#0f172a"/>
-  <circle cx="256" cy="256" r="196" fill="#2563eb"/>
-  <path d="M192 256l48 48l96-96" stroke="#f8fafc" stroke-width="32" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Rounded square background: sky blue gradient -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0ea5e9"/>
+    </linearGradient>
+    <clipPath id="rounded">
+      <rect width="512" height="512" rx="96" ry="96"/>
+    </clipPath>
+  </defs>
+  <rect width="512" height="512" rx="96" fill="url(#bg)"/>
+  <!-- Green hill -->
+  <ellipse cx="256" cy="440" rx="320" ry="160" fill="#22c55e"/>
+  <!-- Sun -->
+  <circle cx="370" cy="130" r="52" fill="#f59e0b"/>
+  <!-- Palm tree left -->
+  <rect x="118" y="210" width="10" height="90" rx="4" fill="#166534"/>
+  <ellipse cx="123" cy="210" rx="30" ry="12" fill="#16a34a" transform="rotate(-20,123,210)"/>
+  <ellipse cx="123" cy="210" rx="30" ry="12" fill="#16a34a" transform="rotate(20,123,210)"/>
+  <ellipse cx="123" cy="210" rx="25" ry="10" fill="#15803d" transform="rotate(0,123,210)"/>
+  <!-- Magnifying glass ring -->
+  <circle cx="228" cy="288" r="100" fill="white" opacity="0.92"/>
+  <circle cx="228" cy="288" r="100" fill="none" stroke="#1e3a5f" stroke-width="18"/>
+  <!-- Handle -->
+  <line x1="304" y1="364" x2="358" y2="420" stroke="#2563eb" stroke-width="26" stroke-linecap="round"/>
+  <!-- Bar chart inside glass -->
+  <rect x="170" y="318" width="26" height="46" rx="4" fill="#22c55e"/>
+  <rect x="206" y="296" width="26" height="68" rx="4" fill="#f59e0b"/>
+  <rect x="242" y="268" width="26" height="96" rx="4" fill="#ef4444"/>
+  <!-- Price tag -->
+  <path d="M310 280 L380 280 L390 308 L380 336 L310 336 L300 308 Z" fill="#f59e0b"/>
+  <circle cx="316" cy="308" r="8" fill="#1e3a5f"/>
+  <!-- Euro sign -->
+  <text x="345" y="320" font-family="Arial,sans-serif" font-weight="900" font-size="36" fill="#92400e" text-anchor="middle">€</text>
 </svg>
