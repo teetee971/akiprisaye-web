@@ -3,6 +3,9 @@ name: Create D1 Database
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   create-d1:
     runs-on: ubuntu-latest
