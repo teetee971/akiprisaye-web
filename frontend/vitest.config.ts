@@ -64,6 +64,7 @@ export default defineConfig({
       // NOTE: si scripts/ est à la racine du repo, remplace par ../scripts/...
       abs('./scripts/verify-pages-api.test.ts'),
       abs('./scripts/validate-deployment.test.ts'),
+      abs('./scripts/ci-workflows.test.ts'),
       // EAN / GTIN validation — GS1 checksum and country label
       abs('./src/test/eanValidator.test.ts'),
       // Structured receipt parser — French ticket OCR
