@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+import { ExternalLink } from 'lucide-react';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
@@ -298,6 +300,120 @@ export default function DonneesPubliques() {
               </dl>
             </article>
           ))}
+        </section>
+
+        {/* Autres suggestions pour aller plus loin */}
+        <section className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-6">
+          <h2 className="text-lg font-bold text-gray-100 mb-4">
+            Autres suggestions pour aller plus loin
+          </h2>
+          <div className="space-y-3">
+            <a
+              href="https://www.data.gouv.fr/fr/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-between p-4 bg-blue-950/30 rounded-lg hover:bg-blue-900/40 transition-colors"
+            >
+              <div className="flex items-center">
+                <span className="text-2xl mr-3">🇫🇷</span>
+                <div>
+                  <h3 className="font-semibold text-blue-200 text-sm">data.gouv.fr</h3>
+                  <p className="text-xs text-blue-400">Portail officiel des données ouvertes françaises — Licence Ouverte Etalab</p>
+                </div>
+              </div>
+              <ExternalLink className="w-4 h-4 text-blue-400 flex-shrink-0" />
+            </a>
+
+            <a
+              href="https://prix-carburants.gouv.fr/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-between p-4 bg-blue-950/30 rounded-lg hover:bg-blue-900/40 transition-colors"
+            >
+              <div className="flex items-center">
+                <span className="text-2xl mr-3">⛽</span>
+                <div>
+                  <h3 className="font-semibold text-blue-200 text-sm">prix-carburants.gouv.fr</h3>
+                  <p className="text-xs text-blue-400">Prix des carburants en temps réel — Open Data gouvernemental (XML)</p>
+                </div>
+              </div>
+              <ExternalLink className="w-4 h-4 text-blue-400 flex-shrink-0" />
+            </a>
+
+            <a
+              href="https://world.openfoodfacts.org/data"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-between p-4 bg-blue-950/30 rounded-lg hover:bg-blue-900/40 transition-colors"
+            >
+              <div className="flex items-center">
+                <span className="text-2xl mr-3">🥫</span>
+                <div>
+                  <h3 className="font-semibold text-blue-200 text-sm">Open Food Facts</h3>
+                  <p className="text-xs text-blue-400">Base mondiale de produits alimentaires — Licence ODbL</p>
+                </div>
+              </div>
+              <ExternalLink className="w-4 h-4 text-blue-400 flex-shrink-0" />
+            </a>
+
+            <a
+              href="https://openprices.net/en/api"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-between p-4 bg-blue-950/30 rounded-lg hover:bg-blue-900/40 transition-colors"
+            >
+              <div className="flex items-center">
+                <span className="text-2xl mr-3">🏷️</span>
+                <div>
+                  <h3 className="font-semibold text-blue-200 text-sm">Open Prices API</h3>
+                  <p className="text-xs text-blue-400">Prix contributifs géolocalisés — ODbL — API REST gratuite</p>
+                </div>
+              </div>
+              <ExternalLink className="w-4 h-4 text-blue-400 flex-shrink-0" />
+            </a>
+
+            <Link
+              to="/contribuer"
+              className="flex items-center justify-between p-4 bg-emerald-950/30 rounded-lg hover:bg-emerald-900/40 transition-colors"
+            >
+              <div className="flex items-center">
+                <span className="text-2xl mr-3">✍️</span>
+                <div>
+                  <h3 className="font-semibold text-emerald-200 text-sm">Contribuer aux données</h3>
+                  <p className="text-xs text-emerald-400">Partagez vos relevés de prix pour enrichir l'observatoire</p>
+                </div>
+              </div>
+              <ExternalLink className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+            </Link>
+
+            <Link
+              to="/transparence"
+              className="flex items-center justify-between p-4 bg-emerald-950/30 rounded-lg hover:bg-emerald-900/40 transition-colors"
+            >
+              <div className="flex items-center">
+                <span className="text-2xl mr-3">🔒</span>
+                <div>
+                  <h3 className="font-semibold text-emerald-200 text-sm">Politique de transparence</h3>
+                  <p className="text-xs text-emerald-400">Notre engagement pour des données fiables et ouvertes</p>
+                </div>
+              </div>
+              <ExternalLink className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+            </Link>
+
+            <Link
+              to="/licence-institution"
+              className="flex items-center justify-between p-4 bg-emerald-950/30 rounded-lg hover:bg-emerald-900/40 transition-colors"
+            >
+              <div className="flex items-center">
+                <span className="text-2xl mr-3">📜</span>
+                <div>
+                  <h3 className="font-semibold text-emerald-200 text-sm">Licences &amp; sources institutionnelles</h3>
+                  <p className="text-xs text-emerald-400">Cadre légal et sources officielles (INSEE, OPMR, DGCCRF…)</p>
+                </div>
+              </div>
+              <ExternalLink className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+            </Link>
+          </div>
         </section>
       </div>
     </div>
