@@ -87,6 +87,13 @@ describe('deploy-pages.yml — race condition guard', () => {
     // clause ensures the deploy step is SKIPPED rather than attempted and FAILED.
     expect(deployYml).toMatch(/github\.event_name\s*!=\s*['"]pull_request['"]/);
   });
+
+  it('deploy job must guard against non-main refs (defense-in-depth)', () => {
+    // Ensures deployment only happens from the protected main branch.
+    // This blocks non-main refs (e.g. workflow_dispatch from a feature branch,
+    // or any future accidental trigger) from overwriting the production Pages site.
+    expect(deployYml).toMatch(/github\.ref\s*==\s*['"]refs\/heads\/main['"]/);
+  });
 });
 
 describe('ci.yml — CI trigger guard', () => {

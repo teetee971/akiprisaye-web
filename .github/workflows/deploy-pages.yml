@@ -64,11 +64,19 @@ jobs:
 
   deploy:
     needs: build
-    # Only run when build actually succeeded AND the event is not a pull_request.
-    # Defense-in-depth: even if a pull_request trigger were ever re-added to this
-    # file, the deploy step would be skipped (not failed) for PR events, preventing
-    # red-cross deployment failures in the GitHub Pages environment history.
-    if: needs.build.result == 'success' && github.event_name != 'pull_request'
+    # Only run when build actually succeeded AND the event is not a pull_request
+    # AND the ref is the main branch.
+    # Defense-in-depth (two independent guards):
+    # 1. github.event_name != 'pull_request' — ensures the deploy step is skipped
+    #    (not failed) if a pull_request trigger is ever re-added, preventing red-cross
+    #    entries in the GitHub Pages deployment history.
+    # 2. github.ref == 'refs/heads/main' — ensures deployment only happens from the
+    #    protected main branch, blocking any non-main ref (including workflow_dispatch
+    #    invocations from feature branches) from accidentally overwriting production.
+    if: >
+      needs.build.result == 'success' &&
+      github.event_name != 'pull_request' &&
+      github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       pages: write
