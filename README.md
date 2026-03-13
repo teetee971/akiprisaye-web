@@ -12,6 +12,14 @@
 
 **Application citoyenne de transparence des prix et des coûts réels dans les territoires ultramarins**
 
+## 📱 Aperçu de l'application
+
+[![Aperçu de l'application A KI PRI SA YÉ](https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fm=webp&fit=crop&w=1200&h=400&q=80)](https://teetee971.github.io/akiprisaye-web/)
+
+> 🔗 **[Accéder à l'application → teetee971.github.io/akiprisaye-web](https://teetee971.github.io/akiprisaye-web/)**
+
+Comparez les prix en temps réel, scannez vos produits et contribuez à la transparence des prix dans les territoires ultramarins.
+
 ## 🌍 Présentation
 
 **A KI PRI SA YÉ** est une application d'information citoyenne dédiée à la compréhension des prix dans les territoires ultramarins.
