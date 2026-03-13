@@ -146,18 +146,18 @@ export default function Comparateur() {
         <input
           id="comp-query"
           name="query"
-          className="flex-1 border rounded px-3 py-2"
+          className="flex-1 min-w-0 border rounded px-3 py-2"
           value={query}
           placeholder="Nom, marque ou code-barres"
           onChange={(e) => setQuery(e.target.value)}
           aria-label="Rechercher un produit par nom, marque ou code-barres"
         />
-        <button type="submit" className="px-4 py-2 rounded bg-blue-600 text-white" disabled={loading}>
+        <button type="submit" className="flex-shrink-0 px-4 py-2 rounded bg-blue-600 text-white whitespace-nowrap" disabled={loading}>
           {loading ? 'Recherche…' : 'Rechercher'}
         </button>
       </form>
 
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
         <label htmlFor="comp-sort" className="text-sm">Tri:&nbsp;
           <select id="comp-sort" name="sort" className="ml-2 border rounded px-2 py-1" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
             <option value="price_asc">Prix croissant</option>
@@ -165,7 +165,7 @@ export default function Comparateur() {
             <option value="merchant">Source</option>
           </select>
         </label>
-        <Link className="text-blue-600" to="/historique">Voir historique</Link>
+        <Link className="text-blue-600 text-sm" to="/historique">Voir historique</Link>
       </div>
 
       {error && <p className="text-red-600">{error}</p>}
@@ -203,10 +203,10 @@ export default function Comparateur() {
 
       <div className="border rounded p-3">
         <p className="font-medium mb-2">Fonctions Pro</p>
-        <div className="flex gap-2">
-          <button className="px-3 py-2 border rounded" onClick={() => !isPro && setPaywall('pro_feature')}>Export CSV/PDF</button>
-          <button className="px-3 py-2 border rounded" onClick={() => !isPro && setPaywall('pro_feature')}>Alertes prix</button>
-          <button className="px-3 py-2 border rounded" onClick={() => !isPro && setPaywall('pro_feature')}>Insights complets</button>
+        <div className="flex flex-wrap gap-2">
+          <button className="px-3 py-2 border rounded text-sm" onClick={() => !isPro && setPaywall('pro_feature')}>Export CSV/PDF</button>
+          <button className="px-3 py-2 border rounded text-sm" onClick={() => !isPro && setPaywall('pro_feature')}>Alertes prix</button>
+          <button className="px-3 py-2 border rounded text-sm" onClick={() => !isPro && setPaywall('pro_feature')}>Insights complets</button>
         </div>
       </div>
 
