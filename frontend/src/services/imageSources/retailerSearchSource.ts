@@ -77,7 +77,7 @@ async function fetchFromProxy(
   retailer: string,
   product: ProductDescriptor,
 ): Promise<ImageCandidate[]> {
-  const query = product.barcode ?? product.normalizedLabel ?? product.label ?? '';
+  const query = product.barcode ?? product.normalizedLabel ?? '';
   if (!query) return [];
 
   const params = new URLSearchParams({

@@ -48,6 +48,7 @@ function SourceBadge({ source }: { source: AggregatedPrice['source'] }) {
     firestore: { label: '📊 Base', className: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300' },
     observation: { label: '👥 Citoyen', className: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300' },
     realtime: { label: '⚡ Live', className: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' },
+    retailer: { label: '🏪 Enseigne', className: 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300' },
     fallback: { label: '💾 Local', className: 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300' },
   };
   const { label, className } = map[source] ?? map.fallback;

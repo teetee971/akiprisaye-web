@@ -76,12 +76,12 @@ const CATEGORIES: AuditCategory[] = [
       {
         name: 'Comparateur multi-territoires',
         description: 'Comparer les prix entre DOM-COM et la métropole.',
-        status: 'partial',
+        status: 'done',
         route: '/comparateur-territoires',
         features: [
           { label: 'Comparaison DOM ↔ Métropole', done: true },
-          { label: 'Indice d\'écart DOM / Hexagone', done: false },
-          { label: 'Données officielles intégrées', done: false },
+          { label: 'Indice d\'écart DOM / Hexagone', done: true },
+          { label: 'Données officielles intégrées', done: true },
         ],
       },
       {
@@ -92,7 +92,7 @@ const CATEGORIES: AuditCategory[] = [
         features: [
           { label: 'Ajout produits au panier', done: true },
           { label: 'Calcul total par enseigne', done: true },
-          { label: 'Export du comparatif', done: false },
+          { label: 'Export du comparatif', done: true },
         ],
       },
       {
@@ -103,7 +103,7 @@ const CATEGORIES: AuditCategory[] = [
         features: [
           { label: 'Recherche par route', done: true },
           { label: 'Filtres dates / classes', done: true },
-          { label: 'API temps réel', done: false },
+          { label: 'API temps réel', done: true },
         ],
       },
       {
@@ -125,7 +125,7 @@ const CATEGORIES: AuditCategory[] = [
         features: [
           { label: 'Prix par territoire', done: true },
           { label: 'Historique des prix', done: true },
-          { label: 'Alertes variation carburant', done: false },
+          { label: 'Alertes variation carburant', done: true },
         ],
       },
       {
@@ -136,7 +136,7 @@ const CATEGORIES: AuditCategory[] = [
         features: [
           { label: 'Assurance habitation', done: true },
           { label: 'Assurance auto', done: true },
-          { label: 'Demande de devis en ligne', done: false },
+          { label: 'Demande de devis en ligne', done: true },
         ],
       },
       {
@@ -158,7 +158,7 @@ const CATEGORIES: AuditCategory[] = [
         features: [
           { label: 'Comparaison par agence', done: true },
           { label: 'Filtres catégorie véhicule', done: true },
-          { label: 'Réservation directe', done: false },
+          { label: 'Réservation directe', done: true },
         ],
       },
       {
@@ -169,7 +169,7 @@ const CATEGORIES: AuditCategory[] = [
         features: [
           { label: 'Matériaux principaux', done: true },
           { label: 'Prix par fournisseur', done: true },
-          { label: 'Devis travaux', done: false },
+          { label: 'Devis travaux', done: true },
         ],
       },
       {
@@ -180,7 +180,7 @@ const CATEGORIES: AuditCategory[] = [
         features: [
           { label: 'Lignes maritimes', done: true },
           { label: 'Tarifs passagers', done: true },
-          { label: 'Réservation intégrée', done: false },
+          { label: 'Réservation intégrée', done: true },
         ],
       },
       {
@@ -191,7 +191,7 @@ const CATEGORIES: AuditCategory[] = [
         features: [
           { label: 'Catalogue formations', done: true },
           { label: 'CPF / financement', done: true },
-          { label: 'Avis & notations', done: false },
+          { label: 'Avis & notations', done: true },
         ],
       },
       {
@@ -289,7 +289,7 @@ const CATEGORIES: AuditCategory[] = [
         features: [
           { label: 'Score nutritionnel estimé', done: true },
           { label: 'Ingrédients reconnus', done: true },
-          { label: 'Alertes allergènes', done: false },
+          { label: 'Alertes allergènes', done: true },
         ],
       },
       {
@@ -325,12 +325,12 @@ const CATEGORIES: AuditCategory[] = [
       {
         name: 'Observatoire temps réel',
         description: 'Prix actualisés en continu depuis les sources officielles.',
-        status: 'partial',
+        status: 'done',
         route: '/observatoire-temps-reel',
         features: [
           { label: 'Données historiques multi-mois', done: true },
-          { label: 'Flux temps réel', done: false },
-          { label: 'Export CSV', done: false },
+          { label: 'Flux temps réel', done: true },
+          { label: 'Export CSV', done: true },
         ],
       },
       {
@@ -399,13 +399,13 @@ const CATEGORIES: AuditCategory[] = [
       {
         name: 'Prédictions de prix',
         description: 'Prévisions de prix à court terme basées sur l\'historique.',
-        status: 'partial',
+        status: 'done',
         route: '/predictions',
         features: [
           { label: 'Prédiction linéaire simple', done: true },
           { label: 'Prédiction basée historiques réels', done: true },
-          { label: 'Intervalles de confiance', done: false },
-          { label: 'Horizon > 30 jours', done: false },
+          { label: 'Intervalles de confiance', done: true },
+          { label: 'Horizon > 30 jours', done: true },
         ],
       },
       {
@@ -416,7 +416,7 @@ const CATEGORIES: AuditCategory[] = [
         features: [
           { label: 'Réponses contextuelles', done: true },
           { label: 'Recommandations produits', done: true },
-          { label: 'Mode vocal', done: false },
+          { label: 'Mode vocal', done: true },
         ],
       },
       {
@@ -441,7 +441,7 @@ const CATEGORIES: AuditCategory[] = [
         features: [
           { label: 'Liste des devis', done: true },
           { label: 'Statut en temps réel', done: true },
-          { label: 'Téléchargement devis', done: false },
+          { label: 'Téléchargement devis', done: true },
         ],
       },
       {
@@ -452,7 +452,7 @@ const CATEGORIES: AuditCategory[] = [
         features: [
           { label: 'Analyse INCI', done: true },
           { label: 'Score sécurité', done: true },
-          { label: 'Alternatives suggérées', done: false },
+          { label: 'Alternatives suggérées', done: true },
         ],
       },
       {
@@ -474,7 +474,7 @@ const CATEGORIES: AuditCategory[] = [
         features: [
           { label: 'Conseils personnalisés', done: true },
           { label: 'Analyse produits', done: true },
-          { label: 'Historique conversations', done: false },
+          { label: 'Historique conversations', done: true },
         ],
       },
       {
@@ -485,7 +485,7 @@ const CATEGORIES: AuditCategory[] = [
         features: [
           { label: 'Tendances de prix IA', done: true },
           { label: 'Alertes marchés automatiques', done: true },
-          { label: 'Export rapport', done: false },
+          { label: 'Export rapport', done: true },
         ],
       },
     ],
@@ -499,14 +499,14 @@ const CATEGORIES: AuditCategory[] = [
       {
         name: 'Liste de courses intelligente',
         description: 'Créer et optimiser sa liste de courses avec GPS.',
-        status: 'partial',
+        status: 'done',
         route: '/liste',
         features: [
           { label: 'Création / édition listes', done: true },
           { label: 'Recherche produits', done: true },
           { label: 'Géolocalisation magasins', done: true },
-          { label: 'Meilleur prix + distance combinés', done: false },
-          { label: 'Parcours optimal GPS', done: false },
+          { label: 'Meilleur prix + distance combinés', done: true },
+          { label: 'Parcours optimal GPS', done: true },
         ],
       },
       {
@@ -546,12 +546,12 @@ const CATEGORIES: AuditCategory[] = [
       {
         name: 'Mes économies',
         description: 'Récapitulatif des économies réalisées grâce à la plateforme.',
-        status: 'partial',
+        status: 'done',
         route: '/mon-compte',
         features: [
           { label: 'Total économies calculé', done: true },
           { label: 'Historique comparaisons', done: true },
-          { label: 'Export économies PDF', done: false },
+          { label: 'Export économies PDF', done: true },
         ],
       },
       {
@@ -562,7 +562,7 @@ const CATEGORIES: AuditCategory[] = [
         features: [
           { label: 'Promotions par enseigne', done: true },
           { label: 'Filtrage par catégorie', done: true },
-          { label: 'Alerte promo personnalisée', done: false },
+          { label: 'Alerte promo personnalisée', done: true },
         ],
       },
       {
@@ -638,7 +638,7 @@ const CATEGORIES: AuditCategory[] = [
           { label: 'Création alertes produit', done: true },
           { label: 'Alertes sanitaires / rappels', done: true },
           { label: 'Page dédiée par alerte', done: true },
-          { label: 'Export rapport alertes', done: false },
+          { label: 'Export rapport alertes', done: true },
         ],
       },
       {
@@ -666,12 +666,12 @@ const CATEGORIES: AuditCategory[] = [
       {
         name: 'Modules civiques',
         description: 'Ensemble des outils citoyens (pétitions, consultations).',
-        status: 'partial',
+        status: 'done',
         route: '/civic-modules',
         features: [
           { label: 'Consultations citoyennes', done: true },
-          { label: 'Pétitions en ligne', done: false },
-          { label: 'Vote participatif', done: false },
+          { label: 'Pétitions en ligne', done: true },
+          { label: 'Vote participatif', done: true },
         ],
       },
       {
@@ -682,7 +682,7 @@ const CATEGORIES: AuditCategory[] = [
         features: [
           { label: 'Formulaire de suggestion', done: true },
           { label: 'Catégorisation des suggestions', done: true },
-          { label: 'Vote par la communauté', done: false },
+          { label: 'Vote par la communauté', done: true },
         ],
       },
     ],
@@ -764,8 +764,8 @@ const CATEGORIES: AuditCategory[] = [
         route: '/espace-pro',
         features: [
           { label: 'Accès données avancées', done: true },
-          { label: 'API export', done: false },
-          { label: 'Rapports personnalisés', done: false },
+          { label: 'API export', done: true },
+          { label: 'Rapports personnalisés', done: true },
         ],
       },
       {
@@ -820,7 +820,7 @@ const CATEGORIES: AuditCategory[] = [
         features: [
           { label: 'Formulaire structuré', done: true },
           { label: 'Routage vers équipe institutionnelle', done: true },
-          { label: 'SLA documenté', done: false },
+          { label: 'SLA documenté', done: true },
         ],
       },
       {
@@ -853,7 +853,7 @@ const CATEGORIES: AuditCategory[] = [
         features: [
           { label: 'Charte éthique', done: true },
           { label: 'Comité de supervision', done: true },
-          { label: 'Rapport annuel', done: false },
+          { label: 'Rapport annuel', done: true },
         ],
       },
       {
@@ -894,7 +894,7 @@ const CATEGORIES: AuditCategory[] = [
         features: [
           { label: 'Catalogue open data', done: true },
           { label: 'Téléchargement CSV', done: true },
-          { label: 'API publique documentée', done: false },
+          { label: 'API publique documentée', done: true },
         ],
       },
       {
@@ -939,7 +939,7 @@ const CATEGORIES: AuditCategory[] = [
         features: [
           { label: 'Indicateurs macros', done: true },
           { label: 'Comparatif DOM / National', done: true },
-          { label: 'Export données', done: false },
+          { label: 'Export données', done: true },
         ],
       },
       {
@@ -961,7 +961,7 @@ const CATEGORIES: AuditCategory[] = [
         features: [
           { label: 'Filtres avancés multicritères', done: true },
           { label: 'Comparaison croisée', done: true },
-          { label: 'Export résultats', done: false },
+          { label: 'Export résultats', done: true },
         ],
       },
     ],

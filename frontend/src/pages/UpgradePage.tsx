@@ -99,6 +99,18 @@ const PLAN_META: Record<PlanId, PlanMeta> = {
       '20 territoires',
     ],
   },
+  CREATOR: {
+    label: 'Créateur',
+    tagline: 'Accès illimité',
+    price: 'Sur invitation',
+    color: 'rose',
+    features: [
+      'Articles illimités',
+      'Actualisations illimitées',
+      'Toutes fonctionnalités ✨',
+      'Tous territoires',
+    ],
+  },
 };
 
 const NEXT_PLAN: Partial<Record<PlanId, PlanId>> = {
