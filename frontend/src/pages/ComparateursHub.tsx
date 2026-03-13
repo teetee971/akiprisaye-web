@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import {
-  DollarSign, Weight, TrendingDown, Map, BarChart3,
+  DollarSign, Weight, TrendingDown, Map as MapIcon, BarChart3,
   Plane, Ship, Package, Droplet, Shield, GraduationCap,
   Car, HardHat, Wifi, ArrowRight, Users, ShoppingCart, Globe, Search,
   TrendingUp, Activity, Sparkles, Zap, Bell, Clock, BookOpen, FileText,
@@ -39,7 +39,7 @@ const GENERAL_COMPARATEURS = [
   { path: '/comparaison-enseignes',  icon: Search,            label: 'Comparaison Enseignes',     color: 'text-blue-400',    bg: 'bg-blue-500/10 border-blue-500/30',     desc: 'Comparer les prix entre supermarchés' },
   { path: '/comparaison-panier',     icon: ShoppingCart,      label: 'Comparaison Panier',        color: 'text-teal-400',    bg: 'bg-teal-500/10 border-teal-500/30',     desc: 'Simuler votre panier dans différentes enseignes' },
   { path: '/comparateur-territoires',icon: Globe,             label: 'Comparateur Territoires',   color: 'text-violet-400',  bg: 'bg-violet-500/10 border-violet-500/30', desc: 'Comparer les prix entre territoires DOM–COM' },
-  { path: '/comparaison-territoires',icon: Map,               label: 'Bilan des Territoires',     color: 'text-rose-400',    bg: 'bg-rose-500/10 border-rose-500/30',     desc: 'Vue d\'ensemble des écarts DOM vs Hexagone' },
+  { path: '/comparaison-territoires',icon: MapIcon,               label: 'Bilan des Territoires',     color: 'text-rose-400',    bg: 'bg-rose-500/10 border-rose-500/30',     desc: 'Vue d\'ensemble des écarts DOM vs Hexagone' },
   { path: '/inflation-categories',   icon: TrendingUp,        label: 'Inflation par Catégorie',   color: 'text-orange-400',  bg: 'bg-orange-500/10 border-orange-500/30', desc: 'Suivi de l\'inflation par famille de produits' },
   { path: '/tableau-inflation',      icon: BarChart3,         label: 'Tableau de l\'Inflation',   color: 'text-yellow-400',  bg: 'bg-yellow-500/10 border-yellow-500/30', desc: 'Tableau de bord inflation multi-territoires' },
   { path: '/couverture-territoires', icon: Activity,          label: 'Couverture Territoires',    color: 'text-cyan-400',    bg: 'bg-cyan-500/10 border-cyan-500/30',     desc: 'Rapport de couverture des données par territoire' },
@@ -158,7 +158,7 @@ const IA_OUTILS = [
   { path: '/analyse-concurrence', icon: BarChart2, label: 'Analyse Concurrence',     color: 'text-cyan-400',    bg: 'bg-cyan-500/10 border-cyan-500/30',       desc: 'Analyse comparative des enseignes concurrentes' },
   { path: '/evaluation-cosmetique',icon: FlaskConical,label: 'Évaluation Cosmétiques',color:'text-fuchsia-400', bg: 'bg-fuchsia-500/10 border-fuchsia-500/30', desc: 'Analyse IA des ingrédients cosmétiques' },
   { path: '/ai-dashboard',        icon: BarChart3, label: 'Tableau de Bord IA',      color: 'text-lime-400',    bg: 'bg-lime-500/10 border-lime-500/30',       desc: 'Tableau de bord IA avec prévisions et recommandations' },
-  { path: '/guide-territoire',    icon: Map,       label: 'Guide Territoire IA',     color: 'text-green-400',   bg: 'bg-green-500/10 border-green-500/30',     desc: 'Conseils intelligents par territoire DOM-COM' },
+  { path: '/guide-territoire',    icon: MapIcon,      label: 'Guide Territoire IA',     color: 'text-green-400',   bg: 'bg-green-500/10 border-green-500/30',     desc: 'Conseils intelligents par territoire DOM-COM' },
   { path: '/analyse-factures',    icon: FileText,  label: 'Analyse Factures IA',     color: 'text-orange-400',  bg: 'bg-orange-500/10 border-orange-500/30',   desc: 'Analyser vos factures et tickets de caisse par IA' },
   { path: '/detection-fraude',    icon: Shield,    label: 'Détection Fraude',        color: 'text-rose-400',    bg: 'bg-rose-500/10 border-rose-500/30',       desc: 'Détecter les hausses suspectes et anomalies tarifaires' },
   { path: '/portail-developpeurs',icon: Code2,     label: 'Portail Développeurs',    color: 'text-slate-400',   bg: 'bg-slate-500/10 border-slate-500/30',     desc: 'API publique pour intégrations tierces' },
@@ -299,7 +299,7 @@ export default function ComparateursHub() {
     { id: 'prix',         label: 'Prix standards',   shortLabel: 'Prix',        icon: DollarSign,  description: 'Comparer les prix entre enseignes sur votre territoire' },
     { id: 'kilo',         label: 'Prix au kilo',      shortLabel: 'Au kilo',     icon: Weight,      description: 'Comparer les prix ramenés au kilo ou au litre — données observatoire' },
     { id: 'shrinkflation',label: 'Shrinkflation',     shortLabel: 'Shrink.',     icon: TrendingDown,description: 'Signalements citoyens de réductions de contenant sans baisse de prix' },
-    { id: 'metropole',    label: 'vs Métropole',      shortLabel: 'Métropole',   icon: Map,         description: 'Écart de prix DOM–COM vs Hexagone — données observatoire mars 2026' },
+    { id: 'metropole',    label: 'vs Métropole',      shortLabel: 'Métropole',   icon: MapIcon,        description: 'Écart de prix DOM–COM vs Hexagone — données observatoire mars 2026' },
     { id: 'historique',   label: 'Historique',        shortLabel: 'Historique',  icon: BarChart3,   description: 'Évolution des prix dans le temps' },
   ] as const;
 
