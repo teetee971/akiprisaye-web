@@ -64,8 +64,11 @@ jobs:
 
   deploy:
     needs: build
-    # Only run when build actually succeeded
-    if: needs.build.result == 'success'
+    # Only run when build actually succeeded AND the event is not a pull_request.
+    # Defense-in-depth: even if a pull_request trigger were ever re-added to this
+    # file, the deploy step would be skipped (not failed) for PR events, preventing
+    # red-cross deployment failures in the GitHub Pages environment history.
+    if: needs.build.result == 'success' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       pages: write

@@ -8,11 +8,24 @@
  *    Using `pull_request_target` is critical: it runs in the context of the base
  *    branch (main) and does NOT require GitHub's "Approve and run" bot approval,
  *    so auto-merge is enabled immediately for Copilot PRs without human intervention.
+ * 3. Removing the `github.event_name != 'pull_request'` guard on the deploy job.
+ *    This defense-in-depth condition ensures that even if a pull_request trigger
+ *    were ever re-introduced, the deploy step would be SKIPPED (not FAILED),
+ *    preventing red-cross entries in the GitHub Pages deployment history.
  *
  * Background (deploy race condition):
  *   A `pull_request: types: [closed]` trigger on deploy-pages.yml caused the
  *   PR-closed run to cancel the push:main run (same concurrency group "pages").
  *   Fixed by PR #1283.
+ *
+ * Background (red-cross deployment failures):
+ *   PR branches that had an older copy of deploy-pages.yml (with `pull_request`
+ *   trigger) would trigger deployments that fail because GitHub Pages only accepts
+ *   deployments from the protected `github-pages` environment (restricted to main).
+ *   Each failed attempt creates a red-cross entry in the GitHub Pages deployment
+ *   history. The `github.event_name != 'pull_request'` condition on the deploy job
+ *   is a second line of defence: even if the trigger guard fails, the deploy step
+ *   is skipped rather than attempted and failed.
  *
  * Background (action_required on bot PRs):
  *   Workflows using `pull_request` trigger require GitHub's "Approve and run" for
@@ -64,6 +77,15 @@ describe('deploy-pages.yml — race condition guard', () => {
 
   it('must keep cancel-in-progress: true to drop stale push runs', () => {
     expect(deployYml).toMatch(/cancel-in-progress:\s*true/);
+  });
+
+  it('deploy job must guard against pull_request events (defense-in-depth)', () => {
+    // Even if a pull_request trigger is ever re-added to this workflow, the deploy
+    // job itself must refuse to run for PR events. This prevents red-cross entries
+    // in the GitHub Pages deployment history from PR-branch deployment attempts.
+    // The condition "github.event_name != 'pull_request'" on the deploy job's `if`
+    // clause ensures the deploy step is SKIPPED rather than attempted and FAILED.
+    expect(deployYml).toMatch(/github\.event_name\s*!=\s*['"]pull_request['"]/);
   });
 });
 
