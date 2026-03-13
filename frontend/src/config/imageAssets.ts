@@ -303,6 +303,8 @@ export const PAGE_HERO_IMAGES = {
   mesListes: 'https://images.unsplash.com/photo-1534723452862-4c874018d66d?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Audience en direct — podium territoires connectés */
   audience: 'https://images.unsplash.com/photo-1511988617509-a57c8a288659?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  /** Statut plateforme — horloges territoires & déploiement */
+  statut: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Module audit */
   moduleAudit: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Périmètre */

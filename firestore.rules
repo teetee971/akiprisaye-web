@@ -95,7 +95,9 @@ service cloud.firestore {
       allow read: if true;
       allow create: if request.resource.data.keys().hasOnly(['totalVisits', 'lastVisit'])
                    && request.resource.data.totalVisits == 1;
-      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['totalVisits', 'lastVisit']);
+      // Only allow incrementing by 1 — prevents tampering with the counter
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['totalVisits', 'lastVisit'])
+                   && request.resource.data.totalVisits == resource.data.totalVisits + 1;
     }
 
     // ── Page / interest stats ───────────────────────────────────────────────
@@ -105,7 +107,9 @@ service cloud.firestore {
       allow read: if true;
       allow create: if request.resource.data.keys().hasOnly(['totalViews', 'name', 'emoji', 'lastView'])
                    && request.resource.data.totalViews == 1;
-      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['totalViews', 'name', 'emoji', 'lastView']);
+      // Only allow incrementing by 1 — prevents tampering with the counter
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['totalViews', 'name', 'emoji', 'lastView'])
+                   && request.resource.data.totalViews == resource.data.totalViews + 1;
     }
   }
 }

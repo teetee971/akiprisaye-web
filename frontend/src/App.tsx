@@ -249,6 +249,7 @@ const DossierInvestisseurs = lazyPage(() => import('./pages/DossierInvestisseurs
 const ChecklistProduction = lazyPage(() => import('./pages/ChecklistProduction'));
 const ModuleAuditPage = lazyPage(() => import('./pages/ModuleAuditPage'));
 const AudiencePage = lazyPage(() => import('./pages/AudiencePage'));
+const StatutPage   = lazyPage(() => import('./pages/StatutPage'));
 const Perimetre = lazyPage(() => import('./pages/Perimetre'));
 const Predictions = lazyPage(() => import('./pages/Predictions'));
 const IaConseiller = lazyPage(() => import('./pages/IaConseiller'));
@@ -659,6 +660,9 @@ export default function App() {
 
                           {/* Audience temps réel — podium territoires */}
                           <Route path="audience" element={<AudiencePage />} />
+
+                          {/* Statut plateforme — horloges + déploiement */}
+                          <Route path="statut" element={<StatutPage />} />
 
                           {/* Pages territoire — hub par territoire et scanner territorial */}
                           <Route path="territoire/:territory" element={<TerritoryHub />} />
