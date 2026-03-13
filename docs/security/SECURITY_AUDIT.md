@@ -1,7 +1,7 @@
 # Security Audit – akiprisaye-web
 
-**Last Updated**: 2026-02-07  
-**Context**: Vite 7.x upgrade + npm security audit  
+**Last Updated**: 2026-03-13  
+**Context**: Vite 7.x upgrade + npm security audit (quarterly review)  
 **Location**: `frontend/`
 
 ## Summary
@@ -15,6 +15,38 @@ Current status: **0 vulnerabilities** ✅
 - Total: 0
 
 ## Vulnerability Resolution
+
+### flatted (GHSA-25h7-pfq9-p65f) - ✅ FIXED
+
+**Previous Status**: High — unbounded recursion DoS in `parse()` revive phase  
+**Package**: `flatted` (transitive dev dependency via `eslint` → `file-entry-cache` → `flat-cache`)  
+**Affected Versions**: flatted < 3.4.0  
+**Previous Version**: flatted 3.3.4  
+**Current Version**: flatted 3.4.1
+
+#### Resolution
+- **Date Fixed**: 2026-03-13
+- **Action Taken**: `npm audit fix` — upgraded flatted 3.3.4 → 3.4.1
+- **Impact**: Dev-only dependency; no effect on production bundle
+- **Build Status**: ✅ Success
+
+---
+
+### undici (multiple CVEs) - ✅ FIXED
+
+**Previous Status**: High — WebSocket parser overflow, HTTP smuggling, memory DoS  
+**Package**: `undici` (transitive dev dependency via `jsdom`)  
+**Affected Versions**: undici 7.0.0 – 7.23.0  
+**Previous Version**: undici 7.22.0  
+**Current Version**: undici 7.24.1
+
+#### Resolution
+- **Date Fixed**: 2026-03-13
+- **Action Taken**: `npm audit fix` — upgraded undici 7.22.0 → 7.24.1
+- **Impact**: Dev-only dependency (`jsdom` used in test environment); no effect on production bundle
+- **Build Status**: ✅ Success
+
+---
 
 ### esbuild ≤0.24.2 (GHSA-67mh-4wv8-2f99) - ✅ FIXED
 
@@ -81,6 +113,12 @@ npm run build          # Production build
 
 ## Upgrade Summary
 
+### Completed (2026-03-13)
+- ✅ flatted upgraded from 3.3.4 to 3.4.1 (fixes GHSA-25h7-pfq9-p65f)
+- ✅ undici upgraded from 7.22.0 to 7.24.1 (fixes multiple WebSocket/HTTP CVEs)
+- ✅ `npm audit` now reports **0 vulnerabilities**
+- ✅ All builds and tests pass after upgrade
+
 ### Completed (2026-02-07)
 - ✅ Upgraded vite from 5.4.21 to 7.3.1
 - ✅ esbuild upgraded to 0.27.3 (fixes GHSA-67mh-4wv8-2f99)
@@ -96,6 +134,7 @@ npm run build          # Production build
 | 2026-01-27 | 2 moderate (esbuild) | Initial documentation | Documented |
 | 2026-02-06 | 2 moderate (esbuild) | Bundle optimization + audit update | Accepted |
 | 2026-02-07 | 0 | Upgraded vite to 7.3.1, fixed all vulnerabilities | ✅ **RESOLVED** |
+| 2026-03-13 | 2 high (flatted, undici) | `npm audit fix`: flatted 3.3.4→3.4.1, undici 7.22.0→7.24.1 | ✅ **RESOLVED** |
 
 ## Next Review
 
@@ -124,5 +163,5 @@ npm list vite esbuild
 
 **Status**: ✅ **ALL VULNERABILITIES RESOLVED**  
 **Security Status**: 0 vulnerabilities  
-**Last Updated**: 2026-02-07  
+**Last Updated**: 2026-03-13  
 **Next Review**: Q3 2026

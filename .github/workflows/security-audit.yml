@@ -69,7 +69,9 @@ jobs:
           echo "High vulnerabilities detected: $HIGH_COUNT"
 
           # 🔐 Baseline documented in SECURITY_AUDIT.md
-          BASELINE=2
+          # Updated 2026-03-13: flatted 3.3.4→3.4.1 and undici 7.22.0→7.24.1
+          # fixed via `npm audit fix`. New baseline is 0.
+          BASELINE=0
 
           if [ "$HIGH_COUNT" -gt "$BASELINE" ]; then
             echo "❌ New HIGH vulnerabilities detected (baseline: $BASELINE)"
