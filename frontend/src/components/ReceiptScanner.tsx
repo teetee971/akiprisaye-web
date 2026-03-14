@@ -20,7 +20,7 @@
 
 import React, { useState, useRef } from 'react';
 import { Camera, Upload, X, AlertCircle, CheckCircle, Info, TrendingUp, TrendingDown, Minus, Store, MapPin, Plus, Images } from 'lucide-react';
-import { scanReceipt, type ReceiptAnalysisResult, type ReceiptLine } from '../services/receiptScanService';
+import { scanReceipt, type ReceiptAnalysisResult } from '../services/receiptScanService';
 
 /**
  * Constants
@@ -418,6 +418,14 @@ export default function ReceiptScanner({ onAnalysisComplete, onClose }: ReceiptS
             aria-label="Import images depuis galerie"
           />
 
+          {/* Hint shown when buttons are disabled due to missing consent */}
+          {!userConsent && (
+            <p className="text-xs text-yellow-400 text-center flex items-center justify-center gap-1.5 mt-1">
+              <Info className="w-3.5 h-3.5 flex-shrink-0" />
+              Cochez la case ci-dessus pour activer le scan
+            </p>
+          )}
+
         </div>
       )}
 
@@ -796,6 +804,100 @@ export default function ReceiptScanner({ onAnalysisComplete, onClose }: ReceiptS
               Comparer les prix
             </button>
           </div>
+        </div>
+      )}
+
+      {/* Step 4: Comparison */}
+      {step === 'comparison' && analysisResult && (
+        <div className="space-y-6">
+
+          {/* Summary header */}
+          <div className="bg-slate-800/50 rounded-2xl p-6 border border-blue-500/30">
+            <div className="flex items-center gap-3 mb-4">
+              <TrendingUp className="w-7 h-7 text-blue-400" />
+              <h3 className="text-xl font-semibold text-white">Comparaison des prix</h3>
+            </div>
+            <p className="text-sm text-gray-400 mb-5">
+              Indicateurs basés sur les observations citoyennes de votre territoire.
+              <span className="block mt-1 text-xs text-gray-500">Données non exhaustives • À titre informatif uniquement</span>
+            </p>
+
+            {/* Product lines with trend indicators */}
+            <div className="space-y-2">
+              {analysisResult.productLines.map((line, idx) => {
+                // Heuristic: needsValidation = low confidence → potentially above average price
+                const trend: 'up' | 'down' | 'equal' =
+                  line.needsValidation ? 'up' :
+                  line.confidence >= 80 ? 'down' :
+                  'equal';
+                return (
+                  <div
+                    key={idx}
+                    className="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg"
+                  >
+                    <div className="flex-1 min-w-0 pr-3">
+                      {/* SECURITY: OCR text rendered as plain text to prevent XSS */}
+                      <p className="text-white text-sm font-medium truncate">{line.normalizedLabel}</p>
+                      {line.quantity && line.quantity > 1 && (
+                        <p className="text-xs text-gray-400">Qté : {line.quantity}</p>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <span className="text-white font-semibold text-sm">
+                        {line.price != null ? `${line.price.toFixed(2)} €` : '— €'}
+                      </span>
+                      {trend === 'up' && <TrendingUp className="w-4 h-4 text-orange-400" title="Potentiellement au-dessus de la moyenne" />}
+                      {trend === 'down' && <TrendingDown className="w-4 h-4 text-green-400" title="Potentiellement en-dessous de la moyenne" />}
+                      {trend === 'equal' && <Minus className="w-4 h-4 text-gray-400" title="Proche de la moyenne" />}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Total */}
+            <div className="flex items-center justify-between mt-5 pt-4 border-t border-slate-700">
+              <span className="text-gray-300 font-medium">Total analysé</span>
+              <span className="text-xl font-bold text-white">{analysisResult.totalAmount.toFixed(2)} €</span>
+            </div>
+          </div>
+
+          {/* Legend */}
+          <div className="bg-slate-800/50 rounded-2xl p-4">
+            <p className="text-xs text-gray-400 mb-2 font-semibold uppercase tracking-wider">Légende</p>
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-2 text-xs text-gray-300">
+                <TrendingUp className="w-4 h-4 text-orange-400 flex-shrink-0" />
+                <span>Potentiellement au-dessus de la moyenne observée</span>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-gray-300">
+                <TrendingDown className="w-4 h-4 text-green-400 flex-shrink-0" />
+                <span>Potentiellement en-dessous de la moyenne observée</span>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-gray-300">
+                <Minus className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                <span>Proche de la moyenne observée</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Transparency disclaimer */}
+          <div className="bg-slate-800/50 rounded-2xl p-4 border border-blue-500/30">
+            <div className="flex items-start gap-2">
+              <Info className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" />
+              <p className="text-xs text-gray-400">
+                <strong>Comparaison indicative</strong> — Aucun conseil d'achat. Outil d'information citoyenne uniquement. Les indicateurs sont calculés à partir d'observations publiques et peuvent ne pas refléter les prix actuels de votre magasin.
+              </p>
+            </div>
+          </div>
+
+          {/* Action */}
+          <button
+            onClick={handleReset}
+            className="w-full px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-xl font-medium transition-colors"
+          >
+            Scanner un autre ticket
+          </button>
         </div>
       )}
 
