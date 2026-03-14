@@ -94,6 +94,26 @@ describe('deploy-pages.yml — race condition guard', () => {
     // or any future accidental trigger) from overwriting the production Pages site.
     expect(deployYml).toMatch(/github\.ref\s*==\s*['"]refs\/heads\/main['"]/);
   });
+
+  it('build job must guard against non-main refs (third line of defence — no orphaned deployments)', () => {
+    // When deploy-pages.yml is triggered on a non-main branch (workflow_dispatch
+    // from a feature branch, or an old PR-branch copy of the file with a
+    // pull_request trigger), the build job must be skipped rather than running.
+    //
+    // Without this guard, `actions/configure-pages` + `actions/upload-pages-artifact`
+    // create an orphaned Pages deployment record that can never be completed (the
+    // deploy job's own ref-guard refuses to run), producing a permanent red-cross
+    // entry in the GitHub Pages deployment history.
+    //
+    // This is the *third* line of defence (after the on.push.branches filter and
+    // the deploy-job if condition) that prevents such spurious failures.
+
+    // Extract the build job block (everything from "  build:" to "  deploy:").
+    const buildJobMatch = deployYml.match(/^\s{2}build:\n([\s\S]*?)(?=\n\s{2}\w)/m);
+    expect(buildJobMatch).not.toBeNull();
+    const buildJobBlock = buildJobMatch![0];
+    expect(buildJobBlock).toMatch(/if:\s*github\.ref\s*==\s*['"]refs\/heads\/main['"]/);
+  });
 });
 
 describe('ci.yml — CI trigger guard', () => {

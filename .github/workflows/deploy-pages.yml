@@ -17,6 +17,14 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Defense-in-depth: if this workflow is ever triggered on a non-main branch
+    # (e.g. via workflow_dispatch from a feature branch, or via an old copy of
+    # this file that still had a pull_request trigger), the build job is skipped
+    # rather than uploading a Pages artifact.  Without this guard, configure-pages
+    # + upload-pages-artifact create an orphaned deployment record that can never
+    # be deployed (because the deploy job's ref guard refuses to run), leaving a
+    # permanent red-cross entry in the GitHub Pages deployment history.
+    if: github.ref == 'refs/heads/main'
     defaults:
       run:
         working-directory: frontend
