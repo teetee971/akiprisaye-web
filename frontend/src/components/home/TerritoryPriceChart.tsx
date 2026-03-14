@@ -143,7 +143,7 @@ export default function TerritoryPriceChart() {
             />
             <Bar dataKey="avg" radius={[6, 6, 0, 0]} maxBarSize={56}>
               {product.data.map((entry, index) => (
-                <Cell key={index} fill={entry.color} />
+                <Cell key={entry.territory} fill={entry.color} />
               ))}
             </Bar>
           </BarChart>

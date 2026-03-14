@@ -32,9 +32,9 @@ export default function ProductSuggestionsDisplay({
       </div>
 
       <div className="space-y-2">
-        {suggestions.map((suggestion, index) => (
+        {suggestions.map((suggestion) => (
           <div
-            key={index}
+            key={suggestion.product}
             className="flex items-center justify-between p-2 bg-slate-800/30 rounded hover:bg-slate-800/50 transition-colors"
           >
             <div className="flex-1">

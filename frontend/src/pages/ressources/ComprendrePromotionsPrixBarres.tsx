@@ -66,8 +66,8 @@ const ComprendrePromotionsPrixBarres: React.FC = () => {
 
           <p className="font-semibold text-gray-100 mb-2">Caractéristiques :</p>
           <div className="space-y-2 mb-4">
-            {promotionDefinition.characteristics.map((char, index) => (
-              <div key={index} className="flex items-start">
+            {promotionDefinition.characteristics.map((char) => (
+              <div key={char} className="flex items-start">
                 <span className="text-blue-400 mr-2">•</span>
                 <span className="text-gray-300">{char}</span>
               </div>
@@ -160,8 +160,8 @@ const ComprendrePromotionsPrixBarres: React.FC = () => {
           </h2>
           
           <div className="space-y-3">
-            {observatoryCapabilities.map((capability, index) => (
-              <div key={index} className="flex items-start bg-indigo-950/30 p-3 rounded">
+            {observatoryCapabilities.map((capability) => (
+              <div key={capability} className="flex items-start bg-indigo-950/30 p-3 rounded">
                 <span className="text-indigo-400 mr-2 text-xl" role="img" aria-label="Oui">✓</span>
                 <span className="text-gray-300">{capability}</span>
               </div>
@@ -181,8 +181,8 @@ const ComprendrePromotionsPrixBarres: React.FC = () => {
           </h2>
           
           <div className="space-y-3">
-            {observatoryLimitations.map((limitation, index) => (
-              <div key={index} className="flex items-start bg-orange-950/30 p-3 rounded">
+            {observatoryLimitations.map((limitation) => (
+              <div key={limitation} className="flex items-start bg-orange-950/30 p-3 rounded">
                 <span className="text-orange-400 mr-2 text-xl" role="img" aria-label="Non">✗</span>
                 <span className="text-gray-300">{limitation}</span>
               </div>
@@ -292,8 +292,8 @@ const ComprendrePromotionsPrixBarres: React.FC = () => {
           </p>
 
           <div className="space-y-3">
-            {promotionDifferences.map((diff, index) => (
-              <div key={index} className="border-l-4 border-cyan-500 pl-4 py-2 bg-cyan-950/30 rounded">
+            {promotionDifferences.map((diff) => (
+              <div key={diff.factor} className="border-l-4 border-cyan-500 pl-4 py-2 bg-cyan-950/30 rounded">
                 <p className="font-semibold text-gray-100">{diff.factor}</p>
                 <p className="text-sm text-gray-300">{diff.explanation}</p>
               </div>
@@ -326,8 +326,8 @@ const ComprendrePromotionsPrixBarres: React.FC = () => {
             <div>
               <p className="font-semibold text-green-300 mb-2">Ce qu'il fait :</p>
               <div className="space-y-2">
-                {observatoryRole.what_it_does.map((item, index) => (
-                  <div key={index} className="flex items-start">
+                {observatoryRole.what_it_does.map((item) => (
+                  <div key={item} className="flex items-start">
                     <span className="text-green-400 mr-2" role="img" aria-label="Fait">✓</span>
                     <span className="text-sm text-gray-300">{item}</span>
                   </div>
@@ -338,8 +338,8 @@ const ComprendrePromotionsPrixBarres: React.FC = () => {
             <div>
               <p className="font-semibold text-red-300 mb-2">Ce qu'il ne fait pas :</p>
               <div className="space-y-2">
-                {observatoryRole.what_it_does_not.map((item, index) => (
-                  <div key={index} className="flex items-start">
+                {observatoryRole.what_it_does_not.map((item) => (
+                  <div key={item} className="flex items-start">
                     <span className="text-red-400 mr-2" role="img" aria-label="Non fait">✗</span>
                     <span className="text-sm text-gray-300">{item}</span>
                   </div>

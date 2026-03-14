@@ -264,7 +264,7 @@ export const DataUploadZone: React.FC<DataUploadZoneProps> = ({
           </p>
           {selectedFiles.map((file, index) => (
             <div
-              key={index}
+              key={file.name}
               className="flex items-center justify-between bg-slate-800/50 rounded-lg px-4 py-3 border border-slate-700"
             >
               <div className="flex items-center gap-3 flex-1 min-w-0">

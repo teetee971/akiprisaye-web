@@ -216,8 +216,7 @@ export function saveProProfile(profile: ProProfile): void {
 }
 
 export function loadProProfile(): ProProfile | null {
-  const raw = safeLocalStorage.getItem(STORAGE_PROFILE);
-  return raw ? (JSON.parse(raw) as ProProfile) : null;
+  return safeLocalStorage.getJSON<ProProfile | null>(STORAGE_PROFILE, null);
 }
 
 export function clearProProfile(): void {
@@ -258,8 +257,7 @@ export function createProProfileFromForm(form: ProRegistrationForm): ProProfile 
 // ─── Gestion des annonces ────────────────────────────────────────────────────
 
 export function loadProAnnonces(proId: string): ProPriceAnnonce[] {
-  const raw = safeLocalStorage.getItem(`${STORAGE_ANNONCES}_${proId}`);
-  return raw ? (JSON.parse(raw) as ProPriceAnnonce[]) : [];
+  return safeLocalStorage.getJSON<ProPriceAnnonce[]>(`${STORAGE_ANNONCES}_${proId}`, []);
 }
 
 export function saveProAnnonces(proId: string, annonces: ProPriceAnnonce[]): void {

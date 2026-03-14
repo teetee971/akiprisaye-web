@@ -36,7 +36,7 @@ export function OptimalRoutePreview() {
         <div className="space-y-3">
           {routeStops.map((stop, index) => (
             <div 
-              key={index}
+              key={stop.store}
               className="flex items-center gap-3 p-3 bg-slate-800/50 rounded-lg hover:bg-slate-800/70 transition-colors"
             >
               <div className="flex-shrink-0 w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center font-bold text-sm">

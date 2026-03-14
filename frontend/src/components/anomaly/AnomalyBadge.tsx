@@ -233,7 +233,7 @@ export function AnomalyList({ anomalies, maxVisible = 2 }: AnomalyListProps) {
       }}
     >
       {visibleAnomalies.map((anomaly, index) => (
-        <AnomalyBadge key={index} anomaly={anomaly} />
+        <AnomalyBadge key={`${anomaly.type}-${anomaly.severity}-${anomaly.description.slice(0, 30)}`} anomaly={anomaly} />
       ))}
 
       {hasMore && !showAll && (

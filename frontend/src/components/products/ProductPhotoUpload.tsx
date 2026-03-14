@@ -118,15 +118,17 @@ export default function ProductPhotoUpload({
       // For now, just simulate success
       const mockPhotoId = `photo-${Date.now()}`;
       
-      console.log('Photo uploaded successfully:', {
-        photoId: mockPhotoId,
-        productEan,
-        productName,
-        fileName: selectedFile.name,
-        fileSize: selectedFile.size,
-        consentGiven: consent,
-        uploadedAt: new Date().toISOString(),
-      });
+      if (import.meta.env.DEV) {
+        console.log('Photo uploaded successfully:', {
+          photoId: mockPhotoId,
+          productEan,
+          productName,
+          fileName: selectedFile.name,
+          fileSize: selectedFile.size,
+          consentGiven: consent,
+          uploadedAt: new Date().toISOString(),
+        });
+      }
       
       setSuccess(true);
       

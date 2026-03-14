@@ -119,8 +119,8 @@ export function StoreHoursDisplay({ hours, className = '' }: StoreHoursDisplayPr
             <div className="mt-3 pt-3 border-t text-xs text-gray-500">
               <p className="font-semibold mb-1">Horaires spéciaux :</p>
               <ul className="space-y-1">
-                {hours.specialHours.slice(0, 3).map((special, index) => (
-                  <li key={index}>
+                {hours.specialHours.slice(0, 3).map((special) => (
+                  <li key={special.date}>
                     {new Date(special.date).toLocaleDateString('fr-FR', { 
                       day: 'numeric',
                       month: 'long',

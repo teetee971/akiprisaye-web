@@ -1,7 +1,7 @@
 # Security Audit – akiprisaye-web
 
-**Last Updated**: 2026-03-13  
-**Context**: Vite 7.x upgrade + npm security audit (quarterly review)  
+**Last Updated**: 2026-03-14  
+**Context**: Audit complet — sécurité, typage, React, revue de code  
 **Location**: `frontend/`
 
 ## Summary
@@ -13,6 +13,63 @@ Current status: **0 vulnerabilities** ✅
 - Moderate: 0
 - Low: 0
 - Total: 0
+
+## Code Audit Findings (2026-03-14)
+
+### JSON.parse non protégé — ✅ FIXED
+
+**Fichiers corrigés** : `frontend/src/services/proAccountService.ts`
+
+Deux fonctions (`loadProProfile`, `loadProAnnonces`) appelaient `JSON.parse()` directement sur des données lues en localStorage, sans bloc try/catch.
+Un JSON corrompu (données altérées, quota plein, migration entre versions) aurait provoqué une exception non interceptée.
+
+**Correction** : Remplacement par `safeLocalStorage.getJSON<T>(key, fallback)`, le wrapper interne qui gère le try/catch et la validation de type.
+
+```ts
+// Avant (dangereux)
+return raw ? (JSON.parse(raw) as ProProfile) : null;
+
+// Après (sûr)
+return safeLocalStorage.getJSON<ProProfile | null>(STORAGE_PROFILE, null);
+```
+
+---
+
+### console.log en production — ✅ FIXED
+
+**Fichiers corrigés** :
+- `frontend/src/components/products/ProductPhotoUpload.tsx`
+- `frontend/src/components/products/AddMissingProduct.tsx`
+
+Des appels `console.log()` non gardés loguaient des données utilisateur (nom de fichier, consentement, données produit) en production.
+
+**Correction** : Encapsulation dans `if (import.meta.env.DEV)` — Vite supprime ces branches dans le bundle de production (tree-shaking).
+
+---
+
+### Clés React `key={index}` — ✅ FIXED
+
+**Fichiers corrigés** : 13 composants
+
+L'utilisation de l'index de tableau comme clé React (`key={index}`) peut provoquer des problèmes de réconciliation (rendu incorrect, perte d'état) lorsque les listes sont filtrées, triées ou modifiées.
+
+| Composant | Clé stable utilisée |
+|-----------|---------------------|
+| `TerritoryPriceChart.tsx` | `entry.territory` |
+| `DailyShockCard.tsx` | `` `${shock.productName}-${shock.territory}` `` |
+| `AnomalyBadge.tsx` | `` `${anomaly.type}-${anomaly.severity}-...` `` |
+| `OptimalRoutePreview.tsx` | `stop.store` |
+| `StatsOverview.tsx` | `stat.label` |
+| `SyncStats.tsx` | `stat.label` |
+| `AntiCrisisReadingPanel.tsx` | `category` (string) |
+| `StoreHoursDisplay.tsx` | `special.date` |
+| `ProductSuggestionsDisplay.tsx` | `suggestion.product` |
+| `LocationButton.tsx` | `suggestion` (string) |
+| `OCRResultView.tsx` | `keyword` (string) |
+| `DataUploadZone.tsx` | `file.name` |
+| `ComprendrePromotionsPrixBarres.tsx` | valeur de chaque item (string) |
+
+---
 
 ## Vulnerability Resolution
 
@@ -102,6 +159,9 @@ npm run build
 2. ✅ **DO**: Review security advisories regularly
 3. ✅ **DO**: Test builds after dependency updates
 4. ✅ **DO**: Run development servers only on localhost for additional security
+5. ✅ **DO**: Use `safeLocalStorage.getJSON<T>(key, fallback)` instead of bare `JSON.parse(localStorage.getItem(key))`
+6. ✅ **DO**: Guard `console.log` with `if (import.meta.env.DEV)` in production components
+7. ✅ **DO**: Use stable keys (id, name, or composite) instead of `key={index}` in React lists
 
 ### Build Commands
 ```bash
@@ -135,6 +195,7 @@ npm run build          # Production build
 | 2026-02-06 | 2 moderate (esbuild) | Bundle optimization + audit update | Accepted |
 | 2026-02-07 | 0 | Upgraded vite to 7.3.1, fixed all vulnerabilities | ✅ **RESOLVED** |
 | 2026-03-13 | 2 high (flatted, undici) | `npm audit fix`: flatted 3.3.4→3.4.1, undici 7.22.0→7.24.1 | ✅ **RESOLVED** |
+| 2026-03-14 | Code audit | JSON.parse non protégé (2 fonctions), console.log prod (2 fichiers), key={index} (13 fichiers) | ✅ **RÉSOLU** |
 
 ## Next Review
 

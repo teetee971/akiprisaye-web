@@ -152,8 +152,8 @@ export default function LocationButton({
               {/* Suggestions */}
               {status.suggestions && status.suggestions.length > 0 && (
                 <ul className="mt-2 space-y-1 text-xs opacity-90">
-                  {status.suggestions.map((suggestion, index) => (
-                    <li key={index} className="flex items-start gap-1">
+                  {status.suggestions.map((suggestion) => (
+                    <li key={suggestion} className="flex items-start gap-1">
                       <span className="mt-0.5">•</span>
                       <span>{suggestion}</span>
                     </li>

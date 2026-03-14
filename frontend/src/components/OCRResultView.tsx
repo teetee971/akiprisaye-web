@@ -185,9 +185,9 @@ export default function OCRResultView({ result, onClose, onRetry }: OCRResultVie
                   </h3>
                   <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-4">
                     <div className="flex flex-wrap gap-2">
-                      {result.sections.dangerPictograms.map((keyword, index) => (
+                      {result.sections.dangerPictograms.map((keyword) => (
                         <span
-                          key={index}
+                          key={keyword}
                           className="px-3 py-1 bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-200 rounded-full text-sm font-semibold capitalize"
                         >
                           {keyword}

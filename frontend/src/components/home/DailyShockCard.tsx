@@ -67,7 +67,7 @@ export function DailyShockCard({ territory = 'GP', className = '' }: DailyShockC
         {/* Liste des hausses */}
         <div className="space-y-3">
           {data.shocks.map((shock, index) => (
-            <ShockItem key={index} shock={shock} rank={index + 1} />
+            <ShockItem key={`${shock.productName}-${shock.territory}`} shock={shock} rank={index + 1} />
           ))}
         </div>
 

@@ -99,7 +99,9 @@ export default function AddMissingProduct({
         submittedAt: new Date().toISOString(),
       };
       
-      console.log('Product contribution submitted:', productData);
+      if (import.meta.env.DEV) {
+        console.log('Product contribution submitted:', productData);
+      }
       
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1500));

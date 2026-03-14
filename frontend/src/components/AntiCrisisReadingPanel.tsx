@@ -151,8 +151,8 @@ const AntiCrisisReadingPanel: React.FC<AntiCrisisReadingPanelProps> = ({
                 Catégories à stabilité observée
               </p>
               <ul className="space-y-1">
-                {reading.stableCategories.map((category, index) => (
-                  <li key={index} className="flex items-center gap-2 text-sm text-gray-700">
+                {reading.stableCategories.map((category) => (
+                  <li key={category} className="flex items-center gap-2 text-sm text-gray-700">
                     <span className="text-green-500">●</span>
                     <span>{category}</span>
                   </li>
