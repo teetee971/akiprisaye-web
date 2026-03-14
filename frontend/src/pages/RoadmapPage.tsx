@@ -798,7 +798,7 @@ export default function RoadmapPage() {
           </div>
         </div>
 
-        <div className="max-w-5xl mx-auto px-4 py-6 pb-20">
+        <div className="max-w-5xl mx-auto px-4 py-6 pb-12">
 
           {/* ── ROADMAP ────────────────────────────────────────────────── */}
           {activeTab === 'roadmap' && (

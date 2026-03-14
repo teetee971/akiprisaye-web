@@ -211,7 +211,7 @@ export default function DossierInvestisseurs() {
         </nav>
 
         {/* Main content */}
-        <main className="flex-1 min-w-0 space-y-14 pb-20">
+        <main className="flex-1 min-w-0 space-y-8 pb-12">
 
           {/* ── 1. EXECUTIVE SUMMARY ──────────────────────────────────────── */}
           <Section

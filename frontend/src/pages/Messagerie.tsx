@@ -201,7 +201,7 @@ export default function Messagerie() {
         <meta name="description" content="Messagerie interne entre utilisateurs A KI PRI SA YÉ" />
       </Helmet>
 
-      <div className="min-h-screen bg-slate-950 pt-16 flex flex-col">
+      <div className="min-h-screen bg-slate-950 pt-10 flex flex-col">
         {/* Hero banner */}
         <div className="px-4 pt-4 pb-0">
           <HeroImage

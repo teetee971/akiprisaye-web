@@ -330,7 +330,7 @@ export default function ComparateursHub() {
         <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/comparateurs" />
       </Helmet>
 
-      <div className="min-h-screen bg-slate-950 p-3 sm:p-4 pt-14 sm:pt-16">
+      <div className="min-h-screen bg-slate-950 p-3 sm:p-4 pt-10 sm:pt-12">
         <div className="max-w-7xl mx-auto">
 
           {/* ── Hero Banner ── */}

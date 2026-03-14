@@ -78,7 +78,7 @@ export default function DetectionFraude() {
           </HeroImage>
         </div>
 
-        <div className="max-w-3xl mx-auto px-4 py-6 pb-20 space-y-6">
+        <div className="max-w-3xl mx-auto px-4 py-6 pb-12 space-y-6">
 
           {/* Intro */}
           <div className="bg-white border border-gray-200 rounded-xl p-5">

@@ -276,7 +276,7 @@ export default function MerchantOnboarding() {
         <meta name="description" content="Référencez votre enseigne sur la marketplace A KI PRI SA YÉ et accédez à tous les territoires ultramarins." />
       </Helmet>
 
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 py-12 px-4">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 py-6 px-4">
         <div className="max-w-2xl mx-auto">
           {/* En-tête */}
           <div className="text-center mb-10">

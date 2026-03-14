@@ -201,8 +201,8 @@ export default function UpgradePage() {
         <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Débloquez toutes les fonctionnalités avancées</p>
       </HeroImage>
 
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12">
-        <div className="max-w-3xl mx-auto px-4 space-y-10">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-6">
+        <div className="max-w-3xl mx-auto px-4 space-y-5">
 
           {/* ---- Plan actuel ---- */}
           <section>

@@ -319,7 +319,7 @@ export default function ChecklistProduction() {
         </div>
 
         {/* Section content */}
-        <div className="max-w-5xl mx-auto px-4 py-8 pb-20">
+        <div className="max-w-5xl mx-auto px-4 py-4 pb-14">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-bold text-gray-900">{section.title}</h2>
             <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">

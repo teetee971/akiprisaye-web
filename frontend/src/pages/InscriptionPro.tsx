@@ -619,7 +619,7 @@ export default function InscriptionPro() {
         <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Accès pro pour enseignes, institutions et collectivités</p>
       </HeroImage>
 
-      <div className="min-h-screen bg-slate-950 py-12 px-4">
+      <div className="min-h-screen bg-slate-950 py-6 px-4">
         <div className="max-w-2xl mx-auto">
           {/* Stepper */}
           <div className="flex items-center justify-between mb-8 px-2">

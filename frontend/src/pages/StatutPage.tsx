@@ -258,7 +258,7 @@ export default function StatutPage() {
         <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/statut" />
       </Helmet>
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10 space-y-12">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-5 space-y-6">
 
         {/* ── Hero ── */}
         <HeroImage

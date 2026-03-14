@@ -134,7 +134,7 @@ export default function SignalerAbus() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 py-6 px-4">
       <div className="max-w-3xl mx-auto">
         {/* Hero banner */}
         <div className="mb-6 animate-fade-in">

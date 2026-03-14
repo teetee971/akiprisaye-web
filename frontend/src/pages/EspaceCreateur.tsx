@@ -225,7 +225,7 @@ const EspaceCreateur: React.FC = () => {
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
 
-      <div className="max-w-5xl mx-auto px-4 pt-8 pb-20">
+      <div className="max-w-5xl mx-auto px-4 pt-4 pb-12">
 
         {/* ── Hero ─────────────────────────────────────────────────── */}
         <div className="mb-8 bg-gradient-to-br from-amber-900/40 to-yellow-900/20 border border-amber-600/40 rounded-2xl p-6 sm:p-8">

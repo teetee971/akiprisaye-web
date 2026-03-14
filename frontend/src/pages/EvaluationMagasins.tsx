@@ -778,7 +778,7 @@ export default function EvaluationMagasins() {
           </HeroImage>
         </div>
 
-        <div className="max-w-3xl mx-auto px-4 py-6 pb-20 space-y-6">
+        <div className="max-w-3xl mx-auto px-4 py-6 pb-12 space-y-6">
 
           {/* Actions */}
           <div className="flex flex-col sm:flex-row gap-3">

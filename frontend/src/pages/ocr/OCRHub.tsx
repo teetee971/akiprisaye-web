@@ -159,7 +159,7 @@ export default function OCRHub() {
         </section>
 
         {/* OCR Modes Cards */}
-        <section className="py-12 px-4">
+        <section className="py-6 px-4">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center">
               Choisissez votre mode de scan
@@ -241,7 +241,7 @@ export default function OCRHub() {
           </div>
         </section>
         {/* Quick Links */}
-        <section className="py-12 px-4">
+        <section className="py-6 px-4">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-2xl font-bold mb-6 text-center">Fonctionnalités avancées</h2>
             

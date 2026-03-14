@@ -270,7 +270,7 @@ export default function MonitoringIAPage() {
           </div>
         </div>
 
-        <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
+        <div className="max-w-5xl mx-auto px-4 py-4 space-y-5">
           {loading && !report && (
             <div className="text-center py-16 text-gray-400">
               <Cpu size={40} className="mx-auto mb-3 animate-pulse text-blue-500" />

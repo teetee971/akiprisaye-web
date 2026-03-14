@@ -178,7 +178,7 @@ export default function PortailDeveloppeurs() {
           </HeroImage>
         </div>
 
-        <div className="max-w-4xl mx-auto px-4 py-6 pb-20 space-y-8">
+        <div className="max-w-4xl mx-auto px-4 py-6 pb-12 space-y-8">
 
           {/* Statut */}
           <div className="flex gap-3 bg-green-50 border border-green-200 rounded-xl p-4">

@@ -49,7 +49,7 @@ const IndiceLogistique: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-950 pb-20">
+    <div className="min-h-screen bg-slate-950 pb-12">
       {/* En-tête */}
       <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white px-4 py-6">
         <div className="max-w-4xl mx-auto">

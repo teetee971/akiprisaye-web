@@ -26,7 +26,7 @@ export default function Layout() {
       <SkipLinks />
       <Header />
       <AlertEvaluatorSideEffect />
-      <main id="main" className="mx-auto w-full max-w-6xl flex-1 px-4 pb-20 pt-4 md:pb-8">
+      <main id="main" className="mx-auto w-full max-w-6xl flex-1 px-4 pb-14 pt-2 md:pb-4">
         <Outlet />
       </main>
       <FabActions />

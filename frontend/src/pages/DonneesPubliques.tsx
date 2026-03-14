@@ -244,7 +244,7 @@ const dataFiles = [
 export default function DonneesPubliques() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
-      <div className="max-w-5xl mx-auto px-4 py-12 space-y-8">
+      <div className="max-w-5xl mx-auto px-4 py-6 space-y-6">
         <HeroImage
           src={PAGE_HERO_IMAGES.donneesPubliques}
           alt="Données Publiques"

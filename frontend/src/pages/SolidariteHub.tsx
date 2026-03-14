@@ -24,7 +24,7 @@ export default function SolidariteHub() {
         <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/solidarite" />
       </Helmet>
       
-      <div className="min-h-screen bg-slate-950 p-3 sm:p-4 pt-14 sm:pt-16">
+      <div className="min-h-screen bg-slate-950 p-3 sm:p-4 pt-10 sm:pt-12">
         <div className="max-w-6xl mx-auto">
           {/* Hero banner */}
           <div className="mb-5 sm:mb-8 animate-fade-in">

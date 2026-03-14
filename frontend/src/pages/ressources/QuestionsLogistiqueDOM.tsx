@@ -54,7 +54,7 @@ const QuestionsLogistiqueDOM: React.FC = () => {
         description="Réponses aux questions sur la logistique des DOM-TOM : import, export, douane, octroi de mer, délais de livraison."
         canonical="https://teetee971.github.io/akiprisaye-web/ressources/questions-logistique-dom"
       />
-    <div className="min-h-screen bg-slate-950 pb-20">
+    <div className="min-h-screen bg-slate-950 pb-12">
       {/* En-tête */}
       <div className="bg-gradient-to-r from-purple-600 to-purple-800 text-white px-4 py-6">
         <div className="max-w-4xl mx-auto">

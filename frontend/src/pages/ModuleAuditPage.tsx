@@ -1374,7 +1374,7 @@ export default function ModuleAuditPage() {
         </div>
 
         {/* Categories */}
-        <div className="max-w-5xl mx-auto px-4 py-8 pb-20 space-y-8">
+        <div className="max-w-5xl mx-auto px-4 py-4 pb-14 space-y-5">
           {filteredCategories.length === 0 && (
             <div className="text-center py-16 text-gray-400">
               <Search className="w-8 h-8 mx-auto mb-3 opacity-40" />

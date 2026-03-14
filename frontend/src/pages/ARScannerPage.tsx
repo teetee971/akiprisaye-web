@@ -51,7 +51,7 @@ export default function ARScannerPage() {
           </HeroImage>
         </div>
 
-        <div className="max-w-3xl mx-auto px-4 py-6 pb-20 space-y-6">
+        <div className="max-w-3xl mx-auto px-4 py-6 pb-12 space-y-6">
 
           {/* Avertissement prototype */}
           <div className="flex gap-3 bg-amber-50 border border-amber-200 rounded-xl p-4">

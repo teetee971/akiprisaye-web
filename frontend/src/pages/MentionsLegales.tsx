@@ -12,7 +12,7 @@ export default function MentionsLegales() {
         canonical="https://teetee971.github.io/akiprisaye-web/mentions-legales"
       />
     <div className="min-h-screen bg-slate-950 text-slate-100">
-      <div className="max-w-4xl mx-auto px-4 py-12 space-y-8">
+      <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
         <HeroImage
           src={PAGE_HERO_IMAGES.mentionsLegales}
           alt="Mentions légales"

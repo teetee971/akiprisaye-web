@@ -105,7 +105,7 @@ export default function Versions() {
         <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/versions" />
         <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/versions" />
       </Helmet>
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-5 space-y-5">
       <HeroImage
         src={PAGE_HERO_IMAGES.versions}
         alt="Versions & Changelog"

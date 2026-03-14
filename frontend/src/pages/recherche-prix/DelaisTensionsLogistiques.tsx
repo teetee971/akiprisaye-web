@@ -78,7 +78,7 @@ const DelaisTensionsLogistiques: React.FC = () => {
         description="Suivez les délais de livraison et les tensions logistiques affectant l'approvisionnement des territoires ultramarins."
         canonical="https://teetee971.github.io/akiprisaye-web/recherche-prix/delais-logistiques"
       />
-    <div className="min-h-screen bg-slate-950 pb-20">
+    <div className="min-h-screen bg-slate-950 pb-12">
       {/* En-tête */}
       <div className="bg-gradient-to-r from-orange-600 to-orange-800 text-white px-4 py-6">
         <div className="max-w-4xl mx-auto">

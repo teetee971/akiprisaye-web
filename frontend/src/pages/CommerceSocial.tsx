@@ -79,7 +79,7 @@ export default function CommerceSocial() {
           </HeroImage>
         </div>
 
-        <div className="max-w-3xl mx-auto px-4 py-6 pb-20 space-y-6">
+        <div className="max-w-3xl mx-auto px-4 py-6 pb-12 space-y-6">
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {FEATURES.map(({ icon: Icon, title, desc, available, route }) => (

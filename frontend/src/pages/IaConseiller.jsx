@@ -30,7 +30,7 @@ export default function IaConseiller() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
-      <div className="max-w-4xl mx-auto py-16 px-4">
+      <div className="max-w-4xl mx-auto py-8 px-4">
         <HeroImage
           src={PAGE_HERO_IMAGES.iaConseiller}
           alt="Conseiller IA"

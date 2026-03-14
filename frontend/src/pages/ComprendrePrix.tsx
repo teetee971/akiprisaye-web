@@ -36,7 +36,7 @@ export default function ComprendrePrix() {
         description="Découvrez les causes de la vie chère dans les DOM-TOM : octroi de mer, transport, oligopoles. Analyses et données accessibles à tous."
         canonical="https://teetee971.github.io/akiprisaye-web/comprendre-prix"
       />
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 py-6 px-4">
       <div className="max-w-4xl mx-auto">
       <HeroImage
         src={PAGE_HERO_IMAGES.comprendrePrix}
