@@ -111,6 +111,8 @@ export default defineConfig({
       abs('./src/test/sitemapRoutes.test.ts'),
       // Image upload — validatePhotoFile, validateImageFile, formatFileSize, compression presets, localStorage helpers
       abs('./src/test/photoUpload.test.ts'),
+      // Historique des recherches — useSearchHistory hook (localStorage, déduplication, limite 20)
+      abs('./src/hooks/__tests__/useSearchHistory.test.ts'),
     ],
 
     exclude: ['**/node_modules/**', '**/.git/**', '**/dist/**', '**/coverage/**'],

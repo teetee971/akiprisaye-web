@@ -19,15 +19,7 @@ const readHistory = (): SearchHistoryEntry[] => {
   if (typeof window === 'undefined' || !safeLocalStorage) {
     return [];
   }
-  const raw = safeLocalStorage.getItem(STORAGE_KEY);
-  if (!raw) return [];
-  try {
-    const parsed = JSON.parse(raw) as SearchHistoryEntry[];
-    if (!Array.isArray(parsed)) return [];
-    return parsed;
-  } catch {
-    return [];
-  }
+  return safeLocalStorage.getJSON<SearchHistoryEntry[]>(STORAGE_KEY, []);
 };
 
 const buildDedupKey = (entry: Pick<SearchHistoryEntry, 'type' | 'query' | 'barcode' | 'label'>) => {
@@ -59,7 +51,7 @@ export function useSearchHistory() {
         };
         const next = [nextEntry, ...prev].slice(0, MAX_ENTRIES);
         if (typeof window !== 'undefined' && safeLocalStorage) {
-          safeLocalStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+          safeLocalStorage.setJSON(STORAGE_KEY, next);
         }
         return next;
       });
@@ -71,7 +63,7 @@ export function useSearchHistory() {
     setHistory((prev) => {
       const next = prev.filter((entry) => entry.id !== id);
       if (typeof window !== 'undefined' && safeLocalStorage) {
-        safeLocalStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+        safeLocalStorage.setJSON(STORAGE_KEY, next);
       }
       return next;
     });
