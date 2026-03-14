@@ -263,7 +263,7 @@ export default function ReceiptScanner({ onAnalysisComplete, onClose }: ReceiptS
 
       {/* GDPR Disclaimer - OBLIGATOIRE - Enhanced with micro-reassurance */}
       {step === 'capture' && (
-        <div className="glass-card p-6 mb-6 border border-blue-500/30">
+        <div className="bg-slate-800/50 rounded-2xl p-6 mb-6 border border-blue-500/30">
           <div className="flex items-start gap-4">
             <Info className="w-6 h-6 text-blue-400 flex-shrink-0 mt-1" />
             <div>
@@ -292,7 +292,7 @@ export default function ReceiptScanner({ onAnalysisComplete, onClose }: ReceiptS
 
       {/* Error Display */}
       {error && (
-        <div className="glass-card p-4 mb-6 border border-red-500/30 bg-red-500/5">
+        <div className="rounded-2xl p-4 mb-6 border border-red-500/30 bg-red-500/5">
           <div className="flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
             <p className="text-sm text-red-300">{error}</p>
@@ -306,7 +306,7 @@ export default function ReceiptScanner({ onAnalysisComplete, onClose }: ReceiptS
 
           {/* Thumbnails grid for collected images */}
           {capturedImages.length > 0 && (
-            <div className="glass-card p-4">
+            <div className="bg-slate-800/50 rounded-2xl p-4">
               <div className="flex items-center gap-2 mb-3">
                 <Images className="w-5 h-5 text-blue-400" />
                 <h3 className="text-white font-semibold">
@@ -366,7 +366,7 @@ export default function ReceiptScanner({ onAnalysisComplete, onClose }: ReceiptS
           <button
             onClick={() => cameraInputRef.current?.click()}
             disabled={!userConsent || capturedImages.length >= MAX_PHOTOS}
-            className="w-full glass-card p-8 hover:bg-slate-800/60 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
+            className="w-full bg-slate-800/50 rounded-2xl p-8 hover:bg-slate-800/60 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
           >
             <Camera className="w-12 h-12 text-blue-400 mx-auto mb-4 group-hover:scale-110 transition-transform" />
             <h3 className="text-white font-semibold text-lg mb-2">
@@ -397,7 +397,7 @@ export default function ReceiptScanner({ onAnalysisComplete, onClose }: ReceiptS
           <button
             onClick={() => fileInputRef.current?.click()}
             disabled={!userConsent || capturedImages.length >= MAX_PHOTOS}
-            className="w-full glass-card p-8 hover:bg-slate-800/60 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
+            className="w-full bg-slate-800/50 rounded-2xl p-8 hover:bg-slate-800/60 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
           >
             <Upload className="w-12 h-12 text-green-400 mx-auto mb-4 group-hover:scale-110 transition-transform" />
             <h3 className="text-white font-semibold text-lg mb-2">
@@ -423,7 +423,7 @@ export default function ReceiptScanner({ onAnalysisComplete, onClose }: ReceiptS
 
       {/* Step 2: Processing with micro-timeline */}
       {step === 'processing' && (
-        <div className="glass-card p-8">
+        <div className="bg-slate-800/50 rounded-2xl p-8">
 
           {/* Multi-photo progress indicator */}
           {capturedImages.length > 1 && (
@@ -543,7 +543,7 @@ export default function ReceiptScanner({ onAnalysisComplete, onClose }: ReceiptS
         <div className="space-y-6">
           
           {/* 🆕 IMMEDIATE FEEDBACK POST-SCAN - Enhanced Summary */}
-          <div className="glass-card p-6 border-2 border-blue-500/50 bg-blue-500/5">
+          <div className="rounded-2xl p-6 border-2 border-blue-500/50 bg-blue-500/5">
             <div className="flex items-center gap-3 mb-4">
               <CheckCircle className="w-8 h-8 text-blue-400" />
               <div>
@@ -602,7 +602,7 @@ export default function ReceiptScanner({ onAnalysisComplete, onClose }: ReceiptS
 
           {/* 🆕 STORE DETAIL CARD (if store detected) */}
           {analysisResult.storeName && (
-            <div className="glass-card p-6 border border-blue-500/30">
+            <div className="bg-slate-800/50 rounded-2xl p-6 border border-blue-500/30">
               <div className="flex items-start gap-4">
                 <div className="w-14 h-14 rounded-xl bg-blue-500/20 flex items-center justify-center flex-shrink-0">
                   <Store className="w-7 h-7 text-blue-400" />
@@ -641,7 +641,7 @@ export default function ReceiptScanner({ onAnalysisComplete, onClose }: ReceiptS
           )}
           
           {/* Summary Card */}
-          <div className="glass-card p-6">
+          <div className="bg-slate-800/50 rounded-2xl p-6">
             <h3 className="text-xl font-semibold text-white mb-4">
               Résumé du ticket
             </h3>
@@ -697,7 +697,7 @@ export default function ReceiptScanner({ onAnalysisComplete, onClose }: ReceiptS
           </div>
 
           {/* Product Lines */}
-          <div className="glass-card p-6">
+          <div className="bg-slate-800/50 rounded-2xl p-6">
             <h3 className="text-lg font-semibold text-white mb-4">
               Produits détectés ({analysisResult.productLines.length})
             </h3>
@@ -735,7 +735,7 @@ export default function ReceiptScanner({ onAnalysisComplete, onClose }: ReceiptS
 
           {/* Unrecognized Lines */}
           {analysisResult.unrecognizedLines.length > 0 && (
-            <div className="glass-card p-6 border border-yellow-500/30">
+            <div className="bg-slate-800/50 rounded-2xl p-6 border border-yellow-500/30">
               <div className="flex items-start gap-3 mb-4">
                 <AlertCircle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
                 <div>
@@ -764,7 +764,7 @@ export default function ReceiptScanner({ onAnalysisComplete, onClose }: ReceiptS
           )}
 
           {/* Transparency Disclaimer - OBLIGATOIRE */}
-          <div className="glass-card p-6 border border-blue-500/30">
+          <div className="bg-slate-800/50 rounded-2xl p-6 border border-blue-500/30">
             <div className="flex items-start gap-3">
               <Info className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
               <div className="text-sm text-gray-300">
