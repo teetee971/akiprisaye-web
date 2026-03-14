@@ -26,7 +26,7 @@ export default function HeroSearch() {
         src={HERO_IMG}
         alt="Marché local — fruits et légumes frais"
         gradient="from-emerald-950 to-slate-900"
-        height="h-72 sm:h-96"
+        height="h-48 sm:h-64"
       >
         <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white drop-shadow-lg">
           Comparez les prix réels près de chez vous.

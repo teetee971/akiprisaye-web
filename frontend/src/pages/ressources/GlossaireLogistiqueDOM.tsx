@@ -46,7 +46,7 @@ const GlossaireLogistiqueDOM: React.FC = () => {
         description="Dictionnaire des termes logistiques spécifiques aux territoires ultramarins : octroi de mer, AWB, BL, Incoterms..."
         canonical="https://teetee971.github.io/akiprisaye-web/ressources/glossaire-logistique-dom"
       />
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 py-4 px-4">
       <div className="max-w-4xl mx-auto">
         {/* En-tête */}
         <div className="mb-8 text-center">

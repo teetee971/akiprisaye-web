@@ -35,7 +35,7 @@ const ComprendrePromotionsPrixBarres: React.FC = () => {
         description="Guide pratique pour comprendre les promotions, prix barrés et soldes dans les supermarchés des DOM-TOM."
         canonical="https://teetee971.github.io/akiprisaye-web/ressources/comprendre-promotions-prix-barres"
       />
-    <div className="min-h-screen bg-slate-950 py-8 px-4">
+    <div className="min-h-screen bg-slate-950 py-4 px-4">
       <div className="max-w-4xl mx-auto">
         
         {/* En-tête */}

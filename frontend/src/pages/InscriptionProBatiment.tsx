@@ -819,7 +819,7 @@ export default function InscriptionProBatiment() {
         />
       </Helmet>
 
-      <div className="min-h-screen bg-slate-950 py-10 px-4">
+      <div className="min-h-screen bg-slate-950 py-5 px-4">
         <div className="max-w-2xl mx-auto">
           {/* En-tête */}
           <div className="text-center mb-8">

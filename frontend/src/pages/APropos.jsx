@@ -27,7 +27,7 @@ export default function APropos() {
 
       {/* Main Content */}
       <main className="max-w-4xl mx-auto p-6">
-        <div className="space-y-8">
+        <div className="space-y-5">
           
           {/* Mission */}
           <section className="bg-[#1e1e1e] rounded-xl border border-gray-700 p-8">

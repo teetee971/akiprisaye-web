@@ -202,7 +202,7 @@ export default function ObservatoireTempsReel() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 space-y-6">
         {/* Header */}
         <header className="space-y-4">
           <div className="flex items-center gap-2">
@@ -241,7 +241,7 @@ export default function ObservatoireTempsReel() {
           <div
             role="alert"
             aria-live="assertive"
-            className="rounded-xl border border-orange-500/40 bg-orange-950/30 px-6 py-8 text-center space-y-4"
+            className="rounded-xl border border-orange-500/40 bg-orange-950/30 px-6 py-4 text-center space-y-4"
           >
             <AlertCircle className="w-10 h-10 text-orange-400 mx-auto" aria-hidden="true" />
             <div>

@@ -101,7 +101,7 @@ export default function BasketComparisonPage() {
 
   if (count === 0) {
     return (
-      <div className="min-h-screen bg-slate-950 py-8 px-4">
+      <div className="min-h-screen bg-slate-950 py-4 px-4">
         <div className="max-w-4xl mx-auto">
           <div className="bg-slate-900 rounded-xl p-8 text-center border border-slate-800">
             <div className="text-6xl mb-4">🛒</div>
@@ -183,7 +183,7 @@ export default function BasketComparisonPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 py-8 px-4">
+    <div className="min-h-screen bg-slate-950 py-4 px-4">
       <div className="max-w-7xl mx-auto">
         <HeroImage
           src={PAGE_HERO_IMAGES.basketComparison}

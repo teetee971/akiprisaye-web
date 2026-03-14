@@ -28,7 +28,7 @@ export function HeroImage({
   src,
   alt,
   gradient = 'from-slate-900 to-slate-800',
-  height = 'h-56 sm:h-72',
+  height = 'h-44 sm:h-56',
   children,
   className = '',
 }: HeroImageProps) {

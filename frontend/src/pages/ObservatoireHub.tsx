@@ -49,7 +49,7 @@ export default function ObservatoireHub() {
               src={HERO_IMG}
               alt="Rayons de supermarché — comparaison des prix DOM-TOM"
               gradient="from-slate-900 to-emerald-950"
-              height="h-36 sm:h-64"
+              height="h-32 sm:h-48"
             >
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white drop-shadow">
                 🔬 Observatoire des Prix — DOM-TOM

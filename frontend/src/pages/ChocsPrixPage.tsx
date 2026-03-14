@@ -304,7 +304,7 @@ export default function ChocsPrixPage() {
           alt="Chocs de prix en Outre-mer"
           className="relative"
         >
-          <div className="max-w-4xl mx-auto px-4 py-16 text-center">
+          <div className="max-w-4xl mx-auto px-4 py-8 text-center">
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-900/40 border border-red-500/40 rounded-full text-sm text-red-300 mb-4">
               <AlertTriangle size={14} /> Alertes hausses — 7 derniers jours
             </div>

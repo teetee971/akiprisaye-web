@@ -168,7 +168,7 @@ export default function AiMarketInsights() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 py-8 px-4">
+    <div className="min-h-screen bg-slate-950 text-slate-100 py-4 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">

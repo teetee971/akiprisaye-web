@@ -15,7 +15,7 @@ import { Link } from 'react-router-dom';
 
 const PourquoiPrixVarieSansChangement: React.FC = () => {
   return (
-    <div className="min-h-screen bg-slate-950 py-8 px-4">
+    <div className="min-h-screen bg-slate-950 py-4 px-4">
       <div className="max-w-4xl mx-auto">
         
         {/* En-tête */}
