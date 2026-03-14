@@ -1,0 +1,95 @@
+name: 🧹 Nettoyage des anciens déploiements
+
+on:
+  workflow_dispatch:
+    inputs:
+      keep_last:
+        description: 'Nombre de déploiements récents à conserver'
+        default: '5'
+        required: false
+        type: string
+  schedule:
+    # Chaque dimanche à 3h UTC
+    - cron: '0 3 * * 0'
+
+permissions:
+  deployments: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Supprimer les anciens déploiements GitHub Pages
+        uses: actions/github-script@v7
+        env:
+          KEEP_LAST: ${{ inputs.keep_last || '5' }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const environment = 'github-pages';
+            const keepLast = Math.max(1, parseInt(process.env.KEEP_LAST) || 5);
+
+            // Récupère tous les déploiements de l'environnement github-pages
+            const deployments = await github.paginate(
+              github.rest.repos.listDeployments,
+              { owner, repo, environment, per_page: 100 }
+            );
+
+            console.log(`📊 Total déploiements trouvés : ${deployments.length}`);
+
+            if (deployments.length <= keepLast) {
+              console.log(`✅ Rien à supprimer (${deployments.length} ≤ ${keepLast} conservés)`);
+              return;
+            }
+
+            // Trie du plus récent au plus ancien
+            const sorted = deployments.sort(
+              (a, b) => new Date(b.created_at) - new Date(a.created_at)
+            );
+
+            const toKeep = sorted.slice(0, keepLast);
+            const toDelete = sorted.slice(keepLast);
+
+            console.log(`✅ Conservation des ${toKeep.length} déploiements les plus récents`);
+            console.log(`🗑️  Suppression de ${toDelete.length} anciens déploiements`);
+
+            let deleted = 0;
+            let errors = 0;
+
+            for (const dep of toDelete) {
+              // Marquer d'abord comme inactif (obligatoire avant suppression)
+              try {
+                await github.rest.repos.createDeploymentStatus({
+                  owner,
+                  repo,
+                  deployment_id: dep.id,
+                  state: 'inactive',
+                  description: 'Nettoyé automatiquement',
+                });
+              } catch (e) {
+                // Peut déjà être inactif ou en conflit — on continue
+                console.log(`ℹ️  Statut inactif non appliqué pour #${dep.id} : ${e.message}`);
+              }
+
+              // Supprime le déploiement
+              try {
+                await github.rest.repos.deleteDeployment({
+                  owner,
+                  repo,
+                  deployment_id: dep.id,
+                });
+                deleted++;
+                if (deleted % 50 === 0) {
+                  console.log(`⏳ Progression : ${deleted}/${toDelete.length} supprimés…`);
+                }
+              } catch (e) {
+                console.log(`⚠️  Impossible de supprimer #${dep.id} : ${e.message}`);
+                errors++;
+              }
+            }
+
+            console.log(
+              `\n🏁 Résultat : ${deleted} supprimés, ${errors} erreurs, ${keepLast} conservés.`
+            );
