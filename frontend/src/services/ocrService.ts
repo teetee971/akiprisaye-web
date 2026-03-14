@@ -113,6 +113,14 @@ export interface OCRResult {
   errorCode?: 'ASSET_MISSING' | 'TIMEOUT' | 'PROCESSING_ERROR';
 }
 
+
+interface OCRWorkerLike {
+  loadLanguage: (language: string) => Promise<void>;
+  initialize: (language: string) => Promise<void>;
+  setParameters: (params: Record<string, string>) => Promise<void>;
+  recognize: (image: Blob) => Promise<{ data: { text: string; confidence: number } }>;
+  terminate: () => Promise<void>;
+}
 const OCR_LOAD_ERROR_MESSAGE =
   'Le module OCR n’a pas pu se charger correctement en production. Les fichiers linguistiques sont peut-être indisponibles.';
 const KNOWN_ASSET_LABELS = new Set(['worker', 'core', 'language']);
@@ -331,30 +339,31 @@ export async function runOCR(
   const receiptMode = options?.receiptMode ?? false;
   const psmMode = options?.psm ?? (receiptMode ? OCR_PSM.SINGLE_COLUMN : OCR_PSM.AUTO);
   let timeoutId: number | undefined;
+  let worker: OCRWorkerLike | null = null;
   
   // Log mode for debugging
   console.log(`OCR mode: ${offline ? 'OFFLINE (local WASM)' : 'ONLINE'} receiptMode=${receiptMode} psm=${psmMode}`);
   console.log('[OCR] Asset paths', { WORKER_PATH, CORE_PATH, LANG_PATH, lang: effectiveLang });
 
-  // Lazy load Tesseract module (17MB) - only loads when OCR is actually used
-  const Tesseract = await loadTesseract();
-
-  await ensureAssetAvailable(WORKER_PATH, 'worker');
-  await ensureAssetAvailable(CORE_PATH, 'core');
-  await ensureAssetAvailable(`${LANG_PATH}/${effectiveLang}.traineddata.gz`, 'language');
-
-  const preprocessed = await preprocessImage(imageUrl, 1600, receiptMode);
-  const worker = await Tesseract.createWorker({
-    workerPath: WORKER_PATH,
-    corePath: CORE_PATH,
-    langPath: LANG_PATH,
-    gzip: true,
-    logger: (m: unknown) => console.debug('[OCR]', m),
-  });
-
   let timeoutTriggered = false;
 
   try {
+    // Lazy load Tesseract module (17MB) - only loads when OCR is actually used
+    const Tesseract = await loadTesseract();
+
+    await ensureAssetAvailable(WORKER_PATH, 'worker');
+    await ensureAssetAvailable(CORE_PATH, 'core');
+    await ensureAssetAvailable(`${LANG_PATH}/${effectiveLang}.traineddata.gz`, 'language');
+
+    const preprocessed = await preprocessImage(imageUrl, 1600, receiptMode);
+    worker = await Tesseract.createWorker({
+      workerPath: WORKER_PATH,
+      corePath: CORE_PATH,
+      langPath: LANG_PATH,
+      gzip: true,
+      logger: (m: unknown) => console.debug('[OCR]', m),
+    }) as OCRWorkerLike;
+
     // Tesseract.js runs entirely in the browser via WASM
     // No server calls - works offline by default
     await worker.loadLanguage(effectiveLang);
@@ -424,7 +433,9 @@ export async function runOCR(
     if (timeoutId !== undefined) {
       clearTimeout(timeoutId);
     }
-    await worker.terminate();
+    if (worker) {
+      await worker.terminate();
+    }
   }
 }
 
