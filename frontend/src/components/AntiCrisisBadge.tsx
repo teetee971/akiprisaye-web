@@ -84,8 +84,8 @@ const AntiCrisisBadge: React.FC<AntiCrisisBadgeProps> = ({
             Analyse de résilience du prix:
           </p>
           
-          {result.reasons.map((reason, index) => (
-            <div key={index} className="flex items-start gap-2">
+          {result.reasons.map((reason) => (
+            <div key={reason.criterion} className="flex items-start gap-2">
               <span className={reason.met ? 'text-green-600' : 'text-gray-400'}>
                 {reason.met ? '✓' : '✗'}
               </span>

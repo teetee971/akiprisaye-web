@@ -1,0 +1,16 @@
+# CODEOWNERS — A KI PRI SA YÉ
+# Chaque PR requiert la revue du propriétaire du dépôt.
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Propriétaire global : toutes les modifications requièrent sa revue
+* @teetee971
+
+# Règles de sécurité Firebase (priorité haute)
+firestore.rules @teetee971
+
+# Workflows CI/CD
+.github/workflows/ @teetee971
+
+# Configuration de déploiement
+vite.config.ts @teetee971
+firebase.json @teetee971

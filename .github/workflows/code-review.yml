@@ -1,0 +1,141 @@
+name: 🔍 Revue de Code Automatique
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  analyse-pr:
+    name: Analyse automatique de la PR
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Vérification @ts-nocheck
+        id: ts-nocheck
+        run: |
+          count=$(git diff origin/${{ github.base_ref }}...HEAD -- '*.ts' '*.tsx' \
+            | grep '^+' | grep -v '^+++' \
+            | grep -c '@ts-nocheck' || echo 0)
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+          if [ "$count" -gt 0 ]; then
+            echo "⚠️  Lignes @ts-nocheck ajoutées :"
+            git diff origin/${{ github.base_ref }}...HEAD -- '*.ts' '*.tsx' \
+              | grep '^+' | grep -v '^+++' | grep '@ts-nocheck' || true
+          fi
+
+      - name: Vérification console.log en production
+        id: consolelog
+        run: |
+          count=$(git diff origin/${{ github.base_ref }}...HEAD -- \
+            '*.ts' '*.tsx' \
+            | grep '^+' \
+            | grep -v '^+++' \
+            | grep -c 'console\.log(' || echo 0)
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+
+      - name: Vérification JSON.parse non protégé
+        id: jsonparse
+        run: |
+          # Compte les appels JSON.parse ajoutés, en excluant les usages sûrs
+          count=$(git diff origin/${{ github.base_ref }}...HEAD -- \
+            '*.ts' '*.tsx' \
+            | grep '^+' \
+            | grep -v '^+++' \
+            | grep 'JSON\.parse(' \
+            | grep -vc 'safeLocalStorage\|safeJsonParse\|try\s*{' || echo 0)
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+
+      - name: Vérification key=\{index\}
+        id: keyindex
+        run: |
+          count=$(git diff origin/${{ github.base_ref }}...HEAD -- \
+            '*.tsx' \
+            | grep '^+' \
+            | grep -v '^+++' \
+            | grep -c 'key={index}' || echo 0)
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+
+      - name: Statistiques de la PR
+        id: stats
+        run: |
+          files=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | wc -l)
+          added=$(git diff --shortstat origin/${{ github.base_ref }}...HEAD | grep -oP '\d+ insertion' | grep -oP '\d+' || echo 0)
+          removed=$(git diff --shortstat origin/${{ github.base_ref }}...HEAD | grep -oP '\d+ deletion' | grep -oP '\d+' || echo 0)
+          echo "files=$files" >> "$GITHUB_OUTPUT"
+          echo "added=$added" >> "$GITHUB_OUTPUT"
+          echo "removed=$removed" >> "$GITHUB_OUTPUT"
+
+      - name: Publication du rapport de revue
+        uses: actions/github-script@v7
+        env:
+          TS_NOCHECK: ${{ steps.ts-nocheck.outputs.count }}
+          CONSOLE_LOG: ${{ steps.consolelog.outputs.count }}
+          JSON_PARSE: ${{ steps.jsonparse.outputs.count }}
+          KEY_INDEX: ${{ steps.keyindex.outputs.count }}
+          FILES: ${{ steps.stats.outputs.files }}
+          ADDED: ${{ steps.stats.outputs.added }}
+          REMOVED: ${{ steps.stats.outputs.removed }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const tsNocheck   = parseInt(process.env.TS_NOCHECK  || '0', 10);
+            const consoleLog  = parseInt(process.env.CONSOLE_LOG || '0', 10);
+            const jsonParse   = parseInt(process.env.JSON_PARSE  || '0', 10);
+            const keyIndex    = parseInt(process.env.KEY_INDEX   || '0', 10);
+            const files       = parseInt(process.env.FILES       || '0', 10);
+            const added       = parseInt(process.env.ADDED       || '0', 10);
+            const removed     = parseInt(process.env.REMOVED     || '0', 10);
+
+            const warnings = [];
+            if (tsNocheck > 0)  warnings.push(`⚠️  **\`@ts-nocheck\` ajouté** dans ${tsNocheck} fichier(s) — préférez corriger les erreurs TypeScript.`);
+            if (consoleLog > 0) warnings.push(`⚠️  **\`console.log\`** ajouté ${consoleLog} fois — utilisez \`import.meta.env.DEV\` pour limiter aux builds de développement.`);
+            if (jsonParse > 0)  warnings.push(`⚠️  **\`JSON.parse\`** ajouté ${jsonParse} fois — vérifiez que chaque appel est protégé par un \`try/catch\` ou utilisez \`safeLocalStorage.getJSON()\`.`);
+            if (keyIndex > 0)   warnings.push(`⚠️  **\`key={index}\`** ajouté ${keyIndex} fois — utilisez un identifiant stable et unique comme clé React.`);
+
+            const status = warnings.length === 0 ? '✅ Aucun problème détecté' : `🟡 ${warnings.length} point(s) à vérifier`;
+
+            const body = [
+              '## 🔍 Revue de Code Automatique',
+              '',
+              `**Statut :** ${status}`,
+              '',
+              `📊 **Statistiques :** ${files} fichier(s) modifié(s) · +${added} lignes · -${removed} lignes`,
+              '',
+              ...(warnings.length > 0 ? ['### Points à vérifier', '', ...warnings, ''] : []),
+              '---',
+              '_Rapport généré automatiquement par le workflow de revue de code._',
+            ].join('\n');
+
+            // Recherche d'un commentaire existant pour le mettre à jour (évite le spam)
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const existing = comments.find(c =>
+              c.user?.type === 'Bot' && c.body?.startsWith('## 🔍 Revue de Code Automatique')
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }

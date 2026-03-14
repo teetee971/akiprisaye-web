@@ -31,8 +31,8 @@ export default function PriceDataWarning({ hasOldData, storeCount, isIncomplete 
         <div className="flex-1">
           <h4 className="text-sm font-semibold text-orange-300 mb-1">Avertissement sur les données</h4>
           <ul className="text-xs text-orange-200 space-y-1">
-            {warnings.map((warning, index) => (
-              <li key={index}>• {warning}</li>
+            {warnings.map((warning) => (
+              <li key={warning}>• {warning}</li>
             ))}
           </ul>
         </div>

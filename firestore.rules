@@ -61,10 +61,24 @@ service cloud.firestore {
     }
     
     // Messages de contact : Tout le monde peut créer, seuls les admins peuvent lire
-    // NOTE: Consider implementing rate limiting via Firebase App Check or Cloud Functions
+    // Validation de la structure du document pour prévenir les abus
     match /contact_messages/{messageId} {
       allow read: if request.auth != null && request.auth.token.admin == true;
-      allow create: if true; // Anyone can send contact - TODO: Add rate limiting
+      allow create: if request.resource.data.keys().hasAll(['name', 'email', 'message', 'createdAt'])
+                    && request.resource.data.keys().hasOnly(['name', 'email', 'message', 'subject', 'territory', 'createdAt'])
+                    && request.resource.data.name is string
+                    && request.resource.data.name.size() >= 2
+                    && request.resource.data.name.size() <= 100
+                    && request.resource.data.email is string
+                    && request.resource.data.email.size() <= 254
+                    && request.resource.data.email.matches('.*@.*\\..*')
+                    && request.resource.data.message is string
+                    && request.resource.data.message.size() >= 10
+                    && request.resource.data.message.size() <= 2000
+                    && request.resource.data.createdAt is timestamp
+                    && request.resource.data.createdAt == request.time
+                    && (!('subject' in request.resource.data) || (request.resource.data.subject is string && request.resource.data.subject.size() <= 200))
+                    && (!('territory' in request.resource.data) || (request.resource.data.territory is string && request.resource.data.territory.size() <= 50));
       allow update: if request.auth != null && request.auth.token.admin == true;
       allow delete: if false; // Prevent deletion for audit trail
     }

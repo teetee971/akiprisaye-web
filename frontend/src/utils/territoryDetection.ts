@@ -14,7 +14,6 @@ export async function detectTerritory(): Promise<string> {
   // 1. Check safeLocalStorage cache
   const cached = safeLocalStorage.getItem('user_territory');
   if (cached) {
-    console.log('Territory from cache:', cached);
     return cached;
   }
 
@@ -30,14 +29,15 @@ export async function detectTerritory(): Promise<string> {
     const territory = mapCoordsToTerritory(position.coords.latitude, position.coords.longitude);
     if (territory) {
       safeLocalStorage.setItem('user_territory', territory);
-      console.log('Territory from GPS:', territory);
       return territory;
     }
   } catch (e) {
-    const errorMsg = e instanceof GeolocationPositionError 
-      ? ['Permission denied', 'Position unavailable', 'Timeout'][e.code - 1]
-      : 'Unknown error';
-    console.log(`Geolocation failed (${errorMsg}), trying IP detection`);
+    if (import.meta.env.DEV) {
+      const errorMsg = e instanceof GeolocationPositionError
+        ? ['Permission denied', 'Position unavailable', 'Timeout'][e.code - 1]
+        : 'Unknown error';
+      console.warn(`[territoryDetection] Geolocation failed (${errorMsg}), trying IP detection`);
+    }
   }
 
   // 3. Fallback: IP geolocation with retry logic
@@ -54,11 +54,12 @@ export async function detectTerritory(): Promise<string> {
     const territory = mapCountryCodeToTerritory(data.country_code, data.region);
     if (territory) {
       safeLocalStorage.setItem('user_territory', territory);
-      console.log('Territory from IP:', territory);
       return territory;
     }
   } catch (e) {
-    console.warn('IP geolocation failed:', e instanceof Error ? e.message : 'Unknown error');
+    if (import.meta.env.DEV) {
+      console.warn('[territoryDetection] IP geolocation failed:', e instanceof Error ? e.message : 'Unknown error');
+    }
   }
 
   // 4. Default fallback

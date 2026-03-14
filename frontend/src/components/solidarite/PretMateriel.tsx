@@ -445,8 +445,7 @@ export default function PretMateriel() {
   const [justDepose, setJustDepose] = useState(false);
 
   const loadUserObjets = useCallback((): ObjetPret[] => {
-    const raw = safeLocalStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as ObjetPret[]) : [];
+    return safeLocalStorage.getJSON<ObjetPret[]>(STORAGE_KEY, []);
   }, []);
 
   useEffect(() => {

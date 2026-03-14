@@ -365,8 +365,7 @@ export default function EntraideCoupDeMain() {
   const [justPublished, setJustPublished] = useState(false);
 
   const loadUserAnnonces = useCallback((): AideAnnonce[] => {
-    const raw = safeLocalStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as AideAnnonce[]) : [];
+    return safeLocalStorage.getJSON<AideAnnonce[]>(STORAGE_KEY, []);
   }, []);
 
   useEffect(() => {

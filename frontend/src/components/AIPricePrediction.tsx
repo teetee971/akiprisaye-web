@@ -79,8 +79,8 @@ export default function AIPricePrediction({
         <div className="bg-slate-800/40 rounded-lg p-3 border border-slate-700/30">
           <p className="text-xs text-gray-400 mb-2 font-medium">Basé sur données publiques :</p>
           <ul className="text-xs text-gray-300 space-y-1">
-            {prediction.basedOn.map((source, index) => (
-              <li key={index} className="flex items-center gap-2">
+            {prediction.basedOn.map((source) => (
+              <li key={source} className="flex items-center gap-2">
                 <span className="w-1 h-1 rounded-full bg-blue-400"></span>
                 {source}
               </li>

@@ -226,9 +226,9 @@ export function TerritorySignal() {
 
       {/* Signals List */}
       <div className="space-y-3">
-        {signals.map((signal, index) => (
+        {signals.map((signal) => (
           <div
-            key={index}
+            key={signal.title}
             className={`p-4 rounded-lg border ${getSeverityColor(signal.severity)}`}
           >
             <div className="flex items-start justify-between gap-3 mb-2">
