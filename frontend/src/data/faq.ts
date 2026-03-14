@@ -10,6 +10,8 @@ export interface FAQItem {
   question: string;
   answer: string;
   tags: string[];
+  /** Affichée sur la page d'accueil dans le mini-aperçu FAQ */
+  featured?: boolean;
 }
 
 export const FAQ_DATA: FAQItem[] = [
@@ -31,6 +33,7 @@ export const FAQ_DATA: FAQItem[] = [
   {
     id: 'faq-003',
     category: 'general',
+    featured: true,
     question: 'Le service est-il vraiment gratuit ?',
     answer: 'Oui. L\'accès public permet de consulter gratuitement les comparateurs, les prix observés et l\'historique simple. L\'inscription est gratuite et sans engagement.',
     tags: ['gratuit', 'prix', 'accès']
@@ -38,6 +41,7 @@ export const FAQ_DATA: FAQItem[] = [
   {
     id: 'faq-004',
     category: 'general',
+    featured: true,
     question: 'D\'où viennent les données ?',
     answer: 'Toutes les données proviennent de sources officielles publiques : INSEE, OPMR, DGCCRF, data.gouv.fr. Elles sont observées, datées et sourcées. Aucune donnée n\'est estimée ou simulée.',
     tags: ['sources', 'données', 'fiabilité']
@@ -45,6 +49,7 @@ export const FAQ_DATA: FAQItem[] = [
   {
     id: 'faq-005',
     category: 'general',
+    featured: true,
     question: 'Mes données personnelles sont-elles exploitées ?',
     answer: 'Non. Aucune donnée personnelle n\'est revendue, utilisée à des fins publicitaires ou commerciales. Seuls l\'email et le niveau d\'accès sont enregistrés pour la facturation éventuelle. Aucun tracking utilisateur.',
     tags: ['rgpd', 'confidentialité', 'données personnelles']
@@ -261,6 +266,13 @@ export const searchFAQ = (query: string): FAQItem[] => {
  */
 export const getFAQById = (id: string): FAQItem | undefined => {
   return FAQ_DATA.find(item => item.id === id);
+};
+
+/**
+ * Get FAQ items marked as featured (home-page mini-preview)
+ */
+export const getFeaturedFAQ = (): FAQItem[] => {
+  return FAQ_DATA.filter(item => item.featured === true);
 };
 
 export default FAQ_DATA;
