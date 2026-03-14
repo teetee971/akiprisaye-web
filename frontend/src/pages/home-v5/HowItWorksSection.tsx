@@ -3,7 +3,7 @@ const HOW_IT_WORKS_STEPS = [
     num: '1',
     emoji: '🔍',
     title: 'Cherchez ou scannez',
-    text: 'Cherchez un produit par son nom, son code EAN, ou scannez directement un ticket de caisse.',
+    text: 'Cherchez un produit par son nom, son code-barre (EAN), ou scannez directement un ticket de caisse.',
     imgUrl: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=600&q=80',
     imgAlt: 'Personne qui scanne un code-barres avec son téléphone dans un supermarché des Antilles',
   },

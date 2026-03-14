@@ -73,7 +73,7 @@ const HERO_PRICES = [
 const PRIORITY_ACTIONS = [
   {
     title: 'Comparer un produit',
-    description: 'Tapez un EAN, un nom ou utilisez le scan pour aller droit au comparateur.',
+    description: 'Tapez un nom, un code-barre ou utilisez le scan pour aller droit au comparateur.',
     to: '/comparateur',
   },
   {
@@ -294,7 +294,7 @@ export default function HomeV5() {
               Comparez vite, sans surcharge, avec des données locales pensées pour les DOM-TOM.
             </p>
             <p className="hero-reassurance fade-in delay-150">
-              Sans compte. Données locales. Vos recherches restent sur votre appareil.
+              Accès libre et gratuit. Données locales. Vos recherches restent sur votre appareil.
             </p>
 
             <form onSubmit={handleSearch} className="hero-search-xxl fade-in delay-200 border-scan">
@@ -310,7 +310,7 @@ export default function HomeV5() {
                 Rechercher un produit
               </button>
             </form>
-            <p className="hero-explain fade-in delay-300">EAN, nom de produit ou scan → comparaison instantanée.</p>
+            <p className="hero-explain fade-in delay-300">Code-barre, nom de produit ou scan → comparaison instantanée.</p>
             <p className="hero-trust fade-in delay-300">
               <span className="badge-live">
                 <span className="badge-live-dot" aria-hidden="true" />

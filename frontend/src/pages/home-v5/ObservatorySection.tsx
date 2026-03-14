@@ -31,7 +31,7 @@ export default function ObservatorySection() {
             Accéder à l'observatoire
           </Link>
           <Link to="/methodologie" className="btn-docs">
-            Pack presse
+            Voir la méthodologie
           </Link>
         </div>
       </div>
