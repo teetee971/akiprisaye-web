@@ -846,9 +846,9 @@ export default function ReceiptScanner({ onAnalysisComplete, onClose }: ReceiptS
                       <span className="text-white font-semibold text-sm">
                         {line.price != null ? `${line.price.toFixed(2)} €` : '— €'}
                       </span>
-                      {trend === 'up' && <TrendingUp className="w-4 h-4 text-orange-400" title="Potentiellement au-dessus de la moyenne" />}
-                      {trend === 'down' && <TrendingDown className="w-4 h-4 text-green-400" title="Potentiellement en-dessous de la moyenne" />}
-                      {trend === 'equal' && <Minus className="w-4 h-4 text-gray-400" title="Proche de la moyenne" />}
+                      {trend === 'up' && <TrendingUp className="w-4 h-4 text-orange-400" aria-label="Potentiellement au-dessus de la moyenne" />}
+                      {trend === 'down' && <TrendingDown className="w-4 h-4 text-green-400" aria-label="Potentiellement en-dessous de la moyenne" />}
+                      {trend === 'equal' && <Minus className="w-4 h-4 text-gray-400" aria-label="Proche de la moyenne" />}
                     </div>
                   </div>
                 );

@@ -1,8 +1,6 @@
-import type { Map as LeafletMap } from 'leaflet';
-
 const isBrowser = typeof window !== 'undefined';
 
-let leafletPromise: Promise<LeafletMap['constructor'] | null> | null = null;
+let leafletPromise: Promise<typeof import('leaflet') | null> | null = null;
 
 /**
  * Lazily load Leaflet and its CSS.
@@ -14,12 +12,12 @@ export async function loadLeaflet(): Promise<typeof import('leaflet') | null> {
   if (!leafletPromise) {
     leafletPromise = Promise.all([
       import('leaflet'),
-      // @ts-expect-error — CSS import resolved by Vite
-      import('leaflet/dist/leaflet.css'),
+      // CSS import resolved by Vite bundler at build time
+      import('leaflet/dist/leaflet.css') as Promise<unknown>,
     ]).then(([leafletModule]) => (leafletModule.default ?? leafletModule) as typeof import('leaflet'));
   }
 
-  return leafletPromise as Promise<typeof import('leaflet') | null>;
+  return leafletPromise;
 }
 
 /**

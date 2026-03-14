@@ -153,7 +153,7 @@ export default function NewsletterHubPage() {
       <SEOHead
         title="Lettres Citoyennes — Briefings IA Outre-mer | A KI PRI SA YÉ"
         description="Abonnez-vous aux lettres citoyennes quotidiennes et hebdomadaires sur la vie chère en Outre-mer. Générées par IA, 100% gratuites."
-        canonicalPath="/newsletter"
+        canonical="/newsletter"
       />
 
       <div className="min-h-screen bg-slate-900 text-white pb-16">

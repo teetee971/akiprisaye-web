@@ -294,7 +294,7 @@ export default function ChocsPrixPage() {
       <SEOHead
         title="Chocs de Prix — Hausses anormales détectées | A KI PRI SA YÉ"
         description="Tableau de bord des hausses de prix anormales détectées cette semaine dans les territoires d'Outre-mer. Comparez et signalez."
-        canonicalPath="/chocs-prix"
+        canonical="/chocs-prix"
       />
 
       <div className="min-h-screen bg-slate-900 text-white pb-16">

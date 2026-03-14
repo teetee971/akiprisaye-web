@@ -223,7 +223,7 @@ export default function MonitoringIAPage() {
       <SEOHead
         title="Monitoring IA — Surveillance Globale | A KI PRI SA YÉ"
         description="Tableau de bord de l'IA de surveillance autonome du logiciel A KI PRI SA YÉ."
-        canonicalPath="/monitoring-ia"
+        canonical="/monitoring-ia"
       />
 
       <div className="min-h-screen bg-slate-900 text-white pb-16">
@@ -338,7 +338,7 @@ export default function MonitoringIAPage() {
                       <Activity size={14} className="text-blue-400" /> {cat}
                     </h3>
                     <div className="space-y-1.5">
-                      {checks.map((c, i) => <CheckRow key={i} check={c} />)}
+                      {checks.map((c: CheckResult, i: number) => <CheckRow key={i} check={c} />)}
                     </div>
                   </div>
                 ))}

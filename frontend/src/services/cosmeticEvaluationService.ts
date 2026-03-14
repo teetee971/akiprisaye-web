@@ -94,11 +94,12 @@ export function parseInciList(inciString: unknown): string[] {
  */
 export function findIngredient(inciName: string): CosmeticIngredient | null {
   const normalized = inciName.toUpperCase().trim();
-  if (OFFICIAL_INGREDIENTS[normalized]) return OFFICIAL_INGREDIENTS[normalized] as CosmeticIngredient;
+  const db = OFFICIAL_INGREDIENTS as Record<string, CosmeticIngredient>;
+  if (db[normalized]) return db[normalized];
 
-  for (const [key, value] of Object.entries(OFFICIAL_INGREDIENTS)) {
+  for (const [key, value] of Object.entries(db)) {
     if (key.includes(normalized) || normalized.includes(key)) {
-      return value as CosmeticIngredient;
+      return value;
     }
   }
   return null;

@@ -27,7 +27,6 @@ export function hasTouchSupport(): boolean {
   return (
     'ontouchstart' in window ||
     navigator.maxTouchPoints > 0 ||
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (navigator as any).msMaxTouchPoints > 0
   );
 }
@@ -40,7 +39,6 @@ export function getDevicePerformanceTier(): DevicePerformanceTier {
   if (typeof navigator === 'undefined') return 'medium';
 
   const cores = navigator.hardwareConcurrency ?? 4;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const connection = (navigator as any).connection ?? (navigator as any).mozConnection ?? (navigator as any).webkitConnection;
 
   if (cores < 4 || connection?.effectiveType === '2g') return 'low';
