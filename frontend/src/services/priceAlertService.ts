@@ -147,13 +147,7 @@ const NOTIFICATION_COOLDOWN = 24 * 60 * 60 * 1000; // 24h
  * Récupère toutes les alertes stockées
  */
 export function getAllAlerts(): PriceAlert[] {
-  try {
-    const data = safeLocalStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : [];
-  } catch (error) {
-    console.error('Error loading price alerts:', error);
-    return [];
-  }
+  return safeLocalStorage.getJSON<PriceAlert[]>(STORAGE_KEY, []);
 }
 
 /**

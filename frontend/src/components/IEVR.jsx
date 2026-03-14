@@ -24,7 +24,7 @@ import {
   getTrendIcon,
   validateIEVRData,
   getTerritoryStatus,
-} from '../utils/ievrCalculations.js';
+} from '../utils/ievrCalculations';
 import { Card } from './ui/card.jsx';
 import DataSourceWarning from './DataSourceWarning.jsx';
 

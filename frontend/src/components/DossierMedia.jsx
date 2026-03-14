@@ -13,7 +13,7 @@
 
 import { useState } from 'react';
 import ievrData from '../data/ievr-data.json';
-import { getTerritoryStatus } from '../utils/ievrCalculations.js';
+import { getTerritoryStatus } from '../utils/ievrCalculations';
 import { Card } from './ui/card.jsx';
 
 export function DossierMedia() {
