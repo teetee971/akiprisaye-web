@@ -118,6 +118,58 @@ describe('ci.yml — CI trigger guard', () => {
   });
 });
 
+describe('deploy-pages.yml — triple validation guard', () => {
+  const deployYml = readWorkflow('deploy-pages.yml');
+
+  it('validate job must run 3 independent sequential rounds (not retry-on-failure)', () => {
+    // Each round is a separate step that must succeed individually.
+    // "round 1/3", "round 2/3", "round 3/3" are present in the validate job.
+    expect(deployYml).toMatch(/round 1\/3/i);
+    expect(deployYml).toMatch(/round 2\/3/i);
+    expect(deployYml).toMatch(/round 3\/3/i);
+  });
+
+  it('validate job must run validate-deployment.mjs at least 3 times', () => {
+    const count = (deployYml.match(/validate-deployment\.mjs/g) || []).length;
+    expect(count).toBeGreaterThanOrEqual(3);
+  });
+
+  it('validate job must include a final proof step', () => {
+    expect(deployYml).toMatch(/PREUVE FINALE/i);
+    expect(deployYml).toMatch(/100% VERT/i);
+  });
+});
+
+describe('deploy-cloudflare-pages.yml — validation guard', () => {
+  const cloudflareYml = readWorkflow('deploy-cloudflare-pages.yml');
+
+  it('must have a validate job that runs after deploy', () => {
+    expect(cloudflareYml).toMatch(/validate:/);
+    expect(cloudflareYml).toMatch(/needs:\s*deploy/);
+  });
+
+  it('validate job must run 3 independent sequential rounds', () => {
+    expect(cloudflareYml).toMatch(/round 1\/3/i);
+    expect(cloudflareYml).toMatch(/round 2\/3/i);
+    expect(cloudflareYml).toMatch(/round 3\/3/i);
+  });
+
+  it('validate job must run validate-deployment.mjs at least 3 times', () => {
+    const count = (cloudflareYml.match(/validate-deployment\.mjs/g) || []).length;
+    expect(count).toBeGreaterThanOrEqual(3);
+  });
+
+  it('validate job must include a final proof step', () => {
+    expect(cloudflareYml).toMatch(/PREUVE FINALE/i);
+    expect(cloudflareYml).toMatch(/100% VERT/i);
+  });
+
+  it('deploy job must output the deployment URL for the validate job', () => {
+    expect(cloudflareYml).toMatch(/outputs:/);
+    expect(cloudflareYml).toMatch(/deployment.url/);
+  });
+});
+
 describe('auto-merge.yml — pull_request_target guard', () => {
   const autoMergeYml = readWorkflow('auto-merge.yml');
 

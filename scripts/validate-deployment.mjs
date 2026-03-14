@@ -38,6 +38,10 @@ export function isGitHubPagesSite(siteUrl) {
   return new URL(siteUrl).hostname.endsWith('github.io');
 }
 
+export function isCloudflarePagesSite(siteUrl) {
+  return new URL(siteUrl).hostname.endsWith('.pages.dev');
+}
+
 export function hasReactShell(html) {
   return /<div[^>]+id=["']root["']/i.test(html);
 }
@@ -306,8 +310,8 @@ async function verifySitemap(siteUrl) {
 }
 
 async function verifyApi(siteUrl) {
-  if (isGitHubPagesSite(siteUrl)) {
-    logOk('/api ignoré sur GitHub Pages (hébergement statique – pas d’endpoints /api servis).');
+  if (isGitHubPagesSite(siteUrl) || isCloudflarePagesSite(siteUrl)) {
+    logOk('/api ignoré (hébergement statique – pas d’endpoints /api servis).');
     return;
   }
 

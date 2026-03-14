@@ -11,6 +11,7 @@ import {
   hasGitHubPagesSpaFallback,
   hasReactShell,
   inferAssetBasePath,
+  isCloudflarePagesSite,
   isGitHubPagesSite,
   joinSiteUrl,
   normalizeBaseUrl,
@@ -79,19 +80,20 @@ describe('validate-deployment helpers', () => {
     ]);
   });
 
-  it('detects GitHub Pages URLs and fallback HTML', () => {
+  it('detects GitHub Pages and Cloudflare Pages static hosting URLs', () => {
     expect(isGitHubPagesSite('https://teetee971.github.io/akiprisaye-web')).toBe(true);
     expect(isGitHubPagesSite('https://akiprisaye-web.pages.dev')).toBe(false);
+    expect(isCloudflarePagesSite('https://akiprisaye-web.pages.dev')).toBe(true);
+    expect(isCloudflarePagesSite('https://teetee971.github.io/akiprisaye-web')).toBe(false);
     expect(hasGitHubPagesSpaFallback('<script>location.replace("/akiprisaye-web/?p=%2Flogin")</script>')).toBe(true);
     expect(hasGitHubPagesSpaFallback('<div id="root"></div>')).toBe(false);
   });
 
-  it('skips /api checks on GitHub Pages static hosting to prevent false validation failures', () => {
-    // verifyApi relies on isGitHubPagesSite to skip the /api check; GitHub Pages is a static host
-    // that cannot serve backend /api endpoints, so validating them would always fail.
+  it('skips /api checks on both GitHub Pages and Cloudflare Pages static hosting to prevent false validation failures', () => {
+    // verifyApi relies on isGitHubPagesSite / isCloudflarePagesSite to skip the /api check.
+    // Both platforms serve only static files for this project; there are no /api endpoints.
     expect(isGitHubPagesSite('https://teetee971.github.io/akiprisaye-web')).toBe(true);
-    // Cloudflare Pages does serve /api endpoints, so validation must run there.
-    expect(isGitHubPagesSite('https://akiprisaye-web.pages.dev')).toBe(false);
+    expect(isCloudflarePagesSite('https://akiprisaye-web.pages.dev')).toBe(true);
   });
 
   it('accepts GitHub Pages cache headers while keeping stricter checks elsewhere', () => {
