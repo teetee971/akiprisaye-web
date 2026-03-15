@@ -65,6 +65,8 @@ export default defineConfig({
       abs('./scripts/verify-pages-api.test.ts'),
       abs('./scripts/validate-deployment.test.ts'),
       abs('./scripts/ci-workflows.test.ts'),
+      // Firebase API key integrity — prevents re-introducing the wrong hardcoded key
+      abs('./scripts/firebase-config.test.ts'),
       // EAN / GTIN validation — GS1 checksum and country label
       abs('./src/test/eanValidator.test.ts'),
       // Structured receipt parser — French ticket OCR

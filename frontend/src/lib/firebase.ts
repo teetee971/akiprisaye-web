@@ -9,7 +9,7 @@ import { getFirestore, type Firestore } from "firebase/firestore";
 // Values are hardcoded here to prevent deployment issues where incorrect
 // environment variable secrets could override the correct fallback values.
 const firebaseConfig = {
-  apiKey: "AIzaSyDf_mB8zMWHFwoFhVLyThuKWMTmhB7uSZY",
+  apiKey: "AIzaSyDf_m8BzMVHFWoFhVLyThuKwWTMhB7u5ZY",
   authDomain: "a-ki-pri-sa-ye.firebaseapp.com",
   projectId: "a-ki-pri-sa-ye",
   storageBucket: "a-ki-pri-sa-ye.firebasestorage.app",
