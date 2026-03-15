@@ -122,6 +122,7 @@ interface OCRWorkerLike {
   recognize: (image: Blob) => Promise<{ data: { text: string; confidence: number } }>;
   terminate: () => Promise<void>;
 }
+
 const OCR_LOAD_ERROR_MESSAGE =
   'Le module OCR n’a pas pu se charger correctement en production. Les fichiers linguistiques sont peut-être indisponibles.';
 const KNOWN_ASSET_LABELS = new Set(['worker', 'core', 'language']);
