@@ -602,7 +602,7 @@
 }
 
 .comparison-flag {
-  font-size: 2rem;
+  font-size: 1.5rem;
 }
 
 .comparison-territory {
@@ -618,10 +618,10 @@
 }
 
 .comparison-price {
-  font-size: 2.5rem;
+  font-size: 1.875rem;
   font-weight: 700;
   color: #3b82f6;
-  margin: 0.5rem 0;
+  margin: 0.25rem 0;
 }
 
 .comparison-delta {
@@ -734,7 +734,7 @@
    ============================================ */
 
 .territories-v5 {
-  padding: 44px 2rem;
+  padding: 24px 2rem;
   max-width: 900px;
   margin: 0 auto;
   text-align: center;
@@ -781,7 +781,7 @@
    ============================================ */
 
 .how-it-works-v5 {
-  padding: 36px 2rem;
+  padding: 20px 2rem;
   max-width: 700px;
   margin: 0 auto;
   text-align: center;
@@ -790,10 +790,10 @@
 .steps-list-v5 {
   list-style: none;
   padding: 0;
-  margin: 2rem 0;
+  margin: 1rem 0;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 0.75rem;
   text-align: left;
 }
 
@@ -807,7 +807,7 @@
 }
 
 .step-emoji {
-  font-size: 2rem;
+  font-size: 1.5rem;
   flex-shrink: 0;
 }
 
@@ -820,14 +820,14 @@
    ============================================ */
 
 .observatory-v5 {
-  padding: 44px 2rem;
+  padding: 24px 2rem;
   max-width: 800px;
   margin: 0 auto;
   text-align: center;
 }
 
 .observatory-content {
-  padding: 3rem 2rem;
+  padding: 1.5rem 2rem;
   background: rgba(16, 185, 129, 0.05);
   border: 1px solid rgba(16, 185, 129, 0.2);
   border-radius: 20px;
@@ -913,7 +913,7 @@
    ============================================ */
 
 .mini-faq {
-  padding: 36px 2rem;
+  padding: 20px 2rem;
   max-width: 700px;
   margin: 0 auto;
 }
@@ -921,7 +921,7 @@
 .section-title-small {
   font-size: 1.5rem;
   font-weight: 600;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   text-align: center;
   color: #f1f5f9;
 }
