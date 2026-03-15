@@ -20,8 +20,8 @@ export default function Compare() {
 
   return (
     <div className="space-y-4">
-      {results.map((r, i) => (
-        <GlassCard key={i}>
+      {results.map((r) => (
+        <GlassCard key={r.store}>
           <div className="flex justify-between">
             <strong>{r.store}</strong>
             <span>{r.price.toFixed(2)} €</span>
