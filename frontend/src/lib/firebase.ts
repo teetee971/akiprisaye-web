@@ -21,8 +21,17 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "G-NFHCZTLPDM",
 };
 
-// Kept for backward compatibility — always empty since fallback defaults are always present.
-const missingCriticalEnvKeys: string[] = [];
+// Detect missing VITE_FIREBASE_* secrets so diagnostic pages (Login, StatutPage)
+// can warn operators.  Vite replaces `import.meta.env.*` at build time: an empty
+// string means the secret was not set in GitHub Actions / Cloudflare Pages.
+const missingCriticalEnvKeys: string[] = (
+  [
+    "VITE_FIREBASE_API_KEY",
+    "VITE_FIREBASE_AUTH_DOMAIN",
+    "VITE_FIREBASE_PROJECT_ID",
+    "VITE_FIREBASE_APP_ID",
+  ] as const
+).filter((k) => !import.meta.env[k as keyof ImportMetaEnv]);
 
 let firebaseError: string | null = null;
 let app: FirebaseApp | null = null;
