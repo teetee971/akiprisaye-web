@@ -131,7 +131,7 @@ export function ImportReport({ result, onReset, entityType }: ImportReportProps)
           <div className="max-h-64 overflow-y-auto space-y-2">
             {result.errors.slice(0, 20).map((error, index) => (
               <div
-                key={index}
+                key={`${error.row}-${error.field ?? 'general'}-${index}`}
                 className="p-3 bg-red-500/5 border border-red-500/20 rounded-lg"
               >
                 <div className="flex items-start space-x-2">

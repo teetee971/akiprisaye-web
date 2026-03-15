@@ -1,5 +1,6 @@
 import { addDoc, collection, doc, getDoc, getDocs, limit, orderBy, query, serverTimestamp, setDoc, where } from 'firebase/firestore';
 import { db } from '../lib/firebase';
+import { safeJsonParse } from '../utils/safeLocalStorage';
 
 export type Plan = 'free' | 'pro';
 
@@ -33,7 +34,7 @@ const minTs = () => Date.now() - HISTORY_RETENTION_DAYS * 24 * 60 * 60 * 1000;
 export const getGuestQuotaStatus = (): QuotaStatus => {
   const raw = localStorage.getItem(GUEST_QUOTA_KEY);
   const today = todayKey();
-  const parsed = raw ? JSON.parse(raw) as { day: string; searchesUsed: number } : { day: today, searchesUsed: 0 };
+  const parsed = safeJsonParse(raw, { day: today, searchesUsed: 0 }) as { day: string; searchesUsed: number };
   const used = parsed.day === today ? parsed.searchesUsed : 0;
   const status = {
     allowed: used < GUEST_LIMIT,
@@ -90,7 +91,7 @@ export const consumeUserQuota = async (uid: string, plan: Plan): Promise<QuotaSt
 export const saveGuestHistory = (entry: Omit<SearchHistoryEntry, 'id' | 'createdAt'>) => {
   const now = Date.now();
   const raw = localStorage.getItem(GUEST_HISTORY_KEY);
-  const list = raw ? JSON.parse(raw) as SearchHistoryEntry[] : [];
+  const list = safeJsonParse(raw, [] as SearchHistoryEntry[]);
   const next: SearchHistoryEntry[] = [{ id: `g-${now}-${Math.random().toString(36).slice(2, 8)}`, createdAt: now, ...entry }, ...list]
     .filter((item) => item.createdAt >= minTs())
     .slice(0, 100);
@@ -99,7 +100,7 @@ export const saveGuestHistory = (entry: Omit<SearchHistoryEntry, 'id' | 'created
 
 export const getGuestHistory = (): SearchHistoryEntry[] => {
   const raw = localStorage.getItem(GUEST_HISTORY_KEY);
-  const list = raw ? JSON.parse(raw) as SearchHistoryEntry[] : [];
+  const list = safeJsonParse(raw, [] as SearchHistoryEntry[]);
   const filtered = list.filter((item) => item.createdAt >= minTs());
   if (filtered.length !== list.length) localStorage.setItem(GUEST_HISTORY_KEY, JSON.stringify(filtered));
   return filtered;
@@ -144,7 +145,7 @@ export const cacheProductResults = (items: Array<Record<string, unknown>>) => {
 export const getCachedProduct = (id: string): Record<string, unknown> | null => {
   const raw = localStorage.getItem(PRODUCT_CACHE_KEY);
   if (!raw) return null;
-  const map = JSON.parse(raw) as Record<string, Record<string, unknown>>;
+  const map = safeJsonParse(raw, {} as Record<string, Record<string, unknown>>);
   return map[id] ?? null;
 };
 

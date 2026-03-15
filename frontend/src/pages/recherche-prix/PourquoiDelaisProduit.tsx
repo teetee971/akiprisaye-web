@@ -181,7 +181,7 @@ const PourquoiDelaisProduit: React.FC = () => {
             
             <div className="space-y-3">
               {selectedExplanation.typical_logistics_path.map((step, index) => (
-                <div key={index} className="flex items-start">
+                <div key={step} className="flex items-start">
                   <div className="flex-shrink-0 w-8 h-8 rounded-full bg-indigo-900/50 flex items-center justify-center text-indigo-400 font-semibold text-sm mr-3">
                     {index + 1}
                   </div>
@@ -207,8 +207,8 @@ const PourquoiDelaisProduit: React.FC = () => {
             </h3>
             
             <ul className="space-y-3">
-              {selectedExplanation.common_delay_factors.map((factor, index) => (
-                <li key={index} className="flex items-start">
+              {selectedExplanation.common_delay_factors.map((factor) => (
+                <li key={factor} className="flex items-start">
                   <AlertCircle className="w-5 h-5 text-orange-400 mr-3 flex-shrink-0 mt-0.5" />
                   <span className="text-sm text-gray-300">{factor}</span>
                 </li>
@@ -223,8 +223,8 @@ const PourquoiDelaisProduit: React.FC = () => {
             </h3>
             
             <div className="flex flex-wrap gap-2">
-              {selectedExplanation.transport_dependency.map((mode, index) => (
-                <span key={index} className="inline-flex items-center px-3 py-1 bg-indigo-900/30 text-indigo-300 text-sm rounded-lg border border-indigo-700">
+              {selectedExplanation.transport_dependency.map((mode) => (
+                <span key={mode} className="inline-flex items-center px-3 py-1 bg-indigo-900/30 text-indigo-300 text-sm rounded-lg border border-indigo-700">
                   {mode === 'maritime' && '🚢 Maritime'}
                   {mode === 'aerien' && '✈️ Aérien'}
                   {mode === 'mixte' && '🚢✈️ Maritime + Aérien'}
@@ -247,8 +247,8 @@ const PourquoiDelaisProduit: React.FC = () => {
           </p>
           
           <div className="space-y-4">
-            {generalFactors.map((gf, index) => (
-              <div key={index} className="border border-slate-700 rounded-lg p-4">
+            {generalFactors.map((gf) => (
+              <div key={gf.factor} className="border border-slate-700 rounded-lg p-4">
                 <h3 className="font-semibold text-gray-100 mb-2 text-sm">
                   {gf.factor}
                 </h3>

@@ -368,7 +368,7 @@ export default function AbonnementsInternet() {
                         <tbody className="divide-y divide-slate-700/50">
                           {sortedResults.map((result, index) => (
                             <tr
-                              key={index}
+                              key={`${result.operateur}-${result.technologie}-${index}`}
                               className="hover:bg-slate-800/30 transition-colors"
                             >
                               <td className="px-4 py-3 text-sm text-gray-200">

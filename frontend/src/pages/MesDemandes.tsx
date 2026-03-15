@@ -242,7 +242,7 @@ export default function MesDemandes() {
                   <h3 className="text-sm font-semibold text-gray-400 mb-3">Historique</h3>
                   <div className="space-y-2">
                     {selectedTicket.statusHistory.map((change, index) => (
-                      <div key={index} className="flex items-start gap-3 text-sm">
+                      <div key={`${String(change.changedAt)}-${change.to}-${index}`} className="flex items-start gap-3 text-sm">
                         <div className="w-2 h-2 rounded-full bg-blue-400 mt-2"></div>
                         <div>
                           <p className="text-gray-300">

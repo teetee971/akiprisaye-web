@@ -197,7 +197,7 @@ const DelaisTensionsLogistiques: React.FC = () => {
 
             <div className="space-y-4">
               {territoryObs.map((obs, index) => (
-                <div key={index} className="border border-slate-700 rounded-lg p-4">
+                <div key={`${obs.territory}-${obs.period}-${obs.transport_type}-${index}`} className="border border-slate-700 rounded-lg p-4">
                   {/* En-tête de l'observation */}
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center space-x-2">

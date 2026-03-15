@@ -227,10 +227,10 @@ export default function ScanEAN() {
 
           if (codes.length > 0) {
             ean = codes[0].rawValue
-            console.log('✅ Barcode detected with BarcodeDetector:', ean)
+            if (import.meta.env.DEV) console.log('✅ Barcode detected with BarcodeDetector:', ean)
           }
         } catch (err) {
-          console.log('BarcodeDetector failed, trying other methods')
+          if (import.meta.env.DEV) console.log('BarcodeDetector failed, trying other methods')
         }
       }
 
@@ -245,13 +245,13 @@ export default function ScanEAN() {
           throw new Error(ocrError);
         }
         ocrText = ocrResult.rawText;
-        console.log('OCR raw text:', ocrText)
+        if (import.meta.env.DEV) console.log('OCR raw text:', ocrText)
 
         // Look for EAN-13 (13 digits) or EAN-8 (8 digits)
         const match = ocrText.match(/\b\d{13}\b|\b\d{8}\b/)
         if (match) {
           ean = match[0]
-          console.log('✅ EAN detected via OCR:', ean)
+          if (import.meta.env.DEV) console.log('✅ EAN detected via OCR:', ean)
         }
       }
 
