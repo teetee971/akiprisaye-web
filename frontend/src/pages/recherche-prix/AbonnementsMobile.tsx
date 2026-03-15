@@ -362,7 +362,7 @@ export default function AbonnementsMobile() {
                         </thead>
                         <tbody>
                           {sortedResults.map((plan, index) => (
-                            <tr key={index} className="border-b border-slate-800 hover:bg-slate-800/30">
+                            <tr key={`${plan.operateur}-${plan.donnees}-${plan.typeOffre}-${index}`} className="border-b border-slate-800 hover:bg-slate-800/30">
                               <td className="py-3 px-2">
                                 <div className="text-gray-200 font-medium">{plan.operateur}</div>
                                 <div className="text-xs text-gray-500">{plan.typeOffre}</div>

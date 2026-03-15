@@ -203,7 +203,7 @@ export default function Avions() {
                             const diffAbs = flight.prix - minPrix;
                             return (
                               <tr
-                                key={index}
+                                key={`${flight.compagnie}-${flight.depart}-${flight.arrivee}-${flight.mois}-${index}`}
                                 className={`border-b border-slate-800 hover:bg-slate-800/30 transition-colors ${index === 0 ? 'bg-green-500/5' : ''}`}
                               >
                                 <td className="py-3 px-2 font-bold text-gray-300">

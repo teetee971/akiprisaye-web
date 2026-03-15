@@ -357,7 +357,7 @@ export default function Eau() {
                         <tbody className="divide-y divide-slate-700/50">
                           {sortedResults.map((result, index) => (
                             <tr
-                              key={index}
+                              key={`${result.organismeGestionnaire}-${result.typeService}-${index}`}
                               className="hover:bg-slate-800/30 transition-colors"
                             >
                               <td className="px-4 py-3 text-sm text-gray-200">

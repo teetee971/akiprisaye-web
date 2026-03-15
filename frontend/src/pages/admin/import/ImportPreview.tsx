@@ -218,7 +218,7 @@ export function ImportPreview({
           <div className="mt-2 space-y-2 max-h-64 overflow-y-auto">
             {errors.map((error, index) => (
               <div
-                key={index}
+                key={`${error.row}-${error.field ?? 'general'}-${index}`}
                 className="p-3 bg-red-500/5 border border-red-500/20 rounded-lg text-sm"
               >
                 <div className="flex items-start space-x-2">

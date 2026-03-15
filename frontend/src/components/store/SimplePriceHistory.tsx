@@ -170,7 +170,7 @@ export default function SimplePriceHistory({
                 
                 return (
                   <circle
-                    key={index}
+                    key={point.date}
                     cx={x}
                     cy={y}
                     r="1.5"

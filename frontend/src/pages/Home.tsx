@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
-import { BarChart2, ShoppingCart, Receipt, Landmark, Search } from 'lucide-react';
+import { BarChart2, ShoppingCart, Receipt, Landmark, Search, Globe, Camera } from 'lucide-react';
 import { getComparisonOfDay, type PriceComparison } from '../data/exampleComparisons';
 import '../styles/home-v5.css';
 import '../styles/animations.css';
@@ -516,25 +516,25 @@ export default function HomeV5() {
                 <FlipStatCard
                   value={`${stats.territories}`}
                   label="Territoires"
-                  icon="🗺️"
+                  icon={<Globe className="w-5 h-5 text-blue-400" />}
                   backContent="Guadeloupe, Martinique, Guyane, La Réunion, Mayotte et plus encore."
                 />
                 <FlipStatCard
                   value={`${stats.products.toLocaleString()}+`}
                   label="Produits comparés"
-                  icon="🛒"
+                  icon={<ShoppingCart className="w-5 h-5 text-emerald-400" />}
                   backContent="Alimentaire, hygiène, entretien — relevés citoyens vérifiés."
                 />
                 <FlipStatCard
                   value={`${stats.scans.toLocaleString()}+`}
                   label="Scans effectués"
-                  icon="📷"
+                  icon={<Camera className="w-5 h-5 text-violet-400" />}
                   backContent="Codes-barres et tickets OCR analysés par la communauté."
                 />
                 <FlipStatCard
                   value="~35%"
                   label="Surcoût moyen DOM"
-                  icon="📊"
+                  icon={<BarChart2 className="w-5 h-5 text-orange-400" />}
                   backContent="Par rapport à l'Hexagone — source observatoire citoyen mars 2026."
                 />
               </div>

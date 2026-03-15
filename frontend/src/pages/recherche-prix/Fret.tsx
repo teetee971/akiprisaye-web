@@ -228,7 +228,7 @@ export default function Fret() {
                         <tbody className="divide-y divide-slate-700/50">
                           {results.map((result, index) => (
                             <tr
-                              key={index}
+                              key={`${result.operateurLogistique}-${result.typeConteneur}-${result.portDepart}-${index}`}
                               className="hover:bg-slate-800/30 transition-colors"
                             >
                               <td className="px-4 py-3 text-sm text-gray-200">

@@ -213,8 +213,8 @@ const IndiceLogistique: React.FC = () => {
             </div>
             
             <ul className="space-y-2">
-              {profile.exposition_risques.map((risque, index) => (
-                <li key={index} className="flex items-start">
+              {profile.exposition_risques.map((risque) => (
+                <li key={risque} className="flex items-start">
                   <span className="text-orange-400 mr-2">•</span>
                   <span className="text-sm text-gray-300">{risque}</span>
                 </li>
@@ -226,8 +226,8 @@ const IndiceLogistique: React.FC = () => {
           <div className="bg-slate-800/50 rounded-lg p-6">
             <h3 className="text-sm font-bold text-gray-100 mb-3">Sources publiques</h3>
             <ul className="space-y-1">
-              {profile.sources_publiques.map((source, index) => (
-                <li key={index} className="text-sm text-gray-400">
+              {profile.sources_publiques.map((source) => (
+                <li key={source} className="text-sm text-gray-400">
                   • {source}
                 </li>
               ))}

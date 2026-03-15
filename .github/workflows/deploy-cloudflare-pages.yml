@@ -13,7 +13,42 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  check-credentials:
+    runs-on: ubuntu-latest
+    outputs:
+      configured: ${{ steps.check.outputs.configured }}
+    steps:
+      - name: Check Cloudflare credentials
+        id: check
+        run: |
+          # A valid Cloudflare Account ID is a 32-character hex string.
+          OK=true
+          if [ -z "$CF_API_TOKEN" ]; then
+            echo "⚠️  CLOUDFLARE_API_TOKEN secret is not set."
+            OK=false
+          fi
+          if [ -z "$CF_ACCOUNT_ID" ]; then
+            echo "⚠️  CLOUDFLARE_ACCOUNT_ID secret is not set."
+            OK=false
+          elif ! echo "$CF_ACCOUNT_ID" | grep -qE '^[0-9a-fA-F]{32}$'; then
+            echo "⚠️  CLOUDFLARE_ACCOUNT_ID does not match the expected 32-character hex format."
+            echo "    Current length: $(echo -n "$CF_ACCOUNT_ID" | wc -c) chars."
+            OK=false
+          fi
+          if [ "$OK" = "false" ]; then
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "    ➡ Update CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID in repo secrets to enable Cloudflare Pages deployment."
+          else
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+            echo "✅ Cloudflare credentials look valid – proceeding with deployment."
+          fi
+        env:
+          CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
   deploy:
+    needs: check-credentials
+    if: needs.check-credentials.outputs.configured == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
