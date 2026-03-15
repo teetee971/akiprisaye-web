@@ -194,9 +194,9 @@ export default function OCRHub() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {GOVERNANCE_PRINCIPLES.map((principle, index) => (
+              {GOVERNANCE_PRINCIPLES.map((principle) => (
                 <div
-                  key={index}
+                  key={principle.title}
                   className="p-6 rounded-xl bg-slate-800/50 border border-slate-700/50 backdrop-blur-sm"
                 >
                   <div className="text-3xl mb-3" aria-hidden="true">

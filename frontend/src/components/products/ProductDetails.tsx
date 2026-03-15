@@ -349,9 +349,9 @@ export default function ProductDetails({ product, onClose, onReportError }: Prod
             />
             {product.userPhotos.length > 1 && (
               <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
-                {product.userPhotos.map((_, index) => (
+                {product.userPhotos.map((photo, index) => (
                   <button
-                    key={index}
+                    key={photo.url}
                     onClick={(e) => {
                       e.stopPropagation();
                       setSelectedPhotoIndex(index);
