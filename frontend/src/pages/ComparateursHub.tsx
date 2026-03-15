@@ -49,6 +49,7 @@ const GENERAL_COMPARATEURS = [
   { path: '/comparatif-concurrence', icon: Scale,             label: 'Comparatif Concurrence',    color: 'text-amber-400',   bg: 'bg-amber-500/10 border-amber-500/30',   desc: 'Positionnement d\'A KI PRI SA YÉ face aux alternatives' },
   { path: '/recherche-avancee',      icon: SlidersHorizontal, label: 'Recherche Avancée',         color: 'text-indigo-400',  bg: 'bg-indigo-500/10 border-indigo-500/30', desc: 'Moteur de recherche multi-critères et comparaison' },
   { path: '/recherche-prix',          icon: Search,            label: 'Recherche Prix',              color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/30', desc: 'Recherche de prix multicritères par produit et territoire' },
+  { path: '/recherche-produits',      icon: Search,            label: 'Recherche Produits',          color: 'text-cyan-400',    bg: 'bg-cyan-500/10 border-cyan-500/30',        desc: 'Recherche et découverte de produits par territoire' },
 ];
 
 // ── Specialized comparators navigation cards ──────────────────────────────────
@@ -62,7 +63,6 @@ const SPECIALIZED = [
   { path: '/comparateur-location-voiture',icon: Car,         label: 'Location voiture',  color: 'text-emerald-400',  bg: 'bg-emerald-500/10 border-emerald-500/30', desc: 'Agences locales et internationales' },
   { path: '/comparateur-materiaux-batiment', icon: HardHat,  label: 'Matériaux BTP',     color: 'text-orange-400',   bg: 'bg-orange-500/10 border-orange-500/30', desc: 'Ciment, acier, bois, tôles, PVC…' },
   { path: '/comparateur-services',        icon: Wifi,        label: 'Télécoms / Services', color: 'text-indigo-400', bg: 'bg-indigo-500/10 border-indigo-500/30', desc: 'Internet, mobile, eau, électricité' },
-  { path: '/evaluation-cosmetique',       icon: Sparkles,    label: 'Cosmétiques',        color: 'text-fuchsia-400', bg: 'bg-fuchsia-500/10 border-fuchsia-500/30', desc: 'Évaluation des produits cosmétiques DOM' },
 ];
 
 // ── Recherche-prix sub-comparators ─────────────────────────────────────────────
@@ -145,6 +145,7 @@ const OBSERVATOIRE = [
   { path: '/enquete-carburants',         icon: FlaskConical, label: 'Enquête Carburants',        color: 'text-yellow-400',  bg: 'bg-yellow-500/10 border-yellow-500/30',   desc: 'Participez à l\'enquête citoyenne sur les carburants' },
   { path: '/enquete-eau',                icon: Droplet,   label: 'Enquête Eau',                 color: 'text-blue-400',    bg: 'bg-blue-500/10 border-blue-500/30',       desc: 'Enquête sur les prix et la qualité de l\'eau en DOM' },
   { path: '/enquete-octroi-mer',         icon: Calculator,label: 'Enquête Octroi de Mer',       color: 'text-rose-400',    bg: 'bg-rose-500/10 border-rose-500/30',       desc: 'Enquête citoyenne sur l\'octroi de mer et son impact' },
+  { path: '/chocs-prix',                 icon: Zap,       label: 'Chocs de Prix',               color: 'text-orange-400',  bg: 'bg-orange-500/10 border-orange-500/30',   desc: 'Détection et analyse des chocs de prix en temps réel' },
 ];
 
 // ── IA & Analyses ───────────────────────────────────────────────────────────────
@@ -163,6 +164,7 @@ const IA_OUTILS = [
   { path: '/detection-fraude',    icon: Shield,    label: 'Détection Fraude',        color: 'text-rose-400',    bg: 'bg-rose-500/10 border-rose-500/30',       desc: 'Détecter les hausses suspectes et anomalies tarifaires' },
   { path: '/portail-developpeurs',icon: Code2,     label: 'Portail Développeurs',    color: 'text-slate-400',   bg: 'bg-slate-500/10 border-slate-500/30',     desc: 'API publique pour intégrations tierces' },
   { path: '/innovation-lab',      icon: Zap,       label: 'Lab Innovation',          color: 'text-indigo-400',  bg: 'bg-indigo-500/10 border-indigo-500/30',   desc: 'Innovations suggérées et vote citoyen' },
+  { path: '/monitoring-ia',       icon: Activity,  label: 'Monitoring IA',           color: 'text-teal-400',    bg: 'bg-teal-500/10 border-teal-500/30',       desc: 'Tableau de bord de surveillance IA du marché en temps réel' },
 ];
 
 // ── Citoyenneté & Communauté ────────────────────────────────────────────────────
@@ -174,6 +176,7 @@ const CITOYEN = [
   { path: '/signalement',         icon: Bell,         label: 'Signaler un Abus',      color: 'text-orange-400',  bg: 'bg-orange-500/10 border-orange-500/30',   desc: 'Signaler une anomalie tarifaire ou un abus' },
   { path: '/lettre-hebdo',        icon: Newspaper,    label: 'Lettre Hebdo IA',       color: 'text-sky-400',     bg: 'bg-sky-500/10 border-sky-500/30',         desc: 'La newsletter hebdomadaire sur les prix DOM–COM' },
   { path: '/lettre-jour',         icon: Newspaper,    label: 'Lettre du Jour IA',     color: 'text-indigo-400',  bg: 'bg-indigo-500/10 border-indigo-500/30',   desc: 'La veille quotidienne des prix DOM-COM par IA' },
+  { path: '/newsletter',          icon: Bell,         label: 'Hub Newsletter',        color: 'text-violet-400',  bg: 'bg-violet-500/10 border-violet-500/30',   desc: 'Toutes les newsletters et alertes d\'information DOM–COM' },
   { path: '/conference-prix',     icon: Users,        label: 'Conférence Prix',       color: 'text-violet-400',  bg: 'bg-violet-500/10 border-violet-500/30',   desc: 'Programme des conférences citoyennes sur les prix' },
   { path: '/ti-panie',            icon: ShoppingCart, label: 'Ti Panie Solidaire',    color: 'text-teal-400',    bg: 'bg-teal-500/10 border-teal-500/30',       desc: 'Panier solidaire pour les familles en difficulté' },
   { path: '/evaluation-magasins', icon: Star,         label: 'Évaluation Magasins',   color: 'text-yellow-400',  bg: 'bg-yellow-500/10 border-yellow-500/30',   desc: 'Notez les magasins de votre territoire' },
