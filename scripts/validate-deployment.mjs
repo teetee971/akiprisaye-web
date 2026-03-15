@@ -418,7 +418,12 @@ async function verifyFirebaseBundle(siteUrl, html) {
     fail(`Bundle JS principal introuvable : ${bundlePath} (HTTP ${response.status}).`);
   }
 
-  // Hard-fail immediately if the known wrong API key is present in the bundle.
+  // Hard-fail immediately if this specific historically-wrong API key is present
+  // in the bundle.  This key was embedded in the live production bundle due to
+  // character transpositions vs the key registered in GCP (project a-ki-pri-sa-ye,
+  // confirmed 2026-03-15).  The positive check below (EXPECTED_FIREBASE_CONFIG)
+  // catches any wrong key in general; this additional guard provides an explicit,
+  // human-readable error pointing directly to the VITE_FIREBASE_API_KEY secret.
   const WRONG_API_KEY = 'AIzaSyDf_mB8zMWHFwoFhVLyThuKWMTmhB7uSZY';
   if (body.includes(WRONG_API_KEY)) {
     const bundleFile = bundlePath.split('/').pop();
