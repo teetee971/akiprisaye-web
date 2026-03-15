@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import {
@@ -8,7 +8,7 @@ import {
   TrendingUp, Activity, Sparkles, Zap, Bell, Clock, BookOpen, FileText,
   Scale, SlidersHorizontal, Camera, Calculator, Heart, Trash2, Bot,
   Eye, Tag, HandHeart, BarChart2, Newspaper, MessageSquare, Star, Wallet,
-  FlaskConical, Leaf, Code2, Navigation,
+  FlaskConical, Leaf, Code2, Navigation, ChevronDown, ChevronUp,
 } from 'lucide-react';
 import { GlassCard } from '../components/ui/glass-card';
 import Comparateur from './Comparateur';
@@ -196,6 +196,94 @@ const NAVIGATION_OUTILS = [
   { path: '/recherche-hub',     icon: Search,     label: 'Hub de Recherche',       color: 'text-blue-400',   bg: 'bg-blue-500/10 border-blue-500/30',    desc: 'Moteur de recherche multi-sources et multi-critères' },
 ];
 
+// ── Constants ──────────────────────────────────────────────────────────────────
+/** Maximum number of cards shown before the "show more" button appears. */
+const CARDS_VISIBLE_DEFAULT = 8;
+
+// ── CategoryCards sub-component ───────────────────────────────────────────────
+interface NavCategory {
+  readonly id: string;
+  readonly icon: React.ElementType;
+  readonly label: string;
+  readonly items: ReadonlyArray<{ path: string; icon: React.ElementType; label: string; color: string; bg: string; desc: string }>;
+}
+
+function CategoryCards({
+  toolSearch,
+  activeNavCat,
+  navCategories,
+}: {
+  toolSearch: string;
+  activeNavCat: string;
+  navCategories: ReadonlyArray<NavCategory>;
+}) {
+  const [expanded, setExpanded] = useState(false);
+
+  const cat = navCategories.find((c) => c.id === activeNavCat);
+  const allItems = toolSearch.trim()
+    ? navCategories.flatMap((c) => c.items).filter(
+        (item, idx, arr) =>
+          arr.findIndex((x) => x.path === item.path) === idx &&
+          (item.label.toLowerCase().includes(toolSearch.toLowerCase()) ||
+           item.desc.toLowerCase().includes(toolSearch.toLowerCase()))
+      )
+    : (cat?.items ?? []);
+
+  // Reset collapsed state when category changes
+  const prevCatRef = React.useRef(activeNavCat);
+  if (prevCatRef.current !== activeNavCat) {
+    prevCatRef.current = activeNavCat;
+    // Can't call setState here; use key trick below instead
+  }
+
+  if (allItems.length === 0) {
+    return (
+      <p className="text-slate-400 text-sm text-center py-6">
+        Aucun outil trouvé pour « {toolSearch} »
+      </p>
+    );
+  }
+
+  const hasMore = allItems.length > CARDS_VISIBLE_DEFAULT;
+  const visibleItems = (!expanded && hasMore) ? allItems.slice(0, CARDS_VISIBLE_DEFAULT) : allItems;
+
+  return (
+    <div key={activeNavCat + toolSearch}>
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-2.5">
+        {visibleItems.map((item) => {
+          const Icon = item.icon;
+          return (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={`group flex items-center gap-2 rounded-xl border p-3 transition-all hover:scale-[1.02] hover:shadow-lg active:scale-[0.98] ${item.bg}`}
+            >
+              <Icon className={`w-5 h-5 flex-shrink-0 ${item.color}`} aria-hidden="true" />
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold text-white text-xs leading-tight">{item.label}</p>
+                <p className="hidden sm:block text-xs text-gray-400 mt-0.5 truncate">{item.desc}</p>
+              </div>
+            </Link>
+          );
+        })}
+      </div>
+      {hasMore && (
+        <button
+          type="button"
+          onClick={() => setExpanded((v) => !v)}
+          className="mt-3 flex items-center gap-1.5 mx-auto text-xs text-slate-400 hover:text-white transition-colors"
+          aria-expanded={expanded}
+        >
+          {expanded
+            ? <><ChevronUp className="w-3.5 h-3.5" aria-hidden="true" /> Voir moins</>
+            : <><ChevronDown className="w-3.5 h-3.5" aria-hidden="true" /> Voir {allItems.length - CARDS_VISIBLE_DEFAULT} de plus</>
+          }
+        </button>
+      )}
+    </div>
+  );
+}
+
 export default function ComparateursHub() {
   const [activeTab, setActiveTab] = useState<ComparateurTab>('prix');
   const [activeNavCat, setActiveNavCat] = useState<string>('general');
@@ -311,16 +399,16 @@ export default function ComparateursHub() {
   const fmtPrice = (n: number) => n.toFixed(2) + ' €';
 
   const NAV_CATEGORIES = [
-    { id: 'general',      emoji: '⚖️', label: 'Général',      items: GENERAL_COMPARATEURS },
-    { id: 'specialise',   emoji: '✈️', label: 'Transport',     items: SPECIALIZED },
-    { id: 'tarifs',       emoji: '💡', label: 'Tarifs',        items: RECHERCHE_PRIX },
-    { id: 'scanners',     emoji: '📷', label: 'Scan',          items: SCANNERS },
-    { id: 'calcul',       emoji: '🧮', label: 'Calcul',        items: CALCULATEURS },
-    { id: 'observatoire', emoji: '🔭', label: 'Données',       items: OBSERVATOIRE },
-    { id: 'ia',           emoji: '🤖', label: 'IA',            items: IA_OUTILS },
-    { id: 'citoyen',      emoji: '🤝', label: 'Citoyen',       items: CITOYEN },
-    { id: 'ressources',   emoji: '📚', label: 'Guides',        items: RESSOURCES },
-    { id: 'cartes',       emoji: '🗺️', label: 'Cartes',        items: NAVIGATION_OUTILS },
+    { id: 'general',      icon: Scale,       label: 'Général',      items: GENERAL_COMPARATEURS },
+    { id: 'specialise',   icon: Plane,        label: 'Transport',    items: SPECIALIZED },
+    { id: 'tarifs',       icon: DollarSign,   label: 'Tarifs',       items: RECHERCHE_PRIX },
+    { id: 'scanners',     icon: Camera,       label: 'Scan',         items: SCANNERS },
+    { id: 'calcul',       icon: Calculator,   label: 'Calcul',       items: CALCULATEURS },
+    { id: 'observatoire', icon: Eye,          label: 'Données',      items: OBSERVATOIRE },
+    { id: 'ia',           icon: Bot,          label: 'IA',           items: IA_OUTILS },
+    { id: 'citoyen',      icon: Users,        label: 'Citoyen',      items: CITOYEN },
+    { id: 'ressources',   icon: BookOpen,     label: 'Guides',       items: RESSOURCES },
+    { id: 'cartes',       icon: Navigation,   label: 'Cartes',       items: NAVIGATION_OUTILS },
   ] as const;
 
   return (
@@ -333,11 +421,11 @@ export default function ComparateursHub() {
         <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/comparateurs" />
       </Helmet>
 
-      <div className="min-h-screen bg-slate-950 p-3 sm:p-4 pt-10 sm:pt-12">
+      <div className="min-h-screen bg-slate-950 p-3 sm:p-4 pt-3 sm:pt-4">
         <div className="max-w-7xl mx-auto">
 
           {/* ── Hero Banner ── */}
-          <div className="relative rounded-2xl overflow-hidden mb-5 sm:mb-6" style={{ minHeight: '140px' }}>
+          <div className="relative rounded-2xl overflow-hidden mb-3 sm:mb-4" style={{ minHeight: '100px' }}>
             <img
               src="https://images.unsplash.com/photo-1604719312566-8912e9227c6a?auto=format&fm=webp&fit=crop&w=1200&q=80"
               alt="Marché tropical — comparaison de prix"
@@ -347,17 +435,18 @@ export default function ComparateursHub() {
               height={300}
             />
             <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-950/80 to-slate-950/40" />
-            <div className="relative z-10 p-5 sm:p-7 flex items-center gap-4">
+            <div className="relative z-10 p-3 sm:p-5 flex items-center gap-3">
+              <BarChart3 className="w-7 h-7 text-blue-400 flex-shrink-0" aria-hidden="true" />
               <div>
-                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-1">📊 Comparateurs de prix</h1>
-                <p className="text-slate-300 text-sm sm:text-base">Tous vos outils de comparaison — données réelles observatoire</p>
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white">Comparateurs de prix</h1>
+                <p className="text-slate-300 text-xs sm:text-sm">Tous vos outils de comparaison — données réelles observatoire</p>
               </div>
             </div>
           </div>
 
 
           {/* ── Tabs ── */}
-          <GlassCard className="mb-4 p-2 sm:p-3">
+          <GlassCard className="mb-3 p-2 sm:p-3">
             <div className="overflow-x-auto pb-0.5 -mb-0.5">
               <div className="flex gap-1.5 sm:gap-2 sm:flex-wrap min-w-max sm:min-w-0">
                 {tabs.map((tab) => {
@@ -382,11 +471,8 @@ export default function ComparateursHub() {
                 })}
               </div>
             </div>
-          </GlassCard>
-
-          {/* Tab description */}
-          <GlassCard className="mb-4 p-3 sm:p-4">
-            <p className="text-gray-300 text-xs sm:text-sm">{tabs.find((t) => t.id === activeTab)?.description}</p>
+            {/* Tab description inline under tabs */}
+            <p className="text-gray-400 text-xs mt-2 px-0.5">{tabs.find((t) => t.id === activeTab)?.description}</p>
           </GlassCard>
 
           {/* ── Tab Content ── */}
@@ -394,8 +480,11 @@ export default function ComparateursHub() {
             {activeTab === 'prix' && <Comparateur />}
 
             {activeTab === 'kilo' && (
-              <GlassCard className="space-y-4">
-                <h2 className="text-lg font-semibold text-white">⚖️ Prix au Kilo / Litre</h2>
+              <GlassCard className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Weight className="w-5 h-5 text-blue-400 flex-shrink-0" aria-hidden="true" />
+                  <h2 className="text-base font-semibold text-white">Prix au Kilo / Litre</h2>
+                </div>
                 <p className="text-gray-400 text-sm">
                   Prix ramenés au kg ou au litre pour comparer les offres. Source : relevés citoyens observatoire (mars 2026).
                 </p>
@@ -429,19 +518,22 @@ export default function ComparateursHub() {
             )}
 
             {activeTab === 'shrinkflation' && (
-              <GlassCard className="space-y-4">
-                <h2 className="text-xl font-semibold text-white mb-4">📉 Signalements Shrinkflation</h2>
-                <p className="text-gray-400 mb-4">
+              <GlassCard className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <TrendingDown className="w-5 h-5 text-red-400 flex-shrink-0" aria-hidden="true" />
+                  <h2 className="text-base font-semibold text-white">Signalements Shrinkflation</h2>
+                </div>
+                <p className="text-gray-400 text-sm">
                   Cette section recense les signalements citoyens confirmés de réduction de contenant sans baisse proportionnelle du prix.
                   Les données ci-dessous proviennent uniquement de signalements vérifiés par la communauté.
                 </p>
-                <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 text-sm text-blue-300">
+                <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-3 text-sm text-blue-300">
                   <strong>Contribuez !</strong> Si vous avez constaté un produit dont la quantité a diminué sans que le prix baisse,{' '}
                   <Link to="/signaler-abus" className="underline hover:text-blue-200">signalez-le ici</Link>.
                   Nos équipes vérifient chaque signalement avant publication.
                 </div>
-                <div className="bg-slate-900/50 rounded-xl p-6 text-center">
-                  <TrendingDown className="w-10 h-10 text-gray-600 mx-auto mb-3" />
+                <div className="bg-slate-900/50 rounded-xl p-4 text-center">
+                  <TrendingDown className="w-8 h-8 text-gray-600 mx-auto mb-2" />
                   <p className="text-gray-400 text-sm">Aucun signalement vérifié pour ce mois-ci.</p>
                   <p className="text-gray-500 text-xs mt-1">Les premiers signalements vérifiés apparaîtront ici.</p>
                 </div>
@@ -449,8 +541,11 @@ export default function ComparateursHub() {
             )}
 
             {activeTab === 'metropole' && (
-              <GlassCard className="space-y-4">
-                <h2 className="text-lg font-semibold text-white">🗺️ Équivalence vs Métropole</h2>
+              <GlassCard className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <MapIcon className="w-5 h-5 text-violet-400 flex-shrink-0" aria-hidden="true" />
+                  <h2 className="text-base font-semibold text-white">Équivalence vs Métropole</h2>
+                </div>
                 <p className="text-gray-400 text-sm">
                   Écarts de prix entre chaque territoire DOM–COM et l'Hexagone.
                 </p>
@@ -493,7 +588,7 @@ export default function ComparateursHub() {
                           </div>
                           {/* Row 3: inline prices */}
                           <div className="flex items-center justify-between text-xs text-slate-400">
-                            <span>🇫🇷 {fmtPrice(item.metropolePrice)}</span>
+                            <span>FR {fmtPrice(item.metropolePrice)}</span>
                             <span className={`font-semibold ${colorCls}`}>
                               {delta > 0 ? '+' : ''}{delta.toFixed(2)} €
                             </span>
@@ -511,9 +606,10 @@ export default function ComparateursHub() {
           </div>
 
           {/* ── Category navigation tools ── */}
-          <div className="mt-6">
+          <div className="mt-4">
             <div className="flex items-center gap-2 mb-3">
-              <h2 className="text-lg sm:text-xl font-bold text-white">🧭 Explorer les outils</h2>
+              <Search className="w-4 h-4 text-slate-400 flex-shrink-0" aria-hidden="true" />
+              <h2 className="text-base sm:text-lg font-bold text-white">Explorer les outils</h2>
               <span className="text-xs text-slate-500 ml-auto hidden sm:block">Sélectionnez une catégorie</span>
             </div>
 
@@ -539,69 +635,37 @@ export default function ComparateursHub() {
 
             {/* Category chips — horizontal scrollable on mobile */}
             {!toolSearch && (
-              <div className="overflow-x-auto pb-2 -mx-3 px-3 mb-4">
-                <div className="flex gap-2 min-w-max">
-                  {NAV_CATEGORIES.map((cat) => (
-                    <button
-                      key={cat.id}
-                      type="button"
-                      onClick={() => setActiveNavCat(cat.id)}
-                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all border ${
-                        activeNavCat === cat.id
-                          ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-600/20'
-                          : 'bg-slate-900/60 border-slate-700 text-slate-300 hover:border-blue-500 hover:text-white'
-                      }`}
-                      aria-pressed={activeNavCat === cat.id}
-                    >
-                      <span role="img" aria-hidden="true">{cat.emoji}</span>
-                      {cat.label}
-                    </button>
-                  ))}
+              <div className="overflow-x-auto pb-2 -mx-3 px-3 mb-3">
+                <div className="flex gap-1.5 min-w-max">
+                  {NAV_CATEGORIES.map((cat) => {
+                    const CatIcon = cat.icon;
+                    return (
+                      <button
+                        key={cat.id}
+                        type="button"
+                        onClick={() => setActiveNavCat(cat.id)}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all border ${
+                          activeNavCat === cat.id
+                            ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-600/20'
+                            : 'bg-slate-900/60 border-slate-700 text-slate-300 hover:border-blue-500 hover:text-white'
+                        }`}
+                        aria-pressed={activeNavCat === cat.id}
+                      >
+                        <CatIcon className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
+                        {cat.label}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             )}
 
             {/* Cards — only selected category OR search results */}
-            {(() => {
-              const cat = NAV_CATEGORIES.find((c) => c.id === activeNavCat);
-              const items = toolSearch.trim()
-                ? NAV_CATEGORIES.flatMap((c) => c.items).filter(
-                    (item, idx, arr) =>
-                      arr.findIndex((x) => x.path === item.path) === idx &&
-                      (item.label.toLowerCase().includes(toolSearch.toLowerCase()) ||
-                       item.desc.toLowerCase().includes(toolSearch.toLowerCase()))
-                  )
-                : (cat?.items ?? []);
-
-              if (items.length === 0) {
-                return (
-                  <p className="text-slate-400 text-sm text-center py-8">
-                    Aucun outil trouvé pour « {toolSearch} »
-                  </p>
-                );
-              }
-
-              return (
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-2.5">
-                  {items.map((item) => {
-                    const Icon = item.icon;
-                    return (
-                      <Link
-                        key={item.path}
-                        to={item.path}
-                        className={`group flex items-center gap-2 rounded-xl border p-3 transition-all hover:scale-[1.02] hover:shadow-lg active:scale-[0.98] ${item.bg}`}
-                      >
-                        <Icon className={`w-5 h-5 flex-shrink-0 ${item.color}`} aria-hidden="true" />
-                        <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-white text-xs leading-tight">{item.label}</p>
-                          <p className="hidden sm:block text-xs text-gray-400 mt-0.5 truncate">{item.desc}</p>
-                        </div>
-                      </Link>
-                    );
-                  })}
-                </div>
-              );
-            })()}
+            <CategoryCards
+              toolSearch={toolSearch}
+              activeNavCat={activeNavCat}
+              navCategories={NAV_CATEGORIES}
+            />
           </div>
 
         </div>
