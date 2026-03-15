@@ -1,6 +1,16 @@
 import { fileURLToPath } from 'node:url';
 
 const DEFAULT_URL = 'https://teetee971.github.io/akiprisaye-web';
+
+// Reference Firebase config for project a-ki-pri-sa-ye.
+// Source of truth: GCP Console (project number 187272078809, ID a-ki-pri-sa-ye)
+// confirmed 2026-03-15, cross-checked against live bundle assets/index-DHqr0YlO.js.
+const EXPECTED_FIREBASE_CONFIG = {
+  projectId: 'a-ki-pri-sa-ye',
+  messagingSenderId: '187272078809',
+  appId: '1:187272078809:web:110a9e34493ef4506e5c8',
+  measurementId: 'G-NFHCZTLPDM',
+};
 const CRITICAL_ROUTES = ['/', '/comparateur', '/scanner', '/observatoire', '/alertes'];
 const OPTIONAL_SECURITY_HEADERS = [
   'x-frame-options',
@@ -57,6 +67,37 @@ export function hasGitHubPagesSpaFallback(html) {
 export function extractServiceWorkerVersion(source) {
   const match = source.match(/akiprisaye-smart-cache-v(\d+)/i);
   return match ? Number(match[1]) : null;
+}
+
+/**
+ * Finds the main JS entry bundle path (index-*.js loaded via `type="module"`) in the HTML.
+ * Returns the raw path string as it appears in the `src` attribute, or null if not found.
+ */
+export function extractMainBundlePath(html) {
+  const match = html.match(/<script[^>]+type=["']module["'][^>]+src=["']([^"']+\/index-[^"']+\.js)["']/i);
+  return match ? match[1] : null;
+}
+
+/**
+ * Extracts Firebase config field values from a minified JS bundle string.
+ * Handles both minified (`key:"value"`) and formatted (`key: "value"`) forms.
+ * Returns an object with the extracted string values (or null for absent fields).
+ */
+export function extractFirebaseConfigFromBundle(js) {
+  /** @param {string} key */
+  function extract(key) {
+    const re = new RegExp(`\\b${key}\\s*:\\s*["']([^"']+)["']`);
+    const m = js.match(re);
+    return m ? m[1] : null;
+  }
+  return {
+    projectId: extract('projectId'),
+    messagingSenderId: extract('messagingSenderId'),
+    appId: extract('appId'),
+    measurementId: extract('measurementId'),
+    apiKey: extract('apiKey'),
+    authDomain: extract('authDomain'),
+  };
 }
 
 function normalizeInternalPath(resourceUrl, siteUrl) {
@@ -350,6 +391,39 @@ function verifyHeaders(headers, siteUrl) {
   }
 }
 
+async function verifyFirebaseBundle(siteUrl, html) {
+  const bundlePath = extractMainBundlePath(html);
+  if (!bundlePath) {
+    fail('Impossible de trouver le bundle JS principal (index-*.js type="module") dans le HTML déployé.');
+  }
+
+  const url = joinSiteUrl(siteUrl, bundlePath);
+  const { response, body } = await fetchText(url);
+  if (!response.ok) {
+    fail(`Bundle JS principal introuvable : ${bundlePath} (HTTP ${response.status}).`);
+  }
+
+  const config = extractFirebaseConfigFromBundle(body);
+  const mismatches = [];
+  for (const [key, expected] of Object.entries(EXPECTED_FIREBASE_CONFIG)) {
+    if (config[key] !== expected) {
+      mismatches.push(`  ${key}: attendu "${expected}", trouvé "${config[key] ?? 'absent'}"`);
+    }
+  }
+
+  if (mismatches.length > 0) {
+    fail(
+      `Config Firebase incorrecte dans le bundle ${bundlePath.split('/').pop()} :\n${mismatches.join('\n')}`,
+    );
+  }
+
+  const bundleFile = bundlePath.split('/').pop();
+  logOk(
+    `Firebase config vérifiée dans le bundle (${bundleFile}) :` +
+    ` projectId=${config.projectId}, appId=${config.appId}, measurementId=${config.measurementId}`,
+  );
+}
+
 async function main() {
   const siteUrl = normalizeBaseUrl(process.argv[2] || DEFAULT_URL);
 
@@ -361,6 +435,7 @@ async function main() {
   const { html, headers } = await verifyHomepage(siteUrl);
   const assetPaths = await verifyAssets(siteUrl, html);
   await verifyServiceWorker(siteUrl, assetPaths);
+  await verifyFirebaseBundle(siteUrl, html);
   await verifySitemap(siteUrl);
   await verifyRoutes(siteUrl);
   await verifyApi(siteUrl);
