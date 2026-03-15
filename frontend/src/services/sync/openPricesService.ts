@@ -296,7 +296,7 @@ export async function fullSync(): Promise<BulkSyncResult> {
   result.batches = territories.length;
 
   for (const territory of territories) {
-    console.log(`Syncing prices for ${territory.name}...`);
+    if (import.meta.env.DEV) console.log(`Syncing prices for ${territory.name}...`);
     
     const syncResult = await syncPricesForTerritory(territory);
     

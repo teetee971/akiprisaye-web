@@ -100,7 +100,7 @@ export class InstitutionalAlertService {
    */
   async sendAlert(alert: InstitutionalAlert): Promise<void> {
     // TODO: Implement email sending via backend API
-    console.log('Sending institutional alert:', alert);
+    if (import.meta.env.DEV) console.log('Sending institutional alert:', alert);
     
     // Update alert status
     alert.sentAt = new Date().toISOString();

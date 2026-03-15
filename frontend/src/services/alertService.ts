@@ -327,7 +327,7 @@ export async function checkAlertsAndNotify(): Promise<void> {
   // that runs periodically to check active alerts
   // and send notifications when conditions are met
 
-  console.log('Alert checking not yet implemented for client-side');
+  if (import.meta.env.DEV) console.log('Alert checking not yet implemented for client-side');
   // TODO: Implement server-side alert checking
 }
 

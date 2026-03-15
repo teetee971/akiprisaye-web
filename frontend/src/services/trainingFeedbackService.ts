@@ -48,7 +48,7 @@ export async function submitFeedback(
     verified: false, // Would require admin verification
   };
 
-  console.log('Submitting feedback:', newFeedback);
+  if (import.meta.env.DEV) console.log('Submitting feedback:', newFeedback);
 
   // For now, just return the created feedback
   // In production, save to database
