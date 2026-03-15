@@ -74,7 +74,8 @@ async function loadTesseract() {
 }
 
 export const GENERIC_OCR_ERROR = 'Une erreur s\'est produite lors de l\'analyse de l\'image';
-const OCR_ASSET_BASE_PATH = '/ocr';
+const pathPrefix = (import.meta.env.BASE_URL || '/').replace(/\/+$/, '');
+const OCR_ASSET_BASE_PATH = `${pathPrefix}/ocr`;
 const WORKER_PATH = `${OCR_ASSET_BASE_PATH}/worker.min.js`;
 const CORE_PATH = `${OCR_ASSET_BASE_PATH}/tesseract-core.wasm`;
 const LANG_PATH = OCR_ASSET_BASE_PATH;
@@ -121,6 +122,7 @@ interface OCRWorkerLike {
   recognize: (image: Blob) => Promise<{ data: { text: string; confidence: number } }>;
   terminate: () => Promise<void>;
 }
+
 const OCR_LOAD_ERROR_MESSAGE =
   'Le module OCR n’a pas pu se charger correctement en production. Les fichiers linguistiques sont peut-être indisponibles.';
 const KNOWN_ASSET_LABELS = new Set(['worker', 'core', 'language']);

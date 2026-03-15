@@ -136,7 +136,7 @@ export default function Scanner() {
       handleReset();
     } else if (behavior === 'show_empty') {
       // Show empty product page (already handled by not_found state)
-      console.log('Showing empty product page');
+      if (import.meta.env.DEV) console.log('Showing empty product page');
     }
   };
 

@@ -4,15 +4,21 @@ import toast from 'react-hot-toast';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
+interface FormData {
+  name: string;
+  email: string;
+  message: string;
+}
+
 export default function Contact() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
     message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -20,28 +26,28 @@ export default function Contact() {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     // Validation
     if (!formData.name || !formData.email || !formData.message) {
       toast.error('Veuillez remplir tous les champs');
       return;
     }
-    
+
     if (!formData.email.includes('@')) {
       toast.error('Veuillez entrer une adresse email valide');
       return;
     }
 
     setIsSubmitting(true);
-    
+
     try {
       // Simulate form submission (replace with actual API call)
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       toast.success('Message envoyé avec succès ! Nous vous répondrons bientôt.');
-      
+
       // Reset form
       setFormData({
         name: '',
@@ -125,7 +131,7 @@ export default function Contact() {
           <textarea
             id="message"
             name="message"
-            rows="5"
+            rows={5}
             value={formData.message}
             onChange={handleChange}
             required
@@ -137,7 +143,7 @@ export default function Contact() {
               background: '#1a1d2e',
               color: '#ffffff',
             }}
-          ></textarea>
+          />
         </div>
         <button
           type="submit"

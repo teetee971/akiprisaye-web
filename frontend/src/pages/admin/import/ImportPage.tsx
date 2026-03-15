@@ -309,7 +309,7 @@ export function ImportPage() {
                 </h3>
                 <ul className="space-y-1 text-sm text-white/70">
                   {currentTab.instructions.map((instruction, index) => (
-                    <li key={index} className={index === 0 ? 'font-medium text-white/80' : ''}>
+                    <li key={instruction} className={index === 0 ? 'font-medium text-white/80' : ''}>
                       {instruction}
                     </li>
                   ))}

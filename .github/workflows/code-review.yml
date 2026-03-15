@@ -22,7 +22,7 @@ jobs:
         run: |
           count=$(git diff origin/${{ github.base_ref }}...HEAD -- '*.ts' '*.tsx' \
             | grep '^+' | grep -v '^+++' \
-            | grep -c '@ts-nocheck' || echo 0)
+            | grep -c '@ts-nocheck' || true)
           echo "count=$count" >> "$GITHUB_OUTPUT"
           if [ "$count" -gt 0 ]; then
             echo "⚠️  Lignes @ts-nocheck ajoutées :"
@@ -37,7 +37,7 @@ jobs:
             '*.ts' '*.tsx' \
             | grep '^+' \
             | grep -v '^+++' \
-            | grep -c 'console\.log(' || echo 0)
+            | grep -c 'console\.log(' || true)
           echo "count=$count" >> "$GITHUB_OUTPUT"
 
       - name: Vérification JSON.parse non protégé
@@ -49,7 +49,7 @@ jobs:
             | grep '^+' \
             | grep -v '^+++' \
             | grep 'JSON\.parse(' \
-            | grep -vc 'safeLocalStorage\|safeJsonParse\|try\s*{' || echo 0)
+            | grep -vc 'safeLocalStorage\|safeJsonParse\|try\s*{' || true)
           echo "count=$count" >> "$GITHUB_OUTPUT"
 
       - name: Vérification key=\{index\}
@@ -59,7 +59,7 @@ jobs:
             '*.tsx' \
             | grep '^+' \
             | grep -v '^+++' \
-            | grep -c 'key={index}' || echo 0)
+            | grep -c 'key={index}' || true)
           echo "count=$count" >> "$GITHUB_OUTPUT"
 
       - name: Statistiques de la PR

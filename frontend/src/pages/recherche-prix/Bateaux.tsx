@@ -197,7 +197,7 @@ export default function Bateaux() {
                         </thead>
                         <tbody>
                           {results.map((boat, index) => (
-                            <tr key={index} className="border-b border-slate-800 hover:bg-slate-800/30">
+                            <tr key={`${boat.compagnie}-${boat.ligne}-${boat.mois}-${index}`} className="border-b border-slate-800 hover:bg-slate-800/30">
                               <td className="py-3 px-2">
                                 <div className="text-gray-200 font-medium">{boat.compagnie}</div>
                                 <div className="text-xs text-gray-500">{boat.source}</div>

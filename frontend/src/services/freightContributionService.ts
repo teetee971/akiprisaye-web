@@ -40,7 +40,7 @@ export async function submitContribution(
   };
   
   // TODO: Enregistrer dans Firebase/database
-  console.log('Contribution soumise:', fullContribution);
+  if (import.meta.env.DEV) console.log('Contribution soumise:', fullContribution);
   
   return fullContribution;
 }
