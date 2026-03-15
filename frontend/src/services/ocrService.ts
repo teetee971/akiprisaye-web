@@ -74,7 +74,8 @@ async function loadTesseract() {
 }
 
 export const GENERIC_OCR_ERROR = 'Une erreur s\'est produite lors de l\'analyse de l\'image';
-const OCR_ASSET_BASE_PATH = '/ocr';
+const pathPrefix = (import.meta.env.BASE_URL || '/').replace(/\/+$/, '');
+const OCR_ASSET_BASE_PATH = `${pathPrefix}/ocr`;
 const WORKER_PATH = `${OCR_ASSET_BASE_PATH}/worker.min.js`;
 const CORE_PATH = `${OCR_ASSET_BASE_PATH}/tesseract-core.wasm`;
 const LANG_PATH = OCR_ASSET_BASE_PATH;
@@ -111,6 +112,14 @@ export interface OCRResult {
   sections?: OCRSections;
   error?: string;
   errorCode?: 'ASSET_MISSING' | 'TIMEOUT' | 'PROCESSING_ERROR';
+}
+
+interface OCRWorkerLike {
+  loadLanguage: (language: string) => Promise<void>;
+  initialize: (language: string) => Promise<void>;
+  setParameters: (params: Record<string, string>) => Promise<void>;
+  recognize: (image: Blob) => Promise<{ data: { text: string; confidence: number } }>;
+  terminate: () => Promise<void>;
 }
 
 const OCR_LOAD_ERROR_MESSAGE =
@@ -331,7 +340,7 @@ export async function runOCR(
   const receiptMode = options?.receiptMode ?? false;
   const psmMode = options?.psm ?? (receiptMode ? OCR_PSM.SINGLE_COLUMN : OCR_PSM.AUTO);
   let timeoutId: number | undefined;
-  let worker: any = null;
+  let worker: OCRWorkerLike | null = null;
   
   // Log mode for debugging
   console.log(`OCR mode: ${offline ? 'OFFLINE (local WASM)' : 'ONLINE'} receiptMode=${receiptMode} psm=${psmMode}`);
@@ -354,7 +363,7 @@ export async function runOCR(
       langPath: LANG_PATH,
       gzip: true,
       logger: (m: unknown) => console.debug('[OCR]', m),
-    });
+    }) as OCRWorkerLike;
 
     // Tesseract.js runs entirely in the browser via WASM
     // No server calls - works offline by default
