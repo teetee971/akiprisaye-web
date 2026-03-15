@@ -74,8 +74,8 @@ async function loadTesseract() {
 }
 
 export const GENERIC_OCR_ERROR = 'Une erreur s\'est produite lors de l\'analyse de l\'image';
-const APP_BASE_URL = (import.meta.env.BASE_URL || '/').replace(/\/+$/, '');
-const OCR_ASSET_BASE_PATH = `${APP_BASE_URL}/ocr`;
+const pathPrefix = (import.meta.env.BASE_URL || '/').replace(/\/+$/, '');
+const OCR_ASSET_BASE_PATH = `${pathPrefix}/ocr`;
 const WORKER_PATH = `${OCR_ASSET_BASE_PATH}/worker.min.js`;
 const CORE_PATH = `${OCR_ASSET_BASE_PATH}/tesseract-core.wasm`;
 const LANG_PATH = OCR_ASSET_BASE_PATH;
