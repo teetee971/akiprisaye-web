@@ -12,7 +12,7 @@ import { getFirestore, type Firestore } from "firebase/firestore";
 // working without a .env file.  In production the secrets MUST be set so
 // the correct apiKey is embedded; the fallback is only a last resort.
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyDf_mB8zMWHFwoFhVLyThuKWMTmhB7uSZY",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyDf_m8BzMVHFWoFhVLyThuKwWTMhB7u5ZY",
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "a-ki-pri-sa-ye.firebaseapp.com",
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "a-ki-pri-sa-ye",
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "a-ki-pri-sa-ye.firebasestorage.app",

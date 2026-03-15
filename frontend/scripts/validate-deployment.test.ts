@@ -129,6 +129,11 @@ describe('validate-deployment helpers', () => {
     expect(extractMainBundlePath(html)).toBe('/akiprisaye-web/assets/index-DHqr0YlO.js');
   });
 
+  it('extractMainBundlePath handles src before type attribute order', () => {
+    const html = `<script src="/akiprisaye-web/assets/index-abc.js" type="module" crossorigin></script>`;
+    expect(extractMainBundlePath(html)).toBe('/akiprisaye-web/assets/index-abc.js');
+  });
+
   it('extractMainBundlePath returns null when no module entry bundle is present', () => {
     expect(extractMainBundlePath('<script src="/bundle.js"></script>')).toBeNull();
     expect(extractMainBundlePath('<link rel="modulepreload" href="/assets/vendor-react.js">')).toBeNull();
@@ -137,13 +142,13 @@ describe('validate-deployment helpers', () => {
 
   it('extractFirebaseConfigFromBundle extracts config from minified JS', () => {
     // Simulates the minified format produced by Vite (no spaces around colons)
-    const js = `const firebaseConfig={apiKey:"AIzaSyDf_mB8zMWHFwoFhVLyThuKWMTmhB7uSZY",authDomain:"a-ki-pri-sa-ye.firebaseapp.com",projectId:"a-ki-pri-sa-ye",storageBucket:"a-ki-pri-sa-ye.firebasestorage.app",messagingSenderId:"187272078809",appId:"1:187272078809:web:110a9e34493ef4506e5c8",measurementId:"G-NFHCZTLPDM"};`;
+    const js = `const firebaseConfig={apiKey:"AIzaSyDf_m8BzMVHFWoFhVLyThuKwWTMhB7u5ZY",authDomain:"a-ki-pri-sa-ye.firebaseapp.com",projectId:"a-ki-pri-sa-ye",storageBucket:"a-ki-pri-sa-ye.firebasestorage.app",messagingSenderId:"187272078809",appId:"1:187272078809:web:110a9e34493ef4506e5c8",measurementId:"G-NFHCZTLPDM"};`;
     const config = extractFirebaseConfigFromBundle(js);
     expect(config.projectId).toBe('a-ki-pri-sa-ye');
     expect(config.messagingSenderId).toBe('187272078809');
     expect(config.appId).toBe('1:187272078809:web:110a9e34493ef4506e5c8');
     expect(config.measurementId).toBe('G-NFHCZTLPDM');
-    expect(config.apiKey).toBe('AIzaSyDf_mB8zMWHFwoFhVLyThuKWMTmhB7uSZY');
+    expect(config.apiKey).toBe('AIzaSyDf_m8BzMVHFWoFhVLyThuKwWTMhB7u5ZY');
     expect(config.authDomain).toBe('a-ki-pri-sa-ye.firebaseapp.com');
   });
 
@@ -152,5 +157,16 @@ describe('validate-deployment helpers', () => {
     expect(config.projectId).toBeNull();
     expect(config.appId).toBeNull();
     expect(config.measurementId).toBeNull();
+  });
+
+  it('extractFirebaseConfigFromBundle does NOT match the old wrong apiKey', () => {
+    // Guard: the known wrong key must never reappear in a deployed bundle.
+    const wrongKey = 'AIzaSyDf_mB8zMWHFwoFhVLyThuKWMTmhB7uSZY';
+    const correctKey = 'AIzaSyDf_m8BzMVHFWoFhVLyThuKwWTMhB7u5ZY';
+    const configWithWrong = extractFirebaseConfigFromBundle(`apiKey:"${wrongKey}"`);
+    const configWithCorrect = extractFirebaseConfigFromBundle(`apiKey:"${correctKey}"`);
+    expect(configWithWrong.apiKey).not.toBe(correctKey);
+    expect(configWithCorrect.apiKey).toBe(correctKey);
+    expect(configWithCorrect.apiKey).not.toBe(wrongKey);
   });
 });

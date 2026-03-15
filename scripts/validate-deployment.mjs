@@ -6,6 +6,7 @@ const DEFAULT_URL = 'https://teetee971.github.io/akiprisaye-web';
 // Source of truth: GCP Console (project number 187272078809, ID a-ki-pri-sa-ye)
 // confirmed 2026-03-15, cross-checked against live bundle assets/index-DHqr0YlO.js.
 const EXPECTED_FIREBASE_CONFIG = {
+  apiKey: 'AIzaSyDf_m8BzMVHFWoFhVLyThuKwWTMhB7u5ZY',
   projectId: 'a-ki-pri-sa-ye',
   messagingSenderId: '187272078809',
   appId: '1:187272078809:web:110a9e34493ef4506e5c8',
@@ -74,8 +75,22 @@ export function extractServiceWorkerVersion(source) {
  * Returns the raw path string as it appears in the `src` attribute, or null if not found.
  */
 export function extractMainBundlePath(html) {
-  const match = html.match(/<script[^>]+type=["']module["'][^>]+src=["']([^"']+\/index-[^"']+\.js)["']/i);
-  return match ? match[1] : null;
+  // Match <script> tags that have BOTH type="module" and a src pointing to index-*.js,
+  // regardless of attribute order.
+  const scriptTagRegex = /<script\b([^>]*)>/gi;
+  let tagMatch;
+  while ((tagMatch = scriptTagRegex.exec(html)) !== null) {
+    const attrs = tagMatch[1];
+    if (!/\btype=["']module["']/i.test(attrs)) continue;
+    const srcMatch = attrs.match(/\bsrc=["']([^"']+\/index-[^"']+\.js)["']/i);
+    if (srcMatch) return srcMatch[1];
+  }
+  return null;
+}
+
+/** Escape a string for safe use inside a RegExp pattern. */
+function escapeRegExp(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 /**
@@ -86,7 +101,7 @@ export function extractMainBundlePath(html) {
 export function extractFirebaseConfigFromBundle(js) {
   /** @param {string} key */
   function extract(key) {
-    const re = new RegExp(`\\b${key}\\s*:\\s*["']([^"']+)["']`);
+    const re = new RegExp(`\\b${escapeRegExp(key)}\\s*:\\s*["']([^"']+)["']`);
     const m = js.match(re);
     return m ? m[1] : null;
   }
@@ -401,6 +416,18 @@ async function verifyFirebaseBundle(siteUrl, html) {
   const { response, body } = await fetchText(url);
   if (!response.ok) {
     fail(`Bundle JS principal introuvable : ${bundlePath} (HTTP ${response.status}).`);
+  }
+
+  // Hard-fail immediately if the known wrong API key is present in the bundle.
+  const WRONG_API_KEY = 'AIzaSyDf_mB8zMWHFwoFhVLyThuKWMTmhB7uSZY';
+  if (body.includes(WRONG_API_KEY)) {
+    const bundleFile = bundlePath.split('/').pop();
+    fail(
+      `CLEF API FIREBASE INCORRECTE détectée dans le bundle ${bundleFile}.\n` +
+      `  Clef erronée : "${WRONG_API_KEY}"\n` +
+      `  La clef correcte est : "${EXPECTED_FIREBASE_CONFIG.apiKey}"\n` +
+      `  → Vérifiez que le secret VITE_FIREBASE_API_KEY est bien configuré dans GitHub Actions.`,
+    );
   }
 
   const config = extractFirebaseConfigFromBundle(body);
