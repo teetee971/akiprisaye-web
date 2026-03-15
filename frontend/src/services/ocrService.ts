@@ -341,6 +341,7 @@ export async function runOCR(
   const psmMode = options?.psm ?? (receiptMode ? OCR_PSM.SINGLE_COLUMN : OCR_PSM.AUTO);
   let timeoutId: number | undefined;
   let worker: OCRWorkerLike | null = null;
+  let worker: any = null;
   
   // Log mode for debugging
   console.log(`OCR mode: ${offline ? 'OFFLINE (local WASM)' : 'ONLINE'} receiptMode=${receiptMode} psm=${psmMode}`);
@@ -364,6 +365,7 @@ export async function runOCR(
       gzip: true,
       logger: (m: unknown) => console.debug('[OCR]', m),
     }) as OCRWorkerLike;
+    });
 
     // Tesseract.js runs entirely in the browser via WASM
     // No server calls - works offline by default
