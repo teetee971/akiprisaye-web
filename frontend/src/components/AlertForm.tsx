@@ -56,6 +56,7 @@ export function AlertForm({ productEAN = '', productName = '', onSave, onCancel 
           </label>
           <input
             id="alert-product-name"
+            name="productName"
             type="text"
             value={formData.productName}
             onChange={(e) => setFormData({ ...formData, productName: e.target.value })}
@@ -74,6 +75,7 @@ export function AlertForm({ productEAN = '', productName = '', onSave, onCancel 
           </label>
           <input
             id="alert-product-ean"
+            name="productEAN"
             type="text"
             value={formData.productEAN}
             onChange={(e) => setFormData({ ...formData, productEAN: e.target.value })}
@@ -92,6 +94,7 @@ export function AlertForm({ productEAN = '', productName = '', onSave, onCancel 
           </label>
           <select
             id="alert-type"
+            name="alertType"
             value={formData.alertType}
             onChange={(e) => setFormData({ ...formData, alertType: e.target.value as AlertType, thresholdMode: 'percentage' })}
             required

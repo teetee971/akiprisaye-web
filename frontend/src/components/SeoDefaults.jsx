@@ -5,6 +5,8 @@ const BASE_TITLE = 'A KI PRI SA YÉ';
 const BASE_DESCRIPTION =
   "Plateforme citoyenne d'observation et de comparaison des prix en Outre-mer.";
 
+const SITE_URL = 'https://teetee971.github.io/akiprisaye-web';
+
 const ROUTE_SEO = {
   '/': {
     title: 'A KI PRI SA YÉ – Accueil',
@@ -29,10 +31,7 @@ export default function SeoDefaults() {
     title: BASE_TITLE,
     description: BASE_DESCRIPTION,
   };
-  const canonical =
-    typeof window !== 'undefined'
-      ? `${window.location.origin}/#${location.pathname}`
-      : undefined;
+  const canonical = `${SITE_URL}${location.pathname}`;
 
   return (
     <Helmet>
@@ -43,8 +42,8 @@ export default function SeoDefaults() {
       <meta property="og:title" content={routeSeo.title} />
       <meta property="og:description" content={routeSeo.description} />
       <meta property="og:type" content="website" />
-      {canonical ? <meta property="og:url" content={canonical} /> : null}
-      {canonical ? <link rel="canonical" href={canonical} /> : null}
+      {<meta property="og:url" content={canonical} />}
+      {<link rel="canonical" href={canonical} />}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={routeSeo.title} />
       <meta name="twitter:description" content={routeSeo.description} />
