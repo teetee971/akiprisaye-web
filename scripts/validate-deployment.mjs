@@ -4,13 +4,14 @@ const DEFAULT_URL = 'https://teetee971.github.io/akiprisaye-web';
 
 // Reference Firebase config for project a-ki-pri-sa-ye.
 // Source of truth: GCP Console (project number 187272078809, ID a-ki-pri-sa-ye)
-// confirmed 2026-03-15. index-DHqr0YlO.js was the last stale bundle with the wrong key — now listed in STALE_BUNDLE_NAMES.
+// confirmed 2026-03-16. Values must match GitHub Actions secrets VITE_FIREBASE_APP_ID
+// and VITE_FIREBASE_MEASUREMENT_ID (the values injected into the production bundle).
 const EXPECTED_FIREBASE_CONFIG = {
   apiKey: 'AIzaSyDf_m8BzMVHFWoFhVLyThuKwWTMhB7u5ZY',
   projectId: 'a-ki-pri-sa-ye',
   messagingSenderId: '187272078809',
-  appId: '1:187272078809:web:110a9e34493ef4506e5c8',
-  measurementId: 'G-NFHCZTLPDM',
+  appId: '1:187272078809:web:501d916973a75edb06e5c8',
+  measurementId: 'G-W0R1B4HHE1',
 };
 const CRITICAL_ROUTES = ['/', '/comparateur', '/scanner', '/observatoire', '/alertes', '/connexion'];
 // Known stale bundles that must no longer appear in the deployed HTML.

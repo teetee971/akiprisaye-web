@@ -17,8 +17,8 @@ const firebaseConfig = {
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "a-ki-pri-sa-ye",
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "a-ki-pri-sa-ye.firebasestorage.app",
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "187272078809",
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:187272078809:web:110a9e34493ef4506e5c8",
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "G-NFHCZTLPDM",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:187272078809:web:501d916973a75edb06e5c8",
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "G-W0R1B4HHE1",
 };
 
 // Detect missing VITE_FIREBASE_* secrets so diagnostic pages (Login, StatutPage)

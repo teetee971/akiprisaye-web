@@ -146,12 +146,12 @@ describe('validate-deployment helpers', () => {
     // Simulates the minified format produced by Vite (no spaces around colons).
     // Key split into two parts so no single literal matches the 39-char AIzaSy... pattern.
     const CORRECT_KEY = 'AIzaSyDf_m8Bz' + 'MVHFWoFhVLyThuKwWTMhB7u5ZY';
-    const js = `const firebaseConfig={apiKey:"${CORRECT_KEY}",authDomain:"a-ki-pri-sa-ye.firebaseapp.com",projectId:"a-ki-pri-sa-ye",storageBucket:"a-ki-pri-sa-ye.firebasestorage.app",messagingSenderId:"187272078809",appId:"1:187272078809:web:110a9e34493ef4506e5c8",measurementId:"G-NFHCZTLPDM"};`;
+    const js = `const firebaseConfig={apiKey:"${CORRECT_KEY}",authDomain:"a-ki-pri-sa-ye.firebaseapp.com",projectId:"a-ki-pri-sa-ye",storageBucket:"a-ki-pri-sa-ye.firebasestorage.app",messagingSenderId:"187272078809",appId:"1:187272078809:web:501d916973a75edb06e5c8",measurementId:"G-W0R1B4HHE1"};`;
     const config = extractFirebaseConfigFromBundle(js);
     expect(config.projectId).toBe('a-ki-pri-sa-ye');
     expect(config.messagingSenderId).toBe('187272078809');
-    expect(config.appId).toBe('1:187272078809:web:110a9e34493ef4506e5c8');
-    expect(config.measurementId).toBe('G-NFHCZTLPDM');
+    expect(config.appId).toBe('1:187272078809:web:501d916973a75edb06e5c8');
+    expect(config.measurementId).toBe('G-W0R1B4HHE1');
     expect(config.apiKey).toBe(CORRECT_KEY);
     expect(config.authDomain).toBe('a-ki-pri-sa-ye.firebaseapp.com');
   });
