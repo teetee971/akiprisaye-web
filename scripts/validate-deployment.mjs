@@ -1,6 +1,17 @@
 import { fileURLToPath } from 'node:url';
 
 const DEFAULT_URL = 'https://teetee971.github.io/akiprisaye-web';
+
+// Reference Firebase config for project a-ki-pri-sa-ye.
+// Source of truth: GCP Console (project number 187272078809, ID a-ki-pri-sa-ye)
+// confirmed 2026-03-15, cross-checked against live bundle assets/index-DHqr0YlO.js.
+const EXPECTED_FIREBASE_CONFIG = {
+  apiKey: 'AIzaSyDf_m8BzMVHFWoFhVLyThuKwWTMhB7u5ZY',
+  projectId: 'a-ki-pri-sa-ye',
+  messagingSenderId: '187272078809',
+  appId: '1:187272078809:web:110a9e34493ef4506e5c8',
+  measurementId: 'G-NFHCZTLPDM',
+};
 const CRITICAL_ROUTES = ['/', '/comparateur', '/scanner', '/observatoire', '/alertes'];
 const OPTIONAL_SECURITY_HEADERS = [
   'x-frame-options',
@@ -57,6 +68,51 @@ export function hasGitHubPagesSpaFallback(html) {
 export function extractServiceWorkerVersion(source) {
   const match = source.match(/akiprisaye-smart-cache-v(\d+)/i);
   return match ? Number(match[1]) : null;
+}
+
+/**
+ * Finds the main JS entry bundle path (index-*.js loaded via `type="module"`) in the HTML.
+ * Returns the raw path string as it appears in the `src` attribute, or null if not found.
+ */
+export function extractMainBundlePath(html) {
+  // Match <script> tags that have BOTH type="module" and a src pointing to index-*.js,
+  // regardless of attribute order.
+  const scriptTagRegex = /<script\b([^>]*)>/gi;
+  let tagMatch;
+  while ((tagMatch = scriptTagRegex.exec(html)) !== null) {
+    const attrs = tagMatch[1];
+    if (!/\btype=["']module["']/i.test(attrs)) continue;
+    const srcMatch = attrs.match(/\bsrc=["']([^"']+\/index-[^"']+\.js)["']/i);
+    if (srcMatch) return srcMatch[1];
+  }
+  return null;
+}
+
+/** Escape a string for safe use inside a RegExp pattern. */
+function escapeRegExp(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/**
+ * Extracts Firebase config field values from a minified JS bundle string.
+ * Handles both minified (`key:"value"`) and formatted (`key: "value"`) forms.
+ * Returns an object with the extracted string values (or null for absent fields).
+ */
+export function extractFirebaseConfigFromBundle(js) {
+  /** @param {string} key */
+  function extract(key) {
+    const re = new RegExp(`\\b${escapeRegExp(key)}\\s*:\\s*["']([^"']+)["']`);
+    const m = js.match(re);
+    return m ? m[1] : null;
+  }
+  return {
+    projectId: extract('projectId'),
+    messagingSenderId: extract('messagingSenderId'),
+    appId: extract('appId'),
+    measurementId: extract('measurementId'),
+    apiKey: extract('apiKey'),
+    authDomain: extract('authDomain'),
+  };
 }
 
 function normalizeInternalPath(resourceUrl, siteUrl) {
@@ -202,7 +258,7 @@ async function verifyHomepage(siteUrl) {
   }
 
   if (!hasReactShell(body)) {
-    fail('La page d’accueil ne contient pas de conteneur React `#root`.');
+    fail('La page d\'accueil ne contient pas de conteneur React `#root`.');
   }
 
   if (containsLegacyFallback(body)) {
@@ -216,7 +272,7 @@ async function verifyHomepage(siteUrl) {
 async function verifyAssets(siteUrl, html) {
   const assetPaths = extractInternalAssetPaths(html, siteUrl);
   if (assetPaths.length === 0) {
-    fail('Aucun asset interne exploitable n’a été détecté dans le HTML déployé.');
+    fail('Aucun asset interne exploitable n\'a été détecté dans le HTML déployé.');
   }
 
   for (const assetPath of assetPaths) {
@@ -243,7 +299,7 @@ async function verifyServiceWorker(siteUrl, assetPaths) {
 
   const version = extractServiceWorkerVersion(body);
   if (version === null) {
-    fail('Le Service Worker est servi mais sa version de cache n’a pas pu être détectée.');
+    fail('Le Service Worker est servi mais sa version de cache n\'a pas pu être détectée.');
   }
 
   if (/['"]\/index\.html['"]/i.test(body)) {
@@ -311,7 +367,7 @@ async function verifySitemap(siteUrl) {
 
 async function verifyApi(siteUrl) {
   if (isGitHubPagesSite(siteUrl) || isCloudflarePagesSite(siteUrl)) {
-    logOk('/api ignoré (hébergement statique – pas d’endpoints /api servis).');
+    logOk('/api ignoré (hébergement statique - pas d\'endpoints /api servis).');
     return;
   }
 
@@ -350,6 +406,56 @@ function verifyHeaders(headers, siteUrl) {
   }
 }
 
+async function verifyFirebaseBundle(siteUrl, html) {
+  const bundlePath = extractMainBundlePath(html);
+  if (!bundlePath) {
+    fail('Impossible de trouver le bundle JS principal (index-*.js type="module") dans le HTML déployé.');
+  }
+
+  const url = joinSiteUrl(siteUrl, bundlePath);
+  const { response, body } = await fetchText(url);
+  if (!response.ok) {
+    fail(`Bundle JS principal introuvable : ${bundlePath} (HTTP ${response.status}).`);
+  }
+
+  // Hard-fail immediately if this specific historically-wrong API key is present
+  // in the bundle.  This key was embedded in the live production bundle due to
+  // character transpositions vs the key registered in GCP (project a-ki-pri-sa-ye,
+  // confirmed 2026-03-15).  The positive check below (EXPECTED_FIREBASE_CONFIG)
+  // catches any wrong key in general; this additional guard provides an explicit,
+  // human-readable error pointing directly to the VITE_FIREBASE_API_KEY secret.
+  const WRONG_API_KEY = 'AIzaSyDf_mB8zMWHFwoFhVLyThuKWMTmhB7uSZY';
+  if (body.includes(WRONG_API_KEY)) {
+    const bundleFile = bundlePath.split('/').pop();
+    fail(
+      `CLEF API FIREBASE INCORRECTE détectée dans le bundle ${bundleFile}.\n` +
+      `  Clef erronée : "${WRONG_API_KEY}"\n` +
+      `  La clef correcte est : "${EXPECTED_FIREBASE_CONFIG.apiKey}"\n` +
+      `  → Vérifiez que le secret VITE_FIREBASE_API_KEY est bien configuré dans GitHub Actions.`,
+    );
+  }
+
+  const config = extractFirebaseConfigFromBundle(body);
+  const mismatches = [];
+  for (const [key, expected] of Object.entries(EXPECTED_FIREBASE_CONFIG)) {
+    if (config[key] !== expected) {
+      mismatches.push(`  ${key}: attendu "${expected}", trouvé "${config[key] ?? 'absent'}"`);
+    }
+  }
+
+  if (mismatches.length > 0) {
+    fail(
+      `Config Firebase incorrecte dans le bundle ${bundlePath.split('/').pop()} :\n${mismatches.join('\n')}`,
+    );
+  }
+
+  const bundleFile = bundlePath.split('/').pop();
+  logOk(
+    `Firebase config vérifiée dans le bundle (${bundleFile}) :` +
+    ` projectId=${config.projectId}, appId=${config.appId}, measurementId=${config.measurementId}`,
+  );
+}
+
 async function main() {
   const siteUrl = normalizeBaseUrl(process.argv[2] || DEFAULT_URL);
 
@@ -361,6 +467,7 @@ async function main() {
   const { html, headers } = await verifyHomepage(siteUrl);
   const assetPaths = await verifyAssets(siteUrl, html);
   await verifyServiceWorker(siteUrl, assetPaths);
+  await verifyFirebaseBundle(siteUrl, html);
   await verifySitemap(siteUrl);
   await verifyRoutes(siteUrl);
   await verifyApi(siteUrl);

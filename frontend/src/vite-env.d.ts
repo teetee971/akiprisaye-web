@@ -12,6 +12,7 @@ interface ImportMetaEnv {
   readonly VITE_BUILD_SHA: string;
   readonly VITE_BUILD_DATE: string;
   readonly VITE_BUILD_ENV: string;
+  readonly VITE_APP_BUILD_ID: string;
 }
 
 interface ImportMeta {

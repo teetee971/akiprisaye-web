@@ -213,3 +213,59 @@ describe('auto-merge.yml — pull_request_target guard', () => {
     expect(autoMergeYml).toMatch(/startsWith.*copilot/);
   });
 });
+
+describe('deploy-pages.yml — Firebase secrets injection guard', () => {
+  const deployYml = readWorkflow('deploy-pages.yml');
+
+  // The Firebase web config MUST be injected from repository secrets during the
+  // Vite build.  Without these env vars the build embeds an empty string, and
+  // firebase.ts falls back to its hardcoded value — a regression risk if that
+  // fallback is ever accidentally reverted.  These tests catch such regressions
+  // before they reach production.
+  const FIREBASE_SECRETS = [
+    'VITE_FIREBASE_API_KEY',
+    'VITE_FIREBASE_AUTH_DOMAIN',
+    'VITE_FIREBASE_PROJECT_ID',
+    'VITE_FIREBASE_STORAGE_BUCKET',
+    'VITE_FIREBASE_MESSAGING_SENDER_ID',
+    'VITE_FIREBASE_APP_ID',
+    'VITE_FIREBASE_MEASUREMENT_ID',
+  ] as const;
+
+  for (const secret of FIREBASE_SECRETS) {
+    it(`build step must inject ${secret} from repository secrets`, () => {
+      // Must reference the secret so Vite can inline the correct value at build time.
+      expect(deployYml).toMatch(new RegExp(`${secret}:\\s*\\$\\{\\{\\s*secrets\\.${secret}\\s*\\}\\}`));
+    });
+  }
+
+  it('must NOT contain the known wrong Firebase API key', () => {
+    // Hard guard: the wrong key (with character transpositions vs the GCP value)
+    // must never reappear in the workflow definition itself.
+    expect(deployYml).not.toContain('AIzaSyDf_mB8zMWHFwoFhVLyThuKWMTmhB7uSZY');
+  });
+});
+
+describe('deploy-cloudflare-pages.yml — Firebase secrets injection guard', () => {
+  const cloudflareYml = readWorkflow('deploy-cloudflare-pages.yml');
+
+  const FIREBASE_SECRETS = [
+    'VITE_FIREBASE_API_KEY',
+    'VITE_FIREBASE_AUTH_DOMAIN',
+    'VITE_FIREBASE_PROJECT_ID',
+    'VITE_FIREBASE_STORAGE_BUCKET',
+    'VITE_FIREBASE_MESSAGING_SENDER_ID',
+    'VITE_FIREBASE_APP_ID',
+    'VITE_FIREBASE_MEASUREMENT_ID',
+  ] as const;
+
+  for (const secret of FIREBASE_SECRETS) {
+    it(`build step must inject ${secret} from repository secrets`, () => {
+      expect(cloudflareYml).toMatch(new RegExp(`${secret}:\\s*\\$\\{\\{\\s*secrets\\.${secret}\\s*\\}\\}`));
+    });
+  }
+
+  it('must NOT contain the known wrong Firebase API key', () => {
+    expect(cloudflareYml).not.toContain('AIzaSyDf_mB8zMWHFwoFhVLyThuKWMTmhB7uSZY');
+  });
+});
