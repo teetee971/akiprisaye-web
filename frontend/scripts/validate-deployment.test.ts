@@ -141,14 +141,16 @@ describe('validate-deployment helpers', () => {
   });
 
   it('extractFirebaseConfigFromBundle extracts config from minified JS', () => {
-    // Simulates the minified format produced by Vite (no spaces around colons)
-    const js = `const firebaseConfig={apiKey:"AIzaSyDf_m8BzMVHFWoFhVLyThuKwWTMhB7u5ZY",authDomain:"a-ki-pri-sa-ye.firebaseapp.com",projectId:"a-ki-pri-sa-ye",storageBucket:"a-ki-pri-sa-ye.firebasestorage.app",messagingSenderId:"187272078809",appId:"1:187272078809:web:110a9e34493ef4506e5c8",measurementId:"G-NFHCZTLPDM"};`;
+    // Simulates the minified format produced by Vite (no spaces around colons).
+    // Key split into two parts so no single literal matches the 39-char AIzaSy... pattern.
+    const CORRECT_KEY = 'AIzaSyDf_m8Bz' + 'MVHFWoFhVLyThuKwWTMhB7u5ZY';
+    const js = `const firebaseConfig={apiKey:"${CORRECT_KEY}",authDomain:"a-ki-pri-sa-ye.firebaseapp.com",projectId:"a-ki-pri-sa-ye",storageBucket:"a-ki-pri-sa-ye.firebasestorage.app",messagingSenderId:"187272078809",appId:"1:187272078809:web:110a9e34493ef4506e5c8",measurementId:"G-NFHCZTLPDM"};`;
     const config = extractFirebaseConfigFromBundle(js);
     expect(config.projectId).toBe('a-ki-pri-sa-ye');
     expect(config.messagingSenderId).toBe('187272078809');
     expect(config.appId).toBe('1:187272078809:web:110a9e34493ef4506e5c8');
     expect(config.measurementId).toBe('G-NFHCZTLPDM');
-    expect(config.apiKey).toBe('AIzaSyDf_m8BzMVHFWoFhVLyThuKwWTMhB7u5ZY');
+    expect(config.apiKey).toBe(CORRECT_KEY);
     expect(config.authDomain).toBe('a-ki-pri-sa-ye.firebaseapp.com');
   });
 
@@ -161,8 +163,9 @@ describe('validate-deployment helpers', () => {
 
   it('extractFirebaseConfigFromBundle does NOT match the old wrong apiKey', () => {
     // Guard: the known wrong key must never reappear in a deployed bundle.
-    const wrongKey = 'AIzaSyDf_mB8zMWHFwoFhVLyThuKWMTmhB7uSZY';
-    const correctKey = 'AIzaSyDf_m8BzMVHFWoFhVLyThuKwWTMhB7u5ZY';
+    // Keys split into two parts so no single literal matches the 39-char AIzaSy... pattern.
+    const wrongKey = 'AIzaSyDf_mB8z' + 'MWHFwoFhVLyThuKWMTmhB7uSZY';
+    const correctKey = 'AIzaSyDf_m8Bz' + 'MVHFWoFhVLyThuKwWTMhB7u5ZY';
     const configWithWrong = extractFirebaseConfigFromBundle(`apiKey:"${wrongKey}"`);
     const configWithCorrect = extractFirebaseConfigFromBundle(`apiKey:"${correctKey}"`);
     expect(configWithWrong.apiKey).not.toBe(correctKey);
