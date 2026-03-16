@@ -24,6 +24,10 @@ export default function Header() {
   const isActive = (path) =>
     location?.pathname === path ? 'text-blue-500' : 'text-gray-300';
 
+  // Derive display name and initials for the avatar
+  const displayLabel = user?.displayName ?? user?.email ?? 'Utilisateur';
+  const initial = displayLabel[0]?.toUpperCase() ?? '?';
+
   return (
     <header className="w-full flex items-center justify-between px-4 py-3 border-b border-white/10 bg-black/40 backdrop-blur">
       <Link to="/" className="text-white font-bold text-lg">
@@ -44,22 +48,43 @@ export default function Header() {
         </Link>
 
         {isAuthenticated ? (
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-400">
-              Bonjour {user?.displayName ?? 'Utilisateur'}
+          <div className="flex items-center gap-2">
+            {/* Avatar: photo if available, otherwise coloured initial */}
+            {user?.photoURL ? (
+              <img
+                src={user.photoURL}
+                alt="Avatar"
+                referrerPolicy="no-referrer"
+                className="w-7 h-7 rounded-full object-cover border border-slate-600 flex-shrink-0"
+              />
+            ) : (
+              <span
+                className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-xs font-semibold text-white flex-shrink-0"
+                aria-hidden="true"
+              >
+                {initial}
+              </span>
+            )}
+            <span
+              className="text-sm text-gray-300 max-w-[140px] truncate hidden sm:block"
+              title={user?.email ?? ''}
+            >
+              {displayLabel}
             </span>
             {signOutAction ? (
               <button
                 type="button"
                 onClick={() => signOutAction()}
-                className="text-sm text-gray-300 hover:text-white"
+                className="text-sm text-gray-400 hover:text-white transition-colors"
               >
                 Se déconnecter
               </button>
             ) : null}
           </div>
         ) : (
-          <span className="text-sm text-gray-500">Invité</span>
+          <Link to="/connexion" className="text-sm text-blue-400 hover:text-blue-300 transition-colors">
+            Se connecter
+          </Link>
         )}
 
         <ThemeToggle />

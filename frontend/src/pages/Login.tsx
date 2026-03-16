@@ -5,6 +5,7 @@ import { firebaseError, missingCriticalEnvKeys, wrongApiKeyDetected } from "@/li
 import { FIREBASE_UNAVAILABLE_MESSAGE, getAuthErrorMessage } from "@/lib/authMessages";
 import SocialLoginButtons from "@/components/SocialLoginButtons";
 import { useAuth } from "@/context/AuthContext";
+import { logDebug } from "@/utils/logger";
 
 import { SEOHead } from '../components/ui/SEOHead';
 type AuthMode = "login" | "signup";
@@ -17,7 +18,7 @@ export default function Login() {
   const [busyAction, setBusyAction] = useState<"email" | "google" | null>(null);
   const [verificationSent, setVerificationSent] = useState(false);
 
-  const { signInEmailPassword, signUpEmailPassword, user } = useAuth();
+  const { signInEmailPassword, signUpEmailPassword, user, loading: authLoading } = useAuth();
 
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -36,6 +37,7 @@ export default function Login() {
   // where Firebase navigates back to this page), redirect immediately.
   useEffect(() => {
     if (user) {
+      logDebug("[AUTH] redirecting authenticated user away from /connexion");
       navigate(getSafeNext(), { replace: true });
     }
   }, [getSafeNext, navigate, user]);
@@ -80,6 +82,32 @@ export default function Login() {
   };
 
   const loading = busyAction !== null;
+
+  // While Firebase auth is initialising (or settling an OAuth redirect result),
+  // show a spinner instead of the login form. This prevents the form from
+  // flashing briefly before the automatic post-OAuth redirect fires.
+  if (authLoading) {
+    return (
+      <>
+        <SEOHead
+          title="Connexion — A KI PRI SA YÉ"
+          description="Connectez-vous à votre compte A KI PRI SA YÉ pour accéder à vos alertes prix et votre historique de contributions."
+          canonical="https://teetee971.github.io/akiprisaye-web/connexion"
+        />
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
+          <div className="text-center">
+            <div
+              className="rounded-full border-2 border-blue-500/30 border-t-blue-500 animate-spin mx-auto mb-4"
+              style={{ width: 40, height: 40 }}
+              role="status"
+              aria-label="Vérification en cours"
+            />
+            <p className="text-slate-400 text-sm">Vérification en cours…</p>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>

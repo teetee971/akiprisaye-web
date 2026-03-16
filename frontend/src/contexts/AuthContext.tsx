@@ -24,6 +24,7 @@ import {
   getAuthRedirectResult,
 } from "@/services/auth";
 import { FIREBASE_UNAVAILABLE_MESSAGE, getAuthErrorMessage } from "@/lib/authMessages";
+import { logDebug, logError } from "@/utils/logger";
 
 type UserRole = "guest" | "citoyen" | "observateur" | "admin" | "creator";
 
@@ -61,7 +62,15 @@ async function resolveUserRole(user: User | null): Promise<UserRole> {
   }
 
   try {
-    const userDoc = await getDoc(doc(db, "users", user.uid));
+    // Guard against Firestore network hangs (e.g. ERR_NAME_NOT_RESOLVED on mobile).
+    // Without a timeout the loading state would stay true indefinitely.
+    const roleTimeout = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error("timeout")), 5000),
+    );
+    const userDoc = await Promise.race([
+      getDoc(doc(db, "users", user.uid)),
+      roleTimeout,
+    ]);
     if (!userDoc.exists()) {
       return "citoyen";
     }
@@ -90,41 +99,62 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     let active = true;
+    let unsubscribeAuth: (() => void) | undefined;
 
-    // Settle any pending redirect sign-in (e.g. from mobile redirect flow).
-    // onAuthStateChanged handles the success case; we only need this to
-    // surface redirect errors (e.g. unauthorized-domain, operation-not-allowed).
-    getAuthRedirectResult().catch((err: unknown) => {
+    logDebug("[AUTH] init");
+
+    async function bootstrap() {
+      // Settle any pending redirect sign-in BEFORE subscribing to onAuthStateChanged.
+      // This prevents a flash of the login form while Firebase processes the OAuth return.
+      try {
+        const result = await getAuthRedirectResult();
+        if (!active) return;
+        if (result?.user) {
+          logDebug("[AUTH] getRedirectResult success");
+        } else {
+          logDebug("[AUTH] getRedirectResult: no pending redirect");
+        }
+      } catch (err: unknown) {
+        if (!active) return;
+        const code =
+          typeof err === "object" && err && "code" in err
+            ? String((err as { code: string }).code)
+            : "";
+        if (code && code !== "auth/no-redirect-pending" && code !== "auth/popup-closed-by-user") {
+          logError("[AUTH] getRedirectResult error", code);
+          setError(getAuthErrorMessage(err));
+        } else {
+          logDebug("[AUTH] getRedirectResult: no pending redirect");
+        }
+      }
+
       if (!active) return;
-      const code =
-        typeof err === "object" && err && "code" in err
-          ? String((err as { code: string }).code)
-          : "";
-      // Ignore the "no pending redirect" case and user-cancelled popup/redirect
-      if (!code || code === "auth/no-redirect-pending" || code === "auth/popup-closed-by-user") {
-        return;
-      }
-      setError(getAuthErrorMessage(err));
-    });
 
-    const unsubscribe = subscribeToAuthState(async (currentUser) => {
-      if (!active) {
-        return;
-      }
+      // Subscribe to auth state changes. By this point getRedirectResult has
+      // already resolved so onAuthStateChanged reflects the final auth state.
+      unsubscribeAuth = subscribeToAuthState(async (currentUser) => {
+        if (!active) {
+          return;
+        }
 
-      setUser(currentUser);
-      const role = await resolveUserRole(currentUser);
-      if (!active) {
-        return;
-      }
+        logDebug("[AUTH] onAuthStateChanged", currentUser ? "user" : "null");
 
-      setUserRole(role);
-      setLoading(false);
-    });
+        setUser(currentUser);
+        const role = await resolveUserRole(currentUser);
+        if (!active) {
+          return;
+        }
+
+        setUserRole(role);
+        setLoading(false);
+      });
+    }
+
+    bootstrap();
 
     return () => {
       active = false;
-      unsubscribe();
+      unsubscribeAuth?.();
     };
   }, []);
 

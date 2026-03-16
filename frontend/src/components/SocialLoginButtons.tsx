@@ -76,9 +76,15 @@ export default function SocialLoginButtons({
     signInGooglePopup,    signInGoogleRedirect,
     signInFacebookPopup, signInFacebookRedirect,
     signInApplePopup,    signInAppleRedirect,
+    user,
   } = useAuth();
   const navigate = useNavigate();
   const [busy, setBusy] = useState<Provider | null>(null);
+
+  // Already authenticated — hide all social login buttons.
+  if (user) {
+    return null;
+  }
 
   const handleSocial = async (provider: Provider) => {
     setBusy(provider);
