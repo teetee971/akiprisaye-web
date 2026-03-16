@@ -23,7 +23,7 @@ export default function Login() {
   const [searchParams] = useSearchParams();
 
   const firebaseHealthy = !firebaseError && missingCriticalEnvKeys.length === 0;
-  const showFirebaseStatus = import.meta.env.DEV || Boolean(firebaseError);
+  const showFirebaseStatus = import.meta.env.DEV || Boolean(firebaseError) || missingCriticalEnvKeys.length > 0;
 
   const getSafeNext = useCallback(() => {
     const nextParam = searchParams.get("next");

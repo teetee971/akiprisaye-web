@@ -250,6 +250,10 @@ describe('deploy-pages.yml — Firebase secrets injection guard', () => {
     expect(occurrences).toBeGreaterThanOrEqual(1);
     // Must not appear in the build env: block as a hardcoded value.
     expect(deployYml).not.toMatch(new RegExp(`VITE_FIREBASE_API_KEY:\\s*${WRONG_KEY}`));
+  it('must NOT contain the known wrong Firebase API key', () => {
+    // Hard guard: the wrong key (with character transpositions vs the GCP value)
+    // must never reappear in the workflow definition itself.
+    expect(deployYml).not.toContain('AIzaSyDf_mB8zMWHFwoFhVLyThuKWMTmhB7uSZY');
   });
 });
 
@@ -323,5 +327,7 @@ describe('deploy-cloudflare-pages.yml — pre-build Firebase key guard', () => {
     expect(validateIdx).toBeGreaterThan(0);
     expect(buildIdx).toBeGreaterThan(0);
     expect(validateIdx).toBeLessThan(buildIdx);
+  it('must NOT contain the known wrong Firebase API key', () => {
+    expect(cloudflareYml).not.toContain('AIzaSyDf_mB8zMWHFwoFhVLyThuKWMTmhB7uSZY');
   });
 });
