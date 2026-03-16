@@ -25,6 +25,7 @@ import {
 } from "@/services/auth";
 import { FIREBASE_UNAVAILABLE_MESSAGE, getAuthErrorMessage } from "@/lib/authMessages";
 import { logDebug, logError } from "@/utils/logger";
+import { writeUserPresence, clearUserPresence } from "@/services/userPresence";
 
 type UserRole = "guest" | "citoyen" | "observateur" | "admin" | "creator";
 

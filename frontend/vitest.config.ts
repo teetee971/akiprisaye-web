@@ -4,10 +4,19 @@ import { fileURLToPath } from 'node:url';
 
 const here = fileURLToPath(new URL('.', import.meta.url));
 const abs = (p: string) => fileURLToPath(new URL(p, import.meta.url));
+const srcPath = fileURLToPath(new URL('./src', import.meta.url));
 
 export default defineConfig({
   // Vitest/Vite considère frontend/ comme racine même si lancé depuis ailleurs
   root: here,
+
+  resolve: {
+    alias: [
+      // Mirror the vite.config.ts aliases so @/... imports work in tests
+      { find: /^@\//, replacement: `${srcPath}/` },
+      { find: /^@$/, replacement: srcPath },
+    ],
+  },
 
   test: {
     environment: 'jsdom',
