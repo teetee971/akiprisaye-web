@@ -15,6 +15,7 @@ import {
   inferAssetBasePath,
   isCloudflarePagesSite,
   isGitHubPagesSite,
+  isStaleBundleReferenced,
   joinSiteUrl,
   normalizeBaseUrl,
 } from '../../scripts/validate-deployment.mjs';
@@ -171,5 +172,26 @@ describe('validate-deployment helpers', () => {
     expect(configWithWrong.apiKey).not.toBe(correctKey);
     expect(configWithCorrect.apiKey).toBe(correctKey);
     expect(configWithCorrect.apiKey).not.toBe(wrongKey);
+  });
+
+  it('isStaleBundleReferenced detects the known stale bundle in deployed HTML', () => {
+    const staleHtml = `
+      <script type="module" crossorigin src="/akiprisaye-web/assets/index-DHqr0YlO.js"></script>
+    `;
+    const freshHtml = `
+      <script type="module" crossorigin src="/akiprisaye-web/assets/index-AbCd1234.js"></script>
+    `;
+    expect(isStaleBundleReferenced(staleHtml, 'index-DHqr0YlO.js')).toBe(true);
+    expect(isStaleBundleReferenced(freshHtml, 'index-DHqr0YlO.js')).toBe(false);
+  });
+
+  it('isStaleBundleReferenced returns false for empty or unrelated HTML', () => {
+    expect(isStaleBundleReferenced('', 'index-DHqr0YlO.js')).toBe(false);
+    expect(isStaleBundleReferenced('<div id="root"></div>', 'index-DHqr0YlO.js')).toBe(false);
+  });
+
+  it('isStaleBundleReferenced is case-sensitive (bundle names are content-hashed)', () => {
+    // Vite hashes are case-sensitive — a different case is a different file.
+    expect(isStaleBundleReferenced('index-dhqr0ylo.js', 'index-DHqr0YlO.js')).toBe(false);
   });
 });

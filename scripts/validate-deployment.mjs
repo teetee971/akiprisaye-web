@@ -4,7 +4,7 @@ const DEFAULT_URL = 'https://teetee971.github.io/akiprisaye-web';
 
 // Reference Firebase config for project a-ki-pri-sa-ye.
 // Source of truth: GCP Console (project number 187272078809, ID a-ki-pri-sa-ye)
-// confirmed 2026-03-15, cross-checked against live bundle assets/index-DHqr0YlO.js.
+// confirmed 2026-03-15. index-DHqr0YlO.js was the last stale bundle with the wrong key — now listed in STALE_BUNDLE_NAMES.
 const EXPECTED_FIREBASE_CONFIG = {
   apiKey: 'AIzaSyDf_m8BzMVHFWoFhVLyThuKwWTMhB7u5ZY',
   projectId: 'a-ki-pri-sa-ye',
@@ -12,7 +12,10 @@ const EXPECTED_FIREBASE_CONFIG = {
   appId: '1:187272078809:web:110a9e34493ef4506e5c8',
   measurementId: 'G-NFHCZTLPDM',
 };
-const CRITICAL_ROUTES = ['/', '/comparateur', '/scanner', '/observatoire', '/alertes'];
+const CRITICAL_ROUTES = ['/', '/comparateur', '/scanner', '/observatoire', '/alertes', '/connexion'];
+// Known stale bundles that must no longer appear in the deployed HTML.
+// index-DHqr0YlO.js was the last bundle built with the incorrect Firebase API key (2026-03-15).
+const STALE_BUNDLE_NAMES = ['index-DHqr0YlO.js'];
 const OPTIONAL_SECURITY_HEADERS = [
   'x-frame-options',
   'x-content-type-options',
@@ -184,6 +187,15 @@ export function joinSiteUrl(baseUrl, path) {
   }
 
   return new URL(normalizedPath, siteUrl).toString();
+}
+
+/**
+ * Returns true if a known stale bundle filename appears anywhere in the HTML.
+ * This catches cases where the CDN is still serving an outdated index.html that
+ * references an old bundle even after the build was regenerated.
+ */
+export function isStaleBundleReferenced(html, staleBundleName) {
+  return html.includes(staleBundleName);
 }
 
 export function extractSitemapPaths(xml, siteUrl) {
@@ -365,6 +377,37 @@ async function verifySitemap(siteUrl) {
   logOk(`Sitemap public valide (${indexedPaths.length} route(s) indexée(s) vérifiées).`);
 }
 
+async function verifyNoBundleRegression(siteUrl, html, assetPaths) {
+  const basePath = inferAssetBasePath(assetPaths);
+
+  for (const staleName of STALE_BUNDLE_NAMES) {
+    if (isStaleBundleReferenced(html, staleName)) {
+      fail(
+        `L'ancien bundle déprécié "${staleName}" est encore référencé dans le HTML déployé.\n` +
+        `  → Le build actif intègre toujours l'ancienne configuration.\n` +
+        `  → Vérifiez que le dernier build a bien été regénéré et déployé correctement.`,
+      );
+    }
+
+    // Probe whether the CDN is still serving the stale file (informational only).
+    // A 404/410 confirms the CDN has purged it; a 200 means the edge cache still
+    // holds it but is harmless because the HTML no longer points to it.
+    const stalePath = `${basePath}assets/${staleName}`.replace(/\/+/g, '/');
+    const staleUrl = joinSiteUrl(siteUrl, stalePath);
+    const response = await fetchStatus(staleUrl);
+    if (response.ok) {
+      logWarn(
+        `L'ancien bundle "${staleName}" est encore accessible via le CDN (HTTP ${response.status}) mais n'est plus référencé dans le HTML.\n` +
+        `  → Le cache CDN sera purgé automatiquement à expiration (max-age). Aucune action requise.`,
+      );
+    } else {
+      logOk(`Ancien bundle "${staleName}" non servi par le CDN (HTTP ${response.status}) — cache purgé.`);
+    }
+  }
+
+  logOk(`Aucun bundle déprécié référencé dans le HTML actif (vérifié: ${STALE_BUNDLE_NAMES.join(', ')}).`);
+}
+
 async function verifyApi(siteUrl) {
   if (isGitHubPagesSite(siteUrl) || isCloudflarePagesSite(siteUrl)) {
     logOk('/api ignoré (hébergement statique - pas d\'endpoints /api servis).');
@@ -467,6 +510,7 @@ async function main() {
   const { html, headers } = await verifyHomepage(siteUrl);
   const assetPaths = await verifyAssets(siteUrl, html);
   await verifyServiceWorker(siteUrl, assetPaths);
+  await verifyNoBundleRegression(siteUrl, html, assetPaths);
   await verifyFirebaseBundle(siteUrl, html);
   await verifySitemap(siteUrl);
   await verifyRoutes(siteUrl);
