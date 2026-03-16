@@ -204,7 +204,7 @@ export function isStaleBundleReferenced(html, staleBundleName) {
  * Returns 0 when `needle` is empty or absent.
  */
 export function countOccurrences(text, needle) {
-  if (!needle) return 0;
+  if (!needle || typeof text !== 'string') return 0;
   let count = 0;
   let pos = 0;
   while ((pos = text.indexOf(needle, pos)) !== -1) {

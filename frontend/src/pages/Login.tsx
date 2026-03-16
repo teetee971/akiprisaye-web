@@ -203,6 +203,15 @@ export default function Login() {
           </Link>
         </div>
 
+        <div className="mt-3 text-center">
+          <Link
+            to="/activation-createur"
+            className="text-xs text-amber-500 hover:text-amber-400 hover:underline"
+          >
+            ✨ Vous êtes le propriétaire ? Activez votre accès Créateur →
+          </Link>
+        </div>
+
         {showFirebaseStatus && (
           <div className="mt-6 p-3 bg-slate-800/70 border border-slate-700 rounded-lg text-xs">
             {firebaseHealthy ? (

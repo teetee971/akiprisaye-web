@@ -61,6 +61,7 @@ const SolidariteHub = lazyPage(() => import('./pages/SolidariteHub'));
 const InscriptionPro = lazyPage(() => import('./pages/InscriptionPro'));
 const EspacePro = lazyPage(() => import('./pages/EspacePro'));
 const EspaceCreateur = lazyPage(() => import('./pages/EspaceCreateur'));
+const ActivationCreateur = lazyPage(() => import('./pages/ActivationCreateur'));
 
 // Scanner & OCR pages
 const ScannerHub = lazyPage(() => import('./pages/ScannerHub'));
@@ -445,6 +446,7 @@ export default function App() {
                           <Route path="espace-pro" element={<EspacePro />} />
                           <Route path="espace-pro-batiment" element={<Navigate to="/espace-pro" replace />} />
                           <Route path="espace-createur" element={<EspaceCreateur />} />
+                          <Route path="activation-createur" element={<ActivationCreateur />} />
 
                           {/* Additional feature routes */}
                           <Route path="donnees-publiques" element={<DonneesPubliques />} />
