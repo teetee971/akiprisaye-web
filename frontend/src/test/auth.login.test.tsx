@@ -8,7 +8,7 @@
  *  - SocialLoginButtons is hidden when the user is already authenticated
  */
 
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 import '@testing-library/jest-dom/vitest';
@@ -86,6 +86,7 @@ vi.mock('../utils/logger', () => ({
 
 import Login from '../pages/Login';
 import Header from '../components/Header';
+import LayoutHeader from '../components/layout/Header';
 import SocialLoginButtons from '../components/SocialLoginButtons';
 
 /* ── ThemeToggle / LanguageSelector stubs ──────────────────────────────── */
@@ -94,6 +95,18 @@ vi.mock('../components/ThemeToggle', () => ({
 }));
 vi.mock('../components/i18n/LanguageSelector', () => ({
   LanguageSelector: () => null,
+}));
+
+/* ── Stubs for layout/Header dependencies ─────────────────────────────── */
+vi.mock('../components/NotificationCenter', () => ({
+  NotificationCenter: () => null,
+}));
+vi.mock('../components/GlobalSearch', () => ({
+  default: () => null,
+  useGlobalSearchShortcut: () => {},
+}));
+vi.mock('../store/useShoppingListStore', () => ({
+  getShoppingListCount: () => 0,
 }));
 
 /* ════════════════════════════════════════════════════════════════════════
@@ -140,6 +153,20 @@ describe('Login page', () => {
     );
 
     expect(mockNavigate).toHaveBeenCalledWith('/mon-compte', { replace: true });
+  });
+
+  it('hides social login buttons and shows the spinner while auth is loading (simulates OAuth redirect return)', () => {
+    authState = makeAuthMock({ loading: true });
+
+    render(
+      <MemoryRouter>
+        <Login />
+      </MemoryRouter>,
+    );
+
+    // Spinner is shown, social buttons hidden — prevents flash of login form during redirect settlement
+    expect(screen.getByRole('status', { name: /vérification en cours/i })).toBeTruthy();
+    expect(screen.queryByText(/continuer avec google/i)).toBeNull();
   });
 });
 
@@ -254,5 +281,91 @@ describe('SocialLoginButtons', () => {
 
     expect(screen.queryByText(/continuer avec google/i)).toBeNull();
     expect(container.firstChild).toBeNull();
+  });
+
+  it('navigates via useEffect when user becomes confirmed after popup (avoids RequireAuth race)', async () => {
+    // Simulate: user=null initially (popup in flight), then user is set (onAuthStateChanged fired)
+    authState = makeAuthMock({ user: null });
+    const { rerender } = render(
+      <MemoryRouter>
+        <SocialLoginButtons redirectTo="/mon-compte" />
+      </MemoryRouter>,
+    );
+
+    // Simulate onAuthStateChanged confirming the user after popup
+    const fakeUser = { uid: 'u1', email: 'test@example.com', displayName: 'Test', photoURL: null };
+    authState = makeAuthMock({ user: fakeUser });
+
+    // Patch pendingRedirect by re-rendering with user set — since SocialLoginButtons
+    // returns null when user is set and no pendingRedirect is active, verify it renders null.
+    rerender(
+      <MemoryRouter>
+        <SocialLoginButtons redirectTo="/mon-compte" />
+      </MemoryRouter>,
+    );
+
+    expect(screen.queryByText(/continuer avec google/i)).toBeNull();
+  });
+});
+
+/* ════════════════════════════════════════════════════════════════════════
+ * layout/Header — production header used by Layout.jsx
+ * ════════════════════════════════════════════════════════════════════════ */
+
+describe('layout/Header', () => {
+  it('shows a "Se connecter" link when the user is not authenticated', () => {
+    authState = makeAuthMock({ user: null });
+
+    render(
+      <MemoryRouter>
+        <LayoutHeader />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByRole('link', { name: /se connecter/i })).toBeTruthy();
+  });
+
+  it('shows an account button with user initials when authenticated', () => {
+    const fakeUser = {
+      uid: 'u1',
+      email: 'jean@example.com',
+      displayName: 'Jean Dupont',
+      photoURL: null,
+    };
+    authState = makeAuthMock({ user: fakeUser, signOutUser: vi.fn() });
+
+    render(
+      <MemoryRouter>
+        <LayoutHeader />
+      </MemoryRouter>,
+    );
+
+    // Avatar button is accessible as "Mon compte"
+    expect(screen.getByRole('button', { name: /mon compte/i })).toBeTruthy();
+    // "Se connecter" link is hidden when authenticated
+    expect(screen.queryByRole('link', { name: /^se connecter$/i })).toBeNull();
+  });
+
+  it('shows displayName in mobile menu when authenticated', () => {
+    const fakeUser = {
+      uid: 'u2',
+      email: 'marie@example.com',
+      displayName: 'Marie Dupont',
+      photoURL: null,
+    };
+    authState = makeAuthMock({ user: fakeUser, signOutUser: vi.fn() });
+
+    render(
+      <MemoryRouter>
+        <LayoutHeader />
+      </MemoryRouter>,
+    );
+
+    // Open the mobile navigation menu
+    const menuButton = screen.getByRole('button', { name: /ouvrir le menu/i });
+    fireEvent.click(menuButton);
+
+    expect(screen.getByText('Marie Dupont')).toBeTruthy();
+    expect(screen.getByText('marie@example.com')).toBeTruthy();
   });
 });

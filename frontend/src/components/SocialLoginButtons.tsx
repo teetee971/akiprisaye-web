@@ -10,7 +10,7 @@
  *  - Apple   : Authentication → Sign-in method → Apple → configurer Apple Developer + Services ID
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { getAuthErrorMessage } from '@/lib/authMessages';
@@ -80,6 +80,17 @@ export default function SocialLoginButtons({
   } = useAuth();
   const navigate = useNavigate();
   const [busy, setBusy] = useState<Provider | null>(null);
+  // Stores the destination after a popup sign-in completes; navigation is
+  // deferred until onAuthStateChanged confirms the user in context, avoiding
+  // a race condition where RequireAuth sees user=null and bounces back to /login.
+  const [pendingRedirect, setPendingRedirect] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (user && pendingRedirect) {
+      navigate(pendingRedirect, { replace: true });
+      setPendingRedirect(null);
+    }
+  }, [user, pendingRedirect, navigate]);
 
   // Already authenticated — hide all social login buttons.
   if (user) {
@@ -110,7 +121,9 @@ export default function SocialLoginButtons({
       if (provider === 'facebook') await signInFacebookPopup();
       if (provider === 'apple')    await signInApplePopup();
       onSuccess?.();
-      navigate(redirectTo);
+      // Defer navigation until onAuthStateChanged confirms the user in context
+      // to avoid RequireAuth bouncing the route before auth state propagates.
+      setPendingRedirect(redirectTo);
     } catch (err: unknown) {
       const code =
         typeof err === 'object' && err && 'code' in err
@@ -128,6 +141,7 @@ export default function SocialLoginButtons({
         }
         return;
       }
+      setPendingRedirect(null);
       onError?.(getSocialErrorMessage(err));
     } finally {
       setBusy(null);
