@@ -198,6 +198,22 @@ export function isStaleBundleReferenced(html, staleBundleName) {
   return html.includes(staleBundleName);
 }
 
+/**
+ * Counts the number of non-overlapping occurrences of `needle` in `text`.
+ * Equivalent to what `grep -c` / `grep -o | wc -l` would return for a literal string.
+ * Returns 0 when `needle` is empty or absent.
+ */
+export function countOccurrences(text, needle) {
+  if (!needle) return 0;
+  let count = 0;
+  let pos = 0;
+  while ((pos = text.indexOf(needle, pos)) !== -1) {
+    count++;
+    pos += needle.length;
+  }
+  return count;
+}
+
 export function extractSitemapPaths(xml, siteUrl) {
   const site = new URL(`${normalizeBaseUrl(siteUrl)}/`);
   const siteBasePath = site.pathname.replace(/\/$/, '');
@@ -379,6 +395,7 @@ async function verifySitemap(siteUrl) {
 
 async function verifyNoBundleRegression(siteUrl, html, assetPaths) {
   const basePath = inferAssetBasePath(assetPaths);
+  const currentBundle = extractMainBundlePath(html);
 
   for (const staleName of STALE_BUNDLE_NAMES) {
     if (isStaleBundleReferenced(html, staleName)) {
@@ -405,7 +422,11 @@ async function verifyNoBundleRegression(siteUrl, html, assetPaths) {
     }
   }
 
-  logOk(`Aucun bundle déprécié référencé dans le HTML actif (vérifié: ${STALE_BUNDLE_NAMES.join(', ')}).`);
+  const currentBundleFile = currentBundle ? currentBundle.split('/').pop() : '(inconnu)';
+  logOk(
+    `Aucun bundle déprécié référencé dans le HTML actif` +
+    ` (bundle actuel: ${currentBundleFile}, vérifié: ${STALE_BUNDLE_NAMES.join(', ')}).`,
+  );
 }
 
 async function verifyApi(siteUrl) {
@@ -468,11 +489,12 @@ async function verifyFirebaseBundle(siteUrl, html) {
   // catches any wrong key in general; this additional guard provides an explicit,
   // human-readable error pointing directly to the VITE_FIREBASE_API_KEY secret.
   const WRONG_API_KEY = 'AIzaSyDf_mB8zMWHFwoFhVLyThuKWMTmhB7uSZY';
-  if (body.includes(WRONG_API_KEY)) {
+  const wrongKeyCount = countOccurrences(body, WRONG_API_KEY);
+  if (wrongKeyCount > 0) {
     const bundleFile = bundlePath.split('/').pop();
     fail(
       `CLEF API FIREBASE INCORRECTE détectée dans le bundle ${bundleFile}.\n` +
-      `  Clef erronée : "${WRONG_API_KEY}"\n` +
+      `  Clef erronée : "${WRONG_API_KEY}" (${wrongKeyCount} occurrence(s))\n` +
       `  La clef correcte est : "${EXPECTED_FIREBASE_CONFIG.apiKey}"\n` +
       `  → Vérifiez que le secret VITE_FIREBASE_API_KEY est bien configuré dans GitHub Actions.`,
     );
@@ -493,8 +515,10 @@ async function verifyFirebaseBundle(siteUrl, html) {
   }
 
   const bundleFile = bundlePath.split('/').pop();
+  const correctKeyCount = countOccurrences(body, EXPECTED_FIREBASE_CONFIG.apiKey);
   logOk(
     `Firebase config vérifiée dans le bundle (${bundleFile}) :` +
+    ` ancienne clé incorrecte: ${wrongKeyCount} occurrence(s), clé correcte: ${correctKeyCount} occurrence(s),` +
     ` projectId=${config.projectId}, appId=${config.appId}, measurementId=${config.measurementId}`,
   );
 }
