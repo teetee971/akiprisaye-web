@@ -30,7 +30,7 @@ export default function Header() {
   const accountRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
-  const { user, userRole, isAdmin, isCreator, signOutUser } = useAuth();
+  const { user, userRole, isAdmin, isCreator, signOutUser, loading } = useAuth();
 
   useEffect(() => {
     const onStorage = () => setCount(getShoppingListCount());
@@ -138,7 +138,15 @@ export default function Header() {
             <NotificationCenter />
 
             {/* ── Account button ─────────────────────────────────── */}
-            {user ? (
+            {loading ? (
+              /* Auth is still settling (e.g. OAuth redirect return).
+                 Show a neutral skeleton — never "Se connecter" while in-flight. */
+              <div
+                className="h-8 w-8 rounded-full bg-slate-700 animate-pulse"
+                role="status"
+                aria-label="Chargement du compte…"
+              />
+            ) : user ? (
               /* Logged-in: avatar + dropdown */
               <div ref={accountRef} className="relative">
                 <button
@@ -295,7 +303,13 @@ export default function Header() {
 
             {/* Account links in mobile menu */}
             <li className="border-t border-slate-800 mt-2 pt-2">
-              {user ? (
+              {loading ? (
+                /* Skeleton while auth is settling */
+                <div className="px-3 py-2 flex items-center gap-2">
+                  <div className="h-6 w-6 rounded-full bg-slate-700 animate-pulse" />
+                  <div className="h-4 w-24 rounded bg-slate-700 animate-pulse" />
+                </div>
+              ) : user ? (
                 <div className="space-y-1">
                   {user.displayName && (
                     <div className="px-3 py-1.5 text-sm font-medium text-slate-200 truncate">{user.displayName}</div>

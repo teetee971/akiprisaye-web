@@ -157,7 +157,7 @@ export function AlertForm({ productEAN = '', productName = '', onSave, onCancel 
 
         {/* Threshold */}
         <div>
-          <label htmlFor="alert-threshold-label" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
+          <label htmlFor="alert-threshold-value" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
             Seuil de déclenchement ({isShrinkflation ? 'g/ml' : isAbsolute ? '€' : '%'}) <span className="text-red-500">*</span>
             <div className="relative group">
               <HelpCircle className="w-4 h-4 text-slate-400 cursor-help" />
@@ -173,7 +173,7 @@ export function AlertForm({ productEAN = '', productName = '', onSave, onCancel 
           {isAbsolute ? (
             <div className="relative">
               <input
-                id="alert-threshold-label"
+                id="alert-threshold-value"
                 name="absolutePrice"
                 type="number"
                 onChange={(e) => setFormData({ ...formData, absolutePrice: e.target.value })}
@@ -187,7 +187,7 @@ export function AlertForm({ productEAN = '', productName = '', onSave, onCancel 
             </div>
           ) : (
             <input
-              id="alert-threshold-label"
+              id="alert-threshold-value"
               name="threshold"
               type="number"
               onChange={(e) => setFormData({ ...formData, threshold: Number(e.target.value) })}

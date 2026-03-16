@@ -139,6 +139,7 @@ export default function SignalementCitoyenModal({
                 </label>
                 <select
                   id="observation-type"
+                  name="observationType"
                   value={type}
                   onChange={(e) => setType(e.target.value as ObservationType)}
                   className="w-full px-4 py-3 bg-white/[0.1] border border-white/[0.22] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -166,6 +167,7 @@ export default function SignalementCitoyenModal({
                 </label>
                 <textarea
                   id="description"
+                  name="description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value.slice(0, 500))}
                   className="w-full px-4 py-3 bg-white/[0.1] border border-white/[0.22] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
@@ -187,6 +189,7 @@ export default function SignalementCitoyenModal({
                 <input
                   type="date"
                   id="observation-date"
+                  name="observationDate"
                   value={observationDate}
                   onChange={(e) => setObservationDate(e.target.value)}
                   max={new Date().toISOString().split('T')[0]}
@@ -202,6 +205,7 @@ export default function SignalementCitoyenModal({
                 <input
                   type="text"
                   id="store"
+                  name="store"
                   value={store}
                   onChange={(e) => setStore(e.target.value.slice(0, 100))}
                   className="w-full px-4 py-3 bg-white/[0.1] border border-white/[0.22] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"

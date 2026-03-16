@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import toast from 'react-hot-toast';
 
 import { firebaseError, missingCriticalEnvKeys, wrongApiKeyDetected } from "@/lib/firebase";
 import { FIREBASE_UNAVAILABLE_MESSAGE, getAuthErrorMessage } from "@/lib/authMessages";
@@ -38,6 +39,13 @@ export default function Login() {
   useEffect(() => {
     if (user) {
       logDebug("[AUTH] redirecting authenticated user away from /connexion");
+      // Fire a visible success confirmation before navigating.
+      // The toast persists into the destination page because ToastProvider
+      // is mounted at the app root, above the router outlet.
+      toast.success(
+        `Bienvenue${user.displayName ? `, ${user.displayName.split(' ')[0]}` : ''}\u00a0!`,
+        { id: 'auth-success', duration: 3000 },
+      );
       navigate(getSafeNext(), { replace: true });
     }
   }, [getSafeNext, navigate, user]);
@@ -169,6 +177,7 @@ export default function Login() {
             </label>
             <input
               id="email"
+              name="email"
               type="email"
               placeholder="votre@email.com"
               required
@@ -185,6 +194,7 @@ export default function Login() {
             </label>
             <input
               id="password"
+              name="password"
               type="password"
               placeholder={mode === "signup" ? "Minimum 6 caractères" : "Votre mot de passe"}
               required

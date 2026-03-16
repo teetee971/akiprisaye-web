@@ -1,7 +1,6 @@
 // src/pages/MonCompte.tsx
 import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import AuthForm from "@/components/AuthForm";
+import { useNavigate, Link, Navigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import { useEntitlements } from "@/billing/useEntitlements";
@@ -66,11 +65,9 @@ export default function MonCompte() {
   }
 
   if (!user) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
-        <AuthForm />
-      </div>
-    );
+    // Guard: should not be reachable (RequireAuth wraps this page), but handle
+    // gracefully (e.g. sign-out race while on-page) by redirecting to login.
+    return <Navigate to={`/connexion?next=${encodeURIComponent('/mon-compte')}`} replace />;
   }
 
   const roleColors: Record<string, string> = {

@@ -21,6 +21,7 @@ export default function Header() {
   const user = auth?.user ?? null;
   const isAuthenticated = Boolean(user);
   const signOutAction = auth?.signOutUser ?? null;
+  const authLoading = auth?.loading ?? false;
   const { plan } = useEntitlements();
   const planInfo = PLAN_BADGE[plan] ?? null;
 
@@ -60,7 +61,14 @@ export default function Header() {
           Paramètres
         </Link>
 
-        {isAuthenticated ? (
+        {authLoading ? (
+          /* Auth is settling (e.g. OAuth redirect return) — neutral skeleton */
+          <div
+            className="w-7 h-7 rounded-full bg-slate-700 animate-pulse"
+            role="status"
+            aria-label="Chargement du compte…"
+          />
+        ) : isAuthenticated ? (
           <div className="flex items-center gap-2">
             {/* Avatar: photo if available, otherwise coloured initial */}
             {user?.photoURL ? (

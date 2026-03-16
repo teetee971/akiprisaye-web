@@ -4,6 +4,8 @@
  * Tests for the auth UX flow:
  *  - Login page shows spinner while Firebase auth is initialising
  *  - Login page redirects an already-authenticated user automatically
+ *  - Login page fires a success toast before redirecting (visual confirmation)
+ *  - Header displays a loading skeleton while auth is settling (prevents "Se connecter" flash)
  *  - Header displays avatar + display-name/email when authenticated
  *  - SocialLoginButtons is hidden when the user is already authenticated
  */
@@ -19,6 +21,12 @@ vi.mock('react-router-dom', async (importOriginal) => {
   const original = await importOriginal<typeof import('react-router-dom')>();
   return { ...original, useNavigate: () => mockNavigate };
 });
+
+/* ── react-hot-toast mock ──────────────────────────────────────────────── */
+const mockToastSuccess = vi.hoisted(() => vi.fn());
+vi.mock('react-hot-toast', () => ({
+  default: { success: mockToastSuccess, error: vi.fn() },
+}));
 
 /* ── Firebase / lib mocks ──────────────────────────────────────────────── */
 vi.mock('../lib/firebase', () => ({
@@ -145,6 +153,7 @@ describe('Login page', () => {
     const fakeUser = { uid: 'u1', email: 'test@example.com', displayName: 'Test', photoURL: null };
     authState = makeAuthMock({ loading: false, user: fakeUser });
     mockNavigate.mockClear();
+    mockToastSuccess.mockClear();
 
     render(
       <MemoryRouter initialEntries={['/connexion']}>
@@ -152,6 +161,31 @@ describe('Login page', () => {
       </MemoryRouter>,
     );
 
+    expect(mockNavigate).toHaveBeenCalledWith('/mon-compte', { replace: true });
+    // Success toast is fired to confirm the sign-in visually
+    expect(mockToastSuccess).toHaveBeenCalledWith(
+      expect.stringContaining('Bienvenue'),
+      expect.objectContaining({ id: 'auth-success' }),
+    );
+  });
+
+  it('fires a success toast before redirecting when auth resolves with a user (OAuth return)', () => {
+    const fakeUser = { uid: 'u1', email: 'marie@example.com', displayName: 'Marie Dupont', photoURL: null };
+    authState = makeAuthMock({ loading: false, user: fakeUser });
+    mockNavigate.mockClear();
+    mockToastSuccess.mockClear();
+
+    render(
+      <MemoryRouter>
+        <Login />
+      </MemoryRouter>,
+    );
+
+    // Toast includes the user's first name
+    expect(mockToastSuccess).toHaveBeenCalledWith(
+      expect.stringContaining('Marie'),
+      expect.objectContaining({ id: 'auth-success', duration: 3000 }),
+    );
     expect(mockNavigate).toHaveBeenCalledWith('/mon-compte', { replace: true });
   });
 
@@ -186,6 +220,23 @@ describe('Header', () => {
 
     expect(screen.getByRole('link', { name: /se connecter/i })).toBeTruthy();
     expect(screen.queryByRole('button', { name: /se déconnecter/i })).toBeNull();
+  });
+
+  it('shows a loading skeleton instead of "Se connecter" while auth is settling', () => {
+    authState = makeAuthMock({ loading: true, user: null });
+
+    render(
+      <MemoryRouter>
+        <Header />
+      </MemoryRouter>,
+    );
+
+    // During OAuth redirect return, auth is in loading state.
+    // Must show a neutral skeleton — NOT the "Se connecter" link which would
+    // create visual contradiction with the "Vérification en cours…" spinner on
+    // the Login page.
+    expect(screen.getByRole('status', { name: /chargement du compte/i })).toBeTruthy();
+    expect(screen.queryByRole('link', { name: /se connecter/i })).toBeNull();
   });
 
   it('shows the display name and a sign-out button when authenticated', () => {
@@ -323,6 +374,21 @@ describe('layout/Header', () => {
     );
 
     expect(screen.getByRole('link', { name: /se connecter/i })).toBeTruthy();
+  });
+
+  it('shows a loading skeleton instead of "Se connecter" while auth is settling', () => {
+    authState = makeAuthMock({ loading: true, user: null });
+
+    render(
+      <MemoryRouter>
+        <LayoutHeader />
+      </MemoryRouter>,
+    );
+
+    // The skeleton replaces the "Se connecter" button while auth is resolving.
+    // This prevents the header from showing contradictory state during OAuth return.
+    expect(screen.getByRole('status', { name: /chargement du compte/i })).toBeTruthy();
+    expect(screen.queryByRole('link', { name: /se connecter/i })).toBeNull();
   });
 
   it('shows an account button with user initials when authenticated', () => {
