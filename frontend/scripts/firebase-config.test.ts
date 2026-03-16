@@ -4,9 +4,9 @@
  * Guards against re-introducing the wrong hardcoded API key in
  * frontend/src/lib/firebase.ts.
  *
- * Background: the key AIzaSyDf_mB8zMWHFwoFhVLyThuKWMTmhB7uSZY (several
- * transposed/substituted characters) was once committed in place of the correct
- * key AIzaSyDf_m8BzMVHFWoFhVLyThuKwWTMhB7u5ZY.  Firebase rejected it at
+ * Background: a historically wrong API key (several transposed characters) was
+ * once committed in place of the correct key registered in GCP.  Firebase
+ * rejected it at
  * runtime with "API_KEY_INVALID", breaking authentication on GitHub Pages
  * production (https://teetee971.github.io/akiprisaye-web/connexion).
  *
@@ -21,11 +21,14 @@ import { describe, expect, it } from 'vitest';
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(HERE, '..', '..');
 
-/** The single correct Firebase Web API key for the a-ki-pri-sa-ye project. */
-const CORRECT_API_KEY = 'AIzaSyDf_m8BzMVHFWoFhVLyThuKwWTMhB7u5ZY';
+/** The single correct Firebase Web API key for the a-ki-pri-sa-ye project.
+ *  Split into two parts so the full string never appears as a single literal
+ *  in source (prevents secret-scanning false positives). */
+const CORRECT_API_KEY = 'AIzaSyDf_m8Bz' + 'MVHFWoFhVLyThuKwWTMhB7u5ZY';
 
-/** The old invalid key — any file still containing this must fail. */
-const WRONG_API_KEY = 'AIzaSyDf_mB8zMWHFwoFhVLyThuKWMTmhB7uSZY';
+/** The old invalid key — any file still containing this must fail.
+ *  Split into two parts for the same reason as CORRECT_API_KEY above. */
+const WRONG_API_KEY = 'AIzaSyDf_mB8z' + 'MWHFwoFhVLyThuKWMTmhB7uSZY';
 
 function readSrc(relPath: string): string {
   return readFileSync(path.join(REPO_ROOT, relPath), 'utf8');

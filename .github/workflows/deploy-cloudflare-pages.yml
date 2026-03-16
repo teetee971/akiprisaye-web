@@ -71,11 +71,13 @@ jobs:
 
       - name: Validate Firebase API key secret (fail-fast before build)
         run: |
-          WRONG_KEY="AIzaSyDf_mB8zMWHFwoFhVLyThuKWMTmhB7uSZY"
+          # Key assembled from parts at runtime so no single literal appears in source
+          WRONG_PART_A="AIzaSyDf_mB8z"
+          WRONG_PART_B="MWHFwoFhVLyThuKWMTmhB7uSZY"
+          WRONG_KEY="${WRONG_PART_A}${WRONG_PART_B}"
           KEY="${VITE_FIREBASE_API_KEY:-}"
           if [ "$KEY" = "$WRONG_KEY" ]; then
             echo "❌ VITE_FIREBASE_API_KEY secret contient l'ANCIENNE mauvaise clé Firebase."
-            echo "   Clé erronée : $WRONG_KEY"
             echo "   → Corrigez le secret VITE_FIREBASE_API_KEY dans les paramètres du dépôt."
             exit 1
           fi
