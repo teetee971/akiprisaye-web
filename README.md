@@ -3,6 +3,7 @@
 [![Version](https://img.shields.io/badge/version-3.3.0-blue)](#-état-du-projet)
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-deployed-success?logo=github&logoColor=white)](https://teetee971.github.io/akiprisaye-web/)
 [![CI/CD Pipeline](https://img.shields.io/github/actions/workflow/status/teetee971/akiprisaye-web/ci-cd-industrial.yml?branch=main&label=CI%2FCD&logo=github-actions)](https://github.com/teetee971/akiprisaye-web/actions/workflows/ci-cd-industrial.yml)
+[![Firebase Key](https://img.shields.io/badge/Firebase%20key-verified%20%E2%9C%85-success?logo=firebase)](docs/FIREBASE_INCIDENT_POSTMORTEM.md)
 [![CI Schema Validation](https://img.shields.io/badge/CI-JSON%20Schema%20Validation-blue)](#)
 [![Browser Only](https://img.shields.io/badge/Runtime-Browser--Only-important)](#)
 [![OCR Local](https://img.shields.io/badge/OCR-100%25%20Local-green)](#)
@@ -619,6 +620,9 @@ npm run preview
 - `npm run dev` (dans `frontend/`) - Serveur de développement Vite
 - `npm run typecheck` - Vérification TypeScript sans compilation
 - `npm test` - Tests automatisés
+- `npm run check:firebase` - Vérifie la clé API Firebase (14 tests, ~700 ms)
+
+> 💡 **Première installation :** exécutez `bash scripts/setup-hooks.sh` pour installer le hook git pre-push qui lance automatiquement `check:firebase` avant chaque `git push`.
 
 ### 🧪 Debug API product-image (développement)
 
