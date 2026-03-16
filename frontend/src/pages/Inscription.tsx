@@ -1,15 +1,14 @@
 // src/pages/Inscription.tsx
 import { useState } from "react";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/lib/firebase";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { doc, setDoc } from "firebase/firestore";
-import { db, firebaseError } from "@/lib/firebase";
+import { auth, db, firebaseError } from "@/lib/firebase";
 import { PasswordInput } from "@/components/PasswordInput";
-import { FIREBASE_UNAVAILABLE_MESSAGE } from "@/lib/authMessages";
+import { FIREBASE_UNAVAILABLE_MESSAGE, getAuthErrorMessage } from "@/lib/authMessages";
 import { HeroImage } from "@/components/ui/HeroImage";
 import { PAGE_HERO_IMAGES } from "@/config/imageAssets";
 import SocialLoginButtons from "@/components/SocialLoginButtons";
+import { useAuth } from "@/context/AuthContext";
 
 import { SEOHead } from '../components/ui/SEOHead';
 const DEFAULT_USER_PLAN = "free";
@@ -36,6 +35,7 @@ export default function Inscription() {
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { signUpEmailPassword } = useAuth();
 
   const requestedPlan = searchParams.get("plan") || DEFAULT_USER_PLAN;
   const selectedPlan = Object.hasOwn(PLAN_LABELS, requestedPlan) ? requestedPlan : DEFAULT_USER_PLAN;
@@ -45,8 +45,7 @@ export default function Inscription() {
     e.preventDefault();
     setError(null);
 
-    // Check if Firebase is available
-    if (firebaseError || !auth) {
+    if (firebaseError) {
       setError(FIREBASE_UNAVAILABLE_MESSAGE);
       return;
     }
@@ -59,46 +58,29 @@ export default function Inscription() {
     setLoading(true);
 
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      
-      // Optionnel: Sauvegarder dans Firestore si disponible
-      if (db) {
-        await setDoc(doc(db, "users", userCredential.user.uid), {
+      // Uses auth service layer: ensureSessionPersistence + createUser + sendEmailVerification
+      await signUpEmailPassword(email, password);
+
+      // Optionnel: Sauvegarder le plan choisi dans Firestore si disponible
+      // auth.currentUser est mis à jour de façon synchrone après la création du compte
+      const currentUser = auth?.currentUser;
+      if (db && currentUser) {
+        await setDoc(doc(db, "users", currentUser.uid), {
           email,
           plan: selectedPlan,
           createdAt: new Date(),
         }, { merge: true });
       }
-      
-      // Show success message before redirecting
+
       setSuccess(true);
-      
-      // Redirect after a short delay to show success message
+
       setTimeout(() => {
         navigate(`/mon-compte?plan=${selectedPlan}`);
       }, 1500);
-    } catch (err: any) {
-      setError(getErrorMessage(err));
+    } catch (err: unknown) {
+      setError(getAuthErrorMessage(err));
     } finally {
       setLoading(false);
-    }
-  };
-
-  // Helper pour traduire les erreurs Firebase
-  const getErrorMessage = (err: any): string => {
-    const code = err?.code || '';
-    
-    switch (code) {
-      case 'auth/email-already-in-use':
-        return "Cet email est déjà utilisé.";
-      case 'auth/invalid-email':
-        return "Email invalide.";
-      case 'auth/weak-password':
-        return "Mot de passe trop faible. Minimum 6 caractères.";
-      case 'auth/too-many-requests':
-        return "Trop de tentatives. Réessayez plus tard.";
-      default:
-        return err?.message || "Une erreur est survenue. Réessayez.";
     }
   };
 

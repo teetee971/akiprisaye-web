@@ -1,7 +1,5 @@
 // src/pages/MonCompte.tsx
 import React, { useState, useEffect } from "react";
-import { auth } from "@/lib/firebase";
-import { onAuthStateChanged, signOut, User } from "firebase/auth";
 import { useNavigate, Link } from "react-router-dom";
 import AuthForm from "@/components/AuthForm";
 import { Button } from "@/components/ui/button";
@@ -27,22 +25,12 @@ const TERRITORY_OPTIONS = [
 type Tab = 'profil' | 'favoris' | 'alertes' | 'territoire' | 'plan';
 
 export default function MonCompte() {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<Tab>('profil');
   const [territory, setTerritory] = useState<string>('GP');
   const [alerts, setAlerts] = useState<unknown[]>([]);
-  const { userRole } = useAuth();
+  const { user, loading, userRole, signOutUser } = useAuth();
   const navigate = useNavigate();
   const { favorites, removeFavorite } = useFavorites();
-
-  useEffect(() => {
-    const unsubscribe = auth ? onAuthStateChanged(auth, async (currentUser) => {
-      setUser(currentUser);
-      setLoading(false);
-    }) : (() => { setLoading(false); });
-    return () => unsubscribe();
-  }, []);
 
   useEffect(() => {
     const saved = safeLocalStorage?.getItem(TERRITORY_STORAGE_KEY);
@@ -60,7 +48,7 @@ export default function MonCompte() {
 
   const handleSignOut = async () => {
     try {
-      await signOut(auth!);
+      await signOutUser();
       navigate("/");
     } catch (err) {
       alert("Erreur lors de la déconnexion : " + err);

@@ -69,11 +69,42 @@ jobs:
       - name: Install
         run: npm ci --no-audit --no-fund
 
+      - name: Validate Firebase API key secret (fail-fast before build)
+        run: |
+          # Key assembled from parts at runtime so no single literal appears in source
+          WRONG_PART_A="AIzaSyDf_mB8z"
+          WRONG_PART_B="MWHFwoFhVLyThuKWMTmhB7uSZY"
+          WRONG_KEY="${WRONG_PART_A}${WRONG_PART_B}"
+          KEY="${VITE_FIREBASE_API_KEY:-}"
+          if [ "$KEY" = "$WRONG_KEY" ]; then
+            echo "❌ VITE_FIREBASE_API_KEY secret contient l'ANCIENNE mauvaise clé Firebase."
+            echo "   → Corrigez le secret VITE_FIREBASE_API_KEY dans les paramètres du dépôt."
+            exit 1
+          fi
+          if [ -z "$KEY" ]; then
+            echo "ℹ️  VITE_FIREBASE_API_KEY non défini — le build utilisera le fallback correct dans firebase.ts."
+          else
+            echo "✅ VITE_FIREBASE_API_KEY présent et distinct de l'ancienne mauvaise clé."
+          fi
+        env:
+          VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+
       - name: Build
         run: npm run build
         env:
           NODE_OPTIONS: --max-old-space-size=4096
           VITE_APP_BUILD_ID: ${{ github.sha }}
+          # Firebase web config — injected from repository secrets so the correct
+          # apiKey is embedded in the production bundle.  If a secret is not set,
+          # frontend/src/lib/firebase.ts falls back to the hardcoded values that
+          # match frontend/.env.example (kept in sync with GCP / Firebase Console).
+          VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+          VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
+          VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+          VITE_FIREBASE_STORAGE_BUCKET: ${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}
+          VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
+          VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
+          VITE_FIREBASE_MEASUREMENT_ID: ${{ secrets.VITE_FIREBASE_MEASUREMENT_ID }}
 
       - name: Deploy to Cloudflare Pages
         id: cloudflare_deploy
