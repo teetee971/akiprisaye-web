@@ -159,6 +159,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
+  // ── Authenticated user presence tracking ──────────────────────────────────
+  // Write/refresh presence every 30 s while a user is logged in.
+  // Presence is cleared explicitly on sign-out so the count drops immediately.
+  useEffect(() => {
+    if (!user) return;
+    const uid = user.uid;
+    writeUserPresence(uid).catch(() => {});
+    const interval = setInterval(() => {
+      writeUserPresence(uid).catch(() => {});
+    }, 30_000);
+    return () => clearInterval(interval);
+  }, [user?.uid]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const value = useMemo<AuthContextValue>(() => ({
     user,
     userRole,
@@ -204,9 +217,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     signOutUser: async () => {
       setError(null);
+      // Clear presence immediately so admin counters update without waiting for TTL
+      if (user) clearUserPresence(user.uid).catch(() => {});
       await signOutUser();
     },
-  }), [user, userRole, loading, error]);
+  }), [user, userRole, loading, error]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

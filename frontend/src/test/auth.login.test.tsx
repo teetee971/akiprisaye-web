@@ -69,6 +69,11 @@ vi.mock('../context/AuthContext', () => ({
   useAuth: () => authState,
 }));
 
+/* ── Mock useEntitlements (Header now reads the plan) ──────────────────── */
+vi.mock('../billing/useEntitlements', () => ({
+  useEntitlements: () => ({ plan: 'FREE', can: () => false, quota: () => 0, explain: () => '' }),
+}));
+
 /* ── Logger mock (silence [AUTH] logs in tests) ────────────────────────── */
 vi.mock('../utils/logger', () => ({
   logDebug: vi.fn(),
@@ -233,7 +238,8 @@ describe('SocialLoginButtons', () => {
       </MemoryRouter>,
     );
 
-    expect(screen.getByRole('button', { name: /continuer avec google/i })).toBeTruthy();
+    // The Google button has text "Continuer avec Google" inside it
+    expect(screen.getByText(/continuer avec google/i)).toBeTruthy();
   });
 
   it('renders nothing when the user is already authenticated', () => {
@@ -246,7 +252,7 @@ describe('SocialLoginButtons', () => {
       </MemoryRouter>,
     );
 
-    expect(screen.queryByRole('button', { name: /continuer avec google/i })).toBeNull();
+    expect(screen.queryByText(/continuer avec google/i)).toBeNull();
     expect(container.firstChild).toBeNull();
   });
 });

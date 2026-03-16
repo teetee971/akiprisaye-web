@@ -4,6 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import AuthForm from "@/components/AuthForm";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
+import { useEntitlements } from "@/billing/useEntitlements";
 import { useFavorites } from "@/hooks/useFavorites";
 import { safeLocalStorage } from "@/utils/safeLocalStorage";
 import { HeroImage } from '../components/ui/HeroImage';
@@ -29,6 +30,7 @@ export default function MonCompte() {
   const [territory, setTerritory] = useState<string>('GP');
   const [alerts, setAlerts] = useState<unknown[]>([]);
   const { user, loading, userRole, signOutUser } = useAuth();
+  const { plan, quota, can } = useEntitlements();
   const navigate = useNavigate();
   const { favorites, removeFavorite } = useFavorites();
 
@@ -373,24 +375,74 @@ export default function MonCompte() {
                   <div className="flex items-center justify-between mb-3">
                     <div>
                       <p className="text-sm text-slate-400">Plan actuel</p>
-                      <p className="text-2xl font-bold text-white">Freemium</p>
+                      <p className="text-2xl font-bold text-white">
+                        {plan === 'FREE' ? 'Gratuit' :
+                         plan === 'FREEMIUM' ? 'Freemium' :
+                         plan === 'CITIZEN_PREMIUM' ? 'Citoyen Premium' :
+                         plan === 'PRO' ? 'Pro' :
+                         plan === 'BUSINESS' ? 'Business' :
+                         plan === 'INSTITUTION' ? 'Institution' :
+                         plan === 'CREATOR' ? 'Créateur' : plan}
+                      </p>
                     </div>
-                    <span className="px-3 py-1 bg-slate-700 text-slate-300 rounded-full text-xs font-medium">Gratuit</span>
+                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                      plan === 'CREATOR'    ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40' :
+                      plan === 'INSTITUTION'? 'bg-purple-500/20 text-purple-300 border border-purple-500/40' :
+                      plan === 'BUSINESS'   ? 'bg-blue-500/20 text-blue-300 border border-blue-500/40' :
+                      plan === 'PRO'        ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40' :
+                      plan === 'CITIZEN_PREMIUM' ? 'bg-green-500/20 text-green-300 border border-green-500/40' :
+                      'bg-slate-700 text-slate-300'
+                    }`}>
+                      {plan === 'FREE' || plan === 'FREEMIUM' ? 'Gratuit' : 'Actif'}
+                    </span>
                   </div>
                   <ul className="space-y-1 text-sm text-slate-400">
-                    <li className="flex items-center gap-2"><span className="text-green-400">✓</span> Comparaisons illimitées</li>
-                    <li className="flex items-center gap-2"><span className="text-green-400">✓</span> Historique basique (7j)</li>
-                    <li className="flex items-center gap-2"><span className="text-green-400">✓</span> 1 territoire</li>
-                    <li className="flex items-center gap-2"><span className="text-slate-600">✗</span> Alertes prix (Premium)</li>
-                    <li className="flex items-center gap-2"><span className="text-slate-600">✗</span> Historique avancé 1 an (Premium)</li>
+                    <li className="flex items-center gap-2">
+                      <span className="text-green-400">✓</span>
+                      {quota('maxItems').toLocaleString('fr-FR')} articles max
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <span className="text-green-400">✓</span>
+                      {quota('refreshPerDay').toLocaleString('fr-FR')} actualisations/jour
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <span className="text-green-400">✓</span>
+                      {quota('maxTerritories') >= 999_999 ? 'Tous les' : quota('maxTerritories')} territoire(s)
+                    </li>
+                    <li className="flex items-center gap-2">
+                      {can('PRICE_ALERTS') ? <span className="text-green-400">✓</span> : <span className="text-slate-600">✗</span>}
+                      <span className={can('PRICE_ALERTS') ? 'text-slate-300' : ''}>
+                        Alertes prix{!can('PRICE_ALERTS') ? ' (Premium)' : ''}
+                      </span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      {can('PRICE_HISTORY_ADVANCED') ? <span className="text-green-400">✓</span> : <span className="text-slate-600">✗</span>}
+                      <span className={can('PRICE_HISTORY_ADVANCED') ? 'text-slate-300' : ''}>
+                        Historique avancé{!can('PRICE_HISTORY_ADVANCED') ? ' (Premium)' : ''}
+                      </span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      {can('EXPORT_ADVANCED') ? <span className="text-green-400">✓</span> : <span className="text-slate-600">✗</span>}
+                      <span className={can('EXPORT_ADVANCED') ? 'text-slate-300' : ''}>
+                        Export avancé{!can('EXPORT_ADVANCED') ? ' (Pro)' : ''}
+                      </span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      {can('API_ACCESS') ? <span className="text-green-400">✓</span> : <span className="text-slate-600">✗</span>}
+                      <span className={can('API_ACCESS') ? 'text-slate-300' : ''}>
+                        Accès API{!can('API_ACCESS') ? ' (Institution)' : ''}
+                      </span>
+                    </li>
                   </ul>
                 </div>
-                <Link
-                  to="/pricing"
-                  className="block w-full text-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
-                >
-                  Voir les plans et passer à Premium
-                </Link>
+                {plan !== 'CREATOR' && plan !== 'INSTITUTION' && (
+                  <Link
+                    to="/pricing"
+                    className="block w-full text-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
+                  >
+                    Voir les plans et passer à Premium
+                  </Link>
+                )}
               </div>
             )}
           </div>

@@ -1,8 +1,19 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useEntitlements } from '../billing/useEntitlements';
 import ThemeToggle from './ThemeToggle';
 import { LanguageSelector } from './i18n/LanguageSelector';
+
+const PLAN_BADGE = {
+  FREE:            { label: 'Gratuit',         cls: 'bg-slate-700 text-slate-300' },
+  FREEMIUM:        { label: 'Freemium',        cls: 'bg-slate-600 text-slate-200' },
+  CITIZEN_PREMIUM: { label: 'Citoyen ✦',      cls: 'bg-green-700/60 text-green-300' },
+  PRO:             { label: 'Pro ✦',           cls: 'bg-cyan-700/60 text-cyan-200' },
+  BUSINESS:        { label: 'Business ✦',      cls: 'bg-blue-700/60 text-blue-200' },
+  INSTITUTION:     { label: 'Institution ✦',  cls: 'bg-purple-700/60 text-purple-200' },
+  CREATOR:         { label: '✨ Créateur',     cls: 'bg-amber-600/60 text-amber-200' },
+};
 
 export default function Header() {
   const location = useLocation();
@@ -10,6 +21,8 @@ export default function Header() {
   const user = auth?.user ?? null;
   const isAuthenticated = Boolean(user);
   const signOutAction = auth?.signOutUser ?? null;
+  const { plan } = useEntitlements();
+  const planInfo = PLAN_BADGE[plan] ?? null;
 
   const [mounted, setMounted] = useState(false);
 
@@ -71,6 +84,11 @@ export default function Header() {
             >
               {displayLabel}
             </span>
+            {planInfo && (
+              <span className={`hidden sm:inline-block text-xs font-semibold px-2 py-0.5 rounded-full ${planInfo.cls}`}>
+                {planInfo.label}
+              </span>
+            )}
             {signOutAction ? (
               <button
                 type="button"
