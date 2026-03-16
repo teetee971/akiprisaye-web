@@ -239,10 +239,17 @@ describe('deploy-pages.yml — Firebase secrets injection guard', () => {
     });
   }
 
-  it('must NOT contain the known wrong Firebase API key', () => {
-    // Hard guard: the wrong key (with character transpositions vs the GCP value)
-    // must never reappear in the workflow definition itself.
-    expect(deployYml).not.toContain('AIzaSyDf_mB8zMWHFwoFhVLyThuKWMTmhB7uSZY');
+  it('wrong Firebase API key must only appear inside the pre-build guard step (never hardcoded elsewhere)', () => {
+    // The wrong key is intentionally referenced in the pre-build guard step so it
+    // can be detected at runtime and fail the build.  It must NOT appear anywhere else
+    // in the workflow (e.g. in the build env: block or hardcoded strings).
+    const WRONG_KEY = 'AIzaSyDf_mB8zMWHFwoFhVLyThuKWMTmhB7uSZY';
+    const occurrences = (deployYml.match(new RegExp(WRONG_KEY.replace(/_/g, '_'), 'g')) || []).length;
+    // Only allowed inside the pre-build guard step (appears exactly once or twice — the
+    // WRONG_KEY variable assignment + the comparison line).  Must never be 0 (guard removed).
+    expect(occurrences).toBeGreaterThanOrEqual(1);
+    // Must not appear in the build env: block as a hardcoded value.
+    expect(deployYml).not.toMatch(new RegExp(`VITE_FIREBASE_API_KEY:\\s*${WRONG_KEY}`));
   });
 });
 
@@ -265,7 +272,56 @@ describe('deploy-cloudflare-pages.yml — Firebase secrets injection guard', () 
     });
   }
 
-  it('must NOT contain the known wrong Firebase API key', () => {
-    expect(cloudflareYml).not.toContain('AIzaSyDf_mB8zMWHFwoFhVLyThuKWMTmhB7uSZY');
+  it('wrong Firebase API key must only appear inside the pre-build guard step (never hardcoded elsewhere)', () => {
+    const WRONG_KEY = 'AIzaSyDf_mB8zMWHFwoFhVLyThuKWMTmhB7uSZY';
+    const occurrences = (cloudflareYml.match(new RegExp(WRONG_KEY.replace(/_/g, '_'), 'g')) || []).length;
+    expect(occurrences).toBeGreaterThanOrEqual(1);
+    expect(cloudflareYml).not.toMatch(new RegExp(`VITE_FIREBASE_API_KEY:\\s*${WRONG_KEY}`));
+  });
+});
+
+describe('deploy-pages.yml — pre-build Firebase key guard', () => {
+  const deployYml = readWorkflow('deploy-pages.yml');
+
+  // A pre-build step must run BEFORE `npm run build` and fail immediately if the
+  // VITE_FIREBASE_API_KEY secret is set to the historically wrong key.
+  // This prevents a misconfigured secret from poisoning the bundle even when the
+  // fallback hardcoded value in firebase.ts is correct.
+  it('must have a pre-build step that validates VITE_FIREBASE_API_KEY', () => {
+    expect(deployYml).toMatch(/Validate Firebase API key secret/i);
+  });
+
+  it('pre-build step must reference the wrong key and call exit 1', () => {
+    expect(deployYml).toContain('AIzaSyDf_mB8zMWHFwoFhVLyThuKWMTmhB7uSZY');
+    expect(deployYml).toMatch(/exit 1/);
+  });
+
+  it('pre-build step must appear before the Build step', () => {
+    const validateIdx = deployYml.indexOf('Validate Firebase API key secret');
+    const buildIdx = deployYml.indexOf('\n      - name: Build\n');
+    expect(validateIdx).toBeGreaterThan(0);
+    expect(buildIdx).toBeGreaterThan(0);
+    expect(validateIdx).toBeLessThan(buildIdx);
+  });
+});
+
+describe('deploy-cloudflare-pages.yml — pre-build Firebase key guard', () => {
+  const cloudflareYml = readWorkflow('deploy-cloudflare-pages.yml');
+
+  it('must have a pre-build step that validates VITE_FIREBASE_API_KEY', () => {
+    expect(cloudflareYml).toMatch(/Validate Firebase API key secret/i);
+  });
+
+  it('pre-build step must reference the wrong key and call exit 1', () => {
+    expect(cloudflareYml).toContain('AIzaSyDf_mB8zMWHFwoFhVLyThuKWMTmhB7uSZY');
+    expect(cloudflareYml).toMatch(/exit 1/);
+  });
+
+  it('pre-build step must appear before the Build step', () => {
+    const validateIdx = cloudflareYml.indexOf('Validate Firebase API key secret');
+    const buildIdx = cloudflareYml.indexOf('\n      - name: Build\n');
+    expect(validateIdx).toBeGreaterThan(0);
+    expect(buildIdx).toBeGreaterThan(0);
+    expect(validateIdx).toBeLessThan(buildIdx);
   });
 });

@@ -45,6 +45,24 @@ jobs:
       - name: Install
         run: npm ci --no-audit --no-fund
 
+      - name: Validate Firebase API key secret (fail-fast before build)
+        run: |
+          WRONG_KEY="AIzaSyDf_mB8zMWHFwoFhVLyThuKWMTmhB7uSZY"
+          KEY="${VITE_FIREBASE_API_KEY:-}"
+          if [ "$KEY" = "$WRONG_KEY" ]; then
+            echo "❌ VITE_FIREBASE_API_KEY secret contient l'ANCIENNE mauvaise clé Firebase."
+            echo "   Clé erronée : $WRONG_KEY"
+            echo "   → Corrigez le secret VITE_FIREBASE_API_KEY dans les paramètres du dépôt."
+            exit 1
+          fi
+          if [ -z "$KEY" ]; then
+            echo "ℹ️  VITE_FIREBASE_API_KEY non défini — le build utilisera le fallback correct dans firebase.ts."
+          else
+            echo "✅ VITE_FIREBASE_API_KEY présent et distinct de l'ancienne mauvaise clé."
+          fi
+        env:
+          VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+
       - name: Build
         run: npm run build
         env:
