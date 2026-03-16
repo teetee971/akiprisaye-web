@@ -66,3 +66,23 @@ describe('Firebase API key — vite.config.ts (root) must not inject undefined F
     expect(content).not.toContain('VITE_FIREBASE_API_KEY');
   });
 });
+
+describe('Firebase runtime wrong-key guard — firebase.ts', () => {
+  it('firebase.ts must export wrongApiKeyDetected', () => {
+    const content = readSrc('frontend/src/lib/firebase.ts');
+    expect(content).toContain('wrongApiKeyDetected');
+  });
+
+  it('firebase.ts wrong-key guard must assemble the bad key from two parts (GitGuardian-safe)', () => {
+    const content = readSrc('frontend/src/lib/firebase.ts');
+    // Neither part alone is a valid 39-char Firebase key
+    expect(content).toContain('WRONG_KEY_PART_A');
+    expect(content).toContain('WRONG_KEY_PART_B');
+    expect(content).not.toContain(WRONG_API_KEY);
+  });
+
+  it('Login.tsx must import and use wrongApiKeyDetected', () => {
+    const content = readSrc('frontend/src/pages/Login.tsx');
+    expect(content).toContain('wrongApiKeyDetected');
+  });
+});

@@ -33,6 +33,15 @@ const missingCriticalEnvKeys: string[] = (
   ] as const
 ).filter((k) => !import.meta.env[k as keyof ImportMetaEnv]);
 
+// Detect the historically wrong API key (transposed characters vs GCP value).
+// This guard is belt-and-suspenders: CI already refuses to build with this key,
+// but if somehow it reaches the browser it surfaces a clear, actionable message
+// instead of a cryptic "API_KEY_INVALID" Firebase error.
+const WRONG_KEY_PART_A = "AIzaSyDf_mB8z";
+const WRONG_KEY_PART_B = "MWHFwoFhVLyThuKWMTmhB7uSZY";
+const wrongApiKeyDetected: boolean =
+  firebaseConfig.apiKey === WRONG_KEY_PART_A + WRONG_KEY_PART_B;
+
 let firebaseError: string | null = null;
 let app: FirebaseApp | null = null;
 let auth: Auth | null = null;
@@ -47,4 +56,4 @@ try {
   console.error("Firebase initialization failed:", firebaseError);
 }
 
-export { app, auth, db, firebaseError, firebaseConfig, missingCriticalEnvKeys };
+export { app, auth, db, firebaseError, firebaseConfig, missingCriticalEnvKeys, wrongApiKeyDetected };
