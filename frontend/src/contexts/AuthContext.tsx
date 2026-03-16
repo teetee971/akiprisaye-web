@@ -148,6 +148,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         setUserRole(role);
         setLoading(false);
+        logDebug("[AUTH] auth resolved", currentUser ? "user" : "null");
       });
     }
 

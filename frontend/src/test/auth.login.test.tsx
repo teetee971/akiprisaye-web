@@ -8,9 +8,11 @@
  *  - Header displays a loading skeleton while auth is settling (prevents "Se connecter" flash)
  *  - Header displays avatar + display-name/email when authenticated
  *  - SocialLoginButtons is hidden when the user is already authenticated
+ *  - SocialLoginButtons uses signInWithRedirect on mobile (not signInWithPopup)
+ *  - SocialLoginButtons uses signInWithPopup on desktop (not signInWithRedirect)
  */
 
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 import '@testing-library/jest-dom/vitest';
@@ -356,6 +358,71 @@ describe('SocialLoginButtons', () => {
     );
 
     expect(screen.queryByText(/continuer avec google/i)).toBeNull();
+  });
+
+  it('calls signInGoogleRedirect (not signInGooglePopup) when on mobile', async () => {
+    const mockSignInGoogleRedirect = vi.fn().mockResolvedValue(undefined);
+    const mockSignInGooglePopup = vi.fn();
+    authState = makeAuthMock({
+      user: null,
+      signInGoogleRedirect: mockSignInGoogleRedirect,
+      signInGooglePopup: mockSignInGooglePopup,
+    });
+
+    // Simulate a mobile user agent
+    Object.defineProperty(navigator, 'userAgent', {
+      value: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1',
+      configurable: true,
+    });
+
+    render(
+      <MemoryRouter>
+        <SocialLoginButtons />
+      </MemoryRouter>,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: /se connecter avec google/i }));
+
+    await waitFor(() => {
+      expect(mockSignInGoogleRedirect).toHaveBeenCalledOnce();
+    });
+    expect(mockSignInGooglePopup).not.toHaveBeenCalled();
+
+    // Restore a desktop user agent for subsequent tests
+    Object.defineProperty(navigator, 'userAgent', {
+      value: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      configurable: true,
+    });
+  });
+
+  it('calls signInGooglePopup (not signInGoogleRedirect) when on desktop', async () => {
+    const mockSignInGooglePopup = vi.fn().mockResolvedValue(undefined);
+    const mockSignInGoogleRedirect = vi.fn();
+    authState = makeAuthMock({
+      user: null,
+      signInGooglePopup: mockSignInGooglePopup,
+      signInGoogleRedirect: mockSignInGoogleRedirect,
+    });
+
+    // Ensure desktop user agent
+    Object.defineProperty(navigator, 'userAgent', {
+      value: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      configurable: true,
+    });
+
+    render(
+      <MemoryRouter>
+        <SocialLoginButtons />
+      </MemoryRouter>,
+    );
+
+    // The Google button accessible name is set by its aria-label
+    fireEvent.click(screen.getByRole('button', { name: /se connecter avec google/i }));
+
+    await waitFor(() => {
+      expect(mockSignInGooglePopup).toHaveBeenCalledOnce();
+    });
+    expect(mockSignInGoogleRedirect).not.toHaveBeenCalled();
   });
 });
 

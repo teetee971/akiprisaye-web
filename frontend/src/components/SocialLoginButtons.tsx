@@ -14,6 +14,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { getAuthErrorMessage } from '@/lib/authMessages';
+import { logDebug } from '@/utils/logger';
 
 /* ── SVG Logos ───────────────────────────────────────────────────────── */
 
@@ -98,11 +99,13 @@ export default function SocialLoginButtons({
   }
 
   const handleSocial = async (provider: Provider) => {
+    logDebug('[AUTH] start google sign-in', { provider });
     setBusy(provider);
 
     // On mobile, skip the popup attempt entirely — Chrome blocks popups by default.
     // The redirect flow navigates the whole page, so we just kick it off and return.
     if (isMobileBrowser()) {
+      logDebug('[AUTH] using redirect', { provider });
       try {
         if (provider === 'google')   await signInGoogleRedirect();
         if (provider === 'facebook') await signInFacebookRedirect();
@@ -116,6 +119,7 @@ export default function SocialLoginButtons({
     }
 
     // Desktop: try popup first, fall back to redirect if blocked.
+    logDebug('[AUTH] using popup', { provider });
     try {
       if (provider === 'google')   await signInGooglePopup();
       if (provider === 'facebook') await signInFacebookPopup();
