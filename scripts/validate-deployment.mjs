@@ -4,7 +4,8 @@ const DEFAULT_URL = 'https://teetee971.github.io/akiprisaye-web';
 
 // Reference Firebase config for project a-ki-pri-sa-ye.
 // Source of truth: GCP Console (project number 187272078809, ID a-ki-pri-sa-ye)
-// confirmed 2026-03-16. Values must match GitHub Actions secrets VITE_FIREBASE_APP_ID
+// confirmed 2026-03-16; re-verified 2026-03-16T18:29Z (live bundle index-Bx8znz_t.js).
+// Values must match GitHub Actions secrets VITE_FIREBASE_APP_ID
 // and VITE_FIREBASE_MEASUREMENT_ID (the values injected into the production bundle).
 const EXPECTED_FIREBASE_CONFIG = {
   apiKey: 'AIzaSyDf_m8BzMVHFWoFhVLyThuKwWTMhB7u5ZY',
