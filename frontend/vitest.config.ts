@@ -129,6 +129,8 @@ export default defineConfig({
       abs('./src/hooks/__tests__/useSearchHistory.test.ts'),
       // Auth UX flow — login spinner, post-OAuth redirect, header avatar, social buttons hide
       abs('./src/test/auth.login.test.tsx'),
+      // Auth callback route — /auth/callback OAuth flow, flag management, anti-loop, timeout
+      abs('./src/test/authCallback.test.tsx'),
     ],
 
     exclude: ['**/node_modules/**', '**/.git/**', '**/dist/**', '**/coverage/**'],

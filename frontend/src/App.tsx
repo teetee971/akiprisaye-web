@@ -106,6 +106,7 @@ const Inscription = lazyPage(() => import('./pages/Inscription'));
 const ResetPassword = lazyPage(() => import('./pages/ResetPassword'));
 const MonCompte = lazyPage(() => import('./pages/MonCompte'));
 const AuthHub = lazyPage(() => import('./pages/AuthHub'));
+const AuthCallbackPage = lazyPage(() => import('./pages/AuthCallbackPage'));
 
 // Pricing & Subscription
 const Pricing = lazyPage(() => import('./pages/Pricing'));
@@ -507,6 +508,7 @@ export default function App() {
                           <Route path="inscription" element={<Inscription />} />
                           <Route path="reset-password" element={<ResetPassword />} />
                           <Route path="auth" element={<AuthHub />} />
+                          <Route path="auth/callback" element={<AuthCallbackPage />} />
                           <Route
                             path="mon-compte"
                             element={

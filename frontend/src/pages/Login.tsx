@@ -7,6 +7,7 @@ import { FIREBASE_UNAVAILABLE_MESSAGE, getAuthErrorMessage } from "@/lib/authMes
 import SocialLoginButtons from "@/components/SocialLoginButtons";
 import { useAuth } from "@/context/AuthContext";
 import { logDebug } from "@/utils/logger";
+import { getRedirectPendingFlag } from "@/services/auth";
 
 import { SEOHead } from '../components/ui/SEOHead';
 type AuthMode = "login" | "signup";
@@ -94,7 +95,11 @@ export default function Login() {
   // While Firebase auth is initialising (or settling an OAuth redirect result),
   // show a spinner instead of the login form. This prevents the form from
   // flashing briefly before the automatic post-OAuth redirect fires.
-  if (authLoading) {
+  // Also show the spinner if a redirect flow was just initiated (pending flag),
+  // which means the user will be navigated to /auth/callback momentarily.
+  const redirectPending = Boolean(getRedirectPendingFlag());
+
+  if (authLoading || redirectPending) {
     return (
       <>
         <SEOHead

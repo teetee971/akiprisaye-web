@@ -22,9 +22,11 @@ import {
   signUpEmailPassword,
   subscribeToAuthState,
   getAuthRedirectResult,
+  clearRedirectPendingFlag,
 } from "@/services/auth";
 import { FIREBASE_UNAVAILABLE_MESSAGE, getAuthErrorMessage } from "@/lib/authMessages";
 import { logDebug, logError } from "@/utils/logger";
+import { authLog } from "@/utils/authLogger";
 import { writeUserPresence, clearUserPresence } from "@/services/userPresence";
 
 type UserRole = "guest" | "citoyen" | "observateur" | "admin" | "creator";
@@ -112,6 +114,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (!active) return;
         if (result?.user) {
           logDebug("[AUTH] getRedirectResult success");
+          authLog('AUTH_REDIRECT_RESULT_RESOLVED', { uid: result.user.uid });
         } else {
           logDebug("[AUTH] getRedirectResult: no pending redirect");
         }
@@ -124,6 +127,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (code && code !== "auth/no-redirect-pending" && code !== "auth/popup-closed-by-user") {
           logError("[AUTH] getRedirectResult error", code);
           setError(getAuthErrorMessage(err));
+          // Clear the redirect pending flag on terminal error so the callback
+          // page can surface a user-friendly message and exit cleanly.
+          clearRedirectPendingFlag();
         } else {
           logDebug("[AUTH] getRedirectResult: no pending redirect");
         }
@@ -139,6 +145,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
 
         logDebug("[AUTH] onAuthStateChanged", currentUser ? "user" : "null");
+
+        if (currentUser) {
+          authLog('AUTH_STATE_USER_PRESENT', { uid: currentUser.uid });
+        } else {
+          authLog('AUTH_STATE_NO_USER');
+        }
 
         setUser(currentUser);
         const role = await resolveUserRole(currentUser);

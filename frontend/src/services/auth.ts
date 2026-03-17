@@ -136,3 +136,46 @@ export async function getAuthRedirectResult(): Promise<UserCredential | null> {
   const authInstance = ensureAuth();
   return getRedirectResult(authInstance);
 }
+
+/* ── Redirect anti-loop flag ─────────────────────────────────────────────
+ * Written to sessionStorage before signInWithRedirect() so that on the
+ * OAuth return the app can detect an in-progress redirect cycle and block
+ * concurrent navigation until auth is fully stabilised.
+ */
+
+export const REDIRECT_PENDING_KEY = 'auth:return:pending';
+
+export interface RedirectPendingData {
+  provider: 'google' | 'facebook' | 'apple';
+  /** Destination path after successful sign-in */
+  next: string;
+  /** Unix ms timestamp of when the redirect was initiated */
+  ts: number;
+}
+
+export function setRedirectPendingFlag(provider: RedirectPendingData['provider'], next: string): void {
+  try {
+    const data: RedirectPendingData = { provider, next, ts: Date.now() };
+    sessionStorage.setItem(REDIRECT_PENDING_KEY, JSON.stringify(data));
+  } catch {
+    // sessionStorage may be unavailable in some contexts; fail silently.
+  }
+}
+
+export function getRedirectPendingFlag(): RedirectPendingData | null {
+  try {
+    const raw = sessionStorage.getItem(REDIRECT_PENDING_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw) as RedirectPendingData;
+  } catch {
+    return null;
+  }
+}
+
+export function clearRedirectPendingFlag(): void {
+  try {
+    sessionStorage.removeItem(REDIRECT_PENDING_KEY);
+  } catch {
+    // Fail silently.
+  }
+}
