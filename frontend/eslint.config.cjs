@@ -52,11 +52,10 @@ module.exports = [
     plugins: { 'react-refresh': reactRefreshPlugin },
   }] : []),
 
-  /* ── 4. jsx-a11y recommended — scoped to JSX/TSX source files ─────
-   * Ensures interactive elements are semantic and keyboard-accessible.
-   * Scoped to src/**/*.{jsx,tsx} to avoid false positives in scripts.
-   * Do NOT disable rules globally — fix violations properly instead.
-   * ──────────────────────────────────────────────────────────────── */
+  // 4. jsx-a11y recommended — scoped to JSX/TSX source files.
+  // Ensures interactive elements are semantic and keyboard-accessible.
+  // Scoped to src files to avoid false positives in scripts.
+  // Do NOT disable rules globally — fix violations properly instead.
   {
     files: ['src/**/*.{jsx,tsx}'],
     ...jsxA11y.flatConfigs.recommended,

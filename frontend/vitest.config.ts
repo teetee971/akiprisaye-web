@@ -135,6 +135,8 @@ export default defineConfig({
       abs('./src/test/authDebugPanel.test.tsx'),
       // Auth modules — pure unit tests for all 6 src/auth/*.ts modules
       abs('./src/test/auth.modules.test.ts'),
+      // CI regression guards — prevents known build/lint failures from recurring
+      abs('./src/test/ciRegression.test.ts'),
     ],
 
     exclude: ['**/node_modules/**', '**/.git/**', '**/dist/**', '**/coverage/**'],
