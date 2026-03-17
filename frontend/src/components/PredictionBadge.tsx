@@ -42,6 +42,7 @@ export default function PredictionBadge({ prediction, showTooltip = true }: Pred
     <div className="relative inline-block">
       <span
         className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold ${config.bgColor} ${config.textColor} cursor-help`}
+        role="button"
         onMouseEnter={() => setTooltipVisible(true)}
         onMouseLeave={() => setTooltipVisible(false)}
         onFocus={() => setTooltipVisible(true)}

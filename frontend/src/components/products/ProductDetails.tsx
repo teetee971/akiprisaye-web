@@ -277,7 +277,7 @@ export default function ProductDetails({ product, onClose, onReportError }: Prod
                 >
                   <img
                     src={photo.thumbnail || photo.url}
-                    alt={`Photo utilisateur ${index + 1}`}
+                    alt={`Utilisateur ${index + 1}`}
                     className="w-full h-full object-cover"
                   />
                 </button>
@@ -343,7 +343,7 @@ export default function ProductDetails({ product, onClose, onReportError }: Prod
             </button>
             <img
               src={product.userPhotos[selectedPhotoIndex].url}
-              alt={`Photo ${selectedPhotoIndex + 1}`}
+              alt={`Vue ${selectedPhotoIndex + 1}`}
               className="w-full h-auto rounded-lg"
               onClick={(e) => e.stopPropagation()}
             />

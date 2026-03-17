@@ -675,7 +675,7 @@ export default function GroupesParole() {
                               >
                                 <img
                                   src={msg.photoUrl}
-                                  alt="Photo partagée"
+                                  alt="Contenu partagé"
                                   className="max-w-full rounded-lg max-h-48 object-cover"
                                   onError={(e) => {
                                     (e.target as HTMLImageElement).style.display = 'none';

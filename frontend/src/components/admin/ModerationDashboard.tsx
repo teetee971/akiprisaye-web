@@ -79,7 +79,7 @@ export default function ModerationDashboard() {
             {contributions.map(c => (
               <div key={c.id} className="bg-white rounded-lg shadow p-4">
                 <h3 className="font-semibold">{c.productName}</h3>
-                {c.photoUrl && <img src={c.photoUrl} alt={`Photo du produit ${c.productName}`} width={384} height={192} loading="lazy" className="w-full h-48 object-cover rounded mt-2" />}
+                {c.photoUrl && <img src={c.photoUrl} alt={`Produit ${c.productName}`} width={384} height={192} loading="lazy" className="w-full h-48 object-cover rounded mt-2" />}
                 <div className="mt-4 flex gap-2">
                   <button 
                     onClick={() => handleModerate(c.id, 'approved')}

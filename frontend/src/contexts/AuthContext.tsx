@@ -223,7 +223,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       active = false;
       unsubscribeAuth?.();
     };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   /* ── Presence tracking ─────────────────────────────────────────────── */
   useEffect(() => {
@@ -298,7 +298,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLastIncident(null);
       setAuthResolved(true);
     },
-  }), [user, userRole, loading, error, authResolved, authFlowState, lastIncident, transition]); // eslint-disable-line react-hooks/exhaustive-deps
+  }), [user, userRole, loading, error, authResolved, authFlowState, lastIncident, transition]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
