@@ -221,8 +221,8 @@ jobs:
 
       - name: Run Lighthouse CI
         working-directory: frontend
-        # Utilise le fichier de config à la racine du dépôt (../lighthouserc.json).
-        # Exit code 1 si performance < 80 ou accessibilité < 90 (seuils "error").
+        # working-directory=frontend → ../lighthouserc.json pointe bien vers la racine du dépôt.
+        # performance ≥ 80 (warn), accessibilité ≥ 90 (error).
         run: npx @lhci/cli@0.15.1 autorun --config=../lighthouserc.json
 
       - name: Print Lighthouse summary
