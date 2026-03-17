@@ -21,7 +21,8 @@ import { useLocation } from 'react-router-dom';
 
 import { useAuth } from '@/context/AuthContext';
 import { isAuthDebugEnabled, useAuthEvents, subscribeToAuthEvents } from '@/utils/authLogger';
-import { getRedirectPendingFlag, type RedirectPendingData } from '@/services/auth';
+import { getRedirectPendingFlag, getAuthRetryCount, clearAuthTransientStorage, type RedirectPendingData } from '@/auth/authStorage';
+import { getAuthDiagnosticReport, clearAuthHistory } from '@/utils/authLogger';
 
 /** Shorten an ISO timestamp to HH:MM:SS.mmm for compact display. */
 function shortTs(iso: string): string {
@@ -46,6 +47,8 @@ export default function AuthDebugPanel() {
   const [pendingFlag, setPendingFlag] = useState<RedirectPendingData | null>(null);
 
   const { user, loading } = useAuth();
+  const authCtx = useAuth();
+  const { authFlowState, lastIncident, authResolved } = authCtx;
   const location = useLocation();
   const events = useAuthEvents();
 

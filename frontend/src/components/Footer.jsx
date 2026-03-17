@@ -111,17 +111,28 @@ export default function Footer() {
 
         {/* Copyright — triple-tap to toggle auth debug panel */}
         <div className="text-center text-slate-400 text-sm">
-          {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
-          <p
+          <button
+            type="button"
             onClick={handleDebugTap}
             title={debugActive ? 'Auth debug actif — triple-tap pour désactiver' : undefined}
-            style={{ cursor: 'default', WebkitTapHighlightColor: 'transparent' }}
+            style={{
+              cursor: 'default',
+              WebkitTapHighlightColor: 'transparent',
+              background: 'none',
+              border: 'none',
+              color: 'inherit',
+              font: 'inherit',
+              padding: 0,
+              display: 'block',
+              width: '100%',
+              textAlign: 'center',
+            }}
           >
             © {new Date().getFullYear()} A KI PRI SA YÉ - Tous droits réservés
             {debugActive && (
               <span className="ml-2 text-xs text-orange-400" aria-label="Auth debug activé">🔒</span>
             )}
-          </p>
+          </button>
           <p className="mt-2 text-xs text-slate-500">
             Plateforme citoyenne de transparence des prix en Outre-mer
           </p>
