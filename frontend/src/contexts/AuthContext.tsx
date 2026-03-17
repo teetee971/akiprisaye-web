@@ -299,7 +299,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setAuthResolved(true);
     },
   }), [user, userRole, loading, error, authResolved, authFlowState, lastIncident, transition]); // eslint-disable-line react-hooks/exhaustive-deps
-  }), [user, userRole, loading, error]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

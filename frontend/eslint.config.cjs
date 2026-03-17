@@ -1,12 +1,4 @@
 /**
- * ESLint Flat Config (ESLint v9+)
- *
- * Design goals:
- *  - Deterministic: same result in dev and CI
- *  - No plugin drift: every referenced plugin is explicitly required/guarded
- *  - Accessibility: jsx-a11y recommended scoped to JSX/TSX source files
- *  - Real errors block CI; warnings do not (no --max-warnings=0 currently)
- */
  * ESLint Flat Config (ESLint v9+) — frontend only
  *
  * Politique de lint :
@@ -16,9 +8,6 @@
  *   - reportUnusedDisableDirectives : 'warn' pour détecter les eslint-disable obsolètes
  *   - Aucun contournement : pas de règles importantes désactivées
  */
-const tseslint = require('typescript-eslint');
-const jsxA11y = require('eslint-plugin-jsx-a11y');
-
 const tseslint    = require('typescript-eslint');
 const jsxA11y     = require('eslint-plugin-jsx-a11y');
 
