@@ -56,6 +56,14 @@ jobs:
         # Les erreurs ESLint (exit 1) font échouer ce job
         run: npm run lint
 
+      - name: ESLint warning count guard (max 17)
+        working-directory: frontend
+        # Exécute ESLint en sortie JSON sur src/, compte le total des warnings,
+        # et fait échouer la CI si warnings > 17.
+        # Seuil = 17 warnings jsx-a11y acceptés (dette technique figée).
+        # Ne modifie aucune règle ESLint.
+        run: node scripts/eslint-warning-check.mjs
+
   # ─── 2. Typecheck ───────────────────────────────────────────────────────────
   typecheck:
     name: Typecheck
