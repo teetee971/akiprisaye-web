@@ -131,6 +131,8 @@ export default defineConfig({
       abs('./src/test/auth.login.test.tsx'),
       // Auth callback route — /auth/callback OAuth flow, flag management, anti-loop, timeout
       abs('./src/test/authCallback.test.tsx'),
+      // Auth debug panel — visibility, state display, event bus, collapse/expand
+      abs('./src/test/authDebugPanel.test.tsx'),
     ],
 
     exclude: ['**/node_modules/**', '**/.git/**', '**/dist/**', '**/coverage/**'],

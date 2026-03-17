@@ -20,6 +20,7 @@ import UpgradePromptModal from './components/billing/UpgradePromptModal';
 import { StoreSelectionProvider } from './context/StoreSelectionContext';
 import { EntitlementProvider } from './billing/EntitlementProvider';
 import RequireAuth from './components/auth/RequireAuth';
+import AuthDebugPanel from './components/AuthDebugPanel';
 import { logDebug } from './utils/logger';
 
 // Lazy-loaded pages - Main routes
@@ -711,6 +712,7 @@ export default function App() {
                       <HelpButton />
                       <ToastProvider />
                       <UpgradePromptModal />
+                      <AuthDebugPanel />
                     </Suspense>
                   </BrowserRouter>
                 </EntitlementProvider>
