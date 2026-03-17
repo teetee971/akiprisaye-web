@@ -4,15 +4,20 @@ const DEFAULT_URL = 'https://teetee971.github.io/akiprisaye-web';
 
 // Reference Firebase config for project a-ki-pri-sa-ye.
 // Source of truth: GCP Console (project number 187272078809, ID a-ki-pri-sa-ye)
-// confirmed 2026-03-15, cross-checked against live bundle assets/index-DHqr0YlO.js.
+// confirmed 2026-03-16; re-verified 2026-03-16T18:29Z (live bundle index-Bx8znz_t.js).
+// Values must match GitHub Actions secrets VITE_FIREBASE_APP_ID
+// and VITE_FIREBASE_MEASUREMENT_ID (the values injected into the production bundle).
 const EXPECTED_FIREBASE_CONFIG = {
   apiKey: 'AIzaSyDf_m8BzMVHFWoFhVLyThuKwWTMhB7u5ZY',
   projectId: 'a-ki-pri-sa-ye',
   messagingSenderId: '187272078809',
-  appId: '1:187272078809:web:110a9e34493ef4506e5c8',
-  measurementId: 'G-NFHCZTLPDM',
+  appId: '1:187272078809:web:501d916973a75edb06e5c8',
+  measurementId: 'G-W0R1B4HHE1',
 };
-const CRITICAL_ROUTES = ['/', '/comparateur', '/scanner', '/observatoire', '/alertes'];
+const CRITICAL_ROUTES = ['/', '/comparateur', '/scanner', '/observatoire', '/alertes', '/connexion'];
+// Known stale bundles that must no longer appear in the deployed HTML.
+// index-DHqr0YlO.js was the last bundle built with the incorrect Firebase API key (2026-03-15).
+const STALE_BUNDLE_NAMES = ['index-DHqr0YlO.js'];
 const OPTIONAL_SECURITY_HEADERS = [
   'x-frame-options',
   'x-content-type-options',
@@ -184,6 +189,41 @@ export function joinSiteUrl(baseUrl, path) {
   }
 
   return new URL(normalizedPath, siteUrl).toString();
+}
+
+/**
+ * Returns true if a known stale bundle filename appears anywhere in the HTML.
+ * This catches cases where the CDN is still serving an outdated index.html that
+ * references an old bundle even after the build was regenerated.
+ */
+export function isStaleBundleReferenced(html, staleBundleName) {
+  return html.includes(staleBundleName);
+}
+
+/**
+ * Returns true if the HTML contains a <meta http-equiv="Content-Security-Policy"> tag.
+ * This is the only way to deliver a CSP on static hosting platforms (GitHub Pages,
+ * Cloudflare Pages) that do not allow custom HTTP response headers.
+ * Note: frame-ancestors is not supported inside a meta CSP and requires a real HTTP header.
+ */
+export function hasMetaCSP(html) {
+  return /<meta[^>]+http-equiv=["']?content-security-policy/i.test(html);
+}
+
+/**
+ * Counts the number of non-overlapping occurrences of `needle` in `text`.
+ * Equivalent to what `grep -c` / `grep -o | wc -l` would return for a literal string.
+ * Returns 0 when `needle` is empty or absent.
+ */
+export function countOccurrences(text, needle) {
+  if (!needle || typeof text !== 'string') return 0;
+  let count = 0;
+  let pos = 0;
+  while ((pos = text.indexOf(needle, pos)) !== -1) {
+    count++;
+    pos += needle.length;
+  }
+  return count;
 }
 
 export function extractSitemapPaths(xml, siteUrl) {
@@ -365,6 +405,42 @@ async function verifySitemap(siteUrl) {
   logOk(`Sitemap public valide (${indexedPaths.length} route(s) indexée(s) vérifiées).`);
 }
 
+async function verifyNoBundleRegression(siteUrl, html, assetPaths) {
+  const basePath = inferAssetBasePath(assetPaths);
+  const currentBundle = extractMainBundlePath(html);
+
+  for (const staleName of STALE_BUNDLE_NAMES) {
+    if (isStaleBundleReferenced(html, staleName)) {
+      fail(
+        `L'ancien bundle déprécié "${staleName}" est encore référencé dans le HTML déployé.\n` +
+        `  → Le build actif intègre toujours l'ancienne configuration.\n` +
+        `  → Vérifiez que le dernier build a bien été regénéré et déployé correctement.`,
+      );
+    }
+
+    // Probe whether the CDN is still serving the stale file (informational only).
+    // A 404/410 confirms the CDN has purged it; a 200 means the edge cache still
+    // holds it but is harmless because the HTML no longer points to it.
+    const stalePath = `${basePath}assets/${staleName}`.replace(/\/+/g, '/');
+    const staleUrl = joinSiteUrl(siteUrl, stalePath);
+    const response = await fetchStatus(staleUrl);
+    if (response.ok) {
+      logWarn(
+        `L'ancien bundle "${staleName}" est encore accessible via le CDN (HTTP ${response.status}) mais n'est plus référencé dans le HTML.\n` +
+        `  → Le cache CDN sera purgé automatiquement à expiration (max-age). Aucune action requise.`,
+      );
+    } else {
+      logOk(`Ancien bundle "${staleName}" non servi par le CDN (HTTP ${response.status}) — cache purgé.`);
+    }
+  }
+
+  const currentBundleFile = currentBundle ? currentBundle.split('/').pop() : '(inconnu)';
+  logOk(
+    `Aucun bundle déprécié référencé dans le HTML actif` +
+    ` (bundle actuel: ${currentBundleFile}, vérifié: ${STALE_BUNDLE_NAMES.join(', ')}).`,
+  );
+}
+
 async function verifyApi(siteUrl) {
   if (isGitHubPagesSite(siteUrl) || isCloudflarePagesSite(siteUrl)) {
     logOk('/api ignoré (hébergement statique - pas d\'endpoints /api servis).');
@@ -389,13 +465,38 @@ export function hasAcceptableHtmlCacheControl(cacheControl, siteUrl) {
   return /(?:no-store|max-age=0)/i.test(cacheControl);
 }
 
-function verifyHeaders(headers, siteUrl) {
+function verifyHeaders(headers, siteUrl, html) {
   const cacheControl = headers.get('cache-control') || '';
   if (!hasAcceptableHtmlCacheControl(cacheControl, siteUrl)) {
     fail(`Cache-Control HTML inattendu: "${cacheControl || 'absent'}".`);
   }
 
   logOk(`Headers HTML cohérents (${cacheControl}).`);
+
+  if (isGitHubPagesSite(siteUrl) || isCloudflarePagesSite(siteUrl)) {
+    // On static hosting (GitHub Pages, Cloudflare Pages) it is impossible to set server-side
+    // HTTP security headers such as X-Frame-Options, X-Content-Type-Options, or
+    // Strict-Transport-Security. These are platform-managed concerns.
+    // • X-Frame-Options / frame-ancestors : not enforceable on static hosting; frame-ancestors
+    //   is also not supported in meta CSP (HTTP header only) — documented limitation.
+    // • X-Content-Type-Options : no meta equivalent; browsers already sniff conservatively for
+    //   module scripts loaded via Vite — not a regression risk.
+    // • Strict-Transport-Security : enforced transparently by the hosting platform (GitHub Pages
+    //   always serves over HTTPS).
+    // Instead, check that the HTML contains a CSP <meta> tag for the directives that *can*
+    // be expressed in HTML (script-src, connect-src, img-src, frame-src, …).
+    if (html && hasMetaCSP(html)) {
+      logOk('Content-Security-Policy présente via balise <meta> dans le HTML (hébergement statique).');
+    } else {
+      logWarn('Content-Security-Policy absente du HTML — balise <meta http-equiv="Content-Security-Policy"> manquante.');
+    }
+    logOk(
+      'X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security : ' +
+      'non injectables via header HTTP sur hébergement statique (GitHub Pages / Cloudflare Pages). ' +
+      'HSTS assuré par la plateforme; frame-ancestors non supporté dans meta CSP.',
+    );
+    return;
+  }
 
   for (const header of OPTIONAL_SECURITY_HEADERS) {
     if (headers.get(header)) {
@@ -425,11 +526,12 @@ async function verifyFirebaseBundle(siteUrl, html) {
   // catches any wrong key in general; this additional guard provides an explicit,
   // human-readable error pointing directly to the VITE_FIREBASE_API_KEY secret.
   const WRONG_API_KEY = 'AIzaSyDf_mB8zMWHFwoFhVLyThuKWMTmhB7uSZY';
-  if (body.includes(WRONG_API_KEY)) {
+  const wrongKeyCount = countOccurrences(body, WRONG_API_KEY);
+  if (wrongKeyCount > 0) {
     const bundleFile = bundlePath.split('/').pop();
     fail(
       `CLEF API FIREBASE INCORRECTE détectée dans le bundle ${bundleFile}.\n` +
-      `  Clef erronée : "${WRONG_API_KEY}"\n` +
+      `  Clef erronée : "${WRONG_API_KEY}" (${wrongKeyCount} occurrence(s))\n` +
       `  La clef correcte est : "${EXPECTED_FIREBASE_CONFIG.apiKey}"\n` +
       `  → Vérifiez que le secret VITE_FIREBASE_API_KEY est bien configuré dans GitHub Actions.`,
     );
@@ -450,8 +552,10 @@ async function verifyFirebaseBundle(siteUrl, html) {
   }
 
   const bundleFile = bundlePath.split('/').pop();
+  const correctKeyCount = countOccurrences(body, EXPECTED_FIREBASE_CONFIG.apiKey);
   logOk(
     `Firebase config vérifiée dans le bundle (${bundleFile}) :` +
+    ` ancienne clé incorrecte: ${wrongKeyCount} occurrence(s), clé correcte: ${correctKeyCount} occurrence(s),` +
     ` projectId=${config.projectId}, appId=${config.appId}, measurementId=${config.measurementId}`,
   );
 }
@@ -467,11 +571,12 @@ async function main() {
   const { html, headers } = await verifyHomepage(siteUrl);
   const assetPaths = await verifyAssets(siteUrl, html);
   await verifyServiceWorker(siteUrl, assetPaths);
+  await verifyNoBundleRegression(siteUrl, html, assetPaths);
   await verifyFirebaseBundle(siteUrl, html);
   await verifySitemap(siteUrl);
   await verifyRoutes(siteUrl);
   await verifyApi(siteUrl);
-  verifyHeaders(headers, siteUrl);
+  verifyHeaders(headers, siteUrl, html);
 
   console.log('');
   console.log('============================');

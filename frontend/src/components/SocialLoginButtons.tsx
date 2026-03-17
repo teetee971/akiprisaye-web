@@ -10,10 +10,11 @@
  *  - Apple   : Authentication → Sign-in method → Apple → configurer Apple Developer + Services ID
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { getAuthErrorMessage } from '@/lib/authMessages';
+import { logDebug } from '@/utils/logger';
 
 /* ── SVG Logos ───────────────────────────────────────────────────────── */
 
@@ -76,16 +77,35 @@ export default function SocialLoginButtons({
     signInGooglePopup,    signInGoogleRedirect,
     signInFacebookPopup, signInFacebookRedirect,
     signInApplePopup,    signInAppleRedirect,
+    user,
   } = useAuth();
   const navigate = useNavigate();
   const [busy, setBusy] = useState<Provider | null>(null);
+  // Stores the destination after a popup sign-in completes; navigation is
+  // deferred until onAuthStateChanged confirms the user in context, avoiding
+  // a race condition where RequireAuth sees user=null and bounces back to /login.
+  const [pendingRedirect, setPendingRedirect] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (user && pendingRedirect) {
+      navigate(pendingRedirect, { replace: true });
+      setPendingRedirect(null);
+    }
+  }, [user, pendingRedirect, navigate]);
+
+  // Already authenticated — hide all social login buttons.
+  if (user) {
+    return null;
+  }
 
   const handleSocial = async (provider: Provider) => {
+    logDebug('[AUTH] start google sign-in', { provider });
     setBusy(provider);
 
     // On mobile, skip the popup attempt entirely — Chrome blocks popups by default.
     // The redirect flow navigates the whole page, so we just kick it off and return.
     if (isMobileBrowser()) {
+      logDebug('[AUTH] using redirect', { provider });
       try {
         if (provider === 'google')   await signInGoogleRedirect();
         if (provider === 'facebook') await signInFacebookRedirect();
@@ -99,12 +119,15 @@ export default function SocialLoginButtons({
     }
 
     // Desktop: try popup first, fall back to redirect if blocked.
+    logDebug('[AUTH] using popup', { provider });
     try {
       if (provider === 'google')   await signInGooglePopup();
       if (provider === 'facebook') await signInFacebookPopup();
       if (provider === 'apple')    await signInApplePopup();
       onSuccess?.();
-      navigate(redirectTo);
+      // Defer navigation until onAuthStateChanged confirms the user in context
+      // to avoid RequireAuth bouncing the route before auth state propagates.
+      setPendingRedirect(redirectTo);
     } catch (err: unknown) {
       const code =
         typeof err === 'object' && err && 'code' in err
@@ -122,6 +145,7 @@ export default function SocialLoginButtons({
         }
         return;
       }
+      setPendingRedirect(null);
       onError?.(getSocialErrorMessage(err));
     } finally {
       setBusy(null);
