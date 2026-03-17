@@ -50,11 +50,24 @@ vi.mock('../context/AuthContext', () => ({
 }));
 
 /* ── Auth service mock ─────────────────────────────────────────────────── */
+// Mirrors the real getRedirectPendingFlag() including TTL expiry.
+// NOTE: vi.mock factories are hoisted, so the constant must be defined
+// with vi.hoisted() or inlined directly — avoid outer-scope variable refs.
+const REDIRECT_PENDING_TTL_MS = vi.hoisted(() => 5 * 60 * 1000);
+
 vi.mock('../services/auth', () => ({
+  REDIRECT_PENDING_TTL_MS: 5 * 60 * 1000, // 5 minutes (matches services/auth.ts)
   getRedirectPendingFlag: () => {
+    const TTL = 5 * 60 * 1000;
     try {
       const raw = sessionStorage.getItem('auth:return:pending');
-      return raw ? JSON.parse(raw) : null;
+      if (!raw) return null;
+      const data = JSON.parse(raw);
+      if (Date.now() - data.ts > TTL) {
+        sessionStorage.removeItem('auth:return:pending');
+        return null;
+      }
+      return data;
     } catch { return null; }
   },
 }));
@@ -172,11 +185,11 @@ describe('AuthDebugPanel — state display', () => {
 
     renderPanel();
 
-    // The panel polls every 500 ms; wait for a re-render
+    // The flag is read synchronously in the useEffect[enabled] on mount.
     await waitFor(() => {
       // StatusBadge label = "⏳ google"
       expect(screen.getByTitle(/⏳ google/)).toBeTruthy();
-    }, { timeout: 1500 });
+    });
   });
 
   it('shows the current route in the body', () => {
@@ -265,5 +278,126 @@ describe('AuthDebugPanel — collapse/expand', () => {
 
     fireEvent.click(screen.getByTitle(/expand auth debug panel/i));
     expect(screen.getByTitle('READY')).toBeTruthy();
+  });
+});
+
+/* ════════════════════════════════════════════════════════════════════════
+ * TTL expiry of auth:return:pending flag
+ * ════════════════════════════════════════════════════════════════════════ */
+
+describe('AuthDebugPanel — TTL expiry of redirect pending flag', () => {
+  beforeEach(() => {
+    sessionStorage.clear();
+    authState = makeAuthMock();
+    mockDebugEnabled = true;
+  });
+
+  afterEach(() => {
+    sessionStorage.clear();
+  });
+
+  it('treats a fresh flag as valid', async () => {
+    sessionStorage.setItem('auth:return:pending', JSON.stringify({
+      provider: 'google', next: '/mon-compte', ts: Date.now(),
+    }));
+
+    renderPanel();
+
+    await waitFor(() => {
+      expect(screen.getByTitle(/⏳ google/)).toBeTruthy();
+    });
+  });
+
+  it('treats an expired flag as absent (ts older than TTL)', async () => {
+    // Simulate a flag written more than 5 minutes ago
+    const expiredTs = Date.now() - REDIRECT_PENDING_TTL_MS - 1000;
+    sessionStorage.setItem('auth:return:pending', JSON.stringify({
+      provider: 'google', next: '/mon-compte', ts: expiredTs,
+    }));
+
+    renderPanel();
+
+    // getRedirectPendingFlag clears the stale entry and returns null
+    await waitFor(() => {
+      expect(screen.getByTitle('✗ no flag')).toBeTruthy();
+    });
+  });
+
+  it('clears the sessionStorage entry when the flag is expired', async () => {
+    const expiredTs = Date.now() - REDIRECT_PENDING_TTL_MS - 1000;
+    sessionStorage.setItem('auth:return:pending', JSON.stringify({
+      provider: 'facebook', next: '/', ts: expiredTs,
+    }));
+
+    renderPanel();
+
+    await waitFor(() => {
+      // The mock getRedirectPendingFlag removes the key when TTL is exceeded
+      expect(sessionStorage.getItem('auth:return:pending')).toBeNull();
+    });
+  });
+});
+
+/* ════════════════════════════════════════════════════════════════════════
+ * Event-driven flag refresh (no polling)
+ * ════════════════════════════════════════════════════════════════════════ */
+
+describe('AuthDebugPanel — event-driven flag refresh', () => {
+  beforeEach(() => {
+    sessionStorage.clear();
+    authState = makeAuthMock();
+    mockDebugEnabled = true;
+  });
+
+  afterEach(() => {
+    sessionStorage.clear();
+  });
+
+  it('shows "no flag" before any auth event when flag is absent', () => {
+    renderPanel();
+    // Synchronous check — initial read should already have run
+    expect(screen.queryByTitle(/⏳/)).toBeNull();
+  });
+
+  it('updates flag display when AUTH_REDIRECT_START event fires', async () => {
+    renderPanel();
+
+    // Initially no flag
+    await waitFor(() => expect(screen.getByTitle('✗ no flag')).toBeTruthy());
+
+    // Simulate the redirect start: write the flag then fire the event
+    sessionStorage.setItem('auth:return:pending', JSON.stringify({
+      provider: 'google', next: '/mon-compte', ts: Date.now(),
+    }));
+
+    act(() => {
+      authLog('AUTH_REDIRECT_START', { provider: 'google' });
+    });
+
+    // The subscription re-reads the flag — no 500ms polling required
+    await waitFor(() => {
+      expect(screen.getByTitle(/⏳ google/)).toBeTruthy();
+    });
+  });
+
+  it('clears flag display when AUTH_REDIRECT_RESULT_RESOLVED event fires', async () => {
+    sessionStorage.setItem('auth:return:pending', JSON.stringify({
+      provider: 'google', next: '/mon-compte', ts: Date.now(),
+    }));
+
+    renderPanel();
+
+    await waitFor(() => expect(screen.getByTitle(/⏳ google/)).toBeTruthy());
+
+    // Simulate the OAuth return: clear the flag then fire the result event
+    sessionStorage.removeItem('auth:return:pending');
+
+    act(() => {
+      authLog('AUTH_REDIRECT_RESULT_RESOLVED');
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTitle('✗ no flag')).toBeTruthy();
+    });
   });
 });

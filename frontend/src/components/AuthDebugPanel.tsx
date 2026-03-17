@@ -20,7 +20,7 @@ import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { useAuth } from '@/context/AuthContext';
-import { isAuthDebugEnabled, useAuthEvents } from '@/utils/authLogger';
+import { isAuthDebugEnabled, useAuthEvents, subscribeToAuthEvents } from '@/utils/authLogger';
 import { getRedirectPendingFlag, type RedirectPendingData } from '@/services/auth';
 
 /** Shorten an ISO timestamp to HH:MM:SS.mmm for compact display. */
@@ -54,14 +54,20 @@ export default function AuthDebugPanel() {
     setEnabled(isAuthDebugEnabled());
   }, []);
 
-  // ── Poll the sessionStorage flag every 500 ms while visible ──────────────
-  // (The flag may be set/cleared during an OAuth cycle on a live page.)
+  // ── Sync the redirect-pending flag with the auth event bus ───────────────
+  // Re-read sessionStorage on each auth event (flag is set/cleared during the
+  // OAuth cycle) instead of polling on a fixed interval, so we consume no
+  // extra CPU cycles when nothing is happening.
   useEffect(() => {
     if (!enabled) return;
-    const tick = () => setPendingFlag(getRedirectPendingFlag());
-    tick();
-    const id = setInterval(tick, 500);
-    return () => clearInterval(id);
+    // Initial read on mount (covers flags set before this component rendered).
+    setPendingFlag(getRedirectPendingFlag());
+    // Re-read whenever an auth event fires — the flag state changes only
+    // alongside these events (redirect start, result resolved, timeout, etc.).
+    const unsubscribe = subscribeToAuthEvents(() => {
+      setPendingFlag(getRedirectPendingFlag());
+    });
+    return unsubscribe;
   }, [enabled]);
 
   if (!enabled) return null;

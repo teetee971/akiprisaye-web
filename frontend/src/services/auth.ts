@@ -145,6 +145,13 @@ export async function getAuthRedirectResult(): Promise<UserCredential | null> {
 
 export const REDIRECT_PENDING_KEY = 'auth:return:pending';
 
+/**
+ * Maximum age (in ms) for the auth:return:pending flag before it is
+ * automatically expired by getRedirectPendingFlag().
+ * 5 minutes is generous enough for the slowest mobile OAuth round-trip.
+ */
+export const REDIRECT_PENDING_TTL_MS = 5 * 60 * 1000; // 5 minutes
+
 export interface RedirectPendingData {
   provider: 'google' | 'facebook' | 'apple';
   /** Destination path after successful sign-in */
@@ -166,7 +173,13 @@ export function getRedirectPendingFlag(): RedirectPendingData | null {
   try {
     const raw = sessionStorage.getItem(REDIRECT_PENDING_KEY);
     if (!raw) return null;
-    return JSON.parse(raw) as RedirectPendingData;
+    const data = JSON.parse(raw) as RedirectPendingData;
+    // Auto-expire: if the flag is older than the TTL, clear and ignore it.
+    if (Date.now() - data.ts > REDIRECT_PENDING_TTL_MS) {
+      sessionStorage.removeItem(REDIRECT_PENDING_KEY);
+      return null;
+    }
+    return data;
   } catch {
     return null;
   }
