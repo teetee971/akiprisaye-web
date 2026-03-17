@@ -44,9 +44,12 @@ export default function AdminLayout() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       {/* Mobile sidebar backdrop */}
       {sidebarOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-gray-600 bg-opacity-75 lg:hidden"
+        <button
+          type="button"
+          className="fixed inset-0 z-40 bg-gray-600 bg-opacity-75 lg:hidden cursor-default"
           onClick={() => setSidebarOpen(false)}
+          tabIndex={-1}
+          aria-label="Fermer le menu"
         />
       )}
 
