@@ -98,7 +98,7 @@ export default function Comparateurs() {
 
         {/* Sélecteur territoire */}
         <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-5 mb-6">
-          <label className="block text-sm font-medium text-white/80 mb-3">Territoire</label>
+          <p className="block text-sm font-medium text-white/80 mb-3">Territoire</p>
           <div className="flex flex-wrap gap-2">
             {territoryOptions.map((opt) => (
               <button

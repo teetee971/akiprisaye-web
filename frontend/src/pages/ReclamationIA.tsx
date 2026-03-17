@@ -203,7 +203,7 @@ export default function ReclamationIA() {
 
             {/* Type de plainte */}
             <div style={{ marginBottom: '1rem' }}>
-              <label style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600, display: 'block', marginBottom: '0.5rem' }}>Type de réclamation *</label>
+              <span style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600, display: 'block', marginBottom: '0.5rem' }}>Type de réclamation *</span>
               <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                 {PLAINTE_TYPES.map(p => (
                   <button key={p.id} onClick={() => setForm(f => ({ ...f, typePlainte: p.id }))}
@@ -233,22 +233,22 @@ export default function ReclamationIA() {
                 </div>
               ))}
               <div>
-                <label style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 600, display: 'block', marginBottom: '0.3rem' }}>Territoire *</label>
-                <select value={form.territoire} onChange={e => setForm(f => ({ ...f, territoire: e.target.value }))}
+                <label htmlFor="recl-territoire" style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 600, display: 'block', marginBottom: '0.3rem' }}>Territoire *</label>
+                <select id="recl-territoire" value={form.territoire} onChange={e => setForm(f => ({ ...f, territoire: e.target.value }))}
                   style={{ width: '100%', padding: '0.5rem 0.7rem', borderRadius: 8, background: 'rgba(30,41,59,0.8)', border: '1px solid rgba(99,102,241,0.35)', color: '#f1f5f9', fontSize: '0.85rem', boxSizing: 'border-box' }}>
                   {TERRITOIRES.map(t => <option key={t.code} value={t.code}>{t.label}</option>)}
                 </select>
               </div>
               <div>
-                <label style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 600, display: 'block', marginBottom: '0.3rem' }}>Date du constat</label>
-                <input type="date" value={form.dateConstat} onChange={e => setForm(f => ({ ...f, dateConstat: e.target.value }))}
+                <label htmlFor="recl-date-constat" style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 600, display: 'block', marginBottom: '0.3rem' }}>Date du constat</label>
+                <input id="recl-date-constat" type="date" value={form.dateConstat} onChange={e => setForm(f => ({ ...f, dateConstat: e.target.value }))}
                   style={{ width: '100%', padding: '0.5rem 0.7rem', borderRadius: 8, background: 'rgba(30,41,59,0.8)', border: '1px solid rgba(99,102,241,0.35)', color: '#f1f5f9', fontSize: '0.85rem', boxSizing: 'border-box' }} />
               </div>
             </div>
 
             <div style={{ marginBottom: '1rem' }}>
-              <label style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 600, display: 'block', marginBottom: '0.3rem' }}>Détails supplémentaires (optionnel)</label>
-              <textarea value={form.details} onChange={e => setForm(f => ({ ...f, details: e.target.value }))} rows={3}
+              <label htmlFor="recl-details" style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 600, display: 'block', marginBottom: '0.3rem' }}>Détails supplémentaires (optionnel)</label>
+              <textarea id="recl-details" value={form.details} onChange={e => setForm(f => ({ ...f, details: e.target.value }))} rows={3}
                 placeholder="Photos, témoins, circonstances particulières…"
                 style={{ width: '100%', padding: '0.5rem 0.7rem', borderRadius: 8, background: 'rgba(30,41,59,0.8)', border: '1px solid rgba(99,102,241,0.35)', color: '#f1f5f9', fontSize: '0.82rem', boxSizing: 'border-box', resize: 'vertical' }} />
             </div>

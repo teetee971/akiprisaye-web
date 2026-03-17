@@ -264,10 +264,11 @@ export function PriceAlertCenter({ userId = 'demo-user' }) {
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label htmlFor="filter-alert-type" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Type d'alerte
             </label>
             <select
+              id="filter-alert-type"
               value={filter.alertType || ''}
               onChange={(e) => setFilter({ ...filter, alertType: e.target.value || null })}
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
@@ -280,10 +281,11 @@ export function PriceAlertCenter({ userId = 'demo-user' }) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label htmlFor="filter-severity" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Sévérité
             </label>
             <select
+              id="filter-severity"
               value={filter.severity || ''}
               onChange={(e) => setFilter({ ...filter, severity: e.target.value || null })}
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
@@ -296,10 +298,11 @@ export function PriceAlertCenter({ userId = 'demo-user' }) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label htmlFor="filter-territory" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Territoire
             </label>
             <select
+              id="filter-territory"
               value={filter.territory || ''}
               onChange={(e) => setFilter({ ...filter, territory: e.target.value || null })}
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"

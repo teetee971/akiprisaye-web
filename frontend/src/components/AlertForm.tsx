@@ -112,9 +112,9 @@ export function AlertForm({ productEAN = '', productName = '', onSave, onCancel 
         {/* Threshold Mode — only for price drop / price increase */}
         {!isShrinkflation && (
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+            <p className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
               Mode de seuil
-            </label>
+            </p>
             <div
               role="radiogroup"
               aria-label="Mode de seuil"

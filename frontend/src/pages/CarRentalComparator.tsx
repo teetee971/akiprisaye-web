@@ -195,14 +195,14 @@ const CarRentalComparator: React.FC = () => {
         {/* Filters */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Territoire</label>
-            <select value={selectedTerritory} onChange={(e) => setSelectedTerritory(e.target.value as Territory)} className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg px-3 py-2">
+            <label htmlFor="voiture-territoire" className="block text-sm text-gray-400 mb-1">Territoire</label>
+            <select id="voiture-territoire" value={selectedTerritory} onChange={(e) => setSelectedTerritory(e.target.value as Territory)} className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg px-3 py-2">
               {TERRITORIES.map((t) => <option key={t.code} value={t.code}>{t.name}</option>)}
             </select>
           </div>
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Catégorie de véhicule</label>
-            <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value as CarCategory)} className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg px-3 py-2">
+            <label htmlFor="voiture-categorie" className="block text-sm text-gray-400 mb-1">Catégorie de véhicule</label>
+            <select id="voiture-categorie" value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value as CarCategory)} className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg px-3 py-2">
               {CATEGORIES.map((c) => <option key={c} value={c}>{CAR_CATEGORY_LABELS[c]}</option>)}
             </select>
           </div>

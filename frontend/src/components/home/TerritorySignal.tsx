@@ -175,7 +175,7 @@ export function TerritorySignal() {
 
       {/* Territory Selector */}
       <div className="mb-6">
-        <label className="block text-sm text-gray-400 mb-2">Votre territoire</label>
+        <p className="block text-sm text-gray-400 mb-2">Votre territoire</p>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {territories.map(territory => (
             <button

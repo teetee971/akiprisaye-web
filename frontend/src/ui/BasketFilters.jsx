@@ -95,6 +95,7 @@ export default function BasketFilters({ filters, onFilterChange }) {
               return (
                 <label
                   key={territory.code}
+                  aria-label={territory.name}
                   className={`
                     flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-all
                     ${isSelected
@@ -129,10 +130,11 @@ export default function BasketFilters({ filters, onFilterChange }) {
         <div className="grid md:grid-cols-3 gap-4 pt-4 border-t border-slate-700">
           {/* Store Filter */}
           <div>
-            <label className="block text-sm font-medium mb-2 text-slate-300">
+            <label htmlFor="filter-store" className="block text-sm font-medium mb-2 text-slate-300">
               Enseigne
             </label>
             <input
+              id="filter-store"
               type="text"
               value={filters.store || ''}
               onChange={(e) => onFilterChange({ ...filters, store: e.target.value })}
@@ -143,10 +145,11 @@ export default function BasketFilters({ filters, onFilterChange }) {
 
           {/* Time Slot Filter */}
           <div>
-            <label className="block text-sm font-medium mb-2 text-slate-300">
+            <label htmlFor="filter-timeslot" className="block text-sm font-medium mb-2 text-slate-300">
               Créneau horaire
             </label>
             <select
+              id="filter-timeslot"
               value={filters.timeSlot || ALL_TIME_SLOTS}
               onChange={(e) => onFilterChange({ ...filters, timeSlot: e.target.value })}
               className="w-full px-3 py-2 rounded-lg bg-slate-800 text-slate-100 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"

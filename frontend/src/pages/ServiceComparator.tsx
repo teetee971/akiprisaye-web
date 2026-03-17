@@ -459,8 +459,9 @@ const ServiceComparator: React.FC = () => {
           {serviceType === 'flights' && (
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Départ</label>
+                <label htmlFor="service-vol-depart" className="block text-sm font-medium text-gray-700 mb-2">Départ</label>
                 <input
+                  id="service-vol-depart"
                   type="text"
                   value={flightFrom}
                   onChange={(e) => setFlightFrom(e.target.value)}
@@ -469,8 +470,9 @@ const ServiceComparator: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Destination</label>
+                <label htmlFor="service-vol-destination" className="block text-sm font-medium text-gray-700 mb-2">Destination</label>
                 <input
+                  id="service-vol-destination"
                   type="text"
                   value={flightTo}
                   onChange={(e) => setFlightTo(e.target.value)}
@@ -484,8 +486,9 @@ const ServiceComparator: React.FC = () => {
           {serviceType === 'boats' && (
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Départ</label>
+                <label htmlFor="service-bateau-depart" className="block text-sm font-medium text-gray-700 mb-2">Départ</label>
                 <input
+                  id="service-bateau-depart"
                   type="text"
                   value={boatFrom}
                   onChange={(e) => setBoatFrom(e.target.value)}
@@ -494,8 +497,9 @@ const ServiceComparator: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Destination</label>
+                <label htmlFor="service-bateau-destination" className="block text-sm font-medium text-gray-700 mb-2">Destination</label>
                 <input
+                  id="service-bateau-destination"
                   type="text"
                   value={boatTo}
                   onChange={(e) => setBoatTo(e.target.value)}
@@ -508,10 +512,11 @@ const ServiceComparator: React.FC = () => {
 
           {serviceType === 'internet' && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="service-internet-vitesse" className="block text-sm font-medium text-gray-700 mb-2">
                 Vitesse minimale: {internetMinSpeed} Mbps
               </label>
               <input
+                id="service-internet-vitesse"
                 type="range"
                 min="50"
                 max="1000"
@@ -525,10 +530,11 @@ const ServiceComparator: React.FC = () => {
 
           {serviceType === 'mobile' && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="service-mobile-data" className="block text-sm font-medium text-gray-700 mb-2">
                 Data minimale: {mobileMinData} Go
               </label>
               <input
+                id="service-mobile-data"
                 type="range"
                 min="5"
                 max="100"
@@ -542,8 +548,9 @@ const ServiceComparator: React.FC = () => {
 
           {serviceType === 'water' && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Commune</label>
+              <label htmlFor="service-eau-commune" className="block text-sm font-medium text-gray-700 mb-2">Commune</label>
               <input
+                id="service-eau-commune"
                 type="text"
                 value={waterCommune}
                 onChange={(e) => setWaterCommune(e.target.value)}
@@ -555,8 +562,9 @@ const ServiceComparator: React.FC = () => {
 
           {serviceType === 'electricity' && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Puissance</label>
+              <label htmlFor="service-elec-puissance" className="block text-sm font-medium text-gray-700 mb-2">Puissance</label>
               <select
+                id="service-elec-puissance"
                 value={electricityPower}
                 onChange={(e) => setElectricityPower(Number(e.target.value))}
                 className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-yellow-500"

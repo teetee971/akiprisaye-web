@@ -389,8 +389,9 @@ export default function GroupesParole() {
 
               <div className="space-y-3">
                 <div>
-                  <label className="block text-sm text-slate-400 mb-1">Territoire *</label>
+                  <label htmlFor="groupe-territoire" className="block text-sm text-slate-400 mb-1">Territoire *</label>
                   <select
+                    id="groupe-territoire"
                     value={createTerritory}
                     onChange={(e) => setCreateTerritory(e.target.value as TerritoryCode)}
                     className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
@@ -404,8 +405,9 @@ export default function GroupesParole() {
                 </div>
 
                 <div>
-                  <label className="block text-sm text-slate-400 mb-1">Nom du groupe *</label>
+                  <label htmlFor="groupe-nom" className="block text-sm text-slate-400 mb-1">Nom du groupe *</label>
                   <input
+                    id="groupe-nom"
                     type="text"
                     value={createName}
                     onChange={(e) => setCreateName(e.target.value)}
@@ -416,8 +418,9 @@ export default function GroupesParole() {
                 </div>
 
                 <div>
-                  <label className="block text-sm text-slate-400 mb-1">Description</label>
+                  <label htmlFor="groupe-description" className="block text-sm text-slate-400 mb-1">Description</label>
                   <textarea
+                    id="groupe-description"
                     value={createDesc}
                     onChange={(e) => setCreateDesc(e.target.value)}
                     placeholder="Décrivez l'objet du groupe…"

@@ -55,10 +55,11 @@ export default function SyncConfig({ onSave }: SyncConfigProps) {
         {/* Cron Schedules */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="sync-products-interval" className="block text-sm font-medium text-gray-700 mb-2">
               Interval sync produits (cron)
             </label>
             <input
+              id="sync-products-interval"
               type="text"
               value={config.productsSyncInterval}
               onChange={(e) => handleChange('productsSyncInterval', e.target.value)}
@@ -71,10 +72,11 @@ export default function SyncConfig({ onSave }: SyncConfigProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="sync-prices-interval" className="block text-sm font-medium text-gray-700 mb-2">
               Interval sync prix (cron)
             </label>
             <input
+              id="sync-prices-interval"
               type="text"
               value={config.pricesSyncInterval}
               onChange={(e) => handleChange('pricesSyncInterval', e.target.value)}
@@ -90,10 +92,11 @@ export default function SyncConfig({ onSave }: SyncConfigProps) {
         {/* Limits */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="sync-max-products" className="block text-sm font-medium text-gray-700 mb-2">
               Max produits par sync
             </label>
             <input
+              id="sync-max-products"
               type="number"
               value={config.maxProductsPerSync}
               onChange={(e) => handleChange('maxProductsPerSync', parseInt(e.target.value))}
@@ -104,10 +107,11 @@ export default function SyncConfig({ onSave }: SyncConfigProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="sync-max-prices" className="block text-sm font-medium text-gray-700 mb-2">
               Max prix par sync
             </label>
             <input
+              id="sync-max-prices"
               type="number"
               value={config.maxPricesPerSync}
               onChange={(e) => handleChange('maxPricesPerSync', parseInt(e.target.value))}
@@ -121,10 +125,11 @@ export default function SyncConfig({ onSave }: SyncConfigProps) {
         {/* Retry */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="sync-max-retries" className="block text-sm font-medium text-gray-700 mb-2">
               Tentatives max
             </label>
             <input
+              id="sync-max-retries"
               type="number"
               value={config.maxRetries}
               onChange={(e) => handleChange('maxRetries', parseInt(e.target.value))}
@@ -135,10 +140,11 @@ export default function SyncConfig({ onSave }: SyncConfigProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="sync-retry-delay" className="block text-sm font-medium text-gray-700 mb-2">
               Délai entre tentatives (ms)
             </label>
             <input
+              id="sync-retry-delay"
               type="number"
               value={config.retryDelayMs}
               onChange={(e) => handleChange('retryDelayMs', parseInt(e.target.value))}

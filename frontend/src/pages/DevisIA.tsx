@@ -331,11 +331,11 @@ export default function DevisIA() {
 
               <div className="grid grid-cols-1 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="devis-type-organisation" className="block text-sm font-medium text-gray-700 mb-1">
                     Type d'organisation *
                   </label>
                   <select
-                    value={form.clientType}
+                    id="devis-type-organisation" value={form.clientType}
                     onChange={(e) => setForm((f) => ({ ...f, clientType: e.target.value as ClientType }))}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   >
@@ -346,11 +346,11 @@ export default function DevisIA() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="devis-nom-organisation" className="block text-sm font-medium text-gray-700 mb-1">
                     Nom de l'organisation *
                   </label>
                   <input
-                    type="text"
+                    id="devis-nom-organisation" type="text"
                     value={form.organisation}
                     onChange={(e) => setForm((f) => ({ ...f, organisation: e.target.value }))}
                     placeholder="Ex : Mairie de Pointe-à-Pitre"
@@ -359,11 +359,11 @@ export default function DevisIA() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="devis-siret" className="block text-sm font-medium text-gray-700 mb-1">
                     SIRET / SIREN / TVA *
                   </label>
                   <input
-                    type="text"
+                    id="devis-siret" type="text"
                     value={form.siret}
                     onChange={(e) => setForm((f) => ({ ...f, siret: e.target.value }))}
                     placeholder="Ex : 123 456 789 00010"
@@ -373,11 +373,11 @@ export default function DevisIA() {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="devis-nom-responsable" className="block text-sm font-medium text-gray-700 mb-1">
                       Nom du responsable *
                     </label>
                     <input
-                      type="text"
+                      id="devis-nom-responsable" type="text"
                       value={form.contactNom}
                       onChange={(e) => setForm((f) => ({ ...f, contactNom: e.target.value }))}
                       placeholder="Prénom Nom"
@@ -385,11 +385,11 @@ export default function DevisIA() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="devis-telephone" className="block text-sm font-medium text-gray-700 mb-1">
                       Téléphone
                     </label>
                     <input
-                      type="tel"
+                      id="devis-telephone" type="tel"
                       value={form.contactTel}
                       onChange={(e) => setForm((f) => ({ ...f, contactTel: e.target.value }))}
                       placeholder="+590 590 XX XX XX"
@@ -399,11 +399,11 @@ export default function DevisIA() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="devis-email" className="block text-sm font-medium text-gray-700 mb-1">
                     Email professionnel *
                   </label>
                   <input
-                    type="email"
+                    id="devis-email" type="email"
                     value={form.contactEmail}
                     onChange={(e) => setForm((f) => ({ ...f, contactEmail: e.target.value }))}
                     placeholder="contact@organisation.fr"
@@ -422,11 +422,11 @@ export default function DevisIA() {
               </h2>
 
               <div className="mb-5">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="devis-territoire" className="block text-sm font-medium text-gray-700 mb-2">
                   Territoire concerné *
                 </label>
                 <select
-                  value={form.territoire}
+                  id="devis-territoire" value={form.territoire}
                   onChange={(e) => setForm((f) => ({ ...f, territoire: e.target.value }))}
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500"
                 >
@@ -437,13 +437,14 @@ export default function DevisIA() {
               </div>
 
               <div className="mb-5">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <span className="block text-sm font-medium text-gray-700 mb-2">
                   Type(s) de besoin * (plusieurs choix possibles)
-                </label>
+                </span>
                 <div className="grid grid-cols-1 gap-2">
                   {BESOINS.map((b) => (
                     <label
                       key={b.value}
+                      aria-label={b.label}
                       className={`flex items-start gap-3 border rounded-xl px-4 py-3 cursor-pointer transition
                         ${form.typesBesoin.includes(b.value)
                           ? 'border-indigo-500 bg-indigo-50'
@@ -466,11 +467,11 @@ export default function DevisIA() {
 
               <div className="grid grid-cols-2 gap-4 mb-5">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="devis-delai" className="block text-sm font-medium text-gray-700 mb-1">
                     Délai souhaité
                   </label>
                   <select
-                    value={form.delai}
+                    id="devis-delai" value={form.delai}
                     onChange={(e) => setForm((f) => ({ ...f, delai: e.target.value as DelaiSouhaite }))}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500"
                   >
@@ -480,11 +481,11 @@ export default function DevisIA() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="devis-niveau-profondeur" className="block text-sm font-medium text-gray-700 mb-1">
                     Niveau de profondeur
                   </label>
                   <select
-                    value={form.niveauProfondeur}
+                    id="devis-niveau-profondeur" value={form.niveauProfondeur}
                     onChange={(e) =>
                       setForm((f) => ({ ...f, niveauProfondeur: e.target.value as NiveauProfondeur }))
                     }
@@ -500,11 +501,11 @@ export default function DevisIA() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="devis-description-libre" className="block text-sm font-medium text-gray-700 mb-1">
                   Description libre de votre besoin
                 </label>
                 <textarea
-                  value={form.descriptionLibre}
+                  id="devis-description-libre" value={form.descriptionLibre}
                   onChange={(e) => setForm((f) => ({ ...f, descriptionLibre: e.target.value }))}
                   placeholder="Décrivez librement votre contexte, vos attentes et contraintes spécifiques…"
                   rows={4}

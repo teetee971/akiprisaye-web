@@ -196,26 +196,27 @@ const BuildingMaterialsComparator: React.FC = () => {
           {/* Filters */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Comparer avec</label>
-              <select value={compareWith} onChange={(e) => setCompareWith(e.target.value)} className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg px-3 py-2">
+              <label htmlFor="bmc-comparer-avec" className="block text-sm text-gray-400 mb-1">Comparer avec</label>
+              <select id="bmc-comparer-avec" value={compareWith} onChange={(e) => setCompareWith(e.target.value)} className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg px-3 py-2">
                 {data?.territories.map((t) => (
                   <option key={t.code} value={t.code}>{t.name}</option>
                 ))}
               </select>
             </div>
             <div>
-              <label className="block text-sm text-gray-400 mb-1">
+              <label htmlFor="bmc-categorie" className="block text-sm text-gray-400 mb-1">
                 <Filter className="w-3 h-3 inline mr-1" />Catégorie
               </label>
-              <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)} className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg px-3 py-2">
+              <select id="bmc-categorie" value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)} className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg px-3 py-2">
                 {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-sm text-gray-400 mb-1">
+              <label htmlFor="bmc-recherche" className="block text-sm text-gray-400 mb-1">
                 <Search className="w-3 h-3 inline mr-1" />Rechercher un matériau
               </label>
               <input
+                id="bmc-recherche"
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}

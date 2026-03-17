@@ -215,8 +215,8 @@ export default function AlertesRupture() {
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem', marginBottom: '0.75rem' }}>
             <div>
-              <label style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 600, display: 'block', marginBottom: '0.3rem' }}>Produit *</label>
-              <input list="produits-list" value={form.produit} onChange={e => setForm(f => ({ ...f, produit: e.target.value }))} required
+              <label htmlFor="alerte-produit" style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 600, display: 'block', marginBottom: '0.3rem' }}>Produit *</label>
+              <input id="alerte-produit" list="produits-list" value={form.produit} onChange={e => setForm(f => ({ ...f, produit: e.target.value }))} required
                 placeholder="ex: Huile de tournesol 1L"
                 style={{ width: '100%', padding: '0.5rem 0.7rem', borderRadius: 8, background: 'rgba(30,41,59,0.8)', border: '1px solid rgba(99,102,241,0.35)', color: '#f1f5f9', fontSize: '0.85rem', boxSizing: 'border-box' }} />
               <datalist id="produits-list">
@@ -224,14 +224,14 @@ export default function AlertesRupture() {
               </datalist>
             </div>
             <div>
-              <label style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 600, display: 'block', marginBottom: '0.3rem' }}>Magasin *</label>
-              <input value={form.magasin} onChange={e => setForm(f => ({ ...f, magasin: e.target.value }))} required
+              <label htmlFor="alerte-magasin" style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 600, display: 'block', marginBottom: '0.3rem' }}>Magasin *</label>
+              <input id="alerte-magasin" value={form.magasin} onChange={e => setForm(f => ({ ...f, magasin: e.target.value }))} required
                 placeholder="ex: Carrefour Gosier"
                 style={{ width: '100%', padding: '0.5rem 0.7rem', borderRadius: 8, background: 'rgba(30,41,59,0.8)', border: '1px solid rgba(99,102,241,0.35)', color: '#f1f5f9', fontSize: '0.85rem', boxSizing: 'border-box' }} />
             </div>
             <div>
-              <label style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 600, display: 'block', marginBottom: '0.3rem' }}>Territoire *</label>
-              <select value={form.territoire} onChange={e => setForm(f => ({ ...f, territoire: e.target.value }))}
+              <label htmlFor="alerte-territoire" style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 600, display: 'block', marginBottom: '0.3rem' }}>Territoire *</label>
+              <select id="alerte-territoire" value={form.territoire} onChange={e => setForm(f => ({ ...f, territoire: e.target.value }))}
                 style={{ width: '100%', padding: '0.5rem 0.7rem', borderRadius: 8, background: 'rgba(30,41,59,0.8)', border: '1px solid rgba(99,102,241,0.35)', color: '#f1f5f9', fontSize: '0.85rem', boxSizing: 'border-box' }}>
                 {TERRITOIRES.map(t => <option key={t.code} value={t.code}>{t.label}</option>)}
               </select>
@@ -239,8 +239,8 @@ export default function AlertesRupture() {
           </div>
 
           <div style={{ marginBottom: '0.85rem' }}>
-            <label style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 600, display: 'block', marginBottom: '0.3rem' }}>Commentaire (optionnel)</label>
-            <textarea value={form.commentaire} onChange={e => setForm(f => ({ ...f, commentaire: e.target.value }))} rows={2}
+            <label htmlFor="alerte-commentaire" style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 600, display: 'block', marginBottom: '0.3rem' }}>Commentaire (optionnel)</label>
+            <textarea id="alerte-commentaire" value={form.commentaire} onChange={e => setForm(f => ({ ...f, commentaire: e.target.value }))} rows={2}
               placeholder="Depuis combien de temps ? Situation particulière ? Produit de substitution disponible ?"
               style={{ width: '100%', padding: '0.5rem 0.7rem', borderRadius: 8, background: 'rgba(30,41,59,0.8)', border: '1px solid rgba(99,102,241,0.35)', color: '#f1f5f9', fontSize: '0.82rem', boxSizing: 'border-box', resize: 'vertical' }} />
           </div>

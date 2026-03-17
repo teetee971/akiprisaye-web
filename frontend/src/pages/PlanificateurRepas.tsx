@@ -371,8 +371,8 @@ export default function PlanificateurRepas() {
         {/* Config bar */}
         <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1.25rem', flexWrap: 'wrap', alignItems: 'flex-end' }}>
           <div>
-            <label style={{ fontSize: '0.7rem', color: '#64748b', display: 'block', marginBottom: '0.2rem' }}>Territoire</label>
-            <select value={territoire} onChange={e => setTerritoire(e.target.value)}
+            <label htmlFor="repas-territoire" style={{ fontSize: '0.7rem', color: '#64748b', display: 'block', marginBottom: '0.2rem' }}>Territoire</label>
+            <select id="repas-territoire" value={territoire} onChange={e => setTerritoire(e.target.value)}
               style={{ padding: '0.4rem 0.7rem', borderRadius: 8, background: 'rgba(30,41,59,0.9)', border: '1px solid rgba(99,102,241,0.4)', color: '#f1f5f9', fontSize: '0.82rem' }}>
               {[['gp','🇬🇵 Guadeloupe'],['mq','🇲🇶 Martinique'],['gf','🇬🇫 Guyane'],['re','🇷🇪 La Réunion'],['yt','🇾🇹 Mayotte'],['fr','🇫🇷 Métropole']].map(([c,l]) => (
                 <option key={c} value={c}>{l}</option>
@@ -380,7 +380,7 @@ export default function PlanificateurRepas() {
             </select>
           </div>
           <div>
-            <label style={{ fontSize: '0.7rem', color: '#64748b', display: 'block', marginBottom: '0.2rem' }}>Personnes</label>
+            <span style={{ fontSize: '0.7rem', color: '#64748b', display: 'block', marginBottom: '0.2rem' }}>Personnes</span>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
               <button onClick={() => setPersonnes(Math.max(1, personnes - 1))} style={{ width: 28, height: 28, borderRadius: 6, background: 'rgba(99,102,241,0.2)', border: '1px solid rgba(99,102,241,0.4)', color: '#a5b4fc', cursor: 'pointer' }}>−</button>
               <span style={{ fontSize: '1rem', fontWeight: 700, color: '#f1f5f9', minWidth: 20, textAlign: 'center' }}>{personnes}</span>

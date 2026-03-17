@@ -257,8 +257,9 @@ export default function PriceHistoryPage() {
             <div className="mb-6 p-4 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-wrap gap-4">
               {categories.length > 0 && (
                 <div>
-                  <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Catégorie</label>
+                  <label htmlFor="ph-categorie" className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Catégorie</label>
                   <select
+                    id="ph-categorie"
                     value={selectedCategory}
                     onChange={(e) => setSelectedCategory(e.target.value)}
                     className="px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm text-slate-800 dark:text-slate-200"
@@ -270,8 +271,9 @@ export default function PriceHistoryPage() {
               )}
               {enseignes.length > 0 && (
                 <div>
-                  <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Enseigne</label>
+                  <label htmlFor="ph-enseigne" className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Enseigne</label>
                   <select
+                    id="ph-enseigne"
                     value={selectedEnseigne}
                     onChange={(e) => setSelectedEnseigne(e.target.value)}
                     className="px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm text-slate-800 dark:text-slate-200"
@@ -420,9 +422,9 @@ export default function PriceHistoryPage() {
               {legacyData.length > 0 && (
                 <UpgradeGate feature="PRICE_HISTORY_ADVANCED">
                   <div className="mb-4">
-                    <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">
+                    <span className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">
                       Vue courbe (données temps-réel)
-                    </label>
+                    </span>
                     <div className="flex gap-1 mb-3">
                       {(['7d', '30d', '90d', '365d'] as Timeframe[]).map((tf) => (
                         <button

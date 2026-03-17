@@ -203,10 +203,11 @@ export default function AdminDashboard() {
             </h2>
             <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium mb-2 text-slate-300">
+                <label htmlFor="admin-titre" className="block text-sm font-medium mb-2 text-slate-300">
                   Titre *
                 </label>
                 <input
+                  id="admin-titre"
                   type="text"
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
@@ -216,10 +217,11 @@ export default function AdminDashboard() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2 text-slate-300">
+                <label htmlFor="admin-magasin" className="block text-sm font-medium mb-2 text-slate-300">
                   Magasin *
                 </label>
                 <input
+                  id="admin-magasin"
                   type="text"
                   value={formData.store}
                   onChange={(e) => setFormData({ ...formData, store: e.target.value })}
@@ -229,10 +231,11 @@ export default function AdminDashboard() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2 text-slate-300">
+                <label htmlFor="admin-territoire" className="block text-sm font-medium mb-2 text-slate-300">
                   Territoire *
                 </label>
                 <select
+                  id="admin-territoire"
                   value={formData.territory}
                   onChange={(e) => setFormData({ ...formData, territory: e.target.value })}
                   required
@@ -245,10 +248,11 @@ export default function AdminDashboard() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2 text-slate-300">
+                <label htmlFor="admin-creneau" className="block text-sm font-medium mb-2 text-slate-300">
                   Créneau de retrait *
                 </label>
                 <input
+                  id="admin-creneau"
                   type="text"
                   value={formData.pickupWindow}
                   onChange={(e) => setFormData({ ...formData, pickupWindow: e.target.value })}
@@ -259,10 +263,11 @@ export default function AdminDashboard() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2 text-slate-300">
+                <label htmlFor="admin-latitude" className="block text-sm font-medium mb-2 text-slate-300">
                   Latitude *
                 </label>
                 <input
+                  id="admin-latitude"
                   type="number"
                   step="any"
                   value={formData.lat}
@@ -273,10 +278,11 @@ export default function AdminDashboard() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2 text-slate-300">
+                <label htmlFor="admin-longitude" className="block text-sm font-medium mb-2 text-slate-300">
                   Longitude *
                 </label>
                 <input
+                  id="admin-longitude"
                   type="number"
                   step="any"
                   value={formData.lon}
@@ -287,10 +293,11 @@ export default function AdminDashboard() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2 text-slate-300">
+                <label htmlFor="admin-stock" className="block text-sm font-medium mb-2 text-slate-300">
                   Stock *
                 </label>
                 <input
+                  id="admin-stock"
                   type="number"
                   value={formData.stock}
                   onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
@@ -301,10 +308,11 @@ export default function AdminDashboard() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2 text-slate-300">
+                <label htmlFor="admin-prix" className="block text-sm font-medium mb-2 text-slate-300">
                   Prix (€) *
                 </label>
                 <input
+                  id="admin-prix"
                   type="number"
                   step="0.01"
                   value={formData.price}
@@ -316,10 +324,11 @@ export default function AdminDashboard() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2 text-slate-300">
+                <label htmlFor="admin-valeur-estimee" className="block text-sm font-medium mb-2 text-slate-300">
                   Valeur estimée (€) *
                 </label>
                 <input
+                  id="admin-valeur-estimee"
                   type="number"
                   step="0.01"
                   value={formData.estimatedValue}
@@ -331,10 +340,11 @@ export default function AdminDashboard() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2 text-slate-300">
+                <label htmlFor="admin-image-url" className="block text-sm font-medium mb-2 text-slate-300">
                   Image URL
                 </label>
                 <input
+                  id="admin-image-url"
                   type="text"
                   value={formData.img}
                   onChange={(e) => setFormData({ ...formData, img: e.target.value })}
@@ -344,10 +354,11 @@ export default function AdminDashboard() {
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium mb-2 text-slate-300">
+                <label htmlFor="admin-articles" className="block text-sm font-medium mb-2 text-slate-300">
                   Articles (séparés par des virgules)
                 </label>
                 <input
+                  id="admin-articles"
                   type="text"
                   value={formData.items}
                   onChange={(e) => setFormData({ ...formData, items: e.target.value })}

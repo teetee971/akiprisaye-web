@@ -89,7 +89,7 @@ export function UploadPreuve({ onUpload, currentProof = null }) {
 
   return (
     <div className="space-y-3">
-      <label className="block text-sm font-medium text-gray-700">
+      <label htmlFor="upload-preuve-file" className="block text-sm font-medium text-gray-700">
         Photo du produit ou ticket (facultatif)
       </label>
 
@@ -100,6 +100,7 @@ export function UploadPreuve({ onUpload, currentProof = null }) {
         >
           <input
             ref={fileInputRef}
+            id="upload-preuve-file"
             type="file"
             accept="image/jpeg,image/jpg,image/png,image/webp"
             onChange={handleFileSelect}

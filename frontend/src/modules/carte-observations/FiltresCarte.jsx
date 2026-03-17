@@ -40,10 +40,11 @@ export function FiltresCarte({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Territory Filter */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="filtre-territoire" className="block text-sm font-medium text-gray-700 mb-2">
             Territoire
           </label>
           <select
+            id="filtre-territoire"
             value={filters.territory}
             onChange={(e) => handleFilterChange('territory', e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
@@ -59,10 +60,11 @@ export function FiltresCarte({
 
         {/* City Filter */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="filtre-commune" className="block text-sm font-medium text-gray-700 mb-2">
             Commune
           </label>
           <select
+            id="filtre-commune"
             value={filters.city}
             onChange={(e) => handleFilterChange('city', e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
@@ -79,10 +81,11 @@ export function FiltresCarte({
 
         {/* Product Filter */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="filtre-produit" className="block text-sm font-medium text-gray-700 mb-2">
             Produit
           </label>
           <select
+            id="filtre-produit"
             value={filters.product}
             onChange={(e) => handleFilterChange('product', e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
@@ -98,10 +101,11 @@ export function FiltresCarte({
 
         {/* Period Selector */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="filtre-periode" className="block text-sm font-medium text-gray-700 mb-2">
             Période
           </label>
           <select
+            id="filtre-periode"
             onChange={(e) => {
               const value = e.target.value;
               const today = new Date();

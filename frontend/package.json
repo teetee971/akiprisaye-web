@@ -11,15 +11,14 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "eslint src --ext .ts,.tsx,.js,.jsx --cache --cache-location .eslintcache",
+    "lint": "eslint src --ext .ts,.tsx,.js,.jsx",
     "lint:fix": "eslint src --ext .ts,.tsx,.js,.jsx --fix",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "typecheck:ci": "tsc -p tsconfig.ci.json",
+    "typecheck:ci": "tsc -p tsconfig.ci.json --noEmit",
     "test:ci": "vitest run --config vitest.config.ts",
     "audit": "npm audit --omit=dev --audit-level=high",
     "audit:ci": "npm audit --omit=dev --audit-level=high",
     "postbuild": "node -e \"const fs=require('fs');fs.mkdirSync('dist',{recursive:true});fs.copyFileSync('public/_redirects','dist/_redirects');\" && node scripts/prerender-routes.mjs",
-    "lint:ci": "cd .. && npm run lint:ci",
     "build:ci": "npm run build"
   },
   "dependencies": {
@@ -79,6 +78,7 @@
     "@zxing/library": "^0.21.3",
     "autoprefixer": "^10.4.24",
     "eslint": "^9.39.3",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.24",
@@ -91,8 +91,5 @@
     "vite": "^7.3.1",
     "vite-plugin-static-copy": "^3.2.0",
     "vitest": "^4.0.18"
-  },
-  "overrides": {
-    "minimatch": "^10.2.1"
   }
 }

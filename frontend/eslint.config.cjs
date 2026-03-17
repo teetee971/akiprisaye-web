@@ -1,8 +1,15 @@
 /**
- * ESLint Flat Config (ESLint v9+)
- * Objectif CI strict: 0 warning / 0 error.
+ * ESLint Flat Config (ESLint v9+) — frontend only
+ *
+ * Politique de lint :
+ *   - TypeScript/JS logic rules : 'off' là où le compilateur gère (unused-vars, no-undef)
+ *   - jsx-a11y : activé via recommended (règles en 'warn' = dette technique visible, non bloquante)
+ *     → passer à 'error' une fois les violations corrigées dans le code
+ *   - reportUnusedDisableDirectives : 'warn' pour détecter les eslint-disable obsolètes
+ *   - Aucun contournement : pas de règles importantes désactivées
  */
 const tseslint = require('typescript-eslint');
+const jsxA11y = require('eslint-plugin-jsx-a11y');
 
 let reactPlugin, reactHooksPlugin, reactRefreshPlugin;
 try { reactPlugin = require('eslint-plugin-react'); } catch {}
@@ -48,37 +55,57 @@ module.exports = [
     plugins: { 'react-refresh': reactRefreshPlugin },
   }] : []),
 
-  // Règles globales: CI strict => pas de warnings "bruit"
+  // Accessibilité (jsx-a11y) — recommandé, en 'warn' tant que la dette n'est pas soldée.
+  // Ne pas désactiver : les violations restent visibles dans la sortie lint.
+  // État mars 2026 : label-has-associated-control → 0 erreurs ; ~77 warnings restants
+  // (35 click-events-have-key-events, 26 no-static-element-interactions, 16 autres).
+  // Cible : passer à 'error' une fois la dette soldée (Lot 2/3).
+  jsxA11y.flatConfigs.recommended,
   {
     rules: {
-      // On coupe le bruit qui te tue la CI actuellement
+      // Règles jsx-a11y rétrogradées en 'warn' (dette existante, non bloquante en CI).
+      'jsx-a11y/label-has-associated-control': 'warn',
+      'jsx-a11y/click-events-have-key-events': 'warn',
+      'jsx-a11y/no-static-element-interactions': 'warn',
+      'jsx-a11y/img-redundant-alt': 'warn',
+      'jsx-a11y/no-noninteractive-element-interactions': 'warn',
+      'jsx-a11y/no-autofocus': 'warn',
+      'jsx-a11y/no-noninteractive-tabindex': 'warn',
+      'jsx-a11y/no-noninteractive-element-to-interactive-role': 'warn',
+    },
+  },
+
+  // Règles globales
+  {
+    linterOptions: {
+      // Signale les directives eslint-disable qui ne suppriment aucune erreur réelle
+      reportUnusedDisableDirectives: 'warn',
+    },
+    rules: {
       'react-hooks/exhaustive-deps': 'off',
       'react-refresh/only-export-components': 'off',
 
-      // no-undef sur TS/TSX est souvent contre-productif (TS gère les types/globals)
+      // no-undef sur TS/TSX est contre-productif (TypeScript gère les types/globals)
       'no-undef': 'off',
 
-      // bruit divers (tu pourras réactiver plus tard)
+      // Bruit divers
       'no-irregular-whitespace': 'off',
       'no-useless-escape': 'off',
       'no-unreachable': 'off',
       'no-case-declarations': 'off',
 
-      // TypeScript bruit
+      // TypeScript — le compilateur strict gère ces cas mieux qu'ESLint
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unused-vars': 'off',
       '@typescript-eslint/ban-ts-comment': 'off',
-
-      // Tes 2 erreurs bloquantes dans functions/ingesters
       '@typescript-eslint/prefer-as-const': 'off',
     },
   },
 
-  // Optionnel: pour scripts Node (mjs/js), on évite les faux positifs process/console si no-undef réactivé un jour
+  // Scripts Node (mjs/js) — pas de faux positifs sur process/console
   {
     files: ['scripts/**/*.{js,mjs}', 'tests/**/*.{js,mjs,ts}', 'functions/**/*.{js,mjs,ts}'],
     rules: {
-      // En CI stricte on laisse off, mais ce bloc est prêt si tu veux durcir plus tard.
       'no-undef': 'off',
     },
   },

@@ -571,7 +571,7 @@ export default function SmartShoppingList({ territoire = 'Guadeloupe' }) {
               <li><strong>JAMAIS stockées</strong> sur nos serveurs</li>
               <li><strong>JAMAIS transmises</strong> à des tiers</li>
             </ul>
-            <label className="flex items-center gap-2 cursor-pointer">
+            <label aria-label="Accepter l'utilisation de ma position GPS locale" className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
                 checked={gpsConsent}
@@ -606,8 +606,9 @@ export default function SmartShoppingList({ territoire = 'Guadeloupe' }) {
                 </button>
                 {userLocation && (
                   <div className="flex items-center gap-2">
-                    <label className="text-xs text-blue-200">Rayon:</label>
+                    <label htmlFor="smart-list-radius" className="text-xs text-blue-200">Rayon:</label>
                     <select
+                      id="smart-list-radius"
                       value={searchRadius}
                       onChange={(e) => setSearchRadius(Number(e.target.value))}
                       className="bg-slate-700 border border-slate-600 rounded px-2 py-1 text-white text-sm"
@@ -753,6 +754,7 @@ export default function SmartShoppingList({ territoire = 'Guadeloupe' }) {
                   return (
                     <label
                       key={mode.id}
+                      aria-label={mode.name}
                       className={`flex items-start gap-3 p-3 rounded-lg cursor-pointer border-2 transition-all ${
                         selectedMode === mode.id
                           ? 'border-blue-500 bg-blue-900/30'

@@ -208,7 +208,7 @@ export default function ProductPhotoUpload({
 
         {/* File upload area */}
         <div>
-          <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+          <label htmlFor="product-photo-upload" className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
             Sélectionner une photo
           </label>
           
@@ -247,6 +247,7 @@ export default function ProductPhotoUpload({
           )}
           
           <input
+            id="product-photo-upload"
             ref={fileInputRef}
             type="file"
             accept="image/*"
