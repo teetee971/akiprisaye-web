@@ -136,3 +136,16 @@ export async function getAuthRedirectResult(): Promise<UserCredential | null> {
   const authInstance = ensureAuth();
   return getRedirectResult(authInstance);
 }
+
+/* ── Redirect anti-loop flag ─────────────────────────────────────────────
+ * Re-exported from the canonical @/auth/authStorage module.
+ * Kept here for backward-compatibility with existing imports.
+ */
+export {
+  REDIRECT_PENDING_KEY,
+  REDIRECT_PENDING_TTL_MS,
+  setRedirectPendingFlag,
+  getRedirectPendingFlag,
+  clearRedirectPendingFlag,
+  type RedirectPendingData,
+} from '@/auth/authStorage';

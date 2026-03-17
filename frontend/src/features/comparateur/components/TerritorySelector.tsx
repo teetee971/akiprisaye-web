@@ -70,6 +70,7 @@ export function TerritorySelector({ territories, selected, onSelectionChange }: 
           return (
             <label 
               key={territory} 
+              aria-label={getTerritoryLabel(territory)}
               className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${
                 isSelected
                   ? 'border-blue-500 bg-blue-500/10'

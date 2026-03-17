@@ -113,10 +113,10 @@ export default function LeaderboardPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Period Filter */}
             <div>
-              <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+              <span className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
                 <Calendar size={16} />
                 Période
-              </label>
+              </span>
               <div className="flex gap-2">
                 {PERIODS.map(p => (
                   <button

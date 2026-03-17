@@ -24,7 +24,7 @@ export default function FontSizeControl() {
 
   return (
     <div className="font-size-control">
-      <label className="block text-sm font-medium mb-2">
+      <label htmlFor="font-size-range" className="block text-sm font-medium mb-2">
         Taille du texte
       </label>
       <div className="flex items-center gap-3">
@@ -41,6 +41,7 @@ export default function FontSizeControl() {
         
         <div className="flex-1">
           <input
+            id="font-size-range"
             type="range"
             min="80"
             max="200"

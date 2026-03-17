@@ -55,7 +55,7 @@ export default function ScanProductPWA({ product, stores, france, history, insig
         <button className="pwa-share" aria-label="Partager"><span aria-hidden="true">🔗</span></button>
       </header>
       <section className="pwa-info">
-        <img src={product.image} alt={product.name} className="pwa-img"/>
+        <img src={product.image} alt={product.name} width={96} height={96} loading="lazy" className="pwa-img"/>
         <div>
           <h2>{product.name}</h2>
           <div className="pwa-brand-cat">{product.brand} | <span>{product.category}</span></div>
@@ -67,7 +67,7 @@ export default function ScanProductPWA({ product, stores, france, history, insig
         {stores.map((store) => (
           <div key={`${store.brand}-${store.store}-${store.territory}`} className="pwa-card" title={`Top ${store.rank} territoire`}>
             <div className="pwa-card-label">{store.label}</div>
-            <img src={store.logo} alt={store.brand} className="pwa-card-logo"/>
+            <img src={store.logo} alt={store.brand} width={40} height={40} loading="lazy" className="pwa-card-logo"/>
             <div>{store.brand}</div>
             <div className="pwa-card-price">{store.price.toFixed(2)} €</div>
             <div className="pwa-card-detail">{store.store} • {store.distance}</div>

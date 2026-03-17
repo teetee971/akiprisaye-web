@@ -191,10 +191,12 @@ const PARPAING_TYPES = [
 function NumInput({ label, value, onChange, placeholder = '0.00', unit }: {
   label: string; value: string; onChange: (v: string) => void; placeholder?: string; unit?: string;
 }) {
+  const id = `num-input-${label.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
   return (
     <div>
-      <label className="block text-sm text-slate-400 mb-1">{label}{unit && <span className="text-slate-500 ml-1">({unit})</span>}</label>
+      <label htmlFor={id} className="block text-sm text-slate-400 mb-1">{label}{unit && <span className="text-slate-500 ml-1">({unit})</span>}</label>
       <input
+        id={id}
         type="number"
         min="0"
         step="0.01"
@@ -531,15 +533,15 @@ function ParpaingCalc({ onCalc, territory, onSave }: CalcProps) {
         <p className="text-sm text-center text-slate-400">Surface : <span className="text-white font-semibold">{(parseFloat(longueur.replace(',', '.')) * parseFloat(hauteur.replace(',', '.'))).toFixed(2)} m²</span></p>
       )}
       <div>
-        <label className="block text-sm text-slate-400 mb-1">Type de bloc</label>
-        <select value={typeIdx} onChange={(e) => setTypeIdx(Number(e.target.value))}
+        <label htmlFor="parpaing-type-bloc" className="block text-sm text-slate-400 mb-1">Type de bloc</label>
+        <select id="parpaing-type-bloc" value={typeIdx} onChange={(e) => setTypeIdx(Number(e.target.value))}
           className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
           {PARPAING_TYPES.map((p, i) => <option key={i} value={i}>{p.label}</option>)}
         </select>
       </div>
       <div>
-        <label className="block text-sm text-slate-400 mb-1">Format sac ciment</label>
-        <select value={cimentIdx} onChange={(e) => setCimentIdx(Number(e.target.value))}
+        <label htmlFor="parpaing-format-ciment" className="block text-sm text-slate-400 mb-1">Format sac ciment</label>
+        <select id="parpaing-format-ciment" value={cimentIdx} onChange={(e) => setCimentIdx(Number(e.target.value))}
           className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
           {CIMENT_TYPES.map((c, i) => <option key={i} value={i}>{c.label}</option>)}
         </select>
@@ -626,11 +628,11 @@ function DalleBetonCalc({ onCalc, territory, onSave }: CalcProps) {
       </div>
 
       <div>
-        <label className="block text-sm text-slate-400 mb-2">Épaisseur de la dalle : <span className="text-white font-bold">{epaisseur} cm</span></label>
+        <label htmlFor="dalle-epaisseur" className="block text-sm text-slate-400 mb-2">Épaisseur de la dalle : <span className="text-white font-bold">{epaisseur} cm</span></label>
         <div className="rounded-xl bg-green-700/40 border border-green-600/30 px-4 py-2 text-center text-green-200 font-semibold mb-2">
           Épaisseur de la dalle : {epaisseur} cm
         </div>
-        <input type="range" min="7" max="20" step="1" value={epaisseur} onChange={(e) => setEpaisseur(Number(e.target.value))}
+        <input id="dalle-epaisseur" type="range" min="7" max="20" step="1" value={epaisseur} onChange={(e) => setEpaisseur(Number(e.target.value))}
           className="w-full accent-orange-500" />
         <div className="flex justify-between text-xs text-slate-500 mt-0.5"><span>7 cm</span><span>20 cm</span></div>
         <div className="flex gap-2 mt-2 flex-wrap">
@@ -648,8 +650,8 @@ function DalleBetonCalc({ onCalc, territory, onSave }: CalcProps) {
       </div>
 
       <div>
-        <label className="block text-sm text-slate-400 mb-1">Format sac ciment</label>
-        <select value={cimentIdx} onChange={(e) => setCimentIdx(Number(e.target.value))}
+        <label htmlFor="dalle-format-ciment" className="block text-sm text-slate-400 mb-1">Format sac ciment</label>
+        <select id="dalle-format-ciment" value={cimentIdx} onChange={(e) => setCimentIdx(Number(e.target.value))}
           className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
           {CIMENT_TYPES.map((c, i) => <option key={i} value={i}>{c.label}</option>)}
         </select>
@@ -744,8 +746,9 @@ function PeintureCalc({ onCalc, territory, onSave }: CalcProps) {
       <div className="grid grid-cols-2 gap-3">
         <NumInput label={mode === 'mur' ? 'Largeur du mur' : 'Longueur pièce'} value={largeur} onChange={setLargeur} unit="m" />
         <div>
-          <label className="block text-sm text-slate-400 mb-1">Nbr d'ouverture</label>
+          <label htmlFor="peinture-nbr-ouvertures" className="block text-sm text-slate-400 mb-1">Nbr d'ouverture</label>
           <input
+            id="peinture-nbr-ouvertures"
             type="number"
             min="0"
             step="1"
@@ -757,8 +760,8 @@ function PeintureCalc({ onCalc, territory, onSave }: CalcProps) {
         </div>
         <NumInput label={mode === 'mur' ? 'Hauteur du mur' : 'Largeur pièce'} value={hauteur} onChange={setHauteur} unit="m" />
         <div>
-          <label className="block text-sm text-slate-400 mb-1">Nbr de couche</label>
-          <select value={nbrCouches} onChange={(e) => setNbrCouches(e.target.value)}
+          <label htmlFor="peinture-nbr-couches" className="block text-sm text-slate-400 mb-1">Nbr de couche</label>
+          <select id="peinture-nbr-couches" value={nbrCouches} onChange={(e) => setNbrCouches(e.target.value)}
             className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
             <option value="1">1</option>
             <option value="2">2</option>
@@ -767,7 +770,7 @@ function PeintureCalc({ onCalc, territory, onSave }: CalcProps) {
         </div>
         <div className="col-span-2">
           <div className="flex items-center gap-2 mb-1">
-            <label className="block text-sm text-slate-400">Rendement de la peinture</label>
+            <label htmlFor="peinture-rendement" className="block text-sm text-slate-400">Rendement de la peinture</label>
             <button onClick={() => setShowRendHelp((v) => !v)} className="w-6 h-6 rounded-full bg-green-700 flex items-center justify-center text-white text-xs font-bold">?</button>
           </div>
           {showRendHelp && (
@@ -781,6 +784,7 @@ function PeintureCalc({ onCalc, territory, onSave }: CalcProps) {
           )}
           <div className="flex items-center gap-2">
             <input
+              id="peinture-rendement"
               type="number"
               min="1"
               step="0.5"
@@ -943,8 +947,8 @@ function BetonCourantCalc({ onCalc, territory, onSave }: CalcProps) {
       <div className="grid grid-cols-2 gap-3">
         <NumInput label="Volume béton" value={volume} onChange={setVolume} unit="m³" />
         <div>
-          <label className="block text-sm text-slate-400 mb-1">Dosage (kg/m³)</label>
-          <select value={dosage} onChange={(e) => setDosage(e.target.value)}
+          <label htmlFor="beton-dosage" className="block text-sm text-slate-400 mb-1">Dosage (kg/m³)</label>
+          <select id="beton-dosage" value={dosage} onChange={(e) => setDosage(e.target.value)}
             className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
             <option value="250">250 – béton maigre</option>
             <option value="300">300 – béton courant</option>
@@ -953,8 +957,8 @@ function BetonCourantCalc({ onCalc, territory, onSave }: CalcProps) {
           </select>
         </div>
         <div className="col-span-2">
-          <label className="block text-sm text-slate-400 mb-1">Format sac ciment</label>
-          <select value={cimentIdx} onChange={(e) => setCimentIdx(Number(e.target.value))}
+          <label htmlFor="beton-format-ciment" className="block text-sm text-slate-400 mb-1">Format sac ciment</label>
+          <select id="beton-format-ciment" value={cimentIdx} onChange={(e) => setCimentIdx(Number(e.target.value))}
             className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
             {CIMENT_TYPES.map((c, i) => <option key={i} value={i}>{c.label}</option>)}
           </select>
@@ -1033,8 +1037,8 @@ function EnduitCalc({ onCalc, territory, onSave }: CalcProps) {
       <div className="grid grid-cols-2 gap-3">
         <NumInput label="Surface" value={surface} onChange={setSurface} unit="m²" />
         <div>
-          <label className="block text-sm text-slate-400 mb-1">Épaisseur <span className="text-slate-500">(mm)</span></label>
-          <select value={epaisseur} onChange={(e) => setEpaisseur(e.target.value)}
+          <label htmlFor="enduit-epaisseur" className="block text-sm text-slate-400 mb-1">Épaisseur <span className="text-slate-500">(mm)</span></label>
+          <select id="enduit-epaisseur" value={epaisseur} onChange={(e) => setEpaisseur(e.target.value)}
             className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
             <option value="10">10 mm – fin (rebouche)</option>
             <option value="15">15 mm – standard</option>
@@ -1043,8 +1047,8 @@ function EnduitCalc({ onCalc, territory, onSave }: CalcProps) {
           </select>
         </div>
         <div className="col-span-2">
-          <label className="block text-sm text-slate-400 mb-1">Format sac ciment (pour mortier maison)</label>
-          <select value={cimentIdx} onChange={(e) => setCimentIdx(Number(e.target.value))}
+          <label htmlFor="enduit-format-ciment" className="block text-sm text-slate-400 mb-1">Format sac ciment (pour mortier maison)</label>
+          <select id="enduit-format-ciment" value={cimentIdx} onChange={(e) => setCimentIdx(Number(e.target.value))}
             className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
             {CIMENT_TYPES.map((c, i) => <option key={i} value={i}>{c.label}</option>)}
           </select>
@@ -1124,8 +1128,8 @@ function FondationsCalc({ onCalc, territory, onSave }: CalcProps) {
       <div className="grid grid-cols-2 gap-3">
         <NumInput label="Longueur totale" value={longueur} onChange={setLongueur} unit="m" />
         <div>
-          <label className="block text-sm text-slate-400 mb-1">Largeur de semelle</label>
-          <select value={largeur} onChange={(e) => setLargeur(e.target.value)}
+          <label htmlFor="fondations-largeur-semelle" className="block text-sm text-slate-400 mb-1">Largeur de semelle</label>
+          <select id="fondations-largeur-semelle" value={largeur} onChange={(e) => setLargeur(e.target.value)}
             className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
             <option value="25">25 cm</option>
             <option value="30">30 cm (standard)</option>
@@ -1135,8 +1139,8 @@ function FondationsCalc({ onCalc, territory, onSave }: CalcProps) {
           </select>
         </div>
         <div>
-          <label className="block text-sm text-slate-400 mb-1">Profondeur (hauteur)</label>
-          <select value={profondeur} onChange={(e) => setProfondeur(e.target.value)}
+          <label htmlFor="fondations-profondeur" className="block text-sm text-slate-400 mb-1">Profondeur (hauteur)</label>
+          <select id="fondations-profondeur" value={profondeur} onChange={(e) => setProfondeur(e.target.value)}
             className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
             <option value="30">30 cm</option>
             <option value="40">40 cm</option>
@@ -1146,8 +1150,8 @@ function FondationsCalc({ onCalc, territory, onSave }: CalcProps) {
           </select>
         </div>
         <div>
-          <label className="block text-sm text-slate-400 mb-1">Format sac ciment</label>
-          <select value={cimentIdx} onChange={(e) => setCimentIdx(Number(e.target.value))}
+          <label htmlFor="fondations-format-ciment" className="block text-sm text-slate-400 mb-1">Format sac ciment</label>
+          <select id="fondations-format-ciment" value={cimentIdx} onChange={(e) => setCimentIdx(Number(e.target.value))}
             className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
             {CIMENT_TYPES.map((c, i) => <option key={i} value={i}>{c.label}</option>)}
           </select>
@@ -1225,7 +1229,7 @@ function ChapeCalc({ onCalc, territory, onSave }: CalcProps) {
         <NumInput label="Longueur" value={longueur} onChange={setLongueur} unit="m" />
         <NumInput label="Largeur" value={largeur} onChange={setLargeur} unit="m" />
         <div className="col-span-2">
-          <label className="block text-sm text-slate-400 mb-2">Épaisseur : <span className="text-white font-bold">{epaisseur} cm</span></label>
+          <span className="block text-sm text-slate-400 mb-2">Épaisseur : <span className="text-white font-bold">{epaisseur} cm</span></span>
           <div className="flex gap-2">
             {[3, 4, 5, 6, 8].map((ep) => (
               <button key={ep} onClick={() => setEpaisseur(String(ep))}
@@ -1236,8 +1240,8 @@ function ChapeCalc({ onCalc, territory, onSave }: CalcProps) {
           </div>
         </div>
         <div className="col-span-2">
-          <label className="block text-sm text-slate-400 mb-1">Format sac ciment</label>
-          <select value={cimentIdx} onChange={(e) => setCimentIdx(Number(e.target.value))}
+          <label htmlFor="chape-format-ciment" className="block text-sm text-slate-400 mb-1">Format sac ciment</label>
+          <select id="chape-format-ciment" value={cimentIdx} onChange={(e) => setCimentIdx(Number(e.target.value))}
             className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
             {CIMENT_TYPES.map((c, i) => <option key={i} value={i}>{c.label}</option>)}
           </select>
@@ -1315,7 +1319,7 @@ function TolesCalc({ onCalc, territory, onSave }: CalcProps) {
         <NumInput label="Longueur rampant" value={longueur} onChange={setLongueur} unit="m" />
         <NumInput label="Largeur rampant" value={largeur} onChange={setLargeur} unit="m" />
         <div className="col-span-2">
-          <label className="block text-sm text-slate-400 mb-2">Longueur des tôles</label>
+          <span className="block text-sm text-slate-400 mb-2">Longueur des tôles</span>
           <div className="grid grid-cols-3 gap-2">
             {['2', '3', '4'].map((l) => (
               <button key={l} onClick={() => setLongTole(l)}
@@ -1389,8 +1393,8 @@ function TerrassementCalc({ onCalc, territory: _territory, onSave }: CalcProps) 
         <NumInput label="Largeur" value={largeur} onChange={setLargeur} unit="m" />
         <NumInput label="Profondeur / Hauteur" value={profondeur} onChange={setProfondeur} unit="m" />
         <div>
-          <label className="block text-sm text-slate-400 mb-1">Type de sol</label>
-          <select value={compactage} onChange={(e) => setCompactage(e.target.value)}
+          <label htmlFor="terrassement-type-sol" className="block text-sm text-slate-400 mb-1">Type de sol</label>
+          <select id="terrassement-type-sol" value={compactage} onChange={(e) => setCompactage(e.target.value)}
             className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
             <option value="1.10">Sable (×1.10)</option>
             <option value="1.20">Terre légère (×1.20)</option>
@@ -1466,8 +1470,8 @@ function ClotureCalc({ onCalc, territory, onSave }: CalcProps) {
       <div className="grid grid-cols-2 gap-3">
         <NumInput label="Longueur totale" value={longueur} onChange={setLongueur} unit="m" />
         <div>
-          <label className="block text-sm text-slate-400 mb-1">Hauteur</label>
-          <select value={hauteur} onChange={(e) => setHauteur(e.target.value)}
+          <label htmlFor="cloture-hauteur" className="block text-sm text-slate-400 mb-1">Hauteur</label>
+          <select id="cloture-hauteur" value={hauteur} onChange={(e) => setHauteur(e.target.value)}
             className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
             <option value="1.0">1.0 m</option>
             <option value="1.2">1.2 m</option>
@@ -1477,7 +1481,7 @@ function ClotureCalc({ onCalc, territory, onSave }: CalcProps) {
           </select>
         </div>
         <div className="col-span-2">
-          <label className="block text-sm text-slate-400 mb-2">Type de clôture</label>
+          <span className="block text-sm text-slate-400 mb-2">Type de clôture</span>
           <div className="grid grid-cols-3 gap-2">
             {([['grillage', '🥅 Grillage'], ['beton', '🧱 Maçonnée'], ['bois', '🪵 Palissade']] as const).map(([t, label]) => (
               <button key={t} onClick={() => setType(t)}
@@ -1643,7 +1647,7 @@ function ElectriciteCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
         <NumInput label="Puissance" value={puissance} onChange={setPuissance} unit="W" />
         <NumInput label="Longueur du câble" value={longueur} onChange={setLongueur} unit="m" />
         <div className="col-span-2">
-          <label className="block text-sm text-slate-400 mb-2">Type d'alimentation</label>
+          <span className="block text-sm text-slate-400 mb-2">Type d'alimentation</span>
           <div className="grid grid-cols-2 gap-2">
             {([['230', '🔌 Monophasé 230 V'], ['400', '⚡ Triphasé 400 V']] as const).map(([v, label]) => (
               <button key={v} onClick={() => setTension(v)}
@@ -1730,7 +1734,7 @@ function PlomberieCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
         <NumInput label="Nombre de coudes" value={nbCoudes} onChange={setNbCoudes} placeholder="0" unit="pcs" />
         <NumInput label="Nombre de Tés" value={nbTees} onChange={setNbTees} placeholder="0" unit="pcs" />
         <div className="col-span-2">
-          <label className="block text-sm text-slate-400 mb-2">Type de réseau</label>
+          <span className="block text-sm text-slate-400 mb-2">Type de réseau</span>
           <div className="grid grid-cols-3 gap-2">
             {([['froide', '🔵 Eau froide'], ['chaude', '🔴 Eau chaude'], ['evacuation', '⬇️ Évacuation']] as const).map(([u, label]) => (
               <button key={u} onClick={() => setUsage(u)}
@@ -1810,8 +1814,8 @@ function IsolationCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
       <div className="grid grid-cols-2 gap-3">
         <NumInput label="Surface à isoler" value={surface} onChange={setSurface} unit="m²" />
         <div>
-          <label className="block text-sm text-slate-400 mb-1">Épaisseur</label>
-          <select value={epaisseur} onChange={(e) => setEpaisseur(e.target.value)}
+          <label htmlFor="isolation-epaisseur" className="block text-sm text-slate-400 mb-1">Épaisseur</label>
+          <select id="isolation-epaisseur" value={epaisseur} onChange={(e) => setEpaisseur(e.target.value)}
             className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
             <option value="40">40 mm (R ≈ 1,1)</option>
             <option value="60">60 mm (R ≈ 1,7)</option>
@@ -1823,7 +1827,7 @@ function IsolationCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
           </select>
         </div>
         <div className="col-span-2">
-          <label className="block text-sm text-slate-400 mb-2">Type d'isolant</label>
+          <span className="block text-sm text-slate-400 mb-2">Type d'isolant</span>
           <div className="grid grid-cols-1 gap-1.5">
             {ISOLATION_TYPES.map((t, i) => (
               <button key={i} onClick={() => setTypeIdx(i)}
@@ -1915,8 +1919,8 @@ function CharpentCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
         <NumInput label="Longueur bâtiment" value={longueur} onChange={setLongueur} unit="m" />
         <NumInput label="Largeur bâtiment" value={largeur} onChange={setLargeur} unit="m" />
         <div>
-          <label className="block text-sm text-slate-400 mb-1">Pente de toit</label>
-          <select value={pente} onChange={(e) => setPente(e.target.value)}
+          <label htmlFor="charpente-pente" className="block text-sm text-slate-400 mb-1">Pente de toit</label>
+          <select id="charpente-pente" value={pente} onChange={(e) => setPente(e.target.value)}
             className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
             <option value="15">15% — très faible</option>
             <option value="20">20% — faible</option>
@@ -1927,8 +1931,8 @@ function CharpentCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
           </select>
         </div>
         <div>
-          <label className="block text-sm text-slate-400 mb-1">Espacement chevrons</label>
-          <select value={espacement} onChange={(e) => setEspacement(e.target.value)}
+          <label htmlFor="charpente-espacement" className="block text-sm text-slate-400 mb-1">Espacement chevrons</label>
+          <select id="charpente-espacement" value={espacement} onChange={(e) => setEspacement(e.target.value)}
             className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
             <option value="40">40 cm</option>
             <option value="50">50 cm</option>
@@ -1937,7 +1941,7 @@ function CharpentCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
           </select>
         </div>
         <div className="col-span-2">
-          <label className="block text-sm text-slate-400 mb-2">Section des chevrons</label>
+          <span className="block text-sm text-slate-400 mb-2">Section des chevrons</span>
           <div className="grid grid-cols-2 gap-2">
             {(['60x80', '60x120', '80x120', '100x150'] as const).map((s) => (
               <button key={s} onClick={() => setSection(s)}
@@ -2016,8 +2020,8 @@ function PlatrierieCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
       <div className="grid grid-cols-2 gap-3">
         <NumInput label="Surface cloison" value={surface} onChange={setSurface} unit="m²" />
         <div>
-          <label className="block text-sm text-slate-400 mb-1">Hauteur sous plafond</label>
-          <select value={hauteur} onChange={(e) => setHauteur(e.target.value)}
+          <label htmlFor="platrerie-hauteur" className="block text-sm text-slate-400 mb-1">Hauteur sous plafond</label>
+          <select id="platrerie-hauteur" value={hauteur} onChange={(e) => setHauteur(e.target.value)}
             className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
             <option value="2.3">2,30 m</option>
             <option value="2.5">2,50 m (standard)</option>
@@ -2026,7 +2030,7 @@ function PlatrierieCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
           </select>
         </div>
         <div className="col-span-2">
-          <label className="block text-sm text-slate-400 mb-2">Type de plaque</label>
+          <span className="block text-sm text-slate-400 mb-2">Type de plaque</span>
           <div className="grid grid-cols-3 gap-2">
             {([['ba13', '🟦 BA13 Standard'], ['ba15', '🔵 BA15 Humide'], ['ba18', '🔴 BA18 Feu']] as const).map(([t, label]) => (
               <button key={t} onClick={() => setType(t)}
@@ -2106,7 +2110,7 @@ function ParquetCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
         <NumInput label="Surface de la pièce" value={surface} onChange={setSurface} unit="m²" />
         <div className="col-span-1" />
         <div className="col-span-2">
-          <label className="block text-sm text-slate-400 mb-2">Type de parquet</label>
+          <span className="block text-sm text-slate-400 mb-2">Type de parquet</span>
           <div className="grid grid-cols-3 gap-2">
             {([['flottant', '🪵 Flottant'], ['colle', '🪵 Collé'], ['massif', '🌲 Massif']] as const).map(([t, label]) => (
               <button key={t} onClick={() => setType(t)}
@@ -2117,7 +2121,7 @@ function ParquetCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
           </div>
         </div>
         <div className="col-span-2">
-          <label className="block text-sm text-slate-400 mb-2">Mode de pose</label>
+          <span className="block text-sm text-slate-400 mb-2">Mode de pose</span>
           <div className="grid grid-cols-3 gap-2">
             {([['droit', '↔️ Droit (+10%)'], ['biais', '↗️ Biais (+15%)'], ['chevron', '🔀 Chevron (+20%)']] as const).map(([p, label]) => (
               <button key={p} onClick={() => setPose(p)}
@@ -2199,14 +2203,14 @@ function GoutiereCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
         <NumInput label="Longueur de gouttière" value={longueur} onChange={setLongueur} unit="m" />
         <NumInput label="Hauteur façade" value={hauteurFacade} onChange={setHauteurFacade} unit="m" />
         <div>
-          <label className="block text-sm text-slate-400 mb-1">Nb de descentes</label>
-          <select value={nbDescentes} onChange={(e) => setNbDescentes(e.target.value)}
+          <label htmlFor="goutiere-nb-descentes" className="block text-sm text-slate-400 mb-1">Nb de descentes</label>
+          <select id="goutiere-nb-descentes" value={nbDescentes} onChange={(e) => setNbDescentes(e.target.value)}
             className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
             {[1,2,3,4,5,6].map((n) => <option key={n} value={n}>{n} descente{n > 1 ? 's' : ''}</option>)}
           </select>
         </div>
         <div>
-          <label className="block text-sm text-slate-400 mb-1">Matériau</label>
+          <span className="block text-sm text-slate-400 mb-1">Matériau</span>
           <div className="grid grid-cols-1 gap-1.5">
             {([['pvc', '⬜ PVC'], ['zinc', '⬛ Zinc'], ['alu', '🔘 Alu']] as const).map(([t, label]) => (
               <button key={t} onClick={() => setType(t)}
@@ -2303,8 +2307,8 @@ function MenuiserieCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="block text-sm text-slate-400 mb-1">Nb de portes ext.</label>
-          <select value={nbPortes} onChange={(e) => setNbPortes(e.target.value)}
+          <label htmlFor="menuiserie-nb-portes" className="block text-sm text-slate-400 mb-1">Nb de portes ext.</label>
+          <select id="menuiserie-nb-portes" value={nbPortes} onChange={(e) => setNbPortes(e.target.value)}
             className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
             {[0,1,2,3,4].map((n) => <option key={n} value={n}>{n} porte{n > 1 ? 's' : ''}</option>)}
           </select>
@@ -2980,10 +2984,11 @@ function UserSuggestionForm({ territory, currentCalc }: { territory: TerritoryCo
 
           {/* Message textarea */}
           <div>
-            <label className="block text-xs text-slate-400 mb-1.5">
+            <label htmlFor="suggestion-message" className="block text-xs text-slate-400 mb-1.5">
               Votre suggestion <span className="text-slate-500">({message.trim().length}/500 caractères, min 10)</span>
             </label>
             <textarea
+              id="suggestion-message"
               value={message}
               onChange={(e) => setMessage(e.target.value.slice(0, 500))}
               rows={4}

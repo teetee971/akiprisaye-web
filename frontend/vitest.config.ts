@@ -129,6 +129,16 @@ export default defineConfig({
       abs('./src/hooks/__tests__/useSearchHistory.test.ts'),
       // Auth UX flow — login spinner, post-OAuth redirect, header avatar, social buttons hide
       abs('./src/test/auth.login.test.tsx'),
+      // Auth callback route — /auth/callback OAuth flow, flag management, anti-loop, timeout
+      abs('./src/test/authCallback.test.tsx'),
+      // Auth debug panel — visibility, state display, event bus, collapse/expand
+      abs('./src/test/authDebugPanel.test.tsx'),
+      // Auth modules — pure unit tests for all 6 src/auth/*.ts modules
+      abs('./src/test/auth.modules.test.ts'),
+      // CI regression guards — prevents known build/lint failures from recurring
+      abs('./src/test/ciRegression.test.ts'),
+      // Monitoring system — storageBuffer, errorTracker, eventLogger, systemSnapshot
+      abs('./src/test/monitoring.test.ts'),
     ],
 
     exclude: ['**/node_modules/**', '**/.git/**', '**/dist/**', '**/coverage/**'],

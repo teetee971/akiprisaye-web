@@ -832,11 +832,12 @@ export default function EvaluationMagasins() {
 
               <div className="p-5 space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-amber-900 mb-1">
-                    Nom du magasin
-                  </label>
+                  <label htmlFor="eval-nom-magasin" className="block text-sm font-medium text-amber-900 mb-1">
+                      Nom du magasin
+                    </label>
                   <input
-                    type="text"
+                      id="eval-nom-magasin"
+                      type="text"
                     value={form.storeName}
                     onChange={(e) => setForm({ ...form, storeName: e.target.value })}
                     placeholder="Ex: Carrefour Jarry"
@@ -847,10 +848,11 @@ export default function EvaluationMagasins() {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-sm font-medium text-amber-900 mb-1">
+                    <label htmlFor="eval-territoire" className="block text-sm font-medium text-amber-900 mb-1">
                       Territoire
                     </label>
                     <select
+                      id="eval-territoire"
                       value={form.territory}
                       onChange={(e) => setForm({ ...form, territory: e.target.value })}
                       className="w-full border border-amber-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white/80"
@@ -861,10 +863,11 @@ export default function EvaluationMagasins() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-amber-900 mb-1">
+                    <label htmlFor="eval-secteur" className="block text-sm font-medium text-amber-900 mb-1">
                       Secteur
                     </label>
                     <select
+                      id="eval-secteur"
                       value={form.sector}
                       onChange={(e) => setForm({ ...form, sector: e.target.value })}
                       className="w-full border border-amber-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white/80"
@@ -878,9 +881,9 @@ export default function EvaluationMagasins() {
 
                 {(['service', 'proprete', 'disponibilite'] as const).map((criterion) => (
                   <div key={criterion}>
-                    <label className="block text-sm font-medium text-amber-900 mb-1">
+                    <span className="block text-sm font-medium text-amber-900 mb-1">
                       {criterion === 'proprete' ? 'Propreté' : criterion === 'disponibilite' ? 'Disponibilité produits' : 'Qualité de service'}
-                    </label>
+                    </span>
                     <div className="flex gap-1">
                       {[1, 2, 3, 4, 5].map((star) => (
                         <button
@@ -899,11 +902,12 @@ export default function EvaluationMagasins() {
                 ))}
 
                 <div>
-                  <label className="block text-sm font-medium text-amber-900 mb-1">
-                    Commentaire (optionnel)
-                  </label>
+                  <label htmlFor="eval-commentaire" className="block text-sm font-medium text-amber-900 mb-1">
+                      Commentaire (optionnel)
+                    </label>
                   <textarea
-                    value={form.comment}
+                      id="eval-commentaire"
+                      value={form.comment}
                     onChange={(e) => setForm({ ...form, comment: e.target.value })}
                     placeholder="Décrivez votre expérience..."
                     rows={3}

@@ -250,7 +250,7 @@ function CommerceCard({ c }: { c: Commerce }) {
     <div className="bg-slate-800/60 border border-slate-700/60 rounded-2xl overflow-hidden hover:border-orange-500/40 transition-all">
       {/* Image */}
       <div className="relative h-36 overflow-hidden">
-        <img src={c.image} alt={c.nom} className="w-full h-full object-cover" loading="lazy" />
+        <img src={c.image} alt={c.nom} width={400} height={144} className="w-full h-full object-cover" loading="lazy" />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent" />
         <div className="absolute bottom-2 left-3 right-3 flex items-end justify-between">
           <span className="text-white font-bold text-sm leading-tight drop-shadow">{c.nom}</span>

@@ -7,6 +7,8 @@ import { FIREBASE_UNAVAILABLE_MESSAGE, getAuthErrorMessage } from "@/lib/authMes
 import SocialLoginButtons from "@/components/SocialLoginButtons";
 import { useAuth } from "@/context/AuthContext";
 import { logDebug } from "@/utils/logger";
+import { getRedirectPendingFlag } from "@/auth/authStorage";
+import { isAuthBusy } from "@/auth/authStateMachine";
 
 import { SEOHead } from '../components/ui/SEOHead';
 type AuthMode = "login" | "signup";
@@ -19,7 +21,7 @@ export default function Login() {
   const [busyAction, setBusyAction] = useState<"email" | "google" | null>(null);
   const [verificationSent, setVerificationSent] = useState(false);
 
-  const { signInEmailPassword, signUpEmailPassword, user, loading: authLoading } = useAuth();
+  const { signInEmailPassword, signUpEmailPassword, user, loading: authLoading, authFlowState } = useAuth();
 
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -94,7 +96,11 @@ export default function Login() {
   // While Firebase auth is initialising (or settling an OAuth redirect result),
   // show a spinner instead of the login form. This prevents the form from
   // flashing briefly before the automatic post-OAuth redirect fires.
-  if (authLoading) {
+  // Also show the spinner if a redirect flow was just initiated (pending flag),
+  // which means the user will be navigated to /auth/callback momentarily.
+  const redirectPending = Boolean(getRedirectPendingFlag());
+
+  if (authLoading || isAuthBusy(authFlowState) || redirectPending) {
     return (
       <>
         <SEOHead

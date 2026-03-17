@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Scale, BarChart2, Wrench, Info, Heart, MessageCircle, Users, Briefcase, Search, Clock } from 'lucide-react';
 import LiveOnlineBadge from '../analytics/LiveOnlineBadge';
@@ -15,6 +16,53 @@ export default function Footer() {
   const buildInfo = BUILD_DATE
     ? `${BUILD_ENV} · ${BUILD_DATE} · ${BUILD_SHA}`
     : `${BUILD_ENV} · ${BUILD_SHA}`;
+
+  const [debugActive, setDebugActive] = useState(false);
+  const tapCount = useRef(0);
+  const tapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    try {
+      setDebugActive(sessionStorage.getItem('auth:debug') === '1');
+    } catch {
+      // sessionStorage may be unavailable
+    }
+    return () => {
+      if (tapTimer.current) clearTimeout(tapTimer.current);
+    };
+  }, []);
+
+  /**
+   * Secret triple-tap activator — tap the copyright line 3 times within 1.5 s
+   * to toggle the auth debug panel without opening DevTools.
+   * Useful on mobile Chrome / Samsung Internet.
+   */
+  const handleDebugTap = () => {
+    tapCount.current += 1;
+    if (tapTimer.current) clearTimeout(tapTimer.current);
+
+    if (tapCount.current >= 3) {
+      tapCount.current = 0;
+      try {
+        const next = sessionStorage.getItem('auth:debug') !== '1';
+        if (next) {
+          sessionStorage.setItem('auth:debug', '1');
+        } else {
+          sessionStorage.removeItem('auth:debug');
+        }
+        setDebugActive(next);
+        window.location.reload();
+      } catch {
+        // sessionStorage unavailable — ignore
+      }
+      return;
+    }
+
+    tapTimer.current = setTimeout(() => {
+      tapCount.current = 0;
+    }, 1500);
+  };
+
 
   return (
     <footer id="footer" className="border-t border-slate-800 bg-slate-950">
@@ -86,7 +134,26 @@ export default function Footer() {
       {/* ── Bottom bar ── */}
       <div className="border-t border-slate-800/60 py-4">
         <div className="mx-auto max-w-6xl px-4 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-600">
-          <p>© {new Date().getFullYear()} A KI PRI SA YÉ — Observer, pas vendre. Données citoyennes pour les territoires ultramarins.</p>
+          <button
+            type="button"
+            onClick={handleDebugTap}
+            title={debugActive ? 'Auth debug actif — triple-tap pour désactiver' : undefined}
+            style={{
+              cursor: 'default',
+              WebkitTapHighlightColor: 'transparent',
+              background: 'none',
+              border: 'none',
+              color: 'inherit',
+              font: 'inherit',
+              padding: 0,
+              textAlign: 'left',
+            }}
+          >
+            © {new Date().getFullYear()} A KI PRI SA YÉ — Observer, pas vendre. Données citoyennes pour les territoires ultramarins.
+            {debugActive && (
+              <span className="ml-1 text-xs text-orange-400" aria-label="Auth debug activé">🔒</span>
+            )}
+          </button>
           <div className="flex gap-3 items-center">
             <LiveOnlineBadge />
             <Link to="/mentions-legales" className="hover:text-slate-400 transition-colors">Mentions légales</Link>

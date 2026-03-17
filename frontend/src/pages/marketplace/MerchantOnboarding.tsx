@@ -305,8 +305,10 @@ export default function MerchantOnboarding() {
                 </h2>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">Raison sociale *</label>
+                    <label htmlFor="mo-raison-sociale" className="block text-sm font-medium text-gray-300 mb-1">Raison sociale *</label>
                     <input
+                      
+                      id="mo-raison-sociale"
                       type="text"
                       value={form.nomLegal}
                       onChange={(e) => set('nomLegal', e.target.value)}
@@ -317,8 +319,10 @@ export default function MerchantOnboarding() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">Nom commercial *</label>
+                    <label htmlFor="mo-nom-commercial" className="block text-sm font-medium text-gray-300 mb-1">Nom commercial *</label>
                     <input
+                      
+                      id="mo-nom-commercial"
                       type="text"
                       value={form.nomCommercial}
                       onChange={(e) => set('nomCommercial', e.target.value)}
@@ -329,8 +333,10 @@ export default function MerchantOnboarding() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">Numéro SIRET * (14 chiffres)</label>
+                    <label htmlFor="mo-siret" className="block text-sm font-medium text-gray-300 mb-1">Numéro SIRET * (14 chiffres)</label>
                     <input
+                      
+                      id="mo-siret"
                       type="text"
                       value={formatSiret(form.siret)}
                       onChange={(e) => handleSiretChange(e.target.value)}
@@ -347,8 +353,10 @@ export default function MerchantOnboarding() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">Numéro TVA intracommunautaire *</label>
+                    <label htmlFor="mo-tva" className="block text-sm font-medium text-gray-300 mb-1">Numéro TVA intracommunautaire *</label>
                     <input
+                      
+                      id="mo-tva"
                       type="text"
                       value={form.tva}
                       onChange={(e) => set('tva', e.target.value.toUpperCase())}
@@ -359,8 +367,10 @@ export default function MerchantOnboarding() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">Type d'enseigne *</label>
+                    <label htmlFor="mo-type-enseigne" className="block text-sm font-medium text-gray-300 mb-1">Type d'enseigne *</label>
                     <select
+                      
+                      id="mo-type-enseigne"
                       value={form.merchantType}
                       onChange={(e) => set('merchantType', e.target.value as MerchantType)}
                       className="w-full bg-slate-800 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500"
@@ -372,7 +382,7 @@ export default function MerchantOnboarding() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Catégories de produits * (au moins une)</label>
+                    <span className="block text-sm font-medium text-gray-300 mb-2">Catégories de produits * (au moins une)</span>
                     <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto">
                       {(Object.entries(CATEGORY_LABELS) as [ProductCategory, string][]).map(([cat, label]) => (
                         <label key={cat} className="flex items-center gap-2 text-sm text-gray-300 cursor-pointer">
@@ -401,8 +411,10 @@ export default function MerchantOnboarding() {
                 </h2>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">Adresse du siège social *</label>
+                    <label htmlFor="mo-adresse-siege" className="block text-sm font-medium text-gray-300 mb-1">Adresse du siège social *</label>
                     <input
+                      
+                      id="mo-adresse-siege"
                       type="text"
                       value={form.adresseSiege}
                       onChange={(e) => set('adresseSiege', e.target.value)}
@@ -414,9 +426,11 @@ export default function MerchantOnboarding() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-1">Code postal *</label>
+                      <label htmlFor="mo-code-postal" className="block text-sm font-medium text-gray-300 mb-1">Code postal *</label>
                       <input
-                        type="text"
+                        
+                      id="mo-code-postal"
+                      type="text"
                         value={form.codePostal}
                         onChange={(e) => set('codePostal', e.target.value)}
                         placeholder="97100"
@@ -425,9 +439,11 @@ export default function MerchantOnboarding() {
                       <FieldError msg={errors.codePostal} />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-1">Ville *</label>
+                      <label htmlFor="mo-ville" className="block text-sm font-medium text-gray-300 mb-1">Ville *</label>
                       <input
-                        type="text"
+                        
+                      id="mo-ville"
+                      type="text"
                         value={form.ville}
                         onChange={(e) => set('ville', e.target.value)}
                         placeholder="Basse-Terre"
@@ -438,8 +454,10 @@ export default function MerchantOnboarding() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">Territoire *</label>
+                    <label htmlFor="mo-territoire" className="block text-sm font-medium text-gray-300 mb-1">Territoire *</label>
                     <select
+                      
+                      id="mo-territoire"
                       value={form.territoire}
                       onChange={(e) => set('territoire', e.target.value as TerritoryCode)}
                       className="w-full bg-slate-800 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500"
@@ -451,11 +469,10 @@ export default function MerchantOnboarding() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">
-                      <Mail className="inline w-4 h-4 mr-1" />
-                      Email de contact *
-                    </label>
+                    <label htmlFor="mo-email" className="block text-sm font-medium text-gray-300 mb-1">Email de contact *</label>
                     <input
+                      
+                      id="mo-email"
                       type="email"
                       value={form.emailContact}
                       onChange={(e) => set('emailContact', e.target.value)}
@@ -466,11 +483,13 @@ export default function MerchantOnboarding() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">
-                      <Phone className="inline w-4 h-4 mr-1" />
+                    <label htmlFor="mo-telephone" className="block text-sm font-medium text-gray-300 mb-1">
+                      Téléphone *
                       Téléphone *
                     </label>
                     <input
+                      
+                      id="mo-telephone"
                       type="tel"
                       value={form.telephone}
                       onChange={(e) => set('telephone', e.target.value)}
@@ -481,11 +500,13 @@ export default function MerchantOnboarding() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">
-                      <Globe className="inline w-4 h-4 mr-1" />
+                    <label htmlFor="mo-site-web" className="block text-sm font-medium text-gray-300 mb-1">
+                      Site web (optionnel)
                       Site web (optionnel)
                     </label>
                     <input
+                      
+                      id="mo-site-web"
                       type="url"
                       value={form.siteWeb}
                       onChange={(e) => set('siteWeb', e.target.value)}
@@ -509,8 +530,10 @@ export default function MerchantOnboarding() {
                 </p>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">Nom du magasin *</label>
+                    <label htmlFor="mo-nom-magasin" className="block text-sm font-medium text-gray-300 mb-1">Nom du magasin *</label>
                     <input
+                      
+                      id="mo-nom-magasin"
                       type="text"
                       value={form.premierMagasinNom}
                       onChange={(e) => set('premierMagasinNom', e.target.value)}
@@ -521,8 +544,10 @@ export default function MerchantOnboarding() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">Adresse du magasin *</label>
+                    <label htmlFor="mo-adresse-magasin" className="block text-sm font-medium text-gray-300 mb-1">Adresse du magasin *</label>
                     <input
+                      
+                      id="mo-adresse-magasin"
                       type="text"
                       value={form.premierMagasinAdresse}
                       onChange={(e) => set('premierMagasinAdresse', e.target.value)}
@@ -533,8 +558,10 @@ export default function MerchantOnboarding() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">Ville *</label>
+                    <label htmlFor="mo-ville-magasin" className="block text-sm font-medium text-gray-300 mb-1">Ville *</label>
                     <input
+                      
+                      id="mo-ville-magasin"
                       type="text"
                       value={form.premierMagasinVille}
                       onChange={(e) => set('premierMagasinVille', e.target.value)}
@@ -546,9 +573,11 @@ export default function MerchantOnboarding() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-1">Latitude GPS *</label>
+                      <label htmlFor="mo-latitude" className="block text-sm font-medium text-gray-300 mb-1">Latitude GPS *</label>
                       <input
-                        type="number"
+                        
+                      id="mo-latitude"
+                      type="number"
                         step="0.000001"
                         value={form.premierMagasinLatitude || ''}
                         onChange={(e) => set('premierMagasinLatitude', parseFloat(e.target.value) || 0)}
@@ -558,9 +587,11 @@ export default function MerchantOnboarding() {
                       <FieldError msg={errors.premierMagasinLatitude} />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-1">Longitude GPS *</label>
+                      <label htmlFor="mo-longitude" className="block text-sm font-medium text-gray-300 mb-1">Longitude GPS *</label>
                       <input
-                        type="number"
+                        
+                      id="mo-longitude"
+                      type="number"
                         step="0.000001"
                         value={form.premierMagasinLongitude || ''}
                         onChange={(e) => set('premierMagasinLongitude', parseFloat(e.target.value) || 0)}
@@ -635,7 +666,7 @@ export default function MerchantOnboarding() {
                 </div>
 
                 <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Facturation</label>
+                  <span className="block text-sm font-medium text-gray-300 mb-2">Facturation</span>
                   <div className="flex gap-3">
                     <label className={`flex-1 p-3 rounded-xl border cursor-pointer text-center text-sm font-medium transition-all ${
                       form.billingCycle === 'monthly' ? 'border-blue-500 bg-blue-900/30 text-white' : 'border-white/15 text-gray-400'

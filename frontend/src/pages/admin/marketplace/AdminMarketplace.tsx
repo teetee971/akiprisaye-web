@@ -91,8 +91,9 @@ function ActionModal({
 
         {requiresReason && (
           <div className="mb-4">
-            <label className="block text-sm text-gray-300 mb-1">Motif * (obligatoire)</label>
+            <label htmlFor="marketplace-motif" className="block text-sm text-gray-300 mb-1">Motif * (obligatoire)</label>
             <textarea
+              id="marketplace-motif"
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               placeholder="Décrivez la raison de cette décision…"

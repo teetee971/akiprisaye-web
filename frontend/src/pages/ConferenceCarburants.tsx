@@ -103,7 +103,7 @@ function WikiImg({ src, alt, caption, credit, creditUrl, height = 170 }: {
   if (err) return null;
   return (
     <figure style={{ margin: 0, borderRadius: 10, overflow: 'hidden', border: '1px solid rgba(148,163,184,0.12)' }}>
-      <img src={src} alt={alt} loading="lazy" onError={() => setErr(true)}
+      <img src={src} alt={alt} width={600} height={height} loading="lazy" onError={() => setErr(true)}
         style={{ width: '100%', height, objectFit: 'cover', display: 'block' }} />
       <figcaption style={{ fontSize: '0.6rem', color: '#64748b', padding: '0.25rem 0.6rem', background: 'rgba(0,0,0,0.5)', lineHeight: 1.4 }}>
         {caption}{' '}

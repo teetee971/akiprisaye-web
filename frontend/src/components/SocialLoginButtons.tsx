@@ -74,9 +74,9 @@ export default function SocialLoginButtons({
   showDivider = true,
 }: SocialLoginButtonsProps) {
   const {
-    signInGooglePopup,    signInGoogleRedirect,
-    signInFacebookPopup, signInFacebookRedirect,
-    signInApplePopup,    signInAppleRedirect,
+    signInGooglePopup,
+    signInFacebookPopup,
+    signInApplePopup,
     user,
   } = useAuth();
   const navigate = useNavigate();
@@ -99,22 +99,17 @@ export default function SocialLoginButtons({
   }
 
   const handleSocial = async (provider: Provider) => {
-    logDebug('[AUTH] start google sign-in', { provider });
+    logDebug('[AUTH] start social sign-in', { provider });
     setBusy(provider);
 
-    // On mobile, skip the popup attempt entirely — Chrome blocks popups by default.
-    // The redirect flow navigates the whole page, so we just kick it off and return.
+    // On mobile, use the redirect flow — Chrome blocks popups by default.
+    // Instead of calling signInWithRedirect() here, we navigate to /auth/callback
+    // which owns the full redirect lifecycle (flag management, resolution, toast).
     if (isMobileBrowser()) {
-      logDebug('[AUTH] using redirect', { provider });
-      try {
-        if (provider === 'google')   await signInGoogleRedirect();
-        if (provider === 'facebook') await signInFacebookRedirect();
-        if (provider === 'apple')    await signInAppleRedirect();
-      } catch (err: unknown) {
-        onError?.(getSocialErrorMessage(err));
-        setBusy(null);
-      }
-      // Page will navigate away — no need to clear busy state.
+      logDebug('[AUTH] using redirect via /auth/callback', { provider });
+      const callbackUrl = `/auth/callback?provider=${provider}&next=${encodeURIComponent(redirectTo)}`;
+      navigate(callbackUrl, { replace: false });
+      // navigate() is synchronous in React Router — no need to handle busy state.
       return;
     }
 
@@ -134,15 +129,10 @@ export default function SocialLoginButtons({
           ? String((err as { code: string }).code)
           : '';
       if (code === 'auth/popup-blocked') {
-        // Silently fall back to redirect — page will navigate away.
-        try {
-          if (provider === 'google')   await signInGoogleRedirect();
-          if (provider === 'facebook') await signInFacebookRedirect();
-          if (provider === 'apple')    await signInAppleRedirect();
-        } catch (redirectErr: unknown) {
-          onError?.(getSocialErrorMessage(redirectErr));
-          setBusy(null);
-        }
+        // Silently fall back to redirect via /auth/callback — page will navigate away.
+        const callbackUrl = `/auth/callback?provider=${provider}&next=${encodeURIComponent(redirectTo)}`;
+        navigate(callbackUrl, { replace: false });
+        setBusy(null);
         return;
       }
       setPendingRedirect(null);

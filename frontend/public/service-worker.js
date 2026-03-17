@@ -1,8 +1,15 @@
-const CACHE_NAME = 'akiprisaye-smart-cache-v8';
+const CACHE_NAME = 'akiprisaye-smart-cache-v9';
 const PRICE_DATA_CACHE = 'akiprisaye-price-data-v1';
 const SCOPE_PATHNAME = new URL(self.registration.scope).pathname;
 // Absolute base URL of the SW scope (e.g. "https://teetee971.github.io/akiprisaye-web/")
 const SCOPE_BASE = new URL('./', self.registration.scope).href;
+
+// Critical assets precached at install for instant LCP on first paint
+const PRECACHE_ASSETS = [
+  `${SCOPE_BASE}manifest.webmanifest`,
+  `${SCOPE_BASE}logo-akiprisaye.svg`,
+  `${SCOPE_BASE}icon-192.png`,
+];
 
 // Offline fallback page HTML (embedded for reliability)
 const OFFLINE_HTML = `<!DOCTYPE html>
@@ -29,7 +36,7 @@ const OFFLINE_HTML = `<!DOCTYPE html>
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll([`${SCOPE_BASE}manifest.webmanifest`])),
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_ASSETS)),
   );
   self.skipWaiting();
 });
@@ -119,6 +126,33 @@ self.addEventListener('fetch', (event) => {
           },
         }),
       ),
+    );
+    return;
+  }
+
+  // Fingerprinted assets (JS/CSS chunks with hash in filename) — cache-first,
+  // then stale-while-revalidate in background for LCP improvement on repeat visits.
+  if (
+    url.origin === self.location.origin &&
+    (url.pathname.includes('/assets/') || url.pathname.match(/\.(js|css|woff2?|png|webp|svg)$/))
+  ) {
+    event.respondWith(
+      (async () => {
+        const cached = await caches.match(request);
+        if (cached) {
+          // Return cached immediately; update in background
+          caches.open(CACHE_NAME).then((cache) =>
+            fetch(request).then((res) => { if (res.ok) cache.put(request, res.clone()); }).catch(() => {}),
+          );
+          return cached;
+        }
+        const live = await fetch(request);
+        if (live.ok) {
+          const cache = await caches.open(CACHE_NAME);
+          cache.put(request, live.clone());
+        }
+        return live;
+      })(),
     );
     return;
   }

@@ -150,8 +150,8 @@ export default function SimulateurBudgetFamilial() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.85rem', marginBottom: '1.5rem' }}>
           {/* Territoire */}
           <div style={{ padding: '0.9rem 1rem', borderRadius: 12, background: 'rgba(15,23,42,0.75)', border: '1px solid rgba(148,163,184,0.12)' }}>
-            <label style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 600, display: 'block', marginBottom: '0.45rem' }}>🗺️ Territoire</label>
-            <select value={terrCode} onChange={e => setTerrCode(e.target.value)}
+            <label htmlFor="budget-territoire" style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 600, display: 'block', marginBottom: '0.45rem' }}>🗺️ Territoire</label>
+            <select id="budget-territoire" value={terrCode} onChange={e => setTerrCode(e.target.value)}
               style={{ width: '100%', padding: '0.45rem 0.6rem', borderRadius: 7, background: 'rgba(30,41,59,0.8)', border: '1px solid rgba(99,102,241,0.4)', color: '#f1f5f9', fontSize: '0.82rem', boxSizing: 'border-box' }}>
               {TERRITORIES.map(t => <option key={t.code} value={t.code}>{t.flag} {t.label}</option>)}
             </select>
@@ -159,7 +159,7 @@ export default function SimulateurBudgetFamilial() {
 
           {/* Adultes */}
           <div style={{ padding: '0.9rem 1rem', borderRadius: 12, background: 'rgba(15,23,42,0.75)', border: '1px solid rgba(148,163,184,0.12)' }}>
-            <label style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 600, display: 'block', marginBottom: '0.45rem' }}>👤 Adultes</label>
+            <span style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 600, display: 'block', marginBottom: '0.45rem' }}>👤 Adultes</span>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <button onClick={() => setAdultes(Math.max(1, adultes - 1))} style={{ width: 28, height: 28, borderRadius: 6, background: 'rgba(99,102,241,0.2)', border: '1px solid rgba(99,102,241,0.4)', color: '#a5b4fc', fontSize: '1rem', cursor: 'pointer' }}>−</button>
               <span style={{ fontSize: '1.1rem', fontWeight: 700, color: '#f1f5f9', minWidth: 24, textAlign: 'center' }}>{adultes}</span>
@@ -169,7 +169,7 @@ export default function SimulateurBudgetFamilial() {
 
           {/* Enfants */}
           <div style={{ padding: '0.9rem 1rem', borderRadius: 12, background: 'rgba(15,23,42,0.75)', border: '1px solid rgba(148,163,184,0.12)' }}>
-            <label style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 600, display: 'block', marginBottom: '0.45rem' }}>👶 Enfants</label>
+            <span style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 600, display: 'block', marginBottom: '0.45rem' }}>👶 Enfants</span>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <button onClick={() => setEnfants(Math.max(0, enfants - 1))} style={{ width: 28, height: 28, borderRadius: 6, background: 'rgba(99,102,241,0.2)', border: '1px solid rgba(99,102,241,0.4)', color: '#a5b4fc', fontSize: '1rem', cursor: 'pointer' }}>−</button>
               <span style={{ fontSize: '1.1rem', fontWeight: 700, color: '#f1f5f9', minWidth: 24, textAlign: 'center' }}>{enfants}</span>
@@ -179,8 +179,8 @@ export default function SimulateurBudgetFamilial() {
 
           {/* Revenu */}
           <div style={{ padding: '0.9rem 1rem', borderRadius: 12, background: 'rgba(15,23,42,0.75)', border: '1px solid rgba(148,163,184,0.12)' }}>
-            <label style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 600, display: 'block', marginBottom: '0.45rem' }}>💰 Revenu net mensuel (€)</label>
-            <input type="number" min={500} max={8000} step={50} value={revenuNet}
+            <label htmlFor="budget-revenu" style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 600, display: 'block', marginBottom: '0.45rem' }}>💰 Revenu net mensuel (€)</label>
+            <input id="budget-revenu" type="number" min={500} max={8000} step={50} value={revenuNet}
               onChange={e => setRevenuNet(Math.max(500, parseInt(e.target.value) || 500))}
               style={{ width: '100%', padding: '0.45rem 0.6rem', borderRadius: 7, background: 'rgba(30,41,59,0.8)', border: '1px solid rgba(99,102,241,0.4)', color: '#f1f5f9', fontSize: '0.95rem', fontWeight: 700, boxSizing: 'border-box' }} />
             <p style={{ margin: '0.2rem 0 0', fontSize: '0.6rem', color: '#475569' }}>SMIC net 2024 : 1 383 €/mois</p>

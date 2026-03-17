@@ -243,7 +243,7 @@ export default function ProductPhotoSearch() {
             {/* Photo preview + detection badge */}
             {preview && (
               <div className="relative rounded-xl overflow-hidden">
-                <img src={preview} alt="Photo analysée" className="w-full max-h-52 object-contain bg-slate-800" />
+                <img src={preview} alt="Photo analysée" width={400} height={208} loading="lazy" className="w-full max-h-52 object-contain bg-slate-800" />
                 {result.barcode ? (
                   <div className="absolute bottom-2 left-2 flex items-center gap-1.5 bg-green-600/90 text-white text-xs px-3 py-1.5 rounded-full font-semibold backdrop-blur">
                     <CheckCircle2 className="w-3.5 h-3.5" />
