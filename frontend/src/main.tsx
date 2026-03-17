@@ -13,6 +13,8 @@ import ErrorBoundary from './components/ErrorBoundary';
 import { safeToText } from './utils/safeToText';
 import { installRuntimeCrashProbe } from './monitoring/runtimeCrashProbe';
 import { initSentry } from './monitoring/sentry';
+import { initErrorTracker } from './monitoring/errorTracker';
+import { initWebVitals } from './monitoring/webVitals';
 import { logDebug } from './utils/logger';
 import { enforceBuildVersionSyncAsync, registerAppServiceWorker } from './utils/buildVersionGuard.client';
 
@@ -35,6 +37,8 @@ window.__BUILD_SHA__ = BUILD_ID;
 logDebug(`[build] A KI PRI SA YÉ boot id=${BUILD_ID}`);
 initSentry();
 installRuntimeCrashProbe();
+initErrorTracker();
+initWebVitals();
 
 // A) Purge stale price data from IndexedDB on startup (non-blocking)
 import('./services/priceCacheService').then(({ purgeExpiredPriceCache }) => {
