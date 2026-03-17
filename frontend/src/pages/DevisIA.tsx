@@ -444,6 +444,7 @@ export default function DevisIA() {
                   {BESOINS.map((b) => (
                     <label
                       key={b.value}
+                      aria-label={b.label}
                       className={`flex items-start gap-3 border rounded-xl px-4 py-3 cursor-pointer transition
                         ${form.typesBesoin.includes(b.value)
                           ? 'border-indigo-500 bg-indigo-50'

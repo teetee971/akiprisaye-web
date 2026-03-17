@@ -265,11 +265,11 @@ function Step2Contact({ form, onChange, onNext, onPrev }: Step2Props) {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-1">
+        <label htmlFor="ip-password" className="block text-sm font-medium text-gray-300 mb-1">
           Mot de passe *
           <span className="ml-2 text-xs text-gray-500 font-normal">(min. 8 caractères)</span>
         </label>
-        <input type="password" value={form.password} onChange={(e) => onChange({ password: e.target.value })}
+        <input id="ip-password" type="password" value={form.password} onChange={(e) => onChange({ password: e.target.value })}
           placeholder="••••••••" minLength={8}
           className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500" />
       </div>

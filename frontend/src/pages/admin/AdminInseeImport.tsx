@@ -253,10 +253,11 @@ export default function AdminInseeImport() {
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs text-slate-400 mb-1 flex items-center gap-1">
+                <label htmlFor="insee-territoire" className="block text-xs text-slate-400 mb-1 flex items-center gap-1">
                   <MapPin className="w-3.5 h-3.5" /> Territoire
                 </label>
                 <select
+                  id="insee-territoire"
                   value={territory}
                   onChange={(e) => setTerritory(e.target.value)}
                   className="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-orange-500"
@@ -268,10 +269,11 @@ export default function AdminInseeImport() {
               </div>
 
               <div>
-                <label className="block text-xs text-slate-400 mb-1 flex items-center gap-1">
+                <label htmlFor="insee-naf" className="block text-xs text-slate-400 mb-1 flex items-center gap-1">
                   <Building2 className="w-3.5 h-3.5" /> Code NAF
                 </label>
                 <select
+                  id="insee-naf"
                   value={nafFilter}
                   onChange={(e) => setNafFilter(e.target.value)}
                   className="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-orange-500"
@@ -283,8 +285,9 @@ export default function AdminInseeImport() {
               </div>
 
               <div>
-                <label className="block text-xs text-slate-400 mb-1">Résultats par page</label>
+                <label htmlFor="insee-per-page" className="block text-xs text-slate-400 mb-1">Résultats par page</label>
                 <select
+                  id="insee-per-page"
                   value={perPage}
                   onChange={(e) => setPerPage(Number(e.target.value))}
                   className="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-orange-500"

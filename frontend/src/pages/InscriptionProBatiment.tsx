@@ -488,9 +488,9 @@ function Step3Metiers({ form, onChange, onNext, onPrev }: {
 
       {/* Certifications */}
       <div>
-        <label className="block text-sm font-medium text-slate-300 mb-2">
+        <p className="block text-sm font-medium text-slate-300 mb-2">
           <Shield className="inline w-3.5 h-3.5 mr-1 text-slate-400" />Certifications &amp; labels
-        </label>
+        </p>
         <div className="flex flex-wrap gap-2">
           {CERTIFICATIONS_OPTIONS.map((c) => (
             <label key={c} className="flex items-center gap-2 cursor-pointer">

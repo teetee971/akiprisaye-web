@@ -348,9 +348,9 @@ export default function Subscribe() {
 
                 {/* Usage Type */}
                 <div>
-                  <label className="block text-white font-medium mb-2">
+                  <p className="block text-white font-medium mb-2">
                     Type d'usage <span className="text-red-400">*</span>
-                  </label>
+                  </p>
                   <div className="grid grid-cols-3 gap-3">
                     {['citoyen', 'pro', 'organisation'].map((type) => (
                       <button
