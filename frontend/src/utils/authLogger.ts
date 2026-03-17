@@ -10,11 +10,15 @@
  *   sessionStorage.setItem('auth:debug', '1'); location.reload();
  *
  * The module exposes:
- *  - An in-memory FIFO event bus (max 20 entries)
+ *  - An in-memory FIFO event bus (max 20 entries) — authLog() ALWAYS records here
  *  - Optional sessionStorage persistence across redirect page reloads (debug mode only)
  *  - subscribeToAuthEvents / useAuthEvents for live panel updates
  *  - getAuthDiagnosticReport for one-click diagnostics export
  *  - clearAuthHistory for debug state reset
+ *
+ * Note: authLog() pushes every event into the in-memory history and fires
+ * all subscribers unconditionally. Console output and sessionStorage
+ * persistence are the only things gated behind the AUTH_DEBUG flag.
  */
 
 import { useEffect, useState } from 'react';

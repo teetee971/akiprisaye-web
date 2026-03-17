@@ -23,6 +23,10 @@ export default function Footer() {
     } catch {
       // sessionStorage may be unavailable
     }
+
+    return () => {
+      if (tapTimer.current) clearTimeout(tapTimer.current);
+    };
   }, []);
 
   /**

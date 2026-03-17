@@ -424,6 +424,7 @@ export default function App() {
                         </Route>
 
                         {/* Main site routes with Layout */}
+                        <Route path="/auth/callback" element={<AuthCallbackPage />} />
                         <Route path="/" element={<Layout />}>
                           <Route index element={<Home />} />
                           <Route path="carte" element={<Carte />} />
@@ -509,7 +510,6 @@ export default function App() {
                           <Route path="inscription" element={<Inscription />} />
                           <Route path="reset-password" element={<ResetPassword />} />
                           <Route path="auth" element={<AuthHub />} />
-                          <Route path="auth/callback" element={<AuthCallbackPage />} />
                           <Route
                             path="mon-compte"
                             element={

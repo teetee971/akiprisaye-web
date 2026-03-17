@@ -99,7 +99,7 @@ export default function SocialLoginButtons({
   }
 
   const handleSocial = async (provider: Provider) => {
-    logDebug('[AUTH] start google sign-in', { provider });
+    logDebug('[AUTH] start social sign-in', { provider });
     setBusy(provider);
 
     // On mobile, use the redirect flow — Chrome blocks popups by default.

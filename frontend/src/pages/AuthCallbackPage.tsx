@@ -51,6 +51,7 @@ export default function AuthCallbackPage() {
   const [searchParams] = useSearchParams();
   const [phase, setPhase] = useState<Phase>('initiating');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [activeProvider, setActiveProvider] = useState<'google' | 'facebook' | 'apple' | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const initiatedRef = useRef(false);
 
@@ -65,6 +66,7 @@ export default function AuthCallbackPage() {
     if (existingFlag) {
       // ── OAuth return: the flag was set on the previous page load ──────────
       authLog('AUTH_REDIRECT_RESULT_RESOLVED', { provider: existingFlag.provider, next: existingFlag.next });
+      setActiveProvider(existingFlag.provider);
       setPhase('pending');
       return;
     }
@@ -80,6 +82,7 @@ export default function AuthCallbackPage() {
       return;
     }
 
+    setActiveProvider(provider);
     authLog('AUTH_REDIRECT_START', { provider, next });
     setRedirectPendingFlag({ provider, next });
 
@@ -177,10 +180,18 @@ export default function AuthCallbackPage() {
   }
 
   // Default: initiating / pending / success — all show the neutral spinner
+  const providerLabel: Record<string, string> = {
+    google: 'Google',
+    facebook: 'Facebook',
+    apple: 'Apple',
+  };
+  const providerName = activeProvider ? (providerLabel[activeProvider] ?? activeProvider) : null;
   const label =
     phase === 'success'
       ? 'Connexion réussie, redirection…'
-      : 'Connexion Google en cours…';
+      : providerName
+        ? `Connexion ${providerName} en cours…`
+        : 'Connexion en cours…';
 
   return (
     <div
