@@ -1,3 +1,18 @@
+# CI Pipeline — akiprisaye-web / frontend
+#
+# Jobs séparés pour une meilleure lisibilité et un échec précis :
+#   lint       → ESLint (config frontend, jsx-a11y actif)
+#   typecheck  → TypeScript strict (tsconfig.ci.json)
+#   test       → Vitest unit tests + audit sécurité
+#   build      → Build production Vite
+#   verify-pages → Build GitHub Pages + vérifications runtime
+#
+# Stratégie :
+#   - Chaque job installe ses dépendances via npm ci (rapide grâce au cache npm)
+#   - Les jobs lint/typecheck/test/build s'exécutent en parallèle
+#   - verify-pages reste indépendant (simule l'env GitHub Pages)
+#   - working-directory: frontend sur tous les jobs pour éviter toute ambiguïté de config
+
 name: CI
 
 on:
@@ -10,7 +25,10 @@ permissions:
   contents: read
 
 jobs:
-  build-test:
+
+  # ─── 1. Lint ────────────────────────────────────────────────────────────────
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,55 +36,102 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
-          cache: 'npm'
+          cache: npm
           cache-dependency-path: frontend/package-lock.json
 
-      - name: Validate frontend package-lock.json (must be valid JSON)
+      - name: Validate package-lock.json (must be valid JSON)
         working-directory: frontend
         run: node -e "JSON.parse(require('fs').readFileSync('package-lock.json','utf8')); console.log('package-lock.json OK')"
-
-      - name: Diagnose environment
-        working-directory: ${{ github.workspace }}
-        run: |
-          pwd
-          node -v && npm -v
-          ls -la
-          ls -la frontend
-          test -f frontend/package-lock.json && echo OK_LOCK || (echo MISSING_LOCK && exit 1)
-          node -e "const p=require('./frontend/package-lock.json'); console.log('lockfileVersion', p.lockfileVersion);"
-          sha256sum frontend/package-lock.json || shasum -a 256 frontend/package-lock.json
 
       - name: Install dependencies
         working-directory: frontend
         run: npm ci --no-audit --no-fund
 
-      - name: Check Firebase API key regression
+      - name: Lint
         working-directory: frontend
-        run: npx vitest run --config vitest.config.ts firebase-config
+        # Config : frontend/eslint.config.cjs (détectée automatiquement car cwd=frontend)
+        # jsx-a11y activé en mode warn (dette technique visible, non bloquante)
+        # Les erreurs ESLint (exit 1) font échouer ce job
+        run: npm run lint
+
+  # ─── 2. Typecheck ───────────────────────────────────────────────────────────
+  typecheck:
+    name: Typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci --no-audit --no-fund
+
+      - name: Typecheck (TypeScript strict)
+        working-directory: frontend
+        run: npx tsc -p tsconfig.ci.json --noEmit
+
+  # ─── 3. Test ────────────────────────────────────────────────────────────────
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci --no-audit --no-fund
 
       - name: Security audit (no high/critical vulnerabilities)
         working-directory: frontend
         run: npm audit --omit=dev --audit-level=high
 
-      - name: Lint
+      - name: Check Firebase API key regression
         working-directory: frontend
-        run: npm run lint
+        run: npx vitest run --config vitest.config.ts firebase-config
 
-      - name: Build
+      - name: Unit tests
+        working-directory: frontend
+        run: npm run test:ci
+
+  # ─── 4. Build ───────────────────────────────────────────────────────────────
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci --no-audit --no-fund
+
+      - name: Build production
         working-directory: frontend
         env:
           NODE_OPTIONS: --max-old-space-size=4096
         run: npm run build
 
-      - name: Typecheck
-        working-directory: frontend
-        run: npx tsc -p tsconfig.ci.json --noEmit
-
-      - name: Test
-        working-directory: frontend
-        run: npm run test:ci
-
+  # ─── 5. Verify Pages ────────────────────────────────────────────────────────
+  # Simule le build GitHub Pages (BASE_PATH=/akiprisaye-web/) pour détecter
+  # les régressions de routing ou de chemins d'assets avant merge.
   verify-pages:
+    name: Verify Pages build
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -77,7 +142,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
-          cache: 'npm'
+          cache: npm
           cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies

@@ -171,7 +171,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       writeUserPresence(uid).catch(() => {});
     }, 30_000);
     return () => clearInterval(interval);
-  }, [user?.uid]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [user?.uid]);
 
   const value = useMemo<AuthContextValue>(() => ({
     user,
@@ -222,7 +222,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (user) clearUserPresence(user.uid).catch(() => {});
       await signOutUser();
     },
-  }), [user, userRole, loading, error]); // eslint-disable-line react-hooks/exhaustive-deps
+  }), [user, userRole, loading, error]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
