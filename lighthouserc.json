@@ -3,6 +3,8 @@
   "ci": {
     "collect": {
       "startServerCommand": "npm run preview",
+      "startServerReadyPattern": "http://localhost:4173",
+      "startServerReadyTimeout": 30000,
       "url": [
         "http://localhost:4173/",
         "http://localhost:4173/#/comparateur"
@@ -51,10 +53,10 @@
       }
     },
     "assert": {
-      "_comment": "Assertions pre-merge: mode warn pour ne pas bloquer les PRs mais signaler les problèmes",
+      "_comment": "Seuils bloquants (error) : performance >= 80, accessibilité >= 90. Le reste en warn.",
       "assertions": {
-        "categories:performance": ["warn", { "minScore": 0.8 }],
-        "categories:accessibility": ["warn", { "minScore": 0.9 }],
+        "categories:performance": ["error", { "minScore": 0.8 }],
+        "categories:accessibility": ["error", { "minScore": 0.9 }],
         "categories:best-practices": ["warn", { "minScore": 0.85 }],
         "categories:seo": ["warn", { "minScore": 0.9 }],
 
@@ -81,18 +83,20 @@
         "listitem": "warn",
         "tabindex": "warn",
         "heading-order": "warn",
-        
+
         "resource-summary:script:size": ["warn", { "maxNumericValue": 350000 }],
         "resource-summary:image:size": ["warn", { "maxNumericValue": 500000 }],
         "resource-summary:total:size": ["warn", { "maxNumericValue": 1200000 }],
-        
+
         "unused-javascript": ["warn", { "maxLength": 1 }],
         "modern-image-formats": "warn",
         "uses-responsive-images": "warn"
       }
     },
     "upload": {
-      "target": "temporary-public-storage"
+      "target": "filesystem",
+      "outputDir": ".lighthouseci",
+      "reportFilenamePattern": "%%PATHNAME%%-%%DATETIME%%-report.%%EXTENSION%%"
     }
   }
 }
