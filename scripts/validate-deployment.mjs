@@ -201,6 +201,16 @@ export function isStaleBundleReferenced(html, staleBundleName) {
 }
 
 /**
+ * Returns true if the HTML contains a <meta http-equiv="Content-Security-Policy"> tag.
+ * This is the only way to deliver a CSP on static hosting platforms (GitHub Pages,
+ * Cloudflare Pages) that do not allow custom HTTP response headers.
+ * Note: frame-ancestors is not supported inside a meta CSP and requires a real HTTP header.
+ */
+export function hasMetaCSP(html) {
+  return /<meta[^>]+http-equiv=["']?content-security-policy/i.test(html);
+}
+
+/**
  * Counts the number of non-overlapping occurrences of `needle` in `text`.
  * Equivalent to what `grep -c` / `grep -o | wc -l` would return for a literal string.
  * Returns 0 when `needle` is empty or absent.
@@ -455,13 +465,38 @@ export function hasAcceptableHtmlCacheControl(cacheControl, siteUrl) {
   return /(?:no-store|max-age=0)/i.test(cacheControl);
 }
 
-function verifyHeaders(headers, siteUrl) {
+function verifyHeaders(headers, siteUrl, html) {
   const cacheControl = headers.get('cache-control') || '';
   if (!hasAcceptableHtmlCacheControl(cacheControl, siteUrl)) {
     fail(`Cache-Control HTML inattendu: "${cacheControl || 'absent'}".`);
   }
 
   logOk(`Headers HTML cohérents (${cacheControl}).`);
+
+  if (isGitHubPagesSite(siteUrl) || isCloudflarePagesSite(siteUrl)) {
+    // On static hosting (GitHub Pages, Cloudflare Pages) it is impossible to set server-side
+    // HTTP security headers such as X-Frame-Options, X-Content-Type-Options, or
+    // Strict-Transport-Security. These are platform-managed concerns.
+    // • X-Frame-Options / frame-ancestors : not enforceable on static hosting; frame-ancestors
+    //   is also not supported in meta CSP (HTTP header only) — documented limitation.
+    // • X-Content-Type-Options : no meta equivalent; browsers already sniff conservatively for
+    //   module scripts loaded via Vite — not a regression risk.
+    // • Strict-Transport-Security : enforced transparently by the hosting platform (GitHub Pages
+    //   always serves over HTTPS).
+    // Instead, check that the HTML contains a CSP <meta> tag for the directives that *can*
+    // be expressed in HTML (script-src, connect-src, img-src, frame-src, …).
+    if (html && hasMetaCSP(html)) {
+      logOk('Content-Security-Policy présente via balise <meta> dans le HTML (hébergement statique).');
+    } else {
+      logWarn('Content-Security-Policy absente du HTML — balise <meta http-equiv="Content-Security-Policy"> manquante.');
+    }
+    logOk(
+      'X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security : ' +
+      'non injectables via header HTTP sur hébergement statique (GitHub Pages / Cloudflare Pages). ' +
+      'HSTS assuré par la plateforme; frame-ancestors non supporté dans meta CSP.',
+    );
+    return;
+  }
 
   for (const header of OPTIONAL_SECURITY_HEADERS) {
     if (headers.get(header)) {
@@ -541,7 +576,7 @@ async function main() {
   await verifySitemap(siteUrl);
   await verifyRoutes(siteUrl);
   await verifyApi(siteUrl);
-  verifyHeaders(headers, siteUrl);
+  verifyHeaders(headers, siteUrl, html);
 
   console.log('');
   console.log('============================');

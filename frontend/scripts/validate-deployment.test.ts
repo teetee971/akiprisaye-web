@@ -12,6 +12,7 @@ import {
   extractServiceWorkerVersion,
   hasAcceptableHtmlCacheControl,
   hasGitHubPagesSpaFallback,
+  hasMetaCSP,
   hasReactShell,
   inferAssetBasePath,
   isCloudflarePagesSite,
@@ -98,6 +99,25 @@ describe('validate-deployment helpers', () => {
     // Both platforms serve only static files for this project; there are no /api endpoints.
     expect(isGitHubPagesSite('https://teetee971.github.io/akiprisaye-web')).toBe(true);
     expect(isCloudflarePagesSite('https://akiprisaye-web.pages.dev')).toBe(true);
+  });
+
+  it('hasMetaCSP detects a Content-Security-Policy meta tag in the HTML', () => {
+    // Valid meta CSP variations
+    expect(hasMetaCSP('<meta http-equiv="Content-Security-Policy" content="default-src \'self\'">')).toBe(true);
+    expect(hasMetaCSP("<meta http-equiv='content-security-policy' content=\"default-src 'self'\">")).toBe(true);
+    expect(hasMetaCSP('<meta content="default-src \'self\'" http-equiv="Content-Security-Policy">')).toBe(true);
+    // Case-insensitive
+    expect(hasMetaCSP('<META HTTP-EQUIV="CONTENT-SECURITY-POLICY" CONTENT="default-src \'self\'">')).toBe(true);
+    // Negative cases
+    expect(hasMetaCSP('<meta name="description" content="test">')).toBe(false);
+    expect(hasMetaCSP('<meta http-equiv="X-UA-Compatible" content="IE=edge">')).toBe(false);
+    expect(hasMetaCSP('')).toBe(false);
+  });
+
+  it('hasMetaCSP detects the CSP meta tag present in the deployed index.html', () => {
+    // This test verifies the actual frontend/index.html contains a CSP meta tag.
+    const html = readFileSync(path.join(REPO_ROOT, 'frontend/index.html'), 'utf8');
+    expect(hasMetaCSP(html)).toBe(true);
   });
 
   it('accepts GitHub Pages cache headers while keeping stricter checks elsewhere', () => {
