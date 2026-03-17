@@ -234,7 +234,7 @@ function MarcheCard({ m }: { m: Marche }) {
     <div className="bg-slate-800/60 border border-slate-700/60 rounded-2xl overflow-hidden hover:border-blue-500/40 transition-all">
       {/* Image */}
       <div className="relative h-40 overflow-hidden">
-        <img src={m.image} alt={m.nom} className="w-full h-full object-cover" loading="lazy" />
+        <img src={m.image} alt={m.nom} width={400} height={160} className="w-full h-full object-cover" loading="lazy" />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent" />
         <div className="absolute top-2 right-2">
           <span className={`text-xs px-2 py-0.5 rounded-full border font-semibold ${typeInfo.cls}`}>

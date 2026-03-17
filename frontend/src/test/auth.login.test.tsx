@@ -52,6 +52,9 @@ function makeAuthMock(overrides: Record<string, unknown> = {}) {
     user: null,
     userRole: 'guest',
     loading: false,
+    authResolved: true,
+    authFlowState: 'idle' as const,
+    lastIncident: null,
     error: null,
     isGuest: true,
     isCitoyen: false,
@@ -125,7 +128,7 @@ vi.mock('../store/useShoppingListStore', () => ({
 
 describe('Login page', () => {
   it('shows a loading spinner while auth is initialising', () => {
-    authState = makeAuthMock({ loading: true });
+    authState = makeAuthMock({ loading: true, authFlowState: 'resolving', authResolved: false });
 
     render(
       <MemoryRouter>
@@ -192,7 +195,7 @@ describe('Login page', () => {
   });
 
   it('hides social login buttons and shows the spinner while auth is loading (simulates OAuth redirect return)', () => {
-    authState = makeAuthMock({ loading: true });
+    authState = makeAuthMock({ loading: true, authFlowState: 'resolving', authResolved: false });
 
     render(
       <MemoryRouter>
@@ -225,7 +228,7 @@ describe('Header', () => {
   });
 
   it('shows a loading skeleton instead of "Se connecter" while auth is settling', () => {
-    authState = makeAuthMock({ loading: true, user: null });
+    authState = makeAuthMock({ loading: true, authFlowState: 'resolving', authResolved: false, user: null });
 
     render(
       <MemoryRouter>
@@ -451,7 +454,7 @@ describe('layout/Header', () => {
   });
 
   it('shows a loading skeleton instead of "Se connecter" while auth is settling', () => {
-    authState = makeAuthMock({ loading: true, user: null });
+    authState = makeAuthMock({ loading: true, authFlowState: 'resolving', authResolved: false, user: null });
 
     render(
       <MemoryRouter>

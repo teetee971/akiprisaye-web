@@ -1,9 +1,12 @@
 /*
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
+  X-DNS-Prefetch-Control: on
   Referrer-Policy: strict-origin-when-cross-origin
-  Permissions-Policy: geolocation=(self), camera=(self), microphone=(self)
+  Permissions-Policy: geolocation=(self), camera=(self), microphone=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()
   Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; script-src 'self' 'sha256-mZvVvMw8+6CB9PkTzAvR40I1vF+FzuYfiM6VR3ZXeaQ=' 'sha256-dK+7CW0a5b1B24QIbYFhVhMX1NH114EFwvzzRLy/f9Q='; connect-src 'self' https:; manifest-src 'self'; worker-src 'self' blob:; upgrade-insecure-requests
+  Cross-Origin-Opener-Policy: same-origin-allow-popups
+  Cross-Origin-Resource-Policy: same-site
   Cache-Control: public, max-age=0, must-revalidate
 */
 

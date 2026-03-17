@@ -13,6 +13,13 @@ interface SEOHeadProps {
   twitterCard?: 'summary' | 'summary_large_image';
   /** Set to true for admin / private pages */
   noIndex?: boolean;
+  /**
+   * Optional JSON-LD structured data object injected as
+   * `<script type="application/ld+json">` for this page.
+   * Typical values: WebPage, BreadcrumbList, Article, FAQPage, etc.
+   * If omitted, a default WebPage schema is generated from title/description/canonical.
+   */
+  jsonLd?: Record<string, unknown> | null;
 }
 
 const SITE_NAME = 'A KI PRI SA YÉ';
@@ -31,10 +38,29 @@ export function SEOHead({
   ogImageHeight  = 512,
   twitterCard    = 'summary_large_image',
   noIndex        = false,
+  jsonLd,
 }: SEOHeadProps) {
   const fullTitle = `${title} | ${SITE_NAME}`;
   const desc      = description ?? DEFAULT_DESC;
   const pageUrl   = canonical ?? SITE_URL;
+
+  // Build the JSON-LD payload: caller-supplied schema takes priority;
+  // otherwise generate a minimal WebPage schema from page metadata.
+  const resolvedJsonLd: Record<string, unknown> = jsonLd ?? {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    '@id': `${pageUrl}#webpage`,
+    url: pageUrl,
+    name: fullTitle,
+    description: desc,
+    inLanguage: 'fr',
+    isPartOf: {
+      '@type': 'WebSite',
+      '@id': `${SITE_URL}#website`,
+      name: SITE_NAME,
+      url: SITE_URL,
+    },
+  };
 
   return (
     <Helmet>
@@ -62,6 +88,11 @@ export function SEOHead({
       <meta name="twitter:image:alt"   content={ogImageAlt} />
 
       {canonical && <link rel="canonical" href={canonical} />}
+
+      {/* JSON-LD structured data */}
+      <script type="application/ld+json">
+        {JSON.stringify(resolvedJsonLd)}
+      </script>
     </Helmet>
   );
 }

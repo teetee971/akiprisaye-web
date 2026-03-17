@@ -7,10 +7,13 @@
   "id": "./",
   "scope": "./",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui", "browser"],
   "orientation": "portrait-primary",
   "background_color": "#0f172a",
   "theme_color": "#2563eb",
   "categories": ["finance", "utilities", "education"],
+  "prefer_related_applications": false,
+  "iarc_rating_id": "",
   "icons": [
     {
       "src": "./icon-192.png",
@@ -29,6 +32,22 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Écran d'accueil A KI PRI SA YÉ"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Comparateur de prix A KI PRI SA YÉ"
     }
   ],
   "shortcuts": [

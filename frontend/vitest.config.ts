@@ -133,6 +133,8 @@ export default defineConfig({
       abs('./src/test/authCallback.test.tsx'),
       // Auth debug panel — visibility, state display, event bus, collapse/expand
       abs('./src/test/authDebugPanel.test.tsx'),
+      // Auth modules — pure unit tests for all 6 src/auth/*.ts modules
+      abs('./src/test/auth.modules.test.ts'),
     ],
 
     exclude: ['**/node_modules/**', '**/.git/**', '**/dist/**', '**/coverage/**'],

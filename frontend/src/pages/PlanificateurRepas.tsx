@@ -422,7 +422,7 @@ export default function PlanificateurRepas() {
                       {recipe ? (
                         <div>
                           {recipe.imgUrl ? (
-                            <img src={recipe.imgUrl} alt={recipe.name} style={{ width: 28, height: 28, objectFit: 'cover', borderRadius: 4, marginBottom: '0.1rem' }} loading="lazy" />
+                            <img src={recipe.imgUrl} alt={recipe.name} width={28} height={28} style={{ width: 28, height: 28, objectFit: 'cover', borderRadius: 4, marginBottom: '0.1rem' }} loading="lazy" />
                           ) : (
                             <div style={{ fontSize: '0.75rem' }}>{recipe.emoji}</div>
                           )}
@@ -463,7 +463,7 @@ export default function PlanificateurRepas() {
                   <button key={r.id} onClick={() => setRecipe(pickingFor.day, pickingFor.meal, r.id)}
                     style={{ padding: '0.7rem 0.9rem', borderRadius: 10, border: '1px solid rgba(148,163,184,0.15)', background: 'rgba(15,23,42,0.7)', cursor: 'pointer', textAlign: 'left', display: 'flex', gap: '0.7rem', alignItems: 'flex-start' }}>
                     {r.imgUrl ? (
-                      <img src={r.imgUrl} alt={r.name} style={{ width: 56, height: 56, objectFit: 'cover', borderRadius: 8, flexShrink: 0 }} loading="lazy" />
+                      <img src={r.imgUrl} alt={r.name} width={56} height={56} style={{ width: 56, height: 56, objectFit: 'cover', borderRadius: 8, flexShrink: 0 }} loading="lazy" />
                     ) : (
                       <span style={{ fontSize: '1.4rem', flexShrink: 0 }}>{r.emoji}</span>
                     )}
