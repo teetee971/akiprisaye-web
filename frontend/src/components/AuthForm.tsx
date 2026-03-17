@@ -241,7 +241,8 @@ export default function AuthForm() {
           {mode === "reset" ? (
             <>
               Retour à la{" "}
-              <span
+              <button
+                type="button"
                 onClick={() => {
                   setMode("login");
                   setError(null);
@@ -250,12 +251,13 @@ export default function AuthForm() {
                 className="text-blue-400 cursor-pointer hover:underline font-medium"
               >
                 connexion
-              </span>
+              </button>
             </>
           ) : mode === "login" ? (
             <>
               Pas encore inscrit ?{" "}
-              <span
+              <button
+                type="button"
                 onClick={() => {
                   setMode("signup");
                   setError(null);
@@ -264,12 +266,13 @@ export default function AuthForm() {
                 className="text-blue-400 cursor-pointer hover:underline font-medium"
               >
                 Créer un compte
-              </span>
+              </button>
             </>
           ) : (
             <>
               Déjà un compte ?{" "}
-              <span
+              <button
+                type="button"
                 onClick={() => {
                   setMode("login");
                   setError(null);
@@ -278,7 +281,7 @@ export default function AuthForm() {
                 className="text-blue-400 cursor-pointer hover:underline font-medium"
               >
                 Se connecter
-              </span>
+              </button>
             </>
           )}
         </p>

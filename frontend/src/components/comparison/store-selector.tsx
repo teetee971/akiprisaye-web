@@ -61,9 +61,9 @@ export function StoreSelector({
 
       {/* Territory Filter */}
       <div className="mb-5">
-        <label className="block text-sm font-medium text-gray-300 mb-2">
+        <p className="block text-sm font-medium text-gray-300 mb-2">
           Territoires
-        </label>
+        </p>
         
         <div className="flex gap-2 mb-2">
           <button
@@ -104,10 +104,10 @@ export function StoreSelector({
 
       {/* Distance Filter */}
       <div className="mb-5">
-        <label className="block text-sm font-medium text-gray-300 mb-2">
+        <p className="block text-sm font-medium text-gray-300 mb-2">
           <MapPin className="inline mr-1" size={14} />
           Distance maximale
-        </label>
+        </p>
         
         {!hasUserLocation && (
           <div className="mb-2 text-xs text-amber-300 bg-amber-900/20 border border-amber-700/50 rounded p-2">
@@ -147,7 +147,7 @@ export function StoreSelector({
 
       {/* Promotions Filter */}
       <div>
-        <label className="flex items-center gap-3 cursor-pointer group">
+        <label aria-label="Inclure les promotions" className="flex items-center gap-3 cursor-pointer group">
           <div className="relative">
             <input
               id="store-selector-promos"

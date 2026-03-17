@@ -47,6 +47,20 @@ export default defineConfig({
   build: {
     // Warn only for truly huge chunks (> 1 MB)
     chunkSizeWarningLimit: 1000,
+    // Split CSS per chunk so only needed styles are loaded
+    cssCodeSplit: true,
+    // Terser minification: drop console/debugger, inline small functions
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+        pure_funcs: ['console.log', 'console.info', 'console.debug', 'console.warn'],
+        passes: 2,
+      },
+      mangle: { safari10: true },
+      format: { comments: false },
+    },
     rollupOptions: {
       output: {
         // Function-based manualChunks for fine-grained splitting

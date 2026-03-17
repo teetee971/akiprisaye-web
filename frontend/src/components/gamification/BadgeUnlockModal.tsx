@@ -28,15 +28,20 @@ export function BadgeUnlockModal({ badge, isOpen, onClose }: BadgeUnlockModalPro
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
-      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
       role="dialog"
       aria-modal="true"
       aria-labelledby="badge-title"
     >
+      <button
+        type="button"
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm cursor-default"
+        onClick={onClose}
+        tabIndex={-1}
+        aria-label="Fermer le dialogue"
+      />
       <div 
-        className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 transform transition-all"
-        onClick={e => e.stopPropagation()}
+        className="relative z-10 bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 transform transition-all"
       >
         {/* Close Button */}
         <button

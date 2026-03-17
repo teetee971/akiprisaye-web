@@ -261,11 +261,12 @@ const FreightComparator: React.FC = () => {
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {/* Origin */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Origine
-                  </label>
+                  <label htmlFor="fret-origine" className="block text-sm font-medium text-gray-300 mb-2">
+                      Origine
+                    </label>
                   <select
-                    value={origin}
+                      id="fret-origine"
+                      value={origin}
                     onChange={(e) => setOrigin(e.target.value)}
                     className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
@@ -279,11 +280,12 @@ const FreightComparator: React.FC = () => {
 
                 {/* Destination */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Destination
-                  </label>
+                  <label htmlFor="fret-destination" className="block text-sm font-medium text-gray-300 mb-2">
+                      Destination
+                    </label>
                   <select
-                    value={destination}
+                      id="fret-destination"
+                      value={destination}
                     onChange={(e) => setDestination(e.target.value as Territory)}
                     className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
@@ -297,11 +299,12 @@ const FreightComparator: React.FC = () => {
 
                 {/* Weight */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Poids (kg)
-                  </label>
+                  <label htmlFor="fret-poids" className="block text-sm font-medium text-gray-300 mb-2">
+                      Poids (kg)
+                    </label>
                   <input
-                    type="number"
+                      id="fret-poids"
+                      type="number"
                     min="0.1"
                     step="0.1"
                     value={weight}
@@ -312,11 +315,12 @@ const FreightComparator: React.FC = () => {
 
                 {/* Dimensions */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Longueur (cm)
-                  </label>
+                  <label htmlFor="fret-longueur" className="block text-sm font-medium text-gray-300 mb-2">
+                      Longueur (cm)
+                    </label>
                   <input
-                    type="number"
+                      id="fret-longueur"
+                      type="number"
                     min="1"
                     value={length}
                     onChange={(e) => setLength(parseInt(e.target.value) || 0)}
@@ -325,11 +329,12 @@ const FreightComparator: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Largeur (cm)
-                  </label>
+                  <label htmlFor="fret-largeur" className="block text-sm font-medium text-gray-300 mb-2">
+                      Largeur (cm)
+                    </label>
                   <input
-                    type="number"
+                      id="fret-largeur"
+                      type="number"
                     min="1"
                     value={width}
                     onChange={(e) => setWidth(parseInt(e.target.value) || 0)}
@@ -338,11 +343,12 @@ const FreightComparator: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Hauteur (cm)
-                  </label>
+                  <label htmlFor="fret-hauteur" className="block text-sm font-medium text-gray-300 mb-2">
+                      Hauteur (cm)
+                    </label>
                   <input
-                    type="number"
+                      id="fret-hauteur"
+                      type="number"
                     min="1"
                     value={height}
                     onChange={(e) => setHeight(parseInt(e.target.value) || 0)}
@@ -352,11 +358,12 @@ const FreightComparator: React.FC = () => {
 
                 {/* Package Type */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Type de colis
-                  </label>
+                  <label htmlFor="fret-type-colis" className="block text-sm font-medium text-gray-300 mb-2">
+                      Type de colis
+                    </label>
                   <select
-                    value={packageType}
+                      id="fret-type-colis"
+                      value={packageType}
                     onChange={(e) =>
                       setPackageType(e.target.value as 'standard' | 'fragile' | 'valeur_declaree')
                     }
@@ -371,10 +378,11 @@ const FreightComparator: React.FC = () => {
                 {/* Declared Value (if applicable) */}
                 {packageType === 'valeur_declaree' && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                    <label htmlFor="fret-valeur-declaree" className="block text-sm font-medium text-gray-300 mb-2">
                       Valeur déclarée (€)
                     </label>
                     <input
+                      id="fret-valeur-declaree"
                       type="number"
                       min="0"
                       step="0.01"
@@ -387,11 +395,12 @@ const FreightComparator: React.FC = () => {
 
                 {/* Urgency */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Urgence
-                  </label>
+                  <label htmlFor="fret-urgence" className="block text-sm font-medium text-gray-300 mb-2">
+                      Urgence
+                    </label>
                   <select
-                    value={urgency}
+                      id="fret-urgence"
+                      value={urgency}
                     onChange={(e) => setUrgency(e.target.value as UrgencyLevel)}
                     className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
@@ -490,8 +499,9 @@ const FreightComparator: React.FC = () => {
                       
                       {/* Sort Control */}
                       <div className="flex items-center gap-2 ml-2 pl-2 border-l border-slate-600">
-                        <label className="text-sm text-gray-400">Trier par:</label>
+                        <label htmlFor="fret-trier-par" className="text-sm text-gray-400">Trier par:</label>
                         <select
+                          id="fret-trier-par"
                           value={sortBy}
                           onChange={(e) => setSortBy(e.target.value as any)}
                           className="bg-slate-800 border border-slate-600 rounded px-2 py-1 text-sm text-gray-100"

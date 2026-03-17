@@ -310,13 +310,15 @@ export default function HomeV5() {
         </div>
 
         {showScrollIndicator && (
-          <div
+          <button
+            type="button"
             className="scroll-indicator fade-in delay-300"
             onClick={() => window.scrollTo({ top: window.innerHeight * 0.7, behavior: 'smooth' })}
+            aria-label="Défiler vers le bas"
           >
             <div className="scroll-arrow float-y">↓</div>
             <span className="scroll-text">Découvrir</span>
-          </div>
+          </button>
         )}
       </section>
 

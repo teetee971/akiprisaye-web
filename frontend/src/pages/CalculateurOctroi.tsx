@@ -169,10 +169,11 @@ export default function CalculateurOctroi() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
           {/* Prix usine */}
           <div style={{ padding: '1rem 1.1rem', borderRadius: 12, background: 'rgba(15,23,42,0.75)', border: '1px solid rgba(148,163,184,0.12)' }}>
-            <label style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600, display: 'block', marginBottom: '0.5rem' }}>
+            <label htmlFor="octroi-prix-usine" style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600, display: 'block', marginBottom: '0.5rem' }}>
               💰 Prix départ usine (€)
             </label>
             <input
+              id="octroi-prix-usine"
               type="number"
               min={0.10}
               max={500}
@@ -186,10 +187,11 @@ export default function CalculateurOctroi() {
 
           {/* Catégorie */}
           <div style={{ padding: '1rem 1.1rem', borderRadius: 12, background: 'rgba(15,23,42,0.75)', border: '1px solid rgba(148,163,184,0.12)' }}>
-            <label style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600, display: 'block', marginBottom: '0.5rem' }}>
+            <label htmlFor="octroi-categorie" style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600, display: 'block', marginBottom: '0.5rem' }}>
               📦 Catégorie de produit
             </label>
             <select
+              id="octroi-categorie"
               value={catId}
               onChange={e => setCatId(e.target.value)}
               style={{ width: '100%', padding: '0.5rem 0.75rem', borderRadius: 8, background: 'rgba(30,41,59,0.8)', border: '1px solid rgba(99,102,241,0.4)', color: '#f1f5f9', fontSize: '0.85rem', boxSizing: 'border-box' }}
@@ -203,10 +205,11 @@ export default function CalculateurOctroi() {
 
           {/* Territoire */}
           <div style={{ padding: '1rem 1.1rem', borderRadius: 12, background: 'rgba(15,23,42,0.75)', border: '1px solid rgba(148,163,184,0.12)' }}>
-            <label style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600, display: 'block', marginBottom: '0.5rem' }}>
+            <label htmlFor="octroi-territoire" style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600, display: 'block', marginBottom: '0.5rem' }}>
               🗺️ Territoire de destination
             </label>
             <select
+              id="octroi-territoire"
               value={terrCode}
               onChange={e => setTerrCode(e.target.value)}
               style={{ width: '100%', padding: '0.5rem 0.75rem', borderRadius: 8, background: 'rgba(30,41,59,0.8)', border: '1px solid rgba(99,102,241,0.4)', color: '#f1f5f9', fontSize: '0.85rem', boxSizing: 'border-box' }}

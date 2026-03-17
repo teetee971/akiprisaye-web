@@ -20,6 +20,7 @@ import UpgradePromptModal from './components/billing/UpgradePromptModal';
 import { StoreSelectionProvider } from './context/StoreSelectionContext';
 import { EntitlementProvider } from './billing/EntitlementProvider';
 import RequireAuth from './components/auth/RequireAuth';
+import AuthDebugPanel from './components/AuthDebugPanel';
 import { logDebug } from './utils/logger';
 
 // Lazy-loaded pages - Main routes
@@ -106,6 +107,7 @@ const Inscription = lazyPage(() => import('./pages/Inscription'));
 const ResetPassword = lazyPage(() => import('./pages/ResetPassword'));
 const MonCompte = lazyPage(() => import('./pages/MonCompte'));
 const AuthHub = lazyPage(() => import('./pages/AuthHub'));
+const AuthCallbackPage = lazyPage(() => import('./pages/AuthCallbackPage'));
 
 // Pricing & Subscription
 const Pricing = lazyPage(() => import('./pages/Pricing'));
@@ -422,6 +424,7 @@ export default function App() {
                         </Route>
 
                         {/* Main site routes with Layout */}
+                        <Route path="/auth/callback" element={<AuthCallbackPage />} />
                         <Route path="/" element={<Layout />}>
                           <Route index element={<Home />} />
                           <Route path="carte" element={<Carte />} />
@@ -709,6 +712,7 @@ export default function App() {
                       <HelpButton />
                       <ToastProvider />
                       <UpgradePromptModal />
+                      <AuthDebugPanel />
                     </Suspense>
                   </BrowserRouter>
                 </EntitlementProvider>

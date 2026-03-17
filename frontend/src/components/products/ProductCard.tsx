@@ -39,7 +39,10 @@ export function ProductCard({ product, onClick, onValidate, anomalies }: Product
   return (
     <div
       className="product-card"
+      role="button"
+      tabIndex={onClick ? 0 : undefined}
       onClick={onClick}
+      onKeyDown={(e) => { if (onClick && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); onClick(); } }}
       style={{
         background: '#1e293b',
         border: '1px solid #334155',

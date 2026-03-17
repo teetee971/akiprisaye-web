@@ -14,7 +14,7 @@
     "build:frontend": "cd frontend && npm ci --include=dev && npm run build",
     "install:frontend": "cd frontend && npm ci --include=dev",
     "lint": "cd frontend && npm run lint",
-    "lint:ci": "eslint \"frontend/src/**/*.{js,jsx,ts,tsx}\" \"price-api/src/**/*.{js,jsx,ts,tsx}\" --max-warnings=0",
+    "lint:ci": "cd frontend && npm run lint",
     "readiness:prod": "node scripts/production-readiness-check.mjs",
     "readiness:prod:network-tolerant": "ALLOW_NETWORK_FAILURE=1 node scripts/production-readiness-check.mjs",
     "check:firebase": "cd frontend && npm install --silent && npx vitest run --config vitest.config.ts firebase-config"

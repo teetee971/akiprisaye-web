@@ -218,11 +218,12 @@ export default function PriceReport({
 
         {/* Price input */}
         <div>
-          <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+          <label htmlFor="price-report-price" className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
             Prix observé <span className="text-red-500">*</span>
           </label>
           <div className="relative">
             <input
+              id="price-report-price"
               type="text"
               inputMode="decimal"
               value={price}
@@ -241,10 +242,11 @@ export default function PriceReport({
 
         {/* Store input */}
         <div>
-          <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+          <label htmlFor="price-report-store" className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
             Magasin <span className="text-red-500">*</span>
           </label>
           <input
+            id="price-report-store"
             type="text"
             value={store}
             onChange={(e) => setStore(e.target.value)}
@@ -268,10 +270,11 @@ export default function PriceReport({
 
         {/* Comment */}
         <div>
-          <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+          <label htmlFor="price-report-comment" className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
             Commentaire (optionnel)
           </label>
           <textarea
+            id="price-report-comment"
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             placeholder="Informations complémentaires..."

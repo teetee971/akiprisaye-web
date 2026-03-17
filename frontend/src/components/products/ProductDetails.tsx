@@ -277,7 +277,7 @@ export default function ProductDetails({ product, onClose, onReportError }: Prod
                 >
                   <img
                     src={photo.thumbnail || photo.url}
-                    alt={`Photo utilisateur ${index + 1}`}
+                    alt={`Utilisateur ${index + 1}`}
                     className="w-full h-full object-cover"
                   />
                 </button>
@@ -330,10 +330,16 @@ export default function ProductDetails({ product, onClose, onReportError }: Prod
       {/* Photo Gallery Modal (simple implementation) */}
       {showPhotoGallery && product.userPhotos.length > 0 && (
         <div 
-          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
-          onClick={() => setShowPhotoGallery(false)}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
         >
-          <div className="relative max-w-4xl w-full">
+          <button
+            type="button"
+            className="absolute inset-0 bg-black/90 cursor-default"
+            onClick={() => setShowPhotoGallery(false)}
+            tabIndex={-1}
+            aria-label="Fermer la galerie"
+          />
+          <div className="relative z-10 max-w-4xl w-full">
             <button
               onClick={() => setShowPhotoGallery(false)}
               className="absolute top-4 right-4 text-white text-2xl hover:text-gray-300"
@@ -343,9 +349,8 @@ export default function ProductDetails({ product, onClose, onReportError }: Prod
             </button>
             <img
               src={product.userPhotos[selectedPhotoIndex].url}
-              alt={`Photo ${selectedPhotoIndex + 1}`}
+              alt={`Vue ${selectedPhotoIndex + 1}`}
               className="w-full h-auto rounded-lg"
-              onClick={(e) => e.stopPropagation()}
             />
             {product.userPhotos.length > 1 && (
               <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2">

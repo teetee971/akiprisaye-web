@@ -328,7 +328,7 @@ export default function ProductPhotoAnalysis() {
                   <div className="w-32 h-32 rounded-lg overflow-hidden bg-gray-900 flex-shrink-0">
                     <img
                       src={capturedImage}
-                      alt="Photo capturée"
+                      alt="Capture"
                       className="w-full h-full object-cover"
                     />
                   </div>

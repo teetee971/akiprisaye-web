@@ -77,20 +77,25 @@ export default function SignalementCitoyenModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60"
-      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-title"
     >
+      <button
+        type="button"
+        className="absolute inset-0 bg-black/60 cursor-default"
+        onClick={onClose}
+        tabIndex={-1}
+        aria-label="Fermer le dialogue"
+      />
       <div
-        className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl shadow-2xl"
+        className="relative z-10 w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl shadow-2xl"
         style={{
           background: 'linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05))',
           backdropFilter: 'blur(10px)',
           border: '1px solid rgba(255,255,255,0.22)',
         }}
-        onClick={(e) => e.stopPropagation()}
       >
         <div className="p-6">
           {/* Header */}

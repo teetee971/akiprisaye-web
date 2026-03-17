@@ -199,7 +199,7 @@ export default function AnalyseNutri() {
             {/* Header */}
             <div style={{ padding: '1.1rem 1.2rem', borderRadius: 16, background: 'rgba(15,23,42,0.8)', border: '1px solid rgba(148,163,184,0.15)', display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'flex-start' }}>
               {p.image_front_url && (
-                <img src={p.image_front_url} alt={name} style={{ width: 80, height: 80, objectFit: 'contain', borderRadius: 8, background: 'white', flexShrink: 0 }} loading="lazy" />
+                <img src={p.image_front_url} alt={name} width={80} height={80} style={{ width: 80, height: 80, objectFit: 'contain', borderRadius: 8, background: 'white', flexShrink: 0 }} loading="lazy" />
               )}
               <div style={{ flex: 1 }}>
                 <h2 style={{ margin: '0 0 0.25rem', fontSize: '1.1rem', fontWeight: 900, color: '#f1f5f9' }}>{name}</h2>

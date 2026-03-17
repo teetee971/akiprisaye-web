@@ -235,10 +235,12 @@ export function ProductList() {
           {/* Filters */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-white/70 mb-2">
-                Catégorie
+              <label htmlFor="pl-categorie" className="block text-sm font-medium text-white/70 mb-2">
+              Catégorie
               </label>
               <select
+              id="pl-categorie"
+              
                 value={categoryFilter}
                 onChange={(e) => {
                   setCategoryFilter(e.target.value as ProductCategory | '');
@@ -256,10 +258,11 @@ export function ProductList() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-white/70 mb-2">
+              <label htmlFor="pl-marque" className="block text-sm font-medium text-white/70 mb-2">
                 Marque
               </label>
               <input
+                id="pl-marque"
                 type="text"
                 placeholder="Filtrer par marque..."
                 value={brandFilter}
@@ -328,13 +331,10 @@ export function ProductList() {
                           key={header.id}
                           className="px-4 py-3 text-left text-sm font-semibold text-white/70"
                         >
-                          {header.isPlaceholder ? null : (
-                            <div
-                              className={
-                                header.column.getCanSort()
-                                  ? 'cursor-pointer select-none flex items-center gap-2'
-                                  : ''
-                              }
+                          {header.isPlaceholder ? null : header.column.getCanSort() ? (
+                            <button
+                              type="button"
+                              className="cursor-pointer select-none flex items-center gap-2 bg-transparent border-0 p-0 font-semibold text-white/70"
                               onClick={header.column.getToggleSortingHandler()}
                             >
                               {flexRender(
@@ -345,7 +345,10 @@ export function ProductList() {
                                 asc: ' 🔼',
                                 desc: ' 🔽',
                               }[header.column.getIsSorted() as string] ?? null}
-                            </div>
+                            </button>
+                          ) : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
                           )}
                         </th>
                       ))}

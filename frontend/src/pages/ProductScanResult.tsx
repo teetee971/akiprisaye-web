@@ -97,7 +97,7 @@ export default function ProductScanResult() {
               )}
             </header>
 
-            {product.image && <img src={product.image} alt={product.name ?? 'Produit'} className="max-h-64 w-full rounded-xl object-contain bg-white p-2" />}
+            {product.image && <img src={product.image} alt={product.name ?? 'Produit'} width={400} height={256} loading="lazy" className="max-h-64 w-full rounded-xl object-contain bg-white p-2" />}
 
             {/* ── Tendance des prix (données observatoire réelles) ── */}
             <PriceTrendWidget

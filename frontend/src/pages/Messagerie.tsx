@@ -244,8 +244,15 @@ export default function Messagerie() {
 
         {/* New conversation modal */}
         {showNewConv && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4" onClick={() => setShowNewConv(false)}>
-            <GlassCard className="w-full max-w-md p-6 space-y-4" onClick={(e: React.MouseEvent) => e.stopPropagation()}>
+          <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+            <button
+              type="button"
+              className="absolute inset-0 bg-black/60 cursor-default"
+              onClick={() => setShowNewConv(false)}
+              tabIndex={-1}
+              aria-label="Fermer"
+            />
+            <GlassCard className="relative z-10 w-full max-w-md p-6 space-y-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-white">Nouvelle conversation</h2>
                 <button onClick={() => setShowNewConv(false)} className="text-slate-400 hover:text-white">

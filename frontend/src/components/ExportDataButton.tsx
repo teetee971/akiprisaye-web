@@ -139,9 +139,12 @@ export default function ExportDataButton({ observations, disabled = false, label
 
       {/* Click outside to close */}
       {showMenu && (
-        <div
-          className="fixed inset-0 z-0"
+        <button
+          type="button"
+          className="fixed inset-0 z-0 cursor-default"
           onClick={() => setShowMenu(false)}
+          tabIndex={-1}
+          aria-label="Fermer le menu"
         />
       )}
     </div>

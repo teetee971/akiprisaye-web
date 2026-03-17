@@ -168,10 +168,11 @@ export default function Scanner() {
               
               {/* Timeout setting */}
               <div className="mb-4">
-                <label className="block text-gray-300 text-sm mb-2">
+                <label htmlFor="scanner-delai" className="block text-gray-300 text-sm mb-2">
                   Délai d'attente (secondes)
                 </label>
                 <input
+                  id="scanner-delai"
                   type="range"
                   min="5"
                   max="30"
@@ -185,10 +186,11 @@ export default function Scanner() {
 
               {/* Not found behavior */}
               <div className="mb-4">
-                <label className="block text-gray-300 text-sm mb-2">
+                <label htmlFor="scanner-non-reference" className="block text-gray-300 text-sm mb-2">
                   Si produit non référencé
                 </label>
                 <select
+                  id="scanner-non-reference"
                   value={settings.notFoundBehavior}
                   onChange={(e) => {
                     const value = e.target.value;

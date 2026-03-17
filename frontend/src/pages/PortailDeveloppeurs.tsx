@@ -347,11 +347,12 @@ export default function PortailDeveloppeurs() {
             <form onSubmit={handleSubmit} noValidate className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Nom complet *
-                  </label>
+                  <label htmlFor="portal-nom" className="block text-sm font-medium text-gray-700 mb-1">
+                      Nom complet *
+                    </label>
                   <input
-                    type="text"
+                    id="portal-nom"
+                      type="text"
                     value={form.nom}
                     onChange={(e) => handleChange('nom', e.target.value)}
                     placeholder="Prénom Nom"
@@ -362,11 +363,12 @@ export default function PortailDeveloppeurs() {
                   {errors.nom && <p className="text-xs text-red-600 mt-1">{errors.nom}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Adresse e-mail *
-                  </label>
+                  <label htmlFor="portal-email" className="block text-sm font-medium text-gray-700 mb-1">
+                      Adresse e-mail *
+                    </label>
                   <input
-                    type="email"
+                    id="portal-email"
+                      type="email"
                     value={form.email}
                     onChange={(e) => handleChange('email', e.target.value)}
                     placeholder="vous@exemple.com"
@@ -380,11 +382,12 @@ export default function PortailDeveloppeurs() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Nom du projet / application
-                  </label>
+                  <label htmlFor="portal-projet" className="block text-sm font-medium text-gray-700 mb-1">
+                      Nom du projet / application
+                    </label>
                   <input
-                    type="text"
+                    id="portal-projet"
+                      type="text"
                     value={form.projet}
                     onChange={(e) => handleChange('projet', e.target.value)}
                     placeholder="Ex : MonApp Prix DOM"
@@ -392,11 +395,12 @@ export default function PortailDeveloppeurs() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Plan souhaité
-                  </label>
+                  <label htmlFor="portal-plan" className="block text-sm font-medium text-gray-700 mb-1">
+                      Plan souhaité
+                    </label>
                   <select
-                    value={form.plan}
+                    id="portal-plan"
+                      value={form.plan}
                     onChange={(e) => handleChange('plan', e.target.value)}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none bg-white"
                   >
@@ -410,11 +414,12 @@ export default function PortailDeveloppeurs() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Description du cas d'usage *
-                </label>
+                <label htmlFor="portal-cas-usage" className="block text-sm font-medium text-gray-700 mb-1">
+                      Description du cas d'usage *
+                    </label>
                 <textarea
-                  rows={4}
+                  id="portal-cas-usage"
+                      rows={4}
                   value={form.useCase}
                   onChange={(e) => handleChange('useCase', e.target.value)}
                   placeholder="Décrivez brièvement comment vous souhaitez utiliser l'API (ex : application mobile de comparaison de prix, outil d'analyse, tableau de bord institutionnel…)"

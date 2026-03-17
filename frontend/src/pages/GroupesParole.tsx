@@ -372,14 +372,15 @@ export default function GroupesParole() {
 
         {/* ── Create group modal ── */}
         {showCreate && (
-          <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4"
-            onClick={() => setShowCreate(false)}
-          >
-            <GlassCard
-              className="w-full max-w-md p-6 space-y-4"
-              onClick={(e: React.MouseEvent) => e.stopPropagation()}
-            >
+          <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+            <button
+              type="button"
+              className="absolute inset-0 bg-black/60 cursor-default"
+              onClick={() => setShowCreate(false)}
+              tabIndex={-1}
+              aria-label="Fermer"
+            />
+            <GlassCard className="relative z-10 w-full max-w-md p-6 space-y-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-white">Créer un groupe de parole</h2>
                 <button onClick={() => setShowCreate(false)} className="text-slate-400 hover:text-white">
@@ -389,8 +390,9 @@ export default function GroupesParole() {
 
               <div className="space-y-3">
                 <div>
-                  <label className="block text-sm text-slate-400 mb-1">Territoire *</label>
+                  <label htmlFor="groupe-territoire" className="block text-sm text-slate-400 mb-1">Territoire *</label>
                   <select
+                    id="groupe-territoire"
                     value={createTerritory}
                     onChange={(e) => setCreateTerritory(e.target.value as TerritoryCode)}
                     className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
@@ -404,8 +406,9 @@ export default function GroupesParole() {
                 </div>
 
                 <div>
-                  <label className="block text-sm text-slate-400 mb-1">Nom du groupe *</label>
+                  <label htmlFor="groupe-nom" className="block text-sm text-slate-400 mb-1">Nom du groupe *</label>
                   <input
+                    id="groupe-nom"
                     type="text"
                     value={createName}
                     onChange={(e) => setCreateName(e.target.value)}
@@ -416,8 +419,9 @@ export default function GroupesParole() {
                 </div>
 
                 <div>
-                  <label className="block text-sm text-slate-400 mb-1">Description</label>
+                  <label htmlFor="groupe-description" className="block text-sm text-slate-400 mb-1">Description</label>
                   <textarea
+                    id="groupe-description"
                     value={createDesc}
                     onChange={(e) => setCreateDesc(e.target.value)}
                     placeholder="Décrivez l'objet du groupe…"
@@ -454,14 +458,15 @@ export default function GroupesParole() {
 
         {/* ── Flag message modal ── */}
         {flagMsgId && (
-          <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4"
-            onClick={() => setFlagMsgId(null)}
-          >
-            <GlassCard
-              className="w-full max-w-sm p-6 space-y-4"
-              onClick={(e: React.MouseEvent) => e.stopPropagation()}
-            >
+          <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+            <button
+              type="button"
+              className="absolute inset-0 bg-black/60 cursor-default"
+              onClick={() => setFlagMsgId(null)}
+              tabIndex={-1}
+              aria-label="Fermer"
+            />
+            <GlassCard className="relative z-10 w-full max-w-sm p-6 space-y-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-white flex items-center gap-2">
                   <Flag className="w-5 h-5 text-orange-400" />
@@ -672,7 +677,7 @@ export default function GroupesParole() {
                               >
                                 <img
                                   src={msg.photoUrl}
-                                  alt="Photo partagée"
+                                  alt="Contenu partagé"
                                   className="max-w-full rounded-lg max-h-48 object-cover"
                                   onError={(e) => {
                                     (e.target as HTMLImageElement).style.display = 'none';

@@ -108,10 +108,10 @@ export default function TiPanierDrawer({ open, onClose, type = 'comparison' }: {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-modal flex items-end md:items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="ti-panier-title" onClick={onClose}>
-      <div className="absolute inset-0 bg-black/50" />
+    <div className="fixed inset-0 z-modal flex items-end md:items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="ti-panier-title">
+      <button type="button" className="absolute inset-0 bg-black/50 cursor-default" onClick={onClose} tabIndex={-1} aria-label="Fermer" />
 
-      <div className="relative z-10 w-full max-w-md" onClick={(e) => e.stopPropagation()} ref={containerRef} tabIndex={-1}>
+      <div className="relative z-10 w-full max-w-md" ref={containerRef} tabIndex={-1}>
         <GlassCard>
           <div className="flex items-start justify-between mb-4">
             <div>

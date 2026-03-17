@@ -116,10 +116,11 @@ export function ShoppingListManager() {
               {/* List Items */}
               <div className="space-y-2">
                 {lists.map(list => (
-                  <div
+                  <button
                     key={list.id}
+                    type="button"
                     className={`
-                      p-3 rounded-lg cursor-pointer transition-colors
+                      w-full text-left p-3 rounded-lg cursor-pointer transition-colors
                       ${selectedList?.id === list.id 
                         ? 'bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-500' 
                         : 'bg-slate-50 dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600'
@@ -147,7 +148,7 @@ export function ShoppingListManager() {
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
-                  </div>
+                  </button>
                 ))}
 
                 {lists.length === 0 && !isCreating && (

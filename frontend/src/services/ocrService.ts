@@ -51,7 +51,7 @@ export const OCR_PSM = {
 
 // Dynamic import for lazy loading (loaded only when OCR is actually used)
 // This reduces initial bundle size by ~17MB
-let TesseractModule: any = null;
+let TesseractModule: typeof Tesseract | null = null;
 
 /**
  * Lazy load Tesseract module
@@ -62,10 +62,8 @@ let TesseractModule: any = null;
 async function loadTesseract() {
   if (!TesseractModule) {
     try {
-      console.log('[OCR] Loading Tesseract.js module (~17MB download)...');
       const module = await import('tesseract.js');
       TesseractModule = module.default || module;
-      console.log('[OCR] Tesseract.js loaded successfully');
     } catch (error) {
       console.error('[OCR] Failed to load Tesseract.js module:', error);
       throw new Error(
@@ -122,7 +120,16 @@ type OCRWorkerLike = Pick<Tesseract.Worker, 'setParameters' | 'recognize' | 'ter
 
 const OCR_LOAD_ERROR_MESSAGE =
   'Le module OCR n’a pas pu se charger correctement en production. Les fichiers linguistiques sont peut-être indisponibles.';
-const KNOWN_ASSET_LABELS = new Set(['worker', 'core', 'language']);
+class AssetLoadError extends Error {
+  status: number;
+  assetLabel: string;
+  constructor(message: string, status: number, assetLabel: string) {
+    super(message);
+    this.name = 'AssetLoadError';
+    this.status = status;
+    this.assetLabel = assetLabel;
+  }
+}
 
 /**
  * Check if running in offline mode
@@ -146,12 +153,8 @@ function normalizeConfidence(confidence: unknown): number {
 async function ensureAssetAvailable(url: string, label: string): Promise<void> {
   try {
     const response = await fetch(url, { method: 'HEAD' });
-    console.log(`[OCR] ${label} asset check`, url, response.status);
     if (!response.ok) {
-      const error = new Error(`Asset ${label} unavailable (${response.status})`);
-      (error as any).status = response.status;
-      (error as any).assetLabel = label;
-      throw error;
+      throw new AssetLoadError(`Asset ${label} unavailable (${response.status})`, response.status, label);
     }
   } catch (error) {
     console.error(`[OCR] Asset check failed for ${label}:`, error);
@@ -160,12 +163,10 @@ async function ensureAssetAvailable(url: string, label: string): Promise<void> {
 }
 
 function isAssetLoadError(error: unknown): boolean {
-  const status = (error as { status?: number })?.status;
-  const assetLabel = (error as { assetLabel?: string })?.assetLabel;
-  if (assetLabel && KNOWN_ASSET_LABELS.has(assetLabel)) {
+  if (error instanceof AssetLoadError) {
     return true;
   }
-  return status === 404;
+  return (error as { status?: number })?.status === 404;
 }
 
 /**
@@ -210,9 +211,7 @@ async function preprocessImage(
 ): Promise<{ blob: Blob; width: number; height: number; originalSize: number; processedSize: number }> {
   const response = await fetch(imageUrl);
   if (!response.ok) {
-    const error = new Error(`Image fetch failed (${response.status})`);
-    (error as any).status = response.status;
-    throw error;
+    throw new AssetLoadError(`Image fetch failed (${response.status})`, response.status, 'image');
   }
 
   const originalBlob = await response.blob();
@@ -281,13 +280,6 @@ async function preprocessImage(
       'image/png',
       0.95,
     );
-  });
-
-  console.log('[OCR] Image preprocessing', {
-    originalSizeKB: Math.round(originalBlob.size / 1024),
-    processedSizeKB: Math.round(processedBlob.size / 1024),
-    canvasWidth: width,
-    canvasHeight: height,
   });
 
   return {
@@ -361,7 +353,7 @@ export async function runOCR(
       corePath: CORE_PATH,
       langPath: LANG_PATH,
       gzip: true,
-      logger: (m: unknown) => console.debug('[OCR]', m),
+      ...(import.meta.env.DEV ? { logger: (m: Tesseract.LoggerMessage) => console.debug('[OCR]', m) } : {}),
     }) as OCRWorkerLike;
 
     // Tesseract.js runs entirely in the browser via WASM

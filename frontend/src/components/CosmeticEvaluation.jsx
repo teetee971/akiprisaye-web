@@ -108,10 +108,11 @@ export default function CosmeticEvaluation() {
         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 mb-8">
           <form onSubmit={handleEvaluate} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              <label htmlFor="cosmetic-nom" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                 Nom du produit
               </label>
               <input
+                id="cosmetic-nom"
                 type="text"
                 value={productName}
                 onChange={(e) => setProductName(e.target.value)}
@@ -122,10 +123,11 @@ export default function CosmeticEvaluation() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              <label htmlFor="cosmetic-categorie" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                 Catégorie
               </label>
               <select
+                id="cosmetic-categorie"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
@@ -139,10 +141,11 @@ export default function CosmeticEvaluation() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              <label htmlFor="cosmetic-inci" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                 Liste INCI (ingrédients séparés par des virgules)
               </label>
               <textarea
+                id="cosmetic-inci"
                 value={inciList}
                 onChange={(e) => setInciList(e.target.value)}
                 placeholder="Ex: AQUA, GLYCERIN, CETEARYL ALCOHOL, NIACINAMIDE, PANTHENOL, TOCOPHEROL"

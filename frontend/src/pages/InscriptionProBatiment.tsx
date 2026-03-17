@@ -187,11 +187,12 @@ function Step1Legal({ form, onChange, onNext }: {
 
       {/* SIRET */}
       <div>
-        <label className="block text-sm font-medium text-slate-300 mb-1">
+        <label htmlFor="ipb-siret" className="block text-sm font-medium text-slate-300 mb-1">
           Numéro SIRET <span className="text-slate-500 text-xs font-normal">(14 chiffres)</span> *
         </label>
         <div className="relative">
           <input
+            id="ipb-siret"
             type="text"
             value={rawSiret.length ? formatSiret(rawSiret) : ''}
             onChange={(e) => onChange({ siret: e.target.value.replace(/\s/g, '') })}
@@ -224,8 +225,9 @@ function Step1Legal({ form, onChange, onNext }: {
 
       {/* Raison sociale */}
       <div>
-        <label className="block text-sm font-medium text-slate-300 mb-1">Raison sociale *</label>
+        <label htmlFor="ipb-raison-sociale" className="block text-sm font-medium text-slate-300 mb-1">Raison sociale *</label>
         <input
+          id="ipb-raison-sociale"
           type="text"
           value={form.raisonSociale}
           onChange={(e) => onChange({ raisonSociale: e.target.value })}
@@ -237,8 +239,9 @@ function Step1Legal({ form, onChange, onNext }: {
 
       {/* Forme juridique */}
       <div>
-        <label className="block text-sm font-medium text-slate-300 mb-1">Forme juridique *</label>
+        <label htmlFor="ipb-forme-juridique" className="block text-sm font-medium text-slate-300 mb-1">Forme juridique *</label>
         <select
+          id="ipb-forme-juridique"
           value={form.formeJuridique}
           onChange={(e) => onChange({ formeJuridique: e.target.value })}
           className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
@@ -252,8 +255,9 @@ function Step1Legal({ form, onChange, onNext }: {
 
       {/* Année de création */}
       <div>
-        <label className="block text-sm font-medium text-slate-300 mb-1">Année de création *</label>
+        <label htmlFor="ipb-annee-creation" className="block text-sm font-medium text-slate-300 mb-1">Année de création *</label>
         <input
+          id="ipb-annee-creation"
           type="number"
           value={form.anneeCreation}
           onChange={(e) => onChange({ anneeCreation: e.target.value })}
@@ -304,57 +308,63 @@ function Step2Contact({ form, onChange, onNext, onPrev }: {
 
       <div className="grid sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-slate-300 mb-1">Prénom du gérant *</label>
-          <input type="text" value={form.gerantPrenom} onChange={(e) => onChange({ gerantPrenom: e.target.value })}
+          <label htmlFor="ipb-prenom-gerant" className="block text-sm font-medium text-slate-300 mb-1">Prénom du gérant *</label>
+          <input id="ipb-prenom-gerant"
+          type="text" value={form.gerantPrenom} onChange={(e) => onChange({ gerantPrenom: e.target.value })}
             placeholder="Jean" maxLength={50} className={inputClass} />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-300 mb-1">Nom du gérant *</label>
-          <input type="text" value={form.gerantNom} onChange={(e) => onChange({ gerantNom: e.target.value })}
+          <label htmlFor="ipb-nom-gerant" className="block text-sm font-medium text-slate-300 mb-1">Nom du gérant *</label>
+          <input id="ipb-nom-gerant"
+          type="text" value={form.gerantNom} onChange={(e) => onChange({ gerantNom: e.target.value })}
             placeholder="Dupont" maxLength={50} className={inputClass} />
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-slate-300 mb-1">
+        <label htmlFor="ipb-email" className="block text-sm font-medium text-slate-300 mb-1">
           <Mail className="inline w-3.5 h-3.5 mr-1 text-slate-400" />Email professionnel *
         </label>
-        <input type="email" value={form.email} onChange={(e) => onChange({ email: e.target.value })}
+        <input id="ipb-email" type="email" value={form.email} onChange={(e) => onChange({ email: e.target.value })}
           placeholder="contact@monentreprise.fr" className={inputClass} />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-slate-300 mb-1">
+        <label htmlFor="ipb-telephone" className="block text-sm font-medium text-slate-300 mb-1">
           <Phone className="inline w-3.5 h-3.5 mr-1 text-slate-400" />Téléphone *
         </label>
-        <input type="tel" value={form.telephone} onChange={(e) => onChange({ telephone: e.target.value })}
+        <input id="ipb-telephone" type="tel" value={form.telephone} onChange={(e) => onChange({ telephone: e.target.value })}
           placeholder="0590 XX XX XX" maxLength={20} className={inputClass} />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-slate-300 mb-1">
+        <label htmlFor="ipb-adresse" className="block text-sm font-medium text-slate-300 mb-1">
           <MapPin className="inline w-3.5 h-3.5 mr-1 text-slate-400" />Adresse professionnelle *
         </label>
-        <input type="text" value={form.adresse} onChange={(e) => onChange({ adresse: e.target.value })}
+        <input
+            id="ipb-adresse" type="text" value={form.adresse} onChange={(e) => onChange({ adresse: e.target.value })}
           placeholder="12 rue des Flamboyants" maxLength={120} className={inputClass} />
       </div>
 
       <div className="grid grid-cols-3 gap-3">
         <div>
-          <label className="block text-sm font-medium text-slate-300 mb-1">Code postal *</label>
-          <input type="text" value={form.codePostal} onChange={(e) => onChange({ codePostal: e.target.value })}
+          <label htmlFor="ipb-code-postal" className="block text-sm font-medium text-slate-300 mb-1">Code postal *</label>
+          <input id="ipb-code-postal"
+          type="text" value={form.codePostal} onChange={(e) => onChange({ codePostal: e.target.value })}
             placeholder="97100" maxLength={10} className={inputClass} />
         </div>
         <div className="col-span-2">
-          <label className="block text-sm font-medium text-slate-300 mb-1">Ville *</label>
-          <input type="text" value={form.ville} onChange={(e) => onChange({ ville: e.target.value })}
+          <label htmlFor="ipb-ville" className="block text-sm font-medium text-slate-300 mb-1">Ville *</label>
+          <input id="ipb-ville"
+          type="text" value={form.ville} onChange={(e) => onChange({ ville: e.target.value })}
             placeholder="Pointe-à-Pitre" maxLength={80} className={inputClass} />
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-slate-300 mb-1">Territoire *</label>
-        <select value={form.territoire} onChange={(e) => onChange({ territoire: e.target.value })}
+        <label htmlFor="ipb-territoire" className="block text-sm font-medium text-slate-300 mb-1">Territoire *</label>
+        <select id="ipb-territoire"
+          value={form.territoire} onChange={(e) => onChange({ territoire: e.target.value })}
           className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-orange-500">
           <option value="">— Sélectionner —</option>
           {TERRITOIRES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
@@ -407,9 +417,9 @@ function Step3Metiers({ form, onChange, onNext, onPrev }: {
 
       {/* Corps de métier */}
       <div>
-        <label className="block text-sm font-medium text-slate-300 mb-2">
+        <span className="block text-sm font-medium text-slate-300 mb-2">
           Corps de métier * <span className="text-slate-500 font-normal text-xs">(sélectionnez au moins 1)</span>
-        </label>
+        </span>
         <div className="flex flex-wrap gap-2">
           {(Object.entries(METIER_LABELS) as [MetierBatiment, string][]).map(([key, label]) => (
             <button
@@ -430,8 +440,9 @@ function Step3Metiers({ form, onChange, onNext, onPrev }: {
 
       {/* Zone d'intervention */}
       <div>
-        <label className="block text-sm font-medium text-slate-300 mb-1">Zone d'intervention *</label>
+        <label htmlFor="ipb-zone-intervention" className="block text-sm font-medium text-slate-300 mb-1">Zone d'intervention *</label>
         <input
+          id="ipb-zone-intervention"
           type="text"
           value={form.zoneIntervention}
           onChange={(e) => onChange({ zoneIntervention: e.target.value })}
@@ -443,11 +454,12 @@ function Step3Metiers({ form, onChange, onNext, onPrev }: {
 
       {/* Tarif horaire */}
       <div>
-        <label className="block text-sm font-medium text-slate-300 mb-1">
+        <label htmlFor="ipb-tarif-horaire" className="block text-sm font-medium text-slate-300 mb-1">
           <Euro className="inline w-3.5 h-3.5 mr-1 text-slate-400" />Tarif horaire HT (€/h)
           <span className="text-slate-500 text-xs font-normal ml-1">(optionnel)</span>
         </label>
         <input
+          id="ipb-tarif-horaire"
           type="number"
           value={form.tarifHoraire}
           onChange={(e) => onChange({ tarifHoraire: e.target.value })}
@@ -459,10 +471,11 @@ function Step3Metiers({ form, onChange, onNext, onPrev }: {
 
       {/* Description */}
       <div>
-        <label className="block text-sm font-medium text-slate-300 mb-1">
+        <label htmlFor="ipb-description" className="block text-sm font-medium text-slate-300 mb-1">
           Présentation libre <span className="text-slate-500 text-xs font-normal">(max 500 caractères)</span>
         </label>
         <textarea
+          id="ipb-description"
           value={form.description}
           onChange={(e) => onChange({ description: e.target.value })}
           placeholder="Décrivez votre entreprise, votre expérience, vos spécialités…"
@@ -475,9 +488,9 @@ function Step3Metiers({ form, onChange, onNext, onPrev }: {
 
       {/* Certifications */}
       <div>
-        <label className="block text-sm font-medium text-slate-300 mb-2">
+        <p className="block text-sm font-medium text-slate-300 mb-2">
           <Shield className="inline w-3.5 h-3.5 mr-1 text-slate-400" />Certifications &amp; labels
-        </label>
+        </p>
         <div className="flex flex-wrap gap-2">
           {CERTIFICATIONS_OPTIONS.map((c) => (
             <label key={c} className="flex items-center gap-2 cursor-pointer">

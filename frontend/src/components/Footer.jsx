@@ -1,8 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
 export default function Footer() {
   const [version, setVersion] = useState(null);
+  const [debugActive, setDebugActive] = useState(false);
+  const tapCount = useRef(0);
+  const tapTimer = useRef(null);
 
   useEffect(() => {
     // Fetch version information
@@ -13,7 +16,49 @@ export default function Footer() {
         // Silently fail - version is optional
         setVersion({ version: '3.0.1', commit: 'unknown' });
       });
+
+    // Reflect current debug state on mount
+    try {
+      setDebugActive(sessionStorage.getItem('auth:debug') === '1');
+    } catch {
+      // sessionStorage may be unavailable
+    }
+
+    return () => {
+      if (tapTimer.current) clearTimeout(tapTimer.current);
+    };
   }, []);
+
+  /**
+   * Secret triple-tap activator — tap the copyright line 3 times within 1.5 s
+   * to toggle the auth debug panel without opening DevTools.
+   * Useful on mobile Chrome / Samsung Internet.
+   */
+  const handleDebugTap = () => {
+    tapCount.current += 1;
+    if (tapTimer.current) clearTimeout(tapTimer.current);
+
+    if (tapCount.current >= 3) {
+      tapCount.current = 0;
+      try {
+        const next = sessionStorage.getItem('auth:debug') !== '1';
+        if (next) {
+          sessionStorage.setItem('auth:debug', '1');
+        } else {
+          sessionStorage.removeItem('auth:debug');
+        }
+        setDebugActive(next);
+        window.location.reload();
+      } catch {
+        // sessionStorage unavailable — ignore
+      }
+      return;
+    }
+
+    tapTimer.current = setTimeout(() => {
+      tapCount.current = 0;
+    }, 1500);
+  };
 
   return (
     <footer
@@ -68,9 +113,30 @@ export default function Footer() {
           </Link>
         </nav>
 
-        {/* Copyright */}
+        {/* Copyright — triple-tap to toggle auth debug panel */}
         <div className="text-center text-slate-400 text-sm">
-          <p>© {new Date().getFullYear()} A KI PRI SA YÉ - Tous droits réservés</p>
+          <button
+            type="button"
+            onClick={handleDebugTap}
+            title={debugActive ? 'Auth debug actif — triple-tap pour désactiver' : undefined}
+            style={{
+              cursor: 'default',
+              WebkitTapHighlightColor: 'transparent',
+              background: 'none',
+              border: 'none',
+              color: 'inherit',
+              font: 'inherit',
+              padding: 0,
+              display: 'block',
+              width: '100%',
+              textAlign: 'center',
+            }}
+          >
+            © {new Date().getFullYear()} A KI PRI SA YÉ - Tous droits réservés
+            {debugActive && (
+              <span className="ml-2 text-xs text-orange-400" aria-label="Auth debug activé">🔒</span>
+            )}
+          </button>
           <p className="mt-2 text-xs text-slate-500">
             Plateforme citoyenne de transparence des prix en Outre-mer
           </p>

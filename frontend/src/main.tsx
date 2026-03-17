@@ -13,6 +13,8 @@ import ErrorBoundary from './components/ErrorBoundary';
 import { safeToText } from './utils/safeToText';
 import { installRuntimeCrashProbe } from './monitoring/runtimeCrashProbe';
 import { initSentry } from './monitoring/sentry';
+import { initErrorTracker } from './monitoring/errorTracker';
+import { initWebVitals } from './monitoring/webVitals';
 import { logDebug } from './utils/logger';
 import { enforceBuildVersionSyncAsync, registerAppServiceWorker } from './utils/buildVersionGuard.client';
 
@@ -35,6 +37,8 @@ window.__BUILD_SHA__ = BUILD_ID;
 logDebug(`[build] A KI PRI SA YÉ boot id=${BUILD_ID}`);
 initSentry();
 installRuntimeCrashProbe();
+initErrorTracker();
+initWebVitals();
 
 // A) Purge stale price data from IndexedDB on startup (non-blocking)
 import('./services/priceCacheService').then(({ purgeExpiredPriceCache }) => {
@@ -56,13 +60,17 @@ function renderFallbackError(title: unknown, message: unknown) {
   const safeMessage = safeToText(message);
 
   fallback.innerHTML = `
-    <img src="${import.meta.env.BASE_URL}logo-akiprisaye.svg" alt="A KI PRI SA YÉ" style="height: 64px; margin-bottom: 24px;" />
+    <img src="${import.meta.env.BASE_URL}logo-akiprisaye.svg" alt="A KI PRI SA YÉ" width="64" height="64" style="margin-bottom: 24px;" />
     <h1 style="font-size: 1.5rem; margin-bottom: 8px;">${safeTitle}</h1>
     <p style="color: #f87171; margin-bottom: 8px;">${safeMessage}</p>
-    <button onclick="location.reload()" style="padding: 12px 24px; background: #3b82f6; color: white; border: none; border-radius: 8px; cursor: pointer;">
+    <button type="button" data-action="reload" style="padding: 12px 24px; background: #3b82f6; color: white; border: none; border-radius: 8px; cursor: pointer;">
       Recharger
     </button>
   `;
+  // Attach the reload handler imperatively — avoids inline onclick which is
+  // blocked by strict-dynamic CSP and flagged by Lighthouse Best Practices.
+  fallback.querySelector<HTMLButtonElement>('[data-action="reload"]')
+    ?.addEventListener('click', () => { window.location.reload(); });
 }
 
 function hideHtmlFallback() {

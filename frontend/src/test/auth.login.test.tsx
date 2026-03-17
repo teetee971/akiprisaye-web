@@ -52,6 +52,9 @@ function makeAuthMock(overrides: Record<string, unknown> = {}) {
     user: null,
     userRole: 'guest',
     loading: false,
+    authResolved: true,
+    authFlowState: 'idle' as const,
+    lastIncident: null,
     error: null,
     isGuest: true,
     isCitoyen: false,
@@ -125,7 +128,7 @@ vi.mock('../store/useShoppingListStore', () => ({
 
 describe('Login page', () => {
   it('shows a loading spinner while auth is initialising', () => {
-    authState = makeAuthMock({ loading: true });
+    authState = makeAuthMock({ loading: true, authFlowState: 'resolving', authResolved: false });
 
     render(
       <MemoryRouter>
@@ -192,7 +195,7 @@ describe('Login page', () => {
   });
 
   it('hides social login buttons and shows the spinner while auth is loading (simulates OAuth redirect return)', () => {
-    authState = makeAuthMock({ loading: true });
+    authState = makeAuthMock({ loading: true, authFlowState: 'resolving', authResolved: false });
 
     render(
       <MemoryRouter>
@@ -225,7 +228,7 @@ describe('Header', () => {
   });
 
   it('shows a loading skeleton instead of "Se connecter" while auth is settling', () => {
-    authState = makeAuthMock({ loading: true, user: null });
+    authState = makeAuthMock({ loading: true, authFlowState: 'resolving', authResolved: false, user: null });
 
     render(
       <MemoryRouter>
@@ -360,8 +363,8 @@ describe('SocialLoginButtons', () => {
     expect(screen.queryByText(/continuer avec google/i)).toBeNull();
   });
 
-  it('calls signInGoogleRedirect (not signInGooglePopup) when on mobile', async () => {
-    const mockSignInGoogleRedirect = vi.fn().mockResolvedValue(undefined);
+  it('navigates to /auth/callback (not signInGooglePopup or direct redirect) when on mobile', async () => {
+    const mockSignInGoogleRedirect = vi.fn();
     const mockSignInGooglePopup = vi.fn();
     authState = makeAuthMock({
       user: null,
@@ -375,17 +378,24 @@ describe('SocialLoginButtons', () => {
       configurable: true,
     });
 
+    mockNavigate.mockClear();
     render(
       <MemoryRouter>
-        <SocialLoginButtons />
+        <SocialLoginButtons redirectTo="/mon-compte" />
       </MemoryRouter>,
     );
 
     fireEvent.click(screen.getByRole('button', { name: /se connecter avec google/i }));
 
     await waitFor(() => {
-      expect(mockSignInGoogleRedirect).toHaveBeenCalledOnce();
+      // On mobile, SocialLoginButtons navigates to /auth/callback — it does NOT
+      // call signInGoogleRedirect directly. The redirect is initiated by AuthCallbackPage.
+      expect(mockNavigate).toHaveBeenCalledWith(
+        expect.stringContaining('/auth/callback?provider=google'),
+        expect.any(Object),
+      );
     });
+    expect(mockSignInGoogleRedirect).not.toHaveBeenCalled();
     expect(mockSignInGooglePopup).not.toHaveBeenCalled();
 
     // Restore a desktop user agent for subsequent tests
@@ -444,7 +454,7 @@ describe('layout/Header', () => {
   });
 
   it('shows a loading skeleton instead of "Se connecter" while auth is settling', () => {
-    authState = makeAuthMock({ loading: true, user: null });
+    authState = makeAuthMock({ loading: true, authFlowState: 'resolving', authResolved: false, user: null });
 
     render(
       <MemoryRouter>

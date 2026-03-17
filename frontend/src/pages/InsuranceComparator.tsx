@@ -298,10 +298,11 @@ const InsuranceComparator: React.FC = () => {
         <div className="bg-slate-900/50 rounded-xl p-6 mb-6 border border-slate-800">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="assurance-territoire" className="block text-sm font-medium text-gray-300 mb-2">
                 Territoire
               </label>
               <select
+                id="assurance-territoire"
                 value={selectedTerritory}
                 onChange={(e) => setSelectedTerritory(e.target.value as Territory)}
                 className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
@@ -315,10 +316,11 @@ const InsuranceComparator: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="assurance-type" className="block text-sm font-medium text-gray-300 mb-2">
                 Type d'assurance
               </label>
               <select
+                id="assurance-type"
                 value={selectedType}
                 onChange={(e) => setSelectedType(e.target.value as InsuranceType)}
                 className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
@@ -332,10 +334,11 @@ const InsuranceComparator: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="assurance-niveau-couverture" className="block text-sm font-medium text-gray-300 mb-2">
                 Niveau de couverture
               </label>
               <select
+                id="assurance-niveau-couverture"
                 value={selectedCoverageLevel}
                 onChange={(e) => setSelectedCoverageLevel(e.target.value as CoverageLevel | 'all')}
                 className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"

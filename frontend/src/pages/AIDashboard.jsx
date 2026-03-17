@@ -171,10 +171,11 @@ export default function AIDashboard() {
 
         {/* Territory Filter */}
         <div className="mb-6">
-          <label className="block text-sm font-medium text-slate-300 mb-2">
+          <label htmlFor="filtrer-territoire" className="block text-sm font-medium text-slate-300 mb-2">
             Filtrer par territoire
           </label>
           <select
+            id="filtrer-territoire"
             value={territory}
             onChange={(e) => setTerritory(e.target.value)}
             className="px-4 py-2 rounded-lg bg-slate-800 text-slate-100 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
