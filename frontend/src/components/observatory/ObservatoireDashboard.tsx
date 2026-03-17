@@ -228,8 +228,9 @@ export default function ObservatoireDashboard() {
         <h2 className="text-xl font-semibold mb-4">🔍 Filtres</h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Code EAN</label>
+            <label htmlFor="obs-ean" className="block text-sm font-medium text-gray-300 mb-2">Code EAN</label>
             <input
+              id="obs-ean"
               type="text"
               value={searchEAN}
               onChange={(e) => setSearchEAN(e.target.value)}

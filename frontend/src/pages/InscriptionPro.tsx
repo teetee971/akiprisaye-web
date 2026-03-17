@@ -105,10 +105,11 @@ function Step1Legal({ form, onChange, onNext }: Step1Props) {
 
       {/* Raison sociale */}
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-1">
+        <label htmlFor="ip-raison-sociale" className="block text-sm font-medium text-gray-300 mb-1">
           Raison sociale / Nom commercial *
         </label>
         <input
+          id="ip-raison-sociale"
           type="text"
           value={form.raisonSociale}
           onChange={(e) => onChange({ raisonSociale: e.target.value })}
@@ -120,11 +121,12 @@ function Step1Legal({ form, onChange, onNext }: Step1Props) {
 
       {/* SIRET */}
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-1">
+        <label htmlFor="ip-siret" className="block text-sm font-medium text-gray-300 mb-1">
           Numéro SIRET *
           <span className="ml-2 text-xs text-gray-500 font-normal">(14 chiffres)</span>
         </label>
         <input
+          id="ip-siret"
           type="text"
           value={form.siret ? formatSiret(form.siret) : ''}
           onChange={(e) => handleSiretChange(e.target.value)}
@@ -153,8 +155,9 @@ function Step1Legal({ form, onChange, onNext }: Step1Props) {
 
       {/* Forme juridique */}
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-1">Forme juridique *</label>
+        <label htmlFor="ip-forme-juridique" className="block text-sm font-medium text-gray-300 mb-1">Forme juridique *</label>
         <select
+          id="ip-forme-juridique"
           value={form.formeJuridique}
           onChange={(e) => onChange({ formeJuridique: e.target.value as FormeJuridique })}
           className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -168,8 +171,9 @@ function Step1Legal({ form, onChange, onNext }: Step1Props) {
 
       {/* Secteur d'activité */}
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-1">Secteur d'activité *</label>
+        <label htmlFor="ip-secteur" className="block text-sm font-medium text-gray-300 mb-1">Secteur d'activité *</label>
         <select
+          id="ip-secteur"
           value={form.secteurActivite}
           onChange={(e) => onChange({ secteurActivite: e.target.value as SecteurActivite })}
           className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -183,11 +187,12 @@ function Step1Legal({ form, onChange, onNext }: Step1Props) {
 
       {/* Code APE (optionnel) */}
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-1">
+        <label htmlFor="ip-code-ape" className="block text-sm font-medium text-gray-300 mb-1">
           Code APE / NAF
           <span className="ml-2 text-xs text-gray-500 font-normal">(optionnel)</span>
         </label>
         <input
+          id="ip-code-ape"
           type="text"
           value={form.codeApe ?? ''}
           onChange={(e) => onChange({ codeApe: e.target.value.toUpperCase() })}
@@ -236,61 +241,68 @@ function Step2Contact({ form, onChange, onNext, onPrev }: Step2Props) {
 
       <div className="grid sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1">Nom du responsable *</label>
-          <input type="text" value={form.nomResponsable} onChange={(e) => onChange({ nomResponsable: e.target.value })}
+          <label htmlFor="ip-nom-responsable" className="block text-sm font-medium text-gray-300 mb-1">Nom du responsable *</label>
+          <input id="ip-nom-responsable"
+          type="text" value={form.nomResponsable} onChange={(e) => onChange({ nomResponsable: e.target.value })}
             placeholder="Prénom Nom" maxLength={80}
             className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1">Téléphone *</label>
-          <input type="tel" value={form.telephone} onChange={(e) => onChange({ telephone: e.target.value })}
+          <label htmlFor="ip-telephone" className="block text-sm font-medium text-gray-300 mb-1">Téléphone *</label>
+          <input id="ip-telephone"
+          type="tel" value={form.telephone} onChange={(e) => onChange({ telephone: e.target.value })}
             placeholder="0590 XX XX XX" maxLength={20}
             className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500" />
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-1">Email professionnel *</label>
-        <input type="email" value={form.email} onChange={(e) => onChange({ email: e.target.value })}
+        <label htmlFor="ip-email" className="block text-sm font-medium text-gray-300 mb-1">Email professionnel *</label>
+        <input id="ip-email"
+          type="email" value={form.email} onChange={(e) => onChange({ email: e.target.value })}
           placeholder="contact@monentreprise.fr"
           className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500" />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-1">
+        <label htmlFor="ip-password" className="block text-sm font-medium text-gray-300 mb-1">
           Mot de passe *
           <span className="ml-2 text-xs text-gray-500 font-normal">(min. 8 caractères)</span>
         </label>
-        <input type="password" value={form.password} onChange={(e) => onChange({ password: e.target.value })}
+        <input id="ip-password" type="password" value={form.password} onChange={(e) => onChange({ password: e.target.value })}
           placeholder="••••••••" minLength={8}
           className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500" />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-1">Adresse professionnelle *</label>
-        <input type="text" value={form.adresse} onChange={(e) => onChange({ adresse: e.target.value })}
+        <label htmlFor="ip-adresse" className="block text-sm font-medium text-gray-300 mb-1">Adresse professionnelle *</label>
+        <input id="ip-adresse"
+          type="text" value={form.adresse} onChange={(e) => onChange({ adresse: e.target.value })}
           placeholder="Numéro et nom de la rue" maxLength={120}
           className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500" />
       </div>
 
       <div className="grid grid-cols-3 gap-3">
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1">Code postal *</label>
-          <input type="text" value={form.codePostal} onChange={(e) => onChange({ codePostal: e.target.value })}
+          <label htmlFor="ip-code-postal" className="block text-sm font-medium text-gray-300 mb-1">Code postal *</label>
+          <input id="ip-code-postal"
+          type="text" value={form.codePostal} onChange={(e) => onChange({ codePostal: e.target.value })}
             placeholder="97100" maxLength={10}
             className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500" />
         </div>
         <div className="col-span-2">
-          <label className="block text-sm font-medium text-gray-300 mb-1">Ville *</label>
-          <input type="text" value={form.ville} onChange={(e) => onChange({ ville: e.target.value })}
+          <label htmlFor="ip-ville" className="block text-sm font-medium text-gray-300 mb-1">Ville *</label>
+          <input id="ip-ville"
+          type="text" value={form.ville} onChange={(e) => onChange({ ville: e.target.value })}
             placeholder="Pointe-à-Pitre" maxLength={80}
             className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500" />
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-1">Territoire *</label>
-        <select value={form.territoire} onChange={(e) => onChange({ territoire: e.target.value })}
+        <label htmlFor="ip-territoire" className="block text-sm font-medium text-gray-300 mb-1">Territoire *</label>
+        <select id="ip-territoire"
+          value={form.territoire} onChange={(e) => onChange({ territoire: e.target.value })}
           className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
           <option value="">— Sélectionner —</option>
           {TERRITOIRES.map((t) => <option key={t} value={t}>{t}</option>)}
@@ -298,7 +310,7 @@ function Step2Contact({ form, onChange, onNext, onPrev }: Step2Props) {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-1">
+        <label htmlFor="ip-site-web" className="block text-sm font-medium text-gray-300 mb-1">
           Site web <span className="text-xs text-gray-500 font-normal">(optionnel)</span>
         </label>
         <div className="relative">
@@ -345,11 +357,11 @@ function Step3Presentation({ form, onChange, onNext, onPrev }: Step3Props) {
       </p>
 
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-1">
+        <label htmlFor="ip-description-activite" className="block text-sm font-medium text-gray-300 mb-1">
           Description de votre activité *
           <span className="ml-2 text-xs text-gray-500 font-normal">(min. 30 caractères)</span>
         </label>
-        <textarea value={form.descriptionActivite} onChange={(e) => onChange({ descriptionActivite: e.target.value })}
+        <textarea id="ip-description-activite" value={form.descriptionActivite} onChange={(e) => onChange({ descriptionActivite: e.target.value })}
           rows={5} maxLength={600}
           placeholder="Présentez votre commerce, vos produits ou services, votre engagement qualité, vos horaires d'ouverture, ce qui vous distingue…"
           className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none" />
@@ -357,10 +369,10 @@ function Step3Presentation({ form, onChange, onNext, onPrev }: Step3Props) {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-1">
+        <label htmlFor="ip-slogan" className="block text-sm font-medium text-gray-300 mb-1">
           Slogan <span className="text-xs text-gray-500 font-normal">(optionnel)</span>
         </label>
-        <input type="text" value={form.slogan ?? ''} onChange={(e) => onChange({ slogan: e.target.value })}
+        <input id="ip-slogan" type="text" value={form.slogan ?? ''} onChange={(e) => onChange({ slogan: e.target.value })}
           placeholder="Ex : Les meilleurs prix de l'île !" maxLength={80}
           className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500" />
       </div>

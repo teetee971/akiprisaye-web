@@ -125,10 +125,11 @@ export default function HistoriqueVariations({
       <div className="bg-white rounded-lg shadow-md p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="historique-produit" className="block text-sm font-medium text-gray-700 mb-2">
               Produit
             </label>
             <select
+              id="historique-produit"
               value={activeProduct}
               onChange={(e) => setSelectedProduct(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -145,10 +146,11 @@ export default function HistoriqueVariations({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="historique-enseigne" className="block text-sm font-medium text-gray-700 mb-2">
               Enseigne
             </label>
             <select
+              id="historique-enseigne"
               value={activeStore}
               onChange={(e) => setSelectedStore(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"

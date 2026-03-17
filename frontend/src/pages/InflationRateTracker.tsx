@@ -272,9 +272,10 @@ export default function InflationRateTracker() {
           {/* Filters + sort */}
           <div className="mb-4 flex flex-wrap gap-3 items-end">
             <div>
-              <label className="block text-xs text-slate-500 mb-1">Territoire</label>
+              <label htmlFor="inflation-territoire" className="block text-xs text-slate-500 mb-1">Territoire</label>
               <select
-                value={selectedTerritory}
+                  id="inflation-territoire"
+                  value={selectedTerritory}
                 onChange={(e) => setSelectedTerritory(e.target.value)}
                 className="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm text-slate-800 dark:text-slate-200"
               >
@@ -283,9 +284,10 @@ export default function InflationRateTracker() {
               </select>
             </div>
             <div>
-              <label className="block text-xs text-slate-500 mb-1">Catégorie</label>
+              <label htmlFor="inflation-categorie" className="block text-xs text-slate-500 mb-1">Catégorie</label>
               <select
-                value={selectedCategory}
+                  id="inflation-categorie"
+                  value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 className="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm text-slate-800 dark:text-slate-200"
               >
@@ -294,9 +296,10 @@ export default function InflationRateTracker() {
               </select>
             </div>
             <div>
-              <label className="block text-xs text-slate-500 mb-1">Trier par</label>
+              <label htmlFor="inflation-trier-par" className="block text-xs text-slate-500 mb-1">Trier par</label>
               <select
-                value={sortBy}
+                  id="inflation-trier-par"
+                  value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
                 className="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm text-slate-800 dark:text-slate-200"
               >

@@ -157,16 +157,16 @@ export default function CrossTerritoryComparator() {
           {/* Product + category filters */}
           <div className="mb-6 flex flex-wrap gap-3">
             <div>
-              <label className="block text-xs text-slate-500 mb-1">Catégorie</label>
-              <select value={selectedCategory} onChange={(e) => { setSelectedCategory(e.target.value); setSelectedProduct(''); }}
+              <label htmlFor="cross-categorie" className="block text-xs text-slate-500 mb-1">Catégorie</label>
+              <select id="cross-categorie" value={selectedCategory} onChange={(e) => { setSelectedCategory(e.target.value); setSelectedProduct(''); }}
                 className="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm text-slate-800 dark:text-slate-200">
                 <option value="">Toutes</option>
                 {categories.map((c) => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>
             <div className="flex-1 min-w-48">
-              <label className="block text-xs text-slate-500 mb-1">Produit comparé</label>
-              <select value={selectedProduct} onChange={(e) => setSelectedProduct(e.target.value)}
+              <label htmlFor="cross-produit" className="block text-xs text-slate-500 mb-1">Produit comparé</label>
+              <select id="cross-produit" value={selectedProduct} onChange={(e) => setSelectedProduct(e.target.value)}
                 className="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm text-slate-800 dark:text-slate-200">
                 {filteredProducts.map((p) => <option key={p.key} value={p.key}>{p.name}</option>)}
               </select>

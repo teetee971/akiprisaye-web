@@ -228,32 +228,32 @@ export default function DLCAntigaspi() {
           <div style={{ padding: '1rem 1.2rem', borderRadius: 14, background: 'rgba(15,23,42,0.8)', border: '1px solid rgba(16,185,129,0.25)', marginBottom: '1rem' }}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '0.65rem', marginBottom: '0.65rem' }}>
               <div>
-                <label style={{ fontSize: '0.7rem', color: '#94a3b8', display: 'block', marginBottom: '0.25rem' }}>Produit *</label>
-                <input value={form.nom} onChange={e => setForm(f => ({ ...f, nom: e.target.value }))} placeholder="Lait, poulet…"
+                <label htmlFor="dlc-produit" style={{ fontSize: '0.7rem', color: '#94a3b8', display: 'block', marginBottom: '0.25rem' }}>Produit *</label>
+                <input id="dlc-produit" value={form.nom} onChange={e => setForm(f => ({ ...f, nom: e.target.value }))} placeholder="Lait, poulet…"
                   style={{ width: '100%', padding: '0.45rem 0.6rem', borderRadius: 7, background: 'rgba(30,41,59,0.9)', border: '1px solid rgba(99,102,241,0.35)', color: '#f1f5f9', fontSize: '0.83rem', boxSizing: 'border-box' }} />
               </div>
               <div>
-                <label style={{ fontSize: '0.7rem', color: '#94a3b8', display: 'block', marginBottom: '0.25rem' }}>DLC / DLUO *</label>
-                <input type="date" value={form.dlc} onChange={e => setForm(f => ({ ...f, dlc: e.target.value }))}
+                <label htmlFor="dlc-date" style={{ fontSize: '0.7rem', color: '#94a3b8', display: 'block', marginBottom: '0.25rem' }}>DLC / DLUO *</label>
+                <input id="dlc-date" type="date" value={form.dlc} onChange={e => setForm(f => ({ ...f, dlc: e.target.value }))}
                   style={{ width: '100%', padding: '0.45rem 0.6rem', borderRadius: 7, background: 'rgba(30,41,59,0.9)', border: '1px solid rgba(99,102,241,0.35)', color: '#f1f5f9', fontSize: '0.83rem', boxSizing: 'border-box' }} />
               </div>
               <div>
-                <label style={{ fontSize: '0.7rem', color: '#94a3b8', display: 'block', marginBottom: '0.25rem' }}>Catégorie</label>
-                <select value={form.categorie} onChange={e => setForm(f => ({ ...f, categorie: e.target.value }))}
+                <label htmlFor="dlc-categorie" style={{ fontSize: '0.7rem', color: '#94a3b8', display: 'block', marginBottom: '0.25rem' }}>Catégorie</label>
+                <select id="dlc-categorie" value={form.categorie} onChange={e => setForm(f => ({ ...f, categorie: e.target.value }))}
                   style={{ width: '100%', padding: '0.45rem 0.6rem', borderRadius: 7, background: 'rgba(30,41,59,0.9)', border: '1px solid rgba(99,102,241,0.35)', color: '#f1f5f9', fontSize: '0.83rem', boxSizing: 'border-box' }}>
                   {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
               <div>
-                <label style={{ fontSize: '0.7rem', color: '#94a3b8', display: 'block', marginBottom: '0.25rem' }}>Lieu</label>
-                <select value={form.lieu} onChange={e => setForm(f => ({ ...f, lieu: e.target.value as FridgeItem['lieu'] }))}
+                <label htmlFor="dlc-lieu" style={{ fontSize: '0.7rem', color: '#94a3b8', display: 'block', marginBottom: '0.25rem' }}>Lieu</label>
+                <select id="dlc-lieu" value={form.lieu} onChange={e => setForm(f => ({ ...f, lieu: e.target.value as FridgeItem['lieu'] }))}
                   style={{ width: '100%', padding: '0.45rem 0.6rem', borderRadius: 7, background: 'rgba(30,41,59,0.9)', border: '1px solid rgba(99,102,241,0.35)', color: '#f1f5f9', fontSize: '0.83rem', boxSizing: 'border-box' }}>
                   {LIEUX.map(l => <option key={l.id} value={l.id}>{l.emoji} {l.label}</option>)}
                 </select>
               </div>
               <div>
-                <label style={{ fontSize: '0.7rem', color: '#94a3b8', display: 'block', marginBottom: '0.25rem' }}>Quantité</label>
-                <input value={form.quantite} onChange={e => setForm(f => ({ ...f, quantite: e.target.value }))} placeholder="1, 500g, 2 boîtes…"
+                <label htmlFor="dlc-quantite" style={{ fontSize: '0.7rem', color: '#94a3b8', display: 'block', marginBottom: '0.25rem' }}>Quantité</label>
+                <input id="dlc-quantite" value={form.quantite} onChange={e => setForm(f => ({ ...f, quantite: e.target.value }))} placeholder="1, 500g, 2 boîtes…"
                   style={{ width: '100%', padding: '0.45rem 0.6rem', borderRadius: 7, background: 'rgba(30,41,59,0.9)', border: '1px solid rgba(99,102,241,0.35)', color: '#f1f5f9', fontSize: '0.83rem', boxSizing: 'border-box' }} />
               </div>
             </div>

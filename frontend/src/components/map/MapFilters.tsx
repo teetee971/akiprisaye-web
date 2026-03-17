@@ -184,9 +184,9 @@ export function MapFilters({
           {/* Price Category */}
           {onPriceCategoryChange && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <p className="block text-sm font-medium text-gray-700 mb-2">
                 Catégorie de prix
-              </label>
+              </p>
               <div className="grid grid-cols-4 gap-2">
                 <button
                   onClick={() => onPriceCategoryChange('all')}
@@ -234,13 +234,14 @@ export function MapFilters({
 
           {/* Chains Filter */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <p className="block text-sm font-medium text-gray-700 mb-2">
               Enseignes ({chains.length} sélectionnées)
-            </label>
+            </p>
             <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto">
               {availableChains.map((chain) => (
                 <label
                   key={chain}
+                  aria-label={chain}
                   className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded cursor-pointer"
                 >
                   <input
@@ -258,13 +259,14 @@ export function MapFilters({
           {/* Services Filter */}
           {onServicesChange && availableServices.length > 0 && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <p className="block text-sm font-medium text-gray-700 mb-2">
                 Services ({services.length} sélectionnés)
-              </label>
+              </p>
               <div className="grid grid-cols-2 gap-2">
                 {availableServices.map((service) => (
                   <label
                     key={service}
+                    aria-label={service}
                     className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded cursor-pointer"
                   >
                     <input

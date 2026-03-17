@@ -753,10 +753,11 @@ export default function Carte() {
         )}
 
         <div className="mb-6">
-          <label className="block text-sm font-medium mb-2 text-slate-300">
+          <label htmlFor="carte-territoire" className="block text-sm font-medium mb-2 text-slate-300">
             Sélectionner un territoire
           </label>
           <select
+            id="carte-territoire"
             value={territory}
             onChange={(e) => setTerritory(e.target.value)}
             className="px-4 py-2 rounded-lg bg-slate-800 text-slate-100 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -820,10 +821,11 @@ export default function Carte() {
           {showFilters && (
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2 text-slate-300">
+                <label htmlFor="carte-categorie" className="block text-sm font-medium mb-2 text-slate-300">
                   Catégorie
                 </label>
                 <select
+                  id="carte-categorie"
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
                   className="w-full px-4 py-2 rounded-lg bg-slate-700 text-slate-100 border border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -837,9 +839,9 @@ export default function Carte() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2 text-slate-300">
+                <p className="block text-sm font-medium mb-2 text-slate-300">
                   Services disponibles
-                </label>
+                </p>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                   {['parking', 'livraison', 'carte_bancaire', 'SAV', 'essence', 'retrait_course'].map(service => (
                     <label key={service} className="flex items-center gap-2 text-sm text-slate-300 cursor-pointer hover:text-blue-400">
@@ -946,10 +948,11 @@ export default function Carte() {
 
               {showNearMeOnly && (
                 <div>
-                  <label className="block text-sm font-medium mb-2 text-slate-300">
+                  <label htmlFor="carte-rayon" className="block text-sm font-medium mb-2 text-slate-300">
                     Rayon de recherche: <span className="text-blue-400 font-bold">{nearMeRadius} km</span>
                   </label>
                   <input
+                    id="carte-rayon"
                     type="range"
                     min="1"
                     max="50"

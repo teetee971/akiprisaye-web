@@ -29,6 +29,9 @@
  * Base légale : Consentement explicite (RGPD Art. 6.1.a)
  */
 
+
+import type Tesseract from 'tesseract.js';
+
 /**
  * Tesseract PSM (Page Segmentation Mode) constants.
  * @see https://tesseract-ocr.github.io/tessdoc/ImproveQuality.html
@@ -114,6 +117,7 @@ export interface OCRResult {
   errorCode?: 'ASSET_MISSING' | 'TIMEOUT' | 'PROCESSING_ERROR';
 }
 
+
 interface OCRWorkerLike {
   loadLanguage: (language: string) => Promise<void>;
   initialize: (language: string) => Promise<void>;
@@ -121,6 +125,7 @@ interface OCRWorkerLike {
   recognize: (image: Blob) => Promise<{ data: { text: string; confidence: number } }>;
   terminate: () => Promise<void>;
 }
+type OCRWorkerLike = Pick<Tesseract.Worker, 'setParameters' | 'recognize' | 'terminate'>;
 
 const OCR_LOAD_ERROR_MESSAGE =
   'Le module OCR n’a pas pu se charger correctement en production. Les fichiers linguistiques sont peut-être indisponibles.';
@@ -341,6 +346,7 @@ export async function runOCR(
   const psmMode = options?.psm ?? (receiptMode ? OCR_PSM.SINGLE_COLUMN : OCR_PSM.AUTO);
   let timeoutId: number | undefined;
   let worker: OCRWorkerLike | null = null;
+  let worker: any = null;
   
   // Log mode for debugging
   console.log(`OCR mode: ${offline ? 'OFFLINE (local WASM)' : 'ONLINE'} receiptMode=${receiptMode} psm=${psmMode}`);
@@ -357,22 +363,21 @@ export async function runOCR(
     await ensureAssetAvailable(`${LANG_PATH}/${effectiveLang}.traineddata.gz`, 'language');
 
     const preprocessed = await preprocessImage(imageUrl, 1600, receiptMode);
-    worker = await Tesseract.createWorker({
+    // Pass language directly to createWorker (tesseract.js v7 API)
+    worker = await Tesseract.createWorker(effectiveLang, undefined, {
       workerPath: WORKER_PATH,
       corePath: CORE_PATH,
       langPath: LANG_PATH,
       gzip: true,
       logger: (m: unknown) => console.debug('[OCR]', m),
     }) as OCRWorkerLike;
+    });
 
     // Tesseract.js runs entirely in the browser via WASM
     // No server calls - works offline by default
-    await worker.loadLanguage(effectiveLang);
-    await worker.initialize(effectiveLang);
-
     await worker.setParameters({
       preserve_interword_spaces: '1',
-      tessedit_pageseg_mode: String(psmMode),
+      tessedit_pageseg_mode: String(psmMode) as Tesseract.PSM,
     });
 
     const timeoutPromise = new Promise<never>((_, reject) => {

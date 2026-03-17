@@ -325,10 +325,11 @@ const BoatComparator: React.FC = () => {
             <div className="grid md:grid-cols-2 gap-4">
               {/* Origin */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label htmlFor="bateau-port-depart" className="block text-sm font-medium text-gray-300 mb-2">
                   Port de départ
                 </label>
                 <select
+                  id="bateau-port-depart"
                   value={selectedOrigin}
                   onChange={(e) => setSelectedOrigin(e.target.value)}
                   className="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -365,10 +366,11 @@ const BoatComparator: React.FC = () => {
 
               {/* Destination */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label htmlFor="bateau-port-arrivee" className="block text-sm font-medium text-gray-300 mb-2">
                   Port d'arrivée
                 </label>
                 <select
+                  id="bateau-port-arrivee"
                   value={selectedDestination}
                   onChange={(e) => setSelectedDestination(e.target.value)}
                   className="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"

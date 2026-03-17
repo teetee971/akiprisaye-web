@@ -143,7 +143,7 @@ export default function OCRHistory() {
                 </div>
               </div>
 
-              <label className="relative inline-flex items-center cursor-pointer">
+              <label aria-label="Activer le partage des données OCR" className="relative inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
                   checked={consent}

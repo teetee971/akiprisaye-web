@@ -186,10 +186,11 @@ export default function SignalementForm({ onSubmit = null }) {
       <div className="bg-white rounded-lg shadow-md p-6 space-y-4">
         {/* Territory Selection */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="signalement-territoire" className="block text-sm font-medium text-gray-700 mb-2">
             Territoire *
           </label>
           <select
+            id="signalement-territoire"
             value={formData.territory}
             onChange={(e) => handleInputChange('territory', e.target.value)}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -204,10 +205,11 @@ export default function SignalementForm({ onSubmit = null }) {
 
         {/* Store Name */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="signalement-magasin" className="block text-sm font-medium text-gray-700 mb-2">
             Nom du magasin *
           </label>
           <input
+            id="signalement-magasin"
             type="text"
             value={formData.store}
             onChange={(e) => handleInputChange('store', e.target.value)}
@@ -223,10 +225,11 @@ export default function SignalementForm({ onSubmit = null }) {
 
         {/* Product */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="signalement-produit" className="block text-sm font-medium text-gray-700 mb-2">
             Produit *
           </label>
           <select
+            id="signalement-produit"
             value={formData.product}
             onChange={(e) => handleInputChange('product', e.target.value)}
             className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
@@ -247,10 +250,11 @@ export default function SignalementForm({ onSubmit = null }) {
 
         {/* Price */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="signalement-prix" className="block text-sm font-medium text-gray-700 mb-2">
             Prix observé (€) *
           </label>
           <input
+            id="signalement-prix"
             type="number"
             step="0.01"
             min="0"
@@ -268,10 +272,11 @@ export default function SignalementForm({ onSubmit = null }) {
 
         {/* Date */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="signalement-date" className="block text-sm font-medium text-gray-700 mb-2">
             Date d'observation *
           </label>
           <input
+            id="signalement-date"
             type="date"
             value={formData.date}
             onChange={(e) => handleInputChange('date', e.target.value)}

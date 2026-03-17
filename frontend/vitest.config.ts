@@ -137,6 +137,8 @@ export default defineConfig({
       abs('./src/test/auth.modules.test.ts'),
       // CI regression guards — prevents known build/lint failures from recurring
       abs('./src/test/ciRegression.test.ts'),
+      // Monitoring system — storageBuffer, errorTracker, eventLogger, systemSnapshot
+      abs('./src/test/monitoring.test.ts'),
     ],
 
     exclude: ['**/node_modules/**', '**/.git/**', '**/dist/**', '**/coverage/**'],

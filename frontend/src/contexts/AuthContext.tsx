@@ -232,7 +232,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     writeUserPresence(uid).catch(() => {});
     const interval = setInterval(() => writeUserPresence(uid).catch(() => {}), 30_000);
     return () => clearInterval(interval);
-  }, [user?.uid]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [user?.uid]);
 
   /* ── Context value ─────────────────────────────────────────────────── */
   const value = useMemo<AuthContextValue>(() => ({
@@ -299,6 +299,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setAuthResolved(true);
     },
   }), [user, userRole, loading, error, authResolved, authFlowState, lastIncident, transition]); // eslint-disable-line react-hooks/exhaustive-deps
+  }), [user, userRole, loading, error]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

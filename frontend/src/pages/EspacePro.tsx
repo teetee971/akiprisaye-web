@@ -129,14 +129,18 @@ function NewAnnonceForm({ proId, plan, onSave, onCancel }: NewAnnonceFormProps) 
 
       <div className="grid sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1">Produit / Service *</label>
-          <input type="text" value={produit} onChange={(e) => setProduit(e.target.value)} maxLength={100}
+          <label htmlFor="ep-produit" className="block text-sm font-medium text-gray-300 mb-1">
+                  Produit / Service *</label>
+          <input id="ep-produit"
+                  type="text" value={produit} onChange={(e) => setProduit(e.target.value)} maxLength={100}
             placeholder="Ex: Poulet entier, Coupe de cheveux, Chambre double…"
             className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1">Catégorie *</label>
-          <input type="text" value={categorie} onChange={(e) => setCategorie(e.target.value)} maxLength={60}
+          <label htmlFor="ep-categorie" className="block text-sm font-medium text-gray-300 mb-1">
+                  Catégorie *</label>
+          <input id="ep-categorie"
+                  type="text" value={categorie} onChange={(e) => setCategorie(e.target.value)} maxLength={60}
             placeholder="Ex: Viande, Coiffure, Hôtellerie…"
             className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" />
         </div>
@@ -144,37 +148,47 @@ function NewAnnonceForm({ proId, plan, onSave, onCancel }: NewAnnonceFormProps) 
 
       <div className="grid grid-cols-3 gap-3">
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1">Prix (€) *</label>
-          <input type="number" value={prix} onChange={(e) => setPrix(e.target.value)} min="0" step="0.01"
+          <label htmlFor="ep-prix" className="block text-sm font-medium text-gray-300 mb-1">
+                  Prix (€) *</label>
+          <input id="ep-prix"
+                  type="number" value={prix} onChange={(e) => setPrix(e.target.value)} min="0" step="0.01"
             placeholder="Ex: 12.50"
             className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1">Unité *</label>
-          <select value={unite} onChange={(e) => setUnite(e.target.value)}
+          <label htmlFor="ep-unite" className="block text-sm font-medium text-gray-300 mb-1">
+                  Unité *</label>
+          <select id="ep-unite"
+                  value={unite} onChange={(e) => setUnite(e.target.value)}
             className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
             {UNITES.map((u) => <option key={u} value={u}>{u}</option>)}
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1">Prix promo (€)</label>
-          <input type="number" value={prixPromo} onChange={(e) => setPrixPromo(e.target.value)} min="0" step="0.01"
+          <label htmlFor="ep-prix-promo" className="block text-sm font-medium text-gray-300 mb-1">
+                  Prix promo (€)</label>
+          <input id="ep-prix-promo"
+                  type="number" value={prixPromo} onChange={(e) => setPrixPromo(e.target.value)} min="0" step="0.01"
             placeholder="Optionnel"
             className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" />
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-1">Description</label>
-        <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={2} maxLength={300}
+        <label htmlFor="ep-description" className="block text-sm font-medium text-gray-300 mb-1">
+                  Description</label>
+        <textarea id="ep-description"
+                  value={description} onChange={(e) => setDescription(e.target.value)} rows={2} maxLength={300}
           placeholder="Détails supplémentaires sur le produit ou service…"
           className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" />
       </div>
 
       <div className="grid sm:grid-cols-3 gap-3">
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1">Disponibilité *</label>
-          <select value={disponibilite} onChange={(e) => setDisponibilite(e.target.value)}
+          <label htmlFor="ep-disponibilite" className="block text-sm font-medium text-gray-300 mb-1">
+                  Disponibilité *</label>
+          <select id="ep-disponibilite"
+                  value={disponibilite} onChange={(e) => setDisponibilite(e.target.value)}
             className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
             {['En stock', 'Disponible', 'Sur commande', 'Limité', 'Épuisé'].map((d) => (
               <option key={d} value={d}>{d}</option>
@@ -182,15 +196,19 @@ function NewAnnonceForm({ proId, plan, onSave, onCancel }: NewAnnonceFormProps) 
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1">Territoire *</label>
-          <select value={territoire} onChange={(e) => setTerritoire(e.target.value)}
+          <label htmlFor="ep-territoire" className="block text-sm font-medium text-gray-300 mb-1">
+                  Territoire *</label>
+          <select id="ep-territoire"
+                  value={territoire} onChange={(e) => setTerritoire(e.target.value)}
             className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
             {TERRITOIRES.map((t) => <option key={t} value={t}>{t}</option>)}
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1">Adresse de vente *</label>
-          <input type="text" value={adresseVente} onChange={(e) => setAdresseVente(e.target.value)} maxLength={120}
+          <label htmlFor="ep-adresse-vente" className="block text-sm font-medium text-gray-300 mb-1">
+                  Adresse de vente *</label>
+          <input id="ep-adresse-vente"
+                  type="text" value={adresseVente} onChange={(e) => setAdresseVente(e.target.value)} maxLength={120}
             placeholder="Adresse ou 'En ligne'"
             className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" />
         </div>

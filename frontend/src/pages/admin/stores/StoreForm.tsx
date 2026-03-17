@@ -228,10 +228,12 @@ export default function StoreForm() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Name */}
           <div>
-            <label className="block text-sm font-medium text-white/90 mb-2">
+            <label htmlFor="sf-nom" className="block text-sm font-medium text-white/90 mb-2">
               Nom <span className="text-red-400">*</span>
             </label>
             <input
+              
+              id="sf-nom"
               type="text"
               {...register('name')}
               className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
@@ -244,10 +246,12 @@ export default function StoreForm() {
 
           {/* Brand ID */}
           <div>
-            <label className="block text-sm font-medium text-white/90 mb-2">
+            <label htmlFor="sf-id-marque" className="block text-sm font-medium text-white/90 mb-2">
               ID de marque <span className="text-red-400">*</span>
             </label>
             <input
+              
+              id="sf-id-marque"
               type="text"
               {...register('brandId')}
               disabled={isEditMode}
@@ -263,10 +267,12 @@ export default function StoreForm() {
 
           {/* Territory */}
           <div>
-            <label className="block text-sm font-medium text-white/90 mb-2">
+            <label htmlFor="sf-territoire" className="block text-sm font-medium text-white/90 mb-2">
               Territoire <span className="text-red-400">*</span>
             </label>
             <select
+              
+              id="sf-territoire"
               {...register('territory')}
               disabled={isEditMode}
               className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -286,10 +292,12 @@ export default function StoreForm() {
 
           {/* Address */}
           <div>
-            <label className="block text-sm font-medium text-white/90 mb-2">
+            <label htmlFor="sf-adresse" className="block text-sm font-medium text-white/90 mb-2">
               Adresse <span className="text-red-400">*</span>
             </label>
             <input
+              
+              id="sf-adresse"
               type="text"
               {...register('address')}
               className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
@@ -305,10 +313,12 @@ export default function StoreForm() {
           {/* Postal Code & City */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-white/90 mb-2">
+              <label htmlFor="sf-code-postal" className="block text-sm font-medium text-white/90 mb-2">
                 Code postal <span className="text-red-400">*</span>
               </label>
               <input
+                
+                id="sf-code-postal"
                 type="text"
                 {...register('postalCode')}
                 className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
@@ -322,10 +332,12 @@ export default function StoreForm() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-white/90 mb-2">
+              <label htmlFor="sf-ville" className="block text-sm font-medium text-white/90 mb-2">
                 Ville <span className="text-red-400">*</span>
               </label>
               <input
+                
+                id="sf-ville"
                 type="text"
                 {...register('city')}
                 className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
@@ -341,11 +353,13 @@ export default function StoreForm() {
 
           {/* Phone */}
           <div>
-            <label className="block text-sm font-medium text-white/90 mb-2">
-              Téléphone
+            <label htmlFor="sf-telephone" className="block text-sm font-medium text-white/90 mb-2">
+                Téléphone
             </label>
             <input
-              type="tel"
+              
+                id="sf-telephone"
+                type="tel"
               {...register('phone')}
               className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
               placeholder="0590123456"
@@ -360,9 +374,9 @@ export default function StoreForm() {
           {/* Coordinates */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <label className="block text-sm font-medium text-white/90">
-                Coordonnées GPS
-              </label>
+              <span className="block text-sm font-medium text-white/90">
+              Coordonnées GPS
+            </span>
               <button
                 type="button"
                 onClick={handleGeocode}
@@ -376,10 +390,12 @@ export default function StoreForm() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs text-white/60 mb-1">
+                <label htmlFor="sf-latitude" className="block text-xs text-white/60 mb-1">
                   Latitude
                 </label>
                 <input
+                  
+                  id="sf-latitude"
                   type="number"
                   step="any"
                   {...register('latitude', { valueAsNumber: true })}
@@ -389,10 +405,12 @@ export default function StoreForm() {
               </div>
 
               <div>
-                <label className="block text-xs text-white/60 mb-1">
+                <label htmlFor="sf-longitude" className="block text-xs text-white/60 mb-1">
                   Longitude
                 </label>
                 <input
+                  
+                  id="sf-longitude"
                   type="number"
                   step="any"
                   {...register('longitude', { valueAsNumber: true })}

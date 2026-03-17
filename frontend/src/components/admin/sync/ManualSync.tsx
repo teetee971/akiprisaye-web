@@ -83,11 +83,12 @@ export default function ManualSync({ onSync }: ManualSyncProps) {
       
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="sync-ean" className="block text-sm font-medium text-gray-700 mb-2">
             Code EAN du produit
           </label>
           <div className="flex gap-2">
             <input
+              id="sync-ean"
               type="text"
               value={ean}
               onChange={(e) => setEan(e.target.value)}

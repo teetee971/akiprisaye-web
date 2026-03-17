@@ -65,10 +65,11 @@ export default function SavingsGoal({
       {isEditing ? (
         <div className="space-y-3">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label htmlFor="savings-goal-amount" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Nouvel objectif (€)
             </label>
             <input
+              id="savings-goal-amount"
               type="number"
               value={newGoal}
               onChange={(e) => setNewGoal(e.target.value)}

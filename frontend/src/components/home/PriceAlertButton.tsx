@@ -101,7 +101,7 @@ export function PriceAlertButton({
 
               {/* Type d'alerte */}
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-gray-300">Type d'alerte</label>
+                <p className="text-sm font-semibold text-gray-300">Type d'alerte</p>
                 <div className="flex gap-3">
                   <button
                     onClick={() => setAlertType("price")}

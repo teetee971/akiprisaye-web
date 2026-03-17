@@ -216,10 +216,11 @@ export default function AddMissingProduct({
 
         {/* Product name */}
         <div>
-          <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+          <label htmlFor="add-product-name" className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
             Nom du produit <span className="text-red-500">*</span>
           </label>
           <input
+            id="add-product-name"
             type="text"
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -231,10 +232,11 @@ export default function AddMissingProduct({
 
         {/* Brand */}
         <div>
-          <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+          <label htmlFor="add-product-brand" className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
             Marque
           </label>
           <input
+            id="add-product-brand"
             type="text"
             value={formData.brand}
             onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
@@ -246,10 +248,11 @@ export default function AddMissingProduct({
 
         {/* Category */}
         <div>
-          <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+          <label htmlFor="add-product-category" className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
             Catégorie <span className="text-red-500">*</span>
           </label>
           <select
+            id="add-product-category"
             value={formData.category}
             onChange={(e) => setFormData({ ...formData, category: e.target.value })}
             className="w-full px-4 py-3 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -265,10 +268,11 @@ export default function AddMissingProduct({
 
         {/* Size/Quantity */}
         <div>
-          <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+          <label htmlFor="add-product-size" className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
             Contenance / Quantité
           </label>
           <input
+            id="add-product-size"
             type="text"
             value={formData.size}
             onChange={(e) => setFormData({ ...formData, size: e.target.value })}
@@ -280,10 +284,11 @@ export default function AddMissingProduct({
 
         {/* Description */}
         <div>
-          <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+          <label htmlFor="add-product-description" className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
             Description (optionnel)
           </label>
           <textarea
+            id="add-product-description"
             value={formData.description}
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             placeholder="Informations complémentaires..."
@@ -299,9 +304,9 @@ export default function AddMissingProduct({
         {/* Photo section */}
         <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
           <div className="flex items-center justify-between mb-3">
-            <label className="block text-sm font-semibold text-gray-900 dark:text-white">
+            <p className="block text-sm font-semibold text-gray-900 dark:text-white">
               Photo du produit
-            </label>
+            </p>
             {photoId && (
               <span className="text-xs text-green-600 dark:text-green-400 flex items-center gap-1">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
