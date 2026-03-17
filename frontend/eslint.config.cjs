@@ -4,10 +4,11 @@
  */
 const tseslint = require('typescript-eslint');
 
-let reactPlugin, reactHooksPlugin, reactRefreshPlugin;
+let reactPlugin, reactHooksPlugin, reactRefreshPlugin, jsxA11yPlugin;
 try { reactPlugin = require('eslint-plugin-react'); } catch {}
 try { reactHooksPlugin = require('eslint-plugin-react-hooks'); } catch {}
 try { reactRefreshPlugin = require('eslint-plugin-react-refresh'); } catch {}
+try { jsxA11yPlugin = require('eslint-plugin-jsx-a11y'); } catch {}
 
 module.exports = [
   // IGNORE (remplace .eslintignore)
@@ -46,6 +47,14 @@ module.exports = [
 
   ...(reactRefreshPlugin ? [{
     plugins: { 'react-refresh': reactRefreshPlugin },
+  }] : []),
+
+  // Accessibility (jsx-a11y) — rules active at 'warn' level to report issues without blocking CI
+  ...(jsxA11yPlugin ? [{
+    plugins: { 'jsx-a11y': jsxA11yPlugin },
+    rules: Object.fromEntries(
+      Object.keys(jsxA11yPlugin.configs.recommended.rules).map(rule => [rule, 'warn'])
+    ),
   }] : []),
 
   // Règles globales: CI strict => pas de warnings "bruit"
