@@ -74,12 +74,17 @@ export function PriceAlertButton({
 
       {showModal && (
         <div 
-          className="fixed inset-0 bg-black/70 z-modal flex items-center justify-center p-4 animate-fade-in"
-          onClick={() => setShowModal(false)}
+          className="fixed inset-0 z-modal flex items-center justify-center p-4 animate-fade-in"
         >
+          <button
+            type="button"
+            className="absolute inset-0 bg-black/70 cursor-default"
+            onClick={() => setShowModal(false)}
+            tabIndex={-1}
+            aria-label="Fermer"
+          />
           <GlassCard 
-            className="max-w-md w-full animate-scale-in"
-            onClick={(e) => e.stopPropagation()}
+            className="relative z-10 max-w-md w-full animate-scale-in"
           >
             <div className="space-y-4">
               <div className="flex items-start justify-between">

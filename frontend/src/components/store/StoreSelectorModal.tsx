@@ -59,8 +59,9 @@ export default function StoreSelectorModal({ open, territory, onClose, onSelect 
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 flex items-end md:items-center justify-center" onClick={onClose}>
-      <div className="w-full md:max-w-2xl bg-slate-900 border border-slate-700 rounded-t-2xl md:rounded-2xl p-4 max-h-[85vh] overflow-auto" onClick={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center">
+      <button type="button" className="absolute inset-0 bg-black/60 cursor-default" onClick={onClose} tabIndex={-1} aria-label="Fermer" />
+      <div className="relative z-10 w-full md:max-w-2xl bg-slate-900 border border-slate-700 rounded-t-2xl md:rounded-2xl p-4 max-h-[85vh] overflow-auto">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-white">Choisir un magasin</h2>
           <button className="text-sm text-slate-300" onClick={onClose}>Fermer</button>
