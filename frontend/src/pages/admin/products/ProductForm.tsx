@@ -234,10 +234,12 @@ export function ProductForm() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Name */}
           <div>
-            <label className="block text-sm font-medium text-white/70 mb-2">
+            <label htmlFor="pf-nom-produit" className="block text-sm font-medium text-white/70 mb-2">
               Nom du produit <span className="text-red-400">*</span>
             </label>
             <input
+              
+              id="pf-nom-produit"
               type="text"
               {...register('name')}
               className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white/90 placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -250,10 +252,12 @@ export function ProductForm() {
 
           {/* Brand */}
           <div>
-            <label className="block text-sm font-medium text-white/70 mb-2">
+            <label htmlFor="pf-marque" className="block text-sm font-medium text-white/70 mb-2">
               Marque
             </label>
             <input
+              
+              id="pf-marque"
               type="text"
               {...register('brand')}
               className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white/90 placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -263,10 +267,12 @@ export function ProductForm() {
 
           {/* Category */}
           <div>
-            <label className="block text-sm font-medium text-white/70 mb-2">
+            <label htmlFor="pf-categorie" className="block text-sm font-medium text-white/70 mb-2">
               Catégorie <span className="text-red-400">*</span>
             </label>
             <select
+              
+              id="pf-categorie"
               {...register('category')}
               className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white/90 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
@@ -283,11 +289,13 @@ export function ProductForm() {
 
           {/* EAN with OpenFoodFacts search */}
           <div>
-            <label className="block text-sm font-medium text-white/70 mb-2">
+            <label htmlFor="pf-ean" className="block text-sm font-medium text-white/70 mb-2">
               Code EAN (8 ou 13 chiffres)
             </label>
             <div className="flex gap-2">
               <input
+                 id="pf-ean"
+                 
                 type="text"
                 {...register('ean')}
                 className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white/90 placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
@@ -317,10 +325,12 @@ export function ProductForm() {
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-white/70 mb-2">
+            <label htmlFor="pf-description" className="block text-sm font-medium text-white/70 mb-2">
               Description
             </label>
             <textarea
+              
+              id="pf-description"
               {...register('description')}
               rows={3}
               className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white/90 placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
@@ -331,11 +341,13 @@ export function ProductForm() {
           {/* Unit and Quantity */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-white/70 mb-2">
-                Unité <span className="text-red-400">*</span>
+              <label htmlFor="pf-unite" className="block text-sm font-medium text-white/70 mb-2">
+              Unité <span className="text-red-400">*</span>
               </label>
               <select
-                {...register('unit')}
+                
+              id="pf-unite"
+              {...register('unit')}
                 className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white/90 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 {UNITS.map((unit) => (
@@ -350,11 +362,13 @@ export function ProductForm() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-white/70 mb-2">
-                Quantité <span className="text-red-400">*</span>
+              <label htmlFor="pf-quantite" className="block text-sm font-medium text-white/70 mb-2">
+              Quantité <span className="text-red-400">*</span>
               </label>
               <input
-                type="number"
+                
+              id="pf-quantite"
+              type="number"
                 step="0.01"
                 {...register('quantity', { valueAsNumber: true })}
                 className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white/90 placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -368,10 +382,12 @@ export function ProductForm() {
 
           {/* Image URL */}
           <div>
-            <label className="block text-sm font-medium text-white/70 mb-2">
+            <label htmlFor="pf-image-url" className="block text-sm font-medium text-white/70 mb-2">
               URL de l'image
             </label>
             <input
+              
+              id="pf-image-url"
               type="url"
               {...register('imageUrl')}
               className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white/90 placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500"

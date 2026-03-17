@@ -455,10 +455,11 @@ const FlightComparator: React.FC = () => {
             <div className="grid md:grid-cols-2 gap-4">
               {/* Origin */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label htmlFor="vol-origine" className="block text-sm font-medium text-gray-300 mb-2">
                   Origine
                 </label>
                 <select
+                  id="vol-origine"
                   value={selectedOrigin}
                   onChange={(e) => setSelectedOrigin(e.target.value)}
                   className="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -482,10 +483,11 @@ const FlightComparator: React.FC = () => {
 
               {/* Destination */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label htmlFor="vol-destination" className="block text-sm font-medium text-gray-300 mb-2">
                   Destination
                 </label>
                 <select
+                  id="vol-destination"
                   value={selectedDestination}
                   onChange={(e) => setSelectedDestination(e.target.value)}
                   className="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -509,10 +511,11 @@ const FlightComparator: React.FC = () => {
 
               {/* Season Filter */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label htmlFor="vol-periode" className="block text-sm font-medium text-gray-300 mb-2">
                   Période
                 </label>
                 <select
+                  id="vol-periode"
                   value={filterSeason}
                   onChange={(e) => setFilterSeason(e.target.value as any)}
                   className="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -526,10 +529,11 @@ const FlightComparator: React.FC = () => {
 
               {/* Price Type Filter */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label htmlFor="vol-classe" className="block text-sm font-medium text-gray-300 mb-2">
                   Classe
                 </label>
                 <select
+                  id="vol-classe"
                   value={filterPriceType}
                   onChange={(e) => setFilterPriceType(e.target.value as any)}
                   className="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"

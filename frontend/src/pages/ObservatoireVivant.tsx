@@ -334,8 +334,9 @@ export default function ObservatoireVivant() {
         <section className="bg-slate-900/70 border border-slate-800 rounded-2xl shadow-xl p-5 space-y-4">
           <div className="grid gap-4 md:grid-cols-3">
             <div className="space-y-2">
-              <label className="text-sm text-slate-400">Territoire</label>
+              <label htmlFor="obs-territoire" className="text-sm text-slate-400">Territoire</label>
               <select
+                id="obs-territoire"
                 className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={territoire}
                 onChange={(e) => setTerritoire(e.target.value)}
@@ -348,8 +349,9 @@ export default function ObservatoireVivant() {
               </select>
             </div>
             <div className="space-y-2">
-              <label className="text-sm text-slate-400">Produit</label>
+              <label htmlFor="obs-produit" className="text-sm text-slate-400">Produit</label>
               <select
+                id="obs-produit"
                 className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={produit}
                 onChange={(e) => setProduit(e.target.value)}
@@ -362,7 +364,7 @@ export default function ObservatoireVivant() {
               </select>
             </div>
             <div className="space-y-2">
-              <label className="text-sm text-slate-400">Période</label>
+              <span className="text-sm text-slate-400">Période</span>
               <div className="grid grid-cols-2 gap-2">
                 {PERIOD_OPTIONS.map((option) => (
                   <button
