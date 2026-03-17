@@ -77,6 +77,7 @@ export function LeaderboardCard({
                     alt={entry.username}
                     width={32}
                     height={32}
+                    loading="lazy"
                     className="w-8 h-8 rounded-full flex-shrink-0"
                   />
                 ) : (

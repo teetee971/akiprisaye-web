@@ -44,7 +44,7 @@ vi.mock('../services/auth', () => ({
 
 /* ── authStorage mock (flag lifecycle) ─────────────────────────────────── */
 vi.mock('../auth/authStorage', () => ({
-  setRedirectPendingFlag: (provider: string, next: string) => {
+  setRedirectPendingFlag: ({ provider, next }: { provider: string; next: string }) => {
     sessionStorage.setItem('auth:return:pending', JSON.stringify({ provider, next, ts: Date.now() }));
   },
   getRedirectPendingFlag: () => {

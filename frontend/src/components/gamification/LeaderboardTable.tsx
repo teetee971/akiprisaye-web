@@ -98,6 +98,7 @@ export function LeaderboardTable({
                           alt={entry.username}
                           width={40}
                           height={40}
+                          loading="lazy"
                           className="w-10 h-10 rounded-full"
                         />
                       ) : (

@@ -49,14 +49,14 @@ vi.mock('../context/AuthContext', () => ({
   useAuth: () => authState,
 }));
 
-/* ── Auth service mock ─────────────────────────────────────────────────── */
+/* ── authStorage mock ──────────────────────────────────────────────────── */
 // Mirrors the real getRedirectPendingFlag() including TTL expiry.
 // NOTE: vi.mock factories are hoisted, so the constant must be defined
 // with vi.hoisted() or inlined directly — avoid outer-scope variable refs.
 const REDIRECT_PENDING_TTL_MS = vi.hoisted(() => 5 * 60 * 1000);
 
-vi.mock('../services/auth', () => ({
-  REDIRECT_PENDING_TTL_MS: 5 * 60 * 1000, // 5 minutes (matches services/auth.ts)
+vi.mock('../auth/authStorage', () => ({
+  REDIRECT_PENDING_TTL_MS: 5 * 60 * 1000,
   getRedirectPendingFlag: () => {
     const TTL = 5 * 60 * 1000;
     try {
@@ -70,6 +70,8 @@ vi.mock('../services/auth', () => ({
       return data;
     } catch { return null; }
   },
+  getAuthRetryCount: () => 0,
+  clearAuthTransientStorage: () => { sessionStorage.clear(); },
 }));
 
 /* ── authLogger: mock isAuthDebugEnabled so we control visibility ──────── */

@@ -81,7 +81,7 @@ export default function AuthCallbackPage() {
     }
 
     authLog('AUTH_REDIRECT_START', { provider, next });
-    setRedirectPendingFlag(provider, next);
+    setRedirectPendingFlag({ provider, next });
 
     (async () => {
       try {
