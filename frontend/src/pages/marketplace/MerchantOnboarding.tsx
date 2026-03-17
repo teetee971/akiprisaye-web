@@ -469,10 +469,7 @@ export default function MerchantOnboarding() {
                   </div>
 
                   <div>
-                    <label htmlFor="mo-email" className="block text-sm font-medium text-gray-300 mb-1">
-                      Email de contact *
-                      Email de contact *
-                    </label>
+                    <label htmlFor="mo-email" className="block text-sm font-medium text-gray-300 mb-1">Email de contact *</label>
                     <input
                       
                       id="mo-email"
@@ -561,10 +558,10 @@ export default function MerchantOnboarding() {
                   </div>
 
                   <div>
-                    <label htmlFor="mo-ville" className="block text-sm font-medium text-gray-300 mb-1">Ville *</label>
+                    <label htmlFor="mo-ville-magasin" className="block text-sm font-medium text-gray-300 mb-1">Ville *</label>
                     <input
                       
-                      id="mo-ville"
+                      id="mo-ville-magasin"
                       type="text"
                       value={form.premierMagasinVille}
                       onChange={(e) => set('premierMagasinVille', e.target.value)}
