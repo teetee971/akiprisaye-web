@@ -839,10 +839,10 @@ export default function Carte() {
               </div>
 
               <div>
-                <label htmlFor="services-disponibles" className="block text-sm font-medium mb-2 text-slate-300">
+                <p className="block text-sm font-medium mb-2 text-slate-300">
                   Services disponibles
-                </label>
-                <div id="services-disponibles" className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                </p>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                   {['parking', 'livraison', 'carte_bancaire', 'SAV', 'essence', 'retrait_course'].map(service => (
                     <label key={service} className="flex items-center gap-2 text-sm text-slate-300 cursor-pointer hover:text-blue-400">
                       <input

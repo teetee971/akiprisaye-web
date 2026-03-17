@@ -57,7 +57,9 @@ module.exports = [
 
   // Accessibilité (jsx-a11y) — recommandé, en 'warn' tant que la dette n'est pas soldée.
   // Ne pas désactiver : les violations restent visibles dans la sortie lint.
-  // Cible : passer à 'error' une fois le code corrigé (dette : ~362 violations, mars 2026).
+  // État mars 2026 : label-has-associated-control → 0 erreurs ; ~77 warnings restants
+  // (35 click-events-have-key-events, 26 no-static-element-interactions, 16 autres).
+  // Cible : passer à 'error' une fois la dette soldée (Lot 2/3).
   jsxA11y.flatConfigs.recommended,
   {
     rules: {

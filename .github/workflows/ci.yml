@@ -159,3 +159,26 @@ jobs:
 
       - name: Production-like runtime check (GitHub Pages base path)
         run: node scripts/verify-pages-runtime.mjs
+
+  # ─── 6. Price-API ───────────────────────────────────────────────────────────
+  price-api:
+    name: Price-API (typecheck + test)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Install dependencies
+        working-directory: price-api
+        run: npm install --no-audit --no-fund
+
+      - name: Typecheck
+        working-directory: price-api
+        run: npm run typecheck
+
+      - name: Unit tests
+        working-directory: price-api
+        run: npm run test
