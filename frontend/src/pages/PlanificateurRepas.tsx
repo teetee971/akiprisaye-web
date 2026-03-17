@@ -442,10 +442,15 @@ export default function PlanificateurRepas() {
 
         {/* Recipe picker modal */}
         {pickingFor && (
-          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}
-            onClick={() => setPickingFor(null)}>
-            <div style={{ background: '#1e293b', borderRadius: 16, padding: '1.5rem', width: '100%', maxWidth: 520, maxHeight: '80vh', overflowY: 'auto', border: '1px solid rgba(148,163,184,0.2)' }}
-              onClick={e => e.stopPropagation()}>
+          <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+            <button
+              type="button"
+              style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.7)', cursor: 'default', border: 'none' }}
+              onClick={() => setPickingFor(null)}
+              tabIndex={-1}
+              aria-label="Fermer"
+            />
+            <div style={{ position: 'relative', zIndex: 1, background: '#1e293b', borderRadius: 16, padding: '1.5rem', width: '100%', maxWidth: 520, maxHeight: '80vh', overflowY: 'auto', border: '1px solid rgba(148,163,184,0.2)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                 <h2 style={{ margin: 0, fontSize: '1rem', fontWeight: 800, color: '#f1f5f9' }}>
                   {MEALS.find(m => m.id === pickingFor.meal)?.emoji} {MEALS.find(m => m.id === pickingFor.meal)?.label} — {pickingFor.day}

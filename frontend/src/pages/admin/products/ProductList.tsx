@@ -331,13 +331,10 @@ export function ProductList() {
                           key={header.id}
                           className="px-4 py-3 text-left text-sm font-semibold text-white/70"
                         >
-                          {header.isPlaceholder ? null : (
-                            <div
-                              className={
-                                header.column.getCanSort()
-                                  ? 'cursor-pointer select-none flex items-center gap-2'
-                                  : ''
-                              }
+                          {header.isPlaceholder ? null : header.column.getCanSort() ? (
+                            <button
+                              type="button"
+                              className="cursor-pointer select-none flex items-center gap-2 bg-transparent border-0 p-0 font-semibold text-white/70"
                               onClick={header.column.getToggleSortingHandler()}
                             >
                               {flexRender(
@@ -348,7 +345,10 @@ export function ProductList() {
                                 asc: ' 🔼',
                                 desc: ' 🔽',
                               }[header.column.getIsSorted() as string] ?? null}
-                            </div>
+                            </button>
+                          ) : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
                           )}
                         </th>
                       ))}
