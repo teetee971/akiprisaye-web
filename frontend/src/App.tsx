@@ -35,6 +35,7 @@ const Comparateur = lazyPage(() => import('./pages/Comparateur'));
 const AdminLayout = lazyPage(() => import('./pages/admin/AdminLayout'));
 const AdminDashboardNew = lazyPage(() => import('./pages/admin/AdminDashboard'));
 const AdminUsers = lazyPage(() => import('./pages/admin/AdminUsers'));
+const AdminAudience = lazyPage(() => import('./pages/admin/AdminAudience'));
 const StoreList = lazyPage(() => import('./pages/admin/stores/StoreList'));
 const StoreForm = lazyPage(() => import('./pages/admin/stores/StoreForm'));
 const StoreDetail = lazyPage(() => import('./pages/admin/stores/StoreDetail'));
@@ -61,6 +62,7 @@ const SolidariteHub = lazyPage(() => import('./pages/SolidariteHub'));
 const InscriptionPro = lazyPage(() => import('./pages/InscriptionPro'));
 const EspacePro = lazyPage(() => import('./pages/EspacePro'));
 const EspaceCreateur = lazyPage(() => import('./pages/EspaceCreateur'));
+const ActivationCreateur = lazyPage(() => import('./pages/ActivationCreateur'));
 
 // Scanner & OCR pages
 const ScannerHub = lazyPage(() => import('./pages/ScannerHub'));
@@ -398,6 +400,7 @@ export default function App() {
                         <Route path="/admin" element={<AdminLayout />}>
                           <Route index element={<AdminDashboardNew />} />
                           <Route path="users" element={<AdminUsers />} />
+                          <Route path="audience" element={<AdminAudience />} />
                           <Route path="stores" element={<StoreList />} />
                           <Route path="stores/new" element={<StoreForm />} />
                           <Route path="stores/:id" element={<StoreDetail />} />
@@ -445,6 +448,7 @@ export default function App() {
                           <Route path="espace-pro" element={<EspacePro />} />
                           <Route path="espace-pro-batiment" element={<Navigate to="/espace-pro" replace />} />
                           <Route path="espace-createur" element={<EspaceCreateur />} />
+                          <Route path="activation-createur" element={<ActivationCreateur />} />
 
                           {/* Additional feature routes */}
                           <Route path="donnees-publiques" element={<DonneesPubliques />} />

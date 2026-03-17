@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import toast from 'react-hot-toast';
 
-import { firebaseError, missingCriticalEnvKeys } from "@/lib/firebase";
+import { firebaseError, missingCriticalEnvKeys, wrongApiKeyDetected } from "@/lib/firebase";
 import { FIREBASE_UNAVAILABLE_MESSAGE, getAuthErrorMessage } from "@/lib/authMessages";
 import SocialLoginButtons from "@/components/SocialLoginButtons";
 import { useAuth } from "@/context/AuthContext";
+import { logDebug } from "@/utils/logger";
 
 import { SEOHead } from '../components/ui/SEOHead';
 type AuthMode = "login" | "signup";
@@ -17,13 +19,13 @@ export default function Login() {
   const [busyAction, setBusyAction] = useState<"email" | "google" | null>(null);
   const [verificationSent, setVerificationSent] = useState(false);
 
-  const { signInEmailPassword, signUpEmailPassword, user } = useAuth();
+  const { signInEmailPassword, signUpEmailPassword, user, loading: authLoading } = useAuth();
 
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  const firebaseHealthy = !firebaseError && missingCriticalEnvKeys.length === 0;
-  const showFirebaseStatus = import.meta.env.DEV || Boolean(firebaseError);
+  const firebaseHealthy = !firebaseError && missingCriticalEnvKeys.length === 0 && !wrongApiKeyDetected;
+  const showFirebaseStatus = import.meta.env.DEV || Boolean(firebaseError) || missingCriticalEnvKeys.length > 0 || wrongApiKeyDetected;
 
   const getSafeNext = useCallback(() => {
     const nextParam = searchParams.get("next");
@@ -36,6 +38,14 @@ export default function Login() {
   // where Firebase navigates back to this page), redirect immediately.
   useEffect(() => {
     if (user) {
+      logDebug("[AUTH] redirecting authenticated user away from /connexion");
+      // Fire a visible success confirmation before navigating.
+      // The toast persists into the destination page because ToastProvider
+      // is mounted at the app root, above the router outlet.
+      toast.success(
+        `Bienvenue${user.displayName ? `, ${user.displayName.split(' ')[0]}` : ''}\u00a0!`,
+        { id: 'auth-success', duration: 3000 },
+      );
       navigate(getSafeNext(), { replace: true });
     }
   }, [getSafeNext, navigate, user]);
@@ -80,6 +90,32 @@ export default function Login() {
   };
 
   const loading = busyAction !== null;
+
+  // While Firebase auth is initialising (or settling an OAuth redirect result),
+  // show a spinner instead of the login form. This prevents the form from
+  // flashing briefly before the automatic post-OAuth redirect fires.
+  if (authLoading) {
+    return (
+      <>
+        <SEOHead
+          title="Connexion — A KI PRI SA YÉ"
+          description="Connectez-vous à votre compte A KI PRI SA YÉ pour accéder à vos alertes prix et votre historique de contributions."
+          canonical="https://teetee971.github.io/akiprisaye-web/connexion"
+        />
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
+          <div className="text-center">
+            <div
+              className="rounded-full border-2 border-blue-500/30 border-t-blue-500 animate-spin mx-auto mb-4"
+              style={{ width: 40, height: 40 }}
+              role="status"
+              aria-label="Vérification en cours"
+            />
+            <p className="text-slate-400 text-sm">Vérification en cours…</p>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
@@ -141,6 +177,7 @@ export default function Login() {
             </label>
             <input
               id="email"
+              name="email"
               type="email"
               placeholder="votre@email.com"
               required
@@ -157,6 +194,7 @@ export default function Login() {
             </label>
             <input
               id="password"
+              name="password"
               type="password"
               placeholder={mode === "signup" ? "Minimum 6 caractères" : "Votre mot de passe"}
               required
@@ -203,6 +241,15 @@ export default function Login() {
           </Link>
         </div>
 
+        <div className="mt-3 text-center">
+          <Link
+            to="/activation-createur"
+            className="text-xs text-amber-500 hover:text-amber-400 hover:underline"
+          >
+            ✨ Vous êtes le propriétaire ? Activez votre accès Créateur →
+          </Link>
+        </div>
+
         {showFirebaseStatus && (
           <div className="mt-6 p-3 bg-slate-800/70 border border-slate-700 rounded-lg text-xs">
             {firebaseHealthy ? (
@@ -210,6 +257,9 @@ export default function Login() {
             ) : (
               <div className="text-amber-300">
                 <p className="font-semibold">Firebase missing env at build time</p>
+                {wrongApiKeyDetected && (
+                  <p className="mt-1">Clé API Firebase incorrecte détectée dans ce build. Vérifiez le secret VITE_FIREBASE_API_KEY dans GitHub Actions.</p>
+                )}
                 {missingCriticalEnvKeys.length > 0 && (
                   <p className="mt-1 break-words">Clés manquantes : {missingCriticalEnvKeys.join(", ")}</p>
                 )}

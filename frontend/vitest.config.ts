@@ -1,13 +1,25 @@
 // frontend/vitest.config.ts
 import { defineConfig } from 'vitest/config';
+import react from '@vitejs/plugin-react';
 import { fileURLToPath } from 'node:url';
 
 const here = fileURLToPath(new URL('.', import.meta.url));
 const abs = (p: string) => fileURLToPath(new URL(p, import.meta.url));
+const srcPath = fileURLToPath(new URL('./src', import.meta.url));
 
 export default defineConfig({
   // Vitest/Vite considère frontend/ comme racine même si lancé depuis ailleurs
   root: here,
+
+  plugins: [react()],
+
+  resolve: {
+    alias: [
+      // Mirror the vite.config.ts aliases so @/... imports work in tests
+      { find: /^@\//, replacement: `${srcPath}/` },
+      { find: /^@$/, replacement: srcPath },
+    ],
+  },
 
   test: {
     environment: 'jsdom',
@@ -65,6 +77,8 @@ export default defineConfig({
       abs('./scripts/verify-pages-api.test.ts'),
       abs('./scripts/validate-deployment.test.ts'),
       abs('./scripts/ci-workflows.test.ts'),
+      // Firebase API key integrity — prevents re-introducing the wrong hardcoded key
+      abs('./scripts/firebase-config.test.ts'),
       // EAN / GTIN validation — GS1 checksum and country label
       abs('./src/test/eanValidator.test.ts'),
       // Structured receipt parser — French ticket OCR
@@ -113,6 +127,8 @@ export default defineConfig({
       abs('./src/test/photoUpload.test.ts'),
       // Historique des recherches — useSearchHistory hook (localStorage, déduplication, limite 20)
       abs('./src/hooks/__tests__/useSearchHistory.test.ts'),
+      // Auth UX flow — login spinner, post-OAuth redirect, header avatar, social buttons hide
+      abs('./src/test/auth.login.test.tsx'),
     ],
 
     exclude: ['**/node_modules/**', '**/.git/**', '**/dist/**', '**/coverage/**'],

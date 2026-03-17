@@ -267,23 +267,6 @@ export default function HomeV5() {
           crossOrigin="anonymous"
           className="hero-bg-img"
         />
-        {/* ── Aurora gradient orbs ── */}
-        <div className="aurora-bg" aria-hidden="true">
-          <div className="aurora-orb aurora-orb--1" />
-          <div className="aurora-orb aurora-orb--2" />
-          <div className="aurora-orb aurora-orb--3" />
-          <div className="aurora-orb aurora-orb--4" />
-        </div>
-
-        {/* ── Floating particles ── */}
-        <div className="particles-container" aria-hidden="true">
-          {Array.from({ length: 12 }, (_, i) => (
-            <div key={i} className={`particle particle--${i + 1}`} />
-          ))}
-        </div>
-
-        {/* ── Morphing blob ── */}
-        <div className="blob-decoration blob-decoration--hero" aria-hidden="true" />
 
         <div className="hero-inner">
           {/* Left column: headline + search */}
@@ -306,7 +289,7 @@ export default function HomeV5() {
                 className="hero-search-input-xxl"
                 aria-label="Rechercher un produit"
               />
-              <button type="submit" className="hero-search-btn-xxl btn-neon" aria-label="Rechercher un produit">
+              <button type="submit" className="hero-search-btn-xxl" aria-label="Rechercher un produit">
                 Rechercher un produit
               </button>
             </form>

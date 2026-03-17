@@ -545,7 +545,7 @@
   background: rgba(30, 41, 59, 0.5);
   border: 1px solid rgba(148, 163, 184, 0.2);
   border-radius: 20px;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   overflow: hidden;
   transition: all 0.3s;
 }
@@ -602,7 +602,7 @@
 }
 
 .comparison-flag {
-  font-size: 2rem;
+  font-size: 1.5rem;
 }
 
 .comparison-territory {
@@ -618,10 +618,10 @@
 }
 
 .comparison-price {
-  font-size: 2.5rem;
+  font-size: 1.875rem;
   font-weight: 700;
   color: #3b82f6;
-  margin: 0.5rem 0;
+  margin: 0.25rem 0;
 }
 
 .comparison-delta {
@@ -734,7 +734,7 @@
    ============================================ */
 
 .territories-v5 {
-  padding: 44px 2rem;
+  padding: 24px 2rem;
   max-width: 900px;
   margin: 0 auto;
   text-align: center;
@@ -781,7 +781,7 @@
    ============================================ */
 
 .how-it-works-v5 {
-  padding: 36px 2rem;
+  padding: 20px 2rem;
   max-width: 700px;
   margin: 0 auto;
   text-align: center;
@@ -790,10 +790,10 @@
 .steps-list-v5 {
   list-style: none;
   padding: 0;
-  margin: 2rem 0;
+  margin: 1rem 0;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 0.75rem;
   text-align: left;
 }
 
@@ -807,7 +807,7 @@
 }
 
 .step-emoji {
-  font-size: 2rem;
+  font-size: 1.5rem;
   flex-shrink: 0;
 }
 
@@ -820,14 +820,14 @@
    ============================================ */
 
 .observatory-v5 {
-  padding: 44px 2rem;
+  padding: 24px 2rem;
   max-width: 800px;
   margin: 0 auto;
   text-align: center;
 }
 
 .observatory-content {
-  padding: 3rem 2rem;
+  padding: 1.5rem 2rem;
   background: rgba(16, 185, 129, 0.05);
   border: 1px solid rgba(16, 185, 129, 0.2);
   border-radius: 20px;
@@ -866,7 +866,7 @@
 .observatory-desc {
   font-size: 1rem;
   color: #cbd5e1;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   line-height: 1.6;
 }
 
@@ -913,7 +913,7 @@
    ============================================ */
 
 .mini-faq {
-  padding: 36px 2rem;
+  padding: 20px 2rem;
   max-width: 700px;
   margin: 0 auto;
 }
@@ -921,7 +921,7 @@
 .section-title-small {
   font-size: 1.5rem;
   font-weight: 600;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   text-align: center;
   color: #f1f5f9;
 }
@@ -1284,7 +1284,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1.5rem;
-  margin: 2rem 0;
+  margin: 1rem 0;
 }
 
 .step-visual-card {
@@ -1374,7 +1374,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
   gap: 1rem;
-  margin: 1.5rem 0 2rem;
+  margin: 1rem 0;
 }
 
 .observatory-stat-item {
@@ -1565,7 +1565,7 @@
 
   /* Territories: Smaller */
   .territories-v5 {
-    padding: 60px 1.5rem;
+    padding: 20px 1.5rem;
   }
 
   .territories-grid-v5 {
@@ -1588,7 +1588,7 @@
 
   /* How it works */
   .how-it-works-v5 {
-    padding: 50px 1.5rem;
+    padding: 20px 1.5rem;
   }
 
   .step-item-v5 {
@@ -1597,7 +1597,7 @@
 
   /* Observatory */
   .observatory-v5 {
-    padding: 60px 1.5rem;
+    padding: 24px 1.5rem;
   }
 
   .observatory-content {
@@ -1610,7 +1610,7 @@
 
   /* FAQ */
   .mini-faq {
-    padding: 50px 1.5rem;
+    padding: 20px 1.5rem;
   }
 
   .faq-answer {
@@ -1619,7 +1619,7 @@
 
   /* Testimonials */
   .testimonials-v5 {
-    padding: 60px 1.5rem;
+    padding: 24px 1.5rem;
   }
 
   .testimonials-grid {
@@ -1703,7 +1703,7 @@
 @media (min-width: 769px) and (max-width: 1023px) {
   .hero-v5 {
     min-height: auto;
-    padding: 2.5rem 1.5rem 2rem;
+    padding: 1.5rem 1.5rem 1.5rem;
   }
 
   .hero-inner {
@@ -1893,7 +1893,7 @@
    ============================================ */
 
 .price-chart-section {
-  padding: 4rem 2rem;
+  padding: 2rem 2rem;
   background: linear-gradient(180deg, rgba(15,23,42,0) 0%, rgba(15,23,42,0.6) 100%);
   width: 100%;
   box-sizing: border-box;
@@ -1902,7 +1902,7 @@
 
 .price-chart-header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .price-chart-sub {
@@ -2050,7 +2050,7 @@
    ============================================ */
 
 .news-feed-section {
-  padding: 4rem 2rem;
+  padding: 2rem 2rem;
   width: 100%;
   box-sizing: border-box;
   overflow: hidden;
@@ -2058,7 +2058,7 @@
 
 .news-feed-header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .news-feed-sub {
@@ -2229,7 +2229,7 @@
   gap: 1.25rem;
   max-width: 1100px;
   margin: 0 auto;
-  padding: 4rem 2rem;
+  padding: 2rem 2rem;
 }
 
 .news-card-skeleton {
@@ -2259,7 +2259,7 @@
    ============================================ */
 
 .price-evo-section {
-  padding: 4rem 2rem;
+  padding: 2rem 2rem;
   background: linear-gradient(180deg, rgba(15,23,42,0.3) 0%, rgba(15,23,42,0) 100%);
   width: 100%;
   box-sizing: border-box;
@@ -2268,7 +2268,7 @@
 
 .price-evo-header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .price-evo-sub {
@@ -2330,22 +2330,22 @@
 
 @media (max-width: 479px) {
   .price-evo-section {
-    padding: 2.5rem 0.5rem;
+    padding: 1.25rem 0.5rem;
   }
   .price-evo-wrap {
     padding: 0.75rem 0.5rem;
   }
   .price-chart-section {
-    padding: 2.5rem 0.5rem;
+    padding: 1.25rem 0.5rem;
   }
   .price-chart-wrap {
     padding: 0.75rem 0.5rem;
   }
   .news-feed-section {
-    padding: 2.5rem 0.75rem;
+    padding: 1.25rem 0.75rem;
   }
   .choc-section {
-    padding: 2.5rem 0.75rem;
+    padding: 1.25rem 0.75rem;
   }
 }
 
@@ -2354,7 +2354,7 @@
    ============================================================ */
 
 .panier-vital-section {
-  padding: 4rem 1.5rem;
+  padding: 2rem 1.5rem;
   max-width: 900px;
   margin: 0 auto;
   width: 100%;
@@ -2365,7 +2365,7 @@
 
 .panier-vital-header {
   text-align: center;
-  margin-bottom: 2.5rem;
+  margin-bottom: 1rem;
 }
 
 .panier-vital-subtitle {
@@ -2596,7 +2596,7 @@
 
 @media (max-width: 600px) {
   .panier-vital-section {
-    padding: 3rem 1rem;
+    padding: 1.5rem 1rem;
   }
 
   .panier-vital-grid {
@@ -2615,7 +2615,7 @@
 
 @media (max-width: 479px) {
   .panier-vital-section {
-    padding: 2.5rem 0.75rem;
+    padding: 1.25rem 0.75rem;
   }
 
   .panier-vital-grid {
@@ -2637,7 +2637,7 @@
    ===================================================================== */
 
 .ibw-section {
-  padding: 4rem 2rem;
+  padding: 2rem 2rem;
   max-width: 900px;
   margin: 0 auto;
   width: 100%;
@@ -2648,7 +2648,7 @@
 
 .ibw-header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .ibw-subtitle {
@@ -2900,7 +2900,7 @@
 
 @media (max-width: 600px) {
   .ibw-section {
-    padding: 3rem 1rem;
+    padding: 1.5rem 1rem;
   }
 
   .ibw-grid {
@@ -2922,7 +2922,7 @@
 
 @media (max-width: 479px) {
   .ibw-section {
-    padding: 2.5rem 0.75rem;
+    padding: 1.25rem 0.75rem;
   }
 
   .ibw-grid {
@@ -2936,7 +2936,7 @@
    ======================================================== */
 
 .choc-section {
-  padding: 4rem 2rem;
+  padding: 2rem 2rem;
   width: 100%;
   box-sizing: border-box;
   overflow: hidden;
@@ -2944,7 +2944,7 @@
 
 .choc-header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .choc-subtitle {
@@ -3121,7 +3121,7 @@
 
 @media (max-width: 600px) {
   .choc-section {
-    padding: 3rem 1rem;
+    padding: 1.5rem 1rem;
   }
 
   .choc-territory-name {
@@ -3138,7 +3138,7 @@
    ======================================================== */
 
 .equite-section {
-  padding: 4rem 2rem;
+  padding: 2rem 2rem;
   max-width: 900px;
   margin: 0 auto;
   width: 100%;
@@ -3149,7 +3149,7 @@
 
 .equite-header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .equite-subtitle {
@@ -3355,7 +3355,7 @@
 
 @media (max-width: 600px) {
   .equite-section {
-    padding: 3rem 1rem;
+    padding: 1.5rem 1rem;
   }
 
   .equite-grid {
@@ -3374,7 +3374,7 @@
 
 @media (max-width: 479px) {
   .equite-section {
-    padding: 2.5rem 0.75rem;
+    padding: 1.25rem 0.75rem;
   }
 
   .equite-grid {
@@ -3388,7 +3388,7 @@
    ======================================================== */
 
 .app-demo-section {
-  padding: 5rem 2rem;
+  padding: 2rem 2rem;
   overflow: hidden;
 }
 
@@ -3858,12 +3858,12 @@
    ======================================================== */
 
 .video-vie-chere-section {
-  padding: 4rem 2rem;
+  padding: 2rem 2rem;
 }
 
 .video-viechere-header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .video-viechere-eyebrow {
@@ -4052,7 +4052,7 @@
 
 @media (max-width: 600px) {
   .video-vie-chere-section {
-    padding: 3rem 1rem;
+    padding: 1.5rem 1rem;
   }
 
   .video-viechere-grid {
@@ -4137,7 +4137,7 @@
 
 .why-reasons-section {
   max-width: 900px;
-  margin: 2.5rem auto 0;
+  margin: 1.25rem auto 0;
   padding: 0 0.5rem;
 }
 

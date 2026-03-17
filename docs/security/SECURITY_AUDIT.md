@@ -196,6 +196,7 @@ npm run build          # Production build
 | 2026-02-07 | 0 | Upgraded vite to 7.3.1, fixed all vulnerabilities | ✅ **RESOLVED** |
 | 2026-03-13 | 2 high (flatted, undici) | `npm audit fix`: flatted 3.3.4→3.4.1, undici 7.22.0→7.24.1 | ✅ **RESOLVED** |
 | 2026-03-14 | Code audit | JSON.parse non protégé (2 fonctions), console.log prod (2 fichiers), key={index} (13 fichiers) | ✅ **RÉSOLU** |
+| 2026-03-15 | Firebase `API_KEY_INVALID` prod | Bundle `index-DHqr0YlO.js` obsolète avec clé transposée — correctif + gardes CI + audit post-déploiement | ✅ **RÉSOLU** |
 
 ## Next Review
 

@@ -213,3 +213,113 @@ describe('auto-merge.yml — pull_request_target guard', () => {
     expect(autoMergeYml).toMatch(/startsWith.*copilot/);
   });
 });
+
+describe('deploy-pages.yml — Firebase secrets injection guard', () => {
+  const deployYml = readWorkflow('deploy-pages.yml');
+
+  // The Firebase web config MUST be injected from repository secrets during the
+  // Vite build.  Without these env vars the build embeds an empty string, and
+  // firebase.ts falls back to its hardcoded value — a regression risk if that
+  // fallback is ever accidentally reverted.  These tests catch such regressions
+  // before they reach production.
+  const FIREBASE_SECRETS = [
+    'VITE_FIREBASE_API_KEY',
+    'VITE_FIREBASE_AUTH_DOMAIN',
+    'VITE_FIREBASE_PROJECT_ID',
+    'VITE_FIREBASE_STORAGE_BUCKET',
+    'VITE_FIREBASE_MESSAGING_SENDER_ID',
+    'VITE_FIREBASE_APP_ID',
+    'VITE_FIREBASE_MEASUREMENT_ID',
+  ] as const;
+
+  for (const secret of FIREBASE_SECRETS) {
+    it(`build step must inject ${secret} from repository secrets`, () => {
+      // Must reference the secret so Vite can inline the correct value at build time.
+      expect(deployYml).toMatch(new RegExp(`${secret}:\\s*\\$\\{\\{\\s*secrets\\.${secret}\\s*\\}\\}`));
+    });
+  }
+
+  it('must NOT contain the known wrong Firebase API key as a literal string', () => {
+    // The guard step assembles the wrong key from two shell variables at runtime
+    // so the full key never appears as a single contiguous literal in the workflow.
+    const p = ['AIzaSyDf_mB8z', 'MWHFwoFhVLyThuKWMTmhB7uSZY'];
+    expect(deployYml).not.toContain(p.join(''));
+  });
+});
+
+describe('deploy-cloudflare-pages.yml — Firebase secrets injection guard', () => {
+  const cloudflareYml = readWorkflow('deploy-cloudflare-pages.yml');
+
+  const FIREBASE_SECRETS = [
+    'VITE_FIREBASE_API_KEY',
+    'VITE_FIREBASE_AUTH_DOMAIN',
+    'VITE_FIREBASE_PROJECT_ID',
+    'VITE_FIREBASE_STORAGE_BUCKET',
+    'VITE_FIREBASE_MESSAGING_SENDER_ID',
+    'VITE_FIREBASE_APP_ID',
+    'VITE_FIREBASE_MEASUREMENT_ID',
+  ] as const;
+
+  for (const secret of FIREBASE_SECRETS) {
+    it(`build step must inject ${secret} from repository secrets`, () => {
+      expect(cloudflareYml).toMatch(new RegExp(`${secret}:\\s*\\$\\{\\{\\s*secrets\\.${secret}\\s*\\}\\}`));
+    });
+  }
+
+  it('must NOT contain the known wrong Firebase API key as a literal string', () => {
+    const p = ['AIzaSyDf_mB8z', 'MWHFwoFhVLyThuKWMTmhB7uSZY'];
+    expect(cloudflareYml).not.toContain(p.join(''));
+  });
+});
+
+describe('deploy-pages.yml — pre-build Firebase key guard', () => {
+  const deployYml = readWorkflow('deploy-pages.yml');
+
+  // A pre-build step must run BEFORE `npm run build` and fail immediately if the
+  // VITE_FIREBASE_API_KEY secret is set to the historically wrong key.
+  // This prevents a misconfigured secret from poisoning the bundle even when the
+  // fallback hardcoded value in firebase.ts is correct.
+  it('must have a pre-build step that validates VITE_FIREBASE_API_KEY', () => {
+    expect(deployYml).toMatch(/Validate Firebase API key secret/i);
+  });
+
+  it('pre-build step must assemble the wrong key at runtime and call exit 1', () => {
+    // The guard uses WRONG_KEY assembled from two shell variables at runtime —
+    // the full literal key must not appear as a single string in the workflow.
+    expect(deployYml).toContain('WRONG_KEY=');
+    expect(deployYml).toMatch(/exit 1/);
+  });
+
+  it('pre-build step must appear before the Build step', () => {
+    const validateIdx = deployYml.indexOf('Validate Firebase API key secret');
+    const buildIdx = deployYml.indexOf('\n      - name: Build\n');
+    expect(validateIdx).toBeGreaterThan(0);
+    expect(buildIdx).toBeGreaterThan(0);
+    expect(validateIdx).toBeLessThan(buildIdx);
+  });
+});
+
+describe('deploy-cloudflare-pages.yml — pre-build Firebase key guard', () => {
+  const cloudflareYml = readWorkflow('deploy-cloudflare-pages.yml');
+
+  it('must have a pre-build step that validates VITE_FIREBASE_API_KEY', () => {
+    expect(cloudflareYml).toMatch(/Validate Firebase API key secret/i);
+  });
+
+  it('pre-build step must assemble the wrong key at runtime and call exit 1', () => {
+    expect(cloudflareYml).toContain('WRONG_KEY=');
+    expect(cloudflareYml).toMatch(/exit 1/);
+  });
+
+  it('pre-build step must appear before the Build step', () => {
+    const validateIdx = cloudflareYml.indexOf('Validate Firebase API key secret');
+    const buildIdx = cloudflareYml.indexOf('\n      - name: Build\n');
+    expect(validateIdx).toBeGreaterThan(0);
+    expect(buildIdx).toBeGreaterThan(0);
+    expect(validateIdx).toBeLessThan(buildIdx);
+  });
+  it('must NOT contain the known wrong Firebase API key as a literal string', () => {
+    const p = ['AIzaSyDf_mB8z', 'MWHFwoFhVLyThuKWMTmhB7uSZY'];
+    expect(cloudflareYml).not.toContain(p.join(''));
+  });
+});

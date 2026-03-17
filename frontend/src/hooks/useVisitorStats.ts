@@ -125,6 +125,8 @@ export interface TerritoryStats {
   flag: string;
   online: number;
   totalVisits: number;
+  /** Top interests currently active in this territory (real-time) */
+  topInterests: Array<{ key: string; name: string; emoji: string; online: number }>;
 }
 
 export interface InterestStats {
@@ -138,6 +140,15 @@ export interface InterestStats {
   totalViews: number;
 }
 
+/** Per-territory, per-interest persistent view count (from territory_interest_stats) */
+export interface TerritoryInterestStat {
+  territory: string;
+  interest: string;
+  name: string;
+  emoji: string;
+  totalViews: number;
+}
+
 export interface VisitorStats {
   /** Total users seen in the last 5 minutes */
   totalOnline: number;
@@ -145,6 +156,11 @@ export interface VisitorStats {
   byTerritory: TerritoryStats[];
   /** Ranked list of page/interest categories */
   byInterest: InterestStats[];
+  /**
+   * Historical per-territory interest counts, keyed by territory code.
+   * Used by AdminAudience for the cross-reference matrix.
+   */
+  interestByTerritory: Record<string, TerritoryInterestStat[]>;
   loading: boolean;
   /** Territory detected for the current browser session */
   myTerritory: string;
@@ -160,6 +176,14 @@ export function useVisitorStats(): VisitorStats {
   const [visitsByTerritory, setVisitsByTerritory] = useState<Record<string, number>>({});
   const [onlineByInterest, setOnlineByInterest] = useState<Record<string, number>>({});
   const [viewsByInterest, setViewsByInterest] = useState<Record<string, number>>({});
+  /** real-time: territory → { interestKey → count } */
+  const [onlineInterestByTerritory, setOnlineInterestByTerritory] = useState<
+    Record<string, Record<string, number>>
+  >({});
+  /** historical: from territory_interest_stats collection */
+  const [interestByTerritoryRaw, setInterestByTerritoryRaw] = useState<
+    Record<string, TerritoryInterestStat[]>
+  >({});
   const [loading, setLoading] = useState(true);
 
   const myTerritory = useRef(detectTerritory());
@@ -222,9 +246,24 @@ export function useVisitorStats(): VisitorStats {
       try {
         if (!sessionStorage.getItem(viewKey)) {
           sessionStorage.setItem(viewKey, '1');
+          // Global interest counter
           setDoc(
             doc(db!, 'page_stats', interest.key),
             { totalViews: increment(1), name: interest.name, emoji: interest.emoji, lastView: serverTimestamp() },
+            { merge: true },
+          ).catch(() => {});
+          // Per-territory interest counter (enables the territory × interest matrix)
+          const tiKey = `${territory === 'other' ? '_other' : territory}_${interest.key}`;
+          setDoc(
+            doc(db!, 'territory_interest_stats', tiKey),
+            {
+              territory: territory === 'other' ? '_other' : territory,
+              interest: interest.key,
+              name: interest.name,
+              emoji: interest.emoji,
+              totalViews: increment(1),
+              lastView: serverTimestamp(),
+            },
             { merge: true },
           ).catch(() => {});
         }
@@ -248,6 +287,7 @@ export function useVisitorStats(): VisitorStats {
         const fiveMinAgo = now - 5 * 60 * 1000;
         const territCounts: Record<string, number> = {};
         const intCounts: Record<string, number> = {};
+        const territInterest: Record<string, Record<string, number>> = {};
         let total = 0;
 
         snap.forEach((d) => {
@@ -260,6 +300,9 @@ export function useVisitorStats(): VisitorStats {
             const iKey = (data.interest as string) || '_home';
             if (iKey !== '_home') {
               intCounts[iKey] = (intCounts[iKey] ?? 0) + 1;
+              // Cross-reference: territory × interest
+              if (!territInterest[t]) territInterest[t] = {};
+              territInterest[t][iKey] = (territInterest[t][iKey] ?? 0) + 1;
             }
             total++;
           }
@@ -267,6 +310,7 @@ export function useVisitorStats(): VisitorStats {
 
         setOnlineByTerritory(territCounts);
         setOnlineByInterest(intCounts);
+        setOnlineInterestByTerritory(territInterest);
         setTotalOnline(total);
         setLoading(false);
       },
@@ -299,12 +343,39 @@ export function useVisitorStats(): VisitorStats {
       () => {},
     );
 
+    // ── 7. Subscribe to territory_interest_stats collection ───────────────────
+    const unsubTerritoryInterest = onSnapshot(
+      collection(db, 'territory_interest_stats'),
+      (snap) => {
+        const byTerritory: Record<string, TerritoryInterestStat[]> = {};
+        snap.forEach((d) => {
+          const data = d.data();
+          const t = data.territory as string;
+          if (!byTerritory[t]) byTerritory[t] = [];
+          byTerritory[t].push({
+            territory: t,
+            interest: data.interest as string,
+            name: (data.name as string) || (data.interest as string),
+            emoji: (data.emoji as string) || '📄',
+            totalViews: (data.totalViews as number) ?? 0,
+          });
+        });
+        // Sort each territory's interests by totalViews descending
+        for (const t of Object.keys(byTerritory)) {
+          byTerritory[t].sort((a, b) => b.totalViews - a.totalViews);
+        }
+        setInterestByTerritoryRaw(byTerritory);
+      },
+      () => {},
+    );
+
     // ── Cleanup ───────────────────────────────────────────────────────────────
     const cleanup = () => {
       if (refreshRef.current) clearInterval(refreshRef.current);
       unsubPresence();
       unsubVisits();
       unsubPageStats();
+      unsubTerritoryInterest();
       deleteDoc(presenceRef).catch(() => {});
     };
 
@@ -316,19 +387,39 @@ export function useVisitorStats(): VisitorStats {
   }, []);
 
   // ── Build sorted territory list ───────────────────────────────────────────
-  const knownTerritories: TerritoryStats[] = Object.values(TERRITORIES).map((t) => ({
-    code: t.code,
-    name: t.name,
-    flag: t.flag,
-    online: onlineByTerritory[t.code] ?? 0,
-    totalVisits: visitsByTerritory[t.code] ?? 0,
-  }));
+  const knownTerritories = Object.values(TERRITORIES).map((t) => {
+    const rtInterests = onlineInterestByTerritory[t.code] ?? {};
+    const topInterests = Object.entries(rtInterests)
+      .map(([key, count]) => {
+        const cat = PAGE_CATEGORIES.find((c) => c.key === key) ?? { key, name: key, emoji: '📄' };
+        return { key, name: cat.name, emoji: cat.emoji, online: count };
+      })
+      .sort((a, b) => b.online - a.online)
+      .slice(0, 5);
+    return {
+      code: t.code,
+      name: t.name,
+      flag: t.flag,
+      online: onlineByTerritory[t.code] ?? 0,
+      totalVisits: visitsByTerritory[t.code] ?? 0,
+      topInterests,
+    } satisfies TerritoryStats;
+  });
 
   const otherOnline = onlineByTerritory['_other'] ?? 0;
   const otherVisits = visitsByTerritory['_other'] ?? 0;
+  const otherRtInterests = onlineInterestByTerritory['_other'] ?? {};
+  const otherTopInterests = Object.entries(otherRtInterests)
+    .map(([key, count]) => {
+      const cat = PAGE_CATEGORIES.find((c) => c.key === key) ?? { key, name: key, emoji: '📄' };
+      return { key, name: cat.name, emoji: cat.emoji, online: count };
+    })
+    .sort((a, b) => b.online - a.online)
+    .slice(0, 5);
+
   const otherEntry: TerritoryStats[] =
     otherOnline > 0 || otherVisits > 0
-      ? [{ code: '_other', name: 'Autre', flag: '🌍', online: otherOnline, totalVisits: otherVisits }]
+      ? [{ code: '_other', name: 'Autre / Métropole', flag: '🌍', online: otherOnline, totalVisits: otherVisits, topInterests: otherTopInterests }]
       : [];
 
   const byTerritory: TerritoryStats[] = [...knownTerritories, ...otherEntry]
@@ -363,10 +454,40 @@ export function useVisitorStats(): VisitorStats {
     .filter((i) => i.online > 0 || i.totalViews > 0)
     .sort((a, b) => b.online - a.online || b.totalViews - a.totalViews);
 
+  // ── Merge real-time + historical interest data per territory ──────────────
+  const interestByTerritory: Record<string, TerritoryInterestStat[]> = {};
+
+  // Start from historical data
+  for (const [t, stats] of Object.entries(interestByTerritoryRaw)) {
+    interestByTerritory[t] = [...stats];
+  }
+
+  // Overlay real-time online counts (update or add entries)
+  for (const [t, intMap] of Object.entries(onlineInterestByTerritory)) {
+    if (!interestByTerritory[t]) interestByTerritory[t] = [];
+    for (const [iKey, onlineCount] of Object.entries(intMap)) {
+      const existing = interestByTerritory[t].find((s) => s.interest === iKey);
+      if (existing) {
+        // totalViews already set from Firestore — just keep it
+      } else {
+        const cat = PAGE_CATEGORIES.find((c) => c.key === iKey) ?? { key: iKey, name: iKey, emoji: '📄' };
+        interestByTerritory[t].push({
+          territory: t,
+          interest: iKey,
+          name: cat.name,
+          emoji: cat.emoji,
+          totalViews: onlineCount, // best-effort until Firestore catches up
+        });
+      }
+    }
+    interestByTerritory[t].sort((a, b) => b.totalViews - a.totalViews);
+  }
+
   return {
     totalOnline,
     byTerritory,
     byInterest,
+    interestByTerritory,
     loading,
     myTerritory: myTerritory.current,
     myInterest: myInterest.current,

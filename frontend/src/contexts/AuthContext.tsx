@@ -24,6 +24,8 @@ import {
   getAuthRedirectResult,
 } from "@/services/auth";
 import { FIREBASE_UNAVAILABLE_MESSAGE, getAuthErrorMessage } from "@/lib/authMessages";
+import { logDebug, logError } from "@/utils/logger";
+import { writeUserPresence, clearUserPresence } from "@/services/userPresence";
 
 type UserRole = "guest" | "citoyen" | "observateur" | "admin" | "creator";
 
@@ -61,7 +63,15 @@ async function resolveUserRole(user: User | null): Promise<UserRole> {
   }
 
   try {
-    const userDoc = await getDoc(doc(db, "users", user.uid));
+    // Guard against Firestore network hangs (e.g. ERR_NAME_NOT_RESOLVED on mobile).
+    // Without a timeout the loading state would stay true indefinitely.
+    const roleTimeout = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error("timeout")), 5000),
+    );
+    const userDoc = await Promise.race([
+      getDoc(doc(db, "users", user.uid)),
+      roleTimeout,
+    ]);
     if (!userDoc.exists()) {
       return "citoyen";
     }
@@ -90,43 +100,78 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     let active = true;
+    let unsubscribeAuth: (() => void) | undefined;
 
-    // Settle any pending redirect sign-in (e.g. from mobile redirect flow).
-    // onAuthStateChanged handles the success case; we only need this to
-    // surface redirect errors (e.g. unauthorized-domain, operation-not-allowed).
-    getAuthRedirectResult().catch((err: unknown) => {
+    logDebug("[AUTH] init");
+
+    async function bootstrap() {
+      // Settle any pending redirect sign-in BEFORE subscribing to onAuthStateChanged.
+      // This prevents a flash of the login form while Firebase processes the OAuth return.
+      try {
+        const result = await getAuthRedirectResult();
+        if (!active) return;
+        if (result?.user) {
+          logDebug("[AUTH] getRedirectResult success");
+        } else {
+          logDebug("[AUTH] getRedirectResult: no pending redirect");
+        }
+      } catch (err: unknown) {
+        if (!active) return;
+        const code =
+          typeof err === "object" && err && "code" in err
+            ? String((err as { code: string }).code)
+            : "";
+        if (code && code !== "auth/no-redirect-pending" && code !== "auth/popup-closed-by-user") {
+          logError("[AUTH] getRedirectResult error", code);
+          setError(getAuthErrorMessage(err));
+        } else {
+          logDebug("[AUTH] getRedirectResult: no pending redirect");
+        }
+      }
+
       if (!active) return;
-      const code =
-        typeof err === "object" && err && "code" in err
-          ? String((err as { code: string }).code)
-          : "";
-      // Ignore the "no pending redirect" case and user-cancelled popup/redirect
-      if (!code || code === "auth/no-redirect-pending" || code === "auth/popup-closed-by-user") {
-        return;
-      }
-      setError(getAuthErrorMessage(err));
-    });
 
-    const unsubscribe = subscribeToAuthState(async (currentUser) => {
-      if (!active) {
-        return;
-      }
+      // Subscribe to auth state changes. By this point getRedirectResult has
+      // already resolved so onAuthStateChanged reflects the final auth state.
+      unsubscribeAuth = subscribeToAuthState(async (currentUser) => {
+        if (!active) {
+          return;
+        }
 
-      setUser(currentUser);
-      const role = await resolveUserRole(currentUser);
-      if (!active) {
-        return;
-      }
+        logDebug("[AUTH] onAuthStateChanged", currentUser ? "user" : "null");
 
-      setUserRole(role);
-      setLoading(false);
-    });
+        setUser(currentUser);
+        const role = await resolveUserRole(currentUser);
+        if (!active) {
+          return;
+        }
+
+        setUserRole(role);
+        setLoading(false);
+        logDebug("[AUTH] auth resolved", currentUser ? "user" : "null");
+      });
+    }
+
+    bootstrap();
 
     return () => {
       active = false;
-      unsubscribe();
+      unsubscribeAuth?.();
     };
   }, []);
+
+  // ── Authenticated user presence tracking ──────────────────────────────────
+  // Write/refresh presence every 30 s while a user is logged in.
+  // Presence is cleared explicitly on sign-out so the count drops immediately.
+  useEffect(() => {
+    if (!user) return;
+    const uid = user.uid;
+    writeUserPresence(uid).catch(() => {});
+    const interval = setInterval(() => {
+      writeUserPresence(uid).catch(() => {});
+    }, 30_000);
+    return () => clearInterval(interval);
+  }, [user?.uid]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const value = useMemo<AuthContextValue>(() => ({
     user,
@@ -173,11 +218,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     signOutUser: async () => {
       setError(null);
+      // Clear presence immediately so admin counters update without waiting for TTL
+      if (user) clearUserPresence(user.uid).catch(() => {});
       await signOutUser();
     },
-  }), [user, userRole, loading, error]);
+  }), [user, userRole, loading, error]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {

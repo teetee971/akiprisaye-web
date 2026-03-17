@@ -155,6 +155,8 @@ export const ContributionForm: React.FC<ContributionFormProps> = ({
       case 'text':
         return (
           <input
+            id={field.name}
+            name={field.name}
             type="text"
             value={(value as string) || ''}
             onChange={(e) => handleFieldChange(field.name, e.target.value)}
@@ -168,6 +170,8 @@ export const ContributionForm: React.FC<ContributionFormProps> = ({
       case 'number':
         return (
           <input
+            id={field.name}
+            name={field.name}
             type="number"
             value={(value as number) || ''}
             onChange={(e) => handleFieldChange(field.name, parseFloat(e.target.value))}
@@ -182,6 +186,8 @@ export const ContributionForm: React.FC<ContributionFormProps> = ({
       case 'select':
         return (
           <select
+            id={field.name}
+            name={field.name}
             value={(value as string) || ''}
             onChange={(e) => handleFieldChange(field.name, e.target.value)}
             className="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -200,6 +206,8 @@ export const ContributionForm: React.FC<ContributionFormProps> = ({
       case 'territory':
         return (
           <select
+            id={field.name}
+            name={field.name}
             value={(value as string) || ''}
             onChange={(e) => handleFieldChange(field.name, e.target.value)}
             className="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -218,6 +226,8 @@ export const ContributionForm: React.FC<ContributionFormProps> = ({
       case 'date':
         return (
           <input
+            id={field.name}
+            name={field.name}
             type="date"
             value={(value as string) || ''}
             onChange={(e) => handleFieldChange(field.name, e.target.value)}
@@ -263,7 +273,7 @@ export const ContributionForm: React.FC<ContributionFormProps> = ({
       {/* Form Fields */}
       {fields.map((field) => (
         <div key={field.name}>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+          <label htmlFor={field.name} className="block text-sm font-medium text-gray-300 mb-2">
             {field.label}
             {field.required && <span className="text-red-400 ml-1">*</span>}
           </label>
