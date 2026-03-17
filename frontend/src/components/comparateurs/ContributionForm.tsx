@@ -273,7 +273,7 @@ export const ContributionForm: React.FC<ContributionFormProps> = ({
       {/* Form Fields */}
       {fields.map((field) => (
         <div key={field.name}>
-          <label htmlFor={field.name} className="block text-sm font-medium text-gray-300 mb-2">
+          <label htmlFor={field.name} aria-label={field.label} className="block text-sm font-medium text-gray-300 mb-2">
             {field.label}
             {field.required && <span className="text-red-400 ml-1">*</span>}
           </label>
@@ -292,10 +292,11 @@ export const ContributionForm: React.FC<ContributionFormProps> = ({
       {/* Proof Upload */}
       {requireProof && (
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+          <label htmlFor="contribution-proof" className="block text-sm font-medium text-gray-300 mb-2">
             Preuve (photo, facture, etc.) <span className="text-red-400">*</span>
           </label>
           <input
+            id="contribution-proof"
             type="file"
             onChange={handleFileChange}
             accept="image/*,application/pdf"

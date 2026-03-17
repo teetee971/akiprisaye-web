@@ -151,7 +151,7 @@ export function SignalementConfirmation({
 
       {/* Final Acceptance */}
       <div className="bg-white rounded-lg shadow-md p-6">
-        <label className="flex items-start space-x-3 cursor-pointer">
+        <label aria-label="Je confirme l'exactitude de ces informations" className="flex items-start space-x-3 cursor-pointer">
           <input
             type="checkbox"
             checked={hasAccepted}

@@ -103,10 +103,11 @@ export default function ObservatoireMarges({ territory = 'guadeloupe', productId
       {/* Product Selector */}
       {availableProducts.length > 0 && (
         <div className="bg-white rounded-lg shadow-md p-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="observatoire-produit" className="block text-sm font-medium text-gray-700 mb-2">
             Sélectionner un produit
           </label>
           <select
+            id="observatoire-produit"
             value={activeProduct}
             onChange={(e) => setSelectedProduct(e.target.value)}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
