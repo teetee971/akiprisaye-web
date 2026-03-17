@@ -182,3 +182,16 @@ jobs:
       - name: Unit tests
         working-directory: price-api
         run: npm run test
+
+  # ─── 7. build-test (gate rétro-compatible) ──────────────────────────────────
+  # Ce job émet le check "build-test" requis par la règle de protection de
+  # branche (configurée avant le découpage lint/typecheck/test/build).
+  # Il se contente d'attendre que build ET test soient verts, sans ré-exécuter
+  # de travail. Ne pas supprimer tant que la règle de protection n'est pas mise
+  # à jour manuellement dans GitHub Settings › Branch protection rules.
+  build-test:
+    name: build-test
+    runs-on: ubuntu-latest
+    needs: [build, test]
+    steps:
+      - run: echo "build-test gate — build ✅  test ✅"
