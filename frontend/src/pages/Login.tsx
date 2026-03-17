@@ -7,7 +7,8 @@ import { FIREBASE_UNAVAILABLE_MESSAGE, getAuthErrorMessage } from "@/lib/authMes
 import SocialLoginButtons from "@/components/SocialLoginButtons";
 import { useAuth } from "@/context/AuthContext";
 import { logDebug } from "@/utils/logger";
-import { getRedirectPendingFlag } from "@/services/auth";
+import { getRedirectPendingFlag } from "@/auth/authStorage";
+import { isAuthBusy } from "@/auth/authStateMachine";
 
 import { SEOHead } from '../components/ui/SEOHead';
 type AuthMode = "login" | "signup";
@@ -20,7 +21,7 @@ export default function Login() {
   const [busyAction, setBusyAction] = useState<"email" | "google" | null>(null);
   const [verificationSent, setVerificationSent] = useState(false);
 
-  const { signInEmailPassword, signUpEmailPassword, user, loading: authLoading } = useAuth();
+  const { signInEmailPassword, signUpEmailPassword, user, loading: authLoading, authFlowState } = useAuth();
 
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -99,7 +100,7 @@ export default function Login() {
   // which means the user will be navigated to /auth/callback momentarily.
   const redirectPending = Boolean(getRedirectPendingFlag());
 
-  if (authLoading || redirectPending) {
+  if (authLoading || isAuthBusy(authFlowState) || redirectPending) {
     return (
       <>
         <SEOHead

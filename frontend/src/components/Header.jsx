@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useEntitlements } from '../billing/useEntitlements';
 import ThemeToggle from './ThemeToggle';
 import { LanguageSelector } from './i18n/LanguageSelector';
+import { isAuthBusy } from '../auth/authStateMachine';
 
 const PLAN_BADGE = {
   FREE:            { label: 'Gratuit',         cls: 'bg-slate-700 text-slate-300' },
@@ -22,6 +23,9 @@ export default function Header() {
   const isAuthenticated = Boolean(user);
   const signOutAction = auth?.signOutUser ?? null;
   const authLoading = auth?.loading ?? false;
+  const authFlowState = auth?.authFlowState ?? 'resolving';
+  // Show skeleton while loading OR while the state machine is busy (e.g. returning from OAuth redirect)
+  const showSkeleton = authLoading || isAuthBusy(authFlowState);
   const { plan } = useEntitlements();
   const planInfo = PLAN_BADGE[plan] ?? null;
 
@@ -61,7 +65,7 @@ export default function Header() {
           Paramètres
         </Link>
 
-        {authLoading ? (
+        {showSkeleton ? (
           /* Auth is settling (e.g. OAuth redirect return) — neutral skeleton */
           <div
             className="w-7 h-7 rounded-full bg-slate-700 animate-pulse"

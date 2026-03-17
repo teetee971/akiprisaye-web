@@ -25,10 +25,13 @@ import {
   signInGoogleRedirect,
   signInFacebookRedirect,
   signInAppleRedirect,
+} from '@/services/auth';
+import {
   setRedirectPendingFlag,
   getRedirectPendingFlag,
   clearRedirectPendingFlag,
-} from '@/services/auth';
+} from '@/auth/authStorage';
+import { getAuthIncidentUserMessage } from '@/auth/authIncidents';
 import { authLog } from '@/utils/authLogger';
 
 /** Maximum ms to wait for the auth flow to stabilise before showing a timeout. */
@@ -43,7 +46,7 @@ type Phase =
   | 'invalid';     // Page loaded without a valid pending context
 
 export default function AuthCallbackPage() {
-  const { user, loading } = useAuth();
+  const { user, loading, authResolved, lastIncident } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [phase, setPhase] = useState<Phase>('initiating');
@@ -111,9 +114,12 @@ export default function AuthCallbackPage() {
     };
   }, [phase]);
 
-  // ── Watch AuthContext.loading to know when auth is stabilised ─────────────
+  // ── Watch AuthContext to know when auth is stabilised ────────────────────
+  // authResolved is true once the bootstrap (getRedirectResult + onAuthStateChanged) settled.
+  // Fall back to !loading for backward compat if authResolved is still false.
   useEffect(() => {
-    if (phase !== 'pending' || loading) return;
+    if (phase !== 'pending') return;
+    if (loading || !authResolved) return;
 
     // Auth cycle completed.
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -134,9 +140,10 @@ export default function AuthCallbackPage() {
     } else {
       authLog('AUTH_STATE_NO_USER');
       setPhase('no-user');
-      setErrorMsg(null); // No specific error — just no user (e.g. cancelled)
+      // Use lastIncident message if available, otherwise generic cancel message
+      setErrorMsg(getAuthIncidentUserMessage(lastIncident) ?? null);
     }
-  }, [loading, phase, user, navigate]);
+  }, [loading, authResolved, lastIncident, phase, user, navigate]);
 
   // ── Handle invalid/direct access ─────────────────────────────────────────
   useEffect(() => {

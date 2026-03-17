@@ -40,6 +40,10 @@ vi.mock('../services/auth', () => ({
   signInGoogleRedirect:   (...args: unknown[]) => mockSignInGoogleRedirect(...args),
   signInFacebookRedirect: (...args: unknown[]) => mockSignInFacebookRedirect(...args),
   signInAppleRedirect:    (...args: unknown[]) => mockSignInAppleRedirect(...args),
+}));
+
+/* ── authStorage mock (flag lifecycle) ─────────────────────────────────── */
+vi.mock('../auth/authStorage', () => ({
   setRedirectPendingFlag: (provider: string, next: string) => {
     sessionStorage.setItem('auth:return:pending', JSON.stringify({ provider, next, ts: Date.now() }));
   },
@@ -55,6 +59,11 @@ vi.mock('../services/auth', () => ({
   REDIRECT_PENDING_KEY: 'auth:return:pending',
 }));
 
+/* ── authIncidents mock ─────────────────────────────────────────────────── */
+vi.mock('../auth/authIncidents', () => ({
+  getAuthIncidentUserMessage: () => null,
+}));
+
 /* ── authLogger mock ───────────────────────────────────────────────────── */
 const mockAuthLog = vi.fn();
 vi.mock('../utils/authLogger', () => ({
@@ -66,6 +75,8 @@ function makeAuthMock(overrides: Record<string, unknown> = {}) {
   return {
     user: null,
     loading: false,
+    authResolved: true,
+    lastIncident: null,
     userRole: 'guest',
     error: null,
     isGuest: true,
@@ -180,7 +191,7 @@ describe('AuthCallbackPage — neutral state while pending', () => {
 
   it('shows a loading spinner and no form/social buttons on first load', async () => {
     // First load: no flag in sessionStorage, provider=google provided
-    authState = makeAuthMock({ loading: true });
+    authState = makeAuthMock({ loading: true, authResolved: false });
 
     renderCallback('?provider=google&next=%2Fmon-compte');
 
@@ -197,7 +208,7 @@ describe('AuthCallbackPage — neutral state while pending', () => {
   });
 
   it('sets the sessionStorage flag before calling signInWithRedirect on first load', async () => {
-    authState = makeAuthMock({ loading: true });
+    authState = makeAuthMock({ loading: true, authResolved: false });
 
     renderCallback('?provider=google&next=%2Fmon-compte');
 
@@ -214,7 +225,7 @@ describe('AuthCallbackPage — neutral state while pending', () => {
     sessionStorage.setItem('auth:return:pending', JSON.stringify({
       provider: 'google', next: '/mon-compte', ts: Date.now(),
     }));
-    authState = makeAuthMock({ loading: true });
+    authState = makeAuthMock({ loading: true, authResolved: false });
 
     renderCallback();
 
@@ -461,7 +472,7 @@ describe('AuthCallbackPage — timeout guard', () => {
       provider: 'google', next: '/mon-compte', ts: Date.now(),
     }));
 
-    authState = makeAuthMock({ user: null, loading: true });
+    authState = makeAuthMock({ user: null, loading: true, authResolved: false });
 
     renderCallback();
 
