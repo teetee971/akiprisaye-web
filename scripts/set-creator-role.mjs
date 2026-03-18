@@ -151,7 +151,9 @@ ${SERVICE_ACCOUNT_PATHS.map(p => '      • ' + p).join('\n')}
    node set-creator-role.mjs ${email}
 
    ── Option C — Variable d'environnement (GitHub Actions / CI) ───────────
-   # Lire depuis un fichier pour ne pas exposer le contenu dans l'historique shell :
+   # Le CONTENU de la variable n'apparaît pas dans l'historique shell ;
+   # seule la commande elle-même y figure. Pour l'exclure totalement,
+   # préfixez-la d'un espace (bash avec HISTCONTROL=ignorespace) :
    export FIREBASE_SERVICE_ACCOUNT="$(cat serviceAccountKey.json)"
    node scripts/set-creator-role.mjs ${email}
 
