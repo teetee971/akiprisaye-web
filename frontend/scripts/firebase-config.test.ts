@@ -73,11 +73,14 @@ describe('Firebase runtime wrong-key guard — firebase.ts', () => {
     expect(content).toContain('wrongApiKeyDetected');
   });
 
-  it('firebase.ts wrong-key guard must assemble the bad key from two parts (GitGuardian-safe)', () => {
+  it('firebase.ts wrong-key guard must use charAt() checks (not string concat) so the bundler cannot constant-fold the wrong key into the bundle', () => {
     const content = readSrc('frontend/src/lib/firebase.ts');
-    // Neither part alone is a valid 39-char Firebase key
-    expect(content).toContain('WRONG_KEY_PART_A');
-    expect(content).toContain('WRONG_KEY_PART_B');
+    // The detection must use charAt() to avoid esbuild constant-folding
+    // 'part_a' + 'part_b' → the full wrong key string in the output bundle.
+    expect(content).toContain('charAt');
+    // The full wrong key must not appear as a single concatenatable expression.
+    expect(content).not.toContain('WRONG_KEY_PART_A');
+    expect(content).not.toContain('WRONG_KEY_PART_B');
     expect(content).not.toContain(WRONG_API_KEY);
   });
 

@@ -519,25 +519,34 @@ async function verifyFirebaseBundle(siteUrl, html) {
     fail(`Bundle JS principal introuvable : ${bundlePath} (HTTP ${response.status}).`);
   }
 
-  // Hard-fail immediately if this specific historically-wrong API key is present
-  // in the bundle.  This key was embedded in the live production bundle due to
-  // character transpositions vs the key registered in GCP (project a-ki-pri-sa-ye,
-  // confirmed 2026-03-15).  The positive check below (EXPECTED_FIREBASE_CONFIG)
-  // catches any wrong key in general; this additional guard provides an explicit,
-  // human-readable error pointing directly to the VITE_FIREBASE_API_KEY secret.
+  const config = extractFirebaseConfigFromBundle(body);
+
+  // Fail early with a clear message if the apiKey field could not be extracted at all
+  // (e.g. the bundle format changed or tree-shaking removed the Firebase config).
+  if (!config.apiKey) {
+    fail(
+      `Impossible d'extraire l'apiKey Firebase depuis le bundle ${bundlePath.split('/').pop()}.\n` +
+      `  → Le bundle ne contient peut-être pas de configuration Firebase valide.`,
+    );
+  }
+
+  // Hard-fail immediately if the extracted apiKey is the historically-wrong API key.
+  // This key was embedded in the live production bundle due to character transpositions
+  // vs the key registered in GCP (project a-ki-pri-sa-ye, confirmed 2026-03-15).
+  // We check the *extracted* apiKey value (from the Firebase config object in the bundle)
+  // rather than searching the raw bundle text, because the wrong key string may also appear
+  // in the bundle as part of detection code (e.g. firebase.ts wrongApiKeyDetected guard)
+  // and a raw-text search would produce false positives in that case.
   const WRONG_API_KEY = 'AIzaSyDf_mB8zMWHFwoFhVLyThuKWMTmhB7uSZY';
-  const wrongKeyCount = countOccurrences(body, WRONG_API_KEY);
-  if (wrongKeyCount > 0) {
+  if (config.apiKey === WRONG_API_KEY) {
     const bundleFile = bundlePath.split('/').pop();
     fail(
       `CLEF API FIREBASE INCORRECTE détectée dans le bundle ${bundleFile}.\n` +
-      `  Clef erronée : "${WRONG_API_KEY}" (${wrongKeyCount} occurrence(s))\n` +
+      `  Clef erronée : "${WRONG_API_KEY}"\n` +
       `  La clef correcte est : "${EXPECTED_FIREBASE_CONFIG.apiKey}"\n` +
       `  → Vérifiez que le secret VITE_FIREBASE_API_KEY est bien configuré dans GitHub Actions.`,
     );
   }
-
-  const config = extractFirebaseConfigFromBundle(body);
   const mismatches = [];
   for (const [key, expected] of Object.entries(EXPECTED_FIREBASE_CONFIG)) {
     if (config[key] !== expected) {
@@ -555,7 +564,7 @@ async function verifyFirebaseBundle(siteUrl, html) {
   const correctKeyCount = countOccurrences(body, EXPECTED_FIREBASE_CONFIG.apiKey);
   logOk(
     `Firebase config vérifiée dans le bundle (${bundleFile}) :` +
-    ` ancienne clé incorrecte: ${wrongKeyCount} occurrence(s), clé correcte: ${correctKeyCount} occurrence(s),` +
+    ` clé correcte: ${correctKeyCount} occurrence(s),` +
     ` projectId=${config.projectId}, appId=${config.appId}, measurementId=${config.measurementId}`,
   );
 }

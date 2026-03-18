@@ -33,14 +33,20 @@ const missingCriticalEnvKeys: string[] = (
   ] as const
 ).filter((k) => !import.meta.env[k as keyof ImportMetaEnv]);
 
-// Detect the historically wrong API key (transposed characters vs GCP value).
+// Detect the historically wrong API key (transposed characters at indices 10–11
+// vs the GCP-registered key: wrong key has 'B8', correct key has '8B').
 // This guard is belt-and-suspenders: CI already refuses to build with this key,
 // but if somehow it reaches the browser it surfaces a clear, actionable message
 // instead of a cryptic "API_KEY_INVALID" Firebase error.
-const WRONG_KEY_PART_A = "AIzaSyDf_mB8z";
-const WRONG_KEY_PART_B = "MWHFwoFhVLyThuKWMTmhB7uSZY";
+// Individual charAt() checks are used deliberately — static string concatenation
+// of the wrong key would be constant-folded by the bundler (esbuild/Vite) into
+// a single literal in the output bundle, which would trigger false positives in
+// bundle validation scripts that search for the wrong key string.
 const wrongApiKeyDetected: boolean =
-  firebaseConfig.apiKey === WRONG_KEY_PART_A + WRONG_KEY_PART_B;
+  typeof firebaseConfig.apiKey === "string" &&
+  firebaseConfig.apiKey.length === 39 &&
+  firebaseConfig.apiKey.charAt(10) === "B" && // wrong key: 'B' here; correct key: '8'
+  firebaseConfig.apiKey.charAt(11) === "8";   // wrong key: '8' here; correct key: 'B'
 
 let firebaseError: string | null = null;
 let app: FirebaseApp | null = null;
