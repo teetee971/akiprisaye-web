@@ -78,6 +78,14 @@ export default defineConfig({
           if (id.includes('react-joyride') || id.includes('react-floater') || id.includes('scrollparent') || id.includes('lodash.merge')) {
             return 'vendor-joyride';
           }
+          // ── Sentry (lazy-loaded via requestIdleCallback — keep in its own chunk) ──
+          if (id.includes('@sentry/') || id.includes('sentry-browser')) {
+            return 'vendor-sentry';
+          }
+          // ── web-vitals (lazy-loaded — keep in its own chunk) ──────────────
+          if (id.includes('web-vitals')) {
+            return 'vendor-web-vitals';
+          }
           // ── Charts (recharts + d3 ecosystem) ──────────────────────────────
           if (id.includes('recharts') || id.includes('/d3-') || id.includes('/victory-')) {
             return 'vendor-charts';

@@ -258,6 +258,8 @@ export default function HomeV5() {
         {/* ── Hero background image — explicit <img> for LCP optimisation ── */}
         <img
           src="https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fm=webp&fit=crop&w=1600&q=80"
+          srcSet="https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fm=webp&fit=crop&w=800&q=80 800w, https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fm=webp&fit=crop&w=1200&q=80 1200w, https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fm=webp&fit=crop&w=1600&q=80 1600w"
+          sizes="100vw"
           alt=""
           aria-hidden="true"
           width={1600}
