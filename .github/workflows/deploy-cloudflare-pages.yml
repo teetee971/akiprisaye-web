@@ -126,7 +126,7 @@ jobs:
     timeout-minutes: 15
     env:
       # Use the deployment URL from wrangler-action; fall back to the stable production URL.
-      SITE_URL: ${{ needs.deploy.outputs.deployment_url || env.DEFAULT_PREVIEW_URL }}
+      SITE_URL: ${{ needs.deploy.outputs.deployment_url || 'https://akiprisaye-web.pages.dev' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -183,7 +183,7 @@ jobs:
     if: needs.deploy.result == 'success' && needs.validate.result == 'success'
     runs-on: ubuntu-latest
     env:
-      DEPLOY_URL: ${{ needs.deploy.outputs.deployment_url || env.DEFAULT_PREVIEW_URL }}
+      DEPLOY_URL: ${{ needs.deploy.outputs.deployment_url || 'https://akiprisaye-web.pages.dev' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
