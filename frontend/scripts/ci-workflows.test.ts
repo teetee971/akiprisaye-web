@@ -207,6 +207,12 @@ describe('deploy-cloudflare-pages.yml — lighthouse on real preview URL', () =>
     expect(cloudflareYml).toMatch(/needs\.deploy\.outputs\.deployment_url/);
   });
 
+  it('fallback URL must be defined as DEFAULT_PREVIEW_URL env var, not hardcoded inline', () => {
+    // Avoids hardcoded strings in each job env; allows env-level override for staging.
+    expect(cloudflareYml).toMatch(/DEFAULT_PREVIEW_URL:/);
+    expect(cloudflareYml).toMatch(/env\.DEFAULT_PREVIEW_URL/);
+  });
+
   it('lighthouse job must call prepare-lighthouse-config.mjs', () => {
     expect(cloudflareYml).toMatch(/prepare-lighthouse-config\.mjs/);
   });

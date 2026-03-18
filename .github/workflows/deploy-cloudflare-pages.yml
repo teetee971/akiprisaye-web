@@ -8,6 +8,11 @@ on:
 permissions:
   contents: read
 
+env:
+  # Stable production URL used as fallback when wrangler-action does not return a preview URL.
+  # Override this at the repo/environment level if you run a separate staging project.
+  DEFAULT_PREVIEW_URL: 'https://akiprisaye-web.pages.dev'
+
 concurrency:
   group: cloudflare-pages
   cancel-in-progress: true
@@ -121,7 +126,7 @@ jobs:
     timeout-minutes: 15
     env:
       # Use the deployment URL from wrangler-action; fall back to the stable production URL.
-      SITE_URL: ${{ needs.deploy.outputs.deployment_url || 'https://akiprisaye-web.pages.dev' }}
+      SITE_URL: ${{ needs.deploy.outputs.deployment_url || env.DEFAULT_PREVIEW_URL }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -178,7 +183,7 @@ jobs:
     if: needs.deploy.result == 'success' && needs.validate.result == 'success'
     runs-on: ubuntu-latest
     env:
-      DEPLOY_URL: ${{ needs.deploy.outputs.deployment_url || 'https://akiprisaye-web.pages.dev' }}
+      DEPLOY_URL: ${{ needs.deploy.outputs.deployment_url || env.DEFAULT_PREVIEW_URL }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
