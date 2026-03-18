@@ -74,6 +74,7 @@ function makeAuthMock(overrides: Record<string, unknown> = {}) {
     isCreator: false,
     clearError: vi.fn(),
     clearAuthIncident: vi.fn(),
+    refreshClaims: vi.fn(),
     signUpEmailPassword: vi.fn(),
     signInEmailPassword: vi.fn(),
     signInGooglePopup: vi.fn(),

@@ -1,4 +1,4 @@
-name: "✨ Attribuer le rôle Créateur"
+name: "✨ Attribuer un rôle utilisateur"
 
 # Déclenchement manuel depuis l'onglet Actions de GitHub (fonctionne sur mobile).
 #
@@ -12,19 +12,41 @@ on:
   workflow_dispatch:
     inputs:
       email:
-        description: "Email du compte Firebase à activer (ex: teetee971@gmail.com)"
+        description: "Email du compte Firebase à modifier (ex: teetee971@gmail.com)"
         required: true
         type: string
+      role:
+        description: "Rôle à attribuer"
+        required: true
+        type: choice
+        default: creator
+        options:
+          - creator
+          - admin
 
 permissions:
   contents: read
 
 jobs:
-  set-creator-role:
-    name: Attribuer le rôle creator
+  set-user-role:
+    name: Attribuer le rôle ${{ github.event.inputs.role }}
     runs-on: ubuntu-latest
 
     steps:
+      - name: Valider les entrées
+        run: |
+          ROLE="${{ github.event.inputs.role }}"
+          EMAIL="${{ github.event.inputs.email }}"
+          if [[ "$ROLE" != "creator" && "$ROLE" != "admin" ]]; then
+            echo "❌ Rôle invalide : $ROLE (valeurs acceptées : creator, admin)"
+            exit 1
+          fi
+          if [[ -z "$EMAIL" || "$EMAIL" != *"@"* ]]; then
+            echo "❌ Email invalide : $EMAIL"
+            exit 1
+          fi
+          echo "✅ Paramètres validés : role=$ROLE"
+
       - name: Récupérer le code
         uses: actions/checkout@v4
 
@@ -33,11 +55,12 @@ jobs:
         with:
           node-version-file: .nvmrc
 
-      - name: Installer firebase-admin
+      - name: Installer les dépendances
         run: npm install
 
-      - name: Attribuer le rôle Créateur dans Firestore
+      - name: Attribuer le rôle dans Firebase (Custom Claims + Firestore)
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-          CREATOR_EMAIL: ${{ github.event.inputs.email }}
-        run: node scripts/set-creator-role.mjs "$CREATOR_EMAIL"
+          TARGET_EMAIL: ${{ github.event.inputs.email }}
+          TARGET_ROLE: ${{ github.event.inputs.role }}
+        run: node scripts/set-user-role.mjs "$TARGET_EMAIL" "$TARGET_ROLE"

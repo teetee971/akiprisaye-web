@@ -213,7 +213,7 @@ try {
   process.exit(1);
 }
 
-/* ── 5. Écrire le rôle "creator" dans Firestore ──────────────────────── */
+/* ── 5. Écrire le rôle "creator" dans Firestore + Custom Claims ──────── */
 
 const uid = userRecord.uid;
 const userRef = db.collection('users').doc(uid);
@@ -232,6 +232,28 @@ try {
     createdAt: existing?.createdAt ?? new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   }, { merge: true });
+
+  // Set Firebase custom claims for fast token-based role resolution
+  await authAdmin.setCustomUserClaims(uid, {
+    role: 'creator',
+  });
+
+  // Audit log — who triggered this, when, and what role was assigned
+  try {
+    await db.collection('auditLogs').add({
+      action: 'SET_ROLE',
+      targetUid: uid,
+      role: 'creator',
+      triggeredBy: process.env.GITHUB_ACTOR || 'cli',
+      workflow: process.env.GITHUB_WORKFLOW || null,
+      runId: process.env.GITHUB_RUN_ID || null,
+      timestamp: new Date().toISOString(),
+      success: true,
+    });
+  } catch {
+    // Non-fatal — audit log failure must not block the role assignment
+    console.warn('⚠️  Audit log non écrit (non bloquant).');
+  }
 
   /* Largeur d'affichage de la boîte de succès (en caractères) */
   const BOX_DISPLAY_WIDTH = 48;

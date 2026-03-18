@@ -11,6 +11,8 @@ import {
 import { doc, getDoc } from "firebase/firestore";
 import type { User } from "firebase/auth";
 
+import { roleFromClaims } from "@/auth/rbac";
+
 import { db, firebaseError } from "@/lib/firebase";
 import {
   signInEmailPassword,
@@ -73,6 +75,8 @@ type AuthContextValue = {
   // ── Actions ────────────────────────────────────────────────────────
   clearError: () => void;
   clearAuthIncident: () => void;
+  /** Force-refreshes the Firebase ID token and re-resolves the role from the new claims. */
+  refreshClaims: () => Promise<void>;
   signUpEmailPassword: (email: string, password: string) => Promise<void>;
   signInEmailPassword: (email: string, password: string) => Promise<void>;
   signInGooglePopup: () => Promise<void>;
@@ -86,11 +90,25 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
-/* ── Firestore role resolver ─────────────────────────────────────────────── */
+/* ── Role resolver: custom claims → Firestore fallback ───────────────────── */
 
 async function resolveUserRole(user: User | null): Promise<UserRole> {
   if (!user) return "guest";
-  if (!db)   return "citoyen";
+
+  // 1. Try custom claims from Firebase ID token (fast path, no network round-trip)
+  try {
+    const tokenResult = await user.getIdTokenResult(false);
+    const claims = tokenResult.claims as Record<string, unknown>;
+    const hasAnyClaim = claims?.role || claims?.creator || claims?.admin;
+    if (hasAnyClaim) {
+      return roleFromClaims(claims);
+    }
+  } catch {
+    // Ignore token errors — fall through to Firestore
+  }
+
+  // 2. Fallback: Firestore users/{uid}.role
+  if (!db) return "citoyen";
 
   try {
     const roleTimeout = new Promise<never>((_, reject) =>
@@ -253,6 +271,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isCreator:       userRole === "creator",
     clearError:         () => setError(null),
     clearAuthIncident:  () => setLastIncident(null),
+    refreshClaims: async () => {
+      if (!user) return;
+      try {
+        await user.getIdTokenResult(true); // force-refresh the token
+        const role = await resolveUserRole(user);
+        setUserRole(role);
+        logDebug("[AUTH] refreshClaims — new role:", role);
+      } catch {
+        logDebug("[AUTH] refreshClaims — failed, role unchanged");
+      }
+    },
     signUpEmailPassword: async (em, pw) => {
       setError(null);
       await signUpEmailPassword(em, pw);
