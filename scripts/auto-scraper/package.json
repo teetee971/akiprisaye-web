@@ -9,7 +9,10 @@
     "scrape:food": "node scrape.mjs --source food",
     "scrape:bqp": "node scrape.mjs --source bqp",
     "scrape:services": "node scrape.mjs --source services",
-    "dry-run": "node scrape.mjs --dry-run"
+    "dry-run": "node scrape.mjs --dry-run",
+    "scan": "node scrape-product.mjs",
+    "scan:panier": "node scrape-product.mjs --panier --territory all --output both",
+    "scan:ean": "node scrape-product.mjs --output both"
   },
   "engines": {
     "node": ">=20.0.0"

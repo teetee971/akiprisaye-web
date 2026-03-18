@@ -105,6 +105,23 @@ jobs:
             node scrape.mjs --source "$SOURCE"
           fi
 
+      - name: 🛒 Scan panier de base (produits essentiels DOM-TOM)
+        if: ${{ inputs.dry_run != 'true' && (inputs.source == 'all' || inputs.source == '') }}
+        working-directory: scripts/auto-scraper
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          GITHUB_WORKSPACE: ${{ github.workspace }}
+        run: |
+          echo "📦 Scan prix produits de première nécessité…"
+          if node scrape-product.mjs --panier --territory all --output both; then
+            echo "✅ Scan panier terminé"
+          else
+            EXIT_CODE=$?
+            echo "⚠️  Scan panier partiel (code $EXIT_CODE) — données Open Prices limitées ou API indisponible"
+            # Non-fatal : ne pas échouer le workflow pour un scan panier partiel
+            exit 0
+          fi
+
       - name: 💾 Commit des données mises à jour
         if: ${{ inputs.dry_run != 'true' }}
         run: |
@@ -121,7 +138,8 @@ jobs:
             git add frontend/public/data/fuel-prices.json \
                     frontend/public/data/services-prices.json \
                     frontend/public/data/bqp-prices.json \
-                    frontend/public/data/open-prices-dom.json 2>/dev/null || true
+                    frontend/public/data/open-prices-dom.json \
+                    frontend/public/data/product-scan-*.json 2>/dev/null || true
 
             git commit \
               -m "🤖 [auto] Mise à jour données prix — $(date -u '+%Y-%m-%d %H:%M UTC')" \

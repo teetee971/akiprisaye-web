@@ -139,6 +139,7 @@ const BoatComparator = lazyPage(() => import('./pages/BoatComparator'));
 const FreightComparator = lazyPage(() => import('./pages/FreightComparator'));
 const FuelComparator = lazyPage(() => import('./pages/FuelComparator'));
 const StationsProximite = lazyPage(() => import('./pages/StationsProximite'));
+const ProductPriceLookup = lazyPage(() => import('./pages/ProductPriceLookup'));
 const EnqueteCarburants = lazyPage(() => import('./pages/EnqueteCarburants'));
 const ConferenceCarburants = lazyPage(() => import('./pages/ConferenceCarburants'));
 const EnqueteOctroiMer = lazyPage(() => import('./pages/EnqueteOctroiMer'));
@@ -554,6 +555,7 @@ export default function App() {
                           <Route path="comparateur-fret" element={<FreightComparator />} />
                           <Route path="comparateur-carburants" element={<FuelComparator />} />
                           <Route path="stations-proximite" element={<StationsProximite />} />
+                          <Route path="prix-produit" element={<ProductPriceLookup />} />
                           <Route path="enquete-carburants" element={<EnqueteCarburants />} />
                           <Route path="conference-carburants" element={<ConferenceCarburants />} />
                           <Route path="comparateur-assurances" element={<InsuranceComparator />} />

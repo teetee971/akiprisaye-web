@@ -140,6 +140,9 @@ async function fetchINSEECPI() {
   /** @type {ServiceEntry[]} */
   const entries = [];
 
+  // Valeurs de référence INSEE IPC DOM — base 100 en 2015
+  // Source : Bulletin de conjoncture INSEE Antilles-Guyane / La Réunion, jan. 2025
+  // À mettre à jour si les données live restent indisponibles > 6 mois.
   const seriesMap = {
     'GP': { id: '001641755', fallback: 117.5, label: 'Guadeloupe' },
     'MQ': { id: '001641756', fallback: 118.2, label: 'Martinique' },
