@@ -349,7 +349,14 @@ describe('lighthouse-pr-comment.mjs — PASS/WARN/FAIL verdict banner', () => {
 });
 
 describe('lighthouserc.json — governance assertions guard (no preset, no individual audits)', () => {
-  const lhrc = JSON.parse(readFileSync(path.join(REPO_ROOT, 'lighthouserc.json'), 'utf8'));
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const lhrc: any = (() => {
+    try {
+      return JSON.parse(readFileSync(path.join(REPO_ROOT, 'lighthouserc.json'), 'utf8'));
+    } catch {
+      throw new Error('lighthouserc.json is missing or contains invalid JSON');
+    }
+  })();
   const assert = lhrc.ci.assert;
 
   it('must NOT use lighthouse:recommended preset (causes individual audit failures in CI)', () => {
