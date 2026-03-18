@@ -348,6 +348,52 @@ describe('lighthouse-pr-comment.mjs — PASS/WARN/FAIL verdict banner', () => {
   });
 });
 
+describe('lighthouserc.json — governance assertions guard (no preset, no individual audits)', () => {
+  const lhrc = JSON.parse(readFileSync(path.join(REPO_ROOT, 'lighthouserc.json'), 'utf8'));
+  const assert = lhrc.ci.assert;
+
+  it('must NOT use lighthouse:recommended preset (causes individual audit failures in CI)', () => {
+    // The preset injects blocking assertions for dozens of individual audits
+    // (bf-cache, forced-reflow, image-delivery, etc.) which bypass the
+    // governance system in lighthouse-engine.mjs / lighthouse-guard.mjs.
+    expect(assert.preset).toBeUndefined();
+  });
+
+  it('must have exactly the 4 governance-level assertions (no individual audits)', () => {
+    const allowed = new Set([
+      'categories:performance',
+      'categories:accessibility',
+      'categories:seo',
+      'performance-budget',
+    ]);
+    const actual = Object.keys(assert.assertions ?? {});
+    expect(actual.every(k => allowed.has(k))).toBe(true);
+    expect(actual.length).toBe(4);
+  });
+
+  it('categories:performance must be warn with minScore 0.8', () => {
+    const [level, opts] = assert.assertions['categories:performance'];
+    expect(level).toBe('warn');
+    expect(opts.minScore).toBe(0.8);
+  });
+
+  it('categories:accessibility must be error with minScore 0.9', () => {
+    const [level, opts] = assert.assertions['categories:accessibility'];
+    expect(level).toBe('error');
+    expect(opts.minScore).toBe(0.9);
+  });
+
+  it('categories:seo must be warn with minScore 0.8', () => {
+    const [level, opts] = assert.assertions['categories:seo'];
+    expect(level).toBe('warn');
+    expect(opts.minScore).toBe(0.8);
+  });
+
+  it('startServerReadyTimeout must be at least 30000ms', () => {
+    expect(lhrc.ci.collect.startServerReadyTimeout).toBeGreaterThanOrEqual(30000);
+  });
+});
+
 describe('lighthouserc.json — performance resource budgets', () => {
   const lhrc = JSON.parse(readFileSync(path.join(REPO_ROOT, 'lighthouserc.json'), 'utf8'));
   const budgets = lhrc.ci.collect.settings.budgets[0];
