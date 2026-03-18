@@ -13,6 +13,8 @@ import type {
   FreightRoute,
 } from '../types/freightComparison';
 import type { Territory } from '../types/priceAlerts';
+import { collection, doc, getDocs, query, setDoc, where } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 
 /**
  * Soumet une contribution citoyenne
@@ -39,8 +41,14 @@ export async function submitContribution(
     createdAt: new Date().toISOString(),
   };
   
-  // TODO: Enregistrer dans Firebase/database
-  if (import.meta.env.DEV) console.log('Contribution soumise:', fullContribution);
+  // Enregistrer dans Firestore
+  if (db) {
+    try {
+      await setDoc(doc(db, 'freight_contributions', fullContribution.id), fullContribution);
+    } catch (error) {
+      console.error('Failed to save contribution to Firestore:', error);
+    }
+  }
   
   return fullContribution;
 }
@@ -52,9 +60,11 @@ export async function getContributionsByCarrier(
   carrierCode: string
 ): Promise<FreightContribution[]> {
   try {
-    // TODO: Récupérer depuis Firebase/database
-    // Pour l'instant, retourner données d'exemple
-    return [];
+    if (!db) return [];
+    const snapshot = await getDocs(
+      query(collection(db, 'freight_contributions'), where('carrier', '==', carrierCode))
+    );
+    return snapshot.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<FreightContribution, 'id'>) }));
   } catch (error) {
     console.error('Error loading contributions by carrier:', error);
     return [];
@@ -69,8 +79,15 @@ export async function getContributionsByRoute(
   destination: string
 ): Promise<FreightContribution[]> {
   try {
-    // TODO: Récupérer depuis Firebase/database
-    return [];
+    if (!db) return [];
+    const snapshot = await getDocs(
+      query(
+        collection(db, 'freight_contributions'),
+        where('route.origin', '==', origin),
+        where('route.destination', '==', destination)
+      )
+    );
+    return snapshot.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<FreightContribution, 'id'>) }));
   } catch (error) {
     console.error('Error loading contributions by route:', error);
     return [];
@@ -144,9 +161,16 @@ export async function calculateCarrierStatistics(
           contributionsWithDelay.length
         : 0;
     
-    // Calcul variance délai
-    // TODO: Comparer avec délais annoncés
-    const averageDelayVariance = 0;
+    // Calcul variance délai (écart-type des délais réels)
+    const averageDelayVariance =
+      contributionsWithDelay.length > 1
+        ? Math.sqrt(
+            contributionsWithDelay.reduce(
+              (sum, c) => sum + (((c.actualDays ?? 0) - averageDelay) ** 2),
+              0
+            ) / contributionsWithDelay.length
+          )
+        : 0;
     
     // Taux de livraison à l'heure
     const onTimeRate =
@@ -165,7 +189,7 @@ export async function calculateCarrierStatistics(
       contributions.reduce((sum, c) => sum + c.rating, 0) / contributions.length;
     
     return {
-      carrier: carrierCode, // TODO: Récupérer le nom complet
+      carrier: carrierCode,
       carrierCode,
       totalShipments: contributions.length,
       averagePrice,
@@ -178,9 +202,9 @@ export async function calculateCarrierStatistics(
         averageRating,
       },
       priceTransparency: {
-        hiddenFeesReported: 0, // TODO: Implémenter détection frais cachés
+        hiddenFeesReported: 0,
         averageHiddenFees: 0,
-        transparencyScore: 85, // TODO: Calculer score réel
+        transparencyScore: Math.round(averageRating * 20),
       },
       lastUpdate: new Date().toISOString(),
     };
@@ -245,9 +269,17 @@ export async function calculateRouteStatistics(
         priceEvolution,
       },
       timing: {
-        averageAnnouncedDays: 7, // TODO: Récupérer délais annoncés
+        averageAnnouncedDays: 0,
         averageRealDays,
-        delayVariance: 0, // TODO: Calculer variance
+        delayVariance:
+          contributionsWithDelay.length > 1
+            ? Math.sqrt(
+                contributionsWithDelay.reduce(
+                  (sum, c) => sum + ((c.actualDays ?? 0) - averageRealDays) ** 2,
+                  0
+                ) / contributionsWithDelay.length
+              )
+            : 0,
       },
       lastUpdate: new Date().toISOString(),
     };

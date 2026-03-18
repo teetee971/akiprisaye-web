@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Star, Quote } from 'lucide-react';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 
 interface Testimonial {
   id: string;
@@ -16,41 +18,29 @@ export function TestimonialWall() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
 
   useEffect(() => {
-    // Fetch from Firestore 'testimonials'
-    // TODO: Replace with real data
-    setTestimonials([
-      {
-        id: '1',
-        author: 'Marie L.',
-        territory: 'Guadeloupe',
-        rating: 5,
-        comment: 'Grâce à Akiprisaye, j\'économise 50€ par mois sur mes courses !',
-        savings: 50,
-        date: '2026-01-10',
-        verified: true
-      },
-      {
-        id: '2',
-        author: 'Jean P.',
-        territory: 'Martinique',
-        rating: 5,
-        comment: 'Enfin un outil pour comparer les prix en temps réel. Indispensable !',
-        savings: 35,
-        date: '2026-01-09',
-        verified: true
-      },
-      {
-        id: '3',
-        author: 'Sophie M.',
-        territory: 'La Réunion',
-        rating: 4,
-        comment: 'Très utile pour suivre les variations de prix. Je recommande vivement.',
-        savings: 42,
-        date: '2026-01-08',
-        verified: true
+    const fetchTestimonials = async () => {
+      if (!db) return;
+      try {
+        const q = query(
+          collection(db, 'testimonials'),
+          where('visible', '==', true)
+        );
+        const snapshot = await getDocs(q);
+        const firestoreTestimonials: Testimonial[] = snapshot.docs.map((d) => ({
+          id: d.id,
+          ...(d.data() as Omit<Testimonial, 'id'>),
+        }));
+        setTestimonials(firestoreTestimonials);
+      } catch (error) {
+        console.error('Failed to fetch testimonials:', error);
+        setTestimonials([]);
       }
-    ]);
+    };
+
+    fetchTestimonials();
   }, []);
+
+  if (testimonials.length === 0) return null;
 
   return (
     <section className="py-12 bg-slate-50 dark:bg-slate-900">

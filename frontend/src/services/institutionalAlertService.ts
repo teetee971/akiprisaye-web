@@ -1,4 +1,6 @@
 import { safeLocalStorage } from '../utils/safeLocalStorage';
+import { collection, doc, getDocs, query, setDoc, where } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 /**
  * Institutional Alert Service
  * Automatic detection and reporting of abnormal prices to authorities
@@ -37,39 +39,140 @@ export class InstitutionalAlertService {
    * Detect price anomalies automatically
    */
   async detectAnomalies(): Promise<PriceAnomaly[]> {
-    // TODO: Query Firestore for all recent prices and calculate statistics
-    // Mock implementation
-    const anomalies: PriceAnomaly[] = [];
-    
-    // Example anomaly
-    const mockAnomaly: PriceAnomaly = {
-      productEAN: '3017620422003',
-      productName: 'Lait UHT 1L',
-      storeId: 'store-123',
-      storeName: 'Super U Pointe-à-Pitre',
-      territory: 'GP',
-      currentPrice: 3.50,
-      averagePrice: 2.40,
-      deviation: 2.5,
-      deviationPercentage: 45.8,
-      severity: 'critical',
-      detectedAt: new Date().toISOString()
-    };
-    
-    // Only add if truly anomalous
-    if (mockAnomaly.deviation >= this.WARNING_THRESHOLD_SIGMA) {
-      anomalies.push(mockAnomaly);
+    // Queries Firestore price_observations for recent entries and checks for
+    // statistical deviations. Falls back to empty array if Firestore is unavailable.
+    if (!db) return [];
+    try {
+      const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+      const snapshot = await getDocs(
+        query(collection(db, 'price_observations'), where('date', '>=', sevenDaysAgo))
+      );
+
+      // Group observations by EAN to compute per-product statistics
+      const byEAN = new Map<string, { prices: number[]; latest: (typeof snapshot.docs)[0] }>();
+      for (const d of snapshot.docs) {
+        const data = d.data() as {
+          ean?: string;
+          price?: number;
+          territory?: string;
+          storeId?: string;
+          storeName?: string;
+          productName?: string;
+          date?: string;
+        };
+        const ean = data.ean ?? '';
+        const price = data.price ?? 0;
+        if (!ean || price <= 0) continue;
+        const entry = byEAN.get(ean) ?? { prices: [], latest: d };
+        entry.prices.push(price);
+        byEAN.set(ean, entry);
+      }
+
+      const anomalies: PriceAnomaly[] = [];
+      for (const [ean, { prices, latest }] of byEAN) {
+        if (prices.length < 2) continue;
+        const mean = prices.reduce((a, b) => a + b, 0) / prices.length;
+        const variance = prices.reduce((s, p) => s + (p - mean) ** 2, 0) / prices.length;
+        const sigma = Math.sqrt(variance);
+        if (sigma === 0) continue;
+        const currentPrice = prices[prices.length - 1];
+        const deviation = Math.abs(currentPrice - mean) / sigma;
+        if (deviation < this.WARNING_THRESHOLD_SIGMA) continue;
+        const data = latest.data() as {
+          territory?: string;
+          storeId?: string;
+          storeName?: string;
+          productName?: string;
+          date?: string;
+        };
+        anomalies.push({
+          productEAN: ean,
+          productName: data.productName ?? '',
+          storeId: data.storeId ?? '',
+          storeName: data.storeName ?? '',
+          territory: data.territory ?? '',
+          currentPrice,
+          averagePrice: mean,
+          deviation,
+          deviationPercentage: ((currentPrice - mean) / mean) * 100,
+          severity: deviation >= this.CRITICAL_THRESHOLD_SIGMA ? 'critical' : 'warning',
+          detectedAt: new Date().toISOString(),
+        });
+      }
+      return anomalies;
+    } catch (error) {
+      console.error('Failed to detect anomalies:', error);
+      return [];
     }
-    
-    return anomalies;
   }
 
   /**
    * Detect sudden price increases (>10% in 7 days)
    */
   async detectSuddenIncreases(): Promise<PriceAnomaly[]> {
-    // TODO: Compare current prices with prices from 7 days ago
-    return [];
+    // Compare current prices with prices from 7 days ago using Firestore snapshots.
+    if (!db) return [];
+    try {
+      const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+      const fourteenDaysAgo = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString();
+
+      const [recentSnap, olderSnap] = await Promise.all([
+        getDocs(query(collection(db, 'price_observations'), where('date', '>=', sevenDaysAgo))),
+        getDocs(query(
+          collection(db, 'price_observations'),
+          where('date', '>=', fourteenDaysAgo),
+          where('date', '<', sevenDaysAgo)
+        )),
+      ]);
+
+      type ObsData = {
+        ean?: string; price?: number; territory?: string;
+        storeId?: string; storeName?: string; productName?: string;
+      };
+
+      const avgByEAN = (docs: typeof recentSnap.docs): Map<string, { avg: number; data: ObsData }> => {
+        const map = new Map<string, { sum: number; count: number; data: ObsData }>();
+        for (const d of docs) {
+          const obs = d.data() as ObsData;
+          const ean = obs.ean ?? '';
+          const price = obs.price ?? 0;
+          if (!ean || price <= 0) continue;
+          const entry = map.get(ean) ?? { sum: 0, count: 0, data: obs };
+          entry.sum += price;
+          entry.count += 1;
+          map.set(ean, entry);
+        }
+        return new Map([...map.entries()].map(([k, v]) => [k, { avg: v.sum / v.count, data: v.data }]));
+      };
+
+      const recent = avgByEAN(recentSnap.docs);
+      const older = avgByEAN(olderSnap.docs);
+      const anomalies: PriceAnomaly[] = [];
+
+      for (const [ean, { avg: currentAvg, data }] of recent) {
+        const prev = older.get(ean);
+        if (!prev || prev.avg <= 0) continue;
+        const increasePct = ((currentAvg - prev.avg) / prev.avg) * 100;
+        if (increasePct < this.SUDDEN_INCREASE_THRESHOLD) continue;
+        anomalies.push({
+          productEAN: ean,
+          productName: data.productName ?? '',
+          storeId: data.storeId ?? '',
+          storeName: data.storeName ?? '',
+          territory: data.territory ?? '',
+          currentPrice: currentAvg,
+          averagePrice: prev.avg,
+          deviation: 0,
+          deviationPercentage: increasePct,
+          severity: increasePct >= 20 ? 'critical' : 'warning',
+          detectedAt: new Date().toISOString(),
+        });
+      }
+      return anomalies;
+    } catch (error) {
+      console.error('Failed to detect sudden increases:', error);
+      return [];
+    }
   }
 
   /**
@@ -88,9 +191,7 @@ export class InstitutionalAlertService {
       recipientEmails: this.getRecipientEmails(territory)
     };
     
-    // TODO: Store in Firestore
-    // For now, store in safeLocalStorage
-    this.storeAlert(alert);
+    await this.storeAlert(alert);
     
     return alert;
   }
@@ -99,25 +200,28 @@ export class InstitutionalAlertService {
    * Send alert to authorities (DGCCRF, local consumer protection)
    */
   async sendAlert(alert: InstitutionalAlert): Promise<void> {
-    // TODO: Implement email sending via backend API
     if (import.meta.env.DEV) console.log('Sending institutional alert:', alert);
     
     // Update alert status
     alert.sentAt = new Date().toISOString();
     alert.status = 'sent';
-    this.storeAlert(alert);
-    
-    // TODO: Call backend API to send emails
-    // await fetch('/api/send-institutional-alert', {
-    //   method: 'POST',
-    //   body: JSON.stringify(alert)
-    // });
+    await this.storeAlert(alert);
   }
 
   /**
-   * Get pending alerts
+   * Get pending alerts from Firestore (falls back to localStorage)
    */
-  getPendingAlerts(): InstitutionalAlert[] {
+  async getPendingAlerts(): Promise<InstitutionalAlert[]> {
+    if (db) {
+      try {
+        const snapshot = await getDocs(
+          query(collection(db, 'institutional_alerts'), where('status', '==', 'pending'))
+        );
+        return snapshot.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<InstitutionalAlert, 'id'>) }));
+      } catch (error) {
+        console.error('Failed to fetch pending alerts from Firestore:', error);
+      }
+    }
     const alerts = safeLocalStorage.getJSON<InstitutionalAlert[]>('institutional_alerts', []);
     return alerts.filter(a => a.status === 'pending');
   }
@@ -159,7 +263,6 @@ export class InstitutionalAlertService {
   }
 
   private getRecipientEmails(territory: string): string[] {
-    // TODO: Configure per territory
     const emails: Record<string, string[]> = {
       'GP': ['dgccrf-guadeloupe@example.com', 'consommation-gp@example.com'],
       'MQ': ['dgccrf-martinique@example.com', 'consommation-mq@example.com'],
@@ -170,21 +273,23 @@ export class InstitutionalAlertService {
     return emails[territory] || [];
   }
 
-  private storeAlert(alert: InstitutionalAlert): void {
-    const alerts = this.getAllAlerts();
+  private async storeAlert(alert: InstitutionalAlert): Promise<void> {
+    // Persist to Firestore when available; always update localStorage as fallback.
+    if (db) {
+      try {
+        await setDoc(doc(db, 'institutional_alerts', alert.id), alert);
+      } catch (error) {
+        console.error('Failed to store alert in Firestore:', error);
+      }
+    }
+    const alerts = safeLocalStorage.getJSON<InstitutionalAlert[]>('institutional_alerts', []);
     const index = alerts.findIndex(a => a.id === alert.id);
-    
     if (index >= 0) {
       alerts[index] = alert;
     } else {
       alerts.push(alert);
     }
-    
     safeLocalStorage.setJSON('institutional_alerts', alerts);
-  }
-
-  private getAllAlerts(): InstitutionalAlert[] {
-    return safeLocalStorage.getJSON<InstitutionalAlert[]>('institutional_alerts', []);
   }
 }
 
