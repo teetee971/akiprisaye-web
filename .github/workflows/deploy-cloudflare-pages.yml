@@ -124,10 +124,17 @@ jobs:
     if: needs.deploy.result == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    env:
-      # Use the deployment URL from wrangler-action; fall back to the stable production URL.
-      SITE_URL: ${{ needs.deploy.outputs.deployment_url || 'https://akiprisaye-web.pages.dev' }}
     steps:
+      - name: Resolve deployment URL
+        # env context is not available in job-level env:, but IS valid in run: scripts.
+        # We export SITE_URL to GITHUB_ENV so all subsequent steps can use $SITE_URL.
+        run: |
+          URL="${{ needs.deploy.outputs.deployment_url }}"
+          if [ -z "$URL" ]; then
+            URL="${{ env.DEFAULT_PREVIEW_URL }}"
+          fi
+          echo "SITE_URL=$URL" >> "$GITHUB_ENV"
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -182,9 +189,17 @@ jobs:
     needs: [deploy, validate]
     if: needs.deploy.result == 'success' && needs.validate.result == 'success'
     runs-on: ubuntu-latest
-    env:
-      DEPLOY_URL: ${{ needs.deploy.outputs.deployment_url || 'https://akiprisaye-web.pages.dev' }}
     steps:
+      - name: Resolve deployment URL
+        # env context is not available in job-level env:, but IS valid in run: scripts.
+        # We export DEPLOY_URL to GITHUB_ENV so all subsequent steps can use $DEPLOY_URL.
+        run: |
+          URL="${{ needs.deploy.outputs.deployment_url }}"
+          if [ -z "$URL" ]; then
+            URL="${{ env.DEFAULT_PREVIEW_URL }}"
+          fi
+          echo "DEPLOY_URL=$URL" >> "$GITHUB_ENV"
+
       - name: Checkout
         uses: actions/checkout@v4
 
