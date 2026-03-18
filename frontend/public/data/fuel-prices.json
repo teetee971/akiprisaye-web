@@ -1352,6 +1352,3936 @@
       "territory": "RE",
       "lastUpdate": "2026-03-18T12:00:00.000Z",
       "regulated": true
+    },
+    {
+      "id": "price-gp-baie-mahault-total-sp95",
+      "station": {
+        "id": "gp-baie-mahault-total",
+        "name": "Total - Baie-Mahault",
+        "address": "ZAC de Houelbourg",
+        "city": "Baie-Mahault",
+        "territory": "GP",
+        "location": {
+          "lat": 16.2688,
+          "lng": -61.5764
+        },
+        "brand": "Total"
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.672,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-baie-mahault-total-sp98",
+      "station": {
+        "id": "gp-baie-mahault-total",
+        "name": "Total - Baie-Mahault",
+        "address": "ZAC de Houelbourg",
+        "city": "Baie-Mahault",
+        "territory": "GP",
+        "location": {
+          "lat": 16.2688,
+          "lng": -61.5764
+        },
+        "brand": "Total"
+      },
+      "fuelType": "SP98",
+      "pricePerLiter": 1.748,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-baie-mahault-total-diesel",
+      "station": {
+        "id": "gp-baie-mahault-total",
+        "name": "Total - Baie-Mahault",
+        "address": "ZAC de Houelbourg",
+        "city": "Baie-Mahault",
+        "territory": "GP",
+        "location": {
+          "lat": 16.2688,
+          "lng": -61.5764
+        },
+        "brand": "Total"
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.523,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-baie-mahault-total-e10",
+      "station": {
+        "id": "gp-baie-mahault-total",
+        "name": "Total - Baie-Mahault",
+        "address": "ZAC de Houelbourg",
+        "city": "Baie-Mahault",
+        "territory": "GP",
+        "location": {
+          "lat": 16.2688,
+          "lng": -61.5764
+        },
+        "brand": "Total"
+      },
+      "fuelType": "E10",
+      "pricePerLiter": 1.637,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-baie-mahault-total-gpl",
+      "station": {
+        "id": "gp-baie-mahault-total",
+        "name": "Total - Baie-Mahault",
+        "address": "ZAC de Houelbourg",
+        "city": "Baie-Mahault",
+        "territory": "GP",
+        "location": {
+          "lat": 16.2688,
+          "lng": -61.5764
+        },
+        "brand": "Total"
+      },
+      "fuelType": "GPL",
+      "pricePerLiter": 0.892,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-gosier-esso-sp95",
+      "station": {
+        "id": "gp-gosier-esso",
+        "name": "Esso - Le Gosier",
+        "address": "Route de Sainte-Anne",
+        "city": "Le Gosier",
+        "territory": "GP",
+        "location": {
+          "lat": 16.2003,
+          "lng": -61.4887
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.672,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-gosier-esso-sp98",
+      "station": {
+        "id": "gp-gosier-esso",
+        "name": "Esso - Le Gosier",
+        "address": "Route de Sainte-Anne",
+        "city": "Le Gosier",
+        "territory": "GP",
+        "location": {
+          "lat": 16.2003,
+          "lng": -61.4887
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "SP98",
+      "pricePerLiter": 1.748,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-gosier-esso-diesel",
+      "station": {
+        "id": "gp-gosier-esso",
+        "name": "Esso - Le Gosier",
+        "address": "Route de Sainte-Anne",
+        "city": "Le Gosier",
+        "territory": "GP",
+        "location": {
+          "lat": 16.2003,
+          "lng": -61.4887
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.523,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-gosier-esso-e10",
+      "station": {
+        "id": "gp-gosier-esso",
+        "name": "Esso - Le Gosier",
+        "address": "Route de Sainte-Anne",
+        "city": "Le Gosier",
+        "territory": "GP",
+        "location": {
+          "lat": 16.2003,
+          "lng": -61.4887
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "E10",
+      "pricePerLiter": 1.637,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-gosier-esso-gpl",
+      "station": {
+        "id": "gp-gosier-esso",
+        "name": "Esso - Le Gosier",
+        "address": "Route de Sainte-Anne",
+        "city": "Le Gosier",
+        "territory": "GP",
+        "location": {
+          "lat": 16.2003,
+          "lng": -61.4887
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "GPL",
+      "pricePerLiter": 0.892,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-sainte-anne-total-sp95",
+      "station": {
+        "id": "gp-sainte-anne-total",
+        "name": "Total - Sainte-Anne",
+        "address": "Route du Bourg",
+        "city": "Sainte-Anne",
+        "territory": "GP",
+        "location": {
+          "lat": 16.2297,
+          "lng": -61.3841
+        },
+        "brand": "Total"
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.672,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-sainte-anne-total-sp98",
+      "station": {
+        "id": "gp-sainte-anne-total",
+        "name": "Total - Sainte-Anne",
+        "address": "Route du Bourg",
+        "city": "Sainte-Anne",
+        "territory": "GP",
+        "location": {
+          "lat": 16.2297,
+          "lng": -61.3841
+        },
+        "brand": "Total"
+      },
+      "fuelType": "SP98",
+      "pricePerLiter": 1.748,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-sainte-anne-total-diesel",
+      "station": {
+        "id": "gp-sainte-anne-total",
+        "name": "Total - Sainte-Anne",
+        "address": "Route du Bourg",
+        "city": "Sainte-Anne",
+        "territory": "GP",
+        "location": {
+          "lat": 16.2297,
+          "lng": -61.3841
+        },
+        "brand": "Total"
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.523,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-sainte-anne-total-e10",
+      "station": {
+        "id": "gp-sainte-anne-total",
+        "name": "Total - Sainte-Anne",
+        "address": "Route du Bourg",
+        "city": "Sainte-Anne",
+        "territory": "GP",
+        "location": {
+          "lat": 16.2297,
+          "lng": -61.3841
+        },
+        "brand": "Total"
+      },
+      "fuelType": "E10",
+      "pricePerLiter": 1.637,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-sainte-anne-total-gpl",
+      "station": {
+        "id": "gp-sainte-anne-total",
+        "name": "Total - Sainte-Anne",
+        "address": "Route du Bourg",
+        "city": "Sainte-Anne",
+        "territory": "GP",
+        "location": {
+          "lat": 16.2297,
+          "lng": -61.3841
+        },
+        "brand": "Total"
+      },
+      "fuelType": "GPL",
+      "pricePerLiter": 0.892,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-le-moule-shell-sp95",
+      "station": {
+        "id": "gp-le-moule-shell",
+        "name": "Shell - Le Moule",
+        "address": "Avenue de l'Europe",
+        "city": "Le Moule",
+        "territory": "GP",
+        "location": {
+          "lat": 16.3289,
+          "lng": -61.3488
+        },
+        "brand": "Shell"
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.672,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-le-moule-shell-sp98",
+      "station": {
+        "id": "gp-le-moule-shell",
+        "name": "Shell - Le Moule",
+        "address": "Avenue de l'Europe",
+        "city": "Le Moule",
+        "territory": "GP",
+        "location": {
+          "lat": 16.3289,
+          "lng": -61.3488
+        },
+        "brand": "Shell"
+      },
+      "fuelType": "SP98",
+      "pricePerLiter": 1.748,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-le-moule-shell-diesel",
+      "station": {
+        "id": "gp-le-moule-shell",
+        "name": "Shell - Le Moule",
+        "address": "Avenue de l'Europe",
+        "city": "Le Moule",
+        "territory": "GP",
+        "location": {
+          "lat": 16.3289,
+          "lng": -61.3488
+        },
+        "brand": "Shell"
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.523,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-le-moule-shell-e10",
+      "station": {
+        "id": "gp-le-moule-shell",
+        "name": "Shell - Le Moule",
+        "address": "Avenue de l'Europe",
+        "city": "Le Moule",
+        "territory": "GP",
+        "location": {
+          "lat": 16.3289,
+          "lng": -61.3488
+        },
+        "brand": "Shell"
+      },
+      "fuelType": "E10",
+      "pricePerLiter": 1.637,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-le-moule-shell-gpl",
+      "station": {
+        "id": "gp-le-moule-shell",
+        "name": "Shell - Le Moule",
+        "address": "Avenue de l'Europe",
+        "city": "Le Moule",
+        "territory": "GP",
+        "location": {
+          "lat": 16.3289,
+          "lng": -61.3488
+        },
+        "brand": "Shell"
+      },
+      "fuelType": "GPL",
+      "pricePerLiter": 0.892,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-petit-bourg-total-sp95",
+      "station": {
+        "id": "gp-petit-bourg-total",
+        "name": "Total - Petit-Bourg",
+        "address": "Route Nationale 1",
+        "city": "Petit-Bourg",
+        "territory": "GP",
+        "location": {
+          "lat": 16.1947,
+          "lng": -61.5793
+        },
+        "brand": "Total"
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.672,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-petit-bourg-total-sp98",
+      "station": {
+        "id": "gp-petit-bourg-total",
+        "name": "Total - Petit-Bourg",
+        "address": "Route Nationale 1",
+        "city": "Petit-Bourg",
+        "territory": "GP",
+        "location": {
+          "lat": 16.1947,
+          "lng": -61.5793
+        },
+        "brand": "Total"
+      },
+      "fuelType": "SP98",
+      "pricePerLiter": 1.748,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-petit-bourg-total-diesel",
+      "station": {
+        "id": "gp-petit-bourg-total",
+        "name": "Total - Petit-Bourg",
+        "address": "Route Nationale 1",
+        "city": "Petit-Bourg",
+        "territory": "GP",
+        "location": {
+          "lat": 16.1947,
+          "lng": -61.5793
+        },
+        "brand": "Total"
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.523,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-petit-bourg-total-e10",
+      "station": {
+        "id": "gp-petit-bourg-total",
+        "name": "Total - Petit-Bourg",
+        "address": "Route Nationale 1",
+        "city": "Petit-Bourg",
+        "territory": "GP",
+        "location": {
+          "lat": 16.1947,
+          "lng": -61.5793
+        },
+        "brand": "Total"
+      },
+      "fuelType": "E10",
+      "pricePerLiter": 1.637,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-petit-bourg-total-gpl",
+      "station": {
+        "id": "gp-petit-bourg-total",
+        "name": "Total - Petit-Bourg",
+        "address": "Route Nationale 1",
+        "city": "Petit-Bourg",
+        "territory": "GP",
+        "location": {
+          "lat": 16.1947,
+          "lng": -61.5793
+        },
+        "brand": "Total"
+      },
+      "fuelType": "GPL",
+      "pricePerLiter": 0.892,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-basse-terre-esso-sp95",
+      "station": {
+        "id": "gp-basse-terre-esso",
+        "name": "Esso - Basse-Terre",
+        "address": "Avenue Félix Eboué",
+        "city": "Basse-Terre",
+        "territory": "GP",
+        "location": {
+          "lat": 15.9985,
+          "lng": -61.7275
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.672,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-basse-terre-esso-sp98",
+      "station": {
+        "id": "gp-basse-terre-esso",
+        "name": "Esso - Basse-Terre",
+        "address": "Avenue Félix Eboué",
+        "city": "Basse-Terre",
+        "territory": "GP",
+        "location": {
+          "lat": 15.9985,
+          "lng": -61.7275
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "SP98",
+      "pricePerLiter": 1.748,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-basse-terre-esso-diesel",
+      "station": {
+        "id": "gp-basse-terre-esso",
+        "name": "Esso - Basse-Terre",
+        "address": "Avenue Félix Eboué",
+        "city": "Basse-Terre",
+        "territory": "GP",
+        "location": {
+          "lat": 15.9985,
+          "lng": -61.7275
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.523,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-basse-terre-esso-e10",
+      "station": {
+        "id": "gp-basse-terre-esso",
+        "name": "Esso - Basse-Terre",
+        "address": "Avenue Félix Eboué",
+        "city": "Basse-Terre",
+        "territory": "GP",
+        "location": {
+          "lat": 15.9985,
+          "lng": -61.7275
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "E10",
+      "pricePerLiter": 1.637,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-basse-terre-esso-gpl",
+      "station": {
+        "id": "gp-basse-terre-esso",
+        "name": "Esso - Basse-Terre",
+        "address": "Avenue Félix Eboué",
+        "city": "Basse-Terre",
+        "territory": "GP",
+        "location": {
+          "lat": 15.9985,
+          "lng": -61.7275
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "GPL",
+      "pricePerLiter": 0.892,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-gourbeyre-total-sp95",
+      "station": {
+        "id": "gp-gourbeyre-total",
+        "name": "Total - Gourbeyre",
+        "address": "Route de la Soufrière",
+        "city": "Gourbeyre",
+        "territory": "GP",
+        "location": {
+          "lat": 15.996,
+          "lng": -61.7029
+        },
+        "brand": "Total"
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.672,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-gourbeyre-total-sp98",
+      "station": {
+        "id": "gp-gourbeyre-total",
+        "name": "Total - Gourbeyre",
+        "address": "Route de la Soufrière",
+        "city": "Gourbeyre",
+        "territory": "GP",
+        "location": {
+          "lat": 15.996,
+          "lng": -61.7029
+        },
+        "brand": "Total"
+      },
+      "fuelType": "SP98",
+      "pricePerLiter": 1.748,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-gourbeyre-total-diesel",
+      "station": {
+        "id": "gp-gourbeyre-total",
+        "name": "Total - Gourbeyre",
+        "address": "Route de la Soufrière",
+        "city": "Gourbeyre",
+        "territory": "GP",
+        "location": {
+          "lat": 15.996,
+          "lng": -61.7029
+        },
+        "brand": "Total"
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.523,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-gourbeyre-total-e10",
+      "station": {
+        "id": "gp-gourbeyre-total",
+        "name": "Total - Gourbeyre",
+        "address": "Route de la Soufrière",
+        "city": "Gourbeyre",
+        "territory": "GP",
+        "location": {
+          "lat": 15.996,
+          "lng": -61.7029
+        },
+        "brand": "Total"
+      },
+      "fuelType": "E10",
+      "pricePerLiter": 1.637,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-gourbeyre-total-gpl",
+      "station": {
+        "id": "gp-gourbeyre-total",
+        "name": "Total - Gourbeyre",
+        "address": "Route de la Soufrière",
+        "city": "Gourbeyre",
+        "territory": "GP",
+        "location": {
+          "lat": 15.996,
+          "lng": -61.7029
+        },
+        "brand": "Total"
+      },
+      "fuelType": "GPL",
+      "pricePerLiter": 0.892,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-morne-a-leau-sp95",
+      "station": {
+        "id": "gp-morne-a-leau",
+        "name": "Pétrodom - Morne-à-l'Eau",
+        "address": "Route de Jabrun",
+        "city": "Morne-à-l'Eau",
+        "territory": "GP",
+        "location": {
+          "lat": 16.3426,
+          "lng": -61.4699
+        },
+        "brand": "Pétrodom"
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.672,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-morne-a-leau-sp98",
+      "station": {
+        "id": "gp-morne-a-leau",
+        "name": "Pétrodom - Morne-à-l'Eau",
+        "address": "Route de Jabrun",
+        "city": "Morne-à-l'Eau",
+        "territory": "GP",
+        "location": {
+          "lat": 16.3426,
+          "lng": -61.4699
+        },
+        "brand": "Pétrodom"
+      },
+      "fuelType": "SP98",
+      "pricePerLiter": 1.748,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-morne-a-leau-diesel",
+      "station": {
+        "id": "gp-morne-a-leau",
+        "name": "Pétrodom - Morne-à-l'Eau",
+        "address": "Route de Jabrun",
+        "city": "Morne-à-l'Eau",
+        "territory": "GP",
+        "location": {
+          "lat": 16.3426,
+          "lng": -61.4699
+        },
+        "brand": "Pétrodom"
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.523,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-morne-a-leau-e10",
+      "station": {
+        "id": "gp-morne-a-leau",
+        "name": "Pétrodom - Morne-à-l'Eau",
+        "address": "Route de Jabrun",
+        "city": "Morne-à-l'Eau",
+        "territory": "GP",
+        "location": {
+          "lat": 16.3426,
+          "lng": -61.4699
+        },
+        "brand": "Pétrodom"
+      },
+      "fuelType": "E10",
+      "pricePerLiter": 1.637,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-morne-a-leau-gpl",
+      "station": {
+        "id": "gp-morne-a-leau",
+        "name": "Pétrodom - Morne-à-l'Eau",
+        "address": "Route de Jabrun",
+        "city": "Morne-à-l'Eau",
+        "territory": "GP",
+        "location": {
+          "lat": 16.3426,
+          "lng": -61.4699
+        },
+        "brand": "Pétrodom"
+      },
+      "fuelType": "GPL",
+      "pricePerLiter": 0.892,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-capesterre-shell-sp95",
+      "station": {
+        "id": "gp-capesterre-shell",
+        "name": "Shell - Capesterre-B-T",
+        "address": "Route Nationale 1",
+        "city": "Capesterre-Belle-Eau",
+        "territory": "GP",
+        "location": {
+          "lat": 16.0447,
+          "lng": -61.572
+        },
+        "brand": "Shell"
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.672,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-capesterre-shell-sp98",
+      "station": {
+        "id": "gp-capesterre-shell",
+        "name": "Shell - Capesterre-B-T",
+        "address": "Route Nationale 1",
+        "city": "Capesterre-Belle-Eau",
+        "territory": "GP",
+        "location": {
+          "lat": 16.0447,
+          "lng": -61.572
+        },
+        "brand": "Shell"
+      },
+      "fuelType": "SP98",
+      "pricePerLiter": 1.748,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-capesterre-shell-diesel",
+      "station": {
+        "id": "gp-capesterre-shell",
+        "name": "Shell - Capesterre-B-T",
+        "address": "Route Nationale 1",
+        "city": "Capesterre-Belle-Eau",
+        "territory": "GP",
+        "location": {
+          "lat": 16.0447,
+          "lng": -61.572
+        },
+        "brand": "Shell"
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.523,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-capesterre-shell-e10",
+      "station": {
+        "id": "gp-capesterre-shell",
+        "name": "Shell - Capesterre-B-T",
+        "address": "Route Nationale 1",
+        "city": "Capesterre-Belle-Eau",
+        "territory": "GP",
+        "location": {
+          "lat": 16.0447,
+          "lng": -61.572
+        },
+        "brand": "Shell"
+      },
+      "fuelType": "E10",
+      "pricePerLiter": 1.637,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-capesterre-shell-gpl",
+      "station": {
+        "id": "gp-capesterre-shell",
+        "name": "Shell - Capesterre-B-T",
+        "address": "Route Nationale 1",
+        "city": "Capesterre-Belle-Eau",
+        "territory": "GP",
+        "location": {
+          "lat": 16.0447,
+          "lng": -61.572
+        },
+        "brand": "Shell"
+      },
+      "fuelType": "GPL",
+      "pricePerLiter": 0.892,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-saint-francois-total-sp95",
+      "station": {
+        "id": "gp-saint-francois-total",
+        "name": "Total - Saint-François",
+        "address": "Route des Gîtes",
+        "city": "Saint-François",
+        "territory": "GP",
+        "location": {
+          "lat": 16.2526,
+          "lng": -61.2649
+        },
+        "brand": "Total"
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.672,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-saint-francois-total-sp98",
+      "station": {
+        "id": "gp-saint-francois-total",
+        "name": "Total - Saint-François",
+        "address": "Route des Gîtes",
+        "city": "Saint-François",
+        "territory": "GP",
+        "location": {
+          "lat": 16.2526,
+          "lng": -61.2649
+        },
+        "brand": "Total"
+      },
+      "fuelType": "SP98",
+      "pricePerLiter": 1.748,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-saint-francois-total-diesel",
+      "station": {
+        "id": "gp-saint-francois-total",
+        "name": "Total - Saint-François",
+        "address": "Route des Gîtes",
+        "city": "Saint-François",
+        "territory": "GP",
+        "location": {
+          "lat": 16.2526,
+          "lng": -61.2649
+        },
+        "brand": "Total"
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.523,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-saint-francois-total-e10",
+      "station": {
+        "id": "gp-saint-francois-total",
+        "name": "Total - Saint-François",
+        "address": "Route des Gîtes",
+        "city": "Saint-François",
+        "territory": "GP",
+        "location": {
+          "lat": 16.2526,
+          "lng": -61.2649
+        },
+        "brand": "Total"
+      },
+      "fuelType": "E10",
+      "pricePerLiter": 1.637,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-saint-francois-total-gpl",
+      "station": {
+        "id": "gp-saint-francois-total",
+        "name": "Total - Saint-François",
+        "address": "Route des Gîtes",
+        "city": "Saint-François",
+        "territory": "GP",
+        "location": {
+          "lat": 16.2526,
+          "lng": -61.2649
+        },
+        "brand": "Total"
+      },
+      "fuelType": "GPL",
+      "pricePerLiter": 0.892,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-pointe-noire-esso-sp95",
+      "station": {
+        "id": "gp-pointe-noire-esso",
+        "name": "Esso - Pointe-Noire",
+        "address": "Bourg",
+        "city": "Pointe-Noire",
+        "territory": "GP",
+        "location": {
+          "lat": 16.2316,
+          "lng": -61.7864
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.672,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-pointe-noire-esso-sp98",
+      "station": {
+        "id": "gp-pointe-noire-esso",
+        "name": "Esso - Pointe-Noire",
+        "address": "Bourg",
+        "city": "Pointe-Noire",
+        "territory": "GP",
+        "location": {
+          "lat": 16.2316,
+          "lng": -61.7864
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "SP98",
+      "pricePerLiter": 1.748,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-pointe-noire-esso-diesel",
+      "station": {
+        "id": "gp-pointe-noire-esso",
+        "name": "Esso - Pointe-Noire",
+        "address": "Bourg",
+        "city": "Pointe-Noire",
+        "territory": "GP",
+        "location": {
+          "lat": 16.2316,
+          "lng": -61.7864
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.523,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-pointe-noire-esso-e10",
+      "station": {
+        "id": "gp-pointe-noire-esso",
+        "name": "Esso - Pointe-Noire",
+        "address": "Bourg",
+        "city": "Pointe-Noire",
+        "territory": "GP",
+        "location": {
+          "lat": 16.2316,
+          "lng": -61.7864
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "E10",
+      "pricePerLiter": 1.637,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-pointe-noire-esso-gpl",
+      "station": {
+        "id": "gp-pointe-noire-esso",
+        "name": "Esso - Pointe-Noire",
+        "address": "Bourg",
+        "city": "Pointe-Noire",
+        "territory": "GP",
+        "location": {
+          "lat": 16.2316,
+          "lng": -61.7864
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "GPL",
+      "pricePerLiter": 0.892,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-deshaies-total-sp95",
+      "station": {
+        "id": "gp-deshaies-total",
+        "name": "Total - Deshaies",
+        "address": "Bourg",
+        "city": "Deshaies",
+        "territory": "GP",
+        "location": {
+          "lat": 16.3113,
+          "lng": -61.8003
+        },
+        "brand": "Total"
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.672,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-deshaies-total-sp98",
+      "station": {
+        "id": "gp-deshaies-total",
+        "name": "Total - Deshaies",
+        "address": "Bourg",
+        "city": "Deshaies",
+        "territory": "GP",
+        "location": {
+          "lat": 16.3113,
+          "lng": -61.8003
+        },
+        "brand": "Total"
+      },
+      "fuelType": "SP98",
+      "pricePerLiter": 1.748,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-deshaies-total-diesel",
+      "station": {
+        "id": "gp-deshaies-total",
+        "name": "Total - Deshaies",
+        "address": "Bourg",
+        "city": "Deshaies",
+        "territory": "GP",
+        "location": {
+          "lat": 16.3113,
+          "lng": -61.8003
+        },
+        "brand": "Total"
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.523,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-deshaies-total-e10",
+      "station": {
+        "id": "gp-deshaies-total",
+        "name": "Total - Deshaies",
+        "address": "Bourg",
+        "city": "Deshaies",
+        "territory": "GP",
+        "location": {
+          "lat": 16.3113,
+          "lng": -61.8003
+        },
+        "brand": "Total"
+      },
+      "fuelType": "E10",
+      "pricePerLiter": 1.637,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gp-deshaies-total-gpl",
+      "station": {
+        "id": "gp-deshaies-total",
+        "name": "Total - Deshaies",
+        "address": "Bourg",
+        "city": "Deshaies",
+        "territory": "GP",
+        "location": {
+          "lat": 16.3113,
+          "lng": -61.8003
+        },
+        "brand": "Total"
+      },
+      "fuelType": "GPL",
+      "pricePerLiter": 0.892,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GP",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-mq-le-lamentin-total-sp95",
+      "station": {
+        "id": "mq-le-lamentin-total",
+        "name": "Total - Le Lamentin",
+        "address": "Zone Industrielle",
+        "city": "Le Lamentin",
+        "territory": "MQ",
+        "location": {
+          "lat": 14.6118,
+          "lng": -61.0088
+        },
+        "brand": "Total"
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.685,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "MQ",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-mq-le-lamentin-total-sp98",
+      "station": {
+        "id": "mq-le-lamentin-total",
+        "name": "Total - Le Lamentin",
+        "address": "Zone Industrielle",
+        "city": "Le Lamentin",
+        "territory": "MQ",
+        "location": {
+          "lat": 14.6118,
+          "lng": -61.0088
+        },
+        "brand": "Total"
+      },
+      "fuelType": "SP98",
+      "pricePerLiter": 1.761,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "MQ",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-mq-le-lamentin-total-diesel",
+      "station": {
+        "id": "mq-le-lamentin-total",
+        "name": "Total - Le Lamentin",
+        "address": "Zone Industrielle",
+        "city": "Le Lamentin",
+        "territory": "MQ",
+        "location": {
+          "lat": 14.6118,
+          "lng": -61.0088
+        },
+        "brand": "Total"
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.538,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "MQ",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-mq-le-lamentin-total-e10",
+      "station": {
+        "id": "mq-le-lamentin-total",
+        "name": "Total - Le Lamentin",
+        "address": "Zone Industrielle",
+        "city": "Le Lamentin",
+        "territory": "MQ",
+        "location": {
+          "lat": 14.6118,
+          "lng": -61.0088
+        },
+        "brand": "Total"
+      },
+      "fuelType": "E10",
+      "pricePerLiter": 1.648,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "MQ",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-mq-le-lamentin-total-gpl",
+      "station": {
+        "id": "mq-le-lamentin-total",
+        "name": "Total - Le Lamentin",
+        "address": "Zone Industrielle",
+        "city": "Le Lamentin",
+        "territory": "MQ",
+        "location": {
+          "lat": 14.6118,
+          "lng": -61.0088
+        },
+        "brand": "Total"
+      },
+      "fuelType": "GPL",
+      "pricePerLiter": 0.905,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "MQ",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-mq-saint-joseph-esso-sp95",
+      "station": {
+        "id": "mq-saint-joseph-esso",
+        "name": "Esso - Saint-Joseph",
+        "address": "Bourg",
+        "city": "Saint-Joseph",
+        "territory": "MQ",
+        "location": {
+          "lat": 14.6666,
+          "lng": -61.0567
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.685,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "MQ",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-mq-saint-joseph-esso-sp98",
+      "station": {
+        "id": "mq-saint-joseph-esso",
+        "name": "Esso - Saint-Joseph",
+        "address": "Bourg",
+        "city": "Saint-Joseph",
+        "territory": "MQ",
+        "location": {
+          "lat": 14.6666,
+          "lng": -61.0567
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "SP98",
+      "pricePerLiter": 1.761,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "MQ",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-mq-saint-joseph-esso-diesel",
+      "station": {
+        "id": "mq-saint-joseph-esso",
+        "name": "Esso - Saint-Joseph",
+        "address": "Bourg",
+        "city": "Saint-Joseph",
+        "territory": "MQ",
+        "location": {
+          "lat": 14.6666,
+          "lng": -61.0567
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.538,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "MQ",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-mq-saint-joseph-esso-e10",
+      "station": {
+        "id": "mq-saint-joseph-esso",
+        "name": "Esso - Saint-Joseph",
+        "address": "Bourg",
+        "city": "Saint-Joseph",
+        "territory": "MQ",
+        "location": {
+          "lat": 14.6666,
+          "lng": -61.0567
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "E10",
+      "pricePerLiter": 1.648,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "MQ",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-mq-saint-joseph-esso-gpl",
+      "station": {
+        "id": "mq-saint-joseph-esso",
+        "name": "Esso - Saint-Joseph",
+        "address": "Bourg",
+        "city": "Saint-Joseph",
+        "territory": "MQ",
+        "location": {
+          "lat": 14.6666,
+          "lng": -61.0567
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "GPL",
+      "pricePerLiter": 0.905,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "MQ",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-mq-le-robert-shell-sp95",
+      "station": {
+        "id": "mq-le-robert-shell",
+        "name": "Shell - Le Robert",
+        "address": "Bourg",
+        "city": "Le Robert",
+        "territory": "MQ",
+        "location": {
+          "lat": 14.6794,
+          "lng": -60.9413
+        },
+        "brand": "Shell"
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.685,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "MQ",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-mq-le-robert-shell-sp98",
+      "station": {
+        "id": "mq-le-robert-shell",
+        "name": "Shell - Le Robert",
+        "address": "Bourg",
+        "city": "Le Robert",
+        "territory": "MQ",
+        "location": {
+          "lat": 14.6794,
+          "lng": -60.9413
+        },
+        "brand": "Shell"
+      },
+      "fuelType": "SP98",
+      "pricePerLiter": 1.761,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "MQ",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-mq-le-robert-shell-diesel",
+      "station": {
+        "id": "mq-le-robert-shell",
+        "name": "Shell - Le Robert",
+        "address": "Bourg",
+        "city": "Le Robert",
+        "territory": "MQ",
+        "location": {
+          "lat": 14.6794,
+          "lng": -60.9413
+        },
+        "brand": "Shell"
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.538,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "MQ",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-mq-le-robert-shell-e10",
+      "station": {
+        "id": "mq-le-robert-shell",
+        "name": "Shell - Le Robert",
+        "address": "Bourg",
+        "city": "Le Robert",
+        "territory": "MQ",
+        "location": {
+          "lat": 14.6794,
+          "lng": -60.9413
+        },
+        "brand": "Shell"
+      },
+      "fuelType": "E10",
+      "pricePerLiter": 1.648,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "MQ",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-mq-le-robert-shell-gpl",
+      "station": {
+        "id": "mq-le-robert-shell",
+        "name": "Shell - Le Robert",
+        "address": "Bourg",
+        "city": "Le Robert",
+        "territory": "MQ",
+        "location": {
+          "lat": 14.6794,
+          "lng": -60.9413
+        },
+        "brand": "Shell"
+      },
+      "fuelType": "GPL",
+      "pricePerLiter": 0.905,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "MQ",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-mq-sainte-marie-total-sp95",
+      "station": {
+        "id": "mq-sainte-marie-total",
+        "name": "Total - Sainte-Marie",
+        "address": "Centre Bourg",
+        "city": "Sainte-Marie",
+        "territory": "MQ",
+        "location": {
+          "lat": 14.7882,
+          "lng": -60.9945
+        },
+        "brand": "Total"
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.685,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "MQ",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-mq-sainte-marie-total-sp98",
+      "station": {
+        "id": "mq-sainte-marie-total",
+        "name": "Total - Sainte-Marie",
+        "address": "Centre Bourg",
+        "city": "Sainte-Marie",
+        "territory": "MQ",
+        "location": {
+          "lat": 14.7882,
+          "lng": -60.9945
+        },
+        "brand": "Total"
+      },
+      "fuelType": "SP98",
+      "pricePerLiter": 1.761,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "MQ",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-mq-sainte-marie-total-diesel",
+      "station": {
+        "id": "mq-sainte-marie-total",
+        "name": "Total - Sainte-Marie",
+        "address": "Centre Bourg",
+        "city": "Sainte-Marie",
+        "territory": "MQ",
+        "location": {
+          "lat": 14.7882,
+          "lng": -60.9945
+        },
+        "brand": "Total"
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.538,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "MQ",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-mq-sainte-marie-total-e10",
+      "station": {
+        "id": "mq-sainte-marie-total",
+        "name": "Total - Sainte-Marie",
+        "address": "Centre Bourg",
+        "city": "Sainte-Marie",
+        "territory": "MQ",
+        "location": {
+          "lat": 14.7882,
+          "lng": -60.9945
+        },
+        "brand": "Total"
+      },
+      "fuelType": "E10",
+      "pricePerLiter": 1.648,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "MQ",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-mq-sainte-marie-total-gpl",
+      "station": {
+        "id": "mq-sainte-marie-total",
+        "name": "Total - Sainte-Marie",
+        "address": "Centre Bourg",
+        "city": "Sainte-Marie",
+        "territory": "MQ",
+        "location": {
+          "lat": 14.7882,
+          "lng": -60.9945
+        },
+        "brand": "Total"
+      },
+      "fuelType": "GPL",
+      "pricePerLiter": 0.905,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "MQ",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-mq-le-vauclin-esso-sp95",
+      "station": {
+        "id": "mq-le-vauclin-esso",
+        "name": "Esso - Le Vauclin",
+        "address": "Bourg",
+        "city": "Le Vauclin",
+        "territory": "MQ",
+        "location": {
+          "lat": 14.5547,
+          "lng": -60.8367
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.685,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "MQ",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-mq-le-vauclin-esso-sp98",
+      "station": {
+        "id": "mq-le-vauclin-esso",
+        "name": "Esso - Le Vauclin",
+        "address": "Bourg",
+        "city": "Le Vauclin",
+        "territory": "MQ",
+        "location": {
+          "lat": 14.5547,
+          "lng": -60.8367
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "SP98",
+      "pricePerLiter": 1.761,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "MQ",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-mq-le-vauclin-esso-diesel",
+      "station": {
+        "id": "mq-le-vauclin-esso",
+        "name": "Esso - Le Vauclin",
+        "address": "Bourg",
+        "city": "Le Vauclin",
+        "territory": "MQ",
+        "location": {
+          "lat": 14.5547,
+          "lng": -60.8367
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.538,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "MQ",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-mq-le-vauclin-esso-e10",
+      "station": {
+        "id": "mq-le-vauclin-esso",
+        "name": "Esso - Le Vauclin",
+        "address": "Bourg",
+        "city": "Le Vauclin",
+        "territory": "MQ",
+        "location": {
+          "lat": 14.5547,
+          "lng": -60.8367
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "E10",
+      "pricePerLiter": 1.648,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "MQ",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-mq-le-vauclin-esso-gpl",
+      "station": {
+        "id": "mq-le-vauclin-esso",
+        "name": "Esso - Le Vauclin",
+        "address": "Bourg",
+        "city": "Le Vauclin",
+        "territory": "MQ",
+        "location": {
+          "lat": 14.5547,
+          "lng": -60.8367
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "GPL",
+      "pricePerLiter": 0.905,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "MQ",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-mq-le-francois-total-sp95",
+      "station": {
+        "id": "mq-le-francois-total",
+        "name": "Total - Le François",
+        "address": "Bourg",
+        "city": "Le François",
+        "territory": "MQ",
+        "location": {
+          "lat": 14.6214,
+          "lng": -60.8997
+        },
+        "brand": "Total"
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.685,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "MQ",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-mq-le-francois-total-sp98",
+      "station": {
+        "id": "mq-le-francois-total",
+        "name": "Total - Le François",
+        "address": "Bourg",
+        "city": "Le François",
+        "territory": "MQ",
+        "location": {
+          "lat": 14.6214,
+          "lng": -60.8997
+        },
+        "brand": "Total"
+      },
+      "fuelType": "SP98",
+      "pricePerLiter": 1.761,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "MQ",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-mq-le-francois-total-diesel",
+      "station": {
+        "id": "mq-le-francois-total",
+        "name": "Total - Le François",
+        "address": "Bourg",
+        "city": "Le François",
+        "territory": "MQ",
+        "location": {
+          "lat": 14.6214,
+          "lng": -60.8997
+        },
+        "brand": "Total"
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.538,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "MQ",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-mq-le-francois-total-e10",
+      "station": {
+        "id": "mq-le-francois-total",
+        "name": "Total - Le François",
+        "address": "Bourg",
+        "city": "Le François",
+        "territory": "MQ",
+        "location": {
+          "lat": 14.6214,
+          "lng": -60.8997
+        },
+        "brand": "Total"
+      },
+      "fuelType": "E10",
+      "pricePerLiter": 1.648,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "MQ",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-mq-le-francois-total-gpl",
+      "station": {
+        "id": "mq-le-francois-total",
+        "name": "Total - Le François",
+        "address": "Bourg",
+        "city": "Le François",
+        "territory": "MQ",
+        "location": {
+          "lat": 14.6214,
+          "lng": -60.8997
+        },
+        "brand": "Total"
+      },
+      "fuelType": "GPL",
+      "pricePerLiter": 0.905,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "MQ",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-mq-sainte-anne-shell-sp95",
+      "station": {
+        "id": "mq-sainte-anne-shell",
+        "name": "Shell - Sainte-Anne MQ",
+        "address": "Bourg",
+        "city": "Sainte-Anne",
+        "territory": "MQ",
+        "location": {
+          "lat": 14.4392,
+          "lng": -60.8898
+        },
+        "brand": "Shell"
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.685,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "MQ",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-mq-sainte-anne-shell-sp98",
+      "station": {
+        "id": "mq-sainte-anne-shell",
+        "name": "Shell - Sainte-Anne MQ",
+        "address": "Bourg",
+        "city": "Sainte-Anne",
+        "territory": "MQ",
+        "location": {
+          "lat": 14.4392,
+          "lng": -60.8898
+        },
+        "brand": "Shell"
+      },
+      "fuelType": "SP98",
+      "pricePerLiter": 1.761,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "MQ",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-mq-sainte-anne-shell-diesel",
+      "station": {
+        "id": "mq-sainte-anne-shell",
+        "name": "Shell - Sainte-Anne MQ",
+        "address": "Bourg",
+        "city": "Sainte-Anne",
+        "territory": "MQ",
+        "location": {
+          "lat": 14.4392,
+          "lng": -60.8898
+        },
+        "brand": "Shell"
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.538,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "MQ",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-mq-sainte-anne-shell-e10",
+      "station": {
+        "id": "mq-sainte-anne-shell",
+        "name": "Shell - Sainte-Anne MQ",
+        "address": "Bourg",
+        "city": "Sainte-Anne",
+        "territory": "MQ",
+        "location": {
+          "lat": 14.4392,
+          "lng": -60.8898
+        },
+        "brand": "Shell"
+      },
+      "fuelType": "E10",
+      "pricePerLiter": 1.648,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "MQ",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-mq-sainte-anne-shell-gpl",
+      "station": {
+        "id": "mq-sainte-anne-shell",
+        "name": "Shell - Sainte-Anne MQ",
+        "address": "Bourg",
+        "city": "Sainte-Anne",
+        "territory": "MQ",
+        "location": {
+          "lat": 14.4392,
+          "lng": -60.8898
+        },
+        "brand": "Shell"
+      },
+      "fuelType": "GPL",
+      "pricePerLiter": 0.905,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "MQ",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-re-saint-paul-total-sp95",
+      "station": {
+        "id": "re-saint-paul-total",
+        "name": "Total - Saint-Paul",
+        "address": "Route Nationale 1",
+        "city": "Saint-Paul",
+        "territory": "RE",
+        "location": {
+          "lat": -21.0045,
+          "lng": 55.2715
+        },
+        "brand": "Total"
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.659,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.srpp.re",
+        "name": "SRPP — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "RE",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-re-saint-paul-total-sp98",
+      "station": {
+        "id": "re-saint-paul-total",
+        "name": "Total - Saint-Paul",
+        "address": "Route Nationale 1",
+        "city": "Saint-Paul",
+        "territory": "RE",
+        "location": {
+          "lat": -21.0045,
+          "lng": 55.2715
+        },
+        "brand": "Total"
+      },
+      "fuelType": "SP98",
+      "pricePerLiter": 1.733,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.srpp.re",
+        "name": "SRPP — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "RE",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-re-saint-paul-total-diesel",
+      "station": {
+        "id": "re-saint-paul-total",
+        "name": "Total - Saint-Paul",
+        "address": "Route Nationale 1",
+        "city": "Saint-Paul",
+        "territory": "RE",
+        "location": {
+          "lat": -21.0045,
+          "lng": 55.2715
+        },
+        "brand": "Total"
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.504,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.srpp.re",
+        "name": "SRPP — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "RE",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-re-saint-paul-total-e85",
+      "station": {
+        "id": "re-saint-paul-total",
+        "name": "Total - Saint-Paul",
+        "address": "Route Nationale 1",
+        "city": "Saint-Paul",
+        "territory": "RE",
+        "location": {
+          "lat": -21.0045,
+          "lng": 55.2715
+        },
+        "brand": "Total"
+      },
+      "fuelType": "E85",
+      "pricePerLiter": 0.849,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.srpp.re",
+        "name": "SRPP — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "RE",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-re-saint-pierre-esso-sp95",
+      "station": {
+        "id": "re-saint-pierre-esso",
+        "name": "Esso - Saint-Pierre",
+        "address": "Boul. Hubert Delisle",
+        "city": "Saint-Pierre",
+        "territory": "RE",
+        "location": {
+          "lat": -21.341,
+          "lng": 55.4732
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.659,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.srpp.re",
+        "name": "SRPP — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "RE",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-re-saint-pierre-esso-sp98",
+      "station": {
+        "id": "re-saint-pierre-esso",
+        "name": "Esso - Saint-Pierre",
+        "address": "Boul. Hubert Delisle",
+        "city": "Saint-Pierre",
+        "territory": "RE",
+        "location": {
+          "lat": -21.341,
+          "lng": 55.4732
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "SP98",
+      "pricePerLiter": 1.733,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.srpp.re",
+        "name": "SRPP — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "RE",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-re-saint-pierre-esso-diesel",
+      "station": {
+        "id": "re-saint-pierre-esso",
+        "name": "Esso - Saint-Pierre",
+        "address": "Boul. Hubert Delisle",
+        "city": "Saint-Pierre",
+        "territory": "RE",
+        "location": {
+          "lat": -21.341,
+          "lng": 55.4732
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.504,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.srpp.re",
+        "name": "SRPP — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "RE",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-re-saint-pierre-esso-e85",
+      "station": {
+        "id": "re-saint-pierre-esso",
+        "name": "Esso - Saint-Pierre",
+        "address": "Boul. Hubert Delisle",
+        "city": "Saint-Pierre",
+        "territory": "RE",
+        "location": {
+          "lat": -21.341,
+          "lng": 55.4732
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "E85",
+      "pricePerLiter": 0.849,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.srpp.re",
+        "name": "SRPP — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "RE",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-re-le-tampon-shell-sp95",
+      "station": {
+        "id": "re-le-tampon-shell",
+        "name": "Shell - Le Tampon",
+        "address": "Route Nationale",
+        "city": "Le Tampon",
+        "territory": "RE",
+        "location": {
+          "lat": -21.2778,
+          "lng": 55.5144
+        },
+        "brand": "Shell"
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.659,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.srpp.re",
+        "name": "SRPP — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "RE",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-re-le-tampon-shell-sp98",
+      "station": {
+        "id": "re-le-tampon-shell",
+        "name": "Shell - Le Tampon",
+        "address": "Route Nationale",
+        "city": "Le Tampon",
+        "territory": "RE",
+        "location": {
+          "lat": -21.2778,
+          "lng": 55.5144
+        },
+        "brand": "Shell"
+      },
+      "fuelType": "SP98",
+      "pricePerLiter": 1.733,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.srpp.re",
+        "name": "SRPP — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "RE",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-re-le-tampon-shell-diesel",
+      "station": {
+        "id": "re-le-tampon-shell",
+        "name": "Shell - Le Tampon",
+        "address": "Route Nationale",
+        "city": "Le Tampon",
+        "territory": "RE",
+        "location": {
+          "lat": -21.2778,
+          "lng": 55.5144
+        },
+        "brand": "Shell"
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.504,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.srpp.re",
+        "name": "SRPP — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "RE",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-re-le-tampon-shell-e85",
+      "station": {
+        "id": "re-le-tampon-shell",
+        "name": "Shell - Le Tampon",
+        "address": "Route Nationale",
+        "city": "Le Tampon",
+        "territory": "RE",
+        "location": {
+          "lat": -21.2778,
+          "lng": 55.5144
+        },
+        "brand": "Shell"
+      },
+      "fuelType": "E85",
+      "pricePerLiter": 0.849,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.srpp.re",
+        "name": "SRPP — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "RE",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-re-saint-andre-total-sp95",
+      "station": {
+        "id": "re-saint-andre-total",
+        "name": "Total - Saint-André",
+        "address": "Route Nationale",
+        "city": "Saint-André",
+        "territory": "RE",
+        "location": {
+          "lat": -20.9599,
+          "lng": 55.648
+        },
+        "brand": "Total"
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.659,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.srpp.re",
+        "name": "SRPP — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "RE",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-re-saint-andre-total-sp98",
+      "station": {
+        "id": "re-saint-andre-total",
+        "name": "Total - Saint-André",
+        "address": "Route Nationale",
+        "city": "Saint-André",
+        "territory": "RE",
+        "location": {
+          "lat": -20.9599,
+          "lng": 55.648
+        },
+        "brand": "Total"
+      },
+      "fuelType": "SP98",
+      "pricePerLiter": 1.733,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.srpp.re",
+        "name": "SRPP — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "RE",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-re-saint-andre-total-diesel",
+      "station": {
+        "id": "re-saint-andre-total",
+        "name": "Total - Saint-André",
+        "address": "Route Nationale",
+        "city": "Saint-André",
+        "territory": "RE",
+        "location": {
+          "lat": -20.9599,
+          "lng": 55.648
+        },
+        "brand": "Total"
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.504,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.srpp.re",
+        "name": "SRPP — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "RE",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-re-saint-andre-total-e85",
+      "station": {
+        "id": "re-saint-andre-total",
+        "name": "Total - Saint-André",
+        "address": "Route Nationale",
+        "city": "Saint-André",
+        "territory": "RE",
+        "location": {
+          "lat": -20.9599,
+          "lng": 55.648
+        },
+        "brand": "Total"
+      },
+      "fuelType": "E85",
+      "pricePerLiter": 0.849,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.srpp.re",
+        "name": "SRPP — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "RE",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-re-sainte-rose-esso-sp95",
+      "station": {
+        "id": "re-sainte-rose-esso",
+        "name": "Esso - Sainte-Rose",
+        "address": "Bourg",
+        "city": "Sainte-Rose",
+        "territory": "RE",
+        "location": {
+          "lat": -21.1225,
+          "lng": 55.7986
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.659,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.srpp.re",
+        "name": "SRPP — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "RE",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-re-sainte-rose-esso-sp98",
+      "station": {
+        "id": "re-sainte-rose-esso",
+        "name": "Esso - Sainte-Rose",
+        "address": "Bourg",
+        "city": "Sainte-Rose",
+        "territory": "RE",
+        "location": {
+          "lat": -21.1225,
+          "lng": 55.7986
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "SP98",
+      "pricePerLiter": 1.733,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.srpp.re",
+        "name": "SRPP — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "RE",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-re-sainte-rose-esso-diesel",
+      "station": {
+        "id": "re-sainte-rose-esso",
+        "name": "Esso - Sainte-Rose",
+        "address": "Bourg",
+        "city": "Sainte-Rose",
+        "territory": "RE",
+        "location": {
+          "lat": -21.1225,
+          "lng": 55.7986
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.504,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.srpp.re",
+        "name": "SRPP — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "RE",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-re-sainte-rose-esso-e85",
+      "station": {
+        "id": "re-sainte-rose-esso",
+        "name": "Esso - Sainte-Rose",
+        "address": "Bourg",
+        "city": "Sainte-Rose",
+        "territory": "RE",
+        "location": {
+          "lat": -21.1225,
+          "lng": 55.7986
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "E85",
+      "pricePerLiter": 0.849,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.srpp.re",
+        "name": "SRPP — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "RE",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gf-kourou-total-sp95",
+      "station": {
+        "id": "gf-kourou-total",
+        "name": "Total - Kourou",
+        "address": "Avenue du Général de Gaulle",
+        "city": "Kourou",
+        "territory": "GF",
+        "location": {
+          "lat": 5.1603,
+          "lng": -52.6469
+        },
+        "brand": "Total"
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.698,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GF",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gf-kourou-total-sp98",
+      "station": {
+        "id": "gf-kourou-total",
+        "name": "Total - Kourou",
+        "address": "Avenue du Général de Gaulle",
+        "city": "Kourou",
+        "territory": "GF",
+        "location": {
+          "lat": 5.1603,
+          "lng": -52.6469
+        },
+        "brand": "Total"
+      },
+      "fuelType": "SP98",
+      "pricePerLiter": 1.782,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GF",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gf-kourou-total-diesel",
+      "station": {
+        "id": "gf-kourou-total",
+        "name": "Total - Kourou",
+        "address": "Avenue du Général de Gaulle",
+        "city": "Kourou",
+        "territory": "GF",
+        "location": {
+          "lat": 5.1603,
+          "lng": -52.6469
+        },
+        "brand": "Total"
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.556,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GF",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gf-kourou-total-e10",
+      "station": {
+        "id": "gf-kourou-total",
+        "name": "Total - Kourou",
+        "address": "Avenue du Général de Gaulle",
+        "city": "Kourou",
+        "territory": "GF",
+        "location": {
+          "lat": 5.1603,
+          "lng": -52.6469
+        },
+        "brand": "Total"
+      },
+      "fuelType": "E10",
+      "pricePerLiter": 1.661,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GF",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gf-saint-laurent-shell-sp95",
+      "station": {
+        "id": "gf-saint-laurent-shell",
+        "name": "Shell - Saint-Laurent-du-Maroni",
+        "address": "Avenue du Gal de Gaulle",
+        "city": "Saint-Laurent-du-Maroni",
+        "territory": "GF",
+        "location": {
+          "lat": 5.5039,
+          "lng": -54.0329
+        },
+        "brand": "Shell"
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.698,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GF",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gf-saint-laurent-shell-sp98",
+      "station": {
+        "id": "gf-saint-laurent-shell",
+        "name": "Shell - Saint-Laurent-du-Maroni",
+        "address": "Avenue du Gal de Gaulle",
+        "city": "Saint-Laurent-du-Maroni",
+        "territory": "GF",
+        "location": {
+          "lat": 5.5039,
+          "lng": -54.0329
+        },
+        "brand": "Shell"
+      },
+      "fuelType": "SP98",
+      "pricePerLiter": 1.782,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GF",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gf-saint-laurent-shell-diesel",
+      "station": {
+        "id": "gf-saint-laurent-shell",
+        "name": "Shell - Saint-Laurent-du-Maroni",
+        "address": "Avenue du Gal de Gaulle",
+        "city": "Saint-Laurent-du-Maroni",
+        "territory": "GF",
+        "location": {
+          "lat": 5.5039,
+          "lng": -54.0329
+        },
+        "brand": "Shell"
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.556,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GF",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gf-saint-laurent-shell-e10",
+      "station": {
+        "id": "gf-saint-laurent-shell",
+        "name": "Shell - Saint-Laurent-du-Maroni",
+        "address": "Avenue du Gal de Gaulle",
+        "city": "Saint-Laurent-du-Maroni",
+        "territory": "GF",
+        "location": {
+          "lat": 5.5039,
+          "lng": -54.0329
+        },
+        "brand": "Shell"
+      },
+      "fuelType": "E10",
+      "pricePerLiter": 1.661,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GF",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gf-matoury-esso-sp95",
+      "station": {
+        "id": "gf-matoury-esso",
+        "name": "Esso - Matoury",
+        "address": "RN 1",
+        "city": "Matoury",
+        "territory": "GF",
+        "location": {
+          "lat": 4.851,
+          "lng": -52.3362
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.698,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GF",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gf-matoury-esso-sp98",
+      "station": {
+        "id": "gf-matoury-esso",
+        "name": "Esso - Matoury",
+        "address": "RN 1",
+        "city": "Matoury",
+        "territory": "GF",
+        "location": {
+          "lat": 4.851,
+          "lng": -52.3362
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "SP98",
+      "pricePerLiter": 1.782,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GF",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gf-matoury-esso-diesel",
+      "station": {
+        "id": "gf-matoury-esso",
+        "name": "Esso - Matoury",
+        "address": "RN 1",
+        "city": "Matoury",
+        "territory": "GF",
+        "location": {
+          "lat": 4.851,
+          "lng": -52.3362
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.556,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GF",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-gf-matoury-esso-e10",
+      "station": {
+        "id": "gf-matoury-esso",
+        "name": "Esso - Matoury",
+        "address": "RN 1",
+        "city": "Matoury",
+        "territory": "GF",
+        "location": {
+          "lat": 4.851,
+          "lng": -52.3362
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "E10",
+      "pricePerLiter": 1.661,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.sara.gp",
+        "name": "SARA — Arrêté préfectoral 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "GF",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-yt-bandraboua-total-sp95",
+      "station": {
+        "id": "yt-bandraboua-total",
+        "name": "Total - Bandraboua",
+        "address": "Bourg",
+        "city": "Bandraboua",
+        "territory": "YT",
+        "location": {
+          "lat": -12.7014,
+          "lng": 45.242
+        },
+        "brand": "Total"
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.628,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.guadeloupe.pref.gouv.fr",
+        "name": "Arrêté préfectoral Mayotte 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "YT",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-yt-bandraboua-total-diesel",
+      "station": {
+        "id": "yt-bandraboua-total",
+        "name": "Total - Bandraboua",
+        "address": "Bourg",
+        "city": "Bandraboua",
+        "territory": "YT",
+        "location": {
+          "lat": -12.7014,
+          "lng": 45.242
+        },
+        "brand": "Total"
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.481,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.guadeloupe.pref.gouv.fr",
+        "name": "Arrêté préfectoral Mayotte 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "YT",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-yt-boueni-esso-sp95",
+      "station": {
+        "id": "yt-boueni-esso",
+        "name": "Esso - Bouéni",
+        "address": "Bourg",
+        "city": "Bouéni",
+        "territory": "YT",
+        "location": {
+          "lat": -12.9565,
+          "lng": 45.0889
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "SP95",
+      "pricePerLiter": 1.628,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.guadeloupe.pref.gouv.fr",
+        "name": "Arrêté préfectoral Mayotte 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "YT",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
+    },
+    {
+      "id": "price-yt-boueni-esso-diesel",
+      "station": {
+        "id": "yt-boueni-esso",
+        "name": "Esso - Bouéni",
+        "address": "Bourg",
+        "city": "Bouéni",
+        "territory": "YT",
+        "location": {
+          "lat": -12.9565,
+          "lng": 45.0889
+        },
+        "brand": "Esso"
+      },
+      "fuelType": "DIESEL",
+      "pricePerLiter": 1.481,
+      "currency": "EUR",
+      "observationDate": "2026-03-18T12:00:00.000Z",
+      "source": {
+        "type": "prefectoral_decree",
+        "url": "https://www.guadeloupe.pref.gouv.fr",
+        "name": "Arrêté préfectoral Mayotte 2025",
+        "observedAt": "2026-03-18T12:00:00.000Z",
+        "reliability": "high"
+      },
+      "isPriceCapPlafonne": true,
+      "territory": "YT",
+      "lastUpdate": "2026-03-18T12:00:00.000Z",
+      "regulated": true
     }
   ]
 }

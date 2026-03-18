@@ -354,6 +354,13 @@ const FuelComparator: React.FC = () => {
                 <LocateFixed className="w-4 h-4" />
                 {gpsStatus === 'loading' ? 'Localisation...' : 'Me localiser (GPS)'}
               </button>
+              <Link
+                to="/stations-proximite"
+                className="flex items-center gap-2 px-4 py-2 bg-orange-600 hover:bg-orange-500 text-white text-sm font-semibold rounded-xl transition-colors"
+              >
+                <MapPin className="w-4 h-4" />
+                Stations autour de moi
+              </Link>
               {gpsStatus === 'found' && nearestStation && (
                 <a
                   href={getStationNavUrl(
