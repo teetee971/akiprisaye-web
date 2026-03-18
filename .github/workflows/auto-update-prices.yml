@@ -54,6 +54,18 @@ jobs:
         working-directory: scripts/auto-prices
         run: npm install
 
+      - name: 🔍 Diagnostic secret Firebase
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          if [ -n "${FIREBASE_SERVICE_ACCOUNT}" ]; then
+            echo "FIREBASE_SERVICE_ACCOUNT_PRESENT=yes"
+          else
+            echo "FIREBASE_SERVICE_ACCOUNT_PRESENT=no"
+            echo "⚠️  Le secret FIREBASE_SERVICE_ACCOUNT est absent ou vide dans ce contexte CI."
+            exit 1
+          fi
+
       - name: ⛽ Collecte des prix carburants
         working-directory: scripts/auto-prices
         env:
