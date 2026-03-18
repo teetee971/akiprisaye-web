@@ -2,7 +2,7 @@
  * Indicator Calculation Service Tests
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
 import {
   calculateAveragePrices,
   calculateDomHexagoneGaps,
@@ -12,9 +12,20 @@ import {
 } from '../indicatorCalculationService';
 import type { PriceObservation } from '../../types/PriceObservation';
 
-describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
-  // TODO: re-enable after deterministic refactor
-  const today = new Date().toISOString();
+// Fixed reference date — makes all Date.now() / new Date() calls in the service deterministic
+const FIXED_DATE = '2026-02-03T12:00:00.000Z';
+
+describe('Indicator Calculation Service', () => {
+  beforeAll(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(FIXED_DATE));
+  });
+
+  afterAll(() => {
+    vi.useRealTimers();
+  });
+
+  const today = FIXED_DATE;
   
   const baseObservation: PriceObservation = {
     id: 'obs-base',
@@ -281,17 +292,16 @@ describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
   });
 
   describe('calculateTemporalEvolution', () => {
-    it('should calculate price evolution over time', () => {
-      const todayDate = new Date();
-      const thirtyDaysAgo = new Date(todayDate);
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    // Dates derived from the fixed system time (2026-02-03T12:00:00.000Z)
+    const thirtyDaysAgo = '2026-01-04';
 
+    it('should calculate price evolution over time', () => {
       const observations: PriceObservation[] = [
         { ...baseObservation, price: 1.60, observedAt: today },
         {
           ...baseObservation,
           price: 1.50,
-          observedAt: thirtyDaysAgo.toISOString().split('T')[0],
+          observedAt: thirtyDaysAgo,
         },
       ];
 
@@ -308,16 +318,12 @@ describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
     });
 
     it('should determine trend correctly', () => {
-      const todayDate = new Date();
-      const thirtyDaysAgo = new Date(todayDate);
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
       const observations: PriceObservation[] = [
         { ...baseObservation, price: 1.70, observedAt: today },
         {
           ...baseObservation,
           price: 1.50,
-          observedAt: thirtyDaysAgo.toISOString().split('T')[0],
+          observedAt: thirtyDaysAgo,
         },
       ];
 

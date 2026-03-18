@@ -141,6 +141,10 @@ export default defineConfig({
       abs('./src/test/ciRegression.test.ts'),
       // Monitoring system — storageBuffer, errorTracker, eventLogger, systemSnapshot
       abs('./src/test/monitoring.test.ts'),
+      // Indicator calculations — average prices, DOM/Hexagone gaps, IVC, temporal evolution, store dispersion
+      abs('./src/services/__tests__/indicatorCalculationService.test.ts'),
+      // Comparateur Citoyen page — data loading, fallback, error states, retry
+      abs('./src/components/comparateur/__tests__/ComparateurCitoyen.test.tsx'),
     ],
 
     exclude: ['**/node_modules/**', '**/.git/**', '**/dist/**', '**/coverage/**'],

@@ -2,6 +2,8 @@
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
+import { HelmetProvider } from 'react-helmet-async';
+import { MemoryRouter } from 'react-router-dom';
 import ComparateurCitoyen from '../../../pages/ComparateurCitoyen';
 
 // Mock fetch globally
@@ -35,8 +37,18 @@ const mockObservatoireData = {
   ],
 };
 
-describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
-  // TODO: re-enable after deterministic refactor
+/** Helper: render the component with all required providers */
+function renderComponent() {
+  return render(
+    <HelmetProvider>
+      <MemoryRouter>
+        <ComparateurCitoyen />
+      </MemoryRouter>
+    </HelmetProvider>
+  );
+}
+
+describe('ComparateurCitoyen', () => {
   beforeEach(() => {
     mockFetch.mockClear();
   });
@@ -47,7 +59,7 @@ describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
       json: async () => mockObservatoireData,
     } as Response);
 
-    render(<ComparateurCitoyen />);
+    renderComponent();
 
     // Should show loading state initially
     expect(screen.getByText(/chargement des données/i)).toBeInTheDocument();
@@ -62,19 +74,19 @@ describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
       expect(screen.getByText('Guadeloupe')).toBeInTheDocument();
     });
 
-    // Should have called fetch with primary file
-    expect(mockFetch).toHaveBeenCalledWith('/data/observatoire/guadeloupe_2026-02.json');
+    // Should have called fetch with primary file (first in DATA_FILES list)
+    expect(mockFetch).toHaveBeenCalledWith('/data/observatoire/guadeloupe_2026-03.json');
   });
 
   test('falls back to secondary file when primary fails with 404', async () => {
-    // First file fails with 404
+    // First file (guadeloupe_2026-03) fails with 404
     mockFetch.mockResolvedValueOnce({
       ok: false,
       status: 404,
       statusText: 'Not Found',
     } as Response);
 
-    // Second file succeeds
+    // Second file (guadeloupe_2026-02) succeeds
     mockFetch.mockResolvedValueOnce({
       ok: true,
       json: async () => ({
@@ -83,15 +95,15 @@ describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
       }),
     } as Response);
 
-    render(<ComparateurCitoyen />);
+    renderComponent();
 
     await waitFor(() => {
       expect(screen.queryByText(/chargement des données/i)).not.toBeInTheDocument();
     });
 
     // Should have tried both files
+    expect(mockFetch).toHaveBeenCalledWith('/data/observatoire/guadeloupe_2026-03.json');
     expect(mockFetch).toHaveBeenCalledWith('/data/observatoire/guadeloupe_2026-02.json');
-    expect(mockFetch).toHaveBeenCalledWith('/data/observatoire/guadeloupe_2026-01.json');
 
     // Should display data info
     await waitFor(() => {
@@ -107,7 +119,7 @@ describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
       statusText: 'Not Found',
     } as Response);
 
-    render(<ComparateurCitoyen />);
+    renderComponent();
 
     await waitFor(() => {
       expect(screen.getByText(/impossible de charger les données de l'observatoire/i)).toBeInTheDocument();
@@ -125,7 +137,7 @@ describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
       statusText: 'Internal Server Error',
     } as Response);
 
-    render(<ComparateurCitoyen />);
+    renderComponent();
 
     await waitFor(() => {
       expect(screen.getByText(/impossible de charger les données de l'observatoire/i)).toBeInTheDocument();
@@ -133,26 +145,15 @@ describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
   });
 
   test('retry button reloads data', async () => {
-    // First attempt fails
-    mockFetch.mockResolvedValueOnce({
+    // First attempt fails — need to fail all 6 DATA_FILES to trigger error state
+    const failResponse = {
       ok: false,
       status: 404,
       statusText: 'Not Found',
-    } as Response);
+    } as Response;
+    mockFetch.mockResolvedValue(failResponse);
 
-    mockFetch.mockResolvedValueOnce({
-      ok: false,
-      status: 404,
-      statusText: 'Not Found',
-    } as Response);
-
-    mockFetch.mockResolvedValueOnce({
-      ok: false,
-      status: 404,
-      statusText: 'Not Found',
-    } as Response);
-
-    render(<ComparateurCitoyen />);
+    renderComponent();
 
     // Wait for error to appear
     await waitFor(() => {
@@ -181,8 +182,8 @@ describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
       expect(screen.getByText('Guadeloupe')).toBeInTheDocument();
     });
 
-    // Should have called fetch again
-    expect(mockFetch).toHaveBeenCalledWith('/data/observatoire/guadeloupe_2026-02.json');
+    // Should have called fetch again with primary file
+    expect(mockFetch).toHaveBeenCalledWith('/data/observatoire/guadeloupe_2026-03.json');
   });
 
   test('handles invalid data structure', async () => {
@@ -194,7 +195,7 @@ describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
       }),
     } as Response);
 
-    render(<ComparateurCitoyen />);
+    renderComponent();
 
     await waitFor(() => {
       expect(screen.getByText(/impossible de charger les données de l'observatoire/i)).toBeInTheDocument();
@@ -207,7 +208,7 @@ describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
       json: async () => mockObservatoireData,
     } as Response);
 
-    render(<ComparateurCitoyen />);
+    renderComponent();
 
     await waitFor(() => {
       expect(screen.getByText('Guadeloupe')).toBeInTheDocument();
@@ -217,7 +218,8 @@ describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
     expect(screen.getByText('Guadeloupe')).toBeInTheDocument();
     expect(screen.getByText(/3 février 2026/i)).toBeInTheDocument();
     expect(screen.getByText(/releve citoyen/i)).toBeInTheDocument();
-    expect(screen.getByText(/vérifié/i)).toBeInTheDocument();
+    // Use getAllByText since "vérifié" may appear in multiple elements
+    expect(screen.getAllByText(/vérifié/i).length).toBeGreaterThan(0);
   });
 
   test('selects first product by default', async () => {
@@ -226,7 +228,7 @@ describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
       json: async () => mockObservatoireData,
     } as Response);
 
-    render(<ComparateurCitoyen />);
+    renderComponent();
 
     await waitFor(() => {
       // Product should be selected in dropdown
@@ -238,7 +240,7 @@ describe.skip('TEMPORARY – unstable suite (CI unblock)', () => {
   test('handles network errors gracefully', async () => {
     mockFetch.mockRejectedValue(new Error('Network error'));
 
-    render(<ComparateurCitoyen />);
+    renderComponent();
 
     await waitFor(() => {
       expect(screen.getByText(/impossible de charger les données de l'observatoire/i)).toBeInTheDocument();

@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { AlertTriangle, X, ExternalLink } from 'lucide-react';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 import { safeLocalStorage } from '../utils/safeLocalStorage';
 
 interface BandeauMessage {
@@ -28,17 +30,26 @@ export function BandeauVieChere() {
     }
 
     // Fetch from Firestore collection 'bandeau_messages'
-    // TODO: Replace with real Firestore query
-    const mockMessages: BandeauMessage[] = [
-      {
-        id: '1',
-        type: 'urgent',
-        title: 'Alerte Prix Abusifs',
-        message: 'Hausse injustifiée détectée sur produits de base',
-        link: '/alerte-cherté.html'
+    const fetchMessages = async () => {
+      if (!db) return;
+      try {
+        const q = query(
+          collection(db, 'bandeau_messages'),
+          where('active', '==', true)
+        );
+        const snapshot = await getDocs(q);
+        const firestoreMessages: BandeauMessage[] = snapshot.docs.map((d) => ({
+          id: d.id,
+          ...(d.data() as Omit<BandeauMessage, 'id'>),
+        }));
+        setMessages(firestoreMessages);
+      } catch (error) {
+        console.error('Failed to fetch bandeau messages:', error);
+        setMessages([]);
       }
-    ];
-    setMessages(mockMessages);
+    };
+
+    fetchMessages();
   }, []);
 
   const handleDismiss = (id: string) => {
