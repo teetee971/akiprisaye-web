@@ -264,6 +264,99 @@ describe('ci.yml — Lighthouse regression guard and PR comment', () => {
   });
 });
 
+describe('lighthouse-guard.mjs — per-metric regression thresholds', () => {
+  const src = readFileSync(path.join(HERE, 'lighthouse-guard.mjs'), 'utf8');
+
+  it('must use per-metric thresholds, not a single global threshold', () => {
+    expect(src).toMatch(/THRESHOLD_PERFORMANCE/);
+    expect(src).toMatch(/THRESHOLD_ACCESSIBILITY/);
+    expect(src).toMatch(/THRESHOLD_SEO/);
+    expect(src).toMatch(/THRESHOLD_BEST_PRACTICES/);
+  });
+
+  it('must use correct default thresholds (perf=5, a11y=2, seo=3, bp=3)', () => {
+    // Perf threshold default 5
+    expect(src).toMatch(/THRESHOLD_PERFORMANCE[^\n]*\?\?[^\n]*5/);
+    // Accessibility threshold default 2
+    expect(src).toMatch(/THRESHOLD_ACCESSIBILITY[^\n]*\?\?[^\n]*2/);
+    // SEO threshold default 3
+    expect(src).toMatch(/THRESHOLD_SEO[^\n]*\?\?[^\n]*3/);
+    // Best-practices threshold default 3
+    expect(src).toMatch(/THRESHOLD_BEST_PRACTICES[^\n]*\?\?[^\n]*3/);
+  });
+
+  it('must produce a PASS/WARN/FAIL verdict', () => {
+    expect(src).toMatch(/'PASS'/);
+    expect(src).toMatch(/'WARN'/);
+    expect(src).toMatch(/'FAIL'/);
+  });
+
+  it('must write /tmp/lh-verdict.json for the PR comment script', () => {
+    expect(src).toMatch(/lh-verdict\.json/);
+  });
+});
+
+describe('lighthouse-pr-comment.mjs — PASS/WARN/FAIL verdict banner', () => {
+  const src = readFileSync(path.join(HERE, 'lighthouse-pr-comment.mjs'), 'utf8');
+
+  it('must render a PASS banner', () => {
+    expect(src).toMatch(/PASS/);
+  });
+
+  it('must render a WARN banner', () => {
+    expect(src).toMatch(/WARN.*[Ll]ég.*re.*d.*gradation/);
+  });
+
+  it('must render a FAIL banner', () => {
+    expect(src).toMatch(/FAIL.*[Rr]égression.*bloquante/);
+  });
+
+  it('must include per-metric regression thresholds matching the guard defaults', () => {
+    expect(src).toMatch(/THRESHOLDS/);
+    expect(src).toMatch(/performance.*5/);
+    expect(src).toMatch(/accessibility.*2/);
+    expect(src).toMatch(/seo.*3/);
+    expect(src).toMatch(/bestPractices.*3/);
+  });
+
+  it('must show regression vs main column in comment table', () => {
+    expect(src).toMatch(/gression vs main/i);
+  });
+});
+
+describe('lighthouserc.json — performance resource budgets', () => {
+  const lhrc = JSON.parse(readFileSync(path.join(REPO_ROOT, 'lighthouserc.json'), 'utf8'));
+  const budgets = lhrc.ci.collect.settings.budgets[0];
+
+  it('must have a stylesheet (CSS) size budget', () => {
+    expect(budgets.resourceSizes.some(
+      (b: { resourceType: string; budget: number }) => b.resourceType === 'stylesheet',
+    )).toBe(true);
+  });
+
+  it('must have an image size budget', () => {
+    expect(budgets.resourceSizes.some(
+      (b: { resourceType: string; budget: number }) => b.resourceType === 'image',
+    )).toBe(true);
+  });
+
+  it('must have a script count budget (≤ 15)', () => {
+    const s = budgets.resourceCounts.find(
+      (b: { resourceType: string; budget: number }) => b.resourceType === 'script',
+    );
+    expect(s).toBeDefined();
+    expect(s.budget).toBeLessThanOrEqual(15);
+  });
+
+  it('must have third-party count budget ≤ 5', () => {
+    const tp = budgets.resourceCounts.find(
+      (b: { resourceType: string; budget: number }) => b.resourceType === 'third-party',
+    );
+    expect(tp).toBeDefined();
+    expect(tp.budget).toBeLessThanOrEqual(5);
+  });
+});
+
 describe('auto-merge.yml — pull_request_target guard', () => {
   const autoMergeYml = readWorkflow('auto-merge.yml');
 

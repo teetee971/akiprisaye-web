@@ -7,16 +7,28 @@
  * Modes :
  *   --write   Lit .lighthouseci/*.report.json → écrit .lighthouseci/lighthouse-scores.json
  *   --compare Télécharge l'artifact "lighthouse-scores" du dernier run main réussi via
- *             l'API GitHub, compare avec les scores actuels, échoue si baisse > THRESHOLD.
+ *             l'API GitHub, compare avec les scores actuels selon des seuils par métrique,
+ *             échoue (FAIL) si une régression dépasse le seuil autorisé.
  *             Écrit également la baseline dans /tmp/lh-baseline.json pour le script de
  *             commentaire PR (lighthouse-pr-comment.mjs).
  *
+ * Seuils de régression (points) :
+ *   performance   : > 5 pts → FAIL
+ *   accessibility : > 2 pts → FAIL
+ *   seo           : > 3 pts → FAIL
+ *   best-practices: > 3 pts → FAIL
+ *   Tout avertissement : WARN
+ *   Aucun écart : PASS
+ *
  * Variables d'environnement :
- *   GITHUB_TOKEN          — token GitHub (requis pour --compare)
- *   GITHUB_REPOSITORY     — "owner/repo" (automatique en GitHub Actions)
- *   REGRESSION_THRESHOLD  — points max de baisse acceptés (défaut : 5)
- *   LH_ARTIFACT_NAME      — nom de l'artifact baseline (défaut : lighthouse-scores)
- *   LHCI_DIR              — répertoire des rapports (défaut : .lighthouseci)
+ *   GITHUB_TOKEN               — token GitHub (requis pour --compare)
+ *   GITHUB_REPOSITORY          — "owner/repo" (automatique en GitHub Actions)
+ *   THRESHOLD_PERFORMANCE      — seuil max baisse Performance   (défaut : 5)
+ *   THRESHOLD_ACCESSIBILITY    — seuil max baisse Accessibilité (défaut : 2)
+ *   THRESHOLD_SEO              — seuil max baisse SEO           (défaut : 3)
+ *   THRESHOLD_BEST_PRACTICES   — seuil max baisse Best Practices(défaut : 3)
+ *   LH_ARTIFACT_NAME           — nom de l'artifact baseline (défaut : lighthouse-scores)
+ *   LHCI_DIR                   — répertoire des rapports (défaut : .lighthouseci)
  *
  * Usage :
  *   node scripts/lighthouse-guard.mjs --write
@@ -32,9 +44,16 @@ const __dirname      = path.dirname(fileURLToPath(import.meta.url));
 const mode           = process.argv[2] || '--write';
 const dir            = path.resolve(process.cwd(), process.env.LHCI_DIR || '.lighthouseci');
 const scoresFile     = path.join(dir, 'lighthouse-scores.json');
-const THRESHOLD      = Number(process.env.REGRESSION_THRESHOLD ?? 5);
 const ARTIFACT_NAME  = process.env.LH_ARTIFACT_NAME || 'lighthouse-scores';
 const BASELINE_OUT   = '/tmp/lh-baseline.json';
+
+// Per-metric regression thresholds (points allowed to drop before FAIL).
+const THRESHOLDS = {
+  performance:   Number(process.env.THRESHOLD_PERFORMANCE    ?? 5),
+  accessibility: Number(process.env.THRESHOLD_ACCESSIBILITY  ?? 2),
+  seo:           Number(process.env.THRESHOLD_SEO            ?? 3),
+  bestPractices: Number(process.env.THRESHOLD_BEST_PRACTICES ?? 3),
+};
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -49,10 +68,10 @@ function extractScores(reportPath) {
   const data = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
   return {
     url:           data.finalUrl || data.requestedUrl || 'unknown',
-    performance:   Math.round((data.categories.performance?.score   ?? 0) * 100),
-    accessibility: Math.round((data.categories.accessibility?.score ?? 0) * 100),
-    seo:           Math.round((data.categories.seo?.score           ?? 0) * 100),
-    bestPractices: Math.round((data.categories['best-practices']?.score ?? 0) * 100),
+    performance:   Math.round((data.categories.performance?.score         ?? 0) * 100),
+    accessibility: Math.round((data.categories.accessibility?.score       ?? 0) * 100),
+    seo:           Math.round((data.categories.seo?.score                 ?? 0) * 100),
+    bestPractices: Math.round((data.categories['best-practices']?.score   ?? 0) * 100),
     timestamp:     new Date().toISOString(),
   };
 }
@@ -94,8 +113,8 @@ async function compareScores() {
 
   const current = JSON.parse(fs.readFileSync(scoresFile, 'utf8'));
   const headers = {
-    Authorization:         `Bearer ${token}`,
-    Accept:                'application/vnd.github+json',
+    Authorization:          `Bearer ${token}`,
+    Accept:                 'application/vnd.github+json',
     'X-GitHub-Api-Version': '2022-11-28',
   };
 
@@ -142,44 +161,103 @@ async function compareScores() {
     process.exit(0);
   }
 
-  // ── Compare ──
-  const metrics = [
-    ['performance',   'Performance    '],
-    ['accessibility', 'Accessibilité  '],
-    ['seo',           'SEO            '],
-    ['bestPractices', 'Best Practices '],
+  // ── Per-metric comparison ─────────────────────────────────────────────────
+
+  const metricDefs = [
+    { key: 'performance',   label: 'Performance    ', threshold: THRESHOLDS.performance   },
+    { key: 'accessibility', label: 'Accessibilité  ', threshold: THRESHOLDS.accessibility },
+    { key: 'seo',           label: 'SEO            ', threshold: THRESHOLDS.seo           },
+    { key: 'bestPractices', label: 'Best Practices ', threshold: THRESHOLDS.bestPractices },
   ];
 
-  const sep = '─'.repeat(50);
-  console.log('\n📊 Comparaison des scores Lighthouse\n');
+  const sep = '─'.repeat(60);
+  console.log('\n📊 Comparaison des scores Lighthouse (régression guard)\n');
   console.log('  ' + sep);
-  console.log('  Métrique          Baseline  Actuel  Delta');
+  console.log('  Métrique          Seuil  Baseline  Actuel  Delta   Verdict');
   console.log('  ' + sep);
 
-  let failed = false;
+  let hasFail = false;
+  let hasWarn = false;
+  const results = [];
 
-  for (const [key, label] of metrics) {
+  for (const { key, label, threshold } of metricDefs) {
     const prev  = baseline[key] ?? null;
     const curr  = current[key]  ?? 0;
     if (prev === null) continue;
 
-    const delta = curr - prev;
-    const sign  = delta >= 0 ? '+' : '';
-    const icon  = delta < -THRESHOLD ? '❌' : delta < 0 ? '⚠️ ' : '✅';
+    const delta   = curr - prev;
+    const sign    = delta >= 0 ? '+' : '';
+    let verdict, icon;
 
-    console.log(`  ${icon} ${label}  ${String(prev).padStart(3)}       ${String(curr).padStart(3)}    ${sign}${delta}`);
+    if (delta < -threshold) {
+      verdict = 'FAIL'; icon = '❌'; hasFail = true;
+    } else if (delta < 0) {
+      verdict = 'WARN'; icon = '⚠️ '; hasWarn = true;
+    } else {
+      verdict = 'PASS'; icon = '✅';
+    }
 
-    if (delta < -THRESHOLD) failed = true;
+    results.push({ key, label, prev, curr, delta, threshold, verdict });
+    console.log(
+      `  ${icon} ${label}  -${String(threshold).padEnd(2)}   ${String(prev).padStart(3)}       ${String(curr).padStart(3)}    ${(sign + delta).padStart(3)}   ${verdict}`
+    );
   }
 
   console.log('  ' + sep + '\n');
 
-  if (failed) {
-    console.error(`❌ Régression Lighthouse détectée : un ou plusieurs scores ont baissé de plus de ${THRESHOLD} points.`);
+  // ── Overall verdict ───────────────────────────────────────────────────────
+
+  const overallVerdict = hasFail ? 'FAIL' : hasWarn ? 'WARN' : 'PASS';
+  const overallIcon    = hasFail ? '❌'   : hasWarn  ? '⚠️ '  : '✅';
+
+  console.log(`${overallIcon} Verdict global : ${overallVerdict}`);
+  if (hasFail) {
+    console.log('   Seuils dépassés :');
+    for (const r of results.filter(r => r.verdict === 'FAIL')) {
+      console.log(`   - ${r.label.trim()} : baseline ${r.prev} → actuel ${r.curr} (delta ${r.delta}, seuil -${r.threshold})`);
+    }
+  }
+
+  // Write verdict for PR comment script to pick up
+  const verdictOut = {
+    verdict:   overallVerdict,
+    thresholds: THRESHOLDS,
+    baseline,
+    current,
+    results,
+  };
+  fs.writeFileSync('/tmp/lh-verdict.json', JSON.stringify(verdictOut, null, 2));
+
+  // ── GitHub Actions step summary ───────────────────────────────────────────
+
+  const summaryFile = process.env.GITHUB_STEP_SUMMARY;
+  if (summaryFile) {
+    const summaryLines = [
+      `## 📊 Lighthouse Régression Guard — ${overallIcon} ${overallVerdict}`,
+      '',
+      `**Baseline :** \`${baseline.url}\` (${baseline.timestamp?.slice(0, 10) || 'N/A'})`,
+      '',
+      '| Métrique | Seuil | Baseline | Actuel | Delta | Verdict |',
+      '|---|---|---|---|---|---|',
+    ];
+    for (const r of results) {
+      const sign = r.delta >= 0 ? '+' : '';
+      const vIcon = r.verdict === 'FAIL' ? '❌ FAIL' : r.verdict === 'WARN' ? '⚠️ WARN' : '✅ PASS';
+      summaryLines.push(`| **${r.label.trim()}** | ≤ -${r.threshold} | ${r.prev} | ${r.curr} | ${sign}${r.delta} | ${vIcon} |`);
+    }
+    summaryLines.push('');
+    summaryLines.push(`> Verdict final : **${overallVerdict}**`);
+    try {
+      fs.appendFileSync(summaryFile, summaryLines.join('\n') + '\n');
+    } catch { /* ignore */ }
+  }
+
+  if (hasFail) {
+    console.error('\n❌ Régression Lighthouse détectée : CI bloquée.');
     process.exit(1);
   }
 
-  console.log(`✅ Aucune régression Lighthouse détectée (seuil : ${THRESHOLD} points).`);
+  console.log(`\n${overallIcon} Aucune régression bloquante (seuils : perf -${THRESHOLDS.performance}, a11y -${THRESHOLDS.accessibility}, seo -${THRESHOLDS.seo}, bp -${THRESHOLDS.bestPractices}).`);
 }
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
