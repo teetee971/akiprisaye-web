@@ -115,6 +115,22 @@ describe('RequireRole', () => {
     expect(screen.queryByTestId('protected-content')).toBeNull();
   });
 
+  it('shows loading spinner when loading=false but authResolved=false (race guard)', () => {
+    // Edge case: loading flipped to false before auth was fully settled
+    authState = makeAuthMock({ loading: false, authResolved: false, user: null });
+
+    renderWithRole(
+      <RequireRole role="creator">
+        <div data-testid="protected-content">Contenu protégé</div>
+      </RequireRole>,
+    );
+
+    // Must NOT redirect prematurely — show spinner instead
+    expect(screen.getByTestId('auth-loading-spinner')).toBeTruthy();
+    expect(screen.queryByTestId('protected-content')).toBeNull();
+    expect(screen.queryByTestId('login-page')).toBeNull();
+  });
+
   it('redirects to /login when user is not authenticated', () => {
     authState = makeAuthMock({ loading: false, user: null, isGuest: true });
 

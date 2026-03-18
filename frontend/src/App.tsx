@@ -17,6 +17,8 @@ import { ToastProvider } from './components/Toast/ToastProvider';
 import { StoreSelectionProvider } from './context/StoreSelectionContext';
 import { EntitlementProvider } from './billing/EntitlementProvider';
 import RequireAuth from './components/auth/RequireAuth';
+import RequireCreator from './components/auth/RequireCreator';
+import RequireAdmin from './components/auth/RequireAdmin';
 import { logDebug } from './utils/logger';
 
 // Non-critical overlays — lazy-loaded so they don't block initial paint
@@ -404,8 +406,8 @@ export default function App() {
                   <BrowserRouter basename={import.meta.env.BASE_URL}>
                     <Suspense fallback={<LoadingFallback />}>
                       <Routes>
-                        {/* Admin routes with dedicated layout */}
-                        <Route path="/admin" element={<AdminLayout />}>
+                        {/* Admin routes — RequireAdmin guard: redirects non-admin users to / */}
+                        <Route path="/admin" element={<RequireAdmin><AdminLayout /></RequireAdmin>}>
                           <Route index element={<AdminDashboardNew />} />
                           <Route path="users" element={<AdminUsers />} />
                           <Route path="audience" element={<AdminAudience />} />
@@ -456,7 +458,7 @@ export default function App() {
                           <Route path="inscription-pro" element={<InscriptionPro />} />
                           <Route path="espace-pro" element={<EspacePro />} />
                           <Route path="espace-pro-batiment" element={<Navigate to="/espace-pro" replace />} />
-                          <Route path="espace-createur" element={<EspaceCreateur />} />
+                          <Route path="espace-createur" element={<RequireCreator><EspaceCreateur /></RequireCreator>} />
                           <Route path="activation-createur" element={<ActivationCreateur />} />
 
                           {/* Additional feature routes */}

@@ -3,6 +3,12 @@
  *
  * Generic route guard that redirects users who don't meet a minimum role requirement.
  * Handles loading states to avoid premature redirects during auth bootstrap.
+ *
+ * Guard logic:
+ *  1. While loading OR auth not yet resolved → spinner (never redirect prematurely)
+ *  2. No user → redirect to /login?next=<current-path>
+ *  3. User present but insufficient role → redirect to `redirectTo` (default: /)
+ *  4. Role satisfied → render children
  */
 
 import { Navigate, useLocation } from "react-router-dom";
@@ -17,10 +23,13 @@ interface RequireRoleProps {
 }
 
 export default function RequireRole({ role, children, redirectTo = "/" }: RequireRoleProps) {
-  const { user, userRole, loading } = useAuth();
+  const { user, userRole, loading, authResolved } = useAuth();
   const location = useLocation();
 
-  if (loading) {
+  // Show spinner while Firebase auth is still bootstrapping.
+  // Guard BOTH `loading` and `authResolved` — defence-in-depth against any
+  // edge-case where `loading` flips to false before `authResolved` does.
+  if (loading || !authResolved) {
     return (
       <div
         data-testid="auth-loading-spinner"

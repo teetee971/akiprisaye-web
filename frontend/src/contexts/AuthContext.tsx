@@ -267,8 +267,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isGuest:         !user,
     isCitoyen:       userRole === "citoyen",
     isObservateur:   userRole === "observateur",
-    isAdmin:         userRole === "admin" || userRole === "creator",
-    isCreator:       userRole === "creator",
+    // isAdmin: only the "admin" role. Use isCreator to gate creator-space access.
+    isAdmin:         userRole === "admin",
+    // isCreator: both "creator" and "admin" can access the creator space,
+    // matching rbac.ts isCreator() and RequireCreator guard behaviour.
+    isCreator:       userRole === "creator" || userRole === "admin",
     clearError:         () => setError(null),
     clearAuthIncident:  () => setLastIncident(null),
     refreshClaims: async () => {

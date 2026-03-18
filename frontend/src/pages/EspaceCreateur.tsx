@@ -206,10 +206,11 @@ function CopyButton({ text }: { text: string }) {
 /* ─── Main component ──────────────────────────────────────────────────── */
 
 const EspaceCreateur: React.FC = () => {
-  const { user, userRole, isCreator, isAdmin, loading, signOutUser } = useAuth();
+  const { user, userRole, isCreator, loading, signOutUser, refreshClaims } = useAuth();
   const [guideOpen, setGuideOpen] = useState(!isCreator);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [envOpen, setEnvOpen] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   // Wait for auth to resolve before checking role — avoids redirect during bootstrap
   if (loading) {
@@ -221,10 +222,15 @@ const EspaceCreateur: React.FC = () => {
     );
   }
 
-  // Redirect non-admins (admins = admin OR creator role)
-  if (!isAdmin) {
+  // isCreator is true for both "creator" and "admin" roles (matches RequireCreator guard)
+  if (!isCreator) {
     return <Navigate to="/" replace />;
   }
+
+  const handleRefreshClaims = async () => {
+    setRefreshing(true);
+    try { await refreshClaims(); } finally { setRefreshing(false); }
+  };
 
   const creatorPlan = PLAN_DEFINITIONS['CREATOR'];
 
@@ -276,6 +282,16 @@ const EspaceCreateur: React.FC = () => {
               <span>📧 <strong className="text-white">{user.email}</strong></span>
               <span>🔑 UID : <code className="text-xs bg-slate-800/60 px-1.5 py-0.5 rounded text-amber-300">{user.uid}</code></span>
               <span>🏷️ Rôle : <strong className="text-amber-300">{userRole}</strong></span>
+              <button
+                type="button"
+                onClick={handleRefreshClaims}
+                disabled={refreshing}
+                title="Forcer le rechargement du rôle depuis Firebase"
+                className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-amber-400 transition-colors disabled:opacity-50"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
+                {refreshing ? 'Actualisation…' : 'Actualiser le rôle'}
+              </button>
               <button
                 onClick={signOutUser}
                 className="ml-auto flex items-center gap-1.5 text-xs text-slate-500 hover:text-red-400 transition-colors"

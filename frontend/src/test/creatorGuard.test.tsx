@@ -198,8 +198,9 @@ describe('EspaceCreateur creator guard', () => {
       isAuthenticated: true,
       email: fakeUser.email,
       displayName: fakeUser.displayName,
+      // admin has isAdmin=true AND isCreator=true (admin can access creator space)
       isAdmin: true,
-      isCreator: false,
+      isCreator: true,
     });
 
     renderCreateur();
