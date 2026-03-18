@@ -3,13 +3,59 @@
  *
  * Source officielle : données.roulez-eco.fr (relayant prix-carburants.gouv.fr)
  * Licence : Open Data gouvernemental — réutilisation libre
- * Format  : XML instantané (mis à jour plusieurs fois par jour)
+ * Format  : XML compressé au format ZIP (mis à jour plusieurs fois par jour)
  *
  * Territoires couverts : Guadeloupe (971), Martinique (972),
  *   Guyane (973), La Réunion (974), Mayotte (976)
  */
 
+import { inflateRaw } from 'zlib';
+import { promisify } from 'util';
 import { XMLParser } from 'fast-xml-parser';
+
+const inflateRawAsync = promisify(inflateRaw);
+
+// ZIP local file header signature
+const ZIP_SIGNATURE = 0x04034b50;
+
+/**
+ * Extract XML text from a single-file ZIP buffer.
+ * The government fuel prices API returns a ZIP archive containing one XML file
+ * encoded in ISO-8859-1 (Latin-1). Uses only built-in Node.js modules.
+ * @param {Buffer} buffer
+ * @returns {Promise<string>}
+ */
+async function extractXmlFromZip(buffer) {
+  if (buffer.readUInt32LE(0) !== ZIP_SIGNATURE) {
+    throw new Error('Not a valid ZIP local file header');
+  }
+  const compressionMethod = buffer.readUInt16LE(8);
+  const filenameLength    = buffer.readUInt16LE(26);
+  const extraFieldLength  = buffer.readUInt16LE(28);
+  // Compressed size from local header (may be 0 if data descriptor is used)
+  const compressedSize    = buffer.readUInt32LE(18);
+  const dataOffset        = 30 + filenameLength + extraFieldLength;
+
+  // If compressed size is 0 in the local header, read until end-of-central-directory
+  // For our use case (single well-formed ZIP), fall back to the rest of the buffer
+  const compressedData = compressedSize > 0
+    ? buffer.slice(dataOffset, dataOffset + compressedSize)
+    : buffer.slice(dataOffset);
+
+  let content;
+  if (compressionMethod === 0) {
+    // Stored — no compression
+    content = compressedData;
+  } else if (compressionMethod === 8) {
+    // Deflate
+    content = await inflateRawAsync(compressedData);
+  } else {
+    throw new Error(`Unsupported ZIP compression method: ${compressionMethod}`);
+  }
+
+  // The XML declares encoding="ISO-8859-1" (Latin-1)
+  return content.toString('latin1');
+}
 
 /** @typedef {{ territory: string; fuelType: string; price: number; stationName: string; city: string; lat?: number; lng?: number; date: string; source: string; }} FuelEntry */
 
@@ -53,8 +99,16 @@ export async function scrapeFuelPrices() {
       });
       clearTimeout(timer);
       if (res.ok) {
-        xmlText = await res.text();
-        console.log(`  ✅ [fuel] Source active : ${url} (${Math.round(xmlText.length / 1024)} Ko)`);
+        const rawBuffer = Buffer.from(await res.arrayBuffer());
+        // The API returns a ZIP archive (confirmed: "format ZIP" per data documentation)
+        if (rawBuffer.readUInt32LE(0) === ZIP_SIGNATURE) {
+          xmlText = await extractXmlFromZip(rawBuffer);
+          console.log(`  ✅ [fuel] Source active : ${url} (ZIP → ${Math.round(xmlText.length / 1024)} Ko XML)`);
+        } else {
+          // Fallback: assume raw XML (latin-1 encoded)
+          xmlText = rawBuffer.toString('latin1');
+          console.log(`  ✅ [fuel] Source active : ${url} (${Math.round(xmlText.length / 1024)} Ko)`);
+        }
         break;
       }
     } catch {
@@ -71,6 +125,10 @@ export async function scrapeFuelPrices() {
     ignoreAttributes: false,
     attributeNamePrefix: '@_',
     isArray: (name) => ['pdv', 'prix', 'horaires', 'service'].includes(name),
+    // The fuel prices XML is large (~12 MB, ~10k stations) with up to 5 levels of nesting
+    // (pdv_liste > pdv > horaires > jour > horaire). Raise the limit above the default of
+    // 100 to avoid false-positive "Maximum nested tags exceeded" errors.
+    maxNestedTags: 500,
   });
 
   let data;

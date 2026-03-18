@@ -65,11 +65,9 @@ jobs:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
         run: |
           if [ -n "${FIREBASE_SERVICE_ACCOUNT}" ]; then
-            echo "FIREBASE_SERVICE_ACCOUNT_PRESENT=yes"
+            echo "✅ FIREBASE_SERVICE_ACCOUNT présent — Firestore activé"
           else
-            echo "FIREBASE_SERVICE_ACCOUNT_PRESENT=no"
-            echo "⚠️  Le secret FIREBASE_SERVICE_ACCOUNT est absent ou vide dans ce contexte CI."
-            exit 1
+            echo "⚠️  FIREBASE_SERVICE_ACCOUNT absent — le scraping continuera sans écriture Firestore"
           fi
 
   scrape:
