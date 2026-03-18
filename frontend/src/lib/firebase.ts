@@ -8,17 +8,18 @@ import { getFirestore, type Firestore } from "firebase/firestore";
 //
 // Values are read from VITE_FIREBASE_* environment variables (injected at
 // build time by GitHub Actions / Cloudflare Pages via repository secrets).
-// The hardcoded fallbacks match frontend/.env.example and keep local dev
-// working without a .env file.  In production the secrets MUST be set so
-// the correct apiKey is embedded; the fallback is only a last resort.
+// For local development, copy frontend/.env.example to frontend/.env.local.
+// No hardcoded fallbacks are provided: a missing env var causes Firebase to
+// fail with a clear error (surfaced via `firebaseError`) rather than silently
+// connecting to the production project with a stale or wrong key.
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyDf_m8BzMVHFWoFhVLyThuKwWTMhB7u5ZY",
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "a-ki-pri-sa-ye.firebaseapp.com",
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "a-ki-pri-sa-ye",
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "a-ki-pri-sa-ye.firebasestorage.app",
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "187272078809",
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:187272078809:web:501d916973a75edb06e5c8",
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "G-W0R1B4HHE1",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
 // Detect missing VITE_FIREBASE_* secrets so diagnostic pages (Login, StatutPage)
@@ -58,7 +59,14 @@ try {
   auth = getAuth(app);
   db = getFirestore(app);
 } catch (error) {
-  firebaseError = error instanceof Error ? error.message : "Unknown Firebase initialization error";
+  firebaseError = error instanceof Error
+    ? error.message
+    : "Unknown Firebase initialization error";
+  if (!firebaseConfig.apiKey) {
+    firebaseError =
+      "VITE_FIREBASE_API_KEY is not set. " +
+      "Copy frontend/.env.example to frontend/.env.local and fill in the Firebase values.";
+  }
   console.error("Firebase initialization failed:", firebaseError);
 }
 
