@@ -56,13 +56,13 @@ for (const file of reports) {
   console.log('  Performance    : ' + ok(perf, 80) + '  ' + perf + ' / 100  (seuil ≥ 80, warn)');
   console.log('  Accessibilité  : ' + ok(a11y, 90) + '  ' + a11y + ' / 100  (seuil ≥ 90, error)');
   console.log('  Best Practices : ' + bp + ' / 100');
-  console.log('  SEO            : ' + seo + ' / 100');
+  console.log('  SEO            : ' + ok(seo, 80) + '  ' + seo + ' / 100  (seuil ≥ 80, warn)');
 
   // Markdown for GitHub Actions step summary
   summaryLines.push(`| **Performance** | ${perf} / 100 | ≥ 80 | ${ok(perf, 80)} warn |`);
   summaryLines.push(`| **Accessibilité** | ${a11y} / 100 | ≥ 90 | ${ok(a11y, 90)} error |`);
   summaryLines.push(`| **Best Practices** | ${bp} / 100 | — | — |`);
-  summaryLines.push(`| **SEO** | ${seo} / 100 | — | — |`);
+  summaryLines.push(`| **SEO** | ${seo} / 100 | ≥ 80 | ${ok(seo, 80)} warn |`);
   summaryLines.push('');
   summaryLines.push(`**URL testée :** \`${url}\``);
   summaryLines.push('');

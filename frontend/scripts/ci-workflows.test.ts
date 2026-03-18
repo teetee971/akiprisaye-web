@@ -190,6 +190,37 @@ describe('deploy-cloudflare-pages.yml — validation guard', () => {
   });
 });
 
+describe('deploy-cloudflare-pages.yml — lighthouse on real preview URL', () => {
+  const cloudflareYml = readWorkflow('deploy-cloudflare-pages.yml');
+
+  it('must have a lighthouse job', () => {
+    expect(cloudflareYml).toMatch(/^\s*lighthouse:/m);
+  });
+
+  it('lighthouse job must run after both deploy and validate', () => {
+    // Ensures the real URL is confirmed live before Lighthouse audits it.
+    expect(cloudflareYml).toMatch(/needs:\s*\[deploy,\s*validate\]/);
+  });
+
+  it('lighthouse job must use the real deployment URL via LHCI_URL or DEPLOY_URL', () => {
+    // The deployment URL from wrangler-action must be passed to Lighthouse.
+    expect(cloudflareYml).toMatch(/needs\.deploy\.outputs\.deployment_url/);
+  });
+
+  it('lighthouse job must call prepare-lighthouse-config.mjs', () => {
+    expect(cloudflareYml).toMatch(/prepare-lighthouse-config\.mjs/);
+  });
+
+  it('lighthouse job must upload reports as artifacts', () => {
+    expect(cloudflareYml).toMatch(/lighthouse-cloudflare-reports/);
+  });
+
+  it('lighthouse job must cache Puppeteer/Chrome', () => {
+    expect(cloudflareYml).toMatch(/puppeteer/);
+    expect(cloudflareYml).toMatch(/actions\/cache@v4/);
+  });
+});
+
 describe('auto-merge.yml — pull_request_target guard', () => {
   const autoMergeYml = readWorkflow('auto-merge.yml');
 

@@ -167,3 +167,60 @@ jobs:
           echo "🔖 SHA      : ${{ github.sha }}"
           echo "📅 Timestamp: $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
           echo "🚀 Statut   : 100% VERT — TOUT OK"
+
+  # ─── Lighthouse (URL réelle Cloudflare) ──────────────────────────────────────
+  # Audit Lighthouse sur l'URL de preview réelle après validation du déploiement.
+  # Plus représentatif que localhost: CDN réel, headers, compression, HTTP/2.
+  # Seuils : performance ≥ 80 (warn), accessibilité ≥ 90 (error), SEO ≥ 80 (warn).
+  lighthouse:
+    name: Lighthouse CI (Cloudflare preview)
+    needs: [deploy, validate]
+    if: needs.deploy.result == 'success' && needs.validate.result == 'success'
+    runs-on: ubuntu-latest
+    env:
+      DEPLOY_URL: ${{ needs.deploy.outputs.deployment_url || 'https://akiprisaye-web.pages.dev' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Cache Puppeteer / Chrome
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/puppeteer
+          key: puppeteer-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}
+          restore-keys: |
+            puppeteer-${{ runner.os }}-
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci --no-audit --no-fund
+
+      - name: Prepare Lighthouse config (URL réelle Cloudflare)
+        working-directory: frontend
+        env:
+          LHCI_URL: ${{ env.DEPLOY_URL }}
+        run: node scripts/prepare-lighthouse-config.mjs
+
+      - name: Run Lighthouse CI
+        working-directory: frontend
+        run: npx @lhci/cli@0.15.1 autorun --config=/tmp/lhcirc.json
+
+      - name: Print Lighthouse summary
+        if: always()
+        working-directory: frontend
+        run: node scripts/lighthouse-summary.mjs
+
+      - name: Upload Lighthouse reports (JSON + HTML)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-cloudflare-reports
+          path: frontend/.lighthouseci/
+          retention-days: 30
