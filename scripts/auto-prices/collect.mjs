@@ -23,6 +23,7 @@
  *   GITHUB_WORKSPACE         — Chemin vers le dépôt (fourni par GitHub Actions)
  */
 
+import AdmZip from 'adm-zip';
 import { XMLParser } from 'fast-xml-parser';
 import admin from 'firebase-admin';
 import { readFileSync, writeFileSync, existsSync } from 'fs';
@@ -79,14 +80,32 @@ function getFirestore() {
 async function fetchFuelXML() {
   console.log(`📡 Téléchargement flux carburants : ${GOVT_FUEL_URL}`);
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 30_000);
+  const timeout = setTimeout(() => controller.abort(), 60_000);
   try {
     const res = await fetch(GOVT_FUEL_URL, {
       signal: controller.signal,
       headers: { 'User-Agent': 'akiprisaye-bot/1.0 (prix-carburants-dom)' },
     });
     if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
-    return await res.text();
+
+    // The API returns a ZIP archive containing PrixCarburants_instantane.xml
+    // encoded in ISO-8859-1. We must extract and re-encode before parsing.
+    const arrayBuffer = await res.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    const ZIP_MAGIC = [0x50, 0x4b]; // "PK" — ZIP local file header signature
+    if (buffer[0] === ZIP_MAGIC[0] && buffer[1] === ZIP_MAGIC[1]) {
+      // ZIP magic bytes "PK" — extract the XML entry
+      const zip = new AdmZip(buffer);
+      const entry = zip.getEntries().find((e) => e.entryName.endsWith('.xml'));
+      if (!entry) throw new Error('Aucun fichier XML trouvé dans l\'archive ZIP');
+      // The XML is ISO-8859-1 — decode with latin1 then re-encode as UTF-8
+      const xmlLatin1 = entry.getData().toString('latin1');
+      return xmlLatin1;
+    }
+
+    // Fallback: plain XML (old API format)
+    return buffer.toString('latin1');
   } finally {
     clearTimeout(timeout);
   }
@@ -104,6 +123,7 @@ function parseAndAggregate(xmlText) {
     ignoreAttributes: false,
     attributeNamePrefix: '@_',
     isArray: (name) => ['pdv', 'prix'].includes(name),
+    maxNestedTags: 500,
   });
   const data = parser.parse(xmlText);
   const stations = data?.pdv_liste?.pdv ?? [];
@@ -335,7 +355,18 @@ async function main() {
     process.exit(1);
   }
 
-  // 3. Load existing data & detect shocks
+  // 3. Guard: if the feed contains no DOM-TOM stations, preserve existing data.
+  // The Metropolitan France feed (roulez-eco.fr/opendata/instantane) does not include
+  // overseas territories (971/972/973/974/976). Keep existing data in this case.
+  const hasNoDomData = Object.keys(aggregated).length === 0;
+  if (hasNoDomData) {
+    console.warn('⚠️  Aucune station DOM-TOM trouvée dans le flux XML.');
+    console.warn('   Le flux roulez-eco.fr/opendata/instantane couvre uniquement la France métropolitaine.');
+    console.warn('   Les données existantes sont conservées.');
+    process.exit(0);
+  }
+
+  // 4. Load existing data & detect shocks
   const existing = loadExistingData(filePath);
   const shocks = detectShocks(existing, aggregated, isoDate);
   if (shocks.length > 0) {

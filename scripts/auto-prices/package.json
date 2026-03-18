@@ -11,6 +11,7 @@
     "node": ">=20.0.0"
   },
   "dependencies": {
+    "adm-zip": "^0.5.16",
     "fast-xml-parser": "^4.5.4",
     "firebase-admin": "^12.1.0"
   }
