@@ -336,14 +336,19 @@ async function main() {
   // ── Shock detection ───────────────────────────────────────────────────────
   console.log('\n🔍 Détection des chocs de prix…');
   const existingFuel = loadJSON(join(dataDir, 'fuel-prices.json'));
-  const shocks = detectFuelShocks(existingFuel, fuelAggregated);
-  if (shocks.length > 0) {
-    console.log(`   🚨 ${shocks.length} choc(s) détecté(s) :`);
-    shocks.slice(0, 5).forEach((s) =>
-      console.log(`   ${s.direction === 'hausse' ? '🔴' : '🟢'} ${s.territory} ${s.type} : ${s.pct > 0 ? '+' : ''}${s.pct}%`),
+  const existingFood = loadJSON(join(dataDir, 'open-prices-dom.json'));
+  const fuelShocks   = detectFuelShocks(existingFuel, fuelAggregated);
+  const foodShocks   = detectFoodShocks(existingFood, foodDedup);
+  const shocks       = { fuel: fuelShocks, food: foodShocks };
+  const allShocks    = [...fuelShocks, ...foodShocks];
+
+  if (allShocks.length > 0) {
+    console.log(`   🚨 ${allShocks.length} choc(s) détecté(s) :`);
+    allShocks.slice(0, 5).forEach((s) =>
+      console.log(`   ${s.direction === 'hausse' ? '🔴' : '🟢'} ${s.territory} ${s.type ?? s.name} : ${s.pct > 0 ? '+' : ''}${s.pct}%`),
     );
   } else {
-    console.log('   ✅ Prix stables — aucun choc');
+    console.log('   ✅ Prix stables — aucun choc (carburant + alimentation)');
   }
 
   if (!DRY_RUN) {
@@ -425,9 +430,9 @@ async function main() {
       `| 📋 BQP (data.gouv.fr) | ${counts.bqp} entrées officielles |`,
       `| 📡 Services (ARCEP/CRE/INSEE) | ${counts.services} tarifs |`,
       '',
-      shocks.length === 0
+      allShocks.length === 0
         ? '### ✅ Prix stables — aucun choc détecté'
-        : `### 🚨 Chocs détectés (${shocks.length})\n${shocks.slice(0, 5).map((s) => `- ${s.direction === 'hausse' ? '🔴' : '🟢'} **${s.territory} ${s.type}** : ${s.pct > 0 ? '+' : ''}${s.pct}%`).join('\n')}`,
+        : `### 🚨 Chocs détectés (${allShocks.length})\n${allShocks.slice(0, 5).map((s) => `- ${s.direction === 'hausse' ? '🔴' : '🟢'} **${s.territory} ${s.type ?? s.name}** : ${s.pct > 0 ? '+' : ''}${s.pct}%`).join('\n')}`,
       '',
       report ? `### 🤖 Rapport IA\n> **${report.qualite_donnees?.toUpperCase()}** — ${report.rapport}` : '',
     ].filter((l) => l !== undefined).join('\n');
@@ -451,7 +456,7 @@ async function main() {
       services: { count: counts.services, ok: counts.services > 0 },
     },
     totalEntries,
-    shocksDetected: shocks.length,
+    shocksDetected: allShocks.length,
     status: totalEntries > 0 ? 'ok' : 'empty',
   };
   saveJSON(join(dataDir, 'scraping-health.json'), health);
