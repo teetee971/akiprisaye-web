@@ -4,14 +4,28 @@
       "url": ["http://localhost:4173"],
       "startServerCommand": "npm run preview",
       "startServerReadyTimeout": 30000,
-      "numberOfRuns": 1
+      "numberOfRuns": 1,
+      "settings": {
+        "budgets": [
+          {
+            "resourceSizes": [
+              { "resourceType": "script", "budget": 350 },
+              { "resourceType": "total",  "budget": 1200 }
+            ],
+            "resourceCounts": [
+              { "resourceType": "third-party", "budget": 10 }
+            ]
+          }
+        ]
+      }
     },
     "assert": {
       "preset": "lighthouse:recommended",
       "assertions": {
         "categories:performance": ["warn", { "minScore": 0.8 }],
         "categories:accessibility": ["error", { "minScore": 0.9 }],
-        "categories:seo": ["warn", { "minScore": 0.8 }]
+        "categories:seo": ["warn", { "minScore": 0.8 }],
+        "performance-budget": ["warn", { "minScore": 0.9 }]
       }
     },
     "upload": {

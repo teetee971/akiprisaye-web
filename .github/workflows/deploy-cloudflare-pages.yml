@@ -217,6 +217,11 @@ jobs:
         working-directory: frontend
         run: npx @lhci/cli@0.15.1 autorun --config=/tmp/lhcirc.json
 
+      - name: Write Lighthouse scores Cloudflare (référence baseline URL réelle)
+        if: always()
+        working-directory: frontend
+        run: node scripts/lighthouse-guard.mjs --write
+
       - name: Print Lighthouse summary
         if: always()
         working-directory: frontend
@@ -229,3 +234,15 @@ jobs:
           name: lighthouse-cloudflare-reports
           path: frontend/.lighthouseci/
           retention-days: 30
+
+      - name: Upload Lighthouse scores Cloudflare (référence baseline URL réelle, 90 jours)
+        # Artifact distinct de "lighthouse-scores" (ci.yml, localhost) pour séparer les baselines :
+        #   - lighthouse-scores           : scores depuis localhost (ci.yml, comparaison PR)
+        #   - lighthouse-scores-cloudflare: scores depuis CDN Cloudflare (qualité réelle)
+        # Permet un suivi indépendant par environnement.
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-scores-cloudflare
+          path: frontend/.lighthouseci/lighthouse-scores.json
+          retention-days: 90

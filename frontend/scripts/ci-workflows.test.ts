@@ -221,9 +221,46 @@ describe('deploy-cloudflare-pages.yml — lighthouse on real preview URL', () =>
     expect(cloudflareYml).toMatch(/lighthouse-cloudflare-reports/);
   });
 
-  it('lighthouse job must cache Puppeteer/Chrome', () => {
-    expect(cloudflareYml).toMatch(/puppeteer/);
-    expect(cloudflareYml).toMatch(/actions\/cache@v4/);
+  it('lighthouse job must upload scores as a separate baseline artifact', () => {
+    expect(cloudflareYml).toMatch(/lighthouse-scores-cloudflare/);
+  });
+
+  it('lighthouse job must run lighthouse-guard.mjs --write to save scores', () => {
+    expect(cloudflareYml).toMatch(/lighthouse-guard\.mjs.*--write/);
+  });
+});
+
+describe('ci.yml — Lighthouse regression guard and PR comment', () => {
+  const ciYml = readWorkflow('ci.yml');
+
+  it('lighthouse job must have pull-requests:write permission for PR comments', () => {
+    expect(ciYml).toMatch(/pull-requests:\s*write/);
+  });
+
+  it('lighthouse job must have actions:read permission for artifact download', () => {
+    expect(ciYml).toMatch(/actions:\s*read/);
+  });
+
+  it('lighthouse job must run lighthouse-guard.mjs --write after LHCI', () => {
+    expect(ciYml).toMatch(/lighthouse-guard\.mjs.*--write/);
+  });
+
+  it('lighthouse job must run regression guard --compare on pull_request events', () => {
+    expect(ciYml).toMatch(/lighthouse-guard\.mjs.*--compare/);
+    expect(ciYml).toMatch(/github\.event_name\s*==\s*['"]pull_request['"]/);
+  });
+
+  it('lighthouse job must post a PR comment with Lighthouse scores', () => {
+    expect(ciYml).toMatch(/lighthouse-pr-comment\.mjs/);
+  });
+
+  it('PR comment step must have continue-on-error to never block CI', () => {
+    expect(ciYml).toMatch(/continue-on-error:\s*true/);
+  });
+
+  it('lighthouse job must upload separate lighthouse-scores artifact (90-day baseline)', () => {
+    expect(ciYml).toMatch(/name:\s*lighthouse-scores/);
+    expect(ciYml).toMatch(/retention-days:\s*90/);
   });
 });
 

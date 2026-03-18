@@ -207,9 +207,15 @@ jobs:
   # URL cible : LHCI_URL si fourni (workflow_dispatch), sinon localhost:4173 (fallback).
   # Sur push:main, l'audit sur URL réelle se produit aussi via deploy-cloudflare-pages.yml.
   # Sorties : rapports JSON + HTML uploadés en artefacts CI + résumé dans le job summary.
+  # Régression guard : compare avec la baseline main (artifact "lighthouse-scores").
+  # PR comment : poste/met à jour un commentaire sur la PR avec les scores + delta.
   lighthouse:
     name: Lighthouse CI
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write   # pour poster un commentaire sur la PR
+      actions: read          # pour télécharger l'artifact baseline (régression guard)
     steps:
       - uses: actions/checkout@v4
 
@@ -251,6 +257,37 @@ jobs:
         working-directory: frontend
         run: npx @lhci/cli@0.15.1 autorun --config=/tmp/lhcirc.json
 
+      - name: Write Lighthouse scores (input baseline)
+        # Toujours exécuté pour capturer les scores même en cas d'erreur LHCI.
+        # Écrit .lighthouseci/lighthouse-scores.json, uploadé comme artifact "lighthouse-scores".
+        if: always()
+        working-directory: frontend
+        run: node scripts/lighthouse-guard.mjs --write
+
+      - name: Régression guard (comparaison avec baseline main)
+        # Télécharge l'artifact "lighthouse-scores" du dernier run main via l'API GitHub.
+        # Échoue si un score baisse de plus de 5 points par rapport à la baseline.
+        # Écrit /tmp/lh-baseline.json pour le commentaire PR.
+        if: always() && github.event_name == 'pull_request'
+        working-directory: frontend
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: node scripts/lighthouse-guard.mjs --compare
+
+      - name: PR comment — scores Lighthouse + delta
+        # Poste ou met à jour un commentaire sur la PR avec les scores et le delta vs main.
+        # Ne fait jamais échouer la CI (continue-on-error: true).
+        if: always() && github.event_name == 'pull_request'
+        continue-on-error: true
+        working-directory: frontend
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
+          BASELINE_SCORES_PATH: /tmp/lh-baseline.json
+        run: node scripts/lighthouse-pr-comment.mjs
+
       - name: Print Lighthouse summary
         if: always()
         working-directory: frontend
@@ -263,6 +300,16 @@ jobs:
           name: lighthouse-reports
           path: frontend/.lighthouseci/
           retention-days: 30
+
+      - name: Upload Lighthouse scores (référence baseline, 90 jours)
+        # Uploadé séparément du rapport complet pour être facilement téléchargeable.
+        # Utilisé comme baseline par le régression guard des prochains runs sur PR.
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-scores
+          path: frontend/.lighthouseci/lighthouse-scores.json
+          retention-days: 90
 
   # ─── 8. build-test (gate rétro-compatible) ──────────────────────────────────
   # Ce job émet le check "build-test" requis par la règle de protection de
