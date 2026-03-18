@@ -54,6 +54,18 @@ jobs:
         working-directory: scripts/auto-prices
         run: npm install
 
+      - name: 🔍 Diagnostic secret Firebase
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          if [ -n "${FIREBASE_SERVICE_ACCOUNT}" ]; then
+            echo "FIREBASE_SERVICE_ACCOUNT_PRESENT=yes"
+          else
+            echo "FIREBASE_SERVICE_ACCOUNT_PRESENT=no"
+            echo "⚠️  Le secret FIREBASE_SERVICE_ACCOUNT est absent ou vide dans ce contexte CI."
+            exit 1
+          fi
+
       - name: ⛽ Collecte des prix carburants
         working-directory: scripts/auto-prices
         env:
@@ -73,11 +85,11 @@ jobs:
           git config user.email "bot-prices@akiprisaye.fr"
           if ! git diff --quiet frontend/public/data/fuel-prices.json; then
             git add frontend/public/data/fuel-prices.json
-            git commit -m "⛽ [auto] Prix carburants DOM-TOM — $(date -u '+%Y-%m-%d')
-
-Source : prix-carburants.gouv.fr
-Territoires : GP, MQ, GF, RE, YT
-[skip ci]"
+            git commit \
+              -m "⛽ [auto] Prix carburants DOM-TOM — $(date -u '+%Y-%m-%d')" \
+              -m "Source : prix-carburants.gouv.fr" \
+              -m "Territoires : GP, MQ, GF, RE, YT" \
+              -m "[skip ci]"
             git push
           else
             echo "ℹ️  Aucune modification fuel-prices.json"

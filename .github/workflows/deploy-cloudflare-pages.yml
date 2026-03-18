@@ -124,10 +124,18 @@ jobs:
     if: needs.deploy.result == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    env:
-      # Use the deployment URL from wrangler-action; fall back to the stable production URL.
-      SITE_URL: ${{ needs.deploy.outputs.deployment_url || env.DEFAULT_PREVIEW_URL }}
     steps:
+      - name: Resolve deployment URL
+        # The 'env' context is not in the allowed list for jobs.<job_id>.env:
+        # (GitHub Actions restricts it there; actionlint enforces this rule).
+        # Using run: to resolve the URL and export it via GITHUB_ENV is the correct pattern.
+        run: |
+          URL="${{ needs.deploy.outputs.deployment_url }}"
+          if [ -z "$URL" ]; then
+            URL="${{ env.DEFAULT_PREVIEW_URL }}"
+          fi
+          echo "SITE_URL=$URL" >> "$GITHUB_ENV"
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -182,9 +190,18 @@ jobs:
     needs: [deploy, validate]
     if: needs.deploy.result == 'success' && needs.validate.result == 'success'
     runs-on: ubuntu-latest
-    env:
-      DEPLOY_URL: ${{ needs.deploy.outputs.deployment_url || env.DEFAULT_PREVIEW_URL }}
     steps:
+      - name: Resolve deployment URL
+        # The 'env' context is not in the allowed list for jobs.<job_id>.env:
+        # (GitHub Actions restricts it there; actionlint enforces this rule).
+        # Using run: to resolve the URL and export it via GITHUB_ENV is the correct pattern.
+        run: |
+          URL="${{ needs.deploy.outputs.deployment_url }}"
+          if [ -z "$URL" ]; then
+            URL="${{ env.DEFAULT_PREVIEW_URL }}"
+          fi
+          echo "DEPLOY_URL=$URL" >> "$GITHUB_ENV"
+
       - name: Checkout
         uses: actions/checkout@v4
 
