@@ -18,6 +18,7 @@ service-account.json
 service-account-file.json
 firebase-adminsdk-*.json
 google-credentials.json
+google-services.json
 secrets.json
 
 # Dépendances & builds

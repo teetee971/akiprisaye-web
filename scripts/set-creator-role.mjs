@@ -39,7 +39,7 @@
  *     ⚠️  Ne commitez JAMAIS ce fichier JSON — il est dans .gitignore
  *
  *     💡 ALTERNATIVE — variable d'environnement (GitHub Actions / CI) :
- *        Exportez le contenu JSON brut dans la variable FIREBASE_SERVICE_ACCOUNT_KEY.
+ *        Exportez le contenu JSON brut dans la variable FIREBASE_SERVICE_ACCOUNT.
  *        Le script lira d'abord cette variable avant de chercher un fichier.
  *
  * ── UTILISATION ────────────────────────────────────────────────────────────
@@ -59,7 +59,7 @@
  *    node set-creator-role.mjs teetee971@gmail.com
  *
  *  Depuis GitHub Actions (sans PC ni terminal) :
- *    1. Ajoutez le contenu JSON comme secret GitHub : FIREBASE_SERVICE_ACCOUNT_KEY
+ *    1. Ajoutez le contenu JSON comme secret GitHub : FIREBASE_SERVICE_ACCOUNT
  *    2. Déclenchez le workflow "✨ Attribuer le rôle Créateur" depuis l'onglet Actions
  *
  *  Exemple local :
@@ -93,16 +93,25 @@ if (!email || !email.includes('@')) {
 /* ── 2. Localiser / lire la clé de service Firebase Admin ────────────── */
 
 // Priorité 1 : variable d'environnement (GitHub Actions, CI, Termux inline)
-const envKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+// Accepte aussi FIREBASE_SERVICE_ACCOUNT_KEY pour rétrocompatibilité.
+const envKey = process.env.FIREBASE_SERVICE_ACCOUNT || process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
 
 let serviceAccount;
 
 if (envKey) {
   try {
-    serviceAccount = JSON.parse(envKey);
-    console.log('\n✅ Clé de service chargée depuis FIREBASE_SERVICE_ACCOUNT_KEY (variable d\'environnement)');
-  } catch (err) {
-    console.error(`\n❌ FIREBASE_SERVICE_ACCOUNT_KEY contient un JSON invalide : ${err.message}\n`);
+    // Accepte base64 ou JSON brut
+    try {
+      serviceAccount = JSON.parse(Buffer.from(envKey, 'base64').toString('utf-8'));
+    } catch {
+      serviceAccount = JSON.parse(envKey);
+    }
+    console.log('\n✅ Clé de service chargée depuis FIREBASE_SERVICE_ACCOUNT (variable d\'environnement)');
+  } catch {
+    // Do NOT include err.message — JSON.parse errors can echo back a portion
+    // of the raw input string, which would expose the secret in terminal output.
+    console.error('\n❌ FIREBASE_SERVICE_ACCOUNT contient un JSON invalide.');
+    console.error('   → La valeur doit être du JSON brut ou encodé en base64.\n');
     process.exit(1);
   }
 } else {
@@ -142,7 +151,8 @@ ${SERVICE_ACCOUNT_PATHS.map(p => '      • ' + p).join('\n')}
    node set-creator-role.mjs ${email}
 
    ── Option C — Variable d'environnement (GitHub Actions / CI) ───────────
-   export FIREBASE_SERVICE_ACCOUNT_KEY='<contenu JSON brut>'
+   # Lire depuis un fichier pour ne pas exposer le contenu dans l'historique shell :
+   export FIREBASE_SERVICE_ACCOUNT="$(cat serviceAccountKey.json)"
    node scripts/set-creator-role.mjs ${email}
 
    ⚠️  Ne commitez JAMAIS ce fichier dans Git (il est dans .gitignore).
@@ -154,7 +164,16 @@ ${SERVICE_ACCOUNT_PATHS.map(p => '      • ' + p).join('\n')}
     serviceAccount = JSON.parse(readFileSync(serviceAccountPath, 'utf8'));
     console.log(`\n✅ Clé de service chargée : ${serviceAccountPath}`);
   } catch (err) {
-    console.error(`\n❌ Impossible de lire la clé de service : ${err.message}\n`);
+    // Only log the file path and generic message — not err.message, which could
+    // echo back characters from the private key if JSON.parse fails mid-string.
+    // Node.js IO errors (ENOENT, EACCES, …) all have a code starting with 'E'
+    // followed by uppercase ASCII letters — safe to show the code alone.
+    const isIOError = err?.code && /^E[A-Z]+$/.test(err.code); // e.g. ENOENT, EACCES
+    if (isIOError) {
+      console.error(`\n❌ Impossible de lire le fichier : ${serviceAccountPath}\n   ${err.code}\n`);
+    } else {
+      console.error(`\n❌ Clé de service invalide dans ${serviceAccountPath} — JSON mal formé.\n`);
+    }
     process.exit(1);
   }
 }

@@ -4,7 +4,7 @@ name: "✨ Attribuer le rôle Créateur"
 #
 # PRÉREQUIS — ajouter un secret GitHub avant de lancer ce workflow :
 #   Dépôt → Settings → Secrets and variables → Actions → New repository secret
-#   Nom   : FIREBASE_SERVICE_ACCOUNT_KEY
+#   Nom   : FIREBASE_SERVICE_ACCOUNT
 #   Valeur: contenu JSON brut du fichier serviceAccountKey.json téléchargé depuis
 #           https://console.firebase.google.com/project/a-ki-pri-sa-ye/settings/serviceaccounts/adminsdk
 #
@@ -38,5 +38,5 @@ jobs:
 
       - name: Attribuer le rôle Créateur dans Firestore
         env:
-          FIREBASE_SERVICE_ACCOUNT_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
         run: node scripts/set-creator-role.mjs "${{ github.event.inputs.email }}"
