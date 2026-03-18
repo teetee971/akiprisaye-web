@@ -155,14 +155,14 @@ const ACTIONS_STEPS: MobileStep[] = [
   {
     num: 2,
     title: 'Ajoutez le secret GitHub',
-    detail: 'Dans votre dépôt GitHub → Settings → Secrets and variables → Actions → "New repository secret". Nom : FIREBASE_SERVICE_ACCOUNT_KEY. Valeur : collez le contenu JSON copié.',
+    detail: 'Dans votre dépôt GitHub → Settings → Secrets and variables → Actions → "New repository secret". Nom : FIREBASE_SERVICE_ACCOUNT. Valeur : collez le contenu JSON copié.',
     link: { label: 'GitHub → Secrets → Nouveau secret →', href: 'https://github.com/teetee971/akiprisaye-web/settings/secrets/actions/new' },
   },
   {
     num: 3,
     title: 'Déclenchez le workflow depuis l\'onglet Actions',
-    detail: 'Dans votre dépôt → onglet "Actions" → workflow "✨ Attribuer le rôle Créateur" → "Run workflow" → entrez votre email → "Run workflow".',
-    link: { label: 'GitHub → Actions → ✨ Attribuer le rôle Créateur →', href: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
+    detail: 'Dans votre dépôt → onglet "Actions" → workflow "✨ Attribuer un rôle utilisateur" → "Run workflow" → entrez votre email et choisissez le rôle → "Run workflow".',
+    link: { label: 'GitHub → Actions → ✨ Attribuer un rôle utilisateur →', href: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
   },
   {
     num: 4,
