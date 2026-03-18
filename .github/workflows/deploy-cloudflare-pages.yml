@@ -126,8 +126,9 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Resolve deployment URL
-        # env context is not available in job-level env:, but IS valid in run: scripts.
-        # We export SITE_URL to GITHUB_ENV so all subsequent steps can use $SITE_URL.
+        # The 'env' context is not in the allowed list for jobs.<job_id>.env:
+        # (GitHub Actions restricts it there; actionlint enforces this rule).
+        # Using run: to resolve the URL and export it via GITHUB_ENV is the correct pattern.
         run: |
           URL="${{ needs.deploy.outputs.deployment_url }}"
           if [ -z "$URL" ]; then
@@ -191,8 +192,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Resolve deployment URL
-        # env context is not available in job-level env:, but IS valid in run: scripts.
-        # We export DEPLOY_URL to GITHUB_ENV so all subsequent steps can use $DEPLOY_URL.
+        # The 'env' context is not in the allowed list for jobs.<job_id>.env:
+        # (GitHub Actions restricts it there; actionlint enforces this rule).
+        # Using run: to resolve the URL and export it via GITHUB_ENV is the correct pattern.
         run: |
           URL="${{ needs.deploy.outputs.deployment_url }}"
           if [ -z "$URL" ]; then
