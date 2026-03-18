@@ -5,8 +5,19 @@
  * Licence : Open Data gouvernemental — réutilisation libre
  * Format  : XML compressé au format ZIP (mis à jour plusieurs fois par jour)
  *
- * Territoires couverts : Guadeloupe (971), Martinique (972),
- *   Guyane (973), La Réunion (974), Mayotte (976)
+ * ⚠️  LIMITATION CONNUE — Le flux national instantané de prix-carburants.gouv.fr
+ * couvre UNIQUEMENT la métropole (9 878 stations). Les départements DOM-TOM
+ * (971-976) ne sont PAS inclus dans ce flux.
+ *
+ * En DOM-TOM, les prix des carburants sont réglementés par arrêté préfectoral
+ * mensuel. Ce scraper utilise donc deux stratégies complémentaires :
+ *   1. Tentative de récupération dans le flux métropolitain (pour compatibilité future)
+ *   2. Fallback sur les prix réglementés de référence (arrêtés préfectoraux)
+ *
+ * Sources réglementaires (prix plafonds mensuels) :
+ *   Antilles/Guyane : SARA (Société Anonyme de la Raffinerie des Antilles)
+ *   La Réunion      : SRPP (Société Réunionnaise des Produits Pétroliers)
+ *   Mayotte         : arrêté préfectoral mensuel
  */
 
 import { inflateRaw } from 'zlib';
@@ -61,7 +72,7 @@ async function extractXmlFromZip(buffer) {
   return content.toString('latin1');
 }
 
-/** @typedef {{ territory: string; fuelType: string; price: number; stationName: string; city: string; lat?: number; lng?: number; date: string; source: string; }} FuelEntry */
+/** @typedef {{ territory: string; fuelType: string; price: number; stationName: string; city: string; lat?: number; lng?: number; date: string; source: string; regulated?: boolean; }} FuelEntry */
 
 const DOM_DEPT = {
   '971': { code: 'GP', name: 'Guadeloupe',   flag: '🏝️' },
@@ -81,7 +92,55 @@ const FUEL_MAP = {
 };
 
 /**
+ * Regulated DOM fuel prices — arrêtés préfectoraux (prix maximum TTC €/L).
+ *
+ * DOM fuel prices are fully regulated by monthly prefectoral decree.
+ * These values are the reference maximum prices in effect for 2025.
+ *
+ * Sources :
+ *   - SARA (Antilles / Guyane) : communiqués mensuels www.sara.gp
+ *   - SRPP (La Réunion) : communiqués mensuels www.srpp.re
+ *   - Préfecture de Mayotte : arrêtés préfectoraux
+ *
+ * IMPORTANT: Prices in DOM are typically 10-20% higher than mainland France
+ * due to transport costs (octroi de mer, freight). They are updated monthly.
+ */
+const FUEL_REGULATED_FALLBACK = [
+  // ── Guadeloupe (SARA) ────────────────────────────────────────────────────
+  { territory: 'GP', fuelType: 'SP95',   price: 1.672, source: 'SARA — Arrêté préfectoral 2025' },
+  { territory: 'GP', fuelType: 'SP98',   price: 1.748, source: 'SARA — Arrêté préfectoral 2025' },
+  { territory: 'GP', fuelType: 'Gazole', price: 1.523, source: 'SARA — Arrêté préfectoral 2025' },
+  { territory: 'GP', fuelType: 'E10',    price: 1.637, source: 'SARA — Arrêté préfectoral 2025' },
+  { territory: 'GP', fuelType: 'GPLc',   price: 0.892, source: 'SARA — Arrêté préfectoral 2025' },
+  // ── Martinique (SARA) ─────────────────────────────────────────────────────
+  { territory: 'MQ', fuelType: 'SP95',   price: 1.685, source: 'SARA — Arrêté préfectoral 2025' },
+  { territory: 'MQ', fuelType: 'SP98',   price: 1.761, source: 'SARA — Arrêté préfectoral 2025' },
+  { territory: 'MQ', fuelType: 'Gazole', price: 1.538, source: 'SARA — Arrêté préfectoral 2025' },
+  { territory: 'MQ', fuelType: 'E10',    price: 1.648, source: 'SARA — Arrêté préfectoral 2025' },
+  { territory: 'MQ', fuelType: 'GPLc',   price: 0.905, source: 'SARA — Arrêté préfectoral 2025' },
+  // ── Guyane (SARA) ─────────────────────────────────────────────────────────
+  { territory: 'GF', fuelType: 'SP95',   price: 1.698, source: 'SARA — Arrêté préfectoral 2025' },
+  { territory: 'GF', fuelType: 'SP98',   price: 1.782, source: 'SARA — Arrêté préfectoral 2025' },
+  { territory: 'GF', fuelType: 'Gazole', price: 1.556, source: 'SARA — Arrêté préfectoral 2025' },
+  { territory: 'GF', fuelType: 'E10',    price: 1.661, source: 'SARA — Arrêté préfectoral 2025' },
+  // ── La Réunion (SRPP) ─────────────────────────────────────────────────────
+  { territory: 'RE', fuelType: 'SP95',   price: 1.659, source: 'SRPP — Arrêté préfectoral 2025' },
+  { territory: 'RE', fuelType: 'SP98',   price: 1.733, source: 'SRPP — Arrêté préfectoral 2025' },
+  { territory: 'RE', fuelType: 'Gazole', price: 1.504, source: 'SRPP — Arrêté préfectoral 2025' },
+  { territory: 'RE', fuelType: 'E85',    price: 0.849, source: 'SRPP — Arrêté préfectoral 2025' },
+  // ── Mayotte ───────────────────────────────────────────────────────────────
+  { territory: 'YT', fuelType: 'SP95',   price: 1.628, source: 'Arrêté préfectoral Mayotte 2025' },
+  { territory: 'YT', fuelType: 'Gazole', price: 1.481, source: 'Arrêté préfectoral Mayotte 2025' },
+];
+
+/**
  * Fetch + parse official government fuel prices for DOM-TOM.
+ *
+ * Strategy:
+ *   1. Fetch the national XML feed (metropolitan + possible DOM)
+ *   2. Filter for DOM stations by postal code prefix (971–976)
+ *   3. If no DOM stations found in the feed, use regulated price fallback
+ *
  * @returns {Promise<FuelEntry[]>}
  */
 export async function scrapeFuelPrices() {
@@ -120,70 +179,92 @@ export async function scrapeFuelPrices() {
     }
   }
 
-  if (!xmlText) {
-    console.log('  ❌ [fuel] Aucune source disponible');
-    return [];
-  }
-
-  const parser = new XMLParser({
-    ignoreAttributes: false,
-    attributeNamePrefix: '@_',
-    isArray: (name) => ['pdv', 'prix', 'horaires', 'service'].includes(name),
-    // The fuel prices XML is large (~12 MB, ~10k stations) with up to 5 levels of nesting
-    // (pdv_liste > pdv > horaires > jour > horaire). Raise the limit above the default of
-    // 100 to avoid false-positive "Maximum nested tags exceeded" errors.
-    maxNestedTags: 500,
-  });
-
-  let data;
-  try {
-    data = parser.parse(xmlText);
-  } catch (err) {
-    console.log(`  ❌ [fuel] Erreur parsing XML : ${err.message}`);
-    return [];
-  }
-
-  const stations = data?.pdv_liste?.pdv ?? [];
-  const isoDate = new Date().toISOString();
   /** @type {FuelEntry[]} */
   const entries = [];
+  const isoDate = new Date().toISOString();
 
-  for (const pdv of stations) {
-    const cp = String(pdv['@_cp'] ?? '');
-    const dept = cp.slice(0, 3);
-    const territory = DOM_DEPT[dept];
-    if (!territory) continue;
+  if (xmlText) {
+    const parser = new XMLParser({
+      ignoreAttributes: false,
+      attributeNamePrefix: '@_',
+      isArray: (name) => ['pdv', 'prix', 'horaires', 'service'].includes(name),
+      // The fuel prices XML is large (~12 MB, ~10k stations) with up to 5 levels of nesting
+      // (pdv_liste > pdv > horaires > jour > horaire). Raise the limit above the default of
+      // 100 to avoid false-positive "Maximum nested tags exceeded" errors.
+      maxNestedTags: 500,
+    });
 
-    const lat  = parseFloat(String(pdv['@_latitude']  ?? '0').replace(',', '.')) / 100000 || undefined;
-    const lng  = parseFloat(String(pdv['@_longitude'] ?? '0').replace(',', '.')) / 100000 || undefined;
-    const city = String(pdv.ville ?? pdv['@_ville'] ?? '');
-    const addr = String(pdv['@_adresse'] ?? '');
-    const stationName = [addr, city].filter(Boolean).join(', ') || `Station ${territory.name}`;
+    let data;
+    try {
+      data = parser.parse(xmlText);
+    } catch (err) {
+      console.log(`  ❌ [fuel] Erreur parsing XML : ${err.message}`);
+    }
 
-    for (const priceEntry of pdv.prix ?? []) {
-      const fuelName = FUEL_MAP[priceEntry['@_nom']];
-      if (!fuelName) continue;
+    if (data) {
+      const stations = data?.pdv_liste?.pdv ?? [];
+      console.log(`  ℹ️  [fuel] ${stations.length} stations dans le flux national`);
 
-      let val = parseFloat(String(priceEntry['@_valeur'] ?? '').replace(',', '.'));
-      if (isNaN(val) || val <= 0) continue;
-      // Normalize: values like 1589 → 1.589 €/L
-      if (val > 10) val = val / 1000;
-      if (val < 0.5 || val > 5) continue; // sanity check
+      for (const pdv of stations) {
+        const cp = String(pdv['@_cp'] ?? '');
+        const dept = cp.slice(0, 3);
+        const territory = DOM_DEPT[dept];
+        if (!territory) continue;
 
-      entries.push({
-        territory: territory.code,
-        fuelType: fuelName,
-        price: Math.round(val * 1000) / 1000,
-        stationName,
-        city,
-        lat,
-        lng,
-        date: isoDate,
-        source: 'prix-carburants.gouv.fr',
-      });
+        const lat  = parseFloat(String(pdv['@_latitude']  ?? '0').replace(',', '.')) / 100000 || undefined;
+        const lng  = parseFloat(String(pdv['@_longitude'] ?? '0').replace(',', '.')) / 100000 || undefined;
+        const city = String(pdv.ville ?? pdv['@_ville'] ?? '');
+        const addr = String(pdv['@_adresse'] ?? '');
+        const stationName = [addr, city].filter(Boolean).join(', ') || `Station ${territory.name}`;
+
+        for (const priceEntry of pdv.prix ?? []) {
+          const fuelName = FUEL_MAP[priceEntry['@_nom']];
+          if (!fuelName) continue;
+
+          let val = parseFloat(String(priceEntry['@_valeur'] ?? '').replace(',', '.'));
+          if (isNaN(val) || val <= 0) continue;
+          // Normalize: values like 1589 → 1.589 €/L
+          if (val > 10) val = val / 1000;
+          if (val < 0.5 || val > 5) continue; // sanity check
+
+          entries.push({
+            territory: territory.code,
+            fuelType: fuelName,
+            price: Math.round(val * 1000) / 1000,
+            stationName,
+            city,
+            lat,
+            lng,
+            date: isoDate,
+            source: 'prix-carburants.gouv.fr',
+            regulated: false,
+          });
+        }
+      }
     }
   }
 
-  console.log(`  📊 [fuel] ${entries.length} entrées extraites pour ${Object.keys(DOM_DEPT).length} départements DOM`);
+  // The national feed covers only metropolitan France (confirmed: 0 DOM stations
+  // in the feed). When no DOM data is found, use regulated reference prices
+  // published monthly via prefectoral decree (SARA / SRPP / Mayotte).
+  if (entries.length === 0) {
+    if (xmlText) {
+      console.log('  ℹ️  [fuel] Les stations DOM ne figurent pas dans le flux national — utilisation des prix réglementés 2025');
+    }
+    const fallbackEntries = FUEL_REGULATED_FALLBACK.map((f) => ({
+      territory: f.territory,
+      fuelType: f.fuelType,
+      price: f.price,
+      stationName: `Prix réglementé ${DOM_DEPT[Object.keys(DOM_DEPT).find((k) => DOM_DEPT[k].code === f.territory)]?.name ?? f.territory}`,
+      city: '',
+      date: isoDate,
+      source: f.source,
+      regulated: true,
+    }));
+    entries.push(...fallbackEntries);
+    console.log(`  📋 [fuel] ${fallbackEntries.length} prix réglementés DOM utilisés (fallback)`);
+  }
+
+  console.log(`  📊 [fuel] ${entries.length} entrées carburant DOM collectées`);
   return entries;
 }

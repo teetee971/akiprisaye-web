@@ -14,51 +14,12 @@
  */
 
 import { XMLParser } from 'fast-xml-parser';
+import { sleep, fetchJSONWithRetry, fetchTextWithRetry } from './utils.mjs';
 
 /** @typedef {{ service: string; category: string; territory: string; price: number; unit: string; period: string; source: string; sourceUrl: string; }} ServiceEntry */
 
-async function fetchJSON(url, label = '') {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 20_000);
-  try {
-    const res = await fetch(url, {
-      signal: controller.signal,
-      headers: {
-        'User-Agent': 'akiprisaye-opendata-bot/2.0 (https://github.com/teetee971/akiprisaye-web)',
-        Accept: 'application/json',
-      },
-    });
-    clearTimeout(timer);
-    if (!res.ok) return null;
-    return await res.json();
-  } catch (err) {
-    clearTimeout(timer);
-    if (label) console.log(`  ⚠️  [services] ${label} : ${err.message}`);
-    return null;
-  }
-}
-
-/** Fetch raw text (used for SDMX-XML endpoints such as INSEE BDM). */
-async function fetchText(url, label = '') {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 20_000);
-  try {
-    const res = await fetch(url, {
-      signal: controller.signal,
-      headers: {
-        'User-Agent': 'akiprisaye-opendata-bot/2.0 (https://github.com/teetee971/akiprisaye-web)',
-        Accept: 'application/xml, text/xml, */*',
-      },
-    });
-    clearTimeout(timer);
-    if (!res.ok) return null;
-    return await res.text();
-  } catch (err) {
-    clearTimeout(timer);
-    if (label) console.log(`  ⚠️  [services] ${label} : ${err.message}`);
-    return null;
-  }
-}
+const fetchJSON = (url, label) => fetchJSONWithRetry(url, label, 'services');
+const fetchText = (url, label) => fetchTextWithRetry(url, label, 'services');
 
 /**
  * Fetch telecom price data from ARCEP open data via data.gouv.fr
@@ -80,9 +41,7 @@ async function fetchTelecomPrices() {
     );
     if (!csvRes) continue;
 
-    const content = await fetch(csvRes.url, {
-      headers: { 'User-Agent': 'akiprisaye-opendata-bot/2.0' },
-    }).then((r) => (r.ok ? r.text() : null)).catch(() => null);
+    const content = await fetchTextWithRetry(csvRes.url, 'ARCEP CSV resource', 'services');
 
     if (!content) continue;
 

@@ -15,6 +15,8 @@
  *   4. Retourne des objets FoodPriceEntry normalisés
  */
 
+import { sleep, fetchJSONWithRetry } from './utils.mjs';
+
 /** @typedef {{ ean: string; productName: string; brand: string; category: string; territory: string; price: number; currency: string; store?: string; city?: string; date: string; source: string; nutritionGrade?: string; }} FoodPriceEntry */
 
 /** Codes ISO-3166-1 alpha-2 des territoires DOM */
@@ -29,35 +31,9 @@ const DOM_COUNTRIES = {
 /** Pause entre les requêtes API pour respecter les rate limits */
 const REQUEST_DELAY_MS = 500;
 
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-
-async function fetchJSON(url, label) {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 20_000);
-  try {
-    const res = await fetch(url, {
-      signal: controller.signal,
-      headers: {
-        'User-Agent': 'akiprisaye-opendata-bot/2.0 (https://github.com/teetee971/akiprisaye-web; contact: contact@akiprisaye.fr)',
-        'Accept': 'application/json',
-      },
-    });
-    clearTimeout(timer);
-    if (!res.ok) {
-      console.log(`  ⚠️  [food] ${label} HTTP ${res.status}`);
-      return null;
-    }
-    return await res.json();
-  } catch (err) {
-    clearTimeout(timer);
-    console.log(`  ⚠️  [food] ${label} erreur : ${err.message}`);
-    return null;
-  }
-}
-
 /**
  * Récupère les prix récents pour un pays DOM depuis Open Prices API,
- * avec pagination (max `maxPages` pages de 100 résultats).
+ * avec pagination (max `maxPages` pages de 100 résultats) et ré-essais automatiques.
  * @param {string} countryCode  ex: 'GP'
  * @param {number} maxPages     nombre maximal de pages à charger (défaut 3)
  * @returns {Promise<any[]>}
@@ -71,7 +47,7 @@ async function fetchOpenPricesByCountry(countryCode, maxPages = 3) {
       `https://prices.openfoodfacts.org/api/v1/prices?` +
       `location_country=${countryCode}&order_by=-date&size=${pageSize}&page=${page}`;
 
-    const data = await fetchJSON(url, `OpenPrices ${countryCode} p${page}`);
+    const data = await fetchJSONWithRetry(url, `OpenPrices ${countryCode} p${page}`, 'food');
     const items = data?.items ?? [];
     all.push(...items);
 
@@ -90,7 +66,7 @@ async function fetchOpenPricesByCountry(countryCode, maxPages = 3) {
  */
 async function fetchProductInfo(ean) {
   const url = `https://world.openfoodfacts.org/api/v2/product/${ean}?fields=product_name,brands,categories_tags,nutrition_grades`;
-  const data = await fetchJSON(url, `OFF EAN ${ean}`);
+  const data = await fetchJSONWithRetry(url, `OFF EAN ${ean}`, 'food');
   if (!data?.product) return null;
   const p = data.product;
   return {
