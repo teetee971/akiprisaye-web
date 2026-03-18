@@ -49,6 +49,8 @@ export default defineConfig({
     chunkSizeWarningLimit: 1000,
     // Split CSS per chunk so only needed styles are loaded
     cssCodeSplit: true,
+    // Disable modulepreload polyfill — all target browsers support <link rel="modulepreload"> natively
+    modulePreload: { polyfill: false },
     // Terser minification: drop console/debugger, inline small functions
     minify: 'terser',
     terserOptions: {
@@ -71,6 +73,18 @@ export default defineConfig({
           }
           if (id.includes('react-router-dom') || id.includes('react-router/')) {
             return 'vendor-react-router';
+          }
+          // ── Onboarding tour (react-joyride — lazy-loaded, keep in its own chunk) ──
+          if (id.includes('react-joyride') || id.includes('react-floater') || id.includes('scrollparent') || id.includes('lodash.merge')) {
+            return 'vendor-joyride';
+          }
+          // ── Sentry (lazy-loaded via requestIdleCallback — keep in its own chunk) ──
+          if (id.includes('@sentry/') || id.includes('sentry-browser')) {
+            return 'vendor-sentry';
+          }
+          // ── web-vitals (lazy-loaded — keep in its own chunk) ──────────────
+          if (id.includes('web-vitals')) {
+            return 'vendor-web-vitals';
           }
           // ── Charts (recharts + d3 ecosystem) ──────────────────────────────
           if (id.includes('recharts') || id.includes('/d3-') || id.includes('/victory-')) {

@@ -79,6 +79,10 @@
     <!-- Preconnect for Firebase (used only after app shell loads) -->
     <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin />
     <link rel="dns-prefetch" href="https://firestore.googleapis.com" />
+    <link rel="preconnect" href="https://identitytoolkit.googleapis.com" crossorigin />
+    <link rel="dns-prefetch" href="https://identitytoolkit.googleapis.com" />
+    <link rel="preconnect" href="https://securetoken.googleapis.com" crossorigin />
+    <link rel="dns-prefetch" href="https://securetoken.googleapis.com" />
 
     <!-- Icons -->
     <link rel="icon" type="image/svg+xml" href="%BASE_URL%logo-akiprisaye.svg" />
@@ -88,10 +92,13 @@
     <!-- Preload critical assets -->
     <link rel="preload" as="image" href="%BASE_URL%logo-akiprisaye.svg" fetchpriority="high" />
     <!-- Preload the hero section image (rendered as <img fetchpriority=high> in Home.tsx — crossorigin must match) -->
+    <!-- imagesrcset/imagesizes let the browser preload the right size for the viewport -->
     <link
       rel="preload"
       as="image"
       href="https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fm=webp&fit=crop&w=1600&q=80"
+      imagesrcset="https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fm=webp&fit=crop&w=800&q=80 800w, https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fm=webp&fit=crop&w=1200&q=80 1200w, https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fm=webp&fit=crop&w=1600&q=80 1600w"
+      imagesizes="100vw"
       fetchpriority="high"
       crossorigin="anonymous"
     />
@@ -168,14 +175,35 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="A KI PRI SA YÉ" />
 
-    <!-- Base styles to prevent white flash -->
+    <!-- Base styles to prevent white flash + critical CSS custom properties.
+         These vars are normally in glass.css (loaded asynchronously by Vite).
+         Inlining them here prevents FOUC and lets the hero render at full quality
+         before the CSS bundle arrives. -->
     <style>
+      /* Critical CSS custom properties — subset of glass.css :root */
+      :root {
+        --bg: #0B1220;
+        --text: #E5E7EB;
+        --text-secondary: #9CA3AF;
+        --accent: #4AA3FF;
+        --accent-secondary: #6EE7B7;
+        --glass: rgba(255, 255, 255, 0.08);
+        --glass-hover: rgba(255, 255, 255, 0.12);
+        --glass-strong: rgba(255, 255, 255, 0.15);
+        --glass-border: rgba(255, 255, 255, 0.15);
+        --glass-border-hover: rgba(255, 255, 255, 0.25);
+        --safe-top: env(safe-area-inset-top);
+        --safe-bottom: env(safe-area-inset-bottom);
+        --safe-left: env(safe-area-inset-left);
+        --safe-right: env(safe-area-inset-right);
+      }
       body {
         margin: 0;
         padding: 0;
         background-color: #0f172a;
         color: white;
         font-family: Inter, system-ui, -apple-system, sans-serif;
+        line-height: 1.5;
       }
       #root {
         min-height: 100vh;

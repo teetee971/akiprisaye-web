@@ -3,18 +3,15 @@ import ReactDOM from 'react-dom/client';
 import { HelmetProvider } from 'react-helmet-async';
 
 import './styles/glass.css';
-import './styles/innovations-3d.css';
 import './styles/mobile-fixes.css';
-import './styles/leaflet-overrides.css';
-import './styles/a11y.css';
+// a11y.css is also imported by SkipLinks.tsx (via Layout chain); remove the duplicate here
+// so it only ends up in the Layout CSS chunk, not the main entry chunk.
 
 import App from './App';
 import ErrorBoundary from './components/ErrorBoundary';
 import { safeToText } from './utils/safeToText';
 import { installRuntimeCrashProbe } from './monitoring/runtimeCrashProbe';
-import { initSentry } from './monitoring/sentry';
 import { initErrorTracker } from './monitoring/errorTracker';
-import { initWebVitals } from './monitoring/webVitals';
 import { logDebug } from './utils/logger';
 import { enforceBuildVersionSyncAsync, registerAppServiceWorker } from './utils/buildVersionGuard.client';
 
@@ -35,10 +32,11 @@ const BUILD_ID = VITE_APP_BUILD_ID || (import.meta.env.VITE_BUILD_SHA as string 
 window.__BUILD_SHA__ = BUILD_ID;
 
 logDebug(`[build] A KI PRI SA YÉ boot id=${BUILD_ID}`);
-initSentry();
+// Lightweight event-listener probes — install early so we catch boot-time crashes
 installRuntimeCrashProbe();
 initErrorTracker();
-initWebVitals();
+// Sentry and web-vitals are deferred: they're heavy and don't need to run before first paint.
+// They are initialised inside bootstrap() via requestIdleCallback after React renders.
 
 // A) Purge stale price data from IndexedDB on startup (non-blocking)
 import('./services/priceCacheService').then(({ purgeExpiredPriceCache }) => {
@@ -209,6 +207,18 @@ if (!rootElement) {
   // Masque le fallback HTML dès que le rendu est lancé
   requestAnimationFrame(() => {
     clearTimeout(globalLoadTimeout);
+  });
+
+  // Defer heavy monitoring (Sentry + web-vitals) until the browser is idle.
+  // This avoids blocking the main thread during initial paint and keeps TBT low.
+  const scheduleIdle: (cb: () => void) => void =
+    typeof window.requestIdleCallback === 'function'
+      ? (cb) => window.requestIdleCallback(cb, { timeout: 3000 })
+      : (cb) => setTimeout(cb, 0);
+
+  scheduleIdle(() => {
+    import('./monitoring/sentry').then(({ initSentry }) => initSentry());
+    import('./monitoring/webVitals').then(({ initWebVitals }) => initWebVitals());
   });
 }
 

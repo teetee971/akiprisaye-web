@@ -1,14 +1,16 @@
-import React, { useEffect } from 'react';
+import React, { lazy, Suspense, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import Header from './layout/Header';
 import Footer from './layout/Footer';
 import FabActions from './ui/FabActions';
-import UpgradePromptModal from './billing/UpgradePromptModal';
 import SkipLinks from './a11y/SkipLinks';
 import PrivacyConsentBanner from './PrivacyConsentBanner';
 import { hydrateShoppingList } from '../store/useShoppingListStore';
 import { usePriceAlertEvaluator } from '../hooks/usePriceAlertEvaluator';
 import { usePrivacyConsent } from '../hooks/usePrivacyConsent';
+
+// Non-critical modal — lazy-loaded so billing module doesn't block initial paint
+const UpgradePromptModal = lazy(() => import('./billing/UpgradePromptModal'));
 
 function AlertEvaluatorSideEffect() {
   const { consent } = usePrivacyConsent();
@@ -30,7 +32,9 @@ export default function Layout() {
         <Outlet />
       </main>
       <FabActions />
-      <UpgradePromptModal />
+      <Suspense fallback={null}>
+        <UpgradePromptModal />
+      </Suspense>
       <PrivacyConsentBanner />
       <Footer />
     </div>

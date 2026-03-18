@@ -1,5 +1,7 @@
 import { cn } from "../../lib/utils";
 import { useTilt3D } from "../../hooks/useTilt3D";
+// 3D tilt effect styles — imported here so they only load with components that use them
+import "../../styles/innovations-3d.css";
 
 /**
  * GlassCard - Universal glass component

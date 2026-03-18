@@ -141,6 +141,9 @@ export default defineConfig({
       abs('./src/test/ciRegression.test.ts'),
       // Monitoring system — storageBuffer, errorTracker, eventLogger, systemSnapshot
       abs('./src/test/monitoring.test.ts'),
+      // Monitoring bootstrap — guards the deferred-monitoring pattern in main.tsx
+      // (concern 1: crash probes early; concern 2: Sentry/web-vitals deferred; concern 3: a11y.css chain)
+      abs('./src/test/monitoringBootstrap.test.ts'),
       // Indicator calculations — average prices, DOM/Hexagone gaps, IVC, temporal evolution, store dispersion
       abs('./src/services/__tests__/indicatorCalculationService.test.ts'),
       // Comparateur Citoyen page — data loading, fallback, error states, retry
