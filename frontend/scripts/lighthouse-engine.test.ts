@@ -184,8 +184,8 @@ describe('evaluateMetric — évaluation par métrique', () => {
     expect(r.reasonCode).toBe(REASON_CODE.METRIC_REGRESSION_WARN);
   });
 
-  it('doit retourner WARN pour une régression à la limite (5 pts exactement)', () => {
-    // failDrop=5 → delta=-5 → FAIL (≤ -5)
+  it('doit retourner FAIL pour une régression exactement au seuil (5 pts = failDrop)', () => {
+    // delta=-5 avec failDrop=5 : -5 <= -5 → FAIL (la limite incluse est bloquante)
     const r = evaluateMetric('performance', 85, 90);
     expect(r.verdict).toBe(VERDICT.FAIL);
     expect(r.delta).toBe(-5);

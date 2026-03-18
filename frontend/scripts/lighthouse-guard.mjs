@@ -13,10 +13,10 @@
  *             écrit /tmp/lh-verdict.json pour le commentaire PR et le résumé.
  *
  * Seuils de régression par métrique (défauts — surchargeable via env vars) :
- *   performance   : baisse > 5 pts → FAIL  (1-5 pts → WARN)
- *   accessibility : baisse > 2 pts → FAIL  (1-2 pts → WARN)
- *   seo           : baisse > 3 pts → FAIL  (1-3 pts → WARN)
- *   best-practices: baisse > 3 pts → FAIL  (1-3 pts → WARN)
+ *   performance   : baisse ≥ 5 pts → FAIL  (1-4 pts → WARN)
+ *   accessibility : baisse ≥ 2 pts → FAIL  (1 pt → WARN)
+ *   seo           : baisse ≥ 3 pts → FAIL  (1-2 pts → WARN)
+ *   best-practices: baisse ≥ 3 pts → FAIL  (1-2 pts → WARN)
  *
  * Variables d'environnement :
  *   GITHUB_TOKEN               — token GitHub (requis pour --compare)

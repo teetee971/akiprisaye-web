@@ -41,15 +41,13 @@ const __dirname      = path.dirname(fileURLToPath(import.meta.url));
 const COMMENT_MARKER = '<!-- lighthouse-ci-bot -->';
 const dir            = path.resolve(process.cwd(), process.env.LHCI_DIR || '.lighthouseci');
 
-// Per-metric regression thresholds (must match lighthouse-guard.mjs defaults).
-// Ces constantes sont ici pour l'affichage dans le commentaire ; la source de
-// vérité est METRIC_CONFIG dans lighthouse-engine.mjs.
-const THRESHOLDS = {
-  performance:   5,
-  accessibility: 2,
-  seo:           3,
-  bestPractices: 3,
-};
+// Seuils de régression pour l'affichage dans le commentaire.
+// Dérivés de METRIC_CONFIG.failDrop (source unique de vérité dans lighthouse-engine.mjs).
+// Ne jamais dupliquer ces valeurs : toute modification des seuils doit se faire
+// exclusivement dans METRIC_CONFIG — ce tableau sera automatiquement mis à jour.
+const THRESHOLDS = Object.fromEntries(
+  Object.keys(METRIC_CONFIG).map(k => [k, METRIC_CONFIG[k].failDrop]),
+);
 
 // ─── Lecture des données ───────────────────────────────────────────────────────
 

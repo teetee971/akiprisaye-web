@@ -262,6 +262,27 @@ describe('ci.yml — Lighthouse regression guard and PR comment', () => {
     expect(ciYml).toMatch(/name:\s*lighthouse-scores/);
     expect(ciYml).toMatch(/retention-days:\s*90/);
   });
+
+  it('lighthouse job must detect override label ci:override-lighthouse', () => {
+    // The override label converts FAIL → WARN (never PASS, never silent).
+    // This prevents a FAIL from blocking merge when explicitly overridden.
+    expect(ciYml).toMatch(/ci:override-lighthouse/);
+    expect(ciYml).toMatch(/LH_OVERRIDE_LABEL/);
+  });
+
+  it('lighthouse job override check must set an output variable for downstream steps', () => {
+    // The override label detection must produce a step output (override_check.outputs.active)
+    // consumed by the quality gate step via LH_OVERRIDE_LABEL env var.
+    expect(ciYml).toMatch(/override_check/);
+    expect(ciYml).toMatch(/steps\.override_check\.outputs\.active/);
+  });
+
+  it('lighthouse job must propagate URL metadata (LH_AUDITED_URL, LH_SOURCE_TYPE, LH_WAS_FALLBACK)', () => {
+    // prepare-lighthouse-config.mjs writes these to $GITHUB_ENV; downstream steps must read them.
+    expect(ciYml).toMatch(/LH_AUDITED_URL/);
+    expect(ciYml).toMatch(/LH_SOURCE_TYPE/);
+    expect(ciYml).toMatch(/LH_WAS_FALLBACK/);
+  });
 });
 
 describe('lighthouse-guard.mjs — per-metric regression thresholds', () => {
@@ -311,12 +332,15 @@ describe('lighthouse-pr-comment.mjs — PASS/WARN/FAIL verdict banner', () => {
     expect(src).toMatch(/FAIL.*[Rr]égression.*bloquante/);
   });
 
-  it('must include per-metric regression thresholds matching the guard defaults', () => {
+  it('must derive thresholds from METRIC_CONFIG (single source of truth — no magic numbers)', () => {
+    // THRESHOLDS must be built from METRIC_CONFIG.failDrop, not hardcoded.
+    // This prevents silent divergence: if METRIC_CONFIG changes, the PR comment automatically reflects it.
     expect(src).toMatch(/THRESHOLDS/);
-    expect(src).toMatch(/performance.*5/);
-    expect(src).toMatch(/accessibility.*2/);
-    expect(src).toMatch(/seo.*3/);
-    expect(src).toMatch(/bestPractices.*3/);
+    expect(src).toMatch(/METRIC_CONFIG/);
+    expect(src).toMatch(/failDrop/);
+    // Ensure no hardcoded numeric literals for thresholds (the magic numbers 5, 2, 3, 3)
+    // are used to define THRESHOLDS — they must come from the engine.
+    expect(src).not.toMatch(/const THRESHOLDS\s*=\s*\{[\s\S]*?performance:\s*\d/);
   });
 
   it('must show regression vs main column in comment table', () => {

@@ -266,7 +266,7 @@ Métadonnées enregistrées :
   LH_WAS_FALLBACK : '1' si localhost utilisé à la place de CDN
 ```
 
-**Détection cloudflare** : si l'URL contient `pages.dev` ou `cloudflare.com`, `sourceType = 'cloudflare'`.
+**Détection Cloudflare** : si l'URL contient `pages.dev` ou `cloudflare.com`, `sourceType = 'cloudflare'`.
 
 **Fallback avec LHCI_EXPECT_CDN=1** :
 Si `LHCI_EXPECT_CDN=1` et que l'URL Cloudflare n'est pas disponible, le fallback localhost est utilisé ET `LH_WAS_FALLBACK=1` est exporté → le verdict sera WARN pour signaler ce contexte dégradé.
@@ -344,7 +344,7 @@ Chaque verdict inclut une liste de `reasonCodes` structurés :
 
 | Code | Signification |
 |------|--------------|
-| `METRIC_REGRESSION_FAIL` | Baisse > failDrop pour une métrique |
+| `METRIC_REGRESSION_FAIL` | Baisse ≥ failDrop pour une métrique (delta <= -failDrop) |
 | `METRIC_REGRESSION_WARN` | Baisse légère pour une métrique |
 | `ABSOLUTE_SCORE_FAIL` | Score < absoluteMin (indépendant de la baseline) |
 | `QUALITY_SCORE_FAIL` | Quality Score < 75 |
