@@ -77,6 +77,8 @@ export default defineConfig({
       abs('./scripts/verify-pages-api.test.ts'),
       abs('./scripts/validate-deployment.test.ts'),
       abs('./scripts/ci-workflows.test.ts'),
+      // Lighthouse governance engine — verdict logic, quality score, budgets, thresholds
+      abs('./scripts/lighthouse-engine.test.ts'),
       // Firebase API key integrity — prevents re-introducing the wrong hardcoded key
       abs('./scripts/firebase-config.test.ts'),
       // EAN / GTIN validation — GS1 checksum and country label

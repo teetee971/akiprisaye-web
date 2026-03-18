@@ -209,6 +209,7 @@ jobs:
   # Sorties : rapports JSON + HTML uploadés en artefacts CI + résumé dans le job summary.
   # Régression guard : compare avec la baseline main (artifact "lighthouse-scores").
   # PR comment : poste/met à jour un commentaire sur la PR avec les scores + delta.
+  # Override label : ci:override-lighthouse — FAIL → WARN (journalisé, jamais silencieux).
   lighthouse:
     name: Lighthouse CI
     runs-on: ubuntu-latest
@@ -243,11 +244,29 @@ jobs:
           NODE_OPTIONS: --max-old-space-size=4096
         run: npm run build
 
-      - name: Prepare Lighthouse config (preview URL ou fallback localhost)
-        # Génère /tmp/lhcirc.json à partir de lighthouserc.json.
-        # Si LHCI_URL est défini (workflow_dispatch), on cible l'URL réelle
-        # sans démarrer de serveur local — plus représentatif, moins de faux positifs.
-        # Sinon, fallback vers localhost:4173 avec npm run preview (comportement actuel).
+      - name: Check override label (ci:override-lighthouse)
+        # Détecte si le label 'ci:override-lighthouse' est présent sur la PR.
+        # Si oui : FAIL → WARN (jamais PASS, jamais silencieux).
+        # Cet état est journalisé dans le commentaire PR et dans le résumé.
+        id: override_check
+        if: github.event_name == 'pull_request'
+        run: |
+          LABELS_JSON='${{ toJSON(github.event.pull_request.labels) }}'
+          if echo "$LABELS_JSON" | grep -q '"ci:override-lighthouse"'; then
+            echo "active=true" >> "$GITHUB_OUTPUT"
+            echo "⚠️  Label 'ci:override-lighthouse' détecté — FAIL sera converti en WARN."
+            echo "   Cet override est journalisé dans les artifacts et le commentaire PR."
+          else
+            echo "active=false" >> "$GITHUB_OUTPUT"
+            echo "ℹ️  Aucun override label détecté — comportement normal."
+          fi
+
+      - name: Prepare Lighthouse config (URL Cloudflare > manuelle > localhost)
+        # Politique d'URL (ordre de priorité) :
+        #   1. URL Cloudflare Pages réelle (LHCI_URL depuis workflow_dispatch)
+        #   2. URL manuelle (workflow_dispatch)
+        #   3. Fallback localhost:4173 (npm run preview)
+        # Exporte LH_AUDITED_URL, LH_SOURCE_TYPE, LH_WAS_FALLBACK dans $GITHUB_ENV.
         working-directory: frontend
         env:
           LHCI_URL: ${{ github.event.inputs.lhci_url }}
@@ -259,25 +278,39 @@ jobs:
 
       - name: Write Lighthouse scores (input baseline)
         # Toujours exécuté pour capturer les scores même en cas d'erreur LHCI.
-        # Écrit .lighthouseci/lighthouse-scores.json, uploadé comme artifact "lighthouse-scores".
+        # Écrit .lighthouseci/lighthouse-scores.json avec métadonnées enrichies
+        # (sha, branch, runId, sourceType, qualityScore…).
+        # Uploadé comme artifact "lighthouse-scores" (baseline pour les prochaines PR).
         if: always()
         working-directory: frontend
+        env:
+          LH_AUDITED_URL: ${{ env.LH_AUDITED_URL }}
+          LH_SOURCE_TYPE: ${{ env.LH_SOURCE_TYPE }}
+          LH_WAS_FALLBACK: ${{ env.LH_WAS_FALLBACK }}
         run: node scripts/lighthouse-guard.mjs --write
 
-      - name: Régression guard (comparaison avec baseline main)
+      - name: Quality gate (comparaison avec baseline main)
         # Télécharge l'artifact "lighthouse-scores" du dernier run main via l'API GitHub.
-        # Échoue si un score baisse de plus de 5 points par rapport à la baseline.
-        # Écrit /tmp/lh-baseline.json pour le commentaire PR.
+        # Utilise le moteur de décision (lighthouse-engine.mjs) pour produire un verdict
+        # PASS / WARN / FAIL / NO_BASELINE avec codes de raison explicites.
+        # Échoue la CI (exit 1) uniquement si verdict = FAIL (et pas d'override actif).
+        # Écrit /tmp/lh-verdict.json pour le commentaire PR et le résumé.
         if: always() && github.event_name == 'pull_request'
         working-directory: frontend
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
+          LH_OVERRIDE_LABEL: ${{ steps.override_check.outputs.active }}
+          LH_AUDITED_URL: ${{ env.LH_AUDITED_URL }}
+          LH_SOURCE_TYPE: ${{ env.LH_SOURCE_TYPE }}
+          LH_WAS_FALLBACK: ${{ env.LH_WAS_FALLBACK }}
         run: node scripts/lighthouse-guard.mjs --compare
 
-      - name: PR comment — scores Lighthouse + delta
-        # Poste ou met à jour un commentaire sur la PR avec les scores et le delta vs main.
-        # Ne fait jamais échouer la CI (continue-on-error: true).
+      - name: PR comment — rapport qualité Lighthouse
+        # Poste ou met à jour un commentaire idempotent sur la PR.
+        # Contient : verdict, quality score, tableau métriques, budgets, diagnostics.
+        # Ne fait JAMAIS échouer la CI (continue-on-error: true).
+        # Si le commentaire n'a pas pu être posté, le log l'indique explicitement.
         if: always() && github.event_name == 'pull_request'
         continue-on-error: true
         working-directory: frontend
@@ -288,7 +321,7 @@ jobs:
           BASELINE_SCORES_PATH: /tmp/lh-baseline.json
         run: node scripts/lighthouse-pr-comment.mjs
 
-      - name: Print Lighthouse summary
+      - name: Print Lighthouse summary (résumé exécutif)
         if: always()
         working-directory: frontend
         run: node scripts/lighthouse-summary.mjs
@@ -303,7 +336,7 @@ jobs:
 
       - name: Upload Lighthouse scores (référence baseline, 90 jours)
         # Uploadé séparément du rapport complet pour être facilement téléchargeable.
-        # Utilisé comme baseline par le régression guard des prochains runs sur PR.
+        # Utilisé comme baseline par le quality gate des prochains runs sur PR.
         if: always()
         uses: actions/upload-artifact@v4
         with:
