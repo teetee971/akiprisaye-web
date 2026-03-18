@@ -82,9 +82,9 @@ import { fileURLToPath } from 'url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
 
-/* ── 1. Lire l'email depuis les arguments ─────────────────────────────── */
+/* ── 1. Lire l'email depuis les arguments ou la variable d'environnement ── */
 
-const email = process.argv[2];
+const email = process.argv[2] || process.env.CREATOR_EMAIL;
 if (!email || !email.includes('@')) {
   console.error('\n❌ Usage : node scripts/set-creator-role.mjs <votre-email@domaine.com>\n');
   process.exit(1);

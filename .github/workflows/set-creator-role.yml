@@ -39,4 +39,5 @@ jobs:
       - name: Attribuer le rôle Créateur dans Firestore
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-        run: node scripts/set-creator-role.mjs "${{ github.event.inputs.email }}"
+          CREATOR_EMAIL: ${{ github.event.inputs.email }}
+        run: node scripts/set-creator-role.mjs "$CREATOR_EMAIL"

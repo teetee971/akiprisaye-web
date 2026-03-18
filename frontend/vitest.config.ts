@@ -148,6 +148,8 @@ export default defineConfig({
       abs('./src/services/__tests__/indicatorCalculationService.test.ts'),
       // Comparateur Citoyen page — data loading, fallback, error states, retry
       abs('./src/components/comparateur/__tests__/ComparateurCitoyen.test.tsx'),
+      // Creator guard — loading spinner, redirect non-creator, allow creator/admin access
+      abs('./src/test/creatorGuard.test.tsx'),
     ],
 
     exclude: ['**/node_modules/**', '**/.git/**', '**/dist/**', '**/coverage/**'],

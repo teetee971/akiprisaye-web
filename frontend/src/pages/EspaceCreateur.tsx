@@ -206,10 +206,20 @@ function CopyButton({ text }: { text: string }) {
 /* ─── Main component ──────────────────────────────────────────────────── */
 
 const EspaceCreateur: React.FC = () => {
-  const { user, userRole, isCreator, isAdmin, signOutUser } = useAuth();
+  const { user, userRole, isCreator, isAdmin, loading, signOutUser } = useAuth();
   const [guideOpen, setGuideOpen] = useState(!isCreator);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [envOpen, setEnvOpen] = useState(false);
+
+  // Wait for auth to resolve before checking role — avoids redirect during bootstrap
+  if (loading) {
+    return (
+      <div data-testid="auth-loading-spinner" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: '#020617' }}>
+        <div style={{ width: 36, height: 36, borderRadius: '50%', border: '3px solid rgba(251,191,36,0.2)', borderTopColor: '#fbbf24', animation: 'spin 0.7s linear infinite' }} />
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      </div>
+    );
+  }
 
   // Redirect non-admins (admins = admin OR creator role)
   if (!isAdmin) {
