@@ -22,6 +22,12 @@ on:
     branches: [main]
   pull_request:
     types: [opened, synchronize, reopened]
+  workflow_dispatch:
+    inputs:
+      lhci_url:
+        description: "URL de preview réelle à auditer (optionnel — fallback localhost:4173)"
+        required: false
+        default: ""
 
 permissions:
   contents: read
@@ -180,6 +186,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: price-api/package-lock.json
 
       - name: Install dependencies
         working-directory: price-api
@@ -195,8 +203,9 @@ jobs:
 
   # ─── 7. Lighthouse CI ───────────────────────────────────────────────────────
   # Mesure performance + accessibilité + best practices sur le build de preview.
-  # Seuils bloquants : performance >= 80, accessibilité >= 90.
-  # Sorties : rapports JSON + HTML uploadés en artefacts CI.
+  # Seuils : performance ≥ 80 (warn), accessibilité ≥ 90 (error).
+  # URL cible : LHCI_URL si fourni (workflow_dispatch), sinon localhost:4173 (fallback).
+  # Sorties : rapports JSON + HTML uploadés en artefacts CI + résumé dans le job summary.
   lighthouse:
     name: Lighthouse CI
     runs-on: ubuntu-latest
@@ -219,11 +228,19 @@ jobs:
           NODE_OPTIONS: --max-old-space-size=4096
         run: npm run build
 
+      - name: Prepare Lighthouse config (preview URL ou fallback localhost)
+        # Génère /tmp/lhcirc.json à partir de lighthouserc.json.
+        # Si LHCI_URL est défini (workflow_dispatch), on cible l'URL réelle
+        # sans démarrer de serveur local — plus représentatif, moins de faux positifs.
+        # Sinon, fallback vers localhost:4173 avec npm run preview (comportement actuel).
+        working-directory: frontend
+        env:
+          LHCI_URL: ${{ github.event.inputs.lhci_url }}
+        run: node scripts/prepare-lighthouse-config.mjs
+
       - name: Run Lighthouse CI
         working-directory: frontend
-        # working-directory=frontend → ../lighthouserc.json pointe bien vers la racine du dépôt.
-        # performance ≥ 80 (warn), accessibilité ≥ 90 (error).
-        run: npx @lhci/cli@0.15.1 autorun --config=../lighthouserc.json
+        run: npx @lhci/cli@0.15.1 autorun --config=/tmp/lhcirc.json
 
       - name: Print Lighthouse summary
         if: always()
