@@ -56,10 +56,27 @@ concurrency:
   cancel-in-progress: false   # Ne jamais annuler un scraping en cours
 
 jobs:
+  check-firebase-secret:
+    name: 🔍 Diagnostic secret Firebase
+    runs-on: ubuntu-latest
+    steps:
+      - name: Vérifier présence FIREBASE_SERVICE_ACCOUNT
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          if [ -n "${FIREBASE_SERVICE_ACCOUNT}" ]; then
+            echo "FIREBASE_SERVICE_ACCOUNT_PRESENT=yes"
+          else
+            echo "FIREBASE_SERVICE_ACCOUNT_PRESENT=no"
+            echo "⚠️  Le secret FIREBASE_SERVICE_ACCOUNT est absent ou vide dans ce contexte CI."
+            exit 1
+          fi
+
   scrape:
     name: 🔄 Scraping multi-sources
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    needs: check-firebase-secret
     # Ne pas exécuter si c'est un déploiement qui a échoué
     if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
 
@@ -113,12 +130,11 @@ jobs:
                     frontend/public/data/bqp-prices.json \
                     frontend/public/data/open-prices-dom.json 2>/dev/null || true
 
-            git commit -m "🤖 [auto] Mise à jour données prix — $(date -u '+%Y-%m-%d %H:%M UTC')
-
-Sources scrapées : prix-carburants.gouv.fr, Open Prices, data.gouv.fr BQP, ARCEP/CRE/INSEE
-Déclencheur : ${{ github.event_name }}
-
-[skip ci]"
+            git commit \
+              -m "🤖 [auto] Mise à jour données prix — $(date -u '+%Y-%m-%d %H:%M UTC')" \
+              -m "Sources scrapées : prix-carburants.gouv.fr, Open Prices, data.gouv.fr BQP, ARCEP/CRE/INSEE" \
+              -m "Déclencheur : ${{ github.event_name }}" \
+              -m "[skip ci]"
             git push
             echo "✅ Données committées et poussées"
           fi
