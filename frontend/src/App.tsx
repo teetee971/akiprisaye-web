@@ -10,18 +10,21 @@ import { ThemeProvider } from './context/ThemeContext';
 import AuthProvider from './context/AuthContext';
 import { OnboardingProvider } from './context/OnboardingContext';
 import { LanguageProvider } from './context/LanguageProvider';
-import { PerformanceMonitor } from './components/PerformanceMonitor';
-import OnboardingTour from './components/OnboardingTour';
 import OnboardingAutoStart from './components/OnboardingAutoStart';
 import HelpButton from './components/HelpButton';
 import AnalyticsTracker from './components/analytics/AnalyticsTracker';
 import { ToastProvider } from './components/Toast/ToastProvider';
-import UpgradePromptModal from './components/billing/UpgradePromptModal';
 import { StoreSelectionProvider } from './context/StoreSelectionContext';
 import { EntitlementProvider } from './billing/EntitlementProvider';
 import RequireAuth from './components/auth/RequireAuth';
-import AuthDebugPanel from './components/AuthDebugPanel';
 import { logDebug } from './utils/logger';
+
+// Non-critical overlays — lazy-loaded so they don't block initial paint
+const PerformanceMonitor = lazyPage(() =>
+  import('./components/PerformanceMonitor').then((m) => ({ default: m.PerformanceMonitor }))
+);
+const OnboardingTour = lazyPage(() => import('./components/OnboardingTour'));
+const AuthDebugPanel = lazyPage(() => import('./components/AuthDebugPanel'));
 
 // Lazy-loaded pages - Main routes
 const Home = lazyPage(() => import('./pages/Home'));
@@ -711,7 +714,6 @@ export default function App() {
                       <OnboardingTour />
                       <HelpButton />
                       <ToastProvider />
-                      <UpgradePromptModal />
                       <AuthDebugPanel />
                     </Suspense>
                   </BrowserRouter>
