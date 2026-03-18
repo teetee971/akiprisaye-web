@@ -2,7 +2,7 @@
   "ci": {
     "collect": {
       "url": ["http://localhost:4173"],
-      "startServerCommand": "npm run preview",
+      "startServerCommand": "npm run preview -- --host 127.0.0.1",
       "startServerReadyTimeout": 30000,
       "numberOfRuns": 1,
       "settings": {
@@ -23,7 +23,6 @@
       }
     },
     "assert": {
-      "preset": "lighthouse:recommended",
       "assertions": {
         "categories:performance":   ["warn",  { "minScore": 0.8 }],
         "categories:accessibility": ["error", { "minScore": 0.9 }],
