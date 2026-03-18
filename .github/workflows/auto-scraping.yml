@@ -56,11 +56,15 @@ concurrency:
   cancel-in-progress: false   # Ne jamais annuler un scraping en cours
 
 jobs:
-  check-firebase-secret:
-    name: 🔍 Diagnostic secret Firebase
+  scrape:
+    name: 🔄 Scraping multi-sources
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+    # Ne pas exécuter si c'est un déploiement qui a échoué
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+
     steps:
-      - name: Vérifier présence FIREBASE_SERVICE_ACCOUNT
+      - name: 🔍 Vérifier secret Firebase
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
         run: |
@@ -70,15 +74,6 @@ jobs:
             echo "⚠️  FIREBASE_SERVICE_ACCOUNT absent — le scraping continuera sans écriture Firestore"
           fi
 
-  scrape:
-    name: 🔄 Scraping multi-sources
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    needs: check-firebase-secret
-    # Ne pas exécuter si c'est un déploiement qui a échoué
-    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
-
-    steps:
       - name: 📥 Checkout
         uses: actions/checkout@v4
         with:
@@ -90,11 +85,11 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: scripts/auto-scraper/package.json
+          cache-dependency-path: scripts/auto-scraper/package-lock.json
 
       - name: 📦 Installer dépendances scraper
         working-directory: scripts/auto-scraper
-        run: npm install
+        run: npm ci
 
       - name: 🤖 Scraping automatique
         working-directory: scripts/auto-scraper

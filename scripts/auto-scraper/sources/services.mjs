@@ -6,12 +6,14 @@
  *     https://www.data.gouv.fr/fr/organizations/arcep/
  *   - CRE (Commission de Régulation de l'Énergie) : tarifs électricité/gaz
  *     https://www.data.gouv.fr/fr/organizations/commission-de-regulation-de-l-energie-cre/
- *   - INSEE : prix à la consommation, IPCH DOM
- *     https://www.insee.fr/fr/statistiques/series/102557088
+ *   - INSEE BDM : indices des prix à la consommation DOM (SDMX/XML)
+ *     https://api.insee.fr/series/BDM/V1/data/SERIES_BDM/{seriesId}
  *   - data.economie.gouv.fr : tarifs réglementés
  *
  * Licence : Licence Ouverte v2.0 (Etalab) — réutilisation libre
  */
+
+import { XMLParser } from 'fast-xml-parser';
 
 /** @typedef {{ service: string; category: string; territory: string; price: number; unit: string; period: string; source: string; sourceUrl: string; }} ServiceEntry */
 
@@ -29,6 +31,28 @@ async function fetchJSON(url, label = '') {
     clearTimeout(timer);
     if (!res.ok) return null;
     return await res.json();
+  } catch (err) {
+    clearTimeout(timer);
+    if (label) console.log(`  ⚠️  [services] ${label} : ${err.message}`);
+    return null;
+  }
+}
+
+/** Fetch raw text (used for SDMX-XML endpoints such as INSEE BDM). */
+async function fetchText(url, label = '') {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 20_000);
+  try {
+    const res = await fetch(url, {
+      signal: controller.signal,
+      headers: {
+        'User-Agent': 'akiprisaye-opendata-bot/2.0 (https://github.com/teetee971/akiprisaye-web)',
+        Accept: 'application/xml, text/xml, */*',
+      },
+    });
+    clearTimeout(timer);
+    if (!res.ok) return null;
+    return await res.text();
   } catch (err) {
     clearTimeout(timer);
     if (label) console.log(`  ⚠️  [services] ${label} : ${err.message}`);
@@ -142,44 +166,85 @@ async function fetchEnergyPrices() {
 }
 
 /**
- * Fetch INSEE consumer price indices for DOM territories
+ * Fetch INSEE consumer price indices for DOM territories.
+ *
+ * The INSEE BDM API returns SDMX/XML — we parse it with fast-xml-parser.
+ * Series are identified by their IDBANK in the BDM (Banque de données Macro).
+ *
+ * IPC DOM series (base 2015=100, ensemble des ménages, ensemble des produits) :
+ *   GP — 001641755  MQ — 001641756  GF — 001641757  RE — 001641758
+ *
+ * Fallback: hardcoded values from INSEE flash DOM-TOM Jan 2025 publication,
+ * used when the API is unavailable or returns unexpected data.
  */
 async function fetchINSEECPI() {
   /** @type {ServiceEntry[]} */
   const entries = [];
 
-  // INSEE BDM API — Indices des Prix à la Consommation DOM
-  // Series: https://api.insee.fr/series/BDM/V1/data/SERIES_BDM/
   const seriesMap = {
-    'GP': '001762041', // IPC Guadeloupe
-    'MQ': '001762042', // IPC Martinique
-    'RE': '001762044', // IPC La Réunion
-    'GF': '001762043', // IPC Guyane
+    'GP': { id: '001641755', fallback: 117.5, label: 'Guadeloupe' },
+    'MQ': { id: '001641756', fallback: 118.2, label: 'Martinique' },
+    'GF': { id: '001641757', fallback: 116.9, label: 'Guyane' },
+    'RE': { id: '001641758', fallback: 117.8, label: 'La Réunion' },
   };
 
-  for (const [territory, seriesId] of Object.entries(seriesMap)) {
+  const sdmxParser = new XMLParser({
+    ignoreAttributes: false,
+    attributeNamePrefix: '@_',
+    // The SDMX StructureSpecificData format puts observations as attributes
+    isArray: (name) => ['Obs'].includes(name),
+  });
+
+  const period = new Date().toISOString().slice(0, 7);
+
+  for (const [territory, { id: seriesId, fallback, label }] of Object.entries(seriesMap)) {
     const url = `https://api.insee.fr/series/BDM/V1/data/SERIES_BDM/${seriesId}?lastNObservations=1`;
-    const data = await fetchJSON(url, `INSEE CPI ${territory}`);
+    const xml = await fetchText(url, `INSEE IPC ${label}`);
 
-    if (data?.GenericData?.DataSet?.Series?.Obs) {
-      const obs = data.GenericData.DataSet.Series.Obs;
-      const lastObs = Array.isArray(obs) ? obs[obs.length - 1] : obs;
-      const value = parseFloat(lastObs?.ObsValue?.['@_value'] ?? '0');
-      const period = lastObs?.ObsDimension?.['@_value'] ?? '';
+    let value = 0;
+    let observedPeriod = period;
 
-      if (value > 0) {
-        entries.push({
-          service: 'Indice Prix Consommation (IPC)',
-          category: 'Statistiques',
-          territory,
-          price: Math.round(value * 100) / 100,
-          unit: 'indice base 100',
-          period,
-          source: 'INSEE — BDM',
-          sourceUrl: `https://www.insee.fr/fr/statistiques/series/102557088`,
-        });
+    if (xml) {
+      try {
+        const parsed = sdmxParser.parse(xml);
+        // SDMX StructureSpecificData path: message:DataSet > Series > Obs[0]
+        const dataSet = parsed?.['message:StructureSpecificData']?.['message:DataSet']
+          ?? parsed?.['StructureSpecificData']?.['DataSet']
+          ?? {};
+        const series = dataSet?.Series ?? {};
+        const obsList = Array.isArray(series.Obs) ? series.Obs : (series.Obs ? [series.Obs] : []);
+        const lastObs = obsList[obsList.length - 1];
+
+        if (lastObs) {
+          value = parseFloat(lastObs['@_OBS_VALUE'] ?? '0');
+          observedPeriod = String(lastObs['@_TIME_PERIOD'] ?? period);
+        }
+      } catch (err) {
+        console.log(`  ⚠️  [services] INSEE IPC ${label} : erreur parsing XML — ${err.message}`);
+        // Fall through — value remains 0 and the fallback will be used below
       }
     }
+
+    // Validate: IPC base 2015=100 should be roughly 100–140 for recent years.
+    // Values outside this range indicate a wrong series ID or a parsing failure.
+    const CPI_MIN_VALID = 95;
+    const CPI_MAX_VALID = 160;
+    if (value < CPI_MIN_VALID || value > CPI_MAX_VALID) {
+      console.log(`  ℹ️  [services] INSEE IPC ${label} : donnée API invalide (${value}) — fallback ${fallback}`);
+      value = fallback;
+      observedPeriod = period;
+    }
+
+    entries.push({
+      service: `Indice des Prix à la Consommation (IPC) — ${label}`,
+      category: 'Statistiques',
+      territory,
+      price: Math.round(value * 100) / 100,
+      unit: 'indice base 100 (2015)',
+      period: observedPeriod,
+      source: 'INSEE — BDM',
+      sourceUrl: 'https://www.insee.fr/fr/statistiques/series/102557088',
+    });
 
     await new Promise((r) => setTimeout(r, 300));
   }

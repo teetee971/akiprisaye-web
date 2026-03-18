@@ -27,7 +27,9 @@ const ZIP_SIGNATURE = 0x04034b50;
  */
 async function extractXmlFromZip(buffer) {
   if (buffer.readUInt32LE(0) !== ZIP_SIGNATURE) {
-    throw new Error('Not a valid ZIP local file header');
+    throw new Error(
+      `Not a valid ZIP file (signature: 0x${buffer.readUInt32LE(0).toString(16).padStart(8, '0')}, expected: 0x${ZIP_SIGNATURE.toString(16)})`,
+    );
   }
   const compressionMethod = buffer.readUInt16LE(8);
   const filenameLength    = buffer.readUInt16LE(26);
@@ -36,8 +38,10 @@ async function extractXmlFromZip(buffer) {
   const compressedSize    = buffer.readUInt32LE(18);
   const dataOffset        = 30 + filenameLength + extraFieldLength;
 
-  // If compressed size is 0 in the local header, read until end-of-central-directory
-  // For our use case (single well-formed ZIP), fall back to the rest of the buffer
+  // If compressed size is 0 in the local header, fall back to the rest of the buffer.
+  // For single-file ZIPs (government fuel feed), this heuristic works well because
+  // the deflated data ends before the central-directory records which inflateRaw
+  // will simply stop consuming once the stream is complete.
   const compressedData = compressedSize > 0
     ? buffer.slice(dataOffset, dataOffset + compressedSize)
     : buffer.slice(dataOffset);

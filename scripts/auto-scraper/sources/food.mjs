@@ -56,18 +56,32 @@ async function fetchJSON(url, label) {
 }
 
 /**
- * Récupère les prix récents pour un pays DOM depuis Open Prices API.
+ * Récupère les prix récents pour un pays DOM depuis Open Prices API,
+ * avec pagination (max `maxPages` pages de 100 résultats).
  * @param {string} countryCode  ex: 'GP'
- * @param {number} pageSize
+ * @param {number} maxPages     nombre maximal de pages à charger (défaut 3)
  * @returns {Promise<any[]>}
  */
-async function fetchOpenPricesByCountry(countryCode, pageSize = 100) {
-  const url =
-    `https://prices.openfoodfacts.org/api/v1/prices?` +
-    `location_country=${countryCode}&order_by=-date&size=${pageSize}&page=1`;
+async function fetchOpenPricesByCountry(countryCode, maxPages = 3) {
+  const pageSize = 100; // API cap
+  const all = [];
 
-  const data = await fetchJSON(url, `OpenPrices ${countryCode}`);
-  return data?.items ?? [];
+  for (let page = 1; page <= maxPages; page++) {
+    const url =
+      `https://prices.openfoodfacts.org/api/v1/prices?` +
+      `location_country=${countryCode}&order_by=-date&size=${pageSize}&page=${page}`;
+
+    const data = await fetchJSON(url, `OpenPrices ${countryCode} p${page}`);
+    const items = data?.items ?? [];
+    all.push(...items);
+
+    // Stop early if the page was not full (last page)
+    if (items.length < pageSize) break;
+
+    await sleep(REQUEST_DELAY_MS);
+  }
+
+  return all;
 }
 
 /**
@@ -100,7 +114,7 @@ export async function scrapeFoodPrices() {
 
   for (const [territoryCode, countryCode] of Object.entries(DOM_COUNTRIES)) {
     console.log(`  📡 [food] Open Prices → ${territoryCode}…`);
-    const items = await fetchOpenPricesByCountry(countryCode, 100);
+    const items = await fetchOpenPricesByCountry(countryCode);
     console.log(`       ${items.length} relevés trouvés`);
 
     for (const item of items) {

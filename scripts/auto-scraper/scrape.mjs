@@ -396,6 +396,26 @@ async function main() {
 
   const totalEntries = counts.fuel + counts.food + counts.bqp + counts.services;
   console.log(`\n✅ Scraping terminé — ${totalEntries} entrées collectées au total\n`);
+
+  // ── Scraping health file ────────────────────────────────────────────────
+  // Written unconditionally (even in dry-run) so the monitoring system can
+  // always check when the last successful scrape ran and which sources had data.
+  const health = {
+    lastScrapedAt: ISO_NOW,
+    date: DATE_ID,
+    dryRun: DRY_RUN,
+    sources: {
+      fuel:     { count: counts.fuel,     ok: counts.fuel > 0 },
+      food:     { count: counts.food,     ok: counts.food > 0 },
+      bqp:      { count: counts.bqp,      ok: counts.bqp > 0 },
+      services: { count: counts.services, ok: counts.services > 0 },
+    },
+    totalEntries,
+    shocksDetected: shocks.length,
+    status: totalEntries > 0 ? 'ok' : 'empty',
+  };
+  saveJSON(join(dataDir, 'scraping-health.json'), health);
+  console.log('💾 scraping-health.json mis à jour');
 }
 
 main().catch((err) => {

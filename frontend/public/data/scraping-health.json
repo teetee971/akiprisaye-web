@@ -1,0 +1,26 @@
+{
+  "lastScrapedAt": "2026-03-18T12:05:44.171Z",
+  "date": "2026-03-18",
+  "dryRun": true,
+  "sources": {
+    "fuel": {
+      "count": 0,
+      "ok": false
+    },
+    "food": {
+      "count": 0,
+      "ok": false
+    },
+    "bqp": {
+      "count": 51,
+      "ok": true
+    },
+    "services": {
+      "count": 0,
+      "ok": false
+    }
+  },
+  "totalEntries": 51,
+  "shocksDetected": 0,
+  "status": "ok"
+}
