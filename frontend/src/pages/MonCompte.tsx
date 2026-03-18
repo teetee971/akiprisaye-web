@@ -5,11 +5,12 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import { useEntitlements } from "@/billing/useEntitlements";
 import { useFavorites } from "@/hooks/useFavorites";
+import { useLoyaltyCards, PRESET_STORES } from "@/hooks/useLoyaltyCards";
 import { safeLocalStorage } from "@/utils/safeLocalStorage";
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 import { ALERTS_STORAGE_KEY } from "@/services/priceAlertsStorage";
-import { Heart, Bell, Globe, CreditCard, User as UserIcon, Trash2, MessageCircle, Crown, Shield } from "lucide-react";
+import { Heart, Bell, Globe, CreditCard, User as UserIcon, Trash2, MessageCircle, Crown, Shield, Wallet, Plus, X } from "lucide-react";
 
 import { SEOHead } from '../components/ui/SEOHead';
 const TERRITORY_STORAGE_KEY = 'akiprisaye:main_territory:v1';
@@ -22,7 +23,7 @@ const TERRITORY_OPTIONS = [
   { value: 'YT', label: '🏖️ Mayotte' },
 ];
 
-type Tab = 'profil' | 'favoris' | 'alertes' | 'territoire' | 'plan';
+type Tab = 'profil' | 'favoris' | 'alertes' | 'territoire' | 'plan' | 'fidelite';
 
 export default function MonCompte() {
   const [activeTab, setActiveTab] = useState<Tab>('profil');
@@ -32,6 +33,12 @@ export default function MonCompte() {
   const { plan, quota, can } = useEntitlements();
   const navigate = useNavigate();
   const { favorites, removeFavorite } = useFavorites();
+  const { cards: loyaltyCards, addCard, removeCard } = useLoyaltyCards();
+
+  const [loyaltyStoreName, setLoyaltyStoreName] = useState<string>(PRESET_STORES[0].name);
+  const [loyaltyCustomStore, setLoyaltyCustomStore] = useState<string>('');
+  const [loyaltyCardNumber, setLoyaltyCardNumber] = useState<string>('');
+  const [loyaltyError, setLoyaltyError] = useState<string | null>(null);
 
   useEffect(() => {
     const saved = safeLocalStorage?.getItem(TERRITORY_STORAGE_KEY);
@@ -54,6 +61,23 @@ export default function MonCompte() {
     } catch (err) {
       alert("Erreur lors de la déconnexion : " + err);
     }
+  };
+
+  const handleAddLoyaltyCard = () => {
+    const store = loyaltyStoreName === 'Autre' ? loyaltyCustomStore.trim() : loyaltyStoreName;
+    if (!store) {
+      setLoyaltyError("Veuillez indiquer le nom de l'enseigne.");
+      return;
+    }
+    if (!loyaltyCardNumber.trim()) {
+      setLoyaltyError("Veuillez saisir le numéro de carte.");
+      return;
+    }
+    setLoyaltyError(null);
+    addCard(store, loyaltyCardNumber);
+    setLoyaltyCardNumber('');
+    setLoyaltyCustomStore('');
+    setLoyaltyStoreName(PRESET_STORES[0].name);
   };
 
   if (loading) {
@@ -86,6 +110,7 @@ export default function MonCompte() {
     { id: 'profil', label: 'Profil', icon: <UserIcon className="w-4 h-4" /> },
     { id: 'favoris', label: 'Favoris', icon: <Heart className="w-4 h-4" />, badge: favorites.length || undefined },
     { id: 'alertes', label: 'Alertes', icon: <Bell className="w-4 h-4" />, badge: alerts.length || undefined },
+    { id: 'fidelite', label: 'Fidélité', icon: <Wallet className="w-4 h-4" />, badge: loyaltyCards.length || undefined },
     { id: 'territoire', label: 'Territoire', icon: <Globe className="w-4 h-4" /> },
     { id: 'plan', label: 'Mon plan', icon: <CreditCard className="w-4 h-4" /> },
   ];
@@ -328,6 +353,124 @@ export default function MonCompte() {
                     Gérer mes alertes
                   </Link>
                 </div>
+              </div>
+            )}
+
+            {/* Fidélité */}
+            {activeTab === 'fidelite' && (
+              <div role="tabpanel" id="tabpanel-fidelite" aria-labelledby="tab-fidelite">
+                <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+                  <Wallet className="w-5 h-5 text-emerald-400" /> Mes cartes de fidélité
+                </h2>
+                <p className="text-slate-400 text-sm mb-5">
+                  Enregistrez vos numéros de cartes de fidélité pour les retrouver facilement en caisse.
+                </p>
+
+                {/* Add card form */}
+                <div className="bg-slate-800 border border-slate-700 rounded-xl p-4 mb-6">
+                  <h3 className="text-white font-medium mb-3 flex items-center gap-2">
+                    <Plus className="w-4 h-4 text-emerald-400" /> Ajouter une carte
+                  </h3>
+                  <div className="space-y-3">
+                    <div>
+                      <label htmlFor="loyalty-store" className="block text-sm text-slate-400 mb-1">Enseigne</label>
+                      <select
+                        id="loyalty-store"
+                        value={loyaltyStoreName}
+                        onChange={(e) => setLoyaltyStoreName(e.target.value)}
+                        className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      >
+                        {PRESET_STORES.map((s) => (
+                          <option key={s.name} value={s.name}>{s.name}</option>
+                        ))}
+                      </select>
+                    </div>
+                    {loyaltyStoreName === 'Autre' && (
+                      <div>
+                        <label htmlFor="loyalty-custom-store" className="block text-sm text-slate-400 mb-1">Nom de l'enseigne</label>
+                        <input
+                          id="loyalty-custom-store"
+                          type="text"
+                          placeholder="Ex : Mon épicerie"
+                          value={loyaltyCustomStore}
+                          onChange={(e) => setLoyaltyCustomStore(e.target.value)}
+                          className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 placeholder:text-slate-500"
+                        />
+                      </div>
+                    )}
+                    <div>
+                      <label htmlFor="loyalty-card-number" className="block text-sm text-slate-400 mb-1">Numéro de carte</label>
+                      <input
+                        id="loyalty-card-number"
+                        type="text"
+                        placeholder="Ex : 1234 5678 9012 3456"
+                        value={loyaltyCardNumber}
+                        onChange={(e) => setLoyaltyCardNumber(e.target.value)}
+                        className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white text-sm font-mono focus:outline-none focus:ring-2 focus:ring-emerald-500 placeholder:text-slate-500"
+                      />
+                    </div>
+                    {loyaltyError && (
+                      <p className="text-red-400 text-sm">{loyaltyError}</p>
+                    )}
+                    <Button
+                      onClick={handleAddLoyaltyCard}
+                      className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
+                    >
+                      <Plus className="w-4 h-4 mr-1" /> Enregistrer la carte
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Cards list */}
+                {loyaltyCards.length === 0 ? (
+                  <div className="text-center py-10">
+                    <Wallet className="w-12 h-12 text-slate-600 mx-auto mb-3" />
+                    <p className="text-slate-400">Aucune carte enregistrée.</p>
+                    <p className="text-slate-500 text-sm mt-1">
+                      Ajoutez votre première carte de fidélité ci-dessus.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {loyaltyCards.map((card) => (
+                      <div
+                        key={card.id}
+                        className="relative rounded-2xl p-5 text-white shadow-lg overflow-hidden"
+                        style={{ background: `linear-gradient(135deg, ${card.color}dd, ${card.color}88)` }}
+                      >
+                        {/* Background decoration */}
+                        <div
+                          className="absolute -right-6 -top-6 w-28 h-28 rounded-full opacity-20"
+                          style={{ background: 'rgba(255,255,255,0.3)' }}
+                          aria-hidden="true"
+                        />
+                        <div
+                          className="absolute -right-2 -bottom-8 w-36 h-36 rounded-full opacity-10"
+                          style={{ background: 'rgba(255,255,255,0.3)' }}
+                          aria-hidden="true"
+                        />
+                        <div className="relative z-10">
+                          <div className="flex items-start justify-between mb-4">
+                            <div>
+                              <p className="text-xs font-semibold uppercase tracking-widest opacity-80">Carte fidélité</p>
+                              <p className="text-lg font-bold mt-0.5">{card.storeName}</p>
+                            </div>
+                            <button
+                              onClick={() => removeCard(card.id)}
+                              aria-label={`Supprimer la carte ${card.storeName}`}
+                              className="p-1 rounded-full hover:bg-white/20 transition-colors"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+                          <p className="font-mono text-base tracking-widest mt-2 select-all">
+                            {card.cardNumber}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 
