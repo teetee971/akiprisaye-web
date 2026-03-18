@@ -10,6 +10,19 @@
   Cache-Control: public, max-age=0, must-revalidate
 */
 
+/ocr/*.wasm
+  Content-Type: application/wasm
+  Cache-Control: public, max-age=31536000, immutable
+  Cross-Origin-Resource-Policy: cross-origin
+
+/ocr/*.js
+  Cache-Control: public, max-age=31536000, immutable
+  Cross-Origin-Resource-Policy: cross-origin
+
+/ocr/*.gz
+  Cache-Control: public, max-age=31536000, immutable
+  Cross-Origin-Resource-Policy: cross-origin
+
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
 

@@ -220,7 +220,7 @@ export async function runOcrOnReceipt(
   const allBlocks: OCRRawBlock[] = [];
 
   for (const imageSource of images) {
-    const result = await runOCR(imageSource, 'fra', { timeout: 30_000 });
+    const result = await runOCR(imageSource, 'fra', { timeout: 30_000, receiptMode: true });
 
     if (result.success && result.rawText) {
       parts.push(result.rawText);

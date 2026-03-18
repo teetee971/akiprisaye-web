@@ -166,7 +166,22 @@ function isAssetLoadError(error: unknown): boolean {
   if (error instanceof AssetLoadError) {
     return true;
   }
-  return (error as { status?: number })?.status === 404;
+  if ((error as { status?: number })?.status === 404) {
+    return true;
+  }
+  // Treat network/CORS fetch failures as asset load errors so the user sees
+  // a meaningful "files unavailable" message rather than the generic OCR error.
+  if (error instanceof TypeError) {
+    const msg = String((error as Error).message ?? '');
+    if (
+      msg.includes('Failed to fetch') ||
+      msg.includes('NetworkError') ||
+      msg.includes('Load failed')
+    ) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /**
@@ -406,8 +421,8 @@ export async function runOCR(
         : isTimeout
           ? 'Délai dépassé, réessayez avec une image plus nette'
           : offline
-            ? 'Erreur OCR hors ligne. Vérifiez que l\'image est valide.'
-            : `Erreur OCR (langue ${effectiveLang}). Veuillez réessayer ou recharger la page.`;
+            ? 'Analyse impossible hors ligne. Reconnectez-vous à Internet puis réessayez.'
+            : 'L\'analyse du ticket a échoué. Essayez avec une image plus nette ou, si le problème persiste, réduisez le nombre de photos analysées à la fois.';
 
     return {
       success: false,

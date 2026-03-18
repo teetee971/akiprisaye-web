@@ -45,7 +45,7 @@ export const AUTH_INCIDENTS: Record<AuthIncidentCode, AuthIncidentMeta> = {
   AUTH_REDIRECT_RESULT_EMPTY: {
     code: 'AUTH_REDIRECT_RESULT_EMPTY',
     severity: 'warning',
-    userMessage: 'Retour Google détecté, mais aucun résultat exploitable.',
+    userMessage: 'La connexion a été interrompue ou refusée par votre navigateur. Activez les cookies tiers ou réessayez.',
     debugMessage: 'getRedirectResult() returned null/empty.',
   },
   AUTH_STATE_NO_USER: {
