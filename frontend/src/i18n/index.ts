@@ -51,10 +51,9 @@ i18n
     // Chargement des traductions
     backend: {
       loadPath: `${import.meta.env.BASE_URL}locales/{{lng}}/{{ns}}.json`,
-      requestOptions: {
-        cache: 'no-cache',
-      },
-      // Add timeout to prevent hanging on slow networks
+      // No custom requestOptions — let the browser use its default caching
+      // (HTTP Cache-Control headers from the CDN) so translation JSONs are
+      // served from cache on repeat visits instead of re-fetched every time.
       parse: (data: string) => {
         try {
           return JSON.parse(data);

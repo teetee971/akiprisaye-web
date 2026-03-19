@@ -80,7 +80,8 @@ const THRESHOLD_BEST_PRACTICES = Number(process.env.THRESHOLD_BEST_PRACTICES ?? 
 
 // Seuils minimaux absolus (hard fail si en-dessous — indépendant de la baseline).
 // Contrairement aux seuils de régression, ces seuils bloquent la CI même sans baseline.
-const MIN_PERFORMANCE    = Number(process.env.MIN_PERFORMANCE    ?? 80);
+// MIN_PERFORMANCE raised to 90 — target after Firebase + i18n deferral (Phase 2+3).
+const MIN_PERFORMANCE    = Number(process.env.MIN_PERFORMANCE    ?? 90);
 const MIN_ACCESSIBILITY  = Number(process.env.MIN_ACCESSIBILITY  ?? 90);
 const MIN_SEO            = Number(process.env.MIN_SEO            ?? 90);
 const MIN_BEST_PRACTICES = Number(process.env.MIN_BEST_PRACTICES ?? 90);

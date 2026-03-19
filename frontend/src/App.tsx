@@ -8,7 +8,6 @@ import Layout from './components/Layout';
 import ErrorBoundary from './components/ErrorBoundary';
 import { ThemeProvider } from './context/ThemeContext';
 import { OnboardingProvider } from './context/OnboardingContext';
-import { LanguageProvider } from './context/LanguageProvider';
 import { ToastProvider } from './components/Toast/ToastProvider';
 import { StoreSelectionProvider } from './context/StoreSelectionContext';
 import RequireAuth from './components/auth/RequireAuth';
@@ -16,13 +15,26 @@ import RequireCreator from './components/auth/RequireCreator';
 import RequireAdmin from './components/auth/RequireAdmin';
 import { logDebug } from './utils/logger';
 
+// ── Parallel preloading ──────────────────────────────────────────────────────
+// All three provider modules start downloading immediately when this module is
+// evaluated — NOT when React first tries to render them.  Because these are
+// pre-evaluated promises (not factory functions), the browser can download all
+// three in parallel during the single Suspense loading phase.
+// vendor-i18n (21 kB gzip) and Firebase (144 kB gzip) no longer block first paint.
+const _langProviderImport  = import('./context/LanguageProvider');
+const _authProviderImport  = import('./contexts/AuthContext');
+const _entitImport         = import('./billing/EntitlementProvider');
+
+const LanguageProvider = lazy(() =>
+  _langProviderImport.then((m) => ({ default: m.LanguageProvider }))
+);
+
 // Heavy providers — lazy-loaded so Firebase (485 kB) doesn't block first paint.
-// Firebase parses in parallel with the main JS while React renders the shell.
 const AuthProvider = lazy(() =>
-  import('./contexts/AuthContext').then((m) => ({ default: m.AuthProvider }))
+  _authProviderImport.then((m) => ({ default: m.AuthProvider }))
 );
 const EntitlementProvider = lazy(() =>
-  import('./billing/EntitlementProvider').then((m) => ({ default: m.EntitlementProvider }))
+  _entitImport.then((m) => ({ default: m.EntitlementProvider }))
 );
 
 // Non-critical UI/tracking — lazy-loaded so they don't block initial paint
@@ -409,16 +421,16 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-      <LanguageProvider>
-        <ThemeProvider>
-          {/* AuthProvider is lazy-loaded: Firebase SDK parses in parallel with the
-              main JS chunk instead of blocking first paint. The HTML loading-fallback
-              div remains visible until React mounts (existing behaviour). */}
-          <Suspense fallback={<LoadingFallback />}>
+      {/* Single top-level Suspense: LanguageProvider (vendor-i18n 21kB), AuthProvider (Firebase
+          485kB) and EntitlementProvider all download in parallel thanks to the pre-evaluated
+          import promises above.  The LoadingFallback replaces the HTML #loading-fallback div. */}
+      <Suspense fallback={<LoadingFallback />}>
+        <LanguageProvider>
+          <ThemeProvider>
             <AuthProvider>
               <OnboardingProvider>
                 <StoreSelectionProvider>
-                  {/* EntitlementProvider also imports Firebase (Firestore); keep lazy. */}
+                  {/* EntitlementProvider also imports Firebase (Firestore); already preloaded. */}
                   <Suspense fallback={null}>
                     <EntitlementProvider>
                       <BrowserRouter basename={import.meta.env.BASE_URL}>
@@ -751,9 +763,9 @@ export default function App() {
                 </StoreSelectionProvider>
               </OnboardingProvider>
             </AuthProvider>
-          </Suspense>
-        </ThemeProvider>
-      </LanguageProvider>
+          </ThemeProvider>
+        </LanguageProvider>
+      </Suspense>
     </ErrorBoundary>
   );
 }

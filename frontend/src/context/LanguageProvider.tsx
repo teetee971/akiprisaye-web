@@ -3,12 +3,20 @@
  * Manages language state and provides i18n context
  */
 
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, Suspense, lazy, useEffect, useState } from 'react';
 import { I18nextProvider } from 'react-i18next';
 import i18n from '../i18n';
 import { useLanguage } from '../hooks/useLanguage';
-import { LanguageSuggestionModal } from '../components/i18n/LanguageSuggestionModal';
 import { Language } from '../i18n/languages';
+
+// LanguageSuggestionModal is only shown when the user's detected territory
+// suggests a different language — lazy-loaded so its dependency on useTranslation
+// and lucide icons doesn't inflate the LanguageProvider chunk itself.
+const LanguageSuggestionModal = lazy(
+  () => import('../components/i18n/LanguageSuggestionModal').then((m) => ({
+    default: m.LanguageSuggestionModal,
+  }))
+);
 import { logDebug } from '../utils/logger';
 
 interface LanguageProviderProps {
@@ -63,11 +71,13 @@ function LanguageInitializer({ children }: { children: ReactNode }) {
     <>
       {children}
       {showSuggestion && suggestedLanguage && (
-        <LanguageSuggestionModal
-          language={suggestedLanguage}
-          onAccept={handleAcceptSuggestion}
-          onDecline={handleDeclineSuggestion}
-        />
+        <Suspense fallback={null}>
+          <LanguageSuggestionModal
+            language={suggestedLanguage}
+            onAccept={handleAcceptSuggestion}
+            onDecline={handleDeclineSuggestion}
+          />
+        </Suspense>
       )}
     </>
   );
