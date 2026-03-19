@@ -124,7 +124,23 @@ jobs:
             process.stderr.write('Content: ' + JSON.stringify(v, null, 2) + '\n');
             process.exit(1);
           }
+          // Coherence check: commit must be at least 7 chars and shortCommit must be the first 7 chars
+          if (v.commit.length < 7) {
+            process.stderr.write(`❌ dist/version.json incoherence: commit "${v.commit}" is shorter than 7 characters\n`);
+            process.exit(1);
+          }
+          if (v.shortCommit !== v.commit.slice(0, 7)) {
+            process.stderr.write(`❌ dist/version.json incoherence: shortCommit="${v.shortCommit}" !== commit.slice(0,7)="${v.commit.slice(0, 7)}"\n`);
+            process.exit(1);
+          }
+          // Coherence check: buildUrl must be a valid GitHub Actions run URL
+          if (!v.buildUrl.startsWith('https://github.com/')) {
+            process.stderr.write(`❌ dist/version.json incoherence: buildUrl="${v.buildUrl}" does not start with "https://github.com/"\n`);
+            process.exit(1);
+          }
           process.stdout.write('✅ dist/version.json contains all required fields: ' + required.join(', ') + '\n');
+          process.stdout.write(`✅ shortCommit="${v.shortCommit}" matches commit.slice(0,7)\n`);
+          process.stdout.write(`✅ buildUrl references github.com\n`);
           EOF
 
       - name: SPA fallback — copy index.html → 404.html
