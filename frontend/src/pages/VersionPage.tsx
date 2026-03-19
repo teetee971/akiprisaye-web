@@ -12,6 +12,7 @@
 
 import { useEffect, useState } from 'react';
 import { CheckCircle, GitBranch, Clock, ExternalLink, RefreshCw, Copy, Check } from 'lucide-react';
+import LiveVerifiedBadge from '../components/system/LiveVerifiedBadge';
 
 interface VersionInfo {
   commit:      string;
@@ -77,6 +78,11 @@ export default function VersionPage() {
           <p className="text-sm text-slate-400 mt-1">
             Comparez le SHA ci-dessous avec le dernier commit sur GitHub pour confirmer que le site sert bien la dernière version.
           </p>
+        </div>
+
+        {/* Live verification badge */}
+        <div>
+          <LiveVerifiedBadge />
         </div>
 
         {/* Main proof card */}

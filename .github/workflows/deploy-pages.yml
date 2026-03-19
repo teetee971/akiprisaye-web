@@ -110,6 +110,23 @@ jobs:
           echo "✅ dist/version.json found:"
           cat dist/version.json
 
+      - name: Verify version.json fields (mirror check)
+        run: |
+          node --input-type=module <<'EOF'
+          import { readFileSync } from 'node:fs';
+          const raw = readFileSync('dist/version.json', 'utf8');
+          let v;
+          try { v = JSON.parse(raw); } catch { process.stderr.write('❌ dist/version.json is not valid JSON\n'); process.exit(1); }
+          const required = ['commit', 'shortCommit', 'branch', 'runId', 'buildUrl'];
+          const missing = required.filter(f => !v[f] || v[f] === null || v[f] === 'unknown' || v[f] === 'local' || v[f] === 'dev');
+          if (missing.length > 0) {
+            process.stderr.write('❌ dist/version.json is missing or has placeholder values for: ' + missing.join(', ') + '\n');
+            process.stderr.write('Content: ' + JSON.stringify(v, null, 2) + '\n');
+            process.exit(1);
+          }
+          process.stdout.write('✅ dist/version.json contains all required fields: ' + required.join(', ') + '\n');
+          EOF
+
       - name: SPA fallback — copy index.html → 404.html
         run: cp dist/index.html dist/404.html
 
