@@ -317,6 +317,35 @@ describe('lighthouse-guard.mjs — per-metric regression thresholds', () => {
   });
 });
 
+describe('lighthouse-guard.mjs — exit code contract', () => {
+  const src = readFileSync(path.join(HERE, 'lighthouse-guard.mjs'), 'utf8');
+
+  it('business verdict FAIL in --compare mode must exit 0 (non-blocking)', () => {
+    // The nominal end of compareScores() must always be process.exit(0)
+    // regardless of business verdict (PASS/WARN/FAIL/NO_BASELINE are all non-blocking).
+    // Look for the guard comment followed by exit(0) at the end of compareScores.
+    expect(src).toMatch(/Mode --compare toujours non bloquant[\s\S]*?process\.exit\(0\)/);
+  });
+
+  it('unexpected technical exception in --compare must exit 1 (blocking)', () => {
+    // The outer .catch() for compareScores() must call process.exit(1).
+    // An unhandled exception (broken engine, unreadable scores JSON, etc.) is a
+    // real technical failure that must block CI so it is never silently ignored.
+    expect(src).toMatch(/compareScores\(\)\.catch\([\s\S]*?process\.exit\(1\)/);
+  });
+
+  it('artifact API/download/parse error in --compare must exit 1 (blocking)', () => {
+    // The inner catch inside compareScores (FETCH_ERROR) must call process.exit(1).
+    // Failures to fetch or parse the baseline artifact are technical, not business verdicts.
+    expect(src).toMatch(/FETCH_ERROR[\s\S]*?process\.exit\(1\)/);
+  });
+
+  it('invalid mode (not --write or --compare) must exit 1', () => {
+    // The else branch for an unknown mode must call process.exit(1).
+    expect(src).toMatch(/else\s*\{[\s\S]*?process\.exit\(1\)/);
+  });
+});
+
 describe('lighthouse-pr-comment.mjs — PASS/WARN/FAIL verdict banner', () => {
   const src = readFileSync(path.join(HERE, 'lighthouse-pr-comment.mjs'), 'utf8');
 

@@ -268,10 +268,10 @@ async function compareScores() {
     console.log(`📊 Baseline URL: ${baseline.url || 'N/A'}, date: ${baseline.timestamp?.slice(0, 10) || 'N/A'}`);
     console.log(`   Baseline Quality Score : ${baseline.qualityScore ?? 'N/A'}`);
   } catch (err) {
-    console.warn('⚠️  Impossible de récupérer la baseline : ' + err.message);
-    console.log('   → NO_BASELINE — régression guard ignoré pour ce run.');
-    _writeNoBaselineVerdict('FETCH_ERROR', true);
-    process.exit(0);
+    console.error('❌ Erreur technique lors de la récupération de la baseline : ' + err.message);
+    console.error('   → Erreur bloquante : artifact inaccessible, JSON illisible ou parse cassé.');
+    _writeNoBaselineVerdict('FETCH_ERROR', false);
+    process.exit(1);
   }
 
   // ── Moteur de décision (Phase 1) ──────────────────────────────────────────
@@ -472,10 +472,10 @@ if (mode === '--write') {
   writeScores();
 } else if (mode === '--compare') {
   compareScores().catch(err => {
-    console.warn('⚠️  Erreur inattendue dans le quality guard :', err.message);
-    // Erreur technique = état connu, journalisé, non silencieux, non bloquant
+    console.error('❌ Erreur technique inattendue dans le quality guard :', err.message);
+    // Erreur technique inattendue = état connu, journalisé, non silencieux, BLOQUANT.
     _writeNoBaselineVerdict('UNEXPECTED_ERROR', false);
-    process.exit(0);
+    process.exit(1);
   });
 } else {
   console.error('Usage : node lighthouse-guard.mjs --write | --compare');
