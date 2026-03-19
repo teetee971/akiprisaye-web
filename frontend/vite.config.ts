@@ -104,17 +104,13 @@ export default defineConfig({
           if (id.includes('web-vitals')) {
             return 'vendor-web-vitals';
           }
-          // ── Charts (recharts + d3 ecosystem + chart.js / react-chartjs-2) ───
-          if (id.includes('recharts') || id.includes('/d3-') || id.includes('/victory-') || id.includes('chart.js') || id.includes('react-chartjs-2')) {
+          // ── Charts (recharts + d3 ecosystem) ──────────────────────────────
+          if (id.includes('recharts') || id.includes('/d3-') || id.includes('/victory-')) {
             return 'vendor-charts';
           }
           // ── Maps ──────────────────────────────────────────────────────────
           if (id.includes('leaflet') || id.includes('react-leaflet')) {
             return 'vendor-leaflet';
-          }
-          // ── Framer Motion (animation — lazy-loaded pages only) ────────────
-          if (id.includes('framer-motion') || id.includes('framer/')) {
-            return 'vendor-framer-motion';
           }
           // ── Firebase (large SDK — load after app shell) ───────────────────
           if (id.includes('@firebase/') || id.includes('firebase/')) {
