@@ -166,6 +166,8 @@ jobs:
     if: needs.deploy.result == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 12
+    permissions:
+      contents: write
     # Hardcoded URL is more reliable than needs.deploy.outputs.page_url which
     # can be empty when the Pages environment is not yet fully configured.
     env:
@@ -186,6 +188,29 @@ jobs:
           MAX_ATTEMPTS: 36
           DELAY_MS: 10000
         run: node frontend/scripts/verify-live-deployment.mjs
+
+      - name: Update LIVE badge (shields.io endpoint)
+        continue-on-error: true
+        run: |
+          node -e "
+            const fs = require('fs');
+            fs.writeFileSync('.github/badges/live.json', JSON.stringify({
+              schemaVersion: 1,
+              label: 'LIVE',
+              message: 'VERIFIED',
+              color: 'brightgreen'
+            }, null, 2) + '\n');
+          "
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .github/badges/live.json
+          if git diff --cached --quiet; then
+            echo "Badge unchanged — no commit needed."
+          else
+            git commit -m "ci: update LIVE badge — $(date -u '+%Y-%m-%dT%H:%M:%SZ') [sha: ${{ github.sha }}]"
+            git pull --rebase
+            git push
+          fi
 
       - name: Final proof
         run: |

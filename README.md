@@ -10,6 +10,7 @@
 [![PageSpeed Desktop](https://img.shields.io/badge/PageSpeed%20Desktop-99%2F100-success?logo=lighthouse)](https://pagespeed.web.dev/analysis/https-akiprisaye-web-vercel-app/1bs32pqrrx?form_factor=desktop)
 [![PageSpeed Mobile](https://img.shields.io/badge/PageSpeed%20Mobile-74%2F100-yellow?logo=lighthouse)](https://pagespeed.web.dev/analysis/https-akiprisaye-web-vercel-app/1bs32pqrrx?form_factor=mobile)
 [![Performance](https://img.shields.io/badge/Performance-Top%201%25-brightgreen)](#-performance--web-vitals)
+[![LIVE](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/teetee971/akiprisaye-web/main/.github/badges/live.json)](https://teetee971.github.io/akiprisaye-web/version)
 
 **Application citoyenne de transparence des prix et des coûts réels dans les territoires ultramarins**
 
