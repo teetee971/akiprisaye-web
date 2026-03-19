@@ -98,6 +98,15 @@ jobs:
         run: npm run build
         env:
           NODE_OPTIONS: --max-old-space-size=4096
+          # Deployment proof — injected into the bundle and into public/version.json
+          # via the prebuild script (scripts/generate-version.mjs).
+          # Without these, version.json would contain branch:"dev" and commit:"unknown",
+          # causing verifyVersionJson (validate-deployment.mjs) to fail post-deploy.
+          VITE_BUILD_SHA: ${{ github.sha }}
+          VITE_BUILD_REF: ${{ github.ref_name }}
+          VITE_BUILD_RUN_ID: ${{ github.run_id }}
+          # head_commit.timestamp is null on workflow_dispatch — fall back to runner time
+          VITE_BUILD_TIME: ${{ github.event.head_commit.timestamp || '' }}
           VITE_APP_BUILD_ID: ${{ github.sha }}
           # Firebase web config — injected from repository secrets so the correct
           # apiKey is embedded in the production bundle.  If a secret is not set,
