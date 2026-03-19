@@ -1,5 +1,5 @@
  
-import React, { Suspense, useEffect, useState } from 'react';
+import React, { Suspense, lazy, useEffect, useState } from 'react';
 import { lazyPage } from './router/lazy';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
@@ -10,9 +10,6 @@ import { ThemeProvider } from './context/ThemeContext';
 import AuthProvider from './context/AuthContext';
 import { OnboardingProvider } from './context/OnboardingContext';
 import { LanguageProvider } from './context/LanguageProvider';
-import OnboardingAutoStart from './components/OnboardingAutoStart';
-import HelpButton from './components/HelpButton';
-import AnalyticsTracker from './components/analytics/AnalyticsTracker';
 import { ToastProvider } from './components/Toast/ToastProvider';
 import { StoreSelectionProvider } from './context/StoreSelectionContext';
 import { EntitlementProvider } from './billing/EntitlementProvider';
@@ -20,14 +17,19 @@ import RequireAuth from './components/auth/RequireAuth';
 import RequireCreator from './components/auth/RequireCreator';
 import RequireAdmin from './components/auth/RequireAdmin';
 import { logDebug } from './utils/logger';
-import { BuildInfo } from './components/BuildInfo';
 
-// Non-critical overlays — lazy-loaded so they don't block initial paint
+// Non-critical UI/tracking — lazy-loaded so they don't block initial paint
 const PerformanceMonitor = lazyPage(() =>
   import('./components/PerformanceMonitor').then((m) => ({ default: m.PerformanceMonitor }))
 );
 const OnboardingTour = lazyPage(() => import('./components/OnboardingTour'));
 const AuthDebugPanel = lazyPage(() => import('./components/AuthDebugPanel'));
+const OnboardingAutoStart = lazy(() => import('./components/OnboardingAutoStart'));
+const HelpButton = lazy(() => import('./components/HelpButton'));
+const AnalyticsTracker = lazy(() => import('./components/analytics/AnalyticsTracker'));
+const BuildInfo = lazy(() =>
+  import('./components/BuildInfo').then((m) => ({ default: m.BuildInfo }))
+);
 
 // Lazy-loaded pages - Main routes
 const Home = lazyPage(() => import('./pages/Home'));
@@ -720,15 +722,15 @@ export default function App() {
                         </Route>
                       </Routes>
 
-                      <AnalyticsTracker />
+                      <Suspense fallback={null}><AnalyticsTracker /></Suspense>
                       <PerformanceMonitor />
-                      <OnboardingAutoStart />
+                      <Suspense fallback={null}><OnboardingAutoStart /></Suspense>
                       <OnboardingTour />
-                      <HelpButton />
+                      <Suspense fallback={null}><HelpButton /></Suspense>
                       <ToastProvider />
                       <AuthDebugPanel />
                       {/* Deployment proof badge — shows shortSHA + date in bottom-right */}
-                      <BuildInfo />
+                      <Suspense fallback={null}><BuildInfo /></Suspense>
                     </Suspense>
                   </BrowserRouter>
                 </EntitlementProvider>

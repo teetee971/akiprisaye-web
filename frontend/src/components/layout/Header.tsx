@@ -1,10 +1,15 @@
-import { Menu, Search, X, User, LogOut, Crown, Shield, ChevronDown } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { Menu, Search, X, User, LogOut, Crown, Shield, ChevronDown, Bell } from 'lucide-react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { getShoppingListCount } from '../../store/useShoppingListStore';
-import { NotificationCenter } from '../NotificationCenter';
-import GlobalSearch, { useGlobalSearchShortcut } from '../GlobalSearch';
+import { useGlobalSearchShortcut } from '../../hooks/useGlobalSearchShortcut';
 import { useAuth } from '../../context/AuthContext';
+
+// Non-critical heavy components — lazy-loaded so they don't block initial paint
+const GlobalSearch = lazy(() => import('../GlobalSearch'));
+const NotificationCenter = lazy(() =>
+  import('../NotificationCenter').then((m) => ({ default: m.NotificationCenter }))
+);
 
 const links = [
   { to: '/search', label: 'Recherche' },
@@ -98,7 +103,9 @@ export default function Header() {
 
   return (
     <>
-      <GlobalSearch isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
+      <Suspense fallback={null}>
+        <GlobalSearch isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
+      </Suspense>
       <header className="sticky top-0 z-40 border-b border-slate-800 bg-slate-950/95 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
           <Link to="/" className="flex items-center" aria-label="Accueil">
@@ -135,7 +142,13 @@ export default function Header() {
             >
               Liste <span className="ml-1 rounded-full bg-blue-600 px-2 py-0.5 text-xs" aria-hidden="true">{count}</span>
             </Link>
-            <NotificationCenter />
+            <Suspense fallback={
+              <button type="button" className="rounded-lg border border-slate-700 p-2 text-slate-100" aria-label="Notifications" disabled>
+                <Bell size={18} aria-hidden="true" />
+              </button>
+            }>
+              <NotificationCenter />
+            </Suspense>
 
             {/* ── Account button ─────────────────────────────────── */}
             {loading ? (
