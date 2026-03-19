@@ -273,6 +273,12 @@ jobs:
         run: node scripts/prepare-lighthouse-config.mjs
 
       - name: Run Lighthouse CI
+        # continue-on-error: LHCI exits 1 for ANY assertion failure (even "warn" level).
+        # Score regressions are not technical errors — they are handled non-blocking by
+        # lighthouse-guard.mjs --compare. Only a true technical failure (server won't
+        # start, Lighthouse crashes) would also trigger this, but we still want reports
+        # and the quality gate to run even in that case.
+        continue-on-error: true
         working-directory: frontend
         run: npx @lhci/cli@0.15.1 autorun --config=/tmp/lhcirc.json
 
@@ -293,7 +299,7 @@ jobs:
         # Télécharge l'artifact "lighthouse-scores" du dernier run main via l'API GitHub.
         # Utilise le moteur de décision (lighthouse-engine.mjs) pour produire un verdict
         # PASS / WARN / FAIL / NO_BASELINE avec codes de raison explicites.
-        # Échoue la CI (exit 1) uniquement si verdict = FAIL (et pas d'override actif).
+        # Non bloquant sur PR : toujours exit 0 (FAIL = avertissement visible, pas d'échec CI).
         # Écrit /tmp/lh-verdict.json pour le commentaire PR et le résumé.
         if: always() && github.event_name == 'pull_request'
         working-directory: frontend

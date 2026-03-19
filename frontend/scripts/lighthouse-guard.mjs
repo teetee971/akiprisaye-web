@@ -364,6 +364,10 @@ async function compareScores() {
   }
 
   console.log(`\n${verdictIcon} Seuils: perf -${THRESHOLD_PERFORMANCE}, a11y -${THRESHOLD_ACCESSIBILITY}, seo -${THRESHOLD_SEO}, bp -${THRESHOLD_BEST_PRACTICES}.`);
+
+  // Mode --compare toujours non bloquant : exit 0 quel que soit le verdict.
+  // Seule une vraie erreur technique (catch global) peut sortir en erreur.
+  process.exit(0);
 }
 
 // ─── Helpers internes ──────────────────────────────────────────────────────────

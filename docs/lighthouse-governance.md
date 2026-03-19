@@ -308,7 +308,7 @@ Label GitHub : **`ci:override-lighthouse`**
 4. **lighthouse-guard.mjs --write** → extrait les scores, écrit `lighthouse-scores.json`
 5. **Check override label** → détecte `ci:override-lighthouse`
 6. **lighthouse-guard.mjs --compare** → télécharge la baseline main, appelle le moteur, produit le verdict
-   - Si FAIL (sans override) → **exit 1, merge bloqué**
+   - Si FAIL (sans override) → **WARN, CI non bloquée**, merge autorisé (avertissement visible dans PR comment + summary)
    - Si FAIL (avec override) → WARN, merge autorisé mais override journalisé
    - Si WARN → exit 0, merge autorisé
    - Si NO_BASELINE → WARN, exit 0, merge autorisé
