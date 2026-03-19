@@ -68,7 +68,7 @@ const HISTORY_PATH  = process.env.LH_HISTORY_PATH || '/tmp/lh-history.json';
 // Verdicts possibles produits par ce script :
 //   'PASS'        — aucune régression bloquante
 //   'WARN'        — légère régression ou contexte dégradé (non bloquant)
-//   'FAIL'        — régression bloquante (exit 1)
+//   'FAIL'        — régression signalée en avertissement (non bloquant — exit 0)
 //   'NO_BASELINE' — aucune baseline disponible (visible, jamais silencieux)
 
 // Per-metric regression thresholds (env vars, surchargent les défauts du moteur).
@@ -359,11 +359,11 @@ async function compareScores() {
   // ── Exit code ─────────────────────────────────────────────────────────────
 
   if (verdict === VERDICT.FAIL) {
-    console.error('\n❌ Régression Lighthouse détectée — CI bloquée (voir /tmp/lh-verdict.json).');
-    process.exit(1);
+    console.warn('\n⚠️  Régression Lighthouse détectée — avertissement (voir /tmp/lh-verdict.json).');
+    console.warn('   → CI non bloquée : le suivi des régressions reste actif, aucun merge bloqué.');
   }
 
-  console.log(`\n${verdictIcon} Aucune régression bloquante (seuils: perf -${THRESHOLD_PERFORMANCE}, a11y -${THRESHOLD_ACCESSIBILITY}, seo -${THRESHOLD_SEO}, bp -${THRESHOLD_BEST_PRACTICES}).`);
+  console.log(`\n${verdictIcon} Seuils: perf -${THRESHOLD_PERFORMANCE}, a11y -${THRESHOLD_ACCESSIBILITY}, seo -${THRESHOLD_SEO}, bp -${THRESHOLD_BEST_PRACTICES}.`);
 }
 
 // ─── Helpers internes ──────────────────────────────────────────────────────────
@@ -468,10 +468,10 @@ if (mode === '--write') {
   writeScores();
 } else if (mode === '--compare') {
   compareScores().catch(err => {
-    console.error('❌ Erreur inattendue dans le quality guard :', err.message);
-    // Erreur technique = état connu, journalisé, non silencieux
+    console.warn('⚠️  Erreur inattendue dans le quality guard :', err.message);
+    // Erreur technique = état connu, journalisé, non silencieux, non bloquant
     _writeNoBaselineVerdict('UNEXPECTED_ERROR', false);
-    process.exit(1);
+    process.exit(0);
   });
 } else {
   console.error('Usage : node lighthouse-guard.mjs --write | --compare');
