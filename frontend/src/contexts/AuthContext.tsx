@@ -252,6 +252,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => clearInterval(interval);
   }, [user?.uid]);
 
+  /* ── Auto-refresh claims on tab focus ──────────────────────────────── */
+  // Picks up Firebase custom claims set by an admin (via setUserRole Cloud Function)
+  // without requiring the user to log out and back in.
+  // Rate-limited to once every 5 minutes to avoid unnecessary token refreshes.
+  const lastClaimsRefreshRef = useRef(0);
+  useEffect(() => {
+    if (!user) return;
+    const REFRESH_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState !== 'visible') return;
+      const now = Date.now();
+      if (now - lastClaimsRefreshRef.current < REFRESH_INTERVAL_MS) return;
+      lastClaimsRefreshRef.current = now;
+
+      user
+        .getIdTokenResult(/* forceRefresh */ true)
+        .then((tokenResult) => {
+          const role = roleFromClaims(tokenResult.claims as Record<string, unknown>);
+          setUserRole(role);
+          logDebug('[AUTH] claims auto-rafraîchis (retour sur onglet), rôle:', role);
+        })
+        .catch(() => {
+          // Silent — the stale role remains until the next manual refresh or logout
+        });
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [user]);
+
   /* ── Context value ─────────────────────────────────────────────────── */
   const value = useMemo<AuthContextValue>(() => ({
     user,

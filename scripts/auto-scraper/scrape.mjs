@@ -372,7 +372,7 @@ async function main() {
 
     // ── Update services-prices.json ───────────────────────────────────────
     if (rawServices.length > 0) {
-      const existingServices = loadJSON(join(dataDir, 'services-prices.json')) ?? {};
+      const existingServices = loadJSON(join(dataDir, 'services-prices.json')) ?? { metadata: {}, services: [] };
       const updatedServices = {
         metadata: { ...(existingServices.metadata ?? {}), lastUpdated: ISO_NOW, autoUpdated: true },
         services: [

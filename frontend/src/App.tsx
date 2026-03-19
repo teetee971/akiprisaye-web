@@ -41,6 +41,7 @@ const Comparateur = lazyPage(() => import('./pages/Comparateur'));
 const AdminLayout = lazyPage(() => import('./pages/admin/AdminLayout'));
 const AdminDashboardNew = lazyPage(() => import('./pages/admin/AdminDashboard'));
 const AdminUsers = lazyPage(() => import('./pages/admin/AdminUsers'));
+const AdminUsersPanel = lazyPage(() => import('./pages/admin/AdminUsersPanel'));
 const AdminAudience = lazyPage(() => import('./pages/admin/AdminAudience'));
 const StoreList = lazyPage(() => import('./pages/admin/stores/StoreList'));
 const StoreForm = lazyPage(() => import('./pages/admin/stores/StoreForm'));
@@ -409,7 +410,7 @@ export default function App() {
                         {/* Admin routes — RequireAdmin guard: redirects non-admin users to / */}
                         <Route path="/admin" element={<RequireAdmin><AdminLayout /></RequireAdmin>}>
                           <Route index element={<AdminDashboardNew />} />
-                          <Route path="users" element={<AdminUsers />} />
+                          <Route path="users" element={<AdminUsersPanel />} />
                           <Route path="audience" element={<AdminAudience />} />
                           <Route path="stores" element={<StoreList />} />
                           <Route path="stores/new" element={<StoreForm />} />
