@@ -74,6 +74,10 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
         run: |
+          if [ -z "$OPENAI_API_KEY" ]; then
+            echo "⚠️  OPENAI_API_KEY absent — génération du briefing ignorée (secret manquant)"
+            exit 0
+          fi
           if [ "${{ inputs.dry_run }}" = "true" ]; then
             node generate.js --dry-run
           else

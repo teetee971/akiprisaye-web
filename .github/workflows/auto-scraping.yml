@@ -156,12 +156,20 @@ jobs:
         with:
           script: |
             const date = new Date().toLocaleString('fr-FR', { timeZone: 'America/Guadeloupe' });
+            const todayIso = new Date().toISOString().slice(0,10);
             core.warning(`⚠️ Échec du scraping automatique — ${date}`);
-            // Créer une issue si scraping critique échoue
+            // Éviter les doublons : vérifier si une issue est déjà ouverte pour aujourd'hui
+            const existing = await github.rest.search.issuesAndPullRequests({
+              q: `[AUTO] Échec scraping données prix — ${todayIso} repo:${context.repo.owner}/${context.repo.repo} is:open label:scraping label:automatique label:alerte`
+            });
+            if (existing.data.total_count > 0) {
+              core.info(`ℹ️ Issue scraping déjà ouverte pour le ${todayIso} — pas de doublon créé`);
+              return;
+            }
             await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: `🚨 [AUTO] Échec scraping données prix — ${new Date().toISOString().slice(0,10)}`,
+              title: `🚨 [AUTO] Échec scraping données prix — ${todayIso}`,
               body: `Le scraping automatique a échoué.\n\n**Run:** ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}\n\n**Actions à mener :**\n- Vérifier les sources de données\n- Contrôler les secrets GitHub\n- Relancer manuellement si nécessaire`,
               labels: ['scraping', 'automatique', 'alerte']
             });
