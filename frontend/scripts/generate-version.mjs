@@ -2,14 +2,14 @@
 /**
  * generate-version.mjs
  *
- * Génère frontend/public/version.json avant chaque build.
+ * Génère dist/version.json après chaque build (postbuild).
  * En CI (GitHub Actions), les variables VITE_BUILD_* sont injectées par le workflow.
  * En local, des valeurs de fallback sont utilisées (pas d'impact sur le build).
  *
- * Exécuté automatiquement via le script "prebuild" dans package.json.
+ * Exécuté automatiquement via le script "postbuild" dans package.json.
  */
 
-import { writeFileSync } from 'fs';
+import { mkdirSync, writeFileSync } from 'fs';
 
 const sha = process.env.VITE_BUILD_SHA ?? '';
 const shortCommit = sha ? sha.slice(0, 7) : 'dev';
@@ -25,5 +25,6 @@ const version = {
     : null,
 };
 
-writeFileSync('public/version.json', JSON.stringify(version, null, 2) + '\n');
+mkdirSync('dist', { recursive: true });
+writeFileSync('dist/version.json', JSON.stringify(version, null, 2) + '\n');
 console.log('✅ version.json généré :', version);

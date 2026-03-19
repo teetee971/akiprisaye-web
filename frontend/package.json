@@ -9,7 +9,6 @@
   "scripts": {
     "test": "vitest run --config vitest.config.ts",
     "dev": "vite",
-    "prebuild": "node scripts/generate-version.mjs",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint src --ext .ts,.tsx,.js,.jsx",
@@ -19,7 +18,7 @@
     "test:ci": "vitest run --config vitest.config.ts",
     "audit": "npm audit --omit=dev --audit-level=high",
     "audit:ci": "npm audit --omit=dev --audit-level=high",
-    "postbuild": "node -e \"const fs=require('fs');fs.mkdirSync('dist',{recursive:true});fs.copyFileSync('public/_redirects','dist/_redirects');\" && node scripts/prerender-routes.mjs",
+    "postbuild": "node scripts/generate-version.mjs && node -e \"const fs=require('fs');fs.mkdirSync('dist',{recursive:true});fs.copyFileSync('public/_redirects','dist/_redirects');\" && node scripts/prerender-routes.mjs",
     "build:ci": "npm run build"
   },
   "dependencies": {
