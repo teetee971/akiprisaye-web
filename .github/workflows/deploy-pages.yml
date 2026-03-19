@@ -134,13 +134,19 @@ jobs:
             process.exit(1);
           }
           // Coherence check: buildUrl must be a valid GitHub Actions run URL
-          if (!v.buildUrl.startsWith('https://github.com/')) {
-            process.stderr.write(`❌ dist/version.json incoherence: buildUrl="${v.buildUrl}" does not start with "https://github.com/"\n`);
+          if (!v.buildUrl.startsWith('https://github.com/') || !v.buildUrl.includes('/actions/runs/')) {
+            process.stderr.write(`❌ dist/version.json incoherence: buildUrl="${v.buildUrl}" is not a valid GitHub Actions run URL\n`);
+            process.exit(1);
+          }
+          // Coherence check: runId must be numeric
+          if (!/^\d+$/.test(String(v.runId))) {
+            process.stderr.write(`❌ dist/version.json incoherence: runId="${v.runId}" is not numeric\n`);
             process.exit(1);
           }
           process.stdout.write('✅ dist/version.json contains all required fields: ' + required.join(', ') + '\n');
           process.stdout.write(`✅ shortCommit="${v.shortCommit}" matches commit.slice(0,7)\n`);
-          process.stdout.write(`✅ buildUrl references github.com\n`);
+          process.stdout.write(`✅ buildUrl is a valid GitHub Actions run URL\n`);
+          process.stdout.write(`✅ runId="${v.runId}" is numeric\n`);
           EOF
 
       - name: SPA fallback — copy index.html → 404.html
