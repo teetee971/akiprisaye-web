@@ -156,6 +156,42 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
+  verify-live:
+    needs: deploy
+    if: needs.deploy.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+
+      - name: Verify live deployed version
+        env:
+          SITE_URL: ${{ needs.deploy.outputs.page_url }}
+          EXPECTED_COMMIT: ${{ github.sha }}
+          EXPECTED_BRANCH: ${{ github.ref_name }}
+          MAX_ATTEMPTS: 24
+          DELAY_MS: 10000
+        run: node frontend/scripts/verify-live-deployment.mjs
+
+      - name: Final proof
+        env:
+          SITE_URL: ${{ needs.deploy.outputs.page_url }}
+        run: |
+          echo ""
+          echo "🏆 ====================================="
+          echo "🏆 PREUVE FINALE – DÉPLOIEMENT VALIDÉ"
+          echo "🏆 ====================================="
+          echo "🌍 URL : $SITE_URL"
+          echo "📌 SHA : ${{ github.sha }}"
+          echo "📅 Timestamp : $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+          echo "🚀 Statut : LIVE = VERIFIED BUILD"
+
   validate:
     needs: deploy
     if: needs.deploy.result == 'success'

@@ -3,26 +3,40 @@
  * generate-version.mjs
  *
  * Génère dist/version.json après chaque build (postbuild).
- * En CI (GitHub Actions), les variables VITE_BUILD_* sont injectées par le workflow.
- * En local, des valeurs de fallback sont utilisées (pas d'impact sur le build).
+ * En CI (GitHub Actions), les variables VITE_BUILD_* ou les variables natives
+ * GITHUB_* sont utilisées. En local, des valeurs de fallback sont utilisées.
  *
  * Exécuté automatiquement via le script "postbuild" dans package.json.
  */
 
-import { mkdirSync, writeFileSync } from 'fs';
+import { mkdirSync, writeFileSync } from 'node:fs';
 
-const sha = process.env.VITE_BUILD_SHA ?? '';
-const shortCommit = sha ? sha.slice(0, 7) : 'dev';
+const commit =
+  process.env.VITE_BUILD_SHA || process.env.GITHUB_SHA || 'unknown';
+const shortCommit = commit !== 'unknown' ? commit.slice(0, 7) : 'dev';
+
+const branch =
+  process.env.VITE_BUILD_REF ||
+  process.env.GITHUB_REF_NAME ||
+  'dev';
+
+const runId =
+  process.env.GITHUB_RUN_ID || process.env.VITE_BUILD_RUN_ID || 'local';
+const builtAt = new Date().toISOString();
+const repo =
+  process.env.GITHUB_REPOSITORY || 'teetee971/akiprisaye-web';
+const buildUrl =
+  process.env.GITHUB_RUN_ID || process.env.VITE_BUILD_RUN_ID
+    ? `https://github.com/${repo}/actions/runs/${runId}`
+    : null;
 
 const version = {
-  commit:      sha          || 'unknown',
-  shortCommit: shortCommit,
-  branch:      process.env.VITE_BUILD_REF    || 'dev',
-  runId:       process.env.VITE_BUILD_RUN_ID || 'local',
-  builtAt:     process.env.VITE_BUILD_TIME   || new Date().toISOString(),
-  buildUrl:    process.env.VITE_BUILD_RUN_ID
-    ? `https://github.com/teetee971/akiprisaye-web/actions/runs/${process.env.VITE_BUILD_RUN_ID}`
-    : null,
+  commit,
+  shortCommit,
+  branch,
+  runId,
+  builtAt,
+  buildUrl,
 };
 
 mkdirSync('dist', { recursive: true });
