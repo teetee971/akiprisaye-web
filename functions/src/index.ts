@@ -38,7 +38,7 @@ interface AdminAuth {
  */
 function assertAdmin(auth?: AdminAuth): string {
   const role = auth?.token?.role;
-  if (!auth?.uid || role !== "admin") {
+  if (!auth?.uid || auth.uid.trim().length === 0 || role !== "admin") {
     throw new HttpsError("permission-denied", "Accès réservé aux administrateurs.");
   }
   return auth.uid;

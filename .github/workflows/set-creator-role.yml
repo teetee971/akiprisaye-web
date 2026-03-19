@@ -34,9 +34,10 @@ jobs:
 
     steps:
       - name: Valider les entrées
+        env:
+          ROLE: ${{ github.event.inputs.role }}
+          EMAIL: ${{ github.event.inputs.email }}
         run: |
-          ROLE="${{ github.event.inputs.role }}"
-          EMAIL="${{ github.event.inputs.email }}"
           if [[ "$ROLE" != "creator" && "$ROLE" != "admin" ]]; then
             echo "❌ Rôle invalide : $ROLE (valeurs acceptées : creator, admin)"
             exit 1
@@ -54,6 +55,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
+          cache: npm
 
       - name: Installer les dépendances
         run: npm install
