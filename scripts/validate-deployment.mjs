@@ -507,6 +507,86 @@ function verifyHeaders(headers, siteUrl, html) {
   }
 }
 
+/**
+ * Returns true when `branch` is the protected production branch.
+ * Exported for unit tests.
+ */
+export function isMainBranch(branch) {
+  return typeof branch === 'string' && branch.trim() === 'main';
+}
+
+/**
+ * Parses and validates the fields of a version.json payload.
+ * Throws a descriptive Error when a required field is missing or malformed.
+ * Exported for unit tests.
+ *
+ * @param {unknown} json - Parsed JSON object from version.json
+ * @returns {{ branch: string, commit: string, builtAt: string | null, runId: string | null }}
+ */
+export function parseVersionJson(json) {
+  if (!json || typeof json !== 'object') {
+    throw new Error('version.json: le payload n\'est pas un objet JSON valide.');
+  }
+  const obj = /** @type {Record<string, unknown>} */ (json);
+
+  const branch = obj['branch'];
+  if (typeof branch !== 'string' || branch.trim() === '') {
+    throw new Error('version.json: champ "branch" manquant ou vide.');
+  }
+
+  const commit = obj['commit'];
+  if (typeof commit !== 'string' || !/^[0-9a-f]{7,40}$/i.test(commit.trim())) {
+    throw new Error(`version.json: champ "commit" manquant ou invalide ("${commit}"). Attendu: SHA hexadécimal.`);
+  }
+
+  const builtAt = typeof obj['builtAt'] === 'string' ? obj['builtAt'] : null;
+  const runId = typeof obj['runId'] === 'string' ? obj['runId'] : null;
+
+  return { branch: branch.trim(), commit: commit.trim(), builtAt, runId };
+}
+
+async function verifyVersionJson(siteUrl) {
+  const url = `${normalizeBaseUrl(siteUrl)}/version.json`;
+  let response;
+  let body;
+  try {
+    ({ response, body } = await fetchText(url));
+  } catch (err) {
+    fail(`version.json inaccessible (${url}) : ${err instanceof Error ? err.message : String(err)}`);
+    return;
+  }
+
+  if (!response.ok) {
+    fail(`version.json introuvable : HTTP ${response.status} sur ${url}`);
+    return;
+  }
+
+  let json;
+  try {
+    json = JSON.parse(body);
+  } catch {
+    fail(`version.json : JSON invalide — impossible de parser la réponse de ${url}`);
+    return;
+  }
+
+  const { branch, commit, builtAt, runId } = parseVersionJson(json);
+
+  // Critical check: the deployed site MUST have been built from main.
+  if (!isMainBranch(branch)) {
+    fail(
+      `version.json indique branch="${branch}" — le site déployé N'EST PAS issu de main.\n` +
+      `  → Merger la PR sur main et relancer deploy-pages.yml pour que production = main.`,
+    );
+    return;
+  }
+
+  logOk(
+    `version.json validé — branch=${branch}, commit=${commit}` +
+    (builtAt ? `, builtAt=${builtAt}` : '') +
+    (runId ? `, runId=${runId}` : ''),
+  );
+}
+
 async function verifyFirebaseBundle(siteUrl, html) {
   const bundlePath = extractMainBundlePath(html);
   if (!bundlePath) {
@@ -581,6 +661,7 @@ async function main() {
   const assetPaths = await verifyAssets(siteUrl, html);
   await verifyServiceWorker(siteUrl, assetPaths);
   await verifyNoBundleRegression(siteUrl, html, assetPaths);
+  await verifyVersionJson(siteUrl);
   await verifyFirebaseBundle(siteUrl, html);
   await verifySitemap(siteUrl);
   await verifyRoutes(siteUrl);

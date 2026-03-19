@@ -17,9 +17,11 @@ import {
   inferAssetBasePath,
   isCloudflarePagesSite,
   isGitHubPagesSite,
+  isMainBranch,
   isStaleBundleReferenced,
   joinSiteUrl,
   normalizeBaseUrl,
+  parseVersionJson,
 } from '../../scripts/validate-deployment.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -239,5 +241,88 @@ describe('validate-deployment helpers', () => {
     expect(countOccurrences('', 'x')).toBe(0);
     expect(countOccurrences('hello', '')).toBe(0);
     expect(countOccurrences('no match here', 'xyz')).toBe(0);
+  });
+});
+
+describe('isMainBranch', () => {
+  it('returns true for "main"', () => {
+    expect(isMainBranch('main')).toBe(true);
+  });
+
+  it('trims whitespace before comparing', () => {
+    expect(isMainBranch('  main  ')).toBe(true);
+  });
+
+  it('returns false for feature branches', () => {
+    expect(isMainBranch('copilot/implement-ci-cd-pipeline')).toBe(false);
+    expect(isMainBranch('copilot/complete-audit-of-actions')).toBe(false);
+    expect(isMainBranch('develop')).toBe(false);
+    expect(isMainBranch('feature/my-feature')).toBe(false);
+  });
+
+  it('returns false for empty string and non-strings', () => {
+    expect(isMainBranch('')).toBe(false);
+    expect(isMainBranch(null as unknown as string)).toBe(false);
+    expect(isMainBranch(undefined as unknown as string)).toBe(false);
+    expect(isMainBranch(42 as unknown as string)).toBe(false);
+  });
+});
+
+describe('parseVersionJson', () => {
+  const validPayload = {
+    branch: 'main',
+    commit: 'a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2',
+    builtAt: '2026-03-19T12:00:00Z',
+    runId: '12345678',
+  };
+
+  it('accepts a valid version.json payload from main', () => {
+    const result = parseVersionJson(validPayload);
+    expect(result.branch).toBe('main');
+    expect(result.commit).toBe('a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2');
+    expect(result.builtAt).toBe('2026-03-19T12:00:00Z');
+    expect(result.runId).toBe('12345678');
+  });
+
+  it('accepts a short (7-char) commit SHA', () => {
+    const result = parseVersionJson({ ...validPayload, commit: '96f75aa' });
+    expect(result.commit).toBe('96f75aa');
+  });
+
+  it('returns null for optional fields when absent', () => {
+    const result = parseVersionJson({ branch: 'main', commit: '96f75aa' });
+    expect(result.builtAt).toBeNull();
+    expect(result.runId).toBeNull();
+  });
+
+  it('throws when payload is not an object', () => {
+    expect(() => parseVersionJson(null)).toThrow('version.json');
+    expect(() => parseVersionJson('string')).toThrow('version.json');
+    expect(() => parseVersionJson(42)).toThrow('version.json');
+  });
+
+  it('throws when branch is missing or empty', () => {
+    expect(() => parseVersionJson({ commit: '96f75aa' })).toThrow('"branch"');
+    expect(() => parseVersionJson({ branch: '', commit: '96f75aa' })).toThrow('"branch"');
+    expect(() => parseVersionJson({ branch: '   ', commit: '96f75aa' })).toThrow('"branch"');
+  });
+
+  it('throws when commit is missing or not a hex SHA', () => {
+    expect(() => parseVersionJson({ branch: 'main' })).toThrow('"commit"');
+    expect(() => parseVersionJson({ branch: 'main', commit: 'not-a-sha' })).toThrow('"commit"');
+    expect(() => parseVersionJson({ branch: 'main', commit: 'unknown' })).toThrow('"commit"');
+    expect(() => parseVersionJson({ branch: 'main', commit: '' })).toThrow('"commit"');
+  });
+
+  it('correctly identifies a feature-branch version.json (branch !== main)', () => {
+    const result = parseVersionJson({
+      branch: 'copilot/implement-ci-cd-pipeline',
+      commit: '298b854',
+      builtAt: '2026-02-07T18:50:23Z',
+      runId: '21785023116',
+    });
+    // parseVersionJson does not enforce main — that's isMainBranch's job.
+    expect(result.branch).toBe('copilot/implement-ci-cd-pipeline');
+    expect(isMainBranch(result.branch)).toBe(false);
   });
 });
