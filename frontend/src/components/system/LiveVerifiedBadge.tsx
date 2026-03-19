@@ -3,11 +3,11 @@
  *
  * Badge "LIVE = VERIFIED BUILD" visible dans l'interface.
  * Lit version.json côté client et affiche l'état du déploiement.
- * Silencieux en cas d'échec (badge simplement masqué).
+ * Affiche un état dégradé "LIVE = UNVERIFIED" en cas d'échec.
  */
 
 import { useEffect, useState } from 'react';
-import { CheckCircle, ExternalLink } from 'lucide-react';
+import { CheckCircle, AlertTriangle, ExternalLink } from 'lucide-react';
 
 type VersionPayload = {
   commit?: string;
@@ -18,26 +18,40 @@ type VersionPayload = {
   buildUrl?: string | null;
 };
 
+type FetchState =
+  | { status: 'loading' }
+  | { status: 'verified'; data: VersionPayload }
+  | { status: 'unverified' };
+
 export default function LiveVerifiedBadge() {
-  const [data, setData] = useState<VersionPayload | null>(null);
+  const [state, setState] = useState<FetchState>({ status: 'loading' });
 
   useEffect(() => {
     const base = import.meta.env.BASE_URL ?? '/';
     const url = base.endsWith('/') ? `${base}version.json` : `${base}/version.json`;
-    fetch(url, { headers: { 'cache-control': 'no-cache' } })
+    // Cache-buster prevents browser/CDN from serving a stale version.json
+    const bustUrl = `${url}?t=${Date.now()}`;
+    fetch(bustUrl, { headers: { 'cache-control': 'no-cache' } })
       .then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json() as Promise<VersionPayload>;
       })
-      .then(setData)
-      .catch(() => {
-        // Silent — badge stays hidden on failure
-      });
+      .then((data) => setState({ status: 'verified', data }))
+      .catch(() => setState({ status: 'unverified' }));
   }, []);
 
-  if (!data) return null;
+  if (state.status === 'loading') return null;
 
-  const { shortCommit, branch, builtAt, buildUrl } = data;
+  if (state.status === 'unverified') {
+    return (
+      <div className="inline-flex items-center gap-2 rounded-full bg-amber-950 border border-amber-700 px-3 py-1.5 text-xs text-amber-300">
+        <AlertTriangle className="w-3.5 h-3.5 shrink-0 text-amber-400" />
+        <span className="font-semibold tracking-wide">LIVE = UNVERIFIED</span>
+      </div>
+    );
+  }
+
+  const { shortCommit, branch, builtAt, buildUrl } = state.data;
 
   const formattedDate = builtAt
     ? new Date(builtAt).toLocaleString('fr-FR', {

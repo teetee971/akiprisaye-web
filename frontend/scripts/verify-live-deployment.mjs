@@ -12,7 +12,7 @@
  *
  * Variables optionnelles :
  *   EXPECTED_BRANCH  — branche attendue (défaut : "main")
- *   MAX_ATTEMPTS     — nombre max de tentatives (défaut : 24)
+ *   MAX_ATTEMPTS     — nombre max de tentatives (défaut : 36)
  *   DELAY_MS         — délai entre tentatives en ms (défaut : 10000)
  *
  * Exécuté par le job "verify-live" dans deploy-pages.yml.
@@ -21,7 +21,7 @@
 const siteUrl = process.env.SITE_URL;
 const expectedCommit = process.env.EXPECTED_COMMIT;
 const expectedBranch = process.env.EXPECTED_BRANCH || 'main';
-const maxAttempts = Number(process.env.MAX_ATTEMPTS || 24);
+const maxAttempts = Number(process.env.MAX_ATTEMPTS || 36);
 const delayMs = Number(process.env.DELAY_MS || 10000);
 
 if (!siteUrl || !expectedCommit) {
@@ -29,7 +29,7 @@ if (!siteUrl || !expectedCommit) {
   process.exit(1);
 }
 
-const versionUrl = `${siteUrl.replace(/\/$/, '')}/version.json`;
+const baseUrl = siteUrl.replace(/\/$/, '');
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -54,6 +54,9 @@ let lastPayload = null;
 let lastError = null;
 
 for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+  // Cache-buster prevents CDN from serving a stale version.json
+  const versionUrl = `${baseUrl}/version.json?t=${Date.now()}`;
+
   try {
     const payload = await fetchJson(versionUrl);
     lastPayload = payload;
@@ -63,15 +66,24 @@ for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
 
     const commitOk = payload.commit === expectedCommit;
     const branchOk = payload.branch === expectedBranch;
+    const shortOk = payload.shortCommit === expectedCommit.slice(0, 7);
+    const runOk = Boolean(payload.runId);
+    const urlOk = Boolean(payload.buildUrl);
 
-    if (commitOk && branchOk) {
+    if (commitOk && branchOk && shortOk && runOk && urlOk) {
       console.log('✅ LIVE VERIFIED BUILD');
       process.exit(0);
     }
 
-    lastError = new Error(
-      `Mismatch live: commit=${payload.commit} branch=${payload.branch}`,
-    );
+    const mismatches = [];
+    if (!commitOk) mismatches.push(`commit=${payload.commit} (attendu: ${expectedCommit})`);
+    if (!branchOk) mismatches.push(`branch=${payload.branch} (attendu: ${expectedBranch})`);
+    if (!shortOk) mismatches.push(`shortCommit=${payload.shortCommit} (attendu: ${expectedCommit.slice(0, 7)})`);
+    if (!runOk) mismatches.push('runId manquant');
+    if (!urlOk) mismatches.push('buildUrl manquant');
+
+    lastError = new Error(`Mismatch live: ${mismatches.join(', ')}`);
+    console.warn(`⚠️ ${lastError.message}`);
   } catch (err) {
     lastError = err;
     console.warn(`⚠️ Tentative ${attempt} échouée: ${err.message}`);
