@@ -160,7 +160,7 @@ jobs:
             core.warning(`⚠️ Échec du scraping automatique — ${date}`);
             // Éviter les doublons : vérifier si une issue est déjà ouverte pour aujourd'hui
             const existing = await github.rest.search.issuesAndPullRequests({
-              q: `[AUTO] Échec scraping données prix — ${todayIso} repo:${context.repo.owner}/${context.repo.repo} is:open label:scraping label:automatique label:alerte`
+              q: `🚨 [AUTO] Échec scraping données prix — ${todayIso} repo:${context.repo.owner}/${context.repo.repo} is:open label:scraping label:automatique label:alerte`
             });
             if (existing.data.total_count > 0) {
               core.info(`ℹ️ Issue scraping déjà ouverte pour le ${todayIso} — pas de doublon créé`);

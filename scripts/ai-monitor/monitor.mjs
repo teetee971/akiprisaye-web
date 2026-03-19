@@ -45,6 +45,9 @@ const TIMESTAMP_ID = ISO_NOW.replace(/[:.]/g, '-').slice(0, 19);
 
 // ─── Configuration ────────────────────────────────────────────────────────────
 
+/** Labels appliqués à toutes les issues de monitoring automatique */
+const MONITORING_ISSUE_LABELS = ['monitoring', 'automatique', 'alerte-ia'];
+
 const CONFIG = {
   /** Score minimum avant création d'une GitHub Issue d'alerte */
   alertScoreThreshold: 70,
@@ -124,12 +127,13 @@ async function checkSiteAvailability() {
     } catch (err) {
       // Network errors (fetch failed, timeout) may reflect runner restrictions,
       // not actual site downtime — score as 50 (inconclusive) instead of 0.
-      const isNetworkError = err.name === 'AbortError' || err.message.includes('fetch failed') || err.message.includes('ECONNREFUSED') || err.message.includes('ENOTFOUND');
+      const networkErrorMessages = ['fetch failed', 'ECONNREFUSED', 'ENOTFOUND'];
+      const isNetErr = err.name === 'AbortError' || networkErrorMessages.some((m) => err.message.includes(m));
       results.push({
-        status: isNetworkError ? 'warn' : 'error',
+        status: isNetErr ? 'warn' : 'error',
         label: `Site ${url}`,
         detail: `Inaccessible : ${err.message}`,
-        score: isNetworkError ? 50 : 0,
+        score: isNetErr ? 50 : 0,
       });
     }
   }
@@ -429,7 +433,8 @@ async function writeMonitoringReport(db, report) {
  */
 async function findExistingAlertIssue(token, dateStr) {
   try {
-    const query = encodeURIComponent(`[MONITORING] ${dateStr} repo:${CONFIG.repo} is:open label:monitoring label:automatique label:alerte-ia`);
+    const labelFilter = MONITORING_ISSUE_LABELS.map((l) => `label:${l}`).join(' ');
+    const query = encodeURIComponent(`[MONITORING] ${dateStr} repo:${CONFIG.repo} is:open ${labelFilter}`);
     const res = await fetchWithTimeout(
       `https://api.github.com/search/issues?q=${query}&per_page=5`,
       10_000,
@@ -516,7 +521,7 @@ async function createAlertIssue(report) {
           body: JSON.stringify({
             title: `🤖 [MONITORING] Score ${report.globalScore}/100 — ${report.aiAnalysis?.status_global ?? 'Dégradé'} — ${dateStr}`,
             body,
-            labels: ['monitoring', 'automatique', 'alerte-ia'],
+            labels: MONITORING_ISSUE_LABELS,
           }),
         },
       );
