@@ -13,6 +13,7 @@
  *  7. RequireAdmin allows only admin
  *  8. RequireAdmin blocks creator role
  */
+/* eslint-disable jsx-a11y/aria-role -- "role" is a custom RequireRole/RequireCreator/RequireAdmin prop, not an ARIA attribute */
 
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';

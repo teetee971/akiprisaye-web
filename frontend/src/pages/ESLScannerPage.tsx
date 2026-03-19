@@ -416,7 +416,6 @@ export default function ESLScannerPage() {
       active = false;
       cameraStream?.getTracks().forEach((t) => t.stop());
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeMethod]);
 
   // When ESL result has an EAN → fetch live prices
@@ -424,7 +423,6 @@ export default function ESLScannerPage() {
     if (eslResult?.ean) {
       livePrices.scan(eslResult.ean);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eslResult?.ean]);
 
   const handleCapture = useCallback(() => {

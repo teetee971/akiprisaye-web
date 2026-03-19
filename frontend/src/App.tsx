@@ -20,6 +20,7 @@ import RequireAuth from './components/auth/RequireAuth';
 import RequireCreator from './components/auth/RequireCreator';
 import RequireAdmin from './components/auth/RequireAdmin';
 import { logDebug } from './utils/logger';
+import { BuildInfo } from './components/BuildInfo';
 
 // Non-critical overlays — lazy-loaded so they don't block initial paint
 const PerformanceMonitor = lazyPage(() =>
@@ -237,6 +238,7 @@ const Promotions = lazyPage(() => import('./pages/Promotions'));
 const BudgetVital = lazyPage(() => import('./pages/BudgetVital'));
 const IEVRPage = lazyPage(() => import('./pages/IEVR'));
 const Versions = lazyPage(() => import('./pages/Versions'));
+const VersionPage = lazyPage(() => import('./pages/VersionPage'));
 const ScanOCR = lazyPage(() => import('./pages/ScanOCR'));
 
 // Messagerie interne
@@ -652,6 +654,7 @@ export default function App() {
                           <Route path="budget-vital" element={<BudgetVital />} />
                           <Route path="ievr" element={<IEVRPage />} />
                           <Route path="versions" element={<Versions />} />
+                          <Route path="version" element={<VersionPage />} />
 
                           {/* Messagerie interne */}
                           <Route path="messagerie" element={<Messagerie />} />
@@ -724,6 +727,8 @@ export default function App() {
                       <HelpButton />
                       <ToastProvider />
                       <AuthDebugPanel />
+                      {/* Deployment proof badge — shows shortSHA + date in bottom-right */}
+                      <BuildInfo />
                     </Suspense>
                   </BrowserRouter>
                 </EntitlementProvider>

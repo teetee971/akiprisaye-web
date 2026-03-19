@@ -206,10 +206,11 @@ export default function AdminUsersPanel() {
           {/* Role selector + save */}
           <div className="flex flex-col sm:flex-row gap-3 sm:items-end pt-2">
             <div className="flex-1">
-              <label className="text-xs text-slate-500 block mb-2">
+              <label htmlFor="role-select" className="text-xs text-slate-500 block mb-2">
                 Nouveau rôle
               </label>
               <select
+                id="role-select"
                 value={selectedRole}
                 onChange={(e) => setSelectedRole(e.target.value as AppRole)}
                 className="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white focus:border-amber-400 focus:outline-none transition-colors"

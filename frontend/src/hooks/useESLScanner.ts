@@ -125,13 +125,11 @@ async function captureAndOCR(
 async function detectBarcodeFromVideo(
   videoEl: HTMLVideoElement,
 ): Promise<Pick<ESLReadResult, 'ean' | 'price' | 'productName' | 'confidence'> | null> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const BD = (window as any).BarcodeDetector;
   if (!BD) return null;
 
   try {
     const detector = new BD({ formats: ['ean_13', 'ean_8', 'upc_a', 'qr_code', 'data_matrix'] });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const barcodes: Array<{ rawValue?: string; format?: string }> = await detector.detect(videoEl);
     for (const barcode of barcodes) {
       const val = String(barcode.rawValue ?? '');

@@ -9,6 +9,7 @@
   "scripts": {
     "test": "vitest run --config vitest.config.ts",
     "dev": "vite",
+    "prebuild": "node scripts/generate-version.mjs",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint src --ext .ts,.tsx,.js,.jsx",

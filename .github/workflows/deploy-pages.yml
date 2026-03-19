@@ -65,12 +65,23 @@ jobs:
         env:
           VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
 
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
       - name: Build
         run: npm run build
         env:
           # GitHub Pages project URL is https://teetee971.github.io/akiprisaye-web/
+          GITHUB_PAGES: "true"
           BASE_PATH: /akiprisaye-web/
           NODE_OPTIONS: --max-old-space-size=4096
+          # Deployment proof — injected into the bundle and into public/version.json
+          # via the prebuild script (scripts/generate-version.mjs).
+          VITE_BUILD_SHA: ${{ github.sha }}
+          # SHORT_SHA is computed by generate-version.mjs as SHA.slice(0,7) — no separate env needed
+          VITE_BUILD_REF: ${{ github.ref_name }}
+          VITE_BUILD_RUN_ID: ${{ github.run_id }}
+          VITE_BUILD_TIME: ${{ github.event.head_commit.timestamp }}
           VITE_APP_BUILD_ID: ${{ github.sha }}
           # Firebase web config — injected from repository secrets so the correct
           # apiKey is embedded in the production bundle.  If a secret is not set,
@@ -84,17 +95,31 @@ jobs:
           VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
           VITE_FIREBASE_MEASUREMENT_ID: ${{ secrets.VITE_FIREBASE_MEASUREMENT_ID }}
 
+      - name: Verify dist/index.html exists
+        run: |
+          test -f dist/index.html
+          echo "✅ dist/index.html found"
+
       - name: Verify build paths
         run: node scripts/verify-pages-build.mjs
+
+      - name: Verify version.json was generated
+        run: |
+          test -f dist/version.json
+          echo "✅ dist/version.json found:"
+          cat dist/version.json
+
+      - name: SPA fallback — copy index.html → 404.html
+        run: cp dist/index.html dist/404.html
+
+      - name: Disable Jekyll
+        run: touch dist/.nojekyll
 
       - name: Production-like runtime check (GitHub Pages base path)
         run: node scripts/verify-pages-runtime.mjs
 
       - name: Debug dist contents
         run: ls -R dist
-
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4

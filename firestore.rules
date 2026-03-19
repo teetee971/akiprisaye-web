@@ -59,6 +59,10 @@ service cloud.firestore {
 
       allow update: if request.auth != null
                     && request.auth.uid == userId
+                    // Note: Firestore Rules do not support local variable extraction, so
+                    // diff(resource.data).changedKeys() is necessarily repeated per field.
+                    // Each condition independently blocks direct writes to role-related fields;
+                    // only the Cloud Function (Admin SDK) can set these via setUserRole().
                     && !("role" in request.resource.data.diff(resource.data).changedKeys())
                     && !("roleUpdatedAt" in request.resource.data.diff(resource.data).changedKeys())
                     && !("roleUpdatedBy" in request.resource.data.diff(resource.data).changedKeys());

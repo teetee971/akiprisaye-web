@@ -21,15 +21,27 @@ type AppRole = "citoyen" | "observateur" | "creator" | "admin";
 
 const ALLOWED_ROLES: AppRole[] = ["citoyen", "observateur", "creator", "admin"];
 
+/** Auth context shape — ensures `role` is typed instead of opaque Record<string, unknown>. */
+interface AdminAuthToken {
+  role?: string;
+  [key: string]: unknown;
+}
+interface AdminAuth {
+  uid?: string;
+  token?: AdminAuthToken;
+}
+
 /**
  * Vérifie que l'appelant est authentifié et a le rôle "admin".
  * Lève HttpsError("permission-denied") sinon.
+ * Returns the verified uid so callers don't need non-null assertions.
  */
-function assertAdmin(auth?: { uid?: string; token?: Record<string, unknown> }): void {
+function assertAdmin(auth?: AdminAuth): string {
   const role = auth?.token?.role;
   if (!auth?.uid || role !== "admin") {
     throw new HttpsError("permission-denied", "Accès réservé aux administrateurs.");
   }
+  return auth.uid;
 }
 
 /* ── findUser ─────────────────────────────────────────────────────────────── */
@@ -94,7 +106,7 @@ export const findUser = onCall(async (request) => {
  * à un rôle supérieur à "admin" (le seul rôle max autorisé).
  */
 export const setUserRole = onCall(async (request) => {
-  assertAdmin(request.auth);
+  const callerUid = assertAdmin(request.auth);
 
   const { uid, role } = request.data as { uid?: string; role?: AppRole };
 
@@ -138,7 +150,7 @@ export const setUserRole = onCall(async (request) => {
       displayName: targetUser.displayName ?? null,
       role,
       roleUpdatedAt: admin.firestore.FieldValue.serverTimestamp(),
-      roleUpdatedBy: request.auth!.uid,
+      roleUpdatedBy: callerUid,
     },
     { merge: true },
   );
@@ -150,7 +162,7 @@ export const setUserRole = onCall(async (request) => {
     targetEmail: targetUser.email ?? null,
     oldRole: beforeRole,
     newRole: role,
-    byUid: request.auth!.uid,
+    byUid: callerUid,
     at: admin.firestore.FieldValue.serverTimestamp(),
   });
 
