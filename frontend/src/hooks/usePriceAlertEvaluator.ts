@@ -16,7 +16,7 @@ import {
   detectPriceIncrease,
   DEFAULT_ALERT_PREFERENCES,
 } from '../services/priceAlertService';
-import { addNotification } from '../components/NotificationCenter';
+import { addNotification } from '../utils/notificationStorage';
 import { getTerritoryLabel } from '../services/territoryNormalizationService';
 import type { TerritoryCode } from '../services/priceSearch/price.types';
 

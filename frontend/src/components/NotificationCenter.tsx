@@ -8,63 +8,24 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Bell, BellOff, X, TrendingDown, TrendingUp, Package, CheckCircle } from 'lucide-react';
-import { safeLocalStorage } from '../utils/safeLocalStorage';
-
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-export type NotificationKind = 'price_drop' | 'price_increase' | 'shrinkflation' | 'availability';
-
-export interface NotificationItem {
-  id: string;
-  kind: NotificationKind;
-  productName: string;
-  territory: string;
-  message: string;
-  triggeredAt: string; // ISO
-  read: boolean;
-  severity: 'low' | 'medium' | 'high';
-}
-
-// ─── Storage helpers ──────────────────────────────────────────────────────────
-
-const NOTIF_KEY = 'akiprisaye:notifications:v1';
-const MAX_STORED = 50;
-
-export function loadNotifications(): NotificationItem[] {
-  const raw = safeLocalStorage?.getItem(NOTIF_KEY);
-  if (!raw) return [];
-  try {
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? (parsed as NotificationItem[]) : [];
-  } catch {
-    return [];
-  }
-}
-
-export function persistNotifications(items: NotificationItem[]): void {
-  safeLocalStorage?.setItem(NOTIF_KEY, JSON.stringify(items.slice(0, MAX_STORED)));
-}
-
-export function addNotification(item: Omit<NotificationItem, 'id' | 'read' | 'triggeredAt'>): void {
-  const existing = loadNotifications();
-  const newItem: NotificationItem = {
-    ...item,
-    id: `notif-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-    read: false,
-    triggeredAt: new Date().toISOString(),
-  };
-  persistNotifications([newItem, ...existing]);
-}
-
-export function markAllRead(): void {
-  const items = loadNotifications().map((n) => ({ ...n, read: true }));
-  persistNotifications(items);
-}
-
-export function dismissNotification(id: string): void {
-  const items = loadNotifications().filter((n) => n.id !== id);
-  persistNotifications(items);
-}
+// Re-export shared types and storage helpers from the lightweight utility module.
+// usePriceAlertEvaluator and other services import from there to avoid pulling
+// this React component into the critical-path bundle.
+export type { NotificationKind, NotificationItem } from '../utils/notificationStorage';
+export {
+  loadNotifications,
+  persistNotifications,
+  addNotification,
+  markAllRead,
+  dismissNotification,
+} from '../utils/notificationStorage';
+import {
+  type NotificationKind,
+  type NotificationItem,
+  loadNotifications,
+  markAllRead,
+  dismissNotification,
+} from '../utils/notificationStorage';
 
 // ─── Icon helpers ─────────────────────────────────────────────────────────────
 
