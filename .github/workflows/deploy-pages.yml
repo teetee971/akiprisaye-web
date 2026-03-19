@@ -111,52 +111,7 @@ jobs:
           cat dist/version.json
 
       - name: Verify version.json fields (mirror check)
-        run: |
-          node --input-type=module <<'EOF'
-          import { readFileSync } from 'node:fs';
-          const raw = readFileSync('dist/version.json', 'utf8');
-          let v;
-          try { v = JSON.parse(raw); } catch { process.stderr.write('❌ dist/version.json is not valid JSON\n'); process.exit(1); }
-          const required = ['commit', 'shortCommit', 'branch', 'runId', 'buildUrl'];
-          const missing = required.filter(f => !v[f] || v[f] === null || v[f] === 'unknown' || v[f] === 'local' || v[f] === 'dev');
-          if (missing.length > 0) {
-            process.stderr.write('❌ dist/version.json is missing or has placeholder values for: ' + missing.join(', ') + '\n');
-            process.stderr.write('Content: ' + JSON.stringify(v, null, 2) + '\n');
-            process.exit(1);
-          }
-          // Coherence check: commit must be at least 7 chars and shortCommit must be the first 7 chars
-          if (v.commit.length < 7) {
-            process.stderr.write(`❌ dist/version.json incoherence: commit "${v.commit}" is shorter than 7 characters\n`);
-            process.exit(1);
-          }
-          if (v.shortCommit !== v.commit.slice(0, 7)) {
-            process.stderr.write(`❌ dist/version.json incoherence: shortCommit="${v.shortCommit}" !== commit.slice(0,7)="${v.commit.slice(0, 7)}"\n`);
-            process.exit(1);
-          }
-          // Coherence check: buildUrl must be a valid GitHub Actions run URL
-          if (!v.buildUrl.startsWith('https://github.com/') || !v.buildUrl.includes('/actions/runs/')) {
-            process.stderr.write(`❌ dist/version.json incoherence: buildUrl="${v.buildUrl}" is not a valid GitHub Actions run URL\n`);
-            process.exit(1);
-          }
-          // Coherence check: runId must be numeric
-          if (!/^\d+$/.test(String(v.runId))) {
-            process.stderr.write(`❌ dist/version.json incoherence: runId="${v.runId}" is not numeric\n`);
-            process.exit(1);
-          }
-          // Coherence check: branch must match github.ref_name
-          const expectedBranch = process.env.GITHUB_REF_NAME;
-          if (expectedBranch && v.branch !== expectedBranch) {
-            process.stderr.write(`❌ dist/version.json incoherence: branch="${v.branch}" !== github.ref_name="${expectedBranch}"\n`);
-            process.exit(1);
-          }
-          process.stdout.write('✅ dist/version.json contains all required fields: ' + required.join(', ') + '\n');
-          process.stdout.write(`✅ shortCommit="${v.shortCommit}" matches commit.slice(0,7)\n`);
-          process.stdout.write(`✅ buildUrl is a valid GitHub Actions run URL\n`);
-          process.stdout.write(`✅ runId="${v.runId}" is numeric\n`);
-          if (expectedBranch) {
-            process.stdout.write(`✅ branch="${v.branch}" matches github.ref_name\n`);
-          }
-          EOF
+        run: node scripts/verify-version-json-fields.mjs
         env:
           GITHUB_REF_NAME: ${{ github.ref_name }}
 
