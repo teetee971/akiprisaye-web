@@ -2,7 +2,8 @@
  * LiveVerifiedBadge.tsx
  *
  * Badge "LIVE = VERIFIED BUILD" visible dans l'interface.
- * Lit version.json côté client et affiche l'état du déploiement.
+ * Lit version.json côté client, valide les champs de manière stricte
+ * (sha256, buildUrl, runId, shortCommit), et affiche l'état du déploiement.
  * Affiche un état dégradé "LIVE = UNVERIFIED" en cas d'échec.
  */
 
@@ -14,8 +15,10 @@ type VersionPayload = {
   shortCommit?: string;
   branch?: string;
   runId?: string;
+  buildId?: string;
   builtAt?: string;
   buildUrl?: string | null;
+  sha256?: string;
 };
 
 type FetchState =
@@ -27,17 +30,52 @@ export default function LiveVerifiedBadge() {
   const [state, setState] = useState<FetchState>({ status: 'loading' });
 
   useEffect(() => {
-    const base = import.meta.env.BASE_URL ?? '/';
-    const url = base.endsWith('/') ? `${base}version.json` : `${base}/version.json`;
-    // Cache-buster prevents browser/CDN from serving a stale version.json
-    const bustUrl = `${url}?t=${Date.now()}`;
-    fetch(bustUrl, { headers: { 'cache-control': 'no-cache' } })
-      .then((r) => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return r.json() as Promise<VersionPayload>;
-      })
-      .then((data) => setState({ status: 'verified', data }))
-      .catch(() => setState({ status: 'unverified' }));
+    let cancelled = false;
+
+    async function load() {
+      try {
+        const url = `${import.meta.env.BASE_URL}version.json?t=${Date.now()}`;
+        const res = await fetch(url, {
+          cache: 'no-store',
+          headers: {
+            'cache-control': 'no-cache, no-store, must-revalidate',
+            pragma: 'no-cache',
+          },
+        });
+
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`);
+        }
+
+        const data: VersionPayload = await res.json();
+
+        const ok =
+          !!data.commit &&
+          !!data.shortCommit &&
+          !!data.branch &&
+          !!data.runId &&
+          !!data.buildUrl &&
+          !!data.sha256 &&
+          data.shortCommit === data.commit.slice(0, 7) &&
+          /^https:\/\/github\.com\//.test(String(data.buildUrl)) &&
+          /\/actions\/runs\//.test(String(data.buildUrl)) &&
+          /^\d+$/.test(String(data.runId)) &&
+          /^[a-f0-9]{64}$/i.test(String(data.sha256));
+
+        if (!cancelled) {
+          setState(ok ? { status: 'verified', data } : { status: 'unverified' });
+        }
+      } catch {
+        if (!cancelled) {
+          setState({ status: 'unverified' });
+        }
+      }
+    }
+
+    load();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   if (state.status === 'loading') return null;

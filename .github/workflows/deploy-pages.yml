@@ -25,6 +25,8 @@ jobs:
     # be deployed (because the deploy job's ref guard refuses to run), leaving a
     # permanent red-cross entry in the GitHub Pages deployment history.
     if: github.ref == 'refs/heads/main'
+    outputs:
+      sha256: ${{ steps.version_meta.outputs.sha256 }}
     defaults:
       run:
         working-directory: frontend
@@ -115,6 +117,17 @@ jobs:
         env:
           GITHUB_REF_NAME: ${{ github.ref_name }}
 
+      - name: Capture expected sha256
+        id: version_meta
+        run: |
+          if [ ! -f dist/version.json ]; then
+            echo "❌ dist/version.json not found — cannot capture sha256"
+            exit 1
+          fi
+          SHA256=$(node -e "const v=JSON.parse(require('node:fs').readFileSync('dist/version.json','utf8')); if(!v.sha256||v.sha256==='unknown'){process.stderr.write('sha256 is missing or unknown\n');process.exit(1);} process.stdout.write(v.sha256)")
+          echo "sha256=${SHA256}" >> "$GITHUB_OUTPUT"
+          echo "✅ sha256 captured: ${SHA256}"
+
       - name: SPA fallback — copy index.html → 404.html
         run: cp dist/index.html dist/404.html
 
@@ -162,7 +175,7 @@ jobs:
         uses: actions/deploy-pages@v4
 
   verify-live:
-    needs: deploy
+    needs: [build, deploy]
     if: needs.deploy.result == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 12
@@ -185,6 +198,7 @@ jobs:
         env:
           EXPECTED_COMMIT: ${{ github.sha }}
           EXPECTED_BRANCH: ${{ github.ref_name }}
+          EXPECTED_SHA256: ${{ needs.build.outputs.sha256 }}
           MAX_ATTEMPTS: 36
           DELAY_MS: 10000
         run: node frontend/scripts/verify-live-deployment.mjs
@@ -197,7 +211,7 @@ jobs:
             fs.writeFileSync('.github/badges/live.json', JSON.stringify({
               schemaVersion: 1,
               label: 'LIVE',
-              message: 'VERIFIED',
+              message: 'VERIFIED BUILD',
               color: 'brightgreen'
             }, null, 2) + '\n');
           "
@@ -222,6 +236,40 @@ jobs:
           echo "📌 SHA : ${{ github.sha }}"
           echo "📅 Timestamp : $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
           echo "🚀 Statut : LIVE = VERIFIED BUILD"
+
+  mark-live-failed:
+    needs: verify-live
+    if: needs.verify-live.result == 'failure'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Write failed badge
+        continue-on-error: true
+        run: |
+          mkdir -p .github/badges
+          node -e "
+            const fs = require('fs');
+            fs.writeFileSync('.github/badges/live.json', JSON.stringify({
+              schemaVersion: 1,
+              label: 'LIVE',
+              message: 'OUTDATED',
+              color: 'red'
+            }, null, 2) + '\n');
+          "
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .github/badges/live.json
+          if git diff --cached --quiet; then
+            echo "Badge unchanged — no commit needed."
+          else
+            git commit -m "ci: mark LIVE badge OUTDATED — $(date -u '+%Y-%m-%dT%H:%M:%SZ') [sha: ${{ github.sha }}]"
+            git pull --rebase
+            git push
+          fi
 
   validate:
     needs: deploy
