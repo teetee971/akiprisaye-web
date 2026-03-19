@@ -3,7 +3,7 @@ import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { getShoppingListCount } from '../../store/useShoppingListStore';
 import { useGlobalSearchShortcut } from '../../hooks/useGlobalSearchShortcut';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/authHook';
 
 // Non-critical heavy components — lazy-loaded so they don't block initial paint
 const GlobalSearch = lazy(() => import('../GlobalSearch'));

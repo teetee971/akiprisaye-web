@@ -12,7 +12,7 @@
  */
 
 import { Navigate, useLocation } from "react-router-dom";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/authHook";
 import { hasRole } from "@/auth/rbac";
 import type { UserRole } from "@/auth/rbac";
 

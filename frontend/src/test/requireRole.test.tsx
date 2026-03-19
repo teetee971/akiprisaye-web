@@ -75,6 +75,11 @@ vi.mock('../context/AuthContext', () => ({
 vi.mock('../contexts/AuthContext', () => ({
   useAuth: () => authState,
 }));
+// authHook.ts is the new lightweight module used by RequireRole/RequireAuth
+vi.mock('../context/authHook', () => ({
+  useAuth: () => authState,
+  AuthContext: { _currentValue: undefined },
+}));
 
 /* ── Import guard components after mocks ─────────────────────────────── */
 import RequireRole from '../components/auth/RequireRole';

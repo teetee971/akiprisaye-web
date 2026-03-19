@@ -81,6 +81,10 @@ let authState = makeAuthMock();
 vi.mock('../context/AuthContext', () => ({
   useAuth: () => authState,
 }));
+vi.mock('../context/authHook', () => ({
+  useAuth: () => authState,
+  AuthContext: { _currentValue: undefined },
+}));
 
 /* ── Mock useEntitlements (Header now reads the plan) ──────────────────── */
 vi.mock('../billing/useEntitlements', () => ({

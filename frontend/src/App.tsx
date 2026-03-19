@@ -7,16 +7,23 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
 import ErrorBoundary from './components/ErrorBoundary';
 import { ThemeProvider } from './context/ThemeContext';
-import AuthProvider from './context/AuthContext';
 import { OnboardingProvider } from './context/OnboardingContext';
 import { LanguageProvider } from './context/LanguageProvider';
 import { ToastProvider } from './components/Toast/ToastProvider';
 import { StoreSelectionProvider } from './context/StoreSelectionContext';
-import { EntitlementProvider } from './billing/EntitlementProvider';
 import RequireAuth from './components/auth/RequireAuth';
 import RequireCreator from './components/auth/RequireCreator';
 import RequireAdmin from './components/auth/RequireAdmin';
 import { logDebug } from './utils/logger';
+
+// Heavy providers — lazy-loaded so Firebase (485 kB) doesn't block first paint.
+// Firebase parses in parallel with the main JS while React renders the shell.
+const AuthProvider = lazy(() =>
+  import('./contexts/AuthContext').then((m) => ({ default: m.AuthProvider }))
+);
+const EntitlementProvider = lazy(() =>
+  import('./billing/EntitlementProvider').then((m) => ({ default: m.EntitlementProvider }))
+);
 
 // Non-critical UI/tracking — lazy-loaded so they don't block initial paint
 const PerformanceMonitor = lazyPage(() =>
@@ -404,12 +411,18 @@ export default function App() {
     <ErrorBoundary>
       <LanguageProvider>
         <ThemeProvider>
-          <AuthProvider>
-            <OnboardingProvider>
-              <StoreSelectionProvider>
-                <EntitlementProvider>
-                  <BrowserRouter basename={import.meta.env.BASE_URL}>
-                    <Suspense fallback={<LoadingFallback />}>
+          {/* AuthProvider is lazy-loaded: Firebase SDK parses in parallel with the
+              main JS chunk instead of blocking first paint. The HTML loading-fallback
+              div remains visible until React mounts (existing behaviour). */}
+          <Suspense fallback={<LoadingFallback />}>
+            <AuthProvider>
+              <OnboardingProvider>
+                <StoreSelectionProvider>
+                  {/* EntitlementProvider also imports Firebase (Firestore); keep lazy. */}
+                  <Suspense fallback={null}>
+                    <EntitlementProvider>
+                      <BrowserRouter basename={import.meta.env.BASE_URL}>
+                        <Suspense fallback={<LoadingFallback />}>
                       <Routes>
                         {/* Admin routes — RequireAdmin guard: redirects non-admin users to / */}
                         <Route path="/admin" element={<RequireAdmin><AdminLayout /></RequireAdmin>}>
@@ -733,10 +746,12 @@ export default function App() {
                       <Suspense fallback={null}><BuildInfo /></Suspense>
                     </Suspense>
                   </BrowserRouter>
-                </EntitlementProvider>
-              </StoreSelectionProvider>
-            </OnboardingProvider>
-          </AuthProvider>
+                    </EntitlementProvider>
+                  </Suspense>
+                </StoreSelectionProvider>
+              </OnboardingProvider>
+            </AuthProvider>
+          </Suspense>
         </ThemeProvider>
       </LanguageProvider>
     </ErrorBoundary>

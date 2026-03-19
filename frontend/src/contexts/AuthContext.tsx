@@ -1,7 +1,5 @@
 import {
-  createContext,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useRef,
@@ -40,55 +38,15 @@ import {
   clearAuthTransientStorage,
 } from "@/auth/authStorage";
 
+// Lightweight shared context + useAuth hook (no Firebase runtime code).
+// Components that only need the hook import from there directly to avoid
+// pulling the full Firebase SDK into their chunk.
+import { AuthContext, type AuthContextValue } from "@/context/authHook";
+export { useAuth } from "@/context/authHook";
+
 /* ── Types ──────────────────────────────────────────────────────────────── */
 
 type UserRole = "guest" | "citoyen" | "observateur" | "admin" | "creator";
-
-type AuthContextValue = {
-  // ── Core auth state ────────────────────────────────────────────────
-  user: User | null;
-  userRole: UserRole;
-  loading: boolean;
-  error: string | null;
-
-  // ── New observability fields ────────────────────────────────────────
-  /** True once the initial auth bootstrap (getRedirectResult + onAuthStateChanged) has settled. */
-  authResolved: boolean;
-  /** Current state-machine position for auth-aware UI rendering. */
-  authFlowState: AuthFlowState;
-  /** Last classified incident, if any. Cleared on successful auth. */
-  lastIncident: AuthIncidentCode | null;
-  /** Derived: true when user is non-null. */
-  isAuthenticated: boolean;
-  /** Derived: user.displayName, or null. */
-  displayName: string | null;
-  /** Derived: user.email, or null. */
-  email: string | null;
-
-  // ── Role helpers (backward compat) ─────────────────────────────────
-  isGuest: boolean;
-  isCitoyen: boolean;
-  isObservateur: boolean;
-  isAdmin: boolean;
-  isCreator: boolean;
-
-  // ── Actions ────────────────────────────────────────────────────────
-  clearError: () => void;
-  clearAuthIncident: () => void;
-  /** Force-refreshes the Firebase ID token and re-resolves the role from the new claims. */
-  refreshClaims: () => Promise<void>;
-  signUpEmailPassword: (email: string, password: string) => Promise<void>;
-  signInEmailPassword: (email: string, password: string) => Promise<void>;
-  signInGooglePopup: () => Promise<void>;
-  signInGoogleRedirect: () => Promise<void>;
-  signInFacebookPopup: () => Promise<void>;
-  signInFacebookRedirect: () => Promise<void>;
-  signInApplePopup: () => Promise<void>;
-  signInAppleRedirect: () => Promise<void>;
-  signOutUser: () => Promise<void>;
-};
-
-const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 /* ── Role resolver: custom claims → Firestore fallback ───────────────────── */
 
@@ -366,10 +324,3 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
-}

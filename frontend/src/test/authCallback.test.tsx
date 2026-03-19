@@ -102,6 +102,10 @@ let authState = makeAuthMock();
 vi.mock('../context/AuthContext', () => ({
   useAuth: () => authState,
 }));
+vi.mock('../context/authHook', () => ({
+  useAuth: () => authState,
+  AuthContext: { _currentValue: undefined },
+}));
 
 /* ── Logger mock ───────────────────────────────────────────────────────── */
 vi.mock('../utils/logger', () => ({
