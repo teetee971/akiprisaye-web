@@ -104,8 +104,8 @@ export default defineConfig({
           if (id.includes('web-vitals')) {
             return 'vendor-web-vitals';
           }
-          // ── Charts (recharts + d3 ecosystem) ──────────────────────────────
-          if (id.includes('recharts') || id.includes('/d3-') || id.includes('/victory-')) {
+          // ── Charts (recharts + d3 ecosystem + chart.js / react-chartjs-2) ──
+          if (id.includes('recharts') || id.includes('/d3-') || id.includes('/victory-') || id.includes('chart.js') || id.includes('react-chartjs-2')) {
             return 'vendor-charts';
           }
           // ── Maps ──────────────────────────────────────────────────────────

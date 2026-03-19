@@ -6,10 +6,12 @@ import '../styles/home-v5.css';
 import '../styles/animations.css';
 import { safeLocalStorage } from '../utils/safeLocalStorage';
 import { getTerritoryAsset, getProductImage } from '../config/imageAssets';
-import PriceLiveTicker from '../components/home/PriceLiveTicker';
 import { SEOHead } from '../components/ui/SEOHead';
 import { useScrollReveal } from '../hooks/useScrollReveal';
-import FlipStatCard from '../components/ui/FlipStatCard';
+
+// Below-fold components — lazy-loaded since they're only visible after user expands the page
+const PriceLiveTicker = lazy(() => import('../components/home/PriceLiveTicker'));
+const FlipStatCard = lazy(() => import('../components/ui/FlipStatCard'));
 
 const HowItWorksSection = lazy(() => import('./home-v5/HowItWorksSection'));
 const ObservatorySection = lazy(() => import('./home-v5/ObservatorySection'));
@@ -250,9 +252,6 @@ export default function HomeV5() {
         canonical="https://teetee971.github.io/akiprisaye-web/"
       />
     <div className="home-v5">
-      <a href="#main-content" className="skip-link">
-        Aller au contenu principal
-      </a>
 
       <section className="hero-v5">
         {/* ── Hero background image — explicit <img> for LCP optimisation ── */}
@@ -324,7 +323,7 @@ export default function HomeV5() {
         )}
       </section>
 
-      <main id="main-content">
+      <div id="main-content">
         <section className="hero-why section-reveal">
           <div className="hero-why-inner">
             <h2 className="hero-why-title">Pourquoi A KI PRI SA YÉ ?</h2>
@@ -495,36 +494,40 @@ export default function HomeV5() {
 
         {showExtendedContent && (
           <div id="home-extended-content">
-            <PriceLiveTicker />
+            <Suspense fallback={null}>
+              <PriceLiveTicker />
+            </Suspense>
 
             {/* ── 3D Flip Stat Cards ── */}
             <section className="reveal px-4 pb-4 pt-2 max-w-5xl mx-auto w-full" aria-label="Statistiques clés">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <FlipStatCard
-                  value={`${stats.territories}`}
-                  label="Territoires"
-                  icon={<Globe className="w-5 h-5 text-blue-400" />}
-                  backContent="Guadeloupe, Martinique, Guyane, La Réunion, Mayotte et plus encore."
-                />
-                <FlipStatCard
-                  value={`${stats.products.toLocaleString()}+`}
-                  label="Produits comparés"
-                  icon={<ShoppingCart className="w-5 h-5 text-emerald-400" />}
-                  backContent="Alimentaire, hygiène, entretien — relevés citoyens vérifiés."
-                />
-                <FlipStatCard
-                  value={`${stats.scans.toLocaleString()}+`}
-                  label="Scans effectués"
-                  icon={<Camera className="w-5 h-5 text-violet-400" />}
-                  backContent="Codes-barres et tickets OCR analysés par la communauté."
-                />
-                <FlipStatCard
-                  value="~35%"
-                  label="Surcoût moyen DOM"
-                  icon={<BarChart2 className="w-5 h-5 text-orange-400" />}
-                  backContent="Par rapport à l'Hexagone — source observatoire citoyen mars 2026."
-                />
-              </div>
+              <Suspense fallback={null}>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <FlipStatCard
+                    value={`${stats.territories}`}
+                    label="Territoires"
+                    icon={<Globe className="w-5 h-5 text-blue-400" />}
+                    backContent="Guadeloupe, Martinique, Guyane, La Réunion, Mayotte et plus encore."
+                  />
+                  <FlipStatCard
+                    value={`${stats.products.toLocaleString()}+`}
+                    label="Produits comparés"
+                    icon={<ShoppingCart className="w-5 h-5 text-emerald-400" />}
+                    backContent="Alimentaire, hygiène, entretien — relevés citoyens vérifiés."
+                  />
+                  <FlipStatCard
+                    value={`${stats.scans.toLocaleString()}+`}
+                    label="Scans effectués"
+                    icon={<Camera className="w-5 h-5 text-violet-400" />}
+                    backContent="Codes-barres et tickets OCR analysés par la communauté."
+                  />
+                  <FlipStatCard
+                    value="~35%"
+                    label="Surcoût moyen DOM"
+                    icon={<BarChart2 className="w-5 h-5 text-orange-400" />}
+                    backContent="Par rapport à l'Hexagone — source observatoire citoyen mars 2026."
+                  />
+                </div>
+              </Suspense>
             </section>
 
             <section className="benefits section-reveal reveal">
@@ -710,7 +713,7 @@ export default function HomeV5() {
           <span>•</span>
           <Link to="/mentions-legales">Mentions légales</Link>
         </footer>
-      </main>
+      </div>
 
       {showMobileCTA && (
         <div className="mobile-sticky-cta slide-up">
