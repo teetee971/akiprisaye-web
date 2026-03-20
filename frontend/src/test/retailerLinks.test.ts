@@ -10,7 +10,7 @@ import { buildRetailerUrl, getRetailerBaseUrl, knownRetailers } from '../utils/r
 describe('getRetailerBaseUrl', () => {
   it('returns a URL for known retailers', () => {
     expect(getRetailerBaseUrl('Carrefour')).toBe('https://www.carrefour.fr/');
-    expect(getRetailerBaseUrl('E.Leclerc')).toBe('https://www.e.leclerc/');
+    expect(getRetailerBaseUrl('E.Leclerc')).toBe('https://www.courses.leclerc.fr/');
     expect(getRetailerBaseUrl('Leader Price')).toBe('https://www.leaderprice.fr/');
     expect(getRetailerBaseUrl('Intermarché')).toBe('https://www.intermarche.com/');
     expect(getRetailerBaseUrl('Super U')).toBe('https://www.courses.super-u.fr/');

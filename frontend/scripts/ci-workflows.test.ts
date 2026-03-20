@@ -482,8 +482,17 @@ describe('auto-merge.yml — pull_request_target guard', () => {
     expect(triggerLines).toEqual([]);
   });
 
-  it('must restrict auto-merge to Copilot branches or trusted bots', () => {
-    expect(autoMergeYml).toMatch(/startsWith.*copilot/);
+  it('must restrict auto-merge to trusted bot actors only (not branch-prefix)', () => {
+    // The actor-based check is more secure than a branch-prefix check: an attacker
+    // could push a branch named 'copilot/malicious' from a fork and trigger
+    // auto-merge without being an official GitHub Copilot bot.
+    // We verify that:
+    //   1. The workflow gates on 'github-actions[bot]' and 'dependabot[bot]'.
+    //   2. The insecure branch-prefix condition 'startsWith(github.head_ref, ''copilot/'')'
+    //      is NOT present.
+    expect(autoMergeYml).toMatch(/github-actions\[bot\]/);
+    expect(autoMergeYml).toMatch(/dependabot\[bot\]/);
+    expect(autoMergeYml).not.toMatch(/startsWith.*copilot/);
   });
 });
 

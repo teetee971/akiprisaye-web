@@ -11,14 +11,12 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { PrismaClient } from '@prisma/client';
 import {
   verifyAccessToken,
   extractTokenFromHeader,
   JWTPayload,
 } from '../../security/jwt.js';
-
-const prisma = new PrismaClient();
+import prisma from '../../database/prisma.js';
 
 // Extension du type Request pour inclure user et userRole
 declare global {

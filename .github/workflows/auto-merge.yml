@@ -11,12 +11,15 @@ permissions:
 jobs:
   enable-auto-merge:
     runs-on: ubuntu-latest
-    # Only auto-merge non-draft PRs created by GitHub Copilot or Dependabot
+    # Only auto-merge non-draft PRs created by the official GitHub Copilot bot
+    # or Dependabot.  The previous condition also matched any branch starting
+    # with 'copilot/' regardless of who pushed it, which allowed an attacker to
+    # create a fork branch named 'copilot/malicious' and trigger auto-merge.
+    # We now require the actor to be an official bot identity.
     if: >
       !github.event.pull_request.draft && (
         github.actor == 'github-actions[bot]' ||
-        github.actor == 'dependabot[bot]' ||
-        startsWith(github.head_ref, 'copilot/')
+        github.actor == 'dependabot[bot]'
       )
     steps:
       - name: Enable auto-merge
