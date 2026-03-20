@@ -12,12 +12,11 @@
  * Mobile-first: large touch targets, no overflow, minimal text.
  */
 
-import { useEffect } from 'react';
-import { Link }      from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { SEOHead }   from '../components/ui/SEOHead';
 import { PrimaryCTA } from '../components/PrimaryCTA';
-import { trackConversionEvent, getVariantForPage } from '../utils/conversionTracker';
 import { formatEur } from '../utils/currency';
+import { SITE_URL } from '../utils/seoHelpers';
 
 // ── Demo data ─────────────────────────────────────────────────────────────────
 
@@ -46,23 +45,12 @@ const PROOF_ITEMS = [
 // ── Page component ────────────────────────────────────────────────────────────
 
 export default function LandingPage() {
-  // Track page view
-  useEffect(() => {
-    trackConversionEvent({
-      pageUrl:     '/landing',
-      retailer:    '',
-      productName: '',
-      variant:     getVariantForPage('/landing'),
-      clickedAt:   new Date().toISOString(),
-    });
-  }, []);
-
   return (
     <div className="min-h-screen bg-[#0a0a0f] text-white">
       <SEOHead
         title="Comparez les prix en Guadeloupe et Martinique — Économisez dès maintenant"
         description="Comparez les prix entre enseignes locales et trouvez l'offre la moins chère en quelques secondes. Résultats en temps réel."
-        canonical="https://akiprisaye.com/landing"
+        canonical={`${SITE_URL}/landing`}
       />
 
       {/* ── 1. HERO ─────────────────────────────────────────────────────────── */}

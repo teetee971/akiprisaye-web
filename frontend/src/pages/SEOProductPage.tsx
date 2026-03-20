@@ -638,7 +638,7 @@ export default function SEOProductPage() {
     : null;
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] px-4 py-8">
+    <div className="min-h-screen bg-[#0a0a0f] px-4 py-8 pb-24 sm:pb-8">
       {/* SEO Head with all meta tags and JSON-LD */}
       <SEOHead
         title={seoTitle}
@@ -780,7 +780,10 @@ export default function SEOProductPage() {
       </div>
 
       {/* ── Sticky CTA bar — always visible above fold on mobile ─────────────── */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-white/10 bg-[#0a0a0f]/95 px-4 py-3 backdrop-blur-sm sm:hidden">
+      <div
+        className="fixed bottom-0 left-0 right-0 z-50 border-t border-white/10 bg-[#0a0a0f]/95 px-4 pt-3 backdrop-blur-sm sm:hidden"
+        style={{ paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))' }}
+      >
         <PrimaryCTA
           variant="best-price"
           href={bestRetailerUrl ?? undefined}
