@@ -2,6 +2,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { BarChart2, ShoppingCart, Camera, Search, Globe } from 'lucide-react';
 import { getComparisonOfDay, type PriceComparison } from '../data/exampleComparisons';
+import { useCompare } from '../hooks/useCompare';
+import type { PriceObservationRow } from '../types/compare';
 import '../styles/home-v5.css';
 import '../styles/animations.css';
 import { safeLocalStorage } from '../utils/safeLocalStorage';
@@ -219,6 +221,97 @@ function LiveResult({ comparison }: LiveResultProps) {
   );
 }
 
+// ── InlineComparisonPanel — powered by useCompare ────────────────────────────
+
+interface InlineComparisonPanelProps {
+  loading: boolean;
+  product?: { name: string; barcode?: string; image?: string };
+  prices: PriceObservationRow[];
+  summary?: { min: number | null; max: number | null; average: number | null; savings: number | null; count: number };
+  query: string;
+}
+
+function InlineComparisonPanel({ loading, product, prices, summary, query }: InlineComparisonPanelProps) {
+  const cheapest  = prices[0];
+  const expensive = prices[prices.length - 1];
+
+  return (
+    <section className="overflow-hidden rounded-[32px] border border-white/10 bg-[linear-gradient(135deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03))] p-5 shadow-[0_20px_70px_rgba(0,0,0,0.30)] backdrop-blur-xl sm:p-6">
+      {loading ? (
+        <div className="grid gap-4 lg:grid-cols-3">
+          <div className="h-32 animate-pulse rounded-[24px] border border-white/10 bg-white/[0.03]" />
+          <div className="h-32 animate-pulse rounded-[24px] border border-white/10 bg-white/[0.03]" />
+          <div className="h-32 animate-pulse rounded-[24px] border border-white/10 bg-white/[0.03]" />
+        </div>
+      ) : (
+        <div className="grid gap-4 lg:grid-cols-[240px_1fr_220px] lg:items-center">
+          {/* Product identity */}
+          <div className="relative overflow-hidden rounded-[24px] border border-white/10 bg-white/[0.03]">
+            {product?.image ? (
+              <img
+                src={product.image}
+                alt={product.name}
+                width={240} height={160}
+                className="h-40 w-full object-cover"
+                loading="lazy"
+              />
+            ) : (
+              <div className="flex h-40 items-center justify-center text-4xl">🛒</div>
+            )}
+            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 p-3">
+              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-300">Résultat</div>
+              <div className="mt-1 text-sm font-semibold text-white">{product?.name ?? query}</div>
+            </div>
+          </div>
+
+          {/* Metrics */}
+          <div className="grid gap-3 md:grid-cols-3">
+            <div className="rounded-[24px] border border-white/10 bg-white/[0.03] px-4 py-4">
+              <div className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">Prix minimum</div>
+              <div className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-white">
+                {cheapest ? `${cheapest.price.toFixed(2)} €` : '—'}
+              </div>
+              <div className="mt-2 text-sm text-zinc-400">{cheapest?.retailer ?? 'Aucun résultat'}</div>
+            </div>
+            <div className="rounded-[24px] border border-white/10 bg-white/[0.03] px-4 py-4">
+              <div className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">Prix maximum</div>
+              <div className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-white">
+                {expensive ? `${expensive.price.toFixed(2)} €` : '—'}
+              </div>
+              <div className="mt-2 text-sm text-zinc-400">{expensive?.retailer ?? '—'}</div>
+            </div>
+            <div className="rounded-[24px] border border-emerald-400/20 bg-emerald-400/10 px-4 py-4">
+              <div className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">Économie possible</div>
+              <div className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-emerald-300">
+                {summary?.savings != null ? `${summary.savings.toFixed(2)} €` : '—'}
+              </div>
+              <div className="mt-2 text-sm text-zinc-400">écart observé</div>
+            </div>
+          </div>
+
+          {/* Retailer badges */}
+          <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-4">
+            <div className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-400">Enseignes</div>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {prices.map((r) => (
+                <span
+                  key={`${r.retailer}-${r.price}`}
+                  className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-zinc-200"
+                >
+                  {r.retailer}
+                </span>
+              ))}
+              {prices.length === 0 && (
+                <span className="text-sm text-zinc-500">Aucune donnée pour ce filtre</span>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
+
 // ── Main page component ───────────────────────────────────────────────────────
 
 export default function HomeV5() {
@@ -227,7 +320,8 @@ export default function HomeV5() {
   const [displayStats, setDisplayStats] = useState({ scans: 0, products: 0, territories: 0 });
   const [statsAnimated, setStatsAnimated] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedTerritory, setSelectedTerritory] = useState('');
+  const [selectedTerritory, setSelectedTerritory] = useState('GP');
+  const [selectedRetailer, setSelectedRetailer] = useState('');
   const [showMobileCTA, setShowMobileCTA] = useState(false);
   const [showExtended, setShowExtended] = useState(false);
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
@@ -235,6 +329,11 @@ export default function HomeV5() {
   const statsRef = useRef<HTMLElement | null>(null);
 
   useScrollReveal();
+
+  // ── Real comparison data ───────────────────────────────────────────────────
+  const compareQuery = searchQuery.trim() || 'Pack eau 6x1.5L';
+  const { data: compareData, loading: compareLoading } =
+    useCompare(compareQuery, selectedTerritory || 'GP', selectedRetailer);
 
   useEffect(() => {
     if (statsAnimated) return;
@@ -388,7 +487,7 @@ export default function HomeV5() {
                             type="button"
                             role="radio"
                             aria-checked={selectedTerritory === t.code}
-                            onClick={() => setSelectedTerritory(selectedTerritory === t.code ? '' : t.code)}
+                            onClick={() => setSelectedTerritory(selectedTerritory === t.code ? 'GP' : t.code)}
                             className={`flex flex-col items-center gap-1 rounded-2xl border py-2 text-center text-xs transition hover:-translate-y-0.5 ${selectedTerritory === t.code ? 'border-emerald-400/40 bg-emerald-400/10 text-emerald-300' : 'border-white/10 bg-white/[0.03] text-zinc-400 hover:border-white/20 hover:text-white'}`}
                             title={t.name}
                           >
@@ -421,6 +520,17 @@ export default function HomeV5() {
           {/* Live result with animated counter */}
           <section className="mt-6">
             <LiveResult comparison={comparison} />
+          </section>
+
+          {/* Real-time comparison — powered by useCompare + compare.service */}
+          <section className="mt-6">
+            <InlineComparisonPanel
+              loading={compareLoading}
+              product={compareData?.product}
+              prices={compareData?.observations ?? []}
+              summary={compareData?.summary}
+              query={compareQuery}
+            />
           </section>
 
           {/* KPI strip */}

@@ -38,6 +38,11 @@ import subscriptionRoutes from './api/routes/subscription.routes.js';
 import pricesRoutes from './api/routes/prices.routes.js';
 // Receipt OCR Import routes
 import receiptsRoutes from './routes/receipts.js';
+// Price comparison routes (Phase 6 — compare + territories + history + signal)
+import compareRoutes from './routes/compare.js';
+import territoriesRoutes from './routes/territories.js';
+import historyRoutes from './routes/history.js';
+import signalRoutes from './routes/signal.js';
 
 // Import middlewares
 import { apiLimiter } from './api/middlewares/rateLimit.middleware.js';
@@ -213,6 +218,12 @@ app.use('/api/prices', pricesRoutes);
 
 // Receipt OCR Import routes
 app.use('/api/receipts', receiptsRoutes);
+
+// Price comparison (Phase 6)
+app.use('/api/compare', compareRoutes);
+app.use('/api/territories', territoriesRoutes);
+app.use('/api/products', historyRoutes);   // mounts /:id/history under /api/products
+app.use('/api/products', signalRoutes);    // mounts /:id/signal  under /api/products
 
 // ========================================
 // Gestion des erreurs
