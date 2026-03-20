@@ -164,6 +164,10 @@ export default defineConfig({
       abs('./src/test/rbac.test.ts'),
       // RequireRole / RequireCreator / RequireAdmin guards — loading, redirect, access control
       abs('./src/test/requireRole.test.tsx'),
+      // Auto SEO guardrails — capHighPriority, capDuplications, isWhitelisted, validateRecommendations
+      abs('./src/test/autoSeoGuardrails.test.ts'),
+      // Auto SEO engine — scoring determinism, recommendation rules, getSummaryStats, edge cases
+      abs('./src/test/autoSeoEngine.test.ts'),
     ],
 
     exclude: ['**/node_modules/**', '**/.git/**', '**/dist/**', '**/coverage/**'],
