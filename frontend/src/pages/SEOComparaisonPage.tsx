@@ -20,6 +20,7 @@ import { SEOHead } from '../components/ui/SEOHead';
 import { formatEur } from '../utils/currency';
 import { buildRetailerUrl } from '../utils/retailerLinks';
 import { trackRetailerClick } from '../utils/priceClickTracker';
+import { PrimaryCTA } from '../components/PrimaryCTA';
 import {
   getTerritoryName,
   TERRITORY_NAMES,
@@ -390,6 +391,16 @@ export default function SEOComparaisonPage() {
           </div>
         </section>
 
+      </div>
+
+      {/* ── Sticky CTA bar — always visible above fold on mobile ─────────────── */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-white/10 bg-[#0a0a0f]/95 px-4 py-3 backdrop-blur-sm sm:hidden">
+        <PrimaryCTA
+          variant="compare"
+          to="/comparateur"
+          territory={territory}
+          className="w-full justify-center py-3.5"
+        />
       </div>
     </div>
   );
