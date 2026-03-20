@@ -207,20 +207,27 @@ export default function CRODashboardPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/[0.03]">
-                    {filtered.map((r, i) => {
-                      const score = scores.find((s) => s.url === r.url);
-                      return (
-                        <tr key={i} className="align-top">
-                          <td className="py-2 pr-4 font-mono text-zinc-400 max-w-[160px] truncate">{r.url}</td>
-                          <td className="py-2 pr-4">
-                            {score ? <ScorePill score={score.globalScore} /> : <span className="text-zinc-600">—</span>}
-                          </td>
-                          <td className="py-2 pr-4"><TypeLabel type={r.type} /></td>
-                          <td className="py-2 pr-4"><PriorityBadge priority={r.priority} /></td>
-                          <td className="py-2 text-zinc-400 max-w-[260px]">{r.reason}</td>
-                        </tr>
-                      );
-                    })}
+                    {(() => {
+                      const scoreByUrl = new Map<string, any>();
+                      scores.forEach((s) => {
+                        scoreByUrl.set(s.url, s);
+                      });
+
+                      return filtered.map((r, i) => {
+                        const score = scoreByUrl.get(r.url);
+                        return (
+                          <tr key={i} className="align-top">
+                            <td className="py-2 pr-4 font-mono text-zinc-400 max-w-[160px] truncate">{r.url}</td>
+                            <td className="py-2 pr-4">
+                              {score ? <ScorePill score={score.globalScore} /> : <span className="text-zinc-600">—</span>}
+                            </td>
+                            <td className="py-2 pr-4"><TypeLabel type={r.type} /></td>
+                            <td className="py-2 pr-4"><PriorityBadge priority={r.priority} /></td>
+                            <td className="py-2 text-zinc-400 max-w-[260px]">{r.reason}</td>
+                          </tr>
+                        );
+                      });
+                    })()}
                   </tbody>
                 </table>
               </div>
