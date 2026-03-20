@@ -21,11 +21,11 @@ const staticPages = [
 ];
 
 // ── SEO entry pages ───────────────────────────────────────────────────────────
+// Note: stats-dashboard is excluded (private user page, blocked in robots.txt)
 const seoPages = [
   "top-economies",
   "tendances",
   "populaires",
-  "stats-dashboard",
 ];
 
 // ── Category pages ────────────────────────────────────────────────────────────
