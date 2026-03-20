@@ -138,6 +138,22 @@ export function deduplicateObservations(obs: PriceObservationRow[]): PriceObserv
   return Array.from(map.values());
 }
 
+// ── Statistics helpers ────────────────────────────────────────────────────────
+
+/**
+ * Interpolated quartile on a pre-sorted array of numbers.
+ * Robust for all array sizes (avoids IQR=0 from floor-only indexing).
+ *
+ * @param sorted  Ascending-sorted price array (not mutated)
+ * @param p       Quantile in [0, 1], e.g. 0.25 for Q1
+ */
+function interpolatedQuartile(sorted: number[], p: number): number {
+  const idx = (sorted.length - 1) * p;
+  const lo  = Math.floor(idx);
+  const hi  = Math.ceil(idx);
+  return lo === hi ? sorted[lo] : sorted[lo] + (idx - lo) * (sorted[hi] - sorted[lo]);
+}
+
 /**
  * Remove statistical outliers using the IQR method.
  * Skipped when there are fewer than 4 observations (IQR not meaningful).
@@ -152,16 +168,8 @@ export function discardOutliers(obs: PriceObservationRow[]): PriceObservationRow
 
   const sorted = [...obs].map((o) => o.price).sort((a, b) => a - b);
 
-  // Linear interpolation quartile — robust for all array sizes
-  const quartile = (p: number): number => {
-    const idx = (sorted.length - 1) * p;
-    const lo  = Math.floor(idx);
-    const hi  = Math.ceil(idx);
-    return lo === hi ? sorted[lo] : sorted[lo] + (idx - lo) * (sorted[hi] - sorted[lo]);
-  };
-
-  const q1  = quartile(0.25);
-  const q3  = quartile(0.75);
+  const q1  = interpolatedQuartile(sorted, 0.25);
+  const q3  = interpolatedQuartile(sorted, 0.75);
   const iqr = q3 - q1;
 
   // If all prices are identical IQR=0; keep everything to avoid empty result

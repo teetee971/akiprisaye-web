@@ -83,6 +83,10 @@ export default defineConfig({
       abs('./scripts/firebase-config.test.ts'),
       // Aggregation utilities — normalizeRetailer, deduplicateObservations, discardOutliers
       abs('./src/test/compareAggregation.test.ts'),
+      // Retailer link builder — UTM-enriched URLs + deep-links by retailer
+      abs('./src/test/retailerLinks.test.ts'),
+      // Price click tracker — localStorage-based analytics (views + retailer clicks)
+      abs('./src/test/priceClickTracker.test.ts'),
       // EAN / GTIN validation — GS1 checksum and country label
       abs('./src/test/eanValidator.test.ts'),
       // Structured receipt parser — French ticket OCR

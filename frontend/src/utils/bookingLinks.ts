@@ -36,7 +36,8 @@ export type BookingCampaign =
   | 'comparateur-internet'
   | 'comparateur-mobile'
   | 'comparateur-fret'
-  | 'recherche-prix';
+  | 'recherche-prix'
+  | 'comparateur-prix';
 
 /**
  * Construit l'URL de réservation finale.

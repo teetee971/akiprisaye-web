@@ -58,20 +58,20 @@ function deduplicateObservations(obs: PriceObservationRow[]): PriceObservationRo
   return Array.from(map.values());
 }
 
+function interpolatedQuartile(sorted: number[], p: number): number {
+  const idx = (sorted.length - 1) * p;
+  const lo  = Math.floor(idx);
+  const hi  = Math.ceil(idx);
+  return lo === hi ? sorted[lo] : sorted[lo] + (idx - lo) * (sorted[hi] - sorted[lo]);
+}
+
 function discardOutliers(obs: PriceObservationRow[]): PriceObservationRow[] {
   if (obs.length < 4) return obs;
 
   const sorted = [...obs].map((o) => o.price).sort((a, b) => a - b);
 
-  const quartile = (p: number): number => {
-    const idx = (sorted.length - 1) * p;
-    const lo  = Math.floor(idx);
-    const hi  = Math.ceil(idx);
-    return lo === hi ? sorted[lo] : sorted[lo] + (idx - lo) * (sorted[hi] - sorted[lo]);
-  };
-
-  const q1  = quartile(0.25);
-  const q3  = quartile(0.75);
+  const q1  = interpolatedQuartile(sorted, 0.25);
+  const q3  = interpolatedQuartile(sorted, 0.75);
   const iqr = q3 - q1;
 
   if (iqr === 0) return obs; // all prices identical — keep everything

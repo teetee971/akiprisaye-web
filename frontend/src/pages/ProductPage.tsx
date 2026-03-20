@@ -1,4 +1,4 @@
-import { lazy, Suspense, useMemo } from 'react';
+import { lazy, Suspense, useEffect, useMemo } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { useCompare }  from '../hooks/useCompare';
 import { useHistory }  from '../hooks/useHistory';
@@ -6,6 +6,8 @@ import { useSignal }   from '../hooks/useSignal';
 import { Skeleton }    from '../components/ui/Skeleton';
 import { formatEur }   from '../utils/currency';
 import { formatDate }  from '../utils/format';
+import { buildRetailerUrl } from '../utils/retailerLinks';
+import { trackProductView, trackRetailerClick } from '../utils/priceClickTracker';
 import type { PriceObservationRow } from '../types/compare';
 import type { SignalResult, HistoryPoint } from '../types/api';
 
@@ -44,7 +46,7 @@ function SourceBadge({ source }: { source: SourceId }) {
       </span>
     );
   }
-  return null; // Real data — no badge needed
+  return null;
 }
 
 // ── Price row ─────────────────────────────────────────────────────────────────
@@ -53,14 +55,22 @@ interface PriceRowProps {
   rank:          number;
   isBest:        boolean;
   savingsVsBest: number | null;
+  barcode:       string;
+  territory:     string;
 }
-function PriceRow({ p, rank, isBest, savingsVsBest }: PriceRowProps) {
+function PriceRow({ p, rank, isBest, savingsVsBest, barcode, territory }: PriceRowProps) {
+  const retailerUrl = buildRetailerUrl(p.retailer, barcode);
+
+  const handleRetailerClick = () => {
+    trackRetailerClick(barcode, p.retailer, territory, p.price);
+  };
+
   return (
     <div
-      className={`relative flex items-center justify-between rounded-xl border px-4 py-4 transition
+      className={`group relative flex items-center justify-between rounded-xl border px-4 py-4 transition-all duration-150
         ${isBest
-          ? 'border-emerald-400/40 bg-emerald-400/[0.08] ring-1 ring-emerald-400/20'
-          : 'border-white/8 bg-white/[0.02]'}`}
+          ? 'border-emerald-400/40 bg-emerald-400/[0.08] ring-1 ring-emerald-400/20 hover:bg-emerald-400/[0.12]'
+          : 'border-white/8 bg-white/[0.02] hover:border-white/15 hover:bg-white/[0.04]'}`}
     >
       <div className="flex min-w-0 items-center gap-3">
         {/* Rank bubble */}
@@ -85,15 +95,33 @@ function PriceRow({ p, rank, isBest, savingsVsBest }: PriceRowProps) {
         </div>
       </div>
 
-      {/* Price + savings */}
-      <div className="ml-4 flex-shrink-0 text-right">
-        <div className={`text-lg font-bold tabular-nums ${isBest ? 'text-emerald-400' : 'text-white'}`}>
-          {formatEur(p.price)}
-        </div>
-        {!isBest && savingsVsBest != null && savingsVsBest > 0.005 && (
-          <div className="mt-0.5 rounded bg-rose-400/10 px-1.5 py-0.5 text-xs font-semibold text-rose-400">
-            +{formatEur(savingsVsBest)} de plus
+      {/* Price + CTA */}
+      <div className="ml-4 flex flex-shrink-0 items-center gap-3">
+        <div className="text-right">
+          <div className={`text-lg font-bold tabular-nums ${isBest ? 'text-emerald-400' : 'text-white'}`}>
+            {formatEur(p.price)}
           </div>
+          {!isBest && savingsVsBest != null && savingsVsBest > 0.005 && (
+            <div className="mt-0.5 rounded bg-rose-400/10 px-1.5 py-0.5 text-xs font-semibold text-rose-400">
+              +{formatEur(savingsVsBest)} de plus
+            </div>
+          )}
+        </div>
+
+        {/* "Voir chez X" CTA — visible on hover, always on best price row */}
+        {retailerUrl && (
+          <a
+            href={retailerUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={handleRetailerClick}
+            className={`flex-shrink-0 rounded-lg border px-3 py-1.5 text-xs font-bold transition-all duration-150
+              ${isBest
+                ? 'border-emerald-400/50 bg-emerald-400/20 text-emerald-300 hover:bg-emerald-400/30'
+                : 'border-white/15 bg-white/5 text-zinc-400 opacity-0 group-hover:opacity-100 hover:border-white/30 hover:bg-white/10 hover:text-white'}`}
+          >
+            Voir →
+          </a>
         )}
       </div>
     </div>
@@ -102,13 +130,22 @@ function PriceRow({ p, rank, isBest, savingsVsBest }: PriceRowProps) {
 
 // ── Best-price hero block ─────────────────────────────────────────────────────
 interface BestPriceHeroProps {
-  bestPrice:   number | null;
-  savings:     number | null;
-  retailer:    string | undefined;
+  bestPrice:    number | null;
+  savings:      number | null;
+  retailer:     string | undefined;
+  retailerUrl:  string | null;
   signalStatus: string | undefined;
+  barcode:      string;
+  territory:    string;
 }
-function BestPriceHero({ bestPrice, savings, retailer, signalStatus }: BestPriceHeroProps) {
+function BestPriceHero({
+  bestPrice, savings, retailer, retailerUrl, signalStatus, barcode, territory,
+}: BestPriceHeroProps) {
   if (bestPrice === null) return null;
+
+  const handleHeroClick = () => {
+    if (retailer) trackRetailerClick(barcode, retailer, territory, bestPrice);
+  };
 
   const signalColor =
     signalStatus === 'buy'  ? 'text-emerald-400 bg-emerald-400/10 border-emerald-400/30' :
@@ -141,12 +178,25 @@ function BestPriceHero({ bestPrice, savings, retailer, signalStatus }: BestPrice
           )}
         </div>
 
-        {/* Right: signal pill */}
-        {signalStatus && signalStatus !== 'neutral' && (
-          <div className={`self-start rounded-xl border px-4 py-2 text-sm font-bold sm:self-auto ${signalColor}`}>
-            {signalStatus === 'buy'  ? '↓ Bon moment pour acheter' : '↑ Attendre recommandé'}
-          </div>
-        )}
+        {/* Right: signal pill + CTA */}
+        <div className="flex flex-col items-start gap-2 sm:items-end">
+          {signalStatus && signalStatus !== 'neutral' && (
+            <div className={`rounded-xl border px-4 py-2 text-sm font-bold ${signalColor}`}>
+              {signalStatus === 'buy'  ? '↓ Bon moment pour acheter' : '↑ Attendre recommandé'}
+            </div>
+          )}
+          {retailerUrl && retailer && (
+            <a
+              href={retailerUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={handleHeroClick}
+              className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-400/40 bg-emerald-400/15 px-4 py-2 text-sm font-bold text-emerald-300 transition-all hover:bg-emerald-400/25 active:scale-95"
+            >
+              Acheter chez {retailer} →
+            </a>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -199,7 +249,7 @@ export default function ProductPage() {
   const { data: history,     loading: historyLoading  } = useHistory(id, territory, '30d');
   const { data: signal,      loading: signalLoading   } = useSignal(id, territory);
 
-  // Cheapest first (already sorted server-side but we re-sort for safety)
+  // Cheapest first (already sorted server-side but re-sort for safety)
   const sorted = useMemo(
     () => [...(compareData?.observations ?? [])].sort((a, b) => a.price - b.price),
     [compareData?.observations],
@@ -212,6 +262,17 @@ export default function ProductPage() {
         : null,
     [sorted],
   );
+
+  // Track product view once data is loaded
+  useEffect(() => {
+    if (compareData?.product && !compareLoading) {
+      trackProductView(
+        compareData.product.barcode || id,
+        compareData.product.name,
+        territory,
+      );
+    }
+  }, [compareData, compareLoading, id, territory]);
 
   // ── Loading skeleton ────────────────────────────────────────────────────────
   if (compareLoading) {
@@ -236,7 +297,10 @@ export default function ProductPage() {
   }
 
   const { product, summary } = compareData;
-  const bestRetailer = sorted[0]?.retailer;
+  const bestRetailer    = sorted[0]?.retailer;
+  const bestRetailerUrl = bestRetailer
+    ? buildRetailerUrl(bestRetailer, product.barcode)
+    : null;
 
   return (
     <div className="min-h-screen bg-[#0a0a0f] px-4 py-8">
@@ -268,12 +332,15 @@ export default function ProductPage() {
           </div>
         </div>
 
-        {/* ── Best-price hero (above the fold, 3-second read) ───────────────── */}
+        {/* ── Best-price hero (above the fold) ─────────────────────────────── */}
         <BestPriceHero
           bestPrice={summary?.min ?? null}
           savings={maxSavings ?? summary?.savings ?? null}
           retailer={bestRetailer}
+          retailerUrl={bestRetailerUrl}
           signalStatus={signal?.status ?? undefined}
+          barcode={product.barcode}
+          territory={territory}
         />
 
         {/* ── Price comparison list ─────────────────────────────────────────── */}
@@ -294,6 +361,8 @@ export default function ProductPage() {
                   rank={i + 1}
                   isBest={i === 0}
                   savingsVsBest={i > 0 ? +(p.price - (sorted[0]?.price ?? 0)).toFixed(2) : null}
+                  barcode={product.barcode}
+                  territory={territory}
                 />
               ))}
             </div>
