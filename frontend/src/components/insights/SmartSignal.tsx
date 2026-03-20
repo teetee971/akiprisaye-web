@@ -45,7 +45,7 @@ function computeSignal(history: HistoryPoint[]): Signal {
       label:   'Acheter maintenant recommandé',
       sub:     `Prix bas — ${trendPct.toFixed(1)} % vs. début de période`,
       message:
-        'Le prix est proche de son point bas sur la période observée. C'est un bon moment pour passer à l'achat avant une éventuelle remontée.',
+        "Le prix est proche de son point bas sur la période observée. C'est un bon moment pour passer à l'achat avant une éventuelle remontée.",
     };
   }
 
@@ -55,7 +55,7 @@ function computeSignal(history: HistoryPoint[]): Signal {
       label:   'Attendre — prix en hausse',
       sub:     `+${trendPct.toFixed(1)} % vs. début de période`,
       message:
-        'Le prix est orienté à la hausse ou proche de son point haut. Attendre quelques jours peut vous faire économiser.',
+        "Le prix est orienté à la hausse ou proche de son point haut. Attendre quelques jours peut vous faire économiser.",
     };
   }
 

@@ -309,6 +309,14 @@ const ChocsPrixPage = lazyPage(() => import('./pages/ChocsPrixPage'));
 const NewsletterHubPage = lazyPage(() => import('./pages/NewsletterHubPage'));
 const MonitoringIAPage = lazyPage(() => import('./pages/MonitoringIAPage'));
 
+// ── SEO & Growth Pages ───────────────────────────────────────────────────────
+const SEOProductPage = lazyPage(() => import('./pages/SEOProductPage'));
+const SEOCategoryPage = lazyPage(() => import('./pages/SEOCategoryPage'));
+const StatsDashboard = lazyPage(() => import('./pages/StatsDashboard'));
+const TopEconomiesPage = lazyPage(() => import('./pages/TopEconomiesPage'));
+const TendancesPage = lazyPage(() => import('./pages/TendancesPage'));
+const PopulairesPage = lazyPage(() => import('./pages/PopulairesPage'));
+
 /**
  * IMPORTANT — NE PAS SUPPRIMER
  * Les tests CI vérifient la présence LITTÉRALE de certaines routes alias
@@ -735,6 +743,14 @@ export default function App() {
                           <Route path="chocs-prix" element={<ChocsPrixPage />} />
                           <Route path="newsletter" element={<NewsletterHubPage />} />
                           <Route path="monitoring-ia" element={<MonitoringIAPage />} />
+
+                          {/* ── SEO & Growth Pages ── */}
+                          <Route path="produit/:slug" element={<SEOProductPage />} />
+                          <Route path="categorie/:slug" element={<SEOCategoryPage />} />
+                          <Route path="stats-dashboard" element={<StatsDashboard />} />
+                          <Route path="top-economies" element={<TopEconomiesPage />} />
+                          <Route path="tendances" element={<TendancesPage />} />
+                          <Route path="populaires" element={<PopulairesPage />} />
 
                           {/* Pages fonctionnelles sans itinéraire précédent */}
                           <Route path="perimetre" element={<Perimetre />} />
