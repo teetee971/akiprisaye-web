@@ -93,18 +93,21 @@ export default function AutoSeoDashboardPage() {
         {/* Filter bar */}
         <div className="flex flex-wrap gap-3 mb-6">
           <FilterSelect
+            id="autoseo-filter-pagetype"
             label="Type de page"
             value={pageTypeFilter}
             options={PAGE_TYPES}
             onChange={setPageTypeFilter}
           />
           <FilterSelect
+            id="autoseo-filter-priority"
             label="Priorité"
             value={priorityFilter}
             options={PRIORITIES}
             onChange={setPriorityFilter}
           />
           <FilterSelect
+            id="autoseo-filter-action"
             label="Action"
             value={actionFilter}
             options={ACTION_TYPES}
@@ -195,11 +198,13 @@ function StatCard({ label, value, color }: { label: string; value: number; color
 }
 
 function FilterSelect({
+  id,
   label,
   value,
   options,
   onChange,
 }: {
+  id: string;
   label: string;
   value: string;
   options: readonly string[];
@@ -207,8 +212,9 @@ function FilterSelect({
 }) {
   return (
     <div className="flex flex-col gap-1">
-      <label className="text-xs text-zinc-500">{label}</label>
+      <label htmlFor={id} className="text-xs text-zinc-500">{label}</label>
       <select
+        id={id}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="bg-zinc-800 border border-zinc-700 text-zinc-200 text-sm rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/50"

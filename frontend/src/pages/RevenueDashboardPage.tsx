@@ -96,8 +96,9 @@ export default function RevenueDashboardPage() {
 
           {/* Filter */}
           <div className="flex flex-col gap-1">
-            <label className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">Type d'action</label>
+            <label htmlFor="revenue-filter-type" className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">Type d'action</label>
             <select
+              id="revenue-filter-type"
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
               className="w-48 rounded-lg border border-white/10 bg-white/[0.05] px-3 py-1.5 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-emerald-400"

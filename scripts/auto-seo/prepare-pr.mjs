@@ -6,7 +6,7 @@
 
 import fs from 'fs';
 import path from 'path';
-import { execSync } from 'child_process';
+import { spawnSync } from 'child_process';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -71,16 +71,19 @@ if (!APPLY) {
 console.log('\n[prepare-pr] 🚀 Applying...');
 
 try {
-  execSync(`git checkout -b ${branchName}`, { stdio: 'inherit' });
+  const r = spawnSync('git', ['checkout', '-b', branchName], { stdio: 'inherit' });
+  if (r.status !== 0) throw new Error('checkout -b failed');
 } catch {
   console.warn(`[prepare-pr] Branch ${branchName} may already exist, trying to switch.`);
-  execSync(`git checkout ${branchName}`, { stdio: 'inherit' });
+  spawnSync('git', ['checkout', branchName], { stdio: 'inherit' });
 }
 
 const existingFiles = filesToPatch.filter((f) => fs.existsSync(path.join(process.cwd(), f)));
 if (existingFiles.length > 0) {
-  execSync(`git add ${existingFiles.map((f) => `"${f}"`).join(' ')}`, { stdio: 'inherit' });
-  execSync(`git commit -m "${title.replace(/"/g, '\\"')}\n\nCo-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"`, { stdio: 'inherit' });
+  spawnSync('git', ['add', '--', ...existingFiles], { stdio: 'inherit' });
+  const commitMessage =
+    `${title}\n\nCo-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>`;
+  spawnSync('git', ['commit', '-m', commitMessage], { stdio: 'inherit' });
   console.log(`[prepare-pr] ✅ Committed ${existingFiles.length} file(s) on branch ${branchName}`);
 } else {
   console.log('[prepare-pr] ℹ️  No whitelisted files exist yet to stage. Commit skipped.');

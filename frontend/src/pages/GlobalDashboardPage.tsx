@@ -107,8 +107,9 @@ export default function GlobalDashboardPage() {
           {/* Filter bar */}
           <div className="flex flex-wrap gap-4">
             <div className="flex flex-col gap-1">
-              <label className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">Type</label>
+              <label htmlFor="global-filter-type" className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">Type</label>
               <select
+                id="global-filter-type"
                 value={pageTypeFilter}
                 onChange={(e) => setPageTypeFilter(e.target.value)}
                 className="rounded-lg border border-white/10 bg-white/[0.05] px-3 py-1.5 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-emerald-400"
@@ -119,8 +120,9 @@ export default function GlobalDashboardPage() {
               </select>
             </div>
             <div className="flex flex-col gap-1">
-              <label className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">Territoire</label>
+              <label htmlFor="global-filter-territory" className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">Territoire</label>
               <select
+                id="global-filter-territory"
                 value={territoryFilter}
                 onChange={(e) => setTerritoryFilter(e.target.value)}
                 className="rounded-lg border border-white/10 bg-white/[0.05] px-3 py-1.5 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-emerald-400"
@@ -131,8 +133,9 @@ export default function GlobalDashboardPage() {
               </select>
             </div>
             <div className="flex flex-col gap-1">
-              <label className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">Classification</label>
+              <label htmlFor="global-filter-classification" className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">Classification</label>
               <select
+                id="global-filter-classification"
                 value={classificationFilter}
                 onChange={(e) => setClassificationFilter(e.target.value)}
                 className="rounded-lg border border-white/10 bg-white/[0.05] px-3 py-1.5 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-emerald-400"

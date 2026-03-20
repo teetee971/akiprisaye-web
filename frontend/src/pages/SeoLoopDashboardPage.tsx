@@ -92,8 +92,9 @@ export default function SeoLoopDashboardPage() {
           {/* Filters */}
           <div className="flex flex-wrap gap-3">
             <div className="flex flex-col gap-1">
-              <label className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">Type de page</label>
+              <label htmlFor="seoloop-filter-pagetype" className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">Type de page</label>
               <select
+                id="seoloop-filter-pagetype"
                 value={pageTypeFilter}
                 onChange={(e) => setPageTypeFilter(e.target.value)}
                 className="rounded-lg border border-white/10 bg-white/[0.05] px-3 py-1.5 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-emerald-400"
@@ -105,8 +106,9 @@ export default function SeoLoopDashboardPage() {
               </select>
             </div>
             <div className="flex flex-col gap-1">
-              <label className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">Priorité</label>
+              <label htmlFor="seoloop-filter-priority" className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">Priorité</label>
               <select
+                id="seoloop-filter-priority"
                 value={priorityFilter}
                 onChange={(e) => setPriorityFilter(e.target.value)}
                 className="rounded-lg border border-white/10 bg-white/[0.05] px-3 py-1.5 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-emerald-400"

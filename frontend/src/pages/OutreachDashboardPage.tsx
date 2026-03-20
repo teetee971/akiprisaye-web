@@ -254,8 +254,9 @@ export default function OutreachDashboardPage() {
                 <Field label="Ancre" value={form.anchor ?? ''} onChange={(v) => setForm((f) => ({ ...f, anchor: v }))} placeholder="guide prix alimentaire" />
                 <Field label="Territoire" value={form.territory ?? ''} onChange={(v) => setForm((f) => ({ ...f, territory: v }))} placeholder="GP" />
                 <div>
-                  <label className="mb-1 block text-xs font-semibold text-zinc-400">Statut</label>
+                  <label htmlFor="outreach-form-status" className="mb-1 block text-xs font-semibold text-zinc-400">Statut</label>
                   <select
+                    id="outreach-form-status"
                     value={form.status ?? 'pending'}
                     onChange={(e) => setForm((f) => ({ ...f, status: e.target.value as BacklinkRecord['status'] }))}
                     className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-zinc-200 focus:border-emerald-400/50 focus:outline-none"
