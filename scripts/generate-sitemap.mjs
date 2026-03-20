@@ -252,6 +252,11 @@ Disallow: /stats-dashboard
 Disallow: /seo-monitoring
 Disallow: /outreach
 Disallow: /cro-dashboard
+Disallow: /seo-loop-dashboard
+Disallow: /revenue-dashboard
+Disallow: /expansion-dashboard
+Disallow: /authority-dashboard
+Disallow: /global-dashboard
 `;
 
 fs.writeFileSync("robots.txt", robotsTxt);

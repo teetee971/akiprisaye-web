@@ -1,0 +1,293 @@
+{
+  "generatedAt": "2026-03-20T18:32:46.579Z",
+  "sourceData": {
+    "generatedAt": "2026-03-20T17:52:58.910Z",
+    "totalPages": 2400,
+    "byType": {
+      "prix-local": 1025,
+      "comparaison-enseignes": 75,
+      "inflation-tendances": 120,
+      "moins-chers": 25,
+      "guide-prix": 1025,
+      "marque": 100,
+      "enseigne-prix": 30
+    },
+    "products": 205,
+    "territories": 5,
+    "retailers": 6,
+    "brands": 20
+  },
+  "totalSuggestions": 30,
+  "suggestions": [
+    {
+      "sourcePattern": "/prix/{product}-guadeloupe",
+      "suggestedPattern": "/prix/{product}-martinique",
+      "sourceTerritoire": "Guadeloupe",
+      "targetTerritoire": "Martinique",
+      "pageType": "prix-local",
+      "reason": "Page prix locale performante — étendre au territoire adjacent",
+      "priority": "high"
+    },
+    {
+      "sourcePattern": "/comparer/{enseigne1}-vs-{enseigne2}-guadeloupe",
+      "suggestedPattern": "/comparer/{enseigne1}-vs-{enseigne2}-martinique",
+      "sourceTerritoire": "Guadeloupe",
+      "targetTerritoire": "Martinique",
+      "pageType": "comparaison-enseignes",
+      "reason": "Comparaison populaire — reproduire pour territoire voisin",
+      "priority": "low"
+    },
+    {
+      "sourcePattern": "/inflation-alimentaire-guadeloupe",
+      "suggestedPattern": "/inflation-alimentaire-martinique",
+      "sourceTerritoire": "Guadeloupe",
+      "targetTerritoire": "Martinique",
+      "pageType": "inflation-tendances",
+      "reason": "Page inflation avec bon engagement — dupliquer vers territoire adjacent",
+      "priority": "medium"
+    },
+    {
+      "sourcePattern": "/prix/{product}-guadeloupe",
+      "suggestedPattern": "/prix/{product}-reunion",
+      "sourceTerritoire": "Guadeloupe",
+      "targetTerritoire": "Réunion",
+      "pageType": "prix-local",
+      "reason": "Page prix locale performante — étendre au territoire adjacent",
+      "priority": "high"
+    },
+    {
+      "sourcePattern": "/comparer/{enseigne1}-vs-{enseigne2}-guadeloupe",
+      "suggestedPattern": "/comparer/{enseigne1}-vs-{enseigne2}-reunion",
+      "sourceTerritoire": "Guadeloupe",
+      "targetTerritoire": "Réunion",
+      "pageType": "comparaison-enseignes",
+      "reason": "Comparaison populaire — reproduire pour territoire voisin",
+      "priority": "low"
+    },
+    {
+      "sourcePattern": "/inflation-alimentaire-guadeloupe",
+      "suggestedPattern": "/inflation-alimentaire-reunion",
+      "sourceTerritoire": "Guadeloupe",
+      "targetTerritoire": "Réunion",
+      "pageType": "inflation-tendances",
+      "reason": "Page inflation avec bon engagement — dupliquer vers territoire adjacent",
+      "priority": "medium"
+    },
+    {
+      "sourcePattern": "/prix/{product}-martinique",
+      "suggestedPattern": "/prix/{product}-guadeloupe",
+      "sourceTerritoire": "Martinique",
+      "targetTerritoire": "Guadeloupe",
+      "pageType": "prix-local",
+      "reason": "Page prix locale performante — étendre au territoire adjacent",
+      "priority": "high"
+    },
+    {
+      "sourcePattern": "/comparer/{enseigne1}-vs-{enseigne2}-martinique",
+      "suggestedPattern": "/comparer/{enseigne1}-vs-{enseigne2}-guadeloupe",
+      "sourceTerritoire": "Martinique",
+      "targetTerritoire": "Guadeloupe",
+      "pageType": "comparaison-enseignes",
+      "reason": "Comparaison populaire — reproduire pour territoire voisin",
+      "priority": "low"
+    },
+    {
+      "sourcePattern": "/inflation-alimentaire-martinique",
+      "suggestedPattern": "/inflation-alimentaire-guadeloupe",
+      "sourceTerritoire": "Martinique",
+      "targetTerritoire": "Guadeloupe",
+      "pageType": "inflation-tendances",
+      "reason": "Page inflation avec bon engagement — dupliquer vers territoire adjacent",
+      "priority": "medium"
+    },
+    {
+      "sourcePattern": "/prix/{product}-martinique",
+      "suggestedPattern": "/prix/{product}-guyane",
+      "sourceTerritoire": "Martinique",
+      "targetTerritoire": "Guyane",
+      "pageType": "prix-local",
+      "reason": "Page prix locale performante — étendre au territoire adjacent",
+      "priority": "high"
+    },
+    {
+      "sourcePattern": "/comparer/{enseigne1}-vs-{enseigne2}-martinique",
+      "suggestedPattern": "/comparer/{enseigne1}-vs-{enseigne2}-guyane",
+      "sourceTerritoire": "Martinique",
+      "targetTerritoire": "Guyane",
+      "pageType": "comparaison-enseignes",
+      "reason": "Comparaison populaire — reproduire pour territoire voisin",
+      "priority": "low"
+    },
+    {
+      "sourcePattern": "/inflation-alimentaire-martinique",
+      "suggestedPattern": "/inflation-alimentaire-guyane",
+      "sourceTerritoire": "Martinique",
+      "targetTerritoire": "Guyane",
+      "pageType": "inflation-tendances",
+      "reason": "Page inflation avec bon engagement — dupliquer vers territoire adjacent",
+      "priority": "medium"
+    },
+    {
+      "sourcePattern": "/prix/{product}-guyane",
+      "suggestedPattern": "/prix/{product}-martinique",
+      "sourceTerritoire": "Guyane",
+      "targetTerritoire": "Martinique",
+      "pageType": "prix-local",
+      "reason": "Page prix locale performante — étendre au territoire adjacent",
+      "priority": "high"
+    },
+    {
+      "sourcePattern": "/comparer/{enseigne1}-vs-{enseigne2}-guyane",
+      "suggestedPattern": "/comparer/{enseigne1}-vs-{enseigne2}-martinique",
+      "sourceTerritoire": "Guyane",
+      "targetTerritoire": "Martinique",
+      "pageType": "comparaison-enseignes",
+      "reason": "Comparaison populaire — reproduire pour territoire voisin",
+      "priority": "low"
+    },
+    {
+      "sourcePattern": "/inflation-alimentaire-guyane",
+      "suggestedPattern": "/inflation-alimentaire-martinique",
+      "sourceTerritoire": "Guyane",
+      "targetTerritoire": "Martinique",
+      "pageType": "inflation-tendances",
+      "reason": "Page inflation avec bon engagement — dupliquer vers territoire adjacent",
+      "priority": "medium"
+    },
+    {
+      "sourcePattern": "/prix/{product}-guyane",
+      "suggestedPattern": "/prix/{product}-mayotte",
+      "sourceTerritoire": "Guyane",
+      "targetTerritoire": "Mayotte",
+      "pageType": "prix-local",
+      "reason": "Page prix locale performante — étendre au territoire adjacent",
+      "priority": "high"
+    },
+    {
+      "sourcePattern": "/comparer/{enseigne1}-vs-{enseigne2}-guyane",
+      "suggestedPattern": "/comparer/{enseigne1}-vs-{enseigne2}-mayotte",
+      "sourceTerritoire": "Guyane",
+      "targetTerritoire": "Mayotte",
+      "pageType": "comparaison-enseignes",
+      "reason": "Comparaison populaire — reproduire pour territoire voisin",
+      "priority": "low"
+    },
+    {
+      "sourcePattern": "/inflation-alimentaire-guyane",
+      "suggestedPattern": "/inflation-alimentaire-mayotte",
+      "sourceTerritoire": "Guyane",
+      "targetTerritoire": "Mayotte",
+      "pageType": "inflation-tendances",
+      "reason": "Page inflation avec bon engagement — dupliquer vers territoire adjacent",
+      "priority": "medium"
+    },
+    {
+      "sourcePattern": "/prix/{product}-reunion",
+      "suggestedPattern": "/prix/{product}-guadeloupe",
+      "sourceTerritoire": "Réunion",
+      "targetTerritoire": "Guadeloupe",
+      "pageType": "prix-local",
+      "reason": "Page prix locale performante — étendre au territoire adjacent",
+      "priority": "high"
+    },
+    {
+      "sourcePattern": "/comparer/{enseigne1}-vs-{enseigne2}-reunion",
+      "suggestedPattern": "/comparer/{enseigne1}-vs-{enseigne2}-guadeloupe",
+      "sourceTerritoire": "Réunion",
+      "targetTerritoire": "Guadeloupe",
+      "pageType": "comparaison-enseignes",
+      "reason": "Comparaison populaire — reproduire pour territoire voisin",
+      "priority": "low"
+    },
+    {
+      "sourcePattern": "/inflation-alimentaire-reunion",
+      "suggestedPattern": "/inflation-alimentaire-guadeloupe",
+      "sourceTerritoire": "Réunion",
+      "targetTerritoire": "Guadeloupe",
+      "pageType": "inflation-tendances",
+      "reason": "Page inflation avec bon engagement — dupliquer vers territoire adjacent",
+      "priority": "medium"
+    },
+    {
+      "sourcePattern": "/prix/{product}-reunion",
+      "suggestedPattern": "/prix/{product}-martinique",
+      "sourceTerritoire": "Réunion",
+      "targetTerritoire": "Martinique",
+      "pageType": "prix-local",
+      "reason": "Page prix locale performante — étendre au territoire adjacent",
+      "priority": "high"
+    },
+    {
+      "sourcePattern": "/comparer/{enseigne1}-vs-{enseigne2}-reunion",
+      "suggestedPattern": "/comparer/{enseigne1}-vs-{enseigne2}-martinique",
+      "sourceTerritoire": "Réunion",
+      "targetTerritoire": "Martinique",
+      "pageType": "comparaison-enseignes",
+      "reason": "Comparaison populaire — reproduire pour territoire voisin",
+      "priority": "low"
+    },
+    {
+      "sourcePattern": "/inflation-alimentaire-reunion",
+      "suggestedPattern": "/inflation-alimentaire-martinique",
+      "sourceTerritoire": "Réunion",
+      "targetTerritoire": "Martinique",
+      "pageType": "inflation-tendances",
+      "reason": "Page inflation avec bon engagement — dupliquer vers territoire adjacent",
+      "priority": "medium"
+    },
+    {
+      "sourcePattern": "/prix/{product}-mayotte",
+      "suggestedPattern": "/prix/{product}-reunion",
+      "sourceTerritoire": "Mayotte",
+      "targetTerritoire": "Réunion",
+      "pageType": "prix-local",
+      "reason": "Page prix locale performante — étendre au territoire adjacent",
+      "priority": "high"
+    },
+    {
+      "sourcePattern": "/comparer/{enseigne1}-vs-{enseigne2}-mayotte",
+      "suggestedPattern": "/comparer/{enseigne1}-vs-{enseigne2}-reunion",
+      "sourceTerritoire": "Mayotte",
+      "targetTerritoire": "Réunion",
+      "pageType": "comparaison-enseignes",
+      "reason": "Comparaison populaire — reproduire pour territoire voisin",
+      "priority": "low"
+    },
+    {
+      "sourcePattern": "/inflation-alimentaire-mayotte",
+      "suggestedPattern": "/inflation-alimentaire-reunion",
+      "sourceTerritoire": "Mayotte",
+      "targetTerritoire": "Réunion",
+      "pageType": "inflation-tendances",
+      "reason": "Page inflation avec bon engagement — dupliquer vers territoire adjacent",
+      "priority": "medium"
+    },
+    {
+      "sourcePattern": "/prix/{product}-mayotte",
+      "suggestedPattern": "/prix/{product}-guyane",
+      "sourceTerritoire": "Mayotte",
+      "targetTerritoire": "Guyane",
+      "pageType": "prix-local",
+      "reason": "Page prix locale performante — étendre au territoire adjacent",
+      "priority": "high"
+    },
+    {
+      "sourcePattern": "/comparer/{enseigne1}-vs-{enseigne2}-mayotte",
+      "suggestedPattern": "/comparer/{enseigne1}-vs-{enseigne2}-guyane",
+      "sourceTerritoire": "Mayotte",
+      "targetTerritoire": "Guyane",
+      "pageType": "comparaison-enseignes",
+      "reason": "Comparaison populaire — reproduire pour territoire voisin",
+      "priority": "low"
+    },
+    {
+      "sourcePattern": "/inflation-alimentaire-mayotte",
+      "suggestedPattern": "/inflation-alimentaire-guyane",
+      "sourceTerritoire": "Mayotte",
+      "targetTerritoire": "Guyane",
+      "pageType": "inflation-tendances",
+      "reason": "Page inflation avec bon engagement — dupliquer vers territoire adjacent",
+      "priority": "medium"
+    }
+  ]
+}

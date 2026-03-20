@@ -1,0 +1,126 @@
+{
+  "generatedAt": "2026-03-20T18:32:46.609Z",
+  "totalAssets": 10,
+  "assets": [
+    {
+      "url": "/guide-prix-alimentaire-dom",
+      "title": "Guide Prix Alimentaire DOM",
+      "pageType": "pillar",
+      "internalLinks": 12,
+      "pageViews": 180,
+      "backlinksCount": 3,
+      "outreachStatus": "won",
+      "authorityScore": 79,
+      "action": "PROMOTE_PAGE",
+      "actionPriority": "high"
+    },
+    {
+      "url": "/comparateur-supermarches-dom",
+      "title": "Comparateur Supermarchés DOM",
+      "pageType": "comparison",
+      "internalLinks": 8,
+      "pageViews": 220,
+      "backlinksCount": 6,
+      "outreachStatus": "won",
+      "authorityScore": 89,
+      "action": "PROMOTE_PAGE",
+      "actionPriority": "high"
+    },
+    {
+      "url": "/inflation-alimentaire-dom",
+      "title": "Inflation Alimentaire DOM",
+      "pageType": "pillar",
+      "internalLinks": 9,
+      "pageViews": 160,
+      "backlinksCount": 5,
+      "outreachStatus": "contacted",
+      "authorityScore": 75,
+      "action": "PROMOTE_PAGE",
+      "actionPriority": "high"
+    },
+    {
+      "url": "/ou-faire-courses-dom",
+      "title": "Où Faire ses Courses DOM",
+      "pageType": "pillar",
+      "internalLinks": 7,
+      "pageViews": 140,
+      "backlinksCount": 2,
+      "outreachStatus": "new",
+      "authorityScore": 52,
+      "action": "STRENGTHEN_CONTENT",
+      "actionPriority": "low"
+    },
+    {
+      "url": "/prix/coca-cola-1-5l-guadeloupe",
+      "title": "Prix Coca-Cola Guadeloupe",
+      "pageType": "product",
+      "internalLinks": 3,
+      "pageViews": 120,
+      "backlinksCount": 1,
+      "outreachStatus": "new",
+      "authorityScore": 41,
+      "action": "OUTREACH_NOW",
+      "actionPriority": "high"
+    },
+    {
+      "url": "/prix/huile-tournesol-martinique",
+      "title": "Prix Huile Tournesol Martinique",
+      "pageType": "product",
+      "internalLinks": 2,
+      "pageViews": 55,
+      "backlinksCount": 0,
+      "outreachStatus": "new",
+      "authorityScore": 26,
+      "action": "OUTREACH_NOW",
+      "actionPriority": "high"
+    },
+    {
+      "url": "/comparer/carrefour-vs-leclerc-guadeloupe",
+      "title": "Carrefour vs Leclerc Guadeloupe",
+      "pageType": "comparison",
+      "internalLinks": 6,
+      "pageViews": 200,
+      "backlinksCount": 4,
+      "outreachStatus": "contacted",
+      "authorityScore": 82,
+      "action": "PROMOTE_PAGE",
+      "actionPriority": "high"
+    },
+    {
+      "url": "/prix/farine-ble-guyane",
+      "title": "Prix Farine Blé Guyane",
+      "pageType": "product",
+      "internalLinks": 1,
+      "pageViews": 30,
+      "backlinksCount": 0,
+      "outreachStatus": "new",
+      "authorityScore": 14,
+      "action": "STRENGTHEN_CONTENT",
+      "actionPriority": "low"
+    },
+    {
+      "url": "/categorie/produits-laitiers-reunion",
+      "title": "Produits Laitiers Réunion",
+      "pageType": "category",
+      "internalLinks": 4,
+      "pageViews": 78,
+      "backlinksCount": 1,
+      "outreachStatus": "new",
+      "authorityScore": 37,
+      "action": "OUTREACH_NOW",
+      "actionPriority": "high"
+    },
+    {
+      "url": "/inflation/alimentation-guadeloupe-2024",
+      "title": "Inflation Alimentation Guadeloupe 2024",
+      "pageType": "inflation",
+      "internalLinks": 5,
+      "pageViews": 95,
+      "backlinksCount": 2,
+      "outreachStatus": "contacted",
+      "authorityScore": 50,
+      "action": "STRENGTHEN_CONTENT",
+      "actionPriority": "low"
+    }
+  ]
+}

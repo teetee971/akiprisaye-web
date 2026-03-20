@@ -327,6 +327,11 @@ const StatsDashboard = lazyPage(() => import('./pages/StatsDashboard'));
 const SeoMonitoringPage = lazyPage(() => import('./pages/SeoMonitoringPage'));
 const OutreachDashboardPage = lazyPage(() => import('./pages/OutreachDashboardPage'));
 const CRODashboardPage = lazyPage(() => import('./pages/CRODashboardPage'));
+const SeoLoopDashboardPage = lazyPage(() => import('./pages/SeoLoopDashboardPage'));
+const RevenueDashboardPage = lazyPage(() => import('./pages/RevenueDashboardPage'));
+const ExpansionDashboardPage = lazyPage(() => import('./pages/ExpansionDashboardPage'));
+const AuthorityDashboardPage = lazyPage(() => import('./pages/AuthorityDashboardPage'));
+const GlobalDashboardPage = lazyPage(() => import('./pages/GlobalDashboardPage'));
 const SEOCompetitorComparisonPage = lazyPage(() => import('./pages/SEOCompetitorComparisonPage'));
 const TopEconomiesPage = lazyPage(() => import('./pages/TopEconomiesPage'));
 const TendancesPage = lazyPage(() => import('./pages/TendancesPage'));
@@ -786,6 +791,11 @@ export default function App() {
                           <Route path="seo-monitoring" element={<SeoMonitoringPage />} />
                           <Route path="outreach" element={<OutreachDashboardPage />} />
                           <Route path="cro-dashboard" element={<CRODashboardPage />} />
+                          <Route path="seo-loop-dashboard" element={<SeoLoopDashboardPage />} />
+                          <Route path="revenue-dashboard" element={<RevenueDashboardPage />} />
+                          <Route path="expansion-dashboard" element={<ExpansionDashboardPage />} />
+                          <Route path="authority-dashboard" element={<AuthorityDashboardPage />} />
+                          <Route path="global-dashboard" element={<GlobalDashboardPage />} />
                           <Route path="vs/:slug" element={<SEOCompetitorComparisonPage />} />
                           <Route path="top-economies" element={<TopEconomiesPage />} />
                           <Route path="tendances" element={<TendancesPage />} />
