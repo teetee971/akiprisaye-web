@@ -384,7 +384,7 @@ export default function HomeV5() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     const dest = searchQuery.trim()
-      ? `/recherche-produits?q=${encodeURIComponent(searchQuery)}${selectedTerritory ? `&territoire=${selectedTerritory}` : ''}`
+      ? `/recherche-produits?q=${encodeURIComponent(searchQuery)}`
       : `/comparateur${selectedTerritory ? `?territoire=${selectedTerritory}` : ''}`;
     navigate(dest);
   };
@@ -724,7 +724,7 @@ export default function HomeV5() {
                 aria-controls="home-extended-content"
                 className="rounded-full border border-white/12 bg-white/5 px-5 py-2 text-sm font-medium text-white transition hover:-translate-y-0.5 hover:bg-white/10"
               >
-                {showExtended ? 'Masquer' : "Voir toute la page d'accueil"}
+                {showExtended ? 'Masquer la vue complète' : "Voir toute la page d\u2019accueil"}
               </button>
             </div>
           </section>

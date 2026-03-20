@@ -11,6 +11,9 @@ on:
       - 'backend/**'
       - '.github/workflows/backend-ci.yml'
 
+permissions:
+  contents: read
+
 jobs:
   backend:
     name: Lint · Build · Test
