@@ -25,7 +25,7 @@ const RETAILER_URLS: Record<string, string> = {
   'Carrefour':        'https://www.carrefour.fr/',
   'Carrefour Market': 'https://www.carrefour.fr/',
   'Leader Price':     'https://www.leaderprice.fr/',
-  'Super U':          'https://www.courses.super-u.fr/',
+  'Super U':          'https://www.courses.u.fr/',
   'E.Leclerc':        'https://www.e.leclerc/',
   'Intermarché':      'https://www.intermarche.com/',
   'Match':            'https://www.match.fr/',
