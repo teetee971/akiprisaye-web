@@ -81,6 +81,8 @@ export default defineConfig({
       abs('./scripts/lighthouse-engine.test.ts'),
       // Firebase API key integrity — prevents re-introducing the wrong hardcoded key
       abs('./scripts/firebase-config.test.ts'),
+      // Aggregation utilities — normalizeRetailer, deduplicateObservations, discardOutliers
+      abs('./src/test/compareAggregation.test.ts'),
       // EAN / GTIN validation — GS1 checksum and country label
       abs('./src/test/eanValidator.test.ts'),
       // Structured receipt parser — French ticket OCR

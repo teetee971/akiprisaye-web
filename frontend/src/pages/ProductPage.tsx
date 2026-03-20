@@ -34,30 +34,20 @@ const SIGNAL_ICON: Record<string, string> = {
   neutral: '→',
 };
 
-// ── Metric tile ───────────────────────────────────────────────────────────────
-interface MetricTileProps {
-  label:  string;
-  value:  string;
-  accent?: boolean;
-}
-function MetricTile({ label, value, accent = false }: MetricTileProps) {
-  return (
-    <div
-      className={`rounded-xl border p-3 text-center ${
-        accent
-          ? 'border-emerald-400/20 bg-emerald-400/10'
-          : 'border-white/10 bg-white/[0.03]'
-      }`}
-    >
-      <div className="text-xs font-semibold uppercase tracking-widest text-zinc-500">{label}</div>
-      <div className={`mt-1 text-lg font-bold ${accent ? 'text-emerald-300' : 'text-white'}`}>
-        {value}
-      </div>
-    </div>
-  );
+// ── Source badge ──────────────────────────────────────────────────────────────
+type SourceId = 'open_prices' | 'internal' | 'open_food_facts' | 'mock';
+function SourceBadge({ source }: { source: SourceId }) {
+  if (source === 'mock') {
+    return (
+      <span className="rounded-md border border-amber-400/30 bg-amber-400/10 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-400">
+        Estimé
+      </span>
+    );
+  }
+  return null; // Real data — no badge needed
 }
 
-// ── Price row (with best-price badge + savings indicator) ─────────────────────
+// ── Price row ─────────────────────────────────────────────────────────────────
 interface PriceRowProps {
   p:             PriceObservationRow;
   rank:          number;
@@ -67,41 +57,102 @@ interface PriceRowProps {
 function PriceRow({ p, rank, isBest, savingsVsBest }: PriceRowProps) {
   return (
     <div
-      className={`relative flex items-center justify-between rounded-xl border px-4 py-3 transition
-        ${isBest ? 'border-emerald-400/30 bg-emerald-400/[0.06]' : 'border-white/8 bg-white/[0.02]'}`}
+      className={`relative flex items-center justify-between rounded-xl border px-4 py-4 transition
+        ${isBest
+          ? 'border-emerald-400/40 bg-emerald-400/[0.08] ring-1 ring-emerald-400/20'
+          : 'border-white/8 bg-white/[0.02]'}`}
     >
-      <div className="flex items-center gap-3">
+      <div className="flex min-w-0 items-center gap-3">
+        {/* Rank bubble */}
         <span
-          className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold
-            ${isBest ? 'bg-emerald-400/20 text-emerald-300' : 'bg-white/10 text-zinc-400'}`}
+          className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold
+            ${isBest ? 'bg-emerald-400/25 text-emerald-300' : 'bg-white/10 text-zinc-400'}`}
         >
           {rank}
         </span>
-        <div>
+
+        <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-sm font-medium text-white">{p.retailer}</span>
+            <span className="truncate text-sm font-semibold text-white">{p.retailer}</span>
             {isBest && (
-              <span className="rounded-md border border-emerald-400/40 bg-emerald-400/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-300">
+              <span className="rounded-md border border-emerald-400/50 bg-emerald-400/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-300">
                 Meilleur prix
               </span>
             )}
+            <SourceBadge source={p.source as SourceId} />
           </div>
-          <div className="text-xs text-zinc-500">{formatDate(p.observedAt)}</div>
+          <div className="mt-0.5 text-xs text-zinc-500">{formatDate(p.observedAt)}</div>
         </div>
       </div>
-      <div className="ml-4 text-right">
-        <div className={`text-base font-semibold ${isBest ? 'text-emerald-400' : 'text-white'}`}>
+
+      {/* Price + savings */}
+      <div className="ml-4 flex-shrink-0 text-right">
+        <div className={`text-lg font-bold tabular-nums ${isBest ? 'text-emerald-400' : 'text-white'}`}>
           {formatEur(p.price)}
         </div>
         {!isBest && savingsVsBest != null && savingsVsBest > 0.005 && (
-          <div className="text-xs text-rose-400/70">+{formatEur(savingsVsBest)}</div>
+          <div className="mt-0.5 rounded bg-rose-400/10 px-1.5 py-0.5 text-xs font-semibold text-rose-400">
+            +{formatEur(savingsVsBest)} de plus
+          </div>
         )}
       </div>
     </div>
   );
 }
 
-// ── API-powered signal card ───────────────────────────────────────────────────
+// ── Best-price hero block ─────────────────────────────────────────────────────
+interface BestPriceHeroProps {
+  bestPrice:   number | null;
+  savings:     number | null;
+  retailer:    string | undefined;
+  signalStatus: string | undefined;
+}
+function BestPriceHero({ bestPrice, savings, retailer, signalStatus }: BestPriceHeroProps) {
+  if (bestPrice === null) return null;
+
+  const signalColor =
+    signalStatus === 'buy'  ? 'text-emerald-400 bg-emerald-400/10 border-emerald-400/30' :
+    signalStatus === 'wait' ? 'text-amber-400   bg-amber-400/10   border-amber-400/30'   :
+                              'text-white        bg-white/5        border-white/10';
+
+  return (
+    <div className="rounded-2xl border border-emerald-400/20 bg-gradient-to-br from-emerald-950/40 to-zinc-900/60 p-5">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+
+        {/* Left: best price */}
+        <div>
+          <div className="text-xs font-bold uppercase tracking-[0.2em] text-emerald-500">
+            🏆 Meilleur prix du marché
+          </div>
+          <div className="mt-2 flex items-end gap-2">
+            <span className="text-4xl font-extrabold tabular-nums text-emerald-400">
+              {formatEur(bestPrice)}
+            </span>
+            {retailer && (
+              <span className="mb-1 text-sm font-medium text-zinc-400">chez {retailer}</span>
+            )}
+          </div>
+          {savings != null && savings > 0.01 && (
+            <div className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-emerald-400/20 bg-emerald-400/10 px-3 py-1.5">
+              <span className="text-xs font-semibold text-emerald-300">
+                Économie potentielle&nbsp;: <span className="text-base font-extrabold">{formatEur(savings)}</span>
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Right: signal pill */}
+        {signalStatus && signalStatus !== 'neutral' && (
+          <div className={`self-start rounded-xl border px-4 py-2 text-sm font-bold sm:self-auto ${signalColor}`}>
+            {signalStatus === 'buy'  ? '↓ Bon moment pour acheter' : '↑ Attendre recommandé'}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ── API signal card ───────────────────────────────────────────────────────────
 interface SignalCardProps { signal: SignalResult; }
 function SignalCard({ signal }: SignalCardProps) {
   const ring = SIGNAL_RING[signal.status] ?? SIGNAL_RING.neutral;
@@ -110,9 +161,9 @@ function SignalCard({ signal }: SignalCardProps) {
   return (
     <div className={`rounded-2xl border p-5 ${ring}`}>
       <div className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
-        Signal intelligent
+        Signal marché
       </div>
-      <div className={`mt-3 flex items-center gap-2 text-xl font-semibold ${text}`}>
+      <div className={`mt-3 flex items-center gap-2 text-xl font-bold ${text}`}>
         <span aria-hidden="true">{icon}</span>
         {signal.label}
       </div>
@@ -121,7 +172,7 @@ function SignalCard({ signal }: SignalCardProps) {
   );
 }
 
-// ── Signal section: prefer API result, fall back to client-side ───────────────
+// ── Signal section ────────────────────────────────────────────────────────────
 interface SignalSectionProps {
   signal:         SignalResult | null;
   history:        HistoryPoint[];
@@ -129,16 +180,16 @@ interface SignalSectionProps {
   historyLoading: boolean;
 }
 function SignalSection({ signal, history, signalLoading, historyLoading }: SignalSectionProps) {
-  if (signalLoading || historyLoading) return <Skeleton className="h-64" />;
+  if (signalLoading || historyLoading) return <Skeleton className="h-48" />;
   if (signal) return <SignalCard signal={signal} />;
   return (
-    <Suspense fallback={<Skeleton className="h-64" />}>
+    <Suspense fallback={<Skeleton className="h-48" />}>
       <LazySmartSignal history={history} />
     </Suspense>
   );
 }
 
-// ── Main page component ───────────────────────────────────────────────────────
+// ── Main page ─────────────────────────────────────────────────────────────────
 export default function ProductPage() {
   const { id = '' } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
@@ -148,13 +199,12 @@ export default function ProductPage() {
   const { data: history,     loading: historyLoading  } = useHistory(id, territory, '30d');
   const { data: signal,      loading: signalLoading   } = useSignal(id, territory);
 
-  // Sort prices cheapest first
+  // Cheapest first (already sorted server-side but we re-sort for safety)
   const sorted = useMemo(
     () => [...(compareData?.observations ?? [])].sort((a, b) => a.price - b.price),
     [compareData?.observations],
   );
 
-  // Maximum savings = most expensive minus cheapest
   const maxSavings: number | null = useMemo(
     () =>
       sorted.length > 1
@@ -167,9 +217,9 @@ export default function ProductPage() {
   if (compareLoading) {
     return (
       <div className="min-h-screen bg-[#0a0a0f] px-4 py-8">
-        <div className="mx-auto max-w-5xl space-y-6">
-          <Skeleton className="h-64" />
-          <Skeleton className="h-20" />
+        <div className="mx-auto max-w-2xl space-y-4">
+          <Skeleton className="h-48" />
+          <Skeleton className="h-28" />
           <Skeleton className="h-48" />
         </div>
       </div>
@@ -186,52 +236,53 @@ export default function ProductPage() {
   }
 
   const { product, summary } = compareData;
+  const bestRetailer = sorted[0]?.retailer;
 
   return (
     <div className="min-h-screen bg-[#0a0a0f] px-4 py-8">
-      <div className="mx-auto max-w-5xl space-y-6">
+      <div className="mx-auto max-w-2xl space-y-4">
 
         {/* ── Product identity ──────────────────────────────────────────────── */}
         <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03]">
           {product.image ? (
-            <div className="flex justify-center bg-white/5 py-8">
+            <div className="flex justify-center bg-white/5 py-6">
               <img
                 src={product.image}
                 alt={product.name}
-                className="h-40 w-40 object-contain drop-shadow-lg"
+                className="h-32 w-32 object-contain drop-shadow-lg sm:h-40 sm:w-40"
+                loading="lazy"
               />
             </div>
           ) : null}
-          <div className="p-5">
+          <div className="p-4">
             {product.brand ? (
               <div className="mb-1 text-xs font-bold uppercase tracking-widest text-emerald-400">
                 {product.brand}
               </div>
             ) : null}
-            <h1 className="text-xl font-bold text-white">{product.name}</h1>
+            <h1 className="text-lg font-bold leading-snug text-white sm:text-xl">{product.name}</h1>
             {product.category ? (
-              <div className="mt-1 text-sm text-zinc-400">{product.category}</div>
+              <div className="mt-1 text-xs text-zinc-500">{product.category}</div>
             ) : null}
-            <div className="mt-2 font-mono text-xs text-zinc-600">{product.barcode}</div>
+            <div className="mt-1 font-mono text-[10px] text-zinc-700">{product.barcode}</div>
           </div>
         </div>
 
-        {/* ── Summary metrics ───────────────────────────────────────────────── */}
-        {summary ? (
-          <div className="grid grid-cols-3 gap-3">
-            <MetricTile label="Meilleur prix"        value={formatEur(summary.min)}                   accent />
-            <MetricTile label="Prix le plus haut"    value={formatEur(summary.max)} />
-            <MetricTile label="Économie potentielle" value={formatEur(maxSavings ?? summary.savings)} accent />
-          </div>
-        ) : null}
+        {/* ── Best-price hero (above the fold, 3-second read) ───────────────── */}
+        <BestPriceHero
+          bestPrice={summary?.min ?? null}
+          savings={maxSavings ?? summary?.savings ?? null}
+          retailer={bestRetailer}
+          signalStatus={signal?.status ?? undefined}
+        />
 
         {/* ── Price comparison list ─────────────────────────────────────────── */}
-        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-          <div className="mb-4 text-xs font-bold uppercase tracking-widest text-zinc-500">
-            Comparatif des enseignes — {territory}
+        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+          <div className="mb-3 text-xs font-bold uppercase tracking-widest text-zinc-500">
+            Comparatif enseignes — {territory}
           </div>
           {sorted.length === 0 ? (
-            <p className="py-4 text-center text-sm text-zinc-500">
+            <p className="py-6 text-center text-sm text-zinc-500">
               Aucune observation disponible pour ce territoire.
             </p>
           ) : (
@@ -249,18 +300,17 @@ export default function ProductPage() {
           )}
         </div>
 
-        {/* ── Chart + signal ────────────────────────────────────────────────── */}
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <Suspense fallback={<Skeleton className="h-64" />}>
-            <LazyPriceHistory productId={id} territory={territory} />
-          </Suspense>
-          <SignalSection
-            signal={signal}
-            history={history}
-            signalLoading={signalLoading}
-            historyLoading={historyLoading}
-          />
-        </div>
+        {/* ── Signal + chart (secondary info) ──────────────────────────────── */}
+        <SignalSection
+          signal={signal}
+          history={history}
+          signalLoading={signalLoading}
+          historyLoading={historyLoading}
+        />
+
+        <Suspense fallback={<Skeleton className="h-56" />}>
+          <LazyPriceHistory productId={id} territory={territory} />
+        </Suspense>
 
       </div>
     </div>

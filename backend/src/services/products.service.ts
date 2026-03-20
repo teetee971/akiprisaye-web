@@ -15,6 +15,7 @@ export interface AggregatedProduct {
   barcode: string;
   image?: string;
   brand?: string;
+  category?: string;
   source: string;
 }
 
