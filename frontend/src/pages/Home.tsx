@@ -469,7 +469,7 @@ export default function HomeV5() {
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
                           className="flex-1 bg-transparent text-sm text-white placeholder:text-zinc-500 outline-none"
-                          aria-label="Nom de produit ou code-barres"
+                          aria-label="Rechercher un produit"
                         />
                       </div>
                     </label>
@@ -687,6 +687,7 @@ export default function HomeV5() {
                 </h3>
                 <p className="mt-3 text-sm leading-7 text-zinc-300 sm:text-base">
                   Hi\u00e9rarchie courte, cartes stables, zones r\u00e9serv\u00e9es. Lecture imm\u00e9diate pour r\u00e9duire le scroll sans sacrifier la clart\u00e9.
+                  {' '}Le plus utile, sans surcharge.
                 </p>
               </div>
               <div className="grid gap-3 sm:grid-cols-3">
@@ -723,7 +724,7 @@ export default function HomeV5() {
                 aria-controls="home-extended-content"
                 className="rounded-full border border-white/12 bg-white/5 px-5 py-2 text-sm font-medium text-white transition hover:-translate-y-0.5 hover:bg-white/10"
               >
-                {showExtended ? 'Masquer' : 'Tout afficher'}
+                {showExtended ? 'Masquer' : "Voir toute la page d'accueil"}
               </button>
             </div>
           </section>
