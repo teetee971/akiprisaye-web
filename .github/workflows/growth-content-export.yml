@@ -1,0 +1,164 @@
+# ────────────────────────────────────────────────────────────────────────────
+# 📣 Growth Content Export
+# ────────────────────────────────────────────────────────────────────────────
+#
+# PURPOSE: Generate TikTok / Facebook / WhatsApp viral post suggestions
+#          and export them as reviewable JSON + Markdown artifacts.
+#
+# TRIGGERS:
+#   - Manual (workflow_dispatch)
+#   - Weekly on Wednesday at 07:00 UTC
+#
+# SAFE GUARANTEES:
+#   ✅ Never commits, never pushes, never deploys
+#   ✅ Output is human-reviewed before any posting
+#   ✅ No auto-posting to social networks
+#
+# OUTPUTS (artifacts, retained 14 days):
+#   - auto-content-engine-output.json  (full structured content)
+#   - content-posts.md                 (human-readable summary)
+# ────────────────────────────────────────────────────────────────────────────
+
+name: 📣 Growth Content Export
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 7 * * 3'   # 07:00 UTC every Wednesday
+
+permissions:
+  contents: read
+
+concurrency:
+  group: growth-content-export
+  cancel-in-progress: true
+
+jobs:
+  generate-content:
+    name: 📣 Generate Growth Content
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+
+      - name: Generate content (TikTok / Facebook / WhatsApp / SEO)
+        run: node scripts/auto-content-engine.mjs
+
+      - name: Export Markdown summary
+        run: |
+          node - <<'EOF'
+          import fs from 'fs';
+
+          const data = JSON.parse(fs.readFileSync('scripts/auto-content-engine-output.json', 'utf-8'));
+          const now = new Date().toISOString().slice(0, 10);
+          const lines = [];
+
+          lines.push(`# 📣 Growth Content Export — ${now}`);
+          lines.push('');
+          lines.push('> ⚠️ **Review required before any posting.**');
+          lines.push('> This file is auto-generated. Do not post without human approval.');
+          lines.push('');
+
+          // ── TikTok ──────────────────────────────────────────────────────────
+          lines.push('## 🎥 TikTok Scripts');
+          lines.push('');
+          for (const t of data.tiktok.slice(0, 4)) {
+            lines.push(`### ${t.product} — ${t.territory}`);
+            lines.push('');
+            lines.push(`**Hook:** ${t.hook}`);
+            lines.push('');
+            lines.push('**Voiceover:**');
+            lines.push(`> ${t.voiceover}`);
+            lines.push('');
+            lines.push('**Text overlays:**');
+            for (const o of t.textOverlays) {
+              lines.push(`- \`${o.style.toUpperCase()}\` — ${o.line}`);
+            }
+            lines.push('');
+            lines.push(`**Hashtags:** ${t.hashtags}`);
+            lines.push('');
+            lines.push(`**CTA:** ${t.cta}`);
+            lines.push('');
+            lines.push(`**Savings:** ${t.savingsEur.toFixed(2)}€ (${t.savingsPct}%)`);
+            lines.push('');
+            lines.push('---');
+            lines.push('');
+          }
+
+          // ── Facebook / WhatsApp ──────────────────────────────────────────────
+          lines.push('## 📱 Facebook / WhatsApp Posts');
+          lines.push('');
+          for (const p of data.facebook.slice(0, 4)) {
+            lines.push(`### ${p.product} — ${p.territory}`);
+            lines.push('');
+            lines.push('**Message principal:**');
+            lines.push('');
+            lines.push('```');
+            lines.push(p.post);
+            lines.push('```');
+            lines.push('');
+            lines.push(`**Groupes cibles:** ${p.targetGroups.join(', ')}`);
+            lines.push('');
+            lines.push('---');
+            lines.push('');
+          }
+
+          // ── WhatsApp Digest ──────────────────────────────────────────────────
+          lines.push('## 💬 WhatsApp Digests hebdomadaires');
+          lines.push('');
+          for (const w of data.whatsapp) {
+            lines.push(`### ${w.territory}`);
+            lines.push('');
+            lines.push('```');
+            lines.push(w.message);
+            lines.push('```');
+            lines.push('');
+          }
+
+          // ── Stats ────────────────────────────────────────────────────────────
+          lines.push('## 📊 Résumé');
+          lines.push('');
+          lines.push(`| Type | Count |`);
+          lines.push(`|------|-------|`);
+          lines.push(`| TikTok scripts | ${data.tiktok.length} |`);
+          lines.push(`| Facebook posts | ${data.facebook.length} |`);
+          lines.push(`| WhatsApp digests | ${data.whatsapp.length} |`);
+          lines.push(`| SEO page specs | ${data.seo.length} |`);
+          lines.push('');
+          lines.push(`_Generated at: ${data.generatedAt}_`);
+
+          fs.writeFileSync('scripts/content-posts.md', lines.join('\n'));
+          console.log('✅ content-posts.md written');
+          EOF
+
+      - name: Upload content artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: growth-content-${{ github.run_number }}
+          retention-days: 14
+          path: |
+            scripts/auto-content-engine-output.json
+            scripts/content-posts.md
+
+      - name: Summary
+        run: |
+          TIKTOK=$(node -e "const d=JSON.parse(require('fs').readFileSync('scripts/auto-content-engine-output.json','utf8')); process.stdout.write(String(d.tiktok.length))")
+          FB=$(node -e "const d=JSON.parse(require('fs').readFileSync('scripts/auto-content-engine-output.json','utf8')); process.stdout.write(String(d.facebook.length))")
+          WA=$(node -e "const d=JSON.parse(require('fs').readFileSync('scripts/auto-content-engine-output.json','utf8')); process.stdout.write(String(d.whatsapp.length))")
+          echo "## 📣 Growth Content Export — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Type | Generated |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|-----------|" >> $GITHUB_STEP_SUMMARY
+          echo "| TikTok scripts | $TIKTOK |" >> $GITHUB_STEP_SUMMARY
+          echo "| Facebook/WhatsApp posts | $FB |" >> $GITHUB_STEP_SUMMARY
+          echo "| WhatsApp digests | $WA |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📥 Download \`content-posts.md\` artifact for human review." >> $GITHUB_STEP_SUMMARY
+          echo "🔒 **No content was auto-posted. Review required.**" >> $GITHUB_STEP_SUMMARY

@@ -1,4 +1,30 @@
-name: Auto SEO Review
+# ────────────────────────────────────────────────────────────────────────────
+# 🔍 Auto SEO Review Loop
+# ────────────────────────────────────────────────────────────────────────────
+#
+# PURPOSE: Collect SEO signals, score pages, generate recommendations,
+#          build patch plan, and export a human-readable review plan.
+#
+# TRIGGERS:
+#   - Manual (workflow_dispatch)
+#   - Weekly on Monday at 04:00 UTC
+#
+# SAFE GUARANTEES:
+#   ✅ Never auto-commits to any branch
+#   ✅ Never auto-merges
+#   ✅ Never deploys anything
+#   ✅ Artifacts are review-only
+#
+# OUTPUTS (artifacts, retained 30 days):
+#   - signals.json
+#   - page-scores.json
+#   - recommendations.json
+#   - patch-plan.json
+#   - AUTO_SEO_PLAN.md (human-readable review doc)
+#   - pr-title.txt + pr-body.md (ready for manual PR creation)
+# ────────────────────────────────────────────────────────────────────────────
+
+name: 🔍 Auto SEO Review Loop
 
 # REVIEW-ONLY: This workflow never auto-commits, auto-pushes, or opens PRs.
 # It runs the SEO analysis pipeline and uploads results as artifacts for human review.
@@ -9,20 +35,29 @@ permissions:
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 4 * * 1'  # Every Monday at 4am UTC
+    - cron: '0 4 * * 1'  # Every Monday at 04:00 UTC
+
+concurrency:
+  group: auto-seo-review
+  cancel-in-progress: false
 
 jobs:
   auto-seo-review:
+    name: 🔍 SEO Signal Analysis
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+    timeout-minutes: 15
 
-      - uses: actions/setup-node@v4
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version-file: .nvmrc
 
       - name: Install root dependencies
-        run: npm install --prefix . --ignore-scripts 2>/dev/null || true
+        run: npm install --ignore-scripts 2>/dev/null || true
 
       - name: Collect signals
         run: node scripts/auto-seo/collect-signals.mjs
@@ -44,6 +79,7 @@ jobs:
         if: always()
         with:
           name: auto-seo-review-${{ github.run_number }}
+          retention-days: 30
           path: |
             scripts/auto-seo/output/signals.json
             scripts/auto-seo/output/page-scores.json
@@ -52,4 +88,29 @@ jobs:
             scripts/auto-seo/output/AUTO_SEO_PLAN.md
             scripts/auto-seo/output/pr-title.txt
             scripts/auto-seo/output/pr-body.md
-          retention-days: 30
+
+      - name: Summary
+        if: always()
+        run: |
+          REC_COUNT=$(node -e "
+            try {
+              const r = JSON.parse(require('fs').readFileSync('scripts/auto-seo/output/recommendations.json','utf8'));
+              process.stdout.write(String(r.length));
+            } catch { process.stdout.write('0'); }
+          ")
+          HIGH_COUNT=$(node -e "
+            try {
+              const r = JSON.parse(require('fs').readFileSync('scripts/auto-seo/output/recommendations.json','utf8'));
+              process.stdout.write(String(r.filter(x=>x.priority==='high').length));
+            } catch { process.stdout.write('0'); }
+          ")
+          echo "## 🔍 Auto SEO Review — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Total recommendations | $REC_COUNT |" >> $GITHUB_STEP_SUMMARY
+          echo "| High-priority | $HIGH_COUNT |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📋 Review the \`AUTO_SEO_PLAN.md\` artifact to see all recommendations." >> $GITHUB_STEP_SUMMARY
+          echo "🔒 **No files were committed or deployed.**" >> $GITHUB_STEP_SUMMARY
+

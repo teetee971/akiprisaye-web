@@ -1,0 +1,2502 @@
+{
+  "/prix/coca-cola-1-5l-guadeloupe": {
+    "intro": "Prix coca-cola-1-5l en GP : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GP.",
+    "faqCount": 2
+  },
+  "/prix/coca-cola-1-5l-martinique": {
+    "intro": "coca-cola-1-5l en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/coca-cola-1-5l-guyane": {
+    "intro": "Prix coca-cola-1-5l en GF : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GF.",
+    "faqCount": 2
+  },
+  "/prix/coca-cola-1-5l-reunion": {
+    "intro": "Prix coca-cola-1-5l en RE : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de RE.",
+    "faqCount": 2
+  },
+  "/prix/coca-cola-1-5l-mayotte": {
+    "intro": "Prix coca-cola-1-5l en YT : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de YT.",
+    "faqCount": 2
+  },
+  "/prix/coca-cola-33cl-pack6-guadeloupe": {
+    "intro": "Prix coca-cola-33cl-pack6 en GP : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GP.",
+    "faqCount": 2
+  },
+  "/prix/coca-cola-33cl-pack6-martinique": {
+    "intro": "coca-cola-33cl-pack6 en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/coca-cola-33cl-pack6-guyane": {
+    "intro": "Prix coca-cola-33cl-pack6 en GF : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GF.",
+    "faqCount": 2
+  },
+  "/prix/coca-cola-33cl-pack6-reunion": {
+    "intro": "coca-cola-33cl-pack6 en RE : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de RE pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/coca-cola-33cl-pack6-mayotte": {
+    "intro": "Prix coca-cola-33cl-pack6 en YT : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de YT.",
+    "faqCount": 2
+  },
+  "/prix/eau-evian-1-5l-guadeloupe": {
+    "intro": "eau-evian-1-5l en GP : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GP pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/eau-evian-1-5l-martinique": {
+    "intro": "eau-evian-1-5l en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/eau-evian-1-5l-guyane": {
+    "intro": "Comparez le prix de eau-evian-1-5l en GF — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GF.",
+    "faqCount": 2
+  },
+  "/prix/eau-evian-1-5l-reunion": {
+    "intro": "Comparez le prix de eau-evian-1-5l en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/eau-evian-1-5l-mayotte": {
+    "intro": "eau-evian-1-5l en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/eau-crystal-1-5l-guadeloupe": {
+    "intro": "Prix eau-crystal-1-5l en GP : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GP.",
+    "faqCount": 2
+  },
+  "/prix/eau-crystal-1-5l-martinique": {
+    "intro": "eau-crystal-1-5l en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/eau-crystal-1-5l-guyane": {
+    "intro": "Comparez le prix de eau-crystal-1-5l en GF — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GF.",
+    "faqCount": 2
+  },
+  "/prix/eau-crystal-1-5l-reunion": {
+    "intro": "eau-crystal-1-5l en RE : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de RE pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/eau-crystal-1-5l-mayotte": {
+    "intro": "eau-crystal-1-5l en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/eau-mont-roucous-1-5l-guadeloupe": {
+    "intro": "eau-mont-roucous-1-5l en GP : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GP pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/eau-mont-roucous-1-5l-martinique": {
+    "intro": "eau-mont-roucous-1-5l en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/eau-mont-roucous-1-5l-guyane": {
+    "intro": "eau-mont-roucous-1-5l en GF : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GF pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/eau-mont-roucous-1-5l-reunion": {
+    "intro": "Prix eau-mont-roucous-1-5l en RE : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de RE.",
+    "faqCount": 2
+  },
+  "/prix/eau-mont-roucous-1-5l-mayotte": {
+    "intro": "eau-mont-roucous-1-5l en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/jus-orange-tropicana-1l-guadeloupe": {
+    "intro": "jus-orange-tropicana-1l en GP : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GP pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/jus-orange-tropicana-1l-martinique": {
+    "intro": "jus-orange-tropicana-1l en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/jus-orange-tropicana-1l-guyane": {
+    "intro": "Prix jus-orange-tropicana-1l en GF : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GF.",
+    "faqCount": 2
+  },
+  "/prix/jus-orange-tropicana-1l-reunion": {
+    "intro": "jus-orange-tropicana-1l en RE : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de RE pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/jus-orange-tropicana-1l-mayotte": {
+    "intro": "Prix jus-orange-tropicana-1l en YT : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de YT.",
+    "faqCount": 2
+  },
+  "/prix/jus-ananas-1l-guadeloupe": {
+    "intro": "Prix jus-ananas-1l en GP : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GP.",
+    "faqCount": 2
+  },
+  "/prix/jus-ananas-1l-martinique": {
+    "intro": "Comparez le prix de jus-ananas-1l en MQ — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de MQ.",
+    "faqCount": 2
+  },
+  "/prix/jus-ananas-1l-guyane": {
+    "intro": "Prix jus-ananas-1l en GF : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GF.",
+    "faqCount": 2
+  },
+  "/prix/jus-ananas-1l-reunion": {
+    "intro": "Comparez le prix de jus-ananas-1l en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/jus-ananas-1l-mayotte": {
+    "intro": "Comparez le prix de jus-ananas-1l en YT — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de YT.",
+    "faqCount": 2
+  },
+  "/prix/jus-goyave-1l-guadeloupe": {
+    "intro": "Prix jus-goyave-1l en GP : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GP.",
+    "faqCount": 2
+  },
+  "/prix/jus-goyave-1l-martinique": {
+    "intro": "jus-goyave-1l en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/jus-goyave-1l-guyane": {
+    "intro": "jus-goyave-1l en GF : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GF pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/jus-goyave-1l-reunion": {
+    "intro": "jus-goyave-1l en RE : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de RE pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/jus-goyave-1l-mayotte": {
+    "intro": "Comparez le prix de jus-goyave-1l en YT — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de YT.",
+    "faqCount": 2
+  },
+  "/prix/jus-maracuja-1l-guadeloupe": {
+    "intro": "Prix jus-maracuja-1l en GP : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GP.",
+    "faqCount": 2
+  },
+  "/prix/jus-maracuja-1l-martinique": {
+    "intro": "Prix jus-maracuja-1l en MQ : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de MQ.",
+    "faqCount": 2
+  },
+  "/prix/jus-maracuja-1l-guyane": {
+    "intro": "jus-maracuja-1l en GF : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GF pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/jus-maracuja-1l-reunion": {
+    "intro": "Comparez le prix de jus-maracuja-1l en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/jus-maracuja-1l-mayotte": {
+    "intro": "Comparez le prix de jus-maracuja-1l en YT — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de YT.",
+    "faqCount": 2
+  },
+  "/prix/biere-lorraine-50cl-guadeloupe": {
+    "intro": "Comparez le prix de biere-lorraine-50cl en GP — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GP.",
+    "faqCount": 2
+  },
+  "/prix/biere-lorraine-50cl-martinique": {
+    "intro": "Comparez le prix de biere-lorraine-50cl en MQ — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de MQ.",
+    "faqCount": 2
+  },
+  "/prix/biere-lorraine-50cl-guyane": {
+    "intro": "Prix biere-lorraine-50cl en GF : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GF.",
+    "faqCount": 2
+  },
+  "/prix/biere-lorraine-50cl-reunion": {
+    "intro": "biere-lorraine-50cl en RE : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de RE pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/biere-lorraine-50cl-mayotte": {
+    "intro": "biere-lorraine-50cl en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/biere-desperados-33cl-guadeloupe": {
+    "intro": "Prix biere-desperados-33cl en GP : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GP.",
+    "faqCount": 2
+  },
+  "/prix/biere-desperados-33cl-martinique": {
+    "intro": "Prix biere-desperados-33cl en MQ : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de MQ.",
+    "faqCount": 2
+  },
+  "/prix/biere-desperados-33cl-guyane": {
+    "intro": "biere-desperados-33cl en GF : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GF pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/biere-desperados-33cl-reunion": {
+    "intro": "Prix biere-desperados-33cl en RE : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de RE.",
+    "faqCount": 2
+  },
+  "/prix/biere-desperados-33cl-mayotte": {
+    "intro": "biere-desperados-33cl en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/biere-heineken-33cl-guadeloupe": {
+    "intro": "Comparez le prix de biere-heineken-33cl en GP — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GP.",
+    "faqCount": 2
+  },
+  "/prix/biere-heineken-33cl-martinique": {
+    "intro": "Comparez le prix de biere-heineken-33cl en MQ — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de MQ.",
+    "faqCount": 2
+  },
+  "/prix/biere-heineken-33cl-guyane": {
+    "intro": "biere-heineken-33cl en GF : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GF pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/biere-heineken-33cl-reunion": {
+    "intro": "Comparez le prix de biere-heineken-33cl en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/biere-heineken-33cl-mayotte": {
+    "intro": "biere-heineken-33cl en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/rhum-clement-70cl-guadeloupe": {
+    "intro": "Comparez le prix de rhum-clement-70cl en GP — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GP.",
+    "faqCount": 2
+  },
+  "/prix/rhum-clement-70cl-martinique": {
+    "intro": "Prix rhum-clement-70cl en MQ : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de MQ.",
+    "faqCount": 2
+  },
+  "/prix/rhum-clement-70cl-guyane": {
+    "intro": "Prix rhum-clement-70cl en GF : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GF.",
+    "faqCount": 2
+  },
+  "/prix/rhum-clement-70cl-reunion": {
+    "intro": "Prix rhum-clement-70cl en RE : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de RE.",
+    "faqCount": 2
+  },
+  "/prix/rhum-clement-70cl-mayotte": {
+    "intro": "rhum-clement-70cl en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/rhum-agricole-blanc-70cl-guadeloupe": {
+    "intro": "Prix rhum-agricole-blanc-70cl en GP : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GP.",
+    "faqCount": 2
+  },
+  "/prix/rhum-agricole-blanc-70cl-martinique": {
+    "intro": "Comparez le prix de rhum-agricole-blanc-70cl en MQ — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de MQ.",
+    "faqCount": 2
+  },
+  "/prix/rhum-agricole-blanc-70cl-guyane": {
+    "intro": "Prix rhum-agricole-blanc-70cl en GF : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GF.",
+    "faqCount": 2
+  },
+  "/prix/rhum-agricole-blanc-70cl-reunion": {
+    "intro": "Prix rhum-agricole-blanc-70cl en RE : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de RE.",
+    "faqCount": 2
+  },
+  "/prix/rhum-agricole-blanc-70cl-mayotte": {
+    "intro": "Prix rhum-agricole-blanc-70cl en YT : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de YT.",
+    "faqCount": 2
+  },
+  "/prix/punch-coco-70cl-guadeloupe": {
+    "intro": "Prix punch-coco-70cl en GP : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GP.",
+    "faqCount": 2
+  },
+  "/prix/punch-coco-70cl-martinique": {
+    "intro": "punch-coco-70cl en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/punch-coco-70cl-guyane": {
+    "intro": "punch-coco-70cl en GF : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GF pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/punch-coco-70cl-reunion": {
+    "intro": "punch-coco-70cl en RE : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de RE pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/punch-coco-70cl-mayotte": {
+    "intro": "Prix punch-coco-70cl en YT : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de YT.",
+    "faqCount": 2
+  },
+  "/prix/sirop-grenadine-750ml-guadeloupe": {
+    "intro": "Comparez le prix de sirop-grenadine-750ml en GP — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GP.",
+    "faqCount": 2
+  },
+  "/prix/sirop-grenadine-750ml-martinique": {
+    "intro": "sirop-grenadine-750ml en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/sirop-grenadine-750ml-guyane": {
+    "intro": "Comparez le prix de sirop-grenadine-750ml en GF — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GF.",
+    "faqCount": 2
+  },
+  "/prix/sirop-grenadine-750ml-reunion": {
+    "intro": "sirop-grenadine-750ml en RE : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de RE pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/sirop-grenadine-750ml-mayotte": {
+    "intro": "Comparez le prix de sirop-grenadine-750ml en YT — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de YT.",
+    "faqCount": 2
+  },
+  "/prix/limonade-lorina-75cl-guadeloupe": {
+    "intro": "Comparez le prix de limonade-lorina-75cl en GP — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GP.",
+    "faqCount": 2
+  },
+  "/prix/limonade-lorina-75cl-martinique": {
+    "intro": "Comparez le prix de limonade-lorina-75cl en MQ — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de MQ.",
+    "faqCount": 2
+  },
+  "/prix/limonade-lorina-75cl-guyane": {
+    "intro": "Prix limonade-lorina-75cl en GF : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GF.",
+    "faqCount": 2
+  },
+  "/prix/limonade-lorina-75cl-reunion": {
+    "intro": "Comparez le prix de limonade-lorina-75cl en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/limonade-lorina-75cl-mayotte": {
+    "intro": "limonade-lorina-75cl en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/eau-gazeuse-perrier-75cl-guadeloupe": {
+    "intro": "eau-gazeuse-perrier-75cl en GP : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GP pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/eau-gazeuse-perrier-75cl-martinique": {
+    "intro": "eau-gazeuse-perrier-75cl en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/eau-gazeuse-perrier-75cl-guyane": {
+    "intro": "Comparez le prix de eau-gazeuse-perrier-75cl en GF — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GF.",
+    "faqCount": 2
+  },
+  "/prix/eau-gazeuse-perrier-75cl-reunion": {
+    "intro": "Comparez le prix de eau-gazeuse-perrier-75cl en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/eau-gazeuse-perrier-75cl-mayotte": {
+    "intro": "Prix eau-gazeuse-perrier-75cl en YT : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de YT.",
+    "faqCount": 2
+  },
+  "/prix/the-glace-lipton-150cl-guadeloupe": {
+    "intro": "Comparez le prix de the-glace-lipton-150cl en GP — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GP.",
+    "faqCount": 2
+  },
+  "/prix/the-glace-lipton-150cl-martinique": {
+    "intro": "the-glace-lipton-150cl en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/the-glace-lipton-150cl-guyane": {
+    "intro": "Comparez le prix de the-glace-lipton-150cl en GF — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GF.",
+    "faqCount": 2
+  },
+  "/prix/the-glace-lipton-150cl-reunion": {
+    "intro": "Comparez le prix de the-glace-lipton-150cl en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/the-glace-lipton-150cl-mayotte": {
+    "intro": "the-glace-lipton-150cl en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/redbull-25cl-guadeloupe": {
+    "intro": "Prix redbull-25cl en GP : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GP.",
+    "faqCount": 2
+  },
+  "/prix/redbull-25cl-martinique": {
+    "intro": "Prix redbull-25cl en MQ : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de MQ.",
+    "faqCount": 2
+  },
+  "/prix/redbull-25cl-guyane": {
+    "intro": "redbull-25cl en GF : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GF pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/redbull-25cl-reunion": {
+    "intro": "redbull-25cl en RE : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de RE pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/redbull-25cl-mayotte": {
+    "intro": "Prix redbull-25cl en YT : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de YT.",
+    "faqCount": 2
+  },
+  "/prix/orangina-1-5l-guadeloupe": {
+    "intro": "Comparez le prix de orangina-1-5l en GP — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GP.",
+    "faqCount": 2
+  },
+  "/prix/orangina-1-5l-martinique": {
+    "intro": "Comparez le prix de orangina-1-5l en MQ — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de MQ.",
+    "faqCount": 2
+  },
+  "/prix/orangina-1-5l-guyane": {
+    "intro": "Prix orangina-1-5l en GF : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GF.",
+    "faqCount": 2
+  },
+  "/prix/orangina-1-5l-reunion": {
+    "intro": "Comparez le prix de orangina-1-5l en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/orangina-1-5l-mayotte": {
+    "intro": "orangina-1-5l en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/fanta-1-5l-guadeloupe": {
+    "intro": "Comparez le prix de fanta-1-5l en GP — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GP.",
+    "faqCount": 2
+  },
+  "/prix/fanta-1-5l-martinique": {
+    "intro": "Prix fanta-1-5l en MQ : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de MQ.",
+    "faqCount": 2
+  },
+  "/prix/fanta-1-5l-guyane": {
+    "intro": "Comparez le prix de fanta-1-5l en GF — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GF.",
+    "faqCount": 2
+  },
+  "/prix/fanta-1-5l-reunion": {
+    "intro": "Comparez le prix de fanta-1-5l en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/fanta-1-5l-mayotte": {
+    "intro": "Prix fanta-1-5l en YT : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de YT.",
+    "faqCount": 2
+  },
+  "/prix/sprite-1-5l-guadeloupe": {
+    "intro": "Prix sprite-1-5l en GP : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GP.",
+    "faqCount": 2
+  },
+  "/prix/sprite-1-5l-martinique": {
+    "intro": "Prix sprite-1-5l en MQ : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de MQ.",
+    "faqCount": 2
+  },
+  "/prix/sprite-1-5l-guyane": {
+    "intro": "sprite-1-5l en GF : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GF pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/sprite-1-5l-reunion": {
+    "intro": "Comparez le prix de sprite-1-5l en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/sprite-1-5l-mayotte": {
+    "intro": "Prix sprite-1-5l en YT : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de YT.",
+    "faqCount": 2
+  },
+  "/prix/schweppes-1-5l-guadeloupe": {
+    "intro": "Prix schweppes-1-5l en GP : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GP.",
+    "faqCount": 2
+  },
+  "/prix/schweppes-1-5l-martinique": {
+    "intro": "schweppes-1-5l en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/schweppes-1-5l-guyane": {
+    "intro": "Prix schweppes-1-5l en GF : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GF.",
+    "faqCount": 2
+  },
+  "/prix/schweppes-1-5l-reunion": {
+    "intro": "Prix schweppes-1-5l en RE : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de RE.",
+    "faqCount": 2
+  },
+  "/prix/schweppes-1-5l-mayotte": {
+    "intro": "schweppes-1-5l en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/nesquik-chocolat-900g-guadeloupe": {
+    "intro": "Comparez le prix de nesquik-chocolat-900g en GP — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GP.",
+    "faqCount": 2
+  },
+  "/prix/nesquik-chocolat-900g-martinique": {
+    "intro": "Comparez le prix de nesquik-chocolat-900g en MQ — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de MQ.",
+    "faqCount": 2
+  },
+  "/prix/nesquik-chocolat-900g-guyane": {
+    "intro": "nesquik-chocolat-900g en GF : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GF pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/nesquik-chocolat-900g-reunion": {
+    "intro": "Comparez le prix de nesquik-chocolat-900g en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/nesquik-chocolat-900g-mayotte": {
+    "intro": "nesquik-chocolat-900g en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/riz-basmati-1kg-guadeloupe": {
+    "intro": "Comparez le prix de riz-basmati-1kg en GP — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GP.",
+    "faqCount": 2
+  },
+  "/prix/riz-basmati-1kg-martinique": {
+    "intro": "riz-basmati-1kg en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/riz-basmati-1kg-guyane": {
+    "intro": "Comparez le prix de riz-basmati-1kg en GF — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GF.",
+    "faqCount": 2
+  },
+  "/prix/riz-basmati-1kg-reunion": {
+    "intro": "riz-basmati-1kg en RE : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de RE pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/riz-basmati-1kg-mayotte": {
+    "intro": "Comparez le prix de riz-basmati-1kg en YT — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de YT.",
+    "faqCount": 2
+  },
+  "/prix/riz-long-grain-1kg-guadeloupe": {
+    "intro": "riz-long-grain-1kg en GP : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GP pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/riz-long-grain-1kg-martinique": {
+    "intro": "Comparez le prix de riz-long-grain-1kg en MQ — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de MQ.",
+    "faqCount": 2
+  },
+  "/prix/riz-long-grain-1kg-guyane": {
+    "intro": "Comparez le prix de riz-long-grain-1kg en GF — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GF.",
+    "faqCount": 2
+  },
+  "/prix/riz-long-grain-1kg-reunion": {
+    "intro": "Comparez le prix de riz-long-grain-1kg en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/riz-long-grain-1kg-mayotte": {
+    "intro": "riz-long-grain-1kg en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/riz-arborio-500g-guadeloupe": {
+    "intro": "Prix riz-arborio-500g en GP : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GP.",
+    "faqCount": 2
+  },
+  "/prix/riz-arborio-500g-martinique": {
+    "intro": "Comparez le prix de riz-arborio-500g en MQ — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de MQ.",
+    "faqCount": 2
+  },
+  "/prix/riz-arborio-500g-guyane": {
+    "intro": "Comparez le prix de riz-arborio-500g en GF — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GF.",
+    "faqCount": 2
+  },
+  "/prix/riz-arborio-500g-reunion": {
+    "intro": "Prix riz-arborio-500g en RE : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de RE.",
+    "faqCount": 2
+  },
+  "/prix/riz-arborio-500g-mayotte": {
+    "intro": "riz-arborio-500g en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/pates-panzani-500g-guadeloupe": {
+    "intro": "pates-panzani-500g en GP : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GP pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/pates-panzani-500g-martinique": {
+    "intro": "Comparez le prix de pates-panzani-500g en MQ — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de MQ.",
+    "faqCount": 2
+  },
+  "/prix/pates-panzani-500g-guyane": {
+    "intro": "pates-panzani-500g en GF : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GF pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/pates-panzani-500g-reunion": {
+    "intro": "Comparez le prix de pates-panzani-500g en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/pates-panzani-500g-mayotte": {
+    "intro": "pates-panzani-500g en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/pates-barilla-500g-guadeloupe": {
+    "intro": "Prix pates-barilla-500g en GP : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GP.",
+    "faqCount": 2
+  },
+  "/prix/pates-barilla-500g-martinique": {
+    "intro": "Prix pates-barilla-500g en MQ : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de MQ.",
+    "faqCount": 2
+  },
+  "/prix/pates-barilla-500g-guyane": {
+    "intro": "Comparez le prix de pates-barilla-500g en GF — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GF.",
+    "faqCount": 2
+  },
+  "/prix/pates-barilla-500g-reunion": {
+    "intro": "Prix pates-barilla-500g en RE : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de RE.",
+    "faqCount": 2
+  },
+  "/prix/pates-barilla-500g-mayotte": {
+    "intro": "pates-barilla-500g en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/pates-coquillettes-500g-guadeloupe": {
+    "intro": "Prix pates-coquillettes-500g en GP : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GP.",
+    "faqCount": 2
+  },
+  "/prix/pates-coquillettes-500g-martinique": {
+    "intro": "Comparez le prix de pates-coquillettes-500g en MQ — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de MQ.",
+    "faqCount": 2
+  },
+  "/prix/pates-coquillettes-500g-guyane": {
+    "intro": "pates-coquillettes-500g en GF : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GF pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/pates-coquillettes-500g-reunion": {
+    "intro": "Prix pates-coquillettes-500g en RE : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de RE.",
+    "faqCount": 2
+  },
+  "/prix/pates-coquillettes-500g-mayotte": {
+    "intro": "pates-coquillettes-500g en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/huile-tournesol-1l-guadeloupe": {
+    "intro": "huile-tournesol-1l en GP : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GP pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/huile-tournesol-1l-martinique": {
+    "intro": "huile-tournesol-1l en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/huile-tournesol-1l-guyane": {
+    "intro": "Comparez le prix de huile-tournesol-1l en GF — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GF.",
+    "faqCount": 2
+  },
+  "/prix/huile-tournesol-1l-reunion": {
+    "intro": "Comparez le prix de huile-tournesol-1l en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/huile-tournesol-1l-mayotte": {
+    "intro": "Prix huile-tournesol-1l en YT : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de YT.",
+    "faqCount": 2
+  },
+  "/prix/huile-olive-75cl-guadeloupe": {
+    "intro": "huile-olive-75cl en GP : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GP pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/huile-olive-75cl-martinique": {
+    "intro": "huile-olive-75cl en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/huile-olive-75cl-guyane": {
+    "intro": "Comparez le prix de huile-olive-75cl en GF — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GF.",
+    "faqCount": 2
+  },
+  "/prix/huile-olive-75cl-reunion": {
+    "intro": "Prix huile-olive-75cl en RE : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de RE.",
+    "faqCount": 2
+  },
+  "/prix/huile-olive-75cl-mayotte": {
+    "intro": "huile-olive-75cl en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/huile-coco-500ml-guadeloupe": {
+    "intro": "Comparez le prix de huile-coco-500ml en GP — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GP.",
+    "faqCount": 2
+  },
+  "/prix/huile-coco-500ml-martinique": {
+    "intro": "huile-coco-500ml en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/huile-coco-500ml-guyane": {
+    "intro": "Prix huile-coco-500ml en GF : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GF.",
+    "faqCount": 2
+  },
+  "/prix/huile-coco-500ml-reunion": {
+    "intro": "Comparez le prix de huile-coco-500ml en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/huile-coco-500ml-mayotte": {
+    "intro": "huile-coco-500ml en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/nutella-400g-guadeloupe": {
+    "intro": "nutella-400g en GP : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GP pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/nutella-400g-martinique": {
+    "intro": "Prix nutella-400g en MQ : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de MQ.",
+    "faqCount": 2
+  },
+  "/prix/nutella-400g-guyane": {
+    "intro": "nutella-400g en GF : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GF pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/nutella-400g-reunion": {
+    "intro": "Prix nutella-400g en RE : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de RE.",
+    "faqCount": 2
+  },
+  "/prix/nutella-400g-mayotte": {
+    "intro": "nutella-400g en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/nutella-750g-guadeloupe": {
+    "intro": "nutella-750g en GP : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GP pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/nutella-750g-martinique": {
+    "intro": "Prix nutella-750g en MQ : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de MQ.",
+    "faqCount": 2
+  },
+  "/prix/nutella-750g-guyane": {
+    "intro": "Comparez le prix de nutella-750g en GF — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GF.",
+    "faqCount": 2
+  },
+  "/prix/nutella-750g-reunion": {
+    "intro": "Comparez le prix de nutella-750g en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/nutella-750g-mayotte": {
+    "intro": "Comparez le prix de nutella-750g en YT — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de YT.",
+    "faqCount": 2
+  },
+  "/prix/sucre-blanc-1kg-guadeloupe": {
+    "intro": "sucre-blanc-1kg en GP : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GP pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/sucre-blanc-1kg-martinique": {
+    "intro": "sucre-blanc-1kg en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/sucre-blanc-1kg-guyane": {
+    "intro": "Prix sucre-blanc-1kg en GF : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GF.",
+    "faqCount": 2
+  },
+  "/prix/sucre-blanc-1kg-reunion": {
+    "intro": "Comparez le prix de sucre-blanc-1kg en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/sucre-blanc-1kg-mayotte": {
+    "intro": "Prix sucre-blanc-1kg en YT : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de YT.",
+    "faqCount": 2
+  },
+  "/prix/sucre-roux-1kg-guadeloupe": {
+    "intro": "Prix sucre-roux-1kg en GP : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GP.",
+    "faqCount": 2
+  },
+  "/prix/sucre-roux-1kg-martinique": {
+    "intro": "Comparez le prix de sucre-roux-1kg en MQ — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de MQ.",
+    "faqCount": 2
+  },
+  "/prix/sucre-roux-1kg-guyane": {
+    "intro": "Comparez le prix de sucre-roux-1kg en GF — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GF.",
+    "faqCount": 2
+  },
+  "/prix/sucre-roux-1kg-reunion": {
+    "intro": "Prix sucre-roux-1kg en RE : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de RE.",
+    "faqCount": 2
+  },
+  "/prix/sucre-roux-1kg-mayotte": {
+    "intro": "Prix sucre-roux-1kg en YT : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de YT.",
+    "faqCount": 2
+  },
+  "/prix/cassonade-500g-guadeloupe": {
+    "intro": "cassonade-500g en GP : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GP pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/cassonade-500g-martinique": {
+    "intro": "cassonade-500g en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/cassonade-500g-guyane": {
+    "intro": "cassonade-500g en GF : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GF pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/cassonade-500g-reunion": {
+    "intro": "Comparez le prix de cassonade-500g en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/cassonade-500g-mayotte": {
+    "intro": "cassonade-500g en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/farine-ble-1kg-guadeloupe": {
+    "intro": "Prix farine-ble-1kg en GP : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GP.",
+    "faqCount": 2
+  },
+  "/prix/farine-ble-1kg-martinique": {
+    "intro": "Comparez le prix de farine-ble-1kg en MQ — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de MQ.",
+    "faqCount": 2
+  },
+  "/prix/farine-ble-1kg-guyane": {
+    "intro": "farine-ble-1kg en GF : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GF pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/farine-ble-1kg-reunion": {
+    "intro": "Comparez le prix de farine-ble-1kg en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/farine-ble-1kg-mayotte": {
+    "intro": "Comparez le prix de farine-ble-1kg en YT — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de YT.",
+    "faqCount": 2
+  },
+  "/prix/farine-mais-500g-guadeloupe": {
+    "intro": "Prix farine-mais-500g en GP : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GP.",
+    "faqCount": 2
+  },
+  "/prix/farine-mais-500g-martinique": {
+    "intro": "Comparez le prix de farine-mais-500g en MQ — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de MQ.",
+    "faqCount": 2
+  },
+  "/prix/farine-mais-500g-guyane": {
+    "intro": "farine-mais-500g en GF : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GF pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/farine-mais-500g-reunion": {
+    "intro": "farine-mais-500g en RE : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de RE pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/farine-mais-500g-mayotte": {
+    "intro": "farine-mais-500g en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/sauce-tomate-400g-guadeloupe": {
+    "intro": "Prix sauce-tomate-400g en GP : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GP.",
+    "faqCount": 2
+  },
+  "/prix/sauce-tomate-400g-martinique": {
+    "intro": "Prix sauce-tomate-400g en MQ : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de MQ.",
+    "faqCount": 2
+  },
+  "/prix/sauce-tomate-400g-guyane": {
+    "intro": "Prix sauce-tomate-400g en GF : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GF.",
+    "faqCount": 2
+  },
+  "/prix/sauce-tomate-400g-reunion": {
+    "intro": "Comparez le prix de sauce-tomate-400g en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/sauce-tomate-400g-mayotte": {
+    "intro": "Prix sauce-tomate-400g en YT : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de YT.",
+    "faqCount": 2
+  },
+  "/prix/sauce-tomate-680g-guadeloupe": {
+    "intro": "sauce-tomate-680g en GP : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GP pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/sauce-tomate-680g-martinique": {
+    "intro": "Comparez le prix de sauce-tomate-680g en MQ — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de MQ.",
+    "faqCount": 2
+  },
+  "/prix/sauce-tomate-680g-guyane": {
+    "intro": "Prix sauce-tomate-680g en GF : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GF.",
+    "faqCount": 2
+  },
+  "/prix/sauce-tomate-680g-reunion": {
+    "intro": "sauce-tomate-680g en RE : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de RE pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/sauce-tomate-680g-mayotte": {
+    "intro": "Comparez le prix de sauce-tomate-680g en YT — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de YT.",
+    "faqCount": 2
+  },
+  "/prix/concentre-tomate-140g-guadeloupe": {
+    "intro": "concentre-tomate-140g en GP : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GP pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/concentre-tomate-140g-martinique": {
+    "intro": "Prix concentre-tomate-140g en MQ : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de MQ.",
+    "faqCount": 2
+  },
+  "/prix/concentre-tomate-140g-guyane": {
+    "intro": "concentre-tomate-140g en GF : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GF pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/concentre-tomate-140g-reunion": {
+    "intro": "concentre-tomate-140g en RE : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de RE pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/concentre-tomate-140g-mayotte": {
+    "intro": "concentre-tomate-140g en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/conserve-thon-160g-guadeloupe": {
+    "intro": "Prix conserve-thon-160g en GP : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GP.",
+    "faqCount": 2
+  },
+  "/prix/conserve-thon-160g-martinique": {
+    "intro": "Prix conserve-thon-160g en MQ : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de MQ.",
+    "faqCount": 2
+  },
+  "/prix/conserve-thon-160g-guyane": {
+    "intro": "Comparez le prix de conserve-thon-160g en GF — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GF.",
+    "faqCount": 2
+  },
+  "/prix/conserve-thon-160g-reunion": {
+    "intro": "Comparez le prix de conserve-thon-160g en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/conserve-thon-160g-mayotte": {
+    "intro": "conserve-thon-160g en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/conserve-thon-280g-guadeloupe": {
+    "intro": "Prix conserve-thon-280g en GP : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GP.",
+    "faqCount": 2
+  },
+  "/prix/conserve-thon-280g-martinique": {
+    "intro": "Comparez le prix de conserve-thon-280g en MQ — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de MQ.",
+    "faqCount": 2
+  },
+  "/prix/conserve-thon-280g-guyane": {
+    "intro": "Prix conserve-thon-280g en GF : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GF.",
+    "faqCount": 2
+  },
+  "/prix/conserve-thon-280g-reunion": {
+    "intro": "Comparez le prix de conserve-thon-280g en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/conserve-thon-280g-mayotte": {
+    "intro": "Prix conserve-thon-280g en YT : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de YT.",
+    "faqCount": 2
+  },
+  "/prix/conserve-sardines-135g-guadeloupe": {
+    "intro": "conserve-sardines-135g en GP : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GP pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/conserve-sardines-135g-martinique": {
+    "intro": "Comparez le prix de conserve-sardines-135g en MQ — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de MQ.",
+    "faqCount": 2
+  },
+  "/prix/conserve-sardines-135g-guyane": {
+    "intro": "Prix conserve-sardines-135g en GF : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GF.",
+    "faqCount": 2
+  },
+  "/prix/conserve-sardines-135g-reunion": {
+    "intro": "Comparez le prix de conserve-sardines-135g en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/conserve-sardines-135g-mayotte": {
+    "intro": "Prix conserve-sardines-135g en YT : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de YT.",
+    "faqCount": 2
+  },
+  "/prix/conserve-haricots-820g-guadeloupe": {
+    "intro": "Comparez le prix de conserve-haricots-820g en GP — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GP.",
+    "faqCount": 2
+  },
+  "/prix/conserve-haricots-820g-martinique": {
+    "intro": "conserve-haricots-820g en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/conserve-haricots-820g-guyane": {
+    "intro": "conserve-haricots-820g en GF : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GF pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/conserve-haricots-820g-reunion": {
+    "intro": "Comparez le prix de conserve-haricots-820g en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/conserve-haricots-820g-mayotte": {
+    "intro": "Prix conserve-haricots-820g en YT : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de YT.",
+    "faqCount": 2
+  },
+  "/prix/lentilles-500g-guadeloupe": {
+    "intro": "Prix lentilles-500g en GP : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GP.",
+    "faqCount": 2
+  },
+  "/prix/lentilles-500g-martinique": {
+    "intro": "Prix lentilles-500g en MQ : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de MQ.",
+    "faqCount": 2
+  },
+  "/prix/lentilles-500g-guyane": {
+    "intro": "lentilles-500g en GF : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GF pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/lentilles-500g-reunion": {
+    "intro": "Prix lentilles-500g en RE : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de RE.",
+    "faqCount": 2
+  },
+  "/prix/lentilles-500g-mayotte": {
+    "intro": "Comparez le prix de lentilles-500g en YT — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de YT.",
+    "faqCount": 2
+  },
+  "/prix/pois-chiches-400g-guadeloupe": {
+    "intro": "Comparez le prix de pois-chiches-400g en GP — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GP.",
+    "faqCount": 2
+  },
+  "/prix/pois-chiches-400g-martinique": {
+    "intro": "Comparez le prix de pois-chiches-400g en MQ — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de MQ.",
+    "faqCount": 2
+  },
+  "/prix/pois-chiches-400g-guyane": {
+    "intro": "Prix pois-chiches-400g en GF : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GF.",
+    "faqCount": 2
+  },
+  "/prix/pois-chiches-400g-reunion": {
+    "intro": "Prix pois-chiches-400g en RE : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de RE.",
+    "faqCount": 2
+  },
+  "/prix/pois-chiches-400g-mayotte": {
+    "intro": "Comparez le prix de pois-chiches-400g en YT — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de YT.",
+    "faqCount": 2
+  },
+  "/prix/chocolat-noir-100g-guadeloupe": {
+    "intro": "Comparez le prix de chocolat-noir-100g en GP — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GP.",
+    "faqCount": 2
+  },
+  "/prix/chocolat-noir-100g-martinique": {
+    "intro": "chocolat-noir-100g en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/chocolat-noir-100g-guyane": {
+    "intro": "Comparez le prix de chocolat-noir-100g en GF — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GF.",
+    "faqCount": 2
+  },
+  "/prix/chocolat-noir-100g-reunion": {
+    "intro": "chocolat-noir-100g en RE : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de RE pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/chocolat-noir-100g-mayotte": {
+    "intro": "Comparez le prix de chocolat-noir-100g en YT — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de YT.",
+    "faqCount": 2
+  },
+  "/prix/cafe-senseo-36d-guadeloupe": {
+    "intro": "Comparez le prix de cafe-senseo-36d en GP — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GP.",
+    "faqCount": 2
+  },
+  "/prix/cafe-senseo-36d-martinique": {
+    "intro": "Comparez le prix de cafe-senseo-36d en MQ — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de MQ.",
+    "faqCount": 2
+  },
+  "/prix/cafe-senseo-36d-guyane": {
+    "intro": "Prix cafe-senseo-36d en GF : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GF.",
+    "faqCount": 2
+  },
+  "/prix/cafe-senseo-36d-reunion": {
+    "intro": "Prix cafe-senseo-36d en RE : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de RE.",
+    "faqCount": 2
+  },
+  "/prix/cafe-senseo-36d-mayotte": {
+    "intro": "Comparez le prix de cafe-senseo-36d en YT — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de YT.",
+    "faqCount": 2
+  },
+  "/prix/cafe-nescafe-100g-guadeloupe": {
+    "intro": "Prix cafe-nescafe-100g en GP : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GP.",
+    "faqCount": 2
+  },
+  "/prix/cafe-nescafe-100g-martinique": {
+    "intro": "cafe-nescafe-100g en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/cafe-nescafe-100g-guyane": {
+    "intro": "cafe-nescafe-100g en GF : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GF pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/cafe-nescafe-100g-reunion": {
+    "intro": "Comparez le prix de cafe-nescafe-100g en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/cafe-nescafe-100g-mayotte": {
+    "intro": "Comparez le prix de cafe-nescafe-100g en YT — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de YT.",
+    "faqCount": 2
+  },
+  "/prix/sel-fin-1kg-guadeloupe": {
+    "intro": "Prix sel-fin-1kg en GP : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GP.",
+    "faqCount": 2
+  },
+  "/prix/sel-fin-1kg-martinique": {
+    "intro": "sel-fin-1kg en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/sel-fin-1kg-guyane": {
+    "intro": "sel-fin-1kg en GF : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GF pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/sel-fin-1kg-reunion": {
+    "intro": "Prix sel-fin-1kg en RE : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de RE.",
+    "faqCount": 2
+  },
+  "/prix/sel-fin-1kg-mayotte": {
+    "intro": "Comparez le prix de sel-fin-1kg en YT — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de YT.",
+    "faqCount": 2
+  },
+  "/prix/poivre-moulu-100g-guadeloupe": {
+    "intro": "Comparez le prix de poivre-moulu-100g en GP — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GP.",
+    "faqCount": 2
+  },
+  "/prix/poivre-moulu-100g-martinique": {
+    "intro": "poivre-moulu-100g en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/poivre-moulu-100g-guyane": {
+    "intro": "Prix poivre-moulu-100g en GF : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GF.",
+    "faqCount": 2
+  },
+  "/prix/poivre-moulu-100g-reunion": {
+    "intro": "Prix poivre-moulu-100g en RE : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de RE.",
+    "faqCount": 2
+  },
+  "/prix/poivre-moulu-100g-mayotte": {
+    "intro": "Prix poivre-moulu-100g en YT : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de YT.",
+    "faqCount": 2
+  },
+  "/prix/curry-poudre-100g-guadeloupe": {
+    "intro": "Comparez le prix de curry-poudre-100g en GP — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GP.",
+    "faqCount": 2
+  },
+  "/prix/curry-poudre-100g-martinique": {
+    "intro": "Comparez le prix de curry-poudre-100g en MQ — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de MQ.",
+    "faqCount": 2
+  },
+  "/prix/curry-poudre-100g-guyane": {
+    "intro": "Prix curry-poudre-100g en GF : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GF.",
+    "faqCount": 2
+  },
+  "/prix/curry-poudre-100g-reunion": {
+    "intro": "Prix curry-poudre-100g en RE : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de RE.",
+    "faqCount": 2
+  },
+  "/prix/curry-poudre-100g-mayotte": {
+    "intro": "curry-poudre-100g en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/curcuma-100g-guadeloupe": {
+    "intro": "Comparez le prix de curcuma-100g en GP — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GP.",
+    "faqCount": 2
+  },
+  "/prix/curcuma-100g-martinique": {
+    "intro": "curcuma-100g en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/curcuma-100g-guyane": {
+    "intro": "curcuma-100g en GF : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GF pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/curcuma-100g-reunion": {
+    "intro": "curcuma-100g en RE : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de RE pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/curcuma-100g-mayotte": {
+    "intro": "Prix curcuma-100g en YT : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de YT.",
+    "faqCount": 2
+  },
+  "/prix/moutarde-amora-440g-guadeloupe": {
+    "intro": "moutarde-amora-440g en GP : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GP pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/moutarde-amora-440g-martinique": {
+    "intro": "Comparez le prix de moutarde-amora-440g en MQ — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de MQ.",
+    "faqCount": 2
+  },
+  "/prix/moutarde-amora-440g-guyane": {
+    "intro": "Prix moutarde-amora-440g en GF : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GF.",
+    "faqCount": 2
+  },
+  "/prix/moutarde-amora-440g-reunion": {
+    "intro": "Comparez le prix de moutarde-amora-440g en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/moutarde-amora-440g-mayotte": {
+    "intro": "Comparez le prix de moutarde-amora-440g en YT — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de YT.",
+    "faqCount": 2
+  },
+  "/prix/mayonnaise-benedicta-235g-guadeloupe": {
+    "intro": "mayonnaise-benedicta-235g en GP : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GP pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/mayonnaise-benedicta-235g-martinique": {
+    "intro": "mayonnaise-benedicta-235g en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/mayonnaise-benedicta-235g-guyane": {
+    "intro": "Comparez le prix de mayonnaise-benedicta-235g en GF — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GF.",
+    "faqCount": 2
+  },
+  "/prix/mayonnaise-benedicta-235g-reunion": {
+    "intro": "Comparez le prix de mayonnaise-benedicta-235g en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/mayonnaise-benedicta-235g-mayotte": {
+    "intro": "Prix mayonnaise-benedicta-235g en YT : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de YT.",
+    "faqCount": 2
+  },
+  "/prix/ketchup-heinz-342g-guadeloupe": {
+    "intro": "Prix ketchup-heinz-342g en GP : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GP.",
+    "faqCount": 2
+  },
+  "/prix/ketchup-heinz-342g-martinique": {
+    "intro": "ketchup-heinz-342g en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/ketchup-heinz-342g-guyane": {
+    "intro": "Comparez le prix de ketchup-heinz-342g en GF — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GF.",
+    "faqCount": 2
+  },
+  "/prix/ketchup-heinz-342g-reunion": {
+    "intro": "Prix ketchup-heinz-342g en RE : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de RE.",
+    "faqCount": 2
+  },
+  "/prix/ketchup-heinz-342g-mayotte": {
+    "intro": "ketchup-heinz-342g en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/confiture-fraise-370g-guadeloupe": {
+    "intro": "confiture-fraise-370g en GP : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GP pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/confiture-fraise-370g-martinique": {
+    "intro": "confiture-fraise-370g en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/confiture-fraise-370g-guyane": {
+    "intro": "confiture-fraise-370g en GF : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GF pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/confiture-fraise-370g-reunion": {
+    "intro": "Comparez le prix de confiture-fraise-370g en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/confiture-fraise-370g-mayotte": {
+    "intro": "Prix confiture-fraise-370g en YT : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de YT.",
+    "faqCount": 2
+  },
+  "/prix/miel-400g-guadeloupe": {
+    "intro": "Prix miel-400g en GP : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GP.",
+    "faqCount": 2
+  },
+  "/prix/miel-400g-martinique": {
+    "intro": "Comparez le prix de miel-400g en MQ — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de MQ.",
+    "faqCount": 2
+  },
+  "/prix/miel-400g-guyane": {
+    "intro": "miel-400g en GF : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GF pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/miel-400g-reunion": {
+    "intro": "miel-400g en RE : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de RE pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/miel-400g-mayotte": {
+    "intro": "miel-400g en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/biscuits-lu-168g-guadeloupe": {
+    "intro": "Prix biscuits-lu-168g en GP : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GP.",
+    "faqCount": 2
+  },
+  "/prix/biscuits-lu-168g-martinique": {
+    "intro": "Comparez le prix de biscuits-lu-168g en MQ — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de MQ.",
+    "faqCount": 2
+  },
+  "/prix/biscuits-lu-168g-guyane": {
+    "intro": "biscuits-lu-168g en GF : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GF pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/biscuits-lu-168g-reunion": {
+    "intro": "Comparez le prix de biscuits-lu-168g en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/biscuits-lu-168g-mayotte": {
+    "intro": "Comparez le prix de biscuits-lu-168g en YT — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de YT.",
+    "faqCount": 2
+  },
+  "/prix/chips-lays-150g-guadeloupe": {
+    "intro": "Prix chips-lays-150g en GP : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GP.",
+    "faqCount": 2
+  },
+  "/prix/chips-lays-150g-martinique": {
+    "intro": "Prix chips-lays-150g en MQ : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de MQ.",
+    "faqCount": 2
+  },
+  "/prix/chips-lays-150g-guyane": {
+    "intro": "Prix chips-lays-150g en GF : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GF.",
+    "faqCount": 2
+  },
+  "/prix/chips-lays-150g-reunion": {
+    "intro": "Comparez le prix de chips-lays-150g en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/chips-lays-150g-mayotte": {
+    "intro": "chips-lays-150g en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/pop-corn-micro-ondes-3x-guadeloupe": {
+    "intro": "Comparez le prix de pop-corn-micro-ondes-3x en GP — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GP.",
+    "faqCount": 2
+  },
+  "/prix/pop-corn-micro-ondes-3x-martinique": {
+    "intro": "pop-corn-micro-ondes-3x en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/pop-corn-micro-ondes-3x-guyane": {
+    "intro": "Comparez le prix de pop-corn-micro-ondes-3x en GF — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GF.",
+    "faqCount": 2
+  },
+  "/prix/pop-corn-micro-ondes-3x-reunion": {
+    "intro": "Comparez le prix de pop-corn-micro-ondes-3x en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/pop-corn-micro-ondes-3x-mayotte": {
+    "intro": "Comparez le prix de pop-corn-micro-ondes-3x en YT — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de YT.",
+    "faqCount": 2
+  },
+  "/prix/lait-entier-1l-guadeloupe": {
+    "intro": "Comparez le prix de lait-entier-1l en GP — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GP.",
+    "faqCount": 2
+  },
+  "/prix/lait-entier-1l-martinique": {
+    "intro": "Comparez le prix de lait-entier-1l en MQ — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de MQ.",
+    "faqCount": 2
+  },
+  "/prix/lait-entier-1l-guyane": {
+    "intro": "lait-entier-1l en GF : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GF pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/lait-entier-1l-reunion": {
+    "intro": "Comparez le prix de lait-entier-1l en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/lait-entier-1l-mayotte": {
+    "intro": "Prix lait-entier-1l en YT : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de YT.",
+    "faqCount": 2
+  },
+  "/prix/lait-demi-ecreme-1l-guadeloupe": {
+    "intro": "lait-demi-ecreme-1l en GP : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GP pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/lait-demi-ecreme-1l-martinique": {
+    "intro": "lait-demi-ecreme-1l en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/lait-demi-ecreme-1l-guyane": {
+    "intro": "lait-demi-ecreme-1l en GF : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GF pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/lait-demi-ecreme-1l-reunion": {
+    "intro": "Comparez le prix de lait-demi-ecreme-1l en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/lait-demi-ecreme-1l-mayotte": {
+    "intro": "lait-demi-ecreme-1l en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/lait-uht-pack6-guadeloupe": {
+    "intro": "Comparez le prix de lait-uht-pack6 en GP — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GP.",
+    "faqCount": 2
+  },
+  "/prix/lait-uht-pack6-martinique": {
+    "intro": "Comparez le prix de lait-uht-pack6 en MQ — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de MQ.",
+    "faqCount": 2
+  },
+  "/prix/lait-uht-pack6-guyane": {
+    "intro": "lait-uht-pack6 en GF : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GF pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/lait-uht-pack6-reunion": {
+    "intro": "lait-uht-pack6 en RE : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de RE pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/lait-uht-pack6-mayotte": {
+    "intro": "Comparez le prix de lait-uht-pack6 en YT — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de YT.",
+    "faqCount": 2
+  },
+  "/prix/yaourt-nature-danone-8-guadeloupe": {
+    "intro": "Comparez le prix de yaourt-nature-danone-8 en GP — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GP.",
+    "faqCount": 2
+  },
+  "/prix/yaourt-nature-danone-8-martinique": {
+    "intro": "yaourt-nature-danone-8 en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/yaourt-nature-danone-8-guyane": {
+    "intro": "Prix yaourt-nature-danone-8 en GF : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GF.",
+    "faqCount": 2
+  },
+  "/prix/yaourt-nature-danone-8-reunion": {
+    "intro": "Prix yaourt-nature-danone-8 en RE : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de RE.",
+    "faqCount": 2
+  },
+  "/prix/yaourt-nature-danone-8-mayotte": {
+    "intro": "Prix yaourt-nature-danone-8 en YT : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de YT.",
+    "faqCount": 2
+  },
+  "/prix/yaourt-aromatise-8-guadeloupe": {
+    "intro": "Comparez le prix de yaourt-aromatise-8 en GP — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GP.",
+    "faqCount": 2
+  },
+  "/prix/yaourt-aromatise-8-martinique": {
+    "intro": "yaourt-aromatise-8 en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/yaourt-aromatise-8-guyane": {
+    "intro": "Prix yaourt-aromatise-8 en GF : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GF.",
+    "faqCount": 2
+  },
+  "/prix/yaourt-aromatise-8-reunion": {
+    "intro": "yaourt-aromatise-8 en RE : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de RE pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/yaourt-aromatise-8-mayotte": {
+    "intro": "Prix yaourt-aromatise-8 en YT : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de YT.",
+    "faqCount": 2
+  },
+  "/prix/yaourt-brassé-4-guadeloupe": {
+    "intro": "Comparez le prix de yaourt-brassé-4 en GP — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GP.",
+    "faqCount": 2
+  },
+  "/prix/yaourt-brassé-4-martinique": {
+    "intro": "Prix yaourt-brassé-4 en MQ : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de MQ.",
+    "faqCount": 2
+  },
+  "/prix/yaourt-brassé-4-guyane": {
+    "intro": "Prix yaourt-brassé-4 en GF : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GF.",
+    "faqCount": 2
+  },
+  "/prix/yaourt-brassé-4-reunion": {
+    "intro": "Prix yaourt-brassé-4 en RE : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de RE.",
+    "faqCount": 2
+  },
+  "/prix/yaourt-brassé-4-mayotte": {
+    "intro": "Comparez le prix de yaourt-brassé-4 en YT — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de YT.",
+    "faqCount": 2
+  },
+  "/prix/beurre-president-250g-guadeloupe": {
+    "intro": "beurre-president-250g en GP : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GP pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/beurre-president-250g-martinique": {
+    "intro": "beurre-president-250g en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/beurre-president-250g-guyane": {
+    "intro": "Comparez le prix de beurre-president-250g en GF — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GF.",
+    "faqCount": 2
+  },
+  "/prix/beurre-president-250g-reunion": {
+    "intro": "Comparez le prix de beurre-president-250g en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/beurre-president-250g-mayotte": {
+    "intro": "beurre-president-250g en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/beurre-doux-500g-guadeloupe": {
+    "intro": "Prix beurre-doux-500g en GP : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GP.",
+    "faqCount": 2
+  },
+  "/prix/beurre-doux-500g-martinique": {
+    "intro": "Comparez le prix de beurre-doux-500g en MQ — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de MQ.",
+    "faqCount": 2
+  },
+  "/prix/beurre-doux-500g-guyane": {
+    "intro": "Prix beurre-doux-500g en GF : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GF.",
+    "faqCount": 2
+  },
+  "/prix/beurre-doux-500g-reunion": {
+    "intro": "Prix beurre-doux-500g en RE : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de RE.",
+    "faqCount": 2
+  },
+  "/prix/beurre-doux-500g-mayotte": {
+    "intro": "Comparez le prix de beurre-doux-500g en YT — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de YT.",
+    "faqCount": 2
+  },
+  "/prix/fromage-emmental-200g-guadeloupe": {
+    "intro": "Comparez le prix de fromage-emmental-200g en GP — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GP.",
+    "faqCount": 2
+  },
+  "/prix/fromage-emmental-200g-martinique": {
+    "intro": "fromage-emmental-200g en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/fromage-emmental-200g-guyane": {
+    "intro": "fromage-emmental-200g en GF : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GF pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/fromage-emmental-200g-reunion": {
+    "intro": "Comparez le prix de fromage-emmental-200g en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/fromage-emmental-200g-mayotte": {
+    "intro": "Comparez le prix de fromage-emmental-200g en YT — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de YT.",
+    "faqCount": 2
+  },
+  "/prix/fromage-camembert-250g-guadeloupe": {
+    "intro": "fromage-camembert-250g en GP : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GP pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/fromage-camembert-250g-martinique": {
+    "intro": "Prix fromage-camembert-250g en MQ : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de MQ.",
+    "faqCount": 2
+  },
+  "/prix/fromage-camembert-250g-guyane": {
+    "intro": "fromage-camembert-250g en GF : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GF pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/fromage-camembert-250g-reunion": {
+    "intro": "Prix fromage-camembert-250g en RE : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de RE.",
+    "faqCount": 2
+  },
+  "/prix/fromage-camembert-250g-mayotte": {
+    "intro": "Prix fromage-camembert-250g en YT : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de YT.",
+    "faqCount": 2
+  },
+  "/prix/fromage-cheddar-200g-guadeloupe": {
+    "intro": "Prix fromage-cheddar-200g en GP : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GP.",
+    "faqCount": 2
+  },
+  "/prix/fromage-cheddar-200g-martinique": {
+    "intro": "Comparez le prix de fromage-cheddar-200g en MQ — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de MQ.",
+    "faqCount": 2
+  },
+  "/prix/fromage-cheddar-200g-guyane": {
+    "intro": "Prix fromage-cheddar-200g en GF : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GF.",
+    "faqCount": 2
+  },
+  "/prix/fromage-cheddar-200g-reunion": {
+    "intro": "Comparez le prix de fromage-cheddar-200g en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/fromage-cheddar-200g-mayotte": {
+    "intro": "Prix fromage-cheddar-200g en YT : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de YT.",
+    "faqCount": 2
+  },
+  "/prix/fromage-fondu-16p-guadeloupe": {
+    "intro": "fromage-fondu-16p en GP : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GP pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/fromage-fondu-16p-martinique": {
+    "intro": "fromage-fondu-16p en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/fromage-fondu-16p-guyane": {
+    "intro": "fromage-fondu-16p en GF : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GF pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/fromage-fondu-16p-reunion": {
+    "intro": "Comparez le prix de fromage-fondu-16p en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/fromage-fondu-16p-mayotte": {
+    "intro": "fromage-fondu-16p en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/creme-fraiche-20cl-guadeloupe": {
+    "intro": "Comparez le prix de creme-fraiche-20cl en GP — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GP.",
+    "faqCount": 2
+  },
+  "/prix/creme-fraiche-20cl-martinique": {
+    "intro": "Comparez le prix de creme-fraiche-20cl en MQ — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de MQ.",
+    "faqCount": 2
+  },
+  "/prix/creme-fraiche-20cl-guyane": {
+    "intro": "Comparez le prix de creme-fraiche-20cl en GF — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GF.",
+    "faqCount": 2
+  },
+  "/prix/creme-fraiche-20cl-reunion": {
+    "intro": "creme-fraiche-20cl en RE : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de RE pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/creme-fraiche-20cl-mayotte": {
+    "intro": "Comparez le prix de creme-fraiche-20cl en YT — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de YT.",
+    "faqCount": 2
+  },
+  "/prix/creme-liquide-25cl-guadeloupe": {
+    "intro": "creme-liquide-25cl en GP : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GP pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/creme-liquide-25cl-martinique": {
+    "intro": "Prix creme-liquide-25cl en MQ : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de MQ.",
+    "faqCount": 2
+  },
+  "/prix/creme-liquide-25cl-guyane": {
+    "intro": "creme-liquide-25cl en GF : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GF pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/creme-liquide-25cl-reunion": {
+    "intro": "Prix creme-liquide-25cl en RE : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de RE.",
+    "faqCount": 2
+  },
+  "/prix/creme-liquide-25cl-mayotte": {
+    "intro": "creme-liquide-25cl en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/creme-dessert-chocolat-4-guadeloupe": {
+    "intro": "creme-dessert-chocolat-4 en GP : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GP pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/creme-dessert-chocolat-4-martinique": {
+    "intro": "creme-dessert-chocolat-4 en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/creme-dessert-chocolat-4-guyane": {
+    "intro": "Prix creme-dessert-chocolat-4 en GF : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GF.",
+    "faqCount": 2
+  },
+  "/prix/creme-dessert-chocolat-4-reunion": {
+    "intro": "Comparez le prix de creme-dessert-chocolat-4 en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/creme-dessert-chocolat-4-mayotte": {
+    "intro": "creme-dessert-chocolat-4 en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/flan-caramel-4-guadeloupe": {
+    "intro": "flan-caramel-4 en GP : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GP pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/flan-caramel-4-martinique": {
+    "intro": "Comparez le prix de flan-caramel-4 en MQ — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de MQ.",
+    "faqCount": 2
+  },
+  "/prix/flan-caramel-4-guyane": {
+    "intro": "Prix flan-caramel-4 en GF : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GF.",
+    "faqCount": 2
+  },
+  "/prix/flan-caramel-4-reunion": {
+    "intro": "flan-caramel-4 en RE : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de RE pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/flan-caramel-4-mayotte": {
+    "intro": "Prix flan-caramel-4 en YT : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de YT.",
+    "faqCount": 2
+  },
+  "/prix/petit-suisse-12-guadeloupe": {
+    "intro": "Prix petit-suisse-12 en GP : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GP.",
+    "faqCount": 2
+  },
+  "/prix/petit-suisse-12-martinique": {
+    "intro": "Comparez le prix de petit-suisse-12 en MQ — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de MQ.",
+    "faqCount": 2
+  },
+  "/prix/petit-suisse-12-guyane": {
+    "intro": "Prix petit-suisse-12 en GF : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GF.",
+    "faqCount": 2
+  },
+  "/prix/petit-suisse-12-reunion": {
+    "intro": "Prix petit-suisse-12 en RE : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de RE.",
+    "faqCount": 2
+  },
+  "/prix/petit-suisse-12-mayotte": {
+    "intro": "Prix petit-suisse-12 en YT : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de YT.",
+    "faqCount": 2
+  },
+  "/prix/fromage-blanc-500g-guadeloupe": {
+    "intro": "Comparez le prix de fromage-blanc-500g en GP — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GP.",
+    "faqCount": 2
+  },
+  "/prix/fromage-blanc-500g-martinique": {
+    "intro": "Comparez le prix de fromage-blanc-500g en MQ — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de MQ.",
+    "faqCount": 2
+  },
+  "/prix/fromage-blanc-500g-guyane": {
+    "intro": "fromage-blanc-500g en GF : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GF pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/fromage-blanc-500g-reunion": {
+    "intro": "Comparez le prix de fromage-blanc-500g en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/fromage-blanc-500g-mayotte": {
+    "intro": "fromage-blanc-500g en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/quark-nature-500g-guadeloupe": {
+    "intro": "Prix quark-nature-500g en GP : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GP.",
+    "faqCount": 2
+  },
+  "/prix/quark-nature-500g-martinique": {
+    "intro": "Prix quark-nature-500g en MQ : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de MQ.",
+    "faqCount": 2
+  },
+  "/prix/quark-nature-500g-guyane": {
+    "intro": "Comparez le prix de quark-nature-500g en GF — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GF.",
+    "faqCount": 2
+  },
+  "/prix/quark-nature-500g-reunion": {
+    "intro": "Comparez le prix de quark-nature-500g en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/quark-nature-500g-mayotte": {
+    "intro": "quark-nature-500g en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/mozzarella-125g-guadeloupe": {
+    "intro": "mozzarella-125g en GP : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GP pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/mozzarella-125g-martinique": {
+    "intro": "mozzarella-125g en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/mozzarella-125g-guyane": {
+    "intro": "Comparez le prix de mozzarella-125g en GF — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GF.",
+    "faqCount": 2
+  },
+  "/prix/mozzarella-125g-reunion": {
+    "intro": "Prix mozzarella-125g en RE : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de RE.",
+    "faqCount": 2
+  },
+  "/prix/mozzarella-125g-mayotte": {
+    "intro": "mozzarella-125g en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/poulet-entier-kg-guadeloupe": {
+    "intro": "poulet-entier-kg en GP : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GP pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/poulet-entier-kg-martinique": {
+    "intro": "Comparez le prix de poulet-entier-kg en MQ — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de MQ.",
+    "faqCount": 2
+  },
+  "/prix/poulet-entier-kg-guyane": {
+    "intro": "Comparez le prix de poulet-entier-kg en GF — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GF.",
+    "faqCount": 2
+  },
+  "/prix/poulet-entier-kg-reunion": {
+    "intro": "Comparez le prix de poulet-entier-kg en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/poulet-entier-kg-mayotte": {
+    "intro": "Prix poulet-entier-kg en YT : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de YT.",
+    "faqCount": 2
+  },
+  "/prix/cuisses-poulet-kg-guadeloupe": {
+    "intro": "cuisses-poulet-kg en GP : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GP pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/cuisses-poulet-kg-martinique": {
+    "intro": "cuisses-poulet-kg en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/cuisses-poulet-kg-guyane": {
+    "intro": "Comparez le prix de cuisses-poulet-kg en GF — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GF.",
+    "faqCount": 2
+  },
+  "/prix/cuisses-poulet-kg-reunion": {
+    "intro": "cuisses-poulet-kg en RE : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de RE pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/cuisses-poulet-kg-mayotte": {
+    "intro": "Comparez le prix de cuisses-poulet-kg en YT — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de YT.",
+    "faqCount": 2
+  },
+  "/prix/blanc-poulet-kg-guadeloupe": {
+    "intro": "Comparez le prix de blanc-poulet-kg en GP — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GP.",
+    "faqCount": 2
+  },
+  "/prix/blanc-poulet-kg-martinique": {
+    "intro": "Comparez le prix de blanc-poulet-kg en MQ — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de MQ.",
+    "faqCount": 2
+  },
+  "/prix/blanc-poulet-kg-guyane": {
+    "intro": "blanc-poulet-kg en GF : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GF pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/blanc-poulet-kg-reunion": {
+    "intro": "blanc-poulet-kg en RE : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de RE pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/blanc-poulet-kg-mayotte": {
+    "intro": "blanc-poulet-kg en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/steak-hache-400g-guadeloupe": {
+    "intro": "Prix steak-hache-400g en GP : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GP.",
+    "faqCount": 2
+  },
+  "/prix/steak-hache-400g-martinique": {
+    "intro": "Prix steak-hache-400g en MQ : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de MQ.",
+    "faqCount": 2
+  },
+  "/prix/steak-hache-400g-guyane": {
+    "intro": "Prix steak-hache-400g en GF : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GF.",
+    "faqCount": 2
+  },
+  "/prix/steak-hache-400g-reunion": {
+    "intro": "Comparez le prix de steak-hache-400g en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/steak-hache-400g-mayotte": {
+    "intro": "Prix steak-hache-400g en YT : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de YT.",
+    "faqCount": 2
+  },
+  "/prix/boeuf-bourguignon-kg-guadeloupe": {
+    "intro": "Comparez le prix de boeuf-bourguignon-kg en GP — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GP.",
+    "faqCount": 2
+  },
+  "/prix/boeuf-bourguignon-kg-martinique": {
+    "intro": "Comparez le prix de boeuf-bourguignon-kg en MQ — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de MQ.",
+    "faqCount": 2
+  },
+  "/prix/boeuf-bourguignon-kg-guyane": {
+    "intro": "Prix boeuf-bourguignon-kg en GF : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GF.",
+    "faqCount": 2
+  },
+  "/prix/boeuf-bourguignon-kg-reunion": {
+    "intro": "Prix boeuf-bourguignon-kg en RE : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de RE.",
+    "faqCount": 2
+  },
+  "/prix/boeuf-bourguignon-kg-mayotte": {
+    "intro": "Prix boeuf-bourguignon-kg en YT : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de YT.",
+    "faqCount": 2
+  },
+  "/prix/cote-porc-kg-guadeloupe": {
+    "intro": "Comparez le prix de cote-porc-kg en GP — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GP.",
+    "faqCount": 2
+  },
+  "/prix/cote-porc-kg-martinique": {
+    "intro": "cote-porc-kg en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/cote-porc-kg-guyane": {
+    "intro": "cote-porc-kg en GF : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GF pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/cote-porc-kg-reunion": {
+    "intro": "cote-porc-kg en RE : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de RE pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/cote-porc-kg-mayotte": {
+    "intro": "Comparez le prix de cote-porc-kg en YT — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de YT.",
+    "faqCount": 2
+  },
+  "/prix/roti-porc-kg-guadeloupe": {
+    "intro": "Comparez le prix de roti-porc-kg en GP — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GP.",
+    "faqCount": 2
+  },
+  "/prix/roti-porc-kg-martinique": {
+    "intro": "Comparez le prix de roti-porc-kg en MQ — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de MQ.",
+    "faqCount": 2
+  },
+  "/prix/roti-porc-kg-guyane": {
+    "intro": "Comparez le prix de roti-porc-kg en GF — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GF.",
+    "faqCount": 2
+  },
+  "/prix/roti-porc-kg-reunion": {
+    "intro": "Prix roti-porc-kg en RE : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de RE.",
+    "faqCount": 2
+  },
+  "/prix/roti-porc-kg-mayotte": {
+    "intro": "roti-porc-kg en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/jambon-blanc-4tr-guadeloupe": {
+    "intro": "Comparez le prix de jambon-blanc-4tr en GP — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GP.",
+    "faqCount": 2
+  },
+  "/prix/jambon-blanc-4tr-martinique": {
+    "intro": "Comparez le prix de jambon-blanc-4tr en MQ — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de MQ.",
+    "faqCount": 2
+  },
+  "/prix/jambon-blanc-4tr-guyane": {
+    "intro": "Comparez le prix de jambon-blanc-4tr en GF — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GF.",
+    "faqCount": 2
+  },
+  "/prix/jambon-blanc-4tr-reunion": {
+    "intro": "Prix jambon-blanc-4tr en RE : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de RE.",
+    "faqCount": 2
+  },
+  "/prix/jambon-blanc-4tr-mayotte": {
+    "intro": "Prix jambon-blanc-4tr en YT : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de YT.",
+    "faqCount": 2
+  },
+  "/prix/lardons-fumés-200g-guadeloupe": {
+    "intro": "Prix lardons-fumés-200g en GP : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GP.",
+    "faqCount": 2
+  },
+  "/prix/lardons-fumés-200g-martinique": {
+    "intro": "lardons-fumés-200g en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/lardons-fumés-200g-guyane": {
+    "intro": "Comparez le prix de lardons-fumés-200g en GF — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GF.",
+    "faqCount": 2
+  },
+  "/prix/lardons-fumés-200g-reunion": {
+    "intro": "Comparez le prix de lardons-fumés-200g en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/lardons-fumés-200g-mayotte": {
+    "intro": "Comparez le prix de lardons-fumés-200g en YT — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de YT.",
+    "faqCount": 2
+  },
+  "/prix/saucisses-viennoises-350g-guadeloupe": {
+    "intro": "saucisses-viennoises-350g en GP : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GP pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/saucisses-viennoises-350g-martinique": {
+    "intro": "Prix saucisses-viennoises-350g en MQ : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de MQ.",
+    "faqCount": 2
+  },
+  "/prix/saucisses-viennoises-350g-guyane": {
+    "intro": "Comparez le prix de saucisses-viennoises-350g en GF — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GF.",
+    "faqCount": 2
+  },
+  "/prix/saucisses-viennoises-350g-reunion": {
+    "intro": "saucisses-viennoises-350g en RE : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de RE pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/saucisses-viennoises-350g-mayotte": {
+    "intro": "Comparez le prix de saucisses-viennoises-350g en YT — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de YT.",
+    "faqCount": 2
+  },
+  "/prix/merguez-500g-guadeloupe": {
+    "intro": "merguez-500g en GP : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GP pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/merguez-500g-martinique": {
+    "intro": "Comparez le prix de merguez-500g en MQ — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de MQ.",
+    "faqCount": 2
+  },
+  "/prix/merguez-500g-guyane": {
+    "intro": "Comparez le prix de merguez-500g en GF — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GF.",
+    "faqCount": 2
+  },
+  "/prix/merguez-500g-reunion": {
+    "intro": "merguez-500g en RE : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de RE pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/merguez-500g-mayotte": {
+    "intro": "merguez-500g en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/chorizo-200g-guadeloupe": {
+    "intro": "Comparez le prix de chorizo-200g en GP — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GP.",
+    "faqCount": 2
+  },
+  "/prix/chorizo-200g-martinique": {
+    "intro": "Prix chorizo-200g en MQ : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de MQ.",
+    "faqCount": 2
+  },
+  "/prix/chorizo-200g-guyane": {
+    "intro": "Prix chorizo-200g en GF : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GF.",
+    "faqCount": 2
+  },
+  "/prix/chorizo-200g-reunion": {
+    "intro": "chorizo-200g en RE : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de RE pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/chorizo-200g-mayotte": {
+    "intro": "chorizo-200g en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/agneau-gigot-kg-guadeloupe": {
+    "intro": "Prix agneau-gigot-kg en GP : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de GP.",
+    "faqCount": 2
+  },
+  "/prix/agneau-gigot-kg-martinique": {
+    "intro": "Prix agneau-gigot-kg en MQ : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de MQ.",
+    "faqCount": 2
+  },
+  "/prix/agneau-gigot-kg-guyane": {
+    "intro": "agneau-gigot-kg en GF : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GF pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/agneau-gigot-kg-reunion": {
+    "intro": "agneau-gigot-kg en RE : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de RE pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/agneau-gigot-kg-mayotte": {
+    "intro": "Comparez le prix de agneau-gigot-kg en YT — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de YT.",
+    "faqCount": 2
+  },
+  "/prix/escalope-veau-kg-guadeloupe": {
+    "intro": "escalope-veau-kg en GP : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GP pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/escalope-veau-kg-martinique": {
+    "intro": "escalope-veau-kg en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/escalope-veau-kg-guyane": {
+    "intro": "Comparez le prix de escalope-veau-kg en GF — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GF.",
+    "faqCount": 2
+  },
+  "/prix/escalope-veau-kg-reunion": {
+    "intro": "Comparez le prix de escalope-veau-kg en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/escalope-veau-kg-mayotte": {
+    "intro": "escalope-veau-kg en YT : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de YT pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/foie-poulet-500g-guadeloupe": {
+    "intro": "foie-poulet-500g en GP : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de GP pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/foie-poulet-500g-martinique": {
+    "intro": "foie-poulet-500g en MQ : notre comparateur vous aide à économiser.",
+    "summary": "Comparez les enseignes de MQ pour trouver le meilleur prix.",
+    "faqCount": 2
+  },
+  "/prix/foie-poulet-500g-guyane": {
+    "intro": "Comparez le prix de foie-poulet-500g en GF — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de GF.",
+    "faqCount": 2
+  },
+  "/prix/foie-poulet-500g-reunion": {
+    "intro": "Comparez le prix de foie-poulet-500g en RE — données actualisées.",
+    "summary": "Notre observatoire recense les prix pratiqués par les grandes enseignes de RE.",
+    "faqCount": 2
+  },
+  "/prix/foie-poulet-500g-mayotte": {
+    "intro": "Prix foie-poulet-500g en YT : trouvez la meilleure offre locale.",
+    "summary": "Données collectées auprès des supermarchés locaux de YT.",
+    "faqCount": 2
+  }
+}

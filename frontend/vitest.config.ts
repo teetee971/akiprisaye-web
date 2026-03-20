@@ -166,6 +166,7 @@ export default defineConfig({
       abs('./src/test/requireRole.test.tsx'),
       // Auto SEO guardrails — capHighPriority, capDuplications, isWhitelisted, validateRecommendations
       abs('./src/test/autoSeoGuardrails.test.ts'),
+      abs('./src/test/analyticsEngine.test.ts'),
       // Auto SEO engine — scoring determinism, recommendation rules, getSummaryStats, edge cases
       abs('./src/test/autoSeoEngine.test.ts'),
       // CRO engine — tracking storage, score determinism, recommendation generation

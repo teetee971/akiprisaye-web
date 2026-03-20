@@ -1,33 +1,40 @@
 {
-  "name": "akiprisaye-web-root",
-  "private": true,
-  "version": "3.3.0",
-  "type": "module",
-  "engines": {
-    "node": ">=20.19.0"
-  },
-  "scripts": {
-    "build": "cd frontend && npm ci --include=dev && npm run build",
-    "dev": "cd frontend && npm run dev",
-    "preview": "cd frontend && npm run preview",
-    "typecheck": "cd frontend && npm run -s typecheck",
-    "build:frontend": "cd frontend && npm ci --include=dev && npm run build",
-    "install:frontend": "cd frontend && npm ci --include=dev",
-    "lint": "cd frontend && npm run lint",
-    "lint:ci": "cd frontend && npm run lint",
-    "readiness:prod": "node scripts/production-readiness-check.mjs",
-    "readiness:prod:network-tolerant": "ALLOW_NETWORK_FAILURE=1 node scripts/production-readiness-check.mjs",
-    "check:firebase": "cd frontend && npm install --silent && npx vitest run --config vitest.config.ts firebase-config"
-  },
-  "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^8.56.1",
-    "@typescript-eslint/parser": "^8.56.1",
-    "eslint": "^9.39.3",
-    "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-react-hooks": "^7.0.1",
-    "eslint-plugin-react-refresh": "^0.5.2",
-    "firebase-admin": "^13.0.0",
-    "typescript": "^5.9.3",
-    "vite": "^7.3.1"
-  }
+    "name": "akiprisaye-web-root",
+    "private": true,
+    "version": "3.3.0",
+    "type": "module",
+    "engines": {
+        "node": ">=20.19.0"
+    },
+    "scripts": {
+        "build": "cd frontend && npm ci --include=dev && npm run build",
+        "dev": "cd frontend && npm run dev",
+        "preview": "cd frontend && npm run preview",
+        "typecheck": "cd frontend && npm run -s typecheck",
+        "build:frontend": "cd frontend && npm ci --include=dev && npm run build",
+        "install:frontend": "cd frontend && npm ci --include=dev",
+        "lint": "cd frontend && npm run lint",
+        "lint:ci": "cd frontend && npm run lint",
+        "readiness:prod": "node scripts/production-readiness-check.mjs",
+        "readiness:prod:network-tolerant": "ALLOW_NETWORK_FAILURE=1 node scripts/production-readiness-check.mjs",
+        "check:firebase": "cd frontend && npm install --silent && npx vitest run --config vitest.config.ts firebase-config",
+        "seo:generate": "node scripts/generate-seo-pages.mjs && node scripts/generate-seo-content.mjs && node scripts/build-internal-links.mjs",
+        "seo:sitemap": "node scripts/generate-sitemap.mjs",
+        "seo:validate": "node scripts/validate-seo-artifacts.mjs",
+        "seo:loop": "node scripts/auto-seo/collect-signals.mjs && node scripts/auto-seo/score-pages.mjs && node scripts/auto-seo/generate-recommendations.mjs",
+        "seo:review-plan": "node scripts/auto-seo/build-patches.mjs && node scripts/auto-seo/export-pr-plan.mjs",
+        "seo:full": "npm run seo:generate && npm run seo:sitemap && npm run seo:validate && npm run seo:loop && npm run seo:review-plan",
+        "content:generate": "node scripts/auto-content-engine.mjs"
+    },
+    "devDependencies": {
+        "@typescript-eslint/eslint-plugin": "^8.56.1",
+        "@typescript-eslint/parser": "^8.56.1",
+        "eslint": "^9.39.3",
+        "eslint-plugin-react": "^7.37.5",
+        "eslint-plugin-react-hooks": "^7.0.1",
+        "eslint-plugin-react-refresh": "^0.5.2",
+        "firebase-admin": "^13.0.0",
+        "typescript": "^5.9.3",
+        "vite": "^7.3.1"
+    }
 }

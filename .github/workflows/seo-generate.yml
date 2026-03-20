@@ -1,0 +1,108 @@
+# ────────────────────────────────────────────────────────────────────────────
+# 🔄 SEO Generation Loop
+# ────────────────────────────────────────────────────────────────────────────
+#
+# PURPOSE: Generate SEO pages, sitemap, content, and internal links.
+#          Validates artifacts and uploads them as reviewable artifacts.
+#
+# TRIGGERS:
+#   - Manual (workflow_dispatch)
+#   - Daily at 06:00 UTC (schedule)
+#
+# SAFE GUARANTEES:
+#   ✅ Never commits to any branch
+#   ✅ Never auto-merges
+#   ✅ Never deploys
+#   ✅ Fails fast if generation or validation fails
+#
+# OUTPUTS (artifacts):
+#   - generated-pages.json
+#   - seo-pages-manifest.json
+#   - generated-content.json
+#   - internal-links-map.json
+#   - sitemap.xml
+#   - validate-report.txt
+# ────────────────────────────────────────────────────────────────────────────
+
+name: 🔄 SEO Generation Loop
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 * * *'   # 06:00 UTC every day
+
+permissions:
+  contents: read           # read-only — no push ever
+
+concurrency:
+  group: seo-generate
+  cancel-in-progress: false   # let an in-progress run finish before starting another
+
+jobs:
+  seo-generate:
+    name: 🔄 Generate SEO Assets
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+
+      - name: Install root dependencies
+        run: npm install --ignore-scripts 2>/dev/null || true
+
+      - name: Generate SEO pages (URL manifest + content)
+        run: npm run seo:generate
+
+      - name: Generate sitemap
+        run: npm run seo:sitemap
+
+      - name: Validate SEO artifacts
+        run: npm run seo:validate | tee /tmp/validate-report.txt
+
+      - name: Upload SEO artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: seo-generated-${{ github.run_number }}
+          retention-days: 14
+          path: |
+            frontend/src/data/seo/generated-pages.json
+            frontend/src/data/seo/generated-content.json
+            frontend/src/data/seo/internal-links-map.json
+            seo-pages-manifest.json
+            frontend/public/sitemap.xml
+
+      - name: Upload validation report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: seo-validate-report-${{ github.run_number }}
+          retention-days: 14
+          path: /tmp/validate-report.txt
+
+      - name: Summary
+        run: |
+          echo "## 🔄 SEO Generation — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Asset | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          for f in \
+            "seo-pages-manifest.json" \
+            "frontend/src/data/seo/generated-pages.json" \
+            "frontend/src/data/seo/generated-content.json" \
+            "frontend/src/data/seo/internal-links-map.json" \
+            "frontend/public/sitemap.xml"; do
+            if [ -f "$f" ]; then
+              echo "| \`$f\` | ✅ generated |" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "| \`$f\` | ❌ missing |" >> $GITHUB_STEP_SUMMARY
+            fi
+          done
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "🔒 **No files were committed or deployed.**" >> $GITHUB_STEP_SUMMARY

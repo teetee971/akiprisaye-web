@@ -1,0 +1,1681 @@
+{
+  "generatedAt": "2026-03-20T22:12:44.461Z",
+  "tiktok": [
+    {
+      "hook": "Coca-Cola 1,5 L : tu paies 13% trop cher sans le savoir",
+      "voiceover": "Coca-Cola 1,5 L en Guadeloupe. Chez le plus cher : 2.85 euros. Chez le moins cher : 2.49 euros chez E.Leclerc. Même produit. 0.36 euros d'écart. Vérifiez pour vos courses sur A Ki Pri Sa Yé point fr.",
+      "textOverlays": [
+        {
+          "line": "Coca-Cola 1,5 L",
+          "style": "title"
+        },
+        {
+          "line": "❌ 2.85€",
+          "style": "bad"
+        },
+        {
+          "line": "✅ 2.49€ chez E.Leclerc",
+          "style": "good"
+        },
+        {
+          "line": "Économisez 0.36€",
+          "style": "cta"
+        }
+      ],
+      "hashtags": "#Guadeloupe #Gwadloup #VieChereGuadeloupe #971 #VieChère #Économies #Courses #Comparateur #AkiPriSaYé",
+      "cta": "👉 https://akiprisaye.fr/landing",
+      "product": "Coca-Cola 1,5 L",
+      "territory": "Guadeloupe",
+      "savingsEur": 0.36,
+      "savingsPct": 13,
+      "productUrl": "https://akiprisaye.fr/gp/produit/coca-cola-1-5-l"
+    },
+    {
+      "hook": "Économisez 0.20€ sur Lait demi-écrémé 1 L en Guadeloupe",
+      "voiceover": "Lait demi-écrémé 1 L en Guadeloupe. Chez le plus cher : 1.29 euros. Chez le moins cher : 1.09 euros chez E.Leclerc. Même produit. 0.20 euros d'écart. Vérifiez pour vos courses sur A Ki Pri Sa Yé point fr.",
+      "textOverlays": [
+        {
+          "line": "Lait demi-écrémé 1 L",
+          "style": "title"
+        },
+        {
+          "line": "❌ 1.29€",
+          "style": "bad"
+        },
+        {
+          "line": "✅ 1.09€ chez E.Leclerc",
+          "style": "good"
+        },
+        {
+          "line": "Économisez 0.20€",
+          "style": "cta"
+        }
+      ],
+      "hashtags": "#Guadeloupe #Gwadloup #VieChereGuadeloupe #971 #VieChère #Économies #Courses #Comparateur #AkiPriSaYé",
+      "cta": "👉 https://akiprisaye.fr/landing",
+      "product": "Lait demi-écrémé 1 L",
+      "territory": "Guadeloupe",
+      "savingsEur": 0.2,
+      "savingsPct": 16,
+      "productUrl": "https://akiprisaye.fr/gp/produit/lait-demi-ecreme-1-l"
+    },
+    {
+      "hook": "Économisez 0.50€ sur Riz basmati 1 kg en Guadeloupe",
+      "voiceover": "Riz basmati 1 kg en Guadeloupe. Chez le plus cher : 3.49 euros. Chez le moins cher : 2.99 euros chez E.Leclerc. Même produit. 0.50 euros d'écart. Vérifiez pour vos courses sur A Ki Pri Sa Yé point fr.",
+      "textOverlays": [
+        {
+          "line": "Riz basmati 1 kg",
+          "style": "title"
+        },
+        {
+          "line": "❌ 3.49€",
+          "style": "bad"
+        },
+        {
+          "line": "✅ 2.99€ chez E.Leclerc",
+          "style": "good"
+        },
+        {
+          "line": "Économisez 0.50€",
+          "style": "cta"
+        }
+      ],
+      "hashtags": "#Guadeloupe #Gwadloup #VieChereGuadeloupe #971 #VieChère #Économies #Courses #Comparateur #AkiPriSaYé",
+      "cta": "👉 https://akiprisaye.fr/landing",
+      "product": "Riz basmati 1 kg",
+      "territory": "Guadeloupe",
+      "savingsEur": 0.5,
+      "savingsPct": 14,
+      "productUrl": "https://akiprisaye.fr/gp/produit/riz-basmati-1-kg"
+    },
+    {
+      "hook": "Huile tournesol 1 L : tu paies 15% trop cher sans le savoir",
+      "voiceover": "Huile tournesol 1 L en Guadeloupe. Chez le plus cher : 2.35 euros. Chez le moins cher : 1.99 euros chez E.Leclerc. Même produit. 0.36 euros d'écart. Vérifiez pour vos courses sur A Ki Pri Sa Yé point fr.",
+      "textOverlays": [
+        {
+          "line": "Huile tournesol 1 L",
+          "style": "title"
+        },
+        {
+          "line": "❌ 2.35€",
+          "style": "bad"
+        },
+        {
+          "line": "✅ 1.99€ chez E.Leclerc",
+          "style": "good"
+        },
+        {
+          "line": "Économisez 0.36€",
+          "style": "cta"
+        }
+      ],
+      "hashtags": "#Guadeloupe #Gwadloup #VieChereGuadeloupe #971 #VieChère #Économies #Courses #Comparateur #AkiPriSaYé",
+      "cta": "👉 https://akiprisaye.fr/landing",
+      "product": "Huile tournesol 1 L",
+      "territory": "Guadeloupe",
+      "savingsEur": 0.36,
+      "savingsPct": 15,
+      "productUrl": "https://akiprisaye.fr/gp/produit/huile-tournesol-1-l"
+    },
+    {
+      "hook": "Même produit. Prix différent. Beurre doux 250 g en Guadeloupe →",
+      "voiceover": "Beurre doux 250 g en Guadeloupe. Chez le plus cher : 3.25 euros. Chez le moins cher : 2.85 euros chez E.Leclerc. Même produit. 0.40 euros d'écart. Vérifiez pour vos courses sur A Ki Pri Sa Yé point fr.",
+      "textOverlays": [
+        {
+          "line": "Beurre doux 250 g",
+          "style": "title"
+        },
+        {
+          "line": "❌ 3.25€",
+          "style": "bad"
+        },
+        {
+          "line": "✅ 2.85€ chez E.Leclerc",
+          "style": "good"
+        },
+        {
+          "line": "Économisez 0.40€",
+          "style": "cta"
+        }
+      ],
+      "hashtags": "#Guadeloupe #Gwadloup #VieChereGuadeloupe #971 #VieChère #Économies #Courses #Comparateur #AkiPriSaYé",
+      "cta": "👉 https://akiprisaye.fr/landing",
+      "product": "Beurre doux 250 g",
+      "territory": "Guadeloupe",
+      "savingsEur": 0.4,
+      "savingsPct": 12,
+      "productUrl": "https://akiprisaye.fr/gp/produit/beurre-doux-250-g"
+    },
+    {
+      "hook": "Pourquoi Farine de blé T45 1 kg coûte plus cher en Guadeloupe ?",
+      "voiceover": "Farine de blé T45 1 kg en Guadeloupe. Chez le plus cher : 1.59 euros. Chez le moins cher : 1.29 euros chez E.Leclerc. Même produit. 0.30 euros d'écart. Vérifiez pour vos courses sur A Ki Pri Sa Yé point fr.",
+      "textOverlays": [
+        {
+          "line": "Farine de blé T45 1 kg",
+          "style": "title"
+        },
+        {
+          "line": "❌ 1.59€",
+          "style": "bad"
+        },
+        {
+          "line": "✅ 1.29€ chez E.Leclerc",
+          "style": "good"
+        },
+        {
+          "line": "Économisez 0.30€",
+          "style": "cta"
+        }
+      ],
+      "hashtags": "#Guadeloupe #Gwadloup #VieChereGuadeloupe #971 #VieChère #Économies #Courses #Comparateur #AkiPriSaYé",
+      "cta": "👉 https://akiprisaye.fr/landing",
+      "product": "Farine de blé T45 1 kg",
+      "territory": "Guadeloupe",
+      "savingsEur": 0.3,
+      "savingsPct": 19,
+      "productUrl": "https://akiprisaye.fr/gp/produit/farine-de-ble-t45-1-kg"
+    },
+    {
+      "hook": "Économisez 0.30€ sur Sucre en poudre 1 kg en Guadeloupe",
+      "voiceover": "Sucre en poudre 1 kg en Guadeloupe. Chez le plus cher : 1.89 euros. Chez le moins cher : 1.59 euros chez E.Leclerc. Même produit. 0.30 euros d'écart. Vérifiez pour vos courses sur A Ki Pri Sa Yé point fr.",
+      "textOverlays": [
+        {
+          "line": "Sucre en poudre 1 kg",
+          "style": "title"
+        },
+        {
+          "line": "❌ 1.89€",
+          "style": "bad"
+        },
+        {
+          "line": "✅ 1.59€ chez E.Leclerc",
+          "style": "good"
+        },
+        {
+          "line": "Économisez 0.30€",
+          "style": "cta"
+        }
+      ],
+      "hashtags": "#Guadeloupe #Gwadloup #VieChereGuadeloupe #971 #VieChère #Économies #Courses #Comparateur #AkiPriSaYé",
+      "cta": "👉 https://akiprisaye.fr/landing",
+      "product": "Sucre en poudre 1 kg",
+      "territory": "Guadeloupe",
+      "savingsEur": 0.3,
+      "savingsPct": 16,
+      "productUrl": "https://akiprisaye.fr/gp/produit/sucre-en-poudre-1-kg"
+    },
+    {
+      "hook": "Économisez 0.46€ sur Yaourt nature x8 en Guadeloupe",
+      "voiceover": "Yaourt nature x8 en Guadeloupe. Chez le plus cher : 2.45 euros. Chez le moins cher : 1.99 euros chez E.Leclerc. Même produit. 0.46 euros d'écart. Vérifiez pour vos courses sur A Ki Pri Sa Yé point fr.",
+      "textOverlays": [
+        {
+          "line": "Yaourt nature x8",
+          "style": "title"
+        },
+        {
+          "line": "❌ 2.45€",
+          "style": "bad"
+        },
+        {
+          "line": "✅ 1.99€ chez E.Leclerc",
+          "style": "good"
+        },
+        {
+          "line": "Économisez 0.46€",
+          "style": "cta"
+        }
+      ],
+      "hashtags": "#Guadeloupe #Gwadloup #VieChereGuadeloupe #971 #VieChère #Économies #Courses #Comparateur #AkiPriSaYé",
+      "cta": "👉 https://akiprisaye.fr/landing",
+      "product": "Yaourt nature x8",
+      "territory": "Guadeloupe",
+      "savingsEur": 0.46,
+      "savingsPct": 19,
+      "productUrl": "https://akiprisaye.fr/gp/produit/yaourt-nature-x8"
+    },
+    {
+      "hook": "Même produit. Prix différent. Pâtes spaghetti 500 g en Guadeloupe →",
+      "voiceover": "Pâtes spaghetti 500 g en Guadeloupe. Chez le plus cher : 1.35 euros. Chez le moins cher : 0.99 euros chez E.Leclerc. Même produit. 0.36 euros d'écart. Vérifiez pour vos courses sur A Ki Pri Sa Yé point fr.",
+      "textOverlays": [
+        {
+          "line": "Pâtes spaghetti 500 g",
+          "style": "title"
+        },
+        {
+          "line": "❌ 1.35€",
+          "style": "bad"
+        },
+        {
+          "line": "✅ 0.99€ chez E.Leclerc",
+          "style": "good"
+        },
+        {
+          "line": "Économisez 0.36€",
+          "style": "cta"
+        }
+      ],
+      "hashtags": "#Guadeloupe #Gwadloup #VieChereGuadeloupe #971 #VieChère #Économies #Courses #Comparateur #AkiPriSaYé",
+      "cta": "👉 https://akiprisaye.fr/landing",
+      "product": "Pâtes spaghetti 500 g",
+      "territory": "Guadeloupe",
+      "savingsEur": 0.36,
+      "savingsPct": 27,
+      "productUrl": "https://akiprisaye.fr/gp/produit/pates-spaghetti-500-g"
+    },
+    {
+      "hook": "Économisez 0.60€ sur Savon liquide 500 ml en Guadeloupe",
+      "voiceover": "Savon liquide 500 ml en Guadeloupe. Chez le plus cher : 2.99 euros. Chez le moins cher : 2.39 euros chez E.Leclerc. Même produit. 0.60 euros d'écart. Vérifiez pour vos courses sur A Ki Pri Sa Yé point fr.",
+      "textOverlays": [
+        {
+          "line": "Savon liquide 500 ml",
+          "style": "title"
+        },
+        {
+          "line": "❌ 2.99€",
+          "style": "bad"
+        },
+        {
+          "line": "✅ 2.39€ chez E.Leclerc",
+          "style": "good"
+        },
+        {
+          "line": "Économisez 0.60€",
+          "style": "cta"
+        }
+      ],
+      "hashtags": "#Guadeloupe #Gwadloup #VieChereGuadeloupe #971 #VieChère #Économies #Courses #Comparateur #AkiPriSaYé",
+      "cta": "👉 https://akiprisaye.fr/landing",
+      "product": "Savon liquide 500 ml",
+      "territory": "Guadeloupe",
+      "savingsEur": 0.6,
+      "savingsPct": 20,
+      "productUrl": "https://akiprisaye.fr/gp/produit/savon-liquide-500-ml"
+    },
+    {
+      "hook": "Coca-Cola 1,5 L : tu paies 13% trop cher sans le savoir",
+      "voiceover": "Coca-Cola 1,5 L en Martinique. Chez le plus cher : 2.85 euros. Chez le moins cher : 2.49 euros chez E.Leclerc. Même produit. 0.36 euros d'écart. Vérifiez pour vos courses sur A Ki Pri Sa Yé point fr.",
+      "textOverlays": [
+        {
+          "line": "Coca-Cola 1,5 L",
+          "style": "title"
+        },
+        {
+          "line": "❌ 2.85€",
+          "style": "bad"
+        },
+        {
+          "line": "✅ 2.49€ chez E.Leclerc",
+          "style": "good"
+        },
+        {
+          "line": "Économisez 0.36€",
+          "style": "cta"
+        }
+      ],
+      "hashtags": "#Martinique #VieChèreMartinique #PrixMartinique #972 #VieChère #Économies #Courses #Comparateur #AkiPriSaYé",
+      "cta": "👉 https://akiprisaye.fr/landing",
+      "product": "Coca-Cola 1,5 L",
+      "territory": "Martinique",
+      "savingsEur": 0.36,
+      "savingsPct": 13,
+      "productUrl": "https://akiprisaye.fr/mq/produit/coca-cola-1-5-l"
+    },
+    {
+      "hook": "Économisez 0.20€ sur Lait demi-écrémé 1 L en Martinique",
+      "voiceover": "Lait demi-écrémé 1 L en Martinique. Chez le plus cher : 1.29 euros. Chez le moins cher : 1.09 euros chez E.Leclerc. Même produit. 0.20 euros d'écart. Vérifiez pour vos courses sur A Ki Pri Sa Yé point fr.",
+      "textOverlays": [
+        {
+          "line": "Lait demi-écrémé 1 L",
+          "style": "title"
+        },
+        {
+          "line": "❌ 1.29€",
+          "style": "bad"
+        },
+        {
+          "line": "✅ 1.09€ chez E.Leclerc",
+          "style": "good"
+        },
+        {
+          "line": "Économisez 0.20€",
+          "style": "cta"
+        }
+      ],
+      "hashtags": "#Martinique #VieChèreMartinique #PrixMartinique #972 #VieChère #Économies #Courses #Comparateur #AkiPriSaYé",
+      "cta": "👉 https://akiprisaye.fr/landing",
+      "product": "Lait demi-écrémé 1 L",
+      "territory": "Martinique",
+      "savingsEur": 0.2,
+      "savingsPct": 16,
+      "productUrl": "https://akiprisaye.fr/mq/produit/lait-demi-ecreme-1-l"
+    },
+    {
+      "hook": "Économisez 0.50€ sur Riz basmati 1 kg en Martinique",
+      "voiceover": "Riz basmati 1 kg en Martinique. Chez le plus cher : 3.49 euros. Chez le moins cher : 2.99 euros chez E.Leclerc. Même produit. 0.50 euros d'écart. Vérifiez pour vos courses sur A Ki Pri Sa Yé point fr.",
+      "textOverlays": [
+        {
+          "line": "Riz basmati 1 kg",
+          "style": "title"
+        },
+        {
+          "line": "❌ 3.49€",
+          "style": "bad"
+        },
+        {
+          "line": "✅ 2.99€ chez E.Leclerc",
+          "style": "good"
+        },
+        {
+          "line": "Économisez 0.50€",
+          "style": "cta"
+        }
+      ],
+      "hashtags": "#Martinique #VieChèreMartinique #PrixMartinique #972 #VieChère #Économies #Courses #Comparateur #AkiPriSaYé",
+      "cta": "👉 https://akiprisaye.fr/landing",
+      "product": "Riz basmati 1 kg",
+      "territory": "Martinique",
+      "savingsEur": 0.5,
+      "savingsPct": 14,
+      "productUrl": "https://akiprisaye.fr/mq/produit/riz-basmati-1-kg"
+    },
+    {
+      "hook": "Huile tournesol 1 L : tu paies 15% trop cher sans le savoir",
+      "voiceover": "Huile tournesol 1 L en Martinique. Chez le plus cher : 2.35 euros. Chez le moins cher : 1.99 euros chez E.Leclerc. Même produit. 0.36 euros d'écart. Vérifiez pour vos courses sur A Ki Pri Sa Yé point fr.",
+      "textOverlays": [
+        {
+          "line": "Huile tournesol 1 L",
+          "style": "title"
+        },
+        {
+          "line": "❌ 2.35€",
+          "style": "bad"
+        },
+        {
+          "line": "✅ 1.99€ chez E.Leclerc",
+          "style": "good"
+        },
+        {
+          "line": "Économisez 0.36€",
+          "style": "cta"
+        }
+      ],
+      "hashtags": "#Martinique #VieChèreMartinique #PrixMartinique #972 #VieChère #Économies #Courses #Comparateur #AkiPriSaYé",
+      "cta": "👉 https://akiprisaye.fr/landing",
+      "product": "Huile tournesol 1 L",
+      "territory": "Martinique",
+      "savingsEur": 0.36,
+      "savingsPct": 15,
+      "productUrl": "https://akiprisaye.fr/mq/produit/huile-tournesol-1-l"
+    },
+    {
+      "hook": "Même produit. Prix différent. Beurre doux 250 g en Martinique →",
+      "voiceover": "Beurre doux 250 g en Martinique. Chez le plus cher : 3.25 euros. Chez le moins cher : 2.85 euros chez E.Leclerc. Même produit. 0.40 euros d'écart. Vérifiez pour vos courses sur A Ki Pri Sa Yé point fr.",
+      "textOverlays": [
+        {
+          "line": "Beurre doux 250 g",
+          "style": "title"
+        },
+        {
+          "line": "❌ 3.25€",
+          "style": "bad"
+        },
+        {
+          "line": "✅ 2.85€ chez E.Leclerc",
+          "style": "good"
+        },
+        {
+          "line": "Économisez 0.40€",
+          "style": "cta"
+        }
+      ],
+      "hashtags": "#Martinique #VieChèreMartinique #PrixMartinique #972 #VieChère #Économies #Courses #Comparateur #AkiPriSaYé",
+      "cta": "👉 https://akiprisaye.fr/landing",
+      "product": "Beurre doux 250 g",
+      "territory": "Martinique",
+      "savingsEur": 0.4,
+      "savingsPct": 12,
+      "productUrl": "https://akiprisaye.fr/mq/produit/beurre-doux-250-g"
+    },
+    {
+      "hook": "Pourquoi Farine de blé T45 1 kg coûte plus cher en Martinique ?",
+      "voiceover": "Farine de blé T45 1 kg en Martinique. Chez le plus cher : 1.59 euros. Chez le moins cher : 1.29 euros chez E.Leclerc. Même produit. 0.30 euros d'écart. Vérifiez pour vos courses sur A Ki Pri Sa Yé point fr.",
+      "textOverlays": [
+        {
+          "line": "Farine de blé T45 1 kg",
+          "style": "title"
+        },
+        {
+          "line": "❌ 1.59€",
+          "style": "bad"
+        },
+        {
+          "line": "✅ 1.29€ chez E.Leclerc",
+          "style": "good"
+        },
+        {
+          "line": "Économisez 0.30€",
+          "style": "cta"
+        }
+      ],
+      "hashtags": "#Martinique #VieChèreMartinique #PrixMartinique #972 #VieChère #Économies #Courses #Comparateur #AkiPriSaYé",
+      "cta": "👉 https://akiprisaye.fr/landing",
+      "product": "Farine de blé T45 1 kg",
+      "territory": "Martinique",
+      "savingsEur": 0.3,
+      "savingsPct": 19,
+      "productUrl": "https://akiprisaye.fr/mq/produit/farine-de-ble-t45-1-kg"
+    },
+    {
+      "hook": "Économisez 0.30€ sur Sucre en poudre 1 kg en Martinique",
+      "voiceover": "Sucre en poudre 1 kg en Martinique. Chez le plus cher : 1.89 euros. Chez le moins cher : 1.59 euros chez E.Leclerc. Même produit. 0.30 euros d'écart. Vérifiez pour vos courses sur A Ki Pri Sa Yé point fr.",
+      "textOverlays": [
+        {
+          "line": "Sucre en poudre 1 kg",
+          "style": "title"
+        },
+        {
+          "line": "❌ 1.89€",
+          "style": "bad"
+        },
+        {
+          "line": "✅ 1.59€ chez E.Leclerc",
+          "style": "good"
+        },
+        {
+          "line": "Économisez 0.30€",
+          "style": "cta"
+        }
+      ],
+      "hashtags": "#Martinique #VieChèreMartinique #PrixMartinique #972 #VieChère #Économies #Courses #Comparateur #AkiPriSaYé",
+      "cta": "👉 https://akiprisaye.fr/landing",
+      "product": "Sucre en poudre 1 kg",
+      "territory": "Martinique",
+      "savingsEur": 0.3,
+      "savingsPct": 16,
+      "productUrl": "https://akiprisaye.fr/mq/produit/sucre-en-poudre-1-kg"
+    },
+    {
+      "hook": "Économisez 0.46€ sur Yaourt nature x8 en Martinique",
+      "voiceover": "Yaourt nature x8 en Martinique. Chez le plus cher : 2.45 euros. Chez le moins cher : 1.99 euros chez E.Leclerc. Même produit. 0.46 euros d'écart. Vérifiez pour vos courses sur A Ki Pri Sa Yé point fr.",
+      "textOverlays": [
+        {
+          "line": "Yaourt nature x8",
+          "style": "title"
+        },
+        {
+          "line": "❌ 2.45€",
+          "style": "bad"
+        },
+        {
+          "line": "✅ 1.99€ chez E.Leclerc",
+          "style": "good"
+        },
+        {
+          "line": "Économisez 0.46€",
+          "style": "cta"
+        }
+      ],
+      "hashtags": "#Martinique #VieChèreMartinique #PrixMartinique #972 #VieChère #Économies #Courses #Comparateur #AkiPriSaYé",
+      "cta": "👉 https://akiprisaye.fr/landing",
+      "product": "Yaourt nature x8",
+      "territory": "Martinique",
+      "savingsEur": 0.46,
+      "savingsPct": 19,
+      "productUrl": "https://akiprisaye.fr/mq/produit/yaourt-nature-x8"
+    },
+    {
+      "hook": "Même produit. Prix différent. Pâtes spaghetti 500 g en Martinique →",
+      "voiceover": "Pâtes spaghetti 500 g en Martinique. Chez le plus cher : 1.35 euros. Chez le moins cher : 0.99 euros chez E.Leclerc. Même produit. 0.36 euros d'écart. Vérifiez pour vos courses sur A Ki Pri Sa Yé point fr.",
+      "textOverlays": [
+        {
+          "line": "Pâtes spaghetti 500 g",
+          "style": "title"
+        },
+        {
+          "line": "❌ 1.35€",
+          "style": "bad"
+        },
+        {
+          "line": "✅ 0.99€ chez E.Leclerc",
+          "style": "good"
+        },
+        {
+          "line": "Économisez 0.36€",
+          "style": "cta"
+        }
+      ],
+      "hashtags": "#Martinique #VieChèreMartinique #PrixMartinique #972 #VieChère #Économies #Courses #Comparateur #AkiPriSaYé",
+      "cta": "👉 https://akiprisaye.fr/landing",
+      "product": "Pâtes spaghetti 500 g",
+      "territory": "Martinique",
+      "savingsEur": 0.36,
+      "savingsPct": 27,
+      "productUrl": "https://akiprisaye.fr/mq/produit/pates-spaghetti-500-g"
+    },
+    {
+      "hook": "Économisez 0.60€ sur Savon liquide 500 ml en Martinique",
+      "voiceover": "Savon liquide 500 ml en Martinique. Chez le plus cher : 2.99 euros. Chez le moins cher : 2.39 euros chez E.Leclerc. Même produit. 0.60 euros d'écart. Vérifiez pour vos courses sur A Ki Pri Sa Yé point fr.",
+      "textOverlays": [
+        {
+          "line": "Savon liquide 500 ml",
+          "style": "title"
+        },
+        {
+          "line": "❌ 2.99€",
+          "style": "bad"
+        },
+        {
+          "line": "✅ 2.39€ chez E.Leclerc",
+          "style": "good"
+        },
+        {
+          "line": "Économisez 0.60€",
+          "style": "cta"
+        }
+      ],
+      "hashtags": "#Martinique #VieChèreMartinique #PrixMartinique #972 #VieChère #Économies #Courses #Comparateur #AkiPriSaYé",
+      "cta": "👉 https://akiprisaye.fr/landing",
+      "product": "Savon liquide 500 ml",
+      "territory": "Martinique",
+      "savingsEur": 0.6,
+      "savingsPct": 20,
+      "productUrl": "https://akiprisaye.fr/mq/produit/savon-liquide-500-ml"
+    }
+  ],
+  "facebook": [
+    {
+      "post": "⚠️ Les prix changent tous les jours en Guadeloupe.\n\nNe payez plus 13% trop cher sans le savoir.\n\nLes économies disponibles aujourd'hui :\nCoca-Cola 1,5 L → -0.36€ chez E.Leclerc\n\n+1 000 comparaisons effectuées cette semaine.\n\n👉 https://akiprisaye.fr/landing",
+      "postAlternate": "Tu paies trop cher tes courses sans le savoir.\n\nJ'ai trouvé un outil qui compare les prix entre Carrefour, Leclerc, Super U en Guadeloupe.\n\nCoca-Cola 1,5 L :\n2.85€ → 2.49€ chez E.Leclerc\n\nMême produit. 0.36€ d'écart.\n\n👉 Vérifie pour tes courses ici :\nhttps://akiprisaye.fr/landing\n\nDis-moi si ça vaut le coup 👀",
+      "product": "Coca-Cola 1,5 L",
+      "territory": "Guadeloupe",
+      "savingsEur": 0.36,
+      "savingsPct": 13,
+      "bestRetailer": "E.Leclerc",
+      "bestPrice": 2.49,
+      "landingUrl": "https://akiprisaye.fr/landing",
+      "targetGroups": [
+        "Guadeloupe bons plans",
+        "Vie chère Guadeloupe",
+        "Courses pas cher Antilles"
+      ]
+    },
+    {
+      "post": "Exemple réel en Guadeloupe :\n\nLait demi-écrémé 1 L :\n❌ 1.29€ au plus cher\n✅ 1.09€ chez E.Leclerc\n\nMême produit. Prix différent.\n\n👉 Vérifie pour tes courses :\nhttps://akiprisaye.fr/landing\n\nTu vas être surpris.",
+      "postAlternate": "⚠️ Les prix changent tous les jours en Guadeloupe.\n\nNe payez plus 16% trop cher sans le savoir.\n\nLes économies disponibles aujourd'hui :\nLait demi-écrémé 1 L → -0.20€ chez E.Leclerc\n\n+1 000 comparaisons effectuées cette semaine.\n\n👉 https://akiprisaye.fr/landing",
+      "product": "Lait demi-écrémé 1 L",
+      "territory": "Guadeloupe",
+      "savingsEur": 0.2,
+      "savingsPct": 16,
+      "bestRetailer": "E.Leclerc",
+      "bestPrice": 1.09,
+      "landingUrl": "https://akiprisaye.fr/landing",
+      "targetGroups": [
+        "Guadeloupe bons plans",
+        "Vie chère Guadeloupe",
+        "Courses pas cher Antilles"
+      ]
+    },
+    {
+      "post": "Tu paies trop cher tes courses sans le savoir.\n\nJ'ai trouvé un outil qui compare les prix entre Carrefour, Leclerc, Super U en Guadeloupe.\n\nRiz basmati 1 kg :\n3.49€ → 2.99€ chez E.Leclerc\n\nMême produit. 0.50€ d'écart.\n\n👉 Vérifie pour tes courses ici :\nhttps://akiprisaye.fr/landing\n\nDis-moi si ça vaut le coup 👀",
+      "postAlternate": "Exemple réel en Guadeloupe :\n\nRiz basmati 1 kg :\n❌ 3.49€ au plus cher\n✅ 2.99€ chez E.Leclerc\n\nMême produit. Prix différent.\n\n👉 Vérifie pour tes courses :\nhttps://akiprisaye.fr/landing\n\nTu vas être surpris.",
+      "product": "Riz basmati 1 kg",
+      "territory": "Guadeloupe",
+      "savingsEur": 0.5,
+      "savingsPct": 14,
+      "bestRetailer": "E.Leclerc",
+      "bestPrice": 2.99,
+      "landingUrl": "https://akiprisaye.fr/landing",
+      "targetGroups": [
+        "Guadeloupe bons plans",
+        "Vie chère Guadeloupe",
+        "Courses pas cher Antilles"
+      ]
+    },
+    {
+      "post": "Tu paies trop cher tes courses sans le savoir.\n\nJ'ai trouvé un outil qui compare les prix entre Carrefour, Leclerc, Super U en Guadeloupe.\n\nHuile tournesol 1 L :\n2.35€ → 1.99€ chez E.Leclerc\n\nMême produit. 0.36€ d'écart.\n\n👉 Vérifie pour tes courses ici :\nhttps://akiprisaye.fr/landing\n\nDis-moi si ça vaut le coup 👀",
+      "postAlternate": "Exemple réel en Guadeloupe :\n\nHuile tournesol 1 L :\n❌ 2.35€ au plus cher\n✅ 1.99€ chez E.Leclerc\n\nMême produit. Prix différent.\n\n👉 Vérifie pour tes courses :\nhttps://akiprisaye.fr/landing\n\nTu vas être surpris.",
+      "product": "Huile tournesol 1 L",
+      "territory": "Guadeloupe",
+      "savingsEur": 0.36,
+      "savingsPct": 15,
+      "bestRetailer": "E.Leclerc",
+      "bestPrice": 1.99,
+      "landingUrl": "https://akiprisaye.fr/landing",
+      "targetGroups": [
+        "Guadeloupe bons plans",
+        "Vie chère Guadeloupe",
+        "Courses pas cher Antilles"
+      ]
+    },
+    {
+      "post": "Exemple réel en Guadeloupe :\n\nBeurre doux 250 g :\n❌ 3.25€ au plus cher\n✅ 2.85€ chez E.Leclerc\n\nMême produit. Prix différent.\n\n👉 Vérifie pour tes courses :\nhttps://akiprisaye.fr/landing\n\nTu vas être surpris.",
+      "postAlternate": "⚠️ Les prix changent tous les jours en Guadeloupe.\n\nNe payez plus 12% trop cher sans le savoir.\n\nLes économies disponibles aujourd'hui :\nBeurre doux 250 g → -0.40€ chez E.Leclerc\n\n+1 000 comparaisons effectuées cette semaine.\n\n👉 https://akiprisaye.fr/landing",
+      "product": "Beurre doux 250 g",
+      "territory": "Guadeloupe",
+      "savingsEur": 0.4,
+      "savingsPct": 12,
+      "bestRetailer": "E.Leclerc",
+      "bestPrice": 2.85,
+      "landingUrl": "https://akiprisaye.fr/landing",
+      "targetGroups": [
+        "Guadeloupe bons plans",
+        "Vie chère Guadeloupe",
+        "Courses pas cher Antilles"
+      ]
+    },
+    {
+      "post": "Tu paies trop cher tes courses sans le savoir.\n\nJ'ai trouvé un outil qui compare les prix entre Carrefour, Leclerc, Super U en Guadeloupe.\n\nFarine de blé T45 1 kg :\n1.59€ → 1.29€ chez E.Leclerc\n\nMême produit. 0.30€ d'écart.\n\n👉 Vérifie pour tes courses ici :\nhttps://akiprisaye.fr/landing\n\nDis-moi si ça vaut le coup 👀",
+      "postAlternate": "Exemple réel en Guadeloupe :\n\nFarine de blé T45 1 kg :\n❌ 1.59€ au plus cher\n✅ 1.29€ chez E.Leclerc\n\nMême produit. Prix différent.\n\n👉 Vérifie pour tes courses :\nhttps://akiprisaye.fr/landing\n\nTu vas être surpris.",
+      "product": "Farine de blé T45 1 kg",
+      "territory": "Guadeloupe",
+      "savingsEur": 0.3,
+      "savingsPct": 19,
+      "bestRetailer": "E.Leclerc",
+      "bestPrice": 1.29,
+      "landingUrl": "https://akiprisaye.fr/landing",
+      "targetGroups": [
+        "Guadeloupe bons plans",
+        "Vie chère Guadeloupe",
+        "Courses pas cher Antilles"
+      ]
+    },
+    {
+      "post": "Exemple réel en Guadeloupe :\n\nSucre en poudre 1 kg :\n❌ 1.89€ au plus cher\n✅ 1.59€ chez E.Leclerc\n\nMême produit. Prix différent.\n\n👉 Vérifie pour tes courses :\nhttps://akiprisaye.fr/landing\n\nTu vas être surpris.",
+      "postAlternate": "⚠️ Les prix changent tous les jours en Guadeloupe.\n\nNe payez plus 16% trop cher sans le savoir.\n\nLes économies disponibles aujourd'hui :\nSucre en poudre 1 kg → -0.30€ chez E.Leclerc\n\n+1 000 comparaisons effectuées cette semaine.\n\n👉 https://akiprisaye.fr/landing",
+      "product": "Sucre en poudre 1 kg",
+      "territory": "Guadeloupe",
+      "savingsEur": 0.3,
+      "savingsPct": 16,
+      "bestRetailer": "E.Leclerc",
+      "bestPrice": 1.59,
+      "landingUrl": "https://akiprisaye.fr/landing",
+      "targetGroups": [
+        "Guadeloupe bons plans",
+        "Vie chère Guadeloupe",
+        "Courses pas cher Antilles"
+      ]
+    },
+    {
+      "post": "Tu paies trop cher tes courses sans le savoir.\n\nJ'ai trouvé un outil qui compare les prix entre Carrefour, Leclerc, Super U en Guadeloupe.\n\nYaourt nature x8 :\n2.45€ → 1.99€ chez E.Leclerc\n\nMême produit. 0.46€ d'écart.\n\n👉 Vérifie pour tes courses ici :\nhttps://akiprisaye.fr/landing\n\nDis-moi si ça vaut le coup 👀",
+      "postAlternate": "Exemple réel en Guadeloupe :\n\nYaourt nature x8 :\n❌ 2.45€ au plus cher\n✅ 1.99€ chez E.Leclerc\n\nMême produit. Prix différent.\n\n👉 Vérifie pour tes courses :\nhttps://akiprisaye.fr/landing\n\nTu vas être surpris.",
+      "product": "Yaourt nature x8",
+      "territory": "Guadeloupe",
+      "savingsEur": 0.46,
+      "savingsPct": 19,
+      "bestRetailer": "E.Leclerc",
+      "bestPrice": 1.99,
+      "landingUrl": "https://akiprisaye.fr/landing",
+      "targetGroups": [
+        "Guadeloupe bons plans",
+        "Vie chère Guadeloupe",
+        "Courses pas cher Antilles"
+      ]
+    },
+    {
+      "post": "⚠️ Les prix changent tous les jours en Guadeloupe.\n\nNe payez plus 27% trop cher sans le savoir.\n\nLes économies disponibles aujourd'hui :\nPâtes spaghetti 500 g → -0.36€ chez E.Leclerc\n\n+1 000 comparaisons effectuées cette semaine.\n\n👉 https://akiprisaye.fr/landing",
+      "postAlternate": "Tu paies trop cher tes courses sans le savoir.\n\nJ'ai trouvé un outil qui compare les prix entre Carrefour, Leclerc, Super U en Guadeloupe.\n\nPâtes spaghetti 500 g :\n1.35€ → 0.99€ chez E.Leclerc\n\nMême produit. 0.36€ d'écart.\n\n👉 Vérifie pour tes courses ici :\nhttps://akiprisaye.fr/landing\n\nDis-moi si ça vaut le coup 👀",
+      "product": "Pâtes spaghetti 500 g",
+      "territory": "Guadeloupe",
+      "savingsEur": 0.36,
+      "savingsPct": 27,
+      "bestRetailer": "E.Leclerc",
+      "bestPrice": 0.99,
+      "landingUrl": "https://akiprisaye.fr/landing",
+      "targetGroups": [
+        "Guadeloupe bons plans",
+        "Vie chère Guadeloupe",
+        "Courses pas cher Antilles"
+      ]
+    },
+    {
+      "post": "Exemple réel en Guadeloupe :\n\nSavon liquide 500 ml :\n❌ 2.99€ au plus cher\n✅ 2.39€ chez E.Leclerc\n\nMême produit. Prix différent.\n\n👉 Vérifie pour tes courses :\nhttps://akiprisaye.fr/landing\n\nTu vas être surpris.",
+      "postAlternate": "⚠️ Les prix changent tous les jours en Guadeloupe.\n\nNe payez plus 20% trop cher sans le savoir.\n\nLes économies disponibles aujourd'hui :\nSavon liquide 500 ml → -0.60€ chez E.Leclerc\n\n+1 000 comparaisons effectuées cette semaine.\n\n👉 https://akiprisaye.fr/landing",
+      "product": "Savon liquide 500 ml",
+      "territory": "Guadeloupe",
+      "savingsEur": 0.6,
+      "savingsPct": 20,
+      "bestRetailer": "E.Leclerc",
+      "bestPrice": 2.39,
+      "landingUrl": "https://akiprisaye.fr/landing",
+      "targetGroups": [
+        "Guadeloupe bons plans",
+        "Vie chère Guadeloupe",
+        "Courses pas cher Antilles"
+      ]
+    },
+    {
+      "post": "⚠️ Les prix changent tous les jours en Martinique.\n\nNe payez plus 13% trop cher sans le savoir.\n\nLes économies disponibles aujourd'hui :\nCoca-Cola 1,5 L → -0.36€ chez E.Leclerc\n\n+1 000 comparaisons effectuées cette semaine.\n\n👉 https://akiprisaye.fr/landing",
+      "postAlternate": "Tu paies trop cher tes courses sans le savoir.\n\nJ'ai trouvé un outil qui compare les prix entre Carrefour, Leclerc, Super U en Martinique.\n\nCoca-Cola 1,5 L :\n2.85€ → 2.49€ chez E.Leclerc\n\nMême produit. 0.36€ d'écart.\n\n👉 Vérifie pour tes courses ici :\nhttps://akiprisaye.fr/landing\n\nDis-moi si ça vaut le coup 👀",
+      "product": "Coca-Cola 1,5 L",
+      "territory": "Martinique",
+      "savingsEur": 0.36,
+      "savingsPct": 13,
+      "bestRetailer": "E.Leclerc",
+      "bestPrice": 2.49,
+      "landingUrl": "https://akiprisaye.fr/landing",
+      "targetGroups": [
+        "Martinique bons plans",
+        "Vie chère Martinique",
+        "Courses pas cher Antilles"
+      ]
+    },
+    {
+      "post": "Exemple réel en Martinique :\n\nLait demi-écrémé 1 L :\n❌ 1.29€ au plus cher\n✅ 1.09€ chez E.Leclerc\n\nMême produit. Prix différent.\n\n👉 Vérifie pour tes courses :\nhttps://akiprisaye.fr/landing\n\nTu vas être surpris.",
+      "postAlternate": "⚠️ Les prix changent tous les jours en Martinique.\n\nNe payez plus 16% trop cher sans le savoir.\n\nLes économies disponibles aujourd'hui :\nLait demi-écrémé 1 L → -0.20€ chez E.Leclerc\n\n+1 000 comparaisons effectuées cette semaine.\n\n👉 https://akiprisaye.fr/landing",
+      "product": "Lait demi-écrémé 1 L",
+      "territory": "Martinique",
+      "savingsEur": 0.2,
+      "savingsPct": 16,
+      "bestRetailer": "E.Leclerc",
+      "bestPrice": 1.09,
+      "landingUrl": "https://akiprisaye.fr/landing",
+      "targetGroups": [
+        "Martinique bons plans",
+        "Vie chère Martinique",
+        "Courses pas cher Antilles"
+      ]
+    },
+    {
+      "post": "Tu paies trop cher tes courses sans le savoir.\n\nJ'ai trouvé un outil qui compare les prix entre Carrefour, Leclerc, Super U en Martinique.\n\nRiz basmati 1 kg :\n3.49€ → 2.99€ chez E.Leclerc\n\nMême produit. 0.50€ d'écart.\n\n👉 Vérifie pour tes courses ici :\nhttps://akiprisaye.fr/landing\n\nDis-moi si ça vaut le coup 👀",
+      "postAlternate": "Exemple réel en Martinique :\n\nRiz basmati 1 kg :\n❌ 3.49€ au plus cher\n✅ 2.99€ chez E.Leclerc\n\nMême produit. Prix différent.\n\n👉 Vérifie pour tes courses :\nhttps://akiprisaye.fr/landing\n\nTu vas être surpris.",
+      "product": "Riz basmati 1 kg",
+      "territory": "Martinique",
+      "savingsEur": 0.5,
+      "savingsPct": 14,
+      "bestRetailer": "E.Leclerc",
+      "bestPrice": 2.99,
+      "landingUrl": "https://akiprisaye.fr/landing",
+      "targetGroups": [
+        "Martinique bons plans",
+        "Vie chère Martinique",
+        "Courses pas cher Antilles"
+      ]
+    },
+    {
+      "post": "Tu paies trop cher tes courses sans le savoir.\n\nJ'ai trouvé un outil qui compare les prix entre Carrefour, Leclerc, Super U en Martinique.\n\nHuile tournesol 1 L :\n2.35€ → 1.99€ chez E.Leclerc\n\nMême produit. 0.36€ d'écart.\n\n👉 Vérifie pour tes courses ici :\nhttps://akiprisaye.fr/landing\n\nDis-moi si ça vaut le coup 👀",
+      "postAlternate": "Exemple réel en Martinique :\n\nHuile tournesol 1 L :\n❌ 2.35€ au plus cher\n✅ 1.99€ chez E.Leclerc\n\nMême produit. Prix différent.\n\n👉 Vérifie pour tes courses :\nhttps://akiprisaye.fr/landing\n\nTu vas être surpris.",
+      "product": "Huile tournesol 1 L",
+      "territory": "Martinique",
+      "savingsEur": 0.36,
+      "savingsPct": 15,
+      "bestRetailer": "E.Leclerc",
+      "bestPrice": 1.99,
+      "landingUrl": "https://akiprisaye.fr/landing",
+      "targetGroups": [
+        "Martinique bons plans",
+        "Vie chère Martinique",
+        "Courses pas cher Antilles"
+      ]
+    },
+    {
+      "post": "Exemple réel en Martinique :\n\nBeurre doux 250 g :\n❌ 3.25€ au plus cher\n✅ 2.85€ chez E.Leclerc\n\nMême produit. Prix différent.\n\n👉 Vérifie pour tes courses :\nhttps://akiprisaye.fr/landing\n\nTu vas être surpris.",
+      "postAlternate": "⚠️ Les prix changent tous les jours en Martinique.\n\nNe payez plus 12% trop cher sans le savoir.\n\nLes économies disponibles aujourd'hui :\nBeurre doux 250 g → -0.40€ chez E.Leclerc\n\n+1 000 comparaisons effectuées cette semaine.\n\n👉 https://akiprisaye.fr/landing",
+      "product": "Beurre doux 250 g",
+      "territory": "Martinique",
+      "savingsEur": 0.4,
+      "savingsPct": 12,
+      "bestRetailer": "E.Leclerc",
+      "bestPrice": 2.85,
+      "landingUrl": "https://akiprisaye.fr/landing",
+      "targetGroups": [
+        "Martinique bons plans",
+        "Vie chère Martinique",
+        "Courses pas cher Antilles"
+      ]
+    },
+    {
+      "post": "Tu paies trop cher tes courses sans le savoir.\n\nJ'ai trouvé un outil qui compare les prix entre Carrefour, Leclerc, Super U en Martinique.\n\nFarine de blé T45 1 kg :\n1.59€ → 1.29€ chez E.Leclerc\n\nMême produit. 0.30€ d'écart.\n\n👉 Vérifie pour tes courses ici :\nhttps://akiprisaye.fr/landing\n\nDis-moi si ça vaut le coup 👀",
+      "postAlternate": "Exemple réel en Martinique :\n\nFarine de blé T45 1 kg :\n❌ 1.59€ au plus cher\n✅ 1.29€ chez E.Leclerc\n\nMême produit. Prix différent.\n\n👉 Vérifie pour tes courses :\nhttps://akiprisaye.fr/landing\n\nTu vas être surpris.",
+      "product": "Farine de blé T45 1 kg",
+      "territory": "Martinique",
+      "savingsEur": 0.3,
+      "savingsPct": 19,
+      "bestRetailer": "E.Leclerc",
+      "bestPrice": 1.29,
+      "landingUrl": "https://akiprisaye.fr/landing",
+      "targetGroups": [
+        "Martinique bons plans",
+        "Vie chère Martinique",
+        "Courses pas cher Antilles"
+      ]
+    },
+    {
+      "post": "Exemple réel en Martinique :\n\nSucre en poudre 1 kg :\n❌ 1.89€ au plus cher\n✅ 1.59€ chez E.Leclerc\n\nMême produit. Prix différent.\n\n👉 Vérifie pour tes courses :\nhttps://akiprisaye.fr/landing\n\nTu vas être surpris.",
+      "postAlternate": "⚠️ Les prix changent tous les jours en Martinique.\n\nNe payez plus 16% trop cher sans le savoir.\n\nLes économies disponibles aujourd'hui :\nSucre en poudre 1 kg → -0.30€ chez E.Leclerc\n\n+1 000 comparaisons effectuées cette semaine.\n\n👉 https://akiprisaye.fr/landing",
+      "product": "Sucre en poudre 1 kg",
+      "territory": "Martinique",
+      "savingsEur": 0.3,
+      "savingsPct": 16,
+      "bestRetailer": "E.Leclerc",
+      "bestPrice": 1.59,
+      "landingUrl": "https://akiprisaye.fr/landing",
+      "targetGroups": [
+        "Martinique bons plans",
+        "Vie chère Martinique",
+        "Courses pas cher Antilles"
+      ]
+    },
+    {
+      "post": "Tu paies trop cher tes courses sans le savoir.\n\nJ'ai trouvé un outil qui compare les prix entre Carrefour, Leclerc, Super U en Martinique.\n\nYaourt nature x8 :\n2.45€ → 1.99€ chez E.Leclerc\n\nMême produit. 0.46€ d'écart.\n\n👉 Vérifie pour tes courses ici :\nhttps://akiprisaye.fr/landing\n\nDis-moi si ça vaut le coup 👀",
+      "postAlternate": "Exemple réel en Martinique :\n\nYaourt nature x8 :\n❌ 2.45€ au plus cher\n✅ 1.99€ chez E.Leclerc\n\nMême produit. Prix différent.\n\n👉 Vérifie pour tes courses :\nhttps://akiprisaye.fr/landing\n\nTu vas être surpris.",
+      "product": "Yaourt nature x8",
+      "territory": "Martinique",
+      "savingsEur": 0.46,
+      "savingsPct": 19,
+      "bestRetailer": "E.Leclerc",
+      "bestPrice": 1.99,
+      "landingUrl": "https://akiprisaye.fr/landing",
+      "targetGroups": [
+        "Martinique bons plans",
+        "Vie chère Martinique",
+        "Courses pas cher Antilles"
+      ]
+    },
+    {
+      "post": "⚠️ Les prix changent tous les jours en Martinique.\n\nNe payez plus 27% trop cher sans le savoir.\n\nLes économies disponibles aujourd'hui :\nPâtes spaghetti 500 g → -0.36€ chez E.Leclerc\n\n+1 000 comparaisons effectuées cette semaine.\n\n👉 https://akiprisaye.fr/landing",
+      "postAlternate": "Tu paies trop cher tes courses sans le savoir.\n\nJ'ai trouvé un outil qui compare les prix entre Carrefour, Leclerc, Super U en Martinique.\n\nPâtes spaghetti 500 g :\n1.35€ → 0.99€ chez E.Leclerc\n\nMême produit. 0.36€ d'écart.\n\n👉 Vérifie pour tes courses ici :\nhttps://akiprisaye.fr/landing\n\nDis-moi si ça vaut le coup 👀",
+      "product": "Pâtes spaghetti 500 g",
+      "territory": "Martinique",
+      "savingsEur": 0.36,
+      "savingsPct": 27,
+      "bestRetailer": "E.Leclerc",
+      "bestPrice": 0.99,
+      "landingUrl": "https://akiprisaye.fr/landing",
+      "targetGroups": [
+        "Martinique bons plans",
+        "Vie chère Martinique",
+        "Courses pas cher Antilles"
+      ]
+    },
+    {
+      "post": "Exemple réel en Martinique :\n\nSavon liquide 500 ml :\n❌ 2.99€ au plus cher\n✅ 2.39€ chez E.Leclerc\n\nMême produit. Prix différent.\n\n👉 Vérifie pour tes courses :\nhttps://akiprisaye.fr/landing\n\nTu vas être surpris.",
+      "postAlternate": "⚠️ Les prix changent tous les jours en Martinique.\n\nNe payez plus 20% trop cher sans le savoir.\n\nLes économies disponibles aujourd'hui :\nSavon liquide 500 ml → -0.60€ chez E.Leclerc\n\n+1 000 comparaisons effectuées cette semaine.\n\n👉 https://akiprisaye.fr/landing",
+      "product": "Savon liquide 500 ml",
+      "territory": "Martinique",
+      "savingsEur": 0.6,
+      "savingsPct": 20,
+      "bestRetailer": "E.Leclerc",
+      "bestPrice": 2.39,
+      "landingUrl": "https://akiprisaye.fr/landing",
+      "targetGroups": [
+        "Martinique bons plans",
+        "Vie chère Martinique",
+        "Courses pas cher Antilles"
+      ]
+    }
+  ],
+  "whatsapp": [
+    {
+      "message": "🔥 Top 5 prix les moins chers cette semaine en Guadeloupe :\n\n1. Savon liquide 500 ml → -0.60€ chez E.Leclerc (2.39€)\n2. Riz basmati 1 kg → -0.50€ chez E.Leclerc (2.99€)\n3. Yaourt nature x8 → -0.46€ chez E.Leclerc (1.99€)\n4. Beurre doux 250 g → -0.40€ chez E.Leclerc (2.85€)\n5. Coca-Cola 1,5 L → -0.36€ chez E.Leclerc (2.49€)\n\n👉 Voir tous les prix :\nhttps://akiprisaye.fr/landing",
+      "territory": "Guadeloupe",
+      "generatedAt": "2026-03-20T22:12:44.462Z"
+    },
+    {
+      "message": "🔥 Top 5 prix les moins chers cette semaine en Martinique :\n\n1. Savon liquide 500 ml → -0.60€ chez E.Leclerc (2.39€)\n2. Riz basmati 1 kg → -0.50€ chez E.Leclerc (2.99€)\n3. Yaourt nature x8 → -0.46€ chez E.Leclerc (1.99€)\n4. Beurre doux 250 g → -0.40€ chez E.Leclerc (2.85€)\n5. Coca-Cola 1,5 L → -0.36€ chez E.Leclerc (2.49€)\n\n👉 Voir tous les prix :\nhttps://akiprisaye.fr/landing",
+      "territory": "Martinique",
+      "generatedAt": "2026-03-20T22:12:44.463Z"
+    }
+  ],
+  "seo": [
+    {
+      "path": "/gp/produit/coca-cola-1-5-l",
+      "type": "product",
+      "title": "Prix Coca-Cola 1,5 L en Guadeloupe 2026 — Comparez maintenant",
+      "description": "Comparez le prix de Coca-Cola 1,5 L entre Carrefour, E.Leclerc et Super U en Guadeloupe. Économisez jusqu'à 0.36€. Données actualisées.",
+      "h1": "Coca-Cola 1,5 L en Guadeloupe : meilleur prix 2.49€ chez E.Leclerc",
+      "faq": [
+        {
+          "q": "Où trouver Coca-Cola 1,5 L moins cher en Guadeloupe ?",
+          "a": "Chez E.Leclerc à 2.49€ — 0.36€ moins cher que le prix le plus élevé."
+        },
+        {
+          "q": "Combien coûte Coca-Cola 1,5 L en Guadeloupe ?",
+          "a": "Entre 2.49€ et 2.85€ selon l'enseigne. Utilisez notre comparateur pour voir tous les prix en temps réel."
+        },
+        {
+          "q": "Pourquoi Coca-Cola 1,5 L est plus cher en Guadeloupe qu'en métropole ?",
+          "a": "L'octroi de mer et les coûts logistiques expliquent l'écart de prix. Notre comparateur vous aide à trouver le meilleur prix local."
+        }
+      ]
+    },
+    {
+      "path": "/gp/comparer/coca-cola-1-5-l-moins-cher",
+      "type": "comparison",
+      "title": "Coca-Cola 1,5 L moins cher en Guadeloupe — Comparatif 2026",
+      "description": "Où acheter Coca-Cola 1,5 L moins cher en Guadeloupe ? Comparatif Carrefour, E.Leclerc, Super U. Jusqu'à 0.36€ d'économies.",
+      "h1": "Coca-Cola 1,5 L : où est-il le moins cher en Guadeloupe ?",
+      "faq": [
+        {
+          "q": "Quelle enseigne vend Coca-Cola 1,5 L le moins cher en Guadeloupe ?",
+          "a": "E.Leclerc propose actuellement le meilleur prix à 2.49€."
+        },
+        {
+          "q": "Quelle est la différence de prix pour Coca-Cola 1,5 L en Guadeloupe ?",
+          "a": "Jusqu'à 0.36€ d'écart entre les enseignes locales, soit 13% d'économies."
+        }
+      ]
+    },
+    {
+      "path": "/gp/produit/lait-demi-ecreme-1-l",
+      "type": "product",
+      "title": "Prix Lait demi-écrémé 1 L en Guadeloupe 2026 — Comparez maintenant",
+      "description": "Comparez le prix de Lait demi-écrémé 1 L entre Carrefour, E.Leclerc et Super U en Guadeloupe. Économisez jusqu'à 0.20€. Données actualisées.",
+      "h1": "Lait demi-écrémé 1 L en Guadeloupe : meilleur prix 1.09€ chez E.Leclerc",
+      "faq": [
+        {
+          "q": "Où trouver Lait demi-écrémé 1 L moins cher en Guadeloupe ?",
+          "a": "Chez E.Leclerc à 1.09€ — 0.20€ moins cher que le prix le plus élevé."
+        },
+        {
+          "q": "Combien coûte Lait demi-écrémé 1 L en Guadeloupe ?",
+          "a": "Entre 1.09€ et 1.29€ selon l'enseigne. Utilisez notre comparateur pour voir tous les prix en temps réel."
+        },
+        {
+          "q": "Pourquoi Lait demi-écrémé 1 L est plus cher en Guadeloupe qu'en métropole ?",
+          "a": "L'octroi de mer et les coûts logistiques expliquent l'écart de prix. Notre comparateur vous aide à trouver le meilleur prix local."
+        }
+      ]
+    },
+    {
+      "path": "/gp/comparer/lait-demi-ecreme-1-l-moins-cher",
+      "type": "comparison",
+      "title": "Lait demi-écrémé 1 L moins cher en Guadeloupe — Comparatif 2026",
+      "description": "Où acheter Lait demi-écrémé 1 L moins cher en Guadeloupe ? Comparatif Carrefour, E.Leclerc, Super U. Jusqu'à 0.20€ d'économies.",
+      "h1": "Lait demi-écrémé 1 L : où est-il le moins cher en Guadeloupe ?",
+      "faq": [
+        {
+          "q": "Quelle enseigne vend Lait demi-écrémé 1 L le moins cher en Guadeloupe ?",
+          "a": "E.Leclerc propose actuellement le meilleur prix à 1.09€."
+        },
+        {
+          "q": "Quelle est la différence de prix pour Lait demi-écrémé 1 L en Guadeloupe ?",
+          "a": "Jusqu'à 0.20€ d'écart entre les enseignes locales, soit 16% d'économies."
+        }
+      ]
+    },
+    {
+      "path": "/gp/produit/riz-basmati-1-kg",
+      "type": "product",
+      "title": "Prix Riz basmati 1 kg en Guadeloupe 2026 — Comparez maintenant",
+      "description": "Comparez le prix de Riz basmati 1 kg entre Carrefour, E.Leclerc et Super U en Guadeloupe. Économisez jusqu'à 0.50€. Données actualisées.",
+      "h1": "Riz basmati 1 kg en Guadeloupe : meilleur prix 2.99€ chez E.Leclerc",
+      "faq": [
+        {
+          "q": "Où trouver Riz basmati 1 kg moins cher en Guadeloupe ?",
+          "a": "Chez E.Leclerc à 2.99€ — 0.50€ moins cher que le prix le plus élevé."
+        },
+        {
+          "q": "Combien coûte Riz basmati 1 kg en Guadeloupe ?",
+          "a": "Entre 2.99€ et 3.49€ selon l'enseigne. Utilisez notre comparateur pour voir tous les prix en temps réel."
+        },
+        {
+          "q": "Pourquoi Riz basmati 1 kg est plus cher en Guadeloupe qu'en métropole ?",
+          "a": "L'octroi de mer et les coûts logistiques expliquent l'écart de prix. Notre comparateur vous aide à trouver le meilleur prix local."
+        }
+      ]
+    },
+    {
+      "path": "/gp/comparer/riz-basmati-1-kg-moins-cher",
+      "type": "comparison",
+      "title": "Riz basmati 1 kg moins cher en Guadeloupe — Comparatif 2026",
+      "description": "Où acheter Riz basmati 1 kg moins cher en Guadeloupe ? Comparatif Carrefour, E.Leclerc, Super U. Jusqu'à 0.50€ d'économies.",
+      "h1": "Riz basmati 1 kg : où est-il le moins cher en Guadeloupe ?",
+      "faq": [
+        {
+          "q": "Quelle enseigne vend Riz basmati 1 kg le moins cher en Guadeloupe ?",
+          "a": "E.Leclerc propose actuellement le meilleur prix à 2.99€."
+        },
+        {
+          "q": "Quelle est la différence de prix pour Riz basmati 1 kg en Guadeloupe ?",
+          "a": "Jusqu'à 0.50€ d'écart entre les enseignes locales, soit 14% d'économies."
+        }
+      ]
+    },
+    {
+      "path": "/gp/produit/huile-tournesol-1-l",
+      "type": "product",
+      "title": "Prix Huile tournesol 1 L en Guadeloupe 2026 — Comparez maintenant",
+      "description": "Comparez le prix de Huile tournesol 1 L entre Carrefour, E.Leclerc et Super U en Guadeloupe. Économisez jusqu'à 0.36€. Données actualisées.",
+      "h1": "Huile tournesol 1 L en Guadeloupe : meilleur prix 1.99€ chez E.Leclerc",
+      "faq": [
+        {
+          "q": "Où trouver Huile tournesol 1 L moins cher en Guadeloupe ?",
+          "a": "Chez E.Leclerc à 1.99€ — 0.36€ moins cher que le prix le plus élevé."
+        },
+        {
+          "q": "Combien coûte Huile tournesol 1 L en Guadeloupe ?",
+          "a": "Entre 1.99€ et 2.35€ selon l'enseigne. Utilisez notre comparateur pour voir tous les prix en temps réel."
+        },
+        {
+          "q": "Pourquoi Huile tournesol 1 L est plus cher en Guadeloupe qu'en métropole ?",
+          "a": "L'octroi de mer et les coûts logistiques expliquent l'écart de prix. Notre comparateur vous aide à trouver le meilleur prix local."
+        }
+      ]
+    },
+    {
+      "path": "/gp/comparer/huile-tournesol-1-l-moins-cher",
+      "type": "comparison",
+      "title": "Huile tournesol 1 L moins cher en Guadeloupe — Comparatif 2026",
+      "description": "Où acheter Huile tournesol 1 L moins cher en Guadeloupe ? Comparatif Carrefour, E.Leclerc, Super U. Jusqu'à 0.36€ d'économies.",
+      "h1": "Huile tournesol 1 L : où est-il le moins cher en Guadeloupe ?",
+      "faq": [
+        {
+          "q": "Quelle enseigne vend Huile tournesol 1 L le moins cher en Guadeloupe ?",
+          "a": "E.Leclerc propose actuellement le meilleur prix à 1.99€."
+        },
+        {
+          "q": "Quelle est la différence de prix pour Huile tournesol 1 L en Guadeloupe ?",
+          "a": "Jusqu'à 0.36€ d'écart entre les enseignes locales, soit 15% d'économies."
+        }
+      ]
+    },
+    {
+      "path": "/gp/produit/beurre-doux-250-g",
+      "type": "product",
+      "title": "Prix Beurre doux 250 g en Guadeloupe 2026 — Comparez maintenant",
+      "description": "Comparez le prix de Beurre doux 250 g entre Carrefour, E.Leclerc et Super U en Guadeloupe. Économisez jusqu'à 0.40€. Données actualisées.",
+      "h1": "Beurre doux 250 g en Guadeloupe : meilleur prix 2.85€ chez E.Leclerc",
+      "faq": [
+        {
+          "q": "Où trouver Beurre doux 250 g moins cher en Guadeloupe ?",
+          "a": "Chez E.Leclerc à 2.85€ — 0.40€ moins cher que le prix le plus élevé."
+        },
+        {
+          "q": "Combien coûte Beurre doux 250 g en Guadeloupe ?",
+          "a": "Entre 2.85€ et 3.25€ selon l'enseigne. Utilisez notre comparateur pour voir tous les prix en temps réel."
+        },
+        {
+          "q": "Pourquoi Beurre doux 250 g est plus cher en Guadeloupe qu'en métropole ?",
+          "a": "L'octroi de mer et les coûts logistiques expliquent l'écart de prix. Notre comparateur vous aide à trouver le meilleur prix local."
+        }
+      ]
+    },
+    {
+      "path": "/gp/comparer/beurre-doux-250-g-moins-cher",
+      "type": "comparison",
+      "title": "Beurre doux 250 g moins cher en Guadeloupe — Comparatif 2026",
+      "description": "Où acheter Beurre doux 250 g moins cher en Guadeloupe ? Comparatif Carrefour, E.Leclerc, Super U. Jusqu'à 0.40€ d'économies.",
+      "h1": "Beurre doux 250 g : où est-il le moins cher en Guadeloupe ?",
+      "faq": [
+        {
+          "q": "Quelle enseigne vend Beurre doux 250 g le moins cher en Guadeloupe ?",
+          "a": "E.Leclerc propose actuellement le meilleur prix à 2.85€."
+        },
+        {
+          "q": "Quelle est la différence de prix pour Beurre doux 250 g en Guadeloupe ?",
+          "a": "Jusqu'à 0.40€ d'écart entre les enseignes locales, soit 12% d'économies."
+        }
+      ]
+    },
+    {
+      "path": "/gp/produit/farine-de-ble-t45-1-kg",
+      "type": "product",
+      "title": "Prix Farine de blé T45 1 kg en Guadeloupe 2026 — Comparez maintenant",
+      "description": "Comparez le prix de Farine de blé T45 1 kg entre Carrefour, E.Leclerc et Super U en Guadeloupe. Économisez jusqu'à 0.30€. Données actualisées.",
+      "h1": "Farine de blé T45 1 kg en Guadeloupe : meilleur prix 1.29€ chez E.Leclerc",
+      "faq": [
+        {
+          "q": "Où trouver Farine de blé T45 1 kg moins cher en Guadeloupe ?",
+          "a": "Chez E.Leclerc à 1.29€ — 0.30€ moins cher que le prix le plus élevé."
+        },
+        {
+          "q": "Combien coûte Farine de blé T45 1 kg en Guadeloupe ?",
+          "a": "Entre 1.29€ et 1.59€ selon l'enseigne. Utilisez notre comparateur pour voir tous les prix en temps réel."
+        },
+        {
+          "q": "Pourquoi Farine de blé T45 1 kg est plus cher en Guadeloupe qu'en métropole ?",
+          "a": "L'octroi de mer et les coûts logistiques expliquent l'écart de prix. Notre comparateur vous aide à trouver le meilleur prix local."
+        }
+      ]
+    },
+    {
+      "path": "/gp/comparer/farine-de-ble-t45-1-kg-moins-cher",
+      "type": "comparison",
+      "title": "Farine de blé T45 1 kg moins cher en Guadeloupe — Comparatif 2026",
+      "description": "Où acheter Farine de blé T45 1 kg moins cher en Guadeloupe ? Comparatif Carrefour, E.Leclerc, Super U. Jusqu'à 0.30€ d'économies.",
+      "h1": "Farine de blé T45 1 kg : où est-il le moins cher en Guadeloupe ?",
+      "faq": [
+        {
+          "q": "Quelle enseigne vend Farine de blé T45 1 kg le moins cher en Guadeloupe ?",
+          "a": "E.Leclerc propose actuellement le meilleur prix à 1.29€."
+        },
+        {
+          "q": "Quelle est la différence de prix pour Farine de blé T45 1 kg en Guadeloupe ?",
+          "a": "Jusqu'à 0.30€ d'écart entre les enseignes locales, soit 19% d'économies."
+        }
+      ]
+    },
+    {
+      "path": "/gp/produit/sucre-en-poudre-1-kg",
+      "type": "product",
+      "title": "Prix Sucre en poudre 1 kg en Guadeloupe 2026 — Comparez maintenant",
+      "description": "Comparez le prix de Sucre en poudre 1 kg entre Carrefour, E.Leclerc et Super U en Guadeloupe. Économisez jusqu'à 0.30€. Données actualisées.",
+      "h1": "Sucre en poudre 1 kg en Guadeloupe : meilleur prix 1.59€ chez E.Leclerc",
+      "faq": [
+        {
+          "q": "Où trouver Sucre en poudre 1 kg moins cher en Guadeloupe ?",
+          "a": "Chez E.Leclerc à 1.59€ — 0.30€ moins cher que le prix le plus élevé."
+        },
+        {
+          "q": "Combien coûte Sucre en poudre 1 kg en Guadeloupe ?",
+          "a": "Entre 1.59€ et 1.89€ selon l'enseigne. Utilisez notre comparateur pour voir tous les prix en temps réel."
+        },
+        {
+          "q": "Pourquoi Sucre en poudre 1 kg est plus cher en Guadeloupe qu'en métropole ?",
+          "a": "L'octroi de mer et les coûts logistiques expliquent l'écart de prix. Notre comparateur vous aide à trouver le meilleur prix local."
+        }
+      ]
+    },
+    {
+      "path": "/gp/comparer/sucre-en-poudre-1-kg-moins-cher",
+      "type": "comparison",
+      "title": "Sucre en poudre 1 kg moins cher en Guadeloupe — Comparatif 2026",
+      "description": "Où acheter Sucre en poudre 1 kg moins cher en Guadeloupe ? Comparatif Carrefour, E.Leclerc, Super U. Jusqu'à 0.30€ d'économies.",
+      "h1": "Sucre en poudre 1 kg : où est-il le moins cher en Guadeloupe ?",
+      "faq": [
+        {
+          "q": "Quelle enseigne vend Sucre en poudre 1 kg le moins cher en Guadeloupe ?",
+          "a": "E.Leclerc propose actuellement le meilleur prix à 1.59€."
+        },
+        {
+          "q": "Quelle est la différence de prix pour Sucre en poudre 1 kg en Guadeloupe ?",
+          "a": "Jusqu'à 0.30€ d'écart entre les enseignes locales, soit 16% d'économies."
+        }
+      ]
+    },
+    {
+      "path": "/gp/produit/yaourt-nature-x8",
+      "type": "product",
+      "title": "Prix Yaourt nature x8 en Guadeloupe 2026 — Comparez maintenant",
+      "description": "Comparez le prix de Yaourt nature x8 entre Carrefour, E.Leclerc et Super U en Guadeloupe. Économisez jusqu'à 0.46€. Données actualisées.",
+      "h1": "Yaourt nature x8 en Guadeloupe : meilleur prix 1.99€ chez E.Leclerc",
+      "faq": [
+        {
+          "q": "Où trouver Yaourt nature x8 moins cher en Guadeloupe ?",
+          "a": "Chez E.Leclerc à 1.99€ — 0.46€ moins cher que le prix le plus élevé."
+        },
+        {
+          "q": "Combien coûte Yaourt nature x8 en Guadeloupe ?",
+          "a": "Entre 1.99€ et 2.45€ selon l'enseigne. Utilisez notre comparateur pour voir tous les prix en temps réel."
+        },
+        {
+          "q": "Pourquoi Yaourt nature x8 est plus cher en Guadeloupe qu'en métropole ?",
+          "a": "L'octroi de mer et les coûts logistiques expliquent l'écart de prix. Notre comparateur vous aide à trouver le meilleur prix local."
+        }
+      ]
+    },
+    {
+      "path": "/gp/comparer/yaourt-nature-x8-moins-cher",
+      "type": "comparison",
+      "title": "Yaourt nature x8 moins cher en Guadeloupe — Comparatif 2026",
+      "description": "Où acheter Yaourt nature x8 moins cher en Guadeloupe ? Comparatif Carrefour, E.Leclerc, Super U. Jusqu'à 0.46€ d'économies.",
+      "h1": "Yaourt nature x8 : où est-il le moins cher en Guadeloupe ?",
+      "faq": [
+        {
+          "q": "Quelle enseigne vend Yaourt nature x8 le moins cher en Guadeloupe ?",
+          "a": "E.Leclerc propose actuellement le meilleur prix à 1.99€."
+        },
+        {
+          "q": "Quelle est la différence de prix pour Yaourt nature x8 en Guadeloupe ?",
+          "a": "Jusqu'à 0.46€ d'écart entre les enseignes locales, soit 19% d'économies."
+        }
+      ]
+    },
+    {
+      "path": "/gp/produit/pates-spaghetti-500-g",
+      "type": "product",
+      "title": "Prix Pâtes spaghetti 500 g en Guadeloupe 2026 — Comparez maintenant",
+      "description": "Comparez le prix de Pâtes spaghetti 500 g entre Carrefour, E.Leclerc et Super U en Guadeloupe. Économisez jusqu'à 0.36€. Données actualisées.",
+      "h1": "Pâtes spaghetti 500 g en Guadeloupe : meilleur prix 0.99€ chez E.Leclerc",
+      "faq": [
+        {
+          "q": "Où trouver Pâtes spaghetti 500 g moins cher en Guadeloupe ?",
+          "a": "Chez E.Leclerc à 0.99€ — 0.36€ moins cher que le prix le plus élevé."
+        },
+        {
+          "q": "Combien coûte Pâtes spaghetti 500 g en Guadeloupe ?",
+          "a": "Entre 0.99€ et 1.35€ selon l'enseigne. Utilisez notre comparateur pour voir tous les prix en temps réel."
+        },
+        {
+          "q": "Pourquoi Pâtes spaghetti 500 g est plus cher en Guadeloupe qu'en métropole ?",
+          "a": "L'octroi de mer et les coûts logistiques expliquent l'écart de prix. Notre comparateur vous aide à trouver le meilleur prix local."
+        }
+      ]
+    },
+    {
+      "path": "/gp/comparer/pates-spaghetti-500-g-moins-cher",
+      "type": "comparison",
+      "title": "Pâtes spaghetti 500 g moins cher en Guadeloupe — Comparatif 2026",
+      "description": "Où acheter Pâtes spaghetti 500 g moins cher en Guadeloupe ? Comparatif Carrefour, E.Leclerc, Super U. Jusqu'à 0.36€ d'économies.",
+      "h1": "Pâtes spaghetti 500 g : où est-il le moins cher en Guadeloupe ?",
+      "faq": [
+        {
+          "q": "Quelle enseigne vend Pâtes spaghetti 500 g le moins cher en Guadeloupe ?",
+          "a": "E.Leclerc propose actuellement le meilleur prix à 0.99€."
+        },
+        {
+          "q": "Quelle est la différence de prix pour Pâtes spaghetti 500 g en Guadeloupe ?",
+          "a": "Jusqu'à 0.36€ d'écart entre les enseignes locales, soit 27% d'économies."
+        }
+      ]
+    },
+    {
+      "path": "/gp/produit/savon-liquide-500-ml",
+      "type": "product",
+      "title": "Prix Savon liquide 500 ml en Guadeloupe 2026 — Comparez maintenant",
+      "description": "Comparez le prix de Savon liquide 500 ml entre Carrefour, E.Leclerc et Super U en Guadeloupe. Économisez jusqu'à 0.60€. Données actualisées.",
+      "h1": "Savon liquide 500 ml en Guadeloupe : meilleur prix 2.39€ chez E.Leclerc",
+      "faq": [
+        {
+          "q": "Où trouver Savon liquide 500 ml moins cher en Guadeloupe ?",
+          "a": "Chez E.Leclerc à 2.39€ — 0.60€ moins cher que le prix le plus élevé."
+        },
+        {
+          "q": "Combien coûte Savon liquide 500 ml en Guadeloupe ?",
+          "a": "Entre 2.39€ et 2.99€ selon l'enseigne. Utilisez notre comparateur pour voir tous les prix en temps réel."
+        },
+        {
+          "q": "Pourquoi Savon liquide 500 ml est plus cher en Guadeloupe qu'en métropole ?",
+          "a": "L'octroi de mer et les coûts logistiques expliquent l'écart de prix. Notre comparateur vous aide à trouver le meilleur prix local."
+        }
+      ]
+    },
+    {
+      "path": "/gp/comparer/savon-liquide-500-ml-moins-cher",
+      "type": "comparison",
+      "title": "Savon liquide 500 ml moins cher en Guadeloupe — Comparatif 2026",
+      "description": "Où acheter Savon liquide 500 ml moins cher en Guadeloupe ? Comparatif Carrefour, E.Leclerc, Super U. Jusqu'à 0.60€ d'économies.",
+      "h1": "Savon liquide 500 ml : où est-il le moins cher en Guadeloupe ?",
+      "faq": [
+        {
+          "q": "Quelle enseigne vend Savon liquide 500 ml le moins cher en Guadeloupe ?",
+          "a": "E.Leclerc propose actuellement le meilleur prix à 2.39€."
+        },
+        {
+          "q": "Quelle est la différence de prix pour Savon liquide 500 ml en Guadeloupe ?",
+          "a": "Jusqu'à 0.60€ d'écart entre les enseignes locales, soit 20% d'économies."
+        }
+      ]
+    },
+    {
+      "path": "/mq/produit/coca-cola-1-5-l",
+      "type": "product",
+      "title": "Prix Coca-Cola 1,5 L en Martinique 2026 — Comparez maintenant",
+      "description": "Comparez le prix de Coca-Cola 1,5 L entre Carrefour, E.Leclerc et Super U en Martinique. Économisez jusqu'à 0.36€. Données actualisées.",
+      "h1": "Coca-Cola 1,5 L en Martinique : meilleur prix 2.49€ chez E.Leclerc",
+      "faq": [
+        {
+          "q": "Où trouver Coca-Cola 1,5 L moins cher en Martinique ?",
+          "a": "Chez E.Leclerc à 2.49€ — 0.36€ moins cher que le prix le plus élevé."
+        },
+        {
+          "q": "Combien coûte Coca-Cola 1,5 L en Martinique ?",
+          "a": "Entre 2.49€ et 2.85€ selon l'enseigne. Utilisez notre comparateur pour voir tous les prix en temps réel."
+        },
+        {
+          "q": "Pourquoi Coca-Cola 1,5 L est plus cher en Martinique qu'en métropole ?",
+          "a": "L'octroi de mer et les coûts logistiques expliquent l'écart de prix. Notre comparateur vous aide à trouver le meilleur prix local."
+        }
+      ]
+    },
+    {
+      "path": "/mq/comparer/coca-cola-1-5-l-moins-cher",
+      "type": "comparison",
+      "title": "Coca-Cola 1,5 L moins cher en Martinique — Comparatif 2026",
+      "description": "Où acheter Coca-Cola 1,5 L moins cher en Martinique ? Comparatif Carrefour, E.Leclerc, Super U. Jusqu'à 0.36€ d'économies.",
+      "h1": "Coca-Cola 1,5 L : où est-il le moins cher en Martinique ?",
+      "faq": [
+        {
+          "q": "Quelle enseigne vend Coca-Cola 1,5 L le moins cher en Martinique ?",
+          "a": "E.Leclerc propose actuellement le meilleur prix à 2.49€."
+        },
+        {
+          "q": "Quelle est la différence de prix pour Coca-Cola 1,5 L en Martinique ?",
+          "a": "Jusqu'à 0.36€ d'écart entre les enseignes locales, soit 13% d'économies."
+        }
+      ]
+    },
+    {
+      "path": "/mq/produit/lait-demi-ecreme-1-l",
+      "type": "product",
+      "title": "Prix Lait demi-écrémé 1 L en Martinique 2026 — Comparez maintenant",
+      "description": "Comparez le prix de Lait demi-écrémé 1 L entre Carrefour, E.Leclerc et Super U en Martinique. Économisez jusqu'à 0.20€. Données actualisées.",
+      "h1": "Lait demi-écrémé 1 L en Martinique : meilleur prix 1.09€ chez E.Leclerc",
+      "faq": [
+        {
+          "q": "Où trouver Lait demi-écrémé 1 L moins cher en Martinique ?",
+          "a": "Chez E.Leclerc à 1.09€ — 0.20€ moins cher que le prix le plus élevé."
+        },
+        {
+          "q": "Combien coûte Lait demi-écrémé 1 L en Martinique ?",
+          "a": "Entre 1.09€ et 1.29€ selon l'enseigne. Utilisez notre comparateur pour voir tous les prix en temps réel."
+        },
+        {
+          "q": "Pourquoi Lait demi-écrémé 1 L est plus cher en Martinique qu'en métropole ?",
+          "a": "L'octroi de mer et les coûts logistiques expliquent l'écart de prix. Notre comparateur vous aide à trouver le meilleur prix local."
+        }
+      ]
+    },
+    {
+      "path": "/mq/comparer/lait-demi-ecreme-1-l-moins-cher",
+      "type": "comparison",
+      "title": "Lait demi-écrémé 1 L moins cher en Martinique — Comparatif 2026",
+      "description": "Où acheter Lait demi-écrémé 1 L moins cher en Martinique ? Comparatif Carrefour, E.Leclerc, Super U. Jusqu'à 0.20€ d'économies.",
+      "h1": "Lait demi-écrémé 1 L : où est-il le moins cher en Martinique ?",
+      "faq": [
+        {
+          "q": "Quelle enseigne vend Lait demi-écrémé 1 L le moins cher en Martinique ?",
+          "a": "E.Leclerc propose actuellement le meilleur prix à 1.09€."
+        },
+        {
+          "q": "Quelle est la différence de prix pour Lait demi-écrémé 1 L en Martinique ?",
+          "a": "Jusqu'à 0.20€ d'écart entre les enseignes locales, soit 16% d'économies."
+        }
+      ]
+    },
+    {
+      "path": "/mq/produit/riz-basmati-1-kg",
+      "type": "product",
+      "title": "Prix Riz basmati 1 kg en Martinique 2026 — Comparez maintenant",
+      "description": "Comparez le prix de Riz basmati 1 kg entre Carrefour, E.Leclerc et Super U en Martinique. Économisez jusqu'à 0.50€. Données actualisées.",
+      "h1": "Riz basmati 1 kg en Martinique : meilleur prix 2.99€ chez E.Leclerc",
+      "faq": [
+        {
+          "q": "Où trouver Riz basmati 1 kg moins cher en Martinique ?",
+          "a": "Chez E.Leclerc à 2.99€ — 0.50€ moins cher que le prix le plus élevé."
+        },
+        {
+          "q": "Combien coûte Riz basmati 1 kg en Martinique ?",
+          "a": "Entre 2.99€ et 3.49€ selon l'enseigne. Utilisez notre comparateur pour voir tous les prix en temps réel."
+        },
+        {
+          "q": "Pourquoi Riz basmati 1 kg est plus cher en Martinique qu'en métropole ?",
+          "a": "L'octroi de mer et les coûts logistiques expliquent l'écart de prix. Notre comparateur vous aide à trouver le meilleur prix local."
+        }
+      ]
+    },
+    {
+      "path": "/mq/comparer/riz-basmati-1-kg-moins-cher",
+      "type": "comparison",
+      "title": "Riz basmati 1 kg moins cher en Martinique — Comparatif 2026",
+      "description": "Où acheter Riz basmati 1 kg moins cher en Martinique ? Comparatif Carrefour, E.Leclerc, Super U. Jusqu'à 0.50€ d'économies.",
+      "h1": "Riz basmati 1 kg : où est-il le moins cher en Martinique ?",
+      "faq": [
+        {
+          "q": "Quelle enseigne vend Riz basmati 1 kg le moins cher en Martinique ?",
+          "a": "E.Leclerc propose actuellement le meilleur prix à 2.99€."
+        },
+        {
+          "q": "Quelle est la différence de prix pour Riz basmati 1 kg en Martinique ?",
+          "a": "Jusqu'à 0.50€ d'écart entre les enseignes locales, soit 14% d'économies."
+        }
+      ]
+    },
+    {
+      "path": "/mq/produit/huile-tournesol-1-l",
+      "type": "product",
+      "title": "Prix Huile tournesol 1 L en Martinique 2026 — Comparez maintenant",
+      "description": "Comparez le prix de Huile tournesol 1 L entre Carrefour, E.Leclerc et Super U en Martinique. Économisez jusqu'à 0.36€. Données actualisées.",
+      "h1": "Huile tournesol 1 L en Martinique : meilleur prix 1.99€ chez E.Leclerc",
+      "faq": [
+        {
+          "q": "Où trouver Huile tournesol 1 L moins cher en Martinique ?",
+          "a": "Chez E.Leclerc à 1.99€ — 0.36€ moins cher que le prix le plus élevé."
+        },
+        {
+          "q": "Combien coûte Huile tournesol 1 L en Martinique ?",
+          "a": "Entre 1.99€ et 2.35€ selon l'enseigne. Utilisez notre comparateur pour voir tous les prix en temps réel."
+        },
+        {
+          "q": "Pourquoi Huile tournesol 1 L est plus cher en Martinique qu'en métropole ?",
+          "a": "L'octroi de mer et les coûts logistiques expliquent l'écart de prix. Notre comparateur vous aide à trouver le meilleur prix local."
+        }
+      ]
+    },
+    {
+      "path": "/mq/comparer/huile-tournesol-1-l-moins-cher",
+      "type": "comparison",
+      "title": "Huile tournesol 1 L moins cher en Martinique — Comparatif 2026",
+      "description": "Où acheter Huile tournesol 1 L moins cher en Martinique ? Comparatif Carrefour, E.Leclerc, Super U. Jusqu'à 0.36€ d'économies.",
+      "h1": "Huile tournesol 1 L : où est-il le moins cher en Martinique ?",
+      "faq": [
+        {
+          "q": "Quelle enseigne vend Huile tournesol 1 L le moins cher en Martinique ?",
+          "a": "E.Leclerc propose actuellement le meilleur prix à 1.99€."
+        },
+        {
+          "q": "Quelle est la différence de prix pour Huile tournesol 1 L en Martinique ?",
+          "a": "Jusqu'à 0.36€ d'écart entre les enseignes locales, soit 15% d'économies."
+        }
+      ]
+    },
+    {
+      "path": "/mq/produit/beurre-doux-250-g",
+      "type": "product",
+      "title": "Prix Beurre doux 250 g en Martinique 2026 — Comparez maintenant",
+      "description": "Comparez le prix de Beurre doux 250 g entre Carrefour, E.Leclerc et Super U en Martinique. Économisez jusqu'à 0.40€. Données actualisées.",
+      "h1": "Beurre doux 250 g en Martinique : meilleur prix 2.85€ chez E.Leclerc",
+      "faq": [
+        {
+          "q": "Où trouver Beurre doux 250 g moins cher en Martinique ?",
+          "a": "Chez E.Leclerc à 2.85€ — 0.40€ moins cher que le prix le plus élevé."
+        },
+        {
+          "q": "Combien coûte Beurre doux 250 g en Martinique ?",
+          "a": "Entre 2.85€ et 3.25€ selon l'enseigne. Utilisez notre comparateur pour voir tous les prix en temps réel."
+        },
+        {
+          "q": "Pourquoi Beurre doux 250 g est plus cher en Martinique qu'en métropole ?",
+          "a": "L'octroi de mer et les coûts logistiques expliquent l'écart de prix. Notre comparateur vous aide à trouver le meilleur prix local."
+        }
+      ]
+    },
+    {
+      "path": "/mq/comparer/beurre-doux-250-g-moins-cher",
+      "type": "comparison",
+      "title": "Beurre doux 250 g moins cher en Martinique — Comparatif 2026",
+      "description": "Où acheter Beurre doux 250 g moins cher en Martinique ? Comparatif Carrefour, E.Leclerc, Super U. Jusqu'à 0.40€ d'économies.",
+      "h1": "Beurre doux 250 g : où est-il le moins cher en Martinique ?",
+      "faq": [
+        {
+          "q": "Quelle enseigne vend Beurre doux 250 g le moins cher en Martinique ?",
+          "a": "E.Leclerc propose actuellement le meilleur prix à 2.85€."
+        },
+        {
+          "q": "Quelle est la différence de prix pour Beurre doux 250 g en Martinique ?",
+          "a": "Jusqu'à 0.40€ d'écart entre les enseignes locales, soit 12% d'économies."
+        }
+      ]
+    },
+    {
+      "path": "/mq/produit/farine-de-ble-t45-1-kg",
+      "type": "product",
+      "title": "Prix Farine de blé T45 1 kg en Martinique 2026 — Comparez maintenant",
+      "description": "Comparez le prix de Farine de blé T45 1 kg entre Carrefour, E.Leclerc et Super U en Martinique. Économisez jusqu'à 0.30€. Données actualisées.",
+      "h1": "Farine de blé T45 1 kg en Martinique : meilleur prix 1.29€ chez E.Leclerc",
+      "faq": [
+        {
+          "q": "Où trouver Farine de blé T45 1 kg moins cher en Martinique ?",
+          "a": "Chez E.Leclerc à 1.29€ — 0.30€ moins cher que le prix le plus élevé."
+        },
+        {
+          "q": "Combien coûte Farine de blé T45 1 kg en Martinique ?",
+          "a": "Entre 1.29€ et 1.59€ selon l'enseigne. Utilisez notre comparateur pour voir tous les prix en temps réel."
+        },
+        {
+          "q": "Pourquoi Farine de blé T45 1 kg est plus cher en Martinique qu'en métropole ?",
+          "a": "L'octroi de mer et les coûts logistiques expliquent l'écart de prix. Notre comparateur vous aide à trouver le meilleur prix local."
+        }
+      ]
+    },
+    {
+      "path": "/mq/comparer/farine-de-ble-t45-1-kg-moins-cher",
+      "type": "comparison",
+      "title": "Farine de blé T45 1 kg moins cher en Martinique — Comparatif 2026",
+      "description": "Où acheter Farine de blé T45 1 kg moins cher en Martinique ? Comparatif Carrefour, E.Leclerc, Super U. Jusqu'à 0.30€ d'économies.",
+      "h1": "Farine de blé T45 1 kg : où est-il le moins cher en Martinique ?",
+      "faq": [
+        {
+          "q": "Quelle enseigne vend Farine de blé T45 1 kg le moins cher en Martinique ?",
+          "a": "E.Leclerc propose actuellement le meilleur prix à 1.29€."
+        },
+        {
+          "q": "Quelle est la différence de prix pour Farine de blé T45 1 kg en Martinique ?",
+          "a": "Jusqu'à 0.30€ d'écart entre les enseignes locales, soit 19% d'économies."
+        }
+      ]
+    },
+    {
+      "path": "/mq/produit/sucre-en-poudre-1-kg",
+      "type": "product",
+      "title": "Prix Sucre en poudre 1 kg en Martinique 2026 — Comparez maintenant",
+      "description": "Comparez le prix de Sucre en poudre 1 kg entre Carrefour, E.Leclerc et Super U en Martinique. Économisez jusqu'à 0.30€. Données actualisées.",
+      "h1": "Sucre en poudre 1 kg en Martinique : meilleur prix 1.59€ chez E.Leclerc",
+      "faq": [
+        {
+          "q": "Où trouver Sucre en poudre 1 kg moins cher en Martinique ?",
+          "a": "Chez E.Leclerc à 1.59€ — 0.30€ moins cher que le prix le plus élevé."
+        },
+        {
+          "q": "Combien coûte Sucre en poudre 1 kg en Martinique ?",
+          "a": "Entre 1.59€ et 1.89€ selon l'enseigne. Utilisez notre comparateur pour voir tous les prix en temps réel."
+        },
+        {
+          "q": "Pourquoi Sucre en poudre 1 kg est plus cher en Martinique qu'en métropole ?",
+          "a": "L'octroi de mer et les coûts logistiques expliquent l'écart de prix. Notre comparateur vous aide à trouver le meilleur prix local."
+        }
+      ]
+    },
+    {
+      "path": "/mq/comparer/sucre-en-poudre-1-kg-moins-cher",
+      "type": "comparison",
+      "title": "Sucre en poudre 1 kg moins cher en Martinique — Comparatif 2026",
+      "description": "Où acheter Sucre en poudre 1 kg moins cher en Martinique ? Comparatif Carrefour, E.Leclerc, Super U. Jusqu'à 0.30€ d'économies.",
+      "h1": "Sucre en poudre 1 kg : où est-il le moins cher en Martinique ?",
+      "faq": [
+        {
+          "q": "Quelle enseigne vend Sucre en poudre 1 kg le moins cher en Martinique ?",
+          "a": "E.Leclerc propose actuellement le meilleur prix à 1.59€."
+        },
+        {
+          "q": "Quelle est la différence de prix pour Sucre en poudre 1 kg en Martinique ?",
+          "a": "Jusqu'à 0.30€ d'écart entre les enseignes locales, soit 16% d'économies."
+        }
+      ]
+    },
+    {
+      "path": "/mq/produit/yaourt-nature-x8",
+      "type": "product",
+      "title": "Prix Yaourt nature x8 en Martinique 2026 — Comparez maintenant",
+      "description": "Comparez le prix de Yaourt nature x8 entre Carrefour, E.Leclerc et Super U en Martinique. Économisez jusqu'à 0.46€. Données actualisées.",
+      "h1": "Yaourt nature x8 en Martinique : meilleur prix 1.99€ chez E.Leclerc",
+      "faq": [
+        {
+          "q": "Où trouver Yaourt nature x8 moins cher en Martinique ?",
+          "a": "Chez E.Leclerc à 1.99€ — 0.46€ moins cher que le prix le plus élevé."
+        },
+        {
+          "q": "Combien coûte Yaourt nature x8 en Martinique ?",
+          "a": "Entre 1.99€ et 2.45€ selon l'enseigne. Utilisez notre comparateur pour voir tous les prix en temps réel."
+        },
+        {
+          "q": "Pourquoi Yaourt nature x8 est plus cher en Martinique qu'en métropole ?",
+          "a": "L'octroi de mer et les coûts logistiques expliquent l'écart de prix. Notre comparateur vous aide à trouver le meilleur prix local."
+        }
+      ]
+    },
+    {
+      "path": "/mq/comparer/yaourt-nature-x8-moins-cher",
+      "type": "comparison",
+      "title": "Yaourt nature x8 moins cher en Martinique — Comparatif 2026",
+      "description": "Où acheter Yaourt nature x8 moins cher en Martinique ? Comparatif Carrefour, E.Leclerc, Super U. Jusqu'à 0.46€ d'économies.",
+      "h1": "Yaourt nature x8 : où est-il le moins cher en Martinique ?",
+      "faq": [
+        {
+          "q": "Quelle enseigne vend Yaourt nature x8 le moins cher en Martinique ?",
+          "a": "E.Leclerc propose actuellement le meilleur prix à 1.99€."
+        },
+        {
+          "q": "Quelle est la différence de prix pour Yaourt nature x8 en Martinique ?",
+          "a": "Jusqu'à 0.46€ d'écart entre les enseignes locales, soit 19% d'économies."
+        }
+      ]
+    },
+    {
+      "path": "/mq/produit/pates-spaghetti-500-g",
+      "type": "product",
+      "title": "Prix Pâtes spaghetti 500 g en Martinique 2026 — Comparez maintenant",
+      "description": "Comparez le prix de Pâtes spaghetti 500 g entre Carrefour, E.Leclerc et Super U en Martinique. Économisez jusqu'à 0.36€. Données actualisées.",
+      "h1": "Pâtes spaghetti 500 g en Martinique : meilleur prix 0.99€ chez E.Leclerc",
+      "faq": [
+        {
+          "q": "Où trouver Pâtes spaghetti 500 g moins cher en Martinique ?",
+          "a": "Chez E.Leclerc à 0.99€ — 0.36€ moins cher que le prix le plus élevé."
+        },
+        {
+          "q": "Combien coûte Pâtes spaghetti 500 g en Martinique ?",
+          "a": "Entre 0.99€ et 1.35€ selon l'enseigne. Utilisez notre comparateur pour voir tous les prix en temps réel."
+        },
+        {
+          "q": "Pourquoi Pâtes spaghetti 500 g est plus cher en Martinique qu'en métropole ?",
+          "a": "L'octroi de mer et les coûts logistiques expliquent l'écart de prix. Notre comparateur vous aide à trouver le meilleur prix local."
+        }
+      ]
+    },
+    {
+      "path": "/mq/comparer/pates-spaghetti-500-g-moins-cher",
+      "type": "comparison",
+      "title": "Pâtes spaghetti 500 g moins cher en Martinique — Comparatif 2026",
+      "description": "Où acheter Pâtes spaghetti 500 g moins cher en Martinique ? Comparatif Carrefour, E.Leclerc, Super U. Jusqu'à 0.36€ d'économies.",
+      "h1": "Pâtes spaghetti 500 g : où est-il le moins cher en Martinique ?",
+      "faq": [
+        {
+          "q": "Quelle enseigne vend Pâtes spaghetti 500 g le moins cher en Martinique ?",
+          "a": "E.Leclerc propose actuellement le meilleur prix à 0.99€."
+        },
+        {
+          "q": "Quelle est la différence de prix pour Pâtes spaghetti 500 g en Martinique ?",
+          "a": "Jusqu'à 0.36€ d'écart entre les enseignes locales, soit 27% d'économies."
+        }
+      ]
+    },
+    {
+      "path": "/mq/produit/savon-liquide-500-ml",
+      "type": "product",
+      "title": "Prix Savon liquide 500 ml en Martinique 2026 — Comparez maintenant",
+      "description": "Comparez le prix de Savon liquide 500 ml entre Carrefour, E.Leclerc et Super U en Martinique. Économisez jusqu'à 0.60€. Données actualisées.",
+      "h1": "Savon liquide 500 ml en Martinique : meilleur prix 2.39€ chez E.Leclerc",
+      "faq": [
+        {
+          "q": "Où trouver Savon liquide 500 ml moins cher en Martinique ?",
+          "a": "Chez E.Leclerc à 2.39€ — 0.60€ moins cher que le prix le plus élevé."
+        },
+        {
+          "q": "Combien coûte Savon liquide 500 ml en Martinique ?",
+          "a": "Entre 2.39€ et 2.99€ selon l'enseigne. Utilisez notre comparateur pour voir tous les prix en temps réel."
+        },
+        {
+          "q": "Pourquoi Savon liquide 500 ml est plus cher en Martinique qu'en métropole ?",
+          "a": "L'octroi de mer et les coûts logistiques expliquent l'écart de prix. Notre comparateur vous aide à trouver le meilleur prix local."
+        }
+      ]
+    },
+    {
+      "path": "/mq/comparer/savon-liquide-500-ml-moins-cher",
+      "type": "comparison",
+      "title": "Savon liquide 500 ml moins cher en Martinique — Comparatif 2026",
+      "description": "Où acheter Savon liquide 500 ml moins cher en Martinique ? Comparatif Carrefour, E.Leclerc, Super U. Jusqu'à 0.60€ d'économies.",
+      "h1": "Savon liquide 500 ml : où est-il le moins cher en Martinique ?",
+      "faq": [
+        {
+          "q": "Quelle enseigne vend Savon liquide 500 ml le moins cher en Martinique ?",
+          "a": "E.Leclerc propose actuellement le meilleur prix à 2.39€."
+        },
+        {
+          "q": "Quelle est la différence de prix pour Savon liquide 500 ml en Martinique ?",
+          "a": "Jusqu'à 0.60€ d'écart entre les enseignes locales, soit 20% d'économies."
+        }
+      ]
+    }
+  ]
+}
