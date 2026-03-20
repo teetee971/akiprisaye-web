@@ -312,6 +312,10 @@ const MonitoringIAPage = lazyPage(() => import('./pages/MonitoringIAPage'));
 // ── SEO & Growth Pages ───────────────────────────────────────────────────────
 const SEOProductPage = lazyPage(() => import('./pages/SEOProductPage'));
 const SEOCategoryPage = lazyPage(() => import('./pages/SEOCategoryPage'));
+const SEOPrixLocalPage = lazyPage(() => import('./pages/SEOPrixLocalPage'));
+const SEOComparaisonPage = lazyPage(() => import('./pages/SEOComparaisonPage'));
+const SEOInflationPage = lazyPage(() => import('./pages/SEOInflationPage'));
+const SEOMoinsChersPage = lazyPage(() => import('./pages/SEOMoinsChersPage'));
 const StatsDashboard = lazyPage(() => import('./pages/StatsDashboard'));
 const TopEconomiesPage = lazyPage(() => import('./pages/TopEconomiesPage'));
 const TendancesPage = lazyPage(() => import('./pages/TendancesPage'));
@@ -747,6 +751,15 @@ export default function App() {
                           {/* ── SEO & Growth Pages ── */}
                           <Route path="produit/:slug" element={<SEOProductPage />} />
                           <Route path="categorie/:slug" element={<SEOCategoryPage />} />
+                          {/* Long-tail SEO: local price pages /prix/<product>-<territory> */}
+                          <Route path="prix/:slug" element={<SEOPrixLocalPage />} />
+                          {/* Long-tail SEO: retailer comparison /comparer/<r1>-vs-<r2>-<territory> */}
+                          <Route path="comparer/:slug" element={<SEOComparaisonPage />} />
+                          {/* Long-tail SEO: inflation trends /inflation/<category>-<territory>-<year> */}
+                          <Route path="inflation/:slug" element={<SEOInflationPage />} />
+                          {/* Long-tail SEO: cheapest products /moins-cher/<territory>[/<category>] */}
+                          <Route path="moins-cher/:territory" element={<SEOMoinsChersPage />} />
+                          <Route path="moins-cher/:territory/:category" element={<SEOMoinsChersPage />} />
                           <Route path="stats-dashboard" element={<StatsDashboard />} />
                           <Route path="top-economies" element={<TopEconomiesPage />} />
                           <Route path="tendances" element={<TendancesPage />} />

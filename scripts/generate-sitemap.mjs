@@ -47,6 +47,30 @@ const categories = [
 const territories = ["GP", "MQ", "GF", "RE", "YT"];
 
 // ── Build sitemap ─────────────────────────────────────────────────────────────
+// ── Long-tail SEO product/territory combinations ──────────────────────────────
+// Top products for /prix/<product>-<territory> pages
+const topProducts = [
+  "coca-cola-1-5l", "lait-entier-1l", "riz-basmati-1kg", "nutella-400g",
+  "poulet-entier", "banane-kg", "beurre-president-250g", "lessive-ariel-30d",
+  "eau-evian-1-5l", "pates-panzani-500g", "couches-pampers-t3", "jambon-blanc-4tr",
+];
+
+const territorySlugMap = {
+  GP: "guadeloupe", MQ: "martinique", GF: "guyane", RE: "reunion", YT: "mayotte",
+};
+
+// Top retailer pairs for /comparer/<r1>-vs-<r2>-<territory> pages
+const retailerPairs = [
+  ["carrefour", "leclerc"],
+  ["carrefour", "super-u"],
+  ["leclerc", "intermarche"],
+  ["leader-price", "super-u"],
+];
+
+// Categories for /inflation/<cat>-<territory>-<year> pages
+const inflationCategories = ["alimentaire", "boissons", "epicerie", "produits-laitiers"];
+const inflationYears      = ["2025", "2026"];
+
 let sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 `;
@@ -93,6 +117,60 @@ territories.forEach(territory => {
 `;
 });
 
+// ── NEW: Long-tail SEO pages ───────────────────────────────────────────────────
+
+// /prix/<product>-<territory> — local price pages
+territories.forEach(territory => {
+  const tSlug = territorySlugMap[territory];
+  topProducts.forEach(product => {
+    sitemap += `  <url>
+    <loc>${SITE_URL}/prix/${product}-${tSlug}</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+`;
+  });
+});
+
+// /comparer/<r1>-vs-<r2>-<territory> — retailer comparison pages
+territories.forEach(territory => {
+  const tSlug = territorySlugMap[territory];
+  retailerPairs.forEach(([r1, r2]) => {
+    sitemap += `  <url>
+    <loc>${SITE_URL}/comparer/${r1}-vs-${r2}-${tSlug}</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+`;
+  });
+});
+
+// /inflation/<category>-<territory>-<year> — inflation trend pages
+territories.forEach(territory => {
+  const tSlug = territorySlugMap[territory];
+  inflationCategories.forEach(category => {
+    inflationYears.forEach(year => {
+      sitemap += `  <url>
+    <loc>${SITE_URL}/inflation/${category}-${tSlug}-${year}</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+`;
+    });
+  });
+});
+
+// /moins-cher/<territory> — cheapest products intent pages
+territories.forEach(territory => {
+  const tSlug = territorySlugMap[territory];
+  sitemap += `  <url>
+    <loc>${SITE_URL}/moins-cher/${tSlug}</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+`;
+});
+
 sitemap += "</urlset>";
 
 // Write sitemap.xml
@@ -124,5 +202,16 @@ console.log(`  - ${staticPages.length} pages statiques`);
 console.log(`  - ${seoPages.length} pages SEO`);
 console.log(`  - ${categories.length} catégories × ${territories.length} territoires = ${categories.length * territories.length} pages catégorie`);
 console.log(`  - ${territories.length} hubs territoires`);
-console.log(`  Total: ${staticPages.length + seoPages.length + (categories.length * territories.length) + territories.length} URLs`);
+// Long-tail pages
+const prixCount       = topProducts.length * territories.length;
+const comparerCount   = retailerPairs.length * territories.length;
+const inflationCount  = inflationCategories.length * territories.length * inflationYears.length;
+const moinsChersCount = territories.length;
+const longTailTotal   = prixCount + comparerCount + inflationCount + moinsChersCount;
+console.log(`  - ${prixCount} pages prix locaux (/prix/...)`);
+console.log(`  - ${comparerCount} pages comparaison enseignes (/comparer/...)`);
+console.log(`  - ${inflationCount} pages inflation/tendances (/inflation/...)`);
+console.log(`  - ${moinsChersCount} pages produits moins chers (/moins-cher/...)`);
+const total = staticPages.length + seoPages.length + (categories.length * territories.length) + territories.length + longTailTotal;
+console.log(`  Total: ${total} URLs (dont ${longTailTotal} longue traîne)`);
 console.log("✔ robots.txt généré");

@@ -62,6 +62,44 @@ const SIGNAL_ICON: Record<string, string> = {
   neutral: '→',
 };
 
+// ── Smart Signal contextual badge ────────────────────────────────────────────
+interface SmartSignalBadgeProps {
+  savings:   number | null;
+  average:   number | null;
+  bestPrice: number | null;
+  signal:    string | undefined;
+}
+function SmartSignalBadge({ savings, average, bestPrice, signal }: SmartSignalBadgeProps) {
+  if (signal === 'buy' && savings != null && savings > 0.01) {
+    const pct = average != null && bestPrice != null && average > 0
+      ? Math.round(((average - bestPrice) / average) * 100)
+      : null;
+    return (
+      <div className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-400/30 bg-emerald-400/10 px-3 py-1.5 text-xs font-bold text-emerald-300">
+        🔻 {pct != null ? `-${pct}% vs moyenne` : 'Meilleur prix'} · Bon moment pour acheter
+      </div>
+    );
+  }
+  if (signal === 'wait') {
+    return (
+      <div className="inline-flex items-center gap-1.5 rounded-lg border border-amber-400/30 bg-amber-400/10 px-3 py-1.5 text-xs font-bold text-amber-300">
+        ⚠️ Prix en hausse · Attendre recommandé
+      </div>
+    );
+  }
+  if (bestPrice != null && average != null && average > 0) {
+    const pct = Math.round(((average - bestPrice) / average) * 100);
+    if (pct >= 10) {
+      return (
+        <div className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-400/30 bg-emerald-400/10 px-3 py-1.5 text-xs font-bold text-emerald-300">
+          🔥 Meilleur prix aujourd'hui · -{pct}% vs moyenne
+        </div>
+      );
+    }
+  }
+  return null;
+}
+
 // ── Source badge ──────────────────────────────────────────────────────────────
 type SourceId = 'open_prices' | 'internal' | 'open_food_facts' | 'mock';
 function SourceBadge({ source }: { source: SourceId }) {
@@ -134,19 +172,19 @@ function PriceRow({ p, rank, isBest, savingsVsBest, barcode, territory }: PriceR
           )}
         </div>
 
-        {/* "Voir chez X" CTA — visible on hover, always on best price row */}
+        {/* "Voir l'offre" CTA — visible on hover, always on best price row */}
         {retailerUrl && (
           <a
             href={retailerUrl}
             target="_blank"
             rel="noopener noreferrer"
             onClick={handleRetailerClick}
-            className={`flex-shrink-0 rounded-lg border px-3 py-1.5 text-xs font-bold transition-all duration-150
+            className={`flex-shrink-0 rounded-lg border px-3 py-1.5 text-xs font-bold transition-all duration-150 active:scale-95
               ${isBest
                 ? 'border-emerald-400/50 bg-emerald-400/20 text-emerald-300 hover:bg-emerald-400/30'
                 : 'border-white/15 bg-white/5 text-zinc-400 opacity-0 group-hover:opacity-100 hover:border-white/30 hover:bg-white/10 hover:text-white'}`}
           >
-            Voir →
+            {isBest ? 'VOIR L\'OFFRE →' : 'Voir →'}
           </a>
         )}
       </div>
@@ -217,9 +255,9 @@ function BestPriceHero({
               target="_blank"
               rel="noopener noreferrer"
               onClick={handleHeroClick}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-400/60 bg-emerald-400/25 px-5 py-2.5 text-sm font-bold text-emerald-200 shadow-lg shadow-emerald-900/30 transition-all hover:bg-emerald-400/35 active:scale-95"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-400/60 bg-emerald-400/25 px-5 py-2.5 text-sm font-extrabold uppercase tracking-wide text-emerald-200 shadow-lg shadow-emerald-900/30 transition-all hover:bg-emerald-400/35 active:scale-95"
             >
-              Voir l'offre la moins chère →
+              ACHETER AU MEILLEUR PRIX →
             </a>
           )}
         </div>
@@ -663,6 +701,14 @@ export default function SEOProductPage() {
           signalStatus={signal?.status ?? undefined}
           barcode={product.barcode}
           territory={territory}
+        />
+
+        {/* ── Smart Signal contextual badge ─────────────────────────────────── */}
+        <SmartSignalBadge
+          savings={maxSavings ?? summary?.savings ?? null}
+          average={summary?.average ?? null}
+          bestPrice={summary?.min ?? null}
+          signal={signal?.status}
         />
 
         {/* ── Price comparison list ─────────────────────────────────────────── */}

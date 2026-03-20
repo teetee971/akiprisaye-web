@@ -352,3 +352,130 @@ export function generateCategoryCanonical(
 ): string {
   return `${SITE_URL}/categorie/${categorySlug}?territory=${territory}`;
 }
+
+// ── New long-tail SEO page helpers ────────────────────────────────────────────
+
+/** Map territory slug name → territory code */
+export const TERRITORY_SLUG_MAP: Record<string, string> = {
+  guadeloupe: 'GP',
+  martinique:  'MQ',
+  guyane:      'GF',
+  reunion:     'RE',
+  'la-reunion': 'RE',
+  mayotte:     'YT',
+};
+
+/**
+ * Build JSON-LD for a local price page (prix/:slug)
+ */
+export function buildPrixLocalJsonLd(
+  productName: string,
+  territory: string,
+  prices: Array<{ retailer: string; price: number }>,
+): Record<string, unknown> {
+  const territoryName = getTerritoryName(territory);
+  const bestPrice = prices.length > 0 ? Math.min(...prices.map((p) => p.price)) : undefined;
+  const worstPrice = prices.length > 0 ? Math.max(...prices.map((p) => p.price)) : undefined;
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: productName,
+    description: `${productName} — comparez les prix en ${territoryName}`,
+    areaServed: { '@type': 'AdministrativeArea', name: territoryName },
+    offers:
+      prices.length > 0
+        ? {
+            '@type': 'AggregateOffer',
+            lowPrice: bestPrice?.toFixed(2),
+            highPrice: worstPrice?.toFixed(2),
+            priceCurrency: 'EUR',
+            offerCount: prices.length,
+            offers: prices.slice(0, 5).map((p) => ({
+              '@type': 'Offer',
+              price: p.price.toFixed(2),
+              priceCurrency: 'EUR',
+              seller: { '@type': 'Organization', name: p.retailer },
+              availability: 'https://schema.org/InStock',
+            })),
+          }
+        : undefined,
+  };
+}
+
+/**
+ * Build JSON-LD for a retailer comparison page (comparer/:slug)
+ */
+export function buildComparaisonJsonLd(
+  retailer1: string,
+  retailer2: string,
+  territory: string,
+): Record<string, unknown> {
+  const territoryName = getTerritoryName(territory);
+  const pageUrl = `${SITE_URL}/comparer/${retailer1.toLowerCase().replace(/\s/g, '-')}-vs-${retailer2.toLowerCase().replace(/\s/g, '-')}-${territory.toLowerCase()}`;
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: `${retailer1} vs ${retailer2} ${territoryName} — Comparatif prix`,
+    description: `Comparez les prix ${retailer1} et ${retailer2} en ${territoryName}. Trouvez le supermarché le moins cher.`,
+    url: pageUrl,
+    breadcrumb: {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Accueil', item: SITE_URL },
+        { '@type': 'ListItem', position: 2, name: 'Comparaison enseignes', item: `${SITE_URL}/comparer` },
+        { '@type': 'ListItem', position: 3, name: `${retailer1} vs ${retailer2}`, item: pageUrl },
+      ],
+    },
+  };
+}
+
+/**
+ * Build JSON-LD for an inflation trend page (inflation/:slug)
+ */
+export function buildInflationJsonLd(
+  categoryName: string,
+  territory: string,
+  year: string,
+): Record<string, unknown> {
+  const territoryName = getTerritoryName(territory);
+  const pageUrl = `${SITE_URL}/inflation/${categoryName.toLowerCase().replace(/\s/g, '-')}-${territory.toLowerCase()}-${year}`;
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Dataset',
+    name: `Inflation ${categoryName} en ${territoryName} — ${year}`,
+    description: `Données d'inflation pour les ${categoryName.toLowerCase()} en ${territoryName} en ${year}. Évolution mensuelle des prix.`,
+    url: pageUrl,
+    creator: { '@type': 'Organization', name: SITE_NAME },
+    temporalCoverage: year,
+    spatialCoverage: { '@type': 'Place', name: territoryName },
+  };
+}
+
+/**
+ * Build JSON-LD for a cheapest products page (moins-cher/:territory)
+ */
+export function buildMoinsChersJsonLd(
+  territory: string,
+  products: Array<{ name: string; price: number; retailer: string }>,
+): Record<string, unknown> {
+  const territoryName = getTerritoryName(territory);
+  const pageUrl = `${SITE_URL}/moins-cher/${territoryName.toLowerCase().replace(/\s/g, '-')}`;
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: `Produits les moins chers en ${territoryName}`,
+    description: `Découvrez les produits les moins chers en ${territoryName} et économisez sur vos courses.`,
+    url: pageUrl,
+    numberOfItems: products.length,
+    itemListElement: products.slice(0, 10).map((product, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: product.name,
+      description: `${product.price.toFixed(2)} € chez ${product.retailer}`,
+    })),
+  };
+}
