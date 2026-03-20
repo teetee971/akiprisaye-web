@@ -1,0 +1,52 @@
+name: Auto SEO Review
+
+# REVIEW-ONLY: This workflow never auto-commits, auto-pushes, or opens PRs.
+# It runs the SEO analysis pipeline and uploads results as artifacts for human review.
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 4 * * 1'  # Every Monday at 4am UTC
+
+jobs:
+  auto-seo-review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install root dependencies
+        run: npm install --prefix . --ignore-scripts 2>/dev/null || true
+
+      - name: Collect signals
+        run: node scripts/auto-seo/collect-signals.mjs
+
+      - name: Score pages
+        run: node scripts/auto-seo/score-pages.mjs
+
+      - name: Generate recommendations
+        run: node scripts/auto-seo/generate-recommendations.mjs
+
+      - name: Build patch plan
+        run: node scripts/auto-seo/build-patches.mjs
+
+      - name: Export PR plan
+        run: node scripts/auto-seo/export-pr-plan.mjs
+
+      - name: Upload review artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: auto-seo-review-${{ github.run_number }}
+          path: |
+            scripts/auto-seo/output/signals.json
+            scripts/auto-seo/output/page-scores.json
+            scripts/auto-seo/output/recommendations.json
+            scripts/auto-seo/output/patch-plan.json
+            scripts/auto-seo/output/AUTO_SEO_PLAN.md
+            scripts/auto-seo/output/pr-title.txt
+            scripts/auto-seo/output/pr-body.md
+          retention-days: 30
