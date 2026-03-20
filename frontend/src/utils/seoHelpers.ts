@@ -274,6 +274,62 @@ export function generateCategoryTitle(
   return `Prix ${categoryName} en ${territoryName} — Comparateur Outre-mer`;
 }
 
+// ── FAQ JSON-LD schema ─────────────────────────────────────────────────────────
+
+/**
+ * Build JSON-LD FAQPage schema for product pages.
+ * 3 targeted Q&A entries boost rich-result eligibility and indexation.
+ */
+export function buildFaqJsonLd(
+  product: CompareProduct,
+  territory: string,
+  bestPrice: number | null,
+  savings: number | null,
+  average: number | null,
+  bestRetailer?: string,
+): Record<string, unknown> {
+  const territoryName = getTerritoryName(territory);
+  const brandLabel = product.brand ? `${product.brand} ` : '';
+  const productLabel = `${brandLabel}${product.name}`;
+
+  const priceAnswer =
+    bestPrice != null && bestRetailer
+      ? `Selon notre comparateur, le meilleur prix du ${productLabel} en ${territoryName} est de ${bestPrice.toFixed(2)}\u00a0€ chez ${bestRetailer}. Consultez notre comparatif pour voir toutes les enseignes disponibles.`
+      : `Utilisez notre comparateur pour trouver le meilleur prix du ${productLabel} en ${territoryName} parmi toutes les enseignes locales.`;
+
+  const averageAnswer =
+    average != null
+      ? `Le prix moyen du ${productLabel} en ${territoryName} est de ${average.toFixed(2)}\u00a0€ d'après les données collectées dans les principales enseignes (Carrefour, E.Leclerc, Super U, Leader Price…).`
+      : `Le prix du ${productLabel} varie selon les enseignes en ${territoryName}. Comparez pour trouver la meilleure offre.`;
+
+  const savingsAnswer =
+    savings != null && savings > 0.01
+      ? `En comparant les enseignes, vous pouvez économiser jusqu'à ${savings.toFixed(2)}\u00a0€ sur le ${productLabel} en ${territoryName}. Notre comparateur met à jour les prix quotidiennement pour vous garantir les meilleures offres.`
+      : `Consultez notre comparateur pour identifier l'enseigne la moins chère pour le ${productLabel} en ${territoryName} et faire des économies sur vos courses.`;
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: `Où acheter ${productLabel} moins cher en ${territoryName}\u00a0?`,
+        acceptedAnswer: { '@type': 'Answer', text: priceAnswer },
+      },
+      {
+        '@type': 'Question',
+        name: `Quel est le prix moyen du ${productLabel} en ${territoryName}\u00a0?`,
+        acceptedAnswer: { '@type': 'Answer', text: averageAnswer },
+      },
+      {
+        '@type': 'Question',
+        name: `Comment économiser sur le ${productLabel} en ${territoryName}\u00a0?`,
+        acceptedAnswer: { '@type': 'Answer', text: savingsAnswer },
+      },
+    ],
+  };
+}
+
 // ── Canonical URL generation ───────────────────────────────────────────────────
 
 /**
