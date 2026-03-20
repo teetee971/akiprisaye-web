@@ -1,15 +1,18 @@
 /**
- * conversionTracker.ts — CRO tracking for CTA click variants.
+ * conversionTracker.ts — CRO tracking for CTA click variants + behavior signals.
  * RGPD: localStorage only, no external calls, 30-day TTL, max 500 events.
  */
 
 import { safeLocalStorage } from './safeLocalStorage';
 import { getSEOPageStats } from './statsTracker';
+import type { UserBehaviorMetric } from '../../../shared/src/cro';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
 const KEY = 'akp:cro:v1';
+const KEY_BEHAVIOR = 'akp:cro:behavior:v1';
 const MAX_EVENTS = 500;
+const MAX_BEHAVIOR_ENTRIES = 200;
 const TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -134,3 +137,99 @@ export function getCROStats(): CROStats {
 export function clearConversionData(): void {
   safeLocalStorage.removeItem(KEY);
 }
+
+// ── Behavior signal storage ───────────────────────────────────────────────────
+
+function readBehavior(): UserBehaviorMetric[] {
+  try {
+    const raw = safeLocalStorage.getItem(KEY_BEHAVIOR);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? (parsed as UserBehaviorMetric[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeBehavior(entries: UserBehaviorMetric[]): void {
+  try {
+    safeLocalStorage.setItem(
+      KEY_BEHAVIOR,
+      JSON.stringify(entries.slice(-MAX_BEHAVIOR_ENTRIES)),
+    );
+  } catch {
+    // silent
+  }
+}
+
+function upsertBehavior(
+  url: string,
+  updater: (entry: UserBehaviorMetric) => UserBehaviorMetric,
+): void {
+  const entries = readBehavior();
+  const idx = entries.findIndex((e) => e.url === url);
+  const blank: UserBehaviorMetric = {
+    url,
+    pageViews: 0,
+    avgScrollDepth: 0,
+    avgTimeOnPage: 0,
+    ctaClicks: 0,
+    retailerClicks: 0,
+    compareInteractions: 0,
+  };
+  if (idx >= 0) {
+    entries[idx] = updater(entries[idx]);
+  } else {
+    entries.push(updater(blank));
+  }
+  writeBehavior(entries);
+}
+
+// ── Behavior tracking public API ──────────────────────────────────────────────
+
+/**
+ * Record a page view for the given URL.
+ */
+export function trackPageView(url: string): void {
+  upsertBehavior(url, (e) => ({ ...e, pageViews: e.pageViews + 1 }));
+}
+
+/**
+ * Record a scroll depth sample (0–100) and update the running average.
+ */
+export function trackScrollDepth(url: string, depth: number): void {
+  upsertBehavior(url, (e) => {
+    const n = e.pageViews || 1;
+    const newAvg = (e.avgScrollDepth * (n - 1) + Math.max(0, Math.min(100, depth))) / n;
+    return { ...e, avgScrollDepth: Math.round(newAvg) };
+  });
+}
+
+/**
+ * Record a CTA click (any type: retailer button, compare, sticky bar…).
+ */
+export function trackCtaClick(url: string, _ctaType: string): void {
+  upsertBehavior(url, (e) => ({ ...e, ctaClicks: e.ctaClicks + 1 }));
+}
+
+/**
+ * Record a click to an external retailer link.
+ */
+export function trackRetailerClick(url: string, _retailer: string): void {
+  upsertBehavior(url, (e) => ({ ...e, retailerClicks: e.retailerClicks + 1 }));
+}
+
+/**
+ * Record a compare-block interaction (expand, collapse, sort…).
+ */
+export function trackCompareInteraction(url: string, _action: string): void {
+  upsertBehavior(url, (e) => ({ ...e, compareInteractions: e.compareInteractions + 1 }));
+}
+
+/**
+ * Return all stored behavior metrics (all URLs).
+ */
+export function getStoredBehaviorMetrics(): UserBehaviorMetric[] {
+  return readBehavior();
+}
+
