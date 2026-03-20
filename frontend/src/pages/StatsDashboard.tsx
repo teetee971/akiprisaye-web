@@ -19,9 +19,11 @@ import {
   getConversionStats,
   getDailyStats,
   getTrendingProducts,
+  getTopSEOProducts,
   type ConversionStats,
   type DailyStats,
 } from '../utils/priceClickTracker';
+import { getSEOPageStats, getSEOTopPages } from '../utils/statsTracker';
 
 // ── Stat card component ───────────────────────────────────────────────────────
 interface StatCardProps {
@@ -216,12 +218,16 @@ export default function StatsDashboard() {
   const [stats, setStats] = useState<ConversionStats | null>(null);
   const [dailyStats, setDailyStats] = useState<DailyStats[]>([]);
   const [trending, setTrending] = useState<ReturnType<typeof getTrendingProducts>>([]);
+  const [seoPages, setSEOPages] = useState<ReturnType<typeof getSEOTopPages>>([]);
+  const [seoProducts, setSEOProducts] = useState<ReturnType<typeof getTopSEOProducts>>([]);
   const [period, setPeriod] = useState<7 | 30>(30);
   
   useEffect(() => {
     setStats(getConversionStats(period));
     setDailyStats(getDailyStats(period));
     setTrending(getTrendingProducts(5));
+    setSEOPages(getSEOTopPages(10));
+    setSEOProducts(getTopSEOProducts(10));
   }, [period]);
   
   if (!stats) {
@@ -385,6 +391,55 @@ export default function StatsDashboard() {
           </div>
         </div>
         
+        {/* ── SEO Page Stats ──────────────────────────────────────────────── */}
+        <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+          <h2 className="mb-3 text-xs font-bold uppercase tracking-wider text-zinc-500">
+            📊 Pages SEO — Top 10 par vues
+          </h2>
+          {seoPages.length === 0 ? (
+            <p className="py-4 text-center text-sm text-zinc-500">Aucune donnée SEO disponible</p>
+          ) : (
+            <div className="space-y-1.5">
+              {seoPages.map((page, i) => (
+                <div key={`${page.slug}-${page.pageType}`} className="flex items-center justify-between rounded-lg border border-white/5 bg-white/[0.01] px-3 py-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-zinc-600">{i + 1}.</span>
+                    <span className="max-w-[200px] truncate text-xs text-zinc-400">{page.slug}</span>
+                    <span className="rounded bg-white/5 px-1.5 py-0.5 text-[10px] text-zinc-600">{page.pageType}</span>
+                  </div>
+                  <span className="text-xs font-bold text-emerald-400">{page.views} vues</span>
+                </div>
+              ))}
+              <p className="mt-2 text-[10px] text-zinc-600">
+                Types uniques : {new Set(getSEOPageStats().map((p) => p.pageType)).size}
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* ── SEO Product Stats ────────────────────────────────────────────── */}
+        <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+          <h2 className="mb-3 text-xs font-bold uppercase tracking-wider text-zinc-500">
+            🔍 Produits SEO populaires
+          </h2>
+          {seoProducts.length === 0 ? (
+            <p className="py-4 text-center text-sm text-zinc-500">Aucun produit SEO suivi</p>
+          ) : (
+            <div className="space-y-1.5">
+              {seoProducts.map((product, i) => (
+                <div key={`${product.productSlug}-${product.territory}`} className="flex items-center justify-between rounded-lg border border-white/5 bg-white/[0.01] px-3 py-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-zinc-600">{i + 1}.</span>
+                    <span className="max-w-[180px] truncate text-xs text-zinc-400">{product.productSlug}</span>
+                    <span className="rounded bg-white/5 px-1.5 py-0.5 text-[10px] text-zinc-600">{product.territory}</span>
+                  </div>
+                  <span className="text-xs font-bold text-emerald-400">{product.views} vues</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
         {/* Info box */}
         <div className="mt-6 rounded-xl border border-white/5 bg-white/[0.01] p-4">
           <h3 className="text-xs font-bold text-zinc-400 mb-2">ℹ️ À propos de ces statistiques</h3>

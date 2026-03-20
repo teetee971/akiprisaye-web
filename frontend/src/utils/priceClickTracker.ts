@@ -373,3 +373,55 @@ export function getTrendingProducts(limit = 5): Array<{
     .sort((a, b) => b.growth - a.growth)
     .slice(0, limit);
 }
+
+// ── SEO Product Tracking ───────────────────────────────────────────────────────
+
+const KEY_SEO_PRODUCTS = 'akp:seo:products:v1';
+const MAX_SEO_ENTRIES  = 200;
+
+export interface SEOProductEntry {
+  productSlug:  string;
+  territory:    string;
+  pageType:     string;
+  views:        number;
+  lastViewedAt: number;
+}
+
+function pruneSEOProducts(entries: SEOProductEntry[]): SEOProductEntry[] {
+  const cutoff = Date.now() - TTL_MS;
+  return entries
+    .filter((e) => e.lastViewedAt > cutoff)
+    .sort((a, b) => b.views - a.views)
+    .slice(0, MAX_SEO_ENTRIES);
+}
+
+/**
+ * Track a view of a long-tail SEO product page.
+ */
+export function trackSEOProductView(
+  productSlug: string,
+  territory: string,
+  pageType: string,
+): void {
+  const entries = readJson<SEOProductEntry[]>(KEY_SEO_PRODUCTS, []);
+  const existing = entries.find(
+    (e) => e.productSlug === productSlug && e.territory === territory && e.pageType === pageType,
+  );
+
+  if (existing) {
+    existing.views       += 1;
+    existing.lastViewedAt = Date.now();
+  } else {
+    entries.push({ productSlug, territory, pageType, views: 1, lastViewedAt: Date.now() });
+  }
+
+  writeJson(KEY_SEO_PRODUCTS, pruneSEOProducts(entries));
+}
+
+/**
+ * Return top viewed SEO product pages, sorted by views descending.
+ */
+export function getTopSEOProducts(limit = 10): SEOProductEntry[] {
+  const entries = readJson<SEOProductEntry[]>(KEY_SEO_PRODUCTS, []);
+  return pruneSEOProducts(entries).slice(0, limit);
+}

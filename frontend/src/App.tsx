@@ -316,6 +316,13 @@ const SEOPrixLocalPage = lazyPage(() => import('./pages/SEOPrixLocalPage'));
 const SEOComparaisonPage = lazyPage(() => import('./pages/SEOComparaisonPage'));
 const SEOInflationPage = lazyPage(() => import('./pages/SEOInflationPage'));
 const SEOMoinsChersPage = lazyPage(() => import('./pages/SEOMoinsChersPage'));
+const SEOBrandPage = lazyPage(() => import('./pages/SEOBrandPage'));
+const SEOEnseignePrixPage = lazyPage(() => import('./pages/SEOEnseignePrixPage'));
+const SEOGuidePrixPage = lazyPage(() => import('./pages/SEOGuidePrixPage'));
+const GuidePrixAlimentaireDOM = lazyPage(() => import('./pages/pillar/GuidePrixAlimentaireDOM'));
+const ComparateurSuperMarchesDOM = lazyPage(() => import('./pages/pillar/ComparateurSuperMarchesDOM'));
+const InflationAlimentaireDOMAnalyse = lazyPage(() => import('./pages/pillar/InflationAlimentaireDOMAnalyse'));
+const OuFaireCoursesDOMPage = lazyPage(() => import('./pages/pillar/OuFaireCoursesDOMPage'));
 const StatsDashboard = lazyPage(() => import('./pages/StatsDashboard'));
 const TopEconomiesPage = lazyPage(() => import('./pages/TopEconomiesPage'));
 const TendancesPage = lazyPage(() => import('./pages/TendancesPage'));
@@ -760,6 +767,17 @@ export default function App() {
                           {/* Long-tail SEO: cheapest products /moins-cher/<territory>[/<category>] */}
                           <Route path="moins-cher/:territory" element={<SEOMoinsChersPage />} />
                           <Route path="moins-cher/:territory/:category" element={<SEOMoinsChersPage />} />
+                          {/* Long-tail SEO: brand pages /marque/<brand>-<territory> */}
+                          <Route path="marque/:slug" element={<SEOBrandPage />} />
+                          {/* Long-tail SEO: retailer price pages /prix-enseigne/<retailer>/<territory> */}
+                          <Route path="prix-enseigne/:retailer/:territory" element={<SEOEnseignePrixPage />} />
+                          {/* Long-tail SEO: guide pages /guide-prix/<product>-<territory> */}
+                          <Route path="guide-prix/:slug" element={<SEOGuidePrixPage />} />
+                          {/* Pillar pages */}
+                          <Route path="guide-prix-alimentaire-dom" element={<GuidePrixAlimentaireDOM />} />
+                          <Route path="comparateur-supermarches-dom" element={<ComparateurSuperMarchesDOM />} />
+                          <Route path="inflation-alimentaire-dom" element={<InflationAlimentaireDOMAnalyse />} />
+                          <Route path="ou-faire-courses-dom" element={<OuFaireCoursesDOMPage />} />
                           <Route path="stats-dashboard" element={<StatsDashboard />} />
                           <Route path="top-economies" element={<TopEconomiesPage />} />
                           <Route path="tendances" element={<TendancesPage />} />

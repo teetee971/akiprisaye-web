@@ -1,0 +1,17 @@
+{
+  "generatedAt": "2026-03-20T17:44:34.371Z",
+  "totalPages": 2400,
+  "byType": {
+    "prix-local": 1025,
+    "comparaison-enseignes": 75,
+    "inflation-tendances": 120,
+    "moins-chers": 25,
+    "guide-prix": 1025,
+    "marque": 100,
+    "enseigne-prix": 30
+  },
+  "products": 205,
+  "territories": 5,
+  "retailers": 6,
+  "brands": 20
+}

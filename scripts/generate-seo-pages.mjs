@@ -443,6 +443,106 @@ function generateMoinsChersPages() {
 
 // ── Main execution ─────────────────────────────────────────────────────────────
 
+// ── Brands (20) ────────────────────────────────────────────────────────────────
+
+const BRANDS = [
+  { slug: 'coca-cola',    name: 'Coca-Cola' },
+  { slug: 'nutella',      name: 'Nutella' },
+  { slug: 'nestle',       name: 'Nestlé' },
+  { slug: 'president',    name: 'Président' },
+  { slug: 'panzani',      name: 'Panzani' },
+  { slug: 'evian',        name: 'Évian' },
+  { slug: 'ariel',        name: 'Ariel' },
+  { slug: 'pampers',      name: 'Pampers' },
+  { slug: 'barilla',      name: 'Barilla' },
+  { slug: 'danone',       name: 'Danone' },
+  { slug: 'kiri',         name: 'Kiri' },
+  { slug: 'lu',           name: 'LU' },
+  { slug: 'maggi',        name: 'Maggi' },
+  { slug: 'bonduelle',    name: 'Bonduelle' },
+  { slug: 'william-saurin', name: 'William Saurin' },
+  { slug: 'clipper',      name: 'Clipper' },
+  { slug: 'tropicana',    name: 'Tropicana' },
+  { slug: 'heineken',     name: 'Heineken' },
+  { slug: 'gillette',     name: 'Gillette' },
+  { slug: 'dove',         name: 'Dove' },
+];
+
+// ── Guide prix pages (/guide-prix/<product>-<territory>) ──────────────────────
+
+function generateGuidePrixPages() {
+  const pages = [];
+  for (const territory of TERRITORIES) {
+    for (const product of PRODUCTS) {
+      const slug = `${product.slug}-${territory.name}`;
+      pages.push({
+        type: 'guide-prix',
+        url: `${SITE_URL}/guide-prix/${slug}`,
+        path: `/guide-prix/${slug}`,
+        priority: '0.8',
+        changefreq: 'monthly',
+        meta: {
+          title: `Guide prix ${product.name} en ${territory.label} 2026 — Historique & conseils`,
+          description: `Guide complet sur le prix de ${product.name} en ${territory.label}. Historique, comparaison des enseignes, conseils pour payer moins cher.`,
+          territory: territory.code,
+          category: product.category,
+          productSlug: product.slug,
+        },
+      });
+    }
+  }
+  return pages;
+}
+
+// ── Brand pages (/marque/<brand>-<territory>) ─────────────────────────────────
+
+function generateMarquePages() {
+  const pages = [];
+  for (const territory of TERRITORIES) {
+    for (const brand of BRANDS) {
+      const slug = `${brand.slug}-${territory.name}`;
+      pages.push({
+        type: 'marque',
+        url: `${SITE_URL}/marque/${slug}`,
+        path: `/marque/${slug}`,
+        priority: '0.7',
+        changefreq: 'weekly',
+        meta: {
+          title: `Prix ${brand.name} en ${territory.label} — Tous les produits comparés`,
+          description: `Comparez les prix de tous les produits ${brand.name} en ${territory.label}. Tableau comparatif par enseigne, mis à jour quotidiennement.`,
+          territory: territory.code,
+          brand: brand.slug,
+        },
+      });
+    }
+  }
+  return pages;
+}
+
+// ── Enseigne pages (/prix-enseigne/<retailer>/<territory>) ─────────────────────
+
+function generateEnseignePages() {
+  const pages = [];
+  for (const territory of TERRITORIES) {
+    for (const retailer of RETAILERS) {
+      pages.push({
+        type: 'enseigne-prix',
+        url: `${SITE_URL}/prix-enseigne/${retailer.slug}/${territory.name}`,
+        path: `/prix-enseigne/${retailer.slug}/${territory.name}`,
+        priority: '0.8',
+        changefreq: 'daily',
+        meta: {
+          title: `Prix ${retailer.name} en ${territory.label} — Top produits du moment`,
+          description: `Découvrez les meilleurs prix chez ${retailer.name} en ${territory.label}. Top 10 produits, comparaison concurrents, conseils économies.`,
+          territory: territory.code,
+          retailer: retailer.slug,
+        },
+      });
+    }
+  }
+  return pages;
+}
+
 const args = process.argv.slice(2);
 const outputJson    = args.includes('--json');
 const outputSitemap = args.includes('--sitemap');
@@ -451,15 +551,19 @@ const prixPages         = generatePrixPages();
 const comparaisonPages  = generateComparaisonPages();
 const inflationPages    = generateInflationPages();
 const moinsChersPages   = generateMoinsChersPages();
+const guidePrixPages    = generateGuidePrixPages();
+const marquePages       = generateMarquePages();
+const enseignePages     = generateEnseignePages();
 
 const allPages = [
   ...prixPages,
   ...comparaisonPages,
   ...inflationPages,
   ...moinsChersPages,
+  ...guidePrixPages,
+  ...marquePages,
+  ...enseignePages,
 ];
-
-// ── Stats summary ──────────────────────────────────────────────────────────────
 
 console.log('🚀 A KI PRI SA YÉ — Générateur de pages SEO longue traîne');
 console.log('──────────────────────────────────────────────────────────');
@@ -467,6 +571,9 @@ console.log(`📄 Pages prix locaux         : ${prixPages.length}`);
 console.log(`🏪 Pages comparaison enseignes: ${comparaisonPages.length}`);
 console.log(`📈 Pages inflation/tendances  : ${inflationPages.length}`);
 console.log(`💰 Pages produits moins chers : ${moinsChersPages.length}`);
+console.log(`📖 Pages guide prix           : ${guidePrixPages.length}`);
+console.log(`🏷️  Pages marques              : ${marquePages.length}`);
+console.log(`🏬 Pages enseignes            : ${enseignePages.length}`);
 console.log(`──────────────────────────────────────────────────────────`);
 console.log(`🎯 TOTAL pages générées       : ${allPages.length}`);
 console.log('');
@@ -483,15 +590,34 @@ if (outputJson || !outputSitemap) {
       'comparaison-enseignes': comparaisonPages.length,
       'inflation-tendances':   inflationPages.length,
       'moins-chers':           moinsChersPages.length,
+      'guide-prix':            guidePrixPages.length,
+      'marque':                marquePages.length,
+      'enseigne-prix':         enseignePages.length,
     },
-    products:   PRODUCTS.length,
+    products:    PRODUCTS.length,
     territories: TERRITORIES.length,
-    retailers:  RETAILERS.length,
+    retailers:   RETAILERS.length,
+    brands:      BRANDS.length,
     pages: allPages,
   };
 
   fs.writeFileSync('seo-pages-manifest.json', JSON.stringify(manifest, null, 2));
   console.log('✔ seo-pages-manifest.json written');
+
+  // Also write to frontend/src/data/seo/
+  const seoDataDir = 'frontend/src/data/seo';
+  fs.mkdirSync(seoDataDir, { recursive: true });
+  const generatedPagesData = {
+    generatedAt: manifest.generatedAt,
+    totalPages:  manifest.totalPages,
+    byType:      manifest.byType,
+    products:    manifest.products,
+    territories: manifest.territories,
+    retailers:   manifest.retailers,
+    brands:      manifest.brands,
+  };
+  fs.writeFileSync(`${seoDataDir}/generated-pages.json`, JSON.stringify(generatedPagesData, null, 2));
+  console.log(`✔ ${seoDataDir}/generated-pages.json written`);
 }
 
 // ── Sitemap fragment output ────────────────────────────────────────────────────

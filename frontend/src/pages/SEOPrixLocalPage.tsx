@@ -27,9 +27,16 @@ import {
   TERRITORY_NAMES,
   TERRITORY_SLUG_MAP,
   buildPrixLocalJsonLd,
-  generateCategorySlug,
   SITE_URL,
 } from '../utils/seoHelpers';
+import {
+  getPageAngle,
+  generatePageIntro,
+  generatePriceTip,
+  generateFaqItems,
+} from '../utils/seoContentEngine';
+import InternalLinksSection from '../components/seo/InternalLinksSection';
+import ConversionStickyBar from '../components/business/ConversionStickyBar';
 
 // ── Mock price data (replace with real API hook when available) ───────────────
 // Prices are territory-adjusted to reflect real cost-of-living differences
@@ -227,7 +234,7 @@ export default function SEOPrixLocalPage() {
   );
 
   // URL param overrides parsed territory
-  const territory    = searchParams.get('territory') ?? parsedTerritory;
+  const territory     = searchParams.get('territory') ?? parsedTerritory;
   const territoryName = getTerritoryName(territory);
   const prices        = useMemo(() => getMockPrices(slug, territory), [slug, territory]);
   const bestPrice     = prices[0];
@@ -236,18 +243,23 @@ export default function SEOPrixLocalPage() {
     ? Math.round((prices[prices.length - 1].price - prices[0].price) * 100) / 100
     : 0;
 
+  const angle      = useMemo(() => getPageAngle(slug), [slug]);
+  const pageIntro  = useMemo(() => generatePageIntro(productName, territory, angle), [productName, territory, angle]);
+  const priceTip   = useMemo(() => generatePriceTip(productName, territory, angle), [productName, territory, angle]);
+  const faqItems   = useMemo(() => generateFaqItems(productName, territory, angle), [productName, territory, angle]);
+
   const jsonLd = buildPrixLocalJsonLd(
     productName,
     territory,
     prices.map((p) => ({ retailer: p.retailer, price: p.price })),
   );
 
-  const seoTitle       = `Prix ${productName} en ${territoryName} — Comparer et économiser`;
-  const seoDescription = `Comparez le prix de ${productName} en ${territoryName}. Meilleur prix : ${formatEur(bestPrice.price)} chez ${bestPrice.retailer}. ${prices.length} enseignes comparées.`;
+  const seoTitle       = `Prix ${productName} en ${territoryName} : où payer le moins cher ?`;
+  const seoDescription = `Comparez le prix de ${productName} en ${territoryName}. Meilleur prix aujourd'hui : ${formatEur(bestPrice.price)} chez ${bestPrice.retailer}. Économisez jusqu'à ${formatEur(maxSavings)} — ${prices.length} enseignes comparées.`;
   const canonical      = `${SITE_URL}/prix/${slug}`;
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] px-4 py-8">
+    <div className="min-h-screen bg-[#0a0a0f] px-4 py-8 pb-24 sm:pb-8">
       <SEOHead
         title={seoTitle}
         description={seoDescription}
@@ -268,9 +280,9 @@ export default function SEOPrixLocalPage() {
           </ol>
         </nav>
 
-        {/* H1 */}
+        {/* H1 — question format */}
         <h1 className="text-xl font-bold text-white sm:text-2xl">
-          Quel est le prix de {productName} en {territoryName} ?
+          Où acheter {productName} moins cher en {territoryName} ?
         </h1>
 
         {/* ── Hero: Best price + CTA — visible without scrolling ──────────── */}
@@ -338,23 +350,37 @@ export default function SEOPrixLocalPage() {
           </div>
         </div>
 
-        {/* ── SEO content (invisible UX but Google loves it) ───────────────── */}
+        {/* ── FAQ section ──────────────────────────────────────────────────── */}
+        <section className="rounded-xl border border-white/8 bg-white/[0.02] p-4">
+          <h2 className="mb-3 text-sm font-bold text-white">Questions fréquentes</h2>
+          <div className="space-y-2">
+            {faqItems.map((item, idx) => (
+              <details
+                key={idx}
+                className="group rounded-lg border border-white/5 bg-white/[0.01] px-4 py-3"
+              >
+                <summary className="cursor-pointer list-none text-xs font-semibold text-zinc-300 group-open:text-emerald-400">
+                  {item.q}
+                </summary>
+                <p className="mt-2 text-xs leading-relaxed text-zinc-500">{item.a}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+
+        {/* ── Unique SEO content ───────────────────────────────────────────── */}
         <section className="rounded-xl border border-white/5 bg-white/[0.01] p-4">
           <h2 className="sr-only">Informations complémentaires</h2>
-          <div className="space-y-2 text-xs leading-relaxed text-zinc-500">
-            <p>
-              <strong className="text-zinc-400">
-                Où acheter {productName} moins cher en {territoryName} ?
-              </strong>{' '}
-              Notre comparateur analyse quotidiennement les prix dans toutes les enseignes
-              (Carrefour, E.Leclerc, Super U, Leader Price, Intermarché) pour vous indiquer
-              le prix le plus bas du {productName} en {territoryName}.
-            </p>
+          <div className="space-y-3 text-xs leading-relaxed text-zinc-500">
+            <p>{pageIntro}</p>
             <p>
               En {territoryName}, les prix sont en moyenne <strong className="text-zinc-300">
               {Math.round((MOCK_PRICE_COEFFICIENTS[territory] ?? 1.15) * 100 - 100)}% plus
               élevés</strong> qu'en France métropolitaine en raison des coûts de transport et
-              de la vie insulaire. Notre comparateur vous aide à trouver les meilleures offres.
+              de la vie insulaire.
+            </p>
+            <p className="rounded-lg border border-emerald-400/10 bg-emerald-400/5 p-3 text-emerald-300/80">
+              {priceTip}
             </p>
             <p>
               Économisez jusqu'à <strong className="text-emerald-400">{formatEur(maxSavings)}</strong>{' '}
@@ -371,7 +397,15 @@ export default function SEOPrixLocalPage() {
           <TerritoryLinks currentSlug={slug} currentTerritory={territory} />
         </section>
 
-        {/* ── Internal linking: related pages ─────────────────────────────── */}
+        {/* ── Dense internal linking ───────────────────────────────────────── */}
+        <InternalLinksSection
+          productSlug={slug.replace(/-(?:guadeloupe|martinique|guyane|reunion|mayotte)$/, '')}
+          productName={productName}
+          territory={territory}
+          category="epicerie"
+        />
+
+        {/* ── Voir aussi ───────────────────────────────────────────────────── */}
         <section className="rounded-xl border border-white/5 bg-white/[0.02] p-4">
           <h2 className="mb-3 text-xs font-bold uppercase tracking-widest text-zinc-500">
             Voir aussi
@@ -399,6 +433,17 @@ export default function SEOPrixLocalPage() {
         </section>
 
       </div>
+
+      {/* Sticky conversion bar — mobile only */}
+      <ConversionStickyBar
+        bestPrice={bestPrice.price}
+        savings={maxSavings}
+        retailer={bestPrice.retailer}
+        retailerUrl={buildRetailerUrl(bestPrice.retailer, '') ?? null}
+        productName={productName}
+        territory={territory}
+        onCTAClick={() => trackRetailerClick('', bestPrice.retailer, territory, bestPrice.price)}
+      />
     </div>
   );
 }

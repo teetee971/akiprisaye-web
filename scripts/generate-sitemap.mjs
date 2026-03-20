@@ -171,6 +171,62 @@ territories.forEach(territory => {
 `;
 });
 
+// ── Guide pages (/guide-prix/<product>-<territory>) ───────────────────────────
+territories.forEach(territory => {
+  const tSlug = territorySlugMap[territory];
+  topProducts.forEach(product => {
+    sitemap += `  <url>
+    <loc>${SITE_URL}/guide-prix/${product}-${tSlug}</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+`;
+  });
+});
+
+// ── Brand pages (/marque/<brand>-<territory>) ─────────────────────────────────
+const brands = [
+  'coca-cola', 'nutella', 'nestle', 'president', 'panzani',
+  'evian', 'ariel', 'pampers', 'barilla', 'danone',
+  'kiri', 'lu', 'maggi', 'bonduelle', 'william-saurin',
+  'clipper', 'tropicana', 'heineken', 'gillette', 'dove',
+];
+brands.forEach(brand => {
+  territories.forEach(territory => {
+    const tSlug = territorySlugMap[territory];
+    sitemap += `  <url>
+    <loc>${SITE_URL}/marque/${brand}-${tSlug}</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+`;
+  });
+});
+
+// ── Retailer pages (/prix-enseigne/<retailer>/<territory>) ────────────────────
+const retailers = ['carrefour', 'leclerc', 'super-u', 'leader-price', 'intermarche', 'simply-market'];
+retailers.forEach(retailer => {
+  territories.forEach(territory => {
+    const tSlug = territorySlugMap[territory];
+    sitemap += `  <url>
+    <loc>${SITE_URL}/prix-enseigne/${retailer}/${tSlug}</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+`;
+  });
+});
+
+// ── Pillar pages ──────────────────────────────────────────────────────────────
+['guide-prix-alimentaire-dom', 'comparateur-supermarches-dom', 'inflation-alimentaire-dom', 'ou-faire-courses-dom'].forEach(pillar => {
+  sitemap += `  <url>
+    <loc>${SITE_URL}/${pillar}</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+`;
+});
+
 sitemap += "</urlset>";
 
 // Write sitemap.xml
@@ -207,11 +263,18 @@ const prixCount       = topProducts.length * territories.length;
 const comparerCount   = retailerPairs.length * territories.length;
 const inflationCount  = inflationCategories.length * territories.length * inflationYears.length;
 const moinsChersCount = territories.length;
-const longTailTotal   = prixCount + comparerCount + inflationCount + moinsChersCount;
+const guidePrixCount  = topProducts.length * territories.length;
+const marqueCount     = brands.length * territories.length;
+const enseigneCount   = retailers.length * territories.length;
+const longTailTotal   = prixCount + comparerCount + inflationCount + moinsChersCount + guidePrixCount + marqueCount + enseigneCount + 4;
 console.log(`  - ${prixCount} pages prix locaux (/prix/...)`);
 console.log(`  - ${comparerCount} pages comparaison enseignes (/comparer/...)`);
 console.log(`  - ${inflationCount} pages inflation/tendances (/inflation/...)`);
 console.log(`  - ${moinsChersCount} pages produits moins chers (/moins-cher/...)`);
+console.log(`  - ${guidePrixCount} pages guide prix (/guide-prix/...)`);
+console.log(`  - ${marqueCount} pages marques (/marque/...)`);
+console.log(`  - ${enseigneCount} pages enseignes (/prix-enseigne/...)`);
+console.log(`  - 4 pages piliers`);
 const total = staticPages.length + seoPages.length + (categories.length * territories.length) + territories.length + longTailTotal;
 console.log(`  Total: ${total} URLs (dont ${longTailTotal} longue traîne)`);
 console.log("✔ robots.txt généré");
