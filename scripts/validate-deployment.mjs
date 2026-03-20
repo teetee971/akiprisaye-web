@@ -29,6 +29,8 @@ const SITEMAP_FILENAME = 'sitemap.xml';
 const INTERNAL_ASSET_EXTENSIONS = ['js', 'css', 'png', 'svg', 'webmanifest'];
 const MAX_ERROR_BODY_LENGTH = 180;
 const FETCH_TIMEOUT_MS = 30_000;
+const FETCH_MAX_RETRIES = 3;
+const FETCH_RETRY_DELAY_MS = 5_000;
 const INTERNAL_ASSET_PATTERN = new RegExp(
   `(?:/assets/[^"'?#]+|/[^"'?#]+\\.(?:${INTERNAL_ASSET_EXTENSIONS.join('|')}))(?:[?#].*)?$`,
   'i',
@@ -269,15 +271,48 @@ export function extractSitemapPaths(xml, siteUrl) {
   return [...paths];
 }
 
+/**
+ * Returns true for transient server-side HTTP errors that should be retried.
+ * Covers 429 (rate-limit), 502 (bad gateway), 503 (service unavailable), and
+ * 504 (gateway timeout) — all common transient failures on GitHub Pages CDN.
+ */
+export function isTransientHttpError(status) {
+  return status === 429 || status === 502 || status === 503 || status === 504;
+}
+
 async function fetchText(url) {
-  const response = await fetch(url, { cache: 'no-store', signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
-  const body = await response.text();
-  return { response, body };
+  let lastResponse;
+  let lastBody;
+  for (let attempt = 0; attempt <= FETCH_MAX_RETRIES; attempt++) {
+    if (attempt > 0) {
+      await new Promise((resolve) => setTimeout(resolve, FETCH_RETRY_DELAY_MS));
+    }
+    const response = await fetch(url, { cache: 'no-store', signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
+    const body = await response.text();
+    if (!isTransientHttpError(response.status)) {
+      return { response, body };
+    }
+    lastResponse = response;
+    lastBody = body;
+    logWarn(`Tentative ${attempt + 1}/${FETCH_MAX_RETRIES + 1} — ${url} a répondu ${response.status}, nouvel essai dans ${FETCH_RETRY_DELAY_MS / 1000}s…`);
+  }
+  return { response: lastResponse, body: lastBody };
 }
 
 async function fetchStatus(url) {
-  const response = await fetch(url, { cache: 'no-store', signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
-  return response;
+  let lastResponse;
+  for (let attempt = 0; attempt <= FETCH_MAX_RETRIES; attempt++) {
+    if (attempt > 0) {
+      await new Promise((resolve) => setTimeout(resolve, FETCH_RETRY_DELAY_MS));
+    }
+    const response = await fetch(url, { cache: 'no-store', signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
+    if (!isTransientHttpError(response.status)) {
+      return response;
+    }
+    lastResponse = response;
+    logWarn(`Tentative ${attempt + 1}/${FETCH_MAX_RETRIES + 1} — ${url} a répondu ${response.status}, nouvel essai dans ${FETCH_RETRY_DELAY_MS / 1000}s…`);
+  }
+  return lastResponse;
 }
 
 function hasAcceptableRouteResponse(response, body, githubPages) {

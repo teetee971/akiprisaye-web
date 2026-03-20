@@ -19,6 +19,7 @@ import {
   isGitHubPagesSite,
   isMainBranch,
   isStaleBundleReferenced,
+  isTransientHttpError,
   joinSiteUrl,
   normalizeBaseUrl,
   parseVersionJson,
@@ -269,6 +270,22 @@ describe('validate-deployment helpers', () => {
     expect(countOccurrences('', 'x')).toBe(0);
     expect(countOccurrences('hello', '')).toBe(0);
     expect(countOccurrences('no match here', 'xyz')).toBe(0);
+  });
+
+  it('isTransientHttpError classifies retryable status codes correctly', () => {
+    // Transient CDN / rate-limit errors that should be retried
+    expect(isTransientHttpError(429)).toBe(true);
+    expect(isTransientHttpError(502)).toBe(true);
+    expect(isTransientHttpError(503)).toBe(true);
+    expect(isTransientHttpError(504)).toBe(true);
+    // Permanent errors and success codes must NOT be retried
+    expect(isTransientHttpError(200)).toBe(false);
+    expect(isTransientHttpError(301)).toBe(false);
+    expect(isTransientHttpError(400)).toBe(false);
+    expect(isTransientHttpError(401)).toBe(false);
+    expect(isTransientHttpError(403)).toBe(false);
+    expect(isTransientHttpError(404)).toBe(false);
+    expect(isTransientHttpError(500)).toBe(false);
   });
 });
 
