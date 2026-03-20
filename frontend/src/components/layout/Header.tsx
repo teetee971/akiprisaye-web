@@ -137,7 +137,7 @@ export default function Header() {
 
             <Link
               to="/liste"
-              className="rounded-lg border border-slate-700 px-3 py-1 text-sm text-slate-100"
+              className="hidden sm:flex items-center rounded-lg border border-slate-700 px-3 py-1 text-sm text-slate-100"
               aria-label={`Ma liste (${count} article${count !== 1 ? 's' : ''})`}
             >
               Liste <span className="ml-1 rounded-full bg-blue-600 px-2 py-0.5 text-xs" aria-hidden="true">{count}</span>
