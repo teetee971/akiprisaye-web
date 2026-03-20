@@ -168,6 +168,8 @@ export default defineConfig({
       abs('./src/test/autoSeoGuardrails.test.ts'),
       // Auto SEO engine — scoring determinism, recommendation rules, getSummaryStats, edge cases
       abs('./src/test/autoSeoEngine.test.ts'),
+      // CRO engine — tracking storage, score determinism, recommendation generation
+      abs('./src/test/cro.engine.test.ts'),
     ],
 
     exclude: ['**/node_modules/**', '**/.git/**', '**/dist/**', '**/coverage/**'],
