@@ -416,7 +416,7 @@ function FaqSection({ product, territory, bestPrice, savings, average, bestRetai
 }
 
 // ── Related products / territory links ────────────────────────────────────────
-const DOM_TERRITORIES
+const DOM_TERRITORIES = Object.keys(TERRITORY_NAMES);
 
 interface RelatedProductsSectionProps {
   product: { name: string; brand?: string; category?: string };
