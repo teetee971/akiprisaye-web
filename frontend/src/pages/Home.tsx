@@ -1,11 +1,10 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
-import { BarChart2, ShoppingCart, Receipt, Landmark, Search, Globe, Camera } from 'lucide-react';
+import { BarChart2, ShoppingCart, Camera, Search, Globe } from 'lucide-react';
 import { getComparisonOfDay, type PriceComparison } from '../data/exampleComparisons';
 import '../styles/home-v5.css';
 import '../styles/animations.css';
 import { safeLocalStorage } from '../utils/safeLocalStorage';
-import { getTerritoryAsset, getProductImage } from '../config/imageAssets';
 import { SEOHead } from '../components/ui/SEOHead';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import {
@@ -14,132 +13,213 @@ import {
   SkeletonStatGrid,
 } from '../components/SkeletonWidgets';
 
-// Below-fold components — lazy-loaded since they're only visible after user expands the page
-const PriceLiveTicker = lazy(() => import('../components/home/PriceLiveTicker'));
-const FlipStatCard = lazy(() => import('../components/ui/FlipStatCard'));
-
-const HowItWorksSection = lazy(() => import('./home-v5/HowItWorksSection'));
-const ObservatorySection = lazy(() => import('./home-v5/ObservatorySection'));
-const MiniFaqSection = lazy(() => import('./home-v5/MiniFaqSection'));
-const TerritoryPriceChart = lazy(() => import('../components/home/TerritoryPriceChart'));
-const PriceEvolutionChart = lazy(() => import('../components/home/PriceEvolutionChart'));
-const LiveNewsFeed = lazy(() => import('../components/home/LiveNewsFeed'));
-const PanierVitalWidget = lazy(() => import('../components/home/PanierVitalWidget'));
-const CategoryOvercostChart = lazy(() => import('../components/home/CategoryOvercostChart'));
-const StoreRankingWidget = lazy(() => import('../components/home/StoreRankingWidget'));
+// ── Below-fold observatory — lazy-loaded, skeleton fallbacks prevent CLS ──────
+const PriceLiveTicker        = lazy(() => import('../components/home/PriceLiveTicker'));
+const FlipStatCard           = lazy(() => import('../components/ui/FlipStatCard'));
+const HowItWorksSection      = lazy(() => import('./home-v5/HowItWorksSection'));
+const ObservatorySection     = lazy(() => import('./home-v5/ObservatorySection'));
+const MiniFaqSection         = lazy(() => import('./home-v5/MiniFaqSection'));
+const TerritoryPriceChart    = lazy(() => import('../components/home/TerritoryPriceChart'));
+const PriceEvolutionChart    = lazy(() => import('../components/home/PriceEvolutionChart'));
+const LiveNewsFeed           = lazy(() => import('../components/home/LiveNewsFeed'));
+const PanierVitalWidget      = lazy(() => import('../components/home/PanierVitalWidget'));
+const CategoryOvercostChart  = lazy(() => import('../components/home/CategoryOvercostChart'));
+const StoreRankingWidget     = lazy(() => import('../components/home/StoreRankingWidget'));
 const InflationBarometerWidget = lazy(() => import('../components/home/InflationBarometerWidget'));
-const ProduitChocWidget = lazy(() => import('../components/home/ProduitChocWidget'));
-const IndiceEquiteWidget = lazy(() => import('../components/home/IndiceEquiteWidget'));
-const AppDemoShowcase = lazy(() => import('../components/home/AppDemoShowcase'));
-const VideoVieChere = lazy(() => import('../components/home/VideoVieChere'));
-const PriceExplainerBanner = lazy(() => import('../components/home/PriceExplainerBanner'));
-const LettreHebdoWidget = lazy(() => import('../components/home/LettreHebdoWidget'));
-const LettreJourWidget = lazy(() => import('../components/home/LettreJourWidget'));
+const ProduitChocWidget      = lazy(() => import('../components/home/ProduitChocWidget'));
+const IndiceEquiteWidget     = lazy(() => import('../components/home/IndiceEquiteWidget'));
+const AppDemoShowcase        = lazy(() => import('../components/home/AppDemoShowcase'));
+const VideoVieChere          = lazy(() => import('../components/home/VideoVieChere'));
+const PriceExplainerBanner   = lazy(() => import('../components/home/PriceExplainerBanner'));
+const LettreHebdoWidget      = lazy(() => import('../components/home/LettreHebdoWidget'));
+const LettreJourWidget       = lazy(() => import('../components/home/LettreJourWidget'));
 
-const TESTIMONIALS = [
-  {
-    name: 'Marie-Christine F.',
-    territory: 'Guadeloupe',
-    flag: '🇬🇵',
-    savings: '47 €',
-    savingsLabel: 'économisés / mois',
-    quote: "J'ai comparé 3 enseignes pour mon panier habituel. La différence est réelle et constante depuis que j'utilise l'application.",
-    product: 'Courses hebdomadaires',
-    initials: 'MC',
-  },
-  {
-    name: 'Jean-Louis B.',
-    territory: 'Martinique',
-    flag: '🇲🇶',
-    savings: '31 %',
-    savingsLabel: 'de moins sur le riz',
-    quote: 'Le même riz que j\'achetais 3,20 € était affiché 2,20 € dans l\'enseigne à deux rues. En un clic, j\'ai su où aller.',
-    product: 'Riz long grain 1 kg',
-    initials: 'JL',
-  },
-  {
-    name: 'Sophie D.',
-    territory: 'La Réunion',
-    flag: '🇷🇪',
-    savings: '89 €',
-    savingsLabel: 'économisés en 1 mois',
-    quote: "L'alerte de prix m'a prévenue quand le lait et les conserves ont baissé. J'ai acheté au bon moment, sans attendre.",
-    product: 'Produits laitiers & conserves',
-    initials: 'SD',
-  },
+// ── Static data ───────────────────────────────────────────────────────────────
+
+const RETAILER_LOGOS = ['Carrefour', 'E.Leclerc', 'Super U', 'Leader Price', 'Match', 'Hyper U'];
+
+const POPULAR_PRODUCTS = [
+  { name: 'Lait demi-écrémé 1L', price: '1,32 \u20ac', delta: '-0,18 \u20ac' },
+  { name: 'Riz long 1 kg',        price: '2,48 \u20ac', delta: '-0,42 \u20ac' },
+  { name: 'Huile 1L',             price: '3,96 \u20ac', delta: '-0,61 \u20ac' },
 ];
 
-/** Static phone mockup for the hero — shows a price comparison screen */
-const HERO_PRICES = [
-  { store: 'E.Leclerc',    price: 1.11, color: '#22c55e' },
-  { store: 'Carrefour GP', price: 1.45, color: '#f59e0b' },
-  { store: 'Hyper U MQ',   price: 1.58, color: '#f97316' },
-  { store: 'Score YT',     price: 2.03, color: '#ef4444' },
-];
-
-const PRIORITY_ACTIONS = [
-  {
-    title: 'Comparer un produit',
-    description: 'Tapez un nom, un code-barre ou utilisez le scan pour aller droit au comparateur.',
-    to: '/comparateur',
-  },
-  {
-    title: 'Choisir mon territoire',
-    description: 'Accédez directement aux prix et magasins de votre zone.',
-    to: '/comparateur?territoire=GP',
-  },
-  {
-    title: 'Comprendre les écarts',
-    description: 'Consultez ensuite l’observatoire complet seulement si vous en avez besoin.',
-    to: '/comprendre-prix',
-  },
+const PRICE_ALERTS = [
+  { label: 'Yaourt nature x12', change: '-7%',  note: 'Baisse d\u00e9tect\u00e9e', down: true  },
+  { label: 'Poulet entier',     change: '+4%',  note: 'Hausse r\u00e9cente',       down: false },
+  { label: 'P\u00e2tes 500g',   change: '-3%',  note: 'Prix stabilis\u00e9',       down: true  },
 ];
 
 const PRIMARY_TERRITORIES = [
-  { code: 'GP', name: 'Guadeloupe', flag: '🇬🇵' },
-  { code: 'MQ', name: 'Martinique', flag: '🇲🇶' },
-  { code: 'GF', name: 'Guyane',     flag: '🇬🇫' },
-  { code: 'RE', name: 'La Réunion', flag: '🇷🇪' },
-  { code: 'YT', name: 'Mayotte',    flag: '🇾🇹' },
+  { code: 'GP', name: 'Guadeloupe', flag: '\ud83c\uddec\ud83c\uddf5' },
+  { code: 'MQ', name: 'Martinique', flag: '\ud83c\uddf2\ud83c\uddf6' },
+  { code: 'GF', name: 'Guyane',     flag: '\ud83c\uddec\ud83c\uddeb' },
+  { code: 'RE', name: 'La R\u00e9union', flag: '\ud83c\uddf7\ud83c\uddea' },
+  { code: 'YT', name: 'Mayotte',    flag: '\ud83c\uddfe\ud83c\uddf9' },
 ];
 
-function HeroPhoneMockup() {
-  const maxPrice = Math.max(...HERO_PRICES.map((d) => d.price));
+const ALL_TERRITORIES = [
+  { code: 'GP', name: 'Guadeloupe',           flag: '\ud83c\uddec\ud83c\uddf5' },
+  { code: 'MQ', name: 'Martinique',            flag: '\ud83c\uddf2\ud83c\uddf6' },
+  { code: 'GF', name: 'Guyane',                flag: '\ud83c\uddec\ud83c\uddeb' },
+  { code: 'RE', name: 'La R\u00e9union',       flag: '\ud83c\uddf7\ud83c\uddea' },
+  { code: 'YT', name: 'Mayotte',               flag: '\ud83c\uddfe\ud83c\uddf9' },
+  { code: 'NC', name: 'Nouvelle-Cal\u00e9donie', flag: '\ud83c\uddf3\ud83c\udde8' },
+];
+
+const TESTIMONIALS = [
+  {
+    name: 'Marie-Christine F.', territory: 'Guadeloupe', flag: '\ud83c\uddec\ud83c\uddf5',
+    savings: '47 \u20ac', savingsLabel: '\u00e9conomis\u00e9s / mois', initials: 'MC',
+    quote: "J'ai compar\u00e9 3 enseignes pour mon panier habituel. La diff\u00e9rence est r\u00e9elle.",
+    product: 'Courses hebdomadaires',
+  },
+  {
+    name: 'Jean-Louis B.', territory: 'Martinique', flag: '\ud83c\uddf2\ud83c\uddf6',
+    savings: '31 %', savingsLabel: 'de moins sur le riz', initials: 'JL',
+    quote: "Le m\u00eame riz \u00e9tait affich\u00e9 2,20 \u20ac dans l'enseigne \u00e0 deux rues. En un clic j'ai su.",
+    product: 'Riz long grain 1 kg',
+  },
+  {
+    name: 'Sophie D.', territory: 'La R\u00e9union', flag: '\ud83c\uddf7\ud83c\uddea',
+    savings: '89 \u20ac', savingsLabel: '\u00e9conomis\u00e9s en 1 mois', initials: 'SD',
+    quote: "L'alerte m'a pr\u00e9venue quand le lait a baiss\u00e9. J'ai achet\u00e9 au bon moment.",
+    product: 'Produits laitiers & conserves',
+  },
+];
+
+// ── Ambient glow blobs — fixed, behind all content ───────────────────────────
+function BgFX() {
   return (
-    <div className="hero-phone-wrap">
-      <div className="app-demo-phone">
-        <div className="app-demo-phone-notch" />
-        <div className="app-demo-phone-screen">
-          <div className="demo-screen demo-screen--compare">
-            <div className="demo-compare-header">
-              <span className="demo-screen-title">🥛 Lait UHT 1L</span>
-              <span className="demo-compare-date">Mars 2026</span>
-            </div>
-            <div className="demo-compare-bars">
-              {HERO_PRICES.map((d, i) => (
-                <div key={i} className="demo-compare-row">
-                  <span className="demo-compare-store">{d.store}</span>
-                  <div className="demo-compare-bar-wrap">
-                    <div
-                      className="demo-compare-bar"
-                      style={{ width: `${Math.round((d.price / maxPrice) * 100)}%`, background: d.color }}
-                    />
-                  </div>
-                  <span className="demo-compare-price" style={{ color: d.color }}>{d.price.toFixed(2)}€</span>
-                </div>
-              ))}
-            </div>
-            <div className="demo-compare-saving">
-              💡 Économie : <strong>+0,92 €/L</strong> vs le moins cher
-            </div>
-          </div>
-        </div>
-        <div className="app-demo-phone-home" />
-      </div>
-      <div className="app-demo-glow" />
+    <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden" aria-hidden="true">
+      <div className="absolute -left-32 -top-16 h-[28rem] w-[28rem] rounded-full bg-emerald-400/10 blur-3xl" />
+      <div className="absolute right-0 top-32 h-[32rem] w-[32rem] rounded-full bg-white/[0.04] blur-3xl" />
+      <div className="absolute bottom-0 left-1/3 h-72 w-72 rounded-full bg-emerald-300/[0.06] blur-3xl" />
     </div>
   );
 }
+
+// ── Shared primitives ─────────────────────────────────────────────────────────
+
+interface BentoCardProps { children: React.ReactNode; className?: string; }
+function BentoCard({ children, className = '' }: BentoCardProps) {
+  return (
+    <section
+      className={`rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.03))] p-5 shadow-[0_16px_60px_rgba(0,0,0,0.24)] backdrop-blur-xl sm:p-6 ${className}`}
+    >
+      {children}
+    </section>
+  );
+}
+
+interface SectionHeaderProps { eyebrow: string; title: string; description: string; }
+function SectionHeader({ eyebrow, title, description }: SectionHeaderProps) {
+  return (
+    <div>
+      <div className="text-xs font-semibold uppercase tracking-[0.24em] text-zinc-400">{eyebrow}</div>
+      <h3 className="mt-3 text-xl font-semibold tracking-[-0.03em] text-white sm:text-2xl">{title}</h3>
+      <p className="mt-2 text-sm leading-6 text-zinc-400">{description}</p>
+    </div>
+  );
+}
+
+interface MetricBlockProps { label: string; value: string; helper: string; accent?: boolean; }
+function MetricBlock({ label, value, helper, accent = false }: MetricBlockProps) {
+  return (
+    <div className={`rounded-[24px] border px-4 py-4 ${accent ? 'border-emerald-400/20 bg-emerald-400/10' : 'border-white/10 bg-white/[0.03]'}`}>
+      <div className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-400">{label}</div>
+      <div className={`mt-3 text-3xl font-semibold tracking-[-0.04em] ${accent ? 'text-emerald-300' : 'text-white'}`}>{value}</div>
+      <div className="mt-2 text-sm text-zinc-400">{helper}</div>
+    </div>
+  );
+}
+
+interface StatCardProps { label: string; value: string; helper: string; }
+function StatCard({ label, value, helper }: StatCardProps) {
+  return (
+    <div className="rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-4">
+      <div className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">{label}</div>
+      <div className="mt-2 text-lg font-semibold text-white">{value}</div>
+      <div className="mt-1 text-xs text-zinc-400">{helper}</div>
+    </div>
+  );
+}
+
+interface KPICardProps { title: string; value: string; }
+function KPICard({ title, value }: KPICardProps) {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 transition hover:-translate-y-0.5 hover:bg-white/[0.07]">
+      <div className="text-sm text-zinc-400">{title}</div>
+      <div className="mt-2 text-2xl font-semibold text-white">{value}</div>
+    </div>
+  );
+}
+
+interface FeatureChipProps { title: string; subtitle: string; }
+function FeatureChip({ title, subtitle }: FeatureChipProps) {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3">
+      <div className="text-sm font-medium text-white">{title}</div>
+      <div className="mt-1 text-xs text-zinc-400">{subtitle}</div>
+    </div>
+  );
+}
+
+// ── Animated savings counter (WOW effect) ─────────────────────────────────────
+interface LiveResultProps { comparison: PriceComparison; }
+function LiveResult({ comparison }: LiveResultProps) {
+  const target = Math.max(0, parseFloat((comparison.territoryPrice - comparison.metropolePrice).toFixed(2)));
+  const [displayed, setDisplayed] = useState(0);
+  const started = useRef(false);
+
+  useEffect(() => {
+    if (started.current) return;
+    started.current = true;
+    let value = 0;
+    const step = target / 40;
+    const id = setInterval(() => {
+      value = Math.min(value + step, target);
+      setDisplayed(parseFloat(value.toFixed(2)));
+      if (value >= target) clearInterval(id);
+    }, 30);
+    return () => clearInterval(id);
+  }, [target]);
+
+  return (
+    <section className="overflow-hidden rounded-[32px] border border-white/10 bg-[linear-gradient(135deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03))] p-5 shadow-[0_20px_70px_rgba(0,0,0,0.30)] backdrop-blur-xl sm:p-6">
+      <div className="grid gap-5 lg:grid-cols-[200px_1fr_240px] lg:items-center">
+        <div className="relative h-36 overflow-hidden rounded-[24px] border border-white/10 bg-[linear-gradient(135deg,rgba(255,255,255,0.10),rgba(255,255,255,0.03))]">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(34,197,94,0.18),transparent_55%)]" />
+          <div className="relative flex h-full flex-col justify-end p-4">
+            <div className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-300">Exemple du jour</div>
+            <div className="mt-1 text-lg font-semibold leading-tight text-white">{comparison.product}</div>
+            <div className="mt-1 text-xs text-zinc-400">{comparison.territoryFlag} {comparison.territory}</div>
+          </div>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-3">
+          <MetricBlock label="Prix local"     value={`${comparison.territoryPrice.toFixed(2)} \u20ac`} helper={comparison.territory} />
+          <MetricBlock label="Prix m\u00e9tropole" value={`${comparison.metropolePrice.toFixed(2)} \u20ac`} helper="R\u00e9f\u00e9rence \ud83c\uddeb\ud83c\uddf7" />
+          <MetricBlock label="Surcot" value={`+${displayed.toFixed(2)} \u20ac`} helper={`+${comparison.deltaPercent}%`} accent />
+        </div>
+
+        <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-4">
+          <div className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-400">Enseignes compar\u00e9es</div>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {['E.Leclerc', 'Carrefour', 'Hyper U'].map((name) => (
+              <span key={name} className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-zinc-200">{name}</span>
+            ))}
+          </div>
+          <Link to="/comparateur" className="mt-4 flex items-center gap-1 text-xs font-semibold text-emerald-400 hover:underline">
+            Voir plus de comparaisons →
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ── Main page component ───────────────────────────────────────────────────────
 
 export default function HomeV5() {
   const navigate = useNavigate();
@@ -147,587 +227,509 @@ export default function HomeV5() {
   const [displayStats, setDisplayStats] = useState({ scans: 0, products: 0, territories: 0 });
   const [statsAnimated, setStatsAnimated] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [showScrollIndicator, setShowScrollIndicator] = useState(true);
+  const [selectedTerritory, setSelectedTerritory] = useState('');
   const [showMobileCTA, setShowMobileCTA] = useState(false);
-  const [showExtendedContent, setShowExtendedContent] = useState(false);
+  const [showExtended, setShowExtended] = useState(false);
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
-  const [exampleComparison] = useState<PriceComparison>(getComparisonOfDay());
+  const [comparison] = useState<PriceComparison>(getComparisonOfDay());
   const statsRef = useRef<HTMLElement | null>(null);
 
-  // Scroll reveal — triggers `.revealed` on `.reveal` elements as they enter viewport
   useScrollReveal();
 
-  // Animated counter: count up to target when section comes into view
   useEffect(() => {
     if (statsAnimated) return;
     const el = statsRef.current;
     if (!el) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          setStatsAnimated(true);
-          observer.disconnect();
-
-          const duration = 1400;
-          const startTime = performance.now();
-
-          const targets = { scans: stats.scans, products: stats.products, territories: stats.territories };
-
-          const step = (now: number) => {
-            const elapsed = Math.min((now - startTime) / duration, 1);
-            const ease = 1 - Math.pow(1 - elapsed, 3);
-            setDisplayStats({
-              scans: Math.round(targets.scans * ease),
-              products: Math.round(targets.products * ease),
-              territories: Math.round(targets.territories * ease),
-            });
-            if (elapsed < 1) requestAnimationFrame(step);
-          };
-          requestAnimationFrame(step);
-        }
-      },
-      { threshold: 0.4 },
-    );
+    const observer = new IntersectionObserver((entries) => {
+      if (!entries[0].isIntersecting) return;
+      setStatsAnimated(true);
+      observer.disconnect();
+      const duration = 1400;
+      const start = performance.now();
+      const targets = { scans: stats.scans, products: stats.products, territories: stats.territories };
+      const step = (now: number) => {
+        const t = Math.min((now - start) / duration, 1);
+        const ease = 1 - Math.pow(1 - t, 3);
+        setDisplayStats({
+          scans: Math.round(targets.scans * ease),
+          products: Math.round(targets.products * ease),
+          territories: Math.round(targets.territories * ease),
+        });
+        if (t < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    }, { threshold: 0.4 });
     observer.observe(el);
     return () => observer.disconnect();
   }, [stats, statsAnimated]);
 
   useEffect(() => {
-    const loadedStats = safeLocalStorage.getJSON('platform_stats', {
-      scans: 1200,
-      products: 5000,
-      territories: 12
-    });
-    setStats(loadedStats);
-
-    let windowHeight = window.innerHeight;
-    let windowWidth = window.innerWidth;
+    const loaded = safeLocalStorage.getJSON('platform_stats', { scans: 1200, products: 5000, territories: 12 });
+    setStats(loaded);
+    let w = window.innerWidth;
     let ticking = false;
-
-    setShowScrollIndicator(windowWidth > 768);
-
-    const handleResize = () => {
-      windowHeight = window.innerHeight;
-      windowWidth = window.innerWidth;
-      setShowScrollIndicator(windowWidth > 768 && window.scrollY <= 100);
-    };
-
-    const handleScroll = () => {
+    const onScroll = () => {
       if (ticking) return;
-
       window.requestAnimationFrame(() => {
-        if (window.scrollY > 100) {
-          setShowScrollIndicator(false);
-        }
-
-        if (windowWidth <= 768) {
-          setShowMobileCTA(window.scrollY > windowHeight * 0.6);
-        }
-
+        if (w <= 768) setShowMobileCTA(window.scrollY > window.innerHeight * 0.6);
         ticking = false;
       });
-
       ticking = true;
     };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', handleResize);
-    };
+    const onResize = () => { w = window.innerWidth; };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onResize);
+    return () => { window.removeEventListener('scroll', onScroll); window.removeEventListener('resize', onResize); };
   }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/recherche-produits?q=${encodeURIComponent(searchQuery)}`);
-    }
+    const dest = searchQuery.trim()
+      ? `/recherche-produits?q=${encodeURIComponent(searchQuery)}${selectedTerritory ? `&territoire=${selectedTerritory}` : ''}`
+      : `/comparateur${selectedTerritory ? `?territoire=${selectedTerritory}` : ''}`;
+    navigate(dest);
   };
-
-  const getTerritoryTitle = () => 'Comparez les prix réels près de chez vous';
 
   return (
     <>
       <SEOHead
-        title="A KI PRI SA YÉ – Transparence des prix Outre-mer"
-        description="Comparez les prix en Guadeloupe, Martinique, Guyane, La Réunion et dans tous les territoires ultramarins. Données citoyennes réelles, scanneur de produits, observatoire des prix."
+        title="A KI PRI SA YÉ \u2013 Transparence des prix Outre-mer"
+        description="Comparez les prix en Guadeloupe, Martinique, Guyane, La R\u00e9union et dans tous les territoires ultramarins. Donn\u00e9es citoyennes r\u00e9elles, scanneur de produits, observatoire des prix."
         canonical="https://teetee971.github.io/akiprisaye-web/"
       />
-    <div className="home-v5">
 
-      <section className="hero-v5">
-        {/* ── Hero background image — explicit <img> for LCP optimisation ── */}
-        <img
-          src="https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fm=webp&fit=crop&w=1600&q=80"
-          srcSet="https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fm=webp&fit=crop&w=800&q=80 800w, https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fm=webp&fit=crop&w=1200&q=80 1200w, https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fm=webp&fit=crop&w=1600&q=80 1600w"
-          sizes="100vw"
-          alt=""
-          aria-hidden="true"
-          width={1600}
-          height={900}
-          fetchPriority="high"
-          decoding="async"
-          crossOrigin="anonymous"
-          className="hero-bg-img"
-        />
+      <BgFX />
 
-        <div className="hero-inner">
-          {/* Left column: headline + search */}
-          <div className="hero-content fade-in">
-            <h1 className="hero-title slide-up">{getTerritoryTitle()}.</h1>
+      <div className="min-h-screen bg-[#05070a] text-white -mx-4 -mt-2 px-4 pb-8 pt-4 sm:px-6">
+        <div className="mx-auto max-w-7xl">
 
-            <p className="hero-subtitle slide-up delay-100">
-              Comparez vite, sans surcharge, avec des données locales pensées pour les DOM-TOM.
-            </p>
-            <p className="hero-reassurance fade-in delay-150">
-              Accès libre et gratuit. Données locales. Vos recherches restent sur votre appareil.
-            </p>
+          {/* Hero 2-column */}
+          <main className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]" id="main-content">
 
-            <form onSubmit={handleSearch} className="hero-search-xxl fade-in delay-200 border-scan">
-              <input
-                type="text"
-                placeholder="Ex : riz 5kg, lait, eau…"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="hero-search-input-xxl"
-                aria-label="Rechercher un produit"
+            {/* Hero panel */}
+            <section className="relative overflow-hidden rounded-[32px] border border-white/10 bg-[linear-gradient(135deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl sm:p-8 lg:min-h-[420px] lg:p-10">
+              <img
+                src="https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fm=webp&fit=crop&w=1200&q=80"
+                srcSet="https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fm=webp&fit=crop&w=800&q=80 800w, https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fm=webp&fit=crop&w=1200&q=80 1200w"
+                sizes="(max-width:1024px) 100vw, 58vw"
+                alt=""
+                aria-hidden="true"
+                width={1200}
+                height={800}
+                fetchPriority="high"
+                decoding="async"
+                crossOrigin="anonymous"
+                className="absolute inset-0 h-full w-full object-cover object-center opacity-[0.18] saturate-50"
               />
-              <button type="submit" className="hero-search-btn-xxl" aria-label="Rechercher un produit">
-                Rechercher un produit
-              </button>
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(52,211,153,0.18),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(255,255,255,0.06),transparent_30%)]" />
+
+              <div className="relative flex h-full flex-col justify-between">
+                <div>
+                  <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-zinc-300">
+                    <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_16px_rgba(52,211,153,0.8)]" aria-hidden="true" />
+                    Donn\u00e9es en direct
+                  </div>
+                  <h1 className="mt-6 text-4xl font-semibold tracking-[-0.04em] text-white sm:text-5xl xl:text-6xl">
+                    Comparez les prix.<br className="hidden sm:block" />
+                    <span className="text-emerald-400">\u00c9conomisez</span> instantan\u00e9ment.
+                  </h1>
+                  <p className="mt-5 max-w-xl text-base leading-7 text-zinc-300 sm:text-lg">
+                    Donn\u00e9es locales pour les DOM-COM. Guadeloupe, Martinique, Guyane, La R\u00e9union et plus.
+                    Acc\u00e8s libre, aucun compte requis.
+                  </p>
+                </div>
+                <div className="mt-8 grid gap-3 sm:grid-cols-3">
+                  <FeatureChip title="Temps r\u00e9el"    subtitle="donn\u00e9es fra\u00eeches" />
+                  <FeatureChip title="DROM-COM"      subtitle="12 territoires" />
+                  <FeatureChip title="Stable layout" subtitle="CLS \u2248 0" />
+                </div>
+              </div>
+            </section>
+
+            {/* Search panel — fixed min-height prevents CLS on hydration */}
+            <form
+              onSubmit={handleSearch}
+              className="relative min-h-[420px] overflow-hidden rounded-[32px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.03))] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl sm:p-6"
+              aria-label="Rechercher un produit"
+            >
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_10%,rgba(34,197,94,0.14),transparent_26%),radial-gradient(circle_at_20%_100%,rgba(255,255,255,0.08),transparent_30%)]" />
+              <div className="relative flex h-full flex-col justify-between">
+                <div>
+                  <div className="text-xs font-semibold uppercase tracking-[0.24em] text-zinc-400">Recherche rapide</div>
+                  <h2 className="mt-3 text-2xl font-semibold tracking-[-0.03em] text-white">
+                    Lancez une comparaison
+                  </h2>
+                  <div className="mt-6 space-y-4">
+                    <label className="block">
+                      <div className="mb-2 text-sm font-medium text-zinc-200">Produit ou code-barres</div>
+                      <div className="flex h-14 items-center rounded-2xl border border-white/10 bg-black/20 px-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] transition focus-within:border-white/25">
+                        <Search size={16} className="mr-3 shrink-0 text-zinc-500" aria-hidden="true" />
+                        <input
+                          type="text"
+                          placeholder="Ex. lait, p\u00e2tes, 3270190204877"
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          className="flex-1 bg-transparent text-sm text-white placeholder:text-zinc-500 outline-none"
+                          aria-label="Nom de produit ou code-barres"
+                        />
+                      </div>
+                    </label>
+                    <div>
+                      <div className="mb-2 text-sm font-medium text-zinc-200">Territoire</div>
+                      <div
+                        className="grid gap-2"
+                        style={{ gridTemplateColumns: 'repeat(5, minmax(0, 1fr))' }}
+                        role="radiogroup"
+                        aria-label="S\u00e9lectionner un territoire"
+                      >
+                        {PRIMARY_TERRITORIES.map((t) => (
+                          <button
+                            key={t.code}
+                            type="button"
+                            role="radio"
+                            aria-checked={selectedTerritory === t.code}
+                            onClick={() => setSelectedTerritory(selectedTerritory === t.code ? '' : t.code)}
+                            className={`flex flex-col items-center gap-1 rounded-2xl border py-2 text-center text-xs transition hover:-translate-y-0.5 ${selectedTerritory === t.code ? 'border-emerald-400/40 bg-emerald-400/10 text-emerald-300' : 'border-white/10 bg-white/[0.03] text-zinc-400 hover:border-white/20 hover:text-white'}`}
+                            title={t.name}
+                          >
+                            <span className="text-lg leading-none">{t.flag}</span>
+                            <span className="hidden sm:block text-[0.65rem]">{t.name.split(' ')[0]}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-6 grid gap-3">
+                  <button
+                    type="submit"
+                    className="flex h-14 items-center justify-center gap-2 rounded-2xl bg-white px-4 text-sm font-semibold text-black transition hover:-translate-y-0.5 hover:bg-zinc-100"
+                  >
+                    <Search size={16} aria-hidden="true" /> Comparer maintenant
+                  </button>
+                  <Link
+                    to="/scan"
+                    className="flex h-14 items-center justify-center gap-2 rounded-2xl border border-white/12 bg-white/5 px-4 text-sm font-medium text-white transition hover:-translate-y-0.5 hover:bg-white/10"
+                  >
+                    \ud83d\udcf7 Scanner un code-barres
+                  </Link>
+                </div>
+              </div>
             </form>
-            <p className="hero-explain fade-in delay-300">Code-barre, nom de produit ou scan → comparaison instantanée.</p>
-            <p className="hero-trust fade-in delay-300">
-              <span className="badge-live">
-                <span className="badge-live-dot" aria-hidden="true" />
-                <span>Données en direct</span>
-              </span>
-              {' · '}Comparateur prioritaire, observatoire complet à la demande.
-            </p>
-          </div>
+          </main>
 
-          {/* Right column: phone mockup illustration */}
-          <div className="hero-phone-side fade-in delay-200" aria-hidden="true">
-            <HeroPhoneMockup />
-          </div>
-        </div>
+          {/* Live result with animated counter */}
+          <section className="mt-6">
+            <LiveResult comparison={comparison} />
+          </section>
 
-        {showScrollIndicator && (
-          <button
-            type="button"
-            className="scroll-indicator fade-in delay-300"
-            onClick={() => window.scrollTo({ top: window.innerHeight * 0.7, behavior: 'smooth' })}
-            aria-label="Défiler vers le bas"
+          {/* KPI strip */}
+          <section className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4" aria-label="Indicateurs cl\u00e9s">
+            <KPICard title="\u00c9conomie moyenne"  value="-18%" />
+            <KPICard title="Temps de r\u00e9ponse"  value="&lt; 3 s" />
+            <KPICard title="Couverture"        value="DROM-COM" />
+            <KPICard title="CLS ma\u00eetris\u00e9" value="\u2248 0" />
+          </section>
+
+          {/* Bento grid — 5 cards */}
+          <section
+            className="mt-6 grid gap-4 lg:grid-cols-12 lg:grid-rows-[repeat(2,minmax(220px,1fr))] lg:gap-6"
+            aria-label="Tableau de bord"
           >
-            <div className="scroll-arrow float-y">↓</div>
-            <span className="scroll-text">Découvrir</span>
-          </button>
-        )}
-      </section>
+            {/* Enseignes */}
+            <BentoCard className="lg:col-span-4 lg:row-span-1">
+              <SectionHeader
+                eyebrow="ENSEIGNES"
+                title="Couverture du r\u00e9seau"
+                description="Enseignes suivies dans votre territoire."
+              />
+              <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                {RETAILER_LOGOS.map((logo) => (
+                  <div
+                    key={logo}
+                    className="flex h-14 items-center justify-center rounded-2xl border border-white/8 bg-white/[0.03] text-xs font-medium text-zinc-200 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
+                  >
+                    {logo}
+                  </div>
+                ))}
+              </div>
+              <div className="mt-5 flex items-center justify-between rounded-2xl border border-emerald-400/15 bg-emerald-400/8 px-4 py-3">
+                <span className="text-sm text-emerald-200">Enseignes surveill\u00e9es</span>
+                <span className="text-lg font-semibold text-white">24</span>
+              </div>
+            </BentoCard>
 
-      <div id="main-content">
-        <section className="hero-why section-reveal">
-          <div className="hero-why-inner">
-            <h2 className="hero-why-title">Pourquoi A KI PRI SA YÉ ?</h2>
-            <div className="hero-why-grid">
-              <div className="hero-why-card">
-                <p className="hero-why-heading">Pourquoi ce service existe</p>
-                <p className="hero-why-text">
-                  Parce que les comparateurs classiques ne montrent pas les vrais prix des DOM-TOM.
+            {/* Produits populaires */}
+            <BentoCard className="lg:col-span-4 lg:row-span-1">
+              <SectionHeader
+                eyebrow="PRODUITS"
+                title="Les plus consult\u00e9s"
+                description="R\u00e9f\u00e9rences qui g\u00e9n\u00e8rent le plus de comparaisons."
+              />
+              <div className="mt-5 space-y-3">
+                {POPULAR_PRODUCTS.map((item) => (
+                  <div key={item.name} className="flex items-center justify-between rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3">
+                    <div>
+                      <div className="text-sm font-medium text-white">{item.name}</div>
+                      <div className="mt-1 text-xs text-zinc-400">Meilleur prix observ\u00e9</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-base font-semibold text-white">{item.price}</div>
+                      <div className="mt-1 text-xs text-emerald-300">{item.delta}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </BentoCard>
+
+            {/* Territoires — tall card (row-span-2) */}
+            <BentoCard className="lg:col-span-4 lg:row-span-2">
+              <SectionHeader
+                eyebrow="TERRITOIRES"
+                title="Comparaison multi-territoires"
+                description="Passez d'un territoire \u00e0 l'autre sans perdre le contexte."
+              />
+              <div className="mt-5 rounded-[24px] border border-white/8 bg-[radial-gradient(circle_at_20%_20%,rgba(34,197,94,0.18),transparent_35%),linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.02))] p-4">
+                <div className="rounded-[20px] border border-white/8 bg-[#0d1117]/70 p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-xs font-semibold uppercase tracking-[0.24em] text-zinc-400">Couverture</div>
+                      <div className="mt-2 text-2xl font-semibold text-white">DROM-COM</div>
+                    </div>
+                    <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-zinc-300">
+                      {12} zones
+                    </div>
+                  </div>
+                  <nav className="mt-6 space-y-3" aria-label="Acc\u00e8s par territoire">
+                    {ALL_TERRITORIES.map((t, i) => (
+                      <Link
+                        key={t.code}
+                        to={`/comparateur?territoire=${t.code}`}
+                        className="flex items-center gap-3 transition hover:opacity-80"
+                        aria-label={`Prix en ${t.name}`}
+                      >
+                        <div className="h-2.5 w-2.5 shrink-0 rounded-full bg-emerald-400 shadow-[0_0_14px_rgba(52,211,153,0.65)]" aria-hidden="true" />
+                        <div className="flex-1 rounded-xl border border-white/8 bg-white/[0.03] px-3 py-2 text-sm text-zinc-200">
+                          {t.flag} {t.name}
+                        </div>
+                        <div className="text-xs text-zinc-500">0{i + 1}</div>
+                      </Link>
+                    ))}
+                  </nav>
+                </div>
+              </div>
+            </BentoCard>
+
+            {/* Alertes prix */}
+            <BentoCard className="lg:col-span-4 lg:row-span-1">
+              <SectionHeader
+                eyebrow="ALERTES"
+                title="Mouvements r\u00e9cents"
+                description="Baisses et hausses \u00e0 surveiller."
+              />
+              <div className="mt-5 space-y-3">
+                {PRICE_ALERTS.map((alert) => (
+                  <div key={alert.label} className="rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3">
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <div className="text-sm font-medium text-white">{alert.label}</div>
+                        <div className="mt-1 text-xs text-zinc-400">{alert.note}</div>
+                      </div>
+                      <div className={`rounded-full px-3 py-1 text-xs font-semibold ${alert.down ? 'bg-emerald-400/12 text-emerald-300' : 'bg-amber-400/12 text-amber-300'}`}>
+                        {alert.change}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                <Link to="/mon-compte" className="mt-2 flex items-center gap-1 text-xs font-semibold text-emerald-400 hover:underline">
+                  Configurer mes alertes →
+                </Link>
+              </div>
+            </BentoCard>
+
+            {/* Fiabilité */}
+            <BentoCard className="lg:col-span-4 lg:row-span-1">
+              <SectionHeader
+                eyebrow="FIABILIT\u00c9"
+                title="Donn\u00e9es fra\u00eeches, lecture claire"
+                description="Architecture compacte, scroll r\u00e9duit, informations cl\u00e9s imm\u00e9diatement visibles."
+              />
+              <div className="mt-5 grid grid-cols-2 gap-3">
+                <StatCard label="Mise \u00e0 jour"   value="Aujourd'hui"   helper="Flux synchronis\u00e9s" />
+                <StatCard label="Comparaisons"  value="12\u202f480"        helper="sur 30 jours" />
+                <StatCard label="Temps moyen"   value="&lt; 3 s"         helper="recherche \u2192 r\u00e9sultat" />
+                <StatCard label="UX cible"      value="CLS \u2248 0"       helper="zones r\u00e9serv\u00e9es" />
+              </div>
+            </BentoCard>
+          </section>
+
+          {/* Trust / proof strip */}
+          <section
+            ref={statsRef}
+            className="mt-6 rounded-[32px] border border-white/10 bg-white/[0.03] p-5 shadow-[0_20px_60px_rgba(0,0,0,0.22)] backdrop-blur-xl sm:p-6"
+            aria-label="Preuve de couverture"
+          >
+            <div className="grid gap-5 lg:grid-cols-2 lg:items-center">
+              <div>
+                <div className="text-xs font-semibold uppercase tracking-[0.24em] text-zinc-400">Confiance</div>
+                <h3 className="mt-3 text-2xl font-semibold tracking-[-0.03em] text-white">
+                  Lisibilit\u00e9, fiabilit\u00e9, densit\u00e9 ma\u00eetris\u00e9e
+                </h3>
+                <p className="mt-3 text-sm leading-7 text-zinc-300 sm:text-base">
+                  Hi\u00e9rarchie courte, cartes stables, zones r\u00e9serv\u00e9es. Lecture imm\u00e9diate pour r\u00e9duire le scroll sans sacrifier la clart\u00e9.
                 </p>
               </div>
-              <div className="hero-why-card">
-                <p className="hero-why-heading">Ce que vous voyez ici</p>
-                <ul className="hero-why-list">
-                  <li>Prix observés localement</li>
-                  <li>Comparaison entre enseignes</li>
-                  <li>Historique automatique</li>
-                  <li>Favoris pour décider plus tard</li>
-                </ul>
+              <div className="grid gap-3 sm:grid-cols-3">
+                <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-4">
+                  <BarChart2 className="mb-2 h-5 w-5 text-blue-400" aria-hidden="true" />
+                  <div className="text-lg font-bold text-white">{displayStats.territories || 12}</div>
+                  <div className="text-xs text-zinc-400">territoires</div>
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-4">
+                  <ShoppingCart className="mb-2 h-5 w-5 text-emerald-400" aria-hidden="true" />
+                  <div className="text-lg font-bold text-white">{(displayStats.products || stats.products).toLocaleString()}+</div>
+                  <div className="text-xs text-zinc-400">produits</div>
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-4">
+                  <Camera className="mb-2 h-5 w-5 text-violet-400" aria-hidden="true" />
+                  <div className="text-lg font-bold text-white">{(displayStats.scans || stats.scans).toLocaleString()}+</div>
+                  <div className="text-xs text-zinc-400">scans</div>
+                </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
 
-        <section className="home-priority section-reveal">
-          <div className="home-priority-header">
-            <h2 className="section-title">Le plus utile, sans surcharge</h2>
-            <p className="home-priority-text">
-              Nous avons réduit la page d’accueil à l’essentiel : chercher, choisir son territoire et comparer rapidement.
-            </p>
-          </div>
-          <div className="home-priority-grid">
-            {PRIORITY_ACTIONS.map((action) => (
-              <Link key={action.title} to={action.to} className="home-priority-card">
-                <span className="home-priority-card-title">{action.title}</span>
-                <span className="home-priority-card-text">{action.description}</span>
-              </Link>
-            ))}
-          </div>
-        </section>
-
-        <section className="territories-section section-reveal">
-          <div className="territories-header">
-            <h2>Mon territoire</h2>
-            <p>Comparez les prix directement dans votre zone.</p>
-          </div>
-          <div className="territories-photo-grid">
-            {PRIMARY_TERRITORIES.map((territory) => {
-              const asset = getTerritoryAsset(territory.code);
-              return (
-                <Link
-                  key={territory.code}
-                  className="territory-photo-card"
-                  to={`/comparateur?territoire=${territory.code}`}
-                  aria-label={`Comparer les prix en ${territory.name}`}
-                >
-                  <img
-                    src={asset.url}
-                    alt={asset.alt}
-                    className="territory-photo-img"
-                    loading="lazy"
-                    width="200"
-                    height="120"
-                    onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
-                  />
-                  <div className="territory-photo-overlay">
-                    <span className="territory-photo-flag">{territory.flag}</span>
-                    <span className="territory-photo-name">{territory.name}</span>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        </section>
-
-        <section ref={statsRef} className="proof-bar fade-in section-reveal">
-          <div className="proof-content">
-            <div className="proof-item">
-              <span className="proof-icon"><BarChart2 className="w-5 h-5 text-blue-400" aria-hidden="true" /></span>
-              <span className="proof-text"><strong>{displayStats.territories || stats.territories}</strong> territoires</span>
-            </div>
-            <div className="proof-divider">|</div>
-            <div className="proof-item">
-              <span className="proof-icon"><ShoppingCart className="w-5 h-5 text-blue-400" aria-hidden="true" /></span>
-              <span className="proof-text"><strong>{(displayStats.products || stats.products).toLocaleString()}+</strong> produits</span>
-            </div>
-            <div className="proof-divider">|</div>
-            <div className="proof-item">
-              <span className="proof-icon"><Receipt className="w-5 h-5 text-blue-400" aria-hidden="true" /></span>
-              <span className="proof-text"><strong>{(displayStats.scans || stats.scans).toLocaleString()}+</strong> scans</span>
-            </div>
-            <div className="proof-divider">|</div>
-            <div className="proof-item">
-              <span className="proof-icon"><Landmark className="w-5 h-5 text-blue-400" aria-hidden="true" /></span>
-              <span className="proof-text">Observatoire indépendant</span>
-            </div>
-          </div>
-        </section>
-
-        <section className="example-comparison section-reveal">
-          <h2 className="section-title slide-up">Exemple de comparaison</h2>
-          <div className="comparison-card fade-in">
-            {/* Product image strip */}
-            {(() => {
-              const prodImg = getProductImage(exampleComparison.product);
-              return (
-                <div className="comparison-product-img-wrap">
-                  <img
-                    src={prodImg.url}
-                    alt={prodImg.alt}
-                    className="comparison-product-img"
-                    loading="lazy"
-                    width="300"
-                    height="120"
-                  />
-                  <div className="comparison-product-img-overlay" aria-hidden="true" />
-                </div>
-              );
-            })()}
-            <div className="comparison-cols">
-              <div className="comparison-col">
-                <div className="comparison-header">
-                  <span className="comparison-flag">{exampleComparison.territoryFlag}</span>
-                  <h3 className="comparison-territory">{exampleComparison.territory}</h3>
-                </div>
-                <p className="comparison-product">{exampleComparison.product}</p>
-                <p className="comparison-price">{exampleComparison.territoryPrice.toFixed(2)} €</p>
-                <p className="comparison-delta">+{exampleComparison.deltaPercent}% plus cher</p>
+          {/* Observatory toggle */}
+          <section className="mt-6 rounded-[28px] border border-white/10 bg-white/[0.03] px-5 py-4 backdrop-blur-xl sm:px-6">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <div className="text-xs font-semibold uppercase tracking-[0.24em] text-zinc-400">Observatoire complet</div>
+                <p className="mt-1 text-sm font-medium text-white">Graphiques, analyses, lettres hebdomadaires, FAQ</p>
               </div>
-              <div className="comparison-divider">
-                <span className="comparison-vs">VS</span>
-              </div>
-              <div className="comparison-col">
-                <div className="comparison-header">
-                  <span className="comparison-flag">🇫🇷</span>
-                  <h3 className="comparison-territory">Métropole</h3>
-                </div>
-                <p className="comparison-product">{exampleComparison.product}</p>
-                <p className="comparison-price">{exampleComparison.metropolePrice.toFixed(2)} €</p>
-                <p className="comparison-reference">Prix de référence</p>
-              </div>
+              <button
+                type="button"
+                onClick={() => setShowExtended((c) => !c)}
+                aria-expanded={showExtended}
+                aria-controls="home-extended-content"
+                className="rounded-full border border-white/12 bg-white/5 px-5 py-2 text-sm font-medium text-white transition hover:-translate-y-0.5 hover:bg-white/10"
+              >
+                {showExtended ? 'Masquer' : 'Tout afficher'}
+              </button>
             </div>
-          </div>
-          <div className="comparison-cta fade-in">
-            <Link to="/comparateur" className="btn-comparison">
-              Voir plus de comparaisons
-            </Link>
-          </div>
-        </section>
+          </section>
 
-        <section className="home-extended-toggle section-reveal">
-          <div className="home-extended-card">
-            <p className="home-extended-eyebrow">Page d’accueil simplifiée</p>
-            <h2 className="home-extended-title">Le reste du contenu est disponible uniquement si vous le souhaitez</h2>
-            <p className="home-extended-text">
-              L’observatoire détaillé, les graphiques, les témoignages et la FAQ restent accessibles sans surcharger l’arrivée sur la page.
-            </p>
-            <button
-              type="button"
-              className="home-extended-button"
-              onClick={() => setShowExtendedContent((current) => !current)}
-              aria-expanded={showExtendedContent}
-              aria-controls="home-extended-content"
-            >
-              {showExtendedContent ? 'Masquer la vue complète' : 'Voir toute la page d’accueil'}
-            </button>
-          </div>
-        </section>
-
-        {showExtendedContent && (
-          <div id="home-extended-content">
-            <Suspense fallback={<SkeletonSection minHeight="60px" className="mx-4 my-2" />}>
-              <PriceLiveTicker />
-            </Suspense>
-
-            {/* ── 3D Flip Stat Cards ── */}
-            <section className="reveal px-4 pb-4 pt-2 max-w-5xl mx-auto w-full" aria-label="Statistiques clés">
-              <Suspense fallback={<SkeletonStatGrid count={4} />}>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  <FlipStatCard
-                    value={`${stats.territories}`}
-                    label="Territoires"
-                    icon={<Globe className="w-5 h-5 text-blue-400" />}
-                    backContent="Guadeloupe, Martinique, Guyane, La Réunion, Mayotte et plus encore."
-                  />
-                  <FlipStatCard
-                    value={`${stats.products.toLocaleString()}+`}
-                    label="Produits comparés"
-                    icon={<ShoppingCart className="w-5 h-5 text-emerald-400" />}
-                    backContent="Alimentaire, hygiène, entretien — relevés citoyens vérifiés."
-                  />
-                  <FlipStatCard
-                    value={`${stats.scans.toLocaleString()}+`}
-                    label="Scans effectués"
-                    icon={<Camera className="w-5 h-5 text-violet-400" />}
-                    backContent="Codes-barres et tickets OCR analysés par la communauté."
-                  />
-                  <FlipStatCard
-                    value="~35%"
-                    label="Surcoût moyen DOM"
-                    icon={<BarChart2 className="w-5 h-5 text-orange-400" />}
-                    backContent="Par rapport à l'Hexagone — source observatoire citoyen mars 2026."
-                  />
-                </div>
+          {/* Extended observatory (lazy + CLS-safe skeletons) */}
+          {showExtended && (
+            <div id="home-extended-content" className="mt-4">
+              <Suspense fallback={<SkeletonSection minHeight="60px" className="my-2" />}>
+                <PriceLiveTicker />
               </Suspense>
-            </section>
 
-            <section className="benefits section-reveal reveal">
-              <h2 className="section-title slide-up">Ce que vous gagnez</h2>
-              <div className="benefits-grid reveal-stagger">
-                {[
-                  "Comparez les prix AVANT d'acheter",
-                  "Économisez jusqu'à 30% sur vos courses",
-                  'Détectez les hausses anormales de prix',
-                  'Exportez les données pour vos analyses'
-                ].map((benefit) => (
-                  <div key={benefit} className="benefit-item reveal slide-up">
-                    <span className="benefit-check">✓</span>
-                    <span className="benefit-text">{benefit}</span>
+              <section className="reveal py-4 max-w-5xl mx-auto w-full" aria-label="Statistiques cl\u00e9s">
+                <Suspense fallback={<SkeletonStatGrid count={4} />}>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <FlipStatCard value="12"    label="Territoires"       icon={<Globe className="w-5 h-5 text-blue-400" />}         backContent="Guadeloupe, Martinique, Guyane, La R\u00e9union, Mayotte et plus." />
+                    <FlipStatCard value={`${stats.products.toLocaleString()}+`} label="Produits compar\u00e9s" icon={<ShoppingCart className="w-5 h-5 text-emerald-400" />} backContent="Alimentaire, hygi\u00e8ne, entretien \u2014 relev\u00e9s citoyens v\u00e9rifi\u00e9s." />
+                    <FlipStatCard value={`${stats.scans.toLocaleString()}+`} label="Scans effectu\u00e9s" icon={<Camera className="w-5 h-5 text-violet-400" />} backContent="Codes-barres et tickets OCR analys\u00e9s par la communaut\u00e9." />
+                    <FlipStatCard value="~35%"  label="Surcot moyen DOM"  icon={<BarChart2 className="w-5 h-5 text-orange-400" />}   backContent="Par rapport \u00e0 l'Hexagone \u2014 observatoire citoyen mars 2026." />
                   </div>
-                ))}
-              </div>
-            </section>
+                </Suspense>
+              </section>
 
-            <section className="territories-v5 section-reveal">
-              <h2 className="section-title slide-up">12 territoires couverts</h2>
-              <div className="territories-grid-v5">
-                {[
-                  { code: 'GP', name: 'Guadeloupe', flag: '🇬🇵' },
-                  { code: 'MQ', name: 'Martinique', flag: '🇲🇶' },
-                  { code: 'GF', name: 'Guyane', flag: '🇬🇫' },
-                  { code: 'RE', name: 'Réunion', flag: '🇷🇪' },
-                  { code: 'YT', name: 'Mayotte', flag: '🇾🇹' },
-                  { code: 'NC', name: 'Nouvelle-Calédonie', flag: '🇳🇨' },
-                  { code: 'PF', name: 'Polynésie française', flag: '🇵🇫' },
-                  { code: 'WF', name: 'Wallis-et-Futuna', flag: '🇼🇫' },
-                  { code: 'PM', name: 'Saint-Pierre-et-Miquelon', flag: '🇵🇲' },
-                  { code: 'BL', name: 'Saint-Barthélemy', flag: '🇧🇱' },
-                  { code: 'MF', name: 'Saint-Martin', flag: '🇲🇫' },
-                  { code: 'TF', name: 'TAAF', flag: '🇹🇫' }
-                ].map((territory) => {
-                  const asset = getTerritoryAsset(territory.code);
-                  return (
-                    <div
-                      key={territory.code}
-                      className="territory-photo-card fade-in"
-                      title={territory.name}
-                      aria-label={territory.name}
-                      role="button"
-                      tabIndex={0}
-                      onClick={() => navigate(`/comparateur?territoire=${territory.code}`)}
-                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') navigate(`/comparateur?territoire=${territory.code}`); }}
-                    >
-                      <img
-                        src={asset.url}
-                        alt={asset.alt}
-                        className="territory-photo-img"
-                        loading="lazy"
-                        width="200"
-                        height="150"
-                        onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
-                      />
-                      <div className="territory-photo-overlay">
-                        <span className="territory-photo-flag">{territory.flag}</span>
-                        <span className="territory-photo-name">{territory.name}</span>
+              <section className="testimonials-v5 section-reveal">
+                <h2 className="section-title slide-up">Ce que disent nos utilisateurs</h2>
+                <div className="testimonials-grid">
+                  {TESTIMONIALS.map((t) => (
+                    <div key={t.name} className="testimonial-card slide-up">
+                      <div className="testimonial-header">
+                        <div className="testimonial-initials">{t.initials}</div>
+                        <div className="testimonial-meta">
+                          <p className="testimonial-name">{t.name}</p>
+                          <p className="testimonial-location"><span>{t.flag}</span><span>{t.territory}</span></p>
+                        </div>
+                        <div className="testimonial-savings-badge">
+                          <span className="testimonial-savings">{t.savings}</span>
+                          <span className="testimonial-savings-label">{t.savingsLabel}</span>
+                        </div>
                       </div>
+                      <p className="testimonial-quote">{t.quote}</p>
+                      <span className="testimonial-product-tag">\ud83d\uded2 {t.product}</span>
                     </div>
-                  );
-                })}
+                  ))}
+                </div>
+              </section>
+
+              <Suspense fallback={<SkeletonSection minHeight="320px" />}><HowItWorksSection /></Suspense>
+              <Suspense fallback={<SkeletonSection minHeight="400px" />}><AppDemoShowcase /></Suspense>
+              <Suspense fallback={<SkeletonWidget minHeight="280px" />}><TerritoryPriceChart /></Suspense>
+              <Suspense fallback={<SkeletonWidget minHeight="280px" />}><PriceEvolutionChart /></Suspense>
+              <Suspense fallback={<SkeletonWidget minHeight="240px" />}><PanierVitalWidget /></Suspense>
+              <Suspense fallback={<SkeletonWidget minHeight="240px" />}><StoreRankingWidget /></Suspense>
+              <Suspense fallback={<SkeletonSection minHeight="180px" />}><PriceExplainerBanner /></Suspense>
+              <Suspense fallback={<SkeletonWidget minHeight="220px" />}><LettreJourWidget /></Suspense>
+              <Suspense fallback={<SkeletonWidget minHeight="220px" />}><LettreHebdoWidget /></Suspense>
+              <Suspense fallback={<SkeletonWidget minHeight="240px" />}><InflationBarometerWidget /></Suspense>
+              <Suspense fallback={<SkeletonWidget minHeight="240px" />}><ProduitChocWidget /></Suspense>
+              <Suspense fallback={<SkeletonWidget minHeight="240px" />}><IndiceEquiteWidget /></Suspense>
+              <Suspense fallback={<SkeletonWidget minHeight="280px" />}><CategoryOvercostChart /></Suspense>
+              <Suspense fallback={<SkeletonSection minHeight="360px" />}><VideoVieChere /></Suspense>
+              <Suspense fallback={<SkeletonWidget minHeight="240px" />}><LiveNewsFeed /></Suspense>
+              <Suspense fallback={<SkeletonSection minHeight="320px" />}><ObservatorySection /></Suspense>
+              <Suspense fallback={<SkeletonSection minHeight="280px" />}>
+                <MiniFaqSection expandedFaq={expandedFaq} onToggleFaq={setExpandedFaq} />
+              </Suspense>
+            </div>
+          )}
+
+          {/* In-page footer */}
+          <footer className="mt-8 rounded-[28px] border border-white/8 bg-black/20 px-5 py-6 backdrop-blur-xl sm:px-6">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              <div>
+                <div className="text-sm font-semibold tracking-[0.18em] text-white">A KI PRI SA Y\u00c9</div>
+                <p className="mt-3 text-sm leading-6 text-zinc-400">
+                  Comparateur de prix pens\u00e9 pour les territoires ultramarins. Lecture rapide, cr\u00e9dibilit\u00e9 forte.
+                </p>
               </div>
-            </section>
-
-            <section className="testimonials-v5 section-reveal">
-              <h2 className="section-title slide-up">Ce que disent nos utilisateurs</h2>
-              <div className="testimonials-grid">
-                {TESTIMONIALS.map((t) => (
-                  <div key={t.name} className="testimonial-card slide-up">
-                    <div className="testimonial-header">
-                      <div className="testimonial-initials">{t.initials}</div>
-                      <div className="testimonial-meta">
-                        <p className="testimonial-name">{t.name}</p>
-                        <p className="testimonial-location">
-                          <span>{t.flag}</span>
-                          <span>{t.territory}</span>
-                        </p>
-                      </div>
-                      <div className="testimonial-savings-badge">
-                        <span className="testimonial-savings">{t.savings}</span>
-                        <span className="testimonial-savings-label">{t.savingsLabel}</span>
-                      </div>
-                    </div>
-                    <p className="testimonial-quote">{t.quote}</p>
-                    <span className="testimonial-product-tag">🛒 {t.product}</span>
-                  </div>
-                ))}
+              <div>
+                <div className="text-sm font-medium text-white">Produit</div>
+                <div className="mt-3 space-y-2">
+                  {[['Comparer', '/comparateur'], ['Scanner', '/scan'], ['Alertes', '/mon-compte'], ['Territoires', '/comparateur']].map(([label, to]) => (
+                    <div key={label}><Link to={to} className="text-sm text-zinc-400 transition hover:text-zinc-200">{label}</Link></div>
+                  ))}
+                </div>
               </div>
-            </section>
+              <div>
+                <div className="text-sm font-medium text-white">Ressources</div>
+                <div className="mt-3 space-y-2">
+                  {[['M\u00e9thodologie', '/methodologie'], ['FAQ', '/faq'], ['Confidentialit\u00e9', '/transparence'], ['Contact', '/contact']].map(([label, to]) => (
+                    <div key={label}><Link to={to} className="text-sm text-zinc-400 transition hover:text-zinc-200">{label}</Link></div>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <div className="text-sm font-medium text-white">L\u00e9gal</div>
+                <div className="mt-3 space-y-2">
+                  {[['Mentions l\u00e9gales', '/mentions-legales'], ['CGU', '/mentions-legales'], ['Accessibilit\u00e9', '/mentions-legales']].map(([label, to]) => (
+                    <div key={label}><Link to={to} className="text-sm text-zinc-400 transition hover:text-zinc-200">{label}</Link></div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </footer>
 
-            <Suspense fallback={<SkeletonSection minHeight="320px" />}>
-              <HowItWorksSection />
-            </Suspense>
-
-            {/* App demo showcase — CSS phone mockup with real data screens */}
-            <Suspense fallback={<SkeletonSection minHeight="400px" />}>
-              <AppDemoShowcase />
-            </Suspense>
-
-            {/* Real price chart — territory comparison with real observatoire data */}
-            <Suspense fallback={<SkeletonWidget minHeight="280px" />}>
-              <TerritoryPriceChart />
-            </Suspense>
-
-            {/* Price evolution line chart — 5-month trend from real observatoire snapshots */}
-            <Suspense fallback={<SkeletonWidget minHeight="280px" />}>
-              <PriceEvolutionChart />
-            </Suspense>
-
-            {/* Panier vital — purchasing power index: minutes of SMIC per basket */}
-            <Suspense fallback={<SkeletonWidget minHeight="240px" />}>
-              <PanierVitalWidget />
-            </Suspense>
-            {/* Store ranking widget — cheapest vs most expensive stores per territory */}
-            <Suspense fallback={<SkeletonWidget minHeight="240px" />}>
-              <StoreRankingWidget />
-            </Suspense>
-
-            {/* Why such price gaps? Explainer fiche with source links + conference CTA */}
-            <Suspense fallback={<SkeletonSection minHeight="180px" />}>
-              <PriceExplainerBanner />
-            </Suspense>
-
-            {/* AI daily briefing — latest editorial about DOM/COM news of the day */}
-            <Suspense fallback={<SkeletonWidget minHeight="220px" />}>
-              <LettreJourWidget />
-            </Suspense>
-
-            {/* AI weekly letter — latest editorial about DOM/COM news */}
-            <Suspense fallback={<SkeletonWidget minHeight="220px" />}>
-              <LettreHebdoWidget />
-            </Suspense>
-
-            {/* Inflation barometer — dynamic month-over-month basket trend from real snapshots */}
-            <Suspense fallback={<SkeletonWidget minHeight="240px" />}>
-              <InflationBarometerWidget />
-            </Suspense>
-
-            {/* Price shock ranking — top 5 products with biggest inter-territory price gap */}
-            <Suspense fallback={<SkeletonWidget minHeight="240px" />}>
-              <ProduitChocWidget />
-            </Suspense>
-
-            {/* Equity index — composite multi-product price equity score per territory vs hexagone */}
-            <Suspense fallback={<SkeletonWidget minHeight="240px" />}>
-              <IndiceEquiteWidget />
-            </Suspense>
-
-            {/* Category overcost chart — DOM surcoût vs Hexagone by category */}
-            <Suspense fallback={<SkeletonWidget minHeight="280px" />}>
-              <CategoryOvercostChart />
-            </Suspense>
-
-            {/* Video section — vie chère outre-mer explained with lazy YouTube embeds */}
-            <Suspense fallback={<SkeletonSection minHeight="360px" />}>
-              <VideoVieChere />
-            </Suspense>
-
-            {/* Live news feed from actualites.json — real data only */}
-            <Suspense fallback={<SkeletonWidget minHeight="240px" />}>
-              <LiveNewsFeed />
-            </Suspense>
-
-            <Suspense fallback={<SkeletonSection minHeight="320px" />}>
-              <ObservatorySection />
-            </Suspense>
-
-            <Suspense fallback={<SkeletonSection minHeight="280px" />}>
-              <MiniFaqSection expandedFaq={expandedFaq} onToggleFaq={setExpandedFaq} />
-            </Suspense>
-          </div>
-        )}
-
-        <footer className="footer-minimal fade-in section-reveal">
-          <Link to="/faq">FAQ</Link>
-          <span>•</span>
-          <Link to="/methodologie">Méthodologie</Link>
-          <span>•</span>
-          <Link to="/contact">Contact</Link>
-          <span>•</span>
-          <Link to="/mentions-legales">Mentions légales</Link>
-        </footer>
+        </div>
       </div>
 
       {showMobileCTA && (
-        <div className="mobile-sticky-cta slide-up">
-          <Link to="/comparateur" className="mobile-cta-btn">
-            <Search className="w-4 h-4 inline-block mr-1 align-text-bottom" aria-hidden="true" /> Rechercher un produit
+        <div className="fixed bottom-4 left-4 right-4 z-50 animate-slide-up">
+          <Link
+            to="/comparateur"
+            className="flex items-center justify-center gap-2 rounded-2xl bg-emerald-500 py-4 text-sm font-bold text-black shadow-[0_8px_32px_rgba(34,197,94,0.3)] transition hover:bg-emerald-400"
+          >
+            <Search className="h-4 w-4" aria-hidden="true" /> Rechercher un produit
           </Link>
         </div>
       )}
-    </div>
     </>
   );
 }
