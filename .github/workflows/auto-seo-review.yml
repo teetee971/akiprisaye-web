@@ -3,6 +3,9 @@ name: Auto SEO Review
 # REVIEW-ONLY: This workflow never auto-commits, auto-pushes, or opens PRs.
 # It runs the SEO analysis pipeline and uploads results as artifacts for human review.
 
+permissions:
+  contents: read
+
 on:
   workflow_dispatch:
   schedule:
