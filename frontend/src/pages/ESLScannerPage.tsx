@@ -192,8 +192,9 @@ function ManualView({ onSubmit }: { onSubmit: (ean: string, price?: number) => v
   return (
     <form onSubmit={handleSubmit} className="space-y-4 py-4">
       <div>
-        <label className="block text-sm text-slate-400 mb-1.5">Code EAN (8 ou 13 chiffres) *</label>
+        <label htmlFor="esl-ean-input" className="block text-sm text-slate-400 mb-1.5">Code EAN (8 ou 13 chiffres) *</label>
         <input
+          id="esl-ean-input"
           type="text"
           inputMode="numeric"
           pattern="\d*"
@@ -209,9 +210,10 @@ function ManualView({ onSubmit }: { onSubmit: (ean: string, price?: number) => v
       </div>
 
       <div>
-        <label className="block text-sm text-slate-400 mb-1.5">Prix affiché (optionnel)</label>
+        <label htmlFor="esl-price-input" className="block text-sm text-slate-400 mb-1.5">Prix affiché (optionnel)</label>
         <div className="relative">
           <input
+            id="esl-price-input"
             type="text"
             inputMode="decimal"
             value={price}

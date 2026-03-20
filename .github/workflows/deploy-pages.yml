@@ -239,7 +239,11 @@ jobs:
 
   mark-live-failed:
     needs: verify-live
-    if: needs.verify-live.result == 'failure'
+    if: >
+      always() && (
+        needs.verify-live.result == 'failure' ||
+        (needs.verify-live.result == 'skipped' && github.ref == 'refs/heads/main')
+      )
     runs-on: ubuntu-latest
     permissions:
       contents: write
