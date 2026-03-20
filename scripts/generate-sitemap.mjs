@@ -249,6 +249,9 @@ Crawl-delay: 1
 Disallow: /admin/
 Disallow: /mon-compte
 Disallow: /stats-dashboard
+Disallow: /seo-monitoring
+Disallow: /outreach
+Disallow: /cro-dashboard
 `;
 
 fs.writeFileSync("robots.txt", robotsTxt);

@@ -324,6 +324,10 @@ const ComparateurSuperMarchesDOM = lazyPage(() => import('./pages/pillar/Compara
 const InflationAlimentaireDOMAnalyse = lazyPage(() => import('./pages/pillar/InflationAlimentaireDOMAnalyse'));
 const OuFaireCoursesDOMPage = lazyPage(() => import('./pages/pillar/OuFaireCoursesDOMPage'));
 const StatsDashboard = lazyPage(() => import('./pages/StatsDashboard'));
+const SeoMonitoringPage = lazyPage(() => import('./pages/SeoMonitoringPage'));
+const OutreachDashboardPage = lazyPage(() => import('./pages/OutreachDashboardPage'));
+const CRODashboardPage = lazyPage(() => import('./pages/CRODashboardPage'));
+const SEOCompetitorComparisonPage = lazyPage(() => import('./pages/SEOCompetitorComparisonPage'));
 const TopEconomiesPage = lazyPage(() => import('./pages/TopEconomiesPage'));
 const TendancesPage = lazyPage(() => import('./pages/TendancesPage'));
 const PopulairesPage = lazyPage(() => import('./pages/PopulairesPage'));
@@ -779,6 +783,10 @@ export default function App() {
                           <Route path="inflation-alimentaire-dom" element={<InflationAlimentaireDOMAnalyse />} />
                           <Route path="ou-faire-courses-dom" element={<OuFaireCoursesDOMPage />} />
                           <Route path="stats-dashboard" element={<StatsDashboard />} />
+                          <Route path="seo-monitoring" element={<SeoMonitoringPage />} />
+                          <Route path="outreach" element={<OutreachDashboardPage />} />
+                          <Route path="cro-dashboard" element={<CRODashboardPage />} />
+                          <Route path="vs/:slug" element={<SEOCompetitorComparisonPage />} />
                           <Route path="top-economies" element={<TopEconomiesPage />} />
                           <Route path="tendances" element={<TendancesPage />} />
                           <Route path="populaires" element={<PopulairesPage />} />

@@ -6,6 +6,7 @@
  */
 
 import { formatEur } from '../../utils/currency';
+import { getVariantForPage, trackConversionEvent } from '../../utils/conversionTracker';
 
 // ── Props ─────────────────────────────────────────────────────────────────────
 
@@ -28,12 +29,32 @@ export default function ConversionStickyBar({
   retailer,
   retailerUrl,
   productName,
+  territory = '',
   onCTAClick,
 }: ConversionStickyBarProps) {
   // Don't render if no valid price
   if (!bestPrice || bestPrice <= 0) return null;
 
+  const pageUrl = typeof window !== 'undefined' ? window.location.pathname : '';
+  const variant = getVariantForPage(pageUrl);
+
+  const ctaText: string =
+    variant === 'B' && savings != null && savings > 0.01
+      ? `ÉCONOMISEZ ${formatEur(savings)} →`
+      : variant === 'C'
+      ? 'ACHETER AU MEILLEUR PRIX →'
+      : "VOIR L'OFFRE →";
+
   const handleClick = () => {
+    trackConversionEvent({
+      pageUrl,
+      retailer: retailer ?? 'inconnu',
+      productName,
+      variant,
+      clickedAt: new Date().toISOString(),
+      territory: territory || undefined,
+      price: bestPrice ?? undefined,
+    });
     onCTAClick?.();
     if (retailerUrl) {
       window.open(retailerUrl, '_blank', 'noopener,noreferrer');
@@ -77,7 +98,7 @@ export default function ConversionStickyBar({
             aria-label={`Voir l'offre ${productName} chez ${retailer ?? 'le moins cher'}`}
             className="shrink-0 rounded-xl border border-emerald-400/60 bg-emerald-400/25 px-5 py-2.5 text-sm font-extrabold uppercase tracking-wide text-emerald-200 shadow-lg shadow-emerald-900/30 transition-all active:scale-95 hover:bg-emerald-400/35"
           >
-            VOIR L'OFFRE →
+            {ctaText}
           </button>
         </div>
       </div>

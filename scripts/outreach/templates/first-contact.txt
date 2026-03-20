@@ -1,0 +1,15 @@
+Objet : Partenariat éditorial — données prix alimentaires {{territory}}
+
+Bonjour,
+
+Je me permets de vous contacter au sujet du site A KI PRI SA YÉ (akiprisaye-web), un observatoire indépendant des prix alimentaires dans les DOM-COM.
+
+Nous avons publié une ressource que vos lecteurs pourraient trouver utile : {{anchorSuggestion}} ({{targetPage}}). Elle présente des données comparatives sur les prix pratiqués par les grandes enseignes locales, mises à jour régulièrement.
+
+Seriez-vous intéressé(e) par une mention ou un lien depuis {{domain}} vers cette page ? Nous serions ravis d'envisager un partenariat éditorial mutuellement bénéfique.
+
+N'hésitez pas à me contacter pour en discuter.
+
+Bien cordialement,
+L'équipe A KI PRI SA YÉ
+https://teetee971.github.io/akiprisaye-web

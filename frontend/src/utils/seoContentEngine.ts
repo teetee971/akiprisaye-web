@@ -299,3 +299,302 @@ export function getSimilarProductSlugs(
 
   return selected.slice(0, 5).map((slug) => `${slug}-${tSlug}`);
 }
+
+// ── Typed Content Engine API (PR #12) ────────────────────────────────────────
+
+export type PageType = 'product' | 'category' | 'comparison' | 'inflation' | 'pillar';
+export type PriceTrend = 'down' | 'up' | 'stable';
+
+export interface ContentInput {
+  pageType:       PageType;
+  productName?:   string;
+  categoryName?:  string;
+  territoryName?: string;
+  retailerName?:  string;
+  trend?:         PriceTrend;
+  bestPrice?:     number | null;
+  averagePrice?:  number | null;
+  savings?:       number | null;
+}
+
+export interface FAQItem {
+  question: string;
+  answer:   string;
+}
+
+export interface ContentSection {
+  title: string;
+  body:  string;
+}
+
+export interface GeneratedContent {
+  intro:    string;
+  summary:  string;
+  faq:      FAQItem[];
+  sections: ContentSection[];
+}
+
+// ── Internal string pools ─────────────────────────────────────────────────────
+
+const PRODUCT_INTROS = [
+  (p: string, t: string, price: string) =>
+    `Découvrez le meilleur prix pour ${p} en ${t}. Notre comparateur analyse en temps réel les offres des supermarchés locaux pour vous faire économiser. Prix actuel à partir de ${price}.`,
+  (p: string, t: string, price: string) =>
+    `Comparez le prix de ${p} dans tous les supermarchés de ${t}. Avec notre observatoire des prix, trouvez l'offre la moins chère aujourd'hui — dès ${price}.`,
+  (p: string, t: string, price: string) =>
+    `${p} en ${t} : qui vend le moins cher ? Notre comparateur indépendant recense les prix du marché local. Meilleur prix constaté : ${price}.`,
+];
+
+const CATEGORY_INTROS = [
+  (c: string, t: string) =>
+    `Suivez l'évolution des prix dans la catégorie ${c} en ${t}. Notre observatoire indépendant vous aide à identifier les meilleures offres du moment.`,
+  (c: string, t: string) =>
+    `Les prix de la catégorie ${c} en ${t} sont-ils en hausse ? Consultez notre baromètre mis à jour régulièrement pour comparer les enseignes locales.`,
+  (c: string, t: string) =>
+    `Analyse des prix ${c} en ${t} : tendances, variations et enseignes les moins chères. Données collectées auprès des supermarchés locaux.`,
+];
+
+const COMPARISON_INTROS = [
+  (r1: string, r2: string, t: string) =>
+    `Qui est vraiment moins cher entre ${r1} et ${r2} en ${t} ? Notre comparatif indépendant analyse des centaines de produits pour vous donner une réponse claire.`,
+  (r1: string, r2: string, t: string) =>
+    `${r1} vs ${r2} en ${t} : le grand comparatif de prix. Découvrez quelle enseigne remporte la bataille du pouvoir d'achat en Outre-mer.`,
+  (r1: string, r2: string, t: string) =>
+    `Comparer ${r1} et ${r2} en ${t} pour faire le bon choix. Notre analyse couvre l'ensemble des rayons pour un résultat objectif et actualisé.`,
+];
+
+const INFLATION_INTROS = [
+  (t: string) =>
+    `L'inflation alimentaire en ${t} continue d'impacter les ménages. Retrouvez ici l'analyse des tendances de prix et les produits les plus touchés.`,
+  (t: string) =>
+    `Évolution des prix en ${t} : notre baromètre inflation décode les hausses et baisses de prix pour vous aider à anticiper votre budget.`,
+  (t: string) =>
+    `Inflation en ${t} : quels produits ont le plus augmenté ? Notre observatoire suit l'évolution des prix alimentaires mois après mois.`,
+];
+
+const PILLAR_INTROS = [
+  (t: string) =>
+    `Guide complet des prix alimentaires en ${t} : comparaison des enseignes, tendances inflation, produits moins chers et conseils pour mieux consommer local.`,
+  (t: string) =>
+    `Tout savoir sur les prix alimentaires en ${t}. Ce guide regroupe analyses, comparatifs et données de terrain pour vous aider à maîtriser votre budget courses.`,
+  (t: string) =>
+    `${t} : le guide de référence pour comparer les prix alimentaires. Enseignes, produits, tendances — une ressource complète mise à jour régulièrement.`,
+];
+
+function pick<T>(arr: T[], idx: number): T {
+  return arr[idx % arr.length];
+}
+
+function fmt(price: number | null | undefined): string {
+  if (price == null) return '—';
+  return price.toFixed(2) + ' €';
+}
+
+// ── generateSeoContent ────────────────────────────────────────────────────────
+
+export function generateSeoContent(input: ContentInput): GeneratedContent {
+  const variantKey =
+    (input.pageType ?? '') +
+    (input.productName ?? '') +
+    (input.territoryName ?? '');
+  const v = djb2Hash(variantKey) % 3;
+
+  const product  = input.productName  ?? 'ce produit';
+  const category = input.categoryName ?? 'cette catégorie';
+  const territory = input.territoryName ?? 'les DOM-COM';
+  const retailer1 = input.retailerName ?? 'Carrefour';
+  const retailer2 = 'E.Leclerc';
+  const bestPriceFmt = fmt(input.bestPrice);
+  const avgPriceFmt  = fmt(input.averagePrice);
+  const savingsFmt   = fmt(input.savings);
+  const trendLabel   = input.trend === 'down' ? 'en baisse' : input.trend === 'up' ? 'en hausse' : 'stable';
+
+  switch (input.pageType) {
+
+    case 'product': {
+      const intro = pick(PRODUCT_INTROS, v)(product, territory, bestPriceFmt);
+      return {
+        intro,
+        summary: `${product} est disponible en ${territory} à partir de ${bestPriceFmt} (prix moyen observé : ${avgPriceFmt}). Vous pouvez économiser jusqu'à ${savingsFmt} en choisissant l'enseigne la moins chère.`,
+        faq: [
+          {
+            question: `Quel est le prix de ${product} en ${territory} ?`,
+            answer: `Le prix de ${product} en ${territory} varie entre ${bestPriceFmt} et ${avgPriceFmt} selon les enseignes. Notre comparateur est mis à jour régulièrement.`,
+          },
+          {
+            question: `Où trouver ${product} au meilleur prix en ${territory} ?`,
+            answer: `Notre comparateur indique que le meilleur prix pour ${product} en ${territory} est actuellement de ${bestPriceFmt}. Consultez le tableau de comparaison pour voir toutes les enseignes.`,
+          },
+          {
+            question: `Le prix de ${product} a-t-il augmenté en ${territory} ?`,
+            answer: `La tendance des prix pour ${product} en ${territory} est actuellement ${trendLabel}. Suivez notre observatoire pour être alerté des variations.`,
+          },
+        ],
+        sections: [
+          {
+            title: `Comparaison des prix de ${product} en ${territory}`,
+            body: `Notre observatoire recense les prix pratiqués par les principales enseignes de ${territory}. Le prix le plus bas constaté est de ${bestPriceFmt}, tandis que le prix moyen du marché est de ${avgPriceFmt}. En choisissant le bon supermarché, vous pouvez économiser ${savingsFmt} sur cet article.`,
+          },
+          {
+            title: `Pourquoi les prix varient-ils en ${territory} ?`,
+            body: `Les prix en ${territory} sont influencés par plusieurs facteurs : coûts de transport maritime, taxes d'importation, politiques commerciales des enseignes et concurrence locale. Notre outil vous permet de naviguer ces variations pour toujours trouver le meilleur prix.`,
+          },
+        ],
+      };
+    }
+
+    case 'category': {
+      const intro = pick(CATEGORY_INTROS, v)(category, territory);
+      return {
+        intro,
+        summary: `Les prix de la catégorie ${category} en ${territory} sont en moyenne de ${avgPriceFmt}. La tendance actuelle est ${trendLabel}. Comparez les enseignes pour optimiser vos achats.`,
+        faq: [
+          {
+            question: `Quels sont les prix moyens pour ${category} en ${territory} ?`,
+            answer: `Le prix moyen observé pour ${category} en ${territory} est de ${avgPriceFmt}. Les prix varient selon les enseignes et les promotions en cours.`,
+          },
+          {
+            question: `Quelle enseigne est la moins chère pour ${category} en ${territory} ?`,
+            answer: `Notre comparateur analyse les prix de toutes les grandes enseignes de ${territory} pour la catégorie ${category}. Consultez le classement mis à jour régulièrement.`,
+          },
+          {
+            question: `L'inflation touche-t-elle les prix ${category} en ${territory} ?`,
+            answer: `La tendance des prix ${category} en ${territory} est actuellement ${trendLabel}. Notre baromètre suit l'évolution mensuelle pour vous aider à anticiper vos dépenses.`,
+          },
+        ],
+        sections: [
+          {
+            title: `Évolution des prix ${category} en ${territory}`,
+            body: `Les prix de la catégorie ${category} en ${territory} ont connu des variations significatives ces derniers mois. Notre observatoire suit ces évolutions pour vous offrir une vision claire du marché local.`,
+          },
+          {
+            title: `Comment économiser sur ${category} en ${territory} ?`,
+            body: `Pour réduire vos dépenses en ${category} en ${territory}, comparez systématiquement les prix entre les enseignes, suivez les promotions et adaptez vos achats aux meilleures offres du moment.`,
+          },
+        ],
+      };
+    }
+
+    case 'comparison': {
+      const intro = pick(COMPARISON_INTROS, v)(retailer1, retailer2, territory);
+      return {
+        intro,
+        summary: `Comparaison ${retailer1} vs ${retailer2} en ${territory} : découvrez quelle enseigne propose les meilleurs prix sur l'ensemble des rayons. Économie potentielle : ${savingsFmt} par mois.`,
+        faq: [
+          {
+            question: `${retailer1} ou ${retailer2} : qui est moins cher en ${territory} ?`,
+            answer: `Notre comparatif indépendant analyse les prix des deux enseignes en ${territory} sur des centaines de produits. Le résultat varie selon les rayons et les périodes de promotion.`,
+          },
+          {
+            question: `Quelle est la différence de prix entre ${retailer1} et ${retailer2} en ${territory} ?`,
+            answer: `En moyenne, l'écart de prix entre ${retailer1} et ${retailer2} en ${territory} peut représenter ${savingsFmt} sur un panier type. Consultez notre comparatif détaillé par rayon.`,
+          },
+          {
+            question: `Y a-t-il des promotions exclusives chez ${retailer1} ou ${retailer2} en ${territory} ?`,
+            answer: `Les deux enseignes proposent régulièrement des promotions spécifiques à leurs magasins en ${territory}. Notre observatoire recense les meilleures offres en temps réel.`,
+          },
+        ],
+        sections: [
+          {
+            title: `${retailer1} vs ${retailer2} : analyse rayon par rayon`,
+            body: `Notre comparatif détaillé de ${retailer1} et ${retailer2} en ${territory} couvre tous les rayons principaux : produits frais, épicerie, boissons, produits d'entretien et hygiène. Les écarts de prix peuvent être significatifs selon les catégories.`,
+          },
+          {
+            title: `Quelle enseigne choisir en ${territory} ?`,
+            body: `Le choix entre ${retailer1} et ${retailer2} en ${territory} dépend de vos habitudes de consommation. Pour optimiser votre budget, consultez notre guide des prix par rayon et profitez des promotions croisées.`,
+          },
+        ],
+      };
+    }
+
+    case 'inflation': {
+      const intro = pick(INFLATION_INTROS, v)(territory);
+      return {
+        intro,
+        summary: `Suivi de l'inflation en ${territory} : les prix alimentaires sont actuellement ${trendLabel}. Notre baromètre analyse les variations mensuelles pour vous aider à adapter votre budget.`,
+        faq: [
+          {
+            question: `Quel est le taux d'inflation alimentaire en ${territory} ?`,
+            answer: `L'inflation alimentaire en ${territory} est suivie par notre observatoire indépendant. La tendance actuelle est ${trendLabel} avec un impact variable selon les catégories de produits.`,
+          },
+          {
+            question: `Quels produits sont les plus touchés par l'inflation en ${territory} ?`,
+            answer: `En ${territory}, les produits les plus sensibles à l'inflation incluent les fruits et légumes importés, les produits laitiers et certaines denrées d'épicerie. Notre analyse détaille l'évolution par catégorie.`,
+          },
+        ],
+        sections: [
+          {
+            title: `Baromètre inflation alimentaire ${territory}`,
+            body: `Notre baromètre suit l'évolution mensuelle des prix alimentaires en ${territory}. Les données sont collectées auprès des principales enseignes et comparées aux prix de référence nationaux.`,
+          },
+          {
+            title: `Impact de l'inflation sur le pouvoir d'achat en ${territory}`,
+            body: `L'inflation en ${territory} affecte différemment les ménages selon leur profil de consommation. Notre simulateur de budget vous permet d'estimer l'impact sur votre foyer et de trouver des stratégies d'économie adaptées.`,
+          },
+        ],
+      };
+    }
+
+    case 'pillar': {
+      const intro = pick(PILLAR_INTROS, v)(territory);
+      return {
+        intro,
+        summary: `Ressource complète sur les prix alimentaires en ${territory} : comparaison des enseignes, suivi de l'inflation, produits les moins chers et conseils pratiques pour maîtriser votre budget courses en Outre-mer.`,
+        faq: [
+          {
+            question: `Comment comparer les prix en ${territory} ?`,
+            answer: `Notre comparateur de prix en ${territory} vous permet de comparer instantanément les tarifs des principales enseignes (Carrefour, E.Leclerc, Leader Price, Super U, Intermarché) sur des milliers de produits.`,
+          },
+          {
+            question: `Pourquoi les prix sont-ils plus élevés en ${territory} qu'en métropole ?`,
+            answer: `Les prix en ${territory} sont généralement plus élevés en raison des coûts de transport maritime, des taxes d'importation et de l'insularité. Notre observatoire quantifie ces écarts et aide les consommateurs à trouver les meilleures offres locales.`,
+          },
+          {
+            question: `Quels sont les produits les moins chers en ${territory} ?`,
+            answer: `Certains produits locaux ou fabriqués sur place sont moins chers en ${territory}. Notre outil identifie les meilleures opportunités d'achat pour optimiser votre budget courses.`,
+          },
+        ],
+        sections: [
+          {
+            title: `Comparatif des grandes enseignes en ${territory}`,
+            body: `En ${territory}, plusieurs grandes enseignes se disputent le marché de la grande distribution. Notre analyse comparative couvre Carrefour, E.Leclerc, Leader Price, Super U et Intermarché — avec des données actualisées sur les prix pratiqués par rayon.`,
+          },
+          {
+            title: `Tendances des prix alimentaires en ${territory}`,
+            body: `Les prix alimentaires en ${territory} évoluent sous l'effet de l'inflation, des politiques d'approvisionnement et de la concurrence locale. Notre baromètre mensuel vous tient informé des principales variations.`,
+          },
+          {
+            title: `Conseils pour économiser sur vos courses en ${territory}`,
+            body: `Pour réduire votre budget courses en ${territory} : comparez les prix avant d'acheter, profitez des promotions croisées, privilégiez les produits locaux quand c'est possible, et utilisez notre alertes de prix pour ne jamais rater une bonne affaire.`,
+          },
+        ],
+      };
+    }
+
+    default: {
+      return {
+        intro: `Découvrez les meilleures offres et comparez les prix en ${territory} avec notre observatoire indépendant.`,
+        summary: `Notre outil de comparaison de prix vous aide à faire les meilleurs choix en ${territory}.`,
+        faq: [],
+        sections: [],
+      };
+    }
+  }
+}
+
+// ── buildFaqJsonLdFromItems ───────────────────────────────────────────────────
+
+export function buildFaqJsonLdFromItems(items: FAQItem[]): Record<string, unknown> {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: items.map((item) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.answer,
+      },
+    })),
+  };
+}
