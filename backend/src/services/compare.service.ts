@@ -4,26 +4,43 @@
  * Pipeline:
  *   1. Check cache
  *   2. Resolve product identity via provider aggregation
- *   3. Build price observations (internal mock → real providers in Phase 2)
- *   4. Filter by retailer, sort by price
- *   5. Compute summary (min / max / average / savings)
- *   6. Cache and return
+ *   3. Fetch price observations from real providers (Open Prices, internal)
+ *   4. Fall back to curated static observations only when providers return nothing
+ *   5. Filter by retailer, sort by price
+ *   6. Compute summary (min / max / average / savings)
+ *   7. Cache and return
  *
- * Phase 2 TODO: replace mockObservations with real DB + external provider calls.
+ * Types are aligned with the shared contracts in shared/src/price.ts and
+ * shared/src/api.ts — field names and value types are intentionally
+ * identical so callers can use either definition interchangeably.
  */
 
 import { getCache, setCache } from './cache.service.js';
 import { searchProducts } from './products.service.js';
+import { fetchPriceObservations } from '../providers/openprices.provider.js';
+import { internalProvider } from '../providers/internal.provider.js';
 
+// ── Territory type — mirrors shared/src/price.ts TerritoryCode ────────────────
+export type TerritoryCode =
+  | 'GP' | 'MQ' | 'GF' | 'RE' | 'YT' | 'PM'
+  | 'BL' | 'MF' | 'NC' | 'PF' | 'WF';
+
+// ── Price source — mirrors shared/src/price.ts PriceSourceId ─────────────────
+export type PriceSourceId = 'open_food_facts' | 'open_prices' | 'internal' | 'mock';
+
+// ── Shared-compatible interfaces ──────────────────────────────────────────────
+
+/** Mirrors shared/src/price.ts PriceObservation */
 export interface PriceObservationRow {
   retailer: string;
   territory: string;
   price: number;
   currency: 'EUR';
   observedAt: string;
-  source: 'open_food_facts' | 'open_prices' | 'internal' | 'mock';
+  source: PriceSourceId;
 }
 
+/** Mirrors shared/src/price.ts CompareSummary */
 export interface CompareSummary {
   min: number | null;
   max: number | null;
@@ -32,6 +49,7 @@ export interface CompareSummary {
   count: number;
 }
 
+/** Mirrors shared/src/api.ts CompareResponse */
 export interface CompareResult {
   product: {
     id: string;
@@ -52,15 +70,18 @@ export interface CompareParams {
   retailer?: string;
 }
 
-// Static observations used until real price data is wired.
-// Structure mirrors what a real DB query would return.
-const STATIC_OBSERVATIONS: PriceObservationRow[] = [
+// ── Curated fallback observations ─────────────────────────────────────────────
+// Used only when all real providers return empty results for the territory.
+// Marked as 'mock' so the UI can indicate data quality to the user.
+const FALLBACK_OBSERVATIONS: PriceObservationRow[] = [
   { retailer: 'Leader Price', territory: 'GP', price: 2.89, currency: 'EUR', observedAt: '2026-03-20T08:30:00Z', source: 'mock' },
   { retailer: 'Carrefour',    territory: 'GP', price: 3.49, currency: 'EUR', observedAt: '2026-03-20T08:20:00Z', source: 'mock' },
   { retailer: 'Super U',      territory: 'GP', price: 3.72, currency: 'EUR', observedAt: '2026-03-20T07:55:00Z', source: 'mock' },
   { retailer: 'E.Leclerc',    territory: 'MQ', price: 2.95, currency: 'EUR', observedAt: '2026-03-20T08:15:00Z', source: 'mock' },
   { retailer: 'Match',        territory: 'MQ', price: 3.10, currency: 'EUR', observedAt: '2026-03-20T08:10:00Z', source: 'mock' },
 ];
+
+// ── Helper ────────────────────────────────────────────────────────────────────
 
 function buildSummary(observations: PriceObservationRow[]): CompareSummary {
   if (observations.length === 0) {
@@ -79,6 +100,8 @@ function buildSummary(observations: PriceObservationRow[]): CompareSummary {
   };
 }
 
+// ── Service ───────────────────────────────────────────────────────────────────
+
 export async function compareService(params: CompareParams): Promise<CompareResult> {
   const { query, territory, retailer } = params;
 
@@ -92,32 +115,55 @@ export async function compareService(params: CompareParams): Promise<CompareResu
     id: query,
     name: query,
     barcode: query,
-    source: 'mock',
+    source: 'mock' as const,
   };
 
-  // 2 — Fetch price observations
-  // Phase 2: replace STATIC_OBSERVATIONS with real DB query + provider merge
-  const territoryCode = territory.toUpperCase();
-  let observations = STATIC_OBSERVATIONS.filter(
-    (o) => o.territory.toUpperCase() === territoryCode,
-  );
-  // Cross-territory fallback for demo territories with no data
-  if (observations.length === 0) observations = [...STATIC_OBSERVATIONS];
+  // 2 — Aggregate price observations from real providers in parallel.
+  //     Both providers degrade gracefully: they return [] on any error.
+  const barcode = product.barcode || query;
+  const [openPricesRows, internalRows] = await Promise.all([
+    fetchPriceObservations(barcode, territory),
+    internalProvider(query, territory),
+  ]);
 
-  // 3 — Apply retailer filter
+  const providerRows: PriceObservationRow[] = [
+    ...openPricesRows,
+    ...internalRows,
+  ];
+
+  // 3 — Filter by territory; fall back to curated static data when empty.
+  const territoryCode = territory.toUpperCase();
+  let observations: PriceObservationRow[];
+
+  if (providerRows.length > 0) {
+    observations = providerRows.filter(
+      (o) => o.territory.toUpperCase() === territoryCode,
+    );
+    // If the territory filter removes everything, keep all provider rows
+    // (cross-territory display is better than an empty response).
+    if (observations.length === 0) observations = providerRows;
+  } else {
+    // No real data — use curated fallback, same territory-filter logic.
+    observations = FALLBACK_OBSERVATIONS.filter(
+      (o) => o.territory.toUpperCase() === territoryCode,
+    );
+    if (observations.length === 0) observations = [...FALLBACK_OBSERVATIONS];
+  }
+
+  // 4 — Apply optional retailer filter
   if (retailer) observations = observations.filter((o) => o.retailer === retailer);
 
-  // 4 — Sort by price ascending
+  // 5 — Sort by price ascending
   observations = [...observations].sort((a, b) => a.price - b.price);
 
-  // 5 — Summarise
+  // 6 — Summarise
   const result: CompareResult = {
     product: {
-      id:     product.id,
-      name:   product.name,
+      id:      product.id,
+      name:    product.name,
       barcode: product.barcode,
-      image:  product.image,
-      brand:  product.brand,
+      image:   product.image,
+      brand:   product.brand,
     },
     territory,
     retailerFilter: retailer ?? null,
