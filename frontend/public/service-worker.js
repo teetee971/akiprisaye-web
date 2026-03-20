@@ -1,4 +1,4 @@
-const CACHE_NAME = 'akiprisaye-smart-cache-v9';
+const CACHE_NAME = 'akiprisaye-smart-cache-v10';
 const PRICE_DATA_CACHE = 'akiprisaye-price-data-v1';
 const SCOPE_PATHNAME = new URL(self.registration.scope).pathname;
 // Absolute base URL of the SW scope (e.g. "https://teetee971.github.io/akiprisaye-web/")
@@ -117,15 +117,25 @@ self.addEventListener('fetch', (event) => {
     url.pathname.endsWith('.html')
   ) {
     event.respondWith(
-      fetch(request, { cache: 'no-store' }).catch(() =>
-        new Response(OFFLINE_HTML, {
-          status: 503,
-          headers: {
-            'Content-Type': 'text/html',
-            'Cache-Control': 'no-store',
-          },
-        }),
-      ),
+      fetch(request, { cache: 'no-store' })
+        .then(async (response) => {
+          // GitHub Pages returns HTTP 404 for SPA deep-link routes (e.g. /mon-compte).
+          // Serve the app shell so React Router handles the route client-side.
+          // The browser URL bar keeps the original path, so routing works correctly.
+          if (response.status === 404 && event.request.mode === 'navigate') {
+            return fetch(SCOPE_BASE, { cache: 'no-store' });
+          }
+          return response;
+        })
+        .catch(() =>
+          new Response(OFFLINE_HTML, {
+            status: 503,
+            headers: {
+              'Content-Type': 'text/html',
+              'Cache-Control': 'no-store',
+            },
+          }),
+        ),
     );
     return;
   }
