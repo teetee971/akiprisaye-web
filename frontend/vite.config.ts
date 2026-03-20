@@ -67,7 +67,9 @@ export default defineConfig({
     chunkSizeWarningLimit: 1000,
     // Split CSS per chunk so only needed styles are loaded
     cssCodeSplit: true,
-    // Disable modulepreload polyfill — all target browsers support <link rel="modulepreload"> natively
+    // Disable the module-preload polyfill — all target browsers support
+    // <link rel="modulepreload"> natively.  The polyfill adds ~2 kB and is
+    // unnecessary for our target audience.
     modulePreload: { polyfill: false },
     // Terser minification: drop console/debugger, inline small functions
     minify: 'terser',
@@ -110,9 +112,11 @@ export default defineConfig({
           // A forced 'vendor-charts' chunk was causing a static modulepreload in the
           // main entry, adding 538 kB to the critical path. Let Rollup decide.
           // ── Maps ──────────────────────────────────────────────────────────
-          if (id.includes('leaflet') || id.includes('react-leaflet')) {
-            return 'vendor-leaflet';
-          }
+          // NOTE: intentionally NOT in manualChunks — same rationale as vendor-charts
+          // and vendor-i18n below.  Forcing leaflet into a named chunk caused Vite's
+          // __vite__preload helper to migrate there (after vendor-i18n was removed),
+          // pulling vendor-leaflet (60 kB gzip) back onto the critical path.
+          // Let Rollup auto-split leaflet with the lazy Carte/MapPage chunks.
           // ── Firebase (large SDK — load after app shell) ───────────────────
           if (id.includes('@firebase/') || id.includes('firebase/')) {
             return 'vendor-firebase';
@@ -122,9 +126,16 @@ export default defineConfig({
             return 'vendor-icons';
           }
           // ── i18n ──────────────────────────────────────────────────────────
-          if (id.includes('i18next') || id.includes('react-i18next')) {
-            return 'vendor-i18n';
-          }
+          // NOTE: intentionally NOT in manualChunks — same pattern as vendor-charts.
+          // LanguageProvider is lazy-loaded in App.tsx, so i18next and react-i18next
+          // are only referenced by the lazy LanguageProvider chunk, never by the
+          // main entry.  Forcing them into a named "vendor-i18n" chunk caused Vite
+          // to place its __vite__preload helper there and statically import that
+          // helper from the main entry (import { _ as e } from "./vendor-i18n…"),
+          // which put the full 65 kB i18n bundle back on the critical path.
+          // Let Rollup auto-split: the helper will migrate to vendor-react-dom
+          // (already statically imported) and vendor-i18n disappears from the
+          // critical path entirely.
           // ── Validation ────────────────────────────────────────────────────
           if (id.includes('zod')) {
             return 'vendor-zod';
