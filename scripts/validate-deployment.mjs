@@ -599,7 +599,33 @@ async function verifyFirebaseBundle(siteUrl, html) {
     fail(`Bundle JS principal introuvable : ${bundlePath} (HTTP ${response.status}).`);
   }
 
-  const config = extractFirebaseConfigFromBundle(body);
+  let config = extractFirebaseConfigFromBundle(body);
+  let configBody = body;
+  let configBundlePath = bundlePath;
+
+  // Firebase is lazy-loaded in a dedicated app chunk (firebase-*.js, ~1 kB) so
+  // the 485 kB Firebase SDK does not block first paint.  The main entry bundle
+  // only holds a Rollup-generated string reference to that chunk and will never
+  // contain the firebaseConfig object itself.  When apiKey is absent from the
+  // main bundle, look for the firebase app chunk reference embedded in the main
+  // bundle's dynamic-import map and fetch it before declaring the config absent.
+  if (!config.apiKey) {
+    // Match any path whose last segment starts with "firebase-" (e.g. "assets/firebase-ABC.js").
+    // The leading [^"]+\/ ensures we require a path separator before "firebase-", which
+    // excludes "vendor-firebase-*.js" whose last segment starts with "vendor-", not "firebase-".
+    const chunkMatch = body.match(/"([^"]+\/firebase-[^"]+\.js)"/);
+    if (chunkMatch) {
+      const firebaseChunkUrl = joinSiteUrl(siteUrl, `/${chunkMatch[1]}`);
+      const firebaseRes = await fetchText(firebaseChunkUrl);
+      if (firebaseRes.response.ok) {
+        config = extractFirebaseConfigFromBundle(firebaseRes.body);
+        configBody = firebaseRes.body;
+        configBundlePath = `/${chunkMatch[1]}`;
+      } else {
+        logWarn(`Firebase app chunk trouvé dans le bundle principal (${chunkMatch[1]}) mais inaccessible (HTTP ${firebaseRes.response.status}) — impossible de vérifier la config Firebase.`);
+      }
+    }
+  }
 
   // Fail early with a clear message if the apiKey field could not be extracted at all
   // (e.g. the bundle format changed or tree-shaking removed the Firebase config).
@@ -619,7 +645,7 @@ async function verifyFirebaseBundle(siteUrl, html) {
   // and a raw-text search would produce false positives in that case.
   const WRONG_API_KEY = 'AIzaSyDf_mB8zMWHFwoFhVLyThuKWMTmhB7uSZY';
   if (config.apiKey === WRONG_API_KEY) {
-    const bundleFile = bundlePath.split('/').pop();
+    const bundleFile = configBundlePath.split('/').pop();
     fail(
       `CLEF API FIREBASE INCORRECTE détectée dans le bundle ${bundleFile}.\n` +
       `  Clef erronée : "${WRONG_API_KEY}"\n` +
@@ -636,12 +662,12 @@ async function verifyFirebaseBundle(siteUrl, html) {
 
   if (mismatches.length > 0) {
     fail(
-      `Config Firebase incorrecte dans le bundle ${bundlePath.split('/').pop()} :\n${mismatches.join('\n')}`,
+      `Config Firebase incorrecte dans le bundle ${configBundlePath.split('/').pop()} :\n${mismatches.join('\n')}`,
     );
   }
 
-  const bundleFile = bundlePath.split('/').pop();
-  const correctKeyCount = countOccurrences(body, EXPECTED_FIREBASE_CONFIG.apiKey);
+  const bundleFile = configBundlePath.split('/').pop();
+  const correctKeyCount = countOccurrences(configBody, EXPECTED_FIREBASE_CONFIG.apiKey);
   logOk(
     `Firebase config vérifiée dans le bundle (${bundleFile}) :` +
     ` clé correcte: ${correctKeyCount} occurrence(s),` +

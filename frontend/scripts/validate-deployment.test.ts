@@ -185,6 +185,34 @@ describe('validate-deployment helpers', () => {
     expect(config.measurementId).toBeNull();
   });
 
+  it('extractFirebaseConfigFromBundle returns null apiKey when Firebase is lazy-loaded (main entry bundle only)', () => {
+    // Verifies the core assumption behind the lazy-chunk fallback in verifyFirebaseBundle:
+    // when Firebase is lazy-loaded, the main bundle only holds a Rollup dynamic-import
+    // chunk map (string references like "assets/firebase-*.js") and does NOT contain the
+    // firebaseConfig object itself.  The apiKey field must therefore be null from the
+    // main bundle, which triggers the secondary lookup in the firebase-*.js lazy chunk.
+    const mainBundleSnippet = `
+      "assets/vendor-firebase-DKDYgiV6.js","assets/firebase-BEDSOtSV.js","assets/AuthContext-FYFwiSo8.js"
+    `;
+    const config = extractFirebaseConfigFromBundle(mainBundleSnippet);
+    expect(config.apiKey).toBeNull();
+  });
+
+  it('firebase lazy chunk URL is embedded in main bundle as "assets/firebase-*.js" and can be extracted', () => {
+    // Verifies the regex used in verifyFirebaseBundle to locate the firebase app chunk URL
+    // inside the main bundle's Rollup chunk map.  The pattern must survive Rollup's
+    // minification (no spaces, compact string literals).
+    const mainBundleSnippet = `
+      "assets/vendor-firebase-DKDYgiV6.js","assets/firebase-BEDSOtSV.js","assets/AuthContext-FYFwiSo8.js"
+    `;
+    // The regex requires a path separator before "firebase-" to exclude the vendor chunk.
+    const chunkMatch = mainBundleSnippet.match(/"([^"]+\/firebase-[^"]+\.js)"/);
+    expect(chunkMatch).not.toBeNull();
+    expect(chunkMatch![1]).toBe('assets/firebase-BEDSOtSV.js');
+    // vendor-firebase must NOT be selected; it contains library code, not the config object.
+    expect(chunkMatch![1]).not.toContain('vendor');
+  });
+
   it('extractFirebaseConfigFromBundle does NOT match the old wrong apiKey', () => {
     // Guard: the known wrong key must never reappear in a deployed bundle.
     // Keys split into two parts so no single literal matches the 39-char AIzaSy... pattern.
