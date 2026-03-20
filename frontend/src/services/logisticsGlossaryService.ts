@@ -304,18 +304,18 @@ export function searchTerms(query: string): GlossaryTerm[] {
   const normalizedQuery = query
     .toLowerCase()
     .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '');
+    .replace(/[̀-ͯ]/g, '');
   
   return glossaryTerms.filter(term => {
     const normalizedTerm = term.term
       .toLowerCase()
       .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '');
+      .replace(/[̀-ͯ]/g, '');
     
     const normalizedDefinition = term.definition
       .toLowerCase()
       .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '');
+      .replace(/[̀-ͯ]/g, '');
     
     return normalizedTerm.includes(normalizedQuery) || 
            normalizedDefinition.includes(normalizedQuery);

@@ -41,22 +41,22 @@ const LettreJourWidget       = lazy(() => import('../components/home/LettreJourW
 const RETAILER_LOGOS = ['Carrefour', 'E.Leclerc', 'Super U', 'Leader Price', 'Match', 'Hyper U'];
 
 const POPULAR_PRODUCTS = [
-  { name: 'Lait demi-écrémé 1L', price: '1,32 \u20ac', delta: '-0,18 \u20ac' },
-  { name: 'Riz long 1 kg',        price: '2,48 \u20ac', delta: '-0,42 \u20ac' },
-  { name: 'Huile 1L',             price: '3,96 \u20ac', delta: '-0,61 \u20ac' },
+  { name: 'Lait demi-écrémé 1L', price: '1,32 €', delta: '-0,18 €' },
+  { name: 'Riz long 1 kg',        price: '2,48 €', delta: '-0,42 €' },
+  { name: 'Huile 1L',             price: '3,96 €', delta: '-0,61 €' },
 ];
 
 const PRICE_ALERTS = [
-  { label: 'Yaourt nature x12', change: '-7%',  note: 'Baisse d\u00e9tect\u00e9e', down: true  },
-  { label: 'Poulet entier',     change: '+4%',  note: 'Hausse r\u00e9cente',       down: false },
-  { label: 'P\u00e2tes 500g',   change: '-3%',  note: 'Prix stabilis\u00e9',       down: true  },
+  { label: 'Yaourt nature x12', change: '-7%',  note: 'Baisse détectée', down: true  },
+  { label: 'Poulet entier',     change: '+4%',  note: 'Hausse récente',       down: false },
+  { label: 'Pâtes 500g',   change: '-3%',  note: 'Prix stabilisé',       down: true  },
 ];
 
 const PRIMARY_TERRITORIES = [
   { code: 'GP', name: 'Guadeloupe', flag: '\ud83c\uddec\ud83c\uddf5' },
   { code: 'MQ', name: 'Martinique', flag: '\ud83c\uddf2\ud83c\uddf6' },
   { code: 'GF', name: 'Guyane',     flag: '\ud83c\uddec\ud83c\uddeb' },
-  { code: 'RE', name: 'La R\u00e9union', flag: '\ud83c\uddf7\ud83c\uddea' },
+  { code: 'RE', name: 'La Réunion', flag: '\ud83c\uddf7\ud83c\uddea' },
   { code: 'YT', name: 'Mayotte',    flag: '\ud83c\uddfe\ud83c\uddf9' },
 ];
 
@@ -64,28 +64,28 @@ const ALL_TERRITORIES = [
   { code: 'GP', name: 'Guadeloupe',           flag: '\ud83c\uddec\ud83c\uddf5' },
   { code: 'MQ', name: 'Martinique',            flag: '\ud83c\uddf2\ud83c\uddf6' },
   { code: 'GF', name: 'Guyane',                flag: '\ud83c\uddec\ud83c\uddeb' },
-  { code: 'RE', name: 'La R\u00e9union',       flag: '\ud83c\uddf7\ud83c\uddea' },
+  { code: 'RE', name: 'La Réunion',       flag: '\ud83c\uddf7\ud83c\uddea' },
   { code: 'YT', name: 'Mayotte',               flag: '\ud83c\uddfe\ud83c\uddf9' },
-  { code: 'NC', name: 'Nouvelle-Cal\u00e9donie', flag: '\ud83c\uddf3\ud83c\udde8' },
+  { code: 'NC', name: 'Nouvelle-Calédonie', flag: '\ud83c\uddf3\ud83c\udde8' },
 ];
 
 const TESTIMONIALS = [
   {
     name: 'Marie-Christine F.', territory: 'Guadeloupe', flag: '\ud83c\uddec\ud83c\uddf5',
-    savings: '47 \u20ac', savingsLabel: '\u00e9conomis\u00e9s / mois', initials: 'MC',
-    quote: "J'ai compar\u00e9 3 enseignes pour mon panier habituel. La diff\u00e9rence est r\u00e9elle.",
+    savings: '47 €', savingsLabel: 'économisés / mois', initials: 'MC',
+    quote: "J'ai comparé 3 enseignes pour mon panier habituel. La différence est réelle.",
     product: 'Courses hebdomadaires',
   },
   {
     name: 'Jean-Louis B.', territory: 'Martinique', flag: '\ud83c\uddf2\ud83c\uddf6',
     savings: '31 %', savingsLabel: 'de moins sur le riz', initials: 'JL',
-    quote: "Le m\u00eame riz \u00e9tait affich\u00e9 2,20 \u20ac dans l'enseigne \u00e0 deux rues. En un clic j'ai su.",
+    quote: "Le même riz était affiché 2,20 € dans l'enseigne à deux rues. En un clic j'ai su.",
     product: 'Riz long grain 1 kg',
   },
   {
-    name: 'Sophie D.', territory: 'La R\u00e9union', flag: '\ud83c\uddf7\ud83c\uddea',
-    savings: '89 \u20ac', savingsLabel: '\u00e9conomis\u00e9s en 1 mois', initials: 'SD',
-    quote: "L'alerte m'a pr\u00e9venue quand le lait a baiss\u00e9. J'ai achet\u00e9 au bon moment.",
+    name: 'Sophie D.', territory: 'La Réunion', flag: '\ud83c\uddf7\ud83c\uddea',
+    savings: '89 €', savingsLabel: 'économisés en 1 mois', initials: 'SD',
+    quote: "L'alerte m'a prévenue quand le lait a baissé. J'ai acheté au bon moment.",
     product: 'Produits laitiers & conserves',
   },
 ];
@@ -200,13 +200,13 @@ function LiveResult({ comparison }: LiveResultProps) {
         </div>
 
         <div className="grid gap-4 sm:grid-cols-3">
-          <MetricBlock label="Prix local"     value={`${comparison.territoryPrice.toFixed(2)} \u20ac`} helper={comparison.territory} />
-          <MetricBlock label="Prix m\u00e9tropole" value={`${comparison.metropolePrice.toFixed(2)} \u20ac`} helper="R\u00e9f\u00e9rence \ud83c\uddeb\ud83c\uddf7" />
-          <MetricBlock label="Surcot" value={`+${displayed.toFixed(2)} \u20ac`} helper={`+${comparison.deltaPercent}%`} accent />
+          <MetricBlock label="Prix local"     value={`${comparison.territoryPrice.toFixed(2)} €`} helper={comparison.territory} />
+          <MetricBlock label="Prix métropole" value={`${comparison.metropolePrice.toFixed(2)} €`} helper="Référence \ud83c\uddeb\ud83c\uddf7" />
+          <MetricBlock label="Surcot" value={`+${displayed.toFixed(2)} €`} helper={`+${comparison.deltaPercent}%`} accent />
         </div>
 
         <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-4">
-          <div className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-400">Enseignes compar\u00e9es</div>
+          <div className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-400">Enseignes comparées</div>
           <div className="mt-4 flex flex-wrap gap-2">
             {['E.Leclerc', 'Carrefour', 'Hyper U'].map((name) => (
               <span key={name} className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-zinc-200">{name}</span>
@@ -392,8 +392,8 @@ export default function HomeV5() {
   return (
     <>
       <SEOHead
-        title="A KI PRI SA YÉ \u2013 Transparence des prix Outre-mer"
-        description="Comparez les prix en Guadeloupe, Martinique, Guyane, La R\u00e9union et dans tous les territoires ultramarins. Donn\u00e9es citoyennes r\u00e9elles, scanneur de produits, observatoire des prix."
+        title="A KI PRI SA YÉ – Transparence des prix Outre-mer"
+        description="Comparez les prix en Guadeloupe, Martinique, Guyane, La Réunion et dans tous les territoires ultramarins. Données citoyennes réelles, scanneur de produits, observatoire des prix."
         canonical="https://teetee971.github.io/akiprisaye-web/"
       />
 
@@ -426,21 +426,21 @@ export default function HomeV5() {
                 <div>
                   <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-zinc-300">
                     <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_16px_rgba(52,211,153,0.8)]" aria-hidden="true" />
-                    Donn\u00e9es en direct
+                    Données en direct
                   </div>
                   <h1 className="mt-6 text-4xl font-semibold tracking-[-0.04em] text-white sm:text-5xl xl:text-6xl">
                     Comparez les prix.<br className="hidden sm:block" />
-                    <span className="text-emerald-400">\u00c9conomisez</span> instantan\u00e9ment.
+                    <span className="text-emerald-400">Économisez</span> instantanément.
                   </h1>
                   <p className="mt-5 max-w-xl text-base leading-7 text-zinc-300 sm:text-lg">
-                    Donn\u00e9es locales pour les DOM-COM. Guadeloupe, Martinique, Guyane, La R\u00e9union et plus.
-                    Acc\u00e8s libre, aucun compte requis.
+                    Données locales pour les DOM-COM. Guadeloupe, Martinique, Guyane, La Réunion et plus.
+                    Accès libre, aucun compte requis.
                   </p>
                 </div>
                 <div className="mt-8 grid gap-3 sm:grid-cols-3">
-                  <FeatureChip title="Temps r\u00e9el"    subtitle="donn\u00e9es fra\u00eeches" />
+                  <FeatureChip title="Temps réel"    subtitle="données fraîches" />
                   <FeatureChip title="DROM-COM"      subtitle="12 territoires" />
-                  <FeatureChip title="Stable layout" subtitle="CLS \u2248 0" />
+                  <FeatureChip title="Stable layout" subtitle="CLS ≈ 0" />
                 </div>
               </div>
             </section>
@@ -464,8 +464,10 @@ export default function HomeV5() {
                       <div className="flex h-14 items-center rounded-2xl border border-white/10 bg-black/20 px-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] transition focus-within:border-white/25">
                         <Search size={16} className="mr-3 shrink-0 text-zinc-500" aria-hidden="true" />
                         <input
+                          id="home-search-query"
+                          name="q"
                           type="text"
-                          placeholder="Ex. lait, p\u00e2tes, 3270190204877"
+                          placeholder="Ex. lait, pâtes, 3270190204877"
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
                           className="flex-1 bg-transparent text-sm text-white placeholder:text-zinc-500 outline-none"
@@ -479,7 +481,7 @@ export default function HomeV5() {
                         className="grid gap-2"
                         style={{ gridTemplateColumns: 'repeat(5, minmax(0, 1fr))' }}
                         role="radiogroup"
-                        aria-label="S\u00e9lectionner un territoire"
+                        aria-label="Sélectionner un territoire"
                       >
                         {PRIMARY_TERRITORIES.map((t) => (
                           <button
@@ -534,11 +536,11 @@ export default function HomeV5() {
           </section>
 
           {/* KPI strip */}
-          <section className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4" aria-label="Indicateurs cl\u00e9s">
-            <KPICard title="\u00c9conomie moyenne"  value="-18%" />
-            <KPICard title="Temps de r\u00e9ponse"  value="&lt; 3 s" />
+          <section className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4" aria-label="Indicateurs clés">
+            <KPICard title="Économie moyenne"  value="-18%" />
+            <KPICard title="Temps de réponse"  value="&lt; 3 s" />
             <KPICard title="Couverture"        value="DROM-COM" />
-            <KPICard title="CLS ma\u00eetris\u00e9" value="\u2248 0" />
+            <KPICard title="CLS maîtrisé" value="≈ 0" />
           </section>
 
           {/* Bento grid — 5 cards */}
@@ -550,7 +552,7 @@ export default function HomeV5() {
             <BentoCard className="lg:col-span-4 lg:row-span-1">
               <SectionHeader
                 eyebrow="ENSEIGNES"
-                title="Couverture du r\u00e9seau"
+                title="Couverture du réseau"
                 description="Enseignes suivies dans votre territoire."
               />
               <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -564,7 +566,7 @@ export default function HomeV5() {
                 ))}
               </div>
               <div className="mt-5 flex items-center justify-between rounded-2xl border border-emerald-400/15 bg-emerald-400/8 px-4 py-3">
-                <span className="text-sm text-emerald-200">Enseignes surveill\u00e9es</span>
+                <span className="text-sm text-emerald-200">Enseignes surveillées</span>
                 <span className="text-lg font-semibold text-white">24</span>
               </div>
             </BentoCard>
@@ -573,15 +575,15 @@ export default function HomeV5() {
             <BentoCard className="lg:col-span-4 lg:row-span-1">
               <SectionHeader
                 eyebrow="PRODUITS"
-                title="Les plus consult\u00e9s"
-                description="R\u00e9f\u00e9rences qui g\u00e9n\u00e8rent le plus de comparaisons."
+                title="Les plus consultés"
+                description="Références qui génèrent le plus de comparaisons."
               />
               <div className="mt-5 space-y-3">
                 {POPULAR_PRODUCTS.map((item) => (
                   <div key={item.name} className="flex items-center justify-between rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3">
                     <div>
                       <div className="text-sm font-medium text-white">{item.name}</div>
-                      <div className="mt-1 text-xs text-zinc-400">Meilleur prix observ\u00e9</div>
+                      <div className="mt-1 text-xs text-zinc-400">Meilleur prix observé</div>
                     </div>
                     <div className="text-right">
                       <div className="text-base font-semibold text-white">{item.price}</div>
@@ -597,7 +599,7 @@ export default function HomeV5() {
               <SectionHeader
                 eyebrow="TERRITOIRES"
                 title="Comparaison multi-territoires"
-                description="Passez d'un territoire \u00e0 l'autre sans perdre le contexte."
+                description="Passez d'un territoire à l'autre sans perdre le contexte."
               />
               <div className="mt-5 rounded-[24px] border border-white/8 bg-[radial-gradient(circle_at_20%_20%,rgba(34,197,94,0.18),transparent_35%),linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.02))] p-4">
                 <div className="rounded-[20px] border border-white/8 bg-[#0d1117]/70 p-4">
@@ -610,7 +612,7 @@ export default function HomeV5() {
                       {12} zones
                     </div>
                   </div>
-                  <nav className="mt-6 space-y-3" aria-label="Acc\u00e8s par territoire">
+                  <nav className="mt-6 space-y-3" aria-label="Accès par territoire">
                     {ALL_TERRITORIES.map((t, i) => (
                       <Link
                         key={t.code}
@@ -634,8 +636,8 @@ export default function HomeV5() {
             <BentoCard className="lg:col-span-4 lg:row-span-1">
               <SectionHeader
                 eyebrow="ALERTES"
-                title="Mouvements r\u00e9cents"
-                description="Baisses et hausses \u00e0 surveiller."
+                title="Mouvements récents"
+                description="Baisses et hausses à surveiller."
               />
               <div className="mt-5 space-y-3">
                 {PRICE_ALERTS.map((alert) => (
@@ -660,15 +662,15 @@ export default function HomeV5() {
             {/* Fiabilité */}
             <BentoCard className="lg:col-span-4 lg:row-span-1">
               <SectionHeader
-                eyebrow="FIABILIT\u00c9"
-                title="Donn\u00e9es fra\u00eeches, lecture claire"
-                description="Architecture compacte, scroll r\u00e9duit, informations cl\u00e9s imm\u00e9diatement visibles."
+                eyebrow="FIABILITÉ"
+                title="Données fraîches, lecture claire"
+                description="Architecture compacte, scroll réduit, informations clés immédiatement visibles."
               />
               <div className="mt-5 grid grid-cols-2 gap-3">
-                <StatCard label="Mise \u00e0 jour"   value="Aujourd'hui"   helper="Flux synchronis\u00e9s" />
-                <StatCard label="Comparaisons"  value="12\u202f480"        helper="sur 30 jours" />
-                <StatCard label="Temps moyen"   value="&lt; 3 s"         helper="recherche \u2192 r\u00e9sultat" />
-                <StatCard label="UX cible"      value="CLS \u2248 0"       helper="zones r\u00e9serv\u00e9es" />
+                <StatCard label="Mise à jour"   value="Aujourd'hui"   helper="Flux synchronisés" />
+                <StatCard label="Comparaisons"  value="12 480"        helper="sur 30 jours" />
+                <StatCard label="Temps moyen"   value="&lt; 3 s"         helper="recherche → résultat" />
+                <StatCard label="UX cible"      value="CLS ≈ 0"       helper="zones réservées" />
               </div>
             </BentoCard>
           </section>
@@ -683,10 +685,10 @@ export default function HomeV5() {
               <div>
                 <div className="text-xs font-semibold uppercase tracking-[0.24em] text-zinc-400">Confiance</div>
                 <h3 className="mt-3 text-2xl font-semibold tracking-[-0.03em] text-white">
-                  Lisibilit\u00e9, fiabilit\u00e9, densit\u00e9 ma\u00eetris\u00e9e
+                  Lisibilité, fiabilité, densité maîtrisée
                 </h3>
                 <p className="mt-3 text-sm leading-7 text-zinc-300 sm:text-base">
-                  Hi\u00e9rarchie courte, cartes stables, zones r\u00e9serv\u00e9es. Lecture imm\u00e9diate pour r\u00e9duire le scroll sans sacrifier la clart\u00e9.
+                  Hiérarchie courte, cartes stables, zones réservées. Lecture immédiate pour réduire le scroll sans sacrifier la clarté.
                   {' '}Le plus utile, sans surcharge.
                 </p>
               </div>
@@ -724,7 +726,7 @@ export default function HomeV5() {
                 aria-controls="home-extended-content"
                 className="rounded-full border border-white/12 bg-white/5 px-5 py-2 text-sm font-medium text-white transition hover:-translate-y-0.5 hover:bg-white/10"
               >
-                {showExtended ? 'Masquer la vue complète' : "Voir toute la page d\u2019accueil"}
+                {showExtended ? 'Masquer la vue complète' : "Voir toute la page d’accueil"}
               </button>
             </div>
           </section>
@@ -736,13 +738,13 @@ export default function HomeV5() {
                 <PriceLiveTicker />
               </Suspense>
 
-              <section className="reveal py-4 max-w-5xl mx-auto w-full" aria-label="Statistiques cl\u00e9s">
+              <section className="reveal py-4 max-w-5xl mx-auto w-full" aria-label="Statistiques clés">
                 <Suspense fallback={<SkeletonStatGrid count={4} />}>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    <FlipStatCard value="12"    label="Territoires"       icon={<Globe className="w-5 h-5 text-blue-400" />}         backContent="Guadeloupe, Martinique, Guyane, La R\u00e9union, Mayotte et plus." />
-                    <FlipStatCard value={`${stats.products.toLocaleString()}+`} label="Produits compar\u00e9s" icon={<ShoppingCart className="w-5 h-5 text-emerald-400" />} backContent="Alimentaire, hygi\u00e8ne, entretien \u2014 relev\u00e9s citoyens v\u00e9rifi\u00e9s." />
-                    <FlipStatCard value={`${stats.scans.toLocaleString()}+`} label="Scans effectu\u00e9s" icon={<Camera className="w-5 h-5 text-violet-400" />} backContent="Codes-barres et tickets OCR analys\u00e9s par la communaut\u00e9." />
-                    <FlipStatCard value="~35%"  label="Surcot moyen DOM"  icon={<BarChart2 className="w-5 h-5 text-orange-400" />}   backContent="Par rapport \u00e0 l'Hexagone \u2014 observatoire citoyen mars 2026." />
+                    <FlipStatCard value="12"    label="Territoires"       icon={<Globe className="w-5 h-5 text-blue-400" />}         backContent="Guadeloupe, Martinique, Guyane, La Réunion, Mayotte et plus." />
+                    <FlipStatCard value={`${stats.products.toLocaleString()}+`} label="Produits comparés" icon={<ShoppingCart className="w-5 h-5 text-emerald-400" />} backContent="Alimentaire, hygiène, entretien — relevés citoyens vérifiés." />
+                    <FlipStatCard value={`${stats.scans.toLocaleString()}+`} label="Scans effectués" icon={<Camera className="w-5 h-5 text-violet-400" />} backContent="Codes-barres et tickets OCR analysés par la communauté." />
+                    <FlipStatCard value="~35%"  label="Surcot moyen DOM"  icon={<BarChart2 className="w-5 h-5 text-orange-400" />}   backContent="Par rapport à l'Hexagone — observatoire citoyen mars 2026." />
                   </div>
                 </Suspense>
               </section>
@@ -796,9 +798,9 @@ export default function HomeV5() {
           <footer className="mt-8 rounded-[28px] border border-white/8 bg-black/20 px-5 py-6 backdrop-blur-xl sm:px-6">
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               <div>
-                <div className="text-sm font-semibold tracking-[0.18em] text-white">A KI PRI SA Y\u00c9</div>
+                <div className="text-sm font-semibold tracking-[0.18em] text-white">A KI PRI SA YÉ</div>
                 <p className="mt-3 text-sm leading-6 text-zinc-400">
-                  Comparateur de prix pens\u00e9 pour les territoires ultramarins. Lecture rapide, cr\u00e9dibilit\u00e9 forte.
+                  Comparateur de prix pensé pour les territoires ultramarins. Lecture rapide, crédibilité forte.
                 </p>
               </div>
               <div>
@@ -812,15 +814,15 @@ export default function HomeV5() {
               <div>
                 <div className="text-sm font-medium text-white">Ressources</div>
                 <div className="mt-3 space-y-2">
-                  {[['M\u00e9thodologie', '/methodologie'], ['FAQ', '/faq'], ['Confidentialit\u00e9', '/transparence'], ['Contact', '/contact']].map(([label, to]) => (
+                  {[['Méthodologie', '/methodologie'], ['FAQ', '/faq'], ['Confidentialité', '/transparence'], ['Contact', '/contact']].map(([label, to]) => (
                     <div key={label}><Link to={to} className="text-sm text-zinc-400 transition hover:text-zinc-200">{label}</Link></div>
                   ))}
                 </div>
               </div>
               <div>
-                <div className="text-sm font-medium text-white">L\u00e9gal</div>
+                <div className="text-sm font-medium text-white">Légal</div>
                 <div className="mt-3 space-y-2">
-                  {[['Mentions l\u00e9gales', '/mentions-legales'], ['CGU', '/mentions-legales'], ['Accessibilit\u00e9', '/mentions-legales']].map(([label, to]) => (
+                  {[['Mentions légales', '/mentions-legales'], ['CGU', '/mentions-legales'], ['Accessibilité', '/mentions-legales']].map(([label, to]) => (
                     <div key={label}><Link to={to} className="text-sm text-zinc-400 transition hover:text-zinc-200">{label}</Link></div>
                   ))}
                 </div>

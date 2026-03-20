@@ -56,7 +56,7 @@ export default function ObservatoireDashboard() {
     setLoading(true);
     try {
       // Load real aggregated data from observatoire snapshots
-      const STEMS = ['guadeloupe', 'martinique', 'guyane', 'la_r\u00e9union', 'mayotte', 'hexagone'];
+      const STEMS = ['guadeloupe', 'martinique', 'guyane', 'la_réunion', 'mayotte', 'hexagone'];
       const MONTH = '2026-03';
       const snapshots = await Promise.all(
         STEMS.map((stem) =>

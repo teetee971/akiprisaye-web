@@ -4,7 +4,7 @@ export const normalizeText = (value?: string): string =>
   (value ?? '')
     .toLowerCase()
     .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[̀-ͯ]/g, '')
     .trim();
 
 const normalizeUnit = (value: PriceObservation['unit']): PriceObservation['unit'] => {

@@ -45,7 +45,7 @@ const pendingRequests = new Map<string, Promise<{ url?: string; source: ImageSou
 function normalizeCategory(category?: string): string {
   return (category ?? '')
     .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[̀-ͯ]/g, '')
     .toLowerCase()
     .trim();
 }

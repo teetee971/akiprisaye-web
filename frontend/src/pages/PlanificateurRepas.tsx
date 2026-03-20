@@ -409,7 +409,7 @@ export default function PlanificateurRepas() {
               <div key={m.id} style={{ display: 'grid', gridTemplateColumns: '90px repeat(7, 1fr)', gap: '3px', marginBottom: '3px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.7rem', color: '#94a3b8', fontWeight: 600, padding: '0.3rem 0.4rem' }}>
                   <span>{m.emoji}</span><span style={{ display: 'none' }}>{m.label}</span>
-                  <span style={{ display: 'block', fontSize: '0.6rem', lineHeight: 1.2 }}>{m.label.split('-').join('\u00ad')}</span>
+                  <span style={{ display: 'block', fontSize: '0.6rem', lineHeight: 1.2 }}>{m.label.split('-').join('­')}</span>
                 </div>
                 {DAYS.map(day => {
                   const entry = plan[day][m.id];

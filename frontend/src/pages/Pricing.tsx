@@ -398,7 +398,7 @@ export default function PricingPage() {
             {/* Badge row */}
             <div className="mt-5 flex flex-wrap justify-center gap-3">
               {[
-                "🆓 Gratuit à vie pour l\u2019essentiel",
+                "🆓 Gratuit à vie pour l’essentiel",
                 '⏱️ Essai 7 jours sur les plans payants',
                 '🌴 -30% résidents DOM',
               ].map((badge) => (
@@ -781,7 +781,7 @@ export default function PricingPage() {
                   {[
                     { icon: '🚫', label: 'Aucune carte bancaire requise pour démarrer' },
                     { icon: '🔓', label: 'Accès à TOUTES les fonctionnalités du plan choisi' },
-                    { icon: '🔔', label: "Rappel 2 jours avant l\u2019expiration de l\u2019essai" },
+                    { icon: '🔔', label: "Rappel 2 jours avant l’expiration de l’essai" },
                     { icon: '❌', label: 'Annulation en 1 clic, à tout moment' },
                   ].map((item) => (
                     <li key={item.label} className="flex items-center gap-3 text-sm text-indigo-200">

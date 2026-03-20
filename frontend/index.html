@@ -96,13 +96,13 @@
     <!-- Preload critical assets -->
     <link rel="preload" as="image" href="%BASE_URL%logo-akiprisaye.svg" fetchpriority="high" />
     <!-- Preload the hero section image (rendered as <img fetchpriority=high> in Home.tsx — crossorigin must match) -->
-    <!-- imagesrcset/imagesizes let the browser preload the right size for the viewport -->
+    <!-- imagesrcset/imagesizes must exactly mirror the <img> srcSet and sizes attributes -->
     <link
       rel="preload"
       as="image"
-      href="https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fm=webp&fit=crop&w=1600&q=80"
-      imagesrcset="https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fm=webp&fit=crop&w=800&q=80 800w, https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fm=webp&fit=crop&w=1200&q=80 1200w, https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fm=webp&fit=crop&w=1600&q=80 1600w"
-      imagesizes="100vw"
+      href="https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fm=webp&fit=crop&w=1200&q=80"
+      imagesrcset="https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fm=webp&fit=crop&w=800&q=80 800w, https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fm=webp&fit=crop&w=1200&q=80 1200w"
+      imagesizes="(max-width:1024px) 100vw, 58vw"
       fetchpriority="high"
       crossorigin="anonymous"
     />

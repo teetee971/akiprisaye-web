@@ -219,7 +219,7 @@ function TerritoryBarometerCard({ entry }: { entry: BarometerEntry }) {
             <span className="ibw-arrow" aria-hidden="true">{arrow}</span>
             <span className="ibw-pct">
               {entry.trendPct !== null
-                ? `${entry.trendPct > 0 ? '+' : ''}${entry.trendPct.toFixed(1)}\u00a0%`
+                ? `${entry.trendPct > 0 ? '+' : ''}${entry.trendPct.toFixed(1)} %`
                 : '—'}
             </span>
           </div>

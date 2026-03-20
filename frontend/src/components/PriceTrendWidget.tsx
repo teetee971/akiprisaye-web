@@ -62,7 +62,7 @@ function matchKnownProduct(productName: string): string | null {
     s
       .toLowerCase()
       .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[̀-ͯ]/g, '')
       .trim();
   const needle = norm(productName);
   // Exact match first

@@ -20,6 +20,26 @@ const appRoutes = Array.from(
   ]),
 ).sort();
 
+/**
+ * Convert an App.tsx route pattern (which may contain :param segments)
+ * into a RegExp that matches concrete sitemap paths.
+ * e.g. "categorie/:slug" → /^\/categorie\/[^/]+$/
+ */
+function routePatternToRegex(pattern: string): RegExp {
+  const escaped = pattern
+    .replace(/[.+?^${}()|[\]\\]/g, '\\$&') // escape regex special chars
+    .replace(/:[^/]+/g, '[^/]+');            // replace :param with wildcard
+  return new RegExp(`^${escaped}$`);
+}
+
+const appRouteRegexes = appRoutes.map((r) => routePatternToRegex(r));
+
+/** Return true if the sitemap path matches at least one App.tsx route (literal or dynamic). */
+function isRouted(sitemapPath: string): boolean {
+  if (appRoutes.includes(sitemapPath)) return true;
+  return appRouteRegexes.some((re) => re.test(sitemapPath));
+}
+
 const sitemapPaths = Array.from(
   new Set(
     [...sitemapSource.matchAll(/<loc>([^<]+)<\/loc>/g)]
@@ -30,7 +50,7 @@ const sitemapPaths = Array.from(
 
 describe('public sitemap route coverage', () => {
   it('keeps every indexed sitemap url mapped to a live App.tsx route', () => {
-    const missingRoutes = sitemapPaths.filter((sitemapPath) => !appRoutes.includes(sitemapPath));
+    const missingRoutes = sitemapPaths.filter((sitemapPath) => !isRouted(sitemapPath));
 
     expect(missingRoutes).toEqual([]);
   });

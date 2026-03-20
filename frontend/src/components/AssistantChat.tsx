@@ -217,6 +217,8 @@ export default function AssistantChat() {
             <div className="flex gap-2">
               <input
                 ref={inputRef}
+                id="assistant-chat-input"
+                name="message"
                 type="text"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}

@@ -28,6 +28,7 @@ import {
   generateProductCanonical,
   buildProductJsonLd,
   buildProductBreadcrumbJsonLd,
+  buildFaqJsonLd,
   getTerritoryName,
   generateCategorySlug,
   SITE_URL,
@@ -346,8 +347,76 @@ function SEOContentBlock({ product, territory, minPrice, maxPrice, savings, stor
   );
 }
 
+// ── "Prix vérifié récemment" badge ───────────────────────────────────────────
+function PriceVerifiedBadge({ latestDate }: { latestDate: string | undefined }) {
+  if (!latestDate) return null;
+  return (
+    <div className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-400/20 bg-emerald-400/5 px-2.5 py-1 text-[10px] font-semibold text-emerald-400">
+      <span aria-hidden="true">✓</span>
+      Prix vérifié récemment · {formatDate(latestDate)}
+    </div>
+  );
+}
+
+// ── FAQ section ───────────────────────────────────────────────────────────────
+interface FaqSectionProps {
+  product: { name: string; brand?: string };
+  territory: string;
+  bestPrice: number | null;
+  savings: number | null;
+  average: number | null;
+  bestRetailer: string | undefined;
+}
+function FaqSection({ product, territory, bestPrice, savings, average, bestRetailer }: FaqSectionProps) {
+  const territoryName = getTerritoryName(territory);
+  const brandLabel = product.brand ? `${product.brand} ` : '';
+  const productLabel = `${brandLabel}${product.name}`;
+
+  const questions: { q: string; a: string }[] = [
+    {
+      q: `Où acheter ${productLabel} moins cher en ${territoryName} ?`,
+      a:
+        bestPrice != null && bestRetailer
+          ? `Le meilleur prix du ${productLabel} en ${territoryName} est actuellement de ${bestPrice.toFixed(2)} € chez ${bestRetailer}. Notre comparateur analyse toutes les enseignes locales (Carrefour, E.Leclerc, Super U, Leader Price…) pour vous garantir la meilleure offre.`
+          : `Utilisez notre comparateur pour trouver le meilleur prix du ${productLabel} parmi toutes les enseignes en ${territoryName}.`,
+    },
+    {
+      q: `Quel est le prix moyen du ${productLabel} en ${territoryName} ?`,
+      a:
+        average != null
+          ? `Le prix moyen du ${productLabel} en ${territoryName} est de ${average.toFixed(2)} € d'après les relevés effectués dans les principales enseignes. Les prix sont mis à jour quotidiennement.`
+          : `Le prix du ${productLabel} varie selon les enseignes. Consultez notre comparateur pour avoir les prix du jour en ${territoryName}.`,
+    },
+    {
+      q: `Comment économiser sur le ${productLabel} en ${territoryName} ?`,
+      a:
+        savings != null && savings > 0.01
+          ? `Vous pouvez économiser jusqu'à ${savings.toFixed(2)} € sur le ${productLabel} en ${territoryName} en comparant les enseignes. Notre comparateur vous indique en temps réel quelle enseigne propose le prix le plus bas.`
+          : `Comparez les prix dans toutes les enseignes grâce à notre comparateur pour trouver la meilleure offre sur le ${productLabel} en ${territoryName}.`,
+    },
+  ];
+
+  return (
+    <section className="mt-4 rounded-xl border border-white/5 bg-white/[0.01] p-4">
+      <h2 className="mb-3 text-sm font-bold text-zinc-300">Questions fréquentes</h2>
+      <div className="space-y-4">
+        {questions.map(({ q, a }) => (
+          <details key={q} className="group">
+            <summary className="cursor-pointer list-none text-xs font-semibold text-zinc-300 hover:text-emerald-300 transition-colors">
+              <span className="mr-1.5 text-emerald-500 group-open:hidden">▶</span>
+              <span className="mr-1.5 hidden text-emerald-500 group-open:inline">▼</span>
+              {q}
+            </summary>
+            <p className="mt-2 pl-4 text-xs leading-relaxed text-zinc-500">{a}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 // ── Related products / territory links ────────────────────────────────────────
-const DOM_TERRITORIES = ['GP', 'MQ', 'GF', 'RE', 'YT'] as const;
+const DOM_TERRITORIES
 
 interface RelatedProductsSectionProps {
   product: { name: string; brand?: string; category?: string };
@@ -464,13 +533,25 @@ export default function SEOProductPage() {
     ? buildProductBreadcrumbJsonLd(compareData.product, territory)
     : null;
 
-  // Combine JSON-LD schemas
-  const combinedJsonLd = productJsonLd && breadcrumbJsonLd
-    ? {
-        '@context': 'https://schema.org',
-        '@graph': [productJsonLd, breadcrumbJsonLd],
-      }
-    : productJsonLd;
+  // Build FAQ JSON-LD once data is available
+  const faqJsonLd = compareData?.product
+    ? buildFaqJsonLd(
+        compareData.product,
+        territory,
+        compareData.summary?.min ?? null,
+        compareData.summary?.savings ?? null,
+        compareData.summary?.average ?? null,
+        sorted[0]?.retailer,
+      )
+    : null;
+
+  // Combine all JSON-LD schemas in a single @graph for Google
+  const combinedJsonLd = (() => {
+    const schemas = [productJsonLd, breadcrumbJsonLd, faqJsonLd].filter(Boolean);
+    if (schemas.length === 0) return null;
+    if (schemas.length === 1) return schemas[0];
+    return { '@context': 'https://schema.org', '@graph': schemas };
+  })();
 
   // ── Loading skeleton ────────────────────────────────────────────────────────
   if (compareLoading) {
@@ -566,6 +647,9 @@ export default function SEOProductPage() {
                 </Link>
               </div>
             ) : null}
+            <div className="mt-2">
+              <PriceVerifiedBadge latestDate={sorted[0]?.observedAt} />
+            </div>
             <div className="mt-1 font-mono text-[10px] text-zinc-700">{product.barcode}</div>
           </div>
         </div>
@@ -627,6 +711,16 @@ export default function SEOProductPage() {
           maxPrice={summary?.max ?? null}
           savings={maxSavings}
           storeCount={sorted.length}
+        />
+
+        {/* ── FAQ — boosts rich-result eligibility + indexation ─────────────── */}
+        <FaqSection
+          product={product}
+          territory={territory}
+          bestPrice={summary?.min ?? null}
+          savings={maxSavings ?? summary?.savings ?? null}
+          average={summary?.average ?? null}
+          bestRetailer={bestRetailer}
         />
 
         {/* ── Related products / territory links (internal linking) ─────────── */}

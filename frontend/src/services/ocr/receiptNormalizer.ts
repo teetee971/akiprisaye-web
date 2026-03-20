@@ -134,7 +134,7 @@ const CATEGORY_RULES: Array<[RegExp, ObsCategory]> = [
  */
 export function detectCategory(label: string): ObsCategory {
   // Strip combining diacritical marks so \b works on accented word endings
-  const ascii = label.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const ascii = label.normalize('NFD').replace(/[̀-ͯ]/g, '');
   for (const [pattern, category] of CATEGORY_RULES) {
     if (pattern.test(ascii)) return category;
   }

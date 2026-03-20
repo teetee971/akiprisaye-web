@@ -68,12 +68,12 @@ export default function ReportPriceModal({ isOpen, barcode, territory, onClose, 
         <form onSubmit={handleSubmit} className="space-y-3 text-sm">
           <label className="block space-y-1">
             <span>Prix (EUR)</span>
-            <input className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2" value={price} onChange={(event) => setPrice(event.target.value)} placeholder="Ex: 2.49" inputMode="decimal" required />
+            <input id="report-price" name="price" className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2" value={price} onChange={(event) => setPrice(event.target.value)} placeholder="Ex: 2.49" inputMode="decimal" required />
           </label>
 
           <label className="block space-y-1">
             <span>Unité</span>
-            <select className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2" value={unit} onChange={(event) => setUnit(event.target.value as UnitType)}>
+            <select id="report-unit" name="unit" className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2" value={unit} onChange={(event) => setUnit(event.target.value as UnitType)}>
               <option value="unit">unité</option>
               <option value="kg">kg</option>
               <option value="l">l</option>
@@ -83,17 +83,17 @@ export default function ReportPriceModal({ isOpen, barcode, territory, onClose, 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <label className="block space-y-1">
               <span>Magasin (optionnel)</span>
-              <input className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2" value={store} onChange={(event) => setStore(event.target.value)} />
+              <input id="report-store" name="store" className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2" value={store} onChange={(event) => setStore(event.target.value)} />
             </label>
             <label className="block space-y-1">
               <span>Ville (optionnel)</span>
-              <input className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2" value={city} onChange={(event) => setCity(event.target.value)} />
+              <input id="report-city" name="city" className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2" value={city} onChange={(event) => setCity(event.target.value)} />
             </label>
           </div>
 
           <label className="block space-y-1">
             <span>Date observée</span>
-            <input type="date" className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2" value={observedAt} onChange={(event) => setObservedAt(event.target.value)} required />
+            <input id="report-date" name="observedAt" type="date" className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2" value={observedAt} onChange={(event) => setObservedAt(event.target.value)} required />
           </label>
 
           <label className="block space-y-1">

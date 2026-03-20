@@ -1,5 +1,5 @@
 User-agent: *
-Allow: /akiprisaye-web/
+Allow: /
 
 Disallow: /akiprisaye-web/admin
 Disallow: /akiprisaye-web/admin/
@@ -9,5 +9,10 @@ Disallow: /akiprisaye-web/tableau-de-bord
 Disallow: /akiprisaye-web/mes-listes
 Disallow: /akiprisaye-web/mon-compte
 Disallow: /akiprisaye-web/parametres
+
+# Key crawl paths (explicit for bots that honour Allow > Disallow)
+Allow: /akiprisaye-web/produit/
+Allow: /akiprisaye-web/categorie/
+Allow: /akiprisaye-web/top-
 
 Sitemap: https://teetee971.github.io/akiprisaye-web/sitemap.xml

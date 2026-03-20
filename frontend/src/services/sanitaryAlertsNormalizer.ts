@@ -25,7 +25,7 @@ const TERRITORY_ALIASES: Record<string, TerritoryCode> = {
 
 const normalizeText = (value: string) => value
   .normalize('NFD')
-  .replace(/[\u0300-\u036f]/g, '')
+  .replace(/[̀-ͯ]/g, '')
   .toLowerCase()
   .trim();
 

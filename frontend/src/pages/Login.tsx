@@ -45,7 +45,7 @@ export default function Login() {
       // The toast persists into the destination page because ToastProvider
       // is mounted at the app root, above the router outlet.
       toast.success(
-        `Bienvenue${user.displayName ? `, ${user.displayName.split(' ')[0]}` : ''}\u00a0!`,
+        `Bienvenue${user.displayName ? `, ${user.displayName.split(' ')[0]}` : ''} !`,
         { id: 'auth-success', duration: 3000 },
       );
       navigate(getSafeNext(), { replace: true });

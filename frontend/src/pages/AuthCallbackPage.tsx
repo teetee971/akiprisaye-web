@@ -134,7 +134,7 @@ export default function AuthCallbackPage() {
     if (user) {
       authLog('AUTH_STATE_USER_PRESENT', { uid: user.uid });
       toast.success(
-        `Bienvenue${user.displayName ? `, ${user.displayName.split(' ')[0]}` : ''}\u00a0!`,
+        `Bienvenue${user.displayName ? `, ${user.displayName.split(' ')[0]}` : ''} !`,
         { id: 'auth-success', duration: 3000 },
       );
       authLog('AUTH_NAVIGATE_AFTER_SUCCESS', { destination });

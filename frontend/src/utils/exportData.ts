@@ -54,7 +54,7 @@ export function exportToCSV(observations: PriceObservation[], filename: string =
   ].join('\n')
 
   // Add BOM for UTF-8 compatibility with Excel
-  const BOM = '\uFEFF'
+  const BOM = '﻿'
   const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' })
   
   // Trigger download

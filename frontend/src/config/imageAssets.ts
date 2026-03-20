@@ -37,7 +37,7 @@ export const TERRITORY_IMAGES: Record<string, { url: string; alt: string; credit
   },
   pf: {
     url: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fm=webp&fit=crop&w=800&q=80',
-    alt: 'Polynésie française — bungalows sur l\u2019eau de Bora Bora',
+    alt: 'Polynésie française — bungalows sur l’eau de Bora Bora',
     credit: 'Unsplash',
   },
   wf: {

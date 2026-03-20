@@ -31,10 +31,10 @@ const TERRITORIES: { code: Territory; name: string; dept: string; flag: string }
   { code: 'GP', name: 'Guadeloupe',               dept: '971', flag: '\uD83C\uDDEC\uD83C\uDDF5' },
   { code: 'MQ', name: 'Martinique',               dept: '972', flag: '\uD83C\uDDF2\uD83C\uDDF6' },
   { code: 'GF', name: 'Guyane',                   dept: '973', flag: '\uD83C\uDDEC\uD83C\uDDEB' },
-  { code: 'RE', name: 'La R\u00e9union',          dept: '974', flag: '\uD83C\uDDF7\uD83C\uDDEA' },
+  { code: 'RE', name: 'La Réunion',          dept: '974', flag: '\uD83C\uDDF7\uD83C\uDDEA' },
   { code: 'PM', name: 'Saint-Pierre-et-Miquelon', dept: '975', flag: '\uD83C\uDDF5\uD83C\uDDF2' },
   { code: 'YT', name: 'Mayotte',                  dept: '976', flag: '\uD83C\uDDFE\uD83C\uDDF9' },
-  { code: 'BL', name: 'Saint-Barth\u00e9lemy',   dept: '977', flag: '\uD83C\uDDE7\uD83C\uDDF1' },
+  { code: 'BL', name: 'Saint-Barthélemy',   dept: '977', flag: '\uD83C\uDDE7\uD83C\uDDF1' },
   { code: 'MF', name: 'Saint-Martin',             dept: '978', flag: '\uD83C\uDDF2\uD83C\uDDEB' },
 ];
 
@@ -73,7 +73,7 @@ const FuelComparator: React.FC = () => {
         setLoading(false);
       })
       .catch(() => {
-        setError('Erreur lors du chargement des donn\u00e9es carburant');
+        setError('Erreur lors du chargement des données carburant');
         setLoading(false);
       });
   }, []);
@@ -195,7 +195,7 @@ const FuelComparator: React.FC = () => {
       case 'average':        return 'Dans la moyenne';
       case 'above_average':  return 'Au-dessus de la moyenne';
       case 'most_expensive': return 'Le plus cher';
-      default: return '\u2014';
+      default: return '—';
     }
   };
 
@@ -214,7 +214,7 @@ const FuelComparator: React.FC = () => {
     return {
       labels: comparisonResult.rankedPrices.map((p) => p.fuelPrice.station.name),
       datasets: [{
-        label: 'Prix \u20ac/L',
+        label: 'Prix €/L',
         data: comparisonResult.rankedPrices.map((p) => p.fuelPrice.pricePerLiter),
         backgroundColor: 'rgba(59,130,246,0.6)',
       }],
@@ -236,7 +236,7 @@ const FuelComparator: React.FC = () => {
     <div className="min-h-screen bg-slate-950 text-white">
       <Helmet>
         <title>Comparateur Carburants DOM-TOM &mdash; A KI PRI SA Y&Eacute;</title>
-        <meta name="description" content="Prix des carburants en direct dans tous les territoires et d\u00e9partements d'outre-mer : SP95, SP98, E10, Diesel, GPL. Donn\u00e9es officielles prix-carburants.gouv.fr." />
+        <meta name="description" content="Prix des carburants en direct dans tous les territoires et départements d'outre-mer : SP95, SP98, E10, Diesel, GPL. Données officielles prix-carburants.gouv.fr." />
               <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/comparateur-carburants" />
         <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/comparateur-carburants" />
         <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/comparateur-carburants" />
@@ -246,7 +246,7 @@ const FuelComparator: React.FC = () => {
         <div className="mb-6">
           <HeroImage
             src={PAGE_HERO_IMAGES.comparateurCarburants}
-            alt="Comparateur carburants DOM-TOM \u2014 station service"
+            alt="Comparateur carburants DOM-TOM — station service"
             gradient="from-yellow-900 to-slate-900"
             height="h-36 sm:h-48"
           >
@@ -406,7 +406,7 @@ const FuelComparator: React.FC = () => {
                   worstPrice={comparisonResult.aggregation.maxPrice}
                   averagePrice={comparisonResult.aggregation.averagePrice}
                   savingsPercentage={comparisonResult.aggregation.priceRangePercentage}
-                  bestProvider={comparisonResult.rankedPrices[0]?.fuelPrice.station.name ?? '\u2014'}
+                  bestProvider={comparisonResult.rankedPrices[0]?.fuelPrice.station.name ?? '—'}
                   totalObservations={comparisonResult.aggregation.totalStations}
                   currency="EUR"
                 />
@@ -533,9 +533,9 @@ const FuelComparator: React.FC = () => {
 
                 <div className="mt-4 text-xs text-gray-500">
                   Source&nbsp;: {liveSource
-                    ? 'data.economie.gouv.fr (donn\u00e9es en direct)'
-                    : (comparisonResult.metadata?.dataSource || 'Observatoire A KI PRI SA Y\u00c9')}
-                  {' \u00b7 '}Comparaison du {formatDate(new Date(comparisonResult.comparisonDate))}
+                    ? 'data.economie.gouv.fr (données en direct)'
+                    : (comparisonResult.metadata?.dataSource || 'Observatoire A KI PRI SA YÉ')}
+                  {' · '}Comparaison du {formatDate(new Date(comparisonResult.comparisonDate))}
                 </div>
                 <div className="mt-2"><BookingLinkBadge /></div>
 
@@ -614,7 +614,7 @@ const FuelComparator: React.FC = () => {
                           <span className="text-xs font-normal text-gray-500">/L min</span>
                         </p>
                         <p className="text-xs text-gray-500 mt-1">
-                          moy.&nbsp;{t.avg !== null ? formatPrice(t.avg) : '\u2014'} &middot; {t.count} station{t.count > 1 ? 's' : ''}
+                          moy.&nbsp;{t.avg !== null ? formatPrice(t.avg) : '—'} &middot; {t.count} station{t.count > 1 ? 's' : ''}
                         </p>
                       </>
                     ) : (

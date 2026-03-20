@@ -143,7 +143,7 @@ export function exportPricesToCSV(records: OpenDataPriceRecord[]): string {
   ].join('\n');
 
   // Add BOM for Excel compatibility
-  return '\ufeff' + csvContent;
+  return '﻿' + csvContent;
 }
 
 /**
@@ -194,7 +194,7 @@ export function exportAnomaliesToCSV(anomalies: PriceAnomaly[]): string {
   ].join('\n');
 
   // Add BOM for Excel compatibility
-  return '\ufeff' + csvContent;
+  return '﻿' + csvContent;
 }
 
 /**

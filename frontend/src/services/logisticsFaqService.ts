@@ -202,18 +202,18 @@ export function searchFaqItems(query: string): FaqItem[] {
   const normalizedQuery = query
     .toLowerCase()
     .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '');
+    .replace(/[̀-ͯ]/g, '');
   
   return faqItems.filter(item => {
     const normalizedQuestion = item.question
       .toLowerCase()
       .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '');
+      .replace(/[̀-ͯ]/g, '');
     
     const normalizedAnswer = item.answer
       .toLowerCase()
       .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '');
+      .replace(/[̀-ͯ]/g, '');
     
     return normalizedQuestion.includes(normalizedQuery) || 
            normalizedAnswer.includes(normalizedQuery);

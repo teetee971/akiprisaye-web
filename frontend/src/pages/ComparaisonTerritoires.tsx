@@ -350,7 +350,7 @@ export default function ComparaisonTerritoires() {
                           </td>
                           <td className={`px-3 py-3 text-right pr-4 font-semibold ${row.affordabilityIndex != null ? colorForSurplus((row.affordabilityIndex - 1) * 100) : 'text-slate-400'}`}>
                             {row.affordabilityIndex != null
-                              ? `×\u202f${row.affordabilityIndex.toFixed(2)}`
+                              ? `× ${row.affordabilityIndex.toFixed(2)}`
                               : '—'}
                           </td>
                         </tr>
