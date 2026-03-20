@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { safeToText } from "../utils/safeToText";
 import SocialLoginButtons from "./SocialLoginButtons";
 import { FIREBASE_UNAVAILABLE_MESSAGE, getAuthErrorMessage } from "@/lib/authMessages";
+import { SITE_URL } from "../utils/seoHelpers";
 
 export default function AuthForm() {
   const [email, setEmail] = useState("");
@@ -92,8 +93,12 @@ export default function AuthForm() {
     setSuccess(null);
     
     try {
-      await sendPasswordResetEmail(auth, email);
-      setSuccess("Un email de réinitialisation a été envoyé à " + email);
+      await sendPasswordResetEmail(auth, email, {
+        url: `${SITE_URL}/login`,
+        handleCodeInApp: false,
+      });
+      setSuccess("Un email de réinitialisation a été envoyé à " + email +
+        ". S'il n'apparaît pas dans votre boîte de réception, vérifiez votre dossier Spam.");
       setMode("login");
     } catch (err: any) {
       console.error("Password reset error:", err);

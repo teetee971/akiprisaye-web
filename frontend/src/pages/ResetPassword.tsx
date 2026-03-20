@@ -5,6 +5,7 @@ import { sendPasswordResetEmail } from "firebase/auth";
 import { auth, firebaseError } from "@/lib/firebase";
 import { Link } from "react-router-dom";
 import { FIREBASE_UNAVAILABLE_MESSAGE, getAuthErrorMessage } from "@/lib/authMessages";
+import { SITE_URL } from "@/utils/seoHelpers";
 
 export default function ResetPassword() {
   const [email, setEmail] = useState("");
@@ -36,7 +37,12 @@ export default function ResetPassword() {
     setLoading(true);
 
     try {
-      await sendPasswordResetEmail(auth, email);
+      await sendPasswordResetEmail(auth, email, {
+        // After the user clicks the reset link Firebase will redirect them
+        // back to the app's login page (not the generic Firebase hosting URL).
+        url: `${SITE_URL}/login`,
+        handleCodeInApp: false,
+      });
       setSuccess(true);
     } catch (err: unknown) {
       setError(getAuthErrorMessage(err));
@@ -62,6 +68,11 @@ export default function ResetPassword() {
                   <p className="text-sm">
                     Un email de réinitialisation a été envoyé à <strong>{email}</strong>.
                     Vérifiez votre boîte de réception et suivez les instructions.
+                  </p>
+                  <p className="text-sm mt-2 text-yellow-300">
+                    ⚠️ Si vous ne voyez pas l'email dans votre boîte de réception,
+                    vérifiez votre dossier <strong>Spam / Courrier indésirable</strong>
+                    {" "}et marquez-le comme « non spam ».
                   </p>
                 </div>
               </div>

@@ -78,10 +78,11 @@ export default function LandingPage() {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const landingUrl =
-    typeof window !== 'undefined'
-      ? `${window.location.origin}/landing`
-      : `${SITE_URL}/landing`;
+  // Always use the canonical SITE_URL so the path includes the deployment
+  // subpath (e.g. /akiprisaye-web/landing on GitHub Pages).
+  // Using window.location.origin alone would strip the subpath and produce
+  // a 404 link like "teetee971.github.io/landing".
+  const landingUrl = `${SITE_URL}/landing`;
 
   const pageUrl =
     typeof window !== 'undefined' ? window.location.pathname : '/landing';
