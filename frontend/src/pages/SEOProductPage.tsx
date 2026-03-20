@@ -29,7 +29,9 @@ import {
   buildProductJsonLd,
   buildProductBreadcrumbJsonLd,
   getTerritoryName,
+  generateCategorySlug,
   SITE_URL,
+  TERRITORY_NAMES,
 } from '../utils/seoHelpers';
 import type { PriceObservationRow } from '../types/compare';
 import type { SignalResult, HistoryPoint } from '../types/api';
@@ -195,7 +197,7 @@ function BestPriceHero({
           {savings != null && savings > 0.01 && (
             <div className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-emerald-400/20 bg-emerald-400/10 px-3 py-1.5">
               <span className="text-xs font-semibold text-emerald-300">
-                Économie potentielle&nbsp;: <span className="text-base font-extrabold">{formatEur(savings)}</span>
+                Économisez&nbsp;<span className="text-base font-extrabold">{formatEur(savings)}</span>&nbsp;maintenant
               </span>
             </div>
           )}
@@ -214,9 +216,9 @@ function BestPriceHero({
               target="_blank"
               rel="noopener noreferrer"
               onClick={handleHeroClick}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-400/40 bg-emerald-400/15 px-4 py-2 text-sm font-bold text-emerald-300 transition-all hover:bg-emerald-400/25 active:scale-95"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-400/60 bg-emerald-400/25 px-5 py-2.5 text-sm font-bold text-emerald-200 shadow-lg shadow-emerald-900/30 transition-all hover:bg-emerald-400/35 active:scale-95"
             >
-              Acheter chez {retailer} →
+              Voir l'offre la moins chère →
             </a>
           )}
         </div>
@@ -312,29 +314,92 @@ interface SEOContentBlockProps {
 function SEOContentBlock({ product, territory, minPrice, maxPrice, savings, storeCount }: SEOContentBlockProps) {
   const territoryName = getTerritoryName(territory);
   const brand = product.brand ?? '';
-  
+  const brandLabel = brand ? `${brand} ` : '';
+
   return (
     <section className="mt-6 rounded-xl border border-white/5 bg-white/[0.01] p-4">
       <h2 className="sr-only">Informations complémentaires</h2>
       <div className="text-xs leading-relaxed text-zinc-500 space-y-2">
         <p>
-          <strong className="text-zinc-400">Comparatif {brand} {product.name} en {territoryName}</strong> — 
-          Retrouvez les meilleurs prix dans {storeCount} enseigne{storeCount > 1 ? 's' : ''} locales.
+          <strong className="text-zinc-400">Comparatif {brandLabel}{product.name} en {territoryName}</strong> —{' '}
+          Retrouvez les meilleurs prix dans {storeCount} enseigne{storeCount > 1 ? 's' : ''} locales et faites des économies sur vos courses.
         </p>
         {minPrice != null && maxPrice != null && minPrice !== maxPrice && (
           <p>
             Les prix varient de <span className="text-emerald-400 font-medium">{formatEur(minPrice)}</span> à{' '}
             <span className="text-zinc-300 font-medium">{formatEur(maxPrice)}</span>.
             {savings != null && savings > 0.01 && (
-              <> Économisez jusqu'à <span className="text-emerald-400 font-bold">{formatEur(savings)}</span> en comparant.</>
+              <> Économisez jusqu'à <span className="text-emerald-400 font-bold">{formatEur(savings)}</span> en comparant les enseignes.</>
             )}
           </p>
         )}
+        <p>
+          Où acheter {brandLabel}{product.name} moins cher en {territoryName}&nbsp;? Notre comparateur analyse quotidiennement
+          les prix dans les principales enseignes (Carrefour, E.Leclerc, Super U, Leader Price…) pour vous aider à trouver la meilleure offre.
+        </p>
         <p>
           Données actualisées quotidiennement à partir de relevés terrains et sources officielles pour{' '}
           {territoryName}.
         </p>
       </div>
+    </section>
+  );
+}
+
+// ── Related products / territory links ────────────────────────────────────────
+const DOM_TERRITORIES = ['GP', 'MQ', 'GF', 'RE', 'YT'] as const;
+
+interface RelatedProductsSectionProps {
+  product: { name: string; brand?: string; category?: string };
+  currentTerritory: string;
+  slug: string;
+}
+function RelatedProductsSection({ product, currentTerritory, slug }: RelatedProductsSectionProps) {
+  const otherTerritories = DOM_TERRITORIES.filter((t) => t !== currentTerritory);
+  const categorySlug = product.category ? generateCategorySlug(product.category) : null;
+
+  return (
+    <section className="mt-4 rounded-xl border border-white/5 bg-white/[0.02] p-4">
+      {/* Territory variants — great for internal linking across DOM pages */}
+      <div className="mb-4">
+        <h2 className="mb-2 text-xs font-bold uppercase tracking-widest text-zinc-500">
+          Prix {product.brand ? `${product.brand} ` : ''}{product.name} dans d'autres territoires
+        </h2>
+        <div className="flex flex-wrap gap-2">
+          {otherTerritories.map((t) => (
+            <Link
+              key={t}
+              to={`/produit/${slug}?territory=${t}`}
+              className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs text-zinc-400 transition-all hover:border-emerald-400/30 hover:text-emerald-300"
+            >
+              {TERRITORY_NAMES[t]}
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      {/* Category link */}
+      {categorySlug && (
+        <div>
+          <h2 className="mb-2 text-xs font-bold uppercase tracking-widest text-zinc-500">
+            Dans la même catégorie
+          </h2>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              to={`/categorie/${categorySlug}?territory=${currentTerritory}`}
+              className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs text-zinc-400 transition-all hover:border-emerald-400/30 hover:text-emerald-300"
+            >
+              Tous les {product.category} →
+            </Link>
+            <Link
+              to={`/comparateur`}
+              className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs text-zinc-400 transition-all hover:border-white/20 hover:text-white"
+            >
+              ← Comparateur
+            </Link>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
@@ -562,6 +627,13 @@ export default function SEOProductPage() {
           maxPrice={summary?.max ?? null}
           savings={maxSavings}
           storeCount={sorted.length}
+        />
+
+        {/* ── Related products / territory links (internal linking) ─────────── */}
+        <RelatedProductsSection
+          product={product}
+          currentTerritory={territory}
+          slug={slug}
         />
 
       </div>

@@ -75,6 +75,7 @@ export function generateCategorySlug(category: string): string {
 
 /**
  * Generate SEO meta description for a product page
+ * Optimized for CTR: includes price, savings, and call to action.
  */
 export function generateProductMetaDescription(
   product: CompareProduct,
@@ -83,17 +84,18 @@ export function generateProductMetaDescription(
 ): string {
   const territoryName = getTerritoryName(territory);
   const brand = product.brand ? `${product.brand} ` : '';
-  
+
   if (summary?.min != null) {
-    const priceText = `${summary.min.toFixed(2)} €`;
-    const savingsText = summary.savings != null && summary.savings > 0
-      ? ` — économisez jusqu'à ${summary.savings.toFixed(2)} €`
-      : '';
-    
-    return `Prix ${brand}${product.name} en ${territoryName} : à partir de ${priceText}${savingsText}. Comparez les prix dans ${summary.count} magasins.`;
+    const priceText = summary.min.toFixed(2);
+    const savingsText =
+      summary.savings != null && summary.savings > 0
+        ? ` Économisez jusqu'à ${summary.savings.toFixed(2)} €.`
+        : '';
+
+    return `Comparez les prix ${brand}${product.name} en ${territoryName}. Meilleur prix aujourd'hui\u00a0: ${priceText}\u00a0€.${savingsText} ${summary.count} magasin${summary.count > 1 ? 's' : ''} comparé${summary.count > 1 ? 's' : ''}.`;
   }
-  
-  return `Comparez les prix de ${brand}${product.name} en ${territoryName}. Trouvez le meilleur prix dans les supermarchés locaux.`;
+
+  return `Comparez les prix de ${brand}${product.name} en ${territoryName}. Trouvez le meilleur prix et économisez dans les supermarchés locaux.`;
 }
 
 /**
@@ -168,6 +170,7 @@ export function buildProductJsonLd(
           highPrice: sortedPrices[sortedPrices.length - 1]?.price.toFixed(2),
           priceCurrency: 'EUR',
           offerCount: observations.length,
+          priceValidUntil: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
           offers,
         }
       : offers[0],
@@ -246,6 +249,8 @@ export function buildCategoryJsonLd(
 
 /**
  * Generate SEO title for product page
+ * Format: "Prix [Produit] en [Territoire] – Comparer et économiser"
+ * Optimized for CTR with action-oriented suffix.
  */
 export function generateProductTitle(
   product: CompareProduct,
@@ -253,8 +258,8 @@ export function generateProductTitle(
 ): string {
   const territoryName = getTerritoryName(territory);
   const brand = product.brand ? `${product.brand} ` : '';
-  
-  return `Prix ${brand}${product.name} en ${territoryName} — Comparateur`;
+
+  return `Prix ${brand}${product.name} en ${territoryName} – Comparer et économiser`;
 }
 
 /**
