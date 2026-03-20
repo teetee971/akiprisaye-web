@@ -189,6 +189,7 @@ frontend/.eslintcache
 
 # Artefacts de build
 /output/
+scripts/**/output/
 
 # Scripts locaux temporaires
 fix-useeffect-report.sh

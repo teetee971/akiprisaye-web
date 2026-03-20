@@ -789,15 +789,16 @@ export default function App() {
                           <Route path="inflation-alimentaire-dom" element={<InflationAlimentaireDOMAnalyse />} />
                           <Route path="ou-faire-courses-dom" element={<OuFaireCoursesDOMPage />} />
                           <Route path="stats-dashboard" element={<StatsDashboard />} />
-                          <Route path="seo-monitoring" element={<SeoMonitoringPage />} />
-                          <Route path="outreach" element={<OutreachDashboardPage />} />
-                          <Route path="cro-dashboard" element={<CRODashboardPage />} />
-                          <Route path="seo-loop-dashboard" element={<SeoLoopDashboardPage />} />
-                          <Route path="revenue-dashboard" element={<RevenueDashboardPage />} />
-                          <Route path="expansion-dashboard" element={<ExpansionDashboardPage />} />
-                          <Route path="authority-dashboard" element={<AuthorityDashboardPage />} />
-                          <Route path="global-dashboard" element={<GlobalDashboardPage />} />
-                          <Route path="auto-seo-dashboard" element={<AutoSeoDashboardPage />} />
+                          {/* Internal/admin dashboards — RequireAdmin guard */}
+                          <Route path="seo-monitoring" element={<RequireAdmin><SeoMonitoringPage /></RequireAdmin>} />
+                          <Route path="outreach" element={<RequireAdmin><OutreachDashboardPage /></RequireAdmin>} />
+                          <Route path="cro-dashboard" element={<RequireAdmin><CRODashboardPage /></RequireAdmin>} />
+                          <Route path="seo-loop-dashboard" element={<RequireAdmin><SeoLoopDashboardPage /></RequireAdmin>} />
+                          <Route path="revenue-dashboard" element={<RequireAdmin><RevenueDashboardPage /></RequireAdmin>} />
+                          <Route path="expansion-dashboard" element={<RequireAdmin><ExpansionDashboardPage /></RequireAdmin>} />
+                          <Route path="authority-dashboard" element={<RequireAdmin><AuthorityDashboardPage /></RequireAdmin>} />
+                          <Route path="global-dashboard" element={<RequireAdmin><GlobalDashboardPage /></RequireAdmin>} />
+                          <Route path="auto-seo-dashboard" element={<RequireAdmin><AutoSeoDashboardPage /></RequireAdmin>} />
                           <Route path="vs/:slug" element={<SEOCompetitorComparisonPage />} />
                           <Route path="top-economies" element={<TopEconomiesPage />} />
                           <Route path="tendances" element={<TendancesPage />} />

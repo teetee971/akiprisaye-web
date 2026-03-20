@@ -5,7 +5,7 @@
  * Shows retailer profile + top 10 products with prices in a territory.
  */
 
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { SEOHead } from '../components/ui/SEOHead';
 import { formatEur } from '../utils/currency';
@@ -124,7 +124,7 @@ export default function SEOEnseignePrixPage() {
 
   const bestProduct = products[0];
 
-  useMemo(() => {
+  useEffect(() => {
     trackSEOProductView(retailer, territoryCode, 'enseigne');
   }, [retailer, territoryCode]);
 
