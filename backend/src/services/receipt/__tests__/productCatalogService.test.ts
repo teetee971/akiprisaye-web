@@ -85,6 +85,8 @@ describe('upsertProduct — création', () => {
     const createArg = mockPrismaProduct.create.mock.calls[0][0].data;
     expect(createArg.productKey).toBe('papeco_essuie_tout_2_rouleaux');
   });
+
+  test('génère une clé auto si aucune clé explicite n\'est fournie', async () => {
     mockPrismaProduct.findUnique.mockResolvedValue(null);
     mockPrismaProduct.create.mockResolvedValue({
       id: 'prod-001',

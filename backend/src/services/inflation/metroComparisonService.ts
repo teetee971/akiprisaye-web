@@ -208,14 +208,8 @@ export async function getTopPriceGapProducts(
   territory: Territory,
   year: number,
   month: number,
-  limit: number = 10
 ): Promise<Array<{ productCode: string; gapPercent: number }>> {
-  try {
-    // In production, this would query actual product prices
-    // For now, returning empty array
-    return [];
-  } catch (error) {
-    console.error('[MetroComparison] Error getting top price gap products:', error);
-    throw error;
-  }
+  // In production, this would query actual product prices
+  // For now, returning empty array
+  return [];
 }

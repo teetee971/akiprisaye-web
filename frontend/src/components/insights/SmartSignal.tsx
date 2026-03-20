@@ -60,7 +60,7 @@ function computeSignal(history: HistoryPoint[]): Signal {
   return {
     status: 'neutral',
     label: 'Marché stable',
-    message: 'La variation reste modérée. Achat possible sans signal fort dans un sens ou dans l'autre.',
+    message: "La variation reste mod\u00e9r\u00e9e. Achat possible sans signal fort dans un sens ou dans l\u2019autre.",
   };
 }
 
