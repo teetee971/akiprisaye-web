@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Scale, BarChart2, Wrench, Info, Heart, MessageCircle, Users, Briefcase, Search, Clock } from 'lucide-react';
+import { SkeletonBadge } from '../SkeletonWidgets';
 
 // LiveOnlineBadge uses Firestore (lib/firebase) — lazy so Firebase SDK doesn't
 // appear in the initial critical-path bundle via the Layout → Footer chain.
@@ -158,7 +159,7 @@ export default function Footer() {
             )}
           </button>
           <div className="flex gap-3 items-center">
-            <Suspense fallback={null}><LiveOnlineBadge /></Suspense>
+            <Suspense fallback={<SkeletonBadge />}><LiveOnlineBadge /></Suspense>
             <Link to="/mentions-legales" className="hover:text-slate-400 transition-colors">Mentions légales</Link>
             <Link to="/transparence" className="hover:text-slate-400 transition-colors">Confidentialité</Link>
             <Link

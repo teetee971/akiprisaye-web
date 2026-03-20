@@ -8,6 +8,11 @@ import { safeLocalStorage } from '../utils/safeLocalStorage';
 import { getTerritoryAsset, getProductImage } from '../config/imageAssets';
 import { SEOHead } from '../components/ui/SEOHead';
 import { useScrollReveal } from '../hooks/useScrollReveal';
+import {
+  SkeletonSection,
+  SkeletonWidget,
+  SkeletonStatGrid,
+} from '../components/SkeletonWidgets';
 
 // Below-fold components — lazy-loaded since they're only visible after user expands the page
 const PriceLiveTicker = lazy(() => import('../components/home/PriceLiveTicker'));
@@ -494,13 +499,13 @@ export default function HomeV5() {
 
         {showExtendedContent && (
           <div id="home-extended-content">
-            <Suspense fallback={null}>
+            <Suspense fallback={<SkeletonSection minHeight="60px" className="mx-4 my-2" />}>
               <PriceLiveTicker />
             </Suspense>
 
             {/* ── 3D Flip Stat Cards ── */}
             <section className="reveal px-4 pb-4 pt-2 max-w-5xl mx-auto w-full" aria-label="Statistiques clés">
-              <Suspense fallback={null}>
+              <Suspense fallback={<SkeletonStatGrid count={4} />}>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   <FlipStatCard
                     value={`${stats.territories}`}
@@ -621,84 +626,84 @@ export default function HomeV5() {
               </div>
             </section>
 
-            <Suspense fallback={null}>
+            <Suspense fallback={<SkeletonSection minHeight="320px" />}>
               <HowItWorksSection />
             </Suspense>
 
             {/* App demo showcase — CSS phone mockup with real data screens */}
-            <Suspense fallback={null}>
+            <Suspense fallback={<SkeletonSection minHeight="400px" />}>
               <AppDemoShowcase />
             </Suspense>
 
             {/* Real price chart — territory comparison with real observatoire data */}
-            <Suspense fallback={null}>
+            <Suspense fallback={<SkeletonWidget minHeight="280px" />}>
               <TerritoryPriceChart />
             </Suspense>
 
             {/* Price evolution line chart — 5-month trend from real observatoire snapshots */}
-            <Suspense fallback={null}>
+            <Suspense fallback={<SkeletonWidget minHeight="280px" />}>
               <PriceEvolutionChart />
             </Suspense>
 
             {/* Panier vital — purchasing power index: minutes of SMIC per basket */}
-            <Suspense fallback={null}>
+            <Suspense fallback={<SkeletonWidget minHeight="240px" />}>
               <PanierVitalWidget />
             </Suspense>
             {/* Store ranking widget — cheapest vs most expensive stores per territory */}
-            <Suspense fallback={null}>
+            <Suspense fallback={<SkeletonWidget minHeight="240px" />}>
               <StoreRankingWidget />
             </Suspense>
 
             {/* Why such price gaps? Explainer fiche with source links + conference CTA */}
-            <Suspense fallback={null}>
+            <Suspense fallback={<SkeletonSection minHeight="180px" />}>
               <PriceExplainerBanner />
             </Suspense>
 
             {/* AI daily briefing — latest editorial about DOM/COM news of the day */}
-            <Suspense fallback={null}>
+            <Suspense fallback={<SkeletonWidget minHeight="220px" />}>
               <LettreJourWidget />
             </Suspense>
 
             {/* AI weekly letter — latest editorial about DOM/COM news */}
-            <Suspense fallback={null}>
+            <Suspense fallback={<SkeletonWidget minHeight="220px" />}>
               <LettreHebdoWidget />
             </Suspense>
 
             {/* Inflation barometer — dynamic month-over-month basket trend from real snapshots */}
-            <Suspense fallback={null}>
+            <Suspense fallback={<SkeletonWidget minHeight="240px" />}>
               <InflationBarometerWidget />
             </Suspense>
 
             {/* Price shock ranking — top 5 products with biggest inter-territory price gap */}
-            <Suspense fallback={null}>
+            <Suspense fallback={<SkeletonWidget minHeight="240px" />}>
               <ProduitChocWidget />
             </Suspense>
 
             {/* Equity index — composite multi-product price equity score per territory vs hexagone */}
-            <Suspense fallback={null}>
+            <Suspense fallback={<SkeletonWidget minHeight="240px" />}>
               <IndiceEquiteWidget />
             </Suspense>
 
             {/* Category overcost chart — DOM surcoût vs Hexagone by category */}
-            <Suspense fallback={null}>
+            <Suspense fallback={<SkeletonWidget minHeight="280px" />}>
               <CategoryOvercostChart />
             </Suspense>
 
             {/* Video section — vie chère outre-mer explained with lazy YouTube embeds */}
-            <Suspense fallback={null}>
+            <Suspense fallback={<SkeletonSection minHeight="360px" />}>
               <VideoVieChere />
             </Suspense>
 
             {/* Live news feed from actualites.json — real data only */}
-            <Suspense fallback={null}>
+            <Suspense fallback={<SkeletonWidget minHeight="240px" />}>
               <LiveNewsFeed />
             </Suspense>
 
-            <Suspense fallback={null}>
+            <Suspense fallback={<SkeletonSection minHeight="320px" />}>
               <ObservatorySection />
             </Suspense>
 
-            <Suspense fallback={null}>
+            <Suspense fallback={<SkeletonSection minHeight="280px" />}>
               <MiniFaqSection expandedFaq={expandedFaq} onToggleFaq={setExpandedFaq} />
             </Suspense>
           </div>
