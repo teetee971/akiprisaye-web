@@ -208,3 +208,12 @@ FINAL_VERIFICATION_*.txt
 useeffect-risk.txt
 audit-report.txt
 functions/lib/
+
+# Pipeline generated artifacts (uploaded as CI artifacts, not committed)
+data/output/
+growth-output.json
+social-content.json
+longtail-pages.json
+longtail-pages.txt
+longtail-pages.md
+content-scripts.json

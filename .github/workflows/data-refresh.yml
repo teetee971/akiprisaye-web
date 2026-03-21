@@ -1,0 +1,88 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# 🔄 Data Refresh
+# ─────────────────────────────────────────────────────────────────────────────
+#
+# PURPOSE: Fetch fresh price observations from all providers, normalise them,
+#          compute product scores, and upload the results as artifacts.
+#
+# SAFE GUARANTEES:
+#   ✅ Never commits or pushes anything
+#   ✅ Never deploys
+#   ✅ All outputs are artifacts — reviewed before use
+#
+# TRIGGERS:
+#   - Every 6 hours (automated)
+#   - Manual via workflow_dispatch
+#
+# ARTIFACTS (retained 3 days):
+#   data/output/price-observations.json
+#   data/output/normalized-products.json
+#   data/output/product-scores.json
+# ─────────────────────────────────────────────────────────────────────────────
+
+name: 🔄 Data Refresh
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */6 * * *'   # Every 6 hours
+
+permissions:
+  contents: read
+
+concurrency:
+  group: data-refresh
+  cancel-in-progress: true
+
+jobs:
+  refresh:
+    name: 🔄 Fetch → Normalise → Score
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+
+      - name: Create output directory
+        run: mkdir -p data/output
+
+      - name: Fetch price data
+        run: node scripts/fetch-price-data.mjs
+
+      - name: Normalise price data
+        run: node scripts/normalize-price-data.mjs
+
+      - name: Compute product scores
+        run: node scripts/compute-product-scores.mjs
+
+      - name: Upload data artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: price-data-${{ github.run_number }}
+          retention-days: 3
+          path: |
+            data/output/price-observations.json
+            data/output/normalized-products.json
+            data/output/product-scores.json
+
+      - name: Job summary
+        run: |
+          PRODUCTS=$(node -e "
+            const d = JSON.parse(require('fs').readFileSync('data/output/product-scores.json','utf8'));
+            process.stdout.write(String((d.products ?? d).length));
+          " 2>/dev/null || echo 'N/A')
+          echo "## 🔄 Data Refresh — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Step | Output |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Fetch | price-observations.json |" >> $GITHUB_STEP_SUMMARY
+          echo "| Normalise | normalized-products.json |" >> $GITHUB_STEP_SUMMARY
+          echo "| Score | $PRODUCTS products scored |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📥 Download artifacts to review price data." >> $GITHUB_STEP_SUMMARY

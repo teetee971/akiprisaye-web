@@ -4,6 +4,7 @@ import Header from './layout/Header';
 import Footer from './layout/Footer';
 import FabActions from './ui/FabActions';
 import FeedbackWidget from './ui/FeedbackWidget';
+import MetaPixel from './MetaPixel';
 import SkipLinks from './a11y/SkipLinks';
 import PrivacyConsentBanner from './PrivacyConsentBanner';
 import { hydrateShoppingList } from '../store/useShoppingListStore';
@@ -39,6 +40,7 @@ export default function Layout() {
       </main>
       <FabActions />
       <FeedbackWidget whatsappNumber={FEEDBACK_WA} />
+      <MetaPixel />
       <Suspense fallback={null}>
         <UpgradePromptModal />
       </Suspense>

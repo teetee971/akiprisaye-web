@@ -101,6 +101,8 @@ jobs:
           # When set, the meta tag is injected into index.html at build time (via vite.config.ts plugin).
           # When absent, the tag is simply omitted (no build failure).
           VITE_GOOGLE_SITE_VERIFICATION: ${{ secrets.VITE_GOOGLE_SITE_VERIFICATION }}
+          VITE_META_PIXEL_ID: ${{ secrets.VITE_META_PIXEL_ID }}
+          VITE_FEEDBACK_WHATSAPP: ${{ secrets.VITE_FEEDBACK_WHATSAPP }}
 
       - name: Verify dist/index.html exists
         run: |

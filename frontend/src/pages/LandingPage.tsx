@@ -296,8 +296,12 @@ export default function LandingPage() {
                     {formatEur(item.price)}
                   </span>
                   {affiliateUrl && (
-                    <span className="text-[10px] font-semibold uppercase tracking-wide text-zinc-500">
-                      →
+                    <span className={`rounded-lg px-2 py-1 text-[10px] font-bold ${
+                      isBest
+                        ? 'bg-emerald-400/20 text-emerald-300'
+                        : 'bg-white/8 text-zinc-400'
+                    }`}>
+                      Voir chez {item.retailer}
                     </span>
                   )}
                 </div>
@@ -330,6 +334,10 @@ export default function LandingPage() {
                       retailer: item.retailer,
                       price: item.price,
                     });
+                    // Show share nudge toast
+                    if (shareToastTimerRef.current) clearTimeout(shareToastTimerRef.current);
+                    setShowShareToast(true);
+                    shareToastTimerRef.current = setTimeout(() => setShowShareToast(false), 4000);
                   }}
                   className={rowClass}
                   aria-label={`Voir ${DEMO_PRODUCT.name} chez ${item.retailer} à ${formatEur(item.price)}`}
@@ -439,6 +447,48 @@ export default function LandingPage() {
           className="py-4 text-base"
         />
       </section>
+
+      {/* ── Share toast — shown for 4s after a retailer click ────────────────── */}
+      {showShareToast && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="fixed bottom-24 left-1/2 z-[90] -translate-x-1/2 rounded-2xl border border-emerald-400/30 bg-black/90 px-5 py-3 text-center shadow-2xl backdrop-blur sm:bottom-6"
+        >
+          <p className="text-sm font-semibold text-white">
+            Bon choix&nbsp;👍&nbsp; Partage ce bon plan à un proche&nbsp;!
+          </p>
+          <button
+            type="button"
+            onClick={async () => {
+              try {
+                await navigator.share({
+                  title: 'Bon plan trouvé',
+                  text: `🔥 Même produit. Prix différent.\n\n${DEMO_PRODUCT.name} :\n2,85€ → 2,49€ selon le magasin\n\n👉 Vérifie pour tes courses :`,
+                  url: SITE_URL,
+                });
+              } catch {
+                navigate('/comparateur');
+              }
+              setShowShareToast(false);
+            }}
+            className="mt-2 rounded-xl bg-emerald-500 px-4 py-2 text-xs font-bold text-black transition hover:bg-emerald-400"
+          >
+            Partager
+          </button>
+        </div>
+      )}
+
+      {/* ── Sticky mobile CTA — fixed bottom bar, hidden on desktop ─────────── */}
+      <div className="fixed bottom-0 left-0 z-[60] w-full border-t border-white/10 bg-black/90 p-3 backdrop-blur sm:hidden">
+        <button
+          type="button"
+          onClick={() => navigate('/comparateur')}
+          className="block w-full rounded-2xl bg-emerald-500 py-3.5 text-sm font-extrabold text-black transition hover:bg-emerald-400 active:scale-95"
+        >
+          Voir le meilleur prix maintenant
+        </button>
+      </div>
     </div>
   );
 }

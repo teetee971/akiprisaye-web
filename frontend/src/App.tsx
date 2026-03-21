@@ -319,7 +319,8 @@ const SEOMoinsChersPage = lazyPage(() => import('./pages/SEOMoinsChersPage'));
 const SEOBrandPage = lazyPage(() => import('./pages/SEOBrandPage'));
 const SEOEnseignePrixPage = lazyPage(() => import('./pages/SEOEnseignePrixPage'));
 const SEOGuidePrixPage = lazyPage(() => import('./pages/SEOGuidePrixPage'));
-const LandingPage = lazyPage(() => import('./pages/LandingPage'));
+const LandingPage   = lazyPage(() => import('./pages/LandingPage'));
+const PartnerPage   = lazyPage(() => import('./pages/PartnerPage'));
 const GuidePrixAlimentaireDOM = lazyPage(() => import('./pages/pillar/GuidePrixAlimentaireDOM'));
 const ComparateurSuperMarchesDOM = lazyPage(() => import('./pages/pillar/ComparateurSuperMarchesDOM'));
 const InflationAlimentaireDOMAnalyse = lazyPage(() => import('./pages/pillar/InflationAlimentaireDOMAnalyse'));
@@ -786,6 +787,7 @@ export default function App() {
                           <Route path="guide-prix/:slug" element={<SEOGuidePrixPage />} />
                           {/* Landing page — high-conversion entry point */}
                           <Route path="landing" element={<LandingPage />} />
+                          <Route path="devenir-partenaire" element={<PartnerPage />} />
                           {/* Pillar pages */}
                           <Route path="guide-prix-alimentaire-dom" element={<GuidePrixAlimentaireDOM />} />
                           <Route path="comparateur-supermarches-dom" element={<ComparateurSuperMarchesDOM />} />

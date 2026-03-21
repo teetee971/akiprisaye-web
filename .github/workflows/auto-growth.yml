@@ -1,0 +1,92 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# 📈 Auto Growth
+# ─────────────────────────────────────────────────────────────────────────────
+#
+# PURPOSE: Read product scores, generate social content and growth reports,
+#          and upload as artifacts for human review before any posting.
+#
+# SAFE GUARANTEES:
+#   ✅ Never auto-posts to social networks
+#   ✅ Never commits or pushes
+#   ✅ Never deploys
+#   ✅ All outputs require human review before distribution
+#
+# TRIGGERS:
+#   - Daily at 07:00 UTC
+#   - Manual via workflow_dispatch
+#
+# ARTIFACTS (retained 7 days):
+#   growth-output.json
+#   social-content.json
+# ─────────────────────────────────────────────────────────────────────────────
+
+name: 📈 Auto Growth
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 7 * * *'   # 07:00 UTC every day
+
+permissions:
+  contents: read
+
+concurrency:
+  group: auto-growth
+  cancel-in-progress: true
+
+jobs:
+  growth:
+    name: 📈 Score → Generate Content
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+
+      - name: Install frontend deps (content engine dependency)
+        working-directory: frontend
+        run: npm ci --no-audit --no-fund
+
+      - name: Create output directory
+        run: mkdir -p data/output
+
+      - name: Run AI Growth System
+        run: node scripts/ai-growth-system.mjs --top=10 --min-delta=0.20
+        env:
+          SITE_URL: https://teetee971.github.io/akiprisaye-web/
+
+      - name: Generate social content
+        run: node scripts/social-content-engine.mjs --top=5 --output=./social-content.json
+        env:
+          SITE_URL: https://teetee971.github.io/akiprisaye-web/
+
+      - name: Upload growth artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: growth-${{ github.run_number }}
+          retention-days: 7
+          path: |
+            growth-output.json
+            social-content.json
+
+      - name: Job summary
+        run: |
+          COUNT=$(node -e "
+            const d = JSON.parse(require('fs').readFileSync('growth-output.json','utf8'));
+            process.stdout.write(String(d.totalOutput ?? 0));
+          " 2>/dev/null || echo '0')
+          echo "## 📈 Auto Growth — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Content sets generated | $COUNT |" >> $GITHUB_STEP_SUMMARY
+          echo "| Min price delta filter | 0.20€ |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📥 Download \`growth-output.json\` + \`social-content.json\` for review." >> $GITHUB_STEP_SUMMARY
+          echo "🔒 **No content was auto-posted. Human review required.**" >> $GITHUB_STEP_SUMMARY
