@@ -30,6 +30,9 @@
 
 name: 🚨 Alert Engine
 
+permissions:
+  contents: read
+
 on:
   schedule:
     - cron: '30 */12 * * *'   # 30 min after scraping-refresh (0 */12 *)
