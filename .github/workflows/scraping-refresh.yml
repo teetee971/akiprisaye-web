@@ -28,6 +28,9 @@
 
 name: 🔄 Scraping Refresh
 
+permissions:
+  contents: read
+
 on:
   schedule:
     - cron: '0 */12 * * *'   # Every 12 hours
