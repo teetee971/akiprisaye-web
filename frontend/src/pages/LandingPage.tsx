@@ -16,7 +16,7 @@
  * Mobile-first: large touch targets, no overflow, minimal text.
  */
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { SEOHead }   from '../components/ui/SEOHead';
 import { PrimaryCTA } from '../components/PrimaryCTA';
 import { formatEur } from '../utils/currency';
@@ -28,6 +28,10 @@ import { trackRevenueClick } from '../utils/revenueTracker';
 import { usePWAInstall } from '../hooks/usePWAInstall';
 import AlertesPrixBanner, { WHATSAPP_SUBSCRIBE_URL } from '../components/business/AlertesPrixBanner';
 import { useNavigate } from 'react-router-dom';
+import TopDealsSection from '../components/ui/TopDealsSection';
+import { trackEvent, countEvents } from '../utils/eventTracker';
+import { selectViralProducts } from '../engine/growthBrain';
+import alertsData from '../data/alerts/generated-alerts.json';
 
 // ── Viral share scripts ───────────────────────────────────────────────────────
 
@@ -97,8 +101,36 @@ export default function LandingPage() {
     typeof window !== 'undefined' ? window.location.pathname : '/landing';
   const variant = getVariantForPage(pageUrl);
 
+  // Top deals derived from generated alerts (V2 pipeline output)
+  const topDeals = useMemo(() => {
+    const raw = (alertsData as { alerts?: unknown[] }).alerts ?? [];
+    if (raw.length === 0) return [];
+    return selectViralProducts(
+      raw.map((a: unknown) => {
+        const alert = a as Record<string, unknown>;
+        return {
+          name:         String(alert.productName ?? alert.product ?? ''),
+          delta:        Number(alert.delta ?? alert.spread ?? 0),
+          score:        Number(alert.alertScore ?? alert.score ?? 50),
+          bestPrice:    Number(alert.bestPrice ?? alert.price ?? 0),
+          bestRetailer: String(alert.bestRetailer ?? alert.enseigne ?? alert.retailer ?? ''),
+          territory:    String(alert.territory ?? alert.code ?? 'gp'),
+          slug:         String(alert.slug ?? ''),
+        };
+      }),
+      0.15,
+      5,
+    );
+  }, []);
+
+  // Live comparison count from eventTracker (RGPD-safe)
+  const [comparisonCount, setComparisonCount] = useState(0);
+  // Hours since last data update (rough estimate based on session activity)
+  const [hoursAgo, setHoursAgo] = useState<number | null>(null);
+
   useEffect(() => {
     trackPageView('/landing');
+    trackEvent('page_view', { page: '/landing' });
     try {
       const stats = getCROStats();
       if (stats.totalClicks > 0 || stats.conversionRate > 0) {
@@ -106,6 +138,14 @@ export default function LandingPage() {
       }
     } catch {
       // ignore
+    }
+    // Count today's comparisons from eventTracker
+    setComparisonCount(countEvents('page_view') + countEvents('deal_view'));
+    // Approximate freshness from generatedAt timestamp in alerts JSON
+    const generatedAt = (alertsData as { generatedAt?: string }).generatedAt;
+    if (generatedAt) {
+      const ageMs = Date.now() - Date.parse(generatedAt);
+      setHoursAgo(Math.round(ageMs / 3_600_000));
     }
     return () => {
       if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
@@ -250,7 +290,30 @@ export default function LandingPage() {
             </div>
           ))}
         </div>
+
+        {/* Urgency + proof live indicators */}
+        <div className="mt-5 flex flex-wrap justify-center gap-3">
+          {hoursAgo !== null && (
+            <span className="rounded-full border border-amber-400/30 bg-amber-400/10 px-3 py-1 text-xs font-semibold text-amber-400">
+              ⏱ Mis à jour il y a {hoursAgo < 1 ? 'moins d\'1 heure' : `${hoursAgo} heure${hoursAgo > 1 ? 's' : ''}`}
+            </span>
+          )}
+          {comparisonCount > 0 && (
+            <span className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-xs font-semibold text-emerald-400">
+              📊 +{comparisonCount} comparaisons aujourd'hui
+            </span>
+          )}
+        </div>
       </section>
+
+      {/* ── 2b. TOP DEALS (V2 pipeline alerts) ──────────────────────────────── */}
+      {topDeals.length > 0 && (
+        <TopDealsSection
+          deals={topDeals}
+          title="🔥 Les meilleures offres en ce moment"
+          limit={6}
+        />
+      )}
 
       {/* ── 3. DEMO ─────────────────────────────────────────────────────────── */}
       <section className="mx-auto max-w-md px-4 py-10">

@@ -319,6 +319,7 @@ const SEOMoinsChersPage = lazyPage(() => import('./pages/SEOMoinsChersPage'));
 const SEOBrandPage = lazyPage(() => import('./pages/SEOBrandPage'));
 const SEOEnseignePrixPage = lazyPage(() => import('./pages/SEOEnseignePrixPage'));
 const SEOGuidePrixPage = lazyPage(() => import('./pages/SEOGuidePrixPage'));
+const SEOComparateurSlugPage = lazyPage(() => import('./pages/SEOComparateurSlugPage'));
 const LandingPage   = lazyPage(() => import('./pages/LandingPage'));
 const PartnerPage   = lazyPage(() => import('./pages/PartnerPage'));
 const GuidePrixAlimentaireDOM = lazyPage(() => import('./pages/pillar/GuidePrixAlimentaireDOM'));
@@ -785,6 +786,8 @@ export default function App() {
                           <Route path="prix-enseigne/:retailer/:territory" element={<SEOEnseignePrixPage />} />
                           {/* Long-tail SEO: guide pages /guide-prix/<product>-<territory> */}
                           <Route path="guide-prix/:slug" element={<SEOGuidePrixPage />} />
+                          {/* Long-tail SEO: comparateur dynamique /comparateur/<product>-<territory> (V2/V3) */}
+                          <Route path="comparateur/:slug" element={<SEOComparateurSlugPage />} />
                           {/* Landing page — high-conversion entry point */}
                           <Route path="landing" element={<LandingPage />} />
                           <Route path="devenir-partenaire" element={<PartnerPage />} />

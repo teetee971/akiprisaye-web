@@ -1,0 +1,147 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# 🔮 Predictive Engine V3 — Trend + Ranking + Personalised Push
+# ─────────────────────────────────────────────────────────────────────────────
+#
+# PURPOSE: Run the V3 predictive scoring pipeline every 6 hours.
+#
+# Pipeline:
+#   1. fetch data              (reuse fetch-price-data.mjs)
+#   2. compute base scores     (compute-product-scores.mjs)
+#   3. predictive ranking      (generate-predictive-ranking.mjs)
+#   4. personalized push       (generate-personalized-push.mjs)
+#   5. growth content          (generate-growth-content.mjs)
+#   6. export artifacts
+#
+# Outputs:
+#   data/output/predictive-ranking.json
+#   data/output/user-segments.json
+#   data/output/personalized-push.json
+#   data/output/growth-content.json
+#
+# SAFE GUARANTEES:
+#   ✅ Never commits or pushes automatically
+#   ✅ Never posts to any social network
+#   ✅ Output is artifact-only — human review required
+# ─────────────────────────────────────────────────────────────────────────────
+
+name: 🔮 Predictive Engine V3
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */6 * * *'   # Every 6 hours
+
+permissions:
+  contents: read
+
+concurrency:
+  group: predictive-engine-v3
+  cancel-in-progress: true
+
+jobs:
+  predictive-pipeline:
+    name: 🔮 Trend → Predict → Personalise
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend deps
+        working-directory: frontend
+        run: npm ci --no-audit --no-fund
+
+      - name: 1 — Fetch price data
+        run: node scripts/fetch-price-data.mjs
+        continue-on-error: true
+        env:
+          NODE_ENV: production
+
+      - name: 2 — Normalize
+        run: node scripts/normalize-price-data.mjs
+        continue-on-error: true
+
+      - name: 3 — Compute base scores
+        run: node scripts/compute-product-scores.mjs
+        continue-on-error: true
+
+      - name: 4 — Predictive ranking (V3)
+        run: node scripts/generate-predictive-ranking.mjs --min-delta=0.10 --limit=50
+        continue-on-error: true
+
+      - name: 5 — Personalized push content (V3)
+        run: node scripts/generate-personalized-push.mjs --count=15
+        continue-on-error: true
+        env:
+          SITE_URL: https://teetee971.github.io/akiprisaye-web/
+
+      - name: 6 — Growth content (V2)
+        run: node scripts/generate-growth-content.mjs --min-delta=0.15 --limit=20
+        continue-on-error: true
+        env:
+          SITE_URL: https://teetee971.github.io/akiprisaye-web/
+
+      - name: 7 — Export top deals
+        run: node scripts/export-top-deals.mjs
+        continue-on-error: true
+
+      - name: 8 — Generate social posts
+        run: node scripts/generate-social-posts.mjs --count=30
+        continue-on-error: true
+        env:
+          SITE_URL: https://teetee971.github.io/akiprisaye-web/
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: predictive-v3-${{ github.run_number }}
+          retention-days: 7
+          path: |
+            data/output/predictive-ranking.json
+            data/output/user-segments.json
+            data/output/personalized-push.json
+            data/output/growth-content.json
+            data/output/top-deals.json
+            exports/social-posts.json
+          if-no-files-found: warn
+
+      - name: Job summary
+        run: |
+          echo "## 🔮 Predictive Engine V3 — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Output | Count |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+
+          for f in \
+            "data/output/predictive-ranking.json:Predictive ranking" \
+            "data/output/personalized-push.json:Personalised push" \
+            "data/output/growth-content.json:Growth content" \
+            "data/output/top-deals.json:Top deals"
+          do
+            FILE="${f%%:*}"
+            LABEL="${f##*:}"
+            if [ -f "$FILE" ]; then
+              N=$(node -e "try{const d=JSON.parse(require('fs').readFileSync('$FILE','utf8'));const c=d.count??d.dealCount??(Array.isArray(d)?d.length:(d.products??d.deals??d.items??[]).length);process.stdout.write(String(c))}catch{process.stdout.write('?')}")
+              echo "| $LABEL | $N |" >> $GITHUB_STEP_SUMMARY
+            fi
+          done
+
+          # Segment tier breakdown
+          if [ -f data/output/user-segments.json ]; then
+            VIRAL=$(node -e "try{const d=JSON.parse(require('fs').readFileSync('data/output/user-segments.json','utf8'));process.stdout.write(String(d.tiers?.viral??0))}catch{process.stdout.write('0')}")
+            OPP=$(node -e "try{const d=JSON.parse(require('fs').readFileSync('data/output/user-segments.json','utf8'));process.stdout.write(String(d.tiers?.opportunity??0))}catch{process.stdout.write('0')}")
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Tier breakdown:** 🔥 viral: $VIRAL — 🟠 opportunity: $OPP" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📥 Download \`predictive-v3-${{ github.run_number }}\` artifact to review content." >> $GITHUB_STEP_SUMMARY
+          echo "🔒 **No content was auto-posted. Human review required.**" >> $GITHUB_STEP_SUMMARY

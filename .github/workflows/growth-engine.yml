@@ -1,0 +1,148 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# 🚀 Growth Engine V2 — Auto Selection + Content Generation
+# ─────────────────────────────────────────────────────────────────────────────
+#
+# PURPOSE: Run the full V2 growth pipeline every 3 hours.
+#
+# Pipeline:
+#   1. fetch data          (fetch-price-data.mjs)
+#   2. compute scores      (compute-product-scores.mjs)
+#   3. select viral        (boost-engine.mjs)
+#   4. generate content    (generate-growth-content.mjs)
+#   5. generate social     (generate-social-posts.mjs — via export-top-deals)
+#   6. push bridge         (push-bridge.mjs)
+#   7. export artifact     (growth-content.json + push-ready.json)
+#
+# SAFE GUARANTEES:
+#   ✅ Never commits or pushes automatically
+#   ✅ Never posts to social networks
+#   ✅ All output is artifact-only — human review required before distribution
+#
+# TRIGGERS:
+#   - Every 3 hours (automated)
+#   - Manual via workflow_dispatch
+# ─────────────────────────────────────────────────────────────────────────────
+
+name: 🚀 Growth Engine V2
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */3 * * *'   # Every 3 hours
+
+permissions:
+  contents: read
+
+concurrency:
+  group: growth-engine-v2
+  cancel-in-progress: true
+
+jobs:
+  growth-pipeline:
+    name: 🚀 Score → Select → Content → Push-bridge
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend deps
+        working-directory: frontend
+        run: npm ci --no-audit --no-fund
+
+      - name: 1 — Fetch price data
+        run: node scripts/fetch-price-data.mjs
+        continue-on-error: true
+        env:
+          NODE_ENV: production
+
+      - name: 2 — Normalize
+        run: node scripts/normalize-price-data.mjs
+        continue-on-error: true
+
+      - name: 3 — Compute scores
+        run: node scripts/compute-product-scores.mjs
+        continue-on-error: true
+
+      - name: 4 — Boost engine (apply click signals)
+        run: node scripts/boost-engine.mjs
+        continue-on-error: true
+
+      - name: 5 — Export top deals
+        run: |
+          # Use boosted-products when available, fall back to scored products
+          if [ -f data/output/boosted-products.json ]; then
+            node scripts/export-top-deals.mjs --input=data/output/boosted-products.json
+          else
+            node scripts/export-top-deals.mjs
+          fi
+        continue-on-error: true
+
+      - name: 6 — Generate multi-format growth content
+        run: node scripts/generate-growth-content.mjs
+        env:
+          SITE_URL: https://teetee971.github.io/akiprisaye-web/
+        continue-on-error: true
+
+      - name: 7 — Generate social posts
+        run: node scripts/generate-social-posts.mjs --count=30
+        env:
+          SITE_URL: https://teetee971.github.io/akiprisaye-web/
+        continue-on-error: true
+
+      - name: 8 — Push bridge (alert → push-ready content)
+        run: node scripts/push-bridge.mjs --min-delta=0.20
+        env:
+          SITE_URL: https://teetee971.github.io/akiprisaye-web/
+        continue-on-error: true
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: growth-v2-${{ github.run_number }}
+          retention-days: 7
+          path: |
+            data/output/growth-content.json
+            data/output/top-deals.json
+            data/output/push-ready.json
+            exports/social-posts.json
+          if-no-files-found: warn
+
+      - name: Job summary
+        run: |
+          echo "## 🚀 Growth Engine V2 — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Step | Output |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|--------|" >> $GITHUB_STEP_SUMMARY
+
+          if [ -f data/output/growth-content.json ]; then
+            COUNT=$(node -e "try{const d=JSON.parse(require('fs').readFileSync('data/output/growth-content.json','utf8'));process.stdout.write(String(d.count))}catch{process.stdout.write('0')}")
+            echo "| Growth content | ${COUNT} items |" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          if [ -f data/output/top-deals.json ]; then
+            DEALS=$(node -e "try{const d=JSON.parse(require('fs').readFileSync('data/output/top-deals.json','utf8'));const a=Array.isArray(d)?d:(d.deals??[]);process.stdout.write(String(a.length))}catch{process.stdout.write('0')}")
+            echo "| Top deals | ${DEALS} items |" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          if [ -f data/output/push-ready.json ]; then
+            PUSH=$(node -e "try{const d=JSON.parse(require('fs').readFileSync('data/output/push-ready.json','utf8'));process.stdout.write(String(d.count))}catch{process.stdout.write('0')}")
+            echo "| Push-ready alerts | ${PUSH} items |" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          if [ -f exports/social-posts.json ]; then
+            SOCIAL=$(node -e "try{const d=JSON.parse(require('fs').readFileSync('exports/social-posts.json','utf8'));const a=Array.isArray(d)?d:(d.posts??[]);process.stdout.write(String(a.length))}catch{process.stdout.write('0')}")
+            echo "| Social posts | ${SOCIAL} items |" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📥 Download artifact \`growth-v2-${{ github.run_number }}\` to review content." >> $GITHUB_STEP_SUMMARY
+          echo "🔒 **No content was auto-posted. Human review required.**" >> $GITHUB_STEP_SUMMARY
