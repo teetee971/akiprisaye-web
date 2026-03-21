@@ -27,6 +27,7 @@ import { getCROStats, trackPageView, trackConversionEvent, getVariantForPage } f
 import { trackRevenueClick } from '../utils/revenueTracker';
 import { usePWAInstall } from '../hooks/usePWAInstall';
 import AlertesPrixBanner, { WHATSAPP_SUBSCRIBE_URL } from '../components/business/AlertesPrixBanner';
+import { useNavigate } from 'react-router-dom';
 
 // ── Viral share scripts ───────────────────────────────────────────────────────
 
@@ -81,6 +82,10 @@ export default function LandingPage() {
   const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   // PWA install prompt
   const { canInstall, install: installPWA } = usePWAInstall();
+  // Post-click share toast: shown after user clicks a retailer link
+  const [showShareToast, setShowShareToast] = useState(false);
+  const shareToastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const navigate = useNavigate();
 
   // Always use the canonical SITE_URL so the path includes the deployment
   // subpath (e.g. /akiprisaye-web/landing on GitHub Pages).

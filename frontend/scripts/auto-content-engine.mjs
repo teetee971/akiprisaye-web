@@ -98,8 +98,8 @@ const savings  = Array.from(groups.values())
 
 // ── Script templates ──────────────────────────────────────────────────────────
 
-const HASHTAGS_GP = '#guadeloupe #courses #prix #inflation #bonplan #economies #supermarche #carrefour #leclerc';
-const HASHTAGS_MQ = '#martinique #courses #prix #inflation #bonplan #economies #supermarche #carrefour #leclerc';
+const HASHTAGS_GP  = '#guadeloupe #courses #prix #inflation #bonplan #economies #supermarche #carrefour #leclerc';
+const HASHTAGS_MQ  = '#martinique #courses #prix #inflation #bonplan #economies #supermarche #carrefour #leclerc';
 const HASHTAGS_DOM = '#outremer #domtom #courses #prix #viechère #bonplan #economies';
 
 const CHANNELS = ['tiktok', 'whatsapp', 'instagram'];
@@ -124,6 +124,66 @@ function buildWhatsAppText(s) {
     `Compare tes courses en 10 secondes :\n${SITE}\n\n` +
     `Tu vas halluciner des différences.`
   );
+}
+
+// ── Public API (importable by other scripts) ──────────────────────────────────
+
+/**
+ * Generate TikTok, WhatsApp and Facebook content for a single product.
+ *
+ * Accepts a product descriptor object:
+ *   { name, bestRetailer, bestPrice, worstRetailer, worstPrice, delta }
+ *
+ * Returns { tiktok, whatsapp, facebook } — ready-to-post text strings.
+ *
+ * The SITE_URL environment variable is used when set; falls back to the
+ * canonical GitHub Pages landing URL.
+ *
+ * @example
+ * import { generateContent } from './auto-content-engine.mjs';
+ * const content = generateContent({
+ *   name: 'Coca-Cola 1,5 L',
+ *   bestRetailer: 'E.Leclerc',
+ *   bestPrice: 2.49,
+ *   worstRetailer: 'Carrefour',
+ *   worstPrice: 2.85,
+ *   delta: 0.36,
+ * });
+ * console.log(content.tiktok);
+ */
+export function generateContent(product) {
+  const siteUrl = process.env.SITE_URL ?? SITE;
+  const { name, bestRetailer, bestPrice, worstRetailer, worstPrice, delta } = product;
+
+  const tiktok = [
+    `Même produit, prix différent 👇`,
+    `${name}`,
+    `${bestRetailer} : ${bestPrice}€`,
+    `Différence : ${delta}€`,
+    ``,
+    `Teste ici 👉 ${siteUrl}`,
+  ].join('\n');
+
+  const whatsapp = [
+    `🔥 Bon plan`,
+    `${name}`,
+    `Le moins cher : ${bestPrice}€ chez ${bestRetailer}`,
+    `Tu peux économiser ${delta}€`,
+    ``,
+    `👉 ${siteUrl}`,
+  ].join('\n');
+
+  const facebook = [
+    `Comparaison rapide :`,
+    `${name}`,
+    ``,
+    `${bestRetailer} : ${bestPrice}€`,
+    `${worstRetailer} : ${worstPrice}€ (+${delta}€ ailleurs)`,
+    ``,
+    `👉 ${siteUrl}`,
+  ].join('\n');
+
+  return { tiktok, whatsapp, facebook };
 }
 
 // ── Generate scripts ──────────────────────────────────────────────────────────

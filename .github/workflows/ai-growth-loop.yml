@@ -1,0 +1,83 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# 🤖 AI Growth Loop
+# ─────────────────────────────────────────────────────────────────────────────
+#
+# PURPOSE: Run the AI Growth System orchestrator every 6 hours.
+#          Scores products by price delta, generates TikTok / WhatsApp /
+#          Facebook content for the top opportunities, and uploads the result
+#          as a GitHub Actions artifact for human review.
+#
+# SAFE GUARANTEES:
+#   ✅ Never commits, never pushes, never deploys
+#   ✅ Never posts to social networks automatically
+#   ✅ Output is human-reviewed before any distribution
+#
+# TRIGGERS:
+#   - Every 6 hours (automated)
+#   - Manual via workflow_dispatch (immediate run)
+#
+# OUTPUT (artifact, retained 7 days):
+#   growth-output.json  — scored products + ready-to-post content
+# ─────────────────────────────────────────────────────────────────────────────
+
+name: 🤖 AI Growth Loop
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */6 * * *'   # Every 6 hours
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ai-growth-loop
+  cancel-in-progress: true
+
+jobs:
+  growth-loop:
+    name: 🤖 Score + Generate Content
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+
+      - name: Install frontend deps (content engine uses auto-content-engine.mjs)
+        working-directory: frontend
+        run: npm ci --no-audit --no-fund
+
+      - name: Run AI Growth System
+        run: node scripts/ai-growth-system.mjs --top=10 --min-delta=0.20
+        env:
+          SITE_URL: https://teetee971.github.io/akiprisaye-web/
+
+      - name: Upload growth output
+        uses: actions/upload-artifact@v4
+        with:
+          name: growth-output-${{ github.run_number }}
+          retention-days: 7
+          path: growth-output.json
+
+      - name: Job summary
+        run: |
+          COUNT=$(node -e "
+            const d = JSON.parse(require('fs').readFileSync('growth-output.json','utf8'));
+            process.stdout.write(String(d.totalOutput));
+          ")
+          echo "## 🤖 AI Growth Loop — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Products scored | $(node -e "const d=JSON.parse(require('fs').readFileSync('growth-output.json','utf8'));process.stdout.write(String(d.totalScored))") |" >> $GITHUB_STEP_SUMMARY
+          echo "| Content sets generated | $COUNT |" >> $GITHUB_STEP_SUMMARY
+          echo "| Min price delta filter | 0.20€ |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📥 Download \`growth-output.json\` artifact to review content." >> $GITHUB_STEP_SUMMARY
+          echo "🔒 **No content was auto-posted. Human review required.**" >> $GITHUB_STEP_SUMMARY

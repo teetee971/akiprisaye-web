@@ -5,14 +5,15 @@
  * revenueTracker.ts (localStorage, RGPD-safe).
  *
  * Scoring model (no ML required — simple heuristics are already powerful):
- *   clickScore  : raw click count for the product (direct revenue signal)
- *   demandScore : unique pages / sessions that generated clicks (reach)
- *   marginScore : number of distinct retailers clicked (comparison depth)
- *   globalScore : weighted composite — 50% clicks, 30% demand, 20% margin
+ *   clickScore   : raw click count for the product (direct revenue signal)
+ *   marginScore  : number of distinct retailers clicked (comparison depth)
+ *   recencyScore : time-decay — recent clicks score higher (0–100)
+ *   globalScore  : weighted composite — 40% clicks + 40% margin + 20% recency
  *
  * Usage:
- *   import { computeProductScores } from './revenueEngine';
+ *   import { computeProductScores, getKPISummary } from './revenueEngine';
  *   const top5 = computeProductScores().slice(0, 5);
+ *   const kpi  = getKPISummary();
  */
 
 import { getRevenueEvents } from './revenueTracker';
@@ -24,18 +25,43 @@ export interface ProductScore {
   product: string;
   /** Raw retailer click count */
   clickScore: number;
-  /** 0–100 — share of unique source pages that generated clicks */
-  demandScore: number;
-  /** Number of distinct retailers clicked for this product */
+  /** Number of distinct retailers clicked for this product (×10, cap 100) */
   marginScore: number;
-  /** Weighted composite score (0–100) */
+  /** 0–100 — how recently the product was last clicked (time-decayed) */
+  recencyScore: number;
+  /** Weighted composite score — 40% clicks + 40% margin + 20% recency */
   globalScore: number;
 }
+
+/** Snapshot of key performance indicators derived from revenue click events. */
+export interface KPISummary {
+  /** Total unique page-view events recorded in statsTracker (approximated from revenue events) */
+  revenueEvents: number;
+  /** Total retailer clicks recorded */
+  clicks: number;
+  /** Distinct products clicked */
+  products: number;
+  /** Distinct retailers clicked */
+  retailers: number;
+  /** Most recent click timestamp (ms), or null when no events exist */
+  lastClickAt: number | null;
+}
+
+// ── Internal constants ────────────────────────────────────────────────────────
+
+/** Events newer than this are considered "very recent" (full recency score). */
+const RECENCY_WINDOW_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 // ── Engine ────────────────────────────────────────────────────────────────────
 
 /**
  * Compute product scores from real user click events (browser-side).
+ *
+ * Scoring weights:
+ *   clicks   × 0.4  — products that are clicked often are revenue leaders
+ *   margin   × 0.4  — products compared across many retailers have higher CPC potential
+ *   recency  × 0.2  — fresh signal beats stale data
+ *
  * Returns products sorted by globalScore descending.
  * Returns [] when no events have been recorded yet.
  */
@@ -43,44 +69,46 @@ export function computeProductScores(): ProductScore[] {
   const events = getRevenueEvents();
   if (events.length === 0) return [];
 
+  const now = Date.now();
+
   // Aggregate per product
   const byProduct = new Map<
     string,
-    { clicks: number; pages: Set<string>; retailers: Set<string> }
+    { clicks: number; retailers: Set<string>; lastClickAt: number }
   >();
 
   for (const e of events) {
     if (!e.product) continue;
     let entry = byProduct.get(e.product);
     if (!entry) {
-      entry = { clicks: 0, pages: new Set(), retailers: new Set() };
+      entry = { clicks: 0, retailers: new Set(), lastClickAt: 0 };
       byProduct.set(e.product, entry);
     }
     entry.clicks += 1;
-    if (e.url) entry.pages.add(e.url);
     if (e.retailer) entry.retailers.add(e.retailer);
+    if (e.clickedAt > entry.lastClickAt) entry.lastClickAt = e.clickedAt;
   }
 
   const maxClicks = Math.max(1, ...Array.from(byProduct.values()).map((v) => v.clicks));
-  const totalProducts = byProduct.size;
 
   return Array.from(byProduct.entries())
     .map(([product, data]) => {
       const clickScore = data.clicks;
-      // demand: share of unique page sources (normalised to 0–100)
-      const demandScore = Math.min(
-        Math.round((data.pages.size / Math.max(1, totalProducts)) * 100),
-        100,
-      );
+
       // margin: number of retailers compared (each retailer = ~10 pts, cap 100)
       const marginScore = Math.min(data.retailers.size * 10, 100);
 
-      // Weighted composite (0–100)
-      const globalScore = Math.round(
-        ((clickScore / maxClicks) * 50 + demandScore * 0.3 + marginScore * 0.2) * 10,
-      ) / 10;
+      // recency: linear decay over RECENCY_WINDOW_MS — 100 if clicked now, 0 if older
+      const ageMs        = now - data.lastClickAt;
+      const recencyScore = Math.max(0, Math.round((1 - ageMs / RECENCY_WINDOW_MS) * 100));
 
-      return { product, clickScore, demandScore, marginScore, globalScore };
+      // Weighted composite — 40% clicks + 40% margin + 20% recency
+      const globalScore =
+        Math.round(
+          ((clickScore / maxClicks) * 40 + marginScore * 0.4 + recencyScore * 0.2) * 10,
+        ) / 10;
+
+      return { product, clickScore, marginScore, recencyScore, globalScore };
     })
     .sort((a, b) => b.globalScore - a.globalScore);
 }
@@ -91,4 +119,35 @@ export function computeProductScores(): ProductScore[] {
  */
 export function getTopProducts(n = 5): ProductScore[] {
   return computeProductScores().slice(0, n);
+}
+
+/**
+ * Return a lightweight KPI snapshot from stored revenue click events.
+ * Intended for a mini dashboard (console log, analytics panel, or UI widget).
+ *
+ * @example
+ * const kpi = getKPISummary();
+ * console.table(kpi);
+ * // { revenueEvents: 42, clicks: 42, products: 7, retailers: 3, lastClickAt: 1711... }
+ */
+export function getKPISummary(): KPISummary {
+  const events = getRevenueEvents();
+
+  const products  = new Set<string>();
+  const retailers = new Set<string>();
+  let   lastClickAt: number | null = null;
+
+  for (const e of events) {
+    if (e.product)  products.add(e.product);
+    if (e.retailer) retailers.add(e.retailer);
+    if (lastClickAt === null || e.clickedAt > lastClickAt) lastClickAt = e.clickedAt;
+  }
+
+  return {
+    revenueEvents: events.length,
+    clicks:        events.length,
+    products:      products.size,
+    retailers:     retailers.size,
+    lastClickAt,
+  };
 }
