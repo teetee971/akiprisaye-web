@@ -1,0 +1,49 @@
+name: Market Domination OS
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 */12 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  build-domination:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install root dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Run Market Domination export script
+        run: node scripts/build-domination-pages.mjs
+
+      - name: Validate outputs
+        run: |
+          for f in data/output/domination-pages.json data/output/territory-priority.json data/output/retailer-battles.json data/output/keyword-gap-plan.json; do
+            if [ ! -f "$f" ]; then
+              echo "Missing output: $f"
+              exit 1
+            fi
+          done
+          echo "All domination outputs present"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: market-domination-outputs
+          path: |
+            data/output/domination-pages.json
+            data/output/territory-priority.json
+            data/output/retailer-battles.json
+            data/output/keyword-gap-plan.json
+          retention-days: 7
