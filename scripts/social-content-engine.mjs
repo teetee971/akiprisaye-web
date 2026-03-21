@@ -95,7 +95,7 @@ function computeTop(prices, n) {
       };
     })
     .filter(Boolean)
-    .filter((p, idx, arr) => arr.findIndex((x) => x.name === p.name) === idx)
+    .filter((() => { const seen = new Set(); return (p) => !seen.has(p.name) && seen.add(p.name); })())
     .sort((a, b) => b.delta - a.delta)
     .slice(0, n);
 }

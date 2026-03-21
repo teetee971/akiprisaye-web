@@ -130,11 +130,12 @@ function computeSavings(group) {
 }
 
 const groups = groupByProduct(rawPrices);
+const seenNames = new Set();
 const allProducts = Array.from(groups.values())
   .map(computeSavings)
   .filter(Boolean)
-  // Deduplicate by name (seed + file data may overlap)
-  .filter((p, idx, arr) => arr.findIndex((x) => x.name === p.name) === idx);
+  // Deduplicate by name (seed + file data may overlap) — O(n) via Set
+  .filter((p) => !seenNames.has(p.name) && seenNames.add(p.name));
 
 // ── Rank with growthBrain, filter by delta, take top N ───────────────────────
 
