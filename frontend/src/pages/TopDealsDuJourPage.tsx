@@ -4,16 +4,18 @@
  * SEO growth page: score-sorted top deals, dominant product hero,
  * per-product CTA with tracking, mobile-first.
  *
- * Data: reads /data/output/top-deals.json (pipeline artifact) with a
- * graceful empty-state fallback when the file isn't yet generated.
+ * Data priority:
+ *   1. /data/output/top-deals.json  — pipeline artifact (updated daily by CI)
+ *   2. generated-alerts.json        — committed seed data (always available)
  */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { SEOHead } from '../components/ui/SEOHead';
 import { PrimaryConversionBlock } from '../components/conversion/PrimaryConversionBlock';
 import { DominantProductCard } from '../components/conversion/DominantProductCard';
 import { AlertOptInPop } from '../components/conversion/AlertOptInPop';
 import { sortByScore, type ConversionProduct } from '../engine/conversionEngine';
 import { logEvent } from '../engine/analytics';
+import alertsData from '../data/alerts/generated-alerts.json';
 
 // ── Top-deal shape from export-top-deals.mjs ─────────────────────────────────
 interface RawDeal {
@@ -29,50 +31,64 @@ interface RawDeal {
 
 function adaptDeal(d: RawDeal, idx: number): ConversionProduct {
   return {
-    id:         d.slug ?? `deal-${idx}`,
-    name:       d.name,
-    price:      d.bestPrice,
-    score:      d.score,
-    priceDrop:  d.delta,
-    trending:   d.boost,
-    retailer:   d.bestRetailer,
-    territory:  d.territory,
-    url:        undefined,  // populated by retailerLinks via DominantProductCard
-    category:   undefined,
+    id:        d.slug ?? `deal-${idx}`,
+    name:      d.name,
+    price:     d.bestPrice,
+    score:     d.score,
+    priceDrop: d.bestPrice && d.delta ? d.delta / (d.bestPrice + d.delta) : undefined,
+    trending:  d.boost ?? (d.delta != null && d.delta > 0.5),
+    retailer:  d.bestRetailer,
+    territory: d.territory,
+    url:       d.slug ? `/produit/${d.slug}` : '/comparateur',
+    category:  undefined,
   };
 }
 
-// ── Placeholder deals (shown when pipeline hasn't run yet) ────────────────────
-const PLACEHOLDER_DEALS: ConversionProduct[] = [
-  { id: 'huile-1l',   name: 'Huile de tournesol 1L',  price: 4.50, score: 95, priceDrop: 0.35, trending: true,  retailer: 'Carrefour' },
-  { id: 'riz-1kg',    name: 'Riz long grain 1 kg',    price: 2.48, score: 88, priceDrop: 0.15, trending: false, retailer: 'E.Leclerc' },
-  { id: 'lait-1l',    name: 'Lait demi-écrémé 1L',    price: 1.32, score: 82, priceDrop: 0.12, trending: true,  retailer: 'Super U'   },
-  { id: 'pates-500g', name: 'Pâtes spaghetti 500g',   price: 1.15, score: 76, priceDrop: 0.08, trending: false, retailer: 'Leader Price' },
-  { id: 'cafe-250g',  name: 'Café moulu 250g',        price: 3.20, score: 71, priceDrop: 0.22, trending: true,  retailer: 'Casino'    },
-];
+// ── Seed deals from committed generated-alerts.json ───────────────────────────
+function seedDealsFromAlerts(): ConversionProduct[] {
+  const raw = (alertsData as { alerts?: unknown[] }).alerts ?? [];
+  return raw.map((a: unknown, idx: number) => {
+    const alert = a as Record<string, unknown>;
+    const bestPrice  = Number(alert.bestPrice ?? alert.price ?? 0);
+    const delta      = Number(alert.delta ?? alert.spread ?? 0);
+    return {
+      id:        String(alert.slug ?? alert.id ?? `seed-${idx}`),
+      name:      String(alert.productName ?? alert.product ?? ''),
+      price:     bestPrice,
+      score:     Number(alert.alertScore ?? alert.score ?? 50),
+      priceDrop: bestPrice && delta ? delta / (bestPrice + delta) : undefined,
+      trending:  delta > 0.5,
+      retailer:  String(alert.bestRetailer ?? alert.enseigne ?? ''),
+      territory: String(alert.territory ?? 'gp'),
+      url:       alert.slug ? `/produit/${String(alert.slug)}` : '/comparateur',
+    };
+  });
+}
+
+const SEED_DEALS = sortByScore(seedDealsFromAlerts());
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export function TopDealsDuJourPage() {
-  const [products, setProducts] = useState<ConversionProduct[]>([]);
-  const [loaded, setLoaded]     = useState(false);
+  const [products, setProducts] = useState<ConversionProduct[]>(SEED_DEALS);
 
   useEffect(() => {
     logEvent('view_page', { page: 'top-deals-du-jour' });
 
+    // Try to upgrade to fresh pipeline data (optional — seed covers the fallback)
     fetch('/data/output/top-deals.json')
       .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then((raw: RawDeal[]) => {
-        const adapted = Array.isArray(raw)
-          ? raw.slice(0, 20).map(adaptDeal)
-          : PLACEHOLDER_DEALS;
-        setProducts(sortByScore(adapted));
+        if (Array.isArray(raw) && raw.length > 0) {
+          setProducts(sortByScore(raw.slice(0, 20).map(adaptDeal)));
+        }
       })
-      .catch(() => setProducts(sortByScore(PLACEHOLDER_DEALS)))
-      .finally(() => setLoaded(true));
+      .catch(() => { /* keep seed data */ })
+      .finally(() => { /* pipeline upgrade complete */ });
   }, []);
 
-  const sorted = sortByScore(products.length > 0 ? products : PLACEHOLDER_DEALS);
+  const sorted = useMemo(() => sortByScore(products), [products]);
+
 
   return (
     <>
@@ -86,9 +102,9 @@ export function TopDealsDuJourPage() {
 
       <main className="min-h-screen bg-gray-950 text-white px-4 py-6 max-w-2xl mx-auto">
 
-        {/* Hero H1 + dominant product */}
+        {/* Hero H1 + dominant product — always shows seed data immediately */}
         <div className="mb-6">
-          <PrimaryConversionBlock products={loaded ? sorted : PLACEHOLDER_DEALS} />
+          <PrimaryConversionBlock products={sorted} />
         </div>
 
         {/* Rest of deals list */}

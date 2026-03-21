@@ -16,12 +16,14 @@ const appSource = readFileSync(resolve(here, '../App.tsx'), 'utf-8');
 const hubSource = readFileSync(resolve(here, '../pages/ComparateursHub.tsx'), 'utf-8');
 
 const isComparatorPath = (path: string) => (
-  path.startsWith('/comparateur')
-  || path.startsWith('/comparaison')
-  || path === '/compare'
-  || path === '/comparatif-concurrence'
-  || path === '/recherche-prix'
-  || path.startsWith('/recherche-prix/')
+  !path.includes(':') && (       // exclude dynamic route templates (e.g. /comparateur/:slug)
+    path.startsWith('/comparateur')
+    || path.startsWith('/comparaison')
+    || path === '/compare'
+    || path === '/comparatif-concurrence'
+    || path === '/recherche-prix'
+    || path.startsWith('/recherche-prix/')
+  )
 );
 
 const hubComparatorPaths = Array.from(

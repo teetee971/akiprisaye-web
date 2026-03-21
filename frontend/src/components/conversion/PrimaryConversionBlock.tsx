@@ -12,7 +12,7 @@
  *   - trust signals
  *   - logEvent tracking
  */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   getBestDeal,
   getBadges,
@@ -43,6 +43,13 @@ export function PrimaryConversionBlock({ products = [] }: PrimaryConversionBlock
   const [confirmed, setConfirmed] = useState(false);
 
   const best = getBestDeal(products);
+
+  // Track product view for CTR denominator — fires whenever best product changes
+  useEffect(() => {
+    if (best) {
+      logEvent('view_product', { id: best.id, price: best.price });
+    }
+  }, [best?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Nothing to show → render nothing (never crash without data)
   if (!best) {
