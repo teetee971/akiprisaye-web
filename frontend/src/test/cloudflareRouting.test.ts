@@ -80,4 +80,27 @@ describe('static hosting SPA routing config', () => {
       '<Route path="espace-pro-batiment" element={<Navigate to="/espace-pro" replace />} />',
     );
   });
+
+  test('/landing route is registered in App.tsx and accessible via direct URL', () => {
+    const appSource = readFileSync(P('src/App.tsx'), 'utf8');
+
+    // The /landing route must be registered so React Router renders LandingPage
+    // when the URL is /landing (after BrowserRouter strips the base path).
+    expect(appSource).toContain('<Route path="landing" element={<LandingPage />} />');
+
+    // LandingPage must be lazy-imported so it is included in the bundle
+    expect(appSource).toContain("import('./pages/LandingPage')");
+  });
+
+  test('index.html contains the ?p= SPA path-restore handler for GitHub Pages deep links', () => {
+    const indexHtml = readFileSync(P('index.html'), 'utf8');
+
+    // The inline script in index.html reads the ?p= query param set by public/404.html
+    // and calls history.replaceState to restore the original deep-link URL before
+    // React Router boots, so /landing (and every other SPA route) works when accessed
+    // directly on GitHub Pages without an active service worker.
+    expect(indexHtml).toContain("search[1] === 'p'");
+    expect(indexHtml).toContain('window.history.replaceState');
+    expect(indexHtml).toContain('decodeURIComponent');
+  });
 });

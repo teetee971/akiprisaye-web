@@ -62,4 +62,17 @@ for (const url of urls) {
   }
 }
 
-console.log('[verify-pages-build] OK: dist/index.html and assets are GitHub Pages safe.');
+// ── SPA fallback: dist/404.html must be the React app shell ──────────────────
+// The deploy-pages workflow copies dist/index.html → dist/404.html so GitHub
+// Pages serves the app for any unknown route (e.g. /landing accessed directly).
+// The CI verify-pages job mirrors that step; this check guards against regressions.
+const NOT_FOUND_PATH = join(DIST_DIR, '404.html');
+if (!existsSync(NOT_FOUND_PATH)) {
+  fail('dist/404.html not found — the SPA fallback step (cp dist/index.html dist/404.html) must have failed');
+}
+const notFoundHtml = readFileSync(NOT_FOUND_PATH, 'utf8');
+if (!notFoundHtml.includes('id="root"')) {
+  fail('dist/404.html does not contain id="root" — it should be a copy of dist/index.html (the React app), not the SPA redirect script');
+}
+
+console.log('[verify-pages-build] OK: dist/index.html, dist/404.html and assets are GitHub Pages safe.');

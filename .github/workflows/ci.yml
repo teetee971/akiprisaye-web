@@ -170,6 +170,9 @@ jobs:
           NODE_OPTIONS: --max-old-space-size=4096
         run: npm run build
 
+      - name: SPA fallback — copy index.html → 404.html (mirrors deploy-pages.yml)
+        run: cp dist/index.html dist/404.html
+
       - name: Verify build paths (GitHub Pages)
         run: node scripts/verify-pages-build.mjs
 

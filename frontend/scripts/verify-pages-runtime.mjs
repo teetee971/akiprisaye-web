@@ -1,4 +1,6 @@
 import { spawn } from 'node:child_process';
+import { readFileSync, existsSync } from 'node:fs';
+import { resolve } from 'node:path';
 
 const HOST = '127.0.0.1';
 const PORT = '4173';
@@ -123,6 +125,36 @@ async function run() {
     } else {
       console.log('[verify-pages-runtime] OK: root /assets paths are not served accidentally.');
     }
+
+    // ── SPA fallback: dist/404.html must be the React app shell ────────────────
+    // GitHub Pages serves dist/404.html for any unmatched URL (e.g. /landing).
+    // Verify that file is the app shell (not the SPA redirect script) by checking
+    // the file directly — Vite preview does not replicate GitHub Pages 404 routing.
+    const notFoundHtmlPath = resolve(process.cwd(), 'dist/404.html');
+    if (!existsSync(notFoundHtmlPath)) {
+      throw new Error('dist/404.html not found — SPA fallback file is missing');
+    }
+    const notFoundHtml = readFileSync(notFoundHtmlPath, 'utf8');
+    if (!notFoundHtml.includes('id="root"')) {
+      throw new Error('dist/404.html does not contain id="root" — it must be a copy of dist/index.html so GitHub Pages serves the React app for direct route access (e.g. /landing)');
+    }
+    console.log('[verify-pages-runtime] OK: dist/404.html is the React app shell (SPA fallback).');
+
+    // ── SPA ?p= redirect path: index.html ?p= handler must be present ──────────
+    // The SPA redirect in public/404.html sends /some/path → /?p=%2Fsome%2Fpath.
+    // The index.html inline script reads ?p= and restores the URL via history.replaceState
+    // before React boots, so React Router sees /some/path and routes correctly.
+    const indexHtmlPath = resolve(process.cwd(), 'dist/index.html');
+    const indexHtml = readFileSync(indexHtmlPath, 'utf8');
+    if (!indexHtml.includes("search[1] === 'p'")) {
+      throw new Error("dist/index.html is missing the ?p= URL-restore handler — direct deep-link access via GitHub Pages 404 fallback will break");
+    }
+    console.log('[verify-pages-runtime] OK: dist/index.html contains the ?p= SPA path-restore handler.');
+
+    // HTTP-level check: the SPA redirect target (?p=%2Flanding) serves the app
+    // (Vite preview serves index.html for /?p= because it is the base URL with a query)
+    await assertOk(`${BASE_PATH}?p=%2Flanding`, 'id="root"');
+    console.log('[verify-pages-runtime] OK: SPA redirect target /?p=%2Flanding returns the app shell.');
 
     console.log(`[verify-pages-runtime] OK: ${BASE_URL} responds with expected production-like assets.`);
   } finally {
