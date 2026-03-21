@@ -26,15 +26,7 @@ export interface DeduplicationResult {
   }>;
 }
 
-export interface NewProduct {
-  ean?: string | null;
-  name: string;
-  brand?: string | null;
-  category?: string | null;
-}
-
 /**
- * Calculate Levenshtein distance between two strings
  */
 function levenshteinDistance(str1: string, str2: string): number {
   const len1 = str1.length;
@@ -86,15 +78,15 @@ export async function findDuplicate(
 ): Promise<DeduplicationResult> {
   const normalizedName = normalizeProductName(product.name);
 
-  // Strategy 1: Match by EAN (exact)
+  // Strategy 1: Match by EAN/barcode (exact)
   if (product.ean) {
     const existingByEan = await prisma.product.findUnique({
-      where: { ean: product.ean },
+      where: { barcode: product.ean },
       select: {
         id: true,
-        name: true,
-        normalizedName: true,
-        ean: true,
+        displayName: true,
+        normalizedLabel: true,
+        barcode: true,
       },
     });
 
@@ -108,14 +100,14 @@ export async function findDuplicate(
     }
   }
 
-  // Strategy 2: Match by normalized name (exact)
+  // Strategy 2: Match by normalized label (exact)
   const existingByName = await prisma.product.findFirst({
-    where: { normalizedName },
+    where: { normalizedLabel: normalizedName },
     select: {
       id: true,
-      name: true,
-      normalizedName: true,
-      ean: true,
+      displayName: true,
+      normalizedLabel: true,
+      barcode: true,
     },
   });
 
@@ -141,16 +133,16 @@ export async function findDuplicate(
   // Get candidate products for fuzzy matching
   const candidates = await prisma.product.findMany({
     where: {
-      normalizedName: {
-        contains: normalizedName.split(' ')[0], // First word similarity
+      normalizedLabel: {
+        contains: normalizedName.split(' ')[0],
       },
     },
     take: SYNC_CONFIG.deduplication.maxCandidates,
     select: {
       id: true,
-      name: true,
-      normalizedName: true,
-      ean: true,
+      displayName: true,
+      normalizedLabel: true,
+      barcode: true,
     },
   });
 
@@ -164,8 +156,11 @@ export async function findDuplicate(
 
   // Calculate similarity for each candidate
   const candidatesWithSimilarity = candidates.map((candidate) => ({
-    ...candidate,
-    similarity: calculateSimilarity(normalizedName, candidate.normalizedName),
+    id: candidate.id,
+    name: candidate.displayName,
+    normalizedName: candidate.normalizedLabel,
+    ean: candidate.barcode,
+    similarity: calculateSimilarity(normalizedName, candidate.normalizedLabel),
   }));
 
   // Sort by similarity (descending)
@@ -180,7 +175,7 @@ export async function findDuplicate(
       existingProductId: bestMatch.id,
       similarity: bestMatch.similarity,
       matchedBy: 'fuzzy',
-      candidateProducts: candidatesWithSimilarity.slice(0, 3), // Top 3 candidates
+      candidateProducts: candidatesWithSimilarity.slice(0, 3),
     };
   }
 
@@ -212,16 +207,16 @@ export async function findSimilarProducts(
   // Get all products (or a filtered subset based on first word)
   const products = await prisma.product.findMany({
     where: {
-      normalizedName: {
+      normalizedLabel: {
         contains: normalizedName.split(' ')[0],
       },
     },
     take: 100,
     select: {
       id: true,
-      name: true,
-      normalizedName: true,
-      ean: true,
+      displayName: true,
+      normalizedLabel: true,
+      barcode: true,
     },
   });
 
@@ -231,7 +226,7 @@ export async function findSimilarProducts(
 
   // Configure Fuse for fuzzy search
   const fuse = new Fuse(products, {
-    keys: ['normalizedName'],
+    keys: ['normalizedLabel'],
     threshold: 0.3,
     includeScore: true,
   });
@@ -239,8 +234,11 @@ export async function findSimilarProducts(
   const results = fuse.search(normalizedName);
 
   return results.slice(0, limit).map((result) => ({
-    ...result.item,
-    score: 1 - (result.score || 0), // Convert to similarity score
+    id: result.item.id,
+    name: result.item.displayName,
+    normalizedName: result.item.normalizedLabel,
+    ean: result.item.barcode,
+    score: 1 - (result.score || 0),
   }));
 }
 
@@ -253,29 +251,24 @@ export async function mergeProducts(
 ): Promise<void> {
   // Start a transaction
   await prisma.$transaction(async (tx) => {
-    // Get source product
     const source = await tx.product.findUnique({
       where: { id: sourceId },
-      include: { prices: true },
+      include: { observations: true },
     });
 
     if (!source) {
       throw new Error(`Source product ${sourceId} not found`);
     }
 
-    // Update all prices to point to target
-    await tx.productPrice.updateMany({
+    // Reassign all price observations to target product
+    await tx.priceObservation.updateMany({
       where: { productId: sourceId },
       data: { productId: targetId },
     });
 
-    // Mark source product as MERGED
-    await tx.product.update({
+    // Delete the source product (merged into target)
+    await tx.product.delete({
       where: { id: sourceId },
-      data: {
-        status: 'MERGED',
-        validatedAt: new Date(),
-      },
     });
   });
 }

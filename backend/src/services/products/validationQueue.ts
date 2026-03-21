@@ -4,21 +4,18 @@
  * Manages the queue of products pending validation
  */
 
-import { ProductStatus } from '@prisma/client';
 import prisma from '../../database/prisma.js';
 
 export interface ValidationQueueItem {
   id: string;
   product: {
     id: string;
-    ean?: string | null;
+    barcode?: string | null;
     name: string;
     normalizedName: string;
     brand?: string | null;
     category?: string | null;
-    quantity?: string | null;
-    imageUrl?: string | null;
-    source: string;
+    primaryImageUrl?: string | null;
     status: string;
     createdAt: Date;
   };
@@ -39,53 +36,48 @@ export interface ValidationStats {
 }
 
 /**
- * Get validation queue with filters
+ * Get validation queue — returns products that need image review
  */
 export async function getValidationQueue(params: {
-  status?: ProductStatus;
+  status?: string;
   source?: string;
   limit?: number;
   offset?: number;
 }): Promise<ValidationQueueItem[]> {
-  const { status = 'PENDING_REVIEW', source, limit = 50, offset = 0 } = params;
+  const { limit = 50, offset = 0 } = params;
 
   const products = await prisma.product.findMany({
     where: {
-      status,
-      ...(source && { source: source as any }),
+      imageNeedsReview: true,
     },
     orderBy: [
-      { createdAt: 'asc' }, // Oldest first within same priority
+      { createdAt: 'asc' },
     ],
     take: limit,
     skip: offset,
   });
 
-  // Map products and sort by priority
   const queueItems = products.map((product) => ({
     id: product.id,
     product: {
       id: product.id,
-      ean: product.ean,
-      name: product.name,
-      normalizedName: product.normalizedName,
+      barcode: product.barcode,
+      name: product.displayName,
+      normalizedName: product.normalizedLabel,
       brand: product.brand,
       category: product.category,
-      quantity: product.quantity,
-      imageUrl: product.imageUrl,
-      source: product.source,
-      status: product.status,
+      primaryImageUrl: product.primaryImageUrl,
+      status: product.imageNeedsReview ? 'PENDING_REVIEW' : 'VALIDATED',
       createdAt: product.createdAt,
     },
-    source: product.source,
-    priority: determinePriority(product.source),
+    source: product.imageSource ?? 'unknown',
+    priority: determinePriority(product.imageSource ?? ''),
     addedAt: product.createdAt,
-    reviewedAt: product.validatedAt,
-    reviewedBy: product.validatedBy,
-    decision: mapStatusToDecision(product.status),
+    reviewedAt: null,
+    reviewedBy: null,
+    decision: null as 'approved' | 'rejected' | 'merged' | null,
   }));
 
-  // Sort by priority (high -> medium -> low) then by date (oldest first)
   const priorityOrder = { high: 0, medium: 1, low: 2 };
   queueItems.sort((a, b) => {
     const priorityDiff = priorityOrder[a.priority] - priorityOrder[b.priority];
@@ -103,77 +95,54 @@ function determinePriority(source: string): 'low' | 'medium' | 'high' {
   switch (source) {
     case 'OCR':
     case 'CITIZEN':
-      return 'high'; // User-generated content needs quick review
+      return 'high';
     case 'OPENPRICES':
       return 'medium';
     case 'OPENFOODFACTS':
-      return 'low'; // Most reliable source
+      return 'low';
     default:
       return 'medium';
   }
 }
 
 /**
- * Map product status to decision
- */
-function mapStatusToDecision(
-  status: ProductStatus
-): 'approved' | 'rejected' | 'merged' | null {
-  switch (status) {
-    case 'VALIDATED':
-      return 'approved';
-    case 'REJECTED':
-      return 'rejected';
-    case 'MERGED':
-      return 'merged';
-    default:
-      return null;
-  }
-}
-
-/**
- * Approve a product in the validation queue
+ * Approve a product in the validation queue (mark image as reviewed)
  */
 export async function approveProduct(
   productId: string,
-  reviewedBy?: string
+  _reviewedBy?: string
 ): Promise<void> {
   await prisma.product.update({
     where: { id: productId },
     data: {
-      status: 'VALIDATED',
-      validatedAt: new Date(),
-      validatedBy: reviewedBy,
+      imageNeedsReview: false,
     },
   });
 }
 
 /**
- * Reject a product in the validation queue
+ * Reject a product in the validation queue (keep flagged for re-review)
  */
 export async function rejectProduct(
   productId: string,
-  reviewedBy?: string
+  _reviewedBy?: string
 ): Promise<void> {
   await prisma.product.update({
     where: { id: productId },
     data: {
-      status: 'REJECTED',
-      validatedAt: new Date(),
-      validatedBy: reviewedBy,
+      imageNeedsReview: true,
     },
   });
 }
 
 /**
- * Merge a product with another (mark as duplicate)
+ * Merge a product with another (reassign observations then remove source)
  */
 export async function mergeProduct(
   sourceId: string,
   targetId: string,
-  reviewedBy?: string
+  _reviewedBy?: string
 ): Promise<void> {
-  // Verify both products exist before starting transaction
   const [sourceProduct, targetProduct] = await Promise.all([
     prisma.product.findUnique({ where: { id: sourceId } }),
     prisma.product.findUnique({ where: { id: targetId } }),
@@ -188,20 +157,15 @@ export async function mergeProduct(
   }
 
   await prisma.$transaction(async (tx) => {
-    // Update all prices to point to target
-    await tx.productPrice.updateMany({
+    // Reassign all price observations to target product
+    await tx.priceObservation.updateMany({
       where: { productId: sourceId },
       data: { productId: targetId },
     });
 
-    // Mark source product as MERGED
-    await tx.product.update({
+    // Delete the source product (merged into target)
+    await tx.product.delete({
       where: { id: sourceId },
-      data: {
-        status: 'MERGED',
-        validatedAt: new Date(),
-        validatedBy: reviewedBy,
-      },
     });
   });
 }
@@ -210,29 +174,17 @@ export async function mergeProduct(
  * Get validation statistics
  */
 export async function getValidationStats(): Promise<ValidationStats> {
-  const [pending, validated, rejected, merged, bySource] = await Promise.all([
-    prisma.product.count({ where: { status: 'PENDING_REVIEW' } }),
-    prisma.product.count({ where: { status: 'VALIDATED' } }),
-    prisma.product.count({ where: { status: 'REJECTED' } }),
-    prisma.product.count({ where: { status: 'MERGED' } }),
-    prisma.product.groupBy({
-      by: ['source'],
-      _count: true,
-      where: { status: 'PENDING_REVIEW' },
-    }),
+  const [pending, validated] = await Promise.all([
+    prisma.product.count({ where: { imageNeedsReview: true } }),
+    prisma.product.count({ where: { imageNeedsReview: false } }),
   ]);
-
-  const bySourceMap: Record<string, number> = {};
-  bySource.forEach((item) => {
-    bySourceMap[item.source] = item._count;
-  });
 
   return {
     pending,
     validated,
-    rejected,
-    merged,
-    bySource: bySourceMap,
+    rejected: 0,
+    merged: 0,
+    bySource: {},
   };
 }
 
@@ -243,9 +195,13 @@ export async function getProductForValidation(productId: string) {
   return await prisma.product.findUnique({
     where: { id: productId },
     include: {
-      prices: {
-        orderBy: { date: 'desc' },
+      observations: {
+        orderBy: { observedAt: 'desc' },
         take: 10,
+      },
+      images: {
+        orderBy: { createdAt: 'desc' },
+        take: 5,
       },
     },
   });

@@ -3,7 +3,7 @@
  * Detects unusual price changes and patterns
  */
 
-import { PrismaClient, AnomalyType, Severity } from '@prisma/client';
+import { PrismaClient, Prisma, AnomalyType, Severity } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -299,7 +299,7 @@ export async function detectAnomalies(
           reportedPrice: price.price,
           expectedPrice: historicalAvg || price.price,
           deviation: anomaly.deviation,
-          context: anomaly.context,
+          context: anomaly.context as unknown as Prisma.InputJsonValue,
         },
       });
     }

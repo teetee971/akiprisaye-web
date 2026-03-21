@@ -8,7 +8,7 @@
  * - Citizen contributions
  */
 
-import { ProductSource, ProductStatus } from '@prisma/client';
+import { PriceSource } from '@prisma/client';
 import prisma from '../../database/prisma.js';
 import { normalizeProductName } from './normalization.js';
 import { findDuplicate } from './deduplication.js';
@@ -46,10 +46,15 @@ export interface AutoCreatedProduct {
   id: string;
   name: string;
   normalizedName: string;
-  source: ProductSource;
-  status: ProductStatus;
   createdAt: Date;
-  validatedBy?: string | null;
+}
+
+/**
+ * Generate a unique productKey from normalized name and optional barcode
+ */
+function makeProductKey(normalizedName: string, barcode?: string | null): string {
+  const base = normalizedName.toLowerCase().replace(/\s+/g, '-').slice(0, 80);
+  return barcode ? `${base}__${barcode}` : `${base}__${Date.now()}`;
 }
 
 /**
@@ -58,9 +63,9 @@ export interface AutoCreatedProduct {
 export async function createProductFromOCR(
   ocrData: OCRProduct
 ): Promise<AutoCreatedProduct | null> {
-  const normalizedName = normalizeProductName(ocrData.rawName);
+  const normalizedLabel = normalizeProductName(ocrData.rawName);
 
-  if (!normalizedName || normalizedName.length < 3) {
+  if (!normalizedLabel || normalizedLabel.length < 3) {
     console.warn('Product name too short after normalization:', ocrData.rawName);
     return null;
   }
@@ -82,31 +87,40 @@ export async function createProductFromOCR(
   // Create new product
   const product = await prisma.product.create({
     data: {
-      ean: ocrData.ean,
-      name: ocrData.rawName,
-      normalizedName,
-      source: 'OCR',
-      status: 'PENDING_REVIEW', // OCR products always need review
+      productKey: makeProductKey(normalizedLabel, ocrData.ean),
+      displayName: ocrData.rawName,
+      rawLabel: ocrData.rawName,
+      normalizedLabel,
+      barcode: ocrData.ean ?? null,
+      imageNeedsReview: false,
     },
   });
 
-  // If price is provided, create a price entry
+  // If price is provided, create a price observation
   if (ocrData.price && ocrData.storeId) {
-    await prisma.productPrice.create({
+    await prisma.priceObservation.create({
       data: {
         productId: product.id,
-        productCode: ocrData.ean || undefined,
         price: ocrData.price,
         currency: 'EUR',
         storeId: ocrData.storeId,
-        territory: ocrData.territory,
-        date: new Date(),
-        source: 'OCR',
+        territory: ocrData.territory ?? 'gp',
+        observedAt: new Date(),
+        productLabel: ocrData.rawName,
+        normalizedLabel,
+        storeLabel: ocrData.storeId,
+        source: 'receipt_ocr',
+        confidenceScore: Math.round(ocrData.confidence * 100),
       },
     });
   }
 
-  return product;
+  return {
+    id: product.id,
+    name: product.displayName,
+    normalizedName: product.normalizedLabel,
+    createdAt: product.createdAt,
+  };
 }
 
 /**
@@ -115,9 +129,9 @@ export async function createProductFromOCR(
 export async function createProductFromOpenFoodFacts(
   offData: OpenFoodFactsProduct
 ): Promise<AutoCreatedProduct | null> {
-  const normalizedName = normalizeProductName(offData.product_name);
+  const normalizedLabel = normalizeProductName(offData.product_name);
 
-  if (!normalizedName || normalizedName.length < 3) {
+  if (!normalizedLabel || normalizedLabel.length < 3) {
     console.warn('Product name too short:', offData.product_name);
     return null;
   }
@@ -136,17 +150,13 @@ export async function createProductFromOpenFoodFacts(
       where: { id: duplicationResult.existingProductId },
     });
 
-    if (existing && existing.source !== 'OPENFOODFACTS') {
+    if (existing && existing.imageSource !== 'OPENFOODFACTS') {
       // Enrich existing product with OFF data
       await prisma.product.update({
         where: { id: existing.id },
         data: {
-          brand: offData.brands || existing.brand,
-          category: offData.categories || existing.category,
-          quantity: offData.quantity || existing.quantity,
-          imageUrl: offData.image_url || existing.imageUrl,
-          nutriscoreGrade: offData.nutriscore_grade || existing.nutriscoreGrade,
-          ecoscoreGrade: offData.ecoscore_grade || existing.ecoscoreGrade,
+          brand: offData.brands ?? existing.brand,
+          category: offData.categories ?? existing.category,
         },
       });
     }
@@ -154,31 +164,27 @@ export async function createProductFromOpenFoodFacts(
     return null;
   }
 
-  // Determine status based on data quality
-  const status: ProductStatus =
-    offData.nutriscore_grade && offData.ecoscore_grade
-      ? 'VALIDATED' // Auto-validate if quality data is present
-      : 'PENDING_REVIEW';
-
   // Create new product
   const product = await prisma.product.create({
     data: {
-      ean: offData.code,
-      name: offData.product_name,
-      normalizedName,
+      productKey: makeProductKey(normalizedLabel, offData.code),
+      displayName: offData.product_name,
+      rawLabel: offData.product_name,
+      normalizedLabel,
+      barcode: offData.code,
       brand: offData.brands,
       category: offData.categories,
-      quantity: offData.quantity,
-      imageUrl: offData.image_url,
-      nutriscoreGrade: offData.nutriscore_grade,
-      ecoscoreGrade: offData.ecoscore_grade,
-      source: 'OPENFOODFACTS',
-      status,
-      validatedAt: status === 'VALIDATED' ? new Date() : undefined,
+      imageSource: offData.image_url ? 'OPENFOODFACTS' : null,
+      imageNeedsReview: false,
     },
   });
 
-  return product;
+  return {
+    id: product.id,
+    name: product.displayName,
+    normalizedName: product.normalizedLabel,
+    createdAt: product.createdAt,
+  };
 }
 
 /**
@@ -193,17 +199,20 @@ export async function createProductFromOpenPrices(
     name: opData.product_name || opData.product_code,
   });
 
-  if (duplicationResult.isDuplicate) {
-    // Add price to existing product
-    await prisma.productPrice.create({
+  if (duplicationResult.isDuplicate && duplicationResult.existingProductId) {
+    // Add price observation to existing product
+    await prisma.priceObservation.create({
       data: {
-        productId: duplicationResult.existingProductId!,
-        productCode: opData.product_code,
+        productId: duplicationResult.existingProductId,
         price: opData.price,
         currency: opData.currency,
-        locationOsmId: opData.location_osm_id,
-        date: new Date(opData.date),
-        source: 'OPENPRICES',
+        territory: 'gp',
+        observedAt: new Date(opData.date),
+        productLabel: opData.product_name ?? opData.product_code,
+        normalizedLabel: normalizeProductName(opData.product_name ?? opData.product_code),
+        storeLabel: opData.location_osm_id ?? 'unknown',
+        source: 'open_prices',
+        barcode: opData.product_code,
       },
     });
 
@@ -216,33 +225,42 @@ export async function createProductFromOpenPrices(
     return null;
   }
 
-  const normalizedName = normalizeProductName(opData.product_name);
+  const normalizedLabel = normalizeProductName(opData.product_name);
 
   // Create new product
   const product = await prisma.product.create({
     data: {
-      ean: opData.product_code,
-      name: opData.product_name,
-      normalizedName,
-      source: 'OPENPRICES',
-      status: 'PENDING_REVIEW',
+      productKey: makeProductKey(normalizedLabel, opData.product_code),
+      displayName: opData.product_name,
+      rawLabel: opData.product_name,
+      normalizedLabel,
+      barcode: opData.product_code,
+      imageNeedsReview: false,
     },
   });
 
-  // Create price entry
-  await prisma.productPrice.create({
+  // Create price observation
+  await prisma.priceObservation.create({
     data: {
       productId: product.id,
-      productCode: opData.product_code,
       price: opData.price,
       currency: opData.currency,
-      locationOsmId: opData.location_osm_id,
-      date: new Date(opData.date),
-      source: 'OPENPRICES',
+      territory: 'gp',
+      observedAt: new Date(opData.date),
+      productLabel: opData.product_name,
+      normalizedLabel,
+      storeLabel: opData.location_osm_id ?? 'unknown',
+      source: 'open_prices',
+      barcode: opData.product_code,
     },
   });
 
-  return product;
+  return {
+    id: product.id,
+    name: product.displayName,
+    normalizedName: product.normalizedLabel,
+    createdAt: product.createdAt,
+  };
 }
 
 /**
@@ -276,3 +294,6 @@ export async function batchCreateProducts<T>(
 
   return { created, skipped, errors };
 }
+
+// Keep PriceSource available for callers that import it from here
+export type { PriceSource };

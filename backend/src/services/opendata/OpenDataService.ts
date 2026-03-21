@@ -6,14 +6,14 @@
  * Open Data France: Données publiques agrégées et anonymisées
  */
 
-import { PrismaClient, Territory } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 interface AggregatedPrice {
   productName: string;
-  category: string;
-  territory: Territory;
+  category: string | null;
+  territory: string;
   averagePrice: number;
   minPrice: number;
   maxPrice: number;
@@ -22,7 +22,7 @@ interface AggregatedPrice {
 }
 
 interface TerritoryData {
-  code: Territory;
+  code: string;
   name: string;
   storeCount: number;
   productCount: number;
@@ -33,15 +33,15 @@ interface Indicator {
   name: string;
   value: number;
   unit: string;
-  territory?: Territory;
+  territory?: string;
   period: string;
   calculatedAt: Date;
 }
 
 interface PriceHistory {
   productName: string;
-  category: string;
-  territory: Territory;
+  category: string | null;
+  territory: string;
   timeSeries: {
     date: Date;
     averagePrice: number;
@@ -59,39 +59,26 @@ export class OpenDataService {
       _count: {
         id: true,
       },
-      where: {
-        isActive: true,
-      },
     });
 
     const territoryData: TerritoryData[] = [];
 
     for (const store of stores) {
-      const productCount = await prisma.product.count({
+      const productCount = await prisma.priceObservation.count({
         where: {
-          brand: {
-            stores: {
-              some: {
-                territory: store.territory,
-                isActive: true,
-              },
-            },
-          },
-          isActive: true,
+          territory: store.territory,
         },
       });
 
-      const lastPrice = await prisma.price.findFirst({
+      const lastObservation = await prisma.priceObservation.findFirst({
         where: {
-          store: {
-            territory: store.territory,
-          },
+          territory: store.territory,
         },
         orderBy: {
-          createdAt: 'desc',
+          observedAt: 'desc',
         },
         select: {
-          createdAt: true,
+          observedAt: true,
         },
       });
 
@@ -100,7 +87,7 @@ export class OpenDataService {
         name: this.getTerritoryName(store.territory),
         storeCount: store._count.id,
         productCount,
-        lastUpdated: lastPrice?.createdAt || new Date(),
+        lastUpdated: lastObservation?.observedAt || new Date(),
       });
     }
 
@@ -111,89 +98,75 @@ export class OpenDataService {
    * Récupère les produits agrégés (pas de détails magasin)
    */
   static async getProducts(filters: {
-    territory?: Territory;
+    territory?: string;
     category?: string;
     limit?: number;
     offset?: number;
   } = {}): Promise<{
     products: Array<{
       name: string;
-      category: string;
-      territories: Territory[];
+      category: string | null;
+      territories: string[];
       priceRange: { min: number; max: number };
     }>;
     total: number;
   }> {
     const { territory, category, limit = 100, offset = 0 } = filters;
 
-    const where: any = {
-      isActive: true,
-    };
+    const where: any = {};
 
     if (category) {
       where.category = category;
     }
 
     if (territory) {
-      where.prices = {
-        some: {
-          store: {
-            territory,
-            isActive: true,
-          },
-        },
-      };
+      where.territory = territory;
     }
 
-    const [products, total] = await Promise.all([
-      prisma.product.findMany({
+    const [observations, total] = await Promise.all([
+      prisma.priceObservation.findMany({
         where,
         select: {
-          name: true,
+          normalizedLabel: true,
           category: true,
-          prices: {
-            where: {
-              store: {
-                isActive: true,
-              },
-            },
-            select: {
-              price: true,
-              store: {
-                select: {
-                  territory: true,
-                },
-              },
-            },
-            orderBy: {
-              effectiveDate: 'desc',
-            },
-            take: 100,
-          },
+          territory: true,
+          price: true,
         },
+        orderBy: { observedAt: 'desc' },
         take: limit,
         skip: offset,
       }),
-      prisma.product.count({ where }),
+      prisma.priceObservation.count({ where }),
     ]);
 
-    return {
-      products: products.map((p) => {
-        const prices = p.prices.map((pr) => Number(pr.price));
-        const territories = [
-          ...new Set(p.prices.map((pr) => pr.store.territory)),
-        ];
+    // Aggregate by normalizedLabel
+    const productMap = new Map<string, {
+      name: string;
+      category: string | null;
+      territories: Set<string>;
+      prices: number[];
+    }>();
 
-        return {
-          name: p.name,
-          category: p.category,
-          territories: territories as Territory[],
-          priceRange: {
-            min: prices.length > 0 ? Math.min(...prices) : 0,
-            max: prices.length > 0 ? Math.max(...prices) : 0,
-          },
-        };
-      }),
+    for (const obs of observations) {
+      const key = obs.normalizedLabel;
+      if (!productMap.has(key)) {
+        productMap.set(key, { name: obs.normalizedLabel, category: obs.category, territories: new Set(), prices: [] });
+      }
+      const entry = productMap.get(key)!;
+      entry.territories.add(obs.territory);
+      entry.prices.push(obs.price);
+    }
+
+    return {
+      products: Array.from(productMap.values()).map((p) => ({
+        name: p.name,
+        category: p.category,
+        territories: Array.from(p.territories) as string[],
+        priceRange: {
+          min: p.prices.length > 0 ? Math.min(...p.prices) : 0,
+          max: p.prices.length > 0 ? Math.max(...p.prices) : 0,
+        },
+      })),
       total,
     };
   }
@@ -203,7 +176,7 @@ export class OpenDataService {
    * IMPORTANT: Pas de données individuelles par magasin (anonymisation)
    */
   static async getAggregatedPrices(filters: {
-    territory?: Territory;
+    territory?: string;
     category?: string;
     productId?: string;
     startDate?: Date;
@@ -225,64 +198,41 @@ export class OpenDataService {
     } = filters;
 
     const where: any = {
-      product: {
-        isActive: true,
-      },
-      store: {
-        isActive: true,
-      },
+      productId: { not: null },
     };
 
     if (territory) {
-      where.store.territory = territory;
+      where.territory = territory;
     }
 
     if (category) {
-      where.product.category = category;
+      where.category = category;
     }
 
-    // Filtrage par productId si fourni
     if (productId) {
-      where.product.id = productId;
+      where.productId = productId;
     }
 
-    if (startDate) {
-      where.effectiveDate = { gte: startDate };
+    if (startDate || endDate) {
+      where.observedAt = {};
+      if (startDate) where.observedAt.gte = startDate;
+      if (endDate) where.observedAt.lte = endDate;
     }
 
-    if (endDate) {
-      where.effectiveDate = {
-        ...where.effectiveDate,
-        lte: endDate,
-      };
-    }
-
-    // Grouper par produit et territoire
-    const priceGroups = await prisma.price.groupBy({
-      by: ['productId'],
-      _avg: {
-        price: true,
-      },
-      _min: {
-        price: true,
-      },
-      _max: {
-        price: true,
-      },
-      _count: {
-        id: true,
-      },
+    // Group by productId and territory
+    const priceGroups = await prisma.priceObservation.groupBy({
+      by: ['productId', 'territory'],
+      _avg: { price: true },
+      _min: { price: true },
+      _max: { price: true },
+      _count: { id: true },
       where,
-      orderBy: {
-        productId: 'asc',
-      },
       take: limit,
       skip: offset,
     });
 
-    // Count unique products for total - using aggregate for better performance
-    const totalCount = await prisma.price.groupBy({
-      by: ['productId'],
+    const totalCount = await prisma.priceObservation.groupBy({
+      by: ['productId', 'territory'],
       where,
       _count: { _all: true },
     });
@@ -290,42 +240,29 @@ export class OpenDataService {
     const aggregatedPrices: AggregatedPrice[] = [];
 
     for (const group of priceGroups) {
+      if (!group.productId) continue;
+
       const product = await prisma.product.findUnique({
         where: { id: group.productId },
-        select: {
-          name: true,
-          category: true,
-          prices: {
-            where: {
-              ...where,
-              productId: group.productId,
-            },
-            select: {
-              store: {
-                select: {
-                  territory: true,
-                },
-              },
-              createdAt: true,
-            },
-            orderBy: {
-              createdAt: 'desc',
-            },
-            take: 1,
-          },
-        },
+        select: { displayName: true, category: true },
       });
 
-      if (product && product.prices.length > 0) {
+      const lastObs = await prisma.priceObservation.findFirst({
+        where: { productId: group.productId, territory: group.territory },
+        orderBy: { observedAt: 'desc' },
+        select: { observedAt: true },
+      });
+
+      if (product) {
         aggregatedPrices.push({
-          productName: product.name,
+          productName: product.displayName,
           category: product.category,
-          territory: product.prices[0].store.territory,
-          averagePrice: Number(group._avg.price || 0),
-          minPrice: Number(group._min.price || 0),
-          maxPrice: Number(group._max.price || 0),
+          territory: group.territory,
+          averagePrice: Number(group._avg?.price ?? 0),
+          minPrice: Number(group._min?.price ?? 0),
+          maxPrice: Number(group._max?.price ?? 0),
           sampleSize: group._count.id,
-          lastUpdated: product.prices[0].createdAt,
+          lastUpdated: lastObs?.observedAt ?? new Date(),
         });
       }
     }
@@ -340,7 +277,7 @@ export class OpenDataService {
    * Calcule les indicateurs publics (inflation locale, dispersion, etc.)
    */
   static async getIndicators(filters: {
-    territory?: Territory;
+    territory?: string;
     period?: 'month' | 'quarter' | 'year';
   } = {}): Promise<Indicator[]> {
     const { territory, period = 'month' } = filters;
@@ -388,21 +325,9 @@ export class OpenDataService {
     }
 
     // Nombre de produits suivis
-    const productCount = await prisma.product.count({
+    const productCount = await prisma.priceObservation.count({
       where: {
-        isActive: true,
-        ...(territory
-          ? {
-              prices: {
-                some: {
-                  store: {
-                    territory,
-                    isActive: true,
-                  },
-                },
-              },
-            }
-          : {}),
+        ...(territory ? { territory } : {}),
       },
     });
 
@@ -425,7 +350,7 @@ export class OpenDataService {
   static async getHistory(filters: {
     productName?: string;
     category?: string;
-    territory?: Territory;
+    territory?: string;
     startDate?: Date;
     endDate?: Date;
     limit?: number;
@@ -439,75 +364,57 @@ export class OpenDataService {
       limit = 50,
     } = filters;
 
-    const where: any = {
-      product: {
-        isActive: true,
-      },
-    };
+    const where: any = {};
 
     if (productName) {
-      where.product.name = { contains: productName, mode: 'insensitive' };
+      where.normalizedLabel = { contains: productName.toLowerCase(), mode: 'insensitive' };
     }
 
     if (category) {
-      where.product.category = category;
+      where.category = category;
     }
 
     if (territory) {
-      where.store = { territory, isActive: true };
+      where.territory = territory;
     }
 
-    if (startDate) {
-      where.effectiveDate = { gte: startDate };
+    if (startDate || endDate) {
+      where.observedAt = {};
+      if (startDate) where.observedAt.gte = startDate;
+      if (endDate) where.observedAt.lte = endDate;
     }
 
-    if (endDate) {
-      where.effectiveDate = {
-        ...where.effectiveDate,
-        lte: endDate,
-      };
-    }
-
-    const prices = await prisma.price.findMany({
+    const observations = await prisma.priceObservation.findMany({
       where,
       select: {
         price: true,
-        effectiveDate: true,
-        product: {
-          select: {
-            name: true,
-            category: true,
-          },
-        },
-        store: {
-          select: {
-            territory: true,
-          },
-        },
+        observedAt: true,
+        normalizedLabel: true,
+        category: true,
+        territory: true,
       },
       orderBy: {
-        effectiveDate: 'desc',
+        observedAt: 'desc',
       },
-      take: 1000, // Limite pour éviter surcharge
+      take: 1000,
     });
 
-    // Grouper par produit et agréger par semaine
     const grouped = new Map<string, PriceHistory>();
 
-    for (const price of prices) {
-      const key = `${price.product.name}-${price.store.territory}`;
+    for (const obs of observations) {
+      const key = `${obs.normalizedLabel}-${obs.territory}`;
 
       if (!grouped.has(key)) {
         grouped.set(key, {
-          productName: price.product.name,
-          category: price.product.category,
-          territory: price.store.territory,
+          productName: obs.normalizedLabel,
+          category: obs.category,
+          territory: obs.territory,
           timeSeries: [],
         });
       }
 
       const history = grouped.get(key)!;
-      const weekStart = this.getWeekStart(price.effectiveDate);
+      const weekStart = this.getWeekStart(obs.observedAt);
 
       const existing = history.timeSeries.find(
         (ts) => ts.date.getTime() === weekStart.getTime(),
@@ -515,15 +422,14 @@ export class OpenDataService {
 
       if (existing) {
         const newAvg =
-          (existing.averagePrice * existing.sampleSize +
-            Number(price.price)) /
+          (existing.averagePrice * existing.sampleSize + Number(obs.price)) /
           (existing.sampleSize + 1);
         existing.averagePrice = newAvg;
         existing.sampleSize += 1;
       } else {
         history.timeSeries.push({
           date: weekStart,
-          averagePrice: Number(price.price),
+          averagePrice: Number(obs.price),
           sampleSize: 1,
         });
       }
@@ -541,13 +447,16 @@ export class OpenDataService {
 
   // ============ Méthodes utilitaires privées ============
 
-  private static getTerritoryName(territory: Territory): string {
-    const names: Record<Territory, string> = {
-      DOM: "Départements d'Outre-Mer",
-      COM: "Collectivités d'Outre-Mer",
-      FRANCE_HEXAGONALE: 'France hexagonale',
+  private static getTerritoryName(territory: string): string {
+    const names: Record<string, string> = {
+      gp: 'Guadeloupe',
+      mq: 'Martinique',
+      gf: 'Guyane',
+      re: 'La Réunion',
+      pm: 'Saint-Pierre-et-Miquelon',
+      yt: 'Mayotte',
     };
-    return names[territory] || territory;
+    return names[territory] || territory.toUpperCase();
   }
 
   private static getPeriodStart(date: Date, period: string): Date {
@@ -567,27 +476,20 @@ export class OpenDataService {
   }
 
   private static async getAveragePriceForPeriod(
-    territory: Territory | undefined,
+    territory: string | undefined,
     startDate: Date,
     endDate: Date,
   ): Promise<number | null> {
-    const result = await prisma.price.aggregate({
+    const result = await prisma.priceObservation.aggregate({
       _avg: {
         price: true,
       },
       where: {
-        effectiveDate: {
+        observedAt: {
           gte: startDate,
           lte: endDate,
         },
-        ...(territory
-          ? {
-              store: {
-                territory,
-                isActive: true,
-              },
-            }
-          : {}),
+        ...(territory ? { territory } : {}),
       },
     });
 
@@ -595,36 +497,22 @@ export class OpenDataService {
   }
 
   private static async getPriceDispersion(
-    territory: Territory | undefined,
+    territory: string | undefined,
   ): Promise<{ coefficient: number } | null> {
-    const result = await prisma.price.aggregate({
+    const result = await prisma.priceObservation.aggregate({
       _avg: {
         price: true,
       },
       where: {
-        ...(territory
-          ? {
-              store: {
-                territory,
-                isActive: true,
-              },
-            }
-          : {}),
+        ...(territory ? { territory } : {}),
       },
     });
 
     if (!result._avg.price) return null;
 
-    const prices = await prisma.price.findMany({
+    const prices = await prisma.priceObservation.findMany({
       where: {
-        ...(territory
-          ? {
-              store: {
-                territory,
-                isActive: true,
-              },
-            }
-          : {}),
+        ...(territory ? { territory } : {}),
       },
       select: {
         price: true,

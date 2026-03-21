@@ -3,7 +3,7 @@
  * Handles community verification and disputes of prices
  */
 
-import { PrismaClient, VerificationAction, VerificationStatus } from '@prisma/client';
+import { PrismaClient, Prisma, VerificationAction, VerificationStatus } from '@prisma/client';
 import { calculateConfidenceScore } from './confidenceCalculator.js';
 
 const prisma = new PrismaClient();
@@ -80,7 +80,7 @@ async function recalculateConfidence(priceId: string): Promise<number> {
     where: { id: priceId },
     data: {
       confidenceScore: confidenceData.score,
-      confidenceFactors: confidenceData.factors,
+      confidenceFactors: confidenceData.factors as unknown as Prisma.InputJsonValue,
     },
   });
   

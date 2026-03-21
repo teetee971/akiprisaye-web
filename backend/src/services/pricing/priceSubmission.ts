@@ -3,7 +3,7 @@
  * Handles submission and validation of new prices
  */
 
-import { PrismaClient, PriceSource } from '@prisma/client';
+import { PrismaClient, Prisma, PriceSource } from '@prisma/client';
 import { calculateConfidenceScore } from './confidenceCalculator.js';
 
 const prisma = new PrismaClient();
@@ -186,7 +186,7 @@ export async function submitPrice(request: SubmitPriceRequest): Promise<SubmitPr
       reportedBy: request.reportedBy,
       proofUrl: request.proof?.url,
       confidenceScore: confidenceData.score,
-      confidenceFactors: confidenceData.factors,
+      confidenceFactors: confidenceData.factors as unknown as Prisma.InputJsonValue,
       verificationCount: 0,
       isActive: true,
     },

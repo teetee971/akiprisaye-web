@@ -4,9 +4,6 @@
  */
 
 import Stripe from 'stripe';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
 
 export class StripeWebhookHandler {
   async handleWebhook(event: Stripe.Event): Promise<void> {
