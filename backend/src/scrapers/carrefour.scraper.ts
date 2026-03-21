@@ -1,7 +1,7 @@
 /**
  * carrefour.scraper.ts — Carrefour DOM-TOM price scraper
  *
- * Data source: Open Prices API (open.openfoodfacts.org/api/v1/prices)
+ * Data source: Open Prices API (prices.openfoodfacts.org/api/v1/prices)
  *   - Licence: ODbL (Open Data Commons Open Database Licence)
  *   - Crowd-sourced, public, no authentication required
  *   - Filtered by: location_osm_id for Carrefour stores in DOM-TOM

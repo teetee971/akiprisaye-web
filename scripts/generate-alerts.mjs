@@ -36,7 +36,7 @@ function flag(name, fallback) {
 
 const MERGED_INPUT    = resolve(ROOT, flag('input',            'data/output/merged-observations.json'));
 const ALERTS_OUTPUT   = resolve(ROOT, flag('alerts-output',    'data/output/price-alerts.json'));
-const DEALS_OUTPUT    = resolve(ROOT, flag('deals-output',     'data/output/deal-alerts.json'));
+const DEALS_OUTPUT    = resolve(ROOT, flag('deals-output',     'data/output/alert-deals.json'));
 const ANOMALY_OUTPUT  = resolve(ROOT, flag('anomaly-output',   'data/output/anomalies.json'));
 const UI_OUTPUT       = resolve(ROOT, flag('ui-output',        'frontend/src/data/alerts/generated-alerts.json'));
 const MIN_SCORE       = parseFloat(flag('min-score',         '10'));

@@ -10,31 +10,14 @@
  *   const result = await runAlertEngine(mergedObservations);
  */
 
-import { detectDeals, DEAL_SPREAD_THRESHOLD_EUR }     from './deal-detector.service.js';
-import { detectAnomalies, detectTemporalAnomalies }   from './anomaly-detector.service.js';
-import type { MergedObservation }                     from './deal-detector.service.js';
+import { detectDeals, DEAL_SPREAD_THRESHOLD_EUR }   from './deal-detector.service.js';
+import { detectAnomalies, detectTemporalAnomalies } from './anomaly-detector.service.js';
+import type { MergedObservation }                   from './deal-detector.service.js';
 
-// Re-export the alert type so importers only need this file.
-export type { PipelinePriceAlert } from '../../shared/src/revenue.js';
+// ── Pipeline alert type ───────────────────────────────────────────────────────
+// Self-contained here so backend/* imports don't need to reach into shared/src.
+// Kept in sync with shared/src/revenue.ts PipelinePriceAlert.
 
-// ── Engine result ─────────────────────────────────────────────────────────────
-
-export interface AlertEngineResult {
-  deals:     PipelinePriceAlert[];
-  drops:     PipelinePriceAlert[];
-  increases: PipelinePriceAlert[];
-  anomalies: PipelinePriceAlert[];
-  all:       PipelinePriceAlert[];
-  stats: {
-    totalAlerts: number;
-    highSeverity: number;
-    mediumSeverity: number;
-    lowSeverity: number;
-    generatedAt: string;
-  };
-}
-
-// Import PipelinePriceAlert type (cannot import from shared .ts directly in backend .ts)
 export interface PipelinePriceAlert {
   id: string;
   type: 'deal' | 'drop' | 'increase' | 'anomaly';
@@ -54,6 +37,23 @@ export interface PipelinePriceAlert {
     whatsapp: string;
     facebook: string;
     tiktokHook: string;
+  };
+}
+
+// ── Engine result ─────────────────────────────────────────────────────────────
+
+export interface AlertEngineResult {
+  deals:     PipelinePriceAlert[];
+  drops:     PipelinePriceAlert[];
+  increases: PipelinePriceAlert[];
+  anomalies: PipelinePriceAlert[];
+  all:       PipelinePriceAlert[];
+  stats: {
+    totalAlerts: number;
+    highSeverity: number;
+    mediumSeverity: number;
+    lowSeverity: number;
+    generatedAt: string;
   };
 }
 
