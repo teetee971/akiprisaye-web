@@ -340,6 +340,9 @@ const SEOCompetitorComparisonPage = lazyPage(() => import('./pages/SEOCompetitor
 const TopEconomiesPage = lazyPage(() => import('./pages/TopEconomiesPage'));
 const TendancesPage = lazyPage(() => import('./pages/TendancesPage'));
 const PopulairesPage = lazyPage(() => import('./pages/PopulairesPage'));
+const UserDashboardPage = lazyPage(() => import('./pages/UserDashboardPage'));
+const ExecutiveDashboardPage = lazyPage(() => import('./pages/ExecutiveDashboardPage'));
+const TopDealsDuJourPage = lazyPage(() => import('./pages/TopDealsDuJourPage'));
 
 /**
  * IMPORTANT — NE PAS SUPPRIMER
@@ -817,6 +820,11 @@ export default function App() {
                           <Route path="predictions" element={<Predictions />} />
                           <Route path="ia-conseiller" element={<IaConseiller />} />
                           <Route path="ai-insights" element={<AiMarketInsights />} />
+
+                          {/* Conversion + User OS + Executive OS */}
+                          <Route path="mon-espace" element={<UserDashboardPage />} />
+                          <Route path="executive" element={<ExecutiveDashboardPage />} />
+                          <Route path="top-deals-du-jour" element={<TopDealsDuJourPage />} />
 
                           {/* Catch-all route - 404 page */}
                           <Route path="*" element={<NotFound />} />

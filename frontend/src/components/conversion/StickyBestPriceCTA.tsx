@@ -88,7 +88,7 @@ export function StickyBestPriceCTA({ product, onAfterClick }: StickyBestPriceCTA
           onClick={handleClick}
           className="w-full bg-white text-emerald-800 font-bold text-sm rounded-xl py-3 active:scale-95 transition-transform"
         >
-          Voir le meilleur prix maintenant →
+          {ctaLabel}
         </button>
 
         {/* Trust signals */}

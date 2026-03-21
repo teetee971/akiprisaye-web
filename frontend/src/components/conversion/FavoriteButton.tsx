@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { isFavorite, toggleFavorite } from '../../engine/favoritesEngine';
+import { logEvent } from '../../engine/analytics';
 
 interface FavoriteButtonProps {
   productId: string;
@@ -16,6 +17,7 @@ export function FavoriteButton({ productId, className = '', onToggle }: Favorite
     const next = !fav;
     toggleFavorite('products', productId);
     setFav(next);
+    logEvent('add_favorite', { id: productId, action: next ? 'add' : 'remove' });
     onToggle?.(next);
   }
 

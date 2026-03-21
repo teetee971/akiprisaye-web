@@ -123,12 +123,12 @@ export default function PartnerPage() {
             {
               icon:  '🎯',
               title: 'Clients qualifiés',
-              desc:  'Nos visiteurs sont en intention d'achat immédiate — ils cherchent où acheter maintenant.',
+              desc:  "Nos visiteurs sont en intention d'achat immédiate — ils cherchent où acheter maintenant.",
             },
             {
               icon:  '📊',
-              title: 'Données décision',
-              desc:  'Accédez aux tendances des prix et aux comportements d'achat locaux.',
+              title:  "Données décision",
+              desc:  "Accédez aux tendances des prix et aux comportements d'achat locaux.",
             },
             {
               icon:  '🏆',
