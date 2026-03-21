@@ -12,6 +12,7 @@ import * as leaderboardService from './leaderboardService';
 
 const prisma = new PrismaClient();
 
+
 export interface GamificationProfile {
   user: {
     id: string;
@@ -46,45 +47,22 @@ export interface GamificationProfile {
 export async function getUserGamificationProfile(userId: string): Promise<GamificationProfile> {
   // Get or create user gamification data
   let userGamification = await prisma.userGamification.findUnique({
-    where: { userId },
-    include: {
-      user: {
-        select: {
-          id: true,
-          name: true,
-          email: true
-        }
-      },
-      badges: {
-        include: {
-          badge: true
-        }
-      }
-    }
+    where: { userId }
+  });
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { id: true, name: true, email: true }
   });
 
   if (!userGamification) {
     userGamification = await prisma.userGamification.create({
-      data: { userId },
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true
-          }
-        },
-        badges: {
-          include: {
-            badge: true
-          }
-        }
-      }
+      data: { userId }
     });
   }
 
   // Get level information
-  const level = levelService.calculateLevel(userGamification.totalXP);
+  const level = levelService.calculateLevel(userGamification.totalPoints);
 
   // Get points summary
   const pointsSummary = await pointsService.getPointsSummary(userId);
@@ -115,7 +93,7 @@ export async function getUserGamificationProfile(userId: string): Promise<Gamifi
   return {
     user: {
       id: userGamification.userId,
-      username: userGamification.user.name || userGamification.user.email.split('@')[0]
+      username: user?.name || user?.email?.split('@')[0] || userId
     },
     level,
     points: {
@@ -132,11 +110,11 @@ export async function getUserGamificationProfile(userId: string): Promise<Gamifi
     },
     rank,
     stats: {
-      pricesSubmitted: userGamification.pricesSubmitted,
-      pricesVerified: userGamification.pricesVerified,
-      productsAdded: userGamification.productsAdded,
-      storesVisited: userGamification.storesVisited,
-      anomaliesReported: userGamification.anomaliesReported
+      pricesSubmitted: userGamification.priceReportsCount,
+      pricesVerified: userGamification.verificationsCount,
+      productsAdded: userGamification.photosCount,
+      storesVisited: 0,
+      anomaliesReported: 0
     }
   };
 }
@@ -170,14 +148,14 @@ export async function handleUserAction(
 
   if (leveledUp && levelData) {
     // Award bonus points for level up
-    await pointsService.awardPoints(userId, 'LEVEL_UP', {
+    await pointsService.awardPoints(userId, PointAction.CHALLENGE_COMPLETE, {
       levelReached: newLevel
     });
 
     // Update user's current level
     await prisma.userGamification.update({
       where: { userId },
-      data: { currentLevel: newLevel }
+      data: { level: newLevel }
     });
 
     levelUpData = levelData;
@@ -191,10 +169,10 @@ export async function handleUserAction(
 
   // Award XP for newly unlocked badges
   for (const badge of newBadges) {
-    await pointsService.awardPoints(userId, 'BADGE_UNLOCKED', {
+    await pointsService.awardPoints(userId, PointAction.BADGE_EARNED, {
       badgeId: badge.id,
       badgeName: badge.name,
-      xpReward: badge.xpReward
+      points: badge.points
     });
   }
 
@@ -220,28 +198,23 @@ async function updateUserStats(
   const updates: any = {};
 
   switch (action) {
-    case 'SUBMIT_PRICE':
-      updates.pricesSubmitted = { increment: 1 };
-      if (metadata?.storeId) {
-        // Would need to track unique stores
-        updates.storesVisited = { increment: 1 };
-      }
+    case PointAction.PRICE_REPORT:
+      updates.priceReportsCount = { increment: 1 };
       break;
 
-    case 'VERIFY_PRICE':
-      updates.pricesVerified = { increment: 1 };
+    case PointAction.PRICE_VERIFY:
+      updates.verificationsCount = { increment: 1 };
       break;
 
-    case 'ADD_PRODUCT':
-      updates.productsAdded = { increment: 1 };
+    case PointAction.PHOTO_UPLOAD:
+      updates.photosCount = { increment: 1 };
       break;
 
-    case 'REPORT_STORE':
-      updates.anomaliesReported = { increment: 1 };
+    case PointAction.RECEIPT_SCAN:
+      updates.receiptsCount = { increment: 1 };
       break;
 
-    case 'REFERRAL':
-      updates.referralsCount = { increment: 1 };
+    default:
       break;
   }
 
