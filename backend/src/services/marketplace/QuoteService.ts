@@ -1,42 +1,38 @@
 /**
  * Service de génération de devis - Sprint 4
  *
- * Génération de devis personnalisés pour PRO et INSTITUTIONS
+ * Génération de devis personnalisés pour BUSINESS et INSTITUTIONS
  * IA déterministe (pas d'hallucination)
+ * Aligné sur le schéma Prisma réel (quoteRequest / quote)
  */
 
-import { PrismaClient, QuoteRequest, Quote, QuoteStatus, RequesterType } from '@prisma/client';
-import { Territory } from '../comparison/types.js';
+import { PrismaClient, QuoteStatus, RequesterType } from '@prisma/client';
+import type { quoteRequest, quote } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-const MODEL_VERSION = 'v1.0.0-quote-generator';
-
 export interface CreateQuoteRequestInput {
+  requesterName: string;
   requesterType: RequesterType;
   email: string;
-  companyName: string;
-  needs: string;
-  estimatedVolume?: string;
-  territory?: Territory;
+  phone?: string;
+  organization?: string;
+  message: string;
 }
 
 export class QuoteService {
   /**
    * Créer une demande de devis
-   *
-   * @param input - Données de la demande
-   * @returns Demande créée
    */
-  async createRequest(input: CreateQuoteRequestInput): Promise<QuoteRequest> {
+  async createRequest(input: CreateQuoteRequestInput): Promise<quoteRequest> {
     return prisma.quoteRequest.create({
       data: {
+        requesterName: input.requesterName,
         requesterType: input.requesterType,
         email: input.email,
-        companyName: input.companyName,
-        needs: input.needs,
-        estimatedVolume: input.estimatedVolume,
-        territory: input.territory,
+        phone: input.phone,
+        organization: input.organization,
+        message: input.message,
         status: 'PENDING',
       },
     });
@@ -46,14 +42,11 @@ export class QuoteService {
    * Générer un devis automatiquement (IA déterministe)
    *
    * RÈGLES:
-   * - Calcul basé sur volume estimé et type de demandeur
+   * - Calcul basé sur type de demandeur
    * - Pas d'hallucination - calcul déterministe
    * - Validité 30 jours
-   *
-   * @param quoteRequestId - ID de la demande
-   * @returns Devis généré
    */
-  async generateQuote(quoteRequestId: string): Promise<Quote> {
+  async generateQuote(quoteRequestId: string): Promise<quote> {
     const request = await prisma.quoteRequest.findUnique({
       where: { id: quoteRequestId },
     });
@@ -67,24 +60,14 @@ export class QuoteService {
     // Ajustement selon type de demandeur
     if (request.requesterType === 'INSTITUTION') {
       baseAmount = 150000; // 1500€ pour institutions
-    }
-
-    // Ajustement selon volume (si fourni)
-    if (request.estimatedVolume) {
-      const volumeMatch = request.estimatedVolume.match(/\d+/);
-      if (volumeMatch) {
-        const volume = parseInt(volumeMatch[0]);
-        if (volume > 100) baseAmount *= 1.5;
-        if (volume > 500) baseAmount *= 2;
-        if (volume > 1000) baseAmount *= 3;
-      }
+    } else if (request.requesterType === 'BUSINESS') {
+      baseAmount = 80000; // 800€ pour entreprises
     }
 
     // Détails JSON
-    const details = JSON.stringify({
+    const details = {
       basePrice: baseAmount,
       requesterType: request.requesterType,
-      territory: request.territory,
       includes: [
         'Accès API complet',
         'Support premium',
@@ -93,72 +76,65 @@ export class QuoteService {
       ],
       validityDays: 30,
       paymentTerms: 'Net 30 jours',
-    });
+    };
 
-    // Créer le devis
-    const quote = await prisma.quote.create({
+    // Créer le devis (schéma: requestId, requester, email, details, status, validUntil)
+    const createdQuote = await prisma.quote.create({
       data: {
-        quoteRequestId,
-        amount: baseAmount,
-        currency: 'EUR',
+        requestId: quoteRequestId,
+        requester: request.requesterName,
+        email: request.email,
+        phone: request.phone,
         details,
-        generatedByAI: true,
-        modelVersion: MODEL_VERSION,
+        status: 'PENDING',
         validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 jours
       },
-      include: { quoteRequest: true },
     });
 
-    // Mettre à jour le statut de la demande
-    await prisma.quoteRequest.update({
-      where: { id: quoteRequestId },
-      data: { status: 'SENT' },
-    });
-
-    return quote;
+    return createdQuote;
   }
 
-  async getQuote(id: string): Promise<Quote | null> {
+  async getQuote(id: string): Promise<quote | null> {
     return prisma.quote.findUnique({
       where: { id },
-      include: { quoteRequest: true },
     });
   }
 
-  async getQuoteByRequest(quoteRequestId: string): Promise<Quote | null> {
+  async getQuoteByRequest(quoteRequestId: string): Promise<quote | null> {
     return prisma.quote.findUnique({
-      where: { quoteRequestId },
-      include: { quoteRequest: true },
+      where: { requestId: quoteRequestId },
     });
   }
 
-  async acceptQuote(id: string): Promise<Quote> {
-    const quote = await prisma.quote.findUnique({
+  async acceptQuote(id: string): Promise<quote> {
+    const existingQuote = await prisma.quote.findUnique({
       where: { id },
-      include: { quoteRequest: true },
     });
 
-    if (!quote) throw new Error('Devis introuvable');
-    if (quote.acceptedAt) throw new Error('Devis déjà accepté');
-    if (new Date() > quote.validUntil) throw new Error('Devis expiré');
+    if (!existingQuote) throw new Error('Devis introuvable');
+    if (existingQuote.status === 'ACCEPTED') throw new Error('Devis déjà accepté');
+    if (existingQuote.validUntil !== null && new Date() > existingQuote.validUntil) {
+      throw new Error('Devis expiré');
+    }
 
     const [updatedQuote] = await Promise.all([
       prisma.quote.update({
         where: { id },
-        data: { acceptedAt: new Date() },
-        include: { quoteRequest: true },
-      }),
-      prisma.quoteRequest.update({
-        where: { id: quote.quoteRequestId },
         data: { status: 'ACCEPTED' },
       }),
+      existingQuote.requestId
+        ? prisma.quoteRequest.update({
+            where: { id: existingQuote.requestId },
+            data: { status: 'ACCEPTED' },
+          })
+        : Promise.resolve(null),
     ]);
 
     return updatedQuote;
   }
 
   async getRequests(page = 1, limit = 20): Promise<{
-    requests: QuoteRequest[];
+    requests: quoteRequest[];
     total: number;
     page: number;
     totalPages: number;
@@ -168,7 +144,6 @@ export class QuoteService {
 
     const [requests, total] = await Promise.all([
       prisma.quoteRequest.findMany({
-        include: { quote: true },
         skip,
         take,
         orderBy: { createdAt: 'desc' },
@@ -183,27 +158,23 @@ export class QuoteService {
     totalRequests: number;
     byStatus: Record<QuoteStatus, number>;
     byType: Record<RequesterType, number>;
-    totalValue: number;
   }> {
-    const [total, pending, sent, accepted, rejected, pro, institution, value] = await Promise.all([
-      prisma.quoteRequest.count(),
-      prisma.quoteRequest.count({ where: { status: 'PENDING' } }),
-      prisma.quoteRequest.count({ where: { status: 'SENT' } }),
-      prisma.quoteRequest.count({ where: { status: 'ACCEPTED' } }),
-      prisma.quoteRequest.count({ where: { status: 'REJECTED' } }),
-      prisma.quoteRequest.count({ where: { requesterType: 'PRO' } }),
-      prisma.quoteRequest.count({ where: { requesterType: 'INSTITUTION' } }),
-      prisma.quote.aggregate({
-        where: { acceptedAt: { not: null } },
-        _sum: { amount: true },
-      }),
-    ]);
+    const [total, pending, accepted, rejected, expired, individual, business, institution] =
+      await Promise.all([
+        prisma.quoteRequest.count(),
+        prisma.quoteRequest.count({ where: { status: 'PENDING' } }),
+        prisma.quoteRequest.count({ where: { status: 'ACCEPTED' } }),
+        prisma.quoteRequest.count({ where: { status: 'REJECTED' } }),
+        prisma.quoteRequest.count({ where: { status: 'EXPIRED' } }),
+        prisma.quoteRequest.count({ where: { requesterType: 'INDIVIDUAL' } }),
+        prisma.quoteRequest.count({ where: { requesterType: 'BUSINESS' } }),
+        prisma.quoteRequest.count({ where: { requesterType: 'INSTITUTION' } }),
+      ]);
 
     return {
       totalRequests: total,
-      byStatus: { PENDING: pending, SENT: sent, ACCEPTED: accepted, REJECTED: rejected },
-      byType: { PRO: pro, INSTITUTION: institution },
-      totalValue: value._sum.amount || 0,
+      byStatus: { PENDING: pending, ACCEPTED: accepted, REJECTED: rejected, EXPIRED: expired },
+      byType: { INDIVIDUAL: individual, BUSINESS: business, INSTITUTION: institution },
     };
   }
 }

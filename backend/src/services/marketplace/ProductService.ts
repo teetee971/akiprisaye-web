@@ -2,57 +2,54 @@
  * Service de gestion des produits (Products) - Sprint 4
  *
  * Gère les opérations CRUD sur les produits
- * Validation avec enseigne active
+ * Aligné sur le schéma Prisma réel (Product sans relation brand/prices)
  */
 
-import { PrismaClient, Product } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
+import type { Product } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 export interface CreateProductInput {
-  brandId: string;
-  name: string;
-  category: string;
+  productKey: string;
+  displayName: string;
+  rawLabel: string;
+  normalizedLabel: string;
+  brand?: string;
+  category?: string;
+  subcategory?: string;
   barcode?: string;
-  description?: string;
-  imageUrl?: string;
+  primaryImageUrl?: string;
 }
 
 export interface UpdateProductInput {
-  name?: string;
+  displayName?: string;
+  rawLabel?: string;
+  normalizedLabel?: string;
+  brand?: string;
   category?: string;
+  subcategory?: string;
   barcode?: string;
-  description?: string;
-  imageUrl?: string;
-  isActive?: boolean;
+  primaryImageUrl?: string;
 }
 
 export interface ProductSearchFilters {
-  brandId?: string;
+  brand?: string;
   category?: string;
   barcode?: string;
   search?: string;
-  isActive?: boolean;
 }
 
 export class ProductService {
   async create(input: CreateProductInput): Promise<Product> {
-    // Vérifier que la brand existe et est ACTIVE
-    const brand = await prisma.brand.findUnique({ where: { id: input.brandId } });
-    if (!brand || brand.status !== 'ACTIVE') {
-      throw new Error('Enseigne introuvable ou non active');
-    }
-
     return prisma.product.create({
       data: input,
-      include: { brand: true },
     });
   }
 
   async findById(id: string): Promise<Product | null> {
     return prisma.product.findUnique({
       where: { id },
-      include: { brand: true, prices: true },
     });
   }
 
@@ -64,22 +61,20 @@ export class ProductService {
     const skip = (page - 1) * Math.min(limit, 100);
     const take = Math.min(limit, 100);
 
-    const where: any = {};
-    if (filters.brandId) where.brandId = filters.brandId;
+    const where: Record<string, unknown> = {};
+    if (filters.brand) where.brand = filters.brand;
     if (filters.category) where.category = filters.category;
     if (filters.barcode) where.barcode = filters.barcode;
-    if (filters.isActive !== undefined) where.isActive = filters.isActive;
     if (filters.search) {
       where.OR = [
-        { name: { contains: filters.search, mode: 'insensitive' } },
-        { description: { contains: filters.search, mode: 'insensitive' } },
+        { displayName: { contains: filters.search, mode: 'insensitive' } },
+        { normalizedLabel: { contains: filters.search, mode: 'insensitive' } },
       ];
     }
 
     const [products, total] = await Promise.all([
       prisma.product.findMany({
         where,
-        include: { brand: true },
         skip,
         take,
         orderBy: { createdAt: 'desc' },
@@ -94,7 +89,6 @@ export class ProductService {
     return prisma.product.update({
       where: { id },
       data: input,
-      include: { brand: true },
     });
   }
 
@@ -104,12 +98,10 @@ export class ProductService {
 
   async getStatistics(): Promise<{
     total: number;
-    active: number;
     byCategory: Record<string, number>;
   }> {
-    const [total, active, categories] = await Promise.all([
+    const [total, categories] = await Promise.all([
       prisma.product.count(),
-      prisma.product.count({ where: { isActive: true } }),
       prisma.product.groupBy({
         by: ['category'],
         _count: true,
@@ -118,10 +110,12 @@ export class ProductService {
 
     const byCategory: Record<string, number> = {};
     categories.forEach((cat) => {
-      byCategory[cat.category] = cat._count;
+      if (cat.category !== null) {
+        byCategory[cat.category] = cat._count;
+      }
     });
 
-    return { total, active, byCategory };
+    return { total, byCategory };
   }
 }
 

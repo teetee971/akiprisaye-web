@@ -13,13 +13,11 @@
  * - RGPD Art. 22 (décision automatisée)
  */
 
-import { PrismaClient, PricePrediction } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
+import type { pricePrediction } from '@prisma/client';
 import { Territory } from '../comparison/types.js';
 
 const prisma = new PrismaClient();
-
-// Version actuelle du modèle IA (fictive pour Sprint 4)
-const MODEL_VERSION = 'v1.0.0-baseline';
 
 // Horizon de prédiction par défaut: 7 jours
 const DEFAULT_HORIZON_DAYS = 7;
@@ -30,26 +28,26 @@ export class PredictionService {
    *
    * IMPORTANT: Prédiction basée sur moyenne historique simple
    * Pas d'IA réelle dans cette version (modèle déterministe)
-   *
-   * @param productId - ID du produit
-   * @param territory - Territoire concerné
-   * @param horizonDays - Horizon de prédiction (jours)
-   * @returns Prédiction générée
    */
   async generate(
     productId: string,
     territory: Territory,
     horizonDays = DEFAULT_HORIZON_DAYS
-  ): Promise<PricePrediction> {
+  ): Promise<pricePrediction> {
+    // Récupérer les storeIds pour ce territoire
+    const storesInTerritory = await prisma.store.findMany({
+      where: { territory },
+      select: { id: true },
+    });
+    const storeIds = storesInTerritory.map((s) => s.id);
+
     // Récupérer l'historique des prix pour ce produit dans ce territoire
-    const prices = await prisma.price.findMany({
+    const prices = await prisma.productPrice.findMany({
       where: {
         productId,
-        store: {
-          territory,
-        },
+        storeId: { in: storeIds },
       },
-      orderBy: { effectiveDate: 'desc' },
+      orderBy: { observedAt: 'desc' },
       take: 30, // Derniers 30 prix
     });
 
@@ -68,45 +66,35 @@ export class PredictionService {
     // Score de confiance basé sur la variance
     const variance = prices.reduce((acc, p) => acc + Math.pow(p.price - averagePrice, 2), 0) / prices.length;
     const stdDev = Math.sqrt(variance);
-    const coeffVariation = stdDev / averagePrice;
+    const coeffVariation = stdDev / (averagePrice || 1);
 
     // Confidence: élevée si faible variation, faible si forte variation
-    const confidenceScore = Math.max(0.1, Math.min(1.0, 1 - coeffVariation));
+    const confidence = Math.max(0.1, Math.min(1.0, 1 - coeffVariation));
 
-    // Créer la prédiction
+    // Créer la prédiction (schéma: productId, territory, predictedPrice, confidence, horizon)
     return prisma.pricePrediction.create({
       data: {
         productId,
         territory,
-        currentPrice,
         predictedPrice,
-        confidenceScore,
-        modelVersion: MODEL_VERSION,
-        horizonDays,
-      },
-      include: {
-        product: true,
+        confidence,
+        horizon: horizonDays,
       },
     });
   }
 
   /**
    * Récupérer les prédictions pour un produit
-   *
-   * @param productId - ID du produit
-   * @param territory - Territoire (optionnel)
-   * @returns Liste des prédictions
    */
   async getByProduct(
     productId: string,
     territory?: Territory
-  ): Promise<PricePrediction[]> {
-    const where: any = { productId };
+  ): Promise<pricePrediction[]> {
+    const where: Record<string, unknown> = { productId };
     if (territory) where.territory = territory;
 
     return prisma.pricePrediction.findMany({
       where,
-      include: { product: true },
       orderBy: { createdAt: 'desc' },
       take: 10,
     });
@@ -114,24 +102,18 @@ export class PredictionService {
 
   /**
    * Récupérer toutes les prédictions pour un territoire
-   *
-   * @param territory - Territoire
-   * @param page - Page
-   * @param limit - Limite
-   * @returns Liste des prédictions
    */
   async getByTerritory(
     territory: Territory,
     page = 1,
     limit = 20
-  ): Promise<{ predictions: PricePrediction[]; total: number; page: number; totalPages: number }> {
+  ): Promise<{ predictions: pricePrediction[]; total: number; page: number; totalPages: number }> {
     const skip = (page - 1) * Math.min(limit, 100);
     const take = Math.min(limit, 100);
 
     const [predictions, total] = await Promise.all([
       prisma.pricePrediction.findMany({
         where: { territory },
-        include: { product: true },
         skip,
         take,
         orderBy: { createdAt: 'desc' },
@@ -144,32 +126,40 @@ export class PredictionService {
 
   /**
    * Obtenir les statistiques des prédictions
-   *
-   * @returns Statistiques
    */
   async getStatistics(): Promise<{
     total: number;
-    byTerritory: Record<Territory, number>;
+    byTerritory: Partial<Record<Territory, number>>;
     averageConfidence: number;
   }> {
-    const [total, france, dom, com, avg] = await Promise.all([
+    const [total, avg, ...territoryCounts] = await Promise.all([
       prisma.pricePrediction.count(),
-      prisma.pricePrediction.count({ where: { territory: 'FRANCE_HEXAGONALE' } }),
-      prisma.pricePrediction.count({ where: { territory: 'DOM' } }),
-      prisma.pricePrediction.count({ where: { territory: 'COM' } }),
-      prisma.pricePrediction.aggregate({
-        _avg: { confidenceScore: true },
-      }),
+      prisma.pricePrediction.aggregate({ _avg: { confidence: true } }),
+      prisma.pricePrediction.count({ where: { territory: Territory.FRANCE_HEXAGONALE } }),
+      prisma.pricePrediction.count({ where: { territory: Territory.GUADELOUPE } }),
+      prisma.pricePrediction.count({ where: { territory: Territory.MARTINIQUE } }),
+      prisma.pricePrediction.count({ where: { territory: Territory.GUYANE } }),
+      prisma.pricePrediction.count({ where: { territory: Territory.LA_REUNION } }),
+      prisma.pricePrediction.count({ where: { territory: Territory.MAYOTTE } }),
+      prisma.pricePrediction.count({ where: { territory: Territory.DOM } }),
+      prisma.pricePrediction.count({ where: { territory: Territory.COM } }),
     ]);
+
+    const [gf, gp, mq, gy, re, yt, dom, com] = territoryCounts;
 
     return {
       total,
       byTerritory: {
-        FRANCE_HEXAGONALE: france,
-        DOM: dom,
-        COM: com,
+        [Territory.FRANCE_HEXAGONALE]: gf,
+        [Territory.GUADELOUPE]: gp,
+        [Territory.MARTINIQUE]: mq,
+        [Territory.GUYANE]: gy,
+        [Territory.LA_REUNION]: re,
+        [Territory.MAYOTTE]: yt,
+        [Territory.DOM]: dom,
+        [Territory.COM]: com,
       },
-      averageConfidence: avg._avg.confidenceScore || 0,
+      averageConfidence: avg._avg.confidence ?? 0,
     };
   }
 }

@@ -2,60 +2,52 @@
  * Service de gestion des magasins (Stores) - Sprint 4
  *
  * Gère les opérations CRUD sur les points de vente
- * Géolocalisation et segmentation par territoire
+ * Aligné sur le schéma Prisma réel (Store sans relations brand/prices)
  */
 
-import { PrismaClient, Store } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
+import type { Store } from '@prisma/client';
 import { Territory } from '../comparison/types.js';
 
 const prisma = new PrismaClient();
 
 export interface CreateStoreInput {
-  brandId: string;
-  name: string;
-  address: string;
-  postalCode: string;
-  city: string;
-  territory: Territory;
-  latitude?: number;
-  longitude?: number;
-}
-
-export interface UpdateStoreInput {
-  name?: string;
+  normalizedName: string;
+  rawName?: string;
+  brand?: string;
+  company?: string;
+  siret?: string;
   address?: string;
   postalCode?: string;
   city?: string;
-  latitude?: number;
-  longitude?: number;
-  isActive?: boolean;
+  territory: string;
+}
+
+export interface UpdateStoreInput {
+  normalizedName?: string;
+  rawName?: string;
+  brand?: string;
+  address?: string;
+  postalCode?: string;
+  city?: string;
 }
 
 export interface StoreSearchFilters {
-  brandId?: string;
-  territory?: Territory;
+  brand?: string;
+  territory?: string;
   city?: string;
-  isActive?: boolean;
 }
 
 export class StoreService {
   async create(input: CreateStoreInput): Promise<Store> {
-    // Vérifier que la brand existe et est ACTIVE
-    const brand = await prisma.brand.findUnique({ where: { id: input.brandId } });
-    if (!brand || brand.status !== 'ACTIVE') {
-      throw new Error('Enseigne introuvable ou non active');
-    }
-
     return prisma.store.create({
       data: input,
-      include: { brand: true },
     });
   }
 
   async findById(id: string): Promise<Store | null> {
     return prisma.store.findUnique({
       where: { id },
-      include: { brand: true, prices: true },
     });
   }
 
@@ -67,16 +59,14 @@ export class StoreService {
     const skip = (page - 1) * Math.min(limit, 100);
     const take = Math.min(limit, 100);
 
-    const where: any = {};
-    if (filters.brandId) where.brandId = filters.brandId;
+    const where: Record<string, unknown> = {};
+    if (filters.brand) where.brand = filters.brand;
     if (filters.territory) where.territory = filters.territory;
     if (filters.city) where.city = { contains: filters.city, mode: 'insensitive' };
-    if (filters.isActive !== undefined) where.isActive = filters.isActive;
 
     const [stores, total] = await Promise.all([
       prisma.store.findMany({
         where,
-        include: { brand: true },
         skip,
         take,
         orderBy: { createdAt: 'desc' },
@@ -91,7 +81,6 @@ export class StoreService {
     return prisma.store.update({
       where: { id },
       data: input,
-      include: { brand: true },
     });
   }
 
@@ -101,25 +90,42 @@ export class StoreService {
 
   async getStatistics(): Promise<{
     total: number;
-    byTerritory: Record<Territory, number>;
-    active: number;
+    byTerritory: Partial<Record<Territory, number>>;
   }> {
-    const [total, france, dom, com, active] = await Promise.all([
+    const [total, ...territoryCounts] = await Promise.all([
       prisma.store.count(),
-      prisma.store.count({ where: { territory: 'FRANCE_HEXAGONALE' } }),
-      prisma.store.count({ where: { territory: 'DOM' } }),
-      prisma.store.count({ where: { territory: 'COM' } }),
-      prisma.store.count({ where: { isActive: true } }),
+      prisma.store.count({ where: { territory: Territory.FRANCE_HEXAGONALE } }),
+      prisma.store.count({ where: { territory: Territory.GUADELOUPE } }),
+      prisma.store.count({ where: { territory: Territory.MARTINIQUE } }),
+      prisma.store.count({ where: { territory: Territory.GUYANE } }),
+      prisma.store.count({ where: { territory: Territory.LA_REUNION } }),
+      prisma.store.count({ where: { territory: Territory.MAYOTTE } }),
+      prisma.store.count({ where: { territory: Territory.SAINT_MARTIN } }),
+      prisma.store.count({ where: { territory: Territory.SAINT_BARTHELEMY } }),
+      prisma.store.count({ where: { territory: Territory.SAINT_PIERRE_ET_MIQUELON } }),
+      prisma.store.count({ where: { territory: Territory.WALLIS_ET_FUTUNA } }),
+      prisma.store.count({ where: { territory: Territory.DOM } }),
+      prisma.store.count({ where: { territory: Territory.COM } }),
     ]);
+
+    const [gf, gp, mq, gy, re, yt, mf, bl, pm, wf, dom, com] = territoryCounts;
 
     return {
       total,
       byTerritory: {
-        FRANCE_HEXAGONALE: france,
-        DOM: dom,
-        COM: com,
+        [Territory.FRANCE_HEXAGONALE]: gf,
+        [Territory.GUADELOUPE]: gp,
+        [Territory.MARTINIQUE]: mq,
+        [Territory.GUYANE]: gy,
+        [Territory.LA_REUNION]: re,
+        [Territory.MAYOTTE]: yt,
+        [Territory.SAINT_MARTIN]: mf,
+        [Territory.SAINT_BARTHELEMY]: bl,
+        [Territory.SAINT_PIERRE_ET_MIQUELON]: pm,
+        [Territory.WALLIS_ET_FUTUNA]: wf,
+        [Territory.DOM]: dom,
+        [Territory.COM]: com,
       },
-      active,
     };
   }
 }

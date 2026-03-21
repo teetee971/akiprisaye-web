@@ -1,7 +1,7 @@
 /**
- * Service de gestion des prix (Prices) - Sprint 4
+ * Service de gestion des prix produits - Sprint 4
  *
- * Gère les opérations sur les prix
+ * Gère les observations de prix (ProductPrice)
  * Historique immuable - détection d'anomalies
  *
  * RÈGLES:
@@ -11,7 +11,8 @@
  * - Audit obligatoire
  */
 
-import { PrismaClient, Price, PriceSource } from '@prisma/client';
+import { PrismaClient, PriceSource } from '@prisma/client';
+import type { ProductPrice } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -24,7 +25,7 @@ export interface CreatePriceInput {
   price: number; // en centimes
   currency?: string;
   source: PriceSource;
-  effectiveDate: Date;
+  observedAt: Date;
 }
 
 export interface PriceSearchFilters {
@@ -40,12 +41,9 @@ export class PriceService {
    * Créer/Mettre à jour un prix
    *
    * Détection d'anomalie: si variation > 50% par rapport au dernier prix
-   *
-   * @param input - Données du prix
-   * @returns Prix créé + warning si anomalie détectée
    */
   async create(input: CreatePriceInput): Promise<{
-    price: Price;
+    price: ProductPrice;
     anomalyDetected: boolean;
     previousPrice?: number;
     variation?: number;
@@ -60,12 +58,12 @@ export class PriceService {
     if (!store) throw new Error('Magasin introuvable');
 
     // Récupérer le dernier prix pour ce produit/magasin
-    const lastPrice = await prisma.price.findFirst({
+    const lastPrice = await prisma.productPrice.findFirst({
       where: {
         productId: input.productId,
         storeId: input.storeId,
       },
-      orderBy: { effectiveDate: 'desc' },
+      orderBy: { observedAt: 'desc' },
     });
 
     let anomalyDetected = false;
@@ -77,25 +75,20 @@ export class PriceService {
       const diff = Math.abs(input.price - lastPrice.price);
       variation = diff / lastPrice.price;
 
-      // Détection anomalie
       if (variation > ANOMALY_THRESHOLD) {
         anomalyDetected = true;
       }
     }
 
     // Créer le prix (historique immuable)
-    const price = await prisma.price.create({
+    const price = await prisma.productPrice.create({
       data: {
         productId: input.productId,
         storeId: input.storeId,
         price: input.price,
-        currency: input.currency || 'EUR',
+        currency: input.currency ?? 'EUR',
         source: input.source,
-        effectiveDate: input.effectiveDate,
-      },
-      include: {
-        product: true,
-        store: true,
+        observedAt: input.observedAt,
       },
     });
 
@@ -109,77 +102,51 @@ export class PriceService {
 
   /**
    * Récupérer l'historique des prix d'un produit
-   *
-   * @param productId - ID du produit
-   * @param storeId - ID du magasin (optionnel - tous si omis)
-   * @returns Historique des prix
    */
   async getHistory(
     productId: string,
     storeId?: string
-  ): Promise<Price[]> {
-    const where: any = { productId };
+  ): Promise<ProductPrice[]> {
+    const where: Record<string, unknown> = { productId };
     if (storeId) where.storeId = storeId;
 
-    return prisma.price.findMany({
+    return prisma.productPrice.findMany({
       where,
-      include: {
-        product: true,
-        store: true,
-      },
-      orderBy: { effectiveDate: 'desc' },
+      orderBy: { observedAt: 'desc' },
     });
   }
 
   /**
    * Récupérer les prix actuels d'un produit dans tous les magasins
-   *
-   * @param productId - ID du produit
-   * @returns Prix actuels par magasin
    */
-  async getCurrentPrices(productId: string): Promise<Price[]> {
-    // Récupérer tous les magasins ayant un prix pour ce produit
-    const stores = await prisma.store.findMany({
-      where: {
-        prices: {
-          some: {
-            productId,
-          },
-        },
-      },
+  async getCurrentPrices(productId: string): Promise<ProductPrice[]> {
+    // Récupérer tous les storeIds ayant un prix pour ce produit
+    const storeEntries = await prisma.productPrice.findMany({
+      where: { productId },
+      select: { storeId: true },
+      distinct: ['storeId'],
     });
 
     // Pour chaque magasin, récupérer le prix le plus récent
     const currentPrices = await Promise.all(
-      stores.map(async (store) => {
-        return prisma.price.findFirst({
-          where: {
-            productId,
-            storeId: store.id,
-          },
-          include: {
-            product: true,
-            store: true,
-          },
-          orderBy: { effectiveDate: 'desc' },
-        });
-      })
+      storeEntries.map(({ storeId }) =>
+        prisma.productPrice.findFirst({
+          where: { productId, storeId },
+          orderBy: { observedAt: 'desc' },
+        })
+      )
     );
 
-    return currentPrices.filter((p): p is Price => p !== null);
+    return currentPrices.filter((p): p is ProductPrice => p !== null);
   }
 
   /**
    * Comparer les prix de plusieurs produits
-   *
-   * @param productIds - IDs des produits
-   * @param storeId - ID du magasin (optionnel)
-   * @returns Comparaison des prix
    */
   async compare(
     productIds: string[],
     storeId?: string
-  ): Promise<Array<{ productId: string; prices: Price[] }>> {
+  ): Promise<Array<{ productId: string; prices: ProductPrice[] }>> {
     const results = await Promise.all(
       productIds.map(async (productId) => {
         const prices = storeId
@@ -195,42 +162,33 @@ export class PriceService {
 
   /**
    * Rechercher des prix avec filtres
-   *
-   * @param filters - Critères de recherche
-   * @param page - Page
-   * @param limit - Limite
-   * @returns Liste de prix
    */
   async search(
     filters: PriceSearchFilters = {},
     page = 1,
     limit = 20
-  ): Promise<{ prices: Price[]; total: number; page: number; totalPages: number }> {
+  ): Promise<{ prices: ProductPrice[]; total: number; page: number; totalPages: number }> {
     const skip = (page - 1) * Math.min(limit, 100);
     const take = Math.min(limit, 100);
 
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (filters.productId) where.productId = filters.productId;
     if (filters.storeId) where.storeId = filters.storeId;
     if (filters.source) where.source = filters.source;
     if (filters.fromDate || filters.toDate) {
-      where.effectiveDate = {};
-      if (filters.fromDate) where.effectiveDate.gte = filters.fromDate;
-      if (filters.toDate) where.effectiveDate.lte = filters.toDate;
+      where.observedAt = {};
+      if (filters.fromDate) (where.observedAt as Record<string, unknown>).gte = filters.fromDate;
+      if (filters.toDate) (where.observedAt as Record<string, unknown>).lte = filters.toDate;
     }
 
     const [prices, total] = await Promise.all([
-      prisma.price.findMany({
+      prisma.productPrice.findMany({
         where,
-        include: {
-          product: true,
-          store: true,
-        },
         skip,
         take,
-        orderBy: { effectiveDate: 'desc' },
+        orderBy: { observedAt: 'desc' },
       }),
-      prisma.price.count({ where }),
+      prisma.productPrice.count({ where }),
     ]);
 
     return { prices, total, page, totalPages: Math.ceil(total / take) };
@@ -238,20 +196,21 @@ export class PriceService {
 
   /**
    * Obtenir les statistiques des prix
-   *
-   * @returns Statistiques
    */
   async getStatistics(): Promise<{
     total: number;
     bySource: Record<PriceSource, number>;
     averagePrice: number;
   }> {
-    const [total, manual, api, institution, avg] = await Promise.all([
-      prisma.price.count(),
-      prisma.price.count({ where: { source: 'MANUAL' } }),
-      prisma.price.count({ where: { source: 'API' } }),
-      prisma.price.count({ where: { source: 'INSTITUTION' } }),
-      prisma.price.aggregate({
+    const [total, ocr, api, openPrices, manual, crowd, scraping, avg] = await Promise.all([
+      prisma.productPrice.count(),
+      prisma.productPrice.count({ where: { source: 'OCR_TICKET' } }),
+      prisma.productPrice.count({ where: { source: 'OFFICIAL_API' } }),
+      prisma.productPrice.count({ where: { source: 'OPEN_PRICES' } }),
+      prisma.productPrice.count({ where: { source: 'MANUAL_ENTRY' } }),
+      prisma.productPrice.count({ where: { source: 'CROWDSOURCED' } }),
+      prisma.productPrice.count({ where: { source: 'SCRAPING_AUTHORIZED' } }),
+      prisma.productPrice.aggregate({
         _avg: { price: true },
       }),
     ]);
@@ -259,11 +218,14 @@ export class PriceService {
     return {
       total,
       bySource: {
-        MANUAL: manual,
-        API: api,
-        INSTITUTION: institution,
+        OCR_TICKET: ocr,
+        OFFICIAL_API: api,
+        OPEN_PRICES: openPrices,
+        MANUAL_ENTRY: manual,
+        CROWDSOURCED: crowd,
+        SCRAPING_AUTHORIZED: scraping,
       },
-      averagePrice: avg._avg.price || 0,
+      averagePrice: avg._avg.price ?? 0,
     };
   }
 }

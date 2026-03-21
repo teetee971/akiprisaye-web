@@ -1,121 +1,111 @@
 /**
  * Service de gestion des abonnements et facturation - Sprint 4
  *
- * Gestion monétisation B2B de la plateforme
+ * Gestion monétisation de la plateforme
+ * Aligné sur le schéma Prisma réel (Subscription par userId, invoice)
  *
  * RÈGLES:
- * - Abonnement obligatoire pour publier produits/prix
- * - Facturation automatique selon billingCycle
- * - Suspension automatique en cas de non-paiement
+ * - Un abonnement par utilisateur
+ * - Facturation manuelle via invoice
  */
 
-import { PrismaClient, Subscription, Invoice, SubscriptionPlan, SubscriptionStatus } from '@prisma/client';
+import { PrismaClient, SubscriptionPlan, SubscriptionStatus } from '@prisma/client';
+import type { Subscription, invoice } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 // Prix des plans (en centimes/mois)
 const PLAN_PRICES: Record<SubscriptionPlan, number> = {
-  FREE: 0,        // 0€
-  BASIC: 9900,    // 99€
-  PREMIUM: 29900, // 299€
+  FREE: 0,           // 0€
+  BASIC: 9900,       // 99€
+  PREMIUM: 29900,    // 299€
   INSTITUTION: 99900, // 999€
 };
 
 export interface CreateSubscriptionInput {
-  brandId: string;
+  userId: string;
   plan: SubscriptionPlan;
-  billingCycle: 'MONTHLY' | 'QUARTERLY' | 'YEARLY';
+  billingCycle?: 'MONTHLY' | 'QUARTERLY' | 'YEARLY';
 }
 
 export class SubscriptionService {
   /**
-   * Créer un nouvel abonnement
-   *
-   * @param input - Données de l'abonnement
-   * @returns Abonnement créé + première facture
+   * Créer ou remplacer un abonnement utilisateur
    */
   async create(input: CreateSubscriptionInput): Promise<{
     subscription: Subscription;
-    invoice: Invoice;
+    invoice: invoice;
   }> {
-    const brand = await prisma.brand.findUnique({ where: { id: input.brandId } });
-    if (!brand) throw new Error('Enseigne introuvable');
+    const user = await prisma.user.findUnique({ where: { id: input.userId } });
+    if (!user) throw new Error('Utilisateur introuvable');
 
+    const billingCycle = input.billingCycle ?? 'MONTHLY';
     const basePrice = PLAN_PRICES[input.plan];
-    let price = basePrice;
     let invoiceAmount = basePrice;
 
-    // Réductions selon billing cycle
-    if (input.billingCycle === 'QUARTERLY') {
-      price = basePrice * 3;
-      invoiceAmount = Math.round(price * 0.95); // 5% de réduction
-    } else if (input.billingCycle === 'YEARLY') {
-      price = basePrice * 12;
-      invoiceAmount = Math.round(price * 0.85); // 15% de réduction
+    if (billingCycle === 'QUARTERLY') {
+      invoiceAmount = Math.round(basePrice * 3 * 0.95); // 5% réduction
+    } else if (billingCycle === 'YEARLY') {
+      invoiceAmount = Math.round(basePrice * 12 * 0.85); // 15% réduction
     }
 
     const now = new Date();
-    const startedAt = now;
-    let endsAt: Date | undefined;
+    let endDate: Date | undefined;
 
-    if (input.billingCycle === 'MONTHLY') {
-      endsAt = new Date(now.setMonth(now.getMonth() + 1));
-    } else if (input.billingCycle === 'QUARTERLY') {
-      endsAt = new Date(now.setMonth(now.getMonth() + 3));
-    } else if (input.billingCycle === 'YEARLY') {
-      endsAt = new Date(now.setFullYear(now.getFullYear() + 1));
+    if (billingCycle === 'MONTHLY') {
+      endDate = new Date(new Date(now).setMonth(now.getMonth() + 1));
+    } else if (billingCycle === 'QUARTERLY') {
+      endDate = new Date(new Date(now).setMonth(now.getMonth() + 3));
+    } else if (billingCycle === 'YEARLY') {
+      endDate = new Date(new Date(now).setFullYear(now.getFullYear() + 1));
     }
 
-    // Créer l'abonnement
-    const subscription = await prisma.subscription.create({
-      data: {
-        brandId: input.brandId,
+    // Upsert l'abonnement (un seul par userId)
+    const subscription = await prisma.subscription.upsert({
+      where: { userId: input.userId },
+      create: {
+        userId: input.userId,
         plan: input.plan,
-        price,
-        billingCycle: input.billingCycle,
         status: 'ACTIVE',
-        startedAt,
-        endsAt,
+        startDate: now,
+        endDate,
       },
-      include: { brand: true },
+      update: {
+        plan: input.plan,
+        status: 'ACTIVE',
+        startDate: now,
+        endDate,
+      },
+      include: { user: true },
     });
 
-    // Générer la première facture
+    // Générer une facture
     const invoiceNumber = `INV-${Date.now()}-${subscription.id.slice(0, 8)}`;
-    const invoice = await prisma.invoice.create({
+    const createdInvoice = await prisma.invoice.create({
       data: {
-        subscriptionId: subscription.id,
+        userId: input.userId,
+        number: invoiceNumber,
         amount: invoiceAmount,
         currency: 'EUR',
         status: 'PENDING',
-        invoiceNumber,
-        issuedAt: new Date(),
-        dueAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 jours
+        issuedAt: now,
       },
-      include: { subscription: true },
     });
 
-    // Mettre à jour le plan de la brand
-    await prisma.brand.update({
-      where: { id: input.brandId },
-      data: { subscriptionPlan: input.plan },
-    });
-
-    return { subscription, invoice };
+    return { subscription, invoice: createdInvoice };
   }
 
   async findById(id: string): Promise<Subscription | null> {
     return prisma.subscription.findUnique({
       where: { id },
-      include: { brand: true, invoices: true },
+      include: { user: true },
     });
   }
 
-  async getByBrand(brandId: string): Promise<Subscription[]> {
-    return prisma.subscription.findMany({
-      where: { brandId },
-      include: { invoices: true },
-      orderBy: { createdAt: 'desc' },
+  async getByUser(userId: string): Promise<Subscription | null> {
+    return prisma.subscription.findUnique({
+      where: { userId },
+      include: { user: true },
     });
   }
 
@@ -135,28 +125,26 @@ export class SubscriptionService {
     });
   }
 
-  async getInvoice(id: string): Promise<Invoice | null> {
+  async getInvoice(id: string): Promise<invoice | null> {
     return prisma.invoice.findUnique({
       where: { id },
-      include: { subscription: { include: { brand: true } } },
     });
   }
 
-  async getInvoicesBySubscription(subscriptionId: string): Promise<Invoice[]> {
+  async getInvoicesByUser(userId: string): Promise<invoice[]> {
     return prisma.invoice.findMany({
-      where: { subscriptionId },
+      where: { userId },
       orderBy: { issuedAt: 'desc' },
     });
   }
 
-  async markInvoicePaid(invoiceId: string): Promise<Invoice> {
+  async markInvoicePaid(invoiceId: string): Promise<invoice> {
     return prisma.invoice.update({
       where: { id: invoiceId },
       data: {
         status: 'PAID',
         paidAt: new Date(),
       },
-      include: { subscription: true },
     });
   }
 
@@ -166,26 +154,28 @@ export class SubscriptionService {
     byStatus: Record<SubscriptionStatus, number>;
     totalRevenue: number;
   }> {
-    const [total, basic, premium, institution, active, inactive, canceled, expired, revenue] = await Promise.all([
-      prisma.subscription.count(),
-      prisma.subscription.count({ where: { plan: 'BASIC' } }),
-      prisma.subscription.count({ where: { plan: 'PREMIUM' } }),
-      prisma.subscription.count({ where: { plan: 'INSTITUTION' } }),
-      prisma.subscription.count({ where: { status: 'ACTIVE' } }),
-      prisma.subscription.count({ where: { status: 'INACTIVE' } }),
-      prisma.subscription.count({ where: { status: 'CANCELED' } }),
-      prisma.subscription.count({ where: { status: 'EXPIRED' } }),
-      prisma.invoice.aggregate({
-        where: { status: 'PAID' },
-        _sum: { amount: true },
-      }),
-    ]);
+    const [total, free, basic, premium, institution, active, inactive, canceled, expired, revenue] =
+      await Promise.all([
+        prisma.subscription.count(),
+        prisma.subscription.count({ where: { plan: 'FREE' } }),
+        prisma.subscription.count({ where: { plan: 'BASIC' } }),
+        prisma.subscription.count({ where: { plan: 'PREMIUM' } }),
+        prisma.subscription.count({ where: { plan: 'INSTITUTION' } }),
+        prisma.subscription.count({ where: { status: 'ACTIVE' } }),
+        prisma.subscription.count({ where: { status: 'INACTIVE' } }),
+        prisma.subscription.count({ where: { status: 'CANCELED' } }),
+        prisma.subscription.count({ where: { status: 'EXPIRED' } }),
+        prisma.invoice.aggregate({
+          where: { status: 'PAID' },
+          _sum: { amount: true },
+        }),
+      ]);
 
     return {
       totalSubscriptions: total,
-      byPlan: { FREE: 0, BASIC: basic, PREMIUM: premium, INSTITUTION: institution },
+      byPlan: { FREE: free, BASIC: basic, PREMIUM: premium, INSTITUTION: institution },
       byStatus: { ACTIVE: active, INACTIVE: inactive, CANCELED: canceled, EXPIRED: expired },
-      totalRevenue: revenue._sum.amount || 0,
+      totalRevenue: revenue._sum.amount ?? 0,
     };
   }
 }
