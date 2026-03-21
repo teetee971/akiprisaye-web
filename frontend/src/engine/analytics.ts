@@ -97,7 +97,7 @@ export function getCTAVariant(): 'A' | 'B' {
 }
 
 export const CTA_LABELS: Record<'A' | 'B', string> = {
-  A: 'Voir le meilleur prix maintenant →',
+  A: '🔥 Voir le prix le moins cher maintenant',
   B: 'Acheter au meilleur prix →',
 };
 

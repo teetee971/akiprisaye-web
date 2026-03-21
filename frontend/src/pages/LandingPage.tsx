@@ -19,6 +19,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { SEOHead }   from '../components/ui/SEOHead';
 import { PrimaryCTA } from '../components/PrimaryCTA';
+import { PrimaryConversionBlock } from '../components/conversion/PrimaryConversionBlock';
 import { formatEur } from '../utils/currency';
 import { SITE_URL } from '../utils/seoHelpers';
 import { buildRetailerUrl } from '../utils/retailerLinks';
@@ -306,7 +307,26 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── 2b. TOP DEALS (V2 pipeline alerts) ──────────────────────────────── */}
+      {/* ── 2b. BEST DEAL HERO — dominant product CTA block ─────────────────── */}
+      {topDeals.length > 0 && (
+        <section className="mx-auto max-w-md px-4 pb-2">
+          <PrimaryConversionBlock
+            products={topDeals.map((d) => ({
+              id:        d.slug ?? d.name,
+              name:      d.name,
+              price:     d.bestPrice,
+              score:     d.scoreFinal,
+              priceDrop: d.bestPrice && d.delta ? d.delta / (d.bestPrice + d.delta) : undefined,
+              trending:  d.tier === 'viral',
+              retailer:  d.bestRetailer,
+              url:       d.slug ? `/produit/${d.slug}` : '/comparateur',
+              territory: d.territory,
+            }))}
+          />
+        </section>
+      )}
+
+      {/* ── 2c. TOP DEALS LIST (V2 pipeline alerts) ──────────────────────────── */}
       {topDeals.length > 0 && (
         <TopDealsSection
           deals={topDeals}
