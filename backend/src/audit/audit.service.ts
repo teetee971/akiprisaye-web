@@ -68,8 +68,9 @@ export class AuditService {
     const auditLog = await this.prisma.auditLog.create({
       data: {
         userId: data.userId,
-        userRole: data.userRole,
+        userRole: data.userRole as string,
         action: data.action,
+        entityType: data.entity ?? 'system',
         entityId: data.entityId,
         result: data.result,
         ipAddress: data.ip,

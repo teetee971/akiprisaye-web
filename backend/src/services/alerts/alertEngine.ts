@@ -3,11 +3,8 @@
  * Detects when price alerts should be triggered based on price updates
  */
 
-import { PrismaClient } from '@prisma/client';
 import type { PriceUpdate, TriggeredAlert, AlertCheckResult, PriceAlert } from './alertTypes.js';
 import { alertService } from './alertService.js';
-
-const _prisma = new PrismaClient();
 
 export class AlertEngine {
   /**

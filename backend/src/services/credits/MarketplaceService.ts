@@ -39,40 +39,37 @@ export class MarketplaceService {
    * @returns Liste des offres
    */
   async getOffers(filters?: {
-    type?: 'PREMIUM_SUBSCRIPTION' | 'DONATION' | 'PARTNER_PRODUCT' | 'CASH' | 'OTHER';
+    type?: string;
     available?: boolean;
   }): Promise<MarketplaceOffer[]> {
-    const now = new Date();
+    const where: { type?: string; status?: string } = {};
+    
+    if (filters?.type) {
+      where.type = filters.type;
+    }
+    
+    // Only return active offers
+    where.status = 'ACTIVE';
     
     const offers = await this.prisma.marketplaceOffer.findMany({
-      where: {
-        type: filters?.type,
-        available: filters?.available !== false,
-        OR: [
-          { expiresAt: null },
-          { expiresAt: { gt: now } },
-        ],
-      },
-      orderBy: { creditCost: 'asc' },
+      where,
+      orderBy: { price: 'asc' },
     });
     
-    // Filtrer ceux avec stock > 0
+    // Filter offers with stock > 0
     return offers
-      .filter(offer => offer.stock === null || offer.stock > 0)
+      .filter(offer => offer.quantity > 0)
       .map(offer => ({
         id: offer.id,
-        type: offer.type.toLowerCase() as 'premium_subscription' | 'donation' | 'partner_product' | 'cash' | 'other',
-        name: offer.name,
-        description: offer.description,
-        imageUrl: offer.imageUrl || undefined,
-        creditCost: offer.creditCost,
-        monetaryValue: offer.monetaryValue,
-        available: offer.available,
-        stock: offer.stock || undefined,
-        partnerId: offer.partnerId || undefined,
-        donationTarget: offer.donationTarget || undefined,
+        type: (offer.type || 'other').toLowerCase() as 'premium_subscription' | 'donation' | 'partner_product' | 'cash' | 'other',
+        name: offer.title,
+        description: offer.description || undefined,
+        imageUrl: undefined,
+        creditCost: Math.round(offer.price),
+        monetaryValue: Math.round(offer.price),
+        available: offer.status === 'ACTIVE',
+        stock: offer.quantity,
         createdAt: offer.createdAt,
-        expiresAt: offer.expiresAt || undefined,
       }));
   }
 
@@ -91,25 +88,22 @@ export class MarketplaceService {
       where: { id: offerId },
     });
     
-    if (!offer || !offer.available) {
+    if (!offer || offer.status !== 'ACTIVE') {
       throw new Error('Offer not available');
     }
     
-    // Vérifier expiration
-    if (offer.expiresAt && offer.expiresAt < new Date()) {
-      throw new Error('Offer expired');
-    }
-    
     // Vérifier stock
-    if (offer.stock !== null && offer.stock <= 0) {
+    if (offer.quantity <= 0) {
       throw new Error('Out of stock');
     }
     
+    const creditCost = Math.round(offer.price);
+    
     // Vérifier balance
     const balance = await this.creditsService.getBalance(userId);
-    if (balance.total < offer.creditCost) {
+    if (balance.total < creditCost) {
       throw new InsufficientCreditsError(
-        `Insufficient credits. Available: ${balance.total}, Required: ${offer.creditCost}`
+        `Insufficient credits. Available: ${balance.total}, Required: ${creditCost}`
       );
     }
     
@@ -117,154 +111,47 @@ export class MarketplaceService {
       // Dépenser crédits
       await this.creditsService.spendCredits(
         userId,
-        offer.creditCost,
-        `Marketplace: ${offer.name}`,
+        creditCost,
+        `Marketplace: ${offer.title}`,
         { offerId }
       );
       
       // Créer achat
       const purchase = await tx.marketplacePurchase.create({
         data: {
-          userId,
+          buyerId: userId,
           offerId,
-          creditCost: offer.creditCost,
+          quantity: 1,
+          totalPrice: creditCost,
           status: 'PENDING',
         },
       });
       
       // Décrémenter stock
-      if (offer.stock !== null) {
-        await tx.marketplaceOffer.update({
-          where: { id: offerId },
-          data: { stock: { decrement: 1 } },
-        });
-      }
+      await tx.marketplaceOffer.update({
+        where: { id: offerId },
+        data: { quantity: { decrement: 1 } },
+      });
       
-      // Traiter l'achat selon type
-      const fulfillmentData = await this.fulfillPurchase(purchase, offer, tx);
-      
-      // Mettre à jour avec fulfillment data
+      // Compléter l'achat
       const updatedPurchase = await tx.marketplacePurchase.update({
         where: { id: purchase.id },
-        data: {
-          fulfillmentData: fulfillmentData ? JSON.stringify(fulfillmentData) : null,
-          status: 'COMPLETED',
-          completedAt: new Date(),
-        },
+        data: { status: 'COMPLETED' },
       });
       
       return updatedPurchase;
     });
     
     // Note: Notification sera gérée par le système de notifications externe
-    // await notificationService.send(userId, { type: 'marketplace_purchase', ... });
     
     return {
       id: result.id,
-      userId: result.userId,
+      userId: result.buyerId,
       offerId: result.offerId,
-      creditCost: result.creditCost,
+      creditCost: result.totalPrice,
       status: result.status.toLowerCase() as 'pending' | 'completed' | 'failed' | 'cancelled',
-      fulfillmentData: result.fulfillmentData ? JSON.parse(result.fulfillmentData) : undefined,
       createdAt: result.createdAt,
-      completedAt: result.completedAt || undefined,
     };
-  }
-
-  /**
-   * Traiter un achat selon son type
-   * (Méthode privée)
-   * 
-   * @param purchase - Achat à traiter
-   * @param offer - Offre achetée
-   * @param tx - Transaction Prisma
-   * @returns Données de fulfillment
-   */
-  private async fulfillPurchase(
-    purchase: { id: string; userId: string; offerId: string; creditCost: number },
-    offer: {
-      id: string;
-      type: string;
-      name: string;
-      partnerId: string | null;
-      donationTarget: string | null;
-      monetaryValue: number;
-    },
-    tx: Omit<PrismaClient, '$connect' | '$disconnect' | '$on' | '$transaction' | '$use' | '$extends'>
-  ): Promise<Record<string, unknown> | null> {
-    switch (offer.type) {
-      case 'PREMIUM_SUBSCRIPTION':
-        // Note: L'activation d'abonnement sera gérée par SubscriptionService
-        // Pour l'instant, on retourne juste les détails
-        return {
-          type: 'premium_subscription',
-          message: 'Premium subscription will be activated',
-          duration: '1 month',
-        };
-        
-      case 'DONATION':
-        // Créer enregistrement de don
-        await tx.donation.create({
-          data: {
-            userId: purchase.userId,
-            target: offer.donationTarget || 'Unknown',
-            amount: offer.monetaryValue,
-            method: 'credits',
-            status: 'completed',
-          },
-        });
-        
-        return {
-          type: 'donation',
-          target: offer.donationTarget,
-          amount: offer.monetaryValue / 100, // Convertir en euros
-          message: `Don de ${offer.monetaryValue / 100}€ effectué à ${offer.donationTarget}`,
-        };
-        
-      case 'PARTNER_PRODUCT':
-        // Générer code promo partenaire
-        // Note: Intégration avec partenaires sera faite séparément
-        const voucherCode = this.generateVoucherCode(offer.partnerId || 'PARTNER');
-        
-        return {
-          type: 'partner_product',
-          partnerId: offer.partnerId,
-          voucherCode,
-          value: offer.monetaryValue / 100,
-          message: `Code promo: ${voucherCode}`,
-        };
-        
-      case 'CASH':
-        // Créer demande de retrait
-        await this.creditsService.redeemCredits(
-          purchase.userId,
-          purchase.creditCost,
-          'bank_transfer',
-          { purchaseId: purchase.id }
-        );
-        
-        return {
-          type: 'cash',
-          amount: offer.monetaryValue / 100,
-          message: `Demande de retrait de ${offer.monetaryValue / 100}€ créée`,
-        };
-        
-      default:
-        return null;
-    }
-  }
-
-  /**
-   * Générer un code promo unique
-   * (Méthode privée)
-   * 
-   * @param partnerId - ID du partenaire
-   * @returns Code promo
-   */
-  private generateVoucherCode(partnerId: string): string {
-    const prefix = partnerId.toUpperCase().substring(0, 4);
-    const random = Math.random().toString(36).substring(2, 10).toUpperCase();
-    return `${prefix}-${random}`;
   }
 
   /**
@@ -279,23 +166,18 @@ export class MarketplaceService {
     limit: number = 50
   ): Promise<MarketplacePurchase[]> {
     const purchases = await this.prisma.marketplacePurchase.findMany({
-      where: { userId },
-      include: {
-        offer: true,
-      },
+      where: { buyerId: userId },
       orderBy: { createdAt: 'desc' },
       take: limit,
     });
     
     return purchases.map(p => ({
       id: p.id,
-      userId: p.userId,
+      userId: p.buyerId,
       offerId: p.offerId,
-      creditCost: p.creditCost,
+      creditCost: p.totalPrice,
       status: p.status.toLowerCase() as 'pending' | 'completed' | 'failed' | 'cancelled',
-      fulfillmentData: p.fulfillmentData ? JSON.parse(p.fulfillmentData) : undefined,
       createdAt: p.createdAt,
-      completedAt: p.completedAt || undefined,
     }));
   }
 }

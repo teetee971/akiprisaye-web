@@ -44,32 +44,24 @@ export class AnalyticsService {
     sector: string,
     dateRange: DateRange
   ): Promise<MarketOverview> {
-    // Récupérer les prix pour le territoire et secteur
-    const prices = await this.prisma.price.findMany({
+    // Récupérer les observations de prix pour le territoire et secteur
+    const observations = await this.prisma.priceObservation.findMany({
       where: {
-        store: {
-          territory,
-        },
-        product: {
-          category: sector,
-        },
-        effectiveDate: {
+        territory: territory.toString(),
+        category: sector,
+        observedAt: {
           gte: dateRange.startDate,
           lte: dateRange.endDate,
         },
       },
-      include: {
-        product: true,
-        store: true,
-      },
     });
     
-    if (prices.length === 0) {
+    if (observations.length === 0) {
       return this.getEmptyMarketOverview(territory, sector, dateRange);
     }
     
     // Calculer statistiques de base
-    const priceValues = prices.map(p => p.price);
+    const priceValues = observations.map(p => p.price);
     const avgPrice = priceValues.reduce((sum, p) => sum + p, 0) / priceValues.length;
     
     // Prix index (100 = prix moyen)
@@ -77,19 +69,15 @@ export class AnalyticsService {
     
     // Calculer volatilité (écart-type)
     const variance = priceValues.reduce((sum, p) => sum + Math.pow(p - avgPrice, 2), 0) / priceValues.length;
-    const volatility = Math.sqrt(variance) / avgPrice * 100; // Coefficient de variation
+    const volatility = Math.sqrt(variance) / avgPrice * 100;
     
     // Changement de prix (comparer début vs fin période)
-    const priceChange = await this.calculatePriceChange(prices, dateRange);
+    const priceChange = await this.calculatePriceChangeFromObservations(observations, dateRange);
     
     // Top produits chers/abordables
-    const productPrices = this.aggregatePricesByProduct(prices);
-    const topExpensive = productPrices
-      .sort((a, b) => b.averagePrice - a.averagePrice)
-      .slice(0, 10);
-    const topAffordable = productPrices
-      .sort((a, b) => a.averagePrice - b.averagePrice)
-      .slice(0, 10);
+    const productPrices = this.aggregatePricesByProductLabel(observations);
+    const topExpensive = [...productPrices].sort((a, b) => b.averagePrice - a.averagePrice).slice(0, 10);
+    const topAffordable = [...productPrices].sort((a, b) => a.averagePrice - b.averagePrice).slice(0, 10);
     
     // Compter contributeurs uniques (approximation via transactions de crédits)
     const contributions = await this.prisma.creditTransaction.count({
@@ -146,35 +134,24 @@ export class AnalyticsService {
     sector: string,
     territory: Territory
   ): Promise<MarketShareData> {
-    // Calculer mentions par marque (via les prix enregistrés)
+    // Calculer mentions par marque (via les observations de prix)
     const threeMonthsAgo = new Date();
     threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
     
-    const prices = await this.prisma.price.findMany({
+    const observations = await this.prisma.priceObservation.findMany({
       where: {
-        store: {
-          territory,
-        },
-        product: {
-          category: sector,
-        },
-        createdAt: {
+        territory: territory.toString(),
+        category: sector,
+        observedAt: {
           gte: threeMonthsAgo,
-        },
-      },
-      include: {
-        store: {
-          include: {
-            brand: true,
-          },
         },
       },
     });
     
     // Compter mentions par marque
     const mentions: Record<string, number> = {};
-    prices.forEach(p => {
-      const brand = p.store.brand.name;
+    observations.forEach(obs => {
+      const brand = obs.brand || 'Inconnu';
       mentions[brand] = (mentions[brand] || 0) + 1;
     });
     
@@ -183,8 +160,8 @@ export class AnalyticsService {
     const shares = Object.entries(mentions).map(([brand, count]) => ({
       brand,
       mentions: count,
-      estimatedShare: (count / total) * 100,
-      trend: 'stable' as const, // Simplification - trend nécessiterait analyse temporelle
+      estimatedShare: total > 0 ? (count / total) * 100 : 0,
+      trend: 'stable' as const,
     })).sort((a, b) => b.estimatedShare - a.estimatedShare);
     
     // Évaluer qualité des données
@@ -214,28 +191,24 @@ export class AnalyticsService {
     const startDate = new Date();
     startDate.setMonth(startDate.getMonth() - period);
     
-    const prices = await this.prisma.price.findMany({
+    const observations = await this.prisma.priceObservation.findMany({
       where: {
-        store: {
-          territory,
-        },
-        product: {
-          category,
-        },
-        effectiveDate: {
+        territory: territory.toString(),
+        category,
+        observedAt: {
           gte: startDate,
         },
       },
       orderBy: {
-        effectiveDate: 'asc',
+        observedAt: 'asc',
       },
     });
     
     // Agréger par semaine
     const weeklyData: Record<string, number[]> = {};
     
-    prices.forEach(price => {
-      const date = new Date(price.effectiveDate);
+    observations.forEach(obs => {
+      const date = new Date(obs.observedAt);
       // Début de semaine (lundi)
       const monday = new Date(date);
       monday.setDate(date.getDate() - date.getDay() + 1);
@@ -244,7 +217,7 @@ export class AnalyticsService {
       if (!weeklyData[weekKey]) {
         weeklyData[weekKey] = [];
       }
-      weeklyData[weekKey].push(price.price);
+      weeklyData[weekKey].push(obs.price);
     });
     
     const timeSeries = Object.entries(weeklyData)
@@ -391,41 +364,42 @@ export class AnalyticsService {
     };
   }
 
-  private calculatePriceChange(
-    prices: Array<{ price: number; effectiveDate: Date }>,
+  private calculatePriceChangeFromObservations(
+    observations: Array<{ price: number; observedAt: Date }>,
     _dateRange: DateRange
   ): number {
-    if (prices.length < 2) return 0;
+    if (observations.length < 2) return 0;
     
-    const sorted = [...prices].sort((a, b) => 
-      a.effectiveDate.getTime() - b.effectiveDate.getTime()
+    const sorted = [...observations].sort((a, b) => 
+      a.observedAt.getTime() - b.observedAt.getTime()
     );
     
-    const firstPrices = sorted.slice(0, Math.max(1, sorted.length / 10));
-    const lastPrices = sorted.slice(-Math.max(1, sorted.length / 10));
+    const firstPrices = sorted.slice(0, Math.max(1, Math.floor(sorted.length / 10)));
+    const lastPrices = sorted.slice(-Math.max(1, Math.floor(sorted.length / 10)));
     
     const firstAvg = firstPrices.reduce((sum, p) => sum + p.price, 0) / firstPrices.length;
     const lastAvg = lastPrices.reduce((sum, p) => sum + p.price, 0) / lastPrices.length;
     
-    return ((lastAvg - firstAvg) / firstAvg) * 100;
+    return firstAvg > 0 ? ((lastAvg - firstAvg) / firstAvg) * 100 : 0;
   }
 
-  private aggregatePricesByProduct(
-    prices: Array<{ price: number; product: { id: string; name: string; category: string } }>
+  private aggregatePricesByProductLabel(
+    observations: Array<{ price: number; normalizedLabel: string; category: string | null }>
   ) {
-    const productMap: Record<string, { prices: number[]; product: typeof prices[0]['product'] }> = {};
+    const productMap: Record<string, { prices: number[]; label: string; category: string | null }> = {};
     
-    prices.forEach(p => {
-      if (!productMap[p.product.id]) {
-        productMap[p.product.id] = { prices: [], product: p.product };
+    observations.forEach(obs => {
+      const key = obs.normalizedLabel;
+      if (!productMap[key]) {
+        productMap[key] = { prices: [], label: obs.normalizedLabel, category: obs.category };
       }
-      productMap[p.product.id].prices.push(p.price);
+      productMap[key].prices.push(obs.price);
     });
     
-    return Object.values(productMap).map(({ prices, product }) => ({
-      id: product.id,
-      name: product.name,
-      category: product.category,
+    return Object.values(productMap).map(({ prices, label, category }) => ({
+      id: label,
+      name: label,
+      category: category || '',
       averagePrice: prices.reduce((sum, p) => sum + p, 0) / prices.length,
       priceChange: undefined,
     }));

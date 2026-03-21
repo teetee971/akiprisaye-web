@@ -44,7 +44,7 @@ export class LegalEntityService {
    */
   async create(data: CreateLegalEntityInput): Promise<LegalEntity> {
     // Vérification de l'unicité du SIREN
-    const existingSiren = await this.prisma.legalEntity.findUnique({
+    const existingSiren = await this.prisma.legalEntity.findFirst({
       where: { siren: data.siren },
     });
 
@@ -91,7 +91,7 @@ export class LegalEntityService {
    * @returns L'entité légale ou null si non trouvée
    */
   async findBySiren(siren: string): Promise<LegalEntity | null> {
-    return await this.prisma.legalEntity.findUnique({
+    return await this.prisma.legalEntity.findFirst({
       where: { siren },
     });
   }

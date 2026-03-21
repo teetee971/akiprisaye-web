@@ -126,7 +126,7 @@ Aucune donnée falsifiée ou simulée.
   private static getPaymentMethodLabel(method?: Invoice['paymentMethod']): string {
     if (!method) return 'Non spécifié';
     
-    const labels: Record<Invoice['paymentMethod'], string> = {
+    const labels: Record<NonNullable<Invoice['paymentMethod']>, string> = {
       card: 'Carte bancaire',
       bank_transfer: 'Virement bancaire',
       institutional_deferred: 'Paiement institutionnel différé',

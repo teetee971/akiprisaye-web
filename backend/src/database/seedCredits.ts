@@ -8,36 +8,17 @@
  */
 
 import { PrismaClient } from '@prisma/client';
-import { DEFAULT_MARKETPLACE_OFFERS } from '../config/marketplaceOffers.js';
 
 const prisma = new PrismaClient();
 
 async function main() {
   console.log('🌱 Seeding credits system data...');
 
-  // Seed marketplace offers
-  console.log('📦 Seeding marketplace offers...');
-  
-  for (const offer of DEFAULT_MARKETPLACE_OFFERS) {
-    await prisma.marketplaceOffer.upsert({
-      where: {
-        // Use a compound key based on type and name
-        id: `${offer.type}-${offer.name}`.toLowerCase().replace(/\s+/g, '-'),
-      },
-      update: {
-        ...offer,
-        type: offer.type.toUpperCase() as any,
-      },
-      create: {
-        id: `${offer.type}-${offer.name}`.toLowerCase().replace(/\s+/g, '-'),
-        ...offer,
-        type: offer.type.toUpperCase() as any,
-      },
-    });
-  }
-  
-  console.log(`✅ Seeded ${DEFAULT_MARKETPLACE_OFFERS.length} marketplace offers`);
-  
+  // Note: marketplace offers seed skipped — DEFAULT_MARKETPLACE_OFFERS uses a legacy interface
+  // that does not match the current Prisma marketplaceOffer schema (sellerId, productId, title, price, quantity).
+  // Seed marketplace offers manually via the admin API or a dedicated migration script.
+  console.log('ℹ️  Marketplace offers seed skipped (schema mismatch — use admin API to seed offers)');
+
   // Log summary
   const offersCount = await prisma.marketplaceOffer.count();
   console.log(`\n📊 Database summary:`);

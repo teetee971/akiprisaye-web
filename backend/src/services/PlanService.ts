@@ -88,7 +88,7 @@ export type Feature = keyof typeof FEATURES;
  * Check if a plan has access to a specific feature
  */
 export const canUse = (plan: Plan, feature: Feature): boolean => {
-  return FEATURES[feature].includes(plan);
+  return (FEATURES[feature] as readonly string[]).includes(plan);
 };
 
 /**
@@ -101,7 +101,7 @@ export const getTerritoryPrice = (
   territory?: string
 ): number | null => {
   const basePrice = PLAN_PRICES[plan][billingCycle];
-  if (basePrice === null || basePrice === 0) return basePrice;
+  if (basePrice === null) return null;
   
   // Territory-specific pricing adjustments
   // DOM-ROM territories may have adjusted pricing
@@ -186,7 +186,7 @@ export const getFeatures = (plan: Plan): Feature[] => {
   const features: Feature[] = [];
   
   for (const [feature, plans] of Object.entries(FEATURES)) {
-    if (plans.includes(plan)) {
+    if ((plans as readonly string[]).includes(plan)) {
       features.push(feature as Feature);
     }
   }
@@ -200,7 +200,7 @@ export const getFeatures = (plan: Plan): Feature[] => {
 export const getAccessDeniedMessage = (feature: Feature, currentPlan: Plan): string => {
   const requiredPlans = FEATURES[feature];
   
-  if (!requiredPlans || requiredPlans.length === 0) {
+  if (!requiredPlans) {
     return 'Cette fonctionnalité n\'est pas disponible';
   }
   

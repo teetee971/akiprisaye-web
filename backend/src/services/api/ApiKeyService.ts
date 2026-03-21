@@ -101,8 +101,8 @@ export class ApiKeyService {
       data: {
         userId,
         name,
+        key,
         keyHash,
-        prefix: this.API_KEY_PREFIX,
         permissions: finalPermissions,
         rateLimitDay: rateLimits.requestsPerDay,
         rateLimitHour: rateLimits.requestsPerHour,
@@ -132,10 +132,9 @@ export class ApiKeyService {
       throw new Error('Format de clé API invalide');
     }
 
-    // Récupérer toutes les clés actives avec ce préfixe
+    // Récupérer toutes les clés actives
     const apiKeys = await this.prisma.apiKey.findMany({
       where: {
-        prefix: this.API_KEY_PREFIX,
         status: ApiKeyStatus.ACTIVE,
       },
     });
@@ -147,10 +146,10 @@ export class ApiKeyService {
       if (isValid) {
         // Vérifier l'expiration
         if (apiKey.expiresAt && apiKey.expiresAt < new Date()) {
-          // Marquer comme expirée
+          // Marquer comme révoquée (expirée)
           await this.prisma.apiKey.update({
             where: { id: apiKey.id },
-            data: { status: ApiKeyStatus.EXPIRED },
+            data: { status: ApiKeyStatus.REVOKED },
           });
           throw new Error('Clé API expirée');
         }
@@ -234,7 +233,6 @@ export class ApiKeyService {
         method,
         statusCode,
         responseTime,
-        clientIp,
       },
     });
   }

@@ -14,11 +14,8 @@ export interface PriceAlert {
   
   alertType: AlertType;
   targetPrice?: number | null;
-  percentageThreshold?: number | null;
   
-  storeIds?: string[];
   territory?: string | null;
-  chains?: string[];
   
   notifyEmail: boolean;
   notifyPush: boolean;
@@ -37,10 +34,7 @@ export interface CreateAlertInput {
   productId: string;
   alertType: AlertType;
   targetPrice?: number;
-  percentageThreshold?: number;
-  storeIds?: string[];
   territory?: string;
-  chains?: string[];
   notifyEmail?: boolean;
   notifyPush?: boolean;
   notifySms?: boolean;
@@ -50,10 +44,7 @@ export interface CreateAlertInput {
 export interface UpdateAlertInput {
   alertType?: AlertType;
   targetPrice?: number;
-  percentageThreshold?: number;
-  storeIds?: string[];
   territory?: string;
-  chains?: string[];
   notifyEmail?: boolean;
   notifyPush?: boolean;
   notifySms?: boolean;
