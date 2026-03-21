@@ -92,7 +92,7 @@ const boosted = products.map((p) => {
     ...p,
     clicks,
     boost:       shouldBoost,
-    score:       shouldBoost ? Math.min(100, (p.score ?? 0) + BOOST_SCORE) : (p.score ?? 0),
+    score:       shouldBoost ? Math.min(100, (p.globalScore ?? p.score ?? 0) + BOOST_SCORE) : (p.globalScore ?? p.score ?? 0),
     boostedAt:   shouldBoost ? new Date().toISOString() : undefined,
   };
 });

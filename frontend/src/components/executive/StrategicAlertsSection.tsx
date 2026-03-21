@@ -16,7 +16,7 @@ const severityStyles: Record<StrategicRisk['severity'], string> = {
   critical: 'border-red-600 bg-red-950',
   high: 'border-orange-600 bg-orange-950',
   medium: 'border-yellow-600 bg-yellow-950',
-  low: 'border-gray-600 bg-gray-850',
+  low: 'border-gray-600 bg-gray-800',
 };
 
 const severityLabel: Record<StrategicRisk['severity'], string> = {

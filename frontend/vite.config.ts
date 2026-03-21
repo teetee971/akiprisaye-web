@@ -39,13 +39,16 @@ export default defineConfig({
     // simply omitted — harmless and clean.
     {
       name: 'google-site-verification',
-      transformIndexHtml(html: string): string {
+      transformIndexHtml() {
         const token = process.env.VITE_GOOGLE_SITE_VERIFICATION?.trim();
-        if (!token) return html;
-        return html.replace(
-          '    <meta name="robots"',
-          `    <meta name="google-site-verification" content="${token}" />\n    <meta name="robots"`,
-        );
+        if (!token) return [];
+        return [
+          {
+            tag: 'meta',
+            attrs: { name: 'google-site-verification', content: token },
+            injectTo: 'head' as const,
+          },
+        ];
       },
     },
   ],

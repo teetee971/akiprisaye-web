@@ -112,7 +112,7 @@ export function computeKpis(): AnalyticsKpis {
 
   const views     = events.filter((e) => e.type === 'view_product').length;
   const clicks    = events.filter((e) => e.type === 'cta_click').length;
-  const favorites = events.filter((e) => e.type === 'add_favorite').length;
+  const favorites = events.filter((e) => e.type === 'add_favorite' && e.action !== 'remove').length;
 
   // Top products by click count
   const clickMap: Record<string, number> = {};

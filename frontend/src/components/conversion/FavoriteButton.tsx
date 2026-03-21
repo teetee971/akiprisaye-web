@@ -17,7 +17,7 @@ export function FavoriteButton({ productId, className = '', onToggle }: Favorite
     const next = !fav;
     toggleFavorite('products', productId);
     setFav(next);
-    logEvent('add_favorite', { id: productId, action: next ? 'add' : 'remove' });
+    logEvent(next ? 'add_favorite' : 'remove_favorite', { id: productId });
     onToggle?.(next);
   }
 

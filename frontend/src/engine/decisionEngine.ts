@@ -73,7 +73,7 @@ export function generateDecisions(
   }
 
   // Medium: B2B outreach
-  if (risks.filter(r => r.severity !== 'critical').length >= 0 && signals.totalProducts >= 20) {
+  if (risks.filter(r => r.severity !== 'critical').length > 0 && signals.totalProducts >= 20) {
     add({ id: 'd-b2b', priority: 'medium', category: 'b2b', title: 'Initier la démarche partenaire B2B', rationale: 'Le système est suffisamment mature pour proposer une valeur aux enseignes.', actions: ['Contacter 3 enseignes avec le deck B2B', 'Proposer le pack Starter à 99€/mois', 'Préparer les données territoire dans un rapport PDF'] });
   }
 

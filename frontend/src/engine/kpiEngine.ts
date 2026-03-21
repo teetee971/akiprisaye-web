@@ -27,7 +27,7 @@ export interface PlatformKPI {
  */
 export function computePlatformKPIs(signals: PlatformSignals): PlatformKPI[] {
   const ctr = signals.affiliateClicks30d > 0 && signals.totalProducts > 0
-    ? parseFloat((signals.affiliateClicks30d / (signals.totalProducts * 10)).toFixed(3))
+    ? parseFloat(((signals.affiliateClicks30d / (signals.totalProducts * 10)) * 100).toFixed(1))
     : 0;
 
   return [

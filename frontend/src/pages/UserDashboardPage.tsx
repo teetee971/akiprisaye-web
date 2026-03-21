@@ -30,7 +30,7 @@ function loadTopDeals(): ConversionProduct[] {
     0.10,
     10,
   ).map((d, idx) => ({
-    id:        d.slug ?? `deal-${idx}`,
+    id:        d.slug || `deal-${idx}`,
     name:      d.name,
     price:     d.bestPrice,
     score:     d.scoreFinal,
@@ -50,8 +50,18 @@ export function UserDashboardPage() {
   // Top deals from pipeline (same source as LandingPage)
   const topDeals = useMemo(() => loadTopDeals(), []);
 
-  // Favorites from localStorage
-  const favStore = useMemo(() => getFavorites(), []);
+  // Favorites from localStorage — reactive to changes from FavoriteButton
+  const [favStore, setFavStore] = useState(() => getFavorites());
+
+  useEffect(() => {
+    function onStorage(e: StorageEvent) {
+      if (e.key === null || e.key.startsWith('akp:favorites')) {
+        setFavStore(getFavorites());
+      }
+    }
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, []);
 
   const favoriteItems: FavoriteItem[] = useMemo(() =>
     favStore.products.map((id) => {
