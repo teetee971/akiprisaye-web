@@ -16,14 +16,14 @@ import RequireAdmin from './components/auth/RequireAdmin';
 import { logDebug } from './utils/logger';
 
 // ── Parallel preloading ──────────────────────────────────────────────────────
-// All three provider modules start downloading immediately when this module is
-// evaluated — NOT when React first tries to render them.  Because these are
-// pre-evaluated promises (not factory functions), the browser can download all
-// three in parallel during the single Suspense loading phase.
-// vendor-i18n (21 kB gzip) and Firebase (144 kB gzip) no longer block first paint.
-const _langProviderImport  = import('./context/LanguageProvider');
-const _authProviderImport  = import('./contexts/AuthContext');
-const _entitImport         = import('./billing/EntitlementProvider');
+// LanguageProvider (i18next, ~21 kB gzip): preloaded eagerly so text content
+// is available on first render without a Suspense waterfall.
+// AuthProvider (Firebase, ~144 kB gzip) and EntitlementProvider (billing) are
+// NOT preloaded eagerly — their downloads now start when React first hits the
+// Suspense boundary (not at module-eval time).  This avoids competing for
+// bandwidth with the LCP image and critical JS on throttled mobile connections.
+// The Suspense phase is slightly longer but FCP/LCP improve on slow networks.
+const _langProviderImport = import('./context/LanguageProvider');
 
 const LanguageProvider = lazy(() =>
   _langProviderImport.then((m) => ({ default: m.LanguageProvider }))
@@ -31,10 +31,10 @@ const LanguageProvider = lazy(() =>
 
 // Heavy providers — lazy-loaded so Firebase (485 kB) doesn't block first paint.
 const AuthProvider = lazy(() =>
-  _authProviderImport.then((m) => ({ default: m.AuthProvider }))
+  import('./contexts/AuthContext').then((m) => ({ default: m.AuthProvider }))
 );
 const EntitlementProvider = lazy(() =>
-  _entitImport.then((m) => ({ default: m.EntitlementProvider }))
+  import('./billing/EntitlementProvider').then((m) => ({ default: m.EntitlementProvider }))
 );
 
 // Non-critical UI/tracking — lazy-loaded so they don't block initial paint

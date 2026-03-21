@@ -143,10 +143,15 @@ export default defineConfig({
           if (id.includes('@firebase/') || id.includes('firebase/')) {
             return 'vendor-firebase';
           }
-          // ── Icons (lucide-react — large, split to own chunk) ──────────────
-          if (id.includes('lucide-react')) {
-            return 'vendor-icons';
-          }
+          // ── Icons (lucide-react) ─────────────────────────────────────────
+          // NOTE: intentionally NOT in manualChunks — same rationale as vendor-charts,
+          // vendor-leaflet, and vendor-i18n.  Header.tsx imports lucide-react synchronously
+          // (critical path); forcing it into a named 'vendor-icons' chunk caused Vite's
+          // __vite__preload helper to migrate there and added it as a static modulepreload
+          // in the main entry, keeping lucide-react on the critical path with an extra
+          // HTTP round-trip.  With Footer now lazy-loaded, lucide-react naturally
+          // tree-shakes into the Layout/Header chunk with zero extra preload overhead.
+          // Let Rollup auto-split: icons used by lazy pages go into their own chunks.
           // ── i18n ──────────────────────────────────────────────────────────
           // NOTE: intentionally NOT in manualChunks — same pattern as vendor-charts.
           // LanguageProvider is lazy-loaded in App.tsx, so i18next and react-i18next
