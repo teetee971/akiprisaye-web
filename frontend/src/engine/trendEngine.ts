@@ -79,10 +79,17 @@ export function normaliseTrend(trend: number): number {
 /**
  * Compute a human-readable trend label.
  */
-export function trendLabel(trend: number): TrendedProduct['trendLabel'] {
+export function trendLabel(
+  trend: number,
+  events?: Pick<ProductEventWindow, 'last24h' | 'previous24h'>,
+): TrendedProduct['trendLabel'] {
   if (trend > 0.2)  return 'rising';
   if (trend < -0.2) return 'falling';
-  if (trend === 0)  return 'new';
+  // trend === 0: distinguish "new activity" from "no signal / stable"
+  if (trend === 0) {
+    if (events && events.previous24h === 0 && events.last24h > 0) return 'new';
+    return 'stable';
+  }
   return 'stable';
 }
 
