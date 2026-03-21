@@ -1,5 +1,14 @@
 /**
- * Leaderboard Service - Manages rankings and leaderboards
+ * Leaderboard Service - Manages rankings and leaderboards.
+ * Aligned with Prisma schema: userGamification (no relations, uses userId string).
+ *
+ * Schema facts:
+ * - userGamification.totalPoints (not totalXP)
+ * - userGamification.level (not currentLevel)
+ * - userGamification.priceReportsCount, verificationsCount, photosCount, receiptsCount
+ * - No user, badges, pointsHistory relations on userGamification
+ * - pointsTransaction linked by userId (not userGamificationId)
+ * - userBadge linked by userId
  */
 
 import { PrismaClient } from '@prisma/client';
@@ -34,32 +43,18 @@ export interface UserRank {
 }
 
 /**
- * Get leaderboard
+ * Get leaderboard.
  */
 export async function getLeaderboard(filters: LeaderboardFilters): Promise<LeaderboardEntry[]> {
   const limit = filters.limit || 100;
 
-  // Base query
-  let orderBy: any = { totalXP: 'desc' };
-
-  // Get all users with gamification data
+  // Fetch all gamification profiles sorted by totalPoints
   const users = await prisma.userGamification.findMany({
-    orderBy,
+    orderBy: { totalPoints: 'desc' },
     take: limit,
-    include: {
-      user: {
-        select: {
-          id: true,
-          name: true,
-          email: true
-        }
-      },
-      badges: true,
-      pointsHistory: true
-    }
   });
 
-  // Calculate period-specific XP if needed
+  // Calculate period-specific points if needed
   let periodStart: Date | null = null;
 
   if (filters.period === 'monthly') {
@@ -71,70 +66,68 @@ export async function getLeaderboard(filters: LeaderboardFilters): Promise<Leade
     periodStart.setDate(now.getDate() - now.getDay());
   }
 
-  // Build leaderboard entries
-  const entries: LeaderboardEntry[] = users.map((user, index) => {
-    const levelData = calculateLevel(user.totalXP);
+  // Fetch badge counts per user
+  const badgeCountsByUser = await prisma.userBadge.groupBy({
+    by: ['userId'],
+    _count: { userId: true },
+  });
+  const badgeCountMap = new Map(badgeCountsByUser.map(b => [b.userId, b._count.userId]));
 
-    let periodXP = user.totalXP;
-    if (periodStart) {
-      periodXP = user.pointsHistory
-        .filter(tx => tx.createdAt >= periodStart!)
-        .reduce((sum, tx) => sum + tx.points + tx.bonusPoints, 0);
+  // Fetch period-specific points if needed
+  let periodPointsMap = new Map<string, number>();
+  if (periodStart) {
+    const txs = await prisma.pointsTransaction.findMany({
+      where: { createdAt: { gte: periodStart } },
+      select: { userId: true, points: true },
+    });
+    for (const tx of txs) {
+      periodPointsMap.set(tx.userId, (periodPointsMap.get(tx.userId) ?? 0) + tx.points);
     }
+  }
+
+  const entries: LeaderboardEntry[] = users.map((user, index) => {
+    const levelData = calculateLevel(user.totalPoints);
+    const periodXP = periodStart ? (periodPointsMap.get(user.userId) ?? 0) : user.totalPoints;
 
     return {
       rank: index + 1,
       userId: user.userId,
-      username: user.user.name || user.user.email.split('@')[0],
+      username: user.userId,
       level: levelData.currentLevel.level,
       levelIcon: levelData.currentLevel.icon,
-      totalXP: user.totalXP,
+      totalXP: user.totalPoints,
       monthlyXP: filters.period === 'monthly' ? periodXP : undefined,
       weeklyXP: filters.period === 'weekly' ? periodXP : undefined,
       currentStreak: user.currentStreak,
-      badgeCount: user.badges.length
+      badgeCount: badgeCountMap.get(user.userId) ?? 0,
     };
   });
 
-  // Sort by period XP if needed
+  // Re-sort by period XP if needed
   if (filters.period !== 'all_time') {
     entries.sort((a, b) => {
-      const aXP = filters.period === 'monthly' ? (a.monthlyXP || 0) : (a.weeklyXP || 0);
-      const bXP = filters.period === 'monthly' ? (b.monthlyXP || 0) : (b.weeklyXP || 0);
+      const aXP = filters.period === 'monthly' ? (a.monthlyXP ?? 0) : (a.weeklyXP ?? 0);
+      const bXP = filters.period === 'monthly' ? (b.monthlyXP ?? 0) : (b.weeklyXP ?? 0);
       return bXP - aXP;
     });
-
-    // Update ranks
-    entries.forEach((entry, index) => {
-      entry.rank = index + 1;
-    });
+    entries.forEach((entry, index) => { entry.rank = index + 1; });
   }
 
   return entries;
 }
 
 /**
- * Get user's rank
+ * Get user's rank.
  */
-export async function getUserRank(
-  userId: string,
-  filters: LeaderboardFilters
-): Promise<UserRank> {
-  // Get all users ordered by XP
+export async function getUserRank(userId: string, filters: LeaderboardFilters): Promise<UserRank> {
   const allUsers = await prisma.userGamification.findMany({
-    orderBy: { totalXP: 'desc' },
-    select: {
-      userId: true,
-      totalXP: true,
-      pointsHistory: true
-    }
+    orderBy: { totalPoints: 'desc' },
+    select: { userId: true, totalPoints: true },
   });
 
   const totalUsers = allUsers.length;
 
-  // Calculate period-specific XP if needed
   let periodStart: Date | null = null;
-
   if (filters.period === 'monthly') {
     const now = new Date();
     periodStart = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -144,62 +137,51 @@ export async function getUserRank(
     periodStart.setDate(now.getDate() - now.getDay());
   }
 
-  // Calculate rankings
-  const rankings = allUsers.map(user => {
-    let xp = user.totalXP;
-    
-    if (periodStart) {
-      xp = user.pointsHistory
-        .filter(tx => tx.createdAt >= periodStart!)
-        .reduce((sum, tx) => sum + tx.points + tx.bonusPoints, 0);
+  let rankings: Array<{ userId: string; xp: number }>;
+
+  if (periodStart) {
+    const txs = await prisma.pointsTransaction.findMany({
+      where: { createdAt: { gte: periodStart } },
+      select: { userId: true, points: true },
+    });
+    const map = new Map<string, number>();
+    for (const tx of txs) {
+      map.set(tx.userId, (map.get(tx.userId) ?? 0) + tx.points);
     }
+    rankings = allUsers.map(u => ({ userId: u.userId, xp: map.get(u.userId) ?? 0 }));
+    rankings.sort((a, b) => b.xp - a.xp);
+  } else {
+    rankings = allUsers.map(u => ({ userId: u.userId, xp: u.totalPoints }));
+  }
 
-    return { userId: user.userId, xp };
-  });
-
-  // Sort by XP
-  rankings.sort((a, b) => b.xp - a.xp);
-
-  // Find user's rank
   const rank = rankings.findIndex(r => r.userId === userId) + 1;
 
   if (rank === 0) {
-    // User not found
-    return {
-      rank: totalUsers + 1,
-      totalUsers,
-      percentile: 0
-    };
+    return { rank: totalUsers + 1, totalUsers, percentile: 0 };
   }
 
-  const percentile = totalUsers > 0 
+  const percentile = totalUsers > 0
     ? Math.round(((totalUsers - rank + 1) / totalUsers) * 100)
     : 0;
 
-  return {
-    rank,
-    totalUsers,
-    percentile
-  };
+  return { rank, totalUsers, percentile };
 }
 
 /**
- * Get territory leaderboard
+ * Get territory leaderboard (delegates to global leaderboard — territory tracking TBD).
  */
 export async function getTerritoryLeaderboard(
   territory: string,
   limit: number = 10
 ): Promise<LeaderboardEntry[]> {
-  // This would require territory tracking in user profile
-  // For now, return general leaderboard
   return getLeaderboard({ period: 'all_time', territory, limit });
 }
 
 /**
- * Get top contributors
+ * Get top contributors by metric.
  */
 export async function getTopContributors(
-  metric: 'prices' | 'verifications' | 'products',
+  metric: 'prices' | 'verifications' | 'photos',
   limit: number = 10
 ): Promise<Array<{
   userId: string;
@@ -208,62 +190,35 @@ export async function getTopContributors(
   level: number;
   levelIcon: string;
 }>> {
-  let orderBy: any = {};
-
-  switch (metric) {
-    case 'prices':
-      orderBy = { pricesSubmitted: 'desc' };
-      break;
-    case 'verifications':
-      orderBy = { pricesVerified: 'desc' };
-      break;
-    case 'products':
-      orderBy = { productsAdded: 'desc' };
-      break;
-  }
+  const orderBy =
+    metric === 'prices'        ? { priceReportsCount: 'desc' as const } :
+    metric === 'verifications' ? { verificationsCount: 'desc' as const } :
+                                 { photosCount: 'desc' as const };
 
   const users = await prisma.userGamification.findMany({
     orderBy,
     take: limit,
-    include: {
-      user: {
-        select: {
-          id: true,
-          name: true,
-          email: true
-        }
-      }
-    }
   });
 
   return users.map(user => {
-    const levelData = calculateLevel(user.totalXP);
-    let count = 0;
-
-    switch (metric) {
-      case 'prices':
-        count = user.pricesSubmitted;
-        break;
-      case 'verifications':
-        count = user.pricesVerified;
-        break;
-      case 'products':
-        count = user.productsAdded;
-        break;
-    }
+    const levelData = calculateLevel(user.totalPoints);
+    const count =
+      metric === 'prices'        ? user.priceReportsCount :
+      metric === 'verifications' ? user.verificationsCount :
+                                   user.photosCount;
 
     return {
       userId: user.userId,
-      username: user.user.name || user.user.email.split('@')[0],
+      username: user.userId,
       count,
       level: levelData.currentLevel.level,
-      levelIcon: levelData.currentLevel.icon
+      levelIcon: levelData.currentLevel.icon,
     };
   });
 }
 
 /**
- * Get leaderboard statistics
+ * Get leaderboard statistics.
  */
 export async function getLeaderboardStats(): Promise<{
   totalUsers: number;
@@ -273,76 +228,57 @@ export async function getLeaderboardStats(): Promise<{
   totalBadges: number;
 }> {
   const users = await prisma.userGamification.findMany({
-    include: {
-      badges: true
-    }
+    select: { totalPoints: true, level: true },
   });
 
   const totalUsers = users.length;
-  const totalXP = users.reduce((sum, u) => sum + u.totalXP, 0);
+  const totalXP = users.reduce((sum, u) => sum + u.totalPoints, 0);
   const averageXP = totalUsers > 0 ? Math.round(totalXP / totalUsers) : 0;
-  
-  const topLevel = totalUsers > 0
-    ? Math.max(...users.map(u => calculateLevel(u.totalXP).currentLevel.level))
-    : 0;
+  const topLevel = totalUsers > 0 ? Math.max(...users.map(u => u.level)) : 0;
+  const totalBadges = await prisma.userBadge.count();
 
-  const totalBadges = users.reduce((sum, u) => sum + u.badges.length, 0);
-
-  return {
-    totalUsers,
-    totalXP,
-    averageXP,
-    topLevel,
-    totalBadges
-  };
+  return { totalUsers, totalXP, averageXP, topLevel, totalBadges };
 }
 
 /**
- * Get user's neighbors on leaderboard (users above and below)
+ * Get neighboring entries on the leaderboard for a user.
  */
 export async function getLeaderboardNeighbors(
   userId: string,
   range: number = 3
 ): Promise<LeaderboardEntry[]> {
-  // Get user's rank first
   const userRank = await getUserRank(userId, { period: 'all_time' });
 
-  if (userRank.rank === 0) {
-    return [];
-  }
+  if (userRank.rank === 0) return [];
 
-  // Get users in range
   const startRank = Math.max(1, userRank.rank - range);
   const endRank = userRank.rank + range;
 
   const users = await prisma.userGamification.findMany({
-    orderBy: { totalXP: 'desc' },
+    orderBy: { totalPoints: 'desc' },
     skip: startRank - 1,
     take: endRank - startRank + 1,
-    include: {
-      user: {
-        select: {
-          id: true,
-          name: true,
-          email: true
-        }
-      },
-      badges: true
-    }
   });
 
-  return users.map((user, index) => {
-    const levelData = calculateLevel(user.totalXP);
+  const badgeCountsByUser = await prisma.userBadge.groupBy({
+    by: ['userId'],
+    where: { userId: { in: users.map(u => u.userId) } },
+    _count: { userId: true },
+  });
+  const badgeCountMap = new Map(badgeCountsByUser.map(b => [b.userId, b._count.userId]));
 
+  return users.map((user, index) => {
+    const levelData = calculateLevel(user.totalPoints);
     return {
       rank: startRank + index,
       userId: user.userId,
-      username: user.user.name || user.user.email.split('@')[0],
+      username: user.userId,
       level: levelData.currentLevel.level,
       levelIcon: levelData.currentLevel.icon,
-      totalXP: user.totalXP,
+      totalXP: user.totalPoints,
       currentStreak: user.currentStreak,
-      badgeCount: user.badges.length
+      badgeCount: badgeCountMap.get(user.userId) ?? 0,
     };
   });
 }
+

@@ -1,5 +1,16 @@
 /**
- * Challenge Service - Manages challenges (daily, weekly, monthly)
+ * Challenge Service - Manages challenges (daily, weekly, monthly).
+ * Aligned with Prisma schema: challenge and userChallenge models.
+ *
+ * Schema facts:
+ * - challenge: id, code (unique), name, description, type (ChallengeType),
+ *              startDate, endDate, target (Int), reward (Int), isActive
+ * - userChallenge: id, userId, challengeCode, progress, completed, completedAt
+ *   @@unique([userId, challengeCode])
+ * - No icon, conditionType, conditionValue, xpReward, startsAt, endsAt, badgeReward fields
+ * - No relation from userGamification to userChallenge (linked via userId/challengeCode)
+ * - PointAction values that map to challenge progress tracking:
+ *   PRICE_REPORT, PRICE_VERIFY, PHOTO_UPLOAD, RECEIPT_SCAN
  */
 
 import { PrismaClient, ChallengeType } from '@prisma/client';
@@ -13,15 +24,14 @@ export interface ChallengeCondition {
 
 export interface Challenge {
   id: string;
+  code: string;
   name: string;
   description: string;
-  icon: string;
   type: ChallengeType;
   condition: ChallengeCondition;
-  xpReward: number;
-  badgeReward?: string;
-  startsAt: Date;
-  endsAt: Date;
+  reward: number;
+  startDate: Date;
+  endDate: Date;
   isActive: boolean;
 }
 
@@ -29,68 +39,26 @@ export interface UserChallenge {
   challenge: Challenge;
   progress: number;
   progressMax: number;
-  isCompleted: boolean;
+  completed: boolean;
   completedAt?: Date;
 }
 
-// Weekly challenge templates
+// Weekly challenge templates (code must be stable for upsert)
 const WEEKLY_CHALLENGE_TEMPLATES = [
-  { 
-    id: 'scan_10_tickets', 
-    name: 'Scanner 10 tickets', 
-    description: 'Scannez 10 tickets de caisse cette semaine',
-    icon: '📸',
-    condition: { type: 'prices_submitted', count: 10 }, 
-    xpReward: 100 
-  },
-  { 
-    id: 'visit_3_chains', 
-    name: 'Visiter 3 enseignes', 
-    description: 'Visitez 3 enseignes différentes cette semaine',
-    icon: '🏪',
-    condition: { type: 'unique_chains_week', count: 3 }, 
-    xpReward: 50 
-  },
-  { 
-    id: 'verify_20_prices', 
-    name: 'Vérifier 20 prix', 
-    description: 'Vérifiez 20 prix cette semaine',
-    icon: '✅',
-    condition: { type: 'prices_verified', count: 20 }, 
-    xpReward: 75 
-  },
-  { 
-    id: 'add_product', 
-    name: 'Ajouter un nouveau produit', 
-    description: 'Ajoutez un nouveau produit à la base de données',
-    icon: '➕',
-    condition: { type: 'products_added', count: 1 }, 
-    xpReward: 50 
-  },
+  { code: 'weekly_scan_10',     name: 'Scanner 10 tickets',     description: 'Scannez 10 tickets de caisse cette semaine',         conditionType: 'receipts_scanned',  target: 10, reward: 100 },
+  { code: 'weekly_verify_20',   name: 'Vérifier 20 prix',        description: 'Vérifiez 20 prix cette semaine',                     conditionType: 'prices_verified',   target: 20, reward: 75  },
+  { code: 'weekly_photos_5',    name: 'Uploader 5 photos',       description: 'Partagez 5 photos de rayons cette semaine',          conditionType: 'photos_uploaded',   target: 5,  reward: 50  },
+  { code: 'weekly_report_3',    name: 'Signaler 3 prix',         description: 'Signalez 3 nouvelles observations de prix',          conditionType: 'prices_reported',   target: 3,  reward: 50  },
 ];
 
 // Daily challenge templates
 const DAILY_CHALLENGE_TEMPLATES = [
-  { 
-    id: 'daily_scan', 
-    name: 'Scanner du jour', 
-    description: 'Scannez un ticket aujourd\'hui',
-    icon: '📱',
-    condition: { type: 'prices_submitted', count: 1 }, 
-    xpReward: 20 
-  },
-  { 
-    id: 'daily_verify', 
-    name: 'Vérification quotidienne', 
-    description: 'Vérifiez 3 prix aujourd\'hui',
-    icon: '👀',
-    condition: { type: 'prices_verified', count: 3 }, 
-    xpReward: 15 
-  },
+  { code: 'daily_scan',    name: 'Scanner du jour',          description: "Scannez un ticket aujourd'hui",    conditionType: 'receipts_scanned', target: 1, reward: 20 },
+  { code: 'daily_verify',  name: 'Vérification quotidienne', description: 'Vérifiez 3 prix aujourd\'hui',     conditionType: 'prices_verified',  target: 3, reward: 15 },
 ];
 
 /**
- * Generate weekly challenges
+ * Upsert weekly challenges for the current week.
  */
 export async function generateWeeklyChallenges(): Promise<Challenge[]> {
   const now = new Date();
@@ -101,46 +69,40 @@ export async function generateWeeklyChallenges(): Promise<Challenge[]> {
   const endOfWeek = new Date(startOfWeek);
   endOfWeek.setDate(startOfWeek.getDate() + 7);
 
-  // Deactivate old weekly challenges
-  await prisma.challenge.updateMany({
-    where: {
-      type: 'WEEKLY',
-      endsAt: { lt: now }
-    },
-    data: { isActive: false }
-  });
-
-  // Create new challenges
   const challenges: Challenge[] = [];
 
   for (const template of WEEKLY_CHALLENGE_TEMPLATES) {
-    const challenge = await prisma.challenge.create({
-      data: {
+    const challenge = await prisma.challenge.upsert({
+      where: { code: template.code },
+      update: {
+        startDate: startOfWeek,
+        endDate: endOfWeek,
+        isActive: true,
+      },
+      create: {
+        code: template.code,
         name: template.name,
         description: template.description,
-        icon: template.icon,
         type: 'WEEKLY',
-        conditionType: template.condition.type,
-        conditionValue: template.condition.count,
-        xpReward: template.xpReward,
-        startsAt: startOfWeek,
-        endsAt: endOfWeek,
-        isActive: true
-      }
+        startDate: startOfWeek,
+        endDate: endOfWeek,
+        target: template.target,
+        reward: template.reward,
+        isActive: true,
+      },
     });
 
     challenges.push({
       id: challenge.id,
+      code: challenge.code,
       name: challenge.name,
       description: challenge.description,
-      icon: challenge.icon,
       type: challenge.type,
-      condition: { type: challenge.conditionType, count: challenge.conditionValue },
-      xpReward: challenge.xpReward,
-      badgeReward: challenge.badgeReward || undefined,
-      startsAt: challenge.startsAt,
-      endsAt: challenge.endsAt,
-      isActive: challenge.isActive
+      condition: { type: template.conditionType, count: challenge.target },
+      reward: challenge.reward,
+      startDate: challenge.startDate,
+      endDate: challenge.endDate,
+      isActive: challenge.isActive,
     });
   }
 
@@ -148,7 +110,7 @@ export async function generateWeeklyChallenges(): Promise<Challenge[]> {
 }
 
 /**
- * Generate daily challenges
+ * Upsert daily challenges for today.
  */
 export async function generateDailyChallenges(): Promise<Challenge[]> {
   const now = new Date();
@@ -156,137 +118,114 @@ export async function generateDailyChallenges(): Promise<Challenge[]> {
   const endOfDay = new Date(startOfDay);
   endOfDay.setDate(startOfDay.getDate() + 1);
 
-  // Deactivate old daily challenges
-  await prisma.challenge.updateMany({
-    where: {
-      type: 'DAILY',
-      endsAt: { lt: now }
-    },
-    data: { isActive: false }
-  });
-
-  // Create new challenges
   const challenges: Challenge[] = [];
 
   for (const template of DAILY_CHALLENGE_TEMPLATES) {
-    const challenge = await prisma.challenge.create({
-      data: {
+    const challenge = await prisma.challenge.upsert({
+      where: { code: template.code },
+      update: {
+        startDate: startOfDay,
+        endDate: endOfDay,
+        isActive: true,
+      },
+      create: {
+        code: template.code,
         name: template.name,
         description: template.description,
-        icon: template.icon,
         type: 'DAILY',
-        conditionType: template.condition.type,
-        conditionValue: template.condition.count,
-        xpReward: template.xpReward,
-        startsAt: startOfDay,
-        endsAt: endOfDay,
-        isActive: true
-      }
+        startDate: startOfDay,
+        endDate: endOfDay,
+        target: template.target,
+        reward: template.reward,
+        isActive: true,
+      },
     });
 
     challenges.push({
       id: challenge.id,
+      code: challenge.code,
       name: challenge.name,
       description: challenge.description,
-      icon: challenge.icon,
       type: challenge.type,
-      condition: { type: challenge.conditionType, count: challenge.conditionValue },
-      xpReward: challenge.xpReward,
-      badgeReward: challenge.badgeReward || undefined,
-      startsAt: challenge.startsAt,
-      endsAt: challenge.endsAt,
-      isActive: challenge.isActive
+      condition: { type: template.conditionType, count: challenge.target },
+      reward: challenge.reward,
+      startDate: challenge.startDate,
+      endDate: challenge.endDate,
+      isActive: challenge.isActive,
     });
   }
 
   return challenges;
 }
 
+/** Resolve which conditionType a challenge uses (from its template). */
+function resolveConditionType(challengeCode: string): string {
+  const allTemplates = [...WEEKLY_CHALLENGE_TEMPLATES, ...DAILY_CHALLENGE_TEMPLATES];
+  return allTemplates.find(t => t.code === challengeCode)?.conditionType ?? 'unknown';
+}
+
 /**
- * Get active challenges for user
+ * Get active challenges for a user and return their progress.
  */
 export async function getActiveChallenges(userId: string): Promise<UserChallenge[]> {
   const now = new Date();
 
-  // Get active challenges
-  const challenges = await prisma.challenge.findMany({
+  const activeChallenges = await prisma.challenge.findMany({
     where: {
       isActive: true,
-      startsAt: { lte: now },
-      endsAt: { gte: now }
-    }
+      startDate: { lte: now },
+      endDate: { gte: now },
+    },
   });
 
-  // Get or create user gamification profile
-  let userGamification = await prisma.userGamification.findUnique({
-    where: { userId },
-    include: {
-      challenges: true
-    }
-  });
-
-  if (!userGamification) {
-    userGamification = await prisma.userGamification.create({
-      data: { userId },
-      include: { challenges: true }
-    });
-  }
-
-  // Calculate progress for each challenge
   const userChallenges: UserChallenge[] = [];
 
-  for (const challenge of challenges) {
-    // Get user's challenge record
-    let userChallenge = userGamification.challenges.find(uc => uc.challengeId === challenge.id);
+  for (const challenge of activeChallenges) {
+    // Get or create userChallenge record
+    let uc = await prisma.userChallenge.findUnique({
+      where: { userId_challengeCode: { userId, challengeCode: challenge.code } },
+    });
 
-    // Create if doesn't exist
-    if (!userChallenge) {
-      userChallenge = await prisma.userChallenge.create({
-        data: {
-          userGamificationId: userGamification.id,
-          challengeId: challenge.id,
-          progress: 0
-        }
+    if (!uc) {
+      uc = await prisma.userChallenge.create({
+        data: { userId, challengeCode: challenge.code, progress: 0 },
       });
     }
 
-    // Calculate current progress based on user stats
-    const currentProgress = await calculateChallengeProgress(
-      userId,
-      challenge.conditionType,
-      challenge.startsAt
-    );
+    // Recalculate current progress from pointsTransaction log
+    const conditionType = resolveConditionType(challenge.code);
+    const currentProgress = await calculateChallengeProgress(userId, conditionType, challenge.startDate);
 
-    // Update progress if changed
-    if (currentProgress !== userChallenge.progress && !userChallenge.isCompleted) {
-      userChallenge = await prisma.userChallenge.update({
-        where: { id: userChallenge.id },
-        data: { 
+    // Update progress if it changed and challenge is not yet completed
+    if (currentProgress !== uc.progress && !uc.completed) {
+      const nowCompleted = currentProgress >= challenge.target;
+      uc = await prisma.userChallenge.update({
+        where: { id: uc.id },
+        data: {
           progress: currentProgress,
-          isCompleted: currentProgress >= challenge.conditionValue,
-          completedAt: currentProgress >= challenge.conditionValue ? new Date() : undefined
-        }
+          completed: nowCompleted,
+          completedAt: nowCompleted ? new Date() : undefined,
+        },
       });
     }
 
     userChallenges.push({
       challenge: {
         id: challenge.id,
+        code: challenge.code,
         name: challenge.name,
         description: challenge.description,
-        icon: challenge.icon,
         type: challenge.type,
-        condition: { type: challenge.conditionType, count: challenge.conditionValue },
-        xpReward: challenge.xpReward,
-        badgeReward: challenge.badgeReward || undefined,
-        startsAt: challenge.startsAt,
-        endsAt: challenge.endsAt,
-        isActive: challenge.isActive
+        condition: { type: conditionType, count: challenge.target },
+        reward: challenge.reward,
+        startDate: challenge.startDate,
+        endDate: challenge.endDate,
+        isActive: challenge.isActive,
       },
-      progress: userChallenge.progress,
-      progressMax: challenge.conditionValue,
-      isCompleted: userChallenge.isCompleted,
-      completedAt: userChallenge.completedAt || undefined
+      progress: uc.progress,
+      progressMax: challenge.target,
+      completed: uc.completed,
+      completedAt: uc.completedAt ?? undefined,
     });
   }
 
@@ -294,142 +233,109 @@ export async function getActiveChallenges(userId: string): Promise<UserChallenge
 }
 
 /**
- * Calculate challenge progress based on user stats
+ * Calculate how many times a user has performed an action since startDate
+ * by counting relevant pointsTransaction records.
  */
 async function calculateChallengeProgress(
   userId: string,
   conditionType: string,
   startDate: Date
 ): Promise<number> {
-  const userGamification = await prisma.userGamification.findUnique({
-    where: { userId },
-    include: {
-      pointsHistory: {
-        where: {
-          createdAt: { gte: startDate }
-        }
-      }
-    }
+  // Map conditionType → PointAction(s)
+  const actionMap: Record<string, string[]> = {
+    receipts_scanned: ['RECEIPT_SCAN'],
+    prices_verified:  ['PRICE_VERIFY'],
+    photos_uploaded:  ['PHOTO_UPLOAD'],
+    prices_reported:  ['PRICE_REPORT'],
+  };
+
+  const actions = actionMap[conditionType];
+  if (!actions) return 0;
+
+  return prisma.pointsTransaction.count({
+    where: {
+      userId,
+      action: { in: actions as never[] },
+      createdAt: { gte: startDate },
+    },
   });
-
-  if (!userGamification) {
-    return 0;
-  }
-
-  switch (conditionType) {
-    case 'prices_submitted':
-      return userGamification.pointsHistory.filter(
-        tx => tx.action === 'SUBMIT_PRICE'
-      ).length;
-
-    case 'prices_verified':
-      return userGamification.pointsHistory.filter(
-        tx => tx.action === 'VERIFY_PRICE'
-      ).length;
-
-    case 'products_added':
-      return userGamification.pointsHistory.filter(
-        tx => tx.action === 'ADD_PRODUCT'
-      ).length;
-
-    case 'unique_chains_week':
-      // This would require tracking unique chains
-      // For now, return estimated value
-      return 0;
-
-    default:
-      return 0;
-  }
 }
 
 /**
- * Update challenge progress
+ * Increment challenge progress for a user based on an action string.
+ * This is called after a user performs an action.
  */
-export async function updateChallengeProgress(
-  userId: string,
-  action: string
-): Promise<void> {
-  // Get user's active challenges
+export async function updateChallengeProgress(userId: string, action: string): Promise<void> {
   const activeChallenges = await getActiveChallenges(userId);
 
-  // Update progress for relevant challenges
-  for (const userChallenge of activeChallenges) {
-    if (userChallenge.isCompleted) {
-      continue;
-    }
+  // Map action strings to conditionTypes
+  const actionToCondition: Record<string, string> = {
+    PRICE_REPORT: 'prices_reported',
+    PRICE_VERIFY: 'prices_verified',
+    PHOTO_UPLOAD: 'photos_uploaded',
+    RECEIPT_SCAN: 'receipts_scanned',
+  };
 
-    // Check if action matches challenge type
-    let shouldIncrement = false;
+  const conditionType = actionToCondition[action];
+  if (!conditionType) return;
 
-    if (action === 'SUBMIT_PRICE' && userChallenge.challenge.condition.type === 'prices_submitted') {
-      shouldIncrement = true;
-    } else if (action === 'VERIFY_PRICE' && userChallenge.challenge.condition.type === 'prices_verified') {
-      shouldIncrement = true;
-    } else if (action === 'ADD_PRODUCT' && userChallenge.challenge.condition.type === 'products_added') {
-      shouldIncrement = true;
-    }
+  for (const uc of activeChallenges) {
+    if (uc.completed) continue;
+    if (uc.challenge.condition.type !== conditionType) continue;
 
-    if (shouldIncrement) {
-      const newProgress = userChallenge.progress + 1;
-      const isCompleted = newProgress >= userChallenge.progressMax;
+    const newProgress = uc.progress + 1;
+    const isCompleted = newProgress >= uc.progressMax;
 
-      const userGamification = await prisma.userGamification.findUnique({
-        where: { userId }
-      });
-
-      if (userGamification) {
-        await prisma.userChallenge.updateMany({
-          where: {
-            userGamificationId: userGamification.id,
-            challengeId: userChallenge.challenge.id
-          },
-          data: {
-            progress: newProgress,
-            isCompleted,
-            completedAt: isCompleted ? new Date() : undefined
-          }
-        });
-      }
-    }
+    await prisma.userChallenge.update({
+      where: { userId_challengeCode: { userId, challengeCode: uc.challenge.code } },
+      data: {
+        progress: newProgress,
+        completed: isCompleted,
+        completedAt: isCompleted ? new Date() : undefined,
+      },
+    });
   }
 }
 
 /**
- * Get completed challenges for user
+ * Get completed challenges for a user.
  */
 export async function getCompletedChallenges(userId: string): Promise<UserChallenge[]> {
-  const userGamification = await prisma.userGamification.findUnique({
-    where: { userId },
-    include: {
-      challenges: {
-        where: { isCompleted: true },
-        include: { challenge: true },
-        orderBy: { completedAt: 'desc' }
-      }
-    }
+  const completedUC = await prisma.userChallenge.findMany({
+    where: { userId, completed: true },
+    orderBy: { completedAt: 'desc' },
   });
 
-  if (!userGamification) {
-    return [];
+  const userChallenges: UserChallenge[] = [];
+
+  for (const uc of completedUC) {
+    const challenge = await prisma.challenge.findUnique({
+      where: { code: uc.challengeCode },
+    });
+    if (!challenge) continue;
+
+    const conditionType = resolveConditionType(challenge.code);
+
+    userChallenges.push({
+      challenge: {
+        id: challenge.id,
+        code: challenge.code,
+        name: challenge.name,
+        description: challenge.description,
+        type: challenge.type,
+        condition: { type: conditionType, count: challenge.target },
+        reward: challenge.reward,
+        startDate: challenge.startDate,
+        endDate: challenge.endDate,
+        isActive: challenge.isActive,
+      },
+      progress: uc.progress,
+      progressMax: challenge.target,
+      completed: uc.completed,
+      completedAt: uc.completedAt ?? undefined,
+    });
   }
 
-  return userGamification.challenges.map(uc => ({
-    challenge: {
-      id: uc.challenge.id,
-      name: uc.challenge.name,
-      description: uc.challenge.description,
-      icon: uc.challenge.icon,
-      type: uc.challenge.type,
-      condition: { type: uc.challenge.conditionType, count: uc.challenge.conditionValue },
-      xpReward: uc.challenge.xpReward,
-      badgeReward: uc.challenge.badgeReward || undefined,
-      startsAt: uc.challenge.startsAt,
-      endsAt: uc.challenge.endsAt,
-      isActive: uc.challenge.isActive
-    },
-    progress: uc.progress,
-    progressMax: uc.challenge.conditionValue,
-    isCompleted: uc.isCompleted,
-    completedAt: uc.completedAt || undefined
-  }));
+  return userChallenges;
 }
+

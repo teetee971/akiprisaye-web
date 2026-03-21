@@ -76,20 +76,6 @@ export class AlertEngine {
       return null;
     }
 
-    // Check store filter
-    if (alert.storeIds && alert.storeIds.length > 0) {
-      if (!alert.storeIds.includes(priceUpdate.storeId)) {
-        return null;
-      }
-    }
-
-    // Check chain filter
-    if (alert.chains && alert.chains.length > 0 && priceUpdate.chain) {
-      if (!alert.chains.includes(priceUpdate.chain)) {
-        return null;
-      }
-    }
-
     // Evaluate based on alert type
     let triggered = false;
     let reason = '';
@@ -127,9 +113,10 @@ export class AlertEngine {
         break;
 
       case 'PRICE_INCREASE':
-        if (priceUpdate.oldPrice && alert.percentageThreshold) {
+        if (priceUpdate.oldPrice) {
           const increase = ((priceUpdate.newPrice - priceUpdate.oldPrice) / priceUpdate.oldPrice) * 100;
-          if (increase > alert.percentageThreshold) {
+          // Trigger on any price increase > 5% (fixed threshold, schema has no percentageThreshold field)
+          if (increase > 5) {
             triggered = true;
             reason = `Le prix a augmenté de ${increase.toFixed(0)}% !`;
           }

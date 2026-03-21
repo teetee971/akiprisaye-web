@@ -1,39 +1,23 @@
 /**
  * Points Service - Manages XP points awards and tracking
+ * Aligned with Prisma schema: PointAction enum and pointsTransaction model.
  */
 
-import { PrismaClient, PointAction } from '@prisma/client';
+import { PrismaClient, PointAction, Prisma } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-export interface PointsConfig {
-  actions: {
-    SUBMIT_PRICE: { base: number; bonusFirstInStore: number };
-    PRICE_VALIDATED: { base: number; bonusHighValidation: number };
-    ADD_PRODUCT: { base: number; bonusValidated: number };
-    REPORT_STORE: { base: number };
-    VERIFY_PRICE: { base: number };
-    STREAK_BONUS: { base: number };
-    REFERRAL: { base: number };
-    CHALLENGE_COMPLETED: { base: number };
-    BADGE_UNLOCKED: { base: number };
-    LEVEL_UP: { base: number };
-  };
-}
-
-export const POINTS_CONFIG: PointsConfig = {
-  actions: {
-    SUBMIT_PRICE: { base: 10, bonusFirstInStore: 5 },
-    PRICE_VALIDATED: { base: 5, bonusHighValidation: 10 },
-    ADD_PRODUCT: { base: 15, bonusValidated: 10 },
-    REPORT_STORE: { base: 25 },
-    VERIFY_PRICE: { base: 3 },
-    STREAK_BONUS: { base: 50 },
-    REFERRAL: { base: 100 },
-    CHALLENGE_COMPLETED: { base: 50 },
-    BADGE_UNLOCKED: { base: 0 },
-    LEVEL_UP: { base: 0 }
-  }
+/** Points awarded per valid PointAction value (schema enum). */
+export const POINTS_CONFIG: Record<PointAction, number> = {
+  PRICE_REPORT: 10,
+  PRICE_VERIFY: 5,
+  PHOTO_UPLOAD: 8,
+  RECEIPT_SCAN: 12,
+  DAILY_LOGIN: 2,
+  STREAK_BONUS: 50,
+  REFERRAL: 100,
+  CHALLENGE_COMPLETE: 50,
+  BADGE_EARNED: 0,
 };
 
 export interface PointsTransaction {
@@ -41,170 +25,122 @@ export interface PointsTransaction {
   userId: string;
   action: PointAction;
   points: number;
-  bonusPoints: number;
   totalPoints: number;
-  reason: string;
-  metadata?: {
-    priceId?: string;
-    productId?: string;
-    storeId?: string;
-    streakDays?: number;
-    referredUserId?: string;
-    challengeId?: string;
-    badgeId?: string;
-    levelReached?: number;
-  };
+  description: string;
+  metadata?: Record<string, unknown>;
   createdAt: Date;
 }
 
 /**
- * Award points to a user for an action
+ * Award points to a user for an action.
+ * Points are stored via pointsTransaction (linked by userId) and
+ * totalPoints is incremented on userGamification.
  */
 export async function awardPoints(
   userId: string,
   action: PointAction,
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 ): Promise<PointsTransaction> {
   // Get or create user gamification profile
-  let userGamification = await prisma.userGamification.findUnique({
-    where: { userId }
+  await prisma.userGamification.upsert({
+    where: { userId },
+    create: { userId },
+    update: {},
   });
 
-  if (!userGamification) {
-    userGamification = await prisma.userGamification.create({
-      data: { userId }
-    });
-  }
-
   // Calculate points
-  const basePoints = POINTS_CONFIG.actions[action]?.base || 0;
-  let bonusPoints = 0;
-  let reason = `${action}`;
+  let points = POINTS_CONFIG[action] ?? 0;
+  let description = `${action}`;
 
-  // Calculate bonuses based on metadata
-  if (action === 'SUBMIT_PRICE' && metadata?.isFirstInStore) {
-    bonusPoints += POINTS_CONFIG.actions.SUBMIT_PRICE.bonusFirstInStore;
-    reason += ' (First in store bonus)';
-  }
-
-  if (action === 'PRICE_VALIDATED' && metadata?.highValidation) {
-    bonusPoints += POINTS_CONFIG.actions.PRICE_VALIDATED.bonusHighValidation;
-    reason += ' (High validation bonus)';
-  }
-
-  if (action === 'ADD_PRODUCT' && metadata?.validated) {
-    bonusPoints += POINTS_CONFIG.actions.ADD_PRODUCT.bonusValidated;
-    reason += ' (Validated product bonus)';
-  }
-
+  // STREAK_BONUS: scale with streak length
   if (action === 'STREAK_BONUS') {
-    const days = metadata?.streakDays || 0;
-    if (days === 7) bonusPoints = 50;
-    else if (days === 30) bonusPoints = 200;
-    else if (days === 100) bonusPoints = 1000;
-    reason = `Streak bonus (${days} days)`;
+    const days = (metadata?.streakDays as number) || 0;
+    if (days >= 100) points = 1000;
+    else if (days >= 30) points = 200;
+    else if (days >= 7) points = 50;
+    description = `Streak bonus (${days} days)`;
   }
 
+  // REFERRAL: bonus for active referrals
   if (action === 'REFERRAL') {
-    const referralType = metadata?.referralType;
-    if (referralType === 'signup') {
-      bonusPoints = 100;
-      reason = 'Referral signup bonus';
-    } else if (referralType === 'active') {
-      bonusPoints = 50;
-      reason = 'Active referral bonus';
-    }
+    const referralType = metadata?.referralType as string | undefined;
+    if (referralType === 'active') points = 150;
+    description = `Referral (${referralType || 'signup'})`;
   }
 
-  if (action === 'BADGE_UNLOCKED') {
-    bonusPoints = metadata?.xpReward || 0;
-    reason = `Badge unlocked: ${metadata?.badgeName || 'Unknown'}`;
+  // BADGE_EARNED: custom points stored in metadata
+  if (action === 'BADGE_EARNED') {
+    points = (metadata?.badgePoints as number) || 0;
+    description = `Badge earned: ${metadata?.badgeName || 'Unknown'}`;
   }
-
-  const totalPoints = basePoints + bonusPoints;
 
   // Create transaction
   const transaction = await prisma.pointsTransaction.create({
     data: {
-      userGamificationId: userGamification.id,
+      userId,
       action,
-      points: basePoints,
-      bonusPoints,
-      reason,
-      metadata: metadata || {}
-    }
+      points,
+      description,
+      metadata: (metadata || {}) as Prisma.InputJsonValue,
+    },
   });
 
-  // Update user total XP
+  // Update user total points
   await prisma.userGamification.update({
-    where: { id: userGamification.id },
-    data: {
-      totalXP: {
-        increment: totalPoints
-      }
-    }
+    where: { userId },
+    data: { totalPoints: { increment: points } },
   });
 
   return {
     id: transaction.id,
     userId,
     action,
-    points: basePoints,
-    bonusPoints,
-    totalPoints,
-    reason,
+    points,
+    totalPoints: points,
+    description,
     metadata,
-    createdAt: transaction.createdAt
+    createdAt: transaction.createdAt,
   };
 }
 
 /**
- * Get user's total points
+ * Get user's total points.
  */
 export async function getUserTotalPoints(userId: string): Promise<number> {
   const userGamification = await prisma.userGamification.findUnique({
-    where: { userId }
+    where: { userId },
   });
 
-  return userGamification?.totalXP || 0;
+  return userGamification?.totalPoints ?? 0;
 }
 
 /**
- * Get user's points history
+ * Get user's points history.
  */
 export async function getPointsHistory(
-  userId: string, 
+  userId: string,
   limit: number = 50
 ): Promise<PointsTransaction[]> {
-  const userGamification = await prisma.userGamification.findUnique({
+  const transactions = await prisma.pointsTransaction.findMany({
     where: { userId },
-    include: {
-      pointsHistory: {
-        orderBy: { createdAt: 'desc' },
-        take: limit
-      }
-    }
+    orderBy: { createdAt: 'desc' },
+    take: limit,
   });
 
-  if (!userGamification) {
-    return [];
-  }
-
-  return userGamification.pointsHistory.map(tx => ({
+  return transactions.map(tx => ({
     id: tx.id,
     userId,
     action: tx.action,
     points: tx.points,
-    bonusPoints: tx.bonusPoints,
-    totalPoints: tx.points + tx.bonusPoints,
-    reason: tx.reason,
-    metadata: tx.metadata as any,
-    createdAt: tx.createdAt
+    totalPoints: tx.points,
+    description: tx.description ?? '',
+    metadata: tx.metadata as Record<string, unknown> | undefined,
+    createdAt: tx.createdAt,
   }));
 }
 
 /**
- * Get points summary for a user
+ * Get points summary for a user.
  */
 export async function getPointsSummary(userId: string): Promise<{
   totalXP: number;
@@ -215,22 +151,10 @@ export async function getPointsSummary(userId: string): Promise<{
 }> {
   const userGamification = await prisma.userGamification.findUnique({
     where: { userId },
-    include: {
-      pointsHistory: {
-        orderBy: { createdAt: 'desc' },
-        take: 10
-      }
-    }
   });
 
   if (!userGamification) {
-    return {
-      totalXP: 0,
-      todayXP: 0,
-      weekXP: 0,
-      monthXP: 0,
-      recentTransactions: []
-    };
+    return { totalXP: 0, todayXP: 0, weekXP: 0, monthXP: 0, recentTransactions: [] };
   }
 
   const now = new Date();
@@ -239,38 +163,44 @@ export async function getPointsSummary(userId: string): Promise<{
   startOfWeek.setDate(now.getDate() - now.getDay());
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
-  // Calculate XP for different periods
+  // Recent transactions for display
+  const recent = await prisma.pointsTransaction.findMany({
+    where: { userId },
+    orderBy: { createdAt: 'desc' },
+    take: 10,
+  });
+
+  // Period-specific aggregates
   const allTransactions = await prisma.pointsTransaction.findMany({
-    where: { userGamificationId: userGamification.id }
+    where: { userId },
   });
 
   const todayXP = allTransactions
     .filter(tx => tx.createdAt >= startOfDay)
-    .reduce((sum, tx) => sum + tx.points + tx.bonusPoints, 0);
+    .reduce((sum, tx) => sum + tx.points, 0);
 
   const weekXP = allTransactions
     .filter(tx => tx.createdAt >= startOfWeek)
-    .reduce((sum, tx) => sum + tx.points + tx.bonusPoints, 0);
+    .reduce((sum, tx) => sum + tx.points, 0);
 
   const monthXP = allTransactions
     .filter(tx => tx.createdAt >= startOfMonth)
-    .reduce((sum, tx) => sum + tx.points + tx.bonusPoints, 0);
+    .reduce((sum, tx) => sum + tx.points, 0);
 
   return {
-    totalXP: userGamification.totalXP,
+    totalXP: userGamification.totalPoints,
     todayXP,
     weekXP,
     monthXP,
-    recentTransactions: userGamification.pointsHistory.map(tx => ({
+    recentTransactions: recent.map(tx => ({
       id: tx.id,
       userId,
       action: tx.action,
       points: tx.points,
-      bonusPoints: tx.bonusPoints,
-      totalPoints: tx.points + tx.bonusPoints,
-      reason: tx.reason,
-      metadata: tx.metadata as any,
-      createdAt: tx.createdAt
-    }))
+      totalPoints: tx.points,
+      description: tx.description ?? '',
+      metadata: tx.metadata as Record<string, unknown> | undefined,
+      createdAt: tx.createdAt,
+    })),
   };
 }

@@ -15,7 +15,7 @@
  * - Audit trail pour redistribution B2B
  */
 
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 import {
   CreditTransaction,
   CreditBalance,
@@ -95,18 +95,7 @@ export class CreditsService {
           type: 'EARN',
           amount,
           description: `Contribution: ${contributionType}`,
-          metadata: metadata ?? undefined,
-        },
-      });
-      
-      // Mettre à jour balance
-      await this.updateBalance(userId, tx);
-      
-      return transaction;
-    });
-    
-    // Note: Notification sera gérée par le système de notifications externe
-    // Note: Vérification badges sera gérée par GamificationService
+          metadata: (metadata ?? undefined) as Prisma.InputJsonValue | undefined,
     
     return {
       id: result.id,
@@ -157,11 +146,7 @@ export class CreditsService {
           type: 'SPEND',
           amount: -amount,
           description: purpose,
-          metadata: metadata ?? undefined,
-        },
-      });
-      
-      await this.updateBalance(userId, tx);
+          metadata: (metadata ?? undefined) as Prisma.InputJsonValue | undefined,
       
       return transaction;
     });
@@ -220,7 +205,7 @@ export class CreditsService {
           type: 'REDEEM',
           amount: -amount,
           description: `Redemption: ${method}`,
-          metadata: { method, details, monetaryValue } as Record<string, unknown>,
+          metadata: { method, details, monetaryValue } as Prisma.InputJsonValue,
         },
       });
       
@@ -313,7 +298,7 @@ export class CreditsService {
       userId: t.userId,
       type: t.type.toLowerCase() as 'earn' | 'spend' | 'redeem' | 'bonus' | 'refund',
       amount: t.amount,
-      source: { type: 'system', verified: false },
+      source: { type: 'bonus' as const, verified: false },
       description: t.description || '',
       metadata: t.metadata as Record<string, unknown> | undefined,
       balance: 0,

@@ -33,15 +33,13 @@ export async function recordActivity(userId: string): Promise<UserStreak> {
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   
-  const lastActivity = userGamification.lastActivityAt;
+  const lastActivity = userGamification.lastActiveDate;
   let newStreak = userGamification.currentStreak;
   let newLongestStreak = userGamification.longestStreak;
-  let streakStart = userGamification.streakStartedAt;
 
   // If no previous activity, start streak
   if (!lastActivity) {
     newStreak = 1;
-    streakStart = today;
   } else {
     const lastActivityDate = new Date(
       lastActivity.getFullYear(),
@@ -62,7 +60,6 @@ export async function recordActivity(userId: string): Promise<UserStreak> {
     } else {
       // Streak broken, reset
       newStreak = 1;
-      streakStart = today;
     }
   }
 
@@ -77,8 +74,7 @@ export async function recordActivity(userId: string): Promise<UserStreak> {
     data: {
       currentStreak: newStreak,
       longestStreak: newLongestStreak,
-      lastActivityAt: now,
-      streakStartedAt: streakStart
+      lastActiveDate: now,
     }
   });
 
@@ -86,8 +82,8 @@ export async function recordActivity(userId: string): Promise<UserStreak> {
     userId,
     currentStreak: updated.currentStreak,
     longestStreak: updated.longestStreak,
-    lastActivityDate: updated.lastActivityAt,
-    streakStartDate: updated.streakStartedAt,
+    lastActivityDate: updated.lastActiveDate,
+    streakStartDate: null,
     isActive: true
   };
 }
@@ -116,11 +112,11 @@ export async function getStreak(userId: string): Promise<UserStreak> {
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   
   let isActive = false;
-  if (userGamification.lastActivityAt) {
+  if (userGamification.lastActiveDate) {
     const lastActivityDate = new Date(
-      userGamification.lastActivityAt.getFullYear(),
-      userGamification.lastActivityAt.getMonth(),
-      userGamification.lastActivityAt.getDate()
+      userGamification.lastActiveDate.getFullYear(),
+      userGamification.lastActiveDate.getMonth(),
+      userGamification.lastActiveDate.getDate()
     );
 
     const daysSinceLastActivity = Math.floor(
@@ -135,8 +131,8 @@ export async function getStreak(userId: string): Promise<UserStreak> {
     userId,
     currentStreak: userGamification.currentStreak,
     longestStreak: userGamification.longestStreak,
-    lastActivityDate: userGamification.lastActivityAt,
-    streakStartDate: userGamification.streakStartedAt,
+    lastActivityDate: userGamification.lastActiveDate,
+    streakStartDate: null,
     isActive
   };
 }
@@ -156,8 +152,8 @@ export async function checkStreakExpiry(): Promise<number> {
         { currentStreak: { gt: 0 } },
         {
           OR: [
-            { lastActivityAt: { lt: yesterday } },
-            { lastActivityAt: null }
+            { lastActiveDate: { lt: yesterday } },
+            { lastActiveDate: null }
           ]
         }
       ]
@@ -170,7 +166,6 @@ export async function checkStreakExpiry(): Promise<number> {
       where: { id: user.id },
       data: {
         currentStreak: 0,
-        streakStartedAt: null
       }
     });
   }
@@ -195,20 +190,11 @@ export async function getStreakLeaderboard(limit: number = 10): Promise<Array<{
       currentStreak: 'desc'
     },
     take: limit,
-    include: {
-      user: {
-        select: {
-          id: true,
-          name: true,
-          email: true
-        }
-      }
-    }
   });
 
   return users.map(u => ({
     userId: u.userId,
-    username: u.user.name || u.user.email.split('@')[0],
+    username: u.userId,
     currentStreak: u.currentStreak,
     longestStreak: u.longestStreak
   }));
@@ -231,7 +217,7 @@ export async function getStreakStats(): Promise<{
     where: {
       AND: [
         { currentStreak: { gt: 0 } },
-        { lastActivityAt: { gte: yesterday } }
+        { lastActiveDate: { gte: yesterday } }
       ]
     }
   });

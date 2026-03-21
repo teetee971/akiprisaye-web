@@ -15,7 +15,7 @@
  * - cash: Retrait d'argent
  */
 
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, EntityStatus, Prisma } from '@prisma/client';
 import {
   MarketplaceOffer,
   MarketplacePurchase,
@@ -42,20 +42,19 @@ export class MarketplaceService {
     type?: string;
     available?: boolean;
   }): Promise<MarketplaceOffer[]> {
-    const where: { type?: string; status?: string } = {};
-    
+    const where: Prisma.marketplaceOfferWhereInput = {
+      status: EntityStatus.ACTIVE,
+    };
+
     if (filters?.type) {
       where.type = filters.type;
     }
-    
-    // Only return active offers
-    where.status = 'ACTIVE';
-    
+
     const offers = await this.prisma.marketplaceOffer.findMany({
       where,
       orderBy: { price: 'asc' },
     });
-    
+
     // Filter offers with stock > 0
     return offers
       .filter(offer => offer.quantity > 0)
@@ -63,11 +62,11 @@ export class MarketplaceService {
         id: offer.id,
         type: (offer.type || 'other').toLowerCase() as 'premium_subscription' | 'donation' | 'partner_product' | 'cash' | 'other',
         name: offer.title,
-        description: offer.description || undefined,
+        description: offer.description || '',
         imageUrl: undefined,
         creditCost: Math.round(offer.price),
         monetaryValue: Math.round(offer.price),
-        available: offer.status === 'ACTIVE',
+        available: offer.status === EntityStatus.ACTIVE,
         stock: offer.quantity,
         createdAt: offer.createdAt,
       }));

@@ -224,7 +224,7 @@ export class ApiKeyService {
     method: string,
     statusCode: number,
     responseTime: number,
-    clientIp?: string
+    _clientIp?: string
   ): Promise<void> {
     await this.prisma.apiUsage.create({
       data: {
