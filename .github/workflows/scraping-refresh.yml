@@ -1,0 +1,92 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# 🔄 Scraping Refresh — Public API price data
+# ─────────────────────────────────────────────────────────────────────────────
+#
+# PURPOSE: Fetch fresh price observations from public APIs (Open Prices /
+#          Open Food Facts, ODbL licence) and merge them with existing data.
+#
+# SOURCES (Level 1 only — no headless browsers, no auth, no anti-bot bypass):
+#   - Open Prices API (prices.openfoodfacts.org) — crowd-sourced, ODbL
+#   - Internal catalogues (frontend/public/data/)
+#
+# SAFE GUARANTEES:
+#   ✅ Never commits or pushes automatically
+#   ✅ No login, no session, no bypass logic
+#   ✅ MAX_PRODUCTS_PER_SOURCE = 100 (hardcoded guard-rail)
+#   ✅ REQUEST_DELAY_MS = 1500 (polite rate-limiting)
+#   ✅ Errors isolated per source — one failure never aborts the pipeline
+#   ✅ Separate from alert-engine.yml
+#
+# TRIGGERS:
+#   - Every 12 hours (automated)
+#   - Manual via workflow_dispatch
+#
+# OUTPUT (artifact, retained 7 days):
+#   scraped-observations.json  — raw per-scraper results
+#   merged-observations.json   — deduplicated, priority-merged
+# ─────────────────────────────────────────────────────────────────────────────
+
+name: 🔄 Scraping Refresh
+
+on:
+  schedule:
+    - cron: '0 */12 * * *'   # Every 12 hours
+  workflow_dispatch:
+
+jobs:
+  scrape:
+    name: Fetch & merge price observations
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Fetch existing pipeline data (API + catalogue)
+        run: node scripts/fetch-price-data.mjs
+        env:
+          NODE_OPTIONS: --max-old-space-size=512
+
+      - name: Fetch scraped data (public APIs only)
+        run: node scripts/fetch-scraped-data.mjs
+        env:
+          NODE_OPTIONS: --max-old-space-size=512
+
+      - name: Merge all observations
+        run: node scripts/merge-all-observations.mjs
+
+      - name: Summarize results
+        run: |
+          echo "## 🔄 Scraping Refresh Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -f data/output/merged-observations.json ]; then
+            COUNT=$(node -e "const d=JSON.parse(require('fs').readFileSync('data/output/merged-observations.json','utf8')); process.stdout.write(String(d.totalCount ?? d.observations?.length ?? 0));")
+            echo "✅ **Merged observations:** $COUNT" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ merged-observations.json not found" >> $GITHUB_STEP_SUMMARY
+          fi
+          if [ -f data/output/scraped-observations.json ]; then
+            SCRAPED=$(node -e "const d=JSON.parse(require('fs').readFileSync('data/output/scraped-observations.json','utf8')); process.stdout.write(String(d.totalCount ?? 0));")
+            echo "🤖 **Scraped observations:** $SCRAPED" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Upload merged observations artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: merged-observations-${{ github.run_id }}
+          path: |
+            data/output/scraped-observations.json
+            data/output/merged-observations.json
+          retention-days: 7
+          if-no-files-found: warn

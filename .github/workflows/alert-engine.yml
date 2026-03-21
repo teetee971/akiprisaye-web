@@ -1,0 +1,119 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# 🚨 Alert Engine — Price alert generation
+# ─────────────────────────────────────────────────────────────────────────────
+#
+# PURPOSE: Detect deal, drop, increase, and anomaly alerts from the latest
+#          merged price observations, and export ready-to-review JSON artifacts.
+#
+# SAFE GUARANTEES:
+#   ✅ Never auto-posts to social media
+#   ✅ Never commits automatically
+#   ✅ Completely independent from scraping-refresh.yml
+#   ✅ Alert outputs are human-reviewed before any distribution
+#   ✅ Anomalies flagged separately and loudly
+#
+# TRIGGERS:
+#   - 30 minutes after each scraping-refresh run (cron offset)
+#   - Manual via workflow_dispatch
+#
+# ALERT RULES (hardcoded, auditable):
+#   DEAL     : spread ≥ 1.00€ between best/worst retailer in same territory
+#   DROP     : price decrease ≥ 15%
+#   INCREASE : price increase ≥ 15%
+#   ANOMALY  : price < 0.10€ OR ≥ 999€
+#
+# OUTPUTS (artifact, retained 7 days):
+#   price-alerts.json   — all alerts sorted by alertScore
+#   top-deals.json      — top deal alerts only
+#   anomalies.json      — anomaly alerts requiring human review
+# ─────────────────────────────────────────────────────────────────────────────
+
+name: 🚨 Alert Engine
+
+on:
+  schedule:
+    - cron: '30 */12 * * *'   # 30 min after scraping-refresh (0 */12 *)
+  workflow_dispatch:
+
+jobs:
+  alerts:
+    name: Generate price alerts
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Run merge (in case scraping-refresh artifact isn't available)
+        run: |
+          if [ ! -f data/output/merged-observations.json ]; then
+            echo "merged-observations.json not found — running fetch + merge pipeline"
+            node scripts/fetch-price-data.mjs
+            node scripts/merge-all-observations.mjs
+          else
+            echo "merged-observations.json found — skipping re-fetch"
+          fi
+
+      - name: Generate alerts
+        run: node scripts/generate-alerts.mjs
+        env:
+          SITE_URL: https://teetee971.github.io/akiprisaye-web
+
+      - name: Generate top deals export
+        run: node scripts/export-top-deals.mjs
+
+      - name: Generate social posts
+        run: node scripts/generate-social-posts.mjs --count=10
+        env:
+          SITE_URL: https://teetee971.github.io/akiprisaye-web
+
+      - name: Summarize alerts
+        run: |
+          echo "## 🚨 Alert Engine Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ -f data/output/price-alerts.json ]; then
+            TOTAL=$(node -e "const d=JSON.parse(require('fs').readFileSync('data/output/price-alerts.json','utf8')); process.stdout.write(String(d.totalCount ?? d.alerts?.length ?? 0));")
+            HIGH=$(node -e "const d=JSON.parse(require('fs').readFileSync('data/output/price-alerts.json','utf8')); process.stdout.write(String(d.highCount ?? d.alerts?.filter(a=>a.severity==='high').length ?? 0));")
+            echo "🚨 **Total alerts:** $TOTAL (🔴 High severity: $HIGH)" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          if [ -f data/output/top-deals.json ]; then
+            DEALS=$(node -e "const d=JSON.parse(require('fs').readFileSync('data/output/top-deals.json','utf8')); process.stdout.write(String(d.count ?? d.deals?.length ?? 0));")
+            echo "🔥 **Top deals:** $DEALS" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          if [ -f data/output/anomalies.json ]; then
+            ANOM=$(node -e "const d=JSON.parse(require('fs').readFileSync('data/output/anomalies.json','utf8')); process.stdout.write(String(d.count ?? d.anomalies?.length ?? 0));")
+            if [ "$ANOM" -gt "0" ]; then
+              echo "⚠️ **ANOMALIES DETECTED: $ANOM — HUMAN REVIEW REQUIRED**" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "✅ **Anomalies:** $ANOM (none)" >> $GITHUB_STEP_SUMMARY
+            fi
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "_All outputs are artifacts for human review — nothing is auto-posted._" >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload alert artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: price-alerts-${{ github.run_id }}
+          path: |
+            data/output/price-alerts.json
+            data/output/deal-alerts.json
+            data/output/anomalies.json
+            exports/social-posts.json
+          retention-days: 7
+          if-no-files-found: warn
