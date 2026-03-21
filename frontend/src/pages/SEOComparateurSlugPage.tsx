@@ -114,6 +114,15 @@ function humanise(slug: string): string {
     .join(' ');
 }
 
+// Simple sanitizer for strings included in JSON-LD, to constrain user-controlled
+// values coming from the URL before they are passed to dangerouslySetInnerHTML.
+function sanitizeJsonLdString(value: string): string {
+  // Ensure value is a string and remove characters outside a conservative allow-list.
+  const str = String(value);
+  // Allow letters (including basic accented), digits, spaces and common punctuation.
+  return str.replace(/[^\p{L}\p{N}\s.,'’\-]/gu, ' ');
+}
+
 // ── Seed deals for TopDealsSection (same territory) ──────────────────────────
 
 function makeSeedDeals(productSlug: string, territory: string): Deal[] {
@@ -159,8 +168,8 @@ export default function SEOComparateurSlugPage() {
   const jsonLd = JSON.stringify({
     '@context':  'https://schema.org',
     '@type':     'Product',
-    name:        productName,
-    description: `Comparateur de prix ${productName} en ${territoryName}`,
+    name:        sanitizeJsonLdString(productName),
+    description: `Comparateur de prix ${sanitizeJsonLdString(productName)} en ${territoryName}`,
     offers: {
       '@type':      'AggregateOffer',
       priceCurrency: 'EUR',
