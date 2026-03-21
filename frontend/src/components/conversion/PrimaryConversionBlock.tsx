@@ -29,6 +29,7 @@ import {
 import { logEvent, getCTAVariant, CTA_LABELS } from '../../engine/analytics';
 import { FavoriteButton } from './FavoriteButton';
 import { PostClickConfirmation } from './PostClickConfirmation';
+import { SocialProofBadge } from './SocialProofBadge';
 
 // ── Props ─────────────────────────────────────────────────────────────────────
 
@@ -159,6 +160,14 @@ export function PrimaryConversionBlock({ products = [] }: PrimaryConversionBlock
                   {b}
                 </span>
               ))}
+            </div>
+          )}
+
+          {/* Social proof — shown for trending or high-score products */}
+          {((best.score ?? 0) > 80 || best.trending) && (
+            <div className="flex gap-1.5 justify-center flex-wrap mt-1.5">
+              {best.trending && <SocialProofBadge variant="popular" />}
+              {(best.score ?? 0) > 80 && <SocialProofBadge variant="top-deal" />}
             </div>
           )}
         </div>

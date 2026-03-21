@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getBadges, type ConversionProduct } from '../../engine/conversionEngine';
 import {
   trackConversionEvent,
@@ -27,6 +27,11 @@ export function DominantProductCard({ product, hero = false }: DominantProductCa
   const badges  = getBadges(product);
   const variant = getCTAVariant();
   const ctaLabel = CTA_LABELS[variant];
+
+  // Track product view for CTR denominator
+  useEffect(() => {
+    logEvent('view_product', { id: product.id, price: product.price });
+  }, [product.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const oldPrice =
     product.price != null && (product.priceDrop ?? 0) > 0

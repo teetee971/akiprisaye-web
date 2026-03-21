@@ -12,6 +12,7 @@ const NotificationCenter = lazy(() =>
 );
 
 const links = [
+  { to: '/top-deals-du-jour', label: '🔥 Top deals' },
   { to: '/search', label: 'Recherche' },
   { to: '/scanner', label: 'Scan' },
   { to: '/comparateurs', label: 'Comparateurs' },
@@ -213,6 +214,14 @@ export default function Header() {
                         Mon compte
                       </Link>
 
+                      <Link
+                        to="/mon-espace"
+                        onClick={() => setAccountOpen(false)}
+                        className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-emerald-300 hover:bg-emerald-900/30 transition-colors"
+                      >
+                        ❤️ Mon espace
+                      </Link>
+
                       {isCreator && (
                         <Link
                           to="/espace-createur"
@@ -331,6 +340,10 @@ export default function Header() {
                   <NavLink to="/mon-compte" onClick={closeMenu}
                     className={({ isActive }) => `flex items-center gap-2 rounded-lg px-3 py-2 text-sm ${isActive ? 'bg-slate-800 text-white' : 'text-slate-200'}`}>
                     <User size={14} /> Mon compte
+                  </NavLink>
+                  <NavLink to="/mon-espace" onClick={closeMenu}
+                    className={({ isActive }) => `flex items-center gap-2 rounded-lg px-3 py-2 text-sm ${isActive ? 'bg-emerald-900/40 text-emerald-300' : 'text-emerald-300'}`}>
+                    ❤️ Mon espace
                   </NavLink>
                   {isCreator && (
                     <NavLink to="/espace-createur" onClick={closeMenu}
