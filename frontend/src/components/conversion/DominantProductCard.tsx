@@ -6,6 +6,7 @@ import {
 } from '../../utils/conversionTracker';
 import { safeRetailerUrl, buildRetailerUrl } from '../../utils/retailerLinks';
 import { logEvent, getCTAVariant, CTA_LABELS } from '../../engine/analytics';
+import { trackRetailerClick } from '../../utils/priceClickTracker';
 import { FavoriteButton } from './FavoriteButton';
 import { UrgencyBadge, type UrgencyVariant } from './UrgencyBadge';
 import { PostClickConfirmation } from './PostClickConfirmation';
@@ -55,6 +56,14 @@ export function DominantProductCard({ product, hero = false }: DominantProductCa
 
     // analytics engine
     logEvent('cta_click', { id: product.id, price: product.price, variant });
+
+    // revenue tracking (priceClickTracker — RGPD-safe localStorage)
+    trackRetailerClick(
+      product.id,
+      product.retailer ?? 'inconnu',
+      product.territory ?? 'gp',
+      product.price ?? 0,
+    );
 
     // Redirect
     const url = product.url

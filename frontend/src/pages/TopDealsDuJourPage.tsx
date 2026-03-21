@@ -13,6 +13,7 @@ import { SEOHead } from '../components/ui/SEOHead';
 import { PrimaryConversionBlock } from '../components/conversion/PrimaryConversionBlock';
 import { DominantProductCard } from '../components/conversion/DominantProductCard';
 import { AlertOptInPop } from '../components/conversion/AlertOptInPop';
+import AlertesPrixBanner from '../components/business/AlertesPrixBanner';
 import { sortByScore, type ConversionProduct } from '../engine/conversionEngine';
 import { logEvent } from '../engine/analytics';
 import alertsData from '../data/alerts/generated-alerts.json';
@@ -118,6 +119,11 @@ export function TopDealsDuJourPage() {
             ))}
           </div>
         </section>
+
+        {/* WhatsApp subscription banner — monetization CTA */}
+        <div className="mt-8">
+          <AlertesPrixBanner territory="GP" />
+        </div>
 
         {/* SEO content */}
         <section className="mt-8 text-sm text-gray-500 space-y-2 border-t border-gray-800 pt-4">
