@@ -167,25 +167,11 @@ router.put('/preferences', async (req: Request, res: Response): Promise<void> =>
       update: {
         emailEnabled: req.body.emailEnabled,
         pushEnabled: req.body.pushEnabled,
-        smsEnabled: req.body.smsEnabled,
-        emailAddress: req.body.emailAddress,
-        phoneNumber: req.body.phoneNumber,
-        digestFrequency: req.body.digestFrequency,
-        quietHoursStart: req.body.quietHoursStart,
-        quietHoursEnd: req.body.quietHoursEnd,
-        timezone: req.body.timezone,
       },
       create: {
         userId,
         emailEnabled: req.body.emailEnabled ?? true,
         pushEnabled: req.body.pushEnabled ?? true,
-        smsEnabled: req.body.smsEnabled ?? false,
-        emailAddress: req.body.emailAddress,
-        phoneNumber: req.body.phoneNumber,
-        digestFrequency: req.body.digestFrequency ?? 'WEEKLY',
-        quietHoursStart: req.body.quietHoursStart,
-        quietHoursEnd: req.body.quietHoursEnd,
-        timezone: req.body.timezone ?? 'America/Guadeloupe',
       },
     });
 

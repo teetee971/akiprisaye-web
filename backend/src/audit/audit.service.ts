@@ -72,8 +72,7 @@ export class AuditService {
         action: data.action,
         entityId: data.entityId,
         result: data.result,
-        message: data.message,
-        ip: data.ip,
+        ipAddress: data.ip,
         userAgent: data.userAgent,
       },
     });
