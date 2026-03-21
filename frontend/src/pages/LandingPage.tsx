@@ -174,6 +174,13 @@ export default function LandingPage() {
           className="w-full max-w-xs py-4 text-base"
         />
 
+        {/* Trust signals — shown immediately under the primary CTA */}
+        <ul className="flex flex-col items-center gap-1 text-xs text-zinc-500 sm:flex-row sm:gap-4" aria-label="Garanties">
+          <li>✔ Comparaison en temps réel</li>
+          <li>✔ Données locales (Guadeloupe / DOM)</li>
+          <li>✔ Gratuit &amp; sans inscription</li>
+        </ul>
+
         {/* Urgency signal */}
         <p className="text-xs text-amber-400/90">
           ⚠️ Les prix changent tous les jours

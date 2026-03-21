@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { buildRetailerUrl, getRetailerBaseUrl, knownRetailers } from '../utils/retailerLinks';
+import { buildRetailerUrl, getRetailerBaseUrl, knownRetailers, safeRetailerUrl } from '../utils/retailerLinks';
 
 describe('getRetailerBaseUrl', () => {
   it('returns a URL for known retailers', () => {
@@ -70,5 +70,43 @@ describe('knownRetailers', () => {
     expect(known).toContain('E.Leclerc');
     expect(known).toContain('Leader Price');
     expect(known).toContain('Intermarché');
+  });
+});
+
+describe('safeRetailerUrl', () => {
+  it('passes through valid known retailer URLs unchanged', () => {
+    expect(safeRetailerUrl('https://www.carrefour.fr/')).toBe('https://www.carrefour.fr/');
+    expect(safeRetailerUrl('https://www.e.leclerc/')).toBe('https://www.e.leclerc/');
+    expect(safeRetailerUrl('https://www.coursesu.com/')).toBe('https://www.coursesu.com/');
+    expect(safeRetailerUrl('https://www.leaderprice.fr/')).toBe('https://www.leaderprice.fr/');
+    expect(safeRetailerUrl('https://www.intermarche.com/')).toBe('https://www.intermarche.com/');
+  });
+
+  it('passes through UTM-enriched retailer URLs unchanged', () => {
+    const url = buildRetailerUrl('E.Leclerc') as string;
+    expect(safeRetailerUrl(url)).toBe(url);
+  });
+
+  it('returns /comparateur for an unknown external domain', () => {
+    expect(safeRetailerUrl('https://www.example.com/produit')).toBe('/comparateur');
+    expect(safeRetailerUrl('https://www.totally-wrong-site.fr/')).toBe('/comparateur');
+  });
+
+  it('returns /comparateur for null or undefined', () => {
+    expect(safeRetailerUrl(null)).toBe('/comparateur');
+    expect(safeRetailerUrl(undefined)).toBe('/comparateur');
+  });
+
+  it('returns /comparateur for empty string', () => {
+    expect(safeRetailerUrl('')).toBe('/comparateur');
+  });
+
+  it('returns /comparateur for an unparseable URL', () => {
+    expect(safeRetailerUrl('not-a-url')).toBe('/comparateur');
+  });
+
+  it('passes through subdomain URLs on allowed domains', () => {
+    expect(safeRetailerUrl('https://drive.carrefour.fr/')).toBe('https://drive.carrefour.fr/');
+    expect(safeRetailerUrl('https://www.lidl.fr/c/promotions')).toBe('https://www.lidl.fr/c/promotions');
   });
 });

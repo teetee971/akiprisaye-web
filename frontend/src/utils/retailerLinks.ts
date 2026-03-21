@@ -100,3 +100,53 @@ function buildDeepLink(
 export function knownRetailers(): string[] {
   return Object.keys(RETAILER_URLS);
 }
+
+// ── Allowed retailer hostnames ────────────────────────────────────────────────
+// Exact hostnames (or suffix-matched) that are considered valid retailer URLs.
+// Any generated URL whose hostname is NOT in this set is rejected and replaced
+// with the internal /comparateur route, preventing wrong-domain redirects.
+
+const ALLOWED_RETAILER_HOSTNAMES: readonly string[] = [
+  'carrefour.fr',
+  'carrefour.com',
+  'e.leclerc',
+  'coursesu.com',
+  'leaderprice.fr',
+  'intermarche.com',
+  'match.fr',
+  'auchan.fr',
+  'supercasino.fr',
+  'aldi.fr',
+  'lidl.fr',
+  'spar.fr',
+  'ecomax.fr',
+];
+
+/**
+ * Validate that a retailer URL points to a known, expected retailer domain.
+ *
+ * Prevents wrong-domain redirects (e.g. an unexpected cached or malformed URL
+ * landing on an unrelated site) by checking the URL hostname against an
+ * allowlist of known retailer domains.
+ *
+ * @param url  Any string URL — typically the output of buildRetailerUrl().
+ * @returns    The original URL when the hostname is safe, or '/comparateur'
+ *             as a fallback when the URL is null / unparseable / off-allowlist.
+ *
+ * @example
+ * safeRetailerUrl('https://www.e.leclerc/?utm_source=...')  // → unchanged
+ * safeRetailerUrl('https://www.example.com/...')            // → '/comparateur'
+ * safeRetailerUrl(null)                                     // → '/comparateur'
+ */
+export function safeRetailerUrl(url: string | null | undefined): string {
+  if (!url) return '/comparateur';
+  try {
+    const { hostname } = new URL(url);
+    const safe = ALLOWED_RETAILER_HOSTNAMES.some(
+      (domain) => hostname === domain || hostname.endsWith(`.${domain}`),
+    );
+    return safe ? url : '/comparateur';
+  } catch {
+    return '/comparateur';
+  }
+}
