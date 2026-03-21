@@ -150,3 +150,27 @@ export function safeRetailerUrl(url: string | null | undefined): string {
     return '/comparateur';
   }
 }
+
+/**
+ * Boolean guard — returns `true` only when the URL hostname is on the
+ * retailer allowlist.  Use this for conditional rendering (e.g. show/hide
+ * an affiliate button):
+ *
+ * @example
+ * const url = buildRetailerUrl(retailer, barcode);
+ * if (!isValidRetailerUrl(url)) return null;          // abort render
+ *
+ * @example
+ * {isValidRetailerUrl(url) && <a href={url}>Voir le prix</a>}
+ */
+export function isValidRetailerUrl(url: string | null | undefined): boolean {
+  if (!url) return false;
+  try {
+    const { hostname } = new URL(url);
+    return ALLOWED_RETAILER_HOSTNAMES.some(
+      (domain) => hostname === domain || hostname.endsWith(`.${domain}`),
+    );
+  } catch {
+    return false;
+  }
+}

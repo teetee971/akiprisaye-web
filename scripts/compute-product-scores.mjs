@@ -119,12 +119,20 @@ const scored = products.map((p, idx) => {
   const maxClicks  = Math.max(1, ...Array.from(clicksByProduct.values()));
   const clickScore = Math.round((rawClicks / maxClicks) * 100);
 
-  const globalScore = +(
+  // Base composite score (0–100 range before modifiers)
+  let rawScore =
     deltaScore   * 0.35 +
     clickScore   * 0.30 +
     demandScore  * 0.20 +
-    recencyScore * 0.15
-  ).toFixed(1);
+    recencyScore * 0.15;
+
+  // ── Business modifiers ────────────────────────────────────────────────────
+  // Penalty: tiny price spread → low viral / revenue potential
+  if (delta < 0.10) rawScore *= 0.5;
+  // Bonus: expensive product → higher absolute affiliate value
+  if (bestPrice > 10) rawScore *= 1.2;
+
+  const globalScore = +Math.min(rawScore, 100).toFixed(1);
 
   return {
     productId:     p.productId,
@@ -151,7 +159,7 @@ mkdirSync(resolve(ROOT, 'data/output'), { recursive: true });
 writeFileSync(OUTPUT, JSON.stringify({
   scoredAt:  new Date().toISOString(),
   count:     scored.length,
-  formula:   'globalScore = delta*0.35 + click*0.30 + demand*0.20 + recency*0.15',
+  formula:   'globalScore = (delta×0.35 + click×0.30 + demand×0.20 + recency×0.15) × penalty(delta<0.1:×0.5) × bonus(price>10:×1.2)',
   top10:     scored.slice(0, 10).map(s => `${s.name} (${s.territory}) — Δ${s.delta}€ score:${s.globalScore}`),
   products:  scored,
 }, null, 2), 'utf8');

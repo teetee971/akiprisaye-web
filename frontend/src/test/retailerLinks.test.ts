@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { buildRetailerUrl, getRetailerBaseUrl, knownRetailers, safeRetailerUrl } from '../utils/retailerLinks';
+import { buildRetailerUrl, getRetailerBaseUrl, knownRetailers, safeRetailerUrl, isValidRetailerUrl } from '../utils/retailerLinks';
 
 describe('getRetailerBaseUrl', () => {
   it('returns a URL for known retailers', () => {
@@ -108,5 +108,49 @@ describe('safeRetailerUrl', () => {
   it('passes through subdomain URLs on allowed domains', () => {
     expect(safeRetailerUrl('https://drive.carrefour.fr/')).toBe('https://drive.carrefour.fr/');
     expect(safeRetailerUrl('https://www.lidl.fr/c/promotions')).toBe('https://www.lidl.fr/c/promotions');
+  });
+});
+
+describe('isValidRetailerUrl', () => {
+  it('returns true for known retailer domains', () => {
+    expect(isValidRetailerUrl('https://www.carrefour.fr/')).toBe(true);
+    expect(isValidRetailerUrl('https://www.e.leclerc/')).toBe(true);
+    expect(isValidRetailerUrl('https://www.coursesu.com/')).toBe(true);
+    expect(isValidRetailerUrl('https://www.leaderprice.fr/')).toBe(true);
+    expect(isValidRetailerUrl('https://www.aldi.fr/')).toBe(true);
+  });
+
+  it('returns false for unknown / off-allowlist domains', () => {
+    expect(isValidRetailerUrl('https://www.example.com/')).toBe(false);
+    expect(isValidRetailerUrl('https://www.amazon.fr/')).toBe(false);
+    expect(isValidRetailerUrl('https://chars-militaires.fr/')).toBe(false);
+  });
+
+  it('returns false for null, undefined, and empty string', () => {
+    expect(isValidRetailerUrl(null)).toBe(false);
+    expect(isValidRetailerUrl(undefined)).toBe(false);
+    expect(isValidRetailerUrl('')).toBe(false);
+  });
+
+  it('returns false for unparseable URLs', () => {
+    expect(isValidRetailerUrl('not-a-url')).toBe(false);
+    expect(isValidRetailerUrl('//no-scheme')).toBe(false);
+  });
+
+  it('returns true for subdomains of allowed domains', () => {
+    expect(isValidRetailerUrl('https://drive.carrefour.fr/')).toBe(true);
+    expect(isValidRetailerUrl('https://www.lidl.fr/promotions')).toBe(true);
+  });
+
+  it('mirrors safeRetailerUrl logic — valid URLs are not rewritten', () => {
+    const url = 'https://www.e.leclerc/?utm_source=akiprisaye';
+    expect(isValidRetailerUrl(url)).toBe(true);
+    expect(safeRetailerUrl(url)).toBe(url);
+  });
+
+  it('mirrors safeRetailerUrl logic — invalid URLs both reject', () => {
+    const url = 'https://www.exemple-inconnu.com/';
+    expect(isValidRetailerUrl(url)).toBe(false);
+    expect(safeRetailerUrl(url)).toBe('/comparateur');
   });
 });

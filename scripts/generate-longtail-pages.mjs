@@ -155,6 +155,19 @@ function retailerPrixPage(productSlug, retailer, territory, territoryMeta) {
 // ── Generate all specs ────────────────────────────────────────────────────────
 
 const pages = [];
+const seenRoutes = new Set();
+let duplicateCount = 0;
+
+function pushPage(spec) {
+  const key = spec.route ?? spec.slug;
+  if (seenRoutes.has(key)) {
+    duplicateCount++;
+    console.error(`[generate-longtail-pages] ⚠️  Duplicate route skipped: ${key}`);
+    return;
+  }
+  seenRoutes.add(key);
+  pages.push(spec);
+}
 
 for (const product of products) {
   const productSlug = slugify(product);
@@ -162,16 +175,22 @@ for (const product of products) {
 
   for (const [territory, meta] of Object.entries(TERRITORIES)) {
     // Type A: comparateur page (1 per product × territory)
-    pages.push(comparateurPage(productSlug, territory, meta));
+    pushPage(comparateurPage(productSlug, territory, meta));
 
     // Type B: meilleur-prix page (1 per product × territory)
-    pages.push(meilleurPrixPage(productSlug, territory, meta));
+    pushPage(meilleurPrixPage(productSlug, territory, meta));
 
     // Type C: per-retailer price page (1 per product × retailer × territory)
     for (const retailer of retailers) {
-      pages.push(retailerPrixPage(productSlug, retailer, territory, meta));
+      pushPage(retailerPrixPage(productSlug, retailer, territory, meta));
     }
   }
+}
+
+if (duplicateCount > 0) {
+  console.error(`[generate-longtail-pages] ❌ ${duplicateCount} duplicate route(s) detected and skipped.`);
+  console.error('  Fix duplicate product names or retailer aliases before deploying.');
+  // Non-fatal: continue with unique pages — validator will also report this.
 }
 
 // ── Output ────────────────────────────────────────────────────────────────────

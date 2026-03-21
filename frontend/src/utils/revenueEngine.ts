@@ -74,19 +74,20 @@ export function computeProductScores(): ProductScore[] {
   // Aggregate per product
   const byProduct = new Map<
     string,
-    { clicks: number; retailers: Set<string>; lastClickAt: number }
+    { clicks: number; retailers: Set<string>; lastClickAt: number; priceSum: number }
   >();
 
   for (const e of events) {
     if (!e.product) continue;
     let entry = byProduct.get(e.product);
     if (!entry) {
-      entry = { clicks: 0, retailers: new Set(), lastClickAt: 0 };
+      entry = { clicks: 0, retailers: new Set(), lastClickAt: 0, priceSum: 0 };
       byProduct.set(e.product, entry);
     }
     entry.clicks += 1;
     if (e.retailer) entry.retailers.add(e.retailer);
     if (e.clickedAt > entry.lastClickAt) entry.lastClickAt = e.clickedAt;
+    if (typeof e.price === 'number' && e.price > 0) entry.priceSum += e.price;
   }
 
   const maxClicks = Math.max(1, ...Array.from(byProduct.values()).map((v) => v.clicks));
@@ -102,11 +103,16 @@ export function computeProductScores(): ProductScore[] {
       const ageMs        = now - data.lastClickAt;
       const recencyScore = Math.max(0, Math.round((1 - ageMs / RECENCY_WINDOW_MS) * 100));
 
-      // Weighted composite — 40% clicks + 40% margin + 20% recency
-      const globalScore =
-        Math.round(
-          ((clickScore / maxClicks) * 40 + marginScore * 0.4 + recencyScore * 0.2) * 10,
-        ) / 10;
+      // Base weighted composite — 40% clicks + 40% margin + 20% recency
+      let rawScore = (clickScore / maxClicks) * 40 + marginScore * 0.4 + recencyScore * 0.2;
+
+      // ── Business modifiers ─────────────────────────────────────────────────
+      // Price bonus: if the average clicked price is > 10€, reward the product
+      // (higher absolute affiliate value per click).
+      const avgPrice = data.clicks > 0 ? data.priceSum / data.clicks : 0;
+      if (avgPrice > 10) rawScore *= 1.2;
+
+      const globalScore = Math.round(Math.min(rawScore, 100) * 10) / 10;
 
       return { product, clickScore, marginScore, recencyScore, globalScore };
     })
