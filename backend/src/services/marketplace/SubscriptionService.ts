@@ -15,8 +15,9 @@ const prisma = new PrismaClient();
 
 // Prix des plans (en centimes/mois)
 const PLAN_PRICES: Record<SubscriptionPlan, number> = {
-  BASIC: 9900, // 99€
-  PRO: 29900, // 299€
+  FREE: 0,        // 0€
+  BASIC: 9900,    // 99€
+  PREMIUM: 29900, // 299€
   INSTITUTION: 99900, // 999€
 };
 
@@ -121,16 +122,16 @@ export class SubscriptionService {
   async cancel(id: string): Promise<Subscription> {
     return prisma.subscription.update({
       where: { id },
-      data: { status: 'CANCELLED' },
-      include: { brand: true },
+      data: { status: 'CANCELED' },
+      include: { user: true },
     });
   }
 
   async suspend(id: string): Promise<Subscription> {
     return prisma.subscription.update({
       where: { id },
-      data: { status: 'SUSPENDED' },
-      include: { brand: true },
+      data: { status: 'INACTIVE' },
+      include: { user: true },
     });
   }
 
@@ -165,14 +166,14 @@ export class SubscriptionService {
     byStatus: Record<SubscriptionStatus, number>;
     totalRevenue: number;
   }> {
-    const [total, basic, pro, institution, active, cancelled, suspended, expired, revenue] = await Promise.all([
+    const [total, basic, premium, institution, active, inactive, canceled, expired, revenue] = await Promise.all([
       prisma.subscription.count(),
       prisma.subscription.count({ where: { plan: 'BASIC' } }),
-      prisma.subscription.count({ where: { plan: 'PRO' } }),
+      prisma.subscription.count({ where: { plan: 'PREMIUM' } }),
       prisma.subscription.count({ where: { plan: 'INSTITUTION' } }),
       prisma.subscription.count({ where: { status: 'ACTIVE' } }),
-      prisma.subscription.count({ where: { status: 'CANCELLED' } }),
-      prisma.subscription.count({ where: { status: 'SUSPENDED' } }),
+      prisma.subscription.count({ where: { status: 'INACTIVE' } }),
+      prisma.subscription.count({ where: { status: 'CANCELED' } }),
       prisma.subscription.count({ where: { status: 'EXPIRED' } }),
       prisma.invoice.aggregate({
         where: { status: 'PAID' },
@@ -182,8 +183,8 @@ export class SubscriptionService {
 
     return {
       totalSubscriptions: total,
-      byPlan: { BASIC: basic, PRO: pro, INSTITUTION: institution },
-      byStatus: { ACTIVE: active, CANCELLED: cancelled, SUSPENDED: suspended, EXPIRED: expired },
+      byPlan: { FREE: 0, BASIC: basic, PREMIUM: premium, INSTITUTION: institution },
+      byStatus: { ACTIVE: active, INACTIVE: inactive, CANCELED: canceled, EXPIRED: expired },
       totalRevenue: revenue._sum.amount || 0,
     };
   }

@@ -19,6 +19,18 @@ export interface Store {
   openingHours?: string;
 }
 
+export interface NearbyStore extends Store {
+  distance: number;
+  travelTimeSeconds: number;
+}
+
+export interface NearbyStoresOptions {
+  chains?: string[];
+  maxResults?: number;
+  sortBy?: 'distance' | 'name';
+  includeServices?: string[];
+}
+
 /**
  * Find stores near a given location
  * @param stores Array of all stores

@@ -10,11 +10,10 @@ export async function processOcrQueueJob(): Promise<void> {
   console.info('🔍 [JOB] Processing OCR queue...');
 
   try {
-    // Get pending OCR products
+    // Get products needing review (imageNeedsReview flag is the closest proxy)
     const pendingProducts = await prisma.product.findMany({
       where: {
-        source: 'OCR',
-        status: 'PENDING_REVIEW',
+        imageNeedsReview: true,
       },
       take: 50, // Process batch of 50
     });

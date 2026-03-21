@@ -3,7 +3,7 @@
  * Schedules periodic jobs for checking alerts and sending digests
  */
 
-import cron from 'node-cron';
+import * as cron from 'node-cron';
 import { alertService } from '../alerts/alertService.js';
 import { alertEngine } from '../alerts/alertEngine.js';
 import { notificationService } from '../notifications/notificationService.js';

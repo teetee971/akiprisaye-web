@@ -4,8 +4,8 @@
  * Coordinates synchronization from multiple sources
  */
 
-import { openFoodFactsSync } from './openFoodFactsSync.js';
-import { openPricesSync } from './openPricesSync.js';
+import { openFoodFactsSync, type SyncResult as OFSyncResult } from './openFoodFactsSync.js';
+import { openPricesSync, type SyncResult as OPSyncResult } from './openPricesSync.js';
 
 export interface OrchestratedSyncResult {
   openFoodFacts?: {
@@ -83,7 +83,7 @@ export class SyncOrchestrator {
   /**
    * Sync only Open Food Facts
    */
-  async syncOpenFoodFacts() {
+  async syncOpenFoodFacts(): Promise<OFSyncResult> {
     console.info('📦 Syncing Open Food Facts only...');
     return await openFoodFactsSync.syncTerritories();
   }
@@ -91,7 +91,7 @@ export class SyncOrchestrator {
   /**
    * Sync only Open Prices
    */
-  async syncOpenPrices() {
+  async syncOpenPrices(): Promise<OPSyncResult> {
     console.info('💰 Syncing Open Prices only...');
     return await openPricesSync.syncTerritories();
   }

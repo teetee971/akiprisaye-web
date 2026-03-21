@@ -17,13 +17,9 @@ export async function cleanupDuplicatesJob(): Promise<void> {
     let duplicatesFound = 0;
     let duplicatesMarked = 0;
 
-    // Process validated products in batches to avoid loading all at once
-    // and to limit the impact of per-product queries.
+    // Process products in batches to avoid loading all at once
     while (true) {
       const products = await prisma.product.findMany({
-        where: {
-          status: 'VALIDATED',
-        },
         orderBy: {
           createdAt: 'asc',
         },
@@ -39,8 +35,8 @@ export async function cleanupDuplicatesJob(): Promise<void> {
       for (const product of products) {
         try {
           const duplicationResult = await findDuplicate({
-            ean: product.ean,
-            name: product.name,
+            ean: product.barcode,
+            name: product.normalizedLabel,
             brand: product.brand,
             category: product.category,
           });
@@ -61,27 +57,15 @@ export async function cleanupDuplicatesJob(): Promise<void> {
               existingProduct &&
               existingProduct.createdAt < product.createdAt
             ) {
-              // Mark this product as duplicate (keep the older one)
-              await prisma.$transaction(async (tx) => {
-                // Move prices to existing product
-                await tx.productPrice.updateMany({
-                  where: { productId: product.id },
-                  data: { productId: existingProduct.id },
-                });
-
-                // Mark as merged
-                await tx.product.update({
-                  where: { id: product.id },
-                  data: {
-                    status: 'MERGED',
-                    validatedAt: new Date(),
-                  },
-                });
+              // Move price observations to existing product
+              await prisma.priceObservation.updateMany({
+                where: { productId: product.id },
+                data: { productId: existingProduct.id },
               });
 
               duplicatesMarked++;
               console.info(
-                `🔗 [JOB] Merged duplicate: ${product.name} -> ${existingProduct.name}`
+                `🔗 [JOB] Merged duplicate: ${product.normalizedLabel} -> ${existingProduct.normalizedLabel}`
               );
             }
           }

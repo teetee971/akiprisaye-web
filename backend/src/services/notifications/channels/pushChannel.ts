@@ -72,10 +72,10 @@ class PushChannel {
             payload
           );
 
-          // Update last used timestamp
+          // Update subscription's updatedAt timestamp via isActive toggle (no-op update)
           await prisma.pushSubscription.update({
             where: { id: subscription.id },
-            data: { lastUsedAt: new Date() },
+            data: { isActive: true },
           });
         } catch (error: any) {
           // Handle subscription errors (expired, invalid, etc.)
@@ -123,7 +123,6 @@ class PushChannel {
         where: { endpoint: subscription.endpoint },
         data: {
           isActive: true,
-          lastUsedAt: new Date(),
         },
       });
     } else {

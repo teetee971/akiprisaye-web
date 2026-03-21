@@ -4,17 +4,17 @@
  */
 
 import Stripe from 'stripe';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, SubscriptionPlan } from '@prisma/client';
 import {
   SubscriptionTier,
   type Subscription,
   type CreateSubscriptionParams
 } from '../../types/subscription.js';
-import { getSubscriptionPlan, getPlanPrice } from '../../config/subscriptionPlans.js';
+import { getSubscriptionPlan } from '../../config/subscriptionPlans.js';
 
 const prisma = new PrismaClient();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2024-12-18.acacia'
+  apiVersion: '2023-10-16'
 });
 
 export class SubscriptionService {
@@ -37,34 +37,25 @@ export class SubscriptionService {
   private async createFreeSubscription(userId: string): Promise<Subscription> {
     const sub = await prisma.subscription.create({
       data: {
-        brandId: userId,
-        plan: 'BASIC',
-        price: 0,
-        billingCycle: 'monthly',
+        userId,
+        plan: 'FREE',
         status: 'ACTIVE',
-        startedAt: new Date(),
-        endsAt: null,
+        startDate: new Date(),
       }
     });
     
     return this.mapSubscription(sub, SubscriptionTier.FREE);
   }
   
-  private async createPaidSubscription(user: any, plan: any, paymentMethodId: string | null, interval: string): Promise<Subscription> {
-    let customerId = user.stripeCustomerId;
-    
-    if (!customerId) {
-      const customer = await stripe.customers.create({
-        email: user.email,
-        name: user.name || undefined,
-        metadata: { userId: user.id }
-      });
-      customerId = customer.id;
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { stripeCustomerId: customerId }
-      });
-    }
+  private async createPaidSubscription(user: { id: string; email: string; name?: string | null }, plan: ReturnType<typeof getSubscriptionPlan>, paymentMethodId: string | null, interval: string): Promise<Subscription> {
+    if (!plan) throw new Error('Plan is required');
+
+    const customer = await stripe.customers.create({
+      email: user.email,
+      name: user.name || undefined,
+      metadata: { userId: user.id }
+    });
+    const customerId = customer.id;
     
     if (paymentMethodId) {
       await stripe.paymentMethods.attach(paymentMethodId, { customer: customerId });
@@ -73,27 +64,26 @@ export class SubscriptionService {
       });
     }
     
-    const priceId = plan.pricing.stripePriceId;
+    const priceId = (plan.pricing as { stripePriceId?: string }).stripePriceId;
     const stripeSub = await stripe.subscriptions.create({
       customer: customerId,
       items: [{ price: priceId }],
       metadata: { 
         userId: user.id, 
         planId: plan.id,
-        actualTier: plan.id // Store the actual tier in metadata
+        actualTier: plan.id
       },
       trial_period_days: plan.id === SubscriptionTier.CITIZEN_PREMIUM ? 14 : 0
     });
     
     const sub = await prisma.subscription.create({
       data: {
-        brandId: user.id,
+        userId: user.id,
         plan: this.mapTierToPlan(plan.id),
-        price: getPlanPrice(plan.id, interval as 'month' | 'year') * 100,
-        billingCycle: interval === 'year' ? 'yearly' : 'monthly',
         status: 'ACTIVE',
-        startedAt: new Date(stripeSub.current_period_start * 1000),
-        endsAt: stripeSub.current_period_end ? new Date(stripeSub.current_period_end * 1000) : null,
+        startDate: new Date(stripeSub.current_period_start * 1000),
+        endDate: stripeSub.current_period_end ? new Date(stripeSub.current_period_end * 1000) : null,
+        externalRef: customerId,
       }
     });
     
@@ -102,7 +92,7 @@ export class SubscriptionService {
   
   async getActiveSubscription(userId: string): Promise<Subscription | null> {
     const sub = await prisma.subscription.findFirst({
-      where: { brandId: userId, status: 'ACTIVE' },
+      where: { userId, status: 'ACTIVE' },
       orderBy: { createdAt: 'desc' }
     });
     if (!sub) return null;
@@ -118,41 +108,51 @@ export class SubscriptionService {
     const plan = getSubscriptionPlan(planId);
     if (!plan) return false;
     
-    const featureValue = (plan.features as any)[feature];
+    const featureValue = (plan.features as Record<string, unknown>)[feature];
     if (typeof featureValue === 'boolean') return featureValue;
     if (typeof featureValue === 'number') return featureValue !== 0;
     if (Array.isArray(featureValue)) return featureValue.length > 0;
     return false;
   }
+
+  /**
+   * Helper: Map SubscriptionTier to Prisma SubscriptionPlan enum
+   */
+  private mapTierToPlan(tier: SubscriptionTier): SubscriptionPlan {
+    const mapping: Record<string, SubscriptionPlan> = {
+      [SubscriptionTier.FREE]: 'FREE',
+      [SubscriptionTier.CITIZEN_PREMIUM]: 'PREMIUM',
+      [SubscriptionTier.SME_FREEMIUM]: 'PREMIUM',
+      [SubscriptionTier.BUSINESS_PRO]: 'PREMIUM',
+      [SubscriptionTier.INSTITUTIONAL]: 'INSTITUTION',
+    };
+    return mapping[tier] ?? 'FREE';
+  }
   
   /**
    * Helper: Map Prisma SubscriptionPlan to SubscriptionTier
-   * This maps the database enum to our new tier system
    */
-  private mapPlanToTier(plan: any): SubscriptionTier {
-    // For basic mapping - in production, we'll need a more sophisticated approach
-    // such as storing the actual tier in subscription metadata
-    const priceBasedMapping: Record<string, SubscriptionTier> = {
+  private mapPlanToTier(plan: SubscriptionPlan): SubscriptionTier {
+    const mapping: Partial<Record<SubscriptionPlan, SubscriptionTier>> = {
+      'FREE': SubscriptionTier.FREE,
       'BASIC': SubscriptionTier.FREE,
-      'PRO': SubscriptionTier.CITIZEN_PREMIUM, // Default PRO to CITIZEN_PREMIUM
-      'INSTITUTION': SubscriptionTier.INSTITUTIONAL
+      'PREMIUM': SubscriptionTier.CITIZEN_PREMIUM,
+      'INSTITUTION': SubscriptionTier.INSTITUTIONAL,
     };
-    return priceBasedMapping[plan] || SubscriptionTier.FREE;
+    return mapping[plan] ?? SubscriptionTier.FREE;
   }
   
   /**
    * Helper: Map Prisma subscription to our Subscription type
-   * @param sub - Prisma subscription object
-   * @param actualTier - The actual subscription tier (passed from context)
    */
-  private mapSubscription(sub: any, actualTier: SubscriptionTier): Subscription {
+  private mapSubscription(sub: { id: string; userId: string; status: string; startDate: Date; endDate?: Date | null; createdAt: Date; updatedAt: Date }, actualTier: SubscriptionTier): Subscription {
     return {
       id: sub.id,
-      userId: sub.brandId,
+      userId: sub.userId,
       planId: actualTier,
-      status: sub.status.toLowerCase() as any,
-      currentPeriodStart: sub.startedAt,
-      currentPeriodEnd: sub.endsAt || new Date('2099-12-31'),
+      status: sub.status.toLowerCase() as Subscription['status'],
+      currentPeriodStart: sub.startDate,
+      currentPeriodEnd: sub.endDate || new Date('2099-12-31'),
       cancelAtPeriodEnd: false,
       createdAt: sub.createdAt,
       updatedAt: sub.updatedAt

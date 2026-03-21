@@ -8,12 +8,10 @@ import type {
   CreateNotificationInput,
   Notification,
   SendNotificationResult,
-  NotificationChannel,
 } from './notificationTypes.js';
 import type { TriggeredAlert } from '../alerts/alertTypes.js';
 import { emailChannel } from './channels/emailChannel.js';
 import { pushChannel } from './channels/pushChannel.js';
-import { smsChannel } from './channels/smsChannel.js';
 
 const prisma = new PrismaClient();
 
@@ -45,7 +43,7 @@ export class NotificationService {
       const result = await this.sendNotification({
         userId: alert.userId,
         alertId: alert.id,
-        type: 'ALERT_TRIGGERED',
+        type: 'PRICE_ALERT',
         channel: 'EMAIL',
         title,
         body,
@@ -58,7 +56,7 @@ export class NotificationService {
       const result = await this.sendNotification({
         userId: alert.userId,
         alertId: alert.id,
-        type: 'ALERT_TRIGGERED',
+        type: 'PRICE_ALERT',
         channel: 'PUSH',
         title,
         body,
@@ -67,18 +65,7 @@ export class NotificationService {
       results.push(result);
     }
 
-    if (alert.notifySms) {
-      const result = await this.sendNotification({
-        userId: alert.userId,
-        alertId: alert.id,
-        type: 'ALERT_TRIGGERED',
-        channel: 'SMS',
-        title,
-        body,
-        data,
-      });
-      results.push(result);
-    }
+    // SMS channel not supported — notifySms flag is ignored
 
     return results;
   }
@@ -87,46 +74,45 @@ export class NotificationService {
    * Send a notification via specified channel
    */
   async sendNotification(input: CreateNotificationInput): Promise<SendNotificationResult> {
-    // Create notification record
+    // Create notification record using Prisma model fields
     const notification = await prisma.notification.create({
       data: {
         userId: input.userId,
-        alertId: input.alertId,
         type: input.type,
-        channel: input.channel,
         title: input.title,
-        body: input.body,
-        data: input.data,
-        status: 'PENDING',
+        message: input.body,
+        metadata: input.data ?? undefined,
+        status: 'UNREAD',
       },
     });
 
     try {
-      // Send via appropriate channel
-      await this.dispatchToChannel(notification);
+      // Build a Notification object (custom type) for channel dispatch
+      const notificationObj: Notification = {
+        id: notification.id,
+        userId: notification.userId,
+        alertId: input.alertId,
+        type: notification.type,
+        channel: input.channel,
+        title: notification.title,
+        body: input.body,
+        data: input.data,
+        status: 'UNREAD',
+        createdAt: notification.createdAt,
+      };
 
-      // Mark as sent
-      await prisma.notification.update({
-        where: { id: notification.id },
-        data: {
-          status: 'SENT',
-          sentAt: new Date(),
-        },
-      });
+      // Send via appropriate channel
+      await this.dispatchToChannel(notificationObj);
 
       return {
         success: true,
         notificationId: notification.id,
       };
     } catch (error) {
-      // Mark as failed
+      // Archive notification on dispatch failure
       await prisma.notification.update({
         where: { id: notification.id },
-        data: {
-          status: 'FAILED',
-          failedAt: new Date(),
-          failureReason: error instanceof Error ? error.message : 'Unknown error',
-        },
+        data: { status: 'ARCHIVED' },
       });
 
       return {
@@ -148,9 +134,6 @@ export class NotificationService {
       case 'PUSH':
         await pushChannel.send(notification);
         break;
-      case 'SMS':
-        await smsChannel.send(notification);
-        break;
       case 'IN_APP':
         // In-app notifications are just stored in the database
         break;
@@ -168,7 +151,7 @@ export class NotificationService {
       offset?: number;
     }
   ): Promise<Notification[]> {
-    const where: any = { userId };
+    const where: { userId: string; status?: string } = { userId };
 
     if (options?.status) {
       where.status = options.status;
@@ -181,7 +164,7 @@ export class NotificationService {
       skip: options?.offset || 0,
     });
 
-    return notifications;
+    return notifications as unknown as Notification[];
   }
 
   /**
@@ -207,7 +190,7 @@ export class NotificationService {
     const result = await prisma.notification.updateMany({
       where: {
         userId: userId,
-        status: { in: ['PENDING', 'SENT'] },
+        status: { in: ['UNREAD'] },
       },
       data: {
         status: 'READ',
@@ -237,7 +220,7 @@ export class NotificationService {
     const count = await prisma.notification.count({
       where: {
         userId: userId,
-        status: { in: ['PENDING', 'SENT'] },
+        status: { in: ['UNREAD'] },
       },
     });
 

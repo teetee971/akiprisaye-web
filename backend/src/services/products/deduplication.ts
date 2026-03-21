@@ -12,6 +12,13 @@ import prisma from '../../database/prisma.js';
 import { normalizeProductName } from './normalization.js';
 import { SYNC_CONFIG } from '../../config/syncConfig.js';
 
+export interface NewProduct {
+  name: string;
+  ean?: string | null;
+  brand?: string | null;
+  category?: string | null;
+}
+
 export interface DeduplicationResult {
   isDuplicate: boolean;
   existingProductId?: string;

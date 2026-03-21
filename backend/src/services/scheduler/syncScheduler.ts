@@ -4,7 +4,7 @@
  * Manages scheduled synchronization jobs using node-cron
  */
 
-import cron from 'node-cron';
+import * as cron from 'node-cron';
 import { SYNC_CONFIG } from '../../config/syncConfig.js';
 import { syncOpenFoodFactsJob } from './jobs/syncOpenFoodFacts.js';
 import { syncOpenPricesJob } from './jobs/syncOpenPrices.js';
@@ -100,7 +100,6 @@ export class SyncScheduler {
           await this.runJob(config.id, config.handler);
         },
         {
-          scheduled: false, // Don't auto-start, will start explicitly in start()
           timezone: SYNC_CONFIG.scheduler.timezone,
         }
       );

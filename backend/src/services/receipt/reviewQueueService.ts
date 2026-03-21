@@ -6,6 +6,7 @@
  */
 
 import { randomUUID } from 'node:crypto';
+import { Prisma } from '@prisma/client';
 import prisma from '../../database/prisma.js';
 import type { ReviewEntityType, ReviewQueueEntryInput } from '../../types/receipt.types.js';
 
@@ -33,7 +34,7 @@ export class ReviewQueueService {
         entityType: input.entityType,
         entityId: input.entityId,
         reason: input.reason,
-        payloadJson: input.payloadJson ?? undefined,
+        payloadJson: (input.payloadJson as Prisma.InputJsonValue | undefined) ?? undefined,
         status: 'pending',
       },
     });

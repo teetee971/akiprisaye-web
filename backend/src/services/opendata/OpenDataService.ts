@@ -227,6 +227,7 @@ export class OpenDataService {
       _max: { price: true },
       _count: { id: true },
       where,
+      orderBy: { productId: 'asc' },
       take: limit,
       skip: offset,
     });

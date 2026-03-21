@@ -34,63 +34,36 @@ export class AnomalyDetectionService {
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-    // Récupérer les produits avec leurs prix sur les 7 derniers jours
-    const where: {
-      isActive: boolean;
-      prices: {
-        some: {
-          effectiveDate: { gte: Date };
-          store?: { territory: Territory; isActive: boolean };
-        };
-      };
+    // Récupérer les produits avec leurs observations sur les 7 derniers jours
+    const observationWhere: {
+      observedAt: { gte: Date };
+      territory?: string;
     } = {
-      isActive: true,
-      prices: {
-        some: {
-          effectiveDate: {
-            gte: sevenDaysAgo,
-          },
-        },
-      },
+      observedAt: { gte: sevenDaysAgo },
     };
 
     if (territory) {
-      where.prices.some.store = {
-        territory,
-        isActive: true,
-      };
+      observationWhere.territory = territory;
     }
 
     const products = await prisma.product.findMany({
-      where,
+      where: {
+        observations: {
+          some: observationWhere,
+        },
+      },
       select: {
         id: true,
-        name: true,
-        prices: {
-          where: {
-            effectiveDate: {
-              gte: sevenDaysAgo,
-            },
-            store: territory
-              ? {
-                  territory,
-                  isActive: true,
-                }
-              : {
-                  isActive: true,
-                },
-          },
+        displayName: true,
+        observations: {
+          where: observationWhere,
           orderBy: {
-            effectiveDate: 'asc',
+            observedAt: 'asc',
           },
           select: {
             price: true,
-            effectiveDate: true,
-            store: {
-              select: {
-                territory: true,
-              },
-            },
+            observedAt: true,
+            territory: true,
           },
         },
       },
@@ -98,21 +71,21 @@ export class AnomalyDetectionService {
 
     // Analyser chaque produit pour détecter les anomalies
     for (const product of products) {
-      if (product.prices.length < 2) continue;
+      if (product.observations.length < 2) continue;
 
-      // Grouper par territoire avec dates (les prix sont déjà triés par effectiveDate asc)
+      // Grouper par territoire avec dates (les observations sont déjà triées par observedAt asc)
       const pricesByTerritory = new Map<Territory, Array<{ price: number; date: Date }>>();
       
-      for (const priceEntry of product.prices) {
-        const t = priceEntry.store.territory;
+      for (const obs of product.observations) {
+        const t = obs.territory as Territory;
         if (!pricesByTerritory.has(t)) {
           pricesByTerritory.set(t, []);
         }
         const prices = pricesByTerritory.get(t);
         if (prices) {
           prices.push({
-            price: Number(priceEntry.price),
-            date: priceEntry.effectiveDate,
+            price: Number(obs.price),
+            date: obs.observedAt,
           });
         }
       }
@@ -148,7 +121,7 @@ export class AnomalyDetectionService {
 
           anomalies.push({
             productId: product.id,
-            productLabel: product.name,
+            productLabel: product.displayName,
             territory: territoryKey,
             type: 'TEMPORAL',
             severity,
@@ -168,30 +141,25 @@ export class AnomalyDetectionService {
   static async detectSpatialAnomalies(): Promise<PriceAnomaly[]> {
     const anomalies: PriceAnomaly[] = [];
 
-    // Récupérer les produits actifs
+    // Récupérer les produits avec des observations récentes
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
     const products = await prisma.product.findMany({
       where: {
-        isActive: true,
+        observations: {
+          some: { observedAt: { gte: thirtyDaysAgo } },
+        },
       },
       select: {
         id: true,
-        name: true,
-        prices: {
-          where: {
-            store: {
-              isActive: true,
-            },
-          },
-          orderBy: {
-            effectiveDate: 'desc',
-          },
+        displayName: true,
+        observations: {
+          where: { observedAt: { gte: thirtyDaysAgo } },
+          orderBy: { observedAt: 'desc' },
           select: {
             price: true,
-            store: {
-              select: {
-                territory: true,
-              },
-            },
+            territory: true,
           },
           take: 100,
         },
@@ -203,22 +171,22 @@ export class AnomalyDetectionService {
     for (const product of products) {
       const pricesByTerritory = new Map<Territory, number[]>();
 
-      for (const priceEntry of product.prices) {
-        const territory = priceEntry.store.territory;
-        if (!pricesByTerritory.has(territory)) {
-          pricesByTerritory.set(territory, []);
+      for (const obs of product.observations) {
+        const terr = obs.territory as Territory;
+        if (!pricesByTerritory.has(terr)) {
+          pricesByTerritory.set(terr, []);
         }
-        const prices = pricesByTerritory.get(territory);
+        const prices = pricesByTerritory.get(terr);
         if (prices) {
-          prices.push(Number(priceEntry.price));
+          prices.push(Number(obs.price));
         }
       }
 
       // Calculer moyenne par territoire
       const avgByTerritory = new Map<Territory, number>();
-      for (const [territory, prices] of pricesByTerritory.entries()) {
+      for (const [terr, prices] of pricesByTerritory.entries()) {
         const avg = prices.reduce((sum, p) => sum + p, 0) / prices.length;
-        avgByTerritory.set(territory, avg);
+        avgByTerritory.set(terr, avg);
       }
 
       if (avgByTerritory.size < 2) continue;
@@ -239,9 +207,9 @@ export class AnomalyDetectionService {
 
         // Trouver le territoire avec le prix max (neutralité: pas de défaut)
         let maxTerritory: Territory | undefined;
-        for (const [territory, avgPrice] of avgByTerritory.entries()) {
+        for (const [terr, avgPrice] of avgByTerritory.entries()) {
           if (avgPrice === maxPrice) {
-            maxTerritory = territory;
+            maxTerritory = terr;
             break;
           }
         }
@@ -250,7 +218,7 @@ export class AnomalyDetectionService {
         if (maxTerritory) {
           anomalies.push({
             productId: product.id,
-            productLabel: product.name,
+            productLabel: product.displayName,
             territory: maxTerritory,
             type: 'SPATIAL',
             severity,

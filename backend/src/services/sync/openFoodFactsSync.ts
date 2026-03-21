@@ -13,7 +13,7 @@ import {
   OpenFoodFactsProduct,
 } from '../products/autoProductCreation.js';
 
-interface SyncResult {
+export interface SyncResult {
   itemsProcessed: number;
   itemsCreated: number;
   itemsUpdated: number;
@@ -73,17 +73,19 @@ export class OpenFoodFactsSync {
         await this.delay(this.config.rateLimitDelay * 2);
       }
 
-      // Update sync log
+      // Update sync log using actual schema fields
       await prisma.syncLog.update({
         where: { id: syncLog.id },
         data: {
           completedAt: new Date(),
           status: 'completed',
-          itemsProcessed: result.itemsProcessed,
-          itemsCreated: result.itemsCreated,
-          itemsUpdated: result.itemsUpdated,
-          itemsSkipped: result.itemsSkipped,
-          errors: result.errors.length > 0 ? result.errors : undefined,
+          recordsCount: result.itemsProcessed,
+          errorMessage: null,
+          metadata: {
+            itemsCreated: result.itemsCreated,
+            itemsUpdated: result.itemsUpdated,
+            itemsSkipped: result.itemsSkipped,
+          },
         },
       });
 
@@ -96,7 +98,7 @@ export class OpenFoodFactsSync {
         data: {
           completedAt: new Date(),
           status: 'failed',
-          errors: [error instanceof Error ? error.message : String(error)],
+          errorMessage: error instanceof Error ? error.message : String(error),
         },
       });
 

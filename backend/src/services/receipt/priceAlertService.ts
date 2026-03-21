@@ -14,7 +14,7 @@
 
 import { randomUUID } from 'node:crypto';
 import prisma from '../../database/prisma.js';
-import type { AlertEventType, PriceAlertEventInput, TerritoryCode } from '../../types/receipt.types.js';
+import type { PriceAlertEventInput, TerritoryCode } from '../../types/receipt.types.js';
 import { priceObservationService } from './priceObservationService.js';
 
 const DROP_THRESHOLD_PERCENT = 10;  // -10% vs moyenne → significant_drop
@@ -106,10 +106,9 @@ export class PriceAlertService {
         productId: ev.productId,
         territory: ev.territory,
         observedAt: ev.observedAt,
-        currentPrice: ev.currentPrice,
-        previousPrice: ev.previousPrice ?? null,
+        newPrice: ev.currentPrice,
+        oldPrice: ev.previousPrice ?? null,
         eventType: ev.eventType,
-        payloadJson: (ev.payloadJson as Record<string, unknown>) ?? undefined,
         processed: false,
       },
     });
