@@ -13,7 +13,7 @@ describe('getRetailerBaseUrl', () => {
     expect(getRetailerBaseUrl('E.Leclerc')).toBe('https://www.e.leclerc/');
     expect(getRetailerBaseUrl('Leader Price')).toBe('https://www.leaderprice.fr/');
     expect(getRetailerBaseUrl('Intermarché')).toBe('https://www.intermarche.com/');
-    expect(getRetailerBaseUrl('Super U')).toBe('https://www.courses.u.fr/');
+    expect(getRetailerBaseUrl('Super U')).toBe('https://www.coursesu.com/');
   });
 
   it('returns null for unknown retailer', () => {

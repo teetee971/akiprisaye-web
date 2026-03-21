@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import Header from './layout/Header';
 import Footer from './layout/Footer';
 import FabActions from './ui/FabActions';
+import FeedbackWidget from './ui/FeedbackWidget';
 import SkipLinks from './a11y/SkipLinks';
 import PrivacyConsentBanner from './PrivacyConsentBanner';
 import { hydrateShoppingList } from '../store/useShoppingListStore';
@@ -11,6 +12,11 @@ import { usePrivacyConsent } from '../hooks/usePrivacyConsent';
 
 // Non-critical modal — lazy-loaded so billing module doesn't block initial paint
 const UpgradePromptModal = lazy(() => import('./billing/UpgradePromptModal'));
+
+// WhatsApp number for feedback (international format, no +).
+// Set VITE_FEEDBACK_WHATSAPP in GitHub secrets / .env.local to activate.
+// When absent the widget still renders but the send button opens wa.me without a number.
+const FEEDBACK_WA = import.meta.env.VITE_FEEDBACK_WHATSAPP ?? '';
 
 function AlertEvaluatorSideEffect() {
   const { consent } = usePrivacyConsent();
@@ -32,6 +38,7 @@ export default function Layout() {
         <Outlet />
       </main>
       <FabActions />
+      <FeedbackWidget whatsappNumber={FEEDBACK_WA} />
       <Suspense fallback={null}>
         <UpgradePromptModal />
       </Suspense>

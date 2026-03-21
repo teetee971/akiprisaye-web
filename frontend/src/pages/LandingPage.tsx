@@ -24,6 +24,8 @@ import { SITE_URL } from '../utils/seoHelpers';
 import { buildRetailerUrl } from '../utils/retailerLinks';
 import { trackRetailerClick } from '../utils/priceClickTracker';
 import { getCROStats, trackPageView, trackConversionEvent, getVariantForPage } from '../utils/conversionTracker';
+import { trackRevenueClick } from '../utils/revenueTracker';
+import { usePWAInstall } from '../hooks/usePWAInstall';
 import AlertesPrixBanner, { WHATSAPP_SUBSCRIBE_URL } from '../components/business/AlertesPrixBanner';
 
 // ── Viral share scripts ───────────────────────────────────────────────────────
@@ -77,6 +79,8 @@ export default function LandingPage() {
   // Viral script copy state: id of last-copied script
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // PWA install prompt
+  const { canInstall, install: installPWA } = usePWAInstall();
 
   // Always use the canonical SITE_URL so the path includes the deployment
   // subpath (e.g. /akiprisaye-web/landing on GitHub Pages).
@@ -194,6 +198,18 @@ export default function LandingPage() {
           Recevoir les bons plans gratuits →
         </a>
 
+        {/* PWA install button — only shown when the browser offers install prompt */}
+        {canInstall && (
+          <button
+            type="button"
+            onClick={installPWA}
+            className="flex items-center gap-2 rounded-full border border-zinc-700 bg-zinc-800/60 px-4 py-2 text-xs font-semibold text-zinc-300 transition-colors hover:border-zinc-500 hover:text-white"
+            aria-label="Installer l'application A KI PRI SA YÉ sur cet appareil"
+          >
+            📲 Installer l&apos;app
+          </button>
+        )}
+
         {/* Live CTR badge — only shown when data is available */}
         {ctrPct !== null && ctrPct > 0 && (
           <p className="text-xs text-zinc-500">
@@ -289,14 +305,20 @@ export default function LandingPage() {
                   href={affiliateUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={() =>
+                  onClick={() => {
                     trackRetailerClick(
                       DEMO_PRODUCT.barcode,
                       item.retailer,
                       DEMO_PRODUCT.territory,
                       item.price,
-                    )
-                  }
+                    );
+                    trackRevenueClick({
+                      url: pageUrl,
+                      product: DEMO_PRODUCT.name,
+                      retailer: item.retailer,
+                      price: item.price,
+                    });
+                  }}
                   className={rowClass}
                   aria-label={`Voir ${DEMO_PRODUCT.name} chez ${item.retailer} à ${formatEur(item.price)}`}
                 >
@@ -361,6 +383,28 @@ export default function LandingPage() {
             );
           })}
         </div>
+
+        {/* Native Web Share — mobile only, degrades to nothing on desktop */}
+        {'share' in navigator && (
+          <button
+            type="button"
+            onClick={async () => {
+              try {
+                await navigator.share({
+                  title: 'A KI PRI SA YÉ — Comparateur de prix Outre-mer',
+                  text: `🔥 Même produit. Prix différent.\n\nCoca-Cola 1,5L :\n2,85€ → 2,49€ selon le magasin\n\n👉 Vérifie pour tes courses :`,
+                  url: landingUrl,
+                });
+              } catch {
+                // User dismissed — no-op
+              }
+            }}
+            className="mx-auto mt-4 flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-semibold text-zinc-400 transition-colors hover:border-white/20 hover:text-zinc-200"
+            aria-label="Partager via l'application de messagerie de votre choix"
+          >
+            🔗 Partager
+          </button>
+        )}
       </section>
 
       {/* ── 5. SUBSCRIPTION BANNER ──────────────────────────────────────────── */}

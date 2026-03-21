@@ -29,7 +29,26 @@ const buildEnv = process.env.CF_PAGES === '1'
     : process.env.NODE_ENV ?? 'development';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    // ── Google Search Console ownership verification ──────────────────────────
+    // Injects <meta name="google-site-verification"> when the env var is set.
+    // Set VITE_GOOGLE_SITE_VERIFICATION as a repo secret and pass it in the
+    // deploy-pages workflow Build step env section.
+    // When the env var is absent (local dev, CI without the secret) the tag is
+    // simply omitted — harmless and clean.
+    {
+      name: 'google-site-verification',
+      transformIndexHtml(html: string): string {
+        const token = process.env.VITE_GOOGLE_SITE_VERIFICATION?.trim();
+        if (!token) return html;
+        return html.replace(
+          '    <meta name="robots"',
+          `    <meta name="google-site-verification" content="${token}" />\n    <meta name="robots"`,
+        );
+      },
+    },
+  ],
   resolve: {
     alias: [
       // Supporte "@/..." et aussi "@..."

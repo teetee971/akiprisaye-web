@@ -1,6 +1,6 @@
 {
   "name": "A KI PRI SA YÉ",
-  "short_name": "A Ki Pri Sa Yé",
+  "short_name": "Akipri",
   "description": "Application citoyenne de transparence des prix dans les territoires d'Outre-mer. Comparez, scannez, contribuez.",
   "lang": "fr",
   "start_url": "./",
@@ -9,8 +9,8 @@
   "display": "standalone",
   "display_override": ["window-controls-overlay", "standalone", "minimal-ui", "browser"],
   "orientation": "portrait-primary",
-  "background_color": "#0f172a",
-  "theme_color": "#2563eb",
+  "background_color": "#0a0a0f",
+  "theme_color": "#0a0a0f",
   "categories": ["finance", "utilities", "education"],
   "prefer_related_applications": false,
   "iarc_rating_id": "",
