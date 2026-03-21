@@ -14,7 +14,10 @@
  * - Les numéros SIREN/SIRET sont des données publiques
  */
 
-import { PrismaClient, LegalEntity, EntityStatus } from '@prisma/client';
+import { PrismaClient, EntityStatus } from '@prisma/client';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type LegalEntity = any;
 import type {
   CreateLegalEntityInput,
   UpdateLegalEntityInput,

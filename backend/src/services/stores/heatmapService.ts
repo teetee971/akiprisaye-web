@@ -90,7 +90,7 @@ export function generateHeatmapData(
  * @param heatmapData Heatmap data
  * @returns Configuration object for leaflet.heat
  */
-export function getHeatmapConfig(heatmapData: HeatmapData) {
+export function getHeatmapConfig(_heatmapData: HeatmapData) {
   return {
     radius: 25, // Radius of influence for each point
     blur: 15, // Amount of blur

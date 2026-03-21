@@ -5,7 +5,8 @@
  * IA déterministe (pas d'hallucination)
  */
 
-import { PrismaClient, QuoteRequest, Quote, QuoteStatus, RequesterType, Territory } from '@prisma/client';
+import { PrismaClient, QuoteRequest, Quote, QuoteStatus, RequesterType } from '@prisma/client';
+import { Territory } from '../comparison/types.js';
 
 const prisma = new PrismaClient();
 

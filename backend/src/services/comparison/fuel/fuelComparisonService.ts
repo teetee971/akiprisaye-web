@@ -200,7 +200,7 @@ export class FuelComparisonService extends ServiceComparisonCore {
   /**
    * Get department code from territory
    */
-  private getDepartmentFromTerritory(territory?: Territory): string | null {
+  private _getDepartmentFromTerritory(territory?: Territory): string | null {
     if (!territory) return null;
     return TERRITORY_TO_DEPARTMENT[territory] || null;
   }
@@ -234,7 +234,7 @@ export class FuelComparisonService extends ServiceComparisonCore {
   /**
    * Fetch from government API (placeholder for future implementation)
    */
-  private async fetchFromGovernmentAPI(department: string | null): Promise<any[]> {
+  private async _fetchFromGovernmentAPI(department: string | null): Promise<any[]> {
     // TODO: Implement actual API call to prix-carburants.gouv.fr
     // Example:
     // const response = await fetch(`https://www.prix-carburants.gouv.fr/api/stations/${department}`);

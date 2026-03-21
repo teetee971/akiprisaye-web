@@ -10,7 +10,7 @@ import {
   type Subscription,
   type CreateSubscriptionParams
 } from '../../types/subscription.js';
-import { SUBSCRIPTION_PLANS, getSubscriptionPlan, getPlanPrice } from '../../config/subscriptionPlans.js';
+import { getSubscriptionPlan, getPlanPrice } from '../../config/subscriptionPlans.js';
 
 const prisma = new PrismaClient();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {

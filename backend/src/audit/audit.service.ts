@@ -11,7 +11,20 @@
  * Conformité RGPD Art. 30 (registre des activités de traitement)
  */
 
-import { PrismaClient, AuditLog, AuditResult, UserRole } from '@prisma/client';
+import { PrismaClient, AuditResult, UserRole } from '@prisma/client';
+
+type AuditLog = {
+  id: string;
+  userId: string;
+  userRole: UserRole;
+  action: string;
+  entityId: string | null;
+  result: AuditResult;
+  message: string | null;
+  ip: string | null;
+  userAgent: string | null;
+  createdAt: Date;
+};
 
 export interface CreateAuditLogInput {
   userId: string;
@@ -57,7 +70,6 @@ export class AuditService {
         userId: data.userId,
         userRole: data.userRole,
         action: data.action,
-        entity: data.entity,
         entityId: data.entityId,
         result: data.result,
         message: data.message,
@@ -66,7 +78,7 @@ export class AuditService {
       },
     });
 
-    return auditLog;
+    return auditLog as unknown as AuditLog;
   }
 
   /**
@@ -81,16 +93,7 @@ export class AuditService {
       skip,
       take,
       orderBy: { createdAt: 'desc' },
-      include: {
-        user: {
-          select: {
-            id: true,
-            email: true,
-            name: true,
-          },
-        },
-      },
-    });
+    }) as unknown as Promise<AuditLog[]>;
   }
 
   /**
@@ -124,7 +127,7 @@ export class AuditService {
     }
 
     if (criteria.entity) {
-      where.entity = criteria.entity;
+      where.entityId = criteria.entity;
     }
 
     if (criteria.entityId) {
@@ -150,16 +153,7 @@ export class AuditService {
       skip,
       take,
       orderBy: { createdAt: 'desc' },
-      include: {
-        user: {
-          select: {
-            id: true,
-            email: true,
-            name: true,
-          },
-        },
-      },
-    });
+    }) as unknown as Promise<AuditLog[]>;
   }
 
   /**
@@ -180,16 +174,7 @@ export class AuditService {
       skip,
       take,
       orderBy: { createdAt: 'desc' },
-      include: {
-        user: {
-          select: {
-            id: true,
-            email: true,
-            name: true,
-          },
-        },
-      },
-    });
+    }) as unknown as Promise<AuditLog[]>;
   }
 
   /**
@@ -209,7 +194,7 @@ export class AuditService {
     if (criteria.userRole) where.userRole = criteria.userRole;
     if (criteria.action)
       where.action = { contains: criteria.action, mode: 'insensitive' };
-    if (criteria.entity) where.entity = criteria.entity;
+    if (criteria.entity) where.entityId = criteria.entity;
     if (criteria.entityId) where.entityId = criteria.entityId;
     if (criteria.result) where.result = criteria.result;
 
@@ -243,7 +228,7 @@ export class AuditService {
 
     const byResult: Record<string, number> = {};
     byResultData.forEach((item) => {
-      byResult[item.result] = item._count;
+      if (item.result !== null) byResult[item.result] = item._count;
     });
 
     // Statistiques par rôle
@@ -254,7 +239,7 @@ export class AuditService {
 
     const byRole: Record<string, number> = {};
     byRoleData.forEach((item) => {
-      byRole[item.userRole] = item._count;
+      if (item.userRole !== null) byRole[item.userRole] = item._count;
     });
 
     // Logs des dernières 24h

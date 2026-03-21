@@ -5,7 +5,7 @@
 
 import { Request, Response } from 'express';
 import { SimpleOpenDataController } from '../simpleOpendata.controller';
-import { Territory } from '@prisma/client';
+import { Territory } from '../../../services/comparison/types.js';
 
 // Mock les services
 jest.mock('../../../services/opendata/OpenDataService');

@@ -126,7 +126,7 @@ class EmailChannel {
    * Get user data
    * TODO: Implement based on actual user service
    */
-  private async getUser(userId: string): Promise<{ email: string } | null> {
+  private async getUser(_userId: string): Promise<{ email: string } | null> {
     // This would query the user database
     // For now, return a placeholder
     return { email: 'user@example.com' };

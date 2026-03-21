@@ -69,14 +69,11 @@ export async function runDailyChallengeGeneration(): Promise<{
  * Can be integrated with cron or other scheduling systems
  */
 export function scheduleWeeklyChallenges(): void {
-  // Example: Run at 6 AM every Monday
-  const MONDAY_6AM = '0 6 * * 1';
-  
   console.log('[Weekly Challenges Job] Scheduled to run every Monday at 6 AM');
   
   // This would use a cron library like node-cron
   // import cron from 'node-cron';
-  // cron.schedule(MONDAY_6AM, async () => {
+  // cron.schedule('0 6 * * 1', async () => {
   //   await runWeeklyChallengeGeneration();
   // });
 }
@@ -85,14 +82,11 @@ export function scheduleWeeklyChallenges(): void {
  * Schedule daily challenges
  */
 export function scheduleDailyChallenges(): void {
-  // Example: Run at 6 AM every day
-  const DAILY_6AM = '0 6 * * *';
-  
   console.log('[Daily Challenges Job] Scheduled to run every day at 6 AM');
   
   // This would use a cron library like node-cron
   // import cron from 'node-cron';
-  // cron.schedule(DAILY_6AM, async () => {
+  // cron.schedule('0 6 * * *', async () => {
   //   await runDailyChallengeGeneration();
   // });
 }

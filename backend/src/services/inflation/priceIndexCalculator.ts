@@ -5,7 +5,6 @@
 
 import { 
   REFERENCE_BASKET, 
-  CATEGORY_WEIGHTS, 
   BASE_INDEX,
   Territory,
   ProductCategory 
@@ -122,8 +121,8 @@ export async function calculatePriceIndex(
 export async function calculateCategoryIndex(
   territory: Territory,
   category: ProductCategory,
-  year: number,
-  month: number,
+  _year: number,
+  _month: number,
   prices: ProductPrice[]
 ): Promise<CategoryPriceIndex> {
   const categoryDef = REFERENCE_BASKET.find(c => c.category === category);
@@ -180,7 +179,7 @@ export function calculateCategoryContribution(
  */
 export function validatePriceData(
   prices: ProductPrice[],
-  territory: Territory
+  _territory: Territory
 ): { isValid: boolean; missingProducts: string[] } {
   const allProducts = REFERENCE_BASKET.flatMap(c => c.products);
   const availableProducts = new Set(prices.map(p => p.productCode));

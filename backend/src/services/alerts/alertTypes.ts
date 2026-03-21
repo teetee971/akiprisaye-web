@@ -13,11 +13,11 @@ export interface PriceAlert {
   productId: string;
   
   alertType: AlertType;
-  targetPrice?: number;
-  percentageThreshold?: number;
+  targetPrice?: number | null;
+  percentageThreshold?: number | null;
   
   storeIds?: string[];
-  territory?: string;
+  territory?: string | null;
   chains?: string[];
   
   notifyEmail: boolean;
@@ -26,10 +26,10 @@ export interface PriceAlert {
   
   isActive: boolean;
   triggeredCount: number;
-  lastTriggeredAt?: Date;
+  triggeredAt?: Date | null;
   createdAt: Date;
   updatedAt: Date;
-  expiresAt?: Date;
+  expiresAt?: Date | null;
 }
 
 export interface CreateAlertInput {

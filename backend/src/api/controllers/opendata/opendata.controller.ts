@@ -10,8 +10,8 @@
  */
 
 import { Request, Response } from 'express';
-import { OpenDataService } from '../../services/opendata/OpenDataService.js';
-import { Territory } from '@prisma/client';
+import { OpenDataService } from '../../../services/opendata/OpenDataService.js';
+import { Territory } from '../../../services/comparison/types.js';
 
 /**
  * Métadonnées obligatoires pour chaque réponse Open Data

@@ -40,14 +40,11 @@ export async function runStreakCheck(): Promise<{
  * Can be integrated with cron or other scheduling systems
  */
 export function scheduleStreakCheck(): void {
-  // Example: Run at midnight every day
-  const MIDNIGHT = '0 0 * * *';
-  
   console.log('[Streak Job] Scheduled to run daily at midnight');
   
   // This would use a cron library like node-cron
   // import cron from 'node-cron';
-  // cron.schedule(MIDNIGHT, async () => {
+  // cron.schedule('0 0 * * *', async () => {
   //   await runStreakCheck();
   // });
 }

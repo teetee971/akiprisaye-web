@@ -11,6 +11,7 @@
 
 import bcryptjs from 'bcryptjs';
 import { z } from 'zod';
+import { randomInt } from 'node:crypto';
 
 // Configuration
 const SALT_ROUNDS = 12; // Coût de hashing (12 = ~250ms, bon compromis sécurité/performance)
@@ -160,20 +161,20 @@ export function generateRandomPassword(length = 16): string {
   let password = '';
 
   // Assurer au moins un caractère de chaque type (utilise crypto.randomInt)
-  password += chars.lowercase[crypto.randomInt(0, chars.lowercase.length)];
-  password += chars.uppercase[crypto.randomInt(0, chars.uppercase.length)];
-  password += chars.numbers[crypto.randomInt(0, chars.numbers.length)];
-  password += chars.special[crypto.randomInt(0, chars.special.length)];
+  password += chars.lowercase[randomInt(0, chars.lowercase.length)];
+  password += chars.uppercase[randomInt(0, chars.uppercase.length)];
+  password += chars.numbers[randomInt(0, chars.numbers.length)];
+  password += chars.special[randomInt(0, chars.special.length)];
 
   // Remplir le reste aléatoirement (utilise crypto.randomInt)
   for (let i = password.length; i < length; i++) {
-    password += allChars[crypto.randomInt(0, allChars.length)];
+    password += allChars[randomInt(0, allChars.length)];
   }
 
   // Mélanger les caractères (utilise crypto.randomInt pour le shuffle)
   const passwordArray = password.split('');
   for (let i = passwordArray.length - 1; i > 0; i--) {
-    const j = crypto.randomInt(0, i + 1);
+    const j = randomInt(0, i + 1);
     [passwordArray[i], passwordArray[j]] = [passwordArray[j], passwordArray[i]];
   }
   

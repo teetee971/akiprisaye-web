@@ -78,3 +78,33 @@ export function generateNeutralInterpretation(stats: {
     interpretation
   };
 }
+
+export interface ObservationStats {
+  observationCount: number;
+  dispersionIndex: number;
+  territoryCount: number;
+}
+
+export interface NeutralInterpretation {
+  signalLevel: number;
+  method: string;
+  interpretation: string;
+}
+
+export function calculateDispersionIndex(prices: number[]): number {
+  if (prices.length < 2) return 0;
+  
+  const mean = prices.reduce((sum, p) => sum + p, 0) / prices.length;
+  const variance = prices.reduce((sum, p) => sum + Math.pow(p - mean, 2), 0) / prices.length;
+  const stdDev = Math.sqrt(variance);
+  
+  return mean > 0 ? (stdDev / mean) * 100 : 0;
+}
+
+export function validateNeutralText(text: string): boolean {
+  if (!text || text.length < 10) return false;
+  if (text.length > 500) return false;
+  
+  const hasSubjectiveWords = /\b(excellent|terrible|mauvais|bon|super|nul)\b/i.test(text);
+  return !hasSubjectiveWords;
+}

@@ -137,7 +137,7 @@ function categorizePriceIndex(
  */
 export function calculateTerritoryPriceIndices(
   storesPrices: Map<string, PriceData[]>,
-  territory: string
+  _territory: string
 ): PriceIndexResult[] {
   const results: PriceIndexResult[] = [];
   const basketTotals: number[] = [];

@@ -237,7 +237,7 @@ export class CreditsService {
       });
       
       // Bloquer crédits (créer transaction directement sans appeler spendCredits)
-      const transaction = await tx.creditTransaction.create({
+      const _transaction = await tx.creditTransaction.create({
         data: {
           userId,
           type: 'SPEND',

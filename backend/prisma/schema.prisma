@@ -100,7 +100,137 @@ enum ApiPermission {
   WRITE_STORES
   READ_PRODUCTS
   WRITE_PRODUCTS
+  READ_COMPARATORS
+  READ_ANALYTICS
+  READ_TERRITORIES
+  WRITE_CONTRIBUTIONS
+  EXPORT_DATA
   ADMIN
+}
+
+enum Territory {
+  FRANCE_HEXAGONALE
+  GUADELOUPE
+  MARTINIQUE
+  GUYANE
+  LA_REUNION
+  MAYOTTE
+  SAINT_MARTIN
+  SAINT_BARTHELEMY
+  SAINT_PIERRE_ET_MIQUELON
+  WALLIS_ET_FUTUNA
+  POLYNESIE_FRANCAISE
+  NOUVELLE_CALEDONIE
+}
+
+enum PointAction {
+  PRICE_REPORT
+  PRICE_VERIFY
+  PHOTO_UPLOAD
+  RECEIPT_SCAN
+  DAILY_LOGIN
+  STREAK_BONUS
+  REFERRAL
+  CHALLENGE_COMPLETE
+  BADGE_EARNED
+}
+
+enum ProductStatus {
+  ACTIVE
+  INACTIVE
+  DISCONTINUED
+}
+
+enum NotificationStatus {
+  UNREAD
+  READ
+  ARCHIVED
+}
+
+enum NotificationType {
+  PRICE_ALERT
+  BADGE_EARNED
+  CHALLENGE_COMPLETE
+  SYSTEM_MESSAGE
+  WEEKLY_SUMMARY
+}
+
+enum NotificationChannel {
+  IN_APP
+  EMAIL
+  PUSH
+}
+
+enum AlertType {
+  PRICE_DROP
+  PRICE_INCREASE
+  NEW_PRODUCT
+  STOCK_ALERT
+  PRICE_TARGET
+  PROMOTION
+  BACK_IN_STOCK
+  BEST_PRICE
+  NEW_STORE
+}
+
+enum BadgeCategory {
+  CONTRIBUTOR
+  EXPLORER
+  EXPERT
+  SOCIAL
+  SPECIAL
+}
+
+enum BadgeRarity {
+  COMMON
+  RARE
+  EPIC
+  LEGENDARY
+}
+
+enum ChallengeType {
+  DAILY
+  WEEKLY
+  MONTHLY
+  SPECIAL
+}
+
+enum QuoteStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  EXPIRED
+}
+
+enum RequesterType {
+  INDIVIDUAL
+  BUSINESS
+  INSTITUTION
+}
+
+enum ApiKeyStatus {
+  ACTIVE
+  INACTIVE
+  REVOKED
+}
+
+enum BrandStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum EntityStatus {
+  ACTIVE
+  INACTIVE
+  ARCHIVED
+  CEASED
+}
+
+enum AuditResult {
+  SUCCESS
+  FAILURE
+  PARTIAL
+  DENIED
 }
 
 /// ===============================
@@ -267,19 +397,23 @@ model RefreshToken {
 }
 
 model ApiKey {
-  id          String         @id @default(cuid())
-  key         String         @unique
-  keyHash     String         @unique
-  name        String
-  userId      String
-  permissions ApiPermission[]
-  isActive    Boolean        @default(true)
-  expiresAt   DateTime?
-  lastUsedAt  DateTime?
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
+  id               String         @id @default(cuid())
+  key              String         @unique
+  keyHash          String         @unique
+  name             String
+  userId           String
+  permissions      ApiPermission[]
+  isActive         Boolean        @default(true)
+  status           ApiKeyStatus   @default(ACTIVE)
+  expiresAt        DateTime?
+  lastUsedAt       DateTime?
+  rateLimitMinute  Int            @default(60)
+  rateLimitHour    Int            @default(1000)
+  rateLimitDay     Int            @default(10000)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
   
-  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   
   @@index([userId])
   @@index([keyHash])
@@ -531,4 +665,441 @@ model PriceAlertEvent {
 
   @@index([productId, territory])
   @@index([processed])
+}
+
+/// ===============================
+/// GAMIFICATION MODELS
+/// ===============================
+
+model userGamification {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  totalPoints       Int      @default(0)
+  level             Int      @default(1)
+  currentStreak     Int      @default(0)
+  longestStreak     Int      @default(0)
+  lastActiveDate    DateTime?
+  priceReportsCount Int      @default(0)
+  verificationsCount Int     @default(0)
+  photosCount       Int      @default(0)
+  receiptsCount     Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@index([userId])
+  @@index([totalPoints])
+}
+
+model pointsTransaction {
+  id          String      @id @default(cuid())
+  userId      String
+  action      PointAction
+  points      Int
+  description String?
+  metadata    Json?
+  createdAt   DateTime    @default(now())
+  
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model badge {
+  id          String        @id @default(cuid())
+  code        String        @unique
+  name        String
+  description String
+  category    BadgeCategory
+  rarity      BadgeRarity
+  iconUrl     String?
+  points      Int           @default(0)
+  requirement Json?
+  isActive    Boolean       @default(true)
+  createdAt   DateTime      @default(now())
+  
+  @@index([category])
+  @@index([rarity])
+}
+
+model userBadge {
+  id        String   @id @default(cuid())
+  userId    String
+  badgeCode String
+  badgeType String?
+  earnedAt  DateTime @default(now())
+  
+  @@unique([userId, badgeCode])
+  @@index([userId])
+}
+
+model challenge {
+  id          String        @id @default(cuid())
+  code        String        @unique
+  name        String
+  description String
+  type        ChallengeType
+  startDate   DateTime
+  endDate     DateTime
+  target      Int
+  reward      Int
+  isActive    Boolean       @default(true)
+  createdAt   DateTime      @default(now())
+  
+  @@index([type])
+  @@index([isActive])
+}
+
+model userChallenge {
+  id           String   @id @default(cuid())
+  userId       String
+  challengeCode String
+  progress     Int      @default(0)
+  completed    Boolean  @default(false)
+  completedAt  DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  @@unique([userId, challengeCode])
+  @@index([userId])
+}
+
+/// ===============================
+/// BRAND & LEGAL ENTITY MODELS
+/// ===============================
+
+model brand {
+  id          String      @id @default(cuid())
+  name        String      @unique
+  normalizedName String   @unique
+  description String?
+  logoUrl     String?
+  website     String?
+  status      BrandStatus @default(ACTIVE)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  @@index([normalizedName])
+}
+
+model legalEntity {
+  id          String       @id @default(cuid())
+  name        String
+  siret       String?      @unique
+  siren       String?
+  address     String?
+  city        String?
+  postalCode  String?
+  country     String       @default("FR")
+  status      EntityStatus @default(ACTIVE)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  
+  @@index([siret])
+  @@index([siren])
+}
+
+/// ===============================
+/// NOTIFICATION MODELS
+/// ===============================
+
+model notification {
+  id          String             @id @default(cuid())
+  userId      String
+  type        NotificationType
+  title       String
+  message     String
+  status      NotificationStatus @default(UNREAD)
+  metadata    Json?
+  createdAt   DateTime           @default(now())
+  readAt      DateTime?
+  
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model notificationPreference {
+  id          String                @id @default(cuid())
+  userId      String                @unique
+  channels    NotificationChannel[]
+  priceAlerts Boolean               @default(true)
+  badges      Boolean               @default(true)
+  challenges  Boolean               @default(true)
+  weekly      Boolean               @default(true)
+  emailEnabled Boolean              @default(true)
+  pushEnabled Boolean               @default(true)
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+  
+  @@index([userId])
+}
+
+model pushSubscription {
+  id          String   @id @default(cuid())
+  userId      String
+  endpoint    String   @unique
+  auth        String
+  p256dh      String
+  userAgent   String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([userId])
+  @@index([isActive])
+}
+
+model priceAlert {
+  id          String    @id @default(cuid())
+  userId      String
+  productId   String
+  territory   String
+  alertType   AlertType
+  targetPrice Float?
+  isActive    Boolean   @default(true)
+  triggeredAt DateTime?
+  notifyEmail Boolean   @default(true)
+  notifyPush  Boolean   @default(true)
+  notifySms   Boolean   @default(false)
+  triggeredCount Int    @default(0)
+  expiresAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  @@index([userId])
+  @@index([productId])
+  @@index([isActive])
+}
+
+/// ===============================
+/// ANALYTICS & PREDICTION MODELS
+/// ===============================
+
+model priceIndex {
+  id          String   @id @default(cuid())
+  territory   String
+  category    String
+  year        Int
+  month       Int
+  indexValue  Float
+  baseValue   Float    @default(100)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@unique([territory, category, year, month])
+  @@index([territory, year, month])
+}
+
+model categoryIndex {
+  id          String   @id @default(cuid())
+  category    String
+  year        Int
+  month       Int
+  indexValue  Float
+  baseValue   Float    @default(100)
+  createdAt   DateTime @default(now())
+  
+  @@unique([category, year, month])
+  @@index([category, year, month])
+}
+
+model pricePrediction {
+  id          String   @id @default(cuid())
+  productId   String
+  territory   String
+  predictedPrice Float
+  confidence  Float
+  horizon     Int      /// Days ahead
+  createdAt   DateTime @default(now())
+  
+  @@index([productId, territory])
+}
+
+model inflationReport {
+  id          String   @id @default(cuid())
+  territory   String
+  year        Int
+  month       Int
+  category    String?
+  rate        Float
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  
+  @@unique([territory, year, month, category])
+  @@index([territory, year, month])
+}
+
+model metroReferencePrice {
+  id          String   @id @default(cuid())
+  productKey  String
+  price       Float
+  observedAt  DateTime
+  source      String
+  createdAt   DateTime @default(now())
+  
+  @@index([productKey])
+  @@index([observedAt])
+}
+
+/// ===============================
+/// QUOTE & MARKETPLACE MODELS
+/// ===============================
+
+model quote {
+  id          String      @id @default(cuid())
+  requestId   String?     @unique
+  requester   String
+  email       String
+  phone       String?
+  details     Json
+  status      QuoteStatus @default(PENDING)
+  validUntil  DateTime?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  @@index([status])
+  @@index([createdAt])
+}
+
+model quoteRequest {
+  id            String        @id @default(cuid())
+  requesterName String
+  requesterType RequesterType
+  email         String
+  phone         String?
+  organization  String?
+  message       String
+  status        QuoteStatus   @default(PENDING)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  
+  @@index([status])
+  @@index([email])
+}
+
+model marketplaceOffer {
+  id          String       @id @default(cuid())
+  sellerId    String
+  productId   String
+  title       String
+  description String?
+  price       Float
+  quantity    Int
+  type        String?
+  status      EntityStatus @default(ACTIVE)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  
+  @@index([sellerId])
+  @@index([productId])
+  @@index([status])
+}
+
+model marketplacePurchase {
+  id          String   @id @default(cuid())
+  buyerId     String
+  offerId     String
+  quantity    Int
+  totalPrice  Float
+  status      String
+  createdAt   DateTime @default(now())
+  
+  @@index([buyerId])
+  @@index([offerId])
+}
+
+/// ===============================
+/// CREDITS & BILLING MODELS
+/// ===============================
+
+model creditBalance {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  balance     Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([userId])
+}
+
+model creditTransaction {
+  id          String   @id @default(cuid())
+  userId      String
+  amount      Int
+  type        String
+  description String?
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model invoice {
+  id          String   @id @default(cuid())
+  userId      String
+  number      String   @unique
+  amount      Float
+  currency    String   @default("EUR")
+  status      String
+  pdfUrl      String?
+  metadata    Json?
+  issuedAt    DateTime
+  paidAt      DateTime?
+  createdAt   DateTime @default(now())
+  
+  @@index([userId])
+  @@index([number])
+  @@index([status])
+}
+
+/// ===============================
+/// AUDIT & SYNC MODELS
+/// ===============================
+
+model auditLog {
+  id          String       @id @default(cuid())
+  userId      String?
+  action      String
+  entityType  String
+  entityId    String?
+  changes     Json?
+  result      AuditResult?
+  userRole    String?
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime     @default(now())
+  
+  @@index([userId])
+  @@index([action])
+  @@index([entityType])
+  @@index([createdAt])
+}
+
+model syncLog {
+  id          String   @id @default(cuid())
+  source      String
+  status      String
+  recordsCount Int     @default(0)
+  errorMessage String?
+  metadata    Json?
+  startedAt   DateTime
+  completedAt DateTime?
+  createdAt   DateTime @default(now())
+  
+  @@index([source])
+  @@index([status])
+  @@index([startedAt])
+}
+
+model apiUsage {
+  id          String   @id @default(cuid())
+  apiKeyId    String
+  endpoint    String
+  method      String
+  statusCode  Int
+  responseTime Int?
+  timestamp   DateTime @default(now())
+  
+  @@index([apiKeyId])
+  @@index([timestamp])
 }

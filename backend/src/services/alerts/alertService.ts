@@ -21,7 +21,7 @@ export class AlertService {
         targetPrice: input.targetPrice,
         percentageThreshold: input.percentageThreshold,
         storeIds: input.storeIds || [],
-        territory: input.territory,
+        territory: input.territory || '',
         chains: input.chains || [],
         notifyEmail: input.notifyEmail ?? true,
         notifyPush: input.notifyPush ?? true,
@@ -153,7 +153,7 @@ export class AlertService {
       where: { id: alertId },
       data: {
         triggeredCount: { increment: 1 },
-        lastTriggeredAt: new Date(),
+        triggeredAt: new Date(),
       },
     });
   }

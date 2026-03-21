@@ -19,7 +19,8 @@ import {
   rejectProduct,
   mergeProduct,
 } from '../../services/products/validationQueue.js';
-import { ProductStatus } from '@prisma/client';
+
+type ProductStatus = 'PENDING_REVIEW' | 'VALIDATED' | 'REJECTED' | 'MERGED';
 
 const router = Router();
 

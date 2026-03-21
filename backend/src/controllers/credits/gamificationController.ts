@@ -4,7 +4,8 @@
  */
 
 import { Request, Response } from 'express';
-import { PrismaClient, Territory } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
+import { Territory } from '../../services/comparison/types.js';
 import { GamificationService } from '../../services/credits/GamificationService.js';
 import { CreditsService } from '../../services/credits/CreditsService.js';
 import { getAllBadges } from '../../config/badges.js';
@@ -17,7 +18,7 @@ const gamificationService = new GamificationService(prisma, creditsService);
  * GET /api/gamification/badges
  * Obtenir tous les badges disponibles
  */
-export async function getAllBadgesEndpoint(req: Request, res: Response) {
+export async function getAllBadgesEndpoint(_req: Request, res: Response) {
   try {
     const badges = getAllBadges();
     return res.json(badges);

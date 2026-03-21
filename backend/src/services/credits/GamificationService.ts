@@ -20,8 +20,6 @@
 import { PrismaClient } from '@prisma/client';
 import {
   Badge,
-  BadgeType,
-  UserBadge,
   LeaderboardEntry,
   UserProgress,
 } from '../../types/credits.js';

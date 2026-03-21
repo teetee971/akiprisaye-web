@@ -27,7 +27,7 @@
 import { createHash } from 'node:crypto';
 import { randomUUID } from 'node:crypto';
 import prisma from '../../database/prisma.js';
-import { buildProductKey, productCatalogService } from './productCatalogService.js';
+import { productCatalogService } from './productCatalogService.js';
 import { priceObservationService } from './priceObservationService.js';
 import { priceHistoryAggregationService } from './priceHistoryAggregationService.js';
 import { priceAlertService } from './priceAlertService.js';

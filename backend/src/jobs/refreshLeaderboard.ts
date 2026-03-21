@@ -50,14 +50,11 @@ export async function runLeaderboardRefresh(): Promise<{
  * Can be integrated with cron or other scheduling systems
  */
 export function scheduleLeaderboardRefresh(): void {
-  // Example: Run every hour at :00
-  const HOURLY = '0 * * * *';
-  
   console.log('[Leaderboard Refresh Job] Scheduled to run every hour');
   
   // This would use a cron library like node-cron
   // import cron from 'node-cron';
-  // cron.schedule(HOURLY, async () => {
+  // cron.schedule('0 * * * *', async () => {
   //   await runLeaderboardRefresh();
   // });
 }

@@ -13,7 +13,8 @@
  * - RGPD Art. 22 (décision automatisée)
  */
 
-import { PrismaClient, PricePrediction, Territory } from '@prisma/client';
+import { PrismaClient, PricePrediction } from '@prisma/client';
+import { Territory } from '../comparison/types.js';
 
 const prisma = new PrismaClient();
 

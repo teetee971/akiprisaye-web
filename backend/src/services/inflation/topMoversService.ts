@@ -4,7 +4,6 @@
  */
 
 import { Territory, ProductCategory } from '../../config/inflationConfig.js';
-import { prisma } from '../../app.js';
 
 /**
  * Price mover data
@@ -38,7 +37,7 @@ export async function getTopMovers(
   territory: Territory,
   year: number,
   month: number,
-  limit: number = 10
+  _limit: number = 10
 ): Promise<TopMoversResult> {
   try {
     // In production, this would query actual product price data
@@ -69,7 +68,7 @@ export async function getTopMovers(
 export async function trackPriceMovements(
   territory: Territory,
   productCode: string,
-  months: number = 12
+  _months: number = 12
 ): Promise<Array<{ year: number; month: number; price: number; change: number }>> {
   try {
     const movements: Array<{ year: number; month: number; price: number; change: number }> = [];
@@ -108,7 +107,7 @@ export async function identifyAtRiskProducts(
  * Get products with sustained trends
  */
 export async function getProductsWithSustainedTrends(
-  territory: Territory,
+  _territory: Territory,
   direction: 'up' | 'down',
   consecutiveMonths: number = 3
 ): Promise<PriceMover[]> {

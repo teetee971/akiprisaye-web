@@ -12,7 +12,8 @@
  * RGPD: Données agrégées uniquement, pas de données personnelles
  */
 
-import { PrismaClient, Territory } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
+import { Territory } from '../comparison/types.js';
 import {
   MarketOverview,
   MarketShareData,
@@ -392,7 +393,7 @@ export class AnalyticsService {
 
   private calculatePriceChange(
     prices: Array<{ price: number; effectiveDate: Date }>,
-    dateRange: DateRange
+    _dateRange: DateRange
   ): number {
     if (prices.length < 2) return 0;
     

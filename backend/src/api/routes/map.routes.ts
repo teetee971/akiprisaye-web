@@ -5,14 +5,10 @@
 
 import express, { Request, Response } from 'express';
 import {
-  calculateTerritoryPriceIndices,
-  calculateTerritoryStats,
-  getPriceCategoryColor,
   getReferenceBasket,
 } from '../../services/stores/priceIndexCalculator.js';
 import {
   findNearbyStores,
-  groupStoresByChain,
   filterStoresByChains,
   type Store,
   type NearbyStoresOptions,

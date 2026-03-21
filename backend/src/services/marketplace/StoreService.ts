@@ -5,7 +5,8 @@
  * Géolocalisation et segmentation par territoire
  */
 
-import { PrismaClient, Store, Territory } from '@prisma/client';
+import { PrismaClient, Store } from '@prisma/client';
+import { Territory } from '../comparison/types.js';
 
 const prisma = new PrismaClient();
 

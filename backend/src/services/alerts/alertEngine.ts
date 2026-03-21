@@ -7,7 +7,7 @@ import { PrismaClient } from '@prisma/client';
 import type { PriceUpdate, TriggeredAlert, AlertCheckResult, PriceAlert } from './alertTypes.js';
 import { alertService } from './alertService.js';
 
-const prisma = new PrismaClient();
+const _prisma = new PrismaClient();
 
 export class AlertEngine {
   /**
@@ -31,7 +31,7 @@ export class AlertEngine {
   /**
    * Check all alerts for a specific product
    */
-  async checkProductAlerts(productId: string): Promise<TriggeredAlert[]> {
+  async checkProductAlerts(_productId: string): Promise<TriggeredAlert[]> {
     // This would need to fetch current prices for the product
     // and check against all alerts
     // Implementation depends on how price data is stored

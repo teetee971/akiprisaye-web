@@ -184,7 +184,7 @@ export class SyncScheduler {
   /**
    * Get next run time for a scheduled task
    */
-  private getNextRun(task: cron.ScheduledTask): Date | undefined {
+  private getNextRun(_task: cron.ScheduledTask): Date | undefined {
     // Note: node-cron doesn't provide a direct way to get next run time
     // This is a placeholder - in production, you might want to use a library like cron-parser
     return undefined;

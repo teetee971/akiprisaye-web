@@ -4,7 +4,7 @@
  */
 
 import { AnomalyDetectionService } from '../AnomalyDetectionService';
-import { Territory } from '@prisma/client';
+import { Territory } from '../../comparison/types.js';
 
 // Mock Prisma Client
 jest.mock('@prisma/client', () => {

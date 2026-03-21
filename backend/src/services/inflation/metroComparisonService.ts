@@ -205,9 +205,9 @@ export async function getMetroComparisonTrend(
  * Identify products with highest price gaps
  */
 export async function getTopPriceGapProducts(
-  territory: Territory,
-  year: number,
-  month: number,
+  _territory: Territory,
+  _year: number,
+  _month: number,
 ): Promise<Array<{ productCode: string; gapPercent: number }>> {
   // In production, this would query actual product prices
   // For now, returning empty array
