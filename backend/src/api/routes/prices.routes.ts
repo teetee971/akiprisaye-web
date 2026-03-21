@@ -46,7 +46,7 @@ const verifyPriceSchema = z.object({
  * POST /api/prices
  * Submit a new price observation
  */
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', async (req: Request, res: Response): Promise<void> => {
   try {
     const validatedData = submitPriceSchema.parse(req.body);
     const result = await submitPrice(validatedData);
@@ -54,7 +54,7 @@ router.post('/', async (req: Request, res: Response) => {
     res.status(result.status === 'accepted' ? 201 : 202).json(result);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return res.status(400).json({
+      return void res.status(400).json({
         error: 'Validation error',
         details: error.errors,
       });
@@ -72,7 +72,7 @@ router.post('/', async (req: Request, res: Response) => {
  * GET /api/prices/product/:productId
  * Get all prices for a product
  */
-router.get('/product/:productId', async (req: Request, res: Response) => {
+router.get('/product/:productId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { productId } = req.params;
     const { storeId, minConfidence, limit } = req.query;
@@ -84,7 +84,7 @@ router.get('/product/:productId', async (req: Request, res: Response) => {
     if (minConfidence) {
       parsedMinConfidence = parseInt(minConfidence as string, 10);
       if (isNaN(parsedMinConfidence) || parsedMinConfidence < 0 || parsedMinConfidence > 100) {
-        return res.status(400).json({
+        return void res.status(400).json({
           error: 'Invalid minConfidence parameter',
           message: 'minConfidence must be a number between 0 and 100',
         });
@@ -94,7 +94,7 @@ router.get('/product/:productId', async (req: Request, res: Response) => {
     if (limit) {
       parsedLimit = parseInt(limit as string, 10);
       if (isNaN(parsedLimit) || parsedLimit < 1 || parsedLimit > 1000) {
-        return res.status(400).json({
+        return void res.status(400).json({
           error: 'Invalid limit parameter',
           message: 'limit must be a number between 1 and 1000',
         });
@@ -126,7 +126,7 @@ router.get('/product/:productId', async (req: Request, res: Response) => {
  * GET /api/prices/store/:storeId
  * Get all prices for a store
  */
-router.get('/store/:storeId', async (req: Request, res: Response) => {
+router.get('/store/:storeId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { storeId } = req.params;
     const { minConfidence, limit } = req.query;
@@ -138,7 +138,7 @@ router.get('/store/:storeId', async (req: Request, res: Response) => {
     if (minConfidence) {
       parsedMinConfidence = parseInt(minConfidence as string, 10);
       if (isNaN(parsedMinConfidence) || parsedMinConfidence < 0 || parsedMinConfidence > 100) {
-        return res.status(400).json({
+        return void res.status(400).json({
           error: 'Invalid minConfidence parameter',
           message: 'minConfidence must be a number between 0 and 100',
         });
@@ -148,7 +148,7 @@ router.get('/store/:storeId', async (req: Request, res: Response) => {
     if (limit) {
       parsedLimit = parseInt(limit as string, 10);
       if (isNaN(parsedLimit) || parsedLimit < 1 || parsedLimit > 1000) {
-        return res.status(400).json({
+        return void res.status(400).json({
           error: 'Invalid limit parameter',
           message: 'limit must be a number between 1 and 1000',
         });
@@ -179,7 +179,7 @@ router.get('/store/:storeId', async (req: Request, res: Response) => {
  * GET /api/prices/best/:productId
  * Get best verified price for a product
  */
-router.get('/best/:productId', async (req: Request, res: Response) => {
+router.get('/best/:productId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { productId } = req.params;
     const { storeId } = req.query;
@@ -187,7 +187,7 @@ router.get('/best/:productId', async (req: Request, res: Response) => {
     const price = await getBestVerifiedPrice(productId, storeId as string | undefined);
 
     if (!price) {
-      return res.status(404).json({
+      return void res.status(404).json({
         error: 'No verified price found',
       });
     }
@@ -208,7 +208,7 @@ router.get('/best/:productId', async (req: Request, res: Response) => {
  * 
  * Requires authentication. Uses authenticated user ID from JWT token.
  */
-router.post('/:id/verify', authMiddleware, async (req: Request, res: Response) => {
+router.post('/:id/verify', authMiddleware, async (req: Request, res: Response): Promise<void> => {
   try {
     const { id: priceId } = req.params;
     const validatedData = verifyPriceSchema.parse(req.body);
@@ -216,7 +216,7 @@ router.post('/:id/verify', authMiddleware, async (req: Request, res: Response) =
     // Get authenticated user ID from JWT token
     const userId = req.user?.userId;
     if (!userId) {
-      return res.status(401).json({ error: 'Authentication required' });
+      return void res.status(401).json({ error: 'Authentication required' });
     }
 
     const result = await verifyPrice({
@@ -228,7 +228,7 @@ router.post('/:id/verify', authMiddleware, async (req: Request, res: Response) =
     res.json(result);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return res.status(400).json({
+      return void res.status(400).json({
         error: 'Validation error',
         details: error.errors,
       });
@@ -246,7 +246,7 @@ router.post('/:id/verify', authMiddleware, async (req: Request, res: Response) =
  * GET /api/prices/:id/verifications
  * Get verification statistics for a price
  */
-router.get('/:id/verifications', async (req: Request, res: Response) => {
+router.get('/:id/verifications', async (req: Request, res: Response): Promise<void> => {
   try {
     const { id: priceId } = req.params;
     const stats = await getPriceVerificationStats(priceId);
@@ -265,13 +265,13 @@ router.get('/:id/verifications', async (req: Request, res: Response) => {
  * GET /api/prices/history/:productId
  * Get price history for a product
  */
-router.get('/history/:productId', async (req: Request, res: Response) => {
+router.get('/history/:productId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { productId } = req.params;
     const { storeId, limit } = req.query;
 
     if (!storeId) {
-      return res.status(400).json({
+      return void res.status(400).json({
         error: 'Store ID is required',
       });
     }
@@ -293,7 +293,7 @@ router.get('/history/:productId', async (req: Request, res: Response) => {
  * GET /api/prices/history/:productId/aggregated
  * Get aggregated price history across stores
  */
-router.get('/history/:productId/aggregated', async (req: Request, res: Response) => {
+router.get('/history/:productId/aggregated', async (req: Request, res: Response): Promise<void> => {
   try {
     const { productId } = req.params;
     const { period } = req.query;
@@ -325,7 +325,7 @@ router.get('/history/:productId/aggregated', async (req: Request, res: Response)
  * Note: Anomaly detection is performed asynchronously by scheduled jobs.
  * This endpoint only retrieves existing anomaly records.
  */
-router.get('/:id/anomalies', async (req: Request, res: Response) => {
+router.get('/:id/anomalies', async (req: Request, res: Response): Promise<void> => {
   try {
     const { id: priceId } = req.params;
     const anomalies = await getAnomaliesForPrice(priceId);

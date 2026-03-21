@@ -3,7 +3,7 @@
  * Endpoints for subscription management
  */
 
-import express, { Request, Response, NextFunction } from 'express';
+import express, { Request, Response } from 'express';
 import Stripe from 'stripe';
 import { authMiddleware } from '../middlewares/auth.middleware.js';
 import subscriptionService from '../../services/subscription/subscriptionService.js';
@@ -13,7 +13,7 @@ import { getAllSubscriptionPlans } from '../../config/subscriptionPlans.js';
 
 const router = express.Router();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2024-12-18.acacia'
+  apiVersion: '2023-10-16'
 });
 
 /**
@@ -35,12 +35,12 @@ router.get('/plans', (_req: Request, res: Response) => {
  * Create a new subscription
  * Requires authentication - uses authenticated user ID
  */
-router.post('/', authMiddleware, async (req: Request, res: Response) => {
+router.post('/', authMiddleware, async (req: Request, res: Response): Promise<void> => {
   try {
     // Get authenticated user ID from JWT token
     const userId = req.user?.userId;
     if (!userId) {
-      return res.status(401).json({
+      return void res.status(401).json({
         success: false,
         error: 'Authentication required'
       });
@@ -49,7 +49,7 @@ router.post('/', authMiddleware, async (req: Request, res: Response) => {
     const { planId, paymentMethodId, interval } = req.body;
     
     if (!planId || !interval) {
-      return res.status(400).json({
+      return void res.status(400).json({
         success: false,
         error: 'Missing required fields: planId, interval'
       });
@@ -77,11 +77,11 @@ router.post('/', authMiddleware, async (req: Request, res: Response) => {
  * Get active subscription for the authenticated user
  * Requires authentication
  */
-router.get('/me', authMiddleware, async (req: Request, res: Response) => {
+router.get('/me', authMiddleware, async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.user?.userId;
     if (!userId) {
-      return res.status(401).json({
+      return void res.status(401).json({
         success: false,
         error: 'Authentication required'
       });
@@ -90,7 +90,7 @@ router.get('/me', authMiddleware, async (req: Request, res: Response) => {
     const subscription = await subscriptionService.getActiveSubscription(userId);
     
     if (!subscription) {
-      return res.json({
+      return void res.json({
         success: true,
         subscription: null,
         message: 'No active subscription found'
@@ -112,11 +112,11 @@ router.get('/me', authMiddleware, async (req: Request, res: Response) => {
  * Check if authenticated user has access to a feature
  * Requires authentication
  */
-router.post('/check-feature', authMiddleware, async (req: Request, res: Response) => {
+router.post('/check-feature', authMiddleware, async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.user?.userId;
     if (!userId) {
-      return res.status(401).json({
+      return void res.status(401).json({
         success: false,
         error: 'Authentication required'
       });
@@ -125,7 +125,7 @@ router.post('/check-feature', authMiddleware, async (req: Request, res: Response
     const { feature } = req.body;
     
     if (!feature) {
-      return res.status(400).json({
+      return void res.status(400).json({
         success: false,
         error: 'Feature name is required'
       });
@@ -147,11 +147,11 @@ router.post('/check-feature', authMiddleware, async (req: Request, res: Response
  * POST /api/subscriptions/webhook
  * Stripe webhook endpoint
  */
-router.post('/webhook', express.raw({ type: 'application/json' }), async (req: Request, res: Response) => {
+router.post('/webhook', express.raw({ type: 'application/json' }), async (req: Request, res: Response): Promise<void> => {
   const sig = req.headers['stripe-signature'];
   
   if (!sig) {
-    return res.status(400).send('Missing stripe-signature header');
+    return void res.status(400).send('Missing stripe-signature header');
   }
   
   try {

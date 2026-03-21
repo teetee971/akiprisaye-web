@@ -27,7 +27,7 @@ const router = Router();
  * GET /api/validation/queue
  * Get products in validation queue
  */
-router.get('/queue', async (req: Request, res: Response) => {
+router.get('/queue', async (req: Request, res: Response): Promise<void> => {
   try {
     const statusParam = req.query.status as string | undefined;
     const source = req.query.source as string | undefined;
@@ -43,7 +43,7 @@ router.get('/queue', async (req: Request, res: Response) => {
     // Validate limit parameter
     const limit = limitParam ? parseInt(limitParam, 10) : 50;
     if (isNaN(limit) || limit < 1 || limit > 100) {
-      return res.status(400).json({
+      return void res.status(400).json({
         success: false,
         error: 'Invalid limit parameter. Must be between 1 and 100.',
       });
@@ -52,7 +52,7 @@ router.get('/queue', async (req: Request, res: Response) => {
     // Validate offset parameter
     const offset = offsetParam ? parseInt(offsetParam, 10) : 0;
     if (isNaN(offset) || offset < 0) {
-      return res.status(400).json({
+      return void res.status(400).json({
         success: false,
         error: 'Invalid offset parameter. Must be >= 0.',
       });
@@ -65,7 +65,7 @@ router.get('/queue', async (req: Request, res: Response) => {
       offset,
     });
 
-    return res.json({
+    return void res.json({
       success: true,
       queue,
       pagination: {
@@ -76,7 +76,7 @@ router.get('/queue', async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('Error getting validation queue:', error);
-    return res.status(500).json({
+    return void res.status(500).json({
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error',
     });
@@ -108,20 +108,20 @@ router.get('/stats', async (_req: Request, res: Response) => {
  * GET /api/validation/:id
  * Get product details for validation
  */
-router.get('/:id', async (req: Request, res: Response) => {
+router.get('/:id', async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
 
     const product = await getProductForValidation(id);
 
     if (!product) {
-      return res.status(404).json({
+      return void res.status(404).json({
         success: false,
         error: 'Product not found',
       });
     }
 
-    return res.json({
+    return void res.json({
       success: true,
       product,
     });
@@ -138,7 +138,7 @@ router.get('/:id', async (req: Request, res: Response) => {
  * POST /api/validation/:id/approve
  * Approve a product
  */
-router.post('/:id/approve', async (req: Request, res: Response) => {
+router.post('/:id/approve', async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
     const { reviewedBy } = req.body;
@@ -162,7 +162,7 @@ router.post('/:id/approve', async (req: Request, res: Response) => {
  * POST /api/validation/:id/reject
  * Reject a product
  */
-router.post('/:id/reject', async (req: Request, res: Response) => {
+router.post('/:id/reject', async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
     const { reviewedBy } = req.body;
@@ -186,14 +186,14 @@ router.post('/:id/reject', async (req: Request, res: Response) => {
  * POST /api/validation/:id/merge/:targetId
  * Merge a product with another (mark as duplicate)
  */
-router.post('/:id/merge/:targetId', async (req: Request, res: Response) => {
+router.post('/:id/merge/:targetId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { id, targetId } = req.params;
     const { reviewedBy } = req.body;
 
     await mergeProduct(id, targetId, reviewedBy);
 
-    return res.json({
+    return void res.json({
       success: true,
       message: 'Product merged',
     });
@@ -202,13 +202,13 @@ router.post('/:id/merge/:targetId', async (req: Request, res: Response) => {
     
     // Return 404 if product not found
     if (error instanceof Error && error.message.includes('not found')) {
-      return res.status(404).json({
+      return void res.status(404).json({
         success: false,
         error: error.message,
       });
     }
     
-    return res.status(500).json({
+    return void res.status(500).json({
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error',
     });

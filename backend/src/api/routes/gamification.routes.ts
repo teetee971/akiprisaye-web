@@ -13,12 +13,12 @@ const router = express.Router();
  * GET /api/gamification/profile
  * Get user's complete gamification profile
  */
-router.get('/profile', async (req: Request, res: Response) => {
+router.get('/profile', async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.query.userId as string;
 
     if (!userId) {
-      return res.status(400).json({
+      return void res.status(400).json({
         success: false,
         error: 'Missing required field: userId'
       });
@@ -39,7 +39,7 @@ router.get('/profile', async (req: Request, res: Response) => {
  * GET /api/gamification/profile/:userId
  * Get specific user's gamification profile
  */
-router.get('/profile/:userId', async (req: Request, res: Response) => {
+router.get('/profile/:userId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { userId } = req.params;
 
@@ -58,12 +58,12 @@ router.get('/profile/:userId', async (req: Request, res: Response) => {
  * GET /api/gamification/dashboard
  * Get user's dashboard summary
  */
-router.get('/dashboard', async (req: Request, res: Response) => {
+router.get('/dashboard', async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.query.userId as string;
 
     if (!userId) {
-      return res.status(400).json({
+      return void res.status(400).json({
         success: false,
         error: 'Missing required field: userId'
       });
@@ -84,12 +84,12 @@ router.get('/dashboard', async (req: Request, res: Response) => {
  * GET /api/gamification/points
  * Get user's points
  */
-router.get('/points', async (req: Request, res: Response) => {
+router.get('/points', async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.query.userId as string;
 
     if (!userId) {
-      return res.status(400).json({
+      return void res.status(400).json({
         success: false,
         error: 'Missing required field: userId'
       });
@@ -110,13 +110,13 @@ router.get('/points', async (req: Request, res: Response) => {
  * GET /api/gamification/points/history
  * Get user's points history
  */
-router.get('/points/history', async (req: Request, res: Response) => {
+router.get('/points/history', async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.query.userId as string;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 50;
 
     if (!userId) {
-      return res.status(400).json({
+      return void res.status(400).json({
         success: false,
         error: 'Missing required field: userId'
       });
@@ -137,12 +137,12 @@ router.get('/points/history', async (req: Request, res: Response) => {
  * GET /api/gamification/points/summary
  * Get user's points summary
  */
-router.get('/points/summary', async (req: Request, res: Response) => {
+router.get('/points/summary', async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.query.userId as string;
 
     if (!userId) {
-      return res.status(400).json({
+      return void res.status(400).json({
         success: false,
         error: 'Missing required field: userId'
       });
@@ -163,12 +163,12 @@ router.get('/points/summary', async (req: Request, res: Response) => {
  * POST /api/gamification/points/award
  * Award points to user (internal use)
  */
-router.post('/points/award', async (req: Request, res: Response) => {
+router.post('/points/award', async (req: Request, res: Response): Promise<void> => {
   try {
     const { userId, action, metadata } = req.body;
 
     if (!userId || !action) {
-      return res.status(400).json({
+      return void res.status(400).json({
         success: false,
         error: 'Missing required fields: userId, action'
       });
@@ -194,12 +194,12 @@ router.post('/points/award', async (req: Request, res: Response) => {
  * GET /api/gamification/level
  * Get user's level
  */
-router.get('/level', async (req: Request, res: Response) => {
+router.get('/level', async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.query.userId as string;
 
     if (!userId) {
-      return res.status(400).json({
+      return void res.status(400).json({
         success: false,
         error: 'Missing required field: userId'
       });
@@ -239,12 +239,12 @@ router.get('/levels', (_req: Request, res: Response) => {
  * GET /api/gamification/badges
  * Get user's badges
  */
-router.get('/badges', async (req: Request, res: Response) => {
+router.get('/badges', async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.query.userId as string;
 
     if (!userId) {
-      return res.status(400).json({
+      return void res.status(400).json({
         success: false,
         error: 'Missing required field: userId'
       });
@@ -282,13 +282,13 @@ router.get('/badges/all', (_req: Request, res: Response) => {
  * GET /api/gamification/badges/:id/progress
  * Get badge progress for user
  */
-router.get('/badges/:id/progress', async (req: Request, res: Response) => {
+router.get('/badges/:id/progress', async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
     const userId = req.query.userId as string;
 
     if (!userId) {
-      return res.status(400).json({
+      return void res.status(400).json({
         success: false,
         error: 'Missing required field: userId'
       });
@@ -309,12 +309,12 @@ router.get('/badges/:id/progress', async (req: Request, res: Response) => {
  * POST /api/gamification/badges/check
  * Check and award badges (internal use)
  */
-router.post('/badges/check', async (req: Request, res: Response) => {
+router.post('/badges/check', async (req: Request, res: Response): Promise<void> => {
   try {
     const { userId } = req.body;
 
     if (!userId) {
-      return res.status(400).json({
+      return void res.status(400).json({
         success: false,
         error: 'Missing required field: userId'
       });
@@ -335,12 +335,12 @@ router.post('/badges/check', async (req: Request, res: Response) => {
  * GET /api/gamification/streak
  * Get user's streak
  */
-router.get('/streak', async (req: Request, res: Response) => {
+router.get('/streak', async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.query.userId as string;
 
     if (!userId) {
-      return res.status(400).json({
+      return void res.status(400).json({
         success: false,
         error: 'Missing required field: userId'
       });
@@ -361,7 +361,7 @@ router.get('/streak', async (req: Request, res: Response) => {
  * GET /api/gamification/streak/leaderboard
  * Get streak leaderboard
  */
-router.get('/streak/leaderboard', async (req: Request, res: Response) => {
+router.get('/streak/leaderboard', async (req: Request, res: Response): Promise<void> => {
   try {
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
     const leaderboard = await gamification.streaks.getStreakLeaderboard(limit);
@@ -379,12 +379,12 @@ router.get('/streak/leaderboard', async (req: Request, res: Response) => {
  * GET /api/gamification/challenges
  * Get active challenges
  */
-router.get('/challenges', async (req: Request, res: Response) => {
+router.get('/challenges', async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.query.userId as string;
 
     if (!userId) {
-      return res.status(400).json({
+      return void res.status(400).json({
         success: false,
         error: 'Missing required field: userId'
       });
@@ -405,12 +405,12 @@ router.get('/challenges', async (req: Request, res: Response) => {
  * GET /api/gamification/challenges/history
  * Get completed challenges
  */
-router.get('/challenges/history', async (req: Request, res: Response) => {
+router.get('/challenges/history', async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.query.userId as string;
 
     if (!userId) {
-      return res.status(400).json({
+      return void res.status(400).json({
         success: false,
         error: 'Missing required field: userId'
       });
@@ -431,7 +431,7 @@ router.get('/challenges/history', async (req: Request, res: Response) => {
  * GET /api/gamification/leaderboard
  * Get leaderboard
  */
-router.get('/leaderboard', async (req: Request, res: Response) => {
+router.get('/leaderboard', async (req: Request, res: Response): Promise<void> => {
   try {
     const territory = req.query.territory as string | undefined;
     const period = (req.query.period as 'all_time' | 'monthly' | 'weekly') || 'all_time';
@@ -457,14 +457,14 @@ router.get('/leaderboard', async (req: Request, res: Response) => {
  * GET /api/gamification/leaderboard/rank
  * Get user's rank
  */
-router.get('/leaderboard/rank', async (req: Request, res: Response) => {
+router.get('/leaderboard/rank', async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.query.userId as string;
     const territory = req.query.territory as string | undefined;
     const period = (req.query.period as 'all_time' | 'monthly' | 'weekly') || 'all_time';
 
     if (!userId) {
-      return res.status(400).json({
+      return void res.status(400).json({
         success: false,
         error: 'Missing required field: userId'
       });
@@ -489,13 +489,13 @@ router.get('/leaderboard/rank', async (req: Request, res: Response) => {
  * GET /api/gamification/leaderboard/neighbors
  * Get user's neighbors on leaderboard
  */
-router.get('/leaderboard/neighbors', async (req: Request, res: Response) => {
+router.get('/leaderboard/neighbors', async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.query.userId as string;
     const range = req.query.range ? parseInt(req.query.range as string) : 3;
 
     if (!userId) {
-      return res.status(400).json({
+      return void res.status(400).json({
         success: false,
         error: 'Missing required field: userId'
       });
@@ -516,7 +516,7 @@ router.get('/leaderboard/neighbors', async (req: Request, res: Response) => {
  * GET /api/gamification/leaderboard/stats
  * Get leaderboard statistics
  */
-router.get('/leaderboard/stats', async (_req: Request, res: Response) => {
+router.get('/leaderboard/stats', async (_req: Request, res: Response): Promise<void> => {
   try {
     const stats = await gamification.leaderboard.getLeaderboardStats();
     res.json({ success: true, stats });
@@ -533,7 +533,7 @@ router.get('/leaderboard/stats', async (_req: Request, res: Response) => {
  * GET /api/gamification/leaderboard/top-contributors
  * Get top contributors
  */
-router.get('/leaderboard/top-contributors', async (req: Request, res: Response) => {
+router.get('/leaderboard/top-contributors', async (req: Request, res: Response): Promise<void> => {
   try {
     const metric = (req.query.metric as 'prices' | 'verifications' | 'products') || 'prices';
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
@@ -553,12 +553,12 @@ router.get('/leaderboard/top-contributors', async (req: Request, res: Response) 
  * POST /api/gamification/initialize
  * Initialize gamification for a user
  */
-router.post('/initialize', async (req: Request, res: Response) => {
+router.post('/initialize', async (req: Request, res: Response): Promise<void> => {
   try {
     const { userId } = req.body;
 
     if (!userId) {
-      return res.status(400).json({
+      return void res.status(400).json({
         success: false,
         error: 'Missing required field: userId'
       });

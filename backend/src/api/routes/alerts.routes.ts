@@ -18,11 +18,11 @@ router.use(authMiddleware);
  * Create a new alert
  * POST /api/alerts
  */
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.user?.userId;
     if (!userId) {
-      return res.status(401).json({ error: 'Unauthorized' });
+      return void res.status(401).json({ error: 'Unauthorized' });
     }
 
     const input: CreateAlertInput = {
@@ -55,11 +55,11 @@ router.post('/', async (req: Request, res: Response) => {
  * Get user's alerts
  * GET /api/alerts
  */
-router.get('/', async (req: Request, res: Response) => {
+router.get('/', async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.user?.userId;
     if (!userId) {
-      return res.status(401).json({ error: 'Unauthorized' });
+      return void res.status(401).json({ error: 'Unauthorized' });
     }
 
     const options = {
@@ -81,16 +81,16 @@ router.get('/', async (req: Request, res: Response) => {
  * Get alert by ID
  * GET /api/alerts/:id
  */
-router.get('/:id', async (req: Request, res: Response) => {
+router.get('/:id', async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.user?.userId;
     if (!userId) {
-      return res.status(401).json({ error: 'Unauthorized' });
+      return void res.status(401).json({ error: 'Unauthorized' });
     }
 
     const alert = await alertService.getAlert(req.params.id, userId);
     if (!alert) {
-      return res.status(404).json({ error: 'Alert not found' });
+      return void res.status(404).json({ error: 'Alert not found' });
     }
 
     res.json(alert);
@@ -104,11 +104,11 @@ router.get('/:id', async (req: Request, res: Response) => {
  * Update alert
  * PUT /api/alerts/:id
  */
-router.put('/:id', async (req: Request, res: Response) => {
+router.put('/:id', async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.user?.userId;
     if (!userId) {
-      return res.status(401).json({ error: 'Unauthorized' });
+      return void res.status(401).json({ error: 'Unauthorized' });
     }
 
     const input: UpdateAlertInput = {
@@ -140,11 +140,11 @@ router.put('/:id', async (req: Request, res: Response) => {
  * Toggle alert active status
  * PATCH /api/alerts/:id/toggle
  */
-router.patch('/:id/toggle', async (req: Request, res: Response) => {
+router.patch('/:id/toggle', async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.user?.userId;
     if (!userId) {
-      return res.status(401).json({ error: 'Unauthorized' });
+      return void res.status(401).json({ error: 'Unauthorized' });
     }
 
     const alert = await alertService.toggleAlert(req.params.id, userId);
@@ -162,11 +162,11 @@ router.patch('/:id/toggle', async (req: Request, res: Response) => {
  * Delete alert
  * DELETE /api/alerts/:id
  */
-router.delete('/:id', async (req: Request, res: Response) => {
+router.delete('/:id', async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.user?.userId;
     if (!userId) {
-      return res.status(401).json({ error: 'Unauthorized' });
+      return void res.status(401).json({ error: 'Unauthorized' });
     }
 
     await alertService.deleteAlert(req.params.id, userId);
@@ -184,11 +184,11 @@ router.delete('/:id', async (req: Request, res: Response) => {
  * Create quick alert (simplified)
  * POST /api/alerts/quick
  */
-router.post('/quick', async (req: Request, res: Response) => {
+router.post('/quick', async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.user?.userId;
     if (!userId) {
-      return res.status(401).json({ error: 'Unauthorized' });
+      return void res.status(401).json({ error: 'Unauthorized' });
     }
 
     const input: CreateAlertInput = {

@@ -20,11 +20,11 @@ router.use(authMiddleware);
  * Get user's notifications
  * GET /api/notifications
  */
-router.get('/', async (req: Request, res: Response) => {
+router.get('/', async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.user?.userId;
     if (!userId) {
-      return res.status(401).json({ error: 'Unauthorized' });
+      return void res.status(401).json({ error: 'Unauthorized' });
     }
 
     const options = {
@@ -50,11 +50,11 @@ router.get('/', async (req: Request, res: Response) => {
  * Get unread notification count
  * GET /api/notifications/unread-count
  */
-router.get('/unread-count', async (req: Request, res: Response) => {
+router.get('/unread-count', async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.user?.userId;
     if (!userId) {
-      return res.status(401).json({ error: 'Unauthorized' });
+      return void res.status(401).json({ error: 'Unauthorized' });
     }
 
     const count = await notificationService.getUnreadCount(userId);
@@ -69,11 +69,11 @@ router.get('/unread-count', async (req: Request, res: Response) => {
  * Mark notification as read
  * PATCH /api/notifications/:id/read
  */
-router.patch('/:id/read', async (req: Request, res: Response) => {
+router.patch('/:id/read', async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.user?.userId;
     if (!userId) {
-      return res.status(401).json({ error: 'Unauthorized' });
+      return void res.status(401).json({ error: 'Unauthorized' });
     }
 
     await notificationService.markAsRead(req.params.id, userId);
@@ -88,11 +88,11 @@ router.patch('/:id/read', async (req: Request, res: Response) => {
  * Mark all notifications as read
  * PATCH /api/notifications/read-all
  */
-router.patch('/read-all', async (req: Request, res: Response) => {
+router.patch('/read-all', async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.user?.userId;
     if (!userId) {
-      return res.status(401).json({ error: 'Unauthorized' });
+      return void res.status(401).json({ error: 'Unauthorized' });
     }
 
     const count = await notificationService.markAllAsRead(userId);
@@ -107,11 +107,11 @@ router.patch('/read-all', async (req: Request, res: Response) => {
  * Delete notification
  * DELETE /api/notifications/:id
  */
-router.delete('/:id', async (req: Request, res: Response) => {
+router.delete('/:id', async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.user?.userId;
     if (!userId) {
-      return res.status(401).json({ error: 'Unauthorized' });
+      return void res.status(401).json({ error: 'Unauthorized' });
     }
 
     await notificationService.deleteNotification(req.params.id, userId);
@@ -126,11 +126,11 @@ router.delete('/:id', async (req: Request, res: Response) => {
  * Get notification preferences
  * GET /api/notifications/preferences
  */
-router.get('/preferences', async (req: Request, res: Response) => {
+router.get('/preferences', async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.user?.userId;
     if (!userId) {
-      return res.status(401).json({ error: 'Unauthorized' });
+      return void res.status(401).json({ error: 'Unauthorized' });
     }
 
     let preferences = await prisma.notificationPreference.findUnique({
@@ -155,11 +155,11 @@ router.get('/preferences', async (req: Request, res: Response) => {
  * Update notification preferences
  * PUT /api/notifications/preferences
  */
-router.put('/preferences', async (req: Request, res: Response) => {
+router.put('/preferences', async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.user?.userId;
     if (!userId) {
-      return res.status(401).json({ error: 'Unauthorized' });
+      return void res.status(401).json({ error: 'Unauthorized' });
     }
 
     const preferences = await prisma.notificationPreference.upsert({
@@ -200,11 +200,11 @@ router.put('/preferences', async (req: Request, res: Response) => {
  * Subscribe to push notifications
  * POST /api/notifications/push-subscription
  */
-router.post('/push-subscription', async (req: Request, res: Response) => {
+router.post('/push-subscription', async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.user?.userId;
     if (!userId) {
-      return res.status(401).json({ error: 'Unauthorized' });
+      return void res.status(401).json({ error: 'Unauthorized' });
     }
 
     await pushChannel.subscribe(
@@ -230,11 +230,11 @@ router.post('/push-subscription', async (req: Request, res: Response) => {
  * Unsubscribe from push notifications
  * DELETE /api/notifications/push-subscription
  */
-router.delete('/push-subscription', async (req: Request, res: Response) => {
+router.delete('/push-subscription', async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.user?.userId;
     if (!userId) {
-      return res.status(401).json({ error: 'Unauthorized' });
+      return void res.status(401).json({ error: 'Unauthorized' });
     }
 
     await pushChannel.unsubscribe(userId, req.body.endpoint);
@@ -249,11 +249,11 @@ router.delete('/push-subscription', async (req: Request, res: Response) => {
  * Get push subscription status
  * GET /api/notifications/push-subscription
  */
-router.get('/push-subscription', async (req: Request, res: Response) => {
+router.get('/push-subscription', async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.user?.userId;
     if (!userId) {
-      return res.status(401).json({ error: 'Unauthorized' });
+      return void res.status(401).json({ error: 'Unauthorized' });
     }
 
     const subscriptions = await pushChannel.getSubscriptions(userId);
