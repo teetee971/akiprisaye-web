@@ -109,6 +109,7 @@ export function knownRetailers(): string[] {
 const ALLOWED_RETAILER_HOSTNAMES: readonly string[] = [
   'carrefour.fr',
   'carrefour.com',
+  'courses.leclerc.fr',
   'e.leclerc',
   'coursesu.com',
   'leaderprice.fr',

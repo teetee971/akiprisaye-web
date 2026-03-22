@@ -8,30 +8,31 @@
  * - update()        délègue aux deux sous-méthodes
  */
 
+import { PriceHistoryAggregationService } from '../priceHistoryAggregationService.js';
+
 const mockMonthly = {
   findUnique: jest.fn(),
   create:     jest.fn(),
   update:     jest.fn(),
+  findMany:   jest.fn(),
 };
 const mockYearly = {
   findUnique: jest.fn(),
   create:     jest.fn(),
   update:     jest.fn(),
+  findMany:   jest.fn(),
 };
 
-jest.mock('../../../database/prisma.js', () => ({
-  default: {
-    priceHistoryMonthly: mockMonthly,
-    priceHistoryYearly:  mockYearly,
-  },
-}));
+// Use dependency injection — avoids ESM jest.mock() hoisting issues
+// (module-level jest.mock() is hoisted before const declarations in ESM mode,
+//  so referencing outer const variables inside the factory results in undefined)
+const svc = new PriceHistoryAggregationService({
+  priceHistoryMonthly: mockMonthly,
+  priceHistoryYearly:  mockYearly,
+} as never);
 
-let svc: import('../priceHistoryAggregationService.js').PriceHistoryAggregationService;
-
-beforeEach(async () => {
+beforeEach(() => {
   jest.clearAllMocks();
-  const mod = await import('../priceHistoryAggregationService.js');
-  svc = mod.priceHistoryAggregationService;
 });
 
 // ─── Monthly ──────────────────────────────────────────────────────────────────

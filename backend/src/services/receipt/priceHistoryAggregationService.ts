@@ -11,7 +11,35 @@
  */
 
 import { randomUUID } from 'node:crypto';
-import prisma from '../../database/prisma.js';
+import prismaDefault from '../../database/prisma.js';
+
+// Minimal Prisma interface for dependency injection / testing
+type MonthlyRecord = {
+  avgPrice: number;
+  minPrice: number;
+  maxPrice: number;
+  observationsCount: number;
+};
+type YearlyRecord = {
+  avgPrice: number;
+  minPrice: number;
+  maxPrice: number;
+  observationsCount: number;
+};
+type PrismaLike = {
+  priceHistoryMonthly: {
+    findUnique: (...args: unknown[]) => Promise<MonthlyRecord | null>;
+    create: (...args: unknown[]) => Promise<unknown>;
+    update: (...args: unknown[]) => Promise<unknown>;
+    findMany: (...args: unknown[]) => Promise<MonthlyRecord[]>;
+  };
+  priceHistoryYearly: {
+    findUnique: (...args: unknown[]) => Promise<YearlyRecord | null>;
+    create: (...args: unknown[]) => Promise<unknown>;
+    update: (...args: unknown[]) => Promise<unknown>;
+    findMany: (...args: unknown[]) => Promise<YearlyRecord[]>;
+  };
+};
 
 export interface HistoryUpdateResult {
   monthlyCreated: boolean;
@@ -19,6 +47,8 @@ export interface HistoryUpdateResult {
 }
 
 export class PriceHistoryAggregationService {
+
+  constructor(private readonly prisma: PrismaLike = prismaDefault as unknown as PrismaLike) {}
 
   /**
    * Met à jour les agrégats mensuel ET annuel pour un produit.
@@ -50,12 +80,12 @@ export class PriceHistoryAggregationService {
     month: number,
     newPrice: number,
   ): Promise<boolean> {
-    const existing = await prisma.priceHistoryMonthly.findUnique({
+    const existing = await this.prisma.priceHistoryMonthly.findUnique({
       where: { productId_territory_year_month: { productId, territory, year, month } },
     });
 
     if (!existing) {
-      await prisma.priceHistoryMonthly.create({
+      await this.prisma.priceHistoryMonthly.create({
         data: {
           id: randomUUID(),
           productId,
@@ -77,7 +107,7 @@ export class PriceHistoryAggregationService {
     const newMin = Math.min(existing.minPrice, newPrice);
     const newMax = Math.max(existing.maxPrice, newPrice);
 
-    await prisma.priceHistoryMonthly.update({
+    await this.prisma.priceHistoryMonthly.update({
       where: { productId_territory_year_month: { productId, territory, year, month } },
       data: {
         avgPrice: newAvg,
@@ -97,12 +127,12 @@ export class PriceHistoryAggregationService {
     year: number,
     newPrice: number,
   ): Promise<boolean> {
-    const existing = await prisma.priceHistoryYearly.findUnique({
+    const existing = await this.prisma.priceHistoryYearly.findUnique({
       where: { productId_territory_year: { productId, territory, year } },
     });
 
     if (!existing) {
-      await prisma.priceHistoryYearly.create({
+      await this.prisma.priceHistoryYearly.create({
         data: {
           id: randomUUID(),
           productId,
@@ -120,7 +150,7 @@ export class PriceHistoryAggregationService {
     const n = existing.observationsCount;
     const newAvg = (existing.avgPrice * n + newPrice) / (n + 1);
 
-    await prisma.priceHistoryYearly.update({
+    await this.prisma.priceHistoryYearly.update({
       where: { productId_territory_year: { productId, territory, year } },
       data: {
         avgPrice: newAvg,
@@ -144,7 +174,7 @@ export class PriceHistoryAggregationService {
   ) {
     const now = new Date();
     const since = new Date(now.getFullYear(), now.getMonth() - months + 1, 1);
-    return prisma.priceHistoryMonthly.findMany({
+    return this.prisma.priceHistoryMonthly.findMany({
       where: {
         productId,
         territory,
@@ -164,7 +194,7 @@ export class PriceHistoryAggregationService {
    * Historique annuel.
    */
   async getYearlyHistory(productId: string, territory: string) {
-    return prisma.priceHistoryYearly.findMany({
+    return this.prisma.priceHistoryYearly.findMany({
       where: { productId, territory },
       orderBy: { year: 'asc' },
     });

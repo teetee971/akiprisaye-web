@@ -63,7 +63,7 @@ function defaultMocks() {
   mockReviewEntry.create.mockResolvedValue({});
 }
 
-import type { ImportReceiptPayload } from '../../types/receipt.types.js';
+import type { ImportReceiptPayload } from '../../../types/receipt.types.js';
 
 const MINIMAL_PAYLOAD: ImportReceiptPayload = {
   store: {

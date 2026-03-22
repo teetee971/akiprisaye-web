@@ -10,7 +10,7 @@ import { buildRetailerUrl, getRetailerBaseUrl, knownRetailers, safeRetailerUrl, 
 describe('getRetailerBaseUrl', () => {
   it('returns a URL for known retailers', () => {
     expect(getRetailerBaseUrl('Carrefour')).toBe('https://www.carrefour.fr/');
-    expect(getRetailerBaseUrl('E.Leclerc')).toBe('https://www.e.leclerc/');
+    expect(getRetailerBaseUrl('E.Leclerc')).toBe('https://www.courses.leclerc.fr/');
     expect(getRetailerBaseUrl('Leader Price')).toBe('https://www.leaderprice.fr/');
     expect(getRetailerBaseUrl('Intermarché')).toBe('https://www.intermarche.com/');
     expect(getRetailerBaseUrl('Super U')).toBe('https://www.coursesu.com/');
@@ -76,7 +76,7 @@ describe('knownRetailers', () => {
 describe('safeRetailerUrl', () => {
   it('passes through valid known retailer URLs unchanged', () => {
     expect(safeRetailerUrl('https://www.carrefour.fr/')).toBe('https://www.carrefour.fr/');
-    expect(safeRetailerUrl('https://www.e.leclerc/')).toBe('https://www.e.leclerc/');
+    expect(safeRetailerUrl('https://www.courses.leclerc.fr/')).toBe('https://www.courses.leclerc.fr/');
     expect(safeRetailerUrl('https://www.coursesu.com/')).toBe('https://www.coursesu.com/');
     expect(safeRetailerUrl('https://www.leaderprice.fr/')).toBe('https://www.leaderprice.fr/');
     expect(safeRetailerUrl('https://www.intermarche.com/')).toBe('https://www.intermarche.com/');
@@ -114,7 +114,7 @@ describe('safeRetailerUrl', () => {
 describe('isValidRetailerUrl', () => {
   it('returns true for known retailer domains', () => {
     expect(isValidRetailerUrl('https://www.carrefour.fr/')).toBe(true);
-    expect(isValidRetailerUrl('https://www.e.leclerc/')).toBe(true);
+    expect(isValidRetailerUrl('https://www.courses.leclerc.fr/')).toBe(true);
     expect(isValidRetailerUrl('https://www.coursesu.com/')).toBe(true);
     expect(isValidRetailerUrl('https://www.leaderprice.fr/')).toBe(true);
     expect(isValidRetailerUrl('https://www.aldi.fr/')).toBe(true);
@@ -143,7 +143,7 @@ describe('isValidRetailerUrl', () => {
   });
 
   it('mirrors safeRetailerUrl logic — valid URLs are not rewritten', () => {
-    const url = 'https://www.e.leclerc/?utm_source=akiprisaye';
+    const url = 'https://www.courses.leclerc.fr/?utm_source=akiprisaye';
     expect(isValidRetailerUrl(url)).toBe(true);
     expect(safeRetailerUrl(url)).toBe(url);
   });

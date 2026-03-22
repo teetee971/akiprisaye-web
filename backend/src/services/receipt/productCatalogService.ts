@@ -8,7 +8,7 @@
  */
 
 import { randomUUID } from 'node:crypto';
-import prisma from '../../database/prisma.js';
+import prismaDefault from '../../database/prisma.js';
 
 // ─── productKey ───────────────────────────────────────────────────────────────
 
@@ -65,6 +65,8 @@ const IMAGE_HIGH_CONFIDENCE_THRESHOLD = 80;
 
 export class ProductCatalogService {
 
+  constructor(private readonly prisma = prismaDefault) {}
+
   /**
    * Crée ou met à jour un produit dans le catalogue.
    *
@@ -77,10 +79,10 @@ export class ProductCatalogService {
   async upsertProduct(input: UpsertProductInput): Promise<UpsertProductResult> {
     const productKey = input.productKey ?? buildProductKey(input.normalizedLabel);
 
-    const existing = await prisma.product.findUnique({ where: { productKey } });
+    const existing = await this.prisma.product.findUnique({ where: { productKey } });
 
     if (!existing) {
-      const created = await prisma.product.create({
+      const created = await this.prisma.product.create({
         data: {
           id: randomUUID(),
           productKey,
@@ -111,7 +113,7 @@ export class ProductCatalogService {
       (existing.primaryImageUrl == null || incomingScore > existingScore) &&
       !(existingScore >= IMAGE_HIGH_CONFIDENCE_THRESHOLD && incomingScore < existingScore);
 
-    await prisma.product.update({
+    await this.prisma.product.update({
       where: { productKey },
       data: {
         // Toujours mettre à jour les champs enrichissement si null
@@ -138,11 +140,11 @@ export class ProductCatalogService {
   }
 
   async findByProductKey(productKey: string) {
-    return prisma.product.findUnique({ where: { productKey } });
+    return this.prisma.product.findUnique({ where: { productKey } });
   }
 
   async findByBarcode(barcode: string) {
-    return prisma.product.findUnique({ where: { barcode } });
+    return this.prisma.product.findUnique({ where: { barcode } });
   }
 }
 

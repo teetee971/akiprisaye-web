@@ -8,27 +8,23 @@
  * - upsertProduct() mise à jour image si score supérieur
  */
 
-import { buildProductKey } from '../productCatalogService.js';
+import { buildProductKey, ProductCatalogService } from '../productCatalogService.js';
 
 // ─── Mock Prisma ──────────────────────────────────────────────────────────────
 
+// Use dependency injection — avoids ESM jest.mock() hoisting issues
+// (jest.mock() factory is hoisted before const declarations in ESM mode)
 const mockPrismaProduct = {
   findUnique: jest.fn(),
   create:     jest.fn(),
   update:     jest.fn(),
 };
 
-jest.mock('../../../database/prisma.js', () => ({
-  default: { product: mockPrismaProduct },
-}));
+const svc = new ProductCatalogService({ product: mockPrismaProduct } as never);
+const upsertProduct = svc.upsertProduct.bind(svc);
 
-// Re-import AFTER mock is set up
-let upsertProduct: (typeof import('../productCatalogService.js'))['productCatalogService']['upsertProduct'];
-
-beforeEach(async () => {
+beforeEach(() => {
   jest.clearAllMocks();
-  const mod = await import('../productCatalogService.js');
-  upsertProduct = mod.productCatalogService.upsertProduct.bind(mod.productCatalogService);
 });
 
 // ─── buildProductKey ──────────────────────────────────────────────────────────
