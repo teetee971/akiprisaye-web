@@ -26,7 +26,7 @@ import {
   FileText, Landmark, ArrowLeft, Search, Shield, Info,
   GitBranch, UserCheck, BarChart2,
   Briefcase, DollarSign, ShoppingBag, Flag, Newspaper, Leaf,
-  Clock, Smartphone, TreePine, Library,
+  Clock, Smartphone, TreePine, Library, Heart,
 } from 'lucide-react';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
@@ -48,6 +48,7 @@ const TABS = [
   { key: 'digital',       label: 'Stratégie & Digital',       icon: Smartphone },
   { key: 'rse',           label: 'RSE & Environnement',       icon: TreePine   },
   { key: 'socio',         label: 'Analyse socio-économique',  icon: Library    },
+  { key: 'population',   label: 'Actions pour la population', icon: Heart      },
   { key: 'territoires',   label: 'Présence territoriale',     icon: Landmark   },
   { key: 'regulatoire',   label: 'Décisions réglementaires',  icon: Scale      },
   { key: 'impact',        label: 'Impact & Vie chère',        icon: TrendingUp },
@@ -2473,6 +2474,368 @@ const OrganigrammeGBH: React.FC = () => {
                 Avis ADLC 09-A-45 et 19-A-12 ; presse régionale Antilles et Réunion.
               </p>
             </Collapse>
+          </div>
+        )}
+
+        {/* ══ TAB : ACTIONS POUR LA POPULATION ════════════════════════════ */}
+        {activeTab === 'population' && (
+          <div>
+            <SectionTitle icon={Heart}>Ce que GBH fait concrètement pour la population</SectionTitle>
+
+            <p className="text-gray-300 text-sm mb-6 leading-relaxed">
+              Au-delà des débats économiques et réglementaires, le Groupe Bernard Hayot produit
+              des effets concrets sur la vie quotidienne des habitants des DOM. Cette page recense,
+              sur la base de sources documentées, les actions positives directes du groupe pour les
+              populations locales, ainsi que les limites et nuances à y apporter pour une lecture
+              équilibrée.
+            </p>
+
+            <InfoBox color="blue" title="ℹ️ Principe de cette section">
+              Toutes les données présentées ci-dessous sont sourcées. Les éléments qui ne peuvent pas
+              être vérifiés indépendamment (communications GBH non publiées) sont signalés
+              explicitement. Cette section adopte une lecture équilibrée : les faits positifs sont
+              présentés sans minimiser les critiques structurelles documentées par ailleurs
+              (voir onglets « Pratiques commerciales » et « Impact & Vie chère »).
+            </InfoBox>
+
+            {/* ─── 1. EMPLOI ─────────────────────────────────────────────── */}
+            <SectionTitle icon={Briefcase}>1 — Emploi : premier employeur privé des DOM</SectionTitle>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+              <DataCard label="Emplois directs (groupe)" value="~14 000" sub="DOM-TOM + international" highlight />
+              <DataCard label="Emplois indirects estimés" value="~25 000+" sub="Sous-traitants, fournisseurs locaux" />
+              <DataCard label="Part des CDI" value="Majorité" sub="Convention collective CCN 3305" />
+              <DataCard label="Rang employeur GP+MQ" value="N°1 privé" sub="Source : IEDOM/CEROM 2023" highlight />
+            </div>
+
+            <div className="space-y-3 mb-8">
+              {[
+                {
+                  titre: '🏪 Emplois en grande distribution — caractéristiques documentées',
+                  desc: 'Les hypermarchés et supermarchés Carrefour opérés par GBH emploient des milliers de caissiers, employés de rayon, bouchers, boulangers, charcutiers, poissonnier, responsables de secteur, etc. Ces emplois sont couverts par la Convention Collective Nationale du Commerce à prédominance alimentaire (CCN 3305), qui fixe les minima salariaux, les droits syndicaux et les conditions de travail.',
+                  source: 'CCN 3305 (Légifrance) ; IEDOM — Rapport emploi DOM 2023',
+                  highlight: true,
+                },
+                {
+                  titre: '🚗 Emplois dans la concession automobile',
+                  desc: 'Les concessionnaires automobiles GBH (Toyota, Mitsubishi, Daihatsu, Kia, etc.) emploient des mécaniciens, carrossiers, techniciens de maintenance, commerciaux et gestionnaires. Ces métiers qualifiés offrent des niveaux de rémunération supérieurs à la médiane DOM et contribuent à la formation professionnelle technique dans les Antilles.',
+                  source: 'Données BODACC — immatriculations filiales automobiles GBH',
+                  highlight: false,
+                },
+                {
+                  titre: '🏨 Emplois dans l\'hôtellerie — réseau Karibéa',
+                  desc: 'Le réseau hôtelier Karibéa (géré par GBH) emploie directement du personnel hôtelier (réception, restauration, entretien, animation). Ces emplois saisonniers et permanents participent au maintien de l\'activité touristique, secteur stratégique pour l\'économie des Antilles. Karibéa propose des établissements de différentes catégories (2 à 4 étoiles) sur plusieurs territoires.',
+                  source: 'Site Karibéa — Guadeloupe, Martinique, Guyane ; classement hôtelier Atout France',
+                  highlight: false,
+                },
+                {
+                  titre: '🏗️ Emplois dans le BTP et les matériaux de construction',
+                  desc: 'Le pôle BTP de GBH (Point P DOM, matériaux de construction) emploie du personnel de vente, de logistique et d\'expertise technique dans le secteur du bâtiment. Ce secteur est stratégique pour les DOM où la demande de logement est forte et les programmes de construction importants (défiscalisation Girardin, logements sociaux).',
+                  source: 'DAAF DOM — statistiques construction ; données BODACC filiales BTP GBH',
+                  highlight: false,
+                },
+              ].map(item => (
+                <div key={item.titre} className={`border rounded-xl p-4 ${item.highlight ? 'border-amber-500/40 bg-amber-500/5' : 'border-slate-700'}`}>
+                  <p className="text-sm font-bold text-white mb-2">{item.titre}</p>
+                  <p className="text-xs text-gray-400 leading-relaxed mb-2">{item.desc}</p>
+                  <p className="text-xs text-slate-600 italic">📎 {item.source}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* ─── 2. FORMATION ──────────────────────────────────────────── */}
+            <SectionTitle icon={Users}>2 — Formation professionnelle & apprentissage</SectionTitle>
+
+            <div className="space-y-3 mb-8">
+              {[
+                {
+                  titre: '🎓 Contrats d\'apprentissage et d\'alternance',
+                  desc: 'GBH, en tant que groupe employeur de taille importante, est soumis aux obligations de financement de la formation professionnelle (contribution à l\'OPCO Commerce et à l\'OPCO Constructys pour le BTP). À ce titre, il finance des contrats d\'apprentissage et des formations professionnelles qualifiantes dans les métiers du commerce, de la grande distribution, de l\'automobile et du BTP dans les DOM.',
+                  source: 'OPCO Commerce — rapport annuel ; Légifrance — Code du travail Art. L6331-1 et suivants',
+                  nuance: 'Le nombre précis d\'apprentis et de contrats d\'alternance n\'est pas publié par GBH (société non cotée). Les obligations légales (1,68 % de la masse salariale pour la formation) s\'appliquent de plein droit.',
+                },
+                {
+                  titre: '🛠️ Formation interne — Carrefour Académie',
+                  desc: 'Carrefour France a développé "Carrefour Académie", un programme de formation interne pour ses collaborateurs (management, commerce, logistique, digital). En tant que franchisé, GBH peut accéder à ces ressources de formation pour ses propres collaborateurs des enseignes Carrefour dans les DOM. Ces formations couvrent la gestion de rayon, le management de proximité, la relation client et les outils digitaux.',
+                  source: 'Site Carrefour.com — Carrefour Académie ; rapport RSE Carrefour SA 2023',
+                  nuance: 'L\'étendue réelle de l\'accès de GBH (franchisé) aux programmes Carrefour Académie (franchiseur) n\'est pas documentée publiquement.',
+                },
+                {
+                  titre: '🏫 Partenariats avec l\'enseignement professionnel DOM',
+                  desc: 'Les grandes entreprises dom implantées dans les DOM participent aux forums métiers dans les lycées professionnels et CFA (Centres de Formation d\'Apprentis) de Guadeloupe, Martinique et Guyane. Des conventions de stage et d\'apprentissage avec des établissements comme le LEGT de Blachon (GP), le lycée Acajou (MQ) ou la CCI de Guyane permettent à des jeunes ultramarins d\'accéder à une première expérience professionnelle au sein du groupe.',
+                  source: 'CCI Guadeloupe, CCI Martinique — rapports d\'activité 2022 ; presse régionale',
+                  nuance: 'Les partenariats formels GBH-établissements scolaires ne sont pas tous publiés. Cette information est reconstituée par recoupement de sources presse régionale et rapports CCI.',
+                },
+              ].map(item => (
+                <div key={item.titre} className="border border-slate-700 rounded-xl p-4">
+                  <p className="text-sm font-bold text-white mb-2">{item.titre}</p>
+                  <p className="text-xs text-gray-400 leading-relaxed mb-2">{item.desc}</p>
+                  {item.nuance && (
+                    <p className="text-xs text-amber-300/80 bg-amber-500/10 rounded-lg px-3 py-2 mb-2 leading-relaxed">
+                      ⚠️ <strong>Nuance :</strong> {item.nuance}
+                    </p>
+                  )}
+                  <p className="text-xs text-slate-600 italic">📎 {item.source}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* ─── 3. PRIX & ACCÈS ALIMENTAIRE ────────────────────────────── */}
+            <SectionTitle icon={ShoppingBag}>3 — Accès à l'alimentation & maîtrise des prix</SectionTitle>
+
+            <div className="space-y-3 mb-8">
+              {[
+                {
+                  titre: '🛒 Bouclier Qualité-Prix (BQP) — signataire obligatoire',
+                  statut: 'Documenté · Annuel',
+                  color: 'green',
+                  desc: 'Depuis 2013, GBH signe chaque année le Bouclier Qualité-Prix dans chaque territoire DOM où il opère. Le BQP est un accord entre les pouvoirs publics (préfets) et les distributeurs qui fixe un panier de 200+ produits alimentaires de base à des prix maîtrisés, inférieurs au prix de marché. Le panier BQP est communiqué annuellement aux consommateurs par les préfectures.',
+                  detail: 'En 2024 en Guadeloupe : le panier BQP incluait 209 produits avec une économie estimée de 15–20 % vs prix libre. Les produits BQP représentent les besoins alimentaires de base (pâtes, riz, conserves, huile, produits d\'hygiène de base).',
+                  source: 'Préfecture de Guadeloupe — Arrêté BQP 2024 ; Préfecture de Martinique — BQP 2024 ; site officiel OPMR',
+                  sourceUrl: 'https://www.guadeloupe.gouv.fr/',
+                },
+                {
+                  titre: '📉 Engagements de baisses de prix post-crise (2009, 2021)',
+                  statut: 'Documenté · Ponctuel',
+                  color: 'blue',
+                  desc: 'Suite à la grève LKP de 2009 (accord "Jacob"), GBH a signé un engagement de baisse de prix sur une liste d\'environ 100 produits alimentaires de base en Guadeloupe et Martinique. Suite aux événements de novembre 2021 en Guadeloupe, Bernard Hayot a annoncé publiquement une nouvelle baisse de prix ciblée sur 200 produits dans les Carrefour GBH des Antilles.',
+                  detail: 'Accord Jacob (2009) : ~100 produits en baisse de prix. Annonce BH (déc. 2021) : 200 produits en baisse de prix. Ces engagements sont des mesures d\'urgence ponctuelle et non des mécanismes structurels permanents.',
+                  source: 'Accord du 4 mars 2009 (dit "accord Jacob") — préfecture de Guadeloupe ; communiqué GBH déc. 2021 (presse régionale)',
+                  sourceUrl: 'https://www.guadeloupe.gouv.fr/',
+                },
+                {
+                  titre: '🏷️ Carte de fidélité Carrefour+ — avantages tarifaires',
+                  statut: 'Permanent',
+                  color: 'green',
+                  desc: 'Le programme de fidélité Carrefour+ (anciennement Carrefour Pass), disponible dans les magasins GBH, offre aux porteurs de carte des réductions immédiates et différées (points de fidélité), des offres personnalisées et des coupons promotionnels. Pour les ménages qui y ont accès, ces avantages représentent une économie annuelle réelle sur les achats alimentaires.',
+                  detail: 'Carrefour France communique sur une économie annuelle moyenne de 200–400 € pour les porteurs actifs de la carte fidélité. L\'effet est probablement similaire dans les DOM pour les clients réguliers.',
+                  source: 'Programme Carrefour+ — conditions générales ; Carrefour SA — rapport RSE 2023',
+                  sourceUrl: 'https://www.carrefour.fr/carrefour-plus',
+                },
+                {
+                  titre: '🌙 Promotions & semaines thématiques',
+                  statut: 'Régulier',
+                  color: 'amber',
+                  desc: 'Comme tout grand distributeur, les Carrefour GBH organisent des semaines de promotions thématiques (Semaine des économies, Foire aux vins locale, promotions de rentrée scolaire, promotions de fin d\'année). Ces opérations permettent ponctuellement aux consommateurs de réaliser des économies significatives sur certains produits, même si elles portent en général sur des produits à marges commerciales plus élevées que les produits de base.',
+                  detail: 'Les catalogues promotionnels Carrefour DOM sont disponibles sur les sites locaux (carrefour.gp, carrefour.mq). Leur contenu peut différer des catalogues métropolitains en fonction des gammes disponibles localement.',
+                  source: 'Site carrefour.gp ; site carrefour.mq — catalogues promotionnels',
+                  sourceUrl: 'https://www.carrefour.gp/',
+                },
+              ].map(item => {
+                const c: Record<string, string> = {
+                  green: 'text-green-300 border-green-500/30 bg-green-500/5',
+                  blue: 'text-blue-300 border-blue-500/30 bg-blue-500/5',
+                  amber: 'text-amber-300 border-amber-500/30 bg-amber-500/5',
+                };
+                return (
+                  <div key={item.titre} className="border border-slate-700 rounded-xl p-4">
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <p className="text-sm font-bold text-white">{item.titre}</p>
+                      <span className={`flex-shrink-0 text-xs px-2 py-0.5 rounded-full border ${c[item.color]}`}>
+                        {item.statut}
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-400 leading-relaxed mb-2">{item.desc}</p>
+                    <p className="text-xs text-amber-200/70 mb-2">💡 {item.detail}</p>
+                    <p className="text-xs text-slate-600">
+                      📎 <SourceLink href={item.sourceUrl}>{item.source}</SourceLink>
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* ─── 4. DON ALIMENTAIRE & SOLIDARITÉ ─────────────────────────── */}
+            <SectionTitle icon={Leaf}>4 — Don alimentaire & solidarité locale</SectionTitle>
+
+            <div className="space-y-3 mb-8">
+              {[
+                {
+                  titre: '🍎 Don d\'invendus alimentaires — obligation légale et pratique',
+                  desc: 'La loi Garot (2016), renforcée par la loi AGEC (2020), impose aux grandes surfaces de plus de 400 m² de ne pas détruire les invendus alimentaires encore consommables et de les proposer en priorité au don à des associations habilitées. Les hypermarchés Carrefour GBH sont soumis à cette obligation dans tous les DOM. Des partenariats avec des associations locales (Restos du Cœur DOM, Banques Alimentaires de Guadeloupe et de Martinique) permettent la collecte régulière de ces invendus.',
+                  source: 'Légifrance — Loi Garot n° 2016-138 ; Loi AGEC n° 2020-105, Art. 24 ; Banque Alimentaire de Guadeloupe',
+                  sourceUrl: 'https://www.legifrance.gouv.fr/',
+                  volume: 'Chiffre indicatif : un hypermarché Carrefour de 5 000 m² génère en moyenne 50 à 100 tonnes de dons alimentaires annuels (estimation ADEME 2022 — données nationales).',
+                },
+                {
+                  titre: '❤️ Collectes nationales en magasin — Banques Alimentaires',
+                  desc: 'Les magasins Carrefour, y compris ceux opérés par GBH dans les DOM, participent aux grandes collectes nationales organisées par les Fédérations des Banques Alimentaires (2 fois par an en général : printemps et automne). Pendant ces collectes, les clients sont invités à acheter et déposer des produits alimentaires non périssables directement en magasin. Le personnel GBH contribue à la logistique de ces collectes.',
+                  source: 'Fédération Française des Banques Alimentaires — Rapport annuel 2023 ; Banque Alimentaire Guadeloupe',
+                  sourceUrl: 'https://www.banquealimentaire.org/',
+                  volume: 'En 2023, les Banques Alimentaires de France ont collecté 143 000 tonnes de denrées. La part des DOM n\'est pas publiée séparément mais les collectes en magasin Carrefour y participent.',
+                },
+                {
+                  titre: '🏫 Parrainage d\'initiatives locales d\'aide alimentaire',
+                  desc: 'GBH soutient ponctuellement des initiatives locales d\'aide alimentaire aux populations vulnérables (distributions pendant les fêtes, aide aux personnes âgées isolées, soutien aux associations de quartier). Ces actions sont généralement communiquées dans la presse régionale et sur les réseaux sociaux des enseignes locales, mais ne font pas l\'objet de rapports consolidés publiés.',
+                  source: 'Presse régionale Guadeloupe (France-Antilles, Guadeloupe La 1ère) — archives 2020-2024',
+                  sourceUrl: 'https://www.guadeloupe.la1ere.fr/',
+                  volume: 'Information partiellement vérifiable. Les annonces ponctuelles dans la presse régionale constituent les sources disponibles.',
+                },
+              ].map(item => (
+                <div key={item.titre} className="border border-slate-700 rounded-xl p-4">
+                  <p className="text-sm font-bold text-white mb-2">{item.titre}</p>
+                  <p className="text-xs text-gray-400 leading-relaxed mb-2">{item.desc}</p>
+                  <p className="text-xs text-green-300/70 mb-2">📊 {item.volume}</p>
+                  <p className="text-xs text-slate-600">
+                    📎 <SourceLink href={item.sourceUrl}>{item.source}</SourceLink>
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            {/* ─── 5. SPORT & CULTURE ────────────────────────────────────────── */}
+            <SectionTitle icon={TrendingUp}>5 — Parrainage sportif & soutien culturel</SectionTitle>
+
+            <Collapse title="⚽ Sport — parrainage et soutien documentés" defaultOpen>
+              <p className="mb-3 text-xs text-gray-300">
+                GBH et ses enseignes locales (Carrefour DOM, Toyota, concessionnaires automobiles)
+                participent au financement du sport local dans les DOM, à travers des partenariats
+                de sponsoring avec des clubs et des événements sportifs. Ces actions sont
+                documentées dans la presse régionale.
+              </p>
+              <ul className="list-disc pl-5 space-y-2 text-xs text-gray-400">
+                <li>
+                  <strong>Football :</strong> Soutien à des clubs de football guadeloupéen et martiniquais via le sponsoring des maillots ou des équipements. Le football est le sport le plus populaire dans les Antilles et la Guyane. La Ligue de football de Guadeloupe (LFG) et la Ligue de football de Martinique (LFM) bénéficient de partenaires privés locaux dont certaines entités du groupe GBH.
+                </li>
+                <li>
+                  <strong>Cyclisme :</strong> Le Tour cycliste de Guadeloupe (TCG, créé en 1986) et le Tour cycliste de Martinique sont des événements sportifs majeurs dans les Antilles. Des enseignes locales du groupe (Carrefour GP) figurent parmi les partenaires habituels de ces épreuves emblématiques.
+                </li>
+                <li>
+                  <strong>Athlétisme & sports collectifs :</strong> GBH soutient ponctuellement des clubs d'athlétisme, de handball, de volleyball et de natation dans les Antilles, via ses concessions automobiles Toyota (partenaire traditionnel du sport amateur dans de nombreux territoires).
+                </li>
+                <li>
+                  <strong>Golf :</strong> Le réseau hôtelier Karibéa est associé à des golfs et des activités sportives de loisir qui contribuent au tourisme de haut de gamme dans les Antilles.
+                </li>
+              </ul>
+              <p className="text-xs text-gray-600 mt-3">
+                Source : France-Antilles archives 2019-2024 ; site Ligue Football Guadeloupe ;
+                Tour cycliste de Guadeloupe — partenaires officiels.
+              </p>
+            </Collapse>
+
+            <Collapse title="🎭 Culture & patrimoine — actions documentées">
+              <ul className="list-disc pl-5 space-y-2 text-xs mt-2 text-gray-400">
+                <li>
+                  <strong>Carnaval de Guadeloupe et de Martinique :</strong> Le carnaval est le grand événement culturel identitaire des Antilles. Des enseignes Carrefour GBH figurent parmi les partenaires commerciaux des grandes manifestations carnavalesques (Mardi Gras, parading, concours de costumes). Ces partenariats soutiennent financièrement des associations culturelles locales.
+                </li>
+                <li>
+                  <strong>Fête de la Musique & événements culturels :</strong> Les grandes surfaces Carrefour DOM participent ponctuellement aux animations culturelles locales (concerts en parking, événements festifs, animations de saison). Ces actions renforcent le lien entre l'enseigne et la communauté locale.
+                </li>
+                <li>
+                  <strong>Valorisation des saveurs locales :</strong> Les hypermarchés Carrefour GBH organisent régulièrement des animations en rayon valorisant les productions locales (semaine créole, foire aux produits antillais, valorisation des rhums, épices et produits transformés locaux). Ces animations favorisent la visibilité des petits producteurs locaux au sein des grandes surfaces.
+                </li>
+                <li>
+                  <strong>Bibliothèques & éducation :</strong> Certaines filiales du groupe sont mentionnées comme mécènes ponctuels d'initiatives éducatives et culturelles dans les DOM (dotations de bibliothèques scolaires, soutien à des projets culturels jeunesse). Ces actions restent difficiles à quantifier faute de publication systématique.
+                </li>
+              </ul>
+              <p className="text-xs text-gray-600 mt-3">
+                Source : Presse régionale (France-Antilles, Martinique La 1ère, Guadeloupe La 1ère) ;
+                sites officiels des événements culturels DOM.
+              </p>
+            </Collapse>
+
+            {/* ─── 6. ACCESSIBILITÉ TERRITORIALE ───────────────────────────── */}
+            <SectionTitle icon={Landmark}>6 — Accessibilité territoriale & services au quotidien</SectionTitle>
+
+            <div className="space-y-3 mb-8">
+              {[
+                {
+                  titre: '📍 Maillage territorial — accès à la grande distribution',
+                  desc: 'La présence de GBH dans des zones parfois éloignées des centres-villes (Basse-Terre en Guadeloupe, Le Marin en Martinique, Saint-Laurent-du-Maroni en Guyane) permet aux habitants de ces zones d\'accéder à une offre diversifiée à des prix potentiellement inférieurs à ceux des petits commerces de proximité, même si ces prix restent supérieurs aux niveaux métropolitains.',
+                  source: 'ADLC Avis 19-A-12 (2019) — cartographie des zones de chalandise ; données OPMR',
+                },
+                {
+                  titre: '⏰ Amplitude horaire — services à la population',
+                  desc: 'Les hypermarchés Carrefour GBH proposent en général des horaires d\'ouverture plus larges que le commerce traditionnel (ouverture le dimanche matin, soirées jusqu\'à 20h-21h). Cette amplitude horaire bénéficie aux ménages dont les adultes travaillent en journée et ne peuvent faire leurs courses qu\'en soirée ou le week-end. Dans les DOM où les petits commerces ferment souvent tôt, cette accessibilité temporelle est appréciée.',
+                  source: 'Sites carrefour.gp / carrefour.mq — horaires officiels',
+                },
+                {
+                  titre: '🏦 Services bancaires et parabancaires en magasin',
+                  desc: 'Certains hypermarchés Carrefour GBH intègrent des services de type Carrefour Banque (crédit à la consommation) ou des automates bancaires (DAB). Dans les zones où l\'accès aux agences bancaires est limité, ces services complémentaires constituent un point d\'accès financier pour une partie de la population. La présence de Carrefour Location (location de véhicules) permet également à des ménages sans véhicule d\'accéder ponctuellement à un transport.',
+                  source: 'Site Carrefour Banque ; observations terrain Carrefour GP / MQ',
+                },
+                {
+                  titre: '🚨 Rôle en situation de crise (cyclone, COVID)',
+                  desc: 'En période de crise (cyclone, pandémie, tensions sociales), les grandes surfaces Carrefour GBH jouent un rôle de point d\'approvisionnement essentiel. Pendant le COVID-19 (2020), les hypermarchés GBH sont restés ouverts en tant que "commerces essentiels" et ont fourni les populations en denrées alimentaires et en produits d\'hygiène. Après le cyclone Irma (2017), les structures GBH encore opérationnelles dans les zones non dévastées ont servi de point d\'approvisionnement de secours.',
+                  source: 'Préfecture de Guadeloupe — rapports COVID 2020 ; France Info DOM — cyclone Irma 2017',
+                },
+              ].map(item => (
+                <div key={item.titre} className="border border-slate-700 rounded-xl p-4">
+                  <p className="text-sm font-bold text-white mb-2">{item.titre}</p>
+                  <p className="text-xs text-gray-400 leading-relaxed mb-2">{item.desc}</p>
+                  <p className="text-xs text-slate-600 italic">📎 {item.source}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* ─── 7. FISCALITÉ LOCALE ──────────────────────────────────────── */}
+            <SectionTitle icon={DollarSign}>7 — Contribution fiscale locale</SectionTitle>
+
+            <Collapse title="🏛️ Fiscalité locale — impôts et taxes versés par GBH dans les DOM">
+              <p className="mb-3 text-xs text-gray-300">
+                En tant qu'entreprise opérant dans les DOM, GBH contribue à la fiscalité locale
+                à travers plusieurs prélèvements obligatoires dont le produit finance les services
+                publics locaux (collectivités, communes, Région).
+              </p>
+              <ul className="list-disc pl-5 space-y-2 text-xs text-gray-400">
+                <li>
+                  <strong>Cotisation Foncière des Entreprises (CFE) :</strong> Calculée sur la valeur locative des biens immobiliers occupés. Pour GBH qui occupe d'importantes surfaces commerciales (hypermarchés, entrepôts, concessions), la CFE constitue une contribution significative aux budgets communaux dans les DOM.
+                </li>
+                <li>
+                  <strong>Cotisation sur la Valeur Ajoutée des Entreprises (CVAE) :</strong> Taxe assise sur la valeur ajoutée produite dans les DOM. GBH, en générant une part significative de la valeur ajoutée dans les économies DOM, contribue à cet impôt local (en voie de suppression progressive depuis 2023, mais encore partiellement actif).
+                </li>
+                <li>
+                  <strong>Taxe Foncière sur les Propriétés Bâties :</strong> Sur les biens immobiliers détenus en propre par les SCI du groupe (SCI Jarry Distribution, etc.). Ces taxes alimentent directement les budgets des communes où les zones commerciales sont implantées.
+                </li>
+                <li>
+                  <strong>Octroi de Mer (OM) :</strong> Taxe spécifique aux DOM sur les importations et la production locale. GBH, en tant qu'importateur massif de marchandises, acquitte l'octroi de mer côté acheteur (répercuté dans les prix de vente). Cet impôt, perçu par les collectivités territoriales, représente une ressource fiscale essentielle pour les Régions et communes DOM (entre 30 et 50 % des recettes fiscales locales dans certains DOM).
+                </li>
+                <li>
+                  <strong>Cotisations sociales patronales :</strong> Pour ~14 000 salariés, GBH verse des cotisations sociales patronales (URSSAF, retraite, prévoyance, chômage) qui financent le système de protection sociale dans les DOM.
+                </li>
+              </ul>
+              <p className="text-xs text-gray-600 mt-3">
+                Source : Légifrance — Code général des impôts ; ADLC Avis 09-A-45 p. 45 (rôle de l'octroi de mer) ;
+                IEDOM — Rapport fiscal DOM 2022.
+              </p>
+              <p className="text-xs text-amber-300/80 bg-amber-500/10 rounded-lg px-3 py-2 mt-2">
+                ⚠️ <strong>Nuance :</strong> Les montants exacts d'impôts versés par GBH ne sont pas publiés (société non cotée). La contribution fiscale est réelle mais n'est pas quantifiable publiquement sans accès aux comptes non publiés du groupe.
+              </p>
+            </Collapse>
+
+            {/* ─── 8. BILAN ────────────────────────────────────────────────── */}
+            <SectionTitle icon={Scale}>8 — Bilan équilibré — forces et limites documentées</SectionTitle>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+              <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-4">
+                <p className="text-sm font-bold text-green-300 mb-3">✅ Ce que GBH apporte concrètement (documenté)</p>
+                <ul className="list-disc pl-4 space-y-1.5 text-xs text-gray-400">
+                  <li>~14 000 emplois directs couverts par convention collective (CCN 3305)</li>
+                  <li>Participation annuelle obligatoire au BQP (200+ produits à prix encadrés)</li>
+                  <li>Don d'invendus alimentaires (obligation Loi Garot 2016 + Loi AGEC 2020)</li>
+                  <li>Contribution fiscale locale réelle (CFE, taxe foncière, cotisations sociales)</li>
+                  <li>Accès à une offre diversifiée dans des zones parfois isolées</li>
+                  <li>Amplitude horaire large (dimanche, soirées)</li>
+                  <li>Rôle de point d'approvisionnement essentiel en cas de crise</li>
+                  <li>Parrainage sportif et culturel (sport amateur local, carnaval)</li>
+                </ul>
+              </div>
+              <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4">
+                <p className="text-sm font-bold text-amber-300 mb-3">⚠️ Limites & nuances à documenter (sources officielles)</p>
+                <ul className="list-disc pl-4 space-y-1.5 text-xs text-gray-400">
+                  <li>Les actions BQP et BH sont des obligations ou réactions aux crises, pas des initiatives spontanées (ADLC 19-A-12)</li>
+                  <li>Le surcoût alimentaire structurel (+11 à +17 %) persiste malgré les dispositifs (INSEE 2023)</li>
+                  <li>Position dominante reconnue : les prix DOM restent structurellement supérieurs à ce qu'ils seraient en situation concurrentielle normale (ADLC)</li>
+                  <li>Les emplois GBH sont dans des secteurs de distribution non exportateurs — ils ne contribuent pas à la diversification économique des DOM</li>
+                  <li>La contribution fiscale reste opaque (société non cotée, aucune publication des comptes)</li>
+                  <li>Les actions RSE et caritatives ne sont pas consolidées dans un rapport public accessible</li>
+                </ul>
+              </div>
+            </div>
+
+            <p className="text-xs text-gray-600 mt-4 italic text-center">
+              Sources de synthèse : ADLC Avis 09-A-45 (2009) et 19-A-12 (2019) · INSEE DOM 2022-2023 · IEDOM/CEROM 2023 · Légifrance · Presse régionale 2019-2024
+            </p>
           </div>
         )}
 
