@@ -24,23 +24,21 @@ jobs:
 
       - run: npm ci
 
-      - name: Vérifier les secrets Cloudflare
+      - name: Vérifier le token Cloudflare
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
+          # account_id est défini dans wrangler.toml — CLOUDFLARE_ACCOUNT_ID secret est optionnel.
+          # CLOUDFLARE_API_TOKEN reste obligatoire pour s'authentifier auprès de l'API.
           if [ -z "${CLOUDFLARE_API_TOKEN}" ]; then
             echo "❌ Le secret CLOUDFLARE_API_TOKEN est absent ou vide."
             echo "   → Configurez-le dans Settings › Secrets and variables › Actions"
+            echo "   → Créez un token sur https://dash.cloudflare.com/profile/api-tokens"
+            echo "   → Droits requis : Workers D1:Edit, Workers KV Storage:Edit (ou Account:Admin)"
             exit 1
           fi
-          if [ -z "${CLOUDFLARE_ACCOUNT_ID}" ]; then
-            echo "❌ Le secret CLOUDFLARE_ACCOUNT_ID est absent ou vide."
-            echo "   → Trouvez votre Account ID sur https://dash.cloudflare.com (barre latérale droite)"
-            echo "   → Configurez-le dans Settings › Secrets and variables › Actions"
-            exit 1
-          fi
-          echo "✅ Secrets Cloudflare présents"
+          echo "✅ CLOUDFLARE_API_TOKEN présent"
+          echo "ℹ️  account_id lu depuis price-api/wrangler.toml (78642e56f72fff94c78e1ef87cb589a7)"
 
       - name: Create D1
         env:
