@@ -4,6 +4,7 @@
  */
 
 import { PrismaClient, PointAction, Prisma } from '@prisma/client';
+import { assertConfigIntegrity } from '../../utils/configIntegrity.js';
 
 const prisma = new PrismaClient();
 
@@ -20,6 +21,13 @@ export const POINTS_CONFIG: Record<PointAction, number> = {
   CHALLENGE_COMPLETE: 50,
   BADGE_EARNED: 0,
 };
+
+// Runtime guard: POINTS_CONFIG must cover every PointAction enum value exactly.
+assertConfigIntegrity(
+  Object.values(PointAction),
+  Object.keys(POINTS_CONFIG),
+  'POINTS_CONFIG vs PointAction'
+);
 
 export interface PointsTransaction {
   id: string;

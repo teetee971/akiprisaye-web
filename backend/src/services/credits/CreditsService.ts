@@ -96,7 +96,15 @@ export class CreditsService {
           amount,
           description: `Contribution: ${contributionType}`,
           metadata: (metadata ?? undefined) as Prisma.InputJsonValue | undefined,
-    
+        },
+      });
+
+      // Mettre à jour balance
+      await this.updateBalance(userId, tx);
+
+      return transaction;
+    });
+
     return {
       id: result.id,
       userId: result.userId,
@@ -108,8 +116,6 @@ export class CreditsService {
       balance: 0,
       createdAt: result.createdAt,
     } as CreditTransaction;
-    
-    return result as CreditTransaction;
   }
 
   /**
@@ -147,7 +153,12 @@ export class CreditsService {
           amount: -amount,
           description: purpose,
           metadata: (metadata ?? undefined) as Prisma.InputJsonValue | undefined,
-      
+        },
+      });
+
+      // Mettre à jour balance
+      await this.updateBalance(userId, tx);
+
       return transaction;
     });
     
@@ -225,12 +236,7 @@ export class CreditsService {
     });
     
     // Note: Notification équipe pour traitement sera gérée séparément
-    
-    return result as Redemption;
-    
-    // Note: Notification équipe pour traitement sera gérée séparément
-    // await this.notifyRedemptionRequest(redemption);
-    
+
     return result as Redemption;
   }
 

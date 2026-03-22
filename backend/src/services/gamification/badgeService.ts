@@ -103,7 +103,7 @@ export async function initializeBadges(): Promise<void> {
         category: badge.category,
         rarity: badge.rarity,
         points: badge.points,
-        requirement: badge.condition as Prisma.InputJsonValue,
+        requirement: badge.condition as unknown as Prisma.InputJsonValue,
       },
       create: {
         code: badge.code,
@@ -113,7 +113,7 @@ export async function initializeBadges(): Promise<void> {
         category: badge.category,
         rarity: badge.rarity,
         points: badge.points,
-        requirement: badge.condition as Prisma.InputJsonValue,
+        requirement: badge.condition as unknown as Prisma.InputJsonValue,
         isActive: true,
       },
     });
@@ -167,7 +167,7 @@ async function checkBadgeCondition(
 }
 
 /**
- * Check all badges for a user and award any newly earned ones.
+ * Check all badges for a user and award newly earned ones.
  */
 export async function checkAndAwardBadges(userId: string): Promise<Badge[]> {
   const newlyEarned: Badge[] = [];

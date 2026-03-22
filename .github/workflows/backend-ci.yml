@@ -35,17 +35,34 @@ jobs:
       - name: Install dependencies
         run: npm ci --no-audit --no-fund
 
-      - name: Prisma generate
-        run: npx prisma generate
+      - name: Prisma format
+        run: npx prisma format
 
       - name: Prisma validate
         run: npx prisma validate
 
+      - name: Prisma generate
+        run: npx prisma generate
+
+      - name: TypeScript typecheck
+        run: npm run typecheck
+
       - name: Lint
         run: npm run lint --if-present
 
-      - name: Build (type-check)
-        run: npm run build --if-present
+      - name: Run unit tests
+        run: npm test -- --runInBand
 
-      - name: Test
-        run: npm test --if-present
+      - name: Build
+        run: npm run build
+
+      - name: Reject any in backend source
+        run: |
+          if grep -RIn --include="*.ts" --exclude="*.test.ts" --exclude="*.spec.ts" "\bany\b" \
+            src/services/gamification src/services/credits; then
+            echo "Forbidden any detected in backend gamification/credits source"
+            exit 1
+          fi
+
+      - name: Run gamification integrity tests
+        run: npm test -- --runInBand pointActionConfig legacyActionMapper

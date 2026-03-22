@@ -10,6 +10,7 @@
   "scripts": {
     "dev": "tsx watch src/app.ts",
     "build": "tsc",
+    "typecheck": "tsc --noEmit",
     "start": "node dist/app.js",
     "test": "jest",
     "test:watch": "jest --watch",
