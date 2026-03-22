@@ -125,8 +125,6 @@ enum Territory {
 
 enum PointAction {
   LEVEL_UP
-  BADGE_EARNED
-  CHALLENGE_COMPLETE
   PRICE_REPORT
   PRICE_VERIFY
   PHOTO_UPLOAD
@@ -134,6 +132,8 @@ enum PointAction {
   DAILY_LOGIN
   STREAK_BONUS
   REFERRAL
+  CHALLENGE_COMPLETE
+  BADGE_EARNED
 }
 
 enum ProductStatus {
