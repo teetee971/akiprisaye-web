@@ -20,6 +20,10 @@ name: CI
 on:
   push:
     branches: [main]
+    paths:
+      - 'frontend/**'
+      - 'price-api/**'
+      - '.github/workflows/ci.yml'
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
