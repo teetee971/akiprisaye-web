@@ -2,7 +2,7 @@
  * Tests for Neutral Interpretation Generation Module
  */
 
-import { describe, it, expect } from 'vitest';
+
 import {
   generateNeutralInterpretation,
   calculateDispersionIndex,
@@ -14,11 +14,9 @@ describe('generateNeutralInterpretation', () => {
   describe('Signal Level Calculation', () => {
     it('should generate strong signal (80-100) with high stats', () => {
       const stats: ObservationStats = {
-        observationsUsed: 2000,
-        observationsMax: 2500,
-        territoriesCovered: 4,
+        observationCount: 2000,
+        territoryCount: 4,
         dispersionIndex: 75,
-        method: 'full',
       };
 
       const result = generateNeutralInterpretation(stats);
@@ -30,11 +28,9 @@ describe('generateNeutralInterpretation', () => {
 
     it('should generate moderate signal (40-59) with medium stats', () => {
       const stats: ObservationStats = {
-        observationsUsed: 300,
-        observationsMax: 800,
-        territoriesCovered: 2,
+        observationCount: 300,
+        territoryCount: 2,
         dispersionIndex: 40,
-        method: 'stratified',
       };
 
       const result = generateNeutralInterpretation(stats);
@@ -46,11 +42,9 @@ describe('generateNeutralInterpretation', () => {
 
     it('should generate minimal signal (0-19) with low stats', () => {
       const stats: ObservationStats = {
-        observationsUsed: 15,
-        observationsMax: 500,
-        territoriesCovered: 1,
+        observationCount: 15,
+        territoryCount: 1,
         dispersionIndex: 10,
-        method: 'full',
       };
 
       const result = generateNeutralInterpretation(stats);
@@ -60,11 +54,9 @@ describe('generateNeutralInterpretation', () => {
 
     it('should cap signal level at 100', () => {
       const stats: ObservationStats = {
-        observationsUsed: 10000,
-        observationsMax: 10000,
-        territoriesCovered: 10,
+        observationCount: 10000,
+        territoryCount: 10,
         dispersionIndex: 100,
-        method: 'full',
       };
 
       const result = generateNeutralInterpretation(stats);
@@ -76,11 +68,9 @@ describe('generateNeutralInterpretation', () => {
   describe('Interpretation Text Generation', () => {
     it('should generate text for strong signal', () => {
       const stats: ObservationStats = {
-        observationsUsed: 1500,
-        observationsMax: 2000,
-        territoriesCovered: 4,
+        observationCount: 1500,
+        territoryCount: 4,
         dispersionIndex: 70,
-        method: 'full',
       };
 
       const result = generateNeutralInterpretation(stats);
@@ -92,11 +82,9 @@ describe('generateNeutralInterpretation', () => {
 
     it('should generate text for moderate signal', () => {
       const stats: ObservationStats = {
-        observationsUsed: 400,
-        observationsMax: 900,
-        territoriesCovered: 2,
+        observationCount: 400,
+        territoryCount: 2,
         dispersionIndex: 45,
-        method: 'stratified',
       };
 
       const result = generateNeutralInterpretation(stats);
@@ -107,11 +95,9 @@ describe('generateNeutralInterpretation', () => {
 
     it('should generate text for minimal signal', () => {
       const stats: ObservationStats = {
-        observationsUsed: 20,
-        observationsMax: 300,
-        territoriesCovered: 1,
+        observationCount: 20,
+        territoryCount: 1,
         dispersionIndex: 5,
-        method: 'full',
       };
 
       const result = generateNeutralInterpretation(stats);
@@ -122,11 +108,9 @@ describe('generateNeutralInterpretation', () => {
 
     it('should include observation count in text', () => {
       const stats: ObservationStats = {
-        observationsUsed: 847,
-        observationsMax: 1200,
-        territoriesCovered: 3,
+        observationCount: 847,
+        territoryCount: 3,
         dispersionIndex: 55,
-        method: 'full',
       };
 
       const result = generateNeutralInterpretation(stats);
@@ -136,11 +120,9 @@ describe('generateNeutralInterpretation', () => {
 
     it('should use "exhaustive" for full method', () => {
       const stats: ObservationStats = {
-        observationsUsed: 500,
-        observationsMax: 800,
-        territoriesCovered: 2,
+        observationCount: 500,
+        territoryCount: 2,
         dispersionIndex: 50,
-        method: 'full',
       };
 
       const result = generateNeutralInterpretation(stats);
@@ -150,11 +132,9 @@ describe('generateNeutralInterpretation', () => {
 
     it('should use "échantillonnage stratifié" for stratified method', () => {
       const stats: ObservationStats = {
-        observationsUsed: 500,
-        observationsMax: 800,
-        territoriesCovered: 2,
+        observationCount: 500,
+        territoryCount: 2,
         dispersionIndex: 50,
-        method: 'stratified',
       };
 
       const result = generateNeutralInterpretation(stats);
@@ -166,11 +146,9 @@ describe('generateNeutralInterpretation', () => {
   describe('Input Validation', () => {
     it('should throw error for negative observations', () => {
       const stats: ObservationStats = {
-        observationsUsed: -10,
-        observationsMax: 100,
-        territoriesCovered: 2,
+        observationCount: -10,
+        territoryCount: 2,
         dispersionIndex: 30,
-        method: 'full',
       };
 
       expect(() => generateNeutralInterpretation(stats)).toThrow('Invalid observation counts');
@@ -178,11 +156,9 @@ describe('generateNeutralInterpretation', () => {
 
     it('should throw error for zero max observations', () => {
       const stats: ObservationStats = {
-        observationsUsed: 10,
-        observationsMax: 0,
-        territoriesCovered: 2,
+        observationCount: 10,
+        territoryCount: 2,
         dispersionIndex: 30,
-        method: 'full',
       };
 
       expect(() => generateNeutralInterpretation(stats)).toThrow('Invalid observation counts');
@@ -190,11 +166,9 @@ describe('generateNeutralInterpretation', () => {
 
     it('should throw error for negative territories', () => {
       const stats: ObservationStats = {
-        observationsUsed: 100,
-        observationsMax: 200,
-        territoriesCovered: -1,
+        observationCount: 100,
+        territoryCount: -1,
         dispersionIndex: 30,
-        method: 'full',
       };
 
       expect(() => generateNeutralInterpretation(stats)).toThrow('Invalid territory count');
@@ -202,11 +176,9 @@ describe('generateNeutralInterpretation', () => {
 
     it('should throw error for invalid dispersion index', () => {
       const stats: ObservationStats = {
-        observationsUsed: 100,
-        observationsMax: 200,
-        territoriesCovered: 2,
+        observationCount: 100,
+        territoryCount: 2,
         dispersionIndex: 150,
-        method: 'full',
       };
 
       expect(() => generateNeutralInterpretation(stats)).toThrow('Dispersion index must be between 0 and 100');
@@ -216,11 +188,9 @@ describe('generateNeutralInterpretation', () => {
   describe('Neutrality Validation', () => {
     it('should generate neutral text without prohibited terms', () => {
       const stats: ObservationStats = {
-        observationsUsed: 500,
-        observationsMax: 800,
-        territoriesCovered: 3,
+        observationCount: 500,
+        territoryCount: 3,
         dispersionIndex: 50,
-        method: 'full',
       };
 
       const result = generateNeutralInterpretation(stats);
@@ -243,11 +213,9 @@ describe('generateNeutralInterpretation', () => {
 
     it('should pass neutrality validation', () => {
       const stats: ObservationStats = {
-        observationsUsed: 500,
-        observationsMax: 800,
-        territoriesCovered: 3,
+        observationCount: 500,
+        territoryCount: 3,
         dispersionIndex: 50,
-        method: 'full',
       };
 
       const result = generateNeutralInterpretation(stats);
