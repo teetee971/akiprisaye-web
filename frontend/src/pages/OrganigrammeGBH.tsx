@@ -1,16 +1,19 @@
 /**
- * OrganigrammeGBH — Organigramme interactif du Groupe Bernard Hayot (GBH)
+ * OrganigrammeGBH — Dossier d'enquête : Groupe Bernard Hayot (GBH)
  * Route : /organigrame-gbh
  *
- * Visualisation SVG interactive de la structure capitalistique et commerciale
- * du Groupe Bernard Hayot, premier groupe de grande distribution
- * dans les départements et régions d'outre-mer français.
+ * Dossier complet, style enquête parlementaire, sur la structure du Groupe Bernard Hayot.
+ * Toutes les données sont issues de sources officielles et publiques.
+ * Aucune affirmation non sourcée n'est formulée.
  *
- * Sources :
- *  Autorité de la concurrence — Avis 09-A-45 ; Avis 19-A-12
- *  INSEE — Annuaire des entreprises 2023
- *  Registre du Commerce et des Sociétés (RCS) Guadeloupe
- *  Rapport CEROM 2022 — Comptes économiques rapides pour l'Outre-Mer
+ * Sources principales :
+ *  Registre National des Entreprises (RNE / INPI) — données SIRENE
+ *  Autorité de la concurrence — Avis 09-A-45 (2009) ; Avis 19-A-12 (2019)
+ *  INSEE — Enquête sur les prix et niveaux de vie DOM 2022-2023
+ *  IEDOM — Rapports annuels 2023
+ *  CEROM — Comptes Économiques Rapides pour l'Outre-Mer 2022
+ *  Cour des Comptes — Rapport finances collectivités DOM 2023
+ *  Légifrance — RCS et publications légales
  */
 
 import { useState, useCallback, useRef, useEffect } from 'react';
