@@ -9,3 +9,4 @@ export * as badges from './badgeService';
 export * as streaks from './streakService';
 export * as challenges from './challengeService';
 export * as leaderboard from './leaderboardService';
+export * from './legacyActionMapper';

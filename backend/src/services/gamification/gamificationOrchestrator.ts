@@ -12,6 +12,29 @@ import * as leaderboardService from './leaderboardService';
 
 const prisma = new PrismaClient();
 
+type GamificationUpdate = Partial<{
+  totalPoints: number;
+  priceReportsCount: number;
+  verificationsCount: number;
+  photosCount: number;
+  receiptsCount: number;
+}>;
+
+function statFieldFor(action: PointAction): keyof GamificationUpdate | null {
+  switch (action) {
+    case PointAction.PRICE_REPORT:
+      return 'priceReportsCount';
+    case PointAction.PRICE_VERIFY:
+      return 'verificationsCount';
+    case PointAction.PHOTO_UPLOAD:
+      return 'photosCount';
+    case PointAction.RECEIPT_SCAN:
+      return 'receiptsCount';
+    default:
+      return null;
+  }
+}
+
 
 export interface GamificationProfile {
   user: {
@@ -125,7 +148,7 @@ export async function getUserGamificationProfile(userId: string): Promise<Gamifi
 export async function handleUserAction(
   userId: string,
   action: PointAction,
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 ): Promise<{
   pointsAwarded: pointsService.PointsTransaction;
   levelUp?: levelService.Level;
@@ -148,7 +171,7 @@ export async function handleUserAction(
 
   if (leveledUp && levelData) {
     // Award bonus points for level up
-    await pointsService.awardPoints(userId, PointAction.CHALLENGE_COMPLETE, {
+    await pointsService.awardPoints(userId, PointAction.LEVEL_UP, {
       levelReached: newLevel
     });
 
@@ -162,7 +185,7 @@ export async function handleUserAction(
   }
 
   // Update user stats based on action
-  await updateUserStats(userId, action, metadata);
+  await updateUserStats(userId, action);
 
   // Check for new badges
   const newBadges = await badgeService.checkAndAwardBadges(userId);
@@ -192,36 +215,14 @@ export async function handleUserAction(
  */
 async function updateUserStats(
   userId: string,
-  action: PointAction,
-  metadata?: Record<string, any>
+  action: PointAction
 ): Promise<void> {
-  const updates: any = {};
+  const statField = statFieldFor(action);
 
-  switch (action) {
-    case PointAction.PRICE_REPORT:
-      updates.priceReportsCount = { increment: 1 };
-      break;
-
-    case PointAction.PRICE_VERIFY:
-      updates.verificationsCount = { increment: 1 };
-      break;
-
-    case PointAction.PHOTO_UPLOAD:
-      updates.photosCount = { increment: 1 };
-      break;
-
-    case PointAction.RECEIPT_SCAN:
-      updates.receiptsCount = { increment: 1 };
-      break;
-
-    default:
-      break;
-  }
-
-  if (Object.keys(updates).length > 0) {
+  if (statField) {
     await prisma.userGamification.updateMany({
       where: { userId },
-      data: updates
+      data: { [statField]: { increment: 1 } }
     });
   }
 }
