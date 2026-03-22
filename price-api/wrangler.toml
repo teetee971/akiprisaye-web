@@ -2,7 +2,9 @@ name = "price-api"
 main = "src/index.ts"
 compatibility_date = "2026-02-18"
 workers_dev = true
-account_id = "78642e56f72fff94c78e1ef87cb589a7"
+# account_id : défini via la variable d'environnement CLOUDFLARE_ACCOUNT_ID (secret GitHub)
+# ou exportez-la en local : export CLOUDFLARE_ACCOUNT_ID=<votre-account-id>
+# Trouvez votre Account ID dans l'URL du dashboard : dash.cloudflare.com/<ACCOUNT_ID>/home/overview
 
 [vars]
 # En dev local (Vite). En prod, on ajoutera https://akiprisaye-web.pages.dev et/ou ton domaine.

@@ -4,25 +4,53 @@ Ce guide couvre la création du jeton API Cloudflare et la configuration des sec
 
 ---
 
-## ✅ Statut actuel (mis à jour)
+## ⚠️ Action requise — Erreur 7003 détectée
+
+**Le workflow "Create D1 Database" échoue avec :**
+```
+✘ [ERROR] A request to the Cloudflare API (/accounts/***/d1/database) failed.
+  Could not route to /client/v4/accounts/***/d1/database,
+  perhaps your object identifier is invalid? [code: 7003]
+```
+
+**Cause** : le secret `CLOUDFLARE_ACCOUNT_ID` contient une valeur incorrecte (pas un Account ID Cloudflare valide de 32 caractères hexadécimaux).
+
+**Solution** : suivez l'étape 1 ci-dessous pour trouver votre vrai Account ID et mettre à jour le secret.
+
+---
+
+## ✅ Statut des secrets GitHub
 
 | Secret GitHub | Statut |
 |---------------|--------|
 | `CLOUDFLARE_API_TOKEN` | ✅ Configuré |
-| `CLOUDFLARE_ACCOUNT_ID` | ✅ Configuré |
+| `CLOUDFLARE_ACCOUNT_ID` | ⚠️ **À corriger** — valeur invalide (erreur 7003) |
 | `FIREBASE_SERVICE_ACCOUNT` | ✅ Configuré |
 | `VITE_FIREBASE_API_KEY` | ✅ Configuré |
 
-**→ Tous les secrets requis sont en place. Passez directement aux [Prochaines étapes](#5-prochaines-étapes).**
-
 ---
 
-## 1. Récupérer votre Account ID
+## 1. Trouver et corriger votre Account ID Cloudflare
 
-Ouvrez [dash.cloudflare.com](https://dash.cloudflare.com) et copiez l'identifiant visible dans l'URL :
-`dash.cloudflare.com/**<ACCOUNT_ID>**/home/overview`
+### Comment trouver votre Account ID
 
-Il s'agit d'une chaîne hexadécimale de 32 caractères (ex: `78642e56f72fff94c78e1ef87cb589a7`).
+1. Ouvrez [dash.cloudflare.com](https://dash.cloudflare.com) (connectez-vous si besoin)
+2. Regardez l'URL dans votre navigateur :
+   ```
+   https://dash.cloudflare.com/a1b2c3d4e5f6789012345678901234ab/home/overview
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                              Votre Account ID — 32 caractères hex
+   ```
+3. Copiez cette valeur (exemple : `a1b2c3d4e5f6789012345678901234ab`)
+
+> **Format attendu** : exactement 32 caractères hexadécimaux (chiffres 0-9 et lettres a-f)
+
+### Mettre à jour le secret GitHub
+
+1. Ouvrez **Settings → Secrets and variables → Actions** dans votre dépôt GitHub
+2. Cliquez sur le crayon ✏️ à côté de `CLOUDFLARE_ACCOUNT_ID`
+3. Collez votre Account ID (32 hex chars) dans le champ "Value"
+4. Cliquez **Update secret**
 
 ---
 
@@ -68,23 +96,21 @@ akiprisaye-web-ci
 
 ---
 
-## 3. Ajouter les secrets dans GitHub
+## 3. Configurer les secrets dans GitHub
 
-**Settings → Secrets and variables → Actions → New repository secret**
+**Settings → Secrets and variables → Actions → New repository secret** (ou crayon ✏️ pour modifier)
 
 | Nom du secret | Valeur | Obligatoire |
 |---------------|--------|-------------|
-| `CLOUDFLARE_API_TOKEN` | Le token copié à l'étape 2.3 | ✅ Oui |
-| `CLOUDFLARE_ACCOUNT_ID` | Votre Account ID (32 hex chars) | ✅ Oui — requis par le workflow Pages |
+| `CLOUDFLARE_ACCOUNT_ID` | Account ID Cloudflare (32 hex chars, depuis l'URL dashboard) | ✅ Oui |
+| `CLOUDFLARE_API_TOKEN` | Token API créé à l'étape 2 | ✅ Oui |
 
 > **Pourquoi `CLOUDFLARE_ACCOUNT_ID` est requis ?**
-> Le workflow `deploy-cloudflare-pages.yml` vérifie ce secret et annule le déploiement s'il est absent ou invalide. Il doit correspondre exactement à votre Account ID Cloudflare (32 caractères hexadécimaux).
+> Wrangler CLI utilise cette variable pour identifier votre compte. Elle doit correspondre exactement à votre Account ID Cloudflare (32 caractères hexadécimaux). Le format est validé par le workflow avant tout appel API.
 
 ---
 
 ## 4. Secrets Firebase requis pour le build
-
-Le build frontend injecte ces variables d'environnement. Si elles ne sont pas définies, les valeurs de `frontend/src/lib/firebase.ts` sont utilisées comme fallback.
 
 | Secret | Obligatoire | Où trouver la valeur |
 |--------|-------------|----------------------|
@@ -99,12 +125,12 @@ Le build frontend injecte ces variables d'environnement. Si elles ne sont pas d�
 
 ---
 
-## 5. Prochaines étapes
+## 5. Relancer les workflows (dans l'ordre)
 
-Maintenant que les secrets sont configurés, lancez les workflows dans cet ordre :
+Après avoir corrigé `CLOUDFLARE_ACCOUNT_ID` :
 
 ### Étape 1 — Créer la base D1 (une seule fois)
-> GitHub → **Actions → "Create D1 Database"** → **"Run workflow"** → **"Run workflow"** ✅
+> GitHub → **Actions → "Create D1 Database"** → **"Run workflow"** ✅
 
 ### Étape 2 — Déployer le Worker price-api
 > GitHub → **Actions → "Deploy price-api (D1 + Worker)"** → **"Run workflow"** ✅
@@ -112,24 +138,14 @@ Maintenant que les secrets sont configurés, lancez les workflows dans cet ordre
 ### Étape 3 — Déployer le frontend sur Cloudflare Pages
 > GitHub → **Actions → "Deploy to Cloudflare Pages"** → **"Run workflow"** ✅
 
-### Étape 4 — Vérifier le déploiement
-Après le déploiement, testez :
-```bash
-# Frontend
-curl -s https://akiprisaye-web.pages.dev | head -5
-
-# API price-api Worker
-curl -s https://price-api.<votre-sous-domaine>.workers.dev/health
-```
-
 ---
 
 ## Récapitulatif complet des secrets GitHub
 
 | Secret | Obligatoire | Description |
 |--------|-------------|-------------|
+| `CLOUDFLARE_ACCOUNT_ID` | ✅ Oui | Account ID Cloudflare (32 hex chars, depuis URL dashboard) |
 | `CLOUDFLARE_API_TOKEN` | ✅ Oui | Jeton API Cloudflare (Workers D1 + Scripts + Pages) |
-| `CLOUDFLARE_ACCOUNT_ID` | ✅ Oui | Account ID Cloudflare (32 hex chars) |
 | `FIREBASE_SERVICE_ACCOUNT` | ✅ Oui | JSON compte de service Firebase/GCP |
 | `VITE_FIREBASE_API_KEY` | ✅ Oui | Clé API Firebase web |
 | `VITE_FIREBASE_AUTH_DOMAIN` | ✅ Oui | Domaine auth Firebase |

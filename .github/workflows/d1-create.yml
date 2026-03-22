@@ -24,33 +24,62 @@ jobs:
 
       - run: npm ci
 
-      - name: Vérifier le token Cloudflare
+      - name: Valider les credentials Cloudflare
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
-          # account_id est défini dans wrangler.toml — CLOUDFLARE_ACCOUNT_ID secret est optionnel.
-          # CLOUDFLARE_API_TOKEN reste obligatoire pour s'authentifier auprès de l'API.
+          ERRORS=0
+
+          # ── Vérification CLOUDFLARE_API_TOKEN ────────────────────────────────
           if [ -z "${CLOUDFLARE_API_TOKEN}" ]; then
             echo "❌ Le secret CLOUDFLARE_API_TOKEN est absent ou vide."
-            echo ""
-            echo "   ── Étapes pour créer le jeton ──────────────────────────────"
-            echo "   1. Ouvrez : https://dash.cloudflare.com/profile/api-tokens"
-            echo "   2. Cliquez sur 'Créer un jeton' → 'Créer un jeton personnalisé'"
-            echo "   3. Nom : akiprisaye-web-ci"
-            echo "   4. Autorisations (3 lignes) :"
+            echo "   → Créez un jeton sur : https://dash.cloudflare.com/profile/api-tokens"
+            echo "   → Permissions requises :"
             echo "        Compte | Workers D1         | Modifier"
             echo "        Compte | Scripts Workers    | Modifier"
             echo "        Compte | Cloudflare Pages   | Modifier"
-            echo "   5. Ressources du compte : Inclure → Tous les comptes"
-            echo "   6. Cliquez 'Créer le jeton' et copiez la valeur affichée."
-            echo "   7. Dans GitHub : Settings › Secrets and variables › Actions"
-            echo "      → 'New repository secret' → Nom : CLOUDFLARE_API_TOKEN"
-            echo "   ────────────────────────────────────────────────────────────"
+            echo "   → Ajoutez-le dans : Settings › Secrets and variables › Actions"
+            echo "      Nom du secret : CLOUDFLARE_API_TOKEN"
+            ERRORS=$((ERRORS + 1))
+          else
+            echo "✅ CLOUDFLARE_API_TOKEN présent"
+          fi
+
+          # ── Vérification CLOUDFLARE_ACCOUNT_ID ──────────────────────────────
+          if [ -z "${CLOUDFLARE_ACCOUNT_ID}" ]; then
+            echo "❌ Le secret CLOUDFLARE_ACCOUNT_ID est absent ou vide."
+            echo "   → Comment trouver votre Account ID :"
+            echo "      1. Ouvrez https://dash.cloudflare.com"
+            echo "      2. Copiez l'identifiant dans l'URL :"
+            echo "         dash.cloudflare.com/<ACCOUNT_ID>/home/overview"
+            echo "      3. C'est une chaîne de 32 caractères hexadécimaux"
+            echo "         Exemple : a1b2c3d4e5f6789012345678901234ab"
+            echo "   → Mettez à jour le secret CLOUDFLARE_ACCOUNT_ID dans :"
+            echo "      Settings › Secrets and variables › Actions"
+            ERRORS=$((ERRORS + 1))
+          elif ! echo "${CLOUDFLARE_ACCOUNT_ID}" | grep -qE '^[0-9a-fA-F]{32}$'; then
+            LEN=$(echo -n "${CLOUDFLARE_ACCOUNT_ID}" | wc -c)
+            echo "❌ CLOUDFLARE_ACCOUNT_ID est invalide (longueur actuelle : ${LEN} caractères)."
+            echo "   → Un Account ID Cloudflare doit être EXACTEMENT 32 caractères hexadécimaux."
+            echo "   → Comment trouver votre Account ID :"
+            echo "      1. Ouvrez https://dash.cloudflare.com"
+            echo "      2. Copiez l'identifiant dans l'URL :"
+            echo "         dash.cloudflare.com/<ACCOUNT_ID>/home/overview"
+            echo "      3. Exemple valide : a1b2c3d4e5f6789012345678901234ab"
+            echo "   → Mettez à jour le secret CLOUDFLARE_ACCOUNT_ID dans :"
+            echo "      Settings › Secrets and variables › Actions"
             echo "   📄 Guide complet : CLOUDFLARE_SETUP.md à la racine du dépôt"
+            ERRORS=$((ERRORS + 1))
+          else
+            echo "✅ CLOUDFLARE_ACCOUNT_ID présent et format valide (32 hex chars)"
+          fi
+
+          if [ $ERRORS -gt 0 ]; then
+            echo ""
+            echo "❌ $ERRORS erreur(s) de configuration — corrigez les secrets et relancez le workflow."
             exit 1
           fi
-          echo "✅ CLOUDFLARE_API_TOKEN présent"
-          echo "ℹ️  account_id lu depuis price-api/wrangler.toml (78642e56f72fff94c78e1ef87cb589a7)"
 
       - name: Create D1
         env:

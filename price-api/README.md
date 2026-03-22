@@ -52,7 +52,9 @@ Permissions à sélectionner lors de la création du jeton sur [dash.cloudflare.
 | Compte | Scripts Workers | Modifier |
 | Compte | Cloudflare Pages | Modifier |
 
-> L'`account_id` est dans `wrangler.toml` (utilisé par `wrangler` CLI/d1). Le secret `CLOUDFLARE_ACCOUNT_ID` est en plus requis par le workflow `deploy-cloudflare-pages.yml` qui le valide explicitement.
+> `CLOUDFLARE_ACCOUNT_ID` doit être votre Account ID Cloudflare (32 caractères hexadécimaux).
+> Trouvez-le dans l'URL du dashboard : `dash.cloudflare.com/<ACCOUNT_ID>/home/overview`.
+> Le workflow valide le format avant tout appel API — une valeur incorrecte retourne l'erreur 7003.
 
 📄 Guide complet étape par étape : [CLOUDFLARE_SETUP.md](../CLOUDFLARE_SETUP.md)
 
