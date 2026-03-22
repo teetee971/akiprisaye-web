@@ -33,7 +33,7 @@ export interface SetUserRoleResponse {
   newRole: AppRole;
 }
 
-const functions = getFunctions(app);
+const functions = getFunctions(app ?? undefined);
 
 /**
  * Recherche un utilisateur Firebase par email ou UID.
