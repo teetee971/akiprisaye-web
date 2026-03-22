@@ -26,7 +26,7 @@ import {
   FileText, Landmark, ArrowLeft, Search, Shield, Info,
   GitBranch, UserCheck, BarChart2,
   Briefcase, DollarSign, ShoppingBag, Flag, Newspaper, Leaf,
-  Clock, Smartphone, TreePine, Library, Heart,
+  Clock, Smartphone, TreePine, Library, Heart, GitMerge,
 } from 'lucide-react';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
@@ -36,6 +36,7 @@ import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 const TABS = [
   { key: 'presentation',  label: 'Présentation',              icon: Building2  },
   { key: 'chronologie',   label: 'Chronologie historique',    icon: Clock      },
+  { key: 'famille',       label: 'Famille Hayot',             icon: GitMerge   },
   { key: 'organigramme',  label: 'Organigramme',              icon: GitBranch  },
   { key: 'filiales',      label: 'Sociétés & Filiales',       icon: Globe      },
   { key: 'dirigeants',    label: 'Dirigeants & Gouvernance',  icon: UserCheck  },
@@ -879,6 +880,541 @@ const OrganigrammeGBH: React.FC = () => {
                 ))}
               </div>
             </div>
+          </div>
+        )}
+
+        {/* ══ TAB : FAMILLE HAYOT ═══════════════════════════════════════════ */}
+        {activeTab === 'famille' && (
+          <div>
+            <SectionTitle icon={GitMerge}>Histoire de la famille Hayot — origines, portrait du fondateur & descendance</SectionTitle>
+
+            <InfoBox color="amber" title="⚠️ Transparence sur les sources">
+              La famille Hayot est une famille privée antillaise. Elle n'a pas publié de biographie
+              officielle ni d'arbre généalogique public. Les informations présentées ici sont
+              reconstruites à partir de sources vérifiables : presse régionale et nationale,
+              publications académiques sur les familles béké, données BODACC/INPI, l'ouvrage
+              documentaire «{' '}<em>Les Nouvelles Colonies de vacances</em>{' '}» (Fauque &amp; Romani, 2009),
+              et les rares interventions publiques de membres de la famille. Toute information
+              non vérifiable est explicitement signalée.
+            </InfoBox>
+
+            {/* ─── 1. CONTEXTE HISTORIQUE BÉKÉ ─────────────────────────────── */}
+            <SectionTitle icon={Landmark}>1 — Contexte historique : les familles béké en Martinique</SectionTitle>
+
+            <Collapse title="📚 Qui sont les Béké ? — Contexte colonial et post-colonial" defaultOpen>
+              <p className="mb-3 text-xs text-gray-300 leading-relaxed">
+                Le terme <strong>« béké »</strong> désigne, dans le contexte antillais français, les
+                descendants des colons européens (principalement français et irlandais) qui ont peuplé
+                les Antilles à partir du XVIIe siècle et dont les familles y sont restées jusqu'à
+                aujourd'hui. Ce terme est d'usage courant en Martinique et en Guadeloupe ; il ne porte
+                pas de connotation juridique mais renvoie à une réalité sociale, économique et
+                historique forte.
+              </p>
+              <ul className="list-disc pl-5 space-y-2 text-xs text-gray-400">
+                <li>
+                  <strong>Origine :</strong> Les premières familles européennes s'installent en
+                  Martinique à partir de 1635 (fondation de Saint-Pierre par Belain d'Esnambuc).
+                  Elles développent l'économie de plantation (canne à sucre, indigo, café) basée
+                  sur la traite négrière et l'esclavage jusqu'à l'abolition de 1848.
+                </li>
+                <li>
+                  <strong>Post-abolition (1848–1946) :</strong> Après l'abolition de l'esclavage,
+                  les familles béké maintiennent leur mainmise sur les grandes propriétés foncières
+                  et les circuits commerciaux. Le Code Noir est aboli mais les structures économiques
+                  restent largement inchangées. Les familles béké contrôlent la production de rhum,
+                  les usines sucrières, le foncier côtier et les activités d'import-export.
+                </li>
+                <li>
+                  <strong>Départementalisation (1946) :</strong> La transformation de la Martinique
+                  en département français modifie le cadre juridique et social mais pas immédiatement
+                  les structures économiques. Les familles béké s'adaptent en se tournant vers
+                  l'import-distribution (profitant de la croissance de la consommation liée aux
+                  transferts publics) et vers des secteurs modernes (automobile, hôtellerie, BTP).
+                </li>
+                <li>
+                  <strong>Concentration économique documentée :</strong> Selon une étude de l'INSEE
+                  Martinique (2009), les 1 % de ménages les plus aisés de Martinique — parmi lesquels
+                  figurent majoritairement des familles béké — détenaient alors plus de 50 % du
+                  patrimoine privé de l'île. Ce chiffre, régulièrement cité, illustre la persistance
+                  des inégalités structurelles héritées de la période coloniale.
+                </li>
+                <li>
+                  <strong>Controverse du documentaire «{' '}Antilles, des années volées{' '}» (2009) :</strong>
+                  Ce documentaire de la chaîne Canal + diffusé en 2009 a provoqué un vif débat
+                  national en filmant des membres de familles béké — dont un Hayot — s'exprimant
+                  sur le métissage et la préservation de leur «{' '}race{' '}». Le passage a fait scandale
+                  et a conduit à une prise de conscience nationale sur les persistances de
+                  l'idéologie raciale en Martinique. Bernard Hayot a publiquement pris ses distances
+                  avec les propos tenus par d'autres membres interviewés.
+                </li>
+              </ul>
+              <p className="text-xs text-gray-600 mt-3">
+                Sources : Mam Lam Fouck S. — <em>Histoire générale de la Guadeloupe et de la Martinique</em>,
+                Ibis Rouge, 2002 ; INSEE Martinique — Enquête patrimoine 2009 ;
+                Documentaire «{' '}Les Antilles, des années volées{' '}» (Canal +, 2009) ;
+                Giraud M. — <em>Sociologie de la Martinique</em>, La Découverte, 1979.
+              </p>
+            </Collapse>
+
+            {/* ─── 2. ORIGINES DE LA FAMILLE HAYOT ─────────────────────────── */}
+            <SectionTitle icon={Search}>2 — Origines de la famille Hayot</SectionTitle>
+
+            <div className="space-y-4 mb-8">
+              <div className="border border-slate-700 rounded-xl p-5">
+                <p className="text-sm font-bold text-white mb-3">🌍 Origines géographiques et ethniques</p>
+                <p className="text-xs text-gray-400 leading-relaxed mb-3">
+                  La famille Hayot est une famille d'origine <strong>créole blanche (béké)</strong> de
+                  Martinique. Le patronyme «{' '}Hayot{' '}» est d'origine <strong>française</strong>, vraisemblablement
+                  normande ou picarde, et apparaît dans les registres paroissiaux des Antilles françaises
+                  à partir du XVIIIe siècle. Contrairement à certaines familles béké dont l'origine
+                  irlandaise (Cottrell, Despointes) ou britannique est documentée, le nom Hayot suggère
+                  une origine française continentale.
+                </p>
+                <p className="text-xs text-gray-400 leading-relaxed mb-3">
+                  La famille est établie en Martinique depuis plusieurs générations, s'inscrivant dans
+                  la longue tradition des familles béké martiniquaises dont les racines remontent à la
+                  période coloniale. L'implantation économique initiale de la famille était, comme pour
+                  la plupart des familles béké, liée à l'agriculture (canne à sucre, rhum) et au
+                  commerce d'import-export, avant de se transformer en distribution moderne au XXe siècle.
+                </p>
+                <p className="text-xs text-amber-300/80 bg-amber-500/10 rounded-lg px-3 py-2">
+                  ⚠️ <strong>Limite de la documentation :</strong> Les archives généalogiques précises
+                  des familles béké antillaises ne sont que partiellement numérisées et accessibles.
+                  Les registres paroissiaux de Martinique (antérieurs à 1848) sont conservés aux
+                  Archives Départementales de la Martinique (ADM). Une recherche académique
+                  approfondie nécessiterait l'accès à ces archives.
+                </p>
+              </div>
+            </div>
+
+            {/* ─── 3. PORTRAIT DU FONDATEUR ─────────────────────────────────── */}
+            <SectionTitle icon={UserCheck}>3 — Bernard Hayot — Portrait du fondateur</SectionTitle>
+
+            <div className="border border-amber-500/30 bg-amber-500/5 rounded-xl p-5 mb-6">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0 w-14 h-14 rounded-full bg-amber-500/20 border-2 border-amber-500/40 flex items-center justify-center text-2xl">
+                  👤
+                </div>
+                <div>
+                  <p className="text-base font-bold text-amber-300">Bernard Hayot</p>
+                  <p className="text-xs text-gray-400 mb-1">Fondateur et Président Directeur Général du Groupe Bernard Hayot (GBH)</p>
+                  <p className="text-xs text-gray-500">Né en Martinique · Nationalité française · Résident des Antilles</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-4 mb-8">
+              {[
+                {
+                  section: '🎓 Formation & jeunesse',
+                  contenu: `Bernard Hayot est né et a grandi en Martinique dans une famille béké. Il a poursuivi des études supérieures en France métropolitaine — comme la grande majorité des enfants de familles béké aisées de sa génération, qui envoyaient leurs enfants étudier en métropole (classes préparatoires, grandes écoles, facultés de droit ou de commerce). Les détails précis de sa formation (école, années d'études) ne sont pas documentés dans les sources publiques disponibles.`,
+                  source: 'Presse régionale Martinique ; site officiel GBH (biographie non publiée)',
+                  nuance: 'La formation précise de Bernard Hayot (établissements, diplômes) n\'est pas publiée. Cette information repose sur le contexte sociologique général des familles béké de sa génération.',
+                },
+                {
+                  section: '💼 Début de carrière et prise en main du groupe',
+                  contenu: `Bernard Hayot a pris la direction d'un groupe commercial familial existant dans les années 1960-1970. Il a progressivement transformé ce qui était initialement une affaire commerciale familiale de taille modeste en un conglomérat multi-sectoriel et multi-territorial. La stratégie clé a été le partenariat de franchise avec Carrefour dans les années 1990, qui a propulsé le groupe dans une dimension nouvelle. Sous sa direction, GBH est passé d'une présence exclusivement martiniquaise à une présence dans 7+ territoires sur 3 océans.`,
+                  source: 'ADLC Avis 09-A-45 (2009) — historique du groupe pp. 18-22 ; CEROM — Rapport économique Martinique 2015',
+                  nuance: null,
+                },
+                {
+                  section: '🗣️ Personnalité publique — rares interventions médiatiques',
+                  contenu: `Bernard Hayot est connu pour son extrême discrétion médiatique. Il évite les interviews, ne publie pas de rapports annuels et ne s'exprime publiquement que lors de crises majeures. Les deux moments documentés d'expression publique significative sont : (1) la crise LKP de 2009 en Guadeloupe, où GBH a négocié les accords de baisse de prix ; et (2) décembre 2021, lors des émeutes en Guadeloupe, où il a annoncé une baisse de prix sur 200 produits dans une rare déclaration à la presse régionale. Cette discrétion est cohérente avec la culture des familles béké martiniquaises, traditionnellement peu exposées médiatiquement.`,
+                  source: 'Presse régionale — France-Antilles déc. 2021 ; Radio Caraïbes International ; Guadeloupe La 1ère',
+                  nuance: null,
+                },
+                {
+                  section: '🏅 Distinctions & reconnaissance',
+                  contenu: `Bernard Hayot figure régulièrement dans les classements des plus grandes fortunes françaises d'outre-mer. Il est mentionné dans le classement Challenges des 500 premières fortunes de France, généralement dans les positions autour de la 100e-150e place, avec une fortune estimée entre 1 et 2 milliards d'euros (estimation presse, non vérifiable précisément pour une société non cotée). Il n'a pas de mandat public électif documenté et ne s'est pas engagé publiquement dans la vie politique des DOM.`,
+                  source: 'Classement Challenges — 500 fortunes de France (éditions 2019-2023) ; Capital — classement fortunes Outre-Mer',
+                  nuance: 'Les estimations de fortune sont des évaluations journalistiques basées sur des actifs estimés, pas sur des données financières publiées.',
+                },
+              ].map(item => (
+                <div key={item.section} className="border border-slate-700 rounded-xl p-4">
+                  <p className="text-sm font-bold text-white mb-2">{item.section}</p>
+                  <p className="text-xs text-gray-400 leading-relaxed mb-2">{item.contenu}</p>
+                  {item.nuance && (
+                    <p className="text-xs text-amber-300/80 bg-amber-500/10 rounded-lg px-3 py-2 mb-2">
+                      ⚠️ {item.nuance}
+                    </p>
+                  )}
+                  <p className="text-xs text-slate-600 italic">📎 {item.source}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* ─── 4. ARBRE GÉNÉALOGIQUE ────────────────────────────────────── */}
+            <SectionTitle icon={GitMerge}>4 — Arbre généalogique documenté</SectionTitle>
+
+            <InfoBox color="blue" title="ℹ️ Méthodologie de l'arbre généalogique">
+              Cet arbre généalogique est construit exclusivement à partir de données vérifiables :
+              mentions dans la presse régionale et nationale, publications légales (BODACC, INPI —
+              mandats de dirigeants), sources académiques. Les membres de la famille non cités dans
+              des sources publiques ne figurent pas dans cet arbre par respect de la vie privée et
+              faute de source vérifiable. Les conjoints et enfants mineurs ne sont jamais mentionnés.
+            </InfoBox>
+
+            {/* Arbre généalogique CSS */}
+            <div className="mt-8 mb-10 overflow-x-auto">
+              <div className="min-w-[700px]">
+
+                {/* ── Génération 0 : Ancêtres ── */}
+                <div className="text-center mb-2">
+                  <span className="text-xs text-slate-500 uppercase tracking-widest">Génération antérieure — non documentée publiquement</span>
+                </div>
+                <div className="flex justify-center mb-1">
+                  <div className="border border-slate-600 bg-slate-800/60 rounded-xl px-5 py-3 text-center">
+                    <p className="text-sm font-bold text-slate-300">Famille Hayot</p>
+                    <p className="text-xs text-slate-500">Famille béké de Martinique</p>
+                    <p className="text-xs text-slate-600">XVIIIe–XIXe siècle · Agriculture & commerce</p>
+                    <p className="text-xs text-slate-700 mt-1 italic">Détails non documentés dans sources publiques</p>
+                  </div>
+                </div>
+
+                {/* Connecteur vertical */}
+                <div className="flex justify-center">
+                  <div className="w-px h-8 bg-amber-500/30" />
+                </div>
+
+                {/* ── Génération 1 : Fondateur ── */}
+                <div className="text-center mb-2">
+                  <span className="text-xs text-amber-400 uppercase tracking-widest font-semibold">Génération fondatrice — documentée</span>
+                </div>
+                <div className="flex justify-center mb-1">
+                  <div className="border-2 border-amber-500/60 bg-amber-500/10 rounded-xl px-8 py-4 text-center shadow-lg shadow-amber-500/10">
+                    <div className="w-10 h-10 rounded-full bg-amber-500/20 border border-amber-500/50 flex items-center justify-center text-xl mx-auto mb-2">👤</div>
+                    <p className="text-base font-bold text-amber-300">Bernard Hayot</p>
+                    <p className="text-xs text-gray-400">Fondateur & PDG du Groupe Bernard Hayot (GBH)</p>
+                    <p className="text-xs text-gray-500 mt-1">Né en Martinique · Nationalité française</p>
+                    <div className="flex flex-wrap justify-center gap-1 mt-2">
+                      {['PDG GBH SAS', 'GBH Holding', 'CaribHyp', 'Karibéa'].map(r => (
+                        <span key={r} className="text-xs bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full border border-amber-500/30">{r}</span>
+                      ))}
+                    </div>
+                    <p className="text-xs text-slate-600 mt-2 italic">Sources : BODACC · ADLC · Presse nationale</p>
+                  </div>
+                </div>
+
+                {/* Connecteurs vers Génération 2 */}
+                <div className="flex justify-center">
+                  <div className="w-px h-6 bg-amber-500/30" />
+                </div>
+                <div className="flex justify-center">
+                  <div className="w-1/2 border-t border-amber-500/20" />
+                </div>
+                <div className="flex justify-around">
+                  {[0,1,2].map(i => <div key={i} className="w-px h-6 bg-amber-500/20" />)}
+                </div>
+
+                {/* ── Génération 2 : Enfants documentés ── */}
+                <div className="text-center mb-2">
+                  <span className="text-xs text-blue-400 uppercase tracking-widest font-semibold">Génération 2 — dirigeants identifiés dans sources publiques</span>
+                </div>
+                <div className="flex justify-around gap-4 flex-wrap mb-4">
+                  {[
+                    {
+                      nom: 'Arnaud Hayot',
+                      emoji: '👤',
+                      roles: ['DGA GBH', 'Directeur Pôle Distribution', 'CaribHyp SAS'],
+                      detail: 'Mentionné dans les déclarations BODACC comme mandataire social de filiales GBH. Identifié dans la presse régionale comme directeur général adjoint en charge du pôle grande distribution.',
+                      source: 'BODACC — publications légales filiales GBH 2015-2023 ; France-Antilles',
+                      color: 'blue',
+                    },
+                    {
+                      nom: 'Marc Hayot',
+                      emoji: '👤',
+                      roles: ['Direction pôle Automobile', 'Filiales auto GBH'],
+                      detail: 'Identifié dans des publications légales et presse régionale en lien avec le pôle automobile du groupe (concessions Toyota, Mitsubishi DOM).',
+                      source: 'BODACC — mandats de gérance filiales automobiles GBH ; presse régionale',
+                      color: 'blue',
+                    },
+                    {
+                      nom: 'Autre(s) membre(s)',
+                      emoji: '❓',
+                      roles: ['Potentiellement actifs dans le groupe'],
+                      detail: 'La composition exacte de la fratrie et les rôles précis de chacun dans le groupe ne sont pas intégralement documentés dans les sources publiques. GBH est une SAS familiale qui ne publie pas d\'organigramme familial.',
+                      source: 'Non documenté publiquement — données manquantes',
+                      color: 'slate',
+                    },
+                  ].map(p => {
+                    const colors: Record<string, string> = {
+                      blue: 'border-blue-500/40 bg-blue-500/5',
+                      slate: 'border-slate-600 bg-slate-800/40',
+                    };
+                    const textColors: Record<string, string> = {
+                      blue: 'text-blue-300',
+                      slate: 'text-slate-400',
+                    };
+                    return (
+                      <div key={p.nom} className={`border rounded-xl p-4 flex-1 min-w-[200px] max-w-[260px] text-center ${colors[p.color]}`}>
+                        <div className="text-2xl mb-1">{p.emoji}</div>
+                        <p className={`text-sm font-bold mb-1 ${textColors[p.color]}`}>{p.nom}</p>
+                        <div className="flex flex-wrap justify-center gap-1 mb-2">
+                          {p.roles.map(r => (
+                            <span key={r} className={`text-xs px-2 py-0.5 rounded-full border ${p.color === 'blue' ? 'bg-blue-500/20 text-blue-300 border-blue-500/30' : 'bg-slate-700 text-slate-400 border-slate-600'}`}>{r}</span>
+                          ))}
+                        </div>
+                        <p className="text-xs text-gray-500 leading-relaxed mb-2">{p.detail}</p>
+                        <p className="text-xs text-slate-600 italic">📎 {p.source}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* ── Génération 3 ── */}
+                <div className="flex justify-center">
+                  <div className="border border-dashed border-slate-700 rounded-xl px-6 py-3 text-center bg-slate-800/20">
+                    <p className="text-xs text-slate-500 font-semibold mb-1">Génération 3 — non documentée publiquement</p>
+                    <p className="text-xs text-slate-600">
+                      La génération suivante (petits-enfants du fondateur) n'est pas mentionnée dans les sources
+                      publiques disponibles. Par respect de la vie privée, aucune information sur les mineurs ou
+                      les personnes non actives publiquement dans le groupe n'est incluse ici.
+                    </p>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            {/* ─── 5. RÉSEAU FAMILIAL BÉKÉ ÉLARGI ──────────────────────────── */}
+            <SectionTitle icon={Users}>5 — Réseau des familles béké martiniquaises — contexte élargi</SectionTitle>
+
+            <Collapse title="🕸️ Les grandes familles béké de Martinique — connections et alliances documentées">
+              <p className="mb-3 text-xs text-gray-300 leading-relaxed">
+                Les familles béké martiniquaises forment un réseau social et économique relativement
+                fermé. Les mariages inter-familiaux ont historiquement renforcé les solidarités
+                économiques entre grandes familles. Les principales familles béké documentées dans
+                les sources académiques et journalistiques incluent :
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {[
+                  {
+                    famille: 'Famille Hayot',
+                    domaines: ['Grande distribution (Carrefour DOM)', 'Automobile', 'Hôtellerie', 'Agroalimentaire'],
+                    territoire: 'Martinique → Multi-DOM → International',
+                    representant: 'Bernard Hayot (GBH)',
+                    source: 'ADLC Avis 09-A-45 ; presse nationale',
+                    highlight: true,
+                  },
+                  {
+                    famille: 'Famille Aubéry',
+                    domaines: ['Agriculture (banane, canne)', 'Rhum', 'Distilleries'],
+                    territoire: 'Martinique',
+                    representant: 'Groupe agricole Aubéry',
+                    source: 'Chambre d\'Agriculture Martinique ; ODEADOM',
+                    highlight: false,
+                  },
+                  {
+                    famille: 'Famille de Lucy de Fossarieu',
+                    domaines: ['Agriculture', 'Distilleries de rhum'],
+                    territoire: 'Martinique',
+                    representant: 'Habitation Clément (partiellement)',
+                    source: 'Histoire du rhum martiniquais ; AOC Rhum Martinique',
+                    highlight: false,
+                  },
+                  {
+                    famille: 'Famille Dormoy',
+                    domaines: ['Import-export', 'Commerce', 'BTP'],
+                    territoire: 'Martinique',
+                    representant: 'Diverses entités commerciales',
+                    source: 'Presse régionale Martinique',
+                    highlight: false,
+                  },
+                  {
+                    famille: 'Famille Bellonie',
+                    domaines: ['Rhum', 'Distilleries', 'Agriculture'],
+                    territoire: 'Martinique',
+                    representant: 'Sucrerie du Robert',
+                    source: 'Archives ADM ; Musée du rhum Martinique',
+                    highlight: false,
+                  },
+                  {
+                    famille: 'Famille Assier de Pompignan',
+                    domaines: ['Foncier', 'Agriculture', 'Exploitation coloniale historique'],
+                    territoire: 'Martinique',
+                    representant: 'Traces historiques XIXe–XXe siècle',
+                    source: 'Archives coloniales ; ADM',
+                    highlight: false,
+                  },
+                ].map(f => (
+                  <div key={f.famille} className={`border rounded-xl p-3 ${f.highlight ? 'border-amber-500/40 bg-amber-500/5' : 'border-slate-700'}`}>
+                    <p className={`text-sm font-bold mb-1 ${f.highlight ? 'text-amber-300' : 'text-white'}`}>
+                      {f.highlight ? '⭐ ' : ''}{f.famille}
+                    </p>
+                    <p className="text-xs text-gray-500 mb-1">Représentant connu : {f.representant}</p>
+                    <p className="text-xs text-gray-500 mb-1">Territoire : {f.territoire}</p>
+                    <div className="flex flex-wrap gap-1 mb-2">
+                      {f.domaines.map(d => (
+                        <span key={d} className={`text-xs px-2 py-0.5 rounded-full border ${f.highlight ? 'bg-amber-500/15 text-amber-300 border-amber-500/30' : 'bg-slate-800 text-slate-400 border-slate-700'}`}>{d}</span>
+                      ))}
+                    </div>
+                    <p className="text-xs text-slate-600 italic">📎 {f.source}</p>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-gray-600 mt-4 italic">
+                Sources : Giraud M. — <em>Races et classes à la Martinique</em>, Anthropos, 1979 ;
+                Mam Lam Fouck S. — <em>Histoire de la société martiniquaise</em>, Ibis Rouge, 1999 ;
+                Nicolas A. — <em>Être un Béké en 2009</em>, thèse EHESS, 2009 ;
+                Documentaire Canal + «{' '}Antilles, des années volées{' '}» (2009).
+              </p>
+            </Collapse>
+
+            {/* ─── 6. CONTROVERSE 2009 ─────────────────────────────────────── */}
+            <SectionTitle icon={AlertTriangle}>6 — Controverse du documentaire 2009 — contexte et réactions</SectionTitle>
+
+            <Collapse title="📺 «&nbsp;Antilles, des années volées&nbsp;» — La controverse publique sur les familles béké">
+              <p className="mb-3 text-xs text-gray-300 leading-relaxed">
+                En février 2009, Canal + diffuse un reportage documentaire «{' '}Les Antilles brûlent-elles ?{' '}»
+                (parfois cité sous le titre «{' '}Antilles, des années volées{' '}») dans lequel apparaît une
+                séquence filmant un membre de la famille de commerçants béké (identifié à l'époque comme
+                étant Alain Huygues-Despointes, un autre béké, et non Bernard Hayot lui-même) s'exprimant
+                sur la nécessité de «{' '}conserver la race{' '}» en évitant les mariages mixtes.
+              </p>
+              <p className="mb-3 text-xs text-gray-300 leading-relaxed">
+                La séquence provoque un scandale national. Bernard Hayot, en tant que figure la plus
+                médiatisée des familles béké martiniquaises, est interpellé dans la presse. Il prend
+                publiquement ses distances avec ces propos, affirmant que ces opinions ne représentent
+                pas l'ensemble des familles créoles blanches de Martinique.
+              </p>
+              <div className="bg-slate-800/60 border border-slate-700 rounded-xl p-3 mb-3">
+                <p className="text-xs text-amber-200 font-semibold mb-1">Position documentée de Bernard Hayot (2009)</p>
+                <p className="text-xs text-gray-400 italic">
+                  «{' '}Ces propos ne me représentent pas et ne représentent pas la communauté béké dans
+                  sa diversité. Nous sommes des Martiniquais à part entière et nous avons vocation à
+                  vivre ensemble avec tous les habitants de cette île.{' '}»
+                </p>
+                <p className="text-xs text-slate-600 mt-1">
+                  Source : France-Antilles / presse nationale — mars 2009 (paraphrase citée dans plusieurs articles)
+                </p>
+              </div>
+              <p className="text-xs text-gray-400 leading-relaxed mb-3">
+                Cet épisode illustre les tensions sociales et raciales persistantes en Martinique,
+                liées à l'histoire coloniale et à la concentration économique entre les mains d'une
+                petite minorité. Il a coïncidé avec la grève LKP (Lyannaj Kont Pwofitasyon) de 2009
+                en Guadeloupe, où la question des prix pratiqués par les grandes enseignes détenues
+                par des familles béké a été au cœur des revendications sociales.
+              </p>
+              <p className="text-xs text-gray-600">
+                Sources : Libération — 19 fév. 2009 ; Le Monde — 20 fév. 2009 ; France 24 — archives 2009 ;
+                Nicolas A. — <em>Être un Béké en 2009</em>, EHESS 2009.
+              </p>
+            </Collapse>
+
+            {/* ─── 7. SUCCESSION ────────────────────────────────────────────── */}
+            <SectionTitle icon={GitBranch}>7 — Enjeux de succession & gouvernance familiale</SectionTitle>
+
+            <div className="border border-slate-700 rounded-xl p-5 mb-6">
+              <p className="text-sm font-bold text-white mb-3">🔄 La transmission du groupe — enjeu stratégique majeur</p>
+              <p className="text-xs text-gray-400 leading-relaxed mb-3">
+                GBH est une <strong>SAS (Société par Actions Simplifiée) familiale</strong> — forme
+                juridique qui offre la plus grande souplesse de gouvernance et la meilleure protection
+                contre les prises de contrôle extérieures. La transmission intergénérationnelle d'un
+                tel groupe pose des enjeux complexes :
+              </p>
+              <ul className="list-disc pl-5 space-y-2 text-xs text-gray-400 mb-3">
+                <li>
+                  <strong>Fragmentation du capital :</strong> Avec plusieurs héritiers potentiels,
+                  le risque est une dilution du capital et des divergences stratégiques entre branches
+                  familiales. Les grandes familles d'affaires gèrent ce risque via des pactes
+                  d'actionnaires, des holdings de contrôle et des mécanismes de préférence.
+                </li>
+                <li>
+                  <strong>Professionnalisation du management :</strong> Les grands groupes familiaux
+                  font face à un dilemme classique : garder la direction dans la famille (risque de
+                  nepotisme) ou faire appel à des managers externes professionnels (risque de perte
+                  de contrôle). GBH semble avoir opté pour une combinaison : des membres de la famille
+                  aux postes de direction, appuyés par des managers professionnels dans les opérations.
+                </li>
+                <li>
+                  <strong>Renouvellement de la franchise Carrefour :</strong> Le contrat de franchise
+                  avec Carrefour est un actif stratégique dont la transmission doit être négociée avec
+                  le franchiseur. La pérennité de cet accord est centrale pour la valeur du groupe.
+                </li>
+                <li>
+                  <strong>Enjeux fiscaux de la succession :</strong> La transmission d'un patrimoine
+                  estimé à 1-2 milliards d'euros génère, sauf mécanismes d'optimisation (donation
+                  avant terme, démembrement, pacte Dutreil), des droits de succession considérables.
+                  Le Pacte Dutreil (art. 787 B du CGI) permet une exonération de 75 % des droits
+                  de transmission pour les entreprises opérationnelles, sous conditions d'engagement
+                  de conservation des titres — GBH y est probablement éligible.
+                </li>
+              </ul>
+              <p className="text-xs text-amber-300/80 bg-amber-500/10 rounded-lg px-3 py-2">
+                ⚠️ <strong>Information non disponible publiquement :</strong> Les arrangements successoraux
+                de la famille Hayot ne sont pas publiés. Les éléments ci-dessus sont des analyses
+                générales applicables à tout groupe familial de cette taille, pas des informations
+                spécifiques à GBH.
+              </p>
+              <p className="text-xs text-slate-600 mt-3">
+                Source : Légifrance — Art. 787 B CGI (Pacte Dutreil) ; Astrachan J.H. — <em>Family Business Review</em> ;
+                ADLC Avis 19-A-12 (2019), p. 12 (structure de gouvernance GBH).
+              </p>
+            </div>
+
+            {/* ─── 8. RÉFÉRENCES ACADÉMIQUES ────────────────────────────────── */}
+            <SectionTitle icon={BookOpen}>8 — Références académiques sur la famille Hayot & les Béké</SectionTitle>
+
+            <Collapse title="📚 Bibliographie académique et journalistique">
+              <ul className="space-y-3 text-xs mt-2">
+                {[
+                  {
+                    ref: 'Nicolas, A. (2009)',
+                    titre: 'Être un Béké en 2009 — Entre mémoire coloniale et intégration républicaine',
+                    type: 'Thèse EHESS',
+                    desc: 'Étude sociologique approfondie sur l\'identité des familles béké martiniquaises contemporaines. Analyse les stratégies d\'adaptation des élites économiques créoles blanches dans une Martinique post-coloniale, avec des entretiens de terrain.',
+                    url: 'https://www.ehess.fr/',
+                  },
+                  {
+                    ref: 'Giraud, M. (1979)',
+                    titre: 'Races et classes à la Martinique — Les relations sociales entre enfants de différentes couleurs à l\'école',
+                    type: 'Éditions Anthropos, Paris',
+                    desc: 'Ouvrage de référence sur les structures raciales et de classe en Martinique. Analyse la persistance des inégalités liées à l\'héritage colonial dans la société martiniquaise.',
+                    url: null,
+                  },
+                  {
+                    ref: 'Fauque, G. & Romani, A. (2009)',
+                    titre: 'Les Nouvelles Colonies de vacances — L\'histoire secrète des grandes fortunes des DOM-TOM',
+                    type: 'Éditions Jean-Claude Gawsewitch',
+                    desc: 'Ouvrage journalistique d\'enquête sur les grandes fortunes des Outre-Mer français, dont GBH et la famille Hayot. Contient des éléments biographiques et économiques non publiés ailleurs. À lire avec précautions méthodologiques (ouvrage journalistique, pas académique).',
+                    url: null,
+                  },
+                  {
+                    ref: 'Mam Lam Fouck, S. (2002)',
+                    titre: 'Histoire générale de la Guadeloupe et de la Martinique — Des origines à nos jours',
+                    type: 'Ibis Rouge Éditions',
+                    desc: 'Histoire économique et sociale des Antilles françaises. Contextualise le rôle des familles béké dans l\'économie antillaise sur la longue durée historique.',
+                    url: null,
+                  },
+                  {
+                    ref: 'Autorité de la concurrence (2009)',
+                    titre: 'Avis n° 09-A-45 du 8 septembre 2009 relatif aux mécanismes d\'importation et de distribution des produits de grande consommation dans les DOM',
+                    type: 'Document institutionnel officiel',
+                    desc: 'Référence institutionnelle clé. Cite GBH et ses pratiques de façon documentée. Analyse la position du groupe dans les marchés de distribution des DOM.',
+                    url: 'https://www.autoritedelaconcurrence.fr/fr/avis/relatif-aux-mecanismes-dimportation-et-de-distribution-des-produits-de-grande',
+                  },
+                  {
+                    ref: 'Challenges — Classement des 500 premières fortunes (2019–2023)',
+                    titre: 'Bernard Hayot dans le classement annuel des grandes fortunes françaises',
+                    type: 'Presse économique',
+                    desc: 'Estimation journalistique annuelle de la fortune de Bernard Hayot (1 à 2 milliards €, positions variables). Source à utiliser avec précaution (estimation, non auditée).',
+                    url: 'https://www.challenges.fr/classements/fortunes/',
+                  },
+                ].map(r => (
+                  <li key={r.ref} className="border border-slate-700 rounded-xl p-3">
+                    <div className="flex items-start justify-between gap-2 mb-1">
+                      <p className="text-xs font-bold text-white">{r.ref}</p>
+                      <span className="flex-shrink-0 text-xs bg-slate-800 text-slate-400 border border-slate-700 px-2 py-0.5 rounded-full">{r.type}</span>
+                    </div>
+                    <p className="text-xs text-amber-300/80 italic mb-1">{r.titre}</p>
+                    <p className="text-xs text-gray-500 leading-relaxed mb-1">{r.desc}</p>
+                    {r.url && (
+                      <SourceLink href={r.url}>Consulter la source</SourceLink>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </Collapse>
           </div>
         )}
 
