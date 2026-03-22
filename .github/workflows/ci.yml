@@ -149,10 +149,10 @@ jobs:
           echo $! > /tmp/lh-preview.pid
 
       - name: Wait for preview server
-        run: npx wait-on http://127.0.0.1:4173
+        run: npx --yes wait-on@9.0.4 http://127.0.0.1:4173
 
       - name: Run Lighthouse CI
-        run: npx lhci autorun --config=./lighthouserc.cjs
+        run: npx --yes @lhci/cli@0.15.1 autorun --config=./lighthouserc.cjs
 
       - name: Upload Lighthouse reports
         if: always()

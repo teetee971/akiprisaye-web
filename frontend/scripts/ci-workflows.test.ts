@@ -243,7 +243,8 @@ describe('ci.yml — Lighthouse CI V2', () => {
   });
 
   it('lighthouse job must run lhci autorun with lighthouserc.cjs', () => {
-    expect(ciYml).toMatch(/lhci autorun.*lighthouserc\.cjs/);
+    // Matches both bare `lhci autorun` and pinned `@lhci/cli@x.y.z autorun`.
+    expect(ciYml).toMatch(/@lhci\/cli.*autorun.*lighthouserc\.cjs|lhci autorun.*lighthouserc\.cjs/);
   });
 
   it('lighthouse job must upload reports with if-no-files-found: warn (non-blocking)', () => {
