@@ -29,7 +29,7 @@ jobs:
 
       - name: Validate outputs
         run: |
-          for f in data/output/revenue-priority-products.json data/output/revenue-priority-retailers.json data/output/sponsored-opportunities.json; do
+          for f in data/output/revenue-os-products.json data/output/revenue-os-retailers.json data/output/revenue-opportunities.json data/output/revenue-push-priority.json data/output/revenue-seo-plan.json; do
             if [ ! -f "$f" ]; then
               echo "Missing output: $f"
               exit 1
@@ -42,7 +42,9 @@ jobs:
         with:
           name: revenue-os-outputs
           path: |
-            data/output/revenue-priority-products.json
-            data/output/revenue-priority-retailers.json
-            data/output/sponsored-opportunities.json
+            data/output/revenue-os-products.json
+            data/output/revenue-os-retailers.json
+            data/output/revenue-opportunities.json
+            data/output/revenue-push-priority.json
+            data/output/revenue-seo-plan.json
           retention-days: 7
