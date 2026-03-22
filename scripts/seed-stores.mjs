@@ -445,6 +445,208 @@ const STORES_DATA = {
       longitude: 45.2761,
       brand: 'Casino'
     }
+  ],
+
+  // ── Grossistes alimentaires ───────────────────────────────────────────────
+  // Cash & carry et distributeurs alimentaires professionnels DOM-TOM
+
+  guadeloupe_grossistes: [
+    {
+      name: 'Metro Cash & Carry Jarry',
+      address: 'Zone Industrielle de Jarry',
+      postalCode: '97122',
+      city: 'Baie-Mahault',
+      territory: 'GP',
+      latitude: 16.247,
+      longitude: -61.557,
+      brand: 'Metro',
+      storeType: 'grossiste'
+    },
+    {
+      name: 'Promocash Jarry',
+      address: 'Zone de Jarry, Rue des Artisans',
+      postalCode: '97122',
+      city: 'Baie-Mahault',
+      territory: 'GP',
+      latitude: 16.248,
+      longitude: -61.555,
+      brand: 'Promocash',
+      storeType: 'grossiste'
+    },
+    {
+      name: 'Samibo Distribution',
+      address: 'Zone Industrielle de Jarry',
+      postalCode: '97122',
+      city: 'Baie-Mahault',
+      territory: 'GP',
+      latitude: 16.246,
+      longitude: -61.558,
+      brand: 'Samibo',
+      storeType: 'grossiste'
+    },
+    {
+      name: 'Transgourmet Antilles Guadeloupe',
+      address: 'Zone de Jarry',
+      postalCode: '97122',
+      city: 'Baie-Mahault',
+      territory: 'GP',
+      latitude: 16.249,
+      longitude: -61.554,
+      brand: 'Transgourmet',
+      storeType: 'grossiste'
+    },
+    {
+      name: 'GBH Distribution Guadeloupe',
+      address: 'Zone Industrielle de Jarry',
+      postalCode: '97122',
+      city: 'Baie-Mahault',
+      territory: 'GP',
+      latitude: 16.250,
+      longitude: -61.556,
+      brand: 'GBH Distribution',
+      storeType: 'grossiste'
+    }
+  ],
+
+  martinique_grossistes: [
+    {
+      name: 'Metro Cash & Carry Le Lamentin',
+      address: 'Zone Industrielle du Lamentin',
+      postalCode: '97232',
+      city: 'Le Lamentin',
+      territory: 'MQ',
+      latitude: 14.608,
+      longitude: -60.991,
+      brand: 'Metro',
+      storeType: 'grossiste'
+    },
+    {
+      name: 'Promocash Martinique',
+      address: 'Zone Industrielle du Lamentin',
+      postalCode: '97232',
+      city: 'Le Lamentin',
+      territory: 'MQ',
+      latitude: 14.611,
+      longitude: -60.985,
+      brand: 'Promocash',
+      storeType: 'grossiste'
+    },
+    {
+      name: 'Codim Cash & Carry',
+      address: 'Quartier Acajou, Le Lamentin',
+      postalCode: '97200',
+      city: 'Fort-de-France',
+      territory: 'MQ',
+      latitude: 14.613,
+      longitude: -61.066,
+      brand: 'Codim',
+      storeType: 'grossiste'
+    },
+    {
+      name: 'Solhy Distribution',
+      address: 'Route de la Pointe des Nègres',
+      postalCode: '97200',
+      city: 'Fort-de-France',
+      territory: 'MQ',
+      latitude: 14.615,
+      longitude: -61.059,
+      brand: 'Solhy',
+      storeType: 'grossiste'
+    },
+    {
+      name: 'Hyper Cash Martinique',
+      address: 'Boulevard du Général de Gaulle',
+      postalCode: '97200',
+      city: 'Fort-de-France',
+      territory: 'MQ',
+      latitude: 14.612,
+      longitude: -61.063,
+      brand: 'Hyper Cash',
+      storeType: 'grossiste'
+    }
+  ],
+
+  guyane_grossistes: [
+    {
+      name: 'Metro Cash & Carry Cayenne',
+      address: 'Zone Industrielle de Dégrad-des-Cannes',
+      postalCode: '97351',
+      city: 'Matoury',
+      territory: 'GF',
+      latitude: 4.929,
+      longitude: -52.319,
+      brand: 'Metro',
+      storeType: 'grossiste'
+    },
+    {
+      name: 'Socaguy Distribution',
+      address: 'Zone Industrielle de Cayenne',
+      postalCode: '97300',
+      city: 'Cayenne',
+      territory: 'GF',
+      latitude: 4.920,
+      longitude: -52.321,
+      brand: 'Socaguy',
+      storeType: 'grossiste'
+    },
+    {
+      name: 'GD Distribution Guyane',
+      address: 'Route de Montabo',
+      postalCode: '97300',
+      city: 'Cayenne',
+      territory: 'GF',
+      latitude: 4.925,
+      longitude: -52.315,
+      brand: 'GD Distribution',
+      storeType: 'grossiste'
+    }
+  ],
+
+  reunion_grossistes: [
+    {
+      name: 'Metro Cash & Carry Réunion',
+      address: 'Zone Industrielle de la Rivière des Galets',
+      postalCode: '97490',
+      city: 'Sainte-Clotilde',
+      territory: 'RE',
+      latitude: -20.891,
+      longitude: 55.502,
+      brand: 'Metro',
+      storeType: 'grossiste'
+    },
+    {
+      name: 'Transgourmet Réunion',
+      address: 'Zone Industrielle de la Bretagne',
+      postalCode: '97490',
+      city: 'Saint-Denis',
+      territory: 'RE',
+      latitude: -20.875,
+      longitude: 55.467,
+      brand: 'Transgourmet',
+      storeType: 'grossiste'
+    },
+    {
+      name: 'Hyper Cash Réunion',
+      address: 'Zone Industrielle de la Rivière du Mât',
+      postalCode: '97440',
+      city: 'Saint-André',
+      territory: 'RE',
+      latitude: -20.964,
+      longitude: 55.649,
+      brand: 'Hyper Cash',
+      storeType: 'grossiste'
+    },
+    {
+      name: 'Groupe Parfait Distribution',
+      address: 'Zone Industrielle du Port',
+      postalCode: '97420',
+      city: 'Saint-Denis',
+      territory: 'RE',
+      latitude: -20.883,
+      longitude: 55.462,
+      brand: 'Groupe Parfait',
+      storeType: 'grossiste'
+    }
   ]
 };
 
@@ -495,7 +697,9 @@ Usage:
 
 Options:
   --territory, -t <name>  Seed stores only for specified territory
-                          Available: guadeloupe, martinique, guyane, reunion, mayotte
+                          Available: guadeloupe, martinique, guyane, reunion, mayotte,
+                                     guadeloupe_grossistes, martinique_grossistes,
+                                     guyane_grossistes, reunion_grossistes
   --clean, -c             Clean existing stores before seeding
   --help, -h              Show this help message
 

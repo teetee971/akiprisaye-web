@@ -1,13 +1,21 @@
 {
   "metadata": {
-    "version": "4.0.0",
-    "generatedAt": "2026-01-07T03:02:18.123Z",
-    "storeCount": 57,
+    "version": "4.1.0",
+    "generatedAt": "2026-03-22T20:00:00.000Z",
+    "storeCount": 74,
     "territories": [
       "GP",
       "MQ",
       "GF",
       "RE"
+    ],
+    "storeTypes": [
+      "hypermarket",
+      "supermarket",
+      "superette",
+      "discount",
+      "franchise",
+      "grossiste"
     ]
   },
   "stores": [
@@ -833,6 +841,290 @@
       "phone": "0262 25 72 00",
       "services": [
         "parking"
+      ]
+    },
+    {
+      "id": "metro-jarry-gp",
+      "name": "Metro Cash & Carry Jarry",
+      "type": "grossiste",
+      "territory": "GP",
+      "commune": "Baie-Mahault",
+      "address": "Zone Industrielle de Jarry",
+      "lat": 16.247,
+      "lon": -61.557,
+      "phone": "0590 26 83 00",
+      "services": [
+        "parking",
+        "professional_access",
+        "bulk_purchase",
+        "cold_storage"
+      ]
+    },
+    {
+      "id": "promocash-jarry-gp",
+      "name": "Promocash Jarry",
+      "type": "grossiste",
+      "territory": "GP",
+      "commune": "Baie-Mahault",
+      "address": "Zone de Jarry, Rue des Artisans",
+      "lat": 16.248,
+      "lon": -61.555,
+      "phone": "0590 38 15 00",
+      "services": [
+        "parking",
+        "professional_access",
+        "bulk_purchase",
+        "delivery"
+      ]
+    },
+    {
+      "id": "samibo-gp",
+      "name": "Samibo Distribution",
+      "type": "grossiste",
+      "territory": "GP",
+      "commune": "Baie-Mahault",
+      "address": "Zone Industrielle de Jarry",
+      "lat": 16.246,
+      "lon": -61.558,
+      "phone": "0590 26 72 00",
+      "services": [
+        "parking",
+        "professional_access",
+        "bulk_purchase",
+        "delivery"
+      ]
+    },
+    {
+      "id": "transgourmet-gp",
+      "name": "Transgourmet Antilles Guadeloupe",
+      "type": "grossiste",
+      "territory": "GP",
+      "commune": "Baie-Mahault",
+      "address": "Zone de Jarry",
+      "lat": 16.249,
+      "lon": -61.554,
+      "phone": "0590 32 19 00",
+      "services": [
+        "professional_access",
+        "delivery",
+        "cold_storage",
+        "bulk_purchase"
+      ]
+    },
+    {
+      "id": "gbh-distribution-gp",
+      "name": "GBH Distribution Guadeloupe",
+      "type": "grossiste",
+      "territory": "GP",
+      "commune": "Baie-Mahault",
+      "address": "Zone Industrielle de Jarry",
+      "lat": 16.250,
+      "lon": -61.556,
+      "phone": "0590 25 48 00",
+      "services": [
+        "parking",
+        "professional_access",
+        "bulk_purchase",
+        "delivery"
+      ]
+    },
+    {
+      "id": "metro-lamentin-mq",
+      "name": "Metro Cash & Carry Le Lamentin",
+      "type": "grossiste",
+      "territory": "MQ",
+      "commune": "Le Lamentin",
+      "address": "Zone Industrielle du Lamentin",
+      "lat": 14.608,
+      "lon": -60.991,
+      "phone": "0596 51 36 00",
+      "services": [
+        "parking",
+        "professional_access",
+        "bulk_purchase",
+        "cold_storage"
+      ]
+    },
+    {
+      "id": "promocash-lamentin-mq",
+      "name": "Promocash Martinique",
+      "type": "grossiste",
+      "territory": "MQ",
+      "commune": "Le Lamentin",
+      "address": "Zone Industrielle du Lamentin",
+      "lat": 14.611,
+      "lon": -60.985,
+      "phone": "0596 51 92 00",
+      "services": [
+        "parking",
+        "professional_access",
+        "bulk_purchase",
+        "delivery"
+      ]
+    },
+    {
+      "id": "codim-fdf-mq",
+      "name": "Codim Cash & Carry",
+      "type": "grossiste",
+      "territory": "MQ",
+      "commune": "Fort-de-France",
+      "address": "Quartier Acajou, Le Lamentin",
+      "lat": 14.613,
+      "lon": -61.066,
+      "phone": "0596 75 54 00",
+      "services": [
+        "parking",
+        "professional_access",
+        "bulk_purchase"
+      ]
+    },
+    {
+      "id": "solhy-distribution-mq",
+      "name": "Solhy Distribution",
+      "type": "grossiste",
+      "territory": "MQ",
+      "commune": "Fort-de-France",
+      "address": "Route de la Pointe des Nègres",
+      "lat": 14.615,
+      "lon": -61.059,
+      "phone": "0596 61 33 00",
+      "services": [
+        "professional_access",
+        "delivery",
+        "bulk_purchase"
+      ]
+    },
+    {
+      "id": "hyper-cash-mq",
+      "name": "Hyper Cash Martinique",
+      "type": "grossiste",
+      "territory": "MQ",
+      "commune": "Fort-de-France",
+      "address": "Boulevard du Général de Gaulle",
+      "lat": 14.612,
+      "lon": -61.063,
+      "phone": "0596 71 44 00",
+      "services": [
+        "parking",
+        "professional_access",
+        "bulk_purchase"
+      ]
+    },
+    {
+      "id": "metro-cayenne-gf",
+      "name": "Metro Cash & Carry Cayenne",
+      "type": "grossiste",
+      "territory": "GF",
+      "commune": "Matoury",
+      "address": "Zone Industrielle de Dégrad-des-Cannes",
+      "lat": 4.929,
+      "lon": -52.319,
+      "phone": "0594 35 41 00",
+      "services": [
+        "parking",
+        "professional_access",
+        "bulk_purchase",
+        "cold_storage"
+      ]
+    },
+    {
+      "id": "socaguy-gf",
+      "name": "Socaguy Distribution",
+      "type": "grossiste",
+      "territory": "GF",
+      "commune": "Cayenne",
+      "address": "Zone Industrielle de Cayenne",
+      "lat": 4.920,
+      "lon": -52.321,
+      "phone": "0594 30 11 00",
+      "services": [
+        "parking",
+        "professional_access",
+        "bulk_purchase",
+        "delivery"
+      ]
+    },
+    {
+      "id": "gd-distribution-gf",
+      "name": "GD Distribution Guyane",
+      "type": "grossiste",
+      "territory": "GF",
+      "commune": "Cayenne",
+      "address": "Route de Montabo",
+      "lat": 4.925,
+      "lon": -52.315,
+      "phone": "0594 29 88 00",
+      "services": [
+        "professional_access",
+        "delivery",
+        "bulk_purchase"
+      ]
+    },
+    {
+      "id": "metro-reunion-re",
+      "name": "Metro Cash & Carry Réunion",
+      "type": "grossiste",
+      "territory": "RE",
+      "commune": "Sainte-Clotilde",
+      "address": "Zone Industrielle de la Rivière des Galets",
+      "lat": -20.891,
+      "lon": 55.502,
+      "phone": "0262 92 14 00",
+      "services": [
+        "parking",
+        "professional_access",
+        "bulk_purchase",
+        "cold_storage"
+      ]
+    },
+    {
+      "id": "transgourmet-reunion-re",
+      "name": "Transgourmet Réunion",
+      "type": "grossiste",
+      "territory": "RE",
+      "commune": "Saint-Denis",
+      "address": "Zone Industrielle de la Bretagne",
+      "lat": -20.875,
+      "lon": 55.467,
+      "phone": "0262 48 22 00",
+      "services": [
+        "professional_access",
+        "delivery",
+        "cold_storage",
+        "bulk_purchase"
+      ]
+    },
+    {
+      "id": "hyper-cash-reunion-re",
+      "name": "Hyper Cash Réunion",
+      "type": "grossiste",
+      "territory": "RE",
+      "commune": "Saint-André",
+      "address": "Zone Industrielle de la Rivière du Mât",
+      "lat": -20.964,
+      "lon": 55.649,
+      "phone": "0262 46 11 00",
+      "services": [
+        "parking",
+        "professional_access",
+        "bulk_purchase"
+      ]
+    },
+    {
+      "id": "groupe-parfait-re",
+      "name": "Groupe Parfait Distribution",
+      "type": "grossiste",
+      "territory": "RE",
+      "commune": "Saint-Denis",
+      "address": "Zone Industrielle du Port",
+      "lat": -20.883,
+      "lon": 55.462,
+      "phone": "0262 41 57 00",
+      "services": [
+        "parking",
+        "professional_access",
+        "bulk_purchase",
+        "delivery"
       ]
     }
   ]
